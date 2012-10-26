@@ -32,6 +32,18 @@ define(["jquery", "require", "./entity-manager.js"], function($, require){
 	function makeReqConf(conf){
 		return $.extend({},conf.general, conf.reqSettings);
 	};
+	
+	function makeCampConf(conf){
+		return $.extend({},conf.general, conf.campSettings);
+	};
+	
+	function makeIterConf(conf){
+		return $.extend({},conf.general, conf.iterSettings);
+	};
+	
+	function makeTSConf(conf){
+		return $.extend({},conf.general, conf.tsSettings);
+	};
 
 	var manager = {
 		
@@ -47,8 +59,20 @@ define(["jquery", "require", "./entity-manager.js"], function($, require){
 			new EntityManager(tcConf);
 			
 			//requirement
-			/*var reqConf = makeReqConf(this.config);
-			new EntityManager(reqConf);*/
+			var reqConf = makeReqConf(this.config);
+			new EntityManager(reqConf);
+			
+			//campaign
+			var campConf = makeCampConf(this.config);
+			new EntityManager(campConf);
+			
+			//iterartion
+			var iterConf = makeIterConf(this.config);
+			new EntityManager(iterConf);
+			
+			//test suite
+			var tsConf = makeTSConf(this.config);
+			new EntityManager(tsConf);
 			
 		}
 	};

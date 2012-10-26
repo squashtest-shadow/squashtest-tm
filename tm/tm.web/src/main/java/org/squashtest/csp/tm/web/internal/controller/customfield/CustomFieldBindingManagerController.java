@@ -62,13 +62,17 @@ public class CustomFieldBindingManagerController {
 		
 		
 		List<CustomFieldBinding> requirementBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_VERSION);
-		/*List<CustomFieldBinding> campaignBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CAMPAIGN);
+		List<CustomFieldBinding> campaignBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CAMPAIGN);
 		List<CustomFieldBinding> iterationBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.ITERATION);
-		List<CustomFieldBinding> testSuiteBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_SUITE);*/
+		List<CustomFieldBinding> testSuiteBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_SUITE);
 		
 		ModelAndView mav = new ModelAndView("custom-field-binding.html");
 		mav.addObject("testCaseBindings", testCaseBindings);
 		mav.addObject("requirementBindings", requirementBindings);
+		mav.addObject("campaignBindings", campaignBindings);
+		mav.addObject("iterationBindings", iterationBindings);
+		mav.addObject("testSuiteBindings", testSuiteBindings);
+		
 		mav.addObject("projectIdentifier", projectId);
 		
 		return mav;

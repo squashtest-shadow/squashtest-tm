@@ -33,53 +33,68 @@
  */
 
 define(["jquery", "jquery.squash.datatables"], function($){
-//define(["jquery", function($){
 
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/*
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
 	return function(settings){
 		
+		/*
+		 * poor's man currying. Some part are taken from jquery.datatables.js
+		 * 
+		 * UNDER WORK
+		 */
+		/*function _setObjectPropertyFromDOM(property){
+			
+
+			function exists(data){
+				var localD = data;
+				var a = property.split('.');
+				for ( var i=0, iLen=a.length-1 ; i<iLen ; i++ )
+				{
+					localD = localD[ a[i] ];
+					if ( localD === undefined )
+					{
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			function setValue(data, val){
+				var localD = data;
+				var a = property.split('.');
+				for ( var i=0, iLen=a.length-1 ; i<iLen; i++ )
+				{
+					var ppt = a[i];
+					if (localD[ppt]===undefined){
+						localD[ppt] = {};
+					}
+					localD = localD[ppt];
+				}
+				localD[a[a.length-1]] = val;
+			}
+			
+			function getValue(data){
+				var localD = data;
+				var a = property.split('.');
+				for ( var i=0, iLen=a.length-1 ; i<iLen ; i++ )
+				{
+					localD = localD[ a[i] ];
+				}
+				return localD;		
+			}
+			
+			return function(data,operation,val){
+				if (operation=='set' && exists(data)==false){
+					setValue(data, val);
+				}
+				else{
+					return getValue(data);
+				}
+			}
+			
+		}
+
+		var fn = _setObjectPropertyFromDOM('customField.name');
+		*/
 		var tableConf = {
 			oLanguage :{
 				sUrl : settings.languageUrl
@@ -89,16 +104,16 @@ define(["jquery", "jquery.squash.datatables"], function($){
 			aoColumnDefs :[
 				{'bSortable' : false, 'bVisible' : false, 'aTargets' : [0], 'mDataProp' : 'id'},
 				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [1], 'mDataProp' : 'position', 'sWidth' : '2em', 'sClass' : 'centered ui-state-default drag-handle select-handle'},
-				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [2], 'mDataProp' : function(data, operation, val){
-					if (operation==='set' && data.customField.name===undefined){
+				//{'bSortable' : false, 'bVisible' : true,  'aTargets' : [2], 'mDataProp' : fn},
+				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [2], 'mDataProp' : function(data,operation,val){
+					if (operation==='set' && data.customField===undefined){
 						data.customField ={};
-						data.customField.name = val;
+						data.customField.name=val;
 					}
 					else{
 						return data.customField.name;
 					}
-					
-				}},
+				}},				
 				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [3], 'mDataProp' : null, 'sWidth' : '2em', 'sClass' : 'delete-button centered'}			
 			]		
 		};

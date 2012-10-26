@@ -64,9 +64,10 @@ define(["require", "jquery.squash", "./models.js"], function(require){
 			]
 		};
 		
-		squashtm.popup.create(params);
-		
+		//save the reference now, before the DOM is moved around
 		var popup = $(settings.selector);
+		
+		squashtm.popup.create(params);
 		
 		popup.postSuccessListeners = [];
 		

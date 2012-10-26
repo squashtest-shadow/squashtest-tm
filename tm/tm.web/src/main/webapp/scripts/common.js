@@ -57,7 +57,9 @@ requirejs.config({
 		"jquery.squash.jstree": "squashtest/jquery.squashtm.jstree.ext", 
 		"jquery.squash.linkabletree": "squash/jquery.squashtm.linkabletree", 
 		"jquery.squash.projectpicker": "squash/jquery.squashtm.projectpicker", 
-		"jquery.cookie": "jquery/jquery.cookie"
+		"jquery.cookie": "jquery/jquery.cookie",
+		"squash.cssloader" : "squash/squash.cssloader",
+		"squash.cuf-binding-manager" : "custom-field-binding/main"
 	},
 	shim : {
 		"ckeditor": {

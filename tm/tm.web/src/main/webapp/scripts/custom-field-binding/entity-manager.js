@@ -23,13 +23,17 @@
 
 define (function(require){
 	
+	var cssloader = require("squash.cssloader");
+	var cssUrl = require.toUrl("./cuf-binding-styles.css");
+	cssloader.cssFromUrl(cssUrl);
+	
 	var Panel = require("./panel.js");
 	var Table = require("./table.js");
 	var Popup = require("./popup.js");
 
 	function getPanelConf(settings){
 		return { 
-			'selector' : settings.panelSelector,
+			'selector' : settings.mainSelector+" .cuf-binding-panel",
 			'initiallyOpen' : true, 
 			'title' : settings.panelTitle
 		};
@@ -44,7 +48,7 @@ define (function(require){
 	
 	function getTableConf(settings){
 		return {
-			selector : settings.tableSelector,
+			selector : settings.mainSelector+" .cuf-binding-table",
 			languageUrl : settings.tableLanguageUrl,
 			ajaxSource : getTableURL(settings),
 			deferLoading : settings.tableDeferLoading,
@@ -71,7 +75,7 @@ define (function(require){
 			bindableEntity : settings.entityType, 
 			getURL : getPopupGetURL(settings),
 			postURL : getPopupPostURL(settings),
-			selector : settings.popupSelector,
+			selector : settings.mainSelector+" .cuf-binding-popup",
 			title : settings.popupTitle,
 			oklabel : settings.oklabel,
 			cancellabel : settings.cancellabel
@@ -80,6 +84,8 @@ define (function(require){
 	
 	return function(settings){
 		var self=this;
+		
+		
 		
 		var panelConf = getPanelConf(settings);
 		this.panel = new Panel(panelConf);

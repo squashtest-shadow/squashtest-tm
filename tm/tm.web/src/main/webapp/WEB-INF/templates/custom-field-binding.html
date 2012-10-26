@@ -47,13 +47,25 @@
 <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css" th:href="@{/styles/ckeditor.override.css}" />
 
 </div>
-<link rel="stylesheet" type="text/css" media="all" href="http://localhost/css/binding.css"/>
+
 
 
 <div id="cuf-binding-administration">
 
 
-<div id="test-cases-binding" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-cases',collection=${testCaseBindings}">
+<div id="test-cases-binding-manager" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-cases',collection=${testCaseBindings}">
+</div>
+
+<div id="requirements-binding-manager" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='requirements',collection=${requirementBindings}">
+</div>
+
+<div id="campaigns-binding-manager" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='campaigns',collection=${campaignBindings}">
+</div>
+
+<div id="iterations-binding-manager" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='iterations',collection=${iterationBindings}">
+</div>
+
+<div id="test-suites-binding-manager" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-suites',collection=${testSuiteBindings}">
 </div>
 
 
@@ -74,22 +86,48 @@
     		
     		tcSettings : {
     			entityType : 'TEST_CASE', //should be @org.squashtest.csp.tm.domain.customfield.BindableEntity@TEST_CASE
-    			
-    			panelSelector : '#test-cases-binding-panel',
+    			mainSelector : "#test-cases-binding-manager", 
     			panelTitle : /*[[ #{project.cufbinding.test-cases.panel.title}  ]]*/"test case bindings",
-    			
-    			tableSelector : '#test-cases-binding-table',
     			tableDeferLoading : /*[[ ${testCaseBindings.size()} ]]*/ 3,
-
-       			popupSelector : '#test-cases-binding-popup',
-       			popupTitle : 'bind new custom fields',		
-    			
-	    	}
+       			popupTitle : 'bind new custom fields'    			
+	    	},
 	    	
+    		reqSettings : {
+    			entityType : 'REQUIREMENT_VERSION', //should be @org.squashtest.csp.tm.domain.customfield.BindableEntity@REQUIREMENT_VERSION
+    			mainSelector : "#requirements-binding-manager", 
+    			panelTitle : /*[[ #{project.cufbinding.requirements.panel.title}  ]]*/"requirements bindings",
+    			tableDeferLoading : /*[[ ${requirementBindings.size()} ]]*/ 3,
+       			popupTitle : 'bind new custom fields'    			
+	    	},
+	    	
+    		campSettings : {
+    			entityType : 'CAMPAIGN', //should be @org.squashtest.csp.tm.domain.customfield.BindableEntity@CAMPAIGN
+    			mainSelector : "#campaigns-binding-manager", 
+    			panelTitle : /*[[ #{project.cufbinding.campaigns.panel.title}  ]]*/"campaign bindings",
+    			tableDeferLoading : /*[[ ${campaignBindings.size()} ]]*/ 3,
+       			popupTitle : 'bind new custom fields'    			
+	    	},
+	    	
+    		iterSettings : {
+    			entityType : 'ITERATION', //should be @org.squashtest.csp.tm.domain.customfield.BindableEntity@ITERATION
+    			mainSelector : "#iterations-binding-manager", 
+    			panelTitle : /*[[ #{project.cufbinding.iterations.panel.title}  ]]*/"iteration bindings",
+    			tableDeferLoading : /*[[ ${iterationBindings.size()} ]]*/ 3,
+       			popupTitle : 'bind new custom fields'    			
+	    	},
+	    	
+    		tsSettings : {
+    			entityType : 'TEST_SUITE', //should be @org.squashtest.csp.tm.domain.customfield.BindableEntity@TEST_SUITE
+    			mainSelector : "#test-suites-binding-manager", 
+    			panelTitle : /*[[ #{project.cufbinding.test-suites.panel.title}  ]]*/"test suite bindings",
+    			tableDeferLoading : /*[[ ${testSuiteBindings.size()} ]]*/ 3,
+       			popupTitle : 'bind new custom fields'    			
+	    	}	    	
+	    		    	
     	};
 
     	domReady(function(){
-        	require(["http://localhost/scripts/custom-field-binding/main.js"], function(main){
+        	require(["squash.cuf-binding-manager"], function(main){
         		main.setConfig(config).init();
         	});   		
     	});
@@ -109,14 +147,14 @@
 				TEMPLATE FRAGMENT DEFINITION + other stuffs removed at runtime
 ============================================================================ -->
 
-	<div th:fragment="cuf-unit-binder" >
+	<div th:fragment="cuf-unit-binder" id="binding-manager">
 		<div class="toggle-panel">
 			<span class="not-displayed toggle-panel-buttons">
 				<input type="button" th:value="#{ label.CustomField.add }" value="ajouter"/>
 			</span>
-			<div id="panel" th:id="${HTMLID}+'-binding-panel'" class="toggle-panel-main">
+			<div id="panel" th:id="${HTMLID}+'-binding-panel'" class="toggle-panel-main cuf-binding-panel">
 			
-				<table id="table" th:id="${HTMLID}+'-binding-table'">
+				<table id="table" class="cuf-binding-table" th:id="${HTMLID}+'-binding-table'">
 					<thead>
 						<tr>
 							<th>id</th>
@@ -187,14 +225,15 @@
 			</div>
 			 -->
 		</div>
-	
-
-	
 	</div>
+	
 </div>
 
-<script type="text/javascript" th:remove="all">
-	/* code , tests the fragment */
+<div th:remove="all">
+<link rel="styleshee" type="text/css" href="../../scripts/custom-field-binding/cuf-binding-styles.css"/>
+<script type="text/javascript" >
+	/* code to tests the fragment. Note that it will not invoke the module 'squash.cuf-binding-manager', 
+	but rather one of its submodules*/
 
    require(["domReady", "require"],function(domReady, require){
 		
@@ -206,19 +245,15 @@
         	cancellabel : "nope",
         	
     		entityType : 'TEST_CASE', 
+   			mainSelector : '#binding-manager',
    			
-    		panelSelector : '#panel',
-   			panelTitle : "test case workspace",
-   			
-   			tableSelector : '#table',
-   			tableDeferLoading : 3,
-   			
-   			popupSelector : '#popup',
+   			panelTitle : "test case workspace",   			
+   			tableDeferLoading : 3,   			
    			popupTitle : 'bind new custom fields',		
 		};
 				   
 		domReady(function(){
-			require(["http://localhost/scripts/custom-field-binding/entity-manager.js"], function(EntityManager){
+			require(["../../scripts/custom-field-binding/entity-manager.js"], function(EntityManager){
         		new EntityManager(settings);
         	});   				
 		});
@@ -226,3 +261,4 @@
    });
          
 </script>
+</div>
