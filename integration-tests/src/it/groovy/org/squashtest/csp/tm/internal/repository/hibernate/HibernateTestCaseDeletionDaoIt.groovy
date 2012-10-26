@@ -306,17 +306,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 
 
-	private boolean found(String tableName, String idColumnName, Long id){
-		String sql = "select count(*) from "+tableName+" where "+idColumnName+" = :id";
-		Query query = getSession().createSQLQuery(sql);
-		query.setParameter("id", id);
+	
 
-		def result = query.uniqueResult();
-		return (result != 0)
-	}
-
-	private Object findEntity(Class<?> entityClass, Long id){
-		return getSession().get(entityClass, id);
-	}
 }
 

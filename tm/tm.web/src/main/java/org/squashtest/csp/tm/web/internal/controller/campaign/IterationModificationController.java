@@ -464,7 +464,7 @@ public class IterationModificationController {
 			res.put("assigned-to", assignedId);
 			res.put("last-exec-on", messageSource.localizeDate(item.getLastExecutedOn(), locale));
 			res.put("is-tc-deleted", item.isTestCaseDeleted());
-			res.put("empty-delete-holder", " ");
+			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			res.put("exec-mode", automationMode);
 
 			return res;

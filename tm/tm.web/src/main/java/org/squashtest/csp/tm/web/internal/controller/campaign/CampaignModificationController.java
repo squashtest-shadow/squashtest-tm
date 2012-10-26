@@ -319,7 +319,7 @@ public class CampaignModificationController {
 				result.put("assigned-to", assigneeId);
 				result.put("importance", formatImportance(testCase.getImportance(), locale));
 				result.put("exec-mode",formatExecutionMode(testCase.getExecutionMode(), locale));
-				result.put("empty-delete-holder", " ");
+				result.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 				result.put("tc-id", testCase.getId());
 				
 				return result;

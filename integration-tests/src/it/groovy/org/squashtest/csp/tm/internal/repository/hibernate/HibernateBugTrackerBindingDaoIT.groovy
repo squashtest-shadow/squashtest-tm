@@ -49,10 +49,5 @@ class HibernateBugTrackerBindingDaoIT extends DbunitDaoSpecification {
 		!found(BugTrackerBinding.class, 1L);
 		found(Project.class, 1L);
 	}
-	private boolean found(Class<?> entityClass, Long id){
-		return (getSession().get(entityClass, id) != null)
-	}
-	private Object findEntity(Class<?> entityClass, Long id){
-		return getSession().get(entityClass, id);
-	}
+	
 }

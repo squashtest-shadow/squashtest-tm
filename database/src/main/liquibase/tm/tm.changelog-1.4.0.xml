@@ -41,8 +41,8 @@
             <column name="CF_ID" type="BIGINT"  autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="pk_custom_field"/>
             </column>
-
-            <column name="FIELD_TYPE" type="CHAR(3)">
+	
+            <column name="FIELD_TYPE" type="CHAR(3)" remarks="CF : simple, SSF : multiple-choice">
                    <constraints nullable="false" />
             </column>
 

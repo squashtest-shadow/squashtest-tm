@@ -59,6 +59,11 @@ import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 @RequestMapping("/administration/custom-fields")
 public class CustomFieldAdministrationController {
 	
+	private static final String NAME = "name";
+	private static final String LABEL = "label";
+	private static final String INPUT_TYPE = "inputType";
+	private static final String CUSTOM_FIELDS = "customFields";
+
 	private CustomFieldManagerService customFieldManagerService;
 	
 	@Inject
@@ -89,7 +94,7 @@ public class CustomFieldAdministrationController {
 	public String showManager(Model model) {
 		
 		List<CustomField> customFields = customFieldManagerService.findAllOrderedByName();
-		model.addAttribute("customFields", customFields);
+		model.addAttribute(CUSTOM_FIELDS, customFields);
 
 		return "custom-field-manager.html";
 	}
@@ -100,9 +105,9 @@ public class CustomFieldAdministrationController {
 	 * NB: column index is of all table's columns (displayed or not)
 	 */
 	private final DataTableMapper customFieldTableMapper = new DataTableMapper("unused", CustomField.class).initMapping(6)
-			.mapAttribute(CustomField.class, 2, "name", String.class)
-			.mapAttribute(CustomField.class, 3, "label", String.class)
-			.mapAttribute(CustomField.class, 5, "inputType", String.class);
+			.mapAttribute(CustomField.class, 2, NAME, String.class)
+			.mapAttribute(CustomField.class, 3, LABEL, String.class)
+			.mapAttribute(CustomField.class, 5, INPUT_TYPE, String.class);
 	
 	/**
 	 * Return the DataTableModel to display the table of all custom fields.
@@ -139,11 +144,11 @@ public class CustomFieldAdministrationController {
 
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put("name", item.getName());
-			res.put("label", item.getLabel());
+			res.put(NAME, item.getName());
+			res.put(LABEL, item.getLabel());
 			res.put("raw-input-type", item.getInputType().name());
-			res.put("input-type", messageSource.internationalize(item.getInputType().getI18nKey(), locale));
-			res.put("empty-delete-holder", " ");
+			res.put(INPUT_TYPE, messageSource.internationalize(item.getInputType().getI18nKey(), locale));
+			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;
 		}
 	}

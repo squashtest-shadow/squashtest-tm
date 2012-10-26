@@ -361,7 +361,7 @@ public class ProjectModificationController {
 			res.put("name", item.getName());
 			res.put("server-url", item.getServer().getBaseURL());
 			res.put("server-kind", item.getServer().getKind());
-			res.put("empty-delete-holder", " ");
+			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			
 			return res;
 		}

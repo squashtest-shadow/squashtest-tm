@@ -28,10 +28,11 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 
 public abstract class DataTableModelHelper<X> {
 	
-	public  final static String DEFAULT_ENTITY_ID_KEY = "entity-id";
-	public 	final static String DEFAULT_ENTITY_INDEX_KEY = "entity-index";
-	public  final static String DEFAULT_NB_ATTACH_KEY = "nb-attachments";
-	public  final static String DEFAULT_ATTACH_LIST_ID_KEY = "attach-list-id";
+	public final static String DEFAULT_ENTITY_ID_KEY = "entity-id";
+	public final static String DEFAULT_ENTITY_INDEX_KEY = "entity-index";
+	public final static String DEFAULT_NB_ATTACH_KEY = "nb-attachments";
+	public final static String DEFAULT_ATTACH_LIST_ID_KEY = "attach-list-id";
+	public final static String DEFAULT_EMPTY_DELETE_HOLDER_KEY = "empty-delete-holder";
 
 	private long currentIndex = 0;
 	

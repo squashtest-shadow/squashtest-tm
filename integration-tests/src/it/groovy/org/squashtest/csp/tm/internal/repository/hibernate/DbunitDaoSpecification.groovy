@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 
 
 import javax.inject.Inject
+import org.hibernate.Query
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.springframework.test.context.ContextConfiguration
@@ -47,6 +48,22 @@ abstract class DbunitDaoSpecification extends Specification {
 
 	protected Session getSession(){
 		return sessionFactory.getCurrentSession();
+	}
+	
+	protected boolean found(Class<?> entityClass, Long id){
+		return (getSession().get(entityClass, id) != null)
+	}
+	protected Object findEntity(Class<?> entityClass, Long id){
+		return getSession().get(entityClass, id);
+	}
+	
+	protected boolean found(String tableName, String idColumnName, Long id){
+		String sql = "select count(*) from "+tableName+" where "+idColumnName+" = :id";
+		Query query = getSession().createSQLQuery(sql);
+		query.setParameter("id", id);
+
+		def result = query.uniqueResult();
+		return (result != 0)
 	}
 
 }
