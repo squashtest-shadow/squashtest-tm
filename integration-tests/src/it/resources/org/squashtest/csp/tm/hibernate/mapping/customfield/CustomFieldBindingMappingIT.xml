@@ -26,7 +26,8 @@
 	<test_case_library tcl_id="1" />
 	<campaign_library cl_id="1" />
 	<requirement_library rl_id="1" />
-	<project project_id="1" tcl_id="1" cl_id="1" rl_id="1" name="toto" created_by="dbu" created_on="2010-02-01" />
+	<attachment_list attachment_list_id="1" />
+	<project project_id="1" tcl_id="1" cl_id="1" rl_id="1" name="toto" created_by="dbu" created_on="2010-02-01" attachment_list_id="1" />
 	<!-- /project 1 -->
 	
 	<!-- custom field 10 -->
@@ -37,7 +38,8 @@
 	<test_case_library tcl_id="2" />
 	<campaign_library cl_id="2" />
 	<requirement_library rl_id="2" />
-	<project project_id="2" tcl_id="2" cl_id="2" rl_id="2" name="zozo" created_by="dbu" created_on="2010-02-01" />
+	<attachment_list attachment_list_id="2" />
+	<project project_id="2" tcl_id="2" cl_id="2" rl_id="2" name="zozo" created_by="dbu" created_on="2010-02-01" attachment_list_id="2" />
 	<!-- /project 2 -->
 
 	<!-- custom field 20 -->

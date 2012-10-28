@@ -36,7 +36,7 @@ import org.unitils.dbunit.annotation.DataSet;
 import spock.unitils.UnitilsSupport;
 
 /**
- * @author Gregory
+ * @author Gregory Fouquet
  *
  */
 @UnitilsSupport
@@ -44,8 +44,11 @@ import spock.unitils.UnitilsSupport;
 @DataSet
 class CustomFieldBindingMappingIT extends DbunitDaoSpecification {
 	@Inject SessionFactory sessionFactory
-	Session session = sessionFactory.currentSession
-
+	
+	Session getSession() {
+		sessionFactory.currentSession
+	}
+	
 	def "should persist and fetch a custom field binding"() {
 		given: 
 		Project p = session.load(Project, 1L)
