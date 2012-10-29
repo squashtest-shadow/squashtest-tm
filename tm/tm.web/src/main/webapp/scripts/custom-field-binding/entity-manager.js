@@ -53,7 +53,9 @@ define (["require","squash.cssloader", "./panel", "./table", "./popup"],function
 			deleteUrl : getTableDeleteURL(settings),
 			deferLoading : settings.tableDeferLoading,
 			oklabel : settings.oklabel,
-			cancellabel : settings.cancellabel
+			cancellabel : settings.cancellabel,
+			deleteMessage : settings.tableDeleteMessage,
+			deleteTooltip : settings.tableDeleteTooltip
 		};
 	};
 	

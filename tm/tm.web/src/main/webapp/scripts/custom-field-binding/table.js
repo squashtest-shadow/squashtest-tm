@@ -135,7 +135,8 @@ define(["jquery", "jquery.squash.datatables"], function($){
 			
 			deleteButtons : {
 				url : settings.deleteUrl+"/{id}",
-				popupmessage : 'you sure you wanna do this ?',
+				popupmessage : settings.deleteMessage,
+				tooltip : settings.deleteTooltip,
 				success : function(){
 					table.refresh();
 				}

@@ -80,47 +80,53 @@
 	    		tableLanguageUrl: /*[[ @{/datatables/messages} ]]*/ "http://localhost:8080/squash/datatables/messages", 
 	        	baseURL: /*[[ @{/custom-fields-binding} ]]*/ "http://localhost:8080/squash/custom-fields-binding",
 	        	oklabel : /*[[ #{label.Yes} ]]*/ "ouaiche",
-	        	cancellabel : /*[[ #{label.Cancel} ]]*/ "nope"
-    		},
+	        	cancellabel : /*[[ #{label.Cancel} ]]*/ "nope",
+       			popupTitle : /*[[#{message.customfieldbinding.bind}]]*/'bind new custom fields',	        
+	        },
     		
     		tcSettings : {
     			entityType : 'TEST_CASE', //should be @org.squashtest.csp.tm.domain.customfield.BindableEntity@TEST_CASE
     			mainSelector : "#test-cases-binding-manager", 
     			panelTitle : /*[[ #{project.cufbinding.test-cases.panel.title}  ]]*/"test case bindings",
-    			tableDeferLoading : /*[[ ${testCaseBindings.size()} ]]*/ 3,
-       			popupTitle : 'bind new custom fields'    			
+    			tableDeferLoading : /*[[ ${testCaseBindings.size()} ]]*/ 3,	
+       			tableDeleteMessage : /*[[#{message.customfieldbinding.unbind(#{label.customField.bindableEntity.TEST_CASE})}]]*/ "Retirer les champs personalisés sélectionnées de ce projet ?",
+       			tableDeleteTooltip : /*[[#{message.customfieldbinding.unbind.tooltip}]]*/ 'retirer'
 	    	},
 	    	
     		reqSettings : {
     			entityType : 'REQUIREMENT_VERSION', //should be @org.squashtest.csp.tm.domain.customfield.BindableEntity@REQUIREMENT_VERSION
     			mainSelector : "#requirements-binding-manager", 
     			panelTitle : /*[[ #{project.cufbinding.requirements.panel.title}  ]]*/"requirements bindings",
-    			tableDeferLoading : /*[[ ${requirementBindings.size()} ]]*/ 3,
-       			popupTitle : 'bind new custom fields'    			
+    			tableDeferLoading : /*[[ ${requirementBindings.size()} ]]*/ 3,	
+    			tableDeleteMessage : /*[[#{message.customfieldbinding.unbind(#{label.customField.bindableEntity.REQUIREMENT_VERSION})}]]*/ "Retirer les champs personalisés sélectionnées de ce projet ?",
+    			tableDeleteTooltip : /*[[#{message.customfieldbinding.unbind.tooltip}]]*/ 'retirer'
 	    	},
 	    	
     		campSettings : {
     			entityType : 'CAMPAIGN', //should be @org.squashtest.csp.tm.domain.customfield.BindableEntity@CAMPAIGN
     			mainSelector : "#campaigns-binding-manager", 
     			panelTitle : /*[[ #{project.cufbinding.campaigns.panel.title}  ]]*/"campaign bindings",
-    			tableDeferLoading : /*[[ ${campaignBindings.size()} ]]*/ 3,
-       			popupTitle : 'bind new custom fields'    			
+    			tableDeferLoading : /*[[ ${campaignBindings.size()} ]]*/ 3,	
+    			tableDeleteMessage : /*[[#{message.customfieldbinding.unbind(#{label.customField.bindableEntity.CAMPAIGN})}]]*/ "Retirer les champs personalisés sélectionnées de ce projet ?",
+    			tableDeleteTooltip : /*[[#{message.customfieldbinding.unbind.tooltip}]]*/ 'retirer'
 	    	},
 	    	
     		iterSettings : {
     			entityType : 'ITERATION', //should be @org.squashtest.csp.tm.domain.customfield.BindableEntity@ITERATION
     			mainSelector : "#iterations-binding-manager", 
     			panelTitle : /*[[ #{project.cufbinding.iterations.panel.title}  ]]*/"iteration bindings",
-    			tableDeferLoading : /*[[ ${iterationBindings.size()} ]]*/ 3,
-       			popupTitle : 'bind new custom fields'    			
+    			tableDeferLoading : /*[[ ${iterationBindings.size()} ]]*/ 3,	
+    			tableDeleteMessage : /*[[#{message.customfieldbinding.unbind(#{label.customField.bindableEntity.ITERATION})}]]*/ "Retirer les champs personalisés sélectionnées de ce projet ?",
+    			tableDeleteTooltip : /*[[#{message.customfieldbinding.unbind.tooltip}]]*/ 'retirer'
 	    	},
 	    	
     		tsSettings : {
     			entityType : 'TEST_SUITE', //should be @org.squashtest.csp.tm.domain.customfield.BindableEntity@TEST_SUITE
     			mainSelector : "#test-suites-binding-manager", 
     			panelTitle : /*[[ #{project.cufbinding.test-suites.panel.title}  ]]*/"test suite bindings",
-    			tableDeferLoading : /*[[ ${testSuiteBindings.size()} ]]*/ 3,
-       			popupTitle : 'bind new custom fields'    			
+    			tableDeferLoading : /*[[ ${testSuiteBindings.size()} ]]*/ 3,	
+    			tableDeleteMessage : /*[[#{message.customfieldbinding.unbind(#{label.customField.bindableEntity.TEST_SUITE})}]]*/ "Retirer les champs personalisés sélectionnées de ce projet ?",
+    			tableDeleteTooltip : /*[[#{message.customfieldbinding.unbind.tooltip}]]*/ 'retirer'
 	    	}	    	
 	    		    	
     	};
@@ -242,13 +248,17 @@
         	baseURL: "http://localhost:8080/squash/custom-fields-binding",
         	oklabel : "ouaiche",
         	cancellabel : "nope",
+        	confirmActionLabel : /*   */ "Retirer les champs personalisés sélectionnées de ce projet ?"
         	
     		entityType : 'TEST_CASE', 
    			mainSelector : '#binding-manager',
    			
    			panelTitle : "test case workspace",   			
    			tableDeferLoading : 3,   			
-   			popupTitle : 'bind new custom fields',		
+   			popupTitle : 'bind new custom fields',	
+   			
+   			tableDeleteMessage : "Retirer les champs personalisés sélectionnées de ce projet ?",
+   			tableDeleteTooltip : 'retirer'
 		};
 				   
 		domReady(function(){
