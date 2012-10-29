@@ -128,14 +128,19 @@
 							<div id="cuf-label" class="display-table-cell" th:text="${customField.label}">the label</div>
 							 <span class="error">&nbsp;</span>
 						</div>
+						<div class="display-table-row">
+							<label for="cuf-default-value" th:text="#{label.DefaultValue}">Default value</label>
+							<div id="cuf-default-value" class="display-table-cell" th:text="${customField.defaultValue}">the default-value</div>
+							 <span class="error">&nbsp;</span>
+						</div>
 						  <div class="display-table-row">
-						 	<label for="inputType" th:text="#{label.inputType}">Type</label>
+						 	<label for="inputType" th:text="#{label.inputType}">Input Type</label>
 						 	<div id="cuf-inputType" class="display-table-cell" th:text="#{${customField.inputType.i18nKey}}">Plain text</div>
       					</div>
       					
 				      	<div class="display-table-row">
-				        	<label for="optional" th:text="#{label.Optional}">Optional</label>
-				        	<input name="optional" value="optional" type="checkbox" />
+				        	<label for="cf-optional" th:text="#{label.Optional}">Optional</label>
+				        	<input id="cf-optional" name="optional" value="optional" type="checkbox" th:field="${customField.optional}"/>
 				        	<span class="error">&nbsp;</span>
 				      	</div>
 					</div>

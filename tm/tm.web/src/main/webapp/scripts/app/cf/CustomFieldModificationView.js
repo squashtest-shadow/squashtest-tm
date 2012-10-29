@@ -27,28 +27,48 @@ define([ "jquery", "backbone", "jqueryui", "jquery.squash.togglepanel",
 	var CustomFieldModificationView = Backbone.View.extend({
 		el : "#information-content",
 		initialize : function() {
-			// back button
+			this.configureBackButton();
+			this.configureTogglePanels();
+			this.configureEditables();
+		},
+		events: {
+			"click #cf-optional": "sendOptional"
+		}, 
+		sendOptional: function(event) {
+		var checked = event.target.checked;
+			$.ajax({
+				url : cfMod.customFieldUrl,
+				type : "post",
+				data : {'isOptional' : checked},
+				dataType : "json",
+				});
+		},
+		configureBackButton: function(){
 			$("#back").button().click(function() {
 				document.location.href = cfMod.backUrl;
 			});
-			// information toggle panel
+		},
+		configureTogglePanels: function(){
 			var settings = {
-				initiallyOpen : true,
-				title : "Information panel",
-				cssClasses : "is-contextual",
-			}
-			this.$("#cuf-info-panel").togglePanel(settings);
-			// jeditable
-			
-			new SimpleJEditable({
-				language: {
-					richEditPlaceHolder : cfMod.richEditPlaceHolder,
-					okLabel: cfMod.okLabel,
-					cancelLabel: cfMod.cancelLabel,
-				},
-				targetUrl : cfMod.customFieldUrl,
-				componentId : "cuf-label",
-				jeditableSettings : {}
+					initiallyOpen : true,
+					title : "Information panel",
+					cssClasses : "is-contextual",
+				}
+				this.$("#cuf-info-panel").togglePanel(settings);
+		},
+		configureEditables:function(){
+			var simpleEditIds = ["cuf-label", "cuf-default-value"];
+			$.each(simpleEditIds, function(index, simpleEditId){
+				new SimpleJEditable({
+					language: {
+						richEditPlaceHolder : cfMod.richEditPlaceHolder,
+						okLabel: cfMod.okLabel,
+						cancelLabel: cfMod.cancelLabel,
+					},
+					targetUrl : cfMod.customFieldUrl,
+					componentId : simpleEditId,
+					jeditableSettings : {}
+				});
 			});
 			
 			new SelectJEditable({
@@ -61,26 +81,7 @@ define([ "jquery", "backbone", "jqueryui", "jquery.squash.togglepanel",
 				componentId : "cuf-inputType",
 				jeditableSettings : {data : JSON.stringify(cfMod.inputTypes)},
 			});
-		},
-	// events: {
-	// "click #add-cf": "showNewCfPanel"
-	// },
-	// showNewCfPanel: function(event) {
-	// var self = this;
-	//
-	// var discard = function() {
-	// self.newCfPanel.off("cancel confirm");
-	// self.newCfPanel.undelegateEvents();
-	// self.newCfPanel = null;
-	// $(event.target).button("enable");
-	// self.table.squashTable().fnDraw();
-	// };
-	//				
-	// $(event.target).button("disable");
-	// self.newCfPanel = new NewCustomFieldPanelView({ model: new
-	// NewCustomFieldModel() });
-	// self.newCfPanel.on("cancel confirm", discard);
-	// }
+		}
 	});
 	return CustomFieldModificationView;
 });
