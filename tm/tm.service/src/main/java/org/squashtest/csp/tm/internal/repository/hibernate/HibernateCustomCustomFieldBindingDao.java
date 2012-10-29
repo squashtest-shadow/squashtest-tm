@@ -20,18 +20,20 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
-import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.internal.repository.CustomCustomFieldBindingDao;
 
 
 @Repository("CustomCustomFieldBindingDao")
-public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<CustomField> implements CustomCustomFieldBindingDao {
+public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<CustomFieldBinding> implements CustomCustomFieldBindingDao {
 	
 	@Override
 	public void removeCustomFieldBindings(List<Long> bindingIds) {
@@ -44,6 +46,17 @@ public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<Cus
 			
 		}
 	}
+
+	@Override
+	public List<CustomFieldBinding> findAllByIds(Collection<Long> ids){
+		return executeListNamedQuery("CustomFieldBinding.findAllByIds", new SetBindingIdsParameterCallback(new ArrayList<Long>(ids)));
+	}
+	
+	public List<CustomFieldBinding> findAllByIds(List<Long> ids){
+		return executeListNamedQuery("CustomFieldBinding.findAllByIds", new SetBindingIdsParameterCallback(ids));		
+	}
+
+	 
 	
 	@SuppressWarnings("unchecked")
 	protected List<NewBindingPosition> recomputeBindingPositions(){
@@ -70,6 +83,7 @@ public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<Cus
 		}
 		
 	}
+	
 	
 	
 	// ********************** static classes ******************************

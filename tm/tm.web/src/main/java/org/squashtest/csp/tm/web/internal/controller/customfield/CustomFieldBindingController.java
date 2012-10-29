@@ -132,6 +132,11 @@ public class CustomFieldBindingController {
 		
 	}
 	
+	@RequestMapping(value="/{bindingIds}/position", method=RequestMethod.POST, params={"newPosition"})
+	@ResponseBody
+	public void reorderBindings(@PathVariable("bindingIds") List<Long> bindingIds, @RequestParam("newPosition") int newIndex ){
+		service.moveCustomFieldbindings(bindingIds, newIndex);
+	}
 	
 	
 	@RequestMapping(value="/new-batch", method = RequestMethod.POST)

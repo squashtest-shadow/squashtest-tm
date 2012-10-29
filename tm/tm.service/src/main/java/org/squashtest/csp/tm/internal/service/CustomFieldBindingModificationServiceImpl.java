@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding.PositionAwareBindingList;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao;
@@ -109,4 +110,18 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 		customFieldBindingDao.removeCustomFieldBindings(bindingIds);
 	}
 	
+	@Override
+	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")	
+	public void moveCustomFieldbindings(List<Long> bindingIds, int newIndex) {
+		
+		if (! bindingIds.isEmpty()){
+			
+			List<CustomFieldBinding> bindingList = customFieldBindingDao.findAllAlike(bindingIds.get(0));
+			PositionAwareBindingList reorderList = new PositionAwareBindingList(bindingList);
+			reorderList.reorderItems(bindingIds, newIndex);			
+			
+		}
+
+	}
+
 }

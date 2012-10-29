@@ -21,7 +21,11 @@
 
 package org.squashtest.csp.tm.domain.customfield;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;
@@ -123,6 +127,66 @@ public class CustomFieldBinding {
 		this.position = position;
 	}
 	
+
+	
+	
+	// ******************* static inner classes, publicly available for once ******************
+	
+	/**
+	 * In case you wonder : NOT THREAD SAFE !
+	 * @author bsiri
+	 *
+	 */
+	public static class PositionAwareBindingList extends LinkedList<CustomFieldBinding>{
+				
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public PositionAwareBindingList(Collection<CustomFieldBinding> items){
+			super(items);
+		}
+		
+		public void reorderItems(List<Long> itemIds, int newIndex){
+			moveCarelessly(itemIds, newIndex);
+			reindex();
+		}
+		
+		private void moveCarelessly(List<Long> ids, int newIndex){
+			
+			Set<Long> _targetIds = new HashSet<Long>(ids);
+			LinkedList<CustomFieldBinding> _removed = new LinkedList<CustomFieldBinding>();
+			
+			ListIterator<CustomFieldBinding> iterator = this.listIterator();
+			
+			while (iterator.hasNext()){
+				
+				CustomFieldBinding binding = iterator.next();
+				Long id = binding.getId();
+				
+				//if the id matches, the current binding moves from the current list to the list of removed binding
+				//then remove the id from the target id set
+				if (_targetIds.contains(id)){
+					_removed.add(binding);
+					iterator.remove();
+					_targetIds.remove(id);
+				}
+				
+			}
+			
+			//now we reinsert the removed entities to their new position
+			this.addAll(newIndex, _removed);
+		}
+		
+		private void reindex(){
+			int position=1;
+			for (CustomFieldBinding binding : this){
+				binding.setPosition(position++);
+			}
+		}
+		
+	}
 	
 	
 }

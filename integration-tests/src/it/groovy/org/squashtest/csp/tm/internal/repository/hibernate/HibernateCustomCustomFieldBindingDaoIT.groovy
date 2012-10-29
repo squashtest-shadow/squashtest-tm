@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import org.hibernate.Query;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.hibernate.HibernateCustomCustomFieldBindingDao.NewBindingPosition;
 import org.unitils.dbunit.annotation.DataSet;
 
@@ -36,6 +37,9 @@ class HibernateCustomCustomFieldBindingDaoIT extends DbunitDaoSpecification {
 
 	@Inject
 	HibernateCustomCustomFieldBindingDao dao
+	
+	@Inject
+	CustomFieldBindingDao dynamicDao;
 
 	
 	def "should get correct indexes from a messed up table"(){
@@ -77,6 +81,19 @@ class HibernateCustomCustomFieldBindingDaoIT extends DbunitDaoSpecification {
 			
 		then :
 			bindings.collect{it.position} as Set == [1, 3, 2] as Set
+	}
+	
+	
+	def "should find all the cfb having the same project and bound entity as this one"(){
+		
+		when :
+			def res = dynamicDao.findAllAlike(221l)
+			
+		then :
+			res.collect{it.id} as Set == [211l, 221l, 241l] as Set 
+			
+			
+		
 	}
 		
 	

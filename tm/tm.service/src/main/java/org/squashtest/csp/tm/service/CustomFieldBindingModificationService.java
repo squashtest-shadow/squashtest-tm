@@ -56,4 +56,15 @@ public interface CustomFieldBindingModificationService extends CustomFieldBindin
 	 */
 	void removeCustomFieldBindings(List<Long> bindingIds);
 	
+	
+	/**
+	 * Given a list of {@link CustomFieldBinding}s, will reorder them with respect to their project and bound entity. This method assumes that 
+	 * they all bind the same entity to the same project. If the input list mixes binding for different projects and/or entities, unexpected 
+	 * behavior may occur.
+	 * 
+	 * @param bindingIds
+	 * @param newIndex
+	 */
+	void moveCustomFieldbindings(List<Long> bindingIds, int newIndex);
+	
 }

@@ -81,17 +81,20 @@
  * The squash specifics are configured using the second parameter :
  * 'squashSettings'. It is an object that accepts the following members : 
  * 
- * - functions.dropHandler : 
- * what : a function that must handle the row drop.
- * param : an obect { itemIds : array of row ids, newIndex : the drop position }
- * default : nothing 
+ * - functions
+ * 
+ *  examples : 
+ *  dropHandler : 
+ * 		what : a function that must handle the row drop.
+ * 		param : an object { itemIds : array of row ids, newIndex : the drop position }
+ * 		default : nothing 
  * 
  * 
  * 
- * - functions.getODataId : 
- * what : a function fetching the id from the data 
- * param : what $().dataTable().fnGetData() would normally accept
- * default : return fnGetData()["entity-id"] 
+ *  getODataId : 
+ * 		what : a function fetching the id from the data 
+ * 		param : what $().dataTable().fnGetData() would normally accept
+ * 		default : return fnGetData()["entity-id"] 
  * 
  * 
  * 

@@ -18,33 +18,50 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
 
-import java.util.List;
 
-import org.squashtest.csp.tm.domain.customfield.BindableEntity;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.tm.core.foundation.collection.Paging;
+package org.squashtest.csp.tm.domain.customfield
 
-public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao{
-	
+import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding.PositionAwareBindingList;
 
-	List<CustomFieldBinding> findAllForProject(long projectId);
+import spock.lang.Specification
+
+
+
+
+class CustomFieldBindingTest extends Specification {
 	
-	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity);
+	// ************* tests for PositionAwareBindingList *************************
+
 	
-	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity, Paging paging);
+	def "should correctly reorder a collection of bindings"(){
+		
+		given :
+			def baseList = [ 
+				createWith(1l, 1),
+				createWith(2l, 2),
+				createWith(3l, 3),
+				createWith(4l, 4),
+				createWith(5l, 5)				
+			]
+		
+		
+		when :
+			PositionAwareBindingList list = new PositionAwareBindingList(baseList)
+			list.reorderItems([3l,5l], 1)
+		
+		
+		then :
+			list.collect{it.id} == [1l, 3l, 5l, 2l, 4l]
+			list.collect{it.position} == [1,2,3,4,5]
+	}
 	
-	void persist(CustomFieldBinding binding);
 	
-	Long countAllForProjectAndEntity(long projectId, BindableEntity boundEntity);
 	
-	/**
-	 * Given an id, returns the list of all the entities binding the same project to the same entity.
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public List<CustomFieldBinding> findAllAlike(long id);
+	def createWith ={ id, position ->
+		return new CustomFieldBinding(id : id, position : position)
+	}
+	
+	
 	
 }

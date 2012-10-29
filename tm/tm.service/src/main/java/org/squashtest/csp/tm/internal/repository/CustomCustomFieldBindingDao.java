@@ -20,9 +20,29 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
+import java.util.Collection;
 import java.util.List;
+
+import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 
 public interface CustomCustomFieldBindingDao {
 
 	void removeCustomFieldBindings(List<Long> bindingIds);
+
+	/**
+	 * returns the bindings grouped by project and entity, sorted by position
+	 * @param ids
+	 * @return
+	 */
+	public List<CustomFieldBinding> findAllByIds(Collection<Long> ids);
+
+	
+	/**
+	 * returns the bindings grouped by project and entity, sorted by position
+	 * @param ids
+	 * @return
+	 */
+	public List<CustomFieldBinding> findAllByIds(List<Long> ids);
+	
+
 }

@@ -126,8 +126,6 @@ define(["jquery", "jquery.squash.datatables"], function($){
 				entityIndex :'position'
 			},
 			
-			enableHover : true,
-			
 			confirmPopup : {
 				oklabel : settings.oklabel,
 				cancellabel : settings.cancellabel
@@ -141,8 +139,23 @@ define(["jquery", "jquery.squash.datatables"], function($){
 					table.refresh();
 				}
 			},
+
+			enableHover : true,
 			
-			enableDnD : true
+			enableDnD : true,
+			
+			functions :{
+				dropHandler : function(moveObject){
+					$.ajax({
+						url : settings.moveUrl+"/"+moveObject.itemIds.join(',')+"/position",
+						type : 'POST',
+						data : {'newPosition' : moveObject.newIndex}
+					})
+					.success(function(){
+						table.refresh();
+					});
+				}
+			}
 		
 		};
 		

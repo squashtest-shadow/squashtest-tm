@@ -45,12 +45,17 @@ define (["require","squash.cssloader", "./panel", "./table", "./popup"],function
 		return settings.baseURL;
 	};
 	
+	function getTableMoveURL(settings){
+		return settings.baseURL;
+	};
+	
 	function getTableConf(settings){
 		return {
 			selector : settings.mainSelector+" .cuf-binding-table",
 			languageUrl : settings.tableLanguageUrl,
 			getUrl : getTableGetURL(settings),
 			deleteUrl : getTableDeleteURL(settings),
+			moveUrl : getTableMoveURL(settings),
 			deferLoading : settings.tableDeferLoading,
 			oklabel : settings.oklabel,
 			cancellabel : settings.cancellabel,
