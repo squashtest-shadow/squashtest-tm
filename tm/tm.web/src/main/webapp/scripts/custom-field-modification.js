@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2012 Henix, henix.fr
  *
@@ -18,25 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package org.squashtest.csp.tm.service.customfield;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.customfield.CustomField;
-
-/**
- * Facade service for custom fields management.
- * 
- * @author Gregory Fouquet
- * 
- */
-@Transactional
-public interface CustomFieldManagerService extends CustomCustomFieldManagerService {
-	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void persist(CustomField newCustomField);
-	
-	public CustomField findById(Long customFieldId);
-
-}
+require([ "common" ], function(common) {
+	require([ "jquery", "app/cf/CustomFieldModificationView","app/ws/squashtm.workspace", "domReady" ], function($,CustomFieldModificationView, WS, domReady) {
+		domReady(function() {
+			WS.init("");
+			var cfMod = new CustomFieldModificationView();
+			$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
+		});
+	});
+});

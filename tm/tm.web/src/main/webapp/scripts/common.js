@@ -37,11 +37,13 @@ requirejs.config({
 		"handlebars": "lib/handlebars/handlebars-1.0.rc.1",
 		"underscore": "lib/underscore/underscore-1.4.2",
 		"backbone": "lib/backbone/backbone-0.9.2", 
-		"ckeditor": "ckeditor/ckeditor.js", 
-		"jquery.ckeditor": "adapters/jquery", 
+		"ckeditor": "ckeditor/ckeditor", 
+		"jquery.ckeditor": "ckeditor/adapters/jquery", 
 		"jeditable": "jquery/jquery.jeditable", 
 		"jeditable.ckeditor": "jquery/jquery.jeditable.ckeditor", 
 		"jeditable.datepicker": "jquery/jquery.jeditable.datepicker", 
+		"jeditable.simpleJEditable" : "squashtest/classes/SimpleJEditable",
+		"jeditable.selectJEditable" : "squashtest/classes/SelectJEditable",
 		"jstree": "jquery/jquery.jstree", 
 		"jquery.generateId": "jquery/jquery.generateId",
 		"jquery.hotkeys": "jquery/jquery.hotkeys-0.8", 
@@ -81,6 +83,14 @@ requirejs.config({
 		"jeditable.datepicker": {
 			deps: [ "jeditable" ],
 			exports: "jeditableDatepicker"
+		},
+		"jeditable.simpleJEditable": {
+			deps : [ "jquery.squash.jeditable" ],
+			exports : "SimpleJEditable"
+		},
+		"jeditable.selectJEditable": {
+			deps : [ "jquery.squash.jeditable" ],
+			exports : "SelectJEditable"
 		},
 		"jstree": {
 			deps : [ "jquery", "jqueryui", "jquery.hotkeys", "jquery.cookie" ],
@@ -142,6 +152,7 @@ requirejs.config({
 			deps : [ "squashtest/classes/Event" ],
 			exports : "TreeEventHandler"
 		},
+		
 		"squashtest/classes/TreeNodeCopier": {
 			deps : [ "jquery" ],
 			exports : "TreeNodeCopier"

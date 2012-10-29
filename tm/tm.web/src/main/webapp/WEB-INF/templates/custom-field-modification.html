@@ -1,0 +1,148 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="#{title.CustomFields}">Champs Personnalisé de tests</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.2.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script type="text/javascript" th:inline="javascript">
+  	var squashtm = {};
+  	squashtm.app = {
+  		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+  		cfMod : {
+  			backUrl : /*[[ @{/administration/custom-fields} ]]*/"http://localhost:8080/administration/custom-fields",
+  			customFieldUrl : /*[[@{/custom-fields/${customField.id}}]]*/"http://localhost:8080/custom-fields/1",
+  			inputTypes : /*${inputTypes}*/ {PLAIN_TEXT: "Plain text", CHECKBOX: "Checkbox", DROPDOXN_LIST: "Dropdown list"},
+  			richEditPlaceHolder: /*[[#{rich-edit.placeholder}]]*/ '(Click to edit ...)',
+  			okLabel: /*[[ #{label.Ok} ]]*/ 'Ok',
+			cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
+  		},
+  		projectFilterConf: {
+			url: /*[[ @{/global-filter/filter} ]]*/ '/global-filter/filter',
+			title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
+			confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
+			cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
+		}, 
+		menuBarConf: {
+    		boxSelector: "#menu-toggle-filter-ckbox",
+    		url: /*[[ @{/global-filter/filter-status} ]]*/ '/global-filter/filter-status',
+    		linkSelector: "#menu-project-filter-link",
+    		enabledTxt: /*[[ #{workspace.menubar.filter.enabled.label} ]]*/ 'Actif',
+    		disabledTxt: /*[[ #{workspace.menubar.filter.disabled.label} ]]*/ 'Inactif',
+    		enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
+    	}, 
+    	notificationConf: {
+  			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info', 
+  			errorTitle: /*[[ #{popup.title.error} ]]*/ 'Erreur'
+  		}
+  	};
+  </script>
+  <script data-main="../../scripts/custom-field-modification.js" th:attr="data-main=@{/scripts/custom-field-modification.js}"
+    src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
+  </script>
+  <!-- common head -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+  <link rel="shortcut icon" type="image/x-icon" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
+  <!-- /common head -->
+  <!-- common script import -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css"
+    th:href="@{/styles/squashtm.fg.menu.css}" />
+  <!-- /common script import -->
+  <link rel="stylesheet" type="text/css" media="all"
+    href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
+   <!-- rich jeditable header --> 
+<!--   <link rel="stylesheet" type="text/css" media="all" -->
+<!--     href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css" -->
+<!--     th:href="@{/styles/ckeditor.override.css}" /> -->
+</head>
+<body>
+  <div id="navigation" th:include="navbar.frag :: navbar">
+    NAVBAR
+  </div>
+  <div id="workspace">
+    <div id="workspace-title">
+      <div class="snap-left">
+        <h2 th:text="#{title.customField}">Espace Détails Champ Personnalisé tests</h2> 
+      </div>
+      <div class="snap-right">
+        <div class="main-menubar unstyled" th:include="menubar.frag :: menubar">
+          MENUBAR
+        </div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">
+          NOTIFICATION
+        </div>
+      </div>
+    </div>
+    <div id="information-content">
+	   <div id="cuf-name-div"
+			class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+			<div style="float: left; height: 3em">
+				<h2>
+					<label for="cuf-name-header" th:text="#{label.customField}">Custom Field</label>
+					<a id="cuf-name-header" href="#" th:text="${customField.name}">CUF NAME</a>
+				</h2>
+			</div>
+			<div style="float: right;">
+				<input id="back" type="button" value="BACK" />
+			</div>
+			<div style="clear: both;"></div>
+				
+		</div>
+		<div class="fragment-body" >
+			<div class="toggle-panel">
+				<span class="not-displayed toogle-panel-buttons"></span>
+				<div id="cuf-info-panel"  class="information-panel toggle-panel-main">
+					<div class="display-table" id="cuf-infos-table">
+						<div class="display-table-row">
+							<label for="cuf-name" th:text="#{label.Name}">Name</label>
+							<div id="cuf-name" class="display-table-cell" th:text="${customField.name}">the name</div>
+							 <span class="error">&nbsp;</span>
+						</div>
+						<div class="display-table-row">
+							<label for="cuf-label" th:text="#{label.Label}">Label</label>
+							<div id="cuf-label" class="display-table-cell" th:text="${customField.label}">the label</div>
+							 <span class="error">&nbsp;</span>
+						</div>
+						  <div class="display-table-row">
+						 	<label for="inputType" th:text="#{label.inputType}">Type</label>
+						 	<div id="cuf-inputType" class="display-table-cell" th:text="#{${customField.inputType.i18nKey}}">Plain text</div>
+      					</div>
+      					
+				      	<div class="display-table-row">
+				        	<label for="optional" th:text="#{label.Optional}">Optional</label>
+				        	<input name="optional" value="optional" type="checkbox" />
+				        	<span class="error">&nbsp;</span>
+				      	</div>
+					</div>
+				</div>
+			</div>
+		</div>
+   	</div>
+   	</div>
+</body>
+</html>

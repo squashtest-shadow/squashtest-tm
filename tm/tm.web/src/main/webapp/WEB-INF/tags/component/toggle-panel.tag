@@ -37,7 +37,6 @@
 	<f:message var="title" key="${ titleKey }" />
 </c:if>
 <%-- dirty trick is dirty --%>
-<c:if test="${not empty isContextual}"><c:set var="additionalClasses" value="is-contextual" /></c:if>
 <c:if test="${not empty classes}"><c:set var="classesToDiv" value="${classes}" /></c:if>
 
 <div class="toggle-panel">

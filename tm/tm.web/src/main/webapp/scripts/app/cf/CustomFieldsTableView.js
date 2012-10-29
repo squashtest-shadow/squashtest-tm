@@ -98,7 +98,7 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 						},
 						
 						bindLinks : {
-							list : [{url: cfTable.ajaxSource+"/{entity-id}", target:2 , isOpenInTab:false}]
+							list : [{url: cfTable.customFieldUrl+"/{entity-id}", target:2 , isOpenInTab:false}]
 						}
 					};
 					

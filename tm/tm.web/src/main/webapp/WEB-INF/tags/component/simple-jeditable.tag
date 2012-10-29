@@ -28,7 +28,7 @@
 <%@ attribute name="submitCallback" required="false" %>
 <%@ attribute name="maxLength" required="false" description="max number of characters" %>
 <%@ attribute name="width" required="false" description="width of the input in px" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib  prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />

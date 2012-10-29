@@ -66,12 +66,10 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF" ], fu
 		},
 		changeStrProp: function(event) {
 			var textbox = event.target;
-
 			this.model.set(textbox.name, textbox.value);
 		},
 		changeOptProp: function(event) {
 			var option = event.target;
-
 			this.model.set(option.name, option.value);
 		},
 		changeInputType: function(event) {
