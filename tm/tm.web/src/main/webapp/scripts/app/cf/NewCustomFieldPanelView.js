@@ -74,7 +74,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF" ], fu
 
 			this.model.set(option.name, option.value);
 		},
-		changeInputType: function() {
+		changeInputType: function(event) {
 			var model = this.model;
 
 			model.set("inputType", event.target.value);
@@ -83,7 +83,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF" ], fu
 			this.render();
 
 		},
-		changeOptional: function() {
+		changeOptional: function(event) {
 			this.model.set("optional", event.target.checked);
 		},
 
