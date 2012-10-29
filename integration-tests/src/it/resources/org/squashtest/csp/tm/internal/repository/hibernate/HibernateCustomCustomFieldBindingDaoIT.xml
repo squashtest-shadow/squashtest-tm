@@ -24,9 +24,10 @@
 
 <dataset>
 
+	<attachment_list attachment_list_id="1"/>
 	
-	<project project_id="1" name="project A" created_by="dbu" created_on="2012-10-26"/>
-	<project project_id="2" name="project B" created_by="dbu" created_on="2012-10-26"/>
+	<project project_id="1" name="project A" created_by="dbu" created_on="2012-10-26"  attachment_list_id="1"/>
+	<project project_id="2" name="project B" created_by="dbu" created_on="2012-10-26"  attachment_list_id="1"/>
 
 	<custom_field cf_id="1" field_type="CF" name="bob" label="bob label" optional="1" default_value="default bob" input_type="PLAIN_TEXT"/>
 	<custom_field cf_id="2" field_type="CF" name="robert" label="robert label" optional="1" default_value="default robert" input_type="PLAIN_TEXT"/>
