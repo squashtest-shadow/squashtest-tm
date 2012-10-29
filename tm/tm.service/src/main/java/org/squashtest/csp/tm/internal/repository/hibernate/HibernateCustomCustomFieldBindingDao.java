@@ -33,24 +33,47 @@ import org.squashtest.csp.tm.internal.repository.CustomCustomFieldBindingDao;
 @Repository("CustomCustomFieldBindingDao")
 public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<CustomField> implements CustomCustomFieldBindingDao {
 	
-
-	
 	@Override
 	public void removeCustomFieldBindings(List<Long> bindingIds) {
+		
 		if (!bindingIds.isEmpty()){
+			
 			executeUpdateListQuery("CustomFieldBinding.removeCustomFieldBindings", new SetBindingIdsParameterCallback(bindingIds));
+			List<NewBindingPosition> newPositions = recomputeBindingPositions();
+			updateBindingPositions(newPositions);
+			
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
 	protected List<NewBindingPosition> recomputeBindingPositions(){
+		
 		Session session = currentSession();
 		Query q = session.getNamedQuery("CustomFieldBinding.recomputeBindingPositions");
 		q.setResultTransformer(Transformers.aliasToBean(NewBindingPosition.class));
-		List<NewBindingPosition> newPositions = q.list();
-		return newPositions;
+		
+		return q.list();		
+		
 	}
 	
+	
+	protected void updateBindingPositions(List<NewBindingPosition> newPositions){
+		
+		Query q = currentSession().getNamedQuery("CustomFielBinding.updateBindingPosition");
+		
+		for (NewBindingPosition newPos : newPositions){
+			if (newPos.needsUpdate()){
+				q.setInteger("newPos", newPos.getNewPosition());
+				q.setLong("id", newPos.getBindingId());
+				q.executeUpdate();
+			}
+		}
+		
+	}
+	
+	
+	// ********************** static classes ******************************
+
 	
 	private static class SetBindingIdsParameterCallback implements SetQueryParametersCallback{
 		
@@ -71,10 +94,9 @@ public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<Cus
 
 		private Long bindingId;
 		private int formerPosition;
-		private Long newPosition;
+		private int newPosition;
 		
 		public NewBindingPosition() {
-			// TODO Auto-generated constructor stub
 		}
 
 		public Long getBindingId() {
@@ -93,15 +115,17 @@ public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<Cus
 			this.formerPosition = formerPosition;
 		}
 
-		public Long getNewPosition() {
+		public int getNewPosition() {
 			return newPosition;
 		}
 
 		public void setNewPosition(Long newPosition) {
-			this.newPosition = newPosition;
+			this.newPosition = newPosition.intValue();
 		}
-		
-		
+
+		public boolean needsUpdate(){
+			return (formerPosition!=newPosition);
+		}
 		
 	}
 

@@ -22,6 +22,8 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 
 import javax.inject.Inject;
 
+import org.hibernate.Query;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.internal.repository.hibernate.HibernateCustomCustomFieldBindingDao.NewBindingPosition;
 import org.unitils.dbunit.annotation.DataSet;
 
@@ -34,16 +36,52 @@ class HibernateCustomCustomFieldBindingDaoIT extends DbunitDaoSpecification {
 
 	@Inject
 	HibernateCustomCustomFieldBindingDao dao
-	
+
 	
 	def "should get correct indexes from a messed up table"(){
 
 		when :
 			List<NewBindingPosition> newPositions = dao.recomputeBindingPositions();
-		
+			
 		then :
-			newPositions.size() == 9
+			def collected = newPositions.collect { return [ it.bindingId, it.formerPosition, it.newPosition] } 
+			def expected = [
+				[121l, 5, 3],
+				[131l, 1 ,1],
+				[111l, 2, 2],
+				[221l, 8, 3],
+				[122l, 10, 3],	
+				[241l, 1, 1],
+				[132l, 2, 2],
+				[211l, 3, 2],
+				[112l, 0, 1]
+			] 
 		
+			collected as Set == expected as Set
+	}
+	
+	def "should update the position of some cuf binding"(){
+		
+		given :
+			def newPositions = [
+					newPosition(241l, 1, 1l),
+					newPosition(221l, 8, 3l),
+					newPosition(211l, 3, 2l),
+				]
+		
+		when :
+			dao.updateBindingPositions(newPositions);
+			
+			Query q = getSession().createQuery("from CustomFieldBinding where id in (241, 221, 211)")
+			List<CustomFieldBinding> bindings = q.list();
+			
+		then :
+			bindings.collect{it.position} as Set == [1, 3, 2] as Set
+	}
+		
+	
+	NewBindingPosition newPosition(id, former, newp){
+		return new NewBindingPosition(bindingId : id, formerPosition : former, newPosition : newp);
 	}
 	
 }

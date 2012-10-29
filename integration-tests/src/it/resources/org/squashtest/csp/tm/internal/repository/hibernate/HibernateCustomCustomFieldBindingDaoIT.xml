@@ -45,7 +45,7 @@
 
 	<!--  binding for project A and ITERATION -->
 	<custom_field_binding cfb_id="132" bound_project_id="1" cf_id="3" bound_entity="ITERATION" position="2"/>
-	<custom_field_binding cfb_id="112" bound_project_id="1" cf_id="1" bound_entity="ITERATION" position="0"/>
+	<custom_field_binding cfb_id="112" bound_project_id="1" cf_id="1" bound_entity="ITERATION" position="0"/><!-- position 0 is usually impossible but oh well -->
 	<custom_field_binding cfb_id="122" bound_project_id="1" cf_id="2" bound_entity="ITERATION" position="10"/>
 
 </dataset>

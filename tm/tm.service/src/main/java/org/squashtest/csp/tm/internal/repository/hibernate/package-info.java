@@ -238,6 +238,7 @@
 		@NamedQuery(name = "CustomFieldBinding.removeCustomFieldBindings", query = "delete CustomFieldBinding cfb where cfb.id in (:cfbIds)"),
 		@NamedQuery(name = "CustomFieldBinding.recomputeBindingPositions", query = "select cfb1.id as bindingId, cfb1.position as formerPosition, count(cfb1.id) as newPosition from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.boundEntity=cfb2.boundEntity "+
 																				   "and cfb1.boundProject = cfb2.boundProject and cfb1.position >= cfb2.position group by cfb1.id"),	
+		@NamedQuery(name="CustomFielBinding.updateBindingPosition", query="update CustomFieldBinding cfb set cfb.position = :newPos where cfb.id = :id"),
 						
 
 		/* ********************************************** batch deletion-related queries **************************************************** */
