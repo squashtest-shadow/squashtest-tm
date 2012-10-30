@@ -31,9 +31,24 @@
 	display:none;
 }
 
+
 .cuf-binding-popup .row-template-holder{
 	display : none;
 }
+
+
+.cuf-binding-popup tr{
+	line-height:20px;	
+}
+
+.cuf-binding-popup table{
+	border-collapse : collapse;	
+}
+
+.cuf-binding-popup thead td{
+	border-bottom : 1px solid black;
+}
+
 /*
 useful for future evolutions :
 
