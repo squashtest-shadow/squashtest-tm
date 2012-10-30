@@ -35,6 +35,7 @@
 /**
  * ======================Intoduction===================================
  * 
+ * 
  * keys used for data lookup -------------------------
  * 
  * That table uses mPropData for its columns. More explictly, it uses json data
@@ -64,7 +65,7 @@
  * placeholders that will be replaced by the corresponding value from
  * aoData["something"]. That's where the data keys above are useful.
  * 
- * =========== Regular Datatable settings=====================================
+ * =========== Regular Datatable settings=======================================
  * 
  * the inherited part of the datatable is configured using the first parameter :
  * 'datatableSettings'. Any regular datatable configuration is supported.
@@ -75,13 +76,31 @@
  * - "aoColumnDefs" (les colonnes)
  * 
  * 
+ * ============= object datasource and DOM data ================================
+ * 
+ * Structured object datasource is great except when you need to read those data
+ * from the DOM. Normally the initial data should be provided by other means (eg 
+ * ajax call or supplied to the configuration), because DOM-based simply doesn't 
+ * fit. For instance, if you configure your column to use 
+ * "mDataProp : 'cake.cherry'", datatable.js will crash because it cannot find 
+ * it in the DOM (because it assumes that all you want is a scalar, not an object).
+ * 
+ * If you still decide to use an object datasource yet initialize it by reading 
+ * the DOM, this datatable will help you to work around this by creating the 
+ * missing parts of the data object on the fly. Note that it still can produce 
+ * buggy datatables if later on the datatable uses data that couldn't be found 
+ * that way.
+ * 
+ * To enable this feature, please add to your configuration 
+ * 'fixObjectDOMInit : true'
+ * 
  * ============= Squash additional settings=====================================
  * 
  * 
  * The squash specifics are configured using the second parameter :
  * 'squashSettings'. It is an object that accepts the following members : 
  * 
- * - functions
+ * - functions : any function defined as public member of the table can be redefined as a member of .function (read the source to pimpoint them at the end of this file)
  * 
  *  examples : 
  *  dropHandler : 
@@ -106,6 +125,8 @@
  * - enableHover : if coalesce to true, will enable lines color change when
  * hovered. If coalesce to false, it will not. 
  * 
+ * 
+ * - fixObjectDOMInit : boolean, refer to the documentation above ('object datasource and DOM data')
  * 
  * 
  * - confirmation popups : if 'confirmPopup' is set, will configure any confirmation 
@@ -684,6 +705,100 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		}
 	}
 	;
+	
+	
+	/**
+	 * Unlike the above, that function will not be a member of the squash datatable.
+	 * This is a factory function that returns a method handling the corner case
+	 * of initializing an object based datasource from the DOM (refer to the documentation above).
+	 * 
+	 * See also the function just below ( _fix_mDataProp )
+	 * 
+	 * some bits are taken from jquery.datatable.js, sorry for the copy pasta.
+	 */
+	function _createObjectDOMInitFixer(property){
+		
+
+		function exists(data, property){
+			var localD = data;
+			var a = property.split('.');
+			for ( var i=0, iLen=a.length-1 ; i<iLen ; i++ )
+			{
+				localD = localD[ a[i] ];
+				if ( localD === undefined )
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		function setValue(data, val, property){
+			var localD = data;
+			var a = property.split('.');
+			for ( var i=0, iLen=a.length-1 ; i<iLen; i++ )
+			{
+				var ppt = a[i];
+				if (localD[ppt]===undefined){
+					localD[ppt] = {};
+				}
+				localD = localD[ppt];
+			}
+			localD[a[a.length-1]] = val;
+		}
+		
+		function getValue(data, property){
+			var localD = data;
+			var a = property.split('.');
+			for ( var i=0, iLen=a.length ; i<iLen ; i++ )
+			{
+				localD = localD[ a[i] ];
+			}
+			return localD;		
+		}
+		
+		return function(data,operation,val){
+			if (operation=='set' && exists(data, property)===false){
+				setValue(data, val, property);
+			}
+			else{
+				return getValue(data, property);
+			}
+		};
+		
+	}
+	;
+	
+	/**
+	 * this function will process the column defs, looking for 
+	 * mDataProp settings using a dotted object notation, 
+	 * to fix them when reading the DOM (read documentation above).
+	 * 
+	 */
+	function _fix_mDataProp(datatableSettings){
+		
+		var columnDefs = datatableSettings.aoColumnDefs;
+		
+		var needsWrapping = function(rowDef){
+			var mDataProp = rowDef.mDataProp;
+			return (
+					(!!mDataProp) &&
+					(typeof mDataProp === 'string') && 
+					(mDataProp.indexOf('.') != -1)
+				);
+		};
+		
+		var i=0;
+		for (i=0, length = columnDefs.length; i<length;i++){
+			var rowDef = columnDefs[i];
+			if ( needsWrapping(rowDef)===true ){
+				var attribute = rowDef.mDataProp;
+				rowDef.mDataProp = _createObjectDOMInitFixer(attribute);
+			}
+			
+		};
+	}
+	
 
 	/***************************************************************************
 	 * 
@@ -741,6 +856,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 		var datatableEffective = $.extend(true, {}, datatableDefaults,
 				datatableSettings);
+		
+		
 		var squashEffective = $.extend(true, {}, squashDefaults, squashSettings);
 
 		/* ************** squash init first *********************** */
@@ -773,10 +890,16 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		if (squashEffective.functions) {
 			$.extend(this, squashEffective.functions);
 		}
+		
+		
+		// ************** preprocess the column definitions if need be ********************
+		
+		if (squashEffective.fixObjectDOMInit){
+			_fix_mDataProp(datatableEffective);
+		}
 
 		/*
-		 * ************* prepare a custom rowcallback and drawcallback if needed
-		 * ********
+		 * ************* prepare a custom rowcallback and drawcallback if needed * ********
 		 */
 
 		// pre draw callback
@@ -811,8 +934,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		/* **************** store the new instance ***************** */
 
 		$.fn.squashTable.instances[this.get(0)] = this;
-
+		
 		/* ************* now call the base plugin ***************** */
+		
 
 		this.dataTable(datatableEffective);
 

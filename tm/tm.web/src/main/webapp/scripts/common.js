@@ -21,7 +21,7 @@
 requirejs.config({
 	
 	packages : ["custom-field-binding"],
-	
+
 	/*
 	 * rules for paths naming : * third party lib : unversionned lib
 	 * name * non AMD squash lib : replace "squashtm" by "squash" in js

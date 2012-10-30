@@ -32,22 +32,22 @@ define (["require","squash.cssloader", "./panel", "./table", "./popup"],function
 			'initiallyOpen' : true, 
 			'title' : settings.panelTitle
 		};
-	};
+	}
 	
 	function getTableGetURL(settings){
 		var url = settings.baseURL;
 		url = url+"?projectId="+settings.projectId;
 		url = url+"&bindableEntity="+settings.entityType;
 		return url;
-	};
+	}
 	
 	function getTableDeleteURL(settings){
 		return settings.baseURL;
-	};
+	}
 	
 	function getTableMoveURL(settings){
 		return settings.baseURL;
-	};
+	}
 	
 	function getTableConf(settings){
 		return {
@@ -62,18 +62,18 @@ define (["require","squash.cssloader", "./panel", "./table", "./popup"],function
 			deleteMessage : settings.tableDeleteMessage,
 			deleteTooltip : settings.tableDeleteTooltip
 		};
-	};
+	}
 	
 	function getPopupGetURL(settings){
 		var url = settings.baseURL+"/available";
 		url = url+"?projectId="+settings.projectId;
 		url = url+"&bindableEntity="+settings.entityType;
 		return url;
-	};
+	}
 	
 	function getPopupPostURL(settings){
 		return settings.baseURL+"/new-batch";
-	};
+	}
 	
 	
 	function getPopupConf(settings){
@@ -87,7 +87,7 @@ define (["require","squash.cssloader", "./panel", "./table", "./popup"],function
 			oklabel : settings.oklabel,
 			cancellabel : settings.cancellabel
 		};		
-	};
+	}
 	
 	return function(settings){
 		var self=this;

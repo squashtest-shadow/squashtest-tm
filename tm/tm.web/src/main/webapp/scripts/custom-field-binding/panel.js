@@ -40,10 +40,10 @@ define(["jquery", "jquery.squash.togglepanel"], function($){
 		
 		instance.getButton = function(){
 			return button;
-		}
+		};
 		
 		
 		return instance;
-	}
+	};
 
 });

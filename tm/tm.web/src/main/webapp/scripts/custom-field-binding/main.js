@@ -24,23 +24,23 @@ define(["jquery", "./entity-manager"], function(jquery, EntityManager){
 
 	function makeTCConf(conf){		
 		return $.extend({},conf.general, conf.tcSettings);
-	};
+	}
 	
 	function makeReqConf(conf){
 		return $.extend({},conf.general, conf.reqSettings);
-	};
+	}
 	
 	function makeCampConf(conf){
 		return $.extend({},conf.general, conf.campSettings);
-	};
+	}
 	
 	function makeIterConf(conf){
 		return $.extend({},conf.general, conf.iterSettings);
-	};
+	}
 	
 	function makeTSConf(conf){
 		return $.extend({},conf.general, conf.tsSettings);
-	};
+	}
 
 	var manager = {
 		
