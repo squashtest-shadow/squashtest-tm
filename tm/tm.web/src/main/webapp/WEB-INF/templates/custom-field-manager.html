@@ -35,8 +35,7 @@
   			languageUrl : /*[[ @{/datatables/messages} ]]*/"http://localhost:8080/squash/datatables/messages",
   			displayLength : /*[[ ${customFieldsPageSize} ]]*/50,
   			ajaxSource : /*[[ @{/administration/custom-fields} ]]*/"http://localhost:8080/squash/administration/custom-fields",
-  			deferLoading : 0,
-			confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
+  			confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
 			cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
 			deleteTooltip: /*[[ #{label.Remove} ]]*/ 'Remove',
 			deleteConfirmMessage : /*[[ #{message.customField.remove} ]]*/ 'Remove',
@@ -99,7 +98,7 @@
         <h2 th:text="#{title.CustomFields}">Champs Personnalisé de tests</h2> 
       </div>
       <div class="snap-right">
-        <div class="main-menubar unstyled" th:include="menubar.frag :: menubar">
+        <div class="main-menubar" th:include="menubar.frag :: menubar">
           MENUBAR
         </div>
         <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">
@@ -107,7 +106,7 @@
         </div>
       </div>
     </div>
-    <div class="fragment-body unstyled">
+    <div class="fragment-body">
     <div id="cf-table-pane">
       <input id="add-cf" type="button" class="sq-button snap-right" value="Add a custom field"
         th:value="#{label.CustomField.add}" />

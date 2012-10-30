@@ -35,6 +35,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +45,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.service.customfield.CustomFieldManagerService;
+import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 
 /**
  * Controller for the Custom Fields resources.
@@ -60,6 +62,11 @@ public class CustomFieldController {
 
 	@Inject
 	private CustomFieldManagerService customFieldManager;
+	
+	@ModelAttribute("customFieldOptionsPageSize")
+	public long populateCustomFieldsPageSize() {
+		return DefaultPaging.FIRST_PAGE.getPageSize();
+	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)

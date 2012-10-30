@@ -44,8 +44,8 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 					"bDeferRender": true,
 					"bRetrieve": true,
 					"sDom": 't<"dataTables_footer"lirp>',
-					"iDeferLoading": cfTable.deferLoading,
-					"aaSorting": [ [ 10, "desc" ] ],
+					"iDeferLoading": 0,
+					"aaSorting": [ [ 0, "asc" ] ],
 					"fnRowCallback": function() {
 					},
 					"aoColumnDefs": [ {
