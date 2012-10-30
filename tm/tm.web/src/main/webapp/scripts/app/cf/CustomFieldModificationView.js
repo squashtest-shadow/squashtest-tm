@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash", "jqueryui", "jquery.squash.togglepanel",
-		 "jeditable.selectJEditable"  ], function($, Backbone, SimpleJEditable) {
+define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEditable", "jquery.squash", "jqueryui", "jquery.squash.togglepanel",
+		 "jeditable.selectJEditable"  ], function($, Backbone, SimpleJEditable, SelectJEditable) {
 	var cfMod = squashtm.app.cfMod;
 	/*
 	 * Defines the controller for the custom fields table.
@@ -64,19 +64,14 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash", "jq
 			this.$("#cuf-info-panel").togglePanel(settings);
 		},
 		configureEditables:function(){
-			var simpleEditIds = ["cuf-label", "cuf-default-value"];
-			$.each(simpleEditIds, function(index, simpleEditId){
-				new SimpleJEditable({
-					language: {
-						richEditPlaceHolder : cfMod.richEditPlaceHolder,
-						okLabel: cfMod.okLabel,
-						cancelLabel: cfMod.cancelLabel,
-					},
-					targetUrl : cfMod.customFieldUrl,
-					componentId : simpleEditId,
-					jeditableSettings : {}
-				});
-			});
+			this.makeSimpleJEditable("cuf-label");
+			
+			if($("#cuf-inputType").attr('value') == "PLAIN_TEXT"){
+				this.makeSimpleJEditable("cuf-default-value");
+			}else if($("#cuf-inputType").attr('value') == "CHECKBOX"){
+				this.makeSelectJEditable("cuf-default-value", cfMod.checkboxJsonDefaultValues);
+				
+			}
 		},
 		renameCuf: function(){
 			var newNameVal = $("#rename-cuf-input").val();
@@ -119,6 +114,30 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash", "jq
 		},
 		closeRenamePopup : function() {$( this ).data("answer","cancel");
 											$( this ).dialog( 'close' );},
+		makeSimpleJEditable : function(imputId){
+			new SimpleJEditable({
+				language: {
+					richEditPlaceHolder : cfMod.richEditPlaceHolder,
+					okLabel: cfMod.okLabel,
+					cancelLabel: cfMod.cancelLabel,
+				},
+				targetUrl : cfMod.customFieldUrl,
+				componentId : imputId,
+				jeditableSettings : {},
+			});
+		},
+		makeSelectJEditable : function(inputId, jsonData){
+			new SelectJEditable({
+				language: {
+					richEditPlaceHolder : cfMod.richEditPlaceHolder,
+					okLabel: cfMod.okLabel,
+					cancelLabel: cfMod.cancelLabel,
+				},
+				targetUrl : cfMod.customFieldUrl,
+				componentId : inputId,
+				jeditableSettings : {data : JSON.stringify(jsonData)},
+			});
+		}
 		
 	});
 	return CustomFieldModificationView;

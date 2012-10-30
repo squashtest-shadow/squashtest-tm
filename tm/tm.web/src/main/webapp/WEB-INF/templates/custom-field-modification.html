@@ -41,6 +41,7 @@
 			ckeditorLang: /*[[#{rich-edit.language.value}]]*/ 'en',
 			renameLabel: /*[[#{label.rename}]]*/ 'Rename',
 			renameCufTitle: /*[[#{title.renameCuf}]]*/ 'Rename custom-field',
+			checkboxJsonDefaultValues: {'false':/*[[#label.false]]*/'faux', 'true':/*[[#label.true]]*/'vrai'},
   		},
   		projectFilterConf: {
 			url: /*[[ @{/global-filter/filter} ]]*/ '/global-filter/filter',
@@ -117,7 +118,7 @@
 		</div>
 		
 		<div class="fragment-body" >
-			<div id="cuf-toolbar" class="toolbar-class ui-corner-all unstyled">
+			<div id="cuf-toolbar" class="toolbar-class ui-corner-all ">
 				<div class="toolbar-button-panel">
 					<input type="button" th:value="#{ label.Rename }" value="Rename" id="rename-cuf-button"
 								class="button"/>
@@ -128,7 +129,7 @@
 			</div>
 			<br>
 			<br>
-			<div class="toggle-panel unstyled">
+			<div class="toggle-panel ">
 				<span class="not-displayed toogle-panel-buttons"></span>
 				<div id="cuf-info-panel"  class="information-panel toggle-panel-main">
 					<div class="display-table" id="cuf-infos-table">
@@ -139,7 +140,7 @@
 						</div>
 						 <div class="display-table-row">
 						 	<label for="inputType" th:text="#{label.inputType}">Input Type</label>
-						 	<div id="cuf-inputType" class="display-table-cell" th:text="#{${customField.inputType.i18nKey}}">Plain text</div>
+						 	<div id="cuf-inputType" class="display-table-cell" th:value="${customField.inputType}" value="CHECKBOX" th:text="#{${customField.inputType.i18nKey}}">Checkbox</div>
       					</div>
       					
 				      	<div class="display-table-row">
@@ -147,10 +148,10 @@
 				        	<input id="cf-optional" name="optional" value="optional" type="checkbox" th:field="${customField.optional}"/>
 				        	<span class="error">&nbsp;</span>
 				      	</div>
-				      	<div class="display-table-row">
-							<label for="cuf-default-value" th:text="#{label.DefaultValue}">Default value</label>
-							<div id="cuf-default-value" class="display-table-cell" th:text="${customField.defaultValue}">the default-value</div>
-							 <span class="error">&nbsp;</span>
+				      	<div th:unless="${customField.inputType == 'DROPDOWN_LIST'}"  class="display-table-row">
+							<label for="cuf-default-value" th:text="#{label.DefaultValue}">Default value</label>	
+							<div id="cuf-default-value" class="display-table-cell" th:text="${customField.defaultValue}">faux</div>
+							<span class="error">&nbsp;</span>
 						</div>
 					</div>
 				</div>
