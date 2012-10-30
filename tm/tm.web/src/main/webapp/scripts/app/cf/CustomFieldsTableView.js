@@ -67,7 +67,7 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 						"mDataProp": "label"
 					}, {
 						"bVisible": false,
-						"aTargets": [4 ],
+						"aTargets": [ 4 ],
 						"sClass": "raw-input-type",
 						"mDataProp": "raw-input-type"
 					}, {
@@ -78,7 +78,7 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 						'bSortable': false,
 						'sWidth': '2em', 
 						'sClass': 'delete-button',
-						'aTargets': [6],
+						'aTargets': [ 6 ],
 						'mDataProp' : 'empty-delete-holder'} ]
 				}, squashtm.datatable.defaults);
 				

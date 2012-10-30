@@ -23,7 +23,7 @@ require([ "common" ], function(common) {
 		domReady(function() {
 			WS.init("");
 			var cfMod = new CustomFieldModificationView();
-			$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
+			
 		});
 	});
 });

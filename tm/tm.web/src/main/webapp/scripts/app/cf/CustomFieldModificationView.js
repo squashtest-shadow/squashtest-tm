@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "jqueryui", "jquery.squash.togglepanel",
-		"jeditable.simpleJEditable", "jeditable.selectJEditable"  ], function($, Backbone) {
+define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash", "jqueryui", "jquery.squash.togglepanel",
+		 "jeditable.selectJEditable"  ], function($, Backbone, SimpleJEditable) {
 	var cfMod = squashtm.app.cfMod;
 	/*
 	 * Defines the controller for the custom fields table.
@@ -27,12 +27,14 @@ define([ "jquery", "backbone", "jqueryui", "jquery.squash.togglepanel",
 	var CustomFieldModificationView = Backbone.View.extend({
 		el : "#information-content",
 		initialize : function() {
-			this.configureBackButton();
+			this.configureButtons();
 			this.configureTogglePanels();
 			this.configureEditables();
+			this.configureRenamePopup();
 		},
 		events: {
-			"click #cf-optional": "sendOptional"
+			"click #cf-optional": "sendOptional",
+			"click #back": "goBack",			
 		}, 
 		sendOptional: function(event) {
 		var checked = event.target.checked;
@@ -43,18 +45,23 @@ define([ "jquery", "backbone", "jqueryui", "jquery.squash.togglepanel",
 				dataType : "json",
 				});
 		},
-		configureBackButton: function(){
-			$("#back").button().click(function() {
-				document.location.href = cfMod.backUrl;
-			});
+		goBack:function(){
+			document.location.href = cfMod.backUrl;
+		},
+		openRenamePopup:function(){
+			
+		},
+		configureButtons: function(){
+			$("#back").button();
+			$.squash.decorateButtons();
 		},
 		configureTogglePanels: function(){
 			var settings = {
 					initiallyOpen : true,
-					title : "Information panel",
+					title : cfMod.informationPanelLabel,
 					cssClasses : "is-contextual",
-				}
-				this.$("#cuf-info-panel").togglePanel(settings);
+				};
+			this.$("#cuf-info-panel").togglePanel(settings);
 		},
 		configureEditables:function(){
 			var simpleEditIds = ["cuf-label", "cuf-default-value"];
@@ -70,18 +77,49 @@ define([ "jquery", "backbone", "jqueryui", "jquery.squash.togglepanel",
 					jeditableSettings : {}
 				});
 			});
-			
-			new SelectJEditable({
-				language: {
-					richEditPlaceHolder : cfMod.richEditPlaceHolder,
-					okLabel: cfMod.okLabel,
-					cancelLabel: cfMod.cancelLabel,
-				},
-				targetUrl : cfMod.customFieldUrl,
-				componentId : "cuf-inputType",
-				jeditableSettings : {data : JSON.stringify(cfMod.inputTypes)},
+		},
+		renameCuf: function(){
+			var newNameVal = $("#rename-cuf-input").val();
+				$.ajax({
+					type : 'POST',
+					data : {'name': newNameVal},
+					dataType : "json",
+					url : cfMod.customFieldUrl,
+				}).done(function(data){
+					$('#cuf-name-header').html(data.newName);
+					$('#rename-cuf-popup').dialog('close');
+				});
+		},
+		configureRenamePopup:function(){
+			var params = {
+					selector : "#rename-cuf-popup",
+					title : cfMod.renameCufTitle,
+					openedBy : "#rename-cuf-button",
+					isContextual : true,
+					usesRichEdit : false,
+					closeOnSuccess : true,
+					ckeditor : {
+						styleUrl : squashtm.app.contextRoot+"/styles/ckeditor/ckeditor-config.js",
+						lang : cfMod.ckeditorLang,
+					},
+					buttons: [ { 'text' : cfMod.renameLabel,
+					        	  'click' : this.renameCuf,
+					        	},
+						        { 'text' : cfMod.cancelLabel,
+						          'click' : this.closeRenamePopup,
+						        },
+							],
+			};
+			squashtm.popup.create(params);
+			$("#rename-cuf-popup").bind("dialogopen",function(event, ui) {
+				var name = $.trim($('#cuf-name-header').text());
+				$("#rename-cuf-input").val($.trim(name));
 			});
-		}
+			
+		},
+		closeRenamePopup : function() {$( this ).data("answer","cancel");
+											$( this ).dialog( 'close' );},
+		
 	});
 	return CustomFieldModificationView;
 });

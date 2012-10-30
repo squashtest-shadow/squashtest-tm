@@ -34,16 +34,19 @@
   		cfMod : {
   			backUrl : /*[[ @{/administration/custom-fields} ]]*/"http://localhost:8080/administration/custom-fields",
   			customFieldUrl : /*[[@{/custom-fields/${customField.id}}]]*/"http://localhost:8080/custom-fields/1",
-  			inputTypes : /*${inputTypes}*/ {PLAIN_TEXT: "Plain text", CHECKBOX: "Checkbox", DROPDOXN_LIST: "Dropdown list"},
   			richEditPlaceHolder: /*[[#{rich-edit.placeholder}]]*/ '(Click to edit ...)',
   			okLabel: /*[[ #{label.Ok} ]]*/ 'Ok',
-			cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
+			cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Cancel',
+			informationPanelLabel: /*[[#{label.CUFInformation}]]*/ 'Custom-Field informations',
+			ckeditorLang: /*[[#{rich-edit.language.value}]]*/ 'en',
+			renameLabel: /*[[#{label.rename}]]*/ 'Rename',
+			renameCufTitle: /*[[#{title.renameCuf}]]*/ 'Rename custom-field',
   		},
   		projectFilterConf: {
 			url: /*[[ @{/global-filter/filter} ]]*/ '/global-filter/filter',
 			title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
 			confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
-			cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
+			cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Cancel',
 		}, 
 		menuBarConf: {
     		boxSelector: "#menu-toggle-filter-ckbox",
@@ -108,32 +111,33 @@
 				</h2>
 			</div>
 			<div style="float: right;">
-				<input id="back" type="button" value="BACK" />
+				<input id="back" type="button" th:value="#{ label.Back }" value="Back"/>
 			</div>
 			<div style="clear: both;"></div>
-				
 		</div>
+		
 		<div class="fragment-body" >
-			<div class="toggle-panel">
+			<div id="cuf-toolbar" class="toolbar-class ui-corner-all unstyled">
+				<div class="toolbar-button-panel">
+					<input type="button" th:value="#{ label.Rename }" value="Rename" id="rename-cuf-button"
+								class="button"/>
+					<input type="button" th:value="#{ label.Delete }" value="Delete" id="delete-cuf-button"
+								class="button"/>
+						
+				</div>
+			</div>
+			<br>
+			<br>
+			<div class="toggle-panel unstyled">
 				<span class="not-displayed toogle-panel-buttons"></span>
 				<div id="cuf-info-panel"  class="information-panel toggle-panel-main">
 					<div class="display-table" id="cuf-infos-table">
-						<div class="display-table-row">
-							<label for="cuf-name" th:text="#{label.Name}">Name</label>
-							<div id="cuf-name" class="display-table-cell" th:text="${customField.name}">the name</div>
-							 <span class="error">&nbsp;</span>
-						</div>
 						<div class="display-table-row">
 							<label for="cuf-label" th:text="#{label.Label}">Label</label>
 							<div id="cuf-label" class="display-table-cell" th:text="${customField.label}">the label</div>
 							 <span class="error">&nbsp;</span>
 						</div>
-						<div class="display-table-row">
-							<label for="cuf-default-value" th:text="#{label.DefaultValue}">Default value</label>
-							<div id="cuf-default-value" class="display-table-cell" th:text="${customField.defaultValue}">the default-value</div>
-							 <span class="error">&nbsp;</span>
-						</div>
-						  <div class="display-table-row">
+						 <div class="display-table-row">
 						 	<label for="inputType" th:text="#{label.inputType}">Input Type</label>
 						 	<div id="cuf-inputType" class="display-table-cell" th:text="#{${customField.inputType.i18nKey}}">Plain text</div>
       					</div>
@@ -143,11 +147,24 @@
 				        	<input id="cf-optional" name="optional" value="optional" type="checkbox" th:field="${customField.optional}"/>
 				        	<span class="error">&nbsp;</span>
 				      	</div>
+				      	<div class="display-table-row">
+							<label for="cuf-default-value" th:text="#{label.DefaultValue}">Default value</label>
+							<div id="cuf-default-value" class="display-table-cell" th:text="${customField.defaultValue}">the default-value</div>
+							 <span class="error">&nbsp;</span>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
    	</div>
    	</div>
+   	<div id="rename-cuf-popup" class="popup-dialog">
+			<label th:text="#{ label.Rename }">Rename</label>
+			<input type="text" id="rename-cuf-input" maxlength="255" size="50" />
+			<br />
+			<span class="error-message name-error"></span>
+</div>
+
+
 </body>
 </html>

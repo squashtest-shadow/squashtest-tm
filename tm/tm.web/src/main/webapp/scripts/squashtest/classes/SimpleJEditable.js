@@ -19,30 +19,37 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+define([ "jquery", "jquery.squash.jeditable" ], function($) {
 
-function SimpleJEditable(settings) {
-	var language = settings.language;
-	var targetUrl = settings.targetUrl;
-	var componentId = settings.componentId;	
-	var component = $( '#'+componentId );
-	var txt = component.text();
-	component.text($.trim(txt));
-	
-	var defaultSettings = {
-			type: 'text',												
-			cols: 80,
-			max_size: 20,
-			placeholder: language.richEditPlaceHolder,
-			submit: language.okLabel,
-			cancel: language.cancelLabel,
-			onblur : function(){},//this disable the onBlur handler, which would close the jeditable 
-			//when clicking in the rich editor (since it considers the click as			
-			//out of the editing zone)
-			indicator : '<img src='+squashtm.app.contextRoot+'/scripts/jquery/indicator.gif" alt="processing..." />' ,
+	var SimpleJEditable = function(settings) {
+		var language = settings.language;
+		var targetUrl = settings.targetUrl;
+		var componentId = settings.componentId;
+		var component = $('#' + componentId);
+		var txt = component.text();
+		component.text($.trim(txt));
+
+		var defaultSettings = {
+			type : 'text',
+			cols : 80,
+			max_size : 20,
+			placeholder : language.richEditPlaceHolder,
+			submit : language.okLabel,
+			cancel : language.cancelLabel,
+			onblur : function() {
+			},// this disable the onBlur handler, which would close the
+				// jeditable
+			// when clicking in the rich editor (since it considers the click as
+			// out of the editing zone)
+			indicator : '<img src=' + squashtm.app.contextRoot
+					+ '/scripts/jquery/indicator.gif" alt="processing..." />',
+		};
+
+		var effectiveSettings = $.extend(true, {}, settings.jeditableSettings,
+				defaultSettings);
+		this.instance = $(component).editable(targetUrl, effectiveSettings)
+				.addClass("editable");
+
 	};
-	
-	var effectiveSettings = $.extend(true, {},  settings.jeditableSettings, defaultSettings);
-	this.instance =  $(component).editable( targetUrl, effectiveSettings).addClass("editable");
-	
-	
-}
+	return SimpleJEditable;
+});

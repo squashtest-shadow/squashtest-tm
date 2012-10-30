@@ -22,32 +22,42 @@
 /**
  * Must specify one of the following : 
  * ================================
- *settings.jeditableSettings.jsonData = string representing the json formated data displayed in the select. Either jsonData or 
- *															jsonUrl must be defined.
- *settings.jeditableSettings.jsonUrl = url where to fetch json formated data displayed in the select. Either jsonData or 
- *															jsonUrl must be defined.
-**/															
-function SelectJEditable(settings) {
-	var language = settings.language;
-	var targetUrl = settings.targetUrl;
-	var componentId = settings.componentId;	
-	var component = $( '#'+componentId );
-	var txt = component.text();
-	component.text($.trim(txt));
-	
-	var defaultSettings = {
-			type: 'select',	
-			placeholder: language.richEditPlaceHolder,
-			submit: language.okLabel,
-			cancel: language.cancelLabel,
-			onblur : function(){},//this disable the onBlur handler, which would close the jeditable 
-			//when clicking in the rich editor (since it considers the click as			
-			//out of the editing zone)
-			indicator : '<img src='+squashtm.app.contextRoot+'/scripts/jquery/indicator.gif" alt="processing..." />' ,
+ * settings.jeditableSettings.jsonData = string representing the json formated
+ * data displayed in the select. Either jsonData or jsonUrl must be defined.
+ * 
+ * settings.jeditableSettings.jsonUrl = url where to fetch json formated data
+ * displayed in the select. Either jsonData or jsonUrl must be defined.
+ */
+
+define([ "jquery", "jquery.squash.jeditable" ], function($) {
+
+	var SelectJEditable = function(settings) {
+		var language = settings.language;
+		var targetUrl = settings.targetUrl;
+		var componentId = settings.componentId;
+		var component = $('#' + componentId);
+		var txt = component.text();
+		component.text($.trim(txt));
+
+		var defaultSettings = {
+			type : 'select',
+			placeholder : language.richEditPlaceHolder,
+			submit : language.okLabel,
+			cancel : language.cancelLabel,
+			onblur : function() {
+			},// this disable the onBlur handler, which would close the
+				// jeditable
+			// when clicking in the rich editor (since it considers the click as
+			// out of the editing zone)
+			indicator : '<img src=' + squashtm.app.contextRoot
+					+ '/scripts/jquery/indicator.gif" alt="processing..." />',
+		};
+
+		var effectiveSettings = $.extend(true, {}, settings.jeditableSettings,
+				defaultSettings);
+		this.instance = $(component).editable(targetUrl, effectiveSettings)
+				.addClass("editable");
+
 	};
-	
-	var effectiveSettings = $.extend(true, {},  settings.jeditableSettings, defaultSettings);
-	this.instance =  $(component).editable( targetUrl, effectiveSettings).addClass("editable");
-	
-	
-}
+	return SelectJEditable;
+});
