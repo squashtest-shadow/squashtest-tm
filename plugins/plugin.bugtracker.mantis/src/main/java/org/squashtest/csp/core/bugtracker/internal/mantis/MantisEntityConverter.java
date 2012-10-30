@@ -22,6 +22,7 @@ package org.squashtest.csp.core.bugtracker.internal.mantis;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -71,15 +72,24 @@ public final class MantisEntityConverter {
 	}
 
 	public static List<BTProject> mantis2SquashProject(ProjectData[] mantisProjects){
-		List<BTProject> projects = new LinkedList<BTProject>();
-
-		for (ProjectData mpd : mantisProjects){
-			String id = mantis2SquashId(mpd.getId());
-			String name = mpd.getName();
-			projects.add(new BTProject(id, name));
+		
+		if ((mantisProjects==null) || (mantisProjects.length==0)){
+			return Collections.emptyList();
 		}
-
-		return projects;
+		else{
+			List<BTProject> projects = new LinkedList<BTProject>();
+	
+			for (ProjectData mpd : mantisProjects){
+				String id = mantis2SquashId(mpd.getId());
+				String name = mpd.getName();
+				projects.add(new BTProject(id, name));
+				
+				//also remember to add its subprojects
+				projects.addAll(mantis2SquashProject(mpd.getSubprojects()));
+			}
+		
+			return projects;
+		}
 	}
 
 	/***
