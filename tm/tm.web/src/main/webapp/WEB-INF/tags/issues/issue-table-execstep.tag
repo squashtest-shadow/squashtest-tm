@@ -190,6 +190,7 @@
 			<th style="cursor:pointer">${interfaceDescriptor.tableIssueIDHeader}</th>
 			<th>${interfaceDescriptor.tableSummaryHeader}</th>
 			<th>${interfaceDescriptor.tablePriorityHeader}</th>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>

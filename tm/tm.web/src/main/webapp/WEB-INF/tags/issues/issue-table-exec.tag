@@ -222,6 +222,7 @@
 			<th>${interfaceDescriptor.tableStatusHeader}</th>
 			<th>${interfaceDescriptor.tableAssigneeHeader}</th>
 			<th>${interfaceDescriptor.tableReportedInHeader}</th>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
