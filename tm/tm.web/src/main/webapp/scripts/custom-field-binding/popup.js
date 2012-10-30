@@ -68,13 +68,24 @@ define(["require", "./models", "jquery.squash" ], function(require, Model){
 		squashtm.popup.create(params);
 		
 		popup.postSuccessListeners = [];
+
 		
-		
-		// ************* private attributes /  methods ***********
+		// ************* private attributes ************************
 		
 		var lineTemplate = popup.find(".row-template-holder tr");
+		
 		var table = popup.find("table");
 
+
+		// ************* private methods ***************************
+		
+		var rowHandleClick = function(evt){
+			var chkbx = $(this).find('td:first input');
+			if (! chkbx.is(evt.target)){
+				chkbx.click();
+			}
+		};
+		
 		var reset = function(){
 			table.find("tbody").empty();			
 		};
@@ -86,18 +97,18 @@ define(["require", "./models", "jquery.squash" ], function(require, Model){
 			
 			for (i=0;i<json.length;i++){
 				var data = json[i];
-				var newLine = lineTemplate.clone();
+				var newLine = lineTemplate.clone(true);
 				var tds = newLine.find("td");
 				
 				tds.eq(0).prop("id", data.id);
 				tds.eq(1).text(data.name);
 				tds.eq(2).text(data.inputType.friendlyName);
 				tds.eq(3).text(data.friendlyOptional);
-				tds.eq(4).text(data.id);
 				
 				rows = rows.add(newLine);
 			}
 
+			rows.click(rowHandleClick);
 			tbody.append(rows);
 		};
 		

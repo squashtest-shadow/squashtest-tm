@@ -21,14 +21,6 @@
 requirejs.config({
 	
 	packages : ["custom-field-binding"],
-	/*packages : [
-		{
-            name: "custom-field-binding",
-            main: "main",
-            location : "http://localhost/scripts/custom-field-binding"
-        }
-	],*/
-	
 	
 	/*
 	 * rules for paths naming : * third party lib : unversionned lib

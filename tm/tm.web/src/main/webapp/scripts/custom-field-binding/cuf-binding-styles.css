@@ -19,34 +19,47 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.cuf-binding-popup table thead td{
+
+.cuf-binding-popup thead tr{
+	line-height : 17px;	
+}
+
+.cuf-binding-popup tbody tr{
+	line-height:20px;	
+}
+
+
+.cuf-binding-popup table td{
 	text-align : center;
 }
 
-.cuf-binding-popup table tbody td{
-	text-align : center;
+
+
+.cuf-binding-popup .strong-header{
+	box-shadow: 2px 2px 5px #888888;
+	-moz-box-shadow : 2px 2px 5px #888888;
+	-webkit-box-shadow : 2px 2px 5px #888888;
+	background-color : #FBFBFB;
+	border-bottom-style : solid;
+	border-bottom-width : 1px;
+	border-bottom-color : #A0A0A0;
+	/*background-image: linear-gradient(-65deg, #F0F0F0 85%, #A0A0A0 100%);
+	background-image: -o-linear-gradient(-65deg, #F0F0F0 85%, #A0A0A0 100%);
+	background-image: -moz-linear-gradient(-65deg, #F0F0F0 85%, #A0A0A0 100%);
+	background-image: -webkit-linear-gradient(-65deg, #F0F0F0 85%, #A0A0A0 100%);
+	background-image: -ms-linear-gradient(-65deg, #F0F0F0 85%, #A0A0A0 100%);*/
 }
 
-.cuf-binding-popup .th-id, .cuf-binding-popup .td-id{
-	display:none;
+.cuf-binding-popup tbody td{
+	cursor : pointer;
 }
-
 
 .cuf-binding-popup .row-template-holder{
 	display : none;
 }
 
-
-.cuf-binding-popup tr{
-	line-height:20px;	
-}
-
-.cuf-binding-popup table{
-	border-collapse : collapse;	
-}
-
-.cuf-binding-popup thead td{
-	border-bottom : 1px solid black;
+.cuf-binding-popup tbody tr:hover{
+	background-color : #F2F2F2;
 }
 
 /*
