@@ -270,5 +270,44 @@
 		<dropColumn tableName="CAMPAIGN" columnName="ATTACHMENT_LIST_ID"/>
 		<dropColumn tableName="REQUIREMENT_VERSION" columnName="ATTACHMENT_LIST_ID"/>
 	</changeSet>
+	
+	<changeSet id="tm-1.4.0.feat-1392.01" author="bsiri">
+		
+		<comment>
+			The table CUSTOM_FIELD_VALUE holds instances of a CUSTOM_FIELD that are bound to instances of : 
+			test cases, requirement version, campagnes, iterations and test suites. A custom field value is created 
+			when a custom field binding is created or an entity subject to an existing custom field binding is created. 
+			A custom field value is destroyed when the bound entity instance is destroyed or the custom field binding 
+			is destroyed.			
+						
+			Note that in this table the coupling between the custom field value and the bound entity is week : it consists of a pair
+			of Type/ID (BINDABLE_ENTITY and BINDABLE_ENTITY_ID) rather than a foreign key to the said entity, nor is true 
+			the opposite ( ie no FK from a test case to a custom field value). 	
+		</comment>
+		
+		<createTable tableName="CUSTOM_FIELD_VALUE">
+		
+			<column name="CFV_ID" type="BIGINT" autoIncrement="true" remarks="technical id">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="pk_custom_field_value"/>
+			</column>
+			
+			<column name="BOUND_ENTITY_ID" type="BIGINT" remarks="the id of the bound entity">
+				<constraints nullable="false"/>
+			</column>  
+			
+			<column name="BOUND_ENTITY" type="VARCHAR(30)" remarks="the kind of entity. Note that this information is also contained by the
+																	custom field binding.">
+				<constraints nullable="false"/>													
+			</column>
+		
+			<column name="CFB_ID" type="BIGINT" remarks="the custom field binding that holds all the data">
+				<constraints nullable="false" foreignKeyName="fk_cfv_cf_binding" references="CUSTOM_FIELD_BINDING(CFB_ID)"/>
+			</column>
+		
+			<column name="VALUE" type="VARCHAR(255)" remarks="the value of that particular custom field value"/>
+		
+		</createTable>
+	
+	</changeSet>
 </databaseChangeLog>
  
