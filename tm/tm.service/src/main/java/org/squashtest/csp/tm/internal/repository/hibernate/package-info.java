@@ -243,6 +243,13 @@
 		@NamedQuery(name = "CustomFielBinding.updateBindingPosition", query="update CustomFieldBinding cfb set cfb.position = :newPos where cfb.id = :id"),
 		@NamedQuery(name = "CustomFieldBinding.findAllAlike", query="select cfb2 from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.id = ? and cfb1.boundProject = cfb2.boundProject and cfb1.boundEntity = cfb2.boundEntity order by cfb2.position"),
 
+		
+		//CustomFieldValue dao
+		@NamedQuery(name = "CustomFieldValue.findAllCustomValues", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityKey.id = ? and cfv.boundEntityKey.type = ? order by cfb.position asc"),
+		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesForEntityKey", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityKey = ? order by cfb.position asc"),
+		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBinding" , query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id = ? order by cfb.position asc"),
+		
+		
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
 		@NamedQuery(name = "testCase.findAllAttachmentLists", query = "select testCase.attachmentList.id from TestCase testCase where testCase.id in (:testCaseIds)"),

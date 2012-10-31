@@ -45,12 +45,15 @@ import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+import org.squashtest.csp.tm.domain.customfield.BoundEntity;
+import org.squashtest.csp.tm.domain.customfield.BoundEntityKey;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Auditable
 @Entity
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
-public class TestSuite implements Identified{
+public class TestSuite implements Identified, BoundEntity{
 
 	public TestSuite() {
 		super();
@@ -356,6 +359,11 @@ public class TestSuite implements Identified{
 				+ id + ']');
 	}
 
+	// ***************** (detached) custom field section *************
 	
+	@Override
+	public BoundEntityKey getBoundEntityKey() {
+		return new BoundEntityKey(getId(), BindableEntity.TEST_SUITE);
+	}
 
 }

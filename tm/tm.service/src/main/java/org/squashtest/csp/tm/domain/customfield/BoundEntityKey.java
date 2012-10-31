@@ -20,45 +20,84 @@
  */
 package org.squashtest.csp.tm.domain.customfield;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 
 @Embeddable
-public class BindableEntityInstance {
+public class BoundEntityKey {
 
-	private Long boundEntityId;
+	@Column(name="BOUND_ENTITY_ID")
+	private Long id;
 	
 	@Enumerated(EnumType.STRING)
-	private BindableEntity boundEntity;
+	@Column(name="BOUND_ENTITY_TYPE")
+	private BindableEntity type;
 
 	
-	public BindableEntityInstance(){
+	public BoundEntityKey(Long id, BindableEntity type) {
 		super();
+		this.id = id;
+		this.type = type;
+	}
+
+
+	public BoundEntityKey(){
+		super();
+	}
+
+
+	public Long getId() {
+		return id;
+	}
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+
+	public BindableEntity getType() {
+		return type;
+	}
+
+
+	public void setType(BindableEntity type) {
+		this.type = type;
+	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BoundEntityKey other = (BoundEntityKey) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (type != other.type)
+			return false;
+		return true;
 	}
 		
-	public BindableEntityInstance(Long boundEntityId,
-			BindableEntity boundEntity) {
-		super();
-		this.boundEntityId = boundEntityId;
-		this.boundEntity = boundEntity;
-	}
 
-	public Long getBoundEntityId() {
-		return boundEntityId;
-	}
-	
-	public void setBoundEntityId(Long boundEntityId) {
-		this.boundEntityId = boundEntityId;
-	}
-	
-	public BindableEntity getBoundEntity() {
-		return boundEntity;
-	}
-	
-	public void setBoundEntity(BindableEntity boundEntity) {
-		this.boundEntity = boundEntity;
-	}
 	
 }

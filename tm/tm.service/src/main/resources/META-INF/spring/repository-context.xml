@@ -165,5 +165,12 @@
 		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.customfield.CustomFieldBinding" />
 	</bean>		
+	
+	<bean id="customFieldValueDao" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicDaoFactoryBean">
+		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.CustomFieldValueDao" />
+		<property name="entityType" value="org.squashtest.csp.tm.domain.customfield.CustomFieldValue" />
+	</bean>		
+	
+	
 </beans>
 

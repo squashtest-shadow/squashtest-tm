@@ -295,7 +295,7 @@
 				<constraints nullable="false"/>
 			</column>  
 			
-			<column name="BOUND_ENTITY" type="VARCHAR(30)" remarks="the kind of entity. Note that this information is also contained by the
+			<column name="BOUND_ENTITY_TYPE" type="VARCHAR(30)" remarks="the kind of entity. Note that this information is also contained by the
 																	custom field binding.">
 				<constraints nullable="false"/>													
 			</column>

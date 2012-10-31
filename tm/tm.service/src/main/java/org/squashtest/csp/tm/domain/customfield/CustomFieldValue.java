@@ -37,7 +37,7 @@ public class CustomFieldValue {
 	private Long id;
 	
 	@Embedded
-	private BindableEntityInstance boundEntityInstance;
+	private BoundEntityKey boundEntityKey;
 
 	@ManyToOne
 	@JoinColumn(name="CFB_ID")
@@ -52,16 +52,6 @@ public class CustomFieldValue {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-
-	public BindableEntityInstance getBoundEntityInstance() {
-		return boundEntityInstance;
-	}
-
-
-	public void setBoundEntityInstance(BindableEntityInstance boundEntityInstance) {
-		this.boundEntityInstance = boundEntityInstance;
 	}
 
 
@@ -81,8 +71,21 @@ public class CustomFieldValue {
 	public void setBinding(CustomFieldBinding binding) {
 		this.binding = binding;
 	}
+
+	public BoundEntityKey getBoundEntityKey() {
+		return boundEntityKey;
+	}
+
+	public void setBoundEntityKey(BoundEntityKey boundEntityKey) {
+		this.boundEntityKey = boundEntityKey;
+	}
 	
-	
-	
+	public Long getBoundEntityId(){
+		return this.boundEntityKey.getId();
+	}
+
+	public BindableEntity getBoundEntityType(){
+		return this.boundEntityKey.getType();
+	}
 	
 }

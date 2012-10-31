@@ -25,7 +25,6 @@ import java.util.List;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 

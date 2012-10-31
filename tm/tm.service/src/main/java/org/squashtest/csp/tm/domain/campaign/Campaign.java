@@ -40,11 +40,14 @@ import javax.validation.constraints.NotNull;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+import org.squashtest.csp.tm.domain.customfield.BoundEntity;
+import org.squashtest.csp.tm.domain.customfield.BoundEntityKey;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
-public class Campaign extends CampaignLibraryNode {
+public class Campaign extends CampaignLibraryNode implements BoundEntity {
 	@Embedded
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
 	@Embedded
@@ -371,4 +374,10 @@ public class Campaign extends CampaignLibraryNode {
 	}
 		
 
+	// ***************** (detached) custom field section *************
+	
+	@Override
+	public BoundEntityKey getBoundEntityKey() {
+		return new BoundEntityKey(getId(), BindableEntity.CAMPAIGN);
+	}
 }

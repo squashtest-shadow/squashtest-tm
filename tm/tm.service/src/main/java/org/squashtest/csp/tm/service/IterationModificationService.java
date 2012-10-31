@@ -24,7 +24,6 @@ import java.util.Date;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 
 @Transactional
 public interface IterationModificationService extends CustomIterationModificationService {

@@ -53,6 +53,9 @@ import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+import org.squashtest.csp.tm.domain.customfield.BoundEntity;
+import org.squashtest.csp.tm.domain.customfield.BoundEntityKey;
 import org.squashtest.csp.tm.domain.exception.UnallowedTestAssociationException;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
@@ -64,7 +67,7 @@ import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
-public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
+public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity {
 	private static final String CLASS_NAME = "org.squashtest.csp.tm.domain.testcase.TestCase";
 	private static final String SIMPLE_CLASS_NAME = "TestCase";
 
@@ -406,6 +409,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder {
 
 	public boolean isAutomated() {
 		return (automatedTest != null && getProject().isTestAutomationEnabled());
+	}
+	
+	// ***************** (detached) custom field section *************
+	
+	@Override
+	public BoundEntityKey getBoundEntityKey() {
+		return new BoundEntityKey(getId(), BindableEntity.TEST_CASE);
 	}
 
 }

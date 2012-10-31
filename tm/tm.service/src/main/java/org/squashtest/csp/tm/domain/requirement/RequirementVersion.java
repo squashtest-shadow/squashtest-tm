@@ -44,6 +44,9 @@ import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+import org.squashtest.csp.tm.domain.customfield.BoundEntity;
+import org.squashtest.csp.tm.domain.customfield.BoundEntityKey;
 import org.squashtest.csp.tm.domain.resource.Resource;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
@@ -56,7 +59,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 @Entity
 @PrimaryKeyJoinColumn(name = "RES_ID")
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
-public class RequirementVersion extends Resource {
+public class RequirementVersion extends Resource implements BoundEntity {
 	/**
 	 * Collection of {@link Test Cases} verifying by this {@link Requirement}
 	 */
@@ -345,5 +348,12 @@ public class RequirementVersion extends Resource {
 		audit.setCreatedBy(memento.getCreatedBy());
 
 		return res;
+	}
+	
+	// ***************** (detached) custom field section *************
+	
+	@Override
+	public BoundEntityKey getBoundEntityKey() {
+		return new BoundEntityKey(getId(), BindableEntity.REQUIREMENT_VERSION);
 	}
 }

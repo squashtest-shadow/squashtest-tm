@@ -18,28 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.domain.customfield;
 
-import java.util.List;
+public interface BoundEntity {
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
-import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-
-@Transactional(readOnly = true)
-public interface IterationFinder {
-		
-	List<Iteration> findIterationsByCampaignId(long campaignId);
-
-	Iteration findById(long iterationId);
-
-	List<Execution> findAllExecutions(long iterationId);
-
-	List<Execution> findExecutionsByTestPlan(long iterationId, long testPlanId);
-
-	List<TestCase> findPlannedTestCases(long iterationId);
-	
-	TestPlanStatistics getIterationStatistics(long iterationId);
+	BoundEntityKey getBoundEntityKey();
 }
