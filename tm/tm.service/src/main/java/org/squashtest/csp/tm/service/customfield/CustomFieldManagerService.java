@@ -34,6 +34,7 @@ import org.squashtest.csp.tm.domain.customfield.CustomField;
  */
 @Transactional
 public interface CustomFieldManagerService extends CustomCustomFieldManagerService {
+	static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
 
 	/**
 	 * @param name
@@ -42,5 +43,12 @@ public interface CustomFieldManagerService extends CustomCustomFieldManagerServi
 	CustomField findByName(@NotNull String name);
 	
 	public CustomField findById(Long customFieldId);
+
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void changeLabel(Long customFieldId, String label);
+	
+	@PreAuthorize(HAS_ROLE_ADMIN)	
+	public void changeDefaultValue(Long customFieldId, String defaultValue);
+
 
 }

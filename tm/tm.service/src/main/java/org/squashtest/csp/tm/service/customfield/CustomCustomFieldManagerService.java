@@ -25,6 +25,9 @@ import javax.validation.constraints.NotNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
 
 /**
  * Custom-Field manager services which cannot be dynamically generated.
@@ -33,17 +36,61 @@ import org.squashtest.csp.tm.domain.customfield.CustomField;
  * 
  */
 @Transactional
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public interface CustomCustomFieldManagerService extends CustomFieldFinderService {
-	/**
+	/** 
 	 * Will delete the custom-field entity
 	 * 
 	 * @param customFieldId
 	 *            : the id of the custom field to delete
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void deleteCustomField(long customFieldId);
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void persist(@NotNull CustomField newCustomField);
 
+	/**
+	 * Will check if new name is available among all custom fields and, if so, will change the name of the concerned {@link CustomField}.
+	 * 
+	 * @param customFieldId
+	 *            the id of the concerned {@link CustomField}
+	 * @param newName
+	 *            the {@link CustomField} potential new name
+	 */
+	public void changeName(long customFieldId, String newName);
+
+	/**
+	 * Will change the optional attribute of the concerned {@link CustomField}<br>
+	 * If custom-field becomes mandatory, all necessary CustomFieldValues will be added. Otherwise, nothing special needs
+	 * to be done.
+	 *  
+	 * @param customFieldId
+	 *            the id of the concerned {@link CustomField}
+	 * @param optional
+	 *            : <code>true</code> if the custom-field changes to be optional<br>
+	 *            <code>false</code> if it changes to be mandatory
+	 */
+	public void changeOptional(Long customFieldId, Boolean optional);
+	
+
+	/**
+	 * Will check if the new label is available among all the concerned {@link CustomField}'s {@link CustomFieldOption}, 
+	 * if so, will change the label of the concerned custom-field's option.
+	 * 
+	 * @throws DuplicateNameException
+	 * @param customFieldId : the id of the concerned {@link CustomField}
+	 * @param optionLabel : the current {@link CustomFieldOption}'s label
+	 * @param newLabel : the potential new label for the concerned custom-field's option
+	 */
+	public void changeOptionLabel(Long customFieldId, String optionLabel, String newLabel);
+	
+	/**
+	 * Will check if the new option's label is available among all the concerned {@link CustomField}'s {@link CustomFieldOption},
+	 * if so, will add the new option at the bottom of the list.
+	 * 
+	 * @throws NameAlreadyInUseException
+	 * @param customFieldId : the id of the concerned {@link CustomField}
+	 * @param label : the label of the potential new option.
+	 */
+	public void addOption(Long customFieldId, String label);
 }

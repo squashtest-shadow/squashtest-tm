@@ -53,4 +53,12 @@ public interface CustomCustomFieldDao {
 	 * @return the number of custom fields
 	 */
 	long countCustomFields();
+	
+	/**
+	 * Will try to find the {@linkplain CustomField} of the given name.
+	 * @param name the name of the custom field
+	 * @return the {@linkplain CustomField} of the given name, or <code>null</code> if there is none of this name.
+	 */
+	CustomField findByName(String name);
+	
 }

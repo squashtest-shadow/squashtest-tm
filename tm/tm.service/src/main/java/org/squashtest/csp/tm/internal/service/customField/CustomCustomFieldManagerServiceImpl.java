@@ -24,9 +24,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao;
@@ -80,5 +81,40 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 			customFieldDao.persist(newCustomField);
 		}
 	}
+
+	@Override
+	public void changeName(long customFieldId, String newName) {
+		CustomField customField = customFieldDao.findById(customFieldId);
+		String oldName = customField.getName();
+		if(customFieldDao.findByName(newName) != null){
+			throw new DuplicateNameException(oldName, newName);
+		}else{
+			customField.setName(newName);
+		}
+		
+	}
+
+	@Override
+	public void changeOptional(Long customFieldId, Boolean optional) {
+		if(!optional){
+			//TODO add all necessary customFieldValues
+		}
+		CustomField customField = customFieldDao.findById(customFieldId);
+		customField.setOptional(optional);		
+	}
+
+	@Override
+	public void changeOptionLabel(Long customFieldId, String optionLabel, String newLabel) {
+			SingleSelectField customField = (SingleSelectField) customFieldDao.findById(customFieldId);
+			customField.changeOption(optionLabel, newLabel);
+	}
+
+	@Override
+	public void addOption(Long customFieldId, String label) {
+		SingleSelectField customField = (SingleSelectField) customFieldDao.findById(customFieldId);
+		customField.addOption(label);
+		
+	}
+
 
 }

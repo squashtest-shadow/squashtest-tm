@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2012 Henix, henix.fr
  *
@@ -18,11 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-require([ "common" ], function(common) {
-	require([ "jquery", "app/cf/CustomFieldModificationView","app/ws/squashtm.workspace", "domReady" ], function($,CustomFieldModificationView, WS, domReady) {
-		domReady(function() {
-			WS.init("");
-			var cfMod = new CustomFieldModificationView();
-		});
-	});
-});
+package org.squashtest.csp.tm.domain;
+
+import org.squashtest.tm.core.foundation.exception.ActionException;
+
+public class CannotDeleteDefaultOptionException extends ActionException {
+
+	
+	/**
+	 *TODO my eclipse could generate the serialVersionUID. thanks. mpagnon
+	 */
+	private static final long serialVersionUID = 1L;
+	private static final String CANNOT_DELETE_MESSAGE_KEY = "squashtm.action.exception.cannotDeleteDefaultOption";
+
+	public CannotDeleteDefaultOptionException(Exception ex) {
+		super(ex);
+	}
+
+	public CannotDeleteDefaultOptionException(String message) {
+		super(message);
+	}
+
+	public CannotDeleteDefaultOptionException() {
+
+	}
+
+	@Override
+	public String getI18nKey() {
+		return CANNOT_DELETE_MESSAGE_KEY;
+	}
+
+}

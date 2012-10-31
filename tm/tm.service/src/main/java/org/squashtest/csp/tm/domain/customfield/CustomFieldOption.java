@@ -20,9 +20,9 @@
  */
 package org.squashtest.csp.tm.domain.customfield;
 
-import org.hibernate.validator.constraints.NotBlank;
-
 import javax.persistence.Embeddable;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * Defines an option which can be selected among a list and set as a custom field's value.

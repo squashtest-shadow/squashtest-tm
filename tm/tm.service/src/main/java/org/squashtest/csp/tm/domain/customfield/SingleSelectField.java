@@ -34,6 +34,8 @@ import javax.persistence.OrderColumn;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.internal.validation.constraint.UniqueItems;
+import org.squashtest.csp.tm.domain.CannotDeleteDefaultOptionException;
+import org.squashtest.csp.tm.domain.DuplicateNameException;
 
 /**
  * A CustomField which stores a single option selected from a list.
@@ -50,25 +52,84 @@ public class SingleSelectField extends CustomField {
 	private List<CustomFieldOption> options = new ArrayList<CustomFieldOption>();
 
 	/**
-	 * Created a SingleSelectField with a 
+	 * Created a SingleSelectField with a
 	 */
 	public SingleSelectField() {
 		super(InputType.DROPDOWN_LIST);
 	}
-	
+
+	/**
+	 * Will check if label is available among the existing options. If so, will add the new option at the end of the
+	 * list. Else will throw a NameAlreadyInUseException.
+	 * 
+	 * @throws NameAlreadyInUseException
+	 * @param label
+	 *            the new option's label
+	 */
 	public void addOption(@NotBlank String label) {
-		options.add(new CustomFieldOption(label));
+		if (isAvailable(label)) {
+			options.add(new CustomFieldOption(label));
+		} else {
+			throw new DuplicateNameException(label);
+			//TODO change for NameAlreadyInUseException
+		}
 	}
-
+	/**
+	 * Checks first if the option is the default one. If so: throw a CannotDeleteDefaultOptionException
+	 * @param label
+	 */
 	public void removeOption(@NotBlank String label) {
+		if(defaultValue == label){
+			throw new CannotDeleteDefaultOptionException(label);
+		}
 		Iterator<CustomFieldOption> it = options.iterator();
-
 		while (it.hasNext()) {
 			if (label.equals(it.next().getLabel())) {
 				it.remove();
 				return;
 			}
 		}
+	}
+
+	/**
+	 * Checks if the newlabel is available among all options. <br> If so, will change the defaultValue if needed, remove the option and add a new one at the vacant position.
+	 * Else throws DuplicateNameException.
+	 * 
+	 * @param previousLabel
+	 * @param newlabel
+	 * @throws DuplicateNameException
+	 */
+	public void changeOption(@NotBlank String previousLabel, String newlabel) {
+		if (isAvailable(newlabel)) {
+			int index = findIndexOf(previousLabel);
+			if(defaultValue.equals(previousLabel)){
+				defaultValue = newlabel;
+			}
+			removeOption(previousLabel);
+			addOption(newlabel, index);
+		} else {
+			throw new DuplicateNameException(previousLabel, newlabel);
+		}
+	}
+
+	private boolean isAvailable(String newlabel) {
+		return findIndexOf(newlabel) == -1;
+	}
+
+	private void addOption(String newlabel, int index) {
+		options.add(index, new CustomFieldOption(newlabel));
+	}
+
+	private int findIndexOf(String previousLabel) {
+		Iterator<CustomFieldOption> it = options.iterator();
+
+		while (it.hasNext()) {
+			CustomFieldOption option = it.next();
+			if (previousLabel.equals(option.getLabel())) {
+				return options.indexOf(option);
+			}
+		}
+		return -1;
 	}
 
 	public List<CustomFieldOption> getOptions() {

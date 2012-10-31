@@ -98,7 +98,7 @@
         <h2 th:text="#{title.CustomFields}">Champs Personnalisé de tests</h2> 
       </div>
       <div class="snap-right">
-        <div class="main-menubar" th:include="menubar.frag :: menubar">
+        <div class="main-menubar " th:include="menubar.frag :: menubar">
           MENUBAR
         </div>
         <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">
@@ -106,7 +106,7 @@
         </div>
       </div>
     </div>
-    <div class="fragment-body">
+    <div class="fragment-body ">
     <div id="cf-table-pane">
       <input id="add-cf" type="button" class="sq-button snap-right" value="Add a custom field"
         th:value="#{label.CustomField.add}" />

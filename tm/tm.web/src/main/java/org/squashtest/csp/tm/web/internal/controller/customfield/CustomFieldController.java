@@ -21,8 +21,6 @@
 
 package org.squashtest.csp.tm.web.internal.controller.customfield;
 
-import java.util.List;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,9 +38,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.service.customfield.CustomFieldManagerService;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
@@ -85,9 +83,7 @@ public class CustomFieldController {
 	@RequestMapping(value="/{customFieldId}", method = RequestMethod.GET)
 	public String showCustomFieldModificationPage(@PathVariable Long customFieldId , Model model){
 		CustomField customField = customFieldManager.findById(customFieldId);
-		
 		model.addAttribute(CUSTOM_FIELD, customField);
-
 		return "custom-field-modification.html";
 	}
 
@@ -104,4 +100,81 @@ public class CustomFieldController {
 			return null;
 		}
 	}
+	
+	/**
+	 * Changes the label of the concerned custom field
+	 * @param customFieldId the id of the concerned custom field
+	 * @param label the new label
+	 * @return
+	 */
+	@RequestMapping(value="/{customFieldId}", method = RequestMethod.POST, params = {"id=cuf-label", "value"})
+	@ResponseBody
+	public void changeLabel(@PathVariable Long customFieldId , @RequestParam("value") String label){
+		customFieldManager.changeLabel(customFieldId, label);
+	}
+	
+	/**
+	 * Changes the name of the concerned custom field
+	 * @param customFieldId the id of the concerned custom field
+	 * @param name the new name
+	 * @return
+	 */
+	@RequestMapping(value="/{customFieldId}/name", method = RequestMethod.POST, params = { "value"})
+	@ResponseBody
+	public void changeName(@PathVariable Long customFieldId , @RequestParam("value") String name){
+		customFieldManager.changeName(customFieldId, name);
+	}
+	
+	/**
+	 * Changes the whether the custom-field is optional or not.
+	 * @param customFieldId the id of the concerned custom field
+	 * @param optional : true if the custom field is optional
+	 * @return
+	 */
+	@RequestMapping(value="/{customFieldId}/optional", method = RequestMethod.POST, params = { "value"})
+	@ResponseBody
+	public void changeOptional(@PathVariable Long customFieldId , @RequestParam("value") Boolean optional){
+		customFieldManager.changeOptional(customFieldId, optional);
+	}
+	
+	/**
+	 * Changes the default value of the concerned custom-field's option
+	 * 
+	 * @param customFieldId : the id of concerned custom-field
+	 * @param defaultValue : the new default-value for the custom-field
+	 */
+	@RequestMapping(value="/{customFieldId}", method = RequestMethod.POST, params = {"id=cuf-default-value", "value"})
+	@ResponseBody
+	public void changeDefaultValue(@PathVariable Long customFieldId , @RequestParam("value") String defaultValue){
+		customFieldManager.changeDefaultValue(customFieldId, defaultValue);
+	}
+	
+	/**
+	 * Changes the label of the concerned custom-field's option
+	 * 
+	 * @param customFieldId : the id of the concerned custom-field
+	 * @param optionLabel : the label of the concerned custom-field's option
+	 * @param newLabel : the new label for the concerned custom-field's option
+	 * @return
+	 */
+	@RequestMapping(value="/{customFieldId}/options/{optionLabel}/label", method = RequestMethod.POST, params = {"value"})
+	@ResponseBody
+	public void changeOptionLabel(@PathVariable Long customFieldId , @PathVariable String optionLabel ,@RequestParam("value") String newLabel){
+		customFieldManager.changeOptionLabel(customFieldId, optionLabel, newLabel);
+	}
+	
+	/**
+	 * Adds an option to the concerned custom-field
+	 * 
+	 * @param customFieldId : the id of the concerned custom-field
+	 * @param label: the label of the new option
+	 */
+	@RequestMapping(value="/{customFieldId}/options/new", method = RequestMethod.POST, params = {"value"})
+	@ResponseBody
+	public void addOption(@PathVariable Long customFieldId, @RequestParam("value") String label){
+		customFieldManager.addOption(customFieldId, label);
+	}
+	
+	
+	
 }
