@@ -111,19 +111,26 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 				"click #add-cf": "showNewCfPanel"
 			}, 
 			showNewCfPanel: function(event) {
-				var self = this;
+				var self = this, 
+					showButton = event.target; 
 
-				var discard = function() {
-					self.newCfPanel.off("cancel confirm");
+				function discard() {
+					self.newCfPanel.off("newcustomfield.cancel newcustomfield.confirm");
 					self.newCfPanel.undelegateEvents();
 					self.newCfPanel = null;				
-					$(event.target).button("enable");
+					$(showButton).button("enable");
 					self.table.squashTable().fnDraw();
-				};
+				}
 				
+				function discardAndRefresh() {
+					discard();
+					self.table.squashTable().fnDraw();
+				}
+
 				$(event.target).button("disable");
 				self.newCfPanel = new NewCustomFieldPanelView({ model: new NewCustomFieldModel() });
-				self.newCfPanel.on("cancel confirm", discard);
+				self.newCfPanel.on("newcustomfield.cancel", discard);
+				self.newCfPanel.on("newcustomfield.confirm", discardAndRefresh);
 			}
 		});
 		return CustomFieldTableView;

@@ -59,8 +59,8 @@ define([ "jquery", "backbone" ], function($, Backbone) {
 			if (pos > -1) {
 				options.splice(pos, 1);
 			}
-		},
-		validate : function(attrs) {
+		}
+		/*validate : function(attrs) {
 			if (!attrs.optional) {
 				var val = attrs.defaultValue;
 
@@ -70,7 +70,7 @@ define([ "jquery", "backbone" ], function($, Backbone) {
 					};
 				}
 			}
-		}
+		}*/
 	});
 
 	return NewCustomFieldModel;

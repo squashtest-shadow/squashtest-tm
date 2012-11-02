@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF" ], function($, Backbone, Handlebars, SD) {
+define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "jquery.squash.confirmdialog" ], 
+		function($, Backbone, Handlebars, SD) {
 	/*
 	 * Defines the controller for the new custom field panel.
 	 */
@@ -39,8 +40,10 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF" ], fu
 			this.$("input:button").button();
 
 			this.render();
-			this.$el.removeClass("not-displayed");
+			this.$el.confirmDialog({autoOpen: true});
+			
 		}, 
+		
 		render: function() {
 			var inputType = this.model.get("inputType");
 			var source   = $("#" + this.model.get("inputType") + "-default-tpl").html();
@@ -52,26 +55,30 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF" ], fu
 			}
 			return this;
 		},
+
 		events: {
 			// textboxes with class .strprop are bound to the model prop which name matches the textbox name
 			"change input:text.strprop": "changeStrProp", 
 			"change select.optprop": "changeOptProp", 
 			"change select[name='inputType']": "changeInputType", 
 			"click input:checkbox[name='optional']": "changeOptional",
-			"click .cancel": "cancel",
-			"click .confirm": "confirm", 
+			"confirmdialogcancel": "cancel",
+			"confirmdialogconfirm": "confirm", 
 			"click .add-option": "addOption", 
 			"click .remove-row>button": "removeOption", 
 			"click .is-default>input:checkbox": "changeDefaultOption" 
 		},
+
 		changeStrProp: function(event) {
 			var textbox = event.target;
 			this.model.set(textbox.name, textbox.value);
 		},
+	
 		changeOptProp: function(event) {
 			var option = event.target;
 			this.model.set(option.name, option.value);
 		},
+
 		changeInputType: function(event) {
 			var model = this.model;
 
@@ -81,22 +88,36 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF" ], fu
 			this.render();
 
 		},
+		
 		changeOptional: function(event) {
 			this.model.set("optional", event.target.checked);
 		},
 
 		cancel: function(event) {
 			this.cleanup();
-			this.trigger("cancel");
+			this.trigger("newcustomfield.cancel");
 		},
+		
 		confirm: function(event) {
-			console.log(this.model.save());
+			this.model.save(null, {
+				success: function() {
+					console.log("save successfull");
+					console.log(arguments);
+				}, error: function() { 
+					console.log("save failed");
+					console.log(arguments);
+				}
+			});
+			
 			this.cleanup();
-			this.trigger("confirm");
+			this.trigger("newcustomfield.confirm");
 		}, 
+		
 		cleanup: function() {
 			this.$el.addClass("not-displayed");
+			this.$el.confirmDialog("destroy");
 		},
+		
 		renderOptionsTable: function() {
 			this.optionsTable = this.$("#options-table");
 			this.optionsTable.dataTable({
@@ -126,22 +147,61 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF" ], fu
 			this.$("input:button").button();
 
 		}, 
+		
 		addOption: function() {
-			var optionInput = this.$("input[name='new-option']"), 
-				errorSpan = this.$("#new-option-error");
+			var optionInput = this.optionInput(), 
+				option = optionInput.value;
 			
-			var option = optionInput.val();
+			optionInput.errorSpan.hide().removeClass("not-visible");
 
 			if (this.model.addOption(option)) {
 				this.optionsTable.dataTable().fnAddData([ option, false, "" ]);
-				optionInput.val("");
-				errorSpan.hide();
+				optionInput.clearMessage();
+				optionInput.$.val("");
 				
 			} else {
-				errorSpan.fadeIn("slow", function() { $(this).removeClass("not-displayed"); });
+				optionInput.showMessage("error", "message.optionAlreadyDefined");
 				
 			}
-		}, 
+		},
+		
+		optionInput: function() {
+			var optionInput = this.$("input[name='new-option']"), 
+			optionGroup = optionInput.closest(".control-group"),
+			errorSpan = optionInput.parent(".controls").find(".help-inline"),
+			option = optionInput.val();
+
+			function clearMessage() {
+				errorSpan.html("&nbsp;");
+				optionGroup.removeClass("error warning");
+			}
+			
+			function showMessage(clazz, messageKey) {
+				optionGroup.addClass(clazz);
+				errorSpan.html(squashtm.app.cfMessages[messageKey]);
+				errorSpan.fadeIn("slow", function() { $(this).removeClass("not-displayed"); });
+				
+				return  {
+					fadeOut: fadeOut
+				};
+			}
+			
+			function fadeOut() {
+				errorSpan.delay(20000).fadeOut('slow', function() {
+					clearMessage();
+				});
+				
+			}
+
+			return  {
+				$: optionInput, 
+				errorSpan: errorSpan, 
+				value: option, 
+				clearMessage: clearMessage,
+				showMessage: showMessage
+			};
+		},
+		
 		removeOption: function(event) {
 			// target of click event is a <span> inside of <button>, so we use currentTarget
 			var button = event.currentTarget, 
@@ -152,16 +212,24 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF" ], fu
 			this.optionsTable.dataTable().fnDeleteRow(row);
 			
 		},
+		
 		changeDefaultOption: function(event) {
 			var checkbox = event.currentTarget, 
 				option = checkbox.value,
 				defaultValue = checkbox.checked ? option : "", 
 				uncheckSelector = ".is-default>input:checkbox" + (checkbox.checked ? "[value!='" + option + "']" : "");
-						
+			
+			if (this.model.get("optional") === false && checkbox.checked === false) {
+				event.preventDefault();
+				this.optionInput().showMessage("warning", "message.defaultOptionMandatory").fadeOut();
+				return;
+			}
+			
 			this.model.set("defaultValue", defaultValue);				
 			this.optionsTable.find(uncheckSelector).attr("checked", false);
 			
 		},
+		
 		/**
 		 * returns the function which should be used as a callback.
 		 */
@@ -183,6 +251,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF" ], fu
 				defaultCell.html(template(tplData));
 			};
 		}, 
+		
 		decorateOptionsTable: function() {
 			SD.deleteButton($(this).find(".remove-row>button"));
 		}
