@@ -20,23 +20,32 @@
  */
 package org.squashtest.csp.tm.domain;
 
+import org.squashtest.csp.tm.internal.service.customField.NameAlreadyInUseException;
+
+/**
+ * /!\ This exception is used both for renaming clashes and new entity name clash. 
+ * You should favor the use of {@link NameAlreadyInUseException} for new entities 
+ *
+ */
 public class DuplicateNameException extends DomainException {
+	/**
+	 * 
+	 */
+	private static final String NAME = "name";
 	private static final long serialVersionUID = 2815263509542519285L;
 	
 	// note : this exception always reports an error on the name, hence the setField("name");
 
 	public DuplicateNameException(String oldName, String newName) {
-		this("Cannot create/rename " + oldName + " : " + newName + " already exists within the same container");
+		this("Cannot rename " + oldName + " : " + newName + " already exists within the same container");
 	}
 
 	public DuplicateNameException() {
-		super();
-		setField("name");
+		super(NAME);
 	}
 
 	public DuplicateNameException(String message) {
-		super(message);
-		setField("name");
+		super(message, NAME);
 	}
 	
 	@Override

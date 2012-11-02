@@ -70,8 +70,7 @@ public class HandlerDomainExceptionResolver extends
 
 	private List<FieldValidationErrorModel> buildFieldValidationErrors(DomainException dex, Locale locale ) {
 		List<FieldValidationErrorModel> ves = new ArrayList<FieldValidationErrorModel>();
-		String key = dex.getI18nKey();
-		String message = messageSource.getMessage(key, null, locale);
+		String message = messageSource.getMessage(dex.getI18nKey(), dex.getI18nParams(), locale);
 		ves.add(new FieldValidationErrorModel(dex.getObjectName(), dex.getField(), message));
 
 		return ves;

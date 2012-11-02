@@ -42,6 +42,10 @@
 			deleteConfirmMessage : /*[[ #{message.customField.remove} ]]*/ 'Remove',
 			customFieldUrl : /*[[ @{/custom-fields} ]]*/ "http://localhost:8080/squash/custom-fields",
   		},
+		cfMessages: {
+			"message.optionAlreadyDefined": /*[[ #{message.optionAlreadyDefined} ]]*/ "Option is already defined", 
+			"message.defaultOptionMandatory": /*[[ #{message.defaultOptionMandatory} ]]*/ "Default option is mandatory when field is not optional", 
+		},
   		projectFilterConf: {
 			url: /*[[ @{/global-filter/filter} ]]*/ '/global-filter/filter',
 			title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
@@ -116,7 +120,7 @@
               <th th:text="#{label.Label}">Label</th>
               <th class="not-displayed">Raw type</th>
               <th th:text="#{label.inputType}">Type</th>
-               <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -143,81 +147,104 @@
       </div>
     </div>
     
-    <div id="new-cf-pane" class="not-displayed">
-      <h2 th:text="#{title.newCustomField}">New Custom field</h2>
-      <div>
-        <label for="name" th:text="#{label.Name}">Name</label>
-        <input name="name" class="strprop" value="" size="50" maxlength="255" type="text" />
-        <span class="error">&nbsp;</span>
-      </div>
-      <div>
-        <label for="label" th:text="#{label.Label}">Label</label>
-        <input name="label" class="strprop" value="" size="50" maxlength="255" type="text" />
-        <span class="error">&nbsp;</span>
-      </div>
-      <div>
-        <label for="inputType" th:text="#{label.inputType}">Type</label>
-        <select name="inputType" th:remove="all-but-first">
-          <option th:each="type: ${T(org.squashtest.csp.tm.domain.customfield.InputType).values()}" value="PLAIN_TEXT"
-            th:value="${type.name()}" th:text="#{${type.i18nKey}}">Plain Text</option>
-          <option value="CHECKBOX">Checkbox</option>
-          <option value="DROPDOWN_LIST">Dropdown list</option>
-        </select> <span class="error">&nbsp;</span>
-      </div>
-      <div>
-        <label for="optional" th:text="#{label.Optional}">Optional</label>
-        <input name="optional" value="optional" type="checkbox" />
-        <span class="error">&nbsp;</span>
-      </div>
-      <div id="default-value-pane">
-      </div>
-      <div>
-        <input class="confirm" type="button" value="OK" th:value="#{label.Ok}" /> <input class="cancel" type="button"
-          value="Cancel" th:value="#{label.Cancel}" />
-      </div>
-  
-      <script id="PLAIN_TEXT-default-tpl" type="text/x-handlebars-template" th:inline="text">
-        <label for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
-        <input name="defaultValue" class="strprop" value="" size="50" maxlength="255" type="text" />		
-				<span class="error">&nbsp;</span>
+      <div id="new-cf-pane" class="not-displayed popup-dialog form-horizontal" title="New Custom field"
+        th:title="#{title.newCustomField}">
+        <div class="control-group">
+          <label class="control-label" for="name" th:text="#{label.Name}">Name</label>
+          <div class="controls">
+            <input name="name" class="strprop" value="" size="50" maxlength="255" type="text" />
+            <span class="help-inline">&nbsp;</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="label" th:text="#{label.Label}">Label</label>
+          <div class="controls">
+            <input name="label" class="strprop" value="" size="50" maxlength="255" type="text" />
+            <span class="help-inline">&nbsp;</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="inputType" th:text="#{label.inputType}">Type</label>
+          <div class="controls">
+            <select name="inputType" th:remove="all-but-first">
+              <option th:each="type: ${T(org.squashtest.csp.tm.domain.customfield.InputType).values()}"
+                value="PLAIN_TEXT" th:value="${type.name()}" th:text="#{${type.i18nKey}}">Plain Text</option>
+              <option value="CHECKBOX">Checkbox</option>
+              <option value="DROPDOWN_LIST">Dropdown list</option>
+            </select> 
+            <span class="help-inline">&nbsp;</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="optional" th:text="#{label.Optional}">Optional</label>
+          <div class="controls">
+            <input name="optional" value="optional" type="checkbox" />
+            <span class="help-inline">&nbsp;</span>
+          </div>
+        </div>
+
+        <div id="default-value-pane" class="control-group"></div>
+
+        <div class="popup-dialog-buttonpane">
+          <input class="confirm" type="button" value="OK" th:value="#{label.Ok}" />
+          <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}" />
+        </div>
+
+        <script id="PLAIN_TEXT-default-tpl" type="text/x-handlebars-template" th:inline="text">
+       	 <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+					<div class="controls">
+        		<input name="defaultValue" class="strprop" value="" size="50" maxlength="255" type="text" />		
+						<span class="help-inline">&nbsp;</span>
+					</div>
+      	</script>
+
+        <script id="CHECKBOX-default-tpl" type="text/x-handlebars-template" th:inline="text">
+  	      <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+					<div class="controls">
+        		<select name="defaultValue" class="optprop">
+	          	<option value="false" th:value="#{label.False}">False</option>
+  		        <option value="true" th:value="#{label.True}">True</option>
+      		  </select>
+						<span class="help-inline">&nbsp;</span>
+					</div>
       </script>
-      <script id="CHECKBOX-default-tpl" type="text/x-handlebars-template" th:inline="text">
-        <label for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
-        <select name="defaultValue" class="optprop">
-          <option value="false" th:value="#{label.False}">False</option>
-          <option value="true" th:value="#{label.True}">True</option>
-        </select>
-				<span class="error">&nbsp;</span>
-      </script>
-      <script id="DROPDOWN_LIST-default-tpl" type="text/x-handlebars-template" th:inline="text">
-        <h3 th:text="#{title.optionsDefinition}">Options definition</h3>
-				<div>
-          <label for="new-option" th:text="#{label.newOption}">New option</label><input name="new-option" type="text" value="" />
-          <input class="add-option" type="button" th:value="#{label.addOption}" value="Add an option" />
-					<span id="new-option-error" class="error not-displayed" th:text="#{message.optionAlreadyDefined}">Option already defined</span>
-				</div>
-        <table id="options-table">
-					<thead>
-            <tr>
-              <th th:text="#{label.option}">Option</th><th th:text="#{label.default}">Default</th><th>&nbsp;</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-				</table>
-      </script>
-      <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+
+        <script id="DROPDOWN_LIST-default-tpl" type="text/x-handlebars-template" th:inline="text">
+        	<h3 th:text="#{title.optionsDefinition}">Options definition</h3>
+						<div class="control-group">
+          		<label class="control-label" for="new-option" th:text="#{label.newOption}">New option</label>
+							<div class="controls"><input name="new-option" type="text" value="" />
+          			<input class="add-option" type="button" th:value="#{label.addOption}" value="Add an option" />
+								<span class="not-visible help-inline">&nbsp;</span>
+							</div>
+						</div>
+	        <table id="options-table">
+						<thead>
+    	        <tr>
+      	        <th th:text="#{label.option}">Option</th><th th:text="#{label.default}">Default</th><th>&nbsp;</th>
+	            </tr>
+  	        </thead>
+    	      <tbody>
+      	    </tbody>
+					</table>
+      	</script>
+
+        <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
 				<button value="{{option}}" th:text="#{label.Remove}">Remove</button>
 			</script>
-      <script id="default-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+
+        <script id="default-cell-tpl" type="text/x-handlebars-template" th:inline="text">
 				{{#if checked}}
 				<input type="checkbox" name="default" value="{{option}}" checked="checked" />
 				{{else}}
 				<input type="checkbox" name="default" value="{{option}}" />
 				{{/if}}
 			</script>
+      </div>
     </div>
-  </div>
   </div>
 </body>
 </html>

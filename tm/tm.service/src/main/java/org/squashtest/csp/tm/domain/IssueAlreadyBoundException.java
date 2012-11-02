@@ -30,8 +30,7 @@ public class IssueAlreadyBoundException extends DomainException {
 	
 	
 	public IssueAlreadyBoundException(){
-		super();
-		setField("bugtracker");
+		super("bugtracker");
 	}
 	
 	@Override

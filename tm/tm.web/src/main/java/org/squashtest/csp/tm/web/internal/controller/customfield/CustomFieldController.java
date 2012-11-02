@@ -23,6 +23,9 @@ package org.squashtest.csp.tm.web.internal.controller.customfield;
 
 import java.util.List;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -30,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -78,5 +82,19 @@ public class CustomFieldController {
 		model.addAttribute(CUSTOM_FIELD, customField);
 
 		return "custom-field-modification.html";
+	}
+
+	@RequestMapping(value = "/name/{name}", params = "id")
+	@ResponseBody
+	public Object getIdByName(@PathVariable String name) {
+		CustomField field = customFieldManager.findByName(name);
+		
+		if (field != null) {
+			Map<String, Long> res =  new HashMap<String, Long>(1);
+			res.put("id", field.getId());
+			return res;
+		} else {
+			return null;
+		}
 	}
 }

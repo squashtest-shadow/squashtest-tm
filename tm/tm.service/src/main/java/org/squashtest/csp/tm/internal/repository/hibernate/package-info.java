@@ -230,6 +230,7 @@
 		@NamedQuery(name = "CustomField.findAll", query = "from CustomField"),
 		@NamedQuery(name = "CustomField.findAllBindableCustomFields", query = "select cf from CustomField cf where cf not in (select cf2 from CustomFieldBinding binding join binding.customField cf2 "+
 																			"where binding.boundProject.id = ? and binding.boundEntity = ?)"),
+		@NamedQuery(name = "CustomField.findByName", query = "from CustomField where name = ?"),
 		
 		//CustomFieldBinding dao
 		@NamedQuery(name = "CustomFieldBinding.findAllByIds", query = "select cfb from CustomFieldBinding cfb where cfb.id in (:cfbIds) group by cfb.boundEntity, cfb.boundProject order by cfb.position asc"),

@@ -25,16 +25,18 @@ public class PasswordChangeFailedException extends DomainException {
 	/**
 	 * 
 	 */
+	private static final String OLD_PASSWORD = "oldPassword";
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 6637408521482514143L;
 
 	public PasswordChangeFailedException() {
-		super();
-		setField("oldPassword");
+		super(OLD_PASSWORD);
 	}
 
 	public PasswordChangeFailedException(String message) {
-		super(message);
-		setField("oldPassword");
+		super(message, OLD_PASSWORD);
 
 	}
 

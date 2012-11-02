@@ -20,22 +20,30 @@
  */
 package org.squashtest.csp.tm.service.customfield;
 
+import javax.validation.constraints.NotNull;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.customfield.CustomField;
 
 /**
  * Custom-Field manager services which cannot be dynamically generated.
  * 
  * @author mpagnon
- *
+ * 
  */
 @Transactional
 public interface CustomCustomFieldManagerService extends CustomFieldFinderService {
 	/**
 	 * Will delete the custom-field entity
-	 * @param customFieldId : the id of the custom field to delete
+	 * 
+	 * @param customFieldId
+	 *            : the id of the custom field to delete
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void deleteCustomField(Long customFieldId);
+	void deleteCustomField(long customFieldId);
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	void persist(@NotNull CustomField newCustomField);
 
 }

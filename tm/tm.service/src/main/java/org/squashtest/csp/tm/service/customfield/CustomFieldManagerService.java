@@ -21,7 +21,8 @@
 
 package org.squashtest.csp.tm.service.customfield;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 
@@ -33,9 +34,12 @@ import org.squashtest.csp.tm.domain.customfield.CustomField;
  */
 @Transactional
 public interface CustomFieldManagerService extends CustomCustomFieldManagerService {
-	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void persist(CustomField newCustomField);
+
+	/**
+	 * @param name
+	 * @return
+	 */
+	CustomField findByName(@NotNull String name);
 	
 	public CustomField findById(Long customFieldId);
 

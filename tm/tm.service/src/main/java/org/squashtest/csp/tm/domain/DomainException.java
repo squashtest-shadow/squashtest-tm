@@ -26,22 +26,26 @@ public abstract class DomainException extends RuntimeException implements Intern
 
 	private static final long serialVersionUID = 5203532234097674488L;
 
+	private static final Object[] NO_PARAMS = {};
+	
 	private String objectName;
-	private String field;
+	private final String field;
 
-	protected DomainException(String message) {
+	protected DomainException(String message, String field) {
 		super(message);
+		this.field = field;
 	}
 
-	protected DomainException() {
+	protected DomainException(String field) {
 		super();
+		this.field = field;
 	}
 
 	public String getObjectName() {
 		return objectName;
 	}
 
-	public void setObjectName(String objectName) {
+	private void setObjectName(String objectName) {
 		this.objectName = objectName;
 	}
 
@@ -49,12 +53,15 @@ public abstract class DomainException extends RuntimeException implements Intern
 		return field;
 	}
 
-	public void setField(String field) {
-		this.field = field;
-	}
-
 	public String getDefaultMessage() {
 		return getMessage();
 	}
 
+	/**
+	 * Can be overridden by subclasses to return the params to use when fetching the i18n'd message. 
+	 * @return should never return <code>null</code>
+	 */
+	public Object[] getI18nParams() {
+		return NO_PARAMS;
+	}
 }

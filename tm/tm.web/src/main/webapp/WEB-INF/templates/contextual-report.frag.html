@@ -87,12 +87,9 @@
  				<div class="main-menubar" th:include="menubar.frag :: menubar">
  					MENUBAR
 				</div>
-				<div style="display:inline-block;">
-					<div id="ajax-processing-indicator" class="ui-corner-all snap-right" style="display:inline-block">
-						<img src="../../../../../../../core/core.web/src/main/webapp/images/ajax-loader.gif" width="19px" height="19px" alt="processing" /> 
-						<span th:text="#{squashtm.processing}">En cours...</span>
-					</div>
- 				</div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">
+          NOTIFICATION
+        </div>
 			</div>
 		</div>
 		

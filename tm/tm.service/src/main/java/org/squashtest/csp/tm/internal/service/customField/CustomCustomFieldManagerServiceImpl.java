@@ -32,20 +32,21 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDeletionDao;
 import org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService;
+
 /**
  * 
  * @author mpagnon
- *
+ * 
  */
 @Service("CustomCustomFieldManagerService")
-public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldManagerService{
-	
+public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldManagerService {
+
 	@Inject
 	private CustomFieldDao customFieldDao;
-	
+
 	@Inject
-	private CustomFieldDeletionDao	customFieldDeletionDao;
-	
+	private CustomFieldDeletionDao customFieldDeletionDao;
+
 	@Override
 	public List<CustomField> findAllOrderedByName() {
 		return customFieldDao.finAllOrderedByName();
@@ -59,10 +60,25 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	}
 
 	@Override
-	public void deleteCustomField(Long customFieldId) {
+	public void deleteCustomField(long customFieldId) {
 		CustomField customField = customFieldDao.findById(customFieldId);
 		customFieldDeletionDao.removeCustomField(customField);
-		
+
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService#persist(org.squashtest.csp.tm.domain.customfield.CustomField)
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void persist(CustomField newCustomField) {
+		CustomField cf = customFieldDao.findByName(newCustomField.getName());
+
+		if (cf != null) {
+			throw new NameAlreadyInUseException("CustomField", newCustomField.getName());
+		} else {
+			customFieldDao.persist(newCustomField);
+		}
 	}
 
 }

@@ -19,22 +19,21 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.csp.tm.internal.repository;
+
 import java.util.List;
+
+import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.internal.repository.CustomCustomFieldDao;
 
-
-public interface CustomFieldDao extends CustomCustomFieldDao{
+public interface CustomFieldDao extends CustomCustomFieldDao {
 
 	List<CustomField> findAll();
-	
-	
+
 	/**
-	 * Will return the list of custom fields that can be bound to the given project and 
-	 * the given bindable entity (ie, those who aren't bound yet).
+	 * Will return the list of custom fields that can be bound to the given project and the given bindable entity (ie,
+	 * those who aren't bound yet).
 	 * 
 	 * 
 	 * @param projectId
@@ -42,12 +41,16 @@ public interface CustomFieldDao extends CustomCustomFieldDao{
 	 * @return
 	 */
 	List<CustomField> findAllBindableCustomFields(Long projectId, BindableEntity bindableEntity);
-	
-	
+
 	void persist(CustomField customField);
-	
-	
+
 	CustomField findById(long id);
-	
-	
+
+	/**
+	 * Returns the field matching the name if it exists.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	CustomField findByName(@NotNull String name);
 }

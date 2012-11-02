@@ -22,15 +22,8 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.util.List;
 
-import org.hibernate.Query;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
-import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDeletionDao;
 
 @Repository
