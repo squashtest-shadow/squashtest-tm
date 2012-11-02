@@ -25,11 +25,48 @@
  * If the div used to generate the dialog contains up to 2 <input type="button" />
  * elements, they are used as the ok and cancel buttons labels.
  * 
- * If
+ * Usage example : 
+ * 
+ * <div id="confirm-dialog" class="not-displayed popup-dialog" title="title">
+ *   <strong>message</strong> 
+ *   <input:ok /> 
+ *   <input:cancel /> 
+ * </div> 
+ * 
+ * <div id="confirm-dialog" class="not-displayed popup-dialog" title="title">
+ *   <strong>message</strong>
+ *   <input type="button" value="not a confirm button" />
+ *   <div class="popup-dialog-buttonpane">
+ *     <input:ok /> 
+ *     <input:cancel /> 
+ *   </div> 
+ * </div> 
+ *
+ * <script>
+ * $(function(){ 
+ *   var confirmHandler = function() { actionAfterConfirm(); };
+ * 
+ *   var dialog = $( "#confirm-dialog" ); 
+ *   dialog.confirmDialog(
+ *     {confirm:confirmHandler}
+ *   );
+ * 
+ *   $('#button').click(function(){ 
+ *     dialog.confirmDialog( "open" ); 
+ *     return false;
+ *   }); 
+ * }); 
+ * </script>
+ * 
+ * The dialog triggers a confirmdialogconfirm when confirm button is clicked
+ * The dialog triggers a confirmdialogcancel when cancel button is clicked
  * 
  * @author Gregory Fouquet
  */
-(function ($) {
+(function($) {
+	var closeDialogHandler = function() {
+	};
+
 	$.widget("squash.confirmDialog", $.ui.dialog, {
 		options : {
 			autoOpen : false,
@@ -38,26 +75,68 @@
 			width : 600,
 			position : [ 'center', 100 ],
 			buttons : [ {
-				text : "Ok", // OK button does nothing by default
-				click : function () {
-				}
+				text : "Ok", // OK button closes by default
+				click : closeDialogHandler
 			}, {
 				text : "Cancel", // cancel button closes by default
 				// TODO ! need to be local dependent !
-				click : function () {
-					$(this).confirmDialog("close");
-				}
+				click : closeDialogHandler
 			} ]
 		},
+		
+		confirm: function(event) {
+			if (false === this._trigger("validate", event)) {
+				return;
+			}
+			
+			if (!this.close()) {
+				return;
+			}
+			
+			this._trigger("confirm");
+			return this;
+		},
+		
+		cancel: function(event) {
+			if (!this.close()) {
+				return;
+			}
+			
+			this._trigger("cancel");
+			return this;
+		},
 
-		// _create : function () {
-		// // we need to invoke prototype creation
-		// $.ui.dialog.prototype._create.apply(this);
-		// },
-
-		_createButtons : function (buttons) {
+		_create : function() {
 			var self = this;
-			var inputButtons = $("input:button", self.element);
+
+			function cancelOnEsc(event) {
+				if (event.keyCode === $.ui.keyCode.ESCAPE) {
+					self.cancel(event);
+					event.preventDefault();
+				}
+			}
+			
+			// creates the widget
+			self._super();
+
+			// declares custom events
+			self._on({
+				"click .ui-dialog-buttonpane button:first": self.confirm,
+				"click .ui-dialog-buttonpane button:last": self.cancel,
+				"click .ui-dialog-titlebar-close": self.cancel, 
+				"keydown": cancelOnEsc
+			});
+		},
+		
+		_createButtons : function(buttons) {
+			var self = this;
+
+			function buttonsParent() {
+				var popup = $(self.element), buttonsPane = popup.find(".popup-dialog-buttonpane");
+				return buttonsPane.val() ? buttonsPane : popup;
+			}
+
+			var inputButtons = buttonsParent().find("input:button");
 
 			if (inputButtons.length > 0) {
 				var okLabel = inputButtons[0].value;
@@ -77,35 +156,16 @@
 			inputButtons.remove();
 		},
 
-		_setOption : function (key, value) {
+		_setOption : function(key, value) {
 			// In jQuery UI 1.8, you have to manually invoke the
 			// _setOption method from the base widget
 			$.Widget.prototype._setOption.apply(this, arguments);
+		},
+		
+		_destroy: function() {
+			this._off($(".ui-dialog-buttonpane button"), "click");
+			this._off($(".ui-dialog-titlebar-close"), "click");
+			this._super();
 		}
 	});
 }(jQuery));
-
-/*
-<div id="confirm-dialog" class="not-displayed popup-dialog" title="title">
-<strong>message</strong>
-<input:ok />
-<input:cancel />
-</div>
-<script>
-
-$(function(){
-var confirmHandler = function() {
-	actionAfterConfirm();
-};
-
-var dialog = $( "#confirm-dialog" );
-dialog.confirmDialog({confirm: confirmHandler});
-
-$('#button').click(function(){
-	dialog.confirmDialog( "open" );
-	return false;
-	
-});
-});
-</script>
-*/

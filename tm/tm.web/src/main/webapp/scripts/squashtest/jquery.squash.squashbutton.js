@@ -19,38 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * ConfirmDialog widget. A confirm dialog is a preconfigured modal dialog which
- * shows a message and has a ok and a cancel button.
- * 
- * If the div used to generate the dialog contains up to 2 <input type="button" />
- * elements, they are used as the ok and cancel buttons labels.
- * 
- * If
+ * squashButton widget. Applies standard theme to buttons
  * 
  * @author Gregory Fouquet
  */
 (function ($) {
 	$.widget("squash.squashButton", $.ui.button, {
-		options : {
-			autoOpen : false,
-			resizable : false,
-			modal : true,
-			width : 600,
-			position : [ 'center', 100 ],
-			buttons : [ {
-				text : "Ok", // OK button does nothing by default
-				click : function () {
-				}
-			}, {
-				text : "Cancel", // cancel button closes by default // TODO !
-				// need to be local dependent !
-				click : function () {
-					$(this).confirmDialog("close");
-				}
-			} ]
-		},
-
-		
 		_trigger : function (type, event, data) {
 			// we need this otherwise events won't bubble
 			$.Widget.prototype._trigger.apply(this, arguments);
