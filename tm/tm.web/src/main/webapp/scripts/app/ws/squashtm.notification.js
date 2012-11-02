@@ -38,13 +38,7 @@ define([ "jquery" ], function($) {
 						var counter = 0;
 						for (counter = 0; counter < validationErrorList.length; counter++) {
 							var fve = validationErrorList[counter];
-							var labelId = fve.fieldName + '-error';
-							labelId = labelId.replace(".", "-");// this is necessary because labelId is used as a css classname
-							var label = $('span.error-message.' + labelId);
-
-							if (label.length != 0) {
-								label.html(fve.errorMessage);
-							} else {
+							if (!showLegacyErrorMessage(fve) && !showBootstrapErrorMessage(fve)) {
 								throw 'exception';
 							}
 						}
@@ -54,6 +48,36 @@ define([ "jquery" ], function($) {
 				}
 			}
 		}
+	}
+	
+	function showLegacyErrorMessage(fieldValidationError) {
+		var labelId = fieldValidationError.fieldName + '-error';
+		labelId = labelId.replace(".", "-");// this is necessary because labelId is used as a css classname
+		var label = $('span.error-message.' + labelId);
+
+		if (label.length === 0) {
+			return false;
+		} 
+		
+		label.html(fieldValidationError.errorMessage);
+		return true;
+	}
+
+	function showBootstrapErrorMessage(fieldValidationError) {
+		var inputName = fieldValidationError.fieldName.replace(".", "-"),
+			input = $("input[name='" + inputName + "']"),
+			group = input.closest(".control-group"), 
+			message = group.find(".help-inline");
+
+		group.addClass("error");
+		message.addClass("not-displayed");
+		
+		if (message.length === 0) {
+			return false;
+		} 
+
+		message.html(fieldValidationError.errorMessage).fadeIn("slow", function() { $(this).removeClass("not-displayed"); });
+		return true;
 	}
 
 	function handleGenericResponseError(request) {
@@ -79,7 +103,9 @@ define([ "jquery" ], function($) {
 		_config.infoTitle = config.infoTitle;
 		
 		var spinner = $("#ajax-processing-indicator");
-		spinner.hide();
+		spinner.addClass("not-processing").removeClass("processing");
+		
+		$(".unstyled-notification-pane").addClass("notification-pane").removeClass("unstyled-notification-pane");
 		
 		/* Does not work with narrowed down selectors. see http://bugs.jquery.com/ticket/6161 */
 		$(document).ajaxError(function (event, request, settings, ex) {
@@ -94,9 +120,11 @@ define([ "jquery" ], function($) {
 				}
 			}
 		}).ajaxStart(function () {
-			spinner.css('display', 'inline-block').show();
+			spinner.addClass("processing").removeClass("not-processing");
+			
 		}).ajaxStop(function () {
-			spinner.hide();
+			spinner.removeClass("processing").addClass("not-processing");
+			
 		});
 	}
 	
