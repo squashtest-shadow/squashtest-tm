@@ -23,8 +23,6 @@ require([ "common" ], function(common) {
 		domReady(function() {
 			WS.init("");
 			var cfTable = new CustomFieldsTableView();
-			
-			$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
 		});
 	});
 });
