@@ -105,7 +105,20 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 		}, 
 		
 		validate: function(event) {
-			var res = true;
+			var res = true, 
+				validationErrors = this.model.validateAll(); 
+			
+			Forms.form(this.$el).clearState();
+			
+			if (validationErrors !== null) {
+				for (var key in validationErrors) {
+					Forms.input(this.$("input[name='" + key + "']")).setState("error", validationErrors[key]);
+				}
+				
+				return false;
+			}
+			
+			
 			this.model.save(null, { 
 				async: false,
 				error: function() {

@@ -45,6 +45,8 @@
 		messages: {
 			"message.optionAlreadyDefined": /*[[ #{message.optionAlreadyDefined} ]]*/ "Option is already defined", 
 			"message.defaultOptionMandatory": /*[[ #{message.defaultOptionMandatory} ]]*/ "Default option is mandatory when field is not optional", 
+			"message.defaultValueMandatory": /*[[ #{message.defaultValueMandatory} ]]*/ "Default value is mandatory when field is not optional", 
+			"message.notBlank": /*[[ #{message.notBlank} ]]*/ "Value should not be blank", 
 		},
   		projectFilterConf: {
 			url: /*[[ @{/global-filter/filter} ]]*/ '/global-filter/filter',
@@ -240,6 +242,7 @@
 					</div>
 					<div class="control-group">
 						<div class="controls">
+							<input name="defaultValue" type="hidden" value="" />
 							<input name="options" type="hidden" value="" />
 							<span class="not-displayed help-inline">&nbsp;</span>
 						</div>

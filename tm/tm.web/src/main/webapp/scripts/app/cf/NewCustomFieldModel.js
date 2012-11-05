@@ -24,6 +24,10 @@ define([ "jquery", "backbone" ], function($, Backbone) {
 		CHECKBOX : "false",
 		DROPDOWN_LIST : ""
 	};
+	
+	function isBlank(val) {
+		return val === null || /^\s*$/.test(val);
+	}
 
 	/*
 	 * Defines the model for a new Custom Field
@@ -38,10 +42,12 @@ define([ "jquery", "backbone" ], function($, Backbone) {
 			defaultValue : "",
 			options : []
 		},
+		
 		resetDefaultValue : function() {
 			this.set("defaultValue", defaultValueByInputType[this.get("inputType")]);
 			this.set("options", []);
 		},
+		
 		addOption : function(option) {
 			var options = this.attributes.options;
 
@@ -53,24 +59,36 @@ define([ "jquery", "backbone" ], function($, Backbone) {
 
 			return true;
 		},
+		
 		removeOption : function(option) {
 			var options = this.attributes.options, pos = $.inArray(option, options);
 
 			if (pos > -1) {
 				options.splice(pos, 1);
 			}
-		}
-		/*validate : function(attrs) {
+		},
+		
+		validateAll: function() {
+			var attrs = this.attributes, 
+				errors = null;
+			
 			if (!attrs.optional) {
-				var val = attrs.defaultValue;
-
-				if (!val || /^\s*$/.test(val)) {
-					return {
-						defaultValue : "message.required"
-					};
+				if (isBlank(attrs.defaultValue)) {
+					errors = errors || {};
+					errors.defaultValue = (attrs.inputType === "DROPDOWN_LIST" ? "message.defaultOptionMandatory" : "message.defaultValueMandatory");
 				}
 			}
-		}*/
+			if (isBlank(attrs.name)) {
+				errors = errors || {};
+				errors.name = "message.notBlank";
+			}
+			if (isBlank(attrs.label)) {
+				errors = errors || {};
+				errors.label = "message.notBlank";
+			}
+		
+			return errors;			
+		}
 	});
 
 	return NewCustomFieldModel;

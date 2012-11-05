@@ -41,7 +41,7 @@ public class UniqueItemsValidator implements ConstraintValidator<UniqueItems, Li
 	 */
 	@Override
 	public void initialize(UniqueItems constraintAnnotation) {
-		// TODO Auto-generated method stub
+		// NOOP
 		
 	}
 

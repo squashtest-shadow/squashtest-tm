@@ -24,7 +24,7 @@
 define([ "jquery" ], function($) {
 	function clearState(help, controlGroup) {
 		return function() {
-			help.addClass("not-displayed").html("&nbsp;");
+			help.hide().addClass("not-displayed").html("&nbsp;");
 
 			controlGroup.removeClass("error").removeClass("warning");
 
@@ -50,7 +50,7 @@ define([ "jquery" ], function($) {
 			
 			$controlGroup.removeClass("error").removeClass("warning").addClass(state);
 
-			$help.html(message).fadeIn("slow", function() {
+			$help.html(message).hide().fadeIn("slow", function() {
 				$(this).removeClass("not-displayed");
 			});
 

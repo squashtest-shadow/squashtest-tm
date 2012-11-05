@@ -60,7 +60,7 @@ public class CustomField {
 	@Size(min = 0, max = 255)
 	private String name;
 
-	@NotNull
+	@NotBlank
 	@Size(min = 0, max = 255)
 	private String label = "";
 
