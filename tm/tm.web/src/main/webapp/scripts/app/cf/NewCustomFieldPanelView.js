@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "jquery.squash.confirmdialog" ], 
-		function($, Backbone, Handlebars, SD) {
+define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms", "jquery.squash.confirmdialog" ], 
+		function($, Backbone, Handlebars, SD, Forms) {
 	/*
 	 * Defines the controller for the new custom field panel.
 	 */
@@ -63,6 +63,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "jqu
 			"change select[name='inputType']": "changeInputType", 
 			"click input:checkbox[name='optional']": "changeOptional",
 			"confirmdialogcancel": "cancel",
+			"confirmdialogvalidate": "validate",
 			"confirmdialogconfirm": "confirm", 
 			"click .add-option": "addOption", 
 			"click .remove-row>button": "removeOption", 
@@ -99,22 +100,26 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "jqu
 		},
 		
 		confirm: function(event) {
-			this.model.save(null, {
-				success: function() {
-					console.log("save successfull");
-					console.log(arguments);
-				}, error: function() { 
-					console.log("save failed");
-					console.log(arguments);
-				}
-			});
-			
 			this.cleanup();
 			this.trigger("newcustomfield.confirm");
 		}, 
 		
+		validate: function(event) {
+			var res = true;
+			this.model.save(null, { 
+				async: false,
+				error: function() {
+					res = false;
+					event.preventDefault();
+				}
+			});
+			
+			return res;
+		},
+		
 		cleanup: function() {
 			this.$el.addClass("not-displayed");
+			Forms.form(this.$el).clearState();
 			this.$el.confirmDialog("destroy");
 		},
 		
@@ -149,57 +154,20 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "jqu
 		}, 
 		
 		addOption: function() {
-			var optionInput = this.optionInput(), 
-				option = optionInput.value;
+			var optionInput = Forms.input(this.$("input[name='new-option']")), 
+				option = optionInput.$el.val();
 			
-			optionInput.errorSpan.hide().removeClass("not-visible");
+			optionInput.clearState();
 
 			if (this.model.addOption(option)) {
 				this.optionsTable.dataTable().fnAddData([ option, false, "" ]);
-				optionInput.clearMessage();
-				optionInput.$.val("");
+				optionInput.clearState();
+				optionInput.$el.val("");
 				
 			} else {
-				optionInput.showMessage("error", "message.optionAlreadyDefined");
+				optionInput.setState("error", "message.optionAlreadyDefined");
 				
 			}
-		},
-		
-		optionInput: function() {
-			var optionInput = this.$("input[name='new-option']"), 
-			optionGroup = optionInput.closest(".control-group"),
-			errorSpan = optionInput.parent(".controls").find(".help-inline"),
-			option = optionInput.val();
-
-			function clearMessage() {
-				errorSpan.html("&nbsp;");
-				optionGroup.removeClass("error warning");
-			}
-			
-			function showMessage(clazz, messageKey) {
-				optionGroup.addClass(clazz);
-				errorSpan.html(squashtm.app.cfMessages[messageKey]);
-				errorSpan.fadeIn("slow", function() { $(this).removeClass("not-displayed"); });
-				
-				return  {
-					fadeOut: fadeOut
-				};
-			}
-			
-			function fadeOut() {
-				errorSpan.delay(20000).fadeOut('slow', function() {
-					clearMessage();
-				});
-				
-			}
-
-			return  {
-				$: optionInput, 
-				errorSpan: errorSpan, 
-				value: option, 
-				clearMessage: clearMessage,
-				showMessage: showMessage
-			};
 		},
 		
 		removeOption: function(event) {
@@ -221,7 +189,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "jqu
 			
 			if (this.model.get("optional") === false && checkbox.checked === false) {
 				event.preventDefault();
-				this.optionInput().showMessage("warning", "message.defaultOptionMandatory").fadeOut();
+				Forms.input(this.$("input[name='new-option']")).setState("warning", "message.defaultOptionMandatory");
 				return;
 			}
 			

@@ -277,14 +277,15 @@
 						<exclude>**/scripts/datatables/**/*.*</exclude>
 						<exclude>**/scripts/jquery/**/*.*</exclude>
 						<exclude>**/scripts/jqgrid/**/*.*</exclude>
-						<exclude>**/scripts/thirdparties/**/*.*</exclude>
-                        <exclude>**/scripts/lib/**/*.*</exclude>
-                        <exclude>**/scripts/require*.js</exclude>
-						<exclude>**/styles/ckeditor/**/*.*</exclude>
-						<exclude>**/styles/datatables/**/*.*</exclude>
+            <exclude>**/scripts/thirdparties/**/*.*</exclude>
+            <exclude>**/scripts/lib/**/*.*</exclude>
+            <exclude>**/scripts/require*.js</exclude>
+            <exclude>**/styles/ckeditor/**/*.*</exclude>
+            <exclude>**/styles/datatables/**/*.*</exclude>
 						<exclude>**/styles/jquery/**/*.*</exclude>
 						<exclude>**/styles/jqgrid/**/*.*</exclude>
 						<exclude>**/styles/**/thymol.js</exclude>
+            <exclude>**/styles/**/bootstrap*.css</exclude>
 						<!-- third-party wslds -->
 						<exclude>**/mantisconnect.wsdl</exclude>
 						<!-- misc system / ide files -->

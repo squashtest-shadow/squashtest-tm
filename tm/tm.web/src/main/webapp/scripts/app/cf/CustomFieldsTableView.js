@@ -107,9 +107,11 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 				
 				this.$("input:button").button();
 			}, 
+			
 			events: {
 				"click #add-cf": "showNewCfPanel"
 			}, 
+			
 			showNewCfPanel: function(event) {
 				var self = this, 
 					showButton = event.target; 

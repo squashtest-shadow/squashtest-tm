@@ -42,7 +42,7 @@
 			deleteConfirmMessage : /*[[ #{message.customField.remove} ]]*/ 'Remove',
 			customFieldUrl : /*[[ @{/custom-fields} ]]*/ "http://localhost:8080/squash/custom-fields",
   		},
-		cfMessages: {
+		messages: {
 			"message.optionAlreadyDefined": /*[[ #{message.optionAlreadyDefined} ]]*/ "Option is already defined", 
 			"message.defaultOptionMandatory": /*[[ #{message.defaultOptionMandatory} ]]*/ "Default option is mandatory when field is not optional", 
 		},
@@ -218,7 +218,7 @@
           		<label class="control-label" for="new-option" th:text="#{label.newOption}">New option</label>
 							<div class="controls"><input name="new-option" type="text" value="" />
           			<input class="add-option" type="button" th:value="#{label.addOption}" value="Add an option" />
-								<span class="not-visible help-inline">&nbsp;</span>
+								<span class="not-displayed help-inline">&nbsp;</span>
 							</div>
 						</div>
 	        <table id="options-table">
