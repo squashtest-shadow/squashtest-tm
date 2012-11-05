@@ -23,7 +23,6 @@ package org.squashtest.csp.tm.internal.repository;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
-import org.squashtest.csp.tm.domain.customfield.BoundEntityKey;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 

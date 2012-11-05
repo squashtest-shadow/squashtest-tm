@@ -44,7 +44,6 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 import javax.inject.Inject;
 
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
-import org.squashtest.csp.tm.domain.customfield.BoundEntityKey;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
 import org.unitils.dbunit.annotation.DataSet;
@@ -70,5 +69,17 @@ class HibernateCustomFieldValueDaoIT extends DbunitDaoSpecification{
 		
 	}
 	
+	
+	def "should find all the custom field values that are instances of a given custom field binding"(){
+		
+		when :
+			List<CustomFieldValue> values = dao.findAllCustomValuesOfBinding(112l)
+			
+		then :
+			values.size()==2
+			values.collect {it.id} == [1112l, 1122l]
+		
+		
+	}
 
 }

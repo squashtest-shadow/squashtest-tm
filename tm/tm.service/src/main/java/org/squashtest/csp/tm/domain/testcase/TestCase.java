@@ -41,7 +41,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
@@ -51,11 +50,9 @@ import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
-import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
-import org.squashtest.csp.tm.domain.customfield.BoundEntityKey;
 import org.squashtest.csp.tm.domain.exception.UnallowedTestAssociationException;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
@@ -414,8 +411,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	// ***************** (detached) custom field section *************
 	
 	@Override
-	public BoundEntityKey getBoundEntityKey() {
-		return new BoundEntityKey(getId(), BindableEntity.TEST_CASE);
+	public Long getBoundEntityId() {
+		return getId();
+	}
+	
+	@Override
+	public BindableEntity getBoundEntityType() {
+		return BindableEntity.TEST_CASE;
 	}
 
 }

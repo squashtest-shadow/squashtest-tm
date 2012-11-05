@@ -22,5 +22,7 @@ package org.squashtest.csp.tm.domain.customfield;
 
 public interface BoundEntity {
 
-	BoundEntityKey getBoundEntityKey();
+	Long getBoundEntityId();
+	
+	BindableEntity getBoundEntityType();
 }

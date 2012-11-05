@@ -32,17 +32,13 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.attachment.Attachment;
-import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
-import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
-import org.squashtest.csp.tm.domain.customfield.BoundEntityKey;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Entity
@@ -377,7 +373,12 @@ public class Campaign extends CampaignLibraryNode implements BoundEntity {
 	// ***************** (detached) custom field section *************
 	
 	@Override
-	public BoundEntityKey getBoundEntityKey() {
-		return new BoundEntityKey(getId(), BindableEntity.CAMPAIGN);
+	public Long getBoundEntityId() {
+		return getId();
+	}
+	
+	@Override
+	public BindableEntity getBoundEntityType() {
+		return BindableEntity.CAMPAIGN;
 	}
 }

@@ -59,7 +59,6 @@ import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
-import org.squashtest.csp.tm.domain.customfield.BoundEntityKey;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.softdelete.SoftDeletable;
@@ -698,8 +697,12 @@ public class Iteration implements AttachmentHolder , Identified, BoundEntity {
 	// ***************** (detached) custom field section *************
 	
 	@Override
-	public BoundEntityKey getBoundEntityKey() {
-		return new BoundEntityKey(getId(), BindableEntity.ITERATION);
+	public Long getBoundEntityId() {
+		return getId();
 	}
-
+	
+	@Override
+	public BindableEntity getBoundEntityType() {
+		return BindableEntity.ITERATION;
+	}
 }

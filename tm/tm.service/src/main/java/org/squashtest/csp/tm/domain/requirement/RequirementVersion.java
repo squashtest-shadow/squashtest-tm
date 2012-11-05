@@ -32,7 +32,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
@@ -41,12 +40,9 @@ import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
 import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
 import org.squashtest.csp.tm.domain.RequirementVersionNotLinkableException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
-import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
-import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
-import org.squashtest.csp.tm.domain.customfield.BoundEntityKey;
 import org.squashtest.csp.tm.domain.resource.Resource;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
@@ -61,7 +57,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
 public class RequirementVersion extends Resource implements BoundEntity {
 	/**
-	 * Collection of {@link Test Cases} verifying by this {@link Requirement}
+	 * Collection of {@link TestCase} verifying by this {@link Requirement}
 	 */
 	@NotNull
 	@ManyToMany(mappedBy = "verifiedRequirementVersions")
@@ -353,7 +349,12 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	// ***************** (detached) custom field section *************
 	
 	@Override
-	public BoundEntityKey getBoundEntityKey() {
-		return new BoundEntityKey(getId(), BindableEntity.REQUIREMENT_VERSION);
+	public Long getBoundEntityId() {
+		return getId();
+	}
+	
+	@Override
+	public BindableEntity getBoundEntityType() {
+		return BindableEntity.REQUIREMENT_VERSION;
 	}
 }

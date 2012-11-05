@@ -21,8 +21,9 @@
 package org.squashtest.csp.tm.domain.customfield;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -36,8 +37,11 @@ public class CustomFieldValue {
 	@Column(name="CFV_ID")
 	private Long id;
 	
-	@Embedded
-	private BoundEntityKey boundEntityKey;
+	private Long boundEntityId;
+
+	@Enumerated(EnumType.STRING)
+	private BindableEntity boundEntityType;
+	
 
 	@ManyToOne
 	@JoinColumn(name="CFB_ID")
@@ -72,20 +76,12 @@ public class CustomFieldValue {
 		this.binding = binding;
 	}
 
-	public BoundEntityKey getBoundEntityKey() {
-		return boundEntityKey;
-	}
-
-	public void setBoundEntityKey(BoundEntityKey boundEntityKey) {
-		this.boundEntityKey = boundEntityKey;
-	}
-	
 	public Long getBoundEntityId(){
-		return this.boundEntityKey.getId();
+		return boundEntityId;
 	}
 
 	public BindableEntity getBoundEntityType(){
-		return this.boundEntityKey.getType();
+		return boundEntityType;
 	}
 	
 }

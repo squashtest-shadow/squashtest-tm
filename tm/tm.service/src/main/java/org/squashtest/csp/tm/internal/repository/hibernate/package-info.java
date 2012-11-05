@@ -245,7 +245,7 @@
 
 		
 		//CustomFieldValue dao
-		@NamedQuery(name = "CustomFieldValue.findAllCustomValues", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityKey.id = ? and cfv.boundEntityKey.type = ? order by cfb.position asc"),
+		@NamedQuery(name = "CustomFieldValue.findAllCustomValues", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId = ? and cfv.boundEntityType = ? order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBinding" , query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id = ? order by cfb.position asc"),
 		
 		
