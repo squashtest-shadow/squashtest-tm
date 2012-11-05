@@ -23,7 +23,6 @@ package org.squashtest.csp.tm.internal.repository;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
-import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntityKey;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
@@ -32,12 +31,19 @@ public interface CustomFieldValueDao {
 
 	
 	/**
+	 * 'nuff said.
+	 * @param newValue
+	 */
+	void persist(CustomFieldValue newValue);
+	
+	/**
 	 * Still in need for an introduction ? Come on ! 
 	 * 
 	 * @param id
 	 * @return
 	 */
 	CustomFieldValue findById(Long id);
+	
 	
 	
 	/**
@@ -49,11 +55,7 @@ public interface CustomFieldValueDao {
 	 * @return
 	 */
 	List<CustomFieldValue> findAllCustomValues(long entityId, BindableEntity entityType);
-	
-	
-	List<CustomFieldValue> findAllCustomValuesForEntityKey(BoundEntityKey key);
-	
-	
+
 	/**
 	 * returns all the {@link CustomFieldValue} related to a given {@link CustomFieldBinding}, sorted according to
 	 * their custom field binding order.

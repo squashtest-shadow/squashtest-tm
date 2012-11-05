@@ -246,7 +246,6 @@
 		
 		//CustomFieldValue dao
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValues", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityKey.id = ? and cfv.boundEntityKey.type = ? order by cfb.position asc"),
-		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesForEntityKey", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityKey = ? order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBinding" , query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id = ? order by cfb.position asc"),
 		
 		
@@ -269,9 +268,6 @@
 })
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import java.util.List;
-
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
-import org.squashtest.csp.tm.domain.users.User;
 
