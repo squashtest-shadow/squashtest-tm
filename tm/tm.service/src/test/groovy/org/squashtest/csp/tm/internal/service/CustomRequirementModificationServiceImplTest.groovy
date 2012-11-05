@@ -27,6 +27,7 @@ import org.hibernate.SessionFactory;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 
 import spock.lang.Specification;
 
@@ -35,12 +36,14 @@ class CustomRequirementModificationServiceImplTest extends Specification {
 	RequirementDao requirementDao = Mock()
 	SessionFactory sessionFactory = Mock()
 	Session currentSession = Mock()
+	PrivateCustomFieldValueService customFieldService = Mock()
 	
 	def setup() {
 		service.requirementDao = requirementDao
 		service.sessionFactory = sessionFactory
 		
 		sessionFactory.currentSession >> currentSession
+		service.customFieldValueService = customFieldService
 	}
 	
 	def "should increase the version of the requirement and persist it"() {

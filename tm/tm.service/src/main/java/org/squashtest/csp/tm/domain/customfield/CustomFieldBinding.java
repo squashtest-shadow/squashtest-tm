@@ -127,6 +127,14 @@ public class CustomFieldBinding {
 		this.position = position;
 	}
 	
+	public CustomFieldValue createNewValue(){
+		CustomFieldValue value = new CustomFieldValue();
+		if (! customField.isOptional()){
+			value.setValue(customField.getDefaultValue());
+		}
+		value.setBinding(this);
+		return value;
+	}
 
 	
 	

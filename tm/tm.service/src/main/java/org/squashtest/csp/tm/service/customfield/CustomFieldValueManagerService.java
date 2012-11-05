@@ -18,17 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.customfield;
+package org.squashtest.csp.tm.service.customfield;
 
-import org.squashtest.csp.tm.domain.project.Project;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.customfield.BoundEntity;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
+
+@Transactional
+public interface CustomFieldValueManagerService extends CustomFieldValueFinderService{
 
 
-public interface BoundEntity {
-
-	Long getBoundEntityId();
-	
-	BindableEntity getBoundEntityType();
-
-	Project getProject();
 	
 }

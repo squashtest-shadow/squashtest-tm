@@ -29,6 +29,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.squashtest.csp.tm.internal.service.customField.BindableEntityMismatchException;
+
 @Entity
 public class CustomFieldValue {
 
@@ -83,5 +85,20 @@ public class CustomFieldValue {
 	public BindableEntity getBoundEntityType(){
 		return boundEntityType;
 	}
+
 	
+	public void setBoundEntity(BoundEntity entity){
+		if (entity.getBoundEntityType() != binding.getBoundEntity()){
+			throw new BindableEntityMismatchException("attempted to bind '"+entity.getBoundEntityType()+"' while expected '"+binding.getBoundEntity()+"'");
+		}
+		this.boundEntityId=entity.getBoundEntityId();
+		this.boundEntityType=entity.getBoundEntityType();
+	}
+	
+	public CustomFieldValue copy(){
+		CustomFieldValue copy = new CustomFieldValue();
+		copy.setBinding(binding);
+		copy.setValue(this.value);
+		return copy;
+	}
 }

@@ -33,6 +33,7 @@ import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao
 import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.service.CampaignLibraryNavigationServiceImpl
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode
 import org.squashtest.csp.tm.domain.campaign.Iteration
@@ -53,6 +54,7 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 	IterationModificationService iterationModificationService = Mock()
 	IterationDao iterationDao = Mock()
 	IterationTestPlanManager iterationTestPlanManager = Mock()
+	PrivateCustomFieldValueService customFieldService = Mock()
 
 	def setup() {
 		service.campaignLibraryDao = campaignLibraryDao
@@ -63,6 +65,7 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 		service.iterationModificationService = iterationModificationService
 		service.iterationDao = iterationDao
 		service.iterationTestPlanManager = iterationTestPlanManager
+		service.customFieldValueService = customFieldService
 	}
 
 

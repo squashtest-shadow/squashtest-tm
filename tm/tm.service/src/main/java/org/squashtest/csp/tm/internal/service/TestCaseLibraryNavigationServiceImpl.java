@@ -137,6 +137,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		} else {
 			library.addRootContent(testCase);
 			testCaseDao.persist(testCase);
+			createCustomFieldValues(testCase);
 		}
 	}
 
@@ -151,6 +152,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		} else {
 			folder.addContent(testCase);
 			testCaseDao.persist(testCase);
+			createCustomFieldValues(testCase);
 		}
 	}
 

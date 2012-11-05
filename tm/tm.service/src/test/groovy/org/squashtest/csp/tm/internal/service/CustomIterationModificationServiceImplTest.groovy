@@ -1,3 +1,4 @@
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2012 Henix, henix.fr
@@ -21,6 +22,7 @@
 package org.squashtest.csp.tm.internal.service
 
 import org.squashtest.csp.tm.domain.attachment.Attachment
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService
 import org.squashtest.csp.tm.domain.campaign.Campaign
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
@@ -49,6 +51,8 @@ class CustomIterationModificationServiceImplTest extends Specification {
 	TestCaseDao testCaseDao= Mock()
 
 	TestCaseCyclicCallChecker cyclicCallChecker = Mock()
+	
+	PrivateCustomFieldValueService customFieldService = Mock()
 
 	def setup() {
 		service.executionDao = execDao
@@ -56,6 +60,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		service.testPlanDao = testPlanDao
 		service.iterationDao = iterationDao
 		service.testCaseCyclicCallChecker = cyclicCallChecker
+		service.customFieldValueService = customFieldService
 	}
 
 	def "should add iteration to campaign"() {

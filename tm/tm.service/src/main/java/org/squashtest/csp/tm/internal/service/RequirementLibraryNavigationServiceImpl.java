@@ -159,6 +159,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		library.addRootContent(newReq);
 		requirementDao.persist(newReq);
+		createCustomFieldValues(newReq.getCurrentVersion());
 
 		return newReq;
 	}
@@ -175,6 +176,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		library.addRootContent(requirement);
 		requirementDao.persist(requirement);
+		createCustomFieldValues(requirement.getCurrentVersion());
 
 		return requirement;
 	}
@@ -197,6 +199,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		folder.addContent(newReq);
 		requirementDao.persist(newReq);
+		createCustomFieldValues(newReq.getCurrentVersion());
 
 		return newReq;
 	}
@@ -213,6 +216,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		folder.addContent(requirement);
 		requirementDao.persist(requirement);
+		createCustomFieldValues(requirement.getCurrentVersion());
 
 		return requirement;
 	}

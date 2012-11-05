@@ -705,4 +705,5 @@ public class Iteration implements AttachmentHolder , Identified, BoundEntity {
 	public BindableEntity getBoundEntityType() {
 		return BindableEntity.ITERATION;
 	}
+
 }

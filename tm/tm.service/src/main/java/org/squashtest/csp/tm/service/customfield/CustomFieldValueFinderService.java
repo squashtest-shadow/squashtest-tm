@@ -18,58 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package org.squashtest.csp.tm.service.customfield;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 
-public interface CustomFieldValueDao {
+@Transactional(readOnly=true)
+public interface CustomFieldValueFinderService {
 
-	
+
 	/**
-	 * 'nuff said.
-	 * @param newValue
-	 */
-	void persist(CustomFieldValue newValue);
-	
-	/**
+	 * Will return the list of the custom field values associated to the specified bound entity.
 	 * 
-	 * 'nuff said.
-	 * @param value
-	 */
-	void delete(CustomFieldValue value);
-	
-	
-	/**
-	 * 'nuff said. 
-	 * @param id
-	 * @return
-	 */
-	CustomFieldValue findById(Long id);
-	
-	
-	
-	/**
-	 * returns the list of {@link CustomFieldValue} for the given entity, sorted according to the 
-	 * order specified in their respective {@link CustomFieldBinding}.
+	 * The authenticated use must be administrator or have read permission on that entity.
 	 * 
 	 * @param entityId
 	 * @param entityType
 	 * @return
 	 */
-	List<CustomFieldValue> findAllCustomValues(long entityId, BindableEntity entityType);
-
-	/**
-	 * returns all the {@link CustomFieldValue} related to a given {@link CustomFieldBinding}, sorted according to
-	 * their custom field binding order.
-	 * 
-	 * @param customFieldBindingId
-	 * @return
-	 */
-	List<CustomFieldValue> findAllCustomValuesOfBinding(long customFieldBindingId);
-	
+	List<CustomFieldValue> findAllCustomFieldValues(BoundEntity boundEntity);
 	
 }

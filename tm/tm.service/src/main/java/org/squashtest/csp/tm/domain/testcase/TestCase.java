@@ -419,5 +419,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public BindableEntity getBoundEntityType() {
 		return BindableEntity.TEST_CASE;
 	}
+	
+
 
 }

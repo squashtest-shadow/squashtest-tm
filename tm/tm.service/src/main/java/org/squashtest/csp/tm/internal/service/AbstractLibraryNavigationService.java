@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.NullArgumentException;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
@@ -34,16 +36,22 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.CannotMoveNodeException;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.library.ExportData;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
 import org.squashtest.csp.tm.domain.library.NodeContainer;
+import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
 import org.squashtest.csp.tm.internal.repository.FolderDao;
 import org.squashtest.csp.tm.internal.repository.LibraryDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.internal.utils.library.LibraryUtils;
+import org.squashtest.csp.tm.service.CustomFieldBindingFinderService;
+import org.squashtest.csp.tm.service.CustomFieldBindingModificationService;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 /**
@@ -127,6 +135,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 				copy.setName(newName);
 				getLibraryNodeDao().persist(copy);
 
+
 				container.addContent(copy);
 				nodeList.add(copy);
 
@@ -179,6 +188,9 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		this.permissionService = permissionService;
 	}
 
+	@Inject
+	protected PrivateCustomFieldValueService customFieldValueService;
+	
 	protected abstract FolderDao<FOLDER, NODE> getFolderDao();
 
 	protected abstract LibraryDao<LIBRARY, NODE> getLibraryDao();
@@ -186,6 +198,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	protected abstract LibraryNodeDao<NODE> getLibraryNodeDao();
 
 	protected abstract NodeDeletionHandler<NODE, FOLDER> getDeletionHandler();
+	
+	
 
 	public AbstractLibraryNavigationService() {
 		super();
@@ -299,6 +313,10 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		return getLibraryDao().findByRootContent(node);
 	}
 
+	protected void createCustomFieldValues(BoundEntity entity){
+		customFieldValueService.createCustomFieldValues(entity);
+	}
+	
 	/* ********************** move operations *************************** */
 
 	private void removeFromLibrary(LIBRARY library, NODE node) {
@@ -453,9 +471,16 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 		return getDeletionHandler().deleteNodes(targetIds);
 	}
-
+	
+	
 	/* ************************* private stuffs ************************* */
 
+	protected void createCustomFieldsValues(BoundEntity entity){
+		
+	}
+	
+	
+	
 	/* **that class just performs the same, using a domainObject directly */
 	protected class SecurityCheckableObject {
 		private final Object domainObject;

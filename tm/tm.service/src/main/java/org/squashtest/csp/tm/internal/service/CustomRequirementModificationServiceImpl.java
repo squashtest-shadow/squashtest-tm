@@ -31,6 +31,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.service.CustomRequirementModificationService;
 import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 
@@ -41,6 +42,9 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
 
+	@Inject
+	private PrivateCustomFieldValueService customFieldValueService;
+	
 	@Inject
 	private SessionFactory sessionFactory;
 
@@ -64,7 +68,8 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 	public void createNewVersion(long requirementId) {
 		Requirement req = requirementDao.findById(requirementId);
 		req.increaseVersion();
-		sessionFactory.getCurrentSession().persist(req.getCurrentVersion());
+		sessionFactory.getCurrentSession().persist(req.getCurrentVersion());	
+		customFieldValueService.createCustomFieldValues(req.getCurrentVersion());
 	}
 	
 

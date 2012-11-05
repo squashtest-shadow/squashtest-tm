@@ -43,6 +43,8 @@ import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
+import org.squashtest.csp.tm.domain.library.Library;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.resource.Resource;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
@@ -357,4 +359,10 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	public BindableEntity getBoundEntityType() {
 		return BindableEntity.REQUIREMENT_VERSION;
 	}
+
+	@Override
+	public Project getProject() {
+		return requirement.getProject();
+	}
+	
 }

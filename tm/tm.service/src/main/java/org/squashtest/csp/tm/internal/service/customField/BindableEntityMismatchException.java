@@ -18,17 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.customfield;
+package org.squashtest.csp.tm.internal.service.customField;
 
-import org.squashtest.csp.tm.domain.project.Project;
+public class BindableEntityMismatchException extends RuntimeException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-public interface BoundEntity {
+	public BindableEntityMismatchException() {
+		super();
+	}
 
-	Long getBoundEntityId();
-	
-	BindableEntity getBoundEntityType();
-
-	Project getProject();
-	
+	public BindableEntityMismatchException(String arg0) {
+		super(arg0);
+	}
 }

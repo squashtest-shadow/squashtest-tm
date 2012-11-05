@@ -302,6 +302,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 		} else {
 			library.addRootContent(newCampaign);
 			campaignDao.persist(newCampaign);
+			createCustomFieldValues(newCampaign);
 		}
 
 	}
@@ -316,6 +317,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 		} else {
 			folder.addContent(newCampaign);
 			campaignDao.persist(newCampaign);
+			createCustomFieldValues(newCampaign);
 		}
 
 	}

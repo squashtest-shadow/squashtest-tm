@@ -53,6 +53,7 @@ import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.csp.tm.service.CustomIterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
@@ -80,14 +81,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	
 	@Inject
 	private ExecutionDao executionDao;
-	
-	
-	
-	
-	@Inject
-	private InsecureTestAutomationManagementService automationService;
-	
-	
+		
 	@Inject
 	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
 
@@ -101,6 +95,11 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private TestSuiteModificationService testSuiteModificationService;
+	
+	@Inject
+	private PrivateCustomFieldValueService customFieldValueService;
+	
+	
 
 	@ServiceReference
 	public void setPermissionService(PermissionEvaluationService permissionService) {
@@ -131,6 +130,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 			}
 		}
 		iterationDao.persistIterationAndTestPlan(iteration);
+		customFieldValueService.createCustomFieldValues(iteration);
 		campaign.addIteration(iteration);
 		return campaign.getIterations().size() - 1;
 	}
@@ -326,6 +326,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	public void addTestSuite(Iteration iteration, TestSuite suite) {
 		suiteDao.persist(suite);
+		customFieldValueService.createCustomFieldValues(suite);
 		iteration.addTestSuite(suite);
 
 	}
