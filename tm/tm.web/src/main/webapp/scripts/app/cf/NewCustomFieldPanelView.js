@@ -158,7 +158,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 				option = optionInput.$el.val();
 			
 			optionInput.clearState();
-
+			
 			if (this.model.addOption(option)) {
 				this.optionsTable.dataTable().fnAddData([ option, false, "" ]);
 				optionInput.clearState();
@@ -186,11 +186,14 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 			var checkbox = event.currentTarget, 
 				option = checkbox.value,
 				defaultValue = checkbox.checked ? option : "", 
-				uncheckSelector = ".is-default>input:checkbox" + (checkbox.checked ? "[value!='" + option + "']" : "");
+				uncheckSelector = ".is-default>input:checkbox" + (checkbox.checked ? "[value!='" + option + "']" : ""), 
+				optionsInput = Forms.input(this.$("input[name='options']")); 
 			
+			optionsInput.clearState();
+
 			if (this.model.get("optional") === false && checkbox.checked === false) {
 				event.preventDefault();
-				Forms.input(this.$("input[name='new-option']")).setState("warning", "message.defaultOptionMandatory");
+				optionsInput.setState("warning", "message.defaultOptionMandatory");
 				return;
 			}
 			

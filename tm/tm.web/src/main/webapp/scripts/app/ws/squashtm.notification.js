@@ -20,7 +20,7 @@
  */
 var squashtm = squashtm || {};
 
-define([ "jquery" ], function($) {
+define([ "jquery", "app/lnf/Forms" ], function($, Forms) {
 	var _config = {};
 	
 	function handleJsonResponseError(request) {
@@ -65,19 +65,12 @@ define([ "jquery" ], function($) {
 
 	function showBootstrapErrorMessage(fieldValidationError) {
 		var inputName = fieldValidationError.fieldName.replace(".", "-"),
-			input = $("input[name='" + inputName + "']"),
-			group = input.closest(".control-group"), 
-			message = group.find(".help-inline");
-
-		group.addClass("error");
-		message.addClass("not-displayed");
+			$input = $("input[name='" + inputName + "']"),
+			input = Forms.input($input);
 		
-		if (message.length === 0) {
-			return false;
-		} 
-
-		message.html(fieldValidationError.errorMessage).fadeIn("slow", function() { $(this).removeClass("not-displayed"); });
-		return true;
+		input.setState("error", fieldValidationError.errorMessage);
+		
+		return input.hasHelp;
 	}
 
 	function handleGenericResponseError(request) {

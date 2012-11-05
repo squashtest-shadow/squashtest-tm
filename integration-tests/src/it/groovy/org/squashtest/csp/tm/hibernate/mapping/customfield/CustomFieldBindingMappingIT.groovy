@@ -91,5 +91,4 @@ class CustomFieldBindingMappingIT extends DbunitDaoSpecification {
 		println res.renderingLocations
 		res.renderingLocations == new HashSet([RenderingLocation.TEST_PLAN])
 	}
-
 }

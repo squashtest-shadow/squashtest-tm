@@ -33,6 +33,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.internal.validation.constraint.UniqueItems;
 
 /**
  * A CustomField which stores a single option selected from a list.
@@ -42,6 +43,7 @@ import org.hibernate.validator.constraints.NotBlank;
 @Entity
 @DiscriminatorValue("SSF")
 public class SingleSelectField extends CustomField {
+	@UniqueItems
 	@ElementCollection
 	@CollectionTable(name = "CUSTOM_FIELD_OPTION", joinColumns = @JoinColumn(name = "CF_ID"))
 	@OrderColumn(name = "POSITION")

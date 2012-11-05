@@ -51,4 +51,35 @@ public class CustomFieldOption {
 	public String getLabel() {
 		return label;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 57;
+		int result = 53;
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof CustomFieldOption)) {
+			return false;
+		}
+		CustomFieldOption other = (CustomFieldOption) obj;
+		if (label == null) {
+			if (other.label != null) {
+				return false;
+			}
+		} else if (!label.equals(other.label)) {
+			return false;
+		}
+		return true;
+	}
+
 }

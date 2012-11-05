@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.hibernate.mapping.customfield
  
+import javax.validation.ValidationException;
+
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.csp.tm.domain.customfield.CustomField
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
@@ -141,5 +143,6 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
 		then:
 		res.options*.label == ["leatherpants", "bataring"]
 	}
+	
 }
 

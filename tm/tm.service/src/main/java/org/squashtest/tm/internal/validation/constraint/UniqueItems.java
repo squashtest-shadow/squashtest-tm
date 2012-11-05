@@ -18,38 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.domain;
+package org.squashtest.tm.internal.validation.constraint;
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.validation.Constraint;
+import javax.validation.Payload;
+
+import org.squashtest.tm.internal.validation.validator.UniqueItemsValidator;
 
 /**
- * @author Gregory
- *
+ * Add this constraint to a List field or a List returning method. It checks that the constrained object does not
+ * contain more than once the same item.
+ * 
+ * @author Gregory Fouquet
+ * 
  */
-class IdentifiedComparatorTest extends Specification {
-	@Unroll("#id1.id is bigger than #id2.id should be #bigger")
-	def "should compare identified objects"() {
-		expect: 
-		(IdentifiedComparator.instance.compare(id1, id2) > 0) == bigger
-		
-		where: 
-		id1               | id2                | bigger
-		new Id()          | new Id(ident: 1L)  | false
-		new Id(ident: 1L) | new Id()           | true
-		new Id(ident: 1L) | new Id(ident: 2L)  | false
-		new Id(ident: 2L) | new Id(ident: 1L)  | true
-		
-	}
-	
+@Target({ ElementType.METHOD, ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = UniqueItemsValidator.class)
+public @interface UniqueItems {
+	String message() default "{org.squashtest.tm.internal.validation.constraint.UniqueItems}";
+
+	public abstract Class<?>[] groups() default {};
+
+	public abstract Class<? extends Payload>[] payload() default {};
+
 }
-
-class Id implements Identified {
-	public Long ident
-	
-	public Long getId() {
-		return ident
-	}
-}
-
-

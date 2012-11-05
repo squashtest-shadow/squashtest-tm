@@ -18,38 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.domain;
+package org.squashtest.tm.internal.validation.validator
 
-import spock.lang.Specification;
+import spock.lang.Specification
 import spock.lang.Unroll;
 
 /**
- * @author Gregory
+ * @author Gregory Fouquet
  *
  */
-class IdentifiedComparatorTest extends Specification {
-	@Unroll("#id1.id is bigger than #id2.id should be #bigger")
-	def "should compare identified objects"() {
-		expect: 
-		(IdentifiedComparator.instance.compare(id1, id2) > 0) == bigger
+class UniqueItemsValidatorTest extends Specification {
+	UniqueItemsValidator validator = new UniqueItemsValidator()
+	
+	@Unroll("List #list should be valid")
+	def "list should be valid"() {
+		expect:
+		validator.isValid list, null
 		
-		where: 
-		id1               | id2                | bigger
-		new Id()          | new Id(ident: 1L)  | false
-		new Id(ident: 1L) | new Id()           | true
-		new Id(ident: 1L) | new Id(ident: 2L)  | false
-		new Id(ident: 2L) | new Id(ident: 1L)  | true
-		
+		where:
+		list << [ null, [], ["a"], ["a", "b"] ]
 	}
 	
-}
-
-class Id implements Identified {
-	public Long ident
-	
-	public Long getId() {
-		return ident
+	@Unroll("List #list should not be valid")
+	def "list should not be valid"() {
+		expect:
+		!validator.isValid(list, null)
+		
+		where:
+		list << [ ["a", "a"], ["a", "b", "a"] ]
 	}
 }
-
-

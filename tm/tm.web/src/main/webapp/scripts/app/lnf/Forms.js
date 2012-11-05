@@ -46,9 +46,11 @@ define([ "jquery" ], function($) {
 		 * Shows the message read from squashtm.app.messages using the given css class
 		 */
 		var setState = function (state, messageKey) {
+			var message = squashtm.app.messages[messageKey] || messageKey;
+			
 			$controlGroup.removeClass("error").removeClass("warning").addClass(state);
 
-			$help.html(squashtm.app.messages[messageKey]).fadeIn("slow", function() {
+			$help.html(message).fadeIn("slow", function() {
 				$(this).removeClass("not-displayed");
 			});
 
@@ -57,8 +59,9 @@ define([ "jquery" ], function($) {
 
 		return {
 			$el: $input,
-			clearState : clearState($help, $controlGroup),
-			setState : setState
+			clearState: clearState($help, $controlGroup),
+			setState: setState, 
+			hasHelp: $help.length !== 0
 		};
 	}
 
