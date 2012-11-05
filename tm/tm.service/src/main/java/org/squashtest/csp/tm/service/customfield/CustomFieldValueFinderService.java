@@ -23,7 +23,6 @@ package org.squashtest.csp.tm.service.customfield;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 

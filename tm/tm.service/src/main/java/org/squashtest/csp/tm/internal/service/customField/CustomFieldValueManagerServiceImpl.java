@@ -29,14 +29,12 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
-import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
-import org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService;
 
-@Service("CustomFieldValueManagerService")
+@Service("squashtest.tm.service.CustomFieldValueManagerService")
 public class CustomFieldValueManagerServiceImpl implements
 		PrivateCustomFieldValueService {
 

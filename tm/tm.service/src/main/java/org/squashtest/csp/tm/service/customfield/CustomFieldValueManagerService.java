@@ -21,9 +21,6 @@
 package org.squashtest.csp.tm.service.customfield;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.customfield.BoundEntity;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 
 @Transactional
 public interface CustomFieldValueManagerService extends CustomFieldValueFinderService{
