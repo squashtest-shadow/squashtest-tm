@@ -70,7 +70,10 @@
 	value="/iterations/{iterId}/assignable-users">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-
+<s:url var="assignableStatusUrl"
+	value="/iterations/{iterId}/assignable-statuses">
+	<s:param name="iterId" value="${iteration.id}" />
+</s:url>
 <s:url var="assignTestCasesUrl"
 	value="/iterations/{iterId}/batch-assign-user">
 	<s:param name="iterId" value="${iteration.id}" />
@@ -421,6 +424,7 @@
 				batchRemoveButtonId="remove-test-case-button"
 				updateTestPlanUrl="${updateTestCaseUrl}"
 				assignableUsersUrl="${assignableUsersUrl}"
+				assignableStatusUrl="${assignableStatusUrl}"
 				nonBelongingTestPlansUrl="${nonBelongingTestCasesUrl}"
 				testPlanExecutionsUrl="${testCaseExecutionsUrl}"
 				editable="${ linkable }"

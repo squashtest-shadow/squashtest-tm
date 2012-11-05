@@ -57,6 +57,7 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.jquery.TestPlanAssignableUser;
+import org.squashtest.csp.tm.web.internal.model.jquery.TestPlanAssignableStatus;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 
@@ -176,8 +177,28 @@ public class IterationTestPlanManagerController {
 		return jsonUsers;
 
 	}
+	
+	@RequestMapping(value = "/iterations/{iterationId}/assignable-statuses", method = RequestMethod.GET)
+	public @ResponseBody List<TestPlanAssignableStatus> getAssignStatusForIterationTestPlanItem(@PathVariable long iterationId, final Locale locale) {
+		
+		List<ExecutionStatus> statusList = iterationTestPlanManagerService.getExecutionStatusList();
 
+		List<TestPlanAssignableStatus> jsonStatuses = new LinkedList<TestPlanAssignableStatus>();
 
+		for (ExecutionStatus status : statusList){
+			jsonStatuses.add(new TestPlanAssignableStatus(status.name(), messageSource.getMessage(status.getI18nKey(), null, locale)));
+		}
+		
+		return jsonStatuses;
+	}
+
+	@RequestMapping(value = "/iterations/{iterationId}/test-case/{testPlanId}/assign-status", method = RequestMethod.POST)
+	public @ResponseBody
+	void assignUserToCampaignTestPlanItem(@PathVariable long testPlanId, @PathVariable long iterationId,
+			@RequestParam String statusName) {
+		iterationTestPlanManagerService.assignExecutionStatusToTestPlanItem(testPlanId, iterationId, statusName);
+	}
+	
 	@RequestMapping(value = "/iterations/{iterationId}/test-cases/table", params = "sEcho")
 	public @ResponseBody
 	DataTableModel getIterationTableModel(@PathVariable Long iterationId, final DataTableDrawParameters params,

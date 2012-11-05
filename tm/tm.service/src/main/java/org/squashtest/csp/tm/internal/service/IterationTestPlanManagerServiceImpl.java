@@ -40,6 +40,7 @@ import org.squashtest.csp.core.domain.IdentifiersOrderComparator;
 import org.squashtest.csp.core.security.acls.model.ObjectAclService;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
@@ -74,7 +75,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Inject
 	private UserDao userDao;
-
+	
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
 	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
@@ -302,5 +303,19 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		Iteration iteration = iterationDao.findById(iterationId);
 		return iteration.getTestPlan(itemTestPlanId);
 	}
-
+	
+	@Override
+	public List<ExecutionStatus> getExecutionStatusList(){
+		
+		List<ExecutionStatus> statusList = new LinkedList<ExecutionStatus>();
+		statusList.addAll(ExecutionStatus.getCanonicalStatusSet());
+		return statusList;
+	}
+	
+	@Override
+	public void assignExecutionStatusToTestPlanItem(Long testPlanId, long iterationId, String statusName){
+		
+		IterationTestPlanItem testPlanItem = findTestPlanItem(iterationId,testPlanId);
+		testPlanItem.setExecutionStatus(ExecutionStatus.valueOf(statusName));
+	}
 }

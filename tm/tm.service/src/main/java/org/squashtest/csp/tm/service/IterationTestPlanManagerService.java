@@ -26,6 +26,7 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.users.User;
@@ -154,4 +155,19 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 */
 	void addTestPlanToIteration(List<IterationTestPlanItem> testPlan, long iterationId);
 
+	/**
+	 * 
+	 * @return the list of defined execution statuses
+	 */
+	List<ExecutionStatus> getExecutionStatusList();
+	
+	/**
+	 * Assigns an execution status to a test plan item
+	 * Overrides the current execution status
+	 * 
+	 * @param testPlanId
+	 * @param iterationId
+	 * @param statusName
+	 */
+	void assignExecutionStatusToTestPlanItem(Long testPlanId, long iterationId, String statusName);
 }

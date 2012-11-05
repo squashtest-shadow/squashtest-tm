@@ -40,6 +40,8 @@
 	description="Right to edit content. Default to false."%>
 <%@ attribute name="assignableUsersUrl" required="true"
 	description="URL to manipulate user of the test-plans"%>
+<%@ attribute name="assignableStatusUrl" required="true"
+	description="URL to manipulate status of the test-plan items"%>
 <%@ attribute name="testCaseSingleRemovalPopupId" required="true"
 	description="html id of the single test-case removal popup"%>
 <%@ attribute name="testCaseMultipleRemovalPopupId" required="true"
@@ -140,6 +142,9 @@
 	function isTestCaseDeleted(data) {
 		return (data['is-tc-deleted'] == "true");
 	}
+	function getCurrentStatus(data) {
+		return data['status'];
+	}
 
 	function addIterationTestPlanItemExecModeIcon(row, data) {
 		var automationToolTips = {
@@ -163,14 +168,23 @@
 		addIconToTestPlanName(row, data);
 		addStyleToDeletedTestCaseRows(row, data);
 		addIterationTestPlanItemExecModeIcon(row, data);
+		selectCurrentStatus(row,data);
 		return row;
 	}
 	
 	function testPlanDrawCallback(){
 		<c:if test="${ editable }">
 		addLoginListToTestPlan();
+		addStatusListToTestPlan();
 		</c:if>		
 	}
+	
+	function selectCurrentStatus(row,data) {
+		
+		var status = getCurrentStatus(data);
+		$("#statuses option:contains('"+status+"')").attr("selected","selected");
+	}
+	
 	
 	function addHLinkToTestPlanName(row, data) {
 		var url = 'javascript:void(0)';
@@ -184,6 +198,71 @@
 	}
 
 	<c:if test="${ editable }">
+	
+	function addStatusListToTestPlan(){
+		
+		var table = $("#test-plans-table").squashTable();
+		
+		//look first at the cache
+		var statusList = table.data('status-list');
+		
+		if (statusList!=null){
+			table.$('td.status-combo').statusCombo();
+		}
+		
+		$.get("${assignableStatusUrl}", "json")
+		.success(function(json){
+			table.data('status-list', json);
+			table.$('td.status-combo').statusCombo();
+		});
+	}
+
+	//because of IE8 naturally trimming text nodes we will trim
+	//every string we must compare.
+	$.fn.statusCombo = function(){
+		
+		if (this.length==0) return;
+		var squashTable=this.eq(0).parents("table").squashTable();
+		var assignableList = squashTable.data('status-list');
+		if (! assignableList) return;
+		
+		//create the template
+		var template=$('<select class="status-list"/>');
+		for (var i=0;i<assignableList.length;i++){
+			var opt = '<option class="exec-status-'+assignableList[i].name+'" value="'+assignableList[i].name+'">'+assignableList[i].internationalizedName+'</option>';
+			template.append(opt);
+		}
+			
+		template.change(function(){
+			$.ajax({
+				type : 'POST',
+				url : this.getAttribute('data-assign-url'),
+				data : "statusName=" + this.value,
+				dataType : 'json'
+			});
+		});
+			
+		this.each(function(){
+			
+			var cloneSelect = template.clone(true);
+			
+			var jqTd = $(this);
+			var row = this.parentNode;
+			
+			var status = $("td.status-combo span").html()
+			
+			//sets the change url
+			var tpId = squashTable.getODataId(row);
+			var dataUrl = "${baseIterationURL}/test-case/"+tpId+"/assign-status";
+			
+			cloneSelect.attr('data-assign-url', dataUrl);
+					
+			//append the content
+			jqTd.empty().append(cloneSelect);
+			$(".status-list option:contains('"+status+"')", row).attr("selected","selected");
+		});	
+	}
+	
 	function addLoginListToTestPlan(){
 			
 		var table = $("#test-plans-table").squashTable();
@@ -212,29 +291,30 @@
 		var assignableList = squashTable.data('assignable-list');
 		if (! assignableList) return;
 		
-		//create the template
-		var template=$('<select/>');
-		for (var i=0;i<assignableList.length;i++){
-			var opt = '<option value="'+assignableList[i].id+'">'+assignableList[i].login+'</option>';
-			template.append(opt);
-		}
-		
-		template.change(function(){
-			$.ajax({
-				type : 'POST',
-				url : this.getAttribute('data-assign-url'),
-				data : "userId=" + this.value,
-				dataType : 'json'
-			});
-		});
-			
 		this.each(function(){
-			
-			var cloneSelect = template.clone(true);
 			
 			var jqTd = $(this);
 			var row = this.parentNode;
 			
+			
+			
+			//create the template
+			var template=$('<select/>');
+			for (var i=0;i<assignableList.length;i++){
+				var opt = '<option value="'+assignableList[i].id+'">'+assignableList[i].login+'</option>';
+				template.append(opt);
+			}
+			
+			template.change(function(){
+				$.ajax({
+					type : 'POST',
+					url : this.getAttribute('data-assign-url'),
+					data : "userId=" + this.value,
+					dataType : 'json'
+				});
+			});
+			
+			var cloneSelect = template.clone(true);
 			
 			//sets the change url
 			var tpId = squashTable.getODataId(row);
@@ -366,7 +446,7 @@
 					{'bSortable': false, 'aTargets': [6], 'mDataProp' : 'importance'},
 					{'bSortable': false, 'sWidth': '10%', 'aTargets': [7], 'mDataProp' : 'type'},
 					{'bSortable': false, 'sWidth': '10%', 'aTargets': [8], 'mDataProp' : 'suite'},
-					{'bSortable': false, 'sWidth': '10%', 'sClass': 'has-status', 'aTargets': [9], 'mDataProp' : 'status'},
+					{'bSortable': false, 'sWidth': '10%', 'sClass': 'has-status status-combo', 'aTargets': [9], 'mDataProp' : 'status'},
 					{'bSortable': false, 'sWidth': '10%', 'sClass': 'assignable-combo', 'aTargets': [10], 'mDataProp' : 'last-exec-by'},
 					{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [11], 'mDataProp' : 'assigned-to'},
 					{'bSortable': false, 'sWidth': '10%', 'aTargets': [12], 'mDataProp' : 'last-exec-on'},
