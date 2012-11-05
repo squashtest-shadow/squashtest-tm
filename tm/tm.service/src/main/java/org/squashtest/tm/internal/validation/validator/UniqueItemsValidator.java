@@ -50,11 +50,7 @@ public class UniqueItemsValidator implements ConstraintValidator<UniqueItems, Li
 	 */
 	@Override
 	public boolean isValid(List<?> value, ConstraintValidatorContext context) {
-		if (value == null) {
-			return true;
-		}
-		
-		if (value.size() < 2) {
+		if (value == null || value.size() < 2) {
 			return true;
 		}
 		

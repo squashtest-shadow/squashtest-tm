@@ -54,8 +54,8 @@ public class CustomFieldOption {
 
 	@Override
 	public int hashCode() {
-		final int prime = 57;
-		int result = 53;
+		final int prime = 57; // NOSONAR : look somewhere else
+		int result = 53; // NOSONAR : look somewhere else
 		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		return result;
 	}

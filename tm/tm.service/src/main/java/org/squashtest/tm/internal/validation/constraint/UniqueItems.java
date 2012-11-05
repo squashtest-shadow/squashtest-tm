@@ -43,8 +43,8 @@ import org.squashtest.tm.internal.validation.validator.UniqueItemsValidator;
 public @interface UniqueItems {
 	String message() default "{org.squashtest.tm.internal.validation.constraint.UniqueItems}";
 
-	public abstract Class<?>[] groups() default {};
+	Class<?>[] groups() default {};
 
-	public abstract Class<? extends Payload>[] payload() default {};
+	Class<? extends Payload>[] payload() default {};
 
 }
