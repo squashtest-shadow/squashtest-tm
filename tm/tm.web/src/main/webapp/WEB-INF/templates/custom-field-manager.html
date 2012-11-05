@@ -214,26 +214,33 @@
 
         <script id="DROPDOWN_LIST-default-tpl" type="text/x-handlebars-template" th:inline="text">
         	<h3 th:text="#{title.optionsDefinition}">Options definition</h3>
-						<div class="control-group">
-          		<label class="control-label" for="new-option" th:text="#{label.newOption}">New option</label>
-							<div class="controls"><input name="new-option" type="text" value="" />
-          			<input class="add-option" type="button" th:value="#{label.addOption}" value="Add an option" />
-								<span class="not-displayed help-inline">&nbsp;</span>
-							</div>
+					<div class="control-group">
+         		<label class="control-label" for="new-option" th:text="#{label.newOption}">New option</label>
+						<div class="controls"><input name="new-option" type="text" value="" />
+         			<input class="add-option" type="button" th:value="#{label.addOption}" value="Add an option" />
+							<span class="not-displayed help-inline">&nbsp;</span>
 						</div>
-	        <table id="options-table">
-						<thead>
-    	        <tr>
-      	        <th th:text="#{label.option}">Option</th><th th:text="#{label.default}">Default</th><th>&nbsp;</th>
-	            </tr>
-  	        </thead>
-    	      <tbody>
-      	    </tbody>
-					</table>
+					</div>
+					<span th:remove="all">
+						<!-- class="dataTables_wrapper" : ugly hack to get the desired style. usually, because of table footer, this div is inserted by dataTables. here we have no footer. -->
+					</span>
+					<div class="dataTables_wrapper">
+		        <table id="options-table">
+							<thead>
+    	      	  <tr>
+      	  	      <th th:text="#{label.option}">Option</th>
+									<th style="width: 2em;" th:text="#{label.default}">Default</th>
+									<th style="width: 1.5em;">&nbsp;</th>
+	      	      </tr>
+  	  	      </thead>
+    		      <tbody>
+  	    	    </tbody>
+						</table>
+					</div>
       	</script>
 
         <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
-				<button value="{{option}}" th:text="#{label.Remove}">Remove</button>
+				<a href="javascript:void(0)" data-value="{{option}}" th:text="#{label.Remove}">Remove</a>
 			</script>
 
         <script id="default-cell-tpl" type="text/x-handlebars-template" th:inline="text">

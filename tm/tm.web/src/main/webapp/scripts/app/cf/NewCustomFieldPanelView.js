@@ -66,7 +66,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 			"confirmdialogvalidate": "validate",
 			"confirmdialogconfirm": "confirm", 
 			"click .add-option": "addOption", 
-			"click .remove-row>button": "removeOption", 
+			"click .remove-row>a": "removeOption", 
 			"click .is-default>input:checkbox": "changeDefaultOption" 
 		},
 
@@ -129,10 +129,10 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 				"oLanguage": {
 					"sUrl": squashtm.app.cfTable.languageUrl
 				},
+				"bAutoWidth" : false,
 				"bJQueryUI": true,
 				"bFilter": false,
 				"bPaginate": false,
-				"bProcessing": false,
 				"bServerSide": false,
 				"bDeferRender": true,
 				"bRetrieve": false,
@@ -143,9 +143,9 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 				"aoColumnDefs": [ {
 					"aTargets": [ 0 ], "sClass": "option"
 				}, {
-					"aTargets": [ 1 ], "sClass": "is-default", "sWidth": "2em"
+					"aTargets": [ 1 ], "sClass": "is-default"
 				}, {
-					"aTargets": [ 2 ], "sClass": "remove-row", "sWidth": "2em"
+					"aTargets": [ 2 ], "sClass": "remove-row"
 				} ]
 			});
 
@@ -173,8 +173,9 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 		removeOption: function(event) {
 			// target of click event is a <span> inside of <button>, so we use currentTarget
 			var button = event.currentTarget, 
-				option = button.value, 
-				row = $(button).parents("tr")[0];
+				$button = $(button),
+				option = $button.data("value"), 
+				row = $button.parents("tr")[0];
 			
 			this.model.removeOption(option);
 			this.optionsTable.dataTable().fnDeleteRow(row);
@@ -221,7 +222,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 		}, 
 		
 		decorateOptionsTable: function() {
-			SD.deleteButton($(this).find(".remove-row>button"));
+			SD.deleteButton($(this).find(".remove-row>a"));
 		}
 	});
 
