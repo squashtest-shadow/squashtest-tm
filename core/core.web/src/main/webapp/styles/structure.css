@@ -891,6 +891,11 @@ div#user-account-password-panel>div>* {
 /* ------------------------------------------ */
 /* -------------->>> MISC <<<---------------- */
 /* ------------------------------------------ */
+.linkWise:HOVER {
+	
+    text-decoration: underline;
+    cursor: pointer;
+}
 .popup-notification {
 	color: #555555;
 	font-size: 0.8em;
@@ -1004,9 +1009,9 @@ tr.nodrop td.drag-handle {
 	padding-left: 10px;
 	padding-right: 10px;
 }
-
+.display-table-cell input[type=checkbox],.display-table>div>div input[type=checkbox] ,.display-table>div>label,.display-table>div>span,.display-table>div>select
 div#project-description-table .projectInactive {
-	color: red;
+	margin:0;
 }
 
 div#project-description-table .projectActive {

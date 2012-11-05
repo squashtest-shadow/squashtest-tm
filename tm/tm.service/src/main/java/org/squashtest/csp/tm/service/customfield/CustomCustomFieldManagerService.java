@@ -25,9 +25,11 @@ import javax.validation.constraints.NotNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.CannotDeleteDefaultOptionException;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 
 /**
  * Custom-Field manager services which cannot be dynamically generated.
@@ -92,5 +94,16 @@ public interface CustomCustomFieldManagerService extends CustomFieldFinderServic
 	 * @param customFieldId : the id of the concerned {@link CustomField}
 	 * @param label : the label of the potential new option.
 	 */
-	public void addOption(Long customFieldId, String label);
+	public void addOption(Long customFieldId, String label);	
+
+	
+	/**
+	 * Will remove the from the custom-field's option list.
+	 * If the option to remove is the default one, will throw a {@link CannotDeleteDefaultOptionException}
+	 * 
+	 * @param customFieldId: the id of the concerned {@link SingleSelectField}
+	 * @param optionLabel : the label of the {@link CustomFieldOption} to remove.
+	 * @throws CannotDeleteDefaultOptionException
+	 */
+	public void removeOption(long customFieldId, String optionLabel);
 }

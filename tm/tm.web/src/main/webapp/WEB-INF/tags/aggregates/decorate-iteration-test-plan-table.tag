@@ -392,13 +392,7 @@
 					oklabel : '<f:message key="label.Yes" />',
 					cancellabel : '<f:message key="label.Cancel" />'
 				},
-				functions : {
-					dropHandler : function(dropData){
-						$.post('${ updateTestPlanUrl }/move',dropData, function(){
-							$("#test-plans-table").squashTable().refresh();
-						});
-					}
-				}
+				
 			};
 			
 			<c:if test="${editable}">
@@ -413,7 +407,14 @@
 					checkForbiddenDeletion(data);	
 					refreshStatistics();				
 				}
-					
+				
+			functions : {
+					dropHandler : function(dropData){
+						$.post('${ updateTestPlanUrl }/move',dropData, function(){
+							$("#test-plans-table").squashTable().refresh();
+						});
+					}
+				}
 			};
 			</c:if>
 					

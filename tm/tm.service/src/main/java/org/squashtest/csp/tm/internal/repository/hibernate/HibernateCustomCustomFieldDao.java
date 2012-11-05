@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.CustomCustomFieldDao;
 
@@ -48,6 +49,11 @@ public class HibernateCustomCustomFieldDao extends HibernateEntityDao<CustomFiel
 	@Override
 	public CustomField findByName(String name) {
 		return executeEntityNamedQuery("customField.findByName", "name", name );
+	}
+
+	@Override
+	public SingleSelectField findSingleSelectFieldById(Long customFieldId) {
+		return executeEntityNamedQuery("singleSelectField.findById", "id", customFieldId );
 	}
 
 	

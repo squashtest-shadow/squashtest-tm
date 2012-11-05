@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
@@ -35,7 +36,7 @@ import org.squashtest.csp.tm.internal.repository.CustomFieldDeletionDao;
 import org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService;
 
 /**
- * 
+ * Implementations for (non dynamically generated) custom-field management services.
  * @author mpagnon
  * 
  */
@@ -44,9 +45,6 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 
 	@Inject
 	private CustomFieldDao customFieldDao;
-
-	@Inject
-	private CustomFieldDeletionDao customFieldDeletionDao;
 
 	@Override
 	public List<CustomField> findAllOrderedByName() {
@@ -63,7 +61,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Override
 	public void deleteCustomField(long customFieldId) {
 		CustomField customField = customFieldDao.findById(customFieldId);
-		customFieldDeletionDao.removeCustomField(customField);
+		customFieldDao.remove(customField);
 
 	}
 
@@ -105,16 +103,27 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 
 	@Override
 	public void changeOptionLabel(Long customFieldId, String optionLabel, String newLabel) {
-			SingleSelectField customField = (SingleSelectField) customFieldDao.findById(customFieldId);
+			SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
 			customField.changeOption(optionLabel, newLabel);
 	}
 
 	@Override
 	public void addOption(Long customFieldId, String label) {
-		SingleSelectField customField = (SingleSelectField) customFieldDao.findById(customFieldId);
+		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
 		customField.addOption(label);
 		
 	}
 
+	@Override
+	public SingleSelectField findSingleSelectFieldById(Long customFieldId) {
+		return customFieldDao.findSingleSelectFieldById(customFieldId);
+	}
 
+	@Override
+	public void removeOption(long customFieldId, String optionLabel) {
+		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
+		customField.removeOption(optionLabel);		
+	}
+
+	
 }

@@ -233,6 +233,10 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	 * aoData[0]; : the datatable expects the id to be first.
 	 */
 	function _getODataId(arg) {
+		var self = this;
+		if(this.squashSettings.getODataId){
+			return this.squashSettings.getODataId.call(self, arg);
+		}
 		var key = this.squashSettings.dataKeys.entityId;
 		var id = this.fnGetData(arg)[key];
 		if ((id != "") && (!isNaN(id))) {
@@ -496,15 +500,13 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	function _resolvePlaceholders(input, data) {
 		var pattern = /\{\S+\}/;
 		var result = input;
-
-		do {
-			var match = pattern.exec(result);
-			if (match) {
-				var pHolder = match[0];
-				var key = pHolder.substr(1, pHolder.length - 2);
-				result = result.replace(pHolder, data[key]);
-			}
-		} while (match);
+		var match = pattern.exec(result);
+		while (match) {
+			var pHolder = match[0];
+			var key = pHolder.substr(1, pHolder.length - 2);
+			result = result.replace(pHolder, data[key]);
+			match = pattern.exec(result);
+		}
 
 		return result;
 	}
@@ -917,8 +919,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		var userDrawCallback = datatableEffective["fnDrawCallback"];
 
 		var customDrawCallback = function(oSettings) {
-			if (userDrawCallback)
-				userDrawCallback.call(this, oSettings);
+			if (userDrawCallback)	userDrawCallback.call(this, oSettings);
 			_attachButtonsCallback.call(this);
 			_buggedPicsCallback.call(this);
 			_configureRichEditables.call(this);

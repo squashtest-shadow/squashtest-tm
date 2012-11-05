@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.repository;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 /**
  * 
@@ -60,5 +61,12 @@ public interface CustomCustomFieldDao {
 	 * @return the {@linkplain CustomField} of the given name, or <code>null</code> if there is none of this name.
 	 */
 	CustomField findByName(String name);
+	
+	/**
+	 * will find the {@link SingleSelectField} of the given id
+	 * @param customFieldId the id of the wanted {@link SingleSelectField}
+	 * @return the {@link SingleSelectField} or <code>null</code>
+	 */
+	SingleSelectField findSingleSelectFieldById(Long customFieldId);
 	
 }

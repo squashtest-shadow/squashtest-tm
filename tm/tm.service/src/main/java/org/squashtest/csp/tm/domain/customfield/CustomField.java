@@ -55,17 +55,17 @@ public class CustomField {
 	@Id
 	@GeneratedValue
 	@Column(name = "CF_ID")
-	private Long id;
+	protected Long id;
 
 	@NotBlank
 	@Size(min = 0, max = 255)
-	private String name;
+	protected String name;
 
 	@NotBlank
 	@Size(min = 0, max = 255)
-	private String label = "";
+	protected String label = "";
 
-	private boolean optional = true;
+	protected boolean optional = true;
 
 	@Size(min = 0, max = 255)
 	protected String defaultValue;
@@ -73,7 +73,7 @@ public class CustomField {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(updatable = false)
-	private InputType inputType = InputType.PLAIN_TEXT;
+	protected InputType inputType = InputType.PLAIN_TEXT;
 
 	/**
 	 * For ORM purposes.

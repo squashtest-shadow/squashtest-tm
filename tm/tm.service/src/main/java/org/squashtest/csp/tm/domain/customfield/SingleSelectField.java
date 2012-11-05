@@ -32,6 +32,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
 
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.internal.validation.constraint.UniqueItems;
 import org.squashtest.csp.tm.domain.CannotDeleteDefaultOptionException;
@@ -42,6 +44,10 @@ import org.squashtest.csp.tm.domain.DuplicateNameException;
  * 
  * @author Gregory Fouquet
  */
+
+@NamedQueries({
+	@NamedQuery(name="singleSelectField.findById", query="from SingleSelectField ssf where ssf.id = :id"),
+})
 @Entity
 @DiscriminatorValue("SSF")
 public class SingleSelectField extends CustomField {
@@ -77,9 +83,10 @@ public class SingleSelectField extends CustomField {
 	/**
 	 * Checks first if the option is the default one. If so: throw a CannotDeleteDefaultOptionException
 	 * @param label
+	 * @throws CannotDeleteDefaultOptionException
 	 */
 	public void removeOption(@NotBlank String label) {
-		if(defaultValue == label){
+		if(defaultValue != null && defaultValue.equals(label)){
 			throw new CannotDeleteDefaultOptionException(label);
 		}
 		Iterator<CustomFieldOption> it = options.iterator();

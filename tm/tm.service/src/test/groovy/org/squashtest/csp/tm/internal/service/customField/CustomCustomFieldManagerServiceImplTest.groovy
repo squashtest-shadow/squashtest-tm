@@ -20,15 +20,11 @@
  */
 package org.squashtest.csp.tm.internal.service.customField
 
-import java.util.List;
-
-import org.springframework.osgi.blueprint.config.internal.support.InstanceEqualityRuntimeBeanReference;
-import org.squashtest.csp.tm.domain.customfield.CustomField;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.csp.tm.domain.customfield.CustomField
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao
-import org.squashtest.csp.tm.internal.repository.CustomFieldDeletionDao
-import org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService
 
 import spock.lang.Specification
 
@@ -36,11 +32,9 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 
 	CustomCustomFieldManagerServiceImpl service = new CustomCustomFieldManagerServiceImpl();
 	CustomFieldDao customFieldDao = Mock()
-	CustomFieldDeletionDao customFieldDeletionDao = Mock()
 
 	def setup() {
 		service.customFieldDao = customFieldDao
-		service.customFieldDeletionDao = customFieldDeletionDao
 	}
 
 	def "should delete custom field"(){
@@ -52,7 +46,7 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 		service.deleteCustomField(1L);
 		
 		then:
-		1* customFieldDeletionDao.removeCustomField(cuf)
+		1* customFieldDao.remove(cuf)
 	}
 
 	def "should find all ordered by name"(){

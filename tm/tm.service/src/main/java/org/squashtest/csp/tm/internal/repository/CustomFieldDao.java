@@ -27,6 +27,7 @@ import javax.validation.constraints.NotNull;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 
 public interface CustomFieldDao extends CustomCustomFieldDao {
 
@@ -45,7 +46,12 @@ public interface CustomFieldDao extends CustomCustomFieldDao {
 
 	void persist(CustomField customField);
 
-	CustomField findById(long id);	
+	CustomField findById(long id);
+
+	
+	void remove(CustomField customField);
+
+	
 
 	/**
 	 * Returns the field matching the name if it exists.

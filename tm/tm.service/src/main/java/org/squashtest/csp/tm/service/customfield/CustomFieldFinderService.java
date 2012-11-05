@@ -24,6 +24,8 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
@@ -49,5 +51,11 @@ public interface CustomFieldFinderService {
 	 * @return the filtered collection of all custom field available in squash
 	 */
 	public FilteredCollectionHolder<List<CustomField>> findSortedCustomFields(CollectionSorting filter);
-
+	
+	/**
+	 * Will find the {@link SingleSelectField} of the given id
+	 * @param customFieldId the id of the {@link SingleSelectField}
+	 * @return the {@link SingleSelectField} or <code>null</code>
+	 */
+	public SingleSelectField findSingleSelectFieldById(Long customFieldId);
 }

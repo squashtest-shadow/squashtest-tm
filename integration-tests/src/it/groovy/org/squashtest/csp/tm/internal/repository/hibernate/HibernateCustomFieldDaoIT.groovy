@@ -22,7 +22,9 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 
 import javax.inject.Inject
 
+import org.hibernate.Query;
 import org.squashtest.csp.tm.domain.customfield.CustomField
+import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.InputType
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao
@@ -77,5 +79,51 @@ class HibernateCustomFieldDaoIT extends DbunitDaoSpecification {
 				return 2;
 			}
 	}
+	
+	//TODO un-comment when deletion is handled
+//	@DataSet("HibernateCustomFieldDeletionDaoIT.should delete custom field.xml")
+//	def "should delete custom field" () {
+//		given:
+//		CustomField cuf =  findEntity(CustomField.class, 1L)
+//		when:
+//		customFieldDao.remove(cuf)
+//		then:
+//		!found(CustomField.class, 1L)
+//		found(CustomField.class, 2L)
+//	}
+//	
+//	@DataSet("HibernateCustomFieldDeletionDaoIT.should delete custom field and option.xml")
+//	def "should delete custom field and options" () {
+//		given:
+//		CustomField cuf =  findEntity(CustomField.class, 1L)
+//		when:
+//		customFieldDao.remove(cuf)
+//		then:
+//		!found(CustomField.class, 1L)
+//		!foundCustomFieldOption("first")
+//		!foundCustomFieldOption("second")
+//		!foundCustomFieldOption("third")
+//	}
+//	
+//	
+//	@DataSet("HibernateCustomFieldDeletionDaoIT.should delete custom field and binding.xml")
+//	def "should delete custom field and binding " () {
+//		given:
+//		CustomField cuf =  findEntity(CustomField.class, 1L)
+//		when:
+//		customFieldDao.remove(cuf)
+//		then:
+//		!found(CustomField.class, 1L)
+//		!found(CustomFieldBinding.class, 1L)
+//		!found(CustomFieldBinding.class, 2L)
+//	}
+//	
+//	
+///* --------------------	private utilities --------------------------*/
+//	private foundCustomFieldOption(String label){
+//		Query query = session.createQuery("from CustomFieldOption cufo where cufo.label = :label")
+//		query.setParameter("label", label);
+//		return query.uniqueResult() != null;
+//	}
 	
 }

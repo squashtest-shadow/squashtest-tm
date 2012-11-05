@@ -31,6 +31,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			this.configureEditables();
 			this.configureRenamePopup();
 			this.configureAddOptionPopup();
+			this.configureRenameOptionPopup();
 			this.configureOptionTable();
 			this.configureButtons();
 			
@@ -39,7 +40,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			"click #cf-optional": "sendOptional",
 			"click #back": "goBack",
 			"click .is-default>input:checkbox": "changeDefaultOption",
-			"click .opt-label": "changeOptionLabel",
+			"click .opt-label": "openRenameOptionPopup",
 		}, 
 		sendOptional: function(event) {
 		var checked = event.target.checked;
@@ -69,19 +70,33 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 		},
 		sendDefaultValue: function(defaultValue){
 			return $.ajax({
-				url: cfMod.optionsTable.ajaxSource,
+				url: cfMod.customFieldUrl+"/defaultValue",
 				type: 'POST',
-				data: {'default': defaultValue},
+				data: {'value': defaultValue},
 				dataType: 'json',
 			});
 		},
-		changeOptionLabel: function(event){
+		openRenameOptionPopup: function(event){
 			var self = this;
 			var labelCell = event.currentTarget;
-			var previousValue = labelCell.value;
+			var previousValue = labelCell.textContent;
 			self.renameCufOptionPopup.find("#rename-cuf-option-previous").text(previousValue);
 			self.renameCufOptionPopup.find("#rename-cuf-option-input").val(previousValue);
 			self.renameCufOptionPopup.dialog("open");
+		},
+		renameOption: function(){
+			var self = this;
+			var previousValue = self.renameCufOptionPopup.find("#rename-cuf-option-previous").text();
+			var newValue = self.renameCufOptionPopup.find("#rename-cuf-option-input").val();
+			$.ajax({
+				type : 'POST',
+				data : {'value': newValue},
+				dataType : "json",
+				url : cfMod.optionsTable.ajaxSource+"/"+previousValue+"/label",
+			}).done(function(data){
+				self.optionsTable.refresh();
+			});
+			
 		},
 		configureButtons: function(){
 			$("#back").button();
@@ -171,6 +186,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			});
 		},
 		configureOptionTable:function(){
+			var self = this;
 			if($("#cuf-inputType").attr('value') == "PLAIN_TEXT"){return;}
 			var config = $.extend({
 				"oLanguage": {
@@ -189,41 +205,52 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 				"bRetrieve": true,
 				"sDom": 't<"dataTables_footer"lirp>',
 				"iDeferLoading": 0,
-				"aaSorting": [ [ 0, "asc" ] ],
 				"fnRowCallback": function() {
 				},
-				"aoColumnDefs": [ {
-					'bSortable': true, 
-					"aTargets": [ 0 ],
-					"class": "opt-label",
-					"mDataProp": "opt-label"
+				"aoColumnDefs": [ {'bSortable': false, 
+					'sWidth': '2em', 
+						'sClass': 'centered ui-state-default drag-handle select-handle', 
+						'aTargets': [ 0 ], 
+						'mDataProp' : 'entity-index'},
+					{'bSortable': false, 
+						"aTargets": [ 1 ],
+						"sClass": "opt-label linkWise",
+						"mDataProp": "opt-label"
 					},
-					{'bSortable': true, 
-					'aTargets': [ 1 ], 
-					'sClass': "is-default",
-					'mDataProp' : 'opt-default'
+					{'bSortable': false, 
+						'aTargets': [ 2 ], 
+						'sClass': "is-default",
+						'mDataProp' : 'opt-default'
 					},
 					{'bSortable': false,
-					'sWidth': '2em', 
-					'sClass': 'delete-button',
-					'aTargets': [ 2 ],
-					'mDataProp' : 'empty-delete-holder'} ]
+						'sWidth': '2em', 
+						'sClass': 'delete-button',
+						'aTargets': [ 3 ],
+						'mDataProp' : 'empty-delete-holder'} ]
 			}, squashtm.datatable.defaults);
 			
 			var squashSettings = {
 					enableHover : true,
-					
+					enableDnD : true,
 					confirmPopup : {
 						oklabel : cfMod.confirmLabel,
 						cancellabel : cfMod.cancelLabel,
 					},
 					
 					deleteButtons : {
-						url : cfMod.optionsTable.ajaxSource+"/{entity-id}",
+						url : cfMod.optionsTable.ajaxSource+"/{opt-label}",
 						popupmessage : cfMod.optionsTable.deleteConfirmMessage,
 						tooltip : cfMod.optionsTable.deleteTooltip,
-						success : function(data){self.table.refresh();}
+						success : function(data){self.optionsTable.refresh();}
 					},
+					
+					functions : {
+						dropHandler : function(dropData){
+							$.post(cfMod.optionsTable.ajaxSource+'/position',dropData, function(){
+								self.optionsTable.refresh();
+							});
+						}
+					}
 					
 				};
 				
@@ -274,14 +301,14 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			}
 			var self = this;
 			var params = {
-					selector : "#add-cuf-option-popup",
-					title : cfMod.optionsTable.addCufOptionTitle,
-					openedBy : "#add-cuf-option-button",
+					selector : "#rename-cuf-option-popup",
+					title : cfMod.optionsTable.renameCufOptionTitle,
+					openedBy : "#rename-cuf-option-popup",
 					isContextual : true,
 					usesRichEdit : false,
 					closeOnSuccess : true,
-					buttons: [ { 'text' : cfMod.optionsTable.addOptionLabel,
-					        	  'click' : function(){self.addOption.call(self);},
+					buttons: [ { 'text' : cfMod.optionsTable.renameOptionLabel,
+					        	  'click' : function(){self.renameOption.call(self);},
 					        	},
 						        { 'text' : cfMod.cancelLabel,
 						          'click' : this.closeRenamePopup,
@@ -289,7 +316,9 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 							],
 			};
 			squashtm.popup.create(params);
+			this.renameCufOptionPopup =  $("#rename-cuf-option-popup");
 		},
+		
 	});
 	return CustomFieldModificationView;
 });
