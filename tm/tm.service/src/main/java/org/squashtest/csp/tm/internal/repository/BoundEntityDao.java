@@ -18,45 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service.customField;
+package org.squashtest.csp.tm.internal.repository;
+
+import java.util.List;
 
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 
-
-/**
- * That interface is called so because it should remain private to this bundle. The reason is that the methods will not be secured. 
- * 
- * @author bsiri
- *
- */
-public interface PrivateCustomFieldValueService extends CustomFieldValueManagerService {
-
-	
-	/**
-	 * Will create a custom field value for all the entities affected by the given binding
-	 * 
-	 * @param binding
-	 */
-	void updateCustomFieldValues(CustomFieldBinding binding);
-	
-	/**
-	 * Will create all the custom field values for one entity. 
-	 * 
-	 * @param entity
-	 */
-	void createAllCustomFieldValues(BoundEntity entity);
-	
+public interface BoundEntityDao {
 
 	/**
-	 * Will copy the custom field values from an entity to another entity. 
+	 * given a {@link CustomFieldBinding, returns all the existing entities subject to that binding; namely all the {@link BindableEntity} that belongs
+	 * to the project of that binding.
 	 * 
-	 * Will fail if the source and destination are from different projects, different {@link BindableEntity} type, or if they are the same.
-	 * 
-	 * @param entity
+	 * @param customFieldBinding
+	 * @return
 	 */
-	void copyCustomFieldValues(BoundEntity source, BoundEntity dest);
+	List<BoundEntity> findAllForBinding(CustomFieldBinding customFieldBinding);
+	
+	
+	/**
+	 * given a {@link CustomFieldValue} id, returns the {@link BoundEntity} instance it is related to.
+	 * 
+	 * @param customFieldValueId
+	 * @return
+	 */
+	BoundEntity findBoundEntity(CustomFieldValue customFieldValue);
 	
 }

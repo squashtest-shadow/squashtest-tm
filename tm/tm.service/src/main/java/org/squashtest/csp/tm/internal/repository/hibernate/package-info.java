@@ -248,6 +248,12 @@
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValues", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId = ? and cfv.boundEntityType = ? order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBinding" , query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id = ? order by cfb.position asc"),
 		
+		//BoundEntity dao
+		@NamedQuery(name = "BoundEntityDao.findAllTestCasesForProject", query="select tc from TestCase tc where tc.project.id = :projectId"),
+		@NamedQuery(name = "BoundEntityDao.findAllReqVersionsForProject", query="select rv from RequirementVersion rv join rv.requirement r where r.project.id = :projectId"),
+		@NamedQuery(name = "BoundEntityDao.findAllCampaignsForProject", query="select c from Campaign c where c.project.id = :projectId"),
+		@NamedQuery(name = "BoundEntityDao.findAllIterationsForProject", query="select i from Iteration i join i.campaign c where c.project.id = :projectId"),
+		@NamedQuery(name = "BoundEntityDao.findAllTestSuitesForProject", query="select ts from TestSuite ts join ts.iteration i join i.campaign c where c.project.id = :projectId"),
 		
 		/* ********************************************** batch deletion-related queries **************************************************** */
 

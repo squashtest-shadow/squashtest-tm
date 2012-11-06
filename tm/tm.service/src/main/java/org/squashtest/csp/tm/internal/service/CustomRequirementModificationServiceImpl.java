@@ -69,7 +69,7 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 		Requirement req = requirementDao.findById(requirementId);
 		req.increaseVersion();
 		sessionFactory.getCurrentSession().persist(req.getCurrentVersion());	
-		customFieldValueService.createCustomFieldValues(req.getCurrentVersion());
+		customFieldValueService.createAllCustomFieldValues(req.getCurrentVersion());
 	}
 	
 

@@ -31,11 +31,12 @@ import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.csp.tm.internal.repository.BoundEntityDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
 
 @Service("squashtest.tm.service.CustomFieldValueManagerService")
-public class CustomFieldValueManagerServiceImpl implements
+public class PrivateFieldValueManagerServiceImpl implements
 		PrivateCustomFieldValueService {
 
 	@Inject
@@ -43,6 +44,12 @@ public class CustomFieldValueManagerServiceImpl implements
 	
 	@Inject 
 	CustomFieldBindingDao customFieldBindingDao;
+	
+
+	@Inject
+	private BoundEntityDao boundEntityDao;
+	
+	
 	
 	private PermissionEvaluationService permissionService;
 	
@@ -61,17 +68,27 @@ public class CustomFieldValueManagerServiceImpl implements
 	}
 
 	
+	@Override
+	public void updateCustomFieldValues(CustomFieldBinding binding) {
+		
+		List<BoundEntity> boundEntities = boundEntityDao.findAllForBinding(binding);
+		
+		for (BoundEntity entity : boundEntities){
+			CustomFieldValue value = binding.createNewValue();
+			value.setBoundEntity(entity);			
+			customFieldValueDao.persist(value);		
+		}
+	}
+	
 	
 	@Override
-	public void createCustomFieldValues(BoundEntity entity) {
+	public void createAllCustomFieldValues(BoundEntity entity) {
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(entity.getProject().getId(), entity.getBoundEntityType());
 		
-		for (CustomFieldBinding binding : bindings){
-			
+		for (CustomFieldBinding binding : bindings){			
 			CustomFieldValue value = binding.createNewValue();
-			value.setBoundEntity(entity);	
-			
-			customFieldValueDao.persist(value);
+			value.setBoundEntity(entity);			
+			customFieldValueDao.persist(value);		
 		}
 	}
 
@@ -86,6 +103,6 @@ public class CustomFieldValueManagerServiceImpl implements
 			customFieldValueDao.persist(copy);
 		}
 	}
-	
+
 
 }

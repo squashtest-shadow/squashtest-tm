@@ -28,13 +28,16 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding.PositionAwareBindingList;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.internal.repository.BoundEntityDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.service.CustomFieldBindingModificationService;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
@@ -47,13 +50,15 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	
 	@Inject
 	private CustomFieldDao customFieldDao;
+
+	@Inject
+	private ProjectDao projectDao;
 	
 	@Inject
 	private CustomFieldBindingDao customFieldBindingDao; 
 	
-	@Inject
-	private ProjectDao projectDao;
-	
+	@Inject 
+	private PrivateCustomFieldValueService customValueService;
 	
 	@Override
 	public List<CustomField> findAvailableCustomFields() {
@@ -89,18 +94,8 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")		
 	public void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId, CustomFieldBinding newBinding) {
-		
-		Project project = projectDao.findById(projectId);
-		CustomField field = customFieldDao.findById(customFieldId);
-		Long newIndex = customFieldBindingDao.countAllForProjectAndEntity(projectId, entity) + 1;
-		
-		newBinding.setBoundProject(project);
-		newBinding.setBoundEntity(entity);
-		newBinding.setCustomField(field);
-		newBinding.setPosition(newIndex.intValue());
-		
-		customFieldBindingDao.persist(newBinding);
-		
+		_createBinding(projectId, entity, customFieldId, newBinding);
+		customValueService.updateCustomFieldValues(newBinding);
 	}
 	
 	
@@ -124,4 +119,21 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	}
 
+
+	private void _createBinding(long projectId, BindableEntity entity, long customFieldId, CustomFieldBinding newBinding) {
+		
+		Project project = projectDao.findById(projectId);
+		CustomField field = customFieldDao.findById(customFieldId);
+		Long newIndex = customFieldBindingDao.countAllForProjectAndEntity(projectId, entity) + 1;
+		
+		newBinding.setBoundProject(project);
+		newBinding.setBoundEntity(entity);
+		newBinding.setCustomField(field);
+		newBinding.setPosition(newIndex.intValue());
+		
+		customFieldBindingDao.persist(newBinding);		
+		
+	}
+
+	
 }
