@@ -47,8 +47,12 @@ public interface CustomCustomFieldManagerService extends CustomFieldFinderServic
 	 *            : the id of the custom field to delete
 	 */
 	void deleteCustomField(long customFieldId);
-
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	
+	/**
+	 * Will persist the given custom field.
+	 * 
+	 * @param newCustomField: the custom field to persist
+	 */
 	void persist(@NotNull CustomField newCustomField);
 
 	/**

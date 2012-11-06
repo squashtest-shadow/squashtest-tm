@@ -26,8 +26,6 @@ import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
-import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 
 public interface CustomFieldDao extends CustomCustomFieldDao {
 
