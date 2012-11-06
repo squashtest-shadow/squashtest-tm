@@ -18,22 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.model.customfields;
+package org.squashtest.csp.tm.web.internal.model.customfield;
 
-import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
-
-
-public class CustomFieldBindingModel {
+public class CustomFieldModel {
 
 	private long id;
 	
-	private long projectId;
+	private String name;
 	
-	private BindableEntityModel boundEntity;
+	private String label;
 	
-	private CustomFieldModel customField;
+	private boolean optional;
 	
-	private int position;
+	private String friendlyOptional;
+	
+	private String defaultValue;
+	
+	private InputTypeModel inputType;
 
 	public long getId() {
 		return id;
@@ -43,37 +44,55 @@ public class CustomFieldBindingModel {
 		this.id = id;
 	}
 
-	public long getProjectId() {
-		return projectId;
+	public String getName() {
+		return name;
 	}
 
-	public void setProjectId(long projectId) {
-		this.projectId = projectId;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public BindableEntityModel getBoundEntity() {
-		return boundEntity;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setBoundEntity(BindableEntityModel entityType) {
-		this.boundEntity = entityType;
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
-
-	public CustomFieldModel getCustomField() {
-		return customField;
+	public boolean isOptional() {
+		return optional;
 	}
 
-	public void setCustomField(CustomFieldModel customField) {
-		this.customField = customField;
+	public void setOptional(boolean optional) {
+		this.optional = optional;
 	}
 
-	public int getPosition() {
-		return position;
+	public String getDefaultValue() {
+		return defaultValue;
 	}
 
-	public void setPosition(int position) {
-		this.position = position;
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
 	}
 
+	public InputTypeModel getInputType() {
+		return inputType;
+	}
+
+	public void setInputType(InputTypeModel inputType) {
+		this.inputType = inputType;
+	}
+
+	public String getFriendlyOptional() {
+		return friendlyOptional;
+	}
+
+	public void setFriendlyOptional(String friendlyOptional) {
+		this.friendlyOptional = friendlyOptional;
+	}
+	
+	
+	
 }
+
