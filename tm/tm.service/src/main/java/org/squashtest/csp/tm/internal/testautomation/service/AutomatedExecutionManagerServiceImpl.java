@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.internal.service.testautomation;
+package org.squashtest.csp.tm.internal.testautomation.service;
 
 import java.net.URL;
 import java.util.List;
