@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.service.customField;
 
+import java.util.List;
+
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
@@ -40,7 +42,24 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	 * 
 	 * @param binding
 	 */
-	void updateCustomFieldValues(CustomFieldBinding binding);
+	void cascadeCustomFieldValuesCreation(CustomFieldBinding binding);
+	
+	
+	/**
+	 * Will remove the custom field values corresponding to the given binding
+	 * 
+	 * @param binding
+	 */
+	void cascadeCustomFieldValuesDeletion(CustomFieldBinding binding);
+	
+	
+	/**
+	 * Will remove the custom field values corresponding to the bindings, given their ids.
+	 * 
+	 * @param binding
+	 */
+	void cascadeCustomFieldValuesDeletion(List<Long> customFieldBindingIds);	
+	
 	
 	/**
 	 * Will create all the custom field values for one entity. 

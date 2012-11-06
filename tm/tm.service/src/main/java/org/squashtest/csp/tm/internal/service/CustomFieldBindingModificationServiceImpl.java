@@ -95,13 +95,14 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")		
 	public void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId, CustomFieldBinding newBinding) {
 		_createBinding(projectId, entity, customFieldId, newBinding);
-		customValueService.updateCustomFieldValues(newBinding);
+		customValueService.cascadeCustomFieldValuesCreation(newBinding);
 	}
 	
 	
 	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")	
 	public void removeCustomFieldBindings(List<Long> bindingIds){
+		customValueService.cascadeCustomFieldValuesDeletion(bindingIds);
 		customFieldBindingDao.removeCustomFieldBindings(bindingIds);
 	}
 	

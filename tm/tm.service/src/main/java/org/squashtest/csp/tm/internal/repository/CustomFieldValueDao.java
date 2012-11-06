@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.csp.core.infrastructure.dynamicmanager.QueryParam;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
@@ -41,6 +42,24 @@ public interface CustomFieldValueDao {
 	 * @param value
 	 */
 	void delete(CustomFieldValue value);
+	
+	
+	/**
+	 * Delete all the CustomFieldValue, given their ids.
+	 * 
+	 * @param ids
+	 */
+	void deleteAll(@QueryParam("ids") List<Long> ids);
+	
+	
+	
+	/**
+	 * Delete all the CustomFieldValue related to a {@link CustomFieldBinding}, given its id.
+	 * 
+	 * @param bindingId
+	 */
+	void deleteAllForBinding(@QueryParam("bindingId") Long bindingId);
+
 	
 	
 	/**
@@ -70,6 +89,13 @@ public interface CustomFieldValueDao {
 	 * @return
 	 */
 	List<CustomFieldValue> findAllCustomValuesOfBinding(long customFieldBindingId);
+
 	
-	
+	/**
+	 * returns all the CustomFieldValue related to a list of CustomFieldBinding, the resulting elements will be
+	 * returned in unspecified order
+	 * @param customFieldBindingIds
+	 * @return
+	 */
+	List<CustomFieldValue> findAllCustomValuesOfBindings(@QueryParam("bindingIds") List<Long>customFieldBindingIds);	
 }

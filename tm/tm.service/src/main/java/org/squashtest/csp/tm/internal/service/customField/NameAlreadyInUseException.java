@@ -30,6 +30,8 @@ import org.squashtest.csp.tm.domain.DomainException;
  * 
  */
 public class NameAlreadyInUseException extends DomainException {
+
+	private static final long serialVersionUID = 1L;
 	private final String entityName;
 	private final String name;
 

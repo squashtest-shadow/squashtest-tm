@@ -20,10 +20,13 @@
  */
 package org.squashtest.csp.tm.internal.service.customField;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -36,7 +39,7 @@ import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
 
 @Service("squashtest.tm.service.CustomFieldValueManagerService")
-public class PrivateFieldValueManagerServiceImpl implements
+public class PrivateCustomFieldValueServiceImpl implements
 		PrivateCustomFieldValueService {
 
 	@Inject
@@ -49,8 +52,7 @@ public class PrivateFieldValueManagerServiceImpl implements
 	@Inject
 	private BoundEntityDao boundEntityDao;
 	
-	
-	
+
 	private PermissionEvaluationService permissionService;
 	
 	@ServiceReference
@@ -69,7 +71,7 @@ public class PrivateFieldValueManagerServiceImpl implements
 
 	
 	@Override
-	public void updateCustomFieldValues(CustomFieldBinding binding) {
+	public void cascadeCustomFieldValuesCreation(CustomFieldBinding binding) {
 		
 		List<BoundEntity> boundEntities = boundEntityDao.findAllForBinding(binding);
 		
@@ -78,6 +80,23 @@ public class PrivateFieldValueManagerServiceImpl implements
 			value.setBoundEntity(entity);			
 			customFieldValueDao.persist(value);		
 		}
+	}
+	
+	@Override
+	public void cascadeCustomFieldValuesDeletion(CustomFieldBinding binding) {
+		customFieldValueDao.deleteAllForBinding(binding.getId());	
+	}
+	
+	@Override
+	public void cascadeCustomFieldValuesDeletion(List<Long> customFieldBindingIds) {
+		List<CustomFieldValue> allValues =  customFieldValueDao.findAllCustomValuesOfBindings(customFieldBindingIds);
+		
+		List<Long> ids = new ArrayList<Long>(allValues.size());
+		for (CustomFieldValue value : allValues){
+			ids.add(value.getId());
+		}
+		
+		customFieldValueDao.deleteAll(ids);
 	}
 	
 	
@@ -104,5 +123,6 @@ public class PrivateFieldValueManagerServiceImpl implements
 		}
 	}
 
+	
 
 }
