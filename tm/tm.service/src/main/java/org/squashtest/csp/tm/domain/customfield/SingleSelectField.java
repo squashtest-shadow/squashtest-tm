@@ -142,4 +142,30 @@ public class SingleSelectField extends CustomField {
 	public List<CustomFieldOption> getOptions() {
 		return Collections.unmodifiableList(options);
 	}
+	
+	/**
+	 * Will remove all options and recreate them at their right-full positions.
+	 * 
+	 * @param newIndex :  the lowest index for the moved selection
+	 * @param optionsLabels : the labels of the moved options
+	 */
+	public void moveOptions(int newIndex, List<String> optionsLabels) {
+		removeOptions(optionsLabels);
+		List<CustomFieldOption> newOptions = createOptionList(optionsLabels);
+		options.addAll(newIndex, newOptions);
+	}
+
+	private List<CustomFieldOption> createOptionList(List<String> optionsLabels) {
+		List<CustomFieldOption> newOptions = new ArrayList<CustomFieldOption>(optionsLabels.size());
+		for (String optionLabel : optionsLabels) {
+			newOptions.add(new CustomFieldOption(optionLabel));
+		}
+		return newOptions;
+	}
+
+	private void removeOptions(List<String> optionsLabels) {
+		for(String option : optionsLabels){
+			removeOption(option);
+		}
+	}
 }

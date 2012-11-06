@@ -22,13 +22,10 @@
 package org.squashtest.csp.tm.service.customfield;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
-import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 
 /**
  * Facade service for custom fields management.
@@ -53,5 +50,6 @@ public interface CustomFieldManagerService extends CustomCustomFieldManagerServi
 	
 	@PreAuthorize(HAS_ROLE_ADMIN)	
 	public void changeDefaultValue(long customFieldId, String defaultValue);
+
 
 }

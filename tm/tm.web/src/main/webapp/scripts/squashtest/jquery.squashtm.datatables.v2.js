@@ -233,10 +233,6 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	 * aoData[0]; : the datatable expects the id to be first.
 	 */
 	function _getODataId(arg) {
-		var self = this;
-		if(this.squashSettings.getODataId){
-			return this.squashSettings.getODataId.call(self, arg);
-		}
 		var key = this.squashSettings.dataKeys.entityId;
 		var id = this.fnGetData(arg)[key];
 		if ((id != "") && (!isNaN(id))) {
@@ -828,6 +824,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			oklabel : "ok",
 			cancellabel : "cancel"
 		}
+		
+		
 
 	};
 
@@ -875,7 +873,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		this.addHLinkToCellText = _addHLinkToCellText;
 		this.selectRows = _selectRows;
 		this.deselectRows = _deselectRows;
-	
+		
 		if(squashSettings.bindDeleteButtons != null){
 			this.bindDeleteButtons = squashSettings.bindDeleteButtons;
 		}

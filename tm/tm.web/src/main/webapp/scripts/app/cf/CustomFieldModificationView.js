@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEditable", "jquery.squash", "jqueryui", "jquery.squash.togglepanel",
-		 "jeditable.selectJEditable", "jquery.squash.datatables" ], function($, Backbone, SimpleJEditable, SelectJEditable) {
+		 "jeditable.selectJEditable", "jquery.squash.datatables", "jquery.squash.oneshotdialog" ], function($, Backbone, SimpleJEditable, SelectJEditable) {
 	var cfMod = squashtm.app.cfMod;
 	/*
 	 * Defines the controller for the custom fields table.
@@ -37,17 +37,26 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			
 		},
 		events: {
-			"click #cf-optional": "sendOptional",
+			"click #cf-optional": "confirmOptional",
 			"click #back": "goBack",
 			"click .is-default>input:checkbox": "changeDefaultOption",
 			"click .opt-label": "openRenameOptionPopup",
 		}, 
-		sendOptional: function(event) {
+		confirmOptional: function(event) {
 		var checked = event.target.checked;
-			$.ajax({
+			if(checked){
+				this.sendOptional(checked);
+			}else{
+				//TODO find default value and replace the "{0}" on the message with the default-value.
+				oneShotConfirm(cfMod.confirmMandatoryTitle, cfMod.confirmMandatoryMessage,
+						 cfMod.confirmLabel, cfMod.cancelLabel).done(function(){sendOptional(checked);});
+			}
+		},
+		sendOptional: function(optional){
+			return $.ajax({
 				url : cfMod.customFieldUrl+"/optional",
 				type : "post",
-				data : {'value' : checked},
+				data : {'value' : optional},
 				dataType : "json",
 				});
 		},
@@ -246,9 +255,12 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 					
 					functions : {
 						dropHandler : function(dropData){
-							$.post(cfMod.optionsTable.ajaxSource+'/position',dropData, function(){
+							$.post(cfMod.optionsTable.ajaxSource+'/positions',dropData, function(){
 								self.optionsTable.refresh();
 							});
+						},
+						getODataId : function(arg){
+							return this.fnGetData(arg)['opt-label'];
 						}
 					}
 					

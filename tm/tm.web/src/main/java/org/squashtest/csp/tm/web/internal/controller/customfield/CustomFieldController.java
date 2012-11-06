@@ -302,5 +302,17 @@ public class CustomFieldController {
 			return res;
 		}
 	}
-
+	
+	/**
+	 * Will change custom field's options positions.
+	 * 
+	 * @param customFieldId : the id of the concerned CustomField.
+	 * @param newIndex : the lowest index for the moved selection
+	 * @param optionsLabels : the labels of the moved options
+	 */
+	@RequestMapping(value = "/{customFieldId}/options/positions", method = RequestMethod.POST, params = { "itemIds[]", "newIndex" })
+	@ResponseBody
+	public void changeOptionsPositions(@PathVariable long customFieldId, @RequestParam int newIndex, @RequestParam("itemIds[]") List<String> optionsLabels) {
+		customFieldManager.changeOptionsPositions(customFieldId, newIndex, optionsLabels);
+	}
 }

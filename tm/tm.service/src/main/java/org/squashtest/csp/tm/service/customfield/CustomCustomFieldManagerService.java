@@ -20,16 +20,18 @@
  */
 package org.squashtest.csp.tm.service.customfield;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.CannotDeleteDefaultOptionException;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
+import org.squashtest.csp.tm.internal.service.customField.NameAlreadyInUseException;
 
 /**
  * Custom-Field manager services which cannot be dynamically generated.
@@ -110,4 +112,13 @@ public interface CustomCustomFieldManagerService extends CustomFieldFinderServic
 	 * @throws CannotDeleteDefaultOptionException
 	 */
 	public void removeOption(long customFieldId, String optionLabel);
+	
+	/**
+	 * Will change custom field's options positions.
+	 * 
+	 * @param customFieldId : the id of the concerned CustomField.
+	 * @param newIndex : the lowest index for the moved selection
+	 * @param optionsLabels : the labels of the moved options
+	 */
+	void changeOptionsPositions(long customFieldId, int newIndex, List<String> optionsLabels);
 }
