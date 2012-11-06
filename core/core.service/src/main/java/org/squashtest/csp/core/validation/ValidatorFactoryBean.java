@@ -66,11 +66,16 @@ public final class ValidatorFactoryBean {
 		.byProvider(HibernateValidator.class);
 		validationBootStrap.providerResolver(new HibernateValidationProviderResolver());
 		HibernateValidatorConfiguration configuration = validationBootStrap.configure();
-		MessageInterpolator targetInterpolator = configuration.getDefaultMessageInterpolator();
-		configuration.messageInterpolator(new LocaleContextMessageInterpolator(targetInterpolator));
+		
+		configureMessageInterpolator(configuration);
 
 		INSTANCE = configuration.buildValidatorFactory();
 
+	}
+
+	private static void configureMessageInterpolator(HibernateValidatorConfiguration configuration) {
+		MessageInterpolator targetInterpolator = configuration.getDefaultMessageInterpolator();
+		configuration.messageInterpolator(new LocaleContextMessageInterpolator(targetInterpolator));
 	}
 
 	public static ValidatorFactory getInstance() {

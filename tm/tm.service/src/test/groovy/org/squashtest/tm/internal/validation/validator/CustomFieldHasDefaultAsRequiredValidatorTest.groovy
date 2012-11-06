@@ -18,33 +18,52 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.tm.internal.validation.validator
+
+import org.squashtest.csp.tm.domain.customfield.CustomField;
 
 import spock.lang.Specification
 import spock.lang.Unroll;
 
 /**
- * @author Gregory Fouquet
+ * @author Gregory
  *
  */
-class UniqueItemsValidatorTest extends Specification {
-	UniqueItemsValidator validator = new UniqueItemsValidator()
+class CustomFieldHasDefaultAsRequiredValidatorTest extends Specification {
+	CustomFieldHasDefaultAsRequiredValidator validator = new CustomFieldHasDefaultAsRequiredValidator() 
 	
-	@Unroll("List #list should be valid")
-	def "list should be valid"() {
-		expect:
-		validator.isValid list, null
+	def "optional custom field should be valid"() {
+		given:
+		CustomField cf = new CustomField()
+		cf.optional = true
+		cf.defaultValue = null
 		
-		where:
-		list << [ null, [], ["a"], ["a", "b"] ]
+		expect:
+		validator.isValid(cf, null)
 	}
 	
-	@Unroll("List #list should not be valid")
-	def "list should not be valid"() {
+	def "required custom field with default value should be valid"() {
+		given:
+		CustomField cf = new CustomField()
+		cf.optional = false
+		cf.defaultValue = "default value"
+		
 		expect:
-		!validator.isValid(list, null)
+		validator.isValid(cf, null)
+	}
+
+	@Unroll("required custom field with '#blank' default value should not be valid")
+	def "required custom field with blank default value should not be valid"() {
+		given:
+		CustomField cf = new CustomField()
+		cf.optional = false
+		cf.defaultValue = blank
+		
+		expect:
+		!validator.isValid(cf, null)
 		
 		where:
-		list << [ ["a", "a"], ["a", "b", "a"] ]
+		blank << [ null, "", " ", "  " ]
 	}
 }

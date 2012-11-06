@@ -1,5 +1,8 @@
 -include: pom.xml
 -nouses: true
+Export-Package: !*internal*,\
+	org.squashtest.csp.tm.*,\
+	org.squashtest.tm.tm.*
 Import-Package: com.mysql.jdbc;resolution:=optional,\
 	javax.transaction,\
 	javassist.util.proxy,\

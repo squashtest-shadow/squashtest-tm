@@ -208,7 +208,6 @@
 				<configuration>
 					<instructions>
 						<_include>bnd.bnd</_include>
-						<Export-Package>!*internal*,org.squashtest.csp.tm.*</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

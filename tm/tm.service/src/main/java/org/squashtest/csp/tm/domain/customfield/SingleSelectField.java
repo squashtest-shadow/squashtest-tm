@@ -35,7 +35,7 @@ import javax.persistence.OrderColumn;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
-import org.squashtest.tm.internal.validation.constraint.UniqueItems;
+import org.squashtest.tm.tm.validation.constraint.UniqueItems;
 import org.squashtest.csp.tm.domain.CannotDeleteDefaultOptionException;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 

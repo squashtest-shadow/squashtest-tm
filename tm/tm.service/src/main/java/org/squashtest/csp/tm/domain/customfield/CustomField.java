@@ -37,6 +37,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.tm.validation.constraint.HasDefaultAsRequired;
 
 /**
  * @author Gregory Fouquet
@@ -51,6 +52,7 @@ import org.hibernate.validator.constraints.NotBlank;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("CF")
+@HasDefaultAsRequired
 public class CustomField {
 	@Id
 	@GeneratedValue

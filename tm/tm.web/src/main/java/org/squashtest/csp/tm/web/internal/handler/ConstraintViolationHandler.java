@@ -19,44 +19,27 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.internal.validation.validator;
+package org.squashtest.csp.tm.web.internal.handler;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
-import org.squashtest.tm.internal.validation.constraint.UniqueItems;
+import javax.validation.ConstraintViolation;
 
 /**
+ * Interface of objects able to populate a list of {@link FieldValidationErrorModel} from a {@link ConstraintViolation}.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-public class UniqueItemsValidator implements ConstraintValidator<UniqueItems, List<?>> {
-
+interface ConstraintViolationHandler {
 	/**
-	 * @see javax.validation.ConstraintValidator#initialize(java.lang.annotation.Annotation)
+	 * If this object is able to handle the violation, it adds a FieldValidationErrorModel to the list and returns true.
+	 * 
+	 * @param violation
+	 *            violation to handled
+	 * @param errors
+	 *            list of errors to populate
+	 * @return true if handled violation
 	 */
-	@Override
-	public void initialize(UniqueItems constraintAnnotation) {
-		// NOOP
-		
-	}
-
-	/**
-	 * @see javax.validation.ConstraintValidator#isValid(java.lang.Object, javax.validation.ConstraintValidatorContext)
-	 */
-	@Override
-	public boolean isValid(List<?> value, ConstraintValidatorContext context) {
-		if (value == null || value.size() < 2) {
-			return true;
-		}
-		
-		Set<Object> uniqueItems = new HashSet<Object>(value.size());
-		uniqueItems.addAll(value);
-		
-		return uniqueItems.size() == value.size();
-	}
+	boolean handle(ConstraintViolation<?> violation, List<FieldValidationErrorModel> errors);
 }

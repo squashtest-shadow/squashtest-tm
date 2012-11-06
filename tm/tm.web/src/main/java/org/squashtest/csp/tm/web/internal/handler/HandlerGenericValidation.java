@@ -39,10 +39,13 @@ import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 
 @Component
 public class HandlerGenericValidation extends AbstractHandlerExceptionResolver {
-
+	private final List<ConstraintViolationHandler> constraintViolationHandlers = new ArrayList<ConstraintViolationHandler>();
+	
 
 	public HandlerGenericValidation() {
 		super();
+		constraintViolationHandlers.add(new HasDefaultAsRequiredViolationHandler());
+		constraintViolationHandlers.add(new PropertyPathConstraintViolationHandler());
 	}
 
 	@Override
@@ -65,12 +68,20 @@ public class HandlerGenericValidation extends AbstractHandlerExceptionResolver {
 
 		Set<ConstraintViolation<?>> constraintList = cve.getConstraintViolations();
 		Iterator<ConstraintViolation<?>> iter = constraintList.iterator();
+		
 		while (iter.hasNext()) {
-			ConstraintViolation<?> violation = iter.next();
-			ves.add(new FieldValidationErrorModel("", violation.getPropertyPath().toString(), violation.getMessage()));
+			addFieldValidationError(iter.next(), ves);
 		}
 
 		return ves;
+	}
+
+	private void addFieldValidationError(ConstraintViolation<?> violation, List<FieldValidationErrorModel> ves) {
+		for (ConstraintViolationHandler handler : constraintViolationHandlers) {
+			if (handler.handle(violation, ves)) {
+				break;
+			}
+		}
 	}
 
 	private boolean exceptionIsHandled(Exception ex) {

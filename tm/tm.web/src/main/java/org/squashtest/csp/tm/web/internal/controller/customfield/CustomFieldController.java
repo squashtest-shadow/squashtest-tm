@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -83,7 +84,7 @@ public class CustomFieldController {
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
-	public void createNew(@RequestBody NewCustomField field) {
+	public void createNew(@Valid @RequestBody NewCustomField field) {
 		LOGGER.info(ToStringBuilder.reflectionToString(field));
 		customFieldManager.persist(field.createTransientEntity());
 	}

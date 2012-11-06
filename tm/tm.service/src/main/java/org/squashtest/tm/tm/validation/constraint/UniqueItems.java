@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.internal.validation.constraint;
+package org.squashtest.tm.tm.validation.constraint;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,20 +28,22 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import org.squashtest.tm.internal.validation.validator.UniqueItemsValidator;
+import org.squashtest.tm.internal.validation.validator.UniqueListItemsValidator;
 
 /**
  * Add this constraint to a List field or a List returning method. It checks that the constrained object does not
  * contain more than once the same item.
+ * 
+ * Note : for this constraint to work properly, items have to be comparable using equals() !
  * 
  * @author Gregory Fouquet
  * 
  */
 @Target({ ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = UniqueItemsValidator.class)
+@Constraint(validatedBy = UniqueListItemsValidator.class)
 public @interface UniqueItems {
-	String message() default "{org.squashtest.tm.internal.validation.constraint.UniqueItems}";
+	String message() default "{org.squashtest.tm.tm.validation.constraint.UniqueItems}";
 
 	Class<?>[] groups() default {};
 

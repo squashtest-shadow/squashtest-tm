@@ -20,16 +20,16 @@
  */
 requirejs.config({
 	
-	packages : ["custom-field-binding"],
+	packages: ["custom-field-binding"],
 
 	/*
-	 * rules for paths naming : * third party lib : unversionned lib
-	 * name * non AMD squash lib : replace "squashtm" by "squash" in js
+	 * rules for paths naming: * third party lib: unversionned lib
+	 * name * non AMD squash lib: replace "squashtm" by "squash" in js
 	 * file name and remove any unrequired "ext" suffix.
 	 */
 	paths: {
 		"domReady": "lib/require/domReady",
-		/* CAVEAT : as we defined a "jquery" path, any module named "jquery/my.module" will be interpolated as "/lib/jquery/../my.module" */
+		/* CAVEAT: as we defined a "jquery" path, any module named "jquery/my.module" will be interpolated as "/lib/jquery/../my.module" */
 		"jquery": "lib/jquery/jquery-1.8.2",
 		"jqueryui": "lib/jquery/jquery-ui-1.9.0.custom",
 		"datatables": "datatables/jquery.dataTables",
@@ -43,13 +43,13 @@ requirejs.config({
 		"jeditable": "jquery/jquery.jeditable", 
 		"jeditable.ckeditor": "jquery/jquery.jeditable.ckeditor", 
 		"jeditable.datepicker": "jquery/jquery.jeditable.datepicker", 
-		"jeditable.simpleJEditable" : "squashtest/classes/SimpleJEditable",
-		"jeditable.selectJEditable" : "squashtest/classes/SelectJEditable",
+		"jeditable.simpleJEditable": "squashtest/classes/SimpleJEditable",
+		"jeditable.selectJEditable": "squashtest/classes/SelectJEditable",
 		"jstree": "jquery/jquery.jstree", 
 		"jquery.generateId": "jquery/jquery.generateId",
 		"jquery.hotkeys": "jquery/jquery.hotkeys-0.8", 
 		"jquery.squash": "squashtest/jquery.squashtm.plugin", 
-		"jquery.squash.fragmenttabs" : "squash/squashtm.fragmenttabs",
+		"jquery.squash.fragmenttabs": "squash/squashtm.fragmenttabs",
 		"jquery.squash.togglepanel": "squashtest/jquery.squash.togglepanels", 
 		"jquery.squash.messagedialog": "squashtest/jquery.squash.messagedialog", 
 		"jquery.squash.confirmdialog": "squashtest/jquery.squash.confirmdialog",
@@ -63,9 +63,9 @@ requirejs.config({
 		"jquery.squash.linkabletree": "squash/jquery.squashtm.linkabletree", 
 		"jquery.squash.projectpicker": "squash/jquery.squashtm.projectpicker", 
 		"jquery.cookie": "jquery/jquery.cookie",
-		"squash.cssloader" : "squash/squash.cssloader",
+		"squash.cssloader": "squash/squash.cssloader"
 	},
-	shim : {
+	shim: {
 		"ckeditor": {
 			exports: "CKEDITOR"
 		},
@@ -86,109 +86,106 @@ requirejs.config({
 			exports: "jeditableDatepicker"
 		},
 		"jeditable.simpleJEditable": {
-			deps : [ "jquery.squash.jeditable" ],
-			exports : "SimpleJEditable"
+			deps: [ "jquery.squash.jeditable" ],
+			exports: "SimpleJEditable"
 		},
 		"jeditable.selectJEditable": {
-			deps : [ "jquery.squash.jeditable" ],
-			exports : "SelectJEditable"
+			deps: [ "jquery.squash.jeditable" ],
+			exports: "SelectJEditable"
 		},
 		"jstree": {
-			deps : [ "jquery", "jqueryui", "jquery.hotkeys", "jquery.cookie" ],
-			exports : "jqueryui"
+			deps: [ "jquery", "jqueryui", "jquery.hotkeys", "jquery.cookie" ],
+			exports: "jqueryui"
 		},
-		"jqueryui": {
-			deps : [ "jquery" ],
-			exports : "jqueryui"
-		},
-		"datatables": {
-			deps : [ "jqueryui" ],
-			exports : "datatables"
-		},
+		"jqueryui": [ "jquery" ],
+		"datatables": [ "jqueryui" ],
 		"squash.datatables": {
-			deps : [ "datatables", "squashtest/jquery.squashtm.tableDnD.ext" ],
-			exports : "squashtmDatatables"
+			deps: [ "datatables", "squashtest/jquery.squashtm.tableDnD.ext" ],
+			exports: "squashtmDatatables"
 		},
 		"jquery.squash.datatables": {
-			deps : [ "datatables", "squash.datatables", "squashtest/classes/KeyEventListener", "jquery.squash.oneshotdialog" ],
-			exports : "squashtmDatatablesWidget"
+			deps: [ "datatables", "squash.datatables", "squashtest/classes/KeyEventListener", "jquery.squash.oneshotdialog" ],
+			exports: "squashtmDatatablesWidget"
 		},
 		"jquery.squash": {
-			deps : [ "jquery" ],
-			exports : "jquerySquashtm"
+			deps: [ "jquery" ],
+			exports: "jquerySquashtm"
 		},
 		"jquery.squash.fragmenttabs":{
-			deps : [ "jquery", "jqueryui" ],
-			exports : "squashtmTabsWidget"
+			deps: [ "jquery", "jqueryui" ],
+			exports: "squashtmTabsWidget"
 		},
 		"jquery.squash.togglepanel": {
-			deps : [ "jquery", "jqueryui", "jquery.squash.squashbutton" ],
-			exports : "jquerySquashtmTogglepanel"
+			deps: [ "jquery", "jqueryui", "jquery.squash.squashbutton" ],
+			exports: "jquerySquashtmTogglepanel"
 		},
 		"jquery.squash.messagedialog": {
-			deps : [ "jquery", "jqueryui" ],
-			exports : "jquerySquashMessageDialog"
+			deps: [ "jquery", "jqueryui" ],
+			exports: "jquerySquashMessageDialog"
 		},
 		"jquery.squash.confirmdialog": {
-			deps : [ "jquery", "jqueryui" ],
-			exports : "jquerySquashConfirmDialog"
+			deps: [ "jquery", "jqueryui" ],
+			exports: "jquerySquashConfirmDialog"
 		},
 		"jquery.squash.oneshotdialog": {
-			deps : [ "jquery", "jqueryui" ],
-			exports : "jquerySquashOneShotConfirm"
+			deps: [ "jquery", "jqueryui" ],
+			exports: "jquerySquashOneShotConfirm"
 		},
 		"jquery.squash.fg.menu": {
-			deps : [ "jquery", "jqueryui" ],
-			exports : "jquerySquashtmFgMenu"
+			deps: [ "jquery", "jqueryui" ],
+			exports: "jquerySquashtmFgMenu"
 		},
 		"jquery.squash.contextual-content": {
-			deps : [ "jquery", "jqueryui" ],
-			exports : "jquerySquashContextualContent"
+			deps: [ "jquery", "jqueryui" ],
+			exports: "jquerySquashContextualContent"
 		},
 		"jquery.squash.jeditable": {
-			deps : [ "jquery", "jeditable", "jeditable.ckeditor" ],
-			exports : "jquerySquashtmJeditable"
+			deps: [ "jquery", "jeditable", "jeditable.ckeditor" ],
+			exports: "jquerySquashtmJeditable"
 		},
 		"squashtest/classes/TreeEventHandler": {
-			deps : [ "squashtest/classes/Event" ],
-			exports : "TreeEventHandler"
+			deps: [ "squashtest/classes/Event" ],
+			exports: "TreeEventHandler"
 		},
 		
 		"squashtest/classes/TreeNodeCopier": {
-			deps : [ "jquery" ],
-			exports : "TreeNodeCopier"
+			deps: [ "jquery" ],
+			exports: "TreeNodeCopier"
 		},
 		"jquery.squash.jstree-node": {
-			deps : [ "jquery", "jstree" ],
-			exports : "jquerySquashtmJstreeNode"
+			deps: [ "jquery", "jstree" ],
+			exports: "jquerySquashtmJstreeNode"
 		},
 		"jquery.squash.jstree": {
-			deps : [ "jquery", "jstree", "jquery.squash.jstree-node" ],
-			exports : "jquerySquashtmJstree"
+			deps: [ "jquery", "jstree", "jquery.squash.jstree-node" ],
+			exports: "jquerySquashtmJstree"
 		},
 		"jquery.squash.linkabletree": {
-			deps : [ "jquery", "jquery.squash.jstree" ],
-			exports : "jquerySquashtmLinkableTree"
+			deps: [ "jquery", "jquery.squash.jstree" ],
+			exports: "jquerySquashtmLinkableTree"
 		},
 		"jquery.squash.projectpicker": {
-			deps : [ "jquery", "jqueryui" ],
-			exports : "jquerySquashtmProjectPicker"
+			deps: [ "jquery", "jqueryui" ],
+			exports: "jquerySquashtmProjectPicker"
 		},
 		"jquery.squash.squashbutton": {
-			deps : [ "jquery", "jqueryui" ],
-			exports : "jquerySquashSquashButton"
+			deps: [ "jquery", "jqueryui" ],
+			exports: "jquerySquashSquashButton"
 		},
 		"jquery.cookie": {
-			deps : [ "jquery" ],
-			exports : "jqueryCookie"
+			deps: [ "jquery" ],
+			exports: "jqueryCookie"
 		},
 		"handlebars": {
 			deps: [ "jquery" ],
 			exports: "Handlebars"
 		},
+		"underscore": {
+			exports: "_"
+		},
 		"backbone": {
-			deps : [ "underscore", "jquery" ],
-			exports : "Backbone"
+			deps: [ "underscore", "jquery" ],
+			exports: "Backbone"
 		}
 	}
 });

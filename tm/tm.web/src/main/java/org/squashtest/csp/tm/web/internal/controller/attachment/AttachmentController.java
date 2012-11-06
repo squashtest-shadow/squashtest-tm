@@ -54,7 +54,7 @@ import org.squashtest.csp.tm.web.internal.fileuploadutils.UploadProgress;
 import org.squashtest.csp.tm.web.internal.fileuploadutils.UploadProgressListener;
 import org.squashtest.csp.tm.web.internal.fileuploadutils.UploadProgressListenerUtils;
 import org.squashtest.csp.tm.web.internal.fileuploadutils.UploadSummary;
-import org.squashtest.csp.tm.web.internal.model.customeditors.AttachmentPropertyEditorSupport;
+import org.squashtest.csp.tm.web.internal.model.customeditor.AttachmentPropertyEditorSupport;
 
 @Controller
 @RequestMapping("/attach-list/{attachListId}/attachments")
