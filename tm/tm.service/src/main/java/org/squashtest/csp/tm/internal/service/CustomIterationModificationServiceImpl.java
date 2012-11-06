@@ -130,8 +130,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 			}
 		}
 		iterationDao.persistIterationAndTestPlan(iteration);
-		customFieldValueService.createAllCustomFieldValues(iteration);
 		campaign.addIteration(iteration);
+		customFieldValueService.createAllCustomFieldValues(iteration);
 		return campaign.getIterations().size() - 1;
 	}
 
@@ -326,9 +326,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	public void addTestSuite(Iteration iteration, TestSuite suite) {
 		suiteDao.persist(suite);
-		customFieldValueService.createAllCustomFieldValues(suite);
 		iteration.addTestSuite(suite);
-
+		customFieldValueService.createAllCustomFieldValues(suite);
 	}
 
 	@Override

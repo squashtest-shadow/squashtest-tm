@@ -25,8 +25,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
