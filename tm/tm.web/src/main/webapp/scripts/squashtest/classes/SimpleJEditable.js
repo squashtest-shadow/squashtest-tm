@@ -41,7 +41,7 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
 				// jeditable
 			// when clicking in the rich editor (since it considers the click as
 			// out of the editing zone)
-			indicator : '<img src=' + squashtm.app.contextRoot
+			indicator : '<img src="' + squashtm.app.contextRoot
 					+ 'scripts/jquery/indicator.gif" alt="processing..." />',
 		};
 

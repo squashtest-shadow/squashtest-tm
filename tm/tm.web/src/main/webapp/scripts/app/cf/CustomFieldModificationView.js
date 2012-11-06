@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEditable", "jquery.squash", "jqueryui", "jquery.squash.togglepanel",
-		 "jeditable.selectJEditable", "jquery.squash.datatables", "jquery.squash.oneshotdialog" ], function($, Backbone, SimpleJEditable, SelectJEditable) {
+		 "jeditable.selectJEditable", "jquery.squash.datatables", "jquery.squash.oneshotdialog", "jquery.squash.messagedialog" ], function($, Backbone, SimpleJEditable, SelectJEditable) {
 	var cfMod = squashtm.app.cfMod;
 	/*
 	 * Defines the controller for the custom fields table.
@@ -47,10 +47,36 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			if(checked){
 				this.sendOptional(checked);
 			}else{
-				//TODO find default value and replace the "{0}" on the message with the default-value.
-				oneShotConfirm(cfMod.confirmMandatoryTitle, cfMod.confirmMandatoryMessage,
-						 cfMod.confirmLabel, cfMod.cancelLabel).done(function(){sendOptional(checked);});
+				var defaultValue = this.findDefaultValue();
+				if(!defaultValue || defaultValue === ""){
+					$.squash.openMessage(cfMod.popupErrorTitle, cfMod.mandatoryNeedsDefaultMessage,350);
+					event.target.checked = true;
+					return;
+				}
+				var message = cfMod.confirmMandatoryMessage;
+				message = this.replacePlaceHolderByValue(0, message, defaultValue);
+				oneShotConfirm(cfMod.confirmMandatoryTitle, message, cfMod.confirmLabel, cfMod.cancelLabel, 500)
+				.done(function(){this.sendOptional(checked);})
+				.fail(function(){event.target.checked = true;});
 			}
+		},
+		findDefaultValue:function(){
+			var defaultValueDiv = this.$('#cuf-default-value');
+			if(defaultValueDiv && defaultValueDiv.length > 0){
+				return defaultValueDiv[0].textContent;
+			}else if(this.optionsTable){
+				var checkedDefault = this.optionsTable.find('td.is-default input:checked');
+				if(checkedDefault){
+					return checkedDefault.val();
+				}
+			}
+			return "";
+		},
+		replacePlaceHolderByValue: function(index, message, replaceValue){
+			var pattern = /\{[\d,\w,\s]*\}/;
+			var match = pattern.exec(message);
+			var pHolder = match[index];
+			return message.replace(pHolder, replaceValue);
 		},
 		sendOptional: function(optional){
 			return $.ajax({
@@ -196,7 +222,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 		},
 		configureOptionTable:function(){
 			var self = this;
-			if($("#cuf-inputType").attr('value') == "PLAIN_TEXT"){return;}
+			if($("#cuf-inputType").attr('value') != "DROPDOWN_LIST"){return;}
 			var config = $.extend({
 				"oLanguage": {
 					"sUrl": cfMod.optionsTable.languageUrl
