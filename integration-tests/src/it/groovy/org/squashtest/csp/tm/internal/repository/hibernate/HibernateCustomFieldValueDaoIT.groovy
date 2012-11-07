@@ -48,6 +48,7 @@ import javax.inject.Inject;
 import org.hibernate.SessionFactory;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
 import org.unitils.dbunit.annotation.DataSet;
 
@@ -102,27 +103,40 @@ class HibernateCustomFieldValueDaoIT extends DbunitDaoSpecification{
 	def "should copy the custom fields values from one test case to another test case by copying the values"(){
 		
 		when :
-		/*	def hql = 		"""update CustomFieldValue cfv1 set cfv1.value = ( 
-								select cfv2.value from CustomFieldValue cfv2 
-								where cfv2.binding = cfv1.binding 
-								and cfv2.boundEntityId = :srcEntityId 
-								and cfv2.boundEntityType = :srcEntityType
-							)
-							where cfv1.boundEntityId = :destEntityId
-							and cfv1.boundEntityType = :srcEntityType
-					  		"""
-			Query q = factory.getCurrentSession().createQuery(hql)
-			q.setParameter("destEntityId", 112l)
-			q.setParameter("srcEntityId", 111l)		
-			q.setParameter("srcEntityType", BindableEntity.TEST_CASE)	
-			
-			q.executeUpdate()*/
-			
 			dao.copyCustomFieldValuesContent(111l, 112l, BindableEntity.TEST_CASE)
 			List<CustomFieldValue> values = dao.findAllCustomValues(112l, BindableEntity.TEST_CASE)
 		
 		then :
 			values.collect{it.value} == ["", "true"]
+	}
+	
+	def "should create all the custom field values for a new BoundEntity"(){
+		
+		given :
+			def session = factory.getCurrentSession()
+			def testcase = session.get(TestCase.class, 113l)
+		
+		when :
+		
+			def hql = 	""" insert into CustomFieldValue(boundEntityId, boundEntityType, binding, value)  
+							select CAST(:destEntityId AS long), cfb.boundEntity, cfb, cf.defaultValue 
+						  	from CustomFieldBinding cfb join cfb.customField cf 
+							where cfb.boundEntity = :entityType 
+							and cfb.boundProject = :boundProject 
+						"""
+			
+			Query q = session.createQuery(hql)
+			q.setParameter("destEntityId", 113l)
+			q.setParameter("entityType", BindableEntity.TEST_CASE)
+			q.setParameter("boundProject", testcase.project)
+			
+			q.executeUpdate()
+			
+			List<CustomFieldValue> values = dao.findAllCustomValues(113l, BindableEntity.TEST_CASE)
+			
+		then :
+			values.collect{it.value} as Set == ["NOSEC", "false"] as Set
+			
 	}
 
 	

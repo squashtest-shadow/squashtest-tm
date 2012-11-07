@@ -101,13 +101,15 @@ public class PrivateCustomFieldValueServiceImpl implements
 	
 	@Override
 	public void createAllCustomFieldValues(BoundEntity entity) {
-		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(entity.getProject().getId(), entity.getBoundEntityType());
+		/*List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(entity.getProject().getId(), entity.getBoundEntityType());
 		
 		for (CustomFieldBinding binding : bindings){			
 			CustomFieldValue value = binding.createNewValue();
 			value.setBoundEntity(entity);			
 			customFieldValueDao.persist(value);		
-		}
+		}*/
+		
+		customFieldValueDao.createAllCustomFieldValues(entity.getBoundEntityId(), entity.getBoundEntityType(), entity.getProject());
 	}
 
 

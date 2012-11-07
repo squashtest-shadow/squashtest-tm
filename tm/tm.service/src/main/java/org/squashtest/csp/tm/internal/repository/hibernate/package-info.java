@@ -265,6 +265,12 @@
 																				  	") "+
 																				  	"where cfv1.boundEntityId = :destEntityId "+
 																				  	"and cfv1.boundEntityType = :entityType"),	
+																				  	
+		@NamedQuery(name = "CustomFieldValue.createAllCustomFieldValues", query= 	"insert into CustomFieldValue(boundEntityId, boundEntityType, binding, value)"+  
+																					"select CAST(:destEntityId AS long), cfb.boundEntity, cfb, cf.defaultValue " +
+																				  	"from CustomFieldBinding cfb join cfb.customField cf "+
+																					"where cfb.boundEntity = :entityType "+
+																					"and cfb.boundProject = :boundProject "),
 		
 		//BoundEntity dao
 		@NamedQuery(name = "BoundEntityDao.findAllTestCasesForProject", query="select tc from TestCase tc where tc.project.id = :projectId"),

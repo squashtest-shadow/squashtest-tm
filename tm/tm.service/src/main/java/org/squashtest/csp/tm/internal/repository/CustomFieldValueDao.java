@@ -38,6 +38,17 @@ public interface CustomFieldValueDao {
 	 */
 	void persist(CustomFieldValue newValue);
 	
+	
+	/**
+	 * Will batch-create the custom field values for a new entity, according to the custom field bindings it is subject to
+	 * 
+	 * @param destEntityId the id of the bound entity
+	 * @param entityType the BindableEntity of that entity
+	 * @param boundProject project to which it belongs
+	 */
+	void createAllCustomFieldValues(@QueryParam("destEntityId") Long destEntityId, @QueryParam("entityType") BindableEntity entityType, @QueryParam("boundProject") Project boundProject);
+	
+	
 	/**
 	 * 
 	 * 'nuff said.
