@@ -237,6 +237,7 @@
 		@NamedQuery(name = "CustomFieldBinding.findAllForProject", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ? group by cfb.boundEntity order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldBinding.findAllForProjectAndEntity", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ? and cfb.boundEntity = ? order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldBinding.countAllForProjectAndEntity", query = "select count(cfb) from CustomFieldBinding cfb where cfb.boundProject.id = ? and cfb.boundEntity = ?"),
+		@NamedQuery(name = "CustomFieldBinding.findIdsForCustomField", query = "select cfb.id from CustomFieldBinding cfb where cfb.customField = ? order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldBinding.removeCustomFieldBindings", query = "delete CustomFieldBinding cfb where cfb.id in (:cfbIds)"),
 		@NamedQuery(name = "CustomFieldBinding.recomputeBindingPositions", query = "select cfb1.id as bindingId, cfb1.position as formerPosition, count(cfb1.id) as newPosition from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.boundEntity=cfb2.boundEntity "+
 																				   "and cfb1.boundProject = cfb2.boundProject and cfb1.position >= cfb2.position group by cfb1.id"),	

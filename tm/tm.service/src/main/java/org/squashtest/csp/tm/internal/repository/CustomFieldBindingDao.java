@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.csp.core.infrastructure.dynamicmanager.QueryParam;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.core.foundation.collection.Paging;
@@ -35,6 +36,8 @@ public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao{
 	
 	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity, Paging paging);
 	
+	List<Long> findIdsForCustomField(long customFieldId);
+	
 	void persist(CustomFieldBinding binding);
 	
 	Long countAllForProjectAndEntity(long projectId, BindableEntity boundEntity);
@@ -46,5 +49,5 @@ public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao{
 	 * @return
 	 */
 	public List<CustomFieldBinding> findAllAlike(long id);
-	
+
 }

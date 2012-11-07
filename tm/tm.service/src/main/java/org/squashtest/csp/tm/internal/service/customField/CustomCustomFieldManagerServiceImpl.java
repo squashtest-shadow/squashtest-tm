@@ -28,11 +28,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao;
 import org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
 
 /**
  * Implementations for (non dynamically generated) custom-field management services.
@@ -46,9 +49,16 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Inject
 	private CustomFieldDao customFieldDao;
 
-	/**
+	@Inject
+	private CustomFieldBindingDao customFieldBindingDao;
+	
+	@Inject
+	private CustomFieldBindingModificationService customFieldBindingModificationService;
+	
+        /**
 	 * @see org.squashtest.csp.tm.service.customfield.CustomFieldFinderService#findAllOrderedByName()
 	 */
+
 	@Override
 	public List<CustomField> findAllOrderedByName() {
 		return customFieldDao.finAllOrderedByName();
@@ -70,8 +80,9 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Override
 	public void deleteCustomField(long customFieldId) {
 		CustomField customField = customFieldDao.findById(customFieldId);
+		List<Long> bindingIds = customFieldBindingDao.findIdsForCustomField(customFieldId);
+		customFieldBindingModificationService.removeCustomFieldBindings(bindingIds);
 		customFieldDao.remove(customField);
-
 	}
 
 	/**
