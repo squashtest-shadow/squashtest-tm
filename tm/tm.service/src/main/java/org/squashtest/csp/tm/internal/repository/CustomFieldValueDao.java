@@ -24,8 +24,10 @@ import java.util.List;
 
 import org.squashtest.csp.core.infrastructure.dynamicmanager.QueryParam;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.csp.tm.domain.project.Project;
 
 public interface CustomFieldValueDao {
 
@@ -98,4 +100,27 @@ public interface CustomFieldValueDao {
 	 * @return
 	 */
 	List<CustomFieldValue> findAllCustomValuesOfBindings(@QueryParam("bindingIds") List<Long>customFieldBindingIds);	
+	
+	
+	/**
+	 * Will copy all the custom field values of a {@link BoundEntity} to another BoundEntity. Those two BoundEntity are expected to be of same {@link BindableEntity}.
+	 *  
+	 * @param srcEntityId the id of the BoundEntity from which we will copy the custom field values
+	 * @param entityType the BindableEntity that must be common for both and destination entities.
+	 * @param destEntityId the id of the BoundEntity which will receive the copies of custom field values. 
+	 */
+	void copyCustomFieldValues(@QueryParam("srcEntityId") Long srcEntityId, @QueryParam("destEntityId") Long destEntityId, @QueryParam("entityType") BindableEntity entityType );
+
+
+	/**
+	 * Will copy the content of all the custom field values of a {@link BoundEntity} into the custom field values of another BoundEntity.
+	 * The custom field values of the destination are expected to exist; they won't be created on the fly.  
+	 * The two BoundEntity are expected to be of same {@link BindableEntity}.
+	 *  
+	 * @param srcEntityId the id of the BoundEntity from which we will copy the custom field values
+	 * @param entityType the BindableEntity that must be common for both and destination entities.
+	 * @param destEntityId the id of the BoundEntity which will receive the copies of custom field values. 
+	 */	
+	void copyCustomFieldValuesContent(@QueryParam("srcEntityId") Long srcEntityId, @QueryParam("destEntityId") Long destEntityId, @QueryParam("entityType") BindableEntity entityType );
+
 }

@@ -25,6 +25,7 @@ import java.util.List;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService;
 
 
@@ -70,12 +71,20 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	
 
 	/**
-	 * Will copy the custom field values from an entity to another entity. 
-	 * 
-	 * Will fail if the source and destination are from different projects, different {@link BindableEntity} type, or if they are the same.
+	 * Will copy the custom field values from an entity to another entity, creating them in the process
 	 * 
 	 * @param entity
 	 */
-	void copyCustomFieldValues(BoundEntity source, BoundEntity dest);
+	void copyCustomFieldValues(BoundEntity source, BoundEntity recipient);
 	
+	
+	/**
+	 * Will copy the custom field values from an entity to another entity. It assumes that the custom field values
+	 * already exists for both, and will simply invoke {@link CustomFieldValue#setValue(String)} from one to the other. 
+	 * 
+	 * 
+	 * @param source
+	 * @param dest
+	 */
+	void copyCustomFieldValuesContent(BoundEntity source, BoundEntity recipient);
 }

@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -111,16 +112,13 @@ public class PrivateCustomFieldValueServiceImpl implements
 
 
 	@Override
-	public void copyCustomFieldValues(BoundEntity source, BoundEntity dest) {
-		List<CustomFieldValue> sourceValues = customFieldValueDao.findAllCustomValues(source.getBoundEntityId(), source.getBoundEntityType());
-		
-		for (CustomFieldValue value : sourceValues){
-			CustomFieldValue copy = value.copy();
-			copy.setBoundEntity(dest);
-			customFieldValueDao.persist(copy);
-		}
+	public void copyCustomFieldValues(BoundEntity source, BoundEntity recipient) {
+		customFieldValueDao.copyCustomFieldValues(source.getBoundEntityId(), recipient.getBoundEntityId(), source.getBoundEntityType());
 	}
 
-	
+	@Override
+	public void copyCustomFieldValuesContent(BoundEntity source, BoundEntity recipient) {
+		throw new NotImplementedException();
+	}
 
 }

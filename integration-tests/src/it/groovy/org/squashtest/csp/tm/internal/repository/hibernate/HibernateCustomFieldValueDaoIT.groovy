@@ -1,3 +1,4 @@
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2012 Henix, henix.fr
@@ -40,9 +41,11 @@
 */
 package org.squashtest.csp.tm.internal.repository.hibernate
 
+import org.hibernate.Query;
 
 import javax.inject.Inject;
 
+import org.hibernate.SessionFactory;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
@@ -57,6 +60,9 @@ class HibernateCustomFieldValueDaoIT extends DbunitDaoSpecification{
 	
 	@Inject
 	CustomFieldValueDao dao;
+	
+	@Inject
+	SessionFactory factory;
 	
 	def "should find all the custom field values for test case 1"(){
 		
@@ -81,5 +87,43 @@ class HibernateCustomFieldValueDaoIT extends DbunitDaoSpecification{
 		
 		
 	}
+	
+	def "should copy the custom fields values from one test case to another test case by creating them"(){
+		
+		when :			
+			dao.copyCustomFieldValues(112l, 113l, BindableEntity.TEST_CASE)			
+			List<CustomFieldValue> values = dao.findAllCustomValues(113l, BindableEntity.TEST_CASE)
+		
+		then :
+			values.collect{it.value} as Set == ["SEC-2", "false"] as Set
+	}
+	
+	
+	def "should copy the custom fields values from one test case to another test case by copying the values"(){
+		
+		when :
+		/*	def hql = 		"""update CustomFieldValue cfv1 set cfv1.value = ( 
+								select cfv2.value from CustomFieldValue cfv2 
+								where cfv2.binding = cfv1.binding 
+								and cfv2.boundEntityId = :srcEntityId 
+								and cfv2.boundEntityType = :srcEntityType
+							)
+							where cfv1.boundEntityId = :destEntityId
+							and cfv1.boundEntityType = :srcEntityType
+					  		"""
+			Query q = factory.getCurrentSession().createQuery(hql)
+			q.setParameter("destEntityId", 112l)
+			q.setParameter("srcEntityId", 111l)		
+			q.setParameter("srcEntityType", BindableEntity.TEST_CASE)	
+			
+			q.executeUpdate()*/
+			
+			dao.copyCustomFieldValuesContent(111l, 112l, BindableEntity.TEST_CASE)
+			List<CustomFieldValue> values = dao.findAllCustomValues(112l, BindableEntity.TEST_CASE)
+		
+		then :
+			values.collect{it.value} == ["", "true"]
+	}
 
+	
 }

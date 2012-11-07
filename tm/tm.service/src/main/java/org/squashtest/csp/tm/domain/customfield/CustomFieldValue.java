@@ -52,6 +52,22 @@ public class CustomFieldValue {
 	private String value;
 	
 	
+	
+	public CustomFieldValue(){
+		super();
+	}
+	
+	
+	public CustomFieldValue(Long boundEntityId, BindableEntity boundEntityType,
+			CustomFieldBinding binding, String value) {
+		super();
+		this.boundEntityId = boundEntityId;
+		this.boundEntityType = boundEntityType;
+		this.binding = binding;
+		this.value = value;
+	}
+
+
 	public Long getId() {
 		return id;
 	}

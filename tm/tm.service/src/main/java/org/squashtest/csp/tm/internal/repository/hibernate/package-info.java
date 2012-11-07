@@ -251,6 +251,20 @@
 		@NamedQuery(name = "CustomFieldValue.deleteAll", query="delete CustomFieldValue where id in (:ids)"),
 		@NamedQuery(name = "CustomFieldValue.deleteAllForBinding", query="delete CustomFieldValue cv1 where cv1 in (select cv2 from CustomFieldValue cv2 join cv2.binding cfb where cfb.id = :bindingId )"),
 		
+		//on the following line, the CAST trick allows hibernate to select litteral passed as arguments
+		//SQL native compatibility backing it is SQL-92 and is widely supported by recent dbms so no worries. 
+		@NamedQuery(name = "CustomFieldValue.copyCustomFieldValues", query="insert into CustomFieldValue(boundEntityId, boundEntityType, binding, value) "+
+																			" select CAST(:destEntityId AS long), cfv.boundEntityType, cfv.binding, cfv.value "+
+																		    " from CustomFieldValue cfv where cfv.boundEntityId = :srcEntityId and cfv.boundEntityType = :entityType"),		
+		
+		@NamedQuery(name = "CustomFieldValue.copyCustomFieldValuesContent", query=	"update CustomFieldValue cfv1 set cfv1.value = ( "+
+																				  	"select cfv2.value from CustomFieldValue cfv2 "+
+																				  	"where cfv2.binding = cfv1.binding "+
+																				  	"and cfv2.boundEntityId = :srcEntityId "+
+																				  	"and cfv2.boundEntityType = :entityType "+
+																				  	") "+
+																				  	"where cfv1.boundEntityId = :destEntityId "+
+																				  	"and cfv1.boundEntityType = :entityType"),	
 		
 		//BoundEntity dao
 		@NamedQuery(name = "BoundEntityDao.findAllTestCasesForProject", query="select tc from TestCase tc where tc.project.id = :projectId"),
