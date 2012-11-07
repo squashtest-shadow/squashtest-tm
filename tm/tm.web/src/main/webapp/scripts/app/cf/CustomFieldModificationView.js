@@ -43,20 +43,21 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			"click .opt-label": "openRenameOptionPopup",
 		}, 
 		confirmOptional: function(event) {
+			var self = this;
 		var checked = event.target.checked;
 			if(checked){
-				this.sendOptional(checked);
+				self.sendOptional(checked);
 			}else{
-				var defaultValue = this.findDefaultValue();
-				if(!defaultValue || defaultValue === ""){
+				var defaultValue = self.findDefaultValue();
+				if(!defaultValue || defaultValue === "" || defaultValue === cfMod.richEditPlaceHolder){
 					$.squash.openMessage(cfMod.popupErrorTitle, cfMod.mandatoryNeedsDefaultMessage,350);
 					event.target.checked = true;
 					return;
 				}
 				var message = cfMod.confirmMandatoryMessage;
-				message = this.replacePlaceHolderByValue(0, message, defaultValue);
+				message = self.replacePlaceHolderByValue(0, message, defaultValue);
 				oneShotConfirm(cfMod.confirmMandatoryTitle, message, cfMod.confirmLabel, cfMod.cancelLabel, 500)
-				.done(function(){this.sendOptional(checked);})
+				.done(function(){self.sendOptional(checked);})
 				.fail(function(){event.target.checked = true;});
 			}
 		},
@@ -93,7 +94,12 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			var self = this;
 			var checkbox = event.currentTarget;
 			var	option = checkbox.value;
-			var	defaultValue = checkbox.checked ? option : "";			
+			var	defaultValue = checkbox.checked ? option : "";
+			if(defaultValue === "" && !this.$("#cf-optional").prop("checked")){
+				checkbox.checked = true;
+				$.squash.openMessage(cfMod.popupErrorTitle, cfMod.defaultOptionMandatoryMessage);
+				return;
+			}
 			var	uncheckSelector = ".is-default>input:checkbox" + (checkbox.checked ? "[value!='" + option + "']" : "");
 						
 			this.sendDefaultValue(defaultValue).done(function(){
@@ -150,13 +156,32 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			this.$("#cuf-options-panel").togglePanel(optionSettings);
 		},
 		configureEditables:function(){
+			var self = this;
 			this.makeSimpleJEditable("cuf-label");
 			
 			if($("#cuf-inputType").attr('value') == "PLAIN_TEXT"){
-				this.makeSimpleJEditable("cuf-default-value");
+				new SimpleJEditable({
+					language: {
+						richEditPlaceHolder : cfMod.richEditPlaceHolder,
+						okLabel: cfMod.okLabel,
+						cancelLabel: cfMod.cancelLabel,
+					},
+					targetUrl : function(value, settings){if( self.changeDefaultValueText(value)){return value;}else{return this.revert;}},
+					componentId : "cuf-default-value",
+					jeditableSettings : {},
+				});
 			}else if($("#cuf-inputType").attr('value') == "CHECKBOX"){
 				this.makeSelectJEditable("cuf-default-value", cfMod.checkboxJsonDefaultValues);
 				
+			}
+		},
+		changeDefaultValueText: function(value){
+			if(value === ""){
+				$.squash.openMessage(cfMod.popupErrorTitle, cfMod.defaultValueMandatoryMessage);
+				return false;
+			}else{
+				this.sendDefaultValue(value);
+				return true;
 			}
 		},
 		renameCuf: function(){
@@ -183,7 +208,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 					        	  'click' : this.renameCuf,
 					        	},
 						        { 'text' : cfMod.cancelLabel,
-						          'click' : this.closeRenamePopup,
+						          'click' : this.closePopup,
 						        },
 							],
 			};
@@ -194,7 +219,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			});
 			
 		},
-		closeRenamePopup : function() {$( this ).data("answer","cancel");
+		closePopup : function() {$( this ).data("answer","cancel");
 											$( this ).dialog( 'close' );},
 		makeSimpleJEditable : function(imputId){
 			new SimpleJEditable({
@@ -276,7 +301,8 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 						url : cfMod.optionsTable.ajaxSource+"/{opt-label}",
 						popupmessage : cfMod.optionsTable.deleteConfirmMessage,
 						tooltip : cfMod.optionsTable.deleteTooltip,
-						success : function(data){self.optionsTable.refresh();}
+						success : function(data){self.optionsTable.refresh();},
+						dataType : "json",
 					},
 					
 					functions : {
@@ -295,7 +321,6 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			this.optionsTable = this.$("table");
 			this.optionsTable.squashTable(config, squashSettings);
 		},
-		
 		configureAddOptionPopup: function(){
 			if($("#cuf-inputType").attr('value') != "DROPDOWN_LIST"){
 				return;
@@ -312,7 +337,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 					        	  'click' : function(){self.addOption.call(self);},
 					        	},
 						        { 'text' : cfMod.cancelLabel,
-						          'click' : this.closeRenamePopup,
+						          'click' : this.closePopup,
 						        },
 							],
 			};
@@ -349,13 +374,14 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 					        	  'click' : function(){self.renameOption.call(self);},
 					        	},
 						        { 'text' : cfMod.cancelLabel,
-						          'click' : this.closeRenamePopup,
+						          'click' : this.closePopup,
 						        },
 							],
 			};
 			squashtm.popup.create(params);
 			this.renameCufOptionPopup =  $("#rename-cuf-option-popup");
 		},
+		
 		
 	});
 	return CustomFieldModificationView;

@@ -28,29 +28,42 @@ import org.squashtest.csp.tm.internal.service.customField.NameAlreadyInUseExcept
  *
  */
 public class DuplicateNameException extends DomainException {
-	/**
-	 * 
-	 */
+	
 	private static final String NAME = "name";
 	private static final long serialVersionUID = 2815263509542519285L;
-	
-	// note : this exception always reports an error on the name, hence the setField("name");
-
+	/**
+	 * Reports an error on the name, hence the setField("name");
+	 * @param oldName : oldName to display on the exception message.
+	 * @param newName : new name to display on the exception message.
+	 */
 	public DuplicateNameException(String oldName, String newName) {
-		this("Cannot rename " + oldName + " : " + newName + " already exists within the same container");
+		super(makeMessage(oldName, newName), NAME);
 	}
-
+	
+	
+	/**
+	 * Reports an error on the name, hence the setField("name");
+	 */
 	public DuplicateNameException() {
 		super(NAME);
 	}
-
+	
+	/**
+	 * Reports an error on the name, hence the setField("name");
+	 * @param message : the exception message.
+	 */
 	public DuplicateNameException(String message) {
 		super(message, NAME);
+	}
+	
+	private static String makeMessage(String oldName, String newName) {
+		return "Cannot rename " + oldName + " : " + newName + " already exists within the same container";
 	}
 	
 	@Override
 	public String getI18nKey() {
 		return "squashtm.domain.exception.duplicate.name";
 	}
+
 
 }

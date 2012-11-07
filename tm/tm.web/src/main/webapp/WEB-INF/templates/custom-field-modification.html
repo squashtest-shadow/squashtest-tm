@@ -50,6 +50,8 @@
 			checkboxJsonDefaultValues: {'false': /*[[#{label.false}]]*/ "false", 
 										'true': /*[[#{label.true}]]*/ "true",
 										},
+			defaultOptionMandatoryMessage: /*[[#{message.defaultOptionMandatory}]]*/ 'Default option is mandatory when custom field is not optional',
+			defaultValueMandatoryMessage: /*[[#{message.defaultValueMandatory}]]*/ 'Default value is mandatory when custom field is not optional',
 			optionsTable : {
 				languageUrl : /*[[ @{/datatables/messages} ]]*/"http://localhost:8080/squash/datatables/messages",
 				newOptionUrl : /*[[@{'/custom-fields/'+${customField.id}+'/options/new'}]]*/ "http://localhost:8080/squash/custom-fields/1/options/new",
@@ -137,7 +139,7 @@
 			<div style="clear: both;"></div>
 		</div>
 		
-		<div class="fragment-body " >
+		<div class="fragment-body unstyled" >
 			<div id="cuf-toolbar" class="toolbar-class ui-corner-all ">
 				<div class="toolbar-button-panel">
 					<input type="button" th:value="#{ label.Rename }" value="Rename" id="rename-cuf-button"
@@ -155,23 +157,22 @@
 						<div class="display-table-row">
 							<label for="cuf-label" th:text="#{label.Label}">Label</label>
 							<div id="cuf-label" class="display-table-cell" th:text="${customField.label}">Description</div>
-							 <span class="error">&nbsp;</span>
+							 <span class="error-message label-error"></span>
 						</div>
 						 <div class="display-table-row">
 						 	<label for="inputType" th:text="#{label.inputType}">Input Type</label>
 						 	<div id="cuf-inputType" class="display-table-cell" th:value="${customField.inputType.name()}" value="CHECKBOX" th:text="#{${customField.inputType.i18nKey}}">Checkbox</div>
-      					</div>
-      					
+      					</div>      					
 				      	<div th:unless="${customField.inputType.name() == 'CHECKBOX'}" class="display-table-row">
 				        	<label for="cf-optional" th:text="#{label.Optional}">Optional</label>
 				        	<div class="table-cell"><input id="cf-optional" name="optional" value="optional" type="checkbox" th:checked="${customField.optional}"/></div>
-				        	<span class="error">&nbsp;</span>
-				      	</div>
+				        	<span class="error-message  optional-error"></span>
+				        </div>
 				      	<div th:unless="${customField.inputType.name() == 'DROPDOWN_LIST'}"  class="display-table-row">
 							<label for="cuf-default-value" th:text="#{label.defaultValue}">Default value</label>
 							<div th:unless="${customField.inputType.name() == 'CHECKBOX'}" id="cuf-default-value" class="display-table-cell" th:text="${customField.defaultValue}">false</div>
 							<div th:if="${customField.inputType.name() == 'CHECKBOX'}" id="cuf-default-value" class="display-table-cell" th:text="#{'label.'+${customField.defaultValue}}">false</div>
-							<span class="error">&nbsp;</span>
+							<span class="error-message  defaultValue-error"></span>
 						</div>
 					</div>
 				</div>
@@ -225,13 +226,13 @@
 	<div id="add-cuf-option-popup" class="not-displayed popup-dialog" th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
 			<label for="new-cuf-option-label-input" th:text="#{label.newOption}">New option</label>
           	<input id="new-cuf-option-label-input" name="label" type="text" value="" />
-          	<span id="new-option-error" class="error not-displayed" th:text="#{message.optionAlreadyDefined}">Option already defined</span>
+          	<span id="new-option-error" class="error-message option-error"></span>
 	</div>
 		<div id="rename-cuf-option-popup" class="not-displayed popup-dialog" th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
 	<span class="not-displayed" id="rename-cuf-option-previous"></span>
 			<label for="rename-cuf-option-input" th:text="#{label.Label}">Label</label>
 			<input id="rename-cuf-option-input" name="label" type="text" value="" />
-          	<span id="rename-cuf-option-error" class="error not-displayed" th:text="#{message.optionAlreadyDefined}">Option already defined</span>
+          	<span id="rename-cuf-option-error" class="error-message option-error"></span>
 	</div>
 </body>
 </html>

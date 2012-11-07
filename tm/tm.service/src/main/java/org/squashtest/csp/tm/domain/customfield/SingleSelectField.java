@@ -31,13 +31,13 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
-
+import org.squashtest.tm.tm.validation.constraint.UniqueItems;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
-import org.squashtest.tm.tm.validation.constraint.UniqueItems;
-import org.squashtest.csp.tm.domain.CannotDeleteDefaultOptionException;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.internal.service.customField.CannotDeleteDefaultOptionException;
+import org.squashtest.csp.tm.internal.service.customField.OptionAlreadyExistException;
 
 /**
  * A CustomField which stores a single option selected from a list.
@@ -68,7 +68,7 @@ public class SingleSelectField extends CustomField {
 	 * Will check if label is available among the existing options. If so, will add the new option at the end of the
 	 * list. Else will throw a NameAlreadyInUseException.
 	 * 
-	 * @throws NameAlreadyInUseException
+	 * @throws OptionAlreadyExistsException
 	 * @param label
 	 *            the new option's label
 	 */
@@ -76,8 +76,7 @@ public class SingleSelectField extends CustomField {
 		if (isAvailable(label)) {
 			options.add(new CustomFieldOption(label));
 		} else {
-			throw new DuplicateNameException(label);
-			//TODO change for NameAlreadyInUseException
+			throw new OptionAlreadyExistException(label);
 		}
 	}
 	/**
@@ -100,11 +99,11 @@ public class SingleSelectField extends CustomField {
 
 	/**
 	 * Checks if the newlabel is available among all options. <br> If so, will change the defaultValue if needed, remove the option and add a new one at the vacant position.
-	 * Else throws DuplicateNameException.
+	 * Else throws OptionAlreadyExistException.
 	 * 
 	 * @param previousLabel
 	 * @param newlabel
-	 * @throws DuplicateNameException
+	 * @throws OptionAlreadyExistException
 	 */
 	public void changeOption(@NotBlank String previousLabel, String newlabel) {
 		if (isAvailable(newlabel)) {
@@ -115,7 +114,7 @@ public class SingleSelectField extends CustomField {
 			removeOption(previousLabel);
 			addOption(newlabel, index);
 		} else {
-			throw new DuplicateNameException(previousLabel, newlabel);
+			throw new OptionAlreadyExistException(newlabel);
 		}
 	}
 

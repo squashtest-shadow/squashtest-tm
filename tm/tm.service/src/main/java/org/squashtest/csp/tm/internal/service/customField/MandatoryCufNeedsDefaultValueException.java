@@ -18,37 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.csp.tm.internal.service.customField;
 
-package org.squashtest.csp.tm.service.customfield;
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
-import javax.validation.constraints.NotNull;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.customfield.CustomField;
-
-/**
- * Facade service for custom fields management.
- * 
- * @author Gregory Fouquet
- * 
- */
-@Transactional
-public interface CustomFieldManagerService extends CustomCustomFieldManagerService {
-	static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
+public class MandatoryCufNeedsDefaultValueException extends ActionException {
 
 	/**
-	 * @param name
-	 * @return
+	 * TODO generate unique serialVersionUID my eclipse couldn't, thanks, mpagnon
 	 */
-	CustomField findByName(@NotNull String name);
+	private static final long serialVersionUID = 1L;
+	
+	public MandatoryCufNeedsDefaultValueException(Exception ex) {
+		super(ex);
+	}
 
-	CustomField findById(Long customFieldId);
+	public MandatoryCufNeedsDefaultValueException(String message) {
+		super(message);
+	}
 
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	void changeLabel(long customFieldId, String label);
+	public MandatoryCufNeedsDefaultValueException() {
 
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	void changeDefaultValue(long customFieldId, String defaultValue);
+	}
+
+	@Override
+	public String getI18nKey() {
+		return "message.mandatoryNeedsDefault";
+	}
 
 }

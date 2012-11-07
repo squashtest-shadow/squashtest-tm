@@ -109,11 +109,19 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 */
 	@Override
 	public void changeOptional(Long customFieldId, Boolean optional) {
+		CustomField customField = customFieldDao.findById(customFieldId);
 		if (!optional) {
+			checkDefaultValueExists(customField);
 			// TODO add all necessary customFieldValues
 		}
-		CustomField customField = customFieldDao.findById(customFieldId);
 		customField.setOptional(optional);
+	}
+
+	private void checkDefaultValueExists(CustomField customField) {
+		if (customField.getDefaultValue() == null || customField.getDefaultValue().equals("")) {
+			throw new MandatoryCufNeedsDefaultValueException();
+		}
+
 	}
 
 	/**

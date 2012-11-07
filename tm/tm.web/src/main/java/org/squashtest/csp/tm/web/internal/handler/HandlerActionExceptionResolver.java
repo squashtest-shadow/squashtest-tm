@@ -118,7 +118,6 @@ public class HandlerActionExceptionResolver extends AbstractHandlerExceptionReso
 	@SuppressWarnings("unchecked")
 	private boolean clientAcceptsMIME(HttpServletRequest request, MimeType type) {
 		Enumeration<String> e = request.getHeaders("Accept");
-
 		while (e.hasMoreElements()) {
 			String header = e.nextElement();
 			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), type.requestHeaderValue())) {

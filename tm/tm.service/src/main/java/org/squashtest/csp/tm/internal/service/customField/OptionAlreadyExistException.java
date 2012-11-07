@@ -18,34 +18,40 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain;
 
-import org.squashtest.tm.core.foundation.exception.ActionException;
+package org.squashtest.csp.tm.internal.service.customField;
 
-public class CannotDeleteDefaultOptionException extends ActionException {
+import org.squashtest.csp.tm.domain.DomainException;
 
-	
+/**
+ * This should be raised when an option already exists for a given custom-field.
+ *  @author mpagnon
+ */
+public class OptionAlreadyExistException extends DomainException {
 	/**
-	 *TODO my eclipse could generate the serialVersionUID. thanks. mpagnon
+	 *TODO make serial version , my eclipse can't.
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final String CANNOT_DELETE_MESSAGE_KEY = "squashtm.action.exception.cannotDeleteDefaultOption";
+	private final String label;
 
-	public CannotDeleteDefaultOptionException(Exception ex) {
-		super(ex);
+	public OptionAlreadyExistException(String label) {
+		super("The option '" + label + "' already exist for the custom-field", "option");
+		this.label = label;
 	}
 
-	public CannotDeleteDefaultOptionException(String message) {
-		super(message);
-	}
-
-	public CannotDeleteDefaultOptionException() {
-
+	/**
+	 * (non-Javadoc)
+	 * 
+	 * @see org.squashtest.tm.core.foundation.i18n.Internationalizable#getI18nKey()
+	 */
+	@Override
+	public String getI18nKey() {
+		return "message.exception.optionAlreadyExists";
 	}
 
 	@Override
-	public String getI18nKey() {
-		return CANNOT_DELETE_MESSAGE_KEY;
+	public Object[] getI18nParams() {
+		return new Object[] {label};
 	}
 
 }

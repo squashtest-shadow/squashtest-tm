@@ -184,6 +184,7 @@
  * 		tooltip : the tooltip displayed by the button 
  * 		success : a callback on the ajax call when successful 
  * 		fail : a callback on the ajax call when failed.
+ * 		dataType : the dataType parameter for the post. (default = "text")
  * 
  * 
  * 
@@ -647,13 +648,12 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 					function() {
 						var finalUrl = _resolvePlaceholders.call(self,
 								conf.url, self.fnGetData(row));
-
 						var request;
 						
 						request = $.ajax({
 							type : 'delete',
 							url : finalUrl,
-							dataType : 'text'
+							dataType : self.squashSettings.deleteButtons.dataType || "text",
 						});
 						
 						if (conf.success)
@@ -818,15 +818,12 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		},
 		bugged : {
 			cssMatcher : "bugged-cell",
-			aoDataNbBugs : "bugged"
+			aoDataNbBugs : "bugged",
 		},
 		confirmPopup : {
 			oklabel : "ok",
-			cancellabel : "cancel"
-		}
-		
-		
-
+			cancellabel : "cancel",
+		},
 	};
 
 	/*

@@ -223,6 +223,7 @@ public class CustomFieldController {
 	@ResponseBody
 	public void changeOptionLabel(@PathVariable long customFieldId, @PathVariable String optionLabel,
 			@RequestParam("value") String newLabel) {
+		
 		customFieldManager.changeOptionLabel(customFieldId, optionLabel, newLabel);
 	}
 

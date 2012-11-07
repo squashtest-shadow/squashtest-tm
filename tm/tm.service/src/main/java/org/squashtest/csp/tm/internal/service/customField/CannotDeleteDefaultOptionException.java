@@ -18,37 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.csp.tm.internal.service.customField;
 
-package org.squashtest.csp.tm.service.customfield;
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
-import javax.validation.constraints.NotNull;
+public class CannotDeleteDefaultOptionException extends ActionException {
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.customfield.CustomField;
-
-/**
- * Facade service for custom fields management.
- * 
- * @author Gregory Fouquet
- * 
- */
-@Transactional
-public interface CustomFieldManagerService extends CustomCustomFieldManagerService {
-	static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
-
+	
 	/**
-	 * @param name
-	 * @return
+	 *TODO my eclipse could generate the serialVersionUID. thanks. mpagnon
 	 */
-	CustomField findByName(@NotNull String name);
+	private static final long serialVersionUID = 1L;
+	private static final String CANNOT_DELETE_MESSAGE_KEY = "squashtm.action.exception.cannotDeleteDefaultOption";
 
-	CustomField findById(Long customFieldId);
+	public CannotDeleteDefaultOptionException(Exception ex) {
+		super(ex);
+	}
 
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	void changeLabel(long customFieldId, String label);
+	public CannotDeleteDefaultOptionException(String message) {
+		super(message);
+	}
 
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	void changeDefaultValue(long customFieldId, String defaultValue);
+	public CannotDeleteDefaultOptionException() {
+
+	}
+
+	@Override
+	public String getI18nKey() {
+		return CANNOT_DELETE_MESSAGE_KEY;
+	}
 
 }

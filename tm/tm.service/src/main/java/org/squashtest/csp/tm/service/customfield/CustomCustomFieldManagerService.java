@@ -26,12 +26,12 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.CannotDeleteDefaultOptionException;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
-import org.squashtest.csp.tm.internal.service.customField.NameAlreadyInUseException;
+import org.squashtest.csp.tm.internal.service.customField.CannotDeleteDefaultOptionException;
+import org.squashtest.csp.tm.internal.service.customField.MandatoryCufNeedsDefaultValueException;
+import org.squashtest.csp.tm.internal.service.customField.OptionAlreadyExistException;
 
 /**
  * Custom-Field manager services which cannot be dynamically generated.
@@ -42,83 +42,95 @@ import org.squashtest.csp.tm.internal.service.customField.NameAlreadyInUseExcept
 @Transactional
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public interface CustomCustomFieldManagerService extends CustomFieldFinderService {
-	/** 
+	/**
 	 * Will delete the custom-field entity
 	 * 
 	 * @param customFieldId
 	 *            : the id of the custom field to delete
 	 */
 	void deleteCustomField(long customFieldId);
-	
+
 	/**
 	 * Will persist the given custom field.
 	 * 
-	 * @param newCustomField: the custom field to persist
+	 * @param newCustomField
+	 *            : the custom field to persist
 	 */
 	void persist(@NotNull CustomField newCustomField);
 
 	/**
-	 * Will check if new name is available among all custom fields and, if so, will change the name of the concerned {@link CustomField}.
+	 * Will check if new name is available among all custom fields and, if so, will change the name of the concerned
+	 * {@link CustomField}.
 	 * 
 	 * @param customFieldId
 	 *            the id of the concerned {@link CustomField}
 	 * @param newName
 	 *            the {@link CustomField} potential new name
 	 */
-	public void changeName(long customFieldId, String newName);
+	void changeName(long customFieldId, String newName);
 
 	/**
-	 * Will change the optional attribute of the concerned {@link CustomField}<br>
-	 * If custom-field becomes mandatory, all necessary CustomFieldValues will be added. Otherwise, nothing special needs
-	 * to be done.
-	 *  
+	 * If custom-field becomes mandatory, will check that a default value exist. If so, all necessary CustomFieldValues
+	 * will be added, otherwise an exception is thrown.<br>
+	 * If custom-field becomes optional the change is done without check of special action.<br>
+	 * 
 	 * @param customFieldId
 	 *            the id of the concerned {@link CustomField}
 	 * @param optional
 	 *            : <code>true</code> if the custom-field changes to be optional<br>
 	 *            <code>false</code> if it changes to be mandatory
+	 * @throws MandatoryCufNeedsDefaultValueException
 	 */
-	public void changeOptional(Long customFieldId, Boolean optional);
-	
+	void changeOptional(Long customFieldId, Boolean optional);
 
 	/**
-	 * Will check if the new label is available among all the concerned {@link CustomField}'s {@link CustomFieldOption}, 
+	 * Will check if the new label is available among all the concerned {@link CustomField}'s {@link CustomFieldOption},
 	 * if so, will change the label of the concerned custom-field's option.
 	 * 
-	 * @throws DuplicateNameException
-	 * @param customFieldId : the id of the concerned {@link CustomField}
-	 * @param optionLabel : the current {@link CustomFieldOption}'s label
-	 * @param newLabel : the potential new label for the concerned custom-field's option
+	 * @throws OptionAlreadyExistException
+	 * @param customFieldId
+	 *            : the id of the concerned {@link CustomField}
+	 * @param optionLabel
+	 *            : the current {@link CustomFieldOption}'s label
+	 * @param newLabel
+	 *            : the potential new label for the concerned custom-field's option
 	 */
-	public void changeOptionLabel(Long customFieldId, String optionLabel, String newLabel);
-	
-	/**
-	 * Will check if the new option's label is available among all the concerned {@link CustomField}'s {@link CustomFieldOption},
-	 * if so, will add the new option at the bottom of the list.
-	 * 
-	 * @throws NameAlreadyInUseException
-	 * @param customFieldId : the id of the concerned {@link CustomField}
-	 * @param label : the label of the potential new option.
-	 */
-	public void addOption(Long customFieldId, String label);	
+	void changeOptionLabel(Long customFieldId, String optionLabel, String newLabel);
 
-	
 	/**
-	 * Will remove the from the custom-field's option list.
-	 * If the option to remove is the default one, will throw a {@link CannotDeleteDefaultOptionException}
+	 * Will check if the new option's label is available among all the concerned {@link CustomField}'s
+	 * {@link CustomFieldOption}, if so, will add the new option at the bottom of the list.
 	 * 
-	 * @param customFieldId: the id of the concerned {@link SingleSelectField}
-	 * @param optionLabel : the label of the {@link CustomFieldOption} to remove.
+	 * @throws OptionAlreadyExistException
+	 * @param customFieldId
+	 *            : the id of the concerned {@link CustomField}
+	 * @param label
+	 *            : the label of the potential new option.
+	 */
+	void addOption(Long customFieldId, String label);
+
+	/**
+	 * Will remove the from the custom-field's option list. If the option to remove is the default one, will throw a
+	 * {@link CannotDeleteDefaultOptionException}
+	 * 
+	 * @param customFieldId
+	 *            : the id of the concerned {@link SingleSelectField}
+	 * @param optionLabel
+	 *            : the label of the {@link CustomFieldOption} to remove.
 	 * @throws CannotDeleteDefaultOptionException
 	 */
-	public void removeOption(long customFieldId, String optionLabel);
-	
+	void removeOption(long customFieldId, String optionLabel);
+
 	/**
 	 * Will change custom field's options positions.
 	 * 
-	 * @param customFieldId : the id of the concerned CustomField.
-	 * @param newIndex : the lowest index for the moved selection
-	 * @param optionsLabels : the labels of the moved options
+	 * @param customFieldId
+	 *            : the id of the concerned CustomField.
+	 * @param newIndex
+	 *            : the lowest index for the moved selection
+	 * @param optionsLabels
+	 *            : the labels of the moved options
 	 */
 	void changeOptionsPositions(long customFieldId, int newIndex, List<String> optionsLabels);
+
 }
