@@ -50,7 +50,7 @@ public class NewCustomField extends CustomField {
 			res = new CustomField(inputType);
 		}
 		
-		res.setName(getLabel());
+		res.setLabel(getLabel());
 		res.setName(getName());
 		res.setOptional(isOptional());
 		res.setDefaultValue(getDefaultValue());

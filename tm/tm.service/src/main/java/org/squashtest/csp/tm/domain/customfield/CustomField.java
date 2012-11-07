@@ -106,6 +106,9 @@ public class CustomField {
 	}
 
 	public boolean isOptional() {
+		if(inputType.equals(InputType.CHECKBOX)){
+			return false;
+		}
 		return optional;
 	}
 

@@ -46,19 +46,27 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 		
 		render: function() {
 			var inputType = this.model.get("inputType");
-			var source   = $("#" + this.model.get("inputType") + "-default-tpl").html();
+			var source   = $("#" + inputType+ "-default-tpl").html();
 			var template = Handlebars.compile(source);
 			this.$("#default-value-pane").html(template(this.model.toJSON()));
-
-			if (inputType === "DROPDOWN_LIST") {
-				this.renderOptionsTable();
-			}
+			switch(inputType){
+				case "DROPDOWN_LIST": 
+					this.renderOptionsTable();
+					this.renderOptional(true);
+					break;
+				case "CHECKBOX":
+					this.renderOptional(false);
+					break;
+				case "PLAIN_TEXT":
+					this.renderOptional(true);
+					break;
+			};
 			return this;
 		},
 
 		events: {
 			// textboxes with class .strprop are bound to the model prop which name matches the textbox name
-			"change input:text.strprop": "changeStrProp", 
+			"change input:text.strprop": "changeStrProp",
 			"change select.optprop": "changeOptProp", 
 			"change select[name='inputType']": "changeInputType", 
 			"click input:checkbox[name='optional']": "changeOptional",
@@ -82,7 +90,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 
 		changeInputType: function(event) {
 			var model = this.model;
-
+			
 			model.set("inputType", event.target.value);
 			model.resetDefaultValue();
 
@@ -135,7 +143,14 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 			Forms.form(this.$el).clearState();
 			this.$el.confirmDialog("destroy");
 		},
-		
+		renderOptional: function(show){
+			var renderPane = this.$("#optional-pane");
+			if(show){
+				renderPane.show();
+			}else{
+				renderPane.hide();
+			}
+		},
 		renderOptionsTable: function() {
 			this.optionsTable = this.$("#options-table");
 			this.optionsTable.dataTable({
