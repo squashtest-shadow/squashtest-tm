@@ -107,7 +107,6 @@ class IterationModificationServiceIT extends HibernateServiceSpecification {
 
 		/** make the test case environment **/
 
-		tcLibCrud.addLibrary()
 		libList = tcLibCrud.findAllLibraries();
 		def tcLib = libList.get(libList.size()-1)
 		libtcId = tcLib.id
