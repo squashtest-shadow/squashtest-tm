@@ -253,7 +253,7 @@ var squashtm = squashtm || {};
 		}
 		
 		return self;
-	}
+	};
 	
 	/*
 	 * Squash TM domain name : variable $.fn.squashtm
@@ -286,10 +286,13 @@ var squashtm = squashtm || {};
 		}, // end popup.create
 		// begin popup.cleanup
 		cleanup : function () {
+			// clear all error-message even ones that are not in this popup
+			// because others might have been filled with error handle.
+			$('.error-message').text('');
+			//clear inputs
 			this.find('input:text').val('');
-			this.find('.error-message').text('');
 			this.find('textarea').val('');
 		}
 	// end popup.cleanup
-	}
+	};
 })(jQuery);
