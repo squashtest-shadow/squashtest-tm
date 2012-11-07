@@ -39,10 +39,12 @@ import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.service.CampaignLibrariesCrudService
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService
 import org.squashtest.csp.tm.service.CampaignModificationService
 import org.squashtest.csp.tm.service.IterationModificationService;
+import org.squashtest.csp.tm.service.ProjectManagerService;
 
 
 
@@ -61,12 +63,20 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 	@Inject
 	private IterationModificationService iterService
 	
+	
+	
+	@Inject
+	private ProjectManagerService projectService;
+	
+	
 	private int campId=-1;
 	private int testCaseId=-1;
 	private int folderId = -1;
 
 	def setup(){
-		libcrud.addLibrary();
+
+		//libcrud.addLibrary();
+		projectService.addProject(createProject())
 
 		def libList= libcrud.findAllLibraries()
 
@@ -199,4 +209,13 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 		then :
 		notThrown(Exception)
 	}
+	
+	
+	def Project createProject(){
+		Project p = new Project();
+		p.name = Double.valueOf(Math.random()).toString();
+		p.description = "eaerazer"
+		return p
+	}
+	
 }

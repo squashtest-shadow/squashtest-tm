@@ -26,10 +26,12 @@ import org.junit.runner.RunWith;
 import org.spockframework.runtime.Sputnik;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
+import org.squashtest.csp.tm.service.ProjectManagerService;
 import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
@@ -52,15 +54,17 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	private TestCaseLibrariesCrudService libcrud
 
 
-
+	
+	@Inject
+	private ProjectManagerService projectService;
 
 	private int testCaseId=-1;
 	private int folderId = -1;
 
 	def setup(){
 
-
-		libcrud.addLibrary();
+		//libcrud.addLibrary();
+		projectService.addProject(createProject())
 
 		def libList= libcrud.findAllLibraries()
 
@@ -439,6 +443,13 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		then:
 		TestCase testCase = findEntity(TestCase.class, testCaseId)
 		testCase.getAutomatedTest() == null
+	}
+	
+	def Project createProject(){
+		Project p = new Project();
+		p.name = Double.valueOf(Math.random()).toString();
+		p.description = "eaerazer"
+		return p
 	}
 	
 }

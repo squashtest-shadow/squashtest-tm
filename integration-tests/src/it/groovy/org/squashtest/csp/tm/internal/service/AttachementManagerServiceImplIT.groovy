@@ -28,10 +28,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentContent;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
 import org.squashtest.csp.tm.service.AttachmentManagerService;
+import org.squashtest.csp.tm.service.ProjectManagerService;
 import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
@@ -51,7 +53,9 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 	@Inject
 	private AttachmentManagerService attachService;
 
-
+	
+	@Inject
+	private ProjectManagerService projectService;
 
 
 	private int testCaseId=-1;
@@ -60,7 +64,8 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 
 
 	def setup(){
-		libcrud.addLibrary();
+		//libcrud.addLibrary();
+		projectService.addProject(createProject())
 
 		def libList= libcrud.findAllLibraries()
 
@@ -279,6 +284,14 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 		then :
 		shouldBeFalse == false;
 		shouldBeTrue == true;
+	}
+	
+	
+	def Project createProject(){
+		Project p = new Project();
+		p.name = Double.valueOf(Math.random()).toString();
+		p.description = "eaerazer"
+		return p
 	}
 
 }

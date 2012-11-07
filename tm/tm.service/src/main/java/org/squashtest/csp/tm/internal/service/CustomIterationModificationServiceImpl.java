@@ -327,7 +327,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	public void addTestSuite(Iteration iteration, TestSuite suite) {
 		suiteDao.persist(suite);
 		iteration.addTestSuite(suite);
-		customFieldValueService.createAllCustomFieldValues(suite);
+		//customFieldValueService.createAllCustomFieldValues(suite);
 	}
 
 	@Override

@@ -22,11 +22,14 @@ package org.squashtest.csp.tm.internal.service
 
 import javax.inject.Inject;
 
+import org.hibernate.SessionFactory;
 import org.spockframework.util.NotThreadSafe;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
+import org.squashtest.csp.tm.service.ProjectManagerService
 
 @NotThreadSafe
 class TestCaseLibraryNavigationServiceIT extends HibernateServiceSpecification {
@@ -41,9 +44,13 @@ class TestCaseLibraryNavigationServiceIT extends HibernateServiceSpecification {
 	private int testCaseId=-1;
 	private int folderId = -1;
 
-
+	@Inject
+	private ProjectManagerService projectService;
+	
+	
 	def setup(){
-		libcrud.addLibrary();
+		//libcrud.addLibrary();
+		projectService.addProject(createProject())
 
 		def libList= libcrud.findAllLibraries()
 
@@ -207,5 +214,14 @@ class TestCaseLibraryNavigationServiceIT extends HibernateServiceSpecification {
 			null,
 			null
 		]
+	}
+	
+	
+	
+	def Project createProject(){
+		Project p = new Project();
+		p.name = Double.valueOf(Math.random()).toString();
+		p.description = "eaerazer"
+		return p
 	}
 }

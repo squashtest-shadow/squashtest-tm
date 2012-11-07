@@ -90,7 +90,7 @@
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
+				<artifactId>maven-failsafe-plugin</artifactId>
 				<configuration>
 					<parallel>false</parallel>
 					<threadCount>1</threadCount>
@@ -104,10 +104,10 @@
 					<execution>
 						<id>integration-tests</id>
 						<phase>test</phase>
-						<!-- <goals>
+						<goals>
 							<goal>integration-test</goal>
 							<goal>verify</goal>
-						</goals> -->
+						</goals> 
 					</execution>
 				</executions>
 				

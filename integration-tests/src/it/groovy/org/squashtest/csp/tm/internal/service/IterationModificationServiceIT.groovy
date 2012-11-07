@@ -30,6 +30,7 @@ import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep
 import org.squashtest.csp.tm.service.AttachmentManagerService;
@@ -38,6 +39,7 @@ import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
 import org.squashtest.csp.tm.service.CampaignModificationService;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService
+import org.squashtest.csp.tm.service.ProjectManagerService;
 import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
@@ -75,6 +77,9 @@ class IterationModificationServiceIT extends HibernateServiceSpecification {
 
 	@Inject
 	private AttachmentManagerService attachService;
+	
+	@Inject
+	private ProjectManagerService projectService;
 
 	private long iterationId
 	private long testCaseId
@@ -86,7 +91,9 @@ class IterationModificationServiceIT extends HibernateServiceSpecification {
 
 
 		/** make the iteration environnement **/
-		campaignLibCrud.addLibrary();
+
+		//libcrud.addLibrary();
+		projectService.addProject(createProject())
 		def libList= campaignLibCrud.findAllLibraries()
 		def camplib = libList.get(libList.size()-1);
 
@@ -300,4 +307,12 @@ class IterationModificationServiceIT extends HibernateServiceSpecification {
 
 		return result;
 	}	
+	
+	
+	def Project createProject(){
+		Project p = new Project();
+		p.name = Double.valueOf(Math.random()).toString();
+		p.description = "eaerazer"
+		return p
+	}
 }

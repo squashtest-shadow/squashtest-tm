@@ -37,8 +37,10 @@ import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.service.CampaignLibrariesCrudService;
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
+import org.squashtest.csp.tm.service.ProjectManagerService;
 import org.unitils.dbunit.annotation.DataSet;
 
 import spock.unitils.UnitilsSupport;
@@ -56,14 +58,20 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@Inject
 	private CampaignLibrariesCrudService libcrud
 
-
+	
+	
+	@Inject
+	private ProjectManagerService projectService;
+	
+	
 	private Long libId=-1
 	private Long campId=-1;
 	private Long folderId = -1;
 
 	def setup(){
 
-		libcrud.addLibrary();
+		//libcrud.addLibrary();
+		projectService.addProject(createProject())
 
 		def libList= libcrud.findAllLibraries()
 
@@ -371,6 +379,14 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		and:"campaign 2 is empty"
 		Campaign campaign11Copy = folderCopy.content.find {it.name == "campaign11"}
 		campaign11Copy.iterations.size == 0
+	}
+	
+	
+	def Project createProject(){
+		Project p = new Project();
+		p.name = Double.valueOf(Math.random()).toString();
+		p.description = "eaerazer"
+		return p
 	}
 	
 }
