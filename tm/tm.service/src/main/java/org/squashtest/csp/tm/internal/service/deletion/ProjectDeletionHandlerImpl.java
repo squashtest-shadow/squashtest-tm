@@ -45,6 +45,7 @@ import org.squashtest.csp.tm.internal.service.NodeDeletionHandler;
 import org.squashtest.csp.tm.internal.service.ProjectDeletionHandler;
 import org.squashtest.csp.tm.internal.service.RequirementNodeDeletionHandler;
 import org.squashtest.csp.tm.internal.service.TestCaseNodeDeletionHandler;
+import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
 
 @Component("squashtest.tm.service.deletion.ProjectDeletionHandler")
 public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
@@ -62,12 +63,18 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	private ProjectDeletionDao projectDeletionDao;
 	@Inject
 	private SessionFactory sessionFactory;
+	
+	@Inject
+	private CustomFieldBindingModificationService bindingService;
 
 	
 	@Override
 	public void deleteProject(long projectId) {
+		
 		checkProjectContainsOnlyFolders(projectId);
 
+		bindingService.removeCustomFieldBindings(projectId);
+		
 		doDeleteProject(projectId);
 
 	}

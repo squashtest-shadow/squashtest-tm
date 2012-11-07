@@ -46,6 +46,7 @@ import org.squashtest.csp.tm.internal.repository.FolderDao;
 import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.internal.service.CampaignNodeDeletionHandler;
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 @Component("squashtest.tm.service.deletion.CampaignNodeDeletionHandler")
@@ -66,6 +67,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 
 	@Inject
 	private TestSuiteDao suiteDao;
+	
+	@Inject
+	private PrivateCustomFieldValueService customValueService;
 
 	@Override
 	protected FolderDao<CampaignFolder, CampaignLibraryNode> getFolderDao() {
@@ -190,6 +194,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 				testPlanItem.setTestSuite(null);
 			}
 			testSuite.getIteration().removeTestSuite(testSuite);
+			
+			customValueService.deleteAllCustomFieldValues(testSuite);
+			
 			deletionDao.removeEntity(testSuite);
 		}
 
@@ -227,6 +234,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 			doDeleteIterations(campaign.getIterations());
 			campaign.getIterations().clear();
 
+			customValueService.deleteAllCustomFieldValues(campaign);
 		}
 
 	}
@@ -252,6 +260,8 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 
 			deleteIterationTestPlan(iteration.getTestPlans());
 			iteration.getTestSuites().clear();	//XXX isn't that supposed to be iteration.getTestPlans().clear();
+			
+			customValueService.deleteAllCustomFieldValues(iteration);
 
 			deletionDao.removeAttachmentList(iteration.getAttachmentList());
 			deletionDao.removeEntity(iteration);

@@ -250,7 +250,9 @@
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBindings", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id in ( :bindingIds )"),
 		@NamedQuery(name = "CustomFieldValue.deleteAll", query="delete CustomFieldValue where id in (:ids)"),
 		@NamedQuery(name = "CustomFieldValue.deleteAllForBinding", query="delete CustomFieldValue cv1 where cv1 in (select cv2 from CustomFieldValue cv2 join cv2.binding cfb where cfb.id = :bindingId )"),
-		
+		@NamedQuery(name = "CustomFieldValue.deleteallForEntity", query = "delete CustomFieldValue cv where cv.boundEntityId = :entityId and cv.boundEntityType = :entityType"),
+		@NamedQuery(name = "CustomFieldValue.deleteAllForEntities", query= "delete CustomFieldValue cv where cv.boundEntityId in (:entityIds) and cv.boundEntityType = :entityType"),
+				
 		//on the following line, the CAST trick allows hibernate to select litteral passed as arguments
 		//SQL native compatibility backing it is SQL-92 and is widely supported by recent dbms so no worries. 
 		@NamedQuery(name = "CustomFieldValue.copyCustomFieldValues", query="insert into CustomFieldValue(boundEntityId, boundEntityType, binding, value) "+
@@ -293,8 +295,8 @@
 		@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),
 
 		@NamedQuery(name = "requirement.findAllAttachmentLists", query = "select v.attachmentList.id from RequirementVersion v where v.requirement.id in (:requirementIds)"),
-		@NamedQuery(name = "requirementDeletionDao.deleteRequirementAuditEvent", query = "delete RequirementAuditEvent rae where rae.id in (:eventIds)")
-
+		@NamedQuery(name = "requirementDeletionDao.deleteRequirementAuditEvent", query = "delete RequirementAuditEvent rae where rae.id in (:eventIds)"),
+		@NamedQuery(name = "requirementDeletionDao.findVersionIds", query = "select rv.id from RequirementVersion rv join rv.requirement r where r.id in (:reqIds)")
 })
 package org.squashtest.csp.tm.internal.repository.hibernate;
 

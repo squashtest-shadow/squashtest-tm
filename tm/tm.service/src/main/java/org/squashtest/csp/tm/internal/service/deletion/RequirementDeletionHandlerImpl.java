@@ -27,12 +27,16 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.springframework.stereotype.Component;
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.FolderDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDeletionDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
+import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.internal.service.RequirementNodeDeletionHandler;
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 @Component("squashtest.tm.service.deletion.RequirementNodeDeletionHandler")
@@ -48,7 +52,10 @@ public class RequirementDeletionHandlerImpl extends
 
 	@Inject
 	private RequirementDeletionDao deletionDao;
-
+	
+	@Inject
+	private PrivateCustomFieldValueService customValueService;
+	
 	@Override
 	protected FolderDao<RequirementFolder, RequirementLibraryNode> getFolderDao() {
 		return folderDao;
@@ -87,6 +94,10 @@ public class RequirementDeletionHandlerImpl extends
 			TestCaseImportanceManagerForRequirementDeletion testCaseImportanceManager = provider.get();
 			testCaseImportanceManager.prepareRequirementDeletion(ids);
 
+			//remove the custom fields	
+			List<Long> allVersionIds = deletionDao.findVersionIds(ids);
+			customValueService.deleteAllCustomFieldValues(BindableEntity.REQUIREMENT_VERSION, allVersionIds);
+			
 			List<Long> requirementAttachmentIds = deletionDao.findRequirementAttachmentListIds(ids);
 
 			deletionDao.removeFromVerifiedRequirementLists(ids);

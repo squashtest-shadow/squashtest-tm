@@ -20,10 +20,15 @@
  */
 package org.squashtest.csp.tm.internal.service.customField;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.swing.plaf.ListUI;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections.Transformer;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +61,14 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	
 	@Inject 
 	private PrivateCustomFieldValueService customValueService;
+	
+	
+	private static final Transformer BINDING_ID_COLLECTOR = new Transformer() {		
+		@Override
+		public Object transform(Object input) {
+			return ((CustomFieldBinding)input).getId();
+		}
+	};	
 	
 	@Override
 	public List<CustomField> findAvailableCustomFields() {
@@ -101,6 +114,15 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	public void removeCustomFieldBindings(List<Long> bindingIds){
 		customValueService.cascadeCustomFieldValuesDeletion(bindingIds);
 		customFieldBindingDao.removeCustomFieldBindings(bindingIds);
+	}
+	
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
+	public void removeCustomFieldBindings(Long projectId) {
+		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProject(projectId);
+		List<Long> bindingIds = new LinkedList<Long>(CollectionUtils.collect(bindings, BINDING_ID_COLLECTOR));
+		removeCustomFieldBindings(bindingIds);
 	}
 	
 	@Override

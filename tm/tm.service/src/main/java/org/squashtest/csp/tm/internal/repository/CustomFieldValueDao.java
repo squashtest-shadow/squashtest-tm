@@ -72,8 +72,26 @@ public interface CustomFieldValueDao {
 	 * @param bindingId
 	 */
 	void deleteAllForBinding(@QueryParam("bindingId") Long bindingId);
+	
+	
+	/**
+	 * Delete all the custom field values related to a BoundEntity, identified by its id and BindableEntity
+	 * 
+	 * @param entityId
+	 * @param entity
+	 */
+	void deleteAllForEntity(@QueryParam("entityId") Long entityId, @QueryParam("entityType") BindableEntity entity);
 
 	
+	/**
+	 * Delete all the custom field values related to a bunch of bound entities
+	 * 
+	 * @param entityTpe
+	 * @param entityIds
+	 */
+	void deleteAllForEntities(@QueryParam("entityType") BindableEntity entityTpe, @QueryParam("entityIds") List<Long> entityIds);
+	
+
 	
 	/**
 	 * 'nuff said. 

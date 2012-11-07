@@ -122,5 +122,10 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		}
 
 	}
+	
+	@Override
+	public List<Long> findVersionIds(List<Long> requirementIds) {
+		return executeSelectNamedQuery("requirementDeletionDao.findVersionIds", "reqIds", requirementIds);
+	}
 
 }

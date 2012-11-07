@@ -58,6 +58,13 @@ public interface CustomFieldBindingModificationService extends CustomFieldBindin
 	
 	
 	/**
+	 * removes all the custom field bindings defined for a project.
+	 * 
+	 * @param projectId the id of the project
+	 */
+	void removeCustomFieldBindings(Long projectId);
+	
+	/**
 	 * Given a list of {@link CustomFieldBinding}s, will reorder them with respect to their project and bound entity. This method assumes that 
 	 * they all bind the same entity to the same project. If the input list mixes binding for different projects and/or entities, unexpected 
 	 * behavior may occur.

@@ -69,6 +69,22 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	 */
 	void createAllCustomFieldValues(BoundEntity entity);
 	
+	
+	/**
+	 * will delete all the custom field vales for one entity
+	 * 
+	 * @param entity
+	 */
+	void deleteAllCustomFieldValues(BoundEntity entity);
+	
+	
+	/**
+	 * Will delete all the custom field values for multiple BoundEntities
+	 * @param entityType the BindableEntity that all of the BoundEntity must share
+	 * @param entityIds the ids of those BoundEntities
+	 */
+	void deleteAllCustomFieldValues(BindableEntity entityType, List<Long> entityIds);
+	
 
 	/**
 	 * Will copy the custom field values from an entity to another entity, creating them in the process

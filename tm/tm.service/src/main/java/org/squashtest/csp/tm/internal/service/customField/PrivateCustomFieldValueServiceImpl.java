@@ -30,6 +30,7 @@ import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
@@ -113,6 +114,18 @@ public class PrivateCustomFieldValueServiceImpl implements
 	}
 
 
+	@Override
+	public void deleteAllCustomFieldValues(BoundEntity entity) {
+		customFieldValueDao.deleteAllForEntity(entity.getBoundEntityId(), entity.getBoundEntityType());
+	}
+		
+	@Override
+	public void deleteAllCustomFieldValues(BindableEntity entityType,
+			List<Long> entityIds) {
+		customFieldValueDao.deleteAllForEntities(entityType, entityIds);		
+	}
+	
+	
 	@Override
 	public void copyCustomFieldValues(BoundEntity source, BoundEntity recipient) {
 		customFieldValueDao.copyCustomFieldValues(source.getBoundEntityId(), recipient.getBoundEntityId(), source.getBoundEntityType());

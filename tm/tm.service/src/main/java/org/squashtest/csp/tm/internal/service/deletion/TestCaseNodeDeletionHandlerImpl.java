@@ -27,6 +27,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.CallTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -38,6 +39,7 @@ import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDeletionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
 import org.squashtest.csp.tm.internal.service.TestCaseNodeDeletionHandler;
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.internal.service.deletion.LockedFileInferenceGraph.Node;
 import org.squashtest.csp.tm.service.TestCaseImportanceManagerService;
 import org.squashtest.csp.tm.service.deletion.AffectedEntitiesPreviewReport;
@@ -58,6 +60,9 @@ public class TestCaseNodeDeletionHandlerImpl extends
 	private TestCaseDeletionDao deletionDao;
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
+	
+	@Inject
+	private PrivateCustomFieldValueService customValueService;
 
 	@Override
 	protected FolderDao<TestCaseFolder, TestCaseLibraryNode> getFolderDao() {
@@ -123,6 +128,9 @@ public class TestCaseNodeDeletionHandlerImpl extends
 			deletionDao.removeFromVerifyingTestCaseLists(ids);
 
 			deletionDao.removeAllSteps(stepIds);
+			
+			customValueService.deleteAllCustomFieldValues(BindableEntity.TEST_CASE, ids);
+			
 			deletionDao.removeEntities(ids);
 
 			// We merge the list for
