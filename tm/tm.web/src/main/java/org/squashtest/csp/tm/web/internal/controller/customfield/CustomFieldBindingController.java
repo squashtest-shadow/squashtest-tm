@@ -40,7 +40,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.csp.tm.service.CustomFieldBindingModificationService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.customfield.CustomFieldBindingModel;
 import org.squashtest.csp.tm.web.internal.model.customfield.CustomFieldJsonConverter;

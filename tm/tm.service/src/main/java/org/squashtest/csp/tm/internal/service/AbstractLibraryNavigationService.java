@@ -48,9 +48,9 @@ import org.squashtest.csp.tm.internal.repository.LibraryDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.internal.utils.library.LibraryUtils;
-import org.squashtest.csp.tm.service.CustomFieldBindingFinderService;
-import org.squashtest.csp.tm.service.CustomFieldBindingModificationService;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldBindingFinderService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 

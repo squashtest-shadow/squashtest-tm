@@ -221,8 +221,8 @@
 	<!--  CUF binding service -->	
 	<osgi:service ref="squashtest.tm.service.CustomFieldBindingService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.CustomFieldBindingFinderService</value>
-			<value>org.squashtest.csp.tm.service.CustomFieldBindingModificationService</value>
+			<value>org.squashtest.csp.tm.service.customfield.CustomFieldBindingFinderService</value>
+			<value>org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService</value>
 		</osgi:interfaces>
 	</osgi:service>			
 

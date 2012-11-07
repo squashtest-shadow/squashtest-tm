@@ -204,12 +204,12 @@
 
 	<osgi:reference id="squashtest.tm.service.CustomFieldBindingFinder"
 		bean-name="squashtest.tm.service.CustomFieldBindingFinder"
-		interface="org.squashtest.csp.tm.service.CustomFieldBindingFinderService"
+		interface="org.squashtest.csp.tm.service.customfield.CustomFieldBindingFinderService"
 		availability="mandatory" />
 
 	<osgi:reference id="squashtest.tm.service.CustomFieldBindingModifier"
 		bean-name="squashtest.tm.service.CustomFieldBindingModifier"
-		interface="org.squashtest.csp.tm.service.CustomFieldBindingModificationService"
+		interface="org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService"
 		availability="mandatory" />
 
 	<osgi:reference id="squashtest.tm.service.CustomFieldManagerService"

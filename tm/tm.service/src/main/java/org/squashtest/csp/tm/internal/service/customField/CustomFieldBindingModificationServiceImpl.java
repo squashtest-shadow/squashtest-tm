@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service;
+package org.squashtest.csp.tm.internal.service.customField;
 
 import java.util.List;
 
@@ -37,8 +37,7 @@ import org.squashtest.csp.tm.internal.repository.BoundEntityDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
-import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
-import org.squashtest.csp.tm.service.CustomFieldBindingModificationService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
