@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -89,8 +88,9 @@ public class PrivateCustomFieldValueServiceImpl implements
 	
 	@Override
 	public void cascadeCustomFieldValuesDeletion(List<Long> customFieldBindingIds) {
+
 		List<CustomFieldValue> allValues =  customFieldValueDao.findAllCustomValuesOfBindings(customFieldBindingIds);
-		
+
 		List<Long> ids = new ArrayList<Long>(allValues.size());
 		for (CustomFieldValue value : allValues){
 			ids.add(value.getId());
@@ -133,7 +133,7 @@ public class PrivateCustomFieldValueServiceImpl implements
 
 	@Override
 	public void copyCustomFieldValuesContent(BoundEntity source, BoundEntity recipient) {
-		throw new NotImplementedException();
+		customFieldValueDao.copyCustomFieldValuesContent(source.getBoundEntityId(), recipient.getBoundEntityId(), source.getBoundEntityType());
 	}
 
 }

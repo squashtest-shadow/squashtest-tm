@@ -117,20 +117,8 @@ class HibernateCustomFieldValueDaoIT extends DbunitDaoSpecification{
 			def testcase = session.get(TestCase.class, 113l)
 		
 		when :
-		
-			def hql = 	""" insert into CustomFieldValue(boundEntityId, boundEntityType, binding, value)  
-							select CAST(:destEntityId AS long), cfb.boundEntity, cfb, cf.defaultValue 
-						  	from CustomFieldBinding cfb join cfb.customField cf 
-							where cfb.boundEntity = :entityType 
-							and cfb.boundProject = :boundProject 
-						"""
-			
-			Query q = session.createQuery(hql)
-			q.setParameter("destEntityId", 113l)
-			q.setParameter("entityType", BindableEntity.TEST_CASE)
-			q.setParameter("boundProject", testcase.project)
-			
-			q.executeUpdate()
+
+			dao.createAllCustomFieldValues(113l, BindableEntity.TEST_CASE, testcase.project)
 			
 			List<CustomFieldValue> values = dao.findAllCustomValues(113l, BindableEntity.TEST_CASE)
 			
