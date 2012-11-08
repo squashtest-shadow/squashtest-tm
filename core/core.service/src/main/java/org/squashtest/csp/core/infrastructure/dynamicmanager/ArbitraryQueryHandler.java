@@ -22,8 +22,8 @@ package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -47,12 +47,12 @@ import org.squashtest.tm.core.foundation.collection.Paging;
  * <p>Accepts any number of parameters that may be :
  * <ul>
  * 	<li>a {@link Paging} (or subclass),</li>
- * 	<li>an annotated List (or subclass), </li>
+ * 	<li>an annotated Collection (or subclass), </li>
  * 	<li>an annotated Object,</li>
  * </ul>
  * 
- * In the third case an object will be treated as a scalar : if that Object is a {@link Set} for instance, it won't be treated as the {@link List}s are. Crashes will
- * inevitably ensue.
+ * In the third case an object will be treated as a scalar. A note about Collection arguments : if that collection is empty the query will not be executed and 
+ * a default return value will be returned.
  * </p>
  * <p>
  * {@link Paging} arguments don't have to be annotated. Multiple Paging will all be applied but only the last one will count. Other arguments MUST all be annotated 
@@ -62,12 +62,20 @@ import org.squashtest.tm.core.foundation.collection.Paging;
  * 
  * <h3>Result</h3>
  * <p>
- * 	It depends on the result type of the method :
+ * 	It depends on the result type of the method. When the query is executed the returned values are : 
  * <ul>
  * 	<li>void : returns null</li>
- * 	<li>List (or subclass) : returns a list</li>
+ * 	<li>Collection (or subclass) : returns a List</li>
  * 	<li>other : returns a scalar</li>
- *  </ul>
+ * </ul>
+ *  
+ * If the query was aborted because a collection argument is empty, the returned values will be instead :
+ * 
+ * <ul>
+ * 	<li>void : returns null</li>
+ * 	<li>Collection (or sublcass) : returns an empty List</li>
+ * 	<li>other : returns null or 0 if the result expects a type primitive </li>
+ * </ul>
  * </p>
  * 
  * @author bsiri
@@ -93,9 +101,13 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
 		
-		Query q = setupQuery(method, args);
-		
-		return executeQuery(method, q);
+		try{
+			Query q = setupQuery(method, args);
+			return executeQuery(method, q);
+		}
+		catch(EmptyCollectionException ex){
+			return abortQuery(method);
+		}
 		
 	}
 
@@ -161,16 +173,16 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 		return Paging.class.isAssignableFrom(paramType);
 	}
 	
-	private boolean _isList(Class<?> paramType){
-		return List.class.isAssignableFrom(paramType);
+	private boolean _isCollection(Class<?> paramType){
+		return Collection.class.isAssignableFrom(paramType);
 	}
 
 	private boolean _isPaging(Object argument){
 		return Paging.class.isAssignableFrom(argument.getClass());
 	}
 	
-	private boolean _isList(Object argument){
-		return List.class.isAssignableFrom(argument.getClass());
+	private boolean _isCollection(Object argument){
+		return Collection.class.isAssignableFrom(argument.getClass());
 	}
 	
 	private boolean _isVoid(Class<?> type){
@@ -199,8 +211,8 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 			if (_isPaging(currentArg)){
 				processPaging(query, currentArg);
 			}
-			else if (_isList(currentArg)){
-				setAsList(query, currentArg, allAnnotations[i]);
+			else if (_isCollection(currentArg)){
+				setAsCollection(query, currentArg, allAnnotations[i]);
 			}
 			else{
 				setAsScalar(query, currentArg, allAnnotations[i]);
@@ -218,7 +230,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 			query.executeUpdate();
 			return null;
 		}
-		else if (_isList(returnType)){
+		else if (_isCollection(returnType)){
 			return query.list();
 		}
 		else{
@@ -227,6 +239,22 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 		
 	}
 	
+	private Object abortQuery(Method method){
+
+		Class<?> returnType = method.getReturnType();
+		
+		if (_isCollection(returnType)){
+			return new ArrayList(0);
+		}
+		else if (returnType.isPrimitive()){
+			return _newPrimitiveZero(returnType);
+		}
+		else{
+			return null;
+		}
+	}
+	
+	
 	private void processPaging(Query query, Object arg) {
 		Paging paging = (Paging) arg;
 		query.setFirstResult(paging.getFirstItemIndex());
@@ -234,9 +262,12 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 	}
 	
 	@SuppressWarnings("rawtypes")
-	private void setAsList(Query query, Object arg, Annotation[] paramAnnotations){
+	private void setAsCollection(Query query, Object arg, Annotation[] paramAnnotations)  {
 		QueryParam paramName = _findQueryParam(paramAnnotations);
-		List argument = (List)arg;
+		Collection argument = (Collection)arg;
+		if (argument.isEmpty()){
+			throw new EmptyCollectionException();
+		}
 		query.setParameterList(paramName.value(),argument);
 	}
 	
@@ -244,4 +275,30 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 		QueryParam paramName = _findQueryParam(paramAnnotations);
 		query.setParameter(paramName.value(),arg);		
 	}
+	
+	private Object _newPrimitiveZero(Class<?> returnType){
+		if (returnType.equals(Short.TYPE)){
+			return 0;
+		}		
+		else if (returnType.equals(Integer.TYPE)){
+			return 0;
+		}
+		else if (returnType.equals(Float.TYPE)){
+			return 0f;
+		}
+		else if (returnType.equals(Double.TYPE)){
+			return 0d;
+		}
+		else if (returnType.equals(Long.TYPE)){
+			return 0l;
+		}
+		else if (returnType.equals(Byte.TYPE)){
+			return (byte)0;
+		}
+		else {
+			return (char)0;
+		}
+	}
+	
+	private static final class EmptyCollectionException extends RuntimeException{}
 }
