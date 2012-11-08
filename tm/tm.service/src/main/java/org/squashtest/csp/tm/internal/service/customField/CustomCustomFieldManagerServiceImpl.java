@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service.customField;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -80,8 +81,14 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Override
 	public void deleteCustomField(long customFieldId) {
 		CustomField customField = customFieldDao.findById(customFieldId);
-		List<Long> bindingIds = customFieldBindingDao.findIdsForCustomField(customFieldId);
-		customFieldBindingModificationService.removeCustomFieldBindings(bindingIds);
+		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForCustomField(customFieldId);
+		List<Long> bindingIds = new ArrayList<Long>();
+		for(CustomFieldBinding binding : bindings) {
+			bindingIds.add(binding.getId());
+		}
+		if(bindingIds.size() > 0){
+			customFieldBindingModificationService.removeCustomFieldBindings(bindingIds);
+		}
 		customFieldDao.remove(customField);
 	}
 

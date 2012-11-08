@@ -36,7 +36,7 @@ public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao{
 	
 	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity, Paging paging);
 	
-	List<Long> findIdsForCustomField(long customFieldId);
+	List<CustomFieldBinding> findAllForCustomField(long customFieldId);
 	
 	void persist(CustomFieldBinding binding);
 	

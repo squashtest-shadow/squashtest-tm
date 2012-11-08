@@ -20,10 +20,14 @@
  */
 package org.squashtest.csp.tm.internal.service.customField
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tm.domain.customfield.CustomField
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder
+import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao
 
 import spock.lang.Specification
@@ -32,15 +36,19 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 
 	CustomCustomFieldManagerServiceImpl service = new CustomCustomFieldManagerServiceImpl();
 	CustomFieldDao customFieldDao = Mock()
-
+	CustomFieldBindingDao customFieldBindingDao = Mock();
+	
 	def setup() {
 		service.customFieldDao = customFieldDao
+		service.customFieldBindingDao = customFieldBindingDao
 	}
 
 	def "should delete custom field"(){
 		given:
 		CustomField cuf = Mock()
+		List<Long> bindingIds = new ArrayList<Long>();
 		customFieldDao.findById(1L) >> cuf
+		customFieldBindingDao.findAllForCustomField(1L) >> bindingIds;
 		
 		when :
 		service.deleteCustomField(1L);
