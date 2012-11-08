@@ -136,37 +136,37 @@
 	<!-- ====== / RDBMS / ORM INTEGRATION ====== -->
 	
 	<!-- Dynamic Daos -->
-	<bean id="requirementAuditEventDao" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicDaoFactoryBean">
+	<bean id="requirementAuditEventDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
 		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.event.RequirementAuditEvent" />
 	</bean>	
 	
-	<bean id="requirementVersionDao" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicDaoFactoryBean">
+	<bean id="requirementVersionDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
 		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.RequirementVersionDao" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.requirement.RequirementVersion" />
 	</bean>	
 	
-	<bean id="testSuiteDao" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicDaoFactoryBean">
+	<bean id="testSuiteDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
 		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.TestSuiteDao" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.campaign.TestSuite" />
 	</bean>	
 
-	<bean id="automatedExecutionDao" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicDaoFactoryBean">
+	<bean id="automatedExecutionDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
 		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.testautomation.AutomatedExecutionExtenderDao" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender" />
 	</bean>	
 	
-	<bean id="customFieldDao" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicDaoFactoryBean">
+	<bean id="customFieldDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
 		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.CustomFieldDao" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.customfield.CustomField" />
 	</bean>	
 	
-	<bean id="customFieldBindingDao" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicDaoFactoryBean">
+	<bean id="customFieldBindingDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
 		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.customfield.CustomFieldBinding" />
 	</bean>		
 	
-	<bean id="customFieldValueDao" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicDaoFactoryBean">
+	<bean id="customFieldValueDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
 		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.CustomFieldValueDao" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.customfield.CustomFieldValue" />
 	</bean>		

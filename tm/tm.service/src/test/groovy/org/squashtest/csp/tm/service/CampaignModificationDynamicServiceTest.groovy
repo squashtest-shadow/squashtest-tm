@@ -24,8 +24,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.junit.runner.RunWith;
 import org.spockframework.runtime.Sputnik;
-import org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
+import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean;
+
 import java.util.Date;
 import java.util.List;
 

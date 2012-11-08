@@ -23,8 +23,8 @@ package org.squashtest.csp.tm.service
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.hibernate.type.EntityType;
-import org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
+import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean;
 
 import spock.lang.Shared;
 import spock.lang.Specification;

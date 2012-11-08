@@ -47,6 +47,11 @@
 			<artifactId>core.foundation</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.dynamicmanager</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
 			<artifactId>core.bugtracker.api</artifactId>
@@ -183,11 +188,42 @@
 		</testResources>
 
 		<testSourceDirectory>src/test/groovy</testSourceDirectory>
-
-		<plugins>
-			<plugin>
+     
+     <plugins>
+			 <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-resource</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>add-resource</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${project.build.directory}/generated-resources</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>org.squashtest.tm</groupId>
+            <artifactId>tools.annotation.processor</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <generatedSourcesDirectory>${project.build.directory}/generated-resources/META-INF</generatedSourcesDirectory>
+        </configuration>
 			</plugin>
 
 			<plugin>

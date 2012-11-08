@@ -15,5 +15,6 @@
 		<module>org.squashtest.csp.tools.unittest</module>
 		<module>license-resources</module>
 		<module>tools-resources</module>
-	</modules>
+    <module>tools.annotation.processor</module>
+  </modules>
 </project>

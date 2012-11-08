@@ -77,15 +77,15 @@
 
   <!-- Dynamic managers -->
 
-  <bean id="squashtest.tm.service.TestCaseModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
+  <bean id="squashtest.tm.service.TestCaseModificationService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
     <property name="componentType" value="org.squashtest.csp.tm.service.TestCaseModificationService" />
     <property name="entityType" value="org.squashtest.csp.tm.domain.testcase.TestCase" />
   </bean>
-  <bean id="squashtest.tm.service.ProjectModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
+  <bean id="squashtest.tm.service.ProjectModificationService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
     <property name="componentType" value="org.squashtest.csp.tm.service.ProjectModificationService" />
     <property name="entityType" value="org.squashtest.csp.tm.domain.project.Project" />
   </bean>
-  <bean id="squashtest.tm.service.BugTrackerModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
+  <bean id="squashtest.tm.service.BugTrackerModificationService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
     <property name="componentType" value="org.squashtest.csp.tm.service.BugTrackerModificationService" />
     <property name="entityType" value="org.squashtest.csp.core.bugtracker.domain.BugTracker" />
   </bean>
@@ -95,7 +95,7 @@
     <property name="libraryDao" ref="hibernateRequirementLibraryDao" />
   </bean>
 
-  <bean id="squashtest.tm.service.RequirementModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
+  <bean id="squashtest.tm.service.RequirementModificationService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
     <property name="componentType" value="org.squashtest.csp.tm.service.RequirementModificationService" />
     <property name="entityType" value="org.squashtest.csp.tm.domain.requirement.Requirement" />
   </bean>
@@ -106,27 +106,27 @@
     <property name="libraryDao" ref="hibernateCampaignLibraryDao" />
   </bean>
 
-  <bean id="squashtest.tm.service.CampaignModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
+  <bean id="squashtest.tm.service.CampaignModificationService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
     <property name="componentType" value="org.squashtest.csp.tm.service.CampaignModificationService" />
     <property name="entityType" value="org.squashtest.csp.tm.domain.campaign.Campaign" />
   </bean>
 
-  <bean id="squashtest.tm.service.IterationModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
+  <bean id="squashtest.tm.service.IterationModificationService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
     <property name="componentType" value="org.squashtest.csp.tm.service.IterationModificationService" />
     <property name="entityType" value="org.squashtest.csp.tm.domain.campaign.Iteration" />
   </bean>
 
-  <bean id="squashtest.tm.service.RequirementVersionManagerService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
+  <bean id="squashtest.tm.service.RequirementVersionManagerService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
     <property name="componentType" value="org.squashtest.csp.tm.service.RequirementVersionManagerService" />
     <property name="entityType" value="org.squashtest.csp.tm.domain.requirement.RequirementVersion" />
   </bean>
 
-  <bean id="squashtest.tm.service.TestSuiteModificationService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
+  <bean id="squashtest.tm.service.TestSuiteModificationService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
     <property name="componentType" value="org.squashtest.csp.tm.service.TestSuiteModificationService" />
     <property name="entityType" value="org.squashtest.csp.tm.domain.campaign.TestSuite" />
   </bean>
 
-  <bean id="squashtest.tm.service.CustomFieldManagerService" class="org.squashtest.csp.core.infrastructure.dynamicmanager.DynamicManagerFactoryBean">
+  <bean id="squashtest.tm.service.CustomFieldManagerService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
     <property name="componentType" value="org.squashtest.csp.tm.service.customfield.CustomFieldManagerService" />
     <property name="entityType" value="org.squashtest.csp.tm.domain.customfield.CustomField" />
   </bean>

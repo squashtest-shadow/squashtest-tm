@@ -26,5 +26,6 @@
 		<module>core.service</module>
 		<module>core.web</module>
 		<module>launcher</module>
-	</modules>
+    <module>core.dynamicmanager</module>
+  </modules>
 </project>

@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.core.infrastructure.lang;
 
+import org.squashtest.tm.core.foundation.lang.PrimitiveTypeUtils;
+
 import spock.lang.Specification;
 import spock.lang.Unroll;
 
