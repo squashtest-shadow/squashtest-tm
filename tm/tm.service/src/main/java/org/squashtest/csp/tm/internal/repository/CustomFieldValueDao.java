@@ -23,10 +23,8 @@ package org.squashtest.csp.tm.internal.repository;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
-import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 
 public interface CustomFieldValueDao {
@@ -38,16 +36,7 @@ public interface CustomFieldValueDao {
 	 */
 	void persist(CustomFieldValue newValue);
 	
-	
-	/**
-	 * Will batch-create the custom field values for a new entity, according to the custom field bindings it is subject to
-	 * 
-	 * @param destEntityId the id of the bound entity
-	 * @param entityType the BindableEntity of that entity
-	 * @param boundProject project to which it belongs
-	 */
-	void createAllCustomFieldValues(@QueryParam("destEntityId") Long destEntityId, @QueryParam("entityType") BindableEntity entityType, @QueryParam("boundProject") Project boundProject);
-	
+
 	
 	/**
 	 * 
@@ -130,26 +119,62 @@ public interface CustomFieldValueDao {
 	 */
 	List<CustomFieldValue> findAllCustomValuesOfBindings(@QueryParam("bindingIds") List<Long>customFieldBindingIds);	
 	
-	
+
 	/**
-	 * Will copy all the custom field values of a {@link BoundEntity} to another BoundEntity. Those two BoundEntity are expected to be of same {@link BindableEntity}.
-	 *  
-	 * @param srcEntityId the id of the BoundEntity from which we will copy the custom field values
-	 * @param entityType the BindableEntity that must be common for both and destination entities.
-	 * @param destEntityId the id of the BoundEntity which will receive the copies of custom field values. 
+	 * Will return instances of {@link CustomFieldValuesPair}, that will pair two {@link CustomFieldValue} that represents the same
+	 * CustomFieldBinding. Those two CustomFieldValue belongs to two BoundEntity as specified by the parameters. 
+	 * One of them is considered as the original and the other one is the copy.
+	 * 
+	 * @param entity
+	 * @param origEntityId
+	 * @param copyEntityId
+	 * @return
 	 */
-	void copyCustomFieldValues(@QueryParam("srcEntityId") Long srcEntityId, @QueryParam("destEntityId") Long destEntityId, @QueryParam("entityType") BindableEntity entityType );
+	List<CustomFieldValuesPair> findPairedCustomFieldValues(@QueryParam("entityType") BindableEntity entity, 
+								@QueryParam("origEntityId") Long origEntityId, @QueryParam("copyEntityId") Long copyEntityId);
+	
+	
+	
+	public static final class CustomFieldValuesPair{
+		
+		private CustomFieldValue original;
+		private CustomFieldValue recipient;
+		
+		public CustomFieldValuesPair(){
+			super();
+		}
+		
+		public CustomFieldValuesPair(CustomFieldValue original,
+				CustomFieldValue recipient) {
+			super();
+			this.original = original;
+			this.recipient = recipient;
+		}
+		
+		
+		public void setOriginal(CustomFieldValue original) {
+			this.original = original;
+		}
 
+		public void setRecipient(CustomFieldValue recipient) {
+			this.recipient = recipient;
+		}
 
-	/**
-	 * Will copy the content of all the custom field values of a {@link BoundEntity} into the custom field values of another BoundEntity.
-	 * The custom field values of the destination are expected to exist; they won't be created on the fly.  
-	 * The two BoundEntity are expected to be of same {@link BindableEntity}.
-	 *  
-	 * @param srcEntityId the id of the BoundEntity from which we will copy the custom field values
-	 * @param entityType the BindableEntity that must be common for both and destination entities.
-	 * @param destEntityId the id of the BoundEntity which will receive the copies of custom field values. 
-	 */	
-	void copyCustomFieldValuesContent(@QueryParam("srcEntityId") Long srcEntityId, @QueryParam("destEntityId") Long destEntityId, @QueryParam("entityType") BindableEntity entityType );
+		
+		public CustomFieldValue getOriginal() {
+			return original;
+		}
 
+		public CustomFieldValue getRecipient() {
+			return recipient;
+		}
+
+		/**
+		 * copies the value of the original CustomFieldValue into the value of the recipient CustomFieldValue
+		 */
+		public void copyContent(){
+			recipient.setValue(original.getValue());
+		}
+	}
+	
 }

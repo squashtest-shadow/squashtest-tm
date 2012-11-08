@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.internal.repository.BoundEntityDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
+import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao.CustomFieldValuesPair;
 
 @Service("squashtest.tm.service.CustomFieldValueManagerService")
 public class PrivateCustomFieldValueServiceImpl implements
@@ -102,15 +104,14 @@ public class PrivateCustomFieldValueServiceImpl implements
 	
 	@Override
 	public void createAllCustomFieldValues(BoundEntity entity) {
-		/*List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(entity.getProject().getId(), entity.getBoundEntityType());
+		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(entity.getProject().getId(), entity.getBoundEntityType());
 		
 		for (CustomFieldBinding binding : bindings){			
 			CustomFieldValue value = binding.createNewValue();
 			value.setBoundEntity(entity);			
 			customFieldValueDao.persist(value);		
-		}*/
+		}
 		
-		customFieldValueDao.createAllCustomFieldValues(entity.getBoundEntityId(), entity.getBoundEntityType(), entity.getProject());
 	}
 
 
@@ -128,12 +129,23 @@ public class PrivateCustomFieldValueServiceImpl implements
 	
 	@Override
 	public void copyCustomFieldValues(BoundEntity source, BoundEntity recipient) {
-		customFieldValueDao.copyCustomFieldValues(source.getBoundEntityId(), recipient.getBoundEntityId(), source.getBoundEntityType());
+		
+		List<CustomFieldValue> sourceValues = customFieldValueDao.findAllCustomValues(source.getBoundEntityId(), source.getBoundEntityType());
+		
+		for (CustomFieldValue value : sourceValues){
+			CustomFieldValue copy = value.copy();
+			copy.setBoundEntity(recipient);
+			customFieldValueDao.persist(copy);
+		}
+	
 	}
 
 	@Override
 	public void copyCustomFieldValuesContent(BoundEntity source, BoundEntity recipient) {
-		customFieldValueDao.copyCustomFieldValuesContent(source.getBoundEntityId(), recipient.getBoundEntityId(), source.getBoundEntityType());
+		List<CustomFieldValuesPair> pairs = customFieldValueDao.findPairedCustomFieldValues(source.getBoundEntityType(), source.getBoundEntityId(), recipient.getBoundEntityId());
+		for (CustomFieldValuesPair pair : pairs){
+			pair.copyContent();
+		}
 	}
 
 }

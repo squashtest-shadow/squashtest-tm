@@ -252,27 +252,14 @@
 		@NamedQuery(name = "CustomFieldValue.deleteAllForBinding", query = "delete CustomFieldValue cv1 where cv1 in (select cv2 from CustomFieldValue cv2 join cv2.binding cfb where cfb.id = :bindingId )"),
 		@NamedQuery(name = "CustomFieldValue.deleteAllForEntity",  query = "delete CustomFieldValue cv where cv.boundEntityId = :entityId and cv.boundEntityType = :entityType"),
 		@NamedQuery(name = "CustomFieldValue.deleteAllForEntities", query= "delete CustomFieldValue cv where cv.boundEntityId in (:entityIds) and cv.boundEntityType = :entityType"),
-				
-		//on the following line, the CAST trick allows hibernate to select litteral passed as arguments
-		//SQL native compatibility backing it is SQL-92 and is widely supported by recent dbms so no worries. 
-		@NamedQuery(name = "CustomFieldValue.copyCustomFieldValues", query="insert into CustomFieldValue(boundEntityId, boundEntityType, binding, value) "+
-																			" select CAST(:destEntityId AS long), cfv.boundEntityType, cfv.binding, cfv.value "+
-																		    " from CustomFieldValue cfv where cfv.boundEntityId = :srcEntityId and cfv.boundEntityType = :entityType"),		
-		
-		@NamedQuery(name = "CustomFieldValue.copyCustomFieldValuesContent", query=	"update CustomFieldValue cfv1 set cfv1.value = ( "+
-																				  	"select cfv2.value from CustomFieldValue cfv2 "+
-																				  	"where cfv2.binding = cfv1.binding "+
-																				  	"and cfv2.boundEntityId = :srcEntityId "+
-																				  	"and cfv2.boundEntityType = :entityType "+
-																				  	") "+
-																				  	"where cfv1.boundEntityId = :destEntityId "+
-																				  	"and cfv1.boundEntityType = :entityType"),	
+		@NamedQuery(name = "CustomFieldValue.findPairedCustomFieldValues", query="select new org.squashtest.csp.tm.internal.repository.CustomFieldValueDao$CustomFieldValuesPair(orig, copy) from CustomFieldValue orig, CustomFieldValue copy "+
+																				 " where orig.boundEntityId = :origEntityId "+
+																				 " and orig.boundEntityType = :entityType "+
+																				 " and copy.boundEntityId = :copyEntityId "+
+																				 " and copy.boundEntityType = :entityType "+
+																				 " and copy.binding = orig.binding"
+																			),
 																				  	
-		@NamedQuery(name = "CustomFieldValue.createAllCustomFieldValues", query= 	"insert into CustomFieldValue(boundEntityId, boundEntityType, binding, value)"+  
-																					"select CAST(:destEntityId AS long), cfb.boundEntity, cfb, cf.defaultValue " +
-																				  	"from CustomFieldBinding cfb join cfb.customField cf "+
-																					"where cfb.boundEntity = :entityType "+
-																					"and cfb.boundProject = :boundProject "),
 		
 		//BoundEntity dao
 		@NamedQuery(name = "BoundEntityDao.findAllTestCasesForProject", query="select tc from TestCase tc where tc.project.id = :projectId"),

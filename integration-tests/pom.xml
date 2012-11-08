@@ -17,9 +17,20 @@
 			with absolute paths (which don't work under windows...) -->
 		<dbunit-database.url>jdbc:h2:target/database/squash-it-dbunit/squash-it</dbunit-database.url>
 		<non-dbunit-database.url>jdbc:h2:target/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
+
+		<hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
+		<database.dialect>h2</database.dialect>
+		<database.drivername>org.h2.Driver</database.drivername>
+		<database.schemaName>public</database.schemaName>
+		<database.username>sa</database.username>
+		<database.password>sa</database.password>
+		<database.typefactory>org.dbunit.ext.h2.H2DataTypeFactory</database.typefactory>
+
 		<database.changelog>../database/src/main/liquibase/global.changelog-master.xml</database.changelog>
 		<squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
 	</properties>
+
+
 
 	<build>
 		<testSourceDirectory>src/it/groovy</testSourceDirectory>
@@ -107,10 +118,10 @@
 						<goals>
 							<goal>integration-test</goal>
 							<goal>verify</goal>
-						</goals> 
+						</goals>
 					</execution>
 				</executions>
-				
+
 				<dependencies>
 					<dependency>
 						<artifactId>database.h2.fragment</artifactId>
@@ -135,10 +146,10 @@
 							<dropFirst>true</dropFirst>
 							<clearCheckSums>true</clearCheckSums>
 							<changeLogFile>${database.changelog}</changeLogFile>
-							<driver>org.h2.Driver</driver>
+							<driver>${database.drivername}</driver>
 							<url>${dbunit-database.url}</url>
-							<username>sa</username>
-							<password>sa</password>
+							<username>${database.username}</username>
+							<password>${database.password}</password>
 						</configuration>
 					</execution>
 
@@ -152,10 +163,10 @@
 							<dropFirst>true</dropFirst>
 							<clearCheckSums>true</clearCheckSums>
 							<changeLogFile>${database.changelog}</changeLogFile>
-							<driver>org.h2.Driver</driver>
-							<url>${non-dbunit-database.url}</url>
-							<username>sa</username>
-							<password>sa</password>
+							<driver>${database.drivername}</driver>
+							<url>${dbunit-database.url}</url>
+							<username>${database.username}</username>
+							<password>${database.password}</password>
 						</configuration>
 					</execution>
 				</executions>
@@ -182,7 +193,7 @@
 			<artifactId>core.testautomation.api</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
-		</dependency>		
+		</dependency>
 		<!-- <dependency> <groupId>${project.groupId}</groupId> <artifactId>plugin.report.std</artifactId> 
 			<version>${project.version}</version> <scope>test</scope> </dependency> -->
 		<dependency>
@@ -264,6 +275,11 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.mysql.jdbc</groupId>
+			<artifactId>com.springsource.com.mysql.jdbc</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 		<!-- ====== SPOCK-SPRING-TEST BRIDGE ====== -->
 		<dependency>
 			<groupId>org.spockframework</groupId>
@@ -446,6 +462,21 @@
 					</plugins>
 				</pluginManagement>
 			</build>
+		</profile>
+		<profile>
+			<id>mysql</id>
+			<properties>
+				<dbunit-database.url>jdbc:mysql://localhost/squashtest_it</dbunit-database.url>
+				<non-dbunit-database.url>jdbc:mysql://localhost/squashtest_it</non-dbunit-database.url>
+
+				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
+				<database.dialect>mysql</database.dialect>
+				<database.drivername>com.mysql.jdbc.Driver</database.drivername>
+		    	<database.schemaName>squashtest_it</database.schemaName>
+				<database.username>tester</database.username>
+				<database.password>_tester</database.password>
+				<database.typefactory>org.dbunit.ext.mysql.MySqlDataTypeFactory</database.typefactory>
+			</properties>
 		</profile>
 	</profiles>
 </project>

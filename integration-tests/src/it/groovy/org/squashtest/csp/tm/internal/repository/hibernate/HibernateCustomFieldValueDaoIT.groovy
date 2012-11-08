@@ -46,11 +46,16 @@ import org.hibernate.Query;
 import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.type.LongType;
+import org.springframework.test.context.ContextConfiguration;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
 import org.unitils.dbunit.annotation.DataSet;
+import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao.CustomFieldValuesPair;
+
+
 
 import spock.unitils.UnitilsSupport;
 
@@ -86,46 +91,17 @@ class HibernateCustomFieldValueDaoIT extends DbunitDaoSpecification{
 			values.size()==2
 			values.collect {it.id} == [1112l, 1122l]
 		
-		
 	}
 	
-	def "should copy the custom fields values from one test case to another test case by creating them"(){
-		
-		when :			
-			dao.copyCustomFieldValues(112l, 113l, BindableEntity.TEST_CASE)			
-			List<CustomFieldValue> values = dao.findAllCustomValues(113l, BindableEntity.TEST_CASE)
-		
-		then :
-			values.collect{it.value} as Set == ["SEC-2", "false"] as Set
-	}
-	
-	
-	def "should copy the custom fields values from one test case to another test case by copying the values"(){
+	def "should find pairs of custom field values"(){
 		
 		when :
-			dao.copyCustomFieldValuesContent(111l, 112l, BindableEntity.TEST_CASE)
-			List<CustomFieldValue> values = dao.findAllCustomValues(112l, BindableEntity.TEST_CASE)
-		
-		then :
-			values.collect{it.value} == ["", "true"]
-	}
-	
-	def "should create all the custom field values for a new BoundEntity"(){
-		
-		given :
-			def session = factory.getCurrentSession()
-			def testcase = session.get(TestCase.class, 113l)
-		
-		when :
-
-			dao.createAllCustomFieldValues(113l, BindableEntity.TEST_CASE, testcase.project)
-			
-			List<CustomFieldValue> values = dao.findAllCustomValues(113l, BindableEntity.TEST_CASE)
+			List<CustomFieldValuesPair> pairs = dao.findPairedCustomFieldValues(BindableEntity.TEST_CASE, 111l,112l )
 			
 		then :
-			values.collect{it.value} as Set == ["NOSEC", "false"] as Set
+			pairs.collect{ return [it.original.id, it.recipient.id] } as Set == [ [1111l, 1121l], [1112l, 1122l] ] as Set
 			
+		
 	}
 
-	
 }
