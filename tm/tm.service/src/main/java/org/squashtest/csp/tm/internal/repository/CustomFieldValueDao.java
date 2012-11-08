@@ -22,12 +22,12 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.csp.core.infrastructure.dynamicmanager.QueryParam;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 
 public interface CustomFieldValueDao {
 
