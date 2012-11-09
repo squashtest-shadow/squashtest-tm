@@ -60,11 +60,12 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 		def result = deletionHandler.deleteNodes([12L])
 
 		then :
-		! result.contains(12l)
-		result == []
+		result == []		
+		found(TestCase.class, 12l)
+		
 	}
 
-	@DataSet("NodeDeletionHandlerTest.should delete the test case and cascade to its steps.xml")
+	@DataSet("NodeDeletionHandlerTest.delete_tc_cascade_steps.xml")
 	def "should delete the test case and cascade to its steps"(){
 		
 		when :
@@ -78,6 +79,9 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 		! found(TestStep.class, 112l)
 		! found(CallTestStep.class, 112l)
 		found (TestCase.class, 12l)
+		
+		allDeleted("CustomFieldValue", [11l, 12L])
+		allNotDeleted("CustomFieldValue", [21L, 22L])
 	}
 
 
@@ -95,8 +99,8 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 	}
 
 
-	@DataSet("NodeDeletionHandlerTest.should cascade delete on attachments.xml")
-	def "should delete a folder and all its dependencies, Called tc are removed successfully because the caller is removed along it"(){
+	@DataSet("NodeDeletionHandlerTest.tc_hierarchy_cascade_delete.xml")
+	def "should delete a folder and all its dependencies, Called tc are removed successfully because the caller is removed along it, so are the custom field values"(){
 
 		when :
 		def result = deletionHandler.deleteNodes([1L]);
@@ -123,6 +127,8 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 			1212l
 		])
 		allDeleted("AttachmentList", [11L, 12L, 111L, 121L])
+		
+		allDeleted("CustomFieldValue", [11L, 12L, 21L, 22L])
 
 		def lib = findEntity(TestCaseLibrary.class, 1l)
 		lib.rootContent.size() == 0
@@ -160,7 +166,5 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 		allDeleted("TestStep", [112L])
 		
 	}
-	
-	
 
 }

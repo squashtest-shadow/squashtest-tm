@@ -52,6 +52,8 @@ import spock.unitils.UnitilsSupport;
  * Note : that class wont test yet whether an entity is actually removable or not, since the implementation of the 
  * class doesn't care of it yet.
  * 
+ * 2012-11-09 Note : the comment above still holds true today. 
+ * 
  */
 
 @NotThreadSafe
@@ -72,21 +74,6 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 
 	/* ****** test of suppression itself, assume that they're all green for removal ************* */
 
-	/*
-	 def "should generate a dtd"(){
-	 when :
-	 // database connection
-	 Class driverClass = Class.forName("org.h2.Driver");
-	 Connection jdbcConnection = DriverManager.getConnection("jdbc:h2:D:/bsiri/helios_workspace/squashtest-csp/provision/target/dev-database/squashtest", "sa", "sa");
-	 IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
-	 DatabaseConfig config = connection.getConfig();
-	 config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new H2DataTypeFactory());
-	 // write DTD file
-	 FlatDtdDataSet.write(connection.createDataSet(), new FileOutputStream("squash-tm.0.20.0.dtd"));
-	 then :
-	 true;
-	 }
-	 */
 
 	@DataSet("NodeDeletionHandlerTest.executionPlusSteps.xml")
 	def "should delete an execution, its steps, their attachments and their issues"(){
@@ -310,7 +297,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 
 
 	@DataSet("NodeDeletionHandlerTest.campaignPlusTestplan.xml")
-	def "should remove a campaign and its Campaign test plans and iterations"(){
+	def "should remove a campaign and its Campaign test plans and iterations, and their custom field values"(){
 		given :
 
 		def cpg = findEntity(Campaign.class, 1);
@@ -324,6 +311,8 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		allDeleted("AttachmentList", [1l, 11l, 12l])
 		allDeleted("CampaignTestPlanItem", [50l, 51l])
 		allDeleted("Iteration", [11l, 12l])
+		
+		allDeleted("CustomFieldValue", [101L, 102L, 113L, 123L])
 	}
 
 
@@ -337,8 +326,11 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		allDeleted("Campaign", [22l, 31l, 32l])
 		allDeleted("AttachmentList", [22l, 31l, 32l])
 
-		!allDeleted("Campaign", [12l])
-		!allDeleted("AttachmentList", [12l])
+		allNotDeleted("Campaign", [12l])
+		allNotDeleted("AttachmentList", [12l])
+		
+		allDeleted("CustomFieldValue", [221L, 222L, 311L, 312L, 321L, 322L])
+		allNotDeleted("CustomFieldValue", [121L, 122L])
 
 		def lib = findEntity(CampaignLibrary.class, 1l)
 		def cpg1 = findEntity(Campaign.class, 12l)
@@ -353,14 +345,17 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		when :
 		deletionHandler.deleteNodes([21l])
 		then :
-		allDeleted("CampaignFolder", [21l])
-		allDeleted("Campaign", [31l, 32l])
-		allDeleted("AttachmentList", [31l, 32l])
+		allDeleted("CampaignFolder", 	[21l])
+		allDeleted("Campaign", 			[31l, 32l])
+		allDeleted("AttachmentList", 	[31l, 32l])
 
-		!allDeleted("Campaign", [12l, 22l])
-		!allDeleted("AttachmentList", [12l, 22l])
-		!allDeleted("CampaignFolder", [11l])
+		allNotDeleted("Campaign", 		[12l, 22l])
+		allNotDeleted("AttachmentList", [12l, 22l])
+		allNotDeleted("CampaignFolder", [11l])
 
+		allDeleted("CustomFieldValue", 	[3131L, 312L, 321L, 322L])
+		allNotDeleted("CustomFieldValue",[121L, 122L, 221L, 222L])
+		
 		def lib = findEntity(CampaignLibrary.class, 1l)
 		def cpg1 = findEntity(Campaign.class, 12l)
 		def fold1 = findEntity(CampaignFolder.class, 11l)
@@ -381,7 +376,11 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 
 		def lib=findEntity(CampaignLibrary.class, 1l)
 		lib.rootContent.size()==0
+		
+		allDeleted("CustomFieldValue", [121L, 122L, 221L, 222L, 3131L, 312L, 321L, 322L])
+		
 	}
+	
 	@DataSet("NodeDeletionHandlerTest.should delete testSuites.xml")
 	def"should remove test suites"(){
 		when :

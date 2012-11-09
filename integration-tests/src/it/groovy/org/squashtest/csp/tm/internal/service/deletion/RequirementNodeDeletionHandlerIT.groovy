@@ -66,9 +66,14 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
 		then :
 		result == [11L]
+		
 		allDeleted("Requirement", [11L])
 		allDeleted("RequirementVersion", [111L, 112L])
+		
 		found (Requirement.class, 12L)
+		
+		allDeleted("CustomFieldValue", [1111L, 1112L, 1121L, 1122L])
+		allNotDeleted("CustomFieldValue", [1211L, 1212L]);
 	}
 
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
@@ -85,6 +90,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		
 		def lib = findEntity(RequirementLibrary.class, 1l)
 		lib.rootContent.size() == 0
+		allDeleted("CustomFieldValue", [1111L, 1112L, 1121L, 1122L, 1211L, 1212L])
 	}
 	
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
