@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.service.customfield;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 
@@ -41,4 +42,13 @@ public interface CustomFieldValueFinderService {
 	 */
 	List<CustomFieldValue> findAllCustomFieldValues(BoundEntity boundEntity);
 	
+	/**
+	 * Same as {@link #findAllCustomFieldValues(BoundEntity)}, but the properties identifying a BoundEntity
+	 * are broken down into its ID and type.
+	 * 
+	 * @param boundEntityId
+	 * @param bindableEntity
+	 * @return
+	 */
+	List<CustomFieldValue> findAllCustomFieldValues(Long boundEntityId, BindableEntity bindableEntity);
 }

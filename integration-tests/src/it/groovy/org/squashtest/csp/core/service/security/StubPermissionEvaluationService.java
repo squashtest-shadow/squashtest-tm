@@ -45,4 +45,10 @@ public class StubPermissionEvaluationService implements
 		return true;
 	}
 
+	@Override
+	public boolean hasRoleOrPermissionOnObject(String role, String permission,
+			Long entityId, String entityClassName) {
+		return true;
+	}
+	
 }

@@ -47,4 +47,14 @@ public interface BoundEntityDao {
 	 */
 	BoundEntity findBoundEntity(CustomFieldValue customFieldValue);
 	
+	
+	/**
+	 * Will retrieve a {@link BoundEntity} according to its ID and type.
+	 * 
+	 * @param boundEntityId
+	 * @param entityType
+	 * @return
+	 */
+	BoundEntity findBoundEntity(Long boundEntityId, BindableEntity entityType);
+	
 }

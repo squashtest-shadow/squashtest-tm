@@ -36,6 +36,20 @@ public interface PermissionEvaluationService {
 	 */
 	boolean hasRoleOrPermissionOnObject(String role, String permission, Object object);
 	
+	
+	/**
+	 * Same as {@link #hasRoleOrPermissionOnObject(String, String, Object)}, except that Object is explicitly identified 
+	 * by its ID and classname
+	 * 
+	 * @param role
+	 * @param permission
+	 * @param entityId
+	 * @param entityClassName
+	 * @return
+	 */
+	boolean hasRoleOrPermissionOnObject(String role, String permission, Long entityId, String entityClassName);
+	
+	
 	/**
 	 * short hand for hasRoleOrPermissionOnObject('ROLE_ADMIN', 'READ', object);
 	 * 
@@ -44,11 +58,13 @@ public interface PermissionEvaluationService {
 	 */
 	boolean canRead(Object object);
 	
+	
 	/**
 	 * return true if the user has more than readonly on the object
 	 * @param object
 	 * @return
 	 */
 	boolean hasMoreThanRead(Object object);
+	
 	
 }

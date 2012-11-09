@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -41,7 +40,6 @@ import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
-import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.customfield.CustomFieldBindingModel;
 import org.squashtest.csp.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.csp.tm.web.internal.model.customfield.CustomFieldModel;
@@ -60,10 +58,9 @@ public class CustomFieldBindingController {
 	
 	private CustomFieldBindingModificationService service;
 
-	private CustomFieldJsonConverter converter;
 	
 	@Inject
-	private InternationalizationHelper messageSource;
+	private CustomFieldJsonConverter converter;
 	
 	
 	@ServiceReference
@@ -71,10 +68,6 @@ public class CustomFieldBindingController {
 		this.service=service;
 	}
 
-	@PostConstruct
-	public void init(){
-		converter = new CustomFieldJsonConverter(messageSource);
-	}
 
 	
 	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "!bindableEntity"}, headers="Accept=application/json")

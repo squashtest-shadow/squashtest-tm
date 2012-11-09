@@ -221,4 +221,13 @@
 		</osgi:interfaces>
 	</osgi:reference>
 
+	<osgi:reference id="squashtest.tm.service.CustomFieldValueManagerService"
+		bean-name="squashtest.tm.service.CustomFieldValueManagerService"
+		availability="mandatory">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService</value>
+			<value>org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService</value>
+		</osgi:interfaces>
+	</osgi:reference>
+
 </beans>

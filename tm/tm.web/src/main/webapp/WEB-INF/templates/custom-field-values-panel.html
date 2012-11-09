@@ -1,0 +1,74 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<div th:remove="all">
+	<!--  documentation : 
+			Parameters :
+				- a List of CustomFieldValue, named 'customFieldValues'
+				- a boolean named 'editable' saying whether those values are editable. 
+	 -->
+
+</div>
+
+
+<div th:remove="all">
+<script type="text/javascript">
+	var require = { 
+	    baseUrl: '../../scripts/'
+	}; 
+</script>
+<script type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.2.js"></script>
+<script type="text/javascript" src="../../js/thymol.js"></script>
+<script type="text/javascript" src="../../scripts/require.js"></script>
+<script type="text/javascript" src="../../scripts/common.js"></script>
+
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../core/core.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css" th:href="@{/styles/squashtm.fg.menu.css}" />
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css" th:href="@{/styles/ckeditor.override.css}" />
+
+</div>
+
+<div id="custom-field-values" >
+	
+	<div class="display-table">
+		<div class="display-table-row" th:each="cufValue : ${customFieldValues}">
+			<label class="display-table-cell" th:text="${cufValue.binding.customField.name}">quantité de café</label>
+			<p class="display-table-cell editable" th:text="${cufValue.value}">maximale</p>	
+		</div>
+	</div>
+	
+	<script type="text/javascript" th:inline="javascript">
+		//<![CDATA[
+		         
+		//]]>
+	</script> 
+	
+</div>
+
+
+<div th:fragment="plain-text" th:remove="all">
+	
+
+</div>

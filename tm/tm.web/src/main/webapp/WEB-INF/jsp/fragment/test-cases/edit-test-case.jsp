@@ -100,6 +100,8 @@
 	<c:param name="tab" value="" />
 </c:url>
 
+<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
+
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- 
 	if no variable 'editable' was provided in the context, we'll set one according to the authorization the user
@@ -836,6 +838,7 @@ function addTestStepSuccessAnother(){
 </script>
 
 		<%----------------------------------- Prerequisites -----------------------------------------------%>
+		
 		<c:if test="${ writable }">
 			<comp:rich-jeditable targetUrl="${ testCaseUrl }"
 				componentId="test-case-prerequisite" />
@@ -845,13 +848,24 @@ function addTestStepSuccessAnother(){
 			titleKey="generics.prerequisite.title" isContextual="true"
 			open="${ not empty testCase.prerequisite }">
 			<jsp:attribute name="body">
-		<div id="test-case-prerequisite-table" class="display-table">
-			<div class="display-table-row">
-				<div class="display-table-cell" id="test-case-prerequisite">${ testCase.prerequisite }</div>
-			</div>
-		</div>
-	</jsp:attribute>
+				<div id="test-case-prerequisite-table" class="display-table">
+					<div class="display-table-row">
+						<div class="display-table-cell" id="test-case-prerequisite">${ testCase.prerequisite }</div>
+					</div>
+				</div>
+			</jsp:attribute>
 		</comp:toggle-panel>
+		
+		<%----------------------------------- Custom Fields -----------------------------------------------%>
+		
+		<comp:toggle-panel id="test-case-custom-fields"
+			titleKey="generics.customfieldvalues.title" isContextual="true"
+			open="${java.lang.Boolean.TRUE}">
+			<jsp:attribute name="body">
+				<div class="waiting-loading minimal-height"></div>
+			</jsp:attribute>
+		</comp:toggle-panel>
+		
 
 		<%--------------------------- Verified Requirements section ------------------------------------%>
 		<script type="text/javascript">
@@ -956,13 +970,17 @@ function addTestStepSuccessAnother(){
 	<div id="tabs-2" class="table-tab">
 		<%----------------------------------- Test Step Table -----------------------------------------------%>
 
-		<script type="text/javascript">
+<script type="text/javascript">
 	$(function(){
 		$("#add-call-step-button").click(function(){			
 			var url = document.URL;
 			$.cookie('call-step-manager-referer', url, {path:'/'});
 			document.location.href = "${callStepManagerUrl}";			
 		});
+		
+		<%-- loading the custom field panel --%>
+		$("#test-case-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}"); 				
+    	
 	});
 
 </script>

@@ -22,19 +22,30 @@ package org.squashtest.csp.tm.web.internal.model.customfield;
 
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.customfield.InputType;
 
+@Component
 public class CustomFieldJsonConverter {
 
+	@Inject
 	private MessageSource messageSource;
 	
 	
+	public CustomFieldJsonConverter(){
+		super();
+	}
+	
 	public CustomFieldJsonConverter(MessageSource messageSource){
+		super();
 		this.messageSource=messageSource;
 	}
 	
@@ -97,6 +108,22 @@ public class CustomFieldJsonConverter {
 		return model;
 	}
 		
+	
+	public CustomFieldValueModel toJson(CustomFieldValue value){
+		
+		CustomFieldValueModel model = new CustomFieldValueModel();
+		
+		BindableEntityModel entityTypeModel = toJson(value.getBoundEntityType());
+		CustomFieldBindingModel bindingModel = toJson(value.getBinding());
+		
+		model.setId(value.getId());
+		model.setBoundEntityId(value.getBoundEntityId());
+		model.setBoundEntityType(entityTypeModel);
+		model.setBinding(bindingModel);
+		
+		return model;
+		
+	}
 	
 	private String getMessage(String key){		
 		Locale locale = LocaleContextHolder.getLocale();		

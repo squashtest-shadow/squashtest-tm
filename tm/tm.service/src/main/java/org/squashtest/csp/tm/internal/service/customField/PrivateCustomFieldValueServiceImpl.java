@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -68,6 +67,14 @@ public class PrivateCustomFieldValueServiceImpl implements
 			throw new AccessDeniedException("Access is denied");
 		}
 		return customFieldValueDao.findAllCustomValues(boundEntity.getBoundEntityId(), boundEntity.getBoundEntityType());
+	}
+	
+	@Override
+	public List<CustomFieldValue> findAllCustomFieldValues(Long boundEntityId,
+			BindableEntity bindableEntity) {
+		
+		BoundEntity boundEntity = boundEntityDao.findBoundEntity(boundEntityId, bindableEntity);
+		return findAllCustomFieldValues(boundEntity);
 	}
 
 	

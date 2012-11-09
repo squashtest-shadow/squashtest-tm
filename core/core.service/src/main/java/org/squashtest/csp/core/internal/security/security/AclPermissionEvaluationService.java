@@ -59,9 +59,24 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 		return permissionEvaluator.hasPermission(userContextService.getPrincipal(), object, permission);
 	}
 
+
 	@Override
 	public boolean hasRoleOrPermissionOnObject(String role, String permissionName, Object object) {
 		return hasRoleOrPermissionOnObject(role, permissionFactory.buildFromName(permissionName), object);
+	}
+	
+	@Override
+	public boolean hasRoleOrPermissionOnObject(String role, String permissionName,
+			Long entityId, String entityClassName) {
+		
+		if (userContextService.hasRole(role)) {
+			return true;
+		}
+		
+		Authentication authentication = userContextService.getPrincipal();
+		Permission permission = permissionFactory.buildFromName(permissionName);
+
+		return permissionEvaluator.hasPermission(authentication,entityId, entityClassName, permission);
 	}
 
 	@Override

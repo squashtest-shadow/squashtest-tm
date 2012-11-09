@@ -21,6 +21,11 @@
 
 package org.squashtest.csp.tm.domain.customfield;
 
+import org.squashtest.csp.tm.domain.campaign.Campaign;
+import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 /**
@@ -30,11 +35,38 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
  *
  */
 public enum BindableEntity implements Internationalizable {
-	TEST_CASE, 
-	CAMPAIGN, 
-	ITERATION, 
-	TEST_SUITE, 
-	REQUIREMENT_VERSION;
+	
+	TEST_CASE(){
+		@Override
+		public Class<?> getReferencedClass() {
+			return TestCase.class;
+		}
+	},
+	
+	CAMPAIGN(){
+		@Override
+		public Class<?> getReferencedClass() {
+			return Campaign.class;
+		} 
+	},
+	ITERATION(){
+		@Override
+		public Class<?> getReferencedClass() {
+			return Iteration.class;
+		}
+	},
+	TEST_SUITE(){
+		@Override
+		public Class<?> getReferencedClass() {
+			return TestSuite.class;
+		}
+	},
+	REQUIREMENT_VERSION(){
+		@Override
+		public Class<?> getReferencedClass() {
+			return RequirementVersion.class;
+		}
+	};
 	
 	private static final String I18N_NAMESPACE = "label.customField.bindableEntity.";
 
@@ -45,4 +77,6 @@ public enum BindableEntity implements Internationalizable {
 	public String getI18nKey() {
 		return I18N_NAMESPACE + name();
 	}
+	
+	public abstract Class<?> getReferencedClass();
 }

@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.service.customField;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
@@ -35,6 +36,7 @@ import org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService;
  * @author bsiri
  *
  */
+@Transactional
 public interface PrivateCustomFieldValueService extends CustomFieldValueManagerService {
 
 	

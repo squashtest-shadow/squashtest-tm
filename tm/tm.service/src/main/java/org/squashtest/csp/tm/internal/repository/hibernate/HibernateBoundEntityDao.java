@@ -27,13 +27,12 @@ import javax.inject.Inject;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.context.CurrentSessionContext;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.internal.repository.BoundEntityDao;
-import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 
 @Repository
 public class HibernateBoundEntityDao implements BoundEntityDao {
@@ -84,5 +83,13 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	public BoundEntity findBoundEntity(CustomFieldValue customFieldValue) {
 		return findAllForBinding(customFieldValue.getBinding()).get(0);
 	}
-
+	
+	@Override
+	public BoundEntity findBoundEntity(Long boundEntityId,
+			BindableEntity entityType) {
+	
+		Class<?> entityClass = entityType.getReferencedClass();
+		return (BoundEntity)factory.getCurrentSession().load(entityClass, boundEntityId);
+		
+	}
 }

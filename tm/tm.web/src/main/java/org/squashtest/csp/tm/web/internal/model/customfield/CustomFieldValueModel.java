@@ -20,19 +20,15 @@
  */
 package org.squashtest.csp.tm.web.internal.model.customfield;
 
-
-
-public class CustomFieldBindingModel {
-
+public class CustomFieldValueModel {
+	
 	private long id;
 	
-	private long projectId;
+	private long boundEntityId;
 	
-	private BindableEntityModel boundEntity;
+	private BindableEntityModel boundEntityType;
 	
-	private CustomFieldModel customField;
-	
-	private int position;
+	private CustomFieldBindingModel binding;
 
 	public long getId() {
 		return id;
@@ -42,37 +38,32 @@ public class CustomFieldBindingModel {
 		this.id = id;
 	}
 
-	public long getProjectId() {
-		return projectId;
+	public long getBoundEntityId() {
+		return boundEntityId;
 	}
 
-	public void setProjectId(long projectId) {
-		this.projectId = projectId;
+	public void setBoundEntityId(long boundEntityId) {
+		this.boundEntityId = boundEntityId;
 	}
 
-	public BindableEntityModel getBoundEntity() {
-		return boundEntity;
+	public BindableEntityModel getBoundEntityType() {
+		return boundEntityType;
 	}
 
-	public void setBoundEntity(BindableEntityModel entityType) {
-		this.boundEntity = entityType;
+	public void setBoundEntityType(BindableEntityModel boundEntityType) {
+		this.boundEntityType = boundEntityType;
 	}
 
-
-	public CustomFieldModel getCustomField() {
-		return customField;
+	public CustomFieldBindingModel getBinding() {
+		return binding;
 	}
 
-	public void setCustomField(CustomFieldModel customField) {
-		this.customField = customField;
+	public void setBinding(CustomFieldBindingModel binding) {
+		this.binding = binding;
 	}
-
-	public int getPosition() {
-		return position;
-	}
-
-	public void setPosition(int position) {
-		this.position = position;
-	}
-
+	
+	
+	
+	
+	
 }
