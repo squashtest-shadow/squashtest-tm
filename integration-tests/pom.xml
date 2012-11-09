@@ -164,7 +164,7 @@
 							<clearCheckSums>true</clearCheckSums>
 							<changeLogFile>${database.changelog}</changeLogFile>
 							<driver>${database.drivername}</driver>
-							<url>${dbunit-database.url}</url>
+							<url>${non-dbunit-database.url}</url>
 							<username>${database.username}</username>
 							<password>${database.password}</password>
 						</configuration>
