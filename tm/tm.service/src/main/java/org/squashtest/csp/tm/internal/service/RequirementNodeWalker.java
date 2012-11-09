@@ -35,11 +35,11 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNodeVisitor;
  * 
  *  Currently : will walk depth-first and wont add duplicate entries.
  *  
- *  NOT THREAD SAFE. Get a new instance everytime you need a walk.
+ *  NOT THREAD SAFE. Get a new instance every-time you need a walk.
  */
 
 /*
- * Todo : 
+ * TODO : 
  * 		1) define Folder and LibraryNode as visitable so that we can turn that class into generic.
  * 		2) let the user choose the walking and adding strategy if need be some day.
  */

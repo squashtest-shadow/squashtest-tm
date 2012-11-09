@@ -23,8 +23,10 @@ package org.squashtest.csp.tm.domain.campaign;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
@@ -36,14 +38,18 @@ import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
+import org.squashtest.csp.tm.domain.library.NodeContainer;
+import org.squashtest.csp.tm.domain.library.NodeVisitor;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
-public class Campaign extends CampaignLibraryNode implements BoundEntity {
+public class Campaign extends CampaignLibraryNode implements NodeContainer<Iteration>, BoundEntity {
 	@Embedded
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
 	@Embedded
@@ -202,6 +208,9 @@ public class Campaign extends CampaignLibraryNode implements BoundEntity {
 	}
 
 	public void addIteration(@NotNull Iteration iteration) {
+		if(!isContentNameAvailable(iteration.getName())){
+			throw new DuplicateNameException(iteration.getName(), iteration.getName());
+		}
 		getIterations().add(iteration);
 		iteration.setCampaign(this);
 	}
@@ -217,7 +226,7 @@ public class Campaign extends CampaignLibraryNode implements BoundEntity {
 
 
 	@Override
-	public Campaign createPastableCopy() {
+	public Campaign createCopy() {
 		Campaign copy = new Campaign();
 		copy.setName(this.getName());
 		copy.setDescription(this.getDescription());
@@ -243,7 +252,8 @@ public class Campaign extends CampaignLibraryNode implements BoundEntity {
 		copy.notifyAssociatedWithProject(this.getProject());
 		return copy;
 	}
-
+	
+	@Override
 	public boolean isContentNameAvailable(String name) {
 		for (Iteration content : getIterations()) {
 			if (content.getName().equals(name)) {
@@ -381,4 +391,45 @@ public class Campaign extends CampaignLibraryNode implements BoundEntity {
 	public BindableEntity getBoundEntityType() {
 		return BindableEntity.CAMPAIGN;
 	}
+
+	@Override
+	public void accept(NodeVisitor visitor) {
+		visitor.visit(this);		
+	}
+
+	@Override
+	public Set<Iteration> getContent() {
+		Set<Iteration> iterationsSet = new HashSet<Iteration>();
+		iterationsSet.addAll(getIterations());
+		return iterationsSet;
+	}
+	
+	@Override
+	public boolean hasContent(){
+		return !getContent().isEmpty();
+	}
+
+	@Override
+	public void addContent(Iteration iteration) throws DuplicateNameException, NullArgumentException {
+		addIteration(iteration);
+		
+	}
+
+	@Override
+	public void removeContent(Iteration contentToRemove) throws NullArgumentException {
+		removeIteration(contentToRemove);
+		
+	}
+
+	@Override
+	public List<String> getContentNames() {
+		List<String> iterationNames = new ArrayList<String>(iterations.size());
+		for(Iteration iteration : iterations){
+			iterationNames.add(iteration.getName());
+		}
+		return iterationNames;
+	}
+	
+
+	
 }

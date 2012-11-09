@@ -35,7 +35,7 @@ class TestCaseLibraryTest   extends Specification {
 		TestCase testCase = new TestCase(name: "foo")
 
 		when:
-		library.addRootContent(testCase)
+		library.addContent(testCase)
 
 		then:
 		library.rootContent.contains testCase
@@ -44,10 +44,10 @@ class TestCaseLibraryTest   extends Specification {
 	def "should not add test with dup name"() {
 		given:
 		TestCase testCase = new TestCase(name: "foo")
-		library.addRootContent(testCase)
+		library.addContent(testCase)
 
 		when:
-		library.addRootContent(new TestCase(name: "foo"))
+		library.addContent(new TestCase(name: "foo"))
 
 		then:
 		thrown DuplicateNameException
@@ -62,7 +62,7 @@ class TestCaseLibraryTest   extends Specification {
 		TestCaseFolder folder = new TestCaseFolder(name: "foo")
 
 		when:
-		library.addRootContent folder
+		library.addContent folder
 
 		then:
 		folder.project == project

@@ -52,7 +52,7 @@ import org.squashtest.csp.tm.domain.softdelete.SoftDeletable;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Auditable
 @SoftDeletable
-public abstract class TestCaseLibraryNode extends GenericLibraryNode implements SelfClassAware, AttachmentHolder {
+public abstract class TestCaseLibraryNode extends GenericLibraryNode implements SelfClassAware {
 	@Id
 	@GeneratedValue
 	@Column(name = "TCLN_ID")
@@ -73,8 +73,6 @@ public abstract class TestCaseLibraryNode extends GenericLibraryNode implements 
 
 	public abstract void accept(TestCaseLibraryNodeVisitor visitor);
 
-	@Override
-	public abstract TestCaseLibraryNode createPastableCopy();
 
 	@Override
 	public int hashCode() {

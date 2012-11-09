@@ -57,10 +57,6 @@ public interface CustomIterationModificationService extends IterationFinder{
 	
 	Execution addAutomatedExecution(long iterationId, long testPlanId);
 
-	@Deprecated
-	// use the other method instead when possible
-	void changeTestPlanPosition(long iterationId, long testPlanId, int newIndex);
-
 	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
 
 	

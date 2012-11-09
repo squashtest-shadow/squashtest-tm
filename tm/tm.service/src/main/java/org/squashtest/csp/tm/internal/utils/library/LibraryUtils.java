@@ -25,6 +25,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class LibraryUtils {
+	private static final String COPY_TOKEN = "-Copie";
+
 	private LibraryUtils(){
 		
 	}
@@ -50,5 +52,10 @@ public final class LibraryUtils {
 		}
 
 		return lastCopy + 1;
+	}
+	
+	public static String generateUniqueCopyName(List<String> copiesNames, String sourceName){
+		int newCopyNumber = generateUniqueCopyNumber(copiesNames, sourceName, COPY_TOKEN);
+		return sourceName + COPY_TOKEN + newCopyNumber;
 	}
 }

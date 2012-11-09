@@ -36,7 +36,12 @@ public interface CampaignLibraryNavigationService extends
 	void addCampaignToCampaignLibrary(long libraryId, Campaign campaign);
 
 	void addCampaignToCampaignFolder(long folderId, Campaign campaign);
-
+	/**
+	 * @deprecated use {@linkplain CampaignFinder#findById(long)} instead
+	 * @param campaignId
+	 * @return
+	 */
+	@Deprecated
 	Campaign findCampaign(long campaignId);
 
 	/**
@@ -50,14 +55,16 @@ public interface CampaignLibraryNavigationService extends
 
 	List<Iteration> findIterationsByCampaignId(long campaignId);
 
-	int copyIterationToCampaign(long campaignId, long iterationId);
-
 	List<Iteration> copyIterationsToCampaign(long campaignId, Long[] iterationsIds);
-
-	int moveIterationToNewCampaign(long newCampaignId, long oldCampaignId, long iterationId);
-
+	/**
+	 * @deprecated use {@linkplain IterationFinder#findById(long)} instead
+	 * @param iterationId
+	 * @return
+	 */
+	@Deprecated
 	Iteration findIteration(long iterationId);
-
+	
+	//FIXME move to TestSuiteFinder
 	List<TestSuite> findIterationContent(long iterationId);
 
 	List<CampaignLibrary> findLinkableCampaignLibraries();

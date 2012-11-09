@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-public interface EntityDao<ENTITY_TYPE> {
+public interface EntityDao<ENTITY_TYPE> extends GenericDao<ENTITY_TYPE>{
 	
 	ENTITY_TYPE findById(long id);
 
@@ -32,13 +32,4 @@ public interface EntityDao<ENTITY_TYPE> {
 	
 	List<ENTITY_TYPE> findAllByIds(Collection<Long> id);
 	
-	void persist(ENTITY_TYPE transientEntity);
-	
-	void persist(List<ENTITY_TYPE> transientEntities);
-
-	void remove(ENTITY_TYPE entity);
-	
-	// FIXME hibernate should not appear in dao interface. 
-	@Deprecated
-	void flush();
 }

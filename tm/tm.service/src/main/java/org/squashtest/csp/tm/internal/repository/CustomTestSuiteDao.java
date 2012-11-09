@@ -27,7 +27,7 @@ import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 
-public interface CustomTestSuiteDao {
+public interface CustomTestSuiteDao extends EntityDao<TestSuite>{
 
 	List<TestSuite> findAllByIterationId(long iterationId);
 

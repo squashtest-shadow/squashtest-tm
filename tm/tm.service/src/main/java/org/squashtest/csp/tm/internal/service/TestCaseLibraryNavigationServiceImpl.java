@@ -44,6 +44,7 @@ import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.internal.service.importer.TestCaseImporter;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
@@ -63,20 +64,26 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
 	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
-
+	@Inject
+	private TreeNodeCopier copier;
+	@Inject
+	private PrivateCustomFieldValueService customFieldValueService;
 	@Inject
 	private TestCaseImporter testCaseImporter;
-	
 	@Inject
 	private TestCaseNodeDeletionHandler deletionHandler;
-
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
-
 	@Inject
 	@Qualifier("squashtest.tm.service.TestCaseLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy;
-
+	@Inject
+	@Qualifier("squashtest.tm.service.internal.PasteToTestCaseFolderStrategy")
+	private PasteStrategy<TestCaseFolder, TestCaseLibraryNode> pasteToTestCaseFolderStrategy;
+	@Inject
+	@Qualifier("squashtest.tm.service.internal.PasteToTestCaseLibraryStrategy")
+	private PasteStrategy<TestCaseLibrary, TestCaseLibraryNode> pasteToTestCaseLibraryStrategy;
+	
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
 		return deletionHandler;
@@ -102,28 +109,43 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	public TestCase findTestCase(long testCaseId) {
 		return testCaseDao.findById(testCaseId);
 	}
-	
+
 	@Override
-	public String getPathAsString(long entityId) {
-		//get
-		TestCaseLibraryNode node = getLibraryNodeDao().findById(entityId);
-		
-		//check
-		checkPermission(new SecurityCheckableObject(node, "READ"));
-		
-		//proceed
-		List<String> names = getLibraryNodeDao().getParentsName(entityId);
-		
-		return "/"+node.getProject().getName()+"/"+formatPath(names);
-		
+	protected PrivateCustomFieldValueService getcustomFieldValueService() {
+		return customFieldValueService;
 	}
 	
-	private String formatPath(List<String> names){
+	@Override
+	protected PasteStrategy<TestCaseFolder, TestCaseLibraryNode> getPasteToFolderStrategy() {
+		return pasteToTestCaseFolderStrategy;
+	}
+
+	@Override
+	protected PasteStrategy<TestCaseLibrary, TestCaseLibraryNode> getPasteToLibraryStrategy() {
+		return pasteToTestCaseLibraryStrategy;
+	}
+
+	@Override
+	public String getPathAsString(long entityId) {
+		// get
+		TestCaseLibraryNode node = getLibraryNodeDao().findById(entityId);
+
+		// check
+		checkPermission(new SecurityCheckableObject(node, "READ"));
+
+		// proceed
+		List<String> names = getLibraryNodeDao().getParentsName(entityId);
+
+		return "/" + node.getProject().getName() + "/" + formatPath(names);
+
+	}
+
+	private String formatPath(List<String> names) {
 		StringBuilder builder = new StringBuilder();
-		for (String name : names){
+		for (String name : names) {
 			builder.append("/").append(name);
 		}
-		return builder.toString();		
+		return builder.toString();
 	}
 
 	@Override
@@ -135,7 +157,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		if (!library.isContentNameAvailable(testCase.getName())) {
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
 		} else {
-			library.addRootContent(testCase);
+			library.addContent(testCase);
 			testCaseDao.persist(testCase);
 			createCustomFieldValues(testCase);
 		}
@@ -185,5 +207,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		List<ExportTestCaseData> testCases = testCaseDao.findTestCaseToExportFromNodes(nodesIds);
 		return (List<ExportTestCaseData>) setFullFolderPath(testCases);
 	}
+
+	
 
 }

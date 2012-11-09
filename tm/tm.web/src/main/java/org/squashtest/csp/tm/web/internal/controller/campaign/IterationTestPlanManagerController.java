@@ -50,6 +50,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.squashtest.csp.tm.service.IterationFinder;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -77,6 +78,13 @@ public class IterationTestPlanManagerController {
 	private MessageSource messageSource;
 	@Inject
 	private Provider<DriveNodeBuilder> driveNodeBuilder;
+	
+	private IterationFinder iterationFinder;
+	
+	@ServiceReference
+	public void setIterationFinder(IterationFinder iterationFinder){
+		this.iterationFinder = iterationFinder;
+	}
 
 	@ServiceReference
 	public void setCampaignTestPlanManagerService(IterationTestPlanManagerService iterationTestPlanManagerService) {
@@ -94,11 +102,11 @@ public class IterationTestPlanManagerController {
 			.mapAttribute(TestSuite.class, 8, "name", String.class)
 			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedBy", String.class)
 			.mapAttribute(IterationTestPlanItem.class, 10, "lastExecutedOn", Date.class);
-
+	
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long iterationId) {
 
-		Iteration iteration = iterationTestPlanManagerService.findIteration(iterationId);
+		Iteration iteration = iterationFinder.findById(iterationId);
 		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
@@ -109,7 +117,7 @@ public class IterationTestPlanManagerController {
 		mav.addObject("useIterationTable", true);
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
 		return mav;
-	}
+	} 
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-cases", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
 	public @ResponseBody

@@ -20,15 +20,17 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.generic;
 
-import java.util.Set
+import java.util.List;
 
 import org.apache.commons.lang.NullArgumentException
-import org.springframework.web.servlet.ModelAndView
-import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
+import org.squashtest.csp.core.security.annotation.AclConstrainedObject
 import org.squashtest.csp.tm.domain.DuplicateNameException
+import org.squashtest.csp.tm.domain.attachment.AttachmentList;
+import org.squashtest.csp.tm.domain.library.Copiable
 import org.squashtest.csp.tm.domain.library.Folder
 import org.squashtest.csp.tm.domain.library.Library
 import org.squashtest.csp.tm.domain.library.LibraryNode
+import org.squashtest.csp.tm.domain.library.NodeVisitor;
 import org.squashtest.csp.tm.domain.project.Project
 import org.squashtest.csp.tm.service.LibraryNavigationService
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode
@@ -129,67 +131,56 @@ class DummyController extends LibraryNavigationController<DummyLibrary, DummyFol
 }
 class DummyFolder  extends DummyNode  implements Folder<DummyNode>{
 	@Override
-	public void addContent(DummyNode contentToAdd) throws DuplicateNameException, NullArgumentException {
-	}
+	public void removeContent(DummyNode contentToRemove) throws NullArgumentException {}
 	@Override
-	public boolean isContentNameAvailable(String name) {
-	}
-	Set getContent() {
-	}
+	public List<String> getContentNames() {	return null;}
 	@Override
-	void addContent(LibraryNode node) {
-	}
+	public void addContent(DummyNode contentToAdd) throws DuplicateNameException, NullArgumentException {}
 	@Override
-	void removeContent(LibraryNode node){
-	}
+	public boolean isContentNameAvailable(String name) {}
+	Set getContent() {}
 	@Override
-	DummyFolder createPastableCopy(){
-	}
+	void addContent(LibraryNode node) {}
 	@Override
-	boolean hasContent(){
-		return true;		
-	}
+	void removeContent(LibraryNode node){}
+	@Override
+	Copiable createCopy(){}
+	@Override
+	boolean hasContent(){return true}
 }
-class DummyNode implements LibraryNode {
-	Long getId() {
-	}
-	String getName() {
-	}
-	String getDescription() {
-	}
-	void setDescription(String description){
-	}
 
-	void setName(String name) {
-	}
-	void deleteMe(){
-	}
-	Project getProject() {
-	}
-	Library getLibrary(){
-		
-	}
-	void notifyAssociatedWithProject(Project project) {
-	}
-	@Override
-	LibraryNode createPastableCopy(){
-		return null;
-	}
+class DummyNode implements LibraryNode {
+	Long getId() {}
+	String getName() {}
+	String getDescription() {}
+	void setDescription(String description){}
+	void setName(String name) {}
+	void deleteMe(){}
+	Project getProject() {}
+	Library getLibrary(){}
+	void notifyAssociatedWithProject(Project project) {}
+	Copiable createCopy() {return null}
+	void accept(NodeVisitor visitor) {}
+	AttachmentList getAttachmentList() {}
 }
 class DummyLibrary implements Library<DummyNode> {
+	@Override
+	public void removeContent(DummyNode contentToRemove) throws NullArgumentException {}
+	@Override
+	public List<String> getContentNames() {	return null;}
 	@Override
 	public Long getId() {
 		return null
 	}
 	@Override
-	public void addRootContent(DummyNode node) {
-	}
+	public void addRootContent(DummyNode node) {}
 	@Override
-	public void removeRootContent(DummyNode node) {
-	}
-	public boolean isContentNameAvailable(String name) {
-	}
-	Set getRootContent() {
+	public void removeRootContent(DummyNode node) {}
+	public boolean isContentNameAvailable(String name) {}
+	Set getRootContent() {}
+	@Override
+	Set getContent(){
+		return null;
 	}
 	@Override
 	public Project getProject() {
@@ -200,8 +191,7 @@ class DummyLibrary implements Library<DummyNode> {
 	public Library getLibrary(){
 		return this;
 	}
-	void notifyAssociatedWithProject(Project project) {
-	}
+	void notifyAssociatedWithProject(Project project) {}
 
 	@Override
 	String getClassSimpleName(){

@@ -28,7 +28,7 @@ import org.squashtest.csp.tm.domain.library.Library;
  * @author Gregory Fouquet
  * 
  */
-public interface ProjectResource {
+public interface ProjectResource{
 	/**
 	 * 
 	 * @return The project which this resource belongs to. Should never be <code>null</code>.
@@ -46,5 +46,4 @@ public interface ProjectResource {
 	 *            should not be <code>null</code>
 	 */
 	void notifyAssociatedWithProject(Project project);
-
 }

@@ -20,15 +20,13 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -54,7 +52,6 @@ import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
 import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
-import org.squashtest.csp.tm.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.csp.tm.service.CustomIterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
@@ -66,7 +63,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 	private static final String PERMISSION_EXECUTE_ITERATION = "hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'EXECUTE') ";
-	private static final Logger LOGGER = LoggerFactory.getLogger(CustomIterationModificationServiceImpl.class);
 	@Inject
 	private CampaignDao campaignDao;
 	@Inject
@@ -99,7 +95,10 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Inject
 	private PrivateCustomFieldValueService customFieldValueService;
 	
-	
+	@Inject
+	@Qualifier("squashtest.tm.service.internal.PasteToIterationStrategy")
+	private PasteStrategy<Iteration, TestSuite> pasteToIterationStrategy;
+
 
 	@ServiceReference
 	public void setPermissionService(PermissionEvaluationService permissionService) {
@@ -239,35 +238,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 
-	/****
-	 * Method which change the index of test case in the selected iteration
-	 * 
-	 * @param iterationId
-	 *            the iteration at which the test case is attached
-	 * @param testCaseId
-	 *            the test case to move
-	 * @param newTestCasePosition
-	 *            the test case new position
-	 */
-	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'LINK') "
-			+ OR_HAS_ROLE_ADMIN)
-	@Deprecated
-	public void changeTestPlanPosition(long iterationId, long testPlanId, int newTestPlanPosition) {
-
-		Iteration iteration = iterationDao.findById(iterationId);
-
-		int currentPosition = iteration.findItemIndexInTestPlan(testPlanId);
-
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("**************** change test case order : old index = " + currentPosition + ",new index : "
-					+ newTestPlanPosition);
-		}
-
-		iteration.moveTestPlan(currentPosition, newTestPlanPosition);
-
-	}
-
+	
 	/**
 	 * @see CustomIterationModificationService#changeTestPlanPosition(long, int, List)
 	 */
@@ -335,60 +306,20 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	public List<TestSuite> findAllTestSuites(long iterationId) {
 		return iterationDao.findAllTestSuites(iterationId);
 	}
-
+	
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public TestSuite copyPasteTestSuiteToIteration(long testSuiteId, long iterationId) {
-		TestSuite testSuite = suiteDao.findById(testSuiteId);
-
-		List<IterationTestPlanItem> copyOfTestPlan = testSuite.createPastableCopyOfTestPlan();
-		TestSuite copyOfTestSuite = testSuite.createPastableCopy();
-
-		iterationTestPlanManagerService.addTestPlanToIteration(copyOfTestPlan, iterationId);
-
-		renameTestSuiteIfNecessary(copyOfTestSuite, iterationId);
-		addTestSuite(iterationId, copyOfTestSuite);
-		List<Long> itemTestPlanIds = listTestPlanIds(copyOfTestPlan);
-
-		testSuiteModificationService.bindTestPlan(copyOfTestSuite.getId(), itemTestPlanIds);
-
-		return copyOfTestSuite;
+		return pasteToIterationStrategy.pasteNodes(iterationId, Arrays.asList(testSuiteId)).get(0);
 	}
-
+	
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, long iterationId) {
-
-		List<TestSuite> createdTestSuites = new ArrayList<TestSuite>();
-
-		for (Long testSuiteId : testSuiteIds) {
-			createdTestSuites.add(copyPasteTestSuiteToIteration(testSuiteId, iterationId));
-		}
-
-		return createdTestSuites;
-	}
-
-	private void renameTestSuiteIfNecessary(TestSuite copyOfTestSuite, Long iterationId) {
-		Iteration iteration = iterationDao.findById(iterationId);
-		String originalSuiteName = copyOfTestSuite.getName();
-		String newName = originalSuiteName;
-		int numberOfCopy = 0;
-		while (!iteration.checkSuiteNameAvailable(newName)) {
-			numberOfCopy++;
-			newName = originalSuiteName + AbstractLibraryNavigationService.COPY_TOKEN + numberOfCopy;
-		}
-		copyOfTestSuite.setName(newName);
-	}
-
-	private List<Long> listTestPlanIds(List<IterationTestPlanItem> copyOfTestPlan) {
-		List<Long> ids = new LinkedList<Long>();
-		for (IterationTestPlanItem iterationTestPlanItem : copyOfTestPlan) {
-			ids.add(iterationTestPlanItem.getId());
-		}
-		return ids;
-	}
+		return pasteToIterationStrategy.pasteNodes(iterationId, Arrays.asList(testSuiteIds));
+	}	
 
 	@Override
 	public List<Long> removeTestSuites(List<Long> suitesIds) {
@@ -469,6 +400,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return iterationDao.getIterationStatistics(iterationId);
 	}
 
+	
 
 
 }

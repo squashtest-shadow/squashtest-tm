@@ -20,22 +20,14 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.core.foundation.collection.Paging;
 
 public interface TestSuiteDao extends CustomTestSuiteDao {
-
+ 
 	List<IterationTestPlanItem> findAllTestPlanItemsPaged(long testSuiteId, Paging paging);
 
 	long countTestPlanItems(long testSuiteId);
-
-	TestSuite findById(long testSuiteId);
-
-	List<TestSuite> findAllByIds(Collection<Long> suitesIds);
-
-	void persist(TestSuite suite);
 }

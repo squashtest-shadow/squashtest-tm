@@ -245,7 +245,7 @@ class TestSuiteTest extends Specification {
 		testSuite.attachmentList.addAttachment(attach2)
 
 		when:
-		TestSuite copiedTestSuite = testSuite.createPastableCopy()
+		TestSuite copiedTestSuite = testSuite.createCopy()
 
 		then:
 		copiedTestSuite.getIteration() == null

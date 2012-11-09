@@ -37,15 +37,15 @@ import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
 class HibernateTestCaseLibraryDaoIT extends HibernateDaoSpecification {
 	@Inject TestCaseLibraryDao dao
 
-	def "should find root content of test cse library"() {
+	def "should find root content of test case library"() {
 		setup:
 		TestCaseLibrary lib  = new TestCaseLibrary();
 
 		TestCase tc = new TestCase(name:"tc")
-		lib.addRootContent tc
+		lib.addContent tc
 
 		TestCaseFolder f = new TestCaseFolder(name:"f")
-		lib.addRootContent f
+		lib.addContent f
 
 		persistFixture lib
 

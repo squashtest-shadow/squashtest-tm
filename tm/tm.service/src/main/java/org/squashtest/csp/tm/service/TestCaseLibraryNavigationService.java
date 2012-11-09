@@ -43,7 +43,13 @@ public interface TestCaseLibraryNavigationService extends
 		LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, TestCaseLibraryFinderService {
 
 	void addTestCaseToLibrary(long libraryId, TestCase testCase);
-
+	
+	/**
+	 * @deprecated use {@link TestCaseFinder#findById(long)} instead
+	 * @param testCaseId
+	 * @return
+	 */
+	@Deprecated
 	TestCase findTestCase(long testCaseId);
 
 	void addTestCaseToFolder(long folderId, TestCase testCase);

@@ -29,12 +29,5 @@ import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
 @Repository
 public class HibernateRequirementLibraryDao extends HibernateLibraryDao<RequirementLibrary, RequirementLibraryNode>
 implements RequirementLibraryDao {
-
-	@Override
-	public void persist(RequirementLibrary requirementLibrary) {
-		persistEntity(requirementLibrary);
-
-	}
-
 	
 }

@@ -224,7 +224,7 @@ class TestCaseTest extends Specification {
 		source[propName] = propValue
 
 		when:
-		def copy = source.createPastableCopy()
+		def copy = source.createCopy()
 
 		then:
 		copy[propName] == source[propName]
@@ -246,7 +246,7 @@ class TestCaseTest extends Specification {
 		source.steps << sourceStep
 
 		when:
-		def copy = source.createPastableCopy()
+		def copy = source.createCopy()
 
 		then:
 		copy.steps.size() == 1
@@ -262,7 +262,7 @@ class TestCaseTest extends Specification {
 		source.addVerifiedRequirementVersion req
 
 		when:
-		def copy = source.createPastableCopy()
+		def copy = source.createCopy()
 
 		then:
 		copy.verifiedRequirementVersions == source.verifiedRequirementVersions

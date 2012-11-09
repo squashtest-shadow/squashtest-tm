@@ -20,30 +20,26 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import java.util.List;
+import javax.inject.Inject
 
-import javax.inject.Inject;
-
-import org.apache.tools.ant.taskdefs.Copy;
-import org.hibernate.Query
+import org.apache.poi.hssf.record.formula.functions.T
 import org.hibernate.Session
-import org.junit.runner.RunWith;
-import org.spockframework.runtime.Sputnik;
-import org.spockframework.util.NotThreadSafe;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
-import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.junit.runner.RunWith
+import org.spockframework.runtime.Sputnik
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.csp.tm.domain.DuplicateNameException
+import org.squashtest.csp.tm.domain.campaign.Campaign
+import org.squashtest.csp.tm.domain.campaign.CampaignFolder
+import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode
+import org.squashtest.csp.tm.domain.campaign.Iteration
 import org.squashtest.csp.tm.domain.campaign.TestSuite
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.service.CampaignLibrariesCrudService;
-import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
-import org.squashtest.csp.tm.service.ProjectManagerService;
-import org.unitils.dbunit.annotation.DataSet;
+import org.squashtest.csp.tm.domain.project.Project
+import org.squashtest.csp.tm.service.CampaignLibrariesCrudService
+import org.squashtest.csp.tm.service.CampaignLibraryNavigationService
+import org.squashtest.csp.tm.service.ProjectManagerService
+import org.unitils.dbunit.annotation.DataSet
 
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
@@ -53,11 +49,9 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	private CampaignLibraryNavigationService navService
-
-
+	
 	@Inject
 	private CampaignLibrariesCrudService libcrud
-
 	
 	
 	@Inject
@@ -290,15 +284,18 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		when:
 		List<Iteration> iterations = navService.copyIterationsToCampaign(targetCampaignId , iterationList )
 		
-		then:
+		then: "2 iterations are copied"
 		iterations.size() == 2
+		and: "the copy 'iter-tc1' has 2 test-suites"
 		iterations.find {it.getName()== "iter - tc1" } != null
 		Iteration iteration1 = iterations.find {it.getName() == "iter - tc1" }
 		iteration1.getTestSuites().size() == 2
+		and :"the 'test-suite1' has been bound to the item-test-plan already copied with the iteration"
 		iteration1.getTestSuites().find {it.getName() == "testSuite1"} != null
 		TestSuite testsSuite1 = iteration1.getTestSuites().find {it.getName() == "testSuite1"}
 		testsSuite1.getTestPlan().size() == 1
 		iteration1.getTestPlans().size() == 1
+		and: "the 'test-suite2' is found and has no test-plan-item"
 		iteration1.getTestSuites().find {it.getName() == "testSuite2"} != null
 		TestSuite testsSuite2 = iteration1.getTestSuites().find {it.getName() == "testSuite2"}
 		testsSuite2.getTestPlan().size() == 0
@@ -374,11 +371,11 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		
 		and:"iteration 2 has no test suites"
 		Iteration iteration2 = campaign10Copy.iterations.find {it.name == "iter - tc1 -2" }
-		iteration2.testSuites.size() == 0
+		iteration2.testSuites.isEmpty()
 		
 		and:"campaign 2 is empty"
 		Campaign campaign11Copy = folderCopy.content.find {it.name == "campaign11"}
-		campaign11Copy.iterations.size == 0
+		campaign11Copy.iterations.isEmpty()
 	}
 	
 	

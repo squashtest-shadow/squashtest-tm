@@ -23,8 +23,11 @@ package org.squashtest.csp.tm.web.internal.model.builder;
 
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.csp.tm.domain.attachment.AttachmentList;
+import org.squashtest.csp.tm.domain.library.Copiable
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
+import org.squashtest.csp.tm.domain.library.NodeVisitor;
 import org.squashtest.csp.tm.domain.project.Project;
 
 import spock.lang.Specification;
@@ -98,16 +101,11 @@ class DummyNode implements LibraryNode {
 	Long id
 	String name
 	String description
-	void deleteMe(){
-	}
-	Project getProject() {
-	}
-	Library<LibraryNode> getLibrary() {
-		
-	}
-	void notifyAssociatedWithProject(Project project){
-	}
-	@Override
-	LibraryNode createPastableCopy(){
-	}
+	void deleteMe(){}
+	Project getProject() {}
+	Library<LibraryNode> getLibrary() {}
+	void notifyAssociatedWithProject(Project project){}	
+	Copiable createCopy() {return null}
+	void accept(NodeVisitor visitor) {}
+	AttachmentList getAttachmentList() {}
 }

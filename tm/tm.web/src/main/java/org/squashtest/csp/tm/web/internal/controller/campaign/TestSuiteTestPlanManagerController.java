@@ -49,6 +49,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.csp.tm.service.IterationFinder;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
 import org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService;
@@ -76,9 +77,10 @@ public class TestSuiteTestPlanManagerController {
 	
 	@Inject
 	private TestSuiteModificationService service;
-	
+	private IterationFinder iterationFinder;
 	private TestSuiteTestPlanManagerService testSuiteTestPlanManagerService;
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 	
 	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
@@ -96,7 +98,10 @@ public class TestSuiteTestPlanManagerController {
 	private MessageSource messageSource;
 	@Inject
 	private Provider<DriveNodeBuilder> driveNodeBuilder;
-
+	@ServiceReference
+	public void setIterationFinder(IterationFinder iterationFinder){
+		this.iterationFinder = iterationFinder;
+	}
 	@ServiceReference
 	public void setIterationTestPlanManagerService(IterationTestPlanManagerService iterationTestPlanManagerService) {
 		this.iterationTestPlanManagerService = iterationTestPlanManagerService;
@@ -110,7 +115,7 @@ public class TestSuiteTestPlanManagerController {
 	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long id, @PathVariable long iterationId) {
 
-		Iteration iteration = iterationTestPlanManagerService.findIteration(iterationId);
+		Iteration iteration = iterationFinder.findById(iterationId);
 		TestSuite testSuite = testSuiteTestPlanManagerService.findTestSuite(id);
 		
 		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();

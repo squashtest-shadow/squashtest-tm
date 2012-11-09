@@ -33,14 +33,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.project.GenericLibrary;
 import org.squashtest.csp.tm.domain.project.Project;
 
 @SuppressWarnings("rawtypes")
 @Entity
-public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode> implements
-		Library<RequirementLibraryNode> {
+public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  {
 
 	private static final String CLASS_NAME = "org.squashtest.csp.tm.domain.requirement.RequirementLibrary";
 	private static final String SIMPLE_CLASS_NAME = "RequirementLibrary";
@@ -67,11 +65,15 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode> i
 	}
 
 	@Override
+	public Set<RequirementLibraryNode> getContent() {
+		return rootContent;
+
+	}
+	
 	public Set<RequirementLibraryNode> getRootContent() {
 		return rootContent;
 
 	}
-
 	@Override
 	public Project getProject() {
 		return project;
@@ -84,7 +86,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode> i
 	}
 
 	@Override
-	public void removeRootContent(RequirementLibraryNode node) {
+	public void removeContent(RequirementLibraryNode node) {
 		rootContent.remove(node);
 
 	}
@@ -106,6 +108,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode> i
 		return (rootContent.size() > 0);
 	}
 
+	
 	
 
 }

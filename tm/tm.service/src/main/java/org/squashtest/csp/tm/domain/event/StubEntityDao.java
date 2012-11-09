@@ -87,4 +87,16 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 		return null;
 	}
 
+	@Override
+	public void clearFromCache(ENTITY entity) {
+		// NOOP
+		
+	}
+
+	@Override
+	public void clearFromCache(Collection<ENTITY> entities) {
+		// NOOP
+		
+	}
+
 }

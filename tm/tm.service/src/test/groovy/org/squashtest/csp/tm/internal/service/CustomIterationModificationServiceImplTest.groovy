@@ -98,10 +98,13 @@ class CustomIterationModificationServiceImplTest extends Specification {
 	def "should return indice of added iteration"() {
 		given:
 		Iteration iteration = Mock()
-
+		iteration.getName()>>"iteration"
+		and : 
+		Iteration alreadyInCampaign = Mock();
+		alreadyInCampaign.getName()>>"alreadyInCampaign"
 		and:
 		Campaign campaign = new Campaign()
-		campaign.iterations << Mock(Iteration)
+		campaign.iterations << alreadyInCampaign
 		campaignDao.findById(10) >> campaign
 
 		when:
@@ -154,15 +157,9 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		TestCase tc1 = Mock()
 		TestCase tc2 = Mock()
 		TestCase tc3 = Mock()
-		tc1.id >> 1
-		tc2.id >> 2
-		tc3.id >> 3
 		IterationTestPlanItem itp1 = Mock()
 		IterationTestPlanItem itp2 = Mock()
 		IterationTestPlanItem itp3 = Mock()
-		itp1.id >> 200
-		itp2.id >> 400
-		itp3.id >> 600
 		itp1.isTestCaseDeleted() >> false
 		itp2.isTestCaseDeleted() >> false
 		itp3.isTestCaseDeleted() >> false
@@ -174,9 +171,9 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		iteration.addTestPlan(itp2)
 		iteration.addTestPlan(itp3)
 		iterationDao.findById(_) >> iteration
-
+		testPlanDao.findAllByIds(_)>> [itp3]
 		when:
-		service.changeTestPlanPosition(5, 600, 0)
+		service.changeTestPlanPosition(5, 0, [600])
 
 		then:
 		iteration.getPlannedTestCase() == [tc3, tc1, tc2]

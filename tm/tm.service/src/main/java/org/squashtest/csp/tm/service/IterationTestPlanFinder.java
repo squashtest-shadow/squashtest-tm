@@ -24,6 +24,9 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 
@@ -34,6 +37,28 @@ public interface IterationTestPlanFinder {
 	FilteredCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, CollectionSorting filter);
 	
 	IterationTestPlanItem findTestPlanItem(Long iterationId, Long itemTestPlanId);
-
+	
+	/**
+	 * Returns a collection of {@link TestCaseLibrary}, the test cases of which may be added to the campaign
+	 */
+	List<TestCaseLibrary> findLinkableTestCaseLibraries();
+	
+	List<TestCase> findPlannedTestCases(Long iterationId);
+	
+	/**
+	 * Get Users with Execute Access for an Iteration and its TestPlan.
+	 * 
+	 * @param testCaseId
+	 * @param campaignId
+	 */
+	List<User> findAssignableUserForTestPlan(long iterationId);
+	/**
+	 * @deprecated used only in IntegrationTests
+	 * @param iterationId
+	 * @param testCaseId
+	 * @return
+	 */
+	@Deprecated
+	IterationTestPlanItem findTestPlanItemByTestCaseId(long iterationId, long testCaseId);
 
 }

@@ -36,7 +36,7 @@ class HibernateRequirementLibraryDaoIT extends HibernateDaoSpecification {
 		RequirementLibrary lib  = new RequirementLibrary();
 
 		RequirementFolder f = new RequirementFolder(name:"f")
-		lib.addRootContent f
+		lib.addContent f
 
 		persistFixture lib
 

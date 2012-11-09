@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +32,7 @@ import org.apache.commons.lang.NullArgumentException;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.CannotMoveNodeException;
@@ -41,17 +42,12 @@ import org.squashtest.csp.tm.domain.library.ExportData;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
-import org.squashtest.csp.tm.domain.library.NodeContainer;
-import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
 import org.squashtest.csp.tm.internal.repository.FolderDao;
 import org.squashtest.csp.tm.internal.repository.LibraryDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.internal.utils.library.LibraryUtils;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
-import org.squashtest.csp.tm.service.customfield.CustomFieldBindingFinderService;
-import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
-import org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 /**
@@ -103,53 +99,6 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	private static final String CREATE = "CREATE";
 	private static final String READ = "READ";
 
-	private abstract class PasteStrategy<CONTAINER extends NodeContainer<NODE>> {
-		@SuppressWarnings("unchecked")
-		public List<NODE> pasteNodes(long containerId, Long[] sourceNodesIds) {
-			// fetch
-			CONTAINER container = findContainerById(containerId);
-
-			// check. Note : we wont recursively check for the whole hierarchy as it's supposed to have the same
-			// identity holder
-			for (Long id : sourceNodesIds) {
-				NODE node = getLibraryNodeDao().findById(id);
-				checkPermission(new SecurityCheckableObject(container, CREATE), new SecurityCheckableObject(node, READ));
-			}
-
-			// proceed
-			List<NODE> nodeList = new ArrayList<NODE>(sourceNodesIds.length);
-
-			for (Long id : sourceNodesIds) {
-				NODE node = getLibraryNodeDao().findById(id);
-
-				String tempName = node.getName();
-				String newName = tempName;
-
-				if (!container.isContentNameAvailable(tempName)) {
-					List<String> copiesNames = findNamesInContainerStartingWith(containerId, newName);
-					int newCopy = generateUniqueCopyNumber(copiesNames, tempName);
-					newName = tempName + COPY_TOKEN + newCopy;
-				}
-
-				NODE copy = createPastableCopy(node);
-				copy.setName(newName);
-				getLibraryNodeDao().persist(copy);
-
-
-				container.addContent(copy);
-				nodeList.add(copy);
-
-			}
-
-			return nodeList;
-		}
-
-		protected abstract CONTAINER findContainerById(long id);
-
-		protected abstract List<String> findNamesInContainerStartingWith(long containerId, String tempName);
-
-	}
-
 	/**
 	 * token appended to the name of a copy
 	 */
@@ -157,39 +106,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	private PermissionEvaluationService permissionService;
 
-	private final PasteStrategy<FOLDER> pasteToFolderStrategy = new PasteStrategy<FOLDER>() {
-
-		@Override
-		protected FOLDER findContainerById(long id) {
-			return getFolderDao().findById(id);
-		}
-
-		@Override
-		protected List<String> findNamesInContainerStartingWith(long containerId, String token) {
-			return getFolderDao().findNamesInFolderStartingWith(containerId, token);
-		}
-	};
-
-	private final PasteStrategy<LIBRARY> pasteToLibraryStrategy = new PasteStrategy<LIBRARY>() {
-
-		@Override
-		protected LIBRARY findContainerById(long id) {
-			return getLibraryDao().findById(id);
-		}
-
-		@Override
-		protected List<String> findNamesInContainerStartingWith(long containerId, String token) {
-			return getFolderDao().findNamesInLibraryStartingWith(containerId, token);
-		}
-	};
-
-	@ServiceReference
-	public void setPermissionService(PermissionEvaluationService permissionService) {
-		this.permissionService = permissionService;
-	}
-
-	@Inject
-	protected PrivateCustomFieldValueService customFieldValueService;
+	protected abstract PrivateCustomFieldValueService getcustomFieldValueService();
 	
 	protected abstract FolderDao<FOLDER, NODE> getFolderDao();
 
@@ -199,7 +116,14 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	protected abstract NodeDeletionHandler<NODE, FOLDER> getDeletionHandler();
 	
+	protected abstract PasteStrategy<FOLDER, NODE> getPasteToFolderStrategy();
 	
+	protected abstract PasteStrategy<LIBRARY, NODE> getPasteToLibraryStrategy();
+
+	@ServiceReference
+	public void setPermissionService(PermissionEvaluationService permissionService) {
+		this.permissionService = permissionService;
+	}
 
 	public AbstractLibraryNavigationService() {
 		super();
@@ -286,7 +210,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		checkPermission(new SecurityCheckableObject(container, CREATE));
 
 		// proceed
-		container.addRootContent((NODE) newFolder);
+		container.addContent((NODE) newFolder);
 		getFolderDao().persist(newFolder);
 	}
 
@@ -313,15 +237,15 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		return getLibraryDao().findByRootContent(node);
 	}
 
-	protected void createCustomFieldValues(BoundEntity entity){
-		customFieldValueService.createAllCustomFieldValues(entity);
+	protected void createCustomFieldValues(BoundEntity entity) {
+		getcustomFieldValueService().createAllCustomFieldValues(entity);
 	}
-	
+
 	/* ********************** move operations *************************** */
 
 	private void removeFromLibrary(LIBRARY library, NODE node) {
 		try {
-			library.removeRootContent(node);
+			library.removeContent(node);
 		} catch (NullArgumentException dne) {
 			throw new CannotMoveNodeException();
 		}
@@ -331,7 +255,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		try {
 			for (Long id : targetIds) {
 				NODE node = getLibraryNodeDao().findById(id);
-				library.addRootContent(node);
+				library.addContent(node);
 			}
 		} catch (DuplicateNameException dne) {
 			throw new CannotMoveNodeException();
@@ -432,12 +356,12 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	@Override
 	public List<NODE> copyNodesToFolder(long destinationId, Long[] sourceNodesIds) {
-		return pasteToFolderStrategy.pasteNodes(destinationId, sourceNodesIds);
+		return getPasteToFolderStrategy().pasteNodes(destinationId, Arrays.asList(sourceNodesIds));
 	}
 
 	@Override
-	public List<NODE> copyNodesToLibrary(long destinationId, Long[] targetId) {
-		return pasteToLibraryStrategy.pasteNodes(destinationId, targetId);
+	public List<NODE> copyNodesToLibrary(long destinationId, Long[] targetIds) {
+		return getPasteToLibraryStrategy().pasteNodes(destinationId, Arrays.asList(targetIds));
 	}
 
 	public int generateUniqueCopyNumber(List<String> copiesNames, String sourceName) {
@@ -448,7 +372,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	@SuppressWarnings("unchecked")
 	public FOLDER createCopyFolder(long folderId) {
 		FOLDER original = getFolderDao().findById(folderId);
-		return (FOLDER) original.createPastableCopy();
+		return (FOLDER) original.createCopy();
 	}
 
 	/* ***************************** deletion operations *************************** */
@@ -471,16 +395,13 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 		return getDeletionHandler().deleteNodes(targetIds);
 	}
-	
-	
+
 	/* ************************* private stuffs ************************* */
 
-	protected void createCustomFieldsValues(BoundEntity entity){
-		
+	protected void createCustomFieldsValues(BoundEntity entity) {
+
 	}
-	
-	
-	
+
 	/* **that class just performs the same, using a domainObject directly */
 	protected class SecurityCheckableObject {
 		private final Object domainObject;
@@ -510,11 +431,6 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	protected NODE createPastableCopy(NODE node) {
-		return (NODE) node.createPastableCopy();
-	}
-	
 	protected List<? extends ExportData> setFullFolderPath(List<? extends ExportData> dataset) {
 		for (ExportData data : dataset) {
 			// get folder id
@@ -523,8 +439,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			StringBuilder path = new StringBuilder();
 
 			// if the requirement is not directly located under
-			// FIXME Potential bug : use equals() instead of instance comparison
-			if (id != ExportData.NO_FOLDER) {
+			if (!id.equals(ExportData.NO_FOLDER)) {
 				for (String name : getLibraryNodeDao().getParentsName(id)) {
 					path.append('/' + name);
 				}

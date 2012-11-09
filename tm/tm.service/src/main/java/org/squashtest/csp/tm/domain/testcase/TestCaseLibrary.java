@@ -33,12 +33,11 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.project.GenericLibrary;
 import org.squashtest.csp.tm.domain.project.Project;
 
 @Entity
-public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> implements Library<TestCaseLibraryNode> {
+public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 
 	private static final String CLASS_NAME = "org.squashtest.csp.tm.domain.testcase.TestCaseLibrary";
 	private static final String SIMPLE_CLASS_NAME = "TestCaseLibrary";
@@ -55,11 +54,13 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> impleme
 	@OneToOne(mappedBy = "testCaseLibrary")
 	private Project project;
 
-	@Override
 	public Set<TestCaseLibraryNode> getRootContent() {
 		return rootContent;
 	}
-
+	@Override
+	public Set<TestCaseLibraryNode> getContent(){
+		return getRootContent();
+	}
 	@Override
 	public Long getId() {
 		return id;
@@ -76,7 +77,7 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> impleme
 	}
 
 	@Override
-	public void removeRootContent(TestCaseLibraryNode node) {
+	public void removeContent(TestCaseLibraryNode node) {
 		rootContent.remove(node);
 
 	}

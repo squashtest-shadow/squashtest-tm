@@ -151,28 +151,6 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return createIterationTreeNode(newIteration, newIterationIndex);
 	}
 
-	
-	// TODO : remove that method ? It looks like it's mapped to nothing
-	public @ResponseBody
-	@Deprecated
-	JsTreeNode addNewIterationToCampaign(long campaignId,
-			long iterationId, boolean copy) {
-		Iteration newIteration = campaignLibraryNavigationService
-				.findIteration(iterationId);
-		int newIterationIndex = 0;
-		if (!copy){
-			newIterationIndex = campaignLibraryNavigationService
-			.addIterationToCampaign(newIteration, campaignId,true);
-		}else{
-			newIterationIndex = campaignLibraryNavigationService
-			.copyIterationToCampaign(campaignId, iterationId);
-		}
-
-		return createIterationTreeNode(newIteration, newIterationIndex);
-	}
-
-
-
 	private JsTreeNode createIterationTreeNode(Iteration iteration, int iterationIndex) {
 		return iterationNodeBuilder.get().setModel(iteration).setIterationIndex(iterationIndex).build();
 	}

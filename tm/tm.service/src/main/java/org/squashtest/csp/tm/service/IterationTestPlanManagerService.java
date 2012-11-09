@@ -28,7 +28,6 @@ import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.users.User;
 
 /**
@@ -39,18 +38,7 @@ import org.squashtest.csp.tm.domain.users.User;
 @Transactional
 public interface IterationTestPlanManagerService extends IterationTestPlanFinder {
 
-	/**
-	 * Find a iteration using its id
-	 * 
-	 * @param iterationId
-	 */
-	Iteration findIteration(long iterationId);
-
-	/**
-	 * Returns a collection of {@link TestCaseLibrary}, the test cases of which may be added to the campaign
-	 */
-	List<TestCaseLibrary> findLinkableTestCaseLibraries();
-
+	
 	/**
 	 * Adds a list of test cases to an iteration.
 	 * 
@@ -67,15 +55,6 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 */
 	List<IterationTestPlanItem> addTestPlanItemsToIteration(List<Long> testCaseIds, Iteration iteration);
 
-	/**
-	 * Adds a list of test cases to a campaign.
-	 * 
-	 * @param testCaseIdss
-	 * @param campaignId
-	 */
-	IterationTestPlanItem findTestPlanItemByTestCaseId(long iterationId, long testCaseId);
-
-	
 	/**
 	 * Removes a list of test cases from a campaign excepted the test plans which were executed
 	 * 
@@ -108,8 +87,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 */
 	boolean removeTestPlanFromIteration(Long testPlanId, long iterationId);
 
-	List<TestCase> findPlannedTestCases(Long iterationId);
-
+	
 	/**
 	 * Update item test plan lastExecuted data (by and on) (for the moment they're constants)
 	 * 
@@ -120,14 +98,6 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 */
 	void updateTestCaseLastExecutedByAndOn(IterationTestPlanItem givenTestPlan, Date lastExecutedOn,
 			String lastExecutedBy);
-
-	/**
-	 * Get Users with Execute Access for an Iteration and its TestPlan.
-	 * 
-	 * @param testCaseId
-	 * @param campaignId
-	 */
-	List<User> findAssignableUserForTestPlan(long iterationId);
 
 	/**
 	 * Assign User with Execute Access to a TestPlan item.
@@ -170,4 +140,5 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @param statusName
 	 */
 	void assignExecutionStatusToTestPlanItem(Long testPlanId, long iterationId, String statusName);
+	
 }

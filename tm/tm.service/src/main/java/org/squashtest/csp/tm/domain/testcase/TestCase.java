@@ -54,6 +54,7 @@ import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.exception.UnallowedTestAssociationException;
+import org.squashtest.csp.tm.domain.library.NodeVisitor;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
@@ -278,7 +279,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	@Override
-	public TestCase createPastableCopy() {
+	public TestCase createCopy() {
 		TestCase copy = new TestCase();
 		copy.setSimplePropertiesUsing(this);
 		copy.addCopiesOfSteps(this);
@@ -444,6 +445,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Override
 	public BindableEntity getBoundEntityType() {
 		return BindableEntity.TEST_CASE;
+	}
+
+	@Override
+	public void accept(NodeVisitor visitor) {
+		visitor.visit(this);
 	}
 	
 

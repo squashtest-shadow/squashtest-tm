@@ -51,18 +51,7 @@ class CampaignLibraryNavigationControllerTest extends spock.lang.Specification {
 		campaignLibraryTreeNodeBuilder.get() >> new CampaignLibraryTreeNodeBuilder(Mock(PermissionEvaluationService))
 	}
 
-	def "should add iteration to campaign content and return iteration node model"() {
-		given:
-		Iteration iter = new Iteration(id:1l)
-		service.findIteration(_) >> iter;
-
-		when:
-		JsTreeNode res = controller.addNewIterationToCampaign(iter, 10, true)
-
-		then:
-		1 * service.addIterationToCampaign(iter, 10, true)
-		res != null
-	}
+	
 
 	def "should return iteration nodes of campaign"() {
 		given:

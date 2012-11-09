@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.domain.testcase;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -32,11 +33,11 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.NullArgumentException;
-import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.FolderSupport;
+import org.squashtest.csp.tm.domain.library.NodeVisitor;
 import org.squashtest.csp.tm.domain.project.Project;
-
+ 
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCaseLibraryNode> {
@@ -80,28 +81,11 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 		content.remove(node);
 
 	}
-	//TODO Make generic for each folder
 	@Override
-	public TestCaseFolder createPastableCopy() {
-		TestCaseFolder newFolder = new TestCaseFolder();
-		newFolder.setName(getName());
-		newFolder.setDescription(getDescription());
-		newFolder.addCopiesOfAttachments(this);
-		for (TestCaseLibraryNode node : this.content) {
-			TestCaseLibraryNode newNode = node.createPastableCopy();
-			newFolder.addContent(newNode);
-		}
-
-		newFolder.notifyAssociatedWithProject(this.getProject());
-		return newFolder;
+	public TestCaseFolder createCopy() {
+		return (TestCaseFolder) folderSupport.createCopy(new TestCaseFolder());
 	}
 	
-	private void addCopiesOfAttachments(TestCaseFolder source) {
-		for (Attachment tcAttach : source.getAttachmentList().getAllAttachments()) {
-			Attachment atCopy = tcAttach.hardCopy();
-			this.getAttachmentList().addAttachment(atCopy);
-		}
-	}
 	@Override
 	public void notifyAssociatedWithProject(Project project) {
 		Project former = getProject();
@@ -123,6 +107,16 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	@Override
 	public boolean hasContent() {
 		return folderSupport.hasContent();
+	}
+
+	@Override
+	public void accept(NodeVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
+	public List<String> getContentNames() {
+		return folderSupport.getContentNames();
 	}
 	
 }

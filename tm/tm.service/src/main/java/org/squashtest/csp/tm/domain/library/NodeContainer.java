@@ -20,25 +20,37 @@
  */
 package org.squashtest.csp.tm.domain.library;
 
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 
 /**
- * Interface for an object which contains library node objects.
+ * Interface for an object which contains tree node objects.
  * 
  * @author Gregory Fouquet
  * 
- * @param <NODE>
+ * @param <NODE> Type of contained node
  */
-public interface NodeContainer<NODE extends LibraryNode> {
+public interface NodeContainer<NODE extends TreeNode> extends Identified{
 	/**
-	 * Adds new content to this folder. Should refuse to add null content, should refuse to add content with duplicate
+	 * Adds new content to this container. Should refuse to add null content, should refuse to add content with duplicate
 	 * name.
 	 * 
-	 * @param contentToAdd
+	 * @param node
 	 */
-	void addContent(NODE contentToAdd) throws DuplicateNameException, NullArgumentException;
+	void addContent(NODE node) throws DuplicateNameException, NullArgumentException;
 
 	boolean isContentNameAvailable(String name);
+	
+	Set<NODE> getContent();
+	
+	boolean hasContent();
+	
+	void removeContent(NODE contentToRemove) throws NullArgumentException;
+
+	List<String> getContentNames();
 
 }

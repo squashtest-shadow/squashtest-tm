@@ -231,7 +231,7 @@ class RequirementTest extends Specification {
 		source.notifyAssociatedWithProject(project);
 
 		when:
-		Requirement copy = source.createPastableCopy()
+		Requirement copy = source.createCopy()
 
 		then:
 		copy.project == source.project
@@ -245,33 +245,52 @@ class RequirementTest extends Specification {
 		copy.versions*.requirement == [copy]
 	}
 
-	def "'pastable' copy should not have obsolete versions"() {
-		given:
+	def "'pastable' copy should not have versions"() {
+		given : "a requirement and it's current version"
 		RequirementVersion ver = new RequirementVersion(name: "ver")
 		Requirement source = new Requirement(ver);
 
-		and:
-		RequirementVersion obsolete = new RequirementVersion(name: "obsolete")
-		use(ReflectionCategory) {
-			RequirementVersion.set field: "status", of: obsolete, to: RequirementStatus.OBSOLETE
-		}
-		source.versions << obsolete
-
-		and:
+		and: "an older requirement version"
 		RequirementVersion old = new RequirementVersion(name: "old")
 		source.versions << old
 
 		when:
-		Requirement copy = source.createPastableCopy()
+		Requirement copy = source.createCopy()
 
-		then:
+		then: "the requirement versions contain only the current version"
 		copy.resource.name == "ver"
 		copy.resource != ver
 
-		copy.versions.size() == 2
-		copy.versions*.name.containsAll(["ver", "old"])
-		copy.versions*.requirement == [copy, copy]
+		copy.versions.size() == 1
+		copy.versions*.name.containsAll(["ver"])
+		copy.versions*.requirement == [copy]
 	}
+	
+		def "'pastable' copy of versions should not have obsolete versions"() {
+			given:"a requirement"
+			RequirementVersion ver = new RequirementVersion(name: "ver")
+			Requirement source = new Requirement(ver);
+			and:"with 2 versions, one being obsolete"
+			RequirementVersion obsolete = new RequirementVersion(name: "obsolete")
+			use(ReflectionCategory) {
+				RequirementVersion.set field: "status", of: obsolete, to: RequirementStatus.OBSOLETE
+			}
+			source.versions << obsolete
+			RequirementVersion old = new RequirementVersion(name: "old")
+			source.versions << old
+			and: "it's copy"
+			RequirementVersion ver2 = new RequirementVersion(name: "ver")
+			Requirement copy = new Requirement(ver2);
+			
+	
+			when:
+			def result = source.addPreviousVersionsCopiesToCopy(copy)
+	
+			then:
+			copy.versions.size() == 2
+			copy.versions*.name.containsAll(["ver", "old"])
+			copy.versions*.requirement == [copy, copy]
+		}
 
 	def "should increase the current version"() {
 		given:

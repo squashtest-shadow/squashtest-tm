@@ -20,32 +20,13 @@
  */
 package org.squashtest.csp.tm.domain.library;
 
-import java.util.Set;
-
-import org.apache.commons.lang.NullArgumentException;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.SelfClassAware;
 import org.squashtest.csp.tm.domain.project.ProjectResource;
-
-public interface Library<NODE extends LibraryNode> extends ProjectResource, SelfClassAware, NodeContainer<NODE> {
-	Long getId();
-
-	Set<NODE> getRootContent();
-
-	/**
-	 * Adds new content to the root of library. Content must not be null, content must not have the same name as another
-	 * content.
-	 *
-	 * @param newContent
-	 * @throws NullArgumentException
-	 *             if content is null
-	 * @throws DuplicateNameException
-	 *             if there is content with the same name
-	 */
-	void addRootContent(NODE node);
-
-	void removeRootContent(NODE node);
-	
-	boolean hasContent();
-
+/**
+ * Interface for project libraries;
+ *
+ * @param <NODE> type of contained node.
+ */
+public interface Library<NODE extends LibraryNode> extends ProjectResource, SelfClassAware, NodeContainer<NODE>, Identified {
 }

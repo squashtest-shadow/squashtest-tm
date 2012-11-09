@@ -20,28 +20,15 @@
  */
 package org.squashtest.csp.tm.domain.library;
 
-import java.util.Set;
-
-import org.apache.commons.lang.NullArgumentException;
 
 /**
  * Interface of a Library folder.
  * 
  * @author bsiri, Gregory Fouquet
  * 
- * @param <T>
+ * @param <NODE>
  *            Type of nodes
  */
-public interface Folder<NODE extends LibraryNode> extends LibraryNode, NodeContainer<NODE> {
-	/**
-	 * Returrns the content of this folder.
-	 * 
-	 * @return
-	 */
-	Set<NODE> getContent();
+public interface Folder<NODE extends LibraryNode> extends LibraryNode, NodeContainer<NODE> {	
 	
-	void removeContent(NODE contentToRemove) throws NullArgumentException;
-
-	boolean hasContent();
-
 }

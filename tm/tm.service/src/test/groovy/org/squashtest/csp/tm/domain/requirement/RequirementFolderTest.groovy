@@ -118,7 +118,7 @@ class RequirementFolderTest extends Specification {
 		folder.attachmentList.addAttachment attachment
 		
 		when:
-		def res = folder.createPastableCopy()		
+		def res = folder.createCopy()		
 
 		then:
 		res.name == folder.name

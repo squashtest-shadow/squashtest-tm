@@ -69,28 +69,6 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	public String getIdPropertyName() {
 		return "id";
 	}
-
-	@Override
-	public final void persist(ENTITY_TYPE transientEntity) {
-		persistEntity(transientEntity);
-	}
-
-	@Override
-	public final void remove(ENTITY_TYPE entity) {
-		removeEntity(entity);
-	}
-
-	@Override
-	public final void flush() {
-		currentSession().flush();
-	}
-
-	@Override
-	public void persist(List<ENTITY_TYPE> transientEntities) {
-		for (ENTITY_TYPE transientEntity : transientEntities) {
-			persistEntity(transientEntity);
-		}
-	}
 	
 	protected static class ContainerIdNameStartParameterCallback implements SetQueryParametersCallback{
 		private long containerId;

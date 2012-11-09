@@ -45,10 +45,12 @@ import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
+import org.squashtest.csp.tm.internal.repository.EntityDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.internal.service.importer.RequirementImporter;
 import org.squashtest.csp.tm.internal.service.importer.RequirementTestCaseLinksImporter;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
@@ -68,32 +70,34 @@ public class RequirementLibraryNavigationServiceImpl extends
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
-
 	@Inject
 	private RequirementFolderDao requirementFolderDao;
-
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
 	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
-
 	@Inject
 	private RequirementDao requirementDao;
-
 	@Inject
 	private RequirementNodeDeletionHandler deletionHandler;
-
 	@Inject
 	private RequirementImporter requirementImporter;
-
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
-
 	@Inject
 	@Qualifier("squashtest.tm.service.RequirementLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy;
-
 	@Inject
 	private RequirementTestCaseLinksImporter requirementTestCaseLinksImporter;
+	@Inject
+	private TreeNodeCopier copier;
+	@Inject
+	private PrivateCustomFieldValueService customFieldValueService;
+	@Inject
+	@Qualifier("squashtest.tm.service.internal.PasteToRequirementFolderStrategy")
+	private PasteStrategy<RequirementFolder, RequirementLibraryNode> pasteToRequirementFolderStrategy;
+	@Inject
+	@Qualifier("squashtest.tm.service.internal.PasteToRequirementLibraryStrategy")
+	private PasteStrategy<RequirementLibrary, RequirementLibraryNode> pasteToRequirementLibraryStrategy;
 
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
@@ -119,6 +123,21 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	protected final LibraryNodeDao<RequirementLibraryNode> getLibraryNodeDao() {
 		return requirementLibraryNodeDao;
+	}
+
+	@Override
+	protected PrivateCustomFieldValueService getcustomFieldValueService() {
+		return customFieldValueService;
+	}
+
+	@Override
+	protected PasteStrategy<RequirementFolder, RequirementLibraryNode> getPasteToFolderStrategy() {
+		return pasteToRequirementFolderStrategy;
+	}
+
+	@Override
+	protected PasteStrategy<RequirementLibrary, RequirementLibraryNode> getPasteToLibraryStrategy() {
+		return pasteToRequirementLibraryStrategy;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -157,7 +176,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		Requirement newReq = createRequirement(newVersion);
 
-		library.addRootContent(newReq);
+		library.addContent(newReq);
 		requirementDao.persist(newReq);
 		createCustomFieldValues(newReq.getCurrentVersion());
 
@@ -174,7 +193,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 			throw new DuplicateNameException(requirement.getName(), requirement.getName());
 		}
 
-		library.addRootContent(requirement);
+		library.addContent(requirement);
 		requirementDao.persist(requirement);
 		createCustomFieldValues(requirement.getCurrentVersion());
 
@@ -224,15 +243,16 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromProject(List<Long> libraryIds) {
-		return (List<ExportRequirementData>) setFullFolderPath(requirementDao.findRequirementToExportFromProject(libraryIds));
+		return (List<ExportRequirementData>) setFullFolderPath(requirementDao
+				.findRequirementToExportFromProject(libraryIds));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromNodes(List<Long> folderIds) {
-		return (List<ExportRequirementData>) setFullFolderPath(requirementDao.findRequirementToExportFromNodes(folderIds));
+		return (List<ExportRequirementData>) setFullFolderPath(requirementDao
+				.findRequirementToExportFromNodes(folderIds));
 	}
-	
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'LINK') " + OR_HAS_ROLE_ADMIN)
@@ -261,7 +281,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 			throw new CopyPasteObsoleteException(e.getMessage());
 		}
 	}
-	
+
 	@Override
 	public List<RequirementLibraryNode> copyNodesToLibrary(long destinationId, Long[] targetId) {
 		try {
@@ -271,4 +291,5 @@ public class RequirementLibraryNavigationServiceImpl extends
 			throw new CopyPasteObsoleteException(e.getMessage());
 		}
 	}
+
 }

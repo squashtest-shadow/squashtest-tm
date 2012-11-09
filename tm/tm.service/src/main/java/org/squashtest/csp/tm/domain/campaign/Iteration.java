@@ -48,6 +48,7 @@ import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
@@ -60,6 +61,10 @@ import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.library.Copiable;
+import org.squashtest.csp.tm.domain.library.NodeContainer;
+import org.squashtest.csp.tm.domain.library.NodeVisitor;
+import org.squashtest.csp.tm.domain.library.TreeNode;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.softdelete.SoftDeletable;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -67,7 +72,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 @Auditable
 @Entity
 @SoftDeletable
-public class Iteration implements AttachmentHolder , Identified, BoundEntity {
+public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified, BoundEntity{
 
 	private static final String ITERATION_ID = "ITERATION_ID";
 
@@ -265,6 +270,7 @@ public class Iteration implements AttachmentHolder , Identified, BoundEntity {
 	 * 
 	 * @return
 	 */
+	@Override
 	public Iteration createCopy() {
 		Iteration clone = new Iteration();
 		clone.setName(this.getName());
@@ -442,27 +448,7 @@ public class Iteration implements AttachmentHolder , Identified, BoundEntity {
 
 		return -1;
 	}
-
-	public boolean isTestCasePlanned(Long testCaseId) {
-		return (getTestPlanForTestCaseId(testCaseId) != null);
-	}
-
-	public boolean isTestCasePlanned(TestCase testCase) {
-		return isTestCasePlanned(testCase.getId());
-	}
-
-	// get a test plan if the provided test case is part of it
-	// returns null otherwise
-	public IterationTestPlanItem getTestPlanForTestCaseId(Long testCaseId) {
-		for (IterationTestPlanItem iterTestPlan : testPlans) {
-			if ((!iterTestPlan.isTestCaseDeleted())
-					&& (iterTestPlan.getReferencedTestCase().getId().equals(testCaseId))) {
-				return iterTestPlan;
-			}
-		}
-		return null;
-	}
-
+	
 	/*
 	 * ********************************* TEST SUITE *********************************************
 	 */
@@ -641,7 +627,7 @@ public class Iteration implements AttachmentHolder , Identified, BoundEntity {
 		List<IterationTestPlanItem> testPlanWithoutDeletedTestCases = getTestPlanWithoutDeletedTestCases();
 		for (TestSuite testSuite : getTestSuites()) {
 			List<IterationTestPlanItem> testSuiteTestPlan = testSuite.getTestPlan();
-			TestSuite testSuiteCopy = testSuite.createPastableCopy();
+			TestSuite testSuiteCopy = testSuite.createCopy();
 			List<Integer> testPlanIndex = new ArrayList<Integer>();
 			for (IterationTestPlanItem iterationTestPlanItem : testSuiteTestPlan) {
 				int testPlanItemIndex = testPlanWithoutDeletedTestCases.indexOf(iterationTestPlanItem);
@@ -704,6 +690,47 @@ public class Iteration implements AttachmentHolder , Identified, BoundEntity {
 	@Override
 	public BindableEntity getBoundEntityType() {
 		return BindableEntity.ITERATION;
+	}
+
+	@Override
+	public void accept(NodeVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
+	public void addContent(@NotNull TestSuite testSuite) throws DuplicateNameException, NullArgumentException {
+		this.addTestSuite((TestSuite) testSuite);
+		
+	}
+
+	@Override
+	public boolean isContentNameAvailable(String name) {
+		return checkSuiteNameAvailable(name);
+	}
+
+	@Override
+	public Set getContent() {
+		return getTestSuites();
+	}
+	
+	@Override
+	public boolean hasContent(){
+		return !getContent().isEmpty();
+	}
+
+	@Override
+	public void removeContent(TestSuite contentToRemove) throws NullArgumentException {
+		removeTestSuite(contentToRemove);
+		
+	}
+
+	@Override
+	public List<String> getContentNames() {
+		List<String> testSuitesNames = new ArrayList<String>(testSuites.size());
+		for(TestSuite suite : testSuites){
+			testSuitesNames.add(suite.getName());
+		}
+		return testSuitesNames;
 	}
 
 }

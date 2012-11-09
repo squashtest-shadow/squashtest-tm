@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.domain.campaign;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -34,11 +35,10 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.FolderSupport;
+import org.squashtest.csp.tm.domain.library.NodeVisitor;
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
@@ -82,24 +82,12 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 		return folderSupport.isContentNameAvailable(name);
 	}
 	
-	//TODO make generic 
 	@Override
-	public CampaignFolder createPastableCopy() {
-
-		CampaignFolder newFolder = new CampaignFolder();
-		newFolder.setName(getName());
-		newFolder.setDescription(getDescription());
-		newFolder.notifyAssociatedWithProject(this.getProject());
-		newFolder.addCopiesOfAttachments(this);
-		return newFolder;
+	public CampaignFolder createCopy() {
+		return (CampaignFolder) folderSupport.createCopy(new CampaignFolder());
 	}
 	
-	private void addCopiesOfAttachments(CampaignFolder source) {
-		for (Attachment tcAttach : source.getAttachmentList().getAllAttachments()) {
-			Attachment atCopy = tcAttach.hardCopy();
-			this.getAttachmentList().addAttachment(atCopy);
-		}
-	}
+	
 	
 	@Override
 	public void notifyAssociatedWithProject(Project project) {
@@ -114,5 +102,16 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 		return folderSupport.hasContent();
 	}
 
+	@Override
+	public void accept(NodeVisitor visitor) {
+		visitor.visit(this);		
+	}
+
+	@Override
+	public List<String> getContentNames() {
+		return folderSupport.getContentNames();
+	}
+	
+	
 	
 }

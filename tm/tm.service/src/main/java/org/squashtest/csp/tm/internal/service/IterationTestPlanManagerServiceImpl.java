@@ -75,7 +75,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Inject
 	private UserDao userDao;
-	
+
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
 	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
@@ -97,12 +97,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@ServiceReference
 	public void setObjectIdentityRetrievalStrategy(ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy) {
 		this.objIdRetrievalStrategy = objectIdentityRetrievalStrategy;
-	}
-
-	// FIXME : security
-	@Override
-	public Iteration findIteration(long iterationId) {
-		return iterationDao.findById(iterationId);
 	}
 
 	@Override
@@ -165,7 +159,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			itemTestPlanDao.persist(itp);
 			iteration.addTestPlan(itp);
 		}
-
 	}
 
 	@Override
@@ -290,11 +283,22 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		}
 	}
 
-	// FIXME : security
+	/**
+	 * @deprecated method used only in Integration tests should be removed
+	 * @param iterationId
+	 * @param testCaseId
+	 * @return
+	 */
+	@Deprecated
 	@Override
 	public IterationTestPlanItem findTestPlanItemByTestCaseId(long iterationId, long testCaseId) {
 		Iteration iteration = iterationDao.findById(iterationId);
-		return iteration.getTestPlanForTestCaseId(testCaseId);
+		for (IterationTestPlanItem item : iteration.getTestPlans()) {
+			if (!item.isTestCaseDeleted() && item.getReferencedTestCase().getId() == testCaseId) {
+				return item;
+			}
+		}
+		return null;
 	}
 
 	// FIXME : security
@@ -303,19 +307,19 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		Iteration iteration = iterationDao.findById(iterationId);
 		return iteration.getTestPlan(itemTestPlanId);
 	}
-	
+
 	@Override
-	public List<ExecutionStatus> getExecutionStatusList(){
-		
+	public List<ExecutionStatus> getExecutionStatusList() {
+
 		List<ExecutionStatus> statusList = new LinkedList<ExecutionStatus>();
 		statusList.addAll(ExecutionStatus.getCanonicalStatusSet());
 		return statusList;
 	}
-	
+
 	@Override
-	public void assignExecutionStatusToTestPlanItem(Long testPlanId, long iterationId, String statusName){
-		
-		IterationTestPlanItem testPlanItem = findTestPlanItem(iterationId,testPlanId);
+	public void assignExecutionStatusToTestPlanItem(Long testPlanId, long iterationId, String statusName) {
+
+		IterationTestPlanItem testPlanItem = findTestPlanItem(iterationId, testPlanId);
 		testPlanItem.setExecutionStatus(ExecutionStatus.valueOf(statusName));
 	}
 }

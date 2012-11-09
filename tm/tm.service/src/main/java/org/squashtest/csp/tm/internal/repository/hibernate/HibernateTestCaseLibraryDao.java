@@ -28,13 +28,4 @@ import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 @Repository
 public class HibernateTestCaseLibraryDao extends HibernateLibraryDao<TestCaseLibrary, TestCaseLibraryNode> implements TestCaseLibraryDao {
 	
-	@Override
-	public void persist(TestCaseLibrary testCaseLibrary) {
-		persistEntity(testCaseLibrary);
-	}
-
-	
-
-
-
 }

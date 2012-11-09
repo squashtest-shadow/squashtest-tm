@@ -30,12 +30,4 @@ public class HibernateCampaignLibraryDao extends HibernateLibraryDao<CampaignLib
 		implements CampaignLibraryDao {
 	
 
-	@Override
-	public void persist(CampaignLibrary library) {
-		persistEntity(library);		
-	}
-
-
-
-
 }

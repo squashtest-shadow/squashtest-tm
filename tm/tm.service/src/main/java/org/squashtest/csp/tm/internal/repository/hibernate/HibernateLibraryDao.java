@@ -26,6 +26,7 @@ import org.apache.commons.lang.WordUtils;
 import org.hibernate.Query;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
+import org.squashtest.csp.tm.internal.repository.EntityDao;
 import org.squashtest.csp.tm.internal.repository.LibraryDao;
 
 /**
@@ -37,7 +38,7 @@ import org.squashtest.csp.tm.internal.repository.LibraryDao;
  * @param <NODE>
  */
 public abstract class HibernateLibraryDao<LIBRARY extends Library<NODE>, NODE extends LibraryNode> extends
-HibernateDao<LIBRARY> implements LibraryDao<LIBRARY, NODE> {
+HibernateEntityDao<LIBRARY> implements LibraryDao<LIBRARY, NODE>{
 	private final String entityClassName;
 
 	public HibernateLibraryDao() {
@@ -45,10 +46,7 @@ HibernateDao<LIBRARY> implements LibraryDao<LIBRARY, NODE> {
 		entityClassName = WordUtils.uncapitalize(entityType.getSimpleName());
 	}
 
-	@Override
-	public final LIBRARY findById(long id) {
-		return getEntity(id);
-	}
+	
 	/**
 	 * Finds the library root content. Template method which invokes a named query named
 	 * "{libraryUnquilifiedClassName}.findAllRootContentById" with a parameter named "libraryId"
@@ -64,15 +62,6 @@ HibernateDao<LIBRARY> implements LibraryDao<LIBRARY, NODE> {
 		};
 
 		return executeListNamedQuery(entityClassName + ".findAllRootContentById", callback);
-	}
-
-	/**
-	* Finds all libraries. Template method which invokes a named query named "{libraryUnquilifiedClassName}.findAll"
-	* with a parameter named "libraryId"
-	*/
-	public List<LIBRARY> findAll() {
-		return executeListNamedQuery(entityClassName + ".findAll");
-		
 	}
 	
 	@Override

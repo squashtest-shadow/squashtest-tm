@@ -147,8 +147,9 @@ class CampaignTest extends Specification {
 		Campaign campaign = new Campaign()
 
 		Iteration iteration1 = new Iteration()
+		iteration1.setName("iteration1");
 		Iteration iteration2 = new Iteration()
-
+		iteration2.setName("iteration2")
 		campaign.addIteration(iteration1)
 		campaign.addIteration(iteration2)
 

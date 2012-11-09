@@ -35,12 +35,11 @@ import javax.persistence.OneToOne;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.hibernate.annotations.Where;
-import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.project.GenericLibrary;
 import org.squashtest.csp.tm.domain.project.Project;
 
 @Entity
-public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> implements Library<CampaignLibraryNode> {
+public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 
 	private static final String CLASS_NAME = "org.squashtest.csp.tm.domain.campaign.CampaignLibrary";
 	private static final String SIMPLE_CLASS_NAME = "CampaignLibrary";
@@ -67,13 +66,17 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> impleme
 		return id;
 	}
 
-	@Override
 	public Set<CampaignLibraryNode> getRootContent() {
 		return rootContent;
 	}
+	
+	@Override
+	public Set<CampaignLibraryNode> getContent(){
+		return getRootContent();
+	}
 
 	@Override
-	public void removeRootContent(CampaignLibraryNode node) {
+	public void removeContent(CampaignLibraryNode node) {
 		if (node == null) {
 			throw new NullArgumentException("CampaignLibrary : cannot remove null node");
 		}
@@ -107,5 +110,5 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> impleme
 		return (rootContent.size() > 0);
 	}
 
-	
+
 }

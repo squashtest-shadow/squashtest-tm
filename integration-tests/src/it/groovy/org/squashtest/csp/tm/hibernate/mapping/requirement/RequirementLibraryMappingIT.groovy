@@ -58,7 +58,7 @@ class RequirementLibraryMappingIT extends HibernateMappingSpecification {
 		when:
 		def addFolder = {Session session -> 
 			Object l = session.get(RequirementLibrary.class, library.id)
-			l.addRootContent(folder)
+			l.addContent(folder)
 			session.persist(folder)
 		}
 		

@@ -29,7 +29,7 @@ class RequirementLibraryTest extends Specification {
 	
 	def "should not add null root content"() {
 		when: 
-		requirementLibrary.addRootContent(null)
+		requirementLibrary.addContent(null)
 		
 		then:
 		thrown(NullArgumentException)
@@ -43,10 +43,10 @@ class RequirementLibraryTest extends Specification {
 		and: "library already has a folder named 'foo'"
 		RequirementFolder fooFolder = new RequirementFolder()
 		fooFolder.setName("foo")
-		requirementLibrary.addRootContent(fooFolder)
+		requirementLibrary.addContent(fooFolder)
 		
 		when:
-		requirementLibrary.addRootContent(newFolder)
+		requirementLibrary.addContent(newFolder)
 		
 		then:
 		thrown(DuplicateNameException)

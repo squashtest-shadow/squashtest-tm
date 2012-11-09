@@ -67,12 +67,6 @@ public class HibernateTestStepDao extends HibernateDao<TestStep> implements Test
 		return getEntity(testStepId);
 	}
 
-	@Override
-	public void persist(TestStep testStep) {
-		persistEntity(testStep);
-		TestCase testCase = findTestCaseByTestStepId(testStep.getId());
-
-	}
 
 
 	/*

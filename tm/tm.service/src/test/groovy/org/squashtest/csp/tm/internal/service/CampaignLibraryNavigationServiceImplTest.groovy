@@ -81,7 +81,7 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 		service.addFolderToLibrary(10, newFolder)
 
 		then:
-		1 * container.addRootContent(newFolder)
+		1 * container.addContent(newFolder)
 		1 * campaignFolderDao.persist(newFolder)
 	}
 
@@ -226,7 +226,7 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 		service.addCampaignToCampaignLibrary(10, campaign)
 
 		then:
-		container.addRootContent campaign
+		container.addContent campaign
 		1 * campaignDao.persist(campaign)
 	}
 

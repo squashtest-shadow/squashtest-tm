@@ -33,6 +33,7 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
@@ -46,7 +47,7 @@ import org.squashtest.csp.tm.domain.audit.Auditable;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Auditable
-public abstract class Resource implements AttachmentHolder {
+public abstract class Resource implements AttachmentHolder, Identified{
 	@Id
 	@GeneratedValue
 	@Column(name = "RES_ID")
@@ -62,7 +63,8 @@ public abstract class Resource implements AttachmentHolder {
 	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval = true)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
-
+	
+	@Override
 	public Long getId() {
 		return id;
 	}

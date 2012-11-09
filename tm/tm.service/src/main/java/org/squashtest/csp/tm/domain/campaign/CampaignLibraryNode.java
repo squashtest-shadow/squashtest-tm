@@ -42,7 +42,7 @@ import org.squashtest.csp.tm.domain.softdelete.SoftDeletable;
 @Inheritance(strategy = InheritanceType.JOINED)
 @SoftDeletable
 @Auditable
-public abstract class CampaignLibraryNode extends GenericLibraryNode implements AttachmentHolder {
+public abstract class CampaignLibraryNode extends GenericLibraryNode {
 	@Id
 	@GeneratedValue
 	@Column(name = "CLN_ID")
@@ -81,8 +81,6 @@ public abstract class CampaignLibraryNode extends GenericLibraryNode implements 
 
 	public abstract void accept(CampaignLibraryNodeVisitor visitor);
 
-	@Override
-	public abstract CampaignLibraryNode createPastableCopy();
 	
 	@Override
 	@AclConstrainedObject

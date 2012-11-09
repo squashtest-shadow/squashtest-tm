@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.domain.requirement;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -35,11 +36,10 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.NullArgumentException;
-import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
-import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.FolderSupport;
+import org.squashtest.csp.tm.domain.library.NodeVisitor;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.resource.SimpleResource;
 
@@ -100,28 +100,11 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 		return folderSupport.isContentNameAvailable(name);
 	}
 	
-	//TODO make generic
 	@Override
-	public RequirementFolder createPastableCopy() {
-		RequirementFolder newFolder = new RequirementFolder();
-		newFolder.setName(getName());
-		newFolder.setDescription(getDescription());
-		newFolder.addCopiesOfAttachments(this);
-		for (RequirementLibraryNode node : this.content) {
-			RequirementLibraryNode newNode = (RequirementLibraryNode) node.createPastableCopy();
-			newFolder.addContent(newNode);
-		}
-
-		newFolder.notifyAssociatedWithProject(this.getProject());
-		return newFolder;
+	public RequirementFolder createCopy() {
+		return (RequirementFolder) folderSupport.createCopy(new RequirementFolder());
 	}
 	
-	private void addCopiesOfAttachments(RequirementFolder source) {
-		for (Attachment tcAttach : source.getAttachmentList().getAllAttachments()) {
-			Attachment atCopy = tcAttach.hardCopy();
-			this.getAttachmentList().addAttachment(atCopy);
-		}
-	}
 	
 	@Override
 	public void notifyAssociatedWithProject(Project project) {
@@ -163,6 +146,15 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	public void emptyContent() {
 		this.content.clear();
 		
+	}
+	@Override
+	public void accept(NodeVisitor visitor) {
+		visitor.visit(this);
+	}
+	
+	@Override
+	public List<String> getContentNames() {
+		return folderSupport.getContentNames();
 	}
 
 }

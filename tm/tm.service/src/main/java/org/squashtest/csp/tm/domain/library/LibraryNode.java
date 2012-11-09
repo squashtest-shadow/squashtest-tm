@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.domain.library;
 
 import org.squashtest.csp.core.domain.Identified;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.project.ProjectResource;
 
 /**
@@ -29,7 +30,7 @@ import org.squashtest.csp.tm.domain.project.ProjectResource;
  * @author Gregory Fouquet
  *
  */
-public interface LibraryNode extends ProjectResource, Identified {
+public interface LibraryNode extends Copiable, ProjectResource, Identified, AttachmentHolder, TreeNode {
 	/**
 	 * @return Name of this node.
 	 */
@@ -50,6 +51,4 @@ public interface LibraryNode extends ProjectResource, Identified {
 	void setDescription(String newDescription);
 
 	String getDescription();
-
-	LibraryNode createPastableCopy();
 }

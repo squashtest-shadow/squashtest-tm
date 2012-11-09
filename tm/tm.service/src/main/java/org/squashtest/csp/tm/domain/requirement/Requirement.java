@@ -26,6 +26,7 @@ import static org.squashtest.csp.tm.domain.requirement.RequirementStatus.OBSOLET
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeMap;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -38,8 +39,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException;
-import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
-import org.squashtest.csp.tm.domain.attachment.AttachmentList;
+import org.squashtest.csp.tm.domain.library.NodeVisitor;
 
 /**
  * Entity requirement
@@ -99,7 +99,12 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> {
 		visitor.visit(this);
 	}
 
-		/***
+	@Override
+	public void accept(NodeVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	/***
 	 * @return the reference of the requirement
 	 */
 	public String getReference() {
@@ -127,21 +132,32 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> {
 	 * caller (the latest version might not be eligible for copy / paste).
 	 */
 	@Override
-	public Requirement createPastableCopy() {
+	public Requirement createCopy() {
 		RequirementVersion latestVersionCopy = getCurrentVersion().createPastableCopy();
 		Requirement copy = new Requirement(latestVersionCopy);
-
-		for (RequirementVersion sourceVersion : this.versions) {
-			if (isNotLatestVersion(sourceVersion) && sourceVersion.isNotObsolete()) {
-				RequirementVersion copyVersion = sourceVersion.createPastableCopy();
-				copy.addVersion(copyVersion);
-			}
-		}
-
 		copy.notifyAssociatedWithProject(this.getProject());
 		return copy;
 	}
 
+	/**
+	 * Will create copies for all non obsolete versions younger than the current version, and add it to the copy.
+	 * 
+	 * @param copy : The requirement copy
+	 * @return a TreeMap of RequirementVersion copy by source ordered younger to older.
+	 */
+	public TreeMap<RequirementVersion, RequirementVersion> addPreviousVersionsCopiesToCopy(Requirement copy) {
+		TreeMap<RequirementVersion, RequirementVersion> copyBySource = new TreeMap<RequirementVersion, RequirementVersion>();
+		for (RequirementVersion sourceVersion : this.versions) {
+			if (isNotLatestVersion(sourceVersion) && sourceVersion.isNotObsolete()) {
+				RequirementVersion copyVersion = sourceVersion.createPastableCopy();
+				copyBySource.put(sourceVersion, copyVersion);
+				copy.addVersion(copyVersion);
+			}
+		}
+		return copyBySource;
+	}
+	
+	
 	private boolean isNotLatestVersion(RequirementVersion sourceVersion) {
 		return !getCurrentVersion().equals(sourceVersion);
 	}
@@ -161,6 +177,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> {
 	public void setCriticality(RequirementCriticality criticality) {
 		resource.setCriticality(criticality);
 	}
+
 	/***
 	 * @return the requirement category
 	 */
@@ -230,13 +247,13 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> {
 		versions.add(0, next);
 		next.setRequirement(this);
 	}
-	
+
 	public void increaseVersion(RequirementVersion newVersion) {
 		newVersion.setVersionNumber(resource.getVersionNumber() + 1);
 		resource = newVersion;
 		versions.add(0, newVersion);
 		newVersion.setRequirement(this);
-		
+
 	}
 
 	/**
@@ -314,18 +331,15 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> {
 	}
 
 	public RequirementVersion findRequirementVersion(int versionNumber) {
-		int versionIndexInAscVersionList = versionNumber -1;
-		int indexOflastVersionInList = versions.size()-1;
-		int versionIndexInDescVersionList =  indexOflastVersionInList - versionIndexInAscVersionList;
-		try{
-		return versions.get(versionIndexInDescVersionList);
-		}catch(IndexOutOfBoundsException e){
-			throw new EntityNotFoundException("Version #"+versionNumber+" of Requirement #"+this.getId()+" do not exist");
+		int versionIndexInAscVersionList = versionNumber - 1;
+		int indexOflastVersionInList = versions.size() - 1;
+		int versionIndexInDescVersionList = indexOflastVersionInList - versionIndexInAscVersionList;
+		try {
+			return versions.get(versionIndexInDescVersionList);
+		} catch (IndexOutOfBoundsException e) {
+			throw new EntityNotFoundException("Version #" + versionNumber + " of Requirement #" + this.getId()
+					+ " do not exist");
 		}
 	}
-
-
-
-	
 
 }

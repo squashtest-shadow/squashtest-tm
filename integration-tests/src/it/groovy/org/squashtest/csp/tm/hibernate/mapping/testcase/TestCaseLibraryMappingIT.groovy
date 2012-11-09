@@ -49,9 +49,9 @@ class TestCaseLibraryMappingIT extends HibernateMappingSpecification {
 		
 		and: "content added to the library"
 		def tc = new TestCase(name: "tc")
-		library.addRootContent tc	
+		library.addContent tc	
 		def f = new TestCaseFolder(name: "f")
-		library.addRootContent f
+		library.addContent f
 		
 		when:
 		doInTransaction({it.persist library})
@@ -80,14 +80,14 @@ class TestCaseLibraryMappingIT extends HibernateMappingSpecification {
 				it.persist folder
 				
 				
-				oldLib.addRootContent(folder)
+				oldLib.addContent(folder)
 				
 				
 				return oldLib
 				})
 		
 		TestCaseLibrary newLib = doInTransaction({def lib = it.get (TestCaseLibrary.class,library.id)
-			Hibernate.initialize(lib.getRootContent());
+			Hibernate.initialize(lib.getContent());
 			return lib 
 			
 			

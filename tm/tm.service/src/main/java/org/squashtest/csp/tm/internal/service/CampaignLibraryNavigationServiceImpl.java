@@ -20,10 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -39,7 +37,6 @@ import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy;
@@ -50,6 +47,7 @@ import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
@@ -62,6 +60,10 @@ public class CampaignLibraryNavigationServiceImpl extends
 		CampaignLibraryNavigationService {
 	
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
+	@Inject
+	private TreeNodeCopier copier;
+	@Inject 
+	private PrivateCustomFieldValueService customFieldValueService;
 	
 	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
@@ -97,87 +99,43 @@ public class CampaignLibraryNavigationServiceImpl extends
 
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
+	
+	@Inject
+	@Qualifier("squashtest.tm.service.internal.PasteToCampaignFolderStrategy")
+	private PasteStrategy<CampaignFolder, CampaignLibraryNode> pasteToCampaignFolderStrategy;
+	
+	@Inject
+	@Qualifier("squashtest.tm.service.internal.PasteToCampaignLibraryStrategy")
+	private PasteStrategy<CampaignLibrary, CampaignLibraryNode> pasteToCampaignLibraryStrategy;
 
 	@Override
 	protected NodeDeletionHandler<CampaignLibraryNode, CampaignFolder> getDeletionHandler() {
 		return deletionHandler;
 	}
+	
+	@Override
+	protected PrivateCustomFieldValueService getcustomFieldValueService() {
+		return customFieldValueService;
+	}
+	@Override
+	protected PasteStrategy<CampaignFolder, CampaignLibraryNode> getPasteToFolderStrategy() {
+		return pasteToCampaignFolderStrategy;
+	}
 
 	@Override
-	@PreAuthorize("(hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE')"
-			+ "and hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ'))"
+	protected PasteStrategy<CampaignLibrary, CampaignLibraryNode> getPasteToLibraryStrategy() {
+		return pasteToCampaignLibraryStrategy;
+	}
+
+	@Inject
+	@Qualifier("squashtest.tm.service.internal.PasteToCampaignStrategy")
+	private PasteStrategy<Campaign, Iteration> pasteToCampaignStrategy;
+
+	@Override
+	@PreAuthorize("(hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE')) "
 			+ OR_HAS_ROLE_ADMIN)
-	public int copyIterationToCampaign(long campaignId, long iterationId) {
-		Iteration originalIteration = iterationDao.findById(iterationId);
-		Campaign campaign = campaignDao.findById(campaignId);
-		copyIterationToCampaign(campaign, originalIteration);
-		return 0;
-	}
-
-	private void copyIterationToCampaign(Campaign campaign, Iteration iterationSource) {
-		Iteration iterationCopy = createCopyIteration(iterationSource);
-		if (!campaign.isContentNameAvailable(iterationCopy.getName())) {
-			renameIterationCopy(iterationCopy, campaign);
-		}
-		campaign.addIteration(iterationCopy);
-	}
-
-	private void renameIterationCopy(Iteration newIteration, Campaign campaign) {
-		List<String> copiesNames = campaignDao
-				.findNamesInCampaignStartingWith(campaign.getId(), newIteration.getName());
-		int newCopy = generateUniqueCopyNumber(copiesNames, newIteration.getName());
-		String newName = newIteration.getName() + COPY_TOKEN + newCopy;
-		newIteration.setName(newName);
-	}
-
-	@Override
-	@PreAuthorize("(hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE'))"
-			+ " or hasRole('ROLE_ADMIN')")
 	public List<Iteration> copyIterationsToCampaign(long campaignId, Long[] iterationsIds) {
-		// create persisted copies
-		List<Iteration> newIterations = createCopiesOfIterations(campaignId, iterationsIds);
-		// link to campaign
-		linkIterationsToCampaign(campaignId, newIterations);
-
-		return newIterations;
-	}
-
-	private void linkIterationsToCampaign(long campaignId, List<Iteration> newIterations) {
-		Campaign campaign = campaignDao.findById(campaignId);
-		for (Iteration iteration : newIterations) {
-			campaign.addIteration(iteration);
-		}
-	}
-
-	private List<Iteration> createCopiesOfIterations(long campaignId, Long[] iterationsIds) {
-		List<Iteration> newIterations = new ArrayList<Iteration>();
-		List<String> namesAtDestination = campaignDao.findAllNamesInCampaign(campaignId);
-		for (Long iterationId : iterationsIds) {
-			Iteration newIteration = createCopyIteration(iterationId);
-			renameIfHomonymeInDestination(newIteration, namesAtDestination);
-			namesAtDestination.add(newIteration.getName());
-			newIterations.add(newIteration);
-		}
-		return newIterations;
-	}
-
-	private void renameIfHomonymeInDestination(Iteration newIteration, List<String> namesAtDestination) {
-		if (namesAtDestination.contains(newIteration.getName())) {
-			List<String> copiesNames = findNamesStartingWith(namesAtDestination, newIteration.getName());
-			int newCopyNumber = generateUniqueCopyNumber(copiesNames, newIteration.getName());
-			String newName = newIteration.getName() + COPY_TOKEN + newCopyNumber;
-			newIteration.setName(newName);
-		}
-	}
-
-	private List<String> findNamesStartingWith(List<String> namesAtDestination, String string) {
-		List<String> copiedNames = new ArrayList<String>();
-		for (String name : namesAtDestination) {
-			if (name.startsWith(string)) {
-				copiedNames.add(name);
-			}
-		}
-		return copiedNames;
+		return	pasteToCampaignStrategy.pasteNodes(campaignId, Arrays.asList(iterationsIds));
 	}
 
 	@Override
@@ -225,72 +183,6 @@ public class CampaignLibraryNavigationServiceImpl extends
 	public List<Iteration> findIterationsByCampaignId(long campaignId) {
 		return iterationModificationService.findIterationsByCampaignId(campaignId);
 	}
-
-	/**
-	 * this is done here because content of campaigns is to be persisted first
-	 */
-	@Override
-	protected CampaignLibraryNode createPastableCopy(CampaignLibraryNode original) {
-		if (original instanceof Campaign) {
-			Campaign clone = (Campaign) original.createPastableCopy();
-			campaignDao.persist(clone);
-			for (Iteration iterationSource : ((Campaign) original).getIterations()) {
-				copyIterationToCampaign(clone, iterationSource);
-			}
-			return clone;
-		} else {
-			CampaignFolder sourceFolder = (CampaignFolder) original;
-			CampaignFolder newFolder = sourceFolder.createPastableCopy();
-			for (CampaignLibraryNode node : sourceFolder.getContent()) {
-				CampaignLibraryNode newNode = createPastableCopy(node);
-				newFolder.addContent(newNode);
-			}
-			return newFolder;
-		}
-
-	}
-
-	/*
-	 * //TODO : investigate why is public and find why createCopyIteration is not exposed in the interface too.
-	 * 
-	 * mpagnon says : my guess is that the method is public so that we can check authorizations through @PreAuthorize
-	 * for each iteration id because this couldn't be done with a list of ids in copyIterationsToCampaign. I suppose we
-	 * need to remove the public attribute and add a check step to the method copyIterationToCampaign
-	 */
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'READ') "+OR_HAS_ROLE_ADMIN)
-	public Iteration createCopyIteration(long iterationId) {
-		Iteration originalIteration = iterationModificationService.findById(iterationId);
-		return createCopyIteration(originalIteration);
-	}
-
-	private Iteration createCopyIteration(Iteration originalIteration) {
-		Iteration iterationCopy = originalIteration.createCopy();
-		iterationDao.persistIterationAndTestPlan(iterationCopy);
-		copyIterationTestSuites(originalIteration, iterationCopy);
-		return iterationCopy;
-	}
-
-	private void copyIterationTestSuites(Iteration originalIteration, Iteration iterationCopy) {
-		Map<TestSuite, List<Integer>> testSuitesPastableCopiesMap = originalIteration.createTestSuitesPastableCopy();
-		for (Entry<TestSuite, List<Integer>> testSuitePastableCopyEntry : testSuitesPastableCopiesMap.entrySet()) {
-			TestSuite testSuiteCopy = testSuitePastableCopyEntry.getKey();
-			iterationTestPlanManager.addTestSuite(iterationCopy, testSuiteCopy);
-			bindTestPlanOfCopiedTestSuite(iterationCopy, testSuitePastableCopyEntry, testSuiteCopy);
-		}
-	}
-
-	private void bindTestPlanOfCopiedTestSuite(Iteration iterationCopy,
-			Entry<TestSuite, List<Integer>> testSuitePastableCopyEntry, TestSuite testSuiteCopy) {
-		List<Integer> testSuiteTpiIndexesInIterationList = testSuitePastableCopyEntry.getValue();
-		List<IterationTestPlanItem> testPlanItemsToBind = new ArrayList<IterationTestPlanItem>();
-		List<IterationTestPlanItem> iterationTestPlanCopy = iterationCopy.getTestPlans();
-		for (Integer testSuiteTpiIndexInIterationList : testSuiteTpiIndexesInIterationList) {
-			IterationTestPlanItem testPlanItemToBind = iterationTestPlanCopy.get(testSuiteTpiIndexInIterationList);
-			testPlanItemsToBind.add(testPlanItemToBind);
-		}
-		testSuiteCopy.bindTestPlanItems(testPlanItemsToBind);
-	}
-
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
@@ -300,7 +192,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 		if (!library.isContentNameAvailable(newCampaign.getName())) {
 			throw new DuplicateNameException(newCampaign.getName(), newCampaign.getName());
 		} else {
-			library.addRootContent(newCampaign);
+			library.addContent(newCampaign);
 			campaignDao.persist(newCampaign);
 			createCustomFieldValues(newCampaign);
 		}
@@ -323,18 +215,19 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	@PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostAuthorize("hasPermission(returnObject, 'READ') "+OR_HAS_ROLE_ADMIN)
 	public Iteration findIteration(long iterationId) {
 		return iterationDao.findById(iterationId);
 
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'READ') "+OR_HAS_ROLE_ADMIN)
 	public List<TestSuite> findIterationContent(long iterationId) {
 		return suiteDao.findAllByIterationId(iterationId);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getPathAsString(long entityId) {
 		//get
@@ -356,31 +249,6 @@ public class CampaignLibraryNavigationServiceImpl extends
 			builder.append("/").append(name);
 		}
 		return builder.toString();		
-	}
-
-	/*
-	 * //TODO : investigate why that method must always return 0, or why should it return something anyway.
-	 * 
-	 * (non-Javadoc)
-	 * 
-	 * @see org.squashtest.csp.tm.service.CampaignLibraryNavigationService#moveIterationToNewCampaign(long, long, long)
-	 */
-	@Override
-	@PreAuthorize("(hasPermission(#newCampaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' , 'CREATE') "
-			+ "and hasPermission(#oldCampaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign' , 'DELETE') "
-			+ "and hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration' , 'READ' ) ) "
-			+ OR_HAS_ROLE_ADMIN)
-	public int moveIterationToNewCampaign(long newCampaignId, long oldCampaignId, long iterationId) {
-
-		Campaign destination = campaignDao.findById(newCampaignId);
-		Campaign source = campaignDao.findById(oldCampaignId);
-		Iteration iteration = iterationDao.findById(iterationId);
-
-		source.removeIteration(iteration);
-		campaignDao.flush();
-		destination.addIteration(iteration);
-
-		return 0;
 	}
 
 	@Override
@@ -411,5 +279,8 @@ public class CampaignLibraryNavigationServiceImpl extends
 	public List<Long> deleteSuites(List<Long> targetIds) {
 		return deletionHandler.deleteSuites(targetIds);
 	}
+
+	
+	
 
 }

@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,6 +30,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.squashtest.csp.tm.internal.repository.GenericDao;
 import org.squashtest.tm.core.foundation.collection.Paging;
 
 /**
@@ -38,9 +40,16 @@ import org.squashtest.tm.core.foundation.collection.Paging;
  * @author Gregory Fouquet
  * 
  */
-public abstract class HibernateDao<ENTITY_TYPE> {
+public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYPE>{
 	protected final Class<ENTITY_TYPE> entityType;
-
+	
+	@SuppressWarnings("unchecked")
+	public HibernateDao() {
+		super();
+		ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
+		entityType = (Class<ENTITY_TYPE>) type.getActualTypeArguments()[0];
+	}
+	
 	@Inject
 	private SessionFactory sessionFactory;
 
@@ -48,12 +57,39 @@ public abstract class HibernateDao<ENTITY_TYPE> {
 		return sessionFactory.getCurrentSession();
 	}
 
+	@Override
+	public void persist(List<ENTITY_TYPE> transientEntities) {
+		for (ENTITY_TYPE transientEntity : transientEntities) {
+			persistEntity(transientEntity);
+		}
+	}
 	
-	@SuppressWarnings("unchecked")
-	public HibernateDao() {
-		super();
-		ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
-		entityType = (Class<ENTITY_TYPE>) type.getActualTypeArguments()[0];
+	@Override
+	public final void  persist(ENTITY_TYPE transientEntity) {
+		persistEntity(transientEntity);
+	}
+
+	@Override
+	public final void remove(ENTITY_TYPE entity) {
+		removeEntity(entity);
+	}
+
+	@Override
+	public final void flush() {
+		currentSession().flush();
+	}
+
+	@Override
+	public void clearFromCache(ENTITY_TYPE entity) {
+		currentSession().evict(entity);
+		
+	}
+
+	@Override
+	public void clearFromCache(Collection<ENTITY_TYPE> entities) {
+		for(ENTITY_TYPE entity: entities){
+			clearFromCache(entity);
+		}		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -160,4 +196,5 @@ public abstract class HibernateDao<ENTITY_TYPE> {
 	protected final void removeEntity(ENTITY_TYPE entity) {
 		currentSession().delete(entity);
 	}
+
 }

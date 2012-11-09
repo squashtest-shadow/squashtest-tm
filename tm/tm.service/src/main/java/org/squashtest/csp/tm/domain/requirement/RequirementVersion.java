@@ -43,7 +43,6 @@ import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
-import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.resource.Resource;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -57,7 +56,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 @Entity
 @PrimaryKeyJoinColumn(name = "RES_ID")
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
-public class RequirementVersion extends Resource implements BoundEntity {
+public class RequirementVersion extends Resource implements BoundEntity{
 	/**
 	 * Collection of {@link TestCase} verifying by this {@link Requirement}
 	 */
@@ -271,8 +270,12 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	/* package-private */void setRequirement(Requirement requirement) {
 		this.requirement = requirement;
 	}
-
-	/* package-private */RequirementVersion createPastableCopy() {
+	
+	/**
+	 * Will create a copy of the requirement version with all attributes, attachments and test-case associations.
+	 * @return the requirement-version copy.
+	 */
+	public RequirementVersion createPastableCopy() {
 		RequirementVersion copy = createBaselineCopy();
 		copy.status = this.status;
 		copy.versionNumber = this.versionNumber;

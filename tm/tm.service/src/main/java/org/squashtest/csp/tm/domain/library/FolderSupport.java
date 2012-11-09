@@ -20,8 +20,15 @@
  */
 package org.squashtest.csp.tm.domain.library;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.attachment.Attachment;
+import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.resource.Resource;
 
 /**
  * This class is meant to be used as a delegate when one implements a {@link Folder}.
@@ -103,6 +110,29 @@ public class FolderSupport<NODE extends LibraryNode> {
 	
 	public boolean hasContent(){
 		return (folder.getContent().size()>0);
+	}
+
+	public Folder<NODE> createCopy(Folder<NODE> newFolder) {
+		newFolder.setName(folder.getName());
+		newFolder.setDescription(folder.getDescription());
+		newFolder.notifyAssociatedWithProject(folder.getProject());
+		addCopiesOfAttachments(folder, newFolder);
+		return newFolder;
+	}
+	
+	private void addCopiesOfAttachments(Folder<NODE> source, Folder<NODE> destination) {
+		for (Attachment tcAttach : source.getAttachmentList().getAllAttachments()) {
+			Attachment atCopy = tcAttach.hardCopy();
+			destination.getAttachmentList().addAttachment(atCopy);
+		}
+	}
+
+	public List<String> getContentNames() {
+			List<String> contentNames = new ArrayList<String>(folder.getContent().size());
+			for(NODE node : folder.getContent()){
+				contentNames.add(node.getName());
+			}
+			return contentNames;
 	}
 
 }

@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.domain.project;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.NullArgumentException;
@@ -27,6 +29,8 @@ import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
+import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.resource.Resource;
 
 /**
  * Abstract superclass of {@link Library} implementations based on generics.
@@ -36,7 +40,7 @@ import org.squashtest.csp.tm.domain.library.LibraryNode;
  * @param <NODE>
  *            The type of nodes this library contains.
  */
-public abstract class GenericLibrary<NODE extends LibraryNode> implements Library<NODE>, ProjectResource {
+public abstract class GenericLibrary<NODE extends LibraryNode> implements Library<NODE> {
 
 	public GenericLibrary() {
 		super();
@@ -44,7 +48,7 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 
 	@Override
 	public boolean isContentNameAvailable(String name) {
-		for (NODE content : getRootContent()) {
+		for (NODE content : getContent()) {
 			if (content.getName().equals(name)) {
 				return false;
 			}
@@ -53,16 +57,13 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 	}
 
 	@Override
-	public abstract Set<NODE> getRootContent();
-
-	@Override
-	public void addRootContent(NODE node) {
+	public void addContent(NODE node)  throws DuplicateNameException, NullArgumentException {
 		if (node == null) {
 			throw new NullArgumentException("node");
 		}
 
 		checkContentNameAvailable(node);
-		getRootContent().add(node);
+		getContent().add(node);
 		node.notifyAssociatedWithProject(getProject());
 	}
 
@@ -77,15 +78,19 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 		}
 	}
 
-	@Override
-	public void addContent(NODE contentToAdd) throws DuplicateNameException, NullArgumentException {
-		addRootContent(contentToAdd);
-
-	}
 	
 	@AclConstrainedObject	
 	@Override
 	public Library<?> getLibrary() {
 		return this;
+	}
+	
+	@Override
+	public List<String> getContentNames() {
+		List<String> contentNames = new ArrayList<String>(getContent().size());
+		for(NODE node : getContent()){
+			contentNames.add(node.getName());
+		}
+		return contentNames;
 	}
 }

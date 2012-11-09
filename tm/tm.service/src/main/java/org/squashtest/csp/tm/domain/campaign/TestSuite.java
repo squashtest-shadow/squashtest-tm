@@ -47,13 +47,16 @@ import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
+import org.squashtest.csp.tm.domain.library.Copiable;
+import org.squashtest.csp.tm.domain.library.NodeVisitor;
+import org.squashtest.csp.tm.domain.library.TreeNode;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
 @Auditable
 @Entity
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
-public class TestSuite implements Identified, BoundEntity{
+public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 
 	public TestSuite() {
 		super();
@@ -256,8 +259,9 @@ public class TestSuite implements Identified, BoundEntity{
 	 * 
 	 * @return returns a copy of a test Suite
 	 */
-	public TestSuite createPastableCopy() {
-		// the pastable copy of a test suite doesn't contain a test plan because
+	@Override
+	public TestSuite createCopy() {
+		// the copy of a test suite doesn't contain a test plan because
 		// , if so, the test plan wouldn't be
 		// reached with "getTestPlan()" because the test suite copy is not yet
 		// linked to an iteration.
@@ -375,4 +379,10 @@ public class TestSuite implements Identified, BoundEntity{
 	public Project getProject() {
 		return iteration.getProject();
 	}
+
+	@Override
+	public void accept(NodeVisitor visitor) {
+		visitor.visit(this);
+	}
+	
 }
