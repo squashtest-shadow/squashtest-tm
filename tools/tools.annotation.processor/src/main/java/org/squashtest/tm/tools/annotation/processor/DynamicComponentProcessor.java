@@ -122,44 +122,54 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 	}
 
 	private void processComponents() {
-		FileObject file = null;
 		Writer writer = null;
 
 		try {
-			file = filer
-					.createResource(StandardLocation.SOURCE_OUTPUT, "spring", generatedFileName(), (Element[]) null);
-
-			writer = file.openWriter();
-			writer.append(FILE_HEADER);
-
-			for (Element manager : dynamicComponents) {
-				messager.printMessage(Kind.NOTE,
-						"Processing @" + annotationClass().getSimpleName() + ' ' + manager.getSimpleName(), manager);
-
-				String beanDefinition = buildBeanDefinition(manager);
-
-				writer.append(beanDefinition);
-			}
-
-			writer.append(FILE_FOOTER);
+			writer = openWriter();
+			outputSpringContextFile(writer);
 		} catch (IOException e) {
 			messager.printMessage(Kind.WARNING, "Error during processing of @" + annotationClass().getSimpleName()
-					+ " annotations");
-			e.printStackTrace();
+					+ " annotations"); 
+			e.printStackTrace(); // NOSONAR : I dont want no logger
 		} finally {
 			if (writer != null) {
-				noFailClose(writer);
+				noFailCloseFile(writer);
 			}
 		}
 
 	}
 
-	private void noFailClose(Writer writer) {
+	private void outputSpringContextFile(Writer writer) throws IOException {
+		writer.append(FILE_HEADER);
+
+		for (Element manager : dynamicComponents) {
+			messager.printMessage(Kind.NOTE,
+					"Processing @" + annotationClass().getSimpleName() + ' ' + manager.getSimpleName(), manager);
+
+			String beanDefinition = buildBeanDefinition(manager);
+
+			writer.append(beanDefinition);
+		}
+
+		writer.append(FILE_FOOTER);
+	}
+
+	private Writer openWriter() throws IOException {
+		FileObject file;
+		Writer writer;
+		file = filer
+				.createResource(StandardLocation.SOURCE_OUTPUT, "spring", generatedFileName(), (Element[]) null);
+
+		writer = file.openWriter();
+		return writer;
+	}
+
+	private void noFailCloseFile(Writer writer) {
 		try {
 			writer.flush();
 			writer.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			e.printStackTrace(); // NOSONAR : I dont want no logger
 		}
 	}
 

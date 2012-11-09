@@ -94,7 +94,7 @@ public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponent
 	 */
 	@Override
 	protected List<DynamicComponentInvocationHandler> createInvocationHandlers() {
-		ArrayList<DynamicComponentInvocationHandler> handlers = new ArrayList<DynamicComponentInvocationHandler>(5);
+		ArrayList<DynamicComponentInvocationHandler> handlers = new ArrayList<DynamicComponentInvocationHandler>(8);
 
 		handlers.add(new PersistEntityHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new DeleteEntityHandler<ENTITY>(entityType, sessionFactory));
