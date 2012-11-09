@@ -243,7 +243,6 @@
 																				   "and cfb1.boundProject = cfb2.boundProject and cfb1.position >= cfb2.position group by cfb1.id"),	
 		@NamedQuery(name = "CustomFielBinding.updateBindingPosition", query="update CustomFieldBinding cfb set cfb.position = :newPos where cfb.id = :id"),
 		@NamedQuery(name = "CustomFieldBinding.findAllAlike", query="select cfb2 from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.id = ? and cfb1.boundProject = cfb2.boundProject and cfb1.boundEntity = cfb2.boundEntity order by cfb2.position"),
-
 		
 		//CustomFieldValue dao
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValues", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId = ? and cfv.boundEntityType = ? order by cfb.position asc"),

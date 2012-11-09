@@ -30,11 +30,13 @@ import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao;
+import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
 import org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService;
 import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
 
@@ -52,6 +54,9 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 
 	@Inject
 	private CustomFieldBindingDao customFieldBindingDao;
+	
+	@Inject
+	private CustomFieldValueDao customFieldValueDao;
 	
 	@Inject
 	private CustomFieldBindingModificationService customFieldBindingModificationService;
@@ -130,16 +135,28 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		CustomField customField = customFieldDao.findById(customFieldId);
 		if (!optional) {
 			checkDefaultValueExists(customField);
-			// TODO add all necessary customFieldValues
+			addDefaultValueToCustomFields(customFieldId, customField.getDefaultValue());
 		}
 		customField.setOptional(optional);
 	}
 
+	
 	private void checkDefaultValueExists(CustomField customField) {
 		if (customField.getDefaultValue() == null || customField.getDefaultValue().equals("")) {
 			throw new MandatoryCufNeedsDefaultValueException();
 		}
+	}
 
+	private void addDefaultValueToCustomFields(Long customFieldId,String defaulfValue){
+		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForCustomField(customFieldId);
+		for(CustomFieldBinding binding : bindings) {
+			 List<CustomFieldValue> values = customFieldValueDao.findAllCustomValuesOfBinding(binding.getId());
+			 for(CustomFieldValue value : values) {
+				 if(value.getValue() == null || value.getValue().equals("")) {
+					 value.setValue(defaulfValue);
+				 }
+			 }
+		}
 	}
 
 	/**

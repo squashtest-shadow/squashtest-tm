@@ -204,19 +204,20 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 	
 	function buildViewUrl(index, format) {
 		// see [Issue 1205] for why "document.location.protocol"
+
 		return document.location.protocol + '//' + document.location.host + config.reportUrl + "/views/" + index + "/formats/" + format;
 
 	}
 	
 	function loadTab(tab) {
-		var url = buildViewUrl(tab.index, "html");	
+		var url = buildViewUrl(tab.newTab.index(), "html");	
 		$.ajax({
 			type: 'post', 
 			url: url, 
 			data: JSON.stringify(formState),  
 			contentType: "application/json"
 		}).done(function (html) {
-			tab.panel.innerHTML = html;
+			tab.newPanel.html(html);
 		});		
 	}
 	
@@ -229,11 +230,11 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 		var tabPanel = $("#view-tabed-panel");
 
 		if (!selectedTab) {
-			tabPanel.tabs('select', 0);
+			tabPanel.tabs( "option", "active", 0);
 		} else {
 			loadTab(selectedTab);
 		}
-
+		
 		$("#view-tabed-panel:hidden").show('blind', {}, 500);
 	}
 	
@@ -241,13 +242,13 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 		selectedTab = ui;
 		var tabs = $(this);
 		tabs.find(".view-format-cmb").addClass('not-displayed');
-		tabs.find("#view-format-cmb-" + ui.index).removeClass('not-displayed');
+		tabs.find("#view-format-cmb-" + ui.newTab.index()).removeClass('not-displayed');
 		
 		loadTab(ui);
 	}
 	
 	function doExport() {
-		var viewIndex = selectedTab.index;
+		var viewIndex = selectedTab.newTab.index();
 		var format = $("#view-format-cmb-" + viewIndex).val();
 
 		var url = buildViewUrl(viewIndex, format);	
@@ -258,8 +259,9 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
  
 	function initViewTabs() {
 		$("#view-tabed-panel").tabs({
-			selected: -1,
-			select: onViewTabSelected
+			active: false,
+			collapsible: true,
+			activate: onViewTabSelected
 		});
 	}
 	/**

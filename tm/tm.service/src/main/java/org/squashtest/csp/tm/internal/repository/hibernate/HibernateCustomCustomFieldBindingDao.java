@@ -46,7 +46,7 @@ public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<Cus
 			
 		}
 	}
-
+	
 	@Override
 	public List<CustomFieldBinding> findAllByIds(Collection<Long> ids){
 		return executeListNamedQuery("CustomFieldBinding.findAllByIds", new SetBindingIdsParameterCallback(new ArrayList<Long>(ids)));
