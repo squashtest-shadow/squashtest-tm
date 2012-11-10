@@ -19,7 +19,7 @@
     <project.stage>RELEASE</project.stage> <!--  overridable by activating the profile development -->
     <spring.version.range>[3,4)</spring.version.range>
     <springdm.version.range>[2,3)</springdm.version.range>
-    <thymeleaf.version>2.0.13-SNAPSHOT</thymeleaf.version>
+    <thymeleaf.version>2.0.13</thymeleaf.version>
   </properties>
 
   <dependencies>
