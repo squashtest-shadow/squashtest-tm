@@ -55,6 +55,12 @@ class TestCaseModificationControllerTest extends Specification {
 	TestCaseImportanceJeditableComboDataBuilder importanceComboBuilder = Mock()
 	Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider = Mock()
 
+	TestCaseNatureJeditableComboDataBuilder natureComboBuilder = Mock()
+	Provider<TestCaseNatureJeditableComboDataBuilder> natureComboBuilderProvider = Mock()
+	
+	TestCaseTypeJeditableComboDataBuilder typeComboBuilder = Mock()
+	Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider = Mock()
+	
 	LevelLabelFormatter importanceLabelFormatter = Mock()
 	Provider<LevelLabelFormatter> levelLabelFormatterProvider = Mock()
 
