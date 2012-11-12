@@ -61,7 +61,7 @@ class TestCaseModificationControllerTest extends Specification {
 	TestCaseTypeJeditableComboDataBuilder typeComboBuilder = Mock()
 	Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider = Mock()
 	
-	LevelLabelFormatter importanceLabelFormatter = Mock()
+	LevelLabelFormatter levelLabelFormatter = Mock()
 	Provider<LevelLabelFormatter> levelLabelFormatterProvider = Mock()
 
 		def setup() {
@@ -72,8 +72,15 @@ class TestCaseModificationControllerTest extends Specification {
 		setupImportanceComboBuilder()
 		controller.importanceComboBuilderProvider = importanceComboBuilderProvider
 
-		setupImportanceLabelFormatter()		
+		setupNatureComboBuilder()
+		controller.natureComboBuilderProvider = natureComboBuilderProvider
+
+		setupTypeComboBuilder()
+		controller.typeComboBuilderProvider = typeComboBuilderProvider
+		
+		setupLevelLabelFormatter()		
 		controller.levelLabelFormatterProvider = levelLabelFormatterProvider
+	
 	}
 
 	def setupImportanceComboBuilder() {
@@ -83,10 +90,24 @@ class TestCaseModificationControllerTest extends Specification {
 		importanceComboBuilderProvider.get() >> importanceComboBuilder
 	}
 
-	def setupImportanceLabelFormatter() {
-		importanceLabelFormatter.useLocale(_) >> importanceLabelFormatter
+	def setupNatureComboBuilder() {
+		natureComboBuilder.useLocale(_) >> natureComboBuilder
+		natureComboBuilder.selectItem(_) >> natureComboBuilder
 
-		levelLabelFormatterProvider.get() >> importanceLabelFormatter
+		natureComboBuilderProvider.get() >> natureComboBuilder
+	}
+
+	def setupTypeComboBuilder() {
+		typeComboBuilder.useLocale(_) >> typeComboBuilder
+		typeComboBuilder.selectItem(_) >> typeComboBuilder
+
+		typeComboBuilderProvider.get() >> typeComboBuilder
+	}
+	
+	def setupLevelLabelFormatter() {
+		levelLabelFormatter.useLocale(_) >> levelLabelFormatter
+
+		levelLabelFormatterProvider.get() >> levelLabelFormatter
 	}
 
 		def "should build table model for test case steps"() {
@@ -288,13 +309,13 @@ class TestCaseModificationControllerTest extends Specification {
 		testCaseModificationService.findTestCaseWithSteps(10) >> testCase
 		
 		and:
-		importanceLabelFormatter.formatLabel(TestCaseImportance.HIGH) >> "takai"
+		levelLabelFormatter.formatLabel(TestCaseImportance.HIGH) >> "takai"
 
 		when:
 		ModelAndView mav = controller.showTestCaseInfo(10, Locale.JAPANESE)
 
 		then:
-		1 * importanceLabelFormatter.useLocale(Locale.JAPANESE) >> importanceLabelFormatter
+		3 * levelLabelFormatter.useLocale(Locale.JAPANESE) >> levelLabelFormatter
 		mav.modelMap['testCaseImportanceLabel'] == "takai"
 	}
 
