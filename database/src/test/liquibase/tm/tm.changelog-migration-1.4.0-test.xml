@@ -78,5 +78,5 @@
 			drop table `KEYVAL`;
 		</sql>
 	</changeSet>
-
+	
 </databaseChangeLog>

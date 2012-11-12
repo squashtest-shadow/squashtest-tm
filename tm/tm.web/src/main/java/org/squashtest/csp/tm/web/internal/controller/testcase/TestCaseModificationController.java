@@ -58,6 +58,8 @@ import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
+import org.squashtest.csp.tm.domain.testcase.TestCaseType;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
@@ -139,9 +141,14 @@ public class TestCaseModificationController {
 	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
 
 	@Inject
-	private Provider<LevelLabelFormatter> importanceLabelFormatterProvider;
-
-
+	private Provider<TestCaseNatureJeditableComboDataBuilder> natureComboBuilderProvider;
+	
+	@Inject
+	private Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider;
+	
+	@Inject
+	private Provider<LevelLabelFormatter> levelLabelFormatterProvider;
+	
 	@ServiceReference
 	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
 		this.testCaseModificationService = testCaseModificationService;
@@ -188,13 +195,24 @@ public class TestCaseModificationController {
 		mav.addObject("executionModes", executionModes);
 		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(testCase, locale));
 		mav.addObject("testCaseImportanceLabel", formatImportance(testCase.getImportance(), locale));
-
+		mav.addObject("testCaseNatureComboJson", buildNatureComboData(testCase, locale));
+		mav.addObject("testCaseNatureLabel", formatNature(testCase.getNature(), locale));
+		mav.addObject("testCaseTypeComboJson", buildTypeComboData(testCase, locale));
+		mav.addObject("testCaseTypeLabel", formatType(testCase.getType(), locale));
 	}
 
 	private String buildImportanceComboData(TestCase testCase, Locale locale) {
 		return importanceComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
+	private String buildNatureComboData(TestCase testCase, Locale locale) {
+		return natureComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	}
+	
+	private String buildTypeComboData(TestCase testCase, Locale locale) {
+		return typeComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	}
+	
 	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
 		return internationalizationHelper.internationalize(mode, locale);
 	}
@@ -346,6 +364,24 @@ public class TestCaseModificationController {
 		return formatImportance(importance, locale);
 	}
 
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-nature", VALUE })
+	public String changeNature(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseNature nature,
+			Locale locale) {
+		testCaseModificationService.changeNature(testCaseId, nature);
+
+		return formatNature(nature, locale);
+	}
+	
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-type", VALUE })
+	public String changeType(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseType type,
+			Locale locale) {
+		testCaseModificationService.changeType(testCaseId, type);
+
+		return formatType(type, locale);
+	}
+	
 	@RequestMapping(value = "/importanceAuto", method = RequestMethod.POST, params = { "importanceAuto" })
 	@ResponseBody
 	public String changeImportanceAuto(@PathVariable long testCaseId,
@@ -385,11 +421,35 @@ public class TestCaseModificationController {
 		TestCaseImportance importance = testCase.getImportance();
 		return formatImportance(importance, locale);
 	}
-
-	private String formatImportance(TestCaseImportance importance, Locale locale) {
-		return importanceLabelFormatterProvider.get().useLocale(locale).formatLabel(importance);
+	
+	@ResponseBody
+	@RequestMapping(value = "/nature", method = RequestMethod.GET)
+	public String getNature(@PathVariable long testCaseId, Locale locale) {
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		TestCaseNature nature = testCase.getNature();
+		return formatNature(nature, locale);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/type", method = RequestMethod.GET)
+	public String getType(@PathVariable long testCaseId, Locale locale) {
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		TestCaseType type = testCase.getType();
+		return formatType(type, locale);
+	}
+	
+	private String formatImportance(TestCaseImportance importance, Locale locale) {
+		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(importance);
+	}
+
+	private String formatNature(TestCaseNature nature, Locale locale) {
+		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(nature);
+	}
+	
+	private String formatType(TestCaseType type, Locale locale) {
+		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(type);
+	}
+	
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
 	public ModelAndView refreshGeneralInfos(@PathVariable long testCaseId) {
 

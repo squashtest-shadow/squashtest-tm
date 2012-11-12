@@ -309,5 +309,23 @@
 		</createTable>
 	
 	</changeSet>
+	
+	<changeSet id="tm-1.4.0.feat-1553.00" author="flaurens">
+		<comment>Adds a nature field to test cases</comment>
+		<addColumn tableName="TEST_CASE">
+			<column name="TC_NATURE" type="VARCHAR(30)" defaultValue="NONE">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="tm-1.4.0.feat-1554.00" author="flaurens">
+		<comment>Adds a type field to test cases</comment>
+		<addColumn tableName="TEST_CASE">
+			<column name="TC_TYPE" type="VARCHAR(30)" defaultValue="NONE">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
  

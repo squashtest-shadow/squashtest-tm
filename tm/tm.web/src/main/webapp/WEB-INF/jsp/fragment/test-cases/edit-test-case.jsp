@@ -84,6 +84,12 @@
 <s:url var="getImportance" value="/test-cases/{tcId}/importance">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
+<s:url var="getNature" value="/test-cases/{tcId}/nature">
+	<s:param name="tcId" value="${testCase.id}" />
+</s:url>
+<s:url var="getType" value="/test-cases/{tcId}/type">
+	<s:param name="tcId" value="${testCase.id}" />
+</s:url>
 <s:url var="importanceAutoUrl" value="/test-cases/{tcId}/importanceAuto">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
@@ -728,6 +734,14 @@ function addTestStepSuccessAnother(){
 			<comp:select-jeditable componentId="test-case-importance"
 				jsonData="${ testCaseImportanceComboJson }"
 				targetUrl="${ testCaseUrl }" />
+				
+			<comp:select-jeditable componentId="test-case-nature"
+				jsonData="${ testCaseNatureComboJson }"
+				targetUrl="${ testCaseUrl }" />
+				
+			<comp:select-jeditable componentId="test-case-type"
+				jsonData="${ testCaseTypeComboJson }"
+				targetUrl="${ testCaseUrl }" />
 		</c:if>
 
 
@@ -769,6 +783,25 @@ function addTestStepSuccessAnother(){
 							</c:if>
 						</div>
 					</div>
+					
+					<div class="display-table-row">
+						<label for="test-case-nature" class="display-table-cell">
+							<f:message	key="test-case.nature.combo.label" />
+						</label>
+						<div class="display-table-cell">
+							<span id="test-case-nature">${ testCaseNatureLabel }</span>
+						</div>
+					</div>
+					
+					<div class="display-table-row">
+						<label for="test-case-type" class="display-table-cell">
+							<f:message	key="test-case.type.combo.label" />
+						</label>
+						<div class="display-table-cell">
+							<span id="test-case-type">${ testCaseTypeLabel }</span>
+						</div>
+					</div>
+					
 						<%-- Test Automation structure --%>
 					<c:if test="${testCase.project.testAutomationEnabled}">
 					<ta:testcase-script-elt-structure testCase="${testCase}" canModify="${writable}" testCaseUrl="${testCaseUrl}"/>

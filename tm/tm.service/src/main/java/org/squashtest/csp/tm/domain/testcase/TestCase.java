@@ -96,6 +96,16 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Basic(optional = false)
 	private TestCaseImportance importance = LOW;
 
+	@Enumerated(EnumType.STRING)
+	@Basic(optional = false)
+	@Column(name = "TC_NATURE")
+	private TestCaseNature nature = TestCaseNature.NONE;
+	
+	@Enumerated(EnumType.STRING)
+	@Basic(optional = false)
+	@Column(name = "TC_TYPE")
+	private TestCaseType type = TestCaseType.NONE;
+	
 	/**
 	 * Should the importance be automatically computed.
 	 */
@@ -229,7 +239,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 * {@link TestCase}.
 	 * 
 	 * When making a copy of a requirement, we cannot use {@link #addVerifiedRequirementVersion(RequirementVersion)}
-	 * because of the single requirment check.
+	 * because of the single requirement check.
 	 * 
 	 * @param requirementVersionCopy
 	 *            a copy of an existing requirement version. It should not have a requirement yet.
@@ -344,6 +354,22 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.importance = weight;
 	}
 
+	public TestCaseNature getNature() {
+		return nature;
+	}
+
+	public void setNature(@NotNull TestCaseNature nature) {
+		this.nature = nature;
+	}
+
+	public TestCaseType getType() {
+		return type;
+	}
+
+	public void setType(@NotNull TestCaseType type) {
+		this.type = type;
+	}
+	
 	/**
 	 * @param prerequisite
 	 *            the prerequisite to set
