@@ -53,9 +53,7 @@ import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
 import org.unitils.dbunit.annotation.DataSet;
-import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao.CustomFieldValuesPair;
-
-
+import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao.CustomFieldValuesPair; 
 
 import spock.unitils.UnitilsSupport;
 
