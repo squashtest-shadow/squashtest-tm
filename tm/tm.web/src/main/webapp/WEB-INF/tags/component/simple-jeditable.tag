@@ -39,7 +39,7 @@
 		var txt = component.text();
 		component.text($.trim(txt));
 		component.editable( '${ targetUrl }', {
-			type: 'text',												//this input type isn't standard, refers to jquery.jeditable.ckeditor.js
+			type: 'text',
 			cols: 80,
 			max_size: 20,
 			placeholder: '<f:message key="rich-edit.placeholder" />',

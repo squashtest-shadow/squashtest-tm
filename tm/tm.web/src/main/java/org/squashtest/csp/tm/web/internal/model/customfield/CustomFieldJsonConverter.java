@@ -30,8 +30,10 @@ import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.customfield.InputType;
+import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 
 @Component
 public class CustomFieldJsonConverter {
@@ -82,21 +84,21 @@ public class CustomFieldJsonConverter {
 	
 	public CustomFieldModel toJson(CustomField field){
 		
-		CustomFieldModel model = new CustomFieldModel();
+		CustomFieldModel model;
 		
-		InputTypeModel typeModel = toJson(field.getInputType());
-		
-		model.setId(field.getId());
-		model.setName(field.getName());
-		model.setLabel(field.getLabel());
-		model.setOptional(field.isOptional());
-		model.setDefaultValue(field.getDefaultValue());
-		model.setInputType(typeModel);		
-		model.setFriendlyOptional(field.isOptional() ? getMessage("label.Yes") : getMessage("label.No"));
+		switch(field.getInputType()){
+		case DROPDOWN_LIST : model = _newSingleSelectFieldModel((SingleSelectField)field); 
+							break;
+							
+		default : model = _newDefaultCustomFieldModel(field);
+							break;
+		}
 		
 		return model;
 		
 	}
+
+
 	
 	public InputTypeModel toJson(InputType type){
 	
@@ -130,5 +132,43 @@ public class CustomFieldJsonConverter {
 		return messageSource.getMessage(key, null, locale);
 	}
 	
+
+	private CustomFieldModel _newDefaultCustomFieldModel(CustomField field) {
+		CustomFieldModel model = new CustomFieldModel();
+
+		return _populateCustomFieldModel(model, field);
+	}
+	
+	
+	private SingleSelectFieldModel _newSingleSelectFieldModel(SingleSelectField field){
+		
+		SingleSelectFieldModel model = new SingleSelectFieldModel();
+		
+		_populateCustomFieldModel(model, field);
+		
+		
+		for (CustomFieldOption option : field.getOptions()){
+			CustomFieldOptionModel newOption = new CustomFieldOptionModel();
+			newOption.setLabel(option.getLabel());
+			model.addOption(newOption);
+		}
+	
+		return model;		
+	}
+	
+	private CustomFieldModel _populateCustomFieldModel(CustomFieldModel model, CustomField field){
+		
+		InputTypeModel typeModel = toJson(field.getInputType());
+		
+		model.setId(field.getId());
+		model.setName(field.getName());
+		model.setLabel(field.getLabel());
+		model.setOptional(field.isOptional());
+		model.setDefaultValue(field.getDefaultValue());
+		model.setInputType(typeModel);		
+		model.setFriendlyOptional(field.isOptional() ? getMessage("label.Yes") : getMessage("label.No"));
+	
+		return model;		
+	}
 	
 }

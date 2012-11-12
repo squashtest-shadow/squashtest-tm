@@ -31,13 +31,13 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
-import org.squashtest.tm.tm.validation.constraint.UniqueItems;
+
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.internal.service.customField.CannotDeleteDefaultOptionException;
 import org.squashtest.csp.tm.internal.service.customField.OptionAlreadyExistException;
+import org.squashtest.tm.tm.validation.constraint.UniqueItems;
 
 /**
  * A CustomField which stores a single option selected from a list.
@@ -166,5 +166,9 @@ public class SingleSelectField extends CustomField {
 		for(String option : optionsLabels){
 			removeOption(option);
 		}
+	}
+	
+	public void accept(CustomFieldVisitor visitor){
+		visitor.visit(this);
 	}
 }

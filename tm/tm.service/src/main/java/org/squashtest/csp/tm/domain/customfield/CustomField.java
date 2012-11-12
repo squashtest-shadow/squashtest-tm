@@ -131,4 +131,9 @@ public class CustomField {
 	public InputType getInputType() {
 		return inputType;
 	}
+	
+	
+	public void accept(CustomFieldVisitor visitor){
+		visitor.visit(this);
+	}
 }

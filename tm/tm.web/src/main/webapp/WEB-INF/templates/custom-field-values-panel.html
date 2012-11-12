@@ -24,10 +24,14 @@
 <div th:remove="all">
 	<!--  documentation : 
 			Parameters :
-				- a List of CustomFieldValue, named 'customFieldValues'
+				- a CustomFieldValueConfigurationBean, named 'configuration'
 				- a boolean named 'editable' saying whether those values are editable. 
 	 -->
-
+			<!-- 
+			<div th:text="${confBean.value}" th:if="${confBean.inputType != 'CHECKBOX'}">maximale</div>
+			<input disabled="disabled" type="checkbox" class="display-table-cell" checked="checked" th:if="${confBean.inputType == 'CHECKBOX' and  confBean.valueAsBoolean}" />
+			<input disabled="disabled" type="checkbox" class="display-table-cell"  th:if="${confBean.inputType == 'CHECKBOX' and  ! confBean.valueAsBoolean}" />
+			 -->
 </div>
 
 
@@ -53,15 +57,68 @@
 <div id="custom-field-values" >
 	
 	<div class="display-table">
-		<div class="display-table-row" th:each="cufValue : ${customFieldValues}">
-			<label class="display-table-cell" th:text="${cufValue.binding.customField.name}">quantité de café</label>
-			<p class="display-table-cell editable" th:text="${cufValue.value}">maximale</p>	
+		<div class="display-table-row" th:each="confBean : ${configuration.configurationBeans}">
+			<label class="display-table-cell" th:text="${confBean.fieldName}">quantité de café</label>
+			<div class="display-table-cell" th:switch="${confBean.type}">
+				<input type="checkbox" disabled="disabled" th:case="'checkbox'" th:checked="${confBean.valueAsBoolean}"/>
+				<span th:case="*" th:text="${confBean.fieldValue}">maximum</span>
+			</div>
 		</div>
 	</div>
 	
-	<script type="text/javascript" th:inline="javascript">
+	<script th:if="${editable}" type="text/javascript" th:inline="javascript">
 		//<![CDATA[
-		         
+			require(['domReady', 'jquery'], function(domReady, $){
+				
+				var imgUrl = /*[[@{/scripts/jquery/indicator.gif}]]*/"../../scripts/jquery/indicator.gif";
+				
+				var baseConf = {
+					submit : /*[[#{rich-edit.button.ok.label}]]*/"ok",
+					cancel : /*[[#{label.Cancel}]]*/"cancel",
+					placeholder : /*[[#{rich-edit.placeholder}]]*/"say something",
+					cols: 80,
+					max_size: 20, 
+					onblur : function(){},		
+					maxlength : 255,
+					indicator : '<img src="'+imgUrl+'" alt="processing..." />'
+				};	
+				
+				var postFunction = function(value, settings){
+					var cfurl = /*[[@{/custom-fields/values}+'/']]*/"http://localhost:8080/squash/custom-fields/values/";
+					var url = cfurl+settings.fieldId;
+					$.post(url, {value : value});
+					return value;
+				}
+				
+				var settings = /*[[${configuration.configurationBeans}]]*/ [];
+				
+				domReady( function(){
+					
+					var widgets = $("#custom-field-values div.display-table-cell *");
+					widgets.addClass("editable");
+					
+					var count = widgets.length;
+					
+					for (var i =0;i<count;i++){
+						
+						var widget = widgets.eq(i);
+						var conf = settings[i];
+						
+						//non-jeditable inputs
+						if (conf.type==='checkbox'){
+							widget.prop('disabled', false);
+							widget.change(function(){
+								postFunction(this.checked, conf);
+							});
+						}
+						//jeditable inputs
+						else{
+							var effective = $.extend({}, baseConf, conf);
+							widget.editable(postFunction, effective);							
+						}
+					}					
+				});			
+			});
 		//]]>
 	</script> 
 	
@@ -69,6 +126,10 @@
 
 
 <div th:fragment="plain-text" th:remove="all">
-	
+	alert('toto');
+</div>
 
+
+<div th:fragment="checkbox" th:remove="all">
+	alert('titi');
 </div>

@@ -30,12 +30,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.csp.tm.web.internal.model.customfield.CustomFieldJsonConverter;
+import org.squashtest.csp.tm.web.internal.model.customfield.CustomFieldValueConfigurationBean;
 import org.squashtest.csp.tm.web.internal.model.customfield.CustomFieldValueModel;
 
 
@@ -64,6 +66,7 @@ public class CustomFieldValuesController {
 
 
 	@RequestMapping(method=RequestMethod.GET, params = {"boundEntityId","boundEntityType"} , headers="Accept=application/json")
+	@ResponseBody
 	public List<CustomFieldValueModel> getCustomFieldValuesForEntity(@RequestParam("boundEntityId") Long id, @RequestParam("boundEntityType") BindableEntity entityType){
 		
 		List<CustomFieldValue> values = managerService.findAllCustomFieldValues(id, entityType);
@@ -81,9 +84,11 @@ public class CustomFieldValuesController {
 		
 		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", id, entityType.getReferencedClass().getName());
 		
+		CustomFieldValueConfigurationBean conf = new CustomFieldValueConfigurationBean(values);
+		
 		ModelAndView mav = new ModelAndView("custom-field-values-panel.html");
-		mav.addObject("editable", editable);
-		mav.addObject("customFieldValues", values);
+		mav.addObject("editable", editable);	
+		mav.addObject("configuration", conf);
 		
 		return mav;
 		
@@ -99,5 +104,7 @@ public class CustomFieldValuesController {
 		
 		return models;
 	}
+	
+	
 	
 }

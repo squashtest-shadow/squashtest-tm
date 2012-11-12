@@ -37,14 +37,14 @@
 	$(function() {
 		var sel_checkbx = $('#${associatedSelectJeditableId}-auto');
 		
-		sel_checkbx.attr('checked', ${isAuto});
+		sel_checkbx.prop('checked', ${isAuto});
 		
-		if (sel_checkbx.attr('checked')){
+		if (sel_checkbx.prop('checked')){
 			sel_setAutoMode();
 		}
 		
 		sel_checkbx.change(function(){
-			var sel_isAuto = $(this).attr('checked');
+			var sel_isAuto = $(this).prop('checked');
 			if (sel_isAuto){
 				$('#${associatedSelectJeditableId}').find("[type='cancel']").trigger('click');
 				sel_setAutoMode();
