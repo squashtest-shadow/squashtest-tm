@@ -56,7 +56,7 @@ class TestCaseModificationControllerTest extends Specification {
 	Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider = Mock()
 
 	LevelLabelFormatter importanceLabelFormatter = Mock()
-	Provider<LevelLabelFormatter> importanceLabelFormatterProvider = Mock()
+	Provider<LevelLabelFormatter> levelLabelFormatterProvider = Mock()
 
 		def setup() {
 		controller.testCaseModificationService = testCaseModificationService
@@ -67,7 +67,7 @@ class TestCaseModificationControllerTest extends Specification {
 		controller.importanceComboBuilderProvider = importanceComboBuilderProvider
 
 		setupImportanceLabelFormatter()		
-		controller.importanceLabelFormatterProvider = importanceLabelFormatterProvider
+		controller.levelLabelFormatterProvider = levelLabelFormatterProvider
 	}
 
 	def setupImportanceComboBuilder() {
@@ -80,7 +80,7 @@ class TestCaseModificationControllerTest extends Specification {
 	def setupImportanceLabelFormatter() {
 		importanceLabelFormatter.useLocale(_) >> importanceLabelFormatter
 
-		importanceLabelFormatterProvider.get() >> importanceLabelFormatter
+		levelLabelFormatterProvider.get() >> importanceLabelFormatter
 	}
 
 		def "should build table model for test case steps"() {
