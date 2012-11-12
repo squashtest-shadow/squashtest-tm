@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.csp.core.infrastructure.dynamicmanager.QueryParam;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.core.foundation.collection.Paging;
