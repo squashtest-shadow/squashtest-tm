@@ -113,14 +113,16 @@
 				</div>
 				
 				<div class="toolbar-button-panel">
-					<sec:authorize access=" hasRole('ROLE_ADMIN')">
+					<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 					<f:message var="rename" key="project.button.rename.label" />
 					<input type="button" value="${ rename }" id="rename-project-button"
 								class="button" />
+					</sec:authorize>
+					<sec:authorize access="hasRole('ROLE_ADMIN')">
 						<f:message var="delete" key='project.button.delete.label' />
 						<input type="button" value="${ delete }" id="delete-project-button"
 								class="button" />
-						</sec:authorize>
+					</sec:authorize>						
 				</div>
 				<div style="clear:both"></div>
 			</div>
@@ -426,7 +428,7 @@
 </script>
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
-<sec:authorize access=" hasRole('ROLE_ADMIN')">
+<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 	<comp:popup id="rename-project-dialog"
 		titleKey="dialog.rename-project.title" isContextual="true"
 		openedBy="rename-project-button">

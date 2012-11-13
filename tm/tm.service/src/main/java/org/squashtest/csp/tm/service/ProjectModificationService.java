@@ -31,7 +31,7 @@ public interface ProjectModificationService extends CustomProjectModificationSer
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	void changeLabel(long projectId, String newLabel);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	void changeName(long projectId, String newName);
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
