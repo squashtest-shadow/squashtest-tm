@@ -25,22 +25,27 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
 import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
+import org.squashtest.csp.tm.domain.testcase.TestCaseType;
 
 public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 
 	private String name = null;
 	private boolean groupByProject = false;
 	private String[] importances;	
-	
+	private String[] natures;
+	private String[] types;
 
 	
 	public TestCaseSearchCriteriaAdapter(String name, boolean groupByProject,
-			String[] importances) {
+			String[] importances, String[] natures, String[] types) {
 		super();
 		setName(name);
 		isGroupByProject(groupByProject);
 		setImportanceFilter(importances);
+		setNatureFilter(natures);
+		setTypeFilter(types);
 	}
 
 	@Override
@@ -57,6 +62,15 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 		return (importances.length > 0);
 	}
 	
+	public boolean usesNatureFilter(){
+		return (natures.length > 0);
+	}
+	
+	public boolean usesTypeFilter(){
+		return (types.length > 0);
+	}
+	
+	
 	@Override
 	public List<TestCaseImportance> getImportanceFilterSet() {		
 			
@@ -70,6 +84,31 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 		
 	}
 	
+	@Override
+	public List<TestCaseNature> getNatureFilterSet() {		
+			
+		List<TestCaseNature> result = new LinkedList<TestCaseNature>();
+		
+		for (String str : natures){
+			result.add(TestCaseNature.valueOf(str));
+		}
+		
+		return result;
+		
+	}
+	
+	@Override
+	public List<TestCaseType> getTypeFilterSet() {		
+			
+		List<TestCaseType> result = new LinkedList<TestCaseType>();
+		
+		for (String str : types){
+			result.add(TestCaseType.valueOf(str));
+		}
+		
+		return result;
+		
+	}
 	
 	public void setName(String name){
 		this.name=name;
@@ -84,6 +123,24 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 			this.importances=new String[0];
 		}else{
 			this.importances = Arrays.copyOf(importances, importances.length);
+		}
+		
+	}
+	
+	public void setNatureFilter(String[] natures){ //NOSONAR no, this array is definitely not stored directly.
+		if (natures == null){
+			this.natures=new String[0];
+		}else{
+			this.natures = Arrays.copyOf(natures, natures.length);
+		}
+		
+	}
+	
+	public void setTypeFilter(String[] types){ //NOSONAR no, this array is definitely not stored directly.
+		if (types == null){
+			this.types=new String[0];
+		}else{
+			this.types = Arrays.copyOf(types, types.length);
 		}
 		
 	}

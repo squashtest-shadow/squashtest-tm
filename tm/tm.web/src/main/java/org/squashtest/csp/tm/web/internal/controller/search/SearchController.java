@@ -101,10 +101,12 @@ public class SearchController {
 	 */
 	@RequestMapping(value = "/test-cases", method = RequestMethod.GET)
 	public ModelAndView searchOrderedTestCases(@RequestParam("name") String name, @RequestParam("order") Boolean order, 
-			@RequestParam(value="importance[]", required=false) String[] importance) {
+			@RequestParam(value="importance[]", required=false) String[] importance,
+			@RequestParam(value="nature[]", required=false) String[] nature,
+			@RequestParam(value="type[]", required=false) String[] type) {
 		LOGGER.info("SQUASH INFO: TRY TestCase search with name : " + name);
 
-		TestCaseSearchCriteriaAdapter criteria = new TestCaseSearchCriteriaAdapter(name, order, importance);
+		TestCaseSearchCriteriaAdapter criteria = new TestCaseSearchCriteriaAdapter(name, order, importance, nature, type);
 		
 		List<TestCaseLibraryNode> resultList = searchService.findTestCase(criteria);
 

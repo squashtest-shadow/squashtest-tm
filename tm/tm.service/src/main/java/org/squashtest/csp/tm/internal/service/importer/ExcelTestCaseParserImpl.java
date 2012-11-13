@@ -39,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.SheetCorruptedException;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
+import org.squashtest.csp.tm.domain.testcase.TestCaseType;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 
 /*
@@ -140,6 +142,23 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 				pseudoTestCase.importance = value;
 			}
 		});
+		
+		// nature populator
+		fieldPopulators.add(new FieldPopulator(NATURE_TAG) {
+			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
+				String value = valueCell(row).getStringCellValue();
+				pseudoTestCase.nature = value;
+			}
+		});
+		
+		// type populator
+		fieldPopulators.add(new FieldPopulator(TYPE_TAG) {
+			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
+				String value = valueCell(row).getStringCellValue();
+				pseudoTestCase.type = value;
+			}
+		});
+		
 		// created by populator
 		fieldPopulators.add(new FieldPopulator(CREATED_BY_TAG) {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
@@ -294,6 +313,30 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 			testCase.setImportance(TestCaseImportance.defaultValue());
 		}
 
+		// nature
+		try {
+			TestCaseNature nature = pseudoTestCase.formatNature();
+			testCase.setNature(nature);
+
+		} catch (IllegalArgumentException ex) {
+
+			LOGGER.warn(ex.getMessage());
+			summary.incrModified();
+			testCase.setNature(TestCaseNature.defaultValue());
+		}
+		
+		// type
+		try {
+			TestCaseType type = pseudoTestCase.formatType();
+			testCase.setType(type);
+
+		} catch (IllegalArgumentException ex) {
+
+			LOGGER.warn(ex.getMessage());
+			summary.incrModified();
+			testCase.setType(TestCaseType.defaultValue());
+		}
+		
 		// test steps
 		List<TestStep> steps = pseudoTestCase.formatSteps();
 

@@ -31,6 +31,8 @@ interface ExcelTestCaseParser {
 
 	String DESCRIPTION_TAG = "Description";
 	String IMPORTANCE_TAG = "Importance";
+	String NATURE_TAG = "Nature";
+	String TYPE_TAG = "Type";
 	String CREATED_ON_TAG = "Created_on";
 	String CREATED_BY_TAG = "Created_by";
 	String PREREQUISITE_TAG = "Prerequisite";

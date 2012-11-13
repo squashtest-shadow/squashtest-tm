@@ -457,6 +457,18 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		} else {
 			hCriteria = tcNodeRootedCriteria(criteria);
 		}
+		
+		if (usesNature(criteria)) {
+			hCriteria = testCaseRootedCriteria(criteria);
+		} else {
+			hCriteria = tcNodeRootedCriteria(criteria);
+		}
+
+		if (usesType(criteria)) {
+			hCriteria = testCaseRootedCriteria(criteria);
+		} else {
+			hCriteria = tcNodeRootedCriteria(criteria);
+		}
 
 		if (criteria.isGroupByProject()) {
 			hCriteria.addOrder(Order.asc(PROJECT));
@@ -476,10 +488,24 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return (!criteria.getImportanceFilterSet().isEmpty());
 	}
 
+	private boolean usesNature(TestCaseSearchCriteria criteria) {
+		return (!criteria.getNatureFilterSet().isEmpty());
+	}
+	
+	private boolean usesType(TestCaseSearchCriteria criteria) {
+		return (!criteria.getTypeFilterSet().isEmpty());
+	}
+	
 	private Criteria testCaseRootedCriteria(TestCaseSearchCriteria criteria) {
 		Criteria crit = currentSession().createCriteria(TestCase.class);
 		if (!criteria.getImportanceFilterSet().isEmpty()) {
 			crit.add(Restrictions.in("importance", criteria.getImportanceFilterSet()));
+		}
+		if (!criteria.getNatureFilterSet().isEmpty()) {
+			crit.add(Restrictions.in("nature", criteria.getNatureFilterSet()));
+		}
+		if (!criteria.getTypeFilterSet().isEmpty()) {
+			crit.add(Restrictions.in("type", criteria.getTypeFilterSet()));
 		}
 		return crit;
 	}

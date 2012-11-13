@@ -82,7 +82,7 @@
 					return;
 				}
 			</c:if>
-			research($("#searchName").val(), $('#project-view').attr('checked'));
+			research($("#searchName").val(), $('#project-view').prop('checked'));
 			$.cookie('search${workspace}', $("#searchName").val());	
 		});
 		
@@ -104,6 +104,9 @@
 		</c:if>
 		<c:if test="${ workspace eq 'campaign' && empty linkable}" >
 		$("#search").addClass("search-div-campaign");
+		</c:if>
+		<c:if test="${ workspace eq 'test-case' || linkable eq 'test-case' }" >
+		$("#search").addClass("search-div-testcase");
 		</c:if>
 	}
 	
@@ -152,6 +155,8 @@
 			data['name'] = rename;
 			data['order'] = order;
 			data['importance'] = getImportanceParams();
+			data['nature'] = getNatureParams();
+			data['type'] = getTypeParams();
 			url = '${searchTCUrl}';
 			
 			<%-- the following is just more wtf on the pile of wtf, I don't care anymore --%>
@@ -423,6 +428,18 @@
 		});
 	}
 	
+	function getNatureParams(){
+		return $(".search-panel-tc-nature input:checked").collect(function(elt){
+			return $(elt).data('value');
+		});
+	}
+	
+	function getTypeParams(){
+		return $(".search-panel-tc-type input:checked").collect(function(elt){
+			return $(elt).data('value');
+		});
+	}
+	
 	function testEmptyCriticality (){
 		var value = getCriticalityParams (); 
 		for(var i = 0; i < value.length; i++)
@@ -625,22 +642,164 @@
 									key="search.test-case.importance.filter" /> </span>
 						</div>
 						<div class="options">
-							<div class="search-tc-importance-1">
-								<input type="checkbox" id="importance-1" data-value="LOW" checked="checked"/><span><f:message
-										key="test-case.importance.LOW" /> </span>
-							</div>
-							<div class="search-tc-importance-2">
-								<input type="checkbox" id="importance-2" data-value="MEDIUM" checked="checked"/><span><f:message
-										key="test-case.importance.MEDIUM" /> </span>
-							</div>
-							<div class="search-tc-importance-3">
-								<input type="checkbox" id="importance-3" data-value="HIGH" checked="checked"/><span><f:message
-										key="test-case.importance.HIGH" /> </span>
-							</div>
-							<div class="search-tc-importance-4">
-								<input type="checkbox" id="importance-4" data-value="VERY_HIGH" checked="checked"/><span><f:message
-										key="test-case.importance.VERY_HIGH" /> </span>
-							</div>
+							<table>
+								<tr>
+									<td>
+										<div class="search-tc-importance-1">
+											<input type="checkbox" id="importance-1" data-value="LOW" checked="checked"/><span><f:message
+													key="test-case.importance.LOW" /> </span>
+										</div>
+									</td>
+									<td>
+										<div class="search-tc-importance-2">
+											<input type="checkbox" id="importance-2" data-value="MEDIUM" checked="checked"/><span><f:message
+													key="test-case.importance.MEDIUM" /> </span>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="search-tc-importance-3">
+											<input type="checkbox" id="importance-3" data-value="HIGH" checked="checked"/><span><f:message
+													key="test-case.importance.HIGH" /> </span>
+										</div>
+									</td>
+									<td>
+										<div class="search-tc-importance-4">
+											<input type="checkbox" id="importance-4" data-value="VERY_HIGH" checked="checked"/><span><f:message
+													key="test-case.importance.VERY_HIGH" /> </span>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="search-panel-tc-nature">
+						<div class="caption">
+							<span class="gray-text"><f:message
+									key="search.test-case.nature.filter" /> </span>
+						</div>
+						<div class="options">
+							<table>
+								<tr>
+									<td>
+										<div class="search-tc-nature-1">
+											<input type="checkbox" id="nature-1" data-value="FUNCTIONAL" checked="checked"/><span><f:message
+													key="test-case.nature.FUNCTIONAL" /> </span>
+										</div>
+									</td>
+									<td>
+										<div class="search-tc-nature-2">
+											<input type="checkbox" id="nature-2" data-value="BUSINESS" checked="checked"/><span><f:message
+													key="test-case.nature.BUSINESS" /> </span>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="search-tc-nature-3">
+											<input type="checkbox" id="nature-3" data-value="NON_FUNCTIONAL" checked="checked"/><span><f:message
+													key="test-case.nature.NON_FUNCTIONAL" /> </span>
+										</div>
+									</td>
+									<td>
+										<div class="search-tc-nature-4">
+											<input type="checkbox" id="nature-4" data-value="PERFORMANCE" checked="checked"/><span><f:message
+													key="test-case.nature.PERFORMANCE" /> </span>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="search-tc-nature-5">
+											<input type="checkbox" id="nature-5" data-value="SECURITY" checked="checked"/><span><f:message
+													key="test-case.nature.SECURITY" /> </span>
+										</div>
+									</td>
+									<td>
+										<div class="search-tc-nature-6">
+											<input type="checkbox" id="nature-6" data-value="ATDD" checked="checked"/><span><f:message
+													key="test-case.nature.ATDD" /> </span>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="search-tc-nature-7">
+											<input type="checkbox" id="nature-7" data-value="NONE" checked="checked"/><span><f:message
+													key="test-case.nature.NONE" /> </span>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="search-panel-tc-type">
+						<div class="caption">
+							<span class="gray-text"><f:message
+									key="search.test-case.type.filter" /> </span>
+						</div>
+						<div class="options">
+							<table>
+								<tr>
+									<td>
+										<div class="search-tc-type-1">
+											<input type="checkbox" id="type-1" data-value="ACCEPTANCE" checked="checked"/><span><f:message
+													key="test-case.type.ACCEPTANCE" /> </span>
+										</div>
+									</td>
+									<td>
+										<div class="search-tc-type-2">
+											<input type="checkbox" id="type-2" data-value="FIX" checked="checked"/><span><f:message
+													key="test-case.type.FIX" /> </span>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="search-tc-type-3">
+											<input type="checkbox" id="type-3" data-value="FEATURE" checked="checked"/><span><f:message
+													key="test-case.type.FEATURE" /> </span>
+										</div>
+									</td>
+									<td>
+										<div class="search-tc-type-4">
+											<input type="checkbox" id="type-4" data-value="NON_REGRESSION" checked="checked"/><span><f:message
+													key="test-case.type.NON_REGRESSION" /> </span>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="search-tc-type-5">
+											<input type="checkbox" id="type-5" data-value="END_TO_END" checked="checked"/><span><f:message
+													key="test-case.type.END_TO_END" /> </span>
+										</div>
+									</td>
+									<td>
+										<div class="search-tc-type-6">
+											<input type="checkbox" id="type-6" data-value="PARTNER" checked="checked"/><span><f:message
+													key="test-case.type.PARTNER" /> </span>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="search-tc-type-7">
+											<input type="checkbox" id="type-7" data-value="NONE" checked="checked"/><span><f:message
+													key="test-case.type.NONE" /> </span>
+										</div>
+									</td>
+								</tr>
+							</table>
 						</div>
 					</div>
 				</td>
