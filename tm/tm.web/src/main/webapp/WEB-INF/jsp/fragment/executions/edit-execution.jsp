@@ -162,7 +162,37 @@
 		<div style="clear: both;"></div>
 	</div>
 
-
+	<%----------------------------------- Information -----------------------------------------------%>
+	
+	<comp:toggle-panel id="execution-information-panel"
+		titleKey="generics.information.title" isContextual="true"
+		open="${ not empty execution.referencedTestCase }">
+		<jsp:attribute name="body">
+		<div id="execution-information-table" class="display-table">
+			<div class="display-table-row">
+				<label class="display-table-cell" for="testcase-description"><f:message key="label.Description" /></label>
+				<div id="testcase-description" class="display-table-cell">${ execution.referencedTestCase.description }</div>
+			</div>
+			<div class="display-table-row">
+				<label class="display-table-cell" for="testcase-reference"><f:message key="test-case.reference.label" /></label>
+				<div id="testcase-reference" class="display-table-cell">${ execution.referencedTestCase.reference }</div>
+			</div>
+			<div class="display-table-row">
+				<label class="display-table-cell" for="testcase-importance"><f:message key="test-case.importance.label" /></label>
+				<div id="testcase-importance" class="display-table-cell"><comp:level-message level="${ execution.referencedTestCase.importance }"/></div>
+			</div>
+			<div class="display-table-row">
+				<label class="display-table-cell" for="testcase-nature"><f:message key="test-case.nature.label" /></label>
+				<div id="testcase-nature" class="display-table-cell"><comp:level-message level="${ execution.referencedTestCase.nature }"/></div>
+			</div>
+			<div class="display-table-row">
+				<label class="display-table-cell" for="testcase-type"><f:message key="test-case.type.label" /></label>
+				<div id="testcase-type" class="display-table-cell"><comp:level-message level="${ execution.referencedTestCase.type }"/></div>
+			</div>
+		</div>
+	</jsp:attribute>
+	</comp:toggle-panel>
+	
 	<%----------------------------------- Prerequisites -----------------------------------------------%>
 
 	<comp:toggle-panel id="execution-prerequisite-panel"
