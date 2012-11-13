@@ -157,96 +157,97 @@
     	    </c:if>
     
     	    domReady(function() {
-		//multiple deletion
-		$( '#${ testCaseMultipleRemovalPopupId }' ).bind('dialogclose', function() {
-			var answer = $("#${ testCaseMultipleRemovalPopupId }").data("answer");
-			if (answer != "yes") {
-				return;
-			}
-			
-			var table = $( '#test-cases-table' ).dataTable();
-			var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
-			
-			if (ids.length > 0) {
-				$.ajax({
-					url : '${ campaignUrl }/test-plan',
-					type : 'POST',
-					data : { 'action' : 'remove', itemIds: ids }
-				})
-				.success(refreshTestPlan);
-			}
-		
-		});
-
-		
-		/* **************************** datatable settings ******************* */
-		
-		
-		var tableSettings = {
-			"oLanguage":{
-				"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
-				"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
-				"sInfo": '<f:message key="generics.datatable.info" />',
-				"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
-				"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
-				"oPaginate":{
-					"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
-					"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
-					"sNext":     '<f:message key="generics.datatable.paginate.next" />',
-					"sLast":     '<f:message key="generics.datatable.paginate.last" />'
-				}
-			},				
-			"sAjaxSource" : "${ campaignUrl }/test-plan/table", 
-			"fnRowCallback" : testPlanRowCallback,
-			"fnDrawCallback" : testPlanDrawCallback,
-			"aoColumnDefs": [
-				{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
-				{'bSortable': false, 'sWidth' : '2em', 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
-				{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'project-name'},
-				{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'reference'},
-				{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'tc-name'},
-				{'bSortable': false, 'aTargets': [5], 'sClass' : 'assignable-combo', 'mDataProp' : 'assigned-user'},
-				{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [6], 'mDataProp' : 'assigned-to'},
-				{'bSortable': false, 'aTargets': [7], 'mDataProp' : 'importance'},
-				{'bSortable': false, 'aTargets': [8], 'mDataProp' : 'exec-mode'},
-				{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [9], 'mDataProp' : 'empty-delete-holder'},
-				{'bSortable': false, 'bVisible' : false, 'aTargets': [10], 'mDataProp' : 'tc-id'},
-			]
-		};		
-	
-		var squashSettings = {
+				//multiple deletion
+				$( '#${ testCaseMultipleRemovalPopupId }' ).bind('dialogclose', function() {
+					var answer = $("#${ testCaseMultipleRemovalPopupId }").data("answer");
+					if (answer != "yes") {
+						return;
+					}
+					
+					var table = $( '#test-cases-table' ).dataTable();
+					var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
+					
+					if (ids.length > 0) {
+						$.ajax({
+							url : '${ campaignUrl }/test-plan',
+							type : 'POST',
+							data : { 'action' : 'remove', itemIds: ids }
+						})
+						.success(refreshTestPlan);
+					}
 				
-			enableHover : true,
-			confirmPopup : {
-				oklabel : '<f:message key="label.Yes" />',
-				cancellabel : '<f:message key="label.Cancel" />'
-			},
-			functions : {
-				dropHandler : function(dropData){
-					$.post('${ campaignUrl }/test-case/move',dropData, function(){
-						$("#test-cases-table").squashTable().refresh();
-					});
-				}
-			}
-		};
+				});
 		
-		<c:if test="${editable}">
-		squashSettings.enableDnD = true;
-
-		squashSettings.deleteButtons = {
+				
+				/* **************************** datatable settings ******************* */
+				
+				
+				var tableSettings = {
+					"oLanguage":{
+						"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
+						"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
+						"sInfo": '<f:message key="generics.datatable.info" />',
+						"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
+						"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
+						"oPaginate":{
+							"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
+							"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
+							"sNext":     '<f:message key="generics.datatable.paginate.next" />',
+							"sLast":     '<f:message key="generics.datatable.paginate.last" />'
+						}
+					},				
+					"sAjaxSource" : "${ campaignUrl }/test-plan/table", 
+					"fnRowCallback" : testPlanRowCallback,
+					"fnDrawCallback" : testPlanDrawCallback,
+					"aoColumnDefs": [
+						{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
+						{'bSortable': false, 'sWidth' : '2em', 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
+						{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'project-name'},
+						{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'reference'},
+						{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'tc-name'},
+						{'bSortable': false, 'aTargets': [5], 'sClass' : 'assignable-combo', 'mDataProp' : 'assigned-user'},
+						{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [6], 'mDataProp' : 'assigned-to'},
+						{'bSortable': false, 'aTargets': [7], 'mDataProp' : 'importance'},
+						{'bSortable': false, 'aTargets': [8], 'mDataProp' : 'exec-mode'},
+						{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [9], 'mDataProp' : 'empty-delete-holder'},
+						{'bSortable': false, 'bVisible' : false, 'aTargets': [10], 'mDataProp' : 'tc-id'},
+					]
+				};		
 			
-			url : "${campaignUrl}/test-plan/{entity-id}",
-			popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
-			tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
-			success : function(data) {
-				refreshTestPlan();				
-			}
+				var squashSettings = {
+						
+					enableHover : true,
+					confirmPopup : {
+						oklabel : '<f:message key="label.Yes" />',
+						cancellabel : '<f:message key="label.Cancel" />'
+					},
+					functions : {
+						dropHandler : function(dropData){
+							$.post('${ campaignUrl }/test-case/move',dropData, function(){
+								$("#test-cases-table").squashTable().refresh();
+							});
+						}
+					}
+				};
 				
-		};
-		</c:if>
-				
-		$("#test-cases-table").squashTable(tableSettings, squashSettings);		
-
-	});
-	
+				<c:if test="${editable}">
+				squashSettings.enableDnD = true;
+		
+				squashSettings.deleteButtons = {
+					
+					url : "${campaignUrl}/test-plan/{entity-id}",
+					popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
+					tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
+					success : function(data) {
+						refreshTestPlan();				
+					}
+						
+				};
+				</c:if>
+						
+				$("#test-cases-table").squashTable(tableSettings, squashSettings);		
+		
+			});
+    	  });
+    });
 </script>

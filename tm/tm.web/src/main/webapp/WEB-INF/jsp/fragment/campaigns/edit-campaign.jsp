@@ -189,7 +189,8 @@
 								var name = $.trim($('#campaign-name').text());
 								$("#rename-campaign-name").val(name);
 
-							});
+							}
+					);
 				</script>			
 				<label><f:message key="dialog.rename.label" />
 				</label>
