@@ -63,7 +63,8 @@ requirejs.config({
 		"jquery.squash.linkabletree": "squash/jquery.squashtm.linkabletree", 
 		"jquery.squash.projectpicker": "squash/jquery.squashtm.projectpicker", 
 		"jquery.cookie": "jquery/jquery.cookie",
-		"squash.cssloader": "squash/squash.cssloader"
+		"squash.cssloader": "squash/squash.cssloader",
+		"squash.translator" : "squash/squash.translator"
 	},
 	shim: {
 		"ckeditor": {

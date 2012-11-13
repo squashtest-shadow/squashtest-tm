@@ -22,7 +22,11 @@ package org.squashtest.csp.tm.web.internal.i18n;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -114,5 +118,32 @@ public class InternationalizationHelper implements MessageSource {
 	public String getMessage(MessageSourceResolvable resolvable, Locale locale) throws NoSuchMessageException {
 		return messageSource.getMessage(resolvable, locale);
 	}
+	
+	public void resolve(MessageObject object, Locale locale){
+		_processAsMap(object, locale);
+	}
 
+	private void _processAsMap(Map<String, Object> object, Locale locale){
+		
+		for (Entry<String, Object> entry : object.entrySet()){
+			Object value = entry.getValue();
+			
+			if  (String.class.isAssignableFrom(value.getClass())){
+				String translation = _processAsString((String) value, locale);
+				entry.setValue(translation);
+			}
+			else if (Map.class.isAssignableFrom(value.getClass())){
+				_processAsMap((Map)value, locale);
+			}
+			else {
+				throw new IllegalArgumentException("InternationalizationHelper : supplied MessageObject contained data that where neither "+
+													"String nor Map. Got : '"+value.getClass()+"'");
+			}
+		}		
+	}
+	
+	private String _processAsString(String key, Locale locale){
+		return messageSource.getMessage(key, null, locale);
+	}
+	
 }
