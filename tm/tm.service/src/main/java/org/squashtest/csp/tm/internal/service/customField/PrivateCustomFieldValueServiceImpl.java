@@ -154,5 +154,19 @@ public class PrivateCustomFieldValueServiceImpl implements
 			pair.copyContent();
 		}
 	}
+	
+	@Override
+	public void update(Long customFieldValueId, String newValue) {
+
+		CustomFieldValue changedValue = customFieldValueDao.findById(customFieldValueId);
+		
+		BoundEntity boundEntity = boundEntityDao.findBoundEntity(changedValue);
+		
+		if (! permissionService.hasMoreThanRead(boundEntity)){
+			throw new AccessDeniedException("access is denied");
+		}
+		
+		changedValue.setValue(newValue);
+	}
 
 }

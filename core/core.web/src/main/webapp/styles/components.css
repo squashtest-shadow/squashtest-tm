@@ -659,6 +659,15 @@ span.span-green {
 	display: none;
 }
 
+
+/****************************************
+* custom field display					*
+*****************************************/
+
+.cuf-value-control{
+	width : 100%;	
+}
+
 /*****************************************
  * custom field binding (administration)
  ****************************************/

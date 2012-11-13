@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -93,6 +94,14 @@ public class CustomFieldValuesController {
 		return mav;
 		
 	}
+	
+	
+	@RequestMapping(value="/{id}", method=RequestMethod.POST, params="value")
+	@ResponseBody
+	public void updateCustomValue(@PathVariable("id") Long valueId, @RequestParam("value") String value){
+		managerService.update(valueId, value);
+	}
+	
 	
 	private List<CustomFieldValueModel> valuesToJson(List<CustomFieldValue> values){
 		List<CustomFieldValueModel> models = new LinkedList<CustomFieldValueModel>();
