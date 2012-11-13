@@ -108,6 +108,9 @@
 </s:url>
 
 
+<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
+
+
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
 	domainObject="${ iteration }">
@@ -325,6 +328,22 @@
 			</jsp:attribute>
 		</comp:toggle-panel>
 
+
+		
+		<%----------------------------------- Custom Fields -----------------------------------------------%>
+		
+		<comp:toggle-panel id="iteration-custom-fields"
+			titleKey="generics.customfieldvalues.title" isContextual="true"
+			open="${java.lang.Boolean.TRUE}">
+			<jsp:attribute name="body">
+				<div class="waiting-loading minimal-height"></div>
+			</jsp:attribute>
+		</comp:toggle-panel>
+		
+		
+
+
+		<%--------------------------- Planning section ------------------------------------%>
 
 		<comp:toggle-panel id="datepicker-panel"
 			titleKey="label.Planning" isContextual="true"
@@ -620,7 +639,10 @@
 			$('#test-case-button').click(function() {
 				document.location.href = "${testPlanManagerUrl}";
 			});
-
+			
+			<%-- loading the custom field panel --%>
+			$("#iteration-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${iteration.boundEntityId}&boundEntityType=${iteration.boundEntityType}"); 				
+	    
 		});
 	</script>
 </c:if>

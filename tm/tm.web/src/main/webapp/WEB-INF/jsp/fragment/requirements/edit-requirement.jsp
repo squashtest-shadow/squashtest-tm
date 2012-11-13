@@ -46,6 +46,7 @@
 <s:url var="confirmDeletionUrl" value="/requirement-browser/delete-nodes/confirm" />
 <s:url var="getStatusComboContent" value="/requirements/${requirement.id}/next-status" />
 
+<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- 
 that page won't be editable if 
@@ -299,6 +300,18 @@ that page won't be editable if
 		</jsp:attribute>
 	</comp:toggle-panel>
 	
+			
+	<%----------------------------------- Custom Fields -----------------------------------------------%>
+		
+		<comp:toggle-panel id="requirement-custom-fields"
+			titleKey="generics.customfieldvalues.title" isContextual="true"
+			open="${java.lang.Boolean.TRUE}">
+			<jsp:attribute name="body">
+				<div class="waiting-loading minimal-height"></div>
+			</jsp:attribute>
+		</comp:toggle-panel>
+		
+		
 	
 
 	<%--------------------------- verifying TestCase section ------------------------------------%>
@@ -390,6 +403,10 @@ that page won't be editable if
 				dialog.confirmDialog( "open" );
 				return false;
 			});
+			
+			<%-- loading the custom field panel --%>
+			$("#requirement-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${requirement.currentVersion.boundEntityId}&boundEntityType=${requirement.currentVersion.boundEntityType}"); 				
+	    	
 			
 		});
 	</script>		

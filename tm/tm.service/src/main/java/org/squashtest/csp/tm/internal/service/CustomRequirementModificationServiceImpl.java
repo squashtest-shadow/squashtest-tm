@@ -30,6 +30,7 @@ import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.service.CustomRequirementModificationService;
@@ -67,9 +68,13 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.csp.tm.domain.requirement.Requirement', 'CREATE') or hasRole('ROLE_ADMIN')")
 	public void createNewVersion(long requirementId) {
 		Requirement req = requirementDao.findById(requirementId);
+		RequirementVersion previousVersion = req.getCurrentVersion();
+		
 		req.increaseVersion();
 		sessionFactory.getCurrentSession().persist(req.getCurrentVersion());	
-		customFieldValueService.createAllCustomFieldValues(req.getCurrentVersion());
+		RequirementVersion newVersion = req.getCurrentVersion();
+		
+		customFieldValueService.copyCustomFieldValues(previousVersion, newVersion);
 	}
 	
 

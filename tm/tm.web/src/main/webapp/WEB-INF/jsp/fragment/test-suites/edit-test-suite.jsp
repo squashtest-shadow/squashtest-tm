@@ -128,6 +128,9 @@
 	<s:param name="id" value="${testSuite.id}" />
 </s:url>
 
+
+<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
+
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT"
@@ -360,9 +363,22 @@
 			titleKey="label.Description" isContextual="true"
 			open="${ not empty testSuite.description }">
 			<jsp:attribute name="body">
-		<div id="test-suite-description">${ testSuite.description }</div>
-	</jsp:attribute>
+				<div id="test-suite-description">${ testSuite.description }</div>
+			</jsp:attribute>
 		</comp:toggle-panel>
+		
+		
+		<%----------------------------------- Custom Fields -----------------------------------------------%>
+		
+		<comp:toggle-panel id="test-suite-custom-fields"
+			titleKey="generics.customfieldvalues.title" isContextual="true"
+			open="${java.lang.Boolean.TRUE}">
+			<jsp:attribute name="body">
+				<div class="waiting-loading minimal-height"></div>
+			</jsp:attribute>
+		</comp:toggle-panel>
+		
+			
 
 		<%-- ------------------ statistiques --------------------------- --%>
 		<comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ testSuiteStatisticsUrl }"/>
@@ -594,6 +610,10 @@
 			dialog.confirmDialog( "open" );
 			return false;
 		});
+		
+		<%-- loading the custom field panel --%>
+		$("#test-suite-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${testSuite.boundEntityId}&boundEntityType=${testSuite.boundEntityType}"); 				
+    	
 	});
 </script>
 </c:if>

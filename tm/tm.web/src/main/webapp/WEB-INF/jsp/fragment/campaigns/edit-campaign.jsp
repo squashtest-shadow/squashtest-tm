@@ -67,6 +67,9 @@
 <s:url var="btEntityUrl" value="/bugtracker/campaign/{id}">
 	<s:param name="id" value="${campaign.id}" />
 </s:url>
+
+<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
+
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ campaign }">
 	<c:set var="attachable" value="${ true }" />
@@ -250,7 +253,7 @@
 			require([ "jquery", "domReady", "jqueryui" ], function ($, domReady) {
 				/* simple initialization for simple components */
 				domReady(function() {
-					$("#campaign-reset-description").button().click(function() {
+					$("#").button().click(function() {
 						$("#campaign-description").html('');
 						return false;
 					});
@@ -263,9 +266,22 @@
 			classes="information-panel" titleKey="label.Description"
 			isContextual="true" open="true">
 			<jsp:attribute name="body">
-		<div id="campaign-description">${ campaign.description }</div>
-	</jsp:attribute>
+				<div id="campaign-description">${ campaign.description }</div>
+			</jsp:attribute>
 		</comp:toggle-panel>
+		
+		
+		<%----------------------------------- Custom Fields -----------------------------------------------%>
+		
+		<comp:toggle-panel id="campaign-custom-fields"
+			titleKey="generics.customfieldvalues.title" isContextual="true"
+			open="${java.lang.Boolean.TRUE}">
+			<jsp:attribute name="body">
+				<div class="waiting-loading minimal-height"></div>
+			</jsp:attribute>
+		</comp:toggle-panel>
+		
+		
 
 
 		<%--------------------------- Planning section ------------------------------------%>
@@ -338,6 +354,10 @@
 						document.location.href = "${testCaseManagerUrl}";
 					});
 					$("#remove-test-case-button").button();
+					
+					<%-- loading the custom field panel --%>
+					$("#campaign-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${campaign.boundEntityId}&boundEntityType=${campaign.boundEntityType}"); 				
+			    	
 				});
 			});
 		});
@@ -482,6 +502,7 @@
 <c:if test="${campaign.project.bugtrackerConnected }">
 	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
 </c:if>
+
 
 <%------------------------------ /bugs section -------------------------------%>
 <comp:decorate-buttons />

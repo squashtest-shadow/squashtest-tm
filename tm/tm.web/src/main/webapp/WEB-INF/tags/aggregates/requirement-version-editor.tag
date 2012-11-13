@@ -47,6 +47,8 @@
 
 <s:url var="getStatusComboContent" value="/requirement-versions/${ requirementVersion.id }/next-status" />
 
+<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
+
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- that page won't be editable if 
    * the user don't have the correct permission,
@@ -193,6 +195,23 @@
 			</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
+	
+	
+	<%----------------------------------- Custom Fields -----------------------------------------------%>
+	
+	<comp:toggle-panel id="requirement-custom-fields"
+		titleKey="generics.customfieldvalues.title" isContextual="true"
+		open="${java.lang.Boolean.TRUE}">
+		<jsp:attribute name="body">
+			<div class="waiting-loading minimal-height"></div>
+		</jsp:attribute>
+	</comp:toggle-panel>
+	
+	
+
+	
+	
+	
 	<%--------------- verifying TestCase section ------------------------------------%>
 	<comp:toggle-panel id="verifying-requirement-panel" titleKey="requirement.verifying_test-case.panel.title" open="true">
 		<jsp:attribute name="panelButtons">
@@ -358,15 +377,25 @@
 </c:if>
 <%-- ----------------------------------- Other ----------------------------------------------%>
 <script type="text/javascript">
-	$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
-		var name = $('#requirement-raw-name').text();
-		$("#rename-requirement-input").val(name);
-	});
+
 	
 	$(function(){
+		
+		$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
+			var name = $('#requirement-raw-name').text();
+			$("#rename-requirement-input").val(name);
+		});
+		
 		$("#verifying-test-case-button").button().click(function(){
 			document.location.href="${ verifyingTCManagerUrl }" ;	
 		});
+		
+		
+		<%-- loading the custom field panel --%>
+		$("#requirement-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${requirementVersion.boundEntityId}&boundEntityType=${requirementVersion.boundEntityType}"); 				
+    	
+		
+		
 	});
 	
 	/* display the requirement name. Used for extern calls (like from the page who will include this fragment)
