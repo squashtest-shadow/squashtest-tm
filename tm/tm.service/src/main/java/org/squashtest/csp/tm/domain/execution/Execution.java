@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.domain.execution;
 
+import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.LOW;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -71,6 +74,9 @@ import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
+import org.squashtest.csp.tm.domain.testcase.TestCaseType;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 
 @Auditable
@@ -108,6 +114,26 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	@Lob
 	private String prerequisite = "";
 
+	private String reference = "";
+	
+	@Lob
+	@Column(name = "TC_DESCRIPTION")
+	private String tcdescription;
+	
+	@Enumerated(EnumType.STRING)
+	@Basic(optional = false)
+	private TestCaseImportance importance = LOW;
+
+	@Enumerated(EnumType.STRING)
+	@Basic(optional = false)
+	@Column(name = "TC_NATURE")
+	private TestCaseNature nature = TestCaseNature.NONE;
+	
+	@Enumerated(EnumType.STRING)
+	@Basic(optional = false)
+	@Column(name = "TC_TYPE")
+	private TestCaseType type = TestCaseType.NONE;
+	
 	@NotBlank
 	private String name;
 
@@ -239,15 +265,26 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 			setName(testCase.getName());
 		}
 		
-		nullSafeSetPrerequisite(testCase);
+		nullSafeSetTestCaseData(testCase);
+		setImportance(testCase.getImportance());
+		setNature(testCase.getNature());
+		setType(testCase.getType());
+
 	}
 
-	private void nullSafeSetPrerequisite(TestCase testCase) {
-		// though it's constrained by the app, database allows null test case prerequisite. hence this safety belt.
+	private void nullSafeSetTestCaseData(TestCase testCase) {
+		// though it's constrained by the app, database allows null test case prerequisite or reference. hence this safety belt.
+		
 		String pr = testCase.getPrerequisite();
 		setPrerequisite(pr == null ? "" : pr);
+		
+		pr = testCase.getReference();
+		setReference(pr == null ? "" : pr);
+		
+		pr = testCase.getDescription();
+		setTcdescription(pr == null ? "" : pr);
 	}
-
+	
 	public TestCaseExecutionMode getExecutionMode() {
 		return executionMode;
 	}
@@ -280,13 +317,54 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	public String getPrerequisite() {
 		return prerequisite;
 	}
-
+	
 	/**
 	 * @param prerequisite
 	 *            the prerequisite to set
 	 */
 	public void setPrerequisite(@NotNull String prerequisite) {
 		this.prerequisite = prerequisite;
+	}
+
+	
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	public TestCaseImportance getImportance() {
+		return importance;
+	}
+
+	public void setImportance(@NotNull TestCaseImportance importance) {
+		this.importance = importance;
+	}
+
+	public TestCaseNature getNature() {
+		return nature;
+	}
+
+	public void setNature(@NotNull TestCaseNature nature) {
+		this.nature = nature;
+	}
+
+	public TestCaseType getType() {
+		return type;
+	}
+
+	public void setType(@NotNull TestCaseType type) {
+		this.type = type;
+	}
+
+	public String getTcdescription() {
+		return tcdescription;
+	}
+
+	public void setTcdescription(String tcdescription) {
+		this.tcdescription = tcdescription;
 	}
 
 	private void addStep(@NotNull ExecutionStep step) {

@@ -327,5 +327,24 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="tm-1.4.0.feat-1596.00" author="flaurens">
+		<comment>Adds test case related fields to executions for denormalization</comment>
+		<addColumn tableName="EXECUTION">
+			<column name="TC_NATURE" type="VARCHAR(30)" defaultValue="NONE">
+				<constraints nullable="false"/>
+			</column>
+			<column name="TC_TYPE" type="VARCHAR(30)" defaultValue="NONE">
+				<constraints nullable="false"/>
+			</column>
+			<column name="IMPORTANCE" type="VARCHAR(20)" defaultValue="LOW">
+				<constraints nullable="false"/>
+			</column>
+			<column name="REFERENCE" type="VARCHAR(20)" defaultValue="NULL">
+			</column>
+			<column name="TC_DESCRIPTION" type="CLOB" defaultValue="NULL">
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
  
