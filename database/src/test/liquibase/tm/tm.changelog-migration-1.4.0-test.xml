@@ -94,4 +94,23 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="tm-1.4.0.feat-1596-test-01" author="flaurens">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from EXECUTION exe
+				join TEST_CASE tc on tc.tcln_id = exe.tcln_id
+				join TEST_CASE_LIBRARY_NODE tcln on tcln.tcln_id = tc.tcln_id
+				where exe.tc_description &lt;&gt; tcln.description
+				or exe.reference &lt;&gt; tc.reference
+				or exe.importance &lt;&gt; tc.importance
+				or exe.tc_nature &lt;&gt; tc.tc_nature
+				or exe.tc_type &lt;&gt; tc.tc_type
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that each execution has data for the new test case related fields</comment>
+		<sql>
+			drop table `EXECUTION_TEST_CASE_DATA`;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
