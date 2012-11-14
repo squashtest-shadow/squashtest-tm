@@ -62,7 +62,8 @@ define(["jquery"], function($){
 				},
 				dataType : 'json',
 				type : 'POST',
-				data : JSON.stringify(messageObject)
+				data : JSON.stringify(messageObject),
+				async : false
 			})
 			.success(function(json){
 				return json;
