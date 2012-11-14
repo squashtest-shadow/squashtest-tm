@@ -45,11 +45,8 @@ public interface CustomFieldDao extends CustomCustomFieldDao {
 	void persist(CustomField customField);
 
 	CustomField findById(long id);
-
 	
 	void remove(CustomField customField);
-
-	
 
 	/**
 	 * Returns the field matching the name if it exists.
@@ -58,4 +55,17 @@ public interface CustomFieldDao extends CustomCustomFieldDao {
 	 * @return
 	 */
 	CustomField findByName(@NotNull String name);
+
+	/**
+	 * Will find all custom fields and return them ordered by their name.
+	 * 
+	 * @return the list of all existing {@link CustomField} ordered by {@link CustomField#getName()}
+	 */
+	List<CustomField> findAllOrderedByName();
+	/**
+	 * Will count all existing custom fields
+	 * 
+	 * @return the number of custom fields
+	 */
+	long countCustomFields();
 }

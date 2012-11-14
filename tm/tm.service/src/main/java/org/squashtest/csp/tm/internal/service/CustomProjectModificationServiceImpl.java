@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -82,7 +83,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
+	@PostAuthorize("hasPermission(returnObject, 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	public Project findById(long projectId) {
 		return projectDao.findById(projectId);
 	}

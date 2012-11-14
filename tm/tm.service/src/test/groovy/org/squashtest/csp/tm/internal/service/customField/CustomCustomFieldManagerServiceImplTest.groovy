@@ -20,15 +20,13 @@
  */
 package org.squashtest.csp.tm.internal.service.customField
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tm.domain.customfield.CustomField
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder
-import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
+import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 import spock.lang.Specification
 
@@ -49,25 +47,17 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 		List<Long> bindingIds = new ArrayList<Long>();
 		customFieldDao.findById(1L) >> cuf
 		customFieldBindingDao.findAllForCustomField(1L) >> bindingIds;
-		
+			
 		when :
 		service.deleteCustomField(1L);
 		
 		then:
 		1* customFieldDao.remove(cuf)
 	}
-
-	def "should find all ordered by name"(){
-		when :
-		service.findAllOrderedByName()
-		
-		then :
-		1* customFieldDao.finAllOrderedByName()
-	}
 	
 	def "should find sorted "(){
 		given :
-		CollectionSorting cs = Mock()
+		PagingAndSorting cs = Mock()
 		List<CustomField> customFields = Mock()
 		customFieldDao.findSortedCustomFields(cs)>> customFields
 		
@@ -76,7 +66,7 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 		customFieldDao.countCustomFields()>> counted
 
 		when:
-		FilteredCollectionHolder<Collection<CustomField>> result = service.findSortedCustomFields(cs)
+		PagedCollectionHolder<Collection<CustomField>> result = service.findSortedCustomFields(cs)
 
 		then:
 		result != null

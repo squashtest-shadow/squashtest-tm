@@ -32,6 +32,8 @@ import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 import org.squashtest.csp.tm.internal.service.customField.CannotDeleteDefaultOptionException;
 import org.squashtest.csp.tm.internal.service.customField.MandatoryCufNeedsDefaultValueException;
 import org.squashtest.csp.tm.internal.service.customField.OptionAlreadyExistException;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 /**
  * Custom-Field manager services which cannot be dynamically generated.
@@ -41,7 +43,7 @@ import org.squashtest.csp.tm.internal.service.customField.OptionAlreadyExistExce
  */
 @Transactional
 @PreAuthorize("hasRole('ROLE_ADMIN')")
-public interface CustomCustomFieldManagerService extends CustomFieldFinderService {
+public interface CustomCustomFieldManagerService {
 	/**
 	 * Will delete the custom-field entity
 	 * 
@@ -132,5 +134,23 @@ public interface CustomCustomFieldManagerService extends CustomFieldFinderServic
 	 *            : the labels of the moved options
 	 */
 	void changeOptionsPositions(long customFieldId, int newIndex, List<String> optionsLabels);
+
+	/**
+	 * Will find all custom fields available and return them ordered according to the given parameters.
+	 * 
+	 * @param filter
+	 *            the {@link CollectionSorting} that holds order and paging params.
+	 * @return the filtered collection of all custom field available in squash
+	 */
+	public PagedCollectionHolder<List<CustomField>> findSortedCustomFields(PagingAndSorting filter);
+
+	/**
+	 * Will find the {@link SingleSelectField} of the given id
+	 * 
+	 * @param customFieldId
+	 *            the id of the {@link SingleSelectField}
+	 * @return the {@link SingleSelectField} or <code>null</code>
+	 */
+	public SingleSelectField findSingleSelectFieldById(Long customFieldId);
 
 }

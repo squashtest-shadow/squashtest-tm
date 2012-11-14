@@ -32,8 +32,12 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
+import org.squashtest.csp.core.infrastructure.hibernate.PagingUtils;
+import org.squashtest.csp.core.infrastructure.hibernate.SortingUtils;
+import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.EntityDao;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> implements EntityDao<ENTITY_TYPE> {
 
@@ -41,18 +45,17 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	public final ENTITY_TYPE findById(long id) {
 		return getEntity(id);
 	}
-	
+
 	/**
 	 * 
-	 * @return a list of all entities found in the database with no restriction 
+	 * @return a list of all entities found in the database with no restriction
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ENTITY_TYPE> findAll() {
-			Criteria criteria = currentSession().createCriteria(entityType);
-			return criteria.list();
-		
+		Criteria criteria = currentSession().createCriteria(entityType);
+		return criteria.list();
+
 	}
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ENTITY_TYPE> findAllByIds(Collection<Long> ids) {
@@ -65,15 +68,16 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 			return criteria.list();
 		}
 	}
-	
+
 	public String getIdPropertyName() {
 		return "id";
 	}
-	
-	protected static class ContainerIdNameStartParameterCallback implements SetQueryParametersCallback{
+
+		ContainerIdNameStartParameterCallback(long containerId, String nameStart) {
 		private long containerId;
 		private String nameStart;
-		ContainerIdNameStartParameterCallback(long containerId, String nameStart){
+
+		ContainerIdNameStartParameterCallback(long containerId, String nameStart) {
 			this.containerId = containerId;
 			this.nameStart = nameStart;
 		}
@@ -83,10 +87,11 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 			query.setParameter("nameStart", nameStart + "%");
 		}
 	}
-	
+
 	protected static class SetProjectIdsParameterCallback implements SetQueryParametersCallback {
 		private List<Long> projectIds;
-		protected SetProjectIdsParameterCallback(List<Long> projectIds){
+
+		protected SetProjectIdsParameterCallback(List<Long> projectIds) {
 			this.projectIds = projectIds;
 		}
 		@Override
@@ -94,10 +99,11 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 			query.setParameterList("projectIds", projectIds, new LongType());
 		}
 	}
-	
+
 	protected static class SetParamIdsParametersCallback implements SetQueryParametersCallback{
 		private List<Long> params;
-		protected SetParamIdsParametersCallback(List<Long> params){
+
+		protected SetParamIdsParametersCallback(List<Long> params) {
 			this.params = params;
 		}
 		@Override
@@ -105,12 +111,10 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 			query.setParameterList("paramIds", params, new LongType());
 		}
 	}
-	
 	@SuppressWarnings("unchecked")
 	protected List<Long> findDescendantIds(List<Long> params, String sql) {
 		if (!params.isEmpty()) {
 			Session session = currentSession();
-			
 
 			List<BigInteger> list;
 			List<Long> result = new ArrayList<Long>();
@@ -140,18 +144,20 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 		}
 
 	}
-	
-	
+
 	/**
 	 * Will find all Entities ordered according to the given params.
 	 * 
-	 * @param filter the {@link CollectionSorting} that holds the order and paging params.
-	 * @param classe the {@link Class} of the seeked entity
-	 * @param alias a String representing the alias of the entity in the builed query.
+	 * @param filter
+	 *            the {@link CollectionSorting} that holds the order and paging params.
+	 * @param classe
+	 *            the {@link Class} of the seeked entity
+	 * @param alias
+	 *            a String representing the alias of the entity in the builed query.
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected List<ENTITY_TYPE> findSorted(CollectionSorting filter, Class<ENTITY_TYPE> classe, String alias){
+	protected final List<ENTITY_TYPE> findSorted(CollectionSorting filter, Class<ENTITY_TYPE> classe, String alias) {
 		Session session = currentSession();
 
 		String sortedAttribute = filter.getSortedAttribute();
@@ -175,4 +181,21 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 		return crit.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	protected final List<ENTITY_TYPE> findSorted(PagingAndSorting filter, Class<ENTITY_TYPE> classe, String alias) {
+		Session session = currentSession();
+
+		Criteria crit = session.createCriteria(CustomField.class, "CustomField");
+
+		/* add ordering */
+		String sortedAttribute = filter.getSortedAttribute();
+		if (sortedAttribute != null) {
+			SortingUtils.addOrder(crit, filter);
+		}
+
+		/* result range */
+		PagingUtils.addPaging(crit, filter);
+
+		return crit.list();
+	}
 }

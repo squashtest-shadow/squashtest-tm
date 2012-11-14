@@ -38,16 +38,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.InputType;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.customfield.CustomFieldManagerService;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 /**
  * Controller for the Custom Fields management pages.
@@ -119,11 +119,11 @@ public class CustomFieldAdministrationController {
 	@RequestMapping(method = RequestMethod.GET, params = "sEcho")
 	@ResponseBody
 	public DataTableModel getCustomFieldsTableModel(final DataTableDrawParameters params, final Locale locale) {
-		CollectionSorting filter =  new DataTableFilterSorter(params, customFieldTableMapper);
+		PagingAndSorting filter =  new DataTableMapperPagingAndSortingAdapter(params, customFieldTableMapper); 
 
-		FilteredCollectionHolder<List<CustomField>> holder = customFieldManagerService.findSortedCustomFields(filter);
+		PagedCollectionHolder<List<CustomField>> holder = customFieldManagerService.findSortedCustomFields(filter);
 
-		return new CustomFieldDataTableModelHelper(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+		return new CustomFieldDataTableModelHelper(locale).buildDataModel(holder, params.getsEcho());
 	}
 	
 	/**

@@ -21,11 +21,8 @@
 
 package org.squashtest.csp.tm.service.customfield;
 
-import javax.validation.constraints.NotNull;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.customfield.CustomField;
 
 /**
  * Facade service for custom fields management.
@@ -34,16 +31,8 @@ import org.squashtest.csp.tm.domain.customfield.CustomField;
  * 
  */
 @Transactional
-public interface CustomFieldManagerService extends CustomCustomFieldManagerService {
+public interface CustomFieldManagerService extends CustomCustomFieldManagerService, CustomFieldFinderService {
 	static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
-
-	/**
-	 * @param name
-	 * @return
-	 */
-	CustomField findByName(@NotNull String name);
-
-	CustomField findById(Long customFieldId);
 
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeLabel(long customFieldId, String label);

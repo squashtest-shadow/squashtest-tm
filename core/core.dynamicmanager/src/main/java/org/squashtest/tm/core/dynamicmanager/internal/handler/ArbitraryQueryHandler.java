@@ -270,5 +270,6 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 	}
 
 	private static final class EmptyCollectionException extends RuntimeException {
+		private static final long serialVersionUID = 2808245564237178860L;
 	}
 }

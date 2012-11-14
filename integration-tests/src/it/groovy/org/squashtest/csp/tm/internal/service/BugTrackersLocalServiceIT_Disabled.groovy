@@ -75,7 +75,7 @@ import spock.unitils.UnitilsSupport
 @UnitilsSupport
 @ContextConfiguration(["classpath:bugtracker-core-context-IT.xml"])
 @Transactional
-class BugTrackersLocalServiceIT_Disabled extends DbunitServiceSpecification  {
+class BugTrackersLocalServiceIT_Disabled { // extends DbunitServiceSpecification  {
 
 
 	/*

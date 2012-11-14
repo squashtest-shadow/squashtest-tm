@@ -25,37 +25,22 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.CustomCustomFieldDao;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 @Repository("CustomCustomFieldDao")
 public class HibernateCustomCustomFieldDao extends HibernateEntityDao<CustomField> implements CustomCustomFieldDao {
 
+	/**
+	 * @see org.squashtest.csp.tm.internal.repository.CustomCustomFieldDao#findSortedCustomFields(org.squashtest.tm.core.foundation.collection.PagingAndSorting)
+	 */
 	@Override
-	public List<CustomField> finAllOrderedByName() {
-		return executeListNamedQuery("customField.findAllOrderedByName");
-	}
-
-	@Override
-	public List<CustomField> findSortedCustomFields(CollectionSorting filter) {
+	public List<CustomField> findSortedCustomFields(PagingAndSorting filter) {
 		return findSorted(filter, CustomField.class, "CustomField");
-	}
-
-	@Override
-	public long countCustomFields() {
-		return executeEntityNamedQuery("customField.count");
-	}
-
-	@Override
-	public CustomField findByName(String name) {
-		return executeEntityNamedQuery("customField.findByName", "name", name );
 	}
 
 	@Override
 	public SingleSelectField findSingleSelectFieldById(Long customFieldId) {
 		return executeEntityNamedQuery("singleSelectField.findById", "id", customFieldId );
 	}
-
-	
-
 }

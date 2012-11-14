@@ -235,14 +235,6 @@ public class TestCaseModificationController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = "executionMode")
-	@ResponseBody
-	public void changeExecutionMode(@RequestParam String executionMode, @PathVariable long testCaseId) {
-		TestCaseExecutionMode mode = TestCaseExecutionMode.valueOf(executionMode);
-		testCaseModificationService.changeExecutionMode(testCaseId, mode);
-		LOGGER.trace("test case {} : execution mode changed, new mode is {}", testCaseId, mode.name());
-	}
-
 	@RequestMapping(value = "/steps/add", method = RequestMethod.POST, params = { "action", "expectedResult" })
 	@ResponseBody
 	public void addActionTestStep(@ModelAttribute("add-test-step") @Valid ActionTestStep step,

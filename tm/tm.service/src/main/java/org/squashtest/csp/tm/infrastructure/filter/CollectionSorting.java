@@ -26,7 +26,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
  * Defines sorting parameters to apply when querying for a collection.
  * 
  * @author Gregory Fouquet
- * 
+ * @deprecated use PagingAndSorting instead
  */
 public interface CollectionSorting extends Paging {
 	/**

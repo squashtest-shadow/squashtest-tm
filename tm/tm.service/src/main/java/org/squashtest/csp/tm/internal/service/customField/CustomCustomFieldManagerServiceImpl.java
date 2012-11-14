@@ -32,13 +32,14 @@ import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
 import org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService;
 import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 
 /**
  * Implementations for (non dynamically generated) custom-field management services.
@@ -61,23 +62,14 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Inject
 	private CustomFieldBindingModificationService customFieldBindingModificationService;
 	
-        /**
-	 * @see org.squashtest.csp.tm.service.customfield.CustomFieldFinderService#findAllOrderedByName()
-	 */
-
-	@Override
-	public List<CustomField> findAllOrderedByName() {
-		return customFieldDao.finAllOrderedByName();
-	}
-
 	/**
 	 * @see org.squashtest.csp.tm.service.customfield.CustomFieldFinderService#findSortedCustomFields(CollectionSorting)
 	 */
 	@Override
-	public FilteredCollectionHolder<List<CustomField>> findSortedCustomFields(CollectionSorting filter) {
+	public PagedCollectionHolder<List<CustomField>> findSortedCustomFields(PagingAndSorting filter) {
 		List<CustomField> customFields = customFieldDao.findSortedCustomFields(filter);
 		long count = customFieldDao.countCustomFields();
-		return new FilteredCollectionHolder<List<CustomField>>(count, customFields);
+		return new PagingBackedPagedCollectionHolder<List<CustomField>>(filter, count, customFields);
 	}
 
 	/**

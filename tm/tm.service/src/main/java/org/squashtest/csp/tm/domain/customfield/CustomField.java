@@ -44,9 +44,8 @@ import org.squashtest.tm.tm.validation.constraint.HasDefaultAsRequired;
  */
 
 @NamedQueries({
-	@NamedQuery(name="customField.findAllOrderedByName", query="from CustomField cf order by cf.name"),
-	@NamedQuery(name="customField.count", query="select count(*) from CustomField"),
-	@NamedQuery(name="customField.findByName", query="from CustomField cf where cf.name = :name")
+	@NamedQuery(name="CustomField.findAllOrderedByName", query="from CustomField cf order by cf.name"),
+	@NamedQuery(name="CustomField.countCustomFields", query="select count(*) from CustomField")
 })
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

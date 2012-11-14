@@ -22,12 +22,12 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 
 import javax.inject.Inject
 
-import org.hibernate.Query;
+import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tm.domain.customfield.CustomField
-import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.InputType
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
@@ -40,7 +40,7 @@ class HibernateCustomFieldDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateCustomFieldDaoIT.should return list of cuf ordered by name.xml")
 	def "should return list of cuf ordered by name" () {
 		when:
-		List<CustomField> list = customFieldDao.finAllOrderedByName()
+		List<CustomField> list = customFieldDao.findAllOrderedByName()
 
 		then:
 		list.size() == 3
@@ -61,14 +61,10 @@ class HibernateCustomFieldDaoIT extends DbunitDaoSpecification {
 
 	}
 	
-	private class InputTypeCollectionFilter implements CollectionSorting	{
+	private class InputTypeCollectionFilter implements PagingAndSorting	{
 			@Override
 			String getSortedAttribute(){
 				return "inputType"
-			}
-			@Override
-			String getSortingOrder(){
-				return "asc"
 			}
 			@Override
 			public int getFirstItemIndex() {
@@ -77,6 +73,13 @@ class HibernateCustomFieldDaoIT extends DbunitDaoSpecification {
 			@Override
 			public int getPageSize() {
 				return 2;
+			}
+			/* (non-Javadoc)
+			 * @see org.squashtest.tm.core.foundation.collection.Sorting#getSortOrder()
+			 */
+			@Override
+			public SortOrder getSortOrder() {
+				return SortOrder.ASCENDING;
 			}
 	}
 	
