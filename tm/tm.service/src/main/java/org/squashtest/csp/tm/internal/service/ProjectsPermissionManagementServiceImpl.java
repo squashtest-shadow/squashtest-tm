@@ -74,10 +74,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		ObjectIdentity rlibraryRef = new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary()
 				.getId());
 		aclService.removeAllResponsibilities(userLogin, rlibraryRef);
-		ObjectIdentity tclibraryRef = new ObjectIdentityImpl(TestCaseLibrary.class, project.getRequirementLibrary()
+		ObjectIdentity tclibraryRef = new ObjectIdentityImpl(TestCaseLibrary.class, project.getTestCaseLibrary()
 				.getId());
 		aclService.removeAllResponsibilities(userLogin, tclibraryRef);
-		ObjectIdentity clibraryRef = new ObjectIdentityImpl(CampaignLibrary.class, project.getRequirementLibrary()
+		ObjectIdentity clibraryRef = new ObjectIdentityImpl(CampaignLibrary.class, project.getCampaignLibrary()
 				.getId());
 		aclService.removeAllResponsibilities(userLogin, clibraryRef);
 	}
@@ -112,10 +112,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		ObjectIdentity rlibraryRef = new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary()
 				.getId());
 		aclService.addNewResponsibility(user.getLogin(), rlibraryRef, permissionName);
-		ObjectIdentity tclibraryRef = new ObjectIdentityImpl(TestCaseLibrary.class, project.getRequirementLibrary()
+		ObjectIdentity tclibraryRef = new ObjectIdentityImpl(TestCaseLibrary.class, project.getTestCaseLibrary()
 				.getId());
 		aclService.addNewResponsibility(user.getLogin(), tclibraryRef, permissionName);
-		ObjectIdentity clibraryRef = new ObjectIdentityImpl(CampaignLibrary.class, project.getRequirementLibrary()
+		ObjectIdentity clibraryRef = new ObjectIdentityImpl(CampaignLibrary.class, project.getCampaignLibrary()
 				.getId());
 		aclService.addNewResponsibility(user.getLogin(), clibraryRef, permissionName);
 
@@ -130,10 +130,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		ObjectIdentity rlibraryRef = new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary()
 				.getId());
 		aclService.removeAllResponsibilities(user.getLogin(), rlibraryRef);
-		ObjectIdentity tclibraryRef = new ObjectIdentityImpl(TestCaseLibrary.class, project.getRequirementLibrary()
+		ObjectIdentity tclibraryRef = new ObjectIdentityImpl(TestCaseLibrary.class, project.getTestCaseLibrary()
 				.getId());
 		aclService.removeAllResponsibilities(user.getLogin(), tclibraryRef);
-		ObjectIdentity clibraryRef = new ObjectIdentityImpl(CampaignLibrary.class, project.getRequirementLibrary()
+		ObjectIdentity clibraryRef = new ObjectIdentityImpl(CampaignLibrary.class, project.getCampaignLibrary()
 				.getId());
 		aclService.removeAllResponsibilities(user.getLogin(), clibraryRef);
 	}
