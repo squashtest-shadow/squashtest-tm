@@ -232,6 +232,8 @@ class ExcelTestCaseParserImplTest extends Specification {
 		ptc.createdOn = "chuck testa"
 		ptc.createdBy = "monti"
 		ptc.importance = "MEDIUM"
+		ptc.nature = "NONE"
+		ptc.type = "NONE"
 
 		and :
 		def summary = new ImportSummaryImpl()
@@ -254,7 +256,9 @@ class ExcelTestCaseParserImplTest extends Specification {
 		ptc.createdOn="21/12/2012"
 		ptc.createdBy="monti"
 		ptc.importance="VERY_HIGH"
-
+		ptc.nature = "NONE"
+		ptc.type = "NONE"
+		
 		and :
 		def summary = new ImportSummaryImpl()
 
@@ -280,7 +284,9 @@ class ExcelTestCaseParserImplTest extends Specification {
 		ptc.createdOn="chuck testa"
 		ptc.createdBy="monti"
 		ptc.importance="very_HIGH"
-
+		ptc.nature = "NONE"
+		ptc.type = "NONE"
+		
 		and :
 		def summary = new ImportSummaryImpl()
 

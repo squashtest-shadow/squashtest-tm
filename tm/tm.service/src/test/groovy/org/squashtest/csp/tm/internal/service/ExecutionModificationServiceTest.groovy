@@ -27,6 +27,9 @@ import org.squashtest.csp.tm.domain.execution.Execution
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus
 import org.squashtest.csp.tm.domain.execution.ExecutionStep
 import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance
+import org.squashtest.csp.tm.domain.testcase.TestCaseNature
+import org.squashtest.csp.tm.domain.testcase.TestCaseType
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep
 import org.squashtest.csp.tm.internal.repository.CampaignDao
 import org.squashtest.csp.tm.internal.repository.ExecutionDao
@@ -83,8 +86,12 @@ public class ExecutionModificationServiceTest extends Specification {
 		testCase.getId() >> 1
 		testCase.getAllAttachments() >> new HashSet<Attachment>()
 		testCase.getPrerequisite() >> "prerequisite"
-
-
+		testCase.getImportance() >> TestCaseImportance.LOW
+		testCase.getNature() >> TestCaseNature.NONE
+		testCase.getType() >> TestCaseType.NONE
+		testCase.getDescription() >> ""
+		testCase.getReference() >> ""
+		
 		Iteration iteration = new Iteration()
 		IterationTestPlanItem testPlan = new IterationTestPlanItem(id:1, iteration : iteration)
 		testPlan.setReferencedTestCase testCase

@@ -71,7 +71,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 		then :
 			summary.getTotal() == 13
 			summary.getSuccess()  == 13
-			summary.getModified() == 12
+			summary.getModified() == 38
 			summary.getFailures() == 0
 	
 			def rContent = service.findLibrary(1l).rootContent
@@ -122,7 +122,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 		then :
 			summary.getTotal() == 13
 			summary.getSuccess()  == 13
-			summary.getModified() == 12
+			summary.getModified() == 38
 			summary.getRenamed() == 4
 			summary.getFailures() == 0
 	

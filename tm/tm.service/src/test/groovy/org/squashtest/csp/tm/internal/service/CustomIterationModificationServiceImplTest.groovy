@@ -28,6 +28,9 @@ import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.csp.tm.domain.campaign.Iteration
 import org.squashtest.csp.tm.domain.testcase.TestCase
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance
+import org.squashtest.csp.tm.domain.testcase.TestCaseNature
+import org.squashtest.csp.tm.domain.testcase.TestCaseType
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode
 import org.squashtest.csp.tm.domain.users.User
 import org.squashtest.csp.tm.internal.repository.CampaignDao
@@ -121,6 +124,9 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		testCase.getName() >> "test case"
 		testCase.getAllAttachments() >> new HashSet<Attachment>()
 		testCase.getPrerequisite() >> "prerequisite"
+		testCase.getImportance() >> TestCaseImportance.LOW
+		testCase.getNature() >> TestCaseNature.NONE
+		testCase.getType() >> TestCaseType.NONE
 
 		IterationTestPlanItem testPlan = new IterationTestPlanItem(id:1, iteration : iteration)
 		testPlan.setReferencedTestCase(testCase)

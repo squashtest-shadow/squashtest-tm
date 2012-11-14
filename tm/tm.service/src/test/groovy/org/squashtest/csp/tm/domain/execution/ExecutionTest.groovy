@@ -22,6 +22,9 @@ package org.squashtest.csp.tm.domain.execution;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
+import org.squashtest.csp.tm.domain.testcase.TestCaseType;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import spock.lang.Specification;
@@ -112,6 +115,9 @@ class ExecutionTest extends Specification {
 		testCase.name >> "peter parker"
 		testCase.steps >> []
 		testCase.allAttachments >> []
+		testCase.importance >> TestCaseImportance.LOW
+		testCase.nature >> TestCaseNature.NONE
+		testCase.type >> TestCaseType.NONE
 		
 		when:
 		Execution res = new Execution(testCase)

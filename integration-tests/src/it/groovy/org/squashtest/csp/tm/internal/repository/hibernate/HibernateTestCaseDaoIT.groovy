@@ -28,6 +28,8 @@ import org.squashtest.csp.tm.domain.requirement.RequirementCategory
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance
+import org.squashtest.csp.tm.domain.testcase.TestCaseNature
+import org.squashtest.csp.tm.domain.testcase.TestCaseType
 import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
 import org.squashtest.csp.tm.internal.repository.TestCaseDao
@@ -395,6 +397,8 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			criteria.getName() >> "roject"
 			criteria.isGroupByProject() >> false
 			criteria.getImportanceFilterSet() >> Collections.emptyList();
+			criteria.getNatureFilterSet() >> Collections.emptyList();
+			criteria.getTypeFilterSet() >> Collections.emptyList();
 		
 		when :
 			def result = testCaseDao.findBySearchCriteria(criteria)
@@ -421,7 +425,9 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			criteria.getName() >> "roject"
 			criteria.isGroupByProject() >> true
 			criteria.getImportanceFilterSet() >> Collections.emptyList();
-		
+			criteria.getNatureFilterSet() >> Collections.emptyList();
+			criteria.getTypeFilterSet() >> Collections.emptyList();
+			
 		when :
 			def result = testCaseDao.findBySearchCriteria(criteria)
 			
@@ -445,6 +451,8 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			criteria.getName() >> "roject"
 			criteria.isGroupByProject() >> false
 			criteria.getImportanceFilterSet() >> [TestCaseImportance.MEDIUM, TestCaseImportance.HIGH] 
+			criteria.getNatureFilterSet() >> [TestCaseNature.NONE]
+			criteria.getTypeFilterSet() >> [TestCaseType.NONE]
 		
 		when :
 			def result = testCaseDao.findBySearchCriteria(criteria)
