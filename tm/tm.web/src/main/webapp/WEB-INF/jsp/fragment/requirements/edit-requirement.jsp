@@ -299,20 +299,7 @@ that page won't be editable if
 			</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
-	
-			
-	<%----------------------------------- Custom Fields -----------------------------------------------%>
-		
-		<comp:toggle-panel id="requirement-custom-fields"
-			titleKey="generics.customfieldvalues.title" isContextual="true"
-			open="${java.lang.Boolean.TRUE}">
-			<jsp:attribute name="body">
-				<div class="waiting-loading minimal-height"></div>
-			</jsp:attribute>
-		</comp:toggle-panel>
-		
-		
-	
+
 
 	<%--------------------------- verifying TestCase section ------------------------------------%>
 	<script type="text/javascript">
@@ -404,8 +391,11 @@ that page won't be editable if
 				return false;
 			});
 			
-			<%-- loading the custom field panel --%>
-			$("#requirement-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${requirement.currentVersion.boundEntityId}&boundEntityType=${requirement.currentVersion.boundEntityType}"); 				
+			<%-- loading the custom fields --%>
+			$.get("${customFieldsValuesURL}?boundEntityId=${requirement.currentVersion.boundEntityId}&boundEntityType=${requirement.currentVersion.boundEntityType}")
+			.success(function(data){
+				$("#edit-requirement-table").append(data);
+			});						
 	    	
 			
 		});

@@ -196,22 +196,7 @@
 		</jsp:attribute>
 	</comp:toggle-panel>
 	
-	
-	<%----------------------------------- Custom Fields -----------------------------------------------%>
-	
-	<comp:toggle-panel id="requirement-custom-fields"
-		titleKey="generics.customfieldvalues.title" isContextual="true"
-		open="${java.lang.Boolean.TRUE}">
-		<jsp:attribute name="body">
-			<div class="waiting-loading minimal-height"></div>
-		</jsp:attribute>
-	</comp:toggle-panel>
-	
-	
 
-	
-	
-	
 	<%--------------- verifying TestCase section ------------------------------------%>
 	<comp:toggle-panel id="verifying-requirement-panel" titleKey="requirement.verifying_test-case.panel.title" open="true">
 		<jsp:attribute name="panelButtons">
@@ -392,7 +377,10 @@
 		
 		
 		<%-- loading the custom field panel --%>
-		$("#requirement-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${requirementVersion.boundEntityId}&boundEntityType=${requirementVersion.boundEntityType}"); 				
+		$.get("${customFieldsValuesURL}?boundEntityId=${requirementVersion.boundEntityId}&boundEntityType=${requirementVersion.boundEntityType}")
+		.success(function(data){
+			$("#edit-requirement-table").append(data);
+		});						
     	
 		
 		

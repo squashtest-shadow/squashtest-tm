@@ -809,6 +809,7 @@ function addTestStepSuccessAnother(){
 					<ta:testcase-script-elt-structure testCase="${testCase}" canModify="${writable}" testCaseUrl="${testCaseUrl}"/>
 					</c:if>
 					   <%--/Test Automation structure --%>
+	
 				</div>
 	</jsp:attribute>
 		</comp:toggle-panel>
@@ -853,16 +854,6 @@ function addTestStepSuccessAnother(){
 						<div class="display-table-cell" id="test-case-prerequisite">${ testCase.prerequisite }</div>
 					</div>
 				</div>
-			</jsp:attribute>
-		</comp:toggle-panel>
-		
-		<%----------------------------------- Custom Fields -----------------------------------------------%>
-		
-		<comp:toggle-panel id="test-case-custom-fields"
-			titleKey="generics.customfieldvalues.title" isContextual="true"
-			open="${java.lang.Boolean.TRUE}">
-			<jsp:attribute name="body">
-				<div class="waiting-loading minimal-height"></div>
 			</jsp:attribute>
 		</comp:toggle-panel>
 		
@@ -978,8 +969,12 @@ function addTestStepSuccessAnother(){
 			document.location.href = "${callStepManagerUrl}";			
 		});
 		
-		<%-- loading the custom field panel --%>
-		$("#test-case-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}"); 				
+		<%-- loading the custom fields --%>
+		$.get("${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}")
+		.success(function(data){
+			$("#test-case-description-table").append(data);
+		});
+	
     	
 	});
 

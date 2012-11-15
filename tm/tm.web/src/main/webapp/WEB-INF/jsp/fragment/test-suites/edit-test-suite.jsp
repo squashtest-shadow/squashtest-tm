@@ -370,7 +370,7 @@
 		
 		<%----------------------------------- Custom Fields -----------------------------------------------%>
 		
-		<comp:toggle-panel id="test-suite-custom-fields"
+		<comp:toggle-panel id="test-suite-custom-fields" classes="display-table"
 			titleKey="generics.customfieldvalues.title" isContextual="true"
 			open="${java.lang.Boolean.TRUE}">
 			<jsp:attribute name="body">

@@ -78,7 +78,7 @@ public class CustomFieldValuesController {
 	}
 	
 	
-	@RequestMapping(method=RequestMethod.GET, params = {"boundEntityId", "boundEntityType"}, headers="Accept=text/html")
+	@RequestMapping(method=RequestMethod.GET, params = {"boundEntityId", "boundEntityType"})
 	public ModelAndView getCustomFieldValuesPanel(@RequestParam("boundEntityId") Long id, @RequestParam("boundEntityType") BindableEntity entityType){
 		
 		List<CustomFieldValue> values = managerService.findAllCustomFieldValues(id, entityType);
