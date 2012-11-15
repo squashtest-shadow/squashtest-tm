@@ -787,7 +787,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		};
 		
 		var i=0;
-		for (i=0, length = columnDefs.length; i<length;i++){
+		var length = columnDefs.length;
+		for (i=0; i<length; i++){
 			var rowDef = columnDefs[i];
 			if ( needsWrapping(rowDef)===true ){
 				var attribute = rowDef.mDataProp;
