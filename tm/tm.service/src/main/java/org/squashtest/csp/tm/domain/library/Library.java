@@ -22,11 +22,12 @@ package org.squashtest.csp.tm.domain.library;
 
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.SelfClassAware;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.project.ProjectResource;
 /**
  * Interface for project libraries;
  *
  * @param <NODE> type of contained node.
  */
-public interface Library<NODE extends LibraryNode> extends ProjectResource, SelfClassAware, NodeContainer<NODE>, Identified {
+public interface Library<NODE extends LibraryNode> extends ProjectResource, SelfClassAware, NodeContainer<NODE>, Identified, AttachmentHolder {
 }

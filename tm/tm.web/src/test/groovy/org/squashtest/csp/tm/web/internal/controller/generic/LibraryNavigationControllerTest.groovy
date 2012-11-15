@@ -210,5 +210,10 @@ class DummyLibrary implements Library<DummyNode> {
 	@Override
 	public void addContent(DummyNode contentToAdd) throws DuplicateNameException, NullArgumentException {
 	}
+	@Override
+	public AttachmentList getAttachmentList() {
+		return null;
+	}
+	
 }
 

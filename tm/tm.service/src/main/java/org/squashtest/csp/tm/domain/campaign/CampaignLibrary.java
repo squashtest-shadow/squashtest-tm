@@ -35,6 +35,7 @@ import javax.persistence.OneToOne;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.hibernate.annotations.Where;
+import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.project.GenericLibrary;
 import org.squashtest.csp.tm.domain.project.Project;
 
@@ -56,6 +57,11 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 
 	@OneToOne(mappedBy = "campaignLibrary")
 	private Project project;
+	
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "ATTACHMENT_LIST_ID")
+	private final AttachmentList attachmentList = new AttachmentList();
+
 
 	public void setId(Long id) {
 		this.id = id;
@@ -108,6 +114,11 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	@Override
 	public boolean hasContent() {
 		return (rootContent.size() > 0);
+	}
+
+	@Override
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
 	}
 
 

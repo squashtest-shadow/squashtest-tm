@@ -33,6 +33,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.project.GenericLibrary;
 import org.squashtest.csp.tm.domain.project.Project;
 
@@ -53,7 +54,11 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	private final Set<RequirementLibraryNode> rootContent = new HashSet<RequirementLibraryNode>();
 
 	@OneToOne(mappedBy = "requirementLibrary")
-	private Project project;
+	private Project project;	
+	
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "ATTACHMENT_LIST_ID")
+	private final AttachmentList attachmentList = new AttachmentList();
 
 	public void setId(Long id) {
 		this.id = id;
@@ -106,6 +111,11 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	@Override
 	public boolean hasContent() {
 		return (rootContent.size() > 0);
+	}
+
+	@Override
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
 	}
 
 	

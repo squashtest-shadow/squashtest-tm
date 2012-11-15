@@ -52,6 +52,18 @@
 		</sql>
 		<sql>
 			insert into KEYVAL (`NAME`, `TOT`)
+			select ('CLIB'), count(*) from CAMPAIGN_LIBRARY;
+		</sql>
+		<sql>
+			insert into KEYVAL (`NAME`, `TOT`)
+			select ('RLIB'), count(*) from REQUIREMENT_LIBRARY;
+		</sql>
+		<sql>
+			insert into KEYVAL (`NAME`, `TOT`)
+			select ('TCLIB'), count(*) from TEST_CASE_LIBRARY;
+		</sql>
+		<sql>
+			insert into KEYVAL (`NAME`, `TOT`)
 			select ('ATTLIST'), count(*) from ATTACHMENT_LIST;
 		</sql>
 	</changeSet>
@@ -63,17 +75,20 @@
 	<changeSet id="1.4.0.feat-1513-test-02" author="mpagnon">
 		<preConditions>
 			<sqlCheck expectedResult="0">
-			select (count(actualAttlist.ATTACHMENT_LIST_ID) - prevAttlist.TOT - simpleResource.TOT - campaignFolder.TOT - testCaseFolder.TOT - project.TOT)
-			from KEYVAL simpleResource, KEYVAL campaignFolder, KEYVAL testCaseFolder , KEYVAL project, KEYVAL prevAttlist, ATTACHMENT_LIST actualAttlist
+			select (count(distinct actualAttlist.ATTACHMENT_LIST_ID) - prevAttlist.TOT - simpleResource.TOT - campaignFolder.TOT - testCaseFolder.TOT - project.TOT - clib.TOT - rlib.TOT - tclib.TOT)
+			from KEYVAL simpleResource, KEYVAL campaignFolder, KEYVAL testCaseFolder , KEYVAL project, KEYVAL clib , KEYVAL rlib , KEYVAL tclib , KEYVAL prevAttlist, ATTACHMENT_LIST actualAttlist
 			where prevAttlist.NAME = 'ATTLIST'
 			and simpleResource.NAME = 'SR'
 			and campaignFolder.NAME = 'CF'
 			and testCaseFolder.NAME = 'TCF'
 			and project.NAME = 'PROJECT'
+			and clib.NAME = 'CLIB'
+			and rlib.NAME = 'RLIB'
+			and tclib.NAME = 'TCLIB'
 			;
 			</sqlCheck>
 		</preConditions>
-		<comment>We check that each test case library node has an attachment list</comment>
+		<comment>We check that each attachable entity has a unique attachment list</comment>
 		<sql>
 			drop table `KEYVAL`;
 		</sql>
