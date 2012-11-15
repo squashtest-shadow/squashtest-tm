@@ -47,6 +47,8 @@ import org.squashtest.csp.tm.internal.repository.LibraryDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.internal.utils.library.LibraryUtils;
+import org.squashtest.csp.tm.internal.utils.security.PermissionsUtils;
+import org.squashtest.csp.tm.internal.utils.security.SecurityCheckableObject;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
@@ -402,33 +404,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	}
 
-	/* **that class just performs the same, using a domainObject directly */
-	protected class SecurityCheckableObject {
-		private final Object domainObject;
-		private final String permission;
-
-		protected SecurityCheckableObject(Object domainObject, String permission) {
-			this.domainObject = domainObject;
-			this.permission = permission;
-		}
-
-		public String getPermission() {
-			return permission;
-		}
-
-		public Object getObject() {
-			return domainObject;
-		}
-
-	}
-
 	protected void checkPermission(SecurityCheckableObject... checkableObjects) {
-		for (SecurityCheckableObject object : checkableObjects) {
-			if (!permissionService
-					.hasRoleOrPermissionOnObject("ROLE_ADMIN", object.getPermission(), object.getObject())) {
-				throw new AccessDeniedException("Access is denied");
-			}
-		}
+		PermissionsUtils.checkPermission(permissionService, checkableObjects);
 	}
 
 	protected List<? extends ExportData> setFullFolderPath(List<? extends ExportData> dataset) {

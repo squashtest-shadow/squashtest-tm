@@ -48,6 +48,7 @@ import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
 import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
+import org.squashtest.csp.tm.internal.utils.security.SecurityCheckableObject;
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;

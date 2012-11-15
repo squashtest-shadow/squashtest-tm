@@ -46,6 +46,7 @@ import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
 import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.internal.service.importer.TestCaseImporter;
+import org.squashtest.csp.tm.internal.utils.security.SecurityCheckableObject;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.importer.ImportSummary;

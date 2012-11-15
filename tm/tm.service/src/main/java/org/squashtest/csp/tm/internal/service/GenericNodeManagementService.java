@@ -32,6 +32,8 @@ import org.squashtest.csp.tm.domain.library.LibraryNode;
 import org.squashtest.csp.tm.internal.repository.EntityDao;
 import org.squashtest.csp.tm.internal.repository.FolderDao;
 import org.squashtest.csp.tm.internal.repository.LibraryDao;
+import org.squashtest.csp.tm.internal.utils.security.PermissionsUtils;
+import org.squashtest.csp.tm.internal.utils.security.SecurityCheckableObject;
 
 /**
  * Generic management service for library nodes. It is responsible for common operations such as rename / move / copy
@@ -186,30 +188,9 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 
 	/* ********************* security scaffolding ************************ */
 
-	private static final class SecurityCheckableObject {
-		private final Object domainObject;
-		private final String permission;
-
-		private SecurityCheckableObject(Object domainObject, String permission) {
-			this.domainObject = domainObject;
-			this.permission = permission;
-		}
-
-		public String getPermission() {
-			return permission;
-		}
-
-		public Object getObject() {
-			return domainObject;
-		}
-	}
+	
 
 	private void checkPermission(SecurityCheckableObject... checkableObjects) {
-		for (SecurityCheckableObject object : checkableObjects) {
-			if (!permissionService
-					.hasRoleOrPermissionOnObject("ROLE_ADMIN", object.getPermission(), object.getObject())) {
-				throw new AccessDeniedException("Access is denied");
-			}
-		}
+		PermissionsUtils.checkPermission(permissionService, checkableObjects);
 	}
 }

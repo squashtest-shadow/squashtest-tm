@@ -30,12 +30,14 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.springframework.stereotype.Component;
+import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.library.NodeContainer;
 import org.squashtest.csp.tm.domain.library.TreeNode;
 import org.squashtest.csp.tm.internal.repository.EntityDao;
 import org.squashtest.csp.tm.internal.repository.GenericDao;
-import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
+import org.squashtest.csp.tm.internal.utils.security.PermissionsUtils;
+import org.squashtest.csp.tm.internal.utils.security.SecurityCheckableObject;
+
 
 public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED extends TreeNode> {
 	
@@ -47,6 +49,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 	private GenericDao<Object> genericDao;
 	private EntityDao<CONTAINER> containerDao;
 	private EntityDao<COPIED> copiedDao;
+	@Inject
+	private PermissionEvaluationService permissionService;
 	
 	public void setGenericDao(GenericDao<Object> genericDao) {
 		this.genericDao = genericDao;
@@ -71,7 +75,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 		// identity holder
 		for (Long id : list) {
 			COPIED node = copiedDao.findById(id);;
-			// checkPermission(new SecurityCheckableObject(container, CREATE), new SecurityCheckableObject(node, READ));
+			PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(container, CREATE), new SecurityCheckableObject(node, READ));
 		}
 
 		// proceed : will copy and persist each node of copied trees generation by generation.
@@ -115,5 +119,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 		//after copying last row, evict source generation and their parents. They will never be grandparents.
 		return nodeList;
 	}
+	
+	
 
 }

@@ -28,7 +28,6 @@ import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,6 +51,8 @@ import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
 import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
+import org.squashtest.csp.tm.internal.utils.security.PermissionsUtils;
+import org.squashtest.csp.tm.internal.utils.security.SecurityCheckableObject;
 import org.squashtest.csp.tm.service.CustomIterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
@@ -83,7 +84,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
-
+	
+	@Inject
 	private PermissionEvaluationService permissionService;
 
 	@Inject
@@ -99,11 +101,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Qualifier("squashtest.tm.service.internal.PasteToIterationStrategy")
 	private PasteStrategy<Iteration, TestSuite> pasteToIterationStrategy;
 
-
-	@ServiceReference
-	public void setPermissionService(PermissionEvaluationService permissionService) {
-		this.permissionService = permissionService;
-	}
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE') "
@@ -357,33 +354,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	/* ************************* security ************************* */
 
-	/* **that class just performs the same, using a domainObject directly */
-	private static final class SecurityCheckableObject {
-		private final Object domainObject;
-		private final String permission;
-
-		private SecurityCheckableObject(Object domainObject, String permission) {
-			this.domainObject = domainObject;
-			this.permission = permission;
-		}
-
-		public String getPermission() {
-			return permission;
-		}
-
-		public Object getObject() {
-			return domainObject;
-		}
-
-	}
-
 	private void checkPermission(SecurityCheckableObject... checkableObjects) {
-		for (SecurityCheckableObject object : checkableObjects) {
-			if (!permissionService
-					.hasRoleOrPermissionOnObject("ROLE_ADMIN", object.getPermission(), object.getObject())) {
-				throw new AccessDeniedException("Access is denied");
-			}
-		}
+		PermissionsUtils.checkPermission(permissionService, checkableObjects);
 	}
 
 	/* ************************* private stuffs ************************* */

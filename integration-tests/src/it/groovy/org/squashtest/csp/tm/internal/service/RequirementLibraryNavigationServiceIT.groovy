@@ -20,15 +20,20 @@
  */
 package org.squashtest.csp.tm.internal.service
 
+import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import spock.unitils.UnitilsSupport;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode
+import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
 import org.unitils.dbunit.annotation.DataSet;
 
@@ -114,5 +119,31 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		requirement.versions.find {it.name == "version102"} != null
 	}
 	
+	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste requirement versions with cuf.xml")
+	def "should copy paste requirement versions with cufs"(){
+		given:
+		Long[] sourceIds = [10L]
+		Long destinationId = 2L
+		
+		when:
+		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
+		
+		then:"requirement has 2 versions"
+		nodes.get(0) instanceof Requirement
+		Requirement requirement = (Requirement) nodes.get(0)
+		requirement.versions.size() == 2
+		RequirementVersion firstV = requirement.versions.find {it.name == "version100"}
+		RequirementVersion currV = requirement.versions.find {it.name == "version102"}
+		findCufValueForEntity(BindableEntity.REQUIREMENT_VERSION, currV.id).get(0).value == "current-cuf"
+		findCufValueForEntity(BindableEntity.REQUIREMENT_VERSION, firstV.id).get(0).value == "first-cuf"
+	}
+	
+	private List<CustomFieldValue> findCufValueForEntity(BindableEntity entity, long entityId){
+		Query query = session.createQuery("from CustomFieldValue cufV where cufV.boundEntityType = :type and cufV.boundEntityId = :id")
+		query.setParameter("type", entity)
+		query.setParameter("id", entityId)
+		
+		return query.list()
+	}
 }
 

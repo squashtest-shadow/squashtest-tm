@@ -22,8 +22,13 @@ package org.squashtest.csp.tm.internal.service
 
 import javax.inject.Inject
 
+import org.junit.runner.RunWith;
+import org.spockframework.runtime.Sputnik;
 import org.spockframework.util.NotThreadSafe
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.csp.core.service.security.PermissionEvaluationService
+import org.squashtest.csp.core.service.security.StubPermissionEvaluationService
 import org.squashtest.csp.tm.domain.attachment.AttachmentList
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.csp.tm.domain.campaign.TestSuite
@@ -34,12 +39,12 @@ import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
 
-@NotThreadSafe
 @UnitilsSupport
 @Transactional
+@RunWith(Sputnik)
 class IterationModificationServiceDbunitIT extends DbunitServiceSpecification {
 	
-	@Inject
+	@Inject	
 	private IterationModificationService iterService
 
 	@DataSet("IterationModificationServiceDbunitIT.should copy-paste a TestSuite.xml")
