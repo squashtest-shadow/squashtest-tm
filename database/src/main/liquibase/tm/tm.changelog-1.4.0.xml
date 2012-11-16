@@ -439,7 +439,7 @@
 		<changeSet id="tm-1.4.0.feat-1596.01" author="flaurens">
 			<comment>adds test case information to executions created prior to the changeset tm-1.4.0.feat-1596.00</comment>
 			<sql>
-			create temporary table EXECUTION_TEST_CASE_DATA (TCLN_ID BIGINT, TC_DESCRIPTION BLOB, REFERENCE VARCHAR(20), IMPORTANCE VARCHAR(20), TC_NATURE VARCHAR(30), TC_TYPE VARCHAR(30));
+			create temporary table EXECUTION_TEST_CASE_DATA (TCLN_ID BIGINT, TC_DESCRIPTION TEXT, REFERENCE VARCHAR(20), IMPORTANCE VARCHAR(20), TC_NATURE VARCHAR(30), TC_TYPE VARCHAR(30));
 			
 			insert into EXECUTION_TEST_CASE_DATA (TCLN_ID, TC_DESCRIPTION, REFERENCE, IMPORTANCE, TC_NATURE, TC_TYPE)
 				select
