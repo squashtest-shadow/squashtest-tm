@@ -58,10 +58,24 @@
 
 <f:message var="cannotCreateExecutionException" key="squashtm.action.exception.cannotcreateexecution.label" />
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
+
 <script type="text/javascript">
 	var removeTestPlansUrl = "${removeTestPlansUrl}";
 	var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
-
+	var runnerUrl = ""; //URL used to run an execution. will be created dynamically
+	
+	var dryRunStart = function() {
+		return $.ajax({
+			url : runnerUrl,
+			method : 'get',
+			dataType : 'json',
+			data : {
+				'dry-run' : ''
+			}
+		});
+	};
+	
+	
 	$(function() {
 		<%--=========================--%>
 		<%-- single test-plan removal --%>
@@ -201,6 +215,100 @@
 	}
 		 
 
+	function shortcutExecutionClickHandler(){
+		openMenu(this);
+	}
+	
+	function openMenu(testPlanHyperlink){
+		
+		var table = $('#test-suite-test-plans-table').dataTable();
+		var data = table.fnGetData(testPlanHyperlink.parentNode.parentNode);
+		var row = testPlanHyperlink.parentNode.parentNode;
+		var tpId = data[0];
+		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
+
+
+		//if the testcase is manual
+		if(data[3] === 'M'){
+		
+			$(".shortcut-exec",row).fgmenu({
+				content : $("#shortcut-exec-man",row).html(),
+				showSpeed : 0,
+				width : 130
+			});
+	
+		//if the testcase is automated		
+		} else {
+			
+			$.ajax({
+				type : 'POST',
+				url : url,
+				data : {"mode":"auto"},
+				dataType : "json"
+			}).done(function(suiteView){
+				refreshTestPlans();
+				if(suiteView.executions.length == 0){
+					$.squash
+					.openMessage("<f:message key='popup.title.Info' />",
+							"<f:message	key='dialog.execution.auto.overview.error.none'/>");
+				}else{
+					squashtm.automatedSuiteOverviewDialog.open(suiteView);
+				}
+			});
+		} 
+	}
+	
+	function launchClassicExe(tpId){
+		
+		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
+	
+		var startResumeClassic = function() {
+			var url = runnerUrl;
+			var data = {
+				'classic' : ''
+			};
+			var winDef = {
+				name : "classicExecutionRunner",
+				features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
+			};
+			$.open(url, data, winDef);
+		};
+
+		$.ajax({
+			type : 'POST',
+			url : url,
+			data : {"mode":"manual"},
+			dataType : "json"
+		}).done(function(id){
+			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
+			dryRunStart().done(startResumeClassic);
+		});
+	}
+	
+	function launchOptimizedExe(tpId){
+		
+		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
+
+		var startResumeOptimized = function() {
+			
+			var url = runnerUrl;
+			$('body form#start-optimized-form').remove();
+			$('body').append('<form id="start-optimized-form" action="'+runnerUrl+'" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="" name="optimized" id="start-optimized-button" /></form>');
+			
+			$('#start-optimized-button').trigger('click');
+		};
+		
+		$.ajax({
+			type : 'POST',
+			url : url,
+			data : {"mode":"manual"},
+			dataType : "json"
+		}).done(function(id){
+			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
+			dryRunStart().done(startResumeOptimized);
+		});
+	}
+	
 	<%--=========================--%>
 	<%-- Drag and Drop --%>
 	<%--=========================--%>
@@ -315,10 +423,6 @@
 		$('td:eq(4)', row).prepend('<img src="${pageContext.servletContext.contextPath}/images/arrow_right.gif"/>');	
 	}	
 
-	function shortcutExecutionClickHandler(){
-		openMenu(this);
-	}
-
 	function addExecuteIconToTestPlan(row, data) {
 		
 		var tpId = data[0];
@@ -332,110 +436,6 @@
 		}
 	}
 
-	var runnerUrl = "";
-	
-	var dryRunStart = function() {
-		return $.ajax({
-			url : runnerUrl,
-			method : 'get',
-			dataType : 'json',
-			data : {
-				'dry-run' : ''
-			}
-		});
-	};
-	
-	function launchClassicExe(tpId){
-		
-		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
-	
-		var startResumeClassic = function() {
-			var url = runnerUrl;
-			var data = {
-				'classic' : ''
-			};
-			var winDef = {
-				name : "classicExecutionRunner",
-				features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
-			};
-			$.open(url, data, winDef);
-		};
-
-		$.ajax({
-			type : 'POST',
-			url : url,
-			data : {"mode":"manual"},
-			dataType : "json"
-		}).done(function(id){
-			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
-			dryRunStart().done(startResumeClassic);
-		});
-	}
-	
-	function launchOptimizedExe(tpId){
-		
-		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
-
-		var startResumeOptimized = function() {
-			
-			var url = runnerUrl;
-			$('body form#start-optimized-form').remove();
-			$('body').append('<form id="start-optimized-form" action="'+runnerUrl+'" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="" name="optimized" id="start-optimized-button" /></form>');
-			
-			$('#start-optimized-button').trigger('click');
-		};
-		
-		$.ajax({
-			type : 'POST',
-			url : url,
-			data : {"mode":"manual"},
-			dataType : "json"
-		}).done(function(id){
-			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
-			dryRunStart().done(startResumeOptimized);
-		});
-	}
-	
-	
-	function openMenu(testPlanHyperlink){
-		
-		var table = $('#test-suite-test-plans-table').dataTable();
-		var data = table.fnGetData(testPlanHyperlink.parentNode.parentNode);
-		var row = testPlanHyperlink.parentNode.parentNode;
-		var tpId = data[0];
-		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
-
-
-		//if the testcase is manual
-		if(data[3] === 'M'){
-		
-			$(".shortcut-exec",row).fgmenu({
-				content : $("#shortcut-exec-man",row).html(),
-				showSpeed : 0,
-				width : 130
-			});
-	
-		//if the testcase is automated		
-		} else {
-			
-			$.ajax({
-				type : 'POST',
-				url : url,
-				data : {"mode":"auto"},
-				dataType : "json"
-			}).done(function(suiteView){
-				refreshTestPlans();
-				if(suiteView.executions.length == 0){
-					$.squash
-					.openMessage("<f:message key='popup.title.Info' />",
-							"<f:message	key='dialog.execution.auto.overview.error.none'/>");
-				}else{
-					squashtm.automatedSuiteOverviewDialog.open(suiteView);
-				}
-			});
-		} 
-	}
-	
 	function addLoginListToTestPlan(row, data){
 		if (! isTestCaseDeleted(data)){
 			var id = getTestPlansTableRowId(data);

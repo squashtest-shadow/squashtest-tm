@@ -75,7 +75,19 @@
 	
 	var testPlansUrl = "${testPlansUrl}";
 	var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
-
+	var runnerUrl = ""; //URL used to run an execution. will be created dynamically
+	
+	var dryRunStart = function() {
+		return $.ajax({
+			url : runnerUrl,
+			method : 'get',
+			dataType : 'json',
+			data : {
+				'dry-run' : ''
+			}
+		});
+	};
+	
 	//This function checks the response and inform the user if a deletion was impossible
 	function checkForbiddenDeletion(data) {
 		if (data == "true") {
@@ -122,31 +134,45 @@
 		openMenu(this);
 	}
 
-	function addExecuteIconToTestPlan(row, data) {
+	function openMenu(testPlanHyperlink){
 		
+		var table = $('#test-plans-table').squashTable();
+		var data = table.fnGetData(testPlanHyperlink.parentNode.parentNode);
+		var image = $(testPlanHyperlink).parent().find("img");
+		var row = testPlanHyperlink.parentNode.parentNode;
 		var tpId = data['entity-id'];
-		
-		if(!isTestCaseDeleted(data)){
-			$('td:eq(11)', row)
-				.prepend('<a class="shortcut-exec"><img src="${pageContext.servletContext.contextPath}/images/execute.png"/></a><div id="shortcut-exec-man" style="display: none"><ul><li><a id="option1-'+tpId+'" href="#" onclick="launchClassicExe('+tpId+')"><f:message key="test-suite.execution.classic.label"/></a></li><li><a id="option2-'+tpId+'" href="#" onclick="launchOptimizedExe('+tpId+')"><f:message key="test-suite.execution.optimized.label"/></a></li></ul></div>');
-		} else {
-			$('td:eq(11)', row).prepend('<a class="disabled-shortcut-exec"><img src="${pageContext.servletContext.contextPath}/images/execute.png"/></a>');
-			$('.disabled-shortcut-exec', row).css('opacity', 0.35);
-		}
-	}
+		var url = "${baseIterationURL}/test-plan/"+tpId+"/executions/new";
 
-	var runnerUrl = "";
+
+		//if the testcase is manual
+		if(data['exec-mode'] === 'M'){
+		
+			$(".shortcut-exec",row).fgmenu({
+				content : $("#shortcut-exec-man",row).html(),
+				showSpeed : 0,
+				width : 130
+			});
 	
-	var dryRunStart = function() {
-		return $.ajax({
-			url : runnerUrl,
-			method : 'get',
-			dataType : 'json',
-			data : {
-				'dry-run' : ''
-			}
-		});
-	};
+		//if the testcase is automated		
+		} else {
+			
+			$.ajax({
+				type : 'POST',
+				url : url,
+				data : {"mode":"auto"},
+				dataType : "json"
+			}).done(function(suiteView){
+				refreshTestPlans();
+				if(suiteView.executions.length == 0){
+					$.squash
+					.openMessage("<f:message key='popup.title.Info' />",
+							"<f:message	key='dialog.execution.auto.overview.error.none'/>");
+				}else{
+					squashtm.automatedSuiteOverviewDialog.open(suiteView);
+				}
+			});
+		} 
+	}
 	
 	function launchClassicExe(tpId){
 		
@@ -199,47 +225,7 @@
 		});
 	}
 	
-	
-	function openMenu(testPlanHyperlink){
-		
-		var table = $('#test-plans-table').squashTable();
-		var data = table.fnGetData(testPlanHyperlink.parentNode.parentNode);
-		var image = $(testPlanHyperlink).parent().find("img");
-		var row = testPlanHyperlink.parentNode.parentNode;
-		var tpId = data['entity-id'];
-		var url = "${baseIterationURL}/test-plan/"+tpId+"/executions/new";
 
-
-		//if the testcase is manual
-		if(data['exec-mode'] === 'M'){
-		
-			$(".shortcut-exec",row).fgmenu({
-				content : $("#shortcut-exec-man",row).html(),
-				showSpeed : 0,
-				width : 130
-			});
-	
-		//if the testcase is automated		
-		} else {
-			
-			$.ajax({
-				type : 'POST',
-				url : url,
-				data : {"mode":"auto"},
-				dataType : "json"
-			}).done(function(suiteView){
-				refreshTestPlans();
-				if(suiteView.executions.length == 0){
-					$.squash
-					.openMessage("<f:message key='popup.title.Info' />",
-							"<f:message	key='dialog.execution.auto.overview.error.none'/>");
-				}else{
-					squashtm.automatedSuiteOverviewDialog.open(suiteView);
-				}
-			});
-		} 
-	}
-	
 	function refreshTestPlans() {
 		$('#test-plans-table').squashTable().refresh();
 	}
@@ -314,6 +300,19 @@
 	function addIconToTestPlanName(row, data) {
 		$('td:eq(4)', row)
 			.prepend('<img src="${pageContext.servletContext.contextPath}/images/arrow_right.gif"/>');
+	}
+	
+	function addExecuteIconToTestPlan(row, data) {
+		
+		var tpId = data['entity-id'];
+		
+		if(!isTestCaseDeleted(data)){
+			$('td:eq(11)', row)
+				.prepend('<a class="shortcut-exec"><img src="${pageContext.servletContext.contextPath}/images/execute.png"/></a><div id="shortcut-exec-man" style="display: none"><ul><li><a id="option1-'+tpId+'" href="#" onclick="launchClassicExe('+tpId+')"><f:message key="test-suite.execution.classic.label"/></a></li><li><a id="option2-'+tpId+'" href="#" onclick="launchOptimizedExe('+tpId+')"><f:message key="test-suite.execution.optimized.label"/></a></li></ul></div>');
+		} else {
+			$('td:eq(11)', row).prepend('<a class="disabled-shortcut-exec"><img src="${pageContext.servletContext.contextPath}/images/execute.png"/></a>');
+			$('.disabled-shortcut-exec', row).css('opacity', 0.35);
+		}
 	}
 	
 	<c:if test="${ editable }">
