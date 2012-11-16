@@ -449,8 +449,8 @@
 					tc.importance AS IMPORTANCE,
 					tc.tc_nature AS TCNATURE,
 					tc.tc_type AS TCTYPE
-				from test_case tc
-				join test_case_library_node tcln on tcln.tcln_id = tc.tcln_id;
+				from TEST_CASE tc
+				join TEST_CASE_LIBRARY_NODE tcln on tcln.tcln_id = tc.tcln_id;
 				
 			
 			update EXECUTION exe
