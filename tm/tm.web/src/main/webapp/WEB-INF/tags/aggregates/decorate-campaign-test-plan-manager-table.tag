@@ -51,7 +51,7 @@
 			var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
 			
 			if (ids.length > 0) {
-				$.post('${ campaignUrl }/test-plan', { action: 'remove', itemsIds: ids }, refreshTestPlan);
+				$.post('${ campaignUrl }/test-plan', { action: 'remove', itemIds: ids }, refreshTestPlan);
 			}
 		});
 	});

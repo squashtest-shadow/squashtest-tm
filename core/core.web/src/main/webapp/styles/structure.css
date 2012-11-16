@@ -158,6 +158,10 @@ div.fragment-tabs {
 	min-height : 50px;	
 }
 
+.full-width{
+	width : 100%;	
+}
+
 div.fragment-tabs>ul {
 	border-bottom: 1px solid black !important;
 	border-radius: 0px 0px 0px 0px !important;
@@ -790,6 +794,15 @@ body.execute-html-body { /*width:100%;*/
 
 div#execute-header {
 	width: 100%;
+}
+
+#execute-header span.execution-title{
+	font-size : 20px;
+	margin-right : 2em;	
+}
+
+#new-test-case-label{
+	color : red;	
 }
 
 div#execute-header-left-div {

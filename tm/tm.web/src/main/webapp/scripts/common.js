@@ -20,7 +20,7 @@
  */
 requirejs.config({
 	
-	packages: ["custom-field-binding"],
+	packages: ["custom-field-binding", "execution-processing"],
 
 	/*
 	 * rules for paths naming: * third party lib: unversionned lib

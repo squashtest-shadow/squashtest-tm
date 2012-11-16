@@ -50,6 +50,11 @@ public class ExecutionRunnerControllerHelper {
 		this.executionProcessingService = executionProcService;
 	}
 
+	public void popuplateExecutionPreview(final long executionId, Model model){
+		Execution execution = executionProcessingService.findExecution(executionId);
+		model.addAttribute("execution", execution);
+	}
+	
 	public void populateExecutionRunnerModel(final long executionId, Model model) {
 		FetchStepCommand command = new FetchStepCommand() {
 			@Override
@@ -60,6 +65,8 @@ public class ExecutionRunnerControllerHelper {
 
 		populateExecutionStepModel(executionId, model, command);
 	}
+	
+	
 
 	public void populateExecutionStepModel(final long executionId, final int stepIndex, Model model) {
 		FetchStepCommand command = new FetchStepCommand() {

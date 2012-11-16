@@ -321,9 +321,9 @@
 			<div id="execute-body" class="execute-fragment-body">
 
 				<div id="new-test-case-label" class="centered not-displayed">
-					<font color=red><f:message
+					<span><f:message
 							key="execute.test.suite.next.test.case.label" />
-					</font>
+					</span>
 				</div>
 
 				<comp:toggle-panel id="execution-action-panel"

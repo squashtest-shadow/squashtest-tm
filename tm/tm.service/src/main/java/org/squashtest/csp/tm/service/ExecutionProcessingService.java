@@ -37,6 +37,15 @@ public interface ExecutionProcessingService {
 	ExecutionStep findExecutionStep(Long executionStepId);
 
 	/**
+	 * Tells whether the execution is fresh new or not. Namely, that all its steps have a status 
+	 * READY. 
+	 * 
+	 * @param executionId
+	 * @return
+	 */
+	boolean wasNeverRan(Long executionId);
+	
+	/**
 	 * 
 	 * @param executionId
 	 * @return the first occurence of a running or ready ExecutionStep

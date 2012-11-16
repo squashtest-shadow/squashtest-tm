@@ -393,6 +393,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	public boolean hasUnexecutedSteps() {
 		return findFirstUnexecutedStep() != null;
 	}
+	
 
 	/* *************** Attachable implementation ****************** */
 	@Override
@@ -457,6 +458,8 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 
 		throw new ExecutionHasNoRunnableStepException();
 	}
+	
+	//public boolean hasB
 
 	/**
 	 * @return the last step of the execution.

@@ -67,6 +67,12 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 		return executionStepDao.findById(executionStepId);
 	}
 
+	
+	public boolean wasNeverRan(Long executionId){
+		return executionDao.wasNeverRan(executionId);
+	}
+	
+	
 	@Override
 	public ExecutionStep findRunnableExecutionStep(long executionId) throws ExecutionHasNoStepsException {
 		Execution execution = executionDao.findById(executionId);

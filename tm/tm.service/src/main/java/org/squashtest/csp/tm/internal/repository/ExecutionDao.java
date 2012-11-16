@@ -39,9 +39,9 @@ public interface ExecutionDao extends EntityDao<Execution> {
 
 	ExecutionStatusReport getStatusReport(long executionId);
 
-	Integer countSuccess(long executionId);
+	long countSuccess(long executionId);
 
-	Integer countReady(long executionId);
+	long countReady(long executionId);
 
 	List<ExecutionStep> findStepsFiltered(Long executionId, Paging filter);
 
@@ -73,5 +73,15 @@ public interface ExecutionDao extends EntityDao<Execution> {
 	 * @return
 	 */
 	long countByTestCaseId(long testCaseId);
+	
+
+	/**
+	 * Tells whether the execution is fresh new or not. Namely, that all its steps have a status 
+	 * READY. 
+	 * 
+	 * @param executionId
+	 * @return
+	 */
+	boolean wasNeverRan(Long executionId);
 
 }

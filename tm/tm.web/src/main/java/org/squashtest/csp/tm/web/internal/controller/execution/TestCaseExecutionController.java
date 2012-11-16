@@ -38,7 +38,9 @@ import org.squashtest.csp.tm.service.ExecutionProcessingService;
 @RequestMapping("/executions/{executionId}/runner")
 public class TestCaseExecutionController {
 	private static final String OPTIMIZED_RUNNER_PAGE_VIEW = "page/executions/ieo-execute-execution";
+	
 	private static final String STEP_PAGE_VIEW = "page/executions/execute-execution";
+	private static final String STEP_PAGE_PREVIEW = "execute-execution-preview.html";
 
 	@Inject
 	private ExecutionRunnerControllerHelper helper;
@@ -56,10 +58,20 @@ public class TestCaseExecutionController {
 
 	@RequestMapping(params = "classic")
 	public String startResumeExecutionInClassicRunner(@PathVariable long executionId, Model model) {
-		helper.populateExecutionRunnerModel(executionId, model);
-		addCurrentStepUrl(executionId, model);
+		
+		if (executionProcessingService.wasNeverRan(executionId)){
+			helper.popuplateExecutionPreview(executionId, model);
+			
+			return STEP_PAGE_PREVIEW;
+			
+		}
+		else{
+			helper.populateExecutionRunnerModel(executionId, model);
+			addCurrentStepUrl(executionId, model);
 
-		return STEP_PAGE_VIEW;
+			return STEP_PAGE_VIEW;			
+		}
+		
 	}
 
 	private void addCurrentStepUrl(long executionId, Model model) {
@@ -79,4 +91,6 @@ public class TestCaseExecutionController {
 	public void dryRunStartResumeExecution(@PathVariable long executionId) {
 		executionProcessingService.findRunnableExecutionStep(executionId);
 	}
+	
+	
 }

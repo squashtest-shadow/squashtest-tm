@@ -101,14 +101,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		for (ExecutionStatus status : ExecutionStatus.values()) {
 			final ExecutionStatus fStatus = status;
 
-			SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
-
-				@Override
-				public void setQueryParameters(Query query) {
-					query.setLong("execId", executionId);
-					query.setParameter("status", fStatus);
-				}
-			};
+			SetQueryParametersCallback newCallBack = new CountStepStatusByExecutionParamSetter(executionId, fStatus);
 
 			Long lResult = executeEntityNamedQuery("execution.countStatus", newCallBack);
 
@@ -130,31 +123,17 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	}
 
 	@Override
-	public Integer countSuccess(final long executionId) {
-		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setLong("execId", executionId);
-				query.setParameter("status", ExecutionStatus.SUCCESS.name());
-			}
-		};
-
-		return executeEntityNamedQuery("execution.countStatus", newCallBack); 
+	public long countSuccess(final long executionId) {
+		SetQueryParametersCallback newCallBack = new CountStepStatusByExecutionParamSetter(executionId, ExecutionStatus.SUCCESS);
+		
+		return (Long)executeEntityNamedQuery("execution.countStatus", newCallBack); 
 	}
 
 	@Override
-	public Integer countReady(final long executionId) {
-		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setLong("execId", executionId);
-				query.setParameter("status", ExecutionStatus.READY.name());
-			}
-		};
-
-		return executeEntityNamedQuery("execution.Status", newCallBack);
+	public long countReady(final long executionId) {
+		SetQueryParametersCallback newCallBack = new CountStepStatusByExecutionParamSetter(executionId, ExecutionStatus.READY); 
+			
+		return (Long)executeEntityNamedQuery("execution.countStatus", newCallBack);
 	}
 
 	/*
@@ -245,5 +224,33 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	public long countByTestCaseId(long testCaseId) {
 		return (Long) executeEntityNamedQuery("execution.countByTestCaseId", "testCaseId", testCaseId);
 	}
+	
+	@Override
+	public boolean wasNeverRan(Long executionId) {
+		return ((countExecutionSteps(executionId) - countReady(executionId)) == 0);
+	}
+	
+	
+	
+	private static class CountStepStatusByExecutionParamSetter implements SetQueryParametersCallback{
 
+		private Long executionId;
+		private ExecutionStatus status;
+		
+		
+		public CountStepStatusByExecutionParamSetter(Long executionId,
+				ExecutionStatus status) {
+			super();
+			this.executionId = executionId;
+			this.status = status;
+		}
+
+
+
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setLong("execId", executionId);
+			query.setParameter("status", status);
+		}
+	};
 }
