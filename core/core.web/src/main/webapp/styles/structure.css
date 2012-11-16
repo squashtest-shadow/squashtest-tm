@@ -450,6 +450,12 @@ iframe#iframe-right {
 	height: 100%;
 }
 
+
+ a.unstyledLink:link {color:inherit; text-decoration:none}      /* unvisited link */
+ a.unstyledLink:visited {color:inherit; text-decoration:none}  /* visited link */
+ a.unstyledLink:hover {color:inherit; text-decoration:none}  /* mouse over link */
+ a.unstyledLink:active {color:inherit; text-decoration:none}
+
 /* -------------------------------------------*/
 /* ---------->>> NAVIGATION DIV <<<-----------*/
 /* -------------------------------------------*/
@@ -1140,4 +1146,61 @@ p {
 #user-infos-table td:first-child {
 	width: 100px;
 }
+
+
+/* ---------------------------------------------------------*/
+/* ---------------->>> Administration page <<<------------------*/
+/* ---------------------------------------------------------*/
+#admin-pane {
+	height: 100%;
+	width: 100%;
+	vertical-align:middle;
+}
+
+#admin-link-pane, #admin-link-msg-pane {
+    color: #666666;
+    margin: auto; 
+    display: block;
+    text-align: center; }
+    
+#admin-link-pane {
+     font-size: 1.5em;
+    font-style: italic;
+}
+
+#admin-link-pane a {
+	display: inline-block;
+         width: 20%;
+         position:relative;
+}
+
+#admin-link-pane img {
+    height: 170px;
+}
+
+#admin-link-msg-pane img {
+	height: 65px;
+}
+
+#admin-link-msg-pane.display-table {
+    display: table;
+    margin-top: 100px;
+    position: relative;
+    vertical-align: middle;
+}
+
+#admin-link-msg-pane.display-table .display-table-cell{
+	vertical-align:middle;
+	padding: 0;
+	line-height: 1.3em;
+}
+
+#admin-link-pane  span {
+	position:absolute; 
+	z-index:5; 
+	top: 150px;
+	left:0px; 
+	right:0px
+}
+
 /* ---------------------------------------------------------*/
