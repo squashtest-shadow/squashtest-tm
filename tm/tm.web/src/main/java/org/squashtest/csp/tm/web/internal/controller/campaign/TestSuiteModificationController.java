@@ -332,7 +332,7 @@ public class TestSuiteModificationController {
 					testCaseName, importance, testCaseExecutionMode,
 					messageSource.internationalize(item.getExecutionStatus(), locale),
 					formatString(item.getLastExecutedBy(), locale, messageSource),
-					messageSource.localizeDate(item.getLastExecutedOn(), locale), item.isTestCaseDeleted(), " " };
+					messageSource.localizeDate(item.getLastExecutedOn(), locale), item.isTestCaseDeleted(), " ", " " };
 		}
 	}
 

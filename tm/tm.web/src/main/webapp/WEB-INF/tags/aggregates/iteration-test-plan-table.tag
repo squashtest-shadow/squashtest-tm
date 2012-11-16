@@ -40,6 +40,7 @@
 			<th><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>
 			<th>is tc deleted (masked)</th>
 			<th>&nbsp;</th>				
+			<th>&nbsp;</th>	
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>

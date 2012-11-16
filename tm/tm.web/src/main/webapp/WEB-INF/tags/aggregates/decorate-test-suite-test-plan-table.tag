@@ -280,6 +280,7 @@
 		</c:if>
 		addHLinkToTestPlanName(row, data);
 		addIconToTestPlanName(row, data);
+		addExecuteIconToTestPlan(row, data);
 		addStyleToDeletedTestCaseRows(row, data);
 		addTestSuiteTestPlanItemExecModeIcon(row, data);
 		return row;
@@ -312,6 +313,11 @@
 		$('td:eq(4)', row).prepend('<img src="${pageContext.servletContext.contextPath}/images/arrow_right.gif"/>');	
 	}	
 
+	function addExecuteIconToTestPlan(row, data) {
+		$('td:eq(10)', row)
+			.prepend('<img src="${pageContext.servletContext.contextPath}/images/execute.png"/>');
+	}
+	
 	function addLoginListToTestPlan(row, data){
 		if (! isTestCaseDeleted(data)){
 			var id = getTestPlansTableRowId(data);
@@ -423,6 +429,7 @@
 		<dt:column-definition targets="8" sortable="false" cssClass="has-status"/>
 		<dt:column-definition targets="9, 10" sortable="false" width="12em"/>
 		<dt:column-definition targets="11" sortable="false" visible="false" />
-		<dt:column-definition targets="12" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
+		<dt:column-definition targets="12" sortable="false" width="2em" cssClass="centered"/>
+		<dt:column-definition targets="13" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
 	</jsp:attribute>
 </comp:decorate-ajax-table>

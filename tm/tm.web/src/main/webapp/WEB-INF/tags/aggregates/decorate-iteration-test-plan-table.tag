@@ -55,7 +55,6 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 
-
 <s:url var="showExecutionUrl" value="/executions" />
 
 <f:message var="cannotCreateExecutionException"
@@ -107,7 +106,7 @@
 					data : {"mode":"auto"},
 					dataType : "json"
 				})
-				.done(function(suiteView) {
+				.done(function() {
 					refreshTestPlans();
 					if(suiteView.executions.length == 0){
 						$.squash
@@ -120,8 +119,127 @@
 		return false; //return false to prevent navigation in page (# appears at the end of the URL)
 	}
 
+	function shortcutExecutionClickHandler(){
+		openMenu(this);
+	}
+
+	function addExecuteIconToTestPlan(row, data) {
+		
+		var tpId = data['entity-id'];
+		
+		if(!isTestCaseDeleted(data)){
+			$('td:eq(11)', row)
+				.prepend('<a class="shortcut-exec"><img src="${pageContext.servletContext.contextPath}/images/execute.png"/></a><div id="shortcut-exec-man" style="display: none"><ul><li><a id="option1-'+tpId+'" href="#" onclick="launchClassicExe('+tpId+')"><f:message key="test-suite.execution.classic.label"/></a></li><li><a id="option2-'+tpId+'" href="#" onclick="launchOptimizedExe('+tpId+')"><f:message key="test-suite.execution.optimized.label"/></a></li></ul></div>');
+		} else {
+			$('td:eq(11)', row).prepend('<a class="disabled-shortcut-exec"><img src="${pageContext.servletContext.contextPath}/images/execute.png"/></a>');
+			$('.disabled-shortcut-exec', row).css('opacity', 0.35);
+		}
+	}
+
+	var runnerUrl = "";
+	
+	var dryRunStart = function() {
+		return $.ajax({
+			url : runnerUrl,
+			method : 'get',
+			dataType : 'json',
+			data : {
+				'dry-run' : ''
+			}
+		});
+	};
+	
+	function launchClassicExe(tpId){
+		
+		var url = "${baseIterationURL}/test-plan/"+tpId+"/executions/new";
+	
+		var startResumeClassic = function() {
+			var url = runnerUrl;
+			var data = {
+				'classic' : ''
+			};
+			var winDef = {
+				name : "classicExecutionRunner",
+				features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
+			};
+			$.open(url, data, winDef);
+		};
+
+		$.ajax({
+			type : 'POST',
+			url : url,
+			data : {"mode":"manual"},
+			dataType : "json"
+		}).done(function(id){
+			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
+			dryRunStart().done(startResumeClassic);
+		});
+	}
+	
+	function launchOptimizedExe(tpId){
+		
+		var url = "${baseIterationURL}/test-plan/"+tpId+"/executions/new";
+
+		var startResumeOptimized = function() {
+			
+			var url = runnerUrl;
+			$('body').append('<form action="'+runnerUrl+'" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="" name="optimized" id="start-optimized-button" /></form>');
+			
+			$('#start-optimized-button').trigger('click');
+		};
+		
+		$.ajax({
+			type : 'POST',
+			url : url,
+			data : {"mode":"manual"},
+			dataType : "json"
+		}).done(function(id){
+			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
+			dryRunStart().done(startResumeOptimized);
+		});
+	}
+	
+	
+	function openMenu(testPlanHyperlink){
+		
+		var table = $('#test-plans-table').squashTable();
+		var data = table.fnGetData(testPlanHyperlink.parentNode.parentNode);
+		var image = $(testPlanHyperlink).parent().find("img");
+		var row = testPlanHyperlink.parentNode.parentNode;
+		var tpId = data['entity-id'];
+		var url = "${baseIterationURL}/test-plan/"+tpId+"/executions/new";
 
 
+		//if the testcase is manual
+		if(data['exec-mode'] === 'M'){
+		
+			$(".shortcut-exec",row).fgmenu({
+				content : $("#shortcut-exec-man",row).html(),
+				showSpeed : 0,
+				width : 130
+			});
+	
+		//if the testcase is automated		
+		} else {
+			
+			$.ajax({
+				type : 'POST',
+				url : url,
+				data : {"mode":"auto"},
+				dataType : "json"
+			}).done(function(suiteView){
+				refreshTestPlans();
+				if(suiteView.executions.length == 0){
+					$.squash
+					.openMessage("<f:message key='popup.title.Info' />",
+							"<f:message	key='dialog.execution.auto.overview.error.none'/>");
+				}else{
+					squashtm.automatedSuiteOverviewDialog.open(suiteView);
+				}
+			});
+		} 
+	}
+	
 	function refreshTestPlans() {
 		$('#test-plans-table').squashTable().refresh();
 	}
@@ -166,6 +284,7 @@
 	function testPlanTableRowCallback(row, data, displayIndex) {
 		addHLinkToTestPlanName(row, data);
 		addIconToTestPlanName(row, data);
+		addExecuteIconToTestPlan(row, data);
 		addStyleToDeletedTestCaseRows(row, data);
 		addIterationTestPlanItemExecModeIcon(row, data);
 		selectCurrentStatus(row,data);
@@ -196,7 +315,7 @@
 		$('td:eq(4)', row)
 			.prepend('<img src="${pageContext.servletContext.contextPath}/images/arrow_right.gif"/>');
 	}
-
+	
 	<c:if test="${ editable }">
 	
 	function addStatusListToTestPlan(){
@@ -281,7 +400,7 @@
 		});
 
 	}
-	
+
 	//because of IE8 naturally trimming text nodes we will trim
 	//every string we must compare.
 	$.fn.loginCombo = function(assignableList){
@@ -414,7 +533,10 @@
 		var newExecAutoButtons = $('a.new-auto-exec');
 		newExecAutoButtons.die('click');
 		newExecAutoButtons.live('click', newAutoExecutionClickHandler);
-		
+
+		var shortcutExecButtons = $('a.shortcut-exec');
+		shortcutExecButtons.die('click');
+		shortcutExecButtons.live('click', shortcutExecutionClickHandler);
 
 		/* could be optimized if we bind that in the datatableDrawCallback.	*/
 		$('#test-plans-table tbody td a.test-case-name-hlink').die('click');
@@ -451,8 +573,9 @@
 					{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [11], 'mDataProp' : 'assigned-to'},
 					{'bSortable': false, 'sWidth': '10%', 'aTargets': [12], 'mDataProp' : 'last-exec-on'},
 					{'bSortable': false, 'bVisible': false, 'aTargets': [13], 'mDataProp' : 'is-tc-deleted'},
-					{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [14], 'mDataProp' : 'empty-delete-holder'} 
-				]
+					{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered execute-button', 'aTargets': [14], 'mDataProp' : 'empty-execute-holder'}, 
+					{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [15], 'mDataProp' : 'empty-delete-holder'} 
+					]
 			};		
 		
 			var squashSettings = {
@@ -501,3 +624,4 @@
 			$("#test-plans-table").squashTable(tableSettings, squashSettings);
 	});
 </script>
+
