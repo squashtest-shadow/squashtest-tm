@@ -55,6 +55,10 @@
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
+<s:url var="baseIterationUrl" value="/iterations/{iterationId}">
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
 <s:url var="testSuiteStatisticsUrl"
 	value="/test-suites/{testSuiteId}/statistics">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
@@ -416,6 +420,7 @@
 				batchRemoveButtonId="remove-test-suite-test-case-button"
 				updateTestPlanUrl="${updateTestCaseUrl}"
 				assignableUsersUrl="${assignableUsersUrl}"
+				baseIterationUrl="${baseIterationUrl}"
 				nonBelongingTestPlansUrl="${nonBelongingTestCasesUrl}"
 				testPlanExecutionsUrl="${testCaseExecutionsUrl}"
 				editable="${ linkable }"

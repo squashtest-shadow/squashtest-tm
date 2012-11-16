@@ -83,7 +83,6 @@
 		}
 	}
 
-
 	function newExecutionClickHandler() {
 		var url = $(this).attr('data-new-exec');
 		$.ajax({
@@ -183,7 +182,8 @@
 		var startResumeOptimized = function() {
 			
 			var url = runnerUrl;
-			$('body').append('<form action="'+runnerUrl+'" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="" name="optimized" id="start-optimized-button" /></form>');
+			$('body form#start-optimized-form').remove();
+			$('body').append('<form id="start-optimized-form" action="'+runnerUrl+'" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="" name="optimized" id="start-optimized-button" /></form>');
 			
 			$('#start-optimized-button').trigger('click');
 		};

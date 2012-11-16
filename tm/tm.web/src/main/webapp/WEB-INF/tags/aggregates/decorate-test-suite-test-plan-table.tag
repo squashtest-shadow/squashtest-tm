@@ -20,6 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+
 <%@ tag body-content="empty" description="jqueryfies a campaign test case table" %>
 <%@ attribute name="tableModelUrl" required="true" description="URL to GET the model of the table" %>
 <%@ attribute name="removeTestPlansUrl" required="true" description="URL to delete the selected test-case from the test-plan" %>
@@ -34,6 +35,7 @@
 <%@ attribute name="testCaseMultipleRemovalPopupId" required="true" description="html id of the multiple test-case removal popup" %>
 <%@ attribute name="testSuiteExecButtonsId" required="true" description="html id of the test suite execution buttons panel" %>
 <%@ attribute name="testSuiteExecButtonsUrl" required="true" description="URL to refresh the labels on the execution buttons" %>
+<%@ attribute name="baseIterationUrl" required="true" description="the base iteration url" %>
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
@@ -313,9 +315,125 @@
 		$('td:eq(4)', row).prepend('<img src="${pageContext.servletContext.contextPath}/images/arrow_right.gif"/>');	
 	}	
 
+	function shortcutExecutionClickHandler(){
+		openMenu(this);
+	}
+
 	function addExecuteIconToTestPlan(row, data) {
-		$('td:eq(10)', row)
-			.prepend('<img src="${pageContext.servletContext.contextPath}/images/execute.png"/>');
+		
+		var tpId = data[0];
+		
+		if(!isTestCaseDeleted(data)){
+			$('td:eq(10)', row)
+				.prepend('<a class="shortcut-exec"><img src="${pageContext.servletContext.contextPath}/images/execute.png"/></a><div id="shortcut-exec-man" style="display: none"><ul><li><a id="option1-'+tpId+'" href="#" onclick="launchClassicExe('+tpId+')"><f:message key="test-suite.execution.classic.label"/></a></li><li><a id="option2-'+tpId+'" href="#" onclick="launchOptimizedExe('+tpId+')"><f:message key="test-suite.execution.optimized.label"/></a></li></ul></div>');
+		} else {
+			$('td:eq(10)', row).prepend('<a class="disabled-shortcut-exec"><img src="${pageContext.servletContext.contextPath}/images/execute.png"/></a>');
+			$('.disabled-shortcut-exec', row).css('opacity', 0.35);
+		}
+	}
+
+	var runnerUrl = "";
+	
+	var dryRunStart = function() {
+		return $.ajax({
+			url : runnerUrl,
+			method : 'get',
+			dataType : 'json',
+			data : {
+				'dry-run' : ''
+			}
+		});
+	};
+	
+	function launchClassicExe(tpId){
+		
+		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
+	
+		var startResumeClassic = function() {
+			var url = runnerUrl;
+			var data = {
+				'classic' : ''
+			};
+			var winDef = {
+				name : "classicExecutionRunner",
+				features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
+			};
+			$.open(url, data, winDef);
+		};
+
+		$.ajax({
+			type : 'POST',
+			url : url,
+			data : {"mode":"manual"},
+			dataType : "json"
+		}).done(function(id){
+			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
+			dryRunStart().done(startResumeClassic);
+		});
+	}
+	
+	function launchOptimizedExe(tpId){
+		
+		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
+
+		var startResumeOptimized = function() {
+			
+			var url = runnerUrl;
+			$('body form#start-optimized-form').remove();
+			$('body').append('<form id="start-optimized-form" action="'+runnerUrl+'" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="" name="optimized" id="start-optimized-button" /></form>');
+			
+			$('#start-optimized-button').trigger('click');
+		};
+		
+		$.ajax({
+			type : 'POST',
+			url : url,
+			data : {"mode":"manual"},
+			dataType : "json"
+		}).done(function(id){
+			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
+			dryRunStart().done(startResumeOptimized);
+		});
+	}
+	
+	
+	function openMenu(testPlanHyperlink){
+		
+		var table = $('#test-suite-test-plans-table').dataTable();
+		var data = table.fnGetData(testPlanHyperlink.parentNode.parentNode);
+		var row = testPlanHyperlink.parentNode.parentNode;
+		var tpId = data[0];
+		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
+
+
+		//if the testcase is manual
+		if(data[3] === 'M'){
+		
+			$(".shortcut-exec",row).fgmenu({
+				content : $("#shortcut-exec-man",row).html(),
+				showSpeed : 0,
+				width : 130
+			});
+	
+		//if the testcase is automated		
+		} else {
+			
+			$.ajax({
+				type : 'POST',
+				url : url,
+				data : {"mode":"auto"},
+				dataType : "json"
+			}).done(function(suiteView){
+				refreshTestPlans();
+				if(suiteView.executions.length == 0){
+					$.squash
+					.openMessage("<f:message key='popup.title.Info' />",
+							"<f:message	key='dialog.execution.auto.overview.error.none'/>");
+				}else{
+					squashtm.automatedSuiteOverviewDialog.open(suiteView);
+				}
+			});
+		} 
 	}
 	
 	function addLoginListToTestPlan(row, data){
@@ -412,6 +530,9 @@
 			return false; //return false to prevent navigation in page (# appears at the end of the URL)
 		} );
 		
+		var shortcutExecButtons = $('a.shortcut-exec');
+		shortcutExecButtons.die('click');
+		shortcutExecButtons.live('click', shortcutExecutionClickHandler);
 	});
 	
 	
