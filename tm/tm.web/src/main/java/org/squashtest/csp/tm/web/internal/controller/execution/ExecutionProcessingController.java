@@ -44,7 +44,9 @@ import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 @Controller
 @RequestMapping("/execute/{executionId}")
 public class ExecutionProcessingController {
+
 	private static final String STEP_PAGE_VIEW = "page/executions/execute-execution";
+	private static final String STEP_PAGE_PREVIEW = "execute-execution-preview.html";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionProcessingController.class);
 
@@ -61,10 +63,19 @@ public class ExecutionProcessingController {
 	private void addCurrentStepUrl(long executionId, Model model) {
 		model.addAttribute("currentStepUrl", "/execute/" + executionId + "/step/");
 	}
+	
+
+	@RequestMapping(value = "/step/prologue", method = RequestMethod.GET)
+	public String getExecutionPrologue(@PathVariable("executionId") long executionId, Model model){
+		addCurrentStepUrl(executionId, model);
+		helper.popuplateExecutionPreview(executionId, model);
+		
+		return STEP_PAGE_PREVIEW;	
+		
+	}
 
 	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET)
-	public String getClassicExecutionStepFragment(@PathVariable long executionId, @PathVariable int stepIndex,
-			Model model) {
+	public String getClassicExecutionStepFragment(@PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 		helper.populateExecutionStepModel(executionId, stepIndex, model);
 		addCurrentStepUrl(executionId, model);
 
@@ -97,6 +108,7 @@ public class ExecutionProcessingController {
 
 	@RequestMapping(value = "/step/{stepIndex}/general", method = RequestMethod.GET)
 	public ModelAndView getMenuInfos(@PathVariable Long executionId, @PathVariable Integer stepIndex) {
+		
 		ExecutionStep executionStep = executionProcService.findStepAt(executionId, stepIndex);
 
 		ModelAndView mav = new ModelAndView("fragment/executions/step-information-fragment");

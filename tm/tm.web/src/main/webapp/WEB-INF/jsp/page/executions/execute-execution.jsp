@@ -66,7 +66,7 @@
 			</s:url>
 			
 			<s:url var="executePrevious" value="${ currentStepUrl }{stepIndex}">
-				<s:param name="stepIndex" value="${executionStep.executionStepOrder-1}" />
+				<s:param name="stepIndex" value="${(executionStep.first) ? 'prologue' : executionStep.executionStepOrder-1}" />
 			</s:url>
 			
 			<s:url var="executeThis" value="${ currentStepUrl }{stepIndex}">
@@ -96,7 +96,6 @@
 				var hasNextTestCase = ${ (not empty hasNextTestCase) and hasNextTestCase };
 				var hasPreviousTestCase = ${ (not empty hasPreviousTestCase) and hasPreviousTestCase };
 				var hasNextStep = ${ (not empty hasNextStep) and hasNextStep };
-				var hasPreviousStep = ${ (not empty hasPreviousStep) and hasPreviousStep };
 	
 				function refreshParent(){
 					window.opener.location.href = window.opener.location.href;
@@ -127,9 +126,6 @@
 				}
 				
 				function navigateNext(){
-					if ( $('#new-test-case-label').hasClass('not-displayed') == false ) {
-						$('#new-test-case-label').addClass('not-displayed');
-					}
 					if (hasNextStep) {
 						document.location.href="${ executeNext }";						
 					} else {
@@ -138,14 +134,7 @@
 				}
 				
 				function navigatePrevious(){
-					if ( $('#new-test-case-label').hasClass('not-displayed') == false ) {
-						$('#new-test-case-label').addClass('not-displayed');
-					}
-					if (hasPreviousStep) {
-						document.location.href="${ executePrevious }";						
-					} else {
-						testComplete();
-					}
+					document.location.href="${ executePrevious }";						
 				}
 				
 				function initNextButton(){
@@ -161,7 +150,6 @@
 				function initPreviousButton(){			
 					$("#execute-previous-button").button({
 						'text' : false,
-						'disabled': !hasPreviousStep,
 						icons : {
 							primary : 'ui-icon-triangle-1-w'
 						}
@@ -269,7 +257,6 @@
 					
 					if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
 					
-					if (${ not empty testPlanItemUrl } && hasPreviousTestCase &&  !hasPreviousStep) $('#new-test-case-label').removeClass('not-displayed');
 					
 					$(window).unload( refreshParent );
 				});	
@@ -320,11 +307,7 @@
 
 			<div id="execute-body" class="execute-fragment-body">
 
-				<div id="new-test-case-label" class="centered not-displayed">
-					<span><f:message
-							key="execute.test.suite.next.test.case.label" />
-					</span>
-				</div>
+
 
 				<comp:toggle-panel id="execution-action-panel"
 					titleKey="execute.panel.action.title" isContextual="true"

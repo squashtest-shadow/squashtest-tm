@@ -211,6 +211,10 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	public String getAction() {
 		return action;
 	}
+	
+	public boolean isFirst(){
+		return (executionStepOrder==0);
+	}
 
 	/* ********************* interface Attachable impl ****************** */
 

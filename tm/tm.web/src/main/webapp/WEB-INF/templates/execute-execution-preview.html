@@ -27,7 +27,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	th:with="titleWindow = #{title.ExecutionPopupPreview(${execution.executionOrder + 1 }, ${execution.name})},
 		 title = #{title.ExecutionPopup(${execution.executionOrder + 1 }, ${execution.name})},
-		 beginURL = @{/execute/__${execution.id}__/step/0}">
+		 beginURL = @{__${currentStepUrl}__0}">
 
 
 <head>
@@ -52,10 +52,12 @@ documentation :
 <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.css"
 	th:href="@{/styles/master.css}" />
 
-<script type="text/javascript">
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
 	var require = {
-		baseUrl : '../../scripts/'
+		baseUrl : /*[[@{/scripts/}]]*/'../../scripts/'
 	};
+//]]>
 </script>
 <script type="text/javascript" th:src="@{/scripts/require-min.js}"></script>
 <script type="text/javascript" th:src="@{/scripts/common.js}"></script>
@@ -73,7 +75,7 @@ documentation :
 
 	<div id="execute-header">
 		<div class="snap-left centered">
-			<button id="execute-stop-button"
+			<button id="execute-stop-button" style="margin-left:10px;" 
 				th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop</button>
 		</div>
 		<div class="full-width centered">
@@ -84,11 +86,6 @@ documentation :
 	</div>
 
 	<div id="execute-body" class="execute-fragment-body">
-
-		<div id="new-test-case-label" class="centered not-displayed">
-			<span th:text="#{execute.test.suite.next.test.case.label}">execute
-				new test case</span>
-		</div>
 
 		<div id="execute-informations-panel" class="toggle-panel-main display-table is-contextual" data-title="Informations" th:attr="data-title=#{generics.information.title}">
 			

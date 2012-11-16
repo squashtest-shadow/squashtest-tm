@@ -40,7 +40,6 @@ public class TestCaseExecutionController {
 	private static final String OPTIMIZED_RUNNER_PAGE_VIEW = "page/executions/ieo-execute-execution";
 	
 	private static final String STEP_PAGE_VIEW = "page/executions/execute-execution";
-	private static final String STEP_PAGE_PREVIEW = "execute-execution-preview.html";
 
 	@Inject
 	private ExecutionRunnerControllerHelper helper;
@@ -60,10 +59,7 @@ public class TestCaseExecutionController {
 	public String startResumeExecutionInClassicRunner(@PathVariable long executionId, Model model) {
 		
 		if (executionProcessingService.wasNeverRan(executionId)){
-			helper.popuplateExecutionPreview(executionId, model);
-			
-			return STEP_PAGE_PREVIEW;
-			
+			return "redirect:" + getRedirectPreviewURL(executionId);		
 		}
 		else{
 			helper.populateExecutionRunnerModel(executionId, model);
@@ -73,11 +69,18 @@ public class TestCaseExecutionController {
 		}
 		
 	}
+	
 
 	private void addCurrentStepUrl(long executionId, Model model) {
 		model.addAttribute("currentStepUrl", "/execute/" + executionId + "/step/");
 	}
+	
+	
+	private String getRedirectPreviewURL(long executionId){
+		return "/execute/"+executionId+"/step/prologue";
+	}
 
+	
 	@RequestMapping(params = "optimized")
 	public String startResumeExecutionInOptimizedRunner(@PathVariable long executionId, Model model) {
 		helper.populateExecutionRunnerModel(executionId, model);
@@ -86,6 +89,7 @@ public class TestCaseExecutionController {
 		return OPTIMIZED_RUNNER_PAGE_VIEW;
 	}
 
+	
 	@RequestMapping(params = "dry-run")
 	@ResponseBody
 	public void dryRunStartResumeExecution(@PathVariable long executionId) {
