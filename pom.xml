@@ -269,25 +269,30 @@
 						<exclude>**/readme*.*</exclude>
 						<!-- manifest templates -->
 						<exclude>**/*.mf</exclude>
+						<exclude>**/bnd.bnd</exclude>
 						<!-- resource modules -->
 						<exclude>tools/license-resources/src/main/resources/**/*.*</exclude>
 						<exclude>tools/tools-resources/src/main/resources/**/*.*</exclude>
+						<!-- mercurial files-->
+						<exclude>**/*.orig</exclude>
+						<exclude>**/.hgtags</exclude>
+						<exclude>**/.hgignore</exclude>
 						<!-- third-party javascript libraries -->
 						<exclude>**/scripts/ckeditor/**/*.*</exclude>
 						<exclude>**/scripts/datatables/**/*.*</exclude>
 						<exclude>**/scripts/jquery/**/*.*</exclude>
 						<exclude>**/scripts/jqgrid/**/*.*</exclude>
-            <exclude>**/scripts/thirdparties/**/*.*</exclude>
-            <exclude>**/scripts/lib/**/*.*</exclude>
-            <exclude>**/scripts/require*.js</exclude>
-            <exclude>**/styles/ckeditor/**/*.*</exclude>
-            <exclude>**/styles/datatables/**/*.*</exclude>
+						<exclude>**/scripts/thirdparties/**/*.*</exclude>
+						<exclude>**/scripts/lib/**/*.*</exclude>
+						<exclude>**/scripts/require*.js</exclude>
+						<exclude>**/styles/ckeditor/**/*.*</exclude>
+						<exclude>**/styles/datatables/**/*.*</exclude>
 						<exclude>**/styles/jquery/**/*.*</exclude>
 						<exclude>**/styles/jqgrid/**/*.*</exclude>
 						<exclude>**/styles/**/thymol.js</exclude>
-            <exclude>**/styles/**/bootstrap*.css</exclude>
+						<exclude>**/styles/**/bootstrap*.css</exclude>
 						<!-- third-party wslds -->
-						<exclude>**/mantisconnect.wsdl</exclude>
+						<exclude>**/*.wsdl</exclude>
 						<!-- misc system / ide files -->
 						<exclude>**/build.properties</exclude>
 						<!-- felix configuration files -->
@@ -299,6 +304,14 @@
 						<exclude>**/izpack/**/*.*</exclude>
 						<!-- m2e generated files -->
 						<exclude>**/pom.properties</exclude>
+						<!-- webapp resources -->
+						<exclude>**/webapp/images/*</exclude>
+						<!-- jasper files -->
+						<exclude>**/*.jasper</exclude>
+						<!-- test resources -->
+						<exclude>integration-tests/src/it/resources/**</exclude>
+						<!--other -->
+						<exclude>**/new_report.rptdesign</exclude>
 					</excludes>
 					<mapping>
 						<tag>DYNASCRIPT_STYLE</tag>
