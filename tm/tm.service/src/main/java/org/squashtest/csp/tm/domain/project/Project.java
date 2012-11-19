@@ -27,6 +27,7 @@ import javax.persistence.Entity;
 @DiscriminatorValue("P")
 public class Project extends GenericProject {
 	public Project() {
+		super();
 	}
 
 	/**

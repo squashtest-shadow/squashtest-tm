@@ -21,16 +21,23 @@
 
 package org.squashtest.csp.tm.domain.project;
 
-/**
- * Project visitor. We need this because of the hibernate proxy problem (https://community.jboss.org/wiki/ProxyVisitorPattern)
- * @author Gregory Fouquet
- *
- */
-public interface ProjectVisitor {
-	void visit(Project project);
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
-	/**
-	 * @param projectTemplate
-	 */
-	void visit(ProjectTemplate projectTemplate);
+/**
+ * @author Gregory Fouquet
+ * 
+ */
+public final class ProjectUtils {
+	private ProjectUtils() {
+		super();
+	}
+
+	public static String toString(GenericProject project) {
+		ToStringBuilder builder = new ToStringBuilder(project, ToStringStyle.SHORT_PREFIX_STYLE);
+		builder.append("id", project.getId())
+			.append("name", project.getName());
+
+		return builder.toString();
+	}
 }

@@ -69,6 +69,7 @@ public class HibernateCampaignFolderDao extends HibernateEntityDao<CampaignFolde
 	/* ******************** //FIXME ******************* */
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<Long[]> findPairedContentForList(final List<Long> ids) {
 
 		if (ids.size() == 0) {
@@ -86,6 +87,7 @@ public class HibernateCampaignFolderDao extends HibernateEntityDao<CampaignFolde
 		return toArrayOfLong(result);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findContentForList(List<Long> ids) {
 		if (ids.size() == 0) {

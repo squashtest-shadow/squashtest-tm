@@ -29,6 +29,7 @@ import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
+import org.squashtest.csp.tm.domain.library.LibraryNodeUtils;
 
 /**
  * Abstract superclass of {@link Library} implementations based on generics.
@@ -54,14 +55,26 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 		return true;
 	}
 
+	/**
+	 * @throws UnsupportedOperationException
+	 *             when trying to add a node to a project template.
+	 */
 	@Override
-	public void addContent(@NotNull final NODE node) {
+	public void addContent(@NotNull final NODE node) throws UnsupportedOperationException {
 		checkContentNameAvailable(node);
 		getContent().add(node);
 
 		getProject().accept(new ProjectVisitor() {
 			public void visit(Project project) {
 				node.notifyAssociatedWithProject(project);
+
+			}
+
+			@Override
+			public void visit(ProjectTemplate projectTemplate) {
+				// should not happen. If so, programming error.
+				throw new UnsupportedOperationException(LibraryNodeUtils.toString(node) + " cannot be added to "
+						+ ProjectUtils.toString(projectTemplate));
 
 			}
 		});
@@ -78,17 +91,16 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 		}
 	}
 
-	
-	@AclConstrainedObject	
+	@AclConstrainedObject
 	@Override
 	public Library<?> getLibrary() {
 		return this;
 	}
-	
+
 	@Override
 	public List<String> getContentNames() {
 		List<String> contentNames = new ArrayList<String>(getContent().size());
-		for(NODE node : getContent()){
+		for (NODE node : getContent()) {
 			contentNames.add(node.getName());
 		}
 		return contentNames;

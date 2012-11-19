@@ -84,6 +84,7 @@
 				
         <value>org.squashtest.csp.tm.domain.project.GenericProject</value>
 				<value>org.squashtest.csp.tm.domain.project.Project</value>
+        <value>org.squashtest.csp.tm.domain.project.ProjectTemplate</value>
 				
 				<value>org.squashtest.csp.tm.domain.projectfilter.ProjectFilter</value>
 				

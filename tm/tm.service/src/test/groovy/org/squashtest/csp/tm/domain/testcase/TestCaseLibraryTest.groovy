@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.domain.testcase
 
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 
@@ -45,7 +46,19 @@ class TestCaseLibraryTest   extends Specification {
 		library.rootContent.contains testCase
 	}
 
-	def "should not add test with dup name"() {
+	def "should not add test case to library template"() {
+		given:
+		TestCase testCase = new TestCase(name: "foo")
+		library.notifyAssociatedWithProject(new ProjectTemplate());
+		
+		when:
+		library.addContent(testCase)
+
+		then:
+		thrown UnsupportedOperationException
+	}
+
+		def "should not add test with dup name"() {
 		given:
 		TestCase testCase = new TestCase(name: "foo")
 		library.addContent(testCase)

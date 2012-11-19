@@ -21,16 +21,25 @@
 
 package org.squashtest.csp.tm.domain.project;
 
-/**
- * Project visitor. We need this because of the hibernate proxy problem (https://community.jboss.org/wiki/ProxyVisitorPattern)
- * @author Gregory Fouquet
- *
- */
-public interface ProjectVisitor {
-	void visit(Project project);
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
+/**
+ * A Project template, which can hold no nodes but will be used to build "real" projects
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+@Entity
+@DiscriminatorValue("T")
+public class ProjectTemplate extends GenericProject {
 	/**
-	 * @param projectTemplate
+	 * @see org.squashtest.csp.tm.domain.project.GenericProject#accept(org.squashtest.csp.tm.domain.project.ProjectVisitor)
 	 */
-	void visit(ProjectTemplate projectTemplate);
+	@Override
+	public void accept(ProjectVisitor visitor) {
+		visitor.visit(this);
+
+	}
+
 }

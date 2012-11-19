@@ -19,18 +19,25 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.domain.project;
+package org.squashtest.csp.tm.domain.library;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
- * Project visitor. We need this because of the hibernate proxy problem (https://community.jboss.org/wiki/ProxyVisitorPattern)
  * @author Gregory Fouquet
- *
+ * 
  */
-public interface ProjectVisitor {
-	void visit(Project project);
+public final class LibraryNodeUtils {
+	private LibraryNodeUtils() {
+		super();
+	}
 
-	/**
-	 * @param projectTemplate
-	 */
-	void visit(ProjectTemplate projectTemplate);
+	public static String toString(LibraryNode node) {
+		ToStringBuilder builder = new ToStringBuilder(node, ToStringStyle.SHORT_PREFIX_STYLE);
+		builder.append("id", node.getId())
+			.append("name", node.getName());
+		
+		return builder.toString();
+	}
 }
