@@ -63,6 +63,7 @@ abstract class AbstractNamedQueryHandler<ENTITY> implements DynamicComponentInvo
 	 */
 	@Override
 	public final Object invoke(Object proxy, Method method, Object[] args) {
+		args = args == null ? new Object[] {} : args;
 		Query query = lookupNamedQuery(method);
 
 		processPaging(query, args);
@@ -84,7 +85,7 @@ abstract class AbstractNamedQueryHandler<ENTITY> implements DynamicComponentInvo
 	}
 
 	private boolean pagedQuery(Object[] args) {
-		return lastArg(args) instanceof Paging;
+		return args.length > 0 && lastArg(args) instanceof Paging;
 	}
 
 	private Object lastArg(Object[] args) {

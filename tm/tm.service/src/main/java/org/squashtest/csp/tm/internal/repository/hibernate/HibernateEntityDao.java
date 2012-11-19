@@ -73,7 +73,7 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 		return "id";
 	}
 
-		ContainerIdNameStartParameterCallback(long containerId, String nameStart) {
+	protected static class ContainerIdNameStartParameterCallback implements SetQueryParametersCallback {
 		private long containerId;
 		private String nameStart;
 

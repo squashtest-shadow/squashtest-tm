@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.FactoryBeanNotInitializedException;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.CompositeInvocationHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.CustomMethodHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.DynamicComponentInvocationHandler;
@@ -89,7 +90,7 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	}
 
 	@PostConstruct
-	protected final void initializeFactory() {
+	protected final synchronized void initializeFactory() {
 		LOGGER.info("Initializing Dynamic component of type " + componentType.getSimpleName());
 		initializeComponentInvocationHandler();
 		initializeComponentProxy();
@@ -98,6 +99,9 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 
 	@Override
 	public final synchronized COMPONENT getObject() {
+		if (proxy == null) {
+			throw new FactoryBeanNotInitializedException();
+		}
 		return proxy;
 	}
 
