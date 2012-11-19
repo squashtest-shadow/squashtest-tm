@@ -41,7 +41,7 @@
 
 <c:set var="textcolor" value="#555555" />
 
-<td colspan="11">
+<td colspan="13">
 	<table class="executions-table">
 		<c:forEach items="${ executions }" var="execution" varStatus="status">
 			<tr>
@@ -84,6 +84,8 @@
 					</c:otherwise>
 				</c:choose>
 				</td>
+				<td style="width: 2.5em;">
+				</td>
 				<td style="width: 1.5em;" class="centered">
 					<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
 					<f:message var="labelRemoveExec" key="label.removeExecution"/>
@@ -94,7 +96,7 @@
 		</c:forEach>
 		<c:if test="${ executable && !testPlanItem.testCaseDeleted }">
 			<tr>
-				<td colspan="11" style="text-align: left;">
+				<td colspan="13" style="text-align: left;">
 					<strong>
 						<a class="button new-exec" style="font-size:0.8em;" id="new-exec-${ testPlanItem.id }" href="javascript:void(0)" data-new-exec="${ newExecutionUrl }">
 							<f:message key="execution.iteration-test-plan-row.new" />
