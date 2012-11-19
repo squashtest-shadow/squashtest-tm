@@ -73,44 +73,6 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 		return "id";
 	}
 
-	protected static class ContainerIdNameStartParameterCallback implements SetQueryParametersCallback {
-		private long containerId;
-		private String nameStart;
-
-		ContainerIdNameStartParameterCallback(long containerId, String nameStart) {
-			this.containerId = containerId;
-			this.nameStart = nameStart;
-		}
-		@Override
-		public void setQueryParameters(Query query) {
-			query.setParameter("containerId", containerId);
-			query.setParameter("nameStart", nameStart + "%");
-		}
-	}
-
-	protected static class SetProjectIdsParameterCallback implements SetQueryParametersCallback {
-		private List<Long> projectIds;
-
-		protected SetProjectIdsParameterCallback(List<Long> projectIds) {
-			this.projectIds = projectIds;
-		}
-		@Override
-		public void setQueryParameters(Query query) {
-			query.setParameterList("projectIds", projectIds, new LongType());
-		}
-	}
-
-	protected static class SetParamIdsParametersCallback implements SetQueryParametersCallback{
-		private List<Long> params;
-
-		protected SetParamIdsParametersCallback(List<Long> params) {
-			this.params = params;
-		}
-		@Override
-		public void setQueryParameters(Query query) {
-			query.setParameterList("paramIds", params, new LongType());
-		}
-	}
 	@SuppressWarnings("unchecked")
 	protected List<Long> findDescendantIds(List<Long> params, String sql) {
 		if (!params.isEmpty()) {
