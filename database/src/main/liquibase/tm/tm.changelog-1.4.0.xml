@@ -416,7 +416,16 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
+	<changeSet id="tm-1.4.0.feat-1609.00" author="flaurens">
+		<comment>Adds a status field to test cases</comment>
+		<addColumn tableName="TEST_CASE">
+			<column name="TC_STATUS" type="VARCHAR(30)" defaultValue="WORK_IN_PROGRESS">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+		
 	<changeSet id="tm-1.4.0.feat-1596.00" author="flaurens">
 		<comment>Adds test case related fields to executions for denormalization</comment>
 		<addColumn tableName="EXECUTION">
@@ -424,6 +433,9 @@
 				<constraints nullable="false"/>
 			</column>
 			<column name="TC_TYPE" type="VARCHAR(30)" defaultValue="NONE">
+				<constraints nullable="false"/>
+			</column>
+			<column name="TC_STATUS" type="VARCHAR(30)" defaultValue="WORK_IN_PROGRESS">
 				<constraints nullable="false"/>
 			</column>
 			<column name="IMPORTANCE" type="VARCHAR(20)" defaultValue="LOW">
@@ -439,16 +451,17 @@
 		<changeSet id="tm-1.4.0.feat-1596.01" author="flaurens">
 			<comment>adds test case information to executions created prior to the changeset tm-1.4.0.feat-1596.00</comment>
 			<sql>
-			create table EXECUTION_TEST_CASE_DATA (TCLN_ID BIGINT, TC_DESCRIPTION TEXT, REFERENCE VARCHAR(20), IMPORTANCE VARCHAR(20), TC_NATURE VARCHAR(30), TC_TYPE VARCHAR(30));
+			create table EXECUTION_TEST_CASE_DATA (TCLN_ID BIGINT, TC_DESCRIPTION TEXT, REFERENCE VARCHAR(20), IMPORTANCE VARCHAR(20), TC_NATURE VARCHAR(30), TC_TYPE VARCHAR(30), TC_STATUS VARCHAR(30));
 			
-			insert into EXECUTION_TEST_CASE_DATA (TCLN_ID, TC_DESCRIPTION, REFERENCE, IMPORTANCE, TC_NATURE, TC_TYPE)
+			insert into EXECUTION_TEST_CASE_DATA (TCLN_ID, TC_DESCRIPTION, REFERENCE, IMPORTANCE, TC_NATURE, TC_TYPE, TC_STATUS)
 				select
 					tc.tcln_id AS TCLN_ID,
 					tcln.description AS DESCRIPTION,
 					tc.reference AS REFERENCE,
 					tc.importance AS IMPORTANCE,
 					tc.tc_nature AS TCNATURE,
-					tc.tc_type AS TCTYPE
+					tc.tc_type AS TCTYPE,
+					tc.tc_status AS TCSTATUS
 				from TEST_CASE tc
 				join TEST_CASE_LIBRARY_NODE tcln on tcln.tcln_id = tc.tcln_id;
 				
@@ -459,7 +472,8 @@
 					reference = (select REFERENCE from EXECUTION_TEST_CASE_DATA etcd where etcd.TCLN_ID = exe.TCLN_ID),
 					importance = (select IMPORTANCE from EXECUTION_TEST_CASE_DATA etcd where etcd.TCLN_ID = exe.TCLN_ID),
 					tc_nature = (select TC_NATURE from EXECUTION_TEST_CASE_DATA etcd where etcd.TCLN_ID = exe.TCLN_ID),
-					tc_type = (select TC_TYPE from EXECUTION_TEST_CASE_DATA etcd where etcd.TCLN_ID = exe.TCLN_ID)
+					tc_type = (select TC_TYPE from EXECUTION_TEST_CASE_DATA etcd where etcd.TCLN_ID = exe.TCLN_ID),
+					tc_status = (select TC_STATUS from EXECUTION_TEST_CASE_DATA etcd where etcd.TCLN_ID = exe.TCLN_ID)
 			</sql>
 				
 		</changeSet>

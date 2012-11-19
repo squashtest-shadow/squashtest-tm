@@ -189,6 +189,10 @@
 				<label class="display-table-cell" for="testcase-type"><f:message key="test-case.type.label" /></label>
 				<div id="testcase-type" class="display-table-cell"><comp:level-message level="${ execution.type }"/></div>
 			</div>
+			<div class="display-table-row">
+				<label class="display-table-cell" for="testcase-status"><f:message key="test-case.status.label" /></label>
+				<div id="testcase-status" class="display-table-cell"><comp:level-message level="${ execution.status }"/></div>
+			</div>
 		</div>
 	</jsp:attribute>
 	</comp:toggle-panel>

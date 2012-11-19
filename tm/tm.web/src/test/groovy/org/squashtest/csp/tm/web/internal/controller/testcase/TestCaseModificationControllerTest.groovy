@@ -61,6 +61,9 @@ class TestCaseModificationControllerTest extends Specification {
 	TestCaseTypeJeditableComboDataBuilder typeComboBuilder = Mock()
 	Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider = Mock()
 	
+	TestCaseStatusJeditableComboDataBuilder statusComboBuilder = Mock()
+	Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider = Mock()
+	
 	LevelLabelFormatter levelLabelFormatter = Mock()
 	Provider<LevelLabelFormatter> levelLabelFormatterProvider = Mock()
 
@@ -77,6 +80,9 @@ class TestCaseModificationControllerTest extends Specification {
 
 		setupTypeComboBuilder()
 		controller.typeComboBuilderProvider = typeComboBuilderProvider
+
+		setupStatusComboBuilder()
+		controller.statusComboBuilderProvider = statusComboBuilderProvider
 		
 		setupLevelLabelFormatter()		
 		controller.levelLabelFormatterProvider = levelLabelFormatterProvider
@@ -102,6 +108,13 @@ class TestCaseModificationControllerTest extends Specification {
 		typeComboBuilder.selectItem(_) >> typeComboBuilder
 
 		typeComboBuilderProvider.get() >> typeComboBuilder
+	}
+	
+	def setupStatusComboBuilder() {
+		statusComboBuilder.useLocale(_) >> statusComboBuilder
+		statusComboBuilder.selectItem(_) >> statusComboBuilder
+
+		statusComboBuilderProvider.get() >> statusComboBuilder
 	}
 	
 	def setupLevelLabelFormatter() {
@@ -315,7 +328,7 @@ class TestCaseModificationControllerTest extends Specification {
 		ModelAndView mav = controller.showTestCaseInfo(10, Locale.JAPANESE)
 
 		then:
-		3 * levelLabelFormatter.useLocale(Locale.JAPANESE) >> levelLabelFormatter
+		4 * levelLabelFormatter.useLocale(Locale.JAPANESE) >> levelLabelFormatter
 		mav.modelMap['testCaseImportanceLabel'] == "takai"
 	}
 

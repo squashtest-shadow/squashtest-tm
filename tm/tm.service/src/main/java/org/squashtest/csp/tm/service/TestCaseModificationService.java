@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
 import org.squashtest.csp.tm.domain.testcase.TestCaseType;
+import org.squashtest.csp.tm.domain.testcase.TestCaseStatus;
 
 @Transactional
 public interface TestCaseModificationService extends CustomTestCaseModificationService {
@@ -43,6 +44,8 @@ public interface TestCaseModificationService extends CustomTestCaseModificationS
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
 	void changeType(long testCaseId, TestCaseType type);
 
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	void changeStatus(long testCaseId, TestCaseStatus status);
 	
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changePrerequisite(long testCaseId, String newPrerequisite);

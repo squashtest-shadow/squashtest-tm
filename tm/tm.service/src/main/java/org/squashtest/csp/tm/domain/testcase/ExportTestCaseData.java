@@ -37,6 +37,7 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	private String reference;
 	private TestCaseNature nature;
 	private TestCaseType type;
+	private TestCaseStatus status;
 	private String firstAction = "";
 	private String firstExpectedResult = "";
 	private List<ExportTestStepData> steps = new ArrayList<ExportTestStepData>();
@@ -88,6 +89,14 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	public void setType(TestCaseType type) {
 		this.type = type;
 	}
+	
+	public TestCaseStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(TestCaseStatus status) {
+		this.status = status;
+	}
 
 	public String getFirstAction() {
 		return firstAction;
@@ -120,6 +129,7 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 		this.weight = testCase.getImportance();
 		this.nature = testCase.getNature();
 		this.type = testCase.getType();
+		this.status = testCase.getStatus();
 		AuditableMixin audit = ((AuditableMixin) testCase);	
 		this.lastModifiedBy = audit.getLastModifiedBy();
 		this.lastModifiedOn = audit.getLastModifiedOn();

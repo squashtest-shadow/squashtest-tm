@@ -29,6 +29,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance
 import org.squashtest.csp.tm.domain.testcase.TestCaseNature
+import org.squashtest.csp.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.csp.tm.domain.testcase.TestCaseType
 import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
@@ -399,7 +400,8 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			criteria.getImportanceFilterSet() >> Collections.emptyList();
 			criteria.getNatureFilterSet() >> Collections.emptyList();
 			criteria.getTypeFilterSet() >> Collections.emptyList();
-		
+			criteria.getStatusFilterSet() >> Collections.emptyList();
+			
 		when :
 			def result = testCaseDao.findBySearchCriteria(criteria)
 			
@@ -427,6 +429,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			criteria.getImportanceFilterSet() >> Collections.emptyList();
 			criteria.getNatureFilterSet() >> Collections.emptyList();
 			criteria.getTypeFilterSet() >> Collections.emptyList();
+			criteria.getStatusFilterSet() >> Collections.emptyList();
 			
 		when :
 			def result = testCaseDao.findBySearchCriteria(criteria)
@@ -453,7 +456,8 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			criteria.getImportanceFilterSet() >> [TestCaseImportance.MEDIUM, TestCaseImportance.HIGH] 
 			criteria.getNatureFilterSet() >> [TestCaseNature.NONE]
 			criteria.getTypeFilterSet() >> [TestCaseType.NONE]
-		
+			criteria.getStatusFilterSet() >> [TestCaseStatus.WORK_IN_PROGRESS]
+			
 		when :
 			def result = testCaseDao.findBySearchCriteria(criteria)
 		

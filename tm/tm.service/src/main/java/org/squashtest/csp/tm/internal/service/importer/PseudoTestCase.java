@@ -28,6 +28,7 @@ import java.util.List;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
+import org.squashtest.csp.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.csp.tm.domain.testcase.TestCaseType;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 
@@ -45,7 +46,8 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
 	public String importance = "";
 	public String nature = "";
 	public String type = "";
-
+	public String status = "";
+	
 	// the first element of the list is the description itself
 	// others are complementary elements
 	public final List<String[]> descriptionElements = new ArrayList<String[]>();
@@ -97,6 +99,10 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
 	
 	public TestCaseType formatType() {
 		return TestCaseType.valueOf(type);
+	}
+
+	public TestCaseStatus formatStatus() {
+		return TestCaseStatus.valueOf(status);
 	}
 	
 	public String formatPreRequisites() {

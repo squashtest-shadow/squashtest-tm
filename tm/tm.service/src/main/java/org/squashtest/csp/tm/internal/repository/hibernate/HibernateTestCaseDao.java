@@ -470,6 +470,12 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			hCriteria = tcNodeRootedCriteria(criteria);
 		}
 
+		if (usesStatus(criteria)) {
+			hCriteria = testCaseRootedCriteria(criteria);
+		} else {
+			hCriteria = tcNodeRootedCriteria(criteria);
+		}
+		
 		if (criteria.isGroupByProject()) {
 			hCriteria.addOrder(Order.asc(PROJECT));
 		}
@@ -495,6 +501,10 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private boolean usesType(TestCaseSearchCriteria criteria) {
 		return (!criteria.getTypeFilterSet().isEmpty());
 	}
+
+	private boolean usesStatus(TestCaseSearchCriteria criteria) {
+		return (!criteria.getTypeFilterSet().isEmpty());
+	}
 	
 	private Criteria testCaseRootedCriteria(TestCaseSearchCriteria criteria) {
 		Criteria crit = currentSession().createCriteria(TestCase.class);
@@ -506,6 +516,9 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		}
 		if (!criteria.getTypeFilterSet().isEmpty()) {
 			crit.add(Restrictions.in("type", criteria.getTypeFilterSet()));
+		}
+		if (!criteria.getStatusFilterSet().isEmpty()) {
+			crit.add(Restrictions.in("status", criteria.getStatusFilterSet()));
 		}
 		return crit;
 	}

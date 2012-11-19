@@ -76,6 +76,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
+import org.squashtest.csp.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.csp.tm.domain.testcase.TestCaseType;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 
@@ -133,6 +134,11 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	@Basic(optional = false)
 	@Column(name = "TC_TYPE")
 	private TestCaseType type = TestCaseType.NONE;
+
+	@Enumerated(EnumType.STRING)
+	@Basic(optional = false)
+	@Column(name = "TC_STATUS")
+	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 	
 	@NotBlank
 	private String name;
@@ -269,6 +275,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		setImportance(testCase.getImportance());
 		setNature(testCase.getNature());
 		setType(testCase.getType());
+		setStatus(testCase.getStatus());
 
 	}
 
@@ -359,6 +366,14 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		this.type = type;
 	}
 
+	public TestCaseStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(@NotNull TestCaseStatus status) {
+		this.status = status;
+	}
+	
 	public String getTcdescription() {
 		return tcdescription;
 	}

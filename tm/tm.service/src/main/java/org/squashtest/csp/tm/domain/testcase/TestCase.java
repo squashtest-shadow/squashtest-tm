@@ -106,6 +106,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Basic(optional = false)
 	@Column(name = "TC_TYPE")
 	private TestCaseType type = TestCaseType.NONE;
+
+	@Enumerated(EnumType.STRING)
+	@Basic(optional = false)
+	@Column(name = "TC_STATUS")
+	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
+	
 	
 	/**
 	 * Should the importance be automatically computed.
@@ -307,6 +313,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.setPrerequisite(source.getPrerequisite());
 		this.executionMode = source.getExecutionMode();
 		this.importance = source.getImportance();
+		this.nature = source.getNature();
+		this.type = source.getType();
+		this.status = source.getStatus();
 		this.reference = source.getReference();
 	}
 
@@ -360,7 +369,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public void setType(@NotNull TestCaseType type) {
 		this.type = type;
 	}
-	
+
+	public TestCaseStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(@NotNull TestCaseStatus status) {
+		this.status = status;
+	}
 	/**
 	 * @param prerequisite
 	 *            the prerequisite to set

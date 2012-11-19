@@ -90,6 +90,9 @@
 <s:url var="getType" value="/test-cases/{tcId}/type">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
+<s:url var="getStatus" value="/test-cases/{tcId}/status">
+	<s:param name="tcId" value="${testCase.id}" />
+</s:url>
 <s:url var="importanceAutoUrl" value="/test-cases/{tcId}/importanceAuto">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
@@ -744,6 +747,10 @@ function addTestStepSuccessAnother(){
 			<comp:select-jeditable componentId="test-case-type"
 				jsonData="${ testCaseTypeComboJson }"
 				targetUrl="${ testCaseUrl }" />
+				
+		<comp:select-jeditable componentId="test-case-status"
+				jsonData="${ testCaseStatusComboJson }"
+				targetUrl="${ testCaseUrl }" />
 		</c:if>
 
 
@@ -801,6 +808,15 @@ function addTestStepSuccessAnother(){
 						</label>
 						<div class="display-table-cell">
 							<span id="test-case-type">${ testCaseTypeLabel }</span>
+						</div>
+					</div>
+					
+					<div class="display-table-row">
+						<label for="test-case-status" class="display-table-cell">
+							<f:message	key="test-case.status.combo.label" />
+						</label>
+						<div class="display-table-cell">
+							<span id="test-case-status">${ testCaseStatusLabel }</span>
 						</div>
 					</div>
 					

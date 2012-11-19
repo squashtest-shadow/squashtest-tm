@@ -28,6 +28,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
 import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.TestCaseType;
+import org.squashtest.csp.tm.domain.testcase.TestCaseStatus;
 
 public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 
@@ -36,16 +37,17 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 	private String[] importances;	
 	private String[] natures;
 	private String[] types;
-
+	private String[] statuses;
 	
 	public TestCaseSearchCriteriaAdapter(String name, boolean groupByProject,
-			String[] importances, String[] natures, String[] types) {
+			String[] importances, String[] natures, String[] types, String[] statuses) {
 		super();
 		setName(name);
 		isGroupByProject(groupByProject);
 		setImportanceFilter(importances);
 		setNatureFilter(natures);
 		setTypeFilter(types);
+		setStatusFilter(statuses);
 	}
 
 	@Override
@@ -70,6 +72,9 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 		return (types.length > 0);
 	}
 	
+	public boolean usesStatusFilter(){
+		return (statuses.length > 0);
+	}
 	
 	@Override
 	public List<TestCaseImportance> getImportanceFilterSet() {		
@@ -104,6 +109,19 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 		
 		for (String str : types){
 			result.add(TestCaseType.valueOf(str));
+		}
+		
+		return result;
+		
+	}
+
+	@Override
+	public List<TestCaseStatus> getStatusFilterSet() {		
+			
+		List<TestCaseStatus> result = new LinkedList<TestCaseStatus>();
+		
+		for (String str : statuses){
+				result.add(TestCaseStatus.valueOf(str));
 		}
 		
 		return result;
@@ -145,4 +163,12 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 		
 	}
 
+	public void setStatusFilter(String[] statuses){ //NOSONAR no, this array is definitely not stored directly.
+		if (statuses == null){
+			this.statuses=new String[0];
+		}else{
+			this.statuses = Arrays.copyOf(statuses, statuses.length);
+		}
+		
+	}
 }

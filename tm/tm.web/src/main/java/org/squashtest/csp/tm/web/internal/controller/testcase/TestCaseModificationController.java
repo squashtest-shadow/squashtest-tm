@@ -59,6 +59,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
+import org.squashtest.csp.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.csp.tm.domain.testcase.TestCaseType;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
@@ -145,6 +146,10 @@ public class TestCaseModificationController {
 	
 	@Inject
 	private Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider;
+
+
+	@Inject
+	private Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider;
 	
 	@Inject
 	private Provider<LevelLabelFormatter> levelLabelFormatterProvider;
@@ -200,6 +205,8 @@ public class TestCaseModificationController {
 		mav.addObject("testCaseNatureLabel", formatNature(testCase.getNature(), locale));
 		mav.addObject("testCaseTypeComboJson", buildTypeComboData(testCase, locale));
 		mav.addObject("testCaseTypeLabel", formatType(testCase.getType(), locale));
+		mav.addObject("testCaseStatusComboJson", buildStatusComboData(testCase, locale));
+		mav.addObject("testCaseStatusLabel", formatStatus(testCase.getStatus(), locale));
 	}
 
 	private String buildImportanceComboData(TestCase testCase, Locale locale) {
@@ -212,6 +219,10 @@ public class TestCaseModificationController {
 	
 	private String buildTypeComboData(TestCase testCase, Locale locale) {
 		return typeComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	}
+	
+	private String buildStatusComboData(TestCase testCase, Locale locale) {
+		return statusComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 	
 	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
@@ -374,6 +385,15 @@ public class TestCaseModificationController {
 
 		return formatType(type, locale);
 	}
+
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-status", VALUE })
+	public String changeStatus(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseStatus status,
+			Locale locale) {
+		testCaseModificationService.changeStatus(testCaseId, status);
+
+		return formatStatus(status, locale);
+	}
 	
 	@RequestMapping(value = "/importanceAuto", method = RequestMethod.POST, params = { "importanceAuto" })
 	@ResponseBody
@@ -431,6 +451,14 @@ public class TestCaseModificationController {
 		return formatType(type, locale);
 	}
 	
+	@ResponseBody
+	@RequestMapping(value = "/status", method = RequestMethod.GET)
+	public String getStatus(@PathVariable long testCaseId, Locale locale) {
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		TestCaseStatus status = testCase.getStatus();
+		return formatStatus(status, locale);
+	}
+	
 	private String formatImportance(TestCaseImportance importance, Locale locale) {
 		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(importance);
 	}
@@ -441,6 +469,10 @@ public class TestCaseModificationController {
 	
 	private String formatType(TestCaseType type, Locale locale) {
 		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(type);
+	}
+	
+	private String formatStatus(TestCaseStatus status, Locale locale) {
+		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(status);
 	}
 	
 	@RequestMapping(value = "/general", method = RequestMethod.GET)

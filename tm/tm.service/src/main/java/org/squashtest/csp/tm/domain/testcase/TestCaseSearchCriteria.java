@@ -44,8 +44,8 @@ public interface TestCaseSearchCriteria {
 
 	
 	/**
-	 * gives the natures of the test cases we want to match. A result of length 0 is likely to be interpreted like 'fetch test cases having no importance', which
-	 * in turn will likely result in a void result set since {@link TestCase}s cannot have null {@link TestCaseImportance} attribute.
+	 * gives the natures of the test cases we want to match. A result of length 0 is likely to be interpreted like 'fetch test cases having no nature', which
+	 * in turn will likely result in a void result set since {@link TestCase}s cannot have null {@link TestCaseNature} attribute.
 	 * 
 	 * @return
 	 */
@@ -53,10 +53,18 @@ public interface TestCaseSearchCriteria {
 	
 	
 	/**
-	 * gives the types of the test cases we want to match. A result of length 0 is likely to be interpreted like 'fetch test cases having no importance', which
-	 * in turn will likely result in a void result set since {@link TestCase}s cannot have null {@link TestCaseImportance} attribute.
+	 * gives the types of the test cases we want to match. A result of length 0 is likely to be interpreted like 'fetch test cases having no type', which
+	 * in turn will likely result in a void result set since {@link TestCase}s cannot have null {@link TestCaseType} attribute.
 	 * 
 	 * @return
 	 */
 	List<TestCaseType> getTypeFilterSet();
+	
+	/**
+	 * gives the statuses of the test cases we want to match. A result of length 0 is likely to be interpreted like 'fetch test cases having no status', which
+	 * in turn will likely result in a void result set since {@link TestCase}s cannot have null {@link TestCaseStatus} attribute.
+	 * 
+	 * @return
+	 */
+	List<TestCaseStatus> getStatusFilterSet();
 }

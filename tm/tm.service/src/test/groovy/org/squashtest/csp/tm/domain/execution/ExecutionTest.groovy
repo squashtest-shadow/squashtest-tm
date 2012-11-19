@@ -25,6 +25,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
 import org.squashtest.csp.tm.domain.testcase.TestCaseType;
+import org.squashtest.csp.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import spock.lang.Specification;
@@ -118,6 +119,7 @@ class ExecutionTest extends Specification {
 		testCase.importance >> TestCaseImportance.LOW
 		testCase.nature >> TestCaseNature.NONE
 		testCase.type >> TestCaseType.NONE
+		testCase.status >> TestCaseStatus.WORK_IN_PROGRESS
 		
 		when:
 		Execution res = new Execution(testCase)

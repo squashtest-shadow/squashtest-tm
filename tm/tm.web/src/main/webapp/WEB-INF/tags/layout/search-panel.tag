@@ -157,6 +157,7 @@
 			data['importance'] = getImportanceParams();
 			data['nature'] = getNatureParams();
 			data['type'] = getTypeParams();
+			data['status'] = getStatusParams();
 			url = '${searchTCUrl}';
 			
 			<%-- the following is just more wtf on the pile of wtf, I don't care anymore --%>
@@ -436,6 +437,12 @@
 	
 	function getTypeParams(){
 		return $(".search-panel-tc-type input:checked").collect(function(elt){
+			return $(elt).data('value');
+		});
+	}
+	
+	function getStatusParams(){
+		return $(".search-panel-tc-status input:checked").collect(function(elt){
 			return $(elt).data('value');
 		});
 	}
@@ -796,6 +803,56 @@
 										<div class="search-tc-type-7">
 											<input type="checkbox" id="type-7" data-value="NONE" checked="checked"/><span><f:message
 													key="test-case.type.NONE" /> </span>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+			<td>
+				<div class="search-panel-tc-status">
+						<div class="caption">
+							<span class="gray-text"><f:message
+									key="search.test-case.status.filter" /> </span>
+						</div>
+						<div class="options">
+							<table>
+								<tr>
+									<td>
+										<div class="search-tc-status-1">
+											<input type="checkbox" id="status-1" data-value="WORK_IN_PROGRESS" checked="checked"/><span><f:message
+													key="test-case.status.WORK_IN_PROGRESS" /> </span>
+										</div>
+									</td>
+									<td>
+										<div class="search-tc-status-2">
+											<input type="checkbox" id="status-2" data-value="UNDER_REVIEW" checked="checked"/><span><f:message
+													key="test-case.status.UNDER_REVIEW" /> </span>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="search-tc-status-3">
+											<input type="checkbox" id="status-3" data-value="APPROVED" checked="checked"/><span><f:message
+													key="test-case.status.APPROVED" /> </span>
+										</div>
+									</td>
+									<td>
+										<div class="search-tc-status-4">
+											<input type="checkbox" id="status-4" data-value="OBSOLETE" checked="checked"/><span><f:message
+													key="test-case.status.OBSOLETE" /> </span>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="search-tc-status-5">
+											<input type="checkbox" id="status-5" data-value="TO_BE_UPDATED" checked="checked"/><span><f:message
+													key="test-case.status.TO_BE_UPDATED" /> </span>
 										</div>
 									</td>
 								</tr>

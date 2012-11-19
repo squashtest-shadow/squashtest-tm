@@ -40,6 +40,7 @@ import org.squashtest.csp.tm.domain.SheetCorruptedException;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
+import org.squashtest.csp.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.csp.tm.domain.testcase.TestCaseType;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 
@@ -156,6 +157,14 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String value = valueCell(row).getStringCellValue();
 				pseudoTestCase.type = value;
+			}
+		});
+	
+		// type populator
+		fieldPopulators.add(new FieldPopulator(STATUS_TAG) {
+			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
+				String value = valueCell(row).getStringCellValue();
+				pseudoTestCase.status = value;
 			}
 		});
 		
@@ -335,6 +344,18 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 			LOGGER.warn(ex.getMessage());
 			summary.incrModified();
 			testCase.setType(TestCaseType.defaultValue());
+		}
+		
+		// status
+		try {
+			TestCaseStatus status = pseudoTestCase.formatStatus();
+			testCase.setStatus(status);
+
+		} catch (IllegalArgumentException ex) {
+
+			LOGGER.warn(ex.getMessage());
+			summary.incrModified();
+			testCase.setStatus(TestCaseStatus.defaultValue());
 		}
 		
 		// test steps

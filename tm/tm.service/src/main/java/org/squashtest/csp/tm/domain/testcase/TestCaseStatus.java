@@ -18,55 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.combo;
+package org.squashtest.csp.tm.domain.testcase;
 
-/***
- * Used to compose select option tag with the association label / value 
- * especially for internationalization devices
- * 
- * @author xpetitrenaud
- * 
- */
+import org.squashtest.csp.tm.domain.Level;
 
-public class OptionTag {
-	/***
-	 * select option label
-	 */
-	private String label;
+public enum TestCaseStatus implements Level{
 	
-	/***
-	 * select option value
-	 */
-	private String value;
+	WORK_IN_PROGRESS(1),
+	UNDER_REVIEW(2),
+	APPROVED(3),
+	OBSOLETE(4),
+	TO_BE_UPDATED(5);
+	
+	private static final String I18N_KEY_ROOT = "test-case.status.";
 
-	public String getLabel() {
-		return label;
+	private final int level;
+
+	private TestCaseStatus(int value) {
+		this.level = value;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
+	@Override
+	public String getI18nKey() {
+		return I18N_KEY_ROOT + this.name();
 	}
 	
-	/***
-	 * Overloaded constructor 
-	 * @param givenLabel the label 
-	 * @param givenValue the value
-	 */
-	public OptionTag(String givenLabel, String givenValue )
-	{
-		this.label = givenLabel;
-		this.value = givenValue;
+	@Override
+	public int getLevel() {
+		return level;
 	}
 	
-	public OptionTag(){
-		
+	public static TestCaseStatus defaultValue() {
+		return WORK_IN_PROGRESS;
 	}
 }

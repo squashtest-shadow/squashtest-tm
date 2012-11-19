@@ -234,6 +234,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 		ptc.importance = "MEDIUM"
 		ptc.nature = "NONE"
 		ptc.type = "NONE"
+		ptc.status = "WORK_IN_PROGRESS"
 
 		and :
 		def summary = new ImportSummaryImpl()
@@ -258,6 +259,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 		ptc.importance="VERY_HIGH"
 		ptc.nature = "NONE"
 		ptc.type = "NONE"
+		ptc.status = "WORK_IN_PROGRESS"
 		
 		and :
 		def summary = new ImportSummaryImpl()
@@ -286,6 +288,7 @@ class ExcelTestCaseParserImplTest extends Specification {
 		ptc.importance="very_HIGH"
 		ptc.nature = "NONE"
 		ptc.type = "NONE"
+		ptc.status = "WORK_IN_PROGRESS"
 		
 		and :
 		def summary = new ImportSummaryImpl()

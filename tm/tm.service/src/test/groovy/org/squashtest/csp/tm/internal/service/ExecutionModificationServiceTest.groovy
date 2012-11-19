@@ -30,6 +30,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance
 import org.squashtest.csp.tm.domain.testcase.TestCaseNature
 import org.squashtest.csp.tm.domain.testcase.TestCaseType
+import org.squashtest.csp.tm.domain.testcase.TestCaseStatus
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep
 import org.squashtest.csp.tm.internal.repository.CampaignDao
 import org.squashtest.csp.tm.internal.repository.ExecutionDao
@@ -89,6 +90,7 @@ public class ExecutionModificationServiceTest extends Specification {
 		testCase.getImportance() >> TestCaseImportance.LOW
 		testCase.getNature() >> TestCaseNature.NONE
 		testCase.getType() >> TestCaseType.NONE
+		testCase.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
 		testCase.getDescription() >> ""
 		testCase.getReference() >> ""
 		

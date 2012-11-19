@@ -18,55 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.combo;
+package org.squashtest.csp.tm.web.internal.controller.testcase;
 
-/***
- * Used to compose select option tag with the association label / value 
- * especially for internationalization devices
- * 
- * @author xpetitrenaud
- * 
- */
+import javax.inject.Inject;
 
-public class OptionTag {
-	/***
-	 * select option label
-	 */
-	private String label;
-	
-	/***
-	 * select option value
-	 */
-	private String value;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.squashtest.csp.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.csp.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
-	public String getLabel() {
-		return label;
-	}
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+@Component
+@Scope("prototype")
+public class TestCaseStatusJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<TestCaseStatus> {
 
-	public String getValue() {
-		return value;
-	}
+		public TestCaseStatusJeditableComboDataBuilder() {
+			super();
+			setModel(TestCaseStatus.values());
+		}
 
-	public void setValue(String value) {
-		this.value = value;
-	}
-	
-	/***
-	 * Overloaded constructor 
-	 * @param givenLabel the label 
-	 * @param givenValue the value
-	 */
-	public OptionTag(String givenLabel, String givenValue )
-	{
-		this.label = givenLabel;
-		this.value = givenValue;
-	}
-	
-	public OptionTag(){
-		
-	}
+		@Inject
+		public void setLabelFormatter(LevelLabelFormatter formatter) {
+			super.setLabelFormatter(formatter);
+		}
 }
