@@ -18,27 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.controller.administration;
+package org.squashtest.csp.tm.internal.repository.hibernate
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.tm.domain.AdministrationStatistics;
-import org.squashtest.csp.tm.service.AdministrationService;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics
+import org.squashtest.csp.tm.domain.campaign.TestPlanStatus
+import org.squashtest.csp.tm.internal.repository.AdministrationDao
+import org.squashtest.csp.tm.internal.repository.IterationDao
+import org.unitils.dbunit.annotation.DataSet
 
-@Controller
-public class AdministrationController {
-	@Inject
-	private AdministrationService administrationService;
+import spock.unitils.UnitilsSupport
+
+@UnitilsSupport
+class HibernateAdministrationDaoIT extends DbunitDaoSpecification {
+	@Inject AdministrationDao administrationDao;
 	
-	@RequestMapping("/administration")
-	public ModelAndView administration() {
-		AdministrationStatistics adminStat = administrationService.findAdministrationStatistics();
-		ModelAndView mav = new ModelAndView("page/administration");
-		mav.addObject("adminStats", adminStat);
-		return mav;
+	@DataSet("HibernateAdministrationDaoIT.should return administration statistics.xml")
+	def "should return administration statistics"(){
+		when:
+		def result = administrationDao.findAdministrationStatistics()
+		
+		then:
+		result.projectsNumber == 1;
 	}
-
 }

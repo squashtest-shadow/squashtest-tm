@@ -18,27 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.controller.administration;
+package org.squashtest.csp.tm.internal.repository;
 
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.AdministrationStatistics;
-import org.squashtest.csp.tm.service.AdministrationService;
 
-@Controller
-public class AdministrationController {
-	@Inject
-	private AdministrationService administrationService;
-	
-	@RequestMapping("/administration")
-	public ModelAndView administration() {
-		AdministrationStatistics adminStat = administrationService.findAdministrationStatistics();
-		ModelAndView mav = new ModelAndView("page/administration");
-		mav.addObject("adminStats", adminStat);
-		return mav;
-	}
 
+public interface AdministrationDao extends GenericDao<Object> {
+	/**
+	 * will count, regardless of any right,  all projects, users, requirement, test-cases, campaigns, iterations, executions, and return them in the {@linkplain AdministrationStatistics} bean.
+	 * @return a filled {@link AdministrationStatistics} bean
+	 */
+	AdministrationStatistics findAdministrationStatistics();
 }

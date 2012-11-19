@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
+import org.squashtest.csp.tm.domain.AdministrationStatistics;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UsersGroup;
@@ -95,4 +96,6 @@ public interface AdministrationService {
 	void deactivateUser(long userId);
 	
 	void activateUser(long userId);
+
+	AdministrationStatistics findAdministrationStatistics();
 }

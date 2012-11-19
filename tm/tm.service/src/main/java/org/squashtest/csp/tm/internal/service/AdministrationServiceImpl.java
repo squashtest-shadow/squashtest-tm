@@ -32,11 +32,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.service.configuration.ConfigurationService;
 import org.squashtest.csp.core.service.security.AdministratorAuthenticationService;
+import org.squashtest.csp.tm.domain.AdministrationStatistics;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UsersGroup;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.squashtest.csp.tm.internal.repository.AdministrationDao;
+import org.squashtest.csp.tm.internal.repository.GenericDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.internal.repository.UsersGroupDao;
@@ -68,16 +71,19 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Inject
 	private UsersGroupDao groupDao;
+	
+	@Inject
+	private AdministrationDao adminDao;
 
 	private ConfigurationService configurationService;
-	private AdministratorAuthenticationService adminService;
+	private AdministratorAuthenticationService adminAuthentService;
 
 	private final static String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE";
 	private final static String LOGIN_MESSAGE_KEY = "LOGIN_MESSAGE";
 
 	@ServiceReference
 	public void setAdministratorAuthenticationService(AdministratorAuthenticationService adminService) {
-		this.adminService = adminService;
+		this.adminAuthentService = adminService;
 	}
 
 	@ServiceReference
@@ -160,7 +166,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 		UsersGroup group = groupDao.findById(groupId);
 
 		aUser.setGroup(group);
-		adminService.createNewUserPassword(aUser.getLogin(), password, aUser.getActive(), true, true, true,
+		adminAuthentService.createNewUserPassword(aUser.getLogin(), password, aUser.getActive(), true, true, true,
 				new ArrayList<GrantedAuthority>());
 		userDao.persist(aUser);
 	}
@@ -186,7 +192,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	public void deactivateUser(long userId) {
 		userAccountService.deactivateUser(userId);
 		User user = userDao.findById(userId);
-		adminService.deactivateAccount(user.getLogin());
+		adminAuthentService.deactivateAccount(user.getLogin());
 	}
 	
 	@Override
@@ -234,6 +240,11 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void resetUserPassword(long userId, String newPassword) {
 		User user = userDao.findById(userId);
-		adminService.resetUserPassword(user.getLogin(), newPassword);
+		adminAuthentService.resetUserPassword(user.getLogin(), newPassword);
+	}
+
+	@Override
+	public AdministrationStatistics findAdministrationStatistics() {
+		return adminDao.findAdministrationStatistics();
 	}
 }

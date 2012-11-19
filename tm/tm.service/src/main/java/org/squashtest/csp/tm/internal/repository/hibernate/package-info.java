@@ -268,6 +268,9 @@
 		@NamedQuery(name = "BoundEntityDao.findAllIterationsForProject", query="select i from Iteration i join i.campaign c where c.project.id = :projectId"),
 		@NamedQuery(name = "BoundEntityDao.findAllTestSuitesForProject", query="select ts from TestSuite ts join ts.iteration i join i.campaign c where c.project.id = :projectId"),
 		
+		
+		//Administration dao
+		@NamedQuery(name = "administration.findAdministrationStatistics", query="select (select count(p.id) from Project p), count(*),(select count(req.id) from Requirement req),(select count(tc.id) from TestCase tc),(select count(camp.id) from Campaign camp), (select count(it.id) from Iteration it),(select count(exec.id) from Execution exec) from User"),
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
 		@NamedQuery(name = "testCase.findAllAttachmentLists", query = "select testCase.attachmentList.id from TestCase testCase where testCase.id in (:testCaseIds)"),

@@ -18,27 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.controller.administration;
+package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.AdministrationStatistics;
-import org.squashtest.csp.tm.service.AdministrationService;
+import org.squashtest.csp.tm.internal.repository.AdministrationDao;
 
-@Controller
-public class AdministrationController {
-	@Inject
-	private AdministrationService administrationService;
-	
-	@RequestMapping("/administration")
-	public ModelAndView administration() {
-		AdministrationStatistics adminStat = administrationService.findAdministrationStatistics();
-		ModelAndView mav = new ModelAndView("page/administration");
-		mav.addObject("adminStats", adminStat);
-		return mav;
+
+/**
+ * Dao for no specific workspace.
+ * 
+ * @author mpagnon
+ * 
+ */
+@Repository
+public class HibernateAdministrationDao extends HibernateDao<Object> implements AdministrationDao{
+
+	@Override
+	public AdministrationStatistics findAdministrationStatistics() {
+		Object[] result =	executeEntityNamedQuery("administration.findAdministrationStatistics");
+		return new AdministrationStatistics(result);
 	}
-
 }

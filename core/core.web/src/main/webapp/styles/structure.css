@@ -1155,10 +1155,10 @@ p {
 	height: 100%;
 	width: 100%;
 	vertical-align:middle;
+	 color: #888888;
 }
-
 #admin-link-pane, #admin-link-msg-pane {
-    color: #666666;
+   
     margin: auto; 
     display: block;
     text-align: center; }
@@ -1184,7 +1184,7 @@ p {
 
 #admin-link-msg-pane.display-table {
     display: table;
-    margin-top: 100px;
+    margin-top: 80px;
     position: relative;
     vertical-align: middle;
 }
@@ -1202,5 +1202,43 @@ p {
 	left:0px; 
 	right:0px
 }
-
+/* =================STATISTICS==================== */
+div#admin-stats {
+	float:right;
+	padding:30px;
+	font-size: 1.2em;
+}
+div.admin-stats-table {
+	display:table;
+    padding: 5%;
+    width: 100%;
+}
+/* 	table is organized in row groups  */
+div.admin-stats-table > div {
+	display:table-row-group;
+	width:100%;
+}
+div.admin-stats-table > div > div {
+	display:table-row;
+}
+div.admin-stats-table > div > div > label, div.admin-stats-table > div > div > span {
+	display: table-cell;
+	color: inherit;
+}
+/* 	because we can't apply padding in table-row-grop first row of a group will have padding-top on it's cell */
+div.admin-stats-table > div > div:first-child > label{
+	padding-top:1em
+}
+/* 	title labels and left column is white and bold */
+div.admin-stats-table > label ,div.admin-stats-table > span, div.admin-stats-table > div >  div > span {
+	color: white;
+	font-weight: bold;
+}
+/* 	titles are undelined an uppercase */
+div.admin-stats-table > label{
+	    padding-right: 0.5em;
+	text-decoration:underline;
+	text-transform: uppercase;
+}
+			
 /* ---------------------------------------------------------*/

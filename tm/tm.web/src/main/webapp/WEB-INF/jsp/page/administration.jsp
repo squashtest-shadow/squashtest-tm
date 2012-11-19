@@ -82,6 +82,25 @@
 								key="label.consultModifyWelcomeMessage" /></span></a>
 				</sec:authorize>
 			</div>
+			
+			<div id="admin-stats">
+				<div class="admin-stats-table"><label ><f:message key="label.version"/></label><span >${initParam["squashTMVersion"]}</span></div>
+				<div class="admin-stats-table"><label><f:message key="label.statistics"/></label>
+					<div>
+						<div><label><f:message key="label.projects"/></label><span>${adminStats.projectsNumber }</span></div>
+						<div><label><f:message key="label.users"/></label><span>${adminStats.usersNumber }</span></div>
+					</div>
+					<div>
+						<div><label><f:message key="label.requirements"/></label><span>${adminStats.requirementsNumber }</span></div>
+						<div><label><f:message key="label.testCases"/></label><span>${adminStats.testCasesNumber }</span></div>
+					</div>
+					<div>
+						<div><label><f:message key="label.campaigns"/></label><span>${adminStats.campaignsNumber }</span></div>
+						<div><label><f:message key="label.iterations"/></label><span>${adminStats.iterationsNumber }</span></div>
+						<div><label><f:message key="label.executions"/></label><span>${adminStats.executionsNumber }</span></div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</jsp:attribute>
 </layout:info-page-layout>
