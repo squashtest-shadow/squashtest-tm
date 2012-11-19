@@ -237,11 +237,11 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 		}
 	}
 
-	public void unbindTestAutomationProject(Long TAprojectId) {
+	public void unbindTestAutomationProject(long taProjectId) {
 		Iterator<TestAutomationProject> iter = testAutomationProjects.iterator();
 		while (iter.hasNext()) {
 			TestAutomationProject proj = iter.next();
-			if (proj.getId().equals(TAprojectId)) {
+			if (proj.getId().equals(taProjectId)) {
 				iter.remove();
 				break;
 			}

@@ -49,7 +49,7 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	private static final String SIMPLE_CLASS_NAME = "TestCaseFolder";
 
 	@Transient
-	private final FolderSupport<TestCaseLibraryNode> folderSupport = new FolderSupport<TestCaseLibraryNode>(this);
+	private final FolderSupport<TestCaseLibraryNode, TestCaseFolder> folderSupport = new FolderSupport<TestCaseLibraryNode, TestCaseFolder>(this);
 
 	@OneToMany(cascade = { CascadeType.ALL })
 	@JoinTable(name = "TCLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
@@ -83,7 +83,7 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	}
 	@Override
 	public TestCaseFolder createCopy() {
-		return (TestCaseFolder) folderSupport.createCopy(new TestCaseFolder());
+		return folderSupport.createCopy(new TestCaseFolder());
 	}
 	
 	@Override

@@ -42,7 +42,7 @@ import org.squashtest.csp.tm.domain.softdelete.SoftDeletable;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Auditable
 @SoftDeletable
-public abstract class RequirementLibraryNode<RESOURCE extends Resource> implements LibraryNode{
+public abstract class RequirementLibraryNode<RESOURCE extends Resource> implements LibraryNode {
 	@Id
 	@GeneratedValue
 	@Column(name = "RLN_ID")
@@ -59,7 +59,7 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 
 	/**
 	 * Notifies this object it is now a resource of the given project.
-	 *
+	 * 
 	 * @param project
 	 */
 	@Override
@@ -81,13 +81,13 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 	public Long getId() {
 		return id;
 	}
-	
+
 	@Override
 	@AclConstrainedObject
 	public Library<?> getLibrary() {
 		return getProject().getRequirementLibrary();
 	}
-	
+
 	@Override
 	public AttachmentList getAttachmentList() {
 		return getResource().getAttachmentList();

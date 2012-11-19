@@ -173,9 +173,9 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 
 	@Override
 	@PreAuthorize("hasPermission(#TMprojectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	public void unbindTestAutomationProject(long TMprojectId, long TAProjectId) {
-		Project project = projectDao.findById(TMprojectId);
-		project.unbindTestAutomationProject(TAProjectId);
+	public void unbindTestAutomationProject(long tmProjectId, long taProjectId) {
+		Project project = projectDao.findById(tmProjectId);
+		project.unbindTestAutomationProject(taProjectId);
 	}
 
 	// ********************************** bugtracker section *************************************

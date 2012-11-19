@@ -63,7 +63,7 @@ abstract class AbstractNamedQueryHandler<ENTITY> implements DynamicComponentInvo
 	 */
 	@Override
 	public final Object invoke(Object proxy, Method method, Object[] args) {
-		args = args == null ? new Object[] {} : args;
+		args = args == null ? new Object[] {} : args; // NOSONAR protecting against bad args using a bad practice
 		Query query = lookupNamedQuery(method);
 
 		processPaging(query, args);

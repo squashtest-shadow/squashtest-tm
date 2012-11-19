@@ -85,13 +85,13 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 		this.customComponent = customComponent;
 	}
 
-	public final void setComponentType(Class<COMPONENT> componentType) {
-		this.componentType = componentType;
+	public final synchronized void setComponentType(Class<COMPONENT> componentType) {
+		this.componentType = componentType; 
 	}
 
 	@PostConstruct
 	protected final synchronized void initializeFactory() {
-		LOGGER.info("Initializing Dynamic component of type " + componentType.getSimpleName());
+		LOGGER.info("Initializing Dynamic component of type " + componentType.getSimpleName()); // NOSONAR componentType not sync'd
 		initializeComponentInvocationHandler();
 		initializeComponentProxy();
 		LOGGER.info("Dynamic component is initialized");

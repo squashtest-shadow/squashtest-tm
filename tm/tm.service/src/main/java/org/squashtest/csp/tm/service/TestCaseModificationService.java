@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.service;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
 import org.squashtest.csp.tm.domain.testcase.TestCaseType;

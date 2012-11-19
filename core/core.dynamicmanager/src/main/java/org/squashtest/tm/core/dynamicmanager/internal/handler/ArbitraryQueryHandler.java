@@ -252,21 +252,25 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 	}
 
 	private Object newPrimitiveZero(Class<?> returnType) {
+		Object res = null;
+
 		if (returnType.equals(Short.TYPE)) {
-			return 0;
+			res = 0;
 		} else if (returnType.equals(Integer.TYPE)) {
-			return 0;
+			res = 0;
 		} else if (returnType.equals(Float.TYPE)) {
-			return 0f;
+			res = 0f;
 		} else if (returnType.equals(Double.TYPE)) {
-			return 0d;
+			res = 0d;
 		} else if (returnType.equals(Long.TYPE)) {
-			return 0L;
+			res = 0L;
 		} else if (returnType.equals(Byte.TYPE)) {
-			return (byte) 0;
+			res = (byte) 0;
 		} else {
-			return (char) 0;
+			res = (char) 0;
 		}
+
+		return res;
 	}
 
 	private static final class EmptyCollectionException extends RuntimeException {

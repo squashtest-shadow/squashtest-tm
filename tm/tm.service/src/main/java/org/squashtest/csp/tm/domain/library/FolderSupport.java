@@ -25,10 +25,7 @@ import java.util.List;
 
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
-import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.csp.tm.domain.resource.Resource;
 
 /**
  * This class is meant to be used as a delegate when one implements a {@link Folder}.
@@ -37,13 +34,13 @@ import org.squashtest.csp.tm.domain.resource.Resource;
  *
  * @param <NODE>
  */
-public class FolderSupport<NODE extends LibraryNode> {
+public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>> {
 	/**
 	 * The folder which delegates operations to this object.
 	 */
-	private final Folder<NODE> folder;
+	private final FOLDER folder;
 
-	public FolderSupport(Folder<NODE> folder) {
+	public FolderSupport(FOLDER folder) {
 		super();
 		this.folder = folder;
 	}
@@ -112,7 +109,7 @@ public class FolderSupport<NODE extends LibraryNode> {
 		return (folder.getContent().size()>0);
 	}
 
-	public Folder<NODE> createCopy(Folder<NODE> newFolder) {
+	public FOLDER createCopy(FOLDER newFolder) {
 		newFolder.setName(folder.getName());
 		newFolder.setDescription(folder.getDescription());
 		newFolder.notifyAssociatedWithProject(folder.getProject());

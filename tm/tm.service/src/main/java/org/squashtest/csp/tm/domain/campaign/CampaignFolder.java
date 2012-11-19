@@ -47,7 +47,7 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	 * Delegate implementation of folder responsibilities.
 	 */
 	@Transient
-	private final FolderSupport<CampaignLibraryNode> folderSupport = new FolderSupport<CampaignLibraryNode>(this);
+	private final FolderSupport<CampaignLibraryNode, CampaignFolder> folderSupport = new FolderSupport<CampaignLibraryNode, CampaignFolder>(this);
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	@JoinTable(name = "CLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
@@ -84,7 +84,7 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	
 	@Override
 	public CampaignFolder createCopy() {
-		return (CampaignFolder) folderSupport.createCopy(new CampaignFolder());
+		return folderSupport.createCopy(new CampaignFolder());
 	}
 	
 	

@@ -86,6 +86,10 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.PersistEntityHandl
  */
 public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicComponentFactoryBean<MANAGER> {
 	/**
+	 * 
+	 */
+	private static final int HANDLERS_COUNT = 6;
+	/**
 	 * Session factory used by dynamic method handler. Should be initialized.
 	 */
 	@Inject
@@ -103,7 +107,7 @@ public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicC
 	}
 
 	protected List<DynamicComponentInvocationHandler> createInvocationHandlers() {
-		List<DynamicComponentInvocationHandler> handlers =  new ArrayList<DynamicComponentInvocationHandler>(6);
+		List<DynamicComponentInvocationHandler> handlers =  new ArrayList<DynamicComponentInvocationHandler>(HANDLERS_COUNT);
 		
 		handlers.add(new PersistEntityHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new EntityModifierHandler<ENTITY>(sessionFactory, entityType));

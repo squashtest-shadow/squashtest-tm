@@ -38,7 +38,6 @@ import org.hibernate.annotations.Where;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.project.GenericLibrary;
 import org.squashtest.csp.tm.domain.project.GenericProject;
-import org.squashtest.csp.tm.domain.project.Project;
 
 @Entity
 public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {

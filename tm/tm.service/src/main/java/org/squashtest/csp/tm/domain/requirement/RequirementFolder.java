@@ -51,7 +51,7 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	 * Delegate implementation of folder responsibilities.
 	 */
 	@Transient
-	private final FolderSupport<RequirementLibraryNode> folderSupport = new FolderSupport<RequirementLibraryNode>(this);
+	private final FolderSupport<RequirementLibraryNode, RequirementFolder> folderSupport = new FolderSupport<RequirementLibraryNode, RequirementFolder>(this);
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))

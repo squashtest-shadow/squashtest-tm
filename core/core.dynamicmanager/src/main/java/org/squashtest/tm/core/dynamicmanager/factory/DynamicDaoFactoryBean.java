@@ -80,6 +80,10 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.PersistEntityHandl
  *            type of the entity which will be manipulated by the dynamic dao.
  */
 public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponentFactoryBean<DAO> {
+	/**
+	 * 
+	 */
+	private static final int HANDLERS_COUNT = 8;
 	@Inject private SessionFactory sessionFactory;
 	private Class<ENTITY> entityType;
 	
@@ -94,7 +98,7 @@ public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponent
 	 */
 	@Override
 	protected List<DynamicComponentInvocationHandler> createInvocationHandlers() {
-		ArrayList<DynamicComponentInvocationHandler> handlers = new ArrayList<DynamicComponentInvocationHandler>(8);
+		ArrayList<DynamicComponentInvocationHandler> handlers = new ArrayList<DynamicComponentInvocationHandler>(HANDLERS_COUNT);
 
 		handlers.add(new PersistEntityHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new DeleteEntityHandler<ENTITY>(entityType, sessionFactory));
