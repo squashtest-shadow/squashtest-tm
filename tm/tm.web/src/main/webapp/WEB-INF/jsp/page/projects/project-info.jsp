@@ -69,7 +69,7 @@
 <layout:info-page-layout titleKey="workspace.project.info.title">
 	<jsp:attribute name="head">	
 		<link rel="stylesheet" type="text/css"
-			href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />	
+			href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />	
 	</jsp:attribute>
 
 	<jsp:attribute name="titlePane">

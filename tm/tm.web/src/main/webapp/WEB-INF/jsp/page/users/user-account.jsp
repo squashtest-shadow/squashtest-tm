@@ -38,7 +38,7 @@
 
 <layout:info-page-layout titleKey="dialog.settings.account.title" highlightedWorkspace="home">
 	<jsp:attribute name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.green.css" />
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />
 		
 
 	

@@ -41,7 +41,7 @@
 <layout:info-page-layout titleKey="workspace.home.title">
 	<jsp:attribute name="head">	
 		<link rel="stylesheet" type="text/css"
-			href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />	
+			href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />	
 			<link rel="stylesheet" type="text/css"
 			href="${ pageContext.servletContext.contextPath }/styles/structure.override.css" />
 	</jsp:attribute>

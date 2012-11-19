@@ -32,7 +32,7 @@
 	uri="http://www.springframework.org/security/tags"%>
 <layout:info-page-layout titleKey="squashtm.project.title">
 	<jsp:attribute  name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />	
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />	
 		
 	</jsp:attribute>
 	
