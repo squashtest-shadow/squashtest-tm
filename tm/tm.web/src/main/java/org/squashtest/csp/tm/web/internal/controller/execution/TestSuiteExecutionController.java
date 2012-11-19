@@ -266,7 +266,7 @@ public class TestSuiteExecutionController {
 			@PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 		populateExecutionStepModel(testSuiteId, testPlanItemId, executionId, stepIndex, model);
 
-		return "fragment/executions/step-information-menu";
+		return "fragment/executions/step-information-toolbox";
 
 	}
 

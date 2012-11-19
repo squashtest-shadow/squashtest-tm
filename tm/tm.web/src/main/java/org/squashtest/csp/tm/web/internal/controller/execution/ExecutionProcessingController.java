@@ -102,7 +102,7 @@ public class ExecutionProcessingController {
 		helper.populateExecutionStepModel(executionId, stepIndex, model);
 		addCurrentStepUrl(executionId, model);
 
-		return "fragment/executions/step-information-menu";
+		return "fragment/executions/step-information-toolbox";
 
 	}
 

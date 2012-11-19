@@ -27,7 +27,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	th:with="titleWindow = #{title.ExecutionPopupPreview(${execution.executionOrder + 1 }, ${execution.name})},
 		 title = #{title.ExecutionPopup(${execution.executionOrder + 1 }, ${execution.name})},
-		 beginURL = @{__${currentStepUrl}__0}">
+		 beginURL = @{__${currentStepUrl}__0__${(optimized!=null)? '?ieo' : ''}__}">
 
 
 <head>
@@ -152,6 +152,13 @@ documentation :
 	
 	require(["domReady", "execution-processing"], function(domReady, executionProcessing){
 		domReady(function(){
+			requirejs.config({
+				config : {
+					'execution-processing' :{
+						runOptimized : /*[[${optimized}?: false]]*/false
+					}
+				}
+			});
 			executionProcessing.initPreview();
 		});		
 	});

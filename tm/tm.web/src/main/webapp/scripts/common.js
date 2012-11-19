@@ -64,7 +64,8 @@ requirejs.config({
 		"jquery.squash.projectpicker": "squash/jquery.squashtm.projectpicker", 
 		"jquery.cookie": "jquery/jquery.cookie",
 		"squash.cssloader": "squash/squash.cssloader",
-		"squash.translator" : "squash/squash.translator"
+		"squash.translator" : "squash/squash.translator",
+		"squash.resizer" : "squash/squash.tree-page-resizer"
 	},
 	shim: {
 		"ckeditor": {

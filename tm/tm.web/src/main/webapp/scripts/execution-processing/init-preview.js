@@ -19,10 +19,43 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["./init-preview"], function(fnInitPreview){
-
-	return {
-		initPreview : fnInitPreview		
+define(["jquery", "module", "jquery.squash.squashbutton", "jquery.squash.togglepanel"], function($, module){
+	
+	function initPreview(){
+		
+		var conf = module.config();
+		
+		var stopButton = $("#execute-stop-button");
+		var stopIcon = stopButton.data('icon');
+		stopButton.removeAttr('data-icon');
+		stopButton.squashButton({
+			'text' : false,
+			'icons' : {
+				'primary' : stopIcon
+			}
+		}).click(function(){
+			window.close();
+		});
+		
+		var beginButton = $("#execute-begin-button");
+		var beginIcon = beginButton.data('icon');
+		beginButton.removeAttr('data-icon');
+		beginButton.squashButton({
+			'icons' : {
+				'secondary' : beginIcon
+			}
+		});
+		
+		var informationsPanel = $("#execute-informations-panel");
+		var infoTitle = informationsPanel.data('title');
+		informationsPanel.removeAttr('data-title');
+		informationsPanel.togglePanel({
+			title : infoTitle
+		});
+		
 	};
 	
+	return initPreview;
+	
 });
+	

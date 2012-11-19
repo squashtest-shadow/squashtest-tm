@@ -91,7 +91,7 @@
 					primary : 'ui-icon-triangle-1-e'
 				}
 			}).click(function(){
-				parent.parent.navigateNext();
+				squashtm.ieomanager.navigateNext();
 			});	
 		
 			$("#execute-previous-button").button({
@@ -101,7 +101,7 @@
 					primary : 'ui-icon-triangle-1-w'
 				}
 			}).click(function(){
-				parent.parent.navigatePrevious();
+				squashtm.ieomanager.navigatePrevious();
 			});
 		
 			$("#execute-stop-button").button({
@@ -110,7 +110,7 @@
 					'primary' : 'ui-icon-power'
 				} 
 			}).click(function(){
-				parent.parent.window.close();
+				squashtm.ieomanager.closeWindow();
 			});			
 
 			$("#execution-action a").live('click', function(){

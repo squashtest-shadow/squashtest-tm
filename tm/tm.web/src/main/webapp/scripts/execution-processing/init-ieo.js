@@ -19,10 +19,39 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["./init-preview"], function(fnInitPreview){
 
-	return {
-		initPreview : fnInitPreview		
-	};
+define(["jquery","./ieo-manager", "squash.resizer", "./jquery.ieo-toolbox"], function($, OptimizedManager, resizer){
+	
+	
+	return function(){
+
+		//make the panels resizeable
+		
+		resizer.init({
+			leftSelector : "#left-panel",
+			rightSelector : "#right-panel"
+		});
+		
+		
+		// init the manager 
+		
+		var manager = new OptimizedManager();
+		
+		
+		//init the toolbox
+		var toolbox = $("#toolbox-container").optimizedToolbox();
+		
+		
+		//wire them
+		manager.setToolbox(toolbox);
+
+		
+		//set it in the context
+		squashtm = squashtm || {};
+		squashtm.ieomanager = manager;		
+		
+	}
+	
 	
 });
+

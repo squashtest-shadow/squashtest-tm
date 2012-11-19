@@ -50,16 +50,16 @@
 		var positionTop = $.cookie("ieo-toolbox-position-top");
 		
 		if ( positionLeft != null && positionTop != null ) {
-			$("#draggable-menu").offset({top : positionTop, left: positionLeft});
+			$("#ieo-toolbox").offset({top : positionTop, left: positionLeft});
 		}
 		
-		$("#draggable-menu").draggable({
+		$("#ieo-toolbox").draggable({
 			start: function(event, ui){
 				$(".iframe-container").addClass('not-visible');
 			},	
 			stop: function(event, ui){
 				$(".iframe-container").removeClass('not-visible');
-				var pos = $("#draggable-menu").offset();
+				var pos = $("#ieo-toolbox").offset();
 				$.cookie("ieo-toolbox-position-left", pos.left);
 				$.cookie("ieo-toolbox-position-top", pos.top);
 			}	
@@ -123,44 +123,42 @@
 		
 		if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');
 
-		$("#draggable-menu .button").button();
+		$("#ieo-toolbox .button").button();
 		
 		$("#step-status-combo").val("${executionStep.executionStatus}");
 		
 		statusComboSetIcon($("#step-status-combo"));		
 		
-		$('#urlATransmettre').attr("value", $('#iframe-right').attr("src"));
 	});	
 </script>
 
 
-<div id="draggable-menu" class="ui-state-active">
+<div id="ieo-toolbox" class="ui-state-active">
 	<table >
 		<tr>
-			<td class="left-aligned"><button id="stop-execution" ><f:message key="execute.header.button.stop.title" /></button></td>
+			<td class="left-aligned"><button class="stop-execution"><f:message key="execute.header.button.stop.title" /></button></td>
 			<td class="right-aligned">
-				<label id="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
+				<label class="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
 				<comp:execution-status-combo name="executionStatus" id="step-status-combo" />
-				<button id="step-failed"><f:message key="execute.header.button.failure.title" /></button>
-				<button id="step-succeeded"><f:message key="execute.header.button.passed.title" /></button>
+				<button class="step-failed"><f:message key="execute.header.button.failure.title" /></button>
+				<button class="step-succeeded"><f:message key="execute.header.button.passed.title" /></button>
 			</td>
 			<td class="centered">
-				<button id="open-address-dialog-button" class="button"><f:message key="execution.IEO.address.go.to.button" /></button>
-				<span id="step-paging">${executionStep.executionStepOrder +1} / ${totalSteps}</span>
-				<button id="execute-previous-step" class="button"><f:message key="execute.header.button.previous.title" /></button>	
-				<button id="execute-next-step" class="button"><f:message key="execute.header.button.next.title" /></button>
+				<button class="button open-address-dialog-button"><f:message key="execution.IEO.address.go.to.button" /></button>
+				<span class="step-paging"></span>
+				<button class="button execute-previous-step"><f:message key="execute.header.button.previous.title" /></button>	
+				<button class="button execute-next-step"><f:message key="execute.header.button.next.title" /></button>
 			</td>
-			<td class="centered not-displayed" id="execute-next-test-case-panel">
+			<td class="centered not-displayed execute-next-test-case-panel">
 				<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner' />" method="post">
-					<input id="urlATransmettre" type="hidden" name="ieoIFrameUrl" value="" >
 					<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
-					<button id="execute-next-test-case" name="optimized" class="button" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
+					<button name="optimized" class="button execute-next-test-case" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
 				</form>
 			</td>
 		</tr>
 		<tr>
 			<td class="centered" colspan="4">
-				<div id="slider"></div>
+				<div class="slider"></div>
 			</td>
 		</tr>
 	</table>

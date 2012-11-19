@@ -200,6 +200,12 @@ public class ExecutionModificationController {
 		LOGGER.trace("ExecutionModificationController : updated comment for step " + stepId);
 		return newComment;
 	}
+	
+	@RequestMapping(value = "/steps/{stepId}/status", method = RequestMethod.GET)
+	@ResponseBody
+	String getStepStatus(@PathVariable("stepId") Long stepId){
+		return executionModService.findExecutionStepById(stepId).getExecutionStatus().toString();
+	}
 
 	private static String localizedStatus(ExecutionStatus status, Locale locale, MessageSource messageSource) {
 		return messageSource.getMessage(status.getI18nKey(), null, locale);

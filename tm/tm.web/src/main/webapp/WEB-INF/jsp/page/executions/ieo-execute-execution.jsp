@@ -272,7 +272,52 @@
 	</div>
 	
 	<div id="toolbox-container" >
-		<gr:ieo-toolbox execution="${ execution }" executionStep="${ executionStep }" hasNextStep="${ hasNextStep }" hasPreviousStep="${ hasPreviousStep }" totalSteps="${ totalSteps }" hasNextTestCase="${ hasNextTestCase }" testPlanItemUrl="${ testPlanItemUrl }" isSuite="${ not empty hasNextTestCase }" />
+		<div id="ieo-toolbox" class="ui-state-active">
+			<table >
+				<tr>
+					<td class="left-aligned"><button class="stop-execution"><f:message key="execute.header.button.stop.title" /></button></td>
+					<td class="right-aligned">
+						<label class="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
+						<comp:execution-status-combo name="executionStatus" id="step-status-combo" />
+						<button class="step-failed"><f:message key="execute.header.button.failure.title" /></button>
+						<button class="step-succeeded"><f:message key="execute.header.button.passed.title" /></button>
+					</td>
+					<td class="centered">
+						<button class="button open-address-dialog-button"><f:message key="execution.IEO.address.go.to.button" /></button>
+						<span class="step-paging"></span>
+						<button class="button execute-previous-step"><f:message key="execute.header.button.previous.title" /></button>	
+						<button class="button execute-next-step"><f:message key="execute.header.button.next.title" /></button>
+					</td>
+					<td class="centered not-displayed execute-next-test-case-panel">
+						<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner' />" method="post">
+							<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
+							<button name="optimized" class="button execute-next-test-case" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
+						</form>
+					</td>
+				</tr>
+				<tr>
+					<td class="centered" colspan="4">
+						<div class="slider"></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<%-- Popup to enter the url we want the right panel to be filled with --%>
+		<comp:popup id="open-address-dialog" openedBy="open-address-dialog-button" titleKey="execution.IEO.address.bar.label">
+			<jsp:attribute name="buttons">
+					<f:message var="label" key="execution.IEO.address.go.to.button" />
+					'${ label }': function() {
+					var url = $('#address-input').val();
+					squashtm.ieomanager.fillRightFrame(url);
+					$('#open-address-dialog').dialog('close');
+					},			
+				</jsp:attribute>
+				<jsp:body>
+					<label><f:message key="execution.execute.IEO.address.label" /></label>
+					<input id="address-input" type="text" size="50" /><br/>
+				</jsp:body>
+		</comp:popup>	
+		
 	</div>
 
 	<comp:decorate-buttons />
