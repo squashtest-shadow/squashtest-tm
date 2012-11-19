@@ -27,7 +27,6 @@ import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tm.domain.project.Project
 import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode

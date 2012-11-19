@@ -23,9 +23,14 @@ package org.squashtest.csp.tm.domain.requirement;
 import spock.lang.Specification;
 import org.apache.commons.lang.NullArgumentException;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.project.Project;
 
 class RequirementLibraryTest extends Specification {
 	RequirementLibrary requirementLibrary = new RequirementLibrary()
+	
+	def setup() {
+		requirementLibrary.notifyAssociatedWithProject(new Project())
+	}
 	
 	def "should not add null root content"() {
 		when: 

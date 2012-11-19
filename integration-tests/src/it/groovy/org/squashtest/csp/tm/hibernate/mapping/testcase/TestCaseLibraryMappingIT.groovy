@@ -23,16 +23,29 @@ package org.squashtest.csp.tm.hibernate.mapping.testcase
 
 
 import org.hibernate.Hibernate;
+import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
 
 class TestCaseLibraryMappingIT extends HibernateMappingSpecification {
+	TestCaseLibrary library = new TestCaseLibrary()
+	Project p = new Project(name: "foo")
+	
+	def setup() {
+		p.testCaseLibrary = library  
+		p.requirementLibrary = new RequirementLibrary()	
+		p.campaignLibrary = new CampaignLibrary()	
+	}
+	
 	def "should persist and retrieve a test case library"() {
 		given:
-		TestCaseLibrary library = new TestCaseLibrary()
-		doInTransaction({it.persist library})	
+		doInTransaction {
+			it.persist library
+		}	
 		
 		when:
 		def res = doInTransaction({it.get(TestCaseLibrary, library.id)})
@@ -44,17 +57,17 @@ class TestCaseLibraryMappingIT extends HibernateMappingSpecification {
 		deleteFixture library
 	}
 	def "should persist and retrieve content in a test case library"() {
-		given: " a library"
-		TestCaseLibrary library = new TestCaseLibrary()
-		
-		and: "content added to the library"
+		given: 
 		def tc = new TestCase(name: "tc")
 		library.addContent tc	
 		def f = new TestCaseFolder(name: "f")
 		library.addContent f
 		
 		when:
-		doInTransaction({it.persist library})
+		doInTransaction {
+			it.persist p
+			it.persist library
+		}
 		def res = doInTransaction({it.createQuery("from TestCaseLibrary l join fetch l.rootContent where l.id = $library.id").uniqueResult()})
 		
 		then:
@@ -62,45 +75,7 @@ class TestCaseLibraryMappingIT extends HibernateMappingSpecification {
 		(res.rootContent.collect { it.name }).containsAll(["tc", "f"])
 		
 		cleanup:
-		deleteFixture library
+		deleteFixture p
 	}
-	
-	def "should add a content to a persistent library"(){
-		given :
-		TestCaseLibrary library = new TestCaseLibrary();
-		persistFixture(library);
-		
-		when :
-		
-		TestCaseLibrary oldLib = doInTransaction(
-			{def oldLib = it.get (TestCaseLibrary.class, library.id)
-				
-				
-				TestCaseFolder folder = new TestCaseFolder(name:"new folder")
-				it.persist folder
-				
-				
-				oldLib.addContent(folder)
-				
-				
-				return oldLib
-				})
-		
-		TestCaseLibrary newLib = doInTransaction({def lib = it.get (TestCaseLibrary.class,library.id)
-			Hibernate.initialize(lib.getContent());
-			return lib 
-			
-			
-			})
-		
-		then :
-		newLib.rootContent.size() == 1
-		newLib.rootContent.collect{ it.id }  != [null]
-
-		cleanup:
-		deleteFixture oldLib
-	}
-	
-	
 	
 }

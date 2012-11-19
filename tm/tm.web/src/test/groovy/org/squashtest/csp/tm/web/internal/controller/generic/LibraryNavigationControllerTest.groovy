@@ -31,6 +31,7 @@ import org.squashtest.csp.tm.domain.library.Folder
 import org.squashtest.csp.tm.domain.library.Library
 import org.squashtest.csp.tm.domain.library.LibraryNode
 import org.squashtest.csp.tm.domain.library.NodeVisitor;
+import org.squashtest.csp.tm.domain.project.GenericProject
 import org.squashtest.csp.tm.domain.project.Project
 import org.squashtest.csp.tm.service.LibraryNavigationService
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode
@@ -128,6 +129,7 @@ class DummyController extends LibraryNavigationController<DummyLibrary, DummyFol
 	JsTreeNode createTreeNodeFromLibraryNode(DummyNode resource) {
 		null
 	}
+	
 }
 class DummyFolder  extends DummyNode  implements Folder<DummyNode>{
 	@Override
@@ -191,7 +193,7 @@ class DummyLibrary implements Library<DummyNode> {
 	public Library getLibrary(){
 		return this;
 	}
-	void notifyAssociatedWithProject(Project project) {}
+	void notifyAssociatedWithProject(GenericProject project) {}
 
 	@Override
 	String getClassSimpleName(){

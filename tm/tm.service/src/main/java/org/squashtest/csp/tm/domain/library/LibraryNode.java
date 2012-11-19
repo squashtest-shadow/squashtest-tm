@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.domain.library;
 
 import org.squashtest.csp.core.domain.Identified;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.project.ProjectResource;
 
@@ -30,7 +31,7 @@ import org.squashtest.csp.tm.domain.project.ProjectResource;
  * @author Gregory Fouquet
  *
  */
-public interface LibraryNode extends Copiable, ProjectResource, Identified, AttachmentHolder, TreeNode {
+public interface LibraryNode extends Copiable, ProjectResource<Project>, Identified, AttachmentHolder, TreeNode {
 	/**
 	 * @return Name of this node.
 	 */

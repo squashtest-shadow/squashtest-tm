@@ -30,6 +30,10 @@ import spock.lang.Specification;
 class TestCaseLibraryTest   extends Specification {
 	TestCaseLibrary library = new TestCaseLibrary()
 
+	def setup() {
+		library.notifyAssociatedWithProject(new Project());
+	}
+
 	def "should add test case to library"() {
 		given:
 		TestCase testCase = new TestCase(name: "foo")

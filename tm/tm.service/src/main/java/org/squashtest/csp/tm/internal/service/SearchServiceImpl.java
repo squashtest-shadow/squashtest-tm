@@ -21,7 +21,6 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -85,6 +84,7 @@ public class SearchServiceImpl implements SearchService {
 	 * RequirementSearchCriteria)
 	 */
 	private static final String FILTRED_READ_OR_ADMIN = "hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')";
+
 	@Override
 	@PostFilter(FILTRED_READ_OR_ADMIN)
 	public List<CampaignLibraryNode> findCampaignByName(String aName, boolean groupByProject) {
@@ -155,20 +155,25 @@ public class SearchServiceImpl implements SearchService {
 		return originalList;
 	}
 
-	protected <X extends ProjectResource> List<X> applyProjectFilter(List<X> initialList) {
+	protected <PR extends ProjectResource<?>> List<PR> applyProjectFilter(List<PR> initialList) {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
 		if (!pf.getActivated()) {
 			return initialList;
 		} else {
-			List<X> filtered = new LinkedList<X>();
-			for (X object : initialList) {
-				if (pf.isProjectSelected(object.getProject())) {
-					filtered.add(object);
-				}
-			}
-			return filtered;
+			return applyFilter(initialList, pf);
 		}
 
+	}
+
+	private <PR extends ProjectResource<?>> List<PR> applyFilter(List<PR> unfilteredResources, ProjectFilter filter) {
+		List<PR> filtered = new ArrayList<PR>(unfilteredResources.size());
+
+		for (PR resource : unfilteredResources) {
+			if (filter.isProjectSelected(resource.getProject())) {
+				filtered.add(resource);
+			}
+		}
+		return filtered;
 	}
 
 	// ------------------------------------------------------------------------------------------TODO mutualize

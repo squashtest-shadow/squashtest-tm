@@ -28,9 +28,11 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
 
 @Transactional
@@ -40,6 +42,8 @@ class HibernateTestCaseLibraryDaoIT extends HibernateDaoSpecification {
 	def "should find root content of test case library"() {
 		setup:
 		TestCaseLibrary lib  = new TestCaseLibrary();
+		Project p = new Project(name: "p")
+		p.testCaseLibrary = lib
 
 		TestCase tc = new TestCase(name:"tc")
 		lib.addContent tc
@@ -47,7 +51,7 @@ class HibernateTestCaseLibraryDaoIT extends HibernateDaoSpecification {
 		TestCaseFolder f = new TestCaseFolder(name:"f")
 		lib.addContent f
 
-		persistFixture lib
+		persistFixture p, lib
 
 
 		when:
@@ -57,8 +61,8 @@ class HibernateTestCaseLibraryDaoIT extends HibernateDaoSpecification {
 		content.size() == 2
 		(content.collect { it.name }).containsAll(["tc", "f"])
 
-		cleanup:
-		deleteFixture lib
+//		cleanup:
+//		deleteFixture lib
 	}
 
 	def "should find library by id"() {

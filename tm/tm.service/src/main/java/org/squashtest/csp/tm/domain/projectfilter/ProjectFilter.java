@@ -33,6 +33,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 
 @Entity
@@ -85,7 +86,7 @@ public class ProjectFilter {
 	 * @param project
 	 * @return
 	 */
-	public boolean isProjectSelected(Project project) {
+	public boolean isProjectSelected(GenericProject project) {
 		boolean result = false;
 		for (Project localProject : projects) {
 			if (project.getId().equals(localProject.getId())) {

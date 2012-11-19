@@ -18,41 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.csp.tm.domain.project;
 
-import org.squashtest.csp.core.security.acls.PermissionGroup;
-
 /**
- * This class represents an agregation of permissions (read, write and so on) which can be given to a user and which
- * have a scope of object identities.
- *
- *	This class is specific to projects permission
+ * Project visitor. We need this because of the hibernate proxy problem (https://community.jboss.org/wiki/ProxyVisitorPattern)
  * @author Gregory Fouquet
  *
  */
-public class ProjectPermission {
-
-	private GenericProject project;
-	private PermissionGroup permissionGroup;
-	
-	public ProjectPermission(GenericProject project, PermissionGroup permissionGroup) {
-		this.project = project;
-		this.permissionGroup = permissionGroup;
-	}
-
-	public GenericProject getProject() {
-		return project;
-	}
-
-	public void setProject(GenericProject project) {
-		this.project = project;
-	}
-
-	public PermissionGroup getPermissionGroup() {
-		return permissionGroup;
-	}
-
-	public void setPermissionGroup(PermissionGroup permissionGroup) {
-		this.permissionGroup = permissionGroup;
-	}
+public interface ProjectVisitor {
+	void visit(Project project);
 }

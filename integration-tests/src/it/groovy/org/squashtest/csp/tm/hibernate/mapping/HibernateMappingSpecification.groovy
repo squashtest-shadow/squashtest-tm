@@ -66,8 +66,10 @@ abstract class HibernateMappingSpecification extends Specification {
 	 * @return
 	 */
 	def final persistFixture(Object... fixtures) {
-		fixtures.each {  fixture ->
-			doInTransaction { it.persist fixture }
+		doInTransaction { session ->
+			fixtures.each {  fixture ->
+				session.persist fixture 
+			}
 		}
 	}
 	/**
@@ -76,8 +78,10 @@ abstract class HibernateMappingSpecification extends Specification {
 	 * @return
 	 */
 	def final deleteFixture(Object... fixtures) {
-		fixtures.each {  fixture ->
-			doInTransaction {  it.delete fixture  }
+		doInTransaction { session ->
+			fixtures.each {  fixture ->
+				session.delete fixture 
+			}
 		}
 	}
 }

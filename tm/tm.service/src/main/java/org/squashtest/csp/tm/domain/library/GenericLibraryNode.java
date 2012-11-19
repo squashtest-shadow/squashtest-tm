@@ -20,33 +20,41 @@
  */
 package org.squashtest.csp.tm.domain.library;
 
+import javax.persistence.CascadeType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
+import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.project.Project;
 
 /**
  * Generic superclass for library nodes.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 @MappedSuperclass
-public abstract class GenericLibraryNode implements LibraryNode {
+public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolder {
 	@ManyToOne
 	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
 
 	@NotBlank
-	@Size(min=0, max=255)
+	@Size(min = 0, max = 255)
 	private String name;
 
 	@Lob
 	private String description;
+
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "ATTACHMENT_LIST_ID", updatable = false)
+	private final AttachmentList attachmentList = new AttachmentList();
 
 	public GenericLibraryNode() {
 		super();
@@ -78,7 +86,7 @@ public abstract class GenericLibraryNode implements LibraryNode {
 
 	/**
 	 * Notifies this object it is now a resource of the given project.
-	 *
+	 * 
 	 * @param project
 	 */
 	@Override
@@ -87,6 +95,9 @@ public abstract class GenericLibraryNode implements LibraryNode {
 
 	}
 
-
+	@Override
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
+	}
 
 }

@@ -35,7 +35,7 @@ import javax.persistence.OneToOne;
 
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.project.GenericLibrary;
-import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 
 @Entity
 public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
@@ -53,7 +53,7 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	private final Set<TestCaseLibraryNode> rootContent = new HashSet<TestCaseLibraryNode>();
 
 	@OneToOne(mappedBy = "testCaseLibrary")
-	private Project project;
+	private GenericProject project;
 		
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
@@ -72,12 +72,12 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	}
 
 	@Override
-	public Project getProject() {
+	public GenericProject getProject() {
 		return project;
 	}
 
 	@Override
-	public void notifyAssociatedWithProject(Project p) {
+	public void notifyAssociatedWithProject(GenericProject p) {
 		this.project = p;
 	}
 
@@ -107,7 +107,4 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	public AttachmentList getAttachmentList() {
 		return attachmentList;
 	}
-
-	
-
 }

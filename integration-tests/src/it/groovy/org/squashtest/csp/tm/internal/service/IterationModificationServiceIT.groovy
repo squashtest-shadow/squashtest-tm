@@ -30,6 +30,7 @@ import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep
@@ -308,7 +309,7 @@ class IterationModificationServiceIT extends HibernateServiceSpecification {
 	}	
 	
 	
-	def Project createProject(){
+	def GenericProject createProject(){
 		Project p = new Project();
 		p.name = Double.valueOf(Math.random()).toString();
 		p.description = "eaerazer"

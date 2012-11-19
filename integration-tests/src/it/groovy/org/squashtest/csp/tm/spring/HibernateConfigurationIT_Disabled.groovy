@@ -33,16 +33,14 @@ import spock.lang.Specification;
 @ContextConfiguration(["classpath*:META-INF/**/datasource-context.xml", "classpath*:META-INF/**/repository-context.xml",
 	"classpath:repository/dependencies-scan-context.xml", "classpath:config-context.xml"])
 @TransactionConfiguration(transactionManager="squashtest.tm.hibernate.TransactionManager")
-class HibernateConfigurationIT extends Specification {
+class HibernateConfigurationIT_Disabled { // extends Specification {
 	@Inject SessionFactory sessionFactory;
 
-
 	def "should have injected session factory"() {
-		when:
-		sessionFactory?.toString()
-		then:
+		expect:
 		sessionFactory != null
 	}
+
 
 	def "should open a session"() {
 		when:

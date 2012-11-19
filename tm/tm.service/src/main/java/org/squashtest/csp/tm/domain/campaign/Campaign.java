@@ -65,8 +65,6 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@JoinColumn(name = "CAMPAIGN_ID")
 	private final List<CampaignTestPlanItem> testPlan = new ArrayList<CampaignTestPlanItem>();
 
-	
-
 	public Campaign() {
 		super();
 	}

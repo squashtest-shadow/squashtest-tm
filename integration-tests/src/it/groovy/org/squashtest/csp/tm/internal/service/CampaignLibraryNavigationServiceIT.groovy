@@ -33,6 +33,7 @@ import org.squashtest.csp.tm.domain.campaign.CampaignFolder
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode
 import org.squashtest.csp.tm.domain.campaign.Iteration
 import org.squashtest.csp.tm.domain.campaign.TestSuite
+import org.squashtest.csp.tm.domain.project.GenericProject
 import org.squashtest.csp.tm.domain.project.Project
 import org.squashtest.csp.tm.service.CampaignLibrariesCrudService
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService
@@ -379,7 +380,7 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	}
 	
 	
-	def Project createProject(){
+	def GenericProject createProject(){
 		Project p = new Project();
 		p.name = Double.valueOf(Math.random()).toString();
 		p.description = "eaerazer"

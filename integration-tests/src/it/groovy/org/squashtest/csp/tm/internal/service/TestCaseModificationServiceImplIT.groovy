@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.spockframework.runtime.Sputnik;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
@@ -194,21 +195,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		then :
 		tc.reference == tcNewRef
 	}
-
-
-
-	def "should change test case execution mode"(){
-		given :
-		def newExecMode = TestCaseExecutionMode.AUTOMATED
-
-		when :
-		service.changeExecutionMode(testCaseId, newExecMode)
-		def tc = service.findById(testCaseId)
-
-		then :
-		tc.executionMode == newExecMode
-	}
-
 
 	def "should update a test step action "(){
 		given :
@@ -445,7 +431,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		testCase.getAutomatedTest() == null
 	}
 	
-	def Project createProject(){
+	def GenericProject createProject(){
 		Project p = new Project();
 		p.name = Double.valueOf(Math.random()).toString();
 		p.description = "eaerazer"

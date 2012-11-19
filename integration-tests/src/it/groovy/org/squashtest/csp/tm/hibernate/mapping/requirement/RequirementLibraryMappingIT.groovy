@@ -22,8 +22,11 @@ package org.squashtest.csp.tm.hibernate.mapping.requirement
 
 
 import org.hibernate.Session;
+import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
 
 class RequirementLibraryMappingIT extends HibernateMappingSpecification {
@@ -49,15 +52,19 @@ class RequirementLibraryMappingIT extends HibernateMappingSpecification {
 	
 	def "should add a folder to a library"() {
 		given:
+		Project p = new Project(name: "foo")
 		RequirementLibrary library = new RequirementLibrary()
-		persistFixture(library)
+		p.requirementLibrary = library
+		p.campaignLibrary = new CampaignLibrary()
+		p.testCaseLibrary = new TestCaseLibrary()
+		persistFixture p, library
 		
 		and:		
 		RequirementFolder folder = new RequirementFolder(name: "add")
 		
 		when:
 		def addFolder = {Session session -> 
-			Object l = session.get(RequirementLibrary.class, library.id)
+			RequirementLibrary l = session.get(RequirementLibrary.class, library.id)
 			l.addContent(folder)
 			session.persist(folder)
 		}
@@ -76,7 +83,7 @@ class RequirementLibraryMappingIT extends HibernateMappingSpecification {
 		
 		cleanup:
 		deleteRootContent library
-		deleteFixture library
+		//deleteFixture p, library
 		
 	}
 

@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.spockframework.runtime.Sputnik;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
@@ -103,7 +104,7 @@ class TestCaseModificationServiceImp2lIT extends HibernateServiceSpecification {
 
 	
 	
-	def Project createProject(){
+	def GenericProject createProject(){
 		Project p = new Project();
 		p.name = Double.valueOf(Math.random()).toString();
 		p.description = "eaerazer"

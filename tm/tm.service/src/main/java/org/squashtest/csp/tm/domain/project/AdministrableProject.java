@@ -25,7 +25,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 
 public class AdministrableProject {
-	private final Project project;
+	private final GenericProject project;
 	private boolean deletable = false;
 
 	public boolean isDeletable() {
@@ -68,11 +68,11 @@ public class AdministrableProject {
 		return project.getCampaignLibrary();
 	}
 
-	public Project getProject() {
+	public GenericProject getProject() {
 		return project;
 	}
 
-	public AdministrableProject(Project project) {
+	public AdministrableProject(GenericProject project) {
 		this.project = project;
 	}
 }

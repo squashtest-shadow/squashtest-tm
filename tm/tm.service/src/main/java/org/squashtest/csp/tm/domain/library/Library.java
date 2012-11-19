@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.domain.library;
 
 import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.SelfClassAware;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.project.ProjectResource;
 /**
@@ -29,5 +30,5 @@ import org.squashtest.csp.tm.domain.project.ProjectResource;
  *
  * @param <NODE> type of contained node.
  */
-public interface Library<NODE extends LibraryNode> extends ProjectResource, SelfClassAware, NodeContainer<NODE>, Identified, AttachmentHolder {
+public interface Library<NODE extends LibraryNode> extends ProjectResource<GenericProject>, SelfClassAware, NodeContainer<NODE>, Identified, AttachmentHolder {
 }

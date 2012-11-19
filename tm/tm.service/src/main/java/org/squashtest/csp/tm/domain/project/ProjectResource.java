@@ -28,12 +28,12 @@ import org.squashtest.csp.tm.domain.library.Library;
  * @author Gregory Fouquet
  * 
  */
-public interface ProjectResource{
+public interface ProjectResource<P extends GenericProject> {
 	/**
 	 * 
 	 * @return The project which this resource belongs to. Should never be <code>null</code>.
 	 */
-	Project getProject();
+	P getProject();
 
 	
 	Library<?> getLibrary();
@@ -45,5 +45,5 @@ public interface ProjectResource{
 	 * @param project
 	 *            should not be <code>null</code>
 	 */
-	void notifyAssociatedWithProject(Project project);
+	void notifyAssociatedWithProject(P project);
 }

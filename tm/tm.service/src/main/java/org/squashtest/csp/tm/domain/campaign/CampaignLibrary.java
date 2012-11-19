@@ -37,6 +37,7 @@ import org.apache.commons.lang.NullArgumentException;
 import org.hibernate.annotations.Where;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.project.GenericLibrary;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 
 @Entity
@@ -56,7 +57,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	private final Set<CampaignLibraryNode> rootContent = new HashSet<CampaignLibraryNode>();
 
 	@OneToOne(mappedBy = "campaignLibrary")
-	private Project project;
+	private GenericProject project;
 	
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
@@ -90,12 +91,12 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	}
 
 	@Override
-	public Project getProject() {
+	public GenericProject getProject() {
 		return project;
 	}
 
 	@Override
-	public void notifyAssociatedWithProject(Project p) {
+	public void notifyAssociatedWithProject(GenericProject p) {
 		this.project = p;
 	}
 

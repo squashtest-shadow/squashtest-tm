@@ -31,6 +31,7 @@ import org.squashtest.csp.tm.domain.execution.Execution
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus
 import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport
 import org.squashtest.csp.tm.domain.execution.ExecutionStep
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep
@@ -875,7 +876,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 	}
 	
-	def Project createProject(){
+	def GenericProject createProject(){
 		Project p = new Project();
 		p.name = Double.valueOf(Math.random()).toString();
 		p.description = "eaerazer"

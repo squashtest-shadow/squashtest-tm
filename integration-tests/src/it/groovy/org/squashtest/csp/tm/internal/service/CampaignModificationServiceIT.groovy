@@ -39,6 +39,7 @@ import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.service.CampaignLibrariesCrudService
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService
@@ -211,7 +212,7 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 	}
 	
 	
-	def Project createProject(){
+	def GenericProject createProject(){
 		Project p = new Project();
 		p.name = Double.valueOf(Math.random()).toString();
 		p.description = "eaerazer"

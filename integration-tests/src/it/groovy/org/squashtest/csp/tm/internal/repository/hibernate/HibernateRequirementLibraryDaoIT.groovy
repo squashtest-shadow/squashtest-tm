@@ -23,8 +23,10 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
 
 @Transactional
@@ -34,11 +36,13 @@ class HibernateRequirementLibraryDaoIT extends HibernateDaoSpecification {
 	def "should find root content of requirement library"() {
 		setup:
 		RequirementLibrary lib  = new RequirementLibrary();
+		Project p = new Project(name: "p")
+		p.requirementLibrary = lib
 
 		RequirementFolder f = new RequirementFolder(name:"f")
 		lib.addContent f
 
-		persistFixture lib
+		persistFixture p, lib
 
 
 		when:
@@ -48,8 +52,8 @@ class HibernateRequirementLibraryDaoIT extends HibernateDaoSpecification {
 		content.size() == 1
 		content[0].id == f.id
 
-		cleanup:
-		deleteFixture lib
+		//cleanup:
+		//deleteFixture lib,p
 	}
 
 	def "should find all libraries"() {

@@ -22,15 +22,13 @@ package org.squashtest.csp.tm.domain.project;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.commons.lang.NullArgumentException;
+import javax.validation.constraints.NotNull;
+
 import org.squashtest.csp.core.security.annotation.AclConstrainedObject;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.csp.tm.domain.resource.Resource;
 
 /**
  * Abstract superclass of {@link Library} implementations based on generics.
@@ -57,14 +55,16 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 	}
 
 	@Override
-	public void addContent(NODE node)  throws DuplicateNameException, NullArgumentException {
-		if (node == null) {
-			throw new NullArgumentException("node");
-		}
-
+	public void addContent(@NotNull final NODE node) {
 		checkContentNameAvailable(node);
 		getContent().add(node);
-		node.notifyAssociatedWithProject(getProject());
+
+		getProject().accept(new ProjectVisitor() {
+			public void visit(Project project) {
+				node.notifyAssociatedWithProject(project);
+
+			}
+		});
 	}
 
 	/**

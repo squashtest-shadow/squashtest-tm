@@ -40,6 +40,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 
 /**
@@ -73,7 +74,7 @@ public class CustomFieldBinding {
 	@ManyToOne
 	@JoinColumn(name = "BOUND_PROJECT_ID", updatable = false)
 	@NotNull
-	private Project boundProject;
+	private GenericProject boundProject;
 	
 	
 	@Column
@@ -103,11 +104,11 @@ public class CustomFieldBinding {
 		this.boundEntity = boundEntity;
 	}
 
-	public Project getBoundProject() {
+	public GenericProject getBoundProject() {
 		return boundProject;
 	}
 
-	public void setBoundProject(Project boundProject) {
+	public void setBoundProject(GenericProject boundProject) {
 		this.boundProject = boundProject;
 	}
 
