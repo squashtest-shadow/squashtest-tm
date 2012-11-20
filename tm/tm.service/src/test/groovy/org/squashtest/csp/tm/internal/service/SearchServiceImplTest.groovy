@@ -27,6 +27,7 @@ import org.squashtest.csp.tm.internal.repository.CampaignDao
 import org.squashtest.csp.tm.internal.repository.RequirementDao
 import org.squashtest.csp.tm.internal.repository.TestCaseDao
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
+import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
 
 import spock.lang.Specification
 
@@ -80,6 +81,21 @@ class SearchServiceImplTest extends Specification {
 		
 		when:
 		def found = service.findTestCaseByName("testCase", false)
+		
+		then:
+		found == [testCase1, testCase2]
+	}
+	
+	def "should return a TestCase matching the criteria" (){
+		given: 
+		TestCase testCase1 = Mock()
+		TestCase testCase2 = Mock()
+		TestCase testCase3 = Mock()
+		TestCaseSearchCriteria criteria = Mock()
+		testCaseDao.findBySearchCriteria(criteria) >> [testCase1, testCase2]
+		
+		when: 
+		def found = service.findTestCase(criteria)
 		
 		then:
 		found == [testCase1, testCase2]

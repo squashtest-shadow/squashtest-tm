@@ -31,6 +31,9 @@ import org.apache.xml.serialize.Encodings;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.csp.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.csp.tm.domain.testcase.TestCaseType;
+import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
 import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.unitils.dbunit.annotation.DataSet;
@@ -71,7 +74,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 		then :
 			summary.getTotal() == 13
 			summary.getSuccess()  == 13
-			summary.getModified() == 51
+			summary.getModified() == 49
 			summary.getFailures() == 0
 	
 			def rContent = service.findLibrary(1l).rootContent
@@ -122,7 +125,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 		then :
 			summary.getTotal() == 13
 			summary.getSuccess()  == 13
-			summary.getModified() == 51
+			summary.getModified() == 49
 			summary.getRenamed() == 4
 			summary.getFailures() == 0
 	
@@ -165,8 +168,9 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			testcase.description.contains("Sub Domain")
 			
 			testcase.importance == TestCaseImportance.MEDIUM;
-			
-		
+			testcase.status == TestCaseStatus.APPROVED;
+			testcase.nature == TestCaseNature.BUSINESS;
+			testcase.type == TestCaseType.NONE;
 	}
 	
 	/*

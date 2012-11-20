@@ -30,6 +30,10 @@ import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.Requirement
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus
+import org.squashtest.csp.tm.domain.testcase.TestCaseImportance
+import org.squashtest.csp.tm.domain.testcase.TestCaseStatus
+import org.squashtest.csp.tm.domain.testcase.TestCaseNature
+import org.squashtest.csp.tm.domain.testcase.TestCaseType
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
@@ -236,6 +240,9 @@ class TestCaseTest extends Specification {
 		"description"   | "bar"
 		"executionMode" | TestCaseExecutionMode.AUTOMATED
 		"importance"    | TestCaseImportance.HIGH
+		"status"		| TestCaseStatus.APPROVED
+		"nature"		| TestCaseNature.ATDD
+		"type"          | TestCaseType.END_TO_END
 		"reference"     | "barfoo"
 	}
 
