@@ -27,6 +27,7 @@ import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary
@@ -54,7 +55,7 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 		def result = deletionHandler.deleteProject(1)
 
 		then :
-		! found(Project.class, 1l)
+		!found(Project.class, 1l)
 		allDeleted ("RequirementLibrary", [12L])
 		allDeleted ("TestCaseLibrary", [13L])
 		allDeleted ("CampaignLibrary", [14L])

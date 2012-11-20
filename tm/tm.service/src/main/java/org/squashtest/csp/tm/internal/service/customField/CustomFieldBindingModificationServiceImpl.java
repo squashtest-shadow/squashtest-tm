@@ -111,6 +111,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 		customFieldBindingDao.removeCustomFieldBindings(bindingIds);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
 	public void removeCustomFieldBindings(Long projectId) {

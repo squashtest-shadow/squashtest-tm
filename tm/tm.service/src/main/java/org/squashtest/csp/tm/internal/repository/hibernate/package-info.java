@@ -160,14 +160,18 @@
 		//Queries on ExecutionStep
 		@NamedQuery(name = "executionStep.findParentNode", query = "select execution from Execution as execution join execution.steps exSteps where exSteps.id= :childId "),
 
+		//Queries on Generic Project
+		@NamedQuery(name = "GenericProject.findAllOrderedByName", query = "from GenericProject fetch all properties order by name"),
+		@NamedQuery(name = "GenericProject.countGenericProjects", query = "select count(p) from GenericProject p"),
+
 		//Queries on Project
-		@NamedQuery(name = "project.findAllOrderedByName", query = "from Project fetch all properties order by name"),
-		@NamedQuery(name = "project.countProjects", query = "select count(p) from Project p"),
+		@NamedQuery(name = "Project.findAllOrderedByName", query = "from Project fetch all properties order by name"),
+		@NamedQuery(name = "Project.countProjects", query = "select count(p) from Project p"),
 		@NamedQuery(name = "project.countNonFolderInCampaign", query = "select count(camp) from Campaign camp where camp.project.id = :projectId"),
 		@NamedQuery(name = "project.countNonFolderInTestCase", query = "select count(tc) from  TestCase tc where tc.project.id = :projectId "),
 		@NamedQuery(name = "project.countNonFolderInRequirement", query = "select count(req) from Requirement req where req.project.id = :projectId "),
-		@NamedQuery(name = "project.findProjectFiltersContainingProject", query = "select pf from ProjectFilter pf join pf.projects p where p.id = :projectId "),
-		@NamedQuery(name = "project.findBoundTestAutomationProjects", query = "select tap from Project p join p.testAutomationProjects tap where p.id = :projectId order by tap.name"),
+		@NamedQuery(name = "Project.findProjectFiltersContainingProject", query = "select pf from ProjectFilter pf join pf.projects p where p.id = :projectId "),
+		@NamedQuery(name = "Project.findBoundTestAutomationProjects", query = "select tap from Project p join p.testAutomationProjects tap where p.id = :projectId order by tap.name"),
 
 		//Queries on Attachement et al
 		@NamedQuery(name = "attachment.findContentId", query = "select aContent.id from Attachment attachment join attachment.content aContent where attachment.id = :attachId"),

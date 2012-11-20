@@ -31,6 +31,7 @@ import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 @Repository("squashtest.tm.repository.CampaignLibraryNodeDao")
 public class HibernateCampaignLibraryNodeDao extends HibernateEntityDao<CampaignLibraryNode> implements LibraryNodeDao<CampaignLibraryNode>{
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getParentsName(long entityId) {
 		SQLQuery query = currentSession().createSQLQuery(NativeQueries.campaignLibraryNode_findSortedParentNames);

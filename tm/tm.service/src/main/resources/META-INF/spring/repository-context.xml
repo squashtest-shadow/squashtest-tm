@@ -138,6 +138,16 @@
 	<!-- ====== / RDBMS / ORM INTEGRATION ====== -->
 	
 	<!-- Dynamic Daos -->
+  <bean id="projectDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
+    <property name="componentType" value="org.squashtest.csp.tm.internal.repository.ProjectDao" />
+    <property name="entityType" value="org.squashtest.csp.tm.domain.project.Project" />
+  </bean> 
+
+  <bean id="genericProjectDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
+    <property name="componentType" value="org.squashtest.csp.tm.internal.repository.GenericProjectDao" />
+    <property name="entityType" value="org.squashtest.csp.tm.domain.project.GenericProject" />
+  </bean> 
+
 	<bean id="requirementAuditEventDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
 		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.event.RequirementAuditEvent" />

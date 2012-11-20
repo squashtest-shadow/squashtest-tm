@@ -24,7 +24,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public interface ProjectModificationService extends CustomProjectModificationService {
+public interface ProjectModificationService extends CustomProjectModificationService, ProjectFinder {
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	void changeDescription(long projectId, String newDescription);
 

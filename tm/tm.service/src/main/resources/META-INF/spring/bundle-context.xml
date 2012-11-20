@@ -131,10 +131,17 @@
     <property name="componentType" value="org.squashtest.csp.tm.service.TestCaseModificationService" />
     <property name="entityType" value="org.squashtest.csp.tm.domain.testcase.TestCase" />
   </bean>
+  
   <bean id="squashtest.tm.service.ProjectModificationService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
     <property name="componentType" value="org.squashtest.csp.tm.service.ProjectModificationService" />
     <property name="entityType" value="org.squashtest.csp.tm.domain.project.Project" />
   </bean>
+  
+  <bean id="squashtest.tm.service.GenericProjectManagerService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
+    <property name="componentType" value="org.squashtest.csp.tm.service.project.GenericProjectManagerService" />
+    <property name="entityType" value="org.squashtest.csp.tm.domain.project.GenericProject" />
+  </bean>
+
   <bean id="squashtest.tm.service.BugTrackerModificationService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
     <property name="componentType" value="org.squashtest.csp.tm.service.BugTrackerModificationService" />
     <property name="entityType" value="org.squashtest.csp.core.bugtracker.domain.BugTracker" />

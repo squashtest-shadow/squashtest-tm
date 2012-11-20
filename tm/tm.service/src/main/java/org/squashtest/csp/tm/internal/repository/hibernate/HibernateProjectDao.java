@@ -20,40 +20,13 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate;
 
-import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.internal.repository.ProjectDao;
+import org.squashtest.csp.tm.internal.repository.CustomProjectDao;
 
 
-@Repository
-public class HibernateProjectDao extends HibernateEntityDao<Project> implements ProjectDao {
-	@Override
-	public List<Project> findAllOrderedByName() {
-		return executeListNamedQuery("project.findAllOrderedByName");
-	}
-
-	@Override
-	@PostFilter("hasPermission(filterObject, 'MANAGEMENT') or  hasRole('ROLE_ADMIN')")
-	// FIXME this posfilter breaks the paging
-	public List<Project> findSortedProjects(CollectionSorting filter) {
-		return findSorted(filter, Project.class, "Project");
-
-	}
-
-	@Override
-	public long countProjects() {
-		return (Long) executeEntityNamedQuery("project.countProjects");
-	}
-
+@Repository("CustomProjectDao")
+public class HibernateProjectDao extends HibernateEntityDao<Project> implements CustomProjectDao {
 	@Override
 	public long countNonFoldersInProject(long projectId) {
 		Long req = (Long) executeEntityNamedQuery("project.countNonFolderInRequirement", idParameter(projectId));
@@ -66,15 +39,4 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 	private SetQueryParametersCallback idParameter(final long id) {
 		return new SetIdParameter("projectId", id);
 	}
-
-	@Override
-	public List<ProjectFilter> findProjectFiltersContainingProject(Long projectId) {
-		return executeListNamedQuery("project.findProjectFiltersContainingProject", idParameter(projectId));
-	}
-
-	@Override
-	public List<TestAutomationProject> findBoundTestAutomationProjects(long id) {
-		return executeListNamedQuery("project.findBoundTestAutomationProjects", idParameter(id));
-	}
-
 }

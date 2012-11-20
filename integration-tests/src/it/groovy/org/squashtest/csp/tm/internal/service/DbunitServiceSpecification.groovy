@@ -27,6 +27,7 @@ import javax.inject.Inject
 
 import org.hibernate.Query
 import org.hibernate.type.LongType
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.springframework.test.context.ContextConfiguration
@@ -61,7 +62,16 @@ abstract class DbunitServiceSpecification extends Specification {
 	}
 
 	protected boolean found(Class<?> entityClass, Long id){
-		return (getSession().get(entityClass, id) != null)
+		boolean found = false
+			
+		try {
+			found = (getSession().get(entityClass, id) != null)
+			
+		} catch (ObjectNotFoundException ex) {
+			// Hibernate sometimes pukes the above exception instead of returning null when entity is part of a class hierarchy
+			found = false
+		}
+		return found
 	}
 
 	protected boolean allDeleted(String className, List<Long> ids){

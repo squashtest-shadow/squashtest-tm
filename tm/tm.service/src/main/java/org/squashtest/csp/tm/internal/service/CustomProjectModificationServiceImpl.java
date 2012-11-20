@@ -26,7 +26,6 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -43,8 +42,6 @@ import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.BugTrackerBindingDao;
 import org.squashtest.csp.tm.internal.repository.BugTrackerDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
@@ -82,13 +79,6 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private static final String MANAGE_PROJECT_OR_ROLE_ADMIN = "hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')";
 
 	@Override
-	@Transactional(readOnly = true)
-	@PostAuthorize("hasPermission(returnObject, 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	public Project findById(long projectId) {
-		return projectDao.findById(projectId);
-	}
-
-	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteProject(long projectId) {
 		projectDeletionHandler.deleteProject(projectId);
@@ -97,7 +87,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Override
 	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public AdministrableProject findAdministrableProjectById(long projectId) {
-		Project project = findById(projectId);
+		Project project = projectDao.findById(projectId);
 		boolean isDeletable = true;
 		try {
 			projectDeletionHandler.checkProjectContainsOnlyFolders(projectId);
@@ -154,7 +144,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Override
 	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public TestAutomationServer getLastBoundServerOrDefault(long projectId) {
-		Project project = findById(projectId);
+		Project project = projectDao.findById(projectId);
 
 		if (project.hasTestAutomationProjects()) {
 			return project.getServerOfLatestBoundProject();
@@ -236,23 +226,6 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 			throw new NoBugTrackerBindingException();
 		}
 		bugtrackerBinding.setProjectName(projectBugTrackerName);
-	}
-	
-
-
-	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
-	@Override
-	public List<Project> findAllOrderedByName() {
-		return projectDao.findAllOrderedByName();
-	}
-	
-
-	@Override
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<Project>> findSortedProjects(CollectionSorting filter) {
-		List<Project> projects = projectDao.findSortedProjects(filter);
-		long count = projectDao.countProjects();
-		return new FilteredCollectionHolder<List<Project>>(count, projects);
 	}
 
 	@Override

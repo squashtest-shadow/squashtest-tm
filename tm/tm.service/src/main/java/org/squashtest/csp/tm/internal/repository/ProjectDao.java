@@ -25,21 +25,25 @@ import java.util.List;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 
+public interface ProjectDao extends CustomProjectDao {
+	Project findById(long id);
+	
+	void persist(Project project);
+	
+	List<Project> findAll();
+	
+	List<Project> findAllByIds(List<Long> ids);
 
-public interface ProjectDao extends EntityDao<Project> {
 	List<Project> findAllOrderedByName();
-
-	List<Project> findSortedProjects(CollectionSorting filter);
 
 	long countProjects();
 
-	long countNonFoldersInProject(long projectId);
 
-	List<ProjectFilter> findProjectFiltersContainingProject(Long id);
+	List<ProjectFilter> findProjectFiltersContainingProject(@QueryParam("projectId") long id);
 
 	// ************************* test automation section **********************
 
-	List<TestAutomationProject> findBoundTestAutomationProjects(long id);
+	List<TestAutomationProject> findBoundTestAutomationProjects(@QueryParam("projectId") long id);
 }

@@ -18,28 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
 
-import java.util.List;
+package org.squashtest.csp.tm.service.project;
 
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.project.Project;
 
 /**
- * @author mpagnon
- * 
+ * @author Gregory Fouquet
+ *
  */
-@Transactional(readOnly = true)
-public interface ProjectFinder {
-	
-	@PostAuthorize("hasPermission(returnObject, 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	Project findById(long projectId);
+@Transactional
+public interface GenericProjectManagerService extends CustomGenericProjectManager, GenericProjectFinder {
 
-	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
-	List<Project> findAllOrderedByName();
-
-	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
-	List<Project> findAllReadable();
 }

@@ -34,7 +34,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.squashtest.csp.core.infrastructure.hibernate.PagingUtils;
 import org.squashtest.csp.core.infrastructure.hibernate.SortingUtils;
-import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.EntityDao;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -56,6 +55,7 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 		return criteria.list();
 
 	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ENTITY_TYPE> findAllByIds(Collection<Long> ids) {
@@ -147,7 +147,7 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	protected final List<ENTITY_TYPE> findSorted(PagingAndSorting filter, Class<ENTITY_TYPE> classe, String alias) {
 		Session session = currentSession();
 
-		Criteria crit = session.createCriteria(CustomField.class, "CustomField");
+		Criteria crit = session.createCriteria(classe, alias);
 
 		/* add ordering */
 		String sortedAttribute = filter.getSortedAttribute();
@@ -159,5 +159,16 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 		PagingUtils.addPaging(crit, filter);
 
 		return crit.list();
+	}
+
+	/**
+	 * Same as {@link #findSorted(PagingAndSorting, Class, String)} using the current entity type and its class name as
+	 * an alias.
+	 * 
+	 * @param pagingAndSorting
+	 * @return
+	 */
+	protected final List<ENTITY_TYPE> findSorted(PagingAndSorting pagingAndSorting) {
+		return findSorted(pagingAndSorting, entityType, entityType.getSimpleName());
 	}
 }
