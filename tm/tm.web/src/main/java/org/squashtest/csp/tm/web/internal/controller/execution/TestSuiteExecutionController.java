@@ -102,11 +102,11 @@ public class TestSuiteExecutionController {
 		super();
 	}
 	
-	private String getRedirectPreviewURL(long executionId, boolean optimized, boolean suitemode){
-		return "/execute/"+executionId+"/step/prologue?optimized="+optimized+"&suitemode="+suitemode;
-	}
+
 	
-	private String getRedirectNextExecURL(long executionId, boolean optimized, boolean suitemode){
+	
+	//redirects to something served by ExecutionProcessingController
+	private String getRedirectExecURL(long executionId, boolean optimized, boolean suitemode){
 		return "/execute/"+executionId+"?optimized="+optimized+"&suitemode="+suitemode;
 	}
 	
@@ -128,7 +128,7 @@ public class TestSuiteExecutionController {
 		
 		Execution execution = testSuiteExecutionProcessingService.startResume(testSuiteId);
 
-		return "redirect:"+ getRedirectNextExecURL(execution.getId(), false, true);
+		return "redirect:"+ getRedirectExecURL(execution.getId(), false, true);
 		
 	}
 	
@@ -142,7 +142,7 @@ public class TestSuiteExecutionController {
 		
 		Execution exec = testSuiteExecutionProcessingService.startResumeNextExecution(testSuiteId, testPlanItemId);
 		
-		return "redirect:"+ getRedirectNextExecURL(exec.getId(), optimized, suitemode);
+		return "redirect:"+ getRedirectExecURL(exec.getId(), optimized, suitemode);
 		
 	}
 		

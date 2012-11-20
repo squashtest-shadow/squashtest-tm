@@ -103,70 +103,9 @@ public class ExecutionRunnerControllerHelper {
 	
 	
 	
+	// ************************** step model population methods *****************************
 	
-	public RunnerState createNewRunnerState(boolean isOptimized, boolean isTestSuiteMode){
-		RunnerState state = new RunnerState();
-		
-		state.setOptimized(isOptimized);
-		state.setTestSuiteMode(isTestSuiteMode);
-		
-		return state;
-	}
-
-
-	public void populateExecutionPreview(final long executionId, Model model){
-		popuplateExecutionPreview(executionId, false, false, model);
-	}
-	
-	
-	public void popuplateExecutionPreview(final long executionId, boolean isOptimized, boolean isTestSuiteMode, Model model){
-		
-		Execution execution = executionProcessingService.findExecution(executionId);
-		
-		RunnerState state = createNewRunnerState(isOptimized, isTestSuiteMode);
-		state.setPrologue(true);
-		
-		model.addAttribute("execution", execution);
-		model.addAttribute("config", state);
-		
-	}
-	
-	
-	
-	public void populateClassicTestSuiteSpecifics(final long executionId, Model model) {
-	
-		Execution execution = executionProcessingService.findExecution(executionId);
-		IterationTestPlanItem itpi = execution.getTestPlan();
-		TestSuite ts = itpi.getTestSuite();
-		
-		
-		model.addAttribute("optimized", false);
-		model.addAttribute("suitemode", true);
-		
-		addTestPlanItemUrl(ts.getId(), itpi.getId(), model);
-		addHasNextTestCase(ts.getId(), itpi.getId(), model);
-		addCurrentStepUrl(executionId, model);
-		
-	}
-	
-	public void populateClassicSingleSpecifics(Model model) {
-
-		model.addAttribute("optimized", false);
-		model.addAttribute("suitemode", false);
-	}
-	
-	public void populateOptimizedSingleSpecifics(Model model) {
-		//TODO
-	}
-	
-	
-	public void populateOptimizedTestSuiteSpecifics(long executionId, Model model){
-		//TODO
-	}
-	
-	
-	
-	public void populateExecutionStepModel(long executionId, int stepIndex, Model model) {
+	public void populateFirstRunnableStepModel(long executionId, int stepIndex, Model model) {
 		
 		Execution execution = executionProcessingService.findExecution(executionId);
 		ExecutionStep executionStep = FETCHER.findStepAtIndex(executionId, stepIndex);
@@ -174,7 +113,7 @@ public class ExecutionRunnerControllerHelper {
 		_populateExecutionStepModel(execution, executionStep, model);
 	}
 	
-	public void populateExecutionStepModel(long executionId, Model model){
+	public void populateStepAtIndexModel(long executionId, Model model){
 		
 		Execution execution = executionProcessingService.findExecution(executionId);
 		ExecutionStep executionStep = FETCHER.firstFirstRunnable(executionId);
@@ -203,6 +142,89 @@ public class ExecutionRunnerControllerHelper {
 		addCurrentStepUrl(execution.getId(), model);
 	}
 	
+	
+
+
+	public void populateExecutionPreview(final long executionId, Model model){
+		popuplateExecutionPreview(executionId, false, false, model);
+	}
+	
+	
+	public void popuplateExecutionPreview(final long executionId, boolean isOptimized, boolean isTestSuiteMode, Model model){
+		
+		Execution execution = executionProcessingService.findExecution(executionId);
+		
+		RunnerState state = createNewRunnerState(isOptimized, isTestSuiteMode);
+		state.setPrologue(true);
+		
+		model.addAttribute("execution", execution);
+		model.addAttribute("config", state);
+		
+	}
+	
+	
+	
+	// ********************** display-mode-specific methods ****************************
+
+	public void populateClassicTestSuiteModel(final long executionId, Model model) {
+	
+		Execution execution = executionProcessingService.findExecution(executionId);
+		IterationTestPlanItem itpi = execution.getTestPlan();
+		TestSuite ts = itpi.getTestSuite();
+		
+		
+		model.addAttribute("optimized", false);
+		model.addAttribute("suitemode", true);
+		
+		addTestPlanItemUrl(ts.getId(), itpi.getId(), model);
+		addHasNextTestCase(ts.getId(), itpi.getId(), model);
+		addCurrentStepUrl(executionId, model);
+		
+	}
+	
+	public void populateClassicSingleModel(Model model) {
+
+		model.addAttribute("optimized", false);
+		model.addAttribute("suitemode", false);
+	}
+	
+
+	public void populateOptimizedTestSuiteModel(long executionId, Model model){
+		
+		Execution execution = executionProcessingService.findExecution(executionId);
+		IterationTestPlanItem itpi = execution.getTestPlan();
+		TestSuite ts = itpi.getTestSuite();
+		
+		
+		model.addAttribute("optimized", false);
+		model.addAttribute("suitemode", true);
+		
+		addTestPlanItemUrl(ts.getId(), itpi.getId(), model);
+		addHasNextTestCase(ts.getId(), itpi.getId(), model);
+		addCurrentStepUrl(executionId, model);
+		
+	}
+	
+	public void populateOptimizedSingleModel(Model model) {
+
+		model.addAttribute("optimized", false);
+		model.addAttribute("suitemode", false);
+	}
+	
+	
+	
+	// ******************* IEO runner state factory methods *************************
+	
+	
+	public RunnerState createNewRunnerState(boolean isOptimized, boolean isTestSuiteMode){
+		RunnerState state = new RunnerState();
+		
+		state.setOptimized(isOptimized);
+		state.setTestSuiteMode(isTestSuiteMode);
+		
+		return state;
+	}
+
 	
 	// ************************ private stuff **************************
 	

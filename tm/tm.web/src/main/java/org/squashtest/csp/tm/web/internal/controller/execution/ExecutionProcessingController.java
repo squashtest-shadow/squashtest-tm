@@ -66,6 +66,16 @@ public class ExecutionProcessingController {
 		model.addAttribute("currentStepUrl", "/execute/" + executionId + "/step/");
 	}
 	
+	
+	private String getRedirectToPrologue(long executionId, boolean optimized, boolean suitemode){
+		return "/execute/"+executionId+"/step/prologue?optimized="+optimized+"&suitemode="+suitemode;
+	}
+	
+	private String getRedirectToStep(long executionId, int stepIndex, boolean optimized, boolean suitemode){
+		return "/execute/"+executionId+"/step/"+stepIndex+"?optimized="+optimized+"&suitemode="+suitemode;
+	}
+	
+	
 	@RequestMapping(method = RequestMethod.GET, params={"optimized", "suitemode"})
 	public String executeFirstRunnableStep(@PathVariable("executionId") long executionId,
 										   @RequestParam("optimized") boolean optimized,
@@ -73,11 +83,11 @@ public class ExecutionProcessingController {
 										   Model model){
 		
 		if (executionProcService.wasNeverRan(executionId)){
-			return getExecutionPrologue(executionId, optimized, suitemode, model);
+			return "redirect:"+getRedirectToPrologue(executionId, optimized, suitemode);
 		}
 		else{
 			int stepIndex = executionProcService.findRunnableExecutionStep(executionId).getExecutionStepOrder();
-			return executionStepFragmentDispatcher(executionId, stepIndex, optimized, suitemode, model);
+			return "redirect:"+getRedirectToStep(executionId, stepIndex, optimized, suitemode);
 		}
 		
 		
@@ -96,31 +106,14 @@ public class ExecutionProcessingController {
 		
 	}
 	
-	private String executionStepFragmentDispatcher(long executionId, int stepIndex, boolean optimized, boolean suitemode, Model model){
-		
-		String view;
-		
-		if ( ! optimized && ! suitemode){
-			view = getClassicSingleExecutionStepFragment(executionId, stepIndex, model);
-		}
-		else if (optimized && ! suitemode){
-			view =getOptimizedSingleExecutionStepFragment(executionId, stepIndex, model);
-		}
-		else if (!optimized && suitemode){
-			view = getClassicTestSuiteExecutionStepFragment(executionId, stepIndex, model);
-		}
-		else view = getOptimizedTestSuiteExecutionStepFragment(executionId, stepIndex, model);
-		
-		return view;
-	}
 
 	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params={"optimized=false", "suitemode=false"})
 	public String getClassicSingleExecutionStepFragment(@PathVariable long executionId, 
 												  @PathVariable int stepIndex, 										  
 												  Model model) {
 		
-		helper.populateExecutionStepModel(executionId, stepIndex, model);
-		helper.populateClassicSingleSpecifics(model);
+		helper.populateFirstRunnableStepModel(executionId, stepIndex, model);
+		helper.populateClassicSingleModel(model);
 		
 		return STEP_PAGE_VIEW;
 
@@ -131,8 +124,8 @@ public class ExecutionProcessingController {
 												  @PathVariable int stepIndex, 										  
 												  Model model) {
 		
-		helper.populateExecutionStepModel(executionId, stepIndex, model);
-		helper.populateClassicTestSuiteSpecifics(executionId, model);
+		helper.populateFirstRunnableStepModel(executionId, stepIndex, model);
+		helper.populateClassicTestSuiteModel(executionId, model);
 		
 		return STEP_PAGE_VIEW;
 
@@ -143,8 +136,8 @@ public class ExecutionProcessingController {
 													@PathVariable int stepIndex,
 													Model model) {
 		
-		helper.populateExecutionStepModel(executionId, stepIndex, model);
-		helper.populateOptimizedSingleSpecifics(model);	
+		helper.populateFirstRunnableStepModel(executionId, stepIndex, model);
+		helper.populateOptimizedSingleModel(model);	
 		
 		return IE0_STEP_VIEW;
 
@@ -155,8 +148,8 @@ public class ExecutionProcessingController {
 													@PathVariable int stepIndex,
 													Model model) {
 		
-		helper.populateExecutionStepModel(executionId, stepIndex, model);
-		helper.populateOptimizedTestSuiteSpecifics(executionId, model);
+		helper.populateFirstRunnableStepModel(executionId, stepIndex, model);
+		helper.populateOptimizedTestSuiteModel(executionId, model);
 		
 		return IE0_STEP_VIEW;
 

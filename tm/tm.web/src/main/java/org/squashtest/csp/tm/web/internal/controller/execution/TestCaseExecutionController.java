@@ -57,24 +57,19 @@ public class TestCaseExecutionController {
 	}
 	
 
-	private String getRedirectPreviewURL(long executionId, boolean optimized, boolean suitemode){
-		return "/execute/"+executionId+"/step/prologue?optimized="+optimized+"&suitemode="+suitemode;
+	
+	//redirects to something served by ExecutionProcessingController
+	private String getRedirectExecURL(long executionId, boolean optimized, boolean suitemode){
+		return "/execute/"+executionId+"?optimized="+optimized+"&suitemode="+suitemode;
 	}
-
+	
 	
 	@RequestMapping(params = {"optimized=true", "suitemode=false"})
 	public String startResumeExecutionInOptimizedRunner(@PathVariable long executionId, Model model) {
 		
-		if (executionProcessingService.wasNeverRan(executionId)){
-			return "redirect:" + getRedirectPreviewURL(executionId, true, false);		
-		}
-		else{
-
-			helper.populateExecutionStepModel(executionId, model);
-			helper.populateOptimizedSingleSpecifics(model);
-			
-			return OPTIMIZED_RUNNER_PAGE_VIEW;
-		}
+		//TODO
+		
+		
 	}
 
 	
@@ -82,15 +77,7 @@ public class TestCaseExecutionController {
 	@RequestMapping(params = {"optimized=false", "suitemode=false"})
 	public String startResumeExecutionInClassicRunner(@PathVariable long executionId, Model model) {
 		
-		if (executionProcessingService.wasNeverRan(executionId)){
-			return "redirect:" + getRedirectPreviewURL(executionId, false, false);		
-		}
-		else{
-			helper.populateExecutionStepModel(executionId, model);
-			helper.populateClassicSingleSpecifics(model);
-
-			return STEP_PAGE_VIEW;			
-		}
+		return "redirect:" + getRedirectExecURL(executionId, false, false);		
 		
 	}
 	
