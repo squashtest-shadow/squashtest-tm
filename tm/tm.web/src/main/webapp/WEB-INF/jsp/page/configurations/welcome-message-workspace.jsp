@@ -33,11 +33,11 @@
 
 <layout:info-page-layout titleKey="label.ConsultModifyWelcomeMessage" highlightedWorkspace="requirement" isSubPaged="true">
 	<jsp:attribute  name="head">
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
-		<h2><f:message key="workspace.home.title" /></h2>	
+		<h2 class="admin"><f:message key="label.administration" /></h2>	
 	</jsp:attribute>
 		
 	<jsp:attribute name="subPageTitle">
@@ -54,7 +54,7 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">
-		<div id="welcome-page-content">
+		<div id="welcome-page-content" class="admin-message-page-content">
 			<span id="welcome-message">${welcomeMessage}</span>
 			<comp:rich-jeditable targetUrl="${ editWelcomeUrl }" componentId="welcome-message" welcome="true" />
 		</div>

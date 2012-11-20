@@ -72,7 +72,7 @@
 	</jsp:attribute>
 
 	<jsp:attribute name="titlePane">
-		<h2><f:message key="label.administration" /></h2>	
+		<h2 class="admin"><f:message key="label.administration" /></h2>	
 	</jsp:attribute>
 	<jsp:attribute name="subPageTitle">
 		<h2><f:message key="workspace.project.info.title" /></h2>

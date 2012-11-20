@@ -42,7 +42,7 @@
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />	
 	</jsp:attribute>
 
-	<jsp:attribute name="titlePane"><h2><f:message key="label.administration" /></h2></jsp:attribute>
+	<jsp:attribute name="titlePane"><h2 class="admin"><f:message key="label.administration" /></h2></jsp:attribute>
 	<jsp:attribute name="subPageTitle">
 		<h2><f:message key="workspace.bugtracker.info.title" /></h2>
 	</jsp:attribute>

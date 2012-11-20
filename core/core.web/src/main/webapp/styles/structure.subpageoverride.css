@@ -125,15 +125,6 @@
 	margin-right : 1.5em;
 }
 
-
-#welcome-page-content{
-	position: absolute; 
-	top: 0pt; 
-	bottom: 0pt; 
-	overflow-y: scroll;
-	width: 100%;
-}
-
 .sub-page-selection-panel #contextual-content {
  	position: inherit;
 	top: inherit;

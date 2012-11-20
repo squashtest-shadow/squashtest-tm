@@ -38,15 +38,15 @@
 <c:url var="welcomeUrl" value="/configuration/welcome-message" />
 <c:url var="customFieldsUrl" value="administration/custom-fields" />
 
-<layout:info-page-layout titleKey="workspace.home.title">
+<layout:info-page-layout titleKey="label.administration">
 	<jsp:attribute name="head">	
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />	
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/structure.override.css" />
 	</jsp:attribute>
 
 	<jsp:attribute name="titlePane">
-		<h2>
-			<f:message key="workspace.home.title" />
+		<h2 class="admin">
+			<f:message key="label.administration" />
 		</h2>	
 	</jsp:attribute>
 
@@ -68,15 +68,11 @@
 					<a href="${ customFieldsUrl }" class="unstyledLink"><img id="custom-fields-admin"
 						src="${ pageContext.servletContext.contextPath }/images/Button_CUF.png" /><br/><span><f:message
 								key="label.customFieldsManagement" /></span></a>
-				</sec:authorize>
-			</div>
-			<div id="admin-link-msg-pane" class="display-table">
-				<sec:authorize access=" hasRole('ROLE_ADMIN')">
-					<a href="${ loginUrl }" class="unstyledLink display-table-row"><img id="login-message-admin"
-						src="${ pageContext.servletContext.contextPath }/images/Button_MsgLogin.png" class="display-table-cell" /><span class="display-table-cell"><f:message
+					<a href="${ loginUrl }" class="unstyledLink "><img id="login-message-admin"
+						src="${ pageContext.servletContext.contextPath }/images/Button_MsgLogin.png" /><span><f:message
 								key="label.consultModifyLoginMessage" /></span></a>
-					<a href="${ welcomeUrl }" class="unstyledLink display-table-row"><img id="welcome-message-admin"
-						src="${ pageContext.servletContext.contextPath }/images/Button_MsgHome.png" class="display-table-cell"/><span class="display-table-cell"><f:message
+					<a href="${ welcomeUrl }" class="unstyledLink "><img id="welcome-message-admin"
+						src="${ pageContext.servletContext.contextPath }/images/Button_MsgHome.png" /><span><f:message
 								key="label.consultModifyWelcomeMessage" /></span></a>
 				</sec:authorize>
 			</div>
