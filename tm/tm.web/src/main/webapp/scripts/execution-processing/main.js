@@ -19,10 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["./init-preview"], function(fnInitPreview){
+define(["./init-preview", "./init-ieo"], function(fnInitPreview, fnInitIeo){
 
 	return {
-		initPreview : fnInitPreview		
+		initPreview : fnInitPreview	,
+		initIEO : fnInitIeo
 	};
 	
 });

@@ -45,6 +45,8 @@ import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 @RequestMapping("/execute/{executionId}")
 public class ExecutionProcessingController {
 
+	private static final String STEP_INFORMATION_FRAGMENT = "fragment/executions/step-information-fragment";
+	private static final String IE0_STEP_VIEW = "page/executions/ieo-fragment-step-information";
 	private static final String STEP_PAGE_VIEW = "page/executions/execute-execution";
 	private static final String STEP_PAGE_PREVIEW = "execute-execution-preview.html";
 
@@ -65,53 +67,55 @@ public class ExecutionProcessingController {
 	}
 	
 
-	@RequestMapping(value = "/step/prologue", method = RequestMethod.GET)
-	public String getExecutionPrologue(@PathVariable("executionId") long executionId, Model model){
+	@RequestMapping(value = "/step/prologue", method = RequestMethod.GET, params={"optimized", "suitemode"})
+	public String getExecutionPrologue(@PathVariable("executionId") long executionId, 
+									   @RequestParam("optimized") boolean optimized, 
+									   @RequestParam("suitemode") boolean suitemode,
+									   Model model){
+		
 		addCurrentStepUrl(executionId, model);
-		helper.popuplateExecutionPreview(executionId, model);
+		helper.popuplateExecutionPreview(executionId, optimized, suitemode, model);
 		
 		return STEP_PAGE_PREVIEW;	
 		
 	}
 
-	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET)
-	public String getClassicExecutionStepFragment(@PathVariable long executionId, @PathVariable int stepIndex, Model model) {
+	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params={"optimized=false", "suitemode"})
+	public String getClassicExecutionStepFragment(@PathVariable long executionId, 
+												  @PathVariable int stepIndex, 
+												  @RequestParam("suitemode") boolean suitemode,												  
+												  Model model) {
 		helper.populateExecutionStepModel(executionId, stepIndex, model);
 		addCurrentStepUrl(executionId, model);
-
+		model.addAttribute("optimized", false);
+		model.addAttribute("suitemode", suitemode);
+		
 		return STEP_PAGE_VIEW;
 
 	}
 
-	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = "ieo")
-	public String getOptimizedExecutionStepFragment(@PathVariable long executionId, @PathVariable int stepIndex,
-			Model model) {
+	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = {"optimized=true", "suitemode"})
+	public String getOptimizedExecutionStepFragment(@PathVariable long executionId, 
+													@PathVariable int stepIndex,
+													@RequestParam("suitemode") boolean suitemode,
+													Model model) {
 		helper.populateExecutionStepModel(executionId, stepIndex, model);
 		addCurrentStepUrl(executionId, model);
-
-		return "page/executions/ieo-fragment-step-information";
+		
+		model.addAttribute("optimized", true);
+		model.addAttribute("suitemode", suitemode);
+		
+		return IE0_STEP_VIEW;
 
 	}
 
-	/**
-	 * Only used by IEO
-	 */
-	@RequestMapping(value = "/step/{stepIndex}/menu", method = RequestMethod.GET)
-	public String getOptimizedExecutionToolboxFragment(@PathVariable long executionId, @PathVariable int stepIndex,
-			Model model) {
-		helper.populateExecutionStepModel(executionId, stepIndex, model);
-		addCurrentStepUrl(executionId, model);
-
-		return "fragment/executions/step-information-toolbox";
-
-	}
 
 	@RequestMapping(value = "/step/{stepIndex}/general", method = RequestMethod.GET)
 	public ModelAndView getMenuInfos(@PathVariable Long executionId, @PathVariable Integer stepIndex) {
 		
 		ExecutionStep executionStep = executionProcService.findStepAt(executionId, stepIndex);
 
-		ModelAndView mav = new ModelAndView("fragment/executions/step-information-fragment");
+		ModelAndView mav = new ModelAndView(STEP_INFORMATION_FRAGMENT);
 
 		mav.addObject("auditableEntity", executionStep);
 		mav.addObject("withoutCreationInfo", true);

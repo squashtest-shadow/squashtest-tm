@@ -31,7 +31,11 @@
  * 
  * + the rest described as in the 'state' variable below
  * 
+ * comment[1] [Issue 1126] Had to use directly "refreshParent" instead of "iframe.unload(refreshParent)" beacause the latest do not work with IE 8  
+ * 
  */
+
+
 
 define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 	
@@ -45,7 +49,7 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 		
 		this.state = $.extend({
 				
-				/*** provided by the app ***/
+				isOptimized : undefined,
 				isLastTestCase : undefined,
 				testSuiteMode : undefined,
 				isPrologue : undefined,
@@ -91,7 +95,7 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 		
 		var testComplete = function(){
 			if (! this.state.testSuiteMode){
-				$.squash.openMessage(config.completeTitle, config.completeTestMessage ).done(function() {
+				$.squash.openMessage(settings.completeTitle, settings.completeTestMessage ).done(function() {
 					refreshParent();// see "comment[1]"
 					window.close();
 				});
@@ -100,7 +104,7 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 				refreshParent();
 			}
 			else{
-				$.squash.openMessage("<f:message key='popup.title.info' />","${ endTestSuiteMessage }").done(function() {
+				$.squash.openMessage(settings.completeTitle, settings.completeSuiteMessage).done(function() {
 					refreshParent();// see "comment[1]"
 					window.close();
 	 			});				
@@ -108,6 +112,9 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 			
 		};
 		
+		var navigateLeftPanel = function(url){
+			parent.frameleft.document.location.href = url;
+		};
 		
 		//************ public functions ****************
 		
@@ -138,8 +145,8 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 		
 		this.navigatePrologue = function(){
 			var state = this.state;
-			var url = state.baseStepUrl+"prologue?ieo=true&suitemode="+state.testSuiteMode;
-			parent.frameleft.document.location.href = url;
+			var url = state.baseStepUrl+"prologue?optimized=true&suitemode="+state.testSuiteMode;
+			navigateLeftPanel(url);
 			this.toolbox._refreshUI();		
 		};
 		
@@ -156,8 +163,8 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 					
 					state.currentStepStatus = json;
 					
-					var frameLeftUrl = state.baseStepUrl+newStepIndex+"?ieo=true&suitemode="+state.testSuiteMode;
-					parent.frameleft.document.location.href = frameLeftUrl;	
+					var frameLeftUrl = state.baseStepUrl+newStepIndex+"?optimized=true&suitemode="+state.testSuiteMode;
+					navigateLeftPanel(frameLeftUrl);	
 					
 					this.toolbox.optimizedToolbox("navigateRandom");				
 				});				
@@ -165,10 +172,6 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 			state.currentStepIndex = newStepIndex;
 
 		};
-	
-		this.closeWindow = function(){
-			window.close();
-		}
 		
 		this.navigateNextTestCase = function(){			
 			getJson(nextTestCaseUrl)
@@ -178,7 +181,11 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 			});
 		};
 		
-		
+		this.closeWindow = function(){
+			window.close();
+		};
+
+
 		this.getState = function(){
 			return state;
 		};
@@ -202,7 +209,7 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 		// *********** setters etc *********************
 
 		
-		this.setToolbox(toolbox){
+		this.setToolbox = function(toolbox){
 			
 			var self = this;
 			
@@ -260,7 +267,7 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 		
 		};
 		
-		this.setRightFrame(rightFrame){
+		this.setRightFrame = function(rightFrame){
 			this.rightFrame = rightFrame;
 		};
 		

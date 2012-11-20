@@ -20,7 +20,14 @@
  */
 requirejs.config({
 	
-	packages: ["custom-field-binding", "execution-processing"],
+	packages: ["custom-field-binding",      
+	           //"execution-processing"],
+	           {
+					name : "execution-processing",
+					main : "main",
+					location : "http://localhost/scripts/execution-processing"
+	           }],
+	           
 
 	/*
 	 * rules for paths naming: * third party lib: unversionned lib
@@ -65,7 +72,7 @@ requirejs.config({
 		"jquery.cookie": "jquery/jquery.cookie",
 		"squash.cssloader": "squash/squash.cssloader",
 		"squash.translator" : "squash/squash.translator",
-		"squash.resizer" : "squash/squash.tree-page-resizer"
+		"squash.resizer" : "squash/squashtm.tree-page-resizer"
 	},
 	shim: {
 		"ckeditor": {

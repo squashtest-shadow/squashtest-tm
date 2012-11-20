@@ -23,6 +23,9 @@ package org.squashtest.csp.tm.web.internal.controller.execution;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
@@ -39,6 +42,7 @@ import org.squashtest.csp.tm.service.ExecutionProcessingService;
  */
 @Component
 public class ExecutionRunnerControllerHelper {
+	
 	private interface FetchStepCommand {
 		ExecutionStep execute(int stepCount);
 	}
@@ -49,13 +53,39 @@ public class ExecutionRunnerControllerHelper {
 	public void setExecutionProcessingService(ExecutionProcessingService executionProcService) {
 		this.executionProcessingService = executionProcService;
 	}
+	
+	@Inject
+	private MessageSource messageSource;
+	
+	
+	public RunnerState createNewRunnerState(boolean isOptimized, boolean isTestSuiteMode){
+		RunnerState state = new RunnerState();
+		
+		state.setOptimized(isOptimized);
+		state.setTestSuiteMode(isTestSuiteMode);
+		
+		return state;
+	}
 
-	public void popuplateExecutionPreview(final long executionId, Model model){
-		Execution execution = executionProcessingService.findExecution(executionId);
-		model.addAttribute("execution", execution);
+
+	public void populateExecutionPreview(final long executionId, Model model){
+		popuplateExecutionPreview(executionId, false, false, model);
 	}
 	
-	public void populateExecutionRunnerModel(final long executionId, Model model) {
+	
+	public void popuplateExecutionPreview(final long executionId, boolean isOptimized, boolean isTestSuiteMode, Model model){
+		Execution execution = executionProcessingService.findExecution(executionId);
+		
+		RunnerState state = createNewRunnerState(isOptimized, isTestSuiteMode);
+		state.setPrologue(true);
+		
+		model.addAttribute("execution", execution);
+		model.addAttribute("config", state);
+	}
+	
+	
+	
+	public void populateClassicTestSuiteRunnerModel(final long executionId, Model model) {
 		FetchStepCommand command = new FetchStepCommand() {
 			@Override
 			public ExecutionStep execute(int stepCount) {
@@ -64,8 +94,42 @@ public class ExecutionRunnerControllerHelper {
 		};
 
 		populateExecutionStepModel(executionId, model, command);
+		model.addAttribute("optimized", false);
+		model.addAttribute("suitemode", true);
+		
 	}
 	
+	
+	public void populateClassicSingleRunnerModel(final long executionId, Model model) {
+		FetchStepCommand command = new FetchStepCommand() {
+			@Override
+			public ExecutionStep execute(int stepCount) {
+				return executionProcessingService.findRunnableExecutionStep(executionId);
+			}
+		};
+
+		populateExecutionStepModel(executionId, model, command);
+		model.addAttribute("optimized", false);
+		model.addAttribute("suitemode", false);
+	}
+	
+	public void populateOptimizedSingleRunnerModel(final long executionId,  Model model) {
+		FetchStepCommand command = new FetchStepCommand() {
+			@Override
+			public ExecutionStep execute(int stepCount) {
+				return executionProcessingService.findRunnableExecutionStep(executionId);
+			}
+		};
+
+		populateExecutionStepModel(executionId, model, command);
+		model.addAttribute("optimized", true);
+		model.addAttribute("suitemode", false);
+	}
+	
+	
+	public void populateOptimizedTestSuiteRunnerModel(){
+		
+	}
 	
 
 	public void populateExecutionStepModel(final long executionId, final int stepIndex, Model model) {
@@ -108,5 +172,7 @@ public class ExecutionRunnerControllerHelper {
 		model.addAttribute("executionStatus", statusSet );
 		model.addAttribute("hasNextStep", stepOrder != (total - 1));
 	}
+	
+	
 
 }

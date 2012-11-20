@@ -25,15 +25,14 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
-	th:with="titleWindow = #{title.ExecutionPopupPreview(${execution.executionOrder + 1 }, ${execution.name})},
-		 title = #{title.ExecutionPopup(${execution.executionOrder + 1 }, ${execution.name})},
-		 beginURL = @{__${currentStepUrl}__0__${(optimized!=null)? '?ieo' : ''}__}">
-
+	th:with=
+	   "titleWindow = #{title.ExecutionPopupPreview(${execution.executionOrder + 1 }, ${execution.name})},
+		title = #{title.ExecutionPopup(${execution.executionOrder + 1 }, ${execution.name})},
+		beginURL = @{__${currentStepUrl}__0(optimized=${config.optimized} , suitemode= ${config.testSuiteMode})} ">
 
 <head>
 
 <style th:remove="all" type="text/css">
-
 /**
 documentation : 
 			Parameters :
@@ -152,13 +151,6 @@ documentation :
 	
 	require(["domReady", "execution-processing"], function(domReady, executionProcessing){
 		domReady(function(){
-			requirejs.config({
-				config : {
-					'execution-processing' :{
-						runOptimized : /*[[${optimized}?: false]]*/false
-					}
-				}
-			});
 			executionProcessing.initPreview();
 		});		
 	});

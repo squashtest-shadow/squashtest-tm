@@ -61,15 +61,15 @@
 
 
 			<%-- cautious : below are used StepIndexes and StepIds. Dont get confused. --%>
-			<s:url var="executeNext" value="${ currentStepUrl }{stepIndex}">
+			<s:url var="executeNext" value="${ currentStepUrl }{stepIndex}?optimized=${optimized}&suitemode=${suitemode}">
 				<s:param name="stepIndex" value="${executionStep.executionStepOrder+1}" />
 			</s:url>
 			
-			<s:url var="executePrevious" value="${ currentStepUrl }{stepIndex}">
+			<s:url var="executePrevious" value="${ currentStepUrl }{stepIndex}?optimized=${optimized}&suitemode=${suitemode}">
 				<s:param name="stepIndex" value="${(executionStep.first) ? 'prologue' : executionStep.executionStepOrder-1}" />
 			</s:url>
 			
-			<s:url var="executeThis" value="${ currentStepUrl }{stepIndex}">
+			<s:url var="executeThis" value="${ currentStepUrl }{stepIndex}?optimized=${optimized}&suitemode=${suitemode}">
 				<s:param name="stepIndex" value="${executionStep.executionStepOrder}" />
 			</s:url>
 			

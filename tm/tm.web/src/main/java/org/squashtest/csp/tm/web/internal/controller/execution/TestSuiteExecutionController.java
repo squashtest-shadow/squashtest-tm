@@ -52,6 +52,9 @@ import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 @Controller
 @RequestMapping("/test-suites/{testSuiteId}/test-plan")
 public class TestSuiteExecutionController {
+	
+	
+	/*
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteExecutionController.class);
 
 	private static class RequestMappings {
@@ -118,7 +121,7 @@ public class TestSuiteExecutionController {
 		return startResumeExecution(testSuiteId, ViewNames.CLASSIC_RUNNER_VIEW_PATTERN);
 	}
 
-	/*
+	
 	@RequestMapping(value = RequestMappings.SHOW_EXECUTION_RUNNER, method = RequestMethod.GET, params = "classic")
 	public String showClassicExecutionRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
 			@PathVariable long executionId, Model model) {
@@ -130,7 +133,7 @@ public class TestSuiteExecutionController {
 
 		return "page/executions/execute-execution";
 	}
-	*/
+	
 	@RequestMapping(value = RequestMappings.SHOW_EXECUTION_RUNNER, method = RequestMethod.GET, params = "classic")
 	public String showClassicExecutionRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
 			@PathVariable long executionId, Model model) {
@@ -198,7 +201,7 @@ public class TestSuiteExecutionController {
 	}
 
 	private void populateExecutionRunnerModel(long testSuiteId, long testPlanItemId, long executionId, String ieoIFrameUrl, Model model) {
-		helper.populateExecutionRunnerModel(executionId, model);
+		helper.populateClassicRunnerModel(executionId, model);
 
 		addTestSuiteTestPlanItemData(testSuiteId, testPlanItemId, model);
 		addCurrentStepUrl(model, testSuiteId, testPlanItemId, executionId);
@@ -215,7 +218,7 @@ public class TestSuiteExecutionController {
 		model.addAttribute("urlIFrame", ieoIFrameUrl);
 	}
 
-	/* copypasta from now on. rework asap */
+	//**** copypasta from now on. rework asap 
 
 	@RequestMapping(value = RequestMappings.SHOW_STEP_INFO, method = RequestMethod.GET)
 	public String showStepInClassicRunner(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
@@ -246,7 +249,7 @@ public class TestSuiteExecutionController {
 	
 	private void populateExecutionPreviewModel(long testSuiteId, long testPlanItemId, long executionId, Model model){
 
-		helper.populateExecutionRunnerModel(executionId, model);
+		helper.populateClassicRunnerModel(executionId, model);
 		addTestSuiteTestPlanItemData(testSuiteId, testPlanItemId, model);
 		addCurrentStepUrl(model, testSuiteId, testPlanItemId, executionId);
 	}
@@ -309,12 +312,9 @@ public class TestSuiteExecutionController {
 		executionProcessingService.setExecutionStepStatus(stepId, status);
 	}
 
-	/* end copypasta */
+	// *** end copypasta 
 
-	/**
-	 * @param executionProcessingService
-	 *            the executionProcessingService to set
-	 */
+
 	@ServiceReference
 	public void setExecutionProcessingService(ExecutionProcessingService executionProcessingService) {
 		this.executionProcessingService = executionProcessingService;
@@ -324,5 +324,5 @@ public class TestSuiteExecutionController {
 	public @ResponseBody void deleteAllExecutions(@PathVariable long testSuiteId) {
 		 testSuiteExecutionProcessingService.deleteAllExecutions(testSuiteId);
 	}
-
+*/
 }

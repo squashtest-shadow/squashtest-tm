@@ -43,7 +43,7 @@
 <input type="button"
 	value="<f:message key="execution.execute.IEO.button.label" />"
 	id="ieo-execution-button" />
-<form action="${ runnerUrl }" method="post"
+<form action="${ runnerUrl }?optimized=true&suitemode=false" method="post"
 	name="execute-test-case-form" target="optimized-execution-runner"
 	class="not-displayed">
 	<input type="submit" value='' name="optimized"
@@ -68,7 +68,8 @@
 		var startResumeClassic = function() {
 			var url = "${ runnerUrl }";
 			var data = {
-				'classic' : ''
+				'optimized' : 'false',
+				'suitemode' : 'false'
 			};
 			var winDef = {
 				name : "classicExecutionRunner",

@@ -37,6 +37,7 @@ import org.squashtest.csp.tm.service.ExecutionProcessingService;
 @Controller
 @RequestMapping("/executions/{executionId}/runner")
 public class TestCaseExecutionController {
+	
 	private static final String OPTIMIZED_RUNNER_PAGE_VIEW = "page/executions/ieo-execute-execution";
 	
 	private static final String STEP_PAGE_VIEW = "page/executions/execute-execution";
@@ -54,21 +55,8 @@ public class TestCaseExecutionController {
 	public void setExecutionProcessingService(ExecutionProcessingService executionProcService) {
 		this.executionProcessingService = executionProcService;
 	}
+	
 
-	@RequestMapping(params = "classic")
-	public String startResumeExecutionInClassicRunner(@PathVariable long executionId, Model model) {
-		
-		if (executionProcessingService.wasNeverRan(executionId)){
-			return "redirect:" + getRedirectPreviewURL(executionId);		
-		}
-		else{
-			helper.populateExecutionRunnerModel(executionId, model);
-			addCurrentStepUrl(executionId, model);
-
-			return STEP_PAGE_VIEW;			
-		}
-		
-	}
 	
 
 	private void addCurrentStepUrl(long executionId, Model model) {
@@ -76,19 +64,43 @@ public class TestCaseExecutionController {
 	}
 	
 	
-	private String getRedirectPreviewURL(long executionId){
-		return "/execute/"+executionId+"/step/prologue";
+	private String getRedirectPreviewURL(long executionId, boolean optimized, boolean suitemode){
+		return "/execute/"+executionId+"/step/prologue?optimized="+optimized+"&suitemode="+suitemode;
 	}
 
 	
-	@RequestMapping(params = "optimized")
+	@RequestMapping(params = {"optimized=true", "suitemode=false"})
 	public String startResumeExecutionInOptimizedRunner(@PathVariable long executionId, Model model) {
-		helper.populateExecutionRunnerModel(executionId, model);
-		addCurrentStepUrl(executionId, model);
-
-		return OPTIMIZED_RUNNER_PAGE_VIEW;
+		
+		if (executionProcessingService.wasNeverRan(executionId)){
+			return "redirect:" + getRedirectPreviewURL(executionId, true, false);		
+		}
+		else{
+		
+			helper.populateOptimizedSingleRunnerModel(executionId, model);
+			addCurrentStepUrl(executionId, model);
+	
+			return OPTIMIZED_RUNNER_PAGE_VIEW;
+		}
 	}
 
+	
+
+	@RequestMapping(params = {"optimized=false", "suitemode=false"})
+	public String startResumeExecutionInClassicRunner(@PathVariable long executionId, Model model) {
+		
+		if (executionProcessingService.wasNeverRan(executionId)){
+			return "redirect:" + getRedirectPreviewURL(executionId, false, false);		
+		}
+		else{
+			helper.populateClassicSingleRunnerModel(executionId, model);
+			addCurrentStepUrl(executionId, model);
+
+			return STEP_PAGE_VIEW;			
+		}
+		
+	}
+	
 	
 	@RequestMapping(params = "dry-run")
 	@ResponseBody

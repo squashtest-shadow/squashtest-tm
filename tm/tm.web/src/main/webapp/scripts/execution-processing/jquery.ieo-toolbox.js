@@ -195,7 +195,7 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 		
 		// ********************** predicates ************************
 		
-		var _canNavigateNextTestCase := function(){
+		var _canNavigateNextTestCase : function(){
 			var state = this._getState();
 			return ((state.testSuiteMode) &&  (! state.isLastTestCase) && (this._isLastStep()));				
 		},

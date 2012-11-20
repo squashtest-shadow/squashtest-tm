@@ -40,7 +40,8 @@
 		function classicExecution(mode) {
 			var url = "${ runnerUrl }";
 			var data = {
-				'classic' : '',
+				'optimized' : 'false',
+				'suitemode' : 'true',
 				'mode' : mode
 			};
 			var winDef = {
@@ -123,7 +124,7 @@
 			});
 		</script>
 	</c:if>
-	<form action="${ runnerUrl }" method="post" name="execute-test-suite-form" target="optimized-execution-runner" class="not-displayed">
+	<form action="${ runnerUrl }?optimized=true&suitemode=true" method="post" name="execute-test-suite-form" target="optimized-execution-runner" class="not-displayed">
 		<input type="submit" value='' name="optimized" id="start-optimized-button" />
 		<input type="hidden" name="mode" value="start-resume" />
 	</form>
