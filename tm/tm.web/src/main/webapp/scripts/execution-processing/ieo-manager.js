@@ -161,7 +161,8 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 				getJson(nextUrl)
 				.success(function(json){
 					
-					state.currentStepStatus = json;
+					state.currentStepStatus = json.currentStepStatus;
+					state.currentStepId = json.currentStepId;
 					
 					var frameLeftUrl = state.baseStepUrl+newStepIndex+"?optimized=true&suitemode="+state.testSuiteMode;
 					navigateLeftPanel(frameLeftUrl);	

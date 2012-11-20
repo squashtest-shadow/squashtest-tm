@@ -21,8 +21,10 @@
 package org.squashtest.csp.tm.web.internal.controller.execution;
 
 import java.text.MessageFormat;
+import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,21 +78,16 @@ public class TestSuiteExecutionController {
 	public static final String CURRENT_STEP_URL_PATTERN = "/test-suites/{0,number,####}/test-plan/{1,number,####}/executions/{2,number,####}/steps/index/";
 	
 	
-	private static final String OPTIMIZED_RUNNER_PAGE_VIEW = "page/executions/ieo-main-page";
-	
-	
+	private static final String OPTIMIZED_RUNNER_MAIN = "page/executions/ieo-main-page";
 
+	
 	private TestSuiteExecutionProcessingService testSuiteExecutionProcessingService;
-	private ExecutionProcessingService executionProcessingService;
+	
 
 	@Inject
 	private ExecutionRunnerControllerHelper helper;
 	
-	@ServiceReference
-	public void setExecutionProcessingService(ExecutionProcessingService executionProcessingService) {
-		this.executionProcessingService = executionProcessingService;
-	}
-	
+
 	@ServiceReference
 	public void setTestSuiteExecutionProcessingService(TestSuiteExecutionProcessingService testSuiteExecutionProcessingService) {
 		this.testSuiteExecutionProcessingService = testSuiteExecutionProcessingService;
@@ -131,9 +128,22 @@ public class TestSuiteExecutionController {
 		
 	}
 	
+	
+	@RequestMapping(value = RequestMappings.INIT_EXECUTION_RUNNER, params = {"optimized=true", "suitemode=true"})
+	public String startResumeExecutionInClassicRunner(@PathVariable long testSuiteId, Model model, ServletContext context, Locale locale) {
+		
+		RunnerState state = helper.initOptimizedTestSuiteContext(testSuiteId, context.getContextPath(), locale);
+		model.addAttribute("config", state);
+		
+		return OPTIMIZED_RUNNER_MAIN;
+		
+		
+	}
+	
+	
 
-	//that method will create the next execution then redirect to it
-	@RequestMapping(value = RequestMappings.INIT_NEXT_EXECUTION_RUNNER, params={"optimized", "suitemode"})
+	//that method will create if necessary the next execution then redirect a view to its runner
+	@RequestMapping(value = RequestMappings.INIT_NEXT_EXECUTION_RUNNER, params={"optimized", "suitemode"}, headers = "Accept=text/html")
 	public String moveToNextTestCase(@PathVariable("testPlanItemId") long testPlanItemId,
 									 @PathVariable("testSuiteId") long testSuiteId, 
 									 @RequestParam("optimized") boolean optimized,
@@ -145,6 +155,23 @@ public class TestSuiteExecutionController {
 		
 	}
 		
+	
+	//that method will create if necessary the next execution then return the RunnerState that corresponds to it
+	//note that most of the time it corresponds to an ieo working in test suite mode so we skip 'optimized' and 'suitemode' parameters here
+	@RequestMapping(value = RequestMappings.INIT_NEXT_EXECUTION_RUNNER, params={"optimized", "suitemode"}, headers = "Accept=application/json")
+	@ResponseBody
+	public RunnerState getNextTestCaseRunnerState(@PathVariable("testPlanItemId") long testPlanItemId,
+									 @PathVariable("testSuiteId") long testSuiteId, 
+									 ServletContext context,
+									 Locale locale){
+		
+		testSuiteExecutionProcessingService.startResumeNextExecution(testSuiteId, testPlanItemId);
+		
+		RunnerState state = helper.initOptimizedTestSuiteContext(testSuiteId, context.getContextPath(), locale);
+		
+		return state;
+		
+	}	
 
 	
 	// ************************** private stuffs ****************************

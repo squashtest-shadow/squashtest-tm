@@ -20,7 +20,10 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.execution;
 
+import java.util.Locale;
+
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
@@ -38,9 +41,7 @@ import org.squashtest.csp.tm.service.ExecutionProcessingService;
 @RequestMapping("/executions/{executionId}/runner")
 public class TestCaseExecutionController {
 	
-	
-	private static final String STEP_PAGE_VIEW = "page/executions/execute-execution";
-	private static final String OPTIMIZED_RUNNER_PAGE_VIEW = "page/executions/ieo-main-page";
+	private static final String OPTIMIZED_RUNNER_MAIN = "page/executions/ieo-main-page";
 
 	@Inject
 	private ExecutionRunnerControllerHelper helper;
@@ -65,10 +66,12 @@ public class TestCaseExecutionController {
 	
 	
 	@RequestMapping(params = {"optimized=true", "suitemode=false"})
-	public String startResumeExecutionInOptimizedRunner(@PathVariable long executionId, Model model) {
+	public String startResumeExecutionInOptimizedRunner(@PathVariable long executionId, Model model, ServletContext context, Locale locale) {
 		
-		//TODO
+		RunnerState state = helper.initOptimizedSingleContext(executionId, context.getContextPath(), locale);
+		model.addAttribute("config", state);
 		
+		return OPTIMIZED_RUNNER_MAIN;
 		
 	}
 
@@ -77,6 +80,7 @@ public class TestCaseExecutionController {
 	@RequestMapping(params = {"optimized=false", "suitemode=false"})
 	public String startResumeExecutionInClassicRunner(@PathVariable long executionId, Model model) {
 		
+		//simple case here : the context is simply the popup. We redirect to the execution processing view controller.
 		return "redirect:" + getRedirectExecURL(executionId, false, false);		
 		
 	}

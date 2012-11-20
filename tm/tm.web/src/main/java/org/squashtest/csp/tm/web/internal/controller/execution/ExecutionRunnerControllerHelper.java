@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.web.internal.controller.execution;
 
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -48,7 +49,13 @@ import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService;
 public class ExecutionRunnerControllerHelper {
 	
 	public static final String TEST_PLAN_ITEM_URL_PATTERN = "/test-suites/{0,number,####}/test-plan/{1,number,####}";
+	public static final String NEXT_EXECUTION_URL = "/test-suites/{0,number,####}/test-plan/{1,number,####}/next-execution/runner";
 	public static final String CURRENT_STEP_URL_PATTERN = "/execute/{0,number,####}/step/";
+	
+	
+	public static final String COMPLETION_POPUP_TITLE = "popup.title.info";
+	public static final String COMPLETED_SUITE_MESSAGE = "squashtm.action.exception.testsuite.end";
+	public static final String COMPLETED_STEP_MESSAGE = "execute.alert.test.complete";
 	
 	
 	private interface FetchStepCommand {
@@ -212,24 +219,106 @@ public class ExecutionRunnerControllerHelper {
 	}
 	
 	
-	// ******************* 
 	
+	// ******************* IEO context model stuffing methods *******************************
+	
+	
+	public RunnerState initOptimizedSingleContext(long executionId, String contextPath, Locale locale){
+		
+	
+		RunnerState state = createNewRunnerState(true, false);
+		
+		_stuffWithPopupMessages(state, locale);
+		_stuffWithPrologueStatus(executionId, state);
+		_stuffWithEntitiesInfos(executionId, state, contextPath);
+		
+		
+		return state;
+	}
+	
+	public RunnerState initOptimizedTestSuiteContext(long testSuiteId, String contextPath, Locale locale){
+		
+		Execution execution = testSuiteExecutionProcessingService.startResume(testSuiteId);
+		
+		RunnerState state = createNewRunnerState(true, true);
+		
+		_stuffWithPopupMessages(state, locale);
+		_stuffWithPrologueStatus(execution.getId(), state);
+		_stuffWithEntitiesInfos(execution.getId(), state, contextPath);
+		_stuffWithSuiteRelatedInfos(execution, state, contextPath);
+		
+		return state;
+	}
 	
 	// ******************* IEO runner state factory methods *************************
 	
 	
-	
-	
-	
 	public RunnerState createNewRunnerState(boolean isOptimized, boolean isTestSuiteMode){
+		
 		RunnerState state = new RunnerState();
 		
 		state.setOptimized(isOptimized);
 		state.setTestSuiteMode(isTestSuiteMode);
 		
 		return state;
+		
+	}
+	
+	
+	private void _stuffWithPrologueStatus(long executionId, RunnerState state){
+		if (executionProcessingService.wasNeverRan(executionId)){
+			state.setPrologue(true);
+		}
+		else{
+			state.setPrologue(false);
+		}
 	}
 
+	private void _stuffWithEntitiesInfos(long executionId, RunnerState state, String contextPath){
+		
+		ExecutionStep step = executionProcessingService.findRunnableExecutionStep(executionId);
+		int totalSteps = executionProcessingService.findTotalNumberSteps(executionId);
+		
+		
+		String currentStepUrl = contextPath + "/" + MessageFormat.format( CURRENT_STEP_URL_PATTERN, executionId);
+		
+		state.setBaseStepUrl(currentStepUrl);
+		
+		state.setCurrentExecutionId(executionId);
+		state.setCurrentStepId(step.getId());
+		
+		state.setFirstStepIndex(0);
+		state.setLastStepIndex(totalSteps);
+		state.setCurrentStepIndex(step.getExecutionStepOrder());
+		state.setCurrentStepStatus(step.getExecutionStatus());
+		
+	}
+	
+	private void _stuffWithSuiteRelatedInfos(Execution execution, RunnerState state, String contextPath){
+		
+		IterationTestPlanItem item = execution.getTestPlan();
+		TestSuite suite = item.getTestSuite();
+		
+		boolean hasNextTestCase = testSuiteExecutionProcessingService.hasMoreExecutableItems(suite.getId(),
+				item.getId());
+		
+		String nextExecutionUrl = contextPath + "/" + MessageFormat.format(NEXT_EXECUTION_URL, suite.getId(), item.getId());
+		
+		state.setLastTestCase(! hasNextTestCase);
+		state.setNextTestCaseUrl(nextExecutionUrl);
+		
+		
+	}
+	
+	private void _stuffWithPopupMessages(RunnerState state, Locale locale){
+		String popupTitle = messageSource.getMessage(COMPLETION_POPUP_TITLE, null, locale);
+		String completeTestMessage = messageSource.getMessage(COMPLETED_STEP_MESSAGE, null, locale);
+		String completeSuiteMessage = messageSource.getMessage(COMPLETED_SUITE_MESSAGE, null, locale);
+		
+		state.setCompleteTitle(popupTitle);
+		state.setCompleteTestMessage(completeTestMessage);
+		state.setCompleteSuiteMessage(completeSuiteMessage);
+	}
 	
 	// ************************ private stuff **************************
 	
