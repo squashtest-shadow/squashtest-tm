@@ -76,8 +76,7 @@ public class TestSuiteExecutionController {
 	public static final String CURRENT_STEP_URL_PATTERN = "/test-suites/{0,number,####}/test-plan/{1,number,####}/executions/{2,number,####}/steps/index/";
 	
 	
-	private static final String OPTIMIZED_RUNNER_PAGE_VIEW = "page/executions/ieo-execute-execution";	
-	private static final String STEP_PAGE_VIEW = "page/executions/execute-execution";
+	private static final String OPTIMIZED_RUNNER_PAGE_VIEW = "page/executions/ieo-main-page";
 	
 	
 

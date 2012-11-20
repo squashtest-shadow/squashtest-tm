@@ -46,7 +46,8 @@ import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 public class ExecutionProcessingController {
 
 	private static final String STEP_INFORMATION_FRAGMENT = "fragment/executions/step-information-fragment";
-	private static final String IE0_STEP_VIEW = "page/executions/ieo-fragment-step-information";
+	
+	private static final String IE0_STEP_VIEW = "page/executions/ieo-execute-execution";
 	private static final String STEP_PAGE_VIEW = "page/executions/execute-execution";
 	private static final String STEP_PAGE_PREVIEW = "execute-execution-preview.html";
 
@@ -76,6 +77,10 @@ public class ExecutionProcessingController {
 	}
 	
 	
+	
+	//************************** getters for the main execution fragments **************************************
+	
+	
 	@RequestMapping(method = RequestMethod.GET, params={"optimized", "suitemode"})
 	public String executeFirstRunnableStep(@PathVariable("executionId") long executionId,
 										   @RequestParam("optimized") boolean optimized,
@@ -92,6 +97,7 @@ public class ExecutionProcessingController {
 		
 		
 	}
+
 
 	@RequestMapping(value = "/step/prologue", method = RequestMethod.GET, params={"optimized", "suitemode"})
 	public String getExecutionPrologue(@PathVariable("executionId") long executionId, 
@@ -154,6 +160,12 @@ public class ExecutionProcessingController {
 		return IE0_STEP_VIEW;
 
 	}
+	
+	
+	
+	// ************************* other stuffs ********************************************
+	
+	
 
 	@RequestMapping(value = "/step/{stepIndex}/general", method = RequestMethod.GET)
 	public ModelAndView getMenuInfos(@PathVariable Long executionId, @PathVariable Integer stepIndex) {

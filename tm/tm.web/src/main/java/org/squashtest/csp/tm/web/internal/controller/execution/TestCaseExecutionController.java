@@ -38,9 +38,9 @@ import org.squashtest.csp.tm.service.ExecutionProcessingService;
 @RequestMapping("/executions/{executionId}/runner")
 public class TestCaseExecutionController {
 	
-	private static final String OPTIMIZED_RUNNER_PAGE_VIEW = "page/executions/ieo-execute-execution";
 	
 	private static final String STEP_PAGE_VIEW = "page/executions/execute-execution";
+	private static final String OPTIMIZED_RUNNER_PAGE_VIEW = "page/executions/ieo-main-page";
 
 	@Inject
 	private ExecutionRunnerControllerHelper helper;
