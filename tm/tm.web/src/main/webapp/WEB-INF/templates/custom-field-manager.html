@@ -23,7 +23,7 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title th:text="#{title.CustomFields}">Champs Personnalisé de tests</title>
+  <title th:text="#{label.customFieldsList}">Liste des champs personnalisés</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.2.js"></script>
   <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
@@ -83,6 +83,10 @@
   <!-- /common script import -->
   <link rel="stylesheet" type="text/css" media="all"
     href="../../../../../../../core/core.web/src/main/webapp/styles/master.grey.css" th:href="@{/styles/master.grey.css}" />
+  <link rel="stylesheet" type="text/css" media="all"
+  href="../../../../../../../core/core.web/src/main/webapp/styles/structure.override.css" th:href="@{/styles/structure.override.css}" />
+  <link rel="stylesheet" type="text/css" media="all"
+  href="../../../../../../../core/core.web/src/main/webapp/styles/structure.subpageoverride.css" th:href="@{/styles/structure.subpageoverride.css}" />
   <!-- rich jeditable header -->
   <link rel="stylesheet" type="text/css" media="all"
     href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css"
@@ -95,7 +99,7 @@
   <div id="workspace">
     <div id="workspace-title">
       <div class="snap-left">
-        <h2 th:text="#{title.CustomFields}">Champs Personnalisé de tests</h2> 
+        <h2 th:text="#{label.administration}">Administration</h2> 
       </div>
       <div class="snap-right">
         <div class="main-menubar " th:include="menubar.frag :: menubar">
@@ -106,6 +110,27 @@
         </div>
       </div>
     </div>
+    <div id="sub-page" class="sub-page" >
+			
+			<div id="sub-page-header" class="sub-page-header shadow ui-corner-all">
+			
+				<div id="sub-page-title" class="sub-page-title">
+					  <h2 th:text="#{title.CustomFields}">Champs personnalisés de test</h2> 
+				</div>
+				
+				<div id="sub-page-buttons" class="sub-page-buttons">
+				  <input type="button" class="button" th:value="#{label.Back}" value="Retour" onClick="history.back();"/>	
+	
+				</div>
+				
+				<div class="unsnap"></div>
+			</div>
+			
+			<div id="sub-page-content" class="sub-page-content shadow ui-corner-all">
+			
+			
+		
+	
     <div class="fragment-body unstyled">
     <div id="cf-table-pane">
       <input id="add-cf" type="button" class="sq-button snap-right" value="Add a custom field"
@@ -260,6 +285,8 @@
 				{{/if}}
 			</script>
       </div>
+    </div>
+    </div>	
     </div>
   </div>
 </body>

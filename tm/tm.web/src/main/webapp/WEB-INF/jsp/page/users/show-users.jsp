@@ -38,15 +38,22 @@
 <s:url var="addUserUrl" value="/administration/users/add" />
 <s:url var="administrationUrl" value="/administration" />
 
-<layout:info-page-layout titleKey="workspace.user.title">
+<layout:info-page-layout titleKey="squashtm.users.title" isSubPaged="true">
 	<jsp:attribute  name="head">	
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />	
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
-		<h2><f:message key="workspace.user.title" /></h2>	
+		<h2><f:message key="label.administration" /></h2>	
+	</jsp:attribute>
+	<jsp:attribute name="subPageTitle">
+		<h2><f:message key="workspace.user.title" /></h2>
 	</jsp:attribute>
 	
+	<jsp:attribute name="subPageButtons">
+			<f:message var="back" key="label.Back" /> 
+				<input id="back" type="button" value="${ back }" />
+	</jsp:attribute>
 	<jsp:attribute name="informationContent">	
 			<script type="text/javascript">
 			
@@ -164,9 +171,7 @@
 				
 				<div style="float: right;">
 				<a id="add-user-button" href="#" class="add-user-button"><f:message key="user.add.label" /></a>
-				<f:message var="back" key="label.Back" /> 
-				<input id="back" type="button" value="${ back }" />
-				</div>
+			</div>
 				<div style="clear:both"></div>
 				
 					<table id="users-list-table">
@@ -183,6 +188,7 @@
 								<th><f:message key="project.workspace.table.header.createdby.label" /></th>
 								<th><f:message key="project.workspace.table.header.modifiedon.label" /></th>	
 								<th><f:message key="project.workspace.table.header.modifiedby.label" /></th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -198,7 +204,7 @@
 						<dt:column-definition targets="1" sortable="false" cssClass="select-handle centered" width="2em"/>
 						<dt:column-definition targets="2, 3, 4, 5, 6, 7, 8, 9" sortable="true" />
 						<dt:column-definition targets="10" sortable="true" width="2em"/>
-						<dt:column-definition targets="11" sortable="true" width="2em" lastDef="true" cssClass="centered delete-button"/>
+						<dt:column-definition targets="11" sortable="false" width="2em" lastDef="true" cssClass="centered delete-button"/>
 					</jsp:attribute>
 				</comp:decorate-ajax-table>	
 				

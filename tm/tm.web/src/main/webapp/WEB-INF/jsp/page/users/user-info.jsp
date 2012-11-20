@@ -62,16 +62,22 @@
 
 
 <f:message key="message.AllProjectsAlreadyLinkedToUser" var="emptyMessage" />
-
-<layout:info-page-layout titleKey="workspace.user.info.title">
+<layout:info-page-layout titleKey="workspace.user.info.title" isSubPaged="true">
 	<jsp:attribute  name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />	
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
 		<h2><f:message key="workspace.user.info.title" /></h2>	
 	</jsp:attribute>
+	<jsp:attribute name="subPageTitle">
+		<h2><f:message key="workspace.user.info.title" /></h2>
+	</jsp:attribute>
 	
+	<jsp:attribute name="subPageButtons">
+		<f:message var="back" key="label.Back" />
+				<input id="back" type="button" value="${ back }" />
+	</jsp:attribute>
 	<jsp:attribute name="informationContent">
 		<script type="text/javascript">
 		
@@ -210,12 +216,6 @@
 					</a>
 				</h2>
 			</div>
-
-			<div style="float: right;">
-				<f:message var="back" key="label.Back" />
-				<input id="back" type="button" value="${ back }" />
-			</div>
-
 			<div style="clear: both;"></div>
 
 		</div>

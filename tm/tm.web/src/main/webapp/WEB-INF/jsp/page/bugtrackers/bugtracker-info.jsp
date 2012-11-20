@@ -20,6 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
@@ -36,20 +37,20 @@
 	<s:param name="bugtrackerId" value="${bugtracker.id}" />
 </s:url>
 <s:url var="bugtrackersUrl" value="/administration/bugtrackers" />
-
-
-<layout:info-page-layout titleKey="workspace.bugtracker.info.title">
+<layout:info-page-layout titleKey="workspace.bugtracker.info.title" isSubPaged="true">
 	<jsp:attribute name="head">	
-		<link rel="stylesheet" type="text/css"
-			href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />	
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />	
 	</jsp:attribute>
 
-	<jsp:attribute name="titlePane">
-		<h2>
-			<f:message key="workspace.bugtracker.info.title" />
-		</h2>	
+	<jsp:attribute name="titlePane"><h2><f:message key="label.administration" /></h2></jsp:attribute>
+	<jsp:attribute name="subPageTitle">
+		<h2><f:message key="workspace.bugtracker.info.title" /></h2>
 	</jsp:attribute>
-
+	
+	<jsp:attribute name="subPageButtons">
+		<f:message var="back" key="label.Back" />
+				<input id="back" type="button" value="${ back }" />
+	</jsp:attribute>
 	<jsp:attribute name="informationContent">
 
 		<div id="bugtracker-name-div"
@@ -64,13 +65,6 @@
 					</a>
 				</h2>
 			</div>
-
-			<div style="float: right;">
-				<f:message var="back" key="label.Back" />
-				<input id="back" type="button" value="${ back }" />
-				
-			</div>
-
 			<div style="clear: both;"></div>
 
 		</div>

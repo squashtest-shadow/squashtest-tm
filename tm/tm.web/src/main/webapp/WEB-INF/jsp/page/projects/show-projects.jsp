@@ -30,17 +30,23 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="sec"
 	uri="http://www.springframework.org/security/tags"%>
-<layout:info-page-layout titleKey="squashtm.project.title">
+<layout:info-page-layout titleKey="squashtm.project.title" isSubPaged="true">
 	<jsp:attribute  name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />	
-		
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
+		<h2><f:message key="label.administration" /></h2>
+	</jsp:attribute>
+		<jsp:attribute name="subPageTitle">
 		<h2><f:message key="workspace.project.title" /></h2>
 	</jsp:attribute>
 	
-	<jsp:attribute name="informationContent">	
+	<jsp:attribute name="subPageButtons">
+		<f:message var="backButtonLabel" key="label.Back" />
+		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
+	</jsp:attribute>
+	<jsp:attribute name="informationContent">
 		<c:url var="projectsUrl" value="/administration/projects/list" />
 		<c:url var="addProjectUrl" value="/administration/projects/add" />
 		<c:url var="projectDetailsBaseUrl" value="/administration/projects" />

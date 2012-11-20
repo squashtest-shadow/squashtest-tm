@@ -28,17 +28,24 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-<layout:info-page-layout titleKey="squashtm.bugtrackers.title">
+<layout:info-page-layout titleKey="squashtm.bugtrackers.title" isSubPaged="true">
 	<jsp:attribute  name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />	
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />
 		
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
+		<h2><f:message key="label.administration" /></h2>
+	</jsp:attribute>
+		<jsp:attribute name="subPageTitle">
 		<h2><f:message key="workspace.bugtracker.title" /></h2>
 	</jsp:attribute>
 	
-	<jsp:attribute name="informationContent">	
+	<jsp:attribute name="subPageButtons">
+		<f:message var="backButtonLabel" key="label.Back" />
+		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
+	</jsp:attribute>
+	<jsp:attribute name="informationContent">
 		<c:url var="bugtrackersUrl" value="/administration/bugtrackers/list" />
 		<c:url var="addBugtrackerUrl" value="/administration/bugtrackers/add" />
 		<c:url var="bugtrackerDetailsBaseUrl" value="/bugtracker" />

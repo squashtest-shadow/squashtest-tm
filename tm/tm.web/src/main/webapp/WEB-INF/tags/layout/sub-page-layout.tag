@@ -66,7 +66,7 @@
 			
 	</jsp:attribute>
 	
-	<jsp:attribute name="titlePane">	
+	<jsp:attribute name="titlePane">
 		<jsp:invoke fragment="titlePane"/>
 	</jsp:attribute>		
 	
