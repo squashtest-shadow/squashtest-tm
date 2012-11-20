@@ -124,9 +124,11 @@
 			});
 		</script>
 	</c:if>
-	<form action="${ runnerUrl }?optimized=true&suitemode=true" method="post" name="execute-test-suite-form" target="optimized-execution-runner" class="not-displayed">
+	<form action="${ runnerUrl }" method="post" name="execute-test-suite-form" target="optimized-execution-runner" class="not-displayed">
 		<input type="submit" value='' name="optimized" id="start-optimized-button" />
 		<input type="hidden" name="mode" value="start-resume" />
+		<input type="hidden" name="optimized" value="true"/>
+		<input type="hidden" name="suitemode" value="true" />
 	</form>
 	<c:if test="${ statisticsEntity.status != 'READY' }">
 		<a tabindex="0" href="#restart" class="button run-menu" id="restart-button"><f:message key='test-suite.execution.restart.label' /></a>

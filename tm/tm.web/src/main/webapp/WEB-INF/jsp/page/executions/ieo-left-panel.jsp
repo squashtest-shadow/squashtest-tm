@@ -127,6 +127,8 @@
 				icons: {
 					primary : 'ui-icon-seek-next'
 				}
+			}).click(function(){
+				squashtm.ieomanager.navigateNextTestCase();
 			});
 			
 			if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		

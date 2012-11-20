@@ -66,6 +66,22 @@ public class ExecutionProcessingController {
 		model.addAttribute("currentStepUrl", "/execute/" + executionId + "/step/");
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, params={"optimized", "suitemode"})
+	public String executeFirstRunnableStep(@PathVariable("executionId") long executionId,
+										   @RequestParam("optimized") boolean optimized,
+										   @RequestParam("suitemode") boolean suitemode,
+										   Model model){
+		
+		if (executionProcService.wasNeverRan(executionId)){
+			return getExecutionPrologue(executionId, optimized, suitemode, model);
+		}
+		else{
+			int stepIndex = executionProcService.findRunnableExecutionStep(executionId).getExecutionStepOrder();
+			return executionStepFragmentDispatcher(executionId, stepIndex, optimized, suitemode, model);
+		}
+		
+		
+	}
 
 	@RequestMapping(value = "/step/prologue", method = RequestMethod.GET, params={"optimized", "suitemode"})
 	public String getExecutionPrologue(@PathVariable("executionId") long executionId, 
@@ -79,36 +95,72 @@ public class ExecutionProcessingController {
 		return STEP_PAGE_PREVIEW;	
 		
 	}
+	
+	private String executionStepFragmentDispatcher(long executionId, int stepIndex, boolean optimized, boolean suitemode, Model model){
+		
+		String view;
+		
+		if ( ! optimized && ! suitemode){
+			view = getClassicSingleExecutionStepFragment(executionId, stepIndex, model);
+		}
+		else if (optimized && ! suitemode){
+			view =getOptimizedSingleExecutionStepFragment(executionId, stepIndex, model);
+		}
+		else if (!optimized && suitemode){
+			view = getClassicTestSuiteExecutionStepFragment(executionId, stepIndex, model);
+		}
+		else view = getOptimizedTestSuiteExecutionStepFragment(executionId, stepIndex, model);
+		
+		return view;
+	}
 
-	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params={"optimized=false", "suitemode"})
-	public String getClassicExecutionStepFragment(@PathVariable long executionId, 
-												  @PathVariable int stepIndex, 
-												  @RequestParam("suitemode") boolean suitemode,												  
+	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params={"optimized=false", "suitemode=false"})
+	public String getClassicSingleExecutionStepFragment(@PathVariable long executionId, 
+												  @PathVariable int stepIndex, 										  
 												  Model model) {
+		
 		helper.populateExecutionStepModel(executionId, stepIndex, model);
-		addCurrentStepUrl(executionId, model);
-		model.addAttribute("optimized", false);
-		model.addAttribute("suitemode", suitemode);
+		helper.populateClassicSingleSpecifics(model);
+		
+		return STEP_PAGE_VIEW;
+
+	}
+	
+	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params={"optimized=false", "suitemode=true"})
+	public String getClassicTestSuiteExecutionStepFragment(@PathVariable long executionId, 
+												  @PathVariable int stepIndex, 										  
+												  Model model) {
+		
+		helper.populateExecutionStepModel(executionId, stepIndex, model);
+		helper.populateClassicTestSuiteSpecifics(executionId, model);
 		
 		return STEP_PAGE_VIEW;
 
 	}
 
-	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = {"optimized=true", "suitemode"})
-	public String getOptimizedExecutionStepFragment(@PathVariable long executionId, 
+	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = {"optimized=true", "suitemode=false"})
+	public String getOptimizedSingleExecutionStepFragment(@PathVariable long executionId, 
 													@PathVariable int stepIndex,
-													@RequestParam("suitemode") boolean suitemode,
 													Model model) {
-		helper.populateExecutionStepModel(executionId, stepIndex, model);
-		addCurrentStepUrl(executionId, model);
 		
-		model.addAttribute("optimized", true);
-		model.addAttribute("suitemode", suitemode);
+		helper.populateExecutionStepModel(executionId, stepIndex, model);
+		helper.populateOptimizedSingleSpecifics(model);	
 		
 		return IE0_STEP_VIEW;
 
 	}
 
+	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = {"optimized=true", "suitemode=true"})
+	public String getOptimizedTestSuiteExecutionStepFragment(@PathVariable long executionId, 
+													@PathVariable int stepIndex,
+													Model model) {
+		
+		helper.populateExecutionStepModel(executionId, stepIndex, model);
+		helper.populateOptimizedTestSuiteSpecifics(executionId, model);
+		
+		return IE0_STEP_VIEW;
+
+	}
 
 	@RequestMapping(value = "/step/{stepIndex}/general", method = RequestMethod.GET)
 	public ModelAndView getMenuInfos(@PathVariable Long executionId, @PathVariable Integer stepIndex) {

@@ -181,7 +181,8 @@
 		var startResumeClassic = function() {
 			var url = runnerUrl;
 			var data = {
-				'classic' : ''
+				'optimized' : 'false',
+				'suitemode' : 'false'
 			};
 			var winDef = {
 				name : "classicExecutionRunner",
@@ -196,7 +197,7 @@
 			data : {"mode":"manual"},
 			dataType : "json"
 		}).done(function(id){
-			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
+			runnerUrl = "${showExecutionUrl}/"+id+"/runner?optimized=false&suitemode=false";
 			dryRunStart().done(startResumeClassic);
 		});
 	}
@@ -220,7 +221,7 @@
 			data : {"mode":"manual"},
 			dataType : "json"
 		}).done(function(id){
-			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
+			runnerUrl = "${showExecutionUrl}/"+id+"/runner?optimized=true&suitemode=false";
 			dryRunStart().done(startResumeOptimized);
 		});
 	}

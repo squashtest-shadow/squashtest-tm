@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.execution;
 
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Set;
 
@@ -29,10 +30,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.service.ExecutionProcessingService;
+import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService;
 
 /**
  * Helper class for Controllers which need to show classic and optimized execution runners.
@@ -43,19 +47,61 @@ import org.squashtest.csp.tm.service.ExecutionProcessingService;
 @Component
 public class ExecutionRunnerControllerHelper {
 	
+	public static final String TEST_PLAN_ITEM_URL_PATTERN = "/test-suites/{0,number,####}/test-plan/{1,number,####}";
+	public static final String CURRENT_STEP_URL_PATTERN = "/execute/{0,number,####}/step/";
+	
+	
 	private interface FetchStepCommand {
-		ExecutionStep execute(int stepCount);
+		ExecutionStep firstFirstRunnable(long executionId);
+		ExecutionStep findStepAtIndex(long executionId, int stepIndex);
 	}
+	
+	private FetchStepCommand FETCHER = new FetchStepCommand() {
+		
+		@Override
+		public ExecutionStep firstFirstRunnable(long executionId) {
+			return executionProcessingService.findRunnableExecutionStep(executionId);
+		}
+		
+		@Override
+		public ExecutionStep findStepAtIndex(long executionId, int stepIndex) {
+			
+			int stepCount = executionProcessingService.findTotalNumberSteps(executionId);
+			
+			if (stepIndex >= stepCount) {
+				return executionProcessingService.findStepAt(executionId, stepCount - 1);
+			}
+
+			ExecutionStep executionStep = executionProcessingService.findStepAt(executionId, stepIndex);
+
+			if (executionStep == null) {
+				executionStep = executionProcessingService.findStepAt(executionId, stepCount - 1);
+			}
+
+			return executionStep;
+		}
+	};
+	
 
 	private ExecutionProcessingService executionProcessingService;
+	
+	
+	private TestSuiteExecutionProcessingService testSuiteExecutionProcessingService;
 
 	@ServiceReference
 	public void setExecutionProcessingService(ExecutionProcessingService executionProcService) {
 		this.executionProcessingService = executionProcService;
 	}
 	
+	@ServiceReference
+	public void setTestSuiteExecutionProcessingService(TestSuiteExecutionProcessingService testSuiteExecutionProcessingService) {
+		this.testSuiteExecutionProcessingService = testSuiteExecutionProcessingService;
+	}
+	
 	@Inject
 	private MessageSource messageSource;
+	
+	
 	
 	
 	public RunnerState createNewRunnerState(boolean isOptimized, boolean isTestSuiteMode){
@@ -74,6 +120,7 @@ public class ExecutionRunnerControllerHelper {
 	
 	
 	public void popuplateExecutionPreview(final long executionId, boolean isOptimized, boolean isTestSuiteMode, Model model){
+		
 		Execution execution = executionProcessingService.findExecution(executionId);
 		
 		RunnerState state = createNewRunnerState(isOptimized, isTestSuiteMode);
@@ -81,85 +128,66 @@ public class ExecutionRunnerControllerHelper {
 		
 		model.addAttribute("execution", execution);
 		model.addAttribute("config", state);
+		
 	}
 	
 	
 	
-	public void populateClassicTestSuiteRunnerModel(final long executionId, Model model) {
-		FetchStepCommand command = new FetchStepCommand() {
-			@Override
-			public ExecutionStep execute(int stepCount) {
-				return executionProcessingService.findRunnableExecutionStep(executionId);
-			}
-		};
-
-		populateExecutionStepModel(executionId, model, command);
+	public void populateClassicTestSuiteSpecifics(final long executionId, Model model) {
+	
+		Execution execution = executionProcessingService.findExecution(executionId);
+		IterationTestPlanItem itpi = execution.getTestPlan();
+		TestSuite ts = itpi.getTestSuite();
+		
+		
 		model.addAttribute("optimized", false);
 		model.addAttribute("suitemode", true);
 		
+		addTestPlanItemUrl(ts.getId(), itpi.getId(), model);
+		addHasNextTestCase(ts.getId(), itpi.getId(), model);
+		addCurrentStepUrl(executionId, model);
+		
 	}
 	
-	
-	public void populateClassicSingleRunnerModel(final long executionId, Model model) {
-		FetchStepCommand command = new FetchStepCommand() {
-			@Override
-			public ExecutionStep execute(int stepCount) {
-				return executionProcessingService.findRunnableExecutionStep(executionId);
-			}
-		};
+	public void populateClassicSingleSpecifics(Model model) {
 
-		populateExecutionStepModel(executionId, model, command);
 		model.addAttribute("optimized", false);
 		model.addAttribute("suitemode", false);
 	}
 	
-	public void populateOptimizedSingleRunnerModel(final long executionId,  Model model) {
-		FetchStepCommand command = new FetchStepCommand() {
-			@Override
-			public ExecutionStep execute(int stepCount) {
-				return executionProcessingService.findRunnableExecutionStep(executionId);
-			}
-		};
-
-		populateExecutionStepModel(executionId, model, command);
-		model.addAttribute("optimized", true);
-		model.addAttribute("suitemode", false);
+	public void populateOptimizedSingleSpecifics(Model model) {
+		//TODO
 	}
 	
 	
-	public void populateOptimizedTestSuiteRunnerModel(){
+	public void populateOptimizedTestSuiteSpecifics(long executionId, Model model){
+		//TODO
+	}
+	
+	
+	
+	public void populateExecutionStepModel(long executionId, int stepIndex, Model model) {
 		
+		Execution execution = executionProcessingService.findExecution(executionId);
+		ExecutionStep executionStep = FETCHER.findStepAtIndex(executionId, stepIndex);
+
+		_populateExecutionStepModel(execution, executionStep, model);
 	}
 	
-
-	public void populateExecutionStepModel(final long executionId, final int stepIndex, Model model) {
-		FetchStepCommand command = new FetchStepCommand() {
-			@Override
-			public ExecutionStep execute(int stepCount) {
-				if (stepIndex >= stepCount) {
-					return executionProcessingService.findStepAt(executionId, stepCount - 1);
-				}
-
-				ExecutionStep executionStep = executionProcessingService.findStepAt(executionId, stepIndex);
-
-				if (executionStep == null) {
-					executionStep = executionProcessingService.findStepAt(executionId, stepCount - 1);
-				}
-
-				return executionStep;
-			}
-		};
-
-		populateExecutionStepModel(executionId, model, command);
-	}
-
-	public void populateExecutionStepModel(long executionId, Model model, FetchStepCommand command) {
+	public void populateExecutionStepModel(long executionId, Model model){
+		
 		Execution execution = executionProcessingService.findExecution(executionId);
-		Integer total = execution.getSteps().size();
-
-		ExecutionStep executionStep = command.execute(total);
+		ExecutionStep executionStep = FETCHER.firstFirstRunnable(executionId);
+		
+		_populateExecutionStepModel(execution, executionStep, model);
+	
+	}
+	
+	private void _populateExecutionStepModel(Execution execution, ExecutionStep executionStep, Model model){
 		
 		int stepOrder = 0;
+		int total = execution.getSteps().size();
+		
 		Set<ExecutionStatus> statusSet = Collections.emptySet();
 		if(executionStep != null){
 			stepOrder = executionStep.getExecutionStepOrder();
@@ -170,9 +198,30 @@ public class ExecutionRunnerControllerHelper {
 		model.addAttribute("executionStep", executionStep);
 		model.addAttribute("totalSteps", total );
 		model.addAttribute("executionStatus", statusSet );
-		model.addAttribute("hasNextStep", stepOrder != (total - 1));
+		model.addAttribute("hasNextStep", stepOrder != (total - 1));	
+		
+		addCurrentStepUrl(execution.getId(), model);
 	}
 	
+	
+	// ************************ private stuff **************************
+	
+	private void addTestPlanItemUrl(long testSuiteId, long testPlanItemId, Model model) {
+		String testPlanItemUrl = MessageFormat.format(TEST_PLAN_ITEM_URL_PATTERN, testSuiteId, testPlanItemId);
+		model.addAttribute("testPlanItemUrl", testPlanItemUrl);
+	}
+
+	private void addHasNextTestCase(long testSuiteId, long testPlanItemId, Model model) {
+		boolean hasNextTestCase = testSuiteExecutionProcessingService.hasMoreExecutableItems(testSuiteId,
+				testPlanItemId);
+		model.addAttribute("hasNextTestCase", hasNextTestCase);
+	}
+
+
+	private void addCurrentStepUrl(long executionId, Model model) {
+		String currentStepUrl = MessageFormat.format( CURRENT_STEP_URL_PATTERN, executionId);
+		model.addAttribute("currentStepUrl", currentStepUrl);
+	}
 	
 
 }

@@ -57,13 +57,6 @@ public class TestCaseExecutionController {
 	}
 	
 
-	
-
-	private void addCurrentStepUrl(long executionId, Model model) {
-		model.addAttribute("currentStepUrl", "/execute/" + executionId + "/step/");
-	}
-	
-	
 	private String getRedirectPreviewURL(long executionId, boolean optimized, boolean suitemode){
 		return "/execute/"+executionId+"/step/prologue?optimized="+optimized+"&suitemode="+suitemode;
 	}
@@ -76,10 +69,10 @@ public class TestCaseExecutionController {
 			return "redirect:" + getRedirectPreviewURL(executionId, true, false);		
 		}
 		else{
-		
-			helper.populateOptimizedSingleRunnerModel(executionId, model);
-			addCurrentStepUrl(executionId, model);
-	
+
+			helper.populateExecutionStepModel(executionId, model);
+			helper.populateOptimizedSingleSpecifics(model);
+			
 			return OPTIMIZED_RUNNER_PAGE_VIEW;
 		}
 	}
@@ -93,8 +86,8 @@ public class TestCaseExecutionController {
 			return "redirect:" + getRedirectPreviewURL(executionId, false, false);		
 		}
 		else{
-			helper.populateClassicSingleRunnerModel(executionId, model);
-			addCurrentStepUrl(executionId, model);
+			helper.populateExecutionStepModel(executionId, model);
+			helper.populateClassicSingleSpecifics(model);
 
 			return STEP_PAGE_VIEW;			
 		}

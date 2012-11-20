@@ -94,7 +94,6 @@
 			<script type="text/javascript">						
 				var isOer = ${ not empty hasNextTestCase };
 				var hasNextTestCase = ${ (not empty hasNextTestCase) and hasNextTestCase };
-				var hasPreviousTestCase = ${ (not empty hasPreviousTestCase) and hasPreviousTestCase };
 				var hasNextStep = ${ (not empty hasNextStep) and hasNextStep };
 	
 				function refreshParent(){
@@ -294,7 +293,7 @@
 							</button>
 						</td>
 						<td class="centered not-displayed" id="execute-next-test-case-panel">
-							<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner' />" method="post">
+							<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner?optimized=false&suitemode=true' />" method="post">
 								<f:message var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
 								<button id="execute-next-test-case" name="classic" class="button" title="${ nextTestCaseTitle }">
 									${ nextTestCaseTitle }
