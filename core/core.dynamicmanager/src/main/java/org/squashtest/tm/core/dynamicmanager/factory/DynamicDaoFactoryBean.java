@@ -32,6 +32,7 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.DeleteEntityHandle
 import org.squashtest.tm.core.dynamicmanager.internal.handler.DynamicComponentInvocationHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.EntityFinderNamedQueryHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.FindAllByIdsHandler;
+import org.squashtest.tm.core.dynamicmanager.internal.handler.FindAllHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.FindByIdHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.ListOfEntitiesFinderNamedQueryHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.PersistEntityHandler;
@@ -83,7 +84,7 @@ public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponent
 	/**
 	 * 
 	 */
-	private static final int HANDLERS_COUNT = 8;
+	private static final int HANDLERS_COUNT = 9;
 	@Inject private SessionFactory sessionFactory;
 	private Class<ENTITY> entityType;
 	
@@ -104,6 +105,7 @@ public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponent
 		handlers.add(new DeleteEntityHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new FindByIdHandler(sessionFactory));
 		handlers.add(new FindAllByIdsHandler<ENTITY>(entityType, sessionFactory));
+		handlers.add(new FindAllHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new ListOfEntitiesFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new EntityFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new CountNamedQueryHandler<ENTITY>(entityType, sessionFactory));

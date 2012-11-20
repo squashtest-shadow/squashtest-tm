@@ -18,36 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.infrastructure.dynamicdao;
+package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
-import java.util.List;
-
+import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-
 
 /**
+ * Utility clas for paging queries.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-public interface DummyDao extends CustomDummyDao {
-	DummyEntity findById(long id);
-	
-	DummyEntity findById(String id);
+final class PagingUtils {
+	private PagingUtils() {
+		super();
+	}
 
-	DummyEntity findByNameAndSuperpower(String name, String superpower);
-	
-	DummyEntity findBySuperpowerPaged(String superpower, Paging paging);
+	public static void addPaging(Query query, Paging paging) {
+		query.setMaxResults(paging.getPageSize());
+		query.setFirstResult(paging.getFirstItemIndex());
+	}
 
-	List<DummyEntity> findAllByNameAndSuperpower(String name, String superpower);
-	
-	void delete(DummyEntity entity);
-
-	void remove(DummyEntity entity);
-	
-	void persist(DummyEntity entity);
-	
-	List<DummyEntity> findAllBySuperpowers(List<String> superpowers);
-
-	List<DummyEntity> findAll(PagingAndSorting pagingAndSorting);
+	public static void addPaging(Criteria criteria, Paging paging) {
+		criteria.setMaxResults(paging.getPageSize());
+		criteria.setFirstResult(paging.getFirstItemIndex());
+	}
 }

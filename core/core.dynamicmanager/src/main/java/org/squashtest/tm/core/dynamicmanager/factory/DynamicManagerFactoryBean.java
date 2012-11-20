@@ -111,8 +111,8 @@ public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicC
 		
 		handlers.add(new PersistEntityHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new EntityModifierHandler<ENTITY>(sessionFactory, entityType));
-		handlers.add(new FindByIdHandler(sessionFactory));
 		handlers.add(new FindAllByIdsHandler<ENTITY>(entityType, sessionFactory));
+		handlers.add(new FindByIdHandler(sessionFactory));
 		handlers.add(new EntityFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new ListOfEntitiesFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
 		

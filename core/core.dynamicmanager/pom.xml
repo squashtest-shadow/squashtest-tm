@@ -73,6 +73,11 @@
       <artifactId>org.springframework.beans</artifactId>
     </dependency>
     <!-- ====== /SPRING FRAMEWORK ====== -->
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

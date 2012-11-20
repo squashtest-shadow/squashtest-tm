@@ -34,6 +34,8 @@ import org.squashtest.tm.core.dynamicmanager.factory.AbstractDynamicComponentFac
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean;
 import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 
 import spock.lang.Specification;
 
@@ -245,5 +247,26 @@ class DynamicDaoFactoryBeanTest extends Specification {
 		res == entity
 	}
 
+	def "find all method a paged entity hql query"() {
+		given:
+		Query query = Mock()
+		currentSession.createQuery("from DummyEntity order by superPower desc") >> query
+
+		and:
+		PagingAndSorting paging = Mock()
+		paging.getFirstItemIndex() >> 10
+		paging.getPageSize() >> 100
+		paging.getSortedAttribute() >> "superPower"
+		paging.getSortOrder() >> SortOrder.DESCENDING
+		
+		when:
+		factory.initializeFactory()
+		factory.object.findAll(paging)
+
+		then:
+		1 * currentSession.createQuery("from DummyEntity order by superPower desc") >> query
+		1 * query.setFirstResult(10)
+		1 * query.setMaxResults(100)
+	}
 
 }
