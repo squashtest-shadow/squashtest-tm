@@ -154,11 +154,11 @@
 		<treepopup:add-nameable-node-dialog resourceName="folder" treeNodeButton="squashtm.treemenu.create.buttons['create-folder']"/>
 		<treepopup:add-nameable-node-dialog resourceName="${ resourceName }"  treeNodeButton="squashtm.treemenu.create.buttons['create-file']"/>
 	
-		<treepopup:rename-node-dialog treeSelector="#tree" successCallback="rename_from_tree_sucess" treeNodeButton="squashtm.treemenu.action.buttons['rename']"/>
-		<treepopup:delete-node-dialog treeSelector="#tree" resourceName="${resourceName}" treeNodeButton="squashtm.treemenu.action.buttons['delete']"/>
+		<treepopup:rename-node-dialog treeSelector="#tree" successCallback="rename_from_tree_sucess" treeNodeButton="squashtm.treeButtons['rename']"/>
+		<treepopup:delete-node-dialog treeSelector="#tree" resourceName="${resourceName}" treeNodeButton="squashtm.treeButtons['delete']"/>
 
 		<treepopup:copy-paste-node treeSelector="#tree" resourceName="${resourceName}" 
-										treeNodeButtonCopy="squashtm.treemenu.action.buttons['copy']" treeNodeButtonPaste="squashtm.treemenu.action.buttons['paste']"/>
+										treeNodeButtonCopy="squashtm.treeButtons['copy']" treeNodeButtonPaste="squashtm.treeButtons['paste']"/>
 
 		<c:if test="${ resourceName == 'test-case' || resourceName == 'requirement' }">
 			<treepopup:export-dialog treeSelector="#tree"  treeNodeButton="squashtm.treemenu.importer.buttons['export']" resourceName="${resourceName}"/>	

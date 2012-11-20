@@ -616,6 +616,14 @@ function updateTreebuttons(strOperations){
 			}
 		}
 	}
+	for (var button in squashtm.treeButtons){
+			if (strOperations.match(button)){
+				squashtm.treeButtons[button].squashButton("enable");
+			}
+			else{
+				squashtm.treeButtons[button].squashButton("disable");
+			}
+		}
 	
 }
 

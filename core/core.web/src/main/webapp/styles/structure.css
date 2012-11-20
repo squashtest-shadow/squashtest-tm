@@ -540,6 +540,17 @@ div#tree_element_menu,.tree-top-toolbar {
 	padding: 0.1em;
 	width: 100%;
 }
+#tree_element_menu .button-group {
+	display:inline-block;
+	padding-left:0.3em;
+	padding-right:0.3em;
+}
+#tree_element_menu .button-group a{
+	margin: -0.5px;
+}
+#tree_element_menu .button-group:last-child {
+	float: right;
+}
 
 div#tree_element_menu>button.ui-button,div#tree_element_menu>a.ui-button
 	{
