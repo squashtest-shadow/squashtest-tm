@@ -94,6 +94,12 @@ class SearchServiceImplTest extends Specification {
 		TestCaseSearchCriteria criteria = Mock()
 		testCaseDao.findBySearchCriteria(criteria) >> [testCase1, testCase2]
 		
+		and: 
+		
+		ProjectFilter filter = Mock()
+		filter.getActivated() >> false
+		projService.findProjectFilterByUserLogin() >> filter
+		
 		when: 
 		def found = service.findTestCase(criteria)
 		
