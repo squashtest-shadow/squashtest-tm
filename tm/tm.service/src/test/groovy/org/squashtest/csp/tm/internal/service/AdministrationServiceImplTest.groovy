@@ -43,7 +43,7 @@ class AdministrationServiceImplTest extends Specification {
 	def setup(){
 		service.userDao = userDao
 		service.groupDao = groupDao
-		service.adminService = adminService
+		service.adminAuthentService = adminService
 	}
 
 	def "shoud add a group to a specific user" (){
