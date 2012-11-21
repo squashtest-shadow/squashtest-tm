@@ -78,14 +78,15 @@ public final class NativeQueries {
 	
 	public static final String aclResponsibilityScopeEntry_remove_all_concerning_class = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "
 			+ "where ID in (select arse.ID "
-			+ "from ACL_RESPONSIBILITY_SCOPE_ENTRY arse, ACL_OBJECT_IDENTITY aoi, ACL_CLASS aclass "
+			+ "from (select * from ACL_RESPONSIBILITY_SCOPE_ENTRY) as arse, ACL_OBJECT_IDENTITY aoi, ACL_CLASS aclass "
 			+ "where aclass.CLASSNAME = :className "
 			+ "and aclass.ID = aoi.CLASS_ID "
-			+ "and aoi.ID = arse.OBJECT_IDENTITY_ID " + "and aoi.IDENTITY = :id ) ";
+			+ "and aoi.ID = arse.OBJECT_IDENTITY_ID " 
+			+ "and aoi.IDENTITY = :id ) ";
 	
 	public static final String aclObjectIdentity_remove_all_concerning_class = "delete from ACL_OBJECT_IDENTITY "
 			+ "where ID in (select aoi.ID " 
-			+ "from  ACL_OBJECT_IDENTITY aoi, ACL_CLASS aclass "
+			+ "from  (select * from ACL_OBJECT_IDENTITY) as aoi, ACL_CLASS aclass "
 			+ "where aclass.CLASSNAME =  :className " 
 			+ "and aclass.ID = aoi.CLASS_ID "
 			+ "and aoi.IDENTITY = :id )";
