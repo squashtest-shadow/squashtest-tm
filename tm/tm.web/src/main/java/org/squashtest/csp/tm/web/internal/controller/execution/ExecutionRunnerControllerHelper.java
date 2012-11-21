@@ -289,7 +289,7 @@ public class ExecutionRunnerControllerHelper {
 		
 		state.setFirstStepIndex(0);
 		state.setLastStepIndex(totalSteps);
-		state.setCurrentStepIndex(step.getExecutionStepOrder());
+		state.setCurrentStepIndex(step.getExecutionStepOrder()+1);	//+1 here : the interface uses 1-based counter
 		state.setCurrentStepStatus(step.getExecutionStatus());
 		
 	}

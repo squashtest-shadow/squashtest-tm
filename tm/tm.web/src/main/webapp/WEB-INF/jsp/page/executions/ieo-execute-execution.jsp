@@ -83,7 +83,10 @@
 	</c:choose>
 	</c:if>
 	<script type="text/javascript">
+		
 		$(function(){
+			
+			
 			$("#execute-next-button").button({
 				'text': false,
 				'disabled': ${ not hasNextStep },
@@ -91,7 +94,7 @@
 					primary : 'ui-icon-triangle-1-e'
 				}
 			}).click(function(){
-				squashtm.ieomanager.navigateNext();
+				parent.squashtm.ieomanager.navigateNext();
 			});	
 		
 			$("#execute-previous-button").button({
@@ -101,7 +104,7 @@
 					primary : 'ui-icon-triangle-1-w'
 				}
 			}).click(function(){
-				squashtm.ieomanager.navigatePrevious();
+				parent.squashtm.ieomanager.navigatePrevious();
 			});
 		
 			$("#execute-stop-button").button({
@@ -110,7 +113,7 @@
 					'primary' : 'ui-icon-power'
 				} 
 			}).click(function(){
-				squashtm.ieomanager.closeWindow();
+				parent.squashtm.ieomanager.closeWindow();
 			});			
 
 			$("#execution-action a").live('click', function(){
@@ -128,7 +131,7 @@
 					primary : 'ui-icon-seek-next'
 				}
 			}).click(function(){
-				squashtm.ieomanager.navigateNextTestCase();
+				parent.squashtm.ieomanager.navigateNextTestCase();
 			});
 			
 			if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
@@ -146,10 +149,8 @@
 					<button id="execute-next-button"><f:message key="execute.header.button.next.title" /></button>
 				</td>
 				<td class="centered not-displayed" id="execute-next-test-case-panel">
-					<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner' />" method="post" target="optimized-execution-runner">
-						<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
-						<button id="execute-next-test-case" name="optimized" class="button" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
-					</form>
+					<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
+					<button id="execute-next-test-case" name="optimized" class="button" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
 				</td>
 			</tr>
 		</table> 	

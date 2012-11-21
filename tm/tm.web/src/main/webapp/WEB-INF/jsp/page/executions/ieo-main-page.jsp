@@ -35,7 +35,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" >
 
-	<c:set var="executeThis" value="${config.baseStepUrl}/${(config.prologue) ? 'prologue' : config.currentStepIndex }?optimized=true&suitemode=${config.testSuiteMode}" />
+	<c:set var="executeThis" value="${config.baseStepUrl}/${(config.prologue) ? 'prologue' : config.currentStepIndex -1}?optimized=true&suitemode=${config.testSuiteMode}" />
 
 
 <head>
@@ -74,7 +74,7 @@
 					<button class="step-succeeded"><f:message key="execute.header.button.passed.title" /></button>
 				</td>
 				<td class="centered">
-					<button class="button open-address-dialog-button"><f:message key="execution.IEO.address.go.to.button" /></button>
+					<button id="open-address-dialog-button" class="button "><f:message key="execution.IEO.address.go.to.button" /></button>
 					<span class="step-paging"></span>
 					<button class="button execute-previous-step"><f:message key="execute.header.button.previous.title" /></button>	
 					<button class="button execute-next-step"><f:message key="execute.header.button.next.title" /></button>
@@ -117,6 +117,9 @@
 	<script type="text/javascript">
 		require(["domReady", "execution-processing"], function(domReady, execProcessing){
 			domReady(function(){
+				
+				$("#open-address-dialog-button").button();
+				
 				requirejs.config({
 					config : {
 						'execution-processing/init-ieo' : ${json:serialize(config)}

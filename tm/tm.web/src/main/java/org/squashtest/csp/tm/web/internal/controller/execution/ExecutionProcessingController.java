@@ -22,6 +22,9 @@ package org.squashtest.csp.tm.web.internal.controller.execution;
 
 import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -113,7 +116,7 @@ public class ExecutionProcessingController {
 	}
 	
 
-	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params={"optimized=false", "suitemode=false"})
+	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params={"optimized=false", "suitemode=false"}, headers="Accept=text/html")
 	public String getClassicSingleExecutionStepFragment(@PathVariable long executionId, 
 												  @PathVariable int stepIndex, 										  
 												  Model model) {
@@ -125,7 +128,7 @@ public class ExecutionProcessingController {
 
 	}
 	
-	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params={"optimized=false", "suitemode=true"})
+	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params={"optimized=false", "suitemode=true"}, headers="Accept=text/html")
 	public String getClassicTestSuiteExecutionStepFragment(@PathVariable long executionId, 
 												  @PathVariable int stepIndex, 										  
 												  Model model) {
@@ -137,7 +140,7 @@ public class ExecutionProcessingController {
 
 	}
 
-	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = {"optimized=true", "suitemode=false"})
+	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = {"optimized=true", "suitemode=false"}, headers="Accept=text/html")
 	public String getOptimizedSingleExecutionStepFragment(@PathVariable long executionId, 
 													@PathVariable int stepIndex,
 													Model model) {
@@ -149,7 +152,7 @@ public class ExecutionProcessingController {
 
 	}
 
-	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = {"optimized=true", "suitemode=true"})
+	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = {"optimized=true", "suitemode=true"}, headers="Accept=text/html")
 	public String getOptimizedTestSuiteExecutionStepFragment(@PathVariable long executionId, 
 													@PathVariable int stepIndex,
 													Model model) {
@@ -161,7 +164,17 @@ public class ExecutionProcessingController {
 
 	}
 	
-	
+
+	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, headers="Accept=application/json")
+	@ResponseBody
+	public StepState getStepState(@PathVariable Long executionId, @PathVariable Integer stepIndex) {
+
+		ExecutionStep executionStep = executionProcService.findStepAt(executionId, stepIndex);
+
+		return new StepState(executionStep);
+		
+	}
+
 	
 	// ************************* other stuffs ********************************************
 	
@@ -185,28 +198,10 @@ public class ExecutionProcessingController {
 	@ResponseBody
 	public String updateComment(@RequestParam(VALUE) String newComment, @PathVariable("stepId") Long stepId) {
 		executionProcService.setExecutionStepComment(stepId, newComment);
-		LOGGER.trace("ExecutionStep " + stepId.toString() + ": updated comment to " + newComment);
-		return newComment;
-	}
-
-	@RequestMapping(value = "/step/{stepIndex}/new-step-infos", method = RequestMethod.GET)
-	@ResponseBody
-	public String getNewStepInfos(@PathVariable Long executionId, @PathVariable Integer stepIndex) {
-
-		JsonSimpleData obj = new JsonSimpleData();
-
-		Execution execution = executionProcService.findExecution(executionId);
-		Integer total = execution.getSteps().size();
-		ExecutionStep executionStep = executionProcService.findStepAt(executionId, stepIndex);
-
-		if (executionStep == null) {
-			executionStep = executionProcService.findStepAt(executionId, total - 1);
+		if (LOGGER.isTraceEnabled()){
+			LOGGER.trace("ExecutionStep " + stepId.toString() + ": updated comment to " + newComment);
 		}
-
-		obj.addAttr("executionStepOrder", executionStep.getExecutionStepOrder().toString());
-		obj.addAttr("executionStepId", executionStep.getId().toString());
-
-		return obj.toString();
+		return newComment;
 	}
 
 	@RequestMapping(value = "/step/{stepId}", method = RequestMethod.POST, params = "executionStatus")

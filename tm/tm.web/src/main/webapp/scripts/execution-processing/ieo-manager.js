@@ -45,6 +45,7 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 	return function(settings) {
 
 		// ***************** init function **********************
+
 		
 		this.state = $.extend({
 				
@@ -72,25 +73,25 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 
 		// ***************** private stuffs ****************
 		
-		var _updateState = function(newState){
+		var _updateState = $.proxy(function(newState){
 			this.state = newState;
-		};
+		}, this);
 		
 		
-		var getJson = function(url){
+		var getJson = $.proxy(function(url){
 			return $.get(url, null, null, "json")			
-		};
+		}, this);
 		
 
-		var refreshParent = function(){
+		var refreshParent = $.proxy(function(){
 			window.opener.location.href = window.opener.location.href;
 			if (window.opener.progressWindow) {
 				window.opener.progressWindow.close();
 			}
-		};
+		}, this);
 		
 		
-		var testComplete = function(){
+		var testComplete = $.proxy(function(){
 			if (! this.state.testSuiteMode){
 				$.squash.openMessage(settings.completeTitle, settings.completeTestMessage ).done(function() {
 					refreshParent();// see "comment[1]"
@@ -107,11 +108,11 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 	 			});				
 			}
 			
-		};
+		}, this);
 		
-		var navigateLeftPanel = function(url){
+		var navigateLeftPanel = $.proxy(function(url){
 			parent.frameleft.document.location.href = url;
-		};
+		}, this);
 		
 		//************ public functions ****************
 		
@@ -144,31 +145,36 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 			var state = this.state;
 			var url = state.baseStepUrl+"prologue?optimized=true&suitemode="+state.testSuiteMode;
 			navigateLeftPanel(url);
-			this.control._refreshUI();		
+			state.currentStepIndex = 0;
+			this.control.ieoControl("navigateRandom", 0);		
 		};
 		
 		
 		this.navigateRandom = function(newStepIndex){
 			var state = this.state;
+			var control = this.control;
 			
 			if (newStepIndex === 0){
 				this.navigatePrologue();
 			}
-			else{
+			else{			
+				var zeroBasedIndex = newStepIndex -1;	
+				var nextUrl = state.baseStepUrl+"/"+zeroBasedIndex+"?optimized=true&suitemode="+state.testSuiteMode;
+				
 				getJson(nextUrl)
 				.success(function(json){
 					
 					state.currentStepStatus = json.currentStepStatus;
 					state.currentStepId = json.currentStepId;
 					
-					var frameLeftUrl = state.baseStepUrl+newStepIndex+"?optimized=true&suitemode="+state.testSuiteMode;
+					var frameLeftUrl = state.baseStepUrl+zeroBasedIndex+"?optimized=true&suitemode="+state.testSuiteMode;
 					navigateLeftPanel(frameLeftUrl);	
-					
-					this.control.ieoControl("navigateRandom");				
+
+					state.currentStepIndex = newStepIndex;
+					control.ieoControl("navigateRandom", newStepIndex);		
+
 				});				
 			}
-			state.currentStepIndex = newStepIndex;
-
 		};
 		
 		this.navigateNextTestCase = function(){			
@@ -190,18 +196,18 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 		
 		// ********************** predicates ************************
 		
-		var canNavigateNextTestCase = function(){
+		var canNavigateNextTestCase = $.proxy(function(){
 			var state = this.state;
 			return ((state.testSuiteMode) &&  (! state.lastTestCase) && (this._isLastStep()));			
-		};
+		}, this);
 		
-		var isLastStep = function(){
-			return (this.currentStepIndex===this.state.lastStepIndex);			
-		};
+		var isLastStep = $.proxy(function(){
+			return (this.state.currentStepIndex===this.state.lastStepIndex);			
+		}, this);
 		
-		var isPrologue = function(){
+		var isPrologue = $.proxy(function(){
 			return (this.state.currentStepIndex===this.state.firstStepIndex);
-		};
+		}, this);
 		
 		
 		// *********** setters etc *********************
