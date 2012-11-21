@@ -22,17 +22,7 @@ package org.squashtest.csp.tm.web.internal.controller.execution;
 
 import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,11 +35,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.service.ExecutionProcessingService;
-import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 
 @Controller
 @RequestMapping("/execute/{executionId}")
@@ -61,7 +49,6 @@ public class ExecutionProcessingController {
 	private static final String STEP_PAGE_VIEW = "page/executions/execute-execution";
 	private static final String STEP_PAGE_PREVIEW = "execute-execution-preview.html";
 	
-	private static final String IEO_RIGHT_FRAME = "page/ieo/ieo-rightframe-fragment";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionProcessingController.class);
 

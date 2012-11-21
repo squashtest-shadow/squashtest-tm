@@ -250,6 +250,20 @@ public class ExecutionRunnerControllerHelper {
 		return state;
 	}
 	
+	public RunnerState createNextOptimizedTestSuiteContext(long testSuiteId, long testPlanItemId, String contextPath, Locale locale){
+		
+		Execution execution = testSuiteExecutionProcessingService.startResumeNextExecution(testSuiteId, testPlanItemId);
+		
+		RunnerState state = createNewRunnerState(true, true);
+		
+		_stuffWithPopupMessages(state, locale);
+		_stuffWithPrologueStatus(execution.getId(), state);
+		_stuffWithEntitiesInfos(execution.getId(), state, contextPath);
+		_stuffWithSuiteRelatedInfos(execution, state, contextPath);
+		
+		return state;
+	}
+	
 	// ******************* IEO runner state factory methods *************************
 	
 	

@@ -21,12 +21,7 @@
 requirejs.config({
 	
 	packages: ["custom-field-binding",      
-	           //"execution-processing"],
-	           {
-					name : "execution-processing",
-					main : "main",
-					location : "http://localhost/scripts/execution-processing"
-	           }],
+	           "execution-processing"],
 	           
 
 	/*

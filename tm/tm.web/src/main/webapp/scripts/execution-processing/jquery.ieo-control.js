@@ -283,7 +283,7 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 			else{
 				this.element.find('.execute-next-test-case-panel').hide();
 			}
-			btnstate = (this._canNavigateNextTestCase()) ? "enable" : "disable";
+			btnState = (this._canNavigateNextTestCase()) ? "enable" : "disable";
 			this.getNextTestCaseButton().button(btnState);
 			
 			

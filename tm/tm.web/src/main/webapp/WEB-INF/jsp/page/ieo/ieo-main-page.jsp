@@ -81,10 +81,8 @@
 					<button class="button execute-next-step"><f:message key="execute.header.button.next.title" /></button>
 				</td>
 				<td class="centered not-displayed execute-next-test-case-panel">
-					<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner' />" method="post">
-						<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
-						<button name="optimized" class="button execute-next-test-case" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
-					</form>
+					<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
+					<button class="button execute-next-test-case" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
 				</td>
 			</tr>
 			<tr>

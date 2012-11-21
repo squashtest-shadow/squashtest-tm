@@ -150,9 +150,7 @@ public class TestSuiteExecutionController {
 									 HttpServletRequest context,
 									 Locale locale){
 		
-		testSuiteExecutionProcessingService.startResumeNextExecution(testSuiteId, testPlanItemId);
-		
-		RunnerState state = helper.initOptimizedTestSuiteContext(testSuiteId, context.getContextPath(), locale);
+		RunnerState state = helper.createNextOptimizedTestSuiteContext(testSuiteId, testPlanItemId, context.getContextPath(), locale);
 		
 		return state;
 		

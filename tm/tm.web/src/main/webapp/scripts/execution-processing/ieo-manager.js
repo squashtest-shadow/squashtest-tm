@@ -184,11 +184,14 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 			}
 		};
 		
-		this.navigateNextTestCase = function(){			
-			getJson(nextTestCaseUrl)
+		this.navigateNextTestCase = function(){	
+			var state = this.state;
+			var url = state.nextTestCaseUrl+"?optimized=true&suitemode=true";
+			var that = this;
+			getJson(url)
 			.success(function(json){
 				_updateState(json);
-				this.control.ieoControl("navigateToNewTestCase");
+				that.navigateRandom(that.state.currentStepIndex);
 			});
 		};
 		
@@ -205,7 +208,7 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 		
 		var canNavigateNextTestCase = $.proxy(function(){
 			var state = this.state;
-			return ((state.testSuiteMode) &&  (! state.lastTestCase) && (this._isLastStep()));			
+			return ((state.testSuiteMode) &&  (! state.lastTestCase) && (this.isLastStep()));			
 		}, this);
 		
 		var isLastStep = $.proxy(function(){
