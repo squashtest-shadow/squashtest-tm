@@ -45,6 +45,7 @@ import org.squashtest.csp.tm.service.project.GenericProjectFinder;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
+import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
@@ -71,7 +72,8 @@ public class ProjectAdministrationController {
 	/* see bug 33 for details, remove this comment when done */
 	/* remember that the indexes here are supposed to match the visible columns in the project view */
 	private DataTableMapper projectMapper = new DataTableMapper("projects-table", GenericProject.class).initMapping(9)
-			.mapAttribute(GenericProject.class, 2, "name", String.class).mapAttribute(GenericProject.class, 3, "label", String.class)
+			.mapAttribute(GenericProject.class, 2, "name", String.class)
+			.mapAttribute(GenericProject.class, 3, "label", String.class)
 			.mapAttribute(GenericProject.class, 4, "active", boolean.class)
 			.mapAttribute(GenericProject.class, 5, "audit.createdOn", Date.class)
 			.mapAttribute(GenericProject.class, 6, "audit.createdBy", String.class)
@@ -101,7 +103,7 @@ public class ProjectAdministrationController {
 	@RequestMapping(value = "/list", params = "sEcho", method = RequestMethod.GET)
 	public @ResponseBody
 	DataTableModel getProjectsTableModel(final DataTableDrawParameters params, final Locale locale) {
-		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, projectMapper);
+		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, projectMapper, SortedAttributeSource.SINGLE_ENTITY);
 
 		PagedCollectionHolder<List<GenericProject>> holder = projectFinder.findSortedProjects(filter);
 
@@ -143,14 +145,7 @@ public class ProjectAdministrationController {
 	}
 
 	private static String formatDate(Date date, Locale locale, InternationalizationHelper messageSource) {
-		try {
-			String format = messageSource.internationalize("squashtm.dateformat", locale);
-			return new SimpleDateFormat(format).format(date);
-		} catch (NoSuchMessageException ex) {
-			LOGGER.warn("Internationalization key not found : " + ex.getMessage(), ex);
-			return formatNoData(locale, messageSource);
-		}
-
+			return messageSource.localizeDate(date, locale);
 	}
 
 	private static String formatBoolean(boolean arg, Locale locale, InternationalizationHelper messageSource) {

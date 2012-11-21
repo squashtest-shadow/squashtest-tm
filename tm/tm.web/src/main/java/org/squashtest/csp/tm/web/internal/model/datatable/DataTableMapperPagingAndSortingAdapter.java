@@ -23,25 +23,66 @@ package org.squashtest.csp.tm.web.internal.model.datatable;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
+
 /**
  * PagingAndSortingAdapter backed by a DataTableDrawParameters and a DataTableMapper (for sorting purposes).
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public class DataTableMapperPagingAndSortingAdapter extends DataTableDrawParametersPagingAdapter implements
 		PagingAndSorting {
+	public enum SortedAttributeSource {
+		SINGLE_ENTITY {
+			/**
+			 * @return the sorted attribute simple name.
+			 */
+			@Override
+			String sortedAttributeName(DataTableMapper mapper, DataTableDrawParameters params) {
+				return mapper.attrAt(params.getiSortCol_0());
+			}
+		},
+		MULTIPLE_ENTITIES {
+			/**
+			 * @return the full sorted attribute path.
+			 */
+			@Override
+			String sortedAttributeName(DataTableMapper mapper, DataTableDrawParameters params) {
+				return mapper.pathAt(params.getiSortCol_0());
+			}
+		};
+		/**
+		 * Returns the sorted attribute name, according to this style of attributes source.
+		 * 
+		 * @param mapper
+		 * @param params
+		 * @return
+		 */
+		abstract String sortedAttributeName(DataTableMapper mapper, DataTableDrawParameters params);
+	}
+
 	private final DataTableDrawParameters params;
 	private final DataTableMapper mapper;
+	private final SortedAttributeSource sortedAttributeNameStrategy;
 
 	public DataTableMapperPagingAndSortingAdapter(DataTableDrawParameters drawParams, DataTableMapper mapper) {
 		super(drawParams);
 		this.params = drawParams;
 		this.mapper = mapper;
+		this.sortedAttributeNameStrategy = SortedAttributeSource.MULTIPLE_ENTITIES;
+	}
+
+	public DataTableMapperPagingAndSortingAdapter(DataTableDrawParameters params,
+			DataTableMapper mapper, SortedAttributeSource sortedAttributeSource) {
+		super(params);
+		this.params = params;
+		this.mapper = mapper;
+		this.sortedAttributeNameStrategy = sortedAttributeSource;
 	}
 
 	@Override
 	public String getSortedAttribute() {
-		return mapper.pathAt(params.getiSortCol_0());
+		return sortedAttributeNameStrategy.sortedAttributeName(mapper, params);
 	}
 
 	@Override
