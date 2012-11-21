@@ -721,5 +721,16 @@ predefined for future evolutions :
 	width:25%;
 }
 */
- 
 
+.warning-message {
+	text-decoration: underline;
+}
+
+.red-warning-message {
+	color: red; 
+	font-size: 14px;
+}
+
+.black-warning-message {
+	font-size: 16px;
+}

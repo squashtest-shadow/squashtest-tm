@@ -36,8 +36,32 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<c:choose>
+	<c:when test="${'delete-requirement-button' == openedBy}">
+		<f:message var="deleteMessage" key="dialog.label.delete-nodes.requirement.label" />
+	</c:when>
+	<c:when test="${'delete-test-case-button' == openedBy}">
+		<f:message var="deleteMessage" key="dialog.label.delete-nodes.test-case.label" />
+	</c:when>
+	<c:when test="${'delete-campaign-button' == openedBy}">
+		<f:message var="deleteMessage" key="dialog.label.delete-nodes.campaign.label" />
+	</c:when>
+	<c:when test="${'delete-iteration-button' == openedBy}">
+		<f:message var="deleteMessage" key="dialog.label.delete-nodes.iteration.label" />
+	</c:when>
+	<c:when test="${'delete-test-suite-button' == openedBy}">
+		<f:message var="deleteMessage" key="dialog.label.delete-nodes.test-suite.label" />
+	</c:when>
+	<c:otherwise>
+		<f:message var="deleteMessage" key="dialog.label.delete-nodes.label" />
+	</c:otherwise>
+</c:choose>
 
-<f:message var="deleteMessage" key="dialog.label.delete-nodes.label" />
+<f:message var='deleteMessageStart' key='dialog.label.delete-node.label.start'/>
+<f:message var='deleteMessageCantBeUndone' key='dialog.label.delete-node.label.cantbeundone'/>
+<f:message var='deleteMessageConfirm' key='dialog.label.delete-node.label.confirm'/>
+
+<c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
 
 <%-- onLoad code --%>
 <script type="text/javascript">
@@ -68,8 +92,10 @@ function sendContextualDeletionSimulationRequest(jqDialog){
 		dataType : 'json'
 	})			
 	.success(function(data){
-		var message = data.message + "<b>${deleteMessage}</b>";
-		jqDialog.html(message);
+		//var message = data.message + "<b>${deleteMessage}</b>";
+		//jqDialog.html(message);
+		jqDialog.html("<table><tr><td><img src='${servContext}/images/messagebox_confirm.png'/></td><td><table><tr><td><span>${deleteMessageStart}<span class='warning-message'> <span class='red-warning-message'>${deleteMessage}</span> </span></span></td></tr><tr><td>${deleteMessageCantBeUndone}</td></tr><tr><td><span class='black-warning-message'>${deleteMessageConfirm}</span></td></tr></table></td></tr></table>");
+		
 	})
 	.fail(function(){
 		jqDialog.dialog("close"); <%-- the standard failure handler should kick in, no need for further treatment here. --%>

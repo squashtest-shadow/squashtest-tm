@@ -110,6 +110,12 @@
 
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
 
+<f:message var='deleteMessageStart' key='dialog.label.delete-node.label.start'/>
+<f:message var="deleteMessage" key="dialog.label.delete-nodes.iteration.label" />
+<f:message var='deleteMessageCantBeUndone' key='dialog.label.delete-node.label.cantbeundone'/>
+<f:message var='deleteMessageConfirm' key='dialog.label.delete-node.label.confirm'/>
+
+<c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
@@ -529,7 +535,7 @@
 		$(function(){
 			$('#delete-iteration-button').click(function(){
 				oneShotConfirm("<f:message key='dialog.delete-iteration.title' />", 
-						"<f:message key='dialog.delete-iteration.message' />",
+						"<table><tr><td><img src='${servContext}/images/messagebox_confirm.png'/></td><td><table><tr><td><span>${deleteMessageStart}<span class='warning-message'> <span class='red-warning-message'>${deleteMessage}</span> </span>${deleteMessageEnd}</span></td></tr><tr><td>${deleteMessageCantBeUndone}</td></tr><tr><td><span class='black-warning-message'>${deleteMessageConfirm}</span></td></tr></table></td></tr></table>",
 						"<f:message key='label.Confirm' />",  
 						"<f:message key='label.Cancel' />",
 						'500px').done(function(){confirmIterationDeletion()
