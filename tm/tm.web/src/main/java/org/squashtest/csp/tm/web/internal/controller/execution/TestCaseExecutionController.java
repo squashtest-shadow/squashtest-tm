@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
@@ -66,7 +67,7 @@ public class TestCaseExecutionController {
 	
 	
 	@RequestMapping(params = {"optimized=true", "suitemode=false"})
-	public String startResumeExecutionInOptimizedRunner(@PathVariable long executionId, Model model, ServletContext context, Locale locale) {
+	public String startResumeExecutionInOptimizedRunner(@PathVariable long executionId, Model model, HttpServletRequest context, Locale locale) {
 		
 		RunnerState state = helper.initOptimizedSingleContext(executionId, context.getContextPath(), locale);
 		model.addAttribute("config", state);

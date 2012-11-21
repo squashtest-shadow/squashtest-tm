@@ -20,37 +20,44 @@
  */
 
 
-define(["jquery","./ieo-manager", "squash.resizer", "./jquery.ieo-toolbox"], function($, OptimizedManager, resizer){
+define(["jquery", "module", "./ieo-manager", "squash.resizer", "./jquery.ieo-control"], function($, module,  OptimizedManager, resizer){
 	
 	
 	return function(){
 
-		//make the panels resizeable
-		
-		resizer.init({
-			leftSelector : "#left-panel",
-			rightSelector : "#right-panel"
-		});
 		
 		
 		// init the manager 
 		
-		var manager = new OptimizedManager();
+		var settings = module.config();
 		
-		
-		//init the toolbox
-		var toolbox = $("#toolbox-container").optimizedToolbox();
-		
-		
-		//wire them
-		manager.setToolbox(toolbox);
-
+		var manager = new OptimizedManager(settings);
 		
 		//set it in the context
 		squashtm = squashtm || {};
-		squashtm.ieomanager = manager;		
+		squashtm.ieomanager = manager;	
 		
-	}
+
+		//init the control
+		var control = $("#ieo-control").ieoControl();
+		
+		
+		//wire them
+		manager.setControl(control);
+
+		//the right panel
+		manager.setRightFrame($("#iframe-right"));
+			
+		
+
+		//make the panels resizeable
+		
+		resizer.init({
+			leftSelector : "#ieo-left-panel",
+			rightSelector : "#ieo-right-panel"
+		});
+	
+	};
 	
 	
 });

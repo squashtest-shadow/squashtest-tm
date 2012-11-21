@@ -20,11 +20,10 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.execution;
 
-import java.text.MessageFormat;
 import java.util.Locale;
 
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,15 +35,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.TestPlanTerminatedOrNoStepsException;
 import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.service.ExecutionProcessingService;
 import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService;
-import org.squashtest.csp.tm.web.internal.model.jquery.JsonSimpleData;
 
 /**
  * 
@@ -130,7 +124,7 @@ public class TestSuiteExecutionController {
 	
 	
 	@RequestMapping(value = RequestMappings.INIT_EXECUTION_RUNNER, params = {"optimized=true", "suitemode=true"})
-	public String startResumeExecutionInClassicRunner(@PathVariable long testSuiteId, Model model, ServletContext context, Locale locale) {
+	public String startResumeExecutionInClassicRunner(@PathVariable long testSuiteId, Model model, HttpServletRequest context, Locale locale) {
 		
 		RunnerState state = helper.initOptimizedTestSuiteContext(testSuiteId, context.getContextPath(), locale);
 		model.addAttribute("config", state);
@@ -162,7 +156,7 @@ public class TestSuiteExecutionController {
 	@ResponseBody
 	public RunnerState getNextTestCaseRunnerState(@PathVariable("testPlanItemId") long testPlanItemId,
 									 @PathVariable("testSuiteId") long testSuiteId, 
-									 ServletContext context,
+									 HttpServletRequest context,
 									 Locale locale){
 		
 		testSuiteExecutionProcessingService.startResumeNextExecution(testSuiteId, testPlanItemId);

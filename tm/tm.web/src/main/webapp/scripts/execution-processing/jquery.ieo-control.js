@@ -27,9 +27,11 @@
 
 define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 	
-	$.widget("squash.optimizedToolbox", $.ui.draggable, {
+	$.widget("squash.ieoControl", {
 		
-		options : {},
+		options : {
+			
+		},
 		
 		_create : function(){
 			
@@ -40,21 +42,17 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 			var positionTop = $.cookie("ieo-toolbox-position-top");
 			
 			if ( positionLeft != null && positionTop != null ) {
-				this.offset({top : positionTop, left: positionLeft});
+				this.element.offset({top : positionTop, left: positionLeft});
 			}	
 			
-			$.ui.dialog.prototype._create.call(this,{
-				start: function(event, ui){
-					$(".iframe-container").addClass('not-visible');
-				},	
+			this.element.draggable({
 				stop: function(event, ui){
-					$(".iframe-container").removeClass('not-visible');
-					var pos = this.offset();
+					var pos = $(this).offset();
 					$.cookie("ieo-toolbox-position-left", pos.left);
 					$.cookie("ieo-toolbox-position-top", pos.top);
-				}					
+				}				
 			});
-	
+
 			
 			// ************* slider init *****************
 			
@@ -64,42 +62,42 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 			
 			// ******** buttons init **********
 			
-			this.find(".execute-next-step").button({
+			this.getNextStepButton().button({
 				'text': false,
 				icons: {
 					primary : 'ui-icon-triangle-1-e'
 				}
 			});
 			
-			this.find(".execute-previous-step").button({
+			this.getPreviousStepButton().button({
 				'text' : false,
 				icons : {
 					primary : 'ui-icon-triangle-1-w'
 				}
 			});
 		
-			this.find(".stop-execution").button({
+			this.getStopButton().button({
 				'text': false, 
 				'icons' : {
 					'primary' : 'ui-icon-power'
 				} 
 			});
 
-			this.find(".step-failed").button({
+			this.getFailedButton().button({
 				'text': false,
 				'icons' :{
 					'primary' : 'execute-failure'
 				}
 			});
 
-			this.find(".step-succeeded").button({
+			this.getSuccessButton().button({
 				'text' : false,
 				'icons' : {
 					'primary' : 'execute-success'
 				}
 			});
 
-			this.find(".execute-next-test-case").button({
+			this.getNextTestCaseButton().button({
 				'text': false,
 				icons: {
 					primary : 'ui-icon-seek-next'
@@ -107,7 +105,7 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 			});
 			
 			
-			this.find('.step-status-combo').change(function(){
+			this.getStatusCombo().change(function(){
 				self._updateComboIcon();
 			});
 
@@ -118,13 +116,13 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 		// **************** setters *****************
 
 		setManager : function(manager){
-			this.manager = manager;
-			this._refreshUI();
+			this.element.manager = manager;
+			this._reset();
 		},
 
 		
 		setStatus : function(status){
-			var cbox = this.find('.step-status-combo');
+			var cbox = this.getStatusCombo();
 			cbox.val(status);
 			this._updateComboIcon();
 		},
@@ -158,54 +156,54 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 		// ********************** getters ***************************
 
 		getNextStepButton : function(){
-			return this.find('.execute-next-step');
+			return this.element.find('.execute-next-step');
 		},
 		
 		getPreviousStepButton : function(){
-			return this.find('.execute-previous-step');
+			return this.element.find('.execute-previous-step');
 		},
 		
 		getStopButton : function(){
-			return this.find('.stop-execution');
+			return this.element.find('.stop-execution');
 		},
 		
 		getFailedButton : function(){
-			return this.find('.step-failed');
+			return this.element.find('.step-failed');
 		},
 		
 		getSuccessButton : function(){
-			return this.find('.step-succeeded');
+			return this.element.find('.step-succeeded');
 		},
 		
 		getNextTestCaseButton : function(){
-			return this.find('.execute-next-test-case');
+			return this.element.find('.execute-next-test-case');
 		},
 		
 		getStatusCombo : function(){
-			return this.find('.step-status-combo');
+			return this.element.find('.execution-status-combo-class');
 		},
 		
 		getSlider : function(){
-			return this.find('.slider');
+			return this.element.find('.slider');
 		},
 		
 		_getState : function(){
-			return this.manager.getState();
+			return this.element.manager.getState();
 		},
 		
 		// ********************** predicates ************************
 		
-		var _canNavigateNextTestCase : function(){
+		_canNavigateNextTestCase : function(){
 			var state = this._getState();
-			return ((state.testSuiteMode) &&  (! state.isLastTestCase) && (this._isLastStep()));				
+			return ((state.testSuiteMode) &&  (! state.lastTestCase) && (this._isLastStep()));				
 		},
 		
-		var _isLastStep : function(){
+		_isLastStep : function(){
 			var state = this._getState();
 			return (state.currentStepIndex===state.lastStepIndex);			
 		},
 		
-		var _isPrologue : function(){
+		_isPrologue : function(){
 			var state = this._getState();
 			return (state.currentStepIndex===state.firstStepIndex);
 		},
@@ -216,11 +214,15 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 		_initSlider : function(){
 			var self = this;
 			
-			var settings = (!!this.manager) ? this._getState() : { lastStepIndex : 0, currentStepIndex : 0 };
+			var settings = (!!this.element.manager) ? this._getState() : { lastStepIndex : 0, currentStepIndex : 0 };
 			
 			var slider = this.getSlider();
 			
-			slider.slider('destroy');
+			try{
+				slider.slider('destroy');
+			}catch(ex){
+				//well okay, no big deal.
+			}
 			
 			var sliderSettings = {
 				range: "max",
@@ -228,20 +230,21 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 				max: settings.lastStepIndex,
 				value: settings.currentStepIndex,
 				stop: function( event, ui ) {
-					self.manager.navigateRandom(ui.value);
+					self.element.manager.navigateRandom(ui.value);
 				}
 			};
 
-			slider.slider(sliderSettings});
+			slider.slider(sliderSettings);
 			
 		},
 		
 		_reset : function(){
 			this._initSlider();
+			this._refreshUI();
 		},
 		
 		_updateComboIcon : function(){
-			var cbox = this.getSatusCombo();
+			var cbox = this.getStatusCombo();
 			
 			//reset the classes
 			cbox.attr("class","");
@@ -258,7 +261,7 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 		},
 		
 		_updateCounter : function(){
-			var label = this.find('step-paging');
+			var label = this.element.find('step-paging');
 			var state = this._getState();
 			var labelText = state.currentStepIndex+" / ("+state.lastStepIndex+")";
 			label.text(labelText);
@@ -267,16 +270,16 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 		_updateButtons : function(){
 			
 			var btnState = (this._isLastStep()) ? "disable" : "enable";
-			this.getNextButton().button(btnState);
+			this.getNextStepButton().button(btnState);
 			
 			btnState = (this._isPrologue()) ? "disable" : "enable";
-			this.getPreviousButton().button(btnState);
+			this.getPreviousStepButton().button(btnState);
 			
 			if (this._getState().testSuiteMode){
-				this.find('.execute-next-test-case-panel').show();
+				this.element.find('.execute-next-test-case-panel').show();
 			}
 			else{
-				this.find('.execute-next-test-case-panel').hide();
+				this.element.find('.execute-next-test-case-panel').hide();
 			}
 			btnstate = (this._canNavigateNextTestCase()) ? "enable" : "disable";
 			this.getNextTestCaseButton().button(btnState);
@@ -284,7 +287,7 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 		},
 		
 		_updateSlider : function(){
-			this.getSlider().slider("option", "value", this.options.currentStepIndex);
+			this.getSlider().slider("option", "value", this._getState().currentStepIndex);
 		},
 		
 		_updateComboEnable : function(){
@@ -302,17 +305,18 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 		},
 		
 		_updateCombo : function(){
-			_updateComboStatus();
-			_updateComboIcon();
-			_updateComboEnable();
+			this._updateComboStatus();
+			this._updateComboIcon();
+			this._updateComboEnable();
 		},
 		
+		
 		_refreshUI : function(){
+			this.element.removeClass('not-displayed');
 			this._updateCounter();
 			this._updateButtons();
 			this._updateCombo();
 			this._updateSlider();
-			this._updateNextTCButton();
 		}
 		
 		

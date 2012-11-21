@@ -417,38 +417,60 @@ div.snap-right>a.button.test-step-toolbar-button>span {
 	padding: 0;
 }
 
-div#left-panel {
-	float: left;
+
+/*************************
+
+	IEO
+	
+*************************/
+
+#ieo-left-panel {
 	height: 100%;
 	width: 32%;
 	border: 1px solid;
+	display : inline-block;
 }
 
-div#right-panel {
+#ieo-right-panel {
 	height: 100%;
 	width: 67%;
 	border: 1px solid;
-	float: left;
+	display : inline-block;
 }
 
-iframe#iframe-left {
-	border-top: none;
-	width: 100%;
-	float: left;
-	height: 100%;
+
+
+body#ieo-body {
+	overflow-y: hidden;
+}
+div#ieo-control {
+	width: 500px;
+	height: 55px;
+	position: absolute;
+	z-index: 5;
+	background-color: gray;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+	bottom: 15%;
+	left: 50%;
+	right: auto;
+}
+
+.ieo-frame{
+	width : 100%;
+	height : 100%;	
 }
 
 html.execute-html body.ieo-body {
 	min-width: 0;
 }
 
-iframe#iframe-right {
-	border-top: none;
-	width: 100%;
-	float: left;
-	height: 100%;
-}
+/*************************
 
+	/IEO
+	
+*************************/
 
  a.unstyledLink:link {color:inherit; text-decoration:none}      /* unvisited link */
  a.unstyledLink:visited {color:inherit; text-decoration:none}  /* visited link */
@@ -851,44 +873,10 @@ div#execute-body {
 	top: 0.9cm;
 }
 
-body#ieo-body {
-	overflow-y: hidden;
-}
-
 .ui-resizable-helper {
 	border: 2px dotted #5E287B;
 }
 
-div#draggable-menu {
-	width: 500px;
-	height: 55px;
-	position: absolute;
-	z-index: 5;
-	background-color: gray;
-	-moz-border-radius: 8px;
-	-webkit-border-radius: 8px;
-	border-radius: 8px;
-	bottom: 15%;
-	left: 50%;
-	right: auto;
-}
-
-div#left-panel>div#execute-body {
-	width: 100%;
-	min-width: inherit;
-	border-top: 1px solid gray;
-	border-right: 1px solid gray;
-	overflow-x: hidden;
-	overflow-y: scroll;
-	position: relative;
-	bottom: 0;
-	top: 0cm;
-	height: 100%;
-}
-
-div#ieo-toggle-div.ieo-toggle {
-	height: 60%;
-}
 
 .execute-fragment-body>div {
 	margin-top: 10px;

@@ -37,22 +37,21 @@
 
 
 
-define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
+define(["jquery", "jquery.squash.messagedialog"], function($){
 	
-	var settings = module.config();
-	
+
 	
 	/* this is a constructor */
-	return function() {
+	return function(settings) {
 
 		// ***************** init function **********************
 		
 		this.state = $.extend({
 				
-				isOptimized : undefined,
-				isLastTestCase : undefined,
+				optimized : undefined,
+				lastTestCase : undefined,
 				testSuiteMode : undefined,
-				isPrologue : undefined,
+				prologue : undefined,
 				
 				baseStepUrl : undefined,
 				nextTestCaseUrl : undefined,
@@ -70,8 +69,6 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 		}, settings);
 		
 
-
-		_updateState(settings);
 
 		// ***************** private stuffs ****************
 		
@@ -147,7 +144,7 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 			var state = this.state;
 			var url = state.baseStepUrl+"prologue?optimized=true&suitemode="+state.testSuiteMode;
 			navigateLeftPanel(url);
-			this.toolbox._refreshUI();		
+			this.control._refreshUI();		
 		};
 		
 		
@@ -167,7 +164,7 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 					var frameLeftUrl = state.baseStepUrl+newStepIndex+"?optimized=true&suitemode="+state.testSuiteMode;
 					navigateLeftPanel(frameLeftUrl);	
 					
-					this.toolbox.optimizedToolbox("navigateRandom");				
+					this.control.ieoControl("navigateRandom");				
 				});				
 			}
 			state.currentStepIndex = newStepIndex;
@@ -178,7 +175,7 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 			getJson(nextTestCaseUrl)
 			.success(function(json){
 				_updateState(json);
-				this.toolbox.optimizedToolbox("navigateToNewTestCase");
+				this.control.ieoControl("navigateToNewTestCase");
 			});
 		};
 		
@@ -188,14 +185,14 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 
 
 		this.getState = function(){
-			return state;
+			return this.state;
 		};
 		
 		// ********************** predicates ************************
 		
 		var canNavigateNextTestCase = function(){
 			var state = this.state;
-			return ((state.testSuiteMode) &&  (! state.isLastTestCase) && (this._isLastStep()));			
+			return ((state.testSuiteMode) &&  (! state.lastTestCase) && (this._isLastStep()));			
 		};
 		
 		var isLastStep = function(){
@@ -210,20 +207,20 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 		// *********** setters etc *********************
 
 		
-		this.setToolbox = function(toolbox){
+		this.setControl = function(control){
 			
 			var self = this;
 			
-			this.toolbox = toolbox;			
-			toolbox.setManager(this);
+			this.control = control;			
+			control.ieoControl("setManager",this);
 			
-			var nextButton = toolbox.optimizedToolbox("getNextStepButton");
-			var prevButton = toolbox.optimizedToolbox("getPreviousStepButton");
-			var stopButton = toolbox.optimizedToolbox("getStopButton");
-			var succButton = toolbox.optimizedToolbox("getSuccessButton");
-			var failButton = toolbox.optimizedToolbox("getFailureButton");
-			var mvTCButton = toolbox.optimizedToolbox("getNextTestCaseButton");
-			var statusCombo = toolbox.optimizedToolbox("getStatusCombo");
+			var nextButton = control.ieoControl("getNextStepButton");
+			var prevButton = control.ieoControl("getPreviousStepButton");
+			var stopButton = control.ieoControl("getStopButton");
+			var succButton = control.ieoControl("getSuccessButton");
+			var failButton = control.ieoControl("getFailedButton");
+			var mvTCButton = control.ieoControl("getNextTestCaseButton");
+			var statusCombo = control.ieoControl("getStatusCombo");
 			
 			nextButton.click(function(){
 				self.navigateNext();
@@ -243,26 +240,26 @@ define(["jquery", "module", "jquery.squash.messagedialog"], function($,module){
 			
 			statusCombo.change(function(){
 				var self = this;
-				$.post(state.statusUrl, {
+				$.post(this.state.statusUrl, {
 					executionStatus : $(self).val()
 				});
 			});
 			
 			succButton.click(function(){
-				$.post(state.statusUrl,{
+				$.post(this.state.statusUrl,{
 					executionStatus : "SUCCESS"
 				})
 				.success(function(){
-					toolbox.optimizedToolbox("setSuccess");
+					self.control.ieoControl("setSuccess");
 				});
 			});
 			
 			failButton.click(function(){
-				$.post(state.statusUrl,{
+				$.post(this.state.statusUrl,{
 					executionStatus : "FAILURE"
 				})
 				.success(function(){
-					toolbox.optimizedToolbox("setFailure");
+					self.control.ieoControl("setFailure");
 				});			
 			});
 		
