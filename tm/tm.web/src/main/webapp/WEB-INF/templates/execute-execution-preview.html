@@ -151,6 +151,15 @@ documentation :
 	
 	require(["domReady", "execution-processing"], function(domReady, executionProcessing){
 		domReady(function(){
+			
+			requirejs.config({
+				
+				config : {
+					"execution-processing/init-preview" : /*[[${config}]]*/{}
+				}
+				
+			})
+			
 			executionProcessing.initPreview();
 		});		
 	});

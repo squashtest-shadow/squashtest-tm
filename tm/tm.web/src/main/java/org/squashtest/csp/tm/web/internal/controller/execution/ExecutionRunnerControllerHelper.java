@@ -279,6 +279,8 @@ public class ExecutionRunnerControllerHelper {
 		ExecutionStep step = executionProcessingService.findRunnableExecutionStep(executionId);
 		int totalSteps = executionProcessingService.findTotalNumberSteps(executionId);
 		
+		boolean wasNeverExecuted = executionProcessingService.wasNeverRan(executionId);
+		int stepOrder = (wasNeverExecuted) ? 0 : step.getExecutionStepOrder()+1;
 		
 		String currentStepUrl = contextPath + "/" + MessageFormat.format( CURRENT_STEP_URL_PATTERN, executionId);
 		
@@ -289,7 +291,7 @@ public class ExecutionRunnerControllerHelper {
 		
 		state.setFirstStepIndex(0);
 		state.setLastStepIndex(totalSteps);
-		state.setCurrentStepIndex(step.getExecutionStepOrder()+1);	//+1 here : the interface uses 1-based counter
+		state.setCurrentStepIndex(stepOrder);	//+1 here : the interface uses 1-based counter
 		state.setCurrentStepStatus(step.getExecutionStatus());
 		
 	}

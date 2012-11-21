@@ -56,9 +56,10 @@
 	</div>
 
 	
+	<%-- the bloody right ifreame is useless for now --%>
 	<div id="ieo-right-panel">
-		<iframe id="iframe-right" name="frameright" class="ieo-frame"  src="">
-		</iframe> 
+		<iframe id="iframe-right" name="frameright" class="ieo-frame" >
+		</iframe>
 	</div>
 	
 	
@@ -101,7 +102,7 @@
 				<f:message var="label" key="execution.IEO.address.go.to.button" />
 				'${ label }': function() {
 				var url = $('#address-input').val();
-				squashtm.ieomanager.fillRightFrame(url);
+				squashtm.ieomanager.fillRightPane(url);
 				$('#open-address-dialog').dialog('close');
 				},			
 			</jsp:attribute>
@@ -111,8 +112,6 @@
 			</jsp:body>
 	</comp:popup>	
 
-
-	<comp:decorate-buttons />
 	
 	<script type="text/javascript">
 		require(["domReady", "execution-processing"], function(domReady, execProcessing){

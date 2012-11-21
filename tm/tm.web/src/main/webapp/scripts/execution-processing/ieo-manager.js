@@ -116,8 +116,15 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 		
 		//************ public functions ****************
 		
-		this.fillRightFrame = function(url){
-			this.rightFrame.attr('src', url);
+		this.fillRightPane = function(url){
+			try{
+				this.rightPane.find('iframe').attr('src', url);
+			}catch(ex){
+				console.log(ex);
+				this.rightPane.find('iframe body').text(ex);
+			}
+				
+	
 		};
 		
 		this.navigateNext = function(){
@@ -210,8 +217,13 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 		}, this);
 		
 		
+
 		// *********** setters etc *********************
 
+		var getStatusUrl = $.proxy(function(){
+			var state = this.state;
+			return state.baseStepUrl+"/"+state.currentStepId;
+		}, this);
 		
 		this.setControl = function(control){
 			
@@ -245,34 +257,34 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 			});
 			
 			statusCombo.change(function(){
-				var self = this;
-				$.post(this.state.statusUrl, {
-					executionStatus : $(self).val()
+				var cbox = this;
+				$.post(getStatusUrl(), {
+					executionStatus : $(cbox).val()
 				});
 			});
 			
 			succButton.click(function(){
-				$.post(this.state.statusUrl,{
+				$.post(getStatusUrl(),{
 					executionStatus : "SUCCESS"
 				})
 				.success(function(){
-					self.control.ieoControl("setSuccess");
+					self.navigateNext();
 				});
 			});
 			
 			failButton.click(function(){
-				$.post(this.state.statusUrl,{
+				$.post(getStatusUrl(),{
 					executionStatus : "FAILURE"
 				})
 				.success(function(){
-					self.control.ieoControl("setFailure");
+					self.navigateNext();
 				});			
 			});
 		
 		};
 		
-		this.setRightFrame = function(rightFrame){
-			this.rightFrame = rightFrame;
+		this.setRightPane = function(rightPane){
+			this.rightPane = rightPane;
 		};
 		
 	}

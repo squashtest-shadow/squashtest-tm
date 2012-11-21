@@ -22,10 +22,17 @@ package org.squashtest.csp.tm.web.internal.controller.execution;
 
 import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,9 +57,11 @@ public class ExecutionProcessingController {
 
 	private static final String STEP_INFORMATION_FRAGMENT = "fragment/executions/step-information-fragment";
 	
-	private static final String IE0_STEP_VIEW = "page/executions/ieo-execute-execution";
+	private static final String IE0_STEP_VIEW = "page/ieo/ieo-execute-execution";
 	private static final String STEP_PAGE_VIEW = "page/executions/execute-execution";
 	private static final String STEP_PAGE_PREVIEW = "execute-execution-preview.html";
+	
+	private static final String IEO_RIGHT_FRAME = "page/ieo/ieo-rightframe-fragment";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionProcessingController.class);
 
@@ -175,6 +184,7 @@ public class ExecutionProcessingController {
 		
 	}
 
+	
 	
 	// ************************* other stuffs ********************************************
 	

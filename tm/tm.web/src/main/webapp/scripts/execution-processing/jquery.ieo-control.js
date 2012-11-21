@@ -261,9 +261,9 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 		},
 		
 		_updateCounter : function(){
-			var label = this.element.find('step-paging');
+			var label = this.element.find('.step-paging');
 			var state = this._getState();
-			var labelText = state.currentStepIndex+" / ("+state.lastStepIndex+")";
+			var labelText = state.currentStepIndex+" / "+state.lastStepIndex;
 			label.text(labelText);
 		},
 		
@@ -274,6 +274,8 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 			
 			btnState = (this._isPrologue()) ? "disable" : "enable";
 			this.getPreviousStepButton().button(btnState);
+			this.getSuccessButton().button(btnState);
+			this.getFailedButton().button(btnState);
 			
 			if (this._getState().testSuiteMode){
 				this.element.find('.execute-next-test-case-panel').show();
@@ -283,6 +285,8 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 			}
 			btnstate = (this._canNavigateNextTestCase()) ? "enable" : "disable";
 			this.getNextTestCaseButton().button(btnState);
+			
+			
 			
 		},
 		

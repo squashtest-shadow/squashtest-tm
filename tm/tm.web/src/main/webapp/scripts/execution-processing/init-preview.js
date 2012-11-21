@@ -24,6 +24,29 @@ define(["jquery", "module", "jquery.squash.squashbutton", "jquery.squash.togglep
 	function initPreview(){
 		
 		var conf = module.config();
+
+		
+		var clickHandlers = {
+			stop : function(){
+				if (conf.optimized){
+					parent.squashtm.ieomanager.closeWindow();
+				}
+				else{
+					window.close();
+				}
+			},
+			
+			begin : function(event){
+				if (conf.optimized){
+					event.preventDefault();
+					parent.squashtm.ieomanager.navigateNext();
+					return false;
+				}
+				else{
+					//nothing special
+				}
+			}
+		}; 
 		
 		var stopButton = $("#execute-stop-button");
 		var stopIcon = stopButton.data('icon');
@@ -33,10 +56,10 @@ define(["jquery", "module", "jquery.squash.squashbutton", "jquery.squash.togglep
 			'icons' : {
 				'primary' : stopIcon
 			}
-		}).click(function(){
-			window.close();
-		});
+		}).click(clickHandlers.stop);
 		
+		
+
 		var beginButton = $("#execute-begin-button");
 		var beginIcon = beginButton.data('icon');
 		beginButton.removeAttr('data-icon');
@@ -44,7 +67,8 @@ define(["jquery", "module", "jquery.squash.squashbutton", "jquery.squash.togglep
 			'icons' : {
 				'secondary' : beginIcon
 			}
-		});
+		}).click(clickHandlers.begin);
+		
 		
 		var informationsPanel = $("#execute-informations-panel");
 		var infoTitle = informationsPanel.data('title');

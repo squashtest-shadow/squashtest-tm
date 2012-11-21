@@ -493,13 +493,15 @@
 								
 								moveNode(data, url)
 								.fail(function(jqXHR){
-									displayInformationNotification(self._get_settings().workspace_tree.cannotMoveMessage);
-									data.inst.refresh();
+									$.squash.openMessage('', self._get_settings().workspace_tree.cannotMoveMessage ).done(function() {
+										data.inst.refresh();
+									});
 								});
 							}
 							else{
-								displayInformationNotification(self._get_settings().workspace_tree.cannotMoveMessage);
-								data.inst.refresh();
+								$.squash.openMessage('', self._get_settings().workspace_tree.cannotMoveMessage ).done(function() {
+									data.inst.refresh();
+								});
 							}
 						}
 					}			

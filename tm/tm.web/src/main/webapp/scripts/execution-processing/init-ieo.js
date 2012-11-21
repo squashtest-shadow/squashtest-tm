@@ -46,7 +46,7 @@ define(["jquery", "module", "./ieo-manager", "squash.resizer", "./jquery.ieo-con
 		manager.setControl(control);
 
 		//the right panel
-		manager.setRightFrame($("#iframe-right"));
+		manager.setRightPane($("#ieo-right-panel"));
 			
 		
 
