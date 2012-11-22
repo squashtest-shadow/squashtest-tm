@@ -34,7 +34,7 @@
 			<rightPen lineWidth="0.0"/>
 		</box>
 	</style>
-	<style name="table_TH" mode="Opaque" backcolor="#660000">
+	<style name="table_TH" mode="Opaque" backcolor="#77132E">
 		<box>
 			<pen lineWidth="0.0" lineColor="#000000"/>
 			<topPen lineWidth="0.0"/>

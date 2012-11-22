@@ -123,7 +123,7 @@ div#tabbed-pane .tab {
 
 ul.ui-tabs-nav li.ui-state-default.ui-corner-top {
 	background:
-		url("jquery/ui/images/ui-bg_gloss-wave_45_2b2b2b_500x100.png")
+		url("jquery/ui/images/ui-bg_glass_45_2b2b2b_1x400.png")
 		repeat-x scroll 50% 50% #2B2B2B;
 	border-color: #2E2E2E;
 }

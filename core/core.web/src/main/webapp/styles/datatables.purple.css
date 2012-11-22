@@ -48,7 +48,7 @@ div.dataTables_wrapper tr.ui-state-highlight{
 }
 
 tr.ui-state-highlight span.ui-icon, a.ui-state-default span.ui-icon  {
-	background-image:url("jquery/ui/images/ui-icons_f3e0ff_256x240.png");
+	background-image:url("jquery/ui/images/ui-icons_ffffff_256x240.png");
 }
 
 tr.test-case-deleted{

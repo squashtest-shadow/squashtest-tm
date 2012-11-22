@@ -20,5 +20,5 @@
  */
 @CHARSET "ISO-8859-1";
 
-@import url("jquery/ui/jquery-ui-1.8.7.custom.blue.css");
+@import url("jquery/ui/jquery-ui-1.9.1.custom.blue.css");
 @import url("datatables.green.css");

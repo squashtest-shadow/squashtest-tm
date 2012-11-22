@@ -25,7 +25,7 @@
 	<property name="ireport.zoom" value="1.2100000000000077"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="cartouche" mode="Opaque" forecolor="#FFFFFF" backcolor="#660000" fill="Solid">
+	<style name="cartouche" mode="Opaque" forecolor="#FFFFFF" backcolor="#77132E" fill="Solid">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$F{projectName}.equalsIgnoreCase( "TOTAL" )]]></conditionExpression>
 			<style mode="Opaque" forecolor="#000000" backcolor="#FFFFFF" fill="Solid"/>
