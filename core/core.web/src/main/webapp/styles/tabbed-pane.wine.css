@@ -18,14 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
  
 ul.ui-tabs-nav li.ui-state-default.ui-tabs-active{
-    background: url("jquery/ui/images/ui-bg_glass_45_e67900_1x400.png") repeat-x scroll 50% 50% #e67900;
-    border-color: #ffca4f;
+    background: url("jquery/ui/images/ui-bg_glass_45_750021_1x400.png") repeat-x scroll 50% 50% #750021;
+    border-color: #52001d;
 }
 
 ul.ui-tabs-nav li.ui-state-default.ui-tabs-active.ui-state-hover{
-    background: url("jquery/ui/images/ui-bg_glass_45_e67900_1x400.png") repeat-x scroll 50% 50% #e67900;
-    border-color: #ffca4f;
+    background: url("jquery/ui/images/ui-bg_glass_45_750021_1x400.png") repeat-x scroll 50% 50% #750021;
+    border-color: #52001d;
 }

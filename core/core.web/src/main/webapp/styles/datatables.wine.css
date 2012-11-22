@@ -18,11 +18,39 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-@CHARSET "ISO-8859-1";
+/************************************
+ * Datatables customization classes *
+ ************************************/
 
-@import url("tabbed-pane.orange.css");
-@import url("jquery/ui/jquery-ui-1.9.1.custom.orange.css");
-@import url("datatables.orange.css");
+@import url("datatables.css");
 
-/* no icon support for input elements, provide padding by default */
-input.ui-button { padding: .4em 1em; }
+ 
+tr.even {
+	background-color: #F1F3F7;
+}
+tr.odd {
+	background-color: #E2E6EF;
+}
+
+tr.ui-state-row-selected, tr.even.row_selected td, tr.odd.row_selected td {
+    background-color:#962E4A;
+    color: black;
+}
+
+tr.ui-state-row-selected a{ 
+	color: black !important; 
+}
+
+div.dataTables_wrapper tr.ui-state-highlight{
+	background-image:none;
+	background-color:#E8B4C2;
+	color:black;
+}
+
+tr.ui-state-highlight span.ui-icon, a.ui-state-default span.ui-icon {
+	background-image:url("jquery/ui/images/ui-icons_a8a8a8_256x240.png");
+}
+
+
+
+
