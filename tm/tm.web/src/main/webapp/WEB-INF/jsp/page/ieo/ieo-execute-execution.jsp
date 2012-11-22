@@ -115,12 +115,18 @@
 				parent.squashtm.ieomanager.closeWindow();
 			});			
 
-			$("#execution-action a").live('click', function(){
-				var jqLink = $(this);
-				jqLink.removeAttr('target');
-				var url = jkLink.attr('href'); 
+			
+			function handleLinks(event){
+				event.preventDefault();
+				var url = $(this).attr('href'); 
 				parent.squashtm.ieomanager.fillRightPane(url);
-			});
+				return false;				
+			};
+			
+			$("#execution-action-panel a").live('click', handleLinks);
+			$("#execution-expected-result-panel a").live('click', handleLinks);
+			$("#execution-comment-panel a").live('click', handleLinks);
+			
 			
 			$("#bugtracker-section-div a").live('click', function(){
 				$(this).attr('target', "${bugLinkTarget}");
