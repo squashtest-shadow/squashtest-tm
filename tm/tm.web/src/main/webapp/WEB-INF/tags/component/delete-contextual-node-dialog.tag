@@ -46,12 +46,6 @@
 	<c:when test="${'delete-campaign-button' == openedBy}">
 		<f:message var="deleteMessage" key="dialog.label.delete-nodes.campaign.label" />
 	</c:when>
-	<c:when test="${'delete-iteration-button' == openedBy}">
-		<f:message var="deleteMessage" key="dialog.label.delete-nodes.iteration.label" />
-	</c:when>
-	<c:when test="${'delete-test-suite-button' == openedBy}">
-		<f:message var="deleteMessage" key="dialog.label.delete-nodes.test-suite.label" />
-	</c:when>
 	<c:otherwise>
 		<f:message var="deleteMessage" key="dialog.label.delete-nodes.label" />
 	</c:otherwise>
@@ -94,7 +88,7 @@ function sendContextualDeletionSimulationRequest(jqDialog){
 	.success(function(data){
 		//var message = data.message + "<b>${deleteMessage}</b>";
 		//jqDialog.html(message);
-		jqDialog.html("<table><tr><td><img src='${servContext}/images/messagebox_confirm.png'/></td><td><table><tr><td><span>${deleteMessageStart}<span class='warning-message'> <span class='red-warning-message'>${deleteMessage}</span> </span></span></td></tr><tr><td>${deleteMessageCantBeUndone}</td></tr><tr><td><span class='black-warning-message'>${deleteMessageConfirm}</span></td></tr></table></td></tr></table>");
+		jqDialog.html("<table><tr><td><img src='${servContext}/images/messagebox_confirm.png'/></td><td><table><tr><td><span>${deleteMessageStart} <span class='red-warning-message'>${deleteMessage}</span> </span></td></tr><tr><td>${deleteMessageCantBeUndone}</td></tr><tr><td class='bold-warning-message'>${deleteMessageConfirm}</td></tr></table></td></tr></table>");
 		
 	})
 	.fail(function(){

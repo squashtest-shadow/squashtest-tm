@@ -169,7 +169,7 @@ function sendDeletionSimulationRequest(){
 	var vNodes = jqDialog.data("vNodes");
 	var types = getNodeCategories(vNodes);
 	
-	jqDialog.html("<table><tr><td><img src='${servContext}/images/messagebox_confirm.png'/></td><td><table><tr><td><span>${deleteMessageStart}<span class='warning-message'> <span class='red-warning-message'>${deleteMessage}</span> </span>${deleteMessageEnd}</span></td></tr><tr><td>${deleteMessageCantBeUndone}</td></tr><tr><td><span class='black-warning-message'>${deleteMessageConfirm}</span></td></tr></table></td></tr></table>");
+	jqDialog.html("<table><tr><td><img src='${servContext}/images/messagebox_confirm.png'/></td><td><table><tr><td><span>${deleteMessageStart} <span class='red-warning-message'>${deleteMessage}</span> ${deleteMessageEnd}</span></td></tr><tr><td>${deleteMessageCantBeUndone}</td></tr><tr><td class='bold-warning-message'>${deleteMessageConfirm}</td></tr></table></td></tr></table>");
 	
 	for (var i in types){
 		var domtype = types[i];
