@@ -42,7 +42,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -90,18 +89,15 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	private boolean active = true;
 
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	@JoinColumn(name = "TCL_ID", updatable = false)
-	@NotNull
+	@JoinColumn(name = "TCL_ID")
 	private TestCaseLibrary testCaseLibrary;
 
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	@JoinColumn(name = "RL_ID", updatable = false)
-	@NotNull
+	@JoinColumn(name = "RL_ID")
 	private RequirementLibrary requirementLibrary;
 
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-	@JoinColumn(name = "CL_ID", updatable = false)
-	@NotNull
+	@JoinColumn(name = "CL_ID")
 	private CampaignLibrary campaignLibrary;
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "project")
 	private BugTrackerBinding bugtrackerBinding;
@@ -274,7 +270,6 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	public void removeBugTrackerBinding() {
 		this.bugtrackerBinding = null;
-
 	}
 
 	/**
