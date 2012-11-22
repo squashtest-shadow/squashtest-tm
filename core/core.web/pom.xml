@@ -87,9 +87,9 @@
       <artifactId>com.springsource.slf4j.api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>com.springsource.slf4j.log4j</artifactId>
-    </dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>com.springsource.slf4j.log4j</artifactId>				
+	</dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>com.springsource.slf4j.org.apache.commons.logging</artifactId>
