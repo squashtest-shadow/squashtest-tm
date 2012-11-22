@@ -78,21 +78,26 @@ documentation :
 				th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop</button>
 		</div>
 		<div class="full-width centered">
-			<span th:text="${title}" class="execution-title">Exec #3 : test interface</span> 
 			<a data-icon="ui-icon-triangle-1-e" id="execute-begin-button" th:text="#{label.Begin}"
-				th:href="${beginURL}" href="#">begin</a>
+				th:href="${beginURL}" href="#">begin</a>	
 		</div>
 	</div>
 
-	<div id="execute-body" class="execute-fragment-body">
 
-		<div id="execute-informations-panel" class="toggle-panel-main display-table is-contextual" data-title="Informations" th:attr="data-title=#{generics.information.title}">
+
+	<div id="execute-body" class="execute-fragment-body">
+	
+		<div id="execute-title-div"  class="ui-widget-header ui-state-default ui-corner-all fragment-header">
+			<h2 th:text="${title}" >Exec #3 : test interface</h2> 
+		</div>
+
+		<div id="execute-informations-panel" class="toggle-panel-main display-table is-contextual load-links-right-frame" data-title="Informations" th:attr="data-title=#{generics.information.title}">
 			
 			<div class="display-table-row">
 			
 				<label class="display-table-cell" th:text="#{label.Description}">description</label>
 				
-				<div id="testcase-description" class="display-table-cell" th:text="${execution.tcdescription}">
+				<div id="testcase-description" class="display-table-cell" th:utext="${execution.tcdescription}">
 				
 					<p th:remove="all">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem 
 					aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. 
@@ -140,10 +145,32 @@ documentation :
 				</div>
 			</div>
 			
+			<div class="display-table-row">
+				<label class="display-table-cell" th:text="#{test-case.status.label}">status</label>
+				<div id="testcase-status" class="display-table-cell" th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">
+					0 - a specifier 
+				</div>
+			
+			</div>
+			
 		</div>
 
 
-
+		<div id="execute-prerequisite-panel" class="toggle-panel-main display-table is-contextual load-links-right-frame" data-title="Prerequisite" th:attr="data-title=#{generics.prerequisite.title}">
+			
+			<div class="display-table-row">			
+				<div class="display-table-cell" th:utext="#{execution.prerequisite}">					
+					<p th:remove="all"> 
+						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam 
+						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, 
+						nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse 
+						quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?	
+					</p>	
+				</div>				
+			</div>
+			
+		</div>
+		
 	</div>
 	
 	<script type="text/javascript" th:inline="javascript">

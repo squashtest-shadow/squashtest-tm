@@ -45,6 +45,18 @@ define(["jquery", "module", "jquery.squash.squashbutton", "jquery.squash.togglep
 				else{
 					//nothing special
 				}
+			}, 
+			
+			links : function(event){
+				if (conf.optimized){
+					event.preventDefault();
+					var url = $(this).attr('href'); 
+					parent.squashtm.ieomanager.fillRightPane(url);
+					return false;	
+				}
+				else{
+					//nothing special
+				}
 			}
 		}; 
 		
@@ -76,6 +88,16 @@ define(["jquery", "module", "jquery.squash.squashbutton", "jquery.squash.togglep
 		informationsPanel.togglePanel({
 			title : infoTitle
 		});
+		
+		var prerequisitePanel = $("#execute-prerequisite-panel");
+		var prerequisiteTitle = prerequisitePanel.data('title');
+		prerequisitePanel.removeAttr('data-title');
+		prerequisitePanel.togglePanel({
+			title : prerequisiteTitle
+		});		
+		
+		$(".load-links-right-frame a").click(clickHandlers.links);
+		
 		
 	};
 	

@@ -116,17 +116,13 @@
 			});			
 
 			
-			function handleLinks(event){
+			$("div.load-links-right-frame a").live('click', function(event){
 				event.preventDefault();
 				var url = $(this).attr('href'); 
 				parent.squashtm.ieomanager.fillRightPane(url);
 				return false;				
-			};
-			
-			$("#execution-action-panel a").live('click', handleLinks);
-			$("#execution-expected-result-panel a").live('click', handleLinks);
-			$("#execution-comment-panel a").live('click', handleLinks);
-			
+			});
+
 			
 			$("#bugtracker-section-div a").live('click', function(){
 				$(this).attr('target', "${bugLinkTarget}");
@@ -178,15 +174,17 @@
 		
 		<comp:toggle-panel id="execution-action-panel" titleKey="execute.panel.action.title" isContextual="true" open="true">
 			<jsp:attribute name="body">
-				<div id="execution-action" >${executionStep.action}</div>
+				<div id="execution-action" class="load-links-right-frame">${executionStep.action}</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
 		
 		<comp:toggle-panel id="execution-expected-result-panel" titleKey="execute.panel.expected-result.title" isContextual="true" open="true">
 			<jsp:attribute name="body">
-				<div id="execution-expected-result" >${executionStep.expectedResult}</div>
+				<div id="execution-expected-result" class="load-links-right-frame">${executionStep.expectedResult}</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
+		
+		
 		<div id="execute-evaluation">
 		
 			<div id="execute-evaluation-leftside">
@@ -195,7 +193,7 @@
 	
 				<comp:toggle-panel id="execution-comment-panel" titleKey="execute.panel.comment.title" isContextual="true" open="true">
 					<jsp:attribute name="body">
-						<div id="execution-comment" >${executionStep.comment}</div>
+						<div id="execution-comment"  class="load-links-right-frame">${executionStep.comment}</div>
 					</jsp:attribute>
 				</comp:toggle-panel>
 			</div>		

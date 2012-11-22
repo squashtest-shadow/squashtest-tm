@@ -834,10 +834,6 @@ div#execute-header {
 	width: 100%;
 }
 
-#execute-header span.execution-title{
-	font-size : 20px;
-	margin-right : 2em;	
-}
 
 #new-test-case-label{
 	color : red;	
