@@ -112,7 +112,7 @@ public class ExecutionRunnerControllerHelper {
 	
 	// ************************** step model population methods *****************************
 	
-	public void populateFirstRunnableStepModel(long executionId, int stepIndex, Model model) {
+	public void populateStepAtIndexModel(long executionId, int stepIndex, Model model) {
 		
 		Execution execution = executionProcessingService.findExecution(executionId);
 		ExecutionStep executionStep = FETCHER.findStepAtIndex(executionId, stepIndex);
@@ -120,7 +120,7 @@ public class ExecutionRunnerControllerHelper {
 		_populateExecutionStepModel(execution, executionStep, model);
 	}
 	
-	public void populateStepAtIndexModel(long executionId, Model model){
+	public void populateFirstRunnableStepIndexModel(long executionId, Model model){
 		
 		Execution execution = executionProcessingService.findExecution(executionId);
 		ExecutionStep executionStep = FETCHER.firstFirstRunnable(executionId);
@@ -160,12 +160,14 @@ public class ExecutionRunnerControllerHelper {
 	public void popuplateExecutionPreview(final long executionId, boolean isOptimized, boolean isTestSuiteMode, Model model){
 		
 		Execution execution = executionProcessingService.findExecution(executionId);
+		int totalSteps = executionProcessingService.findTotalNumberSteps(executionId);
 		
 		RunnerState state = createNewRunnerState(isOptimized, isTestSuiteMode);
 		state.setPrologue(true);
 		
 		model.addAttribute("execution", execution);
 		model.addAttribute("config", state);
+		model.addAttribute("totalSteps", totalSteps);
 		
 	}
 	

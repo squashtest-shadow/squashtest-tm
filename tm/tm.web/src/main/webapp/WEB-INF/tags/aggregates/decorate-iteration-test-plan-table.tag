@@ -197,7 +197,7 @@
 			data : {"mode":"manual"},
 			dataType : "json"
 		}).done(function(id){
-			runnerUrl = "${showExecutionUrl}/"+id+"/runner?optimized=false&suitemode=false";
+			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
 			dryRunStart().done(startResumeClassic);
 		});
 	}
@@ -210,7 +210,7 @@
 			
 			var url = runnerUrl;
 			$('body form#start-optimized-form').remove();
-			$('body').append('<form id="start-optimized-form" action="'+runnerUrl+'" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="" name="optimized" id="start-optimized-button" /></form>');
+			$('body').append('<form id="start-optimized-form" action="'+runnerUrl+'" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="true" name="optimized" id="start-optimized-button" /><input type="button" value="false" name="suitemode"  /></form>');
 			
 			$('#start-optimized-button').trigger('click');
 		};
@@ -221,7 +221,7 @@
 			data : {"mode":"manual"},
 			dataType : "json"
 		}).done(function(id){
-			runnerUrl = "${showExecutionUrl}/"+id+"/runner?optimized=true&suitemode=false";
+			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
 			dryRunStart().done(startResumeOptimized);
 		});
 	}

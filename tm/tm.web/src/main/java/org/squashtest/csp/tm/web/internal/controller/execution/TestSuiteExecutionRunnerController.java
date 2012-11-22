@@ -47,14 +47,15 @@ import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService;
  */
 @Controller
 @RequestMapping("/test-suites/{testSuiteId}/test-plan")
-public class TestSuiteExecutionController {
+public class TestSuiteExecutionRunnerController {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteExecutionController.class);
+	//private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteExecutionController.class);
 
 	private static class RequestMappings {
 		public static final String INIT_EXECUTION_RUNNER = "/execution/runner";
 		public static final String TEST_EXECUTION_BEFORE_INIT = "/execution/test-runner";
 		public static final String INIT_NEXT_EXECUTION_RUNNER = "/{testPlanItemId}/next-execution/runner";
+        public static final String DELETE_ALL_EXECUTIONS = "/executions";
 	}
 
 
@@ -79,7 +80,7 @@ public class TestSuiteExecutionController {
 	}
 
 
-	public TestSuiteExecutionController() {
+	public TestSuiteExecutionRunnerController() {
 		super();
 	}
 	
@@ -101,6 +102,7 @@ public class TestSuiteExecutionController {
 			throw new TestPlanTerminatedOrNoStepsException();
 		}
 	}
+	
 	
 
 	
@@ -155,6 +157,12 @@ public class TestSuiteExecutionController {
 		return state;
 		
 	}	
+	
+	
+    @RequestMapping(value = RequestMappings.DELETE_ALL_EXECUTIONS, method = RequestMethod.DELETE )
+    public @ResponseBody void deleteAllExecutions(@PathVariable long testSuiteId) {
+             testSuiteExecutionProcessingService.deleteAllExecutions(testSuiteId);
+    }
 
 	
 }

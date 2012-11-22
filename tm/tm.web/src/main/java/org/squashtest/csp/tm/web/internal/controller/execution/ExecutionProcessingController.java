@@ -117,7 +117,7 @@ public class ExecutionProcessingController {
 												  @PathVariable int stepIndex, 										  
 												  Model model) {
 		
-		helper.populateFirstRunnableStepModel(executionId, stepIndex, model);
+		helper.populateStepAtIndexModel(executionId, stepIndex, model);
 		helper.populateClassicSingleModel(model);
 		
 		return STEP_PAGE_VIEW;
@@ -129,7 +129,7 @@ public class ExecutionProcessingController {
 												  @PathVariable int stepIndex, 										  
 												  Model model) {
 		
-		helper.populateFirstRunnableStepModel(executionId, stepIndex, model);
+		helper.populateStepAtIndexModel(executionId, stepIndex, model);
 		helper.populateClassicTestSuiteModel(executionId, model);
 		
 		return STEP_PAGE_VIEW;
@@ -141,7 +141,7 @@ public class ExecutionProcessingController {
 													@PathVariable int stepIndex,
 													Model model) {
 		
-		helper.populateFirstRunnableStepModel(executionId, stepIndex, model);
+		helper.populateStepAtIndexModel(executionId, stepIndex, model);
 		helper.populateOptimizedSingleModel(model);	
 		
 		return IE0_STEP_VIEW;
@@ -153,7 +153,7 @@ public class ExecutionProcessingController {
 													@PathVariable int stepIndex,
 													Model model) {
 		
-		helper.populateFirstRunnableStepModel(executionId, stepIndex, model);
+		helper.populateStepAtIndexModel(executionId, stepIndex, model);
 		helper.populateOptimizedTestSuiteModel(executionId, model);
 		
 		return IE0_STEP_VIEW;

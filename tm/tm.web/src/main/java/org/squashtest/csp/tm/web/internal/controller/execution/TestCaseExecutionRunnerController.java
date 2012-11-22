@@ -40,7 +40,7 @@ import org.squashtest.csp.tm.service.ExecutionProcessingService;
  */
 @Controller
 @RequestMapping("/executions/{executionId}/runner")
-public class TestCaseExecutionController {
+public class TestCaseExecutionRunnerController {
 	
 	private static final String OPTIMIZED_RUNNER_MAIN = "page/ieo/ieo-main-page";
 
@@ -49,7 +49,7 @@ public class TestCaseExecutionController {
 
 	private ExecutionProcessingService executionProcessingService;
 	
-	public TestCaseExecutionController() {
+	public TestCaseExecutionRunnerController() {
 		super();
 	}
 
