@@ -34,8 +34,6 @@ var squashtm = squashtm || {};
  * @author bsiri.
  * 
  */
-
-
 (function ($) {
 	$.fn.dataTableExt.oPagination.iFullNumbersShowPages = 1;
 
@@ -631,3 +629,25 @@ function addAttachmentButtonToRowDoV(row, attCount, buttonTemplateId,
 				buttonTemplateEmptyId + ':' + entityId);
 	}
 }
+
+squashtm.datatables = {
+	addDeleteButtonToRow : addDeleteButtonToRow,
+	enableTableRangeSelection : enableTableRangeSelection,
+	getOffsetFromDomTable : getOffsetFromDomTable,
+	enableTableDragAndDrop : enableTableDragAndDrop,
+	bindHover : bindHover,
+	decorateDeleteButtons : decorateDeleteButtons,
+	addClickHandlerToSelectHandle : addClickHandlerToSelectHandle,
+	clearRangeSelection : clearRangeSelection,
+	saveTableSelection : saveTableSelection,
+	getIdsOfSelectedTableRows : getIdsOfSelectedTableRows,
+	findRowStatus : findRowStatus,
+	getObsoleteStatusesOfSelectedTableRows : getObsoleteStatusesOfSelectedTableRows,
+	getIdsOfSelectedAssociationTableRows : getIdsOfSelectedAssociationTableRows,
+	restoreTableSelection : restoreTableSelection,
+	addHLinkToCellText : addHLinkToCellText,
+	addAttachmentButtonToRow : addAttachmentButtonToRow,
+	decorateAttachmentButtons : decorateAttachmentButtons,
+	decorateEmptyAttachmentButtons : decorateEmptyAttachmentButtons,
+	addAttachmentButtonToRowDoV : addAttachmentButtonToRowDoV
+};

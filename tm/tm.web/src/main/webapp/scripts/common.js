@@ -20,9 +20,11 @@
  */
 requirejs.config({
 	
-	packages: ["custom-field-binding",      
-	           "execution-processing"],
-	           
+  packages: [
+    "custom-field-binding", 
+    "execution-processing", 
+    "projects-manager"
+	],
 
 	/*
 	 * rules for paths naming: * third party lib: unversionned lib
@@ -105,7 +107,7 @@ requirejs.config({
 		"datatables": [ "jqueryui" ],
 		"squash.datatables": {
 			deps: [ "datatables", "squashtest/jquery.squashtm.tableDnD.ext" ],
-			exports: "squashtmDatatables"
+			exports: "squashtm.datatables"
 		},
 		"jquery.squash.datatables": {
 			deps: [ "datatables", "squash.datatables", "squashtest/classes/KeyEventListener", "jquery.squash.oneshotdialog" ],

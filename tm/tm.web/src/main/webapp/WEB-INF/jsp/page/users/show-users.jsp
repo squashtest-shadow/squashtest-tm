@@ -185,9 +185,9 @@
 								<th><f:message key="label.LastName" /></th>
 								<th><f:message key="label.Email" /></th>
 								<th><f:message key="label.CreatedOn" /></th>
-								<th><f:message key="project.workspace.table.header.createdby.label" /></th>
-								<th><f:message key="project.workspace.table.header.modifiedon.label" /></th>	
-								<th><f:message key="project.workspace.table.header.modifiedby.label" /></th>
+								<th><f:message key="label.createdBy" /></th>
+								<th><f:message key="label.modifiedOn" /></th>	
+								<th><f:message key="label.modifiedBy" /></th>
 								<th></th>
 							</tr>
 						</thead>

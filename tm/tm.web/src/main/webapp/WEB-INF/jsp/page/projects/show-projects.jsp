@@ -52,99 +52,32 @@
 		<c:url var="projectDetailsBaseUrl" value="/administration/projects" />
 		
 		<script type="text/javascript">
-					$(function() {
-							$( ".deactivated-form" ).submit(function() {
-								return false;
-							});
-							$('#new-project-button').button();
-					});
-					
-					function refreshProjects() {
-						var table = $( '#projects-table' ).dataTable();
-						table.fnDraw(false);
-					}
-					
-		
-					function tableDrawCallback() {
-						addHoverHandler(this);
-					}	
-					
-					function getProjectTableRowId(rowData) {
-						return rowData[0];	
-					}
-					
-					function addHLinkToProjectLogin(row, data) {
-						var url= '${ projectDetailsBaseUrl }/' + getProjectTableRowId(data) + '/info';			
-						addHLinkToCellText($( 'td:eq(1)', row ), url);
-					}	
-					
-					function projectTableRowCallback(row, data, displayIndex) {
-						addHLinkToProjectLogin(row, data);
-						return row;
-					}
-					
-					function addHoverHandler(dataTable){
-						$( 'tbody tr', dataTable ).hover(
-							function() {
-								$( this ).addClass( 'ui-state-highlight' );
-							}, 
-							function() {
-								$( this ).removeClass( 'ui-state-highlight' );
-							} 
-						);
-					}		
-					
-					
-		</script>
-		
+	  require([ "common" ], function() {
+	    require([ "domReady", "projects-manager" ], function(domReady, projects) {
+	    	domReady(function() {
+	        projects.init();
+	    	});
+	    });
+	  });
+	  </script>		
 		<%----------------------------------- Projects Table -----------------------------------------------%>
-		
-<!-- 
-	table structure (columns):
-	
-		* id (not shown)
-		* selecthandle
-		* name,
-		* label
-		* isActive,
-		* created on
-		* created by
-		* modified on
-		* modified by
-
- -->
-
 <div class="fragment-body">
 				<sec:authorize access=" hasRole('ROLE_ADMIN')">
 				<input style="float: right;" type="button" value='<f:message key="project.button.add.label" />' id="new-project-button"/>
 				</sec:authorize>
 				<div style="clear:both"></div>
-				<comp:decorate-ajax-table url="${ projectsUrl }" tableId="projects-table" paginate="true">
-					<jsp:attribute name="drawCallback">tableDrawCallback</jsp:attribute>
-					<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
-					<jsp:attribute name="rowCallback">projectTableRowCallback</jsp:attribute>
-					<jsp:attribute name="columnDefs">
-						<dt:column-definition targets="0" visible="false" />
-						<dt:column-definition targets="1" width="2em" cssClass="select-handle centered" sortable="false"/>
-						<dt:column-definition targets="3" sortable="false"/>
-						<dt:column-definition targets="4" sortable="false" visible="false"/>
-						<dt:column-definition targets="2, 5, 6, 7" sortable="true"/>
-						<dt:column-definition targets="8" sortable="true" lastDef="true"/>
-					</jsp:attribute>
-				</comp:decorate-ajax-table>
-				
 				<table id="projects-table">
 					<thead>
 						<tr>
-							<th>Id(not shown)</th> 
-							<th>#</th>
+							<th class="not-displayed">Id(not shown)</th> 
+							<th style="width: 2em;">#</th>
 							<th><f:message key="label.Name" /></th>
-							<th><f:message key="project.workspace.table.header.label.label" /></th>
-							<th><f:message key="project.workspace.table.header.active.label" /></th>
+							<th><f:message key="label.tag" /></th>
+							<th class="not-displayed"><f:message key="label.active" /></th>
 							<th><f:message key="label.CreatedOn" /></th>
-							<th><f:message key="project.workspace.table.header.createdby.label" /></th>
-							<th><f:message key="project.workspace.table.header.modifiedon.label" /></th>	
-							<th><f:message key="project.workspace.table.header.modifiedby.label" /></th>		
+							<th><f:message key="label.createdBy" /></th>
+							<th><f:message key="label.modifiedOn" /></th>	
+							<th><f:message key="label.modifiedBy" /></th>		
 						</tr>
 					</thead>
 					<tbody><%-- Will be populated through ajax --%></tbody>
