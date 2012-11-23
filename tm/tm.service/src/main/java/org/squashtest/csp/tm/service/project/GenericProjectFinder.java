@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 /**
@@ -39,7 +40,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 @Transactional(readOnly = true)
 public interface GenericProjectFinder {
 	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
-	List<GenericProject> findAllOrderedByName();
+	List<GenericProject> findAllOrderedByName(Paging paging);
 	/**
 	 * Will find all Projects and Templates to which the user has management access to and return them ordered according to the given params.
 	 * 

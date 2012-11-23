@@ -23,6 +23,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
@@ -52,6 +53,7 @@
 		<c:url var="projectDetailsBaseUrl" value="/administration/projects" />
 		
 		<script type="text/javascript">
+		squashtm.app.projectsManager = { deferLoading: ${ fn:length(projects) }};
 	  require([ "common" ], function() {
 	    require([ "projects-manager" ]);
 	  });
@@ -76,7 +78,21 @@
   			<th><f:message key="label.modifiedBy" /></th>		
   		</tr>
   	</thead>
-  	<tbody><%-- Will be populated through ajax --%></tbody>
+  	<tbody>
+      <c:forEach var="project" items="${ projects }" varStatus="status">
+      <tr>
+        <td class="project-id">${ project.id }</td> 
+        <td style="width: 2em;" class="select-handle centered">${ status.index }</td>
+        <td>${ project.name }</td>
+        <td>${ project.label }</td>
+        <td><f:message key="squashtm.yesno.${ project.active }" /></td>
+        <td><comp:date value="${ project.createdOn }" /></td>
+        <td><comp:user value="${ project.createdBy }" /></td>
+        <td><comp:date value="${ project.lastModifiedOn }" /></td> 
+        <td><comp:user value="${ project.lastModifiedBy }" /></td>   
+      </tr>
+      </c:forEach>
+    </tbody>
   </table>
 
   <sec:authorize access=" hasRole('ROLE_ADMIN')">

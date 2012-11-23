@@ -116,32 +116,32 @@ public class InternationalizationHelper implements MessageSource {
 	public String getMessage(MessageSourceResolvable resolvable, Locale locale) throws NoSuchMessageException {
 		return messageSource.getMessage(resolvable, locale);
 	}
-	
-	public void resolve(MessageObject object, Locale locale){
-		_processAsMap(object, locale);
+
+	public void resolve(MessageObject object, Locale locale) {
+		processAsMap(object, locale);
 	}
 
-	private void _processAsMap(Map<String, Object> object, Locale locale){
-		
-		for (Entry<String, Object> entry : object.entrySet()){
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void processAsMap(Map<String, Object> object, Locale locale) {
+
+		for (Entry<String, Object> entry : object.entrySet()) {
 			Object value = entry.getValue();
-			
-			if  (String.class.isAssignableFrom(value.getClass())){
-				String translation = _processAsString((String) value, locale);
+
+			if (value instanceof String) {
+				String translation = processAsString((String) value, locale);
 				entry.setValue(translation);
+			} else if (value instanceof Map) {
+				processAsMap((Map) value, locale);
+			} else {
+				throw new IllegalArgumentException(
+						"InternationalizationHelper : supplied MessageObject contained data that where neither "
+								+ "String nor Map. Got : '" + value.getClass() + "'");
 			}
-			else if (Map.class.isAssignableFrom(value.getClass())){
-				_processAsMap((Map)value, locale);
-			}
-			else {
-				throw new IllegalArgumentException("InternationalizationHelper : supplied MessageObject contained data that where neither "+
-													"String nor Map. Got : '"+value.getClass()+"'");
-			}
-		}		
+		}
 	}
-	
-	private String _processAsString(String key, Locale locale){
+
+	private String processAsString(String key, Locale locale) {
 		return messageSource.getMessage(key, null, locale);
 	}
-	
+
 }

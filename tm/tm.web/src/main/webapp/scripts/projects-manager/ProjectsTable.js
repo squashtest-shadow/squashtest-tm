@@ -35,7 +35,7 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 	}
 
 	function addHLinkToProjectLogin(row, data) {
-		var url= squashtm.app.contextRoot + "/administration/projects" + getProjectTableRowId(data) + '/info';			
+		var url= squashtm.app.contextRoot + "/administration/projects/" + getProjectTableRowId(data) + '/info';			
 		SQDT.addHLinkToCellText($( 'td:eq(1)', row ), url);
 	}
 
@@ -47,9 +47,9 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 					"oLanguage": {
 						"sUrl": squashtm.app.contextRoot + "/datatables/messages"
 					},
-					"sAjaxSource": squashtm.app.contextRoot + "/administration/projects/list", 
-				/*	"bDeferRender" : true,
-					"iDeferLoading" : 0,*/
+					"sAjaxSource": squashtm.app.contextRoot + "/generic-projects", 
+					"bDeferRender" : true,
+					"iDeferLoading" : squashtm.app.projectsManager.deferLoading, 
 					"fnRowCallback": this.projectTableRowCallback,
 					"fnDrawCallback": this.tableDrawCallback, 
 					"aaSorting": [ [ 2, "asc" ] ], 
@@ -61,7 +61,7 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 					}, {
 						"aTargets": [ 1 ], 
 						"bSortable": false, 
-						"cssClass": "select-handle centered"
+						"sClass": "select-handle centered"
 					}, {
 						"aTargets": [ 2 ], 
 						"bSortable": true
