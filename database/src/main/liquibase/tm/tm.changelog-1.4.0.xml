@@ -486,5 +486,12 @@
       </column>
     </addColumn>
   </changeSet>
+  
+  <changeSet id="tm-1.4.0.feat-1393.01" author="mpagnon">
+  <comment>Adds a className for the ProjectTemplate, this is needed so that a project template can hold user's permissions</comment>
+  	<insert tableName="ACL_CLASS">
+			<column name="CLASSNAME" value="org.squashtest.csp.tm.domain.project.ProjectTemplate" />
+		</insert>
+  </changeSet>
 </databaseChangeLog>
  

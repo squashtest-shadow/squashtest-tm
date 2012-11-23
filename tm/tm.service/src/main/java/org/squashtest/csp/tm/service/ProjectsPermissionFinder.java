@@ -43,6 +43,6 @@ public interface ProjectsPermissionFinder {
 	List<Project> findProjectWithoutPermissionByLogin(String userLogin);
 
 	List<UserProjectPermissionsBean> findUserPermissionsBeanByProject(long projectId);
-
+	
 	List<User> findUserWithoutPermissionByProject(long projectId);
 }

@@ -39,7 +39,7 @@ public interface ObjectAclService {
 	
 	List<String> findUsersWithWritePermission(List<ObjectIdentity> entityRefs);
 
-	List<Object[]> retrieveUserAndAclClassFromProject(long projectId, String projectClassName);
+	List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long projectId, String projectClassName);
 
 	List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName);
 

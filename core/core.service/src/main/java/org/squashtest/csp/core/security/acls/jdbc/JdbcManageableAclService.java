@@ -116,7 +116,7 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
 			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " + "where cu.LOGIN = ? and ac.CLASSNAME = ?";
 
-	private static final String USER_AND_ACL_CLASS_FROM_PROJECT = "select arse.USER_ID, ag.ID, ag.QUALIFIED_NAME from "
+	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS = "select arse.USER_ID, ag.ID, ag.QUALIFIED_NAME from "
 			+ "ACL_GROUP ag " + "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
 			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " + "where oid.IDENTITY = ? and ac.CLASSNAME = ?";
@@ -330,8 +330,8 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 	}
 
 	@Override
-	public List<Object[]> retrieveUserAndAclClassFromProject(long projectId, String projectClassName) {
-		return jdbcTemplate.query(USER_AND_ACL_CLASS_FROM_PROJECT, new Object[] { projectId, projectClassName },
+	public List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long projectId, String projectClassName) {
+		return jdbcTemplate.query(USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS, new Object[] { projectId, projectClassName },
 				AclGroupMapper);
 
 	}

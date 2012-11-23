@@ -22,6 +22,8 @@ package org.squashtest.csp.tm.service;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.tm.domain.project.Project;
 
 @Transactional
 public interface ProjectModificationService extends CustomProjectModificationService, ProjectFinder {
@@ -39,5 +41,6 @@ public interface ProjectModificationService extends CustomProjectModificationSer
 	
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	void changeTestAutomationEnabled(long projectId, boolean isEnabled);
+
 
 }

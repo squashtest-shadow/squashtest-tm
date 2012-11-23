@@ -140,6 +140,11 @@
     <property name="componentType" value="org.squashtest.csp.tm.internal.repository.ProjectDao" />
     <property name="entityType" value="org.squashtest.csp.tm.domain.project.Project" />
   </bean> 
+  
+  <bean id="projectTemplateDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
+    <property name="componentType" value="org.squashtest.csp.tm.internal.repository.ProjectTemplateDao" />
+    <property name="entityType" value="org.squashtest.csp.tm.domain.project.ProjectTemplate" />
+  </bean> 
 
   <bean id="genericProjectDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
     <property name="componentType" value="org.squashtest.csp.tm.internal.repository.GenericProjectDao" />

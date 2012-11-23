@@ -25,6 +25,7 @@ import java.util.List;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 
@@ -62,13 +63,13 @@ public interface CustomFieldBindingFinderService {
 	
 	
 	/**
-	 * returns all the custom field bindings associated to a project. 
+	 * returns all the custom field bindings associated to a {@linkplain GenericProject}. 
 	 * 
 	 * 
 	 * @param projectId
 	 * @return
 	 */
-	List<CustomFieldBinding> findCustomFieldsForProject(long projectId);
+	List<CustomFieldBinding> findCustomFieldsForGenericProject(long projectId);
 	
 	
 	/**

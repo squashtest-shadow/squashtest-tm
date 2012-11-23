@@ -20,21 +20,33 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.service.security.ObjectIdentityService;
+import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
+import org.squashtest.csp.tm.internal.repository.ProjectTemplateDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
+import org.squashtest.csp.tm.service.BugTrackerManagerService;
 import org.squashtest.csp.tm.service.ProjectManagerService;
+import org.squashtest.csp.tm.service.ProjectModificationService;
+import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
 
 @Service("squashtest.tm.service.ProjectManagerService")
 @Transactional
@@ -42,6 +54,9 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 
 	@Inject
 	private ProjectDao projectDao;
+	
+	@Inject
+	private ProjectTemplateDao projectTemplateDao;
 
 	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
@@ -54,6 +69,15 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 
 	@Inject
 	private ObjectIdentityService objectIdentityService;
+	
+	@Inject
+	private CustomFieldBindingModificationService customFieldBindingModificationService;
+	
+	@Inject
+	private ProjectsPermissionManagementService projectsPermissionManagementService;
+	
+	@Inject
+	private ProjectModificationService projectModificationService;
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -78,5 +102,52 @@ public class ProjectManagerServiceImpl implements ProjectManagerService {
 		objectIdentityService.addObjectIdentity(cl.getId(), cl.getClass());
 
 	}
+	/**
+	 * @see ProjectManagerService#addProjectAndCopySettingsFromTemplate(Project, long, boolean, boolean, boolean, boolean)
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Override
+	public Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId,
+			boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings,
+			boolean copyTestAutomationSettings) {
+		addProject(newProject);
+		ProjectTemplate projectTemplate = projectTemplateDao.findById(templateId);
+		if(copyAssignedUsers){
+			copyAssignedUsers(newProject, projectTemplate);
+		}
+		if(copyCustomFieldsSettings){
+			copyCustomFieldsSettings(newProject, projectTemplate);
+		}
+		if(copyBugtrackerSettings){
+			copyBugtrackerSettings(newProject, projectTemplate);
+		}
+		if(copyTestAutomationSettings){
+			copyTestAutomationSettings(newProject, projectTemplate);
+		}
+		return newProject;
+	}
+	
+	
+	private void copyTestAutomationSettings(Project newProject, ProjectTemplate projectTemplate) {
+		newProject.setTestAutomationEnabled(projectTemplate.isTestAutomationEnabled());
+		for(TestAutomationProject automationProject : projectTemplate.getTestAutomationProjects()){
+			newProject.bindTestAutomationProject(automationProject);
+		}
+	}
+	private void copyBugtrackerSettings(Project newProject, ProjectTemplate projectTemplate) {
+		if(projectTemplate.isBugtrackerConnected()) {
+			projectModificationService.changeBugTracker(newProject, projectTemplate.getBugtrackerBinding().getBugtracker());
+		}
+	}
+	private void copyCustomFieldsSettings(Project newProject, ProjectTemplate projectTemplate) {
+		customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate( newProject, projectTemplate);
+		
+	}
+	private void copyAssignedUsers(Project newProject, ProjectTemplate projectTemplate) {
+		projectsPermissionManagementService.copyAssignedUsersFromTemplate(newProject, projectTemplate);
+		
+	}
+	
+	
 
 }

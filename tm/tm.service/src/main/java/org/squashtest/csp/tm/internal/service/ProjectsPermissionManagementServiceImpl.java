@@ -34,6 +34,7 @@ import org.squashtest.csp.core.security.acls.model.ObjectAclService;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectPermission;
+import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.users.User;
@@ -47,6 +48,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	private static final String NAMESPACE = "squashtest.acl.group.tm";
 	private static final String PROJECT_CLASS_NAME = "org.squashtest.csp.tm.domain.project.Project";
+	private static final String PROJECT_TEMPLATE_CLASS_NAME = "org.squashtest.csp.tm.domain.project.ProjectTemplate";
 
 	private ObjectAclService aclService;
 
@@ -140,14 +142,9 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	@Override
 	public List<UserProjectPermissionsBean> findUserPermissionsBeanByProject(long projectId) {
-		List<UserProjectPermissionsBean> newResult = new ArrayList<UserProjectPermissionsBean>();
-		List<Object[]> result = aclService.retrieveUserAndAclClassFromProject(projectId, PROJECT_CLASS_NAME);
-		for (Object[] objects : result) {
-			User user = userDao.findById((Long) objects[0]);
-			newResult.add(new UserProjectPermissionsBean(user, (PermissionGroup) objects[1]));
-		}
-		return newResult;
+		return findUserPermissionBeanByProjectOfGivenType(projectId, PROJECT_CLASS_NAME);
 	}
+	
 
 	@Override
 	public List<User> findUserWithoutPermissionByProject(long projectId) {
@@ -156,5 +153,31 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 			return null;
 		}
 		return userDao.findAllByIds(idList);
+	}
+
+	@Override
+	public void copyAssignedUsersFromTemplate(Project newProject, ProjectTemplate projectTemplate) {
+		List<UserProjectPermissionsBean> templateUserPermissions = findUserPermissionsBeanByProjectTemplate(projectTemplate.getId());
+		for(UserProjectPermissionsBean userPermission : templateUserPermissions){
+			long userId = userPermission.getUser().getId();
+			long projectId = newProject.getId();
+			String permissionName = userPermission.getPermissionGroup().getQualifiedName();
+			addNewPermissionToProject(userId, projectId, permissionName);
+		}
+	}
+	
+	private List<UserProjectPermissionsBean> findUserPermissionsBeanByProjectTemplate(long projectId) {
+		return findUserPermissionBeanByProjectOfGivenType(projectId, PROJECT_TEMPLATE_CLASS_NAME);
+	}
+
+	private List<UserProjectPermissionsBean> findUserPermissionBeanByProjectOfGivenType(long projectId, String projectTemplateClassName) {
+		List<UserProjectPermissionsBean> newResult = new ArrayList<UserProjectPermissionsBean>();
+		List<Object[]> result = aclService.retriveUserAndAclGroupNameFromIdentityAndClass(projectId, projectTemplateClassName);
+		for (Object[] objects : result) {
+			User user = userDao.findById((Long) objects[0]);
+			newResult.add(new UserProjectPermissionsBean(user, (PermissionGroup) objects[1]));
+		}
+		return newResult;
+		
 	}
 }

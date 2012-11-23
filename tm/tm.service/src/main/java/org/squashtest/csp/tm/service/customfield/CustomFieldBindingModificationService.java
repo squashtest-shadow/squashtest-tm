@@ -26,6 +26,7 @@ import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 
 /**
  * An interface for services around {@link CustomField}. 
@@ -73,5 +74,13 @@ public interface CustomFieldBindingModificationService extends CustomFieldBindin
 	 * @param newIndex
 	 */
 	void moveCustomFieldbindings(List<Long> bindingIds, int newIndex);
+
+	/**
+	 * Will copy the custom field bindings of the template and apply them to the project.
+	 * 
+	 * @param newProject
+	 * @param projectTemplate
+	 */
+	void copyCustomFieldsSettingsFromTemplate(Project newProject, ProjectTemplate projectTemplate);
 	
 }

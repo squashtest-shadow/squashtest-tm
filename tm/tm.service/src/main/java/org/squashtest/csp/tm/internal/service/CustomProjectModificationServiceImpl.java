@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.service;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,12 +173,21 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 
 	@Override
 	public void changeBugTracker(long projectId, Long newBugtrackerId) {
-		LOGGER.debug("changeBugTracker for project " + projectId + " bt: " + newBugtrackerId);
-
+		
 		Project project = projectDao.findById(projectId);
 		BugTracker newBugtracker = bugTrackerDao.findById(newBugtrackerId);
-		
 		if (newBugtracker != null) {
+			changeBugTracker(project, newBugtracker);
+		} else {
+			throw new UnknownEntityException(newBugtrackerId, BugTracker.class);
+		}
+	}
+	
+
+	@Override
+	public void changeBugTracker(Project project, @NotNull BugTracker newBugtracker) {
+		LOGGER.debug("changeBugTracker for project " + project.getId() + " bt: " + newBugtracker.getId());
+		
 			// the project doesn't have bug-tracker connection yet
 			if (!project.isBugtrackerConnected()) {
 				BugTrackerBinding bugTrackerBinding = new BugTrackerBinding(project.getName(), newBugtracker, project);
@@ -186,14 +196,10 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 			// the project has a bug-tracker connection
 			else {
 				// and the new one is different from the old one
-				if (projectBugTrackerChanges(newBugtrackerId, project)) {
+				if (projectBugTrackerChanges(newBugtracker.getId(), project)) {
 					project.getBugtrackerBinding().setBugtracker(newBugtracker);
 				}
 			}
-		} else {
-			throw new UnknownEntityException(newBugtrackerId, BugTracker.class);
-		}
-
 	}
 
 	private boolean projectBugTrackerChanges(Long newBugtrackerId, Project project) {
@@ -233,5 +239,6 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	public List<Project> findAllReadable() {
 		return projectDao.findAll();
 	}
+
 
 }

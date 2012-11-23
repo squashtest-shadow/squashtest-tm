@@ -26,8 +26,6 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,8 +52,6 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 @RequestMapping("/custom-fields-binding")
 public class CustomFieldBindingController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldBindingController.class);
-	
 	private CustomFieldBindingModificationService service;
 
 	
@@ -74,7 +70,7 @@ public class CustomFieldBindingController {
 	@ResponseBody
 	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam("projectId") Long projectId){
 		
-		List<CustomFieldBinding> bindings = service.findCustomFieldsForProject(projectId);
+		List<CustomFieldBinding> bindings = service.findCustomFieldsForGenericProject(projectId);
 		
 		return bindingToJson(bindings);
 		

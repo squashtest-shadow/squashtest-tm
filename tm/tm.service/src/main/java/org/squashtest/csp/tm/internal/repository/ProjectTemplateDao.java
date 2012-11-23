@@ -18,27 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.internal.repository;
 
-import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 
-public interface ProjectsPermissionManagementService extends ProjectsPermissionFinder {
-
-	void deleteUserProjectOldPermission(String userLogin, long projectId);
-
-	void addNewPermissionToProject(long userId, long projectId, String permissionName);
-
-	void removeProjectPermission(long userId, long projectId);
-
-	/**
-	 * Will copy all user permissions of template and apply them to the project and it's libraries.
-	 * 
-	 * @param project
-	 *            : the {@link Project} to copy the permissions to
-	 * @param projectTemplate
-	 *            : the {@link ProjectTemplate} to copy the permissions from
-	 */
-	void copyAssignedUsersFromTemplate(Project project, ProjectTemplate projectTemplate);
-
+public interface ProjectTemplateDao {
+	ProjectTemplate findById(long id);
 }

@@ -22,6 +22,8 @@ package org.squashtest.csp.tm.service;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -85,7 +87,19 @@ public interface CustomProjectModificationService {
 	 * @param projectId
 	 * @param newBugtrackerId
 	 */
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	void changeBugTracker(long projectId, Long newBugtrackerId);
+	
+	/**
+	 * Change the Bugtracker the Project is associated-to.<br>
+	 * If the Project had no Bugtracker, will add a new association.<br>
+	 * If the Project had a already a Bugtracker, it will keep the project-Name information
+	 * 
+	 * @param project : the concerned project
+	 * @param bugtracker : the bugtracker to bind the project to
+	 */
+	@PreAuthorize("hasPermission(#newProject, 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	void changeBugTracker(Project newProject, BugTracker bugtracker);
 
 	/**
 	 * Will remove the association the Project has to it's Bugtracker.
@@ -103,6 +117,8 @@ public interface CustomProjectModificationService {
 	 *            the name of the bugtracker's project, the Project is connected to
 	 */
 	void changeBugTrackerProjectName(long projectId, String projectBugTrackerName);
+	
+	
 
 	List<Project> findAllReadable();
 }

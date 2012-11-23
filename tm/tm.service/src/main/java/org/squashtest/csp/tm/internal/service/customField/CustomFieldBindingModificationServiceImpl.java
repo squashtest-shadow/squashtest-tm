@@ -35,6 +35,7 @@ import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding.PositionAwareBindingList;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
@@ -77,8 +78,8 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	}
 
 	@Override
-	public List<CustomFieldBinding> findCustomFieldsForProject(long projectId) {
-		return customFieldBindingDao.findAllForProject(projectId);
+	public List<CustomFieldBinding> findCustomFieldsForGenericProject(long projectId) {
+		return customFieldBindingDao.findAllForGenericProject(projectId);
 	}
 
 	@Override
@@ -115,7 +116,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
 	public void removeCustomFieldBindings(Long projectId) {
-		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProject(projectId);
+		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForGenericProject(projectId);
 		List<Long> bindingIds = new LinkedList<Long>(CollectionUtils.collect(bindings, BINDING_ID_COLLECTOR));
 		removeCustomFieldBindings(bindingIds);
 	}
@@ -147,6 +148,19 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 		customFieldBindingDao.persist(newBinding);
 
+	}
+
+	@Override
+	public void copyCustomFieldsSettingsFromTemplate(Project newProject, ProjectTemplate projectTemplate) {
+		List<CustomFieldBinding> templateCutomFieldBindings = findCustomFieldsForGenericProject(projectTemplate.getId());
+		for(CustomFieldBinding templateCustomFieldBinding : templateCutomFieldBindings){
+			long projectId = newProject.getId();
+			BindableEntity entity = templateCustomFieldBinding.getBoundEntity();
+			long customFieldId = templateCustomFieldBinding.getCustomField().getId();
+			CustomFieldBinding newBinding = new CustomFieldBinding();
+			addNewCustomFieldBinding(projectId, entity, customFieldId, newBinding);
+		}
+		
 	}
 
 }

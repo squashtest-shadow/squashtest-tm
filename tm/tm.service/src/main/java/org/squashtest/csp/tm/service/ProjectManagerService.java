@@ -22,12 +22,24 @@ package org.squashtest.csp.tm.service;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 
 @Transactional(readOnly = false)
 public interface ProjectManagerService {
 
 	
 	void addProject(Project project);
-
 	
+	/**
+	 * Will persist the new {@linkplain Project} and add settings copied from a given {@linkplain ProjectTemplate}.
+	 * 
+	 * @param newProject : the new {@link Project} entity to persist
+	 * @param templateId : the id of the {@link ProjectTemplate} to copy the settings from
+	 * @param copyAssignedUsers : whether to copy the Template's assigned Users or not
+	 * @param copyCustomFieldsSettings : whether to copy the Template's CustomFields settings or not
+	 * @param copyBugtrackerSettings : whether to copy the Template's bug-tracker settings or not
+	 * @param copyTestAutomationSettings : whether to copy the Template's automation settings or not
+	 * @return the persisted new {@link Project}
+	 */
+	Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId, boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings , boolean copyTestAutomationSettings);
 }
