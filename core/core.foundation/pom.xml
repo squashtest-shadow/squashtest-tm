@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>squashtest-csp-core</artifactId>
 		<groupId>org.squashtest.tm</groupId>
-		<version>1.4.0.IT43-SNAPSHOT</version>
+		<version>1.4.0.IT43</version>
 	</parent>
 
 	<artifactId>core.foundation</artifactId>
