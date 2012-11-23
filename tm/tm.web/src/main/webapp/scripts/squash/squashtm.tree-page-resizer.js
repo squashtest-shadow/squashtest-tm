@@ -20,40 +20,90 @@
  */
 define ([ "jquery", "jqueryui" ], function($){
 
+	
+	//needed only if there's an iframe on the right panel (it captures the mouse movements and messes with the resizing)
+	function Overlay(panel){
+		
+		this.destroy = function(){};
+		
+		if (panel.find('iframe').length>0){
+			this.shadowedPanel = panel;
+			this.formerZIndex = panel.css('z-index');
+			
+			this.shadowedPanel.css('z-index', -10);
+			
+			this.overlay = $('<div style="position : absolute; width : 100%; height : 100%; opacity : 0.0; filter:alpha(opacity=00);"/>').prependTo(this.shadowedPanel);
+			
+			this.destroy = function(){
+				this.overlay.remove();
+				this.shadowedPanel.css('z-index', this.formerZIndex);
+			};
+		}
+
+		
+	}
+	
+
 
 	function makePanelResizable(confObj){
-		confObj.leftPanel.resizable({
+		
+		
+		var conf = {
 			minWidth: 270,
 			helper: "ui-resizable-helper",
 			
 			start : function(){
 				confObj.helper = $(".ui-resizable-helper");
-			},
-
-			stop : function(){
-				resizePanels(confObj);
-				confObj.leftPanel.css('height', '');
-				delete confObj.helper;
-			},
+				confObj.overlayRight = new Overlay(confObj.rightPanel);
+				//confObj.overlayLeft = new Overlay(confObj.leftPanel);
+			},			
 			
-			resize : function(){
-				resizePanels(confObj);
+			stop : function(){
+				confObj.leftPanel.css('height', '');
+
+				confObj.overlayRight.destroy();
+				//confObj.overlayLeft.destroy();
+				
+				delete confObj.overlayRight;
+				//delete confObj.overlayLeft;
+				delete confObj.helper;
 			}
-		});
+				
+		};
+		
+
+		/**
+		 * we will be using different resizing strategies, that depend on the 
+		 * css 'position' attribute of the right panel.
+		 * 
+		 */
+		var position = confObj.rightPanel.css('position');
+		
+		if (position==='absolute'){
+			$.extend(conf,{
+				resize : function(){
+					var pos = confObj.helper.width();
+					
+					confObj.leftPanel.width(pos-10);		
+					confObj.rightPanel.css('left',pos+10+"px");	
+				}					
+			});
+		}
+		else /*if (position==='relative' || position==='static')*/{
+			
+			confObj.leftPanel.css('float : left;');
+			confObj.rightPanel.css('overflow', 'hidden');
+			confObj.rightPanel.css('width', 'auto');
+			
+		}
+
+		confObj.leftPanel.resizable(conf);
+		
 		//now that the resizebar exists, let configure it
 		confObj.resizeBar = confObj.leftPanel.find(".ui-resizable-e");
-	};
-	
 
+	}
 	
-	function resizePanels(confObj,evt){	
-
-		var pos = confObj.helper.width();
-		
-		confObj.leftPanel.width(pos-10);
-		confObj.rightPanel.css('left',pos+10+"px");
-		
-	};
 
 	var resizer = {
 	
@@ -71,7 +121,9 @@ define ([ "jquery", "jqueryui" ], function($){
 				rightPanel : $(effective.rightSelector)
 			};
 			
+			
 			makePanelResizable(confObj);
+
 		}
 	
 	};

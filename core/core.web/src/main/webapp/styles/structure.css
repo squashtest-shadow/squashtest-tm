@@ -425,24 +425,23 @@ div.snap-right>a.button.test-step-toolbar-button>span {
 *************************/
 
 #ieo-left-panel {
+	float : left;
 	height: 100%;
 	width: 32%;
 	border: 1px solid;
-	display : inline-block;
+	margin-right : 5px;
 }
 
 #ieo-right-panel {
 	height: 100%;
-	width: 67%;
 	border: 1px solid;
-	display : inline-block;
+	overflow : hidden;
 }
-
-
 
 body#ieo-body {
 	overflow-y: hidden;
 }
+
 div#ieo-control {
 	width: 500px;
 	height: 55px;

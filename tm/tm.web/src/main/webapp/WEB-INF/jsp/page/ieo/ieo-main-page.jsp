@@ -39,24 +39,24 @@
 
 
 <head>
+
 	
 	<layout:common-head />		
 	<layout:_common-script-import />
 	<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
 
 	<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/common.js"></script>
-	
+		
 </head>
 
 <body id="ieo-body">
 
-	<div id="ieo-left-panel">
+	<div id="ieo-left-panel" >
 		<iframe id="iframe-left" name="frameleft" class="ieo-frame" src="${executeThis}">
 		</iframe>
 	</div>
 
 	
-	<%-- the bloody right ifreame is useless for now --%>
 	<div id="ieo-right-panel">
 		<iframe id="iframe-right" name="frameright" class="ieo-frame" >
 		</iframe>
