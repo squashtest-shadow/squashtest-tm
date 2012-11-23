@@ -56,7 +56,6 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 				});
 			});
 		</script>
-		<%--<comp:rich-jeditable-header/>  --%>
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">	
@@ -77,7 +76,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 	</jsp:attribute>
 			
 	<jsp:attribute name="content">
-		<div id="information-content">
+		<div id="information-content" class="unstyled">
 			<jsp:invoke fragment="informationContent" />
 		</div>
 	</jsp:attribute>	
@@ -105,7 +104,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 	</jsp:attribute>		
 
 	<jsp:attribute name="content">
-		<div id="information-content">
+		<div id="information-content" class="unstyled">
 			<jsp:invoke fragment="informationContent" />
 		</div>
 	</jsp:attribute>

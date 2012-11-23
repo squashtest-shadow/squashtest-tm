@@ -53,74 +53,81 @@
 		
 		<script type="text/javascript">
 	  require([ "common" ], function() {
-	    require([ "domReady", "projects-manager" ], function(domReady, projects) {
-	    	domReady(function() {
-	        projects.init();
-	    	});
-	    });
+	    require([ "projects-manager" ]);
 	  });
 	  </script>		
 		<%----------------------------------- Projects Table -----------------------------------------------%>
 <div class="fragment-body">
-				<sec:authorize access=" hasRole('ROLE_ADMIN')">
-				<input style="float: right;" type="button" value='<f:message key="project.button.add.label" />' id="new-project-button"/>
-				</sec:authorize>
-				<div style="clear:both"></div>
-				<table id="projects-table">
-					<thead>
-						<tr>
-							<th class="not-displayed">Id(not shown)</th> 
-							<th style="width: 2em;">#</th>
-							<th><f:message key="label.Name" /></th>
-							<th><f:message key="label.tag" /></th>
-							<th class="not-displayed"><f:message key="label.active" /></th>
-							<th><f:message key="label.CreatedOn" /></th>
-							<th><f:message key="label.createdBy" /></th>
-							<th><f:message key="label.modifiedOn" /></th>	
-							<th><f:message key="label.modifiedBy" /></th>		
-						</tr>
-					</thead>
-					<tbody><%-- Will be populated through ajax --%></tbody>
-				</table>
+  <sec:authorize access=" hasRole('ROLE_ADMIN')">
+  <input id="new-project-button" class="snap-right" type="button" value="<f:message key='project.button.add.label' />" />
+  </sec:authorize>
+  <div style="clear:both"></div>
+  <table id="projects-table">
+  	<thead>
+  		<tr>
+  			<th>Id(not shown)</th> 
+  			<th style="width: 2em;">#</th>
+  			<th><f:message key="label.Name" /></th>
+  			<th><f:message key="label.tag" /></th>
+  			<th><f:message key="label.active" /></th>
+  			<th><f:message key="label.CreatedOn" /></th>
+  			<th><f:message key="label.createdBy" /></th>
+  			<th><f:message key="label.modifiedOn" /></th>	
+  			<th><f:message key="label.modifiedBy" /></th>		
+  		</tr>
+  	</thead>
+  	<tbody><%-- Will be populated through ajax --%></tbody>
+  </table>
 
-<sec:authorize access=" hasRole('ROLE_ADMIN')">
-<comp:popup id="add-project-dialog" titleKey="dialog.new-project.title" openedBy="new-project-button">
-	<jsp:attribute name="buttons">
-		<f:message var="label1" key="label.Add" />
-			'${ label1 }': function() {
-					var url = "${ addProjectUrl }";
-					<jq:ajaxcall url="url"
-					 dataType="json"
-					 httpMethod="POST"
-					 useData="true" 
-					 successHandler="refreshProjects">		
-						<jq:params-bindings name="#add-project-name" description="#add-project-description" label="#add-project-label" />
-					</jq:ajaxcall>
-				},							
-		<pop:cancel-button />
-	</jsp:attribute>
-			<jsp:body>
-				<table>
-					<tr>
-						<td><label for="add-project-name"><f:message
-							key="label.Name" /></label></td>
-						<td><input id="add-project-name" type="text" size="50" maxlength="255" />
-						<comp:error-message forField="name" /></td>
-					</tr>
-					<tr>
-						<td><label for="add-project-description"><f:message
-							key="label.Description" /></label></td>
-						<td><textarea id="add-project-description"></textarea></td>
-					</tr>
-					<tr>
-						<td><label for="add-project-label"><f:message
-							key="dialog.new-project.label.label" /></label></td>
-						<td><input id="add-project-label" type="text" size="50" maxlength="255" /></td>
-					</tr>
-				</table>
-			</jsp:body>
-</comp:popup>
-</sec:authorize>
+  <sec:authorize access=" hasRole('ROLE_ADMIN')">
+  <div id="add-project-dialog" class="not-displayed popup-dialog form-horizontal" title="<f:message key='title.addProject' />">
+    <table class="form-horizontal">
+    	<tr class="control-group">
+    		<td>
+          <label class="control-label" for="add-project-name">
+            <f:message key="label.Name" />
+          </label>
+        </td>
+    		<td class="controls">
+          <input id="add-project-name" name="add-project-name" type="text" size="50" maxlength="255" />
+    		  <span class="help-inline">&nbsp;</span>
+        </td>
+    	</tr>
+      <tr class="control-group">
+        <td>
+          <label class="control-label" for="isTemplate"><f:message key="label.projectTemplate" /></label>
+        </td>
+        <td class="controls">
+          <input name="isTemplate" type="checkbox" />
+          <span class="help-inline">&nbsp;</span>
+        </td>
+      </tr>
+    	<tr class="control-group">
+    		<td>
+          <label class="control-label" for="add-project-description"><f:message key="label.Description" /></label>
+        </td>
+    		<td class="controls">
+          <textarea id="add-project-description" name="add-project-description"></textarea>
+          <span class="help-inline">&nbsp;</span>
+        </td>
+    	</tr>
+    	<tr class="control-group">
+    		<td>
+          <label class="control-label" for="add-project-label"><f:message key="label.tag" /></label>
+        </td>
+    		<td class="controls">
+          <input id="add-project-label" id="add-project-label" type="text" size="50" maxlength="255" />
+          <span class="help-inline">&nbsp;</span>
+        </td>
+    	</tr>
+    </table>
+    
+    <div class="popup-dialog-buttonpane">
+      <input class="confirm" type="button" value="<f:message key='label.Add' />" />
+      <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />
+    </div>
+  </div>
+  </sec:authorize>
 </div>
 </jsp:attribute>
 </layout:info-page-layout>

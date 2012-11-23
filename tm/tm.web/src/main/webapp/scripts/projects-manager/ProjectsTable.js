@@ -60,7 +60,8 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 //						"mDataProp" : "entity-id"
 					}, {
 						"aTargets": [ 1 ], 
-						"bSortable": false
+						"bSortable": false, 
+						"cssClass": "select-handle centered"
 					}, {
 						"aTargets": [ 2 ], 
 						"bSortable": true
@@ -68,7 +69,7 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 						"aTargets": [ 3 ], 
 						"bSortable": true
 					}, {
-						"aTargets": [ 2 ], 
+						"aTargets": [ 4 ], 
 						"bSortable": false, 
 						"bVisible": false
 					}, {
@@ -88,16 +89,17 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 					
 			};
 			
-			this.$el.squashTable(tableConf, squashConf);
-			this.dataTable = this.$el.squashTable();
-			
+			this.$el.squashTable(tableConf, squashConf);			
 		}, 
-		refreshProjects: function() {
-			table.fnDraw(false);
+		
+		refresh: function() {
+			this.$el.squashTable().fnDraw(false);
 		}, 
+		
 		tableDrawCallback: function() {
 			addHoverHandler(this);
 		},	
+		
 		projectTableRowCallback: function(row, data, displayIndex) {
 			addHLinkToProjectLogin(row, data);
 			return row;

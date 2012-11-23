@@ -33,7 +33,8 @@ var require = require || {};
 require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 	var squashtm = {};
 	squashtm.app = {
-		contextRoot : "${pageContext.servletContext.contextPath}",
+		contextRoot: "${pageContext.servletContext.contextPath}",
+		ckeditorLanguage: "<f:message key='rich-edit.language.value' />",
 		projectFilterConf: {
 			url: "<c:url value='/global-filter/filter' />",
 			title: "<f:message key='dialog.settings.filter.title' />",

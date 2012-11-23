@@ -124,7 +124,8 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 		},
 
 		showNewCfPanel : function(event) {
-			var self = this, showButton = event.target;
+			var self = this, 
+				showButton = event.target;
 
 			function discard() {
 				self.newCfPanel.off("newcustomfield.cancel newcustomfield.confirm");
@@ -143,6 +144,7 @@ define([ "jquery", "backbone", "app/cf/NewCustomFieldPanelView", "app/cf/NewCust
 			self.newCfPanel = new NewCustomFieldPanelView({
 				model : new NewCustomFieldModel()
 			});
+			
 			self.newCfPanel.on("newcustomfield.cancel", discard);
 			self.newCfPanel.on("newcustomfield.confirm", discardAndRefresh);
 		}
