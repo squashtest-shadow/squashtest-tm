@@ -43,6 +43,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.service.RequirementVersionManagerService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.csp.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 
@@ -67,6 +68,9 @@ public class RequirementVersionManagerController {
 	private Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider;
 
 	private RequirementVersionManagerService requirementVersionManager;
+	
+	@Inject
+	private CustomFieldValueFinderService cufValueService;
 
 	public RequirementVersionManagerController() {
 		super();
@@ -137,12 +141,15 @@ public class RequirementVersionManagerController {
 
 	private void populateRequirementEditorModel(long requirementVersionId, Model model, Locale locale) {
 		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
+		boolean hasCUF = cufValueService.hasCustomFields(requirementVersion);
+		
 		model.addAttribute("requirementVersion", requirementVersion);
 
 		String criticalities = buildMarshalledCriticalities(locale);
 		model.addAttribute("jsonCriticalities", criticalities);
 		String categories = buildMarshalledCategories(locale);
 		model.addAttribute("jsonCategories", categories);
+		model.addAttribute("hasCUF", hasCUF);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/next-status")

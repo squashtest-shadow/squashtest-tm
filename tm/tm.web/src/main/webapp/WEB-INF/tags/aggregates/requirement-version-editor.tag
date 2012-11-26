@@ -375,12 +375,13 @@
 			document.location.href="${ verifyingTCManagerUrl }" ;	
 		});
 		
-		
+		<c:if test="${hasCUF}">
 		<%-- loading the custom field panel --%>
 		$.get("${customFieldsValuesURL}?boundEntityId=${requirementVersion.boundEntityId}&boundEntityType=${requirementVersion.boundEntityType}")
 		.success(function(data){
 			$("#edit-requirement-table").append(data);
-		});						
+		});			
+		</c:if>
     	
 		
 		

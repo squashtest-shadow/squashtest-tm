@@ -42,6 +42,28 @@ public interface CustomFieldValueFinderService {
 	 */
 	List<CustomFieldValue> findAllCustomFieldValues(BoundEntity boundEntity);
 	
+	
+	/**
+	 * Tells whether the given bound entity has custom fields or not.
+	 * 
+	 * 
+	 * @param boundEntity
+	 * @return
+	 */
+	boolean hasCustomFields(BoundEntity boundEntity);
+	
+	
+	/**
+	 * Same as {@link #hasCustomFields(BoundEntity)}, the bound entity being identified by its type and id
+	 * 
+	 * @param boundEntityId
+	 * @param bindableEntity
+	 * @return
+	 */
+	boolean hasCustomFields(Long boundEntityId, BindableEntity bindableEntity);
+	
+	
+	
 	/**
 	 * Same as {@link #findAllCustomFieldValues(BoundEntity)}, but the properties identifying a BoundEntity
 	 * are broken down into its ID and type.

@@ -63,6 +63,7 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanFinder;
 import org.squashtest.csp.tm.service.TestAutomationFinderService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
@@ -92,6 +93,9 @@ public class IterationModificationController {
 	@Inject
 	private PermissionEvaluationService permissionService;
 
+	@Inject
+	private CustomFieldValueFinderService cufValueService;
+	
 	private IterationTestPlanFinder testPlanFinder;
 	
 	
@@ -132,10 +136,12 @@ public class IterationModificationController {
 
 		Iteration iteration = iterationModService.findById(iterationId);
 		TestPlanStatistics statistics = iterationModService.getIterationStatistics(iterationId);
+		boolean hasCUF = cufValueService.hasCustomFields(iteration);
 		
 		ModelAndView mav = new ModelAndView("fragment/iterations/edit-iteration");
 		mav.addObject(ITERATION_KEY, iteration);
 		mav.addObject("statistics", statistics);
+		mav.addObject("hasCUF", hasCUF);
 		return mav;
 	}
 
@@ -148,15 +154,18 @@ public class IterationModificationController {
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-iteration");
 
 		if (iteration != null) {
+			boolean hasCUF = cufValueService.hasCustomFields(iteration);
 			mav.addObject(ITERATION_KEY, iteration);
 			TestPlanStatistics statistics = iterationModService.getIterationStatistics(iterationId);
 			mav.addObject("statistics", statistics);
+			mav.addObject("hasCUF", hasCUF);
 		} else {
 			iteration = new Iteration();
 			iteration.setName("Not found");
 			iteration.setDescription("This iteration either do not exists, or was removed");
 			mav.addObject(ITERATION_KEY, new Iteration());
 			mav.addObject("statistics", null);
+			mav.addObject("hasCUF", false);
 		}
 		return mav;
 	}

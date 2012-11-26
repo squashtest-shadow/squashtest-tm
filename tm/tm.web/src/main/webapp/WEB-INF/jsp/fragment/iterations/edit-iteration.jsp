@@ -340,7 +340,7 @@
 		
 		<comp:toggle-panel id="iteration-custom-fields" 
 			titleKey="generics.customfieldvalues.title" isContextual="true"
-			open="${java.lang.Boolean.TRUE}">
+			open="${hasCUF}">
 			<jsp:attribute name="body">
 				<div id="iteration-custom-fields-content" class="display-table">
 				<div class="waiting-loading minimal-height"></div>
@@ -648,9 +648,10 @@
 				document.location.href = "${testPlanManagerUrl}";
 			});
 			
+			<c:if test="${hasCUF}">
 			<%-- loading the custom field panel --%>
 			$("#iteration-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${iteration.boundEntityId}&boundEntityType=${iteration.boundEntityType}"); 				
-	    
+	    	</c:if>
 		});
 	</script>
 </c:if>

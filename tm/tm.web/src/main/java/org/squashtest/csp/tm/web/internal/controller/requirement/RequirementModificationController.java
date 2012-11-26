@@ -55,6 +55,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.service.RequirementModificationService;
 import org.squashtest.csp.tm.service.RequirementVersionManagerService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.csp.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -83,6 +84,10 @@ public class RequirementModificationController {
 	private Provider<LevelLabelFormatter> levelFormatterProvider;
 	@Inject
 	private Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider;
+	
+	@Inject
+	private CustomFieldValueFinderService cufValueService;
+	
 
 	private RequirementModificationService requirementModService;
 	private RequirementVersionManagerService versionFinder;
@@ -113,6 +118,7 @@ public class RequirementModificationController {
 	public ModelAndView showRequirementInfo(@PathVariable long requirementId, Locale locale) {
 
 		Requirement requirement = requirementModService.findById(requirementId);
+		boolean hasCUF = cufValueService.hasCustomFields(requirement.getCurrentVersion());
 
 		ModelAndView mav = new ModelAndView("page/requirement-libraries/show-requirement");
 
@@ -122,6 +128,7 @@ public class RequirementModificationController {
 		mav.addObject("criticalityList", criticalities);
 		String categories = buildMarshalledCategories(locale);
 		mav.addObject("categoryList", categories);
+		mav.addObject("hasCUF", hasCUF);
 
 		return mav;
 	}
@@ -138,6 +145,7 @@ public class RequirementModificationController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showRequirement(@PathVariable long requirementId, Locale locale) {
 		Requirement requirement = requirementModService.findById(requirementId);
+		boolean hasCUF = cufValueService.hasCustomFields(requirement.getCurrentVersion());
 
 		ModelAndView mav = new ModelAndView("fragment/requirements/edit-requirement");
 		mav.addObject("requirement", requirement);
@@ -147,6 +155,7 @@ public class RequirementModificationController {
 		mav.addObject("criticalityList", criticalities);
 		String categories = buildMarshalledCategories(locale);
 		mav.addObject("categoryList", categories);
+		mav.addObject("hasCUF", hasCUF);
 		return mav;
 	}
 

@@ -60,6 +60,19 @@ public class PrivateCustomFieldValueServiceImpl implements
 		this.permissionService = permissionService;
 	}
 
+	
+	
+	@Override
+	public boolean hasCustomFields(BoundEntity boundEntity) {
+		return boundEntityDao.hasCustomField(boundEntity.getBoundEntityId(), boundEntity.getBoundEntityType());
+	}
+	
+	
+	@Override
+	public boolean hasCustomFields(Long boundEntityId,
+			BindableEntity bindableEntity) {
+		return boundEntityDao.hasCustomField(boundEntityId, bindableEntity);
+	}
 
 	@Override
 	public List<CustomFieldValue> findAllCustomFieldValues(BoundEntity boundEntity) {
@@ -68,6 +81,7 @@ public class PrivateCustomFieldValueServiceImpl implements
 		}
 		return customFieldValueDao.findAllCustomValues(boundEntity.getBoundEntityId(), boundEntity.getBoundEntityType());
 	}
+	
 	
 	@Override
 	public List<CustomFieldValue> findAllCustomFieldValues(Long boundEntityId,

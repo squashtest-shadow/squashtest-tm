@@ -276,7 +276,7 @@
 		
 		<comp:toggle-panel id="campaign-custom-fields" 
 			titleKey="generics.customfieldvalues.title" isContextual="true"
-			open="${java.lang.Boolean.TRUE}">
+			open="${hasCUF}">
 			<jsp:attribute name="body">
 				<div id="campaign-custom-fields-content" class="display-table">
 				<div class="waiting-loading minimal-height"></div>
@@ -358,9 +358,10 @@
 					});
 					$("#remove-test-case-button").button();
 					
+					<c:if test="${hasCUF}">
 					<%-- loading the custom field panel --%>
-					$("#campaign-custom-fields-content").load("${customFieldsValuesURL}?boundEntityId=${campaign.boundEntityId}&boundEntityType=${campaign.boundEntityType}"); 				
-			    	
+					$("#campaign-custom-fields-content").load("${customFieldsValuesURL}?boundEntityId=${campaign.boundEntityId}&boundEntityType=${campaign.boundEntityType}");
+					</c:if>			    	
 				});
 			});
 		});

@@ -53,6 +53,7 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.CampaignModificationService;
 import org.squashtest.csp.tm.service.IterationModificationService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
@@ -68,6 +69,9 @@ public class CampaignModificationController {
 
 	private CampaignModificationService campaignModService;
 	private IterationModificationService iterationModService;
+	
+	@Inject
+	private CustomFieldValueFinderService cufValueService;
 
 	private static final String PLANNING_URL = "/planning";
 	private static final String NEW_DATE_ = ", new date : ";
@@ -98,18 +102,7 @@ public class CampaignModificationController {
 		campaignModService = service;
 	}
 
-	// will return the Campaign in a full page
-	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public ModelAndView showCampaignInfo(@PathVariable long campaignId) {
 
-		Campaign campaign = campaignModService.findById(campaignId);
-		TestPlanStatistics statistics = campaignModService.findCampaignStatistics(campaignId);
-		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-campaign");
-
-		mav.addObject("campaign", campaign);
-		mav.addObject("statistics", statistics);
-		return mav;
-	}
 	
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long campaignId) {
@@ -122,14 +115,34 @@ public class CampaignModificationController {
 		return mav;
 	}
 	
+	// will return the Campaign in a full page
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	public ModelAndView showCampaignInfo(@PathVariable long campaignId) {
+
+		Campaign campaign = campaignModService.findById(campaignId);
+		TestPlanStatistics statistics = campaignModService.findCampaignStatistics(campaignId);
+		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-campaign");
+		boolean hasCUF = cufValueService.hasCustomFields(campaign);
+
+		mav.addObject("campaign", campaign);
+		mav.addObject("statistics", statistics);
+		mav.addObject("hasCUF", hasCUF);
+		return mav;
+	}
+	
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showCampaign(@PathVariable long campaignId) {
 		Campaign campaign = campaignModService.findById(campaignId);
+		boolean hasCUF = cufValueService.hasCustomFields(campaign);
+		
 		TestPlanStatistics statistics = campaignModService.findCampaignStatistics(campaignId);
+		
 		ModelAndView mav = new ModelAndView("fragment/campaigns/edit-campaign");
 		mav.addObject("campaign", campaign);
 		mav.addObject("statistics", statistics);
+		mav.addObject("hasCUF", hasCUF);
+		
 		return mav;
 	}
 

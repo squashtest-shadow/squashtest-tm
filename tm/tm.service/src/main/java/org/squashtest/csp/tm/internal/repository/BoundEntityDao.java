@@ -57,4 +57,14 @@ public interface BoundEntityDao {
 	 */
 	BoundEntity findBoundEntity(Long boundEntityId, BindableEntity entityType);
 	
+	
+	/**
+	 * Tells whether the given bound entity has custom fields or not.
+	 * 
+	 * @param boundEntityId
+	 * @param entityType
+	 * @return
+	 */
+	boolean hasCustomField(Long boundEntityId, BindableEntity entityType);
+	
 }

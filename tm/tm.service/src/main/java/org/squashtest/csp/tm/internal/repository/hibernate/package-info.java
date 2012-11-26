@@ -271,7 +271,7 @@
 		@NamedQuery(name = "BoundEntityDao.findAllCampaignsForProject", query="select c from Campaign c where c.project.id = :projectId"),
 		@NamedQuery(name = "BoundEntityDao.findAllIterationsForProject", query="select i from Iteration i join i.campaign c where c.project.id = :projectId"),
 		@NamedQuery(name = "BoundEntityDao.findAllTestSuitesForProject", query="select ts from TestSuite ts join ts.iteration i join i.campaign c where c.project.id = :projectId"),
-		
+		@NamedQuery(name = "BoundEntityDao.hasCustomFields", query="select count(cfv) from CustomFieldValue cfv where cfv.boundEntityId = :boundEntityId and cfv.boundEntityType = :boundEntityType"),
 		
 		//Administration
 		@NamedQuery(name = "administration.findAdministrationStatistics", query="select (select count(p.id) from Project p), count(*),(select count(req.id) from Requirement req),(select count(tc.id) from TestCase tc),(select count(camp.id) from Campaign camp), (select count(it.id) from Iteration it),(select count(exec.id) from Execution exec) from User"),

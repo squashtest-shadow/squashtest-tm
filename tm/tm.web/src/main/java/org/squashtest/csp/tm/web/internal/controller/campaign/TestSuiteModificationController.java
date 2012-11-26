@@ -57,6 +57,7 @@ import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanFinder;
 import org.squashtest.csp.tm.service.TestAutomationFinderService;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
@@ -89,6 +90,10 @@ public class TestSuiteModificationController {
 	private PermissionEvaluationService permissionService;
 
 	private TestAutomationFinderService testAutomationService;
+	
+	@Inject
+	private CustomFieldValueFinderService cufValueService;
+	
 
 	private static final String TEST_SUITE = "testSuite";
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
@@ -132,10 +137,12 @@ public class TestSuiteModificationController {
 	public ModelAndView showTestSuite(@PathVariable long id) {
 		TestSuite testSuite = service.findById(id);
 		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(id);
+		boolean hasCUF = cufValueService.hasCustomFields(testSuite);
 
 		ModelAndView mav = new ModelAndView("fragment/test-suites/edit-test-suite");
 		mav.addObject(TEST_SUITE, testSuite);
 		mav.addObject("statistics", testSuiteStats);
+		mav.addObject("hasCUF", hasCUF);
 		return mav;
 	}
 
@@ -150,13 +157,16 @@ public class TestSuiteModificationController {
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-test-suite");
 
 		if (testSuite != null) {
+			boolean hasCUF = cufValueService.hasCustomFields(testSuite);
 			mav.addObject(TEST_SUITE, testSuite);
 			mav.addObject("statistics", testSuiteStats);
+			mav.addObject("hasCUF", hasCUF);
 		} else {
 			testSuite = new TestSuite();
 			testSuite.setName("Not found");
 			testSuite.setDescription("This test suite either do not exists, or was removed");
 			mav.addObject(TEST_SUITE, testSuite);
+			mav.addObject("hasCUF", false);
 
 		}
 		return mav;

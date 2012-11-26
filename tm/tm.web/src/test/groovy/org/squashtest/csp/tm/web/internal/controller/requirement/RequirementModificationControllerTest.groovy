@@ -36,6 +36,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion
 import org.squashtest.csp.tm.service.RequirementModificationService
+import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.csp.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.csp.tm.web.internal.helper.LabelFormatter
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter
@@ -62,6 +63,7 @@ class RequirementModificationControllerTest extends Specification {
 		controller.statusComboDataBuilderProvider = statusBuilderProvider
 		controller.levelFormatterProvider = levelFormatterProvider
 		controller.internationalizableFormatterProvider = internationalFormatterProvider
+		controller.cufValueService = Mock(CustomFieldValueFinderService)
 	}
 
 	def criticalityBuilderProvider() {

@@ -384,7 +384,7 @@
 		
 		<comp:toggle-panel id="test-suite-custom-fields"
 			titleKey="generics.customfieldvalues.title" isContextual="true"
-			open="${java.lang.Boolean.TRUE}">
+			open="${hasCUF}">
 			<jsp:attribute name="body">
 				<div id="test-suite-custom-fields-content" class="display-table">
 				<div class="waiting-loading minimal-height"></div>
@@ -626,9 +626,10 @@
 			return false;
 		});
 		
+		<c:if test="${hasCUF}">
 		<%-- loading the custom field panel --%>
 		$("#test-suite-custom-fields-content").load("${customFieldsValuesURL}?boundEntityId=${testSuite.boundEntityId}&boundEntityType=${testSuite.boundEntityType}"); 				
-    	
+    	</c:if>
 	});
 </script>
 </c:if>

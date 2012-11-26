@@ -985,12 +985,13 @@ function addTestStepSuccessAnother(){
 			document.location.href = "${callStepManagerUrl}";			
 		});
 		
+		<c:if test="${hasCUF}">
 		<%-- loading the custom fields --%>
 		$.get("${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}")
 		.success(function(data){
 			$("#test-case-description-table").append(data);
 		});
-	
+		</c:if>
     	
 	});
 

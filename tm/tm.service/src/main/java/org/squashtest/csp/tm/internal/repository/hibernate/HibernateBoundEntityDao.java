@@ -23,10 +23,12 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.EnumType;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
@@ -92,4 +94,18 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 		return (BoundEntity)factory.getCurrentSession().load(entityClass, boundEntityId);
 		
 	}
+	
+	
+	@Override
+	public boolean hasCustomField(Long boundEntityId, BindableEntity entityType) {
+		
+		Query query = factory.getCurrentSession().getNamedQuery("BoundEntityDao.hasCustomFields");
+		query.setParameter("boundEntityId", boundEntityId, LongType.INSTANCE);
+		query.setParameter("boundEntityType", entityType);
+		
+		return ((Long)query.uniqueResult() != 0);
+		
+	}
+	
+	
 }

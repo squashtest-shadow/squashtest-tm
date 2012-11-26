@@ -391,12 +391,13 @@ that page won't be editable if
 				return false;
 			});
 			
+			<c:if test="${hasCUF}">
 			<%-- loading the custom fields --%>
 			$.get("${customFieldsValuesURL}?boundEntityId=${requirement.currentVersion.boundEntityId}&boundEntityType=${requirement.currentVersion.boundEntityType}")
 			.success(function(data){
 				$("#edit-requirement-table").append(data);
 			});						
-	    	
+	    	</c:if>
 			
 		});
 	</script>		
