@@ -164,8 +164,9 @@ documentation :
 		</div>
 
 
-		<div id="execute-prerequisite-panel" class="toggle-panel-main display-table is-contextual load-links-right-frame" data-title="Prerequisite" th:attr="data-title=#{generics.prerequisite.title}">
+		<div id="execute-prerequisite-panel" class="toggle-panel-main is-contextual load-links-right-frame" data-title="Prerequisite" th:attr="data-title=#{generics.prerequisite.title}">
 			
+			<div class="display-table">
 			<div class="display-table-row">			
 				<div class="display-table-cell" th:utext="${execution.prerequisite}">					
 					<p th:remove="all"> 
@@ -176,7 +177,7 @@ documentation :
 					</p>	
 				</div>				
 			</div>
-			
+			</div>
 		</div>
 		
 	</div>

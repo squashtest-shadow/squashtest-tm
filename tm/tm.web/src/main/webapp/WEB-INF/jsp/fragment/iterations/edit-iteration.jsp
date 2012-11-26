@@ -338,11 +338,13 @@
 		
 		<%----------------------------------- Custom Fields -----------------------------------------------%>
 		
-		<comp:toggle-panel id="iteration-custom-fields" classes="display-table"
+		<comp:toggle-panel id="iteration-custom-fields" 
 			titleKey="generics.customfieldvalues.title" isContextual="true"
 			open="${java.lang.Boolean.TRUE}">
 			<jsp:attribute name="body">
+				<div id="iteration-custom-fields-content" class="display-table">
 				<div class="waiting-loading minimal-height"></div>
+				</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
 		

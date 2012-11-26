@@ -382,11 +382,13 @@
 		
 		<%----------------------------------- Custom Fields -----------------------------------------------%>
 		
-		<comp:toggle-panel id="test-suite-custom-fields" classes="display-table"
+		<comp:toggle-panel id="test-suite-custom-fields"
 			titleKey="generics.customfieldvalues.title" isContextual="true"
 			open="${java.lang.Boolean.TRUE}">
 			<jsp:attribute name="body">
+				<div id="test-suite-custom-fields-content" class="display-table">
 				<div class="waiting-loading minimal-height"></div>
+				</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
 		
@@ -625,7 +627,7 @@
 		});
 		
 		<%-- loading the custom field panel --%>
-		$("#test-suite-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${testSuite.boundEntityId}&boundEntityType=${testSuite.boundEntityType}"); 				
+		$("#test-suite-custom-fields-content").load("${customFieldsValuesURL}?boundEntityId=${testSuite.boundEntityId}&boundEntityType=${testSuite.boundEntityType}"); 				
     	
 	});
 </script>
