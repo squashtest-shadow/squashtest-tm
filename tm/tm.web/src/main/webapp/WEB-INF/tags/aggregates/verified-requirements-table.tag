@@ -26,7 +26,7 @@
 	<thead>
 		<tr>
 			<th>#</th>
-			<th><f:message key="label.Project" /></th>
+			<th><f:message key="label.project" /></th>
 			<th><f:message key="report.requirementexport.id"/></th>
 			<th><f:message key="requirement.reference.label"/></th>
 			<th><f:message key="requirement.name.label" /></th>

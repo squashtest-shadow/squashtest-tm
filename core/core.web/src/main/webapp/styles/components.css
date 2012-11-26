@@ -618,7 +618,7 @@ span.span-green {
  * test case / execution mode 
  *******************************/
 .exec-mode-automated {
-	background: url("../images/cog.png") no-repeat center center
+	background: url("../images/cog.png") no-repeat center center;
 }
 .exec-mode-manual {
 }
@@ -630,6 +630,22 @@ span.span-green {
 	display: block;
 }
 
+/*******************************
+ * Projects 
+ *******************************/
+.type-project {
+	
+}
+.type-template {
+	background: url("../images/nyancat.gif") no-repeat center center;
+}
+.type-project, .type-template {
+	color: transparent;
+	overflow: hidden;
+	min-width: 16px;
+	min-height: 16px;
+	display: block;
+}
 
 /****************************************
 * MISC

@@ -36,12 +36,10 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 			this.$el.find("input:text").val("");
 			this.$el.find("input:checkbox").prop("checked", false);
 			textareas.val("");
+			textareas.each(decorateArea);
 			
 			this.$el.confirmDialog({
-				autoOpen: true,
-				open: function() {
-					textareas.each(decorateArea);
-				}
+				autoOpen: true
 			});
 		}, 
 		
@@ -114,12 +112,14 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 			model.name = $el.find("#add-project-name").val();
 			model.description = $el.find("#add-project-description").val();
 			model.label = $el.find("#add-project-label").val();
+			model.isTemplate = $el.find("input:checkbox[name='isTemplate']").prop("checked");
 		},
 		
 		newProjectUrl: function() {
 			var template = this.$el.find("input:checkbox[name='isTemplate']").prop("checked");
 			
-			return squashtm.app.contextRoot + (template ? "/templates" : "/projects") + "/new"; 
+//			return squashtm.app.contextRoot + (template ? "/templates" : "/projects") + "/new"; 
+			return squashtm.app.contextRoot + "/generic-projects/new"; 
 		}
 	});
 

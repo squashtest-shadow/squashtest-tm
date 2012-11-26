@@ -19,21 +19,49 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.service.project;
+package org.squashtest.csp.tm.web.internal.helper;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.project.GenericProject;
+import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.ProjectTemplate;
+import org.squashtest.csp.tm.domain.project.ProjectVisitor;
 
 /**
+ * Helper methods for Project view generation.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-@Transactional
-public interface GenericProjectManagerService extends CustomGenericProjectManager, GenericProjectFinder {
+public final class ProjectHelper {
+	private ProjectHelper() {
+		super();
+	}
 
 	/**
+	 * We cannot use instanceof in el, hence this helper method.
+	 * Also, we need to visit the object (potential hibernate proxy) to get its actual type.
+	 * 
 	 * @param project
+	 * @return <code>true</code> if project is an instance of {@link ProjectTemplate}
 	 */
-	void persist(GenericProject project);
+	public static boolean isTemplate(GenericProject project) {
+		final boolean[] res = { false };
 
+		project.accept(new ProjectVisitor() {
+
+			@Override
+			public void visit(ProjectTemplate projectTemplate) {
+				res[0] = true;
+
+			}
+
+			@Override
+			public void visit(Project project) {
+				res[0] = false;
+
+			}
+		});
+
+		return res[0];
+	}
 }

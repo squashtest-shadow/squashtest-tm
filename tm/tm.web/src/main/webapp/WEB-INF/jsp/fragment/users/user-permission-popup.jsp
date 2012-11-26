@@ -27,7 +27,7 @@
 <table>
 	<tr>
 	<td> 
-		<span> <f:message key="label.Project" /></span>
+		<span> <f:message key="label.project" /></span>
 	</td>
 	<td> 
 	<select id="project-input"> 

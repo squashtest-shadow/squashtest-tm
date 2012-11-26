@@ -80,7 +80,7 @@
 <%-- 				<th><f:message key="requirement.reference.label" /></th> --%>
 <%-- 				<th><f:message key="search.criticality.label" /></th> --%>
 <%-- 				<th><f:message --%>
-<!-- 						key="label.Project" /></th> -->
+<!-- 						key="label.project" /></th> -->
 <%-- 			</c:if> --%>
 			
 <!-- 		</tr> -->

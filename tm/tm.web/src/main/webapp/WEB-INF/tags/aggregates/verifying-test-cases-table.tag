@@ -27,7 +27,7 @@
 		<tr>
 			<th>Id</th>
 			<th>#</th>
-			<th><f:message key="label.Project" /></th>
+			<th><f:message key="label.project" /></th>
 			<th><f:message key="test-case.reference.label" /></th>
 			<th><f:message key="test-case.name.label" /></th>
 			<th><f:message key="verifying-test-cases.table.column-header.type.label"/></th>

@@ -54,20 +54,8 @@ public class ProjectAdministrationController {
 	@Inject
 	private GenericProjectFinder projectFinder;
 
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public @ResponseBody
-	void addProject(@Valid @ModelAttribute("add-project") Project project) {
-
-		LOGGER.info("description " + project.getDescription());
-		LOGGER.info("name " + project.getName());
-		LOGGER.info("label " + project.getLabel());
-
-		projectManagerService.addProject(project);
-
-	}
-
 	@ModelAttribute("projectsPageSize")
-	public long populateCustomFieldsPageSize() {
+	public long populateProjectsPageSize() {
 		return DefaultPaging.FIRST_PAGE.getPageSize();
 	}
 

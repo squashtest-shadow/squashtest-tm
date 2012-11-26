@@ -21,6 +21,7 @@
 
 --%>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ page import="org.squashtest.csp.tm.domain.project.*" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -28,9 +29,8 @@
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-<%@ taglib prefix="sec"
-	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="pu" uri="http://org.squashtest.tm/taglib/project-utils" %>
 <layout:info-page-layout titleKey="squashtm.project.title" isSubPaged="true">
 	<jsp:attribute  name="head">	
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />
@@ -53,13 +53,19 @@
 		<c:url var="projectDetailsBaseUrl" value="/administration/projects" />
 		
 		<script type="text/javascript">
-		squashtm.app.projectsManager = { deferLoading: ${ fn:length(projects) }};
+		squashtm.app.projectsManager = { 
+				deferLoading: ${ fn:length(projects) }, 
+				tooltips: {
+					template: "<f:message key='label.projectTemplate' />",
+					project: "<f:message key='label.project' />"
+				}
+		};
 	  require([ "common" ], function() {
 	    require([ "projects-manager" ]);
 	  });
 	  </script>		
 		<%----------------------------------- Projects Table -----------------------------------------------%>
-<div class="fragment-body">
+<div class="fragment-body unstyled">
   <sec:authorize access=" hasRole('ROLE_ADMIN')">
   <input id="new-project-button" class="snap-right" type="button" value="<f:message key='project.button.add.label' />" />
   </sec:authorize>
@@ -68,8 +74,10 @@
   	<thead>
   		<tr>
   			<th>Id(not shown)</th> 
-  			<th style="width: 2em;">#</th>
+  			<th class="button-cell">#</th>
   			<th><f:message key="label.Name" /></th>
+        <th>raw type (not shown)</th> 
+        <th class="icon-cell">&nbsp;</th> 
   			<th><f:message key="label.tag" /></th>
   			<th><f:message key="label.active" /></th>
   			<th><f:message key="label.CreatedOn" /></th>
@@ -82,8 +90,18 @@
       <c:forEach var="project" items="${ projects }" varStatus="status">
       <tr>
         <td class="project-id">${ project.id }</td> 
-        <td style="width: 2em;" class="select-handle centered">${ status.index }</td>
-        <td>${ project.name }</td>
+        <td class="button-cell select-handle centered">${ status.index }</td>
+        <td class="name">${ project.name }</td>
+        <c:choose>
+        <c:when test="${ pu:isTemplate(project) }">
+        <td class="raw-type">template</td>
+        <td class="type-template type" title="<f:message key='label.projectTemplate' />">&nbsp</td>
+        </c:when>
+        <c:otherwise>
+        <td class="raw-type">project</td>
+        <td class="icon-cell type-project" title="<f:message key='label.project' />">&nbsp</td>
+        </c:otherwise>
+        </c:choose>
         <td>${ project.label }</td>
         <td><f:message key="squashtm.yesno.${ project.active }" /></td>
         <td><comp:date value="${ project.createdOn }" /></td>

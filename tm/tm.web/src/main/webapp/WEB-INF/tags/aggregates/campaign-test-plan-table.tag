@@ -27,7 +27,7 @@
 		<tr>
 			<th>Item Id</th>
 			<th>#</th>
-			<th><f:message key="label.Project" /></th>
+			<th><f:message key="label.project" /></th>
 			<th><f:message key="requirement.reference.label"/></th>
 			<th><f:message key="test-case.name.label" /></th>
 			<th><f:message key="test-case.user.combo.label" /></th>

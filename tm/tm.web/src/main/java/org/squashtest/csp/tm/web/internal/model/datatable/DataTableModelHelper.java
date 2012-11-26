@@ -79,7 +79,7 @@ public abstract class DataTableModelHelper<X> {
 		return model;
 	}
 
-	public long getCurrentIndex() {
+	protected final long getCurrentIndex() {
 		return currentIndex;
 	}
 

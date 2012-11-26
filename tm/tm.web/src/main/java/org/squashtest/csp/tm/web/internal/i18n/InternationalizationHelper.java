@@ -144,4 +144,16 @@ public class InternationalizationHelper implements MessageSource {
 		return messageSource.getMessage(key, null, locale);
 	}
 
+	/**
+	 * Translates true / false into an i18n'd yes / no
+	 * 
+	 * @param yesOrNo
+	 * @param locale
+	 * @return
+	 */
+	public String internationalizeYesNo(boolean yesOrNo, Locale locale) {
+		return internationalize("squashtm.yesno." + yesOrNo, locale);
+	}
+
+	
 }

@@ -22,21 +22,27 @@
 package org.squashtest.csp.tm.web.internal.controller.project;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.project.GenericProject;
-import org.squashtest.csp.tm.service.project.GenericProjectFinder;
+import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.ProjectTemplate;
+import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
+import org.squashtest.csp.tm.web.internal.helper.ProjectHelper;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -58,9 +64,9 @@ public class GenericProjectController {
 
 	@Inject
 	private InternationalizationHelper messageSource;
-	
+
 	@Inject
-	private GenericProjectFinder projectFinder;
+	private GenericProjectManagerService projectManager;
 
 	private DataTableMapper projectMapper = new DataTableMapper("projects-table", GenericProject.class).initMapping(9)
 			.mapAttribute(GenericProject.class, 2, "name", String.class)
@@ -74,9 +80,10 @@ public class GenericProjectController {
 	@RequestMapping(value = "", params = "sEcho", method = RequestMethod.GET)
 	public @ResponseBody
 	DataTableModel getProjectsTableModel(final DataTableDrawParameters params, final Locale locale) {
-		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, projectMapper, SortedAttributeSource.SINGLE_ENTITY);
+		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, projectMapper,
+				SortedAttributeSource.SINGLE_ENTITY);
 
-		PagedCollectionHolder<List<GenericProject>> holder = projectFinder.findSortedProjects(filter);
+		PagedCollectionHolder<List<GenericProject>> holder = projectManager.findSortedProjects(filter);
 
 		return new ProjectDataTableModelHelper(locale, messageSource).buildDataModel(holder, params.getsEcho());
 
@@ -92,42 +99,34 @@ public class GenericProjectController {
 		}
 
 		@Override
-		public Object[] buildItemData(GenericProject item) {
+		public Object buildItemData(GenericProject project) {
+			Map<String, Object> data = new HashMap<String, Object>(11);
 
-			final AuditableMixin auditable = (AuditableMixin) item;
-			return new Object[] { item.getId(), getCurrentIndex(), formatString(item.getName(), locale, messageSource),
-					formatString(item.getLabel(), locale, messageSource),
-					formatBoolean(item.isActive(), locale, messageSource),
-					formatDate(auditable.getCreatedOn(), locale, messageSource),
-					formatString(auditable.getCreatedBy(), locale, messageSource),
-					formatDate(auditable.getLastModifiedOn(), locale, messageSource),
-					formatString(auditable.getLastModifiedBy(), locale, messageSource) };
-		}
-	}
-	
-	private static String formatString(String arg, Locale locale, InternationalizationHelper messageSource) {
-		if (arg == null) {
-			return formatNoData(locale, messageSource);
-		} else {
-			return arg;
-		}
-	}
+			final AuditableMixin auditable = (AuditableMixin) project;
 
-	private static String formatDate(Date date, Locale locale, InternationalizationHelper messageSource) {
-			return messageSource.localizeDate(date, locale);
-	}
-
-	private static String formatBoolean(boolean arg, Locale locale, InternationalizationHelper messageSource) {
-		try {
-			return messageSource.internationalize("squashtm.yesno." + arg, locale);
-		} catch (NoSuchMessageException ex) {
-			LOGGER.warn("Internationalization key not found : " + ex.getMessage(), ex);
-			return formatNoData(locale, messageSource);
+			data.put("project-id", project.getId());
+			data.put("index", getCurrentIndex());
+			data.put("name", project.getName());
+			data.put("active", messageSource.internationalizeYesNo(project.isActive(), locale));
+			data.put("label", project.getLabel());
+			data.put("created-on", messageSource.localizeDate(auditable.getCreatedOn(), locale));
+			data.put("created-by", auditable.getCreatedBy());
+			data.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
+			data.put("last-mod-by", auditable.getLastModifiedBy());
+			data.put("raw-type", ProjectHelper.isTemplate(project) ? "template" : "project");
+			data.put("type", "&nbsp;");
+			
+			return data;
 		}
 	}
 
-	private static String formatNoData(Locale locale, InternationalizationHelper messageSource) {
-		return messageSource.internationalize("squashtm.nodata", locale);
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "isTemplate=false")
+	public @ResponseBody void createNewProject(@Valid @ModelAttribute("add-project") Project project) {
+		projectManager.persist(project);
 	}
 
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "isTemplate=true")
+	public @ResponseBody void createNewProject(@Valid @ModelAttribute("add-project") ProjectTemplate template) {
+		projectManager.persist(template);
+	}
 }

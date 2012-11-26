@@ -958,7 +958,7 @@ function addTestStepSuccessAnother(){
 				<tr>
 					<th>Id(masked)</th>
 					<th>#</th>
-					<th><f:message key="label.Project" /></th>
+					<th><f:message key="label.project" /></th>
 					<th><f:message key="test-case.reference.label" /></th>
 					<th><f:message key="label.Name" /></th>
 					<th><f:message key="test-case.calling-test-cases.table.execmode.label" /></th>				

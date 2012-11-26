@@ -91,7 +91,7 @@
 			<div style="float: left; height: 3em">
 				<h2>
 					<label for="project-name-header"><f:message
-							key="label.Project" />
+							key="label.project" />
 					</label><a id="project-name-header" href="javascript:void(0);"><c:out
 							value="${ adminproject.project.name }" escapeXml="true" />
 					</a>

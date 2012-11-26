@@ -27,7 +27,7 @@
 		<tr>
 			<th>Test Plan Id</th>
 			<th>#</th>
-			<th><f:message key="label.Project" /></th>
+			<th><f:message key="label.project" /></th>
 			<th>&nbsp;</th><%-- exec mode icon --%>
 			<th><f:message key="requirement.reference.label"/></th>
 			<th><f:message key="iteration.executions.table.column-header.test-case.label" /></th>

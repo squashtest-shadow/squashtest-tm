@@ -1010,6 +1010,10 @@ tr.nodrop td.drag-handle {
 	cursor: n-resize;
 }
 
+td.button-cell, th.button-cell, td.icon-cell, th.icon-cell {
+	width: 2em;
+}
+
 .requirement-direct-verification {
 	
 }

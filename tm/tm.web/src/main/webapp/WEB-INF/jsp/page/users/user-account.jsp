@@ -106,7 +106,7 @@
 				<table id="project-permission-table">
 				<thead>
 					<tr>
-						<th><f:message key="label.Project" /></th>
+						<th><f:message key="label.project" /></th>
 						<th><f:message key="label.Permission" /></th>
 					</tr>
 				</thead>
