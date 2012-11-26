@@ -961,11 +961,11 @@ select option,select {
 	color: #888888;
 }
 
-.not-displayed, .unstyled {
+.not-displayed {
 	display: none;
 }
 
-.not-visible {
+.not-visible, .unstyled {
 	visibility: hidden;
 }
 
