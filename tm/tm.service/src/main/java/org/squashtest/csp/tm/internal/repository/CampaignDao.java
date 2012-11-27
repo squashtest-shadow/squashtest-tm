@@ -69,4 +69,6 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	 */
 	TestPlanStatistics findCampaignStatistics(long campaignId);
 
+	
+	long countRunningOrDoneExecutions(long campaignId);
 }

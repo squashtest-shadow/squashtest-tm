@@ -232,8 +232,8 @@ class ExcelTestCaseParserImplTest extends Specification {
 		ptc.createdOn = "chuck testa"
 		ptc.createdBy = "monti"
 		ptc.importance = "MEDIUM"
-		ptc.nature = "NONE"
-		ptc.type = "NONE"
+		ptc.nature = "UNDEFINED"
+		ptc.type = "UNDEFINED"
 		ptc.status = "WORK_IN_PROGRESS"
 
 		and :
@@ -257,8 +257,8 @@ class ExcelTestCaseParserImplTest extends Specification {
 		ptc.createdOn="21/12/2012"
 		ptc.createdBy="monti"
 		ptc.importance="VERY_HIGH"
-		ptc.nature = "NONE"
-		ptc.type = "NONE"
+		ptc.nature = "UNDEFINED"
+		ptc.type = "UNDEFINED"
 		ptc.status = "WORK_IN_PROGRESS"
 		
 		and :
@@ -286,8 +286,8 @@ class ExcelTestCaseParserImplTest extends Specification {
 		ptc.createdOn="chuck testa"
 		ptc.createdBy="monti"
 		ptc.importance="very_HIGH"
-		ptc.nature = "NONE"
-		ptc.type = "NONE"
+		ptc.nature = "UNDEFINED"
+		ptc.type = "UNDEFINED"
 		ptc.status = "WORK_IN_PROGRESS"
 		
 		and :

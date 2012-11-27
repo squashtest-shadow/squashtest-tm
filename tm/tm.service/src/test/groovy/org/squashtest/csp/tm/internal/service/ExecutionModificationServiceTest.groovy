@@ -88,8 +88,8 @@ public class ExecutionModificationServiceTest extends Specification {
 		testCase.getAllAttachments() >> new HashSet<Attachment>()
 		testCase.getPrerequisite() >> "prerequisite"
 		testCase.getImportance() >> TestCaseImportance.LOW
-		testCase.getNature() >> TestCaseNature.NONE
-		testCase.getType() >> TestCaseType.NONE
+		testCase.getNature() >> TestCaseNature.UNDEFINED
+		testCase.getType() >> TestCaseType.UNDEFINED
 		testCase.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
 		testCase.getDescription() >> ""
 		testCase.getReference() >> ""

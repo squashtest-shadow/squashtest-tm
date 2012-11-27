@@ -28,7 +28,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
+import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
@@ -47,7 +49,11 @@ import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.internal.service.CampaignNodeDeletionHandler;
 import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
+import org.squashtest.csp.tm.service.deletion.NotDeletableCampaignsPreviewReport;
+import org.squashtest.csp.tm.service.deletion.NotDeletablePreviewReport;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.csp.tm.internal.utils.security.PermissionsUtils;
+import org.squashtest.csp.tm.internal.utils.security.SecurityCheckableObject;
 
 @Component("squashtest.tm.service.deletion.CampaignNodeDeletionHandler")
 public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl<CampaignLibraryNode, CampaignFolder>
@@ -71,6 +77,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
 
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
+	
 	@Override
 	protected FolderDao<CampaignFolder, CampaignLibraryNode> getFolderDao() {
 		return folderDao;
@@ -81,15 +90,74 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 	@Override
 	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds) {
 
-		// TODO : implement the specs when they are ready. Default is "nothing special".
-		return Collections.emptyList();
+		List<SuppressionPreviewReport> reportList = new ArrayList<SuppressionPreviewReport>();
+		NotDeletableCampaignsPreviewReport report;
+		List<Campaign> campaigns = campaignDao.findAllByIds(nodeIds);
+		
+		//by default the user is assumed to be allowed to delete the campaigns without warning
+		
+		for(Campaign campaign : campaigns){
+			
+			if(campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0){
+				
+				try{
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign,"MANAGEMENT"));
+					
+					//The user is allowed to delete the campaign but must be warned
+					report = new NotDeletableCampaignsPreviewReport();
+					report.addName(campaign.getName());
+					report.setHasRights(true);
+					reportList.add(report);
+				}
+				catch(AccessDeniedException exception){
+					
+					//The user is not allowed to delete the campaign
+					report = new NotDeletableCampaignsPreviewReport();
+					report.addName(campaign.getName());
+					report.setHasRights(false);
+					reportList.add(report);
+				}
+				
+			}
+		}
+
+		return reportList;
 	}
 
 	@Override
 	public List<SuppressionPreviewReport> simulateIterationDeletion(List<Long> targetIds) {
 
-		// TODO : implement the specs when they are ready. Default is "nothing special".
-		return Collections.emptyList();
+		List<SuppressionPreviewReport> reportList = new ArrayList<SuppressionPreviewReport>();
+		NotDeletableCampaignsPreviewReport report;
+		List<Iteration> iterations = iterationDao.findAllByIds(targetIds);
+		
+		//by default the user is assumed to be allowed to delete the iterations without warning
+		
+		for(Iteration iteration : iterations){
+			
+			if(iterationDao.countRunningOrDoneExecutions(iteration.getId()) > 0){
+				
+				try{
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration,"MANAGEMENT"));
+				
+					//The user is allowed to delete the campaign but must be warned
+					report = new NotDeletableCampaignsPreviewReport();
+					report.addName(iteration.getName());
+					report.setHasRights(true);
+					reportList.add(report);
+				}
+				catch(AccessDeniedException exception){
+		
+					//The user is not allowed to delete the campaign
+					report = new NotDeletableCampaignsPreviewReport();
+					report.addName(iteration.getName());
+					report.setHasRights(false);
+					reportList.add(report);
+				}
+			}
+		}
+		
+		return reportList;
 	}
 
 	@Override
@@ -111,9 +179,23 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 	@Override
 	protected List<Long> detectLockedNodes(List<Long> nodeIds) {
 
-		// TODO : implement the specs when they are ready. Default is "no lock detected".
-		return Collections.emptyList();
-
+		List<Campaign> campaigns = campaignDao.findAllByIds(nodeIds);
+		List<Long> lockedNodes = new ArrayList<Long>(nodeIds.size());
+		
+		for(Campaign campaign : campaigns){
+			
+			if(campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0){
+				
+				try{
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign,"MANAGEMENT"));	
+				}
+				catch(AccessDeniedException exception){
+					lockedNodes.add(campaign.getId());
+				}
+			}
+		}
+		
+		return lockedNodes;
 	}
 
 	/* *********************************************************************************
@@ -133,8 +215,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 	 * by Nodes we mean the CampaignLibraryNodes.
 	 */
 	protected void batchDeleteNodes(List<Long> ids) {
+		
 		List<Campaign> campaigns = campaignDao.findAllByIds(ids);
-
+		
 		// saving the attachment list for later.
 		List<AttachmentList> attachLists = new LinkedList<AttachmentList>();
 		for (Campaign campaign : campaigns) {
@@ -157,24 +240,41 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 		for (AttachmentList list : attachLists) {
 			deletionDao.removeAttachmentList(list);
 		}
-
 	}
 
 	@Override
 	public List<Long> deleteIterations(List<Long> targetIds) {
 
 		List<Iteration> iterations = iterationDao.findAllByIds(targetIds);
-
-		for (Iteration iteration : iterations) {
-			iteration.getCampaign().removeIteration(iteration);
+		List<Iteration> iterationsToBeDeleted = new ArrayList<Iteration>(iterations.size());
+		List<Long> deletedTargetIds = new ArrayList<Long>(targetIds.size());
+		
+		for(Iteration iteration : iterations){
+			
+			if(iterationDao.countRunningOrDoneExecutions(iteration.getId()) > 0){
+				
+				try{
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration,"MANAGEMENT"));
+					iteration.getCampaign().removeIteration(iteration);
+					iterationsToBeDeleted.add(iteration);
+					deletedTargetIds.add(iteration.getId());
+				}
+				catch(AccessDeniedException exception){
+					
+				}
+			}
+			else{
+				iteration.getCampaign().removeIteration(iteration);
+				iterationsToBeDeleted.add(iteration);
+				deletedTargetIds.add(iteration.getId());
+			}
 		}
-
-		doDeleteIterations(iterations);
-
-		return targetIds;
-
+			
+		doDeleteIterations(iterationsToBeDeleted);		
+	
+		return deletedTargetIds;
 	}
-
+	
 	@Override
 	public List<Long> deleteSuites(List<Long> testSuites) {
 		List<TestSuite> suites = suiteDao.findAllByIds(testSuites);

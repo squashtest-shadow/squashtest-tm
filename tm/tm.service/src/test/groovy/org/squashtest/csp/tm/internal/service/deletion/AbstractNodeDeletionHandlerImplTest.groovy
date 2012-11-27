@@ -82,7 +82,6 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 		}
 		
 		protected  void batchDeleteNodes(List<Long> ids){
-
 		}
 		
 		

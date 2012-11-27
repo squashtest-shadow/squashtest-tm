@@ -169,8 +169,8 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			
 			testcase.importance == TestCaseImportance.MEDIUM;
 			testcase.status == TestCaseStatus.APPROVED;
-			testcase.nature == TestCaseNature.BUSINESS;
-			testcase.type == TestCaseType.NONE;
+			testcase.nature == TestCaseNature.BUSINESS_TESTING;
+			testcase.type == TestCaseType.UNDEFINED;
 	}
 	
 	/*

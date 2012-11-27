@@ -42,19 +42,22 @@
 <c:choose>
 		<c:when test="${'requirement' == resourceName}">
 			<f:message var="deleteMessage" key="dialog.label.delete-nodes.requirements.label" />
+			<f:message var='deleteMessageStart' key='dialog.label.delete-node.label.start'/>
 		</c:when>
 		<c:when test="${'test-case' == resourceName}">
 			<f:message var="deleteMessage" key="dialog.label.delete-nodes.test-cases.label" />
+			<f:message var='deleteMessageStart' key='dialog.label.delete-node.label.start'/>
 		</c:when>
 		<c:when test="${'campaign' == resourceName}">
 			<f:message var="deleteMessage" key="dialog.label.delete-nodes.campaigns.label" />
+			<f:message var='deleteMessageStart' key='dialog.label.delete-node.label.start.campaigns'/>
 		</c:when>
 		<c:otherwise>
 			<f:message var="deleteMessage" key="dialog.label.delete-nodes.label" />
+			<f:message var='deleteMessageStart' key='dialog.label.delete-node.label.start'/>
 		</c:otherwise>
 	</c:choose>
 
-<f:message var='deleteMessageStart' key='dialog.label.delete-node.label.start'/>
 <f:message var='deleteMessageEnd' key='dialog.label.delete-node.label.end'/>
 <f:message var='deleteMessageCantBeUndone' key='dialog.label.delete-node.label.cantbeundone'/>
 <f:message var='deleteMessageConfirm' key='dialog.label.delete-node.label.confirm'/>

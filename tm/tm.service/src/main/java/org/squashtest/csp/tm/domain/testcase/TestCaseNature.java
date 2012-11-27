@@ -24,13 +24,14 @@ import org.squashtest.csp.tm.domain.Level;
 
 public enum TestCaseNature implements Level{
 
-	NONE(1),
-	FUNCTIONAL(2),
-	BUSINESS(3),
-	NON_FUNCTIONAL(4),
-	PERFORMANCE(5),
-	SECURITY(6),
-	ATDD(7);
+	UNDEFINED(1),
+	FUNCTIONAL_TESTING(2),
+	BUSINESS_TESTING(3),
+	USER_TESTING(4),
+	NON_FUNCTIONAL_TESTING(5),
+	PERFORMANCE_TESTING(6),
+	SECURITY_TESTING(7),
+	ATDD(8);
 	
 	private static final String I18N_KEY_ROOT = "test-case.nature.";
 
@@ -51,6 +52,6 @@ public enum TestCaseNature implements Level{
 	}
 	
 	public static TestCaseNature defaultValue() {
-		return NONE;
+		return UNDEFINED;
 	}
 }

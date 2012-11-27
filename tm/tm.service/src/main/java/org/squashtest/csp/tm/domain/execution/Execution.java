@@ -128,12 +128,12 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_NATURE")
-	private TestCaseNature nature = TestCaseNature.NONE;
+	private TestCaseNature nature = TestCaseNature.UNDEFINED;
 	
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_TYPE")
-	private TestCaseType type = TestCaseType.NONE;
+	private TestCaseType type = TestCaseType.UNDEFINED;
 
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)

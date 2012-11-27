@@ -65,5 +65,6 @@ public interface IterationDao extends EntityDao<Iteration> {
 	 * @return the {@link TestPlanStatistics} computed out of each iteration's test-plan-items
 	 */
 	TestPlanStatistics getIterationStatistics(long iterationId);
-
+	
+	long countRunningOrDoneExecutions(long iterationId);
 }

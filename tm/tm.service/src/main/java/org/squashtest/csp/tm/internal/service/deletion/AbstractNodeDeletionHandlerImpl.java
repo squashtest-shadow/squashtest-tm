@@ -204,6 +204,7 @@ public abstract class AbstractNodeDeletionHandlerImpl<NODE extends LibraryNode, 
 	 * unbinding them from the rest of the domain.
 	 *
 	 * @param ids the doomed node ids.
+	 * @return 
 	 */
 	protected abstract void batchDeleteNodes(List<Long> ids);
 

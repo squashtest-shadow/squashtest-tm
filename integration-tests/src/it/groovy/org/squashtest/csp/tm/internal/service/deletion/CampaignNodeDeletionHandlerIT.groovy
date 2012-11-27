@@ -64,13 +64,8 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler
 
-
-
 	@Inject
 	private CampaignLibraryNavigationService cNavService;
-
-
-
 
 	/* ****** test of suppression itself, assume that they're all green for removal ************* */
 

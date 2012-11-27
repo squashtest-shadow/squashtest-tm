@@ -532,29 +532,14 @@
 
 	<%-- ---------------------deletion popup------------------------------ --%>
 	<c:if test="${ deletable }">
-		<script>
-		var iterationId = ${iteration.id};
-		$(function(){
-			$('#delete-iteration-button').click(function(){
-				oneShotConfirm("<f:message key='dialog.delete-iteration.title' />", 
-						"<table><tr><td><img src='${servContext}/images/messagebox_confirm.png'/></td><td><table><tr><td><span>${deleteMessageStart} <span class='red-warning-message'>${deleteMessage}</span> ${deleteMessageEnd}</span></td></tr><tr><td>${deleteMessageCantBeUndone}</td></tr><tr><td class='bold-warning-message'>${deleteMessageConfirm}</td></tr></table></td></tr></table>",
-						"<f:message key='label.Confirm' />",  
-						"<f:message key='label.Cancel' />",
-						'500px').done(function(){confirmIterationDeletion()
-							.done(deleteIterationSuccess)
-							.fail(deleteIterationFailure)});
-			});
-		});
-		
-		function confirmIterationDeletion(){
-			return $.ajax({
-				'url' : '${confirmDeletionUrl}'+"?nodeIds[]="+iterationId,
-				type : 'DELETE',
-				dataType : 'json'
-			});
-		}
-		
-		</script>
+	
+		<comp:delete-contextual-node-dialog
+		simulationUrl="${simulateDeletionUrl}"
+		confirmationUrl="${confirmDeletionUrl}" itemId="${iteration.id}"
+		successCallback="deleteIterationSuccess"
+		openedBy="delete-iteration-button"
+		titleKey="dialog.delete-iteration.title" />
+	
 	</c:if>
 
 	<%--------------------------- Assign User popup -------------------------------------%>

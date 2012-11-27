@@ -222,4 +222,9 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 			statusMap.put(((ExecutionStatus) objTab[0]).name(), ((Long) objTab[1]).intValue());
 		}
 	}
+	
+	@Override
+	public long countRunningOrDoneExecutions(long iterationId){
+		return (Long) executeEntityNamedQuery("iteration.countRunningOrDoneExecutions", idParameter(iterationId));
+	}
 }

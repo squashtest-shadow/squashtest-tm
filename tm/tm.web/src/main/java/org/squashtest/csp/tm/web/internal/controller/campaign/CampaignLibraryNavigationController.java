@@ -49,6 +49,7 @@ import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationController;
+import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationController.Message;
 import org.squashtest.csp.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.IterationNodeBuilder;
@@ -243,20 +244,31 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}	
 
 	@RequestMapping(value="/delete-iterations/simulate", method = RequestMethod.POST, params = {NODE_IDS})
-	public @ResponseBody String simulateIterationDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale){
+	public @ResponseBody Message simulateIterationDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale){
+		
+
 		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateIterationDeletion(nodeIds);
 		
 		StringBuilder builder = new StringBuilder();
-		
+
 		for (SuppressionPreviewReport report : reportList){
 			builder.append(report.toString(getMessageSource(), locale));
 			builder.append("<br/>");
 		}
-		
-		return builder.toString();
-		
-	}
 
+		return new Message(builder.toString());	
+	}
+	
+	public static class Message {
+		private String message ;
+		public Message (String message){
+			this.message = message;
+		}
+		public String getMessage(){
+			return this.message;
+		}
+	}
+	
 	@RequestMapping(value="/delete-iterations/confirm", method=RequestMethod.DELETE, params= {NODE_IDS})
 	public @ResponseBody List<Long> confirmIterationsDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds){
 		

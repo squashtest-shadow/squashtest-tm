@@ -695,13 +695,13 @@
 								<tr>
 									<td>
 										<div class="search-tc-nature-1">
-											<input type="checkbox" id="nature-1" data-value="FUNCTIONAL" checked="checked"/><span><f:message
+											<input type="checkbox" id="nature-1" data-value="FUNCTIONAL_TESTING" checked="checked"/><span><f:message
 													key="test-case.nature.FUNCTIONAL" /> </span>
 										</div>
 									</td>
 									<td>
 										<div class="search-tc-nature-2">
-											<input type="checkbox" id="nature-2" data-value="BUSINESS" checked="checked"/><span><f:message
+											<input type="checkbox" id="nature-2" data-value="BUSINESS_TESTING" checked="checked"/><span><f:message
 													key="test-case.nature.BUSINESS" /> </span>
 										</div>
 									</td>
@@ -709,36 +709,42 @@
 								<tr>
 									<td>
 										<div class="search-tc-nature-3">
-											<input type="checkbox" id="nature-3" data-value="NON_FUNCTIONAL" checked="checked"/><span><f:message
-													key="test-case.nature.NON_FUNCTIONAL" /> </span>
+											<input type="checkbox" id="nature-3" data-value="USER_TESTING" checked="checked"/><span><f:message
+													key="test-case.nature.USER" /> </span>
 										</div>
 									</td>
 									<td>
 										<div class="search-tc-nature-4">
-											<input type="checkbox" id="nature-4" data-value="PERFORMANCE" checked="checked"/><span><f:message
-													key="test-case.nature.PERFORMANCE" /> </span>
+											<input type="checkbox" id="nature-4" data-value="NON_FUNCTIONAL_TESTING" checked="checked"/><span><f:message
+													key="test-case.nature.NON_FUNCTIONAL" /> </span>
 										</div>
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<div class="search-tc-nature-5">
-											<input type="checkbox" id="nature-5" data-value="SECURITY" checked="checked"/><span><f:message
-													key="test-case.nature.SECURITY" /> </span>
+											<input type="checkbox" id="nature-5" data-value="PERFORMANCE_TESTING" checked="checked"/><span><f:message
+													key="test-case.nature.PERFORMANCE" /> </span>
 										</div>
 									</td>
 									<td>
 										<div class="search-tc-nature-6">
-											<input type="checkbox" id="nature-6" data-value="ATDD" checked="checked"/><span><f:message
-													key="test-case.nature.ATDD" /> </span>
+											<input type="checkbox" id="nature-6" data-value="SECURITY_TESTING" checked="checked"/><span><f:message
+													key="test-case.nature.SECURITY" /> </span>
 										</div>
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<div class="search-tc-nature-7">
-											<input type="checkbox" id="nature-7" data-value="NONE" checked="checked"/><span><f:message
-													key="test-case.nature.NONE" /> </span>
+											<input type="checkbox" id="nature-7" data-value="ATDD" checked="checked"/><span><f:message
+													key="test-case.nature.ATDD" /> </span>
+										</div>
+									</td>
+									<td>
+										<div class="search-tc-nature-8">
+											<input type="checkbox" id="nature-8" data-value="UNDEFINED" checked="checked"/><span><f:message
+													key="test-case.nature.UNDEFINED" /> </span>
 										</div>
 									</td>
 								</tr>
@@ -759,41 +765,41 @@
 								<tr>
 									<td>
 										<div class="search-tc-type-1">
-											<input type="checkbox" id="type-1" data-value="ACCEPTANCE" checked="checked"/><span><f:message
-													key="test-case.type.ACCEPTANCE" /> </span>
+											<input type="checkbox" id="type-1" data-value="COMPLIANCE_TESTING" checked="checked"/><span><f:message
+													key="test-case.type.COMPLIANCE" /> </span>
 										</div>
 									</td>
 									<td>
 										<div class="search-tc-type-2">
-											<input type="checkbox" id="type-2" data-value="FIX" checked="checked"/><span><f:message
-													key="test-case.type.FIX" /> </span>
+											<input type="checkbox" id="type-2" data-value="CORRECTION_TESTING" checked="checked"/><span><f:message
+													key="test-case.type.CORRECTION" /> </span>
 										</div>
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<div class="search-tc-type-3">
-											<input type="checkbox" id="type-3" data-value="FEATURE" checked="checked"/><span><f:message
-													key="test-case.type.FEATURE" /> </span>
+											<input type="checkbox" id="type-3" data-value="EVOLUTION_TESTING" checked="checked"/><span><f:message
+													key="test-case.type.EVOLUTION" /> </span>
 										</div>
 									</td>
 									<td>
 										<div class="search-tc-type-4">
-											<input type="checkbox" id="type-4" data-value="NON_REGRESSION" checked="checked"/><span><f:message
-													key="test-case.type.NON_REGRESSION" /> </span>
+											<input type="checkbox" id="type-4" data-value="REGRESSION_TESTING" checked="checked"/><span><f:message
+													key="test-case.type.REGRESSION" /> </span>
 										</div>
 									</td>
 								</tr>
 								<tr>
 									<td>
 										<div class="search-tc-type-5">
-											<input type="checkbox" id="type-5" data-value="END_TO_END" checked="checked"/><span><f:message
+											<input type="checkbox" id="type-5" data-value="END_TO_END_TESTING" checked="checked"/><span><f:message
 													key="test-case.type.END_TO_END" /> </span>
 										</div>
 									</td>
 									<td>
 										<div class="search-tc-type-6">
-											<input type="checkbox" id="type-6" data-value="PARTNER" checked="checked"/><span><f:message
+											<input type="checkbox" id="type-6" data-value="PARTNER_TESTING" checked="checked"/><span><f:message
 													key="test-case.type.PARTNER" /> </span>
 										</div>
 									</td>
@@ -801,8 +807,8 @@
 								<tr>
 									<td>
 										<div class="search-tc-type-7">
-											<input type="checkbox" id="type-7" data-value="NONE" checked="checked"/><span><f:message
-													key="test-case.type.NONE" /> </span>
+											<input type="checkbox" id="type-7" data-value="UNDEFINED" checked="checked"/><span><f:message
+													key="test-case.type.UNDEFINED" /> </span>
 										</div>
 									</td>
 								</tr>

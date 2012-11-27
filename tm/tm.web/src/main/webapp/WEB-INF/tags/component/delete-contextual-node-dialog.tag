@@ -46,6 +46,9 @@
 	<c:when test="${'delete-campaign-button' == openedBy}">
 		<f:message var="deleteMessage" key="dialog.label.delete-nodes.campaign.label" />
 	</c:when>
+	<c:when test="${'delete-iteration-button' == openedBy}">
+		<f:message var="deleteMessage" key="dialog.label.delete-nodes.iteration.label" />
+	</c:when>
 	<c:otherwise>
 		<f:message var="deleteMessage" key="dialog.label.delete-nodes.label" />
 	</c:otherwise>
@@ -86,10 +89,12 @@ function sendContextualDeletionSimulationRequest(jqDialog){
 		dataType : 'json'
 	})			
 	.success(function(data){
-		//var message = data.message + "<b>${deleteMessage}</b>";
-		//jqDialog.html(message);
+		
 		jqDialog.html("<table><tr><td><img src='${servContext}/images/messagebox_confirm.png'/></td><td><table><tr><td><span>${deleteMessageStart} <span class='red-warning-message'>${deleteMessage}</span> </span></td></tr><tr><td>${deleteMessageCantBeUndone}</td></tr><tr><td class='bold-warning-message'>${deleteMessageConfirm}</td></tr></table></td></tr></table>");
 		
+		if(data !== null){
+			jqDialog.html("<div>"+data.message+"</div>"+ jqDialog.html()); 
+		}		
 	})
 	.fail(function(){
 		jqDialog.dialog("close"); <%-- the standard failure handler should kick in, no need for further treatment here. --%>

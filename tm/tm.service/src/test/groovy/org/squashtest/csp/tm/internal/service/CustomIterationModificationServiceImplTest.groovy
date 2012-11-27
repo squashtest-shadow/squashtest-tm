@@ -129,8 +129,8 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		testCase.getAllAttachments() >> new HashSet<Attachment>()
 		testCase.getPrerequisite() >> "prerequisite"
 		testCase.getImportance() >> TestCaseImportance.LOW
-		testCase.getNature() >> TestCaseNature.NONE
-		testCase.getType() >> TestCaseType.NONE
+		testCase.getNature() >> TestCaseNature.UNDEFINED
+		testCase.getType() >> TestCaseType.UNDEFINED
 		testCase.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
 		
 		IterationTestPlanItem testPlan = new IterationTestPlanItem(id:1, iteration : iteration)

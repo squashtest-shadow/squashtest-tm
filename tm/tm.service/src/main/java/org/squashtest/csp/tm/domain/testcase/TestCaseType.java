@@ -24,13 +24,13 @@ import org.squashtest.csp.tm.domain.Level;
 
 public enum TestCaseType implements Level{
 
-	NONE(1),
-	ACCEPTANCE(2),
-	FIX(3),
-	FEATURE(4),
-	NON_REGRESSION(5),
-	END_TO_END(6),
-	PARTNER(7);
+	UNDEFINED(1),
+	COMPLIANCE_TESTING(2),
+	CORRECTION_TESTING(3),
+	EVOLUTION_TESTING(4),
+	REGRESSION_TESTING(5),
+	END_TO_END_TESTING(6),
+	PARTNER_TESTING(7);
 	
 	private static final String I18N_KEY_ROOT = "test-case.type.";
 
@@ -51,6 +51,6 @@ public enum TestCaseType implements Level{
 	}
 	
 	public static TestCaseType defaultValue() {
-		return NONE;
+		return UNDEFINED;
 	}
 }

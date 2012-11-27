@@ -117,8 +117,8 @@ class ExecutionTest extends Specification {
 		testCase.steps >> []
 		testCase.allAttachments >> []
 		testCase.importance >> TestCaseImportance.LOW
-		testCase.nature >> TestCaseNature.NONE
-		testCase.type >> TestCaseType.NONE
+		testCase.nature >> TestCaseNature.UNDEFINED
+		testCase.type >> TestCaseType.UNDEFINED
 		testCase.status >> TestCaseStatus.WORK_IN_PROGRESS
 		
 		when:

@@ -454,8 +454,8 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			criteria.getName() >> "roject"
 			criteria.isGroupByProject() >> false
 			criteria.getImportanceFilterSet() >> [TestCaseImportance.MEDIUM, TestCaseImportance.HIGH] 
-			criteria.getNatureFilterSet() >> [TestCaseNature.NONE]
-			criteria.getTypeFilterSet() >> [TestCaseType.NONE]
+			criteria.getNatureFilterSet() >> [TestCaseNature.UNDEFINED]
+			criteria.getTypeFilterSet() >> [TestCaseType.UNDEFINED]
 			criteria.getStatusFilterSet() >> [TestCaseStatus.WORK_IN_PROGRESS]
 			
 		when :
