@@ -32,6 +32,7 @@ import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
 import org.squashtest.csp.tm.internal.service.RequirementLibraryNavigationServiceImpl;
+import org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService;
 
 import spock.lang.Specification;
 
@@ -42,6 +43,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 	RequirementDao requirementDao = Mock()
 	PermissionEvaluationService permissionService = Mock()
 	ProjectFilterModificationService projectFilterModificationService = Mock()
+	CustomFieldValueManagerService customFieldValueManager = Mock()
 
 	def setup() {
 		NewRequirementVersionDto.metaClass.sameAs = { 
@@ -57,6 +59,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		service.permissionService = permissionService;
 		service.projectFilterModificationService = projectFilterModificationService
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
+		service.customFieldValueService = customFieldValueManager
 	}
 
 	def "should add folder to library and persist the folder"() {
@@ -71,7 +74,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		service.addFolderToLibrary(10l, f)
 
 		then:
-		1 * lib.addRootContent(f)
+		1 * lib.addContent(f)
 		1 * requirementFolderDao.persist(f)
 	}
 
@@ -115,7 +118,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		def res = service.addRequirementToRequirementLibrary(1, req)
 
 		then :
-		1 * lib.addRootContent({ req.sameAs it.currentVersion })
+		1 * lib.addContent({ req.sameAs it.currentVersion })
 		1 * requirementDao.persist ({ req.sameAs it.currentVersion })
 		req.sameAs res
 	}

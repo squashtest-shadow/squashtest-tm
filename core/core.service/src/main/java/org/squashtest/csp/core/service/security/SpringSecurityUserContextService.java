@@ -25,28 +25,20 @@ import java.util.Collections;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
  * A {@link UserContextService} backed by Spring Security.
- *
- * TODO should migrate to core services
- *
+ * 
+ * 
  * @author Gregory Fouquet
  */
-@Service("squashtest.core.user.UserContextService")
+@Component("squashtest.core.user.UserContextService")
 public class SpringSecurityUserContextService implements UserContextService {
 
 	@Override
 	public String getUsername() {
-		Authentication principal = getPrincipal();
-		return principal == null ? "" : principal.getName();
-	}
-
-	private SecurityContext getContext() {
-		return SecurityContextHolder.getContext();
+		return UserContextHolder.getUsername();
 	}
 
 	@Override
@@ -70,7 +62,7 @@ public class SpringSecurityUserContextService implements UserContextService {
 		if (principal == null) {
 			grantedAuths = Collections.emptyList();
 		} else {
-			grantedAuths = getContext().getAuthentication().getAuthorities();
+			grantedAuths = principal.getAuthorities();
 
 		}
 		return grantedAuths;
@@ -78,7 +70,6 @@ public class SpringSecurityUserContextService implements UserContextService {
 
 	@Override
 	public Authentication getPrincipal() {
-		SecurityContext context = getContext();
-		return context.getAuthentication();
+		return UserContextHolder.getPrincipal();
 	}
 }

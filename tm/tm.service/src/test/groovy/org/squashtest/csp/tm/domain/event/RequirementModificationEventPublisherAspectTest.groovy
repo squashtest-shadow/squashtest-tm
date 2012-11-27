@@ -21,6 +21,8 @@
 package org.squashtest.csp.tm.domain.event;
 
 import org.hibernate.id.enhanced.OptimizerFactory.InitialValueAwareOptimizer;
+import org.springframework.security.core.Authentication;
+import org.squashtest.csp.core.service.security.UserContextHolder;
 import org.squashtest.csp.core.service.security.UserContextService;
 import org.squashtest.csp.tm.domain.library.GenericLibraryNode;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
@@ -37,17 +39,18 @@ import spock.lang.Unroll;
 
 class RequirementModificationEventPublisherAspectTest extends Specification {
 	RequirementAuditor auditor = Mock()
-	UserContextService userContext = Mock()
 	RequirementVersion persistentRequirement = persistentRequirementVersion()
+	Authentication authentication = Mock()
+	
 	def event
 	
 	def setup() {
 		use (ReflectionCategory) {
 			def aspect = RequirementModificationEventPublisherAspect.aspectOf()
 			AbstractRequirementEventPublisher.set field: "auditor", of: aspect, to: auditor 
-			AbstractRequirementEventPublisher.set field: "userContext", of: aspect, to: userContext
 		}
-		userContext.username >> "peter parker"
+		
+		UserContextHolder.context.authentication = authentication
 	}
  
 	@Unroll("Should raise a property change event when property #propertyName is changed from #initialValue to #newValue")
@@ -56,6 +59,8 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 		use(ReflectionCategory) {
 			propertyClass.set field: propertyName, of: persistentRequirement, to: initialValue
 		}
+		
+		authentication.name >> "peter parker"
 		
 		when:
 		persistentRequirement[propertyName] = newValue
@@ -126,11 +131,8 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 	
 		def "uninitialized user context should generate 'unknown' event author"() {
 			given:
-		use (ReflectionCategory) {
-			def aspect = RequirementModificationEventPublisherAspect.aspectOf()
-			AbstractRequirementEventPublisher.set field: "userContext", of: aspect, to: null
-		}
-	
+			UserContextHolder.context.authentication = null
+			
 			when:
 			persistentRequirement.name = "bar"
 			

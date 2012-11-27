@@ -20,10 +20,6 @@
  */
 package org.squashtest.csp.tm.internal.repository.hibernate
 
-
-
-
-
 import javax.inject.Inject
 
 import org.apache.poi.hssf.record.formula.functions.T
@@ -45,9 +41,6 @@ import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.datasetloadstrategy.impl.CleanInsertLoadStrategy
 
 import spock.unitils.UnitilsSupport
-
-
-
 
 @NotThreadSafe
 @UnitilsSupport

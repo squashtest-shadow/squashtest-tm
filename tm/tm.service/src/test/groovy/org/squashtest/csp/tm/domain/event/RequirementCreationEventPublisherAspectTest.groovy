@@ -22,6 +22,8 @@ package org.squashtest.csp.tm.domain.event;
 
 import spock.lang.Specification;
 
+import org.springframework.security.core.Authentication;
+import org.squashtest.csp.core.service.security.UserContextHolder;
 import org.squashtest.csp.core.service.security.UserContextService;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
@@ -36,17 +38,18 @@ import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 class RequirementCreationEventPublisherAspectTest extends Specification {
 	RequirementDao dao = new StubRequirementDao()
 	RequirementAuditor auditor = Mock()
-	UserContextService userContext = Mock()
+	Authentication authentication = Mock()
+	
 	def event
 	
 	def setup() {
 		use (ReflectionCategory) {
 			def aspect = RequirementCreationEventPublisherAspect.aspectOf()
 			AbstractRequirementEventPublisher.set field: "auditor", of: aspect, to: auditor 
-			AbstractRequirementEventPublisher.set field: "userContext", of: aspect, to: userContext
 		}
 		
-		userContext.getUsername() >> "bruce dickinson"
+		UserContextHolder.context.authentication = authentication
+		authentication.name >> "bruce dickinson"
 	}
 	
 	def "should raise event when requirement is persisted"() {
@@ -81,10 +84,7 @@ class RequirementCreationEventPublisherAspectTest extends Specification {
 	
 	def "uninitialized user context should generate 'unknown' event author"() {
 		given:
-		use (ReflectionCategory) {
-			def aspect = RequirementCreationEventPublisherAspect.aspectOf()
-			AbstractRequirementEventPublisher.set field: "userContext", of: aspect, to: null
-		}
+		UserContextHolder.context.authentication = null
 
 		when:
 		dao.persist new Requirement()

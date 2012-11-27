@@ -108,7 +108,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	private PermissionEvaluationService permissionService;
 
-	protected abstract PrivateCustomFieldValueService getcustomFieldValueService();
+	protected abstract PrivateCustomFieldValueService getCustomFieldValueService();
 	
 	protected abstract FolderDao<FOLDER, NODE> getFolderDao();
 
@@ -240,7 +240,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	}
 
 	protected void createCustomFieldValues(BoundEntity entity) {
-		getcustomFieldValueService().createAllCustomFieldValues(entity);
+		getCustomFieldValueService().createAllCustomFieldValues(entity);
 	}
 
 	/* ********************** move operations *************************** */

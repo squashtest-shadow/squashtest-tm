@@ -126,7 +126,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	protected PrivateCustomFieldValueService getcustomFieldValueService() {
+	protected PrivateCustomFieldValueService getCustomFieldValueService() {
 		return customFieldValueService;
 	}
 

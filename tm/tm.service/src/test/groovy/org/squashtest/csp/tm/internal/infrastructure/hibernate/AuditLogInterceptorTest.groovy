@@ -24,6 +24,8 @@ import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.spockframework.compiler.model.CleanupBlock;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.squashtest.csp.core.service.security.UserContextService;
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory;
 import org.squashtest.csp.tm.domain.audit.AuditableSupport;
@@ -32,11 +34,11 @@ import spock.lang.Specification;
 
 class AuditLogInterceptorTest extends Specification {
 	AuditLogInterceptor interceptor = new AuditLogInterceptor()
-	UserContextService userContextService = Mock()
+	Authentication authentication = Mock()
 
 	def setup() {
-		interceptor.userContextService = userContextService
-		userContextService.username >> "nandemo"
+		authentication.name >> "nandemo"
+		SecurityContextHolder.context.authentication = authentication
 	}
 
 	def "should set creation info on auditable object save"() {

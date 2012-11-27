@@ -115,7 +115,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 	
 	@Override
-	protected PrivateCustomFieldValueService getcustomFieldValueService() {
+	protected PrivateCustomFieldValueService getCustomFieldValueService() {
 		return customFieldValueService;
 	}
 	@Override

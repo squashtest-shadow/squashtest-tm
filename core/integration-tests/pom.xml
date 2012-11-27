@@ -30,7 +30,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>integration-test</phase>
+						<phase>pre-integration-test</phase>
 						<goals>
 							<goal>testCompile</goal>
 						</goals>
@@ -58,7 +58,7 @@
 				<executions>
 					<execution>
 						<id>add-integration-test-source</id>
-						<phase>integration-test</phase>
+						<phase>pre-integration-test</phase>
 						<goals>
 							<goal>add-source</goal>
 						</goals>

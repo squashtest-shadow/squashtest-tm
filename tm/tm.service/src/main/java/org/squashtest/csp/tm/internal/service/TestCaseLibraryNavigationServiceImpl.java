@@ -112,7 +112,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	protected PrivateCustomFieldValueService getcustomFieldValueService() {
+	protected PrivateCustomFieldValueService getCustomFieldValueService() {
 		return customFieldValueService;
 	}
 	

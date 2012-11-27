@@ -18,46 +18,43 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.event;
 
-import javax.inject.Inject;
+package org.squashtest.csp.core.service.security;
 
-import org.squashtest.csp.core.service.security.UserContextHolder;
-import org.squashtest.csp.tm.internal.service.event.RequirementAuditor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
- * Superclass for requirement event publisher aspects. Mainly offers common convenience methods
- * 
  * @author Gregory Fouquet
  * 
  */
-public abstract class AbstractRequirementEventPublisher {
-	@Inject
-	private RequirementAuditor auditor;
+public final class UserContextHolder {
+	private UserContextHolder() {
+		super();
+	}
 
-	/**
-	 * The aspect is enabled if it can publish events to an auditor.
-	 * 
-	 * @return <code>true</code> if the aspect is enabled.
-	 */
-	protected final boolean aspectIsEnabled() {
-		return auditor != null;
+	private static SecurityContext getContext() {
+		return SecurityContextHolder.getContext();
 	}
 
 	/**
+	 * Returns the principal registered by the security manager for the current thread.
 	 * 
-	 * @return the current user's username, 'unknown' if there is no user context.
+	 * @return
 	 */
-	protected final String currentUser() { 
-		String name = UserContextHolder.getUsername();
-		if (name == null || "".equals(name)) {
-			name = "unknown";
-		} 
-		
-		return name;
+	public static Authentication getPrincipal() {
+		SecurityContext context = getContext();
+		return context.getAuthentication();
 	}
 
-	protected final void publish(RequirementAuditEvent event) {
-		auditor.notify(event);
+	/**
+	 * Returns the username registered by the security manager for the current thread.
+	 * 
+	 * @return
+	 */
+	public static String getUsername() {
+		Authentication principal = getPrincipal();
+		return principal == null ? "" : principal.getName();
 	}
 }

@@ -22,6 +22,8 @@ package org.squashtest.csp.tm.internal.service.event;
 
 import javax.inject.Inject;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -33,7 +35,6 @@ import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.csp.tm.domain.event.RequirementPropertyChange;
 import org.squashtest.csp.tm.domain.event.RequirementVersionModification;
 import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
-import org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao;
 
 /**
  * Audits Requirement events and persists them according to the Requirement's
@@ -48,8 +49,12 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(StatusBasedRequirementAuditor.class);
 	
-	@Inject
-	private RequirementAuditEventDao eventDao;
+	/*
+	 *  we do not use a dao here because : 
+	 *  1. we only need SessionFactory.persist(...)
+	 *  2. injecting a dao might induce circular refs through the usage of aspects
+	 */
+	@Inject private SessionFactory sessionFactory;
 
 	@Override
 	@Transactional
@@ -59,7 +64,7 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 
 	@Override
 	public void visit(RequirementCreation event) {
-		eventDao.persist(event);
+		currentSession().persist(event);
 		logEvent(event);
 
 	}
@@ -73,7 +78,7 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	@Override
 	public void visit(RequirementPropertyChange event) {
 		if (shouldAuditModification(event)) {
-			eventDao.persist(event);
+			currentSession().persist(event);
 			logEvent(event);
 		}
 
@@ -95,8 +100,15 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	@Override
 	public void visit(RequirementLargePropertyChange event) {
 		if (shouldAuditModification(event)) {
-			eventDao.persist(event);
+			currentSession().persist(event);
 			logEvent(event);
 		}
+	}
+
+	/**
+	 * @return the current hibernate session
+	 */
+	private Session currentSession() {
+		return sessionFactory.getCurrentSession();
 	}
 }

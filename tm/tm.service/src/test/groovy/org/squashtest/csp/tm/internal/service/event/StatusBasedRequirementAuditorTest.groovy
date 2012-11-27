@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.service.event;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.classic.Session;
 import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.csp.tm.domain.event.RequirementCreation;
 import org.squashtest.csp.tm.domain.event.RequirementPropertyChange;
@@ -34,10 +36,12 @@ import spock.lang.Unroll;
 
 class StatusBasedRequirementAuditorTest extends Specification {
 	StatusBasedRequirementAuditor auditor= new StatusBasedRequirementAuditor()
-	RequirementAuditEventDao dao = Mock()
+	SessionFactory sessionFactory = Mock()
+	Session session = Mock()
 
 	def setup() {
-		auditor.eventDao = dao
+		auditor.sessionFactory = sessionFactory
+		sessionFactory.currentSession >> session
 	}
 	
 	@Unroll("should audit status change from #initialStatus to #newStatus")
@@ -55,7 +59,7 @@ class StatusBasedRequirementAuditorTest extends Specification {
 		auditor.notify(event)
 		
 		then:
-		1 * dao.persist(event)
+		1 * session.persist(event)
 		
 		where:
 		initialStatus                      | newStatus
@@ -72,7 +76,7 @@ class StatusBasedRequirementAuditorTest extends Specification {
 		auditor.notify(event)
 		
 		then:
-		1 * dao.persist(event)
+		1 * session.persist(event)
 	}
 
 	@Unroll("should audit #changedProperty property change of an 'under review' requirement")
@@ -93,7 +97,7 @@ class StatusBasedRequirementAuditorTest extends Specification {
 		auditor.notify(event)
 		
 		then:
-		1 * dao.persist(event)
+		1 * session.persist(event)
 		
 		where:
 		changedProperty << ["name", "reference", "description", "criticality"]
@@ -117,7 +121,7 @@ class StatusBasedRequirementAuditorTest extends Specification {
 		auditor.notify(event)
 		
 		then:
-		0 * dao.persist(_)
+		0 * session.persist(_)
 		
 		where:
 		changedProperty | requirementStatus

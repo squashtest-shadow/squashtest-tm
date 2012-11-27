@@ -29,6 +29,7 @@ import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
+import org.squashtest.csp.core.service.security.UserContextHolder;
 import org.squashtest.csp.core.service.security.UserContextService;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.audit.AuditableSupport;
@@ -42,9 +43,6 @@ import org.squashtest.csp.tm.domain.audit.AuditableSupport;
 @Component("squashtest.tm.persistence.hibernate.AuditLogInterceptor")
 @SuppressWarnings("serial")
 public class AuditLogInterceptor extends EmptyInterceptor {
-	@Inject
-	private UserContextService userContextService;
-
 	@Override
 	public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
 			String[] propertyNames, Type[] types) {
@@ -105,6 +103,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	}
 
 	private String getCurrentUser() {
-		return userContextService.getUsername();
+		return UserContextHolder.getUsername();
 	}
 }

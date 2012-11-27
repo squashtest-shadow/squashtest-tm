@@ -71,7 +71,7 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>process-test-resources</phase>
+						<phase>pre-integration-test</phase>
 						<goals>
 							<goal>testResources</goal>
 						</goals>
@@ -86,7 +86,7 @@
 					<!-- Adds more source directories to the pom -->
 					<execution>
 						<id>add-integration-test-source</id>
-						<phase>process-test-sources</phase>
+						<phase>pre-integration-test</phase>
 						<goals>
 							<goal>add-source</goal>
 						</goals>
@@ -114,7 +114,7 @@
 				<executions>
 					<execution>
 						<id>integration-tests</id>
-						<phase>test</phase>
+						<phase>integration-test</phase>
 						<goals>
 							<goal>integration-test</goal>
 							<goal>verify</goal>
