@@ -121,6 +121,9 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 		removeCustomFieldBindings(bindingIds);
 	}
 
+	/**
+	 * @see CustomFieldBindingModificationService#copyCustomFieldsSettingsFromTemplate(Project, ProjectTemplate)
+	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
 	public void moveCustomFieldbindings(List<Long> bindingIds, int newIndex) {
@@ -150,6 +153,9 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	}
 
+	/**
+	 * @see CustomFieldBindingModificationService#copyCustomFieldsSettingsFromTemplate(Project, ProjectTemplate)
+	 */
 	@Override
 	public void copyCustomFieldsSettingsFromTemplate(Project newProject, ProjectTemplate projectTemplate) {
 		List<CustomFieldBinding> templateCutomFieldBindings = findCustomFieldsForGenericProject(projectTemplate.getId());

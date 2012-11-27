@@ -84,7 +84,13 @@
 				<input id="back" type="button" value="${ back }" />	
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">
-
+	<c:choose>
+	<c:when test="${ adminproject.template }">
+		<f:message var="headerLabel" key="label.projectTemplate"/>
+	</c:when><c:otherwise>
+		<f:message var="headerLabel" key="label.Project"/>
+	</c:otherwise>
+	</c:choose>
 		<div id="project-name-div"
 			class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 
@@ -113,6 +119,11 @@
 				
 				<div class="toolbar-button-panel">
 					<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
+					<c:if test="${ adminproject.template }">
+					<f:message var="createFromTemplate" key="label.createFromTemplate" />
+					<input type="button" value="${ createFromTemplate }" id="createFromTemplate-project-button"
+								class="button" />
+					</c:if>
 					<f:message var="rename" key="project.button.rename.label" />
 					<input type="button" value="${ rename }" id="rename-project-button"
 								class="button" />
@@ -191,12 +202,14 @@
 								</div>
 									<script> function projectBugTrackerCallBack (value, settings) {
 										updateBugTrackerMenu(false);
-								         if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
-								        	 $("#project-bugtracker-project-name-row").show();
-												refreshBugTrackerProjectName();
-									     }else{
-								        	 $("#project-bugtracker-project-name-row").hide();								        	 
-								         }
+										<c:if test="${ ! adminproject.template }">
+											  if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
+									        	 $("#project-bugtracker-project-name-row").show();
+													refreshBugTrackerProjectName();
+										     }else{
+									        	 $("#project-bugtracker-project-name-row").hide();								        	 
+									         }
+									      </c:if>
 								         }</script>
 								<comp:select-jeditable componentId="project-bugtracker"
 										jsonData="${bugtrackersList}" targetUrl="${projectUrl}"
@@ -204,7 +217,7 @@
 								
 							</div>
 						</div>
-						<div class="display-table-row"
+						<c:if test="${ ! adminproject.template }"><div class="display-table-row"
 								id="project-bugtracker-project-name-row"
 								<c:if test="${ !adminproject.project.bugtrackerConnected }">style="display:none"</c:if>>
 							<label for="project-bugtracker-project-name"
@@ -220,7 +233,7 @@
 									<c:otherwise>${ adminproject.project.name }</c:otherwise>
 								</c:choose>
 							</div>
-						</div>
+						</div></c:if>
 					</div>
 				</jsp:attribute>
 			</comp:toggle-panel>

@@ -24,6 +24,8 @@ package org.squashtest.csp.tm.domain.project;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.hibernate.annotations.DiscriminatorOptions;
+
 /**
  * A Project template, which can hold no nodes but will be used to build "real" projects
  * 

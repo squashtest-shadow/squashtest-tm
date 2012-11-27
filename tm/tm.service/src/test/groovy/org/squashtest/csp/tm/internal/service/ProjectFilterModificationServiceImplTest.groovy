@@ -20,13 +20,13 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.squashtest.csp.core.service.security.UserContextService;
-import org.squashtest.csp.tm.internal.repository.ProjectDao;
-import org.squashtest.csp.tm.internal.repository.ProjectFilterDao;
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.csp.tm.internal.service.ProjectFilterModificationServiceImpl;
+import org.squashtest.csp.core.service.security.UserContextService
+import org.squashtest.csp.tm.internal.repository.ProjectDao
+import org.squashtest.csp.tm.internal.repository.ProjectFilterDao
+import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter
+import org.squashtest.csp.tm.internal.service.ProjectFilterModificationServiceImpl
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class ProjectFilterModificationServiceImplTest extends Specification {
 	ProjectFilterModificationServiceImpl service = new ProjectFilterModificationServiceImpl()

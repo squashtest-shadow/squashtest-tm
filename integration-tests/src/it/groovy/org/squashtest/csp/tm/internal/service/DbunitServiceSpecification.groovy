@@ -93,4 +93,5 @@ abstract class DbunitServiceSpecification extends Specification {
 
 		return result.size() == ids.size()
 	}
+	
 }

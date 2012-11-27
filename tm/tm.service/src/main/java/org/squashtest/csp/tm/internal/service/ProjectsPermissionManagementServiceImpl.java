@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.stereotype.Service;
@@ -50,6 +49,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	private static final String PROJECT_CLASS_NAME = "org.squashtest.csp.tm.domain.project.Project";
 	private static final String PROJECT_TEMPLATE_CLASS_NAME = "org.squashtest.csp.tm.domain.project.ProjectTemplate";
 
+	@Inject
 	private ObjectAclService aclService;
 
 	@Inject
@@ -58,10 +58,6 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	@Inject
 	private UserDao userDao;
 
-	@ServiceReference
-	public void setObjectAclService(ObjectAclService aclService) {
-		this.aclService = aclService;
-	}
 
 	@Override
 	public List<PermissionGroup> findAllPossiblePermission() {

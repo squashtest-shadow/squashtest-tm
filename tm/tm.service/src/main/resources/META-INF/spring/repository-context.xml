@@ -80,9 +80,9 @@
 				<value>org.squashtest.csp.tm.domain.audit.AuditableSupport</value>
 				<value>org.squashtest.csp.tm.domain.softdelete.SoftDeletableSupport</value>
 				
-        <value>org.squashtest.csp.tm.domain.project.GenericProject</value>
+		        <value>org.squashtest.csp.tm.domain.project.GenericProject</value>
 				<value>org.squashtest.csp.tm.domain.project.Project</value>
-        <value>org.squashtest.csp.tm.domain.project.ProjectTemplate</value>
+		        <value>org.squashtest.csp.tm.domain.project.ProjectTemplate</value>
 				
 				<value>org.squashtest.csp.tm.domain.projectfilter.ProjectFilter</value>
 				
@@ -111,13 +111,13 @@
 				<value>org.squashtest.csp.tm.domain.testautomation.AutomatedSuite</value>
 				<value>org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender</value>
 
-        <!-- Custom Fields -->
-        <value>org.squashtest.csp.tm.domain.customfield.CustomField</value>
-        <value>org.squashtest.csp.tm.domain.customfield.SingleSelectField</value>
-        <value>org.squashtest.csp.tm.domain.customfield.CustomFieldOption</value>
-        <value>org.squashtest.csp.tm.domain.customfield.CustomFieldBinding</value>
-        <value>org.squashtest.csp.tm.domain.customfield.CustomFieldValue</value>
-    </list>
+		        <!-- Custom Fields -->
+		        <value>org.squashtest.csp.tm.domain.customfield.CustomField</value>
+		        <value>org.squashtest.csp.tm.domain.customfield.SingleSelectField</value>
+		        <value>org.squashtest.csp.tm.domain.customfield.CustomFieldOption</value>
+		        <value>org.squashtest.csp.tm.domain.customfield.CustomFieldBinding</value>
+		        <value>org.squashtest.csp.tm.domain.customfield.CustomFieldValue</value>
+    		</list>
 		</property>
 		<property name="namingStrategy">
 			<bean class="org.squashtest.csp.tm.internal.infrastructure.hibernate.UppercaseUnderscoreNamingStrategy" />

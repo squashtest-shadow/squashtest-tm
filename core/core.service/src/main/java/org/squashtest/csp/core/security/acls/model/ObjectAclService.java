@@ -38,8 +38,13 @@ public interface ObjectAclService {
 	void addNewResponsibility(String userLogin, ObjectIdentity entityRef, String qualifiedName);
 	
 	List<String> findUsersWithWritePermission(List<ObjectIdentity> entityRefs);
-
-	List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long projectId, String projectClassName);
+	/**
+	 * Will find squash User ids and theirs permission names for the given acl_object_identity.identity and acl_object_identity.className
+	 * @param objectId : the acl_object_identity.identity
+	 * @param objectClassName : the acl_object_identity.acl_class.className
+	 * @return a list of Object[] containing at index 0 the user id and , at index 1, the user's acl_group.qualified_name for the given acl_object.
+	 */
+	List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long objectIdentity, String objectClassName);
 
 	List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName);
 

@@ -23,6 +23,8 @@ package org.squashtest.csp.tm.domain.project;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.hibernate.annotations.DiscriminatorOptions;
+
 @Entity
 @DiscriminatorValue("P")
 public class Project extends GenericProject {

@@ -32,6 +32,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 
 /**
@@ -60,7 +61,7 @@ public class BugTrackerBinding {
 	
 	@OneToOne(optional = false)
 	@JoinColumn(name="PROJECT_ID")
-	private Project project;
+	private GenericProject project;
 	
 	public BugTrackerBinding(){
 		
@@ -97,11 +98,11 @@ public class BugTrackerBinding {
 		return id;
 	}
 
-	public Project getProject() {
+	public GenericProject getProject() {
 		return project;
 	}
 
-	public void setProject(Project project) {
+	public void setProject(GenericProject project) {
 		this.project = project;
 	}
 	

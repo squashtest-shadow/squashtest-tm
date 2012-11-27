@@ -27,6 +27,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 public class AdministrableProject {
 	private final GenericProject project;
 	private boolean deletable = false;
+	private boolean template = false;
 
 	public boolean isDeletable() {
 		return deletable;
@@ -74,5 +75,13 @@ public class AdministrableProject {
 
 	public AdministrableProject(GenericProject project) {
 		this.project = project;
+	}
+
+	public boolean isTemplate() {
+		return template;
+	}
+
+	public void setTemplate(boolean template) {
+		this.template = template;
 	}
 }

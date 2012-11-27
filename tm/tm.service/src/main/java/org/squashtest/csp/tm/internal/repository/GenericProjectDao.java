@@ -36,4 +36,7 @@ public interface GenericProjectDao {
 
 	@PostFilter("hasPermission(filterObject, 'MANAGEMENT') or  hasRole('ROLE_ADMIN')")
 	List<GenericProject> findAll(PagingAndSorting pagingAndSorting);
+	
+	
+	GenericProject findById(long projectId);
 }

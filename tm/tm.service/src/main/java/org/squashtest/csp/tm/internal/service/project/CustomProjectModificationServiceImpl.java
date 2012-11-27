@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.service.project;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
@@ -34,11 +35,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.core.service.security.ObjectIdentityService;
-import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
 import org.squashtest.csp.tm.domain.NoBugTrackerBindingException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
@@ -47,6 +48,7 @@ import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.internal.repository.BugTrackerBindingDao;
 import org.squashtest.csp.tm.internal.repository.BugTrackerDao;
+import org.squashtest.csp.tm.internal.repository.GenericProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectTemplateDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
@@ -56,6 +58,7 @@ import org.squashtest.csp.tm.service.CustomProjectModificationService;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
 import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
+import org.squashtest.csp.tm.service.project.ProjectManagerService;
 
 /**
  * 
@@ -69,6 +72,8 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomProjectModificationServiceImpl.class);
 	@Inject
 	private ProjectDao projectDao;
+	@Inject
+	private GenericProjectDao genericProjectDao;
 	@Inject
 	private UserDao userDao;
 	@Inject
@@ -89,7 +94,9 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private ProjectTemplateDao projectTemplateDao;
 	@Inject
 	private GenericProjectManagerService genericProjectManager;
-
+	@Inject 
+	private Provider<GenericToAdministrableProject> genericToAdministrableConvertor;
+	
 	private static final String MANAGE_PROJECT_OR_ROLE_ADMIN = "hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')";
 
 	@Override
@@ -101,16 +108,8 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Override
 	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public AdministrableProject findAdministrableProjectById(long projectId) {
-		Project project = projectDao.findById(projectId);
-		boolean isDeletable = true;
-		try {
-			projectDeletionHandler.checkProjectContainsOnlyFolders(projectId);
-		} catch (CannotDeleteProjectException e) {
-			isDeletable = false;
-		}
-		AdministrableProject administrableProject = new AdministrableProject(project);
-		administrableProject.setDeletable(isDeletable);
-		return administrableProject;
+		GenericProject genericProject = genericProjectDao.findById(projectId);
+		return genericToAdministrableConvertor.get().convertToAdministrableProject(genericProject);
 	}
 
 	@Override
