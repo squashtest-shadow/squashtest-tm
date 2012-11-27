@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.service;
 import java.util.List;
 
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.service.project.ProjectManagerService;
 
 
 import spock.lang.Shared;
@@ -33,7 +34,7 @@ import spock.lang.Shared;
  */
 class ProjectModificationDynamicServiceTest extends DynamicManagerInterfaceSpecification {
 	@Shared Class entityType = Project
-	@Shared Class managerType = ProjectModificationService
+	@Shared Class managerType = ProjectManagerService
 
 	@Shared List changeServiceCalls = [
 		{

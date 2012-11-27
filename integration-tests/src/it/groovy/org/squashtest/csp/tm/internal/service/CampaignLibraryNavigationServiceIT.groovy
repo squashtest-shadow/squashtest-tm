@@ -37,7 +37,8 @@ import org.squashtest.csp.tm.domain.project.GenericProject
 import org.squashtest.csp.tm.domain.project.Project
 import org.squashtest.csp.tm.service.CampaignLibrariesCrudService
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService
-import org.squashtest.csp.tm.service.ProjectManagerService
+import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
+import org.squashtest.csp.tm.service.project.ProjectManagerService;
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
@@ -54,9 +55,7 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@Inject
 	private CampaignLibrariesCrudService libcrud
 	
-	
-	@Inject
-	private ProjectManagerService projectService;
+	@Inject GenericProjectManagerService genericProjectManager
 	
 	
 	private Long libId=-1
@@ -66,7 +65,7 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	def setup(){
 
 		//libcrud.addLibrary();
-		projectService.addProject(createProject())
+		genericProjectManager.persist(createProject())
 
 		def libList= libcrud.findAllLibraries()
 

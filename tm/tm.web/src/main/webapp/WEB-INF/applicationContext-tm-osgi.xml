@@ -136,12 +136,12 @@
 		bean-name="squashtest.tm.service.AdministrationService" interface="org.squashtest.csp.tm.service.AdministrationService"
 		availability="mandatory" />
 
-	<osgi:reference id="squashtest.tm.service.ProjectModificationService"
-		bean-name="squashtest.tm.service.ProjectModificationService"
+	<osgi:reference id="squashtest.tm.service.ProjectManagerService"
+		bean-name="squashtest.tm.service.ProjectManagerService"
 		availability="mandatory">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.ProjectModificationService</value>
-			<value>org.squashtest.csp.tm.service.ProjectFinder</value>
+			<value>org.squashtest.csp.tm.service.project.ProjectManagerService</value>
+			<value>org.squashtest.csp.tm.service.project.ProjectFinder</value>
 		</osgi:interfaces>
 	</osgi:reference>
 
@@ -153,11 +153,6 @@
       <value>org.squashtest.csp.tm.service.project.GenericProjectFinder</value>
     </osgi:interfaces>
   </osgi:reference>
-
-	<osgi:reference id="squashtest.tm.service.ProjectManagerService"
-		bean-name="squashtest.tm.service.ProjectManagerService" interface="org.squashtest.csp.tm.service.ProjectManagerService"
-		availability="mandatory">
-	</osgi:reference>
 
 	<osgi:reference id="squashtest.tm.service.CallStepManagerService"
 		bean-name="squashtest.tm.service.CallStepManagerService" interface="org.squashtest.csp.tm.service.CallStepManagerService"
@@ -199,7 +194,7 @@
 		<property name="bugTrackersLocalService"
 			ref="squashtest.tm.service.BugTrackersLocalService" />
 		<property name="projectFinder"
-			ref="squashtest.tm.service.ProjectModificationService" />
+			ref="squashtest.tm.service.ProjectManagerService" />
 		<property name="bugTrackerFinder"
 			ref="squashtest.tm.service.BugTrackerManagerService" />
 

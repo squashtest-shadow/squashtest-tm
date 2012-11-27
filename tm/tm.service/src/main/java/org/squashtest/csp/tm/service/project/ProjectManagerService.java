@@ -18,15 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.service.project;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.service.CustomProjectModificationService;
 
 @Transactional
-public interface ProjectModificationService extends CustomProjectModificationService, ProjectFinder {
+public interface ProjectManagerService extends CustomProjectModificationService, ProjectFinder {
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	void changeDescription(long projectId, String newDescription);
 
@@ -41,6 +40,4 @@ public interface ProjectModificationService extends CustomProjectModificationSer
 	
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
 	void changeTestAutomationEnabled(long projectId, boolean isEnabled);
-
-
 }

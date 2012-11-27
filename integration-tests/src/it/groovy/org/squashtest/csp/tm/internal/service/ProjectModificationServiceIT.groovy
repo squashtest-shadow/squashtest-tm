@@ -25,7 +25,7 @@ import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tm.domain.project.Project
-import org.squashtest.csp.tm.service.ProjectModificationService
+import org.squashtest.csp.tm.service.project.ProjectManagerService;
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
@@ -35,7 +35,7 @@ import spock.unitils.UnitilsSupport
 class ProjectModificationServiceIT extends DbunitServiceSpecification {
 
 	@Inject
-	ProjectModificationService modService
+	ProjectManagerService modService
 	
 	
 		@DataSet("ProjectModificationServiceIT.xml")

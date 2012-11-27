@@ -32,8 +32,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.service.ProjectManagerService;
 import org.squashtest.csp.tm.service.project.GenericProjectFinder;
+import org.squashtest.csp.tm.service.project.ProjectManagerService;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 

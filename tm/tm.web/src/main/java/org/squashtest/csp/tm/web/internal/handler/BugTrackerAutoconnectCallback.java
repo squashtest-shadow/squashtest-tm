@@ -36,7 +36,7 @@ import org.squashtest.csp.core.web.servlet.handler.AuthenticationSuccessCallback
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.service.BugTrackerFinderService;
 import org.squashtest.csp.tm.service.BugTrackersLocalService;
-import org.squashtest.csp.tm.service.ProjectFinder;
+import org.squashtest.csp.tm.service.project.ProjectFinder;
 
 /*
  * 

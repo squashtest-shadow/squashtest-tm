@@ -18,28 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service;
+package org.squashtest.csp.tm.web.internal.controller.project;
 
 import java.util.List;
 
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.transaction.annotation.Transactional;
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.service.project.ProjectFinder;
+import org.squashtest.csp.tm.web.internal.model.jquery.FilterModel;
 
-/**
- * @author mpagnon
- * 
- */
-@Transactional(readOnly = true)
-public interface ProjectFinder {
-	
-	@PostAuthorize("hasPermission(returnObject, 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	Project findById(long projectId);
+@Controller
+@RequestMapping("/projects")
+public class ProjectController {
 
-	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
-	List<Project> findAllOrderedByName();
+	@Inject
+	private ProjectFinder projectFinder;
 
-	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
-	List<Project> findAllReadable();
+	@RequestMapping(method = RequestMethod.GET, params = "format=picker")
+	@ResponseBody
+	public FilterModel getProjectPickerModel() {
+		List<Project> projects = projectFinder.findAllOrderedByName();
+		FilterModel model = new FilterModel();
+
+		for (Project project : projects) {
+			model.addProject(project.getId(), project.getName());
+		}
+
+		return model;
+	}
 }

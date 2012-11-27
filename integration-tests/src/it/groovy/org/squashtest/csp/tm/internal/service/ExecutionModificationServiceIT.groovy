@@ -42,53 +42,37 @@ import org.squashtest.csp.tm.service.ExecutionModificationService
 import org.squashtest.csp.tm.service.ExecutionProcessingService
 import org.squashtest.csp.tm.service.IterationModificationService
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService
-import org.squashtest.csp.tm.service.ProjectManagerService;
 import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService
 import org.squashtest.csp.tm.service.TestCaseModificationService
+import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
+import org.squashtest.csp.tm.service.project.ProjectManagerService;
 
 
 @NotThreadSafe
 class ExecutionModificationServiceIT extends HibernateServiceSpecification {
+	@Inject CampaignModificationService campaignModService
 
-	@Inject
-	private CampaignModificationService campaignModService
+	@Inject CampaignLibraryNavigationService campaignNavService
 
-	@Inject
-	private CampaignLibraryNavigationService campaignNavService
+	@Inject CampaignLibrariesCrudService campaignLibCrud
 
-	@Inject
-	private CampaignLibrariesCrudService campaignLibCrud
-
-
-
-	@Inject
-	private IterationModificationService iterService
+	@Inject IterationModificationService iterService
 	
-	@Inject 
-	private IterationTestPlanManagerService tpManagerService
+	@Inject IterationTestPlanManagerService tpManagerService
 
-	@Inject
-	private ExecutionModificationService execService;
+	@Inject ExecutionModificationService execService;
 
-	@Inject
-	private ExecutionProcessingService procservice;
+	@Inject ExecutionProcessingService procservice;
 
+	@Inject TestCaseModificationService tcModservice
 
+	@Inject TestCaseLibraryNavigationService tcNavService
 
-	@Inject
-	private TestCaseModificationService tcModservice
-
-	@Inject
-	private TestCaseLibraryNavigationService tcNavService
-
-	@Inject
-	private TestCaseLibrariesCrudService tcLibCrud
-
+	@Inject TestCaseLibrariesCrudService tcLibCrud
 	
-	@Inject
-	private ProjectManagerService projectService;
-
+	@Inject GenericProjectManagerService genericProjectManager
+	
 	private long iterationId
 	private long testCaseId
 	private long libtcId;
@@ -98,10 +82,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	def setup(){
 
 		/** make the iteration environnement **/	
-
-		//libcrud.addLibrary();
-		projectService.addProject(createProject())
-		
+		genericProjectManager.persist(createProject())
 		
 		def libList= campaignLibCrud.findAllLibraries()
 		def camplib = libList.get(libList.size()-1);
@@ -143,8 +124,6 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		IterationTestPlanItem tp = tpManagerService.findTestPlanItemByTestCaseId(iterationId, testCaseId);
 		
 		testPlanId = tp.getId();
-		
-		
 	}
 
 
@@ -179,7 +158,6 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def tp1 = tpManagerService.findTestPlanItemByTestCaseId(iterationId, tc1.id);
 		def tp2 = tpManagerService.findTestPlanItemByTestCaseId(iterationId, tc2.id);
 		def tp3 = tpManagerService.findTestPlanItemByTestCaseId(iterationId, tc3.id);
-		
 
 		iterService.addExecution(iterationId, tp1.id)
 		iterService.addExecution(iterationId, tp2.id)
@@ -211,7 +189,6 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		executionSteps << procservice.findStepAt(execution.id,2)
 		executionSteps << procservice.findStepAt(execution.id,3)
 		executionSteps << procservice.findStepAt(execution.id,4)
-
 
 		then :
 
@@ -273,8 +250,6 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		executionStep.getComment()=="Wooooohooo I did that here too !"
 	}
 
-
-
 	def "should get me the first and third step"(){
 		given :
 		iterService.addExecution(iterationId, testPlanId);
@@ -305,7 +280,6 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 		estep = procservice.findStepAt(execution.id, 1);
 		procservice.setExecutionStepStatus(estep.id, ExecutionStatus.FAILURE);
-
 
 		when :
 

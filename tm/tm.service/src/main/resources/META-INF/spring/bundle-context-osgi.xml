@@ -66,10 +66,10 @@
 		interface="org.hibernate.SessionFactory" />
 
 	<!-- Application services -->
-	<osgi:service ref="squashtest.tm.service.ProjectModificationService">
+	<osgi:service ref="squashtest.tm.service.ProjectManagerService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.ProjectModificationService</value>
-			<value>org.squashtest.csp.tm.service.ProjectFinder</value>
+			<value>org.squashtest.csp.tm.service.project.ProjectManagerService</value>
+			<value>org.squashtest.csp.tm.service.project.ProjectFinder</value>
 		</osgi:interfaces>	
 	</osgi:service>
 
@@ -79,9 +79,6 @@
       <value>org.squashtest.csp.tm.service.project.GenericProjectFinder</value>
     </osgi:interfaces>  
   </osgi:service>
-
-	<osgi:service ref="squashtest.tm.service.ProjectManagerService"
-		interface="org.squashtest.csp.tm.service.ProjectManagerService"/>
 
 	<osgi:service ref="squashtest.tm.service.TestCaseModificationService">
 		<osgi:interfaces>

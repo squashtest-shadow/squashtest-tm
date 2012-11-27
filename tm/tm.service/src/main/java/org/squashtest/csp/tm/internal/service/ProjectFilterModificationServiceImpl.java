@@ -34,8 +34,8 @@ import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectFilterDao;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
-import org.squashtest.csp.tm.service.ProjectFinder;
-import org.squashtest.csp.tm.service.ProjectManagerService;
+import org.squashtest.csp.tm.service.project.ProjectFinder;
+import org.squashtest.csp.tm.service.project.ProjectManagerService;
 
 @Service("squashtest.tm.service.ProjectFilterModificationService")
 @Transactional

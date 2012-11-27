@@ -40,13 +40,11 @@ import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
 import org.squashtest.csp.tm.service.CampaignModificationService;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanManagerService
-import org.squashtest.csp.tm.service.ProjectManagerService;
 import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
-
-
-
+import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
+import org.squashtest.csp.tm.service.project.ProjectManagerService;
 
 class IterationModificationServiceIT extends HibernateServiceSpecification {
 
@@ -79,8 +77,7 @@ class IterationModificationServiceIT extends HibernateServiceSpecification {
 	@Inject
 	private AttachmentManagerService attachService;
 	
-	@Inject
-	private ProjectManagerService projectService;
+	@Inject GenericProjectManagerService projectService
 
 	private long iterationId
 	private long testCaseId
@@ -89,12 +86,8 @@ class IterationModificationServiceIT extends HibernateServiceSpecification {
 
 
 	def setup(){
-
-
 		/** make the iteration environnement **/
-
-		//libcrud.addLibrary();
-		projectService.addProject(createProject())
+		projectService.persist(createProject())
 		def libList= campaignLibCrud.findAllLibraries()
 		def camplib = libList.get(libList.size()-1);
 

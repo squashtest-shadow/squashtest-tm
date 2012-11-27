@@ -27,6 +27,7 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.users.User;
@@ -118,7 +119,18 @@ public interface CustomProjectModificationService {
 	 */
 	void changeBugTrackerProjectName(long projectId, String projectBugTrackerName);
 	
-	
-
 	List<Project> findAllReadable();
+	
+	/**
+	 * Will persist the new {@linkplain Project} and add settings copied from a given {@linkplain ProjectTemplate}.
+	 * 
+	 * @param newProject : the new {@link Project} entity to persist
+	 * @param templateId : the id of the {@link ProjectTemplate} to copy the settings from
+	 * @param copyAssignedUsers : whether to copy the Template's assigned Users or not
+	 * @param copyCustomFieldsSettings : whether to copy the Template's CustomFields settings or not
+	 * @param copyBugtrackerSettings : whether to copy the Template's bug-tracker settings or not
+	 * @param copyTestAutomationSettings : whether to copy the Template's automation settings or not
+	 * @return the persisted new {@link Project}
+	 */
+	Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId, boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings , boolean copyTestAutomationSettings);	
 }

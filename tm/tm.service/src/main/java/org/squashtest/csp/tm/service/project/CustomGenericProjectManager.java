@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.service.project;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -32,6 +33,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
  * @author Gregory Fouquet
  *
  */
+@Transactional
 public interface CustomGenericProjectManager {
 	/**
 	 * Will find all Projects and Templates to which the user has management access to and return them ordered according to the given params.
@@ -39,6 +41,11 @@ public interface CustomGenericProjectManager {
 	 * @param filter the {@link CollectionSorting} that holds order and paging params
 	 * @return a {@link FilteredCollectionHolder} containing all projects the user has management access to, ordered according to the given params.
 	 */
-	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting);	
+	@Transactional(readOnly=true)
+	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting);
 
+	/**
+	 * @param project
+	 */
+	void persist(GenericProject project);
 }

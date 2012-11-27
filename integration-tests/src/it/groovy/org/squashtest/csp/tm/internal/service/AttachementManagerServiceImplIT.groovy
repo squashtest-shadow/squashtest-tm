@@ -34,39 +34,32 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
 import org.squashtest.csp.tm.service.AttachmentManagerService;
-import org.squashtest.csp.tm.service.ProjectManagerService;
 import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
+import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
+import org.squashtest.csp.tm.service.project.ProjectManagerService;
 
 @NotThreadSafe
 class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 
-	@Inject
-	private TestCaseModificationService service
+	@Inject	TestCaseModificationService service
 
-	@Inject
-	private TestCaseLibraryNavigationService navService
+	@Inject TestCaseLibraryNavigationService navService
 
-	@Inject
-	private TestCaseLibrariesCrudService libcrud
+	@Inject TestCaseLibrariesCrudService libcrud
 
-	@Inject
-	private AttachmentManagerService attachService;
+	@Inject AttachmentManagerService attachService;
 
-	
-	@Inject
-	private ProjectManagerService projectService;
+	@Inject GenericProjectManagerService genericProjectManager
 
-
-	private int testCaseId=-1;
-	private int folderId = -1;
-	private int attachListId = -1;
+	int testCaseId=-1;
+	int folderId = -1;
+	int attachListId = -1;
 
 
 	def setup(){
-		//libcrud.addLibrary();
-		projectService.addProject(createProject())
+		genericProjectManager.persist(createProject())
 
 		def libList= libcrud.findAllLibraries()
 

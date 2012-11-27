@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service;
+package org.squashtest.csp.tm.internal.service.project;
 
 import java.util.List;
 
@@ -33,12 +33,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
+import org.squashtest.csp.core.service.security.ObjectIdentityService;
 import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
 import org.squashtest.csp.tm.domain.NoBugTrackerBindingException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.domain.users.User;
@@ -46,11 +48,14 @@ import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.internal.repository.BugTrackerBindingDao;
 import org.squashtest.csp.tm.internal.repository.BugTrackerDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
+import org.squashtest.csp.tm.internal.repository.ProjectTemplateDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
+import org.squashtest.csp.tm.internal.service.ProjectDeletionHandler;
 import org.squashtest.csp.tm.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.csp.tm.service.CustomProjectModificationService;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
-
+import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
+import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
 
 /**
  * 
@@ -76,7 +81,19 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private ProjectsPermissionManagementService permissionService;
 	@Inject
 	private InsecureTestAutomationManagementService autotestService;
-	
+	@Inject
+	private ProjectTemplateDao templateDao;
+	@Inject
+	private ObjectIdentityService objectIdentityService;
+	@Inject
+	private CustomFieldBindingModificationService customFieldBindingModificationService;
+	@Inject
+	private ProjectsPermissionManagementService projectsPermissionManagementService;
+	@Inject
+	private ProjectTemplateDao projectTemplateDao;
+	@Inject
+	private GenericProjectManagerService genericProjectManager;
+
 	private static final String MANAGE_PROJECT_OR_ROLE_ADMIN = "hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')";
 
 	@Override
@@ -173,7 +190,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 
 	@Override
 	public void changeBugTracker(long projectId, Long newBugtrackerId) {
-		
+
 		Project project = projectDao.findById(projectId);
 		BugTracker newBugtracker = bugTrackerDao.findById(newBugtrackerId);
 		if (newBugtracker != null) {
@@ -182,24 +199,23 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 			throw new UnknownEntityException(newBugtrackerId, BugTracker.class);
 		}
 	}
-	
 
 	@Override
 	public void changeBugTracker(Project project, @NotNull BugTracker newBugtracker) {
 		LOGGER.debug("changeBugTracker for project " + project.getId() + " bt: " + newBugtracker.getId());
-		
-			// the project doesn't have bug-tracker connection yet
-			if (!project.isBugtrackerConnected()) {
-				BugTrackerBinding bugTrackerBinding = new BugTrackerBinding(project.getName(), newBugtracker, project);
-				project.setBugtrackerBinding(bugTrackerBinding);
+
+		// the project doesn't have bug-tracker connection yet
+		if (!project.isBugtrackerConnected()) {
+			BugTrackerBinding bugTrackerBinding = new BugTrackerBinding(project.getName(), newBugtracker, project);
+			project.setBugtrackerBinding(bugTrackerBinding);
+		}
+		// the project has a bug-tracker connection
+		else {
+			// and the new one is different from the old one
+			if (projectBugTrackerChanges(newBugtracker.getId(), project)) {
+				project.getBugtrackerBinding().setBugtracker(newBugtracker);
 			}
-			// the project has a bug-tracker connection
-			else {
-				// and the new one is different from the old one
-				if (projectBugTrackerChanges(newBugtracker.getId(), project)) {
-					project.getBugtrackerBinding().setBugtracker(newBugtracker);
-				}
-			}
+		}
 	}
 
 	private boolean projectBugTrackerChanges(Long newBugtrackerId, Project project) {
@@ -240,5 +256,54 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		return projectDao.findAll();
 	}
 
+	/**
+	 * @see ProjectManagerService#addProjectAndCopySettingsFromTemplate(Project, long, boolean, boolean, boolean,
+	 *      boolean)
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Override
+	public Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId,
+			boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings,
+			boolean copyTestAutomationSettings) {
+		genericProjectManager.persist(newProject);
+
+		ProjectTemplate projectTemplate = projectTemplateDao.findById(templateId);
+		if (copyAssignedUsers) {
+			copyAssignedUsers(newProject, projectTemplate);
+		}
+		if (copyCustomFieldsSettings) {
+			copyCustomFieldsSettings(newProject, projectTemplate);
+		}
+		if (copyBugtrackerSettings) {
+			copyBugtrackerSettings(newProject, projectTemplate);
+		}
+		if (copyTestAutomationSettings) {
+			copyTestAutomationSettings(newProject, projectTemplate);
+		}
+		return newProject;
+	}
+
+	private void copyTestAutomationSettings(Project newProject, ProjectTemplate projectTemplate) {
+		newProject.setTestAutomationEnabled(projectTemplate.isTestAutomationEnabled());
+		for (TestAutomationProject automationProject : projectTemplate.getTestAutomationProjects()) {
+			newProject.bindTestAutomationProject(automationProject);
+		}
+	}
+
+	private void copyBugtrackerSettings(Project newProject, ProjectTemplate projectTemplate) {
+		if (projectTemplate.isBugtrackerConnected()) {
+			changeBugTracker(newProject, projectTemplate.getBugtrackerBinding().getBugtracker());
+		}
+	}
+
+	private void copyCustomFieldsSettings(Project newProject, ProjectTemplate projectTemplate) {
+		customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(newProject, projectTemplate);
+
+	}
+
+	private void copyAssignedUsers(Project newProject, ProjectTemplate projectTemplate) {
+		projectsPermissionManagementService.copyAssignedUsersFromTemplate(newProject, projectTemplate);
+
+	}
 
 }

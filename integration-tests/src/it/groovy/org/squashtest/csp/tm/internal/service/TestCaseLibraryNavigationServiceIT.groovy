@@ -30,9 +30,9 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.csp.tm.service.ProjectManagerService
 import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService
+import org.squashtest.csp.tm.service.project.ProjectManagerService;
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport

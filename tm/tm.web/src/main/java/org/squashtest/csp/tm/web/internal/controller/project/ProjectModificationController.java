@@ -59,7 +59,7 @@ import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.BugTrackerFinderService;
-import org.squashtest.csp.tm.service.ProjectModificationService;
+import org.squashtest.csp.tm.service.project.ProjectManagerService;
 import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
@@ -81,11 +81,11 @@ public class ProjectModificationController {
 	@Inject
 	private MessageSource messageSource;
 
-	private ProjectModificationService projectModificationService;
+	private ProjectManagerService projectModificationService;
 
 	
 	@ServiceReference
-	public void setProjectModificationService(ProjectModificationService projectModificationService) {
+	public void setProjectModificationService(ProjectManagerService projectModificationService) {
 		this.projectModificationService = projectModificationService;
 	}
 

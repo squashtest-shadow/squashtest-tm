@@ -32,10 +32,11 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
-import org.squashtest.csp.tm.service.ProjectManagerService;
 import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
+import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
+import org.squashtest.csp.tm.service.project.ProjectManagerService;
 import org.unitils.dbunit.annotation.DataSet;
 
 import spock.unitils.UnitilsSupport;
@@ -51,20 +52,13 @@ class TestCaseModificationServiceImp2lIT extends HibernateServiceSpecification {
 
 	@Inject
 	private TestCaseLibrariesCrudService libcrud
-
+	@Inject GenericProjectManagerService projectService
 	
-	@Inject
-	private ProjectManagerService projectService;
-	
-
-
 	private int testCaseId=-1;
 	private int folderId = -1;
 
 	def setup(){
-
-		//libcrud.addLibrary();
-		projectService.addProject(createProject())
+		projectService.persist(createProject())
 
 		def libList= libcrud.findAllLibraries()
 

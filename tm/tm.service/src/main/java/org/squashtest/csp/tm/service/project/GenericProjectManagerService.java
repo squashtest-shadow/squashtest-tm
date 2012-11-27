@@ -22,7 +22,6 @@
 package org.squashtest.csp.tm.service.project;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.project.GenericProject;
 
 /**
  * @author Gregory Fouquet
@@ -30,10 +29,4 @@ import org.squashtest.csp.tm.domain.project.GenericProject;
  */
 @Transactional
 public interface GenericProjectManagerService extends CustomGenericProjectManager, GenericProjectFinder {
-
-	/**
-	 * @param project
-	 */
-	void persist(GenericProject project);
-
 }

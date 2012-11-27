@@ -29,7 +29,8 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
-import org.squashtest.csp.tm.service.ProjectManagerService
+import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
+import org.squashtest.csp.tm.service.project.ProjectManagerService;
 
 @NotThreadSafe
 class TestCaseLibraryNavigationService2IT extends HibernateServiceSpecification {
@@ -44,13 +45,10 @@ class TestCaseLibraryNavigationService2IT extends HibernateServiceSpecification 
 	private int testCaseId=-1;
 	private int folderId = -1;
 
-	@Inject
-	private ProjectManagerService projectService;
-	
+    @Inject GenericProjectManagerService projectService
 	
 	def setup(){
-		//libcrud.addLibrary();
-		projectService.addProject(createProject())
+		projectService.persist(createProject())
 
 		def libList= libcrud.findAllLibraries()
 
