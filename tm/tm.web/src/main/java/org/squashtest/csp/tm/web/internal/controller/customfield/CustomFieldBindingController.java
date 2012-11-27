@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,6 +84,16 @@ public class CustomFieldBindingController {
 		List<CustomFieldBinding> bindings = service.findCustomFieldsForProjectAndEntity(projectId, bindableEntity);
 		
 		return bindingToJson(bindings);
+		
+	}
+	
+	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity", "!sEcho", "optional=false"}, headers="Accept=text/html")
+	public String findRequiredAtCreationTime(@RequestParam("projectId") Long projectId, @RequestParam("bindableEntity") BindableEntity bindableEntity, Model model){
+		
+		List<CustomFieldBinding> bindings = service.findCustomFieldsForProjectAndEntity(projectId, bindableEntity);
+		model.addAttribute("bindings", bindings);
+		
+		return "treepopups/create-node-custom-fields-editor.html";
 		
 	}
 	

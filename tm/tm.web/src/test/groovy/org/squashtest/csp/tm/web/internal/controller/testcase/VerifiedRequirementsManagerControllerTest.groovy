@@ -72,6 +72,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		RequirementLibrary lib = Mock()
 		lib.getClassSimpleName() >> "RequirementLibrary"
 		Project project = Mock()
+		project.getId() >> 10l
 		lib.project >> project
 		requirementLibraryFinder.findLinkableRequirementLibraries() >> [lib]
 

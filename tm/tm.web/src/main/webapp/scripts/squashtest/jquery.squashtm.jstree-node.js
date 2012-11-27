@@ -109,6 +109,10 @@
 		this.getPath = function() {
 			return this.getAncestors().all('getName').join().replace(/,/g, '/');
 		};
+		
+		this.getProjectId = function(){
+			return this.getLibrary().attr('project');
+		};
 
 		// ************ relationships getters
 

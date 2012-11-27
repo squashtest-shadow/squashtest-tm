@@ -64,7 +64,9 @@ class DriveNodeBuilderTest extends Specification {
 	}
 
 	def ofProject(TestCaseLibrary library, String name) {
-		Project project = new Project(name: "foo")
+		Project project = Mock(Project)
+		project.getName() >> name
+		project.getId() >> 10l
 		library.project = project
 		return library
 	}
