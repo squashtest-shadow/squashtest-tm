@@ -21,33 +21,18 @@
 package org.squashtest.csp.tm.web.internal.controller.administration;
 
 import javax.inject.Inject;
-import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.service.project.GenericProjectFinder;
-import org.squashtest.csp.tm.service.project.ProjectManagerService;
-import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 
 @Controller
 @RequestMapping("/administration/projects")
 public class ProjectAdministrationController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectAdministrationController.class);
-
-	@Inject
-	private ProjectManagerService projectManagerService;
-
-	@Inject
-	private InternationalizationHelper messageSource;
-
 	/**
 	 * Finder service for generic project. We manage here both projects and templates !
 	 */
@@ -61,7 +46,6 @@ public class ProjectAdministrationController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showProjects() {
-
 		ModelAndView mav = new ModelAndView("page/projects/show-projects");
 		mav.addObject("projects", projectFinder.findAllOrderedByName(DefaultPaging.FIRST_PAGE));
 		return mav;
