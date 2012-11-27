@@ -82,10 +82,6 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Inject
 	private InsecureTestAutomationManagementService autotestService;
 	@Inject
-	private ProjectTemplateDao templateDao;
-	@Inject
-	private ObjectIdentityService objectIdentityService;
-	@Inject
 	private CustomFieldBindingModificationService customFieldBindingModificationService;
 	@Inject
 	private ProjectsPermissionManagementService projectsPermissionManagementService;
@@ -154,9 +150,9 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	// ********************************** Test automation section *************************************
 	@Override
 	@PreAuthorize("hasPermission(#TMprojectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	public void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject) {
-		TestAutomationProject persistedProject = autotestService.persistOrAttach(TAproject);
-		projectDao.findById(TMprojectId).bindTestAutomationProject(persistedProject);
+	public void bindTestAutomationProject(long tmProjectId, TestAutomationProject taProject) {
+		TestAutomationProject persistedProject = autotestService.persistOrAttach(taProject);
+		projectDao.findById(tmProjectId).bindTestAutomationProject(persistedProject);
 	}
 
 	@Override

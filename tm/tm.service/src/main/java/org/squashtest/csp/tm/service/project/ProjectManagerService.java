@@ -26,18 +26,23 @@ import org.squashtest.csp.tm.service.CustomProjectModificationService;
 
 @Transactional
 public interface ProjectManagerService extends CustomProjectModificationService, ProjectFinder {
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	/**
+	 * 
+	 */
+	public static final String ADMIN_OR_PROJECT_MANAGER = "hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')";
+
+	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
 	void changeDescription(long projectId, String newDescription);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
 	void changeLabel(long projectId, String newLabel);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
 	void changeName(long projectId, String newName);
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void changeActive(long projectId, boolean isActive);
 	
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
 	void changeTestAutomationEnabled(long projectId, boolean isEnabled);
 }
