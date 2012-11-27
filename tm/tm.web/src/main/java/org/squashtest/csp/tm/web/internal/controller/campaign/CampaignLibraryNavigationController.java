@@ -128,6 +128,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return createTreeNodeFromLibraryNode(newCampaign);
 
 	}
+	
+	
+	
+	
 	@Override
 	protected LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> getLibraryNavigationService() {
 		return campaignLibraryNavigationService;

@@ -20,18 +20,20 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+
+<%-- TODO : obsolete. To be rewritten some day. --%>
+
 <%@ tag body-content="empty"
 	description="Defines a dialog which adds a nameable node to a tree"%><%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
-<%@ taglib prefix="su"
-	uri="http://org.squashtest.csp/taglib/string-utils"%>
+<%@ taglib prefix="su" uri="http://org.squashtest.csp/taglib/string-utils"%>
 	
-<%@ attribute name="resourceName" required="true"
-	description="Name of the resource to add. Should be a lowercase, hyphened name. eg : 'test-case'"%>
+<%@ attribute name="resourceName" required="true" description="Name of the resource to add. Should be a lowercase, hyphened name. eg : 'test-case'"%>
 <%@ attribute name="treeNodeButton" required="true" description="the javascript button that will open the dialog" %>
+
 
 <c:url var="requirementComboLists"	value="/requirement-workspace/combo-options" />
 
@@ -40,9 +42,14 @@
 <c:set var="genericHandlerName"	value="genericAdd${ su:hyphenedToCamelCase(resourceName) }Handler" />
 <c:choose>
 	<c:when	test="${ (resourceName eq 'test-case') or (resourceName eq 'campaign') or (resourceName eq 'requirement') }">
-		<c:set var="openButtonId" value="new-leaf-tree-button" /></c:when>
-	<c:when test="${ (resourceName eq 'folder') }"><c:set var="openButtonId" value="new-folder-tree-button" /></c:when>
-	<c:otherwise><c:set var="openButtonId" value="new-resource-tree-button" /></c:otherwise>
+		<c:set var="openButtonId" value="new-leaf-tree-button" />
+	</c:when>
+	<c:when test="${ (resourceName eq 'folder') }">
+		<c:set var="openButtonId" value="new-folder-tree-button" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="openButtonId" value="new-resource-tree-button" />
+	</c:otherwise>
 </c:choose>
 
 
@@ -60,20 +67,20 @@ $(function(){
 
 </script>
 </c:if>
+
 <c:choose>
-<c:when test="${ (resourceName eq 'folder') || (resourceName eq 'test-case') }">
-<c:set var="addAnotherLabelKey" value="label.addAnother"/></c:when>
-<c:otherwise>
-<c:set var="addAnotherLabelKey" value="label.fem.addAnother"/></c:otherwise>
+	<c:when test="${ (resourceName eq 'folder') || (resourceName eq 'test-case') }">
+		<c:set var="addAnotherLabelKey" value="label.addAnother"/>
+	</c:when>
+	<c:otherwise>
+		<c:set var="addAnotherLabelKey" value="label.fem.addAnother"/>
+	</c:otherwise>
 </c:choose>
 
-<pop:popup id="add-${ resourceName }-dialog"
-	titleKey="dialog.new-${ resourceName }.title" closeOnSuccess="${false}">
+<pop:popup id="add-${ resourceName }-dialog" titleKey="dialog.new-${ resourceName }.title" closeOnSuccess="${false}">
 	<jsp:attribute name="buttons">
-		<pop:button labelKey="${addAnotherLabelKey}"
-			handler="${ addAnotherHandlerName }" />
-		<pop:button labelKey="label.Add"
-			handler="${ handlerName }" />
+		<pop:button labelKey="${addAnotherLabelKey}" handler="${ addAnotherHandlerName }" />
+		<pop:button labelKey="label.Add" handler="${ handlerName }" />
 		<pop:cancel-button/>
 	</jsp:attribute>
 	<jsp:attribute name="body">
@@ -111,9 +118,16 @@ $(function(){
 					</td>
 				</tr>
 			</c:if>
+			<c:if test='${ resourceName != "folder"'>
+			<tr>
+				<td colspan="2" class="waiting-loading"></td>
+			</tr>
+			</c:if>
 		</table>
 	</jsp:attribute>
 </pop:popup>
+
+
 <script type="text/javascript">
 
 	function setCopyTestPlan(){
@@ -138,6 +152,7 @@ $(function(){
 		});
 	}
 	
+	<%--
 	function ${genericHandlerName}(){
 		<c:choose>
 		<c:when test='${ resourceName eq "requirement" }'>
@@ -170,6 +185,53 @@ $(function(){
 		return params;
 		
 	}
+	--%>
+	
+	function ${genericHandlerName}(){
+		<c:choose>
+		<c:when test='${ resourceName eq "requirement" }'>
+		var params = {
+			name : $("#add-requirement-name").val(), 
+			description : $("#add-requirement-description").val(), 
+			reference : $("#add-requirement-reference").val(), 
+			criticality : $("#add-requirement-criticality").val(),
+			category : $("#add-requirement-category").val()
+		};
+		</c:when>
+		<c:when test='${ resourceName eq "test-case" }'>
+		var params = {
+			name : $("#add-test-case-name").val(), 
+			description : $("#add-test-case-description").val(), 
+			reference : $("#add-test-case-reference").val()
+		};
+		</c:when>
+		<c:when test='${ resourceName eq "iteration" }'>
+		var params = {
+			name : $("#add-iteration-name").val(), 
+			description : $("#add-iteration-description").val(),
+			copyTestPlan : $("#copy-test-plan").val()
+		};
+		cleanup();
+		</c:when>
+		<c:otherwise>
+		var params = {
+			name : $("#add-${ resourceName }-name").val(), 
+			description : $("#add-${ resourceName }-description").val()
+		};
+		</c:otherwise>
+		</c:choose>
+		
+		//now add the custom fields
+		var cufs = $("#add-${ resourceName }-dialog .create-node-custom-field-input");
+		if (cufs.length>0){
+			cufs.each(function(){
+				params[this.name] = (this.checked) ? this.checked : this.value;
+			});
+		}
+		
+		return params;	
+		
+	}
 	
 	function cleanup(){
 		<c:if test='${ resourceName eq "iteration" }'>
@@ -184,6 +246,8 @@ $(function(){
 			cleanup();
 			return false;
 		});
+		
+	
 	});
 	
 </script>

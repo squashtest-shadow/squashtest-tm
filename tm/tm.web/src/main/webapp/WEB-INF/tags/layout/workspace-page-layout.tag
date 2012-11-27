@@ -151,6 +151,7 @@
 	</jsp:attribute>
 
 	<jsp:attribute name="footer">
+		
 		<treepopup:add-nameable-node-dialog resourceName="folder" treeNodeButton="squashtm.treemenu.create.buttons['create-folder']"/>
 		<treepopup:add-nameable-node-dialog resourceName="${ resourceName }"  treeNodeButton="squashtm.treemenu.create.buttons['create-file']"/>
 	

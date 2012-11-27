@@ -89,7 +89,7 @@ public class CustomFieldValueConfigurationBean {
 	
 	
 	public static interface ConfigurationBean{
-		String getFieldName();
+		String getFieldLabel();
 		Long getFieldId();
 		String getFieldValue();
 		String getType();
@@ -98,7 +98,7 @@ public class CustomFieldValueConfigurationBean {
 	
 	public static abstract class DefaultItem implements ConfigurationBean {
 		
-		private String name;
+		private String label;
 		private Long id;
 		private String value;
 		
@@ -109,7 +109,7 @@ public class CustomFieldValueConfigurationBean {
 		public DefaultItem(CustomFieldValue value){
 			this.id = value.getId();
 			this.value=value.getValue();
-			this.name = value.getBinding().getCustomField().getName();
+			this.label = value.getBinding().getCustomField().getLabel();
 		}
 
 		@Override
@@ -133,12 +133,12 @@ public class CustomFieldValueConfigurationBean {
 	
 
 		@Override
-		public String getFieldName() {
-			return name;
+		public String getFieldLabel() {
+			return label;
 		}
 
-		public void setFieldName(String name) {
-			this.name = name;
+		public void setFieldLabel(String label) {
+			this.label = label;
 		}
 
 		@Override
