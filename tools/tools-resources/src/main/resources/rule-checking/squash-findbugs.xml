@@ -29,9 +29,6 @@
     <Bug pattern="VA_FORMAT_STRING_BAD_ARGUMENT"/>
   </Match>
   <Match>
-    <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
-  </Match>
-  <Match>
     <Bug pattern="SF_DEAD_STORE_DUE_TO_SWITCH_FALLTHROUGH"/>
   </Match>
   <Match>
@@ -825,9 +822,6 @@
   </Match>
   <Match>
     <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
-  </Match>
-  <Match>
-    <Bug pattern="DM_BOOLEAN_CTOR"/>
   </Match>
   <Match>
     <Bug pattern="BC_BAD_CAST_TO_CONCRETE_COLLECTION"/>

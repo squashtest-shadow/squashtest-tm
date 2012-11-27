@@ -36,9 +36,6 @@
   <rule ref="rulesets/design.xml/FinalFieldCouldBeStatic">
     <priority>4</priority>
   </rule>
-  <rule ref="rulesets/braces.xml/IfStmtsMustUseBraces">
-    <priority>3</priority>
-  </rule>
   <rule ref="rulesets/naming.xml/SuspiciousEqualsMethodName">
     <priority>2</priority>
   </rule>
@@ -63,9 +60,6 @@
   <rule ref="rulesets/design.xml/SingularField">
     <priority>4</priority>
   </rule>
-  <rule ref="rulesets/unusedcode.xml/UnusedPrivateMethod">
-    <priority>3</priority>
-  </rule>
   <rule ref="rulesets/design.xml/CloseResource">
     <priority>3</priority>
   </rule>
@@ -83,9 +77,6 @@
   </rule>
   <rule ref="rulesets/basic.xml/UselessOverridingMethod">
     <priority>3</priority>
-  </rule>
-  <rule ref="rulesets/controversial.xml/UnusedModifier">
-    <priority>5</priority>
   </rule>
   <rule ref="rulesets/design.xml/PreserveStackTrace">
     <priority>3</priority>
@@ -132,9 +123,6 @@
   <rule ref="rulesets/optimizations.xml/UseArrayListInsteadOfVector">
     <priority>3</priority>
   </rule>
-  <rule ref="rulesets/braces.xml/WhileLoopsMustUseBraces">
-    <priority>3</priority>
-  </rule>
   <rule ref="rulesets/strings.xml/StringToString">
     <priority>3</priority>
   </rule>
@@ -174,9 +162,6 @@
   <rule ref="rulesets/design.xml/UnnecessaryLocalBeforeReturn">
     <priority>3</priority>
   </rule>
-  <rule ref="rulesets/basic.xml/BooleanInstantiation">
-    <priority>3</priority>
-  </rule>
   <rule ref="rulesets/basic.xml/UnconditionalIfStatement">
     <priority>2</priority>
   </rule>
@@ -184,9 +169,6 @@
     <priority>3</priority>
   </rule>
   <rule ref="rulesets/migrating.xml/ReplaceHashtableWithMap">
-    <priority>3</priority>
-  </rule>
-  <rule ref="rulesets/braces.xml/ForLoopsMustUseBraces">
     <priority>3</priority>
   </rule>
   <rule ref="rulesets/basic.xml/EmptyTryBlock">
@@ -212,9 +194,6 @@
   </rule>
   <rule ref="rulesets/strings.xml/UseStringBufferLength">
     <priority>4</priority>
-  </rule>
-  <rule ref="rulesets/braces.xml/IfElseStmtsMustUseBraces">
-    <priority>3</priority>
   </rule>
   <rule ref="rulesets/logging-java.xml/SystemPrintln">
     <priority>3</priority>
@@ -262,6 +241,9 @@
     </properties>
   </rule>
   <rule ref="rulesets/strictexception.xml/AvoidCatchingThrowable">
+    <priority>3</priority>
+  </rule>
+  <rule ref="rulesets/basic.xml/BooleanInstantiation">
     <priority>3</priority>
   </rule>
 </ruleset>
