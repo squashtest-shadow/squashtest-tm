@@ -43,13 +43,12 @@ import spock.unitils.UnitilsSupport
 class JdbcManageableAclServiceIT extends Specification {
 	@Inject JdbcManageableAclService service
 	@Inject DataSource dataSource
-//	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource)
 
 	def setup() {
 		SecurityContextHolder.getContext().setAuthentication(new StubAuthentication())
 	}
 
-	@DataSet(value = "JdbcManageableAclServiceIT.should create OID for a project.xml")
+	@DataSet("JdbcManageableAclServiceIT.should create OID for a project.xml")
 	@ExpectedDataSet("JdbcManageableAclServiceIT.should create OID for a project.expected.xml")
 	def "should create OID for a project"() {
 		given:
@@ -61,6 +60,20 @@ class JdbcManageableAclServiceIT extends Specification {
 		then:
 		true // expected dataset constraint
 	}
+
+	@DataSet("JdbcManageableAclServiceIT.should delete OID for a project.xml")
+	@ExpectedDataSet("JdbcManageableAclServiceIT.should delete OID for a project.expected.xml")
+	def "should delete OID for a project"() {
+		given:
+		ObjectIdentity oid = new ObjectIdentityImpl("foo.Bar", 10L)
+
+		when:
+		service.removeObjectIdentity(oid)
+
+		then:
+		true // expected dataset constraint
+	}
+
 	@DataSet(value = "JdbcManageableAclServiceIT.should create OID for a project.xml")
 	def "should not create OID for an unknown class"() {
 		given:

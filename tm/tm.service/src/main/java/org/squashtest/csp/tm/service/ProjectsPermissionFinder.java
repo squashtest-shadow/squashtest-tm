@@ -45,4 +45,10 @@ public interface ProjectsPermissionFinder {
 	List<UserProjectPermissionsBean> findUserPermissionsBeanByProject(long projectId);
 	
 	List<User> findUserWithoutPermissionByProject(long projectId);
+
+	/**
+	 * @param userId
+	 * @param projectId
+	 */
+	void removeProjectPermission(long userId, long projectId);
 }

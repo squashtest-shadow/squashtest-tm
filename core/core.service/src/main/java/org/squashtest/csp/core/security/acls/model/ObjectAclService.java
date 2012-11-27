@@ -30,13 +30,20 @@ public interface ObjectAclService {
 	List<PermissionGroup> findAllPermissionGroupsByNamespace(String namespace);
 
 	void removeAllResponsibilities(String userLogin, ObjectIdentity entityRef);
-	
+
+	/**
+	 * Removes ALL RESPONSIBILITIES from the given object.
+	 * 
+	 * @param entityRef
+	 */
+	void removeAllResponsibilities(ObjectIdentity entityRef);
+
 	List<Object[]> retrieveClassAclGroupFromUserLogin(String userLogin, String qualifiedClassName);
-	
+
 	List<Long> findObjectWithoutPermissionByLogin(String userLogin, String qualifiedClass);
-	
+
 	void addNewResponsibility(String userLogin, ObjectIdentity entityRef, String qualifiedName);
-	
+
 	List<String> findUsersWithWritePermission(List<ObjectIdentity> entityRefs);
 	/**
 	 * Will find squash User ids and theirs permission names for the given acl_object_identity.identity and acl_object_identity.className
@@ -44,7 +51,7 @@ public interface ObjectAclService {
 	 * @param objectClassName : the acl_object_identity.acl_class.className
 	 * @return a list of Object[] containing at index 0 the user id and , at index 1, the user's acl_group.qualified_name for the given acl_object.
 	 */
-	List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long objectIdentity, String objectClassName);
+	List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass);
 
 	List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName);
 

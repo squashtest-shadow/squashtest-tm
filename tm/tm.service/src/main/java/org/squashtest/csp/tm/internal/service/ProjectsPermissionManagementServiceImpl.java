@@ -47,7 +47,6 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	private static final String NAMESPACE = "squashtest.acl.group.tm";
 	private static final String PROJECT_CLASS_NAME = "org.squashtest.csp.tm.domain.project.Project";
-	private static final String PROJECT_TEMPLATE_CLASS_NAME = "org.squashtest.csp.tm.domain.project.ProjectTemplate";
 
 	@Inject
 	private ObjectAclService aclService;
@@ -58,7 +57,6 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	@Inject
 	private UserDao userDao;
 
-
 	@Override
 	public List<PermissionGroup> findAllPossiblePermission() {
 		return aclService.findAllPermissionGroupsByNamespace(NAMESPACE);
@@ -66,18 +64,41 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	@Override
 	public void deleteUserProjectOldPermission(String userLogin, long projectId) {
-		ObjectIdentity entityRef = new ObjectIdentityImpl(Project.class, projectId);
+		ObjectIdentity entityRef = createProjectIdentity(projectId);
 		aclService.removeAllResponsibilities(userLogin, entityRef);
+
 		Project project = projectDao.findById(projectId);
-		ObjectIdentity rlibraryRef = new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary()
-				.getId());
+
+		ObjectIdentity rlibraryRef = createRequirementLibraryIdentity(project);
 		aclService.removeAllResponsibilities(userLogin, rlibraryRef);
+
+		ObjectIdentity tclibraryRef = createTestCaseLibraryIdentity(project);
+		aclService.removeAllResponsibilities(userLogin, tclibraryRef);
+
+		ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
+		aclService.removeAllResponsibilities(userLogin, clibraryRef);
+	}
+
+	private ObjectIdentity createProjectIdentity(long projectId) {
+		ObjectIdentity entityRef = new ObjectIdentityImpl(Project.class, projectId);
+		return entityRef;
+	}
+
+	private ObjectIdentity createCampaignLibraryIdentity(Project project) {
+		ObjectIdentity clibraryRef = new ObjectIdentityImpl(CampaignLibrary.class, project.getCampaignLibrary().getId());
+		return clibraryRef;
+	}
+
+	private ObjectIdentity createTestCaseLibraryIdentity(Project project) {
 		ObjectIdentity tclibraryRef = new ObjectIdentityImpl(TestCaseLibrary.class, project.getTestCaseLibrary()
 				.getId());
-		aclService.removeAllResponsibilities(userLogin, tclibraryRef);
-		ObjectIdentity clibraryRef = new ObjectIdentityImpl(CampaignLibrary.class, project.getCampaignLibrary()
+		return tclibraryRef;
+	}
+
+	private ObjectIdentity createRequirementLibraryIdentity(Project project) {
+		ObjectIdentity rlibraryRef = new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary()
 				.getId());
-		aclService.removeAllResponsibilities(userLogin, clibraryRef);
+		return rlibraryRef;
 	}
 
 	@Override
@@ -102,45 +123,45 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	@Override
 	public void addNewPermissionToProject(long userId, long projectId, String permissionName) {
-		ObjectIdentity projectRef = new ObjectIdentityImpl(Project.class, projectId);
+		ObjectIdentity projectRef = createProjectIdentity(projectId);
 		User user = userDao.findById(userId);
 		aclService.addNewResponsibility(user.getLogin(), projectRef, permissionName);
 
 		Project project = projectDao.findById(projectId);
-		ObjectIdentity rlibraryRef = new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary()
-				.getId());
+
+		ObjectIdentity rlibraryRef = createRequirementLibraryIdentity(project);
 		aclService.addNewResponsibility(user.getLogin(), rlibraryRef, permissionName);
-		ObjectIdentity tclibraryRef = new ObjectIdentityImpl(TestCaseLibrary.class, project.getTestCaseLibrary()
-				.getId());
+
+		ObjectIdentity tclibraryRef = createTestCaseLibraryIdentity(project);
 		aclService.addNewResponsibility(user.getLogin(), tclibraryRef, permissionName);
-		ObjectIdentity clibraryRef = new ObjectIdentityImpl(CampaignLibrary.class, project.getCampaignLibrary()
-				.getId());
+
+		ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
 		aclService.addNewResponsibility(user.getLogin(), clibraryRef, permissionName);
 
 	}
 
 	@Override
 	public void removeProjectPermission(long userId, long projectId) {
-		ObjectIdentity projectRef = new ObjectIdentityImpl(Project.class, projectId);
+		ObjectIdentity projectRef = createProjectIdentity(projectId);
 		User user = userDao.findById(userId);
 		aclService.removeAllResponsibilities(user.getLogin(), projectRef);
+
 		Project project = projectDao.findById(projectId);
-		ObjectIdentity rlibraryRef = new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary()
-				.getId());
+
+		ObjectIdentity rlibraryRef = createRequirementLibraryIdentity(project);
 		aclService.removeAllResponsibilities(user.getLogin(), rlibraryRef);
-		ObjectIdentity tclibraryRef = new ObjectIdentityImpl(TestCaseLibrary.class, project.getTestCaseLibrary()
-				.getId());
+
+		ObjectIdentity tclibraryRef = createTestCaseLibraryIdentity(project);
 		aclService.removeAllResponsibilities(user.getLogin(), tclibraryRef);
-		ObjectIdentity clibraryRef = new ObjectIdentityImpl(CampaignLibrary.class, project.getCampaignLibrary()
-				.getId());
+
+		ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
 		aclService.removeAllResponsibilities(user.getLogin(), clibraryRef);
 	}
 
 	@Override
 	public List<UserProjectPermissionsBean> findUserPermissionsBeanByProject(long projectId) {
-		return findUserPermissionBeanByProjectOfGivenType(projectId, PROJECT_CLASS_NAME);
+		return findUserPermissionBeanByProjectOfGivenType(projectId, Project.class);
 	}
-	
 
 	@Override
 	public List<User> findUserWithoutPermissionByProject(long projectId) {
@@ -151,29 +172,54 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		return userDao.findAllByIds(idList);
 	}
 
+	/**
+	 * @see ProjectsPermissionManagementService#copyAssignedUsersFromTemplate(Project, ProjectTemplate)
+	 */
 	@Override
 	public void copyAssignedUsersFromTemplate(Project newProject, ProjectTemplate projectTemplate) {
-		List<UserProjectPermissionsBean> templateUserPermissions = findUserPermissionsBeanByProjectTemplate(projectTemplate.getId());
-		for(UserProjectPermissionsBean userPermission : templateUserPermissions){
-			long userId = userPermission.getUser().getId();
-			long projectId = newProject.getId();
-			String permissionName = userPermission.getPermissionGroup().getQualifiedName();
-			addNewPermissionToProject(userId, projectId, permissionName);
-		}
-	}
-	
-	private List<UserProjectPermissionsBean> findUserPermissionsBeanByProjectTemplate(long projectId) {
-		return findUserPermissionBeanByProjectOfGivenType(projectId, PROJECT_TEMPLATE_CLASS_NAME);
+		long templateId = projectTemplate.getId();
+		copyAssignedUsersFromTemplate(newProject, templateId);
 	}
 
-	private List<UserProjectPermissionsBean> findUserPermissionBeanByProjectOfGivenType(long projectId, String projectTemplateClassName) {
+	private List<UserProjectPermissionsBean> findUserPermissionsBeanByProjectTemplate(long projectId) {
+		return findUserPermissionBeanByProjectOfGivenType(projectId, ProjectTemplate.class);
+	}
+
+	private List<UserProjectPermissionsBean> findUserPermissionBeanByProjectOfGivenType(long projectId,
+			Class<?> projectType) {
 		List<UserProjectPermissionsBean> newResult = new ArrayList<UserProjectPermissionsBean>();
-		List<Object[]> result = aclService.retriveUserAndAclGroupNameFromIdentityAndClass(projectId, projectTemplateClassName);
+
+		List<Object[]> result = aclService.retriveUserAndAclGroupNameFromIdentityAndClass(projectId, projectType);
 		for (Object[] objects : result) {
 			User user = userDao.findById((Long) objects[0]);
 			newResult.add(new UserProjectPermissionsBean(user, (PermissionGroup) objects[1]));
 		}
 		return newResult;
-		
+
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.service.ProjectsPermissionManagementService#copyAssignedUsersFromTemplate(org.squashtest.csp.tm.domain.project.Project,
+	 *      long)
+	 */
+	@Override
+	public void copyAssignedUsersFromTemplate(Project project, long templateId) {
+		List<UserProjectPermissionsBean> templateUserPermissions = findUserPermissionsBeanByProjectTemplate(templateId);
+
+		for (UserProjectPermissionsBean userPermission : templateUserPermissions) {
+			long userId = userPermission.getUser().getId();
+			long projectId = project.getId();
+			String permissionName = userPermission.getPermissionGroup().getQualifiedName();
+			addNewPermissionToProject(userId, projectId, permissionName);
+		}
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.service.ProjectsPermissionManagementService#removeAllPermissionsFromProjectTemplate(long)
+	 */
+	@Override
+	public void removeAllPermissionsFromProjectTemplate(long templateId) {
+		ObjectIdentity projectRef = new ObjectIdentityImpl(ProjectTemplate.class, templateId);
+		aclService.removeAllResponsibilities(projectRef);
 	}
 }

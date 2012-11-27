@@ -58,7 +58,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 	{
 		service.projectTemplateDao = projectTemplateDao
 		service.customFieldBindingModificationService = customFieldBindingModificationService
-		service.projectsPermissionManagementService = projectsPermissionManagementService
+		service.permissionService = projectsPermissionManagementService
 		service.genericProjectManager = genericProjectManagerService
 		
 		

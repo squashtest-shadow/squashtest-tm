@@ -53,7 +53,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Inject
 	private CustomFieldBindingModificationService customFieldBindingModificationService;
 	@Inject
-	private ProjectsPermissionManagementService projectsPermissionManagementService;
+	private ProjectsPermissionManagementService permissionService;
 	@Inject
 	private ProjectTemplateDao projectTemplateDao;
 	@Inject
@@ -118,7 +118,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	}
 
 	private void copyAssignedUsers(Project newProject, ProjectTemplate projectTemplate) {
-		projectsPermissionManagementService.copyAssignedUsersFromTemplate(newProject, projectTemplate);
+		permissionService.copyAssignedUsersFromTemplate(newProject, projectTemplate);
 
 	}
 

@@ -30,7 +30,7 @@ public interface ProjectsPermissionManagementService extends ProjectsPermissionF
 	void addNewPermissionToProject(long userId, long projectId, String permissionName);
 
 	void removeProjectPermission(long userId, long projectId);
-
+	
 	/**
 	 * Will copy all user permissions of template and apply them to the project and it's libraries.
 	 * 
@@ -40,5 +40,21 @@ public interface ProjectsPermissionManagementService extends ProjectsPermissionF
 	 *            : the {@link ProjectTemplate} to copy the permissions from
 	 */
 	void copyAssignedUsersFromTemplate(Project project, ProjectTemplate projectTemplate);
+
+	/**
+	 * Same as {@link #copyAssignedUsersFromTemplate(Project, ProjectTemplate)} using the template's id
+	 * 
+	 * @see #copyAssignedUsersFromTemplate(Project, ProjectTemplate)
+	 * @param project
+	 * @param templateId
+	 */
+	void copyAssignedUsersFromTemplate(Project project, long templateId);
+
+	/**
+	 * Removes all the permissions from the given template (not its libraries).
+	 * 
+	 * @param templateId
+	 */
+	void removeAllPermissionsFromProjectTemplate(long templateId);
 
 }

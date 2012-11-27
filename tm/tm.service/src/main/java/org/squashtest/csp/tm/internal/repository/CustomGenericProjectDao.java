@@ -18,22 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.service.security
 
-class StubObjectIdentityService implements ObjectIdentityService {
+package org.squashtest.csp.tm.internal.repository;
 
-	@Override
-	public void addObjectIdentity(long projectId, Class<?> projectClass) {
-		// noop
+import org.squashtest.csp.tm.domain.project.Project;
 
-	}
-
-	/* (non-Javadoc)
-	 * @see org.squashtest.csp.core.service.security.ObjectIdentityService#removeObjectIdentity(long, java.lang.Class)
+/**
+ * @author Gregory Fouquet
+ * 
+ */
+public interface CustomGenericProjectDao {
+	/**
+	 * Coerces the template of given id into a projet. This method evicts the template from the session cache, yet it
+	 * should not be invoked when the template is loaded.
+	 * 
+	 * @param templateId
+	 * @return the coerced project.
 	 */
-	@Override
-	public void removeObjectIdentity(long entityId, Class<?> entityType) {
-		// noop
-		
-	}
+	Project coerceTemplateIntoProject(long templateId);
+
 }

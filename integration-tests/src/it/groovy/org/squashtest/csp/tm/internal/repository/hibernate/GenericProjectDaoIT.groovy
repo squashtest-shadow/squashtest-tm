@@ -24,6 +24,7 @@ package org.squashtest.csp.tm.internal.repository.hibernate
 import javax.inject.Inject;
 
 import org.squashtest.csp.tm.domain.project.GenericProject;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.internal.repository.GenericProjectDao;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.unitils.dbunit.annotation.DataSet;
@@ -70,4 +71,14 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 		expect:
 		dao.countGenericProjects() == 4L
 	}
+	
+	@DataSet("GenericProjectDaoIT.xml")
+	def "should coerce template into a project" () {
+		when:
+		GenericProject res = dao.coerceTemplateIntoProject(4)
+
+		then:
+		res instanceof Project
+	}
+
 }

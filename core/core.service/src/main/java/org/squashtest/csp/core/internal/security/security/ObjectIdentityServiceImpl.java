@@ -38,9 +38,18 @@ public class ObjectIdentityServiceImpl implements ObjectIdentityService {
 
 
 	@Override
-	public void addObjectIdentity(long objectId, Class<?> projectClass) {
-		ObjectIdentity objectIdentity =  new ObjectIdentityImpl(projectClass, objectId);
+	public void addObjectIdentity(long objectId, Class<?> entityClass) {
+		ObjectIdentity objectIdentity =  new ObjectIdentityImpl(entityClass, objectId);
 		aclService.createObjectIdentity(objectIdentity);
+	}
+
+	/**
+	 * @see org.squashtest.csp.core.service.security.ObjectIdentityService#removeObjectIdentity(long, java.lang.Class)
+	 */
+	@Override
+	public void removeObjectIdentity(long entityId, Class<?> entityType) {
+		ObjectIdentity objectIdentity =  new ObjectIdentityImpl(entityType, entityId);
+		aclService.removeObjectIdentity(objectIdentity);
 	}
 
 }

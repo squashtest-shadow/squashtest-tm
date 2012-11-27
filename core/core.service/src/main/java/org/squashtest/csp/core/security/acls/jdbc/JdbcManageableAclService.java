@@ -125,13 +125,7 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 			+ "where USER_ID = (select ID from CORE_USER where login = ?) " + "and OBJECT_IDENTITY_ID = "
 			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid " + "inner join ACL_CLASS c on c.ID = oid.CLASS_ID "
 			+ "where oid.IDENTITY = ? and c.CLASSNAME = ?)";
-	/*
-	 * private final String deleteResponsablityEntry = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY arse "+
-	 * "inner join ACL_OBJECT_IDENTITY oid on arse.OBJECT_IDENTITY_ID=oid.ID"+
-	 * "inner join ACL_CLASS ac on oid.CLASS_ID = ac.ID "+
-	 * "where arse.USER_ID = (select ID from CORE_USER where login = ?) " + "and oid.IDENTITY = ? "+
-	 * "and ac.CLASSNAME = ?";
-	 */
+
 	private static final String FIND_OBJECT_WITHOUT_PERMISSION = "select nro.IDENTITY from ACL_OBJECT_IDENTITY nro "
 			+ "inner join ACL_CLASS nrc on nro.CLASS_ID = nrc.ID " + "where nrc.CLASSNAME = ? "
 			+ "and not exists (select 1 " + "from ACL_OBJECT_IDENTITY ro "
@@ -140,15 +134,18 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 			+ "inner join CORE_USER u on u.ID = r.USER_ID "
 			+ "where ro.ID = nro.ID and rc.ID = nrc.ID and u.LOGIN = ?) ";
 
-	// private final String findObjectsWithoutPermission =
-	// "select oid.IDENTITY from ACL_OBJECT_IDENTITY oid inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = oid.ID inner join CORE_USER cu on cu.ID = arse.USER_ID inner join ACL_CLASS ac on oid.CLASS_ID = ac.ID right join ACL_OBJECT_IDENTITY aoc"+
-	// " where cu.LOGIN = ? and ac.CLASSNAME = ? and oid.ID is null";
-
 	private static final String FIND_USERS_WITHOUT_PERMISSION_BY_OBJECT = "select u.ID from CORE_USER u "
 			+ "where not exists (select 1 " + "from ACL_OBJECT_IDENTITY aoi "
 			+ "inner join ACL_CLASS ac on ac.ID = aoi.CLASS_ID "
 			+ "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = aoi.ID "
 			+ "where u.ID = arse.USER_ID " + "and ac.CLASSNAME = ? " + "and aoi.IDENTITY = ?) ";
+
+	private static final String DELETE_OBJECT_IDENTITY = "delete ACL_OBJECT_IDENTITY where IDENTITY = ? and CLASS_ID = ?";
+
+	private static final String DELETE_ALL_RESPONSABILITY_ENTRIES = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY " +
+			"where and OBJECT_IDENTITY_ID = (select oid.ID from ACL_OBJECT_IDENTITY oid " +
+			"inner join ACL_CLASS c on c.ID = oid.CLASS_ID " +
+			"where oid.IDENTITY = ? and c.CLASSNAME = ?)";
 
 	public JdbcManageableAclService(DataSource dataSource, LookupStrategy lookupStrategy) {
 		super(dataSource, lookupStrategy);
@@ -330,8 +327,8 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 	}
 
 	@Override
-	public List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long projectId, String projectClassName) {
-		return jdbcTemplate.query(USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS, new Object[] { projectId, projectClassName },
+	public List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass) {
+		return jdbcTemplate.query(USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS, new Object[] { entityId, entityClass.getCanonicalName() },
 				AclGroupMapper);
 
 	}
@@ -345,6 +342,33 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 			finalResult.add(bigInteger.longValue());
 		}
 		return finalResult;
+	}
+
+	/**
+	 * @param objectIdentity
+	 */
+	public void removeObjectIdentity(ObjectIdentity objectIdentity) {
+		LOGGER.info("Attempting to delete the Object Identity " + objectIdentity);
+
+		long classId = retrieveClassPrimaryKey(objectIdentity.getType());
+
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Will attempt to perform '" + DELETE_OBJECT_IDENTITY + "' with args [" + objectIdentity.getIdentifier() + ','
+					+ classId + ']');
+		}
+		jdbcTemplate.update(DELETE_OBJECT_IDENTITY, objectIdentity.getIdentifier(), classId);
+		evictFromCache(objectIdentity);
+	}
+
+	/**
+	 * @see org.squashtest.csp.core.security.acls.model.ObjectAclService#removeAllResponsibilities(org.springframework.security.acls.model.ObjectIdentity)
+	 */
+	@Override
+	public void removeAllResponsibilities(ObjectIdentity entityRef) {
+		jdbcTemplate.update(DELETE_ALL_RESPONSABILITY_ENTRIES,
+				new Object[] { entityRef.getIdentifier(), entityRef.getType() });
+
+		evictFromCache(entityRef);
 	}
 
 }

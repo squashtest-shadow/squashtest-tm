@@ -33,8 +33,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
  * @author Gregory Fouquet
  * 
  */
-public interface GenericProjectDao {
-	
+public interface GenericProjectDao extends CustomGenericProjectDao {
 	long countGenericProjects();
 
 	@PostFilter("hasPermission(filterObject, 'MANAGEMENT') or  hasRole('ROLE_ADMIN')")

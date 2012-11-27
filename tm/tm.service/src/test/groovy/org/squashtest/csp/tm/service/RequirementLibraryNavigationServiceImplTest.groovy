@@ -32,6 +32,7 @@ import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
 import org.squashtest.csp.tm.internal.service.RequirementLibraryNavigationServiceImpl;
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService;
 
 import spock.lang.Specification;
@@ -43,7 +44,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 	RequirementDao requirementDao = Mock()
 	PermissionEvaluationService permissionService = Mock()
 	ProjectFilterModificationService projectFilterModificationService = Mock()
-	CustomFieldValueManagerService customFieldValueManager = Mock()
+	PrivateCustomFieldValueService customFieldValueManager = Mock()
 
 	def setup() {
 		NewRequirementVersionDto.metaClass.sameAs = { 

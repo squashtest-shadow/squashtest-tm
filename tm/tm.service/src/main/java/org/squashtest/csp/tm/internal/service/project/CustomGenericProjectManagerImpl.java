@@ -42,6 +42,8 @@ import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.GenericProject;
+import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
@@ -53,6 +55,7 @@ import org.squashtest.csp.tm.internal.repository.BugTrackerDao;
 import org.squashtest.csp.tm.internal.repository.GenericProjectDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.internal.testautomation.service.InsecureTestAutomationManagementService;
+import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
 import org.squashtest.csp.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -67,6 +70,7 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 public class CustomGenericProjectManagerImpl implements CustomGenericProjectManager {
 	@Inject
 	private GenericProjectDao genericProjectDao;
+	@Inject private ProjectDao projectDao;
 	@Inject
 	private BugTrackerBindingDao bugTrackerBindingDao;
 	@Inject
@@ -80,7 +84,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Inject
 	private Provider<GenericToAdministrableProject> genericToAdministrableConvertor;
 	@Inject
-	private ProjectsPermissionManagementService permissionService;
+	private ProjectsPermissionManagementService permissionsManager;
 	@Inject
 	private InsecureTestAutomationManagementService autotestService;
 
@@ -126,6 +130,19 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	}
 
+	/**
+	 * @see org.squashtest.csp.tm.service.project.CustomGenericProjectManager#coerceTemplateIntoProject(long)
+	 */
+	@Override
+	public void coerceTemplateIntoProject(long templateId) {
+		Project project = genericProjectDao.coerceTemplateIntoProject(templateId);
+
+		objectIdentityService.addObjectIdentity(templateId, Project.class);
+		permissionsManager.copyAssignedUsersFromTemplate(project, templateId);
+		permissionsManager.removeAllPermissionsFromProjectTemplate(templateId);
+		objectIdentityService.removeObjectIdentity(templateId, ProjectTemplate.class);
+	}
+
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteProject(long projectId) {
@@ -142,29 +159,29 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public void addNewPermissionToProject(long userId, long projectId, String permission) {
-		permissionService.addNewPermissionToProject(userId, projectId, permission);
+		permissionsManager.addNewPermissionToProject(userId, projectId, permission);
 	}
 
 	@Override
 	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public void removeProjectPermission(long userId, long projectId) {
-		permissionService.removeProjectPermission(userId, projectId);
+		permissionsManager.removeProjectPermission(userId, projectId);
 
 	}
 
 	@Override
 	public List<UserProjectPermissionsBean> findUserPermissionsBeansByProject(long projectId) {
-		return permissionService.findUserPermissionsBeanByProject(projectId);
+		return permissionsManager.findUserPermissionsBeanByProject(projectId);
 	}
 
 	@Override
 	public List<PermissionGroup> findAllPossiblePermission() {
-		return permissionService.findAllPossiblePermission();
+		return permissionsManager.findAllPossiblePermission();
 	}
 
 	@Override
 	public List<User> findUserWithoutPermissionByProject(long projectId) {
-		return permissionService.findUserWithoutPermissionByProject(projectId);
+		return permissionsManager.findUserWithoutPermissionByProject(projectId);
 	}
 
 	@Override
