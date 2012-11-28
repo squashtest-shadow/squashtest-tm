@@ -41,15 +41,15 @@
 
 <c:url var="listRemoteProjectsURL" 	value="/test-automation/servers/projects-list" />
 
-<s:url var="projectUrl" value="/administration/projects/{projectId}">
+<s:url var="projectUrl" value="/generic-projects/{projectId}">
 	<s:param name="projectId" value="${project.id}" />
 </s:url>
 
-<s:url var="localProjectsURL" value="/administration/projects/{projectId}/test-automation-projects">
+<s:url var="localProjectsURL" value="/generic-projects/{projectId}/test-automation-projects">
 	<s:param name="projectId" value="${project.id}"/>
 </s:url>
 
-<s:url var="enableTAURL" value="/administration/projects/{projectId}/test-automation-enabled">
+<s:url var="enableTAURL" value="/generic-projects/{projectId}/test-automation-enabled">
 	<s:param name="projectId" value="${project.id}"/>
 </s:url>
 

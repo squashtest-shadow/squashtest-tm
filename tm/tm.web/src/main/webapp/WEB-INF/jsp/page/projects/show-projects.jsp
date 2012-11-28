@@ -48,9 +48,6 @@
 		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">
-		<c:url var="projectsUrl" value="/administration/projects/list" />
-		<c:url var="addProjectUrl" value="/administration/projects/add" />
-		<c:url var="projectDetailsBaseUrl" value="/administration/projects" />
 		
 		<script type="text/javascript">
 		squashtm.app.projectsManager = { 

@@ -36,29 +36,29 @@
 	pageEncoding="utf-8"%>
 <%------------------------------------- URLs et back button ----------------------------------------------%>
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
-<s:url var="projectUrl" value="/administration/projects/{projectId}">
+<s:url var="projectUrl" value="/generic-projects/{projectId}">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 <s:url var="projectsUrl" value="/administration/projects" />
 
 
 <s:url var="permissionTableUrl"
-	value="/administration/projects/{projectId}/permission-table">
+	value="/generic-projects/{projectId}/permission-table">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
 <s:url var="permissionPopupUrl"
-	value="/administration/projects/{projectId}/permission-popup">
+	value="/generic-projects/{projectId}/permission-popup">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
 <s:url var="addPermissionUrl"
-	value="/administration/projects/{projectId}/add-permission">
+	value="/generic-projects/{projectId}/add-permission">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
 <s:url var="removePermissionUrl"
-	value="/administration/projects/{projectId}/remove-permission">
+	value="/generic-projects/{projectId}/remove-permission">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 

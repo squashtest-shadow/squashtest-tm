@@ -26,7 +26,10 @@ import java.util.List;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.GenericProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
@@ -51,6 +54,20 @@ public interface GenericProjectFinder {
 	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting);
 	
 	GenericProject findById(long projectId);
+	
+	/**
+	 * @see {@link CustomGenericProjectManager#findAdministrableProjectById(long)}
+	 */
+	AdministrableProject findAdministrableProjectById(long projectId);
+	
+	/**
+	 * @see  {@link CustomGenericProjectManager#getLastBoundServerOrDefault(long)}
+	 */
+	TestAutomationServer getLastBoundServerOrDefault(Long id);
+	/**
+	 * @see {@link CustomGenericProjectManager#findBoundTestAutomationProjects(long)}
+	 */
+	List<TestAutomationProject> findBoundTestAutomationProjects(long projectId);
 	
 	
 

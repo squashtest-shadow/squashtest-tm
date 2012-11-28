@@ -21,24 +21,47 @@
 
 package org.squashtest.csp.tm.web.internal.controller.project;
 
+import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
+
+import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.core.security.acls.PermissionGroup;
+import org.squashtest.csp.tm.domain.LoginDoNotExistException;
+import org.squashtest.csp.tm.domain.NoBugTrackerBindingException;
+import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.audit.AuditableMixin;
 import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectTemplate;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
+import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.squashtest.csp.tm.service.BugTrackerFinderService;
 import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
 import org.squashtest.csp.tm.web.internal.helper.ProjectHelper;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
@@ -47,6 +70,8 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingA
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.csp.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.csp.tm.web.internal.model.testautomation.TestAutomationProjectRegistrationForm;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -63,6 +88,15 @@ public class GenericProjectController {
 
 	@Inject
 	private GenericProjectManagerService projectManager;
+
+	@Inject
+	private BugTrackerFinderService bugtrackerFinderService;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(GenericProjectController.class);
+
+	private static final String PROJECT_ID = "projectId";
+	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
+
 
 	private DataTableMapper projectMapper = new DataTableMapper("projects-table", GenericProject.class).initMapping(9)
 			.mapAttribute(GenericProject.class, 2, "name", String.class)
@@ -125,4 +159,258 @@ public class GenericProjectController {
 	public @ResponseBody void createNewProject(@Valid @ModelAttribute("add-project") ProjectTemplate template) {
 		projectManager.persist(template);
 	}
+	
+	@RequestMapping(method = RequestMethod.POST, params = { "id=project-label", VALUE })
+	@ResponseBody
+	public String changeLabel(@RequestParam(VALUE) String projectLabel, @PathVariable long projectId) {
+		projectManager.changeLabel(projectId, projectLabel);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("project " + projectId + ": updated label to " + projectLabel);
+		}
+		return projectLabel;
+	}
+
+	
+	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
+	@ResponseBody
+	public Object changeName(HttpServletResponse response, @PathVariable long projectId, @RequestParam String newName) {
+
+		projectManager.changeName(projectId, newName);
+		LOGGER.info("Project modification : renaming {} as {}", projectId, newName);
+		return new RenameModel(newName);
+	}
+
+	
+	@RequestMapping(method = RequestMethod.POST, params = { "isActive" })
+	@ResponseBody
+	public Active changeActive(HttpServletResponse response, @PathVariable long projectId,
+			@RequestParam boolean isActive) {
+
+		projectManager.changeActive(projectId, isActive);
+		LOGGER.info("Project modification : change project {} is active = {}", projectId, isActive);
+		return new Active(isActive);
+	}
+	
+	private final class Active {
+		private Boolean active;
+		private Active(Boolean active){
+			this.active = active;
+		}
+		@SuppressWarnings("unused")
+		public Boolean isActive(){
+			return active;
+		}
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = { "id=project-bugtracker", VALUE })
+	@ResponseBody
+	public String changeBugtracker(@RequestParam(VALUE) Long bugtrackerId, @PathVariable long projectId, Locale locale) {
+		String toReturn ;
+		if (bugtrackerId > 0) {
+			toReturn = bugtrackerFinderService.findBugtrackerName(bugtrackerId);
+			projectManager.changeBugTracker(projectId, bugtrackerId);
+			LOGGER.debug("Project {} : bugtracker changed, new value : {}", projectId, bugtrackerId);
+		} else {
+			toReturn = messageSource.getMessage(PROJECT_BUGTRACKER_NAME_UNDEFINED, null, locale);
+			projectManager.removeBugTracker(projectId);
+		}
+		return toReturn;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, params = { "id=project-bugtracker-project-name", VALUE })
+	@ResponseBody
+	public String changeBugtrackerProjectName(@RequestParam(VALUE) String projectBugTrackerName, @PathVariable long projectId, Locale locale) {
+		projectManager.changeBugTrackerProjectName(projectId, projectBugTrackerName);
+		return projectBugTrackerName;
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = { "id=project-description", VALUE })
+	@ResponseBody
+	public String changeDescription(@RequestParam(VALUE) String projectDescription, @PathVariable long projectId) {
+		projectManager.changeDescription(projectId, projectDescription);
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("project " + projectId + ": updated description to " + projectDescription);
+		}
+		return projectDescription;
+	}
+	
+	@RequestMapping(value="bugtracker/projectName", method = RequestMethod.GET)
+	@ResponseBody
+	public String getBugtrackerProject(@PathVariable long projectId){
+		GenericProject project = projectManager.findById(projectId);
+		if(project.isBugtrackerConnected()){
+			return project.getBugtrackerBinding().getProjectName();
+		}else{
+			throw new NoBugTrackerBindingException();
+		}
+	}
+	
+	@RequestMapping(value = "/general", method = RequestMethod.GET)
+	public ModelAndView refreshGeneralInfos(@PathVariable long projectId) {
+
+		ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
+
+		GenericProject project = projectManager.findById(projectId);
+		if (project == null) {
+			throw new UnknownEntityException(projectId, Project.class);
+		}
+		mav.addObject("auditableEntity", project);
+		// context-absolute url of this entity
+		mav.addObject("entityContextUrl", "/projects/" + projectId);
+
+		return mav;
+	}
+
+	
+	
+	@RequestMapping(method = RequestMethod.DELETE)
+	@ResponseBody
+	public void deleteProject(@PathVariable long projectId) {
+		projectManager.deleteProject(projectId);
+	}
+
+	
+	
+	// *********************Permission Management*********************
+	
+	@RequestMapping(value = "/add-permission", method = RequestMethod.POST, params = { "user" })
+	public @ResponseBody
+	void addNewPermission(@RequestParam long user, @PathVariable long projectId, @RequestParam String permission) {
+		projectManager.addNewPermissionToProject(user, projectId, permission);
+	}
+
+	
+	
+	@RequestMapping(value = "/add-permission", method = RequestMethod.POST, params = { "userLogin" })
+	public @ResponseBody
+	void addNewPermissionWithLogin(@RequestParam String userLogin, @PathVariable long projectId,
+			@RequestParam String permission) {
+		User user = projectManager.findUserByLogin(userLogin);
+		if (user == null) {
+			throw new LoginDoNotExistException();
+		}
+		projectManager.addNewPermissionToProject(user.getId(), projectId, permission);
+	}
+	
+	
+	@RequestMapping(value = "/remove-permission", method = RequestMethod.POST)
+	public @ResponseBody
+	void removePermission(@RequestParam("user") long userId, @PathVariable long projectId) {
+		projectManager.removeProjectPermission(userId, projectId);
+	}
+
+	
+	
+	@RequestMapping(value = "/permission-popup", method = RequestMethod.GET)
+	public ModelAndView getPermissionPopup(@PathVariable long projectId) {
+		GenericProject project = projectManager.findById(projectId);
+		List<PermissionGroup> permissionList = projectManager.findAllPossiblePermission();
+		List<User> userList = projectManager.findUserWithoutPermissionByProject(projectId);
+
+		ModelAndView mav = new ModelAndView("fragment/project/project-permission-popup");
+		mav.addObject("project", project);
+		mav.addObject("userList", userList);
+		mav.addObject("permissionList", permissionList);
+		return mav;
+	}
+
+	
+	@RequestMapping(value = "/permission-table", method = RequestMethod.GET)
+	public ModelAndView getPermissionTable(@PathVariable long projectId) {
+		
+		GenericProject project = projectManager.findById(projectId);
+		List<UserProjectPermissionsBean> userProjectPermissionsBean = projectManager
+				.findUserPermissionsBeansByProject(projectId);
+		List<PermissionGroup> permissionList = projectManager.findAllPossiblePermission();
+
+		ModelAndView mav = new ModelAndView("fragment/project/project-permission-table");
+		mav.addObject("project", project);
+		mav.addObject("permissionList", permissionList);
+		mav.addObject("userPermissionList", userProjectPermissionsBean);
+		return mav;
+		
+	}
+	
+	
+	//********************* test automation *********************
+	
+	
+	//filtering and sorting not supported for now
+	@RequestMapping(value = "/test-automation-projects", method=RequestMethod.GET, params = "sEcho")
+	@ResponseBody
+	public DataTableModel getProjectsTableModel(@PathVariable(PROJECT_ID) long projectId, final DataTableDrawParameters params) {
+		List<TestAutomationProject> taProjects = projectManager.findBoundTestAutomationProjects(projectId);
+		
+		FilteredCollectionHolder<List<TestAutomationProject>> holder = 
+			new FilteredCollectionHolder<List<TestAutomationProject>>(taProjects.size(), taProjects);
+		
+		return new TestAutomationTableModel().buildDataModel(holder, 0, params.getsEcho());
+					
+	}
+	
+	@RequestMapping(value = "/test-automation-projects", method=RequestMethod.POST, headers = "Content-Type=application/json" )
+	@ResponseBody
+	public void bindTestAutomationProject(@PathVariable(PROJECT_ID) long projectId, @RequestBody TestAutomationProjectRegistrationForm[] projects, Locale locale)
+	throws BindException{
+		TestAutomationProjectRegistrationForm form=null;
+		try{
+			Iterator<TestAutomationProjectRegistrationForm> it = Arrays.asList(projects).listIterator();
+			while (it.hasNext()){
+				form = it.next();				
+				projectManager.bindTestAutomationProject(projectId, form.toTestAutomationProject());
+			}
+		}
+		catch(MalformedURLException ex){
+			//quick and dirty validation
+			BindException be = new BindException(new TestAutomationServer(), "ta-project");
+			be.rejectValue("baseURL", null, findMessage(locale, "error.url.malformed"));
+			throw be;
+		}	
+	}
+	
+	
+	@RequestMapping(value="/test-automation-enabled", method=RequestMethod.POST, params = "enabled")
+	@ResponseBody
+	public void enableTestAutomation(@PathVariable(PROJECT_ID) long projectId, @RequestParam("enabled") boolean isEnabled){
+		projectManager.changeTestAutomationEnabled(projectId, isEnabled);
+	}
+	
+	
+	
+	@RequestMapping(value = "/test-automation-projects/{taProjectId}", method=RequestMethod.DELETE )
+	@ResponseBody
+	public void unbindProject(@PathVariable(PROJECT_ID) Long projectId, @PathVariable("taProjectId") Long taProjectId){
+		projectManager.unbindTestAutomationProject(projectId, taProjectId);
+	}
+	
+	
+	
+	private final class TestAutomationTableModel extends DataTableModelHelper<TestAutomationProject>{
+
+		
+		@Override
+		protected Map<String, ?> buildItemData(TestAutomationProject item) {
+			Map<String, Object> res = new HashMap<String, Object>();
+			
+			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
+			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() + 1);
+			res.put("name", item.getName());
+			res.put("server-url", item.getServer().getBaseURL());
+			res.put("server-kind", item.getServer().getKind());
+			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
+			
+			return res;
+		}
+	}
+	
+	
+	
+	
+	
+	//***************** private utils *******************************
+	
+	private String findMessage(Locale locale, String key){
+		return messageSource.getMessage(key, null, locale);
+	}
+	
 }
