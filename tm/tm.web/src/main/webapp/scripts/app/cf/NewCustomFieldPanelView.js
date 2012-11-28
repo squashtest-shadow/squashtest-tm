@@ -60,7 +60,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 				case "PLAIN_TEXT":
 					this.renderOptional(true);
 					break;
-			};
+			}
 			return this;
 		},
 

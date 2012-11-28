@@ -27,8 +27,7 @@ define([ "jquery", "backbone", "./ProjectsTable", "./NewProjectDialog", "jqueryu
 		},
 
 		events : {
-			"click #new-project-button" : "showNewProjectDialog", 
-			"click input:button": "showNewProjectDialog"
+			"click #new-project-button" : "showNewProjectDialog" 
 		},
 
 		showNewProjectDialog : function(event) {
@@ -50,8 +49,8 @@ define([ "jquery", "backbone", "./ProjectsTable", "./NewProjectDialog", "jqueryu
 				model : {name: "", description: "", label: ""}
 			});
 
-			self.newProjectDialog.on("newcustomfield.cancel", discard);
-			self.newProjectDialog.on("newcustomfield.confirm", discardAndRefresh);
+			self.newProjectDialog.on("newproject.cancel", discard);
+			self.newProjectDialog.on("newproject.confirm", discardAndRefresh);
 		}
 	});
 

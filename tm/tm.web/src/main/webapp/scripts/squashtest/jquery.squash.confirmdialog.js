@@ -64,6 +64,11 @@
  * @author Gregory Fouquet
  */
 (function($) {
+	if(($.squash !== undefined) && ($.squash.confirmDialog !== undefined)) {
+		// plugin already loaded
+		return;
+	}
+	
 	var closeDialogHandler = function() {
 	};
 
