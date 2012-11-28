@@ -23,14 +23,11 @@ package org.squashtest.csp.tm.internal.infrastructure.hibernate;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.inject.Inject;
-
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.service.security.UserContextHolder;
-import org.squashtest.csp.core.service.security.UserContextService;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.audit.AuditableSupport;
 
