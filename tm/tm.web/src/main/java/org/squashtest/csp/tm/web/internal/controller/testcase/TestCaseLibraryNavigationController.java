@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -101,9 +100,6 @@ public class TestCaseLibraryNavigationController extends
 	JsTreeNode addNewTestCaseToLibraryRootContent(@PathVariable long libraryId,
 			@Valid @ModelAttribute("add-test-case") TestCase testCase, 
 			@RequestParam Map<String, String> customFieldValues) throws BindException{
-
-		
-		testCaseLibraryNavigationService.addTestCaseToLibrary(libraryId, testCase);
 		
 		NewNodeCustomFieldsValues values = new NewNodeCustomFieldsValues("add-test-case", customFieldValues);
 		values.validate();
@@ -112,10 +108,13 @@ public class TestCaseLibraryNavigationController extends
 			values.puke();
 		}
 		
-		
-		
-		LOGGER.debug("TEST CASE ADDED TO ROOT OF LIB " + libraryId + " " + testCase.getName() + " "
-				+ testCase.getDescription());
+		testCaseLibraryNavigationService.addTestCaseToLibrary(libraryId, testCase);
+		processNewNodeCustomFieldValues(testCase, values);
+
+		if (LOGGER.isDebugEnabled()){
+			LOGGER.debug("TEST CASE ADDED TO ROOT OF LIB " + libraryId + " " + testCase.getName() + " "
+					+ testCase.getDescription());
+		}
 
 		return createTreeNodeFromLibraryNode(testCase);
 	}
@@ -123,9 +122,18 @@ public class TestCaseLibraryNavigationController extends
 	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewTestCaseToFolder(@PathVariable long folderId,
-			@Valid @ModelAttribute("add-test-case") TestCase testCase) {
-
+			@Valid @ModelAttribute("add-test-case") TestCase testCase, 
+			@RequestParam Map<String, String> customFieldValues) throws BindException{
+		
+		NewNodeCustomFieldsValues values = new NewNodeCustomFieldsValues("add-test-case", customFieldValues);
+		values.validate();
+		
+		if (values.hasValidationErrors()){
+			values.puke();
+		}
+		
 		testCaseLibraryNavigationService.addTestCaseToFolder(folderId, testCase);
+		processNewNodeCustomFieldValues(testCase, values);
 
 		return createTreeNodeFromLibraryNode(testCase);
 	}

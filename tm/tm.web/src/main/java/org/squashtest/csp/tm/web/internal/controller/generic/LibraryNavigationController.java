@@ -53,12 +53,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.web.utils.HTMLCleanupUtils;
+import org.squashtest.csp.tm.domain.customfield.BoundEntity;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.library.ExportData;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldBindingFinderService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.csp.tm.web.internal.model.customfield.CustomFieldValueModel;
+import org.squashtest.csp.tm.web.internal.model.customfield.NewNodeCustomFieldsValues;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.csp.tm.web.internal.report.services.JasperReportsServiceImpl;
 
@@ -93,6 +100,9 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	protected MessageSource getMessageSource(){
 		return messageSource;
 	}
+	
+	@Inject 
+	private CustomFieldValueManagerService cufValuesService;
 
 
 	protected abstract JsTreeNode createTreeNodeFromLibraryNode(NODE resource);
@@ -138,6 +148,22 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		getLibraryNavigationService().addFolderToFolder(folderId, newFolder);
 
 		return createTreeNodeFromLibraryNode((NODE) newFolder);
+	}
+	
+	
+	//TODO : find a way to make all of that happen in one transaction
+	protected void processNewNodeCustomFieldValues(BoundEntity newBoundEntity, NewNodeCustomFieldsValues newValues){
+		
+		List<CustomFieldValue> persistentValues = cufValuesService.findAllCustomFieldValues(newBoundEntity);
+		
+		for (CustomFieldValue value : persistentValues){
+			
+			if (newValues.hasValueFor(value)){
+				String updatedValue = newValues.getValueFor(value);
+				cufValuesService.update(value.getId(), updatedValue);
+			}			
+		}
+		
 	}
 
 	@RequestMapping(value = "/folders/{folderId}/content", method = RequestMethod.GET)

@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 
 public class NewNodeCustomFieldsValues implements Iterable<NewNodeCustomFieldsValues.Value>{
 
@@ -107,6 +108,23 @@ public class NewNodeCustomFieldsValues implements Iterable<NewNodeCustomFieldsVa
 			
 		}
 	}
+	
+	public String getValueFor(CustomFieldValue customFieldValue){
+		
+		String searchedKey = ATTRIBUTE_PREFIX+customFieldValue.getBinding().getId();
+		
+		return customFieldValues.get(searchedKey);
+		
+	}
+	
+	
+	public boolean hasValueFor(CustomFieldValue customFieldValue){
+
+		String searchedKey = ATTRIBUTE_PREFIX+customFieldValue.getBinding().getId();
+		
+		return customFieldValues.containsKey(searchedKey);
+	}
+	
 	
 	public void puke() throws BindException{
 		throw new BindException(bindingResults);

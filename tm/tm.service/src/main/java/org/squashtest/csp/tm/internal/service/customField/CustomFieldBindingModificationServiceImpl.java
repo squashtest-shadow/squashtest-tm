@@ -31,6 +31,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding.PositionAwareBindingList;
@@ -91,6 +92,12 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	public List<CustomFieldBinding> findCustomFieldsForProjectAndEntity(long projectId, BindableEntity entity) {
 		return customFieldBindingDao.findAllForProjectAndEntity(projectId, entity);
 	}
+	
+	@Override
+	public List<CustomFieldBinding> findCustomFieldsForBoundEntity(BoundEntity boundEntity) {
+		return customFieldBindingDao.findAllForProjectAndEntity(boundEntity.getProject().getId(), boundEntity.getBoundEntityType());
+	}
+	
 
 	@Override
 	public PagedCollectionHolder<List<CustomFieldBinding>> findCustomFieldsForProjectAndEntity(long projectId,
