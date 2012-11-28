@@ -34,10 +34,12 @@ import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding.PositionAwareBindingList;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao;
+import org.squashtest.csp.tm.internal.repository.GenericProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -59,6 +61,9 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
+	
+	@Inject
+	private GenericProjectDao genericProjectDao;
 
 	private static final Transformer BINDING_ID_COLLECTOR = new Transformer() {
 		@Override
@@ -99,6 +104,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
+	//TODO add check for permission MANAGEMENT on the project id
 	public void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId,
 			CustomFieldBinding newBinding) {
 		_createBinding(projectId, entity, customFieldId, newBinding);
@@ -115,6 +121,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	@SuppressWarnings("unchecked")
 	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
+	//TODO add check for permission MANAGEMENT on the project id
 	public void removeCustomFieldBindings(Long projectId) {
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForGenericProject(projectId);
 		List<Long> bindingIds = new LinkedList<Long>(CollectionUtils.collect(bindings, BINDING_ID_COLLECTOR));
@@ -140,7 +147,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	private void _createBinding(long projectId, BindableEntity entity, long customFieldId, CustomFieldBinding newBinding) {
 
-		Project project = projectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findById(projectId);
 		CustomField field = customFieldDao.findById(customFieldId);
 		Long newIndex = customFieldBindingDao.countAllForProjectAndEntity(projectId, entity) + 1;
 
@@ -157,6 +164,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	 * @see CustomFieldBindingModificationService#copyCustomFieldsSettingsFromTemplate(Project, ProjectTemplate)
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void copyCustomFieldsSettingsFromTemplate(Project newProject, ProjectTemplate projectTemplate) {
 		List<CustomFieldBinding> templateCutomFieldBindings = findCustomFieldsForGenericProject(projectTemplate.getId());
 		for(CustomFieldBinding templateCustomFieldBinding : templateCutomFieldBindings){

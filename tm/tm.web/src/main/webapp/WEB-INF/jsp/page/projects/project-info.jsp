@@ -119,11 +119,12 @@
 				
 				<div class="toolbar-button-panel">
 					<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
-					<c:if test="${ adminproject.template }">
-					<f:message var="createFromTemplate" key="label.createFromTemplate" />
-					<input type="button" value="${ createFromTemplate }" id="createFromTemplate-project-button"
-								class="button" />
-					</c:if>
+<!-- NON ACTIVE BUTTON : WAIT FOR FEATURE TO BE REQUESTED -->
+<%-- 					<c:if test="${ adminproject.template }"> --%>
+<%-- 					<f:message var="createFromTemplate" key="label.createFromTemplate" /> --%>
+<%-- 					<input type="button" value="${ createFromTemplate }" id="createFromTemplate-project-button" --%>
+<!-- 								class="button" /> -->
+<%-- 					</c:if> --%>
 					<f:message var="rename" key="project.button.rename.label" />
 					<input type="button" value="${ rename }" id="rename-project-button"
 								class="button" />

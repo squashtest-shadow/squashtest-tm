@@ -72,6 +72,13 @@
 			<value>org.squashtest.csp.tm.service.project.ProjectFinder</value>
 		</osgi:interfaces>	
 	</osgi:service>
+	
+	<osgi:service ref="squashtest.tm.service.ProjectTemplateManagerService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.project.ProjectTemplateManagerService</value>
+			<value>org.squashtest.csp.tm.service.project.ProjectTemplateFinder</value>
+		</osgi:interfaces>	
+	</osgi:service>
 
   <osgi:service ref="squashtest.tm.service.GenericProjectManagerService">
     <osgi:interfaces>

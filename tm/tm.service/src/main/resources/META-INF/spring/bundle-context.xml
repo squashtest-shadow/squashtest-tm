@@ -137,6 +137,11 @@
     <property name="entityType" value="org.squashtest.csp.tm.domain.project.Project" />
   </bean>
   
+  <bean id="squashtest.tm.service.ProjectTemplateManagerService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
+    <property name="componentType" value="org.squashtest.csp.tm.service.project.ProjectTemplateManagerService" />
+    <property name="entityType" value="org.squashtest.csp.tm.domain.project.ProjectTemplate" />
+  </bean>
+  
   <bean id="squashtest.tm.service.GenericProjectManagerService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
     <property name="componentType" value="org.squashtest.csp.tm.service.project.GenericProjectManagerService" />
     <property name="entityType" value="org.squashtest.csp.tm.domain.project.GenericProject" />

@@ -65,6 +65,7 @@
 <div class="fragment-body unstyled">
   <sec:authorize access=" hasRole('ROLE_ADMIN')">
   <input id="new-project-button" class="snap-right" type="button" value="<f:message key='project.button.add.label' />" />
+  <input id="new-project-from-template-button" class="snap-right" type="button" value="<f:message key='label.createFromATemplate'/>"/>
   </sec:authorize>
   <div style="clear:both"></div>
   <table id="projects-table">
@@ -111,6 +112,7 @@
   </table>
 
   <sec:authorize access=" hasRole('ROLE_ADMIN')">
+  <!--   ===========================CREATE PROJECT DIALOG=======================================  -->
   <div id="add-project-dialog" class="not-displayed popup-dialog form-horizontal" title="<f:message key='title.addProject' />">
     <table class="form-horizontal">
     	<tr class="control-group">
@@ -147,10 +149,11 @@
           <label class="control-label" for="add-project-label"><f:message key="label.tag" /></label>
         </td>
     		<td class="controls">
-          <input id="add-project-label" id="add-project-label" type="text" size="50" maxlength="255" />
+          <input id="add-project-label" name="add-project-label" type="text" size="50" maxlength="255" />
           <span class="help-inline">&nbsp;</span>
         </td>
     	</tr>
+
     </table>
     
     <div class="popup-dialog-buttonpane">
@@ -158,6 +161,74 @@
       <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />
     </div>
   </div>
+  <!--   ===========================/CREATE PROJECT DIALOG=======================================  -->
+<!--   ===========================CREATE FROM TEMPLATE DIALOG=======================================  -->
+  <div id="add-project-from-template-dialog" class="not-displayed popup-dialog form-horizontal" title="<f:message key='title.addProjectFromTemplate' />">
+    <table class="form-horizontal">
+    	<tr class="control-group">
+    		<td>
+          <label class="control-label" for="add-project-from-template-name">
+            <f:message key="label.Name" />
+          </label>
+        </td>
+    		<td class="controls">
+          <input id="add-project-from-template-name" name="add-project-from-template-name" type="text" size="50" maxlength="255" />
+    		  <span class="help-inline">&nbsp;</span>
+        </td>
+    	</tr>
+       	<tr class="control-group">
+    		<td>
+          <label class="control-label" for="add-project-from-template-description"><f:message key="label.Description" /></label>
+        </td>
+    		<td class="controls">
+          <textarea id="add-project-from-template-description" name="add-project-from-template-description"></textarea>
+          <span class="help-inline">&nbsp;</span>
+        </td>
+    	</tr>
+    	<tr class="control-group">
+    		<td>
+          <label class="control-label" for="add-project-from-template-label"><f:message key="label.tag" /></label>
+        </td>
+    		<td class="controls">
+          <input id="add-project-from-template-label" name="add-project-from-template-label"  type="text" size="50" maxlength="255" />
+          <span class="help-inline">&nbsp;</span>
+        </td>
+    	</tr>
+    	<!--     	TEMPLATE COMBO -->    	
+    	<tr class="control-group">
+    		<td>
+          <label class="control-label" for="add-project-from-template-tempate"><f:message key="label.projectTemplate" /></label>
+        </td>
+    	<td class="controls">
+          <div id="add-project-from-template-template" ></div>
+         </td>
+    	</tr>
+    	<tr class="control-group">
+    	<td>
+          <label class="control-label" for="add-project-from-template-tempate"><f:message key="label.parametersFromTemplate" /></label>
+        </td>
+        <td>
+    	<!--     	 CHECKBOXES -->
+    	<input id="copyPermissions" name="copyPermissions" type="checkbox" />
+          <label class=" afterDisabled" for="copyPermissions"><f:message key="label.copyPermissions" /></label>
+      	 <br/>
+      	 <input id="copyCUF"  name="copyCUF" type="checkbox" />
+         <label class=" afterDisabled" for="copyCUF"><f:message key="label.copyCUF" /></label>
+       	<br/>
+          <input id="copyBugtrackerBinding" name="copyBugtrackerBinding" type="checkbox" />
+         <label class=" afterDisabled" for="copyBugtrackerBinding"><f:message key="label.copyBugtrackerBinding" /></label>
+      	<br/>
+         <input id="copyAutomatedProjects" name="copyAutomatedProjects" type="checkbox" />
+          <label class=" afterDisabled" for="copyAutomatedProjects"><f:message key="label.copyAutomatedProjects" /></label>
+     	 </td>
+      </table>
+    
+    <div class="popup-dialog-buttonpane">
+      <input class="confirm" type="button" value="<f:message key='label.Add' />" />
+      <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />
+    </div>
+  </div>
+  <!--   ===========================/CREATE FROM TEMPLATE DIALOG=======================================  -->
   </sec:authorize>
 </div>
 </jsp:attribute>

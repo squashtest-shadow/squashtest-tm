@@ -20,8 +20,12 @@
  */
 package org.squashtest.csp.tm.internal.repository;
 
+import java.util.List;
+
 import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 
 public interface ProjectTemplateDao {
 	ProjectTemplate findById(long id);
+
+	List<ProjectTemplate> findAll();
 }

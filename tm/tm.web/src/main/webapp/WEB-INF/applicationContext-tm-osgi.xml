@@ -144,6 +144,14 @@
 			<value>org.squashtest.csp.tm.service.project.ProjectFinder</value>
 		</osgi:interfaces>
 	</osgi:reference>
+	<osgi:reference id="squashtest.tm.service.ProjectTemplateManagerService"
+		bean-name="squashtest.tm.service.ProjectTemplateManagerService"
+		availability="mandatory">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.project.ProjectTemplateManagerService</value>
+			<value>org.squashtest.csp.tm.service.project.ProjectTemplateFinder</value>
+		</osgi:interfaces>
+	</osgi:reference>
 
   <osgi:reference id="squashtest.tm.service.GenericProjectManagerService"
     bean-name="squashtest.tm.service.GenericProjectManagerService"

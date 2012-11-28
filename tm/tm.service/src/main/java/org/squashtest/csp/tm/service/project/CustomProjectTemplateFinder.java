@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2012 Henix, henix.fr
  *
@@ -18,16 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.csp.tm.service.project;
 
-define(["jquery", "domReady", "./ProjectsManager"], function($, domReady, ProjectsManager) {
-	domReady(function() {
-		$( ".deactivated-form" ).submit(function() {
-			return false;
-		});
-		$("#new-project-button").button();
-		$("#new-project-from-template-button").button();
-		new ProjectsManager();
-	});
-	
-	return {};
-});
+import java.util.List;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.project.ProjectTemplate;
+
+/**
+ * @author mpagnon
+ * 
+ */
+@Transactional(readOnly = true)
+public interface CustomProjectTemplateFinder {
+	List<ProjectTemplate> findAll();
+}

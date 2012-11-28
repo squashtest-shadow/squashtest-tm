@@ -18,41 +18,86 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "./ProjectsTable", "./NewProjectDialog", "jqueryui" ], function($, Backbone, ProjectsTable, NewProjectDialog) {
-	var View = Backbone.View.extend({
-		el : ".fragment-body",
+define(
+		[ "jquery", "backbone", "./ProjectsTable", "./NewProjectDialog",  "./NewProjectFromTemplateDialog",
+				"jqueryui" ],
+		function($, Backbone, ProjectsTable, NewProjectDialog, NewProjectFromTemplateDialog) {
+			var View = Backbone.View
+					.extend({
+						el : ".fragment-body",
 
-		initialize : function() {
-			this.projectsTable = new ProjectsTable();
-		},
+						initialize : function() {
+							this.projectsTable = new ProjectsTable();
+						},
 
-		events : {
-			"click #new-project-button" : "showNewProjectDialog" 
-		},
+						events : {
+							"click #new-project-button" : "showNewProjectDialog",
+							"click #new-project-from-template-button" : "showNewProjectFromTemplateDialog",
+						},
 
-		showNewProjectDialog : function(event) {
-			var self = this, 
-				showButton = event.target;
+						showNewProjectDialog : function(event) {
+							var self = this;
 
-			function discard() {
-				self.newProjectDialog.off("newcustomfield.cancel newcustomfield.confirm");
-				self.newProjectDialog.undelegateEvents();
-				self.newProjectDialog = null;
-			}
+							function discard() {
+								self.newProjectDialog
+										.off("newproject.cancel newproject.confirm");
+								self.newProjectDialog.undelegateEvents();
+								self.newProjectDialog = null;
+							}
 
-			function discardAndRefresh() {
-				discard();
-				self.projectsTable.refresh();
-			}
+							function discardAndRefresh() {
+								discard();
+								self.projectsTable.refresh();
+							}
 
-			self.newProjectDialog = new NewProjectDialog({
-				model : {name: "", description: "", label: ""}
-			});
+							self.newProjectDialog = new NewProjectDialog({
+								model : {
+									name : "",
+									description : "",
+									label : ""
+								}
+							});
 
-			self.newProjectDialog.on("newproject.cancel", discard);
-			self.newProjectDialog.on("newproject.confirm", discardAndRefresh);
-		}
-	});
+							self.newProjectDialog.on("newproject.cancel",
+									discard);
+							self.newProjectDialog.on("newproject.confirm",
+									discardAndRefresh);
+						},
 
-	return View;
-});
+						showNewProjectFromTemplateDialog : function() {							
+							var self = this;
+
+							function discard() {
+								self.newProjectFromTemplateDialog
+										.off("newprojectFromTemplate.cancel newprojectFromTemplate.confirm");
+								self.newProjectFromTemplateDialog.undelegateEvents();
+								self.newProjectFromTemplateDialog = null;
+							}
+
+							function discardAndRefresh() {
+								discard();
+								self.projectsTable.refresh();
+							}
+
+							self.newProjectFromTemplateDialog = new NewProjectFromTemplateDialog({
+								model : {
+									name : "",
+									description : "",
+									label : "",
+									templateId : "",
+									copyPermissions : true,
+									copyCUF : true,
+									copyBugtrackerBinding : true,
+									copyAutomatedProjects : true,
+								}
+							});
+
+							self.newProjectFromTemplateDialog.on("newprojectFromTemplate.cancel",
+									discard);
+							self.newProjectFromTemplateDialog.on("newprojectFromTemplate.confirm",
+									discardAndRefresh);
+						}
+					});
+
+			return View;
+		});
