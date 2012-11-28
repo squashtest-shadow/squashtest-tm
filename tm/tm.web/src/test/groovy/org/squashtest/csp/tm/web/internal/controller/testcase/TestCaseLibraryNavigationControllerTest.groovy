@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.web.internal.controller.testcase;
 
 import javax.inject.Provider;
 
+import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
@@ -131,9 +132,11 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		given:
 		TestCase tc = Mock()
 		tc.id >> 60
-
+		
+		def cufs = new HashMap<String, String>(0)
+	
 		when:
-		def res = controller.addNewTestCaseToLibraryRootContent(10, tc)
+		def res = controller.addNewTestCaseToLibraryRootContent(10, tc, cufs)
 
 		then:
 		1 * testCaseLibraryNavigationService.addTestCaseToLibrary(10, tc)

@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -35,6 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,6 +60,7 @@ import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationCo
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder;
+import org.squashtest.csp.tm.web.internal.model.customfield.NewNodeCustomFieldsValues;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 
 @Controller
@@ -85,20 +89,31 @@ public class TestCaseLibraryNavigationController extends
 		return testCaseLibraryNavigationService;
 	}
 
-	
 
 	@Override
 	protected JsTreeNode createTreeNodeFromLibraryNode(TestCaseLibraryNode node) {
 		return testCaseLibraryTreeNodeBuilder.get().setNode(node).build();
 	}
+	
 
 	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewTestCaseToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @ModelAttribute("add-test-case") TestCase testCase) {
+			@Valid @ModelAttribute("add-test-case") TestCase testCase, 
+			@RequestParam Map<String, String> customFieldValues) throws BindException{
 
+		
 		testCaseLibraryNavigationService.addTestCaseToLibrary(libraryId, testCase);
-
+		
+		NewNodeCustomFieldsValues values = new NewNodeCustomFieldsValues("add-test-case", customFieldValues);
+		values.validate();
+		
+		if (values.hasValidationErrors()){
+			values.puke();
+		}
+		
+		
+		
 		LOGGER.debug("TEST CASE ADDED TO ROOT OF LIB " + libraryId + " " + testCase.getName() + " "
 				+ testCase.getDescription());
 

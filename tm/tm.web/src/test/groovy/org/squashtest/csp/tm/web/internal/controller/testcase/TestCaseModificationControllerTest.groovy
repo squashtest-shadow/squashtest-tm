@@ -27,6 +27,7 @@ import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 
 import org.squashtest.csp.tm.service.TestCaseModificationService;
+import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -86,7 +87,7 @@ class TestCaseModificationControllerTest extends Specification {
 		
 		setupLevelLabelFormatter()		
 		controller.levelLabelFormatterProvider = levelLabelFormatterProvider
-	
+		controller.cufValueService = Mock(CustomFieldValueFinderService)
 	}
 
 	def setupImportanceComboBuilder() {

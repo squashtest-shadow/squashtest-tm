@@ -242,7 +242,8 @@ $(function(){
 		var cufs = $("#add-${ resourceName }-dialog .create-node-custom-field");
 		if (cufs.length>0){
 			cufs.each(function(){
-				params[this.id] = (this.checked) ? this.checked : this.value;
+				var jqThis = $(this);
+				params[this.id] = (jqThis.is('input[type="checkbox"]')) ? jqThis.prop('checked') : jqThis.val();
 			});
 		}
 		</c:if>

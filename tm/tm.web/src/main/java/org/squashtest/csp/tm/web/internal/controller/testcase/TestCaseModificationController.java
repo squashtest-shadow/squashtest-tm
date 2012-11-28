@@ -23,7 +23,6 @@ package org.squashtest.csp.tm.web.internal.controller.testcase;
 import static org.squashtest.csp.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -69,7 +68,7 @@ import org.squashtest.csp.tm.service.ExecutionFinder;
 import org.squashtest.csp.tm.service.TestAutomationFinderService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirement;
-import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
+import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.csp.tm.web.internal.combo.OptionTag;
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
@@ -80,8 +79,6 @@ import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTablePagedFilter;
 import org.squashtest.csp.tm.web.internal.model.jquery.RenameModel;
-import org.squashtest.csp.tm.web.internal.model.testautomation.TATestNode;
-import org.squashtest.csp.tm.web.internal.model.testautomation.TATestNodeListBuilder;
 import org.squashtest.csp.tm.web.internal.model.viewmapper.DataTableMapper;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -132,9 +129,7 @@ public class TestCaseModificationController {
 	@Inject
 	private CallStepManagerService callStepManager;
 	
-	@Inject
-	private TestAutomationFinderService taFinderService;
-
+	
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
 	
@@ -147,6 +142,9 @@ public class TestCaseModificationController {
 	@Inject
 	private Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider;
 
+	
+	@Inject
+	private CustomFieldValueFinderService cufValueService;
 
 	@Inject
 	private Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider;
@@ -159,10 +157,6 @@ public class TestCaseModificationController {
 		this.testCaseModificationService = testCaseModificationService;
 	}
 	
-	@ServiceReference
-	public void setTestAutomationFinderService(TestAutomationFinderService taService){
-		this.taFinderService = taService;
-	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showTestCase(@PathVariable long testCaseId, Locale locale) {
@@ -189,6 +183,10 @@ public class TestCaseModificationController {
 	}
 
 	private void populateModelWithTestCaseEditionData(ModelAndView mav, TestCase testCase, Locale locale) {
+		
+
+		boolean hasCUF = cufValueService.hasCustomFields(testCase);
+		
 		// Convert execution mode with local parameter
 		List<OptionTag> executionModes = new ArrayList<OptionTag>();
 		for (TestCaseExecutionMode executionMode : TestCaseExecutionMode.values()) {
@@ -207,6 +205,7 @@ public class TestCaseModificationController {
 		mav.addObject("testCaseTypeLabel", formatType(testCase.getType(), locale));
 		mav.addObject("testCaseStatusComboJson", buildStatusComboData(testCase, locale));
 		mav.addObject("testCaseStatusLabel", formatStatus(testCase.getStatus(), locale));
+		mav.addObject("hasCUF", hasCUF);
 	}
 
 	private String buildImportanceComboData(TestCase testCase, Locale locale) {
