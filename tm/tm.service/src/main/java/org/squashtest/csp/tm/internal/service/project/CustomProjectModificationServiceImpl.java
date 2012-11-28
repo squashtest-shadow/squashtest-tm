@@ -20,40 +20,16 @@
  */
 package org.squashtest.csp.tm.internal.service.project;
 
-import java.util.List;
-
 import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.validation.constraints.NotNull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.security.acls.PermissionGroup;
-import org.squashtest.csp.core.service.security.ObjectIdentityService;
-import org.squashtest.csp.tm.domain.NoBugTrackerBindingException;
-import org.squashtest.csp.tm.domain.UnknownEntityException;
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
-import org.squashtest.csp.tm.domain.project.AdministrableProject;
-import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.domain.users.User;
-import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
-import org.squashtest.csp.tm.internal.repository.BugTrackerBindingDao;
-import org.squashtest.csp.tm.internal.repository.BugTrackerDao;
-import org.squashtest.csp.tm.internal.repository.GenericProjectDao;
-import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectTemplateDao;
-import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.internal.service.ProjectDeletionHandler;
-import org.squashtest.csp.tm.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.csp.tm.service.CustomProjectModificationService;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
 import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
@@ -68,24 +44,8 @@ import org.squashtest.csp.tm.service.project.ProjectManagerService;
 @Service("CustomProjectModificationService")
 @Transactional
 public class CustomProjectModificationServiceImpl implements CustomProjectModificationService {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(CustomProjectModificationServiceImpl.class);
-	@Inject
-	private ProjectDao projectDao;
-	@Inject
-	private GenericProjectDao genericProjectDao;
-	@Inject
-	private UserDao userDao;
-	@Inject
-	private BugTrackerDao bugTrackerDao;
-	@Inject
-	private BugTrackerBindingDao bugTrackerBindingDao;
 	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
-	@Inject
-	private ProjectsPermissionManagementService permissionService;
-	@Inject
-	private InsecureTestAutomationManagementService autotestService;
 	@Inject
 	private CustomFieldBindingModificationService customFieldBindingModificationService;
 	@Inject
@@ -94,161 +54,11 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private ProjectTemplateDao projectTemplateDao;
 	@Inject
 	private GenericProjectManagerService genericProjectManager;
-	@Inject 
-	private Provider<GenericToAdministrableProject> genericToAdministrableConvertor;
-	
-	private static final String MANAGE_PROJECT_OR_ROLE_ADMIN = "hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')";
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteProject(long projectId) {
 		projectDeletionHandler.deleteProject(projectId);
-	}
-
-	@Override
-	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
-	public AdministrableProject findAdministrableProjectById(long projectId) {
-		GenericProject genericProject = genericProjectDao.findById(projectId);
-		return genericToAdministrableConvertor.get().convertToAdministrableProject(genericProject);
-	}
-
-	@Override
-	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
-	public void addNewPermissionToProject(long userId, long projectId, String permission) {
-		permissionService.addNewPermissionToProject(userId, projectId, permission);
-
-	}
-
-	@Override
-	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
-	public void removeProjectPermission(long userId, long projectId) {
-		permissionService.removeProjectPermission(userId, projectId);
-
-	}
-
-	@Override
-	public List<UserProjectPermissionsBean> findUserPermissionsBeansByProject(long projectId) {
-		return permissionService.findUserPermissionsBeanByProject(projectId);
-	}
-
-	@Override
-	public List<PermissionGroup> findAllPossiblePermission() {
-		return permissionService.findAllPossiblePermission();
-	}
-
-	@Override
-	public List<User> findUserWithoutPermissionByProject(long projectId) {
-		return permissionService.findUserWithoutPermissionByProject(projectId);
-	}
-
-	@Override
-	public User findUserByLogin(String userLogin) {
-		return userDao.findUserByLogin(userLogin);
-	}
-
-	// ********************************** Test automation section *************************************
-	@Override
-	@PreAuthorize("hasPermission(#TMprojectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	public void bindTestAutomationProject(long tmProjectId, TestAutomationProject taProject) {
-		TestAutomationProject persistedProject = autotestService.persistOrAttach(taProject);
-		projectDao.findById(tmProjectId).bindTestAutomationProject(persistedProject);
-	}
-
-	@Override
-	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
-	public TestAutomationServer getLastBoundServerOrDefault(long projectId) {
-		Project project = projectDao.findById(projectId);
-
-		if (project.hasTestAutomationProjects()) {
-			return project.getServerOfLatestBoundProject();
-		}
-
-		else {
-			return autotestService.getDefaultServer();
-		}
-	}
-
-	@Override
-	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
-	public List<TestAutomationProject> findBoundTestAutomationProjects(long projectId) {
-		return projectDao.findBoundTestAutomationProjects(projectId);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#TMprojectId, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	public void unbindTestAutomationProject(long tmProjectId, long taProjectId) {
-		Project project = projectDao.findById(tmProjectId);
-		project.unbindTestAutomationProject(taProjectId);
-	}
-
-	// ********************************** bugtracker section *************************************
-
-	@Override
-	public void changeBugTracker(long projectId, Long newBugtrackerId) {
-
-		Project project = projectDao.findById(projectId);
-		BugTracker newBugtracker = bugTrackerDao.findById(newBugtrackerId);
-		if (newBugtracker != null) {
-			changeBugTracker(project, newBugtracker);
-		} else {
-			throw new UnknownEntityException(newBugtrackerId, BugTracker.class);
-		}
-	}
-
-	@Override
-	public void changeBugTracker(Project project, @NotNull BugTracker newBugtracker) {
-		LOGGER.debug("changeBugTracker for project " + project.getId() + " bt: " + newBugtracker.getId());
-
-		// the project doesn't have bug-tracker connection yet
-		if (!project.isBugtrackerConnected()) {
-			BugTrackerBinding bugTrackerBinding = new BugTrackerBinding(project.getName(), newBugtracker, project);
-			project.setBugtrackerBinding(bugTrackerBinding);
-		}
-		// the project has a bug-tracker connection
-		else {
-			// and the new one is different from the old one
-			if (projectBugTrackerChanges(newBugtracker.getId(), project)) {
-				project.getBugtrackerBinding().setBugtracker(newBugtracker);
-			}
-		}
-	}
-
-	private boolean projectBugTrackerChanges(Long newBugtrackerId, Project project) {
-		boolean change = true;
-		BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
-		long bugtrackerId = bugtrackerBinding.getBugtracker().getId();
-		if (bugtrackerId == newBugtrackerId) {
-			change = false;
-		}
-		return change;
-	}
-
-	@Override
-	public void removeBugTracker(long projectId) {
-		LOGGER.debug("removeBugTracker for project " + projectId);
-		Project project = projectDao.findById(projectId);
-		if (project.isBugtrackerConnected()) {
-			BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
-			project.removeBugTrackerBinding();
-			bugTrackerBindingDao.remove(bugtrackerBinding);
-		}
-
-	}
-
-	@Override
-	public void changeBugTrackerProjectName(long projectId, String projectBugTrackerName) {
-		Project project = projectDao.findById(projectId);
-		BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
-		if (bugtrackerBinding == null) {
-			throw new NoBugTrackerBindingException();
-		}
-		bugtrackerBinding.setProjectName(projectBugTrackerName);
-	}
-
-	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
-	public List<Project> findAllReadable() {
-		return projectDao.findAll();
 	}
 
 	/**
@@ -287,7 +97,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 
 	private void copyBugtrackerSettings(Project newProject, ProjectTemplate projectTemplate) {
 		if (projectTemplate.isBugtrackerConnected()) {
-			changeBugTracker(newProject, projectTemplate.getBugtrackerBinding().getBugtracker());
+			genericProjectManager.changeBugTracker(newProject, projectTemplate.getBugtrackerBinding().getBugtracker());
 		}
 	}
 

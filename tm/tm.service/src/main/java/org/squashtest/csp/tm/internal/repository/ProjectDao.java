@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 
 public interface ProjectDao extends CustomProjectDao {
@@ -42,8 +41,4 @@ public interface ProjectDao extends CustomProjectDao {
 
 
 	List<ProjectFilter> findProjectFiltersContainingProject(@QueryParam("projectId") long id);
-
-	// ************************* test automation section **********************
-
-	List<TestAutomationProject> findBoundTestAutomationProjects(@QueryParam("projectId") long id);
 }

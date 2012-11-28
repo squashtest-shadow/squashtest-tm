@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.GenericProject;
@@ -31,6 +32,8 @@ import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 import org.squashtest.csp.tm.domain.project.ProjectVisitor;
 import org.squashtest.csp.tm.internal.service.ProjectDeletionHandler;
+import org.squashtest.csp.tm.internal.utils.security.PermissionsUtils;
+import org.squashtest.csp.tm.internal.utils.security.SecurityCheckableObject;
 @Component
 @Scope("prototype")
 public class GenericToAdministrableProject implements ProjectVisitor {
@@ -39,6 +42,9 @@ public class GenericToAdministrableProject implements ProjectVisitor {
 	
 	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
+	
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
 
 	public AdministrableProject convertToAdministrableProject(GenericProject project){
 		project.accept(this);
@@ -47,6 +53,7 @@ public class GenericToAdministrableProject implements ProjectVisitor {
 
 	@Override
 	public void visit(Project project) {
+		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(project, "MANAGEMENT"));
 		//create administrable project
 		administrableProject = new AdministrableProject(project);
 		// add deletable
@@ -63,6 +70,7 @@ public class GenericToAdministrableProject implements ProjectVisitor {
 	
 	@Override
 	public void visit(ProjectTemplate projectTemplate) {
+	PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(projectTemplate, "MANAGEMENT"));
 		administrableProject = new AdministrableProject(projectTemplate);
 		administrableProject.setDeletable(true);
 		administrableProject.setTemplate(true);

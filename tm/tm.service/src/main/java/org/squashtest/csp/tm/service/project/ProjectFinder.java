@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.service.project;
 
 import java.util.List;
 
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -34,9 +33,6 @@ import org.squashtest.csp.tm.domain.project.Project;
 @Transactional(readOnly = true)
 public interface ProjectFinder {
 	
-	@PostAuthorize("hasPermission(returnObject, 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	Project findById(long projectId);
-
 	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
 	List<Project> findAllOrderedByName();
 

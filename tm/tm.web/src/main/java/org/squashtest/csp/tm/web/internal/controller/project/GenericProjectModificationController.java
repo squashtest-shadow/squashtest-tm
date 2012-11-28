@@ -52,6 +52,7 @@ import org.squashtest.csp.tm.domain.LoginDoNotExistException;
 import org.squashtest.csp.tm.domain.NoBugTrackerBindingException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.project.AdministrableProject;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
@@ -59,7 +60,7 @@ import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.BugTrackerFinderService;
-import org.squashtest.csp.tm.service.project.ProjectManagerService;
+import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
 import org.squashtest.csp.tm.web.internal.helper.JsonHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModel;
@@ -70,9 +71,9 @@ import org.squashtest.csp.tm.web.internal.model.testautomation.TestAutomationPro
 
 @Controller
 @RequestMapping("/administration/projects/{projectId}")
-public class ProjectModificationController {
+public class GenericProjectModificationController {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectModificationController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GenericProjectModificationController.class);
 
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
@@ -80,14 +81,9 @@ public class ProjectModificationController {
 
 	@Inject
 	private MessageSource messageSource;
+	@Inject
+	private GenericProjectManagerService genericProjectModificationService;
 
-	private ProjectManagerService projectModificationService;
-
-	
-	@ServiceReference
-	public void setProjectModificationService(ProjectManagerService projectModificationService) {
-		this.projectModificationService = projectModificationService;
-	}
 
 	private BugTrackerFinderService bugtrackerFinderService;
 
@@ -99,12 +95,11 @@ public class ProjectModificationController {
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public ModelAndView getProjectInfos(@PathVariable long projectId, Locale locale) {
 		
-		AdministrableProject adminProject = projectModificationService.findAdministrableProjectById(projectId);
-		TestAutomationServer taServerCoordinates = projectModificationService.getLastBoundServerOrDefault(adminProject.getProject().getId());
-		List<TestAutomationProject> boundProjects = projectModificationService.findBoundTestAutomationProjects(projectId);
+		AdministrableProject adminProject = genericProjectModificationService.findAdministrableProjectById(projectId);
+		TestAutomationServer taServerCoordinates = genericProjectModificationService.getLastBoundServerOrDefault(adminProject.getProject().getId());
+		List<TestAutomationProject> boundProjects = genericProjectModificationService.findBoundTestAutomationProjects(projectId);
 
 		Map<Long, String> comboDataMap = createComboDataForBugtracker(locale);
-
 		
 		ModelAndView mav = new ModelAndView("page/projects/project-info");
 		
@@ -128,7 +123,7 @@ public class ProjectModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = { "id=project-label", VALUE })
 	@ResponseBody
 	public String changeLabel(@RequestParam(VALUE) String projectLabel, @PathVariable long projectId) {
-		projectModificationService.changeLabel(projectId, projectLabel);
+		genericProjectModificationService.changeLabel(projectId, projectLabel);
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("project " + projectId + ": updated label to " + projectLabel);
 		}
@@ -140,7 +135,7 @@ public class ProjectModificationController {
 	@ResponseBody
 	public Object changeName(HttpServletResponse response, @PathVariable long projectId, @RequestParam String newName) {
 
-		projectModificationService.changeName(projectId, newName);
+		genericProjectModificationService.changeName(projectId, newName);
 		LOGGER.info("Project modification : renaming {} as {}", projectId, newName);
 		return new RenameModel(newName);
 	}
@@ -151,7 +146,7 @@ public class ProjectModificationController {
 	public Active changeActive(HttpServletResponse response, @PathVariable long projectId,
 			@RequestParam boolean isActive) {
 
-		projectModificationService.changeActive(projectId, isActive);
+		genericProjectModificationService.changeActive(projectId, isActive);
 		LOGGER.info("Project modification : change project {} is active = {}", projectId, isActive);
 		return new Active(isActive);
 	}
@@ -173,11 +168,11 @@ public class ProjectModificationController {
 		String toReturn ;
 		if (bugtrackerId > 0) {
 			toReturn = bugtrackerFinderService.findBugtrackerName(bugtrackerId);
-			projectModificationService.changeBugTracker(projectId, bugtrackerId);
+			genericProjectModificationService.changeBugTracker(projectId, bugtrackerId);
 			LOGGER.debug("Project {} : bugtracker changed, new value : {}", projectId, bugtrackerId);
 		} else {
 			toReturn = messageSource.getMessage(PROJECT_BUGTRACKER_NAME_UNDEFINED, null, locale);
-			projectModificationService.removeBugTracker(projectId);
+			genericProjectModificationService.removeBugTracker(projectId);
 		}
 		return toReturn;
 	}
@@ -185,14 +180,14 @@ public class ProjectModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = { "id=project-bugtracker-project-name", VALUE })
 	@ResponseBody
 	public String changeBugtrackerProjectName(@RequestParam(VALUE) String projectBugTrackerName, @PathVariable long projectId, Locale locale) {
-		projectModificationService.changeBugTrackerProjectName(projectId, projectBugTrackerName);
+		genericProjectModificationService.changeBugTrackerProjectName(projectId, projectBugTrackerName);
 		return projectBugTrackerName;
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=project-description", VALUE })
 	@ResponseBody
 	public String changeDescription(@RequestParam(VALUE) String projectDescription, @PathVariable long projectId) {
-		projectModificationService.changeDescription(projectId, projectDescription);
+		genericProjectModificationService.changeDescription(projectId, projectDescription);
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("project " + projectId + ": updated description to " + projectDescription);
 		}
@@ -202,7 +197,7 @@ public class ProjectModificationController {
 	@RequestMapping(value="bugtracker/projectName", method = RequestMethod.GET)
 	@ResponseBody
 	public String getBugtrackerProject(@PathVariable long projectId){
-		Project project = projectModificationService.findById(projectId);
+		GenericProject project = genericProjectModificationService.findById(projectId);
 		if(project.isBugtrackerConnected()){
 			return project.getBugtrackerBinding().getProjectName();
 		}else{
@@ -214,7 +209,7 @@ public class ProjectModificationController {
 
 		ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
 
-		Project project = projectModificationService.findById(projectId);
+		GenericProject project = genericProjectModificationService.findById(projectId);
 		if (project == null) {
 			throw new UnknownEntityException(projectId, Project.class);
 		}
@@ -230,7 +225,7 @@ public class ProjectModificationController {
 	@RequestMapping(method = RequestMethod.DELETE)
 	@ResponseBody
 	public void deleteProject(@PathVariable long projectId) {
-		projectModificationService.deleteProject(projectId);
+		genericProjectModificationService.deleteProject(projectId);
 	}
 
 	
@@ -240,7 +235,7 @@ public class ProjectModificationController {
 	@RequestMapping(value = "/add-permission", method = RequestMethod.POST, params = { "user" })
 	public @ResponseBody
 	void addNewPermission(@RequestParam long user, @PathVariable long projectId, @RequestParam String permission) {
-		projectModificationService.addNewPermissionToProject(user, projectId, permission);
+		genericProjectModificationService.addNewPermissionToProject(user, projectId, permission);
 	}
 
 	
@@ -249,27 +244,27 @@ public class ProjectModificationController {
 	public @ResponseBody
 	void addNewPermissionWithLogin(@RequestParam String userLogin, @PathVariable long projectId,
 			@RequestParam String permission) {
-		User user = projectModificationService.findUserByLogin(userLogin);
+		User user = genericProjectModificationService.findUserByLogin(userLogin);
 		if (user == null) {
 			throw new LoginDoNotExistException();
 		}
-		projectModificationService.addNewPermissionToProject(user.getId(), projectId, permission);
+		genericProjectModificationService.addNewPermissionToProject(user.getId(), projectId, permission);
 	}
 	
 	
 	@RequestMapping(value = "/remove-permission", method = RequestMethod.POST)
 	public @ResponseBody
 	void removePermission(@RequestParam("user") long userId, @PathVariable long projectId) {
-		projectModificationService.removeProjectPermission(userId, projectId);
+		genericProjectModificationService.removeProjectPermission(userId, projectId);
 	}
 
 	
 	
 	@RequestMapping(value = "/permission-popup", method = RequestMethod.GET)
 	public ModelAndView getPermissionPopup(@PathVariable long projectId) {
-		Project project = projectModificationService.findById(projectId);
-		List<PermissionGroup> permissionList = projectModificationService.findAllPossiblePermission();
-		List<User> userList = projectModificationService.findUserWithoutPermissionByProject(projectId);
+		GenericProject project = genericProjectModificationService.findById(projectId);
+		List<PermissionGroup> permissionList = genericProjectModificationService.findAllPossiblePermission();
+		List<User> userList = genericProjectModificationService.findUserWithoutPermissionByProject(projectId);
 
 		ModelAndView mav = new ModelAndView("fragment/project/project-permission-popup");
 		mav.addObject("project", project);
@@ -282,10 +277,10 @@ public class ProjectModificationController {
 	@RequestMapping(value = "/permission-table", method = RequestMethod.GET)
 	public ModelAndView getPermissionTable(@PathVariable long projectId) {
 		
-		Project project = projectModificationService.findById(projectId);
-		List<UserProjectPermissionsBean> userProjectPermissionsBean = projectModificationService
+		GenericProject project = genericProjectModificationService.findById(projectId);
+		List<UserProjectPermissionsBean> userProjectPermissionsBean = genericProjectModificationService
 				.findUserPermissionsBeansByProject(projectId);
-		List<PermissionGroup> permissionList = projectModificationService.findAllPossiblePermission();
+		List<PermissionGroup> permissionList = genericProjectModificationService.findAllPossiblePermission();
 
 		ModelAndView mav = new ModelAndView("fragment/project/project-permission-table");
 		mav.addObject("project", project);
@@ -303,7 +298,7 @@ public class ProjectModificationController {
 	@RequestMapping(value = "/test-automation-projects", method=RequestMethod.GET, params = "sEcho")
 	@ResponseBody
 	public DataTableModel getProjectsTableModel(@PathVariable(PROJECT_ID) long projectId, final DataTableDrawParameters params) {
-		List<TestAutomationProject> taProjects = projectModificationService.findBoundTestAutomationProjects(projectId);
+		List<TestAutomationProject> taProjects = genericProjectModificationService.findBoundTestAutomationProjects(projectId);
 		
 		FilteredCollectionHolder<List<TestAutomationProject>> holder = 
 			new FilteredCollectionHolder<List<TestAutomationProject>>(taProjects.size(), taProjects);
@@ -321,7 +316,7 @@ public class ProjectModificationController {
 			Iterator<TestAutomationProjectRegistrationForm> it = Arrays.asList(projects).listIterator();
 			while (it.hasNext()){
 				form = it.next();				
-				projectModificationService.bindTestAutomationProject(projectId, form.toTestAutomationProject());
+				genericProjectModificationService.bindTestAutomationProject(projectId, form.toTestAutomationProject());
 			}
 		}
 		catch(MalformedURLException ex){
@@ -336,7 +331,7 @@ public class ProjectModificationController {
 	@RequestMapping(value="/test-automation-enabled", method=RequestMethod.POST, params = "enabled")
 	@ResponseBody
 	public void enableTestAutomation(@PathVariable(PROJECT_ID) long projectId, @RequestParam("enabled") boolean isEnabled){
-		projectModificationService.changeTestAutomationEnabled(projectId, isEnabled);
+		genericProjectModificationService.changeTestAutomationEnabled(projectId, isEnabled);
 	}
 	
 	
@@ -344,7 +339,7 @@ public class ProjectModificationController {
 	@RequestMapping(value = "/test-automation-projects/{taProjectId}", method=RequestMethod.DELETE )
 	@ResponseBody
 	public void unbindProject(@PathVariable(PROJECT_ID) Long projectId, @PathVariable("taProjectId") Long taProjectId){
-		projectModificationService.unbindTestAutomationProject(projectId, taProjectId);
+		genericProjectModificationService.unbindTestAutomationProject(projectId, taProjectId);
 	}
 	
 	

@@ -33,7 +33,6 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.tm.domain.project.GenericProject;
-import org.squashtest.csp.tm.domain.project.Project;
 
 /**
  * The purpose of this entity is to store informations about A Project's connection to a BugTracker. <br>
@@ -67,7 +66,7 @@ public class BugTrackerBinding {
 		
 	}
 	
-	public BugTrackerBinding(String projectName, BugTracker newBugtracker, Project project) {
+	public BugTrackerBinding(String projectName, BugTracker newBugtracker, GenericProject project) {
 		super();
 		this.projectName = projectName;
 		this.bugtracker = newBugtracker;

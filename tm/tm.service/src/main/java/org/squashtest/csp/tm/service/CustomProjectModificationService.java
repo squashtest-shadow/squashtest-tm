@@ -20,17 +20,9 @@
  */
 package org.squashtest.csp.tm.service;
 
-import java.util.List;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.security.acls.PermissionGroup;
-import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.domain.users.User;
-import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
+import org.squashtest.csp.tm.domain.project.ProjectTemplate;
+
 
 /**
  * Project modification services which cannot be dynamically generated.
@@ -38,88 +30,7 @@ import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
  * @author mpagnon
  * 
  */
-public interface CustomProjectModificationService {
-
-	void deleteProject(long projectId);
-
-	AdministrableProject findAdministrableProjectById(long projectId);
-
-	void addNewPermissionToProject(long userId, long projectId, String permission);
-
-	void removeProjectPermission(long userId, long projectId);
-
-	List<UserProjectPermissionsBean> findUserPermissionsBeansByProject(long projectId);
-
-	List<PermissionGroup> findAllPossiblePermission();
-
-	List<User> findUserWithoutPermissionByProject(long projectId);
-
-	User findUserByLogin(String userLogin);
-
-	// **************************** test automation extension ********************
-
-	/**
-	 * Returns a TestAutomationServer instance. Either it is a persisted instance that the tm project was bound to
-	 * lastly (through a ta project), either it will be the default server configuration.
-	 * 
-	 */
-	TestAutomationServer getLastBoundServerOrDefault(long projectId);
-
-	/**
-	 * Will bind the TM project to a TA project. Will persist it if necessary.
-	 * 
-	 * @param TMprojectId
-	 * @param TAproject
-	 */
-	void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject);
-
-	List<TestAutomationProject> findBoundTestAutomationProjects(long projectId);
-
-	void unbindTestAutomationProject(long TMprojectId, long TAProjectId);
-
-	// ****************************** bugtracker section ****************************
-
-	/**
-	 * Change the Bugtracker the Project is associated-to.<br>
-	 * If the Project had no Bugtracker, will add a new association.<br>
-	 * If the Project had a already a Bugtracker, it will keep the project-Name information
-	 * 
-	 * @param projectId
-	 * @param newBugtrackerId
-	 */
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.Project', 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	void changeBugTracker(long projectId, Long newBugtrackerId);
-	
-	/**
-	 * Change the Bugtracker the Project is associated-to.<br>
-	 * If the Project had no Bugtracker, will add a new association.<br>
-	 * If the Project had a already a Bugtracker, it will keep the project-Name information
-	 * 
-	 * @param project : the concerned project
-	 * @param bugtracker : the bugtracker to bind the project to
-	 */
-	@PreAuthorize("hasPermission(#newProject, 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-	void changeBugTracker(Project newProject, BugTracker bugtracker);
-
-	/**
-	 * Will remove the association the Project has to it's Bugtracker.
-	 * 
-	 * @param projectId
-	 */
-	void removeBugTracker(long projectId);
-
-	/**
-	 * Will change a bugtracker connexion parameter : the name of the bugtracker's project it's associated to.
-	 * 
-	 * @param projectId
-	 *            the concerned project
-	 * @param projectBugTrackerName
-	 *            the name of the bugtracker's project, the Project is connected to
-	 */
-	void changeBugTrackerProjectName(long projectId, String projectBugTrackerName);
-	
-	List<Project> findAllReadable();
-	
+public interface CustomProjectModificationService {	
 	/**
 	 * Will persist the new {@linkplain Project} and add settings copied from a given {@linkplain ProjectTemplate}.
 	 * 
@@ -131,5 +42,8 @@ public interface CustomProjectModificationService {
 	 * @param copyTestAutomationSettings : whether to copy the Template's automation settings or not
 	 * @return the persisted new {@link Project}
 	 */
-	Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId, boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings , boolean copyTestAutomationSettings);	
+	Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId, boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings , boolean copyTestAutomationSettings);
+
+	void deleteProject(long projectId);	
+	
 }

@@ -50,20 +50,17 @@ import spock.lang.Specification
 class CustomProjectModificationServiceImplTest extends Specification {
 	CustomProjectModificationServiceImpl service = new CustomProjectModificationServiceImpl()
 	ProjectTemplateDao projectTemplateDao = Mock()
-	ProjectDao projectDao = Mock()
 	CustomFieldBindingModificationService customFieldBindingModificationService = Mock()
 	ProjectsPermissionManagementService projectsPermissionManagementService = Mock()
 	GenericProjectManagerService genericProjectManagerService = Mock()
-	GenericProjectDao genericProjectDao = Mock()
 	
 	def setup()
 	{
-		service.projectDao = projectDao
 		service.projectTemplateDao = projectTemplateDao
 		service.customFieldBindingModificationService = customFieldBindingModificationService
 		service.projectsPermissionManagementService = projectsPermissionManagementService
 		service.genericProjectManager = genericProjectManagerService
-		service.genericProjectDao = genericProjectDao
+		
 		
 	}
 	
@@ -92,7 +89,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		then:
 		1* project.setTestAutomationEnabled(true)
 		1* project.bindTestAutomationProject(automationProject)
-		1* project.setBugtrackerBinding(_)
+		1* genericProjectManagerService.changeBugTracker(_, _)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
 		1* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
 	}
@@ -120,7 +117,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		then:
 		1* project.setTestAutomationEnabled(true)
 		1* project.bindTestAutomationProject(automationProject)
-		0* project.setBugtrackerBinding(_)
+		0* genericProjectManagerService.changeBugTracker(_, _)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
 		1* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
 	}
@@ -144,7 +141,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		then:
 		1* project.setTestAutomationEnabled(true)
 		1* project.bindTestAutomationProject(automationProject)
-		0* project.setBugtrackerBinding(_)
+		0* genericProjectManagerService.changeBugTracker(_, _)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
 		1* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
 	}
@@ -174,7 +171,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		then:
 		0* project.setTestAutomationEnabled(_)
 		0* project.bindTestAutomationProject(automationProject)
-		1* project.setBugtrackerBinding(_)
+		1* genericProjectManagerService.changeBugTracker(_, _)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
 		1* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
 	}
@@ -203,7 +200,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		then:
 		1* project.setTestAutomationEnabled(true)
 		1* project.bindTestAutomationProject(automationProject)
-		1* project.setBugtrackerBinding(_)
+		1* genericProjectManagerService.changeBugTracker(_, _)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
 		0* projectsPermissionManagementService.copyAssignedUsersFromTemplate(_, _)
 	}
@@ -233,7 +230,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		then:
 		1* project.setTestAutomationEnabled(true)
 		1* project.bindTestAutomationProject(automationProject)
-		1* project.setBugtrackerBinding(_)
+		1* genericProjectManagerService.changeBugTracker(_, _)
 		0* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(_, _)
 		1* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
 	}

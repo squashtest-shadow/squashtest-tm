@@ -21,6 +21,7 @@
 
 package org.squashtest.csp.tm.service.project;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -29,4 +30,20 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 public interface GenericProjectManagerService extends CustomGenericProjectManager, GenericProjectFinder {
+	public static final String ADMIN_OR_PROJECT_MANAGER = "hasPermission(#arg0, 'org.squashtest.csp.tm.domain.project.GenericProject', 'MANAGEMENT') or hasRole('ROLE_ADMIN')";
+
+	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
+	void changeDescription(long projectId, String newDescription);
+
+	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
+	void changeLabel(long projectId, String newLabel);
+
+	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
+	void changeName(long projectId, String newName);
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	void changeActive(long projectId, boolean isActive);
+	
+	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
+	void changeTestAutomationEnabled(long projectId, boolean isEnabled);
 }

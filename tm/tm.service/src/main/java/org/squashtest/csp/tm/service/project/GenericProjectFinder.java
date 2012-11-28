@@ -48,6 +48,10 @@ public interface GenericProjectFinder {
 	 * @return a {@link FilteredCollectionHolder} containing all projects the user has management access to, ordered according to the given params.
 	 */
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
-	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting);	
+	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting);
+	
+	GenericProject findById(long projectId);
+	
+	
 
 }

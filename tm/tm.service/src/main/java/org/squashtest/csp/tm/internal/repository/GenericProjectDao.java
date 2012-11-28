@@ -25,6 +25,8 @@ import java.util.List;
 
 import org.springframework.security.access.prepost.PostFilter;
 import org.squashtest.csp.tm.domain.project.GenericProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 /**
@@ -32,6 +34,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
  * 
  */
 public interface GenericProjectDao {
+	
 	long countGenericProjects();
 
 	@PostFilter("hasPermission(filterObject, 'MANAGEMENT') or  hasRole('ROLE_ADMIN')")
@@ -39,4 +42,8 @@ public interface GenericProjectDao {
 	
 	
 	GenericProject findById(long projectId);
+	
+	// ************************* test automation section **********************
+
+	List<TestAutomationProject> findBoundTestAutomationProjects(@QueryParam("projectId") long id);
 }

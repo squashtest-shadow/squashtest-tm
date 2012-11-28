@@ -24,7 +24,14 @@ package org.squashtest.csp.tm.service.project;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.core.security.acls.PermissionGroup;
+import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.GenericProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -38,7 +45,7 @@ public interface CustomGenericProjectManager {
 	/**
 	 * Will find all Projects and Templates to which the user has management access to and return them ordered according to the given params.
 	 * 
-	 * @param filter the {@link CollectionSorting} that holds order and paging params
+	 * @param pagingAndSorting the {@link PagingAndSorting} that holds order and paging params
 	 * @return a {@link FilteredCollectionHolder} containing all projects the user has management access to, ordered according to the given params.
 	 */
 	@Transactional(readOnly=true)
@@ -48,4 +55,84 @@ public interface CustomGenericProjectManager {
 	 * @param project
 	 */
 	void persist(GenericProject project);
+	
+	/************************************************************************************************/
+	void deleteProject(long projectId);
+
+	AdministrableProject findAdministrableProjectById(long projectId);
+
+	void addNewPermissionToProject(long userId, long projectId, String permission);
+
+	void removeProjectPermission(long userId, long projectId);
+
+	List<UserProjectPermissionsBean> findUserPermissionsBeansByProject(long projectId);
+
+	List<PermissionGroup> findAllPossiblePermission();
+
+	List<User> findUserWithoutPermissionByProject(long projectId);
+
+	User findUserByLogin(String userLogin);
+
+	// **************************** test automation extension ********************
+
+	/**
+	 * Returns a TestAutomationServer instance. Either it is a persisted instance that the tm project was bound to
+	 * lastly (through a ta project), either it will be the default server configuration.
+	 * 
+	 */
+	TestAutomationServer getLastBoundServerOrDefault(long projectId);
+
+	/**
+	 * Will bind the TM project to a TA project. Will persist it if necessary.
+	 * 
+	 * @param TMprojectId
+	 * @param TAproject
+	 */
+	void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject);
+
+	List<TestAutomationProject> findBoundTestAutomationProjects(long projectId);
+
+	void unbindTestAutomationProject(long projectId, long taProjectId);
+
+	// ****************************** bugtracker section ****************************
+
+	/**
+	 * Change the Bugtracker the Project is associated-to.<br>
+	 * If the Project had no Bugtracker, will add a new association.<br>
+	 * If the Project had a already a Bugtracker, it will keep the project-Name information
+	 * 
+	 * @param projectId
+	 * @param newBugtrackerId
+	 */
+	void changeBugTracker(long projectId, Long newBugtrackerId);
+	
+	/**
+	 * Change the Bugtracker the Project is associated-to.<br>
+	 * If the Project had no Bugtracker, will add a new association.<br>
+	 * If the Project had a already a Bugtracker, it will keep the project-Name information
+	 * 
+	 * @param project : the concerned GenericProject
+	 * @param bugtracker : the bugtracker to bind the project to
+	 */
+	void changeBugTracker(GenericProject project, BugTracker bugtracker);
+
+	/**
+	 * Will remove the association the Project has to it's Bugtracker.
+	 * 
+	 * @param projectId
+	 */
+	void removeBugTracker(long projectId);
+
+	/**
+	 * Will change a bugtracker connexion parameter : the name of the bugtracker's project it's associated to.
+	 * 
+	 * @param projectId
+	 *            the concerned project
+	 * @param projectBugTrackerName
+	 *            the name of the bugtracker's project, the Project is connected to
+	 */
+	void changeBugTrackerProjectName(long projectId, String projectBugTrackerName);
+	
+	
+	
 }
