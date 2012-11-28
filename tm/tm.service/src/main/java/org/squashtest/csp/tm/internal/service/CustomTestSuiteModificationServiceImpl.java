@@ -20,12 +20,15 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
@@ -33,11 +36,14 @@ import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.internal.repository.AutomatedSuiteDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.csp.tm.service.CustomTestSuiteModificationService;
+import org.squashtest.csp.tm.service.ProjectsPermissionFinder;
+import org.squashtest.csp.tm.service.UserAccountService;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
@@ -60,7 +66,16 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	@Inject
 	private ExecutionDao executionDao;
 	
+	@Inject
+	private ProjectsPermissionFinder projectsPermissionFinder;
 
+	private UserAccountService userService;
+	
+	@ServiceReference
+	public void setUserAccountService(UserAccountService service){
+		this.userService=service;
+	}
+	
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.csp.tm.domain.campaign.TestSuite', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void rename(long suiteId, String newName) throws DuplicateNameException {
@@ -104,9 +119,14 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 
 		List<IterationTestPlanItem> testPlan = testSuiteDao.findAllTestPlanItemsPaged(suiteId, paging);
 
+		Long projectId = testSuiteDao.findById(suiteId).getProject().getId();
+		String userLogin = userService.findCurrentUser().getLogin();
+				
+		List<IterationTestPlanItem> filteredTestPlan = this.filterTestSuiteByUser(testPlan, userLogin, projectId);
+		
 		long count = testSuiteDao.countTestPlanItems(suiteId);
 
-		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>>(paging, count, testPlan);
+		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>>(paging, count, filteredTestPlan);
 	}
 
 	@Override
@@ -160,5 +180,63 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 		return execution;
 		
 	}
+
+	public List<IterationTestPlanItem> filterTestSuiteByUser(List<IterationTestPlanItem> testPlanItems, String userLogin, Long projectId) {
+
+		List<IterationTestPlanItem> testPlanItemsToReturn = new ArrayList<IterationTestPlanItem>();
+
+		if(isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")){
+			
+			for(IterationTestPlanItem testPlanItem: testPlanItems){
+					
+				if(hasToBeReturned(testPlanItem,userLogin)){
+					testPlanItemsToReturn.add(testPlanItem);
+				}
+			}
+		} else {
+			testPlanItemsToReturn.addAll(testPlanItems);
+		}
+
+		return testPlanItemsToReturn;
+	}
+
+	private boolean isInPermissionGroup(String userLogin, Long projectId, String permissionGroup){
+		
+		boolean isInGroup = false;
+		List<UserProjectPermissionsBean> permissions = projectsPermissionFinder.findUserPermissionsBeanByProject(projectId);
+		for(UserProjectPermissionsBean permission : permissions){
+			if(permission.getUser().getLogin().equals(userLogin)){
+				if(permission.getPermissionGroup().getQualifiedName().equals(permissionGroup)){
+					isInGroup = true;
+				}
+			}
+		}
+		
+		return isInGroup;
+	}
 	
+	private boolean hasToBeReturned(IterationTestPlanItem testPlanItem, String userLogin){
+		
+		boolean hasToBeReturned = false;
+		
+		if(testPlanItem.getUser() == null || !(testPlanItem.getUser().getLogin()==userLogin)){
+			
+			//The test plan item is not assigned to the user
+			
+			List<Execution> executions = testPlanItem.getExecutions();
+			for(Execution execution : executions){
+				if(execution.getLastExecutedBy() != null && execution.getLastExecutedBy().equals(userLogin)){
+					
+					//But one execution has been run by this user
+					hasToBeReturned = true;
+				}
+			}
+		} else {
+			
+			//The test plan item is assigned to the user
+			hasToBeReturned = true;
+		}
+		
+		return hasToBeReturned;
+	}	
 }

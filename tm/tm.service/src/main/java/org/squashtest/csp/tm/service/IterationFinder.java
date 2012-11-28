@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -42,4 +43,15 @@ public interface IterationFinder {
 	List<TestCase> findPlannedTestCases(long iterationId);
 	
 	TestPlanStatistics getIterationStatistics(long iterationId);
+	
+	/**
+	 * Returns an iteration filtered for a specific user. It returns an iteration
+	 * with a test plan containing only the items that are assigned to that user or
+	 * have been executed by that user.
+	 * @param iterationId
+	 * @return
+	 */
+	List<IterationTestPlanItem> filterIterationForCurrentUser(long iterationId);
+
+	List<Execution> filterExecutionsForCurrentUser(long iterationId, long testPlanId);
 }
