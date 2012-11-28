@@ -24,49 +24,34 @@ import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
-import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 import org.squashtest.csp.tm.domain.project.ProjectVisitor;
+import org.squashtest.csp.tm.internal.repository.ProjectTemplateDao;
 import org.squashtest.csp.tm.internal.service.ProjectDeletionHandler;
 @Component
 @Scope("prototype")
-public class GenericToAdministrableProject implements ProjectVisitor {
-	
-	private AdministrableProject administrableProject ;
+public class DeleteProjectVisitor implements ProjectVisitor {
 	
 	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
 	
-	public AdministrableProject convertToAdministrableProject(GenericProject project){
+	@Inject
+	private ProjectTemplateDao projectTemplateDao;
+	
+		public void deleteProject(GenericProject project){
 		project.accept(this);
-		return this.administrableProject;
 	}
 
 	@Override
 	public void visit(Project project) {
-		//create administrable project
-		administrableProject = new AdministrableProject(project);
-		// add deletable
-		boolean isDeletable = true;
-		try {
-			projectDeletionHandler.checkProjectContainsOnlyFolders(project.getId());
-		} catch (CannotDeleteProjectException e) {
-			isDeletable = false;
-		}
-		administrableProject.setDeletable(isDeletable);
-		// add if is template
-		administrableProject.setTemplate(false);
+		projectDeletionHandler.deleteProject(project.getId());
 	}
 	
 	@Override
 	public void visit(ProjectTemplate projectTemplate) {
-		administrableProject = new AdministrableProject(projectTemplate);
-		administrableProject.setDeletable(true);
-		administrableProject.setTemplate(true);
-
+		//TODO
 	}
 
 }

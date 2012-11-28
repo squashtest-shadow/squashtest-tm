@@ -41,7 +41,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
  *
  */
 @Transactional
-public interface CustomGenericProjectManager {
+public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 	/**
 	 * Will find all Projects and Templates to which the user has management access to and return them ordered according to the given params.
 	 * 
@@ -59,8 +59,6 @@ public interface CustomGenericProjectManager {
 	/************************************************************************************************/
 	void deleteProject(long projectId);
 
-	AdministrableProject findAdministrableProjectById(long projectId);
-
 	void addNewPermissionToProject(long userId, long projectId, String permission);
 
 	void removeProjectPermission(long userId, long projectId);
@@ -75,13 +73,7 @@ public interface CustomGenericProjectManager {
 
 	// **************************** test automation extension ********************
 
-	/**
-	 * Returns a TestAutomationServer instance. Either it is a persisted instance that the tm project was bound to
-	 * lastly (through a ta project), either it will be the default server configuration.
-	 * 
-	 */
-	TestAutomationServer getLastBoundServerOrDefault(long projectId);
-
+	
 	/**
 	 * Will bind the TM project to a TA project. Will persist it if necessary.
 	 * 
@@ -89,8 +81,6 @@ public interface CustomGenericProjectManager {
 	 * @param TAproject
 	 */
 	void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject);
-
-	List<TestAutomationProject> findBoundTestAutomationProjects(long projectId);
 
 	void unbindTestAutomationProject(long projectId, long taProjectId);
 

@@ -23,7 +23,11 @@ package org.squashtest.csp.tm.domain.project;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-
+/**
+ * Dto to decorate a generic project with functional informations such as "deletable" or is "template".
+ * @author mpagnon
+ *
+ */
 public class AdministrableProject {
 	private final GenericProject project;
 	private boolean deletable = false;
