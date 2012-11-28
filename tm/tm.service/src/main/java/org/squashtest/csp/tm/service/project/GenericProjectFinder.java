@@ -30,7 +30,6 @@ import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -47,8 +46,8 @@ public interface GenericProjectFinder {
 	/**
 	 * Will find all Projects and Templates to which the user has management access to and return them ordered according to the given params.
 	 * 
-	 * @param filter the {@link CollectionSorting} that holds order and paging params
-	 * @return a {@link FilteredCollectionHolder} containing all projects the user has management access to, ordered according to the given params.
+	 * @param filter the {@link PagingAndSorting} that holds order and paging params
+	 * @return a {@link PagedCollectionHolder} containing all projects the user has management access to, ordered according to the given params.
 	 */
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
 	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting);
@@ -63,7 +62,7 @@ public interface GenericProjectFinder {
 	/**
 	 * @see  {@link CustomGenericProjectManager#getLastBoundServerOrDefault(long)}
 	 */
-	TestAutomationServer getLastBoundServerOrDefault(Long id);
+	TestAutomationServer getLastBoundServerOrDefault(long id);
 	/**
 	 * @see {@link CustomGenericProjectManager#findBoundTestAutomationProjects(long)}
 	 */

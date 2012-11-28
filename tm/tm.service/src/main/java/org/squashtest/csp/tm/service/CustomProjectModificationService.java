@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.service;
 
+import java.util.List;
+
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 
@@ -44,6 +46,9 @@ public interface CustomProjectModificationService {
 	 */
 	Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId, boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings , boolean copyTestAutomationSettings);
 
-	void deleteProject(long projectId);	
+	void deleteProject(long projectId);
+
+	List<Project> findAllReadable();	
+	
 	
 }

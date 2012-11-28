@@ -20,14 +20,18 @@
  */
 package org.squashtest.csp.tm.internal.service.project;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectTemplateDao;
 import org.squashtest.csp.tm.internal.service.ProjectDeletionHandler;
 import org.squashtest.csp.tm.service.CustomProjectModificationService;
@@ -54,11 +58,18 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private ProjectTemplateDao projectTemplateDao;
 	@Inject
 	private GenericProjectManagerService genericProjectManager;
+	@Inject
+	private ProjectDao projectDao;
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteProject(long projectId) {
 		projectDeletionHandler.deleteProject(projectId);
+	}
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
+	public List<Project> findAllReadable() {
+			return projectDao.findAll();
 	}
 
 	/**

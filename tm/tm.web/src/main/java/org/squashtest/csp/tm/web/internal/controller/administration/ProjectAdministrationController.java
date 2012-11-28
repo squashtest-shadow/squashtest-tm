@@ -74,7 +74,7 @@ public class ProjectAdministrationController {
 	public ModelAndView getProjectInfos(@PathVariable long projectId, Locale locale) {
 		
 		AdministrableProject adminProject = projectFinder.findAdministrableProjectById(projectId);
-		TestAutomationServer taServerCoordinates = projectFinder.getLastBoundServerOrDefault(adminProject.getProject().getId());
+		TestAutomationServer taServerCoordinates = projectFinder.getLastBoundServerOrDefault((long) adminProject.getProject().getId());
 		List<TestAutomationProject> boundProjects = projectFinder.findBoundTestAutomationProjects(projectId);
 
 		Map<Long, String> comboDataMap = createComboDataForBugtracker(locale);

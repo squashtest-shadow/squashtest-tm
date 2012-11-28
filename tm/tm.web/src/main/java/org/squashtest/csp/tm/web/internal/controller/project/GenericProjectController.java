@@ -95,6 +95,7 @@ public class GenericProjectController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(GenericProjectController.class);
 
 	private static final String PROJECT_ID = "projectId";
+	private static final String PROJECT_ID_ULR = "/{projectId}";
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
 
@@ -160,7 +161,7 @@ public class GenericProjectController {
 		projectManager.persist(template);
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, params = { "id=project-label", VALUE })
+	@RequestMapping(value = PROJECT_ID_ULR, method = RequestMethod.POST, params = { "id=project-label", VALUE })
 	@ResponseBody
 	public String changeLabel(@RequestParam(VALUE) String projectLabel, @PathVariable long projectId) {
 		projectManager.changeLabel(projectId, projectLabel);
@@ -171,7 +172,7 @@ public class GenericProjectController {
 	}
 
 	
-	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
+	@RequestMapping(value = PROJECT_ID_ULR, method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
 	public Object changeName(HttpServletResponse response, @PathVariable long projectId, @RequestParam String newName) {
 
@@ -181,7 +182,7 @@ public class GenericProjectController {
 	}
 
 	
-	@RequestMapping(method = RequestMethod.POST, params = { "isActive" })
+	@RequestMapping(value = PROJECT_ID_ULR, method = RequestMethod.POST, params = { "isActive" })
 	@ResponseBody
 	public Active changeActive(HttpServletResponse response, @PathVariable long projectId,
 			@RequestParam boolean isActive) {
@@ -202,7 +203,7 @@ public class GenericProjectController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=project-bugtracker", VALUE })
+	@RequestMapping(value = PROJECT_ID_ULR, method = RequestMethod.POST, params = { "id=project-bugtracker", VALUE })
 	@ResponseBody
 	public String changeBugtracker(@RequestParam(VALUE) Long bugtrackerId, @PathVariable long projectId, Locale locale) {
 		String toReturn ;
@@ -217,14 +218,14 @@ public class GenericProjectController {
 		return toReturn;
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, params = { "id=project-bugtracker-project-name", VALUE })
+	@RequestMapping(value = PROJECT_ID_ULR, method = RequestMethod.POST, params = { "id=project-bugtracker-project-name", VALUE })
 	@ResponseBody
 	public String changeBugtrackerProjectName(@RequestParam(VALUE) String projectBugTrackerName, @PathVariable long projectId, Locale locale) {
 		projectManager.changeBugTrackerProjectName(projectId, projectBugTrackerName);
 		return projectBugTrackerName;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=project-description", VALUE })
+	@RequestMapping(value = PROJECT_ID_ULR, method = RequestMethod.POST, params = { "id=project-description", VALUE })
 	@ResponseBody
 	public String changeDescription(@RequestParam(VALUE) String projectDescription, @PathVariable long projectId) {
 		projectManager.changeDescription(projectId, projectDescription);
@@ -234,7 +235,7 @@ public class GenericProjectController {
 		return projectDescription;
 	}
 	
-	@RequestMapping(value="bugtracker/projectName", method = RequestMethod.GET)
+	@RequestMapping(value= PROJECT_ID_ULR+"/bugtracker/projectName", method = RequestMethod.GET)
 	@ResponseBody
 	public String getBugtrackerProject(@PathVariable long projectId){
 		GenericProject project = projectManager.findById(projectId);
@@ -245,7 +246,7 @@ public class GenericProjectController {
 		}
 	}
 	
-	@RequestMapping(value = "/general", method = RequestMethod.GET)
+	@RequestMapping(value = PROJECT_ID_ULR+"/general", method = RequestMethod.GET)
 	public ModelAndView refreshGeneralInfos(@PathVariable long projectId) {
 
 		ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
@@ -263,7 +264,7 @@ public class GenericProjectController {
 
 	
 	
-	@RequestMapping(method = RequestMethod.DELETE)
+	@RequestMapping(value = PROJECT_ID_ULR, method = RequestMethod.DELETE)
 	@ResponseBody
 	public void deleteProject(@PathVariable long projectId) {
 		projectManager.deleteProject(projectId);
@@ -273,7 +274,7 @@ public class GenericProjectController {
 	
 	// *********************Permission Management*********************
 	
-	@RequestMapping(value = "/add-permission", method = RequestMethod.POST, params = { "user" })
+	@RequestMapping(value = PROJECT_ID_ULR+"/add-permission", method = RequestMethod.POST, params = { "user" })
 	public @ResponseBody
 	void addNewPermission(@RequestParam long user, @PathVariable long projectId, @RequestParam String permission) {
 		projectManager.addNewPermissionToProject(user, projectId, permission);
@@ -281,7 +282,7 @@ public class GenericProjectController {
 
 	
 	
-	@RequestMapping(value = "/add-permission", method = RequestMethod.POST, params = { "userLogin" })
+	@RequestMapping(value = PROJECT_ID_ULR+"/add-permission", method = RequestMethod.POST, params = { "userLogin" })
 	public @ResponseBody
 	void addNewPermissionWithLogin(@RequestParam String userLogin, @PathVariable long projectId,
 			@RequestParam String permission) {
@@ -293,7 +294,7 @@ public class GenericProjectController {
 	}
 	
 	
-	@RequestMapping(value = "/remove-permission", method = RequestMethod.POST)
+	@RequestMapping(value = PROJECT_ID_ULR+"/remove-permission", method = RequestMethod.POST)
 	public @ResponseBody
 	void removePermission(@RequestParam("user") long userId, @PathVariable long projectId) {
 		projectManager.removeProjectPermission(userId, projectId);
@@ -301,7 +302,7 @@ public class GenericProjectController {
 
 	
 	
-	@RequestMapping(value = "/permission-popup", method = RequestMethod.GET)
+	@RequestMapping(value = PROJECT_ID_ULR+"/permission-popup", method = RequestMethod.GET)
 	public ModelAndView getPermissionPopup(@PathVariable long projectId) {
 		GenericProject project = projectManager.findById(projectId);
 		List<PermissionGroup> permissionList = projectManager.findAllPossiblePermission();
@@ -315,7 +316,7 @@ public class GenericProjectController {
 	}
 
 	
-	@RequestMapping(value = "/permission-table", method = RequestMethod.GET)
+	@RequestMapping(value = PROJECT_ID_ULR+"/permission-table", method = RequestMethod.GET)
 	public ModelAndView getPermissionTable(@PathVariable long projectId) {
 		
 		GenericProject project = projectManager.findById(projectId);
@@ -336,7 +337,7 @@ public class GenericProjectController {
 	
 	
 	//filtering and sorting not supported for now
-	@RequestMapping(value = "/test-automation-projects", method=RequestMethod.GET, params = "sEcho")
+	@RequestMapping(value = PROJECT_ID_ULR+"/test-automation-projects", method=RequestMethod.GET, params = "sEcho")
 	@ResponseBody
 	public DataTableModel getProjectsTableModel(@PathVariable(PROJECT_ID) long projectId, final DataTableDrawParameters params) {
 		List<TestAutomationProject> taProjects = projectManager.findBoundTestAutomationProjects(projectId);
@@ -348,7 +349,7 @@ public class GenericProjectController {
 					
 	}
 	
-	@RequestMapping(value = "/test-automation-projects", method=RequestMethod.POST, headers = "Content-Type=application/json" )
+	@RequestMapping(value = PROJECT_ID_ULR+"/test-automation-projects", method=RequestMethod.POST, headers = "Content-Type=application/json" )
 	@ResponseBody
 	public void bindTestAutomationProject(@PathVariable(PROJECT_ID) long projectId, @RequestBody TestAutomationProjectRegistrationForm[] projects, Locale locale)
 	throws BindException{
@@ -369,7 +370,7 @@ public class GenericProjectController {
 	}
 	
 	
-	@RequestMapping(value="/test-automation-enabled", method=RequestMethod.POST, params = "enabled")
+	@RequestMapping(value=PROJECT_ID_ULR+"/test-automation-enabled", method=RequestMethod.POST, params = "enabled")
 	@ResponseBody
 	public void enableTestAutomation(@PathVariable(PROJECT_ID) long projectId, @RequestParam("enabled") boolean isEnabled){
 		projectManager.changeTestAutomationEnabled(projectId, isEnabled);
@@ -377,7 +378,7 @@ public class GenericProjectController {
 	
 	
 	
-	@RequestMapping(value = "/test-automation-projects/{taProjectId}", method=RequestMethod.DELETE )
+	@RequestMapping(value = PROJECT_ID_ULR+"/test-automation-projects/{taProjectId}", method=RequestMethod.DELETE )
 	@ResponseBody
 	public void unbindProject(@PathVariable(PROJECT_ID) Long projectId, @PathVariable("taProjectId") Long taProjectId){
 		projectManager.unbindTestAutomationProject(projectId, taProjectId);
