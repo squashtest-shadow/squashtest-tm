@@ -229,7 +229,7 @@ that page won't be editable if
 		<comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
 		<%-- make requirement-reference editable --%>
 		<%-- TODO put at end of page, maybe componentize --%>
-		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="20" />
+		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="50" />
 	</c:if>
 
 	<comp:toggle-panel id="requirement-information-panel" classes="information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >

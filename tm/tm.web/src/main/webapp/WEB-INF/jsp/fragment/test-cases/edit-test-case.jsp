@@ -734,7 +734,7 @@ function addTestStepSuccessAnother(){
 				componentId="test-case-description" />
 			<comp:simple-jeditable targetUrl="${ testCaseUrl }"
 				componentId="test-case-reference"
-				submitCallback="updateReferenceInTitle" maxLength="20" />
+				submitCallback="updateReferenceInTitle" maxLength="50" />
 
 			<comp:select-jeditable componentId="test-case-importance"
 				jsonData="${ testCaseImportanceComboJson }"
