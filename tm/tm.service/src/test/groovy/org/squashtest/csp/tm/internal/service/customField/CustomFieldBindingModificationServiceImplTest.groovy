@@ -29,6 +29,7 @@ import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao
 import org.squashtest.csp.tm.internal.repository.CustomFieldDao
+import org.squashtest.csp.tm.internal.repository.GenericProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
@@ -42,12 +43,14 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 	CustomFieldDao customFieldDao = Mock()
 	CustomFieldBindingDao customFieldBindingDao = Mock()
 	ProjectDao projectDao = Mock()
+	GenericProjectDao genericProjectDao = Mock()
 	PrivateCustomFieldValueService customValueService = Mock()
 	
 	def setup() {
 		service.customFieldDao = customFieldDao
 		service.customFieldBindingDao = customFieldBindingDao
 		service.projectDao = projectDao
+		service.genericProjectDao = genericProjectDao
 		service.customValueService = customValueService
 	}
 
@@ -56,6 +59,7 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		Project project = Mock()
 		project.getId()>>3L
 		projectDao.findById(3L)>>project
+		genericProjectDao.findById(3L)>>project
 		and:"a template"
 		ProjectTemplate template = Mock()
 		template.getId()>>2L
