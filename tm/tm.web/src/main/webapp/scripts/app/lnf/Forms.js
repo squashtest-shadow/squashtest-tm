@@ -46,7 +46,11 @@ define([ "jquery" ], function($) {
 		 * Shows the message read from squashtm.app.messages using the given css class
 		 */
 		var setState = function (state, messageKey) {
-			var message = squashtm.app.messages[messageKey] || messageKey;
+			var message = messageKey;
+			if(squashtm.app.messages != null){
+				 message = squashtm.app.messages[messageKey] || messageKey;
+			}
+			
 			
 			$controlGroup.removeClass("error").removeClass("warning").addClass(state);
 
