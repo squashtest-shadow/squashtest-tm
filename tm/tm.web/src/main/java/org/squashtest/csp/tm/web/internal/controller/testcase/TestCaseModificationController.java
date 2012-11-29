@@ -417,12 +417,12 @@ public class TestCaseModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
-	public Object rename(HttpServletResponse response, @PathVariable long testCaseId, @RequestParam String newName) {
+	public Object changeName(HttpServletResponse response, @PathVariable long testCaseId, @RequestParam String newName) {
 
 		testCaseModificationService.rename(testCaseId, newName);
 		LOGGER.info("TestCaseModificationController : renaming {} as {}", testCaseId, newName);
 		
-		return new RenameModel(testCaseModificationService.findById(testCaseId).getReference()+" - "+newName);
+		return new RenameModel(newName);
 
 	}
 

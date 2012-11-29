@@ -74,15 +74,15 @@
 			
 		<label for="rename-tree-node-text"><f:message key="dialog.rename.label" /></label>
 		<input id="rename-tree-node-text" type="text" size="50" /> <br />
-		<comp:error-message forField="name" />		
-	</jsp:attribute>		
+		<comp:error-message forField="name" />
+	</jsp:attribute>
 </pop:popup>	
 
 <script type="text/javascript">
-	$(function(){		
+	$(function(){
 		${treeNodeButton}.click(function(){
 			$('#rename-node-dialog').dialog('open');
-			return false;		
+			return false;
 		});		
 	});
 
