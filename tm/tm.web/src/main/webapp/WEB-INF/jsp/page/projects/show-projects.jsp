@@ -104,8 +104,8 @@
         <td><f:message key="squashtm.yesno.${ project.active }" /></td>
         <td><comp:date value="${ project.createdOn }" /></td>
         <td><comp:user value="${ project.createdBy }" /></td>
-        <td><comp:date value="${ project.lastModifiedOn }" /></td> 
-        <td><comp:user value="${ project.lastModifiedBy }" /></td>   
+        <td><comp:date value="${ project.lastModifiedOn }" /></td>
+        <td><comp:user value="${ project.lastModifiedBy }" /></td>
       </tr>
       </c:forEach>
     </tbody>
