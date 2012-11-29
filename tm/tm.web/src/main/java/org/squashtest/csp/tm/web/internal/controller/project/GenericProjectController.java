@@ -270,8 +270,6 @@ public class GenericProjectController {
 		projectManager.deleteProject(projectId);
 	}
 
-	
-	
 	// *********************Permission Management*********************
 	
 	@RequestMapping(value = PROJECT_ID_ULR+"/add-permission", method = RequestMethod.POST, params = { "user" })
@@ -364,19 +362,18 @@ public class GenericProjectController {
 		catch(MalformedURLException ex){
 			//quick and dirty validation
 			BindException be = new BindException(new TestAutomationServer(), "ta-project");
-			be.rejectValue("baseURL", null, findMessage(locale, "error.url.malformed"));
+			be.rejectValue("baseURL", null, messageSource.internationalize("error.url.malformed", locale));
 			throw be;
 		}	
 	}
 	
 	
-	@RequestMapping(value=PROJECT_ID_ULR+"/test-automation-enabled", method=RequestMethod.POST, params = "enabled")
+	@RequestMapping(value = PROJECT_ID_ULR + "/test-automation-enabled", method = RequestMethod.POST, params = "enabled")
 	@ResponseBody
-	public void enableTestAutomation(@PathVariable(PROJECT_ID) long projectId, @RequestParam("enabled") boolean isEnabled){
+	public void enableTestAutomation(@PathVariable(PROJECT_ID) long projectId,
+			@RequestParam("enabled") boolean isEnabled) {
 		projectManager.changeTestAutomationEnabled(projectId, isEnabled);
 	}
-	
-	
 	
 	@RequestMapping(value = PROJECT_ID_ULR+"/test-automation-projects/{taProjectId}", method=RequestMethod.DELETE )
 	@ResponseBody
@@ -403,15 +400,4 @@ public class GenericProjectController {
 			return res;
 		}
 	}
-	
-	
-	
-	
-	
-	//***************** private utils *******************************
-	
-	private String findMessage(Locale locale, String key){
-		return messageSource.getMessage(key, null, locale);
-	}
-	
 }

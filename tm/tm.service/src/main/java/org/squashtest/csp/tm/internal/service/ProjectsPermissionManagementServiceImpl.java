@@ -80,25 +80,21 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	}
 
 	private ObjectIdentity createProjectIdentity(long projectId) {
-		ObjectIdentity entityRef = new ObjectIdentityImpl(Project.class, projectId);
-		return entityRef;
+		return new ObjectIdentityImpl(Project.class, projectId);
 	}
 
 	private ObjectIdentity createCampaignLibraryIdentity(Project project) {
-		ObjectIdentity clibraryRef = new ObjectIdentityImpl(CampaignLibrary.class, project.getCampaignLibrary().getId());
-		return clibraryRef;
+		return new ObjectIdentityImpl(CampaignLibrary.class, project.getCampaignLibrary().getId());
 	}
 
 	private ObjectIdentity createTestCaseLibraryIdentity(Project project) {
-		ObjectIdentity tclibraryRef = new ObjectIdentityImpl(TestCaseLibrary.class, project.getTestCaseLibrary()
+		return new ObjectIdentityImpl(TestCaseLibrary.class, project.getTestCaseLibrary()
 				.getId());
-		return tclibraryRef;
 	}
 
 	private ObjectIdentity createRequirementLibraryIdentity(Project project) {
-		ObjectIdentity rlibraryRef = new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary()
+		return new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary()
 				.getId());
-		return rlibraryRef;
 	}
 
 	@Override
