@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -37,7 +36,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindException;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,6 +49,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
+import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto.NewRequirementVersionDaoValidator;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
@@ -60,7 +61,6 @@ import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationCo
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
-import org.squashtest.csp.tm.web.internal.model.customfield.NewNodeCustomFieldsValues;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 
 /**
@@ -87,6 +87,14 @@ public class RequirementLibraryNavigationController extends
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/requirement-export.jasper";
 
 
+	@InitBinder("add-requirement")
+	public void addRequirementBinder(WebDataBinder binder){
+		NewRequirementVersionDaoValidator validator = new NewRequirementVersionDaoValidator();
+		validator.setMessageSource(getMessageSource());
+		binder.setValidator(validator);
+	}
+	
+	
 	@ServiceReference
 	public void setRequirementLibraryNavigationService(
 			RequirementLibraryNavigationService requirementLibraryNavigationService) {
@@ -97,15 +105,8 @@ public class RequirementLibraryNavigationController extends
 	@ResponseStatus(HttpStatus.CREATED)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion, 
-			@RequestParam Map<String, String> customFieldValues) throws BindException{
+			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion){
 		
-		NewNodeCustomFieldsValues values = new NewNodeCustomFieldsValues("add-test-case", customFieldValues);
-		values.validate();
-		
-		if (values.hasValidationErrors()){
-			values.puke();
-		}
 
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId,
 				firstVersion);
@@ -114,7 +115,6 @@ public class RequirementLibraryNavigationController extends
 			LOGGER.debug("RequirementCreationController : creation of a new requirement, name : "
 					+ firstVersion.getName() + ", description : " + firstVersion.getDescription());
 		}
-		processNewNodeCustomFieldValues(req.getCurrentVersion(), values);
 
 		return createTreeNodeFromLibraryNode(req);
 
@@ -123,27 +123,12 @@ public class RequirementLibraryNavigationController extends
 	@RequestMapping(value = "/folders/{folderId}/content/new-requirement", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToFolderContent(@PathVariable long folderId,
-			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion ,
-			@RequestParam Map<String, String> customFieldValues) throws BindException{
-		
-		NewNodeCustomFieldsValues values = new NewNodeCustomFieldsValues("add-test-case", customFieldValues);
-		values.validate();
-		
-		if (values.hasValidationErrors()){
-			values.puke();
-		}
+			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion ){
 
 
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, firstVersion);
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("RequirementCreationController : creation of a new requirement, name : "
-					+ firstVersion.getName() + ", description : " + firstVersion.getDescription() + " in folder "
-					+ folderId);
-		}
-
-		processNewNodeCustomFieldValues(req.getCurrentVersion(), values);
-		
+	
 		return createTreeNodeFromLibraryNode(req);
 
 	}

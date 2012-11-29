@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -47,7 +48,6 @@ import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager;
-import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.internal.utils.security.SecurityCheckableObject;
 import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
 import org.squashtest.csp.tm.service.IterationModificationService;
@@ -63,8 +63,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 	@Inject
 	private TreeNodeCopier copier;
-	@Inject 
-	private PrivateCustomFieldValueService customFieldValueService;
+
 	
 	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
@@ -114,10 +113,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 		return deletionHandler;
 	}
 	
-	@Override
-	protected PrivateCustomFieldValueService getCustomFieldValueService() {
-		return customFieldValueService;
-	}
+	
 	@Override
 	protected PasteStrategy<CampaignFolder, CampaignLibraryNode> getPasteToFolderStrategy() {
 		return pasteToCampaignFolderStrategy;
@@ -155,6 +151,17 @@ public class CampaignLibraryNavigationServiceImpl extends
 		}
 		return iterationModificationService.addIterationToCampaign(iteration, campaignId, copyTestPlan);
 	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE') "+OR_HAS_ROLE_ADMIN)
+	public int addIterationToCampaign(Iteration iteration, long campaignId,
+			boolean copyTestPlan, Map<Long, String> customFieldValues) {
+		int iterIndex = addIterationToCampaign(iteration, campaignId, copyTestPlan);
+		initCustomFieldValues(iteration, customFieldValues);
+		return iterIndex;
+	}
+	
+	
 
 	@Override
 	protected final CampaignLibraryDao getLibraryDao() {
@@ -184,6 +191,9 @@ public class CampaignLibraryNavigationServiceImpl extends
 	public List<Iteration> findIterationsByCampaignId(long campaignId) {
 		return iterationModificationService.findIterationsByCampaignId(campaignId);
 	}
+	
+	
+	
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
@@ -199,6 +209,18 @@ public class CampaignLibraryNavigationServiceImpl extends
 		}
 
 	}
+	
+	
+	@Override
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary', 'CREATE')"
+			+ OR_HAS_ROLE_ADMIN)
+	public void addCampaignToCampaignLibrary(long libraryId, Campaign campaign,
+			Map<Long, String> customFieldValues) {
+		addCampaignToCampaignLibrary(libraryId, campaign);
+		initCustomFieldValues(campaign, customFieldValues);
+		
+	}
+	
 
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.campaign.CampaignFolder', 'CREATE')"
@@ -214,6 +236,19 @@ public class CampaignLibraryNavigationServiceImpl extends
 		}
 
 	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.campaign.CampaignFolder', 'CREATE')"
+			+ OR_HAS_ROLE_ADMIN)
+	public void addCampaignToCampaignFolder(long folderId, Campaign campaign,
+			Map<Long, String> customFieldValues) {
+		
+		addCampaignToCampaignFolder(folderId, campaign);
+		initCustomFieldValues(campaign, customFieldValues);
+		
+	}
+	
+	
 
 	@Override
 	@PostAuthorize("hasPermission(returnObject, 'READ') "+OR_HAS_ROLE_ADMIN)

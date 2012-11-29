@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.web.internal.controller.campaign;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -32,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,8 +51,9 @@ import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.LibraryNavigationService;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.csp.tm.web.internal.controller.campaign.CampaignFormModel.CampaignFormModelValidator;
+import org.squashtest.csp.tm.web.internal.controller.campaign.IterationFormModel.IterationFormModelValidator;
 import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationController;
-import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationController.Message;
 import org.squashtest.csp.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.IterationNodeBuilder;
@@ -65,8 +69,8 @@ import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
  */
 @Controller
 @RequestMapping(value = "/campaign-browser")
-public class CampaignLibraryNavigationController extends
-LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
+public class CampaignLibraryNavigationController extends LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationController.class);
 	private static final String NODE_IDS = "nodeIds[]";
 
@@ -92,20 +96,34 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	public void setIterationModificationService(IterationModificationService iterationModificationService) {
 		this.iterationModificationService = iterationModificationService;
 	}
+	
+	
 
+	@InitBinder("add-campaign")
+	public void addCampaignBinder(WebDataBinder binder){
+		CampaignFormModelValidator validator = new CampaignFormModelValidator();
+		validator.setMessageSource(getMessageSource());
+		binder.setValidator(validator);
+	}
+	
+	
+	@InitBinder("add-iteration")
+	public void addIterationBinder(WebDataBinder binder){
+		IterationFormModelValidator validator = new IterationFormModelValidator();
+		validator.setMessageSource(getMessageSource());
+		binder.setValidator(validator);
+	}	
+	
+
+	
 	@RequestMapping(value = "/drives/{libraryId}/content/new-campaign", method = RequestMethod.POST)
 	public @ResponseBody
-	JsTreeNode addNewCampaignToLibraryRootContent(@PathVariable Long libraryId, @Valid @ModelAttribute("add-campaign") Campaign newCampaign) {
+	JsTreeNode addNewCampaignToLibraryRootContent(@PathVariable Long libraryId, @Valid @ModelAttribute("add-campaign") CampaignFormModel campaignForm) {
 
-		campaignLibraryNavigationService.addCampaignToCampaignLibrary(
-				libraryId, newCampaign);
-
-
-
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("CampaignCreationController : creation of a new Campaign, name : " + newCampaign.getName()
-					+ ", description : " + newCampaign.getDescription());
-		}
+		Campaign newCampaign = campaignForm.getCampaign();
+		Map<Long, String> customFieldValues = campaignForm.getCustomFields();
+		
+		campaignLibraryNavigationService.addCampaignToCampaignLibrary(libraryId, newCampaign, customFieldValues);
 
 		return createTreeNodeFromLibraryNode(newCampaign);
 
@@ -114,16 +132,13 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	@RequestMapping(value = "/folders/{folderId}/content/new-campaign", method = RequestMethod.POST)
 	public @ResponseBody
-	JsTreeNode addNewCampaignToFolderContent(@PathVariable long folderId,
-			@Valid @ModelAttribute("add-campaign") Campaign newCampaign) {
+	JsTreeNode addNewCampaignToFolderContent(@PathVariable long folderId, @Valid @ModelAttribute("add-campaign") CampaignFormModel campaignForm) {
 
-		campaignLibraryNavigationService.addCampaignToCampaignFolder(folderId,
-				newCampaign);
+		Campaign newCampaign = campaignForm.getCampaign();
+		Map<Long, String> customFieldValues = campaignForm.getCustomFields();
+		
+		campaignLibraryNavigationService.addCampaignToCampaignFolder(folderId,newCampaign, customFieldValues);
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("CampaignCreationController : creation of a new Campaign, name : " + newCampaign.getName()
-					+ ", description : " + newCampaign.getDescription() + " in folder " + folderId);
-		}
 
 		return createTreeNodeFromLibraryNode(newCampaign);
 
@@ -148,14 +163,19 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 
 	@RequestMapping(value = "/files/{campaignId}/content/new-iteration", method = RequestMethod.POST)
-	public @ResponseBody JsTreeNode addNewIterationToCampaign(@Valid @ModelAttribute("add-iteration") Iteration newIteration, @PathVariable long campaignId, boolean copyTestPlan) {
+	public @ResponseBody JsTreeNode addNewIterationToCampaign(@PathVariable long campaignId, @Valid @ModelAttribute("add-iteration") IterationFormModel iterationForm) {
 		
-		int newIterationIndex = campaignLibraryNavigationService.addIterationToCampaign(newIteration, campaignId, copyTestPlan);
+		Iteration newIteration = iterationForm.getIteration();
+		Map<Long, String> customFieldValues = iterationForm.getCustomFields();
+		boolean copyTestPlan = iterationForm.isCopyTestPlan();		
 		
+		int newIterationIndex = campaignLibraryNavigationService.addIterationToCampaign(newIteration, campaignId, copyTestPlan, customFieldValues);		
 		
 		return createIterationTreeNode(newIteration, newIterationIndex);
 	}
 
+	
+	
 	private JsTreeNode createIterationTreeNode(Iteration iteration, int iterationIndex) {
 		return iterationNodeBuilder.get().setModel(iteration).setIterationIndex(iterationIndex).build();
 	}

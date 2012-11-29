@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
@@ -28,14 +29,54 @@ import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
+import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 public interface CampaignLibraryNavigationService extends
 		LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, CampaignLibraryFinderService {
 
+	/**
+	 * Adds a Campaign to the root of the library. The custom fields will be created with their default value.
+	 * 
+	 * @param libraryId
+	 * @param campaign
+	 */
 	void addCampaignToCampaignLibrary(long libraryId, Campaign campaign);
+	
+	/**
+	 * Adds a Campaign to the root of the Library, and its initial custom field values. The initial custom field values
+	 * are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
+	 * Read that last sentence again. 
+	 * 
+	 * @param libraryId
+	 * @param campaign
+	 * @param customFieldValues
+	 */
+	void addCampaignToCampaignLibrary(long libraryId, Campaign campaign, Map<Long, String> customFieldValues);
 
+	
+	
+	/**
+	 * Adds a campaign to a folder. The custom fields will be created with their default value.
+	 * 
+	 * @param libraryId
+	 * @param campaign
+	 */
 	void addCampaignToCampaignFolder(long folderId, Campaign campaign);
+	
+	/**
+	 * Adds a campaign to a folder, and its initial custom field values. The initial custom field values
+	 * are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
+	 * Read that last sentence again. 
+	 * 
+	 * @param libraryId
+	 * @param campaign
+	 * @param customFieldValues
+	 */
+	void addCampaignToCampaignFolder(long folderId, Campaign campaign, Map<Long, String> customFieldValues);
+	
+	
 	/**
 	 * @deprecated use {@linkplain CampaignFinder#findById(long)} instead
 	 * @param campaignId
@@ -52,6 +93,20 @@ public interface CampaignLibraryNavigationService extends
 	 * @return
 	 */
 	int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan);
+	
+	
+	/**
+	 * Adds a new iteration to a campaign. Returns the index of the new iteration. The initial custom field values
+	 * are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
+	 * Read that last sentence again. 
+	 * 
+	 * 
+	 * @param iteration
+	 * @param campaignId
+	 * @return
+	 */
+	int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan, Map<Long, String> customFieldValues);
+	
 
 	List<Iteration> findIterationsByCampaignId(long campaignId);
 

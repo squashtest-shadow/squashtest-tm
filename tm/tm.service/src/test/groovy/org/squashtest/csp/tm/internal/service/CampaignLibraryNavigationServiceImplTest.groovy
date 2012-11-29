@@ -65,7 +65,7 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 		service.iterationModificationService = iterationModificationService
 		service.iterationDao = iterationDao
 		service.iterationTestPlanManager = iterationTestPlanManager
-		service.customFieldValueService = customFieldService
+		service.setCustomFieldValueManagerService customFieldService
 	}
 
 

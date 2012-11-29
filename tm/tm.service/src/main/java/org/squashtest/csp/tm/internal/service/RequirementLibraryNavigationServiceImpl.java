@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.service;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -49,7 +50,6 @@ import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.RequirementDao;
 import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
-import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.internal.service.importer.RequirementImporter;
 import org.squashtest.csp.tm.internal.service.importer.RequirementTestCaseLinksImporter;
 import org.squashtest.csp.tm.internal.utils.security.SecurityCheckableObject;
@@ -91,8 +91,6 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Inject
 	private TreeNodeCopier copier;
 	@Inject
-	private PrivateCustomFieldValueService customFieldValueService;
-	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToRequirementFolderStrategy")
 	private PasteStrategy<RequirementFolder, RequirementLibraryNode> pasteToRequirementFolderStrategy;
 	@Inject
@@ -125,10 +123,6 @@ public class RequirementLibraryNavigationServiceImpl extends
 		return requirementLibraryNodeDao;
 	}
 
-	@Override
-	protected PrivateCustomFieldValueService getCustomFieldValueService() {
-		return customFieldValueService;
-	}
 
 	@Override
 	protected PasteStrategy<RequirementFolder, RequirementLibraryNode> getPasteToFolderStrategy() {
@@ -179,9 +173,15 @@ public class RequirementLibraryNavigationServiceImpl extends
 		library.addContent(newReq);
 		requirementDao.persist(newReq);
 		createCustomFieldValues(newReq.getCurrentVersion());
+		
+		initCustomFieldValues(newReq.getCurrentVersion(), newVersion.getCustomFields());
+		
 
 		return newReq;
 	}
+	
+	
+	
 
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary' , 'CREATE') "
@@ -219,6 +219,8 @@ public class RequirementLibraryNavigationServiceImpl extends
 		folder.addContent(newReq);
 		requirementDao.persist(newReq);
 		createCustomFieldValues(newReq.getCurrentVersion());
+		
+		initCustomFieldValues(newReq.getCurrentVersion(), firstVersion.getCustomFields());
 
 		return newReq;
 	}

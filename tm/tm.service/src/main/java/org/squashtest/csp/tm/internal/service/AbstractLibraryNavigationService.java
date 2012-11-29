@@ -30,14 +30,13 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.CannotMoveNodeException;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.library.ExportData;
 import org.squashtest.csp.tm.domain.library.Folder;
 import org.squashtest.csp.tm.domain.library.Library;
@@ -107,8 +106,6 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	protected static final String COPY_TOKEN = "-Copie";
 
 	private PermissionEvaluationService permissionService;
-
-	protected abstract PrivateCustomFieldValueService getCustomFieldValueService();
 	
 	protected abstract FolderDao<FOLDER, NODE> getFolderDao();
 
@@ -121,7 +118,15 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	protected abstract PasteStrategy<FOLDER, NODE> getPasteToFolderStrategy();
 	
 	protected abstract PasteStrategy<LIBRARY, NODE> getPasteToLibraryStrategy();
-
+	
+	@Inject
+	protected PrivateCustomFieldValueService customFieldValuesService;
+	
+	//never used really, only for groovy
+	void setCustomFieldValueManagerService(PrivateCustomFieldValueService service){
+		this.customFieldValuesService = service;
+	}
+	
 	@ServiceReference
 	public void setPermissionService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
@@ -240,7 +245,26 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	}
 
 	protected void createCustomFieldValues(BoundEntity entity) {
-		getCustomFieldValueService().createAllCustomFieldValues(entity);
+		customFieldValuesService.createAllCustomFieldValues(entity);
+	}
+	
+	//initialCustomFieldValues maps the id of a CustomField to the value of the corresponding CustomFieldValues for that BoundEntity.
+	//read it again until it makes sense.
+	//it assumes that the CustomFieldValues instances already exists.
+	protected void initCustomFieldValues(BoundEntity entity, Map<Long, String> initialCustomFieldValues){
+		
+		List<CustomFieldValue> persistentValues = customFieldValuesService.findAllCustomFieldValues(entity);
+		
+		for (CustomFieldValue value : persistentValues){
+			Long customFieldId = value.getCustomField()
+									  .getId();
+			
+			if (initialCustomFieldValues.containsKey(customFieldId)){
+				String newValue = initialCustomFieldValues.get(customFieldId);
+				value.setValue(newValue);
+			}
+			
+		}
 	}
 
 	/* ********************** move operations *************************** */

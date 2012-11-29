@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.service;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -44,7 +45,6 @@ import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
-import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.internal.service.importer.TestCaseImporter;
 import org.squashtest.csp.tm.internal.utils.security.SecurityCheckableObject;
 import org.squashtest.csp.tm.service.ProjectFilterModificationService;
@@ -67,8 +67,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
 	@Inject
 	private TreeNodeCopier copier;
-	@Inject
-	private PrivateCustomFieldValueService customFieldValueService;
+
 	@Inject
 	private TestCaseImporter testCaseImporter;
 	@Inject
@@ -112,11 +111,6 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	protected PrivateCustomFieldValueService getCustomFieldValueService() {
-		return customFieldValueService;
-	}
-	
-	@Override
 	protected PasteStrategy<TestCaseFolder, TestCaseLibraryNode> getPasteToFolderStrategy() {
 		return pasteToTestCaseFolderStrategy;
 	}
@@ -153,6 +147,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addTestCaseToLibrary(long libraryId, TestCase testCase) {
+		
 		TestCaseLibrary library = testCaseLibraryDao.findById(libraryId);
 
 		if (!library.isContentNameAvailable(testCase.getName())) {
@@ -163,7 +158,17 @@ public class TestCaseLibraryNavigationServiceImpl extends
 			createCustomFieldValues(testCase);
 		}
 	}
-
+	
+	
+	@Override
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
+			+ "or hasRole('ROLE_ADMIN')")
+	public void addTestCaseToLibrary(long libraryId, TestCase testCase,	Map<Long, String> customFieldValues) {
+		addTestCaseToLibrary(libraryId, testCase);
+		initCustomFieldValues(testCase, customFieldValues);		
+	}
+	
+	
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
@@ -178,6 +183,17 @@ public class TestCaseLibraryNavigationServiceImpl extends
 			createCustomFieldValues(testCase);
 		}
 	}
+	
+	
+	@Override
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.csp.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public void addTestCaseToFolder(long folderId, TestCase testCase,Map<Long, String> customFieldValues) {
+		addTestCaseToFolder(folderId, testCase);
+		initCustomFieldValues(testCase, customFieldValues);
+	}
+	
+	
 
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary', 'IMPORT') or hasRole('ROLE_ADMIN')")

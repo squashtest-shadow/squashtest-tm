@@ -89,6 +89,11 @@ public class CustomFieldValue {
 	public CustomFieldBinding getBinding() {
 		return binding;
 	}
+	
+	public CustomField getCustomField(){
+		return binding.getCustomField();
+	}
+
 
 	public void setBinding(CustomFieldBinding binding) {
 		this.binding = binding;

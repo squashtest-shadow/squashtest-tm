@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.controller.testcase;
+package org.squashtest.csp.tm.web.internal.controller.campaign;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +29,10 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 
-public class TestCaseFormModel {
+public class CampaignFormModel {
 	/**
 	 * Note : the following validation annotations are never called, a custom validator will be invoked for this.
 	 * 
@@ -41,7 +42,6 @@ public class TestCaseFormModel {
 	@NotNull*/
 	private String name;	
 	
-	private String reference;
 	private String description;
 
 	
@@ -59,15 +59,7 @@ public class TestCaseFormModel {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
-	public String getReference() {
-		return reference;
-	}
-	
-	public void setReference(String reference) {
-		this.reference = reference;
-	}
+
 	
 	public String getDescription() {
 		return description;
@@ -86,17 +78,16 @@ public class TestCaseFormModel {
 		this.customFields = customFields;
 	}
 	
-	public TestCase getTestCase(){
-		TestCase newTC = new TestCase();
-		newTC.setName(name);
-		newTC.setDescription(description);
-		newTC.setReference(reference);
-		return newTC;
+	public Campaign getCampaign(){
+		Campaign newCampaign = new Campaign();
+		newCampaign.setName(name);
+		newCampaign.setDescription(description);
+		return newCampaign;
 	}
 	
 	
 	
-	public static class TestCaseFormModelValidator implements Validator {
+	public static class CampaignFormModelValidator implements Validator {
 		
 		private MessageSource messageSource;
 		
@@ -106,7 +97,7 @@ public class TestCaseFormModel {
 
 		@Override
 		public boolean supports(Class<?> clazz) {
-			return (clazz.equals(TestCaseFormModel.class));
+			return (clazz.equals(CampaignFormModel.class));
 		}
 
 		@Override
@@ -114,7 +105,7 @@ public class TestCaseFormModel {
 			
 			String notBlank = messageSource.getMessage("message.notBlank", null, LocaleContextHolder.getLocale());
 			
-			TestCaseFormModel model = (TestCaseFormModel) target;
+			CampaignFormModel model = (CampaignFormModel) target;
 			
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "message.notBlank", notBlank);
 		

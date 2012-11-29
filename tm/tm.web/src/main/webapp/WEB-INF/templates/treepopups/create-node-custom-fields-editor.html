@@ -32,11 +32,11 @@
 <tr th:each="binding : ${bindings.?[customField.optional==false]}" th:with="customField=${binding.customField}" class="create-node-custom-field-row">										 
 	<td><label th:text="${customField.label}">quantité de café</label></td>
 	<td th:switch="${customField.inputType.name()}" >
-		<input th:case="'PLAIN_TEXT'" type="text" th:attr="data-default-value=${customField.defaultValue}" class="create-node-custom-field"  th:id="'customFields[binding_'+${binding.id}+']'" />
-		<input th:case="'CHECKBOX'" type="checkbox" th:attr="data-default-value=${customField.defaultValue}" th:checked="${customField.defaultValue == 'TRUE'}" class="create-node-custom-field"  th:id="'customFields[binding_'+${binding.id}+']'" />
-		<select th:case="'DROPDOWN_LIST'"  th:with="defValue=${customField.defaultValue}"  th:attr="data-default-value=${customField.defaultValue}" class="create-node-custom-field"  th:id="'customFields[binding_'+${binding.id}+']'" >
+		<input th:case="'PLAIN_TEXT'" type="text" th:attr="data-default-value=${customField.defaultValue}" class="create-node-custom-field"  th:id="'customFields['+${customField.id}+']'" />
+		<input th:case="'CHECKBOX'" type="checkbox" th:attr="data-default-value=${customField.defaultValue}" th:checked="${customField.defaultValue == 'TRUE'}" class="create-node-custom-field"  th:id="'customFields['+${customField.id}+']'" />
+		<select th:case="'DROPDOWN_LIST'"  th:with="defValue=${customField.defaultValue}"  th:attr="data-default-value=${customField.defaultValue}" class="create-node-custom-field"  th:id="'customFields['+${customField.id}+']'" >
 			<option th:each="option : ${customField.options}" th:value="${option.label}" th:text="${option.label}" th:selected="${option.label == defValue}"></option>
 		</select>
-		<span class="error-message "  th:classappend="'customFields-binding_'+${binding.id}+'-error'" ></span>		
+		<span class="error-message "  th:classappend="'customFields-'+${customField.id}+'-error'" ></span>		
 	</td>
 </tr>

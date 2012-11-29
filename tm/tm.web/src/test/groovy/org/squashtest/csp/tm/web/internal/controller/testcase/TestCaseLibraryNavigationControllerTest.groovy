@@ -130,29 +130,25 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 
 	def "should create test case at root of library and return test case edition view"() {
 		given:
-		TestCase tc = Mock()
-		tc.id >> 60
-		
-		def cufs = new HashMap<String, String>(0)
-	
+		TestCaseFormModel tcfm = new TestCaseFormModel(name:"test case")				
+			
 		when:
-		def res = controller.addNewTestCaseToLibraryRootContent(10, tc, cufs)
+		def res = controller.addNewTestCaseToLibraryRootContent(10, tcfm)
 
 		then:
-		1 * testCaseLibraryNavigationService.addTestCaseToLibrary(10, tc)
-		res.attr['resId'] == "60"
+		1 * testCaseLibraryNavigationService.addTestCaseToLibrary(10, {it.name == "test case"}, [:])
+		res.attr['name'] == "test case"
 	}
 
 	def "should create test case in folder and return test case model"() {
 		given:
-		TestCase tc = Mock()
-		tc.id >> 50
+		TestCaseFormModel tcfm = new TestCaseFormModel(name:"test case")
 
 		when:
-		def res = controller.addNewTestCaseToFolder(10, tc)
+		def res = controller.addNewTestCaseToFolder(10, tcfm)
 
 		then:
-		1 * testCaseLibraryNavigationService.addTestCaseToFolder(10, tc)
-		res.attr['resId'] == "50"
+		1 * testCaseLibraryNavigationService.addTestCaseToFolder(10, {it.name == "test case"}, [:])
+		res.attr['name'] == "test case"
 	}
 }

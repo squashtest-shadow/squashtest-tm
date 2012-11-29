@@ -22,9 +22,12 @@ package org.squashtest.csp.tm.service;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -42,7 +45,48 @@ import org.squashtest.csp.tm.service.importer.ImportSummary;
 public interface TestCaseLibraryNavigationService extends
 		LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, TestCaseLibraryFinderService {
 
+	/**
+	 * Adds a TestCase to the root of the library. The custom fields will be created with their default value.
+	 * 
+	 * @param libraryId
+	 * @param testCase
+	 */
 	void addTestCaseToLibrary(long libraryId, TestCase testCase);
+	
+	
+	/**
+	 * Adds a TestCase to the root of the Library, and its initial custom field values. The initial custom field values
+	 * are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
+	 * Read that last sentence again. 
+	 * 
+	 * @param libraryId
+	 * @param testCase
+	 * @param customFieldValues
+	 */
+	void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, String> customFieldValues);
+	
+
+	
+	/**
+	 * Adds a TestCase to a folder. The custom fields will be created with their default value.
+	 * 
+	 * @param libraryId
+	 * @param testCase
+	 */
+	void addTestCaseToFolder(long folderId, TestCase testCase);
+	
+	
+	/**
+	 * Adds a TestCase to a folder, and its initial custom field values. The initial custom field values
+	 * are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
+	 * Read that last sentence again. 
+	 * 
+	 * @param libraryId
+	 * @param testCase
+	 * @param customFieldValues
+	 */
+	void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, String> customFieldValues);
+	
 	
 	/**
 	 * @deprecated use {@link TestCaseFinder#findById(long)} instead
@@ -52,8 +96,7 @@ public interface TestCaseLibraryNavigationService extends
 	@Deprecated
 	TestCase findTestCase(long testCaseId);
 
-	void addTestCaseToFolder(long folderId, TestCase testCase);
-
+	
 	/**
 	 * Accepts a stream to a .zip file containing regular folders or excel files and nothing else. Will convert the test
 	 * cases from excel to squash.

@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -62,7 +61,6 @@ import org.squashtest.csp.tm.web.internal.controller.testcase.TestCaseFormModel.
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder;
-import org.squashtest.csp.tm.web.internal.model.customfield.NewNodeCustomFieldsValues;
 import org.squashtest.csp.tm.web.internal.model.jstree.JsTreeNode;
 
 @Controller
@@ -111,26 +109,13 @@ public class TestCaseLibraryNavigationController extends
 	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewTestCaseToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @ModelAttribute("add-test-case") TestCaseFormModel testCaseModel) throws BindException{
+			@Valid @ModelAttribute("add-test-case") TestCaseFormModel testCaseModel){
 		
 		TestCase testCase = testCaseModel.getTestCase();
 		
-		Map<String, String> customFieldValues = testCaseModel.getCustomFields();
-		
-		NewNodeCustomFieldsValues values = new NewNodeCustomFieldsValues("add-test-case", customFieldValues);
-		values.validate();
-		
-		if (values.hasValidationErrors()){
-			values.puke();
-		}
-		
-		testCaseLibraryNavigationService.addTestCaseToLibrary(libraryId, testCase);
-		processNewNodeCustomFieldValues(testCase, values);
+		Map<Long, String> customFieldValues = testCaseModel.getCustomFields();
 
-		if (LOGGER.isDebugEnabled()){
-			LOGGER.debug("TEST CASE ADDED TO ROOT OF LIB " + libraryId + " " + testCase.getName() + " "
-					+ testCase.getDescription());
-		}
+		testCaseLibraryNavigationService.addTestCaseToLibrary(libraryId, testCase, customFieldValues);
 
 		return createTreeNodeFromLibraryNode(testCase);
 	}
@@ -138,21 +123,17 @@ public class TestCaseLibraryNavigationController extends
 	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewTestCaseToFolder(@PathVariable long folderId,
-			@Valid @ModelAttribute("add-test-case") TestCase testCase, 
-			@RequestParam Map<String, String> customFieldValues) throws BindException{
+			@Valid @ModelAttribute("add-test-case") TestCaseFormModel testCaseModel){
 		
-		NewNodeCustomFieldsValues values = new NewNodeCustomFieldsValues("add-test-case", customFieldValues);
-		values.validate();
+		TestCase testCase = testCaseModel.getTestCase();
 		
-		if (values.hasValidationErrors()){
-			values.puke();
-		}
+		Map<Long, String> customFieldValues = testCaseModel.getCustomFields();
 		
-		testCaseLibraryNavigationService.addTestCaseToFolder(folderId, testCase);
-		processNewNodeCustomFieldValues(testCase, values);
+		testCaseLibraryNavigationService.addTestCaseToFolder(folderId, testCase, customFieldValues);
 
 		return createTreeNodeFromLibraryNode(testCase);
 	}
+	
 
 	@Deprecated
 	@RequestMapping(method = RequestMethod.GET, params = "show-test-case")
