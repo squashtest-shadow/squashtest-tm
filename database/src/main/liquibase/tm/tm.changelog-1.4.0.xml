@@ -495,10 +495,22 @@
   </changeSet>
   
   <changeSet id="tm-1.4.0.feat-1628.01" author="flaurens">
-  	<modifyDataType tableName="REQUIREMENT_VERSION" columnName="REFERENCE" newDataType="VARCHAR(50)"></modifyDataType>
+  
+    <addDefaultValue tableName="REQUIREMENT_VERSION" columnName="REFERENCE" defaultValue=""></addDefaultValue>
+   	<addDefaultValue tableName="TEST_CASE" columnName="REFERENCE" defaultValue=""></addDefaultValue>
+    <addDefaultValue tableName="EXECUTION" columnName="REFERENCE" defaultValue=""></addDefaultValue>
+    
+  	<modifyDataType tableName="REQUIREMENT_VERSION" columnName="REFERENCE" newDataType="VARCHAR(50)" ></modifyDataType>
   	<modifyDataType tableName="TEST_CASE" columnName="REFERENCE" newDataType="VARCHAR(50)"></modifyDataType>
-  	<modifyDataType tableName="EXECUTION" columnName="REFERENCE" newDataType="VARCHAR(50)"></modifyDataType>
+  	<modifyDataType tableName="EXECUTION" columnName="REFERENCE" newDataType="VARCHAR(50)"></modifyDataType>		
+  
+  	<!--  adds the default values again because they are lost during the previous operations -->
+    <addDefaultValue tableName="REQUIREMENT_VERSION" columnName="REFERENCE" defaultValue=""></addDefaultValue>
+   	<addDefaultValue tableName="TEST_CASE" columnName="REFERENCE" defaultValue=""></addDefaultValue>
+    <addDefaultValue tableName="EXECUTION" columnName="REFERENCE" defaultValue=""></addDefaultValue>
+
   </changeSet>
+  
   
 </databaseChangeLog>
  

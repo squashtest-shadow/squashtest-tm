@@ -115,6 +115,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	@Lob
 	private String prerequisite = "";
 
+	@NotNull
 	private String reference = "";
 	
 	@Lob

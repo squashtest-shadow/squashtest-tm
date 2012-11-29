@@ -72,6 +72,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Column(updatable = false)
 	private final int version = 1;
 
+	@NotNull
 	private String reference = "";
 
 	@Lob

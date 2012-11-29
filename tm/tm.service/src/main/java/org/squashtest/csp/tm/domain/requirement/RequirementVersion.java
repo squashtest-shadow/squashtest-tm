@@ -67,7 +67,8 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	/***
 	 * The requirement reference. It should usually be set by the Requirement.
 	 */
-	private String reference;
+	@NotNull
+	private String reference = "";
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
