@@ -26,6 +26,7 @@ define(["jquery", "domReady", "./ProjectsManager"], function($, domReady, Projec
 		});
 		$("#new-project-button").button();
 		$("#new-project-from-template-button").button();
+		
 		new ProjectsManager();
 	});
 	

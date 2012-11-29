@@ -31,6 +31,8 @@
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="pu" uri="http://org.squashtest.tm/taglib/project-utils" %>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
+<s:url var="administrationUrl" value="/administration" />
 <layout:info-page-layout titleKey="squashtm.project.title" isSubPaged="true">
 	<jsp:attribute  name="head">	
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />
@@ -45,7 +47,7 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
+		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">
 		

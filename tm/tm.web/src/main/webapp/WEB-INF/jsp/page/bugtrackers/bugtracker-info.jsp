@@ -48,8 +48,8 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageButtons">
-		<f:message var="back" key="label.Back" />
-				<input id="back" type="button" value="${ back }" />
+		<f:message var="backButtonLabel" key="label.Back" />
+		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${bugtrackersUrl}'"/>	
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">
 

@@ -27,6 +27,9 @@
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
+
+<s:url var="administrationUrl" value="/administration" />
 
 <c:url var="editLoginMsgUrl" value="/configuration/modify-login-message"/>
 
@@ -46,7 +49,7 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
+		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
 	</jsp:attribute>
 	
 	<jsp:attribute name="footer">	

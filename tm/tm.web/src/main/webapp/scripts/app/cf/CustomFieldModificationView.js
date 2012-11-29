@@ -38,7 +38,6 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 		},
 		events: {
 			"click #cf-optional": "confirmOptional",
-			"click #back": "goBack",
 			"click .is-default>input:checkbox": "changeDefaultOption",
 			"click .opt-label": "openRenameOptionPopup",
 		}, 
@@ -87,9 +86,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 				dataType : "json",
 				});
 		},
-		goBack:function(){
-			document.location.href = cfMod.backUrl;
-		},
+		
 		changeDefaultOption: function(event) {
 			var self = this;
 			var checkbox = event.currentTarget;

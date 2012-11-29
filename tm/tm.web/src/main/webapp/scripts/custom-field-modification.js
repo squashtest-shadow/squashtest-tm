@@ -22,7 +22,10 @@ require([ "common" ], function(common) {
 	require([ "jquery", "app/cf/CustomFieldModificationView","app/ws/squashtm.workspace", "domReady" ], function($,CustomFieldModificationView, WS, domReady) {
 		domReady(function() {
 			WS.init("");
-			var cfMod = new CustomFieldModificationView();
+			new CustomFieldModificationView();
+			$("#back").button().click(function(){
+				document.location.href= squashtm.app.contextRoot +"/administration/custom-fields" ;
+			});
 		});
 	});
 });
