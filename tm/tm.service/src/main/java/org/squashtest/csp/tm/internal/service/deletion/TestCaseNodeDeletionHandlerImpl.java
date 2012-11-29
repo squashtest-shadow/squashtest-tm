@@ -78,7 +78,11 @@ public class TestCaseNodeDeletionHandlerImpl extends
 	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds) {
 		List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
 
-		preview.add(previewLockedNodes(nodeIds));
+		NotDeletablePreviewReport report = previewLockedNodes(nodeIds);
+		
+		if(report != null){
+			preview.add(report);
+		}
 
 		// TODO
 		// preview.add(previewAffectedNodes(nodeIds));
@@ -195,7 +199,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 	 */
 	protected NotDeletablePreviewReport previewLockedNodes(List<Long> nodeIds) {
 
-		NotDeletablePreviewReport report = new NotDeletablePreviewReport();
+		NotDeletablePreviewReport report = null;
 
 		LockedFileInferenceGraph graph = initLockGraph(nodeIds);
 
@@ -205,6 +209,8 @@ public class TestCaseNodeDeletionHandlerImpl extends
 
 		if (graph.hasLockedFiles()) {
 
+			report = new NotDeletablePreviewReport();
+			
 			for (Node node : graph.collectLockedCandidates()) {
 				report.addName(node.getName());
 			}

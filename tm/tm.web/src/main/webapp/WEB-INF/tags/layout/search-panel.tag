@@ -696,13 +696,13 @@
 									<td>
 										<div class="search-tc-nature-1">
 											<input type="checkbox" id="nature-1" data-value="FUNCTIONAL_TESTING" checked="checked"/><span><f:message
-													key="test-case.nature.FUNCTIONAL" /> </span>
+													key="test-case.nature.FUNCTIONAL_TESTING" /> </span>
 										</div>
 									</td>
 									<td>
 										<div class="search-tc-nature-2">
 											<input type="checkbox" id="nature-2" data-value="BUSINESS_TESTING" checked="checked"/><span><f:message
-													key="test-case.nature.BUSINESS" /> </span>
+													key="test-case.nature.BUSINESS_TESTING" /> </span>
 										</div>
 									</td>
 								</tr>
@@ -710,13 +710,13 @@
 									<td>
 										<div class="search-tc-nature-3">
 											<input type="checkbox" id="nature-3" data-value="USER_TESTING" checked="checked"/><span><f:message
-													key="test-case.nature.USER" /> </span>
+													key="test-case.nature.USER_TESTING" /> </span>
 										</div>
 									</td>
 									<td>
 										<div class="search-tc-nature-4">
 											<input type="checkbox" id="nature-4" data-value="NON_FUNCTIONAL_TESTING" checked="checked"/><span><f:message
-													key="test-case.nature.NON_FUNCTIONAL" /> </span>
+													key="test-case.nature.NON_FUNCTIONAL_TESTING" /> </span>
 										</div>
 									</td>
 								</tr>
@@ -724,13 +724,13 @@
 									<td>
 										<div class="search-tc-nature-5">
 											<input type="checkbox" id="nature-5" data-value="PERFORMANCE_TESTING" checked="checked"/><span><f:message
-													key="test-case.nature.PERFORMANCE" /> </span>
+													key="test-case.nature.PERFORMANCE_TESTING" /> </span>
 										</div>
 									</td>
 									<td>
 										<div class="search-tc-nature-6">
 											<input type="checkbox" id="nature-6" data-value="SECURITY_TESTING" checked="checked"/><span><f:message
-													key="test-case.nature.SECURITY" /> </span>
+													key="test-case.nature.SECURITY_TESTING" /> </span>
 										</div>
 									</td>
 								</tr>
@@ -766,13 +766,13 @@
 									<td>
 										<div class="search-tc-type-1">
 											<input type="checkbox" id="type-1" data-value="COMPLIANCE_TESTING" checked="checked"/><span><f:message
-													key="test-case.type.COMPLIANCE" /> </span>
+													key="test-case.type.COMPLIANCE_TESTING" /> </span>
 										</div>
 									</td>
 									<td>
 										<div class="search-tc-type-2">
 											<input type="checkbox" id="type-2" data-value="CORRECTION_TESTING" checked="checked"/><span><f:message
-													key="test-case.type.CORRECTION" /> </span>
+													key="test-case.type.CORRECTION_TESTING" /> </span>
 										</div>
 									</td>
 								</tr>
@@ -780,13 +780,13 @@
 									<td>
 										<div class="search-tc-type-3">
 											<input type="checkbox" id="type-3" data-value="EVOLUTION_TESTING" checked="checked"/><span><f:message
-													key="test-case.type.EVOLUTION" /> </span>
+													key="test-case.type.EVOLUTION_TESTING" /> </span>
 										</div>
 									</td>
 									<td>
 										<div class="search-tc-type-4">
 											<input type="checkbox" id="type-4" data-value="REGRESSION_TESTING" checked="checked"/><span><f:message
-													key="test-case.type.REGRESSION" /> </span>
+													key="test-case.type.REGRESSION_TESTING" /> </span>
 										</div>
 									</td>
 								</tr>
@@ -794,13 +794,13 @@
 									<td>
 										<div class="search-tc-type-5">
 											<input type="checkbox" id="type-5" data-value="END_TO_END_TESTING" checked="checked"/><span><f:message
-													key="test-case.type.END_TO_END" /> </span>
+													key="test-case.type.END_TO_END_TESTING" /> </span>
 										</div>
 									</td>
 									<td>
 										<div class="search-tc-type-6">
 											<input type="checkbox" id="type-6" data-value="PARTNER_TESTING" checked="checked"/><span><f:message
-													key="test-case.type.PARTNER" /> </span>
+													key="test-case.type.PARTNER_TESTING" /> </span>
 										</div>
 									</td>
 								</tr>

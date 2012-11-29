@@ -18,28 +18,52 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.web.internal.controller.testcase;
+package org.squashtest.csp.tm.web.internal.helper;
+
+import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.csp.tm.domain.testcase.TestCaseType;
-import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
-import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
-import org.squashtest.csp.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
+import org.squashtest.csp.tm.domain.Level;
 
 @Component
 @Scope("prototype")
-public class TestCaseTypeJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<TestCaseType>{
-	
-	public TestCaseTypeJeditableComboDataBuilder() {
+public class LevelLabelFormatterWithoutOrder implements LabelFormatter<Level> {
+
+	private final MessageSource messageSource;
+	private Locale locale = Locale.getDefault();
+
+	/**
+	 * @param messageSource
+	 */
+	@Inject
+	public LevelLabelFormatterWithoutOrder(@NotNull MessageSource messageSource) {
 		super();
-		setModel(TestCaseType.values());
+		this.messageSource = messageSource;
 	}
 
-	@Inject
-	public void setLabelFormatter(LevelLabelFormatterWithoutOrder formatter) {
-		super.setLabelFormatter(formatter);
+	/**
+	 * 
+	 * @see org.squashtest.csp.tm.web.internal.helper.LabelFormatter#useLocale(java.util.Locale)
+	 */
+	@Override
+	public LabelFormatter<Level> useLocale(Locale locale) {
+		this.locale = locale;
+		return this;
+	}
+
+	/**
+	 * 
+	 * @see org.squashtest.csp.tm.web.internal.helper.LabelFormatter#formatLabel(java.lang.Object)
+	 */
+	@Override
+	public String formatLabel(Level toFormat) {
+		String label = messageSource.getMessage(toFormat.getI18nKey(), null, locale); 
+		return StringEscapeUtils.escapeHtml(label);
 	}
 }

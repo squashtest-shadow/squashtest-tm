@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
 import org.squashtest.csp.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
 
@@ -39,7 +40,7 @@ public class TestCaseNatureJeditableComboDataBuilder extends EnumJeditableComboD
 		}
 
 		@Inject
-		public void setLabelFormatter(LevelLabelFormatter formatter) {
+		public void setLabelFormatter(LevelLabelFormatterWithoutOrder formatter) {
 			super.setLabelFormatter(formatter);
 		}
 }

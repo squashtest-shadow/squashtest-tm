@@ -74,5 +74,4 @@ public class LevelLabelFormatter implements LabelFormatter<Level> {
 			String label = toFormat.getLevel() + "-" + messageSource.getMessage(toFormat.getI18nKey(), null, locale); 
 			return StringEscapeUtils.escapeHtml(label);
 		}
-
 	}

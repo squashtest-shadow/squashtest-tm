@@ -102,7 +102,7 @@
 						return $('#tree').jstree("get_selected").attr('iterationIndex');
 					}
 				</c:when>
-				<c:when test="${ resourceName eq 'requirement' || resourceName eq 'test-case' }">
+				<c:when test="${ (resourceName eq 'requirement') or (resourceName eq 'test-case') }">
 					function getRealNodeName(name, node){
 						var toReturn = name;
 						//check if there's a reference

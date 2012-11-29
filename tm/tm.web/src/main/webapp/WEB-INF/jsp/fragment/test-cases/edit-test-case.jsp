@@ -1151,6 +1151,7 @@ function addTestStepSuccessAnother(){
 		$('#rename-test-case-dialog').dialog('close');
 		}
 	}
+	
 	/*update only the displayed node name*/
 	function updateTreeDisplayedName(newName){
 			if (typeof renameSelectedNreeNode == 'function'){

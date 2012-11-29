@@ -71,6 +71,7 @@ import org.squashtest.csp.tm.service.VerifiedRequirement;
 import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.csp.tm.web.internal.combo.OptionTag;
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableMapperCollectionSortingAdapter;
@@ -151,6 +152,9 @@ public class TestCaseModificationController {
 	
 	@Inject
 	private Provider<LevelLabelFormatter> levelLabelFormatterProvider;
+
+	@Inject
+	private Provider<LevelLabelFormatterWithoutOrder> levelLabelFormatterWithoutOrderProvider;
 	
 	@ServiceReference
 	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
@@ -463,11 +467,11 @@ public class TestCaseModificationController {
 	}
 
 	private String formatNature(TestCaseNature nature, Locale locale) {
-		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(nature);
+		return levelLabelFormatterWithoutOrderProvider.get().useLocale(locale).formatLabel(nature);
 	}
 	
 	private String formatType(TestCaseType type, Locale locale) {
-		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(type);
+		return levelLabelFormatterWithoutOrderProvider.get().useLocale(locale).formatLabel(type);
 	}
 	
 	private String formatStatus(TestCaseStatus status, Locale locale) {

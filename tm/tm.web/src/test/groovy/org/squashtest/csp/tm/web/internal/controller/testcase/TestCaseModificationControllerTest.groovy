@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.csp.tm.web.internal.helper.LevelLabelFormatterWithoutOrder
 import org.squashtest.csp.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.csp.tm.web.internal.model.datatable.DataTableModelHelper;
@@ -68,6 +69,9 @@ class TestCaseModificationControllerTest extends Specification {
 	LevelLabelFormatter levelLabelFormatter = Mock()
 	Provider<LevelLabelFormatter> levelLabelFormatterProvider = Mock()
 
+	LevelLabelFormatterWithoutOrder levelLabelFormatterWithoutOrder = Mock()
+	Provider<LevelLabelFormatterWithoutOrder> levelLabelFormatterWithoutOrderProvider = Mock()
+	
 		def setup() {
 		controller.testCaseModificationService = testCaseModificationService
 		request.getCharacterEncoding() >> "ISO-8859-1"
@@ -88,6 +92,8 @@ class TestCaseModificationControllerTest extends Specification {
 		setupLevelLabelFormatter()		
 		controller.levelLabelFormatterProvider = levelLabelFormatterProvider
 		controller.cufValueService = Mock(CustomFieldValueFinderService)
+		setupLevelLabelFormatterWithoutOrder()
+		controller.levelLabelFormatterWithoutOrderProvider = levelLabelFormatterWithoutOrderProvider
 	}
 
 	def setupImportanceComboBuilder() {
@@ -124,6 +130,13 @@ class TestCaseModificationControllerTest extends Specification {
 		levelLabelFormatterProvider.get() >> levelLabelFormatter
 	}
 
+	def setupLevelLabelFormatterWithoutOrder() {
+		levelLabelFormatterWithoutOrder.useLocale(_) >> levelLabelFormatterWithoutOrder
+
+		levelLabelFormatterWithoutOrderProvider.get() >> levelLabelFormatterWithoutOrder
+	}
+
+	
 		def "should build table model for test case steps"() {
 		given:
 		AttachmentList al = Mock()
@@ -329,7 +342,7 @@ class TestCaseModificationControllerTest extends Specification {
 		ModelAndView mav = controller.showTestCaseInfo(10, Locale.JAPANESE)
 
 		then:
-		4 * levelLabelFormatter.useLocale(Locale.JAPANESE) >> levelLabelFormatter
+		2 * levelLabelFormatter.useLocale(Locale.JAPANESE) >> levelLabelFormatter
 		mav.modelMap['testCaseImportanceLabel'] == "takai"
 	}
 

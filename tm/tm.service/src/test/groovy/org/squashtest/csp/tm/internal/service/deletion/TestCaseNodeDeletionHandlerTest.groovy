@@ -168,7 +168,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 	}
 	
 	
-	def "should return a report about which nodes cannot be deleted and why (#3)"(){
+	def "should return no report about which nodes cannot be deleted and why (#3)"(){
 		given :
 			def layer0 = [ [null, null, 1l, "1"].toArray() ]
 			def layer1 = [ [1l, "1", 11l, "11"].toArray(), [1l, "1", 12l, "12"].toArray()  ]
@@ -180,8 +180,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 			def report = handler.previewLockedNodes([11l, 12l, 1l]);
 		
 		then :
-			report.nodeNames == []
-			report.why == []
+			report == null
 	}
 	
 	
