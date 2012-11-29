@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,6 +58,7 @@ import org.squashtest.csp.tm.service.LibraryNavigationService;
 import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
 import org.squashtest.csp.tm.service.importer.ImportSummary;
 import org.squashtest.csp.tm.web.internal.controller.generic.LibraryNavigationController;
+import org.squashtest.csp.tm.web.internal.controller.testcase.TestCaseFormModel.TestCaseFormModelValidator;
 import org.squashtest.csp.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.csp.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder;
@@ -77,6 +80,7 @@ public class TestCaseLibraryNavigationController extends
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
 	
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/test-case-export.jasper";
+
 	
 	@ServiceReference
 	public void setTestCaseLibraryNavigationService(TestCaseLibraryNavigationService testCaseLibraryNavigationService) {
@@ -95,11 +99,23 @@ public class TestCaseLibraryNavigationController extends
 	}
 	
 
+	@InitBinder("add-test-case")
+	public void addTestCaseBinder(WebDataBinder binder){
+		TestCaseFormModelValidator validator = new TestCaseFormModelValidator();
+		validator.setMessageSource(getMessageSource());
+		binder.setValidator(validator);
+	}
+	
+	
+
 	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewTestCaseToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @ModelAttribute("add-test-case") TestCase testCase, 
-			@RequestParam Map<String, String> customFieldValues) throws BindException{
+			@Valid @ModelAttribute("add-test-case") TestCaseFormModel testCaseModel) throws BindException{
+		
+		TestCase testCase = testCaseModel.getTestCase();
+		
+		Map<String, String> customFieldValues = testCaseModel.getCustomFields();
 		
 		NewNodeCustomFieldsValues values = new NewNodeCustomFieldsValues("add-test-case", customFieldValues);
 		values.validate();

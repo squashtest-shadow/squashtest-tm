@@ -52,7 +52,7 @@ define([ "jquery", "app/lnf/Forms" ], function($, Forms) {
 	
 	function showLegacyErrorMessage(fieldValidationError) {
 		var labelId = fieldValidationError.fieldName + '-error';
-		labelId = labelId.replace(".", "-");// this is necessary because labelId is used as a css classname
+		labelId = labelId.replace(".", "-").replace('[', '-').replace(']','');// this is necessary because labelId is used as a css classname
 		var label = $('span.error-message.' + labelId);
 
 		if (label.length === 0) {

@@ -1,0 +1,64 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2012 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.csp.tm.web.internal.controller.testcase;
+
+import java.util.Map.Entry;
+
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
+
+public class TestCaseFormModelValidator implements Validator {
+	
+	private MessageSource messageSource;
+	
+	public void setMessageSource(MessageSource messageSource){
+		this.messageSource = messageSource;
+	}
+
+	@Override
+	public boolean supports(Class<?> clazz) {
+		return (clazz.equals(TestCaseFormModel.class));
+	}
+
+	@Override
+	public void validate(Object target, Errors errors) {
+		
+		String notBlank = messageSource.getMessage("message.notBlank", null, LocaleContextHolder.getLocale());
+		
+		TestCaseFormModel model = (TestCaseFormModel) target;
+		
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "message.notBlank", notBlank);
+	
+		
+		for (Entry<String, String> entry : model.getCustomFields().entrySet()){
+			String value = entry.getValue();
+			if (value.trim().isEmpty()){
+				errors.rejectValue(entry.getKey(), "message.notBlank", notBlank);
+			}
+		}
+		
+
+	}
+
+}
