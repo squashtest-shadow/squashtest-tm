@@ -113,7 +113,7 @@
 	}	
 </script>
 <comp:decorate-ajax-table url="${ tableModelUrl }" tableId="verifying-test-cases-table" paginate="true">
-	<jsp:attribute name="initialSort">[[3,'asc']]</jsp:attribute>
+	<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
 	<jsp:attribute name="drawCallback">testCaseTableDrawCallback</jsp:attribute>
 	<jsp:attribute name="rowCallback">testCaseTableRowCallback</jsp:attribute>
 	<jsp:attribute name="columnDefs">

@@ -25,8 +25,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -52,8 +54,10 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
+import org.squashtest.tm.core.foundation.collection.DefaultSorting;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 
 /**
  * DAO for org.squashtest.csp.tm.domain.testcase.TestCase
@@ -70,6 +74,17 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private static final String TEST_CASE_ID_PARAM_NAME = "testCaseId";
 	private static final String PROJECT = "project";
 	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from TCLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
+	
+	
+	private static List<DefaultSorting> DEFAULT_VERIFIED_TC_SORTING;
+	
+	static {
+		DEFAULT_VERIFIED_TC_SORTING = new LinkedList<DefaultSorting>();
+		DEFAULT_VERIFIED_TC_SORTING.add(new DefaultSorting("TestCase.reference"));
+		DEFAULT_VERIFIED_TC_SORTING.add(new DefaultSorting("TestCase.name"));
+		ListUtils.unmodifiableList(DEFAULT_VERIFIED_TC_SORTING);
+	}
+	
 
 	private static final class SetIdParameter implements SetQueryParametersCallback {
 		private final long testCaseId;
@@ -405,16 +420,52 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	 * @param sorting
 	 * @return
 	 */
+	/*
+	 * Issue #1629
+	 * 
+	 * Observed problem : test cases sorted by references are indeed sorted by reference, but no more by name.
+	 * Actual problem : We always want them to be sorted by reference and name, even when we want primarily sort them by project or execution type or else.
+	 * Solution : The resultset will be sorted on all the attributes (ascending), and the Sorting specified by the user will have an higher priority.
+	 * 
+	 * See #createEffectiveSorting(Sorting sorting), just below
+	 */
 	private Criteria createFindAllVerifyingCriteria(PagingAndSorting sorting) {
+		
 		Criteria crit = currentSession().createCriteria(TestCase.class, "TestCase");
 		crit.createAlias("verifiedRequirementVersions", "RequirementVersion");
 		crit.createAlias("verifiedRequirementVersions.requirement", "Requirement", Criteria.LEFT_JOIN);
-		crit.createAlias(PROJECT, PROJECT, Criteria.LEFT_JOIN);
+		crit.createAlias("project", "Project", Criteria.LEFT_JOIN);
+		
+		List<Sorting> effectiveSortings = createEffectiveSorting(sorting);
 
 		PagingUtils.addPaging(crit, sorting);
-		SortingUtils.addOrder(crit, sorting);
+		SortingUtils.addOrders(crit, effectiveSortings);
+		
+		
 		return crit;
 	}
+	
+	private List<Sorting> createEffectiveSorting(Sorting userSorting){
+		
+		LinkedList<Sorting> sortings = new LinkedList<Sorting>(DEFAULT_VERIFIED_TC_SORTING);
+		
+		//from that list we filter out the redundant element, considering the argument.		
+		//note that the sorting order is irrelevant here.
+		ListIterator<Sorting> iterator = sortings.listIterator();
+		while (iterator.hasNext()){
+			Sorting defaultSorting = iterator.next();
+			if (defaultSorting.getSortedAttribute().equals(userSorting.getSortedAttribute())){
+				iterator.remove();
+				break;
+			}
+		}
+		
+		//now we can set the Sorting specified by the user in first position
+		sortings.addFirst(userSorting);
+
+		return sortings;
+	}
+	
 
 	/**
 	 * @see org.squashtest.csp.tm.internal.repository.TestCaseDao#countByVerifiedRequirementVersion(long)
@@ -640,4 +691,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	}
 	/* ----------------------------------------------------/EXPORT METHODS----------------------------------------- */
 
+	
+	
+	
 }

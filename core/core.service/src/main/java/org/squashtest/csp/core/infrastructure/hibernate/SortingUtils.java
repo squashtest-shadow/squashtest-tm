@@ -20,6 +20,9 @@
  */
 package org.squashtest.csp.core.infrastructure.hibernate;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.squashtest.tm.core.foundation.collection.Sorting;
@@ -49,6 +52,15 @@ public final class SortingUtils {
 		case DESCENDING:
 			criteria.addOrder(Order.desc(sorting.getSortedAttribute()));
 			break;
+		}
+	}
+	
+	
+	public static void addOrders(Criteria criteria, Collection<Sorting> sortings){
+		Iterator<Sorting> iterator = sortings.iterator();
+		while(iterator.hasNext()){
+			Sorting next = iterator.next();
+			addOrder(criteria, next);			
 		}
 	}
 }
