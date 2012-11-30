@@ -86,6 +86,14 @@ define(["require", "./models", "jquery.squash" ], function(require, Model){
 			}
 		};
 		
+		var rowHoverIn = function(){
+			$(this).addClass('ui-state-highlight');
+		};
+		
+		var rowHoverOut = function(){
+			$(this).removeClass('ui-state-highlight');
+		}
+		
 		var reset = function(){
 			table.find("tbody").empty();			
 		};
@@ -95,21 +103,31 @@ define(["require", "./models", "jquery.squash" ], function(require, Model){
 			var tbody = table.find("tbody.available-fields");
 			var rows = $();
 			
-			for (i=0;i<json.length;i++){
-				var data = json[i];
-				var newLine = lineTemplate.clone(true);
-				var tds = newLine.find("td");
-				
-				tds.eq(0).prop("id", data.id);
-				tds.eq(1).text(data.name);
-				tds.eq(2).text(data.inputType.friendlyName);
-				tds.eq(3).text(data.friendlyOptional);
-				
-				rows = rows.add(newLine);
+			if (json.length>0){
+				for (i=0;i<json.length;i++){
+					var data = json[i];
+					var newLine = lineTemplate.clone(true);
+					var rowCss = ((i%2)==0) ? "even" : "odd";
+					newLine.addClass(rowCss);
+					var tds = newLine.find("td");
+					
+					tds.eq(0).prop("id", data.id);
+					tds.eq(1).text(data.name);
+					tds.eq(2).text(data.inputType.friendlyName);
+					tds.eq(3).text(data.friendlyOptional);
+					
+					rows = rows.add(newLine);
+				}
+	
+				rows.click(rowHandleClick);
+				rows.hover(rowHoverIn, rowHoverOut);
+				tbody.append(rows);
 			}
-
-			rows.click(rowHandleClick);
-			tbody.append(rows);
+			else{
+				rows = rows.add('<tr class="odd"><td colspan="4" class="centered">--</td></tr>');
+				rows.hover(rowHoverIn, rowHoverOut);
+				tbody.append(rows);
+			}
 		};
 		
 		
@@ -168,7 +186,7 @@ define(["require", "./models", "jquery.squash" ], function(require, Model){
 		};
 		
 		//popup events
-		
+
 		popup.bind("dialogopen", function(){
 			reload();
 		});

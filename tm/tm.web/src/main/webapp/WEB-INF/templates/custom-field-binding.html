@@ -198,14 +198,14 @@
 		
 		<div id="popup" th:id="${HTMLID}+'-binding-popup'" class="popup-dialog cuf-binding-popup">
 			
-			<div class="component left-div">
-				<table>
+			<div class="component left-div dataTables_wrapper">
+				<table class="dataTable">
 					<thead>
 						<tr>
-							<th width="25px" class="th-check"></th>
-							<th width="70px" class="th-name"  th:text="#{project.cufbinding.popup.table.name}">name</th>
-							<th width="70px" class="th-type" th:text="#{project.cufbinding.popup.table.type}">type</th>
-							<th width="70px" class="th-optional" th:text="#{project.cufbinding.popup.table.optional}">optional</th>
+							<th width="25px" class="th-check ui-state-default"></th>
+							<th width="70px" class="th-name ui-state-default"  th:text="#{project.cufbinding.popup.table.name}">name</th>
+							<th width="70px" class="th-type ui-state-default" th:text="#{project.cufbinding.popup.table.type}">type</th>
+							<th width="70px" class="th-optional ui-state-default" th:text="#{project.cufbinding.popup.table.optional}">optional</th>
 						</tr>
 					</thead>
 					<tbody class="available-fields">
