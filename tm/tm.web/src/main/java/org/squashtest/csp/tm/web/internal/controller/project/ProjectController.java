@@ -20,27 +20,39 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.project;
 
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
 import org.squashtest.csp.tm.service.project.ProjectManagerService;
 import org.squashtest.csp.tm.web.internal.model.jquery.FilterModel;
 
 @Controller
 @RequestMapping("/projects")
 public class ProjectController {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectController.class);
+	
 	@Inject
 	private ProjectManagerService projectService;
+	
+	@Inject private GenericProjectManagerService projectManager;
 
 	@RequestMapping(method = RequestMethod.GET, params = "format=picker")
 	@ResponseBody
@@ -53,6 +65,17 @@ public class ProjectController {
 		}
 
 		return model;
+	}
+	
+	@RequestMapping(value= "/{projectId}", method=RequestMethod.PUT)
+	@ResponseStatus(HttpStatus.CREATED)
+	public @ResponseBody void coerceTemplateIntoProject(@RequestBody Map<String, Object> payload, @PathVariable long projectId) {
+		LOGGER.trace("PUTting project/{} with payload {}", projectId, payload);
+		if (payload.get("templateId").equals(projectId)) {
+			throw new IllegalArgumentException(MessageFormat.format("Cannot coerce ProjectTemplate into Project : project id {0} is not the same as template id {1}", projectId, payload.get("templateId")));
+		}
+		
+		projectManager.coerceTemplateIntoProject(projectId);
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "templateId")

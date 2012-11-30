@@ -29,6 +29,7 @@
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="ta" tagdir="/WEB-INF/tags/testautomation"%>
+<%@ taglib prefix="input" tagdir="/WEB-INF/tags/input"%>
 <%@ taglib prefix="sec"
 	uri="http://www.springframework.org/security/tags"%>
 
@@ -40,7 +41,6 @@
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 <s:url var="projectsUrl" value="/administration/projects" />
-
 
 <s:url var="permissionTableUrl"
 	value="/generic-projects/{projectId}/permission-table">
@@ -94,37 +94,44 @@
 		<div id="project-name-div"
 			class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 
-			<div style="float: left; height: 3em">
+			<div class="snap-left" style="height: 3em">
 				<h2>
-					<label for="project-name-header"><f:message
-							key="label.project" />
-					</label><a id="project-name-header" href="javascript:void(0);"><c:out
-							value="${ adminproject.project.name }" escapeXml="true" />
+					<label for="project-name-header">
+            <f:message key="${ adminproject.template ? 'label.projectTemplate' : 'label.project' }" />
+					</label>
+          <a id="project-name-header" href="javascript:void(0);">
+            <c:out value="${ adminproject.project.name }" escapeXml="true" />
 					</a>
 				</h2>
 			</div>
 
-			<div style="clear: both;"></div>
+			<div class="unsnap"></div>
 
 		</div>
 	
 		<%---INFO + Toolbar ---------------------%>
 			<div id="project-toolbar" class="toolbar-class ui-corner-all">
 				
-				<div style="float:left">
-					<comp:general-information-panel
-							auditableEntity="${adminproject.project}"
-							entityUrl="${ projectUrl }" />
+				<div class="snap-left">
+					<comp:general-information-panel auditableEntity="${adminproject.project}" entityUrl="${ projectUrl }" />
 				</div>
 				
 				<div class="toolbar-button-panel">
 					<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
+          <c:if test="${ adminproject.template }">
+          <input type="button" value="<f:message key='label.coerceTemplateIntoProject' />" id="coerce" class="button" data-template-id="${ adminproject.id }" />
+          <div id="coerce-warning-dialog" title="<f:message key="title.coerceTemplateIntoProject" />" class="alert not-displayed">
+            <f:message key="message.coerceTemplateIntoProject" />
+            <input:confirm />
+            <input:cancel />
+          </div>
+
 <!-- NON ACTIVE BUTTON : WAIT FOR FEATURE TO BE REQUESTED -->
 <%-- 					<c:if test="${ adminproject.template }"> --%>
 <%-- 					<f:message var="createFromTemplate" key="label.createFromTemplate" /> --%>
 <%-- 					<input type="button" value="${ createFromTemplate }" id="createFromTemplate-project-button" --%>
 <!-- 								class="button" /> -->
-<%-- 					</c:if> --%>
+ 					</c:if>
 					<f:message var="rename" key="project.button.rename.label" />
 					<input type="button" value="${ rename }" id="rename-project-button"
 								class="button" />
@@ -135,7 +142,7 @@
 								class="button" />
 					</sec:authorize>						
 				</div>
-				<div style="clear:both"></div>
+				<div class="unsnap"></div>
 			</div>
 			<%-------------------------------------------------------------END INFO + Toolbar ---------------%>
 			
@@ -145,7 +152,6 @@
 			<ul>
 				<li><a href="#main-informations"><f:message key="tabs.label.mainpanel"/></a></li>
 				<li><a href="${customFieldManagerURL}"><f:message key="tabs.label.cufbinding"/></a></li>
-			
 			</ul>
 		
 			<%----------------------------------- INFORMATION PANEL -----------------------------------------------%>
@@ -220,7 +226,7 @@
 						</div>
 						<c:if test="${ ! adminproject.template }"><div class="display-table-row"
 								id="project-bugtracker-project-name-row"
-								<c:if test="${ !adminproject.project.bugtrackerConnected }">style="display:none"</c:if>>
+								<c:if test="${ !adminproject.project.bugtrackerConnected }">class="not-displayed"</c:if>>
 							<label for="project-bugtracker-project-name"
 									class="display-table-cell">
 								<f:message key="project.bugtracker.project.name.label" />
@@ -316,37 +322,27 @@
 <script type="text/javascript">
 
 //*********************************************************************NON ADMIN SCRIPT 
-//*****************Back button
-	$(function() {		
-		$("#back").button().click(clickProjectBackButton);
-	});
-	
 	function clickProjectBackButton(){
 		document.location.href = "${projectsUrl}";
 	}
-//****************End Back button
 	function refreshBugTrackerProjectName() {
 		$.ajax({
 				type: 'GET',
 				 url: "${projectUrl}/bugtracker/projectName",
-		}  	
-		).done(function(data){
+		}).done(function(data){
 			$( "#project-bugtracker-project-name").text(data);
 		});
 		
 	}
-    
-//***************Permission management
-	$(function(){
+
+	$(function() {
+		// back button
+		$("#back").button().click(clickProjectBackButton);
+		
+		// permission mgt
 		refreshTableAndPopup();
 		$("#add-permission-button").button();
 		
-		$("#add-permission-dialog").bind("dialogopen", function(event, ui) {
-//  			if ($("#user-input option:last-child").html() == null){
-//  				$(this).dialog('close');
-//  				$.squash.openMessage("<f:message key='popup.title.error' />", "<f:message key='message.AllUsersAlreadyLinkedToProject' />");
-//  			}
-		});
 		
 		$(".select-class").live('change', function(){
 			var url = "${addPermissionUrl}";
@@ -358,9 +354,7 @@
 				  url: url,
 				  data: "user="+userId+"&permission="+$(this).val(),
 				  dataType: 'json',
-				  success: function(){
-					  refreshTableAndPopup();
-				  }
+				  success: refreshTableAndPopup
 			});
 		});
 		
@@ -373,13 +367,9 @@
 				  type: 'POST',
 				  url: url,
 				  data: "user="+userId,
-				  success: function(){
-					refreshTableAndPopup();
-				  }
+				  success: refreshTableAndPopup
 			});
 		});
-		
-		
 	});
 	
 	function getPermissionTableRowId(rowData) {
@@ -397,46 +387,49 @@
 	}
 	
 	function refreshTableAndPopup(){
-		$("#permission-table").empty();
-		$("#permission-table").load("${permissionTableUrl}");
-		$("#permission-popup").empty();
-		$("#permission-popup").load("${permissionPopupUrl}");
+		var permTable = $("#permission-table"), 
+			permPopup = $("#permission-popup");
+		
+		permTable.empty();
+		permTable.load("${permissionTableUrl}");
+		
+		permPopup.empty();
+		permPopup.load("${permissionPopupUrl}");
 	}
 //************************** End Permission Management
 // *****************************************************************************END NON ADMIN SCRIPT 
 
 
-<sec:authorize access=" hasRole('ROLE_ADMIN')">//**********************************ADMIN SCRIPT 
-	
+	<sec:authorize access=" hasRole('ROLE_ADMIN')">//**********************************ADMIN SCRIPT 
 	$(function() {
-		$('#delete-project-button').button().click(deleteProject);
-		
+  	function deleteProject(){
+  	<c:if test="${adminproject.deletable}">	
+  		oneShotConfirm("<f:message key='dialog.delete-project.title'/>",
+  		"<f:message key='dialog.delete-project.message'/>",
+  		"<f:message key='label.Confirm'/>",
+  		"<f:message key='label.Cancel'/>").done(function(){
+  			requestProjectDeletion().done(deleteProjectSuccess);
+  			});
+  		</c:if>
+  		<c:if test="${!adminproject.deletable}">	
+  			$.squash.openMessage("<f:message key='popup.title.info'/>","<f:message key='project.delete.cannot.exception'/>");
+  		</c:if>
+  	}
+  	
+  	function requestProjectDeletion(){
+  		return $.ajax({
+  			type : 'delete',
+  			dataType : "json",
+  			url : "${ projectUrl }"
+  		});
+  	}
+
+  	function deleteProjectSuccess(data){
+  		clickProjectBackButton();
+  	}
+  	
+		$('#delete-project-button').button().click(deleteProject);		
 	});
-	
-	function deleteProject(){
-	<c:if test="${adminproject.deletable}">	
-		oneShotConfirm("<f:message key='dialog.delete-project.title'/>",
-		"<f:message key='dialog.delete-project.message'/>",
-		"<f:message key='label.Confirm'/>",
-		"<f:message key='label.Cancel'/>").done(function(){
-			requestProjectDeletion().done(deleteProjectSuccess);
-			});
-		</c:if>
-		<c:if test="${!adminproject.deletable}">	
-			$.squash.openMessage("<f:message key='popup.title.info'/>","<f:message key='project.delete.cannot.exception'/>");
-		</c:if>
-	}
-	
-	function requestProjectDeletion(){
-		return $.ajax({
-			type : 'delete',
-			dataType : "json",
-			url : "${ projectUrl }"
-		});
-	}
-	function deleteProjectSuccess(data){
-		clickProjectBackButton();
-	}
 	</sec:authorize>//**********************************************************************END ADMIN SCRIPT 
 </script>
 
@@ -480,20 +473,20 @@
 </sec:authorize>
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 <script type="text/javascript">
-
-	$(function(){
-		
-		require(["common"], function(){
-			require(["jquery.squash.fragmenttabs"], function(){
-				squashtm.fragmenttabs.init({
-					beforeLoad : function(event,ui){
-						if (document.getElementById("cuf-binding-administration")!==null){
-							event.preventDefault();
-							return false;
-						}
-					}
-				});				
-			});			
-		});
-	});
+  require(["common"], function(){
+  	require(["domReady", "jquery.squash.fragmenttabs", "project"], function(domReady, Frag) {
+  		function beforeLoad(event, ui) {
+				if (document.getElementById("cuf-binding-administration") !== null) {
+					event.preventDefault();
+					return false;
+				}  			
+  		}
+  		
+  		domReady(function() {
+  			Frag.init({
+  				beforeLoad : beforeLoad
+  			});									
+  		});
+  	});			
+  });
 </script>

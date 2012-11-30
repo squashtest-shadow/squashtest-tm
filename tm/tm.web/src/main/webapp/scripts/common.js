@@ -23,7 +23,8 @@ requirejs.config({
   packages: [
     "custom-field-binding",
     "execution-processing", 
-    "projects-manager"
+    "projects-manager", 
+    "project" 
 	],
 
 	/*
@@ -119,7 +120,7 @@ requirejs.config({
 		},
 		"jquery.squash.fragmenttabs":{
 			deps: [ "jquery", "jqueryui" ],
-			exports: "squashtmTabsWidget"
+			exports: "squashtm.fragmenttabs"
 		},
 		"jquery.squash.togglepanel": {
 			deps: [ "jquery", "jqueryui", "jquery.squash.squashbutton" ],

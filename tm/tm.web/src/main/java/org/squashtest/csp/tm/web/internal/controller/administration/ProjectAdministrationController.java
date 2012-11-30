@@ -70,6 +70,11 @@ public class ProjectAdministrationController {
 		return mav;
 	}
 	
+	@RequestMapping(value = "{projectId}", method = RequestMethod.GET)
+	public ModelAndView showProjectEditor(@PathVariable long projectId, Locale locale) {
+		return getProjectInfos(projectId, locale);
+	}
+	
 	@RequestMapping(value = "{projectId}/info", method = RequestMethod.GET)
 	public ModelAndView getProjectInfos(@PathVariable long projectId, Locale locale) {
 		

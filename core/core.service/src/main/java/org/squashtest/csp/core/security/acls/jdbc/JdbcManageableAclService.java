@@ -143,7 +143,7 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 	private static final String DELETE_OBJECT_IDENTITY = "delete ACL_OBJECT_IDENTITY where IDENTITY = ? and CLASS_ID = ?";
 
 	private static final String DELETE_ALL_RESPONSABILITY_ENTRIES = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY " +
-			"where and OBJECT_IDENTITY_ID = (select oid.ID from ACL_OBJECT_IDENTITY oid " +
+			"where OBJECT_IDENTITY_ID = (select oid.ID from ACL_OBJECT_IDENTITY oid " +
 			"inner join ACL_CLASS c on c.ID = oid.CLASS_ID " +
 			"where oid.IDENTITY = ? and c.CLASSNAME = ?)";
 
