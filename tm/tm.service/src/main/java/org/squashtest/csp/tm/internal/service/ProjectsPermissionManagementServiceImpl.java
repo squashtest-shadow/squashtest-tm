@@ -31,16 +31,20 @@ import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.core.security.acls.model.ObjectAclService;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectPermission;
 import org.squashtest.csp.tm.domain.project.ProjectTemplate;
+import org.squashtest.csp.tm.domain.project.ProjectVisitor;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
+import org.squashtest.csp.tm.internal.repository.GenericProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
+import org.squashtest.csp.tm.service.project.GenericProjectFinder;
 
 @Service("squashtest.tm.service.ProjectsPermissionManagementService")
 public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissionManagementService {
@@ -51,8 +55,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	@Inject
 	private ObjectAclService aclService;
 
-	@Inject
-	private ProjectDao projectDao;
+	@Inject private GenericProjectDao genericProjectFinder;
 
 	@Inject
 	private UserDao userDao;
@@ -67,7 +70,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		ObjectIdentity entityRef = createProjectIdentity(projectId);
 		aclService.removeAllResponsibilities(userLogin, entityRef);
 
-		Project project = projectDao.findById(projectId);
+		GenericProject project = genericProjectFinder.findById(projectId);
 
 		ObjectIdentity rlibraryRef = createRequirementLibraryIdentity(project);
 		aclService.removeAllResponsibilities(userLogin, rlibraryRef);
@@ -80,21 +83,36 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	}
 
 	private ObjectIdentity createProjectIdentity(long projectId) {
-		return new ObjectIdentityImpl(Project.class, projectId);
+		GenericProject project = genericProjectFinder.findById(projectId);
+		final Class<?>[] projectType = {null};
+		
+		project.accept(new ProjectVisitor() {
+			
+			@Override
+			public void visit(ProjectTemplate projectTemplate) {
+				projectType[0] = ProjectTemplate.class;
+			}
+			
+			@Override
+			public void visit(Project project) {
+				projectType[0] = Project.class;
+			}
+		});
+		
+		return new ObjectIdentityImpl(projectType[0], projectId);
 	}
 
-	private ObjectIdentity createCampaignLibraryIdentity(Project project) {
+	private ObjectIdentity createCampaignLibraryIdentity(GenericProject project) {
 		return new ObjectIdentityImpl(CampaignLibrary.class, project.getCampaignLibrary().getId());
 	}
 
-	private ObjectIdentity createTestCaseLibraryIdentity(Project project) {
+	private ObjectIdentity createTestCaseLibraryIdentity(GenericProject project) {
 		return new ObjectIdentityImpl(TestCaseLibrary.class, project.getTestCaseLibrary()
 				.getId());
 	}
 
-	private ObjectIdentity createRequirementLibraryIdentity(Project project) {
-		return new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary()
-				.getId());
+	private ObjectIdentity createRequirementLibraryIdentity(GenericProject project) {
+		return new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary().getId());
 	}
 
 	@Override
@@ -102,7 +120,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
 		List<Object[]> result = aclService.retrieveClassAclGroupFromUserLogin(userLogin, PROJECT_CLASS_NAME);
 		for (Object[] objects : result) {
-			Project project = projectDao.findById((Long) objects[0]);
+			GenericProject project = genericProjectFinder.findById((Long) objects[0]);
 			newResult.add(new ProjectPermission(project, (PermissionGroup) objects[1]));
 		}
 		return newResult;
@@ -114,7 +132,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		if (idList == null || idList.isEmpty()) {
 			return null;
 		}
-		return projectDao.findAllByIds(idList);
+		return genericProjectFinder.findAllByIds(idList);
 	}
 
 	@Override
@@ -123,7 +141,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		User user = userDao.findById(userId);
 		aclService.addNewResponsibility(user.getLogin(), projectRef, permissionName);
 
-		Project project = projectDao.findById(projectId);
+		GenericProject project = genericProjectFinder.findById(projectId);
 
 		ObjectIdentity rlibraryRef = createRequirementLibraryIdentity(project);
 		aclService.addNewResponsibility(user.getLogin(), rlibraryRef, permissionName);
@@ -142,7 +160,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		User user = userDao.findById(userId);
 		aclService.removeAllResponsibilities(user.getLogin(), projectRef);
 
-		Project project = projectDao.findById(projectId);
+		GenericProject project = genericProjectFinder.findById(projectId);
 
 		ObjectIdentity rlibraryRef = createRequirementLibraryIdentity(project);
 		aclService.removeAllResponsibilities(user.getLogin(), rlibraryRef);

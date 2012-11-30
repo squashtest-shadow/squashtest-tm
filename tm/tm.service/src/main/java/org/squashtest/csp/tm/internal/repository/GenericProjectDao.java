@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.springframework.security.access.prepost.PostFilter;
 import org.squashtest.csp.tm.domain.project.GenericProject;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -45,4 +46,10 @@ public interface GenericProjectDao extends CustomGenericProjectDao {
 	// ************************* test automation section **********************
 
 	List<TestAutomationProject> findBoundTestAutomationProjects(@QueryParam("projectId") long id);
+
+	/**
+	 * @param idList
+	 * @return
+	 */
+	List<Project> findAllByIds(List<Long> ids);
 }
