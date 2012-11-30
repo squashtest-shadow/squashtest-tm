@@ -125,7 +125,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 		return nodeList;
 	}
 
-	//this is to avoid infinite loop in case someone copy a folder in itself.
+	//this is to avoid infinite loop in case someone copy a folder and paste it into itself.
 	private void removeCopiedNodesFromNextGeneration(List<COPIED> nodeList,
 			Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextGeneration) {
 		for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> nextGenerationEntry : nextGeneration.entrySet()) {

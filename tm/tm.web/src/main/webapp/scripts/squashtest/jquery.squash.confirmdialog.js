@@ -84,7 +84,6 @@
 				click : closeDialogHandler
 			}, {
 				text : "Cancel", // cancel button closes by default
-				// TODO ! need to be local dependent !
 				click : closeDialogHandler
 			} ]
 		},
@@ -150,10 +149,6 @@
 			if (inputButtons.length > 1) {
 				var cancelLabel = inputButtons[1].value;
 				buttons[1].text = cancelLabel;
-			}
-
-			if (self.options.confirm) {
-				buttons[0].click = self.options.confirm;
 			}
 
 			$.ui.dialog.prototype._createButtons.apply(this, arguments);

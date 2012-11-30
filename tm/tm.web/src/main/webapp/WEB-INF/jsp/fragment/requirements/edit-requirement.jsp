@@ -377,10 +377,13 @@ that page won't be editable if
 	<s:url var="createNewVersionUrl" value="/requirements/${requirement.id}/versions/new" />
 	<script type="text/javascript">
 		$(function() {
-			var confirmHandler = function() {
-				$.post( "${ createNewVersionUrl }", function() {
+			var confirmHandler = function() {				
+				$.ajax({
+					type : "post",
+					url : "${ createNewVersionUrl }"
+				}).done( function() {
 					document.location.reload(true);
-				} );
+				});
 			};
 			
 			var dialog = $( "#confirm-new-version-dialog" );
@@ -396,7 +399,7 @@ that page won't be editable if
 			$.get("${customFieldsValuesURL}?boundEntityId=${requirement.currentVersion.boundEntityId}&boundEntityType=${requirement.currentVersion.boundEntityType}")
 			.success(function(data){
 				$("#edit-requirement-table").append(data);
-			});						
+			});
 	    	</c:if>
 			
 		});

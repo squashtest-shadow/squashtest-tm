@@ -134,7 +134,6 @@ public class RequirementLibraryNavigationServiceImpl extends
 		return pasteToRequirementLibraryStrategy;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public String getPathAsString(long entityId) {
 		// get
