@@ -33,7 +33,10 @@ var squashtm = squashtm || {};
  * 
  * @author Gregory Fouquet
  */
-define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable", "jeditable.datepicker", "jquery.squash", "jquery.squash.linkabletree", "jquery.squash.projectpicker"  ], function($, RWS) {
+define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable", "jeditable.datepicker", 
+         "jquery.squash", "jquery.squash.linkabletree", "jquery.squash.projectpicker", 
+         /* issue 1535 */
+         "datepicker/require.jquery.squash.datepicker-locales"  ], function($, RWS) {
 	var config = {
 		contextPath: "",
 		dateFormat: "dd/mm/yy", 
@@ -149,6 +152,16 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 		};
 		
 		var datepickers = panel.find(".rpt-date-crit");
+		
+		//setting the locale
+		var locale = datepickers.data('locale');
+		var confLocale = $.datepicker.regional[locale];
+		
+		if (!!confLocale){
+			$.extend(dateSettings, confLocale);
+		};
+		
+		//rest of the init
 		datepickers.editable(function (value, settings) {
 			var self = this;
 			onDatepickerChanged.apply(self, [value]);

@@ -145,7 +145,7 @@
 						</span>
 						<div th:case="'DATE'" class="rpt-date">
 							<label th:for="*{name}" th:text="*{label}">Date criteria</label>
-							<span class="rpt-date-crit" th:id="*{name}" th:name="*{name}" th:text="#{squashtm.nodata}">01-02-2012</span>
+							<span class="rpt-date-crit" th:id="*{name}" th:name="*{name}" th:text="#{squashtm.nodata}" data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
 						</div>
 						<div th:case="'DROPDOWN_LIST'">
 							<label for="rpt-drop-crit" th:for="*{name}" th:text="*{label}">Dropdown criteria</label>
