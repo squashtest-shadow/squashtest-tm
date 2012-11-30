@@ -20,17 +20,17 @@
  */
 package org.squashtest.csp.tm.domain.campaign
 
-import org.h2.util.New
 import java.text.SimpleDateFormat
 
+import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tm.domain.DuplicateNameException
 import org.squashtest.csp.tm.domain.attachment.Attachment
-import org.squashtest.csp.tm.domain.attachment.AttachmentContent
 import org.squashtest.csp.tm.domain.attachment.AttachmentList
 import org.squashtest.csp.tm.domain.execution.Execution
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus
 import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode
+
 import spock.lang.Specification
 
 class IterationTest extends Specification {
@@ -70,12 +70,13 @@ class IterationTest extends Specification {
 		when:
 		Iteration copy = copySource.createCopy()
 
-		then:
+		then: "scheduled and auto infos are copied"
 		copy.getScheduledStartDate().equals(expectedStart)
 		copy.getScheduledEndDate() == null
-		copy.isActualStartAuto() == copySource.isActualStartAuto()
-		copy.getActualStartDate().equals(actualStart)
+		copy.isActualStartAuto() == copySource.isActualStartAuto()		
 		copy.isActualEndAuto() == copySource.isActualEndAuto()
+		and:"acual dates are not copied"
+		copy.getActualStartDate() == null
 		copy.getActualEndDate() == null
 
 		copy.getName() == copySource.getName()

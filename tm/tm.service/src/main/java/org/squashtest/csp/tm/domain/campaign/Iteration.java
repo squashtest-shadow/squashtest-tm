@@ -304,13 +304,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		if (this.getScheduledEndDate() != null) {
 			clone.setScheduledEndDate((Date) this.getScheduledEndDate().clone());
 		}
-		if (this.getActualStartDate() != null && !this.isActualStartAuto()) {
-			clone.setActualStartDate((Date) this.getActualStartDate().clone());
-		}
-
-		if (this.getActualEndDate() != null && !this.isActualEndAuto()) {
-			clone.setActualEndDate((Date) this.getActualEndDate().clone());
-		}
+	
 	}
 
 	/*
