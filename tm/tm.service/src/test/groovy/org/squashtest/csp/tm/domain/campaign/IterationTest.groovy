@@ -75,7 +75,7 @@ class IterationTest extends Specification {
 		copy.getScheduledEndDate() == null
 		copy.isActualStartAuto() == copySource.isActualStartAuto()		
 		copy.isActualEndAuto() == copySource.isActualEndAuto()
-		and:"acual dates are not copied"
+		and:"acual dates are not copied [Issue 1250]"
 		copy.getActualStartDate() == null
 		copy.getActualEndDate() == null
 
