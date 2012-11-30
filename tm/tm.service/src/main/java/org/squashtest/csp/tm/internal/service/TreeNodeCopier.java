@@ -215,7 +215,10 @@ public class TreeNodeCopier implements NodeVisitor {
 		}
 		testSuiteCopy.bindTestPlanItems(testPlanItemsToBind);
 	}
-
+	
+	/**
+	 * @see PrivateCustomFieldValueService#copyCustomFieldValues(BoundEntity, BoundEntity)
+	 */
 	private void copyCustomFields(BoundEntity source, BoundEntity copy) {
 		customFieldValueManagerService.copyCustomFieldValues(source, copy);
 	}

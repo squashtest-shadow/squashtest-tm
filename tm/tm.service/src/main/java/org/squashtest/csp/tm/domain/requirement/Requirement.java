@@ -146,7 +146,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> {
 	 * @return a TreeMap of RequirementVersion copy by source ordered younger to older.
 	 */
 	public TreeMap<RequirementVersion, RequirementVersion> addPreviousVersionsCopiesToCopy(Requirement copy) {
-		TreeMap<RequirementVersion, RequirementVersion> copyBySource = new TreeMap<RequirementVersion, RequirementVersion>();
+		TreeMap<RequirementVersion, RequirementVersion> copyBySource = new TreeMap<RequirementVersion, RequirementVersion>(new RequirementVersionNumberComparator());
 		for (RequirementVersion sourceVersion : this.versions) {
 			if (isNotLatestVersion(sourceVersion) && sourceVersion.isNotObsolete()) {
 				RequirementVersion copyVersion = sourceVersion.createPastableCopy();
