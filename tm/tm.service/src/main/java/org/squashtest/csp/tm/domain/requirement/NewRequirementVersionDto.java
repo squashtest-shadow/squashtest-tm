@@ -100,7 +100,7 @@ public class NewRequirementVersionDto {
 	/*@NotNull*/
 	private RequirementCategory category = RequirementCategory.UNDEFINED;
 	
-	/*@Length(max=20)*/
+	/*@Length(max=50)*/
 	private String reference;
 	
 	/*@NotNull 
@@ -143,7 +143,7 @@ public class NewRequirementVersionDto {
 		public void validate(Object target, Errors errors) {
 			Locale locale = LocaleContextHolder.getLocale();
 			String notBlank = messageSource.getMessage("message.notBlank", null, locale);
-			String lengthMax = messageSource.getMessage("message.lengthMax", new Object[]{"20"}, locale);
+			String lengthMax = messageSource.getMessage("message.lengthMax", new Object[]{"50"}, locale);
 			
 			NewRequirementVersionDto model = (NewRequirementVersionDto) target;
 			
@@ -157,7 +157,7 @@ public class NewRequirementVersionDto {
 				errors.rejectValue("category", "message.notBlank", notBlank);
 			}
 			
-			if (model.reference.length()>20){
+			if (model.reference.length()>50){
 				errors.rejectValue("reference", "message.lengthMax", lengthMax);
 			}
 			

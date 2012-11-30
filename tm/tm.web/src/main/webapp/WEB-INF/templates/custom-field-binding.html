@@ -50,7 +50,7 @@
 
 </div>
 
-
+<link rel="stylesheet" type="text/css" media="all" href="http://localhost/styles/binding.css" />
 
 <div id="cuf-binding-administration">
 
@@ -202,10 +202,10 @@
 				<table>
 					<thead>
 						<tr>
-							<td width="25px" class="th-check"></td>
-							<td width="70px" class="th-name strong-header"  th:text="#{project.cufbinding.popup.table.name}">name</td>
-							<td width="70px" class="th-type strong-header" th:text="#{project.cufbinding.popup.table.type}">type</td>
-							<td width="70px" class="th-optional strong-header" th:text="#{project.cufbinding.popup.table.optional}">optional</td>
+							<th width="25px" class="th-check"></th>
+							<th width="70px" class="th-name"  th:text="#{project.cufbinding.popup.table.name}">name</th>
+							<th width="70px" class="th-type" th:text="#{project.cufbinding.popup.table.type}">type</th>
+							<th width="70px" class="th-optional" th:text="#{project.cufbinding.popup.table.optional}">optional</th>
 						</tr>
 					</thead>
 					<tbody class="available-fields">
@@ -237,7 +237,7 @@
 </div>
 
 <div th:remove="all">
-<link rel="styleshee" type="text/css" href="../../scripts/custom-field-binding/cuf-binding-styles.css"/>
+<link rel="stylesheet" type="text/css" href="../../scripts/custom-field-binding/cuf-binding-styles.css"/>
 <script type="text/javascript" >
 	/* code to tests the fragment. Note that it will not invoke the module 'squash.cuf-binding-manager', 
 	but rather one of its submodules*/

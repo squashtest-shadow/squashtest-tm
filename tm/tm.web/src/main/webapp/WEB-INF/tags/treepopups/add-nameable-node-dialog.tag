@@ -168,41 +168,7 @@ $(function(){
 		});
 	}
 	
-	<%--
-	function ${genericHandlerName}(){
-		<c:choose>
-		<c:when test='${ resourceName eq "requirement" }'>
-		var params = <jq:params-bindings 
-			name="#add-requirement-name" 
-			description="#add-requirement-description" 
-			reference="#add-requirement-reference" 
-			criticality="#add-requirement-criticality"
-			category="#add-requirement-category"/>;
-		</c:when>
-		<c:when test='${ resourceName eq "test-case" }'>
-		var params = <jq:params-bindings 
-			name="#add-test-case-name" 
-			description="#add-test-case-description" 
-			reference="#add-test-case-reference"/>;
-			</c:when>
-			<c:when test='${ resourceName eq "iteration" }'>
-				var params = <jq:params-bindings 
-				name="#add-iteration-name" 
-				description="#add-iteration-description"
-				copyTestPlan="#copy-test-plan"/>;
-				cleanup();
-		</c:when>
-		<c:otherwise>
-			var params = <jq:params-bindings 
-			name="#add-${ resourceName }-name" 
-			description="#add-${ resourceName }-description"/>;
-		</c:otherwise>
-	</c:choose>
-		return params;
-		
-	}
-	--%>
-	
+
 	function ${genericHandlerName}(){
 		<c:choose>
 		<c:when test='${ resourceName eq "requirement" }'>

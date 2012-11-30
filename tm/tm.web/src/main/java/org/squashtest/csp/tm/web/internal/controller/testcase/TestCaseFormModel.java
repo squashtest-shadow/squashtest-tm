@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.web.internal.controller.testcase;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -112,12 +113,17 @@ public class TestCaseFormModel {
 		@Override
 		public void validate(Object target, Errors errors) {
 			
-			String notBlank = messageSource.getMessage("message.notBlank", null, LocaleContextHolder.getLocale());
+			Locale locale = LocaleContextHolder.getLocale();
+			String notBlank = messageSource.getMessage("message.notBlank", null, locale);
+			String lengthMax = messageSource.getMessage("message.lengthMax", new Object[]{"50"}, locale);
 			
 			TestCaseFormModel model = (TestCaseFormModel) target;
 			
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "message.notBlank", notBlank);
-		
+			
+			if (model.reference.length()>50){
+				errors.rejectValue("reference", "message.lengthMax", lengthMax);
+			}
 			
 			for (Entry<Long, String> entry : model.getCustomFields().entrySet()){
 				String value = entry.getValue();
