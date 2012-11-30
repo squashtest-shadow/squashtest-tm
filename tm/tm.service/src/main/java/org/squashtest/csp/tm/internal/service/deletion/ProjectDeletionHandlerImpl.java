@@ -34,10 +34,14 @@ import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
+import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.csp.tm.domain.project.ProjectTemplate;
+import org.squashtest.csp.tm.domain.project.ProjectVisitor;
 import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.csp.tm.internal.repository.GenericProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDeletionDao;
 import org.squashtest.csp.tm.internal.service.CampaignNodeDeletionHandler;
@@ -54,6 +58,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	@Inject
 	private ProjectDao projectDao;
 	@Inject
+	private GenericProjectDao genericProjectDao;
+	@Inject
 	private CampaignNodeDeletionHandler campaignDeletionHandler;
 	@Inject
 	private TestCaseNodeDeletionHandler testCaseDeletionHandker;
@@ -63,26 +69,36 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	private ProjectDeletionDao projectDeletionDao;
 	@Inject
 	private SessionFactory sessionFactory;
-	
+
 	@Inject
 	private CustomFieldBindingModificationService bindingService;
 
-	
 	@Override
 	public void deleteProject(long projectId) {
+		GenericProject project = genericProjectDao.findById(projectId);
 		
-		checkProjectContainsOnlyFolders(projectId);
+		project.accept(new ProjectVisitor() {			
+			@Override
+			public void visit(ProjectTemplate projectTemplate) {
+				// NOOP
+			}
+			
+			@Override
+			public void visit(Project project) {
+				checkProjectContainsOnlyFolders(project);
+			}
+		});
 
 		bindingService.removeCustomFieldBindings(projectId);
-		
+
 		doDeleteProject(projectId);
 
 	}
 
 	@Override
-	public void checkProjectContainsOnlyFolders(long projectId) {
-		Long nonFolder = projectDao.countNonFoldersInProject(projectId);
-		LOGGER.debug("The project #" + projectId + " contains " + nonFolder + " non folder library nodes");
+	public void checkProjectContainsOnlyFolders(Project project) {
+		Long nonFolder = projectDao.countNonFoldersInProject(project.getId());
+		LOGGER.debug("The project #{} contains {} non folder library nodes", project.getId(), nonFolder);
 		if (nonFolder > 0L) {
 			throw new CannotDeleteProjectException("non-folders are found in the project");
 		}
@@ -105,6 +121,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		project = projectDao.findById(projectId);
 		removeProjectFromFilters(project);
 
+		// FIXME does not work with template, specific code to remiove acsl. use project permission manager instead
 		projectDeletionDao.removeProject(project);
 	}
 

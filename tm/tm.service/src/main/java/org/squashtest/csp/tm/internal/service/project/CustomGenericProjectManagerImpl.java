@@ -56,6 +56,7 @@ import org.squashtest.csp.tm.internal.repository.GenericProjectDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
+import org.squashtest.csp.tm.internal.service.ProjectDeletionHandler;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
 import org.squashtest.csp.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -87,6 +88,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private ProjectsPermissionManagementService permissionsManager;
 	@Inject
 	private InsecureTestAutomationManagementService autotestService;
+	@Inject ProjectDeletionHandler projectDeletionHandler;
 
 	private static final String MANAGE_PROJECT_OR_ROLE_ADMIN = "hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.GenericProject', 'MANAGEMENT') or hasRole('ROLE_ADMIN')";
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
@@ -146,7 +148,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteProject(long projectId) {
-		// TODO visit project and check for folder before delete if is not template
+		projectDeletionHandler.deleteProject(projectId);
 	}
 
 	@Override

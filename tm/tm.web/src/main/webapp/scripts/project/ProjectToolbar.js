@@ -46,14 +46,11 @@ define([ "jquery", "backbone", "handlebars", "jquery.squash.confirmdialog" ], fu
 			
 			// we need to store the dialog because jquery stores it somewhere else in the dom. 
 			this.coerceDialog = this.$el.find("#coerce-warning-dialog").confirmDialog();
-//			this.coerceDialog.on("confirmdialogcancel", this.cancelTemplateCoertion);
 			// because it's somewhere else, we cannot bind events using the backbone event property
 			this.coerceDialog.on("confirmdialogconfirm", proceedTemplateCoertion(templateId));
 		}, 
 		events: {
-			"click #coerce": "confirmTemplateCoertion", 
-//			"confirmdialogcancel": "cancelTemplateCoertion", 
-//			"confirmdialogconfirm #coerce-warning-dialog": "proceedTemplateCoertion", 
+			"click #coerce": "confirmTemplateCoertion" 
 		}, 
 		confirmTemplateCoertion: function() {
 			var dom = event.source, 
@@ -61,10 +58,7 @@ define([ "jquery", "backbone", "handlebars", "jquery.squash.confirmdialog" ], fu
 			templateId = button.data("template-id");
 
 			this.coerceDialog.confirmDialog("open");
-		}, 
-//		cancelTemplateCoertion: function() {
-//			this.coerceDialog.confirmDialog("close");
-//		}, 
+		} 
 	});
 	
 	return View;

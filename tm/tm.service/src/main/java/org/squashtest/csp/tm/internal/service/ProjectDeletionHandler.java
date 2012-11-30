@@ -20,13 +20,22 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
+import org.squashtest.csp.tm.domain.project.Project;
+
 /**
  * 
  * @author mpagnon
  * 
  */
 public interface ProjectDeletionHandler {
+	/**
+	 * Deletes a generic project. Applies deletion rules according to the project's type (template or not)
+	 * @param projectId
+	 */
 	void deleteProject(long projectId);
 
-	void checkProjectContainsOnlyFolders(long projectId);
+	/**
+	 * @param project
+	 */
+	void checkProjectContainsOnlyFolders(Project project);
 }

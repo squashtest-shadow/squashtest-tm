@@ -60,6 +60,7 @@ public class HibernateProjectDeletionDao extends HibernateDeletionDao implements
 	}
 
 	private void removeProjectAcls(Query removeARSE, Query removeAOI, Project project) {
+		// FIXME does not work with template. use project permission manager instead
 		Long id = project.getId();
 		String className = Project.class.getName();
 

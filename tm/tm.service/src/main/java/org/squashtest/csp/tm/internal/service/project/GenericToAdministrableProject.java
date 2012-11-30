@@ -52,7 +52,7 @@ public class GenericToAdministrableProject implements ProjectVisitor {
 		// add deletable
 		boolean isDeletable = true;
 		try {
-			projectDeletionHandler.checkProjectContainsOnlyFolders(project.getId());
+			projectDeletionHandler.checkProjectContainsOnlyFolders(project);
 		} catch (CannotDeleteProjectException e) {
 			isDeletable = false;
 		}
