@@ -235,7 +235,7 @@ $(function(){
 				var defValue = input.data('default-value');
 				
 				if (input.is('input[type="checkbox"]')){
-					input.prop('checked', (defValue==="true"));
+					input.prop('checked', (defValue===true));
 				}
 				else{
 					input.val(defValue);
