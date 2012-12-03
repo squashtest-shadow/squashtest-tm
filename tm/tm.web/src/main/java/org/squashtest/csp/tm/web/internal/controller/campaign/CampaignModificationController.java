@@ -313,32 +313,7 @@ public class CampaignModificationController {
 		FilteredCollectionHolder<List<CampaignTestPlanItem>> holder = campaignModService.findTestPlanByCampaignId(
 				campaignId, filter);
 
-		return new DataTableModelHelper<CampaignTestPlanItem>() {
-			@Override
-			public Map<String, Object> buildItemData(CampaignTestPlanItem item) {
-				
-				Map<String, Object> result = new HashMap<String, Object>();
-				
-				TestCase testCase = item.getReferencedTestCase();
-				String user = (item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale); 
-				Long assigneeId = (item.getUser()!=null) ? item.getUser().getId() : User.NO_USER_ID;
-	
-				result.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-				result.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-				result.put("project-name", testCase.getProject().getName());
-				result.put("reference", testCase.getReference());
-				result.put("tc-name", testCase.getName());
-				result.put("assigned-user", user);
-				result.put("assigned-to", assigneeId);
-				result.put("importance", formatImportance(testCase.getImportance(), locale));
-				result.put("exec-mode",formatExecutionMode(testCase.getExecutionMode(), locale));
-				result.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
-				result.put("tc-id", testCase.getId());
-				
-				return result;
-				
-			}
-		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+		return new TestCaseTableModelHelper(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}
 
 	@RequestMapping(value = "/test-plan/manager/table", params = "sEcho")
@@ -350,15 +325,7 @@ public class CampaignModificationController {
 		FilteredCollectionHolder<List<CampaignTestPlanItem>> holder = campaignModService.findTestPlanByCampaignId(
 				campaignId, filter);
 
-		return new DataTableModelHelper<CampaignTestPlanItem>() {
-			@Override
-			public Object[] buildItemData(CampaignTestPlanItem item) {
-				TestCase testCase = item.getReferencedTestCase();
-				return new Object[] { item.getId(), getCurrentIndex(), testCase.getProject().getName(),
-						testCase.getReference(), testCase.getName(), formatImportance(testCase.getImportance(), locale),
-						formatExecutionMode(testCase.getExecutionMode(), locale), "", testCase.getId() };
-			}
-		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+		return new TestPlanManagerTableHelper(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DataTableMapper mapper) {
@@ -378,4 +345,66 @@ public class CampaignModificationController {
 	private String formatImportance(TestCaseImportance importance, Locale locale) {
 		return messageSource.getMessage(importance.getI18nKey(), null, locale);
 	}
+	
+	
+	private class TestCaseTableModelHelper extends DataTableModelHelper<CampaignTestPlanItem>{
+		
+		Locale locale;
+		
+		private TestCaseTableModelHelper(Locale locale){
+			this.locale = locale;
+		}
+		
+		public Map<String, Object> buildItemData(CampaignTestPlanItem item) {
+			
+			Map<String, Object> result = new HashMap<String, Object>();
+			
+			TestCase testCase = item.getReferencedTestCase();
+			String user = (item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale); 
+			Long assigneeId = (item.getUser()!=null) ? item.getUser().getId() : User.NO_USER_ID;
+
+			result.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
+			result.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+			result.put("project-name", testCase.getProject().getName());
+			result.put("reference", testCase.getReference());
+			result.put("tc-name", testCase.getName());
+			result.put("assigned-user", user);
+			result.put("assigned-to", assigneeId);
+			result.put("importance", formatImportance(testCase.getImportance(), locale));
+			result.put("exec-mode",formatExecutionMode(testCase.getExecutionMode(), locale));
+			result.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
+			result.put("tc-id", testCase.getId());
+			
+			return result;
+			
+		}
+				
+	}
+	
+	
+	private class TestPlanManagerTableHelper extends DataTableModelHelper<CampaignTestPlanItem>{
+
+		Locale locale;
+		
+		private TestPlanManagerTableHelper(Locale locale){
+			this.locale = locale;
+		}
+		
+		@Override
+		public Object[] buildItemData(CampaignTestPlanItem item) {
+			TestCase testCase = item.getReferencedTestCase();
+			return new Object[] { 
+					item.getId(), 
+					getCurrentIndex(), 
+					testCase.getProject().getName(),
+					testCase.getReference(), 
+					testCase.getName(), 
+					formatImportance(testCase.getImportance(), locale),
+					formatExecutionMode(testCase.getExecutionMode(), locale), 
+					"", 
+					testCase.getId() };
+		}
+		
+	}
+	
 }

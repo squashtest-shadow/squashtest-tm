@@ -47,4 +47,10 @@ public final class DataTablePagedFilter implements Paging {
 	public int getPageSize() {
 		return params.getiDisplayLength();
 	}
+	
+	@Override
+	public boolean shouldDisplayAll() {
+		return (params.getiDisplayLength()<0);
+	}
+	
 }

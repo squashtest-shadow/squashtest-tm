@@ -149,11 +149,40 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 
 		Query q = session.getNamedQuery(queryName);
 		q.setParameter(0, queryParam);
-		q.setFirstResult(filter.getFirstItemIndex());
-		q.setMaxResults(filter.getPageSize());
+		
+		if (! filter.shouldDisplayAll()){
+			q.setFirstResult(filter.getFirstItemIndex());
+			q.setMaxResults(filter.getPageSize());
+		}
 
 		return q.list();
 	}
+	
+	
+	/**
+	 * Executes a named query with parameters. The parameters should be set by the callback object.
+	 * 
+	 * @param <R>
+	 * @param queryName
+	 * @param setParams
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	protected final <R> List<R> executeListNamedQuery(String queryName, SetQueryParametersCallback setParams, Paging paging) {
+		
+		Session session = currentSession();
+
+		Query q = session.getNamedQuery(queryName);
+		setParams.setQueryParameters(q);
+		
+		if (!paging.shouldDisplayAll()){
+			q.setFirstResult(paging.getFirstItemIndex());
+			q.setMaxResults(paging.getPageSize());
+		}
+
+		return q.list();
+	}
+	
 
 	/**
 	 * Runs a named query which returns a single entity / tuple / scalar and which accepts a unique parameter.

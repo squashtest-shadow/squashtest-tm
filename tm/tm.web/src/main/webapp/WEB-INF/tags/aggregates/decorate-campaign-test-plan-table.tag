@@ -197,6 +197,7 @@
 						}
 					},				
 					"sAjaxSource" : "${ campaignUrl }/test-plan/table", 
+					"aLengthMenu" : [[10, 25, 50, 100, -1], [10, 25, 50, 100, '<f:message key="label.All"/>']],
 					"fnRowCallback" : testPlanRowCallback,
 					"fnDrawCallback" : testPlanDrawCallback,
 					"aoColumnDefs": [

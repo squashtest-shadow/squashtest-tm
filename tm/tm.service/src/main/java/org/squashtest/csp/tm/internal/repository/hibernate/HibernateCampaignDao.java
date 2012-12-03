@@ -56,23 +56,17 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	@Override
 	public List<CampaignTestPlanItem> findAllTestPlanByIdFiltered(final long campaignId, final CollectionSorting filter) {
 
-		final int firstIndex = filter.getFirstItemIndex();
-		final int lastIndex = filter.getFirstItemIndex() + filter.getPageSize() - 1;
-
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
 
 			@Override
 			public void setQueryParameters(Query query) {
-
 				query.setParameter("campaignId", campaignId);
-				query.setParameter("firstIndex", firstIndex);
-				query.setParameter("lastIndex", lastIndex);
-
 			}
 
 		};
+		
 
-		return executeListNamedQuery("campaign.findTestPlanFiltered", callback);
+		return executeListNamedQuery("campaign.findTestPlanFiltered", callback, filter);
 
 	}
 

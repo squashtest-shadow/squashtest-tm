@@ -58,5 +58,10 @@ public class DefaultPaging implements Paging {
 	public int getPageSize() {
 		return 50;
 	}
+	
+	@Override
+	public boolean shouldDisplayAll() {
+		return false;
+	}
 
 }

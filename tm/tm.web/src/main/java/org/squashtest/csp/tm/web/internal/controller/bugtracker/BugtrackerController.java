@@ -701,6 +701,11 @@ public class BugtrackerController {
 			return params.getiDisplayLength();
 		}
 		
+		@Override
+		public boolean shouldDisplayAll() {
+			return (getPageSize()<0);
+		}
+		
 	}
 	
 

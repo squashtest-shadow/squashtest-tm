@@ -36,12 +36,16 @@ public final class PagingUtils {
 	}
 
 	public static void addPaging(Query query, Paging paging) {
-		query.setMaxResults(paging.getPageSize());
-		query.setFirstResult(paging.getFirstItemIndex());
+		if (! paging.shouldDisplayAll()){
+			query.setMaxResults(paging.getPageSize());
+			query.setFirstResult(paging.getFirstItemIndex());
+		}
 	}
 
 	public static void addPaging(Criteria criteria, Paging paging) {
-		criteria.setMaxResults(paging.getPageSize());
-		criteria.setFirstResult(paging.getFirstItemIndex());
+		if (! paging.shouldDisplayAll()){
+			criteria.setMaxResults(paging.getPageSize());
+			criteria.setFirstResult(paging.getFirstItemIndex());
+		}
 	}
 }

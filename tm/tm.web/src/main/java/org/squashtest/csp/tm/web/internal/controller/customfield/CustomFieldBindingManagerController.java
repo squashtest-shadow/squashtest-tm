@@ -88,6 +88,11 @@ public class CustomFieldBindingManagerController {
 			return DEFAULT_PAGE_SIZE;
 		}
 		
+		@Override
+		public boolean shouldDisplayAll() {
+			return false;
+		}
+		
 	}
 	
 }

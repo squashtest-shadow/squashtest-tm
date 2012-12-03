@@ -48,5 +48,10 @@ public class DataTableDrawParametersPagingAdapter implements Paging {
 	public int getFirstItemIndex() {
 		return params.getiDisplayStart();
 	}
+	
+	@Override
+	public boolean shouldDisplayAll() {
+		return (params.getiDisplayLength()<0);
+	}
 
 }

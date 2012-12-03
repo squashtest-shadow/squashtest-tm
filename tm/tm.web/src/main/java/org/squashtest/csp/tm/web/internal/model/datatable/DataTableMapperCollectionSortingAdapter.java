@@ -50,5 +50,10 @@ public class DataTableMapperCollectionSortingAdapter implements CollectionSortin
 	public int getPageSize() {
 		return delegate.getPageSize();
 	}
+	
+	@Override
+	public boolean shouldDisplayAll() {
+		return (getPageSize()<0);
+	}
 
 }

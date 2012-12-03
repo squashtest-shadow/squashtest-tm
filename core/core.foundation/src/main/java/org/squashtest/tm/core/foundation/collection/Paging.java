@@ -40,5 +40,12 @@ public interface Paging {
 	 * @return
 	 */
 	int getPageSize();
+	
+	
+	/**
+	 * 
+	 * @return true if the query should return all the valid rows (ie, the paging should not be applied)
+	 */
+	boolean shouldDisplayAll();
 
 }
