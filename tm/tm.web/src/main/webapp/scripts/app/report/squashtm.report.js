@@ -94,7 +94,8 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 		var option = this;
 		var name = option.name;
 		var value = option.value;
-
+		var givesAccessTo = option.className;
+		
 		$(formState[name]).each(function () {
 			if (this.value === value) {
 				this.selected = option.checked;
@@ -102,8 +103,36 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 				this.selected = false;
 			}
 		});
+		
+		//deactivate all elements which are linked to other options in the group
+		deactivateAllAssociatedButtons(name);
+		
+		//if the option has an associated element
+		if(givesAccessTo !== undefined && givesAccessTo !== "none"){
+			
+			//find the right element and activate it
+			$("#"+givesAccessTo+"-open").removeAttr("disabled");
+			
+		}
+		
 	}
 
+	function deactivateAllAssociatedButtons(name){
+		
+		var list = $("li [name="+name+"]");
+		var givesAccessTo;
+		
+		list.each(function () {
+		
+			givesAccessTo = this.className; 
+				
+			if(givesAccessTo !== undefined && givesAccessTo !== "none"){
+				//find the right element and deactivate it
+				$("#"+givesAccessTo+"-open").attr("disabled","disabled");
+			}
+		});
+	}
+	
 	function onListItemSelected() {
 		var dropdown = $(this);
 		var options = dropdown.find("option");
@@ -186,6 +215,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 		.each(function () {
 			var option = this;
 			var name = option.name;
+			var givesAccessTo = option.className;
 			
 			formState[name] = formState[name] || [];
 			formState[name].push({
@@ -194,6 +224,11 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 				selected : option.checked,
 				type: 'RADIO_BUTTONS_GROUP'
 			});
+			
+			if(givesAccessTo !== undefined && givesAccessTo !== "none"){
+				//find the right element and deactivate it
+				$("#"+givesAccessTo+"-open").attr("disabled","disabled");
+			}
 		});
 	}
 	

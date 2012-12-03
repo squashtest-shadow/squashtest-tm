@@ -128,7 +128,7 @@
 				<div class="snap-right" th:if="${hasBackButton}">
 					<input id="back" type="button" th:value="#{label.Back}" value="Back" />
 				</div>
-			
+				
 				<div class="unsnap"></div>
 			</div>
 			<div class="fragment-body">
@@ -159,7 +159,7 @@
 							<ul>
 								<li th:each="opt : *{options}">
 									<input name="rpt-radio-crit" type="radio" th:value="${opt.value}" data-grouped="true" th:text="${opt.label}"
-										th:name="${opt.name}" th:checked="${opt.defaultSelected}">
+										th:name="${opt.name}" th:checked="${opt.defaultSelected}" th:class="${opt.givesAccessTo}">
 										Option
 									</input>
 								</li>
@@ -182,7 +182,7 @@
 								<div th:id="*{name}" class="rpt-tree-crit tree selection-tree" th:attr="data-node-type=*{pickedNodeType}"></div>
 							</div>
 							<label th:for="*{name} + '-open'" th:text="*{label}">Nodes</label>
-							<input th:name="*{name} + '-open'" type="button" class="button rpt-tree-crit-open" 
+							<input th:id="*{name} + '-open'" type="button" class="button rpt-tree-crit-open" 
 								th:value="#{report.form.tree-picker.button.label}" th:attr="data-id-opened=*{name} + '-dialog'" />
 						</div>
 						<div th:case="'PROJECT_PICKER'">

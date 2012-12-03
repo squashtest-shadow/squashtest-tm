@@ -30,7 +30,8 @@ public class OptionInput extends Labelled {
 	private String name;
 	private String value = "";
 	private boolean defaultSelected = false;
-
+	private String givesAccessTo = "none";
+	
 	/**
 	 * @param value
 	 *            the value to set
@@ -45,6 +46,21 @@ public class OptionInput extends Labelled {
 	public String getValue() {
 		return value;
 	}
+	
+	
+	public void setGivesAccessTo(String givesAccessTo) {
+		if(givesAccessTo !=null && !givesAccessTo.equals("")){
+			this.givesAccessTo = givesAccessTo;
+		}
+	}
+
+	/**
+	 * @return the name of the object the OptionInput gives access to
+	 */
+	public String getGivesAccessTo() {
+		return givesAccessTo;
+	}
+
 
 	/**
 	 * Callback - should be called by a {@link OptionsGroup} then this object is added to the group.
