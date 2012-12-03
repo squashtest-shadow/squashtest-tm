@@ -138,6 +138,22 @@ public class CustomFieldController {
 		customFieldManager.changeLabel(customFieldId, label);
 		return label;
 	}
+	
+	/**
+	 * Changes the code of the concerned custom field
+	 * 
+	 * @param customFieldId
+	 *            the id of the concerned custom field
+	 * @param label
+	 *            the new code
+	 * @return
+	 */
+	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.POST, params = { "id=cuf-code", "value" })
+	@ResponseBody
+	public String changeCode(@PathVariable long customFieldId, @RequestParam("value") String code) {
+		customFieldManager.changeCode(customFieldId, code);
+		return code;
+	}
 
 	/**
 	 * Changes the name of the concerned custom field

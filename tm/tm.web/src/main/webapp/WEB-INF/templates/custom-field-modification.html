@@ -181,6 +181,11 @@
 							<div id="cuf-label" class="display-table-cell" th:text="${customField.label}">Description</div>
 							 <span class="error-message label-error"></span>
 						</div>
+						<div class="display-table-row">
+							<label for="cuf-code" th:text="#{label.code}">Code</label>
+							<div id="cuf-code" class="display-table-cell" th:text="${customField.code}">code</div>
+							 <span class="error-message code-error"></span>
+						</div>
 						 <div class="display-table-row">
 						 	<label for="inputType" th:text="#{label.inputType}">Input Type</label>
 						 	<div id="cuf-inputType" class="display-table-cell" th:value="${customField.inputType.name()}" value="CHECKBOX" th:text="#{${customField.inputType.i18nKey}}">Checkbox</div>

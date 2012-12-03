@@ -155,7 +155,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 		configureEditables:function(){
 			var self = this;
 			this.makeSimpleJEditable("cuf-label");
-			
+			this.makeSimpleJEditable("cuf-code");
 			if($("#cuf-inputType").attr('value') == "PLAIN_TEXT"){
 				new SimpleJEditable({
 					language: {
@@ -168,8 +168,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 					jeditableSettings : {},
 				});
 			}else if($("#cuf-inputType").attr('value') == "CHECKBOX"){
-				this.makeSelectJEditable("cuf-default-value", cfMod.checkboxJsonDefaultValues);
-				
+				this.makeSelectJEditable("cuf-default-value", cfMod.checkboxJsonDefaultValues);				
 			}
 		},
 		changeDefaultValueText: function(value){
