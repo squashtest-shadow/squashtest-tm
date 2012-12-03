@@ -51,6 +51,8 @@ define([ "jquery" ], function($) {
 				 message = squashtm.app.messages[messageKey] || messageKey;
 			}
 			
+			$controlGroup.removeClass("error").removeClass("warning").addClass(state);
+			
 			$help.html(message).hide().fadeIn("slow", function() {
 				$(this).removeClass("not-displayed");
 			});

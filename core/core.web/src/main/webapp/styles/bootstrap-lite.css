@@ -19,7 +19,7 @@ legend + .control-group {
   margin-top: 20px;
   -webkit-margin-top-collapse: separate;
 }
-.control-group.warning > label,
+
 .control-group.warning .help-block,
 .control-group.warning .help-inline {
   color: #c09853;
@@ -58,7 +58,7 @@ legend + .control-group {
   border-color: #c09853;
 }
 
-.control-group.error > label,
+
 .control-group.error .help-block,
 .control-group.error .help-inline {
   color: #b94a48;
