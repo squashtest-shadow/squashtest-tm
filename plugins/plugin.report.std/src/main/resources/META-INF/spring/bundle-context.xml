@@ -123,6 +123,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 							<bean class="org.squashtest.tm.api.report.form.OptionInput">
 								<property name="labelKey" value="report.criteria.panel.campaignlist.selection.selected.label" />
 								<property name="value" value="TREE_PICKER" />
+								<property name="givesAccessTo" value="campaignIds" />
 							</bean>
 						</list>
 					</property>
@@ -230,6 +231,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 							<bean class="org.squashtest.tm.api.report.form.OptionInput">
 								<property name="value" value="PROJECT_PICKER" />
 								<property name="labelKey" value="report.coverage.criteria.selectionMode.projectPicker.label" />
+								<property name="givesAccessTo" value="projectIds" />
 							</bean>
 						</list>
 					</property>
