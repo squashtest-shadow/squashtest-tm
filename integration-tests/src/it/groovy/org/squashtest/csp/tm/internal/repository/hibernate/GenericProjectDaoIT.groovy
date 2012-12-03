@@ -80,5 +80,19 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 		then:
 		res instanceof Project
 	}
+	
+	
+	@DataSet("GenericProjectDaoIT.xml")
+	@Unroll("asserting that project of id #pId is a template is #res")
+	def "should tells that the given project is a project template"(){
+		expect :
+			res == dao.isProjectTemplate(pId)
+		where :
+			pId	| res
+			1l	| false
+			4l	| true
+	}
+	
+	
 
 }
