@@ -76,6 +76,10 @@ public class CustomField {
 	@Column(updatable = false)
 	protected InputType inputType = InputType.PLAIN_TEXT;
 
+	@NotBlank
+	@Size(min=0, max= 30)
+	protected String code = "";
+	
 	/**
 	 * For ORM purposes.
 	 */
@@ -130,8 +134,15 @@ public class CustomField {
 	public InputType getInputType() {
 		return inputType;
 	}
-	
-	
+		
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	public void accept(CustomFieldVisitor visitor){
 		visitor.visit(this);
 	}

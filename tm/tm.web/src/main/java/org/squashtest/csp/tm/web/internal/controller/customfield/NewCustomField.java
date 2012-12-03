@@ -49,7 +49,7 @@ public class NewCustomField extends CustomField {
 		default:
 			res = new CustomField(inputType);
 		}
-		
+		res.setCode(getCode());
 		res.setLabel(getLabel());
 		res.setName(getName());
 		res.setOptional(isOptional());

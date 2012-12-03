@@ -510,7 +510,11 @@
     <addDefaultValue tableName="EXECUTION" columnName="REFERENCE" defaultValue=""></addDefaultValue>
 
   </changeSet>
-  
+  <changeSet id="tm-1.4.0.feat-1638.01" author="mpagnon">
+  	<addColumn tableName="CUSTOM_FIELD">
+  	<column name="CODE" defaultValue="" type="VARCHAR(30)"><constraints nullable="false"/></column>
+  	</addColumn>
+  </changeSet>
   
 </databaseChangeLog>
  

@@ -44,6 +44,7 @@ define(
 						defaults : {
 							name : "",
 							label : "",
+							code : "",
 							inputType : "PLAIN_TEXT",
 							optional : true,
 							defaultValue : "",
@@ -93,6 +94,10 @@ define(
 								errors.name = "message.notBlank";
 							}
 							if (isBlank(attrs.label)) {
+								errors = errors || {};
+								errors.label = "message.notBlank";
+							}
+							if (isBlank(attrs.code)) {
 								errors = errors || {};
 								errors.label = "message.notBlank";
 							}
