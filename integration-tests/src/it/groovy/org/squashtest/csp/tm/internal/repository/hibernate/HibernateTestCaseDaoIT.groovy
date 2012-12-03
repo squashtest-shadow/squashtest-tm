@@ -157,6 +157,10 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			public String getSortedAttribute() {
 				return "TestCase.name";
 			}
+			
+			boolean shouldDisplayAll() {
+				return false;
+			};
 		};
 
 		and :

@@ -81,6 +81,11 @@ class HibernateCustomFieldDaoIT extends DbunitDaoSpecification {
 			public SortOrder getSortOrder() {
 				return SortOrder.ASCENDING;
 			}
+			
+			@Override
+			public boolean shouldDisplayAll() {
+				return false;
+			}
 	}
 	
 	//TODO un-comment when deletion is handled

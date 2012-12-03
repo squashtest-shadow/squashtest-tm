@@ -148,6 +148,10 @@ class BugTrackersLocalServiceIT_Disabled { // extends DbunitServiceSpecification
 			   String getSortingOrder(){
 				   return "desc"
 			   }
+			   
+			   boolean shouldDisplayAll() {
+			   	return false;
+			   };
 			}
 		
 		when :
@@ -191,6 +195,10 @@ class BugTrackersLocalServiceIT_Disabled { // extends DbunitServiceSpecification
 			   String getSortingOrder(){
 				   return "desc"
 			   }
+			   
+			   boolean shouldDisplayAll() {
+				   return false;
+			   };
 			}
 		
 		when :

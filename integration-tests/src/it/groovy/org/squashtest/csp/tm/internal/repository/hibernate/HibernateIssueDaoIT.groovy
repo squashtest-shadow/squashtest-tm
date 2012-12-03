@@ -59,6 +59,11 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 					public int getPageSize() {
 						return 2
 					}
+					
+					@Override
+					public boolean shouldDisplayAll() {
+						return false;
+					}
 				}
 		when: def result = issueDao.findSortedIssuesFromExecutionAndExecutionSteps(execIds, execStepIds,sorter)
 
@@ -93,6 +98,10 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 					public int getPageSize() {
 						return 7
 					}
+					
+					boolean shouldDisplayAll() {
+						return false
+					};
 				}
 		when: def result = issueDao.findSortedIssuesFromExecutionAndExecutionSteps(execIds, execStepIds,sorter)
 
@@ -142,6 +151,10 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 					@Override
 					public int getPageSize() {
 						return 7
+					}
+					
+					boolean shouldDisplayAll(){
+						return false;
 					}
 				}
 		when: def result = issueDao.findSortedIssuesFromIssuesLists (issueListIds, sorter, bugTrackerId)
