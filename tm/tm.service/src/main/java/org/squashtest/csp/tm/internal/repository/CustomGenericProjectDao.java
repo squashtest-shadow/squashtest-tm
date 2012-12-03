@@ -22,6 +22,7 @@
 package org.squashtest.csp.tm.internal.repository;
 
 import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 
 /**
  * @author Gregory Fouquet
@@ -36,5 +37,15 @@ public interface CustomGenericProjectDao {
 	 * @return the coerced project.
 	 */
 	Project coerceTemplateIntoProject(long templateId);
+	
+	
+	
+	/**
+	 * Tells whether the project of id 'projectId' is a project template or not
+	 * 
+	 * @param projectId
+	 * @return
+	 */
+	boolean isProjectTemplate(long projectId);
 
 }

@@ -164,7 +164,9 @@
 
 		//Generic Project
 		@NamedQuery(name = "GenericProject.findAllOrderedByName", query = "from GenericProject fetch all properties order by name"),
-		@NamedQuery(name = "GenericProject.countGenericProjects", query = "select count(p) from GenericProject p"),
+		@NamedQuery(name = "GenericProject.countGenericProjects", query = "select count(p) from GenericProject p"),		
+		@NamedQuery(name = "GenericProject.findProjectTypeOf", query = "select p.class from GenericProject p where p.id = :projectId"),
+
 
 		//Project
 		@NamedQuery(name = "Project.findAllOrderedByName", query = "from Project fetch all properties order by name"),

@@ -232,8 +232,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 
 	private void processPaging(Query query, Object arg) {
 		Paging paging = (Paging) arg;
-		query.setFirstResult(paging.getFirstItemIndex());
-		query.setMaxResults(paging.getPageSize());
+		PagingUtils.addPaging(query, paging);
 	}
 
 	@SuppressWarnings("rawtypes")

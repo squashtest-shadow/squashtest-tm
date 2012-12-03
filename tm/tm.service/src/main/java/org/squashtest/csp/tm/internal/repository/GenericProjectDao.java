@@ -52,4 +52,5 @@ public interface GenericProjectDao extends CustomGenericProjectDao {
 	 * @return
 	 */
 	List<Project> findAllByIds(List<Long> ids);
+
 }

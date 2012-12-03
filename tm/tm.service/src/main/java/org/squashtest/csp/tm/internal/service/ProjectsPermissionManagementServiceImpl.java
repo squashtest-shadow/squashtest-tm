@@ -174,7 +174,12 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	@Override
 	public List<UserProjectPermissionsBean> findUserPermissionsBeanByProject(long projectId) {
-		return findUserPermissionBeanByProjectOfGivenType(projectId, Project.class);
+		if (genericProjectFinder.isProjectTemplate(projectId)){
+			return findUserPermissionBeanByProjectOfGivenType(projectId, ProjectTemplate.class);
+		}
+		else{
+			return findUserPermissionBeanByProjectOfGivenType(projectId, Project.class);
+		}
 	}
 
 	@Override

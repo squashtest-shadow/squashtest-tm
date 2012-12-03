@@ -24,6 +24,7 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
@@ -64,4 +65,16 @@ public class HibernateGenericProjectDao implements CustomGenericProjectDao {
 		return (Project) session.load(Project.class, templateId);
 	}
 
+	
+	@Override
+	public boolean isProjectTemplate(long projectId) {
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("GenericProject.findProjectTypeOf");
+		query.setParameter("projectId", projectId);
+		
+		String type = (String)query.uniqueResult();
+		
+		return type.equals("T");
+	}
+
+	
 }

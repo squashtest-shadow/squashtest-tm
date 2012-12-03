@@ -318,8 +318,8 @@ public class GenericProjectController {
 	public ModelAndView getPermissionTable(@PathVariable long projectId) {
 		
 		GenericProject project = projectManager.findById(projectId);
-		List<UserProjectPermissionsBean> userProjectPermissionsBean = projectManager
-				.findUserPermissionsBeansByProject(projectId);
+		List<UserProjectPermissionsBean> userProjectPermissionsBean = projectManager.findUserPermissionsBeansByProject(projectId);
+		
 		List<PermissionGroup> permissionList = projectManager.findAllPossiblePermission();
 
 		ModelAndView mav = new ModelAndView("fragment/project/project-permission-table");
