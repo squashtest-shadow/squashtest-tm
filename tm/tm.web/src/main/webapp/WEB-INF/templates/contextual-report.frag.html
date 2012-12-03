@@ -159,7 +159,7 @@
 							<ul>
 								<li th:each="opt : *{options}">
 									<input name="rpt-radio-crit" type="radio" th:value="${opt.value}" data-grouped="true" th:text="${opt.label}"
-										th:name="${opt.name}" th:checked="${opt.defaultSelected}" th:class="${opt.givesAccessTo}">
+										th:name="${opt.name}" th:checked="${opt.defaultSelected}" th:id="${opt.givesAccessTo} + '-binder'">
 										Option
 									</input>
 								</li>

@@ -94,7 +94,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 		var option = this;
 		var name = option.name;
 		var value = option.value;
-		var givesAccessTo = option.className;
+		var givesAccessTo = (option.id).replace("-binder","");
 		
 		$(formState[name]).each(function () {
 			if (this.value === value) {
@@ -124,7 +124,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 		
 		list.each(function () {
 		
-			givesAccessTo = this.className; 
+			givesAccessTo = (this.id).replace("-binder",""); 
 				
 			if(givesAccessTo !== undefined && givesAccessTo !== "none"){
 				//find the right element and deactivate it
@@ -215,7 +215,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 		.each(function () {
 			var option = this;
 			var name = option.name;
-			var givesAccessTo = option.className;
+			var givesAccessTo = (option.id).replace("-binder","");
 			
 			formState[name] = formState[name] || [];
 			formState[name].push({
