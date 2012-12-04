@@ -322,13 +322,6 @@
 		
 		var table = $("#test-plans-table").squashTable();
 		
-		//look first at the cache
-		var statusList = table.data('status-list');
-		
-		if (statusList!=null){
-			table.$('td.status-combo').statusCombo();
-		}
-		
 		$.get("${assignableStatusUrl}", "json")
 		.success(function(json){
 			table.data('status-list', json);
