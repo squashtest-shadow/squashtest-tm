@@ -45,7 +45,7 @@ public interface CustomFieldDao extends CustomCustomFieldDao {
 	void persist(CustomField customField);
 
 	CustomField findById(long id);
-	
+
 	void remove(CustomField customField);
 
 	/**
@@ -62,10 +62,19 @@ public interface CustomFieldDao extends CustomCustomFieldDao {
 	 * @return the list of all existing {@link CustomField} ordered by {@link CustomField#getName()}
 	 */
 	List<CustomField> findAllOrderedByName();
+
 	/**
 	 * Will count all existing custom fields
 	 * 
 	 * @return the number of custom fields
 	 */
 	long countCustomFields();
+
+	/**
+	 * Will find the CustomField having a code value matching the parameter.
+	 * 
+	 * @param code
+	 * @return the {@link CustomField} matching the code param.
+	 */
+	CustomField findByCode(@NotNull String code);
 }

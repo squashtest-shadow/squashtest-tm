@@ -32,6 +32,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.NamedQueries;
@@ -45,7 +46,8 @@ import org.squashtest.tm.tm.validation.constraint.HasDefaultAsRequired;
 
 @NamedQueries({
 	@NamedQuery(name="CustomField.findAllOrderedByName", query="from CustomField cf order by cf.name"),
-	@NamedQuery(name="CustomField.countCustomFields", query="select count(*) from CustomField")
+	@NamedQuery(name="CustomField.countCustomFields", query="select count(*) from CustomField"),
+	@NamedQuery(name="CustomField.findByCode", query="from CustomField where code = ?")
 })
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -53,6 +55,8 @@ import org.squashtest.tm.tm.validation.constraint.HasDefaultAsRequired;
 @DiscriminatorValue("CF")
 @HasDefaultAsRequired
 public class CustomField {
+	protected static final String CODE_REGEXP="^[A-Za-z0-9_]*$";
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "CF_ID")
@@ -78,6 +82,7 @@ public class CustomField {
 
 	@NotBlank
 	@Size(min=0, max= 30)
+	@Pattern(regexp=CODE_REGEXP)
 	protected String code = "";
 	
 	/**

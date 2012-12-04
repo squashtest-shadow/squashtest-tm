@@ -63,7 +63,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	private CustomFieldBindingModificationService customFieldBindingModificationService;
 	
 	/**
-	 * @see org.squashtest.csp.tm.service.customfield.CustomFieldFinderService#findSortedCustomFields(CollectionSorting)
+	 * @see org.squashtest.csp.tm.service.customfield.CustomFieldFinderService#findSortedCustomFields(PagingAndSorting)
 	 */
 	@Override
 	public PagedCollectionHolder<List<CustomField>> findSortedCustomFields(PagingAndSorting filter) {
@@ -95,12 +95,23 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void persist(CustomField newCustomField) {
-		CustomField cf = customFieldDao.findByName(newCustomField.getName());
+		checkDuplicateName(newCustomField); 
+		checkDuplicateCode(newCustomField);
+		customFieldDao.persist(newCustomField);
+		
+	}
 
-		if (cf != null) {
+	private void checkDuplicateCode(CustomField newCustomField) {
+		CustomField codeDuplicate = customFieldDao.findByCode(newCustomField.getCode());
+		if (codeDuplicate != null) {
+			throw new CodeAlreadyExistsException(null, newCustomField.getCode());
+		}		
+	}
+
+	private void checkDuplicateName(CustomField newCustomField) {
+		CustomField nameDuplicate = customFieldDao.findByName(newCustomField.getName());
+		if (nameDuplicate != null) {
 			throw new NameAlreadyInUseException("CustomField", newCustomField.getName());
-		} else {
-			customFieldDao.persist(newCustomField);
 		}
 	}
 
@@ -196,6 +207,23 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	public void changeOptionsPositions(long customFieldId, int newIndex, List<String> optionsLabels) {
 		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
 		customField.moveOptions(newIndex, optionsLabels);
+	}
+
+	/**
+	 * @see org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService#changeCode(long, String)
+	 */
+	@Override
+	public void changeCode(long customFieldId, String code) {
+		CustomField cuf = customFieldDao.findById(customFieldId);
+		checkDuplicateCode(cuf, code);
+		cuf.setCode(code);
+		
+	}
+
+	private void checkDuplicateCode(CustomField cuf, String newCode) {		
+		if(customFieldDao.findByCode(newCode) != null){
+			throw new CodeAlreadyExistsException(cuf.getCode(), newCode);
+		}
 	}
 
 }

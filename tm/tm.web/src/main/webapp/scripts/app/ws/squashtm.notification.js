@@ -65,7 +65,7 @@ define([ "jquery", "app/lnf/Forms" ], function($, Forms) {
 
 	function showBootstrapErrorMessage(fieldValidationError) {
 		var inputName = fieldValidationError.fieldName;
-		if(fieldValidationError.objectName != null){
+		if(fieldValidationError.objectName != null && fieldValidationError.objectName != ""){
 			inputName = fieldValidationError.objectName +"-"+inputName;
 		}
 		

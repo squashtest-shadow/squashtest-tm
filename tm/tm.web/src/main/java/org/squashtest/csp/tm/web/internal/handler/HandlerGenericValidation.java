@@ -94,7 +94,7 @@ public class HandlerGenericValidation extends AbstractHandlerExceptionResolver {
 
 		while (e.hasMoreElements()) {
 			String header = e.nextElement();
-			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), MimeType.APPLICATION_JSON.requestHeaderValue())) {
+			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), MimeType.ANYTHING.requestHeaderValue()) || StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), MimeType.APPLICATION_JSON.requestHeaderValue())) {
 				return true;
 			}
 		}

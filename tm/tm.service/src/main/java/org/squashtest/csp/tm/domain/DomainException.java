@@ -45,10 +45,6 @@ public abstract class DomainException extends RuntimeException implements Intern
 		return objectName;
 	}
 
-	private void setObjectName(String objectName) {
-		this.objectName = objectName;
-	}
-
 	public String getField() {
 		return field;
 	}

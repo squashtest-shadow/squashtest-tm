@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
+import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.service.customField.CannotDeleteDefaultOptionException;
 import org.squashtest.csp.tm.internal.service.customField.MandatoryCufNeedsDefaultValueException;
 import org.squashtest.csp.tm.internal.service.customField.OptionAlreadyExistException;
@@ -153,4 +154,12 @@ public interface CustomCustomFieldManagerService {
 	 */
 	public SingleSelectField findSingleSelectFieldById(Long customFieldId);
 
+	/**
+	 * Will change the code of the custom field after having checked that : the code is unique among all custom fields,
+	 * and that the code contains only letters (upper and lower cases), numbers or under-scores.
+	 * 
+	 * @param customFieldId : the id of the concerned {@link CustomField}
+	 * @param code : the new code
+	 */
+	void changeCode(long customFieldId, String code);
 }
