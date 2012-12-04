@@ -36,6 +36,7 @@ import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.internal.service.customField.CannotDeleteDefaultOptionException;
+import org.squashtest.csp.tm.internal.service.customField.CodeAlreadyExistsException;
 import org.squashtest.csp.tm.internal.service.customField.OptionAlreadyExistException;
 import org.squashtest.tm.tm.validation.constraint.UniqueItems;
 
@@ -45,9 +46,7 @@ import org.squashtest.tm.tm.validation.constraint.UniqueItems;
  * @author Gregory Fouquet
  */
 
-@NamedQueries({
-	@NamedQuery(name="singleSelectField.findById", query="from SingleSelectField ssf where ssf.id = :id"),
-})
+@NamedQueries({ @NamedQuery(name = "singleSelectField.findById", query = "from SingleSelectField ssf where ssf.id = :id"), })
 @Entity
 @DiscriminatorValue("SSF")
 public class SingleSelectField extends CustomField {
@@ -72,20 +71,32 @@ public class SingleSelectField extends CustomField {
 	 * @param label
 	 *            the new option's label
 	 */
-	public void addOption(@NotBlank String label) {
-		if (isAvailable(label)) {
-			options.add(new CustomFieldOption(label));
-		} else {
+	public void addOption(@NotBlank String label, @NotBlank String code) {
+		checkLabelAvailable(label);
+		checkCodeAvailable(code);
+		options.add(new CustomFieldOption(label, code));
+	}
+
+	private void checkCodeAvailable(String code) {
+		if (!isCodeAvailable(code)) {
+			throw new CodeAlreadyExistsException(null, code, CustomFieldOption.class);
+		}
+	}
+
+	private void checkLabelAvailable(String label) {
+		if (!isLabelAvailable(label)) {
 			throw new OptionAlreadyExistException(label);
 		}
 	}
+
 	/**
 	 * Checks first if the option is the default one. If so: throw a CannotDeleteDefaultOptionException
+	 * 
 	 * @param label
 	 * @throws CannotDeleteDefaultOptionException
 	 */
 	public void removeOption(@NotBlank String label) {
-		if(defaultValue != null && defaultValue.equals(label)){
+		if (defaultValue != null && defaultValue.equals(label)) {
 			throw new CannotDeleteDefaultOptionException(label);
 		}
 		Iterator<CustomFieldOption> it = options.iterator();
@@ -98,35 +109,79 @@ public class SingleSelectField extends CustomField {
 	}
 
 	/**
-	 * Checks if the newlabel is available among all options. <br> If so, will change the defaultValue if needed, remove the option and add a new one at the vacant position.
-	 * Else throws OptionAlreadyExistException.
+	 * Checks if the newlabel is available among all options. <br>
+	 * If so, will change the defaultValue if needed, remove the option and add a new one at the vacant position. Else
+	 * throws OptionAlreadyExistException.
 	 * 
 	 * @param previousLabel
 	 * @param newlabel
 	 * @throws OptionAlreadyExistException
 	 */
-	public void changeOption(@NotBlank String previousLabel, String newlabel) {
-		if (isAvailable(newlabel)) {
-			int index = findIndexOf(previousLabel);
-			if(defaultValue.equals(previousLabel)){
-				defaultValue = newlabel;
-			}
-			removeOption(previousLabel);
-			addOption(newlabel, index);
-		} else {
-			throw new OptionAlreadyExistException(newlabel);
+	public void changeOptionLabel(@NotBlank String previousLabel, String newlabel) {
+		checkLabelAvailable(newlabel);
+		int index = findIndexOfLabel(previousLabel);
+		String code = findCodeOf(previousLabel);
+		if (defaultValue.equals(previousLabel)) {
+			defaultValue = newlabel;
 		}
+		removeOption(previousLabel);
+		addOption(newlabel, code, index);
+
+	}
+	
+	/**
+	 * Checks if the newCode is available among all options. <br>
+	 * If so, will remove the option and add a new one at the vacant position. Else
+	 * throws CodeAlreadyExistException.
+	 * 
+	 * @param optionLabel : the label to identify the concerned option.
+	 * @param newCode : the new code for the concerned option.
+	 * @throws CodeAlreadyExistException
+	 */
+	public void changeOptionCode(String optionLabel, String newCode) {
+		checkCodeAvailable(newCode);
+		int index = findIndexOfLabel(optionLabel);		
+		removeOption(optionLabel);
+		addOption(optionLabel, newCode, index);
+		
+	}
+	
+	private String findCodeOf(String previousLabel) {
+		Iterator<CustomFieldOption> it = options.iterator();
+
+		while (it.hasNext()) {
+			CustomFieldOption option = it.next();
+			if (previousLabel.equals(option.getLabel())) {
+				return option.getCode();
+			}
+		}
+		return null;
 	}
 
-	private boolean isAvailable(String newlabel) {
-		return findIndexOf(newlabel) == -1;
+	private boolean isLabelAvailable(String newlabel) {
+		return findIndexOfLabel(newlabel) == -1;
+	}
+	private boolean isCodeAvailable(String newCode){
+		return findIndexOfCode(newCode) == -1;
 	}
 
-	private void addOption(String newlabel, int index) {
-		options.add(index, new CustomFieldOption(newlabel));
+	private int findIndexOfCode(String newCode) {
+		Iterator<CustomFieldOption> it = options.iterator();
+
+		while (it.hasNext()) {
+			CustomFieldOption option = it.next();
+			if (newCode.equals(option.getCode())) {
+				return options.indexOf(option);
+			}
+		}
+		return -1;
 	}
 
-	private int findIndexOf(String previousLabel) {
+	private void addOption(String newlabel, String code, int index) {
+		options.add(index, new CustomFieldOption(newlabel, code));
+	}
+
+	private int findIndexOfLabel(String previousLabel) {
 		Iterator<CustomFieldOption> it = options.iterator();
 
 		while (it.hasNext()) {
@@ -141,34 +196,38 @@ public class SingleSelectField extends CustomField {
 	public List<CustomFieldOption> getOptions() {
 		return Collections.unmodifiableList(options);
 	}
-	
+
 	/**
 	 * Will remove all options and recreate them at their right-full positions.
 	 * 
-	 * @param newIndex :  the lowest index for the moved selection
-	 * @param optionsLabels : the labels of the moved options
+	 * @param newIndex
+	 *            : the lowest index for the moved selection
+	 * @param optionsLabels
+	 *            : the labels of the moved options
 	 */
 	public void moveOptions(int newIndex, List<String> optionsLabels) {
-		removeOptions(optionsLabels);
 		List<CustomFieldOption> newOptions = createOptionList(optionsLabels);
+		removeOptions(optionsLabels);
 		options.addAll(newIndex, newOptions);
 	}
 
 	private List<CustomFieldOption> createOptionList(List<String> optionsLabels) {
 		List<CustomFieldOption> newOptions = new ArrayList<CustomFieldOption>(optionsLabels.size());
 		for (String optionLabel : optionsLabels) {
-			newOptions.add(new CustomFieldOption(optionLabel));
+			String code = findCodeOf(optionLabel);
+			newOptions.add(new CustomFieldOption(optionLabel, code));
 		}
 		return newOptions;
 	}
 
 	private void removeOptions(List<String> optionsLabels) {
-		for(String option : optionsLabels){
+		for (String option : optionsLabels) {
 			removeOption(option);
 		}
 	}
-	
-	public void accept(CustomFieldVisitor visitor){
+
+	public void accept(CustomFieldVisitor visitor) {
 		visitor.visit(this);
 	}
+
 }

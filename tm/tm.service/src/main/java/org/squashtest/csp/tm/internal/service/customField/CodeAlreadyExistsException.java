@@ -34,9 +34,10 @@ public class CodeAlreadyExistsException extends DomainException {
 	 * Reports an error on the code, hence the setField("code");
 	 * @param oldCode : oldCode to display on the exception message.
 	 * @param newCode : new code to display on the exception message.
+	 * @param holder : class of the holder
 	 */
-	public CodeAlreadyExistsException(String oldCode, String newCode) {
-		super(makeMessage(oldCode, newCode), CODE);
+	public CodeAlreadyExistsException(String oldCode, String newCode, Class<?> holder) {
+		super(makeMessage(oldCode, newCode, holder.getCanonicalName()), CODE);
 	}
 	
 	
@@ -55,13 +56,14 @@ public class CodeAlreadyExistsException extends DomainException {
 		super(message, CODE);
 	}
 	
-	private static String makeMessage(String oldCode, String newCode) {
+	private static String makeMessage(String oldCode, String newCode, String holder) {
 		if(oldCode == null || oldCode.equals(newCode)){
-			return "Cannot create the custom field of code :'"+newCode+"' because this code is already used by a custom field.";
+			return "Cannot create the "+holder+" of code :'"+newCode+"' because this code is already used by another "+holder+".";
 		}else{
-			return "Cannot change code '" + oldCode + "' for '" + newCode + "' because it is already used by a custom field.";
+			return "Cannot change code '" + oldCode + "' for '" + newCode + "' this code is already used by another "+holder+".";
 				
 		}
+		
 	}
 	
 	@Override

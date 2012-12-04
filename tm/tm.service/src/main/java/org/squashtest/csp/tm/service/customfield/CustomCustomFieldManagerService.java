@@ -99,18 +99,34 @@ public interface CustomCustomFieldManagerService {
 	 *            : the potential new label for the concerned custom-field's option
 	 */
 	void changeOptionLabel(Long customFieldId, String optionLabel, String newLabel);
+	
+	/**
+	 * Will check if the new code is available among all the concerned {@link CustomField}'s {@link CustomFieldOption},
+	 * if so, will change the code of the concerned custom-field's option.
+	 * 
+	 * @throws CodeAlreadyExistException
+	 * @param customFieldId
+	 *            : the id of the concerned {@link CustomField}
+	 * @param optionLabel
+	 *            : the {@link CustomFieldOption}'s label
+	 * @param newCode
+	 *            : the potential new code for the concerned custom-field's option
+	 */
+	void changeOptionCode(long customFieldId, String optionLabel, String newCode);
 
 	/**
 	 * Will check if the new option's label is available among all the concerned {@link CustomField}'s
-	 * {@link CustomFieldOption}, if so, will add the new option at the bottom of the list.
+	 * {@link CustomFieldOption}, check also if the code is available,if so, will add the new option at the bottom of the list.
 	 * 
 	 * @throws OptionAlreadyExistException
 	 * @param customFieldId
 	 *            : the id of the concerned {@link CustomField}
 	 * @param label
 	 *            : the label of the potential new option.
+	 * @param code
+	 *            : the code of the potential new option.
 	 */
-	void addOption(Long customFieldId, String label);
+	void addOption(Long customFieldId, String label, String code);
 
 	/**
 	 * Will remove the from the custom-field's option list. If the option to remove is the default one, will throw a
@@ -158,8 +174,12 @@ public interface CustomCustomFieldManagerService {
 	 * Will change the code of the custom field after having checked that : the code is unique among all custom fields,
 	 * and that the code contains only letters (upper and lower cases), numbers or under-scores.
 	 * 
-	 * @param customFieldId : the id of the concerned {@link CustomField}
-	 * @param code : the new code
+	 * @param customFieldId
+	 *            : the id of the concerned {@link CustomField}
+	 * @param code
+	 *            : the new code
 	 */
 	void changeCode(long customFieldId, String code);
+
+	
 }

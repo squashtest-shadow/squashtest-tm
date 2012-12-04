@@ -104,7 +104,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	private void checkDuplicateCode(CustomField newCustomField) {
 		CustomField codeDuplicate = customFieldDao.findByCode(newCustomField.getCode());
 		if (codeDuplicate != null) {
-			throw new CodeAlreadyExistsException(null, newCustomField.getCode());
+			throw new CodeAlreadyExistsException(null, newCustomField.getCode(), CustomField.class);
 		}		
 	}
 
@@ -169,16 +169,26 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Override
 	public void changeOptionLabel(Long customFieldId, String optionLabel, String newLabel) {
 		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
-		customField.changeOption(optionLabel, newLabel);
+		customField.changeOptionLabel(optionLabel, newLabel);
+	}
+	
+	/**
+	 * @see org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService#changeOptionCode(Long, String,
+	 *      String)
+	 */
+	@Override
+	public void changeOptionCode(long customFieldId, String optionLabel, String newCode) {
+		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
+		customField.changeOptionCode(optionLabel, newCode);
 	}
 
 	/**
-	 * @see org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService#addOption(Long, String)
+	 * @see org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService#addOption(Long, String, String)
 	 */
 	@Override
-	public void addOption(Long customFieldId, String label) {
+	public void addOption(Long customFieldId, String label, String code) {
 		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
-		customField.addOption(label);
+		customField.addOption(label, code);
 
 	}
 
@@ -222,8 +232,10 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 
 	private void checkDuplicateCode(CustomField cuf, String newCode) {		
 		if(customFieldDao.findByCode(newCode) != null){
-			throw new CodeAlreadyExistsException(cuf.getCode(), newCode);
+			throw new CodeAlreadyExistsException(cuf.getCode(), newCode, CustomField.class);
 		}
 	}
+
+	
 
 }

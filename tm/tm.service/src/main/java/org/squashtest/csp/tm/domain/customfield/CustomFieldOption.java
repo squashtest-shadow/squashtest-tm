@@ -21,6 +21,8 @@
 package org.squashtest.csp.tm.domain.customfield;
 
 import javax.persistence.Embeddable;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -41,17 +43,30 @@ public class CustomFieldOption {
 		super();
 	}
 
-	public CustomFieldOption(String label) {
+	public CustomFieldOption(String label, String code) {
 		this.label = label;
+		this.code = code;
 	}
-
+	
+	@NotBlank
+	@Size(min=0, max= 30)
+	@Pattern(regexp=CustomField.CODE_REGEXP)
+	private String code = "";
+	
 	/**
 	 * @return the label
 	 */
 	public String getLabel() {
 		return label;
 	}
-
+	
+	/**
+	 * @return the code
+	 */
+	public String getCode() {
+		return code;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 57; // NOSONAR : look somewhere else

@@ -32,6 +32,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			this.configureRenamePopup();
 			this.configureAddOptionPopup();
 			this.configureRenameOptionPopup();
+			this.configureChangeOptionCodePopup();
 			this.configureOptionTable();
 			this.configureButtons();
 			
@@ -40,6 +41,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			"click #cf-optional": "confirmOptional",
 			"click .is-default>input:checkbox": "changeDefaultOption",
 			"click .opt-label": "openRenameOptionPopup",
+			"click .opt-code" : "openChangeOptionCodePopup",
 		}, 
 		confirmOptional: function(event) {
 			var self = this;
@@ -122,6 +124,15 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			self.renameCufOptionPopup.find("#rename-cuf-option-input").val(previousValue);
 			self.renameCufOptionPopup.dialog("open");
 		},
+		openChangeOptionCodePopup: function(event){
+			var self = this;
+			var codeCell = event.currentTarget;
+			var previousValue = codeCell.textContent;
+			var label = $(codeCell).parent("tr").find("td.opt-label").text();
+			self.changeOptionCodePopup.find("#change-cuf-option-code-label").text(label);
+			self.changeOptionCodePopup.find("#change-cuf-option-code-input").val(previousValue);
+			self.changeOptionCodePopup.dialog("open");
+		},
 		renameOption: function(){
 			var self = this;
 			var previousValue = self.renameCufOptionPopup.find("#rename-cuf-option-previous").text();
@@ -131,6 +142,20 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 				data : {'value': newValue},
 				dataType : "json",
 				url : cfMod.optionsTable.ajaxSource+"/"+previousValue+"/label",
+			}).done(function(data){
+				self.optionsTable.refresh();
+			});
+			
+		},
+		changeOptionCode: function(){
+			var self = this;
+			var label = self.changeOptionCodePopup.find("#change-cuf-option-code-label").text();
+			var newValue = self.changeOptionCodePopup.find("#change-cuf-option-code-input").val();
+			$.ajax({
+				type : 'POST',
+				data : {'value': newValue},
+				dataType : "json",
+				url : cfMod.optionsTable.ajaxSource+"/"+label+"/code",
 			}).done(function(data){
 				self.optionsTable.refresh();
 			});
@@ -267,22 +292,27 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 					'sWidth': '2em', 
 						'sClass': 'centered ui-state-default drag-handle select-handle', 
 						'aTargets': [ 0 ], 
-						'mDataProp' : 'entity-index'},
+						'mDataProp' : 'entity-index',},
 					{'bSortable': false, 
 						"aTargets": [ 1 ],
 						"sClass": "opt-label linkWise",
-						"mDataProp": "opt-label"
+						"mDataProp": "opt-label",
 					},
 					{'bSortable': false, 
-						'aTargets': [ 2 ], 
+						"aTargets": [ 2 ],
+						"sClass": "opt-code linkWise",
+						"mDataProp": "opt-code",
+					},
+					{'bSortable': false, 
+						'aTargets': [ 3 ], 
 						'sClass': "is-default",
-						'mDataProp' : 'opt-default'
+						'mDataProp' : 'opt-default',
 					},
 					{'bSortable': false,
 						'sWidth': '2em', 
 						'sClass': 'delete-button',
-						'aTargets': [ 3 ],
-						'mDataProp' : 'empty-delete-holder'} ]
+						'aTargets': [ 4 ],
+						'mDataProp' : 'empty-delete-holder',}, ]
 			}, squashtm.datatable.defaults);
 			
 			var squashSettings = {
@@ -345,10 +375,11 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			 }
 			var self = this;
 			var label = $("#new-cuf-option-label-input").val();
+			var code = $("#new-cuf-option-code-input").val();
 			return $.ajax({
 				url: cfMod.optionsTable.newOptionUrl,
 				type: 'POST',
-				data: {'label': label},
+				data: {'label': label, 'code':code},
 				dataType: 'json',
 			}).done(function(){
 					self.optionsTable.refresh();
@@ -376,6 +407,29 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jeditable.selectJEd
 			};
 			squashtm.popup.create(params);
 			this.renameCufOptionPopup =  $("#rename-cuf-option-popup");
+		},
+		configureChangeOptionCodePopup: function(){
+			if($("#cuf-inputType").attr('value') != "DROPDOWN_LIST"){
+				return;
+			}
+			var self = this;
+			var params = {
+					selector : "#change-cuf-option-code-popup",
+					title : cfMod.optionsTable.changeOptionCodeTitle,
+					openedBy : "#change-cuf-option-code-popup",
+					isContextual : true,
+					usesRichEdit : false,
+					closeOnSuccess : true,
+					buttons: [ { 'text' : cfMod.optionsTable.changeOptionCodeLabel,
+					        	  'click' : function(){self.changeOptionCode.call(self);},
+					        	},
+						        { 'text' : cfMod.cancelLabel,
+						          'click' : this.closePopup,
+						        },
+							],
+			};
+			squashtm.popup.create(params);
+			this.changeOptionCodePopup =  $("#change-cuf-option-code-popup");
 		},
 		
 		

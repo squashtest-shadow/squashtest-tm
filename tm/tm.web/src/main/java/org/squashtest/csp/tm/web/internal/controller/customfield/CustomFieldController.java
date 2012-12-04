@@ -71,7 +71,7 @@ public class CustomFieldController {
 
 	@Inject
 	private CustomFieldManagerService customFieldManager;
-	
+
 	@Inject
 	private MessageSource messageSource;
 
@@ -113,9 +113,9 @@ public class CustomFieldController {
 	@ResponseBody
 	public Object getIdByName(@PathVariable String name) {
 		CustomField field = customFieldManager.findByName(name);
-		
+
 		if (field != null) {
-			Map<String, Long> res =  new HashMap<String, Long>(1);
+			Map<String, Long> res = new HashMap<String, Long>(1);
 			res.put("id", field.getId());
 			return res;
 		} else {
@@ -138,7 +138,7 @@ public class CustomFieldController {
 		customFieldManager.changeLabel(customFieldId, label);
 		return label;
 	}
-	
+
 	/**
 	 * Changes the code of the concerned custom field
 	 * 
@@ -194,18 +194,20 @@ public class CustomFieldController {
 	 *            : the id of concerned custom-field
 	 * @param defaultValue
 	 *            : the new default-value for the custom-field
-	 * @param locale : the browser's locale
+	 * @param locale
+	 *            : the browser's locale
 	 * 
 	 * @return defaultValue
 	 */
 	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.POST, params = { "id=cuf-default-value", "value" })
 	@ResponseBody
-	public String changeDefaultValueJedit(@PathVariable long customFieldId, @RequestParam("value") String defaultValue, Locale locale) {
+	public String changeDefaultValueJedit(@PathVariable long customFieldId, @RequestParam("value") String defaultValue,
+			Locale locale) {
 		customFieldManager.changeDefaultValue(customFieldId, defaultValue);
 		CustomField customField = customFieldManager.findById(customFieldId);
 		String toReturn = defaultValue;
-		if(customField.getInputType().equals(InputType.CHECKBOX)){
-			toReturn = messageSource.getMessage("label."+defaultValue, null, locale);
+		if (customField.getInputType().equals(InputType.CHECKBOX)) {
+			toReturn = messageSource.getMessage("label." + defaultValue, null, locale);
 		}
 		return toReturn;
 	}
@@ -239,8 +241,27 @@ public class CustomFieldController {
 	@ResponseBody
 	public void changeOptionLabel(@PathVariable long customFieldId, @PathVariable String optionLabel,
 			@RequestParam("value") String newLabel) {
-		
+
 		customFieldManager.changeOptionLabel(customFieldId, optionLabel, newLabel);
+	}
+	
+	/**
+	 * Changes the code of the concerned custom-field's option
+	 * 
+	 * @param customFieldId
+	 *            : the id of the concerned custom-field
+	 * @param optionCode
+	 *            : the label of the concerned custom-field's option
+	 * @param newCode
+	 *            : the new code for the concerned custom-field's option
+	 * @return
+	 */
+	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/code", method = RequestMethod.POST, params = { "value" })
+	@ResponseBody
+	public void changeOptionCode(@PathVariable long customFieldId, @PathVariable String optionLabel,
+			@RequestParam("value") String newCode) {
+
+		customFieldManager.changeOptionCode(customFieldId, optionLabel, newCode);
 	}
 
 	/**
@@ -250,11 +271,14 @@ public class CustomFieldController {
 	 *            : the id of the concerned custom-field
 	 * @param label
 	 *            : the label of the new option
+	 * @param code
+	 *            : the code of the new option
 	 */
-	@RequestMapping(value = "/{customFieldId}/options/new", method = RequestMethod.POST, params = { "label" })
+	@RequestMapping(value = "/{customFieldId}/options/new", method = RequestMethod.POST, params = { "label", "code" })
 	@ResponseBody
-	public void addOption(@PathVariable long customFieldId, @RequestParam("label") String label) {
-		customFieldManager.addOption(customFieldId, label);
+	public void addOption(@PathVariable long customFieldId, @RequestParam("label") String label,
+			@RequestParam("code") String code) {
+		customFieldManager.addOption(customFieldId, label, code);
 	}
 
 	/**
@@ -308,27 +332,34 @@ public class CustomFieldController {
 
 			Map<String, Object> res = new HashMap<String, Object>();
 			String checked = " ";
-			if(customField.getDefaultValue().equals(item.getLabel())){
+			if (customField.getDefaultValue().equals(item.getLabel())) {
 				checked = " checked='checked' ";
 			}
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put("opt-label", item.getLabel());
-			res.put("opt-default", "<input type='checkbox' name='default' value='" + item.getLabel() + "'"+checked+ "/>");
+			res.put("opt-code", item.getCode());
+			res.put("opt-default", "<input type='checkbox' name='default' value='" + item.getLabel() + "'" + checked
+					+ "/>");
 			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;
 		}
 	}
-	
+
 	/**
 	 * Will change custom field's options positions.
 	 * 
-	 * @param customFieldId : the id of the concerned CustomField.
-	 * @param newIndex : the lowest index for the moved selection
-	 * @param optionsLabels : the labels of the moved options
+	 * @param customFieldId
+	 *            : the id of the concerned CustomField.
+	 * @param newIndex
+	 *            : the lowest index for the moved selection
+	 * @param optionsLabels
+	 *            : the labels of the moved options
 	 */
-	@RequestMapping(value = "/{customFieldId}/options/positions", method = RequestMethod.POST, params = { "itemIds[]", "newIndex" })
+	@RequestMapping(value = "/{customFieldId}/options/positions", method = RequestMethod.POST, params = { "itemIds[]",
+			"newIndex" })
 	@ResponseBody
-	public void changeOptionsPositions(@PathVariable long customFieldId, @RequestParam int newIndex, @RequestParam("itemIds[]") List<String> optionsLabels) {
+	public void changeOptionsPositions(@PathVariable long customFieldId, @RequestParam int newIndex,
+			@RequestParam("itemIds[]") List<String> optionsLabels) {
 		customFieldManager.changeOptionsPositions(customFieldId, newIndex, optionsLabels);
 	}
 }

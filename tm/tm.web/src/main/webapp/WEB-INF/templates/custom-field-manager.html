@@ -43,6 +43,8 @@
   		},
 		messages: {
 			"message.optionAlreadyDefined": /*[[ #{message.optionAlreadyDefined} ]]*/ "Option is already defined", 
+			"message.optionCodeAlreadyDefined": /*[[ #{message.optionCodeAlreadyDefined} ]]*/ "Code is already defined", 
+			"message.optionCodeInvalidPattern" : /*[[ #{message.optionCodeInvalidPattern} ]]*/ "Code must have only letters, numbers and under-scores",
 			"message.defaultOptionMandatory": /*[[ #{message.defaultOptionMandatory} ]]*/ "Default option is mandatory when field is not optional", 
 			"message.defaultValueMandatory": /*[[ #{message.defaultValueMandatory} ]]*/ "Default value is mandatory when field is not optional", 
 			"message.notBlank": /*[[ #{message.notBlank} ]]*/ "Value should not be blank", 
@@ -245,12 +247,17 @@
         <script id="DROPDOWN_LIST-default-tpl" type="text/x-handlebars-template" th:inline="text">
         	<h3 th:text="#{title.optionsDefinition}">Options definition</h3>
 					<div class="control-group">
-         		<label class="control-label" for="new-option" th:text="#{label.newOption}">New option</label>
+         				<label class="control-label" for="new-option" th:text="#{label.newOption}">New option</label>
 						<div class="controls">
 							<input name="new-option" type="text" value="" />
-         			<input class="add-option" type="button" th:value="#{label.addOption}" value="Add an option" />
 							<span class="not-displayed help-inline">&nbsp;</span>
 						</div>
+						<label class="control-label" for="new-option-code" th:text="#{label.code}">Code</label>
+						<div class="controls">
+							<input name="new-option-code" type="text" value="" />
+							<span class="not-displayed help-inline">&nbsp;</span>
+						</div>
+						<input class="add-option" type="button" th:value="#{label.addOption}" value="Add an option" />
 					</div>
 					<span th:remove="all">
 						<!-- class="dataTables_wrapper" : ugly hack to get the desired style. usually, because of table footer, this div is inserted by dataTables. here we have no footer. -->
@@ -259,9 +266,10 @@
 		        <table id="options-table">
 							<thead>
     	      	  <tr>
-      	  	      <th th:text="#{label.option}">Option</th>
-									<th style="width: 2em;" th:text="#{label.default}">Default</th>
-									<th style="width: 1.5em;">&nbsp;</th>
+      	  	      	<th th:text="#{label.option}">Option</th>
+					<th th:text="#{label.code}">Code</th>
+				  	<th style="width: 2em;" th:text="#{label.default}">Default</th>
+				  	<th style="width: 1.5em;">&nbsp;</th>
 	      	      </tr>
   	  	      </thead>
     		      <tbody>

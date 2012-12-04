@@ -21,8 +21,6 @@
 
 package org.squashtest.csp.tm.web.internal.controller.customfield;
 
-import java.util.List;
-
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.InputType;
 import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
@@ -33,7 +31,7 @@ import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
  */
 public class NewCustomField extends CustomField {
 	private InputType inputType;
-	private List<String> options;
+	private String[][] options;
 
 	public NewCustomField() {
 		super(InputType.PLAIN_TEXT);
@@ -62,8 +60,10 @@ public class NewCustomField extends CustomField {
 		CustomField res;
 		SingleSelectField ssf = new SingleSelectField();
 		 
-		for(String option : options) {
-			ssf.addOption(option);
+		for(String[] option : options) {
+			String label = option[0];
+			String code = option[1];
+			ssf.addOption(label,code );
 		}
 		
 		res = ssf;
@@ -89,7 +89,7 @@ public class NewCustomField extends CustomField {
 	/**
 	 * @return the options
 	 */
-	public List<String> getOptions() {
+	public String[][] getOptions() {
 		return options;
 	}
 
@@ -97,7 +97,7 @@ public class NewCustomField extends CustomField {
 	 * @param options
 	 *            the options to set
 	 */
-	public void setOptions(List<String> options) {
+	public void setOptions(String[][] options) {
 		this.options = options;
 	}
 }

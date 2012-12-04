@@ -515,6 +515,11 @@
   	<column name="CODE" defaultValue="" type="VARCHAR(30)"><constraints nullable="false"/></column>
   	</addColumn>
   </changeSet>
+    <changeSet id="tm-1.4.0.feat-1638.02" author="mpagnon">
+  	<addColumn tableName="CUSTOM_FIELD_OPTION">
+  	<column name="CODE" defaultValue="" type="VARCHAR(30)"><constraints nullable="false"/></column>
+  	</addColumn>
+  </changeSet>
   
 </databaseChangeLog>
  

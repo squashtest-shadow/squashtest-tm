@@ -48,7 +48,7 @@ define(
 							inputType : "PLAIN_TEXT",
 							optional : true,
 							defaultValue : "",
-							options : []
+							options : [][2]
 						},
 
 						resetDefaultValue : function() {
@@ -60,16 +60,34 @@ define(
 
 						addOption : function(option) {
 							var options = this.attributes.options;
-
-							if ($.inArray(option, options) > -1) {
+							if(this.optionAlreadyDefined(option[0]) || this.optionCodeAlreadyDefined(option[1])){
 								return false;
-							}
-
+							}		
 							options.push(option);
 
 							return true;
 						},
-
+						optionAlreadyDefined: function(optionLabel){
+							var options = this.attributes.options;
+							for(var i=0; i<options.length; i++){
+								if(optionLabel == options[i][0]){
+									return true;
+								}
+								return false;
+							}
+						},
+						optionCodeAlreadyDefined: function(optionCode){
+							var options = this.attributes.options;
+							for(var i=0; i<options.length; i++){
+								if(optionCode == options[i][1]){
+									return true;
+								}
+								return false;
+							}
+						},
+						optionCodePatternValid: function(optionCode){
+							return optionCode.match(/^[A-Za-z0-9_]*$/);
+						},
 						removeOption : function(option) {
 							var options = this.attributes.options, pos = $
 									.inArray(option, options);

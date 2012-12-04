@@ -59,8 +59,10 @@
 				deleteTooltip: /*[[ #{label.Remove} ]]*/ 'Remove',
 				deleteConfirmMessage : /*[[ #{message.customFieldOption.remove} ]]*/ 'Remove ?',
 				renameCufOptionTitle : /*[[#{title.renameCufOption}]]*/ 'Rename custom field option',
+				changeOptionCodeTitle:/*[[#{title.changeCufOptionCode}]]*/ 'Change custom field option code',
 				addCufOptionTitle : /*[[#{title.addCufOption}]]*/ 'Add custom field option',
 				renameOptionLabel: /*[[#{label.Rename}]]*/ 'Rename',
+				changeOptionCodeLabel: /*[[#{label.changeCode}]]*/ 'Change code',
 				addOptionLabel : /*[[#{label.addOption}]]*/ 'Add option',
 			}
   		},
@@ -214,6 +216,7 @@
 							<tr>
 							 <th>#</th>
               					<th th:text="#{label.option}">Option</th>
+              					<th th:text="#{label.code}">Code</th>
               					<th th:text="#{label.default}">Default</th>
               					<th>&nbsp;</th>
             				</tr>
@@ -222,18 +225,21 @@
 				             <tr th:each="cfOpt , iterStat: ${customField.options}" th:object="${cfOpt}">
 				              	<td th:text="${iterStat.count}">1</td>
 				             	<td th:text="*{label}">label1</td>
+				             	<td th:text="*{code}">code1</td>
 				             	<td><input type="checkbox" name="default" th:value="*{label}" value="label1" th:checked="${customField.defaultValue == cfOpt.label}"/></td>
 				             	<td></td>
 				             </tr>
 				             <tr th:remove="all">
 				             	<td>2</td>
 				             	<td class="opt-label">label2</td>
+				             	<td class="opt-code">code2</td>
 				             	<td class="is-default"><input type="checkbox" name="default" value="label2" /></td>
 				             	<td class="delete-button"></td>
 				             	 </tr>
 				             <tr th:remove="all">
 				             	<td>3</td>
 				             	<td class="opt-label">label3</td>
+				             	<td class="opt-code">code3</td>
 				             	<td class="is-default"><input type="checkbox" name="default"  value="label3" checked="checked"/></td>
 				             	<td class="delete-button"></td>
 				             </tr>
@@ -254,14 +260,24 @@
 	</div>
 	<div id="add-cuf-option-popup" class="not-displayed popup-dialog" th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
 			<label for="new-cuf-option-label-input" th:text="#{label.newOption}">New option</label>
-          	<input id="new-cuf-option-label-input" name="label" type="text" value="" />
+          	<input id="new-cuf-option-label-input" name="label" type="text" value="" maxlength="255" size="50" />
+          
+          	<label for="new-cuf-option-code-input" th:text="#{label.code}">Code</label>
+          	<input id="new-cuf-option-code-input" name="code" type="text" value="" maxlength="30" size="50" />
+          	
           	<span id="new-option-error" class="error-message option-error"></span>
 	</div>
-		<div id="rename-cuf-option-popup" class="not-displayed popup-dialog" th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
-	<span class="not-displayed" id="rename-cuf-option-previous"></span>
-			<label for="rename-cuf-option-input" th:text="#{label.Label}">Label</label>
-			<input id="rename-cuf-option-input" name="label" type="text" value="" />
-          	<span id="rename-cuf-option-error" class="error-message option-error"></span>
+	<div id="rename-cuf-option-popup" class="not-displayed popup-dialog" th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
+		<span class="not-displayed" id="rename-cuf-option-previous"></span>
+		<label for="rename-cuf-option-input" th:text="#{label.Label}">Label</label>
+		<input id="rename-cuf-option-input" name="label" type="text" value="" maxlength="255" size="50" />
+        <span id="rename-cuf-option-error" class="error-message option-error"></span>
+	</div>
+	<div id="change-cuf-option-code-popup" class="not-displayed popup-dialog" th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
+		<span class="not-displayed" id="change-cuf-option-code-label"></span>
+		<label for="change-cuf-option-code-input" th:text="#{label.code}">Code</label>
+		<input id="change-cuf-option-code-input" name="code" type="text" value="" maxlength="30" size="50" />
+        <span id="change-cuf-option-code-error" class="error-message option-error"></span>
 	</div>
 </body>
 </html>

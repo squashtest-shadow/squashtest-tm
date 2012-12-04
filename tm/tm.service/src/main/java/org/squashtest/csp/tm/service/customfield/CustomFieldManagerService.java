@@ -39,6 +39,7 @@ public interface CustomFieldManagerService extends CustomCustomFieldManagerServi
 
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeDefaultValue(long customFieldId, String defaultValue);
+
 	
 	
 
