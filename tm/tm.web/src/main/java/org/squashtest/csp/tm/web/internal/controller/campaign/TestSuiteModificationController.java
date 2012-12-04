@@ -53,13 +53,10 @@ import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.csp.tm.domain.users.User;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanFinder;
 import org.squashtest.csp.tm.service.TestAutomationFinderService;
 import org.squashtest.csp.tm.service.TestSuiteModificationService;
-import org.squashtest.csp.tm.service.UserAccountService;
 import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
@@ -89,8 +86,6 @@ public class TestSuiteModificationController {
 
 	private IterationTestPlanFinder iterationTestPlanFinder;
 
-	private UserAccountService userService;
-	
 	@Inject
 	private PermissionEvaluationService permissionService;
 
@@ -121,11 +116,6 @@ public class TestSuiteModificationController {
 	@ServiceReference
 	public void setIterationModificationService(IterationModificationService iterationModService) {
 		this.iterationModService = iterationModService;
-	}
-
-	@ServiceReference
-	public void setUserAccountService(UserAccountService service){
-		this.userService=service;
 	}
 	
 	@Inject
@@ -281,17 +271,12 @@ public class TestSuiteModificationController {
 					+ newIndex);
 		}
 	}
-
-	private List<Execution> getFilteredExecutions(long iterationId, long testPlanId){
-
-		return iterationModService.filterExecutionsForCurrentUser(iterationId,testPlanId);
-	}
 	
 	@RequestMapping(value = "{iterationId}/test-case-executions/{testPlanId}", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable long id, @PathVariable long iterationId,
 			@PathVariable long testPlanId) {
 		TestSuite testSuite = service.findById(id);
-		List<Execution> executionList = getFilteredExecutions(iterationId, testPlanId);
+		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
 		// get the iteraction to check access rights
 		Iteration iter = iterationModService.findById(iterationId);
 		IterationTestPlanItem iterationTestPlanItem = iterationTestPlanFinder.findTestPlanItem(iterationId, testPlanId);
@@ -307,11 +292,6 @@ public class TestSuiteModificationController {
 
 		return mav;
 
-	}
-
-	private List<IterationTestPlanItem> getFilteredTestSuiteTestPlan(long iterationId, Paging paging){
-		
-		return iterationModService.filterIterationForCurrentUser(iterationId);
 	}
 	
 	@RequestMapping(value = "/test-plan/table", params = "sEcho")

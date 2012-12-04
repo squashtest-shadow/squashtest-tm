@@ -35,7 +35,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
-import org.squashtest.csp.tm.domain.TestPlanItemUnauthorizedExecutionException;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
@@ -45,7 +44,6 @@ import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.internal.repository.AutomatedSuiteDao;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
@@ -344,9 +342,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 	
 	@Override
-	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException, TestPlanItemUnauthorizedExecutionException {
-		
-		checkTesterRightRestrictions(item);
+	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException{
 		
 		Execution execution = item.createExecution(testCaseCyclicCallChecker);
 		// if we dont persist before we add, add will trigger an update of item.testPlan which fail because execution
@@ -357,10 +353,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return execution;
 	}
 	
-	public Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException, TestPlanItemUnauthorizedExecutionException {
+	public Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException{
 
-		checkTesterRightRestrictions(item);
-		
 		Execution execution = item.createAutomatedExecution(testCaseCyclicCallChecker);
 		
 		executionDao.persist(execution);
@@ -369,21 +363,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return execution;
 		
 	}
-	
-	private void checkTesterRightRestrictions(IterationTestPlanItem item) throws TestPlanItemUnauthorizedExecutionException{
-		
-		//if the user is a tester, executions can only be created if the item is assigned to them.
-		String userLogin = getCurrentUserLogin();
-		long projectId = item.getProject().getId();
-		
-		if(isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")){
-			
-			if(item.getUser() == null || !item.getUser().getLogin().equals(userLogin)){
-				throw new TestPlanItemUnauthorizedExecutionException();
-			}
-		}
-	}
-
 
 	/* ************************* security ************************* */
 
@@ -417,7 +396,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		
 		Long projectId = iteration.getProject().getId();
 		
-		if(isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")){
+		if(projectsPermissionFinder.isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")){
 			
 			for(IterationTestPlanItem testPlanItem: testPlanItems){
 					
@@ -432,40 +411,12 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return testPlanItemsToReturn;
 	}
 
-	private boolean isInPermissionGroup(String userLogin, Long projectId, String permissionGroup){
-		
-		boolean isInGroup = false;
-		List<UserProjectPermissionsBean> permissions = projectsPermissionFinder.findUserPermissionsBeanByProject(projectId);
-		for(UserProjectPermissionsBean permission : permissions){
-			if(permission.getUser().getLogin().equals(userLogin)){
-				if(permission.getPermissionGroup().getQualifiedName().equals(permissionGroup)){
-					isInGroup = true;
-				}
-			}
-		}
-		
-		return isInGroup;
-	}
-	
 	private boolean hasToBeReturned(IterationTestPlanItem testPlanItem, String userLogin){
 		
 		boolean hasToBeReturned = false;
 		
-		if(testPlanItem.getUser() == null || !(testPlanItem.getUser().getLogin()==userLogin)){
+		if(testPlanItem.getUser() != null && (testPlanItem.getUser().getLogin()==userLogin)){
 			
-			//The test plan item is not assigned to the user
-			
-			List<Execution> executions = testPlanItem.getExecutions();
-			for(Execution execution : executions){
-				if(execution.getLastExecutedBy() != null && execution.getLastExecutedBy().equals(userLogin)){
-					
-					//But one execution has been run by this user
-					hasToBeReturned = true;
-				}
-			}
-		} else {
-			
-			//The test plan item is assigned to the user
 			hasToBeReturned = true;
 		}
 		
@@ -474,39 +425,5 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	
 	private String getCurrentUserLogin(){
 		return userService.findCurrentUser().getLogin();
-	}
-	
-	@Override
-	public List<Execution> filterExecutionsForCurrentUser(long iterationId, long testPlanId) {
-		
-		List<Execution> executionsToReturn = new ArrayList<Execution>();
-		IterationTestPlanItem item = testPlanDao.findById(testPlanId);
-		String userLogin = getCurrentUserLogin();
-		
-		Long projectId = item.getProject().getId();
-		
-		if(isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")){
-			//the user is a tester
-
-			if(item.getUser() == null || !item.getUser().equals(userLogin)){
-				
-				//the testPlanItem is not assigned to this user
-				for(Execution execution : item.getExecutions()){
-					
-					if(execution.getLastExecutedBy() != null && execution.getLastExecutedBy().equals(userLogin)){
-						executionsToReturn.add(execution);
-					}
-				}
-				
-			} else {
-				//the testPlanItem is assigned to this user	
-				executionsToReturn.addAll(item.getExecutions());
-			}
-			
-		} else {
-			executionsToReturn.addAll(item.getExecutions());
-		}
-		
-		return executionsToReturn;
 	}
 }

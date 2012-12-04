@@ -52,6 +52,4 @@ public interface IterationFinder {
 	 * @return
 	 */
 	List<IterationTestPlanItem> filterIterationForCurrentUser(long iterationId);
-
-	List<Execution> filterExecutionsForCurrentUser(long iterationId, long testPlanId);
 }

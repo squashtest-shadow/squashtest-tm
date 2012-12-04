@@ -185,7 +185,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 
 		List<IterationTestPlanItem> testPlanItemsToReturn = new ArrayList<IterationTestPlanItem>();
 
-		if(isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")){
+		if(projectsPermissionFinder.isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")){
 			
 			for(IterationTestPlanItem testPlanItem: testPlanItems){
 					
@@ -200,40 +200,12 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 		return testPlanItemsToReturn;
 	}
 
-	private boolean isInPermissionGroup(String userLogin, Long projectId, String permissionGroup){
-		
-		boolean isInGroup = false;
-		List<UserProjectPermissionsBean> permissions = projectsPermissionFinder.findUserPermissionsBeanByProject(projectId);
-		for(UserProjectPermissionsBean permission : permissions){
-			if(permission.getUser().getLogin().equals(userLogin)){
-				if(permission.getPermissionGroup().getQualifiedName().equals(permissionGroup)){
-					isInGroup = true;
-				}
-			}
-		}
-		
-		return isInGroup;
-	}
-	
 	private boolean hasToBeReturned(IterationTestPlanItem testPlanItem, String userLogin){
 		
 		boolean hasToBeReturned = false;
 		
-		if(testPlanItem.getUser() == null || !(testPlanItem.getUser().getLogin()==userLogin)){
-			
-			//The test plan item is not assigned to the user
-			
-			List<Execution> executions = testPlanItem.getExecutions();
-			for(Execution execution : executions){
-				if(execution.getLastExecutedBy() != null && execution.getLastExecutedBy().equals(userLogin)){
-					
-					//But one execution has been run by this user
-					hasToBeReturned = true;
-				}
-			}
-		} else {
-			
-			//The test plan item is assigned to the user
+		if(testPlanItem.getUser() != null && (testPlanItem.getUser().getLogin()==userLogin)){
+		
 			hasToBeReturned = true;
 		}
 		

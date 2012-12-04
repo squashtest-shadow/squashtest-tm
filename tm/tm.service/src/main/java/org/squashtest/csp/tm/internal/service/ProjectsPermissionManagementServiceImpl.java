@@ -241,4 +241,20 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		ObjectIdentity projectRef = new ObjectIdentityImpl(ProjectTemplate.class, templateId);
 		aclService.removeAllResponsibilities(projectRef);
 	}
+	
+	@Override
+	public boolean isInPermissionGroup(String userLogin, Long projectId, String permissionGroup){
+		
+		boolean isInGroup = false;
+		List<UserProjectPermissionsBean> permissions = findUserPermissionsBeanByProject(projectId);
+		for(UserProjectPermissionsBean permission : permissions){
+			if(permission.getUser().getLogin().equals(userLogin)){
+				if(permission.getPermissionGroup().getQualifiedName().equals(permissionGroup)){
+					isInGroup = true;
+				}
+			}
+		}
+		
+		return isInGroup;
+	}
 }

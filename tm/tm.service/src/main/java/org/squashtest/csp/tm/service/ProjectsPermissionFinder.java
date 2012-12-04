@@ -51,4 +51,6 @@ public interface ProjectsPermissionFinder {
 	 * @param projectId
 	 */
 	void removeProjectPermission(long userId, long projectId);
+	
+	public boolean isInPermissionGroup(String userLogin, Long projectId, String permissionGroup);
 }

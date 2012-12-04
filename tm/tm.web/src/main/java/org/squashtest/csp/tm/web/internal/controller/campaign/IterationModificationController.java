@@ -63,7 +63,6 @@ import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.IterationModificationService;
 import org.squashtest.csp.tm.service.IterationTestPlanFinder;
 import org.squashtest.csp.tm.service.TestAutomationFinderService;
-import org.squashtest.csp.tm.service.UserAccountService;
 import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.csp.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
@@ -91,8 +90,6 @@ public class IterationModificationController {
 
 	private IterationModificationService iterationModService;
 
-	private UserAccountService userService;
-	
 	@Inject
 	private PermissionEvaluationService permissionService;
 
@@ -119,11 +116,6 @@ public class IterationModificationController {
 		this.testAutomationService = testAutomationService;
 	}
 
-	@ServiceReference
-	public void setUserAccountService(UserAccountService service){
-		this.userService=service;
-	}
-	
 	@Inject
 	private InternationalizationHelper messageSource;
 
@@ -399,17 +391,12 @@ public class IterationModificationController {
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource) ;
 
 	}
-
-	private List<Execution> getFilteredExecutions(long iterationId, long testPlanId){
-		
-		return iterationModService.filterExecutionsForCurrentUser(iterationId, testPlanId);
-	}
 	
 	@RequestMapping(value = "/test-case-executions/{testPlanId}", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable long iterationId, @PathVariable long testPlanId) {
 
 		//TODO
-		List<Execution> executionList = getFilteredExecutions(iterationId,testPlanId);
+		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
 		// get the iteraction to check access rights
 		Iteration iter = iterationModService.findById(iterationId);
 		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", iter);

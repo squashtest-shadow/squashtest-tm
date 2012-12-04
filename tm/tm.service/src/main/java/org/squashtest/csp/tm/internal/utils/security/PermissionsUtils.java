@@ -24,9 +24,11 @@ import org.springframework.security.access.AccessDeniedException;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 
 public class PermissionsUtils {
+
 	private PermissionsUtils(){
 		
 	}
+	
 	public static final void checkPermission(PermissionEvaluationService permissionService, SecurityCheckableObject... checkableObjects) {
 		for (SecurityCheckableObject object : checkableObjects) {
 			if (!permissionService
