@@ -210,8 +210,8 @@
 			
 			var url = runnerUrl;
 			$('body form#start-optimized-form').remove();
-			$('body').append('<form id="start-optimized-form" action="'+runnerUrl+'" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="true" name="optimized" id="start-optimized-button" /><input type="button" value="false" name="suitemode"  /></form>');
-			
+			$('body').append('<form id="start-optimized-form" action="'+runnerUrl+'?optimized=true&suitemode=false" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="true" name="optimized" id="start-optimized-button" /><input type="button" value="false" name="suitemode"  /></form>');
+	
 			$('#start-optimized-button').trigger('click');
 		};
 		
