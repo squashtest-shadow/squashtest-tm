@@ -187,14 +187,19 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 			
 			optionInput.clearState();
 			
-			if (this.model.addOption(option)) {
-				this.optionsTable.dataTable().fnAddData([ option, false, "" ]);
-				optionInput.clearState();
-				optionInput.$el.val("");
-				
+			if($.trim(option) === ""){
+				optionInput.setState("error", "message.notBlank");
 			} else {
-				optionInput.setState("error", "message.optionAlreadyDefined");
 				
+				if (this.model.addOption(option)) {
+					this.optionsTable.dataTable().fnAddData([ option, false, "" ]);
+					optionInput.clearState();
+					optionInput.$el.val("");
+					
+				} else {
+					optionInput.setState("error", "message.optionAlreadyDefined");
+					
+				}
 			}
 		},
 		
