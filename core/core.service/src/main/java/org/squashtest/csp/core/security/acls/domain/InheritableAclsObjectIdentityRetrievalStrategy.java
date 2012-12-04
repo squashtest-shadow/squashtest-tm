@@ -59,18 +59,20 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 			this.heir = heir;
 		}
 
-		@Override// NOSONAR generated code
+		@Override
+		// NOSONAR generated code
 		public int hashCode() { // NOSONAR generated code
 			final int prime = 31;
-			int result = 1;
+			int result = 17;
 			result = prime * result + ((heir == null) ? 0 : heir.hashCode());
 			result = prime * result + ((constrained == null) ? 0 : constrained.hashCode());
 			return result;
 		}
 
-		@Override// NOSONAR generated code
+		@Override
+		// NOSONAR generated code
 		public boolean equals(Object obj) { // NOSONAR generated code
-			//CHECKSTYLE:OFF
+			// CHECKSTYLE:OFF
 			if (this == obj) {
 				return true;
 			}
@@ -96,7 +98,7 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 				return false;
 			}
 			return true;
-			//CHECKSTYLE:ON
+			// CHECKSTYLE:ON
 		}
 
 	}
@@ -130,16 +132,11 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 		if (inherits == null) {
 			identityHolder = domainObject;
 
-			if (LOGGER.isTraceEnabled()) {
-				LOGGER.trace("Will use domain object for OID retrieval of " + identityHolder);
-			}
-
+			LOGGER.trace("Will use domain object for OID retrieval of {}", identityHolder);
 		} else {
 			identityHolder = findAclHolder(domainObject, inherits);
 
-			if (LOGGER.isTraceEnabled()) {
-				LOGGER.trace("Will use constrained object " + identityHolder + " for OID retrieval of " + domainObject);
-			}
+			LOGGER.trace("Will use constrained object {} for OID retrieval of {}", identityHolder, domainObject);
 
 		}
 
@@ -147,9 +144,7 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 	}
 
 	private Object findAclHolder(Object domainObject, InheritsAcls inherits) {
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("Looking for constrained object for OID retrieval of " + domainObject);
-		}
+		LOGGER.trace("Looking for constrained object for OID retrieval of {}", domainObject);
 
 		String hql;
 
@@ -168,8 +163,8 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 
 	private void cacheQuery(Object domainObject, InheritsAcls inherits, String hql) {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Caching query : [" + inherits.constrainedClass().getSimpleName() + ','
-					+ domainObject.getClass().getSimpleName() + "] -> '" + hql + '\'');
+			LOGGER.debug("Caching query : [{},{}] -> '{}'", new Object[] { inherits.constrainedClass().getSimpleName(),
+					domainObject.getClass().getSimpleName(), hql });
 		}
 		hqlCache.put(new Key(inherits.constrainedClass(), domainObject.getClass()), hql);
 

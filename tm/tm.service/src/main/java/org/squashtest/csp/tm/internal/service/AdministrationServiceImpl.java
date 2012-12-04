@@ -39,7 +39,6 @@ import org.squashtest.csp.tm.domain.users.UsersGroup;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.internal.repository.AdministrationDao;
-import org.squashtest.csp.tm.internal.repository.GenericDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.internal.repository.UsersGroupDao;

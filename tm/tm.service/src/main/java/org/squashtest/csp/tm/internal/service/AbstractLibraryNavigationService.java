@@ -148,7 +148,6 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		return getFolderDao().findAllContentById(folderId);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public final LIBRARY findLibrary(long libraryId) {
 		// fetch
@@ -159,7 +158,6 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		return library;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public final LIBRARY findCreatableLibrary(long libraryId) {
 		// fetch
@@ -170,7 +168,6 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		return library;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public final FOLDER findFolder(long folderId) {
 		// fetch
@@ -300,7 +297,6 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void modeNodesToFolder(long destinationId, Long[] targetIds) {
 
@@ -332,7 +328,6 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void moveNodesToLibrary(long destinationId, Long[] targetIds) {
 
@@ -408,7 +403,6 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		return getDeletionHandler().simulateDeletion(targetIds);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> deleteNodes(List<Long> targetIds) {
 

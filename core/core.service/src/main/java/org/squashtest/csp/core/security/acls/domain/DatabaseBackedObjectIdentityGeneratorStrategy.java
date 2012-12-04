@@ -65,7 +65,7 @@ public class DatabaseBackedObjectIdentityGeneratorStrategy implements ObjectIden
 			Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(type);
 			Session session = sessionFactory.getCurrentSession();
 
-			Object instance = session.get(clazz, id);
+			Object instance = session.load(clazz, id);
 
 			return objectRetrievalStrategy.getObjectIdentity(instance);
 
