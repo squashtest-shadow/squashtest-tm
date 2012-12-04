@@ -20,13 +20,15 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.project;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.csp.tm.domain.project.ProjectTemplate;
+import org.squashtest.csp.tm.domain.NamedReference;
 import org.squashtest.csp.tm.service.project.ProjectTemplateFinder;
 
 @Controller
@@ -37,34 +39,8 @@ public class ProjectTemplateController {
 	private ProjectTemplateFinder projectFinder;
 	
 
-	@RequestMapping(value="/combo", method = RequestMethod.GET)
-	@ResponseBody
-	public Combo getProjectPickerModel() {
-		StringBuilder toReturn = new StringBuilder("<select>");
-		for (ProjectTemplate template : projectFinder.findAll()) {
-			toReturn.append("<option value = \"");
-			toReturn.append(template.getId());
-			toReturn.append("\">" +  template.getLabel() + "</option>");
-		}
-		toReturn.append("</select>");
-		
-		return new Combo(toReturn.toString());
-	}
-	private static class Combo {
-		private String templates ;
-
-		public Combo(String templates) {
-			super();
-			this.templates = templates;
-		}
-
-		public String getTemplates() {
-			return templates;
-		}
-
-		public void setTemplates(String templates) {
-			this.templates = templates;
-		}
-		
+	@RequestMapping(method = RequestMethod.GET, params="dropdownList")
+	public @ResponseBody List<NamedReference> getTemplateDropdownModel() {
+		return projectFinder.findAllReferences();
 	}
 }

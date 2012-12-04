@@ -25,14 +25,8 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 		
 		initialize: function() {
 			var textareas = this.$el.find("textarea");
-			var self = this;
-			$.ajax({
-				url : squashtm.app.contextRoot + "/project-templates/combo",
-				context : self.$el.find("#add-project-from-template-template"),
-				success : function(data) {
-					this.html(data.templates);
-				}
-			});
+			
+			this.initializeTemplatesList();
 			
 			function decorateArea() {
 				$(this).ckeditor(function() {}, { 
@@ -50,6 +44,23 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 				autoOpen: true
 			});
 		}, 
+		
+		initializeTemplatesList: function() {
+			var self = this;
+			$.ajax({
+				url: squashtm.app.contextRoot + "/project-templates",
+				data: { dropdownList: "" }, 
+				success : function(data) {
+					self.renderTemplatesList(data);
+				}
+			});
+		}, 
+		
+		renderTemplatesList: function(data) {
+			var source   = this.$el.find("#templates-list-tpl").html();
+			var template = Handlebars.compile(source);
+			this.$el.find("#add-project-from-template-template").html(template({items: data}));
+		},
 		
 		events: {
 			"confirmdialogcancel": "cancel",
@@ -125,7 +136,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 			model.copyCUF = $el.find("input:checkbox[name='copyCUF']").prop("checked");
 			model.copyBugtrackerBinding = $el.find("input:checkbox[name='copyBugtrackerBinding']").prop("checked");
 			model.copyAutomatedProjects = $el.find("input:checkbox[name='copyAutomatedProjects']").prop("checked");
-		},
+		}
 		
 	});
 

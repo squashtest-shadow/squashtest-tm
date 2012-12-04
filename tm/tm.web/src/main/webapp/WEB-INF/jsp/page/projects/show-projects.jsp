@@ -229,6 +229,15 @@
       <input class="confirm" type="button" value="<f:message key='label.Add' />" />
       <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />
     </div>
+    
+    <script id="templates-list-tpl" type="text/x-handlebars-template">
+			<select>
+        {{#each items}}
+        <option value="{{this.id}}">{{this.name}}</option>
+        {{/each}}
+			</select>
+     </script>
+    
   </div>
   <!--   ===========================/CREATE FROM TEMPLATE DIALOG=======================================  -->
   </sec:authorize>

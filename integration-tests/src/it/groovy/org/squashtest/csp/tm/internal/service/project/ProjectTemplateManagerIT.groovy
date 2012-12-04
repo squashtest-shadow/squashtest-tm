@@ -18,26 +18,39 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service.project;
 
-import java.util.List;
+package org.squashtest.csp.tm.internal.service.project;
 
-import org.springframework.security.access.prepost.PostFilter;
+import static org.junit.Assert.*;
+
+import javax.inject.Inject;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.NamedReference;
+import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
+import org.squashtest.csp.tm.service.project.ProjectManagerService;
+import org.squashtest.csp.tm.service.project.ProjectTemplateManagerService;
+import org.unitils.dbunit.annotation.DataSet;
+
+import spock.unitils.UnitilsSupport;
 
 /**
- * @author mpagnon
- * 
+ * @author Gregory Fouquet
+ *
  */
-@Transactional(readOnly = true)
-public interface ProjectTemplateFinder extends CustomProjectTemplateFinder {
-	/**
-	 * Finds all templates order by name and returns them as {@link NamedReference}s
-	 * 
-	 * @return
-	 */
-	@PostFilter("hasPermission(filterObject.id, 'org.squashtest.csp.tm.domain.project.ProjectTemplate', 'READ') or hasRole('ROLE_ADMIN')")
-	List<NamedReference> findAllReferences();
-	
+@UnitilsSupport
+@Transactional
+class ProjectTemplateManagerIT extends DbunitServiceSpecification {
+
+	@Inject ProjectTemplateManagerService manager
+
+	@DataSet("ProjectTemplateManagerIT.xml")
+	def"should find all references"(){
+		when:
+		def res = manager.findAllReferences()
+
+		then:
+		res.collect { it.class } == [ NamedReference, NamedReference ] 
+		res*.name == [ "FOUR", "TWO" ] 
+	}
 }

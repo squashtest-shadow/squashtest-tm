@@ -18,26 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service.project;
 
-import java.util.List;
+package org.squashtest.csp.tm.domain;
 
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.NamedReference;
+import java.io.Serializable;
+
+import javax.validation.constraints.NotNull;
 
 /**
- * @author mpagnon
+ * This can b used as a reference or summary of any entity which has a name.
+ * 
+ * @author Gregory Fouquet
  * 
  */
-@Transactional(readOnly = true)
-public interface ProjectTemplateFinder extends CustomProjectTemplateFinder {
-	/**
-	 * Finds all templates order by name and returns them as {@link NamedReference}s
-	 * 
-	 * @return
-	 */
-	@PostFilter("hasPermission(filterObject.id, 'org.squashtest.csp.tm.domain.project.ProjectTemplate', 'READ') or hasRole('ROLE_ADMIN')")
-	List<NamedReference> findAllReferences();
-	
+public class NamedReference implements Serializable {
+
+	private final Long id;
+
+	private final String name;
+
+	public NamedReference(@NotNull Long id, @NotNull String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
 }

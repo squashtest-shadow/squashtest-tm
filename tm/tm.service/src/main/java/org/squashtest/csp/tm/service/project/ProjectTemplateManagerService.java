@@ -21,9 +21,7 @@
 package org.squashtest.csp.tm.service.project;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.service.CustomProjectModificationService;
 
 @Transactional
 public interface ProjectTemplateManagerService extends CustomProjectTemplateManagerService, ProjectTemplateFinder {
-	
 }

@@ -23,6 +23,8 @@ package org.squashtest.csp.tm.domain.project;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  * A Project template, which can hold no nodes but will be used to build "real" projects
@@ -30,6 +32,7 @@ import javax.persistence.Entity;
  * @author Gregory Fouquet
  * 
  */
+@NamedQueries({ @NamedQuery(name = "ProjectTemplate.findAllReferences", query = "select new org.squashtest.csp.tm.domain.NamedReference(t.id, t.name) from ProjectTemplate t order by t.name") })
 @Entity
 @DiscriminatorValue("T")
 public class ProjectTemplate extends GenericProject {
