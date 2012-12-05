@@ -41,7 +41,6 @@ import org.squashtest.csp.tm.internal.service.customField.CannotDeleteDefaultOpt
 import org.squashtest.csp.tm.internal.service.customField.CodeAlreadyExistsException;
 import org.squashtest.csp.tm.internal.service.customField.CodeDoesNotMatchesPattern;
 import org.squashtest.csp.tm.internal.service.customField.OptionAlreadyExistException;
-import org.squashtest.tm.tm.validation.constraint.UniqueItems;
 
 /**
  * A CustomField which stores a single option selected from a list.
@@ -53,7 +52,7 @@ import org.squashtest.tm.tm.validation.constraint.UniqueItems;
 @Entity
 @DiscriminatorValue("SSF")
 public class SingleSelectField extends CustomField {
-	@UniqueItems
+	
 	@ElementCollection
 	@CollectionTable(name = "CUSTOM_FIELD_OPTION", joinColumns = @JoinColumn(name = "CF_ID"))
 	@OrderColumn(name = "POSITION")
