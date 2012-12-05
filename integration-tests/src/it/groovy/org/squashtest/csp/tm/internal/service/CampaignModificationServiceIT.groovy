@@ -213,5 +213,4 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 		p.description = "eaerazer"
 		return p
 	}
-	
 }

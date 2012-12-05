@@ -304,9 +304,6 @@
 	</c:if>
 </div>
 
-
-
-
 <div id="test-suite-toolbar" class="toolbar-class ui-corner-all ">
 	<div class="toolbar-information-panel">
 		<div id="general-informations-panel">

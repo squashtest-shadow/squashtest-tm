@@ -26,7 +26,7 @@
 		<module>core.service</module>
 		<module>core.web</module>
 		<module>launcher</module>
-	    <module>core.dynamicmanager</module>
-	    <module>core.jasperreport.fragment</module>
+	  <module>core.dynamicmanager</module>
+	  <module>core.jasperreport.fragment</module>
 	</modules>
 </project>

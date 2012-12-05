@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.service
 
 import javax.inject.Inject
 
+import org.hibernate.SessionFactory;
 import org.junit.runner.RunWith;
 import org.spockframework.runtime.Sputnik;
 import org.spockframework.util.NotThreadSafe
@@ -36,6 +37,7 @@ import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.execution.ExecutionStatus
 import org.squashtest.csp.tm.service.IterationModificationService
 import org.unitils.dbunit.annotation.DataSet
+import org.unitils.dbunit.annotation.ExpectedDataSet;
 
 import spock.unitils.UnitilsSupport
 
@@ -45,7 +47,9 @@ import spock.unitils.UnitilsSupport
 class IterationModificationServiceDbunitIT extends DbunitServiceSpecification {
 	
 	@Inject	
-	private IterationModificationService iterService
+	IterationModificationService iterService
+	
+	@Inject SessionFactory sessionFactory
 
 	@DataSet("IterationModificationServiceDbunitIT.should copy-paste a TestSuite.xml")
 	def "should copy-paste a TestSuite"(){
@@ -122,5 +126,21 @@ class IterationModificationServiceDbunitIT extends DbunitServiceSpecification {
 			extender.id != null
 			extender.execution == exec
 			extender.automatedTest.id == 100l
+	}
+	
+	@DataSet("IterationModificationServiceDbunitIT.should create a suite with custom fields.xml")
+	@ExpectedDataSet("IterationModificationServiceDbunitIT.should create a suite with custom fields.expected.xml")
+	def "should create a suite with custom fields"() {
+		given:
+		TestSuite suite = new TestSuite(name: "fishnet")
+		
+		def createSuite = { 
+			iterService.addTestSuite(1L, suite)
+			sessionFactory.currentSession.flush()
+			true
+		}		
+		
+		expect:
+		createSuite()
 	}
 }

@@ -44,7 +44,6 @@ import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.internal.repository.AutomatedSuiteDao;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionDao;
@@ -65,7 +64,7 @@ import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 @Service("CustomIterationModificationService")
 public class CustomIterationModificationServiceImpl implements CustomIterationModificationService,
 		IterationTestPlanManager {
-	
+
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 	private static final String PERMISSION_EXECUTE_ITERATION = "hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'EXECUTE') ";
 	@Inject
@@ -76,19 +75,19 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private TestSuiteDao suiteDao;
 	@Inject
 	private ItemTestPlanDao testPlanDao;
-	
+
 	@Inject
 	private AutomatedSuiteDao autoSuiteDao;
-	
+
 	@Inject
 	private ExecutionDao executionDao;
-		
+
 	@Inject
 	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
 
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
-	
+
 	@Inject
 	private PermissionEvaluationService permissionService;
 
@@ -97,24 +96,24 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private TestSuiteModificationService testSuiteModificationService;
-	
+
 	@Inject
 	private PrivateCustomFieldValueService customFieldValueService;
-	
+
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToIterationStrategy")
 	private PasteStrategy<Iteration, TestSuite> pasteToIterationStrategy;
 
 	@Inject
 	private ProjectsPermissionFinder projectsPermissionFinder;
-	
+
 	private UserAccountService userService;
-	
+
 	@ServiceReference
-	public void setUserAccountService(UserAccountService service){
-		this.userService=service;
+	public void setUserAccountService(UserAccountService service) {
+		this.userService = service;
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.csp.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
@@ -125,14 +124,13 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		List<CampaignTestPlanItem> campaignTestPlan = campaign.getTestPlan();
 
-		if(copyTestPlan){
+		if (copyTestPlan) {
 			for (CampaignTestPlanItem campaignItem : campaignTestPlan) {
 				IterationTestPlanItem iterationItem = new IterationTestPlanItem(campaignItem.getReferencedTestCase());
 				iterationItem.setUser(campaignItem.getUser());
 				iteration.addTestPlan(iterationItem);
 			}
-		}
-		else{
+		} else {
 			for (CampaignTestPlanItem campaignItem : campaignTestPlan) {
 				IterationTestPlanItem iterationItem = new IterationTestPlanItem(campaignItem.getReferencedTestCase());
 				iterationItem.setUser(campaignItem.getUser());
@@ -183,8 +181,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
-	@PreAuthorize(PERMISSION_EXECUTE_ITERATION
-			+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(PERMISSION_EXECUTE_ITERATION + OR_HAS_ROLE_ADMIN)
 	public Execution addExecution(long iterationId, long testPlanId) {
 
 		Iteration iteration = iterationDao.findAndInit(iterationId);
@@ -192,63 +189,55 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		return addExecution(item);
 	}
-	
+
 	@Override
-	@PreAuthorize(PERMISSION_EXECUTE_ITERATION
-			+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(PERMISSION_EXECUTE_ITERATION + OR_HAS_ROLE_ADMIN)
 	public Execution addAutomatedExecution(long iterationId, long testPlanId) {
-		
+
 		Iteration iteration = iterationDao.findAndInit(iterationId);
 		IterationTestPlanItem item = iteration.getTestPlan(testPlanId);
-		
+
 		return addAutomatedExecution(item);
 	}
-	
 
-
-	@Override	
-	@PreAuthorize(PERMISSION_EXECUTE_ITERATION
-			+ OR_HAS_ROLE_ADMIN)
-	public AutomatedSuite createAutomatedSuite(long iterationId) {
-		
-		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
-		
-		Iteration iteration = iterationDao.findById(iterationId);
-		
-		for (IterationTestPlanItem item : iteration.getTestPlans()){
-			if (item.isAutomated()){
-				Execution exec = addAutomatedExecution(item);
-				newSuite.addExtender(exec.getAutomatedExecutionExtender());
-			}			
-		}
-		
-		return newSuite;
-	}
-
-	
 	@Override
-	@PreAuthorize(PERMISSION_EXECUTE_ITERATION
-			+ OR_HAS_ROLE_ADMIN)
-	public AutomatedSuite createAutomatedSuite(long iterationId, Collection<Long> testPlanIds) {
-		
+	@PreAuthorize(PERMISSION_EXECUTE_ITERATION + OR_HAS_ROLE_ADMIN)
+	public AutomatedSuite createAutomatedSuite(long iterationId) {
+
 		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
-		
-		List<IterationTestPlanItem> items = testPlanDao.findAllByIds(testPlanIds);
-		
-		for (IterationTestPlanItem item : items){
-			if (item.isAutomated()){
+
+		Iteration iteration = iterationDao.findById(iterationId);
+
+		for (IterationTestPlanItem item : iteration.getTestPlans()) {
+			if (item.isAutomated()) {
 				Execution exec = addAutomatedExecution(item);
 				newSuite.addExtender(exec.getAutomatedExecutionExtender());
 			}
-			
 		}
 
 		return newSuite;
-		
 	}
 
+	@Override
+	@PreAuthorize(PERMISSION_EXECUTE_ITERATION + OR_HAS_ROLE_ADMIN)
+	public AutomatedSuite createAutomatedSuite(long iterationId, Collection<Long> testPlanIds) {
 
-	
+		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
+
+		List<IterationTestPlanItem> items = testPlanDao.findAllByIds(testPlanIds);
+
+		for (IterationTestPlanItem item : items) {
+			if (item.isAutomated()) {
+				Execution exec = addAutomatedExecution(item);
+				newSuite.addExtender(exec.getAutomatedExecutionExtender());
+			}
+
+		}
+
+		return newSuite;
+
+	}
+
 	/**
 	 * @see CustomIterationModificationService#changeTestPlanPosition(long, int, List)
 	 */
@@ -308,7 +297,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	public void addTestSuite(Iteration iteration, TestSuite suite) {
 		suiteDao.persist(suite);
 		iteration.addTestSuite(suite);
-		//customFieldValueService.createAllCustomFieldValues(suite);
+		customFieldValueService.createAllCustomFieldValues(suite);
 	}
 
 	@Override
@@ -316,20 +305,20 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	public List<TestSuite> findAllTestSuites(long iterationId) {
 		return iterationDao.findAllTestSuites(iterationId);
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public TestSuite copyPasteTestSuiteToIteration(long testSuiteId, long iterationId) {
 		return pasteToIterationStrategy.pasteNodes(iterationId, Arrays.asList(testSuiteId)).get(0);
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.csp.tm.domain.campaign.Iteration', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, long iterationId) {
 		return pasteToIterationStrategy.pasteNodes(iterationId, Arrays.asList(testSuiteIds));
-	}	
+	}
 
 	@Override
 	public List<Long> removeTestSuites(List<Long> suitesIds) {
@@ -340,10 +329,10 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return deletionHandler.deleteSuites(suitesIds);
 
 	}
-	
+
 	@Override
-	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException{
-		
+	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
+
 		Execution execution = item.createExecution(testCaseCyclicCallChecker);
 		// if we dont persist before we add, add will trigger an update of item.testPlan which fail because execution
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
@@ -352,16 +341,16 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		return execution;
 	}
-	
-	public Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException{
+
+	public Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 
 		Execution execution = item.createAutomatedExecution(testCaseCyclicCallChecker);
-		
+
 		executionDao.persist(execution);
 		item.addExecution(execution);
-		
+
 		return execution;
-		
+
 	}
 
 	/* ************************* security ************************* */
@@ -391,16 +380,16 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		List<IterationTestPlanItem> testPlanItemsToReturn = new ArrayList<IterationTestPlanItem>();
 
 		Iteration iteration = iterationDao.findById(iterationId);
-		
+
 		List<IterationTestPlanItem> testPlanItems = iteration.getTestPlans();
-		
+
 		Long projectId = iteration.getProject().getId();
-		
-		if(projectsPermissionFinder.isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")){
-			
-			for(IterationTestPlanItem testPlanItem: testPlanItems){
-					
-				if(hasToBeReturned(testPlanItem,userLogin)){
+
+		if (projectsPermissionFinder.isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")) {
+
+			for (IterationTestPlanItem testPlanItem : testPlanItems) {
+
+				if (hasToBeReturned(testPlanItem, userLogin)) {
 					testPlanItemsToReturn.add(testPlanItem);
 				}
 			}
@@ -411,19 +400,19 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return testPlanItemsToReturn;
 	}
 
-	private boolean hasToBeReturned(IterationTestPlanItem testPlanItem, String userLogin){
-		
+	private boolean hasToBeReturned(IterationTestPlanItem testPlanItem, String userLogin) {
+
 		boolean hasToBeReturned = false;
-		
-		if(testPlanItem.getUser() != null && (testPlanItem.getUser().getLogin()==userLogin)){
-			
+
+		if (testPlanItem.getUser() != null && (testPlanItem.getUser().getLogin() == userLogin)) {
+
 			hasToBeReturned = true;
 		}
-		
+
 		return hasToBeReturned;
 	}
-	
-	private String getCurrentUserLogin(){
+
+	private String getCurrentUserLogin() {
 		return userService.findCurrentUser().getLogin();
 	}
 }
