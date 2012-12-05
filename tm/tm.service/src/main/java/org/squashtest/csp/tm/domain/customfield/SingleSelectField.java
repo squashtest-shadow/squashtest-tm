@@ -31,12 +31,15 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
+import javax.validation.Valid;
+import javax.validation.ValidationException;
 
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.internal.service.customField.CannotDeleteDefaultOptionException;
 import org.squashtest.csp.tm.internal.service.customField.CodeAlreadyExistsException;
+import org.squashtest.csp.tm.internal.service.customField.CodeDoesNotMatchesPattern;
 import org.squashtest.csp.tm.internal.service.customField.OptionAlreadyExistException;
 import org.squashtest.tm.tm.validation.constraint.UniqueItems;
 
@@ -54,8 +57,9 @@ public class SingleSelectField extends CustomField {
 	@ElementCollection
 	@CollectionTable(name = "CUSTOM_FIELD_OPTION", joinColumns = @JoinColumn(name = "CF_ID"))
 	@OrderColumn(name = "POSITION")
+	@Valid
 	private List<CustomFieldOption> options = new ArrayList<CustomFieldOption>();
-
+		
 	/**
 	 * Created a SingleSelectField with a
 	 */
@@ -64,17 +68,29 @@ public class SingleSelectField extends CustomField {
 	}
 
 	/**
-	 * Will check if label is available among the existing options. If so, will add the new option at the end of the
-	 * list. Else will throw a NameAlreadyInUseException.
+	 * Will check if label and the code are available among the existing options. If so, will add the new option at the end of the
+	 * list. Else will throw a NameAlreadyInUseException or CodeAlreadyExistsException.
 	 * 
 	 * @throws OptionAlreadyExistsException
 	 * @param label
 	 *            the new option's label
 	 */
-	public void addOption(@NotBlank String label, @NotBlank String code) {
+	public void addOption( String label, String code) {
 		checkLabelAvailable(label);
 		checkCodeAvailable(code);
+		//TODO fix [Task 1682] and remove this line
+		checkCodeMatchesPattern(code);
 		options.add(new CustomFieldOption(label, code));
+	}
+
+	//TODO fix [Task 1682] and remove this method
+	private void checkCodeMatchesPattern(String code) {
+		if(!code.matches(CODE_REGEXP)){
+		throw new CodeDoesNotMatchesPattern(code, CODE_REGEXP);
+		}
+		if(code.length() > 30 || code.length() < 1){
+		throw new ValidationException("Code '"+code+"' size is not between 1 and 30 chars");
+		}
 	}
 
 	private void checkCodeAvailable(String code) {
@@ -117,7 +133,7 @@ public class SingleSelectField extends CustomField {
 	 * @param newlabel
 	 * @throws OptionAlreadyExistException
 	 */
-	public void changeOptionLabel(@NotBlank String previousLabel, String newlabel) {
+	public void changeOptionLabel(String previousLabel, String newlabel) {
 		checkLabelAvailable(newlabel);
 		int index = findIndexOfLabel(previousLabel);
 		String code = findCodeOf(previousLabel);
@@ -140,6 +156,8 @@ public class SingleSelectField extends CustomField {
 	 */
 	public void changeOptionCode(String optionLabel, String newCode) {
 		checkCodeAvailable(newCode);
+		//TODO fix [Task 1682] and remove this line
+		checkCodeMatchesPattern(newCode);
 		int index = findIndexOfLabel(optionLabel);		
 		removeOption(optionLabel);
 		addOption(optionLabel, newCode, index);
@@ -206,12 +224,12 @@ public class SingleSelectField extends CustomField {
 	 *            : the labels of the moved options
 	 */
 	public void moveOptions(int newIndex, List<String> optionsLabels) {
-		List<CustomFieldOption> newOptions = createOptionList(optionsLabels);
+		List<CustomFieldOption> newOptions = copyOptionList(optionsLabels);
 		removeOptions(optionsLabels);
 		options.addAll(newIndex, newOptions);
 	}
 
-	private List<CustomFieldOption> createOptionList(List<String> optionsLabels) {
+	private List<CustomFieldOption> copyOptionList(List<String> optionsLabels) {
 		List<CustomFieldOption> newOptions = new ArrayList<CustomFieldOption>(optionsLabels.size());
 		for (String optionLabel : optionsLabels) {
 			String code = findCodeOf(optionLabel);
