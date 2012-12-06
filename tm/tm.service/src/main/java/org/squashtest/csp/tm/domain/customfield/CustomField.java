@@ -56,6 +56,8 @@ import org.squashtest.tm.tm.validation.constraint.HasDefaultAsRequired;
 @HasDefaultAsRequired
 public class CustomField {
 	protected static final String CODE_REGEXP="^[A-Za-z0-9_]*$";
+	protected static final int MIN_CODE_SIZE= 1;
+	protected static final int MAX_CODE_SIZE=30;
 	
 	@Id
 	@GeneratedValue
@@ -81,7 +83,7 @@ public class CustomField {
 	protected InputType inputType = InputType.PLAIN_TEXT;
 
 	@NotBlank
-	@Size(min=0, max= 30)
+	@Size(min=MIN_CODE_SIZE, max= MAX_CODE_SIZE)
 	@Pattern(regexp=CODE_REGEXP)
 	protected String code = "";
 	

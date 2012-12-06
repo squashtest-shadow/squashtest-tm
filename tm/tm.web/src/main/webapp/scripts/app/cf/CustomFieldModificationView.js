@@ -184,7 +184,7 @@ define(
 									"#change-cuf-option-code-label")
 									.text(label);
 							self.changeOptionCodePopup.find(
-									"#change-cuf-option-code-input").val(
+									"#change-cuf-option-code").val(
 									previousValue);
 							self.changeOptionCodePopup.dialog("open");
 						},
@@ -214,7 +214,7 @@ define(
 							var label = self.changeOptionCodePopup.find(
 									"#change-cuf-option-code-label").text();
 							var newValue = self.changeOptionCodePopup.find(
-									"#change-cuf-option-code-input").val();
+									"#change-cuf-option-code").val();
 							$.ajax(
 									{
 										type : 'POST',

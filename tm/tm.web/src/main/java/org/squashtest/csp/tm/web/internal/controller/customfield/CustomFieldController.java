@@ -242,8 +242,12 @@ public class CustomFieldController {
 	@ResponseBody
 	public void changeOptionLabel(@PathVariable long customFieldId, @PathVariable String optionLabel,
 			@RequestParam("value") String newLabel) {
-
+		try{
 		customFieldManager.changeOptionLabel(customFieldId, optionLabel, newLabel);
+		}catch(DomainException e){
+			e.setObjectName("rename-cuf-option");
+			throw e;
+		}
 	}
 	
 	/**
@@ -261,8 +265,12 @@ public class CustomFieldController {
 	@ResponseBody
 	public void changeOptionCode(@PathVariable long customFieldId, @PathVariable String optionLabel,
 			@RequestParam("value") String newCode) {
-
+		try{
 		customFieldManager.changeOptionCode(customFieldId, optionLabel, newCode);
+		}catch(DomainException e){
+			e.setObjectName("change-cuf-option");
+			throw e;
+		}
 	}
 
 	/**

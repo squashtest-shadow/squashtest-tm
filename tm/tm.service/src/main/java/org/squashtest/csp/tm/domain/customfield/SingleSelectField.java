@@ -32,11 +32,11 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.csp.tm.domain.WrongStringSizeException;
 import org.squashtest.csp.tm.internal.service.customField.CannotDeleteDefaultOptionException;
 import org.squashtest.csp.tm.internal.service.customField.CodeAlreadyExistsException;
 import org.squashtest.csp.tm.internal.service.customField.CodeDoesNotMatchesPattern;
@@ -86,8 +86,8 @@ public class SingleSelectField extends CustomField {
 		if(!code.matches(CODE_REGEXP)){
 		throw new CodeDoesNotMatchesPattern(code, CODE_REGEXP);
 		}
-		if(code.length() > 30 || code.length() < 1){
-		throw new ValidationException("Code '"+code+"' size is not between 1 and 30 chars");
+		if(code.length() > MAX_CODE_SIZE || code.length() < MIN_CODE_SIZE){
+		throw new WrongStringSizeException("code", MIN_CODE_SIZE, MAX_CODE_SIZE);
 		}
 	}
 
@@ -98,6 +98,11 @@ public class SingleSelectField extends CustomField {
 	}
 
 	private void checkLabelAvailable(String label) {
+		//TODO fix [Task 1682] and remove the first check
+		if(label.length() >255 || label.length() <1){
+			throw new WrongStringSizeException("label", 1, 255);
+		}
+		
 		if (!isLabelAvailable(label)) {
 			throw new OptionAlreadyExistException(label);
 		}

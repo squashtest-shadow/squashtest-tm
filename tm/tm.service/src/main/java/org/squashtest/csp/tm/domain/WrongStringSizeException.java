@@ -18,39 +18,43 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package org.squashtest.csp.tm.domain.customfield;
-
-import org.apache.poi.hssf.record.formula.functions.T
-
-import spock.lang.Specification
-
+package org.squashtest.csp.tm.domain;
 
 /**
- * @author Gregory
+ * should not be needed anymore when [Task 1682] is done
+ * @author mpagnon
  *
  */
-class SingleSelectFieldTest extends Specification {
-	def "should add and remove options"() {
-		given: 
-		SingleSelectField field = new SingleSelectField()
-		//field.inputType = InputType.DROPDOWN_LIST
-		
-		when:
-		field.addOption(new CustomFieldOption("batman", "code1"))
-		
-		field.addOption(new CustomFieldOption("robin", "code2"))
-		 
-		then:
-		field.options*.label == ["batman", "robin"]
-		field.options*.code == ["code1", "code2"]
+public class WrongStringSizeException extends DomainException {
 
-		when:
-		field.removeOption("batman")
-		
-		then:
-		field.options*.label == ["robin"]
-		
+	/**
+	 * TODO my eclipse coudn't thanks - mpagnon
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private static final String KEY = "squashtm.domain.exception.wong.string.size";
+	private Object[] i18nParams = new Object[2];
+	
+	public WrongStringSizeException(String fieldName, int min, int max) {
+		super("Property" + fieldName + " should be between "+min+" and "+max+" chars.",fieldName);
+		this.i18nParams[0] = min;
+		this.i18nParams[1] = max;
 	}
+	
+	
+	
+	@Override
+	public String getI18nKey() {
+		return KEY ;
+	}
+
+
+
+	@Override
+	public Object[] getI18nParams() {
+		return this.i18nParams;
+	}
+	
+	
 
 }
