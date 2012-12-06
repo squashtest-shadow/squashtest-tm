@@ -637,7 +637,7 @@ span.span-green {
 	
 }
 .type-template {
-	background: url("../images/nyancat.gif") no-repeat center center;
+	background: url("../images/icon_template.png") no-repeat center center;
 }
 .type-project, .type-template {
 	color: transparent;
