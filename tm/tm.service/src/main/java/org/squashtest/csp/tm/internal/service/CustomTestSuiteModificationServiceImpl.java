@@ -28,7 +28,6 @@ import javax.inject.Inject;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
 import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
@@ -36,7 +35,6 @@ import org.squashtest.csp.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
-import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.internal.repository.AutomatedSuiteDao;
 import org.squashtest.csp.tm.internal.repository.ExecutionDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
@@ -161,12 +159,9 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 				Execution exec = addAutomatedExecution(item);
 				newSuite.addExtender(exec.getAutomatedExecutionExtender());
 			}
-			
 		}
 		
 		return newSuite;
-		
-		
 	}
 	
 	//TODO merge code with IterationModificationService.addAutomatedExecution

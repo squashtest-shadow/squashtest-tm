@@ -59,8 +59,7 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 			this.heir = heir;
 		}
 
-		@Override
-		// NOSONAR generated code
+		@Override // NOSONAR generated code
 		public int hashCode() { // NOSONAR generated code
 			final int prime = 31;
 			int result = 17;
@@ -69,8 +68,7 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 			return result;
 		}
 
-		@Override
-		// NOSONAR generated code
+		@Override // NOSONAR generated code
 		public boolean equals(Object obj) { // NOSONAR generated code
 			// CHECKSTYLE:OFF
 			if (this == obj) {

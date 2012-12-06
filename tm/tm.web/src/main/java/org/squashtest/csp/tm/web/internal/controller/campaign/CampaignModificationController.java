@@ -347,9 +347,9 @@ public class CampaignModificationController {
 	}
 	
 	
-	private class TestCaseTableModelHelper extends DataTableModelHelper<CampaignTestPlanItem>{
+	private final class TestCaseTableModelHelper extends DataTableModelHelper<CampaignTestPlanItem>{
 		
-		Locale locale;
+		private Locale locale;
 		
 		private TestCaseTableModelHelper(Locale locale){
 			this.locale = locale;
@@ -382,9 +382,8 @@ public class CampaignModificationController {
 	}
 	
 	
-	private class TestPlanManagerTableHelper extends DataTableModelHelper<CampaignTestPlanItem>{
-
-		Locale locale;
+	private final class TestPlanManagerTableHelper extends DataTableModelHelper<CampaignTestPlanItem>{
+		private Locale locale;
 		
 		private TestPlanManagerTableHelper(Locale locale){
 			this.locale = locale;
