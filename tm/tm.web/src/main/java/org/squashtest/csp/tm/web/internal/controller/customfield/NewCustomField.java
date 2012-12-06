@@ -22,6 +22,7 @@
 package org.squashtest.csp.tm.web.internal.controller.customfield;
 
 import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.csp.tm.domain.customfield.InputType;
 import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 
@@ -63,7 +64,7 @@ public class NewCustomField extends CustomField {
 		for(String[] option : options) {
 			String label = option[0];
 			String code = option[1];
-			ssf.addOption(label,code );
+			ssf.addOption(new CustomFieldOption(label, code) );
 		}
 		
 		res = ssf;

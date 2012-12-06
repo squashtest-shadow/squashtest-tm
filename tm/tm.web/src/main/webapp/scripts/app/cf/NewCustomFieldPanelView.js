@@ -218,8 +218,8 @@ define(
 								this.optionsTable.dataTable().fnAddData(
 										[ optionLabel, optionCode, false, "" ]);
 								optionCodeInput.clearState();
-					optionInput.clearState();
-					optionInput.$el.val("");
+								optionInput.clearState();
+								optionInput.$el.val("");
 								optionCodeInput.$el.val("");
 							}
 
@@ -229,15 +229,22 @@ define(
 							var optionCode = optionCodeInput.$el.val();
 							var validated = true;
 							// Validate option label
-							if($.trim(optionLabel) === ""){
-				                                optionInput.setState("error", "message.notBlank");
-			                                }else if (this.model.optionAlreadyDefined(optionLabel)) {
+							if ($.trim(optionLabel) === "") {
+								optionInput.setState("error",
+										"message.notBlank");
+								validated = false;
+							} else if (this.model
+									.optionAlreadyDefined(optionLabel)) {
 								optionInput.setState("error",
 										"message.optionAlreadyDefined");
 								validated = false;
 							}
 							// validate option code
-							if (!this.model.optionCodePatternValid(optionCode)) {
+							if ($.trim(optionCode) === "") {
+								optionCodeInput.setState("error", "message.notBlank");
+								validated = false;
+							} else if (!this.model
+									.optionCodePatternValid(optionCode)) {
 								optionCodeInput.setState("error",
 										"message.optionCodeInvalidPattern");
 								validated = false;
