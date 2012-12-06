@@ -43,7 +43,7 @@ public interface ExecutionProcessingService {
 	 * @param executionId
 	 * @return
 	 */
-	boolean wasNeverRan(Long executionId);
+	boolean wasNeverRun(Long executionId);
 	
 	/**
 	 * 

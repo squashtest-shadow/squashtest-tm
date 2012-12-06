@@ -68,7 +68,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	}
 
 	
-	public boolean wasNeverRan(Long executionId){
+	public boolean wasNeverRun(Long executionId){
 		return executionDao.wasNeverRan(executionId);
 	}
 	

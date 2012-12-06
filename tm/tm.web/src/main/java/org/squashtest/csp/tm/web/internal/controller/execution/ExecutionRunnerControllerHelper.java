@@ -282,7 +282,7 @@ public class ExecutionRunnerControllerHelper {
 	
 	
 	private void _stuffWithPrologueStatus(long executionId, RunnerState state){
-		if (executionProcessingService.wasNeverRan(executionId)){
+		if (executionProcessingService.wasNeverRun(executionId)){
 			state.setPrologue(true);
 		}
 		else{
@@ -295,7 +295,7 @@ public class ExecutionRunnerControllerHelper {
 		ExecutionStep step = executionProcessingService.findRunnableExecutionStep(executionId);
 		int totalSteps = executionProcessingService.findTotalNumberSteps(executionId);
 		
-		boolean wasNeverExecuted = executionProcessingService.wasNeverRan(executionId);
+		boolean wasNeverExecuted = executionProcessingService.wasNeverRun(executionId);
 		int stepOrder = (wasNeverExecuted) ? 0 : step.getExecutionStepOrder()+1;
 		
 		String currentStepUrl = contextPath + "/" + MessageFormat.format( CURRENT_STEP_URL_PATTERN, executionId);

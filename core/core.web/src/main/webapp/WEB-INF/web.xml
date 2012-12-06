@@ -130,6 +130,19 @@
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 	<!-- ====== /USER CONCURRENT REQUEST QUEUE ====== -->
+  
+  <!-- ====== FIXES IE8 ACCEPT HEADER ====== -->
+  <filter>
+    <filter-name>IE8AcceptHeaderFixerFilter</filter-name>
+    <filter-class>org.squashtest.csp.core.web.internal.filter.IE8AcceptHeaderFixerFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>IE8AcceptHeaderFixerFilter</filter-name>
+    <servlet-name>squashtest.csp.core</servlet-name>
+    <dispatcher>FORWARD</dispatcher>
+  </filter-mapping>
+  <!-- ====== /FIXES IE8 ACCEPT HEADER ====== -->  
 
 	<!-- ====== SPRING BOOTSTRAPPER ====== -->
 	<context-param>
