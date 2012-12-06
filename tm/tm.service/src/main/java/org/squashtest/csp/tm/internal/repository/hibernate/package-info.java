@@ -26,16 +26,16 @@
 @NamedQueries({
 		//TestCaseLibrary
 		@NamedQuery(name = "testCaseLibrary.findAllRootContentById", query = "select l.rootContent from TestCaseLibrary l where l.id = :libraryId"),
-		@NamedQuery(name = "testCaseLibrary.findAll", query = "from TestCaseLibrary fetch all properties"),
+		@NamedQuery(name = "testCaseLibrary.findAll", query = "select tcl from Project p join p.testCaseLibrary tcl fetch all properties"),
 		@NamedQuery(name = "testCaseLibrary.findByRootContent", query = "from TestCaseLibrary where :content in elements(rootContent)"),
 
 		//RequirementLibrary
-		@NamedQuery(name = "requirementLibrary.findAll", query = "from RequirementLibrary fetch all properties"),
+		@NamedQuery(name = "requirementLibrary.findAll", query = "select rl from Project p join p.requirementLibrary rl fetch all properties"),
 		@NamedQuery(name = "requirementLibrary.findAllRootContentById", query = "select l.rootContent from RequirementLibrary l where l.id = :libraryId"),
 		@NamedQuery(name = "requirementLibrary.findByRootContent", query = "from RequirementLibrary where :content in elements(rootContent)"),
 
 		//CampaignLibrary
-		@NamedQuery(name = "campaignLibrary.findAll", query = "from CampaignLibrary fetch all properties"),
+		@NamedQuery(name = "campaignLibrary.findAll", query = "select cl from Project p join p.campaignLibrary cl fetch all properties"),
 		@NamedQuery(name = "campaignLibrary.findAllRootContentById", query = "select l.rootContent from CampaignLibrary l where l.id = :libraryId"),
 		@NamedQuery(name = "campaignLibrary.findByRootContent", query = "from CampaignLibrary where :content in elements(rootContent)"),
 

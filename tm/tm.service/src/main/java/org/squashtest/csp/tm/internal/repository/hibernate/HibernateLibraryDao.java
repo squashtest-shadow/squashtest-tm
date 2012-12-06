@@ -26,7 +26,6 @@ import org.apache.commons.lang.WordUtils;
 import org.hibernate.Query;
 import org.squashtest.csp.tm.domain.library.Library;
 import org.squashtest.csp.tm.domain.library.LibraryNode;
-import org.squashtest.csp.tm.internal.repository.EntityDao;
 import org.squashtest.csp.tm.internal.repository.LibraryDao;
 
 /**
@@ -46,7 +45,10 @@ HibernateEntityDao<LIBRARY> implements LibraryDao<LIBRARY, NODE>{
 		entityClassName = WordUtils.uncapitalize(entityType.getSimpleName());
 	}
 
-	
+	@Override
+	public List<LIBRARY> findAll(){
+		return executeListNamedQuery(entityClassName+".findAll");
+	}
 	/**
 	 * Finds the library root content. Template method which invokes a named query named
 	 * "{libraryUnquilifiedClassName}.findAllRootContentById" with a parameter named "libraryId"
