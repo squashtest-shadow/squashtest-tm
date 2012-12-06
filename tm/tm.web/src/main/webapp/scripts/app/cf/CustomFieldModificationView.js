@@ -93,7 +93,7 @@ define(
 						findDefaultValue : function() {
 							var defaultValueDiv = this.$('#cuf-default-value');
 							if (defaultValueDiv && defaultValueDiv.length > 0) {
-								return defaultValueDiv[0].textContent;
+								return $(defaultValueDiv[0]).text();
 							} else if (this.optionsTable) {
 								var checkedDefault = this.optionsTable
 										.find('td.is-default input:checked');
@@ -165,19 +165,20 @@ define(
 						openRenameOptionPopup : function(event) {
 							var self = this;
 							var labelCell = event.currentTarget;
-							var previousValue = labelCell.textContent;
+							var previousValue = $(labelCell).text();
+							
 							self.renameCufOptionPopup.find(
 									"#rename-cuf-option-previous").text(
 									previousValue);
 							self.renameCufOptionPopup.find(
-									"#rename-cuf-option-input").val(
+									"#rename-cuf-option-label").val(
 									previousValue);
 							self.renameCufOptionPopup.dialog("open");
 						},
 						openChangeOptionCodePopup : function(event) {
 							var self = this;
 							var codeCell = event.currentTarget;
-							var previousValue = codeCell.textContent;
+							var previousValue = $(codeCell).text();
 							var label = $(codeCell).parent("tr").find(
 									"td.opt-label").text();
 							self.changeOptionCodePopup.find(
@@ -193,7 +194,7 @@ define(
 							var previousValue = self.renameCufOptionPopup.find(
 									"#rename-cuf-option-previous").text();
 							var newValue = self.renameCufOptionPopup.find(
-									"#rename-cuf-option-input").val();
+									"#rename-cuf-option-label").val();
 							$.ajax(
 									{
 										type : 'POST',
