@@ -60,4 +60,9 @@ public abstract class DomainException extends RuntimeException implements Intern
 	public Object[] getI18nParams() {
 		return NO_PARAMS;
 	}
+
+	public void setObjectName(String objectName) {
+		this.objectName = objectName;
+		
+	}
 }

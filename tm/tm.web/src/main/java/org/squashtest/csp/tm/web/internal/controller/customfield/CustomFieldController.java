@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.squashtest.csp.tm.domain.DomainException;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.csp.tm.domain.customfield.InputType;
@@ -269,16 +270,16 @@ public class CustomFieldController {
 	 * 
 	 * @param customFieldId
 	 *            : the id of the concerned custom-field
-	 * @param label
-	 *            : the label of the new option
-	 * @param code
-	 *            : the code of the new option
+	 * @param option : the new option
 	 */
-	@RequestMapping(value = "/{customFieldId}/options/new", method = RequestMethod.POST, params = { "label", "code" })
+	@RequestMapping(value = "/{customFieldId}/options/new", method = RequestMethod.POST)
 	@ResponseBody
-	public void addOption(@PathVariable long customFieldId, @RequestParam("label") String label,
-			@RequestParam("code") String code) {
-		customFieldManager.addOption(customFieldId, label, code);
+	public void addOption(@PathVariable long customFieldId, @Valid @ModelAttribute("new-cuf-option") CustomFieldOption option) {
+		try{customFieldManager.addOption(customFieldId, option);}
+		catch(DomainException e){
+			e.setObjectName("new-cuf-option");
+			throw e;
+		}
 	}
 
 	/**

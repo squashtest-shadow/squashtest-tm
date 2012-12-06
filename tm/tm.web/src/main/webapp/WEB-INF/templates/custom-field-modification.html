@@ -181,12 +181,12 @@
 						<div class="display-table-row">
 							<label for="cuf-label" th:text="#{label.Label}">Label</label>
 							<div id="cuf-label" class="display-table-cell" th:text="${customField.label}">Description</div>
-							 <span class="error-message label-error"></span>
+							
 						</div>
 						<div class="display-table-row">
 							<label for="cuf-code" th:text="#{label.code}">Code</label>
 							<div id="cuf-code" class="display-table-cell" th:text="${customField.code}">code</div>
-							 <span class="error-message code-error"></span>
+							
 						</div>
 						 <div class="display-table-row">
 						 	<label for="inputType" th:text="#{label.inputType}">Input Type</label>
@@ -226,7 +226,7 @@
 				              	<td th:text="${iterStat.count}">1</td>
 				             	<td th:text="*{label}">label1</td>
 				             	<td th:text="*{code}">code1</td>
-				             	<td><input type="checkbox" name="default" th:value="*{label}" value="label1" th:checked="${customField.defaultValue == cfOpt.label}"/></td>
+				             	<td><input type="checkbox" name="default" th:value="*{label}" value="label1" th:checked="${customField.defaultValue == cfOpt.label}" title="Add cuf option"/></td>
 				             	<td></td>
 				             </tr>
 				             <tr th:remove="all">
@@ -252,27 +252,47 @@
 		</div>
    	</div>
    	</div>
+<!--    ====================================POPUPS======================================================  -->
+<!--    	RENAME POPUP -->
    	<div id="rename-cuf-popup" class="not-displayed popup-dialog">
 			<label for="rename-cuf-input" th:text="#{ label.Rename }">Rename</label>
 			<input type="text" id="rename-cuf-input" maxlength="255" size="50" />
 			<br />
 			<span class="error-message name-error"></span>
 	</div>
-	<div id="add-cuf-option-popup" class="not-displayed popup-dialog" th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
-			<label for="new-cuf-option-label-input" th:text="#{label.newOption}">New option</label>
-          	<input id="new-cuf-option-label-input" name="label" type="text" value="" maxlength="255" size="50" />
-          
-          	<label for="new-cuf-option-code-input" th:text="#{label.code}">Code</label>
-          	<input id="new-cuf-option-code-input" name="code" type="text" value="" maxlength="30" size="50" />
-          	
-          	<span id="new-option-error" class="error-message option-error"></span>
+	
+<!-- 	ADD OPTION POPUP  -->
+	<div id="add-cuf-option-popup" class="not-displayed popup-dialog" th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}" th:title="#{title.addCufOption}">
+		<table class="form-horizontal">
+    	<tr class="control-group">
+    		<td><label class="control-label" for="new-cuf-option-label" th:text="#{label.newOption}">New option</label></td>
+          	<td class="controls">
+	          	<input id="new-cuf-option-label" name="new-cuf-option-label" type="text" value="" maxlength="255" size="50" />
+	          	<span class="help-inline">&nbsp;</span>
+          	</td>
+         </tr><tr class="control-group" >
+          	<td><label class="control-label" for="new-cuf-option-code" th:text="#{label.code}">Code</label></td>
+          	<td class="controls">
+	          	<input id="new-cuf-option-code" name="new-cuf-option-code" type="text" value="" maxlength="30" size="50" />
+	          	<span class="help-inline">&nbsp;</span>
+          	</td>
+         </tr>
+         </table>
+         <div class="popup-dialog-buttonpane">
+		      <input class="confirm" type="button" th:value="#{label.Add}" value="add"/>
+		      <input class="cancel" type="button" th:value="#{label.Cancel}" value="cancel"/>
+		 </div>
 	</div>
+	
+<!-- 	RENAME OPTION POPUP -->
 	<div id="rename-cuf-option-popup" class="not-displayed popup-dialog" th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
 		<span class="not-displayed" id="rename-cuf-option-previous"></span>
 		<label for="rename-cuf-option-input" th:text="#{label.Label}">Label</label>
 		<input id="rename-cuf-option-input" name="label" type="text" value="" maxlength="255" size="50" />
         <span id="rename-cuf-option-error" class="error-message option-error"></span>
 	</div>
+	
+<!-- 	CHANGE OPTION CODE POPUP -->
 	<div id="change-cuf-option-code-popup" class="not-displayed popup-dialog" th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
 		<span class="not-displayed" id="change-cuf-option-code-label"></span>
 		<label for="change-cuf-option-code-input" th:text="#{label.code}">Code</label>

@@ -33,9 +33,10 @@ public class OptionAlreadyExistException extends DomainException {
 	 */
 	private static final long serialVersionUID = 1L;
 	private final String label;
+	private static final String FIELD_NAME = "label";
 
 	public OptionAlreadyExistException(String label) {
-		super("The option '" + label + "' already exist for the custom-field", "option");
+		super("The option '" + label + "' already exist for the custom-field", FIELD_NAME);
 		this.label = label;
 	}
 

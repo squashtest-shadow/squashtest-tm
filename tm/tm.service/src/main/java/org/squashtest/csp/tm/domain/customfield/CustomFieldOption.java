@@ -53,6 +53,14 @@ public class CustomFieldOption {
 		super();
 	}
 
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	/**
 	 * @return the label
 	 */

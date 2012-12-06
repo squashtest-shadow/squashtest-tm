@@ -62,9 +62,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 		validate: function(event) {
 			var res = true, 
 				self = this;
-			
 			this.populateModel();
-			
 			Forms.form(this.$el).clearState();
 			
 			$.ajax({ 

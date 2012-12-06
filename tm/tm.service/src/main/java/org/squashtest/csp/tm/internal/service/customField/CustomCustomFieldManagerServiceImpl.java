@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
@@ -183,12 +184,12 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	}
 
 	/**
-	 * @see org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService#addOption(Long, String, String)
+	 * @see org.squashtest.csp.tm.service.customfield.CustomCustomFieldManagerService#addOption(Long, CustomFieldOption)
 	 */
 	@Override
-	public void addOption(Long customFieldId, String label, String code) {
+	public void addOption(Long customFieldId,CustomFieldOption option) {
 		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
-		customField.addOption(label, code);
+		customField.addOption(option);
 
 	}
 

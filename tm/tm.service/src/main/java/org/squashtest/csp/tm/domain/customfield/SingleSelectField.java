@@ -71,15 +71,14 @@ public class SingleSelectField extends CustomField {
 	 * list. Else will throw a NameAlreadyInUseException or CodeAlreadyExistsException.
 	 * 
 	 * @throws OptionAlreadyExistsException
-	 * @param label
-	 *            the new option's label
+	 * @param option : the new option
 	 */
-	public void addOption( String label, String code) {
-		checkLabelAvailable(label);
-		checkCodeAvailable(code);
+	public void addOption(CustomFieldOption option) {
+		checkLabelAvailable(option.getLabel());
+		checkCodeAvailable(option.getCode());
 		//TODO fix [Task 1682] and remove this line
-		checkCodeMatchesPattern(code);
-		options.add(new CustomFieldOption(label, code));
+		checkCodeMatchesPattern(option.getCode());
+		options.add(option);
 	}
 
 	//TODO fix [Task 1682] and remove this method

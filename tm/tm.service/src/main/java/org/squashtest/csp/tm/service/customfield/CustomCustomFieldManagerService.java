@@ -121,12 +121,9 @@ public interface CustomCustomFieldManagerService {
 	 * @throws OptionAlreadyExistException
 	 * @param customFieldId
 	 *            : the id of the concerned {@link CustomField}
-	 * @param label
-	 *            : the label of the potential new option.
-	 * @param code
-	 *            : the code of the potential new option.
+	 * @param option : the new {@link CustomFieldOption}
 	 */
-	void addOption(Long customFieldId, String label, String code);
+	void addOption(Long customFieldId, CustomFieldOption option);
 
 	/**
 	 * Will remove the from the custom-field's option list. If the option to remove is the default one, will throw a
