@@ -26,6 +26,7 @@ import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.csp.tm.domain.customfield.CustomField
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
 import org.squashtest.csp.tm.domain.campaign.Iteration
+import org.squashtest.csp.tm.domain.customfield.CustomFieldOption
 import org.squashtest.csp.tm.domain.customfield.InputType
 import org.squashtest.csp.tm.domain.customfield.SingleSelectField
 import org.hibernate.Hibernate
@@ -38,6 +39,7 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
         given:
         def cf = new CustomField();
         cf.name = "batman"
+		cf.code="code1"
         cf.inputType = InputType.PLAIN_TEXT
 
         when:
@@ -69,8 +71,9 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
         given:
         def cf = new SingleSelectField();
         cf.name = "batman"
-        cf.addOption("leatherpants")
-        cf.addOption("batarang")
+		cf.code="code1"
+        cf.addOption(new CustomFieldOption("leatherpants", "code2"))
+        cf.addOption(new CustomFieldOption("batarang", "code3"))
         persistFixture cf
 
         when:
@@ -90,8 +93,9 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
         given:
         def cf = new SingleSelectField();
         cf.name = "batman"
-        cf.addOption("leatherpants")
-        cf.addOption("batarang")
+		cf.code="code1"
+        cf.addOption(new CustomFieldOption("leatherpants", "code2"))
+        cf.addOption(new CustomFieldOption("batarang", "code3"))
         persistFixture cf
 
         when:
@@ -117,10 +121,11 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
 	
 	def "should change the label of a single select field's option"() {
 		given:
-		def cf = new SingleSelectField();
-		cf.name = "batman"
-		cf.addOption("leatherpants")
-		cf.addOption("batarang")
+		def cf = new SingleSelectField()
+		cf.name="batman"
+		cf.code = "code1"
+        cf.addOption(new CustomFieldOption("leatherpants", "code2"))
+        cf.addOption(new CustomFieldOption("batarang", "code3"))
 		persistFixture cf
 
 		when:
