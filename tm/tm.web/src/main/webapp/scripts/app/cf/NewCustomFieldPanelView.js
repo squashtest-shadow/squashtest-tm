@@ -77,7 +77,7 @@ define(
 						events : {
 							// textboxes with class .strprop are bound to the
 							// model prop which name matches the textbox name
-							"change input:text.strprop" : "changeStrProp",
+							"blur input:text.strprop" : "changeStrProp",
 							"change select.optprop" : "changeOptProp",
 							"change select[name='inputType']" : "changeInputType",
 							"click input:checkbox[name='optional']" : "changeOptional",
@@ -131,12 +131,7 @@ define(
 
 							if (validationErrors !== null) {
 								for ( var key in validationErrors) {
-									Forms
-											.input(
-													this.$("input[name='" + key
-															+ "']")).setState(
-													"error",
-													validationErrors[key]);
+									Forms.input(this.$("input[name='" + key+ "']")).setState("error",validationErrors[key]);
 								}
 
 								return false;

@@ -29,10 +29,10 @@ define(
 
 			function isBlank(val) {
 				// [Issue 1607] changed the last condition that was using regex
-				// with this jquery.trim. Dit it because IE8 did not compute the regex
+				// with this jquery.trim. Did it because IE8 did not compute the regex
 				// "^\s*$" properly, matching it with names containing white spaces
 				// like "new custom field".
-				return val === null || $.trim(val) == '';
+				return val === null || $.trim(val) === "";
 			}
 
 			/*
@@ -86,7 +86,10 @@ define(
 							}
 						},
 						optionCodePatternValid: function(optionCode){
-							return optionCode.match(/^[A-Za-z0-9_]*$/);
+							optionCode = $.trim(optionCode);
+							//first condition specific for IE8 that does not understand "^" and "$" as "from start to end" of the string
+							// hence without the following line "mqlskd slqk" would be validated even thought it has white spaces.
+							return((!optionCode.match(/\s+/)) && optionCode.match(/^[A-Za-z0-9_]*$/));
 						},
 						removeOption : function(option) {
 							var options = this.attributes.options, pos = $
@@ -117,9 +120,13 @@ define(
 							}
 							if (isBlank(attrs.code)) {
 								errors = errors || {};
-								errors.label = "message.notBlank";
+								errors.code = "message.notBlank";
 							}
-
+							if(!this.optionCodePatternValid(attrs.code)){
+								errors = errors || {};
+								errors.code = "message.optionCodeInvalidPattern";
+							}
+							
 							return errors;
 						}
 					});
