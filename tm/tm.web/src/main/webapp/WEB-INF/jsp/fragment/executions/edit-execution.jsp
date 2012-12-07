@@ -152,7 +152,7 @@
 			</div>
 		</div>
 		<div class="toolbar-button-panel">
-		<c:if test="${ editable && not execution.automated }">
+		<c:if test="${ editable }">
 				<comp:execution-execute-buttons execution="${ execution }"/>
 				<input type="button"
 					value='<f:message key="execution.execute.remove.button.label" />'

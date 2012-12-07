@@ -49,11 +49,10 @@ import org.squashtest.csp.tm.internal.repository.IterationDao;
 import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
 import org.squashtest.csp.tm.internal.service.CampaignNodeDeletionHandler;
 import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
-import org.squashtest.csp.tm.service.deletion.NotDeletableCampaignsPreviewReport;
-import org.squashtest.csp.tm.service.deletion.NotDeletablePreviewReport;
-import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.csp.tm.internal.utils.security.PermissionsUtils;
 import org.squashtest.csp.tm.internal.utils.security.SecurityCheckableObject;
+import org.squashtest.csp.tm.service.deletion.NotDeletableCampaignsPreviewReport;
+import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
 
 @Component("squashtest.tm.service.deletion.CampaignNodeDeletionHandler")
 public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl<CampaignLibraryNode, CampaignFolder>
@@ -409,6 +408,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl
 	private void deleteAutomatedExecutionExtender(Execution execution){
 		if (execution.getAutomatedExecutionExtender()!=null){
 			deletionDao.removeEntity(execution.getAutomatedExecutionExtender());
+			execution.setAutomatedExecutionExtender(null);
 		}
 	}
 
