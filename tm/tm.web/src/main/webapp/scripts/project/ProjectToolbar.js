@@ -49,13 +49,15 @@ define([ "jquery", "backbone", "handlebars", "jquery.squash.confirmdialog" ], fu
 			// because it's somewhere else, we cannot bind events using the backbone event property
 			this.coerceDialog.on("confirmdialogconfirm", proceedTemplateCoertion(templateId));
 		}, 
+		
 		events: {
 			"click #coerce": "confirmTemplateCoertion" 
 		}, 
-		confirmTemplateCoertion: function() {
+		
+		confirmTemplateCoertion: function(event) {
 			var dom = event.source, 
-			button = $(dom),
-			templateId = button.data("template-id");
+				button = $(dom),
+				templateId = button.data("template-id");
 
 			this.coerceDialog.confirmDialog("open");
 		} 
