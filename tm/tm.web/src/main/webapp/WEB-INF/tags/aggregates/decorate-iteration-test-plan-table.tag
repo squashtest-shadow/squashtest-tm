@@ -117,7 +117,7 @@
 					data : {"mode":"auto"},
 					dataType : "json"
 				})
-				.done(function() {
+				.done(function(suiteView) {
 					refreshTestPlans();
 					if(suiteView.executions.length == 0){
 						$.squash
