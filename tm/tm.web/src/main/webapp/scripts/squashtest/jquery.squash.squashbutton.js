@@ -26,16 +26,13 @@
 (function ($) {
 	$.widget("squash.squashButton", $.ui.button, {
 		_trigger : function (type, event, data) {
-			// we need this otherwise events won't bubble
-			$.Widget.prototype._trigger.apply(this, arguments);
-
-			$(this).removeClass("ui-state-focus ui-state-hover");
+			this._super(type, event, data  );			
+			this.element.removeClass("ui-state-focus ui-state-hover");			
+			return this;
 		},
 
 		_setOption : function (key, value) {
-			// In jQuery UI 1.8, you have to manually invoke the
-			// _setOption method from the base widget
-			$.Widget.prototype._setOption.apply(this, arguments);
+			return this._super(key, value);
 		}
 		
 	});
