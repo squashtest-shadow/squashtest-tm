@@ -92,21 +92,18 @@ var squashtm = squashtm || {};
 
 	};
 
-	$.fn.bindFirst = function (type, closure) {
-		/*
-		
-		//broken
-		
-		var saveHandlers = this.data('events')[type].slice(0);
-		this.data('events')[type] = [];		
-		closure();
+	/* thanks to http://stackoverflow.com/questions/2360655/jquery-event-handlers-always-execute-in-order-they-were-bound-any-way-around-t for fixing me*/
+	$.fn.bindFirst = function(name, selector, data, fn) {
+	     
+	    this.on(name, selector, data, fn);
 
-		for (var i=0; i<saveHandlers.length;i++) {
-			this.data('events')[type].push(saveHandlers[i]);
-		};
-		*/
-		closure();
+	    this.each(function() {
+	        var handlers = $._data(this, 'events')[name.split('.')[0]];
+	        var handler = handlers.pop();
+	        handlers.splice(0, 0, handler);
+	    });
 	};
+
 
 	/* defines functions in the jQuery namespace */
 	$.extend({
