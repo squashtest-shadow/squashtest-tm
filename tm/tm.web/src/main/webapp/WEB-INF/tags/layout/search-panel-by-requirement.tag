@@ -54,8 +54,7 @@
 					if (!byReqVerifyParams()) {
 						return;
 					}
-					byReqResearch($("#byReqSearchName").val(), $('#byReqProject-view').attr(
-							'checked'));
+					byReqResearch($("#byReqSearchName").val(), $('#byReqProject-view').is(':checked'));
 					//save the research to pre-fill the field for the next research
 					$.cookie('searchByReq${workspace}', $("#byReqSearchName").val());
 				});

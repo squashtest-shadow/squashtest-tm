@@ -82,7 +82,7 @@
 					return;
 				}
 			</c:if>
-			research($("#searchName").val(), $('#project-view').prop('checked'));
+			research($("#searchName").val(), $('#project-view').is(':checked'));
 			$.cookie('search${workspace}', $("#searchName").val());	
 		});
 		
@@ -406,20 +406,20 @@
 // 	<c:if test="${ (workspace eq 'requirement' || linkable eq 'requirement') || (workspace != 'requirement' || linkable eq 'test-case')}">
 	function getCriticalityParams (){
 		var critValue = [];
-		critValue[0] = $('#crit-1').attr('checked');
-		critValue[1] = $('#crit-2').attr('checked');
-		critValue[2] = $('#crit-3').attr('checked');
-		critValue[3] = $('#crit-4').attr('checked');
+		critValue[0] = $('#crit-1').is(':checked');
+		critValue[1] = $('#crit-2').is(':checked');
+		critValue[2] = $('#crit-3').is(':checked');
+		critValue[3] = $('#crit-4').is(':checked');
 		return critValue;	
 	}
 	function getCategoryParams (){
 		var catValue = [];
-		catValue[0] = $('#cat-1').attr('checked');
-		catValue[1] = $('#cat-2').attr('checked');
-		catValue[2] = $('#cat-3').attr('checked');
-		catValue[3] = $('#cat-4').attr('checked');
-		catValue[4] = $('#cat-5').attr('checked');
-		catValue[5] = $('#cat-6').attr('checked');
+		catValue[0] = $('#cat-1').is(':checked');
+		catValue[1] = $('#cat-2').is(':checked');
+		catValue[2] = $('#cat-3').is(':checked');
+		catValue[3] = $('#cat-4').is(':checked');
+		catValue[4] = $('#cat-5').is(':checked');
+		catValue[5] = $('#cat-6').is(':checked');
 		return catValue;	
 	}
 	
