@@ -41,10 +41,8 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.domain.users.User;
 import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.internal.repository.GenericProjectDao;
-import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
-import org.squashtest.csp.tm.service.project.GenericProjectFinder;
 
 @Service("squashtest.tm.service.ProjectsPermissionManagementService")
 public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissionManagementService {
@@ -240,6 +238,15 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	public void removeAllPermissionsFromProjectTemplate(long templateId) {
 		ObjectIdentity projectRef = new ObjectIdentityImpl(ProjectTemplate.class, templateId);
 		aclService.removeAllResponsibilities(projectRef);
+	}
+	
+	/**
+	 * @see  org.squashtest.csp.tm.service.ProjectsPermissionManagementService#removeAllPermissionsFromObject(Class, long)
+	 */
+	@Override
+	public void removeAllPermissionsFromObject(Class<?> clazz, long id){
+		ObjectIdentity ref = new ObjectIdentityImpl(clazz, id);
+		aclService.removeAllResponsibilities(ref);
 	}
 	
 	@Override

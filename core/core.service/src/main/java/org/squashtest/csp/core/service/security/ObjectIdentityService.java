@@ -22,11 +22,15 @@ package org.squashtest.csp.core.service.security;
 
 public interface ObjectIdentityService {
 	
+	/**
+	 * @param entityId : the entity id
+	 * @param entityClass : the entity's class
+	 */
 	void addObjectIdentity(long entityId, Class<?> entityClass);
 	
 	/**
-	 * @param entityId
-	 * @param entityType
+	 * @param entityId : the entity id
+	 * @param entityClass : the entity's class
 	 */
-	void removeObjectIdentity(long entityId, Class<?> entityType);
+	void removeObjectIdentity(long entityId, Class<?> entityClass);
 }

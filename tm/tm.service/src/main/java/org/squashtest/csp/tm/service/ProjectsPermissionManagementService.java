@@ -56,5 +56,12 @@ public interface ProjectsPermissionManagementService extends ProjectsPermissionF
 	 * @param templateId
 	 */
 	void removeAllPermissionsFromProjectTemplate(long templateId);
+	/**
+	 * Removes all the permissions from the given object.
+	 * 
+	 * @param clazz : the object's class
+	 * @param id : the object's id
+	 */
+	void removeAllPermissionsFromObject(Class<?> clazz, long id);
 
 }

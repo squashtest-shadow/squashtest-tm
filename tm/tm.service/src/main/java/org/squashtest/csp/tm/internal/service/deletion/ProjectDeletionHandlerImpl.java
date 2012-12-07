@@ -30,6 +30,7 @@ import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.squashtest.csp.core.service.security.ObjectIdentityService;
 import org.squashtest.csp.tm.domain.CannotDeleteProjectException;
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.csp.tm.domain.library.Library;
@@ -43,12 +44,12 @@ import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.internal.repository.GenericProjectDao;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
-import org.squashtest.csp.tm.internal.repository.ProjectDeletionDao;
 import org.squashtest.csp.tm.internal.service.CampaignNodeDeletionHandler;
 import org.squashtest.csp.tm.internal.service.NodeDeletionHandler;
 import org.squashtest.csp.tm.internal.service.ProjectDeletionHandler;
 import org.squashtest.csp.tm.internal.service.RequirementNodeDeletionHandler;
 import org.squashtest.csp.tm.internal.service.TestCaseNodeDeletionHandler;
+import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
 import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
 
 @Component("squashtest.tm.service.deletion.ProjectDeletionHandler")
@@ -66,9 +67,12 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	@Inject
 	private RequirementNodeDeletionHandler requirementDeletionHandler;
 	@Inject
-	private ProjectDeletionDao projectDeletionDao;
+	private ObjectIdentityService objectIdentityService;
+	@Inject
+	private ProjectsPermissionManagementService projectPermissionManagementService;
 	@Inject
 	private SessionFactory sessionFactory;
+	
 
 	@Inject
 	private CustomFieldBindingModificationService bindingService;
@@ -107,7 +111,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 	private void doDeleteProject(long projectId) {
 		LOGGER.debug("The project #" + projectId + " is being deleted");
-		Project project = projectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findById(projectId);
 
 		CampaignLibrary campaignLibrary = project.getCampaignLibrary();
 		deleteLibraryContent(campaignLibrary, campaignDeletionHandler);
@@ -119,10 +123,49 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		deleteLibraryContent(requirementLibrary, requirementDeletionHandler);
 		sessionFactory.getCurrentSession().evict(project);
 		project = projectDao.findById(projectId);
-		removeProjectFromFilters(project);
+		project.accept(new ProjectVisitor() {			
+			@Override
+			public void visit(ProjectTemplate projectTemplate) {
+				// NOOP
+			}
+			
+			@Override
+			public void visit(Project project) {
+				removeProjectFromFilters(project);
+			}
+		});
 
-		// FIXME does not work with template, specific code to remiove acsl. use project permission manager instead
-		projectDeletionDao.removeProject(project);
+		removeACLsForProjectAndLibraries(project);
+		genericProjectDao.remove(project);
+	}
+
+	private void removeACLsForProjectAndLibraries(GenericProject project) {
+		long rlId = project.getRequirementLibrary().getId();
+		long tclId = project.getTestCaseLibrary().getId();
+		long clId = project.getCampaignLibrary().getId();
+		//remove arse for libraries
+		projectPermissionManagementService.removeAllPermissionsFromObject(RequirementLibrary.class, rlId);
+		projectPermissionManagementService.removeAllPermissionsFromObject(TestCaseLibrary.class, tclId);
+		projectPermissionManagementService.removeAllPermissionsFromObject(CampaignLibrary.class, clId);
+		//remove aoi for libaries
+		objectIdentityService.removeObjectIdentity(rlId, RequirementLibrary.class);
+		objectIdentityService.removeObjectIdentity(tclId, TestCaseLibrary.class);
+		objectIdentityService.removeObjectIdentity(clId, CampaignLibrary.class);
+		//remove arse for project
+		//and remove aoi for project
+		project.accept(new ProjectVisitor() {			
+			@Override
+			public void visit(ProjectTemplate projectTemplate) {
+				projectPermissionManagementService.removeAllPermissionsFromObject(ProjectTemplate.class, projectTemplate.getId());
+				objectIdentityService.removeObjectIdentity(projectTemplate.getId(), ProjectTemplate.class);
+			}
+			
+			@Override
+			public void visit(Project project) {
+				projectPermissionManagementService.removeAllPermissionsFromObject(Project.class, project.getId());
+				objectIdentityService.removeObjectIdentity(project.getId(), Project.class);
+			}
+		});
 	}
 
 	private void removeProjectFromFilters(Project project) {

@@ -22,21 +22,17 @@ package org.squashtest.csp.tm.internal.service.deletion;
 
 import javax.inject.Inject;
 
-import org.hibernate.Query;
-import org.hibernate.type.LongType
-import org.spockframework.util.NotThreadSafe;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.csp.core.service.security.ObjectIdentityService
 import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.csp.tm.internal.repository.ProjectDao
-import org.squashtest.csp.tm.internal.repository.TestCaseDao
-import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
-import org.unitils.dbunit.annotation.DataSet
+import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification
+import org.unitils.dbunit.annotation.DataSet;
 
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
@@ -44,7 +40,12 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 
 	@Inject
 	private ProjectDeletionHandlerImpl deletionHandler
-
+	
+	private ObjectIdentityService objectIdentityService = Mock()
+	
+	def setup(){
+		deletionHandler.objectIdentityService = objectIdentityService;
+	}
 	@Inject
 	private ProjectDao projectDao
 
@@ -64,7 +65,7 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 	@DataSet("ProjectDeletionHandlerTest.should delete project and libraries.xml")
 	def "should delete project acls"(){
 		
-		when :
+		when : 
 		def result = deletionHandler.deleteProject(1)
 		getSession().flush();
 		then :
@@ -73,10 +74,13 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",7L)
 		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",8L)
 		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",9L)
-		! found ("ACL_OBJECT_IDENTITY", "ID", 8L)
-		! found ("ACL_OBJECT_IDENTITY", "ID", 9L)
-		! found ("ACL_OBJECT_IDENTITY", "ID", 10L)
-		! found ("ACL_OBJECT_IDENTITY", "ID", 11L)
+		
+//		In integration test context ObjectIdentityService is as stub
+//		this is why i use a mock here
+		1*objectIdentityService.removeObjectIdentity(12L,RequirementLibrary.class)
+		1*objectIdentityService.removeObjectIdentity(13L,TestCaseLibrary.class)
+		1*objectIdentityService.removeObjectIdentity(14L,CampaignLibrary.class)
+		1*objectIdentityService.removeObjectIdentity(1L,Project.class)
 	}
 	
 	
