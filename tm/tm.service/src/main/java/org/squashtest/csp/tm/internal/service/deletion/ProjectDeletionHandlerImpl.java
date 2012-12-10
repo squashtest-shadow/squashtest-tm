@@ -122,7 +122,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		RequirementLibrary requirementLibrary = project.getRequirementLibrary();
 		deleteLibraryContent(requirementLibrary, requirementDeletionHandler);
 		sessionFactory.getCurrentSession().evict(project);
-		project = projectDao.findById(projectId);
+		project = genericProjectDao.findById(projectId);
 		project.accept(new ProjectVisitor() {			
 			@Override
 			public void visit(ProjectTemplate projectTemplate) {
