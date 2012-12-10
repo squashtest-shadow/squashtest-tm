@@ -43,7 +43,7 @@ public class HibernateTestStepDao extends HibernateDao<TestStep> implements Test
 	 * So we're going to locate the TestCase who contain it first, then remove the TestStep from the list.
 	 */
 	@Override
-	public void removeById(Long testStepId) {
+	public void removeById(long testStepId) {
 
 		TestCase testCase = findTestCaseByTestStepId(testStepId);
 
@@ -63,7 +63,7 @@ public class HibernateTestStepDao extends HibernateDao<TestStep> implements Test
 	}
 
 	@Override
-	public TestStep findById(Long testStepId) {
+	public TestStep findById(long testStepId) {
 		return getEntity(testStepId);
 	}
 
@@ -112,7 +112,6 @@ public class HibernateTestStepDao extends HibernateDao<TestStep> implements Test
 			
 		}
 		
-	};
-
+	}
 
 }

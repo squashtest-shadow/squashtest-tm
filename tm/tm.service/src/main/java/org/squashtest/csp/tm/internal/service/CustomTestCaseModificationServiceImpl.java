@@ -35,8 +35,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.CallTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
@@ -45,6 +45,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
+import org.squashtest.csp.tm.internal.repository.ActionTestStepDao;
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestStepDao;
@@ -71,6 +72,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestCaseDao testCaseDao;
+	
+	@Inject
+	private ActionTestStepDao actionStepDao;
 
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
@@ -134,14 +138,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.csp.tm.domain.testcase.TestStep' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void updateTestStepAction(long testStepId, String newAction) {
-		ActionTestStep testStep = (ActionTestStep) testStepDao.findById(testStepId);
+		ActionTestStep testStep = actionStepDao.findById(testStepId);
 		testStep.setAction(newAction);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.csp.tm.domain.testcase.TestStep' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void updateTestStepExpectedResult(long testStepId, String newExpectedResult) {
-		ActionTestStep testStep = (ActionTestStep) testStepDao.findById(testStepId);
+		ActionTestStep testStep = actionStepDao.findById(testStepId);
 		testStep.setExpectedResult(newExpectedResult);
 	}
 

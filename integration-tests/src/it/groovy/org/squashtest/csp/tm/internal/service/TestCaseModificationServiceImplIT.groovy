@@ -38,6 +38,7 @@ import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
 import org.squashtest.csp.tm.service.project.ProjectManagerService;
 import org.unitils.dbunit.annotation.DataSet;
+import org.unitils.dbunit.annotation.ExpectedDataSet;
 
 import spock.unitils.UnitilsSupport;
 
@@ -192,24 +193,18 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		tc.reference == tcNewRef
 	}
 
+	@DataSet("TestCaseModificationServiceImplIT.should update a test step action.xml")
 	def "should update a test step action "(){
 		given :
-		ActionTestStep step = new ActionTestStep(action: "first step", expectedResult: "should work")
-
+		def stepId = 2L
 		and:
-		def newaction = "begin"
-
+		def newAction = "manmana"
 		when :
-		def tstep = service.addActionTestStep(testCaseId, step)
-		service.updateTestStepAction(tstep.id, newaction)
-
-		def listSteps = service.findStepsByTestCaseId (testCaseId)
-
-		tstep = listSteps.get(0);
-
-
+		service.updateTestStepAction(stepId, newAction)
+		
 		then :
-		tstep.action == newaction
+		ActionTestStep step = findEntity(ActionTestStep.class, 2L);
+		step.action == newAction;
 	}
 
 

@@ -165,6 +165,10 @@
 		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.TestSuiteDao" />
 		<property name="entityType" value="org.squashtest.csp.tm.domain.campaign.TestSuite" />
 	</bean>	
+	<bean id="actionTestStepDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
+		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.ActionTestStepDao" />
+		<property name="entityType" value="org.squashtest.csp.tm.domain.testcase.ActionTestStep" />
+	</bean>	
 
 	<bean id="automatedExecutionDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
 		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.testautomation.AutomatedExecutionExtenderDao" />
