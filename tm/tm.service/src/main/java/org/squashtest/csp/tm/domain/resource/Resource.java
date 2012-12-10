@@ -91,8 +91,66 @@ public abstract class Resource implements AttachmentHolder, Identified{
 	public AttachmentList getAttachmentList() {
 		return attachmentList;
 	}
+
+
+
+	// ******************* other utilities ****************************
 	
+	/*
+	 * Issue 1713
+	 * 
+	 * Due to the mixed use of actual instances and javassist proxies, comparisons may fail. Thus the 
+	 * redefinition of hashCode() and equals() below, that take account of the lazy loading and 
+	 * the fact that the compared objects may be of different classes. 
+	 * 
+	 */
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((getAttachmentList() == null) ? 0 : getAttachmentList().hashCode());
+		result = prime * result
+				+ ((getDescription() == null) ? 0 : getDescription().hashCode());
+		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (! ( this.getClass().isAssignableFrom(obj.getClass()) || obj.getClass().isAssignableFrom(getClass()) ))
+			return false;
+		Resource other = (Resource) obj;
+		if (getAttachmentList() == null) {
+			if (other.getAttachmentList() != null)
+				return false;
+		} else if (!getAttachmentList().equals(other.getAttachmentList()))
+			return false;
+		if (getDescription() == null) {
+			if (other.getDescription() != null)
+				return false;
+		} else if (!getDescription().equals(other.getDescription()))
+			return false;
+		if (getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!getId().equals(other.getId()))
+			return false;
+		if (getName() == null) {
+			if (other.getName() != null)
+				return false;
+		} else if (!getName().equals(other.getName()))
+			return false;
+		return true;
+	}
+
 
 	
+
 }
