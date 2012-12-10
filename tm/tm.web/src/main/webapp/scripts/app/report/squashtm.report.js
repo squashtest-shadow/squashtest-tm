@@ -34,9 +34,7 @@ var squashtm = squashtm || {};
  * @author Gregory Fouquet
  */
 define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable", "jeditable.datepicker", 
-         "jquery.squash", "jquery.squash.linkabletree", "jquery.squash.projectpicker", 
-         /* issue 1535 */
-         "datepicker/require.jquery.squash.datepicker-locales"  ], function($, RWS) {
+         "jquery.squash", "jquery.squash.linkabletree", "jquery.squash.projectpicker", "datepicker/require.jquery.squash.datepicker-locales"  ], function($, RWS) {
 	var config = {
 		contextPath: "",
 		dateFormat: "dd/mm/yy", 
@@ -188,7 +186,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 		
 		if (!!confLocale){
 			$.extend(dateSettings, confLocale);
-		};
+		}
 		
 		//rest of the init
 		datepickers.editable(function (value, settings) {
@@ -279,6 +277,8 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 
 		if (!selectedTab) {
 			tabPanel.tabs( "option", "active", 0);
+		// tab is inited, we dont need collapsible anymore, otherwise click on active tab will trigger an event
+			tabPanel.tabs("option", "collapsible", false); 
 		} else {
 			loadTab(selectedTab);
 		}
@@ -286,13 +286,13 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 		$("#view-tabed-panel:hidden").show('blind', {}, 500);
 	}
 	
-	function onViewTabSelected(event, ui) {
+	function onViewTabSelected(event, ui) {		
 		selectedTab = ui;
 		var tabs = $(this);
 		tabs.find(".view-format-cmb").addClass('not-displayed');
 		tabs.find("#view-format-cmb-" + ui.newTab.index()).removeClass('not-displayed');
 		
-		loadTab(ui);
+		loadTab(ui);			
 	}
 	
 	function doExport() {
@@ -308,7 +308,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 	function initViewTabs() {
 		$("#view-tabed-panel").tabs({
 			active: false,
-			collapsible: true,
+			collapsible: true, // we need collapsible for first init of first tab
 			activate: onViewTabSelected
 		});
 	}
