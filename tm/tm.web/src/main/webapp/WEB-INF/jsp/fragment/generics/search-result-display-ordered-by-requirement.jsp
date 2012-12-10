@@ -21,7 +21,7 @@
 
 --%>
 <%-- 
-	Winner of the Golden WTF Award here ! Whenever we have time for refractoring DUMP THIS along with 
+	Winner of the Golden WTF Award here ! Whenever we have time for refactoring DUMP THIS along with 
 		- search-result-display-by-requirement
 		- search-result-display
 		- search-result-display-ordered
@@ -39,12 +39,9 @@
 	<thead>
 		<tr>
 			<th> Id </th>
-			<th><f:message key="${workspace}.header.title" />s</th>
-			
-				
-				<th> Criticalité </th>
-				<th> Projet </th>
-			
+			<th><f:message key="${workspace}.header.title" />s</th>				
+			<th> Criticalité </th>
+			<th> Projet </th>		
 		</tr>
 	</thead>
 	<tbody>
@@ -54,21 +51,18 @@
 			<c:if test="${currentProject != oldProject}">
 				<tr> 
 					<td> ${object.id}</td>
-					<td id="searchnode-${object.class.simpleName}Library-${object.project.id}" class="searched-project non-tree" style="border: none;"> 
+					<td id="searchnode-${object.class.simpleName}Library-${object.project.id}" class="searched-project non-tree" style="border: none;" > 
 						<a style="color: white; text-decoration: none; border: none;" href="#">
 							<img class="search-image" src="${servContext}/images/root.png"/>
-							<span class="search-text">${object.reference}-${object.project.name}</span>
+							<span class="search-text">${object.project.name}</span>
 						</a>
 					</td> 
-					
-					
-						<td>
-							${object.project.name }
-						</td>
-						<td>
-							${object.project.name }
-						</td>
-					
+					<td>
+						
+					</td>
+					<td>
+						
+					</td>
 				</tr>
 				<c:set var="oldProject" value="${currentProject}"></c:set>
 			</c:if>
@@ -89,10 +83,7 @@
 									${object.project.name }-${object.criticality}
 								</td>
 								<td>
-									${object.project.name }-${object.name }
-								</td>
-								<td>
-									${object.project.name }-${object.reference }
+									${object.project.name }-${object.project.name }
 								</td>
 						</tr>
 					
@@ -131,7 +122,6 @@
 			<dt:column-definition targets="0" sortable="false" visible="false" />
 			<dt:column-definition targets="1" sortable="false" />
 			<dt:column-definition targets="2" sortable="true" visible="false" />
-			<dt:column-definition targets="3" sortable="true" visible="false" />
-			<dt:column-definition targets="4" sortable="true" visible="false" lastDef="true"/>
+			<dt:column-definition targets="3" sortable="true" visible="false" lastDef="true"/>
 		</jsp:attribute>
 	</comp:decorate-ajax-search-table>
