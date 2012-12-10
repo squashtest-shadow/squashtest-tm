@@ -31,13 +31,12 @@
 <%@ attribute name="titleKey" required="true" %>
 <%@ attribute name="isSubPaged" required="false"  description="boolean. if set to true, the layout will be applied in a sub-paged form. Basically
 it will insert sub-page-layout.tag between the top template and this one." %>
-
-
 <%@ attribute name="highlightedWorkspace" required="false" description="Workspace which should be highlighted. Values : test-case, campaign, requirement. Empty for no workspace highlight" %>
+
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="sq" tagdir="/WEB-INF/tags" %>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"  %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <?xml version="1.0" encoding="ISO-8859-1" ?>

@@ -54,7 +54,7 @@
 			<a id="dialog-settings-filter-deselectall" href="#" class="project-picker-deselall">${deselectAllLabel}</a>
 			<a id="dialog-settings-filter-invertselect" href="#" class="project-picker-invsel">${invertselectLabel}</a>				
 		</div>	
-		<hr/>
+		<br/>
 		<div id="dialog-settings-filter-projectlist" class="project-filter-list">
 		
 		</div>
@@ -66,8 +66,8 @@
 <%-- 
 	code managing the initialization of the popup
  --%>
- <%--
-<c:url var="libUrl" value="/scripts/squash/squashtm.projectfilter.js" />
+<%-- 
+<c:url var="libUrl" value="/scripts/app/ws/squashtm.projectfilter.js" />
 <script type="text/javascript" src="${libUrl}"></script> 
 <script type="text/javascript">
 	var projectFilterConf = {
