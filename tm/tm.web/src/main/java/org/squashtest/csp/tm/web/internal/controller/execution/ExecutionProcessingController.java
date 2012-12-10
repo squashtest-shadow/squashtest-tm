@@ -43,6 +43,15 @@ import org.squashtest.csp.tm.service.ExecutionProcessingService;
 @RequestMapping("/execute/{executionId}")
 public class ExecutionProcessingController {
 
+	/**
+	 * Accept HTML header
+	 */
+	private static final String ACCEPT_HTML_HEADER = "Accept=text/html";
+	/**
+	 * Step partial URL
+	 */
+	private static final String STEP_URL = "/step/{stepIndex}";
+
 	private static final String STEP_INFORMATION_FRAGMENT = "fragment/executions/step-information-fragment";
 
 	private static final String IE0_STEP_VIEW = "page/ieo/ieo-execute-execution";
@@ -99,8 +108,8 @@ public class ExecutionProcessingController {
 
 	}
 
-	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = { "optimized=false",
-			"suitemode=false" }, headers = "Accept=text/html")
+	@RequestMapping(value = STEP_URL, method = RequestMethod.GET, params = { "optimized=false",
+			"suitemode=false" }, headers = ACCEPT_HTML_HEADER)
 	public String getClassicSingleExecutionStepFragment(@PathVariable long executionId, @PathVariable int stepIndex,
 			Model model) {
 
@@ -111,8 +120,8 @@ public class ExecutionProcessingController {
 
 	}
 	
-	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = { "optimized=false",
-			"suitemode=true" }, headers = "Accept=text/html")
+	@RequestMapping(value = STEP_URL, method = RequestMethod.GET, params = { "optimized=false",
+			"suitemode=true" }, headers = ACCEPT_HTML_HEADER)
 	public String getClassicTestSuiteExecutionStepFragment(@PathVariable long executionId, @PathVariable int stepIndex,
 			Model model) {
 
@@ -123,8 +132,8 @@ public class ExecutionProcessingController {
 
 	}
 
-	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = { "optimized=true",
-			"suitemode=false" }, headers = "Accept=text/html")
+	@RequestMapping(value = STEP_URL, method = RequestMethod.GET, params = { "optimized=true",
+			"suitemode=false" }, headers = ACCEPT_HTML_HEADER)
 	public String getOptimizedSingleExecutionStepFragment(@PathVariable long executionId, @PathVariable int stepIndex,
 			Model model) {
 
@@ -135,8 +144,8 @@ public class ExecutionProcessingController {
 
 	}
 
-	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, params = { "optimized=true",
-			"suitemode=true" }, headers = "Accept=text/html")
+	@RequestMapping(value = STEP_URL, method = RequestMethod.GET, params = { "optimized=true",
+			"suitemode=true" }, headers = ACCEPT_HTML_HEADER)
 	public String getOptimizedTestSuiteExecutionStepFragment(@PathVariable long executionId,
 			@PathVariable int stepIndex, Model model) {
 
@@ -147,7 +156,7 @@ public class ExecutionProcessingController {
 
 	}
 
-	@RequestMapping(value = "/step/{stepIndex}", method = RequestMethod.GET, headers = "Accept=application/json")
+	@RequestMapping(value = STEP_URL, method = RequestMethod.GET, headers = "Accept=application/json")
 	@ResponseBody
 	public StepState getStepState(@PathVariable Long executionId, @PathVariable Integer stepIndex) {
 

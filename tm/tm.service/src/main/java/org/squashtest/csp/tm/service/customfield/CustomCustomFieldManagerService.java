@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.internal.service.customField.CannotDeleteDefaultOptionException;
 import org.squashtest.csp.tm.internal.service.customField.MandatoryCufNeedsDefaultValueException;
 import org.squashtest.csp.tm.internal.service.customField.OptionAlreadyExistException;
@@ -153,7 +152,7 @@ public interface CustomCustomFieldManagerService {
 	 * Will find all custom fields available and return them ordered according to the given parameters.
 	 * 
 	 * @param filter
-	 *            the {@link CollectionSorting} that holds order and paging params.
+	 *            the {@link PagedCollectionHolder} that holds order and paging params.
 	 * @return the filtered collection of all custom field available in squash
 	 */
 	public PagedCollectionHolder<List<CustomField>> findSortedCustomFields(PagingAndSorting filter);
