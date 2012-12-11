@@ -85,7 +85,8 @@
 
 	<c:if
 		test="${ statisticsEntity.status == 'RUNNING' || statisticsEntity.status == 'READY'}">
-		<a tabindex="0" href="#start" class="button run-menu" id="start-resume-button" class="button" >${startResumeLabel}</a>
+		<!-- <a tabindex="0" href="#start" class="button run-menu" id="start-resume-button" class="button" >${startResumeLabel}</a> -->
+		<input type="button" id="start-resume-button" class="button run-menu" value="${startResumeLabel}"/>
 		<div id="start" style="display: none">
 			<ul>
 				<li>
@@ -99,7 +100,6 @@
 
 		<script>
 			$(function() {
-				$( ".run-menu" ).button();
 				$("#start-resume-button").fgmenu({
 					content : $('#start-resume-button').next().html(),
 					showSpeed : 0,

@@ -27,7 +27,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <script type="text/javascript">
 	$(function() {
-		$( ".run-menu" ).button()
+		$( ".run-menu" )
 		.click(function(){
 			$(this).removeClass("ui-state-focus ui-state-hover");
 		});
