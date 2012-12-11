@@ -65,7 +65,6 @@ import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
 import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.csp.tm.service.CallStepManagerService;
 import org.squashtest.csp.tm.service.ExecutionFinder;
-import org.squashtest.csp.tm.service.TestAutomationFinderService;
 import org.squashtest.csp.tm.service.TestCaseModificationService;
 import org.squashtest.csp.tm.service.VerifiedRequirement;
 import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
@@ -99,10 +98,11 @@ public class TestCaseModificationController {
 
 	private final DataTableMapper verifiedReqMapper = new DataTableMapper("verified-requirement",
 			RequirementVersion.class, Project.class).initMapping(9)
-			.mapAttribute(Project.class, 2, NAME_KEY, String.class)
-			.mapAttribute(RequirementVersion.class, 3, "id", Long.class)
-			.mapAttribute(RequirementVersion.class, 4, "reference", String.class)
-			.mapAttribute(RequirementVersion.class, 5, NAME_KEY, String.class)
+			.mapAttribute(Project.class, 1, NAME_KEY, String.class)
+			.mapAttribute(RequirementVersion.class, 2, "id", Long.class)
+			.mapAttribute(RequirementVersion.class, 3, "reference", String.class)
+			.mapAttribute(RequirementVersion.class, 4, NAME_KEY, String.class)
+			.mapAttribute(RequirementVersion.class, 5, "versionNumber", Integer.class)
 			.mapAttribute(RequirementVersion.class, 6, "criticality", RequirementCriticality.class)
 			.mapAttribute(RequirementVersion.class, 7, "category", RequirementCategory.class);
 
