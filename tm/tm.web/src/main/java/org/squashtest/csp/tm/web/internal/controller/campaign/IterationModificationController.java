@@ -536,7 +536,7 @@ public class IterationModificationController {
 		return 	AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds" })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "!testPlanItemsIds[]" })
 	public @ResponseBody AutomatedSuiteOverview executeAllAuto(@PathVariable long iterationId, Locale locale ){
 		AutomatedSuite suite = iterationModService.createAutomatedSuite(iterationId);
 		testAutomationService.startAutomatedSuite(suite);

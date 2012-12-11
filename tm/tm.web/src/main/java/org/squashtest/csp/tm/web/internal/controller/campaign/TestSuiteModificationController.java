@@ -365,7 +365,7 @@ public class TestSuiteModificationController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds" })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "!testPlanItemsIds[]" })
 	public @ResponseBody
 	AutomatedSuiteOverview executeAllAuto(@PathVariable long id, Locale locale) {
 		AutomatedSuite suite = service.createAutomatedSuite(id);
