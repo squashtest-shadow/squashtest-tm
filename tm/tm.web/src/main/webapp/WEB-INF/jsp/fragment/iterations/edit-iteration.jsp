@@ -464,13 +464,13 @@
 		<%--------------------------- Deletion confirmation pup for Test plan section ------------------------------------%>
 		<c:if test="${ linkable }">
 			<pop:popup id="delete-multiple-test-plan-dialog"
-				openedBy="remove-test-case-button"
+				openedBy="remove-test-case-button" isContextual="true" 
 				titleKey="dialog.remove-testcase-associations.title">
 				<jsp:attribute name="buttons">
 		<f:message var="label" key="label.Yes" />
 				'${ label }' : function(){
-						$("#delete-multiple-test-plan-dialog").data("answer","yes");
-						$("#delete-multiple-test-plan-dialog").dialog("close");
+					$("#delete-multiple-test-plan-dialog").data("answer","yes");
+					$("#delete-multiple-test-plan-dialog").dialog("close");
 				},
 				
 		<pop:cancel-button />
@@ -483,8 +483,7 @@
 				"dialogopen",
 				function(event, ui) {
 					var table = $('#test-plans-table').dataTable();
-					var ids = getIdsOfSelectedTableRows(table,
-							getTestPlansTableRowId);
+					var ids = getIdsOfSelectedTableRows(table,	getTestPlansTableRowId);
 
 					if (ids.length == 0) {
 						$.squash.openMessage(
