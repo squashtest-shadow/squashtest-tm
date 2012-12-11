@@ -31,7 +31,7 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 	}
 	
 	function getProjectTableRowId(rowData) {
-		return rowData["project-id"];	
+		return rowData["project-id"];
 	}
 
 	function addHLinkToProjectName(row, data) {
@@ -117,6 +117,10 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 			
 			this.$el.squashTable(tableConf, squashConf);			
 		}, 
+		
+		hasTemplate: function(){
+			return this.$el.find("td.type-template").length	> 0;
+		},
 		
 		refresh: function() {
 			this.$el.squashTable().fnDraw(false);

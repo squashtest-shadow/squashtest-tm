@@ -64,8 +64,13 @@ define(
 									discardAndRefresh);
 						},
 
-						showNewProjectFromTemplateDialog : function() {							
+						showNewProjectFromTemplateDialog : function() {
 							var self = this;
+							var messages = squashtm.app.projectsManager.messages;
+							if(!self.projectsTable.hasTemplate()){
+								$.squash.openMessage(messages.info, messages.noProjectTemplateMessage);
+								return;
+							}
 
 							function discard() {
 								self.newProjectFromTemplateDialog

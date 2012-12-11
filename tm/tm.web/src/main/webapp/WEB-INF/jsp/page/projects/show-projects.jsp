@@ -57,7 +57,12 @@
 				tooltips: {
 					template: "<f:message key='label.projectTemplate' />",
 					project: "<f:message key='label.project' />"
-				}
+				},
+				messages: {
+					info : "<f:message key='popup.title.info'/>",
+					noProjectTemplateMessage : "<f:message key='message.noProjectTemplateSource'/>"
+					} 
+				
 		};
 	  require([ "common" ], function() {
 	    require([ "projects-manager" ]);
