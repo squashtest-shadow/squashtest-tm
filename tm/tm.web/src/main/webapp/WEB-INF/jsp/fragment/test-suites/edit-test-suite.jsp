@@ -543,7 +543,7 @@
 
 		<jsp:attribute name="buttons">
 		
-			<f:message var="label" key="campaign.test-plan.assign.button.label" />
+			<f:message var="label" key="label.Assign" />
 			'${ label }': function() {
 				var url = "${assignTestCasesUrl}";
 				var table = $( '#test-suite-test-plans-table' ).dataTable();
