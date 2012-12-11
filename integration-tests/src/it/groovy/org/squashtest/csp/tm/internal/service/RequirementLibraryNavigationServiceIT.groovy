@@ -27,6 +27,8 @@ import spock.unitils.UnitilsSupport;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.squashtest.csp.tm.domain.CopyPasteObsoleteException;
+import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.requirement.Requirement
@@ -34,6 +36,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementFolder
 import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
+import org.squashtest.csp.tm.internal.repository.IssueDao;
 import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
 import org.unitils.dbunit.annotation.DataSet;
 
@@ -83,6 +86,32 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		export3.name == "req3"
 		export3.folderName == ""
+	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should not copy paste obsolete.xml")
+	def "should not copy paste selection containing obsolete"(){
+		given:
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when:
+		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
+		
+		then:"exception is thrown"
+		thrown (CopyPasteObsoleteException)
+	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste folder with requirements.xml")
+	def "should not go infinite loop when copy paste a folder into itself"(){
+		given:
+		Long[] sourceIds = [1L]
+		Long destinationId = 1L
+		
+		when:
+		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
+		
+		then:"requirement folder is copied"
+		nodes.get(0) instanceof RequirementFolder
 	}
 	
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste folder with requirements.xml")

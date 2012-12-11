@@ -38,6 +38,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.csp.tm.domain.CopyPasteObsoleteException;
 import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException;
 import org.squashtest.csp.tm.domain.library.NodeVisitor;
 
@@ -133,6 +134,9 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> {
 	 */
 	@Override
 	public Requirement createCopy() {
+		if(!getCurrentVersion().isNotObsolete()){
+			throw new CopyPasteObsoleteException();
+		}
 		RequirementVersion latestVersionCopy = getCurrentVersion().createPastableCopy();
 		Requirement copy = new Requirement(latestVersionCopy);
 		copy.notifyAssociatedWithProject(this.getProject());
