@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.security.acls.PermissionGroup;
 import org.squashtest.csp.core.service.security.ObjectIdentityService;
+import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.NoBugTrackerBindingException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
 import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding;
@@ -44,6 +45,7 @@ import org.squashtest.csp.tm.domain.project.AdministrableProject;
 import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectTemplate;
+import org.squashtest.csp.tm.domain.project.ProjectVisitor;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
@@ -53,10 +55,12 @@ import org.squashtest.csp.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.csp.tm.internal.repository.BugTrackerBindingDao;
 import org.squashtest.csp.tm.internal.repository.BugTrackerDao;
 import org.squashtest.csp.tm.internal.repository.GenericProjectDao;
-import org.squashtest.csp.tm.internal.repository.UserDao;
-import org.squashtest.csp.tm.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
+import org.squashtest.csp.tm.internal.repository.UserDao;
 import org.squashtest.csp.tm.internal.service.ProjectDeletionHandler;
+import org.squashtest.csp.tm.internal.testautomation.service.InsecureTestAutomationManagementService;
+import org.squashtest.csp.tm.internal.utils.security.PermissionsUtils;
+import org.squashtest.csp.tm.internal.utils.security.SecurityCheckableObject;
 import org.squashtest.csp.tm.service.ProjectsPermissionManagementService;
 import org.squashtest.csp.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -71,7 +75,8 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 public class CustomGenericProjectManagerImpl implements CustomGenericProjectManager {
 	@Inject
 	private GenericProjectDao genericProjectDao;
-	@Inject private ProjectDao projectDao;
+	@Inject
+	private ProjectDao projectDao;
 	@Inject
 	private BugTrackerBindingDao bugTrackerBindingDao;
 	@Inject
@@ -87,10 +92,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Inject
 	private ProjectsPermissionManagementService permissionsManager;
 	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
+	@Inject
 	private InsecureTestAutomationManagementService autotestService;
-	@Inject ProjectDeletionHandler projectDeletionHandler;
+	@Inject
+	ProjectDeletionHandler projectDeletionHandler;
 
-	private static final String MANAGE_PROJECT_OR_ROLE_ADMIN = "hasPermission(#projectId, 'org.squashtest.csp.tm.domain.project.GenericProject', 'MANAGEMENT') or hasRole('ROLE_ADMIN')";
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 
 	/**
@@ -152,21 +159,43 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
-	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public AdministrableProject findAdministrableProjectById(long projectId) {
 		GenericProject genericProject = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(genericProject);
 		return genericToAdministrableConvertor.get().convertToAdministrableProject(genericProject);
 	}
 
+	private void checkManageProjectOrAdmin(GenericProject genericProject) {
+		genericProject.accept(new ProjectVisitor() {
+
+			@Override
+			public void visit(ProjectTemplate projectTemplate) {
+				PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(
+						projectTemplate, "MANAGEMENT"));
+
+			}
+
+			@Override
+			public void visit(Project project) {
+				PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(project,
+						"MANAGEMENT"));
+
+			}
+		});
+
+	}
+
 	@Override
-	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public void addNewPermissionToProject(long userId, long projectId, String permission) {
+		GenericProject genericProject = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(genericProject);
 		permissionsManager.addNewPermissionToProject(userId, projectId, permission);
 	}
 
 	@Override
-	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public void removeProjectPermission(long userId, long projectId) {
+		GenericProject genericProject = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(genericProject);
 		permissionsManager.removeProjectPermission(userId, projectId);
 
 	}
@@ -194,18 +223,19 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	// ********************************** Test automation section *************************************
 
 	@Override
-	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public void bindTestAutomationProject(long projectId, TestAutomationProject taProject) {
+		GenericProject genericProject = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(genericProject);
 		TestAutomationProject persistedProject = autotestService.persistOrAttach(taProject);
-		genericProjectDao.findById(projectId).bindTestAutomationProject(persistedProject);
+		genericProject.bindTestAutomationProject(persistedProject);
 	}
 
 	@Override
-	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public TestAutomationServer getLastBoundServerOrDefault(long projectId) {
-		GenericProject project = genericProjectDao.findById(projectId);
-		if (project.hasTestAutomationProjects()) {
-			return project.getServerOfLatestBoundProject();
+		GenericProject genericProject = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(genericProject);
+		if (genericProject.hasTestAutomationProjects()) {
+			return genericProject.getServerOfLatestBoundProject();
 		}
 
 		else {
@@ -214,26 +244,27 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
-	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public List<TestAutomationProject> findBoundTestAutomationProjects(long projectId) {
+		GenericProject genericProject = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(genericProject);
 		return genericProjectDao.findBoundTestAutomationProjects(projectId);
 	}
 
 	@Override
-	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
 	public void unbindTestAutomationProject(long projectId, long taProjectId) {
-		GenericProject project = genericProjectDao.findById(projectId);
-		project.unbindTestAutomationProject(taProjectId);
+		GenericProject genericProject = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(genericProject);
+		genericProject.unbindTestAutomationProject(taProjectId);
 
 	}
 
 	// ********************************** bugtracker section *************************************
 
 	@Override
-	@PreAuthorize(MANAGE_PROJECT_OR_ROLE_ADMIN)
-		public void changeBugTracker(long projectId, Long newBugtrackerId) {
+	public void changeBugTracker(long projectId, Long newBugtrackerId) {
 
 		GenericProject project = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(project);
 		BugTracker newBugtracker = bugTrackerDao.findById(newBugtrackerId);
 		if (newBugtracker != null) {
 			changeBugTracker(project, newBugtracker);
@@ -244,10 +275,9 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#project, 'MANAGEMENT') or hasRole('ROLE_ADMIN')")
-		public void changeBugTracker(GenericProject project, BugTracker newBugtracker) {
+	public void changeBugTracker(GenericProject project, BugTracker newBugtracker) {
 		LOGGER.debug("changeBugTracker for project " + project.getId() + " bt: " + newBugtracker.getId());
-
+		checkManageProjectOrAdmin(project);
 		// the project doesn't have bug-tracker connection yet
 		if (!project.isBugtrackerConnected()) {
 			BugTrackerBinding bugTrackerBinding = new BugTrackerBinding(project.getName(), newBugtracker, project);
