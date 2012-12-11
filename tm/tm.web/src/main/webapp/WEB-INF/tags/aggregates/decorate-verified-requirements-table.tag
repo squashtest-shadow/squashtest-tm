@@ -136,7 +136,7 @@
 		 
 		function addHLinkToRequirementName(row, data) {
 			var url='${ pageContext.servletContext.contextPath }/requirement-versions/' + getRequirementsTableRowId(data) + '/info';			
-			addHLinkToCellText($( 'td:eq(3)', row ), url);
+			addHLinkToCellText($( 'td:eq(4)', row ), url);
 		}	
 		
 		function addSelectEditableToVersionNumber(row, data) {
@@ -145,7 +145,7 @@
 			var table = $('#verified-requirements-table').dataTable();
 			if (data[10]!="false" && data[9] !="OBSOLETE"){
 				<%-- the table needs to be redrawn after each return of the POST so we implement the posting workflow --%>
-				$( 'td:eq(4)', row ).editable(function(value, settings) {
+				$( 'td:eq(5)', row ).editable(function(value, settings) {
 						var innerPOSTData;
 						$.post(urlPOST, {
 							value : value
