@@ -85,7 +85,6 @@
 
 	<c:if
 		test="${ statisticsEntity.status == 'RUNNING' || statisticsEntity.status == 'READY'}">
-		<!-- <a tabindex="0" href="#start" class="button run-menu" id="start-resume-button" class="button" >${startResumeLabel}</a> -->
 		<input type="button" id="start-resume-button" class="button run-menu" value="${startResumeLabel}"/>
 		<div id="start" style="display: none">
 			<ul>
@@ -100,7 +99,7 @@
 
 		<script>
 			$(function() {
-				$("#start-resume-button").fgmenu({
+				$("#start-resume-button").squashButton().fgmenu({
 					content : $('#start-resume-button').next().html(),
 					showSpeed : 0,
 					width : 130
@@ -130,7 +129,8 @@
 		<input type="hidden" name="suitemode" value="true" />
 	</form>
 	<c:if test="${ statisticsEntity.status != 'READY' }">
-		<a tabindex="0" href="#restart" class="button run-menu" id="restart-button"><f:message key='test-suite.execution.restart.label' /></a>
+		<f:message var="restartSuiteButton" key="test-suite.execution.restart.label"/>
+		<input type="button" id="restart-button" class="button run-menu" value="${restartSuiteButton}"/>
 		<div id="restart" style="display: none">
 			<ul>
 				<li>
@@ -150,7 +150,7 @@
 		</div>
 		<script>
 			$(function() {
-				$("#restart-button").fgmenu({
+				$("#restart-button").squashButton().fgmenu({
 					content : $('#restart-button').next().html(),
 					showSpeed : 0,
 					width : 130
