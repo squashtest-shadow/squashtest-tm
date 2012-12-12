@@ -72,23 +72,11 @@ documentation :
 
 <body class="execute-html-body">
 
-	<div id="execute-header" class="display-table full-width" >
-		<!--  quick and dirty -->
-		<table class="full-width">
-			<tr>
-				<td class="centered" style="width:8%">
-					<button id="execute-stop-button" th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop</button>
-				</td>
-				<td class="centered" style="width:30%">
-					<span id="execute-header-numbers-label" th:text="'0 / '+${totalSteps}">0 / 3</span>
-				</td>
-				<td class="centered">
-					<a data-icon="ui-icon-triangle-1-e" id="execute-begin-button" th:text="#{label.Begin}"
-						th:href="${beginURL}" href="#">begin</a>	
-				</td>
-			
-			</tr>
-		</table>
+	<div id="execute-header">
+		<div style="float:left"><button id="execute-stop-button" th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop</button></div>
+		<div style="float:left; margin-left:25%"><span id="execute-header-numbers-label" th:text="'0 / '+${totalSteps}">0 / 3</span></div>
+		<div style="float:right"><a data-icon="ui-icon-triangle-1-e" id="execute-begin-button" th:text="#{label.Begin}"
+						th:href="${beginURL}" href="#">begin</a></div>
 	</div>
 
 
@@ -158,14 +146,11 @@ documentation :
 				<div id="testcase-status" class="display-table-cell" th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">
 					0 - a specifier 
 				</div>
-			
 			</div>
-			
 		</div>
 
 
 		<div id="execute-prerequisite-panel" class="toggle-panel-main is-contextual load-links-right-frame" data-title="Prerequisite" th:attr="data-title=#{generics.prerequisite.title}">
-			
 			<div class="display-table">
 			<div class="display-table-row">			
 				<div class="display-table-cell" th:utext="${execution.prerequisite}">					

@@ -830,7 +830,9 @@ body.execute-html-body { /*width:100%;*/
 }
 
 div#execute-header {
-	width: 100%;
+	position: absolute;
+	width:inherit;
+	
 }
 
 
