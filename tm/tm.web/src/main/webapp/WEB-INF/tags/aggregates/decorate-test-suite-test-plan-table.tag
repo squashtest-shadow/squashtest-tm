@@ -213,17 +213,9 @@
 						});
 				return false; //return false to prevent navigation in page (# appears at the end of the URL)
 	}
-		 
-
-	function shortcutExecutionClickHandler(){
-		openMenu(this);
-	}
 	
-	function openMenu(testPlanHyperlink){
+function bindMenuToExecutionShortCut(row, data){
 		
-		var table = $('#test-suite-test-plans-table').dataTable();
-		var data = table.fnGetData(testPlanHyperlink.parentNode.parentNode);
-		var row = testPlanHyperlink.parentNode.parentNode;
 		var tpId = data[0];
 		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
 
@@ -239,7 +231,7 @@
 	
 		//if the testcase is automated		
 		} else {
-			
+			$(".shortcut-exec",row).click(function(){
 			$.ajax({
 				type : 'POST',
 				url : url,
@@ -254,6 +246,7 @@
 				}else{
 					squashtm.automatedSuiteOverviewDialog.open(suiteView);
 				}
+			});
 			});
 		} 
 	}
@@ -430,11 +423,14 @@
 		
 		if(!isTestCaseDeleted(data)){
 			$('td:eq(10)', row)
-				.prepend('<a class="shortcut-exec"><img src="${pageContext.servletContext.contextPath}/images/execute.png"/></a><div id="shortcut-exec-man" style="display: none"><ul><li><a id="option1-'+tpId+'" href="#" onclick="launchClassicExe('+tpId+')"><f:message key="test-suite.execution.classic.label"/></a></li><li><a id="option2-'+tpId+'" href="#" onclick="launchOptimizedExe('+tpId+')"><f:message key="test-suite.execution.optimized.label"/></a></li></ul></div>');
+				.prepend('<input type="image" class="shortcut-exec" src="${pageContext.servletContext.contextPath}/images/execute.png"/><div id="shortcut-exec-man" style="display: none"><ul><li><a id="option1-'+tpId+'" href="#" onclick="launchClassicExe('+tpId+')"><f:message key="test-suite.execution.classic.label"/></a></li><li><a id="option2-'+tpId+'" href="#" onclick="launchOptimizedExe('+tpId+')"><f:message key="test-suite.execution.optimized.label"/></a></li></ul></div>');
 		} else {
-			$('td:eq(10)', row).prepend('<a class="disabled-shortcut-exec"><img src="${pageContext.servletContext.contextPath}/images/execute.png"/></a>');
+			$('td:eq(10)', row).prepend('<input type="image" class="disabled-shortcut-exec" src="${pageContext.servletContext.contextPath}/images/execute.png"/>');
+			//TODO explain why this is done here and not in css file
 			$('.disabled-shortcut-exec', row).css('opacity', 0.35);
 		}
+
+		bindMenuToExecutionShortCut(row, data);
 	}
 
 	function addLoginListToTestPlan(row, data){
@@ -531,9 +527,7 @@
 			return false; //return false to prevent navigation in page (# appears at the end of the URL)
 		} );
 		
-		var shortcutExecButtons = $('a.shortcut-exec');
-		shortcutExecButtons.die('click');
-		shortcutExecButtons.live('click', shortcutExecutionClickHandler);
+	
 	});
 	
 	

@@ -130,16 +130,8 @@
 		return false; //return false to prevent navigation in page (# appears at the end of the URL)
 	}
 
-	function shortcutExecutionClickHandler(){
-		openMenu(this);
-	}
-
-	function openMenu(testPlanHyperlink){
+	function bindMenuToExecutionShortCut(row, data){
 		
-		var table = $('#test-plans-table').squashTable();
-		var data = table.fnGetData(testPlanHyperlink.parentNode.parentNode);
-		var image = $(testPlanHyperlink).parent().find("img");
-		var row = testPlanHyperlink.parentNode.parentNode;
 		var tpId = data['entity-id'];
 		var url = "${baseIterationURL}/test-plan/"+tpId+"/executions/new";
 
@@ -155,7 +147,7 @@
 	
 		//if the testcase is automated		
 		} else {
-			
+			$(".shortcut-exec",row).click(function(){
 			$.ajax({
 				type : 'POST',
 				url : url,
@@ -170,6 +162,7 @@
 				}else{
 					squashtm.automatedSuiteOverviewDialog.open(suiteView);
 				}
+			});
 			});
 		} 
 	}
@@ -282,6 +275,7 @@
 		<c:if test="${ editable }">
 		addLoginListToTestPlan();
 		addStatusListToTestPlan();
+		
 		</c:if>		
 	}
 	
@@ -309,11 +303,14 @@
 		
 		if(!isTestCaseDeleted(data)){
 			$('td:eq(11)', row)
-				.prepend('<a class="shortcut-exec"><img src="${pageContext.servletContext.contextPath}/images/execute.png"/></a><div id="shortcut-exec-man" style="display: none"><ul><li><a id="option1-'+tpId+'" href="#" onclick="launchClassicExe('+tpId+')"><f:message key="test-suite.execution.classic.label"/></a></li><li><a id="option2-'+tpId+'" href="#" onclick="launchOptimizedExe('+tpId+')"><f:message key="test-suite.execution.optimized.label"/></a></li></ul></div>');
+				.prepend('<input type="image" class="shortcut-exec"  src="${pageContext.servletContext.contextPath}/images/execute.png"/><div id="shortcut-exec-man" style="display: none"><ul><li><a id="option1-'+tpId+'" href="#" onclick="launchClassicExe('+tpId+')"><f:message key="test-suite.execution.classic.label"/></a></li><li><a id="option2-'+tpId+'" href="#" onclick="launchOptimizedExe('+tpId+')"><f:message key="test-suite.execution.optimized.label"/></a></li></ul></div>');
 		} else {
-			$('td:eq(11)', row).prepend('<a class="disabled-shortcut-exec"><img src="${pageContext.servletContext.contextPath}/images/execute.png"/></a>');
+			$('td:eq(11)', row).prepend('<input type="image" class="disabled-shortcut-exec" src="${pageContext.servletContext.contextPath}/images/execute.png"/>');
+			//TODO explain why this is done here and not in css file
 			$('.disabled-shortcut-exec', row).css('opacity', 0.35);
 		}
+
+		bindMenuToExecutionShortCut(row, data);
 	}
 	
 	<c:if test="${ editable }">
@@ -527,10 +524,6 @@
 		newExecAutoButtons.die('click');
 		newExecAutoButtons.live('click', newAutoExecutionClickHandler);
 
-		var shortcutExecButtons = $('a.shortcut-exec');
-		shortcutExecButtons.die('click');
-		shortcutExecButtons.live('click', shortcutExecutionClickHandler);
-
 		/* could be optimized if we bind that in the datatableDrawCallback.	*/
 		$('#test-plans-table tbody td a.test-case-name-hlink').die('click');
 		<%-- binding the handler managing the collapse/expand test case icon--%>
@@ -600,8 +593,8 @@
 				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
 				success : function(data) {
 					refreshTestPlans();
-					checkForbiddenDeletion(data);	
-					refreshStatistics();				
+					checkForbiddenDeletion(data):
+					refreshStatistics();
 				}
 			};
 				
