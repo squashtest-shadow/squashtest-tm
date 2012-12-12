@@ -242,31 +242,6 @@
 
 
 
-<%-- init code, including copy pasta de decorate-button.tag, that will handle those two buttons only --%>
-<script type="text/javascript">
-	$(function() {
-
-		<c:if test="${editable}">
-		$("#issue-report-dialog-openbutton").button();
-		$("#issue-report-dialog-openbutton").click(function() {
-			$(this).removeClass("ui-state-focus ui-state-hover");
-		});
-		</c:if>
-
-		$("#issue-login-button").button();
-		$("#issue-login-button").click(function() {
-			$(this).removeClass("ui-state-focus ui-state-hover");
-		});
-
-		<c:if test="${editable}">
-		$("#issue-report-dialog-openbutton").click(checkAndReportIssue);
-		</c:if>
-		$("#issue-login-button").click(bugTrackerLogin);
-
-	});
-</script>
-
-
 <div id="issue-panel-bugcreated-area"
 	class="not-displayed ui-corner-all ">
 	<span class="ui-icon ui-icon-info icon"></span><span
@@ -377,23 +352,15 @@ check that in the next <script></script> tags
 	$(function() {
 
 		<c:if test="${editable}">
-		$("#issue-report-dialog-openbutton").squashButton();
-		$("#issue-report-dialog-openbutton").click(function() {
+		$("#issue-report-dialog-openbutton").squashButton().click(function() {
 			$(this).removeClass("ui-state-focus ui-state-hover");
+			checkAndReportIssue();
 		});
 		</c:if>
 
-		$("#issue-login-button").button();
-		$("#issue-login-button").click(function() {
+		$("#issue-login-button").button().click(function() {
 			$(this).removeClass("ui-state-focus ui-state-hover");
+			bugTrackerLogin();
 		});
-
-		<c:if test="${editable}">
-		$("#issue-report-dialog-openbutton").click(checkAndReportIssue);
-		</c:if>
-		$("#issue-login-button").click(bugTrackerLogin);		
-		
-		
-
 	});
 </script>

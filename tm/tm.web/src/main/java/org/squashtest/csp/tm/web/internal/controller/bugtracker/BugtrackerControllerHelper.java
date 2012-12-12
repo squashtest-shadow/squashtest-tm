@@ -20,8 +20,10 @@
  */
 package org.squashtest.csp.tm.web.internal.controller.bugtracker;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -312,14 +314,24 @@ public final class BugtrackerControllerHelper {
 		}
 
 		@Override
-		public Object[] buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
+		public Map<String, Object> buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
+			
 			BTIssueDecorator issue = ownership.getIssue();
 
-			return new Object[] {
-					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
-							.toExternalForm(), issue.getId(), issue.getSummary(), issue.getPriority().getName(),
-					issue.getStatus().getName(), issue.getAssignee().getName(),
-					nameBuilder.buildName(ownership.getOwner()),"",issue.getIssueId()};
+			Map<String, Object> result = new HashMap<String, Object>(9);
+			
+			result.put("issue-url", bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
+														    .toExternalForm());
+			result.put("remote-id", issue.getId());
+			result.put("summary", issue.getSummary());
+			result.put("priority", issue.getPriority().getName());
+			result.put("status", issue.getStatus().getName());
+			result.put("assignee", issue.getAssignee().getName());
+			result.put("owner", nameBuilder.buildName(ownership.getOwner()));
+			result.put("empty-placeholder", "");
+			result.put("local-id", issue.getIssueId());
+			
+			return result;
 		}
 	}
 
@@ -342,11 +354,23 @@ public final class BugtrackerControllerHelper {
 		}
 
 		@Override
-		public Object[] buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
-			return new Object[] {
-					bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(),
-							ownership.getOwner().getBugTracker()).toExternalForm(), ownership.getIssue().getId(),
-					ownership.getIssue().getSummary(), ownership.getIssue().getPriority().getName(),"",ownership.getIssue().getIssueId() };
+		public Map<String, Object> buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
+			
+			BTIssueDecorator issue = ownership.getIssue();
+			Map<String, Object> result = new HashMap<String, Object>();
+			
+			result.put("issue-url", bugTrackersLocalService.getIssueUrl(
+									issue.getId(), ownership.getOwner().getBugTracker())
+									.toExternalForm()
+					   );
+			
+			result.put("remote-id", issue.getId());
+			result.put("summary", issue.getSummary());
+			result.put("priority", issue.getPriority().getName());
+			result.put("empty-placeholder", "");
+			result.put("local-id", issue.getIssueId());
+			
+			return result;
 		}
 	}
 

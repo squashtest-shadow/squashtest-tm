@@ -595,11 +595,9 @@ public class BugtrackerController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/detach", method = RequestMethod.POST)
-	public @ResponseBody 
-	void detachIssue(Long issueid) {
-		
-		bugTrackersLocalService.detachIssue(issueid);
+	@RequestMapping(value = "/issues/{issueId}", method = RequestMethod.DELETE)
+	public @ResponseBody void detachIssue(@PathVariable("issueId") Long issueId) {		
+		bugTrackersLocalService.detachIssue(issueId);
 	}
 
 	/* ********* generates a json model for an issue ******* */

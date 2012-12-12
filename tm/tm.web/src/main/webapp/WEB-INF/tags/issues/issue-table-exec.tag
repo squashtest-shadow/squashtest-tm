@@ -113,50 +113,6 @@
 	} 
 
 	
-	function bindDeleteButtons() {
-		
-		var conf = this.squashSettings.deleteButtons;
-		
-		var popconf = {
-				oklabel : "ok",
-				cancellabel : "cancel"
-			};
-
-		var self = this;
-
-		this.delegate('td.delete-button > a', 'click', function() {
-			var row = this.parentNode.parentNode; 
-			
-			var jqRow = $(row);
-			jqRow.addClass('ui-state-row-selected');
-			var id = self.getODataId(row);
-
-			oneShotConfirm(conf.tooltip || "", conf.popupmessage || "",
-					popconf.oklabel, popconf.cancellabel).done(
-					function() {
-						
-						var request;
-							
-						var id = $(row).find('td:eq(0)').attr('issueid');
-							
-						request = $.ajax({
-							type : 'post',
-							url : conf.url,
-							dataType : 'text',
-							data : {issueid : id}
-						});
-						
-					if (conf.success)
-							request.done(conf.success);
-					if (conf.fail)
-							request.fail(conf.fail);
-
-				}).fail(function() {
-					jqRow.removeClass('ui-state-row-selected');
-				});
-		});
-	};
-	
 	/* ************************** datatable settings ********************* */
 
 
@@ -176,15 +132,15 @@
 				"aaSorting" : [[1,'desc']],
 				"fnRowCallback" : issueTableRowCallback,
 				"aoColumnDefs": [
-					{'bSortable': false, 'bVisible': false, 'aTargets': [0]},
-					{'bSortable': true, 'sClass': 'select-handle centered', 'aTargets': [1]},
-					{'bSortable': false, 'aTargets': [2]},
-					{'bSortable': false, 'aTargets': [3], 'sWidth': '2em'},
-					{'bSortable': false, 'aTargets': [4]},
-					{'bSortable': false, 'aTargets': [5]},
-					{'bSortable': false, 'aTargets': [6]},
-					{'bSortable': false, 'sWidth': '2em', 'aTargets': [7], 'sClass' : 'centered delete-button'},
-					{'bSortable': false, 'bVisible': false, 'aTargets': [8]}
+					{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'issue-url'},
+					{'bSortable': true,  'sClass': 'select-handle centered', 'aTargets': [1], 'mDataProp' : 'remote-id'},
+					{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'summary'},
+					{'bSortable': false, 'aTargets': [3], 'sWidth': '2em', 'mDataProp' : 'priority'},
+					{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'status'},
+					{'bSortable': false, 'aTargets': [5], 'mDataProp' : 'assignee'},
+					{'bSortable': false, 'aTargets': [6], 'mDataProp' : 'owner'},
+					{'bSortable': false, 'sWidth': '2em', 'aTargets': [7], 'sClass' : 'centered delete-button', 'mDataProp' : 'empty-placeholder'},
+					{'bSortable': false, 'bVisible': false, 'aTargets': [8], 'mDataProp' : 'local-id'}
 				]
 			};		
 		
@@ -196,16 +152,14 @@
 			squashSettings.enableDnD = false;
 	
 			squashSettings.deleteButtons = {
-				url : '${bugTrackerUrl}detach',
+				url : '${bugTrackerUrl}issues/{local-id}',
 				popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
 				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
-				data: {issueid : ''},
 				success : function(data) {
 					refreshTestPlan();
 				}					
 			};
 			
-			squashSettings.bindDeleteButtons = bindDeleteButtons;
 			
 			$("#issue-table").squashTable(tableSettings, squashSettings);
 	});
