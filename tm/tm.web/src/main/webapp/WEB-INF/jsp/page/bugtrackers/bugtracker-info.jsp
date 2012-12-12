@@ -144,12 +144,10 @@
 	
 	function clickBugTrackerIframeFriendly(){
 		
-		var isIframeFriendlyPostParam = $("#bugtracker-iframeFriendly-checkbx").attr("checked");
-	 	
 		$.ajax({
 			type : 'post',
 			data : {
-				'isIframeFriendly' : isIframeFriendlyPostParam
+				'isIframeFriendly' : $("#bugtracker-iframeFriendly-checkbx").is(":checked")
 			},
 			dataType : "json",
 			url : "${ bugtrackerUrl }"
