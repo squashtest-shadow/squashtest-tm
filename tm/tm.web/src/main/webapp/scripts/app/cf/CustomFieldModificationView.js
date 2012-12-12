@@ -36,7 +36,6 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 			this.configureTogglePanels();
 			this.configureEditables();
 			this.configureRenamePopup();
-			this.configureRenameOptionPopup();
 			this.configureChangeOptionCodePopup();
 			this.configureOptionTable();
 			this.configureButtons();
@@ -227,23 +226,24 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 					language : {
 						richEditPlaceHolder : cfMod.richEditPlaceHolder,
 						okLabel : cfMod.okLabel,
-						cancelLabel : cfMod.cancelLabel
-					},
+						cancelLabel : cfMod.cancelLabel,
+					},					
 					targetUrl : function(value, settings) {
 						if (self.changeDefaultValueText(value)) {
 							return value;
-						} else {
-							return this.revert;
-						}
+						} else {return this.revert;}
 					},
 					componentId : "cuf-default-value",
-					jeditableSettings : {}
+					jeditableSettings : {callback: self.enableOptionalChange,},
 				});
+				
 			} else if ($("#cuf-inputType").attr('value') == "CHECKBOX") {
-				this.makeSelectJEditable("cuf-default-value", cfMod.checkboxJsonDefaultValues);
+				this.makeDefaultSelectJEditable("cuf-default-value", cfMod.checkboxJsonDefaultValues);
 			}
+			$("#cuf-default-value").click(self.disableOptionalChange);
 		},
-
+		disableOptionalChange : function(){$("#cf-optional").attr("disabled", true);},
+		enableOptionalChange : function(){$("#cf-optional").removeAttr("disabled");},
 		changeDefaultValueText : function(value) {
 			if (this.isFieldMandatory() && StringUtil.isBlank(value)) {
 				$.squash.openMessage(cfMod.popupErrorTitle, cfMod.defaultValueMandatoryMessage);
@@ -315,16 +315,19 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 				jeditableSettings : {}
 			});
 		},
-		makeSelectJEditable : function(inputId, jsonData) {
+		makeDefaultSelectJEditable : function(inputId, jsonData) {
+			var self = this;
 			new SelectJEditable({
 				language : {
 					richEditPlaceHolder : cfMod.richEditPlaceHolder,
 					okLabel : cfMod.okLabel,
 					cancelLabel : cfMod.cancelLabel
 				},
+				
 				targetUrl : cfMod.customFieldUrl,
 				componentId : inputId,
 				jeditableSettings : {
+					callback: self.enableOptionalChange,
 					data : JSON.stringify(jsonData)
 				}
 			});

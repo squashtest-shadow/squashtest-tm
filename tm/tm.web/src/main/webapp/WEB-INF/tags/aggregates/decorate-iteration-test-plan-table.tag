@@ -593,7 +593,7 @@
 				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
 				success : function(data) {
 					refreshTestPlans();
-					checkForbiddenDeletion(data):
+					checkForbiddenDeletion(data);
 					refreshStatistics();
 				}
 			};
