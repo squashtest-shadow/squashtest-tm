@@ -41,97 +41,7 @@
 <layout:tree-page-layout titleKey="squashtm" highlightedWorkspace="${ resourceName }" linkable="${linkable}">
 	<jsp:attribute name="head">
 		<comp:rich-jeditable-header />
-		<script type="text/javascript">
-			
-			function renameSelectedNreeNode(name){
-				var node = $('#tree').jstree("get_selected");
-				$('#tree').jstree("set_text",node,name); //we don't want rename-node() since we use our own renaming interface
-			}
-			//update the selected node name attribute
-			function updateSelectedNodeName(newName){
-				var node = $('#tree').jstree("get_selected");
-				node.attr('name', newName);
-			}
-
-	
-			//success handler for a renaming operation
-			function rename_from_tree_sucess(data) {
-				//change the node name attribute
-				updateSelectedNodeName(data.newName);
-				//get the node
-				var node = $('#tree').jstree("get_selected");
-				//check if there's a prefix to the name
-				var checkedName = getRealNodeName(data.newName, node);
-				//performed if the node is displayed  in the contextual content
-				updateFragmentPageData(data.newName, checkedName);
-				
-				//rename the node in the tree
-				renameSelectedNreeNode(checkedName);
-
-				//close the pop-up
-				$('#rename-node-dialog' ).dialog( 'close' );
-			}
-			
-	
-			
-			function rename_from_tree_failed(xhr){
-				$('#rename-node-dialog .popup-label-error')
-				.html(xhr.statusText);								
-			}
-
-			
-			<c:choose>
-				<c:when test="${ resourceName eq 'campaign' }">
-					function getRealNodeName(name, node){
-						var toReturn = name;
-						//check if there's an index
-						if(node.attr('iterationIndex') != null){
-							toReturn = node.attr('iterationIndex') + " - " + name;
-						}
-						return toReturn;
-					}
-					//external calls ie fragment js functions
-					function updateFragmentPageData(rawName, completeName){
-						//declare a hook to rename the label
-						if (typeof nodeSetname == 'function'){
-							nodeSetname(rawName);
-						}
-					}
-					//only for campaign : get the iteration index
-					function getSelectedNodeIndex(){
-						return $('#tree').jstree("get_selected").attr('iterationIndex');
-					}
-				</c:when>
-				<c:when test="${ (resourceName eq 'requirement') or (resourceName eq 'test-case') }">
-					function getRealNodeName(name, node){
-						var toReturn = name;
-						//check if there's a reference
-						if(node.attr('reference') != null){
-							toReturn = node.attr('reference') + " - " + name;
-						}
-						return toReturn;
-					}
-					function updateFragmentPageData(rawName, completeName){
-						if (typeof nodeSetname == 'function'){
-							nodeSetname(completeName);
-						}
-						if (typeof updateRawNameHiddenField == 'function'){
-							updateRawNameHiddenField(rawName);
-						}
-					}
-				</c:when>
-				<c:otherwise>
-					function getRealNodeName(name, node){
-						return name;
-					}
-					function updateFragmentPageData(rawName, completeName){
-						if (typeof nodeSetname == 'function'){
-							nodeSetname(rawName);
-						}
-					}
-				</c:otherwise>
-			</c:choose>
-		</script>		
+		
 		
 		<jsp:invoke fragment="head" />
 	</jsp:attribute>
@@ -155,7 +65,7 @@
 		<treepopup:add-nameable-node-dialog resourceName="folder" treeNodeButton="squashtm.treemenu.create.buttons['create-folder']"/>
 		<treepopup:add-nameable-node-dialog resourceName="${ resourceName }"  treeNodeButton="squashtm.treemenu.create.buttons['create-file']"/>
 	
-		<treepopup:rename-node-dialog treeSelector="#tree" successCallback="rename_from_tree_sucess" treeNodeButton="squashtm.treeButtons['rename']"/>
+		<treepopup:rename-node-dialog treeSelector="#tree" treeNodeButton="squashtm.treeButtons['rename']"/>
 		<treepopup:delete-node-dialog treeSelector="#tree" resourceName="${resourceName}" treeNodeButton="squashtm.treeButtons['delete']"/>
 
 		<treepopup:copy-paste-node treeSelector="#tree" resourceName="${resourceName}" 

@@ -45,7 +45,7 @@
 			_cleanPopups();
 			this.empty();
 			this.listeners = [];
-			if (this.onCleanContent != null) {
+			if (this.onCleanContent !== null) {
 				this.onCleanContent();
 				this.onCleanContent = null;
 			}

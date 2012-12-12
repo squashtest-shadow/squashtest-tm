@@ -52,6 +52,43 @@
 			}
 		}
 	}
+	
+	
+	var buildRefreshLabel = function(treeNode){
+		
+		switch(treeNode.getResType()){
+		case "requirements" :
+		case "test-cases" :
+			return function(){
+				var name = this.getName();
+				var reference = this.getReference() || "";
+				if (reference.length>0){
+					reference+=" - ";
+				}
+				this.getTree().set_text(this, reference+name);
+			};
+			break;
+			
+		case "iterations" :
+			return function(){
+				var name = this.getName();
+				var index = this.getIndex() || "";
+				if (index.length>0){
+					index+=" - ";
+				};
+				this.getTree().set_text(this, index+name);
+			};
+			break;
+			
+		default :
+			return function(){
+				var name = this.getName();
+				this.getTree().set_text(this, name);
+			}
+			break;
+		}
+		
+	}
 
 	$.fn.treeNode = function () {
 
@@ -105,6 +142,14 @@
 		this.getName = function () {
 			return this.reference.attr('name');
 		};
+		
+		this.getReference = function(){
+			return this.reference.attr('reference');
+		};
+		
+		this.getIndex = function(){
+			return this.reference.attr('iterationIndex');			
+		};
 
 		this.getPath = function() {
 			return this.getAncestors().all('getName').join().replace(/,/g, '/');
@@ -113,6 +158,18 @@
 		this.getProjectId = function(){
 			return this.getLibrary().attr('project');
 		};
+		
+		// ************ some setters **************
+		
+		this.setName = function(name){
+			this.reference.attr('name', name);
+			this.refreshLabel();
+		};
+		
+		this.setReference = function(reference){
+			this.reference.attr('reference', reference);
+			this.refreshLabel();
+		}
 
 		// ************ relationships getters
 
@@ -380,6 +437,8 @@
 		};
 
 		this.getContentUrl = buildGetContent(this);
+		this.refreshLabel = buildRefreshLabel(this);
+		
 
 		this.getCopyUrl = function () {
 			switch (this.getDomType()) {

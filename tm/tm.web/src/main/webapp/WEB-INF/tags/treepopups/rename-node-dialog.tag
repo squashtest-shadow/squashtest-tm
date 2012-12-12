@@ -30,7 +30,6 @@
 
 
 <%@ attribute name="treeSelector" description="jQuerySelector for the tree."%>
-<%@ attribute name="successCallback" description="javascript callback in case of success."%>
 <%@ attribute name="treeNodeButton" required="true" description="the javascript button that will open the dialog" %>
 
 		
@@ -39,7 +38,9 @@
 		<f:message var="label" key="dialog.rename.confirm.label" />	
 		"${ label }": function() {
 			
-			var url = $('${treeSelector}').jstree('get_selected').getResourceUrl();
+			var node = $('${treeSelector}').jstree('get_selected');
+			var url = node.getResourceUrl();
+
 			var name = $('#rename-tree-node-text').val();
 			
 			$.ajax({
@@ -48,7 +49,13 @@
 				data : { 'newName' : name },
 				dataType : 'json'		
 			})
-			.success(${successCallback});
+			.success(function(){
+				var event = new EventRename(
+					new SquashEventObject(node.getResId(), node.getResType()),
+					name
+				);
+				squashtm.contextualContent.fire(null, event);
+			});
 	
 		},
 	<pop:cancel-button />

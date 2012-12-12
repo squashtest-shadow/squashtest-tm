@@ -37,6 +37,8 @@
 		// todo : make something smarter
 		switch(event.evt_name){
 			case "paste" : updateEventPaste(event, this.tree); break;
+			case "rename" : updateEventRename(event, this.tree); break;
+			case "update-reference" : updateEventUpdateReference(event, this.tree); break;
 			default : this.tree.refresh_selected(); break;
 		}
  	}
@@ -63,4 +65,29 @@
  		}	
  	});
 
+ }
+ 
+ 
+ function updateEventRename(event, tree){
+	 
+	 var target = tree.findNodes({
+		 restype : event.evt_target.obj_restype,
+		 resid : event.evt_target.obj_id
+	 });
+	 
+	 if (target.length===0) return;
+	 
+	 target.setName(event.evt_newname);
+	 
+ }
+ 
+ function updateEventUpdateReference(event, tree){
+	 var target = tree.findNodes({
+		 restype : event.evt_target.obj_restype,
+		 resid : event.evt_target.obj_id
+	 });
+	 
+	 if (target.length===0) return;
+	 
+	 target.setReference(event.evt_newref);
  }
