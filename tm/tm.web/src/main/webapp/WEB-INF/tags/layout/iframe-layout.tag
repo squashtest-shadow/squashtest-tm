@@ -43,13 +43,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
 <title><f:message key="${titleKey }" /></title>
 <layout:common-head />
-<layout:_common-script-import />
+<layout:_common-script-import highlightedWorkspace="${ resourceName }"/>
 <tree:jstree-header />
 <link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" ></link>	
 <jsp:invoke fragment="head" />
 </head>
 <body>
-	<layout:navigation highlighted="${ highlightedWorkspace }" />
+	<layout:navigation highlighted="${ resourceName }" />
 	<div id="workspace">
 		<div id="workspace-title">
 			<div class="snap-left">

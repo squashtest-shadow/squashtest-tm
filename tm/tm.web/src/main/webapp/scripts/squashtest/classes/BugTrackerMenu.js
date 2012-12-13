@@ -18,25 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "app/ws/squashtm.navbar", "app/ws/squashtm.projectfilter",
-		"app/ws/squashtm.menubar", "app/ws/squashtm.notification" , "squash.bugtrackerMenu"], function(
-		$, NavBar, ProjectFilter, MenuBar, WTF, BTM) {
-	function init(highlightedWorkspace) {
-			/* navigation tag */
-			NavBar.initHighlighted(highlightedWorkspace);
-			squashtm.bugtrackerMenu = new BTM({workspaceUrl : squashtm.app.contextRoot + "/bugtracker/workspace-button"});
-			squashtm.bugtrackerMenu.updateBugTrackerMenu(highlightedWorkspace ==  "bugtracker");
-			ProjectFilter.init(squashtm.app.projectFilterConf);
-			MenuBar.init(squashtm.app.menuBarConf);
 
-			/* wtf */
-			WTF.init(squashtm.app.notificationConf);
+define([ "domReady", "jquery", "app/ws/squashtm.navbar" ], function(domReady,
+		$, NavBar) {
 
-			/* Try to prevent FOUCs */
-			$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
-	}
+	var BugTrackerMenu = function(settings) {
+		var workspaceUrl = settings.workspaceUrl;
+		this.updateBugTrackerMenu  =  function (highlighted) {
 
-	return {
-		init : init
+			$("#bugtracker-div").load(workspaceUrl, function() {
+				if (highlighted) {
+					NavBar.initHighlighted('bugtracker');
+				}
+				$("#bugtracker-link").hover(function() {
+					NavBar.highlightOn("bugtracker-link");
+				}, function() {
+					NavBar.highlightOff("bugtracker-link");
+				});
+			});
+		};
 	};
+	return BugTrackerMenu;
 });

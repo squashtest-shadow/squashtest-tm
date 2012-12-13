@@ -71,7 +71,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 	
 		<title><f:message key="${ titleKey }"/></title>
 		<layout:common-head />		
-		<layout:_common-script-import />
+		<layout:_common-script-import highlightedWorkspace="${ highlightedWorkspace }"/>
 		<tree:jstree-header />
 		<jsp:invoke fragment="head" />
 	</head>

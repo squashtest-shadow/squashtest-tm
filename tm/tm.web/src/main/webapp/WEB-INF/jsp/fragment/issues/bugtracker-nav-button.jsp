@@ -55,8 +55,9 @@
 		</c:forEach>
 	</ul>
 </div>
-<script> 
-			$(function() {
+<script>
+require([ "common" ], function() {
+	require([ "domReady","jquery", "jquery.squash.fg.menu" ], function(domReady,$) {
 				$("#bugtracker-link").fgmenu({
 					content : $('#bugtracker-link').next().html(),
 					showSpeed : 0,
@@ -64,4 +65,5 @@
 				});
 
 			});
+});
 		</script>

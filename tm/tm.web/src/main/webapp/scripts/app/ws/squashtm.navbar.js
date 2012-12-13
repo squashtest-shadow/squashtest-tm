@@ -21,24 +21,20 @@
 var squashtm = squashtm || {};
 
 define([ "jquery" ], function($) {
-	var highlightedButton;
+	var highlightedButton = "";
 
 	function navLinkOn(linkName) {
 		var thisLink = $('#' + linkName);
-		var imgName = $(thisLink).find('img').attr("src");
-
-		imgName = imgName.replace("_off", "_on");
-
-		$(thisLink).find('img').attr("src", imgName);
+			var imgName = $(thisLink).find('img').attr("src");
+			if(imgName){imgName = imgName.replace("_off", "_on");
+			$(thisLink).find('img').attr("src", imgName);}
 	}
 
 	function navLinkOff(linkName) {
 		var thisLink = $('#' + linkName);
-		var imgName = $(thisLink).find('img').attr("src");
-
-		imgName = imgName.replace("_on", "_off");
-
-		$(thisLink).find('img').attr("src", imgName);
+			var imgName = $(thisLink).find('img').attr("src");
+			if(imgName){imgName = imgName.replace("_on", "_off");
+			$(thisLink).find('img').attr("src", imgName);}
 	}
 
 	function initHighlighted(linkName) {
@@ -53,12 +49,12 @@ define([ "jquery" ], function($) {
 	squashtm.navbar = {
 		initHighlighted : initHighlighted,
 		highlightOn : function(linkName) {
-			if (linkName !== this.highlightedButton) {
+			if (linkName !== highlightedButton) {
 				navLinkOn(linkName);
 			}
 		},
 		highlightOff : function(linkName) {
-			if (linkName !== this.highlightedButton) {
+			if (linkName !== highlightedButton) {
 				navLinkOff(linkName);
 			}
 		}

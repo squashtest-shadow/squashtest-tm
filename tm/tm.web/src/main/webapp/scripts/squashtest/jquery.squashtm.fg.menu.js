@@ -46,7 +46,6 @@ var allUIMenus = [];
 //renamed menu to fgmenu because caused conflict with jqueryui autocomplete (mpagnon 14/05/2012)
 $.fn.fgmenu = function(options){
 	var caller = this;
-	var options = options;
 	var m = new Menu(caller, options);	
 	allUIMenus.push(m);
 	

@@ -20,37 +20,26 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty" %>
-<%@ attribute name="highlighted" type="java.lang.Boolean" required="true" %>
-<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ tag body-content="empty"%>
+<%@ attribute name="highlighted" type="java.lang.Boolean"
+	required="true"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <c:url var="workspaceUrl" value="/bugtracker/workspace-button" />
 <%--
 	this section is loaded asynchronously. The bugtracker might be out of reach indeed.
- --%>	
- <script type="text/javascript">
- 	
- 	$(function(){
- 			var highlighted = false;
- 			<c:if test="${ highlighted }">
- 			highlighted = true;
- 			</c:if>
- 			updateBugTrackerMenu(highlighted);
- 	});
- 	
- 	function updateBugTrackerMenu (highlighted){
- 		
- 		$("#bugtracker-div").load("${workspaceUrl}",
-	 			function(){
- 			if(highlighted){
- 	 			squashtm.navbar.initHighlighted('bugtracker');
- 	 		}
- 			$("#bugtracker-link").hover(
-	 						function () {squashtm.navbar.highlightOn("bugtracker-link");}, 
-	 						function () {squashtm.navbar.highlightOff("bugtracker-link");}
- 	 		);
- 		});
- 	}
- </script>
-<div id="bugtracker-div" ></div>
+ --%>
+<script type="text/javascript">
+	require([ "common" ], function() {
+		require([ "domReady", "squash.bugtrackerMenu" ], function(domReady,
+				BTM) {
+			
+			domReady(function() {
+				squashtm.bugtrackerMenu = new BTM({workspaceUrl :"${workspaceUrl}"});
+				squashtm.bugtrackerMenu.updateBugTrackerMenu(${ highlighted});
+			});
+		});
+	});
+</script>
+<div id="bugtracker-div"></div>

@@ -30,18 +30,6 @@
 		<c:set var="libraryId" value="${library.id}" />
 </c:if>
 
-<script type="text/javascript">
-	<c:if test="${ not empty highlighted }">
-		<c:choose>
-			<c:when test="${ highlighted == 'bugtracker'}">
-
-				<c:set var="bugtrackerHighlighted" value="${ true }"/>
-			</c:when>
-			<c:otherwise>
-			</c:otherwise>
-		</c:choose>
-	</c:if>
-</script>
 
 <div id="navigation">
 	<div id="test_mgt_nav">
@@ -49,7 +37,7 @@
 		<lay:_workspace-button imageName="Button_Nav_Requirement_off.png" resourceName="requirement" />
 		<lay:_workspace-button imageName="Button_Nav_TestCase_off.png" resourceName="test-case" />
 		<lay:_workspace-button imageName="Button_Nav_Campaign_off.png" resourceName="campaign" />
-		<lay:_workspace-button-bugtracker highlighted="${ bugtrackerHighlighted }"/>
+		<lay:_workspace-button-bugtracker highlighted="${ not empty highlighted and highlighted == 'bugtracker' }"/>
 		<lay:_workspace-button imageName="Button_Nav_Reporting_off.png" resourceName="report" />
 	</div>
 	

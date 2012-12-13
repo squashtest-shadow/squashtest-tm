@@ -132,35 +132,42 @@
 <script type="text/javascript">
 
 //*****************Back button
-	$(function() {
+
+$(function() {
+			
 		$("#back").button().click(clickBugtackerBackButton);
 		$("#bugtracker-iframeFriendly-checkbx").change(clickBugTrackerIframeFriendly);
-	
-	});
-	
-	function clickBugtackerBackButton(){
-		document.location.href = "${bugtrackersUrl}";
-	}
-	
-	function clickBugTrackerIframeFriendly(){
-		
-		$.ajax({
-			type : 'post',
-			data : {
-				'isIframeFriendly' : $("#bugtracker-iframeFriendly-checkbx").is(":checked")
-			},
-			dataType : "json",
-			url : "${ bugtrackerUrl }"
-		}).done(function(){
-				//Update navigation menu
-						updateBugTrackerMenu(false);
-			});
-	 }
-	
-	function changeBugTrackerUrlCallback(){
-		updateBugTrackerMenu(false);
-	}
+});
 
+function clickBugtackerBackButton(){
+	document.location.href = "${bugtrackersUrl}";
+}
+
+function clickBugTrackerIframeFriendly(){
+	
+	$.ajax({
+		type : 'post',
+		data : {
+			'isIframeFriendly' : $("#bugtracker-iframeFriendly-checkbx").is(":checked")
+		},
+		dataType : "json",
+		url : "${ bugtrackerUrl }"
+	}).done(function(){
+			//Update navigation menu
+					squashtm.bugtrackerMenu.updateBugTrackerMenu(false);
+		});
+ }
+
+function changeBugTrackerUrlCallback(){
+	squashtm.bugtrackerMenu.updateBugTrackerMenu(false);
+}
+
+/* renaming success handler */
+function renameBugtrackerSuccess(data) {
+	squashtm.bugtrackerMenu.updateBugTrackerMenu(false);
+	$('#bugtracker-name-header').html(data.newName);
+	$('#rename-bugtracker-dialog').dialog('close');
+}
 </script>
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
@@ -185,13 +192,7 @@
 					var name = $.trim($('#bugtracker-name-header').text());
 					$("#rename-bugtracker-input").val($.trim(name));
 			
-				});
-				/* renaming success handler */
-				function renameBugtrackerSuccess(data) {
-					updateBugTrackerMenu(false);
-					$('#bugtracker-name-header').html(data.newName);
-					$('#rename-bugtracker-dialog').dialog('close');
-				}
+				});				
 			</script>
 			<label><f:message key="dialog.rename.label" /></label>
 			<input type="text" id="rename-bugtracker-input" maxlength="255" size="50" />
