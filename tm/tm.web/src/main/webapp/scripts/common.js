@@ -24,7 +24,13 @@ requirejs.config({
     "custom-field-binding",
     "execution-processing", 
     "projects-manager", 
-    "project" 
+    "project",
+    //"contextual-content-handlers"
+    {
+    	main : "main",
+    	location : "http://localhost/scripts/scripts/contextual-content-handlers",
+    	name : "contextual-content-handlers"
+    }
 	],
 
 	/*

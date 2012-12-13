@@ -1126,42 +1126,34 @@ function addTestStepSuccessAnother(){
 
 <script type="text/javascript">
 
+	var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
 
-	/* display the test case name. Used for extern calls (like from the page who will include this fragment)
-	 *  will refresh the general informations as well*/
-	function nodeSetname(name) {
-		$('#test-case-name').html(name);
-	}
-	function updateRawNameHiddenField(name){
-		$('#test-case-raw-name').html(name);
-	}
-	/* renaming success handler */
-	function renameTestCaseSuccess(data) {
-		//Compose the real name
-		var checkedName = composeTestCaseName(data.newName);
-		//update name in panel
-		nodeSetname(checkedName);
-		//update name in tree
-		updateTreeDisplayedName(checkedName);
-		//change also the node name attribute
-		if (typeof updateSelectedNodeName == 'function'){
-			updateSelectedNodeName(data.newName);	
-		//and the hidden raw name
-		updateRawNameHiddenField(data.newName);
-		$('#rename-test-case-dialog').dialog('close');
-		}
-	}
+	require(["domReady", "require"], function(domReady, require){
+		domReady(function(){
+			require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
+				var nameHandler = contentHandlers.getNameAndReferenceHandler();
+				
+				nameHandler.identity = identity;
+				nameHandler.nameDisplay = $("#test-case-name");
+				nameHandler.nameHidden = $("#test-case-raw-name");
+				nameHandler.referenceHidden = $("#test-case-raw-reference");
+				
+				squashtm.contextualContent.addListener(nameHandler);
+				
+			});
+		});
+	});
+
+	function renameTestCaseSuccess(data){
+		var evt = new EventRename(identity, data.newName);
+		squashtm.contextualContent.fire(null, evt);
+		
+	};	
 	
-	/*update only the displayed node name*/
-	function updateTreeDisplayedName(newName){
-			if (typeof renameSelectedNreeNode == 'function'){
-				renameSelectedNreeNode(newName);
-			}
-		}
-	/* renaming failure handler */
-	function renameTestCaseFailure(xhr) {
-		$('#rename-test-case-dialog .popup-label-error').html(xhr.statusText);
-	}
+	function updateReferenceInTitle(newRef){
+		var evt = new EventUpdateReference(identity, newRef);
+		squashtm.contextualContent.fire(null, evt);		
+	};
 
 	/* deletion success handler */
 	function deleteTestCaseSuccess() {
@@ -1175,33 +1167,6 @@ function addTestStepSuccessAnother(){
 		location.reload(true);
 		</c:otherwise>
 		</c:choose>		
-	}
-	/* renaming after reference update */
-	/* args : reference : the html-escaped reference*/
-	function updateReferenceInTitle(reference){
-		//update hidden reference
-		var jqRawRef = $('#test-case-raw-reference');
-		jqRawRef.html(reference);
-		var escaped = jqRawRef.text();
-		var newName = "";
-		if(reference.length > 0)
-			{
-				newName += escaped + " - ";
-			}
-		newName += $('#test-case-raw-name').text();
-		//update name
-		nodeSetname(newName);
-		//update tree
-		updateTreeDisplayedName(newName);
-	}
-	
-	function composeTestCaseName(rawName)
-	{
-		var toReturn = rawName;
-		if($('#test-case-raw-reference').text().length > 0){
-			toReturn = $('#test-case-raw-reference').text() + " - " + rawName;
-		}
-		return toReturn;
 	}
 	
 	

@@ -144,7 +144,14 @@ function TestSuiteModel(settings) {
 			dataType : 'json'
 		}).success(function (json) {
 			renameSuite(json);
-			var evt = { evt_name : "rename" }
+			var evt = { 
+				evt_name : "rename",
+				evt_target : {
+					obj_id : toSend.id,
+					obj_restype : "test-suites"
+				},
+				evt_newname : toSend.name
+			};
 			notifyListeners(evt);
 			notifyContextualContent(evt);
 		})
