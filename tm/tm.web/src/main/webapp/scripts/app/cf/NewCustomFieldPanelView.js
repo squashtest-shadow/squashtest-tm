@@ -29,6 +29,7 @@ define(
 					.extend({
 						el : "#new-cf-pane",
 						initialize : function() {
+							var self = this;
 							var model = this.model;
 
 							this.defaultValueField = this
@@ -47,7 +48,10 @@ define(
 
 							this.render();
 							this.$el.confirmDialog({
-								autoOpen : true
+								autoOpen : true,
+								close : function(){
+									self.cancel.call(self);
+								}
 							});
 
 						},

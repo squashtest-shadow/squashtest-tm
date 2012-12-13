@@ -26,6 +26,7 @@ define([ "jquery", "app/ws/squashtm.navbar", "app/ws/squashtm.projectfilter",
 			NavBar.initHighlighted(highlightedWorkspace);
 			squashtm.bugtrackerMenu = new BTM({workspaceUrl : squashtm.app.contextRoot + "/bugtracker/workspace-button"});
 			squashtm.bugtrackerMenu.updateBugTrackerMenu(highlightedWorkspace ==  "bugtracker");
+			
 			ProjectFilter.init(squashtm.app.projectFilterConf);
 			MenuBar.init(squashtm.app.menuBarConf);
 
