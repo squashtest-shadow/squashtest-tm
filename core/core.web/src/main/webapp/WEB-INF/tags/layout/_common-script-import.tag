@@ -25,7 +25,7 @@
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ attribute name="highlightedWorkspace" required="true" description="the highlighted workspace in the navigation bar." %>
+<%@ attribute name="highlightedWorkspace" required="false" description="the highlighted workspace in the navigation bar." %>
 <%-- the declaration oder does matter --%>
 
 <script type="text/javascript">

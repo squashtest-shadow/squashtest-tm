@@ -42,7 +42,7 @@
 
 	
 	<layout:common-head />		
-	<layout:_common-script-import />
+	<layout:_common-script-import highlightedWorkspace=""/>
 	<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
 
 	<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/common.js"></script>

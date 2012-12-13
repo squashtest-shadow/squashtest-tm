@@ -55,7 +55,7 @@
 				+1}/${totalSteps})</title>
 			
 			<layout:common-head />
-			<layout:_common-script-import />
+			<layout:_common-script-import highlightedWorkspace=""/>
 			
 			<comp:rich-jeditable-header />
 

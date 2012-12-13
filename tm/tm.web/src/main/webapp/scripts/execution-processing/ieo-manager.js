@@ -208,7 +208,7 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 		
 		var canNavigateNextTestCase = $.proxy(function(){
 			var state = this.state;
-			return ((state.testSuiteMode) &&  (! state.lastTestCase) && (this.isLastStep()));			
+			return ((state.testSuiteMode) &&  (! state.lastTestCase) && (isLastStep()));			
 		}, this);
 		
 		var isLastStep = $.proxy(function(){
