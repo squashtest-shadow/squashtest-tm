@@ -171,19 +171,42 @@
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 
+
+
 <script type="text/javascript">
+
+	var identity = { obj_id : ${testSuite.id}, obj_restype : "test-suites"  };
+	
+	
+	require(["domReady", "require"], function(domReady, require){
+		domReady(function(){
+			require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
+	
+				var nameHandler = contentHandlers.getSimpleNameHandler();
+				
+				nameHandler.identity = identity;
+				nameHandler.nameDisplay = "#test-suite-name";
+				
+				squashtm.contextualContent.addListener(nameHandler);
+
+				
+			});
+		});
+	});
+	
+	
+	function renameTestSuiteSuccess(data){
+		var evt = new EventRename(identity, data.newName);
+		squashtm.contextualContent.fire(null, evt);		
+		refreshTestSuiteInfos();
+	}
+	
 	
 	/* Bind any changeable element to this handler to refresh the general informations */	
 	function refreshTestSuiteInfos(){
 		$('#general-informations-panel').load('${testSuiteInfoUrl}');	
 	}
-	
-	/* display the iteration name. Used for extern calls (like from the page who will include this fragment)
-	*  will refresh the general informations as well*/
-	function nodeSetname(name){
-		$('#test-suite-name').html(name);
-		refreshTestSuiteInfos();
-	}
+
 	
 	/*post a request to duplicate the test suite*/
 	function duplicateTestSuite(){
@@ -207,38 +230,13 @@
 				var duplicate = new SquashEventObject( idOfDuplicate, "test-suites");
 				var source = new SquashEventObject(${testSuite.id}, "test-suites");
 				var evt = new EventDuplicate(destination, duplicate, source);
-				squashtm.contextualContent.fire(this, evt);
+				squashtm.contextualContent.fire(null, evt);
 			</c:otherwise>
 		</c:choose>
 		
 	}
-	
-	/* renaming success handler */
-	function renameTestSuiteSuccess(data){
-		nodeSetname(data.newName);
-		//change the name in the tree
-		updateTreeDisplayedName(data.newName);
-		//change also the node name attribute
-		if(typeof updateSelectedNodeName == 'function'){
-			updateSelectedNodeName(data.newName);
-		}
-						
-		$( '#rename-test-suite-dialog' ).dialog( 'close' );
-	}
-	
-	function updateTreeDisplayedName(name){
-		//update the name
-		if (typeof renameSelectedNreeNode == 'function'){
-			renameSelectedNreeNode(name);
-		}
-	}
-	
-	/* renaming failure handler */
-	function renameTestSuiteFailure(xhr){
-		$('#rename-test-suite-dialog .popup-label-error')
-		.html(xhr.statusText);		
-	}
-	
+
+
 	/* deletion success handler */
 	function deleteTestSuiteSuccess(){		
 		<c:choose>

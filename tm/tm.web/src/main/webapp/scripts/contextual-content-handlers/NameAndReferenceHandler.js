@@ -33,23 +33,23 @@ define(['jquery'], function($){
 		
 		this._updateDisplay = function(){
 			
-			var name = this.nameHidden.text();
-			var reference = $.trim(this.referenceHidden.text());
+			var name = $(this.nameHidden).text();
+			var reference = $.trim( $(this.referenceHidden).text());
 			
 			if (reference.length>0){
 				reference+=" - ";
 			};
 			
-			this.nameDisplay.text(reference+name);
+			$(this.nameDisplay).text(reference+name);
 		};
 		
 		this._rename = function(newName){
-			this.nameHidden.text(newName);	
+			$(this.nameHidden).text(newName);	
 			this._updateDisplay();
 		};
 		
 		this._updateReference = function(newRef){
-			this.referenceHidden.text(newRef);
+			$(this.referenceHidden).text(newRef);
 			this._updateDisplay();
 		};
 

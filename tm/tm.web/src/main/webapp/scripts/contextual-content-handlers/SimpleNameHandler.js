@@ -19,16 +19,32 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["./NameAndReferenceHandler", "./SimpleNameHandler"],function(NameRefHandler, SimpleHandler){
+define(['jquery'], function($){
 	
-	return {
-		getNameAndReferenceHandler : function(){
-			return new NameRefHandler();
-		},
+	return function(){
 		
-		getSimpleNameHandler : function(){
-			return new SimpleHandler();
-		}
+		this.identity = undefined;
+		
+		this.nameDisplay = undefined;
+		
+		this._rename = function(newName){
+			$(this.nameDisplay).text(newName);
+		};
+		
+		this.isMe = function(target){
+			return (this.identity.obj_id == target.obj_id) && 
+			 	   (this.identity.obj_restype == target.obj_restype);
+		};
+		
+		this.update = function(evt){
+			switch(evt.evt_name){
+			case "rename" : if (this.isMe(evt.evt_target)){				
+								this._rename(evt.evt_newname);
+							};
+							break;
+			default : break;
+			}
+		};
 		
 	}
 	

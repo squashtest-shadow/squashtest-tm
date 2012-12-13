@@ -93,65 +93,6 @@
 </authz:authorized>
 
 
-<script type="text/javascript">
-	require([ "common" ], function () {
-		require([ "jquery", "domReady", "jqueryui" ], function ($, domReady) {
-			/* simple initialization for simple components */
-			domReady(function() {
-				$('#delete-campaign-button').button();
-				$('#rename-campaign-button').button();
-			});
-		});
-	});
-
-	/* display the campaign name. Used for extern calls (like from the page who will include this fragment)
-	 *  will refresh the general informations as well*/
-	function nodeSetname(name) {
-		$('#campaign-name').html(name);
-	}
-
-	/* renaming success handler */
-	function renameCampaignSuccess(data) {
-		nodeSetname(data.newName);
-
-		if (typeof renameSelectedNreeNode == 'function') {
-			renameSelectedNreeNode(data.newName);
-		}
-		//change also the node name attribute
-		if (typeof updateSelectedNodeName == 'function') {
-			updateSelectedNodeName(data.newName);
-		}
-
-		$('#rename-campaign-dialog').dialog('close');
-	}
-
-	/* renaming failure handler */
-	function renameCampaignFailure(xhr) {
-		$('#rename-campaign-dialog .popup-label-error').html(xhr.statusText);
-	}
-
-	/* deletion success handler */
-	function deleteCampaignSuccess() {
-		<c:choose>
-<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-	<c:when test="${param.isInfoPage}" >
-		document.location.href = "${workspaceUrl}";
-		</c:when>
-<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
-	<c:otherwise>
-		location.reload(true);
-		</c:otherwise>
-		</c:choose>
-	}
-
-	/* deletion failure handler */
-	function deleteCampaignFailure(xhr) {
-		$.squash.openMessage("<f:message key='popup.title.error' />",
-				xhr.statusText);
-	}
-</script>
-
-
 
 <div
 	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
@@ -502,13 +443,69 @@
 			
 		</jsp:body>
 </comp:popup>
+
+
 <%------------------------------ bugs section -------------------------------%>
 <c:if test="${campaign.project.bugtrackerConnected }">
 	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
 </c:if>
-
-
 <%------------------------------ /bugs section -------------------------------%>
+
+
+<script type="text/javascript">
+
+	var identity = { obj_id : ${campaign.id}, obj_restype : "campaigns"  };
+
+	
+	require(["domReady", "require"], function(domReady, require){
+		domReady(function(){
+			require(["jquery", "contextual-content-handlers","jqueryui"], function($, contentHandlers){
+				
+				$('#delete-campaign-button').button();
+				$('#rename-campaign-button').button();
+				
+				
+				var nameHandler = contentHandlers.getSimpleNameHandler();
+				
+				nameHandler.identity = identity;
+				nameHandler.nameDisplay = "#campaign-name";
+				
+				squashtm.contextualContent.addListener(nameHandler);				
+				
+			});
+		});
+	});
+	
+	function renameCampaignSuccess(data){
+		var evt = new EventRename(identity, data.newName);
+		squashtm.contextualContent.fire(null, evt);		
+	};	
+
+
+
+	/* deletion success handler */
+	function deleteCampaignSuccess() {
+		<c:choose>
+		<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
+		<c:when test="${param.isInfoPage}" >
+		document.location.href = "${workspaceUrl}";
+		</c:when>
+		<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
+		<c:otherwise>
+		location.reload(true);
+		</c:otherwise>
+		</c:choose>
+	}
+
+	/* deletion failure handler */
+	function deleteCampaignFailure(xhr) {
+		$.squash.openMessage("<f:message key='popup.title.error' />",
+				xhr.statusText);
+	}
+</script>
+
+
+
 <comp:decorate-buttons />
 
 

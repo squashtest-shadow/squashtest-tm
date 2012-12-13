@@ -977,25 +977,7 @@ function addTestStepSuccessAnother(){
 	<div id="tabs-2" class="table-tab">
 		<%----------------------------------- Test Step Table -----------------------------------------------%>
 
-<script type="text/javascript">
-	$(function(){
-		$("#add-call-step-button").click(function(){			
-			var url = document.URL;
-			$.cookie('call-step-manager-referer', url, {path:'/'});
-			document.location.href = "${callStepManagerUrl}";			
-		});
-		
-		<c:if test="${hasCUF}">
-		<%-- loading the custom fields --%>
-		$.get("${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}")
-		.success(function(data){
-			$("#test-case-description-table").append(data);
-		});
-		</c:if>
-    	
-	});
 
-</script>
 		<f:message var="collapse" key="test-case.step.button.collapse.label" />
 		<f:message var="expand" key="test-case.step.button.expand.label" />
 		<div class="toolbar">
@@ -1122,9 +1104,26 @@ function addTestStepSuccessAnother(){
 
 </c:if>
 
-
-
 <script type="text/javascript">
+	
+	$(function(){
+		$("#add-call-step-button").click(function(){			
+			var url = document.URL;
+			$.cookie('call-step-manager-referer', url, {path:'/'});
+			document.location.href = "${callStepManagerUrl}";			
+		});
+		
+		<c:if test="${hasCUF}">
+		<%-- loading the custom fields --%>
+		$.get("${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}")
+		.success(function(data){
+			$("#test-case-description-table").append(data);
+		});
+		</c:if>
+		
+	});
+
+
 
 	var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
 
@@ -1134,9 +1133,9 @@ function addTestStepSuccessAnother(){
 				var nameHandler = contentHandlers.getNameAndReferenceHandler();
 				
 				nameHandler.identity = identity;
-				nameHandler.nameDisplay = $("#test-case-name");
-				nameHandler.nameHidden = $("#test-case-raw-name");
-				nameHandler.referenceHidden = $("#test-case-raw-reference");
+				nameHandler.nameDisplay = "#test-case-name";
+				nameHandler.nameHidden = "#test-case-raw-name";
+				nameHandler.referenceHidden = "#test-case-raw-reference";
 				
 				squashtm.contextualContent.addListener(nameHandler);
 				
@@ -1146,8 +1145,7 @@ function addTestStepSuccessAnother(){
 
 	function renameTestCaseSuccess(data){
 		var evt = new EventRename(identity, data.newName);
-		squashtm.contextualContent.fire(null, evt);
-		
+		squashtm.contextualContent.fire(null, evt);		
 	};	
 	
 	function updateReferenceInTitle(newRef){

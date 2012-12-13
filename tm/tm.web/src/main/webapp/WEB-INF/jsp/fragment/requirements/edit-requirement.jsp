@@ -440,93 +440,58 @@ that page won't be editable if
 <%-- -----------------------------------/POPUPS ----------------------------------------------%>
 <%-- -----------------------------------SCRIPT ----------------------------------------------%>
 <comp:decorate-buttons />
+
 <script type="text/javascript">
-	/* display the requirement name. Used for extern calls (like from the page who will include this fragment)
-	*  will refresh the general informations as well*/
-	function nodeSetname(name){
-		$('#requirement-name').html(name);		
-	}
+
+	var identity = { obj_id : ${requirement.id}, obj_restype : "requirements"  };
 	
-	function updateRawNameHiddenField(name){
-		$('#requirement-raw-name').html(name);
-	}
+	require(["domReady", "require"], function(domReady, require){
+		domReady(function(){
+			require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
+				var nameHandler = contentHandlers.getNameAndReferenceHandler();
+				
+				nameHandler.identity = identity;
+				nameHandler.nameDisplay = "#requirement-name";
+				nameHandler.nameHidden = "#requirement-raw-name";
+				nameHandler.referenceHidden = "#requirement-raw-reference";
+				
+				squashtm.contextualContent.addListener(nameHandler);
+				
+			});
+		});
+	});
 	
-	function composeRequirementName(rawName)
-	{
-		var toReturn = rawName;
-		if($('#requirement-raw-reference').text().length > 0){
-			toReturn = $('#requirement-raw-reference').text() + " - " + rawName;
-		}
-		return toReturn;
-	}
+	
 
 	<c:if test="${smallEditable}">
-		/* renaming success handler */
-		function renameRequirementSuccess(data){
-			//Compose the real name
-			var checkedName = composeRequirementName(data.newName);
-			//update name in panel
-			nodeSetname(checkedName);
-			//update name in tree
-			updateTreeDisplayedName(checkedName);
-			//change also the node name attribute
-			if (typeof updateSelectedNodeName == 'function'){
-				updateSelectedNodeName(data.newName);	
-			}
-			//and the hidden raw name
-			updateRawNameHiddenField(data.newName);
-			$( '#rename-requirement-dialog' ).dialog( 'close' );
-		}
+	function renameRequirementSuccess(data){
+		var evt = new EventRename(identity, data.newName);
+		squashtm.contextualContent.fire(null, evt);
+	}
+	
+	function updateReferenceInTitle(reference){
+		var evt = new EventUpdateReference(identity, reference);
+		squashtm.contextualContent.fire(null, evt);	
+	}
+	</c:if>
+
+
 		
-		/*update only the displayed node name*/
-		function updateTreeDisplayedName(newName){
-			if (typeof renameSelectedNreeNode == 'function'){
-				renameSelectedNreeNode(newName);
-			}
+	<c:if test="${deletable}">
+		/* deletion success handler */
+		function deleteRequirementSuccess(){		
+			<c:choose>
+			<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
+			<c:when test="${param.isInfoPage}" >		
+			document.location.href="${workspaceUrl}" ;
+			</c:when>
+			<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
+			<c:otherwise>
+			location.reload(true);
+			</c:otherwise>
+			</c:choose>				
 		}
-		
-		/* renaming after reference update */
-		/* args : reference : the html-escaped reference*/
-		function updateReferenceInTitle(reference){
-			//update hidden reference
-			var jqRawRef = $('#requirement-raw-reference');
-			jqRawRef.html(reference);
-			var escaped = jqRawRef.text();
-			var newName = "";
-			if(reference.length > 0)
-				{
-					newName += escaped + " - ";
-				}
-			newName += $('#requirement-raw-name').text();
-			//update name
-			nodeSetname(newName);
-			//update tree
-			updateTreeDisplayedName(newName);
-		}
-		
-		/* renaming failure handler */
-		function renameRequirementFailure(xhr){
-			$('#rename-requirement-dialog .popup-label-error')
-			.html(xhr.statusText);		
-		}
-			
-		</c:if>
-		
-			<c:if test="${deletable}">
-				/* deletion success handler */
-				function deleteRequirementSuccess(){		
-					<c:choose>
-					<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-					<c:when test="${param.isInfoPage}" >		
-					document.location.href="${workspaceUrl}" ;
-					</c:when>
-					<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
-					<c:otherwise>
-					location.reload(true);
-					</c:otherwise>
-					</c:choose>				
-				}
-			</c:if>
+	</c:if>
 		
 </script>
 <%-- -----------------------------------/ SCRIPT ----------------------------------------------%>

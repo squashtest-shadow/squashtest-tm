@@ -153,70 +153,12 @@
 	<c:set var="executable" value="${ true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
+
 <script type="text/javascript">
-	/* Bind any changeable element to this handler to refresh the general informations */
 	function refreshIterationInfos() {
 		$('#general-informations-panel').load('${iterationInfoUrl}');
 	}
-
-	/* display the iteration name. Used for extern calls (like from the page who will include this fragment)
-	 *  will refresh the general informations as well*/
-	function nodeSetname(name) {
-		$('#iteration-name').html(name);
-		refreshIterationInfos();
-	}
-
-	/* renaming success handler */
-	function renameIterationSuccess(data) {
-		nodeSetname(data.newName);
-		//change the name in the tree
-		updateTreeDisplayedName(data.newName);
-		//change also the node name attribute
-		if (typeof updateSelectedNodeName == 'function') {
-			updateSelectedNodeName(data.newName);
-		}
-
-		$('#rename-iteration-dialog').dialog('close');
-	}
-
-	function updateTreeDisplayedName(name) {
-		//compose name
-		if (typeof getSelectedNodeIndex == 'function') {
-			name = getSelectedNodeIndex() + " - " + name;
-		}
-		//update the name
-		if (typeof renameSelectedNreeNode == 'function') {
-			renameSelectedNreeNode(name);
-		}
-	}
-
-	/* renaming failure handler */
-	function renameIterationFailure(xhr) {
-		$('#rename-iteration-dialog .popup-label-error').html(xhr.statusText);
-	}
-
-	/* deletion success handler */
-	function deleteIterationSuccess() {
-		<c:choose>
-<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-	<c:when test="${param.isInfoPage}" >
-		document.location.href = "${workspaceUrl}";
-		</c:when>
-<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
-	<c:otherwise>
-		location.reload(true);
-		</c:otherwise>
-		</c:choose>
-	}
-
-	/* deletion failure handler */
-	function deleteIterationFailure(xhr) {
-		$.squash.openMessage("<f:message key='popup.title.error' />",
-				xhr.statusText);
-	}
 </script>
-
-
 
 <div
 	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
@@ -624,19 +566,70 @@
 </c:if>
 <%------------------------------ /bugs section -------------------------------%>
 <comp:decorate-buttons />
-<c:if test="${linkable}">
-	<script type="text/javascript">
-		$(function() {
 
-			$('#test-case-button').click(function() {
-				document.location.href = "${testPlanManagerUrl}";
+
+<script type="text/javascript">
+
+	var identity = { obj_id : ${iteration.id}, obj_restype : "iterations"  };
+	
+	
+	require(["domReady", "require"], function(domReady, require){
+		domReady(function(){
+			require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
+
+				var nameHandler = contentHandlers.getSimpleNameHandler();
+				
+				nameHandler.identity = identity;
+				nameHandler.nameDisplay = "#iteration-name";
+				
+				squashtm.contextualContent.addListener(nameHandler);
+				
+				<c:if test="${linkable}">
+				$('#test-case-button').click(function() {
+					document.location.href = "${testPlanManagerUrl}";
+				});
+				</c:if>			
+				
+				<c:if test="${hasCUF}">
+				<%-- loading the custom field panel --%>
+				$("#iteration-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${iteration.boundEntityId}&boundEntityType=${iteration.boundEntityType}"); 				
+				</c:if>	
+		
+				
 			});
-			
-			<c:if test="${hasCUF}">
-			<%-- loading the custom field panel --%>
-			$("#iteration-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${iteration.boundEntityId}&boundEntityType=${iteration.boundEntityType}"); 				
-	    	</c:if>
 		});
-	</script>
-</c:if>
+	});
+
+
+
+	/* renaming success handler */
+	function renameIterationSuccess(data) {
+		var evt = new EventRename(identity, data.newName);
+		squashtm.contextualContent.fire(null, evt);		
+		refreshIterationInfos();
+	}
+
+
+
+	/* deletion success handler */
+	function deleteIterationSuccess() {
+		<c:choose>
+		<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
+		<c:when test="${param.isInfoPage}" >
+		document.location.href = "${workspaceUrl}";
+		</c:when>
+		<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
+		<c:otherwise>
+		location.reload(true);
+		</c:otherwise>
+		</c:choose>
+	}
+
+	/* deletion failure handler */
+	function deleteIterationFailure(xhr) {
+		$.squash.openMessage("<f:message key='popup.title.error' />",xhr.statusText);
+	}
+		
+</script>
+
 

@@ -387,74 +387,38 @@
 		
 	});
 	
-	/* display the requirement name. Used for extern calls (like from the page who will include this fragment)
-	*  will refresh the general informations as well*/
-	function nodeSetname(name){
-		$('#requirement-name').html(name);		
-	}
 	
-	function updateRawNameHiddenField(name){
-		$('#requirement-raw-name').html(name);
-	}
 	
-	function composeRequirementName(rawName)
-	{
-		var toReturn = rawName;
-		if($('#requirement-raw-reference').text().length > 0){
-			toReturn = $('#requirement-raw-reference').text() + " - " + rawName;
-		}
-		return toReturn;
-	}
+	var identity = { obj_id : ${requirementVersion.id}, obj_restype : "requirements"  };
+
+	require(["domReady", "require"], function(domReady, require){
+		domReady(function(){
+			require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
+				var nameHandler = contentHandlers.getNameAndReferenceHandler();
+				
+				nameHandler.identity = identity;
+				nameHandler.nameDisplay = "#requirement-name";
+				nameHandler.nameHidden = "#requirement-raw-name";
+				nameHandler.referenceHidden = "#requirement-raw-reference";
+				
+				squashtm.contextualContent.addListener(nameHandler);
+				
+			});
+		});
+	});
 
 	<c:if test="${ smallEditable }">
-		/* renaming success handler */
-		function renameRequirementSuccess(data){
-			//Compose the real name
-			var checkedName = composeRequirementName(data.newName);
-			//update name in panel
-			nodeSetname(checkedName);
-			//update name in tree
-			updateTreeDisplayedName(checkedName);
-			//change also the node name attribute
-			if (typeof updateSelectedNodeName == 'function'){
-				updateSelectedNodeName(data.newName);	
-			}
-			//and the hidden raw name
-			updateRawNameHiddenField(data.newName);
-			$( '#rename-requirement-dialog' ).dialog( 'close' );
-		}
+	function renameRequirementSuccess(data){
+		var evt = new EventRename(identity, $('#rename-requirement-input').val());
+		squashtm.contextualContent.fire(null, evt);
 		
-		/*update only the displayed node name*/
-		function updateTreeDisplayedName(newName){
-			if (typeof renameSelectedNreeNode == 'function'){
-				renameSelectedNreeNode(newName);
-			}
-		}
-		
-		/* renaming after reference update */
-		/* args : reference : the html-escaped reference*/
-		function updateReferenceInTitle(reference){
-			//update hidden reference
-			var jqRawRef = $('#requirement-raw-reference');
-			jqRawRef.html(reference);
-			var escaped = jqRawRef.text();
-			var newName = "";
-			if(reference.length > 0)
-				{
-					newName += escaped + " - ";
-				}
-			newName += $('#requirement-raw-name').text();
-			//update name
-			nodeSetname(newName);
-			//update tree
-			updateTreeDisplayedName(newName);
-		}
-		
-		/* renaming failure handler */
-		function renameRequirementFailure(xhr){
-			$('#rename-requirement-dialog .popup-label-error')
-			.html(xhr.statusText);		
-		}
-		</c:if>
+	};	
+	
+	function updateReferenceInTitle(newRef){
+		var evt = new EventUpdateReference(identity, newRef);
+		squashtm.contextualContent.fire(null, evt);		
+	};
+	</c:if>
+	
 </script>
 <!------------------------------------------ /SCRIPTS ------------------------------------------------------>

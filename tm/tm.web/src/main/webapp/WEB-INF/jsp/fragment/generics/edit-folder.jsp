@@ -24,10 +24,12 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="su" uri="http://org.squashtest.csp/taglib/string-utils" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+
+
 <s:url var="folderUrl" value="/${ updateUrl }/{folderId}">
 	<s:param name="folderId" value="${folder.id}" />
 </s:url>
@@ -41,9 +43,23 @@
 </c:if>
 
 <script type="text/javascript">
-	function nodeSetname(name){
-		$('#folder-name').html(name);	
-	}
+
+	var identity = { obj_id : ${folder.id}, obj_restype : '${su:camelCaseToHyphened(folder.class.simpleName)}s'  };
+	
+	require(["domReady", "require"], function(domReady, require){
+		domReady(function(){
+			require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
+				var nameHandler = contentHandlers.getSimpleNameHandler();
+				
+				nameHandler.identity = identity;
+				nameHandler.nameDisplay = "#folder-name";
+				
+				squashtm.contextualContent.addListener(nameHandler);				
+				
+			});
+		});
+	});
+
 </script>
 
 

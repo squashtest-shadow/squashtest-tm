@@ -56,7 +56,7 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 	};
 </script>
 <script src="<c:url value='/scripts/require-min.js' />"></script>
-
+<script src="<c:url value='/scripts/common.js' />"></script>
 <jq:jquery-header />
 <ck:ckeditor-header />
 
