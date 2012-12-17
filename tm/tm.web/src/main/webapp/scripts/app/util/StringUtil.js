@@ -21,11 +21,11 @@
 define([ "jquery" ], function($) {
 	function isBlank(val) {
 		// IE8 does not not compute the regex "^\s*$" properly, hence the "trim"
-		return val === null || $.trim(val) === "";
+		return (!val) || $.trim(val) === "";
 	}
 	
 	function isEmpty(val) {
-		return val === null || val === "";
+		return (!val) || val === "";
 	}
 
 	return {
