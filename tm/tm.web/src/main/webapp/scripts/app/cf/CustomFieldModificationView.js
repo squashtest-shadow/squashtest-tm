@@ -221,12 +221,12 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 			var self = this;
 			this.makeSimpleJEditable("cuf-label");
 			this.makeSimpleJEditable("cuf-code");
-			if ($("#cuf-inputType").attr('value') == "PLAIN_TEXT") {
+			if ($("#cuf-inputType").attr('value') === "PLAIN_TEXT") {
 				new SimpleJEditable({
 					language : {
 						richEditPlaceHolder : cfMod.richEditPlaceHolder,
 						okLabel : cfMod.okLabel,
-						cancelLabel : cfMod.cancelLabel,
+						cancelLabel : cfMod.cancelLabel
 					},					
 					targetUrl : function(value, settings) {
 						if (self.changeDefaultValueText(value)) {
@@ -234,10 +234,10 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 						} else {return this.revert;}
 					},
 					componentId : "cuf-default-value",
-					jeditableSettings : {callback: self.enableOptionalChange,},
+					jeditableSettings : { callback: self.enableOptionalChange }
 				});
 				
-			} else if ($("#cuf-inputType").attr('value') == "CHECKBOX") {
+			} else if ($("#cuf-inputType").attr('value') === "CHECKBOX") {
 				this.makeDefaultSelectJEditable("cuf-default-value", cfMod.checkboxJsonDefaultValues);
 			}
 			$("#cuf-default-value").click(self.disableOptionalChange);
@@ -255,7 +255,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 		},
 		
 		isFieldMandatory: function() {
-			this.optionalCheckbox.checked;
+			return !this.optionalCheckbox.checked;
 		},
 
 		renameCuf : function() {
@@ -335,7 +335,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 
 		configureOptionTable : function() {
 			var self = this;
-			if ($("#cuf-inputType").attr('value') != "DROPDOWN_LIST") {
+			if ($("#cuf-inputType").attr('value') !== "DROPDOWN_LIST") {
 				return;
 			}
 			var config = $.extend({
@@ -423,7 +423,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 		},
 
 		openAddOptionPopup : function() {
-			if ($("#cuf-inputType").attr('value') != "DROPDOWN_LIST") {
+			if ($("#cuf-inputType").attr('value') !== "DROPDOWN_LIST") {
 				return;
 			}
 			var self = this;
@@ -451,7 +451,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 		},
 
 		configureRenameOptionPopup : function() {
-			if ($("#cuf-inputType").attr('value') != "DROPDOWN_LIST") {
+			if ($("#cuf-inputType").attr('value') !== "DROPDOWN_LIST") {
 				return;
 			}
 			var self = this;
@@ -477,7 +477,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 		},
 		
 		configureChangeOptionCodePopup : function() {
-			if ($("#cuf-inputType").attr('value') != "DROPDOWN_LIST") {
+			if ($("#cuf-inputType").attr('value') !== "DROPDOWN_LIST") {
 				return;
 			}
 			
