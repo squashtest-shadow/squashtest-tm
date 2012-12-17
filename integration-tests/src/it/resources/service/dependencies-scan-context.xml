@@ -34,9 +34,7 @@
 
 	<context:component-scan  base-package="org.squashtest.csp.tm.internal" />
 	<context:component-scan base-package="org.squashtest.csp.core.security" />
-<!-- 	<context:component-scan base-package="org.squashtest.tm.internal" />
-	<context:component-scan base-package="org.squashtest.tm.plugin" />
- -->
+
 	<!--  stubs  -->
 	<bean id="bugTrackersService" class="org.squashtest.csp.core.bugtracker.service.StubBugTrackerService" primary="true"/>
 	<bean class="org.squashtest.csp.core.service.security.StubUserContextService" primary="true"/> 
