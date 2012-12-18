@@ -202,56 +202,42 @@ define(
 						},
 
 						addOption : function() {
-							var optionInput = Forms.input(this.$("input[name='new-option']"));
-							var optionLabel = optionInput.$el.val();
+							var optionLabelInput = Forms.input(this.$("input[name='new-option-label']"));
+							var optionLabel = optionLabelInput.$el.val();
 
 							var optionCodeInput = Forms.input(this.$("input[name='new-option-code']"));
 							var optionCode = optionCodeInput.$el.val();
 
-							if (this.validateOption(optionInput, optionCodeInput)) {
-								var option = [ optionLabel, optionCode ];
-								this.model.addOption(option);
+							try {
+								this.model.addOption([optionLabel, optionCode]);
+								
 								this.optionsTable.dataTable().fnAddData([ optionLabel, optionCode, false, "" ]);
+
 								optionCodeInput.clearState();
-								optionInput.clearState();
-								optionInput.$el.val("");
 								optionCodeInput.$el.val("");
+								optionLabelInput.clearState();
+								optionLabelInput.$el.val("");
+								
+							} catch (ex) {
+								if (ex.name === "ValidationException") {
+									if (ex.validationErrors.optionLabel) {
+										optionLabelInput.setState("error", ex.validationErrors.optionLabel);
+									}
+									if (ex.validationErrors.optionCode) {
+										optionCodeInput.setState("error", ex.validationErrors.optionCode);
+									}
+								}
 							}
 
 						},
-						
-
-						validateOption : function(optionInput, optionCodeInput) {
-							var optionLabel = optionInput.$el.val();
-							var optionCode = optionCodeInput.$el.val();
-							var validated = true;
-							// Validate option label
-							if ($.trim(optionLabel) === "") {
-								optionInput.setState("error", "message.notBlank");
-								validated = false;
-							} else if (this.model.optionAlreadyDefined(optionLabel)) {
-								optionInput.setState("error", "message.optionAlreadyDefined");
-								validated = false;
-							}
-							// validate option code
-							if ($.trim(optionCode) === "") {
-								optionCodeInput.setState("error", "message.notBlank");
-								validated = false;
-							} else if (!this.model.optionCodePatternValid(optionCode)) {
-								optionCodeInput.setState("error", "message.optionCodeInvalidPattern");
-								validated = false;
-							} else if (this.model.optionCodeAlreadyDefined(optionCode)) {
-								optionCodeInput.setState("error", "message.optionCodeAlreadyDefined");
-								validated = false;
-							}
-							return validated;
-						},
-						
+												
 						removeOption : function(event) {
 							// target of click event is a <span> inside of
 							// <button>, so we use currentTarget
-							var button = event.currentTarget, $button = $(button), option = $button
-									.data("value"), row = $button.parents("tr")[0];
+							var button = event.currentTarget, 
+								$button = $(button), 
+								option = $button.data("value"), 
+								row = $button.parents("tr")[0];
 
 							this.model.removeOption(option);
 							this.optionsTable.dataTable().fnDeleteRow(row);
@@ -283,10 +269,12 @@ define(
 						decorateOptionRow : function(self) {
 							return function(nRow, aData, iDisplayIndex,
 									iDisplayIndexFull) {
-								var row = $(nRow), defaultCell = row
-										.find(".is-default"), removeCell = row
-										.find(".remove-row"), option = aData[0], checked = option === self.model
-										.get("defaultValue"), tplData = {
+								var row = $(nRow), 
+									defaultCell = row.find(".is-default"), 
+									removeCell = row.find(".remove-row"), 
+									option = aData[0], 
+									checked = option === self.model.get("defaultValue"), 
+									tplData = {
 									option : option,
 									checked : checked
 								};

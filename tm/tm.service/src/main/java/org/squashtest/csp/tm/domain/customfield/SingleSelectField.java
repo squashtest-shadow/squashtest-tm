@@ -52,13 +52,13 @@ import org.squashtest.csp.tm.internal.service.customField.OptionAlreadyExistExce
 @Entity
 @DiscriminatorValue("SSF")
 public class SingleSelectField extends CustomField {
-	
+
 	@ElementCollection
 	@CollectionTable(name = "CUSTOM_FIELD_OPTION", joinColumns = @JoinColumn(name = "CF_ID"))
 	@OrderColumn(name = "POSITION")
 	@Valid
 	private List<CustomFieldOption> options = new ArrayList<CustomFieldOption>();
-		
+
 	/**
 	 * Created a SingleSelectField with a
 	 */
@@ -67,27 +67,28 @@ public class SingleSelectField extends CustomField {
 	}
 
 	/**
-	 * Will check if label and the code are available among the existing options. If so, will add the new option at the end of the
-	 * list. Else will throw a NameAlreadyInUseException or CodeAlreadyExistsException.
+	 * Will check if label and the code are available among the existing options. If so, will add the new option at the
+	 * end of the list. Else will throw a NameAlreadyInUseException or CodeAlreadyExistsException.
 	 * 
 	 * @throws OptionAlreadyExistsException
-	 * @param option : the new option
+	 * @param option
+	 *            : the new option
 	 */
 	public void addOption(CustomFieldOption option) {
 		checkLabelAvailable(option.getLabel());
 		checkCodeAvailable(option.getCode());
-		//TODO fix [Task 1682] and remove this line
+		// TODO fix [Task 1682] and remove this line
 		checkCodeMatchesPattern(option.getCode());
 		options.add(option);
 	}
 
-	//TODO fix [Task 1682] and remove this method
+	// TODO fix [Task 1682] and remove this method
 	private void checkCodeMatchesPattern(String code) {
-		if(!code.matches(CODE_REGEXP)){
-		throw new CodeDoesNotMatchesPattern(code, CODE_REGEXP);
+		if (!code.matches(CODE_REGEXP)) {
+			throw new CodeDoesNotMatchesPattern(code, CODE_REGEXP, "optionCode");
 		}
-		if(code.length() > MAX_CODE_SIZE || code.length() < MIN_CODE_SIZE){
-		throw new WrongStringSizeException("code", MIN_CODE_SIZE, MAX_CODE_SIZE);
+		if (code.length() > MAX_CODE_SIZE || code.length() < MIN_CODE_SIZE) {
+			throw new WrongStringSizeException("code", MIN_CODE_SIZE, MAX_CODE_SIZE);
 		}
 	}
 
@@ -98,11 +99,11 @@ public class SingleSelectField extends CustomField {
 	}
 
 	private void checkLabelAvailable(String label) {
-		//TODO fix [Task 1682] and remove the first check
-		if(label.length() >255 || label.length() <1){
+		// TODO fix [Task 1682] and remove the first check
+		if (label.length() > 255 || label.length() < 1) {
 			throw new WrongStringSizeException("label", 1, 255);
 		}
-		
+
 		if (!isLabelAvailable(label)) {
 			throw new OptionAlreadyExistException(label);
 		}
@@ -147,26 +148,27 @@ public class SingleSelectField extends CustomField {
 		addOption(newlabel, code, index);
 
 	}
-	
+
 	/**
 	 * Checks if the newCode is available among all options. <br>
-	 * If so, will remove the option and add a new one at the vacant position. Else
-	 * throws CodeAlreadyExistException.
+	 * If so, will remove the option and add a new one at the vacant position. Else throws CodeAlreadyExistException.
 	 * 
-	 * @param optionLabel : the label to identify the concerned option.
-	 * @param newCode : the new code for the concerned option.
+	 * @param optionLabel
+	 *            : the label to identify the concerned option.
+	 * @param newCode
+	 *            : the new code for the concerned option.
 	 * @throws CodeAlreadyExistException
 	 */
 	public void changeOptionCode(String optionLabel, String newCode) {
 		checkCodeAvailable(newCode);
-		//TODO fix [Task 1682] and remove this line
+		// TODO fix [Task 1682] and remove this line
 		checkCodeMatchesPattern(newCode);
-		int index = findIndexOfLabel(optionLabel);		
+		int index = findIndexOfLabel(optionLabel);
 		removeOption(optionLabel);
 		addOption(optionLabel, newCode, index);
-		
+
 	}
-	
+
 	private String findCodeOf(String previousLabel) {
 		Iterator<CustomFieldOption> it = options.iterator();
 
@@ -182,7 +184,8 @@ public class SingleSelectField extends CustomField {
 	private boolean isLabelAvailable(String newlabel) {
 		return findIndexOfLabel(newlabel) == -1;
 	}
-	private boolean isCodeAvailable(String newCode){
+
+	private boolean isCodeAvailable(String newCode) {
 		return findIndexOfCode(newCode) == -1;
 	}
 

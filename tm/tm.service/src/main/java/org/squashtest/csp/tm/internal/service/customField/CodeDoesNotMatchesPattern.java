@@ -23,37 +23,27 @@ package org.squashtest.csp.tm.internal.service.customField;
 import org.squashtest.csp.tm.domain.DomainException;
 
 public class CodeDoesNotMatchesPattern extends DomainException {
-
-	/**
-	 * TODO my eclipse coudn't thanks - mpagnon
-	 */
-	private static final long serialVersionUID = 1L;
 	private static final String CODE = "code";
 	private static final String KEY = "squashtm.domain.exception.code.pattern";
-	
-	
+
 	/**
 	 * Reports an error on the code, hence the setField("code");
 	 */
 	public CodeDoesNotMatchesPattern() {
-		super("Code doesn't match pattern.",CODE);
-	}
-	public CodeDoesNotMatchesPattern(String code, String pattern) {
-		super("Code "+code+" doesn't match pattern : "+pattern+".",CODE);
-	}
-	
-	/**
-	 * Reports an error on the code, hence the setField("code");
-	 * @param message : the exception message.
-	 */
-	public CodeDoesNotMatchesPattern(String message) {
-		super(message, CODE);
-	}
-	
-	@Override
-	public String getI18nKey() {
-		return KEY ;
+		super("Code doesn't match pattern.");
 	}
 
+	public CodeDoesNotMatchesPattern(String code, String pattern) {
+		super("Code " + code + " doesn't match pattern : " + pattern + ".", CODE);
+	}
+
+	public CodeDoesNotMatchesPattern(String code, String pattern,  String field) {
+		super("Code " + code + " doesn't match pattern : " + pattern + ".", field);
+	}
+
+	@Override
+	public String getI18nKey() {
+		return KEY;
+	}
 
 }

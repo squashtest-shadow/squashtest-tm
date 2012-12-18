@@ -49,34 +49,46 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, St
 			this.set("options", []);
 		},
 
+		/**
+		 * Validates an option and then addds it. 
+		 * @throws an exception when option does not validate. exception.name === "ValidationException"
+		 */
 		addOption : function(option) {
-			var options = this.attributes.options;
-			if (this.optionAlreadyDefined(option[0]) || this.optionCodeAlreadyDefined(option[1])) {
-				return false;
+			var options = this.attributes.options, 
+				errors = this.validateOption(option);
+			if (errors) {
+				throw { 
+					name: "ValidationException", 
+					validationErrors: errors
+				};
 			}
 			options.push(option);
-
-			return true;
+		},
+		/**
+		 * usage : 
+		 * var mapper = function(item) { return item[<what we want>]; };
+		 * var isDefined = this.optionPropertyAlreadyDefined(mapper)
+		 * if (isDefined("candidate prop")) { ... }
+		 * 
+		 * @param mapper
+		 *          function which should receive an item from the options array and
+		 *          return the property of this item we need to check
+		 * @return a function which checks if a given property is already defined
+		 */
+		optionPropertyAlreadyDefined: function(propertyMapper) {
+			var options = this.attributes.options;
+		
+			return function(propertyValue) { 
+				return $.inArray(propertyValue, $.map(options, propertyMapper)) >= 0; 
+			};
 		},
 		
 		optionAlreadyDefined : function(optionLabel) {
-			var options = this.attributes.options;
-			for ( var i = 0; i < options.length; i++) {
-				if (optionLabel == options[i][0]) {
-					return true;
-				}
-				return false;
-			}
+			return (this.optionPropertyAlreadyDefined(function(item) { return item[0]; }))(optionLabel);
 		},
 		
 		optionCodeAlreadyDefined : function(optionCode) {
-			var options = this.attributes.options;
-			for ( var i = 0; i < options.length; i++) {
-				if (optionCode == options[i][1]) {
-					return true;
-				}
-				return false;
-			}
+			return (this.optionPropertyAlreadyDefined(function(item) { return item[1]; }))(optionCode);
 		},
 		
 		optionCodePatternValid : function(optionCode) {
@@ -87,8 +99,14 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, St
 			return ((!optionCode.match(/\s+/)) && optionCode.match(/^[A-Za-z0-9_]*$/));
 		},
 		
-		removeOption : function(option) {
-			var options = this.attributes.options, pos = $.inArray(option, options);
+		/**
+		 * removes an option from the given label.
+		 */
+		removeOption : function(optionLabel) {
+			var options = this.attributes.options;
+			
+			var	labels = $.map(options, function(item) { return item[0]; });
+			var pos = $.inArray(optionLabel, labels);
 
 			if (pos > -1) {
 				options.splice(pos, 1);
@@ -97,7 +115,7 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, St
 
 		validateAll : function() {
 			var attrs = this.attributes, 
-			errors = null;
+				errors = null;
 
 			if (!attrs.optional) {
 				if (isBlank(attrs.defaultValue)) {
@@ -117,15 +135,47 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, St
 			if (isBlank(attrs.code)) {
 				errors = errors || {};
 				errors.code = "message.notBlank";
-			}
-			if (!this.optionCodePatternValid(attrs.code)) {
+			} else if (!this.optionCodePatternValid(attrs.code)) {
 				errors = errors || {};
 				errors.code = "message.optionCodeInvalidPattern";
 			}
 
 			return errors;
+		},
+
+		validateOption : function(option) {
+			var validated = true;
+			var errors = null;
+			
+			// Validate option label
+			if (isBlank(option[0])) {
+				errors = errors || {};
+				errors.optionLabel = "message.notBlank";
+				
+			} else if (this.optionAlreadyDefined(option[0])) {
+				errors = errors || {};
+				errors.optionLabel = "message.optionAlreadyDefined";
+				
+			}
+	
+			// validate option code
+			if (isBlank(option[1])) {
+				errors = errors || {};
+				errors.optionCode = "message.notBlank";
+				
+			} else if (!this.optionCodePatternValid(option[1])) {
+				errors = errors || {};
+				errors.optionCode = "message.optionCodeInvalidPattern";
+				
+			} else if (this.optionCodeAlreadyDefined(option[1])) {
+				errors = errors || {};
+				errors.optionCode = "message.optionCodeAlreadyDefined";
+				
+			}
+			
+			return errors;
 		}
 	});
-
+	
 	return NewCustomFieldModel;
 });
