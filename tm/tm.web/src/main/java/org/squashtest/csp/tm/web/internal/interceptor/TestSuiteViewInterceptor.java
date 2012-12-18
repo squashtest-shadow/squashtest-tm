@@ -47,9 +47,9 @@ public class TestSuiteViewInterceptor extends ObjectViewsInterceptor {
 		if (model != null) {
 			Identified identified = (Identified) model.get("testSuite");
 			if (identified != null) {
-				LOGGER.debug("New view added for TestSuite = " + identified.getId() + " Viewer = "
-						+ request.getRemoteUser());
-				LOGGER.trace("TestSuite request  description " + request.getDescription(true));
+				if (LOGGER.isTraceEnabled()) {
+					LOGGER.trace("TestSuite request  description " + request.getDescription(true));
+				}
 				boolean otherViewers = super.addViewerToEntity(TestSuite.class.getSimpleName(), identified,
 						request.getRemoteUser());
 				model.addAttribute("otherViewers", otherViewers);
@@ -59,7 +59,7 @@ public class TestSuiteViewInterceptor extends ObjectViewsInterceptor {
 
 	@Override
 	public void afterCompletion(WebRequest request, Exception ex) {
-		
+
 	}
 
 }

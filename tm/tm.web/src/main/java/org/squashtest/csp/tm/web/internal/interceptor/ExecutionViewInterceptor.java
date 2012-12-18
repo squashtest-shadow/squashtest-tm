@@ -38,19 +38,18 @@ public class ExecutionViewInterceptor extends ObjectViewsInterceptor {
 
 	@Override
 	public void preHandle(WebRequest request) {
-
+		// NOOP
 	}
 
 	@Override
 	public void postHandle(WebRequest request, ModelMap model) {
-
 		// check model is not null in case we are intercepting an ajax request on the page
 		if (model != null) {
 			Identified identified = (Identified) model.get("execution");
 			if (identified != null) {
-				LOGGER.debug("New view added for Execution = " + identified.getId() + " Viewer = "
-						+ request.getRemoteUser());
-				LOGGER.trace("Execution request  description " + request.getDescription(true));
+				if (LOGGER.isTraceEnabled()) {
+					LOGGER.trace("Execution request  description {}", request.getDescription(true));
+				}
 				boolean otherViewers = super.addViewerToEntity(Execution.class.getSimpleName(), identified,
 						request.getRemoteUser());
 				model.addAttribute("otherViewers", otherViewers);
@@ -60,7 +59,7 @@ public class ExecutionViewInterceptor extends ObjectViewsInterceptor {
 
 	@Override
 	public void afterCompletion(WebRequest request, Exception ex) {
-
+		// NOOP
 	}
 
 }

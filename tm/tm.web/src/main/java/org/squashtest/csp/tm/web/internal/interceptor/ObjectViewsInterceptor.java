@@ -49,6 +49,7 @@ public abstract class ObjectViewsInterceptor implements WebRequestInterceptor {
 	private PermissionEvaluationService permissionService;
 
 	public boolean addViewerToEntity(String contextAttributeName, Identified object, String userLogin) {
+		LOGGER.debug("New view added for {} = {}  Viewer = {}", new Object[] {contextAttributeName, object.getId(), userLogin});
 		boolean otherViewers = false;
 		if (permissionService.hasMoreThanRead(object)) {
 			LOGGER.debug("User has more than readonly in object = true");

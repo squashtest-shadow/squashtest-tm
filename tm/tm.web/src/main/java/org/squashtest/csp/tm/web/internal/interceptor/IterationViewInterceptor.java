@@ -43,14 +43,13 @@ public class IterationViewInterceptor extends ObjectViewsInterceptor {
 
 	@Override
 	public void postHandle(WebRequest request, ModelMap model) {
-
 		// check model is not null in case we are intercepting an ajax request on the page
 		if (model != null) {
 			Identified identified = (Identified) model.get("iteration");
 			if (identified != null) {
-				LOGGER.debug("New view added for Iteration = " + identified.getId() + " Viewer = "
-						+ request.getRemoteUser());
-				LOGGER.trace("Iteration request  description " + request.getDescription(true));
+				if (LOGGER.isTraceEnabled()) {
+					LOGGER.trace("Iteration request  description {}", request.getDescription(true));
+				}
 				boolean otherViewers = super.addViewerToEntity(Iteration.class.getSimpleName(), identified,
 						request.getRemoteUser());
 				model.addAttribute("otherViewers", otherViewers);
