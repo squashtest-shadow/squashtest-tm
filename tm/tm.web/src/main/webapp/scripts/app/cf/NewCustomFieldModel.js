@@ -80,7 +80,6 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, St
 		},
 		
 		optionCodePatternValid : function(optionCode) {
-			optionCode = $.trim(optionCode);
 			// first condition specific for IE8 that does not understand "^" and "$"
 			// as "from start to end" of the string
 			// hence without the following line "mqlskd slqk" would be validated even
@@ -97,7 +96,8 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, St
 		},
 
 		validateAll : function() {
-			var attrs = this.attributes, errors = null;
+			var attrs = this.attributes, 
+			errors = null;
 
 			if (!attrs.optional) {
 				if (isBlank(attrs.defaultValue)) {

@@ -128,14 +128,13 @@ define(
 						},
 
 						validate : function(event) {
-							var res = true, validationErrors = this.model
-									.validateAll();
+							var res = true, validationErrors = this.model.validateAll();
 
 							Forms.form(this.$el).clearState();
 
 							if (validationErrors !== null) {
 								for ( var key in validationErrors) {
-									Forms.input(this.$("input[name='" + key+ "']")).setState("error",validationErrors[key]);
+									Forms.input(this.$("input[name='" + key + "']")).setState("error", validationErrors[key]);
 								}
 
 								return false;
@@ -157,6 +156,7 @@ define(
 							Forms.form(this.$el).clearState();
 							this.$el.confirmDialog("destroy");
 						},
+						
 						renderOptional : function(show) {
 							var renderPane = this.$("#optional-pane");
 							if (show) {
@@ -202,20 +202,16 @@ define(
 						},
 
 						addOption : function() {
-							var optionInput = Forms.input(this
-									.$("input[name='new-option']"));
+							var optionInput = Forms.input(this.$("input[name='new-option']"));
 							var optionLabel = optionInput.$el.val();
 
-							var optionCodeInput = Forms.input(this
-									.$("input[name='new-option-code']"));
+							var optionCodeInput = Forms.input(this.$("input[name='new-option-code']"));
 							var optionCode = optionCodeInput.$el.val();
 
-							if (this.validateOption(optionInput,
-									optionCodeInput)) {
+							if (this.validateOption(optionInput, optionCodeInput)) {
 								var option = [ optionLabel, optionCode ];
 								this.model.addOption(option);
-								this.optionsTable.dataTable().fnAddData(
-										[ optionLabel, optionCode, false, "" ]);
+								this.optionsTable.dataTable().fnAddData([ optionLabel, optionCode, false, "" ]);
 								optionCodeInput.clearState();
 								optionInput.clearState();
 								optionInput.$el.val("");
@@ -223,38 +219,34 @@ define(
 							}
 
 						},
+						
+
 						validateOption : function(optionInput, optionCodeInput) {
 							var optionLabel = optionInput.$el.val();
 							var optionCode = optionCodeInput.$el.val();
 							var validated = true;
 							// Validate option label
 							if ($.trim(optionLabel) === "") {
-								optionInput.setState("error",
-										"message.notBlank");
+								optionInput.setState("error", "message.notBlank");
 								validated = false;
-							} else if (this.model
-									.optionAlreadyDefined(optionLabel)) {
-								optionInput.setState("error",
-										"message.optionAlreadyDefined");
+							} else if (this.model.optionAlreadyDefined(optionLabel)) {
+								optionInput.setState("error", "message.optionAlreadyDefined");
 								validated = false;
 							}
 							// validate option code
 							if ($.trim(optionCode) === "") {
 								optionCodeInput.setState("error", "message.notBlank");
 								validated = false;
-							} else if (!this.model
-									.optionCodePatternValid(optionCode)) {
-								optionCodeInput.setState("error",
-										"message.optionCodeInvalidPattern");
+							} else if (!this.model.optionCodePatternValid(optionCode)) {
+								optionCodeInput.setState("error", "message.optionCodeInvalidPattern");
 								validated = false;
-							} else if (this.model
-									.optionCodeAlreadyDefined(optionCode)) {
-								optionCodeInput.setState("error",
-										"message.optionCodeAlreadyDefined");
+							} else if (this.model.optionCodeAlreadyDefined(optionCode)) {
+								optionCodeInput.setState("error", "message.optionCodeAlreadyDefined");
 								validated = false;
 							}
 							return validated;
 						},
+						
 						removeOption : function(event) {
 							// target of click event is a <span> inside of
 							// <button>, so we use currentTarget
@@ -267,31 +259,26 @@ define(
 						},
 
 						changeDefaultOption : function(event) {
-							var checkbox = event.currentTarget, option = checkbox.value, defaultValue = checkbox.checked ? option
-									: "", uncheckSelector = ".is-default>input:checkbox"
-									+ (checkbox.checked ? "[value!='" + option
-											+ "']" : ""), optionsInput = Forms
-									.input(this.$("input[name='options']"));
+							var checkbox = event.currentTarget, 
+								option = checkbox.value, 
+								defaultValue = checkbox.checked ? option : "", uncheckSelector = ".is-default>input:checkbox" + (checkbox.checked ? "[value!='" + option + "']" : ""), 
+								optionsInput = Forms.input(this.$("input[name='options']"));
 
 							optionsInput.clearState();
 
-							if (this.model.get("optional") === false
-									&& checkbox.checked === false) {
+							if (this.model.get("optional") === false && checkbox.checked === false) {
 								event.preventDefault();
-								optionsInput.setState("warning",
-										"message.defaultOptionMandatory");
+								optionsInput.setState("warning", "message.defaultOptionMandatory");
 								return;
 							}
 
 							this.model.set("defaultValue", defaultValue);
-							this.optionsTable.find(uncheckSelector).attr(
-									"checked", false);
+							this.optionsTable.find(uncheckSelector).attr("checked", false);
 
 						},
 
 						/**
-						 * returns the function which should be used as a
-						 * callback.
+						 * returns the function which should be used as a callback.
 						 */
 						decorateOptionRow : function(self) {
 							return function(nRow, aData, iDisplayIndex,
