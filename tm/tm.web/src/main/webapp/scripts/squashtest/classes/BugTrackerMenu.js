@@ -19,16 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "domReady", "jquery", "app/ws/squashtm.navbar" ], function(domReady,
-		$, NavBar) {
-
+define([ "domReady", "jquery", "app/ws/squashtm.navbar" ], function(domReady, $, NavBar) {
 	var BugTrackerMenu = function(settings) {
 		var workspaceUrl = settings.workspaceUrl;
-		this.updateBugTrackerMenu  =  function (highlighted) {
+		this.updateBugTrackerMenu = function(highlighted) {
 
 			$("#bugtracker-div").load(workspaceUrl, function() {
 				if (highlighted) {
-					NavBar.initHighlighted('bugtracker');
+					NavBar.initHighlighted("bugtracker");
 				}
 				$("#bugtracker-link").hover(function() {
 					NavBar.highlightOn("bugtracker-link");

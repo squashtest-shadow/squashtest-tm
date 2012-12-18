@@ -441,18 +441,20 @@
 
 		<pop:popup id="delete-test-suite-multiple-test-plan-dialog"
 			openedBy="remove-test-suite-test-case-button"
-			titleKey="dialog.remove-testcase-testsuite-associations.title">
+			titleKey="dialog.remove-testcase-testsuite-associations.title" isContextual="true"  >
 			<jsp:attribute name="buttons">
 		<f:message var="labelDelete" key="label.Yes" />
-				'${ labelDelete }' : function(){						
-						$("#delete-test-suite-multiple-test-plan-dialog").data("answer","delete");
-						$("#delete-test-suite-multiple-test-plan-dialog").dialog("close");
+				'${ labelDelete }' : function() {
+            $this = $(this);						
+						$this.data("answer","delete");
+						$this.dialog("close");
 				},
 				
 		<f:message var="labelDetach" key="label.No" />
 				'${ labelDetach }' : function(){
-						$("#delete-test-suite-multiple-test-plan-dialog").data("answer","detach");
-						$("#delete-test-suite-multiple-test-plan-dialog").dialog("close");
+            $this = $(this);            
+						$this.data("answer","detach");
+						$this.dialog("close");
 				},
 				
 		<pop:cancel-button />
@@ -479,18 +481,20 @@
 		<%--- the openedBy attribute here is irrelevant and is just a dummy --%>
 		<pop:popup id="delete-test-suite-single-test-plan-dialog"
 			openedBy="test-suite-test-plans-table .delete-test-suite-test-plan-button"
-			titleKey="dialog.remove-testcase-testsuite-association.title">
+			titleKey="dialog.remove-testcase-testsuite-association.title" isContextual="true">
 			<jsp:attribute name="buttons">
 		<f:message var="labelDelete" key="label.Yes" />
 				'${ labelDelete }' : function(){
-						$("#delete-test-suite-single-test-plan-dialog").data("answer","delete");
-						$("#delete-test-suite-single-test-plan-dialog").dialog("close");
+            $this = $(this);
+						$this.data("answer","delete");
+						$this.dialog("close");
 				},
 				
 		<f:message var="labelDetach" key="label.No" />
 				'${ labelDetach }' : function(){
-						$("#delete-test-suite-single-test-plan-dialog").data("answer","detach");
-						$("#delete-test-suite-single-test-plan-dialog").dialog("close");
+            $this = $(this);
+						$this.data("answer","detach");
+						$this.dialog("close");
 				},
 				
 		<pop:cancel-button />
