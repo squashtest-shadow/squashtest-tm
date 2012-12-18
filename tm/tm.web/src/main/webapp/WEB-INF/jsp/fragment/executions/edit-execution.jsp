@@ -37,8 +37,7 @@
 <comp:rich-jeditable-header />
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" />
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE"
-	domainObject="${ execution }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
 	<c:set var="editable" value="${ true }" />
 </authz:authorized>
 <c:set var="automated"
@@ -117,7 +116,6 @@
 
 </script>
 
-
 <div
 	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
 
@@ -137,10 +135,6 @@
 
 
 	<div style="clear: both;"></div>
-	<c:if test="${ editable }">
-		<comp:opened-object otherViewers="${ otherViewers }"
-			objectUrl="${ executionUrl }" isContextual="false" />
-	</c:if>
 </div>
 
 <div class="fragment-body">
@@ -160,6 +154,9 @@
 			</c:if>
 		</div>
 		<div style="clear: both;"></div>
+    <c:if test="${ editable }">
+      <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ executionUrl }" isContextual="false" />
+    </c:if>
 	</div>
 
 	<%----------------------------------- Information -----------------------------------------------%>

@@ -32,68 +32,84 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.squashtest.csp.tm.web.internal.interceptor.OpenedEntities;
+
 /**
  * This lisner acts when the ServletContext is created or when a user's session is ending.
- * <ul><li>When the servletContext is created : a OpenedEntities instance is created and stored in the servletContext for each entry in the {@linkplain OpenedEntities#MANAGED_ENTITIES_LIST}.</li>
- * <li>When a user's session is ending, all his stored views on the existing OpenedEntities are removed</li></ul>
- * The aim of all this is to notify a user when someone else is viewing the same object than him. See {@linkplain OpenedEntities}'s java doc for more details.
+ * <ul>
+ * <li>When the servletContext is created : a OpenedEntities instance is created and stored in the servletContext for
+ * each entry in the {@linkplain OpenedEntities#MANAGED_ENTITIES_LIST}.</li>
+ * <li>When a user's session is ending, all his stored views on the existing OpenedEntities are removed</li>
+ * </ul>
+ * The aim of all this is to notify a user when someone else is viewing the same object than him. See
+ * {@linkplain OpenedEntities}'s java doc for more details.
  * 
  * @author mpagnon
- *
+ * 
  */
-public class HttpSessionListnerImpl implements HttpSessionListener, ServletContextListener{
-	private static final Logger LOGGER = LoggerFactory.getLogger(HttpSessionListnerImpl.class);
+public class OpenedEntitiesLifecycleListener implements HttpSessionListener, ServletContextListener {
+	private static final Logger LOGGER = LoggerFactory.getLogger(OpenedEntitiesLifecycleListener.class);
 
 	@Override
-	public void sessionCreated(HttpSessionEvent arg0) {
-		// TODO Auto-generated method stub
+	public void sessionCreated(HttpSessionEvent event) {
+		// NOOP
 
 	}
-	
+
 	@Override
-	public void sessionDestroyed(HttpSessionEvent arg0) {
-		ServletContext context = arg0.getSession().getServletContext();
-		HttpSession session = arg0.getSession();
+	public void sessionDestroyed(HttpSessionEvent event) {
+		ServletContext context = event.getSession().getServletContext();
+		HttpSession session = event.getSession();
 		SecurityContext securityContext = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-		String login = null ;
-		if(securityContext != null){
-			Authentication authentication = securityContext.getAuthentication();
-			if(authentication != null ){
-				login = authentication.getName();
-			}
-		}
+
+		String login = retrieveLogin(securityContext);
+		
+		unregisterLogin(context, login);
+	}
+
+	private void unregisterLogin(ServletContext context, String login) {
 		if (login != null) {
-			LOGGER.debug("Session Closed for user "+login);
+			LOGGER.debug("Session Closed for user {}", login);
+			
 			for (String managedEntityKey : OpenedEntities.MANAGED_ENTITIES_LIST) {
 				removeUserFromViewers(managedEntityKey, login, context);
 			}
 		}
 	}
 
+	private String retrieveLogin(SecurityContext securityContext) {
+		String login = null;
+		
+		if (securityContext != null) {
+			Authentication authentication = securityContext.getAuthentication();
+			if (authentication != null) {
+				login = authentication.getName();
+			}
+		}
+		return login;
+	}
+
 	private void removeUserFromViewers(String managedEntityKey, String login, ServletContext context) {
 		OpenedEntities openedEntities = (OpenedEntities) context.getAttribute(managedEntityKey);
-		if(openedEntities != null){openedEntities.removeViewer(login);}
+		if (openedEntities != null) {
+			openedEntities.removeViewer(login);
+		}
 	}
 
-
-
 	@Override
-	public void contextDestroyed(ServletContextEvent arg0) {
-		
-		
+	public void contextDestroyed(ServletContextEvent event) {
+		// NOOP
+
 	}
 
-
-
 	@Override
-	public void contextInitialized(ServletContextEvent arg0) {
-		ServletContext context = arg0.getServletContext();
-		LOGGER.debug("ServletContext attribute is null");
+	public void contextInitialized(ServletContextEvent event) {
+		ServletContext context = event.getServletContext();
+
 		for (String contextAttributeName : OpenedEntities.MANAGED_ENTITIES_LIST) {
 			OpenedEntities entities = new OpenedEntities();
 			context.setAttribute(contextAttributeName, entities);
 		}
-		
+
 	}
 
 }

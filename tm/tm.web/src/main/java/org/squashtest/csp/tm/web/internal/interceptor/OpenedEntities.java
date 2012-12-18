@@ -32,6 +32,7 @@ import org.squashtest.csp.core.domain.Identified;
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
+import org.squashtest.csp.tm.domain.execution.Execution;
 import org.squashtest.csp.tm.domain.requirement.Requirement;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 /**
@@ -47,7 +48,7 @@ import org.squashtest.csp.tm.domain.testcase.TestCase;
  * 	handle the opening of a new view and add the boolean "otherViewers" to the mav. </li>
  * <li>add the <span style="color:darkgreen">component "opened-object"</span> in the view to notify the user if he is not alone viewing this object and to send a quit request if the user leaves the view</li>
  * <li>add the leaveObject method in the <span style="color:darkgreen">ObjectAccessController</span> </li>
- * <li>add the object class.simpleName to the <span style="color:darkgreen">MANAGED_ENTITIES_LIST</span> below</li>. This will allow the HttpSessionListnerImpl to create the needed OpenedEntities at the start of squash and to close the view of a user the end of his session</ol>
+ * <li>add the object class.simpleName to the <span style="color:darkgreen">MANAGED_ENTITIES_LIST</span> below</li>. This will allow the OpenedEntitiesLifecycleListener to create the needed OpenedEntities at the start of squash and to close the view of a user the end of his session</ol>
  * <br>
  * <b>How to add a view to a managed entity</b>
  * <ol><li>add the view's access url to the rightful interceptor in the <span style="color:darkgreen">serlvet.xml</span></li>
@@ -64,7 +65,7 @@ public class OpenedEntities {
 	private Map<Long, OpenedEntity> entitiesViewers;
 	
 	public static final List<String> MANAGED_ENTITIES_LIST = Arrays.asList(TestCase.class.getSimpleName(),
-			Requirement.class.getSimpleName(), Campaign.class.getSimpleName(), Iteration.class.getSimpleName(), TestSuite.class.getSimpleName());
+			Requirement.class.getSimpleName(), Campaign.class.getSimpleName(), Iteration.class.getSimpleName(), TestSuite.class.getSimpleName(), Execution.class.getSimpleName());
 
 	public OpenedEntities(){
 		entitiesViewers = new HashMap<Long, OpenedEntity>();

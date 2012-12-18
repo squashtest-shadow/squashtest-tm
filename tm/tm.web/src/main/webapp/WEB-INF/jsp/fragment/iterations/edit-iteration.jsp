@@ -238,13 +238,12 @@
 	</div>
 	<div style="clear: both;"></div>
 	<c:if test="${ moreThanReadOnly }">
-		<comp:opened-object otherViewers="${ otherViewers }"
-			objectUrl="${ iterationUrl }" isContextual="${ ! param.isInfoPage }" />
+		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" isContextual="${ ! param.isInfoPage }" />
 	</c:if>
 </div>
 
-
 <comp:fragment-tabs />
+
 <div class="fragment-tabs fragment-body">
 	<ul>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
