@@ -66,10 +66,7 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 				
 				currentStepStatus : undefined
 				
-				
 		}, settings);
-		
-
 
 		// ***************** private stuffs ****************
 		
@@ -79,7 +76,7 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 		
 		
 		var getJson = $.proxy(function(url){
-			return $.get(url, null, null, "json")			
+			return $.get(url, null, null, "json");		
 		}, this);
 		
 
@@ -105,13 +102,14 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 				$.squash.openMessage(settings.completeTitle, settings.completeSuiteMessage).done(function() {
 					refreshParent();// see "comment[1]"
 					window.close();
-	 			});				
+				});
 			}
 			
 		}, this);
 		
 		var navigateLeftPanel = $.proxy(function(url){
 			parent.frameleft.document.location.href = url;
+			refreshParent();
 		}, this);
 		
 		//************ public functions ****************
@@ -120,7 +118,6 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 			try{
 				this.rightPane.find('iframe').attr('src', url);
 			}catch(ex){
-				console.log(ex);
 				this.rightPane.find('iframe body').text(ex);
 			}
 				
@@ -145,42 +142,38 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 			if (! isPrologue()){
 				var prevStep = state.currentStepIndex - 1;
 				this.navigateRandom(prevStep);
-			}			
+			}
 		};
 		
-		this.navigatePrologue = function(){
+		this.navigatePrologue = function() {
 			var state = this.state;
-			var url = state.baseStepUrl+"prologue?optimized=true&suitemode="+state.testSuiteMode;
+			var url = state.baseStepUrl + "prologue?optimized=true&suitemode=" + state.testSuiteMode;
 			navigateLeftPanel(url);
 			state.currentStepIndex = 0;
-			this.control.ieoControl("navigateRandom", 0);		
+			this.control.ieoControl("navigateRandom", 0);
 		};
-		
-		
+
 		this.navigateRandom = function(newStepIndex){
 			var state = this.state;
 			var control = this.control;
 			
 			if (newStepIndex === 0){
 				this.navigatePrologue();
-			}
-			else{			
+			} else {			
 				var zeroBasedIndex = newStepIndex -1;	
 				var nextUrl = state.baseStepUrl+"/"+zeroBasedIndex+"?optimized=true&suitemode="+state.testSuiteMode;
 				
-				getJson(nextUrl)
-				.success(function(json){
-					
+				getJson(nextUrl).success(function(json){
 					state.currentStepStatus = json.currentStepStatus;
 					state.currentStepId = json.currentStepId;
-					
+
 					var frameLeftUrl = state.baseStepUrl+zeroBasedIndex+"?optimized=true&suitemode="+state.testSuiteMode;
-					navigateLeftPanel(frameLeftUrl);	
+					navigateLeftPanel(frameLeftUrl);
 
 					state.currentStepIndex = newStepIndex;
-					control.ieoControl("navigateRandom", newStepIndex);		
+					control.ieoControl("navigateRandom", newStepIndex);
 
-				});				
+				});
 			}
 		};
 		
@@ -196,9 +189,9 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 		};
 		
 		this.closeWindow = function(){
+			refreshParent();
 			window.close();
 		};
-
 
 		this.getState = function(){
 			return this.state;
@@ -218,8 +211,6 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 		var isPrologue = $.proxy(function(){
 			return (this.state.currentStepIndex===this.state.firstStepIndex);
 		}, this);
-		
-		
 
 		// *********** setters etc *********************
 
@@ -243,21 +234,13 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 			var mvTCButton = control.ieoControl("getNextTestCaseButton");
 			var statusCombo = control.ieoControl("getStatusCombo");
 			
-			nextButton.click(function(){
-				self.navigateNext();
-			});
+			nextButton.click(self.navigateNext);
 			
-			prevButton.click(function(){
-				self.navigatePrevious();
-			});
+			prevButton.click(self.navigatePrevious);
 			
-			mvTCButton.click(function(){
-				self.navigateNextTestCase();		
-			});	
+			mvTCButton.click(self.navigateNextTestCase);	
 			
-			stopButton.click(function(){
-				window.close();
-			});
+			stopButton.click(self.closeWindow);
 			
 			statusCombo.change(function(){
 				var cbox = this;
@@ -290,6 +273,6 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 			this.rightPane = rightPane;
 		};
 		
-	}
+	};
 	
 });

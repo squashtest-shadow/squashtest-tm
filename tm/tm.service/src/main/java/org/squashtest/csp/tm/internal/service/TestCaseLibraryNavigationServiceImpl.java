@@ -65,8 +65,6 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
 	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
-	@Inject
-	private TreeNodeCopier copier;
 
 	@Inject
 	private TestCaseImporter testCaseImporter;

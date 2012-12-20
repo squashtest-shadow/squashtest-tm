@@ -101,8 +101,6 @@ public class TreeNodeCopier implements NodeVisitor {
 		source.accept(this);
 		return copy;
 	}
-	
-	
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void visit(Folder source, FolderDao dao) {

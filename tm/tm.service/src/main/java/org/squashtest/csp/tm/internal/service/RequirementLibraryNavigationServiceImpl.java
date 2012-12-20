@@ -89,8 +89,6 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Inject
 	private RequirementTestCaseLinksImporter requirementTestCaseLinksImporter;
 	@Inject
-	private TreeNodeCopier copier;
-	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToRequirementFolderStrategy")
 	private PasteStrategy<RequirementFolder, RequirementLibraryNode> pasteToRequirementFolderStrategy;
 	@Inject

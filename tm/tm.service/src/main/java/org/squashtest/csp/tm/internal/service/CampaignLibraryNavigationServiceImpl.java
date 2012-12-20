@@ -61,9 +61,6 @@ public class CampaignLibraryNavigationServiceImpl extends
 		CampaignLibraryNavigationService {
 	
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
-	@Inject
-	private TreeNodeCopier copier;
-
 	
 	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
@@ -263,7 +260,6 @@ public class CampaignLibraryNavigationServiceImpl extends
 		return suiteDao.findAllByIterationId(iterationId);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public String getPathAsString(long entityId) {
 		//get

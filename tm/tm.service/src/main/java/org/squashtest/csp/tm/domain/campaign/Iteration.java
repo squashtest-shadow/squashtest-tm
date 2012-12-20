@@ -619,16 +619,20 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	public Map<TestSuite, List<Integer>> createTestSuitesPastableCopy() {
 		Map<TestSuite, List<Integer>> resultMap = new HashMap<TestSuite, List<Integer>>();
 		List<IterationTestPlanItem> testPlanWithoutDeletedTestCases = getTestPlanWithoutDeletedTestCases();
+		
 		for (TestSuite testSuite : getTestSuites()) {
 			List<IterationTestPlanItem> testSuiteTestPlan = testSuite.getTestPlan();
 			TestSuite testSuiteCopy = testSuite.createCopy();
 			List<Integer> testPlanIndex = new ArrayList<Integer>();
+			
 			for (IterationTestPlanItem iterationTestPlanItem : testSuiteTestPlan) {
 				int testPlanItemIndex = testPlanWithoutDeletedTestCases.indexOf(iterationTestPlanItem);
 				testPlanIndex.add(testPlanItemIndex);
 			}
+			
 			resultMap.put(testSuiteCopy, testPlanIndex);
 		}
+		
 		return resultMap;
 	}
 

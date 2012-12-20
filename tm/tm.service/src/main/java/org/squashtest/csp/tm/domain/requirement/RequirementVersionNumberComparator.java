@@ -35,6 +35,7 @@ public class RequirementVersionNumberComparator implements Comparator<Requiremen
 	 * Compare requirement versions according to their version number for a descending order..
 	 */
 	public int compare(RequirementVersion o1, RequirementVersion o2) {
+		// XXX replace with more efficient : return -(rv1.versionNumber - rv2.versionNumber) 
 		return -((Integer)o1.getVersionNumber()).compareTo((Integer)o2.getVersionNumber());
 	}
 

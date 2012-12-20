@@ -41,7 +41,7 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 			var positionLeft = $.cookie("ieo-toolbox-position-left");
 			var positionTop = $.cookie("ieo-toolbox-position-top");
 			
-			if ( positionLeft != null && positionTop != null ) {
+			if ((!!positionLeft) && (!!positionTop)) {
 				this.element.offset({top : positionTop, left: positionLeft});
 			}	
 			
