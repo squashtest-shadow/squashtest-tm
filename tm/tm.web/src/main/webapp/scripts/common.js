@@ -21,6 +21,7 @@
 requirejs.config({
 	
   packages: [
+    "custom-field-editor",
     "custom-field-binding",
     "execution-processing", 
     "projects-manager", 

@@ -122,7 +122,6 @@
 				parent.squashtm.ieomanager.fillRightPane(url);
 				return false;				
 			});
-
 			
 			$("#bugtracker-section-div a").live('click', function(){
 				$(this).attr('target', "${bugLinkTarget}");

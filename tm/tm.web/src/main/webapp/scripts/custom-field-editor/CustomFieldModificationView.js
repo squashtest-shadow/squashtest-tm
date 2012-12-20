@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simpleJEditable",
+define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore", "jeditable.simpleJEditable",
 		"jeditable.selectJEditable", "app/util/StringUtil", "jquery.squash", "jqueryui", "jquery.squash.togglepanel", "jeditable.selectJEditable",
-		"jquery.squash.datatables", "jquery.squash.oneshotdialog", "jquery.squash.messagedialog" ], function($,
-		NewCustomFieldOptionDialog, Backbone, SimpleJEditable, SelectJEditable, StringUtil) {
+		"jquery.squash.datatables", "jquery.squash.oneshotdialog", "jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($,
+		NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable, SelectJEditable, StringUtil) {
 	var cfMod = squashtm.app.cfMod;
 	/*
 	 * Defines the controller for the custom fields table.
@@ -29,13 +29,14 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 	var CustomFieldModificationView = Backbone.View.extend({
 		el : "#information-content",
 		initialize : function() {
-			var self = this;
+			this.inputType = $("#cuf-inputType").data("type");
 			
 			this.optionalCheckbox = this.$("#cf-optional").get(0);
 			
 			this.configureTogglePanels();
 			this.configureEditables();
 			this.configureRenamePopup();
+			this.configureRenameOptionPopup();
 			this.configureChangeOptionCodePopup();
 			this.configureOptionTable();
 			this.configureButtons();
@@ -46,25 +47,45 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 			// before it is moved from it's "span.not-displayed"
 			// to the toggle panel header.
 			// TODO change our way to make toggle panels buttons
-			this.$("#add-cuf-option-button").click(function() {
-				self.openAddOptionPopup.call(self);
-			});
+			this.$("#add-cuf-option-button").on("click", $.proxy(this.openAddOptionPopup, this));
+			
+			// dialog is moved from DOM when widgetized => we need to store it
+			this.confirmDeletionDialog = this.$("#delete-warning-pane").confirmDialog();
+			//...and we cannot use the events hash
+			this.confirmDeletionDialog.on("confirmdialogconfirm", $.proxy(this.deleteCustomField, this));
 		},
 
 		events : {
 			"click #cf-optional" : "confirmOptional",
 			"click .is-default>input:checkbox" : "changeDefaultOption",
 			"click .opt-label" : "openRenameOptionPopup",
-			"click .opt-code" : "openChangeOptionCodePopup"
+			"click .opt-code" : "openChangeOptionCodePopup", 
+			"click #delete-cuf-button" : "confirmCustomFieldDeletion"
 		},
 
+		confirmCustomFieldDeletion: function(event) {
+			this.confirmDeletionDialog.confirmDialog("open");
+		},
+		
+		deleteCustomField: function(event) {
+			var self = this;
+			
+			$.ajax({
+				type: "delete",
+				url: "" 
+			}).done(function() {
+				self.trigger("customfield.delete");
+			});
+			
+		},
+		
 		confirmOptional : function(event) {
 			var self = this;
 			var checked = event.target.checked;
-			
+
 			if (checked) {
 				self.sendOptional(checked);
-				
+
 			} else {
 				var defaultValue = self.findDefaultValue();
 				if (StringUtil.isBlank(defaultValue) || defaultValue === cfMod.richEditPlaceHolder) {
@@ -87,6 +108,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 			var defaultValueDiv = this.$('#cuf-default-value');
 			if (defaultValueDiv && defaultValueDiv.length > 0) {
 				return $(defaultValueDiv[0]).text();
+				
 			} else if (this.optionsTable) {
 				var checkedDefault = this.optionsTable.find('td.is-default input:checked');
 				if (checkedDefault) {
@@ -200,7 +222,6 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 		},
 
 		configureButtons : function() {
-			$("#back").button();
 			$.squash.decorateButtons();
 		},
 
@@ -221,7 +242,8 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 			var self = this;
 			this.makeSimpleJEditable("cuf-label");
 			this.makeSimpleJEditable("cuf-code");
-			if ($("#cuf-inputType").attr('value') === "PLAIN_TEXT") {
+			
+			if (this.inputType === "PLAIN_TEXT") {
 				new SimpleJEditable({
 					language : {
 						richEditPlaceHolder : cfMod.richEditPlaceHolder,
@@ -237,13 +259,21 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 					jeditableSettings : { callback: self.enableOptionalChange }
 				});
 				
-			} else if ($("#cuf-inputType").attr('value') === "CHECKBOX") {
+			} else if (this.inputType === "CHECKBOX") {
 				this.makeDefaultSelectJEditable("cuf-default-value", cfMod.checkboxJsonDefaultValues);
 			}
+			
 			$("#cuf-default-value").click(self.disableOptionalChange);
 		},
-		disableOptionalChange : function(){$("#cf-optional").attr("disabled", true);},
-		enableOptionalChange : function(){$("#cf-optional").removeAttr("disabled");},
+		
+		disableOptionalChange : function() {
+			$("#cf-optional").attr("disabled", true);
+		},
+		
+		enableOptionalChange : function() {
+			$("#cf-optional").removeAttr("disabled");
+		},
+		
 		changeDefaultValueText : function(value) {
 			if (this.isFieldMandatory() && StringUtil.isBlank(value)) {
 				$.squash.openMessage(cfMod.popupErrorTitle, cfMod.defaultValueMandatoryMessage);
@@ -335,7 +365,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 
 		configureOptionTable : function() {
 			var self = this;
-			if ($("#cuf-inputType").attr('value') !== "DROPDOWN_LIST") {
+			if (this.inputType !== "DROPDOWN_LIST") {
 				return;
 			}
 			var config = $.extend({
@@ -423,7 +453,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 		},
 
 		openAddOptionPopup : function() {
-			if ($("#cuf-inputType").attr('value') !== "DROPDOWN_LIST") {
+			if (this.inputType !== "DROPDOWN_LIST") {
 				return;
 			}
 			var self = this;
@@ -451,7 +481,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 		},
 
 		configureRenameOptionPopup : function() {
-			if ($("#cuf-inputType").attr('value') !== "DROPDOWN_LIST") {
+			if (this.inputType !== "DROPDOWN_LIST") {
 				return;
 			}
 			var self = this;
@@ -477,7 +507,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 		},
 		
 		configureChangeOptionCodePopup : function() {
-			if ($("#cuf-inputType").attr('value') !== "DROPDOWN_LIST") {
+			if (this.inputType !== "DROPDOWN_LIST") {
 				return;
 			}
 			
@@ -501,8 +531,8 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "jeditable.simple
 			};
 			squashtm.popup.create(params);
 			this.changeOptionCodePopup = $("#change-cuf-option-code-popup");
-		}
-
+		} 
+		
 	});
 	return CustomFieldModificationView;
 });

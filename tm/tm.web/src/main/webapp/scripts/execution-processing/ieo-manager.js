@@ -93,12 +93,13 @@ define(["jquery", "jquery.squash.messagedialog"], function($){
 				$.squash.openMessage(settings.completeTitle, settings.completeTestMessage ).done(function() {
 					refreshParent();// see "comment[1]"
 					window.close();
+					
 				});
-			} else if (canNavigateNextTestCase()){
+			} else if (canNavigateNextTestCase()) {
 				this.navigateNextTestCase();	
 				refreshParent();
-			}
-			else{
+				
+			} else {
 				$.squash.openMessage(settings.completeTitle, settings.completeSuiteMessage).done(function() {
 					refreshParent();// see "comment[1]"
 					window.close();

@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 function oneShotConfirm(dialogTitle, domMessage, okText, koText, widthParam) {
-	if (widthParam == null) {
+	if (!widthParam) {
 		widthParam = '300px';
 	}
 	var oneShotPopup = $("<div/>");

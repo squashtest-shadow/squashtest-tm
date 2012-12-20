@@ -156,7 +156,7 @@ public class CustomFieldAdministrationController {
 	
 	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteCustomField( @PathVariable Long customFieldId) {
+	public void deleteCustomField( @PathVariable long customFieldId) {
 		customFieldManagerService.deleteCustomField(customFieldId);
 	}
 }

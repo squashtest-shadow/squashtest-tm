@@ -100,6 +100,7 @@ public class CustomFieldController {
 	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.GET)
 	public String showCustomFieldModificationPage(@PathVariable Long customFieldId, Model model) {
 		CustomField customField = customFieldManager.findById(customFieldId);
+		
 		if (customField.getInputType().equals(InputType.DROPDOWN_LIST)) {
 			SingleSelectField cuf = customFieldManager.findSingleSelectFieldById(customFieldId);
 			model.addAttribute(CUSTOM_FIELD, cuf);
@@ -223,6 +224,7 @@ public class CustomFieldController {
 	 */
 	@RequestMapping(value = "/{customFieldId}/defaultValue", method = RequestMethod.POST, params = { "value" })
 	@ResponseBody
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeDefaultValue(@PathVariable long customFieldId, @RequestParam("value") String defaultValue) {
 		customFieldManager.changeDefaultValue(customFieldId, defaultValue);
 	}
@@ -240,16 +242,17 @@ public class CustomFieldController {
 	 */
 	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/label", method = RequestMethod.POST, params = { "value" })
 	@ResponseBody
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeOptionLabel(@PathVariable long customFieldId, @PathVariable String optionLabel,
 			@RequestParam("value") String newLabel) {
-		try{
-		customFieldManager.changeOptionLabel(customFieldId, optionLabel, newLabel);
-		}catch(DomainException e){
+		try {
+			customFieldManager.changeOptionLabel(customFieldId, optionLabel, newLabel);
+		} catch (DomainException e) {
 			e.setObjectName("rename-cuf-option");
 			throw e;
 		}
 	}
-	
+
 	/**
 	 * Changes the code of the concerned custom-field's option
 	 * 
@@ -263,11 +266,12 @@ public class CustomFieldController {
 	 */
 	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/code", method = RequestMethod.POST, params = { "value" })
 	@ResponseBody
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeOptionCode(@PathVariable long customFieldId, @PathVariable String optionLabel,
 			@RequestParam("value") String newCode) {
-		try{
-		customFieldManager.changeOptionCode(customFieldId, optionLabel, newCode);
-		}catch(DomainException e){
+		try {
+			customFieldManager.changeOptionCode(customFieldId, optionLabel, newCode);
+		} catch (DomainException e) {
 			e.setObjectName("change-cuf-option");
 			throw e;
 		}
@@ -278,13 +282,17 @@ public class CustomFieldController {
 	 * 
 	 * @param customFieldId
 	 *            : the id of the concerned custom-field
-	 * @param option : the new option
+	 * @param option
+	 *            : the new option
 	 */
 	@RequestMapping(value = "/{customFieldId}/options/new", method = RequestMethod.POST)
 	@ResponseBody
-	public void addOption(@PathVariable long customFieldId, @Valid @ModelAttribute("new-cuf-option") CustomFieldOption option) {
-		try{customFieldManager.addOption(customFieldId, option);}
-		catch(DomainException e){
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	public void addOption(@PathVariable long customFieldId,
+			@Valid @ModelAttribute("new-cuf-option") CustomFieldOption option) {
+		try {
+			customFieldManager.addOption(customFieldId, option);
+		} catch (DomainException e) {
 			e.setObjectName("new-cuf-option");
 			throw e;
 		}
@@ -300,6 +308,7 @@ public class CustomFieldController {
 	 */
 	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}", method = RequestMethod.DELETE)
 	@ResponseBody
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void removeOption(@PathVariable long customFieldId, @PathVariable String optionLabel) {
 		customFieldManager.removeOption(customFieldId, optionLabel);
 	}
@@ -367,8 +376,15 @@ public class CustomFieldController {
 	@RequestMapping(value = "/{customFieldId}/options/positions", method = RequestMethod.POST, params = { "itemIds[]",
 			"newIndex" })
 	@ResponseBody
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeOptionsPositions(@PathVariable long customFieldId, @RequestParam int newIndex,
 			@RequestParam("itemIds[]") List<String> optionsLabels) {
 		customFieldManager.changeOptionsPositions(customFieldId, newIndex, optionsLabels);
+	}
+
+	@RequestMapping(method = RequestMethod.DELETE)
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	public @ResponseBody void deleteCustomField(@PathVariable long customFieldId) {
+		customFieldManager.deleteCustomField(customFieldId);
 	}
 }

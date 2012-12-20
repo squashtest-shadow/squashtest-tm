@@ -19,8 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF",
-				"app/lnf/Forms", "jquery.squash.confirmdialog" ],
+		[ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms", "jquery.squash.confirmdialog" ],
 		function($, Backbone, Handlebars, SD, Forms) {
 			/*
 			 * Defines the controller for the new custom field panel.
@@ -32,24 +31,21 @@ define(
 							var self = this;
 							var model = this.model;
 
-							this.defaultValueField = this
-									.$("input:text[name='defaultValue']");
+							this.defaultValueField = this.$("input:text[name='defaultValue']");
 
 							this.$("input:text.strprop").each(function() {
 								var self = this;
 								self.value = model.get(self.name);
 							});
-							this.$("input:checkbox[name='optional']").get()[0].checked = model
-									.get("optional");
-							this.$("select[name='inputType']").val(
-									model.get("inputType"));
+							this.$("input:checkbox[name='optional']").get()[0].checked = model.get("optional");
+							this.$("select[name='inputType']").val(model.get("inputType"));
 
 							this.$("input:button").button();
 
 							this.render();
 							this.$el.confirmDialog({
 								autoOpen : true,
-								close : function(){
+								close : function() {
 									self.cancel.call(self);
 								}
 							});
@@ -58,11 +54,9 @@ define(
 
 						render : function() {
 							var inputType = this.model.get("inputType");
-							var source = $("#" + inputType + "-default-tpl")
-									.html();
+							var source = $("#" + inputType + "-default-tpl").html();
 							var template = Handlebars.compile(source);
-							this.$("#default-value-pane").html(
-									template(this.model.toJSON()));
+							this.$("#default-value-pane").html(template(this.model.toJSON()));
 							switch (inputType) {
 							case "DROPDOWN_LIST":
 								this.renderOptionsTable();
@@ -156,7 +150,7 @@ define(
 							Forms.form(this.$el).clearState();
 							this.$el.confirmDialog("destroy");
 						},
-						
+
 						renderOptional : function(show) {
 							var renderPane = this.$("#optional-pane");
 							if (show) {
@@ -209,15 +203,15 @@ define(
 							var optionCode = optionCodeInput.$el.val();
 
 							try {
-								this.model.addOption([optionLabel, optionCode]);
-								
+								this.model.addOption([ optionLabel, optionCode ]);
+
 								this.optionsTable.dataTable().fnAddData([ optionLabel, optionCode, false, "" ]);
 
 								optionCodeInput.clearState();
 								optionCodeInput.$el.val("");
 								optionLabelInput.clearState();
 								optionLabelInput.$el.val("");
-								
+
 							} catch (ex) {
 								if (ex.name === "ValidationException") {
 									if (ex.validationErrors.optionLabel) {
@@ -230,14 +224,12 @@ define(
 							}
 
 						},
-												
+
 						removeOption : function(event) {
 							// target of click event is a <span> inside of
 							// <button>, so we use currentTarget
-							var button = event.currentTarget, 
-								$button = $(button), 
-								option = $button.data("value"), 
-								row = $button.parents("tr")[0];
+							var button = event.currentTarget, $button = $(button), option = $button.data("value"), row = $button
+									.parents("tr")[0];
 
 							this.model.removeOption(option);
 							this.optionsTable.dataTable().fnDeleteRow(row);
@@ -245,10 +237,10 @@ define(
 						},
 
 						changeDefaultOption : function(event) {
-							var checkbox = event.currentTarget, 
-								option = checkbox.value, 
-								defaultValue = checkbox.checked ? option : "", uncheckSelector = ".is-default>input:checkbox" + (checkbox.checked ? "[value!='" + option + "']" : ""), 
-								optionsInput = Forms.input(this.$("input[name='options']"));
+							var checkbox = event.currentTarget, option = checkbox.value, defaultValue = checkbox.checked ? option
+									: "", uncheckSelector = ".is-default>input:checkbox"
+									+ (checkbox.checked ? "[value!='" + option + "']" : ""), optionsInput = Forms.input(this
+									.$("input[name='options']"));
 
 							optionsInput.clearState();
 
@@ -267,14 +259,9 @@ define(
 						 * returns the function which should be used as a callback.
 						 */
 						decorateOptionRow : function(self) {
-							return function(nRow, aData, iDisplayIndex,
-									iDisplayIndexFull) {
-								var row = $(nRow), 
-									defaultCell = row.find(".is-default"), 
-									removeCell = row.find(".remove-row"), 
-									option = aData[0], 
-									checked = option === self.model.get("defaultValue"), 
-									tplData = {
+							return function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+								var row = $(nRow), defaultCell = row.find(".is-default"), removeCell = row.find(".remove-row"), option = aData[0], checked = option === self.model
+										.get("defaultValue"), tplData = {
 									option : option,
 									checked : checked
 								};

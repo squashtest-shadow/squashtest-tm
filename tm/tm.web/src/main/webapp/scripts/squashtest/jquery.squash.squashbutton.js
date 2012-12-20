@@ -26,7 +26,7 @@
 (function ($) {
 	$.widget("squash.squashButton", $.ui.button, {
 		_trigger : function (type, event, data) {
-			this._super(type, event, data  );			
+			this._super(type, event, data);			
 			this.element.removeClass("ui-state-focus ui-state-hover");			
 			return this;
 		},
