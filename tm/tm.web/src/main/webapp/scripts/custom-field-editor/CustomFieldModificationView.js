@@ -72,7 +72,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore", "je
 			
 			$.ajax({
 				type: "delete",
-				url: "" 
+				url: document.location.href
 			}).done(function() {
 				self.trigger("customfield.delete");
 			});
