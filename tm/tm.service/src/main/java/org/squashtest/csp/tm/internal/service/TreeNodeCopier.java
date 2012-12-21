@@ -22,9 +22,11 @@ package org.squashtest.csp.tm.internal.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.inject.Inject;
@@ -106,6 +108,7 @@ public class TreeNodeCopier implements NodeVisitor {
 	public void visit(Folder source, FolderDao dao) {
 		Folder<?> copy = (Folder<?>) source.createCopy();
 		persistCopy(copy, dao);
+		// XXX try to put this before binding the copy to the source's content so that we dont need to remove stuff from nextsSourcesByDestination afterwards
 		saveNextToCopy((NodeContainer<TreeNode>) source, copy);
 	}
 
@@ -114,6 +117,7 @@ public class TreeNodeCopier implements NodeVisitor {
 		Campaign copy = source.createCopy();
 		persistCopy(copy, campaignDao);
 		copyCustomFields(source, copy);
+		// XXX try to put this before binding the copy to the source's content so that we dont need to remove stuff from nextsSourcesByDestination afterwards
 		saveNextToCopy(source, copy);
 	}
 
@@ -224,7 +228,8 @@ public class TreeNodeCopier implements NodeVisitor {
 	@SuppressWarnings("unchecked")
 	private void saveNextToCopy(NodeContainer<? extends TreeNode> source, NodeContainer<? extends TreeNode> copy) {
 		if (source.hasContent()) {
-			nextsSourcesByDestination.put((NodeContainer<TreeNode>) copy, (Collection<TreeNode>) source.getContent());
+			Set<TreeNode> sourceContent = new HashSet<TreeNode>(source.getContent()); 
+			nextsSourcesByDestination.put((NodeContainer<TreeNode>) copy, sourceContent);
 		}
 	}
 

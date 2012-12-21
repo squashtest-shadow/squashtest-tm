@@ -100,6 +100,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 			
 			if (!nextGeneration.isEmpty()) {
 				if (parents != null) {
+					// if we cont flush and then evict, some entities might not be persisted
+					genericDao.flush();
 					// when moving to a next row, evict the parents that just became grandparents.
 					// note: will note evict the nodes to return because they never been in the "sourceRow" map.
 					for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> grandParentGenerationEntry : parents
@@ -131,6 +133,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 	}
 
 	//this is to avoid infinite loop in case someone copy a folder and paste it into itself.
+	// XXX maybe we can avoid this with a finer control of what's put in nextGeneration
 	private void removeCopiedNodesFromNextGeneration(List<COPIED> nodeList,
 			Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextGeneration) {
 		for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> nextGenerationEntry : nextGeneration.entrySet()) {
