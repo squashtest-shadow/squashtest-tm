@@ -259,8 +259,8 @@
             </div>
           </div>
 
-          <div id="delete-warning-pane" class="not-displayed popup-dialog" title="New Custom field"
-            th:title="#{title.newCustomField}">
+          <div id="delete-warning-pane" class="not-displayed popup-dialog" title="Delete"
+            th:title="#{label.Remove}">
             <div class="alert">
               <span th:text="#{message.customField.remove}">Do you wanna remove custom field ?</span>
             </div>
@@ -333,10 +333,10 @@
     <table class="form-horizontal">
       <tr class="control-group">
         <td>
-          <label for="change-cuf-option-code" class="control-label" th:text="#{label.code}">Code</label>
+          <label for="change-cuf-option-optionCode" class="control-label" th:text="#{label.code}">Code</label>
         </td>
         <td class="controls">
-          <input id="change-cuf-option-code" name="change-cuf-option-code" type="text" value="" maxlength="30" size="50" />
+          <input id="change-cuf-option-code" name="change-cuf-option-optionCode" type="text" value="" maxlength="30" size="50" />
           <span class="help-inline">&nbsp;</span>
         </td>
       </tr>
