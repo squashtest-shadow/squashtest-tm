@@ -29,7 +29,7 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
-<%@ taglib prefix="su" uri="http://org.squashtest.csp/taglib/string-utils"%>
+<%@ taglib prefix="su" uri="http://org.squashtest.tm/taglib/string-utils"%>
 	
 <%@ attribute name="resourceName" required="true" description="Name of the resource to add. Should be a lowercase, hyphened name. eg : 'test-case'"%>
 <%@ attribute name="treeNodeButton" required="true" description="the javascript button that will open the dialog" %>

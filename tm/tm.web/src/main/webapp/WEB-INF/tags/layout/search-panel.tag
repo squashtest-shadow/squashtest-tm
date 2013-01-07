@@ -31,7 +31,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="stru"
-	uri="http://org.squashtest.csp/taglib/string-utils"%>
+	uri="http://org.squashtest.tm/taglib/string-utils"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>

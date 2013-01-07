@@ -198,7 +198,7 @@
 		injection won't work despite one being a fragment of the other) -->
 
 	<bean id="squashtest.tm.web.authSuccessCallback.btautoconnect"
-		class="org.squashtest.csp.tm.web.internal.handler.BugTrackerAutoconnectCallback">
+		class="org.squashtest.tm.web.internal.exceptionresolver.BugTrackerAutoconnectCallback">
 		<property name="bugTrackersLocalService"
 			ref="squashtest.tm.service.BugTrackersLocalService" />
 		<property name="projectFinder"
@@ -209,7 +209,7 @@
 	</bean>
 
 	<osgi:service ref="squashtest.tm.web.authSuccessCallback.btautoconnect"
-		interface="org.squashtest.csp.core.web.servlet.handler.AuthenticationSuccessCallback" />
+		interface="org.squashtest.tm.web.security.authentication.AuthenticationSuccessCallback" />
 
 
 	<!-- CUF services -->

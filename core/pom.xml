@@ -24,7 +24,6 @@
 		<module>core.bugtracker.api</module>
 		<module>core.testautomation.api</module>
 		<module>core.service</module>
-		<module>core.web</module>
 		<module>launcher</module>
 	  <module>core.dynamicmanager</module>
 	  <module>core.jasperreport.fragment</module>

@@ -309,20 +309,7 @@
 			<artifactId>plugin.bugtracker.mantis</artifactId>
 			<version>${project.version}</version>
 		</dependency>		
-		
 
-		<dependency>
-			<groupId>org.squashtest.tm</groupId>
-			<artifactId>core.web</artifactId>
-			<version>${project.version}</version>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>org.squashtest.tm</groupId>
-			<artifactId>core.web</artifactId>
-			<version>${project.version}</version>
-			<type>pom</type>
-		</dependency>
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
 			<artifactId>core.service</artifactId>

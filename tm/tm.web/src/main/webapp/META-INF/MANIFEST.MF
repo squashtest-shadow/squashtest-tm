@@ -58,13 +58,13 @@ Import-Package: javax.servlet.http;version="2.5",javax.servlet.jsp.jst
  SE",org.springframework.web.servlet.tags.form;version="3.0.4.RELEASE"
  ,org.springframework.web.servlet.view;version="3.0.4.RELEASE",org.spr
  ingframework.web.servlet.view.json;version="3.0",org.springframework.
- web.util;version="3.0",org.squashtest.csp.tm.domain;version="0.1",org
- .squashtest.csp.tm.domain.campaign;version="0.1",org.squashtest.csp.t
- m.domain.library;version="0.1",org.squashtest.csp.tm.domain.requireme
- nt;version="0.1",org.squashtest.csp.tm.domain.testcase;version="0.1",
- org.squashtest.csp.tm.infrastructure.filter;version="0.1",org.squasht
+ web.util;version="3.0",org.squashtest.tm.tm.domain;version="0.1",org
+ .squashtest.csp.tm.domain.campaign;version="0.1",org.squashtest.tm.t
+ m.domain.library;version="0.1",org.squashtest.tm.tm.domain.requireme
+ nt;version="0.1",org.squashtest.tm.tm.domain.testcase;version="0.1",
+ org.squashtest.tm.tm.infrastructure.filter;version="0.1",org.squasht
  est.csp.tm.service;version="0.1",org.tuckey.web.filters.urlrewrite;ve
- rsion="3.1", org.squashtest.csp.tm.domain.report.executionprogress.dto;version="0.1"
-Bundle-SymbolicName: org.squashtest.csp.tm.web
+ rsion="3.1", org.squashtest.tm.tm.domain.report.executionprogress.dto;version="0.1"
+Bundle-SymbolicName: org.squashtest.tm.tm.web
 Originally-Created-By: 1.6.0_21 (Sun Microsystems Inc.)
 

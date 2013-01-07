@@ -9,14 +9,16 @@
   
   <artifactId>tm.web</artifactId>
   <name>${project.groupId}.${project.artifactId}</name>
-  <description>Squash TM webapp fragment - Provides features related to test management</description>
+  <description>Squash TM webapp - Provides web frontend</description>
   <packaging>war</packaging>
   
   <properties>
-    <bundle.name>${project.artifactId}</bundle.name>
-    <bundle.symbolicName>${project.artifactId}</bundle.symbolicName>
-    <bundle.namespace>tm.web</bundle.namespace>
-    <bundle.contextPath>tm</bundle.contextPath>
+    <bundle.contextPath>squash</bundle.contextPath>
+    <logger.urlRewriteFilter>DEBUG</logger.urlRewriteFilter>
+    <project.stage>RELEASE</project.stage> <!--  overridable by activating the profile development -->
+    <spring.version.range>[3,4)</spring.version.range>
+    <springdm.version.range>[2,3)</springdm.version.range>
+    <thymeleaf.version>2.0.13</thymeleaf.version>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
   </properties>
 
@@ -43,19 +45,15 @@
       <artifactId>tm.service</artifactId>
       <version>${project.version}</version>
     </dependency>
-
+  <dependency>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>core.service</artifactId>
+    <version>${project.version}</version>
+  </dependency>
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.bugtracker.api</artifactId>
       <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>core.web</artifactId>
-      <version>${project.version}</version>
-      <classifier>classes</classifier>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -106,6 +104,10 @@
       <groupId>org.slf4j</groupId>
       <artifactId>com.springsource.slf4j.api</artifactId>
     </dependency>
+    <dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>com.springsource.slf4j.log4j</artifactId>       
+  </dependency>
    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>com.springsource.slf4j.org.apache.commons.logging</artifactId>
@@ -132,13 +134,49 @@
     </dependency>
 		<!-- ====== /SPRING DM WEB CONTEXT ====== -->
 
+    <!-- ====== SPRING SECURITY ====== -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>org.springframework.security.web</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>org.springframework.security.config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>org.springframework.security.taglibs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>org.springframework.security.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>org.springframework.security.acls</artifactId>
+    </dependency>
+    <!-- ====== /SPRING SECURITY ====== -->
+
+    <!-- ====== FOR AUTH PURPOSES - should be moved afterwards ====== -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.transaction</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- ====== /FOR AUTH PURPOSES - should be moved afterwards ====== -->
+
 		<!-- ====== XML PARSER ====== -->
 		<!-- Required by jstl impl -->
-    <dependency>
+<!--     <dependency>
       <groupId>org.apache.xmlcommons</groupId>
       <artifactId>com.springsource.org.apache.xmlcommons</artifactId>
       <scope>runtime</scope>
-    </dependency>
+    </dependency> -->
 		<!-- ====== /XML PARSER ====== -->
 
 		<!-- ====== SPRING MVC ====== -->
@@ -213,6 +251,31 @@
       <artifactId>commons-io</artifactId>
     </dependency>
 		<!-- ====== /FILE UPLOAD ====== -->
+    
+    <!-- ====== THYMELEAF ====== -->
+    <dependency>
+      <groupId>org.thymeleaf</groupId>
+      <artifactId>org.squashtest.org.thymeleaf</artifactId>
+      <version>${thymeleaf.version}</version>
+    <exclusions>
+      <exclusion>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+      </exclusion>
+    </exclusions>      
+    </dependency>
+    <dependency>
+      <groupId>org.thymeleaf</groupId>
+      <artifactId>org.squashtest.org.thymeleaf.spring3</artifactId>
+      <version>${thymeleaf.version}</version>
+    <exclusions>
+      <exclusion>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+      </exclusion>
+    </exclusions>      
+    </dependency>
+    <!-- ====== /THYMELEAF ====== -->
 
 		<!-- ====== JASPER REPORTS ====== -->
 		<!-- 
@@ -279,7 +342,6 @@
       </testResource>
     </testResources>
 
-
     <testSourceDirectory>src/test/groovy</testSourceDirectory>
 
     <plugins>
@@ -293,9 +355,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
-
-
-
 			<!-- ====== /SPOCK TESTS ====== -->
 
       <plugin>
@@ -342,7 +401,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
           <webResources>
             <resource>
               <directory>${jasperreports.build.outputDirectory}</directory>
@@ -357,6 +415,7 @@
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
           </archive>
+          <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
           <attachClasses>true</attachClasses>
         </configuration>
       </plugin>
@@ -364,6 +423,55 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>continuous-integration</id>
+      <activation>
+        <property>
+          <name>env.type</name>
+          <value>ci</value>
+        </property>
+      </activation>
+      <properties>
+        <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
+      </properties>
+    </profile>
+    <profile>
+      <id>integration</id>
+      <activation>
+        <property>
+          <name>env.type</name>
+          <value>int</value>
+        </property>
+      </activation>
+      <properties>
+        <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
+      </properties>
+    </profile>
+    <profile>
+      <id>build</id>
+      <activation>
+        <property>
+          <name>env.type</name>
+          <value>build</value>
+        </property>
+      </activation>
+      <properties>
+        <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
+      </properties>
+    </profile>
+    <profile>
+      <id>development</id>
+      <activation>
+        <property>
+          <name>env.type</name>
+          <value>dev</value>
+        </property>
+      </activation>
+      <properties>
+        <project.stage>DEV</project.stage>
+      </properties>
+    </profile>
+
     <profile>
       <id>eclipse</id>
       <activation>

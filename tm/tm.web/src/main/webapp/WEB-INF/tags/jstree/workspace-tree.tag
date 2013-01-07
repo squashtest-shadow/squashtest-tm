@@ -24,9 +24,9 @@
 <%@ attribute name="rootModel" required="true" type="java.lang.Object" description="JSON serializable model of root of tree" %>
 <%@ attribute name="workspaceType" required="true" %>
 
-<%@ taglib prefix="json" uri="http://org.squashtest.csp/taglib/json" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="su" uri="http://org.squashtest.csp/taglib/string-utils" %>
+<%@ taglib prefix="su" uri="http://org.squashtest.tm/taglib/string-utils" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>

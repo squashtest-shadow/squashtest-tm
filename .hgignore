@@ -114,12 +114,12 @@ tm/tm\.testautomation\.api/META-INF$
 /\.idea$
 \.iml$
 plugins/plugin.testautomation.jenkins/META-INF
-tm/tm.web/scripts*
 /tm\.web/images$
 /tm\.web/scripts$
 /tm\.web/WEB-INF$
 ^core/core.dynamicmanager/META-INF
 core/core.jasperreport.fragment/META-INF/*
+^tm/tm\.web/styles$
 syntax: glob
 integration-tests/log/IT.log
 integration-tests/src/it/resources/log4j.properties

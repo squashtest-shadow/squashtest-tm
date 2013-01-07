@@ -24,8 +24,8 @@
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
-<%@ taglib prefix="su" uri="http://org.squashtest.csp/taglib/string-utils" %>
-<%@ taglib prefix="json" uri="http://org.squashtest.csp/taglib/json" %>
+<%@ taglib prefix="su" uri="http://org.squashtest.tm/taglib/string-utils" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <%@ attribute name="rootModel" required="true" type="java.lang.Object"  description="the json-formatted initial nodes loaded in the tree (typically, libraries)" %>
 
