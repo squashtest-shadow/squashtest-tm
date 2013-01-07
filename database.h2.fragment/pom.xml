@@ -5,12 +5,12 @@
 	<parent>
 		<artifactId>squashtest-parent-pom</artifactId>
 		<groupId>org.squashtest.tm</groupId>
-		<version>1.4.0.RELEASE</version>
+		<version>1.4.1.RELEASE-SNAPSHOT</version>
 		<relativePath>../parent-pom/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>database.h2.fragment</artifactId>
-	<version>1.4.0.RELEASE</version>
+	<version>1.4.1.RELEASE-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<name>${project.groupId}.${project.artifactId}</name>
 	<description>H2 fragment - triggers</description>
