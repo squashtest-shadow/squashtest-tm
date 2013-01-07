@@ -480,5 +480,18 @@
 			<artifactId>h2</artifactId>
 		</dependency>
 		<!-- ====== /DATABASE ====== -->
+		
+		
 	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>springframework-milestone</id>
+			<url>http://maven.springframework.org/milestone</url>
+		</repository>
+		<repository>
+			<id>spring-osgi-by-shrub</id>
+			<url>http://shrub.appspot.com/maven.springframework.org/osgi/</url>
+		</repository>
+	</repositories>
 </project>

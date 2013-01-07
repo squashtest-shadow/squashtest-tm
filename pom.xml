@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.squashtest.tm</groupId>
 		<artifactId>squash-tm-parent</artifactId>
-		<version>1.2</version>
+		<version>1.3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>squashtest-csp</artifactId>
@@ -505,6 +505,7 @@
 		</profile>
 	</profiles>
 
+<!--  
 	<repositories>
 		<repository>
 			<id>squash-release-repo</id>
@@ -521,5 +522,5 @@
 			</releases>
 		</repository>
 	</repositories>
-
+-->
 </project>
