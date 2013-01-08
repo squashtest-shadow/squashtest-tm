@@ -80,8 +80,7 @@ public class ProgressAwareMultipartResolver extends CommonsMultipartResolver {
 
 		return new DefaultMultipartHttpServletRequest(request, 
 				parsingResult.getMultipartFiles(),
-				parsingResult.getMultipartParameters(), 
-				parsingResult.getMultipartParameterContentTypes());
+				parsingResult.getMultipartParameters());
 	}
 
 
