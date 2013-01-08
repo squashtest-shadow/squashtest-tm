@@ -28,65 +28,40 @@ import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.csp.tm.internal.repository.ProjectDao;
 import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
+import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
+import org.unitils.dbunit.annotation.DataSet;
+
+import spock.unitils.UnitilsSupport;
 
 @Transactional
-class HibernateRequirementLibraryDaoIT extends HibernateDaoSpecification {
+@UnitilsSupport
+@DataSet
+class HibernateRequirementLibraryDaoIT extends DbunitServiceSpecification {
 	@Inject RequirementLibraryDao dao
 
 	def "should find root content of requirement library"() {
-		setup:
-		RequirementLibrary lib  = new RequirementLibrary();
-		Project p = new Project(name: "p")
-		p.requirementLibrary = lib
-
-		RequirementFolder f = new RequirementFolder(name:"f")
-		lib.addContent f
-
-		persistFixture p, lib
-
-
 		when:
-		def content = dao.findAllRootContentById(lib.id)
+		def content = dao.findAllRootContentById(110L)
 
 		then:
 		content.size() == 1
-		content[0].id == f.id
+		content[0].id == 1110L
 
-		//cleanup:
-		//deleteFixture lib,p
 	}
 
 	def "should find all libraries"() {
-		setup:
-		RequirementLibrary l1  = new RequirementLibrary();
-		persistFixture l1
-		RequirementLibrary l2  = new RequirementLibrary();
-		persistFixture l2
-
 		when:
 		def libs = dao.findAll()
 
 		then:
-		// FIXME assertion sould be ==
-		libs.size() >= 2
-
-		cleanup:
-		deleteFixture l1
-		deleteFixture l2
+		libs.size() == 2
 	}
 
 	def "should find library by id"() {
-		setup:
-		RequirementLibrary lib  = new RequirementLibrary();
-		persistFixture lib
-
 		when:
-		def found = dao.findById(lib.id)
+		def found = dao.findById(120L)
 
 		then:
 		found != null
-
-		cleanup:
-		deleteFixture lib
 	}
 }
