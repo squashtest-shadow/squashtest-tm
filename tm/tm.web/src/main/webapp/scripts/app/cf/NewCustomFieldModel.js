@@ -22,7 +22,8 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, St
 	var defaultValueByInputType = {
 		PLAIN_TEXT : "",
 		CHECKBOX : "false",
-		DROPDOWN_LIST : ""
+		DROPDOWN_LIST : "",
+		DATE_PICKER : "",
 	};
 
 	function isBlank(val) {
@@ -54,7 +55,7 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, St
 		 * @throws an exception when option does not validate. exception.name === "ValidationException"
 		 */
 		addOption : function(option) {
-			var options = this.attributes.options, 
+			var options = this.attributes.options,
 				errors = this.validateOption(option);
 			if (errors) {
 				throw { 
@@ -144,7 +145,6 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, St
 		},
 
 		validateOption : function(option) {
-			var validated = true;
 			var errors = null;
 			
 			// Validate option label

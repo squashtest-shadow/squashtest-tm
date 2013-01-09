@@ -68,6 +68,10 @@ define(
 							case "PLAIN_TEXT":
 								this.renderOptional(true);
 								break;
+							case "DATE_PICKER":
+								this.renderOptional(true);
+								$("#defaultValue").datepicker();
+								break; 
 							}
 							return this;
 						},
@@ -77,6 +81,7 @@ define(
 							// model prop which name matches the textbox name
 							"blur input:text.strprop" : "changeStrProp",
 							"change select.optprop" : "changeOptProp",
+							"change input:text.dateprop" : "changeDateProp",
 							"change select[name='inputType']" : "changeInputType",
 							"click input:checkbox[name='optional']" : "changeOptional",
 							"confirmdialogcancel" : "cancel",
@@ -91,7 +96,13 @@ define(
 							var textbox = event.target;
 							this.model.set(textbox.name, textbox.value);
 						},
-
+						changeDateProp : function(event) {
+							var textbox = $(event.target);
+							var date = textbox.datepicker("getDate");
+							var dateToString = $.datepicker.formatDate($.datepicker.ATOM, date);
+							this.model.set(textbox.name,dateToString);
+							
+						},
 						changeOptProp : function(event) {
 							var option = event.target;
 							this.model.set(option.name, option.value);

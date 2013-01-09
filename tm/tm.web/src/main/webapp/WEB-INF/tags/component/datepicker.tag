@@ -75,11 +75,9 @@ the data. Prototype is : function my_function(strParamName, iDate)"%>
 	</div>
 	<div class="datepicker-date">
 	
-	<c:choose>
-		<c:when test="${ (empty editable) or editable }" >
+	<c:if test="${ (empty editable) or editable }" >
 			<input id="${datePickerId}" type="text" class="date-hidden"/>			
-		</c:when>
-	</c:choose>
+	</c:if>
 	
 	<c:choose>
 		<c:when test="${ not empty initialDate }">

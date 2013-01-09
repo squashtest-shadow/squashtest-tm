@@ -74,24 +74,24 @@
   </script>
   <!-- common head -->
   <link rel="stylesheet" type="text/css" media="all"
-    href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+    href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
   <link rel="shortcut icon" type="image/x-icon" media="all"
-    href="../../../../../../../core/core.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
+    href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
   <!-- /common head -->
   <!-- common script import -->
   <link rel="stylesheet" type="text/css" media="all"
-    href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css"
+    href="../../../../../../../tm/tm.web/src/main/webapp/styles/squashtm.fg.menu.css"
     th:href="@{/styles/squashtm.fg.menu.css}" />
   <!-- /common script import -->
   <link rel="stylesheet" type="text/css" media="all"
-    href="../../../../../../../core/core.web/src/main/webapp/styles/master.grey.css" th:href="@{/styles/master.grey.css}" />
+    href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.grey.css" th:href="@{/styles/master.grey.css}" />
   <link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../core/core.web/src/main/webapp/styles/structure.override.css" th:href="@{/styles/structure.override.css}" />
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css" th:href="@{/styles/structure.override.css}" />
   <link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../core/core.web/src/main/webapp/styles/structure.subpageoverride.css" th:href="@{/styles/structure.subpageoverride.css}" />
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css" th:href="@{/styles/structure.subpageoverride.css}" />
   <!-- rich jeditable header -->
   <link rel="stylesheet" type="text/css" media="all"
-    href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css"
+    href="../../../../../../../tm/tm.web/src/main/webapp/styles/ckeditor.override.css"
     th:href="@{/styles/ckeditor.override.css}" />
 </head>
 <body>
@@ -205,6 +205,7 @@
                 value="PLAIN_TEXT" th:value="${type.name()}" th:text="#{${type.i18nKey}}">Plain Text</option>
               <option value="CHECKBOX">Checkbox</option>
               <option value="DROPDOWN_LIST">Dropdown list</option>
+              <option value="DATE_PICKER">Date</option>
             </select> 
             <span class="help-inline">&nbsp;</span>
           </div>
@@ -284,7 +285,16 @@
 						</div>
 					</div>
       	</script>
-
+      	
+ 		<script id="DATE_PICKER-default-tpl" type="text/x-handlebars-template" th:inline="text">
+       	<label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+		<div class="controls">
+			<input name="defaultValue" id="defaultValue" class="date-hidden dateprop" value="" size="10" maxlength="10" type="text" />		
+			<span id="defaultValue-label" style="color:#4297d7;font-weight: bold "></span>
+			<span class="help-inline">&nbsp;</span>		
+		</div>
+      	</script>
+      	
         <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
 				<a href="javascript:void(0)" data-value="{{option}}" th:text="#{label.Remove}">Remove</a>
 			</script>
