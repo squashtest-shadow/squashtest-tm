@@ -505,7 +505,7 @@
 		</profile>
 	</profiles>
 
-<!--  
+ 
 	<repositories>
 		<repository>
 			<id>squash-release-repo</id>
@@ -522,5 +522,5 @@
 			</releases>
 		</repository>
 	</repositories>
--->
+
 </project>
