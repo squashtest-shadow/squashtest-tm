@@ -29,6 +29,6 @@
 	<function>
 		<name>isTemplate</name>
 		<function-class>org.squashtest.tm.web.internal.helper.ProjectHelper</function-class>
-		<function-signature>boolean isTemplate(org.squashtest.tm.tm.domain.project.GenericProject)</function-signature>
+		<function-signature>boolean isTemplate(org.squashtest.csp.tm.domain.project.GenericProject)</function-signature>
 	</function>
 </taglib>  
