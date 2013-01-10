@@ -20,6 +20,9 @@
  */
 package org.squashtest.csp.tm.domain.customfield;
 
+import java.text.ParseException;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -35,6 +38,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.apache.tools.ant.util.DateUtils;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
@@ -129,7 +133,20 @@ public class CustomField {
 	public String getDefaultValue() {
 		return defaultValue;
 	}
-
+	
+	public Date getDefaulValueAsDate(){
+		if(this.inputType == InputType.DATE_PICKER){
+			try {
+				return DateUtils.parseIso8601Date(defaultValue);
+			} catch (ParseException e) {
+				defaultValue = "";
+				e.printStackTrace();
+			}
+		}
+		return null;
+		
+	}
+	
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
 	}

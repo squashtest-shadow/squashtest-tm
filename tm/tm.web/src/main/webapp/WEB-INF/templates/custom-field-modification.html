@@ -32,6 +32,8 @@
 	squashtm.app = {
 		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 		cfMod : {
+			noDateLabel: /*[[ #{squashtm.nodata} ]]*/ "---", 
+			dateFormat: /*[[ #{squashtm.dateformatShort.js} ]]*/ "dd/mm/yy",
 			customFieldUrl : /*[[ @{'/custom-fields/'+${customField.id}} ]]*/"http://localhost:8080/custom-fields/1",
 			richEditPlaceHolder : /*[[#{rich-edit.placeholder}]]*/'(Click to edit ...)',
 			confirmMandatoryTitle : /*[[#{title.confirmMandatory}]]*/'Confirm mandatory',
@@ -96,27 +98,27 @@
 </script>
 <!-- common head -->
 <link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
 <link rel="shortcut icon" type="image/x-icon" media="all"
-  href="../../../../../../../core/core.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
+  href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
 <!-- /common head -->
 <!-- common script import -->
 <link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css"
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squashtm.fg.menu.css"
   th:href="@{/styles/squashtm.fg.menu.css}" />
 <!-- /common script import -->
 <link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../core/core.web/src/main/webapp/styles/master.grey.css" th:href="@{/styles/master.grey.css}" />
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.grey.css" th:href="@{/styles/master.grey.css}" />
 <link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../core/core.web/src/main/webapp/styles/structure.override.css"
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css"
   th:href="@{/styles/structure.override.css}" />
 
 <link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../core/core.web/src/main/webapp/styles/structure.subpageoverride.css"
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
   th:href="@{/styles/structure.subpageoverride.css}" />
 <!-- rich jeditable header -->
 <!--   <link rel="stylesheet" type="text/css" media="all" -->
-<!--     href="../../../../../../../core/core.web/src/main/webapp/styles/ckeditor.override.css" -->
+<!--     href="../../../../../../../tm/tm.web/src/main/webapp/styles/ckeditor.override.css" -->
 <!--     th:href="@{/styles/ckeditor.override.css}" /> -->
 </head>
 <body>
@@ -187,8 +189,8 @@
                   <div class="display-table-row">
                     <label for="inputType" th:text="#{label.inputType}">Input Type</label>
                     <div id="cuf-inputType" class="display-table-cell"
-                      th:attr="data-type=${customField.inputType.name()}" data-type="DROPDOWN_LIST"
-                      th:text="#{${customField.inputType.i18nKey}}">Dropdown list</div>
+                      th:attr="data-type=${customField.inputType.name()}" data-type="PLAIN_TEXT"
+                      th:text="#{${customField.inputType.i18nKey}}">PLAIN_TEXT</div>
                   </div>
                   <div th:unless="${customField.inputType.name() == 'CHECKBOX'}" class="display-table-row">
                     <label for="cf-optional" th:text="#{label.Optional}">Optional</label>
@@ -200,10 +202,19 @@
                   </div>
                   <div th:unless="${customField.inputType.name() == 'DROPDOWN_LIST'}" class="display-table-row">
                     <label for="cuf-default-value" th:text="#{label.defaultValue}">Default value</label>
-                    <div th:unless="${customField.inputType.name() == 'CHECKBOX'}" id="cuf-default-value"
+                    
+                    <div th:if="${customField.inputType.name() == 'PLAIN_TEXT'}" id="cuf-default-value"
                       class="display-table-cell" th:text="${customField.defaultValue}">false</div>
+                      
                     <div th:if="${customField.inputType.name() == 'CHECKBOX'}" id="cuf-default-value"
                       class="display-table-cell" th:text="#{'label.'+${customField.defaultValue}}">false</div>
+                    
+                     <div th:if="${customField.inputType.name() == 'DATE_PICKER'}"
+                      class="display-table-cell" >
+                     <span  id="cuf-default-value" th:text="${customField.defaulValueAsDate}? ${#dates.format(customField.defaulValueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}" data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
+						
+                      </div>
+                      
                     <span class="error-message  defaultValue-error"></span>
                   </div>
                 </div>

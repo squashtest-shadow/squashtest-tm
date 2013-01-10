@@ -35,7 +35,7 @@
 the data. Prototype is : function my_function(strParamName, iDate)"%>
 <%@ attribute name="isContextual" description="if should be displayed in the contextual content, set to true. Do it." %>
 <%@ attribute name="paramName" required="true" description="the name of the parameter being posted"%>
-<%@ attribute name="initialDate" required="true" description="" %>
+<%@ attribute name="initialDate" required="true" description="date in millisecondes since 1rst january 1970." %>
 <%@ attribute name="postCallback" required="false" description="sets the callback once posted" %> 
 <%@ attribute name="editable" type="java.lang.Boolean" required="false" description="if specified, will tell whether the component is editable or not. Default is true." %>
 

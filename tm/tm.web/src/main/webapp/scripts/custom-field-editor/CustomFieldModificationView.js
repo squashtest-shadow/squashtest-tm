@@ -20,7 +20,7 @@
  */
 define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore", "jeditable.simpleJEditable",
 		"jeditable.selectJEditable", "app/util/StringUtil", "jquery.squash", "jqueryui", "jquery.squash.togglepanel", "jeditable.selectJEditable",
-		"jquery.squash.datatables", "jquery.squash.oneshotdialog", "jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($,
+		"jquery.squash.datatables", "jquery.squash.oneshotdialog", "jquery.squash.messagedialog", "jquery.squash.confirmdialog" , "jeditable.datepicker", "datepicker/require.jquery.squash.datepicker-locales"], function($,
 		NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable, SelectJEditable, StringUtil) {
 	var cfMod = squashtm.app.cfMod;
 	/*
@@ -88,7 +88,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore", "je
 
 			} else {
 				var defaultValue = self.findDefaultValue();
-				if (StringUtil.isBlank(defaultValue) || defaultValue === cfMod.richEditPlaceHolder) {
+				if (StringUtil.isBlank(defaultValue) || defaultValue === cfMod.richEditPlaceHolder || defaultValue === cfMod.noDateLabel) {
 					$.squash.openMessage(cfMod.popupErrorTitle, cfMod.mandatoryNeedsDefaultMessage, 350);
 					event.target.checked = true;
 					return;
@@ -106,6 +106,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore", "je
 
 		findDefaultValue : function() {
 			var defaultValueDiv = this.$('#cuf-default-value');
+			
 			if (defaultValueDiv && defaultValueDiv.length > 0) {
 				return $(defaultValueDiv[0]).text();
 				
@@ -258,12 +259,14 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore", "je
 					componentId : "cuf-default-value",
 					jeditableSettings : { callback: self.enableOptionalChange }
 				});
-				
+				$("#cuf-default-value").click(self.disableOptionalChange);
 			} else if (this.inputType === "CHECKBOX") {
 				this.makeDefaultSelectJEditable("cuf-default-value", cfMod.checkboxJsonDefaultValues);
+				$("#cuf-default-value").click(self.disableOptionalChange);
+			} else if (this.inputType === "DATE_PICKER"){
+				this.makeDefaultDatePickerEditable("cuf-default-value");
 			}
-			
-			$("#cuf-default-value").click(self.disableOptionalChange);
+						
 		},
 		
 		disableOptionalChange : function() {
@@ -345,6 +348,57 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore", "je
 				jeditableSettings : {}
 			});
 		},
+		makeDefaultDatePickerEditable : function(inputId) {
+			var self = this;
+			var datepick = this.$("#"+inputId);
+				
+			//configure editable datepicker settings :
+			var dateSettings = {
+					dateFormat: cfMod.dateFormat,
+					
+			};
+			var locale = datepick.data('locale');
+			var confLocale = $.datepicker.regional[locale];
+			if (!!confLocale){
+				$.extend(dateSettings, confLocale);
+			}
+				
+			//function to be called by the editable
+			var onDatepickerChanged = function (value, inputId) {
+				var localizedDate = value;
+				var postDateFormat = $.datepicker.ATOM;
+				var postDate;
+				if (cfMod.noDateLabel === value ) {
+					postDate = "";
+				} else {
+					var date = $.datepicker.parseDate(cfMod.dateFormat, localizedDate);
+					postDate = $.datepicker.formatDate(postDateFormat, date);
+				}				
+				
+				if (self.changeDefaultValueText(postDate)) {
+					if(value === ""){
+						return cfMod.noDateLabel;
+					}
+					return value;
+				} else {return this.revert;}
+//				
+//				$.ajax({type : "post",
+//						url : cfMod.customFieldUrl ,
+//						data : {value: postDate, id : inputId},});
+			};
+				
+			//make editable
+			datepick.editable(function (value, settings) {
+				var self = this;
+				return onDatepickerChanged.call(this, value, self.id);
+			}, {
+		        type      : 'datepicker',
+		        tooltip   : cfMod.richEditPlaceHolder,
+		        datepicker: dateSettings,
+			});
+								
+		},
+		
 		makeDefaultSelectJEditable : function(inputId, jsonData) {
 			var self = this;
 			new SelectJEditable({

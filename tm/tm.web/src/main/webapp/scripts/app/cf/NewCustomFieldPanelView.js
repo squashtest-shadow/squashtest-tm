@@ -97,11 +97,10 @@ define(
 							this.model.set(textbox.name, textbox.value);
 						},
 						changeDateProp : function(event) {
-							var textbox = $(event.target);
-							var date = textbox.datepicker("getDate");
+							var textbox = event.target;
+							var date = $(textbox).datepicker("getDate");
 							var dateToString = $.datepicker.formatDate($.datepicker.ATOM, date);
-							this.model.set(textbox.name,dateToString);
-							
+							this.model.set(textbox.name, dateToString);
 						},
 						changeOptProp : function(event) {
 							var option = event.target;
