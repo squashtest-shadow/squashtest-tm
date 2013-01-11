@@ -29,7 +29,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.apache.commons.lang.StringUtils;
 import org.squashtest.csp.tm.internal.service.customField.BindableEntityMismatchException;
+import org.squashtest.csp.tm.internal.service.customField.MandatoryCufException;
 
 @Entity
 public class CustomFieldValue {
@@ -83,6 +85,9 @@ public class CustomFieldValue {
 
 
 	public void setValue(String value) {
+		if(!getCustomField().isOptional() && StringUtils.isBlank(value)){
+			throw new MandatoryCufException();
+		}
 		this.value = value;
 	}
 

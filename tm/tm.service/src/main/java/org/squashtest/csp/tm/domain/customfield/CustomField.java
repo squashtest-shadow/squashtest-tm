@@ -38,10 +38,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.util.DateUtils;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.csp.tm.internal.service.customField.MandatoryCufNeedsDefaultValueException;
 import org.squashtest.tm.tm.validation.constraint.HasDefaultAsRequired;
 
 /**
@@ -140,7 +142,6 @@ public class CustomField {
 			try {
 				return DateUtils.parseIso8601Date(defaultValue);
 			} catch (ParseException e) {
-				defaultValue = "";
 				e.printStackTrace();
 			}
 		}
@@ -149,7 +150,18 @@ public class CustomField {
 	}
 	
 	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
+		String dValue = defaultValue;
+		if(this.inputType == InputType.DATE_PICKER){
+			try{
+				DateUtils.parseIso8601Date(defaultValue);
+			}catch (ParseException e) {
+				dValue = "";
+			}
+		}
+		if(!this.optional && StringUtils.isBlank(dValue)){
+			throw new MandatoryCufNeedsDefaultValueException();
+		}
+		this.defaultValue = dValue;
 	}
 
 	public Long getId() {

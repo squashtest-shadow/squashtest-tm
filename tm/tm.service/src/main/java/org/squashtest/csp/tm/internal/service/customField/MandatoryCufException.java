@@ -22,28 +22,28 @@ package org.squashtest.csp.tm.internal.service.customField;
 
 import org.squashtest.tm.core.foundation.exception.ActionException;
 
-public class MandatoryCufNeedsDefaultValueException extends ActionException {
+public class MandatoryCufException extends ActionException {
 
 	/**
 	 * TODO generate unique serialVersionUID my eclipse couldn't, thanks, mpagnon
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public MandatoryCufNeedsDefaultValueException(Exception ex) {
+	public MandatoryCufException(Exception ex) {
 		super(ex);
 	}
 
-	public MandatoryCufNeedsDefaultValueException(String message) {
+	public MandatoryCufException(String message) {
 		super(message);
 	}
 
-	public MandatoryCufNeedsDefaultValueException() {
+	public MandatoryCufException() {
 
 	}
 
 	@Override
 	public String getI18nKey() {
-		return "message.cuf.value.mandatory";
+		return "message.mandatoryNeedsDefault";
 	}
 
 }
