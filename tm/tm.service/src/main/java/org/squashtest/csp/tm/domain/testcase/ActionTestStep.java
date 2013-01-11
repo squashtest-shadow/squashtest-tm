@@ -36,11 +36,14 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
+import org.squashtest.csp.tm.domain.project.Project;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
-public class ActionTestStep extends TestStep implements AttachmentHolder {
+public class ActionTestStep extends TestStep implements AttachmentHolder, BoundEntity {
 	@Lob
 	@Basic(optional = false)
 	private String action;
@@ -114,10 +117,23 @@ public class ActionTestStep extends TestStep implements AttachmentHolder {
 	}
 	
 	public Set<Attachment>  getAllAttachments() {
-		
 		return attachmentList.getAllAttachments();
+	}
 	
+	// *************** BoundEntity implementation *************
+	
+	@Override
+	public Long getBoundEntityId() {
+		return getId();
+	}
+	
+	@Override
+	public BindableEntity getBoundEntityType() {
+		return BindableEntity.TEST_STEP;
+	}
 
-}
-
+	@Override
+	public Project getProject() {
+		return getTestCase().getProject();
+	}
 }

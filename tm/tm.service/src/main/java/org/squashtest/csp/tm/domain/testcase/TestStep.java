@@ -28,6 +28,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
@@ -40,9 +44,23 @@ public abstract class TestStep {
 	@GeneratedValue
 	@Column(name = "TEST_STEP_ID")
 	private Long id;
+	
+	
+	@ManyToOne
+	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "STEP_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID", updatable = false, insertable = false))
+	private TestCase testCase;
 
 	public Long getId() {
 		return id;
+	}
+	
+	
+	void setTestCase(@NotNull TestCase testCase){
+		this.testCase = testCase;
+	}
+	
+	public TestCase getTestCase(){
+		return testCase;
 	}
 
 	/**

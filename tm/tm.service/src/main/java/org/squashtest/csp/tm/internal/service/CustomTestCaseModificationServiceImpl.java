@@ -128,9 +128,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public TestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep) {
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 
+		testStepDao.persist(newTestStep);
 		// will throw a nasty NullPointerException if the parent test case can't be found
 		parentTestCase.addStep(newTestStep);
-		testStepDao.persist(newTestStep);
 
 		return newTestStep;
 	}

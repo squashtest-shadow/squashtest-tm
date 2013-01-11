@@ -171,13 +171,21 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public List<TestStep> getSteps() {
 		return steps;
 	}
+	
+	
+	//TODO : best would be to have a smarter subclass of List that would override #add(...) methods for this purpose
+	private void notifyStepBelongsToMe(TestStep step){
+		step.setTestCase(this);
+	}
 
 	public void addStep(@NotNull TestStep step) {
 		getSteps().add(step);
+		notifyStepBelongsToMe(step);
 	}
 
 	public void addStep(int index, @NotNull TestStep step) {
 		getSteps().add(index, step);
+		notifyStepBelongsToMe(step);
 	}
 
 	public void moveStep(int stepIndex, int newIndex) {

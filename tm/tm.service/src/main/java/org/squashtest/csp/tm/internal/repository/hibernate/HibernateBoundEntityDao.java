@@ -44,6 +44,7 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	private static final String CAMPAIGN_QUERY_NAME = "BoundEntityDao.findAllCampaignsForProject";
 	private static final String ITERATION_QUERY_NAME = "BoundEntityDao.findAllIterationsForProject";
 	private static final String TEST_SUITE_QUERY_NAME = "BoundEntityDao.findAllTestSuitesForProject";
+	private static final String TEST_STEP_QUERY_NAME = "BoundEntityDao.findAllTestStepsForProject";
 
 	@Inject
 	SessionFactory factory;
@@ -68,6 +69,9 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 									break;
 		
 		case TEST_SUITE			: queryName = TEST_SUITE_QUERY_NAME;
+									break;
+									
+		case TEST_STEP			: queryName = TEST_STEP_QUERY_NAME;
 									break;
 									
 		}

@@ -25,6 +25,7 @@ import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
@@ -40,6 +41,13 @@ public enum BindableEntity implements Internationalizable {
 		@Override
 		public Class<?> getReferencedClass() {
 			return TestCase.class;
+		}
+	},
+	
+	TEST_STEP(){
+		@Override
+		public Class<?> getReferencedClass() {
+			return ActionTestStep.class;
 		}
 	},
 	
