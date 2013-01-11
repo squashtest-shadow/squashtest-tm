@@ -102,6 +102,7 @@ public class CustomFieldValueConfigurationBean {
 		private String label;
 		private Long id;
 		protected String value;
+		private boolean optional;
 
 		public DefaultItem() {
 			super();
@@ -111,6 +112,7 @@ public class CustomFieldValueConfigurationBean {
 			this.id = value.getId();
 			this.value = value.getValue();
 			this.label = value.getBinding().getCustomField().getLabel();
+			this.optional = value.getCustomField().isOptional();
 		}
 
 		@Override
@@ -138,9 +140,16 @@ public class CustomFieldValueConfigurationBean {
 
 		public void setFieldLabel(String label) {
 			this.label = label;
+		}		
+		
+		public boolean isOptional() {
+			return optional;
 		}
-		
-		
+
+		public void setOptional(boolean optional) {
+			this.optional = optional;
+		}
+
 		@Override
 		public abstract String getType();
 

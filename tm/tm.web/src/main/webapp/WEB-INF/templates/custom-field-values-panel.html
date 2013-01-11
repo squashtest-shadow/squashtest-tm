@@ -72,9 +72,9 @@
 		<span th:case="'datepicker'"
 			th:id="'cuf-value-'+${confBeanStat.count}" class="cuf-value-control"
 			th:text="${confBean.valueAsDate}? ${#dates.format(confBean.valueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}">
-			01-02-2012</span>
-		<span th:case="*" th:id="'cuf-value-'+${confBeanStat.count}"
-			class="cuf-value-control" th:text="${confBean.fieldValue}">maximum</span>
+			01-02-2012</span> <span th:case="*"
+			th:id="'cuf-value-'+${confBeanStat.count}" class="cuf-value-control"
+			th:text="${confBean.fieldValue}">maximum</span>
 	</div>
 </div>
 
@@ -88,7 +88,13 @@
 			function(domReady, $) {
 
 				var imgUrl = /*[[@{/scripts/jquery/indicator.gif}]]*/"../../scripts/jquery/indicator.gif";
-
+				var fieldMandatoryMessage = /*[[#{message.cuf.value.mandatory}]]*/'The custom field is mandatory';
+				var errorTitle = /*[[ #{popup.title.error} ]]*/'Erreur';
+				var cufValuesUrl = /*[[@{/custom-fields/values}+'/']]*/"http://localhost:8080/squash/custom-fields/values/";
+				var locale = /*[[ #{squashtm.locale} ]]*/"fr";
+				var localizedDateFormat = /*[[ #{squashtm.dateformatShort.js} ]]*/"dd/mm/yy"
+				var noDateString = /*[[ #{squashtm.nodata} ]]*/"---";
+				
 				var baseConf = {
 					submit : /*[[#{rich-edit.button.ok.label}]]*/"ok",
 					cancel : /*[[#{label.Cancel}]]*/"cancel",
@@ -102,8 +108,11 @@
 				};
 
 				var postFunction = function(value, settings) {
-					var cfurl = /*[[@{/custom-fields/values}+'/']]*/"http://localhost:8080/squash/custom-fields/values/";
-					var url = cfurl + settings.fieldId;
+					if (!settings.optional && value === "") {
+						$.squash.openMessage(errorTitle, fieldMandatoryMessage);
+						return this.revert;
+					}
+					var url = cufValuesUrl + settings.fieldId;
 					$.post(url, {
 						value : value
 					});
@@ -113,9 +122,8 @@
 				/**************** code for DatePicker ***************/
 				//DatePickerBaseConf
 				var dateSettings = {
-					dateFormat : /*[[ #{squashtm.dateformatShort.js} ]]*/"dd/mm/yy"
-				};
-				var locale = /*[[ #{squashtm.locale} ]]*/ "fr";
+					dateFormat : localizedDateFormat
+				};				
 				var confLocale = $.datepicker.regional[locale];
 				if (!!confLocale) {
 					$.extend(dateSettings, confLocale);
@@ -129,14 +137,15 @@
 				var datePickerPostFunction = function(value, settings) {
 					var localizedDate = value;
 					var postDateFormat = $.datepicker.ATOM;
-					var date = $.datepicker.parseDate(/*[[ #{squashtm.dateformatShort.js} ]]*/"dd/mm/yy"
-							,	localizedDate);
-					var postDate = $.datepicker.formatDate(postDateFormat, date);
-					postFunction(postDate, settings)
-					if (value === "") {
-						return /*[[ #{squashtm.nodata} ]]*/"---";
+					var date = $.datepicker
+							.parseDate(localizedDateFormat,	localizedDate);
+					var postDate = $.datepicker
+							.formatDate(postDateFormat, date);
+					var toreturn = postFunction.call(this, postDate, settings)
+					if (toreturn === "") {
+						return noDateString;
 					} else {
-						return value
+						return toreturn;
 					}
 
 				};
@@ -153,7 +162,6 @@
 					var count = widgets.length;
 
 					for ( var i = 0; i < count; i++) {
-
 						var widget = widgets.eq(i);
 						var conf = settings[i];
 
@@ -165,7 +173,8 @@
 						}
 						//jeditable inputs
 						else if (conf.type === 'datepicker') {
-							var effective = $.extend({}, datePickBaseConf, conf);
+							var effective = $
+									.extend({}, datePickBaseConf, conf);
 							widget.editable(datePickerPostFunction, effective)
 						} else {
 							var effective = $.extend({}, baseConf, conf);
