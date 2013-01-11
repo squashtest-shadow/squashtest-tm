@@ -211,7 +211,7 @@
                     
                      <div th:if="${customField.inputType.name() == 'DATE_PICKER'}"
                       class="display-table-cell" >
-                     <span  id="cuf-default-value" th:text="${customField.defaulValueAsDate}? ${#dates.format(customField.defaulValueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}" data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
+                     <span  id="cuf-default-value" th:text="${customField.defaultValueAsDate}? ${#dates.format(customField.defaultValueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}" data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
 						
                       </div>
                       

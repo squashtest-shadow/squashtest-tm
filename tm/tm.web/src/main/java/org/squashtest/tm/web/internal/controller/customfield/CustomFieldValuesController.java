@@ -22,9 +22,11 @@ package org.squashtest.tm.web.internal.controller.customfield;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +55,9 @@ public class CustomFieldValuesController {
 	@Inject
 	private CustomFieldJsonConverter converter;
 	
+	@Inject
+	private MessageSource messageSource;
+	
 	@ServiceReference
 	public void setManagerService(CustomFieldValueManagerService managerService) {
 		this.managerService = managerService;
@@ -79,7 +84,7 @@ public class CustomFieldValuesController {
 	
 	
 	@RequestMapping(method=RequestMethod.GET, params = {"boundEntityId", "boundEntityType"})
-	public ModelAndView getCustomFieldValuesPanel(@RequestParam("boundEntityId") Long id, @RequestParam("boundEntityType") BindableEntity entityType){
+	public ModelAndView getCustomFieldValuesPanel(@RequestParam("boundEntityId") Long id, @RequestParam("boundEntityType") BindableEntity entityType, Locale locale){
 		
 		List<CustomFieldValue> values = managerService.findAllCustomFieldValues(id, entityType);
 		
@@ -88,7 +93,7 @@ public class CustomFieldValuesController {
 		CustomFieldValueConfigurationBean conf = new CustomFieldValueConfigurationBean(values);
 		
 		ModelAndView mav = new ModelAndView("custom-field-values-panel.html");
-		mav.addObject("editable", editable);	
+		mav.addObject("editable", editable);
 		mav.addObject("configuration", conf);
 		
 		return mav;

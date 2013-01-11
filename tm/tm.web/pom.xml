@@ -72,7 +72,6 @@
     </dependency>
 
 		<!-- ====== /SQUASHTEST ====== -->
-
 		<!-- ====== JEE API ====== -->
     <dependency>
       <groupId>javax.servlet</groupId>

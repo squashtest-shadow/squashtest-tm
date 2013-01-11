@@ -62,6 +62,7 @@ public class CustomField {
 	protected static final String CODE_REGEXP="^[A-Za-z0-9_]*$";
 	protected static final int MIN_CODE_SIZE= 1;
 	protected static final int MAX_CODE_SIZE=30;
+	public static final String DATE_PATTERN = DateUtils.ISO8601_DATE_PATTERN;
 	
 	@Id
 	@GeneratedValue
@@ -134,7 +135,7 @@ public class CustomField {
 		return defaultValue;
 	}
 	
-	public Date getDefaulValueAsDate(){
+	public Date getDefaultValueAsDate(){
 		if(this.inputType == InputType.DATE_PICKER){
 			try {
 				return DateUtils.parseIso8601Date(defaultValue);
