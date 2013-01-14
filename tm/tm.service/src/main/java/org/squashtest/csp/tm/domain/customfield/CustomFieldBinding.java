@@ -130,8 +130,8 @@ public class CustomFieldBinding {
 	
 	public CustomFieldValue createNewValue(){
 		CustomFieldValue value = new CustomFieldValue();
-		value.setValue(customField.getDefaultValue());
 		value.setBinding(this);
+		value.setValue(customField.getDefaultValue());
 		return value;
 	}
 

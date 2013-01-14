@@ -85,7 +85,7 @@ public class CustomFieldValue {
 
 
 	public void setValue(String value) {
-		if(!getCustomField().isOptional() && StringUtils.isBlank(value)){
+		if(getCustomField() != null && !getCustomField().isOptional() && StringUtils.isBlank(value)){
 			throw new MandatoryCufException();
 		}
 		this.value = value;
@@ -96,7 +96,10 @@ public class CustomFieldValue {
 	}
 	
 	public CustomField getCustomField(){
-		return binding.getCustomField();
+		if(binding != null){
+			return binding.getCustomField();
+		}
+		return null;
 	}
 
 
