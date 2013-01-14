@@ -23,13 +23,24 @@ package org.squashtest.csp.tm.internal.infrastructure.hibernate;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.inject.Inject;
+
 import org.hibernate.EmptyInterceptor;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.type.LongType;
 import org.hibernate.type.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.service.security.UserContextHolder;
 import org.squashtest.csp.tm.domain.audit.Auditable;
 import org.squashtest.csp.tm.domain.audit.AuditableSupport;
+import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.domain.testcase.TestStep;
 
 /**
  * This interceptor transparently logs creation / last modification data of any {@link Auditable} entity.
@@ -40,6 +51,19 @@ import org.squashtest.csp.tm.domain.audit.AuditableSupport;
 @Component("squashtest.tm.persistence.hibernate.AuditLogInterceptor")
 @SuppressWarnings("serial")
 public class AuditLogInterceptor extends EmptyInterceptor {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuditLogInterceptor.class); 
+	
+
+	
+	private SessionFactory sessionFactory;
+	
+	
+	@ServiceReference
+	public void setSessionFactory(SessionFactory sessionFactory){
+		this.sessionFactory = sessionFactory;
+	}
+	
 	@Override
 	public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
 			String[] propertyNames, Type[] types) {
@@ -101,5 +125,31 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
 	private String getCurrentUser() {
 		return UserContextHolder.getUsername();
+	}
+	
+	
+	@Override
+	public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+		
+		Class<?> entityClass = entity.getClass();
+		
+		LOGGER.trace("Entity Interceptor : loading entity '"+entityClass.getName()+":"+id+"'");
+		
+		if (TestStep.class.isAssignableFrom(entityClass)){
+			LOGGER.trace("Entity Interceptor : entity is a test step, fetching the test case that owns it");
+			Session session = sessionFactory.getCurrentSession();
+			
+			Query query = session.createQuery("select tc from TestCase tc join tc.steps st where :step member of st");
+			query.setParameter("step", id, LongType.INSTANCE);
+			
+			
+			TestCase testCase = (TestCase)query.uniqueResult();
+			
+			((TestStep)entity).setTestCase(testCase);
+			return true;
+		}
+		
+		return false;
+		
 	}
 }
