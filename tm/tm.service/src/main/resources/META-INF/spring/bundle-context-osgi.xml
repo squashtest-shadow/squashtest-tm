@@ -93,6 +93,8 @@
 			<value>org.squashtest.csp.tm.service.TestCaseFinder</value>
 		</osgi:interfaces>
 	</osgi:service>
+	
+	<osgi:service ref="squashtest.tm.service.TestStepFinder" interface="org.squashtest.csp.tm.service.testcase.TestStepFinder" />
 
 	<osgi:service ref="squashtest.tm.service.TestCaseLibraryNavigationService">
 		<osgi:interfaces>

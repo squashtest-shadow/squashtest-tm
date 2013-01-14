@@ -229,6 +229,7 @@ $(function() {
 		</c:if>
 		addAttachmentButtonToRowDoV(row, getStepsTableAttchNumber(data), 'manage-attachment-button', 'manage-attachment-button-empty');
 		addHLinkToCallStep(row, data);
+		addHLinkToNumber(row, data);
 		return row;
 		}catch(wtf){
 			$.squash.openMessage("<f:message key='popup.title.error' />", wtf);
@@ -413,7 +414,11 @@ $(function() {
 			addHLinkToCellText($( 'td:eq(2)', row ), url);
 		}
 	}
-	
+
+	function addHLinkToNumber(row, data){
+		var url= '${ pageContext.servletContext.contextPath }/test-steps/' + getStepsTableRowId(data);			
+		addHLinkToCellText($( 'td:eq(0)', row ), url);	
+	}	
 	<%-- manage test step table toolbar buttons --%>
 	$(function() {
 

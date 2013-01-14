@@ -56,6 +56,10 @@
 			<value>org.squashtest.csp.tm.service.TestCaseLibraryFinderService</value>
 		</osgi:interfaces>
 	</osgi:reference>
+	
+	<osgi:reference
+		id="squashtest.tm.service.TestStepFinder" bean-name="squashtest.tm.service.TestStepFinder"
+		availability="mandatory" interface="org.squashtest.csp.tm.service.testcase.TestStepFinder" />
 
 
 	<osgi:reference id="squashtest.tm.service.RequirementModificationService"

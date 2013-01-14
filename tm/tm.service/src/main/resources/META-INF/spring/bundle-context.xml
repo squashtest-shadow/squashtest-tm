@@ -132,6 +132,11 @@
     <property name="entityType" value="org.squashtest.csp.tm.domain.testcase.TestCase" />
   </bean>
   
+  <bean id="squashtest.tm.service.TestStepFinder" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
+    <property name="componentType" value="org.squashtest.csp.tm.service.testcase.TestStepFinder" />
+    <property name="entityType" value="org.squashtest.csp.tm.domain.testcase.TestStep" />
+  </bean>
+  
   <bean id="squashtest.tm.service.ProjectManagerService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
     <property name="componentType" value="org.squashtest.csp.tm.service.project.ProjectManagerService" />
     <property name="entityType" value="org.squashtest.csp.tm.domain.project.Project" />

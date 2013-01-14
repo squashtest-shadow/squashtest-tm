@@ -23,12 +23,12 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
 	<!-- /common head -->
 	<!-- common script import -->
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/squashtm.fg.menu.css" th:href="@{/styles/squashtm.fg.menu.css}" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squashtm.fg.menu.css" th:href="@{/styles/squashtm.fg.menu.css}" />
 	<!-- /common script import -->
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../core/core.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
 </head>
 <body>
     <!-- MENUBAR FRAGMENT -->
@@ -87,7 +87,7 @@
       <!-- NOTIFICATION AREA FRAGMENT -->
       <div class="unstyled-notification-pane" th:fragment="notification">
         <div id="ajax-processing-indicator" class="ui-corner-all snap-right not-processing">
-          <img src="../../../../../../../core/core.web/src/main/webapp/images/ajax-loader.gif" width="19px" height="19px" alt="processing" th:alt="#{squashtm.processing}" th:src="@{/images/ajax-loader.gif}" /> 
+          <img src="../../../../../../../tm/tm.web/src/main/webapp/images/ajax-loader.gif" width="19px" height="19px" alt="processing" th:alt="#{squashtm.processing}" th:src="@{/images/ajax-loader.gif}" /> 
           <span th:text="#{squashtm.processing}">En cours...</span>
         </div>
         <div id="generic-error-notification-area" class="ui-state-error ui-corner-all snap-right not-displayed">

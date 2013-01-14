@@ -923,6 +923,12 @@ div#user-account-password-panel>div>* {
 /* ------------------------------------------ */
 /* -------------->>> MISC <<<---------------- */
 /* ------------------------------------------ */
+table#test-steps-table > tbody > tr > td > a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+
 .linkWise:HOVER {
 	
     text-decoration: underline;
