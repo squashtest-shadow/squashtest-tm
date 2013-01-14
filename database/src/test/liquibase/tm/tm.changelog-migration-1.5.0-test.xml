@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    
+  <changeSet id="1.4.0.feat-1513-test-01" author="mpagnon">
+		<comment>We save data from CUSTOM_FIELD_VALUE that should not change</comment>
+		<sql>
+			create table `TEMP_CUF_VALUES` (
+			`ID` BIGINT(20),
+			`VALUE` VARCHAR(255)
+			);
+		</sql>
+		<comment>We save data of optional custom fields</comment>
+		
+		<sql>
+			insert into `TEMP_CUF_VALUES`(`ID`, `VALUE`)
+			select cfv.CFV_ID, cfv.VALUE from CUSTOM_FIELD_VALUE cfv
+			join CUSTOM_FIELD_BINDING cfb on cfb.CFB_ID = cfv.CFB_ID
+			join CUSTOM_FIELD cf on cf.CF_ID = cfb.CF_ID
+			where cf.OPTIONAL = true;
+		</sql>
+		<comment>We save data of mandatory but valorized custom fields</comment>
+		
+		<sql>
+			insert into `TEMP_CUF_VALUES`(`ID`, `VALUE`)
+			select cfv.CFV_ID, cfv.VALUE from CUSTOM_FIELD_VALUE cfv
+			join CUSTOM_FIELD_BINDING cfb on cfb.CFB_ID = cfv.CFB_ID
+			join CUSTOM_FIELD cf on cf.CF_ID = cfb.CF_ID
+			where cf.OPTIONAL = false
+			and cfv.VALUE is not NULL
+			and  LTRIM(RTRIM(cfv.VALUE))  != ''
+		</sql>
+	</changeSet>
+<!-- =================================================================================================================== -->
+<!-- ___________________________________________________________INCLUDE CHANGELOG_______________________________________ -->
+		<include file="../../../main/liquibase/tm/tm.changelog-1.5.0.xml" relativeToChangelogFile="true" />
+<!-- =================================================================================================================== -->
+     <changeSet id="tm-1.5.0.issue-1838-test-01" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from CUSTOM_FIELD_VALUE cfv
+				join CUSTOM_FIELD_BINDING cfb on cfb.CFB_ID = cfv.CFB_ID
+				join CUSTOM_FIELD cf on cf.CF_ID = cfb.CF_ID
+				where (cfv.VALUE is null or  LTRIM(RTRIM(cfv.VALUE)) = '')
+				and cf.OPTIONAL = false
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that all mandatory cuf values are not null or equal to ""</comment>
+		</changeSet>
+		
+
+		<changeSet id="1.5.0.issue-1838-test-02" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from CUSTOM_FIELD_VALUE cfv, TEMP_CUF_VALUES tcv
+				where cfv.CFV_ID = tcv.ID
+				and cfv.VALUE != tcv.VALUE
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that optional cuf values and mandatory but valorized cuf values did not change</comment>
+		<sql>
+			drop table `TEMP_CUF_VALUES`;
+		</sql>
+	</changeSet>
+</databaseChangeLog>

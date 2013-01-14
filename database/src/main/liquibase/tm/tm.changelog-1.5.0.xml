@@ -35,6 +35,25 @@
         </update>
     </changeSet>
 
-  
+  	<changeSet id="tm-1.5.0.00-issue-1838.01" author="mpagnon">
+  		<comment>Update table custom-field-value so that all mandatory cuf have a value</comment>
+  		<sql>
+  			update CUSTOM_FIELD_VALUE
+  			set VALUE = (
+  				select cf.DEFAULT_VALUE 
+  				from CUSTOM_FIELD_BINDING cfb 
+  					join CUSTOM_FIELD cf on cfb.CF_ID = cf.CF_ID 
+  				where cfb.CFB_ID = CUSTOM_FIELD_VALUE.CFB_ID
+  				)
+  			where (CUSTOM_FIELD_VALUE.VALUE is null or LTRIM(RTRIM(CUSTOM_FIELD_VALUE.VALUE)) = '' )
+  			and exists (
+  				select * 
+  				from CUSTOM_FIELD_BINDING cfb 
+  					join CUSTOM_FIELD cf on cfb.CF_ID = cf.CF_ID 
+  				where cfb.CFB_ID = CUSTOM_FIELD_VALUE.CFB_ID 
+  				and cf.OPTIONAL = false)
+  			;
+  		</sql>
+  	</changeSet>
 </databaseChangeLog>
  
