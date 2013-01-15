@@ -55,14 +55,14 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuditLogInterceptor.class); 
 	
 
-	
+	/*
 	private SessionFactory sessionFactory;
 	
 	
 	@ServiceReference
 	public void setSessionFactory(SessionFactory sessionFactory){
 		this.sessionFactory = sessionFactory;
-	}
+	}*/
 	
 	@Override
 	public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
@@ -127,7 +127,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 		return UserContextHolder.getUsername();
 	}
 	
-	
+	/*
 	@Override
 	public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
 		
@@ -151,5 +151,5 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 		
 		return false;
 		
-	}
+	}*/
 }
