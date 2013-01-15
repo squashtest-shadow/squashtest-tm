@@ -152,7 +152,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
 		} else {
 			library.addContent(testCase);
-			testCaseDao.persist(testCase);
+			testCaseDao.safePersist(testCase);
 			createCustomFieldValues(testCase);
 		}
 	}
@@ -177,7 +177,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
 		} else {
 			folder.addContent(testCase);
-			testCaseDao.persist(testCase);
+			testCaseDao.safePersist(testCase);
 			createCustomFieldValues(testCase);
 		}
 	}

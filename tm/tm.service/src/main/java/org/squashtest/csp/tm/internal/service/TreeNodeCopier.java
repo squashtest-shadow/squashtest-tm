@@ -175,7 +175,7 @@ public class TreeNodeCopier implements NodeVisitor {
 	@Override
 	public void visit(TestCase source) {
 		TestCase copy = source.createCopy();
-		persistCopy(copy, testCaseDao);
+		persistTestCase(copy);
 		copyCustomFields(source, copy);
 	}
 
@@ -239,6 +239,14 @@ public class TreeNodeCopier implements NodeVisitor {
 		dao.persist(copy);
 		((NodeContainer<T>)destination).addContent(copy);
 		this.copy = copy;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void persistTestCase(TestCase testCase){
+		renameIfNeeded(testCase);
+		testCaseDao.persistTestCaseAndSteps(testCase);
+		((NodeContainer<TestCase>)destination).addContent(testCase);
+		this.copy = testCase;		
 	}
 
 	@SuppressWarnings("unchecked")

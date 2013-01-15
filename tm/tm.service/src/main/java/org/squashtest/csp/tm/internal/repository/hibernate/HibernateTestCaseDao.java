@@ -99,6 +99,26 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			query.setLong(TEST_CASE_ID_PARAM_NAME, testCaseId);
 		}
 	};
+	
+	
+	@Override
+	public void safePersist(TestCase testCase){
+		
+		if (testCase.getSteps().isEmpty()){
+			super.persist(testCase);
+		}
+		else{
+			persistTestCaseAndSteps(testCase);
+		}
+	}
+	
+	@Override
+	public void persistTestCaseAndSteps(TestCase testCase) {
+		for (TestStep step : testCase.getSteps()){
+			super.persistEntity(step);
+		}
+		super.persistEntity(testCase);
+	}
 
 	@Override
 	// FIXME Uh, should be init'd by a query !

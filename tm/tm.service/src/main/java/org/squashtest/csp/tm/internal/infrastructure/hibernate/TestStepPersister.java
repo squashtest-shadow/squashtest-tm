@@ -32,6 +32,14 @@ import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Table;
 import org.hibernate.persister.entity.JoinedSubclassEntityPersister;
 
+
+/*
+ * Since version 1.5.0 :
+ * 
+ * 
+ * 
+ * 
+ */
 public class TestStepPersister extends JoinedSubclassEntityPersister {
 
 	private static final String NONFORMATTED_TABLE_NAME = "TEST_CASE_STEPS";

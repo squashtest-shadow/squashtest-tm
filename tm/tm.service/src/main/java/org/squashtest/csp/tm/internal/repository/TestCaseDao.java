@@ -40,6 +40,21 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 public interface TestCaseDao extends EntityDao<TestCase> {
 
+	/**
+	 * That method exists because hibernate doesn't quite respect the 
+	 * cascade persist for a set of test case and steps 
+	 * 
+	 * @param testCase
+	 */
+	void persistTestCaseAndSteps(TestCase testCase);
+	
+	/**
+	 * if the transient test case has steps, will invoke {@link #persistTestCaseAndSteps(TestCase)}
+	 * else, will just save it.
+	 * 
+	 */
+	public void safePersist(TestCase testCase);
+	
 	TestCase findAndInit(Long testCaseId);
 
 	List<ActionTestStep> getTestCaseSteps(Long testCaseId);
