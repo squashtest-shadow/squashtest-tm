@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tm.domain.requirement.RequirementCategory
 import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
 import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria
+import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestCaseImportance
 import org.squashtest.csp.tm.domain.testcase.TestCaseNature
 import org.squashtest.csp.tm.domain.testcase.TestCaseStatus;
@@ -37,6 +38,8 @@ import org.squashtest.csp.tm.internal.repository.TestCaseDao
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
 import org.squashtest.tm.core.foundation.collection.Paging
 import org.unitils.dbunit.annotation.DataSet
+import org.hibernate.Session
+import org.hibernate.SessionFactory
 
 import spock.unitils.UnitilsSupport
 
@@ -44,6 +47,7 @@ import spock.unitils.UnitilsSupport
 @Transactional
 class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	@Inject TestCaseDao testCaseDao
+	@Inject SessionFactory sessionFactory
 	
 	def setupSpec() {
 		List.metaClass.containsSameIdentifiers << { ids ->
@@ -53,6 +57,15 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		}
 		
 		ListAssertions.declareIdsEqual() 
+	}
+	
+	@DataSet("HibernateTestCaseDaoIT.should find filtered steps by test case id.xml")
+	def "should load a step with its test case"() {
+		when :
+			def st = sessionFactory.getCurrentSession().get(ActionTestStep.class, 200l)
+			
+		then :
+			st.testCase.id == 10l
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find filtered steps by test case id.xml")

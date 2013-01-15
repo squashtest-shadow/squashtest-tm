@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.domain.testcase;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,26 +33,37 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SecondaryTable;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.JoinColumnsOrFormulas;
+import org.hibernate.annotations.Loader;
+import org.hibernate.annotations.Persister;
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
+import org.squashtest.csp.tm.internal.infrastructure.hibernate.TestStepPersister;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @InheritsAcls(constrainedClass = TestCase.class, collectionName = "steps")
+
+@Persister(impl=TestStepPersister.class)
 public abstract class TestStep {
 	@Id
 	@GeneratedValue
 	@Column(name = "TEST_STEP_ID")
 	private Long id;
 	
-	
+
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "STEP_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID", updatable = false, insertable = false))
-	//@Transient
 	private TestCase testCase;
-
+	
 	public Long getId() {
 		return id;
 	}
