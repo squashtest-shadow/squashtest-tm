@@ -34,7 +34,14 @@
             <where>STR_KEY = 'squashtest.tm.database.version'</where>
         </update>
     </changeSet>
-
+    
+     <changeSet id="tm-1.5.0.feat-1596.02" author="bsiri">
+    	<comment>dropping the temp table from changest tm-1.4.0.feat-1596.01</comment>
+    	<dropTable tableName="EXECUTION_TEST_CASE_DATA"/>    
+    </changeSet>
+   
+    
+    
   	<changeSet id="tm-1.5.0.00-issue-1838.01" author="mpagnon">
   		<comment>Update table custom-field-value so that all mandatory cuf have a value</comment>
   		<sql>
