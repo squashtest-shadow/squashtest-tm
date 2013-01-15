@@ -142,7 +142,7 @@
                 <label for="test-case-name-header" th:text="#{test-case.header.title}">Test Case</label>&nbsp;&nbsp;
 				<a id="test-case-name-header" href="#" th:text="${testStepView.testCase.name}">Test Case Name</a>&nbsp;&nbsp;
 				<label for="test-step-number-header" th:text="#{test-step.header.title}">step # </label>
-				<a id="test-step-number-header" href="#" th:text="${testStepView.order}">12</a>
+				<a id="test-step-number-header" href="#" th:text="${testStepView.order}+'/'+${testStepView.totalNumberOfSteps}">12/13</a>
               </h2>
             </div>
             <div class="snap-right"></div>
@@ -180,6 +180,8 @@
                   </div>
                 </div>
               </div>
+              <br /> <br />
+              <span th:if="${attachableEntity}" id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC</span>
             </div>
            
 

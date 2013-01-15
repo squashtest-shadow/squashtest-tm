@@ -328,6 +328,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.reference = source.getReference();
 	}
 
+	/**
+	 * Will compare id of test-case steps with given id and return the index of the matching step.
+	 * Otherwise throw an exception.
+	 * 
+	 * @param stepId
+	 * @return the step index (starting at 0)
+	 * @throws UnknownEntityException
+	 */
 	public int getPositionOfStep(long stepId) throws UnknownEntityException {
 		for (int i = 0; i < getSteps().size(); i++) {
 			if (getSteps().get(i).getId() == stepId) {

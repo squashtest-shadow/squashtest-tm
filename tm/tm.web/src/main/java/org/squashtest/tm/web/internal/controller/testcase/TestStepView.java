@@ -28,6 +28,7 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
 public class TestStepView {
 	private long id;
 	private TestCase testCase;
+	private int totalNumberOfSteps;
 	private int order;
 	private TestStep previousStep;
 	private TestStep nextStep;
@@ -35,35 +36,31 @@ public class TestStepView {
 	private CallTestStep callStep;
 
 	public TestStepView(ActionTestStep step) {
-		temporaryFake(step);
+		genericSettings(step);
 		actionStep = step;
 
 	}
 
 	public TestStepView(CallTestStep step) {
-		temporaryFake(step);
+		genericSettings(step);
 		callStep = step;
 
 	}
 
-	private void temporaryFake(TestStep step) {
-		// TODO see what ben is doing with that
-		testCase = new TestCase();
-		testCase.setName("FAKE TC");
-
-		//  int stepIndex = testCase.getSteps().indexOf(step);
-		//order = stepIndex +1
-		order = 1;
+	private void genericSettings(TestStep step) {
+		testCase = step.getTestCase();
+		setTotalNumberOfSteps(testCase.getSteps().size());
+		int stepIndex = testCase.getPositionOfStep(step.getId());
 		
-//		if(stepIndex > 0){
-//			previousStep = testCase.getSteps().get(stepIndex - 1);
-//		}
-		setPreviousStep(step);
-		
-//		if(order < testCase.getSteps().size()){
-//			nextStep = testCase.getSteps().get(stepIndex + 1);
-//		}
-		//setNextStep(step);
+		order = stepIndex +1;
+				
+		if(stepIndex > 0){
+			previousStep = testCase.getSteps().get(stepIndex - 1);
+		}
+	
+		if(order < testCase.getSteps().size()){
+			nextStep = testCase.getSteps().get(stepIndex + 1);
+		}
 		
 		id = step.getId();
 	}
@@ -122,6 +119,14 @@ public class TestStepView {
 
 	public void setNextStep(TestStep nextStep) {
 		this.nextStep = nextStep;
+	}
+
+	public int getTotalNumberOfSteps() {
+		return totalNumberOfSteps;
+	}
+
+	public void setTotalNumberOfSteps(int totalNumberOfSteps) {
+		this.totalNumberOfSteps = totalNumberOfSteps;
 	}
 
 }

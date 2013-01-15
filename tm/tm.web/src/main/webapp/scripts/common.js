@@ -52,7 +52,8 @@ requirejs.config({
 		"jeditable.datepicker": "jquery/jquery.jeditable.datepicker", 
 		"jeditable.simpleJEditable": "squashtest/classes/SimpleJEditable",
 		"jeditable.selectJEditable": "squashtest/classes/SelectJEditable",
-		"jstree": "jquery/jquery.jstree", 
+		"jstree": "jquery/jquery.jstree",
+		"jform": "jquery/jquery.form",
 		"jquery.generateId": "jquery/jquery.generateId",
 		"jquery.hotkeys": "jquery/jquery.hotkeys-0.8", 
 		"jquery.squash": "squashtest/jquery.squashtm.plugin", 
@@ -66,14 +67,14 @@ requirejs.config({
 		"jquery.squash.squashbutton": "squashtest/jquery.squash.squashbutton", 
 		"jquery.squash.jeditable": "squashtest/jquery.squashtm.jeditable.ext",
 		"jquery.squash.jstree-node": "squashtest/jquery.squashtm.jstree-node", 
-		"jquery.squash.jstree": "squashtest/jquery.squashtm.jstree.ext", 
+		"jquery.squash.jstree": "squashtest/jquery.squashtm.jstree.ext",
 		"jquery.squash.linkabletree": "squash/jquery.squashtm.linkabletree", 
 		"jquery.squash.projectpicker": "squash/jquery.squashtm.projectpicker", 
 		"jquery.cookie": "jquery/jquery.cookie",
 		"squash.bugtrackerMenu" :"squashtest/classes/BugTrackerMenu",
 		"squash.cssloader": "squash/squash.cssloader",
 		"squash.translator" : "squash/squash.translator",
-		"squash.resizer" : "squash/squashtm.tree-page-resizer"
+		"squash.resizer" : "squash/squashtm.tree-page-resizer",
 	},
 	shim: {
 		"ckeditor": {
@@ -107,6 +108,7 @@ requirejs.config({
 			deps: [ "jquery", "jqueryui", "jquery.hotkeys", "jquery.cookie" ],
 			exports: "jqueryui"
 		},
+		"jform": [ "jquery"],
 		"jqueryui": [ "jquery" ],
 		"datatables": [ "jqueryui" ],
 		"squash.datatables": {

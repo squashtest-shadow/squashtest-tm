@@ -29,6 +29,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.service.TestCaseFinder;
 import org.squashtest.csp.tm.service.testcase.TestStepFinder;
@@ -45,6 +46,9 @@ public class TestStepController {
 	@Inject
 	private TestCaseFinder testCaseFinder;
 	
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
+	
 	/**
 	 * Shows the custom field modification page.
 	 * 
@@ -60,10 +64,16 @@ public class TestStepController {
 		TestStep testStep = testStepFinder.findById(testStepId);
 		TestStepView testStepView = new TestStepViewBuilder().buildTestStepView(testStep);
 		model.addAttribute("testStepView", testStepView);
-		//TODO check rights when ben is done knowing the test-case of the step
-		//change this when [Task 1843] is done
-		model.addAttribute("writable", true); //right to modify steps
-
+		model.addAttribute("workspace", "test-case");
+		//waiting for [Task 1843]
+		boolean writable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testStep);
+		model.addAttribute("writable", writable); //right to modify steps
+		boolean attachable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "ATTACH", testStep);
+		model.addAttribute("attachable", attachable); //right to modify steps
+		//end waiting for [Task 1843]
+		if(testStepView.getActionStep() != null){
+			model.addAttribute("attachableEntity", testStepView.getActionStep());
+		}
 		return "edit-test-step.html";
 	}
 

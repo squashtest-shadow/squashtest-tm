@@ -1,0 +1,120 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<!-- common head -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+	<!-- /common head -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
+</head>
+<body>
+<div th:remove="all">
+<!--  
+	parameters are :
+		
+		attachable : boolean that says whether user has attach right on attachable entity
+		attachableEntity : an attachable entity
+		
+		
+	that file groups three popup together. 
+	 - file selection, 
+	 - progres bar,
+	 - summary
+ 
+
+ -->
+</div>
+	<div th:fragment="add-attachment-popup">
+	<script th:remove="all" data-main="../../scripts/attachment-popup.frag.js"  src="../../scripts/require.js" ></script>
+	<script type="text/javascript" th:inline="javascript">
+	if(!squashtm){
+		var squashtm = {};
+	}
+	if(!squashtm.app){
+		squashtm.app = {
+				contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",			
+		};
+	}
+	squashtm.app.addAttachmentPopupSettings = {
+		uploadAttachmentUrl : /*[[ @{/attach-list/} + ${attachableEntity.attachmentList.id} + 'attachments/upload' ]]*/'http://localhost:8080/squash/attach-list/1/attachments/upload',
+		uploadErrorMessage : /*[[ #{message.AttachmentUploadSizeExceeded} ]]*/'size exceeded',
+		megaByteLabel : /*[[ #{squashtm.megabyte.label} ]]*/'mega bytes',
+		uploadPopupTitle : /*[[ #{dialog.attachment.upload.title} ]]*/'Upload attachment',
+		uploadPleaseWaitTitle : /*[[ #{title.UploadingPleaseWait} ]]*/'Uploading please wait',
+		uploadSummaryTitle : /*[[ #{dialog.attachment.summary.label} ]]*/'Upload summary',
+		uploadCompletedMessage : /*[[ #{message.UploadComplete} ]]*/ 'Upload complete',
+		pleaseWaitMessage : /*[[ #{title.UploadingPleaseWait} ]]*/'Please wait !',
+		uploadLabel : /*[[ #{label.Upload} ]]*/ 'Upload',
+		cancelLabel : /*[[ #{label.Cancel} ]]*/ 'Cancel',
+		okLabel : /*[[ #{label.Ok} ]]*/ 'OK',
+	};
+	</script>
+
+<!-- <comp:add-attachment-popup paramName="attachment" url="${uploadAttachmentUrl}"   -->
+<!-- 				openedBy="upload-attachment-button"	submitCallback="reloadAttachments"/> -->
+
+<div id="attachment-upload-dialog" class="popup-dialog" > 			
+<!--  		 templates for cloning  -->
+ 		<div id="add-attachments-templates" style="display:none;">
+	 		<div class="attachment-item">
+		 		<input type="file" name="attachment[]" size="40" />
+		 		<input type="button" th:value="#{dialog.attachment.add.button.remove.label}" value="remove" />
+	 		</div>
+ 		</div>
+
+ 		
+ 		<div id="add-attachment-list" style="height:300px; margin:10 10 10 10;overflow-y:auto">
+			<form id="add-attachment-form" th:action="@{/attach-list/} + ${attachableEntity.attachmentList.id} + 'attachments/upload'" action="http://localhost:8080/squash/attach-list/1/attachments/upload" method="POST" enctype="multipart/form-data">
+ 				 				 			
+ 			</form>
+ 		</div> 	
+ 		<div id="dump" style="display:none;"></div>
+ </div>
+ 
+ 
+ 
+ 
+ 
+
+ <div id="attachment-progress-dialog" class="popup-dialog"  >
+ 		<div style="text-align:center;">
+ 			<h4 id="attachment-progress-message" style="text-align:center;"></h4>
+ 			<div id="attachment-progressbar"></div>
+ 			<span id="attachment-progress-percentage"></span>
+ 		</div>
+ </div>
+ 
+ 
+ 
+ 
+<!--   popup for the summary  -->
+ <div id="attachment-upload-summary" class="popup-dialog" >
+ 	<div id="attachment-upload-summary-body" class="display-table">
+ 	</div>
+ </div>
+ 
+	
+	</div>
+</body>
+</html>

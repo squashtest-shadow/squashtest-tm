@@ -43,13 +43,13 @@ define([ "jquery", "backbone", "jquery.squash", "jqueryui",
 				goPrevious : function() {
 					if (editTCS.previousId) {
 						document.location.href = squashtm.app.contextRoot
-								+ "/test-steps/" + editTCS.previousId;
+								+ "test-steps/" + editTCS.previousId;
 					}
 				},
 				goNext : function() {
 					if (editTCS.nextId) {
 						document.location.href = squashtm.app.contextRoot
-								+ "/test-steps/" + editTCS.nextId;
+								+ "test-steps/" + editTCS.nextId;
 					}
 
 				},

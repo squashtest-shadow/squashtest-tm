@@ -52,7 +52,7 @@
 define(["jquery"], function($){
 	var serviceURL = squashtm.app.contextRoot+"/localization/filler";
 	
-	return {		
+	return {
 		get : function(messageObject){
 			
 			$.ajax({

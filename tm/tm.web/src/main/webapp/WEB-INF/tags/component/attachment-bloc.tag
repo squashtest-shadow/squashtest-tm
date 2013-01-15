@@ -56,8 +56,7 @@
 		
 		function reloadAttachmentCallback(){
 			handleNotFoundImages("${ pageContext.servletContext.contextPath }/images/file_blank.png");
-			openAttachmentIfNotEmpty();		
-			
+			openAttachmentIfNotEmpty();
 		}
 		
 		$(function(){
@@ -65,10 +64,8 @@
 				document.location.href = "${attachmentManagerUrl}";
 			});
 			
-			
 			reloadAttachments();
 		});
-		
 	</script>
 
 <comp:toggle-panel id="attachment-panel" titleKey="label.Attachments" isContextual="true" open="${ entity.attachmentList.notEmpty }">
