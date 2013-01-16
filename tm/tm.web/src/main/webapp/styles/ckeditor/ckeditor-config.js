@@ -13,4 +13,5 @@ CKEDITOR.editorConfig = function( config ){
 	config.resize_minHeight = 	175;
 	config.resize_minWidth = 200;
 	config.removePlugins = 'elementspath';
+	config.extraPlugins='onchange'; 
 }

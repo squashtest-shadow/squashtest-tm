@@ -60,7 +60,6 @@ public class CustomFieldValueConfigurationBean {
 			case DROPDOWN_LIST:
 				newConf = new SingleSelectItem(value);
 				break;
-
 			case CHECKBOX:
 				newConf = new CheckboxItem(value);
 				break;

@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2012 Henix, henix.fr
  *
@@ -18,11 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.testcase;
+define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, StringUtil) {
+	var editTCS = squashtm.app.editTCS;
+	function isBlank(val) {
+		return StringUtil.isBlank(val);
+	}
 
-public interface TestStepVisitor {
+	/*
+	 * Defines the model for a TestStep
+	 */
+	var TestStepInfoModel = Backbone.Model.extend({
+		
+		url : editTCS.testStepURL,
+		mandatoryCUFValuesIds : [],
+		validateAll : function() {
+			var attrs = this.attributes, 
+				errors = null;
 
-	void visit(ActionTestStep visited);
+			
+			if (attrs.action != null && isBlank(attrs.action)) {
+				errors = errors || {};
+				errors.action = "message.notBlank";
+			}
+			
+			
 
-	void visit(CallTestStep visited);
-}
+			return errors;
+		},
+	});
+	
+	return TestStepInfoModel;
+});

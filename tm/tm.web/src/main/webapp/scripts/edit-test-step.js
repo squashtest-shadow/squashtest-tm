@@ -20,17 +20,17 @@
  */
 require([ "common" ], function(common) {
 	require([ "jquery", "test-step-editor/TestStepModificationView",
-			"app/ws/squashtm.workspace","domReady", "attachment-bloc.frag" ], function($,
+			"app/ws/squashtm.workspace","domReady", "attachment-bloc.frag",  "test-step-editor/TestStepInfoModel",], function($,
 			TestStepModificationView, WS, domReady) {
 		var goBack = function() {
-			history.back();
+			document.history.back();
 		};
 
 		domReady(function() {
 			WS.init("");
-			var view = new TestStepModificationView();
+			 new TestStepModificationView();
 			$("#back").button().on("click", goBack);
-			// view.on("t.delete", goBack);
+			
 		});
 
 	});

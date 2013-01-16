@@ -36,16 +36,14 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.attachment.Attachment;
 import org.squashtest.csp.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.csp.tm.domain.attachment.AttachmentList;
-import org.squashtest.csp.tm.domain.customfield.BindableEntity;
-import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.domain.project.Project;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
 public class ActionTestStep extends TestStep implements AttachmentHolder{
 	@Lob
 	@Basic(optional = false)
+	
 	private String action;
 
 	@Lob
@@ -59,12 +57,13 @@ public class ActionTestStep extends TestStep implements AttachmentHolder{
 		super();
 	}
 
-	public ActionTestStep(String action, String expectedResult) {
+	public ActionTestStep(@NotBlank String action, String expectedResult) {
 		super();
 		this.action = action;
 		this.expectedResult = expectedResult;
 	}
-
+	
+	@NotBlank
 	public void setAction(String action) {
 		this.action = action;
 	}

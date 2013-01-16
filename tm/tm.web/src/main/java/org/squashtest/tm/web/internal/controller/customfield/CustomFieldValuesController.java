@@ -88,7 +88,7 @@ public class CustomFieldValuesController {
 		
 		List<CustomFieldValue> values = managerService.findAllCustomFieldValues(id, entityType);
 		
-		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", id, entityType.getReferencedClass().getName());
+		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "SMALL_EDIT", id, entityType.getReferencedClass().getName());
 		
 		CustomFieldValueConfigurationBean conf = new CustomFieldValueConfigurationBean(values);
 		
@@ -99,7 +99,6 @@ public class CustomFieldValuesController {
 		return mav;
 		
 	}
-	
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.POST, params="value")
 	@ResponseBody

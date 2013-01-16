@@ -33,10 +33,14 @@
 		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 		stepURL : /*[[ @{/test-steps/} + ${testStepView.id} ]]*/ "http://localhost:8080/squash/test-steps/1",
 		editTCS : {
+			testStepURL : /*[[ @{/test-steps/}+${testStepView.id} ]]*/ "http://localhost:8080/squash/test-steps/50",
+			hasCUF : /*[[ ${hasCUF} ]]*/false,
 			informationPanelLabel : /*[[#{label.testStep.information}]]*/'Test step informations',
 			previousId : /*[[ ${testStepView.previousStep}? ${testStepView.previousStep.id} : -1 ]]*/1,
 			nextId : /*[[ ${testStepView.nextStep}? ${testStepView.nextStep.id} : -1 ]]*/-1,
 			writable : /*[[ ${writable} ]]*/true,
+			localizedDateFormat : /*[[ #{squashtm.dateformatShort.js} ]]*/"dd/mm/yy",
+			CUFsettings : /*[[${configuration.configurationBeans}]]*/[],
 			
 		},
 		ckeditorSettings : {
@@ -47,7 +51,7 @@
 			submit: /*[[#{rich-edit.button.ok.label}]]*/'OK',
 			cancel: /*[[#{label.Cancel}]]*/'Cancel',
 			indicator : '<img src="' + /*[[ @{/scripts/jquery/indicator.gif} ]]*/ 'http://localhost:8080/squash/scripts/jquery/indicator.gif'
-			+ " alt="processing..." />'
+			+ '" alt="processing..." />'
 		},
 		menuBarConf : {
 			boxSelector : "#menu-toggle-filter-ckbox",
@@ -152,26 +156,58 @@
           <div class="fragment-body unstyled">
             <div id="test-step-toolbar" class="toolbar-class ui-corner-all ">
               <div class="toolbar-button-panel">
-                <input type="button" th:if="${testStepView.previousStep}" th:value="#{ label.previous }" value="Previous" id="previous-test-step-button" class="button" />
-                <input type="button" th:if="${testStepView.nextStep}" th:value="#{ label.next }" value="Next" id="next-test-step-button" class="button" />
+               <input th:if="${testStepView.actionStep} or ${hasCUF}" type="button" th:value="#{ label.save }" value="Save" id="save-test-step-button" class="button" />&nbsp;&nbsp;&nbsp;
+                <a th:text="#{ label.previous }"  href="#" id="previous-test-step-button"  >Previous</a>
+                <a th:text="#{ label.next }" href="#" id="next-test-step-button">Next</a>
               </div>
             </div>
             <br /> <br />
             <div class="toggle-panel ">
               <span class="not-displayed toogle-panel-buttons"></span>
               <div id="test-step-info-panel" class="information-panel toggle-panel-main">
-                <div class="display-table" id="test-step-infos-table">
+                <div class="display-table" id="test-step-infos-table"  th:style="${testStepView.actionStep}? 'width:100%' : ''">
                  <div class="display-table-row" >
                     <label for="test-step-id" >Id</label>
                     <div id="test-step-id" class="display-table-cell" th:utext="${testStepView.id} ">1</div>
                   </div>
-                  <div class="display-table-row" th:if="${testStepView.actionStep}">
+<!--    ================================CUSTOM FIELDS============================= -->
+					<div class="display-table-row"
+						th:each="confBean : ${configuration.configurationBeans}">
+						<label class="display-table-cell" th:text="${confBean.fieldLabel}"
+							th:for="'cuf-value-'+${confBean.fieldId}">quantité de café</label>
+<!-- EDITABLE-->	<div th:if="${writable}" class="display-table-cell" th:switch="${confBean.type}"> 
+							<input th:case="'checkbox'" type="checkbox" th:checked="${confBean.valueAsBoolean}"
+								th:id="'cuf-value-'+${confBean.fieldId}" th:name="${confBean.fieldId}" class="cuf-value-control" />
+							<input type="text" th:case="'datepicker'"
+								th:id="'cuf-value-'+${confBean.fieldId}" th:name="${confBean.fieldId}" class="cuf-value-control"
+								th:value="${confBean.valueAsDate}? ${#dates.format(confBean.valueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}"/>
+							<select th:case="'select'"
+								th:id="'cuf-value-'+${confBean.fieldId}" th:name="${confBean.fieldId}" class="cuf-value-control"></select>
+							<input th:case="*"
+								th:id="'cuf-value-'+${confBean.fieldId}" th:name="${confBean.fieldId}" class="cuf-value-control"
+								th:value="${confBean.fieldValue}"/>
+						</div>
+<!-- NON EDITABLE-->	<div th:if="${!writable}" class="display-table-cell" th:switch="${confBean.type}">
+							<input th:case="'checkbox'" type="checkbox" th:checked="${confBean.valueAsBoolean}" disabled="disabled"
+								th:id="'cuf-value-'+${confBean.fieldId}" class="cuf-value" />
+							<span th:case="'datepicker'"
+								th:id="'cuf-value-'+${confBean.fieldId}" class="cuf-value"
+								th:text="${confBean.valueAsDate}? ${#dates.format(confBean.valueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}">12/12/2012</span>
+							<span th:case="*"
+								th:id="'cuf-value-'+${confBean.fieldId}" class="cuf-value"
+								th:text="${confBean.fieldValue}">value</span>
+							</div>
+					</div>
+<!-- 	============================END CUSTOM FIELDS===============================  -->
+                  <div class="display-table-row" th:if="${testStepView.actionStep}" th:switch="${writable}">
                     <label for="test-step-action" th:text="#{label.action}">Action</label>
-                    <div id="test-step-action" class="display-table-cell" th:utext="${testStepView.actionStep.action} ">do this</div>
+                    <textarea th:case="${true}" class="display-table-cell test-step-attr" name="action" id="test-step-action" th:utext="${testStepView.actionStep.action} ">do this</textarea>
+                 	<span th:case="${false}" th:utext="${testStepView.actionStep.action}">do this</span>
                   </div>
-                  <div class="display-table-row" th:if="${testStepView.actionStep}">
-                    <label for="test-step-expected-result" th:text="#{label.expectedResult}">Expected result</label>
-                    <div id="test-step-expected-result" class="display-table-cell" th:utext="${testStepView.actionStep.expectedResult}">see that</div>
+                  <div class="display-table-row" th:if="${testStepView.actionStep}" th:switch="${writable}">
+                    <label for="test-step-expectedResult" th:text="#{label.expectedResult}">Expected result</label>
+                   <textarea th:case="${true}"  class="display-table-cell test-step-attr" name="expectedResult" id="test-step-expectedResult" th:utext="${testStepView.actionStep.expectedResult}">see that</textarea>
+                  	<span th:case="${false}" th:utext="${testStepView.actionStep.action}">do this</span>
                   </div>
                   <div class="display-table-row" th:if="${testStepView.callStep}">
                     <label for="test-step-called-test-case" th:text="#{label.calledTestCase}">Called test case</label>

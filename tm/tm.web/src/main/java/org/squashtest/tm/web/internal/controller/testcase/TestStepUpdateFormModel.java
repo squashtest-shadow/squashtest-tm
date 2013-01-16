@@ -18,11 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.testcase;
+package org.squashtest.tm.web.internal.controller.testcase;
 
-public interface TestStepVisitor {
+import java.util.Map;
 
-	void visit(ActionTestStep visited);
+public class TestStepUpdateFormModel {
 
-	void visit(CallTestStep visited);
+	private String action;
+	private String expectedResult;
+	private Map<Long, String> cufValues;
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public String getExpectedResult() {
+		return expectedResult;
+	}
+
+	public void setExpectedResult(String expectedResult) {
+		this.expectedResult = expectedResult;
+	}
+
+	public Map<Long, String> getCufValues() {
+		return cufValues;
+	}
+
+	public void setCufValues(Map<Long, String> cufValues) {
+		this.cufValues = cufValues;
+	}
 }
