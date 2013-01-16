@@ -37,7 +37,7 @@
 		<select th:case="'DROPDOWN_LIST'"  th:with="defValue=${customField.defaultValue}"  th:attr="data-default-value=${customField.defaultValue}" class="create-node-custom-field"  th:id="'customFields['+${customField.id}+']'" >
 			<option th:each="option : ${customField.options}" th:value="${option.label}" th:text="${option.label}" th:selected="${option.label == defValue}"></option>
 		</select>
-		<input type="text" th:case="'DATE_PICKER'" th:attr="data-default-value=${customField.defaultValue}" class="create-node-custom-field"  th:id="'customFields['+${customField.id}+']'"/>
+		<span th:case="'DATE_PICKER'" data-locale="fr" data-format="dd/mm/yyyy" th-attr="data-locale=#{squashtm.locale}, data-format=#{squashtm.dateformatShort.js}" th:attr="data-default-value=${customField.defaultValue}" class="create-node-custom-field"  th:id="'customFields['+${customField.id}+']'">2013-02-01</span>
 		<span class="error-message "  th:classappend="'customFields-'+${customField.id}+'-error'" ></span>		
 	</td>
 </tr>
