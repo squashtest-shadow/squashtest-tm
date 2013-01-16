@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "app/ws/squashtm.workspace", "domReady", "jform", "squashtest/add-attachment-popup" ], function($,  WS, domReady) {
+	require([ "jquery", "app/ws/squashtm.workspace", "domReady", "jquery.squash.squashbutton", "jform", "squashtest/add-attachment-popup" ], function($,  WS, domReady) {
 		
 		
 		
@@ -204,10 +204,7 @@ require([ "common" ], function(common) {
 
 		
 		function exitUpload(){
-			//TODO
-//			<c:if test="${not empty submitCallback}">
-//			${submitCallback}();
-//			</c:if>
+			$(AAPS).trigger("exitUpload");
 		}
 		
 //	 	  the section below handle the polling routine.
@@ -264,6 +261,7 @@ require([ "common" ], function(common) {
 			/** INIT UPLOAD POPUP **/
 			var params = {
 	 			selector : "#attachment-upload-dialog",
+	 			openedBy : "#upload-attachment-button",
 	 			title : AAPS.uploadPopupTitle,
 	 			isContextual : true,
 	 			buttons : [ {

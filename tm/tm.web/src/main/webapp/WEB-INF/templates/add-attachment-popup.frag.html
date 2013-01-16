@@ -53,11 +53,11 @@
 	}
 	if(!squashtm.app){
 		squashtm.app = {
-				contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",			
+				contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 		};
 	}
 	squashtm.app.addAttachmentPopupSettings = {
-		uploadAttachmentUrl : /*[[ @{/attach-list/} + ${attachableEntity.attachmentList.id} + 'attachments/upload' ]]*/'http://localhost:8080/squash/attach-list/1/attachments/upload',
+		uploadAttachmentUrl : /*[[ @{/attach-list/} + ${attachableEntity.attachmentList.id} + '/attachments/upload' ]]*/'http://localhost:8080/squash/attach-list/1/attachments/upload',
 		uploadErrorMessage : /*[[ #{message.AttachmentUploadSizeExceeded} ]]*/'size exceeded',
 		megaByteLabel : /*[[ #{squashtm.megabyte.label} ]]*/'mega bytes',
 		uploadPopupTitle : /*[[ #{dialog.attachment.upload.title} ]]*/'Upload attachment',

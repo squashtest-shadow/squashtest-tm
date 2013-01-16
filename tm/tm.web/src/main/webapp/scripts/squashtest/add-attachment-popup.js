@@ -70,7 +70,7 @@
 
 		var mybutton = this.getButton();
 
-		decorateButton(mybutton);
+		$(mybutton).squashButton();
 
 		mybutton.click(function () {
 			myself.container.removeItem(myself);
@@ -155,7 +155,7 @@
 	/* ************** utility code ************** */
 
 	function isFileBrowserEmpty(jqItem) {
-		var content = jqItem.find("input [type='file'").val();
+		var content = jqItem.find("input [type='file']").val();
 
 		if ((content == "") || (typeof (content) == 'undefined')) {
 			return true;

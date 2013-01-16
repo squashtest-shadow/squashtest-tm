@@ -50,6 +50,8 @@ require([ "common" ], function(common) {
 				document.location.href = ABS.attachmentManagerUrl;
 			});
 			reloadAttachments();
+			
+			$(squashtm.app.addAttachmentPopupSettings).on("exitUpload", reloadAttachments);
 		});
 
 	});
