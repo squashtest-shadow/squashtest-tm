@@ -22,7 +22,6 @@ package org.squashtest.csp.tm.domain.testcase;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,20 +32,24 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.SecondaryTable;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.JoinColumnsOrFormulas;
-import org.hibernate.annotations.Loader;
 import org.hibernate.annotations.Persister;
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.internal.infrastructure.hibernate.TestStepPersister;
+
+
+
+
+/*
+ * IF YOU CHANGE ANYTHING REGARDING THE HIBERNATE MAPPING IN THAT CLASS, LIKE THE UNDERLYING TABLES OR THE MAPPING,
+ * PLEASE MIND THE CUSTOM PERSISTER BELOW (@Persister(impl=TestStepPersister.class)).
+ * 
+ *  see org.squashtest.csp.tm.internal.infrastructure.hibernate.TestStepPersister
+ */
+
+
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)

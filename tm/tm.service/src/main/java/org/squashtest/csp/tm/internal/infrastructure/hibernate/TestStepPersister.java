@@ -37,6 +37,41 @@ import org.hibernate.persister.entity.JoinedSubclassEntityPersister;
  * Since version 1.5.0 :
  * 
  * 
+ * What
+ * ====================== 
+ * 
+ * This class works around a bug on the reverse mapping between the test steps and the test case that own them.
+ * 
+ * 
+ * Why
+ * ======================
+ * 
+ * Hibernate 3.6.10 (and probably other releases) cannot process properly the following case :
+ * 
+ * - bi-directional ManyToOne (owned by the 1 side),
+ * - using a join table,
+ * - using an index column,
+ * - mapped in a superclass using the joined-sublasses strategy
+ * 
+ * Specifically the problem lies in org.hibernate.persister.entity.JoinedSubclassEntityPersister constructor, line 277 -> 281.
+ * In that section of the code, the foreign key between the master table (TEST_STEP) and the join table (TEST_CASE_STEPS) is 
+ * wrongly identified : it is assumed to be the the primary key of the join table regardless of what the annotations says  
+ * (and the primary key isn't right anyway). 
+ * 
+ * The consequence is that Hibernate believe it must join on TEST_CASE_ID, while the correct column is STEP_ID. 
+ * 
+ * 
+ * How
+ * =======================
+ * 
+ * To work around this we override the function #getSubclassTableKeyColumns(), that returns accepts an index as input and returns 
+ * the foreign key for this index. This method is invoked anytime the persister generates a join sql fragment. 
+ * When the overriden function is requested for the foreign key of the table TEST_CASE_STEPS, it will return the correct foreign key
+ * (STEP_ID), instead of the wrong one (TEST_CASE_ID). 
+ * 
+ * This class reuses some bits of the initialization code in order to generate the final name of the table and column, according to 
+ * target database dialect.
+ * 
  * 
  * 
  */
@@ -49,8 +84,11 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 	private String[] formattedColumnName = new String[1];
 	
 	/*
-	 * instead of testing which column will be hidden by its name, we'll cache its index 
-	 * whenever we have the chance
+	 * At first, when Hibernate invokes getSubclassTableKeyColumns(int) we must test if 
+	 * the override applies by comparing the string names of the requested table.
+	 * 
+	 * In order to prevent systematic and expensive string comparison we later on 
+	 * cache the index of that data, once it is known to us.
 	 */
 	private int _cachedIndex=-1;		
 
@@ -66,6 +104,10 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 
 
 	
+	/*
+	 * This override is the very reason of that class(non-Javadoc)
+	 * @see org.hibernate.persister.entity.JoinedSubclassEntityPersister#getSubclassTableKeyColumns(int)
+	 */
 	@Override
 	protected String[] getSubclassTableKeyColumns(int j) {
 		if (isTheJoinTable(j)){
@@ -77,6 +119,21 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 	}
 
 	
+	private boolean isTheJoinTable(int index){
+		if (_cachedIndex==-1){
+			boolean isTheOne = getSubclassTableName(index).equals(formattedTableName);
+			if (isTheOne){
+				_cachedIndex=index;
+			}
+			return isTheOne;
+		}
+		else{
+			return (_cachedIndex == index);
+		}
+	}
+	
+	
+	// **************************** init **************************
 	
 	private void init(PersistentClass persistentClass, SessionFactoryImplementor factory){
 		_createTableNamePattern(persistentClass, factory);
@@ -99,68 +156,11 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 		throw new IllegalArgumentException("TestStepPersister : could not find the join table TEST_CASE_STEPS");
 	}
 	
-	//
+	
 	private void _createColumnName(SessionFactoryImplementor factory){
 		Column column = new Column(NONFORMATTED_COLUMN_NAME);
 		formattedColumnName[0] = column.getQuotedName(factory.getDialect());
 	}
 
-	
-	
-	private boolean isTheJoinTable(int index){
-		if (_cachedIndex==-1){
-			boolean isTheOne = getSubclassTableName(index).equals(formattedTableName);
-			if (isTheOne){
-				_cachedIndex=index;
-			}
-			return isTheOne;
-		}
-		else{
-			return (_cachedIndex == index);
-		}
-	}
-	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
