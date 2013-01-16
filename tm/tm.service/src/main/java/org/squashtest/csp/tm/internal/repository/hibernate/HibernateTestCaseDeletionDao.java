@@ -114,7 +114,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	 * awkward treatment that follows :
 	 */
 	@SuppressWarnings("unchecked")
-	public void removeCallingCampaignItemTestPlan(List<Long> testCaseIds) {
+	public void removeCampaignTestPlanInboundReferences(List<Long> testCaseIds) {
 
 		if (!testCaseIds.isEmpty()) {
 
@@ -174,7 +174,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public void removeOrSetNullCallingIterationItemTestPlan(List<Long> testCaseIds) {
+	public void removeOrSetIterationTestPlanInboundReferencesToNull(List<Long> testCaseIds) {
 
 		if (!testCaseIds.isEmpty()) {
 			SQLQuery query1 = getSession().createSQLQuery(
@@ -231,7 +231,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	}
 
 	@Override
-	public void setNullCallingExecutionSteps(List<Long> testStepIds) {
+	public void setExecStepInboundReferencesToNull(List<Long> testStepIds) {
 		if (!testStepIds.isEmpty()) {
 			Query query = getSession().createSQLQuery(NativeQueries.testCase_sql_setNullCallingExecutionSteps);
 			query.setParameterList(TESTS_STEPS_IDS, testStepIds, LongType.INSTANCE);
@@ -240,7 +240,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	}
 
 	@Override
-	public void setNullCallingExecutions(List<Long> testCaseIds) {
+	public void setExecutionInboundReferencesToNull(List<Long> testCaseIds) {
 		Query query = getSession().createSQLQuery(NativeQueries.testCase_sql_setNullCallingExecutions);
 		query.setParameterList(TEST_CASES_IDS, testCaseIds, LongType.INSTANCE);
 		query.executeUpdate();

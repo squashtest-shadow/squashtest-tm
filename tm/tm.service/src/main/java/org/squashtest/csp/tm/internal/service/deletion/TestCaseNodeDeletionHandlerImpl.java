@@ -123,11 +123,11 @@ public class TestCaseNodeDeletionHandlerImpl extends
 			List<Long> testCaseAttachmentIds = deletionDao.findTestCaseAttachmentListIds(ids);
 			List<Long> testStepAttachmentIds = deletionDao.findTestStepAttachmentListIds(stepIds);
 
-			deletionDao.removeCallingCampaignItemTestPlan(ids);
-			deletionDao.removeOrSetNullCallingIterationItemTestPlan(ids);
+			deletionDao.removeCampaignTestPlanInboundReferences(ids);
+			deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull(ids);
 
-			deletionDao.setNullCallingExecutions(ids);
-			deletionDao.setNullCallingExecutionSteps(stepIds);
+			deletionDao.setExecutionInboundReferencesToNull(ids); 
+			deletionDao.setExecStepInboundReferencesToNull(stepIds);
 
 			deletionDao.removeFromVerifyingTestCaseLists(ids);
 
@@ -165,7 +165,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 
 		List<Long> stepId = new LinkedList<Long>();
 		stepId.add(step.getId());
-		deletionDao.setNullCallingExecutionSteps(stepId);
+		deletionDao.setExecStepInboundReferencesToNull(stepId);
 		
 		customValueService.deleteAllCustomFieldValues(step);
 

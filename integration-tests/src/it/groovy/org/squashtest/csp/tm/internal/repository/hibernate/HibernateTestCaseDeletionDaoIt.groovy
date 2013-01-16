@@ -189,8 +189,8 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 		when :
 
-		deletionDao.removeOrSetNullCallingIterationItemTestPlan([11l])
-		deletionDao.setNullCallingExecutions([11l])
+		deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull([11l])
+		deletionDao.setExecutionInboundReferencesToNull([11l])
 
 		getSession().flush()
 		getSession().clear()
@@ -211,7 +211,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	@DataSet("NodeDeletionHandlerTest.should disassociate from two item test plan and remove two.xml")
 	def "should disassociate from two item test plan having executions and remove two other having no executions, for two iterations "(){
 		when :
-		deletionDao.removeOrSetNullCallingIterationItemTestPlan([2l, 3l]);
+		deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull([2l, 3l]);
 
 		then :
 
@@ -247,7 +247,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	def "should disassociate a test step from calling exec steps"(){
 
 		when :
-		deletionDao.setNullCallingExecutionSteps([11l, 14l])
+		deletionDao.setExecStepInboundReferencesToNull([11l, 14l])
 
 
 		then :
@@ -266,7 +266,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	def "should delete and reorder campaign item test plans that were calling deleted test cases"(){
 
 		when :
-		deletionDao.removeCallingCampaignItemTestPlan([2l, 3l])
+		deletionDao.removeCampaignTestPlanInboundReferences([2l, 3l])
 
 		then :
 		found("campaign_test_plan_item", "ctpi_id", 11l)

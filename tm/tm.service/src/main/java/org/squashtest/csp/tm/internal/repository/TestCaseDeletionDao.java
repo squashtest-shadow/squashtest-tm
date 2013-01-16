@@ -31,9 +31,9 @@ public interface TestCaseDeletionDao extends DeletionDao {
 	
 	//data removers
 	void removeAllSteps(List<Long> testStepIds);
-	void removeCallingCampaignItemTestPlan(List<Long> testCaseIds);
-	void removeOrSetNullCallingIterationItemTestPlan(List<Long> testCaseIds);
-	void setNullCallingExecutionSteps(List<Long> testStepIds);
-	void setNullCallingExecutions(List<Long> testCaseIds);
+	void removeCampaignTestPlanInboundReferences(List<Long> testCaseIds);
+	void removeOrSetIterationTestPlanInboundReferencesToNull(List<Long> testCaseIds);
+	void setExecStepInboundReferencesToNull(List<Long> testStepIds);
+	void setExecutionInboundReferencesToNull(List<Long> testCaseIds);
 	void removeFromVerifyingTestCaseLists(List<Long> testCaseIds);
 }
