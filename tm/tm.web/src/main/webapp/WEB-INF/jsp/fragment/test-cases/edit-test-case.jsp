@@ -103,6 +103,7 @@
 	<c:param name="tab" value="" />
 </c:url>
 
+<c:url var="customFieldBindings" value="/custom-fields-binding"/>
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
@@ -551,6 +552,9 @@ $(function() {
 				</label>
 			<textarea id="add-test-step-result"></textarea>
 		</div>
+		<table id="add-test-step-custom-fields">
+			<!--  populated using ajax -->
+		</table>
 
 	</jsp:body>
 	</comp:popup>
@@ -559,6 +563,7 @@ function addTestStepSuccess(){
 	if ($("#add-test-step-dialog").dialog("isOpen")==true) $( "#add-test-step-dialog" ).dialog('close');
 	refreshSteps();
 }
+
 
 function addTestStepSuccessAnother(){
 	CKEDITOR.instances["add-test-step-action"].setData('');
@@ -1125,6 +1130,22 @@ function addTestStepSuccessAnother(){
 			$("#test-case-description-table").append(data);
 		});
 		</c:if>
+		
+		
+		//init the custom fields for the add-test-step-dialog
+		var table = $("#add-test-step-custom-fields");				
+		var projectId = ${testCase.project.id};
+		var bindableEntity = 'TEST_STEP';
+		var bindingsUrl = "${customFieldBindings}?projectId="+projectId+"&bindableEntity="+bindableEntity+"&optional=false";
+		
+		$.get(bindingsUrl, null, null, "html")
+		.success(function(html){
+			//because it wouldn't work otherwise, we must strip the result of the license header
+			var fixed = $.trim(html.replace(/\<\!--[\s\S]*--\>/,''));
+			table.append(fixed);
+			
+			
+		});	
 		
 	});
 

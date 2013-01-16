@@ -41,7 +41,6 @@
 <c:set var="handlerName" value="add${ su:hyphenedToCamelCase(resourceName) }Handler" />
 <c:set var="addAnotherHandlerName"	value="addAnother${ su:hyphenedToCamelCase(resourceName) }Handler" />
 <c:set var="genericHandlerName"	value="genericAdd${ su:hyphenedToCamelCase(resourceName) }Handler" />
-<c:set var="initCUF" value="initCreate${su:hyphenedToCamelCase(resourceName)}CustomFields"/>
 
 <c:choose>
 	<c:when	test="${ (resourceName eq 'test-case') or (resourceName eq 'campaign') or (resourceName eq 'requirement') }">
@@ -163,7 +162,10 @@ $(function(){
 			</c:if>
 			$('.error-message').text("");
 			<c:if test="${not empty bindableEntity}">
-				${initCUF}();
+				var dialog =  $('#add-${ resourceName }-dialog');
+				var table = dialog.find('table.add-node-attributes')
+				var cufValuesSupport = dialog.data('cuf-values-support');
+				cufValuesSupport.resetCUFValues(table);
 			</c:if>
 		});
 	}
@@ -204,14 +206,14 @@ $(function(){
 		</c:choose>
 		
 		<c:if test="${not empty bindableEntity}">
-		//now add the custom fields
-		var cufs = $("#add-${ resourceName }-dialog .create-node-custom-field");
-		if (cufs.length>0){
-			cufs.each(function(){
-				var jqThis = $(this);
-				params[this.id] = (jqThis.is('input[type="checkbox"]')) ? jqThis.prop('checked') : jqThis.val();
-			});
-		}
+		var dialog =  $('#add-${ resourceName }-dialog');
+		var table = dialog.find('table.add-node-attributes');
+	
+		var cufValuesSupport = dialog.data('cuf-values-support');
+		var cufParams = cufValuesSupport.readCUFValues(table);
+		
+		$.extend(params, cufParams);
+		
 		</c:if>
 		
 		return params;	
@@ -226,25 +228,6 @@ $(function(){
 		</c:if>
 	}
 	
-	<c:if test="${not empty bindableEntity}">
-	function ${initCUF}(){
-		var bindings = $("#add-${ resourceName }-dialog .create-node-custom-field");
-		if (bindings.length>0){
-			bindings.each(function(){
-				var input = $(this);
-				var defValue = input.data('default-value');
-				
-				if (input.is('input[type="checkbox"]')){
-					input.prop('checked', (defValue===true));
-				}
-				else{
-					input.val(defValue);
-				}
-			})
-		}
-		
-	}
-	</c:if>
 	
 	$(function(){
 		${treeNodeButton}.click(function(){
@@ -254,28 +237,25 @@ $(function(){
 		});
 
 		<c:if test="${not empty bindableEntity}">
-		$("#add-${ resourceName }-dialog").on("dialogopen", function(){
+		
+		require(['jquery', 'custom-field-values'] , function($,cufValuesManager){	
 			
-			var table = $("#add-${ resourceName }-dialog table.add-node-attributes ");
-			
-			var pleaseWait=$('<tr class="cuf-wait" style="line-height:10px;"><td colspan="2" class="waiting-loading"></td></tr>');
-			
-			table.find('.create-node-custom-field-row').remove();
-			table.append(pleaseWait);
-			
-			var projectId = $("#tree").jstree('get_selected').getProjectId();
-			var bindableEntity = '${bindableEntity}';
-			var bindingsUrl = "${customFieldBindings}?projectId="+projectId+"&bindableEntity="+bindableEntity+"&optional=false";
-			
-			$.get(bindingsUrl, null, null, "html")
-			.success(function(html){
-				table.find(".cuf-wait").remove();
-				//because it wouldn't work otherwise, we must strip the result of the license header
-				var fixed = $.trim(html.replace(/\<\!--[\s\S]*--\>/,''));
-				table.append(fixed);
-				${initCUF}();
+
+			var dialog = $("#add-${ resourceName }-dialog");			
+			var table = dialog.find('table.add-node-attributes');
+			var cufValuesSupport = cufValuesManager.getNodeCreationDialogCUFValuesSupport();			
+		
+			dialog.on("dialogopen", function(){						
+				var projectId = $("#tree").jstree('get_selected').getProjectId();
+				var bindingsUrl = "${customFieldBindings}?projectId="+projectId+"&bindableEntity=${bindableEntity}&optional=false";
+						
+				cufValuesSupport.loadCUFValuesPanel({getURL : bindingsUrl, table : table});
 			});
+			
+			dialog.data('cuf-values-support', cufValuesSupport);			
+			
 		});
+
 		</c:if>
 	});
 	

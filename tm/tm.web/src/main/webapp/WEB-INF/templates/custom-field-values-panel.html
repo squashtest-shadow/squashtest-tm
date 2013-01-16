@@ -72,7 +72,8 @@
 		<span th:case="'datepicker'"
 			th:id="'cuf-value-'+${confBeanStat.count}" class="cuf-value-control"
 			th:text="${confBean.valueAsDate}? ${#dates.format(confBean.valueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}">
-			01-02-2012</span> <span th:case="*"
+			01-02-2012</span> 
+		<span th:case="*"
 			th:id="'cuf-value-'+${confBeanStat.count}" class="cuf-value-control"
 			th:text="${confBean.fieldValue}">maximum</span>
 	</div>
@@ -176,7 +177,8 @@
 							var effective = $
 									.extend({}, datePickBaseConf, conf);
 							widget.editable(datePickerPostFunction, effective)
-						} else {
+						} 
+						else {
 							var effective = $.extend({}, baseConf, conf);
 							widget.editable(postFunction, effective);
 						}
