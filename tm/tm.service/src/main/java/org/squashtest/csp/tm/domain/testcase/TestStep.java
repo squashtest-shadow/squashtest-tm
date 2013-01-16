@@ -36,7 +36,10 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Persister;
 import org.squashtest.csp.core.security.annotation.InheritsAcls;
+import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
+import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.internal.infrastructure.hibernate.TestStepPersister;
 
 
@@ -56,7 +59,7 @@ import org.squashtest.csp.tm.internal.infrastructure.hibernate.TestStepPersister
 @InheritsAcls(constrainedClass = TestCase.class, collectionName = "steps")
 
 @Persister(impl=TestStepPersister.class)
-public abstract class TestStep {
+public abstract class TestStep implements BoundEntity  {
 	@Id
 	@GeneratedValue
 	@Column(name = "TEST_STEP_ID")
@@ -91,5 +94,23 @@ public abstract class TestStep {
 	public abstract void accept(TestStepVisitor visitor);
 	
 	public abstract List<ExecutionStep> createExecutionSteps();
+	
+	
+	// *************** BoundEntity implementation *************
+	
+	@Override
+	public Long getBoundEntityId() {
+		return getId();
+	}
+	
+	@Override
+	public BindableEntity getBoundEntityType() {
+		return BindableEntity.TEST_STEP;
+	}
+
+	@Override
+	public Project getProject() {
+		return getTestCase().getProject();
+	}
 
 }

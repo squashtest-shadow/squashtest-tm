@@ -26,6 +26,10 @@ define(["jquery", "./entity-manager"], function(jquery, EntityManager){
 		return $.extend({},conf.general, conf.tcSettings);
 	}
 	
+	function makeTStepConf(conf){		
+		return $.extend({},conf.general, conf.tstepSettings);
+	}
+	
 	function makeReqConf(conf){
 		return $.extend({},conf.general, conf.reqSettings);
 	}
@@ -54,6 +58,10 @@ define(["jquery", "./entity-manager"], function(jquery, EntityManager){
 			//test case
 			var tcConf = makeTCConf(this.config);
 			new EntityManager(tcConf);
+			
+			//test step
+			var tstepConf = makeTStepConf(this.config);
+			new EntityManager(tstepConf);
 			
 			//requirement
 			var reqConf = makeReqConf(this.config);

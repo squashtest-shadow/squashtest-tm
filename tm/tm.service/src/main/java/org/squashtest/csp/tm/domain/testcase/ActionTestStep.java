@@ -43,7 +43,7 @@ import org.squashtest.csp.tm.domain.project.Project;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
-public class ActionTestStep extends TestStep implements AttachmentHolder, BoundEntity {
+public class ActionTestStep extends TestStep implements AttachmentHolder{
 	@Lob
 	@Basic(optional = false)
 	private String action;
@@ -120,20 +120,5 @@ public class ActionTestStep extends TestStep implements AttachmentHolder, BoundE
 		return attachmentList.getAllAttachments();
 	}
 	
-	// *************** BoundEntity implementation *************
-	
-	@Override
-	public Long getBoundEntityId() {
-		return getId();
-	}
-	
-	@Override
-	public BindableEntity getBoundEntityType() {
-		return BindableEntity.TEST_STEP;
-	}
 
-	@Override
-	public Project getProject() {
-		return getTestCase().getProject();
-	}
 }

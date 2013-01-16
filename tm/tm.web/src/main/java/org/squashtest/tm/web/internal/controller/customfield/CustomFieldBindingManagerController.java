@@ -54,7 +54,7 @@ public class CustomFieldBindingManagerController {
 		List<CustomFieldBinding> testCaseBindings = service.findCustomFieldsForProjectAndEntity
 													(projectId, BindableEntity.TEST_CASE, new DefaultPaging()).getPagedItems();
 		
-		
+		List<CustomFieldBinding> testStepBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_STEP);
 		List<CustomFieldBinding> requirementBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_VERSION);
 		List<CustomFieldBinding> campaignBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CAMPAIGN);
 		List<CustomFieldBinding> iterationBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.ITERATION);
@@ -62,6 +62,7 @@ public class CustomFieldBindingManagerController {
 		
 		ModelAndView mav = new ModelAndView("custom-field-binding.html");
 		mav.addObject("testCaseBindings", testCaseBindings);
+		mav.addObject("testStepBindings", testStepBindings);
 		mav.addObject("requirementBindings", requirementBindings);
 		mav.addObject("campaignBindings", campaignBindings);
 		mav.addObject("iterationBindings", iterationBindings);

@@ -59,6 +59,9 @@
 <div id="test-cases-binding-manager" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-cases',collection=${testCaseBindings}">
 </div>
 
+<div id="test-steps-binding-manager" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='test-steps',collection=${testStepBindings}">
+</div>
+
 <div id="campaigns-binding-manager" th:include="custom-field-binding :: cuf-unit-binder" th:with="HTMLID='campaigns',collection=${campaignBindings}">
 </div>
 
@@ -94,6 +97,15 @@
        			tableDeleteTooltip : /*[[#{message.customfieldbinding.unbind.tooltip}]]*/ 'retirer'
 	    	},
 	    	
+    		tstepSettings : {
+    			entityType : 'TEST_STEP', //should be @org.squashtest.tm.tm.domain.customfield.BindableEntity@TEST_STEP
+    			mainSelector : "#test-steps-binding-manager", 
+    			panelTitle : /*[[ #{project.cufbinding.test-steps.panel.title}  ]]*/"test step bindings",
+    			tableDeferLoading : /*[[ ${testStepBindings.size()} ]]*/ 3,	
+    			tableDeleteMessage : /*[[#{message.customfieldbinding.unbind.message(#{label.customField.bindableEntity.TEST_STEP})}]]*/ "Retirer les champs personalisés sélectionnées de ce projet ?",
+    			tableDeleteTooltip : /*[[#{message.customfieldbinding.unbind.tooltip}]]*/ 'retirer'
+    		},
+	    	
     		reqSettings : {
     			entityType : 'REQUIREMENT_VERSION', //should be @org.squashtest.tm.tm.domain.customfield.BindableEntity@REQUIREMENT_VERSION
     			mainSelector : "#requirements-binding-manager", 
@@ -128,7 +140,7 @@
     			tableDeferLoading : /*[[ ${testSuiteBindings.size()} ]]*/ 3,	
     			tableDeleteMessage : /*[[#{message.customfieldbinding.unbind.message(#{label.customField.bindableEntity.TEST_SUITE})}]]*/ "Retirer les champs personalisés sélectionnées de ce projet ?",
     			tableDeleteTooltip : /*[[#{message.customfieldbinding.unbind.tooltip}]]*/ 'retirer'
-	    	}	    	
+	    	}
 	    		    	
     	};
 
