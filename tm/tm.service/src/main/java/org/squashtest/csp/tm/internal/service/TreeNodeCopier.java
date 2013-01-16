@@ -49,6 +49,7 @@ import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.internal.repository.CampaignDao;
 import org.squashtest.csp.tm.internal.repository.CampaignFolderDao;
 import org.squashtest.csp.tm.internal.repository.EntityDao;
@@ -223,6 +224,17 @@ public class TreeNodeCopier implements NodeVisitor {
 	 */
 	private void copyCustomFields(BoundEntity source, BoundEntity copy) {
 		customFieldValueManagerService.copyCustomFieldValues(source, copy);
+	}
+	
+	private void copyCustomFields(TestCase source, TestCase copy) {
+		customFieldValueManagerService.copyCustomFieldValues(source, copy);
+		//do the same for the steps if any
+		int total=copy.getSteps().size();
+		for (int i=0;i<total;i++){
+			TestStep copyStep = copy.getSteps().get(i);
+			TestStep sourceStep = source.getSteps().get(i);
+			customFieldValueManagerService.copyCustomFieldValues(sourceStep, copyStep);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

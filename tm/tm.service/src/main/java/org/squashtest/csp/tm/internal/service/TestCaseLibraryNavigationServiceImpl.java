@@ -150,10 +150,17 @@ public class TestCaseLibraryNavigationServiceImpl extends
 
 		if (!library.isContentNameAvailable(testCase.getName())) {
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
-		} else {
+		} 
+		else {
 			library.addContent(testCase);
-			testCaseDao.safePersist(testCase);
+			testCaseDao.safePersist(testCase);			
 			createCustomFieldValues(testCase);
+			
+			//also create the custom field values for the steps if any
+			if (! testCase.getSteps().isEmpty()){
+				createCustomFieldValues(testCase.getSteps());
+			}
+			
 		}
 	}
 	
@@ -175,10 +182,16 @@ public class TestCaseLibraryNavigationServiceImpl extends
 
 		if (!folder.isContentNameAvailable(testCase.getName())) {
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
-		} else {
+		} 
+		else {
 			folder.addContent(testCase);
 			testCaseDao.safePersist(testCase);
 			createCustomFieldValues(testCase);
+			
+			//also create the custom field values for the steps if any
+			if (! testCase.getSteps().isEmpty()){
+				createCustomFieldValues(testCase.getSteps());
+			}
 		}
 	}
 	

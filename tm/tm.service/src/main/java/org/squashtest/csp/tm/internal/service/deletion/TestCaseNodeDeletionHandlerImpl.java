@@ -131,6 +131,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 
 			deletionDao.removeFromVerifyingTestCaseLists(ids);
 
+			customValueService.deleteAllCustomFieldValues(BindableEntity.TEST_STEP, stepIds);
 			deletionDao.removeAllSteps(stepIds);
 			
 			customValueService.deleteAllCustomFieldValues(BindableEntity.TEST_CASE, ids);
@@ -142,8 +143,6 @@ public class TestCaseNodeDeletionHandlerImpl extends
 			// we can make one only one query against the database.
 			testCaseAttachmentIds.addAll(testStepAttachmentIds);
 			deletionDao.removeAttachmentsLists(testCaseAttachmentIds);
-
-			// supprimer les associations Parent - Enfant ici
 
 		}
 	}
@@ -167,6 +166,8 @@ public class TestCaseNodeDeletionHandlerImpl extends
 		List<Long> stepId = new LinkedList<Long>();
 		stepId.add(step.getId());
 		deletionDao.setNullCallingExecutionSteps(stepId);
+		
+		customValueService.deleteAllCustomFieldValues(step);
 
 		if (step instanceof ActionTestStep) {
 			deleteActionStep((ActionTestStep) step);

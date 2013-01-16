@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.internal.service;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -240,9 +241,18 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	public LIBRARY findLibraryOfRootNodeIfExist(NODE node) {
 		return getLibraryDao().findByRootContent(node);
 	}
+	
+	
+	// ************************* custom field values *************************
 
 	protected void createCustomFieldValues(BoundEntity entity) {
 		customFieldValuesService.createAllCustomFieldValues(entity);
+	}
+	
+	protected void createCustomFieldValues(Collection<? extends BoundEntity> entities){
+		for (BoundEntity entity : entities){
+			createCustomFieldsValues(entity);
+		}
 	}
 	
 	//initialCustomFieldValues maps the id of a CustomField to the value of the corresponding CustomFieldValues for that BoundEntity.
@@ -263,6 +273,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			
 		}
 	}
+	
 
 	/* ********************** move operations *************************** */
 
