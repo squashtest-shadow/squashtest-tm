@@ -109,8 +109,6 @@
 			</sqlCheck>
 		</preConditions>
 		<comment>We check that each execution has data for the new test case related fields</comment>
-		<sql>
-			drop table `EXECUTION_TEST_CASE_DATA`;
-		</sql>
+		
 	</changeSet>
 </databaseChangeLog>
