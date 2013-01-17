@@ -19,7 +19,35 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery"], function($){
+define(["jquery", "jqueryui", 'jquery.squash.jeditable', "jeditable.datepicker",
+		"datepicker/require.jquery.squash.datepicker-locales"], function($){
+	
+	
+	function noPostFn(value){
+		return value;
+	}
+	
+	function convertStrDate(fromFormat, toFormat, strFromValue){
+		var date = $.datepicker.parseDate(fromFormat, strFromValue);
+		return $.datepicker.formatDate(toFormat, date);		
+	}
+	
+	function initDatepicker(input){
+		var locale = input.data('locale');
+		var format = input.data('format');
+
+		var conf ={
+			type : 'datepicker',
+			datepicker : $.extend(
+					{dateFormat : format},
+					$.datepicker.regional[locale]
+				)
+				
+		}
+		
+		input.editable(noPostFn, conf);
+	
+	}
 	
 	var nodeCreationDialogCUFValuesSupport = {
 			
@@ -45,8 +73,30 @@ define(["jquery"], function($){
 				//because it wouldn't work otherwise, we must strip the result of the license header
 				var fixed = $.trim(html.replace(/\<\!--[\s\S]*--\>/,''));
 				table.append(fixed);
-				self.resetCUFValues(table);
+				self.initCUFValues(table);
 			});			
+		},
+		
+		/*
+		 * settings :
+		 *  - table : the <table/> element that hold the elements, as a jQuery object.
+		 */			
+		initCUFValues : function(table){
+			var bindings = table.find(".create-node-custom-field");
+			if (bindings.length>0){
+				bindings.each(function(){
+					
+					var input = $(this);
+					var defValue = input.data('default-value');
+					var inputType = input.data('input-type');
+					
+					if (inputType==="DATE_PICKER"){
+						initDatepicker(input);
+					}
+				});
+				
+				this.resetCUFValues(table);
+			}				
 		},
 	
 		/*
@@ -59,15 +109,21 @@ define(["jquery"], function($){
 				bindings.each(function(){
 					var input = $(this);
 					var defValue = input.data('default-value');
+					var inputType = input.data('input-type');
 					
-					if (input.is('input[type="checkbox"]')){
+					if (inputType==="CHECKBOX"){
 						input.prop('checked', (defValue===true));
+					}
+					else if (inputType==="DATE_PICKER"){
+						var format = input.data('format');
+						var displayedDate = convertStrDate($.datepicker.ATOM, format, defValue);
+						input.text(displayedDate);			
 					}
 					else{
 						input.val(defValue);
 					}
 				})
-			}			
+			}		
 		},
 		
 		/*
@@ -82,8 +138,20 @@ define(["jquery"], function($){
 			var cufs = table.find(".create-node-custom-field");
 			if (cufs.length>0){
 				cufs.each(function(){
-					var jqThis = $(this);
-					result[this.id] = (jqThis.is('input[type="checkbox"]')) ? jqThis.prop('checked') : jqThis.val();
+					var input = $(this);
+					var inputType = input.data('input-type');
+					var value=null;
+					if (inputType==="CHECKBOX"){
+						value = input.prop('checked');
+					}
+					else if (inputType==="DATE_PICKER"){
+						var format=input.data('format');
+						value = convertStrDate(format, $.datepicker.ATOM,input.text());
+					}
+					else{
+						value = input.val();
+					}
+					result[this.id] = value;
 				});
 			}
 			return result;

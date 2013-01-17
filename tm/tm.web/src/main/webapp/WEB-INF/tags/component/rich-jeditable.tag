@@ -48,7 +48,10 @@
 								
 		}
 		
-		$('#${componentId}').richEditable(settings).addClass("editable");
+		require(['jquery', 'jqueryui', 'jeditable', 'ckeditor', 'jeditable.ckeditor'], function(){
+			$('#${componentId}').richEditable(settings).addClass("editable");			
+		});
+		
 	})
 	
 </script>

@@ -32,12 +32,12 @@
 <tr th:each="binding : ${bindings.?[customField.optional==false]}" th:with="customField=${binding.customField}" class="create-node-custom-field-row">										 
 	<td><label th:text="${customField.label}">quantité de café</label></td>
 	<td th:switch="${customField.inputType.name()}" >
-		<input th:case="'PLAIN_TEXT'" type="text" th:attr="data-default-value=${customField.defaultValue}" class="create-node-custom-field"  th:id="'customFields['+${customField.id}+']'" />
-		<input th:case="'CHECKBOX'" type="checkbox" th:attr="data-default-value=${customField.defaultValue}" th:checked="${customField.defaultValue == 'TRUE'}" class="create-node-custom-field"  th:id="'customFields['+${customField.id}+']'" />
-		<select th:case="'DROPDOWN_LIST'"  th:with="defValue=${customField.defaultValue}"  th:attr="data-default-value=${customField.defaultValue}" class="create-node-custom-field"  th:id="'customFields['+${customField.id}+']'" >
+		<input th:case="'PLAIN_TEXT'" type="text" th:attr="data-default-value=${customField.defaultValue}, data-input-type='PLAIN_TEXT'" class="create-node-custom-field"  th:id="'customFields['+${customField.id}+']'" />
+		<input th:case="'CHECKBOX'" type="checkbox" th:attr="data-default-value=${customField.defaultValue}, data-input-type='CHECKBOX'" th:checked="${customField.defaultValue == 'TRUE'}" class="create-node-custom-field"  th:id="'customFields['+${customField.id}+']'" />
+		<select th:case="'DROPDOWN_LIST'"  th:with="defValue=${customField.defaultValue}"  th:attr="data-default-value=${customField.defaultValue}, data-input-type='DROPDOWN_LIST'" class="create-node-custom-field"  th:id="'customFields['+${customField.id}+']'" >
 			<option th:each="option : ${customField.options}" th:value="${option.label}" th:text="${option.label}" th:selected="${option.label == defValue}"></option>
 		</select>
-		<span th:case="'DATE_PICKER'" data-locale="fr" data-format="dd/mm/yyyy" th-attr="data-locale=#{squashtm.locale}, data-format=#{squashtm.dateformatShort.js}" th:attr="data-default-value=${customField.defaultValue}" class="create-node-custom-field"  th:id="'customFields['+${customField.id}+']'">2013-02-01</span>
+		<span type="text" th:case="'DATE_PICKER'" th:attr="data-default-value=${customField.defaultValue}, data-locale=#{squashtm.locale}, data-format=#{squashtm.dateformatShort.js}, data-input-type='DATE_PICKER'" class="create-node-custom-field"  th:id="'customFields['+${customField.id}+']'">2013-02-01</span>
 		<span class="error-message "  th:classappend="'customFields-'+${customField.id}+'-error'" ></span>		
 	</td>
 </tr>
