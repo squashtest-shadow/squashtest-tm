@@ -33,5 +33,14 @@ public interface TestStepDao {
 	<STEP extends TestStep> void persist(STEP testStep);
 	
 	List<TestStep> findListById(List<Long> testStepIds);
+	
+	/**
+	 * returns the position (ie index) of a step within the 
+	 * list of step of its test case 
+	 * 
+	 * @param testStepId the id of the step
+	 * @return
+	 */
+	int findPositionOfStep(Long testStepId);
 
 }

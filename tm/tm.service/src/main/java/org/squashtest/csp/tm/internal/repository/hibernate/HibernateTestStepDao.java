@@ -100,6 +100,13 @@ public class HibernateTestStepDao extends HibernateDao<TestStep> implements Test
 		
 	}
 	
+	@Override
+	public int findPositionOfStep(Long testStepId) {
+		Query query = currentSession().getNamedQuery("testStep.findPositionOfStep");
+		query.setParameter("stepId", testStepId, LongType.INSTANCE);
+		return (Integer)query.uniqueResult();
+	}
+	
 	private static final class TestStepIdsQueryParametersCallback implements SetQueryParametersCallback  {
 		
 		private List<Long> testStepIds;

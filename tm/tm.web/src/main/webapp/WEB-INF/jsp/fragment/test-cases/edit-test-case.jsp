@@ -520,21 +520,25 @@ $(function() {
 	
 		<f:message var="addLabel" key="label.Add" />
 		'${ addLabel }': function() {
+			var params = readAddStepParams();
 			var url = "${ addStepUrl }";
-			<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
-				useData="true" successHandler="addTestStepSuccess">		
-				<jq:params-bindings action="#add-test-step-action"
-					expectedResult="#add-test-step-result" />
-			</jq:ajaxcall>					
+			$.ajax({
+				url : url,
+				type : 'POST',
+				dataType : 'json',
+				data : params
+			}).success(addTestStepSuccess);			
 		},
 		<f:message var="addAnotherLabel" key="dialog.button.add.another.label" />
 		'${ addAnotherLabel }': function() {
+			var params = readAddStepParams();
 			var url = "${ addStepUrl }";
-			<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
-				useData="true" successHandler="addTestStepSuccessAnother">		
-				<jq:params-bindings action="#add-test-step-action"
-					expectedResult="#add-test-step-result" />
-			</jq:ajaxcall>					
+			$.ajax({
+				url : url,
+				type : 'POST',
+				dataType : 'json',
+				data : params
+			}).success(addTestStepSuccessAnother);	
 		},			
 		<pop:cancel-button />
 	</jsp:attribute>
@@ -560,7 +564,10 @@ $(function() {
 	</comp:popup>
 	<script>
 function addTestStepSuccess(){
-	if ($("#add-test-step-dialog").dialog("isOpen")==true) $( "#add-test-step-dialog" ).dialog('close');
+	var dialog = $("#add-test-step-dialog");
+	if (dialog.dialog("isOpen")==true){
+		dialog.dialog('close');
+	}
 	refreshSteps();
 }
 
@@ -568,7 +575,28 @@ function addTestStepSuccess(){
 function addTestStepSuccessAnother(){
 	CKEDITOR.instances["add-test-step-action"].setData('');
 	CKEDITOR.instances["add-test-step-result"].setData('');
+	
+	var dialog = $("#add-test-step-dialog");
+	var cufSupport = dialog.data('cuf-values-support');
+	var table = $("#add-test-step-custom-fields");
+	cufSupport.resetCUFValues(table);
+	
 	refreshSteps();
+}
+
+function readAddStepParams(){
+	
+	var dialog = $("#add-test-step-dialog");
+	var cufSupport = dialog.data('cuf-values-support');
+	var table = $("#add-test-step-custom-fields");
+	
+	var params = {};
+	params.action = $("#add-test-step-action").val();
+	params.expectedResult = $("#add-test-step-result").val();	
+	$.extend(params,cufSupport.readCUFValues(table));
+	
+	return params;
+	
 }
 </script>
 	<%------------------------ Test Step deletion dialogs ----------------------------------%>
@@ -1133,19 +1161,22 @@ function addTestStepSuccessAnother(){
 		
 		
 		//init the custom fields for the add-test-step-dialog
+		var dialog = $("#add-test-step-dialog");
 		var table = $("#add-test-step-custom-fields");				
-		var projectId = ${testCase.project.id};
-		var bindableEntity = 'TEST_STEP';
-		var bindingsUrl = "${customFieldBindings}?projectId="+projectId+"&bindableEntity="+bindableEntity+"&optional=false";
+		var bindingsUrl = "${customFieldBindings}?projectId=${testCase.project.id}&bindableEntity=TEST_STEP&optional=false";
 		
-		$.get(bindingsUrl, null, null, "html")
-		.success(function(html){
-			//because it wouldn't work otherwise, we must strip the result of the license header
-			var fixed = $.trim(html.replace(/\<\!--[\s\S]*--\>/,''));
-			table.append(fixed);
+		require(['jquery', 'custom-field-values'], function($,cufValuesManager){
 			
+			var cufValuesSupport = cufValuesManager.getNodeCreationDialogCUFValuesSupport();
+			cufValuesSupport.loadCUFValuesPanel({getURL : bindingsUrl, table : table});		
+			dialog.data('cuf-values-support', cufValuesSupport);
 			
-		});	
+			dialog.on("dialogopen", function(){
+				cufValuesSupport.resetCUFValues(table);			
+			});
+			
+		});
+
 		
 	});
 

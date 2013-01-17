@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -37,6 +38,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -72,6 +75,8 @@ import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.web.internal.controller.testcase.ActionStepFormModel.ActionStepFormModelValidator;
+import org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.TestCaseFormModelValidator;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -159,6 +164,13 @@ public class TestCaseModificationController {
 	@ServiceReference
 	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
 		this.testCaseModificationService = testCaseModificationService;
+	}
+	
+	@InitBinder("add-test-step")
+	public void addTestCaseBinder(WebDataBinder binder){
+		ActionStepFormModelValidator validator = new ActionStepFormModelValidator();
+		validator.setMessageSource(internationalizationHelper);
+		binder.setValidator(validator);
 	}
 	
 
@@ -251,14 +263,20 @@ public class TestCaseModificationController {
 
 	@RequestMapping(value = "/steps/add", method = RequestMethod.POST, params = { "action", "expectedResult" })
 	@ResponseBody
-	public void addActionTestStep(@ModelAttribute("add-test-step") @Valid ActionTestStep step,
+	public void addActionTestStep(@Valid @ModelAttribute("add-test-step") ActionStepFormModel stepModel,
 			@PathVariable long testCaseId) {
 
-		testCaseModificationService.addActionTestStep(testCaseId, step);
+		ActionTestStep step = stepModel.getActionTestStep();
+		
+		Map<Long, String> customFieldValues = stepModel.getCustomFields();
+		
+		testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues);
 
 		LOGGER.trace(TEST_CASE_ + testCaseId + ": step added, action : " + step.getAction() + ", expected result : "
 				+ step.getExpectedResult());
 	}
+	
+	
 
 	@RequestMapping(value = "/steps/paste", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })
 	@ResponseBody

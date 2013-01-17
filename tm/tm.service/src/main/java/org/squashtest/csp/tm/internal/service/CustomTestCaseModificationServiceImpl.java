@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -34,6 +35,8 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.tm.domain.DuplicateNameException;
+import org.squashtest.csp.tm.domain.customfield.BoundEntity;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
@@ -49,6 +52,7 @@ import org.squashtest.csp.tm.internal.repository.ActionTestStepDao;
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao;
 import org.squashtest.csp.tm.internal.repository.TestCaseDao;
 import org.squashtest.csp.tm.internal.repository.TestStepDao;
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.csp.tm.service.CallStepManagerService;
 import org.squashtest.csp.tm.service.CustomTestCaseModificationService;
@@ -97,6 +101,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	
 	@Inject
 	private InsecureTestAutomationManagementService taService;
+	
+	@Inject
+	protected PrivateCustomFieldValueService customFieldValuesService;
 
 	/* *************** TestCase section ***************************** */
 
@@ -131,10 +138,20 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		testStepDao.persist(newTestStep);
 		// will throw a nasty NullPointerException if the parent test case can't be found
 		parentTestCase.addStep(newTestStep);
-
+		
+		customFieldValuesService.createAllCustomFieldValues(newTestStep);
 		return newTestStep;
 	}
 
+	@Override
+	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	public TestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, String> customFieldValues) {
+		
+		TestStep step = addActionTestStep(parentTestCaseId, newTestStep);
+		initCustomFieldValues(step, customFieldValues);
+		return step;
+	}
+	
 	@Override
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.csp.tm.domain.testcase.TestStep' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void updateTestStepAction(long testStepId, String newAction) {
@@ -222,43 +239,36 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void pasteCopiedTestStep(long testCaseId, long idToCopyAfter, long copiedTestStepId) {
-		TestStep original = testStepDao.findById(copiedTestStepId);
-		// FIXME il faut vérifier un éventuel cycle ! // pour l'instant vérifié au niveau du controller
-		TestStep copyStep = original.createCopy();
-
-		testStepDao.persist(copyStep);
-
-		TestCase testCase = testCaseDao.findAndInit(testCaseId);
-		int index;
-
-		TestStep stepToCopyAfter = testStepDao.findById(idToCopyAfter);
-		index = testCase.getSteps().indexOf(stepToCopyAfter) + 1;
-
-		testCase.addStep(index, copyStep);
-
-		if (!testCase.getSteps().contains(original)) {
-			updateImportanceIfCallStep(testCase, copyStep);
-		}
-
+		Integer position = testStepDao.findPositionOfStep(idToCopyAfter) + 1;
+		pasteTestStepAtPosition(testCaseId, copiedTestStepId, position);
 	}
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId) {
+		pasteTestStepAtPosition(testCaseId, copiedTestStepId, null);		
+
+	}
+
+	// FIXME il faut vérifier un éventuel cycle ! // pour l'instant vérifié au niveau du controller
+	private void pasteTestStepAtPosition(long testCaseId, long copiedTestStepId, Integer position){
 		TestStep original = testStepDao.findById(copiedTestStepId);
-		// FIXME il faut vérifier un éventuel cycle ! // pour l'instant vérifié au niveau du controller
 		TestStep copyStep = original.createCopy();
 
 		testStepDao.persist(copyStep);
+		customFieldValuesService.copyCustomFieldValues(original, copyStep);
 
-		TestCase testCase = testCaseDao.findAndInit(testCaseId);
-
-		testCase.addStep(copyStep);
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		if (position!=null){
+			testCase.addStep(position, copyStep);
+		}
+		else{
+			testCase.addStep(copyStep);
+		}
 
 		if (!testCase.getSteps().contains(original)) {
 			updateImportanceIfCallStep(testCase, copyStep);
-		}
-
+		}		
 	}
 
 	private void updateImportanceIfCallStep(TestCase parentTestCase, TestStep copyStep) {
@@ -364,5 +374,24 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		testCase.removeAutomatedScript();
 		
+	}
+	
+	//initialCustomFieldValues maps the id of a CustomField to the value of the corresponding CustomFieldValues for that BoundEntity.
+	//read it again until it makes sense.
+	//it assumes that the CustomFieldValues instances already exists.
+	protected void initCustomFieldValues(BoundEntity entity, Map<Long, String> initialCustomFieldValues){
+		
+		List<CustomFieldValue> persistentValues = customFieldValuesService.findAllCustomFieldValues(entity);
+		
+		for (CustomFieldValue value : persistentValues){
+			Long customFieldId = value.getCustomField()
+									  .getId();
+			
+			if (initialCustomFieldValues.containsKey(customFieldId)){
+				String newValue = initialCustomFieldValues.get(customFieldId);
+				value.setValue(newValue);
+			}
+			
+		}
 	}
 }

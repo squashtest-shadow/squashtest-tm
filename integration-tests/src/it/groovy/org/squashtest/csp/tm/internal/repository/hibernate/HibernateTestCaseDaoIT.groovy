@@ -59,14 +59,6 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		ListAssertions.declareIdsEqual() 
 	}
 	
-	@DataSet("HibernateTestCaseDaoIT.should find filtered steps by test case id.xml")
-	def "should load a step with its test case"() {
-		when :
-			def st = sessionFactory.getCurrentSession().get(ActionTestStep.class, 200l)
-			
-		then :
-			st.testCase.id == 10l
-	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find filtered steps by test case id.xml")
 	def "should find filtered steps by test case id"() {

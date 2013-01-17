@@ -22,8 +22,11 @@ package org.squashtest.csp.tm.service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
@@ -41,6 +44,17 @@ public interface CustomTestCaseModificationService extends TestCaseFinder {
 	void rename(long testCaseId, String newName);
 
 	TestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep);
+	
+	/**
+	 * Adds an action test step to a test case, and its initial custom field values. 
+	 * The initial custom field values are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
+	 * Read that last sentence again. 
+	 * 
+	 * @param libraryId
+	 * @param testCase
+	 * @param customFieldValues
+	 */
+	TestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, String> customFieldValues);
 
 	void updateTestStepAction(long testStepId, String newAction);
 
