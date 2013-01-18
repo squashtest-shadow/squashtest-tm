@@ -162,10 +162,9 @@ $(function(){
 			</c:if>
 			$('.error-message').text("");
 			<c:if test="${not empty bindableEntity}">
-				var dialog =  $('#add-${ resourceName }-dialog');
-				var table = dialog.find('table.add-node-attributes')
-				var cufValuesSupport = dialog.data('cuf-values-support');
-				cufValuesSupport.resetCUFValues(table);
+			var dialog =  $('#add-${ resourceName }-dialog')
+						  .data('cuf-values-support')
+						  .reset();
 			</c:if>
 		});
 	}
@@ -206,11 +205,9 @@ $(function(){
 		</c:choose>
 		
 		<c:if test="${not empty bindableEntity}">
-		var dialog =  $('#add-${ resourceName }-dialog');
-		var table = dialog.find('table.add-node-attributes');
-	
-		var cufValuesSupport = dialog.data('cuf-values-support');
-		var cufParams = cufValuesSupport.readCUFValues(table);
+		
+		var dialog =  $('#add-${ resourceName }-dialog');	
+		var cufParams = dialog.data('cuf-values-support').readValues();
 		
 		$.extend(params, cufParams);
 		
@@ -239,20 +236,19 @@ $(function(){
 		<c:if test="${not empty bindableEntity}">
 		
 		require(['jquery', 'custom-field-values'] , function($,cufValuesManager){	
-			
 
 			var dialog = $("#add-${ resourceName }-dialog");			
 			var table = dialog.find('table.add-node-attributes');
-			var cufValuesSupport = cufValuesManager.getNodeCreationDialogCUFValuesSupport();			
+			var cufValuesCreator = cufValuesManager.newCUFValuesCreator({table : table});			
 		
 			dialog.on("dialogopen", function(){						
 				var projectId = $("#tree").jstree('get_selected').getProjectId();
 				var bindingsUrl = "${customFieldBindings}?projectId="+projectId+"&bindableEntity=${bindableEntity}&optional=false";
 						
-				cufValuesSupport.loadCUFValuesPanel({getURL : bindingsUrl, table : table});
+				cufValuesCreator.loadPanel(bindingsUrl);
 			});
 			
-			dialog.data('cuf-values-support', cufValuesSupport);			
+			dialog.data('cuf-values-support', cufValuesCreator);			
 			
 		});
 

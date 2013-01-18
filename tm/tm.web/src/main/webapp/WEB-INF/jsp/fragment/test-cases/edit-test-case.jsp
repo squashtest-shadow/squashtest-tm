@@ -543,6 +543,11 @@ $(function() {
 		<pop:cancel-button />
 	</jsp:attribute>
 		<jsp:body>
+		
+		<table id="add-test-step-custom-fields">
+			<!--  populated using ajax -->
+		</table>
+		
 		<div class="centered" style="text-align: center; margin-bottom: 2em;">
 			<label style="font-weight: bold;" for="add-test-step-action"><f:message
 						key="label.Actions" />
@@ -556,10 +561,6 @@ $(function() {
 				</label>
 			<textarea id="add-test-step-result"></textarea>
 		</div>
-		<table id="add-test-step-custom-fields">
-			<!--  populated using ajax -->
-		</table>
-
 	</jsp:body>
 	</comp:popup>
 	<script>
@@ -577,23 +578,19 @@ function addTestStepSuccessAnother(){
 	CKEDITOR.instances["add-test-step-result"].setData('');
 	
 	var dialog = $("#add-test-step-dialog");
-	var cufSupport = dialog.data('cuf-values-support');
-	var table = $("#add-test-step-custom-fields");
-	cufSupport.resetCUFValues(table);
+	dialog.data('cuf-values-support').reset();
 	
 	refreshSteps();
 }
 
 function readAddStepParams(){
 	
-	var dialog = $("#add-test-step-dialog");
-	var cufSupport = dialog.data('cuf-values-support');
-	var table = $("#add-test-step-custom-fields");
+	var cufSupport = $("#add-test-step-dialog").data('cuf-values-support');
 	
 	var params = {};
 	params.action = $("#add-test-step-action").val();
 	params.expectedResult = $("#add-test-step-result").val();	
-	$.extend(params,cufSupport.readCUFValues(table));
+	$.extend(params,cufSupport.readValues());
 	
 	return params;
 	
@@ -1167,12 +1164,12 @@ function readAddStepParams(){
 		
 		require(['jquery', 'custom-field-values'], function($,cufValuesManager){
 			
-			var cufValuesSupport = cufValuesManager.getNodeCreationDialogCUFValuesSupport();
-			cufValuesSupport.loadCUFValuesPanel({getURL : bindingsUrl, table : table});		
+			var cufValuesSupport = cufValuesManager.newCUFValuesCreator({url : bindingsUrl, table : table});
+			cufValuesSupport.reloadPanel();		
 			dialog.data('cuf-values-support', cufValuesSupport);
 			
 			dialog.on("dialogopen", function(){
-				cufValuesSupport.resetCUFValues(table);			
+				cufValuesSupport.reset();			
 			});
 			
 		});

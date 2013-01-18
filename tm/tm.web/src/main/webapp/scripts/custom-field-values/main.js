@@ -39,9 +39,9 @@ define(["jquery", "jqueryui", 'jquery.squash.jeditable', "jeditable.datepicker",
 		var conf ={
 			type : 'datepicker',
 			datepicker : $.extend(
-					{dateFormat : format},
-					$.datepicker.regional[locale]
-				)
+				{dateFormat : format},
+				$.datepicker.regional[locale]
+			)
 				
 		}
 		
@@ -49,39 +49,58 @@ define(["jquery", "jqueryui", 'jquery.squash.jeditable', "jeditable.datepicker",
 	
 	}
 	
-	var nodeCreationDialogCUFValuesSupport = {
+	
+	/*
+	 * settings :
+	 *  - url : the url where to fetch the creator panel
+	 *  - table : the <table/> element that (will) hold the elements, as a jQuery object (but not as a jQuery.DataTable)
+	 */
+	function CUFValuesCreator(settings) {
 			
-
-		/*
-		 * settings :
-		 *  - getURL : the url where to fetch the creator panel
-		 *  - table : the <table/> element that (will) hold the elements, as a jQuery object.
+		this.table = settings.table;
+		
+		if (this.table===undefined || !this.table.is('table')){
+			throw "illegal argument : the settings must provide an attribute 'table' referencing "+
+			  	  "a jquery table";
+		}
+		
+		this.url = settings.url;
+		
+		
+		/* loads the custom field values into the table using the given url
+		 * also stores that url for future reference
 		 */
-		loadCUFValuesPanel : function(settings){
-			var url = settings.getURL;
-			var table = $(settings.table);
-			
+		this.loadPanel = function(url){
 			var pleaseWait=$('<tr class="cuf-wait" style="line-height:10px;"><td colspan="2" class="waiting-loading"></td></tr>');
+			var table = this.table;
 			
 			table.find('.create-node-custom-field-row').remove(); //cleanup of the previous calls (if any)
-			table.append(pleaseWait);	
+			table.append(pleaseWait);
+			
 			var self = this;
 			
 			$.get(url, null, null, "html")
 			.success(function(html){
 				table.find(".cuf-wait").remove();
+				
 				//because it wouldn't work otherwise, we must strip the result of the license header
 				var fixed = $.trim(html.replace(/\<\!--[\s\S]*--\>/,''));
 				table.append(fixed);
-				self.initCUFValues(table);
-			});			
-		},
+				self.init(table);
+				
+				this.url = url;
+			});				
+		};
+
+		/* reload the custom field values using the last used url */
+		this.reloadPanel = function(){
+			this.loadPanel(this.url);		
+		};
 		
-		/*
-		 * settings :
-		 *  - table : the <table/> element that hold the elements, as a jQuery object.
-		 */			
-		initCUFValues : function(table){
+		
+		/* init the widgets used by the custom field values */
+		this.init = function(){
+			var table = this.table;
 			var bindings = table.find(".create-node-custom-field");
 			if (bindings.length>0){
 				bindings.each(function(){
@@ -95,15 +114,13 @@ define(["jquery", "jqueryui", 'jquery.squash.jeditable', "jeditable.datepicker",
 					}
 				});
 				
-				this.resetCUFValues(table);
+				this.reset(table);
 			}				
-		},
+		};
 	
-		/*
-		 * settings :
-		 *  - table : the <table/> element that hold the elements, as a jQuery object.
-		 */		
-		resetCUFValues : function(table){
+		/* reset the values of the custom field values. Will not reinitialise the widgets themselves. */
+		this.reset = function(){
+			var table = this.table;
 			var bindings = table.find(".create-node-custom-field");
 			if (bindings.length>0){
 				bindings.each(function(){
@@ -124,17 +141,16 @@ define(["jquery", "jqueryui", 'jquery.squash.jeditable', "jeditable.datepicker",
 					}
 				})
 			}		
-		},
+		};
 		
 		/*
-		 * settings :
-		 *  - table : the <table/> element that hold the elements, as a jQuery object.
-		 *  
 		 *  returns : a map of { id, value }, suitable for posting with the rest of the 
 		 *  		  entity model 
 		 */
-		readCUFValues : function(table){
+		this.readValues = function(){
 			var result = {};
+			var table = this.table;
+			
 			var cufs = table.find(".create-node-custom-field");
 			if (cufs.length>0){
 				cufs.each(function(){
@@ -159,10 +175,11 @@ define(["jquery", "jqueryui", 'jquery.squash.jeditable', "jeditable.datepicker",
 			
 	};
 	
+	
 	return {
 		
-		getNodeCreationDialogCUFValuesSupport : function(){
-			return nodeCreationDialogCUFValuesSupport;
+		newCUFValuesCreator : function(settings){
+			return new CUFValuesCreator(settings);
 		}
 		
 		
