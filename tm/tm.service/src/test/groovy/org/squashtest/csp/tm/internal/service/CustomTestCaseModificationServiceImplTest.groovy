@@ -30,6 +30,7 @@ import org.squashtest.csp.tm.internal.repository.RequirementDao
 import org.squashtest.csp.tm.internal.repository.RequirementVersionDao
 import org.squashtest.csp.tm.internal.repository.TestCaseDao
 import org.squashtest.csp.tm.internal.repository.TestStepDao
+import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
 import org.squashtest.csp.tm.service.CallStepManagerService
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -46,6 +47,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	GenericNodeManagementService testCaseManagementService = Mock()
 	CallStepManagerService callStepManagerService = Mock()
 	TestCaseNodeDeletionHandler deletionHandler = Mock()
+	PrivateCustomFieldValueService cufValuesService = Mock()
 
 	def setup() {
 		CollectionAssertions.declareContainsExactlyIds()
@@ -57,6 +59,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.requirementVersionDao = requirementVersionDao
 		service.callStepManagerService = callStepManagerService
 		service.deletionHandler = deletionHandler
+		service.customFieldValuesService = cufValuesService
 	}
 
 	def "should find test case and add a step"() {
@@ -122,9 +125,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and:
 		testCase.addStep(step1)
-		testCaseDao.findAndInit(0) >> testCase
+		testCaseDao.findById(0) >> testCase
 		testStepDao.findById(0) >> step1
 		testStepDao.findById(1) >> step2
+		testStepDao.findPositionOfStep(0) >> 1;
 
 
 		when:

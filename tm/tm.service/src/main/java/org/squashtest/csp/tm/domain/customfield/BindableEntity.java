@@ -41,6 +41,11 @@ public enum BindableEntity implements Internationalizable {
 		@Override
 		public Class<?> getReferencedClass() {
 			return TestCase.class;
+		};
+		
+		@Override
+		public RenderingLocation[] getValidRenderingLocations() {
+			return new RenderingLocation[0];
 		}
 	},
 	
@@ -48,6 +53,11 @@ public enum BindableEntity implements Internationalizable {
 		@Override
 		public Class<?> getReferencedClass() {
 			return TestStep.class;
+		};
+		
+		@Override
+		public RenderingLocation[] getValidRenderingLocations() {
+			return new RenderingLocation[0];
 		}
 	},
 	
@@ -55,24 +65,44 @@ public enum BindableEntity implements Internationalizable {
 		@Override
 		public Class<?> getReferencedClass() {
 			return Campaign.class;
-		} 
+		} ;
+		
+		@Override
+		public RenderingLocation[] getValidRenderingLocations() {
+			return new RenderingLocation[0];
+		}
 	},
 	ITERATION(){
 		@Override
 		public Class<?> getReferencedClass() {
 			return Iteration.class;
+		};
+		
+		@Override
+		public RenderingLocation[] getValidRenderingLocations() {
+			return new RenderingLocation[0];
 		}
 	},
 	TEST_SUITE(){
 		@Override
 		public Class<?> getReferencedClass() {
 			return TestSuite.class;
+		};
+		
+		@Override
+		public RenderingLocation[] getValidRenderingLocations() {
+			return new RenderingLocation[0];
 		}
 	},
 	REQUIREMENT_VERSION(){
 		@Override
 		public Class<?> getReferencedClass() {
 			return RequirementVersion.class;
+		};
+		
+		@Override
+		public RenderingLocation[] getValidRenderingLocations() {
+			return new RenderingLocation[0];
 		}
 	};
 	
@@ -87,4 +117,6 @@ public enum BindableEntity implements Internationalizable {
 	}
 	
 	public abstract Class<?> getReferencedClass();
+	
+	public abstract RenderingLocation[] getValidRenderingLocations();
 }

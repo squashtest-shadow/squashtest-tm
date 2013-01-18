@@ -21,15 +21,31 @@
 
 package org.squashtest.csp.tm.domain.customfield;
 
+import org.squashtest.tm.core.foundation.i18n.Internationalizable;
+
 /**
  * Enumerates where a custoim field should be displayed.
  * 
  * @author Gregory Fouquet
  * 
  */
-public enum RenderingLocation {
+public enum RenderingLocation implements Internationalizable {
 	LINK_TABLE,
 	TEST_PLAN, 
 	EXECUTION, 
-	SEARCH_CRITERIA
+	SEARCH_CRITERIA,
+	STEP_TABLE;
+	
+	
+
+	private static final String I18N_NAMESPACE = "label.customField.bindableEntity.";
+	
+	/**
+	 * @see org.squashtest.tm.core.foundation.i18n.Internationalizable#getI18nKey()
+	 */
+	@Override
+	public String getI18nKey() {
+		return I18N_NAMESPACE + name();
+	}
+	
 }

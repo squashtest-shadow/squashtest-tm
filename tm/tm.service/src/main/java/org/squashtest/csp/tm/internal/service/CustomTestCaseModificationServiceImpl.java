@@ -260,7 +260,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		if (position!=null){
-			testCase.addStep(position, copyStep);
+			try{
+				testCase.addStep(position, copyStep);
+			}catch(IndexOutOfBoundsException ex){
+				testCase.addStep(copyStep);
+			}
 		}
 		else{
 			testCase.addStep(copyStep);
