@@ -58,7 +58,8 @@ define (["require","./panel", "./table", "./popup"],function(require, Panel, Tab
 			oklabel : settings.oklabel,
 			cancellabel : settings.cancellabel,
 			deleteMessage : settings.tableDeleteMessage,
-			deleteTooltip : settings.tableDeleteTooltip
+			deleteTooltip : settings.tableDeleteTooltip,
+			renderingLocations : settings.tableRenderingLocations
 		};
 	}
 	

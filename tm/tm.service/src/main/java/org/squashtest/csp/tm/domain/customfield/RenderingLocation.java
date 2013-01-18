@@ -38,7 +38,7 @@ public enum RenderingLocation implements Internationalizable {
 	
 	
 
-	private static final String I18N_NAMESPACE = "label.customField.bindableEntity.";
+	private static final String I18N_NAMESPACE = "label.customField.renderingLocations.";
 	
 	/**
 	 * @see org.squashtest.tm.core.foundation.i18n.Internationalizable#getI18nKey()

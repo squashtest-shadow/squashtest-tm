@@ -21,6 +21,10 @@
 
 package org.squashtest.csp.tm.domain.customfield;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.squashtest.csp.tm.domain.campaign.Campaign;
 import org.squashtest.csp.tm.domain.campaign.Iteration;
 import org.squashtest.csp.tm.domain.campaign.TestSuite;
@@ -47,9 +51,11 @@ public enum BindableEntity implements Internationalizable {
 		public RenderingLocation[] getValidRenderingLocations() {
 			return new RenderingLocation[0];
 		}
+		
 	},
 	
 	TEST_STEP(){
+		
 		@Override
 		public Class<?> getReferencedClass() {
 			return TestStep.class;
@@ -57,7 +63,7 @@ public enum BindableEntity implements Internationalizable {
 		
 		@Override
 		public RenderingLocation[] getValidRenderingLocations() {
-			return new RenderingLocation[0];
+			return new RenderingLocation[]{RenderingLocation.STEP_TABLE};
 		}
 	},
 	
@@ -71,6 +77,7 @@ public enum BindableEntity implements Internationalizable {
 		public RenderingLocation[] getValidRenderingLocations() {
 			return new RenderingLocation[0];
 		}
+
 	},
 	ITERATION(){
 		@Override
@@ -89,10 +96,12 @@ public enum BindableEntity implements Internationalizable {
 			return TestSuite.class;
 		};
 		
+		
 		@Override
 		public RenderingLocation[] getValidRenderingLocations() {
 			return new RenderingLocation[0];
 		}
+		
 	},
 	REQUIREMENT_VERSION(){
 		@Override
@@ -104,6 +113,7 @@ public enum BindableEntity implements Internationalizable {
 		public RenderingLocation[] getValidRenderingLocations() {
 			return new RenderingLocation[0];
 		}
+		
 	};
 	
 	private static final String I18N_NAMESPACE = "label.customField.bindableEntity.";

@@ -29,26 +29,40 @@
  * 		deleteUrl : the url where to send DELETE request,
  * 		deferLoading : the iDeferLoading (native),
  * 		oklabel : text for the ok button,
- * 		cancellabel : text for the cancel button
+ * 		cancellabel : text for the cancel button,
+ * 		renderingLocations : an array of RenderingLocation. These are the ones supported by the BindableEntity this table is treating.  
  * }
  */
 
 define(["jquery", "jquery.squash.datatables"], function($){
 
 	return function(settings){
-				
+		
+		//initialize the column definitions
+		var aoColumnDefs = [
+			{'bSortable' : false, 'bVisible' : false, 'aTargets' : [0], 'mDataProp' : 'id'},
+			{'bSortable' : false, 'bVisible' : true,  'aTargets' : [1], 'mDataProp' : 'position', 'sWidth' : '2em', 'sClass' : 'centered ui-state-default drag-handle select-handle'},
+			{'bSortable' : false, 'bVisible' : true,  'aTargets' : [2], 'mDataProp' : 'customField.name'}			
+		];
+		
+		var i = 0,
+			array = settings.renderingLocations,
+			arrayLength = array.length;
+		
+		for (i=0;i<arrayLength;i++){
+			var columnDef = { 'bSortable' : false, 'bVisible' : true, 'aTargets' : [3+i], 'mDataProp' : 'renderingLocations.'+array[i], 'sWidth' : '15em', 'sClass' : 'centered custom-field-location'}
+			aoColumnDefs.push(columnDef);
+		}
+		
+		aoColumnDefs.push({'bSortable' : false, 'bVisible' : true,  'aTargets' : [3+arrayLength], 'mDataProp' : null, 'sWidth' : '2em', 'sClass' : 'delete-button centered'});	
+		
 		var tableConf = {
 			oLanguage :{
 				sUrl : settings.languageUrl
 			},
 			sAjaxSource : settings.getUrl,
 			iDeferLoading : settings.deferLoading,
-			aoColumnDefs :[
-				{'bSortable' : false, 'bVisible' : false, 'aTargets' : [0], 'mDataProp' : 'id'},
-				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [1], 'mDataProp' : 'position', 'sWidth' : '2em', 'sClass' : 'centered ui-state-default drag-handle select-handle'},
-				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [2], 'mDataProp' : 'customField.name'},		
-				{'bSortable' : false, 'bVisible' : true,  'aTargets' : [3], 'mDataProp' : null, 'sWidth' : '2em', 'sClass' : 'delete-button centered'}			
-			]		
+			aoColumnDefs : aoColumnDefs
 		};
 	
 		var squashConf = {
