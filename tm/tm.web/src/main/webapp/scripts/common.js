@@ -22,12 +22,7 @@ requirejs.config({
 	
   packages: [
     "custom-field-editor",
-    {
-    	main : "main",
-    	location : "http://localhost/scripts/scripts/custom-field-binding",
-    	name : "custom-field-binding"
-    },
-    //"custom-field-binding",
+    "custom-field-binding",
     "custom-field-values",
     "execution-processing", 
     "projects-manager", 
