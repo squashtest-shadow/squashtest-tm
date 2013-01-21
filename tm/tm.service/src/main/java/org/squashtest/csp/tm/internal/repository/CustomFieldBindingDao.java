@@ -29,6 +29,8 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao{
 	
 
+	CustomFieldBinding findById(long bindingId);
+	
 	List<CustomFieldBinding> findAllForGenericProject(long projectId);
 	
 	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity);

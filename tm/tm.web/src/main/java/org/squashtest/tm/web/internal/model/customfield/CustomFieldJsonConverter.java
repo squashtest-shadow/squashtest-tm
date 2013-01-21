@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.customfield;
 
+import java.util.Collection;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -33,6 +34,7 @@ import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.customfield.InputType;
+import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
 import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
 
 @Component
@@ -55,13 +57,14 @@ public class CustomFieldJsonConverter {
 		CustomFieldBindingModel bindingModel = new CustomFieldBindingModel();
 
 		BindableEntityModel entityModel = toJson(binding.getBoundEntity());
-
+		RenderingLocationModel[] locationArrayModel = toJson(binding.getRenderingLocations());
 		CustomFieldModel fieldModel = toJson(binding.getCustomField());
 
 		bindingModel.setId(binding.getId());
 		bindingModel.setProjectId(binding.getBoundProject().getId());
 		bindingModel.setBoundEntity(entityModel);
 		bindingModel.setCustomField(fieldModel);
+		bindingModel.setRenderingLocations(locationArrayModel);
 		bindingModel.setPosition(binding.getPosition());
 
 		return bindingModel;
@@ -121,6 +124,26 @@ public class CustomFieldJsonConverter {
 
 		return model;
 
+	}
+	
+	public RenderingLocationModel toJson(RenderingLocation location){
+		
+		RenderingLocationModel model = new RenderingLocationModel();
+		
+		model.setEnumName(location.toString());
+		model.setFriendlyName(getMessage(location.getI18nKey()));
+		
+		return model;
+		
+	}
+	
+	public RenderingLocationModel[] toJson(Collection<RenderingLocation> values){
+		RenderingLocationModel[] modelArray = new RenderingLocationModel[values.size()];
+		int i=0;
+		for (RenderingLocation location : values){
+			modelArray[i++]=toJson(location);
+		}
+		return modelArray;
 	}
 
 	private String getMessage(String key) {

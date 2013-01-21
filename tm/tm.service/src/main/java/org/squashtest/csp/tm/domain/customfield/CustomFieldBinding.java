@@ -119,6 +119,14 @@ public class CustomFieldBinding {
 	public void setRenderingLocations(Set<RenderingLocation> renderingLocations) {
 		this.renderingLocations = renderingLocations;
 	}
+	
+	public void addRenderingLocation(RenderingLocation location){
+		this.renderingLocations.add(location);
+	}
+	
+	public void removeRenderingLocation(RenderingLocation location){
+		this.renderingLocations.remove(location);
+	}
 
 	public int getPosition() {
 		return position;

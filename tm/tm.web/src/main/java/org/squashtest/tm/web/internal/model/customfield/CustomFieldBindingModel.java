@@ -32,6 +32,8 @@ public class CustomFieldBindingModel {
 	
 	private CustomFieldModel customField;
 	
+	private RenderingLocationModel[] renderingLocations;
+	
 	private int position;
 
 	public long getId() {
@@ -73,6 +75,14 @@ public class CustomFieldBindingModel {
 
 	public void setPosition(int position) {
 		this.position = position;
+	}
+
+	public RenderingLocationModel[] getRenderingLocations() {
+		return renderingLocations;
+	}
+
+	public void setRenderingLocations(RenderingLocationModel[] renderingLocations) {
+		this.renderingLocations = renderingLocations;
 	}
 
 }

@@ -34,6 +34,7 @@ import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding.PositionAwareBindingList;
 import org.squashtest.csp.tm.domain.project.GenericProject;
 import org.squashtest.csp.tm.domain.project.Project;
@@ -117,6 +118,22 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 		_createBinding(projectId, entity, customFieldId, newBinding);
 		customValueService.cascadeCustomFieldValuesCreation(newBinding);
 	}
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
+	public void addRenderingLocation(long bindingId, RenderingLocation location) {
+		CustomFieldBinding binding = customFieldBindingDao.findById(bindingId);
+		binding.addRenderingLocation(location);
+	}
+	
+	@Override
+	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
+	public void removeRenderingLocation(long bindingId,
+			RenderingLocation location) {
+		CustomFieldBinding binding = customFieldBindingDao.findById(bindingId);
+		binding.removeRenderingLocation(location);
+	}
+	
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")

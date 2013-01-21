@@ -213,7 +213,7 @@
 							<td th:text="${binding.customField.name}">bob</td>
 							
 							<td th:remove="tag" th:each="location : ${availableLocations}">
-							<td><input type="checkbox" th:attr="data-location=${location.toString()}" th:checked="${#sets.contains(binding.renderingLocations, location)}"/></td>		
+							<td th:text="${#sets.contains(binding.renderingLocations, location)}">false</td>	
 							</td>
 							
 							<td> </td>
@@ -223,14 +223,14 @@
 							<td>20</td>
 							<td>2</td>
 							<td>robert</td>
-							<td><input type="checkbox" checked="checked"/></td>
+							<td>true</td>
 							<td> </td>		
 						</tr>
 						<tr th:remove="all">
 							<td>30</td>
 							<td>3</td>
 							<td>mike</td>
-							<td><input type="checkbox"/></td>
+							<td>false</td>
 							<td> </td>				
 						</tr>
 					</tbody>

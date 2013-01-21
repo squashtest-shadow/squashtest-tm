@@ -47,6 +47,10 @@ define (["require","./panel", "./table", "./popup"],function(require, Panel, Tab
 		return settings.baseURL;
 	}
 	
+	function getTableEditURL(settings){
+		return settings.baseURL;
+	}
+	
 	function getTableConf(settings){
 		return {
 			selector : settings.mainSelector+" .cuf-binding-table",
@@ -54,6 +58,7 @@ define (["require","./panel", "./table", "./popup"],function(require, Panel, Tab
 			getUrl : getTableGetURL(settings),
 			deleteUrl : getTableDeleteURL(settings),
 			moveUrl : getTableMoveURL(settings),
+			editUrl : getTableEditURL(settings),
 			deferLoading : settings.tableDeferLoading,
 			oklabel : settings.oklabel,
 			cancellabel : settings.cancellabel,

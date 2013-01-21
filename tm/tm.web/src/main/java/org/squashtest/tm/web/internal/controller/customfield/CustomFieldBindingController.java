@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
 import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldBindingModel;
@@ -155,6 +156,19 @@ public class CustomFieldBindingController {
 		}
 	}
 	
+	 @RequestMapping(value="/{bindingId}/renderingLocations/{location}", method=RequestMethod.PUT)
+	 @ResponseBody
+	 public void addRenderingLocation(@PathVariable Long bindingId, @PathVariable RenderingLocation location){
+		 service.addRenderingLocation(bindingId, location);
+	 }
+	 
+	 @RequestMapping(value="/{bindingId}/renderingLocations/{location}", method=RequestMethod.DELETE)
+	 @ResponseBody
+	 public void removeRenderingLocation(@PathVariable Long bindingId, @PathVariable RenderingLocation location){
+		 service.removeRenderingLocation(bindingId, location);
+	 }
+	 
+	  
 	
 	
 	// ********************** private stuffs *********************

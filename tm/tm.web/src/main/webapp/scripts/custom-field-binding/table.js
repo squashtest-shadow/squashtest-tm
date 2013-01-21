@@ -27,6 +27,8 @@
  * 		languageUrl : the url where to fetch the localization conf object,
  * 		getUrl : the ajaxSource (native),
  * 		deleteUrl : the url where to send DELETE request,
+ * 		moveUrl : the url where to notify that rows have been reordered
+ * 		editUrl : the url where to put or delete that a location has changed 
  * 		deferLoading : the iDeferLoading (native),
  * 		oklabel : text for the ok button,
  * 		cancellabel : text for the cancel button,
@@ -38,31 +40,122 @@ define(["jquery", "jquery.squash.datatables"], function($){
 
 	return function(settings){
 		
-		//initialize the column definitions
+		// ******************** hook, callback etc definition **********************************
+		
+		/*
+		 * The data format for RenderingLocation are inconsistent between the datatable and what the server returns. Indeed, for each row : 
+		 * - the datatable expects the renderingLocations to be a map, mapping a location to a boolean (true | false),
+		 * - while the server actually returns an array, containing only the locations used (and disabled locations aren't returned)
+		 * 
+		 * To cope with that we must customize the way the datatable and the server talk and make the data compatible. 
+		 */
+		
+		var fnServerData = function(sSource, aoData, fnCallback, oSettings){
+			oSettings.jqXHR = $.ajax({
+				'dataType' : 'json',
+				'type' : 'GET',
+				'url' : sSource,
+				'data' : aoData,
+				'success' : function(allData,textStatus,jqXHR){
+					var availableLocations = settings.renderingLocations; 				
+					var count=0,
+						dataLength = allData.aaData.length;
+					
+					for (count=0;count<dataLength;count++){
+						var data = allData.aaData[count];
+						
+						var actualLocations = $.map(data.renderingLocations, function(elt){return elt.enumName});		// from the server
+						
+						var result = {}, i=0, max=renderingLocations.length;
+						
+						for (i=0;i<max;i++){
+							var possibleLocation = renderingLocations[i];						
+							result[possibleLocation] = ( $.inArray( possibleLocation, actualLocations ) !== -1) ? "true" : "false";		
+						}
+						
+						data.renderingLocations = result;
+					}
+					
+					fnCallback(allData, textStatus, jqXHR);				// now we can invoke the original callback
+				}
+			});
+		};
+		
+		var fnDrawCallback = function(oSettings){
+			var table = this;
+			var cells = table.find('td.custom-field-location');
+			
+			var clickHandler = function(){
+				var checkbx = $(this);
+				var row = checkbx.parent('td').parent('tr').get(0);
+				
+				var locationName = checkbx.data('location-name'),
+					checked = checkbx.prop('checked');
+				
+				var id=table.fnGetData(row)['id'];
+				
+				$.ajax({
+					url : settings.editUrl+"/"+id+"/renderingLocations/"+locationName,
+					type : (checked) ? 'PUT' : 'DELETE'
+				})			
+			};
+			
+			cells.each(function(){
+				
+				var cell=$(this);
+				var row = cell.parent('tr').get(0);
+				var colPosition = table.fnGetPosition(this)[2];
+				var locationName = settings.renderingLocations[colPosition-3];	//see the definition of aoColumnDefs regarding the offset (-3)
+				
+				
+				var checkbx = $('<input type="checkbox" />');
+				checkbx.data('location-name', locationName),
+				checkbx.prop('checked', (table.fnGetData(this) == "true") );
+				checkbx.click(clickHandler);
+				
+				cell.empty().append(checkbx);
+			});
+				
+		};
+		
+		
+		//**************************** column definition *******************************
+		
 		var aoColumnDefs = [
 			{'bSortable' : false, 'bVisible' : false, 'aTargets' : [0], 'mDataProp' : 'id'},
 			{'bSortable' : false, 'bVisible' : true,  'aTargets' : [1], 'mDataProp' : 'position', 'sWidth' : '2em', 'sClass' : 'centered ui-state-default drag-handle select-handle'},
 			{'bSortable' : false, 'bVisible' : true,  'aTargets' : [2], 'mDataProp' : 'customField.name'}			
 		];
 		
+
 		var i = 0,
-			array = settings.renderingLocations,
-			arrayLength = array.length;
+			renderingLocations = settings.renderingLocations,
+			arrayLength = renderingLocations.length;
 		
 		for (i=0;i<arrayLength;i++){
-			var columnDef = { 'bSortable' : false, 'bVisible' : true, 'aTargets' : [3+i], 'mDataProp' : 'renderingLocations.'+array[i], 'sWidth' : '15em', 'sClass' : 'centered custom-field-location'}
+			var columnDef = { 'bSortable' : false, 
+							  'bVisible' : true, 
+							  'aTargets' : [3+i], 
+							  'mDataProp' : 'renderingLocations.'+renderingLocations[i], 
+							  'sWidth' : '15em', 
+							  'sClass' : 'centered custom-field-location'
+							}
 			aoColumnDefs.push(columnDef);
 		}
 		
 		aoColumnDefs.push({'bSortable' : false, 'bVisible' : true,  'aTargets' : [3+arrayLength], 'mDataProp' : null, 'sWidth' : '2em', 'sClass' : 'delete-button centered'});	
 		
+
+		//**************************** rest of the table initialization ******************************
 		var tableConf = {
 			oLanguage :{
 				sUrl : settings.languageUrl
 			},
 			sAjaxSource : settings.getUrl,
 			iDeferLoading : settings.deferLoading,
-			aoColumnDefs : aoColumnDefs
+			aoColumnDefs : aoColumnDefs,
+			fnServerData : fnServerData,
+			fnDrawCallback : fnDrawCallback
 		};
 	
 		var squashConf = {
@@ -82,7 +175,7 @@ define(["jquery", "jquery.squash.datatables"], function($){
 				popupmessage : settings.deleteMessage,
 				tooltip : settings.deleteTooltip,
 				success : function(){
-					table.refresh();
+					$(settings.selector).squashTable().refresh();
 				}
 			},
 
@@ -100,7 +193,7 @@ define(["jquery", "jquery.squash.datatables"], function($){
 						data : {'newPosition' : moveObject.newIndex}
 					})
 					.success(function(){
-						table.refresh();
+						$(settings.selector).squashTable().refresh();
 					});
 				}
 			}

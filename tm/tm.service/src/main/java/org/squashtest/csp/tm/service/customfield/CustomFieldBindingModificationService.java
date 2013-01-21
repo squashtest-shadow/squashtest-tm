@@ -25,6 +25,7 @@ import java.util.List;
 import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
 import org.squashtest.csp.tm.domain.project.Project;
 import org.squashtest.csp.tm.domain.project.ProjectTemplate;
 
@@ -49,6 +50,23 @@ public interface CustomFieldBindingModificationService extends CustomFieldBindin
 	 * @param newBinding
 	 */
 	void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId, CustomFieldBinding newBinding);
+	
+	
+	/**
+	 * Add a rendering location to a custom field binding
+	 * 
+	 * @param bindingId
+	 * @param location
+	 */
+	void addRenderingLocation(long bindingId, RenderingLocation location);
+	
+	/**
+	 * Remove the rendering location from a custom field binding
+	 * 
+	 * @param bindingId
+	 * @param location
+	 */
+	void removeRenderingLocation(long bindingId, RenderingLocation location);
 	
 	
 	/**

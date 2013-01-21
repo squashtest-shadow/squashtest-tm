@@ -845,7 +845,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		 */
 
 		if (arguments.length == 0) {
-			return $.fn.squashTable.instances[this.get(0)];
+			return $.fn.squashTable.instances[this.selector];
 		}
 
 		/*
@@ -930,7 +930,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 		/* **************** store the new instance ***************** */
 
-		$.fn.squashTable.instances[this.get(0)] = this;
+		$.fn.squashTable.instances[this.selector] = this;
 		
 		/* ************* now call the base plugin ***************** */
 		
