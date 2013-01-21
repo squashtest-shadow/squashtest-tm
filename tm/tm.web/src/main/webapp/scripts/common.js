@@ -27,7 +27,13 @@ requirejs.config({
     "execution-processing", 
     "projects-manager", 
     "project",
-    "contextual-content-handlers"
+    "contextual-content-handlers",
+    //"test-cases-management",
+    {
+    	main : "main",
+    	name : "test-cases-management",
+    	location : "http://localhost/scripts/scripts/test-cases-management"
+    }
 	],
 
 	/*
@@ -76,6 +82,7 @@ requirejs.config({
 		"squash.cssloader": "squash/squash.cssloader",
 		"squash.translator" : "squash/squash.translator",
 		"squash.resizer" : "squash/squashtm.tree-page-resizer",
+		"squash.table-collapser" : "http://localhost/scripts/scripts/squashtest/jquery.squash.table-collapser"
 	},
 	shim: {
 		"ckeditor": {

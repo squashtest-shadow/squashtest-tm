@@ -152,74 +152,10 @@ $(function() {
 		$("#delete-step-dialog").data('opener', this).dialog('open');
 	});
 	$( "add-test-step-button" ).die('click');
-	
-	bindCollapser();
+
 });
-	<%--COLLAPSER --%>
-	function loadCollapserScript(){
-		return $.ajax({
-			cache : true,
-			type : 'GET',
-			url : "${collapserScriptUrl}",
-			dataType : 'script'
-		});
-	}
-	var collapser ; 
-	function bindCollapser(){
-		var collapseButton = $('#collapse-steps-button');
-		var table = $('#test-steps-table');
-		var columns = [2,3];
-		loadCollapserScript().done(function(){ 
-			collapser = new TableCollapser(table, columns); 
-			collapser.onClose.addHandler(collapseCloseHandle);
-			collapser.onOpen.addHandler(collapseOpenHandle);	
-			//collapser.bindButtonToTable(collapseButton);
-			collapseButton.click(function(){
-				if(collapser.isOpen){
-					if(oneCellIsInEditingState()){
-						$.squash.openMessage("<f:message key='popup.title.info' />", "<f:message key='message.CloseEditingFormsBeforeCollapse' />");
-					}else{
-						collapser.closeAll();
-						decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomin");
-						$("#collapse-steps-button").attr('title', "<f:message key='test-case.step.button.expand.label' />");
-						$("#collapse-steps-button").button({label:"<f:message key='test-case.step.button.expand.label' />"});
-					}
-				}else{
-					collapser.openAll();
-					decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomout");
-					$("#collapse-steps-button").attr('title', "<f:message key='test-case.step.button.collapse.label' />");
-					$("#collapse-steps-button").button({label:"<f:message key='test-case.step.button.collapse.label' />"});
-				}
-			});
-		});
-	 }
-	function oneCellIsInEditingState(){
-		var collapsibleCells = collapser.collapsibleCells;
-		for(var k = 0; k < collapsibleCells.length ; k++){
-			if(collapsibleCells[k].editing){
-				return  true;
-			}
-		}		
-		return false;
-	}
-	function collapseCloseHandle(){
-		var collapsibleCells = $(collapser.collapsibleCells);
-		collapsibleCells.editable('disable');
-		collapsibleCells.removeClass('editable');
-		collapsibleCells.bind("click", openAllAndSetEditing);
-	}
-	function openAllAndSetEditing(eventObject){
-		collapser.openAll();
-		setTimeout(function() {
-			$(eventObject.target).click();
-		 }, 500);
-	}
-	function collapseOpenHandle(){
-		var collapsibleCells = $(collapser.collapsibleCells);
-		collapsibleCells.editable('enable');
-		collapsibleCells.addClass('editable');
-		collapsibleCells.unbind("click", openAllAndSetEditing);
-	}
+	
+
 	<%-- STEPS TABLE --%>	
 	function stepsTableRowCallback(row, data, displayIndex) {
 		try{
@@ -247,6 +183,7 @@ $(function() {
 		restoreTableSelection(this, getStepsTableRowId);
 		decorateAttachmentButtons($('.manage-attachment-button', this));
 		decorateEmptyAttachmentButtons($('.manage-attachment-button-empty', this));
+		var collapser = $("#test-steps-table").data('collapser');
 		if(collapser){
 			collapser.refreshTable();
 		}
@@ -1069,43 +1006,7 @@ function readAddStepParams(){
 			</jsp:attribute>
 			</comp:decorate-ajax-table>
 
-			<table id="test-steps-table">
-				<thead>
-					<tr>
-						<th>S</th>
-						<th>#</th>
-						<th>stepId(masked)</th>
-						<th><f:message key="table.column-header.has-attachment.label" />
-						</th>
-						<th><f:message
-								key="label.Actions" />
-						</th>
-						<th><f:message
-								key="label.ExpectedResults" />
-						</th>
-						<th>M</th>
-						<th>&nbsp;</th>
-						<th>nbAttach(masked)</th>
-						<th>stepNature(masked)</th>
-						<th>calledStepId(masked)</th>
-					</tr>
-				</thead>
-				<tbody>
-					<%-- Will be populated by ajax --%>
-				</tbody>
-			</table>
-
-			<div id="test-step-row-buttons" class="not-displayed">
-				<a id="delete-step-button" href="#" class="delete-step-button"><f:message
-						key="test-case.step.delete.label" />
-				</a> <a id="manage-attachment-button" href="#"
-					class="manage-attachment-button"><f:message
-						key="test-case.step.manage-attachment.label" />
-				</a> <a id="manage-attachment-button-empty" href="#"
-					class="manage-attachment-button-empty"><f:message
-						key="test-case.step.add-attachment.label" />
-				</a>
-			</div>
+			<aggr:decorate-test-steps-table />
 
 		</div>
 	</div>
