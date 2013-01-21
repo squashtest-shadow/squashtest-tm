@@ -69,7 +69,7 @@ define([ "jquery", "app/lnf/Forms" ], function($, Forms) {
 			inputName = fieldValidationError.objectName +"-"+inputName;
 		}
 		
-			$input = $("input[name='" + inputName + "']"),
+			$input = $("input[name='" + inputName + "'], textarea[name='"+ inputName +"']"),
 			input = Forms.input($input);
 		
 		input.setState("error", fieldValidationError.errorMessage);

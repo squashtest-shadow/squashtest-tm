@@ -40,10 +40,9 @@ import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
-public class ActionTestStep extends TestStep implements AttachmentHolder{
+public class ActionTestStep extends TestStep implements AttachmentHolder {
 	@Lob
 	@Basic(optional = false)
-	
 	private String action;
 
 	@Lob
@@ -57,13 +56,12 @@ public class ActionTestStep extends TestStep implements AttachmentHolder{
 		super();
 	}
 
-	public ActionTestStep(@NotBlank String action, String expectedResult) {
+	public ActionTestStep(String action, String expectedResult) {
 		super();
 		this.action = action;
 		this.expectedResult = expectedResult;
 	}
-	
-	@NotBlank
+
 	public void setAction(String action) {
 		this.action = action;
 	}
@@ -108,16 +106,15 @@ public class ActionTestStep extends TestStep implements AttachmentHolder{
 	}
 
 	@Override
-	public List<ExecutionStep> createExecutionSteps(){
+	public List<ExecutionStep> createExecutionSteps() {
 		List<ExecutionStep> returnList = new ArrayList<ExecutionStep>(1);
 		ExecutionStep exec = new ExecutionStep(this);
 		returnList.add(exec);
 		return returnList;
 	}
-	
-	public Set<Attachment>  getAllAttachments() {
+
+	public Set<Attachment> getAllAttachments() {
 		return attachmentList.getAllAttachments();
 	}
-	
 
 }
