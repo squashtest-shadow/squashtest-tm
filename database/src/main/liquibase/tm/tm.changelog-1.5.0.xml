@@ -62,5 +62,16 @@
   			;
   		</sql>
   	</changeSet>
+  	
+  	<changeSet id="tm-1.5.0.00-feat-1390.03" author="bsiri">
+  		<comment>adding cascade delete on the rendering locations when custom field bindings are removed (prune the orphans)</comment>
+  		
+  		<dropForeignKeyConstraint baseTableName="CUSTOM_FIELD_RENDERING_LOCATION" constraintName="fk_cfb_render_loc_cfb"/>
+  		
+  		<addForeignKeyConstraint constraintName="fk_cfb_render_loc_cfb" onDelete="CASCADE"
+  								 referencedTableName="CUSTOM_FIELD_BINDING"  referencedColumnNames="CFB_ID"
+  								baseTableName="CUSTOM_FIELD_RENDERING_LOCATION" baseColumnNames="CFB_ID"  />
+  		
+  	</changeSet>
 </databaseChangeLog>
  

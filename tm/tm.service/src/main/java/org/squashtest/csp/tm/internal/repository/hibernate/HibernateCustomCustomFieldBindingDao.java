@@ -41,6 +41,7 @@ public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<Cus
 		if (!bindingIds.isEmpty()){
 			
 			executeUpdateListQuery("CustomFieldBinding.removeCustomFieldBindings", new SetBindingIdsParameterCallback(bindingIds));
+			
 			List<NewBindingPosition> newPositions = recomputeBindingPositions();
 			updateBindingPositions(newPositions);
 			
