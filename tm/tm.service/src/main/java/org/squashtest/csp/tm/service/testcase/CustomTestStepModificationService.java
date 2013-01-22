@@ -18,27 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package org.squashtest.csp.tm.service.testcase;
 
-import java.util.List;
+import java.util.Map;
 
-import org.squashtest.csp.tm.domain.testcase.TestStep;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface TestStepDao extends EntityDao<TestStep>{
-
-	void removeById(long testStepId);
-
-	<STEP extends TestStep> void persist(STEP testStep);
-	
-	List<TestStep> findListById(List<Long> testStepIds);
+/**
+ * Methods non automatically generated for TestStep Modification
+ * @author mpagnon
+ *
+ */
+@Transactional
+public interface CustomTestStepModificationService  {
 	
 	/**
-	 * returns the position (ie index) of a step within the 
-	 * list of step of its test case 
+	 * Will update the TestStep of the given id with the given params.
+	 * If TestStep is a CallStep params "action" and "expectedResult" are ignored.
 	 * 
-	 * @param testStepId the id of the step
-	 * @return
+	 * @param testStepId
+	 * @param action
+	 * @param expectedResult
+	 * @param cufValues
+	 * 
 	 */
-	int findPositionOfStep(Long testStepId);
+	void updateTestStep(Long testStepId, String action, String expectedResult,
+			Map<Long, String> cufValues);
 
 }

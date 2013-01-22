@@ -35,31 +35,28 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
+import org.squashtest.csp.tm.domain.CompositeDomainException;
 import org.squashtest.csp.tm.domain.DomainException;
 
-
 @Component
-public class HandlerDomainExceptionResolver extends
-		AbstractHandlerExceptionResolver {
-	
+public class HandlerCompositeDomainExceptionResolver extends AbstractHandlerExceptionResolver {
+
 	@Inject
 	private MessageSource messageSource;
 
-	
-	public HandlerDomainExceptionResolver() {
+	public HandlerCompositeDomainExceptionResolver() {
 		super();
 	}
-	
 
 	@Override
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception ex) {
-		
+
 		if (exceptionIsHandled(ex) && clientAcceptsJson(request)) {
 			response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 
-			DomainException dex = (DomainException) ex; // NOSONAR Type was checked earlier
-			List<FieldValidationErrorModel> errors = buildFieldValidationErrors(dex, request.getLocale());
+			CompositeDomainException cdex = (CompositeDomainException) ex; // NOSONAR Type was checked earlier
+			List<FieldValidationErrorModel> errors = buildFieldValidationErrors(cdex, request.getLocale());
 
 			return new ModelAndView(new MappingJacksonJsonView(), "fieldValidationErrors", errors);
 		}
@@ -67,32 +64,31 @@ public class HandlerDomainExceptionResolver extends
 		return null;
 	}
 
-
-	private List<FieldValidationErrorModel> buildFieldValidationErrors(DomainException dex, Locale locale ) {
+	private List<FieldValidationErrorModel> buildFieldValidationErrors(CompositeDomainException cdex, Locale locale) {
 		List<FieldValidationErrorModel> ves = new ArrayList<FieldValidationErrorModel>();
-		String message = dex.getMessage();
-		if(!dex.getI18nKey().equals("")){
-			message = messageSource.getMessage(dex.getI18nKey(), dex.getI18nParams(), locale);
-		}
-		
-		ves.add(new FieldValidationErrorModel(dex.getObjectName(), dex.getField(), message));
+		for (DomainException dex : cdex.getExceptions()) {
+			String message = dex.getMessage();
+			if (!dex.getI18nKey().equals("")) {
+				message = messageSource.getMessage(dex.getI18nKey(), dex.getI18nParams(), locale);
+			}
 
+			ves.add(new FieldValidationErrorModel(dex.getObjectName(), dex.getField(), message));
+		}
 		return ves;
 	}
 
-	
 	private boolean exceptionIsHandled(Exception ex) {
-		return ex instanceof DomainException;
+		return ex instanceof CompositeDomainException;
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	private boolean clientAcceptsJson(HttpServletRequest request) {
 		Enumeration<String> e = request.getHeaders("Accept");
 
 		while (e.hasMoreElements()) {
 			String header = e.nextElement();
-			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), MimeType.APPLICATION_JSON.requestHeaderValue())) {
+			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header),
+					MimeType.APPLICATION_JSON.requestHeaderValue())) {
 				return true;
 			}
 		}

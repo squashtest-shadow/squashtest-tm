@@ -24,17 +24,20 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Composite exception. All component exceptions must be of the same type.
+ * Composite exception. All component exceptions must be of the type DomainException
  *
- * @author Gregory Fouquet
+ * @author mpagnon
  *
  */
-public class CompositeException extends RuntimeException {
-	private static final long serialVersionUID = 836083547975368038L;
+public class CompositeDomainException extends RuntimeException {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/**
 	 * Component exceptions.
 	 */
-	private final List<?> exceptions;
+	private final List<DomainException> exceptions;
 
 	private static String buildMessage(List<?> exceptions) {
 		StringBuilder sb = new StringBuilder("Exceptions with the following messages were thrown : [");
@@ -46,7 +49,7 @@ public class CompositeException extends RuntimeException {
 		return sb.toString();
 	}
 
-	public <T extends Exception> CompositeException(List<T> exceptions) {
+	public <T extends Exception> CompositeDomainException(List<DomainException> exceptions) {
 		super(buildMessage(exceptions));
 		this.exceptions = exceptions;
 	}
@@ -55,7 +58,7 @@ public class CompositeException extends RuntimeException {
 	 *
 	 * @return unmodifiable view of exceptions.
 	 */
-	public List<?> getExceptions() {
+	public List<DomainException> getExceptions() {
 		return Collections.unmodifiableList(exceptions);
 	}
 }

@@ -34,7 +34,7 @@ import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.csp.tm.internal.repository.TestStepDao;
 
 @Repository
-public class HibernateTestStepDao extends HibernateDao<TestStep> implements TestStepDao {
+public class HibernateTestStepDao extends HibernateEntityDao<TestStep> implements TestStepDao {
 	
 	/*
 	 * Because of the -yet- unidirectional mapping : TestCase -- OneToMany --> TestStep, we can't remove the TestStep
@@ -61,13 +61,6 @@ public class HibernateTestStepDao extends HibernateDao<TestStep> implements Test
 		}
 
 	}
-
-	@Override
-	public TestStep findById(long testStepId) {
-		return getEntity(testStepId);
-	}
-
-
 
 	/*
 	 * Returns a TestCase if it contains a TestStep with the provided Id Returns null otherwise

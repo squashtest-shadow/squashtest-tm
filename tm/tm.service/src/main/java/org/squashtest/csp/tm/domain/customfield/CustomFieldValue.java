@@ -86,7 +86,7 @@ public class CustomFieldValue {
 
 	public void setValue(String value) {
 		if(getCustomField() != null && !getCustomField().isOptional() && StringUtils.isBlank(value)){
-			throw new MandatoryCufException();
+			throw new MandatoryCufException(this);
 		}
 		this.value = value;
 	}

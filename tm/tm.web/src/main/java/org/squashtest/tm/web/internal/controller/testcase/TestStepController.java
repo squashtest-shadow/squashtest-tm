@@ -21,14 +21,12 @@
 package org.squashtest.tm.web.internal.controller.testcase;
 
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,9 +38,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.csp.core.service.security.PermissionEvaluationService;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
-import org.squashtest.csp.tm.service.TestCaseModificationService;
-import org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService;
-import org.squashtest.csp.tm.service.testcase.TestStepFinder;
+import org.squashtest.csp.tm.service.TestCaseFinder;
+import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.csp.tm.service.testcase.TestStepModificationService;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueConfigurationBean;
 
 @Controller
@@ -51,13 +49,13 @@ public class TestStepController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestStepController.class);
 
 	@Inject
-	private TestStepFinder testStepFinder;
+	private TestStepModificationService testStepService;
 
 	@Inject
-	private CustomFieldValueManagerService cufValueService;
+	private CustomFieldValueFinderService cufValueFinder;
 
 	@Inject
-	private TestCaseModificationService testCaseModService;
+	private TestCaseFinder testCaseFinder;
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
@@ -71,10 +69,10 @@ public class TestStepController {
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String showCustomFieldModificationPage(@PathVariable Long testStepId, Model model) {
+	public String showCustomFieldModificationPage(@PathVariable long testStepId, Model model) {
 		LOGGER.info("Show Test Step initiated");
 		LOGGER.debug("Find and show TestStep #{}", testStepId);
-		TestStep testStep = testStepFinder.findById(testStepId);
+		TestStep testStep = testStepService.findById(testStepId);
 		TestStepView testStepView = new TestStepViewBuilder().buildTestStepView(testStep);
 		model.addAttribute("testStepView", testStepView);
 		model.addAttribute("workspace", "test-case");
@@ -90,11 +88,11 @@ public class TestStepController {
 			model.addAttribute("attachableEntity", testStepView.getActionStep());
 		}
 		// -----------------------------------------CUF PART
-		List<CustomFieldValue> values = cufValueService.findAllCustomFieldValues(testStep.getBoundEntityId(),
+		List<CustomFieldValue> values = cufValueFinder.findAllCustomFieldValues(testStep.getBoundEntityId(),
 				testStep.getBoundEntityType());
 		CustomFieldValueConfigurationBean conf = new CustomFieldValueConfigurationBean(values);
 		model.addAttribute("configuration", conf);
-		boolean hasCUF = cufValueService.hasCustomFields(testStep);
+		boolean hasCUF = cufValueFinder.hasCustomFields(testStep);
 		model.addAttribute("hasCUF", hasCUF);
 
 		return "edit-test-step.html";
@@ -104,32 +102,13 @@ public class TestStepController {
 	 * update the TestStep infos
 	 * 
 	 * @param testStepId
-	 * @param testStepUpdateFormModel
+	 * @param testStepModel
 	 */
 	@RequestMapping(method = RequestMethod.POST, headers = { "Content-Type=application/json" })
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public void updateStep(@PathVariable Long testStepId, @RequestBody TestStepUpdateFormModel testStepUpdateFormModel) {
-		TestStep stepToUpdate = testStepFinder.findById(testStepId);
-		if(testStepUpdateFormModel.getAction() != null ){
-		testCaseModService.updateTestStepAction(testStepId, testStepUpdateFormModel.getAction());
-		testCaseModService.updateTestStepExpectedResult(testStepId, testStepUpdateFormModel.getExpectedResult());
-		}
-		updateCufValues(stepToUpdate, testStepUpdateFormModel);
-
-	}
-
-	private void updateCufValues(TestStep step, TestStepUpdateFormModel testStepUpdateFormModel) {
-		if (testStepUpdateFormModel.getCufValues() != null) {
-			if (!permissionEvaluationService
-					.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", step)) {
-				throw new AccessDeniedException("Access is denied");
-			}
-
-			for (Entry<Long, String> cufValue : testStepUpdateFormModel.getCufValues().entrySet()) {
-				cufValueService.update(cufValue.getKey(), cufValue.getValue());
-			}
-		}
+	public void updateStep(@PathVariable Long testStepId, @RequestBody TestStepUpdateFormModel testStepModel) {
+		testStepService.updateTestStep(testStepId, testStepModel.getAction(), testStepModel.getExpectedResult(), testStepModel.getCufValues());
 	}
 
 }

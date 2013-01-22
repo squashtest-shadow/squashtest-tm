@@ -175,7 +175,7 @@
 						th:each="confBean : ${configuration.configurationBeans}">
 						<label class="display-table-cell" th:text="${confBean.fieldLabel}"
 							th:for="'cuf-value-'+${confBean.fieldId}">quantité de café</label>
-<!-- EDITABLE-->	<div th:if="${writable}" class="display-table-cell" th:switch="${confBean.type}">
+<!-- EDITABLE-->	<div th:if="${writable}" class="display-table-cell controls" th:switch="${confBean.type}">
 							<input th:case="'checkbox'" type="checkbox" th:checked="${confBean.valueAsBoolean}"
 								th:id="'cuf-value-'+${confBean.fieldId}" th:name="${confBean.fieldId}" class="cuf-value-control" />
 							<input type="text" th:case="'datepicker'"
@@ -202,15 +202,15 @@
 <!-- 	============================END CUSTOM FIELDS===============================  -->
                   <div class="display-table-row control-group" th:if="${testStepView.actionStep}" th:switch="${writable}" >
                     <label for="test-step-action" class="control-label" th:text="#{label.action}">Action</label>
-                   <div th:case="${true}"  class="controls"><textarea class="display-table-cell test-step-attr" name="action" id="test-step-action" th:utext="${testStepView.actionStep.action} ">do this</textarea>
+                   <div th:case="${true}"  class="display-table-cell controls"><textarea class="test-step-attr" name="action" id="test-step-action" th:utext="${testStepView.actionStep.action} ">do this</textarea>
                  	  <span  class="help-inline">&nbsp;</span></div>
-                 	<span th:case="${false}" th:utext="${testStepView.actionStep.action}">do this</span>
+                 	<span th:case="${false}" class="display-table-cell" th:utext="${testStepView.actionStep.action}">do this</span>
                   </div>
                   <div class="display-table-row control-group" th:if="${testStepView.actionStep}" th:switch="${writable}">
                     <label for="test-step-expectedResult" class="control-label" th:text="#{label.expectedResult}">Expected result</label>
-                   <div th:case="${true}"  class="controls"><textarea class="display-table-cell test-step-attr" name="expectedResult" id="test-step-expectedResult" th:utext="${testStepView.actionStep.expectedResult}">see that</textarea>
+                   <div th:case="${true}"  class="display-table-cell controls"><textarea class=" test-step-attr" name="expectedResult" id="test-step-expectedResult" th:utext="${testStepView.actionStep.expectedResult}">see that</textarea>
                   	 <span  class="help-inline">&nbsp;</span></div>
-                  	<span th:case="${false}" th:utext="${testStepView.actionStep.action}">do this</span>
+                  	<span th:case="${false}" class="display-table-cell" th:utext="${testStepView.actionStep.action}">do this</span>
                   </div>
                   <div class="display-table-row" th:if="${testStepView.callStep}">
                     <label for="test-step-called-test-case" th:text="#{label.calledTestCase}">Called test case</label>

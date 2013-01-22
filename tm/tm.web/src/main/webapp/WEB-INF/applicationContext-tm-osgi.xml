@@ -56,10 +56,14 @@
 			<value>org.squashtest.csp.tm.service.TestCaseLibraryFinderService</value>
 		</osgi:interfaces>
 	</osgi:reference>
-	
-	<osgi:reference
-		id="squashtest.tm.service.TestStepFinder" bean-name="squashtest.tm.service.TestStepFinder"
-		availability="mandatory" interface="org.squashtest.csp.tm.service.testcase.TestStepFinder" />
+
+	<osgi:reference id="squashtest.tm.service.TestStepModificationService"
+		bean-name="squashtest.tm.service.TestStepModificationService" availability="mandatory">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.testcase.TestStepFinder</value>
+			<value>org.squashtest.csp.tm.service.testcase.TestStepModificationService</value>
+		</osgi:interfaces>
+	</osgi:reference>
 
 
 	<osgi:reference id="squashtest.tm.service.RequirementModificationService"
@@ -141,8 +145,7 @@
 		availability="mandatory" />
 
 	<osgi:reference id="squashtest.tm.service.ProjectManagerService"
-		bean-name="squashtest.tm.service.ProjectManagerService"
-		availability="mandatory">
+		bean-name="squashtest.tm.service.ProjectManagerService" availability="mandatory">
 		<osgi:interfaces>
 			<value>org.squashtest.csp.tm.service.project.ProjectManagerService</value>
 			<value>org.squashtest.csp.tm.service.project.ProjectFinder</value>
@@ -157,14 +160,14 @@
 		</osgi:interfaces>
 	</osgi:reference>
 
-  <osgi:reference id="squashtest.tm.service.GenericProjectManagerService"
-    bean-name="squashtest.tm.service.GenericProjectManagerService"
-    availability="mandatory">
-    <osgi:interfaces>
-      <value>org.squashtest.csp.tm.service.project.GenericProjectManagerService</value>
-      <value>org.squashtest.csp.tm.service.project.GenericProjectFinder</value>
-    </osgi:interfaces>
-  </osgi:reference>
+	<osgi:reference id="squashtest.tm.service.GenericProjectManagerService"
+		bean-name="squashtest.tm.service.GenericProjectManagerService"
+		availability="mandatory">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.project.GenericProjectManagerService</value>
+			<value>org.squashtest.csp.tm.service.project.GenericProjectFinder</value>
+		</osgi:interfaces>
+	</osgi:reference>
 
 	<osgi:reference id="squashtest.tm.service.CallStepManagerService"
 		bean-name="squashtest.tm.service.CallStepManagerService" interface="org.squashtest.csp.tm.service.CallStepManagerService"
@@ -205,8 +208,7 @@
 		class="org.squashtest.tm.web.internal.exceptionresolver.BugTrackerAutoconnectCallback">
 		<property name="bugTrackersLocalService"
 			ref="squashtest.tm.service.BugTrackersLocalService" />
-		<property name="projectFinder"
-			ref="squashtest.tm.service.ProjectManagerService" />
+		<property name="projectFinder" ref="squashtest.tm.service.ProjectManagerService" />
 		<property name="bugTrackerFinder"
 			ref="squashtest.tm.service.BugTrackerManagerService" />
 

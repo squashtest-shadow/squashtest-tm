@@ -20,7 +20,7 @@
  */
 var squashtm = squashtm || {};
 
-define([ "jquery", "app/lnf/Forms" ], function($, Forms) {
+define([ "jquery", "app/lnf/Forms", "jquery.squash.messagedialog" ], function($, Forms) {
 	var _config = {};
 	
 	function handleJsonResponseError(request) {
@@ -69,7 +69,7 @@ define([ "jquery", "app/lnf/Forms" ], function($, Forms) {
 			inputName = fieldValidationError.objectName +"-"+inputName;
 		}
 		
-			$input = $("input[name='" + inputName + "'], textarea[name='"+ inputName +"']"),
+			$input = $("input[name='" + inputName + "'], input[id='" + inputName + "'],  textarea[name='"+ inputName +"']"),
 			input = Forms.input($input);
 		
 		input.setState("error", fieldValidationError.errorMessage);

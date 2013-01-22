@@ -20,30 +20,38 @@
  */
 package org.squashtest.csp.tm.internal.service.customField;
 
-import org.squashtest.tm.core.foundation.exception.ActionException;
+import org.squashtest.csp.tm.domain.DomainException;
+import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 
-public class MandatoryCufException extends ActionException {
+public class MandatoryCufException extends DomainException {
 
 	/**
 	 * TODO generate unique serialVersionUID my eclipse couldn't, thanks, mpagnon
 	 */
 	private static final long serialVersionUID = 1L;
+	private String key = "message.notBlank";
 	
-	public MandatoryCufException(Exception ex) {
-		super(ex);
+
+	public MandatoryCufException(String field) {
+		super(field);
 	}
-
-	public MandatoryCufException(String message) {
-		super(message);
+	
+	public MandatoryCufException(String message, String field){
+		super(message, field);
 	}
-
-	public MandatoryCufException() {
-
+	
+	public MandatoryCufException( String message, String field, String objectName) {
+		this(message, field);
+		this.setObjectName(objectName);
 	}
-
+	
+	public MandatoryCufException(CustomFieldValue customFieldValue) {
+		this("the custom field for value #"+customFieldValue.getId()+" is mandatory",  ""+customFieldValue.getId(),  "cuf-value");
+	}
+	
 	@Override
 	public String getI18nKey() {
-		return "message.mandatoryNeedsDefault";
+		return key;
 	}
 
 }

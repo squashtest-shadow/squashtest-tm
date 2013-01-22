@@ -52,9 +52,9 @@
 			<value>org.squashtest.csp.tm.service.BugTrackerFinderService</value>
 		</osgi:interfaces>
 	</osgi:service>
-<osgi:service ref="squashtest.tm.service.BugTrackerModificationService"
+	<osgi:service ref="squashtest.tm.service.BugTrackerModificationService"
 		interface="org.squashtest.csp.tm.service.BugTrackerModificationService" />
-	
+
 	<!-- ========= /BUGTRACKER SERVICES ============= -->
 
 
@@ -70,22 +70,22 @@
 		<osgi:interfaces>
 			<value>org.squashtest.csp.tm.service.project.ProjectManagerService</value>
 			<value>org.squashtest.csp.tm.service.project.ProjectFinder</value>
-		</osgi:interfaces>	
+		</osgi:interfaces>
 	</osgi:service>
-	
+
 	<osgi:service ref="squashtest.tm.service.ProjectTemplateManagerService">
 		<osgi:interfaces>
 			<value>org.squashtest.csp.tm.service.project.ProjectTemplateManagerService</value>
 			<value>org.squashtest.csp.tm.service.project.ProjectTemplateFinder</value>
-		</osgi:interfaces>	
+		</osgi:interfaces>
 	</osgi:service>
 
-  <osgi:service ref="squashtest.tm.service.GenericProjectManagerService">
-    <osgi:interfaces>
-      <value>org.squashtest.csp.tm.service.project.GenericProjectManagerService</value>
-      <value>org.squashtest.csp.tm.service.project.GenericProjectFinder</value>
-    </osgi:interfaces>  
-  </osgi:service>
+	<osgi:service ref="squashtest.tm.service.GenericProjectManagerService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.project.GenericProjectManagerService</value>
+			<value>org.squashtest.csp.tm.service.project.GenericProjectFinder</value>
+		</osgi:interfaces>
+	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.TestCaseModificationService">
 		<osgi:interfaces>
@@ -93,9 +93,14 @@
 			<value>org.squashtest.csp.tm.service.TestCaseFinder</value>
 		</osgi:interfaces>
 	</osgi:service>
-	
-	<osgi:service ref="squashtest.tm.service.TestStepFinder" interface="org.squashtest.csp.tm.service.testcase.TestStepFinder" />
 
+	<osgi:service ref="squashtest.tm.service.TestStepModificationService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.testcase.TestStepFinder</value>
+			<value>org.squashtest.csp.tm.service.testcase.TestStepModificationService</value>
+		</osgi:interfaces>
+	</osgi:service>
+	
 	<osgi:service ref="squashtest.tm.service.TestCaseLibraryNavigationService">
 		<osgi:interfaces>
 			<value>org.squashtest.csp.tm.service.TestCaseLibraryNavigationService</value>
@@ -204,7 +209,8 @@
 		<osgi:interfaces>
 			<value>org.squashtest.csp.tm.service.ProjectsPermissionManagementService</value>
 			<value>org.squashtest.csp.tm.service.ProjectsPermissionFinder</value>
-		</osgi:interfaces></osgi:service>
+		</osgi:interfaces>
+	</osgi:service>
 
 	<osgi:service
 		ref="squashtest.tm.service.audit.RequirementAuditTrailService"
@@ -230,29 +236,29 @@
 	<osgi:service
 		ref="squashtest.tm.service.testautomation.AutomatedExecutionManagerService"
 		interface="org.squashtest.csp.tm.service.testautomation.AutomatedExecutionManagerService" />
-			
-	<!--  CUF binding service -->	
+
+	<!-- CUF binding service -->
 	<osgi:service ref="squashtest.tm.service.CustomFieldBindingService">
 		<osgi:interfaces>
 			<value>org.squashtest.csp.tm.service.customfield.CustomFieldBindingFinderService</value>
 			<value>org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService</value>
 		</osgi:interfaces>
-	</osgi:service>			
+	</osgi:service>
 
-    <osgi:service ref="squashtest.tm.service.CustomFieldManagerService">
-      <osgi:interfaces>
-       <value>org.squashtest.csp.tm.service.customfield.CustomFieldFinderService</value> 
-        <value>org.squashtest.csp.tm.service.customfield.CustomFieldManagerService</value>
-      </osgi:interfaces>
-    </osgi:service>
-    
-    <osgi:service ref="squashtest.tm.service.CustomFieldValueManagerService">
-      <osgi:interfaces>
-        <value>org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService</value>
-       	<value>org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService</value> 
-      </osgi:interfaces>
-    </osgi:service>          
-		
+	<osgi:service ref="squashtest.tm.service.CustomFieldManagerService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.customfield.CustomFieldFinderService</value>
+			<value>org.squashtest.csp.tm.service.customfield.CustomFieldManagerService</value>
+		</osgi:interfaces>
+	</osgi:service>
+
+	<osgi:service ref="squashtest.tm.service.CustomFieldValueManagerService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService</value>
+			<value>org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService</value>
+		</osgi:interfaces>
+	</osgi:service>
+
 
 	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
 	<!-- Jdbc Datasource -->
@@ -323,13 +329,13 @@
 		bean-name="squashtest.core.security.PermissionEvaluationService"
 		interface="org.squashtest.csp.core.service.security.PermissionEvaluationService"
 		availability="mandatory" />
-		
+
 
 	<!-- Validation services -->
 	<osgi:reference id="javax.validation.ValidatorFactory"
 		bean-name="javax.validation.ValidatorFactory" interface="javax.validation.ValidatorFactory"
-		availability="mandatory" />		
+		availability="mandatory" />
 
-		
+
 
 </beans>

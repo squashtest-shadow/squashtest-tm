@@ -22,7 +22,7 @@ package org.squashtest.csp.tm.domain;
 
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
-public abstract class DomainException extends RuntimeException implements Internationalizable {
+public class DomainException extends RuntimeException implements Internationalizable {
 
 	private static final long serialVersionUID = 5203532234097674488L;
 
@@ -64,5 +64,10 @@ public abstract class DomainException extends RuntimeException implements Intern
 	public void setObjectName(String objectName) {
 		this.objectName = objectName;
 		
+	}
+
+	@Override
+	public String getI18nKey() {
+		return null;
 	}
 }

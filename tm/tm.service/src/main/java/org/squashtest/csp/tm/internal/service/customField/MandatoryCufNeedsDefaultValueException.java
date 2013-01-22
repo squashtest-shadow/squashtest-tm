@@ -40,10 +40,11 @@ public class MandatoryCufNeedsDefaultValueException extends ActionException {
 	public MandatoryCufNeedsDefaultValueException() {
 
 	}
+	
 
 	@Override
 	public String getI18nKey() {
-		return "message.cuf.value.mandatory";
+		return "message.mandatoryNeedsDefault";
 	}
 
 }

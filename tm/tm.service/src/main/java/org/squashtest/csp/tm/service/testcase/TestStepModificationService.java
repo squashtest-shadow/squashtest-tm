@@ -18,27 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package org.squashtest.csp.tm.service.testcase;
 
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
-import org.squashtest.csp.tm.domain.testcase.TestStep;
-
-public interface TestStepDao extends EntityDao<TestStep>{
-
-	void removeById(long testStepId);
-
-	<STEP extends TestStep> void persist(STEP testStep);
+@Transactional
+public interface TestStepModificationService extends CustomTestStepModificationService, TestStepFinder {
 	
-	List<TestStep> findListById(List<Long> testStepIds);
 	
-	/**
-	 * returns the position (ie index) of a step within the 
-	 * list of step of its test case 
-	 * 
-	 * @param testStepId the id of the step
-	 * @return
-	 */
-	int findPositionOfStep(Long testStepId);
 
 }
