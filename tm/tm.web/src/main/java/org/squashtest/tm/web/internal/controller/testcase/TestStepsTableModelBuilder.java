@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.springframework.context.MessageSource;
 import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
@@ -39,7 +41,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implements TestStepVisitor {
 	private final MessageSource messageSource;
 	private final Locale locale;
-	private Object[] lastBuiltItem;
+	private Map<?, ?> lastBuiltItem;
 
 	public TestStepsTableModelBuilder(MessageSource messageSource, Locale locale) {
 		this.messageSource = messageSource;
@@ -47,7 +49,7 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 	}
 
 	@Override
-	public Object[] buildItemData(TestStep item) {
+	public Map<?, ?> buildItemData(TestStep item) {
 		item.accept(this);
 		return lastBuiltItem;
 	}
@@ -57,19 +59,20 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 	 */
 	@Override
 	public void visit(ActionTestStep visited) {
-		lastBuiltItem = new Object[] { 
-				"", 
-				getCurrentIndex(), 
-				visited.getId(), 
-				visited.getAttachmentList().getId(),
-				visited.getAction(), 
-				visited.getExpectedResult(), 
-				"",
-				"",
-				visited.getAttachmentList().size(),
-				"action",
-				null
-		};
+		
+		Map<Object, Object> item = new HashMap<Object, Object>(9);
+		
+		item.put("step-id", visited.getId());
+		item.put("step-index", getCurrentIndex());
+		item.put("attach-list-id", visited.getAttachmentList().getId());
+		item.put("step-action", visited.getAction());
+		item.put("step-result", visited.getExpectedResult());
+		item.put("nb-attachments", visited.getAttachmentList().size());
+		item.put("step-type", "action");
+		item.put("called-tc-id", null);
+		item.put("empty-delete-holder", null);
+		
+		lastBuiltItem = item;
 
 	}
 
@@ -80,23 +83,20 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 		String action = messageSource.getMessage("test-case.call-step.action.template",
 				new Object[] { called.getName() }, locale);
 
-		lastBuiltItem = new Object[] { 
-				"", 
-				getCurrentIndex(), 
-				visited.getId(), 
-				"", 
-				action, 
-				"", 
-				"", 
-				"", 
-				null,
-				"call",
-				called.getId()
-		};
+		Map<Object, Object> item = new HashMap<Object, Object>(9);
+		
+		item.put("step-id", visited.getId());
+		item.put("step-index", getCurrentIndex());
+		item.put("attach-list-id", null);
+		item.put("step-action", action);
+		item.put("step-result", null);
+		item.put("nb-attachments", 0l);
+		item.put("step-type", "call");
+		item.put("called-tc-id", called.getId());
+		item.put("empty-delete-holder", null);
+		
+		lastBuiltItem = item;
 
 	}
-
-		
-	
 
 }

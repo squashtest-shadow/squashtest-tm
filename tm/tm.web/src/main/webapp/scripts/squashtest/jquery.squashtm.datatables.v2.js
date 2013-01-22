@@ -100,6 +100,8 @@
  * The squash specifics are configured using the second parameter :
  * 'squashSettings'. It is an object that accepts the following members : 
  * 
+ * 
+ * 
  * - functions : any function defined as public member of the table can be redefined as a member of .function (read the source to pimpoint them at the end of this file)
  * 
  *  examples : 
@@ -879,6 +881,15 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		this.addHLinkToCellText = _addHLinkToCellText;
 		this.selectRows = _selectRows;
 		this.deselectRows = _deselectRows;
+		this.configureLinks = _configureLinks;
+		
+		this.attachButtonsCallback = _attachButtonsCallback;
+		this.buggedPicsCallback = buggedPicsCallback;
+		this.configureRichEditables = configureRichEditables;
+		this.configureExecutionStatus = _configureExecutionStatus;
+		this.configureDeleteButtons = _configureDeleteButtons;
+		this.enableTableDragAndDrop = enableTableDragAndDrop;
+		this.restoreTableSelection = restoreTableSelection;
 		
 		if(squashSettings.bindDeleteButtons != null){
 			this.bindDeleteButtons = squashSettings.bindDeleteButtons;
@@ -891,12 +902,15 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			this.fnDraw(false);
 		};
 
-		// function overrides
+		
+
+		// ************** function overrides *********************************************
 
 		if (squashEffective.functions) {
 			$.extend(this, squashEffective.functions);
 		}
 		
+
 		
 		// ************** preprocess the column definitions if need be ********************
 		
@@ -924,6 +938,18 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 		var customDrawCallback = function(oSettings) {
 			if (userDrawCallback)	userDrawCallback.call(this, oSettings);
+			
+			this.attachButtonsCallback();
+			this.buggedPicsCallback();
+			this.configureRichEditables();
+			this.configureExecutionStatus();
+			this.configureDeleteButtons();
+			this.configureLinks();
+			this.enableTableDragAndDrop();
+			this.restoreTableSelection();
+			
+			
+			/*
 			_attachButtonsCallback.call(this);
 			_buggedPicsCallback.call(this);
 			_configureRichEditables.call(this);
@@ -932,6 +958,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			_configureLinks.call(this);
 			_enableTableDragAndDrop.call(this);
 			_restoreTableSelection.call(this);
+			*/
 		};
 
 		datatableEffective["fnDrawCallback"] = customDrawCallback;
@@ -939,6 +966,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		/* **************** store the new instance ***************** */
 
 		$.fn.squashTable.instances[this.selector] = this;
+		
+		
 		
 		/* ************* now call the base plugin ***************** */
 		

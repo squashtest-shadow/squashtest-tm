@@ -34,7 +34,7 @@
 
 
 
-<div id="test-steps-panel" th:with="isWritable= , isAttachable=">
+<div id="test-steps-panel" th:with="isWritable=${true} , isAttachable=${true}">
 
 
 	
@@ -88,17 +88,15 @@
 	<table id="test-steps-table">
 		<thead>
 			<tr>
-				<th>S</th>
+				<th>id (masked)</th>
 				<th>#</th>
-				<th>stepId(masked)</th>
-				<th th:text="#{table.column-header.has-attachment.label}">has attachments</th>
+				<th th:text="#{table.column-header.has-attachment.label}">0</th>
 				<th th:text="#{label.Actions}">Actions</th>
 				<th th:text="#{label.ExpectedResults}">Expected results</th>
-				<th>M</th>
-				<th>&nbsp;</th>
 				<th>nbAttach(masked)</th>
 				<th>stepNature(masked)</th>
 				<th>calledStepId(masked)</th>
+				<th> </th>
 			</tr>
 		</thead>
 		<tbody>

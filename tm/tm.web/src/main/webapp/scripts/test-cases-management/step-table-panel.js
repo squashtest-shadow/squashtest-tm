@@ -84,12 +84,12 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			stepcufBindingUrl: ctxUrl + "/custom-fields-binding?projectId="+conf.basic.projectId+"&bindableEntity=TEST_STEP&optional=false",
 			ckeConfigUrl : ctxUrl + "/styles/ckeditor/ckeditor-config.js",
 			indicatorUrl : ctxUrl + "/scripts/jquery/indixator.gif",
-			callStepManagerUrl : tcUrl + "/call"
+			callStepManagerUrl : tcUrl + "/call",
+			tableLanguageUrl : ctxUrl + "/datatables/messages",
+			tableAjaxUrl : tcUrl + "/steps-table"
 		}		
 	}
-	
-	
-	
+		
 	
 	// ************************* table configuration functions ******************************
 	
@@ -101,18 +101,27 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		alert('I should throw an event there so that I can say I need to refresh the requirement table (refreshStepsAndImportance)')
 	}
 	
+	
+	function stepsTableCreatedRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull){
+		if (aData['step-type']==="action"){
+			nRow.find('td.called-tc-cell').removeClass('called-tc-cell');
+		}
+		else{
+			nRow.find('td.rich-edit-action').removeClass('rich-edit-action');
+			nRow.find('td.rich-edit-result').removeClass('rich-edit-result');
+		}
+	}
+	
 	function stepsTableDrawCallback() {
+		//collapser
 		var collapser = $("#test-steps-table").data('collapser');
 		if(collapser){
 			collapser.refreshTable();
 		}
+		
 	}
 
-	function isActionStep(rowData){
-		return rowData['step-type']==="action";
-	}
 
-	
 	function stepDropHandlerFactory(dropUrl){
 		return function stepDropHandler(dropData) {
 			$.post(dropUrl ,dropData, function(){
@@ -122,16 +131,108 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 	}
 
 
-
-
 	// ************************************ table initialization *****************************
+	
 	
 	function initTable(settings){
 		
+		var language = settings.language,
+			urls = makeTableUrls(settings),
+			permissions = settings.permissions;
 		
+		var datatableSettings = {
+			oLanguage : {
+				sUrl : urls.tableLanguageUrl
+			},
+			
+			sAjaxSource : urls.tableAjaxUrl,
+			fnDrawCallback : stepsTableDrawCallback,
+			fnCreatedRow  : stepsTableCreatedRowCallback,
+			aoColumnDefs : [
+			  {'bvisible':false, 'bsortable':false, 'aTargets':[0], 'mDataProp':'step-id'},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[1], 'mDataProp':'step-index', 'sClass':'select-handle drag-handle centered', 'sWidth':'2em'},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[2], 'mDataProp':'attach-list-id', 'sClass':'centered has-attachment-cell', 'sWidth':'2em'},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[3], 'mDataProp':'step-action', 'sClass':'rich-edit-action called-tc-cell'},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[4], 'mDataProp':'step-result', 'sClass':'rich-edit-result'},
+			  {'bVisible':false, 'bSortable':false, 'aTargets':[5], 'mDataProp':'nb-attachments'},
+			  {'bVisible':false, 'bSortable':false, 'aTargets':[6], 'mDataProp':'step-type'},
+			  {'bVisible':false, 'bSortable':false, 'aTargets':[7], 'mDataProp':'called-tc-id'},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[8], 'mDataProp':'centered delete-button', 'sWidth':'2em'}
+			]
+			
+		};
+		
+		var squashSettings = {
+			
+			dataKeys : {
+				entityId : 'step-id' ,
+				entityIndex : 'step-index'
+			},
+			
+			enableHover : true,
+			
+			confirmPopup : {
+				oklabel : language.oklabel,
+				cancellabel : language.cancellabel
+			},
+			
+			bindLinks : {
+				list : [
+				   {
+					   targetClass : 'called-tc-cell',
+					   url : urls.callTC
+				   }
+				]
+			}
+		}
+		
+		if (permissions.isWritable){
+			
+			var moreSettings = {
+				
+				enableDnD : true,
+				
+				deleteButtons : {
+					url : urls.singleDelete,
+					popupmessage : language.deleteConfirm,
+					tooltip : language.deleteTitle,
+					success : refresh
+				},
+				
+				attachments : {
+					url : urls.attachments
+				},
+				
+				richEditables : {
+					conf : {
+						ckeditor : {
+							customConfig : urls.ckeConfigUrl,
+							language : language.ckeLang
+						},
+						placeholder : language.placeholder,
+						submit : language.submit,
+						cancel : language.cancellabel,
+						indicator : indicatorUrl
+					},
+					
+					targets : {
+						'rich-edit-action' : urls.editActionUrl,
+						'rich-edit-result' : urls.editResultUrl
+					}
+				},
+				
+				functions : {
+					dropHandler : stepDropHandlerFactory(urls.dropUrl)
+				}
+			}
+			
+			$.extend(squashSettings, moreSettings);
+			
+		}
+		
+		$("#test-steps-table").squashTable(datatableSettings, squashSettings);
 		
 	}
-	
 	
 	
 	// ************************************ toolbar utility functions *************************
@@ -144,6 +245,91 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		});
 	}
 
+	
+	
+	
+	// *************************** add step popup ***************************
+	
+	function addTestStepSuccess(){
+		var dialog = $("#add-test-step-dialog");
+		if (dialog.dialog("isOpen")==true){
+			dialog.dialog('close');
+		}
+		refresh();
+	}
+
+
+	function addTestStepSuccessAnother(){
+		CKEDITOR.instances["add-test-step-action"].setData('');
+		CKEDITOR.instances["add-test-step-result"].setData('');
+		
+		var dialog = $("#add-test-step-dialog");
+		dialog.data('cuf-values-support').reset();
+		
+		refresh();
+	}
+
+	function readAddStepParams(){
+		
+		var cufSupport = $("#add-test-step-dialog").data('cuf-values-support');
+		
+		var params = {};
+		params.action = $("#add-test-step-action").val();
+		params.expectedResult = $("#add-test-step-result").val();	
+		$.extend(params,cufSupport.readValues());
+		
+		return params;
+		
+	}
+	
+	function initAddTestStepDialog(language, urls){
+
+		//main popup definition
+		
+		//TODO : the handlers
+		var params = {
+			selector : "#add-test-step-dialog",
+			openedBy : "#add-test-step-button",
+			title : language.title,
+			isContextual : true,
+			usesRichEdit : true,
+			closeOnSuccess : false,
+			ckEditor : {
+				styleUrl : urls.ckeConfigUrl,
+				lang : language.ckeLang
+			},
+			buttons : [
+			   {
+				   'text' : language.addStep
+			   },
+			   {
+				   'text' : language.addAnother
+			   },
+			   {
+				   'text' : language.cancellabel
+			   }
+			]
+			
+		};
+		
+
+		//cuf value support
+
+		var dialog = $("#add-test-step-dialog");
+		var cufTable = $("#add-test-step-custom-fields");
+		var bindingsUrl = urls.stepcufBindingUrl;
+		
+		var cufValuesSupport = cufValuesManager.newCUFValuesCreator({url : bindingsUrl, table : cufTable});
+		cufValuesSupport.reloadPanel();
+		dialog.data('cuf-values-support', cufValuesSupport);
+		
+		dialog.on('dialogopen', function(){
+			cufValuesSupport.reset();
+		});
+	}
+	
+	
+	// ************************* other buttons code **********************************
 
 	function initStepCopyPastaButtons(language, urls){
 		
@@ -241,7 +427,6 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		decorateStepTableButton("#add-test-step-button", "ui-icon-plusthick");
 		decorateStepTableButton("#add-call-step-button", "ui-icon-arrowthickstop-1-e");
 		decorateStepTableButton("#delete-all-steps-button", "ui-icon-minusthick");
-		decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomout");
 		
 		//copy pasta buttons
 		initStepCopyPastaButtons(language, urls);
@@ -251,6 +436,10 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		
 		//call step button
 		initCallStepButton(urls);
+		
+		//add test step
+		initAddTestStepDialog(language, urls);
+		
 	};
 	
 	
@@ -289,6 +478,9 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 	
 	function initCollapser(settings){
 		
+
+		decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomout");
+		
 		var collapser;
 		var language = settings.language;
 		
@@ -304,11 +496,12 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		
 		//begin
 		
-		var columns = [2,3];
+		var columns = [1,2];
+		
 		collapser = new TableCollapser(table, columns); 
 		collapser.onClose.addHandler(collapser.collapseCloseHandle);
 		collapser.onOpen.addHandler(collapser.collapseOpenHandle);	
-		//collapser.bindButtonToTable(collapseButton);
+		
 		collapseButton.click(function(){
 			if(collapser.isOpen){
 				if(collapser.oneCellIsInEditingState()){
@@ -332,109 +525,26 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		
 		return collapser;
 	 }	
-	
-	
-	// *************************** add step popup ***************************
-	
-	function addTestStepSuccess(){
-		var dialog = $("#add-test-step-dialog");
-		if (dialog.dialog("isOpen")==true){
-			dialog.dialog('close');
-		}
-		refresh();
-	}
 
-
-	function addTestStepSuccessAnother(){
-		CKEDITOR.instances["add-test-step-action"].setData('');
-		CKEDITOR.instances["add-test-step-result"].setData('');
-		
-		var dialog = $("#add-test-step-dialog");
-		dialog.data('cuf-values-support').reset();
-		
-		refresh();
-	}
-
-	function readAddStepParams(){
-		
-		var cufSupport = $("#add-test-step-dialog").data('cuf-values-support');
-		
-		var params = {};
-		params.action = $("#add-test-step-action").val();
-		params.expectedResult = $("#add-test-step-result").val();	
-		$.extend(params,cufSupport.readValues());
-		
-		return params;
-		
-	}
-	
-	function initAddStepDialog(language, urls){
-
-		
-		//main popup definition
-		
-		//TODO : the handlers
-		var params = {
-			selector : "#add-test-step-dialog",
-			openedBy : "#add-test-step-button",
-			title : language.title,
-			isContextual : true,
-			usesRichEdit : true,
-			closeOnSuccess : false,
-			ckEditor : {
-				styleUrl : urls.ckeConfigUrl,
-				lang : language.ckeLang
-			},
-			buttons : [
-			   {
-				   'text' : language.addStep
-			   },
-			   {
-				   'text' : language.addAnother
-			   },
-			   {
-				   'text' : language.cancellabel
-			   }
-			]
-			
-		};
-		
-
-		//cuf value support
-
-		var dialog = $("#add-test-step-dialog");
-		var cufTable = $("#add-test-step-custom-fields");
-		var bindingsUrl = urls.stepcufBindingUrl;
-		
-		var cufValuesSupport = cufValuesManager.newCUFValuesCreator({url : bindingsUrl, table : cufTable});
-		cufValuesSupport.reloadPanel();
-		dialog.data('cuf-values-support', cufValuesSupport);
-		
-		dialog.on('dialogopen', function(){
-			cufValuesSupport.reset();
-		});
-	}
-	
 	
 	// ******************************* main *********************************
 	
 	function init(settings){
+
+		var language = settings.language;
+		var urls = makeTableUrls(settings);
 		
+		// the table
+		initTable(settings);
 		
 		// toolbar 
+		if (settings.permissions.isWritable){
+			initTableToolbar(language, urls);
+		}
 		
-		
-		// table collapser
-		
+		// table collapser		
 		var collapserSettings = settings.collapser;
 		var collapser = initCollapser(collapserSettings);
-		
-		
-		// various event bindings
-		
-		$('#test-steps-table .delete-step-button').live('click', function() {
-			$("#delete-step-dialog").data('opener', this).dialog('open');
-		});
 		
 	}
 	
