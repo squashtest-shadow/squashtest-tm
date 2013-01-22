@@ -142,11 +142,11 @@
 							.parseDate(localizedDateFormat,	localizedDate);
 					var postDate = $.datepicker
 							.formatDate(postDateFormat, date);
-					var toreturn = postFunction.call(this, postDate, settings)
-					if (toreturn === "") {
+					var returned = postFunction.call(this, postDate, settings)
+					if (returned === "") {
 						return noDateString;
 					} else {
-						return toreturn;
+						return value;
 					}
 
 				};
