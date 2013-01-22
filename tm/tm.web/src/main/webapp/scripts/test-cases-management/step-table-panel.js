@@ -25,64 +25,53 @@
  * configuration object looks like :
  * 
  * {
- * 	 table : {
- * 
- * 		basic : {
- * 			testCaseId : the id of the test case,
- * 			rootContext : the root url
- * 			testCaseUrl : the baseTestCaseUrl
- * 		}
- * 
- * 		richEditables : {
- * 			conf : the conf object for the $.ui.richEditable
- * 			targets : {
- * 				'rich-edit-action' : the url where to post the actions
- * 				'rich-edit-results' : the url where to post the expected results
- * 			}
- * 		}
- * 
- * 		permissions : {
- * 			isWritable : says whether the table content or structure can be modified by the user
- * 			isAttachable : says if you can attach attachments to the steps 
- * 		}
- * 
- * 		language : {
- * 			errorTitle : the title of the error popup
- * 			noStepSelected : the message when no steps where selected although some were needed
- * 			oklabel : the ok label for any confirmation popup
- * 			cancellabel : the cancellabel for any confirmation popup
- * 			deleteConfirm : the message for confirmation of deletion of the popup
- * 			deleteTitle : the tooltip for the delete popup buttons
- * 		}
- * 
-
- *   },
  * 
  * 
- *   collapser : {
- *   	language : {
- *   		popupTitle : the title for the popup that says close your widgets in edit mode
- *   		popupMessage : the content of that popup
- *   		btnExpand : the label of the expand button
- *   		btnCollapse : the label of the collapse button   
- *   	}  
- *   }
+ * 	 basic : {
+ * 		testCaseId : the id of the test case,
+ * 		projectId : the id of the project this test case belongs to
+ * 		rootContext : the root url
+ * 		testCaseUrl : the baseTestCaseUrl
+ * 	 },
+ * 
+ * 
+ * 	permissions : {
+ * 		isWritable : says whether the table content or structure can be modified by the user
+ * 		isAttachable : says if you can attach attachments to the steps 
+ * 	},
+ * 
+ * 	language : {
+ * 		errorTitle : the title of the error popup
+ * 		noStepSelected : the message when no steps where selected although some were needed
+ * 		oklabel : the ok label for any confirmation popup
+ * 		cancellabel : the cancellabel for any confirmation popup
+ * 		deleteConfirm : the message for confirmation of deletion of the popup
+ * 		deleteTitle : the tooltip for the delete popup buttons
+ *   	infoTitle : the title for the popup that says close your widgets in edit mode
+ *   	popupMessage : the content of that popup
+ *   	btnExpand : the label of the expand button
+ *   	btnCollapse : the label of the collapse button  
+ *      addStepTitle : title for the add step popup
+ *      addStep : label for the add step button
+ *      addAnotherStep :  label for the add another step button
+ *      ckeLang : the language for ckEditor
+ *      placeholder : the placeholder title
+ *      submit : the submit button value
+ * 	}
  * 
  * }
  * 
  * 
  * 
- * 
- * 
  */
 
-define(["jquery", "squash.table-collapser"], function($, TableCollapser){
+define(["jquery", "squash.table-collapser", "custom-field-values"], function($, TableCollapser, cufValuesManager){
 	
 	// ************************* configuration functions ************************************
 	
-	function makeTableUrls(tableConf){
-		var tcUrl = tableConf.basic.testCaseUrl;
-		var ctxUrl = tableConf.basic.rootContext;
+	function makeTableUrls(conf){
+		var tcUrl = conf.basic.testCaseUrl;
+		var ctxUrl = conf.basic.rootContext;
 		return {
 			dropUrl :  		tcUrl  + "/steps/move",
 			attachments : 	ctxUrl + "/attach-list/{attach-list-id}/attachments/manager?workspace=test-case",
@@ -91,7 +80,11 @@ define(["jquery", "squash.table-collapser"], function($, TableCollapser){
 			callTC : 		ctxUrl + "/test-cases/{called-tc-id}/info",
 			pasteStep : 	tcUrl  + "/steps",
 			editActionUrl : tcUrl  + "/steps/{step-id}/action",
-			editResultUrl : tcUrl  + "/steps/{step-id}/result"
+			editResultUrl : tcUrl  + "/steps/{step-id}/result",
+			stepcufBindingUrl: ctxUrl + "/custom-fields-binding?projectId="+conf.basic.projectId+"&bindableEntity=TEST_STEP&optional=false",
+			ckeConfigUrl : ctxUrl + "/styles/ckeditor/ckeditor-config.js",
+			indicatorUrl : ctxUrl + "/scripts/jquery/indixator.gif",
+			callStepManagerUrl : tcUrl + "/call"
 		}		
 	}
 	
@@ -231,6 +224,13 @@ define(["jquery", "squash.table-collapser"], function($, TableCollapser){
 		}
 	}
 	
+	function initCallStepButton(urls){
+		$("#add-call-step-button").click(function(){			
+			var url = document.URL;
+			$.cookie('call-step-manager-referer', url, {path:'/'});
+			document.location.href = urls.callStepManagerUrl;			
+		});
+	}
 	
 	// ******************************* toolbar initialization *********************************
 	
@@ -249,6 +249,8 @@ define(["jquery", "squash.table-collapser"], function($, TableCollapser){
 		//delete all button
 		initDeleteAllStepsButtons(language, urls);
 		
+		//call step button
+		initCallStepButton(urls);
 	};
 	
 	
@@ -310,7 +312,7 @@ define(["jquery", "squash.table-collapser"], function($, TableCollapser){
 		collapseButton.click(function(){
 			if(collapser.isOpen){
 				if(collapser.oneCellIsInEditingState()){
-					$.squash.openMessage(language.popupTitle, language.popupMessage);
+					$.squash.openMessage(language.infoTitle, language.collapseMessage);
 				}else{
 					collapser.closeAll();
 					decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomin");
@@ -332,6 +334,86 @@ define(["jquery", "squash.table-collapser"], function($, TableCollapser){
 	 }	
 	
 	
+	// *************************** add step popup ***************************
+	
+	function addTestStepSuccess(){
+		var dialog = $("#add-test-step-dialog");
+		if (dialog.dialog("isOpen")==true){
+			dialog.dialog('close');
+		}
+		refresh();
+	}
+
+
+	function addTestStepSuccessAnother(){
+		CKEDITOR.instances["add-test-step-action"].setData('');
+		CKEDITOR.instances["add-test-step-result"].setData('');
+		
+		var dialog = $("#add-test-step-dialog");
+		dialog.data('cuf-values-support').reset();
+		
+		refresh();
+	}
+
+	function readAddStepParams(){
+		
+		var cufSupport = $("#add-test-step-dialog").data('cuf-values-support');
+		
+		var params = {};
+		params.action = $("#add-test-step-action").val();
+		params.expectedResult = $("#add-test-step-result").val();	
+		$.extend(params,cufSupport.readValues());
+		
+		return params;
+		
+	}
+	
+	function initAddStepDialog(language, urls){
+
+		
+		//main popup definition
+		
+		//TODO : the handlers
+		var params = {
+			selector : "#add-test-step-dialog",
+			openedBy : "#add-test-step-button",
+			title : language.title,
+			isContextual : true,
+			usesRichEdit : true,
+			closeOnSuccess : false,
+			ckEditor : {
+				styleUrl : urls.ckeConfigUrl,
+				lang : language.ckeLang
+			},
+			buttons : [
+			   {
+				   'text' : language.addStep
+			   },
+			   {
+				   'text' : language.addAnother
+			   },
+			   {
+				   'text' : language.cancellabel
+			   }
+			]
+			
+		};
+		
+
+		//cuf value support
+
+		var dialog = $("#add-test-step-dialog");
+		var cufTable = $("#add-test-step-custom-fields");
+		var bindingsUrl = urls.stepcufBindingUrl;
+		
+		var cufValuesSupport = cufValuesManager.newCUFValuesCreator({url : bindingsUrl, table : cufTable});
+		cufValuesSupport.reloadPanel();
+		dialog.data('cuf-values-support', cufValuesSupport);
+		
+		dialog.on('dialogopen', function(){
+			cufValuesSupport.reset();
+		});
+	}
 	
 	
 	// ******************************* main *********************************
@@ -339,6 +421,7 @@ define(["jquery", "squash.table-collapser"], function($, TableCollapser){
 	function init(settings){
 		
 		
+		// toolbar 
 		
 		
 		// table collapser
@@ -360,12 +443,5 @@ define(["jquery", "squash.table-collapser"], function($, TableCollapser){
 		init : init
 	}
 	
-	
-	
-	/*
-	 
 
-	 
-	 
-	 */
 })

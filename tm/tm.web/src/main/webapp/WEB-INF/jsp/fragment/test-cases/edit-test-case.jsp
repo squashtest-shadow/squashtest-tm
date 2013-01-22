@@ -51,12 +51,7 @@
 <s:url var="testCaseInfoUrl" value="/test-cases/{tcId}/general">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
-<s:url var="getStepsUrl" value="/test-cases/{tcId}/steps-table">
-	<s:param name="tcId" value="${testCase.id}" />
-</s:url>
-<s:url var="addStepUrl" value="/test-cases/{tcId}/steps/add">
-	<s:param name="tcId" value="${testCase.id}" />
-</s:url>
+
 <c:url var="verifiedRequirementsTableUrl"
 	value="/test-cases/${testCase.id}/all-verified-requirements-table" />
 <s:url var="updateStepUrl" value="/test-cases/{tcId}/steps/">
@@ -71,9 +66,7 @@
 	value="/test-cases/${ testCase.id }/verified-requirement-versions" />
 <c:url var="nonVerifiedRequirementsUrl"
 	value="/test-cases/${ testCase.id }/non-verified-requirement-versions" />
-<s:url var="callStepManagerUrl"
-	value="/test-cases/${ testCase.id }/call" />
-<s:url var="stepAttachmentManagerUrl" value="/attach-list/" />
+
 <s:url var="callingtestCasesTableUrl"
 	value="/test-cases/${testCase.id}/calling-test-case-table" />
 <c:url var="workspaceUrl" value="/test-case-workspace/#" />
@@ -96,14 +89,11 @@
 <s:url var="importanceAutoUrl" value="/test-cases/{tcId}/importanceAuto">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
-<s:url var="collapserScriptUrl"
-	value="/scripts/squashtest/classes/TableCollapser.js" />
 <c:url var="executionsTabUrl"
 	value='/test-cases/${testCase.id}/executions'>
 	<c:param name="tab" value="" />
 </c:url>
 
-<c:url var="customFieldBindings" value="/custom-fields-binding"/>
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
@@ -505,68 +495,21 @@
 
 	</div>
 	<div id="tabs-2" class="table-tab">
-		<%----------------------------------- Test Step Table -----------------------------------------------%>
+
+	<%-- 
+	
+	
+		REPLACE WITH
+		
+		THE NEW AND SHINY
+		
+		THYMELEAF TEMPLATE
+	
+	
+	
+	 --%>
 
 
-		<f:message var="collapse" key="test-case.step.button.collapse.label" />
-		<f:message var="expand" key="test-case.step.button.expand.label" />
-		<div class="toolbar">
-
-			<span class="group"><button id="collapse-steps-button"
-					class="button test-step-toolbar-button" href="#">${collapse}</button>
-			</span>
-			<c:if test="${ writable }">
-				<span class="group"><button id="add-test-step-button"
-						class="test-step-toolbar-button" href="#">
-						<f:message key="test-case.step.button.add.label" />
-					</button>
-					<button id="delete-all-steps-button"
-						class="test-step-toolbar-button" href="#">
-						<f:message key="test-case.step.button.remove.label" />
-					</button>
-					<button id="add-call-step-button" class="test-step-toolbar-button"
-						href="#">
-						<f:message key="test-case.step.button.call.label" />
-					</button> </span>
-				<span class="group"><button id="copy-step"
-						class="test-step-toolbar-button" href="#">
-						<f:message key="test-case.step.button.copy.label" />
-					</button>
-					<button id="paste-step" class="test-step-toolbar-button" href="#">
-						<f:message key="test-case.step.button.paste.label" />
-					</button> </span>
-			</c:if>
-		</div>
-		<div class="table-tab-wrap">
-			<comp:decorate-ajax-table url="${ getStepsUrl }"
-				tableId="test-steps-table" paginate="true">
-				<jsp:attribute name="drawCallback">stepsTableDrawCallback</jsp:attribute>
-				<jsp:attribute name="rowCallback">stepsTableRowCallback</jsp:attribute>
-				<jsp:attribute name="disableHighlightOnMouseOver">true</jsp:attribute>
-				<jsp:attribute name="columnDefs">
-				<dt:column-definition targets="0, 2, 6" visible="false"
-						sortable="false" />
-				<dt:column-definition targets="1" sortable="false"
-						cssClass="centered ui-state-default drag-handle select-handle"
-						width="2em" />
-				<dt:column-definition targets="3" sortable="false" width="2em"
-						cssClass="centered has-attachment-cell" />
-				<dt:column-definition targets="4" sortable="false"
-						cssClass="action-cell" />
-				<dt:column-definition targets="5" sortable="false"
-						cssClass="result-cell" />
-				<dt:column-definition targets="7" sortable="false"
-						cssClass="centered" width="2em" />
-				<dt:column-definition targets="8" sortable="false" visible="false" />
-				<dt:column-definition targets="9" sortable="false" visible="false" />
-				<dt:column-definition targets="10" sortable="false" visible="false"
-						lastDef="true" />
-			</jsp:attribute>
-			</comp:decorate-ajax-table>
-
-			<aggr:decorate-test-steps-table />
-
-		</div>
 	</div>
 
 	<%------------------------------ Attachments bloc ---------------------------------------------%>
@@ -601,12 +544,7 @@
 <script type="text/javascript">
 	
 	$(function(){
-		$("#add-call-step-button").click(function(){			
-			var url = document.URL;
-			$.cookie('call-step-manager-referer', url, {path:'/'});
-			document.location.href = "${callStepManagerUrl}";			
-		});
-		
+
 		<c:if test="${hasCUF}">
 		<%-- loading the custom fields --%>
 		$.get("${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}")
@@ -614,25 +552,6 @@
 			$("#test-case-description-table").append(data);
 		});
 		</c:if>
-		
-		
-		//init the custom fields for the add-test-step-dialog
-		var dialog = $("#add-test-step-dialog");
-		var table = $("#add-test-step-custom-fields");				
-		var bindingsUrl = "${customFieldBindings}?projectId=${testCase.project.id}&bindableEntity=TEST_STEP&optional=false";
-		
-		require(['jquery', 'custom-field-values'], function($,cufValuesManager){
-			
-			var cufValuesSupport = cufValuesManager.newCUFValuesCreator({url : bindingsUrl, table : table});
-			cufValuesSupport.reloadPanel();		
-			dialog.data('cuf-values-support', cufValuesSupport);
-			
-			dialog.on("dialogopen", function(){
-				cufValuesSupport.reset();			
-			});
-			
-		});
-
 		
 	});
 
