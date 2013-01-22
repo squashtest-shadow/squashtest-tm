@@ -32,14 +32,9 @@
 			<th>S</th>
 			<th>#</th>
 			<th>stepId(masked)</th>
-			<th><f:message key="table.column-header.has-attachment.label" />
-			</th>
-			<th><f:message
-					key="label.Actions" />
-			</th>
-			<th><f:message
-					key="label.ExpectedResults" />
-			</th>
+			<th><f:message key="table.column-header.has-attachment.label" /></th>
+			<th><f:message	key="label.Actions" /></th>
+			<th><f:message	key="label.ExpectedResults" /></th>
 			<th>M</th>
 			<th>&nbsp;</th>
 			<th>nbAttach(masked)</th>

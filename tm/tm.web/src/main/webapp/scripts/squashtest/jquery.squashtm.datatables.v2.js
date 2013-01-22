@@ -195,6 +195,7 @@
  *  			Object params as follow : 
  *  				-url : the url to wrap the text with (place holder will be set to row object id)
  *  				-target : the td rank in the row (starts with 1)
+ *  				-targetClass : alternate to the above, uses css class to find its target
  *  				-isOpenInTab : boolean to set the target of the url to "_blank" or not.
  */
 var squashtm = squashtm || {};
@@ -687,7 +688,14 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 				link.attr('target', '_blank');
 			}
 			//2. select required td and wrap their thext with the built link
-			var cells = $('td:nth-child('+linkConf.target+')', self);
+			var cells;
+			if (linkConf.targetClass!==undefined){
+				cells = $("td."+linkConf.targetClass, self);
+			}
+			else{
+				cells = $('td:nth-child('+linkConf.target+')', self);
+			}
+			
 			cells.contents().filter(function () {
 				// IE doesn't define the constant Node so we'll use constant value
 				// instead of Node.TEXT_NODE

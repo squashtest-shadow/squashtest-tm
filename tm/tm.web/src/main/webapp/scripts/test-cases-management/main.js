@@ -20,14 +20,14 @@
  */
 
 
-define(["jquery", "./step-table"], function($, stepTable){
+define(["jquery", "./step-table-panel"], function($, stepTablePanel){
 	
-	var initStepTable = function(settings){
-		stepTable.init(settings);
+	var initStepTablePanel = function(settings){
+		stepTablePanel.init(settings);
 	};
 	
 	return {
-		initStepTable : initStepTable
+		initStepTablePanel : initStepTablePanel
 	}
 });
 

@@ -1,0 +1,195 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<div th:remove="all">
+	<!--  
+		This snippet of html describes the template for the test step panel of the tab panel of a test case.
+		Required data :
+			- testCase : the test case bean
+			-
+			-
+	 -->
+
+</div>
+
+
+<c:if test="${ writable }">
+
+	<!-- ------------------------------ Add Test Step Dialog ------------------------------------------------ -->
+	<comp:popup id="add-test-step-dialog"
+		titleKey="title.AddTestStep" isContextual="true"
+		openedBy="add-test-step-button" closeOnSuccess="${false}">
+		<jsp:attribute name="buttons">
+	
+		<f:message var="addLabel" key="label.Add" />
+		'${ addLabel }': function() {
+			var params = readAddStepParams();
+			var url = "${ addStepUrl }";
+			$.ajax({
+				url : url,
+				type : 'POST',
+				dataType : 'json',
+				data : params
+			}).success(addTestStepSuccess);			
+		},
+		<f:message var="addAnotherLabel" key="dialog.button.add.another.label" />
+		'${ addAnotherLabel }': function() {
+			var params = readAddStepParams();
+			var url = "${ addStepUrl }";
+			$.ajax({
+				url : url,
+				type : 'POST',
+				dataType : 'json',
+				data : params
+			}).success(addTestStepSuccessAnother);	
+		},			
+		<pop:cancel-button />
+	</jsp:attribute>
+		<jsp:body>
+		
+		<table id="add-test-step-custom-fields">
+			<!--  populated using ajax -->
+		</table>
+		
+		<div class="centered" style="text-align: center; margin-bottom: 2em;">
+			<label style="font-weight: bold;" for="add-test-step-action"><f:message
+						key="label.Actions" />
+				</label>
+			<textarea id="add-test-step-action"></textarea>
+			<comp:error-message forField="action" />	
+		</div>
+		<div class="centered">
+			<label style="font-weight: bold;" for="add-test-step-result"><f:message
+						key="label.ExpectedResults" />
+				</label>
+			<textarea id="add-test-step-result"></textarea>
+		</div>
+	</jsp:body>
+	</comp:popup>
+
+<script>
+function addTestStepSuccess(){
+	var dialog = $("#add-test-step-dialog");
+	if (dialog.dialog("isOpen")==true){
+		dialog.dialog('close');
+	}
+	refreshSteps();
+}
+
+
+function addTestStepSuccessAnother(){
+	CKEDITOR.instances["add-test-step-action"].setData('');
+	CKEDITOR.instances["add-test-step-result"].setData('');
+	
+	var dialog = $("#add-test-step-dialog");
+	dialog.data('cuf-values-support').reset();
+	
+	refreshSteps();
+}
+
+function readAddStepParams(){
+	
+	var cufSupport = $("#add-test-step-dialog").data('cuf-values-support');
+	
+	var params = {};
+	params.action = $("#add-test-step-action").val();
+	params.expectedResult = $("#add-test-step-result").val();	
+	$.extend(params,cufSupport.readValues());
+	
+	return params;
+	
+}
+</script>
+
+
+<!-- ==================== DOM definition =================== -->
+<div id="test-steps-panel">
+	<table id="test-steps-table">
+		<thead>
+			<tr>
+				<th>S</th>
+				<th>#</th>
+				<th>stepId(masked)</th>
+				<th th:text="#{table.column-header.has-attachment.label}">has attachments</th>
+				<th th:text="#{label.Actions}">Actions</th>
+				<th th:text="#{label.ExpectedResults}">Expected results</th>
+				<th>M</th>
+				<th>&nbsp;</th>
+				<th>nbAttach(masked)</th>
+				<th>stepNature(masked)</th>
+				<th>calledStepId(masked)</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- Will be populated by ajax -->
+		</tbody>
+	</table>
+	
+	<div id="test-step-row-buttons" class="not-displayed">
+		<a id="delete-step-button" href="#" class="delete-step-button" th:text="#{test-case.step.delete.label}">delete</a> 
+	</div>
+	
+	
+	<!-- ==================== /DOM definition =================== -->
+	
+	<!-- ==================== initialisation ==================== -->
+	
+	<script type="text/javascript">
+		require(["domReady", "test-cases-management"], function(domReady,testCaseManagement){
+			domReady(function(){
+				
+				var settings = {
+					
+					table : {
+						
+						basic : {
+							testCaseUrl : /*[[@{/test-cases/${testCase.id}}]]*/"/squash/test-cases/1",
+							testCaseId : /*[[${testCase.id}]]*/1,
+							rootContext : /*[[@{/}]]*/"/squash"
+						},
+
+							
+						permissions :{
+							isWritable : /*[[${isWritable}]]*/true,
+							isAttachable : /*[[${isAttachable}]]*/false
+						}
+
+					},
+						
+						
+					collapser : {
+						language : {
+							popupTitle : /*[[#{popup.title.info}]]*/"read this",
+							popupMessage : /*[[#{message.CloseEditingFormsBeforeCollapse}]]*/"please close all your widgets still in edit-mode",
+							btnExpand : /*[[#{test-case.step.button.expand.label}]]*/"expand",
+							btnCollapse : /*[[#{test-case.step.button.collapse.label}]]*/"collapse"
+						}
+					}
+				};
+				
+				testCaseManagement.initStepTable(settings);
+			})
+		});
+	</script>
+	<!-- ==================== /initialisation ==================== -->
+</div>
