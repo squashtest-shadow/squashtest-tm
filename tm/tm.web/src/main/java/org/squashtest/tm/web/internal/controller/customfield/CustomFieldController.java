@@ -227,6 +227,7 @@ public class CustomFieldController {
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeDefaultValue(@PathVariable long customFieldId, @RequestParam("value") String defaultValue) {
 		customFieldManager.changeDefaultValue(customFieldId, defaultValue);
+		
 	}
 
 	/**
