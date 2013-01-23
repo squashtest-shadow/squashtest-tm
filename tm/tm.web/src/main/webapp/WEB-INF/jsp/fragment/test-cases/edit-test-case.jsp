@@ -478,30 +478,68 @@
 </c:if>
 
 <%-- ----------------------------------------- Remaining of the javascript initialization ----------------------------- --%>
-
-<comp:decorate-ajax-table url="${ callingtestCasesTableUrl }"
-			tableId="calling-test-case-table" paginate="true">		
-	<jsp:attribute name="initialSort">[[4,'asc']]</jsp:attribute>
-	<jsp:attribute name="rowCallback">callingTestCasesTableRowCallback</jsp:attribute>
-	<jsp:attribute name="columnDefs">
-		<dt:column-definition targets="0" visible="false"  sortable="false" />
-		<dt:column-definition targets="1" sortable="false" cssClass="centered select-handle" width="2em" />
-		<dt:column-definition targets="2" sortable="true" />
-		<dt:column-definition targets="3" sortable="true" width="15em" />
-		<dt:column-definition targets="4" sortable="true" />
-		<dt:column-definition targets="5" sortable="true" visible="true" lastDef="true" />
-	</jsp:attribute>
-</comp:decorate-ajax-table>			
-		
-<%-- Test Automation code --%>
-<c:if test="${testCase.project.testAutomationEnabled}">
-	<ta:testcase-script-elt-code testCase="${testCase}"
-								 canModify="${writable}" 
-								 testCaseUrl="${testCaseUrl}" />
-</c:if>
-<%-- /Test Automation code  --%>
+	
 
 <script type="text/javascript">
+
+	function addHLinkToCallingTestCasesName(row, data) {
+		var url= '${ pageContext.servletContext.contextPath }/test-cases/' + data[0] + '/info';			
+		addHLinkToCellText($( 'td:eq(2)', row ), url);
+	}	
+	
+	function callingTestCasesTableRowCallback(row, data, displayIndex) {
+		addClickHandlerToSelectHandle(row, $("#calling-test-case-table"));
+		addHLinkToCallingTestCasesName(row, data);
+		return row;
+	}
+	
+	
+	function refreshTCImportance(){
+		$.ajax({
+			type : 'GET',
+			data : {},
+			success : function(importance){refreshTCImportanceSuccess(importance);},
+			error : function(){refreshTCImportanceFail();},
+			dataType : "text",
+			url : '${getImportance}'			
+		})
+		.success(function(importance){
+			$("#test-case-importance").html(importance);	
+		})
+		.error(function(){
+			$.squash.openMessage("<f:message key='popup.title.error' />", "fail to refresh importance");
+		});
+	}
+
+
+	
+	function deleteTestCaseSuccess() {
+		<c:choose>
+		<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
+		<c:when test="${param['isInfoPage']}" >		
+		document.location.href="${workspaceUrl}" ;
+		</c:when>
+		<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
+		<c:otherwise>
+		location.reload(true);
+		</c:otherwise>
+		</c:choose>		
+	}
+	
+
+
+	function renameTestCaseSuccess(data){
+		var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
+		var evt = new EventRename(identity, data.newName);
+		squashtm.contextualContent.fire(null, evt);		
+	};	
+	
+	function updateReferenceInTitle(newRef){
+		var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
+		var evt = new EventUpdateReference(identity, newRef);
+		squashtm.contextualContent.fire(null, evt);		
+	};
+
 	
 	$(function(){
 		
@@ -531,7 +569,6 @@
 		//init the renaming listener
 		require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
 			
-
 			var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
 			
 			var nameHandler = contentHandlers.getNameAndReferenceHandler();
@@ -548,61 +585,29 @@
 	});
 
 	
-	function addHLinkToCallingTestCasesName(row, data) {
-		var url= '${ pageContext.servletContext.contextPath }/test-cases/' + data[0] + '/info';			
-		addHLinkToCellText($( 'td:eq(2)', row ), url);
-	}	
-	
-	function callingTestCasesTableRowCallback(row, data, displayIndex) {
-		addClickHandlerToSelectHandle(row, $("#calling-test-case-table"));
-		addHLinkToCallingTestCasesName(row, data);
-		return row;
-	}
-	
-	
-	function refreshTCImportance(){
-		$.ajax({
-			type : 'GET',
-			data : {},
-			success : function(importance){refreshTCImportanceSuccess(importance);},
-			error : function(){refreshTCImportanceFail();},
-			dataType : "text",
-			url : '${getImportance}'			
-		});	
-	}
-	
-	function refreshTCImportanceSuccess(importance){
-		$("#test-case-importance").html(importance);	
-	}
-	
-	function refreshTCImportanceFail(){
-		$.squash.openMessage("<f:message key='popup.title.error' />", "fail to refresh importance");
-	}
-
-
-	function renameTestCaseSuccess(data){
-		var evt = new EventRename(identity, data.newName);
-		squashtm.contextualContent.fire(null, evt);		
-	};	
-	
-	function updateReferenceInTitle(newRef){
-		var evt = new EventUpdateReference(identity, newRef);
-		squashtm.contextualContent.fire(null, evt);		
-	};
-
-	
-	function deleteTestCaseSuccess() {
-		<c:choose>
-		<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-		<c:when test="${param['isInfoPage']}" >		
-		document.location.href="${workspaceUrl}" ;
-		</c:when>
-		<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
-		<c:otherwise>
-		location.reload(true);
-		</c:otherwise>
-		</c:choose>		
-	}
-	
-	
 </script>
+
+
+<comp:decorate-ajax-table url="${ callingtestCasesTableUrl }"
+			tableId="calling-test-case-table" paginate="true">		
+	<jsp:attribute name="initialSort">[[4,'asc']]</jsp:attribute>
+	<jsp:attribute name="rowCallback">callingTestCasesTableRowCallback</jsp:attribute>
+	<jsp:attribute name="columnDefs">
+		<dt:column-definition targets="0" visible="false"  sortable="false" />
+		<dt:column-definition targets="1" sortable="false" cssClass="centered select-handle" width="2em" />
+		<dt:column-definition targets="2" sortable="true" />
+		<dt:column-definition targets="3" sortable="true" width="15em" />
+		<dt:column-definition targets="4" sortable="true" />
+		<dt:column-definition targets="5" sortable="true" visible="true" lastDef="true" />
+	</jsp:attribute>
+</comp:decorate-ajax-table>		
+
+		
+<%-- Test Automation code --%>
+<c:if test="${testCase.project.testAutomationEnabled}">
+	<ta:testcase-script-elt-code testCase="${testCase}"
+								 canModify="${writable}" 
+								 testCaseUrl="${testCaseUrl}" />
+</c:if>
+<%-- /Test Automation code  --%>
+

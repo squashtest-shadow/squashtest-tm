@@ -295,7 +295,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			isContextual : true,
 			usesRichEdit : true,
 			closeOnSuccess : false,
-			ckEditor : {
+			ckeditor : {
 				styleUrl : urls.ckeConfigUrl,
 				lang : language.ckeLang
 			},
@@ -313,7 +313,8 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			
 		};
 		
-
+		squashtm.popup.create(params);
+		
 		//cuf value support
 
 		var dialog = $("#add-test-step-dialog");
