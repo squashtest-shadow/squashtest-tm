@@ -370,7 +370,7 @@
 			is destroyed.			
 						
 			Note that in this table the coupling between the custom field value and the bound entity is week : it consists of a pair
-			of Type/ID (BINDABLE_ENTITY and BINDABLE_ENTITY_ID) rather than a foreign key to the said entity, nor is true 
+			of Type/ID (BINDABLE_ENTITY_TYPE and BINDABLE_ENTITY_ID) rather than a foreign key to the said entity, nor is true 
 			the opposite ( ie no FK from a test case to a custom field value). 	
 		</comment>
 		

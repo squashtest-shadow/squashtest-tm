@@ -25,54 +25,120 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-    <!-- DO NOT FORGET TO UPDATE VERSION IN CORE_CONFIG ! -->
-    <changeSet id="tm-1.5.0.00" author="mpagnon">
-        <comment>Update TM database version number</comment>
-        <update tableName="CORE_CONFIG">
-            <column name="STR_KEY" value="squashtest.tm.database.version" />
-            <column name="VALUE" value="1.5.0" />
-            <where>STR_KEY = 'squashtest.tm.database.version'</where>
-        </update>
-    </changeSet>
-    
-     <changeSet id="tm-1.5.0.feat-1596.02" author="bsiri">
-    	<comment>dropping the temp table from changest tm-1.4.0.feat-1596.01</comment>
-    	<dropTable tableName="EXECUTION_TEST_CASE_DATA"/>    
-    </changeSet>
-   
-    
-    
-  	<changeSet id="tm-1.5.0.00-issue-1838.01" author="mpagnon">
-  		<comment>Update table custom-field-value so that all mandatory cuf have a value</comment>
-  		<sql>
-  			update CUSTOM_FIELD_VALUE
-  			set VALUE = (
-  				select cf.DEFAULT_VALUE 
-  				from CUSTOM_FIELD_BINDING cfb 
-  					join CUSTOM_FIELD cf on cfb.CF_ID = cf.CF_ID 
-  				where cfb.CFB_ID = CUSTOM_FIELD_VALUE.CFB_ID
-  				)
-  			where (CUSTOM_FIELD_VALUE.VALUE is null or LTRIM(RTRIM(CUSTOM_FIELD_VALUE.VALUE)) = '' )
-  			and exists (
-  				select * 
-  				from CUSTOM_FIELD_BINDING cfb 
-  					join CUSTOM_FIELD cf on cfb.CF_ID = cf.CF_ID 
-  				where cfb.CFB_ID = CUSTOM_FIELD_VALUE.CFB_ID 
-  				and cf.OPTIONAL = false)
-  			;
-  		</sql>
-  	</changeSet>
-  	
-  	<changeSet id="tm-1.5.0.00-feat-1390.03" author="bsiri">
-  		<comment>adding cascade delete on the rendering locations when custom field bindings are removed (prune the orphans)</comment>
-  		
-  		<dropForeignKeyConstraint baseTableName="CUSTOM_FIELD_RENDERING_LOCATION" constraintName="fk_cfb_render_loc_cfb"/>
-  		
-  		<addForeignKeyConstraint constraintName="fk_cfb_render_loc_cfb" onDelete="CASCADE"
-  								 referencedTableName="CUSTOM_FIELD_BINDING"  referencedColumnNames="CFB_ID"
-  								baseTableName="CUSTOM_FIELD_RENDERING_LOCATION" baseColumnNames="CFB_ID"  />
-  		
-  	</changeSet>
+	<!-- DO NOT FORGET TO UPDATE VERSION IN CORE_CONFIG ! -->
+	<changeSet id="tm-1.5.0.00" author="mpagnon">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="squashtest.tm.database.version" />
+			<column name="VALUE" value="1.5.0" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.feat-1596.02" author="bsiri">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="EXECUTION_TEST_CASE_DATA" />
+		</preConditions>
+		<comment>dropping the temp table from changest tm-1.4.0.feat-1596.01</comment>
+		<dropTable tableName="EXECUTION_TEST_CASE_DATA" />
+	</changeSet>
+
+
+
+	<changeSet id="tm-1.5.0.00-issue-1838.01" author="mpagnon">
+		<comment>Update table custom-field-value so that all mandatory cuf have a value</comment>
+		<sql>
+			update CUSTOM_FIELD_VALUE
+			set VALUE = (
+			select cf.DEFAULT_VALUE
+			from CUSTOM_FIELD_BINDING cfb
+			join CUSTOM_FIELD cf on cfb.CF_ID =
+			cf.CF_ID
+			where cfb.CFB_ID = CUSTOM_FIELD_VALUE.CFB_ID
+			)
+			where
+			(CUSTOM_FIELD_VALUE.VALUE is null or
+			LTRIM(RTRIM(CUSTOM_FIELD_VALUE.VALUE)) = '' )
+			and exists (
+			select *
+			from CUSTOM_FIELD_BINDING cfb
+			join CUSTOM_FIELD cf on cfb.CF_ID =
+			cf.CF_ID
+			where cfb.CFB_ID = CUSTOM_FIELD_VALUE.CFB_ID
+			and cf.OPTIONAL =
+			false)
+			;
+		</sql>
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.00-feat-1390.03" author="bsiri">
+		<comment>adding cascade delete on the rendering locations when custom field bindings are removed (prune the orphans)</comment>
+
+		<dropForeignKeyConstraint baseTableName="CUSTOM_FIELD_RENDERING_LOCATION"
+			constraintName="fk_cfb_render_loc_cfb" />
+
+		<addForeignKeyConstraint constraintName="fk_cfb_render_loc_cfb"
+			onDelete="CASCADE" referencedTableName="CUSTOM_FIELD_BINDING"
+			referencedColumnNames="CFB_ID" baseTableName="CUSTOM_FIELD_RENDERING_LOCATION"
+			baseColumnNames="CFB_ID" />
+
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.00-feat-1850.01" author="mpagnon">
+		<comment>The table DENORMALIZED_FIELD_VALUE holds instances of a FIELD that are bound to instances of : 
+			executions, execution-steps	when they are created from test-cases or test-case-steps holding CUSTOM_FIELDS.
+			A "denormalized field value" is destroyed when the "denormalized field holder" instance is destroyed.
+						
+			Note that in this table the coupling between the "denormalized field value" and the "denormalized field holder" is week : it consists of a pair
+			of Type/ID (DENORMALIZED_FIELD_HOLDER_TYPE and DENORMALIZED_FIELD_HOLDER_ID) rather than a foreign key to the said entity, nor is true 
+			the opposite ( ie no FK from an execution to a denormalized field value). 	</comment>
+		<createTable tableName="DENORMALIZED_FIELD_VALUE">
+			<column name="DFV_ID" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"
+					primaryKeyName="pk_custom_field" />
+			</column>
+			<column name="CFV_ID" type="BIGINT"
+				remarks="the custom field value where the denormalized field is copied from">
+				<constraints nullable="true" foreignKeyName="fk_dfv_cfv_binding"
+					references="CUSTOM_FIELD_VALUE(CFV_ID)" />
+			</column>
+			<column name="CODE" defaultValue="" type="VARCHAR(30)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DENORMALIZED_FIELD_HOLDER_ID" type="BIGINT"
+				remarks="the id of the denormalized field holder.">
+				<constraints nullable="false" />
+			</column>
+			<column name="DENORMALIZED_FIELD_HOLDER_TYPE" type="VARCHAR(30)"
+				remarks="the kind of entity.">
+				<constraints nullable="false" />
+			</column>
+			<column name="INPUT_TYPE" type="CHAR(30)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LABEL" type="VARCHAR(255)" defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			<column name="POSITION" type="INT">
+				<constraints nullable="true" />
+			</column>
+			<column name="VALUE" type="VARCHAR(255)"
+				remarks="the value of that particular custom field value" />
+		</createTable>
+	</changeSet>
+	
+		<changeSet id="tm-1.5.0.00-feat-1850.02" author="mpagnon">
+		<comment>Create table for denormalized field rendering location</comment>
+		 <createTable tableName="DENORMALIZED_FIELD_RENDERING_LOCATION">
+            <column name="DFV_ID" type="BIGINT">
+                <constraints nullable="false" references="DENORMALIZED_FIELD_VALUE(DFV_ID)" foreignKeyName="fk_df_render_loc_dfv"/>
+            </column>
+
+            <column name="RENDERING_LOCATION" type="VARCHAR(30)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        </changeSet>
   	
   	<changeSet id="tm-1.5.0-feat-821" author="gfouquet">
   		<comment>Change class names in ACL system</comment>
