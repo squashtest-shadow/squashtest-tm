@@ -65,6 +65,8 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolder;
+import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -82,7 +84,7 @@ import org.squashtest.tm.service.security.annotation.AclConstrainedObject;
 
 @Auditable
 @Entity
-public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus {
+public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus, DenormalizedFieldHolder {
 	
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 	
@@ -589,6 +591,16 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 			return automatedExecutionExtender.getResultSummary();
 		}
 		throw new NotAutomatedException();		
+	}
+
+	@Override
+	public Long getDenormalizedFieldHolderId() {
+		return getId();
+	}
+
+	@Override
+	public DenormalizedFieldHolderType getDenormalizedFieldHolderType() {
+		return DenormalizedFieldHolderType.EXECUTION;
 	}
 	
 }

@@ -118,6 +118,9 @@
         <value>org.squashtest.tm.domain.customfield.CustomFieldOption</value>
         <value>org.squashtest.tm.domain.customfield.CustomFieldBinding</value>
         <value>org.squashtest.tm.domain.customfield.CustomFieldValue</value>
+		        
+		          <!-- Denormalized Fields -->
+		        <value>org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldValue</value>
       </list>
     </property>
     <property name="namingStrategy">

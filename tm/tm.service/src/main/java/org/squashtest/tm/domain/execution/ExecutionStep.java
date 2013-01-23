@@ -56,6 +56,8 @@ import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolder;
+import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
@@ -63,7 +65,7 @@ import org.squashtest.tm.service.security.annotation.AclConstrainedObject;
 
 @Entity
 @Auditable
-public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepVisitor, Identified, HasExecutionStatus {
+public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepVisitor, Identified, HasExecutionStatus, DenormalizedFieldHolder {
 	
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 	
@@ -120,7 +122,6 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	private final AttachmentList attachmentList = new AttachmentList();
 
 	/* issues attributes */
-
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	@JoinColumn(name = "ISSUE_LIST_ID")
 	private IssueList issueList = new IssueList();
@@ -273,6 +274,16 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	@Override
 	public BugTracker getBugTracker() {
 		return getProject().findBugTracker();
+	}
+
+	@Override
+	public Long getDenormalizedFieldHolderId() {
+		return getId();
+	}
+
+	@Override
+	public DenormalizedFieldHolderType getDenormalizedFieldHolderType() {
+		return DenormalizedFieldHolderType.EXECUTION_STEP;
 	}
 	
 }
