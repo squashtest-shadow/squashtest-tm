@@ -142,7 +142,7 @@ class TestCaseModificationControllerTest extends Specification {
 	}
 
 	
-		def "should build table model for test case steps"() {
+	def "should build table model for test case steps"() {
 		given:
 		AttachmentList al = Mock()
 		al.size() >> 1
@@ -180,10 +180,11 @@ class TestCaseModificationControllerTest extends Specification {
 
 		then:
 		res.sEcho == "echo"
-		res.aaData == [
-			[ "", 1, 1, 5, "a1", "r1", "", "", 1, "action", null ],
-			[ "", 2, 2, 5, "a2", "r2", "", "", 1, "action", null ]
+		res.aaData == [			
+			["step-id":1l, "step-type":"action", "nb-attachments":1, "attach-list-id":5l, "step-result":"r1", "step-index":1, "empty-delete-holder":null, "called-tc-id":null, "step-action":"a1"], 
+			["step-id":2l, "step-type":"action", "nb-attachments":1, "attach-list-id":5l, "step-result":"r2", "step-index":2, "empty-delete-holder":null, "called-tc-id":null, "step-action":"a2"]
 		]
+
 	}
 	def "should change step index"() {
 		given:

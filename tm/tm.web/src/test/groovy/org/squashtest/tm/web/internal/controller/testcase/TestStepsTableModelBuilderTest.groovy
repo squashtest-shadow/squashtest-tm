@@ -51,20 +51,20 @@ class TestStepsTableModelBuilderTest extends Specification {
 		def data = builder.buildItemData(step);
 
 		then:
-		data[0] == ""
-		data[1] == stepIndex
-		data[2] == step.id
-		data[3] == step.attachmentList.id
-		data[4] == step.action
-		data[5] == step.expectedResult
-		data[6] == ""
-		data[7] == ""
-		data[8] == step.attachmentList.size()
-		data[9] == "action"
-		data[10] == null
+		data == [
+				 "step-id" : step.id, 
+				 "step-index" : stepIndex, 
+				 "nb-attachments" : step.attachmentList.size(),
+				 "attach-list-id" : step.attachmentList.id,
+				 "step-action" : "action", 
+				 "step-result" : step.expectedResult,
+				 "step-type" : "action",
+				 "called-tc-id" : null,
+				 "empty-delete-holder" : null
+			]	
 	}
 
-	def "Should build model for an CallTestStep"() {
+	def "Should build model for a CallTestStep"() {
 		given:
 		TestCase callee = new TestCase(name: "callee")
 		CallTestStep step = new CallTestStep(calledTestCase: callee)
@@ -82,16 +82,18 @@ class TestStepsTableModelBuilderTest extends Specification {
 		def data = builder.buildItemData(step);
 
 		then:
-		data[0] == ""
-		data[1] == stepIndex
-		data[2] == step.id
-		data[3] == ""
-		data[4] == "Call : callee"
-		data[5] == ""
-		data[6] == ""
-		data[7] == ""
-		data[8] == null
-		data[9] == "call"
-		data[10] == callee.id
+		
+		data == [
+			"step-id" : step.id,
+			"step-index" : stepIndex,
+			"nb-attachments" : null,
+			"attach-list-id" : null,
+			"step-action" : "Call : callee",
+			"step-result" : null,
+			"step-type" : "call",
+			"called-tc-id" : callee.id,
+			"empty-delete-holder" : null
+	   ]
+	
 	}
 }

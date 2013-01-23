@@ -90,7 +90,7 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 		item.put("attach-list-id", null);
 		item.put("step-action", action);
 		item.put("step-result", null);
-		item.put("nb-attachments", 0l);
+		item.put("nb-attachments", null);
 		item.put("step-type", "call");
 		item.put("called-tc-id", called.getId());
 		item.put("empty-delete-holder", null);

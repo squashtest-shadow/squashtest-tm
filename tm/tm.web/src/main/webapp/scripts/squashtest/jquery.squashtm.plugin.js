@@ -249,6 +249,18 @@ var squashtm = squashtm || {};
 			target.addClass('is-contextual');
 		}
 		
+		//hook on remove : remove the instances of CKEditor
+		if (settings.usesRichEdit){
+			target.on('remove', function(){
+				target.find('textarea').each(function(){
+					var ckInstance = CKEDITOR.instances[this.id];
+					if (ckInstance) {
+						ckInstance.destroy(true);
+					}
+				});
+			});
+		}
+		
 		return self;
 	};
 	

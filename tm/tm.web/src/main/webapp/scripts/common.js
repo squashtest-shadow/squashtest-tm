@@ -63,7 +63,7 @@ requirejs.config({
 		"jform": "jquery/jquery.form",
 		"jquery.generateId": "jquery/jquery.generateId",
 		"jquery.hotkeys": "jquery/jquery.hotkeys-0.8", 
-		"jquery.squash": "squashtest/jquery.squashtm.plugin", 
+		"jquery.squash": "http://localhost/scripts/scripts/squashtest/jquery.squashtm.plugin", 
 		"jquery.squash.fragmenttabs": "squash/squashtm.fragmenttabs",
 		"jquery.squash.togglepanel": "squashtest/jquery.squash.togglepanels", 
 		"jquery.squash.messagedialog": "squashtest/jquery.squash.messagedialog", 

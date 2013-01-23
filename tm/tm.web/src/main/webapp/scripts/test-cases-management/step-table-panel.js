@@ -79,15 +79,16 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			multiDelete : 	tcUrl  + "/steps",
 			callTC : 		ctxUrl + "/test-cases/{called-tc-id}/info",
 			pasteStep : 	tcUrl  + "/steps",
+			addStep : 		tcUrl  + "/steps/add",
 			editActionUrl : tcUrl  + "/steps/{step-id}/action",
 			editResultUrl : tcUrl  + "/steps/{step-id}/result",
 			stepcufBindingUrl: ctxUrl + "/custom-fields-binding?projectId="+conf.basic.projectId+"&bindableEntity=TEST_STEP&optional=false",
-			ckeConfigUrl : ctxUrl + "/styles/ckeditor/ckeditor-config.js",
-			indicatorUrl : ctxUrl + "/scripts/jquery/indixator.gif",
+			ckeConfigUrl : ctxUrl + "styles/ckeditor/ckeditor-config.js",
+			indicatorUrl : ctxUrl + "/scripts/jquery/indicator.gif",
 			callStepManagerUrl : tcUrl + "/call",
 			tableLanguageUrl : ctxUrl + "/datatables/messages",
 			tableAjaxUrl : tcUrl + "/steps-table"
-		}		
+		};		
 	}
 		
 	
@@ -98,24 +99,30 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 	}
 	
 	function removeStepSuccess(){
-		alert('I should throw an event there so that I can say I need to refresh the requirement table (refreshStepsAndImportance)')
+		alert('I should throw an event there so that I can say I need to refresh the requirement table (refreshStepsAndImportance)');
 	}
 	
 	
 	function stepsTableCreatedRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull){
-		var jqRow = $(nRow);
-		if (aData['step-type']==="action"){
-			jqRow.find('td.called-tc-cell').removeClass('called-tc-cell');
-		}
-		else{
-			jqRow.find('td.rich-edit-action').removeClass('rich-edit-action');
-			jqRow.find('td.rich-edit-result').removeClass('rich-edit-result');
-		}
+		nRow.className += (aData['step-type']==="action") ?  " action-step-row" : " call-step-row";
 	}
 	
 	function stepsTableDrawCallback() {
+
+		//rework the td css classes to inhibit some post processing on them when not relevant
+		var actionRows = this.find('tr.action-step-row');
+		var callRows = this.find('tr.call-step-row');
+		
+		actionRows.find('td.call-tc-cell').removeClass('called-tc-cell');
+		
+		callRows.find('td.rich-edit-action').removeClass('rich-edit-action');
+		callRows.find('td.rich-edit-result').removeClass('rich-edit-result');
+		callRows.find('td.has-attachment-cell').removeClass('has-attachment-cell');
+		callRows.find('td.called-tc-cell').next().remove().end().attr('colspan', 2);
+		
+		
 		//collapser
-		var collapser = $("#test-steps-table").data('collapser');
+		var collapser = this.data('collapser');
 		if(collapser){
 			collapser.refreshTable();
 		}
@@ -185,7 +192,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 				   }
 				]
 			}
-		}
+		};
 		
 		if (permissions.isWritable){
 			
@@ -225,7 +232,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 				functions : {
 					dropHandler : stepDropHandlerFactory(urls.dropUrl)
 				}
-			}
+			};
 			
 			$.extend(squashSettings, moreSettings);
 			
@@ -285,13 +292,25 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 	
 	function initAddTestStepDialog(language, urls){
 
+		decorateStepTableButton("#add-test-step-button", "ui-icon-plusthick");
+		
+		
+		function postStep(data){
+			return $.ajax({
+				url : urls.addStep,
+				type : 'POST',
+				data : data,
+				dataType : 'json'
+			});
+		}
+		
 		//main popup definition
 		
 		//TODO : the handlers
 		var params = {
 			selector : "#add-test-step-dialog",
 			openedBy : "#add-test-step-button",
-			title : language.title,
+			title : language.addStepTitle,
 			isContextual : true,
 			usesRichEdit : true,
 			closeOnSuccess : false,
@@ -301,13 +320,24 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			},
 			buttons : [
 			   {
-				   'text' : language.addStep
+				   'text' : language.addStep,
+				   'click' : function(){
+					   var data = readAddStepParams();
+					   postStep(data).success(addTestStepSuccess);
+				   }
 			   },
 			   {
-				   'text' : language.addAnother
+				   'text' : language.addAnotherStep,
+				   'click' : function(){
+					   var data = readAddStepParams();
+					   postStep(data).success(addTestStepSuccessAnother);
+				   }
 			   },
 			   {
-				   'text' : language.cancellabel
+				   'text' : language.cancellabel,
+				   'click' : function(){
+					   $("#add-test-step-dialog").dialog('close');
+				   }
 			   }
 			]
 			
@@ -337,6 +367,9 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		
 		var table = $("#test-steps-table").squashTable();
 		
+		decorateStepTableButton("#copy-step", "ui-icon-clipboard" );
+		decorateStepTableButton("#paste-step", "ui-icon-copy");
+		
 		$("#copy-step").bind('click', function(){
 			var stepIds = table.getSelectedIds();
 			if (stepIds.length==0){
@@ -354,7 +387,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			var stepIds = cookieIds.split(",");
 			
 			try{
-				if (idList.length==0){
+				if (stepIds.length==0){
 					throw language.noStepSelected;
 				}
 			
@@ -391,28 +424,35 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 	
 	function initDeleteAllStepsButtons(language, urls){
 
-		var table = $("#test-steps-table").squashTable();		
-		var ids = table.getSelectedIds();
+		decorateStepTableButton("#delete-all-steps-button", "ui-icon-minusthick");
 		
-		if (ids.length==0){
-			$.squash.openMessage(language.errorTitle, language.noStepSelected );
-		}
-		else{
-			oneShotConfirm(language.deleteTitle, 
-						   language.deleteConfirm, 
-						   language.oklabel,
-						   language.cancellabel
-			).done(function(){
-				$.ajax({
-					url : urls.multiDelete+"/"+ids.join(','),
-					type : 'DELETE',
-					dataType : "json"
+		$("#copy-step").bind('click', function(){
+			var table = $("#test-steps-table").squashTable();		
+			var ids = table.getSelectedIds();
+			
+			if (ids.length==0){
+				$.squash.openMessage(language.errorTitle, language.noStepSelected );
+			}
+			else{
+				oneShotConfirm(language.deleteTitle, 
+							   language.deleteConfirm, 
+							   language.oklabel,
+							   language.cancellabel
+				).done(function(){
+					$.ajax({
+						url : urls.multiDelete+"/"+ids.join(','),
+						type : 'DELETE',
+						dataType : "json"
+					});
 				});
-			});
-		}
+			}						
+		});
 	}
 	
 	function initCallStepButton(urls){
+
+		decorateStepTableButton("#add-call-step-button", "ui-icon-arrowthickstop-1-e");
+		
 		$("#add-call-step-button").click(function(){			
 			var url = document.URL;
 			$.cookie('call-step-manager-referer', url, {path:'/'});
@@ -424,11 +464,6 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 	
 	function initTableToolbar(language, urls){
 		
-		decorateStepTableButton("#copy-step", "ui-icon-clipboard" );
-		decorateStepTableButton("#paste-step", "ui-icon-copy");
-		decorateStepTableButton("#add-test-step-button", "ui-icon-plusthick");
-		decorateStepTableButton("#add-call-step-button", "ui-icon-arrowthickstop-1-e");
-		decorateStepTableButton("#delete-all-steps-button", "ui-icon-minusthick");
 		
 		//copy pasta buttons
 		initStepCopyPastaButtons(language, urls);
@@ -524,7 +559,6 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		//end
 		table.data('collapser', collapser);
 		
-		return collapser;
 	 }	
 
 	
@@ -544,15 +578,14 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		}
 		
 		// table collapser		
-		var collapserSettings = settings.collapser;
-		var collapser = initCollapser(language, urls);
+		initCollapser(language, urls);
 		
-	}
+	};
 	
 	
 	return {
 		init : init
-	}
+	};
 	
 
 })
