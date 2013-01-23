@@ -22,9 +22,20 @@
 --%>
 <%@ tag description="activation of jquery-ui tabs"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<%@ attribute name="beforeLoad" required="false" description="if set, will add a beforeLoad hook to the configuration of the tabs." %>
+
 <script type="text/javascript" src="<c:url value='/scripts/squash/squashtm.fragmenttabs.js' />"></script>
 <script type="text/javascript">
 	$(function() {
-		squashtm.fragmenttabs.init();
+		require(["jquery.squash.fragmenttabs"], function(Frag){
+			var init = {};
+			
+			<c:if test="${not empty beforeLoad}">
+			init.beforeLoad = ${beforeLoad};
+			</c:if>
+			
+			Frag.init(init);
+		});
 	});
 </script>

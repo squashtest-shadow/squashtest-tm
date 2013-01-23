@@ -28,12 +28,12 @@ requirejs.config({
     "projects-manager", 
     "project",
     "contextual-content-handlers",
-    //"test-cases-management",
-    {
+    "test-cases-management",
+    /*{
     	main : "main",
     	name : "test-cases-management",
     	location : "http://localhost/scripts/scripts/test-cases-management"
-    }
+    }*/
 	],
 
 	/*
@@ -63,7 +63,7 @@ requirejs.config({
 		"jform": "jquery/jquery.form",
 		"jquery.generateId": "jquery/jquery.generateId",
 		"jquery.hotkeys": "jquery/jquery.hotkeys-0.8", 
-		"jquery.squash": "http://localhost/scripts/scripts/squashtest/jquery.squashtm.plugin", 
+		"jquery.squash": "squashtest/jquery.squashtm.plugin", 
 		"jquery.squash.fragmenttabs": "squash/squashtm.fragmenttabs",
 		"jquery.squash.togglepanel": "squashtest/jquery.squash.togglepanels", 
 		"jquery.squash.messagedialog": "squashtest/jquery.squash.messagedialog", 
@@ -82,7 +82,7 @@ requirejs.config({
 		"squash.cssloader": "squash/squash.cssloader",
 		"squash.translator" : "squash/squash.translator",
 		"squash.resizer" : "squash/squashtm.tree-page-resizer",
-		"squash.table-collapser" : "http://localhost/scripts/scripts/squashtest/jquery.squash.table-collapser"
+		"squash.table-collapser" : "squashtest/jquery.squash.table-collapser"
 	},
 	shim: {
 		"ckeditor": {

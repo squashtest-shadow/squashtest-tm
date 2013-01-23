@@ -450,7 +450,6 @@
 						 entity="${ testCase }"
 						 editable="${ attachable }" />
 
-	<comp:fragment-tabs />
 
 	<%------------------------------ /Attachments bloc ---------------------------------------------%>
 
@@ -539,6 +538,14 @@
 		var evt = new EventUpdateReference(identity, newRef);
 		squashtm.contextualContent.fire(null, evt);		
 	};
+	
+	
+	function beforeLoadTab(event, ui){
+		if (document.getElementById("test-steps-tabs-panel") !== null){
+			event.preventDefault();
+			return false;
+		}
+	};
 
 	
 	$(function(){
@@ -610,4 +617,7 @@
 								 testCaseUrl="${testCaseUrl}" />
 </c:if>
 <%-- /Test Automation code  --%>
+
+
+<comp:fragment-tabs beforeLoad="beforeLoadTab" />
 
