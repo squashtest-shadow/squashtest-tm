@@ -244,6 +244,18 @@ public class TestCaseModificationController {
 		return internationalizationHelper.internationalize(mode, locale);
 	}
 
+	
+	@RequestMapping(value="/steps/panel")
+	public String getTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model){
+		
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		
+		model.addAttribute("testCase", testCase);
+		
+		return "test-cases-tabs/test-steps-tab.html";
+		
+	}
+	
 	@RequestMapping(value = "/steps-table", params = S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getStepsTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,

@@ -70,7 +70,7 @@
 			<button id="copy-step"
 					class="test-step-toolbar-button" 
 					href="#"
-					th:text="${test-case.step.button.copy.label}">
+					th:text="#{test-case.step.button.copy.label}">
 					copy step(s)
 			</button>
 			<button id="paste-step" 
@@ -136,13 +136,14 @@
 	
 	<!-- ==================== initialisation ==================== -->
 	
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
+		/*<![CDATA[*/
 		require(["domReady", "test-cases-management"], function(domReady,testCaseManagement){
 			domReady(function(){
 				
 				var settings = {
 					basic : {
-							testCaseUrl : /*[[@{/test-cases/${testCase.id}}]]*/"/squash/test-cases/1",
+							testCaseUrl : /*[[@{/test-cases/__${testCase.id}__}]]*/"/squash/test-cases/1",
 							testCaseId : /*[[${testCase.id}]]*/1,
 							projectId : /*[[${testCase.project.id}]]*/1,
 							rootContext : /*[[@{/}]]*/"/squash"
@@ -174,9 +175,10 @@
 
 				};
 				
-				testCaseManagement.initStepTable(settings);
+				testCaseManagement.initStepTablePanel(settings);
 			})
 		});
+		/*]]>*/
 	</script>
 	<!-- ==================== /initialisation ==================== -->
 </div>

@@ -884,12 +884,12 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		this.configureLinks = _configureLinks;
 		
 		this.attachButtonsCallback = _attachButtonsCallback;
-		this.buggedPicsCallback = buggedPicsCallback;
-		this.configureRichEditables = configureRichEditables;
+		this.buggedPicsCallback = _buggedPicsCallback;
+		this.configureRichEditables = _configureRichEditables;
 		this.configureExecutionStatus = _configureExecutionStatus;
 		this.configureDeleteButtons = _configureDeleteButtons;
-		this.enableTableDragAndDrop = enableTableDragAndDrop;
-		this.restoreTableSelection = restoreTableSelection;
+		this.enableTableDragAndDrop = _enableTableDragAndDrop;
+		this.restoreTableSelection = _restoreTableSelection;
 		
 		if(squashSettings.bindDeleteButtons != null){
 			this.bindDeleteButtons = squashSettings.bindDeleteButtons;

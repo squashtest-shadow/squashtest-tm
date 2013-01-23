@@ -45,6 +45,7 @@ import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
 import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException;
 import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
 import org.squashtest.csp.tm.domain.UnknownEntityException;
@@ -145,6 +146,20 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 */
 	public String getReference() {
 		return reference;
+	}
+	
+	
+	/**
+	 * @return {reference} - {name} if reference is not empty, or {name} if it is
+	 * 
+	 */
+	public String getFullName(){
+		if (StringUtils.isBlank(reference)){
+			return getName();
+		}
+		else{
+			return getReference()+" - "+getName();
+		}
 	}
 
 	/***

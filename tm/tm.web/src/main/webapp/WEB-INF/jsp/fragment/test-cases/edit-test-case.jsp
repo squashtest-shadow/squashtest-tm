@@ -95,6 +95,7 @@
 </c:url>
 
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
+<c:url var="stepTabUrl" value="/test-cases/${testCase.id}/steps/panel" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- 
@@ -136,26 +137,27 @@
 
 <%---------------------------- Test Case Header ------------------------------%>
 
-<div id="test-case-name-div"
-	class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+<div id="test-case-name-div" 
+	 class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 
 	<div style="float: left; height: 100%;">
 		<h2>
-			<span><f:message key="test-case.header.title" />&nbsp;:&nbsp;</span>
-			<c:set var="completeTestCaseName" value="${ testCase.name }" />
-			<c:if
-				test="${not empty testCase.reference && fn:length(testCase.reference) > 0}">
-				<c:set var="completeTestCaseName"
-					value='${ testCase.reference } - ${ testCase.name }' />
-			</c:if>
-			<a id="test-case-name" href="${ testCaseUrl }/info"><c:out
-					value="${ completeTestCaseName }" escapeXml="true" />
+			<span>
+				<f:message key="test-case.header.title" />&nbsp;:&nbsp;
+			</span>
+			
+			<c:set var="completeTestCaseName" value="${ testCase.fullName }" />
+			<a id="test-case-name" href="${ testCaseUrl }/info">
+				<c:out value="${ completeTestCaseName }" escapeXml="true" /> 
 			</a>
+			
 			<%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
-			<span id="test-case-raw-reference" style="display: none"><c:out
-					value="${ testCase.reference }" escapeXml="true" />
-			</span> <span id="test-case-raw-name" style="display: none"><c:out
-					value="${ testCase.name }" escapeXml="true" />
+			<span id="test-case-raw-reference" style="display: none">
+				<c:out value="${ testCase.reference }" escapeXml="true" /> 
+			</span> 
+			
+			<span id="test-case-raw-name" style="display: none">
+				<c:out value="${ testCase.name }" escapeXml="true" /> 
 			</span>
 		</h2>
 	</div>
@@ -168,32 +170,34 @@
 	<comp:popup id="rename-test-case-dialog"
 		titleKey="dialog.rename-test-case.title" isContextual="true"
 		openedBy="rename-test-case-button">
+		
 		<jsp:attribute name="buttons">
 	
-		<f:message var="label" key="dialog.rename-test-case.title" />
-		'${ label }': function() {
-			var url = "${ testCaseUrl }";
-			<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
-				useData="true" successHandler="renameTestCaseSuccess">					
-				<jq:params-bindings newName="#rename-test-case-input" />
-			</jq:ajaxcall>					
-		},
-		<pop:cancel-button />
-	</jsp:attribute>
+			<f:message var="label" key="dialog.rename-test-case.title" />
+			
+			'${ label }': function() {
+				var newName = $("#rename-test-case-input").val();
+				$.ajax({
+					url : "${testCaseUrl}",
+					type : "POST",
+					dataType : "json",
+					data : { 'newName' : newName}
+				}).success(renameTestCaseSuccess);			
+			},
+			
+			<pop:cancel-button />
+			
+		</jsp:attribute>
+		
 		<jsp:body>
-				<script type="text/javascript">
-				$( "#rename-test-case-dialog" ).bind( "dialogopen", function(event, ui) {
-					var name = $.trim($('#test-case-raw-name').text());
-					$("#rename-test-case-input").val(name);
-					
-				});
-				</script>
-				<label><f:message key="dialog.rename.label" />
-			</label>
-				<input type="text" id="rename-test-case-input" maxlength="255" size="50" />
-			<br />
+				<label>
+					<f:message key="dialog.rename.label" />
+				</label>
+				<input type="text" id="rename-test-case-input" 
+					   maxlength="255"	size="50" />
+				<br />
 				<comp:error-message forField="name" />
-			</jsp:body>
+		</jsp:body>
 
 	</comp:popup>
 </c:if>
@@ -201,189 +205,172 @@
 <%---------------------------- Test Case Informations ------------------------------%>
 
 <div id="test-case-toolbar" classes="toolbar-class ui-corner-all">
+	
 	<div class="toolbar-information-panel">
-		<comp:general-information-panel auditableEntity="${ testCase }"
-			entityUrl="${ testCaseUrl }" />
-
-
-		<%-- There used to be an execution mode combobox right here. Search SCM if needed again --%>
+		<comp:general-information-panel auditableEntity="${ testCase }"	entityUrl="${ testCaseUrl }" />
 	</div>
 
 	<div class="toolbar-button-panel">
-		<c:if test="${ smallEditable }">
-			<input type="button"
-				value="<f:message key='test-case.button.rename.label' />"
+	<c:if test="${ smallEditable }">
+		<input type="button" value="<f:message key='test-case.button.rename.label' />"
 				id="rename-test-case-button" class="button" />
-		</c:if>
-		<c:if test="${ deletable }">
-			<input type="button"
-				value="<f:message key='test-case.button.remove.label' />"
+	</c:if>
+	<c:if test="${ deletable }">
+		<input type="button" value="<f:message key='test-case.button.remove.label' />"
 				id="delete-test-case-button" class="button" />
-		</c:if>
+	</c:if>
 	</div>
 	<div style="clear: both;"></div>
 	<c:if test="${ moreThanReadOnly }">
 		<comp:opened-object otherViewers="${ otherViewers }"
-			objectUrl="${ testCaseUrl }" isContextual="${ ! param.isInfoPage }" />
+							objectUrl="${ testCaseUrl }" 
+							isContextual="${ ! param.isInfoPage }" />
 	</c:if>
 
 </div>
+
+
+<%-- --------------------------------------- Test Case body --------------------------------------- --%>
+
 <div class="fragment-tabs fragment-body">
+
+	<%--  ------------------ main tab panel --------------------------------- --%>
 	<ul>
-		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
-		</a>
+		<li>
+			<a href="#tabs-1"><f:message key="tabs.label.information" /></a>
 		</li>
-		<li><a href="#tabs-2"><f:message key="tabs.label.steps" />
-		</a>
+		<li>
+			<a href="${stepTabUrl}"><f:message key="tabs.label.steps" /></a>
 		</li>
-		<li><a href="#tabs-3"><f:message key="label.Attachments" />
-				<c:if test="${ testCase.attachmentList.notEmpty }">
-					<span class="hasAttach">!</span>
-				</c:if>
-		</a>
+		<li>
+			<a href="#tabs-3"><f:message key="label.Attachments" />
+			<c:if test="${ testCase.attachmentList.notEmpty }">
+				<span class="hasAttach">!</span>
+			</c:if> 
+			</a>
 		</li>
-		<li><a href="${executionsTabUrl}"><f:message
-					key="label.executions" />
-		</a>
+		<li>
+			<a href="${executionsTabUrl}"><f:message key="label.executions" /> </a>
 		</li>
 	</ul>
+	
+	
+	<%-- ------------------------- Description Panel ------------------------- --%>
+	
 	<div id="tabs-1">
-		<%----------------------------------- Description -----------------------------------------------%>
+		
 		<c:if test="${ smallEditable }">
-			<comp:rich-jeditable targetUrl="${ testCaseUrl }"
-				componentId="test-case-description" />
-			<comp:simple-jeditable targetUrl="${ testCaseUrl }"
-				componentId="test-case-reference"
-				submitCallback="updateReferenceInTitle" maxLength="50" />
+		<comp:rich-jeditable   targetUrl="${ testCaseUrl }" 
+							   componentId="test-case-description" />
+		
+		<comp:simple-jeditable targetUrl="${ testCaseUrl }"	
+							   componentId="test-case-reference"
+							   submitCallback="updateReferenceInTitle" 
+							   maxLength="50" />
 
-			<comp:select-jeditable componentId="test-case-importance"
-				jsonData="${ testCaseImportanceComboJson }"
-				targetUrl="${ testCaseUrl }" />
-				
-			<comp:select-jeditable componentId="test-case-nature"
-				jsonData="${ testCaseNatureComboJson }"
-				targetUrl="${ testCaseUrl }" />
-				
-			<comp:select-jeditable componentId="test-case-type"
-				jsonData="${ testCaseTypeComboJson }"
-				targetUrl="${ testCaseUrl }" />
-				
+		<comp:select-jeditable componentId="test-case-importance"
+							   jsonData="${ testCaseImportanceComboJson }"
+							   targetUrl="${ testCaseUrl }" />
+
+		<comp:select-jeditable componentId="test-case-nature"
+							   jsonData="${ testCaseNatureComboJson }" 
+							   targetUrl="${ testCaseUrl }" />
+
+		<comp:select-jeditable componentId="test-case-type"
+							   jsonData="${ testCaseTypeComboJson }" 
+							   targetUrl="${ testCaseUrl }" />
+
 		<comp:select-jeditable componentId="test-case-status"
-				jsonData="${ testCaseStatusComboJson }"
-				targetUrl="${ testCaseUrl }" />
+								jsonData="${ testCaseStatusComboJson }" 
+								targetUrl="${ testCaseUrl }" />
 		</c:if>
 
 
 		<comp:toggle-panel id="test-case-description-panel"
-			titleKey="label.Description" isContextual="true" open="true">
+						   titleKey="label.Description" 
+						   isContextual="true" 
+						   open="true">
+						   
 			<jsp:attribute name="body">
-				<div id="test-case-description-table" class="display-table">
-					<div class="display-table-row">
-							<label class="display-table-cell" for="test-case-id">ID</label>
-							<div class="display-table-cell" id="test-case-id">${ testCase.id }</div>
-					</div>
-					
-					<div class="display-table-row">
-						<label for="test-case-description" class="display-table-cell"><f:message
-										key="label.Description" />
-								</label>
-						<div class="display-table-cell" id="test-case-description">${ testCase.description }</div>
-					</div>
-					
-					<div class="display-table-row">
-							<label class="display-table-cell" for="test-case-reference"><f:message
-										key="test-case.reference.label" />
-								</label>
-							<div class="display-table-cell" id="test-case-reference">${ testCase.reference }</div>
-					</div>
-					
-					<div class="display-table-row">
-						<label for="test-case-importance" class="display-table-cell">
-							<f:message	key="test-case.importance.combo.label" />
-						</label>
-						<div class="display-table-cell">
-							<span id="test-case-importance">${ testCaseImportanceLabel }</span>
-							<c:if test="${ smallEditable }">
-							<comp:select-jeditable-auto
-											associatedSelectJeditableId="test-case-importance"
-											url="${ importanceAutoUrl }"
-											isAuto="${ testCase.importanceAuto }"
-											paramName="importanceAuto" />
-							</c:if>
-						</div>
-					</div>
-					
-					<div class="display-table-row">
-						<label for="test-case-nature" class="display-table-cell">
-							<f:message	key="test-case.nature.combo.label" />
-						</label>
-						<div class="display-table-cell">
-							<span id="test-case-nature">${ testCaseNatureLabel }</span>
-						</div>
-					</div>
-					
-					<div class="display-table-row">
-						<label for="test-case-type" class="display-table-cell">
-							<f:message	key="test-case.type.combo.label" />
-						</label>
-						<div class="display-table-cell">
-							<span id="test-case-type">${ testCaseTypeLabel }</span>
-						</div>
-					</div>
-					
-					<div class="display-table-row">
-						<label for="test-case-status" class="display-table-cell">
-							<f:message	key="test-case.status.combo.label" />
-						</label>
-						<div class="display-table-cell">
-							<span id="test-case-status">${ testCaseStatusLabel }</span>
-						</div>
-					</div>
-					
-						<%-- Test Automation structure --%>
-					<c:if test="${testCase.project.testAutomationEnabled}">
-					<ta:testcase-script-elt-structure testCase="${testCase}" canModify="${writable}" testCaseUrl="${testCaseUrl}"/>
-					</c:if>
-					   <%--/Test Automation structure --%>
-	
+			<div id="test-case-description-table"  class="display-table">
+				
+				<div class="display-table-row">
+					<label class="display-table-cell" for="test-case-id">ID</label>
+					<div class="display-table-cell" id="test-case-id">${ testCase.id }</div>
 				</div>
-	</jsp:attribute>
+				
+				<div class="display-table-row">
+					<label for="test-case-description" class="display-table-cell"><f:message key="label.Description" /></label>
+					<div class="display-table-cell" id="test-case-description">${ testCase.description }</div>
+				</div>
+				
+				<div class="display-table-row">
+					<label class="display-table-cell" for="test-case-reference"><f:message key="test-case.reference.label" /></label>
+					<div class="display-table-cell" id="test-case-reference">${ testCase.reference }</div>
+				</div>
+				
+				<div class="display-table-row">
+					<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
+					<div class="display-table-cell">
+						<span id="test-case-importance">${testCaseImportanceLabel}</span>
+						<c:if test="${ smallEditable }">
+						<comp:select-jeditable-auto
+								associatedSelectJeditableId="test-case-importance"
+								url="${ importanceAutoUrl }"
+								isAuto="${ testCase.importanceAuto }"
+								paramName="importanceAuto" />
+						</c:if>
+					</div>
+				</div>
+				
+				<div class="display-table-row">
+					<label for="test-case-nature" class="display-table-cell"><f:message key="test-case.nature.combo.label" /></label>
+					<div class="display-table-cell">
+						<span id="test-case-nature">${ testCaseNatureLabel }</span>
+					</div>
+				</div>
+				
+				<div class="display-table-row">
+					<label for="test-case-type" class="display-table-cell">
+						<f:message key="test-case.type.combo.label" />
+					</label>
+					<div class="display-table-cell">
+						<span id="test-case-type">${ testCaseTypeLabel }</span>
+					</div>
+				</div>
+				
+				<div class="display-table-row">
+					<label for="test-case-status" class="display-table-cell"><f:message key="test-case.status.combo.label" /></label>
+					<div class="display-table-cell">
+						<span id="test-case-status">${ testCaseStatusLabel }</span>
+					</div>
+				</div>
+				
+				
+				<%-- Test Automation structure --%>
+				<c:if test="${testCase.project.testAutomationEnabled}">
+				<ta:testcase-script-elt-structure testCase="${testCase}"
+												  canModify="${writable}" 
+												  testCaseUrl="${testCaseUrl}" />	
+				</c:if>			
+				<%--/Test Automation structure --%>
+				
+			</div>
+			</jsp:attribute>
 		</comp:toggle-panel>
-		<%-- Test Automation code --%>			
-		<c:if test="${testCase.project.testAutomationEnabled}">
-		<ta:testcase-script-elt-code testCase="${testCase}" canModify="${writable}" testCaseUrl="${testCaseUrl}"/>
-		</c:if>	
-		<%-- /Test Automation code  --%>
-						
-		<script>
-	function refreshTCImportance(){
-		$.ajax({
-			type : 'GET',
-			data : {},
-			success : function(importance){refreshTCImportanceSuccess(importance);},
-			error : function(){refreshTCImportanceFail();},
-			dataType : "text",
-			url : '${getImportance}'			
-		});	
-	}
-	function refreshTCImportanceSuccess(importance){
-		$("#test-case-importance").html(importance);	
-	}
-	function refreshTCImportanceFail(){
-		$.squash.openMessage("<f:message key='popup.title.error' />", "fail to refresh importance");
-	}
-</script>
+		
 
 		<%----------------------------------- Prerequisites -----------------------------------------------%>
-		
+
 		<c:if test="${ writable }">
-			<comp:rich-jeditable targetUrl="${ testCaseUrl }"
-				componentId="test-case-prerequisite" />
+		<comp:rich-jeditable targetUrl="${ testCaseUrl }"
+					   		 componentId="test-case-prerequisite" />
 		</c:if>
 
 		<comp:toggle-panel id="test-case-prerequisite-panel"
-			titleKey="generics.prerequisite.title" isContextual="true"
-			open="${ not empty testCase.prerequisite }">
+						   titleKey="generics.prerequisite.title" 
+						   isContextual="true"
+							open="${ not empty testCase.prerequisite }">
 			<jsp:attribute name="body">
 				<div id="test-case-prerequisite-table" class="display-table">
 					<div class="display-table-row">
@@ -392,138 +379,87 @@
 				</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
-		
+
 
 		<%--------------------------- Verified Requirements section ------------------------------------%>
-		<script type="text/javascript">
-	$(function() {
-		$("#verified-req-button").button().click(function() {
-			document.location.href = "${verifiedReqsManagerUrl}";
-		});
-	});
-</script>
 
 		<comp:toggle-panel id="verified-requirements-panel"
-			titleKey="test-case.verified_requirements.panel.title"
-			isContextual="true" open="true">
+						   titleKey="test-case.verified_requirements.panel.title"
+						   isContextual="true" 
+						   open="true">
 			<jsp:attribute name="panelButtons">
-	<c:if test="${ linkable }">
-		<f:message var="associateLabel"
-						key="test-case.verified_requirements.manage.button.label" />
-		<input id="verified-req-button" type="button"
-						value="${associateLabel}" class="button" />
-		<f:message var="removeLabel"
-						key="test-case.verified_requirement_item.remove.button.label" />
-		<input id="remove-verified-requirements-button" type="button"
-						value="${ removeLabel }" class="button" />
-	</c:if>
-	</jsp:attribute>
+			<c:if test="${ linkable }">
+				<f:message var="associateLabel"	key="test-case.verified_requirements.manage.button.label" />
+				<input id="verified-req-button" type="button" value="${associateLabel}" class="button" />
+				
+				<f:message var="removeLabel" key="test-case.verified_requirement_item.remove.button.label" />
+				<input id="remove-verified-requirements-button" type="button" value="${ removeLabel }" class="button" />
+			</c:if>
+			</jsp:attribute>
 
 			<jsp:attribute name="body">
-		<aggr:decorate-verified-requirements-table
-					tableModelUrl="${ verifiedRequirementsTableUrl }"
-					verifiedRequirementsUrl="${ verifiedRequirementsUrl }"
-					batchRemoveButtonId="remove-verified-requirements-button"
-					nonVerifiedRequirementsUrl="${ nonVerifiedRequirementsUrl }"
-					editable="${ linkable }"
-					updateImportanceMethod="refreshTCImportance" />
-		<aggr:verified-requirements-table />
-	</jsp:attribute>
+			<aggr:decorate-verified-requirements-table
+						tableModelUrl="${ verifiedRequirementsTableUrl }"
+						verifiedRequirementsUrl="${ verifiedRequirementsUrl }"
+						batchRemoveButtonId="remove-verified-requirements-button"
+						nonVerifiedRequirementsUrl="${ nonVerifiedRequirementsUrl }"
+						editable="${ linkable }"
+						updateImportanceMethod="refreshTCImportance" />
+			<aggr:verified-requirements-table />
+			</jsp:attribute>
 		</comp:toggle-panel>
 
 
 		<%--------------------------- calling test case section ------------------------------------%>
 
-		<%-- javascript for the calling test case table --%>
-		<script type="text/javascript">
-	function addHLinkToCallingTestCasesName(row, data) {
-		var url= '${ pageContext.servletContext.contextPath }/test-cases/' + data[0] + '/info';			
-		addHLinkToCellText($( 'td:eq(2)', row ), url);
-	}	
-	
-	function callingTestCasesTableRowCallback(row, data, displayIndex) {
-		addClickHandlerToSelectHandle(row, $("#calling-test-case-table"));
-		addHLinkToCallingTestCasesName(row, data);
-		return row;
-	}
-
-</script>
 
 		<comp:toggle-panel id="calling-test-case-panel"
-			titleKey="test-case.calling-test-cases.panel.title"
-			isContextual="true" open="true">
+						   titleKey="test-case.calling-test-cases.panel.title"
+						   isContextual="true" 
+						   open="true">
 
 
 			<jsp:attribute name="body">
-		<%--<jsp:attribute name="drawCallback">todo</jsp:attribute>--%>
-		<comp:decorate-ajax-table url="${ callingtestCasesTableUrl }"
-					tableId="calling-test-case-table" paginate="true">		
-			<jsp:attribute name="initialSort">[[4,'asc']]</jsp:attribute>
-			<jsp:attribute name="rowCallback">callingTestCasesTableRowCallback</jsp:attribute>
-			<jsp:attribute name="columnDefs">
-				<dt:column-definition targets="0" visible="false" sortable="false" />
-				<dt:column-definition targets="1" sortable="false"
-							cssClass="centered select-handle" width="2em" />
-				<dt:column-definition targets="2" sortable="true" />
-				<dt:column-definition targets="3" sortable="true"  width="15em"/>
-				<dt:column-definition targets="4" sortable="true" />
-				<dt:column-definition targets="5" sortable="true" visible="true"
-							lastDef="true" />
+				<table id="calling-test-case-table">
+					<thead>
+						<tr>
+							<th>Id(masked)</th>
+							<th>#</th>
+							<th><f:message key="label.project" /></th>
+							<th><f:message key="test-case.reference.label" /></th>
+							<th><f:message key="label.Name" /></th>
+							<th><f:message key="test-case.calling-test-cases.table.execmode.label" /></th>				
+						</tr>
+					</thead>
+					<tbody>
+						<%-- loaded via ajax --%>
+					</tbody>		
+				</table>	
 			</jsp:attribute>
-		</comp:decorate-ajax-table>	
-	
-	
-		<table id="calling-test-case-table">
-			<thead>
-				<tr>
-					<th>Id(masked)</th>
-					<th>#</th>
-					<th><f:message key="label.project" /></th>
-					<th><f:message key="test-case.reference.label" /></th>
-					<th><f:message key="label.Name" /></th>
-					<th><f:message key="test-case.calling-test-cases.table.execmode.label" /></th>				
-				</tr>
-			</thead>
-			<tbody>
-			
-			</tbody>		
-		</table>	
-	</jsp:attribute>
 
 
 		</comp:toggle-panel>
 
 	</div>
-	<div id="tabs-2" class="table-tab">
-
-	<%-- 
 	
-	
-		REPLACE WITH
-		
-		THE NEW AND SHINY
-		
-		THYMELEAF TEMPLATE
-	
-	
-	
-	 --%>
-
-
-	</div>
+	<%-- ------------------------- /Description Panel ------------------------- --%>
 
 	<%------------------------------ Attachments bloc ---------------------------------------------%>
+	
+	<comp:attachment-tab tabId="tabs-3" 
+						 entity="${ testCase }"
+						 editable="${ attachable }" />
 
-	<comp:attachment-tab tabId="tabs-3" entity="${ testCase }"	editable="${ attachable }" />
-		
-	<comp:fragment-tabs /> 
+	<comp:fragment-tabs />
 
-<%------------------------------ bugs section -------------------------------%>
-<c:if test="${testCase.project.bugtrackerConnected }">
-	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
-</c:if>
+	<%------------------------------ /Attachments bloc ---------------------------------------------%>
 
-<%------------------------------ /bugs section -------------------------------%>
+	<%------------------------------ bugs section -------------------------------%>
+	<c:if test="${testCase.project.bugtrackerConnected }">
+		<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
+	</c:if>
+
+	<%------------------------------ /bugs section -------------------------------%>
 
 </div>
 
@@ -541,39 +477,108 @@
 
 </c:if>
 
+<%-- ----------------------------------------- Remaining of the javascript initialization ----------------------------- --%>
+
+<comp:decorate-ajax-table url="${ callingtestCasesTableUrl }"
+			tableId="calling-test-case-table" paginate="true">		
+	<jsp:attribute name="initialSort">[[4,'asc']]</jsp:attribute>
+	<jsp:attribute name="rowCallback">callingTestCasesTableRowCallback</jsp:attribute>
+	<jsp:attribute name="columnDefs">
+		<dt:column-definition targets="0" visible="false"  sortable="false" />
+		<dt:column-definition targets="1" sortable="false" cssClass="centered select-handle" width="2em" />
+		<dt:column-definition targets="2" sortable="true" />
+		<dt:column-definition targets="3" sortable="true" width="15em" />
+		<dt:column-definition targets="4" sortable="true" />
+		<dt:column-definition targets="5" sortable="true" visible="true" lastDef="true" />
+	</jsp:attribute>
+</comp:decorate-ajax-table>			
+		
+<%-- Test Automation code --%>
+<c:if test="${testCase.project.testAutomationEnabled}">
+	<ta:testcase-script-elt-code testCase="${testCase}"
+								 canModify="${writable}" 
+								 testCaseUrl="${testCaseUrl}" />
+</c:if>
+<%-- /Test Automation code  --%>
+
 <script type="text/javascript">
 	
 	$(function(){
-
+		
+		//init the rename popup
+		$( "#rename-test-case-dialog" ).bind( "dialogopen", function(event, ui) {
+			var name = $.trim($('#test-case-raw-name').text());
+			$("#rename-test-case-input").val(name);
+			
+		});
+		
+		
 		<c:if test="${hasCUF}">
-		<%-- loading the custom fields --%>
+		//load the custom fields
 		$.get("${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}")
 		.success(function(data){
 			$("#test-case-description-table").append(data);
 		});
 		</c:if>
 		
-	});
-
-
-
-	var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
-
-	require(["domReady", "require"], function(domReady, require){
-		domReady(function(){
-			require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
-				var nameHandler = contentHandlers.getNameAndReferenceHandler();
-				
-				nameHandler.identity = identity;
-				nameHandler.nameDisplay = "#test-case-name";
-				nameHandler.nameHidden = "#test-case-raw-name";
-				nameHandler.referenceHidden = "#test-case-raw-reference";
-				
-				squashtm.contextualContent.addListener(nameHandler);
-				
-			});
+		
+		//init the requirements manager button
+		$("#verified-req-button").button().click(function() {
+			document.location.href = "${verifiedReqsManagerUrl}";
 		});
+		
+		
+		//init the renaming listener
+		require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
+			
+
+			var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
+			
+			var nameHandler = contentHandlers.getNameAndReferenceHandler();
+			
+			nameHandler.identity = identity;
+			nameHandler.nameDisplay = "#test-case-name";
+			nameHandler.nameHidden = "#test-case-raw-name";
+			nameHandler.referenceHidden = "#test-case-raw-reference";
+			
+			squashtm.contextualContent.addListener(nameHandler);
+			
+		});
+		
 	});
+
+	
+	function addHLinkToCallingTestCasesName(row, data) {
+		var url= '${ pageContext.servletContext.contextPath }/test-cases/' + data[0] + '/info';			
+		addHLinkToCellText($( 'td:eq(2)', row ), url);
+	}	
+	
+	function callingTestCasesTableRowCallback(row, data, displayIndex) {
+		addClickHandlerToSelectHandle(row, $("#calling-test-case-table"));
+		addHLinkToCallingTestCasesName(row, data);
+		return row;
+	}
+	
+	
+	function refreshTCImportance(){
+		$.ajax({
+			type : 'GET',
+			data : {},
+			success : function(importance){refreshTCImportanceSuccess(importance);},
+			error : function(){refreshTCImportanceFail();},
+			dataType : "text",
+			url : '${getImportance}'			
+		});	
+	}
+	
+	function refreshTCImportanceSuccess(importance){
+		$("#test-case-importance").html(importance);	
+	}
+	
+	function refreshTCImportanceFail(){
+		$.squash.openMessage("<f:message key='popup.title.error' />", "fail to refresh importance");
+	}
+
 
 	function renameTestCaseSuccess(data){
 		var evt = new EventRename(identity, data.newName);
@@ -585,7 +590,7 @@
 		squashtm.contextualContent.fire(null, evt);		
 	};
 
-	/* deletion success handler */
+	
 	function deleteTestCaseSuccess() {
 		<c:choose>
 		<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>

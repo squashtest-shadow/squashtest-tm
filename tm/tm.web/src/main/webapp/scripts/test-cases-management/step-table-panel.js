@@ -103,12 +103,13 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 	
 	
 	function stepsTableCreatedRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull){
+		var jqRow = $(nRow);
 		if (aData['step-type']==="action"){
-			nRow.find('td.called-tc-cell').removeClass('called-tc-cell');
+			jqRow.find('td.called-tc-cell').removeClass('called-tc-cell');
 		}
 		else{
-			nRow.find('td.rich-edit-action').removeClass('rich-edit-action');
-			nRow.find('td.rich-edit-result').removeClass('rich-edit-result');
+			jqRow.find('td.rich-edit-action').removeClass('rich-edit-action');
+			jqRow.find('td.rich-edit-result').removeClass('rich-edit-result');
 		}
 	}
 	
@@ -149,7 +150,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			fnDrawCallback : stepsTableDrawCallback,
 			fnCreatedRow  : stepsTableCreatedRowCallback,
 			aoColumnDefs : [
-			  {'bvisible':false, 'bsortable':false, 'aTargets':[0], 'mDataProp':'step-id'},
+			  {'bVisible':false, 'bsortable':false, 'aTargets':[0], 'mDataProp':'step-id'},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[1], 'mDataProp':'step-index', 'sClass':'select-handle drag-handle centered', 'sWidth':'2em'},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[2], 'mDataProp':'attach-list-id', 'sClass':'centered has-attachment-cell', 'sWidth':'2em'},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[3], 'mDataProp':'step-action', 'sClass':'rich-edit-action called-tc-cell'},
@@ -157,7 +158,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[5], 'mDataProp':'nb-attachments'},
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[6], 'mDataProp':'step-type'},
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[7], 'mDataProp':'called-tc-id'},
-			  {'bVisible':true,  'bSortable':false, 'aTargets':[8], 'mDataProp':'centered delete-button', 'sWidth':'2em'}
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[8], 'mDataProp':'empty-delete-holder', 'sClass':'centered delete-button', 'sWidth':'2em'}
 			]
 			
 		};
@@ -212,7 +213,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 						placeholder : language.placeholder,
 						submit : language.submit,
 						cancel : language.cancellabel,
-						indicator : indicatorUrl
+						indicator : language.indicatorUrl
 					},
 					
 					targets : {
@@ -402,7 +403,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 						   language.cancellabel
 			).done(function(){
 				$.ajax({
-					url : urls.multiDelete+"/"+ids.join(',')
+					url : urls.multiDelete+"/"+ids.join(','),
 					type : 'DELETE',
 					dataType : "json"
 				});
@@ -476,13 +477,12 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		collapsibleCells.unbind("click", this.openAllAndSetEditing);
 	}
 	
-	function initCollapser(settings){
+	function initCollapser(language, urls){
 		
 
 		decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomout");
 		
 		var collapser;
-		var language = settings.language;
 		
 		var collapseButton = $('#collapse-steps-button');		
 		var table = $('#test-steps-table');
@@ -544,7 +544,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		
 		// table collapser		
 		var collapserSettings = settings.collapser;
-		var collapser = initCollapser(collapserSettings);
+		var collapser = initCollapser(language, urls);
 		
 	}
 	
