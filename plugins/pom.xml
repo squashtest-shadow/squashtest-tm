@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>squashtest-parent-pom</artifactId>
 		<groupId>org.squashtest.tm</groupId>
-		<version>1.5.0.IT44-SNAPSHOT</version>
+		<version>1.5.0.IT46</version>
 		<relativePath>../parent-pom</relativePath>
 	</parent>
 	<artifactId>squash-tm-plugins</artifactId>
