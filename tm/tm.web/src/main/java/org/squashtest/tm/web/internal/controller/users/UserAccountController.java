@@ -35,10 +35,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.csp.tm.domain.project.ProjectPermission;
-import org.squashtest.csp.tm.domain.users.User;
-import org.squashtest.csp.tm.service.ProjectsPermissionFinder;
-import org.squashtest.csp.tm.service.UserAccountService;
+import org.squashtest.tm.domain.project.ProjectPermission;
+import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.project.ProjectsPermissionFinder;
+import org.squashtest.tm.service.user.UserAccountService;
 
 
 @Controller

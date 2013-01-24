@@ -20,12 +20,13 @@
  */
 package org.squashtest.csp.tm.domain.library;
 
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.tm.domain.library.Folder
+import org.squashtest.tm.domain.library.FolderSupport
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.exception.DuplicateNameException;
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class FolderSupportTest extends Specification{
 	Folder folder = Mock()

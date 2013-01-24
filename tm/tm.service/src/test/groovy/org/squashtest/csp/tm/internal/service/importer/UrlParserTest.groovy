@@ -21,6 +21,8 @@
 package org.squashtest.csp.tm.internal.service.importer
 
 
+import org.squashtest.tm.service.internal.importer.UrlParser;
+
 import spock.lang.Specification;
 
 

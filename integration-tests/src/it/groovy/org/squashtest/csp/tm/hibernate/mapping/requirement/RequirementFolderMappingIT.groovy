@@ -21,13 +21,13 @@
 package org.squashtest.csp.tm.hibernate.mapping.requirement
 
 
-import org.hibernate.Hibernate 
-import org.hibernate.Session;
-import org.hibernate.exception.GenericJDBCException;
-import org.squashtest.csp.tm.domain.requirement.Requirement 
-import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
+import org.hibernate.Hibernate
+import org.hibernate.Session
+import org.hibernate.exception.GenericJDBCException
+import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementFolder
+import org.squashtest.tm.domain.requirement.RequirementVersion
 
 class RequirementFolderMappingIT extends HibernateMappingSpecification {
 	def "should persist and retrieve a requirement folder"() {

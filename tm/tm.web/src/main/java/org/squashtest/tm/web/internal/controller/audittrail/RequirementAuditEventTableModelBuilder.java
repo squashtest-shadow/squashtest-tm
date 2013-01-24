@@ -29,14 +29,14 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
-import org.squashtest.csp.tm.domain.event.RequirementAuditEventVisitor;
-import org.squashtest.csp.tm.domain.event.RequirementCreation;
-import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange;
-import org.squashtest.csp.tm.domain.event.RequirementPropertyChange;
-import org.squashtest.csp.tm.domain.event.RequirementVersionModification;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
+import org.squashtest.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.tm.domain.event.RequirementAuditEventVisitor;
+import org.squashtest.tm.domain.event.RequirementCreation;
+import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
+import org.squashtest.tm.domain.event.RequirementPropertyChange;
+import org.squashtest.tm.domain.event.RequirementVersionModification;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 
 /**

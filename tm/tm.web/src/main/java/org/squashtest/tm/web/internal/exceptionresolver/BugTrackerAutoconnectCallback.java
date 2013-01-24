@@ -31,11 +31,11 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.service.BugTrackerContext;
 import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
-import org.squashtest.csp.core.domain.IdentifiedUtil;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.service.BugTrackerFinderService;
-import org.squashtest.csp.tm.service.BugTrackersLocalService;
-import org.squashtest.csp.tm.service.project.ProjectFinder;
+import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.web.security.authentication.AuthenticationSuccessCallback;
 
 /*

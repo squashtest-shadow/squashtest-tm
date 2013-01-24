@@ -30,7 +30,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 
 
 public class ActionStepFormModel {

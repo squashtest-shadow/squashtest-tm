@@ -21,15 +21,16 @@
 package org.squashtest.csp.tm.internal.service.importer
 
 
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipInputStream
 
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.internal.utils.archive.Entry;
-import org.squashtest.csp.tm.internal.utils.archive.impl.ZipReader.ZipReaderEntry;
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.service.internal.archive.Entry
+import org.squashtest.tm.service.internal.archive.ZipReader.ZipReaderEntry
+import org.squashtest.tm.service.internal.importer.ExcelTestCaseParser
+import org.squashtest.tm.service.internal.importer.HierarchyCreator
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 
 class HierarchyCreatorTest extends Specification {

@@ -20,22 +20,19 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
-import java.util.List;
-
 import org.apache.commons.lang.NullArgumentException
-import org.squashtest.csp.core.security.annotation.AclConstrainedObject
-import org.squashtest.csp.tm.domain.DuplicateNameException
-import org.squashtest.csp.tm.domain.attachment.AttachmentList;
-import org.squashtest.csp.tm.domain.library.Copiable
-import org.squashtest.csp.tm.domain.library.Folder
-import org.squashtest.csp.tm.domain.library.Library
-import org.squashtest.csp.tm.domain.library.LibraryNode
-import org.squashtest.csp.tm.domain.library.NodeVisitor;
-import org.squashtest.csp.tm.domain.project.GenericProject
-import org.squashtest.csp.tm.domain.project.Project
-import org.squashtest.csp.tm.service.LibraryNavigationService
-import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.domain.attachment.AttachmentList
+import org.squashtest.tm.domain.library.Copiable
+import org.squashtest.tm.domain.library.Folder
+import org.squashtest.tm.domain.library.Library
+import org.squashtest.tm.domain.library.LibraryNode
+import org.squashtest.tm.domain.library.NodeVisitor
+import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.exception.DuplicateNameException
+import org.squashtest.tm.service.library.LibraryNavigationService
+import org.squashtest.tm.service.security.annotation.AclConstrainedObject
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 
 import spock.lang.Specification
 

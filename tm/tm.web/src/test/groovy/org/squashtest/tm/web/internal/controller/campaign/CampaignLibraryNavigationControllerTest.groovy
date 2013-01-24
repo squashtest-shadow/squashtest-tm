@@ -24,14 +24,12 @@ import static org.junit.Assert.*
 
 import javax.inject.Provider
 
-import org.apache.poi.hssf.record.formula.functions.T
-import org.squashtest.csp.core.service.security.PermissionEvaluationService
-import org.squashtest.csp.tm.domain.campaign.Iteration
-import org.squashtest.csp.tm.service.CampaignLibraryNavigationService
-import org.squashtest.tm.web.internal.controller.campaign.CampaignLibraryNavigationController;
-import org.squashtest.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
+import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder
+import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
+import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder
 
 class CampaignLibraryNavigationControllerTest extends spock.lang.Specification {
 	CampaignLibraryNavigationController controller = new CampaignLibraryNavigationController()

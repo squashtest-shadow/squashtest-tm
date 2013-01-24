@@ -20,24 +20,19 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import javax.inject.Provider;
+import javax.inject.Provider
 
-import org.springframework.validation.BindingResult;
-import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseLibraryNavigationController;
-import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
+import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
+import org.squashtest.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class TestCaseLibraryNavigationControllerTest extends Specification {
 	TestCaseLibraryNavigationController controller = new TestCaseLibraryNavigationController()

@@ -20,11 +20,9 @@
  */
 package org.squashtest.tm.web.internal.report
 
-import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
-import org.squashtest.tm.api.report.Report;
-import org.squashtest.tm.web.internal.report.IdentifiedReportDecorator;
+import org.squashtest.tm.api.report.Report
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet

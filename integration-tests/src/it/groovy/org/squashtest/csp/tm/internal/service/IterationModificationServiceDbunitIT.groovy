@@ -22,22 +22,16 @@ package org.squashtest.csp.tm.internal.service
 
 import javax.inject.Inject
 
-import org.hibernate.SessionFactory;
-import org.junit.runner.RunWith;
-import org.spockframework.runtime.Sputnik;
-import org.spockframework.util.NotThreadSafe
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.hibernate.SessionFactory
+import org.junit.runner.RunWith
+import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.core.service.security.PermissionEvaluationService
-import org.squashtest.csp.core.service.security.StubPermissionEvaluationService
-import org.squashtest.csp.tm.domain.attachment.AttachmentList
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.csp.tm.domain.campaign.TestSuite
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus
-import org.squashtest.csp.tm.service.IterationModificationService
+import org.squashtest.tm.domain.campaign.TestSuite
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.service.campaign.IterationModificationService
 import org.unitils.dbunit.annotation.DataSet
-import org.unitils.dbunit.annotation.ExpectedDataSet;
+import org.unitils.dbunit.annotation.ExpectedDataSet
 
 import spock.unitils.UnitilsSupport
 

@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.tm.domain.library.Folder;
-import org.squashtest.csp.tm.service.FolderModificationService;
+import org.squashtest.tm.domain.library.Folder;
+import org.squashtest.tm.service.library.FolderModificationService;
 
 public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 	@RequestMapping(method = RequestMethod.GET)

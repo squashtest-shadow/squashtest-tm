@@ -20,37 +20,32 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import org.springframework.context.MessageSource;
-import org.springframework.web.servlet.ModelAndView;
+import java.util.List
 
-import javax.inject.Provider;
-import javax.servlet.http.HttpServletRequest;
+import javax.inject.Provider
+import javax.servlet.http.HttpServletRequest
 
-import org.squashtest.csp.tm.service.TestCaseModificationService;
-import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
-import org.squashtest.csp.tm.domain.attachment.AttachmentList;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.csp.tm.domain.testcase.TestStep;
+import org.springframework.web.servlet.ModelAndView
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
+import org.squashtest.tm.domain.attachment.AttachmentList
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestStep
+import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
+import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder
+import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
+import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
+import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper
+import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper
 
-import spock.lang.Specification;
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseModificationController;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseNatureJeditableComboDataBuilder;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseStatusJeditableComboDataBuilder;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseTypeJeditableComboDataBuilder;
-import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
-import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import spock.lang.Specification
 
 class TestCaseModificationControllerTest extends Specification {
 	TestCaseModificationController controller = new TestCaseModificationController()

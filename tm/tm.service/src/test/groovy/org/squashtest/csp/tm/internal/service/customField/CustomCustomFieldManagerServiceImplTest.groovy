@@ -20,13 +20,12 @@
  */
 package org.squashtest.csp.tm.internal.service.customField
 
-import org.apache.poi.hssf.record.formula.functions.T
-import org.squashtest.csp.tm.domain.customfield.CustomField
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder
-import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao
-import org.squashtest.csp.tm.internal.repository.CustomFieldDao
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.domain.customfield.CustomField
+import org.squashtest.tm.service.internal.customfield.CustomCustomFieldManagerServiceImpl
+import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao
+import org.squashtest.tm.service.internal.repository.CustomFieldDao
 
 import spock.lang.Specification
 

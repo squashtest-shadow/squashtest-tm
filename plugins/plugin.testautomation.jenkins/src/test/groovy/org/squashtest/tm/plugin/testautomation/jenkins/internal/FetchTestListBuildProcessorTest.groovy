@@ -21,16 +21,14 @@
 package org.squashtest.tm.plugin.testautomation.jenkins.internal
 
 
-import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.FetchTestListBuildProcessor;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.FetchTestListStepSequence;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProcessor;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.CheckBuildQueue;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.CheckBuildRunning;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GatherTestList;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.StartBuild;
+import org.squashtest.tm.domain.testautomation.AutomatedTest
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProcessor
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.CheckBuildQueue
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.CheckBuildRunning
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GatherTestList
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.StartBuild
 
 import spock.lang.Specification
 

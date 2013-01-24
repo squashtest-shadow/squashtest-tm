@@ -29,15 +29,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.MessageSource;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
-import org.squashtest.csp.tm.domain.bugtracker.BTIssueDecorator;
-import org.squashtest.csp.tm.domain.bugtracker.IssueDetector;
-import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
-import org.squashtest.csp.tm.domain.campaign.TestSuite;
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.service.BugTrackersLocalService;
+import org.squashtest.tm.domain.bugtracker.BTIssueDecorator;
+import org.squashtest.tm.domain.bugtracker.IssueDetector;
+import org.squashtest.tm.domain.bugtracker.IssueOwnership;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 

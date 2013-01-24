@@ -20,9 +20,10 @@
  */
 package org.squashtest.csp.tm.domain.testcase;
 
-import org.squashtest.csp.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.attachment.Attachment
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 
 class TestStepTest extends Specification {

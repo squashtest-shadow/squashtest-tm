@@ -25,10 +25,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException;
-import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException;
-import org.squashtest.csp.tm.domain.RequirementVersionNotLinkableException;
-import org.squashtest.csp.tm.domain.VerifiedRequirementException;
+import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
+import org.squashtest.tm.exception.RequirementAlreadyVerifiedException;
+import org.squashtest.tm.exception.RequirementVersionNotLinkableException;
+import org.squashtest.tm.exception.VerifiedRequirementException;
 
 /**
  * Helper class which builds a summary for a verified requirements related action. This summary is to be sent to the

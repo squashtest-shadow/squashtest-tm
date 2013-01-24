@@ -25,7 +25,7 @@ import java.util.List;
 
 import javax.validation.ConstraintViolation;
 
-import org.squashtest.tm.tm.validation.constraint.HasDefaultAsRequired;
+import org.squashtest.tm.service.validation.constraint.HasDefaultAsRequired;
 
 /**
  * Handles {@link ConstraintViolation} from {@link HasDefaultAsRequired} constraints.

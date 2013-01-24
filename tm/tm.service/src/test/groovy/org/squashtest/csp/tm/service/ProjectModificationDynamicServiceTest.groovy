@@ -20,13 +20,7 @@
  */
 package org.squashtest.csp.tm.service;
 
-import java.util.List;
-
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.service.project.ProjectManagerService;
-
-
-import spock.lang.Shared;
+import spock.lang.Shared
 
 /**
  * @author mpagnon

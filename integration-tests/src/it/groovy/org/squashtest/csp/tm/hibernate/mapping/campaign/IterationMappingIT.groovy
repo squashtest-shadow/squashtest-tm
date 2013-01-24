@@ -20,11 +20,10 @@
  */
 package org.squashtest.csp.tm.hibernate.mapping.campaign
 
-import java.util.ResourceBundle.SingleFormatControl;
-
-import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
-import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.tm.domain.campaign.Iteration
 
 class IterationMappingIT extends HibernateMappingSpecification {
 

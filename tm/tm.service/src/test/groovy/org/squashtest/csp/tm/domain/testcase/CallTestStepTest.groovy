@@ -21,6 +21,9 @@
 package org.squashtest.csp.tm.domain.testcase
 
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
 
 import spock.lang.Specification;
 

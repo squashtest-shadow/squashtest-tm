@@ -21,21 +21,13 @@
 package org.squashtest.csp.tm.hibernate.mapping.testcase
 
 
-import org.hibernate.Session;
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.hibernate.Hibernate;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
-import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
-import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory;
-
-import spock.lang.Specification;
+import org.hibernate.SessionFactory
+import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.TestCase
 
 class TestStepMappingIT extends HibernateMappingSpecification {
 	@Inject SessionFactory sessionFactory;

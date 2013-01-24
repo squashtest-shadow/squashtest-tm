@@ -21,21 +21,16 @@
 package org.squashtest.csp.tm.internal.service.importer
 
 
-import java.util.List
-import java.util.Map
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
-import org.squashtest.csp.tm.domain.requirement.RequirementFolder
-import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus
-import org.squashtest.csp.tm.domain.resource.Resource
-
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.domain.requirement.RequirementFolder
+import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.service.internal.importer.PseudoRequirement
+import org.squashtest.tm.service.internal.importer.PseudoRequirementVersion
+import org.squashtest.tm.service.internal.importer.RequirementParserImpl
 
 import spock.lang.Specification
-import spock.lang.Unroll
 
 class RequirementParserImplTest extends Specification {
 

@@ -28,15 +28,15 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.testautomation.spi.TestAutomationException;
-import org.squashtest.csp.tm.testautomation.spi.UnreadableResponseException;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Build;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.BuildList;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.ItemList;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Job;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.JobList;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.TestList;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
+import org.squashtest.tm.service.testautomation.spi.UnreadableResponseException;
 
 
 public class JsonParser {

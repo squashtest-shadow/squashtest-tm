@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.customfield;
 
-import org.squashtest.csp.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BindableEntity;
 
 
 public class BindableEntityModel {

@@ -29,11 +29,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.squashtest.csp.tm.domain.customfield.CustomField;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.csp.tm.domain.customfield.InputType;
-import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.SingleSelectField;
 
 public class CustomFieldValueConfigurationBean {
 

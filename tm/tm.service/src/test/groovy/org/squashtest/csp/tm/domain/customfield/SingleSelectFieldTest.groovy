@@ -22,6 +22,8 @@
 package org.squashtest.csp.tm.domain.customfield;
 
 import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.tm.domain.customfield.SingleSelectField;
 
 import spock.lang.Specification
 

@@ -21,9 +21,11 @@
 package org.squashtest.csp.tm.internal.service
 
 
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder 
-import spock.lang.Specification;
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
+
+import spock.lang.Specification
 
 class TestCaseNodeWalkerTest extends Specification {
 	

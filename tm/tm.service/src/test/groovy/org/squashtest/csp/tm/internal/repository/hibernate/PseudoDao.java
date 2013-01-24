@@ -22,6 +22,8 @@ package org.squashtest.csp.tm.internal.repository.hibernate;
 
 import java.util.HashMap;
 
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateDao;
+
 public class PseudoDao extends HibernateDao<HashMap> {
 
 }

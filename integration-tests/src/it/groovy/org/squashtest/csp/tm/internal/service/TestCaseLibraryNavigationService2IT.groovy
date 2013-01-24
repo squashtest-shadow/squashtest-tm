@@ -20,17 +20,15 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.hibernate.SessionFactory;
-import org.spockframework.util.NotThreadSafe;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
-import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
-import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
-import org.squashtest.csp.tm.service.project.ProjectManagerService;
+import org.spockframework.util.NotThreadSafe
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.service.project.GenericProjectManagerService
+import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 
 @NotThreadSafe
 class TestCaseLibraryNavigationService2IT extends HibernateServiceSpecification {

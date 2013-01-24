@@ -20,33 +20,23 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import java.util.Set;
+import javax.inject.Inject
+import javax.validation.ConstraintViolation
+import javax.validation.ConstraintViolationException
+import javax.validation.Path
 
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Path;
-
-
-import java.util.Calendar;
-import java.util.Iterator;
-
-import javax.inject.Inject;
-
-
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
-import org.squashtest.csp.tm.domain.project.GenericProject;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.service.CampaignLibrariesCrudService
-import org.squashtest.csp.tm.service.CampaignLibraryNavigationService
-import org.squashtest.csp.tm.service.CampaignModificationService
-import org.squashtest.csp.tm.service.IterationModificationService;
-import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
-import org.squashtest.csp.tm.service.project.ProjectManagerService;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.CampaignFolder
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.exception.DuplicateNameException
+import org.squashtest.tm.service.campaign.CampaignLibrariesCrudService
+import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
+import org.squashtest.tm.service.campaign.CampaignModificationService
+import org.squashtest.tm.service.campaign.IterationModificationService
+import org.squashtest.tm.service.project.GenericProjectManagerService
 
 
 

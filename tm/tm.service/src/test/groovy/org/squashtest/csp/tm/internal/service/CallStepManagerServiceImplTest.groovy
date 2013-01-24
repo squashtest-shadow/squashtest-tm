@@ -20,14 +20,15 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.apache.poi.hssf.record.formula.functions.T
-import org.squashtest.csp.tm.domain.CyclicStepCallException
-import org.squashtest.csp.tm.domain.testcase.CallTestStep
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.internal.repository.TestCaseDao
-import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
-import org.squashtest.csp.tm.internal.repository.TestStepDao
-import org.squashtest.csp.tm.service.ProjectFilterModificationService
+import org.squashtest.tm.domain.testcase.CallTestStep
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.exception.CyclicStepCallException;
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
+import org.squashtest.tm.service.internal.repository.TestStepDao
+import org.squashtest.tm.service.internal.testcase.CallStepManagerServiceImpl;
+import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl;
+import org.squashtest.tm.service.project.ProjectFilterModificationService;
 
 import spock.lang.Specification
 

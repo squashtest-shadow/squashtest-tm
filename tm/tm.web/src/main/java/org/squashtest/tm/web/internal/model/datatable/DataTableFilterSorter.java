@@ -22,7 +22,7 @@ package org.squashtest.tm.web.internal.model.datatable;
 
 import javax.validation.constraints.NotNull;
 
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
+import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
 
 public class DataTableFilterSorter extends DataTableDrawParametersPagingAdapter implements CollectionSorting {

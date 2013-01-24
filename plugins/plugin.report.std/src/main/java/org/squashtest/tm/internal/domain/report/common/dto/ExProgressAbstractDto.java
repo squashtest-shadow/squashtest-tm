@@ -22,7 +22,7 @@ package org.squashtest.tm.internal.domain.report.common.dto;
 
 import java.util.List;
 
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 
 
 public abstract class ExProgressAbstractDto {

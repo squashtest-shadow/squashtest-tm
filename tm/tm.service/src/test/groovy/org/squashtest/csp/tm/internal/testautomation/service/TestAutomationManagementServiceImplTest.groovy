@@ -20,25 +20,26 @@
  */
 package org.squashtest.csp.tm.internal.testautomation.service
 
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
-import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
-import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
-import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.internal.repository.TestAutomationServerDao;
-import org.squashtest.csp.tm.internal.testautomation.service.TestAutomationConnectorRegistry;
-import org.squashtest.csp.tm.internal.testautomation.service.TestAutomationManagementServiceImpl;
-import org.squashtest.csp.tm.internal.testautomation.service.TestAutomationManagementServiceImpl.ExtenderSorter;
-import org.squashtest.csp.tm.internal.testautomation.tasks.FetchTestListTask;
-import org.squashtest.csp.tm.internal.testautomation.thread.FetchTestListFuture;
-import org.squashtest.csp.tm.internal.testautomation.thread.TestAutomationTaskExecutor;
-import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
-import org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector;
-import org.squashtest.csp.tm.testautomation.spi.UnknownConnectorKind;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
+import org.squashtest.tm.domain.testautomation.AutomatedSuite
+import org.squashtest.tm.domain.testautomation.AutomatedTest
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.service.internal.repository.TestAutomationServerDao
+import org.squashtest.tm.service.internal.testautomation.service.TestAutomationConnectorRegistry
+import org.squashtest.tm.service.internal.testautomation.service.TestAutomationManagementServiceImpl
+import org.squashtest.tm.service.internal.testautomation.service.TestAutomationManagementServiceImpl.ExtenderSorter
+import org.squashtest.tm.service.internal.testautomation.tasks.FetchTestListTask
+import org.squashtest.tm.service.internal.testautomation.thread.FetchTestListFuture
+import org.squashtest.tm.service.internal.testautomation.thread.TestAutomationTaskExecutor
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
+import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector
+import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 
 class TestAutomationManagementServiceImplTest extends Specification {

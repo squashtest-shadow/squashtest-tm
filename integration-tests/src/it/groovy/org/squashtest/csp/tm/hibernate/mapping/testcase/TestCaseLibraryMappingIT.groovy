@@ -22,14 +22,13 @@ package org.squashtest.csp.tm.hibernate.mapping.testcase
 ;
 
 
-import org.hibernate.Hibernate;
-import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
+import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.tm.domain.campaign.CampaignLibrary
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.requirement.RequirementLibrary
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
 
 class TestCaseLibraryMappingIT extends HibernateMappingSpecification {
 	TestCaseLibrary library = new TestCaseLibrary()

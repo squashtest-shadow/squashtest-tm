@@ -24,8 +24,8 @@ package org.squashtest.csp.tm.internal.service
 import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tm.domain.project.Project
-import org.squashtest.csp.tm.service.project.ProjectManagerService
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.service.project.ProjectManagerService
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport

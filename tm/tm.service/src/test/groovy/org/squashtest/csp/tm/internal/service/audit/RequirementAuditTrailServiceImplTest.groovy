@@ -20,9 +20,10 @@
  */
 package org.squashtest.csp.tm.internal.service.audit
 
-import org.squashtest.csp.tm.domain.event.RequirementCreation
-import org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao
-import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.Paging
+import org.squashtest.tm.domain.event.RequirementCreation
+import org.squashtest.tm.service.internal.audit.RequirementAuditTrailServiceImpl
+import org.squashtest.tm.service.internal.repository.RequirementAuditEventDao
 
 import spock.lang.Specification
 

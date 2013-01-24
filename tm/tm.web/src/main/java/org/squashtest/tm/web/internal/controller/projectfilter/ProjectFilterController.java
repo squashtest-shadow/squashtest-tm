@@ -31,9 +31,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.csp.tm.service.ProjectFilterModificationService;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.projectfilter.ProjectFilter;
+import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 
 

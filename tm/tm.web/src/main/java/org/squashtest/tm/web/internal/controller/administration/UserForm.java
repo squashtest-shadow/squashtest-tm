@@ -23,7 +23,7 @@ package org.squashtest.tm.web.internal.controller.administration;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
-import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.tm.domain.users.User;
 
 /**
  * Form bean for user definition.

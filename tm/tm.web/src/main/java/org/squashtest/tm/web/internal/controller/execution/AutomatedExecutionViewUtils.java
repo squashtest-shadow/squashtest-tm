@@ -27,10 +27,10 @@ import java.util.Locale;
 
 import org.springframework.context.MessageSource;
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
-import org.squashtest.csp.tm.domain.testautomation.AutomatedExecutionExtender;
-import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 
 public final class AutomatedExecutionViewUtils {
 	private AutomatedExecutionViewUtils() {

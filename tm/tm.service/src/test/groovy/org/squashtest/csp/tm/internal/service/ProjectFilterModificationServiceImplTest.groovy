@@ -20,11 +20,11 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.squashtest.csp.core.service.security.UserContextService
-import org.squashtest.csp.tm.internal.repository.ProjectDao
-import org.squashtest.csp.tm.internal.repository.ProjectFilterDao
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter
-import org.squashtest.csp.tm.internal.service.ProjectFilterModificationServiceImpl
+import org.squashtest.tm.domain.projectfilter.ProjectFilter
+import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl;
+import org.squashtest.tm.service.internal.repository.ProjectDao
+import org.squashtest.tm.service.internal.repository.ProjectFilterDao
+import org.squashtest.tm.service.security.UserContextService
 
 import spock.lang.Specification
 

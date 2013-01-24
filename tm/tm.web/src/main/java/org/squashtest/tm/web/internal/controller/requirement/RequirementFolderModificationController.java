@@ -23,8 +23,8 @@ package org.squashtest.tm.web.internal.controller.requirement;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
-import org.squashtest.csp.tm.service.FolderModificationService;
+import org.squashtest.tm.domain.requirement.RequirementFolder;
+import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.web.internal.controller.generic.FolderModificationController;
 
 @Controller

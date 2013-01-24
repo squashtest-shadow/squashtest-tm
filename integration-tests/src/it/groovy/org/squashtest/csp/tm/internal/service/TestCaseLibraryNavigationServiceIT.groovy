@@ -22,17 +22,12 @@ package org.squashtest.csp.tm.internal.service
 
 import javax.inject.Inject
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
-import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService
-import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService
-import org.squashtest.csp.tm.service.project.ProjectManagerService;
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport

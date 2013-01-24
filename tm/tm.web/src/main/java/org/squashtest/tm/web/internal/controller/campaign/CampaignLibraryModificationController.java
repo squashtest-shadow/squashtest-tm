@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 
 @Controller
 @RequestMapping("/campaign-libraries/{libraryId}")

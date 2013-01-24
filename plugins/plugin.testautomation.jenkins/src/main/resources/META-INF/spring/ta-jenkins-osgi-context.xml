@@ -23,9 +23,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
-						http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd 
-						http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+						http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0-m1.xsd 
+						http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium-2.0-m1.xsd">
 
 
 	<!-- service reference injection -->
@@ -33,6 +33,6 @@
 	
 	<osgix:cm-properties id="connector.conf"  persistent-id="tm.testautomation.conf" /> 	
 					   
-	<osgi:service ref="plugin.testautomation.jenkins.connector" interface="org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector"/>
+	<osgi:service ref="plugin.testautomation.jenkins.connector" interface="org.squashtest.tm.service.testautomation.spi.TestAutomationConnector"/>
 	
 </beans>

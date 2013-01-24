@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
-import org.squashtest.csp.tm.domain.testcase.CallTestStep;
-import org.squashtest.csp.tm.domain.testcase.TestStep;
-import org.squashtest.csp.tm.domain.testcase.TestStepVisitor;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.TestStepVisitor;
 
 /**
  * Builds a DataTable model for TestSteps table.

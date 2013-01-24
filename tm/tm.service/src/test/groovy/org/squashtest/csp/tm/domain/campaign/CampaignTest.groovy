@@ -20,13 +20,17 @@
  */
 package org.squashtest.csp.tm.domain.campaign
 
+import static org.junit.Assert.*
+
 import java.text.SimpleDateFormat
-import org.squashtest.csp.tm.domain.testcase.TestCase
+
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.testcase.TestCase
 
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import static org.junit.Assert.*
 
 class CampaignTest extends Specification {
 	Campaign campaign = new Campaign()

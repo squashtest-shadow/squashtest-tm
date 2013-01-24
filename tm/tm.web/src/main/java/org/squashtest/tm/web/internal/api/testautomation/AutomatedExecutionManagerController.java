@@ -30,9 +30,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.csp.tm.service.testautomation.AutomatedExecutionManagerService;
-import org.squashtest.csp.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
+import org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService;
+import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 
 
 

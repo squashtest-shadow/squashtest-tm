@@ -20,18 +20,18 @@
  */
 package org.squashtest.csp.tm.internal.testautomation.service
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.spockframework.util.NotThreadSafe;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
-import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
-import org.unitils.dbunit.annotation.DataSet;
-import org.squashtest.csp.tm.service.TestAutomationFinderService;
+import org.spockframework.util.NotThreadSafe
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService
+import org.squashtest.tm.service.testautomation.TestAutomationFinderService
+import org.unitils.dbunit.annotation.DataSet
 
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @NotThreadSafe
 @UnitilsSupport

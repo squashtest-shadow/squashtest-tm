@@ -21,9 +21,10 @@
 package org.squashtest.csp.tm.domain.event;
 
 
-import spock.lang.Specification;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.event.RequirementLargePropertyChange
+import org.squashtest.tm.domain.requirement.RequirementVersion
+
+import spock.lang.Specification
 
 class RequirementLargePropertyChangeTest extends Specification {
 	def "should build a property change event"() {

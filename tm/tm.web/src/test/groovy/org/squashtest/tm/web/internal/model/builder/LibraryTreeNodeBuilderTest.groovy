@@ -21,17 +21,16 @@
 
 package org.squashtest.tm.web.internal.model.builder;
 
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tm.domain.attachment.AttachmentList;
-import org.squashtest.csp.tm.domain.library.Copiable
-import org.squashtest.csp.tm.domain.library.Library;
-import org.squashtest.csp.tm.domain.library.LibraryNode;
-import org.squashtest.csp.tm.domain.library.NodeVisitor;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.tm.web.internal.model.builder.LibraryTreeNodeBuilder;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.domain.attachment.AttachmentList
+import org.squashtest.tm.domain.library.Copiable
+import org.squashtest.tm.domain.library.Library
+import org.squashtest.tm.domain.library.LibraryNode
+import org.squashtest.tm.domain.library.NodeVisitor
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 
 class LibraryTreeNodeBuilderTest extends Specification{

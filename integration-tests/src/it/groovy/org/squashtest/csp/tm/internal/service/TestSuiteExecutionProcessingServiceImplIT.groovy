@@ -20,20 +20,16 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import java.util.List
-
 import javax.inject.Inject
 
-import org.hibernate.Query
-import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tm.domain.EmptyTestSuiteTestPlanException;
-import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException;
-import org.squashtest.csp.tm.domain.execution.Execution
-import org.squashtest.csp.tm.domain.execution.ExecutionStep
-import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.exception.EmptyTestSuiteTestPlanException
+import org.squashtest.tm.exception.TestPlanItemNotExecutableException
+import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService
 import org.unitils.dbunit.annotation.DataSet
+
 import spock.unitils.UnitilsSupport
 
 @NotThreadSafe

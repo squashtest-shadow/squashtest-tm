@@ -20,9 +20,10 @@
  */
 package org.squashtest.csp.tm.domain.library.structures
 
-import org.squashtest.csp.tm.domain.library.NodeReference
+import org.squashtest.tm.domain.library.NodeReference
+import org.squashtest.tm.domain.library.structures.StringPathMap
+
 import spock.lang.Specification
-import java.io.File;
 
 
 class StringPathMapTest extends Specification {

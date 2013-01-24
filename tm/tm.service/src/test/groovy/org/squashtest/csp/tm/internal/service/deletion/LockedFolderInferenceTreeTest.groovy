@@ -22,6 +22,8 @@ package org.squashtest.csp.tm.internal.service.deletion
 
 import java.util.List;
 
+import org.squashtest.tm.service.internal.deletion.LockedFolderInferenceTree;
+
 import spock.lang.Specification;
 
 class LockedFolderInferenceTreeTest extends Specification {

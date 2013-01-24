@@ -20,14 +20,15 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.squashtest.csp.tm.domain.campaign.Campaign
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.internal.repository.CampaignDao
-import org.squashtest.csp.tm.internal.repository.RequirementDao
-import org.squashtest.csp.tm.internal.repository.TestCaseDao
-import org.squashtest.csp.tm.service.ProjectFilterModificationService;
-import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.projectfilter.ProjectFilter
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria
+import org.squashtest.tm.service.internal.library.SearchServiceImpl;
+import org.squashtest.tm.service.internal.repository.CampaignDao
+import org.squashtest.tm.service.internal.repository.RequirementDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.project.ProjectFilterModificationService;
 
 import spock.lang.Specification
 

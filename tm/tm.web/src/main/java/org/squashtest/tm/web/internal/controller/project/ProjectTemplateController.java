@@ -28,8 +28,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.csp.tm.domain.NamedReference;
-import org.squashtest.csp.tm.service.project.ProjectTemplateFinder;
+import org.squashtest.tm.domain.NamedReference;
+import org.squashtest.tm.service.project.ProjectTemplateFinder;
 
 @Controller
 @RequestMapping("/project-templates")

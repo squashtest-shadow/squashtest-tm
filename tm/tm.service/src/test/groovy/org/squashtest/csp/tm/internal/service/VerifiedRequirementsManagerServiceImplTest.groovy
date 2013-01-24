@@ -20,27 +20,25 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter
-import org.squashtest.csp.tm.domain.requirement.Requirement
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary
-import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion
-import org.squashtest.csp.tm.domain.resource.Resource
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy
-import org.squashtest.csp.tm.internal.repository.LibraryNodeDao
-import org.squashtest.csp.tm.internal.repository.RequirementDao
-import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.csp.tm.internal.repository.RequirementVersionDao
-import org.squashtest.csp.tm.internal.repository.TestCaseDao
-import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
-import org.squashtest.csp.tm.service.TestCaseModificationService
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementLibrary
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode
+import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.resource.Resource
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
+import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl;
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao
+import org.squashtest.tm.service.internal.repository.RequirementLibraryDao
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerServiceImpl;
+import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl;
 
 import spock.lang.Specification
 

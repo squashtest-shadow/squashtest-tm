@@ -20,12 +20,10 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.tm.web.internal.model.builder.JsTreeNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class JsTreeNodeListBuilderTest extends Specification {
 	def "should build list of tree nodes"() {

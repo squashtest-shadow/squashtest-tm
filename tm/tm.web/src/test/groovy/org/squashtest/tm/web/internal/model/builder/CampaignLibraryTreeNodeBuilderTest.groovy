@@ -21,15 +21,14 @@
 package org.squashtest.tm.web.internal.model.builder
 
 
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
-import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.CampaignFolder
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class CampaignLibraryTreeNodeBuilderTest extends Specification {
 	CampaignLibraryTreeNodeBuilder builder = new CampaignLibraryTreeNodeBuilder(Mock(PermissionEvaluationService))

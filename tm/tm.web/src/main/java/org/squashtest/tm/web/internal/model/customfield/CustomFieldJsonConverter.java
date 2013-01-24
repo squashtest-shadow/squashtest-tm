@@ -28,14 +28,14 @@ import javax.inject.Inject;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
-import org.squashtest.csp.tm.domain.customfield.BindableEntity;
-import org.squashtest.csp.tm.domain.customfield.CustomField;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.csp.tm.domain.customfield.InputType;
-import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
-import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.domain.customfield.SingleSelectField;
 
 @Component
 public class CustomFieldJsonConverter {

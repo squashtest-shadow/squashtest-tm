@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.jquery;
 
-import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.tm.domain.users.User;
 
 public class TestPlanAssignableUser {
 	private String id;

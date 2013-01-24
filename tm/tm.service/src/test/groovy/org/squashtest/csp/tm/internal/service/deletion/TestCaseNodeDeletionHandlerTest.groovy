@@ -21,8 +21,10 @@
 package org.squashtest.csp.tm.internal.service.deletion
 
 
-import org.squashtest.csp.tm.internal.repository.TestCaseDao 
-import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao 
+import org.squashtest.tm.service.internal.deletion.TestCaseNodeDeletionHandlerImpl;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
+
 import spock.lang.Specification;
 
 class TestCaseNodeDeletionHandlerTest extends Specification {

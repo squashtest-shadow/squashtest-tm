@@ -23,11 +23,10 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.net
 
 
 
-import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
+import org.squashtest.tm.domain.testautomation.AutomatedTest
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
 
 import spock.lang.Specification
 

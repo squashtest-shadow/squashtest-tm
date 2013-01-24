@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks;
 
-import org.squashtest.csp.tm.testautomation.spi.TestAutomationException;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 
 public abstract class SynchronousBuildProcessor<RESULT> extends AbstractBuildProcessor {
 

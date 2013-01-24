@@ -21,26 +21,20 @@
 package org.squashtest.csp.tm.internal.service.deletion
 
 
-import org.springframework.context.MessageSource;
-import org.squashtest.csp.tm.service.deletion.NotDeletablePreviewReport;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.springframework.context.MessageSource
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.service.deletion.NotDeletablePreviewReport
+import org.squashtest.tm.service.deletion.SuppressionPreviewReport
+import org.squashtest.tm.service.internal.deletion.AbstractNodeDeletionHandlerImpl
+import org.squashtest.tm.service.internal.repository.EntityDao
+import org.squashtest.tm.service.internal.repository.FolderDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
 
-import java.util.LinkedList;
-
-
-
-import java.util.List;
-
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.csp.tm.internal.repository.EntityDao;
-import org.squashtest.csp.tm.internal.repository.FolderDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
-import org.squashtest.csp.tm.internal.service.deletion.AbstractNodeDeletionHandlerImpl 
-import org.squashtest.csp.tm.service.deletion.SuppressionPreviewReport;
-
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class AbstractNodeDeletionHandlerImplTest extends Specification {
 

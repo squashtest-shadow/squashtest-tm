@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>squashtest-csp-tm</artifactId>
 		<groupId>org.squashtest.tm</groupId>
 		<version>1.5.0.IT47-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>tm.service</artifactId>
 	<name>${project.groupId}.${project.artifactId}</name>
 	<description>Squash TM services module - Provides Test management related internal services</description>
 	<packaging>bundle</packaging>
-	
+
 	<dependencies>
 		<!-- ====== DEPENDENCY POMS ====== -->
 		<dependency>
@@ -47,11 +48,16 @@
 			<artifactId>core.foundation</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>core.dynamicmanager</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.dynamicmanager</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
 			<artifactId>core.bugtracker.api</artifactId>
@@ -59,13 +65,14 @@
 		</dependency>
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
-			<artifactId>core.service</artifactId>
+			<artifactId>core.testautomation.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
-			<artifactId>core.testautomation.api</artifactId>
+			<artifactId>org.squashtest.csp.tools.unittest</artifactId>
 			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<!--======= /SQUASHTEST MODULES ======== -->
 
@@ -103,10 +110,15 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>org.springframework.aop</artifactId>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.aopalliance</groupId>
 			<artifactId>com.springsource.org.aopalliance</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.jdbc</artifactId>
 		</dependency>
 		<!-- ====== /SPRING FRAMEWORK ====== -->
 
@@ -164,12 +176,31 @@
 		</dependency>
 		<!-- ====== /SPRING SECURITY ====== -->
 
+		<!-- ====== EHCACHE ====== -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.context.support</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.ehcache</groupId>
+			<artifactId>com.springsource.net.sf.ehcache</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+		<!-- ====== /EHCACHE ====== -->
+
 		<!-- ====== POI ====== -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>org.squashtest.org.apache.poi</artifactId>
 		</dependency>
 		<!-- ====== /POI ====== -->
+
+		<dependency>
+			<groupId>org.apache.log4j</groupId>
+			<artifactId>com.springsource.org.apache.log4j</artifactId>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -188,42 +219,42 @@
 		</testResources>
 
 		<testSourceDirectory>src/test/groovy</testSourceDirectory>
-     
-     <plugins>
-			 <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-resource</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>add-resource</goal>
-            </goals>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>${project.build.directory}/generated-resources</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      
-      <plugin>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-resource</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>add-resource</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}/generated-resources</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-        <dependencies>
-          <dependency>
-            <groupId>org.squashtest.tm</groupId>
-            <artifactId>tools.annotation.processor</artifactId>
-            <version>${project.version}</version>
-          </dependency>
-        </dependencies>
-        <configuration>
-          <generatedSourcesDirectory>${project.build.directory}/generated-resources/META-INF</generatedSourcesDirectory>
-        </configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.squashtest.tm</groupId>
+						<artifactId>tools.annotation.processor</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<generatedSourcesDirectory>${project.build.directory}/generated-resources/META-INF</generatedSourcesDirectory>
+				</configuration>
 			</plugin>
 
 			<plugin>

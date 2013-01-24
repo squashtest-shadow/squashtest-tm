@@ -21,13 +21,9 @@
 package org.squashtest.csp.tm.hibernate.mapping.testcase
 
 
-import javax.inject.Inject;
-
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
-
-import spock.lang.Specification;
+import org.springframework.test.context.transaction.TransactionConfiguration
+import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.tm.domain.testcase.TestCaseFolder
 
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
 class TestCaseFolderIT extends HibernateMappingSpecification  {

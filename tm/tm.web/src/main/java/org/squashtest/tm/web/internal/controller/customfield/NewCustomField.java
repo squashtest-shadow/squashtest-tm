@@ -21,10 +21,10 @@
 
 package org.squashtest.tm.web.internal.controller.customfield;
 
-import org.squashtest.csp.tm.domain.customfield.CustomField;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldOption;
-import org.squashtest.csp.tm.domain.customfield.InputType;
-import org.squashtest.csp.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.SingleSelectField;
 
 /**
  * @author Gregory Fouquet

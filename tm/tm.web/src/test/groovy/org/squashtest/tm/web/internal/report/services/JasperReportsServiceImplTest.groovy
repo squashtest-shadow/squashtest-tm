@@ -20,17 +20,11 @@
  */
 package org.squashtest.tm.web.internal.report.services
 
-import java.io.BufferedReader
-import java.io.FileInputStream
-
-import java.io.InputStreamReader
-
-import java.io.InputStream
-
-import org.squashtest.csp.tm.domain.requirement.ExportRequirementData
-import org.squashtest.csp.tm.domain.requirement.RequirementCategory
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
-import org.squashtest.tm.web.internal.report.service.JasperReportsService;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.domain.requirement.ExportRequirementData
+import org.squashtest.tm.domain.requirement.RequirementCategory
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.web.internal.report.service.JasperReportsService
 
 import spock.lang.Specification
 

@@ -45,11 +45,6 @@
       <artifactId>tm.service</artifactId>
       <version>${project.version}</version>
     </dependency>
-  <dependency>
-    <groupId>${project.groupId}</groupId>
-    <artifactId>core.service</artifactId>
-    <version>${project.version}</version>
-  </dependency>
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.bugtracker.api</artifactId>

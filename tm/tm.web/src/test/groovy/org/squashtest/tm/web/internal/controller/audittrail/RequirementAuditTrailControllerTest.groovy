@@ -21,13 +21,12 @@
 package org.squashtest.tm.web.internal.controller.audittrail;
 
 import org.springframework.context.MessageSource
-import org.squashtest.csp.tm.domain.event.RequirementCreation
-import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange
-import org.squashtest.csp.tm.service.audit.RequirementAuditTrailService
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
-import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditTrailController;
-import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.domain.event.RequirementCreation
+import org.squashtest.tm.domain.event.RequirementLargePropertyChange
+import org.squashtest.tm.service.audit.RequirementAuditTrailService
+import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
+import org.squashtest.tm.web.internal.model.datatable.DataTableModel
 
 import spock.lang.Specification
 

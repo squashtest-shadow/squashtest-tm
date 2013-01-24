@@ -20,12 +20,13 @@
  */
 package org.squashtest.csp.tm.service;
 
-import java.util.List;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.service.testcase.TestCaseModificationService;
 
-import spock.lang.Shared;
+import spock.lang.Shared
 
 /**
  * @author Gregory Fouquet

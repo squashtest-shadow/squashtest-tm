@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.web.context.request.WebRequestInterceptor;
-import org.squashtest.csp.core.domain.Identified;
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 /**
  * Groups mutual code to store the information of an access to the view of an entity in the OpenedEntities stored in the ServeletContext. 
  * see {@linkplain OpenedEntities}

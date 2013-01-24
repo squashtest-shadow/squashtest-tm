@@ -27,7 +27,7 @@ import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.squashtest.csp.core.service.configuration.ConfigurationService;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 
 @Controller
 public class LoginLogoutController {

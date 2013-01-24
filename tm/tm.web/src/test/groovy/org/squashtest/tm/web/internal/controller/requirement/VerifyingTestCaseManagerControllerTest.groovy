@@ -27,15 +27,13 @@ import javax.inject.Provider
 import org.springframework.context.MessageSource
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
-import org.squashtest.csp.core.service.security.PermissionEvaluationService
-import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException
-import org.squashtest.csp.tm.domain.requirement.Requirement
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.service.RequirementVersionManagerService
-import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService
-import org.squashtest.tm.web.internal.controller.requirement.VerifyingTestCaseManagerController;
-import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.exception.RequirementAlreadyVerifiedException
+import org.squashtest.tm.service.requirement.RequirementVersionManagerService
+import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService
+import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 
 import spock.lang.Specification
 

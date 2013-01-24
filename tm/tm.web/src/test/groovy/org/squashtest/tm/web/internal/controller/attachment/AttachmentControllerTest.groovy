@@ -20,20 +20,13 @@
  */
 package org.squashtest.tm.web.internal.controller.attachment;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import javax.servlet.ServletOutputStream
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse
 
-import org.squashtest.csp.tm.domain.attachment.Attachment;
-import org.squashtest.csp.tm.service.AttachmentManagerService;
-import org.squashtest.tm.web.internal.controller.attachment.AttachmentController;
+import org.squashtest.tm.domain.attachment.Attachment
+import org.squashtest.tm.service.attachment.AttachmentManagerService
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class AttachmentControllerTest extends Specification {
 	AttachmentController attachmentController = new AttachmentController()

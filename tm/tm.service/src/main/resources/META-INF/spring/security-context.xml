@@ -66,13 +66,13 @@
 		<property name="parameterNameDiscoverer">
 			<!-- We use 2 param name discovery strategies : the standard one and a "arg0, arg1" fallback -->
 			<bean
-				class="org.squashtest.csp.core.infrastructure.spring.CompositeDelegatingParameterNameDiscoverer">
+				class="org.squashtest.tm.service.internal.spring.CompositeDelegatingParameterNameDiscoverer">
 				<constructor-arg>
 					<list>
 						<bean
 							class="org.springframework.core.LocalVariableTableParameterNameDiscoverer" />
 						<bean
-							class="org.squashtest.csp.core.infrastructure.spring.ArgumentPositionParameterNameDiscoverer" />
+							class="org.squashtest.tm.service.internal.spring.ArgumentPositionParameterNameDiscoverer" />
 					</list>
 				</constructor-arg>
 			</bean>

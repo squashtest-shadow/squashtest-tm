@@ -21,10 +21,11 @@
 
 package org.squashtest.tm.internal.validation.validator
 
-import org.squashtest.csp.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomField
+import org.squashtest.tm.service.internal.validation.validator.CustomFieldHasDefaultAsRequiredValidator
 
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
 
 /**
  * @author Gregory

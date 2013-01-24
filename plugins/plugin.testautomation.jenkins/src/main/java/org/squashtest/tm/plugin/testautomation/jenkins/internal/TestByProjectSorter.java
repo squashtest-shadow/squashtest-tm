@@ -26,9 +26,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
 public class TestByProjectSorter{
 

@@ -22,14 +22,13 @@ package org.squashtest.csp.tm.internal.service
 
 import static org.junit.Assert.*
 
-import org.squashtest.csp.core.service.security.AdministratorAuthenticationService
-import org.squashtest.csp.tm.domain.LoginAlreadyExistsException
-import org.squashtest.csp.tm.domain.users.User
-import org.squashtest.csp.tm.domain.users.UsersGroup
-import org.squashtest.csp.tm.internal.repository.UserDao
-import org.squashtest.csp.tm.internal.repository.UsersGroupDao
-import org.squashtest.csp.tm.internal.repository.hibernate.HibernateUserDao
-import org.squashtest.csp.tm.service.AdministrationService
+import org.springframework.security.core.userdetails.User
+import org.squashtest.tm.domain.users.UsersGroup
+import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.internal.repository.UsersGroupDao;
+import org.squashtest.tm.service.internal.user.AdministrationServiceImpl;
+import org.squashtest.tm.service.security.AdministratorAuthenticationService
+import org.squashtest.tm.service.user.AdministrationService;
 
 import spock.lang.Specification
 

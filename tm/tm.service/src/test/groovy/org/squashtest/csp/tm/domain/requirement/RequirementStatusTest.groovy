@@ -20,7 +20,8 @@
  */
 package org.squashtest.csp.tm.domain.requirement
 
-import static org.squashtest.csp.tm.domain.requirement.RequirementStatus.*
+import org.apache.poi.hssf.record.formula.functions.T
+
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -53,7 +54,7 @@ class RequirementStatusTest extends Specification {
 			OBSOLETE			|	[ APPROVED, UNDER_REVIEW, WORK_IN_PROGRESS ] as Set
 			
 	}
-	// FIXME l'assertion est le resultat de allowedTransitions.each { ... } soit le retour de la dernière itéeration !
+	// FIXME l'assertion est le resultat de allowedTransitions.each { ... } soit le retour de la derniï¿½re itï¿½eration !
 	
 //	@Unroll("transitions from #status to #allowedTransitions should be legal")
 //	def "transitions from #status to #allowedTransitions should be legal"(){

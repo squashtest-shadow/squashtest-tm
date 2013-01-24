@@ -29,7 +29,9 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.transaction.TransactionConfiguration
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.core.service.security.StubAuthentication
+import org.squashtest.tm.service.security.StubAuthentication
+import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService
+import org.squashtest.tm.service.security.acls.jdbc.UnknownAclClassException
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
 

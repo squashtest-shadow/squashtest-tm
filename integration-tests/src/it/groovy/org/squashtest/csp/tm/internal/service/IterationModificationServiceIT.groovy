@@ -20,31 +20,28 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import java.util.List;
+import javax.inject.Inject
 
-import javax.inject.Inject;
-
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.campaign.Campaign
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.csp.tm.domain.campaign.Iteration
-import org.squashtest.csp.tm.domain.campaign.TestSuite;
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.project.GenericProject;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep
-import org.squashtest.csp.tm.service.AttachmentManagerService;
-import org.squashtest.csp.tm.service.CampaignLibrariesCrudService;
-import org.squashtest.csp.tm.service.CampaignLibraryNavigationService;
-import org.squashtest.csp.tm.service.CampaignModificationService;
-import org.squashtest.csp.tm.service.IterationModificationService;
-import org.squashtest.csp.tm.service.IterationTestPlanManagerService
-import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
-import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
-import org.squashtest.csp.tm.service.TestCaseModificationService;
-import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
-import org.squashtest.csp.tm.service.project.ProjectManagerService;
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.TestSuite
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.exception.DuplicateNameException
+import org.squashtest.tm.service.attachment.AttachmentManagerService
+import org.squashtest.tm.service.campaign.CampaignLibrariesCrudService
+import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
+import org.squashtest.tm.service.campaign.CampaignModificationService
+import org.squashtest.tm.service.campaign.IterationModificationService
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService
+import org.squashtest.tm.service.project.GenericProjectManagerService
+import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
+import org.squashtest.tm.service.testcase.TestCaseModificationService
 
 class IterationModificationServiceIT extends HibernateServiceSpecification {
 

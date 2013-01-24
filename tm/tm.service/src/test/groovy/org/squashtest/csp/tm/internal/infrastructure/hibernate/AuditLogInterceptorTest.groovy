@@ -20,17 +20,15 @@
  */
 package org.squashtest.csp.tm.internal.infrastructure.hibernate;
 
-import org.hibernate.Interceptor;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.spockframework.compiler.model.CleanupBlock;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.squashtest.csp.core.service.security.UserContextService;
-import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory;
-import org.squashtest.csp.tm.domain.audit.AuditableSupport;
+import org.hibernate.SessionFactory
+import org.hibernate.cfg.Configuration
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
+import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.tm.domain.audit.AuditableSupport
+import org.squashtest.tm.service.internal.hibernate.AuditLogInterceptor
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class AuditLogInterceptorTest extends Specification {
 	AuditLogInterceptor interceptor = new AuditLogInterceptor()
@@ -44,7 +42,7 @@ class AuditLogInterceptorTest extends Specification {
 	def "should set creation info on auditable object save"() {
 		given:
 		Auditable entity = new Auditable()
-
+		
 		and:
 		Object[] state = [new AuditableSupport()]
 		String[] propertyNames = ["audit"]
@@ -186,7 +184,7 @@ class AuditLogInterceptorTest extends Specification {
 	}
 }
 
-@org.squashtest.csp.tm.domain.audit.Auditable
+@org.squashtest.tm.domain.audit.Auditable
 class Auditable {
 }
 

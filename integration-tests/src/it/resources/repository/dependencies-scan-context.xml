@@ -28,9 +28,9 @@
 	  	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	">
 	
-	<context:component-scan base-package="org.squashtest.csp.tm.internal.repository" />
-	<context:component-scan base-package="org.squashtest.csp.core.internal.api" />
-<bean class="org.squashtest.csp.core.service.security.StubUserContextService" />
+	<context:component-scan base-package="org.squashtest.tm.service.internal.repository" />
+	<context:component-scan base-package="org.squashtest.tm.service.internal.api" />
+<bean class="org.squashtest.tm.service.security.StubUserContextService" />
  
 
 </beans>

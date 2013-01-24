@@ -22,21 +22,24 @@ package org.squashtest.csp.tm.internal.service
 
 
 
-import org.squashtest.csp.tm.domain.campaign.Campaign
-import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.csp.tm.domain.users.User;
-import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy
-import org.squashtest.csp.tm.internal.repository.CampaignDao
-import org.squashtest.csp.tm.internal.repository.CampaignTestPlanItemDao
-import org.squashtest.csp.tm.internal.repository.LibraryNodeDao
-import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
-import org.squashtest.csp.tm.internal.repository.UserDao;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
+import org.squashtest.tm.domain.projectfilter.ProjectFilter
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.domain.users.User
+import org.squashtest.tm.service.internal.campaign.CampaignTestPlanManagerServiceImpl;
+import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
+import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl;
+import org.squashtest.tm.service.internal.repository.CampaignDao
+import org.squashtest.tm.service.internal.repository.CampaignTestPlanItemDao
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
+import org.squashtest.tm.service.internal.repository.UserDao
+
 import spock.lang.Specification
 
 

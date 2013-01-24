@@ -23,30 +23,29 @@ package org.squashtest.csp.tm.internal.service
 import javax.inject.Inject
 
 import org.spockframework.util.NotThreadSafe
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.campaign.Campaign
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.csp.tm.domain.campaign.Iteration
-import org.squashtest.csp.tm.domain.execution.Execution
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus
-import org.squashtest.csp.tm.domain.execution.ExecutionStatusReport
-import org.squashtest.csp.tm.domain.execution.ExecutionStep
-import org.squashtest.csp.tm.domain.project.GenericProject;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep
-import org.squashtest.csp.tm.service.CampaignLibrariesCrudService
-import org.squashtest.csp.tm.service.CampaignLibraryNavigationService
-import org.squashtest.csp.tm.service.CampaignModificationService
-import org.squashtest.csp.tm.service.ExecutionModificationService
-import org.squashtest.csp.tm.service.ExecutionProcessingService
-import org.squashtest.csp.tm.service.IterationModificationService
-import org.squashtest.csp.tm.service.IterationTestPlanManagerService
-import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService
-import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService
-import org.squashtest.csp.tm.service.TestCaseModificationService
-import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
-import org.squashtest.csp.tm.service.project.ProjectManagerService;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.execution.ExecutionStatusReport
+import org.squashtest.tm.domain.execution.ExecutionStep
+import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.service.campaign.CampaignLibrariesCrudService
+import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
+import org.squashtest.tm.service.campaign.CampaignModificationService
+import org.squashtest.tm.service.campaign.IterationModificationService
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService
+import org.squashtest.tm.service.execution.ExecutionModificationService
+import org.squashtest.tm.service.execution.ExecutionProcessingService
+import org.squashtest.tm.service.project.GenericProjectManagerService
+import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
+import org.squashtest.tm.service.testcase.TestCaseModificationService
 
 
 @NotThreadSafe

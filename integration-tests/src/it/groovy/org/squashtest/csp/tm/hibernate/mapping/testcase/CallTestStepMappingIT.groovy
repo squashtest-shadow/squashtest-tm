@@ -20,15 +20,13 @@
  */
 package org.squashtest.csp.tm.hibernate.mapping.testcase
 
-import javax.inject.Inject;
-import org.hibernate.SessionFactory;
-import org.squashtest.csp.tm.domain.testcase.CallTestStep;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestStep;
-import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
-import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory;
+import javax.inject.Inject
 
-import spock.lang.Specification;
+import org.hibernate.SessionFactory
+import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.tm.domain.testcase.CallTestStep
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestStep
 
 class CallTestStepMappingIT extends HibernateMappingSpecification {
 	@Inject SessionFactory sessionFactory;

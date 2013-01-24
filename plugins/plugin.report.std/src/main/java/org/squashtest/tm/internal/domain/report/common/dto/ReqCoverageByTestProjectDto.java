@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
 
 public class ReqCoverageByTestProjectDto {
 

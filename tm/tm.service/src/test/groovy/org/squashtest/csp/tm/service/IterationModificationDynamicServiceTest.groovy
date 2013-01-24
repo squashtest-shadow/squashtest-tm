@@ -20,16 +20,9 @@
  */
 package org.squashtest.csp.tm.service
 
-import org.squashtest.csp.tm.domain.campaign.Iteration;
+import org.squashtest.tm.service.campaign.IterationModificationService;
 
-import java.util.List;
-
-import spock.lang.Shared;
-
-import java.util.Date;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
+import spock.lang.Shared
 
 /**
  * @author Gregory Fouquet

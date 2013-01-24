@@ -23,11 +23,11 @@ package org.squashtest.tm.internal.service;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Service;
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tm.domain.project.ProjectResource;
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.csp.tm.service.ProjectFilterModificationService;
+import org.squashtest.tm.domain.project.ProjectResource;
+import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.plugin.report.std.service.DataFilteringService;
+import org.squashtest.tm.service.project.ProjectFilterModificationService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 
 @Service("squashtest.tm.service.DataFilteringService")

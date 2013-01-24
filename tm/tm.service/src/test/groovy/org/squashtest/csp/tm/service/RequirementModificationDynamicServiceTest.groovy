@@ -20,12 +20,11 @@
  */
 package org.squashtest.csp.tm.service
 
-import java.util.List
-
-import org.squashtest.csp.tm.domain.requirement.Requirement
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.service.requirement.RequirementModificationService;
 
 import spock.lang.Shared
 

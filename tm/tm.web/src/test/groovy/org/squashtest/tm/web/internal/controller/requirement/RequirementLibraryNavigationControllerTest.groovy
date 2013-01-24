@@ -22,14 +22,14 @@ package org.squashtest.tm.web.internal.controller.requirement
 
 import javax.inject.Provider
 
-import org.squashtest.csp.core.service.security.PermissionEvaluationService
-import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto
-import org.squashtest.csp.tm.domain.requirement.Requirement
-import org.squashtest.csp.tm.domain.requirement.RequirementFolder
-import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion
-import org.squashtest.csp.tm.service.RequirementLibraryNavigationService
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.requirement.NewRequirementVersionDto
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementFolder
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode

@@ -20,19 +20,17 @@
  */
 package org.squashtest.tm.web.internal.controller.audittrail
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.springframework.context.MessageSource
-import org.squashtest.csp.tm.domain.event.RequirementAuditEvent
-import org.squashtest.csp.tm.domain.event.RequirementCreation
-import org.squashtest.csp.tm.domain.event.RequirementLargePropertyChange
-import org.squashtest.csp.tm.domain.event.RequirementPropertyChange
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
-import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
-import org.squashtest.tm.web.internal.helper.LabelFormatter;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.domain.event.RequirementAuditEvent
+import org.squashtest.tm.domain.event.RequirementCreation
+import org.squashtest.tm.domain.event.RequirementLargePropertyChange
+import org.squashtest.tm.domain.event.RequirementPropertyChange
+import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.web.internal.helper.LabelFormatter
+import org.squashtest.tm.web.internal.model.datatable.DataTableModel
 
 import spock.lang.Specification
 /**

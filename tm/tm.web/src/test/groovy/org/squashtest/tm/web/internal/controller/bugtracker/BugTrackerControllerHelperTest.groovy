@@ -23,10 +23,9 @@ package org.squashtest.tm.web.internal.controller.bugtracker
 import javax.servlet.http.HttpServletRequest
 
 import org.springframework.context.MessageSource
-import org.squashtest.csp.tm.domain.execution.Execution
-import org.squashtest.csp.tm.domain.execution.ExecutionStep
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.tm.web.internal.controller.bugtracker.BugtrackerControllerHelper;
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.execution.ExecutionStep
+import org.squashtest.tm.domain.testcase.TestCase
 
 
 class BugTrackerControllerHelperTest extends spock.lang.Specification {

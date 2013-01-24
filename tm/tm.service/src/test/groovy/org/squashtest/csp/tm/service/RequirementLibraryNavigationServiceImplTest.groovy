@@ -20,22 +20,21 @@
  */
 package org.squashtest.csp.tm.service
 
-import org.squashtest.csp.core.service.security.PermissionEvaluationService 
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.internal.repository.RequirementDao;
-import org.squashtest.csp.tm.internal.repository.RequirementFolderDao;
-import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao;
-import org.squashtest.csp.tm.internal.service.RequirementLibraryNavigationServiceImpl;
-import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
-import org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService;
+import org.squashtest.tm.domain.projectfilter.ProjectFilter
+import org.squashtest.tm.domain.requirement.NewRequirementVersionDto
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementFolder
+import org.squashtest.tm.domain.requirement.RequirementLibrary
+import org.squashtest.tm.exception.DuplicateNameException
+import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
+import org.squashtest.tm.service.internal.repository.RequirementDao
+import org.squashtest.tm.service.internal.repository.RequirementFolderDao
+import org.squashtest.tm.service.internal.repository.RequirementLibraryDao
+import org.squashtest.tm.service.internal.requirement.RequirementLibraryNavigationServiceImpl
+import org.squashtest.tm.service.project.ProjectFilterModificationService
+import org.squashtest.tm.service.security.PermissionEvaluationService
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class RequirementLibraryNavigationServiceImplTest extends Specification {
 	RequirementLibraryNavigationServiceImpl service = new RequirementLibraryNavigationServiceImpl()

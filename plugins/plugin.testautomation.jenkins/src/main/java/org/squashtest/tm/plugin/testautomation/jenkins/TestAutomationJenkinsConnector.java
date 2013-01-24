@@ -35,19 +35,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
-import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.service.testautomation.AutomatedExecutionSetIdentifier;
-import org.squashtest.csp.tm.service.testautomation.TestAutomationCallbackService;
-import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
-import org.squashtest.csp.tm.testautomation.spi.AccessDenied;
-import org.squashtest.csp.tm.testautomation.spi.BadConfiguration;
-import org.squashtest.csp.tm.testautomation.spi.NotFoundException;
-import org.squashtest.csp.tm.testautomation.spi.ServerConnectionFailed;
-import org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector;
-import org.squashtest.csp.tm.testautomation.spi.TestAutomationException;
-import org.squashtest.csp.tm.testautomation.spi.UnreadableResponseException;
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Build;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.BuildList;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.ExecuteAndWatchBuildProcessor;
@@ -61,6 +51,16 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecu
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepEventListener;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID;
+import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
+import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
+import org.squashtest.tm.service.testautomation.spi.AccessDenied;
+import org.squashtest.tm.service.testautomation.spi.BadConfiguration;
+import org.squashtest.tm.service.testautomation.spi.NotFoundException;
+import org.squashtest.tm.service.testautomation.spi.ServerConnectionFailed;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
+import org.squashtest.tm.service.testautomation.spi.UnreadableResponseException;
 
 
 @Service("plugin.testautomation.jenkins.connector")

@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.tm.service.AdministrationService;
+import org.squashtest.tm.service.user.AdministrationService;
 
 @Controller
 public class HomeController {

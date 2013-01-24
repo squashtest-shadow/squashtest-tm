@@ -21,11 +21,11 @@
 
 package org.squashtest.csp.tm.internal.service.testautomation
 
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus
-import org.squashtest.csp.tm.internal.testautomation.service.AutomatedExecutionManagerServiceImpl;
+import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.service.internal.testautomation.service.AutomatedExecutionManagerServiceImpl
 
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet

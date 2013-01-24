@@ -20,13 +20,15 @@
  */
 package org.squashtest.csp.tm.domain.campaign
 
-import org.squashtest.csp.tm.domain.DuplicateNameException
-import org.squashtest.csp.tm.domain.attachment.Attachment
-import org.squashtest.csp.tm.domain.execution.Execution
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.testcase.TestStep
-import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.attachment.Attachment
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.TestSuite
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestStep
+import org.squashtest.tm.exception.DuplicateNameException;
 
 import spock.lang.Specification
 

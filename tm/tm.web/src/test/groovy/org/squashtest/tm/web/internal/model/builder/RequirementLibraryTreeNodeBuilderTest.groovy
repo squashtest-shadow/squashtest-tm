@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
-import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementFolder
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 
 class RequirementLibraryTreeNodeBuilderTest extends Specification {

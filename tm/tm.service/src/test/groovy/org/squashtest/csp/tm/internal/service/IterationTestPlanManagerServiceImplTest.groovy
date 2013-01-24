@@ -20,18 +20,18 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import org.squashtest.csp.tm.domain.campaign.Iteration
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao;
-import org.squashtest.csp.tm.internal.repository.IterationDao;
-import org.squashtest.csp.tm.internal.repository.LibraryNodeDao;
-import org.squashtest.csp.tm.internal.service.CampaignTestPlanManagerServiceImplTest.MockTC
-import org.squashtest.csp.tm.internal.service.CampaignTestPlanManagerServiceImplTest.MockTCF
-
+import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import spock.lang.Specification;
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.service.internal.campaign.IterationTestPlanManagerServiceImpl;
+import org.squashtest.tm.service.internal.repository.ItemTestPlanDao
+import org.squashtest.tm.service.internal.repository.IterationDao
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao
+
+import spock.lang.Specification
 
 public class IterationTestPlanManagerServiceImplTest extends Specification {
 

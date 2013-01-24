@@ -24,11 +24,11 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
-import org.squashtest.csp.tm.domain.testcase.TestCaseSearchCriteria;
-import org.squashtest.csp.tm.domain.testcase.TestCaseType;
-import org.squashtest.csp.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseNature;
+import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.TestCaseType;
 
 public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 

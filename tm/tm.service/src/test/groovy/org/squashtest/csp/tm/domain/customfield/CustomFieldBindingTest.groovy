@@ -22,7 +22,8 @@
 
 package org.squashtest.csp.tm.domain.customfield
 
-import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding.PositionAwareBindingList;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding
+import org.squashtest.tm.domain.customfield.CustomFieldBinding.PositionAwareBindingList
 
 import spock.lang.Specification
 

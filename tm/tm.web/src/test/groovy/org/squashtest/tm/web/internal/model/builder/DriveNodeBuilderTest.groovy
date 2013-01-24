@@ -20,19 +20,15 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.spockframework.compiler.model.Spec;
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import static org.junit.Assert.*
 
-import spock.lang.Specification;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 
-import static org.junit.Assert.*;
+import spock.lang.Specification
 
 class DriveNodeBuilderTest extends Specification {
 	PermissionEvaluationService permissionEvaluationService = Mock()

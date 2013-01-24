@@ -21,10 +21,10 @@
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.net
 
 
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider.ServerKey
 
 import spock.lang.Specification
-import HttpClientProvider.ServerKey;
 
 class HttpClientProviderTest extends Specification {
 

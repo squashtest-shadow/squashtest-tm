@@ -20,14 +20,12 @@
  */
 package org.squashtest.csp.tm.internal.infrastructure.hibernate;
 
-import java.util.Date;
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.Id
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
-import org.squashtest.csp.tm.domain.audit.Auditable;
-import org.squashtest.csp.tm.domain.audit.AuditableSupport;
+import org.squashtest.tm.domain.audit.AuditableSupport
+import org.squashtest.tm.domain.audit.Auditable
 
 @Entity
 @Auditable

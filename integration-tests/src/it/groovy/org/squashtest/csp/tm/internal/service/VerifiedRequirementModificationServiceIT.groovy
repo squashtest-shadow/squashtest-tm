@@ -20,27 +20,20 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import javax.inject.Inject;import java.util.List;
+import javax.inject.Inject
 
-
-
-
-import org.spockframework.util.NotThreadSafe;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
-import org.squashtest.csp.tm.service.CustomRequirementModificationService;
-import org.squashtest.csp.tm.service.RequirementLibrariesCrudService;
-import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
-import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
-import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
-import org.squashtest.csp.tm.service.TestCaseModificationService;
-import org.squashtest.csp.tm.service.VerifiedRequirementsManagerService;
-import org.squashtest.csp.tm.service.project.ProjectManagerService;
+import org.spockframework.util.NotThreadSafe
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.requirement.RequirementFolder
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.service.project.ProjectManagerService
+import org.squashtest.tm.service.requirement.CustomRequirementModificationService
+import org.squashtest.tm.service.requirement.RequirementLibrariesCrudService
+import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
+import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
+import org.squashtest.tm.service.testcase.TestCaseModificationService
 
 
 @NotThreadSafe

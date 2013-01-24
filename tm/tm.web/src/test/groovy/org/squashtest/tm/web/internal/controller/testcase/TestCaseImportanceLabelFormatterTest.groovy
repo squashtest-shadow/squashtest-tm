@@ -20,12 +20,10 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.*
 
-import org.apache.poi.hssf.record.formula.functions.T
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.*
 import org.springframework.context.MessageSource
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 
 import spock.lang.Specification
 import spock.lang.Unroll

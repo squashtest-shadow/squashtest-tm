@@ -73,5 +73,33 @@
   								baseTableName="CUSTOM_FIELD_RENDERING_LOCATION" baseColumnNames="CFB_ID"  />
   		
   	</changeSet>
+  	
+  	<changeSet id="tm-1.5.0-feat-821" author="gfouquet">
+  		<comment>Change class names in ACL system</comment>
+  		<update tableName="ACL_CLASS">
+  			<column name="CLASSNAME" value="org.squashtest.tm.domain.project.Project" />
+  			<where>
+  				CLASSNAME = 'org.squashtest.csp.tm.domain.project.Project'
+  			</where>
+  		</update>
+  		<update tableName="ACL_CLASS">
+  			<column name="CLASSNAME" value="org.squashtest.tm.domain.requirement.RequirementLibrary" />
+  			<where>
+  				CLASSNAME = 'org.squashtest.csp.tm.domain.requirement.RequirementLibrary'
+  			</where>
+  		</update>
+  		<update tableName="ACL_CLASS">
+  			<column name="CLASSNAME" value="org.squashtest.tm.domain.testcase.TestCaseLibrary" />
+  			<where>
+  				CLASSNAME = 'org.squashtest.csp.tm.domain.testcase.TestCaseLibrary'
+  			</where>
+  		</update>
+  		<update tableName="ACL_CLASS">
+  			<column name="CLASSNAME" value="org.squashtest.tm.domain.campaign.CampaignLibrary" />
+  			<where>
+  				CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary'
+  			</where>
+  		</update>
+  	</changeSet>
 </databaseChangeLog>
  

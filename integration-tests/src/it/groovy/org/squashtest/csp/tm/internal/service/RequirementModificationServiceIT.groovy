@@ -20,23 +20,16 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.junit.runner.RunWith;
-import org.spockframework.runtime.Sputnik;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.service.CustomRequirementModificationService;
-import org.squashtest.csp.tm.service.RequirementModificationService;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import javax.inject.Inject
 
-import spock.unitils.UnitilsSupport;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.requirement.RequirementCategory
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.exception.DuplicateNameException
+import org.squashtest.tm.service.requirement.RequirementModificationService
+import org.unitils.dbunit.annotation.DataSet
 
-import org.unitils.dbunit.annotation.DataSet;
-
-
-
-
-import javax.inject.Inject;
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional

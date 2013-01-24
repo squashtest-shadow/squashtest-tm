@@ -21,12 +21,13 @@
 
 package org.squashtest.csp.tm.internal.service.importer
 
-import java.lang.Thread.State;
-
-import org.hibernate.SessionFactory;
-import org.squashtest.csp.tm.domain.requirement.RequirementFolder;
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
-import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.domain.requirement.RequirementFolder
+import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.service.internal.importer.PseudoRequirement
+import org.squashtest.tm.service.internal.importer.RequirementLibraryMerger
+import org.squashtest.tm.service.internal.importer.RequirementMerger
+import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 
 import spock.lang.Specification
 

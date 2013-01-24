@@ -20,16 +20,15 @@
  */
 package org.squashtest.csp.tm.domain.requirement
 
-import spock.lang.Specification;
-import org.apache.commons.lang.NullArgumentException;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.attachment.Attachment;
-import org.squashtest.csp.tm.domain.library.GenericLibraryNode;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.internal.service.RequirementLibraryNavigationServiceImpl;
-import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.attachment.Attachment
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementFolder
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode
+import org.squashtest.tm.exception.DuplicateNameException;
+
+import spock.lang.Specification
 
 class RequirementFolderTest extends Specification {
 	RequirementFolder folder = new RequirementFolder()

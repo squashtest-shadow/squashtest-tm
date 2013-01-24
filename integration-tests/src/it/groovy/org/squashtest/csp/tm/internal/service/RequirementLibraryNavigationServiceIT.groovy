@@ -20,30 +20,21 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.hibernate.Query;
-import org.springframework.transaction.annotation.Transactional;
+import javax.inject.Inject
 
-import spock.unitils.UnitilsSupport;
-import java.util.List;
-import java.util.ArrayList;
+import org.hibernate.Query
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.customfield.BindableEntity
+import org.squashtest.tm.domain.customfield.CustomFieldValue
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementFolder
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.exception.CopyPasteObsoleteException
+import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
+import org.unitils.dbunit.annotation.DataSet
 
-import org.squashtest.csp.tm.domain.CopyPasteObsoleteException;
-import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
-import org.squashtest.csp.tm.domain.customfield.BindableEntity;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.csp.tm.domain.requirement.Requirement
-import org.squashtest.csp.tm.domain.requirement.RequirementFolder
-import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
-import org.squashtest.csp.tm.internal.repository.IssueDao;
-import org.squashtest.csp.tm.service.RequirementLibraryNavigationService;
-import org.unitils.dbunit.annotation.DataSet;
-
-
-
-
-import javax.inject.Inject;
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional

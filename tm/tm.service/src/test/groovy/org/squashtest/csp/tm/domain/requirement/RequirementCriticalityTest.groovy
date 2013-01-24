@@ -20,9 +20,8 @@
  */
 package org.squashtest.csp.tm.domain.requirement
 
-import org.apache.poi.hssf.record.formula.functions.T
 
-import static org.squashtest.csp.tm.domain.requirement.RequirementCriticality.*
+import org.squashtest.tm.domain.requirement.RequirementCriticality
 
 import spock.lang.Specification
 

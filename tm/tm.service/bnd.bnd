@@ -1,11 +1,13 @@
 -include: pom.xml
 -nouses: true
-Export-Package: !*internal*,\
-	org.squashtest.csp.tm.*,\
-	org.squashtest.tm.tm.*
 Import-Package: com.mysql.jdbc;resolution:=optional,\
 	javax.transaction,\
 	javassist.util.proxy,\
+	net.sf.ehcache,\
+	net.sf.ehcache.bootstrap,\
+	net.sf.ehcache.constructs.blocking,\
+	net.sf.ehcache.event,\
+	net.sf.ehcache.store,\
 	org.h2;resolution:=optional,\
 	org.aopalliance.aop,\
 	org.apache.commons.dbcp,\
@@ -14,5 +16,6 @@ Import-Package: com.mysql.jdbc;resolution:=optional,\
 	org.hibernate.validator,\
 	org.springframework.aop,\
 	org.springframework.aop.framework,\
-	!org.squashtest.csp.tm*,\
+	org.springframework.core.task,\
+	org.springframework.scheduling,\
 	*

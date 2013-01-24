@@ -20,22 +20,18 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import java.util.List;
+import javax.inject.Inject
 
-import javax.inject.Inject;
+import org.spockframework.util.NotThreadSafe
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.core.foundation.collection.Paging
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.TestSuite
+import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService
+import org.squashtest.tm.service.internal.repository.TestSuiteDao
+import org.unitils.dbunit.annotation.DataSet
 
-import org.hibernate.Query
-import org.hibernate.type.LongType
-import org.spockframework.util.NotThreadSafe;
-import org.squashtest.csp.tm.domain.campaign.TestSuite;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep
-import org.squashtest.csp.tm.internal.repository.TestSuiteDao;
-import org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService;
-import org.unitils.dbunit.annotation.DataSet;
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @NotThreadSafe
 @UnitilsSupport

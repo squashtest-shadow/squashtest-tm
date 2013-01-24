@@ -20,10 +20,13 @@
  */
 package org.squashtest.csp.tm.domain.requirement;
 
-import spock.lang.Specification;
-import org.apache.commons.lang.NullArgumentException;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.project.Project;
+import org.apache.commons.lang.NullArgumentException
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.requirement.RequirementFolder
+import org.squashtest.tm.domain.requirement.RequirementLibrary
+import org.squashtest.tm.exception.DuplicateNameException;
+
+import spock.lang.Specification
 
 class RequirementLibraryTest extends Specification {
 	RequirementLibrary requirementLibrary = new RequirementLibrary()

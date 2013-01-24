@@ -29,8 +29,8 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.csp.tm.domain.Level;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
+import org.squashtest.tm.domain.Level;
 
 /**
  * Formats {@link Level} items so that they are displayed in a combobox as

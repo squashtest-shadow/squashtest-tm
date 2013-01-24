@@ -31,13 +31,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.csp.tm.domain.campaign.TestSuite;
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.service.ExecutionProcessingService;
-import org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
+import org.squashtest.tm.service.execution.ExecutionProcessingService;
 
 /**
  * Helper class for Controllers which need to show classic and optimized execution runners.

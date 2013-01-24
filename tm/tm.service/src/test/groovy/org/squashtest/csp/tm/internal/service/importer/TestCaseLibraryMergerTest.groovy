@@ -20,17 +20,18 @@
  */
 package org.squashtest.csp.tm.internal.service.importer
 
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.csp.tm.internal.service.importer.TestCaseLibraryMerger.DestinationManager;
-import org.squashtest.csp.tm.internal.service.importer.TestCaseLibraryMerger.FolderMerger;
-import org.squashtest.csp.tm.internal.service.importer.TestCaseLibraryMerger.FolderPair;
-import org.squashtest.csp.tm.internal.service.importer.TestCaseLibraryMerger.NodeMerger;
-import org.squashtest.csp.tm.internal.service.importer.TestCaseLibraryMerger.TestCaseMerger;
-import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.service.internal.importer.TestCaseLibraryMerger
+import org.squashtest.tm.service.internal.importer.RequirementLibraryMerger.FolderMerger
+import org.squashtest.tm.service.internal.importer.TestCaseLibraryMerger.DestinationManager
+import org.squashtest.tm.service.internal.importer.TestCaseLibraryMerger.FolderPair
+import org.squashtest.tm.service.internal.importer.TestCaseLibraryMerger.NodeMerger
+import org.squashtest.tm.service.internal.importer.TestCaseLibraryMerger.TestCaseMerger
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 
 

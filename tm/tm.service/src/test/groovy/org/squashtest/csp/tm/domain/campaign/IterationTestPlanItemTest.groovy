@@ -20,14 +20,15 @@
  */
 package org.squashtest.csp.tm.domain.campaign
 
-import org.squashtest.csp.tm.domain.CyclicStepCallException
-import org.squashtest.csp.tm.domain.TestPlanItemNotExecutableException
-import org.squashtest.csp.tm.domain.execution.Execution
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.users.User
-import org.squashtest.csp.tm.internal.service.TestCaseCyclicCallChecker
-import org.squashtest.csp.tm.internal.service.CampaignTestPlanManagerServiceImplTest.MockTC;
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.users.User
+import org.squashtest.tm.exception.CyclicStepCallException;
+import org.squashtest.tm.exception.TestPlanItemNotExecutableException;
+import org.squashtest.tm.service.internal.testcase.TestCaseCyclicCallChecker;
 
 import spock.lang.Specification
 

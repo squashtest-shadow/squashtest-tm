@@ -20,16 +20,12 @@
  */
 package org.squashtest.csp.tm.hibernate.mapping.customfield
  
-import javax.validation.ValidationException;
-
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
-import org.squashtest.csp.tm.domain.customfield.CustomField
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
-import org.squashtest.csp.tm.domain.campaign.Iteration
-import org.squashtest.csp.tm.domain.customfield.CustomFieldOption
-import org.squashtest.csp.tm.domain.customfield.InputType
-import org.squashtest.csp.tm.domain.customfield.SingleSelectField
-import org.hibernate.Hibernate
+import org.squashtest.tm.domain.customfield.CustomField
+import org.squashtest.tm.domain.customfield.CustomFieldOption
+import org.squashtest.tm.domain.customfield.InputType
+import org.squashtest.tm.domain.customfield.SingleSelectField
 
 /**
   * @author Gregory Fouquet

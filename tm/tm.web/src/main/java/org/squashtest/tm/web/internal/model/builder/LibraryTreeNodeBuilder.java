@@ -21,8 +21,8 @@
 package org.squashtest.tm.web.internal.model.builder;
 
 import org.apache.commons.lang.NullArgumentException;
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 

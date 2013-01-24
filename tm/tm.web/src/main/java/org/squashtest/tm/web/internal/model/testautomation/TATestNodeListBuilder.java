@@ -26,9 +26,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 import org.squashtest.tm.web.internal.model.testautomation.TATestNode.Attr;
 import org.squashtest.tm.web.internal.model.testautomation.TATestNode.Data;

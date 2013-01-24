@@ -32,12 +32,6 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.squashtest.tm</groupId>
-			<artifactId>core.service</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
 		<!-- ================= /Squash TM dependencies ========================== -->
 
 		<!--  ================= Apache dependencies ============================== -->

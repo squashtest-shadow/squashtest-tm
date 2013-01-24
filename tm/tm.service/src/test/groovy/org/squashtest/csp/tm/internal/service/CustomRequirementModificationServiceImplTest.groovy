@@ -20,16 +20,17 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
-import org.hibernate.classic.Session;
-import org.hibernate.SessionFactory;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.internal.repository.RequirementDao;
-import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
+import org.hibernate.SessionFactory
+import org.hibernate.classic.Session
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
+import org.squashtest.tm.service.internal.repository.RequirementDao
+import org.squashtest.tm.service.internal.requirement.CustomRequirementModificationServiceImpl
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class CustomRequirementModificationServiceImplTest extends Specification {
 	CustomRequirementModificationServiceImpl service = new CustomRequirementModificationServiceImpl()

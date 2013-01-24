@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.csp.tm.service.TestCaseModificationService;
-import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
+import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.model.testautomation.TATestNode;
 import org.squashtest.tm.web.internal.model.testautomation.TATestNodeListBuilder;
 

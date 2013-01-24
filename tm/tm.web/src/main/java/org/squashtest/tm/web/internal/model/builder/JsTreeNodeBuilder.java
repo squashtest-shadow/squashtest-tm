@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
 /**

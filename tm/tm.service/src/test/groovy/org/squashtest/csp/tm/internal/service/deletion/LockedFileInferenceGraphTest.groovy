@@ -20,9 +20,10 @@
  */
 package org.squashtest.csp.tm.internal.service.deletion
 
-import java.util.List;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.service.internal.deletion.LockedFileInferenceGraph
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class LockedFileInferenceGraphTest extends Specification {
 

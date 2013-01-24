@@ -20,20 +20,14 @@
  */
 package org.squashtest.tm.web.internal.controller.generic
 
-import java.util.Set;
+import javax.servlet.http.HttpServletRequest
 
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.servlet.ModelAndView
+import org.squashtest.tm.domain.library.Folder
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.service.library.FolderModificationService
 
-import org.apache.commons.lang.NullArgumentException;
-import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.library.Folder;
-import org.squashtest.csp.tm.domain.library.LibraryNode;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.service.FolderModificationService;
-import org.squashtest.tm.web.internal.controller.generic.FolderModificationController;
-
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class FolderModificationControllerTest extends Specification {
 	DummyFolderModificationController controller = new DummyFolderModificationController()

@@ -20,21 +20,19 @@
  */
 package org.squashtest.csp.tm.internal.service.bugtracker
 
-import java.net.URL
-import java.util.List
-
 import org.squashtest.csp.core.bugtracker.domain.BTIssue
 import org.squashtest.csp.core.bugtracker.domain.BTProject
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.csp.core.bugtracker.domain.Priority
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus
-import org.squashtest.csp.tm.domain.bugtracker.Issue
-import org.squashtest.csp.tm.domain.bugtracker.IssueList;
-import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership
-import org.squashtest.csp.tm.domain.execution.Execution
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.internal.repository.IssueDao
+import org.squashtest.tm.domain.bugtracker.BugTrackerStatus
+import org.squashtest.tm.domain.bugtracker.Issue
+import org.squashtest.tm.domain.bugtracker.IssueList
+import org.squashtest.tm.domain.bugtracker.IssueOwnership
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.service.internal.bugtracker.BugTrackersLocalServiceImpl;
+import org.squashtest.tm.service.internal.repository.IssueDao;
 
 import spock.lang.Specification
 

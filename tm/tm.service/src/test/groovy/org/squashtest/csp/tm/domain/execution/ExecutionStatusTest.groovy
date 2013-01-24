@@ -21,10 +21,12 @@
 package org.squashtest.csp.tm.domain.execution;
 
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
 
-import static org.squashtest.csp.tm.domain.execution.ExecutionStatus.*
+import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.execution.ExecutionStatusReport
+
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet

@@ -27,9 +27,9 @@
 	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
 	xsi:schemaLocation="
 			http://www.springframework.org/schema/beans 
-			http://www.springframework.org/schema/beans/spring-beans.xsd 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
             http://www.springframework.org/schema/osgi
-            http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+            http://www.springframework.org/schema/osgi/spring-osgi-2.0-m1.xsd">
 
 	<osgi:list id="bugtracker.plugins.registry" interface="org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider" cardinality="0..N">
 		<osgi:listener ref="squashtest.core.bugtracker.BugTrackerConnectorFactory"

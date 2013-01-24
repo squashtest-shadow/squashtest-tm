@@ -29,11 +29,11 @@
 	<CORE_GROUP_AUTHORITY />
 	<CORE_GROUP_MEMBER />
 	
-	<ACL_CLASS ID="1001" CLASSNAME="org.squashtest.csp.tm.domain.project.ProjectTemplate" />
-	<ACL_CLASS ID="1002" CLASSNAME="org.squashtest.csp.tm.domain.project.Project" />
-	<ACL_CLASS ID="1003" CLASSNAME="org.squashtest.csp.tm.domain.campaign.CampaignLibrary" />
-	<ACL_CLASS ID="1004" CLASSNAME="org.squashtest.csp.tm.domain.requirement.RequirementLibrary" />	
-	<ACL_CLASS ID="1005" CLASSNAME="org.squashtest.csp.tm.domain.testCase.TestCaseLibrary" />
+	<ACL_CLASS ID="1001" CLASSNAME="org.squashtest.tm.domain.project.ProjectTemplate" />
+	<ACL_CLASS ID="1002" CLASSNAME="org.squashtest.tm.domain.project.Project" />
+	<ACL_CLASS ID="1003" CLASSNAME="org.squashtest.tm.domain.campaign.CampaignLibrary" />
+	<ACL_CLASS ID="1004" CLASSNAME="org.squashtest.tm.domain.requirement.RequirementLibrary" />	
+	<ACL_CLASS ID="1005" CLASSNAME="org.squashtest.tm.domain.testCase.TestCaseLibrary" />
 	
 	<ACL_OBJECT_IDENTITY ID="1" IDENTITY="1" CLASS_ID="1001" />
 	<ACL_OBJECT_IDENTITY ID="2" IDENTITY="1" CLASS_ID="1003" />

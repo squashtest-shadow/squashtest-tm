@@ -25,8 +25,8 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.tm.domain.AdministrationStatistics;
-import org.squashtest.csp.tm.service.AdministrationService;
+import org.squashtest.tm.domain.AdministrationStatistics;
+import org.squashtest.tm.service.user.AdministrationService;
 
 @Controller
 public class AdministrationController {

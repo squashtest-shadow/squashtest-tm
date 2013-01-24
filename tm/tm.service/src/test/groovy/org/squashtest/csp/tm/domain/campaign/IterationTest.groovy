@@ -22,14 +22,17 @@ package org.squashtest.csp.tm.domain.campaign
 
 import java.text.SimpleDateFormat
 
-import org.apache.poi.hssf.record.formula.functions.T
-import org.squashtest.csp.tm.domain.DuplicateNameException
-import org.squashtest.csp.tm.domain.attachment.Attachment
-import org.squashtest.csp.tm.domain.attachment.AttachmentList
-import org.squashtest.csp.tm.domain.execution.Execution
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode
+import org.squashtest.tm.domain.attachment.Attachment
+import org.squashtest.tm.domain.attachment.AttachmentList
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.TestSuite
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
+import org.squashtest.tm.exception.DuplicateNameException;
 
 import spock.lang.Specification
 

@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.plugin.report.std.service;
 
-import org.squashtest.csp.tm.domain.project.ProjectResource;
+import org.squashtest.tm.domain.project.ProjectResource;
 
 
 /**

@@ -20,18 +20,13 @@
  */
 package org.squashtest.csp.tm.service;
 
-import org.hibernate.SessionFactory;
-import org.hibernate.classic.Session;
-import org.junit.runner.RunWith;
-import org.spockframework.runtime.Sputnik;
-import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.junit.runner.RunWith
+import org.spockframework.runtime.Sputnik
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.service.campaign.CampaignModificationService;
 
-import java.util.Date;
-import java.util.List;
-
-import spock.lang.Shared;
-import spock.lang.Specification;
+import spock.lang.Shared
 
 
 /**

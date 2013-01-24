@@ -24,17 +24,16 @@ import javax.inject.Provider
 
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
-import org.squashtest.csp.core.service.security.PermissionEvaluationService
-import org.squashtest.csp.tm.domain.NoVerifiableRequirementVersionException
-import org.squashtest.csp.tm.domain.project.Project
-import org.squashtest.csp.tm.domain.requirement.Requirement
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.service.RequirementLibraryFinderService;
-import org.squashtest.csp.tm.service.TestCaseModificationService;
-import org.squashtest.csp.tm.service.VerifiedRequirementsManagerService
-import org.squashtest.tm.web.internal.controller.testcase.VerifiedRequirementsManagerController;
-import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementLibrary
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.exception.NoVerifiableRequirementVersionException
+import org.squashtest.tm.service.requirement.RequirementLibraryFinderService
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testcase.TestCaseModificationService
+import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 
 import spock.lang.Specification
 

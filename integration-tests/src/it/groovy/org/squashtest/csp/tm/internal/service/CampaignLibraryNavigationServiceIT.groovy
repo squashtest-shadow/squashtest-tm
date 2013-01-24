@@ -22,23 +22,20 @@ package org.squashtest.csp.tm.internal.service
 
 import javax.inject.Inject
 
-import org.apache.poi.hssf.record.formula.functions.T
-import org.hibernate.Session
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tm.domain.DuplicateNameException
-import org.squashtest.csp.tm.domain.campaign.Campaign
-import org.squashtest.csp.tm.domain.campaign.CampaignFolder
-import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode
-import org.squashtest.csp.tm.domain.campaign.Iteration
-import org.squashtest.csp.tm.domain.campaign.TestSuite
-import org.squashtest.csp.tm.domain.project.GenericProject
-import org.squashtest.csp.tm.domain.project.Project
-import org.squashtest.csp.tm.service.CampaignLibrariesCrudService
-import org.squashtest.csp.tm.service.CampaignLibraryNavigationService
-import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
-import org.squashtest.csp.tm.service.project.ProjectManagerService;
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.CampaignFolder
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.TestSuite
+import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.exception.DuplicateNameException
+import org.squashtest.tm.service.campaign.CampaignLibrariesCrudService
+import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
+import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport

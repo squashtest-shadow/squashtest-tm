@@ -40,8 +40,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.tm.service.BugTrackerFinderService;
-import org.squashtest.csp.tm.service.BugTrackerModificationService;
+import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.bugtracker.BugTrackerModificationService;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 

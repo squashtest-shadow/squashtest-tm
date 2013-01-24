@@ -20,27 +20,24 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.junit.runner.RunWith;
-import org.spockframework.runtime.Sputnik;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.project.GenericProject;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
-import org.squashtest.csp.tm.service.TestCaseLibrariesCrudService;
-import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
-import org.squashtest.csp.tm.service.TestCaseModificationService;
-import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
-import org.squashtest.csp.tm.service.project.ProjectManagerService;
-import org.unitils.dbunit.annotation.DataSet;
-import org.unitils.dbunit.annotation.ExpectedDataSet;
+import org.junit.runner.RunWith
+import org.spockframework.runtime.Sputnik
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.exception.DuplicateNameException
+import org.squashtest.tm.service.project.GenericProjectManagerService
+import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
+import org.squashtest.tm.service.testcase.TestCaseModificationService
+import org.unitils.dbunit.annotation.DataSet
 
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @RunWith(Sputnik)

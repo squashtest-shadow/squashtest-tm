@@ -20,20 +20,21 @@
  */
 package org.squashtest.csp.tm.hibernate.mapping.customfield
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.customfield.BindableEntity;
-import org.squashtest.csp.tm.domain.customfield.CustomField;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.internal.repository.hibernate.DbunitDaoSpecification
-import org.unitils.dbunit.annotation.DataSet;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.hibernate.Session
+import org.hibernate.SessionFactory
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
+import org.squashtest.tm.domain.customfield.BindableEntity
+import org.squashtest.tm.domain.customfield.CustomField
+import org.squashtest.tm.domain.customfield.CustomFieldBinding
+import org.squashtest.tm.domain.customfield.RenderingLocation
+import org.squashtest.tm.domain.project.Project
+import org.unitils.dbunit.annotation.DataSet
 
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 /**
  * @author Gregory Fouquet

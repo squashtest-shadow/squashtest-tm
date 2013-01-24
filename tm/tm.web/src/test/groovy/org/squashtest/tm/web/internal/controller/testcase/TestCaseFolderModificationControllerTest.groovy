@@ -21,13 +21,14 @@
 
 package org.squashtest.tm.web.internal.controller.testcase
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest
 
-import spock.lang.Specification;
-import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.service.FolderModificationService;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseFolderModificationController;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.springframework.web.servlet.ModelAndView
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.service.library.FolderModificationService;
+
+import spock.lang.Specification
 
 class TestCaseFolderModificationControllerTest extends Specification {
 	TestCaseFolderModificationController controller = new TestCaseFolderModificationController()

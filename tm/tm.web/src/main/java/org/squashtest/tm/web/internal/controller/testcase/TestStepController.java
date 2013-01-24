@@ -35,12 +35,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.csp.tm.domain.testcase.TestStep;
-import org.squashtest.csp.tm.service.TestCaseFinder;
-import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
-import org.squashtest.csp.tm.service.testcase.TestStepModificationService;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testcase.TestCaseFinder;
+import org.squashtest.tm.service.testcase.TestStepModificationService;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueConfigurationBean;
 
 @Controller

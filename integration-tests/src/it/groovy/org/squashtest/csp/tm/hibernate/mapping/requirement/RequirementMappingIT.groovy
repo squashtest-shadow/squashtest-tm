@@ -21,14 +21,13 @@
 package org.squashtest.csp.tm.hibernate.mapping.requirement
 
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.hibernate.JDBCException
-import org.squashtest.csp.tm.domain.IllegalRequirementModificationException
-import org.squashtest.csp.tm.domain.requirement.Requirement
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion
-import org.squashtest.csp.tm.domain.testcase.TestCase
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.exception.IllegalRequirementModificationException
 
 class RequirementMappingIT extends HibernateMappingSpecification {
 

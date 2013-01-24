@@ -22,6 +22,8 @@ package org.squashtest.csp.tm.domain.requirement;
 
 import static org.junit.Assert.*;
 
+import org.squashtest.tm.domain.requirement.VerificationCriterion;
+
 import spock.lang.Specification;
 import spock.lang.Unroll;
 

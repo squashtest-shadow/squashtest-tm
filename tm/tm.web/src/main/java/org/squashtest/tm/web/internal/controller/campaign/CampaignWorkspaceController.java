@@ -23,8 +23,8 @@ package org.squashtest.tm.web.internal.controller.campaign;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.squashtest.csp.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.csp.tm.service.WorkspaceService;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 
 @Controller

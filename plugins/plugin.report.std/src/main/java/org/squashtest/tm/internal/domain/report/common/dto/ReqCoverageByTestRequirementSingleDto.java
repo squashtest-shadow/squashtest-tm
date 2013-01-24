@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.internal.domain.report.common.dto;
 
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
 
 /**
  * this represent a requirement version mpagnon

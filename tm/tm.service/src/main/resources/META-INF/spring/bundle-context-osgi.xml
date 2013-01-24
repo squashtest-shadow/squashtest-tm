@@ -24,39 +24,82 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
-						http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd 
-						http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+						http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0-m1.xsd 
+						http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium-2.0-m1.xsd">
 	<!-- definitions using elements of the osgi namespace can be included in 
 		this file. There is no requirement to keep these definitions in a separate 
 		file if you do not want to. The rationale for keeping these definitions separate 
 		is to facilitate integration testing of the bundle outside of an OSGi container -->
 
-	<!-- ====== SERVICES EXPOSED BY THIS BUNDLE ====== -->
-
-
 	<!-- service reference injection -->
 	<bean
 		class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
 
-	<!-- ========= Bugtracker ============= -->
+	<!-- ====== SERVICES EXPOSED BY THIS BUNDLE ====== -->
+
+  <!-- =================== free access scheduled thread pool ======================= -->
+  <osgi:service id="core.executor.service">
+    <osgi:interfaces>
+       <value>org.springframework.scheduling.TaskScheduler</value>
+       <value>org.springframework.core.task.TaskExecutor</value>
+       <value>org.springframework.core.task.AsyncTaskExecutor</value>
+       <value>org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler</value>
+    </osgi:interfaces>
+    <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+      <property name="poolSize" value="10" />
+    </bean>
+  </osgi:service>
+
+	<!-- ========= BUGTRACKER SERVICES ============= -->
 	<osgi:service ref="squashtest.core.bugtracker.BugTrackerContextHolder"
 		interface="org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder" />
 
 	<osgi:service ref="squashtest.tm.service.BugTrackersLocalService"
-		interface="org.squashtest.csp.tm.service.BugTrackersLocalService" />
+		interface="org.squashtest.tm.service.bugtracker.BugTrackersLocalService" />
 
 	<osgi:service ref="squashtest.tm.service.BugTrackerManagerService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.BugTrackerManagerService</value>
-			<value>org.squashtest.csp.tm.service.BugTrackerFinderService</value>
+			<value>org.squashtest.tm.service.bugtracker.BugTrackerManagerService</value>
+			<value>org.squashtest.tm.service.bugtracker.BugTrackerFinderService</value>
 		</osgi:interfaces>
 	</osgi:service>
 	<osgi:service ref="squashtest.tm.service.BugTrackerModificationService"
-		interface="org.squashtest.csp.tm.service.BugTrackerModificationService" />
-
+		interface="org.squashtest.tm.service.bugtracker.BugTrackerModificationService" />
+	
 	<!-- ========= /BUGTRACKER SERVICES ============= -->
 
+  <osgi:service ref="squashtest.core.security.PermissionEvaluationService" 
+    interface="org.squashtest.tm.service.security.PermissionEvaluationService" />
+    
+  <osgi:service ref="squashtest.core.user.UserContextService" 
+    interface="org.squashtest.tm.service.security.UserContextService" />  
+    
+  <osgi:service ref="squashtest.core.security.PermissionEvaluator" 
+    interface="org.springframework.security.access.PermissionEvaluator" />
+    
+  <osgi:service ref="squashtest.core.security.AclService">
+    <osgi:interfaces>
+      <value>org.squashtest.tm.service.security.acls.model.ObjectAclService</value>
+      <value>org.springframework.security.acls.model.AclService</value>
+    </osgi:interfaces>
+  </osgi:service>
+    
+  <osgi:service ref="squashtest.core.security.ObjectIdentityRetrievalStrategy" 
+    interface="org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy" />
+  
+  <osgi:service ref="squashtest.core.security.ObjectIdentityService" 
+    interface="org.squashtest.tm.service.security.ObjectIdentityService" />
+    
+  <osgi:service ref="squashtest.core.configuration.ConfigurationService" 
+    interface="org.squashtest.tm.service.configuration.ConfigurationService" />
+  
+  <osgi:service ref="squashtest.core.persistence.jdbc.DataSource" 
+    interface="javax.sql.DataSource" />
+
+  <!-- Bean Validation Factory -->
+  <osgi:service ref="javax.validation.ValidatorFactory" 
+    interface="javax.validation.ValidatorFactory" />
 
 	<!-- Transaction Manager -->
 	<osgi:service ref="squashtest.tm.hibernate.TransactionManager"
@@ -65,202 +108,230 @@
 	<osgi:service ref="squashtest.tm.persistence.hibernate.SessionFactory"
 		interface="org.hibernate.SessionFactory" />
 
+   <osgi:service ref="squashtest.core.security.AdministratorAuthenticationService"
+    interface="org.squashtest.tm.service.security.UserAuthenticationService"  />    
+    
+   <!-- ====== API SERVICES ====== -->
+   <osgi:service ref="squash.api.repository.SqlQueryRunner" interface="org.squashtest.tm.api.repository.SqlQueryRunner" />
+
 	<!-- Application services -->
 	<osgi:service ref="squashtest.tm.service.ProjectManagerService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.project.ProjectManagerService</value>
-			<value>org.squashtest.csp.tm.service.project.ProjectFinder</value>
+			<value>org.squashtest.tm.service.project.ProjectManagerService</value>
+			<value>org.squashtest.tm.service.project.ProjectFinder</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.ProjectTemplateManagerService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.project.ProjectTemplateManagerService</value>
-			<value>org.squashtest.csp.tm.service.project.ProjectTemplateFinder</value>
+			<value>org.squashtest.tm.service.project.ProjectTemplateManagerService</value>
+			<value>org.squashtest.tm.service.project.ProjectTemplateFinder</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.GenericProjectManagerService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.project.GenericProjectManagerService</value>
-			<value>org.squashtest.csp.tm.service.project.GenericProjectFinder</value>
+      <value>org.squashtest.tm.service.project.GenericProjectManagerService</value>
+      <value>org.squashtest.tm.service.project.GenericProjectFinder</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.TestCaseModificationService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.TestCaseModificationService</value>
-			<value>org.squashtest.csp.tm.service.TestCaseFinder</value>
+			<value>org.squashtest.tm.service.testcase.TestCaseModificationService</value>
+			<value>org.squashtest.tm.service.testcase.TestCaseFinder</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.TestStepModificationService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.testcase.TestStepFinder</value>
-			<value>org.squashtest.csp.tm.service.testcase.TestStepModificationService</value>
+			<value>org.squashtest.tm.service.testcase.TestStepFinder</value>
+			<value>org.squashtest.tm.service.testcase.TestStepModificationService</value>
 		</osgi:interfaces>
 	</osgi:service>
 	
 	<osgi:service ref="squashtest.tm.service.TestCaseLibraryNavigationService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.TestCaseLibraryNavigationService</value>
-			<value>org.squashtest.csp.tm.service.TestCaseLibraryFinderService</value>
+			<value>org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService</value>
+			<value>org.squashtest.tm.service.testcase.TestCaseLibraryFinderService</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.RequirementModificationService"
-		interface="org.squashtest.csp.tm.service.RequirementModificationService" />
+		interface="org.squashtest.tm.service.requirement.RequirementModificationService" />
 
 	<osgi:service
 		ref="squashtest.tm.service.RequirementLibraryNavigationService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.RequirementLibraryNavigationService</value>
-			<value>org.squashtest.csp.tm.service.RequirementLibraryFinderService</value>
+			<value>org.squashtest.tm.service.requirement.RequirementLibraryNavigationService</value>
+			<value>org.squashtest.tm.service.requirement.RequirementLibraryFinderService</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.CampaignModificationService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.CampaignModificationService</value>
-			<value>org.squashtest.csp.tm.service.CampaignFinder</value>
+			<value>org.squashtest.tm.service.campaign.CampaignModificationService</value>
+			<value>org.squashtest.tm.service.campaign.CampaignFinder</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.IterationModificationService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.IterationModificationService</value>
-			<value>org.squashtest.csp.tm.service.IterationFinder</value>
+			<value>org.squashtest.tm.service.campaign.IterationModificationService</value>
+			<value>org.squashtest.tm.service.campaign.IterationFinder</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.CampaignLibraryNavigationService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.CampaignLibraryNavigationService</value>
-			<value>org.squashtest.csp.tm.service.CampaignLibraryFinderService</value>
+			<value>org.squashtest.tm.service.campaign.CampaignLibraryNavigationService</value>
+			<value>org.squashtest.tm.service.campaign.CampaignLibraryFinderService</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<osgi:service
 		ref="squashtest.tm.service.VerifiedRequirementsManagerService"
-		interface="org.squashtest.csp.tm.service.VerifiedRequirementsManagerService" />
+		interface="org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService" />
 
 	<osgi:service ref="squashtest.tm.service.VerifyingTestCaseManagerService"
-		interface="org.squashtest.csp.tm.service.VerifyingTestCaseManagerService" />
+		interface="org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService" />
 
 	<osgi:service ref="squashtest.tm.service.CallStepManagerService"
-		interface="org.squashtest.csp.tm.service.CallStepManagerService" />
+		interface="org.squashtest.tm.service.testcase.CallStepManagerService" />
 
 	<osgi:service ref="squashtest.tm.service.CampaignTestPlanManagerService"
-		interface="org.squashtest.csp.tm.service.CampaignTestPlanManagerService" />
+		interface="org.squashtest.tm.service.campaign.CampaignTestPlanManagerService" />
 
 	<osgi:service ref="squashtest.tm.service.ExecutionModificationService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.ExecutionModificationService</value>
-			<value>org.squashtest.csp.tm.service.ExecutionFinder</value>
+			<value>org.squashtest.tm.service.execution.ExecutionModificationService</value>
+			<value>org.squashtest.tm.service.execution.ExecutionFinder</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.ExecutionProcessingService"
-		interface="org.squashtest.csp.tm.service.ExecutionProcessingService" />
+		interface="org.squashtest.tm.service.execution.ExecutionProcessingService" />
 
 	<osgi:service ref="squashtest.tm.service.IterationTestPlanManagerService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.IterationTestPlanManagerService</value>
-			<value>org.squashtest.csp.tm.service.IterationTestPlanFinder</value>
+			<value>org.squashtest.tm.service.campaign.IterationTestPlanManagerService</value>
+			<value>org.squashtest.tm.service.campaign.IterationTestPlanFinder</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.AttachmentManagerService"
-		interface="org.squashtest.csp.tm.service.AttachmentManagerService" />
+		interface="org.squashtest.tm.service.attachment.AttachmentManagerService" />
 
 	<osgi:service ref="squashtest.tm.service.TestCasesWorkspaceService"
-		interface="org.squashtest.csp.tm.service.WorkspaceService" />
+		interface="org.squashtest.tm.service.library.WorkspaceService" />
 
 	<osgi:service ref="squashtest.tm.service.CampaignsWorkspaceService"
-		interface="org.squashtest.csp.tm.service.WorkspaceService" />
+		interface="org.squashtest.tm.service.library.WorkspaceService" />
 
 	<osgi:service ref="squashtest.tm.service.RequirementsWorkspaceService"
-		interface="org.squashtest.csp.tm.service.WorkspaceService" />
+		interface="org.squashtest.tm.service.library.WorkspaceService" />
 
 	<osgi:service ref="squashtest.tm.service.TestCaseFolderModificationService"
-		interface="org.squashtest.csp.tm.service.FolderModificationService" />
+		interface="org.squashtest.tm.service.library.FolderModificationService" />
 
 	<osgi:service
 		ref="squashtest.tm.service.RequirementFolderModificationService"
-		interface="org.squashtest.csp.tm.service.FolderModificationService" />
+		interface="org.squashtest.tm.service.library.FolderModificationService" />
 
 	<osgi:service ref="squashtest.tm.service.CampaignFolderModificationService"
-		interface="org.squashtest.csp.tm.service.FolderModificationService" />
+		interface="org.squashtest.tm.service.library.FolderModificationService" />
 
 	<osgi:service ref="squashtest.tm.service.ProjectFilterModificationService"
-		interface="org.squashtest.csp.tm.service.ProjectFilterModificationService" />
+		interface="org.squashtest.tm.service.project.ProjectFilterModificationService" />
 
 	<osgi:service ref="squashtest.tm.service.SearchService"
-		interface="org.squashtest.csp.tm.service.SearchService" />
+		interface="org.squashtest.tm.service.library.SearchService" />
 
 	<osgi:service ref="squashtest.tm.service.UserAccountService"
-		interface="org.squashtest.csp.tm.service.UserAccountService" />
+		interface="org.squashtest.tm.service.user.UserAccountService" />
 
 	<osgi:service ref="squashtest.tm.service.AdministrationService"
-		interface="org.squashtest.csp.tm.service.AdministrationService" />
+		interface="org.squashtest.tm.service.user.AdministrationService" />
 
 	<osgi:service
 		ref="squashtest.tm.service.ProjectsPermissionManagementService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.ProjectsPermissionManagementService</value>
-			<value>org.squashtest.csp.tm.service.ProjectsPermissionFinder</value>
+			<value>org.squashtest.tm.service.project.ProjectsPermissionManagementService</value>
+			<value>org.squashtest.tm.service.project.ProjectsPermissionFinder</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<osgi:service
 		ref="squashtest.tm.service.audit.RequirementAuditTrailService"
-		interface="org.squashtest.csp.tm.service.audit.RequirementAuditTrailService" />
+		interface="org.squashtest.tm.service.audit.RequirementAuditTrailService" />
 
 	<osgi:service ref="squashtest.tm.service.RequirementVersionManagerService"
-		interface="org.squashtest.csp.tm.service.RequirementVersionManagerService" />
+		interface="org.squashtest.tm.service.requirement.RequirementVersionManagerService" />
 
 	<osgi:service ref="squashtest.tm.service.TestSuiteModificationService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.TestSuiteModificationService</value>
-			<value>org.squashtest.csp.tm.service.TestSuiteFinder</value>
+			<value>org.squashtest.tm.service.campaign.TestSuiteModificationService</value>
+			<value>org.squashtest.tm.service.campaign.TestSuiteFinder</value>
 		</osgi:interfaces>
 	</osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.TestSuiteTestPlanManagerService"
-		interface="org.squashtest.csp.tm.service.TestSuiteTestPlanManagerService" />
+		interface="org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService" />
 
 	<osgi:service
 		ref="squashtest.tm.service.TestSuiteExecutionProcessingService"
-		interface="org.squashtest.csp.tm.service.TestSuiteExecutionProcessingService" />
+		interface="org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService" />
 
 	<osgi:service
 		ref="squashtest.tm.service.testautomation.AutomatedExecutionManagerService"
-		interface="org.squashtest.csp.tm.service.testautomation.AutomatedExecutionManagerService" />
-
-	<!-- CUF binding service -->
+		interface="org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService" />
+			
+	<!--  CUF binding service -->	
 	<osgi:service ref="squashtest.tm.service.CustomFieldBindingService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.customfield.CustomFieldBindingFinderService</value>
-			<value>org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService</value>
+			<value>org.squashtest.tm.service.customfield.CustomFieldBindingFinderService</value>
+			<value>org.squashtest.tm.service.customfield.CustomFieldBindingModificationService</value>
 		</osgi:interfaces>
-	</osgi:service>
+	</osgi:service>			
 
-	<osgi:service ref="squashtest.tm.service.CustomFieldManagerService">
-		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.customfield.CustomFieldFinderService</value>
-			<value>org.squashtest.csp.tm.service.customfield.CustomFieldManagerService</value>
-		</osgi:interfaces>
-	</osgi:service>
-
-	<osgi:service ref="squashtest.tm.service.CustomFieldValueManagerService">
-		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService</value>
-			<value>org.squashtest.csp.tm.service.customfield.CustomFieldValueManagerService</value>
-		</osgi:interfaces>
-	</osgi:service>
-
+    <osgi:service ref="squashtest.tm.service.CustomFieldManagerService">
+      <osgi:interfaces>
+       <value>org.squashtest.tm.service.customfield.CustomFieldFinderService</value> 
+        <value>org.squashtest.tm.service.customfield.CustomFieldManagerService</value>
+      </osgi:interfaces>
+    </osgi:service>
+    
+    <osgi:service ref="squashtest.tm.service.CustomFieldValueManagerService">
+      <osgi:interfaces>
+        <value>org.squashtest.tm.service.customfield.CustomFieldValueFinderService</value>
+       	<value>org.squashtest.tm.service.customfield.CustomFieldValueManagerService</value> 
+      </osgi:interfaces>
+    </osgi:service>          
+		
 
 	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
+  <!-- Looks up properties set from OSGi Config Admin Compendium -->
+  <osgix:cm-properties id="squashtest.core.datasource.jdbc.config"
+    persistent-id="org.squashtest.csp.core.datasource.jdbc.config" />
+
+  <!--  
+    pretty much the same problem here. To be specific, that thing should be instanciated here in core.service.
+    the reason is that due to the rigid configuration of Spring security, we had to declare it, along with the main authentication manager, in
+    core.web. That is : 
+      - you can't delegate the authentication manager for one Spring context to a bean from another context (eg core.web and core.service)
+        so you must declare the authentication manager in the web context.
+      - the UserDetailsService and AuthenticationManager need cross-references to each other that cannot be lazily initialized,
+        thus forbidding asynchronous OSGI-service injection.
+    
+    Spring DM, Spring security and Hibernate really need to talk together.
+  -->
+  <osgi:reference id="squashtest.core.security.JdbcUserDetailsManager"
+    bean-name="squashtest.core.security.JdbcUserDetailsManager"
+    interface="org.springframework.security.provisioning.UserDetailsManager" 
+    availability="optional" 
+    sticky="false" />
+    
+    
 	<!-- Jdbc Datasource -->
 	<osgi:reference id="squashtest.core.persistence.jdbc.DataSource"
 		bean-name="squashtest.core.persistence.jdbc.DataSource" interface="javax.sql.DataSource"
@@ -279,63 +350,5 @@
 		bean-name="squashtest.core.bugtracker.BugTrackerConnectorFactory"
 		interface="org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory"
 		availability="mandatory" />
-
-	<!-- Security related service FIXME : REMOVE THE UNUSED SERVICES -->
-	<osgi:reference id="squashtest.core.user.UserContextService"
-		bean-name="squashtest.core.user.UserContextService"
-		interface="org.squashtest.csp.core.service.security.UserContextService"
-		availability="mandatory" />
-
-
-	<osgi:reference id="squashtest.core.security.UserAuthenticationService"
-		interface="org.squashtest.csp.core.service.security.UserAuthenticationService"
-		availability="mandatory" />
-
-	<osgi:reference
-		id="squashtest.core.security.AdministratorAuthenticationService"
-		interface="org.squashtest.csp.core.service.security.AdministratorAuthenticationService"
-		availability="mandatory" />
-
-	<osgi:reference id="squashtest.core.security.PermissionEvaluator"
-		bean-name="squashtest.core.security.PermissionEvaluator" interface="org.springframework.security.access.PermissionEvaluator"
-		availability="mandatory" />
-
-	<osgi:reference id="squashtest.core.security.ObjectAclService"
-		bean-name="squashtest.core.security.AclService" availability="mandatory">
-		<osgi:interfaces>
-			<value>org.squashtest.csp.core.security.acls.model.ObjectAclService</value>
-		</osgi:interfaces>
-	</osgi:reference>
-
-	<osgi:reference id="squashtest.core.configuration.ConfigurationService"
-		bean-name="squashtest.core.configuration.ConfigurationService"
-		interface="org.squashtest.csp.core.service.configuration.ConfigurationService"
-		availability="mandatory" />
-
-	<osgi:reference id="squashtest.core.security.ObjectIdentityService"
-		bean-name="squashtest.core.security.ObjectIdentityService"
-		interface="org.squashtest.csp.core.service.security.ObjectIdentityService"
-		availability="mandatory" />
-
-
-	<osgi:reference
-		id="squashtest.core.security.ObjectIdentityRetrievalStrategy"
-		bean-name="squashtest.core.security.ObjectIdentityRetrievalStrategy"
-		interface="org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy"
-		availability="mandatory" />
-
-
-	<osgi:reference id="squashtest.core.security.PermissionEvaluationService"
-		bean-name="squashtest.core.security.PermissionEvaluationService"
-		interface="org.squashtest.csp.core.service.security.PermissionEvaluationService"
-		availability="mandatory" />
-
-
-	<!-- Validation services -->
-	<osgi:reference id="javax.validation.ValidatorFactory"
-		bean-name="javax.validation.ValidatorFactory" interface="javax.validation.ValidatorFactory"
-		availability="mandatory" />
-
-
 
 </beans>

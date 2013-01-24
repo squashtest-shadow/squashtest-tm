@@ -20,20 +20,17 @@
  */
 package org.squashtest.csp.tm.internal.service.customField
 
-import org.apache.poi.hssf.record.formula.functions.T
-import org.squashtest.csp.tm.domain.customfield.BindableEntity;
-import org.squashtest.csp.tm.domain.customfield.CustomField
-import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.project.ProjectTemplate;
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder
-import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao
-import org.squashtest.csp.tm.internal.repository.CustomFieldDao
-import org.squashtest.csp.tm.internal.repository.GenericProjectDao;
-import org.squashtest.csp.tm.internal.repository.ProjectDao;
-import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.domain.customfield.BindableEntity
+import org.squashtest.tm.domain.customfield.CustomField
+import org.squashtest.tm.domain.customfield.CustomFieldBinding
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.project.ProjectTemplate
+import org.squashtest.tm.service.internal.customfield.CustomFieldBindingModificationServiceImpl
+import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
+import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao
+import org.squashtest.tm.service.internal.repository.CustomFieldDao
+import org.squashtest.tm.service.internal.repository.GenericProjectDao
+import org.squashtest.tm.service.internal.repository.ProjectDao
 
 import spock.lang.Specification
 

@@ -23,9 +23,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
-						http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd 
-						http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+						http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0-m1.xsd 
+						http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium-2.0-m1.xsd">
 
 	<osgix:cm-properties id="squashtest.tm.ta.defaults"  persistent-id="tm.testautomation.conf" /> 
 	
@@ -36,16 +36,16 @@
 	 -->
 	<!--  
 		the listener here is declared using @Component 
-		(see class org.squashtest.csp.tm.internal.service.TestAutomationConnectorRegistry)
+		(see class org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry)
 	 -->
-	<osgi:list id="plugin.testautomation.registry" interface="org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector" cardinality="0..N" >
+	<osgi:list id="plugin.testautomation.registry" interface="org.squashtest.tm.service.testautomation.spi.TestAutomationConnector" cardinality="0..N" >
 		<osgi:listener ref="squashtest.testautomation.connector-registry"
 					   bind-method="registerConnector" 
 					   unbind-method="unregisterConnector" />
 	</osgi:list>
 	
 	<osgi:service ref="squashtest.tm.service.TestAutomationService"
-				  interface="org.squashtest.csp.tm.service.TestAutomationFinderService" />
+				  interface="org.squashtest.tm.service.testautomation.TestAutomationFinderService" />
 
 	
 </beans>

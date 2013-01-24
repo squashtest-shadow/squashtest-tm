@@ -21,7 +21,7 @@
 package org.squashtest.csp.tm.internal.service
 
 
-import java.net.URL
+import java.util.List
 
 import javax.inject.Inject
 
@@ -36,15 +36,14 @@ import org.squashtest.csp.core.bugtracker.domain.Priority
 import org.squashtest.csp.core.bugtracker.domain.User
 import org.squashtest.csp.core.bugtracker.domain.Version
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerStatus
-import org.squashtest.csp.tm.domain.bugtracker.Issue
-import org.squashtest.csp.tm.domain.bugtracker.IssueOwnership
-import org.squashtest.csp.tm.domain.execution.Execution
-import org.squashtest.csp.tm.domain.execution.ExecutionStep
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder
-import org.squashtest.csp.tm.internal.repository.IssueDao;
-import org.squashtest.csp.tm.service.BugTrackersLocalService
+import org.squashtest.tm.domain.bugtracker.BugTrackerStatus
+import org.squashtest.tm.domain.bugtracker.Issue
+import org.squashtest.tm.domain.bugtracker.IssueOwnership
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.execution.ExecutionStep
+import org.squashtest.tm.service.bugtracker.BugTrackersLocalService
+import org.squashtest.tm.service.foundation.collection.CollectionSorting
+import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport

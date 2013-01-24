@@ -20,13 +20,13 @@
  */
 package org.squashtest.csp.tm.internal.testautomation.thread
 
-import java.util.concurrent.Future;
+import java.util.concurrent.Future
 
-import org.springframework.core.task.AsyncTaskExecutor;
-import org.squashtest.csp.tm.internal.testautomation.tasks.FetchTestListTask;
-import org.squashtest.csp.tm.internal.testautomation.thread.FetchTestListFuture;
-import org.squashtest.csp.tm.internal.testautomation.thread.TestAutomationTaskExecutor;
-import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
+import org.springframework.core.task.AsyncTaskExecutor
+import org.squashtest.tm.service.internal.testautomation.tasks.FetchTestListTask
+import org.squashtest.tm.service.internal.testautomation.thread.FetchTestListFuture
+import org.squashtest.tm.service.internal.testautomation.thread.TestAutomationTaskExecutor
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
 
 import spock.lang.Specification
 class TestAutomationTaskExecutorTest extends Specification {

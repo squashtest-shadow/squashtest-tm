@@ -22,10 +22,10 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.springframework.scheduling.TaskScheduler;
-import org.squashtest.csp.tm.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.DelayedBuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepSequence;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
 
 public class ExecuteTestsBuildProcessor extends DelayedBuildProcessor {

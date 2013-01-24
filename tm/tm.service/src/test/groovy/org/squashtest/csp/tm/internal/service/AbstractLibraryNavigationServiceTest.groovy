@@ -21,19 +21,12 @@
 package org.squashtest.csp.tm.internal.service
 
 
-import org.squashtest.csp.core.service.security.PermissionEvaluationService
-import org.squashtest.csp.tm.domain.library.TreeNode
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.csp.tm.internal.repository.EntityDao
-import org.squashtest.csp.tm.internal.repository.FolderDao
-import org.squashtest.csp.tm.internal.repository.LibraryDao
-import org.squashtest.csp.tm.internal.repository.LibraryNodeDao
-import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao
-import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
-import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
+import org.squashtest.tm.service.internal.library.PasteStrategy;
+import org.squashtest.tm.service.internal.testcase.TestCaseLibraryNavigationServiceImpl;
 
 import spock.lang.Specification
 

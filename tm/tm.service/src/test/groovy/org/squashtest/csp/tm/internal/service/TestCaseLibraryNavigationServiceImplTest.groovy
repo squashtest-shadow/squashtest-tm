@@ -21,18 +21,18 @@
 
 package org.squashtest.csp.tm.internal.service;
 
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.internal.repository.TestCaseDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao;
-import org.squashtest.csp.core.service.security.PermissionEvaluationService
-import org.squashtest.csp.tm.internal.repository.TestCaseDao
-import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao
-import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
-import spock.lang.Specification;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
+import org.squashtest.tm.service.internal.testcase.TestCaseLibraryNavigationServiceImpl;
+import org.squashtest.tm.service.security.PermissionEvaluationService
+
+import spock.lang.Specification
 
 
 class TestCaseLibraryNavigationServiceImplTest extends Specification {

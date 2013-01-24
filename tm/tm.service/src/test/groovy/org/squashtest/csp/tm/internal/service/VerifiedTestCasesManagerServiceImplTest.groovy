@@ -20,22 +20,24 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.csp.tm.internal.infrastructure.strategy.LibrarySelectionStrategy
-import org.squashtest.csp.tm.internal.repository.LibraryNodeDao
-import org.squashtest.csp.tm.internal.repository.RequirementVersionDao
-import org.squashtest.csp.tm.internal.repository.TestCaseDao
-import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
-import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService
+import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
-import org.squashtest.csp.tm.service.VerifyingTestCaseManagerService
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.tm.domain.projectfilter.ProjectFilter
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
+import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl;
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
+import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl;
+import org.squashtest.tm.service.internal.testcase.VerifyingTestCaseManagerServiceImpl;
+import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
+
 import spock.lang.Specification
 
 

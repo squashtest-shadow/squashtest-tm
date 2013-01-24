@@ -20,10 +20,11 @@
  */
 package org.squashtest.csp.tm.domain.execution
 
-import org.squashtest.csp.tm.domain.attachment.Attachment;
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.attachment.Attachment
+import org.squashtest.tm.domain.execution.ExecutionStep
+import org.squashtest.tm.domain.testcase.ActionTestStep
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class ExecutionStepTest extends Specification {
 	def "Should create an execution step for an ActionTestStep"() {

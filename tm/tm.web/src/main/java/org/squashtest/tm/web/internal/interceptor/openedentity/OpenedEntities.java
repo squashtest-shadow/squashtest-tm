@@ -28,13 +28,13 @@ import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.csp.core.domain.Identified;
-import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
-import org.squashtest.csp.tm.domain.campaign.TestSuite;
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.testcase.TestCase;
 
 /**
  * Opened Entities represent a list of object of one type among the "MANAGED_ENTITIES_LIST". It is used to notify a user

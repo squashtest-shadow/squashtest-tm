@@ -20,10 +20,11 @@
  */
 package org.squashtest.csp.tm.internal.infrastructure.hibernate;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
-import org.junit.Test;
-import spock.lang.Specification;
+import org.squashtest.tm.service.internal.hibernate.UppercaseUnderscoreNamingStrategy
+
+import spock.lang.Specification
 
 class UppercaseUnderscoreNamingStrategyTest extends Specification{
 	UppercaseUnderscoreNamingStrategy strategy = new UppercaseUnderscoreNamingStrategy()

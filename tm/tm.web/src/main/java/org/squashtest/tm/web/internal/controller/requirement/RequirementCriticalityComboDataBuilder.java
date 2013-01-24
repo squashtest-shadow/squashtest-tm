@@ -24,8 +24,8 @@ import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.csp.tm.domain.LevelComparator;
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.LevelComparator;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 

@@ -20,10 +20,10 @@
  */
 package org.squashtest.csp.tm.domain.library.structures
 
-import java.util.NoSuchElementException
-
 import org.apache.commons.collections.Transformer
-import org.squashtest.csp.tm.domain.library.structures.LibraryTree.TreeNodePair
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.domain.library.structures.LibraryTree
+import org.squashtest.tm.domain.library.structures.LibraryTree.TreeNodePair
 
 import spock.lang.Specification
 

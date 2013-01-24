@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.internal.domain.report.common.dto;
 
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 public class ExProgressTestPlanDto {
 	private String testCaseName;

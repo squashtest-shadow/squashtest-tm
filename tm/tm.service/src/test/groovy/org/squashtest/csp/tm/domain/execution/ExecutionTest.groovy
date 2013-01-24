@@ -20,15 +20,18 @@
  */
 package org.squashtest.csp.tm.domain.execution;
 
-import org.apache.commons.lang.NullArgumentException;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.csp.tm.domain.testcase.TestCaseNature;
-import org.squashtest.csp.tm.domain.testcase.TestCaseType;
-import org.squashtest.csp.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode;
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
-import spock.lang.Specification;
+import org.apache.commons.lang.NullArgumentException
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.execution.ExecutionStep
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestCaseNature
+import org.squashtest.tm.domain.testcase.TestCaseStatus
+import org.squashtest.tm.domain.testcase.TestCaseType
+
+import spock.lang.Specification
 
 class ExecutionTest extends Specification {
 	def "should copy test steps as execution steps"() {

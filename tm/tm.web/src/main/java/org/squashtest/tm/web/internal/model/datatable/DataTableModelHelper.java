@@ -23,8 +23,8 @@ package org.squashtest.tm.web.internal.model.datatable;
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.csp.tm.infrastructure.filter.FilteredCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
 public abstract class DataTableModelHelper<X> {
 	

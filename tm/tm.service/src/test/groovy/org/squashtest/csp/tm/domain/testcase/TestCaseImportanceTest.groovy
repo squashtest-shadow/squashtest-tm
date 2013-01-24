@@ -20,14 +20,11 @@
  */
 package org.squashtest.csp.tm.domain.testcase;
 
-import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.*
-import static org.squashtest.csp.tm.domain.requirement.RequirementCriticality.*
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.domain.testcase.TestCaseImportance
 
-
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
-
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet

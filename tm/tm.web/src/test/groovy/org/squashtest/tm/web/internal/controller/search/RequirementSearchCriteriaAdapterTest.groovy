@@ -21,13 +21,12 @@
 package org.squashtest.tm.web.internal.controller.search;
 
 
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
-import org.squashtest.tm.web.internal.controller.search.RequirementSearchCriteriaAdapter;
-import org.squashtest.tm.web.internal.controller.search.RequirementSearchParams;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.domain.requirement.VerificationCriterion
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
 
 class RequirementSearchCriteriaAdapterTest extends Specification {

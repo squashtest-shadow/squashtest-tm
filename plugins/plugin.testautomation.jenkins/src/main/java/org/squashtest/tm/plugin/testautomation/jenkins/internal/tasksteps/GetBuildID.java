@@ -22,13 +22,13 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
-import org.squashtest.csp.tm.testautomation.spi.NotFoundException;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Build;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.BuildList;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
+import org.squashtest.tm.service.testautomation.spi.NotFoundException;
 
 
 public class GetBuildID extends BuildStep<GetBuildID> implements HttpBasedStep{

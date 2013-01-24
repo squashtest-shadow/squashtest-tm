@@ -21,14 +21,14 @@
 package org.squashtest.csp.tm.internal.service;
 
 import org.springframework.transaction.annotation.Transactional;
-import spock.unitils.UnitilsSupport;
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.hibernate.HibernateException;
-import org.springframework.beans.factory.annotation.InjectionMetadata.InjectedElement;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.service.CampaignTestPlanManagerService;
-import org.unitils.dbunit.annotation.DataSet;
+import org.hibernate.HibernateException
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService
+import org.unitils.dbunit.annotation.DataSet
+
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional

@@ -22,14 +22,13 @@ package org.squashtest.csp.tm.internal.service
 
 import static org.junit.Assert.*
 
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.csp.tm.domain.campaign.TestSuite
-import org.squashtest.csp.tm.domain.execution.Execution
-import org.squashtest.csp.tm.domain.execution.ExecutionStep
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.testcase.TestStep
-import org.squashtest.csp.tm.internal.repository.TestSuiteDao
-import org.squashtest.csp.tm.internal.service.campaign.IterationTestPlanManager
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.TestSuite
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.execution.ExecutionStep
+import org.squashtest.tm.service.internal.campaign.IterationTestPlanManager
+import org.squashtest.tm.service.internal.campaign.TestSuiteExecutionProcessingServiceImpl;
+import org.squashtest.tm.service.internal.repository.TestSuiteDao
 
 import spock.lang.Specification
 import spock.lang.Unroll

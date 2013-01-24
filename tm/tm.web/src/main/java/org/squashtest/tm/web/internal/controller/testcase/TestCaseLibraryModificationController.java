@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.csp.tm.service.TestCaseLibraryNavigationService;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
 @Controller
 @RequestMapping("/test-case-libraries/{libraryId}")

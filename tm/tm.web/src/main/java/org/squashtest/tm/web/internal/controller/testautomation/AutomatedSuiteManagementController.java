@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.csp.tm.domain.testautomation.AutomatedSuite;
-import org.squashtest.csp.tm.service.TestAutomationFinderService;
+import org.squashtest.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.tm.service.testautomation.TestAutomationFinderService;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 

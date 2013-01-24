@@ -23,7 +23,7 @@ package org.squashtest.tm.web.internal.api.testautomation;
 
 import javax.validation.constraints.NotNull;
 
-import org.squashtest.csp.tm.service.testautomation.AutomatedExecutionSetIdentifier;
+import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 import org.thymeleaf.util.Validate;
 
 /**

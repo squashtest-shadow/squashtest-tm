@@ -20,31 +20,20 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.jboss.util.collection.ListSet
-import org.squashtest.csp.core.service.security.PermissionEvaluationService
-import org.squashtest.csp.tm.domain.DuplicateNameException
-import org.squashtest.csp.tm.domain.requirement.NewRequirementVersionDto
-import org.squashtest.csp.tm.domain.requirement.Requirement
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
-import org.squashtest.csp.tm.domain.requirement.RequirementFolder
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.csp.tm.internal.repository.RequirementDao
-import org.squashtest.csp.tm.internal.repository.RequirementVersionDao
-import org.squashtest.csp.tm.internal.repository.RequirementFolderDao
-import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao
-import org.squashtest.csp.tm.internal.repository.TestCaseDao;
-import org.squashtest.csp.tm.internal.service.CallStepManagerServiceImpl
-import org.squashtest.csp.tm.internal.service.RequirementLibraryNavigationServiceImpl
-import org.squashtest.csp.tm.internal.service.TestCaseImportanceManagerServiceImpl
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 
-import java.util.HashSet;
-import spock.lang.Specification;
-import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.*
-import static org.squashtest.csp.tm.domain.requirement.RequirementCriticality.*
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.service.internal.repository.RequirementDao
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.testcase.CallStepManagerServiceImpl;
+import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl;
+
+import spock.lang.Specification
 class TestCaseImportanceManagerServiceImplTest extends Specification {
 	TestCaseImportanceManagerServiceImpl service = new TestCaseImportanceManagerServiceImpl()
 	CallStepManagerServiceImpl callStepManagerService = Mock()

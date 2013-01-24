@@ -20,12 +20,11 @@
  */
 package org.squashtest.csp.tm.domain.testcase;
 
-import static org.squashtest.csp.tm.domain.testcase.TestCaseImportance.*;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.domain.LevelComparator
 
-import org.squashtest.csp.tm.domain.LevelComparator;
-
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet

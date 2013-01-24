@@ -19,18 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.csp.tm.internal.service
-import org.squashtest.csp.core.service.security.PermissionEvaluationService
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.testcase.TestCaseFolder
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.csp.tm.internal.repository.FolderDao
-import org.squashtest.csp.tm.internal.repository.LibraryDao
-import org.squashtest.csp.tm.internal.repository.LibraryNodeDao
-import org.squashtest.csp.tm.internal.repository.TestCaseDao
-import org.squashtest.csp.tm.internal.repository.TestCaseFolderDao
-import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
-import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
+import org.squashtest.tm.service.internal.library.TreeNodeCopier
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
 
 import spock.lang.Specification
 

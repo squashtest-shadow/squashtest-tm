@@ -21,10 +21,10 @@
 
 package org.squashtest.tm.web.internal.helper;
 
-import org.squashtest.csp.tm.domain.project.GenericProject;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.project.ProjectTemplate;
-import org.squashtest.csp.tm.domain.project.ProjectVisitor;
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.project.ProjectTemplate;
+import org.squashtest.tm.domain.project.ProjectVisitor;
 
 /**
  * Helper methods for Project view generation.

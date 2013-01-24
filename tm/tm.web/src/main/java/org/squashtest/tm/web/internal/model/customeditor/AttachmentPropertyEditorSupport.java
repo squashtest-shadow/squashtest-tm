@@ -26,8 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.springframework.web.multipart.MultipartFile;
-import org.squashtest.csp.tm.domain.attachment.Attachment;
-import org.squashtest.csp.tm.domain.attachment.AttachmentContent;
+import org.squashtest.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.attachment.AttachmentContent;
 
 public class AttachmentPropertyEditorSupport extends PropertyEditorSupport {
 

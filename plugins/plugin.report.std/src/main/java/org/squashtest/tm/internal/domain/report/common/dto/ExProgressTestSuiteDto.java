@@ -23,7 +23,7 @@ package org.squashtest.tm.internal.domain.report.common.dto;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.squashtest.csp.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.campaign.TestSuite;
 
 public class ExProgressTestSuiteDto extends ExProgressAbstractDto{
 	private ExProgressIterationDto iteration;

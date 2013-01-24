@@ -20,15 +20,12 @@
  */
 package org.squashtest.csp.tm.service
 
-import org.hibernate.SessionFactory;
-import org.hibernate.classic.Session;
-import org.hibernate.type.EntityType;
-import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean;
+import org.hibernate.SessionFactory
+import org.hibernate.classic.Session
+import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean
 
-import spock.lang.Shared;
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * Superclass for testing the interface of a Dynamic Manager.

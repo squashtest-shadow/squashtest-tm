@@ -20,10 +20,12 @@
  */
 package org.squashtest.csp.tm.domain.campaign;
 
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.domain.users.User;
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.users.User
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 
 class CampaignTestPlanItemTest extends Specification{

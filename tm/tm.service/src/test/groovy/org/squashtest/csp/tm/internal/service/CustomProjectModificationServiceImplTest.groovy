@@ -21,29 +21,15 @@
 package org.squashtest.csp.tm.internal.service
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
-import org.squashtest.csp.core.service.security.ObjectIdentityService
-import org.squashtest.csp.tm.domain.bugtracker.BugTrackerBinding
-import org.squashtest.csp.tm.domain.campaign.CampaignLibrary
-import org.squashtest.csp.tm.domain.campaign.CampaignLibraryNode
-import org.squashtest.csp.tm.domain.project.Project
-import org.squashtest.csp.tm.domain.project.ProjectTemplate
-import org.squashtest.csp.tm.domain.requirement.RequirementLibrary
-import org.squashtest.csp.tm.domain.requirement.RequirementLibraryNode
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.csp.tm.internal.repository.CampaignLibraryDao
-import org.squashtest.csp.tm.internal.repository.GenericProjectDao;
-import org.squashtest.csp.tm.internal.repository.ProjectDao
-import org.squashtest.csp.tm.internal.repository.ProjectTemplateDao
-import org.squashtest.csp.tm.internal.repository.RequirementLibraryDao
-import org.squashtest.csp.tm.internal.repository.TestCaseLibraryDao
-import org.squashtest.csp.tm.internal.service.project.CustomProjectModificationServiceImpl
-import org.squashtest.csp.tm.service.ProjectsPermissionManagementService
-import org.squashtest.csp.tm.service.customfield.CustomFieldBindingModificationService
-import org.squashtest.csp.tm.service.project.GenericProjectManagerService;
-import org.squashtest.csp.tm.service.project.ProjectManagerService
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.bugtracker.BugTrackerBinding
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.project.ProjectTemplate
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService
+import org.squashtest.tm.service.internal.project.CustomProjectModificationServiceImpl
+import org.squashtest.tm.service.internal.repository.ProjectTemplateDao
+import org.squashtest.tm.service.project.GenericProjectManagerService
+import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 
 import spock.lang.Specification
 

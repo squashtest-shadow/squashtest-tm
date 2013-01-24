@@ -22,28 +22,22 @@ package org.squashtest.tm.web.internal.controller.requirement
 
 
 
-import java.util.Locale
-
 import javax.inject.Provider
 
 import org.springframework.context.MessageSource
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
 import org.springframework.web.servlet.ModelAndView
-import org.squashtest.csp.tm.domain.requirement.Requirement
-import org.squashtest.csp.tm.domain.requirement.RequirementCategory
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion
-import org.squashtest.csp.tm.service.RequirementModificationService
-import org.squashtest.csp.tm.service.customfield.CustomFieldValueFinderService;
-import org.squashtest.tm.web.internal.controller.requirement.RequirementCategoryComboDataBuilder;
-import org.squashtest.tm.web.internal.controller.requirement.RequirementCriticalityComboDataBuilder;
-import org.squashtest.tm.web.internal.controller.requirement.RequirementModificationController;
-import org.squashtest.tm.web.internal.controller.requirement.RequirementStatusComboDataBuilder;
-import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
-import org.squashtest.tm.web.internal.helper.LabelFormatter;
-import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementCategory
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
+import org.squashtest.tm.service.requirement.RequirementModificationService
+import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter
+import org.squashtest.tm.web.internal.helper.LabelFormatter
+import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 
 import spock.lang.Specification
 

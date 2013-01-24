@@ -20,9 +20,10 @@
  */
 package org.squashtest.csp.tm.domain.testautomation
 
-import org.squashtest.csp.tm.domain.project.Project;
+import org.squashtest.tm.domain.testautomation.AutomatedTest
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
 
-import spock.lang.Shared;
+import spock.lang.Shared
 import spock.lang.Specification
 
 class AutomatedTestTest extends Specification {

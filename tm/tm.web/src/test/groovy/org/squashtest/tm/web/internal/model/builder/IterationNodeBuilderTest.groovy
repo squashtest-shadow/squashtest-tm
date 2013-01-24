@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.web.internal.model.builder
 
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
-import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class IterationNodeBuilderTest extends Specification {
 	PermissionEvaluationService permissionEvaluationService = Mock()

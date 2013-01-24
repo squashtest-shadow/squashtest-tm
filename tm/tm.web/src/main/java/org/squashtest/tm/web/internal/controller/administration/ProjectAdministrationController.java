@@ -35,12 +35,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.tm.domain.project.AdministrableProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.service.BugTrackerFinderService;
-import org.squashtest.csp.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
+import org.squashtest.tm.domain.project.AdministrableProject;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 
 @Controller

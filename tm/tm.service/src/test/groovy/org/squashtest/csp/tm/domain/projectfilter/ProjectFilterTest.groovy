@@ -20,10 +20,10 @@
  */
 package org.squashtest.csp.tm.domain.projectfilter
 
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.projectfilter.ProjectFilter
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class ProjectFilterTest extends Specification {
 	ProjectFilter projectFilter = new ProjectFilter();

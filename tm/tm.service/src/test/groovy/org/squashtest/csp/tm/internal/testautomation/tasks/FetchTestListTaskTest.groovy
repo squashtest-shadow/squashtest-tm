@@ -21,11 +21,12 @@
 package org.squashtest.csp.tm.internal.testautomation.tasks
 
 
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.csp.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.csp.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.csp.tm.internal.testautomation.service.TestAutomationConnectorRegistry;
-import org.squashtest.csp.tm.testautomation.spi.TestAutomationConnector;
+import org.squashtest.tm.domain.testautomation.AutomatedTest
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.service.internal.testautomation.service.TestAutomationConnectorRegistry
+import org.squashtest.tm.service.internal.testautomation.tasks.FetchTestListTask
+import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector
 
 import spock.lang.Specification
 

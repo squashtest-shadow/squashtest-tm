@@ -20,22 +20,20 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.squashtest.csp.tm.domain.requirement.Requirement
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion
-import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep
-import org.squashtest.csp.tm.infrastructure.filter.CollectionSorting
-import org.squashtest.csp.tm.internal.repository.RequirementDao
-import org.squashtest.csp.tm.internal.repository.RequirementVersionDao
-import org.squashtest.csp.tm.internal.repository.TestCaseDao
-import org.squashtest.csp.tm.internal.repository.TestStepDao
-import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService;
-import org.squashtest.csp.tm.service.CallStepManagerService
+import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.service.internal.library.GenericNodeManagementService;
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.TestStepDao
+import org.squashtest.tm.service.internal.testcase.CustomTestCaseModificationServiceImpl;
+import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler;
+import org.squashtest.tm.service.testcase.CallStepManagerService;
 
 import spock.lang.Specification
 

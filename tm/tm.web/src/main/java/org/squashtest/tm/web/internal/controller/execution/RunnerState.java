@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.execution;
 
-import org.squashtest.csp.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 public class RunnerState {
 

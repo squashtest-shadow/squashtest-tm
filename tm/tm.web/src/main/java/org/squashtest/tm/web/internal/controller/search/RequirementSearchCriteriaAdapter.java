@@ -25,10 +25,10 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.squashtest.csp.tm.domain.requirement.RequirementCategory;
-import org.squashtest.csp.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.csp.tm.domain.requirement.RequirementSearchCriteria;
-import org.squashtest.csp.tm.domain.requirement.VerificationCriterion;
+import org.squashtest.tm.domain.requirement.RequirementCategory;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
+import org.squashtest.tm.domain.requirement.VerificationCriterion;
 
 /**
  * Adapts a {@link RequirementSearchParams} into a {@link RequirementSearchCriteria}

@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.internal.validation.validator
 
+import org.squashtest.tm.service.internal.validation.validator.UniqueListItemsValidator;
+
 import spock.lang.Specification
 import spock.lang.Unroll;
 

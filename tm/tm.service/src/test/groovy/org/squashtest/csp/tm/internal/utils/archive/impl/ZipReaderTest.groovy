@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.internal.utils.archive.impl
 import org.apache.poi.hssf.record.formula.functions.T
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
+import org.squashtest.tm.service.internal.archive.ZipReader;
 
 import spock.lang.Specification
 

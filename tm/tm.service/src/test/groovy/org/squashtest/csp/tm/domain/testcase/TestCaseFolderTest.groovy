@@ -20,14 +20,14 @@
  */
 package org.squashtest.csp.tm.domain.testcase;
 
-import org.squashtest.csp.tm.domain.library.Folder;
-import org.squashtest.csp.tm.domain.library.Folder;
-import org.squashtest.csp.tm.domain.library.GenericLibraryNode;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.library.GenericLibraryNode
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.exception.DuplicateNameException;
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 
 class TestCaseFolderTest extends Specification {

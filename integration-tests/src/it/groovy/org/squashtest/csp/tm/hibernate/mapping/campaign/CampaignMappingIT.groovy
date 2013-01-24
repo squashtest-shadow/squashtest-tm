@@ -20,16 +20,15 @@
  */
 package org.squashtest.csp.tm.hibernate.mapping.campaign
 
-import org.apache.commons.lang.NullArgumentException;
-import org.hibernate.Hibernate;
-import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory;
-import org.squashtest.csp.tm.domain.campaign.Campaign;
-import org.squashtest.csp.tm.domain.campaign.CampaignFolder;
-import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.csp.tm.domain.campaign.Iteration;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification;
-import org.squashtest.csp.tm.internal.repository.hibernate.NativeQueries;
+import org.apache.commons.lang.NullArgumentException
+import org.apache.poi.hssf.record.formula.functions.T
+import org.hibernate.Hibernate
+import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.testcase.TestCase
 
 
 class CampaignMappingIT extends HibernateMappingSpecification {

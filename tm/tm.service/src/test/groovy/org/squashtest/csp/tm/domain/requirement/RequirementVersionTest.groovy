@@ -20,17 +20,20 @@
  */
 package org.squashtest.csp.tm.domain.requirement
 
-import static org.squashtest.csp.tm.domain.requirement.RequirementStatus.*
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.attachment.Attachment
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.exception.IllegalRequirementModificationException;
+import org.squashtest.tm.exception.RequirementVersionNotLinkableException;
 
-import org.squashtest.csp.tm.domain.IllegalRequirementModificationException;
-import org.squashtest.csp.tm.domain.RequirementVersionNotLinkableException;
-import org.squashtest.csp.tm.domain.attachment.Attachment;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet

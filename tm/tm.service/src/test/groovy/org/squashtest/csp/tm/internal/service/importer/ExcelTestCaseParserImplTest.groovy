@@ -20,13 +20,17 @@
  */
 package org.squashtest.csp.tm.internal.service.importer
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.apache.poi.ss.usermodel.Cell
+import org.apache.poi.ss.usermodel.Row
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.service.internal.importer.ExcelTestCaseParser
+import org.squashtest.tm.service.internal.importer.ExcelTestCaseParserImpl
+import org.squashtest.tm.service.internal.importer.ImportSummaryImpl
+import org.squashtest.tm.service.internal.importer.PseudoTestCase
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
 class ExcelTestCaseParserImplTest extends Specification {
 

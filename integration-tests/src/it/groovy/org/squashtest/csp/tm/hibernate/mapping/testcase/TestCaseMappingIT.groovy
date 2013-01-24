@@ -21,23 +21,19 @@
 package org.squashtest.csp.tm.hibernate.mapping.testcase
 
 
-import java.util.Date
-
-import org.apache.poi.hssf.record.formula.functions.T
 import org.hibernate.JDBCException
-import org.hibernate.Session
 import org.hibernate.SessionFactory
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.csp.tm.domain.execution.Execution
-import org.squashtest.csp.tm.domain.requirement.Requirement
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.csp.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 
 import spock.lang.Unroll
 

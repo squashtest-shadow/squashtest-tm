@@ -20,18 +20,15 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.spockframework.util.NotThreadSafe;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.csp.tm.service.ProjectFilterModificationService;
-import org.unitils.dbunit.annotation.DataSet;
+import javax.inject.Inject
 
-import spock.unitils.UnitilsSupport;
+import org.spockframework.util.NotThreadSafe
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.service.project.ProjectFilterModificationService
+import org.unitils.dbunit.annotation.DataSet
 
-import java.util.List;
-
-import javax.inject.Inject;
+import spock.unitils.UnitilsSupport
 
 @NotThreadSafe
 @UnitilsSupport

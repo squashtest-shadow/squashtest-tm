@@ -21,26 +21,26 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.squashtest.csp.tm.domain.attachment.Attachment
-import org.squashtest.csp.tm.internal.service.customField.PrivateCustomFieldValueService
-import org.squashtest.csp.tm.domain.campaign.Campaign
-import org.squashtest.csp.tm.domain.campaign.CampaignTestPlanItem
-import org.squashtest.csp.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.csp.tm.domain.campaign.Iteration
-import org.squashtest.csp.tm.domain.testcase.TestCase
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance
-import org.squashtest.csp.tm.domain.testcase.TestCaseNature
-import org.squashtest.csp.tm.domain.testcase.TestCaseType
-import org.squashtest.csp.tm.domain.testcase.TestCaseStatus
-import org.squashtest.csp.tm.domain.testcase.TestCaseExecutionMode
-import org.squashtest.csp.tm.domain.users.User
-import org.squashtest.csp.tm.internal.repository.CampaignDao
-import org.squashtest.csp.tm.internal.repository.ExecutionDao
-import org.squashtest.csp.tm.internal.repository.ExecutionStepDao
-import org.squashtest.csp.tm.internal.repository.ItemTestPlanDao
-import org.squashtest.csp.tm.internal.repository.IterationDao
-import org.squashtest.csp.tm.internal.repository.TestCaseDao
-import org.squashtest.csp.tm.service.CallStepManagerService
+import org.squashtest.tm.domain.attachment.Attachment
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestCaseNature
+import org.squashtest.tm.domain.testcase.TestCaseStatus
+import org.squashtest.tm.domain.testcase.TestCaseType
+import org.squashtest.tm.domain.users.User
+import org.squashtest.tm.service.internal.campaign.CustomIterationModificationServiceImpl
+import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
+import org.squashtest.tm.service.internal.repository.CampaignDao
+import org.squashtest.tm.service.internal.repository.ExecutionDao
+import org.squashtest.tm.service.internal.repository.ItemTestPlanDao
+import org.squashtest.tm.service.internal.repository.IterationDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.testcase.TestCaseCyclicCallChecker
 
 import spock.lang.Specification
 

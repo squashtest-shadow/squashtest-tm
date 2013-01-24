@@ -20,16 +20,19 @@
  */
 package org.squashtest.csp.tm.internal.service;
 
-import org.squashtest.csp.core.service.security.PermissionEvaluationService;
-import org.squashtest.csp.tm.domain.DuplicateNameException;
-import org.squashtest.csp.tm.domain.library.Folder;
-import org.squashtest.csp.tm.domain.library.Library;
-import org.squashtest.csp.tm.domain.testcase.TestCase;
-import org.squashtest.csp.tm.internal.repository.FolderDao;
-import org.squashtest.csp.tm.internal.repository.LibraryDao;
-import org.squashtest.csp.tm.internal.repository.TestCaseDao;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.domain.library.Folder
+import org.squashtest.tm.domain.library.Library
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.service.internal.library.GenericNodeManagementService;
+import org.squashtest.tm.service.internal.library.NodeManagementService;
+import org.squashtest.tm.service.internal.repository.FolderDao
+import org.squashtest.tm.service.internal.repository.LibraryDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.security.PermissionEvaluationService
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class GenericNodeManagementServiceTest extends Specification {
 	NodeManagementService service = new GenericNodeManagementService()

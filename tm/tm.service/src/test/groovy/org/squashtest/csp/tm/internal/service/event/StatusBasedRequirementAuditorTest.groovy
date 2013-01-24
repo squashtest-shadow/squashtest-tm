@@ -20,19 +20,18 @@
  */
 package org.squashtest.csp.tm.internal.service.event;
 
-import org.hibernate.SessionFactory;
-import org.hibernate.classic.Session;
-import org.squashtest.csp.tm.domain.event.RequirementAuditEvent;
-import org.squashtest.csp.tm.domain.event.RequirementCreation;
-import org.squashtest.csp.tm.domain.event.RequirementPropertyChange;
-import org.squashtest.csp.tm.domain.requirement.Requirement;
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus;
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion;
-import org.squashtest.csp.tm.internal.repository.RequirementAuditEventDao;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.hibernate.SessionFactory
+import org.hibernate.classic.Session
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.event.RequirementAuditEvent
+import org.squashtest.tm.domain.event.RequirementCreation
+import org.squashtest.tm.domain.event.RequirementPropertyChange
+import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.service.internal.event.StatusBasedRequirementAuditor;
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
 class StatusBasedRequirementAuditorTest extends Specification {
 	StatusBasedRequirementAuditor auditor= new StatusBasedRequirementAuditor()

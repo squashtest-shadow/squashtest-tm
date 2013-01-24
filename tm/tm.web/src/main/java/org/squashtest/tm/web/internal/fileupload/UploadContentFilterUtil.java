@@ -22,7 +22,7 @@ package org.squashtest.tm.web.internal.fileupload;
 
 
 
-import org.squashtest.csp.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.attachment.Attachment;
 
 
 public class UploadContentFilterUtil {

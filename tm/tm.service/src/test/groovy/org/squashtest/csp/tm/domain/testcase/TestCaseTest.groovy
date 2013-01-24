@@ -20,23 +20,24 @@
  */
 package org.squashtest.csp.tm.domain.testcase
 
-import javax.swing.plaf.basic.BasicFileChooserUI.ApproveSelectionAction
-
 import org.apache.commons.lang.NullArgumentException
-import org.squashtest.csp.tm.domain.RequirementAlreadyVerifiedException
-import org.squashtest.csp.tm.domain.RequirementVersionNotLinkableException
-import org.squashtest.csp.tm.domain.UnknownEntityException
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.requirement.Requirement
-import org.squashtest.csp.tm.domain.requirement.RequirementVersion
-import org.squashtest.csp.tm.domain.requirement.RequirementStatus
-import org.squashtest.csp.tm.domain.testcase.TestCaseImportance
-import org.squashtest.csp.tm.domain.testcase.TestCaseStatus
-import org.squashtest.csp.tm.domain.testcase.TestCaseNature
-import org.squashtest.csp.tm.domain.testcase.TestCaseType
-import org.squashtest.csp.tm.domain.testautomation.AutomatedTest
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.testautomation.AutomatedTest
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestCaseNature
+import org.squashtest.tm.domain.testcase.TestCaseStatus
+import org.squashtest.tm.domain.testcase.TestCaseType
+import org.squashtest.tm.domain.testcase.TestStep
+import org.squashtest.tm.exception.RequirementAlreadyVerifiedException;
+import org.squashtest.tm.exception.RequirementVersionNotLinkableException;
+import org.squashtest.tm.exception.UnknownEntityException;
 
 import spock.lang.Specification
 import spock.lang.Unroll

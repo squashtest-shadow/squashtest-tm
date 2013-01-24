@@ -46,7 +46,7 @@
 	
 	<osgi:reference id="squashtest.core.configuration.ConfigurationService"
 		bean-name="squashtest.core.configuration.ConfigurationService"
-		interface="org.squashtest.csp.core.service.configuration.ConfigurationService" availability="mandatory" />
+		interface="org.squashtest.tm.service.configuration.ConfigurationService" availability="mandatory" />
 
 	<!-- Validation services -->
 	<osgi:reference id="javax.validation.ValidatorFactory"

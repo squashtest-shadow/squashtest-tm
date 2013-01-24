@@ -20,6 +20,9 @@
  */
 package org.squashtest.csp.tm.domain.library.structures
 
+import org.squashtest.tm.domain.library.structures.NodeData
+
+
 class TreeNodeDataTestImpl extends NodeData<Long>{
 
 	private String name;

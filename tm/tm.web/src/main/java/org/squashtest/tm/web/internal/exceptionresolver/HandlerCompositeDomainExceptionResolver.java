@@ -35,8 +35,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
-import org.squashtest.csp.tm.domain.CompositeDomainException;
-import org.squashtest.csp.tm.domain.DomainException;
+import org.squashtest.tm.exception.CompositeDomainException;
+import org.squashtest.tm.exception.DomainException;
 
 @Component
 public class HandlerCompositeDomainExceptionResolver extends AbstractHandlerExceptionResolver {
