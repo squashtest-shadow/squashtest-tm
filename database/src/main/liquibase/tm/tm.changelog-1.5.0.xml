@@ -131,15 +131,20 @@
 		<comment>Create table for denormalized field rendering location</comment>
 		 <createTable tableName="DENORMALIZED_FIELD_RENDERING_LOCATION">
             <column name="DFV_ID" type="BIGINT">
-                <constraints nullable="false" references="DENORMALIZED_FIELD_VALUE(DFV_ID)" foreignKeyName="fk_df_render_loc_dfv"/>
+                <constraints nullable="false" />
             </column>
 
             <column name="RENDERING_LOCATION" type="VARCHAR(30)">
                 <constraints nullable="false" />
             </column>
         </createTable>
+        
+        <addForeignKeyConstraint constraintName="fk_dfb_render_loc_dfb"
+			onDelete="CASCADE" referencedTableName="DENORMALIZED_FIELD_VALUE"
+			referencedColumnNames="DFV_ID" baseTableName="DENORMALIZED_FIELD_RENDERING_LOCATION"
+			baseColumnNames="DFV_ID" />
+			
         </changeSet>
-  	
   	<changeSet id="tm-1.5.0-feat-821" author="gfouquet">
   		<comment>Change class names in ACL system</comment>
   		<update tableName="ACL_CLASS">

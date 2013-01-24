@@ -110,6 +110,17 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		allDeleted("Execution", [500l])
 		allDeleted("ExecutionStep", [500l, 6001l, 6002l, 6003l])
 	}
+	@DataSet("NodeDeletionHandlerTest.executionPlusDenormalizedFields.xml")
+	def "should delete an execution with all denormalized field values"(){
+		given :
+		def exec = findEntity(Execution.class, 500l)
+
+		when :
+		deletionHandler.deleteExecution(exec)
+
+		then :
+		allDeleted("DenormalizedFieldValue", [1l,2l,3l,4l]);
+	}
 
 	@DataSet("NodeDeletionHandlerTest.iterationPlusExecutions.xml")
 	def "should delete an execution but not the other"(){

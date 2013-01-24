@@ -50,6 +50,7 @@ import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
 import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.csp.tm.internal.service.denormalizedField.PrivateDenormalizedFieldValueService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -75,6 +76,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
+	
+	@Inject
+	private PrivateDenormalizedFieldValueService denormalizedFieldValueService;
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
@@ -311,6 +315,8 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		testPlanItem.removeExecution(execution);
 		deleteAutomatedExecutionExtender(execution);
 		
+		denormalizedFieldValueService.deleteAllDenormalizedFieldValues(execution);
+		
 		deletionDao.removeAttachmentList(execution.getAttachmentList());		
 		deletionDao.removeEntity(execution);
 	}
@@ -399,6 +405,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		for (ExecutionStep step : execution.getSteps()) {
 			
 			deletionDao.removeAttachmentList(step.getAttachmentList());
+			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(step);
 			deletionDao.removeEntity(step);
 		}
 
