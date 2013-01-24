@@ -246,11 +246,15 @@ public class TestCaseModificationController {
 
 	
 	@RequestMapping(value="/steps/panel")
-	public String getTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model){
+	public String getTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model, Locale locale){
 		
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		
+		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));		
+		List<Map<?,?>>  stepsData = new TestStepsTableModelBuilder(internationalizationHelper, locale).buildAllData(steps);
+		
 		model.addAttribute("testCase", testCase);
+		model.addAttribute("stepsData", stepsData);
 		
 		return "test-cases-tabs/test-steps-tab.html";
 		

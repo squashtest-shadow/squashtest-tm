@@ -18,7 +18,8 @@
     <project.stage>RELEASE</project.stage> <!--  overridable by activating the profile development -->
     <spring.version.range>[3,4)</spring.version.range>
     <springdm.version.range>[2,3)</springdm.version.range>
-    <thymeleaf.version>2.0.13</thymeleaf.version>
+    <thymeleaf.version>2.0.14</thymeleaf.version>
+    <thyleleaf.springsec>2.0.0-SNAPSHOT</thyleleaf.springsec>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
   </properties>
 
@@ -269,6 +270,17 @@
       </exclusion>
     </exclusions>      
     </dependency>
+    <dependency>
+      <groupId>org.thymeleaf.extras</groupId>
+      <artifactId>org.squashtest.thymeleaf-extras-springsecurity3</artifactId>
+      <version>${thyleleaf.springsec}</version>
+    <exclusions>
+      <exclusion>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+      </exclusion>
+    </exclusions>      
+    </dependency>    
     <!-- ====== /THYMELEAF ====== -->
 
 		<!-- ====== JASPER REPORTS ====== -->

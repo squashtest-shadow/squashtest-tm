@@ -148,6 +148,18 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			urls = makeTableUrls(settings),
 			permissions = settings.permissions;
 		
+		//in order to enable/disable some features regarding the permissions, one have to tune the css classes of some columns.
+		var editActionClass ="", editResultClass="", deleteClass="", dragClass="";
+		
+
+		if (permissions.isWritable){
+			editActionClass="rich-edit-action";
+			editResultClass="rich-edit-result";
+			deleteClass="delete-button";
+			dragClass="drag-handle";
+		}
+		
+		//create the settings
 		var datatableSettings = {
 			oLanguage : {
 				sUrl : urls.tableLanguageUrl
@@ -156,16 +168,17 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			sAjaxSource : urls.tableAjaxUrl,
 			fnDrawCallback : stepsTableDrawCallback,
 			fnCreatedRow  : stepsTableCreatedRowCallback,
+			iDeferLoading : settings.basic.initialRows,
 			aoColumnDefs : [
 			  {'bVisible':false, 'bsortable':false, 'aTargets':[0], 'mDataProp':'step-id'},
-			  {'bVisible':true,  'bSortable':false, 'aTargets':[1], 'mDataProp':'step-index', 'sClass':'select-handle drag-handle centered', 'sWidth':'2em'},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[1], 'mDataProp':'step-index', 'sClass':'select-handle centered '+dragClass, 'sWidth':'2em'},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[2], 'mDataProp':'attach-list-id', 'sClass':'centered has-attachment-cell', 'sWidth':'2em'},
-			  {'bVisible':true,  'bSortable':false, 'aTargets':[3], 'mDataProp':'step-action', 'sClass':'rich-edit-action called-tc-cell'},
-			  {'bVisible':true,  'bSortable':false, 'aTargets':[4], 'mDataProp':'step-result', 'sClass':'rich-edit-result'},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[3], 'mDataProp':'step-action', 'sClass':'call-tc-cell '+editActionClass},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[4], 'mDataProp':'step-result', 'sClass': editResultClass},
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[5], 'mDataProp':'nb-attachments'},
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[6], 'mDataProp':'step-type'},
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[7], 'mDataProp':'called-tc-id'},
-			  {'bVisible':true,  'bSortable':false, 'aTargets':[8], 'mDataProp':'empty-delete-holder', 'sClass':'centered delete-button', 'sWidth':'2em'}
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[8], 'mDataProp':'empty-delete-holder', 'sClass':'centered '+deleteClass, 'sWidth':'2em'}
 			]
 			
 		};
@@ -182,6 +195,10 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			confirmPopup : {
 				oklabel : language.oklabel,
 				cancellabel : language.cancellabel
+			},
+			
+			attachments : {
+					url : "#"
 			},
 			
 			bindLinks : {
@@ -207,9 +224,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 					success : refresh
 				},
 				
-				attachments : {
-					url : urls.attachments
-				},
+
 				
 				richEditables : {
 					conf : {
@@ -236,6 +251,12 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			
 			$.extend(squashSettings, moreSettings);
 			
+		};
+		
+		if (permissions.isAttachable){
+			squashSettings.attachments = {
+					url : urls.attachments
+			}
 		}
 		
 		$("#test-steps-table").squashTable(datatableSettings, squashSettings);

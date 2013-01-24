@@ -84,5 +84,9 @@ public abstract class DataTableModelHelper<X> {
 	}
 
 	protected abstract Object buildItemData(X item);
+	
+	protected void incrementIndex(){
+		currentIndex++;
+	}
 
 }

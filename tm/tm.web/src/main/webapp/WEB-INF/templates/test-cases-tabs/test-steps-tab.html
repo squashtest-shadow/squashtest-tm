@@ -26,17 +26,16 @@
 		This snippet of html describes the template for the test step panel of the tab panel of a test case.
 		Required data :
 			- testCase : the test case bean
-			-
-			-
+			- stepsData : a list of maps such as build by a TestStepsTableModelBuilder 
 	 -->
 
 </div>
 
 
 
-<div id="test-steps-tabs-panel" th:with="isWritable=${true} , isAttachable=${true}">
-
-
+<div id="test-steps-tabs-panel" th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'WRITE')} , 
+										 isAttachable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'ATTACH')},
+										 initialRows = ${(stepsData.size() > 10) ? 10 : stepsData.size()}">
 	
 	<!-- ==================== toolbar definition =================== -->
 	<div class="toolbar">
@@ -84,6 +83,7 @@
 
 	<!-- ==================== /toolbar definition =================== -->
 
+
 	<!-- ==================== table definition =================== -->
 	<table id="test-steps-table">
 		<thead>
@@ -100,7 +100,18 @@
 			</tr>
 		</thead>
 		<tbody>
-			<!-- Will be populated by ajax -->
+			<tr th:each="stepData : ${stepsData}" >
+				<td th:text="${stepData['step-id']}">1</td>
+				<td th:text="${stepData['step-index']}">1</td>
+				<td th:text="${stepData['attach-list-id']}">1</td>
+				<td th:text="${stepData['step-action']}">1</td>
+				<td th:text="${stepData['step-result']}">1</td>
+				<td th:text="${stepData['nb-attachments']}">1</td>
+				<td th:text="${stepData['step-type']}">1</td>
+				<td th:text="${stepData['called-tc-id']}">1</td>
+				<td th:text="${stepData['empty-delete-holder']}">1</td>
+			</tr>
+
 		</tbody>
 	</table>
 
@@ -146,7 +157,8 @@
 							testCaseUrl : /*[[@{/test-cases/__${testCase.id}__}]]*/"/squash/test-cases/1",
 							testCaseId : /*[[${testCase.id}]]*/1,
 							projectId : /*[[${testCase.project.id}]]*/1,
-							rootContext : /*[[@{/}]]*/"/squash"
+							rootContext : /*[[@{/}]]*/"/squash",
+							initialRows : /*[[${initialRows}]]*/0,
 					},	
 					
 					language : {

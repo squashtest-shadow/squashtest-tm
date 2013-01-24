@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -48,6 +50,16 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 		this.locale = locale;
 	}
 
+	public List<Map<?,?>> buildAllData(List<TestStep> source){
+		List<Map<?,?>> result = new ArrayList<Map<?,?>>(source.size());
+		for (TestStep step : source){
+			Map<?,?> itemData = buildItemData(step);
+			result.add(itemData);
+			incrementIndex();
+		}
+		return result;
+	}
+	
 	@Override
 	public Map<?, ?> buildItemData(TestStep item) {
 		item.accept(this);
