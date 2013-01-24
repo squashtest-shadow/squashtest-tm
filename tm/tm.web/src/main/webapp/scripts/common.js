@@ -28,12 +28,7 @@ requirejs.config({
     "projects-manager", 
     "project",
     "contextual-content-handlers",
-    //"test-cases-management",
-    {
-    	main : "main",
-    	name : "test-cases-management",
-    	location : "http://localhost/scripts/scripts/test-cases-management"
-    }
+    "test-cases-management",
 	],
 
 	/*

@@ -33,7 +33,9 @@
 
 
 
-<div id="test-steps-tabs-panel" th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'WRITE')} , 
+<div id="test-steps-tabs-panel" 
+	 class="table-tab" 
+	 th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'WRITE')} , 
 										 isAttachable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'ATTACH')},
 										 initialRows = ${(stepsData.size() > 10) ? 10 : stepsData.size()}">
 	
@@ -96,16 +98,16 @@
 				<th>nbAttach(masked)</th>
 				<th>stepNature(masked)</th>
 				<th>calledStepId(masked)</th>
-				<th> </th>
+				<th class=""> </th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr th:each="stepData : ${stepsData}" >
 				<td th:text="${stepData['step-id']}">1</td>
-				<td th:text="${stepData['step-index']}">1</td>
+				<td th:text="${stepData['step-index'] + 1}">1</td>
 				<td th:text="${stepData['attach-list-id']}">1</td>
-				<td th:text="${stepData['step-action']}">1</td>
-				<td th:text="${stepData['step-result']}">1</td>
+				<td th:text="${stepData['step-action']?:''}">1</td>
+				<td th:utext="${stepData['step-result']?:''}">1</td>
 				<td th:text="${stepData['nb-attachments']}">1</td>
 				<td th:text="${stepData['step-type']}">1</td>
 				<td th:text="${stepData['called-tc-id']}">1</td>
@@ -169,7 +171,8 @@
 						btnExpand : /*[[#{test-case.step.button.expand.label}]]*/"expand",
 						btnCollapse : /*[[#{test-case.step.button.collapse.label}]]*/"collapse",
 						errorTitle : /*[[#{popup.title.error}]]*/"wtf",
-						deleteConfirm : /*[[#{dialog.delete-step.message}]]*/"confirm ?",
+						deleteSingleConfirm : /*[[#{dialog.delete-step.message}]]*/"confirm ?",
+						deleteMultipleConfirm : /*[[#{dialog.delete-selected-steps.message}]]*/"Confirm ?",
 						deleteTitle : /*[[#{dialog.delete-step.title}]]*/"delete",
 						noStepSelected : /*[[#{test-case.step.no-selection}]]*/"please select some steps",
 						addStepTitle : /*[[#{test-case.step.button.add.label}]]*/"Add test step",

@@ -330,22 +330,20 @@ public class TestCaseModificationController {
 
 	}
 
-	@RequestMapping(value = "/steps/move", method = RequestMethod.POST, params = { "newIndex", "stepIds[]" })
+	@RequestMapping(value = "/steps/move", method = RequestMethod.POST, params = { "newIndex", "itemIds[]" })
 	@ResponseBody
-	public void changeStepsIndex(@RequestParam("stepIds[]") List<Long> stepIds, @RequestParam int newIndex,
+	public void changeStepsIndex(@RequestParam("itemIds[]") List<Long> itemIds, @RequestParam("newIndex") int newIndex,
 			@PathVariable long testCaseId) {
 
 		
-		testCaseModificationService.changeTestStepsPosition(testCaseId, newIndex, stepIds);
+		testCaseModificationService.changeTestStepsPosition(testCaseId, newIndex, itemIds);
 
 	}
 
-	@RequestMapping(value = "/steps/{stepId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/steps/{stepIds}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteStep(@PathVariable long stepId, @PathVariable long testCaseId) {
-
-		testCaseModificationService.removeStepFromTestCase(testCaseId, stepId);
-		LOGGER.trace(TEST_CASE_ + testCaseId + ": removed step " + stepId);
+	public void deleteSteps(@PathVariable("stepIds") List<Long> stepIds, @PathVariable long testCaseId) {
+		testCaseModificationService.removeListOfSteps(testCaseId, stepIds);
 	}
 
 	@RequestMapping(value = "/steps/{stepId}/action", method = RequestMethod.POST, params = { "id", VALUE })
@@ -362,14 +360,6 @@ public class TestCaseModificationController {
 		testCaseModificationService.updateTestStepExpectedResult(stepId, newResult);
 		LOGGER.trace("TestCaseModificationController : updated action for step {}", stepId);
 		return newResult;
-	}
-
-	@RequestMapping(value = "/removed-steps", params = "removedStepIds[]", method = RequestMethod.POST)
-	@ResponseBody
-	public void deleteListStep(@PathVariable long testCaseId,
-			@RequestParam("removedStepIds[]") List<Long> removedStepIds) {
-		testCaseModificationService.removeListOfSteps(testCaseId, removedStepIds);
-		LOGGER.trace("TestCaseModificationController : removed a list of steps");
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-description", VALUE })

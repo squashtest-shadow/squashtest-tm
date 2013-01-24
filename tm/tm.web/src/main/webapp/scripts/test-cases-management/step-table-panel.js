@@ -75,7 +75,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		return {
 			dropUrl :  		tcUrl  + "/steps/move",
 			attachments : 	ctxUrl + "/attach-list/{attach-list-id}/attachments/manager?workspace=test-case",
-			singleDelete :	tcUrl  + "/steps/{entity-id}",
+			singleDelete :	tcUrl  + "/steps/{step-id}",
 			multiDelete : 	tcUrl  + "/steps",
 			callTC : 		ctxUrl + "/test-cases/{called-tc-id}/info",
 			pasteStep : 	tcUrl  + "/steps",
@@ -113,7 +113,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		var actionRows = this.find('tr.action-step-row');
 		var callRows = this.find('tr.call-step-row');
 		
-		actionRows.find('td.call-tc-cell').removeClass('called-tc-cell');
+		actionRows.find('td.called-tc-cell').removeClass('called-tc-cell');
 		
 		callRows.find('td.rich-edit-action').removeClass('rich-edit-action');
 		callRows.find('td.rich-edit-result').removeClass('rich-edit-result');
@@ -173,7 +173,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			  {'bVisible':false, 'bsortable':false, 'aTargets':[0], 'mDataProp':'step-id'},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[1], 'mDataProp':'step-index', 'sClass':'select-handle centered '+dragClass, 'sWidth':'2em'},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[2], 'mDataProp':'attach-list-id', 'sClass':'centered has-attachment-cell', 'sWidth':'2em'},
-			  {'bVisible':true,  'bSortable':false, 'aTargets':[3], 'mDataProp':'step-action', 'sClass':'call-tc-cell '+editActionClass},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[3], 'mDataProp':'step-action', 'sClass':'called-tc-cell '+editActionClass},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[4], 'mDataProp':'step-result', 'sClass': editResultClass},
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[5], 'mDataProp':'nb-attachments'},
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[6], 'mDataProp':'step-type'},
@@ -219,7 +219,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 				
 				deleteButtons : {
 					url : urls.singleDelete,
-					popupmessage : language.deleteConfirm,
+					popupmessage : language.deleteSingleConfirm,
 					tooltip : language.deleteTitle,
 					success : refresh
 				},
@@ -415,7 +415,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 				var position =  table.getSelectedIds();
 		
 				var data = {};
-				data['copiedStepId']=idList;
+				data['copiedStepId']=stepIds;
 		
 				var pasteUrl = urls.pasteStep;
 				
@@ -447,7 +447,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 
 		decorateStepTableButton("#delete-all-steps-button", "ui-icon-minusthick");
 		
-		$("#copy-step").bind('click', function(){
+		$("#delete-all-steps-button").bind('click', function(){
 			var table = $("#test-steps-table").squashTable();		
 			var ids = table.getSelectedIds();
 			
@@ -456,7 +456,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			}
 			else{
 				oneShotConfirm(language.deleteTitle, 
-							   language.deleteConfirm, 
+							   language.deleteMultipleConfirm, 
 							   language.oklabel,
 							   language.cancellabel
 				).done(function(){
@@ -464,7 +464,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 						url : urls.multiDelete+"/"+ids.join(','),
 						type : 'DELETE',
 						dataType : "json"
-					});
+					}).success(refresh);
 				});
 			}						
 		});
@@ -553,9 +553,11 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		
 		//begin
 		
-		var columns = [1,2];
+		var cellSelector = function(row){
+			return $(row).find('td.rich-edit-action').add('td.rich-edit-result', row).get();
+		}
 		
-		collapser = new TableCollapser(table, columns); 
+		collapser = new TableCollapser(table, cellSelector); 
 		collapser.onClose.addHandler(collapser.collapseCloseHandle);
 		collapser.onOpen.addHandler(collapser.collapseOpenHandle);	
 		

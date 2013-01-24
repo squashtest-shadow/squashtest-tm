@@ -92,8 +92,10 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 	public void visit(CallTestStep visited) {
 		TestCase called = visited.getCalledTestCase();
 
-		String action = messageSource.getMessage("test-case.call-step.action.template",
-				new Object[] { called.getName() }, locale);
+		String action = "<span>" +
+						messageSource.getMessage("test-case.call-step.action.template",	new Object[] { called.getName() }, locale) + 
+						"</span>";
+						   
 
 		Map<Object, Object> item = new HashMap<Object, Object>(9);
 		

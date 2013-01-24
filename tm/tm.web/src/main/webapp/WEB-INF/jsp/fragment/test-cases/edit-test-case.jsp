@@ -538,14 +538,6 @@
 		var evt = new EventUpdateReference(identity, newRef);
 		squashtm.contextualContent.fire(null, evt);		
 	};
-	
-	
-	function beforeLoadTab(event, ui){
-		if (document.getElementById("test-steps-tabs-panel") !== null){
-			event.preventDefault();
-			return false;
-		}
-	};
 
 	
 	$(function(){
@@ -619,5 +611,5 @@
 <%-- /Test Automation code  --%>
 
 
-<comp:fragment-tabs beforeLoad="beforeLoadTab" />
+<comp:fragment-tabs cacheRequests="true" />
 

@@ -34,6 +34,20 @@ define(["jquery"], function(){
 			this.eventHandlers[i](args);
 		}
 	};
+	
+	
+	function makeDefaultCellSelector(columnsP){
+		return function(row){
+			var columns = columnsP;
+			var length = columns.length;
+			var result = [];
+			var tds = $(row).children('td');
+			for (var i=0;i<length;i++){
+				result.push(tds[columns[i]]);
+			}
+			return result;
+		}
+	}
 
 
 	return function(dataTableP, columnsP) {
@@ -41,6 +55,15 @@ define(["jquery"], function(){
 		var self = this;
 		
 		var dataTable = dataTableP;
+		
+		var cellSelector;
+		if ($.isFunction(columnsP)){
+			cellSelector = columnsP;
+		}
+		else{
+			cellSelector = makeDefaultCellSelector(columnsP);
+		}
+		
 		var columns = columnsP;
 		this.isOpen = true;
 		var rows = [];
@@ -51,11 +74,12 @@ define(["jquery"], function(){
 		var setCellsData = $.proxy(function(){
 			var rows = dataTableP.children('tbody').children('tr');
 			
-			for (var i = 0; i < columns.length; i++) {
-				for (var j = 0; j < rows.length; j++) {
-					this.collapsibleCells.push($(rows[j]).children('td')[columns[i]]);
-				}
+			
+			for (var j = 0; j < rows.length; j++) {
+				var cells = cellSelector(rows[j]);
+				this.collapsibleCells.push.apply(this.collapsibleCells, cells);
 			}
+			
 			
 			for (var k = 0; k < this.collapsibleCells.length; k++) {
 				var cell = $(this.collapsibleCells[k]);

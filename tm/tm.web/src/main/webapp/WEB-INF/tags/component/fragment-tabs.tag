@@ -23,16 +23,32 @@
 <%@ tag description="activation of jquery-ui tabs"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%@ attribute name="beforeLoad" required="false" description="if set, will add a beforeLoad hook to the configuration of the tabs." %>
+<%@ attribute name="beforeLoad" required="false" description="javascript function identifier. if set, will add a beforeLoad hook to the configuration of the tabs." %>
+<%@ attribute name="cacheRequests" type="java.lang.Boolean"  required="false"  description="boolean. if set, will cache the ajax calls to the server to prevent multiple reload. Note that unfortunately it will void any 'beforeLoad' attribute. Default is false." %>
 
 <script type="text/javascript" src="<c:url value='/scripts/squash/squashtm.fragmenttabs.js' />"></script>
 <script type="text/javascript">
 	$(function() {
-		require(["jquery.squash.fragmenttabs"], function(Frag){
+		require(["jquery","jquery.squash.fragmenttabs"], function($,Frag){
 			var init = {};
 			
 			<c:if test="${not empty beforeLoad}">
 			init.beforeLoad = ${beforeLoad};
+			</c:if>
+			<c:if test="${not empty cacheRequests and cacheRequests}">
+			init.beforeLoad = 	function (event, ui){
+				var contentCache = $(this).data('content-cache') || [];
+				var targetUrl = ui.ajaxSettings.url;
+				
+				if ($.inArray(targetUrl, contentCache) !== -1){
+					event.preventDefault();
+					return false;
+				}
+				else{
+					contentCache.push(targetUrl);
+					$(this).data('content-cache', contentCache);
+				}
+			};
 			</c:if>
 			
 			Frag.init(init);
