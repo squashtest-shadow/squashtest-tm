@@ -21,6 +21,7 @@
 package org.squashtest.csp.tm.internal.service
 
 import org.squashtest.tm.domain.attachment.Attachment
+import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution
@@ -30,6 +31,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseStatus
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.service.internal.campaign.CustomIterationModificationServiceImpl;
 import org.squashtest.tm.service.internal.execution.ExecutionModificationServiceImpl;
@@ -41,6 +43,7 @@ import org.squashtest.tm.service.internal.repository.ItemTestPlanDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
+import org.squashtest.csp.tm.internal.service.denormalizedField.PrivateDenormalizedFieldValueService
 
 import spock.lang.Specification
 
@@ -60,7 +63,8 @@ public class ExecutionModificationServiceTest extends Specification {
 	TestCaseDao testCaseDao = Mock()
 
 	TestCaseCyclicCallChecker checker = Mock()
-
+	PrivateDenormalizedFieldValueService denormalizedFieldValueService = Mock()
+	
 	def setup(){
 		service.executionDao = execDao
 		service.executionStepDao = execStepDao
@@ -74,6 +78,7 @@ public class ExecutionModificationServiceTest extends Specification {
 		iterService.executionDao = execDao
 
 		iterService.testCaseCyclicCallChecker = checker
+		iterService.denormalizedFieldValueService = denormalizedFieldValueService
 	}
 
 	def "should create an execution with all steps"(){
@@ -83,6 +88,8 @@ public class ExecutionModificationServiceTest extends Specification {
 		ActionTestStep ts3 = new ActionTestStep(action:"action 3")
 		ActionTestStep ts4 = new ActionTestStep(action:"action 4")
 		ActionTestStep ts5 = new ActionTestStep(action:"action 5")
+		
+		Project project = new Project() 
 
 		TestCase testCase = Mock()
 		testCase.getSteps() >> [ts1, ts2, ts3, ts4, ts5]
@@ -95,6 +102,12 @@ public class ExecutionModificationServiceTest extends Specification {
 		testCase.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
 		testCase.getDescription() >> ""
 		testCase.getReference() >> ""
+		testCase.getProject() >> project
+		ts1.setTestCase(testCase)
+		ts2.setTestCase(testCase)
+		ts3.setTestCase(testCase)
+		ts4.setTestCase(testCase)
+		ts5.setTestCase(testCase)
 		
 		Iteration iteration = new Iteration()
 		IterationTestPlanItem testPlan = new IterationTestPlanItem(id:1, iteration : iteration)
@@ -120,6 +133,8 @@ public class ExecutionModificationServiceTest extends Specification {
 			"action 4",
 			"action 5"
 		]
+		
+		6* denormalizedFieldValueService.createAllDenormalizedFieldValues(_, _)
 	}
 
 

@@ -27,6 +27,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -42,9 +44,11 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.exception.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.csp.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
@@ -54,6 +58,7 @@ import org.squashtest.tm.service.internal.repository.ItemTestPlanDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
+import org.squashtest.csp.tm.internal.service.denormalizedField.PrivateDenormalizedFieldValueService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -64,7 +69,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 @Transactional
 public class CustomIterationModificationServiceImpl implements CustomIterationModificationService,
 		IterationTestPlanManager {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomIterationModificationServiceImpl.class);
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 	private static final String PERMISSION_EXECUTE_ITERATION = "hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'EXECUTE') ";
 	@Inject
@@ -75,32 +80,25 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private TestSuiteDao suiteDao;
 	@Inject
 	private ItemTestPlanDao testPlanDao;
-
 	@Inject
 	private AutomatedSuiteDao autoSuiteDao;
-
 	@Inject
 	private ExecutionDao executionDao;
-
 	@Inject
 	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
-
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
-
 	@Inject
 	private PermissionEvaluationService permissionService;
-
 	@Inject
 	private PrivateCustomFieldValueService customFieldValueService;
-
+	@Inject
+	private PrivateDenormalizedFieldValueService denormalizedFieldValueService;
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToIterationStrategy")
 	private PasteStrategy<Iteration, TestSuite> pasteToIterationStrategy;
-
 	@Inject
 	private ProjectsPermissionFinder projectsPermissionFinder;
-
 	@Inject
 	private UserAccountService userService;
 
@@ -330,12 +328,32 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 
 		Execution execution = item.createExecution(testCaseCyclicCallChecker);
-		// if we dont persist before we add, add will trigger an update of item.testPlan which fail because execution
+		// if we don't persist before we add, add will trigger an update of item.testPlan which fail because execution
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
 		executionDao.persist(execution);
 		item.addExecution(execution);
+		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
 
 		return execution;
+	}
+
+	private void createDenormalizedFieldsForExecutionAndExecutionSteps(Execution execution) {
+		LOGGER.debug("Create denormalized fields for Execution {}", execution.getId());
+		TestCase sourceTC = execution.getReferencedTestCase();
+		denormalizedFieldValueService.createAllDenormalizedFieldValues(sourceTC, execution);
+		for (ExecutionStep step : execution.getSteps()) {
+			TestStep sourceStep = step.getReferencedTestStep();
+			if (stepIsFromSameProjectAsTC(sourceTC, sourceStep)) {
+				denormalizedFieldValueService.createAllDenormalizedFieldValues(sourceStep, step);
+			} else {
+				denormalizedFieldValueService.createAllDenormalizedFieldValues(sourceStep, step, sourceTC.getProject());
+			}
+		}
+
+	}
+
+	private boolean stepIsFromSameProjectAsTC(TestCase sourceTC, TestStep sourceStep) {
+		return sourceStep.getProject().getId() == sourceTC.getProject().getId();
 	}
 
 	public Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
@@ -344,6 +362,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		executionDao.persist(execution);
 		item.addExecution(execution);
+		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
 
 		return execution;
 

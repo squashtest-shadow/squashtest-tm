@@ -22,6 +22,7 @@
 package org.squashtest.csp.tm.internal.service
 
 import org.squashtest.tm.domain.attachment.Attachment
+import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
 import org.squashtest.tm.domain.campaign.Iteration
@@ -41,6 +42,7 @@ import org.squashtest.tm.service.internal.repository.ItemTestPlanDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
+import org.squashtest.csp.tm.internal.service.denormalizedField.PrivateDenormalizedFieldValueService
 
 import spock.lang.Specification
 
@@ -57,6 +59,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 	TestCaseCyclicCallChecker cyclicCallChecker = Mock()
 	
 	PrivateCustomFieldValueService customFieldService = Mock()
+	PrivateDenormalizedFieldValueService denormalizedFieldValueService = Mock();
 
 	def setup() {
 		service.executionDao = execDao
@@ -65,6 +68,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		service.iterationDao = iterationDao
 		service.testCaseCyclicCallChecker = cyclicCallChecker
 		service.customFieldValueService = customFieldService
+		service.denormalizedFieldValueService = denormalizedFieldValueService
 	}
 
 	def "should add iteration to campaign"() {

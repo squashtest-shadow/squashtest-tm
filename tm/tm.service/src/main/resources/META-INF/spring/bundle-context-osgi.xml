@@ -262,6 +262,9 @@
     </osgi:interfaces>
   </osgi:service>
 
+	<osgi:service ref="squashtest.tm.service.DenormalizedFieldValueFinder"
+		interface="org.squashtest.csp.tm.service.denormalizedfield.DenormalizedFieldValueFinder" />
+
 
   <!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
   <!-- Looks up properties set from OSGi Config Admin Compendium -->

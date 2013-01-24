@@ -53,13 +53,14 @@ abstract class DbunitServiceSpecification extends Specification {
 	
 	/*-------------------------------------------Private stuff-----------------------------------*/
 	protected boolean found(String tableName, String idColumnName, Long id){
-		String sql = "select count(*) from "+tableName+" where "+idColumnName+" = :id";
-		Query query = getSession().createSQLQuery(sql);
-		query.setParameter("id", id);
+		String sql = "select count(*) from "+tableName+" where "+idColumnName+" = :id"
+		Query query = getSession().createSQLQuery(sql)
+		query.setParameter("id", id)
 
-		def result = query.uniqueResult();
+		def result = query.uniqueResult()
 		return (result != 0)
 	}
+	
 
 	protected boolean found(Class<?> entityClass, Long id){
 		boolean found = false

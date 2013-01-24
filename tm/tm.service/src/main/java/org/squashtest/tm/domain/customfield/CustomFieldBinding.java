@@ -87,6 +87,12 @@ public class CustomFieldBinding {
 	public Set<RenderingLocation> getRenderingLocations() {
 		return renderingLocations;
 	}
+	
+	public Set<RenderingLocation> copyRenderingLocations(){
+		Set<RenderingLocation> copy = new HashSet<RenderingLocation>(5);
+		copy.addAll(renderingLocations);
+		return copy;
+	}
 
 	public CustomField getCustomField() {
 		return customField;
