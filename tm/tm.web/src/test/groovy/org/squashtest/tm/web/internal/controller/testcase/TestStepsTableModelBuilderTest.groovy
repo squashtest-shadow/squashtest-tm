@@ -88,7 +88,7 @@ class TestStepsTableModelBuilderTest extends Specification {
 			"step-index" : stepIndex,
 			"nb-attachments" : null,
 			"attach-list-id" : null,
-			"step-action" : "Call : callee",
+			"step-action" : "<span>Call : callee</span>",
 			"step-result" : null,
 			"step-type" : "call",
 			"called-tc-id" : callee.id,

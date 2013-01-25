@@ -245,7 +245,7 @@ class TestCaseTest extends Specification {
 		"importance"    | TestCaseImportance.HIGH
 		"status"		| TestCaseStatus.APPROVED
 		"nature"		| TestCaseNature.ATDD
-		"type"          | TestCaseType.END_TO_END
+		"type"          | TestCaseType.END_TO_END_TESTING
 		"reference"     | "barfoo"
 	}
 

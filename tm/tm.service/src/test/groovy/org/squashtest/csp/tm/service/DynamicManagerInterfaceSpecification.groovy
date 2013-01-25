@@ -62,7 +62,7 @@ abstract class DynamicManagerInterfaceSpecification extends Specification {
 		entityType.newInstance()
 	}
 
-	@Unroll
+	@Unroll("should not fail to modify entity using #modifier")
 	def "should not fail to modify entity"() {
 		given:
 		def service = factory.object

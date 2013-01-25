@@ -22,10 +22,12 @@
 package org.squashtest.csp.tm.internal.service;
 
 import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
@@ -46,7 +48,9 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 		service.testCaseLibraryDao = testCaseLibraryDao
 		service.testCaseFolderDao = testCaseFolderDao
 		service.testCaseDao = testCaseDao
-		service.permissionService = permissionService;
+		use (ReflectionCategory) {
+			AbstractLibraryNavigationService.set(field: "permissionService", of: service, to: permissionService)
+		}
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 	}	
 	

@@ -50,7 +50,7 @@ class DatabaseBackedObjectIdentityGeneratorStrategyTest  extends Specification {
 	def "should fetch the entity and delegate object identity generation"() {
 		given:
 		Object entity = Mock()
-		session.get(Object, 10L) >> entity
+		session.load(Object, 10L) >> entity
 		
 		and:
 		ObjectIdentity expectedOid = Mock()

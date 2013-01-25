@@ -57,13 +57,13 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 		service.campaignLibraryDao = campaignLibraryDao
 		service.campaignFolderDao = campaignFolderDao
 		service.campaignDao = campaignDao
-		service.permissionService = permissionService
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 		service.iterationModificationService = iterationModificationService
 		service.iterationDao = iterationDao
 		service.iterationTestPlanManager = iterationTestPlanManager
 
 		use (ReflectionCategory) {
+			AbstractLibraryNavigationService.set(field: "permissionService", of: service, to: permissionService)
 			AbstractLibraryNavigationService.set(field: "customFieldValuesService", of: service, to: customFieldService)
 		}
 		

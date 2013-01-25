@@ -20,7 +20,9 @@
  */
 package org.squashtest.csp.tm.service;
 
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.project.ProjectManagerService;
 
 import spock.lang.Shared
@@ -29,9 +31,9 @@ import spock.lang.Shared
  * @author mpagnon
  *
  */
-class ProjectModificationDynamicServiceTest extends DynamicManagerInterfaceSpecification {
+class GenericProjectDynamicManagerTest extends DynamicManagerInterfaceSpecification {
 	@Shared Class entityType = Project
-	@Shared Class managerType = ProjectManagerService
+	@Shared Class managerType = GenericProjectManagerService
 
 	@Shared List changeServiceCalls = [
 		{
@@ -39,6 +41,15 @@ class ProjectModificationDynamicServiceTest extends DynamicManagerInterfaceSpeci
 		},
 		{
 			it.changeLabel(10L, "bar")
+		},
+		{
+			it.changeName(10L, "bar")
+		},
+		{
+			it.changeActive(10L, true)
+		},
+		{
+			it.changeTestAutomationEnabled(10L, true)
 		}
-	]
+		]
 }

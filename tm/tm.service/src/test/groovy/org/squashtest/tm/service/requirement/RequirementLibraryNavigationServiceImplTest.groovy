@@ -58,11 +58,11 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		service.requirementLibraryDao = requirementLibraryDao
 		service.requirementFolderDao = requirementFolderDao
 		service.requirementDao = requirementDao
-		service.permissionService = permissionService;
 		service.projectFilterModificationService = projectFilterModificationService
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 		
 		use (ReflectionCategory) {
+			AbstractLibraryNavigationService.set(field: "permissionService", of: service, to: permissionService)
 			AbstractLibraryNavigationService.set(field: "customFieldValuesService", of: service, to: customFieldValueManager)
 		}
 		
