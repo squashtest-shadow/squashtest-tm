@@ -36,7 +36,6 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.AsyncTaskExecutor;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -99,9 +98,7 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	@Inject
 	private TestAutomationCallbackService callbackService;
 	
-
 	private TestAutomationTaskExecutor executor ;
-
 
 	@Inject
 	public void setAsyncTaskExecutor(AsyncTaskExecutor executor){

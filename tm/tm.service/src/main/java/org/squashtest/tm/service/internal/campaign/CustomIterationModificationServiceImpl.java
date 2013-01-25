@@ -28,7 +28,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
