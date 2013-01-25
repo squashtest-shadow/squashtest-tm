@@ -20,8 +20,9 @@
  */
 package org.squashtest.csp.tm.internal.service
 
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.*
+import static RequirementCriticality.*
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementVersion

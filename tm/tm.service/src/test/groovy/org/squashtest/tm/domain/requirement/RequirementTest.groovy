@@ -18,8 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.requirement
+package org.squashtest.tm.domain.requirement
 
+import static org.squashtest.tm.domain.requirement.RequirementStatus.*
 
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.project.Project

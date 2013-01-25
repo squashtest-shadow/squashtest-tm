@@ -18,9 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service.importer
+package org.squashtest.tm.service.internal.importer
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.squashtest.tm.domain.testcase.TestCaseImportance

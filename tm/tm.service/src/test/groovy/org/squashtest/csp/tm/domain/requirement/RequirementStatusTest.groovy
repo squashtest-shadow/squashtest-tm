@@ -20,10 +20,10 @@
  */
 package org.squashtest.csp.tm.domain.requirement
 
-import org.apache.poi.hssf.record.formula.functions.T
-
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import static org.squashtest.tm.domain.requirement.RequirementStatus.*
 
 class RequirementStatusTest extends Specification {
 

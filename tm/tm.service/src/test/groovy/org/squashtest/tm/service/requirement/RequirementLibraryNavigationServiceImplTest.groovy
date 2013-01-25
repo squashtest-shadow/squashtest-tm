@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service
+package org.squashtest.tm.service.requirement
 
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto
@@ -59,7 +59,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		service.permissionService = permissionService;
 		service.projectFilterModificationService = projectFilterModificationService
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
-		service.customFieldValueService = customFieldValueManager
+		service.customFieldValueManagerService = customFieldValueManager
 	}
 
 	def "should add folder to library and persist the folder"() {
@@ -124,7 +124,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 	}
 
 
-	def "should create a Requirement in a Folder"(){
+	def "should create a Requirement in a Folder"() {
 
 		given :
 		RequirementFolder folder = Mock(RequirementFolder)

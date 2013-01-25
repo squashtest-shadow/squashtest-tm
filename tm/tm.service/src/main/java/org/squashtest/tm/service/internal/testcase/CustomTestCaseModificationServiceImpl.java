@@ -73,7 +73,7 @@ import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 @Service("CustomTestCaseModificationService")
 public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModificationService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);
-	private static final String WRITE_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.csp.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')";
+	private static final String WRITE_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')";
 
 	@Inject
 	private TestCaseDao testCaseDao;

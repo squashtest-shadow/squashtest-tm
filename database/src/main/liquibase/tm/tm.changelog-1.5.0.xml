@@ -100,6 +100,13 @@
   				CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary'
   			</where>
   		</update>
+  		
+  		<update tableName="ACL_CLASS">
+  			<column name="CLASSNAME" value="org.squashtest.tm.domain.project.ProjectTemplate" />
+  			<where>
+  				CLASSNAME = 'org.squashtest.csp.tm.domain.project.ProjectTemplate'
+  			</where>
+  		</update>
   	</changeSet>
 </databaseChangeLog>
  

@@ -18,9 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.requirement
+package org.squashtest.tm.domain.requirement
 
-import org.apache.poi.hssf.record.formula.functions.T
+import static RequirementStatus.*
+
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.attachment.Attachment

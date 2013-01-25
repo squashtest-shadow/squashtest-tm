@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service.importer
+package org.squashtest.tm.service.internal.importer
 
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
@@ -396,7 +396,7 @@ class TestCaseLibraryMergerTest extends Specification {
 			transF.getName() >> "node 12"
 			
 		and :
-			def merger = new FolderMerger()
+			def merger = new TestCaseLibraryMerger.FolderMerger()
 			merger.context=context
 			merger.destLibrary=parentLib
 			merger.setTransientFolder transF
@@ -431,7 +431,7 @@ class TestCaseLibraryMergerTest extends Specification {
 			transF.getName() >> "node 11"
 			
 		and :
-			def merger = new FolderMerger()
+			def merger = new TestCaseLibraryMerger.FolderMerger()
 			merger.context=context
 			merger.destLibrary=parentLib
 			merger.toMerge = transF
@@ -471,7 +471,7 @@ class TestCaseLibraryMergerTest extends Specification {
 			transF.getName() >> "node 5"
 			
 		and :
-			def merger = new FolderMerger()
+			def merger = new TestCaseLibraryMerger.FolderMerger()
 			merger.context=context
 			merger.destLibrary=parentLib
 			merger.toMerge = transF
@@ -508,7 +508,7 @@ class TestCaseLibraryMergerTest extends Specification {
 			transF.getName() >> "node 5"
 			
 		and :
-			def merger = new FolderMerger()
+			def merger = new TestCaseLibraryMerger.FolderMerger()
 			merger.context=context
 			merger.destLibrary=parentLib
 			merger.toMerge = transF
@@ -563,12 +563,12 @@ class TestCaseLibraryMergerTest extends Specification {
 			def context = new TestCaseLibraryMerger()
 			def parentLib = Mock(TestCaseLibrary)
 			
-			def merger = new NodeMerger()
+			def merger = new TestCaseLibraryMerger.NodeMerger()
 			merger.context=context;
 			merger.destLibrary = parentLib
 			
 		and :
-			def fMerger = Mock(FolderMerger)
+			def fMerger = Mock(TestCaseLibraryMerger.FolderMerger)
 			merger.fMerger=fMerger
 			
 		and :

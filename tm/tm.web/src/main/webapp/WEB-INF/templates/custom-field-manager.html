@@ -201,7 +201,7 @@
           <label class="control-label" for="inputType" th:text="#{label.inputType}">Type</label>
           <div class="controls">
             <select name="inputType" th:remove="all-but-first">
-              <option th:each="type: ${T(org.squashtest.csp.tm.domain.customfield.InputType).values()}"
+              <option th:each="type: ${T(org.squashtest.tm.domain.customfield.InputType).values()}"
                 value="PLAIN_TEXT" th:value="${type.name()}" th:text="#{${type.i18nKey}}">Plain Text</option>
               <option value="CHECKBOX">Checkbox</option>
               <option value="DROPDOWN_LIST">Dropdown list</option>

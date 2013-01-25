@@ -18,11 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service
+package org.squashtest.tm.service.internal.user
 
 import static org.junit.Assert.*
 
-import org.springframework.security.core.userdetails.User
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.repository.UsersGroupDao;

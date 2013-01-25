@@ -53,7 +53,7 @@ public class RequirementVersionNotLinkableException extends VerifiedRequirementE
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.squashtest.csp.tm.domain.VerifiedRequirementException#getShortName()
+	 * @see org.squashtest.tm.domain.VerifiedRequirementException#getShortName()
 	 */
 	@Override
 	public String getShortName() {

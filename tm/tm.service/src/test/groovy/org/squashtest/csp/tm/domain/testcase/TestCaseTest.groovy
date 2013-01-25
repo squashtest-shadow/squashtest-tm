@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.domain.testcase
 
+import static org.squashtest.tm.domain.testcase.TestCaseType.*
+
 import org.apache.commons.lang.NullArgumentException
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory

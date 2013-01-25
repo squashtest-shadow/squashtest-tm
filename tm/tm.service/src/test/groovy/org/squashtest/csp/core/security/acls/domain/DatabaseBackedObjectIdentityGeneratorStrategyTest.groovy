@@ -20,8 +20,6 @@
  */
 package org.squashtest.csp.core.security.acls.domain;
 
-import java.rmi.server.ObjID;
-
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.ietf.jgss.Oid;

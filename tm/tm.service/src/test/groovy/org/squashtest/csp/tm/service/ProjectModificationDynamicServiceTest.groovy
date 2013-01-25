@@ -20,6 +20,9 @@
  */
 package org.squashtest.csp.tm.service;
 
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.service.project.ProjectManagerService;
+
 import spock.lang.Shared
 
 /**

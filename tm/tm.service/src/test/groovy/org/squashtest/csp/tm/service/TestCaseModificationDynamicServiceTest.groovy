@@ -20,7 +20,8 @@
  */
 package org.squashtest.csp.tm.service;
 
-import org.apache.poi.hssf.record.formula.functions.T
+
+
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
 import org.squashtest.tm.domain.testcase.TestCaseImportance
@@ -38,8 +39,6 @@ class TestCaseModificationDynamicServiceTest extends DynamicManagerInterfaceSpec
 
 	@Shared List changeServiceCalls = [{
 			it.changeDescription(10L, "foo")
-		}, {
-			it.changeExecutionMode(10L, TestCaseExecutionMode.MANUAL)
 		}, {
 			it.changeImportance(10L, TestCaseImportance.HIGH)
 		}, {

@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.service
 
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 
 import spock.lang.Shared

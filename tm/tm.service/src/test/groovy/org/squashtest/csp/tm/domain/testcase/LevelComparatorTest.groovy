@@ -20,7 +20,9 @@
  */
 package org.squashtest.csp.tm.domain.testcase;
 
-import org.apache.poi.hssf.record.formula.functions.T
+
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.*
+
 import org.squashtest.tm.domain.LevelComparator
 
 import spock.lang.Specification

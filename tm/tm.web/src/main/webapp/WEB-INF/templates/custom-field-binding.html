@@ -55,32 +55,32 @@
 
 <div id="requirements-binding-manager" 
 	 th:include="custom-field-binding :: cuf-unit-binder" 
-	 th:with="HTMLID='requirements',bindings=${requirementBindings},bindableEntity=${T(org.squashtest.csp.tm.domain.customfield.BindableEntity).REQUIREMENT_VERSION}">
+	 th:with="HTMLID='requirements',bindings=${requirementBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).REQUIREMENT_VERSION}">
 </div>
 
 <div id="test-cases-binding-manager" 
      th:include="custom-field-binding :: cuf-unit-binder" 
-     th:with="HTMLID='test-cases',bindings=${testCaseBindings},bindableEntity=${T(org.squashtest.csp.tm.domain.customfield.BindableEntity).TEST_CASE}">
+     th:with="HTMLID='test-cases',bindings=${testCaseBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_CASE}">
 </div>
 
 <div id="test-steps-binding-manager" 
      th:include="custom-field-binding :: cuf-unit-binder" 
-     th:with="HTMLID='test-steps',bindings=${testStepBindings},bindableEntity=${T(org.squashtest.csp.tm.domain.customfield.BindableEntity).TEST_STEP}">
+     th:with="HTMLID='test-steps',bindings=${testStepBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_STEP}">
 </div>
 
 <div id="campaigns-binding-manager" 
 	 th:include="custom-field-binding :: cuf-unit-binder" 
-	 th:with="HTMLID='campaigns',bindings=${campaignBindings},bindableEntity=${T(org.squashtest.csp.tm.domain.customfield.BindableEntity).CAMPAIGN}">
+	 th:with="HTMLID='campaigns',bindings=${campaignBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).CAMPAIGN}">
 </div>
 
 <div id="iterations-binding-manager" 
 	 th:include="custom-field-binding :: cuf-unit-binder" 
-	 th:with="HTMLID='iterations',bindings=${iterationBindings},bindableEntity=${T(org.squashtest.csp.tm.domain.customfield.BindableEntity).ITERATION}">
+	 th:with="HTMLID='iterations',bindings=${iterationBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).ITERATION}">
 </div>
 
 <div id="test-suites-binding-manager" 
 	 th:include="custom-field-binding :: cuf-unit-binder" 
-	 th:with="HTMLID='test-suites',bindings=${testSuiteBindings},bindableEntity=${T(org.squashtest.csp.tm.domain.customfield.BindableEntity).TEST_SUITE}">
+	 th:with="HTMLID='test-suites',bindings=${testSuiteBindings},bindableEntity=${T(org.squashtest.tm.domain.customfield.BindableEntity).TEST_SUITE}">
 </div>
 
 

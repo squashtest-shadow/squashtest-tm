@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.tm.domain.execution;
 
-
+import static org.squashtest.tm.domain.execution.ExecutionStatus.*
 
 import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.execution.ExecutionStatusReport
@@ -83,8 +83,8 @@ class ExecutionStatusTest extends Specification {
 		SUCCESS 	| "execution.execution-status.SUCCESS"
 		RUNNING 	| "execution.execution-status.RUNNING"
 		READY   	| "execution.execution-status.READY"
-		ERROR	| "execution.execution-status.ERROR"
-		WARNING	| "execution.execution-status.WARNING"
+		ERROR	    | "execution.execution-status.ERROR"
+		WARNING	    | "execution.execution-status.WARNING"
 	}
 	
 	def "should compute a new status (1)"(){

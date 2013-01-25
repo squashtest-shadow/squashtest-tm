@@ -19,9 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.internal.service.importer
+package org.squashtest.tm.service.internal.importer
 
-import org.apache.poi.hssf.record.formula.functions.T
+import static org.squashtest.tm.domain.requirement.RequirementStatus.*
+
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.service.internal.importer.PseudoRequirement
