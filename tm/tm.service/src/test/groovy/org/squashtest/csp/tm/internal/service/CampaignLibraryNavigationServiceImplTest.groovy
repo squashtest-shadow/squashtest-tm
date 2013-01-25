@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service
 
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.CampaignLibrary
@@ -29,6 +30,7 @@ import org.squashtest.tm.service.campaign.IterationModificationService
 import org.squashtest.tm.service.internal.campaign.CampaignLibraryNavigationServiceImpl
 import org.squashtest.tm.service.internal.campaign.IterationTestPlanManager
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
+import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.repository.CampaignDao
 import org.squashtest.tm.service.internal.repository.CampaignFolderDao
 import org.squashtest.tm.service.internal.repository.CampaignLibraryDao
@@ -60,7 +62,13 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 		service.iterationModificationService = iterationModificationService
 		service.iterationDao = iterationDao
 		service.iterationTestPlanManager = iterationTestPlanManager
-		service.setCustomFieldValueManagerService customFieldService
+
+		use (ReflectionCategory) {
+			AbstractLibraryNavigationService.set(field: "customFieldValuesService", of: service, to: customFieldService)
+		}
+		
+		customFieldService.findAllCustomFieldValues(_) >> []
+		customFieldService.findAllCustomFieldValues(_, _) >> []
 	}
 
 

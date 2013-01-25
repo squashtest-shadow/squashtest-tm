@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.security.acls.domain;
+package org.squashtest.tm.service.security.acls.domain;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
@@ -59,7 +59,7 @@ class DatabaseBackedObjectIdentityGeneratorStrategyTest  extends Specification {
 		def oid = objectIdentityGenerator.createObjectIdentity(10L, "java.lang.Object")
 		
 		then:
-		1 * objectIdentityRetrievalStrategy.getObjectIdentity(entity) >> expectedOid 		
+		1 * objectIdentityRetrievalStrategy.getObjectIdentity(entity) >> expectedOid
 		oid == expectedOid
 	}
 }

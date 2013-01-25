@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.requirement
 
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto
 import org.squashtest.tm.domain.requirement.Requirement
@@ -27,6 +28,7 @@ import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
+import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao
 import org.squashtest.tm.service.internal.repository.RequirementLibraryDao
@@ -59,7 +61,13 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		service.permissionService = permissionService;
 		service.projectFilterModificationService = projectFilterModificationService
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
-		service.customFieldValueManagerService = customFieldValueManager
+		
+		use (ReflectionCategory) {
+			AbstractLibraryNavigationService.set(field: "customFieldValuesService", of: service, to: customFieldValueManager)
+		}
+		
+		customFieldValueManager.findAllCustomFieldValues(_) >> []
+		customFieldValueManager.findAllCustomFieldValues(_, _) >> []
 	}
 
 	def "should add folder to library and persist the folder"() {

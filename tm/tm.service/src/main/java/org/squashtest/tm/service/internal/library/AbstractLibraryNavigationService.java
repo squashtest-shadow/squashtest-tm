@@ -121,17 +121,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	protected abstract PasteStrategy<LIBRARY, NODE> getPasteToLibraryStrategy();
 	
 	@Inject
-	protected PrivateCustomFieldValueService customFieldValuesService;
-	
-	//never used really, only for groovy
-	void setCustomFieldValueManagerService(PrivateCustomFieldValueService service){
-		this.customFieldValuesService = service;
-	}
-	
-	
-	public void setPermissionService(PermissionEvaluationService permissionService) {
-		this.permissionService = permissionService;
-	}
+	private PrivateCustomFieldValueService customFieldValuesService;
 
 	public AbstractLibraryNavigationService() {
 		super();
