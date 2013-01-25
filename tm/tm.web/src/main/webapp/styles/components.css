@@ -712,3 +712,25 @@ predefined for future evolutions :
 	font-weight: bold;
 	padding-top:1em;
 }
+/*****************************************
+ * /step denormalized fields
+ ****************************************/
+#denormalized-fields .toggle-panel h3 {
+    background: none;
+    border-color: grey;
+    border-image: none;
+    border-radius: 0 0 0 0;
+    border-style: none none solid;
+    border-width: medium medium 1px;
+}
+
+
+#denormalized-fields .toggle-panel h3 a {
+    color: #555555;
+}
+
+#denormalized-fields-panel {
+    background: none;
+    border: medium none;
+    min-height: 0;
+}

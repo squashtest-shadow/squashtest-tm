@@ -37,6 +37,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
@@ -44,7 +45,10 @@ import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.csp.tm.domain.customfield.InputType;
 import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
-@NamedQuery(name = "DenormalizedFieldValue.deleteAllForEntity",  query = "delete DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType")
+@NamedQueries(value = {
+@NamedQuery(name = "DenormalizedFieldValue.deleteAllForEntity",  query = "delete DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType"),
+@NamedQuery(name = "DenormalizedFieldValue.findDenormalizedFieldValuesForEntity", query="from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType order by dfv.position")
+})
 @Entity
 public class DenormalizedFieldValue {
 
@@ -141,9 +145,11 @@ public class DenormalizedFieldValue {
 
 	/**
 	 * Will create a DenormalizedFieldValue with the value param. The position will be valorized with the given param. No rendering location is added.
-	 * 
-	 * @param remainingCufValue
+	 *  
+	 * @param customFieldValue
 	 * @param newBindingPosition
+	 * @param denormalizedFieldHolderId
+	 * @param denormalizedFieldHolderType
 	 */
 	public DenormalizedFieldValue(CustomFieldValue customFieldValue, int newBindingPosition,
 			Long denormalizedFieldHolderId, DenormalizedFieldHolderType denormalizedFieldHolderType) {

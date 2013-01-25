@@ -109,4 +109,9 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 		return null;
 	}
 
+	@Override
+	public List<DenormalizedFieldValue> findAllForEntity(DenormalizedFieldHolder denormalizedFieldHolder) {
+		return denormalizedFieldValueDao.findDenormalizedFieldValuesForEntity(denormalizedFieldHolder.getDenormalizedFieldHolderId(), denormalizedFieldHolder.getDenormalizedFieldHolderType());
+	}
+
 }

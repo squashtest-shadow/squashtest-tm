@@ -24,10 +24,10 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
@@ -305,9 +305,16 @@
 			</div>
 
 			<div id="execute-body" class="execute-fragment-body">
-
-
-
+				<c:if test="${not empty denormalizedFieldValues }">
+				<span id="denormalized-fields"><comp:toggle-panel id="denormalized-fields-panel" titleKey="title.step.fields" isContextual="true"
+					open="false">
+				<jsp:attribute name="body"> 
+						<div class="display-table">
+							<comp:denormalized-field-values-list denormalizedFieldValues="${ denormalizedFieldValues }" />
+						</div>
+					</jsp:attribute>
+				</comp:toggle-panel></span>
+				</c:if>
 				<comp:toggle-panel id="execution-action-panel"
 					titleKey="execute.panel.action.title" isContextual="true"
 					open="true">

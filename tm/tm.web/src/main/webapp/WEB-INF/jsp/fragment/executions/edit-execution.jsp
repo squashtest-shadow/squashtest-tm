@@ -190,6 +190,7 @@
 				<label class="display-table-cell" for="testcase-status"><f:message key="test-case.status.label" /></label>
 				<div id="testcase-status" class="display-table-cell"><comp:level-message level="${ execution.status }"/></div>
 			</div>
+			<comp:denormalized-field-values-list denormalizedFieldValues="${ denormalizedFieldValues }" />
 		</div>
 	</jsp:attribute>
 	</comp:toggle-panel>

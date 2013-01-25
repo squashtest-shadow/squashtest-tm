@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.execution;
 
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -34,10 +35,12 @@ import org.springframework.ui.Model;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.csp.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
 
 /**
  * Helper class for Controllers which need to show classic and optimized execution runners.
@@ -109,7 +112,8 @@ public class ExecutionRunnerControllerHelper {
 	private MessageSource messageSource;
 	
 	
-	
+	@Inject
+	private DenormalizedFieldValueFinder denormalizedFieldValueFinder;
 	// ************************** step model population methods *****************************
 	
 	public void populateStepAtIndexModel(long executionId, int stepIndex, Model model) {
@@ -135,13 +139,16 @@ public class ExecutionRunnerControllerHelper {
 		int total = execution.getSteps().size();
 		
 		Set<ExecutionStatus> statusSet = Collections.emptySet();
+		List<DenormalizedFieldValue> denormalizedFieldValues = Collections.emptyList();
 		if(executionStep != null){
 			stepOrder = executionStep.getExecutionStepOrder();
 			statusSet = executionStep.getLegalStatusSet();
+			denormalizedFieldValues = denormalizedFieldValueFinder.findAllForEntity(executionStep);
 		}
 
 		model.addAttribute("execution", execution);
 		model.addAttribute("executionStep", executionStep);
+		model.addAttribute("denormalizedFieldValues", denormalizedFieldValues);
 		model.addAttribute("totalSteps", total );
 		model.addAttribute("executionStatus", statusSet );
 		model.addAttribute("hasNextStep", stepOrder != (total - 1));	

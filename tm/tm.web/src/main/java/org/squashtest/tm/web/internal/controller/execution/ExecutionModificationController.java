@@ -47,6 +47,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.csp.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -68,6 +70,9 @@ public class ExecutionModificationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionModificationController.class);
 
 	private ExecutionModificationService executionModService;
+	
+	@Inject
+	private DenormalizedFieldValueFinder denormalizedFieldValueFinder;
 
 	@Inject
 	private MessageSource messageSource;
@@ -83,12 +88,13 @@ public class ExecutionModificationController {
 		int rank = executionModService.findExecutionRank(executionId);
 
 		LOGGER.trace("ExecutionModService : getting execution {}, rank {}", executionId, rank);
+		List<DenormalizedFieldValue> values = denormalizedFieldValueFinder.findAllForEntity(execution);
 
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-execution");
 
 		mav.addObject("execution", execution);
 		mav.addObject("executionRank", Integer.valueOf(rank + 1));
-
+		mav.addObject("denormalizedFieldValues", values);
 		return mav;
 
 	}
