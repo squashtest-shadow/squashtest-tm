@@ -39,6 +39,13 @@
 
   <!-- ====== BEAN VALIDATION ====== -->
   <bean id="javax.validation.ValidatorFactory" class="org.squashtest.tm.service.validation.ValidatorFactoryBean" factory-method="getInstance" />
+  
+   <!-- ====== SHARED THREAD POOL TASK EXECUTOR ====== -->
+   
+   <bean id="squashtest.tm.service.ThreadPoolTaskScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+      <property name="poolSize" value="10" />
+  </bean>
+  
 
   <!-- ====== SECURITY PLUMBING ====== -->
   <bean class="org.springframework.security.acls.AclPermissionEvaluator" id="squashtest.core.security.PermissionEvaluator">
@@ -310,6 +317,8 @@
     <property name="entityType" value="org.squashtest.tm.domain.customfield.CustomField" />
   </bean>
   
+
+   
    
 </beans>
 

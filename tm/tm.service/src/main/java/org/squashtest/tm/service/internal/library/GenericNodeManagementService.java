@@ -22,8 +22,6 @@ package org.squashtest.tm.service.internal.library;
 
 import javax.inject.Inject;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.library.Folder;

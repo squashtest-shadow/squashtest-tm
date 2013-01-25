@@ -91,6 +91,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	private UserDao userDao;
 
 	@Inject
+	@Qualifier("squashtest.core.security.ObjectIdentityRetrievalStrategy")
 	private ObjectIdentityRetrievalStrategy objIdRetrievalStrategy;
 
 	@Inject

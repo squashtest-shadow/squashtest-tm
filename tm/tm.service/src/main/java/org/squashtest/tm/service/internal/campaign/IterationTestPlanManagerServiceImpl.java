@@ -85,6 +85,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	private ProjectFilterModificationService projectFilterModificationService;
 
 	@Inject
+	@Qualifier("squashtest.core.security.ObjectIdentityRetrievalStrategy")
 	private ObjectIdentityRetrievalStrategy objIdRetrievalStrategy;
 
 	@Inject

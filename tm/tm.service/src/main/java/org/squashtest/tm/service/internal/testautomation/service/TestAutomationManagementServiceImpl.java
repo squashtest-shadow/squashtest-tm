@@ -99,11 +99,11 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	@Inject
 	private TestAutomationCallbackService callbackService;
 	
-	
-	@Inject
+
 	private TestAutomationTaskExecutor executor ;
 
 
+	@Inject
 	public void setAsyncTaskExecutor(AsyncTaskExecutor executor){
 		TestAutomationTaskExecutor taExecutor = new TestAutomationTaskExecutor(executor);
 		this.executor=taExecutor;

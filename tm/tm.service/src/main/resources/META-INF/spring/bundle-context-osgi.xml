@@ -39,16 +39,14 @@
 	<!-- ====== SERVICES EXPOSED BY THIS BUNDLE ====== -->
 
   <!-- =================== free access scheduled thread pool ======================= -->
-  <osgi:service id="core.executor.service">
+  <osgi:service id="core.executor.service" ref="squashtest.tm.service.ThreadPoolTaskScheduler">
     <osgi:interfaces>
        <value>org.springframework.scheduling.TaskScheduler</value>
        <value>org.springframework.core.task.TaskExecutor</value>
        <value>org.springframework.core.task.AsyncTaskExecutor</value>
        <value>org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler</value>
     </osgi:interfaces>
-    <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
-      <property name="poolSize" value="10" />
-    </bean>
+
   </osgi:service>
 
 	<!-- ========= BUGTRACKER SERVICES ============= -->
