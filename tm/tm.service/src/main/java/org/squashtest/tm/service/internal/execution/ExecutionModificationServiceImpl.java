@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.csp.tm.internal.repository.DenormalizedFieldValueDao;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -50,6 +51,9 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
+
+	@Inject
+	private DenormalizedFieldValueDao denormalizedFieldValueDao;
 
 	@Override
 	public Execution findAndInitExecution(Long executionId) {
@@ -115,6 +119,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	/**
 	 * @see org.squashtest.tm.service.execution.ExecutionFinder#findAllByTestCaseIdOrderByRunDate(long, org.squashtest.csp.core.infrastructure.collection.Paging)
+	 *      org.squashtest.csp.core.infrastructure.collection.Paging)
 	 */
 	@Override
 	public List<Execution> findAllByTestCaseIdOrderByRunDate(long testCaseId, Paging paging) {

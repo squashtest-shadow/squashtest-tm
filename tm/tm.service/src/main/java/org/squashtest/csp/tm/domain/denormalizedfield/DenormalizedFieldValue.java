@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.domain.denormalizedfield;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,9 +39,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.apache.tools.ant.util.DateUtils;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.csp.tm.domain.customfield.CustomField;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
@@ -47,11 +52,13 @@ import org.squashtest.csp.tm.domain.customfield.InputType;
 import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
 @NamedQueries(value = {
 @NamedQuery(name = "DenormalizedFieldValue.deleteAllForEntity",  query = "delete DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType"),
-@NamedQuery(name = "DenormalizedFieldValue.findDenormalizedFieldValuesForEntity", query="from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType order by dfv.position")
+@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntity", query="from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType order by dfv.position"),
+@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntityAndRenderingLocation", query="select dfv from DenormalizedFieldValue dfv join dfv.renderingLocations rl where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType and rl = :renderingLocation order by dfv.position")
 })
 @Entity
 public class DenormalizedFieldValue {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(DenormalizedFieldValue.class);
 	@Id
 	@GeneratedValue
 	@Column(name = "DFV_ID")
@@ -199,6 +206,23 @@ public class DenormalizedFieldValue {
 
 	public String getValue() {
 		return value;
+	}
+	
+	/**
+	 * Return the value as a Date or <code>null</code> if the input type is not Date-picker and if the parsing can't be done.
+	 * @return a {@link Date} or <code>null</code> in case of ParseException and wrong input-type
+	 */
+	public Date getValueAsDate() {
+		Date toReturn = null;
+		if(this.inputType == InputType.DATE_PICKER){ 
+			try {
+				toReturn = DateUtils.parseIso8601Date(value);
+			} catch (ParseException e) {
+				LOGGER.error(e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		return toReturn;
 	}
 
 	public Set<RenderingLocation> getRenderingLocations() {

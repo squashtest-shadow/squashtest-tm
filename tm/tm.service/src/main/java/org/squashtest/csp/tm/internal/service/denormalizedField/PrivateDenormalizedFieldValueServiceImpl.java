@@ -30,6 +30,7 @@ import org.squashtest.csp.tm.domain.customfield.BindableEntity;
 import org.squashtest.csp.tm.domain.customfield.BoundEntity;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
 import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
@@ -111,7 +112,14 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 
 	@Override
 	public List<DenormalizedFieldValue> findAllForEntity(DenormalizedFieldHolder denormalizedFieldHolder) {
-		return denormalizedFieldValueDao.findDenormalizedFieldValuesForEntity(denormalizedFieldHolder.getDenormalizedFieldHolderId(), denormalizedFieldHolder.getDenormalizedFieldHolderType());
+		return denormalizedFieldValueDao.findDFVForEntity(denormalizedFieldHolder.getDenormalizedFieldHolderId(), denormalizedFieldHolder.getDenormalizedFieldHolderType());
 	}
+
+	@Override
+	public List<DenormalizedFieldValue> findAllForEntityAndRenderingLocation(
+			DenormalizedFieldHolder denormalizedFieldHolder, RenderingLocation renderingLocation) {
+		return denormalizedFieldValueDao.findDFVForEntityAndRenderingLocation(denormalizedFieldHolder.getDenormalizedFieldHolderId(), denormalizedFieldHolder.getDenormalizedFieldHolderType(), renderingLocation);
+	}
+	
 
 }

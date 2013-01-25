@@ -23,6 +23,7 @@ package org.squashtest.csp.tm.service.denormalizedfield;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
 import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldValue;
 
@@ -41,5 +42,14 @@ public interface DenormalizedFieldValueFinder {
 	 * @return a list of {@link DenormalizedFieldValue} ordered by position asc.
 	 */
 	List<DenormalizedFieldValue> findAllForEntity(DenormalizedFieldHolder denormalizedFieldHolder);
+	
+	/**
+	 * Will return all {@link DenormalizedFieldValue} attached to the given {@link DenormalizedFieldHolder} and having the given {@link RenderingLocation}, ordered by dfv.position asc.
+	 * 
+	 * @param denormalizedFieldHolder
+	 * @param renderingLocation
+	 * @return
+	 */
+	List<DenormalizedFieldValue> findAllForEntityAndRenderingLocation(DenormalizedFieldHolder denormalizedFieldHolder, RenderingLocation renderingLocation);
 	
 }

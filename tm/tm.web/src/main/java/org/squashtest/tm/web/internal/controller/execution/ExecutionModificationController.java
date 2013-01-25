@@ -28,6 +28,8 @@ package org.squashtest.tm.web.internal.controller.execution;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -47,11 +49,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.core.service.security.PermissionEvaluationService;
+import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
 import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.csp.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -70,7 +76,9 @@ public class ExecutionModificationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionModificationController.class);
 
 	private ExecutionModificationService executionModService;
-	
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
+
 	@Inject
 	private DenormalizedFieldValueFinder denormalizedFieldValueFinder;
 
@@ -84,19 +92,56 @@ public class ExecutionModificationController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getExecution(@PathVariable long executionId) {
+		// execution properties
 		Execution execution = executionModService.findAndInitExecution(executionId);
 		int rank = executionModService.findExecutionRank(executionId);
-
 		LOGGER.trace("ExecutionModService : getting execution {}, rank {}", executionId, rank);
 		List<DenormalizedFieldValue> values = denormalizedFieldValueFinder.findAllForEntity(execution);
+		// step properties
+		List<AoColumnDef> columnDefs;
+		List<String> firstStepDfvsLabels;
+		if (!execution.getSteps().isEmpty()) {
+			List<DenormalizedFieldValue> firstStepDfv = denormalizedFieldValueFinder
+					.findAllForEntityAndRenderingLocation(execution.getSteps().get(0), RenderingLocation.STEP_TABLE);
+			columnDefs = findColumnDefForSteps(execution, firstStepDfv);
+			firstStepDfvsLabels = extractLabels(firstStepDfv);
+		} else {
+			columnDefs = Collections.emptyList();
+			firstStepDfvsLabels = Collections.emptyList();
+		}
 
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-execution");
-
 		mav.addObject("execution", execution);
 		mav.addObject("executionRank", Integer.valueOf(rank + 1));
 		mav.addObject("denormalizedFieldValues", values);
+		mav.addObject("stepsAoColumnDefs", JsonHelper.serialize(columnDefs));
+		mav.addObject("stepsDfvsLabels", firstStepDfvsLabels);
 		return mav;
 
+	}
+
+	private List<AoColumnDef> findColumnDefForSteps(Execution execution, List<DenormalizedFieldValue> firstStepDfv) {
+		List<AoColumnDef> columnDefs;
+		List<String> firstStepDfvCode = extractCodes(firstStepDfv);
+		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", execution);
+		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDefs(firstStepDfvCode, editable);
+		return columnDefs;
+	}
+
+	private List<String> extractLabels(List<DenormalizedFieldValue> dfvs) {
+		List<String> labels = new ArrayList<String>(dfvs.size());
+		for (DenormalizedFieldValue dfv : dfvs) {
+			labels.add(dfv.getLabel());
+		}
+		return labels;
+	}
+
+	private List<String> extractCodes(List<DenormalizedFieldValue> dfvs) {
+		List<String> codes = new ArrayList<String>(dfvs.size());
+		for (DenormalizedFieldValue dfv : dfvs) {
+			codes.add(dfv.getCode());
+		}
+		return codes;
 	}
 
 	@RequestMapping(value = "/steps", method = RequestMethod.GET, params = "sEcho")
@@ -110,18 +155,69 @@ public class ExecutionModificationController {
 		FilteredCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
 				filter);
 
-		return new ManualExecutionStepDataTableModelHelper(locale, messageSource).buildDataModel(holder,
-				filter.getFirstItemIndex() + 1, params.getsEcho());
+		return new ManualExecutionStepDataTableModelHelper(locale, messageSource, denormalizedFieldValueFinder)
+				.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
-	
+
+	private static class ExecutionStepTableColumnDefHelper {
+		private static final List<AoColumnDef> baseColumns = new ArrayList<AoColumnDef>(5);
+		static {
+			String smallWidth = "2em";
+			// columns.add(new AoColumnDef(bVisible, bSortable, sClass, sWidth, aTargets, mDataProp))
+			baseColumns.add(new AoColumnDef(false, false, "", smallWidth, "entity-id"));
+			baseColumns.add(new AoColumnDef(true, false, "select-handle centered", smallWidth, "entity-index"));
+			baseColumns.add(new AoColumnDef(true, false, "", null, "action"));
+			baseColumns.add(new AoColumnDef(true, false, "", null, "expected"));
+			baseColumns.add(new AoColumnDef(true, false, "has-status", null, "status"));
+			baseColumns.add(new AoColumnDef(true, false, "", null, "last-exec-on"));
+			baseColumns.add(new AoColumnDef(true, false, "", null, "last-exec-by"));
+			baseColumns.add(new AoColumnDef(true, false, "smallfonts rich-editable-comment", null, "comment"));
+			baseColumns.add(new AoColumnDef(true, false, "centered bugged-cell", smallWidth, "bugged"));
+			baseColumns.add(new AoColumnDef(false, false, "", null, "nb-attachments"));
+			baseColumns.add(new AoColumnDef(true, false, "centered has-attachment-cell", smallWidth, "attach-list-id"));
+		}
+		private List<AoColumnDef> columns = new ArrayList<AoColumnDef>();
+
+		private ExecutionStepTableColumnDefHelper() {
+			columns.addAll(baseColumns);
+		}
+
+		private List<AoColumnDef> getAoColumnDefs(List<String> dfvCodes, boolean editable) {
+			columns.get(columns.size() - 1).setbVisible(editable);
+			if (!dfvCodes.isEmpty()) {
+				List<AoColumnDef> dfvColumns = new ArrayList<AoColumnDef>(dfvCodes.size());
+				for (String dfvCode : dfvCodes) {
+					AoColumnDef aoColumn = new AoColumnDef(true, false, "dfv", null, "dfv-" + dfvCode);
+					dfvColumns.add(aoColumn);
+				}
+				columns.addAll(2, dfvColumns);
+			}
+			addATargets(columns);
+			return columns;
+		}
+
+		private void addATargets(List<AoColumnDef> columns2) {
+			for (int i = 0; i < columns2.size(); i++) {
+				int[] aTarget = new int[1];
+				aTarget[0] = i;
+				columns2.get(i).setaTargets(aTarget);
+			}
+
+		}
+	}
+
 	private static class ExecutionStepDataTableModelHelper extends DataTableModelHelper<ExecutionStep> {
 		private Locale locale;
 		private MessageSource messageSource;
+		private DenormalizedFieldValueFinder dfvFinder;
 
-		private ExecutionStepDataTableModelHelper(Locale locale, MessageSource messageSource) {
+		private ExecutionStepDataTableModelHelper(Locale locale, MessageSource messageSource,
+				DenormalizedFieldValueFinder dfvFinder) {
 			this.locale = locale;
 			this.messageSource = messageSource;
+			this.dfvFinder = dfvFinder;
+
 		}
 
 		@Override
@@ -129,6 +225,7 @@ public class ExecutionModificationController {
 			Map<String, Object> res = new HashMap<String, Object>();
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder() + 1);
+			addDenormalizedFieldValues(item, res);
 			res.put("action", item.getAction());
 			res.put("expected", item.getExpectedResult());
 			res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale, messageSource));
@@ -139,18 +236,36 @@ public class ExecutionModificationController {
 			res.put(DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
 			return res;
 		}
+
+		private void addDenormalizedFieldValues(ExecutionStep item, Map<String, Object> res) {
+			List<DenormalizedFieldValue> stepDfvs = dfvFinder.findAllForEntityAndRenderingLocation(item,
+					RenderingLocation.STEP_TABLE);
+			for (DenormalizedFieldValue stepDfv : stepDfvs) {
+				String dfvValue = stepDfv.getValue();
+				Date date = stepDfv.getValueAsDate();
+				if (date != null) {					
+					String dateFormat = messageSource.getMessage("squashtm.dateformatShort", null, locale);
+					dfvValue = new SimpleDateFormat(dateFormat).format(date);
+				}
+				res.put("dfv-" + stepDfv.getCode(), dfvValue);
+			}
+		}
+
 	}
+
 	private static final class ManualExecutionStepDataTableModelHelper extends ExecutionStepDataTableModelHelper {
-		private ManualExecutionStepDataTableModelHelper(Locale locale, MessageSource messageSource) {
-			super(locale, messageSource);
+		private ManualExecutionStepDataTableModelHelper(Locale locale, MessageSource messageSource,
+				DenormalizedFieldValueFinder dfvFinder) {
+			super(locale, messageSource, dfvFinder);
 		}
 
 		@Override
 		public Map<String, Object> buildItemData(ExecutionStep item) {
 			Map<String, Object> res = super.buildItemData(item);
+
 			res.put("status", localizedStatus(item.getExecutionStatus(), super.locale, super.messageSource));
 			return res;
-			
+
 		}
 	}
 
@@ -165,13 +280,15 @@ public class ExecutionModificationController {
 		FilteredCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
 				filter);
 
-		return new AutomatedExecutionStepDataTableModelHelper(locale, messageSource).buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+		return new AutomatedExecutionStepDataTableModelHelper(locale, messageSource, denormalizedFieldValueFinder)
+				.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
 	private static final class AutomatedExecutionStepDataTableModelHelper extends ExecutionStepDataTableModelHelper {
-		private AutomatedExecutionStepDataTableModelHelper(Locale locale, MessageSource messageSource) {
-			super(locale, messageSource);
+		private AutomatedExecutionStepDataTableModelHelper(Locale locale, MessageSource messageSource,
+				DenormalizedFieldValueFinder dfvFinder) {
+			super(locale, messageSource, dfvFinder);
 		}
 
 		@Override
@@ -206,10 +323,10 @@ public class ExecutionModificationController {
 		LOGGER.trace("ExecutionModificationController : updated comment for step " + stepId);
 		return newComment;
 	}
-	
+
 	@RequestMapping(value = "/steps/{stepId}/status", method = RequestMethod.GET)
 	@ResponseBody
-	String getStepStatus(@PathVariable("stepId") Long stepId){
+	String getStepStatus(@PathVariable("stepId") Long stepId) {
 		return executionModService.findExecutionStepById(stepId).getExecutionStatus().toString();
 	}
 
@@ -288,18 +405,21 @@ public class ExecutionModificationController {
 		}
 		return new StartEndDate(reNewStartDate, reNewEndDate);
 	}
-	private static final class StartEndDate{
+
+	private static final class StartEndDate {
 		private Long newStartDate;
 		private Long newEndDate;
 
-		private StartEndDate(Long newStartDate, Long newEndDate){
+		private StartEndDate(Long newStartDate, Long newEndDate) {
 			this.newStartDate = newStartDate;
 			this.newEndDate = newEndDate;
 		}
+
 		@SuppressWarnings("unused")
-		public Long getNewStartDate(){
+		public Long getNewStartDate() {
 			return this.newStartDate;
 		}
+
 		@SuppressWarnings("unused")
 		public Long getNewEndDate() {
 			return this.newEndDate;

@@ -238,6 +238,9 @@
 					<th><f:message
 								key="executions.steps.table.column-header.rank.label" />
 						</th>
+					<c:forEach var="label" items="${stepsDfvsLabels}">
+						<th>${label}</th>
+					</c:forEach>
 					<th><f:message
 								key="executions.steps.table.column-header.action.label" />
 						</th>		
@@ -301,19 +304,7 @@
 				}
 			},	
 			"sAjaxSource": "${executionStepsUrl}", 
-			"aoColumnDefs": [
-			{'bVisible': false, 'bSortable': false, 'sWidth': '2em', 'aTargets': [0], 'mDataProp' : 'entity-id'},
-			{'bVisible': true, 'bSortable': false, 'sWidth': '2em', 'sClass': 'select-handle centered', 'aTargets': [1], 'mDataProp' : 'entity-index'},
-			{'bVisible': true, 'bSortable': false, 'aTargets': [2], 'mDataProp' : 'action'},
-			{'bVisible': true, 'bSortable': false, 'aTargets': [3], 'mDataProp' : 'expected'},
-			{'bVisible': true, 'bSortable': false, 'aTargets': [4], 'mDataProp' : 'status', 'sClass' : 'has-status'},
-			{'bVisible': true, 'bSortable': false, 'aTargets': [5], 'mDataProp' : 'last-exec-on'},
-			{'bVisible': true, 'bSortable': false, 'aTargets': [6], 'mDataProp' : 'last-exec-by'},
-			{'bVisible': true, 'bSortable': false, 'aTargets': [7], 'sClass' : 'smallfonts rich-editable-comment', 'mDataProp' : 'comment'},
-			{'bVisible': true, 'bSortable': false, 'sWidth': '2em', 'sClass': 'centered bugged-cell', 'aTargets': [8], 'mDataProp' : 'bugged'},
-			{'bVisible': false, 'bSortable': false, 'aTargets': [9], 'mDataProp' : 'nb-attachments'},
-			{'bVisible': ${editable}, 'bSortable': false, 'sWidth': '2em', 'sClass': 'centered has-attachment-cell', 'aTargets': [10], 'mDataProp' : 'attach-list-id'}
-			]
+			"aoColumnDefs": ${stepsAoColumnDefs},
 		};
 		
 			var squashSettings = {

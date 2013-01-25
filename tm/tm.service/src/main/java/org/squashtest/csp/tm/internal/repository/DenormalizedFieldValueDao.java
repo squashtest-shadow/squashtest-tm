@@ -22,6 +22,7 @@ package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
 import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
@@ -49,8 +50,20 @@ public interface DenormalizedFieldValueDao {
 	 * 
 	 * @param denormalizedFieldHolderId
 	 * @param denormalizedFieldHolderType
-	 * @return the list of correpsonding {@link DenormalizedFieldValue} ordered by position asc.
+	 * @return the list of corresponding {@link DenormalizedFieldValue} ordered by position asc.
 	 */
-	List<DenormalizedFieldValue> findDenormalizedFieldValuesForEntity( @QueryParam("entityId") long denormalizedFieldHolderId,  @QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType);
+	List<DenormalizedFieldValue> findDFVForEntity( @QueryParam("entityId") long denormalizedFieldHolderId,  @QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType);
+	
+	/**
+	 *  Return all denormalized field values related to the denormalizedFieldHolder matching params.
+	 * The list is ordered by position asc.
+	 * 
+	 * @param denormalizedFieldHolderId
+	 * @param denormalizedFieldHolderType
+	 * @param renderingLocation
+	 * @return
+	 */
+	List<DenormalizedFieldValue> findDFVForEntityAndRenderingLocation(@QueryParam("entityId")  long  denormalizedFieldHolderId,
+			@QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType, @QueryParam("renderingLocation") RenderingLocation renderingLocation);
 
 }
