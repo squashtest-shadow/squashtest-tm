@@ -121,6 +121,7 @@ public class CustomFieldJsonConverter {
 		model.setBoundEntityId(value.getBoundEntityId());
 		model.setBoundEntityType(entityTypeModel);
 		model.setBinding(bindingModel);
+		model.setValue(value.getValue());
 
 		return model;
 

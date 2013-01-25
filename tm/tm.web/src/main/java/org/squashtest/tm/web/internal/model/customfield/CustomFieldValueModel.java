@@ -30,6 +30,18 @@ public class CustomFieldValueModel {
 	
 	private CustomFieldBindingModel binding;
 
+	private String value;
+	
+	
+	
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
 	public long getId() {
 		return id;
 	}

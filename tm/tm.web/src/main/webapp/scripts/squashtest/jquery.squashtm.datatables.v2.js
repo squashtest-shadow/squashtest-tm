@@ -98,11 +98,15 @@
  * 
  * 
  * The squash specifics are configured using the second parameter :
- * 'squashSettings'. It is an object that accepts the following members : 
+ * 'squashSettings', for additional configuration. The next items 
+ * describe the additional configuration available, that are passed 
+ * as member of the 'squashSettings' object.
  * 
+ * ============= Squash table functions override================================
  * 
- * 
- * - functions : any function defined as public member of the table can be redefined as a member of .function (read the source to pimpoint them at the end of this file)
+ * Member name : 'functions'
+ * What : any function defined as public member of the table can be redefined as a member of .functions 
+ * 		(read the source to pimpoint them at the end of this file)
  * 
  *  examples : 
  *  dropHandler : 
@@ -110,39 +114,46 @@
  * 		param : an object { itemIds : array of row ids, newIndex : the drop position }
  * 		default : nothing 
  * 
- * 
- * 
  *  getODataId : 
  * 		what : a function fetching the id from the data 
  * 		param : what $().dataTable().fnGetData() would normally accept
  * 		default : return fnGetData()["entity-id"] 
  * 
  * 
- * 
- * - enableDnD : if coalesce to true, will enable table drag and drop. If coalesce 
- * 				to false, it will not. 
- * 
- * 
- * 
- * - enableHover : if coalesce to true, will enable lines color change when
- * hovered. If coalesce to false, it will not. 
+ * ============= Drag and drop :  =============================================
+ *
+ *
+ *  Member name : 'enableDnD' : true|false 
  * 
  * 
- * - fixObjectDOMInit : boolean, refer to the documentation above ('object datasource and DOM data')
+ * ============== Hovering  (css style) =======================================
+ * 
+ * Member name : 'enableHover' : true|false. 
  * 
  * 
- * - confirmation popups : if 'confirmPopup' is set, will configure any confirmation 
- * 				dialog used in that table. it's an object such as :
+ * ============== Object data model read from the DOM =========================
+ * 
+ * Member name : 'fixObjectDOMInit' : true|false, refer to the documentation above ('object datasource and DOM data')
+ * 
+ * 
+ * ============== Generic multipurpose popup configuration ====================
+ * 
+ * Member name : 'confirmPopup' 
+ * 
+ * 	If set, will configure any confirmation	dialog used in that table. it's an object whose members are :
  * 		oklabel : label for okay buttons 
  * 		cancellabel : label for cancel buttons 
  * 
+ * ============== Attachments ==================================================
  * 
- * 
- * - attachments : If the table finds tds having a given cssClass (see cssMatcher)
- * if will turn them into link to the attachment manager. 'attachments' is an
- * object. It must define at least url. It may also override the others of
- * course.
- * 	url : url where the attachment manager is. Accepts placeholders. 
+ *  Member name : 'attachments' 
+ *  
+ *  If the table finds tds having a given cssClass (see cssMatcher)
+ *  if will turn them into link to the attachment manager. 'attachments' is an
+ *  object. It must define at least url. It may also override the others of
+ *  course.
+ * 	
+ *  url : url where the attachment manager is. Accepts placeholders. 
  *  			Note : that one accepts no defaults ! 
  *  cssMatcher : the css class of cells that must be treated. defaults to 
  *  			'has-attachment-cells' 
@@ -151,12 +162,13 @@
  *  aoDataListId : the name of the column in aoData where to look for the 
  *  			attachment list id, defaults to "attach-list-id"
  *  
+ *  ============== Rich editables configuration =================================
  *  
- *  
- *  - rich editables configuration : if a property 'richEditables' is set, will
- * attempt to turn some cells to rich editables. If undefined, nothing will
- * happen. the property 'richEditables' is an compound object and must define at
- * least 1 member for 'target'. 
+ *  Member name : 'richEditables' 
+ * 
+ *  If set, will attempt to turn some cells to rich editables. If undefined, nothing will
+ *  happen. the property 'richEditables' is an compound object and must define at
+ *  least 1 member for 'target'. 
  * 		conf : a regular object configuring the plugin $.ui.richEditable (see
  * 					jquery.squashtm.jeditable.ext.js). 
  * 		targets : a map of key-values. A key represents a css class and the 
@@ -165,10 +177,13 @@
  * 				  with 'conf' and posting to the supplied url. 
  * 
  * 
+ *  ============== Execution status icons  ======================================
  * 
- * - execution status : If a property 'executionStatus' is set, will attempt to 
- * decorate some cells with execution statuses. If undefined, nothing will happen. 
- * The matched cells are identified by css class 'has-status'.
+ * 
+ *  Member name : 'executionStatus' 
+ *  
+ *  If set, will attempt to decorate some cells with execution statuses. If undefined, nothing will happen. 
+ *  The matched cells are identified by css class 'has-status'.
  * 
  * 	'executionStatus' is an object defining the localized status text : 
  * 		blocked : internationalized version of status 'blocked' 
@@ -177,10 +192,12 @@
  * 		running : internationalized version of status 'running' 
  * 		ready : internationalized version of status 'ready' 
  * 
+ * ============== Delete row button ==============================================
  * 
+ * Member name : 'deleteButtons' 
  * 
- * - delete button : if the property 'deleteButtons' is set then will look for cells 
- * having the css class 'delete-button'. Configuration as follow : 
+ *  If set then will look for cells having the css class 'delete-button'. 
+ *  Configuration as follow : 
  * 		url : the url where to post the 'delete' instruction. Supports placeholders. 
  * 		popupmessage : the message that will be displayed 
  * 		tooltip : the tooltip displayed by the button 
@@ -188,10 +205,11 @@
  * 		fail : a callback on the ajax call when failed.
  * 		dataType : the dataType parameter for the post. (default = "text")
  * 
+ * ============== Add hyperlink to a cell==========================================
  * 
+ *  Member name : 'bindLinks' 
  * 
- * - add links to cell text : if the property 'bindLinks' is set then will look for cells
- *  according to the parameters given and make their text a link to the wanted url.
+ *  If set then will look for cells  according to the parameters given and make their text a link to the wanted url.
  *  Configuration as follow: 
  *  	 list : a list of object to represent each td of a row to make as url
  *  			Object params as follow : 
