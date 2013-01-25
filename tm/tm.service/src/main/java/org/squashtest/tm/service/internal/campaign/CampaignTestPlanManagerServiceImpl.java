@@ -90,13 +90,14 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	@Inject
 	private UserDao userDao;
 
+	@Inject
 	private ObjectIdentityRetrievalStrategy objIdRetrievalStrategy;
 
 	@Inject
 	@Qualifier("squashtest.tm.service.TestCaseLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy;
 
-	@ServiceReference
+
 	public void setObjectIdentityRetrievalStrategy(ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy) {
 		this.objIdRetrievalStrategy = objectIdentityRetrievalStrategy;
 	}

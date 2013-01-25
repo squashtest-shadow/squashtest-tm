@@ -23,6 +23,8 @@ package org.squashtest.tm.service.internal.security;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
@@ -35,14 +37,17 @@ import org.squashtest.tm.service.security.AdministratorAuthenticationService;
 
 public class AdministratorAuthenticationServiceImpl implements AdministratorAuthenticationService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdministratorAuthenticationServiceImpl.class);
+	
+	@Inject
 	private UserDetailsManager userManager;
 	private PasswordEncoder encoder;
 	private Object salt = null;
 
-	@ServiceReference
+
 	public void setUserDetailsManager(UserDetailsManager userManager) {
 		this.userManager = userManager;
 	}
+	
 
 	public void setPasswordEncoder(PasswordEncoder encoder) {
 		this.encoder = encoder;

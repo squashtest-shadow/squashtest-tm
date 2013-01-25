@@ -45,15 +45,18 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Inject
 	private UserDao userDao;
 
+	@Inject
 	private UserContextService userContextService;
+	
+	@Inject
 	private UserAuthenticationService authService;
 
-	@ServiceReference
+
 	public void setUserContextService(UserContextService userContextService) {
 		this.userContextService = userContextService;
 	}
 
-	@ServiceReference
+
 	public void setUserAuthenticationService(UserAuthenticationService authService) {
 		this.authService = authService;
 	}

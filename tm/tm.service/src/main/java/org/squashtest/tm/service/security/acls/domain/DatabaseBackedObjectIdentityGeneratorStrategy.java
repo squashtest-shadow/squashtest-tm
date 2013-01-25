@@ -41,13 +41,14 @@ import org.springframework.stereotype.Component;
 @Component("squashtest.core.security.ObjectIdentityGeneratorStrategy")
 public class DatabaseBackedObjectIdentityGeneratorStrategy implements ObjectIdentityGenerator {
 
+	@Inject
 	private SessionFactory sessionFactory;
 
 	@Inject
 	@Named("squashtest.core.security.ObjectIdentityRetrievalStrategy")
 	private ObjectIdentityRetrievalStrategy objectRetrievalStrategy;
 
-	@ServiceReference
+
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}

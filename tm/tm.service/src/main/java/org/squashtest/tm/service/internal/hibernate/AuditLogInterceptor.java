@@ -45,15 +45,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuditLogInterceptor.class); 
 	
-
-	/*
-	private SessionFactory sessionFactory;
-	
-	
-	@ServiceReference
-	public void setSessionFactory(SessionFactory sessionFactory){
-		this.sessionFactory = sessionFactory;
-	}*/
 	
 	@Override
 	public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,

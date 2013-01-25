@@ -84,18 +84,19 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 
+	@Inject
 	private ObjectIdentityRetrievalStrategy objIdRetrievalStrategy;
 
 	@Inject
 	@Qualifier("squashtest.tm.service.TestCaseLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy;
 
-	@ServiceReference
+
 	public void setObjectAclService(ObjectAclService aclService) {
 		this.aclService = aclService;
 	}
 
-	@ServiceReference
+
 	public void setObjectIdentityRetrievalStrategy(ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy) {
 		this.objIdRetrievalStrategy = objectIdentityRetrievalStrategy;
 	}

@@ -49,9 +49,10 @@ public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionM
 	
 	@Inject private AutomatedExecutionExtenderDao automatedExecutionDao;
 	
+	@Inject
 	private PermissionEvaluationService permissionService;
 	
-	@ServiceReference
+
 	public void setPermissionEvaluationService(PermissionEvaluationService permissionService){
 		this.permissionService = permissionService;
 	}

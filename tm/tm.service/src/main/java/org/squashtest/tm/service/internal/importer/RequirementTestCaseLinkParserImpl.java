@@ -50,9 +50,9 @@ public class RequirementTestCaseLinkParserImpl implements RequirementTestCaseLin
 	@Inject
 	private TestCaseDao testCaseDao;
 
+	@Inject
 	private PermissionEvaluationService permissionService;
 
-	@ServiceReference
 	public void setPermissionService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
 	}

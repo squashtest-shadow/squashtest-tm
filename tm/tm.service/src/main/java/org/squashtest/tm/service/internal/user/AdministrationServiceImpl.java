@@ -74,18 +74,21 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Inject
 	private AdministrationDao adminDao;
 
+	@Inject
 	private ConfigurationService configurationService;
+	
+	@Inject
 	private AdministratorAuthenticationService adminAuthentService;
 
 	private final static String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE";
 	private final static String LOGIN_MESSAGE_KEY = "LOGIN_MESSAGE";
 
-	@ServiceReference
+
 	public void setAdministratorAuthenticationService(AdministratorAuthenticationService adminService) {
 		this.adminAuthentService = adminService;
 	}
 
-	@ServiceReference
+
 	public void setConfigurationService(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}

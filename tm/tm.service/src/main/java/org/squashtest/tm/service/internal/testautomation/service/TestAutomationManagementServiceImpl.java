@@ -100,11 +100,10 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	private TestAutomationCallbackService callbackService;
 	
 	
-
+	@Inject
 	private TestAutomationTaskExecutor executor ;
 
-	
-	@ServiceReference
+
 	public void setAsyncTaskExecutor(AsyncTaskExecutor executor){
 		TestAutomationTaskExecutor taExecutor = new TestAutomationTaskExecutor(executor);
 		this.executor=taExecutor;

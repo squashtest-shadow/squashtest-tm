@@ -68,9 +68,10 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	@Inject
 	private ProjectsPermissionFinder projectsPermissionFinder;
 
+	@Inject
 	private UserAccountService userService;
 	
-	@ServiceReference
+	
 	public void setUserAccountService(UserAccountService service){
 		this.userService=service;
 	}

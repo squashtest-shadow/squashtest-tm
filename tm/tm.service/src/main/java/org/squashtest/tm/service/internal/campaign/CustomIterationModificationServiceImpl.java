@@ -108,9 +108,10 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Inject
 	private ProjectsPermissionFinder projectsPermissionFinder;
 
+	@Inject
 	private UserAccountService userService;
 
-	@ServiceReference
+
 	public void setUserAccountService(UserAccountService service) {
 		this.userService = service;
 	}

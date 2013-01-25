@@ -51,9 +51,10 @@ public class PrivateCustomFieldValueServiceImpl implements
 	@Inject
 	private BoundEntityDao boundEntityDao;
 
+	@Inject
 	private PermissionEvaluationService permissionService;
 
-	@ServiceReference
+
 	public void setPermissionService(
 			PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;

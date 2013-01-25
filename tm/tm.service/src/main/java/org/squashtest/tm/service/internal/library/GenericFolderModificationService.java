@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.library;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
@@ -48,15 +49,16 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE extends LibraryNode> implements
 		FolderModificationService<FOLDER> {
 
+	@Inject
 	private PermissionEvaluationService permissionService;
 
-	@ServiceReference
-	public void setPermissionService(PermissionEvaluationService permissionService) {
-		this.permissionService = permissionService;
+	@PostConstruct
+	public void postConstruct() {
 		delegate.setPermissionService(permissionService);
 	}
 
 	private final GenericNodeManagementService<FOLDER, NODE, FOLDER> delegate = new GenericNodeManagementService<FOLDER, NODE, FOLDER>();
+	
 	private FolderDao<FOLDER, NODE> folderDao;
 	private LibraryDao<Library<NODE>, NODE> libraryDao;
 

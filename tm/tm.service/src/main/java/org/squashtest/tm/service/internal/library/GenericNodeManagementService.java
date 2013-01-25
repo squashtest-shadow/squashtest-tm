@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import javax.inject.Inject;
+
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -52,9 +54,9 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE extends LibraryNode, FOLDER extends Folder<NODE>>
 		implements NodeManagementService<MANAGED, NODE, FOLDER> {
 
+	@Inject
 	private PermissionEvaluationService permissionService;
 
-	@ServiceReference
 	public void setPermissionService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
 	}
