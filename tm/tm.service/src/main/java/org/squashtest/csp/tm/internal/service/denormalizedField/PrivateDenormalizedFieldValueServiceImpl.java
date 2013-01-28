@@ -35,7 +35,7 @@ import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.testcase.TestStep;
+import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
 import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
 import org.squashtest.csp.tm.internal.repository.DenormalizedFieldValueDao;
@@ -71,7 +71,7 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 	}
 
 	@Override
-	public void createAllDenormalizedFieldValues(TestStep sourceStep, ExecutionStep destinationStep, Project project) {
+	public void createAllDenormalizedFieldValues(ActionTestStep sourceStep, ExecutionStep destinationStep, Project project) {
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(project.getId(), BindableEntity.TEST_STEP);
 		List<CustomFieldValue> sourceStepCustomFieldValues = customFieldValueDao.findAllCustomValues(sourceStep.getBoundEntityId(), sourceStep.getBoundEntityType());
 		int lastBindingPosition = 0;

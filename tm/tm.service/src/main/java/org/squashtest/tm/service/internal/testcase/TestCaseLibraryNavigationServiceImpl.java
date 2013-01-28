@@ -161,19 +161,20 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		} 
 		else {
 			library.addContent(testCase);
-			testCaseDao.safePersist(testCase);			
+			testCaseDao.safePersist(testCase);
 			createCustomFieldValues(testCase);
 			
 			//also create the custom field values for the steps if any
 			if (! testCase.getSteps().isEmpty()){
-				List<ActionTestStep> actionSteps = new ActionStepCollector().collect(testCase.getSteps());
-				createCustomFieldValues(actionSteps);
+				createCustomFieldValues(testCase.getActionSteps());
 			}
 			
 		}
 	}
 	
 	
+	
+
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ "or hasRole('ROLE_ADMIN')")
@@ -199,8 +200,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 			
 			//also create the custom field values for the steps if any
 			if (! testCase.getSteps().isEmpty()){
-				List<ActionTestStep> actionSteps = new ActionStepCollector().collect(testCase.getSteps());
-				createCustomFieldValues(actionSteps);
+				createCustomFieldValues(testCase.getActionSteps());
 			}
 		}
 	}

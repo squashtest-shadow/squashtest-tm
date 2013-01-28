@@ -490,6 +490,42 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		visitor.visit(this);
 	}
 	
+	/**
+	 * 
+	 * @return the list of {@link ActionTestStep} or empty list
+	 */
+	public List<ActionTestStep> getActionSteps() {
+		List<ActionTestStep> result = new ArrayList<ActionTestStep>();
+		ActionStepRetreiver retriever = new ActionStepRetreiver(result);
+		for(TestStep step : this.getSteps()){
+			step.accept(retriever);
+		}
+		return retriever.getResult();
+		
+	}
+	private class ActionStepRetreiver implements TestStepVisitor{
+		
+		private List<ActionTestStep> result;
+		
+		private List<ActionTestStep> getResult(){
+			return result;
+		}
+
+		private ActionStepRetreiver(List<ActionTestStep> result){
+			this.result = result;			
+		}
+		@Override
+		public void visit(ActionTestStep visited) {
+			result.add(visited);
+			
+		}
+
+		@Override
+		public void visit(CallTestStep visited) {
+			//noop
+		}
+		
+	}
 
 
 }

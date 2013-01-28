@@ -35,6 +35,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -152,7 +153,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, String> customFieldValues) {
 
 		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep);
-		initCustomFieldValues(step, customFieldValues);
+		initCustomFieldValues((ActionTestStep)step, customFieldValues);
 		return step;
 	}
 
@@ -261,13 +262,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private void pasteTestStepAtPosition(long testCaseId, long copiedTestStepId, Integer position) {
 		TestStep original = testStepDao.findById(copiedTestStepId);
 		TestStep copyStep = original.createCopy();
-
 		testStepDao.persist(copyStep);
+		copyStep.accept(new TestStepCustomFieldCopier(original));
 		
-		//custom field copy
-		StepCustomFieldCopier cufCopier = new StepCustomFieldCopier();
-		cufCopier.setOriginalStep(original);
-		copyStep.accept(cufCopier);
+		
 		
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
@@ -285,7 +283,24 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			updateImportanceIfCallStep(testCase, copyStep);
 		}
 	}
+	private class TestStepCustomFieldCopier implements TestStepVisitor{
+		TestStep original;
+		private TestStepCustomFieldCopier(TestStep original){
+			this.original = original;
+		}
+		@Override
+		public void visit(ActionTestStep visited) {
+			customFieldValuesService.copyCustomFieldValues((ActionTestStep) original, visited);
+			
+		}
 
+		@Override
+		public void visit(CallTestStep visited) {
+			//NOPE
+			
+		}
+		
+	}
 	private void updateImportanceIfCallStep(TestCase parentTestCase, TestStep copyStep) {
 		if (copyStep instanceof CallTestStep) {
 			TestCase called = ((CallTestStep) copyStep).getCalledTestCase();

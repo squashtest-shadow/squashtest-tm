@@ -171,7 +171,7 @@
                     <div id="test-step-id" class="display-table-cell" th:utext="${testStepView.id} ">1</div>
                   </div>
 <!--    ================================CUSTOM FIELDS============================= -->
-					<div class="display-table-row control-group"
+					<div class="display-table-row control-group" th:if="${hasCUF}" 
 						th:each="confBean : ${configuration.configurationBeans}">
 						<label class="display-table-cell" th:text="${confBean.fieldLabel}"
 							th:for="'cuf-value-'+${confBean.fieldId}">quantité de café</label>

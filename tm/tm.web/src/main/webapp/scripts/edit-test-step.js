@@ -23,7 +23,7 @@ require([ "common" ], function(common) {
 			"app/ws/squashtm.workspace","domReady", "attachment-bloc.frag",  "test-step-editor/TestStepInfoModel",], function($,
 			TestStepModificationView, WS, domReady) {
 		var goBack = function() {
-			document.history.back();
+			window.history.back();
 		};
 
 		domReady(function() {

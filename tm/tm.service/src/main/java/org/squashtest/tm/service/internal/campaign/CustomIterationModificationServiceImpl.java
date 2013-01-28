@@ -46,6 +46,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.exception.TestPlanItemNotExecutableException;
+import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.csp.tm.domain.testcase.TestStep;
@@ -343,16 +344,16 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		denormalizedFieldValueService.createAllDenormalizedFieldValues(sourceTC, execution);
 		for (ExecutionStep step : execution.getSteps()) {
 			TestStep sourceStep = step.getReferencedTestStep();
-			if (stepIsFromSameProjectAsTC(sourceTC, sourceStep)) {
-				denormalizedFieldValueService.createAllDenormalizedFieldValues(sourceStep, step);
+			if (stepIsFromSameProjectAsTC(sourceTC, (ActionTestStep) sourceStep)) {
+				denormalizedFieldValueService.createAllDenormalizedFieldValues((ActionTestStep)sourceStep, step);
 			} else {
-				denormalizedFieldValueService.createAllDenormalizedFieldValues(sourceStep, step, sourceTC.getProject());
+				denormalizedFieldValueService.createAllDenormalizedFieldValues((ActionTestStep)sourceStep, step, sourceTC.getProject());
 			}
 		}
 
 	}
 
-	private boolean stepIsFromSameProjectAsTC(TestCase sourceTC, TestStep sourceStep) {
+	private boolean stepIsFromSameProjectAsTC(TestCase sourceTC, ActionTestStep sourceStep) {
 		return sourceStep.getProject().getId() == sourceTC.getProject().getId();
 	}
 

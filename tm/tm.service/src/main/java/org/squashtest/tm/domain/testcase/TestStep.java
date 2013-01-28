@@ -94,6 +94,4 @@ public abstract class TestStep {
 	public abstract void accept(TestStepVisitor visitor);
 	
 	public abstract List<ExecutionStep> createExecutionSteps();
-	
-
 }

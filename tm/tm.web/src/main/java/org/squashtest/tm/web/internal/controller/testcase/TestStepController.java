@@ -63,15 +63,15 @@ public class TestStepController {
 	private PermissionEvaluationService permissionEvaluationService;
 
 	/**
-	 * Shows the custom field modification page.
+	 * Shows the step modification page.
 	 * 
-	 * @param customFieldId
-	 *            the id of the custom field to show
+	 * @param testStepId
+	 *            the id of the step to show
 	 * @param model
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String showCustomFieldModificationPage(@PathVariable long testStepId, Model model) {
+	public String showStepInfos(@PathVariable long testStepId, Model model) {
 		
 		LOGGER.info("Show Test Step initiated");
 		LOGGER.debug("Find and show TestStep #{}", testStepId);
@@ -90,24 +90,24 @@ public class TestStepController {
 		
 		
 		// end waiting for [Task 1843]
-		// ------------------------------------ATTACHMENT PART
+		// ------------------------------------ATTACHMENT  AND CUF PART
+		boolean hasCUF = false;
+		List<CustomFieldValue> values = Collections.emptyList();
 		if (testStepView.getActionStep() != null) {
 			model.addAttribute("attachableEntity", testStepView.getActionStep());
+			values = cufValueFinder.findAllCustomFieldValues(testStepView.getActionStep().getBoundEntityId(),
+					testStepView.getActionStep().getBoundEntityType());hasCUF = cufValueFinder.hasCustomFields(testStepView.getActionStep());
 		}
 		
 		
-		// -----------------------------------------CUF PART
-		List<CustomFieldValue> values;
-		if (testStepView.getActionStep() != null){
 			ActionTestStep aStep = testStepView.getActionStep();
 			values = cufValueFinder.findAllCustomFieldValues(aStep.getBoundEntityId(), aStep.getBoundEntityType());
 		}
 		else{
 			values = Collections.emptyList();
 		}
-		CustomFieldValueConfigurationBean conf = new CustomFieldValueConfigurationBean(values);
+		CustomFieldValueConfigurationBean conf =  new CustomFieldValueConfigurationBean(values);
 		model.addAttribute("configuration", conf);
-		
 		
 		boolean hasCUF = (testStepView.getActionStep()!=null) ? cufValueFinder.hasCustomFields(testStepView.getActionStep()) : false;
 		model.addAttribute("hasCUF", hasCUF);

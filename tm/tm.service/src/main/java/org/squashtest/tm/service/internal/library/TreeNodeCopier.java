@@ -236,15 +236,34 @@ public class TreeNodeCopier implements NodeVisitor {
 		int total=copy.getSteps().size();
 		StepCustomFieldCopier cufCopier = new StepCustomFieldCopier();
 		for (int i=0;i<total;i++){
-			TestStep sourceStep = source.getSteps().get(i);
-			cufCopier.setOriginalStep(sourceStep);
-			
 			TestStep copyStep = copy.getSteps().get(i);
-			copyStep.accept(cufCopier);
+			TestStep sourceStep = source.getSteps().get(i);
+			copyStep.accept(new TestStepCufCopier(customFieldValueManagerService, sourceStep));
 		}
 	}
-
 	
+	private class TestStepCufCopier implements TestStepVisitor{
+		private PrivateCustomFieldValueService customFieldValueManagerService;
+		private TestStep sourceStep;
+
+		private TestStepCufCopier(PrivateCustomFieldValueService customFieldValueManagerService, TestStep sourceStep){
+			this.customFieldValueManagerService = customFieldValueManagerService;
+			this.sourceStep = sourceStep;
+		}
+
+		@Override
+		public void visit(ActionTestStep visited) {
+			customFieldValueManagerService.copyCustomFieldValues((ActionTestStep) sourceStep, visited);
+			
+		}
+
+		@Override
+		public void visit(CallTestStep visited) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
 	@SuppressWarnings("unchecked")
 	private void saveNextToCopy(NodeContainer<? extends TreeNode> source, NodeContainer<? extends TreeNode> copy) {
 		if (source.hasContent()) {
