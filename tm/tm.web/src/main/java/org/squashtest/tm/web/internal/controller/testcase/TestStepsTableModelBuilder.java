@@ -53,9 +53,9 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 	public List<Map<?,?>> buildAllData(List<TestStep> source){
 		List<Map<?,?>> result = new ArrayList<Map<?,?>>(source.size());
 		for (TestStep step : source){
+			incrementIndex();
 			Map<?,?> itemData = buildItemData(step);
 			result.add(itemData);
-			incrementIndex();
 		}
 		return result;
 	}

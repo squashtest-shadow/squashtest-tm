@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2012 Henix, henix.fr
  *
@@ -18,17 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.web.internal.model.customfield;
 
-define(["./creation-popup-handler", "./table-handler"], function(CreationPopupCUFHandler, tableHandler){
+public class DatePickerFieldModel extends CustomFieldModel {
+
+	private String format;
 	
-	return {
-		
-		newCreationPopupCUFHandler : function(settings){
-			return new CreationPopupCUFHandler(settings);
-		},
-		
-		cufTableSupport : tableHander
-		
+	private String locale;
+
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
+	public String getLocale() {
+		return locale;
+	}
+
+	public void setLocale(String locale) {
+		this.locale = locale;
 	}
 	
-});
+	
+	
+}

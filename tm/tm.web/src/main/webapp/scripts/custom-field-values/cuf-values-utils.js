@@ -19,16 +19,17 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["./creation-popup-handler", "./table-handler"], function(CreationPopupCUFHandler, tableHandler){
+
+define(["jquery", "jqueryui"], function($){
+	
+	function convertStrDate(fromFormat, toFormat, strFromValue){
+		var date = $.datepicker.parseDate(fromFormat, strFromValue);
+		return $.datepicker.formatDate(toFormat, date);		
+	}
+	
 	
 	return {
-		
-		newCreationPopupCUFHandler : function(settings){
-			return new CreationPopupCUFHandler(settings);
-		},
-		
-		cufTableSupport : tableHander
-		
+		convertStrDate : convertStrDate
 	}
 	
 });

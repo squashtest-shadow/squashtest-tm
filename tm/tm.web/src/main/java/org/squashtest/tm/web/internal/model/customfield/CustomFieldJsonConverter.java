@@ -87,6 +87,11 @@ public class CustomFieldJsonConverter {
 		CustomFieldModel model;
 
 		switch (field.getInputType()) {
+		
+		case DATE_PICKER:
+			model = createDatePickerFieldModel(field);
+			break;
+		
 		case DROPDOWN_LIST:
 			model = createSingleSelectFieldModel((SingleSelectField) field);
 			break;
@@ -172,6 +177,21 @@ public class CustomFieldJsonConverter {
 
 		return model;
 	}
+	
+	private DatePickerFieldModel createDatePickerFieldModel(CustomField field){
+		
+		Locale locale = LocaleContextHolder.getLocale();
+		DatePickerFieldModel model = new DatePickerFieldModel();
+		
+		populateCustomFieldModel(model, field);
+		
+		model.setFormat(getMessage("squashtm.dateformatShort.js"));
+		model.setLocale(locale.getCountry().toLowerCase());
+		
+		return model;
+		
+	}
+	
 
 	private CustomFieldModel populateCustomFieldModel(CustomFieldModel model, CustomField field) {
 
@@ -184,6 +204,7 @@ public class CustomFieldJsonConverter {
 		model.setDefaultValue(field.getDefaultValue());
 		model.setInputType(typeModel);
 		model.setFriendlyOptional(field.isOptional() ? getMessage("label.Yes") : getMessage("label.No"));
+		model.setCode(field.getCode());
 
 		return model;
 	}

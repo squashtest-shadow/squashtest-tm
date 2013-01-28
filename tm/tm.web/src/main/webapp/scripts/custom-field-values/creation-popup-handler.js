@@ -27,17 +27,13 @@
  *  
  */
 
-define(["jquery", "jqueryui", 'jquery.squash.jeditable', "jeditable.datepicker",
-		"datepicker/require.jquery.squash.datepicker-locales"], function($){
+define(["jquery", "./cuf-values-utils", "jqueryui", 'jquery.squash.jeditable', "jeditable.datepicker",
+		"datepicker/require.jquery.squash.datepicker-locales"], function($, utils){
 	
 	function noPostFn(value){
 		return value;
 	}
 	
-	function convertStrDate(fromFormat, toFormat, strFromValue){
-		var date = $.datepicker.parseDate(fromFormat, strFromValue);
-		return $.datepicker.formatDate(toFormat, date);		
-	}
 	
 	function initDatepicker(input){
 		var locale = input.data('locale');
@@ -140,7 +136,7 @@ define(["jquery", "jqueryui", 'jquery.squash.jeditable', "jeditable.datepicker",
 					}
 					else if (inputType==="DATE_PICKER"){
 						var format = input.data('format');
-						var displayedDate = convertStrDate($.datepicker.ATOM, format, defValue);
+						var displayedDate = utils.convertStrDate($.datepicker.ATOM, format, defValue);
 						input.text(displayedDate);			
 					}
 					else{
@@ -169,7 +165,7 @@ define(["jquery", "jqueryui", 'jquery.squash.jeditable', "jeditable.datepicker",
 					}
 					else if (inputType==="DATE_PICKER"){
 						var format=input.data('format');
-						value = convertStrDate(format, $.datepicker.ATOM,input.text());
+						value = utils.convertStrDate(format, $.datepicker.ATOM,input.text());
 					}
 					else{
 						value = input.val();

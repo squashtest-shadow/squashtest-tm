@@ -107,19 +107,26 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		nRow.className += (aData['step-type']==="action") ?  " action-step-row" : " call-step-row";
 	}
 	
-	function stepsTableDrawCallback() {
-
-		//rework the td css classes to inhibit some post processing on them when not relevant
-		var actionRows = this.find('tr.action-step-row');
-		var callRows = this.find('tr.call-step-row');
+	function specializeCellClasses(table){
 		
+		var actionRows = table.find('tr.action-step-row');
+		var callRows = table.find('tr.call-step-row');
+		
+		//remove useless classes for action step rows
 		actionRows.find('td.called-tc-cell').removeClass('called-tc-cell');
 		
+		//remove useless classes for call step rows
 		callRows.find('td.rich-edit-action').removeClass('rich-edit-action');
 		callRows.find('td.rich-edit-result').removeClass('rich-edit-result');
 		callRows.find('td.has-attachment-cell').removeClass('has-attachment-cell');
+		callRows.find('td.custom-field-value').removeClass();	//remove all the classes
 		callRows.find('td.called-tc-cell').next().remove().end().attr('colspan', 2);
-		
+	}
+	
+	function stepsTableDrawCallback() {
+
+		//rework the td css classes to inhibit some post processing on them when not relevant
+		specializeCellClasses(table);
 		
 		//collapser
 		var collapser = this.data('collapser');
@@ -164,13 +171,13 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			oLanguage : {
 				sUrl : urls.tableLanguageUrl
 			},
-			
+			aaData : settings.basic.tableData,
 			sAjaxSource : urls.tableAjaxUrl,
 			fnDrawCallback : stepsTableDrawCallback,
 			fnCreatedRow  : stepsTableCreatedRowCallback,
 			iDeferLoading : settings.basic.initialRows,
 			aoColumnDefs : [
-			  {'bVisible':false, 'bsortable':false, 'aTargets':[0], 'mDataProp':'step-id'},
+			  {'bVisible':false, 'bSortable':false, 'aTargets':[0], 'mDataProp':'step-id'},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[1], 'mDataProp':'step-index', 'sClass':'select-handle centered '+dragClass, 'sWidth':'2em'},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[2], 'mDataProp':'attach-list-id', 'sClass':'centered has-attachment-cell', 'sWidth':'2em'},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[3], 'mDataProp':'step-action', 'sClass':'called-tc-cell '+editActionClass},

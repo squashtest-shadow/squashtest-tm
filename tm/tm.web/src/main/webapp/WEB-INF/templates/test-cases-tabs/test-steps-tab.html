@@ -26,7 +26,8 @@
 		This snippet of html describes the template for the test step panel of the tab panel of a test case.
 		Required data :
 			- testCase : the test case bean
-			- stepsData : a list of maps such as build by a TestStepsTableModelBuilder 
+			- stepsData : a list of maps such as build by a TestStepsTableModelBuilder.
+			- cufDefinitions : an array of CustomFieldModel
 	 -->
 
 </div>
@@ -102,18 +103,6 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="stepData : ${stepsData}" >
-				<td th:text="${stepData['step-id']}">1</td>
-				<td th:text="${stepData['step-index'] + 1}">1</td>
-				<td th:text="${stepData['attach-list-id']}">1</td>
-				<td th:text="${stepData['step-action']?:''}">1</td>
-				<td th:utext="${stepData['step-result']?:''}">1</td>
-				<td th:text="${stepData['nb-attachments']}">1</td>
-				<td th:text="${stepData['step-type']}">1</td>
-				<td th:text="${stepData['called-tc-id']}">1</td>
-				<td th:text="${stepData['empty-delete-holder']}">1</td>
-			</tr>
-
 		</tbody>
 	</table>
 
@@ -161,6 +150,8 @@
 							projectId : /*[[${testCase.project.id}]]*/1,
 							rootContext : /*[[@{/}]]*/"/squash",
 							initialRows : /*[[${initialRows}]]*/0,
+							tableData : /*[[${stepsData}]]*/[],
+							cufDefinitions : /*[[${cufDefinitions}]]*/[],
 					},	
 					
 					language : {

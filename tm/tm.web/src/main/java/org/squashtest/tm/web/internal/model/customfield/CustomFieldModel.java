@@ -34,6 +34,8 @@ public class CustomFieldModel {
 	
 	private String defaultValue;
 	
+	private String code;
+	
 	private InputTypeModel inputType;
 
 	public long getId() {
@@ -82,6 +84,17 @@ public class CustomFieldModel {
 
 	public void setInputType(InputTypeModel inputType) {
 		this.inputType = inputType;
+	}
+
+	
+	
+	
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public String getFriendlyOptional() {
