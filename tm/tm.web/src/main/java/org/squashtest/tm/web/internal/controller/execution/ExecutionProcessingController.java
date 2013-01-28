@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 
@@ -164,6 +165,15 @@ public class ExecutionProcessingController {
 
 		return new StepState(executionStep);
 
+	}
+	
+	@RequestMapping(value = "/step/{stepId}", params = {"optimized=false", "suitemode=false"})
+	public String startResumeExecutionStepInClassicRunner(@PathVariable long executionId, @PathVariable long stepId, Model model) {
+		Execution execution = executionProcService.findExecution(executionId);
+		int stepIndex = execution.getStepIndex(stepId);
+		//simple case here : the context is simply the popup. We redirect to the execution processing view controller.
+		return "redirect:" + getRedirectToStep(executionId, stepIndex, false, false);
+		
 	}
 
 	// ************************* other stuffs ********************************************

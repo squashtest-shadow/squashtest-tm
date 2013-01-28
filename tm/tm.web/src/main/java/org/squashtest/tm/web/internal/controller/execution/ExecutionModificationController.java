@@ -176,6 +176,7 @@ public class ExecutionModificationController {
 			baseColumns.add(new AoColumnDef(true, false, "centered bugged-cell", smallWidth, "bugged"));
 			baseColumns.add(new AoColumnDef(false, false, "", null, "nb-attachments"));
 			baseColumns.add(new AoColumnDef(true, false, "centered has-attachment-cell", smallWidth, "attach-list-id"));
+			baseColumns.add(new AoColumnDef(true, false, "centered run-step-button", smallWidth, "run-step-button"));
 		}
 		private List<AoColumnDef> columns = new ArrayList<AoColumnDef>();
 
@@ -234,6 +235,7 @@ public class ExecutionModificationController {
 			res.put("bugged", createBugList(item));
 			res.put(DataTableModelHelper.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
 			res.put(DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
+			res.put("run-step-button", "");
 			return res;
 		}
 

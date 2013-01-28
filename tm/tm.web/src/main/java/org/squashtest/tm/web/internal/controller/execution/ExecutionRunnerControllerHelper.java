@@ -124,6 +124,13 @@ public class ExecutionRunnerControllerHelper {
 		_populateExecutionStepModel(execution, executionStep, model);
 	}
 	
+	
+	/**
+	 * @deprecated unused
+	 * @param executionId
+	 * @param model
+	 */
+	@Deprecated
 	public void populateFirstRunnableStepIndexModel(long executionId, Model model){
 		
 		Execution execution = executionProcessingService.findExecution(executionId);

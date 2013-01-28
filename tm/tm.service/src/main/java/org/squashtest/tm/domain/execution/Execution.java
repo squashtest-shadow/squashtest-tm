@@ -67,6 +67,8 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
+import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolder;
+import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -601,6 +603,21 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	@Override
 	public DenormalizedFieldHolderType getDenormalizedFieldHolderType() {
 		return DenormalizedFieldHolderType.EXECUTION;
+	}
+
+	/**
+	 * returns the index of the step matching the given id or <code>-1</code> if step is not found.
+	 * 
+	 * @param stepId
+	 * @return index of step or -1
+	 */
+	public int getStepIndex(long stepId) {
+		for(ExecutionStep step : steps){
+			if(step.getId() == stepId) {
+				return steps.indexOf(step);
+			}
+		}
+		return -1;
 	}
 	
 }

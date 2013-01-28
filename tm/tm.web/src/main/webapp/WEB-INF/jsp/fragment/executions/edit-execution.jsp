@@ -234,7 +234,7 @@
 		<table id="execution-execution-steps-table">
 			<thead>
 				<tr>
-					<th>Id</th>
+					<th>Id(masked)</th>
 					<th><f:message
 								key="executions.steps.table.column-header.rank.label" />
 						</th>
@@ -265,7 +265,8 @@
 					<th>numberOfAttch(masked)</th>
 					<th><f:message
 								key="executions.steps.table.column-header.attachment.label" />
-						</th>
+					</th>
+					<th><f:message		key="label.short.execute" /></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -341,6 +342,29 @@
 		}
 		
 		</c:if>
+		squashSettings.buttons = [
+				{ tooltip : "tooltip",
+					cssClass : "",
+					tdSelector : "td.run-step-button",
+					image : "/squash/images/execute.png",
+					onClick : function(table, cell){
+						var executionId = "${execution.id}";
+						var row = cell.parentNode.parentNode; // hopefully, that's the
+						// 'tr' one
+						var executionStepId = table.getODataId(row);
+							var url = "http://localhost:8080/squash/execute/"+executionId+"/step/"+executionStepId;
+										var data = {
+											'optimized' : 'false',
+											'suitemode' : 'false'
+										};
+										var winDef = {
+											name : "classicExecutionRunner",
+											features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
+										};
+										$.open(url, data, winDef);
+					}
+				}
+			];
 		
 		$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
 	});
