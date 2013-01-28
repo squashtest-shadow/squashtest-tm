@@ -372,7 +372,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		var cufTable = $("#add-test-step-custom-fields");
 		var bindingsUrl = urls.stepcufBindingUrl;
 		
-		var cufValuesSupport = cufValuesManager.newCUFValuesCreator({url : bindingsUrl, table : cufTable});
+		var cufValuesSupport = cufValuesManager.newCreationPopupCUFHandler({url : bindingsUrl, table : cufTable});
 		cufValuesSupport.reloadPanel();
 		dialog.data('cuf-values-support', cufValuesSupport);
 		

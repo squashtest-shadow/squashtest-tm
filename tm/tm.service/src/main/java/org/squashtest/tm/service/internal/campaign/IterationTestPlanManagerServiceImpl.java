@@ -59,7 +59,6 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 
 @Service("squashtest.tm.service.IterationTestPlanManagerService")
-@Transactional
 public class IterationTestPlanManagerServiceImpl implements IterationTestPlanManagerService {
 
 	@Inject

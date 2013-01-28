@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.users.User;
  * 
  * @author Agnes Durand
  */
+//@Transactional
 @Transactional
 public interface IterationTestPlanManagerService extends IterationTestPlanFinder {
 

@@ -239,16 +239,16 @@ $(function(){
 
 			var dialog = $("#add-${ resourceName }-dialog");			
 			var table = dialog.find('table.add-node-attributes');
-			var cufValuesCreator = cufValuesManager.newCUFValuesCreator({table : table});			
+			var cufHandler = cufValuesManager.newCreationPopupCUFHandler({table : table});			
 		
 			dialog.on("dialogopen", function(){						
 				var projectId = $("#tree").jstree('get_selected').getProjectId();
 				var bindingsUrl = "${customFieldBindings}?projectId="+projectId+"&bindableEntity=${bindableEntity}&optional=false";
 						
-				cufValuesCreator.loadPanel(bindingsUrl);
+				cufHandler.loadPanel(bindingsUrl);
 			});
 			
-			dialog.data('cuf-values-support', cufValuesCreator);			
+			dialog.data('cuf-values-support', cufHandler);			
 			
 		});
 

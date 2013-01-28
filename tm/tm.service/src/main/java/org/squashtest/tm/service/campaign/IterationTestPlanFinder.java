@@ -30,7 +30,8 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
+@Transactional
 public interface IterationTestPlanFinder {
 	
 	

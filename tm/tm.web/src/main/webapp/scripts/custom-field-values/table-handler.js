@@ -19,14 +19,22 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["./creation-popup-handler.js"], function($, CreationPopupCUFHandler){
+
+define([], function(){
 	
-	return : {
+	function createColumnDefs(cufDefinitions){
 		
-		newCreationPopupCUFHandler : function(settings){
-			return new CreationPopupCUFHandler(settings);
+		var columns = [];
+		
+		var i = 0, 
+			total = cufDefinitions.length;
+		
+		for (i=0;i<total;i++){
+			
 		}
 		
+		
 	}
+	
 	
 });
