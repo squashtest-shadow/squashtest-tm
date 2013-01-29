@@ -58,6 +58,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
@@ -86,6 +87,7 @@ import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.combo.OptionTag;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperCollectionSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -262,9 +264,11 @@ public class TestCaseModificationController {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));	
 		
-		//the custom fields
-		List<CustomField> cufDefinitions = cufHelperService.findCustomFieldsBoundTo(testCase.getProject().getId(), BindableEntity.TEST_STEP);
+		//the custom fields definitions
+		List<CustomField> cufs = cufHelperService.findCustomFieldsForEntitiesAtLocation(testCase.getProject().getId(), BindableEntity.TEST_STEP, RenderingLocation.STEP_TABLE);
+		List<CustomFieldModel> cufDefinitions = cufHelperService.convertToJson(cufs);
 		
+		//the custom field values for the steps
 		List<CustomFieldValue> cufValues;		
 		if (! cufDefinitions.isEmpty()){
 			cufValues = cufHelperService.findCustomFieldValuesForTestSteps(steps);
@@ -273,15 +277,20 @@ public class TestCaseModificationController {
 			cufValues = Collections.emptyList();
 		}
 	
+		
+		//process the data
 		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
 		builder.usingCustomFields(cufValues, cufDefinitions.size());
 		List<Map<?,?>>  stepsData = builder.buildAllData(steps);
 		
-
+		
+		//populate the model
 		model.addAttribute("testCase", testCase);
 		model.addAttribute("stepsData", stepsData);
 		model.addAttribute("cufDefinitions", cufDefinitions);
 		
+		
+		//return
 		return "test-cases-tabs/test-steps-tab.html";
 		
 	}

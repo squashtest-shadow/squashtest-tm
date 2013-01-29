@@ -109,7 +109,7 @@ public interface CustomFieldValueDao {
 	 * @param entityType
 	 * @return
 	 */
-	List<CustomFieldValue> batchedFindAllCustomValues(@QueryParam("entityIds") List<Long> entityIds, @QueryParam("entityType") BindableEntity entityType);
+	List<CustomFieldValue> batchedFindAllCustomValuesFor(@QueryParam("entityIds") List<Long> entityIds, @QueryParam("entityType") BindableEntity entityType);
 	
 	
 	/**

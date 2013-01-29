@@ -43,8 +43,8 @@ define(["jquery", "./cuf-values-utils", "jqueryui", 'jquery.squash.jeditable', "
 			}
 		}
 		else if (typeof idOrURLOrPostfunction === undefined){
-			postFunction = function(value, obj){
-				var id = obj.data('value-id');
+			postFunction = function(value){
+				var id = $(this).data('value-id');
 				var url = squashtm.app.contextRoot+"/custom-fields/values/"+id;
 				return $.ajax({
 					url : url,
@@ -67,7 +67,7 @@ define(["jquery", "./cuf-values-utils", "jqueryui", 'jquery.squash.jeditable', "
 		
 		return function(value, settings){
 			var data = postProcessFn(value, settings);
-			postFunction(data, this)
+			postFunction.call(this, data)
 			.success(function(){
 				return value;
 			});

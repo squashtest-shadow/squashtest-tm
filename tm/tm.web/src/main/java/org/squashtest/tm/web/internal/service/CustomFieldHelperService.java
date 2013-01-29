@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -34,12 +35,14 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.testcase.ActionStepCollector;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
-import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 
 
 @Component
@@ -48,6 +51,10 @@ public class CustomFieldHelperService {
 	private CustomFieldBindingFinderService cufBindingService;
 
 	private CustomFieldValueManagerService cufValuesService;
+	
+
+	@Inject
+	private CustomFieldJsonConverter converter;
 	
 	@ServiceReference
 	public void setCustomFieldBindingFinderService(CustomFieldBindingFinderService service){
@@ -65,6 +72,13 @@ public class CustomFieldHelperService {
 		return cufValuesService.hasCustomFields(entity);
 	}
 	
+	public List<CustomFieldModel> convertToJson(List<CustomField> customFields){
+		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(customFields.size());
+		for (CustomField field : customFields){
+			models.add(converter.toJson(field));
+		}
+		return models;
+	}
 
 
 	/**
@@ -74,7 +88,7 @@ public class CustomFieldHelperService {
 	 * @param entityType
 	 * @return
 	 */
-	public List<CustomField> findCustomFieldsBoundTo(long projectId, BindableEntity entityType){
+	public List<CustomField> findCustomFieldsForEntitiesAtLocation(long projectId, BindableEntity entityType, RenderingLocation location){
 		
 		List<CustomFieldBinding> bindings = cufBindingService.findCustomFieldsForProjectAndEntity(projectId, entityType);
 		Collections.sort(bindings, new BindingSorter());
@@ -83,7 +97,9 @@ public class CustomFieldHelperService {
 		List<CustomField> result = new ArrayList<CustomField>(bindings.size());
 		
 		for (CustomFieldBinding binding : bindings){
-			result.add(binding.getCustomField());
+			if (binding.getRenderingLocations().contains(location) ){
+				result.add(binding.getCustomField());
+			}
 		}
 		
 		return result;
@@ -95,6 +111,10 @@ public class CustomFieldHelperService {
 	
 	public List<CustomFieldValue> findCustomFieldValuesForTestSteps(List<TestStep> testSteps){
 		
+		if (testSteps.isEmpty()){
+			return Collections.emptyList();
+		}
+			
 		List<ActionTestStep> actionSteps = new ActionStepCollector().collect(testSteps);
 		
 		return cufValuesService.findAllCustomFieldValues(actionSteps);

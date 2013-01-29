@@ -54,7 +54,7 @@ define(["jquery", "./jquery-cuf-values"],function($){
 		
 		//ensure that the original columnDefs are sorted 
 		var finalDefs = regularColumnDefs.sort(function(a,b){
-			return a.aTargets[0] < b.aTargets[0];
+			return a.aTargets[0] - b.aTargets[0];
 		});
 		
 		//merge the arrays
@@ -64,13 +64,13 @@ define(["jquery", "./jquery-cuf-values"],function($){
 		//reindex the target columns
 		var i=0,length=finalDefs.length;
 		for (i=0;i<length;i++){
-			var currentColumns = finalDefs[i];
-			i.aTargets = i.aTargets || [];
-			i.aTargets[0] = i;
+			var col = finalDefs[i];
+			col.aTargets = col.aTargets || [];
+			col.aTargets[0] = i;
 		};
 		
 		//done
-		return sortedColumns;				
+		return finalDefs;				
 	}
 	
 
@@ -90,7 +90,7 @@ define(["jquery", "./jquery-cuf-values"],function($){
 	}
 	
 	
-	function makePostFunction(cufCode){
+	function makePostFunction(cufCode, table){
 		return function(value){
 			
 			var row = $(this).parents('tr').get(0);
@@ -117,7 +117,7 @@ define(["jquery", "./jquery-cuf-values"],function($){
 			for (var code in defMap){
 				var def = defMap[code];
 				var cells = table.find('td.custom-field-'+code);
-				var postFunction = makePostFunction(code);
+				var postFunction = makePostFunction(code, table);
 				
 				cells.customField(def, postFunction);
 				
@@ -132,7 +132,7 @@ define(["jquery", "./jquery-cuf-values"],function($){
 		var cufDefs = createColumnDefs(cufDefinitions);
 		
 		var origDef = tableSettings.aoColumnDefs;
-		tableSettings.aoColumnDefs = mergeColumnDefs(origDef, cufDef, index);
+		tableSettings.aoColumnDefs = mergeColumnDefs(origDef, cufDefs, index);
 		
 		var oldDrawCallback = tableSettings.fnDrawCallback;
 		var addendumCallback = createCufValuesDrawCallback(cufDefinitions);
@@ -162,7 +162,7 @@ define(["jquery", "./jquery-cuf-values"],function($){
 		}
 		
 		//insert them
-		var header = table.find('thead');
+		var header = table.find('thead tr');
 		var firstHeaders = header.find('th').slice(0, index);
 		header.prepend(newTDSet);
 		header.prepend(firstHeaders);
