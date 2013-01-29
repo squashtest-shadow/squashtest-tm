@@ -43,7 +43,7 @@ public interface CustomTestCaseModificationService extends TestCaseFinder {
 	
 	void rename(long testCaseId, String newName);
 
-	TestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep);
+	ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep);
 	
 	/**
 	 * Adds an action test step to a test case, and its initial custom field values. 
@@ -54,7 +54,7 @@ public interface CustomTestCaseModificationService extends TestCaseFinder {
 	 * @param testCase
 	 * @param customFieldValues
 	 */
-	TestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, String> customFieldValues);
+	ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, String> customFieldValues);
 
 	void updateTestStepAction(long testStepId, String newAction);
 

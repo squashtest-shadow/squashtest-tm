@@ -167,9 +167,9 @@ public class TestCaseNodeDeletionHandlerImpl extends
 		stepId.add(step.getId());
 		deletionDao.setExecStepInboundReferencesToNull(stepId);
 		
-		customValueService.deleteAllCustomFieldValues(step);
 
 		if (step instanceof ActionTestStep) {
+			customValueService.deleteAllCustomFieldValues((ActionTestStep) step);
 			deleteActionStep((ActionTestStep) step);
 		} else if (step instanceof CallTestStep) {
 			CallTestStep callTestStep = (CallTestStep) step;

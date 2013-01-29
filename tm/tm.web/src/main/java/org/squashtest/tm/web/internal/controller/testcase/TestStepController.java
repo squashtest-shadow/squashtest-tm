@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -70,29 +72,44 @@ public class TestStepController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showCustomFieldModificationPage(@PathVariable long testStepId, Model model) {
+		
 		LOGGER.info("Show Test Step initiated");
 		LOGGER.debug("Find and show TestStep #{}", testStepId);
 		TestStep testStep = testStepService.findById(testStepId);
 		TestStepView testStepView = new TestStepViewBuilder().buildTestStepView(testStep);
 		model.addAttribute("testStepView", testStepView);
 		model.addAttribute("workspace", "test-case");
+		
+		
 		// ------------------------------------RIGHTS PART
 		// waiting for [Task 1843]
 		boolean writable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testStep);
 		model.addAttribute("writable", writable); // right to modify steps
 		boolean attachable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "ATTACH", testStep);
 		model.addAttribute("attachable", attachable); // right to modify steps
+		
+		
 		// end waiting for [Task 1843]
 		// ------------------------------------ATTACHMENT PART
 		if (testStepView.getActionStep() != null) {
 			model.addAttribute("attachableEntity", testStepView.getActionStep());
 		}
+		
+		
 		// -----------------------------------------CUF PART
-		List<CustomFieldValue> values = cufValueFinder.findAllCustomFieldValues(testStep.getBoundEntityId(),
-				testStep.getBoundEntityType());
+		List<CustomFieldValue> values;
+		if (testStepView.getActionStep() != null){
+			ActionTestStep aStep = testStepView.getActionStep();
+			values = cufValueFinder.findAllCustomFieldValues(aStep.getBoundEntityId(), aStep.getBoundEntityType());
+		}
+		else{
+			values = Collections.emptyList();
+		}
 		CustomFieldValueConfigurationBean conf = new CustomFieldValueConfigurationBean(values);
 		model.addAttribute("configuration", conf);
-		boolean hasCUF = cufValueFinder.hasCustomFields(testStep);
+		
+		
+		boolean hasCUF = (testStepView.getActionStep()!=null) ? cufValueFinder.hasCustomFields(testStepView.getActionStep()) : false;
 		model.addAttribute("hasCUF", hasCUF);
 
 		return "edit-test-step.html";

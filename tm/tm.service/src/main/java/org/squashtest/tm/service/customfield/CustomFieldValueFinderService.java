@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.customfield;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,18 @@ public interface CustomFieldValueFinderService {
 	 * @return
 	 */
 	List<CustomFieldValue> findAllCustomFieldValues(BoundEntity boundEntity);
+	
+	
+	/**
+	 * Same as {@link #findAllCustomFieldValues(BoundEntity)}, using a List of entities instead.
+	 * This method is pure convenience, to fetch custom fields in bulk (and soften the db queries overhead).
+	 * 
+	 * The order of the result is arbitrary.
+	 * 
+	 * @param boundEntity
+	 * @return
+	 */
+	List<CustomFieldValue> findAllCustomFieldValues(List<? extends BoundEntity> boundEntities);
 	
 	
 	/**
@@ -73,4 +86,7 @@ public interface CustomFieldValueFinderService {
 	 * @return
 	 */
 	List<CustomFieldValue> findAllCustomFieldValues(Long boundEntityId, BindableEntity bindableEntity);
+	
+	
+	
 }

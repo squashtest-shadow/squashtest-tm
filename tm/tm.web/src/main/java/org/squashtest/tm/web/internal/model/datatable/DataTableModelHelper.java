@@ -21,9 +21,12 @@
 package org.squashtest.tm.web.internal.model.datatable;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
 public abstract class DataTableModelHelper<X> {
@@ -36,6 +39,35 @@ public abstract class DataTableModelHelper<X> {
 	public final static String DEFAULT_EMPTY_EXECUTE_HOLDER_KEY = "empty-execute-holder";
 	
 	private long currentIndex = 0;
+	
+	protected Map<Long, Map<String, ShortCUFValueModel>> customFieldValuesById;
+	
+	
+	
+	public void usingCustomFields(List<CustomFieldValue> cufValues, int nbFieldsPerEntity){
+		
+		customFieldValuesById = new HashMap<Long, Map<String,ShortCUFValueModel>>();
+		
+		for (CustomFieldValue value : cufValues){
+			
+			Long entityId = value.getBoundEntityId();
+			Map<String, ShortCUFValueModel> values = customFieldValuesById.get(entityId);
+			
+			if (values==null){
+				values = new HashMap<String, ShortCUFValueModel>(nbFieldsPerEntity);
+				customFieldValuesById.put(entityId, values);
+			}
+			
+			values.put(value.getCustomField().getCode(), new ShortCUFValueModel(value));
+			
+		}
+	}
+	
+	
+	public void usingCustomFields(List<CustomFieldValue> cufValues){
+		usingCustomFields(cufValues, 3);	//3 is a plain blind guess
+	}
+	
 	
 	public DataTableModel buildDataModel(FilteredCollectionHolder<List<X>> holder, int startIndex, String sEcho) {
 
@@ -64,6 +96,8 @@ public abstract class DataTableModelHelper<X> {
 		return model;
 
 	}
+	
+
 
 	private DataTableModel createModelFromItems(String sEcho, Collection<X> pagedItems) {
 		DataTableModel model = new DataTableModel(sEcho);
@@ -85,8 +119,58 @@ public abstract class DataTableModelHelper<X> {
 
 	protected abstract Object buildItemData(X item);
 	
+	
+	
 	protected void incrementIndex(){
 		currentIndex++;
+	}	
+	
+	
+	protected Map<String, ShortCUFValueModel> getCustomFieldsFor(Long id){
+		if (customFieldValuesById==null){
+			return new HashMap<String, ShortCUFValueModel>(0);
+		}
+		else{
+			Map<String, ShortCUFValueModel> values = customFieldValuesById.get(id);
+			if (values == null){
+				return new HashMap<String, ShortCUFValueModel>(0);
+			}
+			else{
+				return values;
+			}
+		}
+	}
+	
+	protected static class ShortCUFValueModel{
+		
+		private String value;
+		private Long id;
+		
+		public String getValue() {
+			return value;
+		}
+		
+		public void setValue(String value) {
+			this.value = value;
+		}
+		
+		public Long getId() {
+			return id;
+		}
+		
+		public void setId(Long id) {
+			this.id = id;
+		}
+		
+		public ShortCUFValueModel(){
+			super();
+		}
+		
+		public ShortCUFValueModel(CustomFieldValue value) {
+			this.id = value.getId();
+			this.value = value.getValue();
+		}
+		
 	}
 
 }

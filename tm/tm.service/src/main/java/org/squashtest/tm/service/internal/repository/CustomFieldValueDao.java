@@ -78,7 +78,7 @@ public interface CustomFieldValueDao {
 	 * @param entityTpe
 	 * @param entityIds
 	 */
-	void deleteAllForEntities(@QueryParam("entityType") BindableEntity entityTpe, @QueryParam("entityIds") List<Long> entityIds);
+	void deleteAllForEntities(@QueryParam("entityType") BindableEntity entityType, @QueryParam("entityIds") List<Long> entityIds);
 	
 
 	
@@ -101,6 +101,17 @@ public interface CustomFieldValueDao {
 	 */
 	List<CustomFieldValue> findAllCustomValues(long entityId, BindableEntity entityType);
 
+	
+	/**
+	 * Same as above, list version.
+	 * 
+	 * @param entityIds
+	 * @param entityType
+	 * @return
+	 */
+	List<CustomFieldValue> findAllCustomValues(@QueryParam("entityIds") List<Long> entityIds, @QueryParam("entityType") BindableEntity entityType);
+	
+	
 	/**
 	 * returns all the {@link CustomFieldValue} related to a given {@link CustomFieldBinding}, sorted according to
 	 * their custom field binding order.

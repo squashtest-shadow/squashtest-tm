@@ -21,7 +21,11 @@
 package org.squashtest.tm.service.internal.customfield;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -83,14 +87,43 @@ public class PrivateCustomFieldValueServiceImpl implements
 				boundEntity.getBoundEntityType());
 	}
 
+
 	@Override
 	public List<CustomFieldValue> findAllCustomFieldValues(Long boundEntityId,
 			BindableEntity bindableEntity) {
 
 		BoundEntity boundEntity = boundEntityDao.findBoundEntity(boundEntityId,
 				bindableEntity);
+		
+		if (!permissionService.canRead(boundEntity)) {
+			throw new AccessDeniedException("Access is denied");
+		}
+		
 		return findAllCustomFieldValues(boundEntity);
 	}
+	
+	
+	@Override
+	// well I'll skip the security check for this one because we don't really want to kill the db
+	public List<CustomFieldValue> findAllCustomFieldValues(List<? extends BoundEntity> boundEntities) {
+		
+		//first, because the entities might be of different kind we must segregate them.
+		Map<BindableEntity, List<Long>> compositeIds = _breakEntitiesIntoCompositeIds(boundEntities);
+		
+		//second, one can now call the db and consolidate the result.
+		List<CustomFieldValue> result = new ArrayList<CustomFieldValue>();
+		
+		for (Entry<BindableEntity, List<Long>> entry : compositeIds.entrySet()){
+			
+			result.addAll(customFieldValueDao.findAllCustomValues(entry.getValue(), entry.getKey()));
+			
+		}
+		
+		return result;
+		
+	}
+
+	
 
 	@Override
 	public void cascadeCustomFieldValuesCreation(CustomFieldBinding binding) {
@@ -191,5 +224,21 @@ public class PrivateCustomFieldValueServiceImpl implements
 
 		changedValue.setValue(newValue);
 	}
+	
+	
+	// *********************** private convenience methods ********************
 
+	private Map<BindableEntity, List<Long>> _breakEntitiesIntoCompositeIds(Collection<? extends BoundEntity> boundEntities) {
+		
+		Map<BindableEntity, List<Long>> segregatedEntities = new HashMap<BindableEntity, List<Long>>(3); //3 is just a guess
+		for (BoundEntity entity : boundEntities){
+			List<Long> idList = segregatedEntities.get(entity.getBoundEntityType());
+			if (idList == null){
+				idList = new ArrayList<Long>();
+				segregatedEntities.put(entity.getBoundEntityType(), idList);
+			}
+			idList.add(entity.getBoundEntityId());
+		}
+		return segregatedEntities;
+	}
 }

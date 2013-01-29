@@ -49,6 +49,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
@@ -133,7 +134,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	public TestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep) {
+	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep) {
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 
 		testStepDao.persist(newTestStep);
@@ -146,9 +147,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	public TestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, String> customFieldValues) {
+	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, String> customFieldValues) {
 		
-		TestStep step = addActionTestStep(parentTestCaseId, newTestStep);
+		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep);
 		initCustomFieldValues(step, customFieldValues);
 		return step;
 	}
@@ -257,7 +258,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestStep copyStep = original.createCopy();
 
 		testStepDao.persist(copyStep);
-		customFieldValuesService.copyCustomFieldValues(original, copyStep);
+		
+		//custom field copy
+		StepCustomFieldCopier cufCopier = new StepCustomFieldCopier();
+		cufCopier.setOriginalStep(original);
+		copyStep.accept(cufCopier);
+		
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		if (position!=null){
@@ -398,5 +404,29 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			}
 			
 		}
+	}
+	
+	// ***************** utilities etc **********************
+	
+	private class StepCustomFieldCopier implements TestStepVisitor{
+
+		private TestStep originalStep;
+		
+		public void setOriginalStep(TestStep step){
+			this.originalStep = step;
+		}
+		
+		@Override
+		public void visit(ActionTestStep visited) {
+			customFieldValuesService.copyCustomFieldValues((ActionTestStep)originalStep, visited);
+		}
+
+		@Override
+		public void visit(CallTestStep visited) {
+			//nothing
+		}
+		
+		
+		
 	}
 }

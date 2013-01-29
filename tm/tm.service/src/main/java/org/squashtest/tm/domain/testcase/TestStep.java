@@ -59,7 +59,7 @@ import org.squashtest.tm.service.security.annotation.InheritsAcls;
 @InheritsAcls(constrainedClass = TestCase.class, collectionName = "steps")
 
 @Persister(impl=TestStepPersister.class)
-public abstract class TestStep implements BoundEntity  {
+public abstract class TestStep {
 	@Id
 	@GeneratedValue
 	@Column(name = "TEST_STEP_ID")
@@ -95,22 +95,5 @@ public abstract class TestStep implements BoundEntity  {
 	
 	public abstract List<ExecutionStep> createExecutionSteps();
 	
-	
-	// *************** BoundEntity implementation *************
-	
-	@Override
-	public Long getBoundEntityId() {
-		return getId();
-	}
-	
-	@Override
-	public BindableEntity getBoundEntityType() {
-		return BindableEntity.TEST_STEP;
-	}
-
-	@Override
-	public Project getProject() {
-		return getTestCase().getProject();
-	}
 
 }

@@ -21,16 +21,12 @@
 
 package org.squashtest.tm.domain.customfield;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 /**
@@ -58,7 +54,7 @@ public enum BindableEntity implements Internationalizable {
 		
 		@Override
 		public Class<?> getReferencedClass() {
-			return TestStep.class;
+			return ActionTestStep.class;
 		};
 		
 		@Override

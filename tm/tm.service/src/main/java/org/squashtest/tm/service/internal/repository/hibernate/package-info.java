@@ -254,6 +254,7 @@
 		
 		//CustomFieldValue
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValues", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId = ? and cfv.boundEntityType = ? order by cfb.position asc"),
+		@NamedQuery(name = "CustomFieldValue.findAllCustomValues", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType group by cfv.boundEntityId order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBinding" , query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id = ? order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBindings", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id in ( :bindingIds )"),
 		@NamedQuery(name = "CustomFieldValue.deleteAll", query="delete CustomFieldValue where id in (:ids)"),
@@ -275,7 +276,7 @@
 		@NamedQuery(name = "BoundEntityDao.findAllCampaignsForProject", query="select c from Campaign c where c.project.id = :projectId"),
 		@NamedQuery(name = "BoundEntityDao.findAllIterationsForProject", query="select i from Iteration i join i.campaign c where c.project.id = :projectId"),
 		@NamedQuery(name = "BoundEntityDao.findAllTestSuitesForProject", query="select ts from TestSuite ts join ts.iteration i join i.campaign c where c.project.id = :projectId"),
-		@NamedQuery(name = "BoundEntityDao.findAllTestStepsForProject", query="select ts from TestCase tc join tc.steps ts where tc.project.id = :projectId"),		
+		@NamedQuery(name = "BoundEntityDao.findAllTestStepsForProject", query="select ts from TestCase tc join tc.steps ts where tc.project.id = :projectId and ts.class = ActionTestStep"),		
 		@NamedQuery(name = "BoundEntityDao.hasCustomFields", query="select count(cfv) from CustomFieldValue cfv where cfv.boundEntityId = :boundEntityId and cfv.boundEntityType = :boundEntityType"),
 		
 		//Administration

@@ -51,11 +51,12 @@ import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.web.internal.controller.testcase.ActionStepFormModel.ActionStepFormModelValidator;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.TestCaseFormModelValidator;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
@@ -70,6 +71,7 @@ import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
@@ -77,10 +79,12 @@ import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.web.internal.controller.testcase.ActionStepFormModel.ActionStepFormModelValidator;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.combo.OptionTag;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperCollectionSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -89,6 +93,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePagedFilter;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.service.CustomFieldHelperService;
 
 
 @Controller
@@ -149,9 +154,13 @@ public class TestCaseModificationController {
 	private Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider;
 
 	
-	@Inject
-	private CustomFieldValueFinderService cufValueService;
+	// ****** custom field services ******************
 
+	@Inject
+	private CustomFieldHelperService cufHelperService;
+
+	// ****** /custom field services ******************
+	
 	@Inject
 	private Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider;
 	
@@ -201,7 +210,7 @@ public class TestCaseModificationController {
 	private void populateModelWithTestCaseEditionData(ModelAndView mav, TestCase testCase, Locale locale) {
 		
 
-		boolean hasCUF = cufValueService.hasCustomFields(testCase);
+		boolean hasCUF = cufHelperService.hasCustomFields(testCase);
 		
 		// Convert execution mode with local parameter
 		List<OptionTag> executionModes = new ArrayList<OptionTag>();
@@ -249,12 +258,20 @@ public class TestCaseModificationController {
 	public String getTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model, Locale locale){
 		
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));	
 		
-		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));		
-		List<Map<?,?>>  stepsData = new TestStepsTableModelBuilder(internationalizationHelper, locale).buildAllData(steps);
+		List<CustomField> cufDefinitions = cufHelperService.findCustomFieldsBoundTo(testCase.getProject().getId(), BindableEntity.TEST_STEP);
+		List<CustomFieldValue> cufValues = cufHelperService.findCustomFieldValuesForTestSteps(steps);
+			
 		
+		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
+		builder.usingCustomFields(cufValues);
+		List<Map<?,?>>  stepsData = builder.buildAllData(steps);
+		
+
 		model.addAttribute("testCase", testCase);
 		model.addAttribute("stepsData", stepsData);
+		model.addAttribute("cufDefinitions", cufDefinitions);
 		
 		return "test-cases-tabs/test-steps-tab.html";
 		

@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.context.MessageSource;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -41,9 +42,11 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
  *
  */
 class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implements TestStepVisitor {
+	
 	private final MessageSource messageSource;
 	private final Locale locale;
 	private Map<?, ?> lastBuiltItem;
+	
 
 	public TestStepsTableModelBuilder(MessageSource messageSource, Locale locale) {
 		this.messageSource = messageSource;
@@ -65,6 +68,7 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 		item.accept(this);
 		return lastBuiltItem;
 	}
+	
 
 	/**
 	 * Creates a model row from the visited item and stores it as {@link #lastBuiltItem}
@@ -72,7 +76,7 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 	@Override
 	public void visit(ActionTestStep visited) {
 		
-		Map<Object, Object> item = new HashMap<Object, Object>(9);
+		Map<Object, Object> item = new HashMap<Object, Object>(10);
 		
 		item.put("step-id", visited.getId());
 		item.put("step-index", getCurrentIndex());
@@ -84,6 +88,8 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 		item.put("called-tc-id", null);
 		item.put("empty-delete-holder", null);
 		
+		decorateWithCustomFields(item);
+		
 		lastBuiltItem = item;
 
 	}
@@ -92,12 +98,10 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 	public void visit(CallTestStep visited) {
 		TestCase called = visited.getCalledTestCase();
 
-		String action = "<span>" +
-						messageSource.getMessage("test-case.call-step.action.template",	new Object[] { called.getName() }, locale) + 
-						"</span>";
+		String action = messageSource.getMessage("test-case.call-step.action.template",	new Object[] { called.getName() }, locale);
 						   
 
-		Map<Object, Object> item = new HashMap<Object, Object>(9);
+		Map<Object, Object> item = new HashMap<Object, Object>(10);
 		
 		item.put("step-id", visited.getId());
 		item.put("step-index", getCurrentIndex());
@@ -108,9 +112,20 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 		item.put("step-type", "call");
 		item.put("called-tc-id", called.getId());
 		item.put("empty-delete-holder", null);
+
+		decorateWithCustomFields(item);
 		
 		lastBuiltItem = item;
 
 	}
+	
+
+	protected void decorateWithCustomFields(Map<Object, Object> item){
+
+		Map<String, ShortCUFValueModel> cufValues = getCustomFieldsFor((Long)item.get("step-id"));
+		item.put("customFields", cufValues);		
+		
+	}
+	
 
 }

@@ -47,9 +47,12 @@ import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.service.internal.campaign.IterationTestPlanManager;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
@@ -218,6 +221,7 @@ public class TreeNodeCopier implements NodeVisitor {
 		testSuiteCopy.bindTestPlanItems(testPlanItemsToBind);
 	}
 	
+	
 	/**
 	 * @see PrivateCustomFieldValueService#copyCustomFieldValues(BoundEntity, BoundEntity)
 	 */
@@ -225,17 +229,22 @@ public class TreeNodeCopier implements NodeVisitor {
 		customFieldValueManagerService.copyCustomFieldValues(source, copy);
 	}
 	
+	
 	private void copyCustomFields(TestCase source, TestCase copy) {
 		customFieldValueManagerService.copyCustomFieldValues(source, copy);
 		//do the same for the steps if any
 		int total=copy.getSteps().size();
+		StepCustomFieldCopier cufCopier = new StepCustomFieldCopier();
 		for (int i=0;i<total;i++){
-			TestStep copyStep = copy.getSteps().get(i);
 			TestStep sourceStep = source.getSteps().get(i);
-			customFieldValueManagerService.copyCustomFieldValues(sourceStep, copyStep);
+			cufCopier.setOriginalStep(sourceStep);
+			
+			TestStep copyStep = copy.getSteps().get(i);
+			copyStep.accept(cufCopier);
 		}
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	private void saveNextToCopy(NodeContainer<? extends TreeNode> source, NodeContainer<? extends TreeNode> copy) {
 		if (source.hasContent()) {
@@ -244,6 +253,7 @@ public class TreeNodeCopier implements NodeVisitor {
 		}
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	private <T extends TreeNode>void persistCopy(T copy, EntityDao<T> dao) {
 		renameIfNeeded((Copiable) copy);
@@ -251,6 +261,7 @@ public class TreeNodeCopier implements NodeVisitor {
 		((NodeContainer<T>)destination).addContent(copy);
 		this.copy = copy;
 	}
+	
 	
 	@SuppressWarnings("unchecked")
 	private void persistTestCase(TestCase testCase){
@@ -273,6 +284,30 @@ public class TreeNodeCopier implements NodeVisitor {
 			String newName = LibraryUtils.generateUniqueCopyName(destination.getContentNames(), copy.getName());
 			copy.setName(newName);
 		}
+	}
+	
+	// ***************** utilities etc **********************
+	
+	private class StepCustomFieldCopier implements TestStepVisitor{
+
+		private TestStep originalStep;
+		
+		public void setOriginalStep(TestStep step){
+			this.originalStep = step;
+		}
+		
+		@Override
+		public void visit(ActionTestStep visited) {
+			customFieldValueManagerService.copyCustomFieldValues((ActionTestStep)originalStep, visited);
+		}
+
+		@Override
+		public void visit(CallTestStep visited) {
+			//nothing
+		}
+		
+		
+		
 	}
 
 }

@@ -32,11 +32,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.internal.importer.TestCaseImporter;
@@ -161,7 +165,8 @@ public class TestCaseLibraryNavigationServiceImpl extends
 			
 			//also create the custom field values for the steps if any
 			if (! testCase.getSteps().isEmpty()){
-				createCustomFieldValues(testCase.getSteps());
+				List<ActionTestStep> actionSteps = new ActionStepCollector().collect(testCase.getSteps());
+				createCustomFieldValues(actionSteps);
 			}
 			
 		}
@@ -193,7 +198,8 @@ public class TestCaseLibraryNavigationServiceImpl extends
 			
 			//also create the custom field values for the steps if any
 			if (! testCase.getSteps().isEmpty()){
-				createCustomFieldValues(testCase.getSteps());
+				List<ActionTestStep> actionSteps = new ActionStepCollector().collect(testCase.getSteps());
+				createCustomFieldValues(actionSteps);
 			}
 		}
 	}
@@ -238,7 +244,5 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		List<ExportTestCaseData> testCases = testCaseDao.findTestCaseToExportFromNodes(nodesIds);
 		return (List<ExportTestCaseData>) setFullFolderPath(testCases);
 	}
-
-	
 
 }
