@@ -27,6 +27,7 @@
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
     
      <changeSet id="1.4.0.feat-1513-test-01" author="mpagnon">
+     
 		<comment>We save data from ISSUE before it is migrated</comment>
 		<sql>
 			CREATE TABLE `KEYVAL` (
@@ -109,6 +110,20 @@
 			</sqlCheck>
 		</preConditions>
 		<comment>We check that each execution has data for the new test case related fields</comment>
+		
+	</changeSet>
+	<changeSet id="tm-1.4.0.feat-1596-test-02" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from EXECUTION exe
+				where  exe.importance &lt;&gt; 'LOW'
+				and exe.importance &lt;&gt; 'HIGH'
+				and exe.importance &lt;&gt; 'MEDIUM'
+				and exe.importance &lt;&gt; 'VERY_HIGH'
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that each execution has data for execution importance</comment>
 		
 	</changeSet>
 </databaseChangeLog>

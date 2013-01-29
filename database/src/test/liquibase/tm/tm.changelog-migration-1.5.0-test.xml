@@ -25,8 +25,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-    
-  <changeSet id="1.4.0.feat-1513-test-01" author="mpagnon">
+         
+<include file="tm.data-1.4.1.xml" relativeToChangelogFile="true" />
+  <changeSet id="tm-1.5.0.issue-1838-test-00" author="mpagnon">
 		<comment>We save data from CUSTOM_FIELD_VALUE that should not change</comment>
 		<sql>
 			create table `TEMP_CUF_VALUES` (

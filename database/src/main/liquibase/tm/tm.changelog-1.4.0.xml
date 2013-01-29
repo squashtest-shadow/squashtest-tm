@@ -478,7 +478,7 @@
 				
 		</changeSet>
   
-  <changeSet id="tm-1.4.0.feat-1110.01" author="">
+  <changeSet id="tm-1.4.0.feat-1110.01" author="gfouquet">
     <comment>Adds a type discriminator column on PROJECT</comment>
     <addColumn tableName="PROJECT">
       <column name="PROJECT_TYPE" type="CHAR(1)" defaultValue="P" remarks="P: project, T: project template">
