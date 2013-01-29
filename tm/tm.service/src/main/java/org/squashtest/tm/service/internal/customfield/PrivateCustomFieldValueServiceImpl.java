@@ -115,7 +115,7 @@ public class PrivateCustomFieldValueServiceImpl implements
 		
 		for (Entry<BindableEntity, List<Long>> entry : compositeIds.entrySet()){
 			
-			result.addAll(customFieldValueDao.findAllCustomValues(entry.getValue(), entry.getKey()));
+			result.addAll(customFieldValueDao.batchedFindAllCustomValues(entry.getValue(), entry.getKey()));
 			
 		}
 		

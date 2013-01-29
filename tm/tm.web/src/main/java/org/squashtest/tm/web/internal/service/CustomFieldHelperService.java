@@ -27,42 +27,46 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.testcase.ActionStepCollector;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
-import org.squashtest.tm.service.internal.testcase.ActionStepCollector;
-import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
+import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 
 
 @Component
 public class CustomFieldHelperService {
 
-	
-	
-	@Inject
-	private CustomFieldValueFinderService cufValueService;
-	
-	@Inject 
 	private CustomFieldBindingFinderService cufBindingService;
 
-	@Inject
-	private CustomFieldJsonConverter converter;
+	private CustomFieldValueManagerService cufValuesService;
 	
-	
-	public boolean hasCustomFields(BoundEntity entity){
-		return cufValueService.hasCustomFields(entity);
+	@ServiceReference
+	public void setCustomFieldBindingFinderService(CustomFieldBindingFinderService service){
+		this.cufBindingService=service;
 	}
 	
+	@ServiceReference
+	public void setManagerService(CustomFieldValueManagerService cufValuesService) {
+		this.cufValuesService = cufValuesService;
+	}
 	
+
+
+	public boolean hasCustomFields(BoundEntity entity){
+		return cufValuesService.hasCustomFields(entity);
+	}
+	
+
+
 	/**
 	 * Return the CustomFields referenced by the CustomFieldBindings for the given project and BindableEntity type, ordered by their position. 
 	 * 
@@ -93,7 +97,7 @@ public class CustomFieldHelperService {
 		
 		List<ActionTestStep> actionSteps = new ActionStepCollector().collect(testSteps);
 		
-		return cufValueService.findAllCustomFieldValues(actionSteps);
+		return cufValuesService.findAllCustomFieldValues(actionSteps);
 		
 	}
 	

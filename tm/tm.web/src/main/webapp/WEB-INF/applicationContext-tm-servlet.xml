@@ -74,6 +74,7 @@
 		class="org.squashtest.tm.web.internal.fileupload.UploadContentFilterUtil">
 		<property name="whiteList" value="${uploadfilter.fileExtensions.whitelist}" />
 	</bean>
+  
 
 
 	<!-- ============================== /multipart files handling =============================================== -->

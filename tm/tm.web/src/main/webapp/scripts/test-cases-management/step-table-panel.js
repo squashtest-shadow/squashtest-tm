@@ -126,7 +126,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 	function stepsTableDrawCallback() {
 
 		//rework the td css classes to inhibit some post processing on them when not relevant
-		specializeCellClasses(table);
+		specializeCellClasses(this);
 		
 		//collapser
 		var collapser = this.data('collapser');

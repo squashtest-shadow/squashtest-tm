@@ -136,7 +136,7 @@ define(["jquery", "./cuf-values-utils", "jqueryui", 'jquery.squash.jeditable', "
 	}
 	
 	
-	function initAsPlainText(this, cufDefinition, idOrURLOrPostfunction){
+	function initAsPlainText(elts, cufDefinition, idOrURLOrPostfunction){
 		
 		var conf = { type : 'text' };
 		
@@ -147,7 +147,7 @@ define(["jquery", "./cuf-values-utils", "jqueryui", 'jquery.squash.jeditable', "
 	}
 	
 	
-	function initAsCheckbox(this, cufDefinition, idOrURLOrPostfunction){
+	function initAsCheckbox(elts, cufDefinition, idOrURLOrPostfunction){
 		
 		if (elts.length===0) return;
 

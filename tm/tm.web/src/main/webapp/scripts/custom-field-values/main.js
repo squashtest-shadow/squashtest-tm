@@ -27,7 +27,7 @@ define(["./creation-popup-handler", "./table-handler"], function(CreationPopupCU
 			return new CreationPopupCUFHandler(settings);
 		},
 		
-		cufTableSupport : tableHander
+		cufTableSupport : tableHandler
 		
 	}
 	

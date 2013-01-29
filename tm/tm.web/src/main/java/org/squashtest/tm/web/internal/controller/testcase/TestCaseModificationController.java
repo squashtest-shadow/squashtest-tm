@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.testcase;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -257,15 +258,23 @@ public class TestCaseModificationController {
 	@RequestMapping(value="/steps/panel")
 	public String getTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model, Locale locale){
 		
+		//the main entities
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));	
 		
+		//the custom fields
 		List<CustomField> cufDefinitions = cufHelperService.findCustomFieldsBoundTo(testCase.getProject().getId(), BindableEntity.TEST_STEP);
-		List<CustomFieldValue> cufValues = cufHelperService.findCustomFieldValuesForTestSteps(steps);
-			
 		
+		List<CustomFieldValue> cufValues;		
+		if (! cufDefinitions.isEmpty()){
+			cufValues = cufHelperService.findCustomFieldValuesForTestSteps(steps);
+		}
+		else{
+			cufValues = Collections.emptyList();
+		}
+	
 		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
-		builder.usingCustomFields(cufValues);
+		builder.usingCustomFields(cufValues, cufDefinitions.size());
 		List<Map<?,?>>  stepsData = builder.buildAllData(steps);
 		
 
