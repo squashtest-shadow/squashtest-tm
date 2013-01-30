@@ -21,7 +21,7 @@
 
 
 define(["jquery", "./cuf-values-utils", "jqueryui", 'jquery.squash.jeditable', "jeditable.datepicker",
-		"datepicker/require.jquery.squash.datepicker-locales"],function($){
+		"datepicker/require.jquery.squash.datepicker-locales"],function($, utils){
 
 	
 	function buildPostFunction(idOrURLOrPostfunction, postProcess){
@@ -67,28 +67,38 @@ define(["jquery", "./cuf-values-utils", "jqueryui", 'jquery.squash.jeditable', "
 		
 		return function(value, settings){
 			var data = postProcessFn(value, settings);
-			postFunction.call(this, data)
-			.success(function(){
-				return value;
-			});
+			postFunction.call(this, data);
+			return value;
 		}
 		
 	}
 	
 
+	function getBasicConf(){
+		return {
+			width : '100%',
+			submit : squashtm.app.projectFilterConf.confirmLabel,
+			cancel : squashtm.app.projectFilterConf.cancelLabel
+		}
+		
+	}
 	
 	function initAsDatePicker(elts, cufDefinition, idOrURLOrPostfunction){
 		
-		var conf = {
-			type : 'datepicker',
-			datepicker : $.extend(
-				{ dateFormat : cufDefinition.format},
-				$.datepicker.regional[cufDefinition.locale]
-			)
-		}
+		var conf = getBasicConf();
+		
+		var format = cufDefinition.format;
+		var locale = cufDefinition.locale;
+		
+		conf.type = 'datepicker';
+		conf.datepicker = $.extend(
+				{ dateFormat : format },
+				$.datepicker.regional[locale]
+			);
+	
 		
 		var postProcess = function(value, settings){
-			return utils.convertStrDate(settings.datePicker.dateFormat, $.datepicker.ATOM, value);						
+			return utils.convertStrDate(format, $.datepicker.ATOM, value);						
 		}
 		
 		var postFunction = buildPostFunction(idOrURLOrPostfunction, postProcess);
@@ -99,17 +109,19 @@ define(["jquery", "./cuf-values-utils", "jqueryui", 'jquery.squash.jeditable', "
 
 
 	
+	
 	function initAsList(elts, cufDefinitions, idOrURLOrPostfunction){
 		if (elts.length===0) return;
 		
 		var prepareSelectData = function(options, selected){
 			
-			var copy = options.slice(0); //cheap copy
-			var i=0,length=copy.length;
+			var i=0,length=options.length;
 			var result={};
 			
+			var opt;
 			for (i=0;i<length;i++){
-				result[copy[i]]=copy[i];
+				opt=options[i].label;
+				result[opt]=opt;
 			}
 			
 			result.selected = selected;
@@ -123,11 +135,10 @@ define(["jquery", "./cuf-values-utils", "jqueryui", 'jquery.squash.jeditable', "
 			var jqThis = $(this);
 			var selected = jqThis.text();
 			
-			var conf = {
-				type : 'select',
-				data : prepareSelectData(cufDefinitions.options, selected)
-			}
-			
+			var conf = getBasicConf();
+			conf.type='select';
+			conf.data = prepareSelectData(cufDefinitions.options, selected);
+	
 			var postFunction = buildPostFunction(idOrURLOrPostfunction);
 			
 			jqThis.editable(postFunction, conf);
@@ -138,7 +149,8 @@ define(["jquery", "./cuf-values-utils", "jqueryui", 'jquery.squash.jeditable', "
 	
 	function initAsPlainText(elts, cufDefinition, idOrURLOrPostfunction){
 		
-		var conf = { type : 'text' };
+		var conf = getBasicConf();
+		conf.type = 'text';
 		
 		var postFunction = buildPostFunction(idOrURLOrPostfunction);
 		
@@ -165,11 +177,11 @@ define(["jquery", "./cuf-values-utils", "jqueryui", 'jquery.squash.jeditable', "
 			var chkbx;
 			
 			if (! jqThis.is('input[type="checkbox"]')){
-				var checked = ( jqThis.text() === "true" ) ? true : false;
+				var checked = ( jqThis.text().toLowerCase() === "true" ) ? true : false;
 				jqThis.empty();
 				chkbx = $('<input type="checkbox"/>');
-				chkbox.prop('checked', checked);			
-				jqThis.append(chkbox); 			
+				chkbx.prop('checked', checked);			
+				jqThis.append(chkbx); 			
 			}
 			else{
 				chkbx = jqThis;

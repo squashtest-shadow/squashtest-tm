@@ -38,7 +38,8 @@ define(["jquery", "./jquery-cuf-values"],function($){
 				'bVisible' : true, 
 				'bSortable' : false, 
 				'mDataProp' : "customFields."+currentDef.code+".value",
-				'sClass' : 'custom-field-value custom-field-'+currentDef.code
+				'sClass' : 'custom-field-value custom-field-'+currentDef.code,
+				'sWidth' : "5em"
 			};			
 			columns.push(newColumn);
 			
@@ -115,11 +116,14 @@ define(["jquery", "./jquery-cuf-values"],function($){
 			var defMap = mapDefinitionsToCode(cufDefinitions); 
 
 			for (var code in defMap){
+				
 				var def = defMap[code];
 				var cells = table.find('td.custom-field-'+code);
+				var spans = cells.wrapInner('<span/>').find('span:eq(0)');
+				
 				var postFunction = makePostFunction(code, table);
 				
-				cells.customField(def, postFunction);
+				spans.customField(def, postFunction);
 				
 			}
 			

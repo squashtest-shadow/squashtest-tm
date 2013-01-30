@@ -25,8 +25,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
@@ -48,6 +51,7 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
+import org.squashtest.tm.web.internal.service.CustomFieldHelperService.Helper;
 
 
 
@@ -267,7 +271,7 @@ public class CustomFieldHelperService {
 		
 		
 		private <Y>  void retainUniques(Collection<Y> argument){
-			HashSet<Y> set = new HashSet<Y>(argument);
+			Set<Y> set = new LinkedHashSet<Y>(argument);
 			argument.clear();
 			argument.addAll(set);
 		}

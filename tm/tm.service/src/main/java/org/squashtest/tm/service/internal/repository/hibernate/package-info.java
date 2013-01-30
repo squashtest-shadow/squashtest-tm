@@ -254,10 +254,10 @@
 		
 		//CustomFieldValue
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValues", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId = ? and cfv.boundEntityType = ? order by cfb.position asc"),
-		@NamedQuery(name = "CustomFieldValue.batchedFindAllCustomValuesFor", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType group by cfv.boundEntityId order by cfb.position asc"),
+		@NamedQuery(name = "CustomFieldValue.batchedFindAllCustomValuesFor", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType order by cfv.boundEntityId asc, cfb.position asc"),
 		@NamedQuery(name = "CustomFieldValue.batchedRestrictedFindAllCustomValuesFor", query="select cfv from CustomFieldValue cfv join cfv.binding cfb join cfb.customField cf where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType " +
 																							 "and cf in (:customFields) " +	
-																							 "group by cfv.boundEntityId order by cfb.position asc"),		
+																							 "order by cfv.boundEntityId , cfb.position asc"),		
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBinding" , query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id = ? order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBindings", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id in ( :bindingIds )"),
 		@NamedQuery(name = "CustomFieldValue.deleteAll", query="delete CustomFieldValue where id in (:ids)"),
