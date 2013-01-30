@@ -199,7 +199,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		};
 		
 		//decorate the settings with the cuf values support
-		datatableSettings = cufTableHandler.decorateTableSettings(datatableSettings, settings.basic.cufDefinitions, 2);
+		datatableSettings = cufTableHandler.decorateTableSettings(datatableSettings, settings.basic.cufDefinitions, 2, permissions.isWritable);
 		
 		
 		var squashSettings = {

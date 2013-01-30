@@ -176,17 +176,18 @@ define(["jquery", "./cuf-values-utils", "jqueryui", 'jquery.squash.jeditable', "
 			var jqThis = $(this);
 			var chkbx;
 			
-			if (! jqThis.is('input[type="checkbox"]')){
-				var checked = ( jqThis.text().toLowerCase() === "true" ) ? true : false;
-				jqThis.empty();
-				chkbx = $('<input type="checkbox"/>');
-				chkbx.prop('checked', checked);			
-				jqThis.append(chkbx); 			
-			}
-			else{
+			
+			if (jqThis.is('input[type="checkbox"]')){
 				chkbx = jqThis;
 			}
+			else if (jqThis.find('input[type="checkbox"]').length>0){
+				chkbx = jqThis.find('input[type="checkbox"]');
+			}
+			else{
+				chkbx = utils.appendCheckbox(jqThis);			
+			}
 			
+			chkbx.enable(true);
 			chkbx.click(clickFn);
 			
 		});		

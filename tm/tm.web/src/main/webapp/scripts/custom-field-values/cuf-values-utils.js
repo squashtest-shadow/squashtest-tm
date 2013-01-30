@@ -22,6 +22,59 @@
 
 define(["jquery", "jqueryui"], function($){
 	
+	
+	function appendCheckbox(element){
+		var jqThis = (element instanceof jQuery) ? element : $(element);
+		var checked = ( jqThis.text().toLowerCase() === "true" ) ? true : false;
+		jqThis.empty();
+		chkbx = $('<input type="checkbox"/>');
+		chkbx.prop('checked', checked);			
+		jqThis.append(chkbx); 		
+		return chkbx;
+	}
+	
+	function staticRendering(elts, cufDefinition){
+		
+		var elements = (elts instanceof jQuery) ? elts.get() : elts;
+		if (elements.length===0) return;		
+		
+		//name of the property that gets/sets the text depending on the browser
+		var txtppt = (elements[0].textContent!==undefined) ? "textContent" : "innerText";
+		
+		//loop variables
+		var i=0, 
+			length=elements.length,
+			elt;
+		
+		var inputType = cufDefinition.inputType.enumName;
+		
+		if (inputType==="DATE_PICKER"){
+			var format = cufDefinition.format;
+			var text, formatted;
+			for (i=0;i<length;i++){
+				elt = elements[i];
+				text = elt[txtppt];
+				formatted = convertStrDate($.datepicker.ATOM, format, text);
+				elt[txtppt]=formatted;
+			}
+		}
+		else if (inputType==="CHECKBOX"){
+			var chbx;
+			for (i=0;i<length;i++){
+				elt = elements[i];
+				if (elt.type !="checkbox" ){
+					chbx = appendCheckbox(elt);
+					chbx.enable(false);
+				}
+				
+			}
+		}
+		//else nothing
+		
+		
+	}
+	
+	
 	function convertStrDate(fromFormat, toFormat, strFromValue){
 		var date = $.datepicker.parseDate(fromFormat, strFromValue);
 		return $.datepicker.formatDate(toFormat, date);		
@@ -29,7 +82,9 @@ define(["jquery", "jqueryui"], function($){
 	
 	
 	return {
-		convertStrDate : convertStrDate
+		convertStrDate : convertStrDate,
+		staticRendering : staticRendering,
+		appendCheckbox : appendCheckbox
 	}
 	
 });

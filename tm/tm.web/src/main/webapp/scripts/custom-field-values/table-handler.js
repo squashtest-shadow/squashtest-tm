@@ -20,7 +20,7 @@
  */
 
 
-define(["jquery", "./jquery-cuf-values"],function($){
+define(["jquery", "./cuf-values-utils", "./jquery-cuf-values"],function($, utils){
 	
 	
 	// ********************************** Datatable configuration *******************************
@@ -90,6 +90,7 @@ define(["jquery", "./jquery-cuf-values"],function($){
 		return resultMap;
 	}
 	
+
 	
 	function makePostFunction(cufCode, table){
 		return function(value){
@@ -108,22 +109,30 @@ define(["jquery", "./jquery-cuf-values"],function($){
 	}
 	
 	
-	function createCufValuesDrawCallback(cufDefinitions){
+	function createCufValuesDrawCallback(cufDefinitions, editable){
+
+		var definitionMap = mapDefinitionsToCode(cufDefinitions); 
 		
 		return function(){
-			
-			var table = this;
-			var defMap = mapDefinitionsToCode(cufDefinitions); 
 
+			var table = this;
+			var defMap = definitionMap;
+			var isEditable = editable;
+			
+			//wrap the tds content with a span
+			table.find('td.custom-field-value').wrapInner('<span/>');
+			
 			for (var code in defMap){
 				
 				var def = defMap[code];
-				var cells = table.find('td.custom-field-'+code);
-				var spans = cells.wrapInner('<span/>').find('span:eq(0)');
+				var spans = table.find('td.custom-field-'+code+'>span');
 				
-				var postFunction = makePostFunction(code, table);
+				utils.staticRendering(spans, def);
 				
-				spans.customField(def, postFunction);
+				if (isEditable){
+					var postFunction = makePostFunction(code, table);				
+					spans.customField(def, postFunction);
+				}
 				
 			}
 			
@@ -131,7 +140,9 @@ define(["jquery", "./jquery-cuf-values"],function($){
 	}
 	
 	
-	function decorateTableSettings(tableSettings, cufDefinitions, index){
+	function decorateTableSettings(tableSettings, cufDefinitions, index, isEditable){
+		
+		var editable = (isEditable===undefined) ? false : isEditable;
 		
 		var cufDefs = createColumnDefs(cufDefinitions);
 		
@@ -139,7 +150,8 @@ define(["jquery", "./jquery-cuf-values"],function($){
 		tableSettings.aoColumnDefs = mergeColumnDefs(origDef, cufDefs, index);
 		
 		var oldDrawCallback = tableSettings.fnDrawCallback;
-		var addendumCallback = createCufValuesDrawCallback(cufDefinitions);
+		
+		var addendumCallback = createCufValuesDrawCallback(cufDefinitions, editable);
 		
 		tableSettings.fnDrawCallback = function(){
 			oldDrawCallback.apply(this, arguments);
