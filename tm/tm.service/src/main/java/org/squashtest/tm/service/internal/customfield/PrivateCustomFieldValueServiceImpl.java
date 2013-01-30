@@ -34,6 +34,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
@@ -43,8 +44,7 @@ import org.squashtest.tm.service.internal.repository.CustomFieldValueDao.CustomF
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 @Service("squashtest.tm.service.CustomFieldValueManagerService")
-public class PrivateCustomFieldValueServiceImpl implements
-		PrivateCustomFieldValueService {
+public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldValueService {
 
 	@Inject
 	CustomFieldValueDao customFieldValueDao;
@@ -105,7 +105,7 @@ public class PrivateCustomFieldValueServiceImpl implements
 	
 	@Override
 	// well I'll skip the security check for this one because we don't really want to kill the db
-	public List<CustomFieldValue> findAllCustomFieldValues(List<? extends BoundEntity> boundEntities) {
+	public List<CustomFieldValue> findAllCustomFieldValues(Collection<? extends BoundEntity> boundEntities) {
 		
 		//first, because the entities might be of different kind we must segregate them.
 		Map<BindableEntity, List<Long>> compositeIds = _breakEntitiesIntoCompositeIds(boundEntities);
@@ -116,6 +116,27 @@ public class PrivateCustomFieldValueServiceImpl implements
 		for (Entry<BindableEntity, List<Long>> entry : compositeIds.entrySet()){
 			
 			result.addAll(customFieldValueDao.batchedFindAllCustomValuesFor(entry.getValue(), entry.getKey()));
+			
+		}
+		
+		return result;
+		
+	}
+	
+	// same : no sec, a gesture of mercy for the database
+	@Override
+	public List<CustomFieldValue> findAllCustomFieldValues(Collection<? extends BoundEntity> boundEntities, 
+														   Collection<CustomField> restrictedToThoseCustomfields) {
+		
+		//first, because the entities might be of different kind we must segregate them.
+		Map<BindableEntity, List<Long>> compositeIds = _breakEntitiesIntoCompositeIds(boundEntities);
+		
+		//second, one can now call the db and consolidate the result.
+		List<CustomFieldValue> result = new ArrayList<CustomFieldValue>();
+		
+		for (Entry<BindableEntity, List<Long>> entry : compositeIds.entrySet()){
+			
+			result.addAll(customFieldValueDao.batchedRestrictedFindAllCustomValuesFor(entry.getValue(), entry.getKey(), restrictedToThoseCustomfields));
 			
 		}
 		

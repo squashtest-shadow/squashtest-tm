@@ -97,6 +97,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTablePagedFilter;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
 import org.squashtest.tm.web.internal.service.CustomFieldHelperService;
+import org.squashtest.tm.web.internal.service.CustomFieldHelperService.Helper;
 
 
 @Controller
@@ -265,19 +266,13 @@ public class TestCaseModificationController {
 		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));	
 		
 		//the custom fields definitions
-		List<CustomField> cufs = cufHelperService.findCustomFieldsForEntitiesAtLocation(testCase.getProject().getId(), BindableEntity.TEST_STEP, RenderingLocation.STEP_TABLE);
-		List<CustomFieldModel> cufDefinitions = cufHelperService.convertToJson(cufs);
+		Helper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps).setRenderingLocations(RenderingLocation.STEP_TABLE)
+																			  .restrictToCommonFields();
 		
-		//the custom field values for the steps
-		List<CustomFieldValue> cufValues;		
-		if (! cufDefinitions.isEmpty()){
-			cufValues = cufHelperService.findCustomFieldValuesForTestSteps(steps);
-		}
-		else{
-			cufValues = Collections.emptyList();
-		}
-	
-		
+		List<CustomFieldModel> cufDefinitions = helper.getCustomFieldConfiguration();
+		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
+
+
 		//process the data
 		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
 		builder.usingCustomFields(cufValues, cufDefinitions.size());
@@ -306,9 +301,16 @@ public class TestCaseModificationController {
 
 		FilteredCollectionHolder<List<TestStep>> holder = testCaseModificationService.findStepsByTestCaseIdFiltered(
 				testCaseId, filter);
+		
+		//cufs 
+		Helper<ActionTestStep> helper = cufHelperService.newStepsHelper(holder.getFilteredCollection()).restrictToCommonFields();
+		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
 
-		return new TestStepsTableModelBuilder(internationalizationHelper, locale).buildDataModel(holder,
-				filter.getFirstItemIndex() + 1, params.getsEcho());
+		//generate the model
+		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
+		builder.usingCustomFields(cufValues);
+		return builder.buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
+
 
 	}
 

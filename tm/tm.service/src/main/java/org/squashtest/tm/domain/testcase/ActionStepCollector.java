@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.testcase;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 

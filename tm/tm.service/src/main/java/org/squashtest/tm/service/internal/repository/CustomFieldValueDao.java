@@ -20,10 +20,12 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 
@@ -110,6 +112,16 @@ public interface CustomFieldValueDao {
 	 * @return
 	 */
 	List<CustomFieldValue> batchedFindAllCustomValuesFor(@QueryParam("entityIds") List<Long> entityIds, @QueryParam("entityType") BindableEntity entityType);
+	
+	
+	/**
+	 * Same as above, will restrict to the custom fields specified as arguments
+	 * 
+	 * @return
+	 */
+	List<CustomFieldValue> batchedRestrictedFindAllCustomValuesFor(@QueryParam("entityIds") List<Long> entityIds, 
+																   @QueryParam("entityType") BindableEntity entityType,
+																   @QueryParam("customFields") Collection<CustomField> customFields);
 	
 	
 	/**

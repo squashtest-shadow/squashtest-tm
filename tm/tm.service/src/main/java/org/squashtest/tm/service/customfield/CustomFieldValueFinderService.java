@@ -26,6 +26,7 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 
 @Transactional(readOnly=true)
@@ -53,7 +54,19 @@ public interface CustomFieldValueFinderService {
 	 * @param boundEntity
 	 * @return
 	 */
-	List<CustomFieldValue> findAllCustomFieldValues(List<? extends BoundEntity> boundEntities);
+	List<CustomFieldValue> findAllCustomFieldValues(Collection<? extends BoundEntity> boundEntities);
+	
+	
+	/**
+	 * Same as {@link #findAllCustomFieldValues(Collection)}, but only the values refering to one of the custom fields 
+	 * given as argument will be retained.
+	 * 
+	 * 
+	 * @param boundEntities
+	 * @param restrictedToThoseCustomfields
+	 * @return
+	 */
+	List<CustomFieldValue> findAllCustomFieldValues(Collection<? extends BoundEntity> boundEntities, Collection<CustomField> restrictedToThoseCustomfields);
 	
 	
 	/**

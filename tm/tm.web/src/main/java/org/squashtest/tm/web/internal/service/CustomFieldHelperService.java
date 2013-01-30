@@ -21,13 +21,18 @@
 package org.squashtest.tm.web.internal.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -44,6 +49,15 @@ import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 
+
+
+/**
+ * Read the definition of {@link Helper} instead
+ * 
+ * 
+ * @author bsiri
+ *
+ */
 
 @Component
 public class CustomFieldHelperService {
@@ -68,59 +82,268 @@ public class CustomFieldHelperService {
 	
 
 
+
+	// *************************** the public helper class backed by this service *****************************
+	
+	
+	/**
+	 * The goal of a helper is to hide all the logic regarding the custom fields, so as to make the task for 
+	 * the controller as light as possible. 
+	 */
+	public class Helper<X extends BoundEntity> {
+		
+		private Collection<X> entities;
+		private Collection<RenderingLocation> locations;
+		
+		private CustomFieldDefinitionStrategy addingStrategy = CustomFieldDefinitionStrategy.INTERSECTION;
+		
+		private List<CustomField> customFields;
+		private List<CustomFieldValue> values;
+		
+		
+		public Helper(X entity){
+			this.entities = new ArrayList<X>();
+			this.entities.add(entity);
+		}
+		
+		public Helper(Collection<X> entities){
+			this.entities = entities;
+		}
+		
+		public Helper<X> setRenderingLocations(RenderingLocation... locations){
+			this.locations = Arrays.asList(locations);
+			return this;
+		}
+		
+		public Helper<X> setRenderingLocations(Collection<RenderingLocation> locations){
+			this.locations = locations;
+			return this;
+		}
+		
+		
+		/**
+		 * tells the helper to retain only the custom fields that are common to all the entities (in case they come from mixed projects, or are 
+		 * of mixed concrete classes)
+		 * 
+		 * @return this object
+		 */
+		public Helper<X> restrictToCommonFields(){
+			addingStrategy = CustomFieldDefinitionStrategy.INTERSECTION;
+			return this;
+		}
+		
+		/**
+		 * tells the helper to include every custom fields it finds.
+		 * 
+		 * @return
+		 */
+		public Helper<X> includeAllCustomFields(){
+			addingStrategy = CustomFieldDefinitionStrategy.UNION;
+			return this;
+		}
+		
+
+		/**
+		 * sorted by position, filtered by location.
+		 * 
+		 * @return
+		 */
+		public List<CustomFieldModel> getCustomFieldConfiguration(){
+			if (! isInited()){
+				init();
+			}
+			
+			return convertToJson(customFields);
+			
+		}
+		
+		
+		public List<CustomFieldValue> getCustomFieldValues(){
+			
+			if (! isInited()){
+				init();
+			}
+			
+			if (values == null){
+				
+				if (customFields.isEmpty() || entities.isEmpty()){
+					values = Collections.emptyList();
+				}
+				else{
+					values = findRestrictedCustomFieldValues(entities, customFields, locations);
+				}
+			}
+			
+			return values;
+			
+		}
+		
+		// ******************* utilities **************************
+
+		private boolean isInited(){
+			return customFields!=null;
+		}
+		
+		private void init(){
+			if (! entities.isEmpty()){			
+				
+				//restrict the number of queries we must perform.
+				Collection<BindingTarget> targets = CollectionUtils.collect(entities, new BindingTargetCollector());
+				retainUniques(targets);
+				
+				customFields = new ArrayList<CustomField>(); 
+				
+				//collect the result
+				for (BindingTarget target : targets){
+					customFields = addingStrategy.add(customFields,  
+													  findCustomFields(target.getProjectId(), target.getBindableEntity(), locations)
+									);
+
+				}
+				
+				//eliminate multiple definitions
+				retainUniques(customFields);
+			}
+			else{
+				customFields = Collections.emptyList();
+			}			
+		}
+		
+		
+		/**
+		 * Return the CustomFields referenced by the CustomFieldBindings for the given project and BindableEntity type, ordered by their position. 
+		 * The location argument is optional, if set then only the custom fields that are rendered in at least one of these locations will be returned.
+		 * 
+		 * @param projectId
+		 * @param entityType
+		 * @return
+		 */
+		private List<CustomField> findCustomFields(long projectId, BindableEntity entityType, Collection<RenderingLocation> optionalLocations){
+			
+			List<CustomFieldBinding> bindings = cufBindingService.findCustomFieldsForProjectAndEntity(projectId, entityType);
+			
+			Collections.sort(bindings, new BindingSorter());
+			
+			CollectionUtils.filter(bindings, new BindingLocationFilter(optionalLocations));
+			
+			return (List<CustomField>) CollectionUtils.collect(bindings, new BindingFieldCollector());
+
+		}
+		
+
+		
+		/**
+		 * returns the flattened collection of custom fields associated to all the entities in arguments, restricted to only the supplied customfields. 
+		 * If some rendering locations are specified, then the resulting collection will contain only those that can be displayed in at least one of those locations. 
+		 * 
+		 * @param entities
+		 * @param optionalLocations
+		 * @return
+		 */
+		private List<CustomFieldValue> findRestrictedCustomFieldValues(Collection<? extends BoundEntity> entities,  
+																	   Collection<CustomField> customFields,
+																	   Collection<RenderingLocation>  optionalLocations){
+			
+			if (entities.isEmpty() || customFields.isEmpty()){
+				return Collections.emptyList();
+			}
+			
+			List<CustomFieldValue> values = cufValuesService.findAllCustomFieldValues(entities, customFields);
+			
+			CollectionUtils.filter(values, new ValueLocationFilter(optionalLocations));
+			
+			return values;
+		}
+
+		
+
+		private List<CustomFieldModel> convertToJson(Collection<CustomField> customFields){
+			List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(customFields.size());
+			for (CustomField field : customFields){
+				models.add(converter.toJson(field));
+			}
+			return models;
+		}
+		
+		
+		private <Y>  void retainUniques(Collection<Y> argument){
+			HashSet<Y> set = new HashSet<Y>(argument);
+			argument.clear();
+			argument.addAll(set);
+		}
+		
+	}
+	
+	
+	// ************************** service methods **********************************
+	
+	
 	public boolean hasCustomFields(BoundEntity entity){
 		return cufValuesService.hasCustomFields(entity);
 	}
 	
-	public List<CustomFieldModel> convertToJson(List<CustomField> customFields){
-		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(customFields.size());
-		for (CustomField field : customFields){
-			models.add(converter.toJson(field));
-		}
-		return models;
+	
+	public <X extends BoundEntity> Helper<X> newHelper(X entity){
+		return new Helper<X>(entity);
 	}
+	
+	public <X extends BoundEntity> Helper<X> newHelper(List<X> entities){
+		return new Helper<X>(entities);
+	}
+	
+	public Helper<ActionTestStep> newStepsHelper(List<TestStep> steps){
+		return new Helper<ActionTestStep> (new ActionStepCollector().collect(steps));
+	}
+	
 
-
-	/**
-	 * Return the CustomFields referenced by the CustomFieldBindings for the given project and BindableEntity type, ordered by their position. 
-	 * 
-	 * @param projectId
-	 * @param entityType
-	 * @return
-	 */
-	public List<CustomField> findCustomFieldsForEntitiesAtLocation(long projectId, BindableEntity entityType, RenderingLocation location){
+	
+	// *************************** utility classes **********************************
+	
+	
+	private enum CustomFieldDefinitionStrategy{
 		
-		List<CustomFieldBinding> bindings = cufBindingService.findCustomFieldsForProjectAndEntity(projectId, entityType);
-		Collections.sort(bindings, new BindingSorter());
-		
-		
-		List<CustomField> result = new ArrayList<CustomField>(bindings.size());
-		
-		for (CustomFieldBinding binding : bindings){
-			if (binding.getRenderingLocations().contains(location) ){
-				result.add(binding.getCustomField());
+		INTERSECTION(){
+			@Override
+			List<CustomField>  add(List<CustomField> orig, List<CustomField> addition) {
+				if (orig.isEmpty()){
+					return addition;
+				}
+				else{
+					return new ArrayList<CustomField>(CollectionUtils.intersection(orig, addition));
+				}
 			}
-		}
+		},
+		UNION(){
+			@Override
+			List<CustomField>  add(List<CustomField> orig, List<CustomField> addition) {
+				orig.addAll(addition);
+				return orig;
+			}
+		};
 		
-		return result;
-		
+		abstract List<CustomField> add(List<CustomField> orig, List<CustomField> addition);
 	}
 	
-
 	
+	private static class BindingTarget{
 	
-	public List<CustomFieldValue> findCustomFieldValuesForTestSteps(List<TestStep> testSteps){
+		private Long projectId;
+		private BindableEntity bindableEntity;
 		
-		if (testSteps.isEmpty()){
-			return Collections.emptyList();
+		BindingTarget(BoundEntity entity){
+			this.projectId = entity.getProject().getId();
+			this.bindableEntity=entity.getBoundEntityType();
 		}
-			
-		List<ActionTestStep> actionSteps = new ActionStepCollector().collect(testSteps);
 		
-		return cufValuesService.findAllCustomFieldValues(actionSteps);
+		public Long getProjectId() {
+			return projectId;
+		}
+		
+		public BindableEntity getBindableEntity() {
+			return bindableEntity;
+		}
 		
 	}
-	
 	
 	
 	private static final class BindingSorter implements Comparator<CustomFieldBinding>{
@@ -130,7 +353,53 @@ public class CustomFieldHelperService {
 		}
 	}
 	
-	
+	private static final class BindingLocationFilter implements Predicate{
 
+		private Collection<RenderingLocation> locations;
+		
+		BindingLocationFilter( Collection<RenderingLocation>  locations){
+			this.locations = locations;
+		}
+		
+		@Override
+		public boolean evaluate(Object arg0) {
+			CustomFieldBinding binding = (CustomFieldBinding)arg0;
+			return (CollectionUtils.containsAny(locations, binding.getRenderingLocations()));
+		}
+		
+	}
 	
+	private static final class ValueLocationFilter implements Predicate{
+
+		private Collection<RenderingLocation> locations;
+		
+		ValueLocationFilter( Collection<RenderingLocation>  locations){
+			this.locations = locations;
+		}
+		
+		
+		@Override
+		public boolean evaluate(Object arg0) {
+			CustomFieldValue value = (CustomFieldValue)arg0;
+			return (CollectionUtils.containsAny(locations, value.getBinding().getRenderingLocations()));
+		}
+		
+	}
+
+	private static final class BindingFieldCollector implements Transformer{
+
+		@Override
+		public Object transform(Object arg0) {
+			CustomFieldBinding binding = (CustomFieldBinding) arg0;
+			return binding.getCustomField();
+		}
+		
+	}
+	
+	private static final class BindingTargetCollector implements Transformer{
+		@Override
+		public Object transform(Object arg0) {
+			return new BindingTarget((BoundEntity) arg0);
+		}
+	}
 }
