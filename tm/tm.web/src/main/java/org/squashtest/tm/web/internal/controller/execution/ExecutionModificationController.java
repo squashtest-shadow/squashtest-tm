@@ -185,7 +185,7 @@ public class ExecutionModificationController {
 		}
 
 		private List<AoColumnDef> getAoColumnDefs(List<String> dfvCodes, boolean editable) {
-			columns.get(columns.size() - 1).setbVisible(editable);
+			columns.get(columns.size() - 2).setbVisible(editable);
 			if (!dfvCodes.isEmpty()) {
 				List<AoColumnDef> dfvColumns = new ArrayList<AoColumnDef>(dfvCodes.size());
 				for (String dfvCode : dfvCodes) {

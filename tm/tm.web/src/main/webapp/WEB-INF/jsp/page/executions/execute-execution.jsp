@@ -232,6 +232,7 @@
 					initNextButton();
 					initPreviousButton();
 					initStopButton();
+					<c:if test="${editable}">
 					initFailButton();
 					initSuccessButton();
 	
@@ -245,7 +246,7 @@
 						statusComboChange
 						);
 					});
-					
+					</c:if>
 					$("#execute-next-test-case").button({
 						'text': false,
 						'disabled': !hasNextTestCase || hasNextStep,
@@ -284,13 +285,19 @@
 							<label id="evaluation-label-status">
 								<f:message key="execute.header.status.label" />
 							</label> 
-							<comp:execution-status-combo name="executionStatus" id="execution-status-combo" />
+							<c:choose>
+							<c:when test="${editable }"><comp:execution-status-combo name="executionStatus" id="execution-status-combo" />
 							<button id="execute-fail-button">
 								<f:message key="execute.header.button.failure.title" />
 							</button>
 							<button id="execute-success-button">
 								<f:message key="execute.header.button.passed.title" />
 							</button>
+							</c:when>
+							<c:otherwise>
+							<jq:execution-status status="${executionStep.executionStatus.canonicalStatus}" /> 
+							</c:otherwise>
+							</c:choose>
 						</td>
 						<td class="centered not-displayed" id="execute-next-test-case-panel">
 							<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner?optimized=false&suitemode=true' />" method="post">
@@ -334,11 +341,11 @@
 				<div id="execute-evaluation">
 
 					<div id="execute-evaluation-leftside">
-
-						<comp:rich-jeditable targetUrl="${executeComment}"
-							componentId="execution-comment"
-							submitCallback="refreshExecStepInfos" />
-
+						<c:if test="${editable}">
+							<comp:rich-jeditable targetUrl="${executeComment}"
+								componentId="execution-comment"
+								submitCallback="refreshExecStepInfos" />
+						</c:if>
 						<comp:toggle-panel id="execution-comment-panel"
 							titleKey="execute.panel.comment.title" isContextual="true"
 							open="true">
