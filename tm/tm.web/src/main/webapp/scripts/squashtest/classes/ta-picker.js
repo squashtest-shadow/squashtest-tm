@@ -161,7 +161,9 @@ function TestAutomationPicker(settings){
 	};
 	
 	var reset = function(){
-		tree.jstree('get_selected').deselect();	
+		if(tree.jstree('get_selected').length > 0){
+			tree.jstree('get_selected').deselect();
+		}
 	};
 	
 	//****************** transaction ************
