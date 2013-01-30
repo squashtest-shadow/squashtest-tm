@@ -25,61 +25,108 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-         
-<include file="tm.data-1.4.1.xml" relativeToChangelogFile="true" />
-  <changeSet id="tm-1.5.0.issue-1838-test-00" author="mpagnon">
+
+	<include file="tm.data-1.4.1.xml" relativeToChangelogFile="true" />
+	<changeSet id="tm-1.5.0.issue-1838-test-00" author="mpagnon">
 		<comment>We save data from CUSTOM_FIELD_VALUE that should not change</comment>
 		<sql>
 			create table `TEMP_CUF_VALUES` (
 			`ID` BIGINT(20),
-			`VALUE` VARCHAR(255)
+			`VALUE`
+			VARCHAR(255)
 			);
 		</sql>
 		<comment>We save data of optional custom fields</comment>
-		
+
 		<sql>
 			insert into `TEMP_CUF_VALUES`(`ID`, `VALUE`)
-			select cfv.CFV_ID, cfv.VALUE from CUSTOM_FIELD_VALUE cfv
-			join CUSTOM_FIELD_BINDING cfb on cfb.CFB_ID = cfv.CFB_ID
+			select cfv.CFV_ID,
+			cfv.VALUE from CUSTOM_FIELD_VALUE cfv
+			join CUSTOM_FIELD_BINDING cfb on
+			cfb.CFB_ID = cfv.CFB_ID
 			join CUSTOM_FIELD cf on cf.CF_ID = cfb.CF_ID
 			where cf.OPTIONAL = true;
 		</sql>
 		<comment>We save data of mandatory but valorized custom fields</comment>
-		
+
 		<sql>
 			insert into `TEMP_CUF_VALUES`(`ID`, `VALUE`)
-			select cfv.CFV_ID, cfv.VALUE from CUSTOM_FIELD_VALUE cfv
-			join CUSTOM_FIELD_BINDING cfb on cfb.CFB_ID = cfv.CFB_ID
+			select cfv.CFV_ID,
+			cfv.VALUE from CUSTOM_FIELD_VALUE cfv
+			join CUSTOM_FIELD_BINDING cfb on
+			cfb.CFB_ID = cfv.CFB_ID
 			join CUSTOM_FIELD cf on cf.CF_ID = cfb.CF_ID
 			where cf.OPTIONAL = false
 			and cfv.VALUE is not NULL
-			and  LTRIM(RTRIM(cfv.VALUE))  != ''
+			and
+			LTRIM(RTRIM(cfv.VALUE)) != ''
 		</sql>
 	</changeSet>
-<!-- =================================================================================================================== -->
-<!-- ___________________________________________________________INCLUDE CHANGELOG_______________________________________ -->
-		<include file="../../../main/liquibase/tm/tm.changelog-1.5.0.xml" relativeToChangelogFile="true" />
-<!-- =================================================================================================================== -->
-     <changeSet id="tm-1.5.0.issue-1838-test-01" author="mpagnon">
+	<changeSet id="tm-1.5.0.feat-1864-test-00" author="mpagnon">
+		<comment>We save data from ACL_RESPONSIBILITY_SCOPE_ENTRY in temporary table</comment>
+		<sql>
+			create table `TEMP_ARSE_INFOS` (
+			`ID` BIGINT(20),
+			`USER_ID`
+			BIGINT(20),
+			);
+		</sql>
+		<comment>We save data of arse</comment>
+
+		<sql>
+			insert into `TEMP_ARSE_INFOS`(`ID`, `USER_ID`)
+			select arse.ID ,
+			arse.USER_ID from ACL_RESPONSIBILITY_SCOPE_ENTRY arse;
+		</sql>
+
+		<comment>We save data from ACL_RESPONSIBILITY_SCOPE_ENTRY in temporary table</comment>
+		<sql>
+			create table `TEMP_CGRPM_INFOS` (
+			`GROUP_ID` BIGINT(20),
+			`USER_ID`
+			BIGINT(20),
+			);
+		</sql>
+		<comment>We save data of core_group_member</comment>
+
+		<sql>
+			insert into `TEMP_CGRPM_INFOS`(`GROUP_ID`, `USER_ID`)
+			select
+			CGRPM.GROUP_ID , CGRPM.USER_ID from CORE_GROUP_MEMBER CGRPM;
+		</sql>
+
+	</changeSet>
+	<!-- =================================================================================================================== -->
+	<!-- ___________________________________________________________INCLUDE 
+		CHANGELOG_______________________________________ -->
+	<include file="../../../main/liquibase/tm/tm.changelog-1.5.0.xml"
+		relativeToChangelogFile="true" />
+	<!-- =================================================================================================================== -->
+	<changeSet id="tm-1.5.0.issue-1838-test-01" author="mpagnon">
 		<preConditions>
 			<sqlCheck expectedResult="0">
 				select count(*)
-				from CUSTOM_FIELD_VALUE cfv
-				join CUSTOM_FIELD_BINDING cfb on cfb.CFB_ID = cfv.CFB_ID
+				from
+				CUSTOM_FIELD_VALUE cfv
+				join CUSTOM_FIELD_BINDING cfb on cfb.CFB_ID =
+				cfv.CFB_ID
 				join CUSTOM_FIELD cf on cf.CF_ID = cfb.CF_ID
-				where (cfv.VALUE is null or  LTRIM(RTRIM(cfv.VALUE)) = '')
-				and cf.OPTIONAL = false
+				where
+				(cfv.VALUE is null or LTRIM(RTRIM(cfv.VALUE)) = '')
+				and cf.OPTIONAL =
+				false
 			</sqlCheck>
 		</preConditions>
 		<comment>We check that all mandatory cuf values are not null or equal to ""</comment>
-		</changeSet>
-		
+	</changeSet>
 
-		<changeSet id="1.5.0.issue-1838-test-02" author="mpagnon">
+
+	<changeSet id="1.5.0.issue-1838-test-02" author="mpagnon">
 		<preConditions>
 			<sqlCheck expectedResult="0">
 				select count(*)
-				from CUSTOM_FIELD_VALUE cfv, TEMP_CUF_VALUES tcv
+				from
+				CUSTOM_FIELD_VALUE cfv, TEMP_CUF_VALUES tcv
 				where cfv.CFV_ID = tcv.ID
 				and cfv.VALUE != tcv.VALUE
 			</sqlCheck>
@@ -87,6 +134,133 @@
 		<comment>We check that optional cuf values and mandatory but valorized cuf values did not change</comment>
 		<sql>
 			drop table `TEMP_CUF_VALUES`;
+		</sql>
+	</changeSet>
+	<!--================================== FEAT 1864=================================== -->
+	<changeSet id="tm-1.5.0.feat-1864-test-01" author="mpagnon">
+		<preConditions>
+			<tableExists tableName="CORE_PARTY" />
+			<columnExists tableName="CORE_PARTY" columnName="PARTY_ID" />
+			<primaryKeyExists primaryKeyName="pk_party" tableName="CORE_PARTY"/>
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0.feat-1864-test-02" author="mpagnon">
+		<preConditions>
+			<tableExists tableName="CORE_TEAM" />
+			<columnExists tableName="CORE_TEAM" columnName="PARTY_ID" />
+			<primaryKeyExists primaryKeyName="pk_team" tableName="CORE_TEAM" />
+			<foreignKeyConstraintExists
+				foreignKeyName="fk_team_party" />
+			<columnExists tableName="CORE_TEAM" columnName="NAME" />
+			<columnExists tableName="CORE_TEAM" columnName="DESCRIPTION" />
+			<columnExists tableName="CORE_TEAM" columnName="CREATED_BY" />
+			<columnExists tableName="CORE_TEAM" columnName="CREATED_ON" />
+			<columnExists tableName="CORE_TEAM" columnName="LAST_MODIFIED_BY" />
+			<columnExists tableName="CORE_TEAM" columnName="LAST_MODIFIED_ON" />
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0.feat-1864-test-03" author="mpagnon">
+		<preConditions>
+			<tableExists tableName="CORE_TEAM_MEMBER" />
+			<columnExists tableName="CORE_TEAM_MEMBER" columnName="USER_ID" />
+			<foreignKeyConstraintExists
+				foreignKeyName="fk_team_member_team" />
+			<columnExists tableName="CORE_TEAM_MEMBER" columnName="TEAM_ID" />
+			<foreignKeyConstraintExists
+				foreignKeyName="fk_team_member_user" />
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0.feat-1864-test-04" author="mpagnon">
+		<preConditions>
+			<columnExists tableName="CORE_USER" columnName="PARTY_ID" />
+			<primaryKeyExists primaryKeyName="pk_core_user" tableName="CORE_USER"/>
+			<foreignKeyConstraintExists
+				foreignKeyName="fk_core_user_party" />
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0.feat-1864-test-05" author="mpagnon">
+		<preConditions>
+			<columnExists tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY"
+				columnName="PARTY_ID" />
+			<foreignKeyConstraintExists
+				foreignKeyName="fk_arse_party" />
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0.feat-1864-test-06" author="mpagnon">
+		<preConditions>
+			<columnExists tableName="CORE_GROUP_MEMBER" columnName="PARTY_ID" />
+			<foreignKeyConstraintExists
+				foreignKeyName="fk_group_member_party" />
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0.feat-1864-test-07" author="mpagnon">
+		<preConditions>
+			<not>
+				<columnExists tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY"
+					columnName="USER_ID" />
+				<columnExists tableName="CORE_GROUP_MEMBER" columnName="USER_ID" />
+			</not>
+		</preConditions>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0.feat-1864-test-08" author="mpagnon">
+		<preConditions>
+			<foreignKeyConstraintExists
+				foreignKeyName="fk_camp_tp_user" />
+			<foreignKeyConstraintExists
+				foreignKeyName="fk_itertestplan_user" />
+		</preConditions>
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.feat-1864-test-09" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from
+				TEMP_CGRPM_INFOS temp
+				where not exists (
+				select * from
+				CORE_GROUP_MEMBER cgm, CORE_USER cu
+				where cgm.GROUP_ID =
+				temp.GROUP_ID
+				and temp.USER_ID = cu.PARTY_ID
+				and cu.PARTY_ID = cgm.PARTY_ID
+				)
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that every CORE_GROUP_MEMBER entry has a rightfull PARTY_ID</comment>
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.feat-1864-test-10" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from TEMP_ARSE_INFOS
+				temp
+				where not exists (
+				select * from ACL_RESPONSIBILITY_SCOPE_ENTRY
+				arse, CORE_USER cu
+				where arse.ID = temp.ID
+				and temp.USER_ID = cu.PARTY_ID
+				and cu.PARTY_ID = arse.PARTY_ID
+				)
+			</sqlCheck>
+		</preConditions>
+		<comment>We check that every ACL_RESPONSIBILITY_SCOPE_ENTRY entry has a rightfull PARTY_ID</comment>
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.feat-1864-test-w" author="mpagnon">
+		<sql>
+			drop table `TEMP_ARSE_INFOS`;
+		</sql>
+		<sql>
+			drop table `TEMP_CGRPM_INFOS`;
 		</sql>
 	</changeSet>
 </databaseChangeLog>
