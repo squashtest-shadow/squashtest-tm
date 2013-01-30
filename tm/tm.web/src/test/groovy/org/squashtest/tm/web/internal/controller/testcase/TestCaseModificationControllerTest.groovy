@@ -44,6 +44,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper
 import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper
+import org.squashtest.tm.web.internal.service.CustomFieldHelperService;
 
 import spock.lang.Specification
 
@@ -72,7 +73,9 @@ class TestCaseModificationControllerTest extends Specification {
 	LevelLabelFormatterWithoutOrder levelLabelFormatterWithoutOrder = Mock()
 	Provider<LevelLabelFormatterWithoutOrder> levelLabelFormatterWithoutOrderProvider = Mock()
 	
-		def setup() {
+	CustomFieldHelperService cufHelperService = Mock()
+	
+	def setup() {
 		controller.testCaseModificationService = testCaseModificationService
 		request.getCharacterEncoding() >> "ISO-8859-1"
 		controller.internationalizationHelper = messageSource
@@ -91,9 +94,12 @@ class TestCaseModificationControllerTest extends Specification {
 		
 		setupLevelLabelFormatter()		
 		controller.levelLabelFormatterProvider = levelLabelFormatterProvider
-		controller.cufValueService = Mock(CustomFieldValueFinderService)
+		
+		
 		setupLevelLabelFormatterWithoutOrder()
 		controller.levelLabelFormatterWithoutOrderProvider = levelLabelFormatterWithoutOrderProvider
+		
+		controller.cufHelperService = cufHelperService
 	}
 
 	def setupImportanceComboBuilder() {
@@ -176,8 +182,8 @@ class TestCaseModificationControllerTest extends Specification {
 		then:
 		res.sEcho == "echo"
 		res.aaData == [			
-			["step-id":1l, "step-type":"action", "nb-attachments":1, "attach-list-id":5l, "step-result":"r1", "step-index":1, "empty-delete-holder":null, "called-tc-id":null, "step-action":"a1"], 
-			["step-id":2l, "step-type":"action", "nb-attachments":1, "attach-list-id":5l, "step-result":"r2", "step-index":2, "empty-delete-holder":null, "called-tc-id":null, "step-action":"a2"]
+			["step-id":1l, "step-type":"action", "nb-attachments":1, "attach-list-id":5l, "step-result":"r1", "step-index":1, "empty-delete-holder":null, "called-tc-id":null, "step-action":"a1", "customFields":[:]], 
+			["step-id":2l, "step-type":"action", "nb-attachments":1, "attach-list-id":5l, "step-result":"r2", "step-index":2, "empty-delete-holder":null, "called-tc-id":null, "step-action":"a2", "customFields":[:]]
 		]
 
 	}

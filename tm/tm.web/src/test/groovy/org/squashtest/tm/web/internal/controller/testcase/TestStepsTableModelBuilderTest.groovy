@@ -60,7 +60,8 @@ class TestStepsTableModelBuilderTest extends Specification {
 				 "step-result" : step.expectedResult,
 				 "step-type" : "action",
 				 "called-tc-id" : null,
-				 "empty-delete-holder" : null
+				 "empty-delete-holder" : null,
+				 "customFields" : [:]
 			]	
 	}
 
@@ -88,11 +89,12 @@ class TestStepsTableModelBuilderTest extends Specification {
 			"step-index" : stepIndex,
 			"nb-attachments" : null,
 			"attach-list-id" : null,
-			"step-action" : "<span>Call : callee</span>",
+			"step-action" : "Call : callee",
 			"step-result" : null,
 			"step-type" : "call",
 			"called-tc-id" : callee.id,
-			"empty-delete-holder" : null
+			"empty-delete-holder" : null,
+			"customFields" : [:]
 	   ]
 	
 	}
