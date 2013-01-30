@@ -60,7 +60,7 @@
 				}
 				if (selected == 1){
 					var table = $( '#search-result-datatable' ).dataTable();
-					tab = getIdsOfSelectedAssociationTableRows(table, getRequirementsTableRowId);
+					tab = getIdsOfSelectedAssociationTableRows(table,  function(rowData){return rowData[0];});
 				}
 				
 				return tab;
