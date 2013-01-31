@@ -117,7 +117,7 @@ class JdbcManageableAclServiceIT extends Specification {
 //		service.removeAllResponsibilities("robin", oid)
 //
 //		then:
-//		jdbcTemplate.queryForLong("select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY where USER_ID = 20 and OBJECt_IDENTITY_ID = 1000") == 0
+//		jdbcTemplate.queryForLong("select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY where PARTY_ID = 20 and OBJECt_IDENTITY_ID = 1000") == 0
 //	}
 
 //	@DataSet("JdbcManageableAclServiceIT.should add permissions on object for user.xml")
@@ -130,7 +130,7 @@ class JdbcManageableAclServiceIT extends Specification {
 //		service.addNewResponsibility ("batman", oid, "driver")
 //		
 //		then:
-//		jdbcTemplate.queryForInt("select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY r inner join ACL_OBJECT_IDENTITY o on o.ID = r.OBJECT_IDENTITY_ID inner join ACL_CLASS c on c.ID = o.CLASS_ID inner join CORE_USER u on u.ID = r.USER_ID where c.CLASSNAME = 'batmobile' and o.IDENTITY = 1000 and u.LOGIN = 'batman'") == 1
+//		jdbcTemplate.queryForInt("select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY r inner join ACL_OBJECT_IDENTITY o on o.ID = r.OBJECT_IDENTITY_ID inner join ACL_CLASS c on c.ID = o.CLASS_ID inner join CORE_USER u on u.PARTY_ID = r.PARTY_ID where c.CLASSNAME = 'batmobile' and o.IDENTITY = 1000 and u.LOGIN = 'batman'") == 1
 //	}
 	
 	@DataSet("JdbcManageableAclServiceIT.should find object Identity for project.xml")

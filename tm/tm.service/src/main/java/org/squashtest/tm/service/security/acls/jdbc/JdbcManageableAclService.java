@@ -111,20 +111,24 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 	private static final String SELECT_CLASS_PRIMARY_KEY = "select ID from ACL_CLASS where CLASSNAME = ?";
 	private static final String FIND_ALL_ACL_GROUPS_BY_NAMESPACE = "select ID, QUALIFIED_NAME from ACL_GROUP where QUALIFIED_NAME like ?";
 
-	private static final String INSERT_ACL_RESPONSABILITY_SCOPE = "insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (USER_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID) values ((select ID from CORE_USER where login = ?), (select ID from ACL_GROUP where QUALIFIED_NAME = ?), "
-			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid inner join ACL_CLASS c on c.ID = oid.CLASS_ID where CLASSNAME = ?  and oid.IDENTITY = ? ))";
+	private static final String INSERT_ACL_RESPONSABILITY_SCOPE = "insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (PARTY_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID) "
+			+ "values ((select PARTY_ID from CORE_USER where login = ?), "
+			+ "(select ID from ACL_GROUP where QUALIFIED_NAME = ?), "
+			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid "
+			+ "inner join ACL_CLASS c on c.ID = oid.CLASS_ID " 
+			+ "where CLASSNAME = ?  and oid.IDENTITY = ? )) ";
 
 	private static final String FIND_ACL_FOR_CLASS_FROM_USER = "select oid.IDENTITY, ag.ID, ag.QUALIFIED_NAME from "
-			+ "ACL_GROUP ag " + "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
-			+ "inner join CORE_USER cu on arse.USER_ID = cu.ID "
+			+ "ACL_GROUP ag  inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
+			+ "inner join CORE_USER cu on arse.PARTY_ID = cu.PARTY_ID "
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
-			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " + "where cu.LOGIN = ? and ac.CLASSNAME = ?";
+			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID  where cu.LOGIN = ? and ac.CLASSNAME = ?";
 
-	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS = "select arse.USER_ID, ag.ID, ag.QUALIFIED_NAME from "
-			+ "ACL_GROUP ag " + "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
-			+ "inner join CORE_USER cu on arse.USER_ID = cu.ID "
-			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
-			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " + "where oid.IDENTITY = ? and ac.CLASSNAME = ? ";
+	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS = "select arse.PARTY_ID, ag.ID, ag.QUALIFIED_NAME from  "
+			+ "ACL_GROUP ag  inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID  "
+			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID  "
+			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " + "where oid.IDENTITY = ? and ac.CLASSNAME = ? "
+			+ "inner join CORE_USER cu on arse.PARTY_ID = cu.PARTY_ID ";
 	
 	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS_FILTERED = "select arse.USER_ID, ag.ID, ag.QUALIFIED_NAME from "
 			+ "ACL_GROUP ag " + "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
@@ -136,30 +140,32 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 	
 
 	private static final String DELETE_RESPONSABILITY_ENTRY = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "
-			+ "where USER_ID = (select ID from CORE_USER where login = ?) " + "and OBJECT_IDENTITY_ID = "
-			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid " + "inner join ACL_CLASS c on c.ID = oid.CLASS_ID "
+			+ "where PARTY_ID = (select PARTY_ID from CORE_USER where login = ?)  and OBJECT_IDENTITY_ID = "
+			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid  inner join ACL_CLASS c on c.ID = oid.CLASS_ID "
 			+ "where oid.IDENTITY = ? and c.CLASSNAME = ?)";
 
 	private static final String FIND_OBJECT_WITHOUT_PERMISSION = "select nro.IDENTITY from ACL_OBJECT_IDENTITY nro "
-			+ "inner join ACL_CLASS nrc on nro.CLASS_ID = nrc.ID " + "where nrc.CLASSNAME = ? "
-			+ "and not exists (select 1 " + "from ACL_OBJECT_IDENTITY ro "
+			+ "inner join ACL_CLASS nrc on nro.CLASS_ID = nrc.ID " 
+			+ "where nrc.CLASSNAME = ? "
+			+ "and not exists (select 1 "
+			+ "from ACL_OBJECT_IDENTITY ro "
 			+ "inner join ACL_CLASS rc on rc.ID = ro.CLASS_ID "
 			+ "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY r on r.OBJECT_IDENTITY_ID = ro.ID "
-			+ "inner join CORE_USER u on u.ID = r.USER_ID "
+			+ "inner join CORE_USER u on u.PARTY_ID = r.PARTY_ID "
 			+ "where ro.ID = nro.ID and rc.ID = nrc.ID and u.LOGIN = ?) ";
 
-	private static final String FIND_USERS_WITHOUT_PERMISSION_BY_OBJECT = "select u.ID from CORE_USER u "
-			+ "where not exists (select 1 " + "from ACL_OBJECT_IDENTITY aoi "
+	private static final String FIND_USERS_WITHOUT_PERMISSION_BY_OBJECT = "select u.PARTY_ID from CORE_USER u "
+			+ "where not exists (select 1  from ACL_OBJECT_IDENTITY aoi "
 			+ "inner join ACL_CLASS ac on ac.ID = aoi.CLASS_ID "
 			+ "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = aoi.ID "
-			+ "where u.ID = arse.USER_ID " + "and ac.CLASSNAME = ? " + "and aoi.IDENTITY = ?) ";
-
+			+ "where u.PARTY_ID = arse.PARTY_ID  and ac.CLASSNAME = ?  and aoi.IDENTITY = ?) ";
+	
 	private static final String DELETE_OBJECT_IDENTITY = "delete from ACL_OBJECT_IDENTITY where IDENTITY = ? and CLASS_ID = ?";
-
-	private static final String DELETE_ALL_RESPONSABILITY_ENTRIES = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY " +
-			"where OBJECT_IDENTITY_ID = (select oid.ID from ACL_OBJECT_IDENTITY oid " +
-			"inner join ACL_CLASS c on c.ID = oid.CLASS_ID " +
-			"where oid.IDENTITY = ? and c.CLASSNAME = ?)";
+	
+	private static final String DELETE_ALL_RESPONSABILITY_ENTRIES = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "
+			+ "where OBJECT_IDENTITY_ID = (select oid.ID from ACL_OBJECT_IDENTITY oid "
+			+ "inner join ACL_CLASS c on c.ID = oid.CLASS_ID "
+			+ "where oid.IDENTITY = ? and c.CLASSNAME = ?)";
 
 	public JdbcManageableAclService(DataSource dataSource, LookupStrategy lookupStrategy) {
 		super(dataSource, lookupStrategy);
@@ -184,8 +190,8 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 
 	private void createObjectIdentity(Serializable objectIdentifier, long classId) {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Will attempt to perform '" + INSERT_OBJECT_IDENTITY + "' with args [" + objectIdentifier + ','
-					+ classId + ']');
+			LOGGER.debug("Will attempt to perform '" + INSERT_OBJECT_IDENTITY + "' with args [" + objectIdentifier
+					+ ',' + classId + ']');
 		}
 		jdbcTemplate.update(INSERT_OBJECT_IDENTITY, objectIdentifier, classId);
 	}
@@ -219,8 +225,8 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		}
 
 		try {
-			return Long.valueOf(jdbcTemplate.queryForLong(SELECT_OBJECT_IDENTITY_PRIMARY_KEY,
-					new Object[] { objectIdentity.getType(), objectIdentity.getIdentifier() }));
+			return Long.valueOf(jdbcTemplate.queryForLong(SELECT_OBJECT_IDENTITY_PRIMARY_KEY, new Object[] {
+					objectIdentity.getType(), objectIdentity.getIdentifier() }));
 		} catch (DataAccessException notFound) {
 			return null;
 		}
@@ -234,7 +240,8 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 	 */
 	@Override
 	public List<PermissionGroup> findAllPermissionGroupsByNamespace(@NotNull String namespace) {
-		return jdbcTemplate.query(FIND_ALL_ACL_GROUPS_BY_NAMESPACE, new Object[] { namespace + '%' }, permissionGroupMapper);
+		return jdbcTemplate.query(FIND_ALL_ACL_GROUPS_BY_NAMESPACE, new Object[] { namespace + '%' },
+				permissionGroupMapper);
 	}
 
 	/**
@@ -399,8 +406,8 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		long classId = retrieveClassPrimaryKey(objectIdentity.getType());
 
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Will attempt to perform '" + DELETE_OBJECT_IDENTITY + "' with args [" + objectIdentity.getIdentifier() + ','
-					+ classId + ']');
+			LOGGER.debug("Will attempt to perform '" + DELETE_OBJECT_IDENTITY + "' with args ["
+					+ objectIdentity.getIdentifier() + ',' + classId + ']');
 		}
 		jdbcTemplate.update(DELETE_OBJECT_IDENTITY, objectIdentity.getIdentifier(), classId);
 		evictFromCache(objectIdentity);
