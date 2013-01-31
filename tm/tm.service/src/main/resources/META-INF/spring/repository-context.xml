@@ -99,6 +99,9 @@
 
         <value>org.squashtest.tm.domain.users.User</value>
         <value>org.squashtest.tm.domain.users.UsersGroup</value>
+				<value>org.squashtest.csp.tm.domain.users.Team</value>
+				<value>org.squashtest.csp.tm.domain.users.Party</value>
+				
 
         <value>org.squashtest.tm.domain.event.RequirementAuditEvent</value>
         <value>org.squashtest.tm.domain.event.RequirementCreation</value>

@@ -18,91 +18,59 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.users;
+package org.squashtest.csp.tm.domain.users;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
-import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.csp.tm.domain.audit.Auditable;
 
 @Entity
 @Auditable
-@Table(name = "CORE_USER")
+@Table(name = "CORE_TEAM")
 @PrimaryKeyJoinColumn(name = "PARTY_ID")
-public class User extends Party {
-
-	@Transient
-	public static final Long NO_USER_ID = 0l;
-
-	@NotBlank
-	private String firstName;
-	@NotBlank
-	private String lastName;
-	@NotBlank
-	private String login;
-	private String email;
-
-	private Boolean active = true;
-
-	@NotNull
-	@ManyToMany(mappedBy = "members")
-	private final Set<Team> teams = new HashSet<Team>();
-
-	public User() {
-		super();
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getLogin() {
-		return login;
-	}
-
-	public void setLogin(String login) {
-		this.login = login;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public Boolean getActive() {
-		return active;
-	}
-
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-
-	public Set<Team> getTeams() {
-		return teams;
-	}
+public class Team extends Party{
 	
 	
+	@NotBlank
+	@Size(min = 0, max = 50)
+	private String name;
+	
+	@Size(min = 0, max = 255)
+	private String description;
+	
+	@ManyToMany
+	@JoinTable(name = "CORE_TEAM_MEMBER", joinColumns = @JoinColumn(name = "TEAM_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
+	private final Set<User> members = new HashSet<User>();
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Set<User> getMembers() {
+		return members;
+	}
+	
+
 }
