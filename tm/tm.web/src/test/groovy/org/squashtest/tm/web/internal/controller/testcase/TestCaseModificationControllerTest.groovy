@@ -179,6 +179,8 @@ class TestCaseModificationControllerTest extends Specification {
 		CustomFieldHelperService.Helper cufhelper = Mock() 
 		cufhelper.getCustomFieldValues() >> []
 		cufhelper.restrictToCommonFields() >> cufhelper
+		cufhelper.setRenderingLocations(_) >> cufhelper
+		
 		cufHelperService.newStepsHelper(_) >> cufhelper
 
 		when:
