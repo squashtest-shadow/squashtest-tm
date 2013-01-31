@@ -33,13 +33,14 @@ define(["jquery", "./cuf-values-utils", "./jquery-cuf-values"],function($, utils
 		
 		for (i=0;i<total;i++){
 			
-			var currentDef = cufDefinitions[i];			
+			var code = cufDefinitions[i].code;			
 			var newColumn = { 
 				'bVisible' : true, 
 				'bSortable' : false, 
-				'mDataProp' : "customFields."+currentDef.code+".value",
-				'sClass' : 'custom-field-value custom-field-'+currentDef.code,
-				'sWidth' : "5em"
+				'mDataProp' : "customFields."+code+".value",
+				'sClass' : 'custom-field-value custom-field-'+code,
+				'sWidth' : "5em",
+				'aTargets' : ['custom-field-'+code]
 			};			
 			columns.push(newColumn);
 			
@@ -49,29 +50,31 @@ define(["jquery", "./cuf-values-utils", "./jquery-cuf-values"],function($, utils
 		
 	}
 	
-	
-	
+
 	function mergeColumnDefs(regularColumnDefs, cufColumnDefs, insertionIndex){
+		/*
+		 * update the aTargets of the existing columns if they use an index (instead of a classname)
+		 * and if their index is above the insertionIndex
+		*/
+		var i = 0,
+			regularLength = regularColumnDefs.length,
+			cufLength = cufColumnDefs.length;
 		
-		//ensure that the original columnDefs are sorted 
-		var finalDefs = regularColumnDefs.sort(function(a,b){
-			return a.aTargets[0] - b.aTargets[0];
-		});
+		for (i=0;i<regularLength;i++){
+			var regDef = regularColumnDefs[i];
+			var aTarget = regDef.aTargets[0];
+			if ( (typeof aTarget == "number") && (aTarget >= insertionIndex)){
+				regDef.aTargets[0]=aTarget+cufLength;
+			}
+		}
 		
-		//merge the arrays
+		//no we can merge the column defs
 		var spliceArgs = [insertionIndex, 0].concat(cufColumnDefs);
-		Array.prototype.splice.apply(finalDefs, spliceArgs);
+		Array.prototype.splice.apply(regularColumnDefs, spliceArgs);
 		
-		//reindex the target columns
-		var i=0,length=finalDefs.length;
-		for (i=0;i<length;i++){
-			var col = finalDefs[i];
-			col.aTargets = col.aTargets || [];
-			col.aTargets[0] = i;
-		};
-		
-		//done
-		return finalDefs;				
+		//return
+		return regularColumnDefs;
+	
 	}
 	
 
@@ -173,7 +176,8 @@ define(["jquery", "./cuf-values-utils", "./jquery-cuf-values"],function($, utils
 		var i=0, length=cufDefinitions.length;
 		
 		for (i=0; i<length; i++){
-			var newTD = $('<th>'+cufDefinitions[i].label+'</th>');
+			var def = cufDefinitions[i];
+			var newTD = $('<th class="custom-field-'+def.code+'">'+def.label+'</th>');
 			newTDSet = newTDSet.add(newTD);
 		}
 		
