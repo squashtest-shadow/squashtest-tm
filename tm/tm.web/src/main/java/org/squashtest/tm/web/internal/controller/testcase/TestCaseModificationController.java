@@ -303,7 +303,9 @@ public class TestCaseModificationController {
 				testCaseId, filter);
 		
 		//cufs 
-		Helper<ActionTestStep> helper = cufHelperService.newStepsHelper(holder.getFilteredCollection()).restrictToCommonFields();
+		Helper<ActionTestStep> helper = cufHelperService.newStepsHelper(holder.getFilteredCollection())
+														.setRenderingLocations(RenderingLocation.STEP_TABLE)
+														.restrictToCommonFields();
 		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
 
 		//generate the model

@@ -224,7 +224,9 @@ public class CustomFieldHelperService {
 			
 			Collections.sort(bindings, new BindingSorter());
 			
-			CollectionUtils.filter(bindings, new BindingLocationFilter(optionalLocations));
+			if (optionalLocations!=null && ! optionalLocations.isEmpty()){
+				CollectionUtils.filter(bindings, new BindingLocationFilter(optionalLocations));
+			}
 			
 			return (List<CustomField>) CollectionUtils.collect(bindings, new BindingFieldCollector());
 
@@ -352,32 +354,17 @@ public class CustomFieldHelperService {
 	private static final class BindingLocationFilter implements Predicate{
 
 		private Collection<RenderingLocation> locations;
+		private boolean automaticallyPassed = false;
 		
 		BindingLocationFilter( Collection<RenderingLocation>  locations){
 			this.locations = locations;
+			automaticallyPassed = (locations == null || locations.isEmpty());
 		}
 		
 		@Override
-		public boolean evaluate(Object arg0) {
-			CustomFieldBinding binding = (CustomFieldBinding)arg0;
-			return (CollectionUtils.containsAny(locations, binding.getRenderingLocations()));
-		}
-		
-	}
-	
-	private static final class ValueLocationFilter implements Predicate{
-
-		private Collection<RenderingLocation> locations;
-		
-		ValueLocationFilter( Collection<RenderingLocation>  locations){
-			this.locations = locations;
-		}
-		
-		
-		@Override
-		public boolean evaluate(Object arg0) {
-			CustomFieldValue value = (CustomFieldValue)arg0;
-			return (CollectionUtils.containsAny(locations, value.getBinding().getRenderingLocations()));
+		public boolean evaluate(Object binding) {
+			return automaticallyPassed ||			
+				  (CollectionUtils.containsAny(locations, ((CustomFieldBinding)binding).getRenderingLocations()));
 		}
 		
 	}
