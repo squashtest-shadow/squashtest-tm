@@ -27,7 +27,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 import spock.lang.Specification;
 
-class ReadWriteLockExploratoryTest extends Specification {
+class ReadWriteLockExploratoryTest_DISABLED extends Specification {
 	ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 	boolean wasRead = false
 	boolean tryingToRead = false
