@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.4.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.5.0.dtd">
 
 <dataset>
 	<CUSTOM_FIELD FIELD_TYPE="SSF" NAME="" INPUT_TYPE="DROPDOWN_LIST" CF_ID="1"/>
