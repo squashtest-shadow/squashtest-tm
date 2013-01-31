@@ -110,7 +110,7 @@
     	    $.fn.loginCombo = function(assignableList){
     	    	
     	    	if (this.length==0) return;
-    	    	var squashTable=this.eq(0).parents("table").squashTable();
+    	    	var squashTable=$("#test-cases-table").squashTable();
     	    	var assignableList = squashTable.data('assignable-list');
     	    	if (! assignableList) return;
     	    	
