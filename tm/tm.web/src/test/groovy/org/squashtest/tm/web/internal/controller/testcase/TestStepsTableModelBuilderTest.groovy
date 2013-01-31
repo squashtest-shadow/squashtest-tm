@@ -61,6 +61,7 @@ class TestStepsTableModelBuilderTest extends Specification {
 				 "step-type" : "action",
 				 "called-tc-id" : null,
 				 "empty-delete-holder" : null,
+				 "empty-browse-holder" : null,
 				 "customFields" : [:]
 			]	
 	}
@@ -94,6 +95,7 @@ class TestStepsTableModelBuilderTest extends Specification {
 			"step-type" : "call",
 			"called-tc-id" : callee.id,
 			"empty-delete-holder" : null,
+			"empty-browse-holder" : null,
 			"customFields" : [:]
 	   ]
 	

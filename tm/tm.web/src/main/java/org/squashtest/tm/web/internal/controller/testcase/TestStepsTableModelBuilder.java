@@ -76,7 +76,7 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 	@Override
 	public void visit(ActionTestStep visited) {
 		
-		Map<Object, Object> item = new HashMap<Object, Object>(10);
+		Map<Object, Object> item = new HashMap<Object, Object>(11);
 		
 		item.put("step-id", visited.getId());
 		item.put("step-index", getCurrentIndex());
@@ -86,6 +86,7 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 		item.put("nb-attachments", visited.getAttachmentList().size());
 		item.put("step-type", "action");
 		item.put("called-tc-id", null);
+		item.put("empty-browse-holder", null);
 		item.put("empty-delete-holder", null);
 		
 		decorateWithCustomFields(item);
@@ -101,7 +102,7 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 		String action = messageSource.getMessage("test-case.call-step.action.template",	new Object[] { called.getName() }, locale);
 						   
 
-		Map<Object, Object> item = new HashMap<Object, Object>(10);
+		Map<Object, Object> item = new HashMap<Object, Object>(11);
 		
 		item.put("step-id", visited.getId());
 		item.put("step-index", getCurrentIndex());
@@ -111,6 +112,7 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 		item.put("nb-attachments", null);
 		item.put("step-type", "call");
 		item.put("called-tc-id", called.getId());
+		item.put("empty-browse-holder", null);
 		item.put("empty-delete-holder", null);
 
 		decorateWithCustomFields(item);

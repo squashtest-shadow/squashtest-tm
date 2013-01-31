@@ -193,7 +193,8 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[5], 'mDataProp':'nb-attachments'},
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[6], 'mDataProp':'step-type'},
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[7], 'mDataProp':'called-tc-id'},
-			  {'bVisible':true,  'bSortable':false, 'aTargets':[8], 'mDataProp':'empty-delete-holder', 'sClass':'centered '+deleteClass, 'sWidth':'2em'}
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[8], 'mDataProp':'empty-browse-holder', 'sClass':'centered', 'sWidth':'2em'},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[9], 'mDataProp':'empty-delete-holder', 'sClass':'centered '+deleteClass, 'sWidth':'2em'}
 			]
 			
 		};

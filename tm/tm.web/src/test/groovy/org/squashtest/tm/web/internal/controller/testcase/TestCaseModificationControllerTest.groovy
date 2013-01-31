@@ -175,6 +175,11 @@ class TestCaseModificationControllerTest extends Specification {
 		params.setiDisplayStart(0)
 		params.setsEcho("echo");
 
+		and:
+		CustomFieldHelperService.Helper cufhelper = Mock() 
+		cufhelper.getCustomFieldValues() >> []
+		cufhelper.restrictToCommonFields() >> cufhelper
+		cufHelperService.newStepsHelper(_) >> cufhelper
 
 		when:
 		def res = controller.getStepsTableModel(10, params, Locale.FRENCH)
@@ -182,8 +187,8 @@ class TestCaseModificationControllerTest extends Specification {
 		then:
 		res.sEcho == "echo"
 		res.aaData == [			
-			["step-id":1l, "step-type":"action", "nb-attachments":1, "attach-list-id":5l, "step-result":"r1", "step-index":1, "empty-delete-holder":null, "called-tc-id":null, "step-action":"a1", "customFields":[:]], 
-			["step-id":2l, "step-type":"action", "nb-attachments":1, "attach-list-id":5l, "step-result":"r2", "step-index":2, "empty-delete-holder":null, "called-tc-id":null, "step-action":"a2", "customFields":[:]]
+			["step-id":1l, "step-type":"action", "nb-attachments":1, "attach-list-id":5l, "step-result":"r1", "step-index":1, "empty-delete-holder":null, "called-tc-id":null, "step-action":"a1", "customFields":[:], "empty-browse-holder":null], 
+			["step-id":2l, "step-type":"action", "nb-attachments":1, "attach-list-id":5l, "step-result":"r2", "step-index":2, "empty-delete-holder":null, "called-tc-id":null, "step-action":"a2", "customFields":[:], "empty-browse-holder":null]
 		]
 
 	}

@@ -170,12 +170,8 @@ public class CustomFieldHelperService {
 			
 			if (values == null){
 				
-				if (customFields.isEmpty() || entities.isEmpty()){
-					values = Collections.emptyList();
-				}
-				else{
-					values = findRestrictedCustomFieldValues(entities, customFields, locations);
-				}
+				values = findRestrictedCustomFieldValues(entities, customFields);
+				
 			}
 			
 			return values;
@@ -191,7 +187,7 @@ public class CustomFieldHelperService {
 		private void init(){
 			if (! entities.isEmpty()){			
 				
-				//restrict the number of queries we must perform.
+				//restrict the number of queries we must perform : 1 per pair of (project, bindableentity)
 				Collection<BindingTarget> targets = CollectionUtils.collect(entities, new BindingTargetCollector());
 				retainUniques(targets);
 				
@@ -200,12 +196,12 @@ public class CustomFieldHelperService {
 				//collect the result
 				for (BindingTarget target : targets){
 					customFields = addingStrategy.add(customFields,  
-													  findCustomFields(target.getProjectId(), target.getBindableEntity(), locations)
+										findCustomFields(target.getProjectId(), target.getBindableEntity(), locations)
 									);
 
 				}
 				
-				//eliminate multiple definitions
+				//eliminate multiple occurences
 				retainUniques(customFields);
 			}
 			else{
@@ -237,25 +233,21 @@ public class CustomFieldHelperService {
 
 		
 		/**
-		 * returns the flattened collection of custom fields associated to all the entities in arguments, restricted to only the supplied customfields. 
-		 * If some rendering locations are specified, then the resulting collection will contain only those that can be displayed in at least one of those locations. 
+		 * returns the flattened collection of custom fields associated to all the entities in arguments, restricted to only the supplied customfields.
 		 * 
 		 * @param entities
 		 * @param optionalLocations
 		 * @return
 		 */
 		private List<CustomFieldValue> findRestrictedCustomFieldValues(Collection<? extends BoundEntity> entities,  
-																	   Collection<CustomField> customFields,
-																	   Collection<RenderingLocation>  optionalLocations){
+																	   Collection<CustomField> customFields){
 			
 			if (entities.isEmpty() || customFields.isEmpty()){
 				return Collections.emptyList();
 			}
 			
 			List<CustomFieldValue> values = cufValuesService.findAllCustomFieldValues(entities, customFields);
-			
-			CollectionUtils.filter(values, new ValueLocationFilter(optionalLocations));
-			
+
 			return values;
 		}
 
