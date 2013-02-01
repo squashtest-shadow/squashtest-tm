@@ -26,7 +26,13 @@ import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
 import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
-
+import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
+/**
+ * Data access methods for {@link DenormalizedFieldValue}.
+ * Methods are all dynamically generated: see {@link DynamicDaoFactoryBean}.
+ * @author mpagnon
+ *
+ */
 public interface DenormalizedFieldValueDao {
 
 	/**

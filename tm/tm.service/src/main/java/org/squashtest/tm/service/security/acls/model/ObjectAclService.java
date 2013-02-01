@@ -66,4 +66,10 @@ public interface ObjectAclService {
 	List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName);
 
 	List<String> findUsersWithExecutePermission(List<ObjectIdentity> entityRefs);
+	
+	/**
+	 * Remove all responsibilities for the Party of the given Id
+	 * @param partyId
+	 */
+	void removeAllResponsibilitiesForParty(long partyId);
 }

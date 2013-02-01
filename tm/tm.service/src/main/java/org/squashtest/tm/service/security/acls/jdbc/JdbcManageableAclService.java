@@ -166,6 +166,9 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 			+ "where OBJECT_IDENTITY_ID = (select oid.ID from ACL_OBJECT_IDENTITY oid "
 			+ "inner join ACL_CLASS c on c.ID = oid.CLASS_ID "
 			+ "where oid.IDENTITY = ? and c.CLASSNAME = ?)";
+	
+	private static final String DELETE_ALL_RESPONSABILITY_ENTRIES_FOR_PARTY = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "
+			+ "where PARTY_ID = ?";
 
 	public JdbcManageableAclService(DataSource dataSource, LookupStrategy lookupStrategy) {
 		super(dataSource, lookupStrategy);
@@ -422,6 +425,12 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 				new Object[] { entityRef.getIdentifier(), entityRef.getType() });
 
 		evictFromCache(entityRef);
+	}
+
+	@Override
+	public void removeAllResponsibilitiesForParty(long partyId) {
+		jdbcTemplate.update(DELETE_ALL_RESPONSABILITY_ENTRIES_FOR_PARTY, partyId);
+		
 	}
 
 }

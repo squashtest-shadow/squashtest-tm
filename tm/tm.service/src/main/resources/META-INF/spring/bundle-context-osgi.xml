@@ -223,7 +223,16 @@
     </osgi:interfaces>
   </osgi:service>
 
-  <osgi:service ref="squashtest.tm.service.audit.RequirementAuditTrailService" interface="org.squashtest.tm.service.audit.RequirementAuditTrailService" />
+	<osgi:service ref="squashtest.tm.service.TeamModificationService">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.users.TeamModificationService</value>
+			<value>org.squashtest.csp.tm.service.users.TeamFinderService</value>
+		</osgi:interfaces>
+	</osgi:service>
+
+	<osgi:service
+		ref="squashtest.tm.service.audit.RequirementAuditTrailService"
+		interface="org.squashtest.csp.tm.service.audit.RequirementAuditTrailService" />
 
   <osgi:service ref="squashtest.tm.service.RequirementVersionManagerService" interface="org.squashtest.tm.service.requirement.RequirementVersionManagerService" />
 

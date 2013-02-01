@@ -87,6 +87,10 @@ abstract class DbunitServiceSpecification extends Specification {
 		return getSession().get(entityClass, id);
 	}
 	
+	protected List<Object> findAll(String className){
+		return getSession().createQuery("from "+className).list();
+	}
+	
 	protected boolean allNotDeleted(String className, List<Long> ids){
 		Query query = getSession().createQuery("from "+className+" where id in (:ids)")
 		query.setParameterList("ids", ids, new LongType())

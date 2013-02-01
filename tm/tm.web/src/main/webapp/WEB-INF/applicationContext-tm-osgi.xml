@@ -145,6 +145,13 @@
 		bean-name="squashtest.tm.service.AdministrationService" interface="org.squashtest.csp.tm.service.AdministrationService"
 		availability="mandatory" />
 
+	<osgi:reference id="squashtest.tm.service.TeamModificationService" bean-name="squashtest.tm.service.TeamModificationService" availability="mandatory">
+		<osgi:interfaces>
+			<value>org.squashtest.csp.tm.service.users.TeamModificationService</value>
+			<value>org.squashtest.csp.tm.service.users.TeamFinderService</value>
+		</osgi:interfaces>
+	</osgi:reference>
+
 	<osgi:reference id="squashtest.tm.service.ProjectManagerService"
 		bean-name="squashtest.tm.service.ProjectManagerService" availability="mandatory">
 		<osgi:interfaces>

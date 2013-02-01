@@ -213,11 +213,14 @@
     <!-- <property name="customComponent" ref="CustomTestStepModificationService" /> -->
   </bean>
 
-  <bean id="squashtest.tm.service.ProjectManagerService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean"
-    parent="parent.DynamicManagerFactoryBean">
-    <property name="componentType" value="org.squashtest.tm.service.project.ProjectManagerService" />
-    <property name="entityType" value="org.squashtest.tm.domain.project.Project" />
-    <!-- <property name="customComponent" ref="CustomProjectModificationService" /> -->
+  <bean id="squashtest.tm.service.TeamModificationService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
+    <property name="componentType" value="org.squashtest.csp.tm.service.users.TeamModificationService" />
+    <property name="entityType" value="org.squashtest.csp.tm.domain.users.Team" />
+  </bean>
+  
+  <bean id="squashtest.tm.service.ProjectManagerService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
+    <property name="componentType" value="org.squashtest.csp.tm.service.project.ProjectManagerService" />
+    <property name="entityType" value="org.squashtest.csp.tm.domain.project.Project" />
   </bean>
 
   <bean id="squashtest.tm.service.ProjectTemplateManagerService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean"

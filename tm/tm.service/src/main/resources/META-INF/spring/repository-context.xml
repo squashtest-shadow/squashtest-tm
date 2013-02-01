@@ -224,6 +224,10 @@
 		<property name="entityType" value="org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldValue" />
 	</bean>		
 
+	<bean id="teamDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
+		<property name="componentType" value="org.squashtest.csp.tm.internal.repository.TeamDao" />
+		<property name="entityType" value="org.squashtest.csp.tm.domain.users.Team" />
+	</bean>		
   <bean id="customFieldValueDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean"
     lazy-init="false" parent="parent.DynamicDaoFactoryBean">
     <property name="componentType" value="org.squashtest.tm.service.internal.repository.CustomFieldValueDao" />
