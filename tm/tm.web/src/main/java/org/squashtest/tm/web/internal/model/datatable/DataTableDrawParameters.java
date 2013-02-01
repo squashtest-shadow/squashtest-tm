@@ -87,7 +87,11 @@ public class DataTableDrawParameters {
 	}
 	
 	public Object getsSortedAttribute_0(){
-		return mDataProp.get(iSortCol_0);
+		Object o = mDataProp.get(iSortCol_0);
+		if (o==null){
+			o = iSortCol_0;
+		}
+		return o;
 	}
 
 	public void setsSortDir_0(String sSortDir_0) { // NOSONAR names have to match JSON structure

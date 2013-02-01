@@ -143,7 +143,7 @@
  * 
  * ============== Object data model read from the DOM =========================
  * 
- * Member name : 'fixObjectDOMInit' : true|false, refer to the documentation above ('object datasource and DOM data')
+ * Member name : 'fixObjectDOMInit' : true|false, refer to the documentation above ('object datasource and DOM data'), default is false
  * 
  * 
  * ============== Generic multipurpose popup configuration ====================
