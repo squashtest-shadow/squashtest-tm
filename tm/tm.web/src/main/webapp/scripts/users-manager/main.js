@@ -20,8 +20,7 @@
  */
 
 define(["./user-list-page"], function(fnInitUserListPage){
-	console.log('main : ');
-	console.log(fnInitUserListPage);
+
 	return {
 		initUserListPage : fnInitUserListPage
 	}

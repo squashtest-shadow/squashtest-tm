@@ -218,8 +218,6 @@ define(["jquery", "jquery.squash.datatables"], function($){
 	}
 	
 	
-	console.log('module : returning');
-	console.log(init);
 	return init;
 	
 

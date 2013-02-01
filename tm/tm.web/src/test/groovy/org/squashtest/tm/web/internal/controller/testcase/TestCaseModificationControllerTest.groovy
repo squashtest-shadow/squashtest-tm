@@ -43,7 +43,7 @@ import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper
 import org.squashtest.tm.web.internal.service.CustomFieldHelperService;
 
 import spock.lang.Specification
@@ -298,7 +298,7 @@ class TestCaseModificationControllerTest extends Specification {
 		params.getiSortCol_0() >> 2
 		params.getsSortDir_0() >> "asc"
 
-		DataTableMapper dtMapper = Mock()
+		DatatableMapper dtMapper = Mock()
 		dtMapper.pathAt(2) >> "name"
 
 		when:

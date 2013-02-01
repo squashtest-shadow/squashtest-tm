@@ -56,7 +56,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
 /**
  * Controller for verified requirements management page.
@@ -78,11 +79,11 @@ public class VerifyingTestCaseManagerController {
 	private VerifyingTestCaseManagerService verifyingTestCaseManager;
 	private RequirementVersionManagerService requirementVersionFinder;
 
-	private final DataTableMapper verifyingTcMapper = new DataTableMapper("verifying-test-cases", TestCase.class,
-			Project.class).initMapping(6).mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(TestCase.class, 3, "reference", String.class)
-			.mapAttribute(TestCase.class, 4, "name", String.class)
-			.mapAttribute(TestCase.class, 5, "executionMode", TestCaseExecutionMode.class);
+	private final DatatableMapper verifyingTcMapper = new IndexBasedMapper(6)
+														  .mapAttribute(Project.class, "name", String.class, 2)
+														  .mapAttribute(TestCase.class, "reference", String.class, 3)
+														  .mapAttribute(TestCase.class, "name", String.class, 4)
+														  .mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 5);
 
 	@ServiceReference
 	public void setVerifyingTestCaseManager(VerifyingTestCaseManagerService verifyingTestCaseManagerService) {

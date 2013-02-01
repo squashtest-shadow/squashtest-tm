@@ -48,7 +48,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
 @Controller
 @RequestMapping("/attach-list/{attachListId}/attachments")
@@ -67,12 +68,11 @@ public class AttachmentManagerController {
 	private MessageSource messageSource;
 	
 
-	private final DataTableMapper attachmentMapper = new DataTableMapper("attachment-detail",Attachment.class)
-												.initMapping(7)
-												.mapAttribute(Attachment.class, 0, "id", Long.class)
-												.mapAttribute(Attachment.class, 3, "name", String.class)
-												.mapAttribute(Attachment.class, 4, "size", Long.class)
-												.mapAttribute(Attachment.class, 5, "addedOn", Date.class);
+	private final DatatableMapper attachmentMapper = new IndexBasedMapper(7)
+														 .mapAttribute(Attachment.class, "id", Long.class, 0)
+														 .mapAttribute(Attachment.class, "name", String.class, 3)
+														 .mapAttribute(Attachment.class, "size", Long.class, 4)
+														 .mapAttribute(Attachment.class, "addedOn", Date.class, 5);
 
 	@ServiceReference
 	public void setAttachmentManagerService(AttachmentManagerService attachmentManagerService) {
@@ -164,7 +164,7 @@ public class AttachmentManagerController {
 
 	}
 	
-	private CollectionSorting createPaging(final DataTableDrawParameters params, final DataTableMapper mapper) {
+	private CollectionSorting createPaging(final DataTableDrawParameters params, final DatatableMapper mapper) {
 		return new DataTableFilterSorter(params, mapper);
 	}
 

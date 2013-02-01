@@ -65,7 +65,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSo
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
 @Controller
 @RequestMapping("/requirements/{requirementId}")
@@ -92,13 +93,13 @@ public class RequirementModificationController {
 	private RequirementModificationService requirementModService;
 	private RequirementVersionManagerService versionFinder;
 
-	private final DataTableMapper versionMapper = new DataTableMapper("requirement-version", RequirementVersion.class)
-			.initMapping(7).mapAttribute(RequirementVersion.class, 1, "versionNumber", int.class)
-			.mapAttribute(RequirementVersion.class, 2, "reference", String.class)
-			.mapAttribute(RequirementVersion.class, 3, "name", String.class)
-			.mapAttribute(RequirementVersion.class, 4, "status", RequirementStatus.class)
-			.mapAttribute(RequirementVersion.class, 5, "criticality", RequirementCriticality.class)
-			.mapAttribute(RequirementVersion.class, 6, "category", RequirementCategory.class);
+	private final DatatableMapper versionMapper = new IndexBasedMapper(7)
+														.mapAttribute(RequirementVersion.class, "versionNumber", int.class, 1)
+														.mapAttribute(RequirementVersion.class, "reference", String.class, 2)
+														.mapAttribute(RequirementVersion.class, "name", String.class, 3)
+														.mapAttribute(RequirementVersion.class, "status", RequirementStatus.class, 4)
+														.mapAttribute(RequirementVersion.class, "criticality", RequirementCriticality.class, 5)
+														.mapAttribute(RequirementVersion.class, "category", RequirementCategory.class, 6);
 
 	@ServiceReference
 	public void setRequirementModificationService(RequirementModificationService service) {

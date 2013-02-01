@@ -22,7 +22,8 @@ package org.squashtest.tm.web.internal.model.datatable;
 
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 /**
  * 
  * @author Gregory Fouquet
@@ -31,7 +32,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
 public class DataTableMapperCollectionSortingAdapter implements CollectionSorting {
 	private final PagingAndSorting delegate;  
 
-	public DataTableMapperCollectionSortingAdapter(DataTableDrawParameters drawParams, DataTableMapper mapper) {
+	public DataTableMapperCollectionSortingAdapter(DataTableDrawParameters drawParams, DatatableMapper mapper) {
 		delegate = new DataTableMapperPagingAndSortingAdapter(drawParams, mapper);
 	}
 

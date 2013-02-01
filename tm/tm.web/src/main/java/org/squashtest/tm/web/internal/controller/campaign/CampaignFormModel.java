@@ -30,7 +30,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.testcase.TestCase;
 
 public class CampaignFormModel {
 	/**

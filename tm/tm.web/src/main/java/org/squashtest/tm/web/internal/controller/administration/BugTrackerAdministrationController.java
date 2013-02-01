@@ -44,7 +44,8 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
 @Controller
 @RequestMapping("/administration/bugtrackers")
@@ -58,12 +59,11 @@ public class BugTrackerAdministrationController {
 
 
 /* remember that the indexes here are supposed to match the visible columns in the bugtracker view */
-	private DataTableMapper bugtrackerMapper=new DataTableMapper("bugtrackers-table", BugTracker.class)
-										.initMapping(6)
-										.mapAttribute(BugTracker.class, 2, "name", String.class)
-										.mapAttribute(BugTracker.class, 3, "kind", String.class)
-										.mapAttribute(BugTracker.class, 4, "url", String.class)
-										.mapAttribute(BugTracker.class, 5, "iframeFriendly", String.class);
+	private DatatableMapper bugtrackerMapper=new IndexBasedMapper(6)
+										.mapAttribute(BugTracker.class, "name", String.class, 2)
+										.mapAttribute(BugTracker.class, "kind", String.class, 3)
+										.mapAttribute(BugTracker.class, "url", String.class, 4)
+										.mapAttribute(BugTracker.class, "iframeFriendly", String.class, 5);
 
 	@ServiceReference
 	public void setBugtrackerManagerService(BugTrackerManagerService bugTrackerManagerService) {
@@ -108,8 +108,7 @@ public class BugTrackerAdministrationController {
 
 	/* ****************************** data formatters ********************************************** */
 
-	private CollectionSorting createPaging(final DataTableDrawParameters params,
-			final DataTableMapper mapper) {
+	private CollectionSorting createPaging(final DataTableDrawParameters params, final DatatableMapper mapper) {
 		return new DataTableFilterSorter(params, mapper);
 	}
 

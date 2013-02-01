@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.testcase;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -55,8 +54,6 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.execution.Execution;
@@ -73,8 +70,6 @@ import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
-import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
@@ -86,7 +81,6 @@ import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.combo.OptionTag;
-import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperCollectionSortingAdapter;
@@ -95,7 +89,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePagedFilter;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 import org.squashtest.tm.web.internal.service.CustomFieldHelperService;
 import org.squashtest.tm.web.internal.service.CustomFieldHelperService.Helper;
 
@@ -110,32 +105,31 @@ public class TestCaseModificationController {
 	private static final String TEST_CASE_ = "test case ";
 	private static final String COPIED_STEP_ID_PARAM = "copiedStepId[]";
 
-	private final DataTableMapper verifiedReqMapper = new DataTableMapper("verified-requirement",
-			RequirementVersion.class, Project.class).initMapping(9)
-			.mapAttribute(Project.class, 1, NAME_KEY, String.class)
-			.mapAttribute(RequirementVersion.class, 2, "id", Long.class)
-			.mapAttribute(RequirementVersion.class, 3, "reference", String.class)
-			.mapAttribute(RequirementVersion.class, 4, NAME_KEY, String.class)
-			.mapAttribute(RequirementVersion.class, 5, "versionNumber", Integer.class)
-			.mapAttribute(RequirementVersion.class, 6, "criticality", RequirementCriticality.class)
-			.mapAttribute(RequirementVersion.class, 7, "category", RequirementCategory.class);
+	private final DatatableMapper verifiedReqMapper = new IndexBasedMapper(7)
+															.mapAttribute(Project.class, NAME_KEY, String.class, 1)
+															.mapAttribute(RequirementVersion.class, "id", Long.class, 2)
+															.mapAttribute(RequirementVersion.class, "reference", String.class, 3)
+															.mapAttribute(RequirementVersion.class, NAME_KEY, String.class, 4)
+															.mapAttribute(RequirementVersion.class, "versionNumber", Integer.class, 5)
+															.mapAttribute(RequirementVersion.class, "criticality", RequirementCriticality.class, 6)
+															.mapAttribute(RequirementVersion.class, "category", RequirementCategory.class, 7);
 
-	private final DataTableMapper referencingTestCaseMapper = new DataTableMapper("referencing-test-cases",
-			TestCase.class, Project.class).initMapping(6).mapAttribute(Project.class, 2, NAME_KEY, String.class)
-			.mapAttribute(TestCase.class, 3, "reference", String.class)
-			.mapAttribute(TestCase.class, 4, NAME_KEY, String.class)
-			.mapAttribute(TestCase.class, 5, "executionMode", TestCaseExecutionMode.class);
+	private final DatatableMapper referencingTestCaseMapper = new IndexBasedMapper(6)
+																	.mapAttribute(Project.class, NAME_KEY, String.class, 2)
+																	.mapAttribute(TestCase.class, "reference", String.class, 3)
+																	.mapAttribute(TestCase.class, NAME_KEY, String.class, 4)
+																	.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 5);
 
-	private final DataTableMapper execsTableMapper = new DataTableMapper("executions", Execution.class, Project.class, Campaign.class, Iteration.class, TestSuite.class)
-			.initMapping(11).mapAttribute(Project.class, 1, NAME_KEY, String.class)
-			.mapAttribute(Campaign.class, 2, NAME_KEY, String.class)
-			.mapAttribute(Iteration.class, 3, NAME_KEY, String.class)
-			.mapAttribute(Execution.class, 4, NAME_KEY, String.class)
-			.mapAttribute(Execution.class, 5, "executionMode", TestCaseExecutionMode.class)
-			.mapAttribute(TestSuite.class, 6, NAME_KEY, String.class)
-			.mapAttribute(Execution.class, 8, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(Execution.class, 9, "lastExecutedBy", String.class)
-			.mapAttribute(Execution.class, 10, "lastExecutedOn", Date.class);
+	private final DatatableMapper execsTableMapper = new IndexBasedMapper(11)
+														.mapAttribute(Project.class, NAME_KEY, String.class, 1)
+														.mapAttribute(Campaign.class, NAME_KEY, String.class, 2)
+														.mapAttribute(Iteration.class, NAME_KEY, String.class, 3)
+														.mapAttribute(Execution.class, NAME_KEY, String.class, 4)
+														.mapAttribute(Execution.class, "executionMode", TestCaseExecutionMode.class, 5)
+														.mapAttribute(TestSuite.class, NAME_KEY, String.class, 6)
+														.mapAttribute(Execution.class, "executionStatus", ExecutionStatus.class, 8)
+														.mapAttribute(Execution.class, "lastExecutedBy", String.class, 9)
+														.mapAttribute(Execution.class, "lastExecutedOn", Date.class, 10);
 
 	private TestCaseModificationService testCaseModificationService;
 
@@ -592,7 +586,7 @@ public class TestCaseModificationController {
 
 	}
 
-	private PagingAndSorting createPagingAndSorting(DataTableDrawParameters params, DataTableMapper mapper) {
+	private PagingAndSorting createPagingAndSorting(DataTableDrawParameters params, DatatableMapper mapper) {
 		return new DataTableMapperPagingAndSortingAdapter(params, mapper);
 	}
 
@@ -618,7 +612,7 @@ public class TestCaseModificationController {
 
 	}
 
-	private CollectionSorting createPaging(final DataTableDrawParameters params, final DataTableMapper dtMapper) {
+	private CollectionSorting createPaging(final DataTableDrawParameters params, final DatatableMapper dtMapper) {
 		return new DataTableMapperCollectionSortingAdapter(params, dtMapper);
 	}
 

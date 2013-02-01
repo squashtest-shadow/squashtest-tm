@@ -22,7 +22,8 @@ package org.squashtest.tm.web.internal.model.datatable;
 
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
 /**
  * PagingAndSortingAdapter backed by a DataTableDrawParameters and a DataTableMapper (for sorting purposes).
@@ -38,7 +39,7 @@ public class DataTableMapperPagingAndSortingAdapter extends DataTableDrawParamet
 			 * @return the sorted attribute simple name.
 			 */
 			@Override
-			String sortedAttributeName(DataTableMapper mapper, DataTableDrawParameters params) {
+			String sortedAttributeName(DatatableMapper mapper, DataTableDrawParameters params) {
 				return mapper.attrAt(params.getiSortCol_0());
 			}
 		},
@@ -47,7 +48,7 @@ public class DataTableMapperPagingAndSortingAdapter extends DataTableDrawParamet
 			 * @return the full sorted attribute path.
 			 */
 			@Override
-			String sortedAttributeName(DataTableMapper mapper, DataTableDrawParameters params) {
+			String sortedAttributeName(DatatableMapper mapper, DataTableDrawParameters params) {
 				return mapper.pathAt(params.getiSortCol_0());
 			}
 		};
@@ -58,14 +59,14 @@ public class DataTableMapperPagingAndSortingAdapter extends DataTableDrawParamet
 		 * @param params
 		 * @return
 		 */
-		abstract String sortedAttributeName(DataTableMapper mapper, DataTableDrawParameters params);
+		abstract String sortedAttributeName(DatatableMapper mapper, DataTableDrawParameters params);
 	}
 
 	private final DataTableDrawParameters params;
-	private final DataTableMapper mapper;
+	private final DatatableMapper mapper;
 	private final SortedAttributeSource sortedAttributeNameStrategy;
 
-	public DataTableMapperPagingAndSortingAdapter(DataTableDrawParameters drawParams, DataTableMapper mapper) {
+	public DataTableMapperPagingAndSortingAdapter(DataTableDrawParameters drawParams, DatatableMapper mapper) {
 		super(drawParams);
 		this.params = drawParams;
 		this.mapper = mapper;
@@ -73,7 +74,7 @@ public class DataTableMapperPagingAndSortingAdapter extends DataTableDrawParamet
 	}
 
 	public DataTableMapperPagingAndSortingAdapter(DataTableDrawParameters params,
-			DataTableMapper mapper, SortedAttributeSource sortedAttributeSource) {
+			DatatableMapper mapper, SortedAttributeSource sortedAttributeSource) {
 		super(params);
 		this.params = params;
 		this.mapper = mapper;

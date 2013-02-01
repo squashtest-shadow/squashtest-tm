@@ -20,14 +20,15 @@
  */
 package org.squashtest.tm.web.internal.model.viewmapper;
 
-import java.lang.reflect.Method;
+public class NameBasedMapper extends DefaultDatatableMapper<String> {
 
-class AttributeRegister {
-	String fieldName; // NOSONAR Class is package visible only
-	String fieldPath; // NOSONAR Class is package visible only
-	int objectIndex; // NOSONAR Class is package visible only
-	int attributeIndex; // NOSONAR Class is package visible only
-	Method getter; // NOSONAR Class is package visible only
-	Method setter; // NOSONAR Class is package visible only
-	Class<?> type; // NOSONAR Class is package visible only
+	public NameBasedMapper() {
+		super();
+	}
+
+	public NameBasedMapper(int initialCapacity) {
+		super(initialCapacity);
+	}
+	
+	
 }

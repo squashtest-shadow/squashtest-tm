@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.execution;
 import java.util.Locale;
 
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;

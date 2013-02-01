@@ -23,14 +23,15 @@ package org.squashtest.tm.web.internal.model.datatable;
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
 public class DataTableFilterSorter extends DataTableDrawParametersPagingAdapter implements CollectionSorting {
 	
 	private final DataTableDrawParameters params;
-	private final DataTableMapper mapper;
+	private final DatatableMapper mapper;
 
-	public DataTableFilterSorter(@NotNull DataTableDrawParameters params, @NotNull DataTableMapper mapper){
+	public DataTableFilterSorter(@NotNull DataTableDrawParameters params, @NotNull DatatableMapper mapper){
 		super(params);
 		this.params = params;
 		this.mapper=mapper;
@@ -38,7 +39,7 @@ public class DataTableFilterSorter extends DataTableDrawParametersPagingAdapter 
 	
 	@Override
 	public String getSortedAttribute() {
-		return mapper.pathAt(params.getiSortCol_0());
+		return mapper.pathAt(params.getsSortedAttribute_0());
 	}
 
 	@Override

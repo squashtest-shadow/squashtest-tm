@@ -20,6 +20,11 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.codehaus.jackson.annotate.JsonAnySetter;
+
 /**
  * Parameters of the draw request sent by a datatable.
  *
@@ -28,11 +33,19 @@ package org.squashtest.tm.web.internal.model.datatable;
  */
 // NOSONAR names have to match JSON structure  
 public class DataTableDrawParameters {
+	
+	private static final String M_DATA_PROP_PREFIX = "mDataProp_";
+	private static final int M_DATA_PROP_SUFFIX_INDEX = M_DATA_PROP_PREFIX.length() +1 ;
+	
+	private String sEcho;
+	
 	private int iDisplayStart;
 	private int iDisplayLength;
-	private String sEcho;
+	
 	private int iSortCol_0;
 	private String sSortDir_0;
+	private String sSearch;
+	private Map<Integer, Object> mDataProp = new HashMap<Integer, Object>();
 
 
 
@@ -68,11 +81,44 @@ public class DataTableDrawParameters {
 		this.iSortCol_0 = iSortCol_0;
 	}
 
+	@Deprecated
 	public String getsSortDir_0() { // NOSONAR names have to match JSON structure
 		return sSortDir_0;
+	}
+	
+	public Object getsSortedAttribute_0(){
+		return mDataProp.get(iSortCol_0);
 	}
 
 	public void setsSortDir_0(String sSortDir_0) { // NOSONAR names have to match JSON structure
 		this.sSortDir_0 = sSortDir_0;
 	}
+
+	public String getsSearch() {
+		return sSearch;
+	}
+
+	public void setsSearch(String sSearch) {
+		this.sSearch = sSearch;
+	}
+	
+	public Map<Integer, Object> getmDataProp(){
+		return mDataProp;
+	}
+	
+	public Object getmDataProp(Integer index){
+		return mDataProp.get(index);
+	}
+	
+	@JsonAnySetter	
+	public void setUnknown(String unknownAttribute, Object value){
+		if (unknownAttribute.matches(M_DATA_PROP_PREFIX)){
+			Integer propIndex = Integer.valueOf(unknownAttribute.substring(M_DATA_PROP_SUFFIX_INDEX));
+			mDataProp.put(propIndex, value);
+		}
+		else{
+			// f*** it
+		}
+	}
+	
 }

@@ -69,12 +69,13 @@ import org.squashtest.tm.web.internal.helper.ProjectHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
+import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.testautomation.TestAutomationProjectRegistrationForm;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
 /**
  * @author Gregory Fouquet
@@ -99,14 +100,14 @@ public class GenericProjectController {
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
 
-	private DataTableMapper projectMapper = new DataTableMapper("projects-table", GenericProject.class).initMapping(9)
-			.mapAttribute(GenericProject.class, 2, "name", String.class)
-			.mapAttribute(GenericProject.class, 3, "label", String.class)
-			.mapAttribute(GenericProject.class, 4, "active", boolean.class)
-			.mapAttribute(GenericProject.class, 5, "audit.createdOn", Date.class)
-			.mapAttribute(GenericProject.class, 6, "audit.createdBy", String.class)
-			.mapAttribute(GenericProject.class, 7, "audit.lastModifiedOn", Date.class)
-			.mapAttribute(GenericProject.class, 8, "audit.lastModifiedBy", String.class);
+	private DatatableMapper projectMapper = new IndexBasedMapper(9)
+												.mapAttribute(GenericProject.class, "name", String.class, 2)
+												.mapAttribute(GenericProject.class, "label", String.class, 3)
+												.mapAttribute(GenericProject.class, "active", boolean.class, 4)
+												.mapAttribute(GenericProject.class, "audit.createdOn", Date.class, 5)
+												.mapAttribute(GenericProject.class, "audit.createdBy", String.class, 6)
+												.mapAttribute(GenericProject.class, "audit.lastModifiedOn", Date.class, 7)
+												.mapAttribute(GenericProject.class, "audit.lastModifiedBy", String.class, 8);
 
 	@RequestMapping(value = "", params = "sEcho", method = RequestMethod.GET)
 	public @ResponseBody

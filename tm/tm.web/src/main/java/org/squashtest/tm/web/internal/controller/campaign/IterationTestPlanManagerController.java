@@ -60,7 +60,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableStatus;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
 /**
  * 
@@ -91,17 +92,16 @@ public class IterationTestPlanManagerController {
 		this.iterationTestPlanManagerService = iterationTestPlanManagerService;
 	}
 
-	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
-			TestCase.class, Project.class, TestSuite.class).initMapping(11)
-			.mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(TestCase.class, 3, "reference", String.class)
-			.mapAttribute(TestCase.class, 4, "name", String.class)
-			.mapAttribute(TestCase.class, 5, "importance", TestCaseImportance.class)
-			.mapAttribute(TestCase.class, 6, "executionMode", TestCaseExecutionMode.class)
-			.mapAttribute(IterationTestPlanItem.class, 7, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(TestSuite.class, 8, "name", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedBy", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 10, "lastExecutedOn", Date.class);
+	private final DatatableMapper testPlanMapper = new IndexBasedMapper(11)
+														.mapAttribute(Project.class, "name", String.class, 2)
+														.mapAttribute(TestCase.class, "reference", String.class, 3)
+														.mapAttribute(TestCase.class, "name", String.class, 4)
+														.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, 5)
+														.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 6)
+														.mapAttribute(IterationTestPlanItem.class, "executionStatus", ExecutionStatus.class, 7)
+														.mapAttribute(TestSuite.class, "name", String.class, 8)
+														.mapAttribute(IterationTestPlanItem.class, "lastExecutedBy", String.class, 9)
+														.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, 10);
 	
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long iterationId) {
@@ -293,7 +293,7 @@ public class IterationTestPlanManagerController {
 		return messageSource.getMessage("squashtm.none.f", null, locale);
 	}
 
-	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DataTableMapper mapper) {
+	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DatatableMapper mapper) {
 		return new DataTableFilterSorter(params, mapper);
 	}
 

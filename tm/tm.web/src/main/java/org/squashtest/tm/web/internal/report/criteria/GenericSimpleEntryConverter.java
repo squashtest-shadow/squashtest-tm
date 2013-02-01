@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.report.criteria;
 
-import static org.squashtest.tm.web.internal.report.criteria.FormEntryConstants.*;
+import static org.squashtest.tm.web.internal.report.criteria.FormEntryConstants.INPUT_VALUE;
 
 import java.util.Map;
 

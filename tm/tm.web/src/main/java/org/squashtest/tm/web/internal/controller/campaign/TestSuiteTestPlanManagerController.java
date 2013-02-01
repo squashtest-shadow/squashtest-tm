@@ -61,7 +61,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSo
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
 /**
  *
@@ -82,16 +83,15 @@ public class TestSuiteTestPlanManagerController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 	
-	private final DataTableMapper testPlanMapper = new DataTableMapper("unused", IterationTestPlanItem.class,
-			TestCase.class, Project.class, TestSuite.class).initMapping(11)
-			.mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(TestCase.class, 3, "reference", String.class)
-			.mapAttribute(TestCase.class, 4, "name", String.class)
-			.mapAttribute(TestCase.class, 5, "importance", TestCaseImportance.class)
-			.mapAttribute(TestCase.class, 6, "executionMode", TestCaseExecutionMode.class)
-			.mapAttribute(IterationTestPlanItem.class, 7, "executionStatus", ExecutionStatus.class)
-			.mapAttribute(IterationTestPlanItem.class, 8, "lastExecutedBy", String.class)
-			.mapAttribute(IterationTestPlanItem.class, 9, "lastExecutedOn", Date.class);
+	private final DatatableMapper testPlanMapper = new IndexBasedMapper(11)
+														.mapAttribute(Project.class, "name", String.class, 2)
+														.mapAttribute(TestCase.class, "reference", String.class, 3)
+														.mapAttribute(TestCase.class, "name", String.class, 4)
+														.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, 5)
+														.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 6)
+														.mapAttribute(IterationTestPlanItem.class, "executionStatus", ExecutionStatus.class, 7)
+														.mapAttribute(IterationTestPlanItem.class, "lastExecutedBy", String.class, 8)
+														.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, 9);
 
 	@Inject
 	private MessageSource messageSource;

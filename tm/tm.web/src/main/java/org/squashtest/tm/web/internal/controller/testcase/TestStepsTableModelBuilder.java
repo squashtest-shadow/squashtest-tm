@@ -27,7 +27,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.context.MessageSource;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;

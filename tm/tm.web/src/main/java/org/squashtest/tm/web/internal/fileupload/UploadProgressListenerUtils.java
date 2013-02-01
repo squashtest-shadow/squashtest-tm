@@ -25,7 +25,6 @@ package org.squashtest.tm.web.internal.fileupload;
 
 import java.util.List;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 

@@ -47,7 +47,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
 /**
  * Controller for the Custom Fields management pages.
@@ -104,10 +105,10 @@ public class CustomFieldAdministrationController {
 	 * A Mapping for custom fields table sortable columns : maps the table column index to an entity property.
 	 * NB: column index is of all table's columns (displayed or not)
 	 */
-	private final DataTableMapper customFieldTableMapper = new DataTableMapper("unused", CustomField.class).initMapping(6)
-			.mapAttribute(CustomField.class, 2, NAME, String.class)
-			.mapAttribute(CustomField.class, 3, LABEL, String.class)
-			.mapAttribute(CustomField.class, 5, INPUT_TYPE, String.class);
+	private final DatatableMapper customFieldTableMapper = new IndexBasedMapper(6)
+																.mapAttribute(CustomField.class, NAME, String.class, 2)
+																.mapAttribute(CustomField.class, LABEL, String.class, 3)
+																.mapAttribute(CustomField.class, INPUT_TYPE, String.class, 5);
 	
 	/**
 	 * Return the DataTableModel to display the table of all custom fields.

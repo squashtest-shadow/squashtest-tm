@@ -35,7 +35,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 

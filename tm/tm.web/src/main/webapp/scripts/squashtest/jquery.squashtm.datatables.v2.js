@@ -65,6 +65,16 @@
  * placeholders that will be replaced by the corresponding value from
  * aoData["something"]. That's where the data keys above are useful.
  * 
+ * 
+ * 
+ * static functions : ----------
+ * 
+ * $.fn.squashTable.decorator{
+ * 		rewriteSentData(datatableSettings) : will decorate the datatableSettigns.fnServerData with a preprocessor that will turn the mDataProp_x to
+ * 											 something that makes sense to Spring databinder - eg, will write mDataProp[x] instead. 
+ * 											If the settings specified any fnServerParams, the decorator will append its code in last position (and will not overwrite it).
+ * }
+ * 
  * =========== Regular Datatable settings=======================================
  * 
  * the inherited part of the datatable is configured using the first parameter :
@@ -826,6 +836,24 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		};
 	}
 	
+	
+	// ************************ functions used by the static functions *****************************
+	
+	function fnRewriteData(aoData){
+		var i = 0,
+			length = aoData.length,
+			regexp = /mDataProp_(\d+)/,
+			match;
+		
+		for (i=0;i<length;i++){
+			match = aoData[i].name.match(regexp);
+			if (match != null){
+				aoData[i].name = "mDataProp['"+match[1]+"']";
+			}
+		}
+	}
+	
+	
 
 	/***************************************************************************
 	 * 
@@ -965,21 +993,15 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			this.configureLinks();
 			this.enableTableDragAndDrop();
 			this.restoreTableSelection();
-			
-			
-			/*
-			_attachButtonsCallback.call(this);
-			_buggedPicsCallback.call(this);
-			_configureRichEditables.call(this);
-			_configureExecutionStatus.call(this);
-			_configureDeleteButtons.call(this);
-			_configureLinks.call(this);
-			_enableTableDragAndDrop.call(this);
-			_restoreTableSelection.call(this);
-			*/
+	
 		};
 
 		datatableEffective["fnDrawCallback"] = customDrawCallback;
+		
+		
+		/* ********************* rewrite the data ***************** */
+		
+		$.fn.squashTable.decorator.rewriteSentData(datatableEffective);
 
 		/* **************** store the new instance ***************** */
 
@@ -1010,5 +1032,18 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	};
 
 	$.fn.squashTable.instances = existingInstances || {}; // end of the hack
+	
+	//static methods 
+	$.fn.squashTable.decorator = {
+		rewriteSentData : function(datatableSettings){
+			var oldfnServerParams = datatableSettings.fnServerParams;
+			datatableSettings.fnServerParams = function(aoData){
+				if (oldfnServerParams!==undefined) oldfnServerParams.call(this, aoData);
+				fnRewriteData(aoData);				
+			}
+		}
+			
+			
+	}
 
 })(jQuery);

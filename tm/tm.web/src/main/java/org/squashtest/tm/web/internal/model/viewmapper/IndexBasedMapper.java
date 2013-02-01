@@ -18,28 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.testcase;
-
-import javax.inject.Inject;
-
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.testcase.TestCaseNature;
-import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
-import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
+package org.squashtest.tm.web.internal.model.viewmapper;
 
 
-@Component
-@Scope("prototype")
-public class TestCaseNatureJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<TestCaseNature> {
+public class IndexBasedMapper extends DefaultDatatableMapper<Integer>{
 
-		public TestCaseNatureJeditableComboDataBuilder() {
-			super();
-			setModel(TestCaseNature.values());
-		}
+	public IndexBasedMapper() {
+		super();
+	}
 
-		@Inject
-		public void setLabelFormatter(LevelLabelFormatterWithoutOrder formatter) {
-			super.setLabelFormatter(formatter);
-		}
+	public IndexBasedMapper(int initialCapacity) {
+		super(initialCapacity);
+	}
+	
+	
+	
+	
 }

@@ -60,7 +60,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableFilterSorter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 import org.squashtest.tm.web.internal.util.DateUtils;
 
 @Controller
@@ -85,13 +86,12 @@ public class CampaignModificationController {
 	 * the one in the association interface) they should be addressed by two distinct DataTableMappers, especially
 	 * because their configuration and content are different !
 	 */
-	private final DataTableMapper testPlanMapper = new DataTableMapper("irrelevant", TestCase.class, Project.class)
-			.initMapping(8)
-			.mapAttribute(Project.class, 2, "name", String.class)
-			.mapAttribute(Project.class, 3, "name", String.class)
-			.mapAttribute(TestCase.class, 4, "name", String.class)
-			.mapAttribute(TestCase.class, 6, "importance", TestCaseImportance.class)
-			.mapAttribute(TestCase.class, 7, "executionMode", TestCaseExecutionMode.class);
+	private final DatatableMapper testPlanMapper = new IndexBasedMapper(8)
+														.mapAttribute(Project.class, "name", String.class, 2)
+														.mapAttribute(Project.class, "name", String.class, 3)
+														.mapAttribute(TestCase.class, "name", String.class, 4)
+														.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, 6)
+														.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 7);
 
 	@ServiceReference
 	public void setIterationModificationService(IterationModificationService iterationModificationService) {
@@ -329,7 +329,7 @@ public class CampaignModificationController {
 		return new TestPlanManagerTableHelper(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}
 
-	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DataTableMapper mapper) {
+	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DatatableMapper mapper) {
 		return new DataTableFilterSorter(params, mapper);
 	}
 

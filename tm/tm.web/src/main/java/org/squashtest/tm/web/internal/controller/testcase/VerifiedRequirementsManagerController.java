@@ -59,7 +59,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSo
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
 /**
  * Controller for verified requirements management page.
@@ -76,15 +77,14 @@ public class VerifiedRequirementsManagerController {
 
 	private static final String REQUIREMENTS_IDS = "requirementsIds[]";
 
-	private final DataTableMapper verifiedReqMapper = new DataTableMapper("verified-requirement-version",
-			RequirementVersion.class, Project.class).initMapping(9)
-			.mapAttribute(Project.class, 1, "name", String.class)
-			.mapAttribute(RequirementVersion.class, 2, "id", Long.class)
-			.mapAttribute(RequirementVersion.class, 3, "reference", String.class)
-			.mapAttribute(RequirementVersion.class, 4, "name", String.class)
-			.mapAttribute(RequirementVersion.class, 5, "versionNumber", Integer.class)
-			.mapAttribute(RequirementVersion.class, 6, "criticality", RequirementCriticality.class)
-			.mapAttribute(RequirementVersion.class, 7, "category", RequirementCategory.class);
+	private final DatatableMapper verifiedReqMapper = new IndexBasedMapper(9)
+														  .mapAttribute(Project.class, "name", String.class, 1)
+														  .mapAttribute(RequirementVersion.class, "id", Long.class, 2)
+														  .mapAttribute(RequirementVersion.class, "reference", String.class, 3)
+														  .mapAttribute(RequirementVersion.class, "name", String.class, 4)
+														  .mapAttribute(RequirementVersion.class, "versionNumber", Integer.class, 5)
+														  .mapAttribute(RequirementVersion.class, "criticality", RequirementCriticality.class, 6)
+														  .mapAttribute(RequirementVersion.class, "category", RequirementCategory.class, 7);
 	
 	@Inject
 	private Provider<DriveNodeBuilder> driveNodeBuilder;
