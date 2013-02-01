@@ -24,21 +24,17 @@ requirejs.config({
     "custom-field-editor",
     "custom-field-binding",
     "custom-field-values",
-    /*{
-    	main : "main",
-    	name : "custom-field-values",
-    	location : "http://localhost/scripts/scripts/custom-field-values"
-    },*/
     "execution-processing", 
     "projects-manager", 
     "project",
     "contextual-content-handlers",
     "test-cases-management",
-    /*{
-    	name : "test-cases-management",
+    //"users-administration"
+    {
+    	name : "users-administration",
     	main : "main",
-    	location : "http://localhost/scripts/scripts/test-cases-management"
-    }*/
+    	location : "http://localhost/scripts/scripts/users-administration"
+    }
 	],
 
 	/*
