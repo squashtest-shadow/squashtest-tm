@@ -50,6 +50,7 @@ public class DataTablesController {
 		messages.put("sInfo", messageSource.getMessage("generics.datatable.info", null, locale));
 		messages.put("sInfoEmpty", messageSource.getMessage("generics.datatable.infoEmpty", null, locale));
 		messages.put("sInfoFiltered", messageSource.getMessage("generics.datatable.infoFiltered", null, locale));
+		messages.put("sSearch", messageSource.getMessage("generics.datatable.search", null, locale));
 
 		Map<String, Object> pagination = new HashMap<String, Object>();
 		messages.put("oPaginate", pagination);

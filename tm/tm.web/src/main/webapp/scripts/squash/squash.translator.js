@@ -47,27 +47,65 @@
  *  	} 
  *  	
  *  }
+ *  
+ *  
+ *  //TODO : implement a cache.
  * 
  */
 define(["jquery"], function($){
+	
+	
 	var serviceURL = squashtm.app.contextRoot+"/localization/filler";
 	
+
+	function getAsObject(object){
+		var result;
+		$.ajax({
+			url : serviceURL,
+			headers : {
+				'Content-Type' : 'application/json'					
+			},
+			dataType : 'json',
+			type : 'POST',
+			data : JSON.stringify(object),
+			async : false
+		})
+		.success(function(json){
+			result= json;
+		});			
+		
+		return result;
+	}
+	
+	
+	function getAsString(string){
+		var result;
+		$.ajax({
+			url : serviceURL,
+			headers : {
+				'Content-Type' : 'application/json'					
+			},
+			dataType : 'json',
+			type : 'POST',
+			data : JSON.stringify({ query : string }),
+			async : false
+		})
+		.success(function(json){
+			result= json.query;
+		});			
+		
+		return result;
+	}
+	
 	return {
-		get : function(messageObject){
+		get : function(argument){
 			
-			$.ajax({
-				url : serviceURL,
-				headers : {
-					'Content-Type' : 'application/json'					
-				},
-				dataType : 'json',
-				type : 'POST',
-				data : JSON.stringify(messageObject),
-				async : false
-			})
-			.success(function(json){
-				return json;
-			});			
+			if (typeof argument === "string"){
+				return getAsString(argument);
+			}
+			else{
+				return getAsObject(argument);		
+			}
 		}
 	};
 

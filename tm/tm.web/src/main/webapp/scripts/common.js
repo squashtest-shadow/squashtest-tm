@@ -29,11 +29,11 @@ requirejs.config({
     "project",
     "contextual-content-handlers",
     "test-cases-management",
-    //"users-administration"
+    //"users-manager"
     {
-    	name : "users-administration",
+    	name : "users-manager",
     	main : "main",
-    	location : "http://localhost/scripts/scripts/users-administration"
+    	location : "http://localhost/scripts/scripts/users-manager"
     }
 	],
 

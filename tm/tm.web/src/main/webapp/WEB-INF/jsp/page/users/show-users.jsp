@@ -189,7 +189,7 @@
 	<script type="text/javascript">
 	
 		$(function(){
-			require(['users-administration'], function(userAdmin){
+			require(['users-manager'], function(userAdmin){
 				var settings = {
 					data : {
 						tableData : ${json:serialize(userList)}

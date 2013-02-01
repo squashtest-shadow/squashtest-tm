@@ -145,7 +145,7 @@ define(["jquery", "jquery.squash.datatables"], function($){
 	function initTable(settings){
 		var datatableSettings = {
 			"oLanguage": {
-				"sUrl": settings.urls.rootContext+"'datatables/messages'"
+				"sUrl": settings.urls.rootContext+"datatables/messages"
 			},
 			"bJQueryUI": true,
 			"bAutoWidth": false,
@@ -156,12 +156,12 @@ define(["jquery", "jquery.squash.datatables"], function($){
 			"iDeferLoading" : settings.data.tableData.length, 
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": settings.urls.baseUrl+'/users/table',
+			"sAjaxSource": settings.urls.baseUrl+'/table',
 			"aaData" : settings.data.tableData,		
-			"sDom" : 't<"dataTables_footer"flirp>',
+			"sDom" : 'ft<"dataTables_footer"lirp>',
 			"aoColumnDefs": [
 				{ 'bVisible':false, 'bSortable':false, 'mDataProp':'user-id', 		      'aTargets':['user-id'] },
-				{ 'bVisible':true,  'bSortable':true,  'mDataProp':'user-index', 	      'aTargets':['user-index'], 'sWidth':'2em', 'sClass':'select-handle centered' },
+				{ 'bVisible':true,  'bSortable':false,  'mDataProp':'user-index', 	      'aTargets':['user-index'], 'sWidth':'2em', 'sClass':'select-handle centered' },
 				{ 'bVisible':true,  'bSortable':true,  'mDataProp':'user-login', 	      'aTargets':['user-login'], 'sClass':'user-reference'},
 				{ 'bVisible':true, 	'bSortable':true,  'mDataProp':'user-group', 	      'aTargets':['user-group'] },
 				{ 'bVisible':true, 	'bSortable':true,  'mDataProp':'user-firstname',      'aTargets':['user-firstname'] },
@@ -170,7 +170,7 @@ define(["jquery", "jquery.squash.datatables"], function($){
 				{ 'bVisible':true, 	'bSortable':true,  'mDataProp':'user-created-on',     'aTargets':['user-created-on'] },
 				{ 'bVisible':true, 	'bSortable':true,  'mDataProp':'user-created-by',     'aTargets':['user-created-by'] },
 				{ 'bVisible':true, 	'bSortable':true,  'mDataProp':'user-modified-on',    'aTargets':['user-modified-on'] },
-				{ 'bVisible':true, 	'bSortable':true,  'mDataProp':'user-modified-by',    'aTargets':['user-modified-by'], 'sWidth':'2em'}
+				{ 'bVisible':true, 	'bSortable':true,  'mDataProp':'user-modified-by',    'aTargets':['user-modified-by'], 'sWidth':'2em'},
 				{ 'bVisible':true, 	'bSortable':false, 'mDataProp':'empty-delete-holder', 'aTargets':['empty-delete-holder'], 'sWidth':'2em', 'sClass':'centered delete-button'}
 				
 			] 
@@ -185,7 +185,7 @@ define(["jquery", "jquery.squash.datatables"], function($){
 			deleteButtons : {
 				url : settings.urls.baseUrl+"/delete/{user-id}",
 				popupmessage : settings.language.deleteMessage,
-				tooltip : settings.langague.deleteTooltip,
+				tooltip : settings.language.deleteTooltip,
 				success : function(){
 					refreshUsers();
 				}
