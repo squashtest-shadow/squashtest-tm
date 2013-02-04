@@ -64,15 +64,15 @@
 					<tr>
 						<th class="user-id">Id</th>
 						<th class="user-index">#</th>
-						<th class="user-login"><f:message key="label.Login" /></th>
+						<th class="user-login datatable-filterable"><f:message key="label.Login" /></th>
 						<th class="user-group"><f:message key="label.Group" /></th>
-						<th class="user-firstname"><f:message key="label.FirstName" /></th>
-						<th class="user-lastname"><f:message key="label.LastName" /></th>
-						<th class="user-email"><f:message key="label.Email" /></th>
+						<th class="user-firstname datatable-filterable"><f:message key="label.FirstName" /></th>
+						<th class="user-lastname datatable-filterable"><f:message key="label.LastName" /></th>
+						<th class="user-email datatable-filterable"><f:message key="label.Email" /></th>
 						<th class="user-created-on"><f:message key="label.CreatedOn" /></th>
-						<th class="user-created-by"><f:message key="label.createdBy" /></th>
+						<th class="user-created-by datatable-filterable"><f:message key="label.createdBy" /></th>
 						<th class="user-modified-on"><f:message key="label.modifiedOn" /></th>	
-						<th class="user-modified-by"><f:message key="label.modifiedBy" /></th>
+						<th class="user-modified-by datatable-filterable"><f:message key="label.modifiedBy" /></th>
 						<th class="empty-delete-holder"></th>
 					</tr>
 				</thead>

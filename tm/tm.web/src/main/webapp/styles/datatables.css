@@ -138,3 +138,7 @@ height:8px;
 table.center {
 	text-align: center;
 }
+
+div.dataTables_wrapper th.datatable-filterable.datatable-filtered{
+	font-weight:bold;	
+}

@@ -140,6 +140,8 @@ define(["jquery", "jquery.squash.datatables"], function($){
 			document.location.href= "${administrationUrl}";
 		});		
 	}
+	
+
 
 	
 	function initTable(settings){

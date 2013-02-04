@@ -66,6 +66,11 @@
  * aoData["something"]. That's where the data keys above are useful.
  * 
  * 
+ * filtering : -----------------
+ * 
+ * activation : just give css class 'datatable-filterable' to the relevant th elements.
+ * Whenever a datatable is redrawn, a hook will check if any filtering had been applied and enable/disable the class 'datatable-filtered' when appropriate. 
+ * 
  * 
  * static functions : ----------
  * 
@@ -837,6 +842,17 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	}
 	
 	
+	function _applyFilteredStyle(){
+		var isFiltered = (this.fnSettings().oPreviousSearch.sSearch.length>0);
+		if (isFiltered){
+			this.find('th.datatable-filterable').addClass('datatable-filtered');
+		}
+		else{
+			this.find('th.datatable-filterable').removeClass('datatable-filtered');
+		}
+	}
+	
+	
 	// ************************ functions used by the static functions *****************************
 	
 	function fnRewriteData(aoData){
@@ -936,6 +952,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		this.configureDeleteButtons = _configureDeleteButtons;
 		this.enableTableDragAndDrop = _enableTableDragAndDrop;
 		this.restoreTableSelection = _restoreTableSelection;
+		this.applyFilteredStyle = _applyFilteredStyle;
 		
 		if(squashSettings.bindDeleteButtons != null){
 			this.bindDeleteButtons = squashSettings.bindDeleteButtons;
@@ -993,6 +1010,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			this.configureLinks();
 			this.enableTableDragAndDrop();
 			this.restoreTableSelection();
+			this.applyFilteredStyle();
 	
 		};
 
