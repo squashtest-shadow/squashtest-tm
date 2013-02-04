@@ -31,7 +31,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
  * @author Gregory Fouquet
  * 
  */
-public class DataTableMapperPagingAndSortingAdapter extends DataTableDrawParametersPagingAdapter implements
+public class DataTableMapperPagingAndSortingAdapter extends DataTableSorting implements
 		PagingAndSorting {
 	public enum SortedAttributeSource {
 		SINGLE_ENTITY {
@@ -40,7 +40,7 @@ public class DataTableMapperPagingAndSortingAdapter extends DataTableDrawParamet
 			 */
 			@Override
 			String sortedAttributeName(DatatableMapper mapper, DataTableDrawParameters params) {
-				return mapper.attrAt(params.getiSortCol_0());
+				return mapper.attrAt(params.getsSortedAttribute_0());
 			}
 		},
 		MULTIPLE_ENTITIES {
@@ -49,7 +49,7 @@ public class DataTableMapperPagingAndSortingAdapter extends DataTableDrawParamet
 			 */
 			@Override
 			String sortedAttributeName(DatatableMapper mapper, DataTableDrawParameters params) {
-				return mapper.pathAt(params.getiSortCol_0());
+				return mapper.pathAt(params.getsSortedAttribute_0());
 			}
 		};
 		/**
@@ -62,22 +62,17 @@ public class DataTableMapperPagingAndSortingAdapter extends DataTableDrawParamet
 		abstract String sortedAttributeName(DatatableMapper mapper, DataTableDrawParameters params);
 	}
 
-	private final DataTableDrawParameters params;
-	private final DatatableMapper mapper;
+
 	private final SortedAttributeSource sortedAttributeNameStrategy;
 
 	public DataTableMapperPagingAndSortingAdapter(DataTableDrawParameters drawParams, DatatableMapper mapper) {
-		super(drawParams);
-		this.params = drawParams;
-		this.mapper = mapper;
+		super(drawParams, mapper);
 		this.sortedAttributeNameStrategy = SortedAttributeSource.MULTIPLE_ENTITIES;
 	}
 
-	public DataTableMapperPagingAndSortingAdapter(DataTableDrawParameters params,
+	public DataTableMapperPagingAndSortingAdapter(DataTableDrawParameters drawParams,
 			DatatableMapper mapper, SortedAttributeSource sortedAttributeSource) {
-		super(params);
-		this.params = params;
-		this.mapper = mapper;
+		super(drawParams, mapper);
 		this.sortedAttributeNameStrategy = sortedAttributeSource;
 	}
 

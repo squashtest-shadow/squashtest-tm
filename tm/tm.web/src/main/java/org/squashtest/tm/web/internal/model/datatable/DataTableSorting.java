@@ -20,38 +20,33 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
-import org.squashtest.tm.core.foundation.collection.Paging;
+import javax.validation.constraints.NotNull;
 
-/**
- * This class adapts a {@link DataTableDrawParameters} object into a {@link Paging}.
- * 
- * @author Gregory Fouquet
- * 
- */
-public class DataTableDrawParametersPagingAdapter implements Paging {
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 
-	private final DataTableDrawParameters params;
+public class DataTableSorting extends DataTablePaging implements PagingAndSorting {
+	
+	protected final DataTableDrawParameters params;
+	protected final DatatableMapper mapper;
 
-	/**
-	 * @param drawParams
-	 */
-	public DataTableDrawParametersPagingAdapter(DataTableDrawParameters drawParams) {
-		params = drawParams;
-	}
-
-	@Override
-	public int getPageSize() {
-		return params.getiDisplayLength();
-	}
-
-	@Override
-	public int getFirstItemIndex() {
-		return params.getiDisplayStart();
+	public DataTableSorting(@NotNull DataTableDrawParameters params, @NotNull DatatableMapper mapper){
+		super(params);
+		this.params = params;
+		this.mapper=mapper;
 	}
 	
 	@Override
-	public boolean shouldDisplayAll() {
-		return (params.getiDisplayLength()<0);
+	public String getSortedAttribute() {
+		return mapper.pathAt(params.getsSortedAttribute_0());
 	}
+
+
+	@Override
+	public SortOrder getSortOrder() {
+		return SortOrder.coerceFromCode(params.getsSortDir_0());
+	}
+	
 
 }

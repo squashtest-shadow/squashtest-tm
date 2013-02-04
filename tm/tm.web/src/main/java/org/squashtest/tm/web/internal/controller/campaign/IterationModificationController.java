@@ -68,7 +68,7 @@ import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionVie
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableFilterSorter;
+import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -551,7 +551,7 @@ public class IterationModificationController {
 	/* ************** private stuffs are below ********************** */
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DatatableMapper mapper) {
-		return new DataTableFilterSorter(params, mapper);
+		return new DataTableCollectionSorting(params, mapper);
 	}
 
 	/* ***************** data formatter *************************** */

@@ -20,32 +20,37 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
-import javax.validation.constraints.NotNull;
+import org.squashtest.tm.core.foundation.collection.Paging;
 
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
-
-public class DataTableFilterSorter extends DataTableDrawParametersPagingAdapter implements CollectionSorting {
-	
+/**
+ * Implementation of a {@link Paging} which filters the data requested by a paged datatable.
+ *
+ * @author Gregory Fouquet
+ *
+ */
+public class DataTablePaging implements Paging {
 	private final DataTableDrawParameters params;
-	private final DatatableMapper mapper;
 
-	public DataTableFilterSorter(@NotNull DataTableDrawParameters params, @NotNull DatatableMapper mapper){
-		super(params);
+	public DataTablePaging(DataTableDrawParameters params) {
 		this.params = params;
-		this.mapper=mapper;
-	}
-	
-	@Override
-	public String getSortedAttribute() {
-		return mapper.pathAt(params.getsSortedAttribute_0());
 	}
 
 	@Override
-	public String getSortingOrder() {
-		return params.getsSortDir_0();
+	public int getFirstItemIndex() {
+		return params.getiDisplayStart();
+	}
+
+	/**
+	 * @see org.squashtest.tm.core.foundation.collection.Paging#getPageSize()
+	 */
+	@Override
+	public int getPageSize() {
+		return params.getiDisplayLength();
 	}
 	
-
+	@Override
+	public boolean shouldDisplayAll() {
+		return (params.getiDisplayLength()<0);
+	}
+	
 }

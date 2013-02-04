@@ -42,7 +42,7 @@ import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableFilterSorter;
+import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
@@ -109,7 +109,7 @@ public class BugTrackerAdministrationController {
 	/* ****************************** data formatters ********************************************** */
 
 	private CollectionSorting createPaging(final DataTableDrawParameters params, final DatatableMapper mapper) {
-		return new DataTableFilterSorter(params, mapper);
+		return new DataTableCollectionSorting(params, mapper);
 	}
 
 

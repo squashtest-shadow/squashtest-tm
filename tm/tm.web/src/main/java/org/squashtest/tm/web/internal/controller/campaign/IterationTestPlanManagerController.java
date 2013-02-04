@@ -54,7 +54,7 @@ import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableFilterSorter;
+import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableStatus;
@@ -294,7 +294,7 @@ public class IterationTestPlanManagerController {
 	}
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DatatableMapper mapper) {
-		return new DataTableFilterSorter(params, mapper);
+		return new DataTableCollectionSorting(params, mapper);
 	}
 
 }

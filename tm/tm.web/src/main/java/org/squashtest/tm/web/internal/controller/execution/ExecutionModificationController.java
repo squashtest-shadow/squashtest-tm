@@ -59,7 +59,7 @@ import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTablePagedFilter;
+import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 
 @Controller
 @RequestMapping("/executions/{executionId}")
@@ -190,7 +190,7 @@ public class ExecutionModificationController {
 	}
 
 	private Paging createPaging(final DataTableDrawParameters params) {
-		return new DataTablePagedFilter(params);
+		return new DataTablePaging(params);
 	}
 
 	@RequestMapping(value = "/steps/{stepId}/comment", method = RequestMethod.POST, params = { "id", VALUE })

@@ -45,9 +45,9 @@ import org.squashtest.tm.web.internal.model.customfield.CustomFieldBindingModel;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParametersPagingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 
 
 @Controller
@@ -107,7 +107,7 @@ public class CustomFieldBindingController {
 			 Locale locale){
 		
 		
-		DataTableDrawParametersPagingAdapter paging = new DataTableDrawParametersPagingAdapter(params);
+		DataTablePaging paging = new DataTablePaging(params);
 		
 		PagedCollectionHolder<List<CustomFieldBinding>> bindings = service.findCustomFieldsForProjectAndEntity(projectId, bindableEntity, paging);
 

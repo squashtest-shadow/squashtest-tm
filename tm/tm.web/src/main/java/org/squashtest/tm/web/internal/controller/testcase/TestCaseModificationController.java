@@ -87,7 +87,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableMapperCollectionS
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTablePagedFilter;
+import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
@@ -617,7 +617,7 @@ public class TestCaseModificationController {
 	}
 
 	private Paging createPaging(final DataTableDrawParameters params) {
-		return new DataTablePagedFilter(params);
+		return new DataTablePaging(params);
 	}
 
 	/* ********************************** localization stuffs ****************************** */

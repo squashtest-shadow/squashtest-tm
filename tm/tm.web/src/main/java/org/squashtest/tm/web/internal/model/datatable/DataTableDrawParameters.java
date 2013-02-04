@@ -72,7 +72,12 @@ public class DataTableDrawParameters {
 	public void setsEcho(String sEcho) { // NOSONAR names have to match JSON structure
 		this.sEcho = sEcho;
 	}
-
+	
+	
+	/** 
+	 * use #getsSortedAttribute_0() instead 
+	 */
+	@Deprecated
 	public int getiSortCol_0() { // NOSONAR names have to match JSON structure
 		return iSortCol_0;
 	}
@@ -81,7 +86,7 @@ public class DataTableDrawParameters {
 		this.iSortCol_0 = iSortCol_0;
 	}
 
-	@Deprecated
+	
 	public String getsSortDir_0() { // NOSONAR names have to match JSON structure
 		return sSortDir_0;
 	}

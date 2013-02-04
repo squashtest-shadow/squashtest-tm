@@ -29,6 +29,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
  * @author Gregory Fouquet
  *
  */
+@Deprecated
 public class DataTableMapperCollectionSortingAdapter implements CollectionSorting {
 	private final PagingAndSorting delegate;  
 

@@ -295,7 +295,7 @@ class TestCaseModificationControllerTest extends Specification {
 		DataTableDrawParameters	params = Mock()
 		params.getiDisplayLength() >> 10
 		params.getiDisplayStart() >> 5
-		params.getiSortCol_0() >> 2
+		params.getsSortedAttribute_0() >> 2
 		params.getsSortDir_0() >> "asc"
 
 		DatatableMapper dtMapper = Mock()

@@ -37,8 +37,8 @@ import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParametersPagingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 
 /**
  * This controller handles requests related to a requirement's audit trail (ie its collection of
@@ -69,7 +69,7 @@ public class RequirementAuditTrailController {
 			Locale locale) {
 		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService
 				.findAllByRequirementVersionIdOrderedByDate(requirementVersionId,
-						new DataTableDrawParametersPagingAdapter(drawParams));
+						new DataTablePaging(drawParams));
 
 		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale,
 				messageSource);
