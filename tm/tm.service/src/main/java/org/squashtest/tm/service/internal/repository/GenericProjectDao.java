@@ -40,6 +40,9 @@ public interface GenericProjectDao extends CustomGenericProjectDao {
 	@PostFilter("hasPermission(filterObject, 'MANAGEMENT') or  hasRole('ROLE_ADMIN')")
 	List<GenericProject> findAll(PagingAndSorting pagingAndSorting);
 	
+	@PostFilter("hasPermission(filterObject, 'MANAGEMENT') or  hasRole('ROLE_ADMIN')")
+	List<GenericProject> findProjectsFiltered(PagingAndSorting pagingAndSorting, @QueryParam("filter") String filter);
+		
 	
 	GenericProject findById(long projectId);
 	

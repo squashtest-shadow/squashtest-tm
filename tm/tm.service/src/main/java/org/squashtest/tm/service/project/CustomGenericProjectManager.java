@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -44,10 +45,11 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 	 * Will find all Projects and Templates to which the user has management access to and return them ordered according to the given params.
 	 * 
 	 * @param pagingAndSorting the {@link PagingAndSorting} that holds order and paging params
+	 * @param filter the filter to apply on the result
 	 * @return a {@link FilteredCollectionHolder} containing all projects the user has management access to, ordered according to the given params.
 	 */
 	@Transactional(readOnly=true)
-	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting);
+	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting, Filtering filter);
 
 	/**
 	 * @param project

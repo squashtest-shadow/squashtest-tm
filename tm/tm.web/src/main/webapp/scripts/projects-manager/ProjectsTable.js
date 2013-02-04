@@ -55,11 +55,13 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 						"sUrl": squashtm.app.contextRoot + "/datatables/messages"
 					},
 					"sAjaxSource": squashtm.app.contextRoot + "/generic-projects", 
+					"bFilter" : true,
 					"bDeferRender": true,
 					"iDeferLoading": squashtm.app.projectsManager.deferLoading, 
 					"fnRowCallback": this.projectTableRowCallback,
 					"fnDrawCallback": this.tableDrawCallback, 
 					"aaSorting": [ [ 2, "asc" ] ], 
+					"sDom" : 'ft<"dataTables_footer"lirp>',
 					"aoColumnDefs": [ {
 						"bVisible": false,
 						"aTargets": [ 0 ],

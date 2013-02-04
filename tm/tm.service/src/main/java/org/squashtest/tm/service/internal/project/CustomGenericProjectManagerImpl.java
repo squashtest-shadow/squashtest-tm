@@ -34,6 +34,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
@@ -105,8 +106,16 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
-	public PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting) {
-		List<GenericProject> projects = genericProjectDao.findAll(pagingAndSorting);
+	public PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
+		List<GenericProject> projects;
+		
+		if (filter.isDefined()){
+			projects = genericProjectDao.findProjectsFiltered(pagingAndSorting, "%"+filter.getFilter()+"%");
+		}
+		else{
+			projects = genericProjectDao.findAll(pagingAndSorting);
+		}
+		
 		long count = genericProjectDao.countGenericProjects();
 		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(pagingAndSorting, count, projects);
 	}

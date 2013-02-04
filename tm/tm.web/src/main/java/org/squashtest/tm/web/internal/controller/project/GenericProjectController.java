@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
@@ -68,6 +69,7 @@ import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.web.internal.helper.ProjectHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -76,6 +78,7 @@ import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.testautomation.TestAutomationProjectRegistrationForm;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 /**
  * @author Gregory Fouquet
@@ -100,56 +103,29 @@ public class GenericProjectController {
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
 
-	private DatatableMapper projectMapper = new IndexBasedMapper(9)
-												.mapAttribute(GenericProject.class, "name", String.class, 2)
-												.mapAttribute(GenericProject.class, "label", String.class, 3)
-												.mapAttribute(GenericProject.class, "active", boolean.class, 4)
-												.mapAttribute(GenericProject.class, "audit.createdOn", Date.class, 5)
-												.mapAttribute(GenericProject.class, "audit.createdBy", String.class, 6)
-												.mapAttribute(GenericProject.class, "audit.lastModifiedOn", Date.class, 7)
-												.mapAttribute(GenericProject.class, "audit.lastModifiedBy", String.class, 8);
+	private DatatableMapper projectMapper = new NameBasedMapper(9)
+												.mapAttribute(GenericProject.class, "name", String.class, "name")
+												.mapAttribute(GenericProject.class, "label", String.class, "label")
+												.mapAttribute(GenericProject.class, "active", boolean.class, "active")
+												.mapAttribute(GenericProject.class, "audit.createdOn", Date.class, "created-on")
+												.mapAttribute(GenericProject.class, "audit.createdBy", String.class, "created-by")
+												.mapAttribute(GenericProject.class, "audit.lastModifiedOn", Date.class, "last-mod-on")
+												.mapAttribute(GenericProject.class, "audit.lastModifiedBy", String.class, "last-mod-by");
 
+	
 	@RequestMapping(value = "", params = "sEcho", method = RequestMethod.GET)
 	public @ResponseBody
 	DataTableModel getProjectsTableModel(final DataTableDrawParameters params, final Locale locale) {
-		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, projectMapper,
-				SortedAttributeSource.SINGLE_ENTITY);
+		
+		PagingAndSorting sorter = new DataTableMapperPagingAndSortingAdapter(params, projectMapper,
+									  SortedAttributeSource.SINGLE_ENTITY);
+		
+		Filtering filter = new DataTableFiltering(params);
 
-		PagedCollectionHolder<List<GenericProject>> holder = projectManager.findSortedProjects(filter);
+		PagedCollectionHolder<List<GenericProject>> holder = projectManager.findSortedProjects(sorter, filter);
 
 		return new ProjectDataTableModelHelper(locale, messageSource).buildDataModel(holder, params.getsEcho());
 
-	}
-
-	private static final class ProjectDataTableModelHelper extends DataTableModelHelper<GenericProject> {
-		private InternationalizationHelper messageSource;
-		private Locale locale;
-
-		private ProjectDataTableModelHelper(Locale locale, InternationalizationHelper messageSource) {
-			this.locale = locale;
-			this.messageSource = messageSource;
-		}
-
-		@Override
-		public Object buildItemData(GenericProject project) {
-			Map<String, Object> data = new HashMap<String, Object>(11);
-
-			final AuditableMixin auditable = (AuditableMixin) project;
-
-			data.put("project-id", project.getId());
-			data.put("index", getCurrentIndex());
-			data.put("name", project.getName());
-			data.put("active", messageSource.internationalizeYesNo(project.isActive(), locale));
-			data.put("label", project.getLabel());
-			data.put("created-on", messageSource.localizeDate(auditable.getCreatedOn(), locale));
-			data.put("created-by", auditable.getCreatedBy());
-			data.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
-			data.put("last-mod-by", auditable.getLastModifiedBy());
-			data.put("raw-type", ProjectHelper.isTemplate(project) ? "template" : "project");
-			data.put("type", "&nbsp;");
-			
-			return data;
-		}
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "isTemplate=false")
@@ -401,4 +377,37 @@ public class GenericProjectController {
 			return res;
 		}
 	}
+	
+
+	private static final class ProjectDataTableModelHelper extends DataTableModelHelper<GenericProject> {
+		private InternationalizationHelper messageSource;
+		private Locale locale;
+
+		private ProjectDataTableModelHelper(Locale locale, InternationalizationHelper messageSource) {
+			this.locale = locale;
+			this.messageSource = messageSource;
+		}
+
+		@Override
+		public Object buildItemData(GenericProject project) {
+			Map<String, Object> data = new HashMap<String, Object>(11);
+
+			final AuditableMixin auditable = (AuditableMixin) project;
+
+			data.put("project-id", project.getId());
+			data.put("index", getCurrentIndex());
+			data.put("name", project.getName());
+			data.put("active", messageSource.internationalizeYesNo(project.isActive(), locale));
+			data.put("label", project.getLabel());
+			data.put("created-on", messageSource.localizeDate(auditable.getCreatedOn(), locale));
+			data.put("created-by", auditable.getCreatedBy());
+			data.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
+			data.put("last-mod-by", auditable.getLastModifiedBy());
+			data.put("raw-type", ProjectHelper.isTemplate(project) ? "template" : "project");
+			data.put("type", "&nbsp;");
+			
+			return data;
+		}
+	}
+
 }

@@ -80,15 +80,15 @@
   		<tr>
   			<th>Id(not shown)</th> 
   			<th class="button-cell">#</th>
-  			<th><f:message key="label.Name" /></th>
-        <th>raw type (not shown)</th> 
-        <th class="icon-cell">&nbsp;</th> 
-  			<th><f:message key="label.tag" /></th>
+  			<th class="datatable-filterable"><f:message key="label.Name" /></th>
+	        <th>raw type (not shown)</th> 
+	        <th class="icon-cell">&nbsp;</th> 
+  			<th class="datatable-filterable"><f:message key="label.tag" /></th>
   			<th><f:message key="label.active" /></th>
   			<th><f:message key="label.CreatedOn" /></th>
-  			<th><f:message key="label.createdBy" /></th>
+  			<th class="datatable-filterable"><f:message key="label.createdBy" /></th>
   			<th><f:message key="label.modifiedOn" /></th>	
-  			<th><f:message key="label.modifiedBy" /></th>		
+  			<th class="datatable-filterable"><f:message key="label.modifiedBy" /></th>		
   		</tr>
   	</thead>
   	<tbody>
@@ -118,7 +118,7 @@
     </tbody>
   </table>
 
-  <sec:authorize access=" hasRole('ROLE_ADMIN')">
+  <sec:authorize access="hasRole('ROLE_ADMIN')">
   <!--   ===========================CREATE PROJECT DIALOG=======================================  -->
   <div id="add-project-dialog" class="not-displayed popup-dialog form-horizontal" title="<f:message key='title.addProject' />">
     <table class="form-horizontal">
