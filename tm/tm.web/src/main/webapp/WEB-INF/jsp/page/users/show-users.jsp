@@ -26,6 +26,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="agg" tagdir="/WEB-INF/tags/aggregates" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
@@ -52,13 +53,16 @@
 				<input id="back" type="button" value="${ back }" />
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">	
-	<div class="fragment-body">
-		<div id="users-table-pane">
-			<div style="float: right;">
+			<div class="fragment-tabs fragment-body">
+			<ul>
+				<li><a href="#users-table-pane"><f:message key="label.users"/></a></li>
+				<li><a href="#team-table-pane"><f:message key="label.teams"/></a></li>
+			</ul>
+			<div id="users-table-pane" class="table-tab">
+					<div class="toolbar">
 				<a id="add-user-button" href="#" class="add-user-button"><f:message key="user.add.label" /></a>
 			</div>
-			<div style="clear:both"></div>
-				
+					<div class="table-tab-wrap">
 			<table id="users-list-table">
 				<thead>
 					<tr>
@@ -83,6 +87,12 @@
 
 	
 		</div>
+	</div><%-- /div#users-table-pane --%>
+	
+	<agg:teams-table-tab />
+	
+	
+	</div><%-- /div.fragment-body.fragment-tabs --%>
 	<%-- ------------------------------ Add User Dialog ------------------------------------------------ --%>
 		<comp:popup id="add-user-dialog" titleKey="title.AddUser" isContextual="true"
 			openedBy="add-user-button" width="400">
@@ -175,7 +185,7 @@
 				</table>
 			</jsp:body>
 		</comp:popup>
-	</div>
+	
 	
 	
 	<f:message var="missingNewPassword" key="user.account.newpass.error"/>
@@ -219,4 +229,4 @@
 	</jsp:attribute>
 
 </layout:info-page-layout>
-
+<comp:fragment-tabs/>

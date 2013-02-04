@@ -31,4 +31,5 @@ import org.squashtest.csp.tm.domain.users.Team;
 @Transactional
 public interface TeamModificationService extends CustomTeamModificationService, TeamFinderService {
 
+
 }

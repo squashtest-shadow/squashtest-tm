@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.service.users;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +31,9 @@ import org.squashtest.csp.tm.domain.users.Team;
 import org.squashtest.csp.tm.internal.repository.TeamDao;
 import org.squashtest.csp.tm.internal.service.customField.NameAlreadyInUseException;
 import org.squashtest.csp.tm.service.users.CustomTeamModificationService;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 @Service("CustomTeamModificationService")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class CustomTeamModificationServiceImpl implements CustomTeamModificationService {
@@ -60,6 +65,13 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		aclService.removeAllResponsibilitiesForParty(teamId);
 		teamDao.delete(team);
 		
+	}
+	
+	@Override
+	public PagedCollectionHolder<List<Team>> findAllFiltered(PagingAndSorting filter) {
+		List<Team> teams = teamDao.findSortedTeams(filter);
+		long count = teamDao.count();
+		return new PagingBackedPagedCollectionHolder<List<Team>>(filter, count, teams);
 	}
 
 }

@@ -22,17 +22,15 @@ package org.squashtest.csp.tm.service.users;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.users.Team;
-
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 /**
- * {@link Team} retrieval methods.
+* Holder for non dynamically generated find methods for {@link Team}
  * @author mpagnon
  *
  */
-@Transactional(readOnly = true)
-public interface TeamFinderService extends CustomTeamFinderService {
-	
-	List<Team> findAll();
+public interface CustomTeamFinderService {
 
+	PagedCollectionHolder<List<Team>> findAllFiltered(PagingAndSorting filter);
 }

@@ -30,7 +30,7 @@ import org.squashtest.csp.tm.internal.service.customField.NameAlreadyInUseExcept
  *
  */
 @Transactional
-public interface CustomTeamModificationService {
+public interface CustomTeamModificationService extends CustomTeamFinderService{
 	
 	/**
 	 * Check if name is available and persist the new Team.
@@ -41,7 +41,9 @@ public interface CustomTeamModificationService {
 	void persist(Team team);
 	
 	/**
-	 * Delete the team along with all it's acls
+	 * Delete the team along with all it's acls.
+	 * Do not delete it's associated users.
+	 * 
 	 */
 	void deleteTeam(long teamId);
 

@@ -18,21 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service.users;
+package org.squashtest.csp.tm.internal.repository;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.domain.users.Team;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
-/**
- * {@link Team} retrieval methods.
- * @author mpagnon
- *
- */
-@Transactional(readOnly = true)
-public interface TeamFinderService extends CustomTeamFinderService {
+public interface CustomTeamDao {
+	/**
+	 * 
+	 * @param filter
+	 * @return
+	 */
+	List<Team> findSortedTeams(PagingAndSorting filter);
 	
-	List<Team> findAll();
-
+	
 }

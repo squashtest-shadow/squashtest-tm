@@ -42,7 +42,8 @@ import org.squashtest.csp.tm.domain.audit.Auditable;
 @PrimaryKeyJoinColumn(name = "PARTY_ID")
 @NamedQueries(value = {
 @NamedQuery(name="Team.findAllByName", query="select t from Team t where t.name = ?"),
-@NamedQuery(name="Team.findAll", query="from Team ")
+@NamedQuery(name="Team.findAll", query="from Team "),
+@NamedQuery(name="Team.count", query="select count(*) from Team ")
 
 })
 public class Team extends Party{

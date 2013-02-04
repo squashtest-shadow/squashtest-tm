@@ -31,7 +31,7 @@ import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
  * @author mpagnon
  * 
  */
-public interface TeamDao {
+public interface TeamDao extends CustomTeamDao{
 	/**
 	 * Will persist a new team.
 	 * 
@@ -39,7 +39,7 @@ public interface TeamDao {
 	 *            : the new team to persist
 	 */
 	void persist(Team team);
-	
+
 	/**
 	 * Simply retrieve the {@link Team} of the given id
 	 * 
@@ -47,13 +47,14 @@ public interface TeamDao {
 	 * @return
 	 */
 	Team findById(long teamId);
-	
+
 	/**
 	 * Simply delete the given {@link Team}
+	 * 
 	 * @param team
 	 */
 	void delete(Team team);
-	
+
 	/**
 	 * Find all teams with name equals to the given name param.
 	 * 
@@ -61,4 +62,11 @@ public interface TeamDao {
 	 * @return list of team with same name as param
 	 */
 	List<Team> findAllByName(String name);
+
+	/**
+	 * Simply count all Teams
+	 * 
+	 * @return amount of {@link Team} in database
+	 */
+	long count();
 }

@@ -322,11 +322,6 @@ div#search-result a {
 	text-decoration: none;
 }
 
-#add-user-button {
-	padding: 0;
-	height: 2em;
-}
-
 input#search-button {
 	height: 2em;
 	padding: 0;
@@ -356,13 +351,6 @@ div#contextual-content.no-resizable-contextual-content {
 	width: auto;
 }
 
-div#users-table-pane {
-	bottom: 0;
-	left: 10px;
-	position: absolute;
-	right: 10px;
-	top: 0;
-}
 
 div#search-pane {
 	padding: 0;
