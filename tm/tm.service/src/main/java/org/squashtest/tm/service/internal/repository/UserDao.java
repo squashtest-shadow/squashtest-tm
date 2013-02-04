@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.LoginAlreadyExistsException;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
@@ -34,7 +36,7 @@ public interface UserDao extends EntityDao<User> {
 	
 	List<User> findAllUsersFiltered(CollectionSorting filter);
 
-	List<User> findAllActiveUsersFiltered(CollectionSorting filter);
+	List<User> findAllActiveUsers(PagingAndSorting sorter, Filtering filter);
 	
 	User findUserByLogin(String login);
 

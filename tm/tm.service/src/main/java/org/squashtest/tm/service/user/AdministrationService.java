@@ -22,6 +22,8 @@ package org.squashtest.tm.service.user;
 
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.AdministrationStatistics;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.User;
@@ -73,7 +75,7 @@ public interface AdministrationService {
 	
 	FilteredCollectionHolder<List<User>> findAllUsersFiltered(CollectionSorting filter);
 
-	FilteredCollectionHolder<List<User>> findAllActiveUsersFiltered(CollectionSorting filter);
+	FilteredCollectionHolder<List<User>> findAllActiveUsersFiltered(PagingAndSorting sorter, Filtering filter);
 
 	List<UsersGroup> findAllUsersGroupOrderedByQualifiedName();
 

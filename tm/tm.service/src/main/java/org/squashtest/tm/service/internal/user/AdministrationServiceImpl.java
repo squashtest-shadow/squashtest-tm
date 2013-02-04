@@ -30,6 +30,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.AdministrationStatistics;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.User;
@@ -146,8 +148,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 	
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public FilteredCollectionHolder<List<User>> findAllActiveUsersFiltered(CollectionSorting filter) {
-		List<User> list = userDao.findAllActiveUsersFiltered(filter);
+	public FilteredCollectionHolder<List<User>> findAllActiveUsersFiltered(PagingAndSorting sorter, Filtering filter) {
+		List<User> list = userDao.findAllActiveUsers(sorter, filter);
 		long count = userDao.findAll().size();
 		return new FilteredCollectionHolder<List<User>>(count, list);
 	}

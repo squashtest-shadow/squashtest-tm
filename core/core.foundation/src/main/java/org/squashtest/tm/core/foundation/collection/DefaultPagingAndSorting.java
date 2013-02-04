@@ -20,51 +20,50 @@
  */
 package org.squashtest.tm.core.foundation.collection;
 
-import org.springframework.util.StringUtils;
+public class DefaultPagingAndSorting implements PagingAndSorting{
 
-public class DefaultFiltering implements Filtering{
+	private String sortedAttribute;
 	
-	public static final DefaultFiltering NO_FILTERING = new DefaultFiltering("", null);
-	
-	
-	private String filteredAttribute;
-	private String filter;
-
-	public DefaultFiltering() {
+	public DefaultPagingAndSorting(){
 		super();
 	}
-
-
-	public DefaultFiltering(String filteredAttribute, String filter) {
+	
+	
+	public DefaultPagingAndSorting(String sortedAttribute) {
 		super();
-		this.filteredAttribute = filteredAttribute;
-		this.filter = filter;
-	}
-	
-
-	@Override
-	public boolean isDefined() {
-		return StringUtils.hasLength(filter);
-	}
-
-	@Override
-	public String getFilter() {
-		return filter;
-	}
-
-	@Override
-	public String getFilteredAttribute() {
-		return filteredAttribute;
-	}
-
-	public void setFilteredAttribute(String filteredAttribute) {
-		this.filteredAttribute = filteredAttribute;
-	}
-
-	public void setFilter(String filter) {
-		this.filter = filter;
+		this.sortedAttribute = sortedAttribute;
 	}
 
 	
-	
+
+	public void setSortedAttribute(String sortedAttribute) {
+		this.sortedAttribute = sortedAttribute;
+	}
+
+
+	@Override
+	public int getFirstItemIndex() {
+		return 0;
+	}
+
+	@Override
+	public int getPageSize() {
+		return 10;
+	}
+
+	@Override
+	public boolean shouldDisplayAll() {
+		return false;
+	}
+
+	@Override
+	public String getSortedAttribute() {
+		return sortedAttribute;
+	}
+
+	@Override
+	public SortOrder getSortOrder() {
+		return SortOrder.ASCENDING;
+	}
+
 }

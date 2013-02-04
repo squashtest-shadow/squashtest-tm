@@ -45,6 +45,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectPermission;
@@ -55,10 +60,12 @@ import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.service.user.AdministrationService;
-import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
+import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -105,20 +112,16 @@ public class UserAdministrationController {
 		ModelAndView mav = new ModelAndView("page/users/show-users");
 		
 		List<UsersGroup> list = adminService.findAllUsersGroupOrderedByQualifiedName();
-		CollectionSorting sorting = new DefaultPaging();
 		
-		DataTableModel model = getTableModel(sorting, "noneed", locale);
+		PagingAndSorting paging = new DefaultPagingAndSorting("User.login");
+		Filtering filter = DefaultFiltering.NO_FILTERING;
+		
+		DataTableModel model = getTableModel(paging, filter,  "noneed", locale);
 		
 		mav.addObject("usersGroupList", list);
 		mav.addObject("userList", model.getAaData());
 		
 		return mav;
-	}
-
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public @ResponseBody
-	void addNewUser(@ModelAttribute("add-user") @Valid UserForm userForm) {
-		adminService.addUser(userForm.getUser(), userForm.getGroupId(), userForm.getPassword());
 	}
 	
 	@RequestMapping(value = "/table", params = "sEcho", method = RequestMethod.GET)
@@ -126,21 +129,30 @@ public class UserAdministrationController {
 	DataTableModel getTable(final  DataTableDrawParameters params, final Locale locale) {
 		LOGGER.trace("getTable called ");
 
-		CollectionSorting filter = createPaging(params, userMapper);
+		DataTableSorting sorting = createSorting(params, userMapper);
+		Filtering filtering = new DataTableFiltering(params);
 
-		return getTableModel(filter, params.getsEcho(), locale);
+		return getTableModel(sorting, filtering, params.getsEcho(), locale);
 
 	}
 	
-	private DataTableModel getTableModel(CollectionSorting sorting, String sEcho, Locale locale){ 
-		FilteredCollectionHolder<List<User>> holder = adminService.findAllActiveUsersFiltered(sorting);
+	private DataTableModel getTableModel(PagingAndSorting sorting, Filtering filtering, String sEcho, Locale locale){ 
+		FilteredCollectionHolder<List<User>> holder = adminService.findAllActiveUsersFiltered(sorting, filtering);
 
 		return new UserDataTableModelBuilder(locale).buildDataModel(holder, sorting.getFirstItemIndex() + 1,
 				sEcho);	
 	}
+	
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public @ResponseBody
+	void addNewUser(@ModelAttribute("add-user") @Valid UserForm userForm) {
+		adminService.addUser(userForm.getUser(), userForm.getGroupId(), userForm.getPassword());
+	}
+	
 
-	private CollectionSorting createPaging(final DataTableDrawParameters params, final DatatableMapper mapper) {
-		return new DataTableCollectionSorting(params, mapper);
+
+	private DataTableSorting createSorting(final DataTableDrawParameters params, final DatatableMapper mapper) {
+		return new DataTableSorting(params, mapper);
 	}
 
 	@RequestMapping(value = USER_URL, method = RequestMethod.DELETE)
@@ -262,35 +274,7 @@ public class UserAdministrationController {
 		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}
 	
-	private static final class DefaultPaging implements CollectionSorting{
 
-		@Override
-		public int getFirstItemIndex() {
-			return 0;
-		}
-
-		@Override
-		public int getPageSize() {
-			return 10;
-		}
-
-		@Override
-		public boolean shouldDisplayAll() {
-			return false;
-		}
-
-		@Override
-		public String getSortedAttribute() {
-			return "User.login";
-		}
-
-		@Override
-		public String getSortingOrder() {
-			return "asc";
-		}
-
-		
-	}
 	
 	
 	/**
@@ -338,6 +322,7 @@ public class UserAdministrationController {
 	
 		}
 	}
+	
 
 	
 }
