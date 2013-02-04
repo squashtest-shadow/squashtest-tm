@@ -26,7 +26,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 
-public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao{
+public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao {
 	
 
 	CustomFieldBinding findById(long bindingId);

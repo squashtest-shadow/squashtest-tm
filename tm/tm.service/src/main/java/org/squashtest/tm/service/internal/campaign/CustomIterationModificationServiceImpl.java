@@ -32,6 +32,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -43,8 +44,6 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
-import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
-import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
@@ -54,14 +53,15 @@ import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ItemTestPlanDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
-import org.squashtest.tm.service.internal.testcase.TestCaseCyclicCallChecker;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 import org.squashtest.tm.service.user.UserAccountService;
 
 @Service("CustomIterationModificationService")
+@Transactional
 public class CustomIterationModificationServiceImpl implements CustomIterationModificationService,
 		IterationTestPlanManager {
 
@@ -92,12 +92,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private PermissionEvaluationService permissionService;
 
 	@Inject
-	private IterationTestPlanManagerService iterationTestPlanManagerService;
-
-	@Inject
-	private TestSuiteModificationService testSuiteModificationService;
-
-	@Inject
 	private PrivateCustomFieldValueService customFieldValueService;
 
 	@Inject
@@ -109,11 +103,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject
 	private UserAccountService userService;
-
-
-	public void setUserAccountService(UserAccountService service) {
-		this.userService = service;
-	}
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
@@ -146,12 +135,14 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
 			+ OR_HAS_ROLE_ADMIN)
+	@Transactional(readOnly = true)
 	public List<Iteration> findIterationsByCampaignId(long campaignId) {
 		return campaignDao.findByIdWithInitializedIterations(campaignId).getIterations();
 	}
 
 	@Override
 	@PostAuthorize("hasPermission(returnObject, 'READ') " + OR_HAS_ROLE_ADMIN)
+	@Transactional(readOnly = true)
 	public Iteration findById(long iterationId) {
 		return iterationDao.findById(iterationId);
 	}
@@ -255,6 +246,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
 			+ OR_HAS_ROLE_ADMIN)
+	@Transactional(readOnly = true)
 	public List<Execution> findAllExecutions(long iterationId) {
 		return iterationDao.findOrderedExecutionsByIterationId(iterationId);
 
@@ -263,6 +255,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
 			+ OR_HAS_ROLE_ADMIN)
+	@Transactional(readOnly = true)
 	public List<Execution> findExecutionsByTestPlan(long iterationId, long testPlanId) {
 		return iterationDao.findOrderedExecutionsByIterationAndTestPlan(iterationId, testPlanId);
 
@@ -271,6 +264,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
 			+ OR_HAS_ROLE_ADMIN)
+	@Transactional(readOnly = true)
 	public List<TestCase> findPlannedTestCases(long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		return iteration.getPlannedTestCase();
@@ -303,6 +297,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@Transactional(readOnly = true)
 	public List<TestSuite> findAllTestSuites(long iterationId) {
 		return iterationDao.findAllTestSuites(iterationId);
 	}

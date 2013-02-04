@@ -48,6 +48,7 @@ import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.acls.model.Sid;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.service.security.acls.CustomPermission;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
@@ -75,6 +76,7 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService;
  * 
  * @author bsiri
  */
+@Transactional
 public class JdbcManageableAclService extends JdbcAclService implements ObjectAclService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JdbcManageableAclService.class);

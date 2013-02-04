@@ -20,9 +20,16 @@
  */
 package org.squashtest.tm.service.project;
 
+import java.util.List;
+
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.project.Project;
 
 @Transactional
 public interface ProjectManagerService extends CustomProjectModificationService, ProjectFinder {
-	
+	@Transactional(readOnly = false)
+	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
+	List<Project> findAllOrderedByName();
+
 }

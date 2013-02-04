@@ -41,6 +41,7 @@ public class CustomProjectTemplateManagerServiceImpl implements CustomProjectTem
 	@Inject
 	private ProjectTemplateDao projectTemplateDao;
 	@Override
+	@Transactional(readOnly = true)
 	public List<ProjectTemplate> findAll() {
 		return projectTemplateDao.findAll();
 	}

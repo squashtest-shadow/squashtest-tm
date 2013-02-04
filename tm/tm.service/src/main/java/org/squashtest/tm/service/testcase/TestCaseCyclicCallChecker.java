@@ -18,17 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testcase;
+package org.squashtest.tm.service.testcase;
 
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.CyclicStepCallException;
 
 public interface TestCaseCyclicCallChecker {
 	/**
-	 * Used to check if the testPlan call tree is not cyclic 
-	 * This method is used to prevent infinite cycle in case of bugged data. 
+	 * Used to check if the testPlan call tree is not cyclic This method is used
+	 * to prevent infinite cycle in case of bugged data.
 	 * 
-	 * if so :  a {@linkplain CyclicStepCallException} is thrown.
+	 * if so : a {@linkplain CyclicStepCallException} is thrown.
 	 * 
 	 */
 	void checkNoCyclicCall(TestCase testCase) throws CyclicStepCallException;

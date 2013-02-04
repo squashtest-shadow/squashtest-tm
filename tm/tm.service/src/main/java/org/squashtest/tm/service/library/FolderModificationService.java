@@ -23,7 +23,6 @@ package org.squashtest.tm.service.library;
 import org.squashtest.tm.domain.library.Folder;
 
 public interface FolderModificationService<FOLDER extends Folder<?>> {
-
 	FOLDER findFolder(long folderId);
 
 	void removeFolder(long folderId);

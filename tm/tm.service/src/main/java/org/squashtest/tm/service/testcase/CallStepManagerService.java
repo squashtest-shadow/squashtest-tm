@@ -20,12 +20,8 @@
  */
 package org.squashtest.tm.service.testcase;
 
-import java.util.List;
-import java.util.Set;
-
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.CyclicStepCallException;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 
 public interface CallStepManagerService {
 
@@ -38,26 +34,7 @@ public interface CallStepManagerService {
 	 * @param calledTestCaseId being called
 	 */
 	void addCallTestStep(long parentTestCaseId, long calledTestCaseId);
-	
-	/**
-	 *  given the Id of a test case, will compute the subsequent test case call tree.
-	 * 
-	 * @param rootTcId. Null is not legal and unchecked.
-	 * @return a set containing the ids of the called test cases, that will not include the calling test case id. Not null, possibly empty. 
-	 */
-	Set<Long> getTestCaseCallTree(Long rootTcId);
-	
-	
-	/**
-	 * That method returns the list of test cases having at least one CallTestStep directly calling the 
-	 * test case identified by testCaseId. 
-	 *  
-	 * @param testCaseId the Id of the called test case.
-	 * @param sorting the sorting parameters.
-	 * @return a non null but possibly empty list of test cases calling the argument test case (first level only)
-	 */
-	List<TestCase> findCallingTestCases(long testCaseId, CollectionSorting sorting);	
-	
+		
 	/**
 	 * Used to check if the destination test case id is found in the calling tree of the pasted steps
 	 * if so : a {@linkplain CyclicStepCallException} is thrown.

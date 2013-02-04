@@ -40,7 +40,7 @@ import org.squashtest.tm.service.internal.repository.ExecutionDao
 import org.squashtest.tm.service.internal.repository.ItemTestPlanDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
-import org.squashtest.tm.service.internal.testcase.TestCaseCyclicCallChecker
+import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 
 import spock.lang.Specification
 

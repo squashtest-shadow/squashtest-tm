@@ -15,6 +15,7 @@ Import-Package: com.mysql.jdbc;resolution:=optional,\
 	org.hibernate.proxy,\
 	org.hibernate.validator,\
 	org.springframework.aop,\
+	org.springframework.aop.aspectj.autoproxy,\
 	org.springframework.aop.framework,\
 	org.springframework.core.task,\
 	org.springframework.scheduling,\

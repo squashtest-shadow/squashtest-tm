@@ -21,16 +21,16 @@
 package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
 
-import org.hibernate.Query;
-import org.hibernate.SessionFactory;
-import org.hibernate.classic.Session;
-import org.springframework.beans.factory.BeanFactory;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodException;
-import org.squashtest.tm.core.dynamicmanager.factory.AbstractDynamicComponentFactoryBean;
-import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean;
+import org.hibernate.Query
+import org.hibernate.SessionFactory
+import org.hibernate.classic.Session
+import org.springframework.beans.factory.BeanFactory
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodException
+import org.squashtest.tm.core.dynamicmanager.factory.AbstractDynamicComponentFactoryBean
+import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class DynamicManagerFactoryBeanTest extends Specification{
 	DynamicManagerFactoryBean factory = new DynamicManagerFactoryBean()
@@ -41,12 +41,11 @@ class DynamicManagerFactoryBeanTest extends Specification{
 	def setup() {
 		sessionFactory.getCurrentSession() >> currentSession
 		
-		use(ReflectionCategory) {
-			DynamicManagerFactoryBean.set field: "sessionFactory", of: factory, to: sessionFactory
-			DynamicManagerFactoryBean.set field: "entityType", of: factory, to: DummyEntity
-			AbstractDynamicComponentFactoryBean.set field: "componentType", of: factory, to: DummyManager
-			AbstractDynamicComponentFactoryBean.set field: "beanFactory", of: factory, to: beanFactory
-		}
+		factory.beanFactory = beanFactory
+		factory.lookupCustomImplementation = false
+		factory.componentType = DummyManager
+		factory.entityType = DummyEntity
+		factory.sessionFactory = sessionFactory		
 	}
 
 	def "factory should create a unique dynamic DummyManager"() {
@@ -84,7 +83,8 @@ class DynamicManagerFactoryBeanTest extends Specification{
 	def "should delegate methods of manager's superinterface"() {
 		given:
 		CustomDummyManager delegateManager = Mock()
-		factory.customComponent = delegateManager
+		beanFactory.getBean("delegateManager") >> delegateManager
+		factory.customImplementationBeanName = "delegateManager"
 
 		when:
 		factory.initializeFactory()
@@ -135,7 +135,7 @@ class DynamicManagerFactoryBeanTest extends Specification{
 		beanFactory.getBean("CustomDummyManager") >> delegateManager
 
 		and:
-		factory.lookupCustomComponent = true
+		factory.lookupCustomImplementation = true
 
 		when:
 		factory.initializeFactory()

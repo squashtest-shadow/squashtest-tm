@@ -49,6 +49,7 @@ import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 
 @Service("squashtest.tm.service.CustomFieldBindingService")
+@Transactional
 public class CustomFieldBindingModificationServiceImpl implements CustomFieldBindingModificationService {
 
 	@Inject
@@ -62,7 +63,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
-	
+
 	@Inject
 	private GenericProjectDao genericProjectDao;
 
@@ -74,32 +75,38 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	};
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<CustomField> findAvailableCustomFields() {
 		return customFieldDao.findAll();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<CustomField> findAvailableCustomFields(long projectId, BindableEntity entity) {
 		return customFieldDao.findAllBindableCustomFields(projectId, entity);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<CustomFieldBinding> findCustomFieldsForGenericProject(long projectId) {
 		return customFieldBindingDao.findAllForGenericProject(projectId);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<CustomFieldBinding> findCustomFieldsForProjectAndEntity(long projectId, BindableEntity entity) {
 		return customFieldBindingDao.findAllForProjectAndEntity(projectId, entity);
 	}
-	
-	@Override
-	public List<CustomFieldBinding> findCustomFieldsForBoundEntity(BoundEntity boundEntity) {
-		return customFieldBindingDao.findAllForProjectAndEntity(boundEntity.getProject().getId(), boundEntity.getBoundEntityType());
-	}
-	
 
 	@Override
+	@Transactional(readOnly = true)
+	public List<CustomFieldBinding> findCustomFieldsForBoundEntity(BoundEntity boundEntity) {
+		return customFieldBindingDao.findAllForProjectAndEntity(boundEntity.getProject().getId(),
+				boundEntity.getBoundEntityType());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public PagedCollectionHolder<List<CustomFieldBinding>> findCustomFieldsForProjectAndEntity(long projectId,
 			BindableEntity entity, Paging paging) {
 
@@ -111,28 +118,26 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
-	//TODO add check for permission MANAGEMENT on the project id
+	// TODO add check for permission MANAGEMENT on the project id
 	public void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId,
 			CustomFieldBinding newBinding) {
-		_createBinding(projectId, entity, customFieldId, newBinding);
+		createBinding(projectId, entity, customFieldId, newBinding);
 		customValueService.cascadeCustomFieldValuesCreation(newBinding);
 	}
-	
+
 	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
 	public void addRenderingLocation(long bindingId, RenderingLocation location) {
 		CustomFieldBinding binding = customFieldBindingDao.findById(bindingId);
 		binding.addRenderingLocation(location);
 	}
-	
+
 	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
-	public void removeRenderingLocation(long bindingId,
-			RenderingLocation location) {
+	public void removeRenderingLocation(long bindingId, RenderingLocation location) {
 		CustomFieldBinding binding = customFieldBindingDao.findById(bindingId);
 		binding.removeRenderingLocation(location);
 	}
-	
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
@@ -144,7 +149,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	@SuppressWarnings("unchecked")
 	@Override
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
-	//TODO add check for permission MANAGEMENT on the project id
+	// TODO add check for permission MANAGEMENT on the project id
 	public void removeCustomFieldBindings(Long projectId) {
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForGenericProject(projectId);
 		List<Long> bindingIds = new LinkedList<Long>(CollectionUtils.collect(bindings, BINDING_ID_COLLECTOR));
@@ -168,7 +173,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	}
 
-	private void _createBinding(long projectId, BindableEntity entity, long customFieldId, CustomFieldBinding newBinding) {
+	private void createBinding(long projectId, BindableEntity entity, long customFieldId, CustomFieldBinding newBinding) {
 
 		GenericProject project = genericProjectDao.findById(projectId);
 		CustomField field = customFieldDao.findById(customFieldId);
@@ -190,14 +195,14 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void copyCustomFieldsSettingsFromTemplate(Project newProject, ProjectTemplate projectTemplate) {
 		List<CustomFieldBinding> templateCutomFieldBindings = findCustomFieldsForGenericProject(projectTemplate.getId());
-		for(CustomFieldBinding templateCustomFieldBinding : templateCutomFieldBindings){
+		for (CustomFieldBinding templateCustomFieldBinding : templateCutomFieldBindings) {
 			long projectId = newProject.getId();
 			BindableEntity entity = templateCustomFieldBinding.getBoundEntity();
 			long customFieldId = templateCustomFieldBinding.getCustomField().getId();
 			CustomFieldBinding newBinding = new CustomFieldBinding();
 			addNewCustomFieldBinding(projectId, entity, customFieldId, newBinding);
 		}
-		
+
 	}
 
 }

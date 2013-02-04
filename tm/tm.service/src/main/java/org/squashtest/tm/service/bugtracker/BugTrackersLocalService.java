@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerManagerException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
@@ -39,6 +40,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
+@Transactional
 public interface BugTrackersLocalService {
 
 	/* ******************* Squash TM - side methods ****************** */

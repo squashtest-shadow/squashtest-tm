@@ -23,8 +23,6 @@ package org.squashtest.tm.core.dynamicmanager.factory;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.hibernate.SessionFactory;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.ArbitraryQueryHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.CountNamedQueryHandler;
@@ -85,7 +83,7 @@ public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponent
 	 * 
 	 */
 	private static final int HANDLERS_COUNT = 9;
-	@Inject private SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 	private Class<ENTITY> entityType;
 	
 	/**
@@ -113,4 +111,13 @@ public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponent
 	
 		return handlers;
 	}
+
+	/**
+	 * @param sessionFactory the sessionFactory to set
+	 */
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	
 }

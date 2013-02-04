@@ -21,9 +21,7 @@
 package org.squashtest.tm.service.internal.library;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +47,6 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE extends LibraryNode> implements
 		FolderModificationService<FOLDER> {
 
-	@Inject
 	private PermissionEvaluationService permissionService;
 
 	@PostConstruct
@@ -164,6 +161,13 @@ public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE 
 				throw new AccessDeniedException("Access is denied");
 			}
 		}
+	}
+
+	/**
+	 * @param permissionService the permissionService to set
+	 */
+	public void setPermissionService(PermissionEvaluationService permissionService) {
+		this.permissionService = permissionService;
 	}
 
 }

@@ -28,7 +28,6 @@ import javax.inject.Inject;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
@@ -37,7 +36,6 @@ import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 
 @Service("squashtest.tm.service.BugTrackerManagerService")
-@Transactional
 public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 
 	@Inject

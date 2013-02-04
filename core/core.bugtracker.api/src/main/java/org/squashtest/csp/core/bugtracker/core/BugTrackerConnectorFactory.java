@@ -27,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
@@ -40,7 +39,6 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
  * @author Gregory Fouquet
  *
  */
-@Component("squashtest.core.bugtracker.BugTrackerConnectorFactory")
 public class BugTrackerConnectorFactory {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerConnectorFactory.class);
 

@@ -25,14 +25,16 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.FactoryBeanNotInitializedException;
+import org.springframework.beans.factory.InitializingBean;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.CompositeInvocationHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.CustomMethodHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.DynamicComponentInvocationHandler;
@@ -49,10 +51,11 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.DynamicComponentIn
  * @param <COMPONENT>
  * @param <ENTITY>
  */
-public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements FactoryBean<COMPONENT> {
+public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements FactoryBean<COMPONENT>,
+		BeanFactoryAware, InitializingBean {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDynamicComponentFactoryBean.class);
 
-	@Inject
 	private BeanFactory beanFactory;
 
 	/**
@@ -64,13 +67,13 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	 * Should this factory lookup a custom manager in Spring's bean factory. Looked up type is the *FIRST*
 	 * superinterface of the dynamic manager type. Can be configured by Spring.
 	 */
-	private boolean lookupCustomComponent = true;
+	private boolean lookupCustomImplementation = true;
 
 	/**
-	 * Custom manager, should either be intialized to handle custom services which cannot be adressed by dynamic methods
-	 * or {@link #lookupCustomComponent} should be set to true.
+	 * Custom manager name, should either be intialized to handle custom services which cannot be adressed by dynamic
+	 * methods or {@link #lookupCustomImplementation} should be set to true.
 	 */
-	private Object customComponent;
+	private String customImplementationBeanName;
 
 	/**
 	 * The current object which handles invocations sent to the dynamic manager.
@@ -81,20 +84,25 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	 */
 	private COMPONENT proxy;
 
-	public final void setCustomComponent(Object customComponent) {
-		this.customComponent = customComponent;
-	}
-
 	public final synchronized void setComponentType(Class<COMPONENT> componentType) {
-		this.componentType = componentType; 
+		this.componentType = componentType;
 	}
 
-	@PostConstruct
 	protected final synchronized void initializeFactory() {
-		LOGGER.info("Initializing Dynamic component of type " + componentType.getSimpleName()); // NOSONAR componentType not sync'd
+		LOGGER.info("Initializing Dynamic component of type {}", componentType.getSimpleName()); // NOSONAR
+																									// componentType not
+																									// sync'd
+		initializeProperties();
 		initializeComponentInvocationHandler();
 		initializeComponentProxy();
-		LOGGER.info("Dynamic component is initialized");
+		LOGGER.debug("Dynamic component is initialized");
+	}
+
+	/**
+	 * Override if required
+	 */
+	protected void initializeProperties() {
+		// NOOP
 	}
 
 	@Override
@@ -118,7 +126,7 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 
 		if (componentInvocationHandler == null) {
 			List<DynamicComponentInvocationHandler> invocationHandlers = new ArrayList<DynamicComponentInvocationHandler>();
-			addCustomcomponentHandler(invocationHandlers); // IT MUST BE THE FIRST !
+			addCustomImplementationHandler(invocationHandlers); // IT MUST BE THE FIRST !
 			invocationHandlers.addAll(createInvocationHandlers());
 
 			componentInvocationHandler = new CompositeInvocationHandler(invocationHandlers);
@@ -131,31 +139,48 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	 * Adds a handler which delegates to cistom manager if necessary. It must be the first handler to be added to the
 	 * list / processed !
 	 */
-	private void addCustomcomponentHandler(List<DynamicComponentInvocationHandler> handlers) {
-		initializeCustomManager();
-
-		if (customComponent != null) {
-			handlers.add(new CustomMethodHandler(customComponent));
+	private void addCustomImplementationHandler(List<DynamicComponentInvocationHandler> handlers) {
+		if (hasCustomImplementation()) {
+			handlers.add(new CustomMethodHandler(createCustomImplempentationProvider()));
 		}
 	}
 
-	private void initializeCustomManager() {
-		LOGGER.debug("Initializing custom component");
-		
-		if (customComponent == null && lookupCustomComponent) {
-			if (cannotDetermineCustomComponentType()) {
-				LOGGER.info("No custom component type could be found in Dynamic component "
-						+ componentType.getSimpleName());
-				return;
-			}
+	private Provider<Object> createCustomImplempentationProvider() {
+		LOGGER.debug("Creating a custom implementation provider for dynamic component {}",
+				componentType.getSimpleName());
+		String beanName = null;
 
-			LOGGER.trace("Looking up for custom component");
-			
-			String customManagerName = componentType.getInterfaces()[0].getSimpleName();
-			customComponent = beanFactory.getBean(customManagerName);
-			
-			LOGGER.debug("Lookup found a custom component named : " + customManagerName);
+		if (customImplementationBeanName != null) {
+			LOGGER.trace("Using configured customImplementationBeanName");
+			beanName = customImplementationBeanName;
+		} else {
+			LOGGER.trace("Using automatic lookup for custom implementation");
+			beanName = componentType.getInterfaces()[0].getSimpleName();
 		}
+
+		LOGGER.info("Dynamic component {} is bound to delegate to custom implementation named {}",
+				componentType.getSimpleName(), customImplementationBeanName);
+
+		return new DeferredLookupCustomImplementationProvider(beanFactory, beanName);
+	}
+
+	private boolean hasCustomImplementation() {
+		if (customImplementationBeanName != null) {
+			return true;
+		}
+
+		if (!lookupCustomImplementation) {
+			return false;
+		}
+
+		if (lookupCustomImplementation && cannotDetermineCustomComponentType()) {
+			LOGGER.warn(
+					"No custom implementation type could be found in Dynamic component {}, will not apply custom implementation lookup",
+					componentType.getSimpleName());
+			return false;
+		}
+		
+		return true;
 	}
 
 	/**
@@ -175,11 +200,31 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 		return true;
 	}
 
-	/**
-	 * @param lookupCustomManager
-	 *            the lookupCustomManager to set
-	 */
-	public final void setLookupCustomComponent(boolean lookupCustomManager) {
-		this.lookupCustomComponent = lookupCustomManager;
+	@Override
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		this.beanFactory = beanFactory;
+
 	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		initializeFactory();
+	}
+
+	/**
+	 * @param customImplementationBeanName
+	 *            the customImplementationBeanName to set
+	 */
+	public void setCustomImplementationBeanName(String customImplementationBeanName) {
+		this.customImplementationBeanName = customImplementationBeanName;
+	}
+
+	/**
+	 * @param lookupCustomImplementation
+	 *            the lookupCustomImplementation to set
+	 */
+	public void setLookupCustomImplementation(boolean lookupCustomImplementation) {
+		this.lookupCustomImplementation = lookupCustomImplementation;
+	}
+
 }

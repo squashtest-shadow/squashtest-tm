@@ -22,7 +22,6 @@ package org.squashtest.tm.service.requirement;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 
 /**
@@ -31,7 +30,6 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality;
  * @author Gregory Fouquet
  * 
  */
-@Transactional
 public interface CustomRequirementModificationService {
 	
 	void rename(long reqId, @NotNull String newName);

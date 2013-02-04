@@ -26,7 +26,7 @@
 	<!-- ====== SPRING FRONT CONTROLLER ====== -->
 	<servlet>
 		<!-- CoC will lookup ${servlet-name}-servlet.xml for MVC conf -->
-		<servlet-name>squashtest.csp.core</servlet-name>
+		<servlet-name>squash-tm</servlet-name>
 		<servlet-class>
 			org.springframework.web.servlet.DispatcherServlet
 		</servlet-class>
@@ -44,7 +44,7 @@
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>squashtest.csp.core</servlet-name>
+		<servlet-name>squash-tm</servlet-name>
 		<url-pattern>/app/*</url-pattern>
 	</servlet-mapping>
 	<!-- ====== /SPRING FRONT CONTROLLER ====== -->
@@ -113,7 +113,7 @@
 
 	<filter-mapping>
 		<filter-name>bugTrackerContextPersister</filter-name>
-		<servlet-name>squashtest.csp.core</servlet-name>
+		<servlet-name>squash-tm</servlet-name>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 	<!-- ====== /BUG TRACKER CONTEXT PERSISTER ====== -->
@@ -126,7 +126,7 @@
 
 	<filter-mapping>
 		<filter-name>userConcurrentRequestLocker</filter-name>
-		<servlet-name>squashtest.csp.core</servlet-name>
+		<servlet-name>squash-tm</servlet-name>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 	<!-- ====== /USER CONCURRENT REQUEST QUEUE ====== -->
@@ -139,7 +139,7 @@
 
   <filter-mapping>
     <filter-name>IE8AcceptHeaderFixerFilter</filter-name>
-    <servlet-name>squashtest.csp.core</servlet-name>
+    <servlet-name>squash-tm</servlet-name>
     <dispatcher>FORWARD</dispatcher>
   </filter-mapping>
   <!-- ====== /FIXES IE8 ACCEPT HEADER ====== -->  

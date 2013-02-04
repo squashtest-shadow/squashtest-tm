@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.domain.event;
 
-import javax.inject.Inject;
-
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.service.internal.event.RequirementAuditor;
 import org.squashtest.tm.service.security.UserContextHolder;
@@ -33,7 +31,6 @@ import org.squashtest.tm.service.security.UserContextHolder;
  * 
  */
 public abstract class AbstractRequirementEventPublisher {
-	@Inject
 	private RequirementAuditor auditor;
 
 	/**
@@ -60,5 +57,9 @@ public abstract class AbstractRequirementEventPublisher {
 
 	protected final void publish(RequirementAuditEvent event) {
 		auditor.notify(event);
+	}
+	
+	public void setAuditor(RequirementAuditor auditor) {
+		this.auditor = auditor;
 	}
 }

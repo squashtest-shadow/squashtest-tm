@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.project;
 
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 
@@ -33,8 +30,7 @@ import org.squashtest.tm.domain.project.ProjectTemplate;
  * @author mpagnon
  * 
  */
-@Transactional
-public interface CustomProjectModificationService {	
+public interface CustomProjectModificationService extends ProjectFinder {	
 	/**
 	 * Will persist the new {@linkplain Project} and add settings copied from a given {@linkplain ProjectTemplate}.
 	 * 
@@ -49,9 +45,5 @@ public interface CustomProjectModificationService {
 	Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId, boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings , boolean copyTestAutomationSettings);
 
 	void deleteProject(long projectId);
-
-	@Transactional(readOnly=true)
-	List<Project> findAllReadable();	
-	
 	
 }

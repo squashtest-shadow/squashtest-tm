@@ -22,14 +22,12 @@ package org.squashtest.tm.service.project;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 
 /**
  * @author mpagnon
  * 
  */
-@Transactional(readOnly = true)
 public interface CustomProjectTemplateFinder {
 	List<ProjectTemplate> findAll();
 }

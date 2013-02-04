@@ -55,7 +55,7 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 @Component("squashtest.tm.service.deletion.CampaignNodeDeletionHandler")
-public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandlerImpl<CampaignLibraryNode, CampaignFolder>
+public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<CampaignLibraryNode, CampaignFolder>
 		implements CampaignNodeDeletionHandler {
 
 	@Inject

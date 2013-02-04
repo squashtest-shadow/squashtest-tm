@@ -31,6 +31,7 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.domain.Permission
 import org.squashtest.csp.core.bugtracker.domain.Priority
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor
+import org.squashtest.tm.service.bugtracker.BugTrackersService;
 
 
 class StubBugTrackerService implements BugTrackersService {

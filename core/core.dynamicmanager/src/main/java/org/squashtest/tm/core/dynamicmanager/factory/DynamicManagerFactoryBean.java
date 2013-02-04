@@ -23,8 +23,6 @@ package org.squashtest.tm.core.dynamicmanager.factory;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.hibernate.SessionFactory;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.DynamicComponentInvocationHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.EntityFinderNamedQueryHandler;
@@ -92,7 +90,6 @@ public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicC
 	/**
 	 * Session factory used by dynamic method handler. Should be initialized.
 	 */
-	@Inject
 	private SessionFactory sessionFactory;
 	/**
 	 * Type of entities which are manipulated by the Dynamic manager. Should be initialized.
@@ -117,6 +114,13 @@ public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicC
 		handlers.add(new ListOfEntitiesFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
 		
 		return handlers;
+	}
+
+	/**
+	 * @param sessionFactory the sessionFactory to set
+	 */
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 
 }

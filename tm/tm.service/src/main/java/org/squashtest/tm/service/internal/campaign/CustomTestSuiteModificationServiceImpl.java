@@ -43,8 +43,8 @@ import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
-import org.squashtest.tm.service.internal.testcase.TestCaseCyclicCallChecker;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
+import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 import org.squashtest.tm.service.user.UserAccountService;
 
 @Service("CustomTestSuiteModificationService")

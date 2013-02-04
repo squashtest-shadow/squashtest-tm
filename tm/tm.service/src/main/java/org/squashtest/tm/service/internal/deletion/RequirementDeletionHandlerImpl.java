@@ -39,7 +39,7 @@ import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHan
 
 @Component("squashtest.tm.service.deletion.RequirementNodeDeletionHandler")
 public class RequirementDeletionHandlerImpl extends
-		AbstractNodeDeletionHandlerImpl<RequirementLibraryNode, RequirementFolder> implements
+		AbstractNodeDeletionHandler<RequirementLibraryNode, RequirementFolder> implements
 		RequirementNodeDeletionHandler {
 
 	@Inject

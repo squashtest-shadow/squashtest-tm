@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.exceptionresolver;
+package org.squashtest.tm.web.internal.security.authentication;
 
 import java.util.List;
 
@@ -82,10 +82,10 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 			
 			for (BugTracker bugTracker : bugTrackers) {
 				try {
-					LOGGER.debug("try connexion of bug-tracker : " + bugTracker.getName());
+					LOGGER.debug("try connexion of bug-tracker : {}", bugTracker.getName());
 					bugTrackersLocalService.setCredentials(username, password, bugTracker);
 					// if success, store the credential in context
-					LOGGER.debug("add credentials for bug-tracker : " + bugTracker.getName());
+					LOGGER.debug("add credentials for bug-tracker : {}", bugTracker.getName());
 					AuthenticationCredentials creds = new AuthenticationCredentials(username, password);
 					newContext.setCredentials(bugTracker, creds);
 					

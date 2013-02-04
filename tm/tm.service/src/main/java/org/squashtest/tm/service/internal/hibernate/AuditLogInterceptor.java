@@ -39,7 +39,6 @@ import org.squashtest.tm.service.security.UserContextHolder;
  * @author Gregory Fouquet
  *
  */
-@Component("squashtest.tm.persistence.hibernate.AuditLogInterceptor")
 @SuppressWarnings("serial")
 public class AuditLogInterceptor extends EmptyInterceptor {
 	
@@ -108,30 +107,4 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	private String getCurrentUser() {
 		return UserContextHolder.getUsername();
 	}
-	
-	/*
-	@Override
-	public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-		
-		Class<?> entityClass = entity.getClass();
-		
-		LOGGER.trace("Entity Interceptor : loading entity '"+entityClass.getName()+":"+id+"'");
-		
-		if (TestStep.class.isAssignableFrom(entityClass)){
-			LOGGER.trace("Entity Interceptor : entity is a test step, fetching the test case that owns it");
-			Session session = sessionFactory.getCurrentSession();
-			
-			Query query = session.createQuery("select tc from TestCase tc join tc.steps st where :step member of st");
-			query.setParameter("step", id, LongType.INSTANCE);
-			
-			
-			TestCase testCase = (TestCase)query.uniqueResult();
-			
-			((TestStep)entity).setTestCase(testCase);
-			return true;
-		}
-		
-		return false;
-		
-	}*/
 }

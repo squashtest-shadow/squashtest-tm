@@ -23,15 +23,12 @@ package org.squashtest.tm.service.customfield;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 
-@Transactional(readOnly=true)
 public interface CustomFieldValueFinderService {
-
 
 	/**
 	 * Will return the list of the custom field values associated to the specified bound entity.
@@ -43,8 +40,7 @@ public interface CustomFieldValueFinderService {
 	 * @return
 	 */
 	List<CustomFieldValue> findAllCustomFieldValues(BoundEntity boundEntity);
-	
-	
+
 	/**
 	 * Same as {@link #findAllCustomFieldValues(BoundEntity)}, using a List of entities instead.
 	 * This method is pure convenience, to fetch custom fields in bulk (and soften the db queries overhead).
@@ -77,8 +73,7 @@ public interface CustomFieldValueFinderService {
 	 * @return
 	 */
 	boolean hasCustomFields(BoundEntity boundEntity);
-	
-	
+
 	/**
 	 * Same as {@link #hasCustomFields(BoundEntity)}, the bound entity being identified by its type and id
 	 * 
@@ -87,12 +82,10 @@ public interface CustomFieldValueFinderService {
 	 * @return
 	 */
 	boolean hasCustomFields(Long boundEntityId, BindableEntity bindableEntity);
-	
-	
-	
+
 	/**
-	 * Same as {@link #findAllCustomFieldValues(BoundEntity)}, but the properties identifying a BoundEntity
-	 * are broken down into its ID and type.
+	 * Same as {@link #findAllCustomFieldValues(BoundEntity)}, but the properties identifying a BoundEntity are broken
+	 * down into its ID and type.
 	 * 
 	 * @param boundEntityId
 	 * @param bindableEntity

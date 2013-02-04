@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -38,7 +37,6 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
  * @author Gregory Fouquet
  * 
  */
-@Transactional
 public interface CustomTestCaseModificationService extends TestCaseFinder {
 	
 	void rename(long testCaseId, String newName);

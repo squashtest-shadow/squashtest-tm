@@ -22,14 +22,11 @@ package org.squashtest.tm.service.testcase;
 
 import java.util.Map;
 
-import org.springframework.transaction.annotation.Transactional;
-
 /**
  * Methods non automatically generated for TestStep Modification
  * @author mpagnon
  *
  */
-@Transactional
 public interface CustomTestStepModificationService  {
 	
 	/**

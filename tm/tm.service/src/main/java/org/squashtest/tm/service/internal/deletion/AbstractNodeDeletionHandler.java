@@ -53,7 +53,7 @@ import org.squashtest.tm.service.internal.repository.FolderDao;
  * @param <FOLDER> the corresponding Folder
  */
 
-public abstract class AbstractNodeDeletionHandlerImpl<NODE extends LibraryNode, FOLDER extends Folder<NODE>>
+public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLDER extends Folder<NODE>>
 		implements NodeDeletionHandler<NODE, FOLDER>{
 
 	/**

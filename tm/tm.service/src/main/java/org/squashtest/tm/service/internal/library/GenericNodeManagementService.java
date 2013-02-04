@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import javax.inject.Inject;
-
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.library.Folder;
@@ -52,7 +50,6 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE extends LibraryNode, FOLDER extends Folder<NODE>>
 		implements NodeManagementService<MANAGED, NODE, FOLDER> {
 
-	@Inject
 	private PermissionEvaluationService permissionService;
 
 	public void setPermissionService(PermissionEvaluationService permissionService) {

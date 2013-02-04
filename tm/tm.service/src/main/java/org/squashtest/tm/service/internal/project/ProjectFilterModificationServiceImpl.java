@@ -33,7 +33,6 @@ import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectFilterDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
-import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.security.UserContextService;
 
@@ -48,10 +47,7 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 	private ProjectDao projectDao;
 
 	@Inject
-	private ProjectManagerService projectManagerService;
-	
-	@Inject
-	private ProjectFinder projectFinder;
+	private ProjectManagerService projectManager;
 
 	@Inject
 	private UserContextService userContextService;
@@ -79,7 +75,7 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 
 	/***
 	 * This method checks if a filter already exists, returns it or create a new one
-	 *
+	 * 
 	 * @return the current user filter or create a new one
 	 */
 	private ProjectFilter findOrCreateProjectFilter() {
@@ -97,7 +93,7 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 
 	/***
 	 * The method convert the project id list into project lists
-	 *
+	 * 
 	 * @param givenList
 	 *            the project id list (List<Long>)
 	 * @return the corresponding project list (List<Project>)
@@ -115,8 +111,9 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@Transactional(readOnly = true)
 	public List<Project> getAllProjects() {
-		return projectFinder.findAllOrderedByName();
+		return projectManager.findAllOrderedByName();
 	}
 
 }

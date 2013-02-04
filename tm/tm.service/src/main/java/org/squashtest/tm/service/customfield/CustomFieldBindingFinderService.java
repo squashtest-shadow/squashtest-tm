@@ -22,7 +22,6 @@ package org.squashtest.tm.service.customfield;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -31,50 +30,45 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.project.GenericProject;
 
-
 /**
- * An interface for services around {@link CustomField}. This is a 'finder' service : those methods are meant to find data, not to modify them. 
- *
- *The methods in this service need not to be secured.
+ * An interface for services around {@link CustomField}. This is a 'finder' service : those methods are meant to find
+ * data, not to modify them.
  * 
- *  
+ * The methods in this service need not to be secured.
+ * 
+ * 
  * @author bsiri
- *
+ * 
  */
-@Transactional
+
 public interface CustomFieldBindingFinderService {
 
-	
 	/**
 	 * returns all the existing custom fields.
 	 * 
 	 * @return what I just said.
 	 */
 	List<CustomField> findAvailableCustomFields();
-	
-	
+
 	/**
-	 * same as {@link #findAvailableCustomFields()}, restricted to the given
-	 * project and bindable entity. The only returned fields are those who
-	 * aren't already mapped for that project and entity.
+	 * same as {@link #findAvailableCustomFields()}, restricted to the given project and bindable entity. The only
+	 * returned fields are those who aren't already mapped for that project and entity.
 	 * 
 	 * @param projectId
 	 * @param entity
 	 * @return
 	 */
 	List<CustomField> findAvailableCustomFields(long projectId, BindableEntity entity);
-	
-	
+
 	/**
-	 * returns all the custom field bindings associated to a {@linkplain GenericProject}. 
+	 * returns all the custom field bindings associated to a {@linkplain GenericProject}.
 	 * 
 	 * 
 	 * @param projectId
 	 * @return
 	 */
 	List<CustomFieldBinding> findCustomFieldsForGenericProject(long projectId);
-	
-	
+
 	/**
 	 * 
 	 * returns all the custom field bindings associated to a project for a given entity type
@@ -83,8 +77,7 @@ public interface CustomFieldBindingFinderService {
 	 * @return
 	 */
 	List<CustomFieldBinding> findCustomFieldsForProjectAndEntity(long projectId, BindableEntity entity);
-	
-	
+
 	/**
 	 * returns all the custom field bindinds associated to that entity wrt its project and {@link BindableEntity} type
 	 * 
@@ -92,8 +85,6 @@ public interface CustomFieldBindingFinderService {
 	 * @return
 	 */
 	List<CustomFieldBinding> findCustomFieldsForBoundEntity(BoundEntity boundEntity);
-	
-	
 
 	/**
 	 * 
@@ -102,7 +93,7 @@ public interface CustomFieldBindingFinderService {
 	 * @param projectId
 	 * @return
 	 */
-	PagedCollectionHolder<List<CustomFieldBinding>> findCustomFieldsForProjectAndEntity(long projectId, BindableEntity entity, Paging paging);
-	
-	
+	PagedCollectionHolder<List<CustomFieldBinding>> findCustomFieldsForProjectAndEntity(long projectId,
+			BindableEntity entity, Paging paging);
+
 }

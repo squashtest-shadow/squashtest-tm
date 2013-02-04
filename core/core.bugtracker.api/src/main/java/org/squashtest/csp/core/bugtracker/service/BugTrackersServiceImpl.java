@@ -25,9 +25,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
-
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
@@ -45,15 +42,9 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
  */
 public class BugTrackersServiceImpl implements BugTrackersService {
 
-	@Inject
 	private BugTrackerContextHolder contextHolder;
 
 	private BugTrackerConnectorFactory bugTrackerConnectorFactory;
-
-	@ServiceReference
-	public void setBugTrackerConnectorFactory(BugTrackerConnectorFactory bugTrackerConnectorFactory) {
-		this.bugTrackerConnectorFactory = bugTrackerConnectorFactory;
-	}
 
 	@Override
 	public boolean isCredentialsNeeded(BugTracker bugTracker) {
@@ -155,6 +146,20 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	public Set<String> getProviderKinds() {
 		return bugTrackerConnectorFactory.getProviderKinds();
 
+	}
+
+	/**
+	 * @param contextHolder the contextHolder to set
+	 */
+	public void setContextHolder(BugTrackerContextHolder contextHolder) {
+		this.contextHolder = contextHolder;
+	}
+
+	/**
+	 * @param bugTrackerConnectorFactory the bugTrackerConnectorFactory to set
+	 */
+	public void setBugTrackerConnectorFactory(BugTrackerConnectorFactory bugTrackerConnectorFactory) {
+		this.bugTrackerConnectorFactory = bugTrackerConnectorFactory;
 	}
 
 }

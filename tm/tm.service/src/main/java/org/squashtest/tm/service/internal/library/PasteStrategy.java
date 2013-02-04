@@ -27,9 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.service.internal.repository.EntityDao;
@@ -43,12 +42,10 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 	private static final String CREATE = "CREATE";
 	private static final String READ = "READ";
 
-	@Inject
-	private Provider<TreeNodeCopier> copier;
+	private ObjectFactory<TreeNodeCopier> copier;
 	private GenericDao<Object> genericDao;
 	private EntityDao<CONTAINER> containerDao;
 	private EntityDao<COPIED> copiedDao;
-	@Inject
 	private PermissionEvaluationService permissionService;
 
 	public void setGenericDao(GenericDao<Object> genericDao) {
@@ -73,31 +70,31 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 		// identity holder
 		for (Long id : list) {
 			COPIED node = copiedDao.findById(id);
-			
+
 			PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(container, CREATE),
 					new SecurityCheckableObject(node, READ));
 		}
 
 		// proceed : will copy and persist each node of copied trees generation by generation.
 		List<COPIED> nodeList = new ArrayList<COPIED>(list.size());
-		
+
 		// initialize generation memorizers = list of destination/sources couples
 		Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextGeneration = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
 		Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceGeneration = null;
 		Map<NodeContainer<TreeNode>, Collection<TreeNode>> parents = null;
-		
+
 		// copy first generation and memorize copied entities
 		for (Long id : list) {
 			COPIED node = copiedDao.findById(id);
-			
-			COPIED copy = (COPIED) copier.get().copy(node, (NodeContainer<TreeNode>) container, nextGeneration);
+
+			COPIED copy = (COPIED) createCopier().copy(node, (NodeContainer<TreeNode>) container, nextGeneration);
 			nodeList.add(copy);
 		}
-		
+
 		// loop on all following generations
 		while (!nextGeneration.isEmpty()) {
 			removeCopiedNodesFromNextGeneration(nodeList, nextGeneration);
-			
+
 			if (!nextGeneration.isEmpty()) {
 				if (parents != null) {
 					// if we cont flush and then evict, some entities might not be persisted
@@ -116,13 +113,13 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 				parents = sourceGeneration;
 				sourceGeneration = nextGeneration;
 				nextGeneration = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
-				
+
 				// loop in all node of source generation and copy them
 				for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> sourceEntry : sourceGeneration.entrySet()) {
 					Collection<TreeNode> sources = sourceEntry.getValue();
 					NodeContainer<TreeNode> destination = sourceEntry.getKey();
 					for (TreeNode source : sources) {
-						copier.get().copy(source, destination, nextGeneration);
+						createCopier().copy(source, destination, nextGeneration);
 					}
 				}
 			}
@@ -132,14 +129,34 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 		return nodeList;
 	}
 
-	//this is to avoid infinite loop in case someone copy a folder and paste it into itself.
+	private TreeNodeCopier createCopier() {
+		return copier.getObject();
+	}
+
+	// this is to avoid infinite loop in case someone copy a folder and paste it into itself.
 	// XXX maybe we can avoid this with a finer control of what's put in nextGeneration
 	private void removeCopiedNodesFromNextGeneration(List<COPIED> nodeList,
 			Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextGeneration) {
 		for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> nextGenerationEntry : nextGeneration.entrySet()) {
 			nextGenerationEntry.getValue().removeAll(nodeList);
 		}
-		
+
+	}
+
+	/**
+	 * @param copier
+	 *            the copier to set
+	 */
+	public void setCopier(ObjectFactory<TreeNodeCopier> copier) {
+		this.copier = copier;
+	}
+
+	/**
+	 * @param permissionService
+	 *            the permissionService to set
+	 */
+	public void setPermissionService(PermissionEvaluationService permissionService) {
+		this.permissionService = permissionService;
 	}
 
 }

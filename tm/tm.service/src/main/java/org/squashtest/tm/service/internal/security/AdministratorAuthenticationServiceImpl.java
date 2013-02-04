@@ -23,11 +23,8 @@ package org.squashtest.tm.service.internal.security;
 import java.util.Collection;
 import java.util.Collections;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -38,7 +35,6 @@ import org.squashtest.tm.service.security.AdministratorAuthenticationService;
 public class AdministratorAuthenticationServiceImpl implements AdministratorAuthenticationService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdministratorAuthenticationServiceImpl.class);
 	
-	@Inject
 	private UserDetailsManager userManager;
 	private PasswordEncoder encoder;
 	private Object salt = null;
@@ -114,4 +110,5 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 		LOGGER.debug("deactivate account for user "+login);
 		userManager.createUser(newUser);		
 	}
+
 }

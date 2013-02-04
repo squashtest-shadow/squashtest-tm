@@ -28,7 +28,6 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 
-@Transactional
 public interface TestCaseImportanceManagerService {
 
 	/**

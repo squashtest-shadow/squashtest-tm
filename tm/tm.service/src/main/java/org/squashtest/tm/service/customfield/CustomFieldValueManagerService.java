@@ -20,18 +20,17 @@
  */
 package org.squashtest.tm.service.customfield;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 
-@Transactional
-public interface CustomFieldValueManagerService extends CustomFieldValueFinderService{
+public interface CustomFieldValueManagerService extends CustomFieldValueFinderService {
 
 	/**
-	 * Will update the value of a {@link CustomFieldValue} using its Id. The service will check that the requestor has the correct credentials.
+	 * Will update the value of a {@link CustomFieldValue} using its Id. The service will check that the requestor has
+	 * the correct credentials.
 	 * 
 	 * @param customFieldValueId
 	 * @param newValue
 	 */
 	void update(Long customFieldValueId, String newValue);
-	
+
 }

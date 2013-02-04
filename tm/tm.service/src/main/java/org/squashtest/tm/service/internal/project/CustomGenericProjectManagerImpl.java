@@ -72,6 +72,7 @@ import org.squashtest.tm.service.security.acls.PermissionGroup;
  * 
  */
 @Service("CustomGenericProjectManager")
+@Transactional
 public class CustomGenericProjectManagerImpl implements CustomGenericProjectManager {
 	@Inject
 	private GenericProjectDao genericProjectDao;
@@ -96,7 +97,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Inject
 	private InsecureTestAutomationManagementService autotestService;
 	@Inject
-	ProjectDeletionHandler projectDeletionHandler;
+	private ProjectDeletionHandler projectDeletionHandler;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 

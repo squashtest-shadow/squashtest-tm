@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -35,10 +36,10 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
 @Service
+@Transactional
 public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceManagerService {
 
 	@Inject
@@ -48,10 +49,9 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	private RequirementVersionDao requirementVersionDao;
 
 	@Inject
-	private CallStepManagerService callStepManagerService;
-
-	@Inject
 	private TestCaseDao testCaseDao;
+	
+	@Inject private TestCaseCallTreeFinder callTreeFinder;
 
 	/**
 	 * 
@@ -59,7 +59,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	 * @return distinct criticalities found for all verified requirementVersions (including through call steps)
 	 */
 	private List<RequirementCriticality> findAllDistinctRequirementsCriticalityByTestCaseId(long testCaseId) {
-		Set<Long> calleesIds = callStepManagerService.getTestCaseCallTree(testCaseId);
+		Set<Long> calleesIds = callTreeFinder.getTestCaseCallTree(testCaseId);
 		calleesIds.add(testCaseId);
 		return requirementDao.findDistinctRequirementsCriticalitiesVerifiedByTestCases(calleesIds);
 

@@ -20,9 +20,7 @@
  */
 package org.squashtest.tm.service.project;
 
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 public interface CustomProjectTemplateManagerService extends CustomProjectTemplateFinder {
 	
 }

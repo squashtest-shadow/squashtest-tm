@@ -22,7 +22,6 @@ package org.squashtest.tm.service.testcase;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -37,26 +36,20 @@ import org.squashtest.tm.service.requirement.VerifiedRequirement;
  * 
  */
 public interface TestCaseFinder {
-	@Transactional(readOnly = true)
 	TestCase findById(long testCaseId);
 
-	@Transactional(readOnly = true)
 	TestCase findTestCaseWithSteps(long testCaseId);
 
-	@Transactional(readOnly = true)
 	List<TestStep> findStepsByTestCaseId(long testCaseId);
 
-	@Transactional(readOnly = true)
 	FilteredCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId, Paging filter);
 
-	
 	/**
 	 * @param testCaseId
 	 * @param pas
 	 * @return
 	 */
 	@Deprecated
-	@Transactional(readOnly = true)
 	PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
 			PagingAndSorting pas);
 
@@ -72,8 +65,6 @@ public interface TestCaseFinder {
 	 * @return a non null but possibly empty FilteredCollectionHolder wrapping the list of first-level calling test
 	 *         cases.
 	 */
-	@Transactional(readOnly = true)
 	FilteredCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, CollectionSorting sorting);
 
-	
 }

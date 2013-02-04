@@ -22,8 +22,6 @@ package org.squashtest.tm.service.internal.library;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.library.Library;
@@ -41,11 +39,10 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
  * @param <LIBRARY>
  * @param <NODE>
  */
-@Transactional
+@Transactional(readOnly = true)
 public class GenericWorkspaceService<LIBRARY extends Library<NODE>, NODE extends LibraryNode> implements
 		WorkspaceService<LIBRARY> {
 
-	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 
 	private LibraryDao<LIBRARY, NODE> libraryDao;
@@ -80,6 +77,10 @@ public class GenericWorkspaceService<LIBRARY extends Library<NODE>, NODE extends
 
 	public void setLibraryStrategy(LibrarySelectionStrategy<LIBRARY, NODE> libraryStrategy) {
 		this.libraryStrategy = libraryStrategy;
+	}
+
+	public void setProjectFilterModificationService(ProjectFilterModificationService projectFilterModificationService) {
+		this.projectFilterModificationService = projectFilterModificationService;
 	}
 
 }

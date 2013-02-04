@@ -31,8 +31,8 @@ import org.squashtest.tm.domain.bugtracker.IssueList
 import org.squashtest.tm.domain.bugtracker.IssueOwnership
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.service.internal.bugtracker.BugTrackersLocalServiceImpl;
-import org.squashtest.tm.service.internal.repository.IssueDao;
+import org.squashtest.tm.service.internal.bugtracker.BugTrackersLocalServiceImpl
+import org.squashtest.tm.service.internal.repository.IssueDao
 
 import spock.lang.Specification
 

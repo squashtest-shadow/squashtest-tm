@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -62,23 +63,22 @@ import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
-import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
-
 
 /**
  * @author Gregory Fouquet
  * 
  */
 @Service("CustomTestCaseModificationService")
+@Transactional
 public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModificationService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);
 	private static final String WRITE_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')";
 
 	@Inject
 	private TestCaseDao testCaseDao;
-	
+
 	@Inject
 	private ActionTestStepDao actionStepDao;
 
@@ -96,16 +96,15 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private RequirementVersionDao requirementVersionDao;
 
 	@Inject
-	private CallStepManagerService callStepManagerService;
+	private TestCaseNodeDeletionHandler deletionHandler;
 
 	@Inject
-	private TestCaseNodeDeletionHandler deletionHandler;
-	
-	@Inject
 	private InsecureTestAutomationManagementService taService;
-	
+
 	@Inject
 	protected PrivateCustomFieldValueService customFieldValuesService;
+	
+	@Inject private TestCaseCallTreeFinder callTreeFinder;
 
 	/* *************** TestCase section ***************************** */
 
@@ -117,12 +116,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
+	@Transactional(readOnly = true)
 	public TestCase findById(long testCaseId) {
 		return testCaseDao.findById(testCaseId);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
+	@Transactional(readOnly = true)
 	public List<TestStep> findStepsByTestCaseId(long testCaseId) {
 
 		TestCase testCase = testCaseDao.findByIdWithInitializedSteps(testCaseId);
@@ -138,9 +139,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 
 		testStepDao.persist(newTestStep);
-		// will throw a nasty NullPointerException if the parent test case can't be found
+		// will throw a nasty NullPointerException if the parent test case can't
+		// be found
 		parentTestCase.addStep(newTestStep);
-		
+
 		customFieldValuesService.createAllCustomFieldValues(newTestStep);
 		return newTestStep;
 	}
@@ -148,12 +150,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, String> customFieldValues) {
-		
+
 		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep);
 		initCustomFieldValues(step, customFieldValues);
 		return step;
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void updateTestStepAction(long testStepId, String newAction) {
@@ -207,12 +209,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	 * 
 	 * returns : the index if found, -1 if not found or if the provided TestCase is null
 	 */
+	@Transactional(readOnly = true)
 	private int findTestStepInTestCase(TestCase testCase, long testStepId) {
 		return testCase.getPositionOfStep(testStepId);
 	}
 
 	@Override
 	@PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@Transactional(readOnly = true)
 	public TestCase findTestCaseWithSteps(long testCaseId) {
 		return testCaseDao.findAndInit(testCaseId);
 	}
@@ -231,8 +235,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId,
-			Paging filter) {
+	@Transactional(readOnly = true)
+	public FilteredCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId, Paging filter) {
 		List<TestStep> list = testCaseDao.findAllStepsByIdFiltered(testCaseId, filter);
 		long count = findStepsByTestCaseId(testCaseId).size();
 		return new FilteredCollectionHolder<List<TestStep>>(count, list);
@@ -248,12 +252,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId) {
-		pasteTestStepAtPosition(testCaseId, copiedTestStepId, null);		
+		pasteTestStepAtPosition(testCaseId, copiedTestStepId, null);
 
 	}
 
-	// FIXME il faut vérifier un éventuel cycle ! // pour l'instant vérifié au niveau du controller
-	private void pasteTestStepAtPosition(long testCaseId, long copiedTestStepId, Integer position){
+	// FIXME il faut vérifier un éventuel cycle ! // pour l'instant vérifié au
+	// niveau du controller
+	private void pasteTestStepAtPosition(long testCaseId, long copiedTestStepId, Integer position) {
 		TestStep original = testStepDao.findById(copiedTestStepId);
 		TestStep copyStep = original.createCopy();
 
@@ -266,20 +271,19 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
-		if (position!=null){
-			try{
+		if (position != null) {
+			try {
 				testCase.addStep(position, copyStep);
-			}catch(IndexOutOfBoundsException ex){
+			} catch (IndexOutOfBoundsException ex) {
 				testCase.addStep(copyStep);
 			}
-		}
-		else{
+		} else {
 			testCase.addStep(copyStep);
 		}
 
 		if (!testCase.getSteps().contains(original)) {
 			updateImportanceIfCallStep(testCase, copyStep);
-		}		
+		}
 	}
 
 	private void updateImportanceIfCallStep(TestCase parentTestCase, TestStep copyStep) {
@@ -290,13 +294,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
 			PagingAndSorting pas) {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Looking for verified requirements of TestCase[id: " + testCaseId + ']');
-		}
+		LOGGER.debug("Looking for verified requirements of TestCase[id:{}]", testCaseId);
 
-		Set<Long> calleesIds = callStepManagerService.getTestCaseCallTree(testCaseId);
+		Set<Long> calleesIds = callTreeFinder.getTestCaseCallTree(testCaseId);
 
 		calleesIds.add(testCaseId);
 
@@ -336,9 +339,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public FilteredCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, CollectionSorting sorting) {
 
-		List<TestCase> callers = callStepManagerService.findCallingTestCases(testCaseId, sorting);
+		List<TestCase> callers = testCaseDao.findAllCallingTestCases(testCaseId, sorting);
 		Long countCallers = testCaseDao.countCallingTestSteps(testCaseId);
 		return new FilteredCollectionHolder<List<TestCase>>(countCallers, callers);
 
@@ -352,31 +356,30 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		testCaseImportanceManagerService.changeImportanceIfIsAuto(testCaseId);
 	}
 
-	
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public Collection<TestAutomationProjectContent> findAssignableAutomationTests(
-			long testCaseId) {
-		
+	@Transactional(readOnly = true)
+	public Collection<TestAutomationProjectContent> findAssignableAutomationTests(long testCaseId) {
+
 		TestCase testCase = testCaseDao.findById(testCaseId);
-		
+
 		return taService.listTestsInProjects(testCase.getProject().getTestAutomationProjects());
 	}
-	
+
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public AutomatedTest bindAutomatedTest(Long testCaseId, Long taProjectId, String testName) {
-		
-		TestAutomationProject project = taService.findProjectById(taProjectId); 
-		
+
+		TestAutomationProject project = taService.findProjectById(taProjectId);
+
 		AutomatedTest newTest = new AutomatedTest(testName, project);
-		
-		AutomatedTest persistedTest =  taService.persistOrAttach(newTest);
-		
+
+		AutomatedTest persistedTest = taService.persistOrAttach(newTest);
+
 		TestCase testCase = testCaseDao.findById(testCaseId);
-		
+
 		testCase.setAutomatedTest(persistedTest);
-		
+
 		return persistedTest;
 	}
 
@@ -384,25 +387,25 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public void removeAutomation(long testCaseId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		testCase.removeAutomatedScript();
-		
+
 	}
-	
-	//initialCustomFieldValues maps the id of a CustomField to the value of the corresponding CustomFieldValues for that BoundEntity.
-	//read it again until it makes sense.
-	//it assumes that the CustomFieldValues instances already exists.
-	protected void initCustomFieldValues(BoundEntity entity, Map<Long, String> initialCustomFieldValues){
-		
+
+	// initialCustomFieldValues maps the id of a CustomField to the value of the
+	// corresponding CustomFieldValues for that BoundEntity.
+	// read it again until it makes sense.
+	// it assumes that the CustomFieldValues instances already exists.
+	protected void initCustomFieldValues(BoundEntity entity, Map<Long, String> initialCustomFieldValues) {
+
 		List<CustomFieldValue> persistentValues = customFieldValuesService.findAllCustomFieldValues(entity);
-		
-		for (CustomFieldValue value : persistentValues){
-			Long customFieldId = value.getCustomField()
-									  .getId();
-			
-			if (initialCustomFieldValues.containsKey(customFieldId)){
+
+		for (CustomFieldValue value : persistentValues) {
+			Long customFieldId = value.getCustomField().getId();
+
+			if (initialCustomFieldValues.containsKey(customFieldId)) {
 				String newValue = initialCustomFieldValues.get(customFieldId);
 				value.setValue(newValue);
 			}
-			
+
 		}
 	}
 	

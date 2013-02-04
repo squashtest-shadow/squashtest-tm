@@ -29,12 +29,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
@@ -91,16 +89,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Inject
 	@Qualifier("squashtest.tm.service.TestCaseLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy;
-
-
-	public void setObjectAclService(ObjectAclService aclService) {
-		this.aclService = aclService;
-	}
-
-
-	public void setObjectIdentityRetrievalStrategy(ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy) {
-		this.objIdRetrievalStrategy = objectIdentityRetrievalStrategy;
-	}
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")

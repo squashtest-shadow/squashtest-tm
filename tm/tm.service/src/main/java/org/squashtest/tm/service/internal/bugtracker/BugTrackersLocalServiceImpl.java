@@ -33,7 +33,6 @@ import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
@@ -69,7 +68,6 @@ import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 
 @Service("squashtest.tm.service.BugTrackersLocalService")
-@Transactional
 public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Inject

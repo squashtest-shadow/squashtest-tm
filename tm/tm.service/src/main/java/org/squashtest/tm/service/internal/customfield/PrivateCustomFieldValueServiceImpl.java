@@ -29,9 +29,9 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -44,13 +44,14 @@ import org.squashtest.tm.service.internal.repository.CustomFieldValueDao.CustomF
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 @Service("squashtest.tm.service.CustomFieldValueManagerService")
+@Transactional
 public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldValueService {
 
 	@Inject
-	CustomFieldValueDao customFieldValueDao;
+	private CustomFieldValueDao customFieldValueDao;
 
 	@Inject
-	CustomFieldBindingDao customFieldBindingDao;
+	private CustomFieldBindingDao customFieldBindingDao;
 
 	@Inject
 	private BoundEntityDao boundEntityDao;
@@ -65,35 +66,32 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public boolean hasCustomFields(BoundEntity boundEntity) {
-		return boundEntityDao.hasCustomField(boundEntity.getBoundEntityId(),
-				boundEntity.getBoundEntityType());
+		return boundEntityDao.hasCustomField(boundEntity.getBoundEntityId(), boundEntity.getBoundEntityType());
 	}
 
 	@Override
-	public boolean hasCustomFields(Long boundEntityId,
-			BindableEntity bindableEntity) {
+	@Transactional(readOnly = true)
+	public boolean hasCustomFields(Long boundEntityId, BindableEntity bindableEntity) {
 		return boundEntityDao.hasCustomField(boundEntityId, bindableEntity);
 	}
 
 	@Override
-	public List<CustomFieldValue> findAllCustomFieldValues(
-			BoundEntity boundEntity) {
+	@Transactional(readOnly = true)
+	public List<CustomFieldValue> findAllCustomFieldValues(BoundEntity boundEntity) {
 		if (!permissionService.canRead(boundEntity)) {
 			throw new AccessDeniedException("Access is denied");
 		}
-		return customFieldValueDao.findAllCustomValues(
-				boundEntity.getBoundEntityId(),
-				boundEntity.getBoundEntityType());
+		return customFieldValueDao
+				.findAllCustomValues(boundEntity.getBoundEntityId(), boundEntity.getBoundEntityType());
 	}
 
-
 	@Override
-	public List<CustomFieldValue> findAllCustomFieldValues(Long boundEntityId,
-			BindableEntity bindableEntity) {
+	@Transactional(readOnly = true)
+	public List<CustomFieldValue> findAllCustomFieldValues(Long boundEntityId, BindableEntity bindableEntity) {
 
-		BoundEntity boundEntity = boundEntityDao.findBoundEntity(boundEntityId,
-				bindableEntity);
+		BoundEntity boundEntity = boundEntityDao.findBoundEntity(boundEntityId, bindableEntity);
 		
 		if (!permissionService.canRead(boundEntity)) {
 			throw new AccessDeniedException("Access is denied");
@@ -101,7 +99,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		
 		return findAllCustomFieldValues(boundEntity);
 	}
-	
+
 	
 	@Override
 	// well I'll skip the security check for this one because we don't really want to kill the db
@@ -149,8 +147,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	@Override
 	public void cascadeCustomFieldValuesCreation(CustomFieldBinding binding) {
 
-		List<BoundEntity> boundEntities = boundEntityDao
-				.findAllForBinding(binding);
+		List<BoundEntity> boundEntities = boundEntityDao.findAllForBinding(binding);
 
 		for (BoundEntity entity : boundEntities) {
 			CustomFieldValue value = binding.createNewValue();
@@ -165,11 +162,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	}
 
 	@Override
-	public void cascadeCustomFieldValuesDeletion(
-			List<Long> customFieldBindingIds) {
+	public void cascadeCustomFieldValuesDeletion(List<Long> customFieldBindingIds) {
 
-		List<CustomFieldValue> allValues = customFieldValueDao
-				.findAllCustomValuesOfBindings(customFieldBindingIds);
+		List<CustomFieldValue> allValues = customFieldValueDao.findAllCustomValuesOfBindings(customFieldBindingIds);
 
 		List<Long> ids = new ArrayList<Long>(allValues.size());
 		for (CustomFieldValue value : allValues) {
@@ -181,9 +176,8 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Override
 	public void createAllCustomFieldValues(BoundEntity entity) {
-		List<CustomFieldBinding> bindings = customFieldBindingDao
-				.findAllForProjectAndEntity(entity.getProject().getId(),
-						entity.getBoundEntityType());
+		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(entity.getProject()
+				.getId(), entity.getBoundEntityType());
 
 		for (CustomFieldBinding binding : bindings) {
 			CustomFieldValue value = binding.createNewValue();
@@ -195,22 +189,19 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Override
 	public void deleteAllCustomFieldValues(BoundEntity entity) {
-		customFieldValueDao.deleteAllForEntity(entity.getBoundEntityId(),
-				entity.getBoundEntityType());
+		customFieldValueDao.deleteAllForEntity(entity.getBoundEntityId(), entity.getBoundEntityType());
 	}
 
 	@Override
-	public void deleteAllCustomFieldValues(BindableEntity entityType,
-			List<Long> entityIds) {
+	public void deleteAllCustomFieldValues(BindableEntity entityType, List<Long> entityIds) {
 		customFieldValueDao.deleteAllForEntities(entityType, entityIds);
 	}
 
 	@Override
 	public void copyCustomFieldValues(BoundEntity source, BoundEntity recipient) {
 
-		List<CustomFieldValue> sourceValues = customFieldValueDao
-				.findAllCustomValues(source.getBoundEntityId(),
-						source.getBoundEntityType());
+		List<CustomFieldValue> sourceValues = customFieldValueDao.findAllCustomValues(source.getBoundEntityId(),
+				source.getBoundEntityType());
 
 		for (CustomFieldValue value : sourceValues) {
 			CustomFieldValue copy = value.copy();
@@ -221,11 +212,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	}
 
 	@Override
-	public void copyCustomFieldValuesContent(BoundEntity source,
-			BoundEntity recipient) {
-		List<CustomFieldValuesPair> pairs = customFieldValueDao
-				.findPairedCustomFieldValues(source.getBoundEntityType(),
-						source.getBoundEntityId(), recipient.getBoundEntityId());
+	public void copyCustomFieldValuesContent(BoundEntity source, BoundEntity recipient) {
+		List<CustomFieldValuesPair> pairs = customFieldValueDao.findPairedCustomFieldValues(
+				source.getBoundEntityType(), source.getBoundEntityId(), recipient.getBoundEntityId());
 		for (CustomFieldValuesPair pair : pairs) {
 			pair.copyContent();
 		}
@@ -234,8 +223,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	@Override
 	public void update(Long customFieldValueId, String newValue) {
 
-		CustomFieldValue changedValue = customFieldValueDao
-				.findById(customFieldValueId);
+		CustomFieldValue changedValue = customFieldValueDao.findById(customFieldValueId);
 
 		BoundEntity boundEntity = boundEntityDao.findBoundEntity(changedValue);
 
@@ -245,7 +233,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 		changedValue.setValue(newValue);
 	}
-	
+
 	
 	// *********************** private convenience methods ********************
 

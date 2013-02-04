@@ -22,174 +22,203 @@
 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-  	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-  	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
-	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+  xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+                      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+                      http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+                      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
-	<tx:annotation-driven transaction-manager="squashtest.tm.hibernate.TransactionManager" order="1"/>
+  <tx:annotation-driven transaction-manager="squashtest.tm.hibernate.TransactionManager" order="1"
+    proxy-target-class="false" />
 	
 	<!-- ====== RDBMS / ORM INTEGRATION ====== -->
-	 <bean id="defaultLobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler" />
-	 
-	
-	<bean id="squashtest.tm.persistence.hibernate.SessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
-		<property name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource" />
-		<property name="annotatedPackages">
-			<list>
-				<value>org.squashtest.tm.service.internal.repository.hibernate</value>
-				<value>org.squashtest.tm.service.internal.hibernate</value>
-			</list>
-		</property>
-		<property name="annotatedClasses">
-			<list>
-				<value>org.squashtest.tm.domain.testcase.TestCaseLibrary</value>
-				<value>org.squashtest.tm.domain.testcase.TestCaseLibraryNode</value>
-				<value>org.squashtest.tm.domain.testcase.TestCaseFolder</value>
-				<value>org.squashtest.tm.domain.testcase.TestCase</value>
-				<value>org.squashtest.tm.domain.testcase.TestStep</value>
-				<value>org.squashtest.tm.domain.testcase.ActionTestStep</value>
-				<value>org.squashtest.tm.domain.testcase.CallTestStep</value>
+  <bean id="defaultLobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler" />
 
-				<value>org.squashtest.tm.domain.requirement.RequirementLibrary</value>
-				<value>org.squashtest.tm.domain.requirement.Requirement</value>
-				<value>org.squashtest.tm.domain.requirement.RequirementLibraryNode</value>
-				<value>org.squashtest.tm.domain.requirement.RequirementFolder</value>
+  <bean id="squashtest.tm.persistence.hibernate.SessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean"
+    lazy-init="false">
+    <property name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource" />
+    <property name="annotatedPackages">
+      <list>
+        <value>org.squashtest.tm.service.internal.repository.hibernate</value>
+        <value>org.squashtest.tm.service.internal.hibernate</value>
+      </list>
+    </property>
+    <property name="annotatedClasses">
+      <list>
+        <value>org.squashtest.tm.domain.testcase.TestCaseLibrary</value>
+        <value>org.squashtest.tm.domain.testcase.TestCaseLibraryNode</value>
+        <value>org.squashtest.tm.domain.testcase.TestCaseFolder</value>
+        <value>org.squashtest.tm.domain.testcase.TestCase</value>
+        <value>org.squashtest.tm.domain.testcase.TestStep</value>
+        <value>org.squashtest.tm.domain.testcase.ActionTestStep</value>
+        <value>org.squashtest.tm.domain.testcase.CallTestStep</value>
 
-				<value>org.squashtest.tm.domain.resource.Resource</value>
-				<value>org.squashtest.tm.domain.resource.SimpleResource</value>
-				<value>org.squashtest.tm.domain.requirement.RequirementVersion</value>
-				
-				<value>org.squashtest.tm.domain.campaign.CampaignLibrary</value>
-				<value>org.squashtest.tm.domain.campaign.Campaign</value>
-				<value>org.squashtest.tm.domain.campaign.CampaignLibraryNode</value>
-				<value>org.squashtest.tm.domain.campaign.CampaignFolder</value>
-				<value>org.squashtest.tm.domain.campaign.Iteration</value>
-				<value>org.squashtest.tm.domain.campaign.IterationTestPlanItem</value>
-				<value>org.squashtest.tm.domain.campaign.CampaignTestPlanItem</value>
-				<value>org.squashtest.tm.domain.campaign.TestSuite</value>
+        <value>org.squashtest.tm.domain.requirement.RequirementLibrary</value>
+        <value>org.squashtest.tm.domain.requirement.Requirement</value>
+        <value>org.squashtest.tm.domain.requirement.RequirementLibraryNode</value>
+        <value>org.squashtest.tm.domain.requirement.RequirementFolder</value>
 
-				<value>org.squashtest.tm.domain.execution.Execution</value>
-				<value>org.squashtest.tm.domain.execution.ExecutionStep</value>
-				
-				<value>org.squashtest.tm.domain.projectfilter.ProjectFilter</value>
+        <value>org.squashtest.tm.domain.resource.Resource</value>
+        <value>org.squashtest.tm.domain.resource.SimpleResource</value>
+        <value>org.squashtest.tm.domain.requirement.RequirementVersion</value>
 
-				<value>org.squashtest.tm.domain.audit.AuditableSupport</value>
-				<value>org.squashtest.tm.domain.softdelete.SoftDeletableSupport</value>
-				
-		        <value>org.squashtest.tm.domain.project.GenericProject</value>
-				<value>org.squashtest.tm.domain.project.Project</value>
-		        <value>org.squashtest.tm.domain.project.ProjectTemplate</value>
-				
-				<value>org.squashtest.tm.domain.projectfilter.ProjectFilter</value>
-				
-				<value>org.squashtest.tm.domain.attachment.AttachmentList</value>
-				<value>org.squashtest.tm.domain.attachment.Attachment</value>
-				<value>org.squashtest.tm.domain.attachment.AttachmentContent</value>
-				
-				<value>org.squashtest.csp.core.bugtracker.domain.BugTracker</value>
-				<value>org.squashtest.tm.domain.bugtracker.BugTrackerBinding</value>
-				
-				<value>org.squashtest.tm.domain.bugtracker.IssueList</value>
-				<value>org.squashtest.tm.domain.bugtracker.Issue</value>
-				
-				<value>org.squashtest.tm.domain.users.User</value>
-				<value>org.squashtest.tm.domain.users.UsersGroup</value>
-				
-				<value>org.squashtest.tm.domain.event.RequirementAuditEvent</value>
-				<value>org.squashtest.tm.domain.event.RequirementCreation</value>
-				<value>org.squashtest.tm.domain.event.RequirementPropertyChange</value>
-				<value>org.squashtest.tm.domain.event.RequirementLargePropertyChange</value>
-				
-				<!--  the following entries come from fragment tm.testautomation.api (except for the TA execution) -->
-				<value>org.squashtest.tm.domain.testautomation.TestAutomationServer</value>
-				<value>org.squashtest.tm.domain.testautomation.TestAutomationProject</value>
-				<value>org.squashtest.tm.domain.testautomation.AutomatedTest</value>
-				<value>org.squashtest.tm.domain.testautomation.AutomatedSuite</value>
-				<value>org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender</value>
+        <value>org.squashtest.tm.domain.campaign.CampaignLibrary</value>
+        <value>org.squashtest.tm.domain.campaign.Campaign</value>
+        <value>org.squashtest.tm.domain.campaign.CampaignLibraryNode</value>
+        <value>org.squashtest.tm.domain.campaign.CampaignFolder</value>
+        <value>org.squashtest.tm.domain.campaign.Iteration</value>
+        <value>org.squashtest.tm.domain.campaign.IterationTestPlanItem</value>
+        <value>org.squashtest.tm.domain.campaign.CampaignTestPlanItem</value>
+        <value>org.squashtest.tm.domain.campaign.TestSuite</value>
 
-		        <!-- Custom Fields -->
-		        <value>org.squashtest.tm.domain.customfield.CustomField</value>
-		        <value>org.squashtest.tm.domain.customfield.SingleSelectField</value>
-		        <value>org.squashtest.tm.domain.customfield.CustomFieldOption</value>
-		        <value>org.squashtest.tm.domain.customfield.CustomFieldBinding</value>
-		        <value>org.squashtest.tm.domain.customfield.CustomFieldValue</value>
-    		</list>
-		</property>
-		<property name="namingStrategy">
-			<bean class="org.squashtest.tm.service.internal.hibernate.UppercaseUnderscoreNamingStrategy" />
-		</property>
-		<property name="entityInterceptor">
-			<bean class="org.squashtest.tm.service.internal.hibernate.AuditLogInterceptor" />
-		</property>
-		<property name="hibernateProperties" ref="squashtest.tm.hibernate.config" />
-		
-		<property name="lobHandler" ref="defaultLobHandler"/>
-	</bean>
+        <value>org.squashtest.tm.domain.execution.Execution</value>
+        <value>org.squashtest.tm.domain.execution.ExecutionStep</value>
 
-	<bean id="squashtest.tm.hibernate.TransactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-		<property name="sessionFactory" ref="squashtest.tm.persistence.hibernate.SessionFactory" />
-	</bean>	
+        <value>org.squashtest.tm.domain.projectfilter.ProjectFilter</value>
+
+        <value>org.squashtest.tm.domain.audit.AuditableSupport</value>
+        <value>org.squashtest.tm.domain.softdelete.SoftDeletableSupport</value>
+
+        <value>org.squashtest.tm.domain.project.GenericProject</value>
+        <value>org.squashtest.tm.domain.project.Project</value>
+        <value>org.squashtest.tm.domain.project.ProjectTemplate</value>
+
+        <value>org.squashtest.tm.domain.projectfilter.ProjectFilter</value>
+
+        <value>org.squashtest.tm.domain.attachment.AttachmentList</value>
+        <value>org.squashtest.tm.domain.attachment.Attachment</value>
+        <value>org.squashtest.tm.domain.attachment.AttachmentContent</value>
+
+        <value>org.squashtest.csp.core.bugtracker.domain.BugTracker</value>
+        <value>org.squashtest.tm.domain.bugtracker.BugTrackerBinding</value>
+
+        <value>org.squashtest.tm.domain.bugtracker.IssueList</value>
+        <value>org.squashtest.tm.domain.bugtracker.Issue</value>
+
+        <value>org.squashtest.tm.domain.users.User</value>
+        <value>org.squashtest.tm.domain.users.UsersGroup</value>
+
+        <value>org.squashtest.tm.domain.event.RequirementAuditEvent</value>
+        <value>org.squashtest.tm.domain.event.RequirementCreation</value>
+        <value>org.squashtest.tm.domain.event.RequirementPropertyChange</value>
+        <value>org.squashtest.tm.domain.event.RequirementLargePropertyChange</value>
+
+        <!-- the following entries come from fragment tm.testautomation.api (except for the TA execution) -->
+        <value>org.squashtest.tm.domain.testautomation.TestAutomationServer</value>
+        <value>org.squashtest.tm.domain.testautomation.TestAutomationProject</value>
+        <value>org.squashtest.tm.domain.testautomation.AutomatedTest</value>
+        <value>org.squashtest.tm.domain.testautomation.AutomatedSuite</value>
+        <value>org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender</value>
+
+        <!-- Custom Fields -->
+        <value>org.squashtest.tm.domain.customfield.CustomField</value>
+        <value>org.squashtest.tm.domain.customfield.SingleSelectField</value>
+        <value>org.squashtest.tm.domain.customfield.CustomFieldOption</value>
+        <value>org.squashtest.tm.domain.customfield.CustomFieldBinding</value>
+        <value>org.squashtest.tm.domain.customfield.CustomFieldValue</value>
+      </list>
+    </property>
+    <property name="namingStrategy">
+      <bean class="org.squashtest.tm.service.internal.hibernate.UppercaseUnderscoreNamingStrategy" />
+    </property>
+    <property name="entityInterceptor">
+      <bean class="org.squashtest.tm.service.internal.hibernate.AuditLogInterceptor" />
+    </property>
+    <property name="hibernateProperties" ref="squashtest.tm.hibernate.config" />
+
+    <property name="lobHandler">
+      <bean class="org.springframework.jdbc.support.lob.DefaultLobHandler" />
+    </property>
+  </bean>
+
+  <bean id="squashtest.tm.hibernate.TransactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager"
+    lazy-init="false">
+    <property name="sessionFactory" ref="squashtest.tm.persistence.hibernate.SessionFactory" />
+  </bean>
 	<!-- ====== / RDBMS / ORM INTEGRATION ====== -->
 	
-	<!-- Dynamic Daos -->
-  <bean id="projectDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
+  <!-- Dynamic Daos -->
+  <bean id="parent.DynamicDaoFactoryBean" abstract="true">
+    <property name="sessionFactory" ref="squashtest.tm.persistence.hibernate.SessionFactory" />
+  </bean>
+
+  <bean id="projectDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean" lazy-init="false"
+    parent="parent.DynamicDaoFactoryBean">
     <property name="componentType" value="org.squashtest.tm.service.internal.repository.ProjectDao" />
     <property name="entityType" value="org.squashtest.tm.domain.project.Project" />
-  </bean> 
-  
-  <bean id="projectTemplateDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
+    <!-- <property name="customComponent" ref="CustomProjectDao" /> -->
+  </bean>
+
+  <bean id="projectTemplateDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean"
+    lazy-init="false" parent="parent.DynamicDaoFactoryBean">
     <property name="componentType" value="org.squashtest.tm.service.internal.repository.ProjectTemplateDao" />
     <property name="entityType" value="org.squashtest.tm.domain.project.ProjectTemplate" />
-  </bean> 
+    <property name="lookupCustomImplementation" value="false" />
+  </bean>
 
-  <bean id="genericProjectDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
+  <bean id="genericProjectDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean"
+    lazy-init="false" parent="parent.DynamicDaoFactoryBean">
     <property name="componentType" value="org.squashtest.tm.service.internal.repository.GenericProjectDao" />
     <property name="entityType" value="org.squashtest.tm.domain.project.GenericProject" />
-  </bean> 
+    <!-- <property name="customComponent" ref="CustomGenericProjectDao" /> -->
+  </bean>
 
-	<bean id="requirementAuditEventDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
-		<property name="componentType" value="org.squashtest.tm.service.internal.repository.RequirementAuditEventDao" />
-		<property name="entityType" value="org.squashtest.tm.domain.event.RequirementAuditEvent" />
-	</bean>	
-	
-	<bean id="requirementVersionDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
-		<property name="componentType" value="org.squashtest.tm.service.internal.repository.RequirementVersionDao" />
-		<property name="entityType" value="org.squashtest.tm.domain.requirement.RequirementVersion" />
-	</bean>	
-	
-	<bean id="testSuiteDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
-		<property name="componentType" value="org.squashtest.tm.service.internal.repository.TestSuiteDao" />
-		<property name="entityType" value="org.squashtest.tm.domain.campaign.TestSuite" />
-	</bean>	
-	<bean id="actionTestStepDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
-		<property name="componentType" value="org.squashtest.tm.service.internal.repository.ActionTestStepDao" />
-		<property name="entityType" value="org.squashtest.tm.domain.testcase.ActionTestStep" />
-	</bean>	
+  <bean id="requirementAuditEventDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean"
+    lazy-init="false" parent="parent.DynamicDaoFactoryBean">
+    <property name="componentType" value="org.squashtest.tm.service.internal.repository.RequirementAuditEventDao" />
+    <property name="entityType" value="org.squashtest.tm.domain.event.RequirementAuditEvent" />
+    <property name="lookupCustomImplementation" value="false" />
+  </bean>
 
-	<bean id="automatedExecutionDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
-		<property name="componentType" value="org.squashtest.tm.service.internal.repository.testautomation.AutomatedExecutionExtenderDao" />
-		<property name="entityType" value="org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender" />
-	</bean>	
-	
-	<bean id="customFieldDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
-		<property name="componentType" value="org.squashtest.tm.service.internal.repository.CustomFieldDao" />
-		<property name="entityType" value="org.squashtest.tm.domain.customfield.CustomField" />
-	</bean>	
-	
-	<bean id="customFieldBindingDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
-		<property name="componentType" value="org.squashtest.tm.service.internal.repository.CustomFieldBindingDao" />
-		<property name="entityType" value="org.squashtest.tm.domain.customfield.CustomFieldBinding" />
-	</bean>		
-	
-	<bean id="customFieldValueDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
-		<property name="componentType" value="org.squashtest.tm.service.internal.repository.CustomFieldValueDao" />
-		<property name="entityType" value="org.squashtest.tm.domain.customfield.CustomFieldValue" />
-	</bean>		
-	
-	
+  <bean id="requirementVersionDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean"
+    lazy-init="false" parent="parent.DynamicDaoFactoryBean">
+    <property name="componentType" value="org.squashtest.tm.service.internal.repository.RequirementVersionDao" />
+    <property name="entityType" value="org.squashtest.tm.domain.requirement.RequirementVersion" />
+    <!-- <property name="customComponent" ref="CustomRequirementVersionDao" /> -->
+  </bean>
+
+  <bean id="testSuiteDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean" lazy-init="false"
+    parent="parent.DynamicDaoFactoryBean">
+    <property name="componentType" value="org.squashtest.tm.service.internal.repository.TestSuiteDao" />
+    <property name="entityType" value="org.squashtest.tm.domain.campaign.TestSuite" />
+    <!-- <property name="customComponent" ref="CustomTestSuiteDao" /> -->
+  </bean>
+  <bean id="actionTestStepDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean"
+    lazy-init="false" parent="parent.DynamicDaoFactoryBean">
+    <property name="componentType" value="org.squashtest.tm.service.internal.repository.ActionTestStepDao" />
+    <property name="entityType" value="org.squashtest.tm.domain.testcase.ActionTestStep" />
+    <property name="lookupCustomImplementation" value="false" />
+  </bean>
+
+  <bean id="automatedExecutionDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean"
+    lazy-init="false" parent="parent.DynamicDaoFactoryBean">
+    <property name="componentType" value="org.squashtest.tm.service.internal.repository.testautomation.AutomatedExecutionExtenderDao" />
+    <property name="entityType" value="org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender" />
+    <property name="lookupCustomImplementation" value="false" />
+  </bean>
+
+  <bean id="customFieldDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean" lazy-init="false"
+    parent="parent.DynamicDaoFactoryBean">
+    <property name="componentType" value="org.squashtest.tm.service.internal.repository.CustomFieldDao" />
+    <property name="entityType" value="org.squashtest.tm.domain.customfield.CustomField" />
+    <!--  <property name="customImplementationBeanName" ref="CustomCustomFieldDao"></property> -->
+  </bean>
+
+  <bean id="customFieldBindingDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean"
+    lazy-init="false" parent="parent.DynamicDaoFactoryBean">
+    <property name="componentType" value="org.squashtest.tm.service.internal.repository.CustomFieldBindingDao" />
+    <property name="entityType" value="org.squashtest.tm.domain.customfield.CustomFieldBinding" />
+    <!-- <property name="customComponent" ref="CustomCustomFieldBindingDao" /> -->
+  </bean>
+
+  <bean id="customFieldValueDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean"
+    lazy-init="false" parent="parent.DynamicDaoFactoryBean">
+    <property name="componentType" value="org.squashtest.tm.service.internal.repository.CustomFieldValueDao" />
+    <property name="entityType" value="org.squashtest.tm.domain.customfield.CustomFieldValue" />
+    <property name="lookupCustomImplementation" value="false" />
+  </bean>
+
 </beans>
 

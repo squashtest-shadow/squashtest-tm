@@ -26,17 +26,16 @@ import java.util.List;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.service.testcase.CallStepManagerService;
 
 public interface TestCaseDao extends EntityDao<TestCase> {
 
@@ -179,7 +178,7 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	/**
 	 * Returns the test cases ids first called by the call steps found in the list of given test steps ids. Note: only
 	 * first level called test case are returned. To get the whole test case tree you should use
-	 * {@linkplain CallStepManagerService#getTestCaseCallTree(Long)}.
+	 * {@linkplain org.squashtest.tm.service.testcase.CallStepManagerService#getTestCaseCallTree(Long)}.
 	 * 
 	 * @param testStepsIds
 	 * @return the list of test case ids called by test steps

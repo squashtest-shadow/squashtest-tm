@@ -36,7 +36,6 @@ import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
  * @author bsiri
  *
  */
-@Transactional
 public interface PrivateCustomFieldValueService extends CustomFieldValueManagerService {
 
 	

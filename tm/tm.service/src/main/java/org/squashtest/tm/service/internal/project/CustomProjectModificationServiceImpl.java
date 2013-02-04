@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -44,6 +45,7 @@ import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
  * 
  */
 @Service("CustomProjectModificationService")
+@Transactional
 public class CustomProjectModificationServiceImpl implements CustomProjectModificationService {
 	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
@@ -65,6 +67,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	}
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
+	@Transactional(readOnly=true)
 	public List<Project> findAllReadable() {
 			return projectDao.findAll();
 	}

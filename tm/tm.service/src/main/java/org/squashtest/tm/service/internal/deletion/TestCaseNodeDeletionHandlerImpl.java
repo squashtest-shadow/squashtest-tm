@@ -27,6 +27,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
@@ -47,8 +48,9 @@ import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
 @Component("squashtest.tm.service.deletion.TestCaseNodeDeletionHandler")
+@Transactional
 public class TestCaseNodeDeletionHandlerImpl extends
-		AbstractNodeDeletionHandlerImpl<TestCaseLibraryNode, TestCaseFolder> implements TestCaseNodeDeletionHandler {
+		AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements TestCaseNodeDeletionHandler {
 
 	@Inject
 	private TestCaseFolderDao folderDao;

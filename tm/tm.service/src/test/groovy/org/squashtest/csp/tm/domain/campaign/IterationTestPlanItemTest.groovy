@@ -28,7 +28,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.exception.CyclicStepCallException;
 import org.squashtest.tm.exception.TestPlanItemNotExecutableException;
-import org.squashtest.tm.service.internal.testcase.TestCaseCyclicCallChecker;
+import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 
 import spock.lang.Specification
 

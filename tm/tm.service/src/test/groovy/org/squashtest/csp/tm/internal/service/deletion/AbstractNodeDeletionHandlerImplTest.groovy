@@ -28,7 +28,7 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.service.deletion.NotDeletablePreviewReport
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport
-import org.squashtest.tm.service.internal.deletion.AbstractNodeDeletionHandlerImpl
+import org.squashtest.tm.service.internal.deletion.AbstractNodeDeletionHandler
 import org.squashtest.tm.service.internal.repository.EntityDao
 import org.squashtest.tm.service.internal.repository.FolderDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
@@ -41,7 +41,7 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 	final TestCaseDao nodeDao = Mock();
 	final TestCaseFolderDao folderDao = Mock();
 	
-	class TestNodeDeletionHandler extends AbstractNodeDeletionHandlerImpl<TestCaseLibraryNode,  TestCaseFolder>{
+	class TestNodeDeletionHandler extends AbstractNodeDeletionHandler<TestCaseLibraryNode,  TestCaseFolder>{
 		
 		TestCaseDao tcDao;
 		TestCaseFolderDao tcFolderDao;

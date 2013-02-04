@@ -33,6 +33,7 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -53,6 +54,7 @@ import org.squashtest.tm.service.testcase.CustomTestStepModificationService;
  * 
  */
 @Service("CustomTestStepModificationService")
+@Transactional
 public class CustomTestStepModificationServiceImpl implements CustomTestStepModificationService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestStepModificationServiceImpl.class);
 	@Inject

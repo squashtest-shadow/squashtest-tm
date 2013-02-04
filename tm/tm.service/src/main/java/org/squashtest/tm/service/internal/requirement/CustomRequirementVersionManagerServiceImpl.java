@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
@@ -39,6 +40,7 @@ import org.squashtest.tm.service.requirement.CustomRequirementVersionManagerServ
  * 
  */
 @Service("CustomRequirementVersionManagerService")
+@Transactional
 public class CustomRequirementVersionManagerServiceImpl implements CustomRequirementVersionManagerService {
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
@@ -62,6 +64,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ') or hasRole('ROLE_ADMIN')")
+	@Transactional(readOnly = true)
 	public PagedCollectionHolder<List<RequirementVersion>> findAllByRequirement(long requirementId, PagingAndSorting pas) {
 		List<RequirementVersion> versions = requirementVersionDao.findAllByRequirement(requirementId, pas);
 		long versionsCount = requirementVersionDao.countByRequirement(requirementId);

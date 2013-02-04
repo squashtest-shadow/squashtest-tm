@@ -22,6 +22,7 @@ package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
 import java.lang.reflect.Method;
 
+import javax.inject.Provider;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -31,17 +32,22 @@ import javax.validation.constraints.NotNull;
  * 
  */
 public class CustomMethodHandler implements DynamicComponentInvocationHandler {
-	private final Object customManager;
-
-	public CustomMethodHandler(@NotNull Object customManager) {
+	private final Provider<Object> customImplementationProvider;
+	
+	public CustomMethodHandler(@NotNull Provider<Object> customImplementationProvider) {
 		super();
-		this.customManager = customManager;
+		this.customImplementationProvider = customImplementationProvider;
 	}
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { // NOSONAR : I dont choose what JDK interfaces throw
-		return method.invoke(customManager, args);
+		return method.invoke(customImplementation(), args);
 	}
+
+	private Object customImplementation() {
+		return customImplementationProvider.get();
+	}
+
 
 	@Override
 	public boolean handles(Method method) {
@@ -49,7 +55,7 @@ public class CustomMethodHandler implements DynamicComponentInvocationHandler {
 	}
 
 	private boolean isMethodOfCustomManager(Method method) {
-		return method.getDeclaringClass().isAssignableFrom(customManager.getClass());
+		return method.getDeclaringClass().isAssignableFrom(customImplementation().getClass());
 	}
 
 }

@@ -20,24 +20,23 @@
  */
 package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
-import org.hibernate.Query;
-import org.hibernate.SessionFactory;
-import org.hibernate.classic.Session;
-import org.springframework.beans.factory.BeanFactory;
+import org.hibernate.Query
+import org.hibernate.SessionFactory
+import org.hibernate.classic.Session
+import org.springframework.beans.factory.BeanFactory
 import org.squashtest.csp.core.infrastructure.dynamicdao.CustomDummyDao;
 import org.squashtest.csp.core.infrastructure.dynamicdao.DummyDao;
 import org.squashtest.csp.core.infrastructure.dynamicdao.DummyEntity;
 import org.squashtest.csp.core.infrastructure.dynamicdao.NoSuperclassDummyDao;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodException;
-import org.squashtest.tm.core.dynamicmanager.factory.AbstractDynamicComponentFactoryBean;
-import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
-import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean;
-import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodException
+import org.squashtest.tm.core.dynamicmanager.factory.AbstractDynamicComponentFactoryBean
+import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean
+import org.squashtest.tm.core.foundation.collection.Paging
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.core.foundation.collection.SortOrder
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet
@@ -54,13 +53,10 @@ class DynamicDaoFactoryBeanTest extends Specification {
 
 		factory.sessionFactory = sessionFactory
 		factory.entityType = DummyEntity
-
-		use(ReflectionCategory) {
-			//			DynamicManagerFactoryBean.set field: "sessionFactory", of: factory, to: sessionFactory
-			//			DynamicManagerFactoryBean.set field: "entityType", of: factory, to: DummyEntity
-			AbstractDynamicComponentFactoryBean.set field: "componentType", of: factory, to: DummyDao
-			AbstractDynamicComponentFactoryBean.set field: "beanFactory", of: factory, to: beanFactory
-		}
+		factory.beanFactory = beanFactory
+		factory.lookupCustomImplementation = false
+		factory.componentType = DummyDao
+		factory.entityType = DummyEntity
 	}
 
 	def "factory should create a unique dynamic DummyDao"() {
@@ -76,14 +72,15 @@ class DynamicDaoFactoryBeanTest extends Specification {
 	def "should delegate methods of manager's superinterface"() {
 		given:
 		CustomDummyDao delegateDao = Mock()
-		factory.customComponent = delegateDao
+		beanFactory.getBean("delegateDao") >> delegateDao
+		factory.customImplementationBeanName = "delegateDao"
 
 		when:
 		factory.initializeFactory()
-		def res = factory.object.findByCoolness(10L, "�bercool")
+		def res = factory.object.findByCoolness(10L, "ÜBERCOOL")
 
 		then:
-		1 * delegateDao.findByCoolness(10L, "�bercool") >> "yay!"
+		1 * delegateDao.findByCoolness(10L, "ÜBERCOOL") >> "yay!"
 		res == "yay!"
 	}
 
@@ -93,14 +90,14 @@ class DynamicDaoFactoryBeanTest extends Specification {
 		beanFactory.getBean("CustomDummyDao") >> delegateDao
 
 		and:
-		factory.lookupCustomComponent = true
+		factory.lookupCustomImplementation = true
 
 		when:
 		factory.initializeFactory()
-		factory.object.findByCoolness(10L, "�bercool")
+		factory.object.findByCoolness(10L, "ÜBERCOOL")
 
 		then:
-		1 * delegateDao.findByCoolness(10L, "�bercool")
+		1 * delegateDao.findByCoolness(10L, "ÜBERCOOL")
 	}
 
 	def "should not lookup the delegate manager when dao does not have superinterface"() {

@@ -36,7 +36,6 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
  * @author Gregory Fouquet
  *
  */
-@Transactional
 public interface CustomRequirementVersionManagerService {
 	/**
 	 * will change the requirement criticality and update the importance of any associated TestCase with importanceAuto

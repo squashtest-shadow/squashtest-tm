@@ -23,23 +23,17 @@ package org.squashtest.tm.service.campaign;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.users.User;
 
 /**
  * Service that aims at managing the test cases of a campaign (i.e. its test plan)
  * 
  * @author Agnes Durand
  */
-//@Transactional
-@Transactional
 public interface IterationTestPlanManagerService extends IterationTestPlanFinder {
 
-	
 	/**
 	 * Adds a list of test cases to an iteration.
 	 * 
@@ -88,7 +82,6 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 */
 	boolean removeTestPlanFromIteration(Long testPlanId, long iterationId);
 
-	
 	/**
 	 * Update item test plan lastExecuted data (by and on) (for the moment they're constants)
 	 * 
@@ -131,15 +124,14 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @return the list of defined execution statuses
 	 */
 	List<ExecutionStatus> getExecutionStatusList();
-	
+
 	/**
-	 * Assigns an execution status to a test plan item
-	 * Overrides the current execution status
+	 * Assigns an execution status to a test plan item Overrides the current execution status
 	 * 
 	 * @param testPlanId
 	 * @param iterationId
 	 * @param statusName
 	 */
 	void assignExecutionStatusToTestPlanItem(Long testPlanId, long iterationId, String statusName);
-	
+
 }

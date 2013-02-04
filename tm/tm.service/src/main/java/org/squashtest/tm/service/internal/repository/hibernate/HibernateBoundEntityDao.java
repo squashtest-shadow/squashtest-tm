@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.persistence.EnumType;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -47,7 +46,7 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	private static final String TEST_STEP_QUERY_NAME = "BoundEntityDao.findAllTestStepsForProject";
 
 	@Inject
-	SessionFactory factory;
+	private SessionFactory factory;
 	
 	
 	@Override

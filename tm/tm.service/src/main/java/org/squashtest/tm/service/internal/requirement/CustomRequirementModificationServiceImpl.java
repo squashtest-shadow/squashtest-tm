@@ -26,6 +26,7 @@ import javax.inject.Named;
 import org.hibernate.SessionFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
@@ -38,6 +39,7 @@ import org.squashtest.tm.service.requirement.CustomRequirementModificationServic
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
 @Service("CustomRequirementModificationService")
+@Transactional
 public class CustomRequirementModificationServiceImpl implements CustomRequirementModificationService {
 	@Inject
 	private RequirementDao requirementDao;
