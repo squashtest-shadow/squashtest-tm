@@ -100,9 +100,10 @@ define(["jquery", "jquery.squash.datatables"], function($){
 			"iDeferLoading" : userPermissions.length,
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": squashtm.app.contextRoot+"/generic-projects/"+settings.basic.projectId+"/users-permissions",
+			"sAjaxSource": squashtm.app.contextRoot+"/generic-projects/"+settings.basic.projectId+"/user-permissions",
 			"aaData" : userPermissions,		
 			"sDom" : 'ft<"dataTables_footer"lirp>',
+			"aaSorting": [[1,'asc']],
 			"aoColumnDefs": [	
 			    {'bSortable' : false, 'mDataProp' : 'user-index', 'aTargets' : [0], 'sWidth' : '2em', 'sClass' : 'centered'},
 			    {'bSortable' : true , 'mDataProp' : 'user.login', 'aTargets' : [1], 'sClass' : 'user-reference centered'},

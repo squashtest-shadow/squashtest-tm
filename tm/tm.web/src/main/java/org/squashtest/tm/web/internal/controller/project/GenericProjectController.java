@@ -67,6 +67,7 @@ import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
+import org.squashtest.tm.web.internal.controller.administration.UserPermissionDatatableModelHelper;
 import org.squashtest.tm.web.internal.helper.ProjectHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -113,6 +114,12 @@ public class GenericProjectController {
 												.mapAttribute(GenericProject.class, "audit.lastModifiedOn", Date.class, "last-mod-on")
 												.mapAttribute(GenericProject.class, "audit.lastModifiedBy", String.class, "last-mod-by");
 
+	
+	private DatatableMapper permissionsMapper = new NameBasedMapper(3)
+													.mapAttribute(User.class, "index", Integer.class, "user-index")
+													.mapAttribute(User.class, "login", String.class, "user.login")
+													.mapAttribute(PermissionGroup.class, "qualifiedName", String.class, "permission-group.qualifiedName");
+	
 	
 	@RequestMapping(value = "", params = "sEcho", method = RequestMethod.GET)
 	public @ResponseBody
@@ -287,21 +294,16 @@ public class GenericProjectController {
 
 	
 	@RequestMapping(value = PROJECT_ID_ULR+"/user-permissions", method = RequestMethod.GET)
-	public ModelAndView getPermissionTable(@PathVariable long projectId) {
-		
-		throw new NotImplementedException();
-		/*
-		 * 
-		 * todo : refactor that using the UserPermissionDatatableModelHelper
-		 * 
-		 * 
-		List<UserProjectPermissionsBean> userProjectPermissionsBean = projectManager.findUserPermissionsBeansByProject(projectId);		
-		List<PermissionGroup> permissionList = projectManager.findAllPossiblePermission();
+	@ResponseBody
+	public DataTableModel getPermissionTable(DataTableDrawParameters params, @PathVariable("projectId") long projectId) {
 
-		ModelAndView mav = new ModelAndView("fragment/project/project-permission-table");
-		mav.addObject("permissionList", permissionList);
-		mav.addObject("userPermissionList", userProjectPermissionsBean);
-		return mav;*/
+		PagingAndSorting sorting = new DataTableMapperPagingAndSortingAdapter(params, permissionsMapper, SortedAttributeSource.SINGLE_ENTITY);
+		Filtering filtering = new DataTableFiltering(params);
+		
+		PagedCollectionHolder<List<UserProjectPermissionsBean>> userPermissions = projectManager.findUserPermissionsBeanByProject(sorting, filtering, projectId);
+		
+		return new UserPermissionDatatableModelHelper().buildDataModel(userPermissions, params.getsEcho());
+		
 		
 	}
 	

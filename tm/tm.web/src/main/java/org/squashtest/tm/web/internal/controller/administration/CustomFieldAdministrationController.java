@@ -49,6 +49,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 /**
  * Controller for the Custom Fields management pages.
@@ -105,10 +106,10 @@ public class CustomFieldAdministrationController {
 	 * A Mapping for custom fields table sortable columns : maps the table column index to an entity property.
 	 * NB: column index is of all table's columns (displayed or not)
 	 */
-	private final DatatableMapper customFieldTableMapper = new IndexBasedMapper(6)
-																.mapAttribute(CustomField.class, NAME, String.class, 2)
-																.mapAttribute(CustomField.class, LABEL, String.class, 3)
-																.mapAttribute(CustomField.class, INPUT_TYPE, String.class, 5);
+	private final DatatableMapper customFieldTableMapper = new NameBasedMapper(3)
+																.mapAttribute(CustomField.class, NAME, String.class, NAME)
+																.mapAttribute(CustomField.class, LABEL, String.class, LABEL)
+																.mapAttribute(CustomField.class, INPUT_TYPE, String.class, "input-type");
 	
 	/**
 	 * Return the DataTableModel to display the table of all custom fields.

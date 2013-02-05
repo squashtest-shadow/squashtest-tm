@@ -23,6 +23,8 @@ package org.squashtest.tm.service.security.acls.model;
 import java.util.List;
 
 import org.springframework.security.acls.model.ObjectIdentity;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
 
 public interface ObjectAclService {
@@ -52,6 +54,14 @@ public interface ObjectAclService {
 	 * @return a list of Object[] containing at index 0 the user id and , at index 1, the user's acl_group.qualified_name for the given acl_object.
 	 */
 	List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass);
+	
+	/**
+	 * Same as {@link #retriveUserAndAclGroupNameFromIdentityAndClass(long, Class)}, sorted and filtered version
+	 * @param objectId
+	 * @param qualifiedClassName
+	 * @return
+	 */
+	List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass, Sorting sorting, Filtering filtering);
 
 	List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName);
 

@@ -60,7 +60,6 @@
 
 		<verbose.compiler>false</verbose.compiler>
 		<hibernate.version>3.6.10.Final.B</hibernate.version>
-        <spring-security.version>3.0.8.RELEASE</spring-security.version>
 	</properties>
 
 	<dependencyManagement>

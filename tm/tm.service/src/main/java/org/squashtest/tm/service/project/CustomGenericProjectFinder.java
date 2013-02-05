@@ -22,6 +22,9 @@ package org.squashtest.tm.service.project;
 
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -46,6 +49,8 @@ public interface CustomGenericProjectFinder {
 	List<TestAutomationProject> findBoundTestAutomationProjects(long projectId);
 
 	List<UserProjectPermissionsBean> findUserPermissionsBeansByProject(long projectId);
+	
+	PagedCollectionHolder<List<UserProjectPermissionsBean>> findUserPermissionsBeanByProject(PagingAndSorting sorting, Filtering filtering, long projectId);
 	
 	List<PermissionGroup> findAllPossiblePermission();
 

@@ -23,6 +23,9 @@ package org.squashtest.tm.service.project;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.User;
@@ -42,7 +45,9 @@ public interface ProjectsPermissionFinder {
 
 	List<Project> findProjectWithoutPermissionByLogin(String userLogin);
 
-	List<UserProjectPermissionsBean> findUserPermissionsBeanByProject(long projectId);
+	List<UserProjectPermissionsBean> findUserPermissionsBeanByProject(long projectId);	
+	
+	PagedCollectionHolder<List<UserProjectPermissionsBean>> findUserPermissionsBeanByProject(PagingAndSorting sorting, Filtering filtering, long projectId);
 	
 	List<User> findUserWithoutPermissionByProject(long projectId);
 

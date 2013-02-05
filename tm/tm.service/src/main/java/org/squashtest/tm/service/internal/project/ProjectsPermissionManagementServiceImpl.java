@@ -25,9 +25,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
@@ -172,13 +179,23 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	@Override
 	public List<UserProjectPermissionsBean> findUserPermissionsBeanByProject(long projectId) {
-		if (genericProjectFinder.isProjectTemplate(projectId)){
-			return findUserPermissionBeanByProjectOfGivenType(projectId, ProjectTemplate.class);
-		}
-		else{
-			return findUserPermissionBeanByProjectOfGivenType(projectId, Project.class);
-		}
+		
+		Class<?> projectClass = genericProjectFinder.isProjectTemplate(projectId) ? ProjectTemplate.class : Project.class;
+		
+		return findUserPermissionBeanByProjectOfGivenType(projectId, projectClass);
+
 	}
+	
+	@Override
+	public PagedCollectionHolder<List<UserProjectPermissionsBean>> findUserPermissionsBeanByProject(
+			PagingAndSorting sorting, Filtering filtering, long projectId) {
+	
+		Class<?> projectClass = genericProjectFinder.isProjectTemplate(projectId) ? ProjectTemplate.class : Project.class;
+	
+		return findUserPermissionBeanByProjectOfGivenType(projectId, projectClass, sorting, filtering);
+		
+	}
+	
 
 	@Override
 	public List<User> findUserWithoutPermissionByProject(long projectId) {
@@ -202,8 +219,8 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		return findUserPermissionBeanByProjectOfGivenType(projectId, ProjectTemplate.class);
 	}
 
-	private List<UserProjectPermissionsBean> findUserPermissionBeanByProjectOfGivenType(long projectId,
-			Class<?> projectType) {
+	//clearly suboptimal, on the other hand this method is seldomely invoked
+	private List<UserProjectPermissionsBean> findUserPermissionBeanByProjectOfGivenType(long projectId, Class<?> projectType) {
 		List<UserProjectPermissionsBean> newResult = new ArrayList<UserProjectPermissionsBean>();
 
 		List<Object[]> result = aclService.retriveUserAndAclGroupNameFromIdentityAndClass(projectId, projectType);
@@ -214,6 +231,32 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		return newResult;
 
 	}
+	
+	//clearly suboptimal, on the other hand this method is seldomely invoked
+	private PagedCollectionHolder<List<UserProjectPermissionsBean>> findUserPermissionBeanByProjectOfGivenType(long projectId, Class<?> projectType, PagingAndSorting sorting, Filtering filtering) {
+		
+
+		List<Object[]> result = aclService.retriveUserAndAclGroupNameFromIdentityAndClass(projectId, projectType, sorting, filtering);
+		
+		int total = result.size();
+		
+		int startIndex = sorting.getFirstItemIndex();
+		int nbItems = Math.min(sorting.getPageSize(), total - startIndex);
+		
+		result = result.subList(startIndex, nbItems);
+
+		List<UserProjectPermissionsBean> newResult = new ArrayList<UserProjectPermissionsBean>(result.size());
+		
+		for (Object[] objects : result) {
+			User user = userDao.findById((Long) objects[0]);
+			newResult.add(new UserProjectPermissionsBean(user, (PermissionGroup) objects[1]));
+		}
+		
+		return new PagingBackedPagedCollectionHolder<List<UserProjectPermissionsBean>>(sorting, total, newResult);
+
+	}
+	
+
 
 	/**
 	 * @see org.squashtest.tm.service.project.ProjectsPermissionManagementService#copyAssignedUsersFromTemplate(org.squashtest.tm.domain.project.Project,

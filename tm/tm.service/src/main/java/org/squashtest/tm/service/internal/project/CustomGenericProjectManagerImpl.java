@@ -74,6 +74,10 @@ import org.squashtest.tm.service.security.acls.PermissionGroup;
 @Service("CustomGenericProjectManager")
 @Transactional
 public class CustomGenericProjectManagerImpl implements CustomGenericProjectManager {
+	
+	private static final String IS_ADMIN_OR_MANAGER = "hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')";
+	private static final String IS_ADMIN = "hasRole('ROLE_ADMIN')";
+	
 	@Inject
 	private GenericProjectDao genericProjectDao;
 	@Inject
@@ -106,7 +110,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(IS_ADMIN_OR_MANAGER)
 	public PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
 		List<GenericProject> projects;
 		
@@ -122,7 +126,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(IS_ADMIN)
 	public void persist(GenericProject project) {
 		Session session = sessionFactory.getCurrentSession();
 
@@ -151,7 +155,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	/**
 	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#coerceTemplateIntoProject(long)
 	 */
-	@Override
+	@Override	
+	@PreAuthorize(IS_ADMIN)
 	public void coerceTemplateIntoProject(long templateId) {
 		Project project = genericProjectDao.coerceTemplateIntoProject(templateId);
 
@@ -162,7 +167,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(IS_ADMIN_OR_MANAGER)
 	public void deleteProject(long projectId) {
 		projectDeletionHandler.deleteProject(projectId);
 	}
@@ -212,6 +217,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	public List<UserProjectPermissionsBean> findUserPermissionsBeansByProject(long projectId) {
 		return permissionsManager.findUserPermissionsBeanByProject(projectId);
+	}
+	
+	@Override
+	public PagedCollectionHolder<List<UserProjectPermissionsBean>> findUserPermissionsBeanByProject(
+			PagingAndSorting sorting, Filtering filtering, long projectId) {
+		return permissionsManager.findUserPermissionsBeanByProject(sorting, filtering, projectId);
 	}
 
 	@Override
@@ -314,7 +325,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	public void removeBugTracker(long projectId) {
 		LOGGER.debug("removeBugTracker for project " + projectId);
-		GenericProject project = genericProjectDao.findById(projectId);
+		GenericProject project = genericProjectDao.findById(projectId);	
+		checkManageProjectOrAdmin(project);
 		if (project.isBugtrackerConnected()) {
 			BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
 			project.removeBugTrackerBinding();
@@ -325,6 +337,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	public void changeBugTrackerProjectName(long projectId, String projectBugTrackerName) {
 		GenericProject project = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(project);
 		BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
 		if (bugtrackerBinding == null) {
 			throw new NoBugTrackerBindingException();

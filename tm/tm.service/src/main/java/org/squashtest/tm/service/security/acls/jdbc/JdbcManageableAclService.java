@@ -49,6 +49,8 @@ import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.acls.model.Sid;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.service.security.acls.CustomPermission;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
@@ -120,8 +122,18 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 
 	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS = "select arse.USER_ID, ag.ID, ag.QUALIFIED_NAME from "
 			+ "ACL_GROUP ag " + "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
+			+ "inner join CORE_USER cu on arse.USER_ID = cu.ID "
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
-			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " + "where oid.IDENTITY = ? and ac.CLASSNAME = ?";
+			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " + "where oid.IDENTITY = ? and ac.CLASSNAME = ? ";
+	
+	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS_FILTERED = "select arse.USER_ID, ag.ID, ag.QUALIFIED_NAME from "
+			+ "ACL_GROUP ag " + "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
+			+ "inner join CORE_USER cu on arse.USER_ID = cu.ID "
+			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
+			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " + "where oid.IDENTITY = ? and ac.CLASSNAME = ? "
+			+ "and cu.LOGIN like ? ";
+		
+	
 
 	private static final String DELETE_RESPONSABILITY_ENTRY = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "
 			+ "where USER_ID = (select ID from CORE_USER where login = ?) " + "and OBJECT_IDENTITY_ID = "
@@ -328,10 +340,42 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		}
 	}
 
+	
+    @Override
+    public List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass) {
+            return jdbcTemplate.query(USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS, new Object[] { entityId, entityClass.getCanonicalName() },
+                            AclGroupMapper);
+
+    }
+	
 	@Override
-	public List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass) {
-		return jdbcTemplate.query(USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS, new Object[] { entityId, entityClass.getCanonicalName() },
-				AclGroupMapper);
+	public List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass, Sorting sorting, Filtering filtering) {
+		
+		String baseQuery;
+		String orderByClause;
+		Object[] arguments;
+		
+		if (filtering.isDefined()){ 
+			baseQuery = USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS_FILTERED;
+			arguments = new Object[]{entityId, entityClass.getCanonicalName(), "%"+filtering.getFilter()+"%"};
+		}
+		else{
+			baseQuery = USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS;
+			arguments = new Object[]{entityId, entityClass.getCanonicalName()};
+		}
+		
+		if (sorting.getSortedAttribute().equals("login")){
+			orderByClause=" order by cu.LOGIN ";
+		}
+		else{
+			orderByClause=" order by ag.QUALIFIED_NAME ";
+		}
+		orderByClause+= sorting.getSortOrder().getCode();
+		
+		
+		String finalQuery = baseQuery + orderByClause;
+		
+		return jdbcTemplate.query(finalQuery, arguments , AclGroupMapper);
 
 	}
 
