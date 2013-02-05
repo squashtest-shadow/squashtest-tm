@@ -205,7 +205,7 @@
  * 		failure : internationalized version of status 'failure' 
  * 		success : internationalized version of status 'success' 
  * 		running : internationalized version of status 'running' 
- * 		ready : internationalized version of status 'ready' 
+ * 		ready 	: internationalized version of status 'ready' 
  * 
  * ============== Delete row button ==============================================
  * 

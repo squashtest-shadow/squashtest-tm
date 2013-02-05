@@ -30,6 +30,8 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="ta" tagdir="/WEB-INF/tags/testautomation"%>
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input"%>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
+
 <%@ taglib prefix="sec"
 	uri="http://www.springframework.org/security/tags"%>
 
@@ -257,13 +259,18 @@
 				</jsp:attribute>
 				
 				<jsp:attribute name="body">
-					<div id="permission-table"></div>
-					<div id="permission-row-buttons" class="not-displayed">
-						<a id="delete-permission-button" href="#"
-							class="delete-permission-button">
-							<f:message key="tree.button.delete.label" />
-						</a>
-					</div> 
+					<table id="user-permissions-table">
+						<thead>
+							<tr>
+								<th class="user-index">#</th>
+								<th class="user-login datatable-filterable"><f:message key="user.header.title" /></th>
+								<th class="user-permission"><f:message key="project.permission.table.profile.label" /></th>
+								<th class="empty-delete-holder"> </th>
+							</tr>
+						</thead>
+					</table>
+					<tbody>
+					</tbody>
 				</jsp:attribute>
 			</comp:toggle-panel>
 			<%-----------------------------------END USERS PANEL -----------------------------------------------%>
@@ -321,116 +328,7 @@
 </layout:info-page-layout>
 <script type="text/javascript">
 
-//*********************************************************************NON ADMIN SCRIPT 
-	function clickProjectBackButton(){
-		document.location.href = "${projectsUrl}";
-	}
-	function refreshBugTrackerProjectName() {
-		$.ajax({
-				type: 'GET',
-				 url: "${projectUrl}/bugtracker/projectName",
-		}).done(function(data){
-			$( "#project-bugtracker-project-name").text(data);
-		});
-		
-	}
 
-	$(function() {
-		// back button
-		$("#back").button().click(clickProjectBackButton);
-		
-		// permission mgt
-		refreshTableAndPopup();
-		$("#add-permission-button").button();
-		
-		
-		$(".select-class").live('change', function(){
-			var url = "${addPermissionUrl}";
-			var tr = $(this).parents("tr");
-			var userId = $(tr).attr("id");
-
-			$.ajax({
-				  type: 'POST',
-				  url: url,
-				  data: "user="+userId+"&permission="+$(this).val(),
-				  dataType: 'json',
-				  success: refreshTableAndPopup
-			});
-		});
-		
-		$(".delete-permission-button").live('click', function(){
-			var url = "${removePermissionUrl}";
-			var tr = $(this).parents("tr");
-			var userId = $(tr).attr("id");
-			
-			$.ajax({
-				  type: 'POST',
-				  url: url,
-				  data: "user="+userId,
-				  success: refreshTableAndPopup
-			});
-		});
-	});
-	
-	function getPermissionTableRowId(rowData) {
-		return rowData[0];	
-	}
-	
-	function addDeleteButtonCallBack(row, data, displayIndex){
-		var id = getPermissionTableRowId(data);
-		addDeleteButtonToRow(row, id, 'delete-permission-button');
-		return row;
-	}
-	
-	function refreshTableCallBack(){
-		decorateDeleteButtons($('.delete-permission-button', this));
-	}
-	
-	function refreshTableAndPopup(){
-		var permTable = $("#permission-table"), 
-			permPopup = $("#permission-popup");
-		
-		permTable.empty();
-		permTable.load("${permissionTableUrl}");
-		
-		permPopup.empty();
-		permPopup.load("${permissionPopupUrl}");
-	}
-//************************** End Permission Management
-// *****************************************************************************END NON ADMIN SCRIPT 
-
-
-	<sec:authorize access=" hasRole('ROLE_ADMIN')">//**********************************ADMIN SCRIPT 
-	$(function() {
-  	function deleteProject(){
-  	<c:if test="${adminproject.deletable}">	
-  		oneShotConfirm("<f:message key='dialog.delete-project.title'/>",
-  		"<f:message key='dialog.delete-project.message'/>",
-  		"<f:message key='label.Confirm'/>",
-  		"<f:message key='label.Cancel'/>").done(function(){
-  			requestProjectDeletion().done(deleteProjectSuccess);
-  			});
-  		</c:if>
-  		<c:if test="${!adminproject.deletable}">	
-  			$.squash.openMessage("<f:message key='popup.title.info'/>","<f:message key='project.delete.cannot.exception'/>");
-  		</c:if>
-  	}
-  	
-  	function requestProjectDeletion(){
-  		return $.ajax({
-  			type : 'delete',
-  			dataType : "json",
-  			url : "${ projectUrl }"
-  		});
-  	}
-
-  	function deleteProjectSuccess(data){
-  		clickProjectBackButton();
-  	}
-  	
-		$('#delete-project-button').button().click(deleteProject);		
-	});
-	</sec:authorize>//**********************************************************************END ADMIN SCRIPT 
 </script>
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
@@ -449,20 +347,8 @@
 			</jq:ajaxcall>					
 		},			
 		<pop:cancel-button />
-	</jsp:attribute>
+		</jsp:attribute>
 		<jsp:body>
-<script type="text/javascript">
-	$("#rename-project-dialog").bind("dialogopen", function(event, ui) {
-		var name = $.trim($('#project-name-header').text());
-		$("#rename-project-input").val(name);
-
-	});
-	/* renaming success handler */
-	function renameProjectSuccess(data) {
-		$('#project-name-header').html(data.newName);
-		$('#rename-project-dialog').dialog('close');
-	}
-</script>
 		<label><f:message key="dialog.rename.label" />
 		</label>
 		<input type="text" id="rename-project-input" maxlength="255" size="50" />
@@ -471,22 +357,135 @@
 	</jsp:body>
 	</comp:popup>
 </sec:authorize>
+
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 <script type="text/javascript">
-  require(["common"], function(){
-  	require(["domReady", "jquery.squash.fragmenttabs", "project"], function(domReady, Frag) {
-  		function beforeLoad(event, ui) {
-				if (document.getElementById("cuf-binding-administration") !== null) {
-					event.preventDefault();
-					return false;
-				}  			
-  		}
-  		
-  		domReady(function() {
-  			Frag.init({
-  				beforeLoad : beforeLoad
-  			});									
-  		});
-  	});			
-  });
+
+	
+	/* popup renaming success handler */
+	function renameProjectSuccess(data) {
+		$('#project-name-header').html(data.newName);
+		$('#rename-project-dialog').dialog('close');
+	}
+		
+	
+	function clickProjectBackButton(){
+		document.location.href = "${projectsUrl}";
+	}
+	
+	function refreshBugTrackerProjectName() {
+		$.ajax({
+			type: 'GET',
+			 url: "${projectUrl}/bugtracker/projectName",
+		}).done(function(data){
+			$( "#project-bugtracker-project-name").text(data);
+		});
+		
+	}
+	
+	function reloadPermissionPopup(){
+		var permPopup = $("#permission-popup");
+		permPopup.empty();
+		permPopup.load("${permissionPopupUrl}");		
+	}
+	
+	function refreshTableAndPopup(){
+		reloadPermissionPopup();		
+		$("#user-permissions-table").squashTable().refresh();		
+	}
+	
+
+
+	$(function() {
+
+		require(["common"], function(){
+		 	require(["jquery.squash.fragmenttabs", "projects-manager", "project"], function(projectsManager, Frag){
+		 		init(projectsManager, Frag);	
+		 	});			
+		});
+	});
+	
+	function init(projectsManager, Frag){
+		
+		
+		// back button
+		$("#back").button().click(clickProjectBackButton);
+		
+		// permission mgt
+		$("#add-permission-button").button();
+		
+		// rename popup
+		$("#rename-project-dialog").bind("dialogopen", function(event, ui) {
+			var name = $.trim($('#project-name-header').text());
+			$("#rename-project-input").val(name);
+	
+		});
+		
+		// permissions popup
+		permPopup.load("${permissionPopupUrl}");
+
+		//user permissions table
+		var permSettings = {
+			basic : {
+				projectId : ${adminproject.project.id},
+				userPermissions : ${json:serialize(userPermissions)},
+				availablePermissions : ${json:serialize(availablePermissions)}
+			},
+			language : {
+				ok : '<f:message key="label.Confirm"/>',
+				cancel : '<f:message key="label.Cancel"/>',
+				deleteMessage : '<f:message key="message.permissions.remove"/>',
+				deleteTooltip : '<f:message key="tooltips.permissions.remove"/>'
+			}
+		};
+		
+		projectsManager.projectInfo.initUserPermissions(permSettings);
+		
+
+		//tab 
+ 		function beforeLoad(event, ui) {
+			if (document.getElementById("cuf-binding-administration") !== null) {
+				event.preventDefault();
+				return false;
+			}  			
+ 		};
+
+		Frag.init({
+			beforeLoad : beforeLoad
+		});								
+	}
+	
+	
+	<sec:authorize access=" hasRole('ROLE_ADMIN')">
+	$(function() {
+		function deleteProject(){
+		<c:if test="${adminproject.deletable}">	
+			oneShotConfirm("<f:message key='dialog.delete-project.title'/>",
+			"<f:message key='dialog.delete-project.message'/>",
+			"<f:message key='label.Confirm'/>",
+			"<f:message key='label.Cancel'/>").done(function(){
+				requestProjectDeletion().done(deleteProjectSuccess);
+				});
+			</c:if>
+			<c:if test="${!adminproject.deletable}">	
+				$.squash.openMessage("<f:message key='popup.title.info'/>","<f:message key='project.delete.cannot.exception'/>");
+			</c:if>
+		}
+		
+		function requestProjectDeletion(){
+			return $.ajax({
+				type : 'delete',
+				dataType : "json",
+				url : "${ projectUrl }"
+			});
+		}
+	
+		function deleteProjectSuccess(data){
+			clickProjectBackButton();
+		}
+		
+		$('#delete-project-button').button().click(deleteProject);		
+	});
+	</sec:authorize>
+
 </script>

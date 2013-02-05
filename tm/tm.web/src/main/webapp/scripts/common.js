@@ -25,16 +25,16 @@ requirejs.config({
     "custom-field-binding",
     "custom-field-values",
     "execution-processing", 
-    "projects-manager", 
+    //"projects-manager",
+    {
+    	main : "main",
+    	location : "http://localhost/scripts/scipts/projects-manager",
+    	name : "projects-manager"
+    }
     "project",
     "contextual-content-handlers",
     "test-cases-management",
-    //"users-manager"
-    {
-    	name : "users-manager",
-    	main : "main",
-    	location : "http://localhost/scripts/scripts/users-manager"
-    }
+    "users-manager"
 	],
 
 	/*

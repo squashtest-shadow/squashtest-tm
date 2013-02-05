@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -103,7 +104,7 @@ public class GenericProjectController {
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
 
-	private DatatableMapper projectMapper = new NameBasedMapper(9)
+	private DatatableMapper allProjectsMapper = new NameBasedMapper(9)
 												.mapAttribute(GenericProject.class, "name", String.class, "name")
 												.mapAttribute(GenericProject.class, "label", String.class, "label")
 												.mapAttribute(GenericProject.class, "active", boolean.class, "active")
@@ -117,7 +118,7 @@ public class GenericProjectController {
 	public @ResponseBody
 	DataTableModel getProjectsTableModel(final DataTableDrawParameters params, final Locale locale) {
 		
-		PagingAndSorting sorter = new DataTableMapperPagingAndSortingAdapter(params, projectMapper,
+		PagingAndSorting sorter = new DataTableMapperPagingAndSortingAdapter(params, allProjectsMapper,
 									  SortedAttributeSource.SINGLE_ENTITY);
 		
 		Filtering filter = new DataTableFiltering(params);
@@ -247,38 +248,13 @@ public class GenericProjectController {
 		projectManager.deleteProject(projectId);
 	}
 
-	// *********************Permission Management*********************
 	
-	@RequestMapping(value = PROJECT_ID_ULR+"/add-permission", method = RequestMethod.POST, params = { "user" })
-	public @ResponseBody
-	void addNewPermission(@RequestParam long user, @PathVariable long projectId, @RequestParam String permission) {
-		projectManager.addNewPermissionToProject(user, projectId, permission);
-	}
-
-	
-	
-	@RequestMapping(value = PROJECT_ID_ULR+"/add-permission", method = RequestMethod.POST, params = { "userLogin" })
-	public @ResponseBody
-	void addNewPermissionWithLogin(@RequestParam String userLogin, @PathVariable long projectId,
-			@RequestParam String permission) {
-		User user = projectManager.findUserByLogin(userLogin);
-		if (user == null) {
-			throw new LoginDoNotExistException();
-		}
-		projectManager.addNewPermissionToProject(user.getId(), projectId, permission);
-	}
-	
-	
-	@RequestMapping(value = PROJECT_ID_ULR+"/remove-permission", method = RequestMethod.POST)
-	public @ResponseBody
-	void removePermission(@RequestParam("user") long userId, @PathVariable long projectId) {
-		projectManager.removeProjectPermission(userId, projectId);
-	}
-
+	// ********************************** Permission Popup *******************************
 	
 	
 	@RequestMapping(value = PROJECT_ID_ULR+"/permission-popup", method = RequestMethod.GET)
 	public ModelAndView getPermissionPopup(@PathVariable long projectId) {
+		
 		GenericProject project = projectManager.findById(projectId);
 		List<PermissionGroup> permissionList = projectManager.findAllPossiblePermission();
 		List<User> userList = projectManager.findUserWithoutPermissionByProject(projectId);
@@ -287,28 +263,65 @@ public class GenericProjectController {
 		mav.addObject("project", project);
 		mav.addObject("userList", userList);
 		mav.addObject("permissionList", permissionList);
+		
 		return mav;
 	}
+	
+	
+	@RequestMapping(value = PROJECT_ID_ULR+"/users/{userLogin}/permissions/{permission}", method = RequestMethod.PUT )
+	public @ResponseBody
+	void addNewPermissionWithLogin(@RequestParam String userLogin, @PathVariable long projectId, @RequestParam String permission) {
+		
+		User user = projectManager.findUserByLogin(userLogin);
+		
+		if (user == null) {
+			throw new LoginDoNotExistException();
+		}
+		
+		projectManager.addNewPermissionToProject(user.getId(), projectId, permission);
+		
+	}
+	
+
+	// ***************************** permission table *************************************
 
 	
-	@RequestMapping(value = PROJECT_ID_ULR+"/permission-table", method = RequestMethod.GET)
+	@RequestMapping(value = PROJECT_ID_ULR+"/user-permissions", method = RequestMethod.GET)
 	public ModelAndView getPermissionTable(@PathVariable long projectId) {
 		
-		GenericProject project = projectManager.findById(projectId);
-		List<UserProjectPermissionsBean> userProjectPermissionsBean = projectManager.findUserPermissionsBeansByProject(projectId);
-		
+		throw new NotImplementedException();
+		/*
+		 * 
+		 * todo : refactor that using the UserPermissionDatatableModelHelper
+		 * 
+		 * 
+		List<UserProjectPermissionsBean> userProjectPermissionsBean = projectManager.findUserPermissionsBeansByProject(projectId);		
 		List<PermissionGroup> permissionList = projectManager.findAllPossiblePermission();
 
 		ModelAndView mav = new ModelAndView("fragment/project/project-permission-table");
-		mav.addObject("project", project);
 		mav.addObject("permissionList", permissionList);
 		mav.addObject("userPermissionList", userProjectPermissionsBean);
-		return mav;
+		return mav;*/
 		
 	}
 	
 	
-	//********************* test automation *********************
+	
+	@RequestMapping(value = PROJECT_ID_ULR+"/users/{userId}/permissions/{permission}", method = RequestMethod.POST)
+	public @ResponseBody
+	void addNewPermission(@RequestParam("userId") long user, @PathVariable("projectId") long projectId, @RequestParam("permission") String permission) {
+		projectManager.addNewPermissionToProject(user, projectId, permission);
+	}
+
+	
+	@RequestMapping(value = PROJECT_ID_ULR+"/users/{userId}/permissions", method = RequestMethod.DELETE)
+	public @ResponseBody
+	void removePermission(@RequestParam("userId") long userId, @PathVariable long projectId) {
+		projectManager.removeProjectPermission(userId, projectId);
+	}
+
+	
+	// ********************************** test automation ***********************************
 	
 	
 	//filtering and sorting not supported for now
@@ -358,6 +371,10 @@ public class GenericProjectController {
 		projectManager.unbindTestAutomationProject(projectId, taProjectId);
 	}
 	
+	
+	
+	
+	// ********************** other stuffs *****************************
 	
 	
 	private final class TestAutomationTableModel extends DataTableModelHelper<TestAutomationProject>{

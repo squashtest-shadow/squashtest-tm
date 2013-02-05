@@ -65,7 +65,9 @@
 				
 		};
 	  require([ "common" ], function() {
-	    require([ "projects-manager" ]);
+	    require([ "projects-manager" ], function(manager){
+	    	manager.showProjects.init();
+	    });
 	  });
 	  </script>		
 		<%----------------------------------- Projects Table -----------------------------------------------%>

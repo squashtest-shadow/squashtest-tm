@@ -19,16 +19,28 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "domReady", "./ProjectsManager"], function($, domReady, ProjectsManager) {
-	domReady(function() {
-		$( ".deactivated-form" ).submit(function() {
-			return false;
-		});
-		$("#new-project-button").button();
-		$("#new-project-from-template-button").button();
-		
-		new ProjectsManager();
-	});
+define(["jquery", "domReady", "./ProjectsManager", "./project-info-manager"], function($, domReady, ProjectsManager, infoManager) {
 	
-	return {};
+	
+	function initShowProjects(){
+		domReady(function() {
+			$( ".deactivated-form" ).submit(function() {
+				return false;
+			});
+			$("#new-project-button").button();
+			$("#new-project-from-template-button").button();
+			
+			new ProjectsManager();
+		});	
+	}
+	
+	
+	return {
+		showProjects : {
+			init : initShowProjects
+		},
+		projectInfo : {
+			initUserPermissions : infoManager.initUserPermissions
+		}
+	};
 });

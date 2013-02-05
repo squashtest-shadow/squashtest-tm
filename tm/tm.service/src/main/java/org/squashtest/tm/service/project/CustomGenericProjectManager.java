@@ -66,11 +66,6 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 
 	void removeProjectPermission(long userId, long projectId);
 
-	List<UserProjectPermissionsBean> findUserPermissionsBeansByProject(long projectId);
-
-	List<PermissionGroup> findAllPossiblePermission();
-
-	List<User> findUserWithoutPermissionByProject(long projectId);
 
 	User findUserByLogin(String userLogin);
 

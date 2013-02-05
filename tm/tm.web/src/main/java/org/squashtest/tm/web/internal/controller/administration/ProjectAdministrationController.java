@@ -39,8 +39,10 @@ import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectFinder;
+import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 
 @Controller
@@ -79,18 +81,34 @@ public class ProjectAdministrationController {
 	public ModelAndView getProjectInfos(@PathVariable long projectId, Locale locale) {
 		
 		AdministrableProject adminProject = projectFinder.findAdministrableProjectById(projectId);
+		
+		
+		//user permissions data
+		List<UserProjectPermissionsBean> userProjectPermissionsBean = projectFinder.findUserPermissionsBeansByProject(projectId);		
+		List<Map<?,?>> userPermissions = new UserPermissionDatatableModelHelper().buildAllData(userProjectPermissionsBean);
+		
+		List<PermissionGroup> availablePermissions = projectFinder.findAllPossiblePermission();
+		
+		//test automation data
 		TestAutomationServer taServerCoordinates = projectFinder.getLastBoundServerOrDefault((long) adminProject.getProject().getId());
 		List<TestAutomationProject> boundProjects = projectFinder.findBoundTestAutomationProjects(projectId);
 
+		
+		//bugtracker data
 		Map<Long, String> comboDataMap = createComboDataForBugtracker(locale);
 		
+		
+		//populating model
 		ModelAndView mav = new ModelAndView("page/projects/project-info");
 		
 		mav.addObject("adminproject", adminProject);
 		mav.addObject("taServer", taServerCoordinates);
+		mav.addObject("boundTAProjects", boundProjects);
 		mav.addObject("bugtrackersList", JsonHelper.serialize(comboDataMap));
 		mav.addObject("bugtrackersListEmpty", comboDataMap.size() == 1);
-		mav.addObject("boundTAProjects", boundProjects);
+		mav.addObject("userPermissions", userPermissions);
+		mav.addObject("availablePermissions", availablePermissions);
+		
 		return mav;
 	}
 	

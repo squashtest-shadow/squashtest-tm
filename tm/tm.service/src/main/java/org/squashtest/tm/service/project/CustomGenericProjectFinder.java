@@ -25,6 +25,9 @@ import java.util.List;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
+import org.squashtest.tm.service.security.acls.PermissionGroup;
 /**
  * Holder for non dynamically generated find methods for both Project and ProjectTemplate
  * @author mpagnon
@@ -42,5 +45,10 @@ public interface CustomGenericProjectFinder {
 	
 	List<TestAutomationProject> findBoundTestAutomationProjects(long projectId);
 
+	List<UserProjectPermissionsBean> findUserPermissionsBeansByProject(long projectId);
+	
+	List<PermissionGroup> findAllPossiblePermission();
+
+	List<User> findUserWithoutPermissionByProject(long projectId);
 	
 }
