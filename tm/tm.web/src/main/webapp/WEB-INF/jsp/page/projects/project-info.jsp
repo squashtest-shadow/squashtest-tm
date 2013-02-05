@@ -42,27 +42,14 @@
 <s:url var="projectUrl" value="/generic-projects/{projectId}">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
-<s:url var="projectsUrl" value="/administration/projects" />
 
-<s:url var="permissionTableUrl"
-	value="/generic-projects/{projectId}/permission-table">
-	<s:param name="projectId" value="${adminproject.project.id}" />
-</s:url>
+<s:url var="projectsUrl" value="/administration/projects" />
 
 <s:url var="permissionPopupUrl"
 	value="/generic-projects/{projectId}/permission-popup">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
-<s:url var="addPermissionUrl"
-	value="/generic-projects/{projectId}/add-permission">
-	<s:param name="projectId" value="${adminproject.project.id}" />
-</s:url>
-
-<s:url var="removePermissionUrl"
-	value="/generic-projects/{projectId}/remove-permission">
-	<s:param name="projectId" value="${adminproject.project.id}" />
-</s:url>
 
 <s:url var="customFieldManagerURL" value="/administration/project/{projectId}/custom-fields-binding">
 	<s:param name="projectId" value="${adminproject.project.id}"/>
@@ -269,6 +256,13 @@
 							</tr>
 						</thead>
 					</table>
+					<div class="not-displayed permission-select-template">
+						<select>
+						<c:forEach var="perm" items="${availablePermissions}">
+						<option value="${perm.qualifiedName}"><f:message key="user.project-rights.${perm.simpleName}.label"/></option>
+						</c:forEach>
+						</select>
+					</div>
 					<tbody>
 					</tbody>
 				</jsp:attribute>
@@ -305,15 +299,13 @@
 			
 				<f:message var="label" key="label.Add" />
 				'${ label }': function() {
-					var url = "${ addPermissionUrl }";
-					
-					<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
-						useData="true" successHandler="refreshTableAndPopup">					
-						<jq:params-bindings userLogin="#user-input"
-							permission="#permission-input" />
-					</jq:ajaxcall>	
-					
-					
+					var userLogin = $("#user-input").val();
+					var permission = $("#permission-input").val();
+					var url = squashtm.app.contextRoot+"/generic-projects/${adminproject.project.id}/users/"+userLogin+"/permissions/"+permission;
+					$.ajax({
+						url : url,
+						type : 'PUT',
+					}).success(refreshTableAndPopup);					
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
@@ -399,7 +391,7 @@
 	$(function() {
 
 		require(["common"], function(){
-		 	require(["jquery.squash.fragmenttabs", "projects-manager", "project"], function(projectsManager, Frag){
+		 	require(["projects-manager", "jquery.squash.fragmenttabs", "project"], function(projectsManager, Frag){
 		 		init(projectsManager, Frag);	
 		 	});			
 		});
@@ -422,14 +414,13 @@
 		});
 		
 		// permissions popup
-		permPopup.load("${permissionPopupUrl}");
+		reloadPermissionPopup();
 
 		//user permissions table
 		var permSettings = {
 			basic : {
 				projectId : ${adminproject.project.id},
-				userPermissions : ${json:serialize(userPermissions)},
-				availablePermissions : ${json:serialize(availablePermissions)}
+				userPermissions : ${json:serialize(userPermissions)}
 			},
 			language : {
 				ok : '<f:message key="label.Confirm"/>',

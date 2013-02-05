@@ -270,7 +270,7 @@ public class GenericProjectController {
 	
 	@RequestMapping(value = PROJECT_ID_ULR+"/users/{userLogin}/permissions/{permission}", method = RequestMethod.PUT )
 	public @ResponseBody
-	void addNewPermissionWithLogin(@RequestParam String userLogin, @PathVariable long projectId, @RequestParam String permission) {
+	void addNewPermissionWithLogin(@PathVariable("userLogin") String userLogin, @PathVariable("projectId") long projectId, @PathVariable("permission") String permission) {
 		
 		User user = projectManager.findUserByLogin(userLogin);
 		
@@ -309,14 +309,14 @@ public class GenericProjectController {
 	
 	@RequestMapping(value = PROJECT_ID_ULR+"/users/{userId}/permissions/{permission}", method = RequestMethod.POST)
 	public @ResponseBody
-	void addNewPermission(@RequestParam("userId") long user, @PathVariable("projectId") long projectId, @RequestParam("permission") String permission) {
+	void addNewPermission(@PathVariable("userId") long user, @PathVariable("projectId") long projectId, @PathVariable("permission") String permission) {
 		projectManager.addNewPermissionToProject(user, projectId, permission);
 	}
 
 	
 	@RequestMapping(value = PROJECT_ID_ULR+"/users/{userId}/permissions", method = RequestMethod.DELETE)
 	public @ResponseBody
-	void removePermission(@RequestParam("userId") long userId, @PathVariable long projectId) {
+	void removePermission(@PathVariable("userId") long userId, @PathVariable long projectId) {
 		projectManager.removeProjectPermission(userId, projectId);
 	}
 

@@ -28,9 +28,9 @@ requirejs.config({
     //"projects-manager",
     {
     	main : "main",
-    	location : "http://localhost/scripts/scipts/projects-manager",
+    	location : "http://localhost/scripts/scripts/projects-manager",
     	name : "projects-manager"
-    }
+    },
     "project",
     "contextual-content-handlers",
     "test-cases-management",
@@ -49,7 +49,7 @@ requirejs.config({
 		"jqueryui": "lib/jquery/jquery-ui-1.9.0.custom",
 		"datatables": "datatables/jquery.dataTables",
 		"squash.datatables": "squashtest/jquery.squashtm.datatables",
-		"jquery.squash.datatables": "squashtest/jquery.squashtm.datatables.v2",
+		"jquery.squash.datatables": "http://localhost/scripts/scripts/squashtest/jquery.squashtm.datatables.v2",
 		"handlebars": "lib/handlebars/handlebars-1.0.rc.1",
 		"underscore": "lib/underscore/underscore-1.4.2",
 		"backbone": "lib/backbone/backbone-0.9.2", 

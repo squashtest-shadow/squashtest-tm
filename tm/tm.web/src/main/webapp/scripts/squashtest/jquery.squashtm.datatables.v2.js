@@ -529,15 +529,31 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			return this.nodeType == 3;
 		}).wrap(link);
 	}
+	
+	
+	function _dereferenceNestedProperties(data, key){
+		var keys = key.split('.');
+		var i = 0,
+			length =  keys.length,
+			nestedData = data;
+		
+		for (i=0;i<length;i++){
+			nestedData=nestedData[keys[i]];
+		}
+		
+		return nestedData;	//should be a scalar
+	}
 
+	
 	function _resolvePlaceholders(input, data) {
 		var pattern = /\{\S+\}/;
 		var result = input;
 		var match = pattern.exec(result);
 		while (match) {
 			var pHolder = match[0];
-			var key = pHolder.substr(1, pHolder.length - 2);
-			result = result.replace(pHolder, data[key]);
+			var key = pHolder.substr(1, pHolder.length - 2);			
+			var value = _dereferenceNestedProperties(data, key);			
+			result = result.replace(pHolder, value);
 			match = pattern.exec(result);
 		}
 

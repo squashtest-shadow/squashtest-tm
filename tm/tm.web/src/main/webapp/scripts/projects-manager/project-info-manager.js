@@ -19,12 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require("jquery", "jquery.squash.datatables", function($){
+define(["jquery", "jquery.squash.datatables"], function($){
 	
 	
-	// ***************** user-permissions-table section *****************************
-	
-	
+	// ***************** user-permissions-table section *****************************	
 	// ************* combo boxes *******************
 	
 	function bindSelectChange(settings){
@@ -35,7 +33,7 @@ require("jquery", "jquery.squash.datatables", function($){
 			
 			var $this = $(this);
 			var tr = $this.parents("tr").get(0);	
-			var data = $("#user-permisisons-table").squashTable().fnData(tr);
+			var data = $("#user-permissions-table").squashTable().fnGetData(tr);
 			var userId = data['user']['id'];			
 			
 			var url = squashtm.app.contextRoot+"/generic-projects/"+projectId+"/users/"+userId+"/permissions/"+$this.val();
@@ -50,36 +48,29 @@ require("jquery", "jquery.squash.datatables", function($){
 		
 	}
 	
-	
-	function comboTemplateFactory = function(settings){
-		var comboTemplate = $("<select/>");			
-		
-		var permissions = settings.basic.availablePermissions,
-			i = 0,
-			length = permissions.length;
-		
-		for (i=0;i<length;i++){
-			var option = $("<option/>", { 'value' : permissions[i].id, 'text' : permissions[i].qualifiedName }).appendTo(comboTemplate);
-		}		
-		
-		return comboTemplate;
-	}
-	
+
 	
 	function drawCallbackFactory(settings){
+
+		var comboTemplate = $("div.permission-select-template > select");
 		
-		var comboTemplate = comboTemplateFactory(settings);
+		//sort the options of the select
+		comboTemplate.append(
+			comboTemplate.find('option').get().sort(function(a,b){ 
+				return (a.innerText || a.textContent) > (b.innerText || b.textContent);
+			})
+		);	
 		
-		function decorateCombos(cell){			
-			var id = cell.html();
+		function decorateCombo(cell){			
+			var value = cell.html();
 			var combo = comboTemplate.clone();
-			combo.val(id);
+			combo.val(value);
 			cell.empty().append(combo);
 		}
 		
 		return function(){
-			$(this).find('td.permission-cell').each(function(){
-				decorateCombo(this);
+			$(this).find('td.permissions-cell').each(function(){
+				decorateCombo($(this));
 			});		
 		}
 	}
@@ -97,7 +88,7 @@ require("jquery", "jquery.squash.datatables", function($){
 		
 		var datatableSettings = {
 			"oLanguage": {
-				"sUrl": settings.urls.contextRoot+"datatables/messages"
+				"sUrl": squashtm.app.contextRoot+"/datatables/messages"
 			},
 			"bJQueryUI": true,
 			"bAutoWidth": false,
@@ -109,14 +100,14 @@ require("jquery", "jquery.squash.datatables", function($){
 			"iDeferLoading" : userPermissions.length,
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": squashtm.app.contextRoot+"generic-projects/"+settings.basic.projectId+"/users-permissions",
+			"sAjaxSource": squashtm.app.contextRoot+"/generic-projects/"+settings.basic.projectId+"/users-permissions",
 			"aaData" : userPermissions,		
 			"sDom" : 'ft<"dataTables_footer"lirp>',
 			"aoColumnDefs": [	
-			    {'mDataProp' : 'user-index', 'aTargets' : [0], 'sWidth' : '2em'},
-			    {'mDataProp' : 'user.login', 'aTargets' : [1], 'sClass' : 'user-reference centered'},
-			    {'mDataProp' : 'user-permission.id', 'aTargets' : [2], 'sClass' : 'permissions-cell centered'},
-			    {'mDataProp' : 'empty-delete-holder', 'aTargets' : [3], 'sWidth' : '2em', 'sClass' : "delete-button centered" }
+			    {'bSortable' : false, 'mDataProp' : 'user-index', 'aTargets' : [0], 'sWidth' : '2em', 'sClass' : 'centered'},
+			    {'bSortable' : true , 'mDataProp' : 'user.login', 'aTargets' : [1], 'sClass' : 'user-reference centered'},
+			    {'bSortable' : true , 'mDataProp' : 'permission-group.qualifiedName', 'aTargets' : [2], 'sClass' : 'permissions-cell centered'},
+			    {'bSortable' : false, 'mDataProp' : 'empty-delete-holder', 'aTargets' : [3], 'sWidth' : '2em', 'sClass' : "delete-button centered" }
 			] 				
 		};
 		
@@ -129,12 +120,12 @@ require("jquery", "jquery.squash.datatables", function($){
 			},
 			deleteButtons : {
 				popupmessage : language.deleteMessage,
-				url : squashtm.app.contextRoot+"generic-projects/"+settings.basic.projectId+"/users/{user.id}/permissions",
+				url : squashtm.app.contextRoot+"/generic-projects/"+settings.basic.projectId+"/users/{user.id}/permissions",
 				tooltip : language.deleteTooltip,
 				success : refreshTableAndPopup
 			},
 			bindLinks : {
-				list : [{ url : squashtm.app.contextRoot+"/administration/users/{user.id}", targetClass : 'user-reference' }]
+				list : [{ url : squashtm.app.contextRoot+"/administration/users/{user.id}/info", targetClass : 'user-reference' }]
 			}
 			
 		}
@@ -147,8 +138,7 @@ require("jquery", "jquery.squash.datatables", function($){
 	
 	
 	return {
-		initUserPermissions : initUserPermissions,
-
+		initUserPermissions : initUserPermissions
 	}
 	
 	
