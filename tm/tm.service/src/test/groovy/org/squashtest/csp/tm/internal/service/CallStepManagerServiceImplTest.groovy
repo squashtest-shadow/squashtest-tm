@@ -23,10 +23,12 @@ package org.squashtest.csp.tm.internal.service
 import org.squashtest.tm.domain.testcase.CallTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.exception.CyclicStepCallException;
+import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
 import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.testcase.CallStepManagerServiceImpl;
+import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 
@@ -40,34 +42,15 @@ class CallStepManagerServiceImplTest extends Specification {
 	TestCaseLibraryDao testCaseLibraryDao = Mock()
 	ProjectFilterModificationService filterService = Mock();
 	TestCaseImportanceManagerServiceImpl testCaseImportanceManagerServiceImpl = Mock();
+	TestCaseCallTreeFinder callTreeFinder = Mock()
 
 	def setup(){
 		service.testCaseDao = testCaseDao;
 		service.testStepDao = testStepDao;
 		service.testCaseImportanceManagerService = testCaseImportanceManagerServiceImpl
+		service.callTreeFinder = callTreeFinder
+		
 	}
-
-
-
-	def "should return the test case call tree of a test case"(){
-
-		given :
-		def firstLevel = [2l, 3l]
-		def secondLevel = [4l, 5l]
-		def thirdLevel = []
-
-		testCaseDao.findDistinctTestCasesIdsCalledByTestCase ( 1l ) 		   >>  firstLevel
-		testCaseDao.findAllTestCasesIdsCalledByTestCases ( firstLevel ) >>  secondLevel
-		testCaseDao.findAllTestCasesIdsCalledByTestCases ( secondLevel ) >>  thirdLevel
-
-		when :
-		def callTree = service.getTestCaseCallTree(1l)
-
-		then :
-
-		callTree.containsAll(firstLevel + secondLevel)
-	}
-
 
 	def "should deny step call creation because the caller and calling test cases are the same"(){
 
@@ -82,18 +65,10 @@ class CallStepManagerServiceImplTest extends Specification {
 	def "should deny step call creation because the caller is somewhere in the test case call tree of the called test case"(){
 
 		given :
-
-		def firstLevel = [3l, 4l]
-		def secondLevel = [5l, 1l]
-		def thirdLevel = []
-
-		testCaseDao.findDistinctTestCasesIdsCalledByTestCase ( 2l ) 		   >>  firstLevel
-		testCaseDao.findAllTestCasesIdsCalledByTestCases ( firstLevel ) >>  secondLevel
-		testCaseDao.findAllTestCasesIdsCalledByTestCases ( secondLevel ) >>  thirdLevel
-
+		callTreeFinder.getTestCaseCallTree(_) >> [1L]
+		
 		when :
-
-		service.addCallTestStep(1l, 2l);
+		service.addCallTestStep(1L, 2L);
 
 		then :
 		thrown(CyclicStepCallException);
@@ -110,14 +85,7 @@ class CallStepManagerServiceImplTest extends Specification {
 		testCaseDao.findById(2l) >> called;
 
 		and : "acyclic test case call tree"
-		def firstLevel = [3l, 4l]
-		def secondLevel = [5l, 6l]
-		def thirdLevel = []
-
-		testCaseDao.findDistinctTestCasesIdsCalledByTestCase ( 2l ) 		   >>  firstLevel
-		testCaseDao.findAllTestCasesIdsCalledByTestCases ( firstLevel ) >>  secondLevel
-		testCaseDao.findAllTestCasesIdsCalledByTestCases ( secondLevel ) >>  thirdLevel
-
+		callTreeFinder.getTestCaseCallTree(_) >> [3L, 4L, 5L, 6L]
 
 		when :
 		service.addCallTestStep(1l, 2l)

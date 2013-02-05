@@ -44,7 +44,7 @@ abstract class DynamicManagerInterfaceSpecification extends Specification {
 	DynamicManagerFactoryBean factory = new DynamicManagerFactoryBean()
 
 	def setup() {
-		factory.lookupCustomComponent = false
+		factory.lookupCustomImplementation = false
 		factory.componentType = managerType
 		factory.entityType = entityType
 

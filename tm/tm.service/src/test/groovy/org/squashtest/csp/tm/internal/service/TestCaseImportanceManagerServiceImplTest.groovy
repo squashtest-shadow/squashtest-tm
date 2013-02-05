@@ -32,12 +32,13 @@ import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.testcase.CallStepManagerServiceImpl;
+import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl;
 
 import spock.lang.Specification
 class TestCaseImportanceManagerServiceImplTest extends Specification {
 	TestCaseImportanceManagerServiceImpl service = new TestCaseImportanceManagerServiceImpl()
-	CallStepManagerServiceImpl callStepManagerService = Mock()
+	TestCaseCallTreeFinder callTreeFinder = Mock()
 	RequirementDao requirementDao = Mock()
 	RequirementVersionDao requirementVersionDao = Mock()
 	TestCaseDao testCaseDao = Mock()
@@ -45,7 +46,7 @@ class TestCaseImportanceManagerServiceImplTest extends Specification {
 	def setup() {
 		service.testCaseDao = testCaseDao
 		service.requirementDao = requirementDao
-		service.callStepManagerService = callStepManagerService
+		service.callTreeFinder = callTreeFinder
 		service.requirementVersionDao = requirementVersionDao
 	}
 	def"should change importance if is Auto"(){
@@ -57,7 +58,7 @@ class TestCaseImportanceManagerServiceImplTest extends Specification {
 		testCaseDao.findById(10) >> testCase
 
 		Set<Long> calleesIds = new HashSet<Long>()
-		callStepManagerService.getTestCaseCallTree(10)>> calleesIds
+		callTreeFinder.getTestCaseCallTree(10)>> calleesIds
 
 		List<RequirementCriticality> crits = Arrays.asList(UNDEFINED, CRITICAL)
 		requirementDao.findDistinctRequirementsCriticalitiesVerifiedByTestCases(calleesIds)>> crits
@@ -98,7 +99,7 @@ class TestCaseImportanceManagerServiceImplTest extends Specification {
 
 		//called tree contains an unimportant criticality + the newly added
 		Set<Long> calleesIds = []
-		callStepManagerService.getTestCaseCallTree(1)>> calleesIds
+		callTreeFinder.getTestCaseCallTree(1)>> calleesIds
 		List<RequirementCriticality> crits = Arrays.asList(UNDEFINED, CRITICAL)
 		requirementDao.findDistinctRequirementsCriticalitiesVerifiedByTestCases(calleesIds)>> crits
 
@@ -115,7 +116,7 @@ class TestCaseImportanceManagerServiceImplTest extends Specification {
 
 		//calling call tree contains the test-case's requirements
 		Set<Long> calleesIds2 = [1]
-		callStepManagerService.getTestCaseCallTree(2)>> calleesIds2
+		callTreeFinder.getTestCaseCallTree(2)>> calleesIds2
 		requirementDao.findDistinctRequirementsCriticalitiesVerifiedByTestCases(calleesIds2)>> crits
 
 		//no test-case is calling the calling one
@@ -171,7 +172,7 @@ class TestCaseImportanceManagerServiceImplTest extends Specification {
 
 		//no called test case
 		Set<Long> calleesIds2 = [1L]
-		callStepManagerService.getTestCaseCallTree(1L)>> new HashSet(0)
+		callTreeFinder.getTestCaseCallTree(1L)>> new HashSet(0)
 		//no calling test case
 		testCaseDao.findAllCallingTestCases (1L, null)>> new ArrayList(0)
 
@@ -202,7 +203,7 @@ class TestCaseImportanceManagerServiceImplTest extends Specification {
 
 		//no called test case
 		Set<Long> calleesIds2 = [1L]
-		callStepManagerService.getTestCaseCallTree(1L)>> new HashSet(0)
+		callTreeFinder.getTestCaseCallTree(1L)>> new HashSet(0)
 		//no calling test case
 		testCaseDao.findAllCallingTestCases (1L, null)>> new ArrayList(0)
 
@@ -231,7 +232,7 @@ class TestCaseImportanceManagerServiceImplTest extends Specification {
 
 		//no called test case
 		Set<Long> calleesIds2 = [1L]
-		callStepManagerService.getTestCaseCallTree(1L)>> new HashSet(0)
+		callTreeFinder.getTestCaseCallTree(1L)>> new HashSet(0)
 		//no calling test case
 		testCaseDao.findAllCallingTestCases (1L, null)>> new ArrayList(0)
 

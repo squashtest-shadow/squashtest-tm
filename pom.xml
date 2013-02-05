@@ -164,8 +164,6 @@
 								<value>test-log4j.properties</value>
 							</property>
 						</systemProperties>
-						<parallel>true</parallel>
-						<threadCount>2</threadCount>
 					</configuration>
 				</plugin>
 				<plugin>

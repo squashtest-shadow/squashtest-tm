@@ -32,6 +32,7 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.testcase.CustomTestCaseModificationServiceImpl;
+import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 
@@ -43,7 +44,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	TestStepDao testStepDao = Mock()
 	RequirementVersionDao requirementVersionDao = Mock()
 	GenericNodeManagementService testCaseManagementService = Mock()
-	CallStepManagerService callStepManagerService = Mock()
+	TestCaseCallTreeFinder callTreeFinder = Mock()
 	TestCaseNodeDeletionHandler deletionHandler = Mock()
 	PrivateCustomFieldValueService cufValuesService = Mock()
 
@@ -55,7 +56,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.testStepDao = testStepDao
 		service.testCaseManagementService = testCaseManagementService
 		service.requirementVersionDao = requirementVersionDao
-		service.callStepManagerService = callStepManagerService
+		service.callTreeFinder = callTreeFinder
 		service.deletionHandler = deletionHandler
 		service.customFieldValuesService = cufValuesService
 	}
@@ -157,7 +158,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 
 		and : "the looked up test case calls no test case"
-		callStepManagerService.getTestCaseCallTree(_) >> []
+		callTreeFinder.getTestCaseCallTree(_) >> []
 
 
 		when:
@@ -181,7 +182,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and : "the looked up test case calls a test case"
 		long callee = 20L
-		callStepManagerService.getTestCaseCallTree(_) >> [callee]
+		callTreeFinder.getTestCaseCallTree(_) >> [callee]
 
 
 		and: "the callee verifies a requiremnt"
@@ -216,7 +217,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		and : "the looked up test case calls a test case that calls a test case (L2)"
 		long firstLevelCallee = 20L
 		long secondLevelCallee = 30L
-		callStepManagerService.getTestCaseCallTree(_) >> [
+		callTreeFinder.getTestCaseCallTree(_) >> [
 			firstLevelCallee,
 			secondLevelCallee
 		]
@@ -249,7 +250,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		testCase.getVerifiedRequirementVersions() >> []
 
 		and: "the looked up test case calls no test case"
-		callStepManagerService.getTestCaseCallTree(10L) >> []
+		callTreeFinder.getTestCaseCallTree(10L) >> []
 
 		and:
 		requirementVersionDao.findAllVerifiedByTestCases({ [10L].containsAll(it) }, _) >> []
