@@ -77,8 +77,8 @@ define(["jquery", "./cuf-values-utils", "jqueryui", 'jquery.squash.jeditable', "
 	function getBasicConf(){
 		return {
 			width : '100%',
-			submit : squashtm.app.projectFilterConf.confirmLabel,
-			cancel : squashtm.app.projectFilterConf.cancelLabel
+			submit : squashtm.message.confirm,
+			cancel : squashtm.message.cancel
 		}
 		
 	}

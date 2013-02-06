@@ -54,6 +54,14 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
   			errorTitle: "<f:message key='popup.title.error' />"
   		}
 	};
+	
+	// -------------------- Waiting for better handle of locale in .js---------------------------------------------
+	squashtm.message = squashtm.message || {};
+	squashtm.message.cancel = "<f:message key='label.Cancel'/>";
+	squashtm.message.confirm = "<f:message key='label.Confirm'/>";		
+	squashtm.message.intoTitle = "<f:message key='popup.title.info'/>";		
+	squashtm.message.errorTitle = "<f:message key='popup.title.error'/>";	
+	
 </script>
 <script src="<c:url value='/scripts/require-min.js' />"></script>
 <script src="<c:url value='/scripts/common.js' />"></script>
@@ -120,12 +128,3 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 	});
 </script>
 
-<!-- -------------------- Waiting for better handle of locale in .js--------------------------------------------- -->
-<script>
-$(function(){
-	squashtm.message = new Object();
-	squashtm.message.cancel = "<f:message key='label.Cancel'/>" ;
-	squashtm.message.confirm = "<f:message key='label.Confirm'/>" ;
-});
-</script>
-<!-- -------------------- Waiting for better handle of locale in .js--------------------------------------------- -->
