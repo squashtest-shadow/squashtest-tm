@@ -232,7 +232,7 @@
 
 	<osgi:service
 		ref="squashtest.tm.service.audit.RequirementAuditTrailService"
-		interface="org.squashtest.csp.tm.service.audit.RequirementAuditTrailService" />
+		interface="org.squashtest.tm.service.audit.RequirementAuditTrailService" />
 
   <osgi:service ref="squashtest.tm.service.RequirementVersionManagerService" interface="org.squashtest.tm.service.requirement.RequirementVersionManagerService" />
 
@@ -272,7 +272,7 @@
   </osgi:service>
 
 	<osgi:service ref="squashtest.tm.service.DenormalizedFieldValueFinder"
-		interface="org.squashtest.csp.tm.service.denormalizedfield.DenormalizedFieldValueFinder" />
+		interface="org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder" />
 
 
   <!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->

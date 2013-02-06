@@ -227,7 +227,7 @@
   
 <osgi:reference id="squashtest.tm.service.DenormalizedFieldValueFinder"
 		bean-name="squashtest.tm.service.DenormalizedFieldValueFinder"
-		interface="org.squashtest.csp.tm.service.denormalizedfield.DenormalizedFieldValueFinder"
+		interface="org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder"
 		availability="mandatory" />
 
 
