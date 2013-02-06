@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.Team;
@@ -40,12 +39,8 @@ public class HibernateTeamDao extends HibernateEntityDao<Team> implements Custom
 	@Override
 	public List<Team> findSortedTeams(PagingAndSorting filter) {
 		Session session = currentSession();
-		//http://jira.grails.org/browse/GRAILS-8162
 		Criteria crit = session.createCriteria(Team.class, "Team");
-		crit.createAlias("Team.members", "members", Criteria.LEFT_JOIN);
-		crit.setProjection(Projections.projectionList().add(Projections.groupProperty("members.id"))
-		                                                    .add(Projections.count("members.id").as("numberOfMembers")));
-	
+		
 		/* add ordering */
 		String sortedAttribute = filter.getSortedAttribute();
 		if (sortedAttribute != null) {

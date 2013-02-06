@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.project.Project;
 
 @Transactional
 public interface ProjectManagerService extends CustomProjectModificationService, ProjectFinder {
+	
 	@Transactional(readOnly = false)
 	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
 	List<Project> findAllOrderedByName();

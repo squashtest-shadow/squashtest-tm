@@ -46,5 +46,6 @@ public interface CustomTeamModificationService extends CustomTeamFinderService{
 	 * 
 	 */
 	void deleteTeam(long teamId);
-
+	
+	
 }

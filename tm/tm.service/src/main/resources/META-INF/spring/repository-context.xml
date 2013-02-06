@@ -99,8 +99,8 @@
 
         <value>org.squashtest.tm.domain.users.User</value>
         <value>org.squashtest.tm.domain.users.UsersGroup</value>
-				<value>org.squashtest.tm.domain.users.Team</value>
-				<value>org.squashtest.tm.domain.users.Party</value>
+		<value>org.squashtest.tm.domain.users.Team</value>
+		<value>org.squashtest.tm.domain.users.Party</value>
 				
 
         <value>org.squashtest.tm.domain.event.RequirementAuditEvent</value>
@@ -123,7 +123,7 @@
         <value>org.squashtest.tm.domain.customfield.CustomFieldValue</value>
 		        
 		          <!-- Denormalized Fields -->
-		        <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue</value>
+		<value>org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue</value>
       </list>
     </property>
     <property name="namingStrategy">
@@ -224,7 +224,7 @@
 		<property name="entityType" value="org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue" />
 	</bean>		
 
-	<bean id="teamDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean">
+	<bean id="teamDao" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean" lazy-init="false" parent="parent.DynamicDaoFactoryBean">
 		<property name="componentType" value="org.squashtest.tm.service.internal.repository.TeamDao" />
 		<property name="entityType" value="org.squashtest.tm.domain.users.Team" />
 	</bean>		

@@ -127,8 +127,9 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS = "select arse.PARTY_ID, ag.ID, ag.QUALIFIED_NAME from  "
 			+ "ACL_GROUP ag  inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID  "
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID  "
-			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " + "where oid.IDENTITY = ? and ac.CLASSNAME = ? "
-			+ "inner join CORE_USER cu on arse.PARTY_ID = cu.PARTY_ID ";
+			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID "
+			+ "inner join CORE_USER cu on arse.PARTY_ID = cu.PARTY_ID "
+			+ "where oid.IDENTITY = ? and ac.CLASSNAME = ? ";
 	
 	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS_FILTERED = "select arse.USER_ID, ag.ID, ag.QUALIFIED_NAME from "
 			+ "ACL_GROUP ag " + "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "

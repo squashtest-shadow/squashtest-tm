@@ -69,10 +69,10 @@ public class TeamController {
 	
 	private static final String TEAM_ID_ULR = "/{teamId}";
 
-	private DatatableMapper teamsMapper = new IndexBasedMapper(9)
+	private DatatableMapper<Integer> teamsMapper = new IndexBasedMapper(9)
 			.mapAttribute(Team.class, "name", String.class, 2)
 			.mapAttribute(Team.class, "description", String.class, 3)
-			.mapAttribute(Team.class, "numberOfMembers", Long.class, 4)
+			.mapAttribute(Team.class, "members.size", Long.class, 4)
 			.mapAttribute(Team.class, "audit.createdOn", Date.class, 5)
 			.mapAttribute(Team.class, "audit.createdBy", String.class, 6)
 			.mapAttribute(Team.class, "audit.lastModifiedOn", Date.class, 7)
