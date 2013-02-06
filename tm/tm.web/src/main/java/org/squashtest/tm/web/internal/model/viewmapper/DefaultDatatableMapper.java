@@ -47,12 +47,24 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 	
 	@Override
 	public String attrAt(KEY key) {
-		return attributesMap.get(key).getAttributeName();
+		AttributeRegister<KEY> reg = attributesMap.get(key);
+		if (reg!=null){
+			return reg.getAttributeName();
+		}
+		else{
+			return "";
+		}
 	}
 
 	@Override
-	public String pathAt(KEY key) {
-		return attributesMap.get(key).getAttributePath();
+	public String pathAt(KEY key) {		
+		AttributeRegister<KEY> reg = attributesMap.get(key);
+		if (reg!=null){
+			return reg.getAttributePath();
+		}
+		else{
+			return "";
+		}
 	}
 
 	

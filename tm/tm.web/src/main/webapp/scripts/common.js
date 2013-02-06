@@ -23,7 +23,12 @@ requirejs.config({
   packages: [
     "custom-field-editor",
     "custom-field-binding",
-    "custom-field-values",
+    //"custom-field-values",
+    {
+    	main : "main",
+    	location : "http://localhost/scripts/scripts/custom-field-values",
+    	name : "custom-field-values"
+    },
     "execution-processing", 
     "projects-manager",
     /*{
@@ -33,7 +38,12 @@ requirejs.config({
     },*/
     "project",
     "contextual-content-handlers",
-    "test-cases-management",
+    //"test-cases-management",
+    {
+    	main : "main",
+    	location : "http://localhost/scripts/scripts/test-cases-management",
+    	name : "test-cases-management"
+    },
     "users-manager"
 	],
 

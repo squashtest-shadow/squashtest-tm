@@ -23,7 +23,16 @@
 define(["jquery", "./cuf-values-utils", "./jquery-cuf-values"],function($, utils){
 	
 	
-	// ********************************** Datatable configuration *******************************
+	
+	/* *************************************************************************************
+	  
+	 				JS DATATABLE CONFIGURATION
+	 				
+	 * *************************************************************************************/
+	
+	
+	// ********************************** column definitions ******************************
+	
 	
 	function createColumnDefs(cufDefinitions){
 		
@@ -50,7 +59,7 @@ define(["jquery", "./cuf-values-utils", "./jquery-cuf-values"],function($, utils
 		
 	}
 	
-
+	
 	function mergeColumnDefs(regularColumnDefs, cufColumnDefs, insertionIndex){
 		/*
 		 * update the aTargets of the existing columns if they use an index (instead of a classname)
@@ -77,6 +86,10 @@ define(["jquery", "./cuf-values-utils", "./jquery-cuf-values"],function($, utils
 	
 	}
 	
+	
+	
+
+	// ************************************ table draw callback *********************************
 
 	function mapDefinitionsToCode(cufDefinitions){
 		
@@ -93,7 +106,6 @@ define(["jquery", "./cuf-values-utils", "./jquery-cuf-values"],function($, utils
 		return resultMap;
 	}
 	
-
 	
 	function makePostFunction(cufCode, table){
 		return function(value){
@@ -143,15 +155,121 @@ define(["jquery", "./cuf-values-utils", "./jquery-cuf-values"],function($, utils
 	}
 	
 	
+	// ******************************************** datasource model configuration **************************************
+	
+	
+	function defaultFnServerDataImpl(sSource, aoData, fnCallback, oSettings){
+		oSettings.jqXHR = $.ajax({
+		    "dataType": 'json',
+		    "type": oSettings.sServerMethod,
+		    "url": sSource,
+		    "data": aoData,
+		    "success": fnCallback
+		  });
+	}
+	
+	function createDefaultDefinitions(cufDefinitions){
+		var i = 0,
+			length = cufDefinitions.length,
+			code,
+			result = {};
+		
+		for (i=0;i<length;i++){
+			code = cufDefinitions[i].code;
+			result[code] = {
+				id : null,
+				value : null,
+				code : null
+			};
+		}
+		
+		return result;
+	}
+	
+	function fillMissingCustomFields(aaData, defaultDefinitions){
+		
+		
+		var length = aaData.length,
+			i = 0;
+		
+		for (i=0;i<length;i++){
+			
+			var copyDefaults = $.extend({}, defaultDefinitions);
+			
+			//create the field 'customFields' if doesn't exist
+			if (aaData[i].customFields === undefined){
+				aaData[i].customFields = copyDefaults;
+			}
+			//else we merge the defaults with the existing field
+			else{
+				aaData[i].customFields = $.extend(copyDefaults, aaData[i].customFields);
+			}
+		}
+		
+		return aaData;
+	}
+	
+	
+	// the goal here is to prevent faulty table redraw if some custom fields aren't part of the model of a given row.
+	// it may happen for tables mixing heterogeneous data, eg action steps/call steps, or testcase from project A or project B.
+	//
+	// Hence we aim to fill the holes in the model, by decorating the function fnCallback, then invoke the initial decoratedFnServerData with it. 
+	function ajaxPostProcessorFactory(defaultDefinitions, decoratedFnServerData){
+
+		//now the decorated fnServerData function, that will invoke the original fnServerData with the decorated callback
+		return function(sSource, aoData, fnCallback, oSettings){
+			
+			var decoratedCallback = function(json, xhr, statusText){
+				
+				var ajaxProp = oSettings.sAjaxDataProp;
+				
+				var origData = (ajaxProp !== "") ? json[ajaxProp] : json;
+				var fixedData = fillMissingCustomFields(origData, defaultDefinitions);
+				
+				var fixedJson;
+				if (ajaxProp !== ""){
+					fixedJson = json;
+					fixedJson[ajaxProp] = fixedData;
+				}
+				else{
+					fixedJson = fixedData;
+				}
+				
+				fnCallback.call(this, fixedJson, xhr, statusText);
+			};		
+			
+			decoratedFnServerData.call(this, sSource, aoData, decoratedCallback, oSettings);
+		}
+	}
+	
+	
+	
+	// ************************ main decorator ************************************
+	
 	function decorateTableSettings(tableSettings, cufDefinitions, index, isEditable){
 		
 		var editable = (isEditable===undefined) ? false : isEditable;
 		
-		var cufDefs = createColumnDefs(cufDefinitions);
 		
+		//decorate the column definitions
+		var cufDefs = createColumnDefs(cufDefinitions);		
 		var origDef = tableSettings.aoColumnDefs;
 		tableSettings.aoColumnDefs = mergeColumnDefs(origDef, cufDefs, index);
 		
+		
+		//decorate the model and ajax processor
+		var defaultDefinitions = createDefaultDefinitions(cufDefinitions);
+		
+		if (tableSettings.aaData !== undefined){
+			tableSettings.aaData = fillMissingCustomFields(tableSettings.aaData, defaultDefinitions);
+		}
+		
+		var origFnServerData = tableSettings.fnServerData || defaultFnServerDataImpl;
+		tableSettings.fnServerData = ajaxPostProcessorFactory(defaultDefinitions, origFnServerData );
+		
+		
+		
+		//decorate the table draw callback
 		var oldDrawCallback = tableSettings.fnDrawCallback;
 		
 		var addendumCallback = createCufValuesDrawCallback(cufDefinitions, editable);
@@ -165,7 +283,12 @@ define(["jquery", "./cuf-values-utils", "./jquery-cuf-values"],function($, utils
 	}
 	
 	
-	// ********************* DOM table configuration **************************
+	/* *************************************************************************************
+	  
+	 				DOM TABLE CONFIGURATION
+	 				
+	 * *************************************************************************************/
+	
 	
 	function decorateDOMTable(zeTable, cufDefinitions, index){
 		var table = (zeTable instanceof jQuery) ? zeTable : $(zeTable);
