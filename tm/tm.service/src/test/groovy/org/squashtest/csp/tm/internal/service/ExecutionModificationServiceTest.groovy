@@ -43,7 +43,7 @@ import org.squashtest.tm.service.internal.repository.ItemTestPlanDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
-import org.squashtest.csp.tm.internal.service.denormalizedField.PrivateDenormalizedFieldValueService
+import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
 
 import spock.lang.Specification
 

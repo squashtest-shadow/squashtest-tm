@@ -41,19 +41,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.squashtest.csp.tm.domain.audit.AuditableMixin;
-import org.squashtest.csp.tm.domain.users.Team;
-import org.squashtest.csp.tm.service.users.TeamModificationService;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.users.Team;
+import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
-import org.squashtest.tm.web.internal.model.viewmapper.DataTableMapper;
-
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 /**
  * @author mpagnon
  * 
@@ -69,14 +69,14 @@ public class TeamController {
 	
 	private static final String TEAM_ID_ULR = "/{teamId}";
 
-	private DataTableMapper teamsMapper = new DataTableMapper("teams-table", Team.class).initMapping(9)
-			.mapAttribute(Team.class, 2, "name", String.class)
-			.mapAttribute(Team.class, 3, "description", String.class)
-			.mapAttribute(Team.class, 4, "numberOfMembers", Long.class)
-			.mapAttribute(Team.class, 5, "audit.createdOn", Date.class)
-			.mapAttribute(Team.class, 6, "audit.createdBy", String.class)
-			.mapAttribute(Team.class, 7, "audit.lastModifiedOn", Date.class)
-			.mapAttribute(Team.class, 8, "audit.lastModifiedBy", String.class);
+	private DatatableMapper teamsMapper = new IndexBasedMapper(9)
+			.mapAttribute(Team.class, "name", String.class, 2)
+			.mapAttribute(Team.class, "description", String.class, 3)
+			.mapAttribute(Team.class, "numberOfMembers", Long.class, 4)
+			.mapAttribute(Team.class, "audit.createdOn", Date.class, 5)
+			.mapAttribute(Team.class, "audit.createdBy", String.class, 6)
+			.mapAttribute(Team.class, "audit.lastModifiedOn", Date.class, 7)
+			.mapAttribute(Team.class, "audit.lastModifiedBy", String.class, 8);
 	
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TeamController.class);

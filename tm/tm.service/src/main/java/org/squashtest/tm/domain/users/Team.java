@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.users;
+package org.squashtest.tm.domain.users;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,13 +31,21 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
-import org.squashtest.csp.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.audit.Auditable;
 
 @Entity
 @Auditable
 @Table(name = "CORE_TEAM")
 @PrimaryKeyJoinColumn(name = "PARTY_ID")
+@NamedQueries(value = {
+@NamedQuery(name="Team.findAllByName", query="select t from Team t where t.name = ?"),
+@NamedQuery(name="Team.findAll", query="from Team "),
+@NamedQuery(name="Team.count", query="select count(*) from Team ")
+
+})
 public class Team extends Party{
 	
 	

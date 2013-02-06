@@ -18,13 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.denormalizedfield;
+package org.squashtest.tm.service.internal.repository;
 
+import java.util.List;
 
-public interface DenormalizedFieldHolder {
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.users.Team;
 
-	Long getDenormalizedFieldHolderId();
-
-	DenormalizedFieldHolderType getDenormalizedFieldHolderType();
-
+public interface CustomTeamDao {
+	/**
+	 * 
+	 * @param filter
+	 * @return
+	 */
+	List<Team> findSortedTeams(PagingAndSorting filter);
+	
+	
 }

@@ -18,10 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import java.util.List;
 
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
+import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+/**
+ * Data access methods for {@link DenormalizedFieldValue}.
+ * Methods are all dynamically generated: see {@link DynamicDaoFactoryBean}.
+ * @author mpagnon
+ *
+ */
 public interface DenormalizedFieldValueDao {
 
 	/**
@@ -30,5 +41,35 @@ public interface DenormalizedFieldValueDao {
 	 * @param newValue
 	 */
 	void persist(DenormalizedFieldValue newValue);
+	
+	/**
+	 * Delete all the denormalized field values related to a DenormalizedFieldHolder, identified by its id and DenormalizedFieldHolderType
+	 * 
+	 * @param denormalizedFieldHolderId
+	 * @param denormalizedFieldHolderType
+	 */
+	void deleteAllForEntity(@QueryParam("entityId")long denormalizedFieldHolderId, @QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType);
+	
+	/**
+	 * Return all denormalized field values related to the denormalizedFieldHolder matching params.
+	 * The list is ordered by position asc.
+	 * 
+	 * @param denormalizedFieldHolderId
+	 * @param denormalizedFieldHolderType
+	 * @return the list of corresponding {@link DenormalizedFieldValue} ordered by position asc.
+	 */
+	List<DenormalizedFieldValue> findDFVForEntity( @QueryParam("entityId") long denormalizedFieldHolderId,  @QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType);
+	
+	/**
+	 *  Return all denormalized field values related to the denormalizedFieldHolder matching params.
+	 * The list is ordered by position asc.
+	 * 
+	 * @param denormalizedFieldHolderId
+	 * @param denormalizedFieldHolderType
+	 * @param renderingLocation
+	 * @return
+	 */
+	List<DenormalizedFieldValue> findDFVForEntityAndRenderingLocation(@QueryParam("entityId")  long  denormalizedFieldHolderId,
+			@QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType, @QueryParam("renderingLocation") RenderingLocation renderingLocation);
 
 }

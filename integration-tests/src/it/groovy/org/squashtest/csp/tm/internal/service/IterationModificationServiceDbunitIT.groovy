@@ -31,8 +31,8 @@ import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.service.campaign.IterationModificationService
-import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
-import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldValue
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
 

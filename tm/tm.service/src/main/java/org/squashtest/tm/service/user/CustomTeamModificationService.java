@@ -18,21 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service.users;
-
-import java.util.List;
+package org.squashtest.tm.service.user;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.users.Team;
+import org.squashtest.tm.domain.users.Team;
+import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 
 /**
- * {@link Team} retrieval methods.
+ * Non dynamically generated methods for {@link Team} Modification
  * @author mpagnon
  *
  */
-@Transactional(readOnly = true)
-public interface TeamFinderService extends CustomTeamFinderService {
+@Transactional
+public interface CustomTeamModificationService extends CustomTeamFinderService{
 	
-	List<Team> findAll();
+	/**
+	 * Check if name is available and persist the new Team.
+	 * 
+	 * @param team
+	 * @throws NameAlreadyInUseException if a team of the same name as the team param already exists in database
+	 */
+	void persist(Team team);
+	
+	/**
+	 * Delete the team along with all it's acls.
+	 * Do not delete it's associated users.
+	 * 
+	 */
+	void deleteTeam(long teamId);
 
 }

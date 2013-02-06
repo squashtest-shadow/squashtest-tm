@@ -18,8 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.denormalizedfield;
+package org.squashtest.tm.domain.denormalizedfield;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,15 +39,26 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.apache.tools.ant.util.DateUtils;
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
-import org.squashtest.csp.tm.domain.customfield.CustomField;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.csp.tm.domain.customfield.InputType;
-import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
+@NamedQueries(value = {
+@NamedQuery(name = "DenormalizedFieldValue.deleteAllForEntity",  query = "delete DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType"),
+@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntity", query="from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType order by dfv.position"),
+@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntityAndRenderingLocation", query="select dfv from DenormalizedFieldValue dfv join dfv.renderingLocations rl where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType and rl = :renderingLocation order by dfv.position")
+})
 @Entity
 public class DenormalizedFieldValue {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(DenormalizedFieldValue.class);
 	@Id
 	@GeneratedValue
 	@Column(name = "DFV_ID")
@@ -109,8 +122,52 @@ public class DenormalizedFieldValue {
 		this.inputType = cuf.getInputType();
 		this.label = cuf.getLabel();
 		this.value = customFieldValue.getValue();
-		this.renderingLocations = customFieldValue.getBinding().getRenderingLocations();
 		this.position = customFieldValue.getBinding().getPosition();
+		this.renderingLocations = customFieldValue.getBinding().copyRenderingLocations();
+		this.denormalizedFieldHolderId = denormalizedFieldHolderId;
+		this.denormalizedFieldHolderType = denormalizedFieldHolderType;
+	}
+
+	/**
+	 * Create DenormalizedFieldValue with value param. All positions params are copied from the given binding.
+	 * 
+	 * @param value
+	 * @param binding
+	 * @param denormalizedFieldHolderId
+	 * @param denormalizedFieldHolderType
+	 */
+	public DenormalizedFieldValue(String value, CustomFieldBinding binding, Long denormalizedFieldHolderId,
+			DenormalizedFieldHolderType denormalizedFieldHolderType) {
+		super();
+		CustomField cuf = binding.getCustomField();
+		this.code = cuf.getCode();
+		this.inputType = cuf.getInputType();
+		this.label = cuf.getLabel();
+		this.value = value;
+		this.position = binding.getPosition();
+		this.renderingLocations = binding.copyRenderingLocations();
+		this.denormalizedFieldHolderId = denormalizedFieldHolderId;
+		this.denormalizedFieldHolderType = denormalizedFieldHolderType;
+	}
+
+	/**
+	 * Will create a DenormalizedFieldValue with the value param. The position will be valorized with the given param. No rendering location is added.
+	 *  
+	 * @param customFieldValue
+	 * @param newBindingPosition
+	 * @param denormalizedFieldHolderId
+	 * @param denormalizedFieldHolderType
+	 */
+	public DenormalizedFieldValue(CustomFieldValue customFieldValue, int newBindingPosition,
+			Long denormalizedFieldHolderId, DenormalizedFieldHolderType denormalizedFieldHolderType) {
+		super();
+		this.customFieldValue = customFieldValue;
+		CustomField cuf = customFieldValue.getCustomField();
+		this.code = cuf.getCode();
+		this.inputType = cuf.getInputType();
+		this.label = cuf.getLabel();
+		this.value = customFieldValue.getValue();
+		this.position = newBindingPosition;
 		this.denormalizedFieldHolderId = denormalizedFieldHolderId;
 		this.denormalizedFieldHolderType = denormalizedFieldHolderType;
 	}
@@ -150,9 +207,32 @@ public class DenormalizedFieldValue {
 	public String getValue() {
 		return value;
 	}
+	
+	/**
+	 * Return the value as a Date or <code>null</code> if the input type is not Date-picker and if the parsing can't be done.
+	 * @return a {@link Date} or <code>null</code> in case of ParseException and wrong input-type
+	 */
+	public Date getValueAsDate() {
+		Date toReturn = null;
+		if(this.inputType == InputType.DATE_PICKER){ 
+			try {
+				toReturn = DateUtils.parseIso8601Date(value);
+			} catch (ParseException e) {
+				LOGGER.error(e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		return toReturn;
+	}
 
 	public Set<RenderingLocation> getRenderingLocations() {
 		return renderingLocations;
 	}
+
+	public void setRenderingLocations(Set<RenderingLocation> renderingLocations) {
+		this.renderingLocations = renderingLocations;
+	}
+	
+	
 
 }

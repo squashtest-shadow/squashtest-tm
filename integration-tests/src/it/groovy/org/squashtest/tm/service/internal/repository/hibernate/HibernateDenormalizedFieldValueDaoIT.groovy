@@ -18,14 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository.hibernate;
+package org.squashtest.tm.service.internal.repository.hibernate;
 
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
-import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
-import org.squashtest.csp.tm.internal.repository.DenormalizedFieldValueDao;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
+import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDao;
 import org.unitils.dbunit.annotation.DataSet;
 
 import spock.unitils.UnitilsSupport;

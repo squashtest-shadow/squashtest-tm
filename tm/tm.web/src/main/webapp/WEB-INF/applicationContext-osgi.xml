@@ -148,7 +148,13 @@
 
   <osgi:reference id="squashtest.tm.service.AdministrationService" bean-name="squashtest.tm.service.AdministrationService"
     interface="org.squashtest.tm.service.user.AdministrationService" availability="mandatory" />
-
+    
+<osgi:reference id="squashtest.tm.service.TeamModificationService" bean-name="squashtest.tm.service.TeamModificationService" availability="mandatory">
+		<osgi:interfaces>
+			<value>org.squashtest.tm.service.user.TeamModificationService</value>
+			<value>org.squashtest.tm.service.user.TeamFinderService</value>
+		</osgi:interfaces>
+	</osgi:reference>
   <osgi:reference id="squashtest.tm.service.ProjectManagerService" bean-name="squashtest.tm.service.ProjectManagerService"
     availability="mandatory">
     <osgi:interfaces>
@@ -218,6 +224,11 @@
     <osgi:listener ref="squash.tm.report.JasperReportsViewDefinitionsRegistry" bind-method="registerViews"
       unbind-method="registerViews" />
   </osgi:list>
+  
+<osgi:reference id="squashtest.tm.service.DenormalizedFieldValueFinder"
+		bean-name="squashtest.tm.service.DenormalizedFieldValueFinder"
+		interface="org.squashtest.csp.tm.service.denormalizedfield.DenormalizedFieldValueFinder"
+		availability="mandatory" />
 
 
   <osgix:cm-properties id="squashtest.core.auth.config" persistent-id="org.squashtest.csp.core.auth.config" />  

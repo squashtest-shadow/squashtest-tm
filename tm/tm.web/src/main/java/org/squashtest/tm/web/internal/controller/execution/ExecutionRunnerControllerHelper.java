@@ -29,19 +29,18 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
+import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
-import org.squashtest.csp.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
-
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 /**
  * Helper class for Controllers which need to show classic and optimized execution runners.
  * 

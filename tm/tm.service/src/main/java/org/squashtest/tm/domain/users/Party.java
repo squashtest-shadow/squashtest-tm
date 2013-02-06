@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.domain.users;
+package org.squashtest.tm.domain.users;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,7 +38,7 @@ public class Party {
 	@Id
 	@GeneratedValue
 	@Column(name = "PARTY_ID")
-	private Long id;
+	protected Long id;
 	
 	@OneToOne
 	@JoinTable(name = "CORE_GROUP_MEMBER", joinColumns = @JoinColumn(name = "PARTY_ID"), inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))

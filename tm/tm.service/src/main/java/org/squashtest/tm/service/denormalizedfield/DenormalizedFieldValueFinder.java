@@ -18,9 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.service.denormalizedfield;
+package org.squashtest.tm.service.denormalizedfield;
+
+import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 
 /**
  * 
@@ -29,5 +34,22 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional(readOnly=true)
 public interface DenormalizedFieldValueFinder {
+
+	/**
+	 * Will return all {@link DenormalizedFieldValue} attached to the given {@link DenormalizedFieldHolder} ordered by dfv.position asc.
+	 * 
+	 * @param denormalizedFieldHolder
+	 * @return a list of {@link DenormalizedFieldValue} ordered by position asc.
+	 */
+	List<DenormalizedFieldValue> findAllForEntity(DenormalizedFieldHolder denormalizedFieldHolder);
+	
+	/**
+	 * Will return all {@link DenormalizedFieldValue} attached to the given {@link DenormalizedFieldHolder} and having the given {@link RenderingLocation}, ordered by dfv.position asc.
+	 * 
+	 * @param denormalizedFieldHolder
+	 * @param renderingLocation
+	 * @return
+	 */
+	List<DenormalizedFieldValue> findAllForEntityAndRenderingLocation(DenormalizedFieldHolder denormalizedFieldHolder, RenderingLocation renderingLocation);
 	
 }

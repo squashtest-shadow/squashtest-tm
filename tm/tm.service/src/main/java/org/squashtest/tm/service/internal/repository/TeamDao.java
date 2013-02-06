@@ -18,12 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository;
+package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.csp.tm.domain.users.Team;
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
+import org.squashtest.tm.domain.users.Team;
 
 /**
  * Data access methods for {@link Team}s. Methods are all dynamically generated: see {@link DynamicDaoFactoryBean}.

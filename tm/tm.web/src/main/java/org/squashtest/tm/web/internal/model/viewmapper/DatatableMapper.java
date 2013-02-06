@@ -18,35 +18,45 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.web.internal.model.viewmapper;
 
-package org.squashtest.tm.service.internal.repository.testautomation;
 
-import java.util.List;
 
-import javax.validation.constraints.NotNull;
-
-import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
-import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 
 /**
- * @author bsiri
- * @author Gregory Fouquet
- * 
+ * @param <KEY>
  */
-public interface AutomatedExecutionExtenderDao{
-	
-	AutomatedExecutionExtender findById(long executionId);
-	
-	void persist(AutomatedExecutionExtender extender);
+public interface DatatableMapper<KEY> {
 
 	/**
-	 * Returns the {@link AutomatedExecution}s which match the {@link AutomatedExecutionSetIdentifier}.
-	 * @param projectName 
+	 * Returns the name of the attribute indexed by KEY in the mapper.
 	 * 
+	 * @param key
 	 * @return
 	 */
-	List<AutomatedExecutionExtender> findAllBySuiteIdAndTestName(@NotNull String suiteId, @NotNull String testName, @NotNull String projectName);
+	String attrAt(KEY key);	
 	
 	
-	List<AutomatedExecutionExtender> findAllBySuiteIdAndProjectId(@NotNull String suiteId, @NotNull Long projectId);
+	/**
+	 * Returns the path of that attribute. Contrary to {@link #attrAt(Object)}, you will also know of which class it belongs :
+	 * the returned data is &lt;simpleclassname&gt;.&lt;attributename&gt;. Example : the name of a TestCase will be returned 
+	 * as "TestCase.name".
+	 * 
+	 * @param key
+	 * @return
+	 */
+	String pathAt(KEY key);
+	
+	
+	/**
+	 * will register an attribute named 'attributeName' of a class 'ownerType', of which the type is 'attributeType' and that will be refered to as 'key'.
+	 * 
+	 * @param ownerType
+	 * @param attributeName
+	 * @param attributeType
+	 * @param key
+	 * @return this
+	 */
+	public DatatableMapper<KEY> mapAttribute(Class<?> ownerType, String attributeName, Class<?> attributeType, KEY key);
+
 }

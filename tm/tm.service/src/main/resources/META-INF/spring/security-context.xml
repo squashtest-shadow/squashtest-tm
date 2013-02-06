@@ -91,12 +91,16 @@
 
     <property name="groupAuthoritiesByUsernameQuery">
       <value>
-        select g.ID, g.QUALIFIED_NAME, ga.AUTHORITY
-        from CORE_GROUP g
-        inner join CORE_GROUP_AUTHORITY ga on ga.GROUP_ID = g.ID
-        inner join CORE_GROUP_MEMBER gm on gm.GROUP_ID = g.ID
-        inner join CORE_USER u on u.ID = gm.USER_ID
-        where u.LOGIN = ?
+        select g.ID, g.QUALIFIED_NAME, ga.AUTHORITY 
+				from CORE_GROUP g 
+					inner join CORE_GROUP_AUTHORITY ga on ga.GROUP_ID = g.ID
+					inner join CORE_GROUP_MEMBER gm on gm.GROUP_ID = g.ID
+					inner join CORE_PARTY party on party.PARTY_ID = gm.PARTY_ID							
+					left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
+					left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
+					CORE_USER u 
+				where( (u.PARTY_ID = tmemb.USER_ID) or (u.PARTY_ID = party.PARTY_ID) ) and ( u.LOGIN = ?	)
+
       </value>
     </property> 
     
@@ -208,31 +212,31 @@
     <property name="selectClause">
       <value>
         select oid.IDENTITY as object_id_identity,
-        gp.PERMISSION_ORDER,
-        oid.ID as acl_id,
-        null as parent_object, /*
-        oid.parent */
-        true as entries_inheriting, /* oid.entries_inheriting*/
-        rse.ID as ace_id,
-        gp.PERMISSION_MASK as mask,
-        gp.GRANTING as granting,
-        true as audit_success, /* audit success */
-        false as audit_failure, /* audit failure */
-        true as ace_principal, /* sid is principal */
-        u.LOGIN as ace_sid,
-        true as acl_principal, /* owner is prinipal */
-        u.LOGIN as acl_sid, /* owner sid */
-        ocl.CLASSNAME as class
-        from ACL_OBJECT_IDENTITY oid
-        left join ACL_CLASS ocl on
-        ocl.ID = oid.CLASS_ID
-        left join ACL_GROUP_PERMISSION gp on gp.CLASS_ID = ocl.ID
-        left join ACL_GROUP g on g.ID =
-        gp.ACL_GROUP_ID
-        left join ACL_RESPONSIBILITY_SCOPE_ENTRY rse on rse.ACL_GROUP_ID = g.ID and
-        rse.OBJECT_IDENTITY_ID = oid.ID
-        inner join CORE_USER u on u.ID = rse.USER_ID
-        where (
+					gp.PERMISSION_ORDER,
+					oid.ID as acl_id,
+					null as parent_object, /* oid.parent */
+					true as entries_inheriting, /* oid.entries_inheriting*/
+					rse.ID as ace_id,
+					gp.PERMISSION_MASK as mask,
+					gp.GRANTING as granting,
+					true as audit_success, /* audit success */
+					false as audit_failure, /* audit failure */
+					true as ace_principal, /* sid is principal */
+					u.LOGIN as ace_sid,
+					true as acl_principal, /* owner is prinipal */
+					u.LOGIN as acl_sid, /* owner sid */
+					ocl.CLASSNAME as class
+				from ACL_OBJECT_IDENTITY oid
+					left join ACL_CLASS ocl on ocl.ID = oid.CLASS_ID
+					left join ACL_GROUP_PERMISSION gp on gp.CLASS_ID = ocl.ID
+					left join ACL_GROUP g on g.ID = gp.ACL_GROUP_ID
+					left join ACL_RESPONSIBILITY_SCOPE_ENTRY rse on rse.ACL_GROUP_ID = g.ID and rse.OBJECT_IDENTITY_ID = oid.ID
+					inner join CORE_PARTY party on party.PARTY_ID = rse.PARTY_ID							
+					left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
+					left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
+					CORE_USER u 
+				where( (u.PARTY_ID = tmemb.USER_ID) or (u.PARTY_ID = party.PARTY_ID) )and (
+			
       </value>
     </property>
     <property name="lookupObjectIdentitiesWhereClause">

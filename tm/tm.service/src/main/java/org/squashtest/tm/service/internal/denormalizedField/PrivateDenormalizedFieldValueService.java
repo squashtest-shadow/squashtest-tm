@@ -18,15 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service.denormalizedField;
+package org.squashtest.tm.service.internal.denormalizedField;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.domain.customfield.BoundEntity;
-import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolder;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.testcase.TestStep;
-import org.squashtest.csp.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
+import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
+import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
 
 
 /**
@@ -65,6 +65,6 @@ public interface PrivateDenormalizedFieldValueService extends DenormalizedFieldV
 	 * @param step
 	 * @param project
 	 */
-	void createAllDenormalizedFieldValues(TestStep sourceStep, ExecutionStep step, Project project);
+	void createAllDenormalizedFieldValues(ActionTestStep sourceStep, ExecutionStep step, Project project);
 	
 }

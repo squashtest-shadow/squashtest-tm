@@ -35,10 +35,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Persister;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.execution.ExecutionStep;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.hibernate.TestStepPersister;
 import org.squashtest.tm.service.security.annotation.InheritsAcls;
 

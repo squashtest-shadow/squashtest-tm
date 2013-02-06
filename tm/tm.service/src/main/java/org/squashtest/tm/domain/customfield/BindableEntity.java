@@ -21,7 +21,6 @@
 
 package org.squashtest.tm.domain.customfield;
 
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;

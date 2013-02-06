@@ -19,11 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.csp.tm.domain.denormalizedfield;
+package org.squashtest.tm.domain.denormalizedfield;
 
-import org.squashtest.csp.tm.domain.execution.Execution;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 
 /**
  * Enumerates the entities which can hold denormalized field values.

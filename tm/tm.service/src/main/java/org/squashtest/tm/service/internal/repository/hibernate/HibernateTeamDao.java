@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.repository.hibernate;
+package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.List;
 
@@ -26,11 +26,11 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Repository;
-import org.squashtest.csp.core.infrastructure.hibernate.PagingUtils;
-import org.squashtest.csp.core.infrastructure.hibernate.SortingUtils;
-import org.squashtest.csp.tm.domain.users.Team;
-import org.squashtest.csp.tm.internal.repository.CustomTeamDao;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.users.Team;
+import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
+import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
+import org.squashtest.tm.service.internal.repository.CustomTeamDao;
 
 
 @Repository("CustomTeamDao")

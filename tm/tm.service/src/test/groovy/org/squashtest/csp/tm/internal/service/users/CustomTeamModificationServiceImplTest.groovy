@@ -21,20 +21,19 @@
 package org.squashtest.csp.tm.internal.service.users
 
 import org.apache.poi.hssf.record.formula.functions.T
-import org.squashtest.csp.core.security.acls.model.ObjectAclService
-import org.squashtest.csp.tm.domain.users.Team
-import org.squashtest.csp.tm.internal.repository.TeamDao
-import org.squashtest.csp.tm.internal.service.customField.NameAlreadyInUseException
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.users.Team
+import org.squashtest.tm.exception.customfield.NameAlreadyInUseException
+import org.squashtest.tm.service.internal.repository.TeamDao
+import org.squashtest.tm.service.internal.user.CustomTeamModificationServiceImpl
+import org.squashtest.tm.service.security.acls.model.ObjectAclService
 
 import spock.lang.Specification
 
-
 class CustomTeamModificationServiceImplTest extends Specification {
-
-CustomTeamModificationServiceImpl service = new CustomTeamModificationServiceImpl()
-TeamDao teamDao = Mock()
-ObjectAclService aclService = Mock()
+	
+	CustomTeamModificationServiceImpl service = new CustomTeamModificationServiceImpl()
+	TeamDao teamDao = Mock()
+	ObjectAclService aclService = Mock()
 	
 	def setup(){
 		service.teamDao = teamDao
@@ -43,15 +42,21 @@ ObjectAclService aclService = Mock()
 
 	def "should persist a new team"(){
 		given : Team team = new Team()
+		team.name ="team1"
+		teamDao.findAllByName(_)>> Collections.emptyList()
+		
+		
 		when: service.persist(team)
+	
+		
 		then : 1* teamDao.persist(team)
 	}
 	
 	def "should not persist team because name already in use"(){
-		given : Team team = new Team()
-		team.setName("team1")
+		given : Team team =  new Team()
+		team.name = "team1"
 		Team team2 = Mock()
-		teamDao.findAllByName("team1")>> [team2]
+		teamDao.findAllByName(_)>> [team2]
 		
 		when : service.persist(team)
 		
@@ -61,13 +66,11 @@ ObjectAclService aclService = Mock()
 	}
 	
 	def "should delete a team and delete acls"(){
-		given : Team team = new Team()
-		use(ReflectionCategory){
-			Team.setMetaClass(field:"id", of:team, to :1L)
-		}
+		given : Team team = Mock()
+		team.getId()>> 1L
 		teamDao.findById(1L)>> team
 		when: service.deleteTeam(1L)
-		then : 
+		then :
 		1* aclService.removeAllResponsibilitiesForParty(1L)
 		1* teamDao.delete(team)
 	}

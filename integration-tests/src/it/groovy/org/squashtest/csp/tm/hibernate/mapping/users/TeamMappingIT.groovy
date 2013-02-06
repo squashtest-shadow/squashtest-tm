@@ -21,7 +21,7 @@
 package org.squashtest.csp.tm.hibernate.mapping.users
  
 import org.apache.poi.hssf.record.formula.functions.T
-import org.squashtest.csp.tm.domain.users.Team
+import org.squashtest.tm.domain.users.Team
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
 

@@ -30,9 +30,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
-import org.squashtest.tm.service.security.acls.PermissionGroup;
 
 /**
  * @author Gregory Fouquet

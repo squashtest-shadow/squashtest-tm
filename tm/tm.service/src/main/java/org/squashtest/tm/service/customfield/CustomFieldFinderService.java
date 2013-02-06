@@ -29,6 +29,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 
 /**
  * Facade service for custom fields read only access methods

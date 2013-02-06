@@ -100,16 +100,13 @@ public class TestStepController {
 		}
 		
 		
-			ActionTestStep aStep = testStepView.getActionStep();
-			values = cufValueFinder.findAllCustomFieldValues(aStep.getBoundEntityId(), aStep.getBoundEntityType());
-		}
 		else{
 			values = Collections.emptyList();
 		}
 		CustomFieldValueConfigurationBean conf =  new CustomFieldValueConfigurationBean(values);
 		model.addAttribute("configuration", conf);
 		
-		boolean hasCUF = (testStepView.getActionStep()!=null) ? cufValueFinder.hasCustomFields(testStepView.getActionStep()) : false;
+		
 		model.addAttribute("hasCUF", hasCUF);
 
 		return "edit-test-step.html";

@@ -25,6 +25,7 @@ import java.util.List;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 /**
  * 
  * Facade for Custom-Field access methods which cannot be dynamically generated. 

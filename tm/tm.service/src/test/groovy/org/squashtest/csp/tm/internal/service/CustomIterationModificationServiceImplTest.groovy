@@ -21,8 +21,8 @@
  */
 package org.squashtest.csp.tm.internal.service
 
+import spock.lang.Specification
 import org.squashtest.tm.domain.attachment.Attachment
-import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
 import org.squashtest.tm.domain.campaign.Iteration
@@ -36,15 +36,13 @@ import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.internal.campaign.CustomIterationModificationServiceImpl
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
+import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
 import org.squashtest.tm.service.internal.repository.CampaignDao
 import org.squashtest.tm.service.internal.repository.ExecutionDao
 import org.squashtest.tm.service.internal.repository.ItemTestPlanDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
-import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
-import org.squashtest.csp.tm.internal.service.denormalizedField.PrivateDenormalizedFieldValueService
-
-import spock.lang.Specification
+import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker
 
 
 class CustomIterationModificationServiceImplTest extends Specification {

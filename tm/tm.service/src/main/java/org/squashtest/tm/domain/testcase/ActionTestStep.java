@@ -137,10 +137,4 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 		return getTestCase().getProject();
 	}
 
-	
-
-		@Override
-		public Project getProject() {
-			return getTestCase().getProject();
-		}
 }

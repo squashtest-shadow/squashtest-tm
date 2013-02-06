@@ -28,7 +28,6 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
 

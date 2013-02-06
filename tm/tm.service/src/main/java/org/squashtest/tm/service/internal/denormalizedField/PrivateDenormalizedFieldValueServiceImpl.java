@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service.denormalizedField;
+package org.squashtest.tm.service.internal.denormalizedField;
 
 import java.util.Iterator;
 import java.util.List;
@@ -26,19 +26,19 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
-import org.squashtest.csp.tm.domain.customfield.BindableEntity;
-import org.squashtest.csp.tm.domain.customfield.BoundEntity;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.csp.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.csp.tm.domain.customfield.RenderingLocation;
-import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldHolder;
-import org.squashtest.csp.tm.domain.denormalizedfield.DenormalizedFieldValue;
-import org.squashtest.csp.tm.domain.execution.ExecutionStep;
-import org.squashtest.csp.tm.domain.project.Project;
-import org.squashtest.csp.tm.domain.testcase.ActionTestStep;
-import org.squashtest.csp.tm.internal.repository.CustomFieldBindingDao;
-import org.squashtest.csp.tm.internal.repository.CustomFieldValueDao;
-import org.squashtest.csp.tm.internal.repository.DenormalizedFieldValueDao;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
+import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
+import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDao;
 
 /**
  * 

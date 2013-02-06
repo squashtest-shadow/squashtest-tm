@@ -28,13 +28,12 @@ import javax.inject.Inject
 import org.apache.poi.hssf.record.formula.functions.T
 import org.springframework.transaction.annotation.Transactional
 
-import org.squashtest.csp.tm.domain.NamedReference
-import org.squashtest.csp.tm.domain.users.Team;
-import org.squashtest.csp.tm.domain.users.User;
-import org.squashtest.csp.tm.domain.users.UsersGroup;
-import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification
-import org.squashtest.csp.tm.internal.service.customField.NameAlreadyInUseException;
-import org.squashtest.csp.tm.service.users.TeamModificationService;
+import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
+import org.squashtest.tm.domain.NamedReference
+import org.squashtest.tm.domain.users.Team;
+import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.domain.users.UsersGroup;
+import org.squashtest.tm.service.user.TeamModificationService;
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet;
 

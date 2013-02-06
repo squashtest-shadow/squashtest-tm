@@ -22,7 +22,6 @@ package org.squashtest.tm.service.internal.requirement;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;

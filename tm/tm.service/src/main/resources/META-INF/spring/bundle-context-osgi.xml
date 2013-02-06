@@ -225,8 +225,8 @@
 
 	<osgi:service ref="squashtest.tm.service.TeamModificationService">
 		<osgi:interfaces>
-			<value>org.squashtest.csp.tm.service.users.TeamModificationService</value>
-			<value>org.squashtest.csp.tm.service.users.TeamFinderService</value>
+			<value>org.squashtest.tm.service.user.TeamModificationService</value>
+			<value>org.squashtest.tm.service.user.TeamFinderService</value>
 		</osgi:interfaces>
 	</osgi:service>
 

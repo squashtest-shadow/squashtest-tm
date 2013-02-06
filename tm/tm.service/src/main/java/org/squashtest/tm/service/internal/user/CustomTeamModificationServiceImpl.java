@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service.users;
+package org.squashtest.tm.service.internal.user;
 
 import java.util.List;
 
@@ -26,14 +26,14 @@ import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.squashtest.csp.core.security.acls.model.ObjectAclService;
-import org.squashtest.csp.tm.domain.users.Team;
-import org.squashtest.csp.tm.internal.repository.TeamDao;
-import org.squashtest.csp.tm.internal.service.customField.NameAlreadyInUseException;
-import org.squashtest.csp.tm.service.users.CustomTeamModificationService;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.users.Team;
+import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
+import org.squashtest.tm.service.internal.repository.TeamDao;
+import org.squashtest.tm.service.security.acls.model.ObjectAclService;
+import org.squashtest.tm.service.user.CustomTeamModificationService;
 @Service("CustomTeamModificationService")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class CustomTeamModificationServiceImpl implements CustomTeamModificationService {

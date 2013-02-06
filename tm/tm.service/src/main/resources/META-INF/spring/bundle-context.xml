@@ -214,7 +214,7 @@
   </bean>
 
   <bean id="squashtest.tm.service.TeamModificationService" class="org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean">
-    <property name="componentType" value="org.squashtest.csp.tm.service.users.TeamModificationService" />
+    <property name="componentType" value="org.squashtest.tm.service.user.TeamModificationService" />
     <property name="entityType" value="org.squashtest.csp.tm.domain.users.Team" />
   </bean>
   
