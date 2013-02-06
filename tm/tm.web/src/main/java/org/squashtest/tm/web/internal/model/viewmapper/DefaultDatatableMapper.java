@@ -52,7 +52,7 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 			return reg.getAttributeName();
 		}
 		else{
-			return "";
+			return null;
 		}
 	}
 
@@ -63,7 +63,7 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 			return reg.getAttributePath();
 		}
 		else{
-			return "";
+			return null;
 		}
 	}
 

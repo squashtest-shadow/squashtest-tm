@@ -134,8 +134,13 @@ define(["jquery", "./cuf-values-utils", "./jquery-cuf-values"],function($, utils
 			var defMap = definitionMap;
 			var isEditable = editable;
 			
-			//wrap the tds content with a span
-			table.find('td.custom-field-value').wrapInner('<span/>');
+			//A cell holds a custom field value if it has the class .custom-field-value, and if the data model is not empty for that one.
+			var cufCells = table.find('td.custom-field-value').filter(function(){
+				return (table.fnGetData(this) != null);
+			});
+			
+			//now wrap the content with a span
+			cufCells.wrapInner('<span/>');
 			
 			for (var code in defMap){
 				
