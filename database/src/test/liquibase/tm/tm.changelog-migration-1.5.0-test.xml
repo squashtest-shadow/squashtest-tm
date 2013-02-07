@@ -148,8 +148,7 @@
 			<tableExists tableName="CORE_TEAM" />
 			<columnExists tableName="CORE_TEAM" columnName="PARTY_ID" />
 			<primaryKeyExists primaryKeyName="pk_team" tableName="CORE_TEAM" />
-			<foreignKeyConstraintExists
-				foreignKeyName="fk_team_party" />
+  <foreignKeyConstraintExists foreignKeyName="fk_team_party" foreignKeyTableName="CORE_TEAM" />
 			<columnExists tableName="CORE_TEAM" columnName="NAME" />
 			<columnExists tableName="CORE_TEAM" columnName="DESCRIPTION" />
 			<columnExists tableName="CORE_TEAM" columnName="CREATED_BY" />
