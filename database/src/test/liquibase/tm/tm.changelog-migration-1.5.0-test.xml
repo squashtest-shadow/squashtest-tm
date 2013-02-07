@@ -82,8 +82,7 @@
 		<sql>
 			create table `TEMP_CGRPM_INFOS` (
 			`GROUP_ID` BIGINT(20),
-			`USER_ID`
-			BIGINT(20),
+			`USER_ID` BIGINT(20)
 			);
 		</sql>
 		<comment>We save data of core_group_member</comment>
