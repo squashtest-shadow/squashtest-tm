@@ -223,11 +223,11 @@
 	<changeSet id="tm-1.5.0.00-feat-1864.02" author="mpagnon">
 		<comment>change name of USER_ID into PARTY_ID in CORE_USER, ACL_RESPONSIBILITY_SCOPE_ENTRY and CORE_GROUP_MEMBER</comment>
 		<renameColumn tableName="CORE_USER" oldColumnName="ID"
-			newColumnName="PARTY_ID" />
+			newColumnName="PARTY_ID" columnDataType="BIGINT" />
 		<renameColumn tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY"
-			oldColumnName="USER_ID" newColumnName="PARTY_ID" />
+			oldColumnName="USER_ID" newColumnName="PARTY_ID" columnDataType="BIGINT" />
 		<renameColumn tableName="CORE_GROUP_MEMBER"
-			oldColumnName="USER_ID" newColumnName="PARTY_ID" />
+			oldColumnName="USER_ID" newColumnName="PARTY_ID" columnDataType="BIGINT" />
 	</changeSet>
 
 
@@ -294,6 +294,5 @@
 			<column name="USER_ID" />
 		</createIndex>
 	</changeSet>
-        
 </databaseChangeLog>
  
