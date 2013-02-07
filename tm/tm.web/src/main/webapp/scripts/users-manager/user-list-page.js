@@ -110,7 +110,7 @@ define(["jquery", "jquery.squash.datatables"], function($){
 	function readForm(){
 		return {
 			login : $("#add-user-login").val(),
-			firstName : $("#add-user-firstname").val(),
+			firstName : $("#add-user-firstName").val(),
 			lastName : $("#add-user-lastName").val(),
 			email : $("#add-user-email").val(),
 			groupId : $("#add-user-group").val(),

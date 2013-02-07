@@ -225,9 +225,8 @@
  * for cells according to the parameters given and make their text a link to the
  * wanted url. Configuration as follow: list : a list of object to represent
  * each td of a row to make as url Object params as follow : 
- * -url : the url to wrap the text with (place holder will be set to row object id) -target : the
- * td rank in the row (starts with 1)
- *  -isOpenInTab : boolean to set the target
+ * -url : the url to wrap the text with (place holder will be set to row object id) 
+ * -target : the td rank in the row (starts with 1)
  * -targetClass : alternate to the above, uses css class to find its target
  *-isOpenInTab : boolean to set the target of the url to "_blank" or not.
  

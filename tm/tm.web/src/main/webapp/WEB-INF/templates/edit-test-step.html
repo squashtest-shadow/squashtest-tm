@@ -130,7 +130,7 @@
 
         <div id="sub-page-buttons" class="sub-page-buttons">
 
-          <input id="back" type="button" th:value="#{ label.Back }" value="Back" />
+          <input id="close" type="button" th:value="#{ label.Close }" value="Close" />
 
         </div>
 
@@ -156,9 +156,9 @@
           <div class="fragment-body unstyled">
             <div id="test-step-toolbar" class="toolbar-class ui-corner-all ">
               <div class="toolbar-button-panel">
-               <input th:if="${testStepView.actionStep} or ${hasCUF}" type="button" th:value="#{ label.save }" value="Save" id="save-test-step-button" class="button" />&nbsp;&nbsp;&nbsp;
-                <a th:text="#{ label.previous }"  href="#" id="previous-test-step-button"  >Previous</a>
-                <a th:text="#{ label.next }" href="#" id="next-test-step-button">Next</a>
+               <input th:if="(${testStepView.actionStep} or ${hasCUF}) and  ${writable}" type="button" th:value="#{ label.save }" value="Save" id="save-test-step-button" class="button" />&nbsp;&nbsp;&nbsp;
+                <a th:text="${writable} ? #{ label.previous.saveWarning } : #{ label.previous } "  href="#" id="previous-test-step-button" >Previous</a>
+                <a th:text="${writable} ? #{ label.next.saveWarning }  : #{ label.next }" href="#" id="next-test-step-button">Next</a>
               </div>
             </div>
             <br /> <br />

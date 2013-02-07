@@ -76,6 +76,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			dropUrl :  		tcUrl  + "/steps/move",
 			attachments : 	ctxUrl + "/attach-list/{attach-list-id}/attachments/manager?workspace=test-case",
 			singleDelete :	tcUrl  + "/steps/{step-id}",
+			steps :			ctxUrl  + "test-steps/",
 			multiDelete : 	tcUrl  + "/steps",
 			callTC : 		ctxUrl + "/test-cases/{called-tc-id}/info",
 			pasteStep : 	tcUrl  + "/steps",
@@ -193,7 +194,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[5], 'mDataProp':'nb-attachments'},
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[6], 'mDataProp':'step-type'},
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[7], 'mDataProp':'called-tc-id'},
-			  {'bVisible':true,  'bSortable':false, 'aTargets':[8], 'mDataProp':'empty-browse-holder', 'sClass':'centered', 'sWidth':'2em'},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[8], 'mDataProp':'empty-browse-holder', 'sClass':'centered browse-button', 'sWidth':'2em'},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[9], 'mDataProp':'empty-delete-holder', 'sClass':'centered '+deleteClass, 'sWidth':'2em'}
 			]
 			
@@ -226,9 +227,23 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 				   {
 					   targetClass : 'called-tc-cell',
 					   url : urls.callTC
-				   }
+				   },
 				]
-			}
+			},
+			
+			buttons : [{ tooltip : "browse",
+				cssClass : "",
+				tdSelector : "td.browse-button",
+				image : "/squash/images/pencil.png",
+				onClick : function(table, cell){
+					var row = cell.parentNode.parentNode; 
+					var stepId = table.getODataId(row);
+					var url = urls.steps + stepId;
+					window.open(url, '_blank');
+					window.focus();
+				}
+			}]
+			
 		};
 		
 		if (permissions.isWritable){

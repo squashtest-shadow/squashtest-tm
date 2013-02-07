@@ -20,16 +20,16 @@
  */
 require([ "common" ], function(common) {
 	require([ "jquery", "test-step-editor/TestStepModificationView",
-			"app/ws/squashtm.workspace","domReady", "attachment-bloc.frag",  "test-step-editor/TestStepInfoModel",], function($,
+			"app/ws/squashtm.workspace","domReady", "attachment-bloc.frag"], function($,
 			TestStepModificationView, WS, domReady) {
-		var goBack = function() {
-			window.history.back();
+		var closeWindow = function() {
+			window.close();
 		};
 
 		domReady(function() {
 			WS.init("");
 			 new TestStepModificationView();
-			$("#back").button().on("click", goBack);
+			$("#close").button().on("click", closeWindow);
 			
 		});
 
