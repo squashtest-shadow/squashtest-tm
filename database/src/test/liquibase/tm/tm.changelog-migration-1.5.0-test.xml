@@ -148,7 +148,6 @@
 			<tableExists tableName="CORE_TEAM" />
 			<columnExists tableName="CORE_TEAM" columnName="PARTY_ID" />
 			<primaryKeyExists primaryKeyName="pk_team" tableName="CORE_TEAM" />
-  <foreignKeyConstraintExists foreignKeyName="fk_team_party" foreignKeyTableName="CORE_TEAM" />
 			<columnExists tableName="CORE_TEAM" columnName="NAME" />
 			<columnExists tableName="CORE_TEAM" columnName="DESCRIPTION" />
 			<columnExists tableName="CORE_TEAM" columnName="CREATED_BY" />
@@ -162,11 +161,7 @@
 		<preConditions>
 			<tableExists tableName="CORE_TEAM_MEMBER" />
 			<columnExists tableName="CORE_TEAM_MEMBER" columnName="USER_ID" />
-			<foreignKeyConstraintExists
-				foreignKeyName="fk_team_member_team" />
 			<columnExists tableName="CORE_TEAM_MEMBER" columnName="TEAM_ID" />
-			<foreignKeyConstraintExists
-				foreignKeyName="fk_team_member_user" />
 		</preConditions>
 	</changeSet>
 	
@@ -174,8 +169,6 @@
 		<preConditions>
 			<columnExists tableName="CORE_USER" columnName="PARTY_ID" />
 			<primaryKeyExists primaryKeyName="pk_core_user" tableName="CORE_USER"/>
-			<foreignKeyConstraintExists
-				foreignKeyName="fk_core_user_party" />
 		</preConditions>
 	</changeSet>
 	
@@ -183,16 +176,12 @@
 		<preConditions>
 			<columnExists tableName="ACL_RESPONSIBILITY_SCOPE_ENTRY"
 				columnName="PARTY_ID" />
-			<foreignKeyConstraintExists
-				foreignKeyName="fk_arse_party" />
 		</preConditions>
 	</changeSet>
 	
 	<changeSet id="tm-1.5.0.feat-1864-test-06" author="mpagnon">
 		<preConditions>
 			<columnExists tableName="CORE_GROUP_MEMBER" columnName="PARTY_ID" />
-			<foreignKeyConstraintExists
-				foreignKeyName="fk_group_member_party" />
 		</preConditions>
 	</changeSet>
 	
@@ -206,15 +195,6 @@
 		</preConditions>
 	</changeSet>
 	
-	<changeSet id="tm-1.5.0.feat-1864-test-08" author="mpagnon">
-		<preConditions>
-			<foreignKeyConstraintExists
-				foreignKeyName="fk_camp_tp_user" />
-			<foreignKeyConstraintExists
-				foreignKeyName="fk_itertestplan_user" />
-		</preConditions>
-	</changeSet>
-
 	<changeSet id="tm-1.5.0.feat-1864-test-09" author="mpagnon">
 		<preConditions>
 			<sqlCheck expectedResult="0">
