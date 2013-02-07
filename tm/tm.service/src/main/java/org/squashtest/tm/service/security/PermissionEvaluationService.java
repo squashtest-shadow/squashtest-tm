@@ -66,5 +66,10 @@ public interface PermissionEvaluationService {
 	 */
 	boolean hasMoreThanRead(Object object);
 	
-	
+	/**
+	 * return true if the user has the given role.
+	 * @param role
+	 * @return
+	 */
+	boolean hasRole(String role);
 }

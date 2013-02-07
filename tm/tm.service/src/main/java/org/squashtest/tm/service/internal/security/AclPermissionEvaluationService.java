@@ -83,6 +83,11 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	public boolean canRead(Object object) {
 		return hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", object);
 	}
+	
+	@Override
+	public boolean hasRole(String role) {
+		return userContextService.hasRole(role);
+	}
 
 	@Override
 	public boolean hasMoreThanRead(Object object) {

@@ -93,7 +93,7 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 					bindLinks : {
 						list : [{
 							target: 2, 
-							url: squashtm.app.contextRoot + "/administration/teams/{entity-id}",
+							url: squashtm.app.contextRoot + "/teams/{entity-id}",
 							isOpenInTab : false}]
 					}, 
 					deleteButtons: {url : squashtm.app.contextRoot+"/teams/{entity-id}",

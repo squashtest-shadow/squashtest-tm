@@ -74,4 +74,14 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		return new PagingBackedPagedCollectionHolder<List<Team>>(filter, count, teams);
 	}
 
+	@Override
+	public void changeName(long teamId, String name) {
+		if(!teamDao.findAllByName(name).isEmpty()){			
+				throw new NameAlreadyInUseException("Team", name);
+		}
+		Team team = teamDao.findById(teamId);
+		team.setName(name);
+		
+	}
+
 }

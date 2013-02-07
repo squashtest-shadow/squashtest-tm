@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2012 Henix, henix.fr
  *
@@ -18,27 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.user;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.users.Team;
-
-/**
- * Dynamically generated methods for {@link Team} modification.
- * @author mpagnon
- *
- */
-@Transactional
-@PreAuthorize("hasRole('ROLE_ADMIN')")
-public interface TeamModificationService extends CustomTeamModificationService, TeamFinderService {
-
-	/**
-	 * Simply updates the description of the team of the given id
-	 * 
-	 * @param teamId
-	 * @param description
-	 */
-	void changeDescription(long teamId, String description);
-	
-}
+require([ "common" ], function(common) {
+	require([ "jquery", "team-editor/TeamModificationView","app/ws/squashtm.workspace", "domReady" ], function($,TeamModificationView, WS, domReady) {
+		var goBack = function() {
+			document.location.href = squashtm.app.contextRoot + "/administration/users/list";
+		};
+		
+		domReady(function() {
+			WS.init("");
+			var view = new TeamModificationView();
+			$("#back").button().on("click", goBack);
+			view.on("team.delete", goBack);
+		});
+		
+	});
+});

@@ -34,17 +34,22 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.users.Team;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -52,6 +57,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSo
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 /**
@@ -66,6 +72,8 @@ public class TeamController {
 	
 	@Inject
 	private InternationalizationHelper messageSource;
+	
+	@Inject PermissionEvaluationService permissionEvaluationService;
 	
 	private static final String TEAM_ID_ULR = "/{teamId}";
 
@@ -150,4 +158,34 @@ public class TeamController {
 	public void deleteTeam(@PathVariable long teamId) {
 		service.deleteTeam(teamId);
 	}
+	
+	/**
+	 * Will return a view for the team of the given id
+	 * 
+	 * @param teamId
+	 */
+	@RequestMapping(value = TEAM_ID_ULR, method = RequestMethod.GET)
+	public String showTeamModificationPage(@PathVariable Long teamId, Model model) {
+		if(!permissionEvaluationService.hasRole("ROLE_ADMIN")){
+			throw new AccessDeniedException("Access is denied");
+		}
+		Team team = service.findById(teamId);
+		model.addAttribute("team", team);
+		return "team-modification.html";
+	}
+	
+	@RequestMapping(value = TEAM_ID_ULR , method = RequestMethod.POST, params = "id=team-description")
+	@ResponseBody 
+	public String changeDescription(@PathVariable Long teamId , @RequestParam String value ){
+		service.changeDescription(teamId, value);
+		return value;
+	}
+	
+	@RequestMapping(value = TEAM_ID_ULR+"/name" , method = RequestMethod.POST)
+	@ResponseBody 
+	public RenameModel changeName(@PathVariable Long teamId , @RequestParam String value ){
+		service.changeName(teamId, value);
+		return new RenameModel(value);
+	}
+
 }
