@@ -67,8 +67,7 @@
 		<sql>
 			create table `TEMP_ARSE_INFOS` (
 			`ID` BIGINT(20),
-			`USER_ID`
-			BIGINT(20),
+			`USER_ID` BIGINT(20)
 			);
 		</sql>
 		<comment>We save data of arse</comment>
