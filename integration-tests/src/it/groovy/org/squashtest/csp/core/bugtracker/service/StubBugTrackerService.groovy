@@ -21,14 +21,9 @@
 package org.squashtest.csp.core.bugtracker.service
 
 
-import java.net.URL;
-import java.util.List;
-import java.util.Set
-
 import org.squashtest.csp.core.bugtracker.domain.BTIssue
 import org.squashtest.csp.core.bugtracker.domain.BTProject
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.domain.Permission
+import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.csp.core.bugtracker.domain.Priority
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor
 

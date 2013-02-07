@@ -66,21 +66,21 @@ class ExecutionModificationServiceDbunitIT extends DbunitServiceSpecification {
 		when:
 		//you change the status of a step in the first execution, the item test plan is not updated
 		//the getLastUpdatedBy and on are null
-		procService.setExecutionStepStatus(exec1Step1.id, ExecutionStatus.SUCCESS)
+		procService.changeExecutionStepStatus(exec1Step1.id, ExecutionStatus.SUCCESS)
 		IterationTestPlanItem tp = exec1.getTestPlan()
 		def lastExecutedBy1 = tp.lastExecutedBy
 		def lastExecutedOn1 = tp.lastExecutedOn
 
 		//you change the status of a step in the last execution, the item test plan is updated
 		//the getLastUpdatedBy and on are not null
-		procService.setExecutionStepStatus(exec3Step1.id, ExecutionStatus.SUCCESS)
+		procService.changeExecutionStepStatus(exec3Step1.id, ExecutionStatus.SUCCESS)
 		tp = exec3.getTestPlan()
 		def lastExecutedBy2 = tp.lastExecutedBy
 		def lastExecutedOn2 = tp.lastExecutedOn
 
 		//you set the status of the step to READY for the last execution
 		//=> the getLastUpdatedBy and on are null
-		procService.setExecutionStepStatus(exec3Step1.id, ExecutionStatus.READY)
+		procService.changeExecutionStepStatus(exec3Step1.id, ExecutionStatus.READY)
 		tp = exec3.getTestPlan()
 		def lastExecutedBy3 = tp.lastExecutedBy
 		def lastExecutedOn3 = tp.lastExecutedOn

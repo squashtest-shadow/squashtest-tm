@@ -206,7 +206,7 @@ public class ExecutionProcessingController {
 	@ResponseBody
 	public void updateExecutionMode(@RequestParam String executionStatus, @PathVariable("stepId") long stepId) {
 		ExecutionStatus status = ExecutionStatus.valueOf(executionStatus);
-		executionProcService.setExecutionStepStatus(stepId, status);
+		executionProcService.changeExecutionStepStatus(stepId, status);
 	}
 
 }

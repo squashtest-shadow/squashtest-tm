@@ -31,6 +31,12 @@ public interface ObjectAclService {
 	
 	List<PermissionGroup> findAllPermissionGroupsByNamespace(String namespace);
 
+	/**
+	 * Returns all permission groups for a namespace. A namespace is the start of a group's qualified name.
+	 * 
+	 * @param namespace
+	 * @return
+	 */
 	void removeAllResponsibilities(String userLogin, ObjectIdentity entityRef);
 
 	/**

@@ -18,39 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security;
+package org.squashtest.tm.service.security
 
-import org.squashtest.it.infrastructure.Stub;
+import java.io.Serializable
 
-@Stub
-public class StubPermissionEvaluationService implements PermissionEvaluationService {
+import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
-	public StubPermissionEvaluationService() {
+class StubPermissionEvaluator implements PermissionEvaluator {
+
+	public StubPermissionEvaluator() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public boolean hasRoleOrPermissionOnObject(String role, String permission, Object object) {
-		// TODO Auto-generated method stub
+	public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
 		return true;
 	}
 
 	@Override
-	public boolean canRead(Object object) {
-		return true;
-
-	}
-
-	@Override
-	public boolean hasMoreThanRead(Object object) {
-		// TODO Auto-generated method stub
+	public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType,
+			Object permission) {
 		return true;
 	}
-
-	@Override
-	public boolean hasRoleOrPermissionOnObject(String role, String permission, Long entityId, String entityClassName) {
-		return true;
-	}
-
 }

@@ -31,7 +31,9 @@ import org.springframework.test.context.transaction.TransactionConfiguration
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.security.StubAuthentication
 import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService
+import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService;
 import org.squashtest.tm.service.security.acls.jdbc.UnknownAclClassException
+import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
 
@@ -43,7 +45,8 @@ import spock.unitils.UnitilsSupport
 @UnitilsSupport
 @Transactional
 class JdbcManageableAclServiceIT extends Specification {
-	@Inject JdbcManageableAclService service
+	@Inject ManageableAclService manageableService
+	@Inject ObjectAclService service
 	@Inject DataSource dataSource
 
 	def setup() {
@@ -57,7 +60,7 @@ class JdbcManageableAclServiceIT extends Specification {
 		ObjectIdentity oid = new ObjectIdentityImpl("foo.Bar", 10L)
 
 		when:
-		service.createObjectIdentity oid
+		manageableService.createObjectIdentity oid
 
 		then:
 		true // expected dataset constraint
@@ -70,7 +73,7 @@ class JdbcManageableAclServiceIT extends Specification {
 		ObjectIdentity oid = new ObjectIdentityImpl("foo.Bar", 10L)
 
 		when:
-		service.removeObjectIdentity(oid)
+		manageableService.removeObjectIdentity(oid)
 
 		then:
 		true // expected dataset constraint
@@ -82,7 +85,7 @@ class JdbcManageableAclServiceIT extends Specification {
 		ObjectIdentity oid = new ObjectIdentityImpl("foo.Unknown", 10L)
 
 		when:
-		service.createObjectIdentity oid
+		manageableService.createObjectIdentity oid
 
 		then:
 		thrown(UnknownAclClassException)
@@ -106,86 +109,60 @@ class JdbcManageableAclServiceIT extends Specification {
 		then:
 		groups == []
 	}
-//
-//	@DataSet(value = "JdbcManageableAclServiceIT.should remove all permissions on object for user.xml")
-//	@ExpectedDataSet(value = "JdbcManageableAclServiceIT.should remove all permissions on object for user.expected.xml")
-//	def "should remove all permissions on object for user"() {
-//		given:
-//		ObjectIdentity oid = new ObjectIdentityImpl("batmobile", 1000L)
-//
-//		when:
-//		service.removeAllResponsibilities("robin", oid)
-//
-//		then:
-//		jdbcTemplate.queryForLong("select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY where PARTY_ID = 20 and OBJECt_IDENTITY_ID = 1000") == 0
-//	}
 
-//	@DataSet("JdbcManageableAclServiceIT.should add permissions on object for user.xml")
-//	@ExpectedDataSet("JdbcManageableAclServiceIT.should add permissions on object for user.expected.xml")
-//	def "should add permissions on object for user" () {
-//		given:
-//		ObjectIdentity oid = new ObjectIdentityImpl("batmobile", 1000L)
-//		
-//		when:
-//		service.addNewResponsibility ("batman", oid, "driver")
-//		
-//		then:
-//		jdbcTemplate.queryForInt("select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY r inner join ACL_OBJECT_IDENTITY o on o.ID = r.OBJECT_IDENTITY_ID inner join ACL_CLASS c on c.ID = o.CLASS_ID inner join CORE_USER u on u.PARTY_ID = r.PARTY_ID where c.CLASSNAME = 'batmobile' and o.IDENTITY = 1000 and u.LOGIN = 'batman'") == 1
-//	}
-	
-	@DataSet("JdbcManageableAclServiceIT.should find object Identity for project.xml")
-	def "should find object Identity for project"(){
-		given:
-			ObjectIdentity oid = new ObjectIdentityImpl("batmobile", 1000L)
-		when:
-		def res = service.retrieveObjectIdentityPrimaryKey(oid)
-		
-		then:
-		res == 900
-	}
-	
+	//	@DataSet("JdbcManageableAclServiceIT.should find object Identity for project.xml")
+	//	def "should find object Identity for project"(){
+	//		given:
+	//			ObjectIdentity oid = new ObjectIdentityImpl("batmobile", 1000L)
+	//		when:
+	//		def res = manageableService.retrieveObjectIdentityPrimaryKey(oid)
+	//
+	//		then:
+	//		res == 900
+	//	}
+
 	@DataSet("JdbcManageableAclServiceIT.should retrieve acl group user.xml")
-	def "should retrieve acl group for user"(){
+	def "should retrieve acl group for user"() {
 		when:
 		def res = service.retrieveClassAclGroupFromUserLogin("batman", "batmobile")
-		
-	
+
+
 		then:
 		res != null
 		!res.isEmpty()
 		res[0][0] == 101
 		res[1][0] == 102
 	}
-	
+
 	@DataSet("JdbcManageableAclServiceIT.should retrieve acl group user.xml")
-	def "sould fiind object without permission"(){
+	def "sould fiind object without permission"() {
 		when:
 		def res = service.findObjectWithoutPermissionByLogin ("batman", "batmobile")
 		System.out.println(res.toString());
-		
+
 		then:
 		res != null
 		!res.isEmpty()
 		res[0] == 103
 
 	}
-	
+
 	@DataSet("JdbcManageableAclServiceIT.should find user with write permission on a specific object.xml")
-	def "should find user with write permission on a specific object"(){
+	def "should find user with write permission on a specific object"() {
 		given:
 		ObjectIdentity oid = new ObjectIdentityImpl("batmobile", 1000L)
 		List<ObjectIdentity> entityRefs = new ArrayList<ObjectIdentity>();
 		entityRefs.add(oid);
-		
+
 		when:
 		def res = service.findUsersWithWritePermission(entityRefs)
 
-		
+
 		then:
 		res != null
 		!res.isEmpty()
 		res.size() == 1
 		res[0] == "batman"
 	}
-	
+
 }

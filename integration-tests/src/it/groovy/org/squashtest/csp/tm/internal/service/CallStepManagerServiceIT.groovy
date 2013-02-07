@@ -26,6 +26,7 @@ import javax.inject.Inject
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.exception.CyclicStepCallException
+import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.testcase.CallStepManagerService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.unitils.dbunit.annotation.DataSet
@@ -38,10 +39,12 @@ import spock.unitils.UnitilsSupport
 class CallStepManagerServiceIT extends DbunitServiceSpecification {
 
 	@Inject
-	private CallStepManagerService callStepService
+	CallStepManagerService callStepService
 	
 	@Inject
-	private TestCaseModificationService testCaseService;
+	TestCaseModificationService testCaseService;
+	
+	@Inject TestCaseCallTreeFinder callTreeFinder
 	
 	
 	def setupSpec(){
@@ -49,21 +52,6 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 			delegate.containsAll(arg) && arg.containsAll(delegate)
 		}
 	}
-	
-	
-	@DataSet("CallStepManagerServiceIT.dataset.xml")
-	def "should return the test case call tree of a test case"(){
-
-		given :
-			Set<Long> expectedTree = [11l, 21l, 22l, 31l, 32l]
-		
-		when :
-			Set<Long> callTree = callStepService.getTestCaseCallTree(1l);
-		
-		then :				
-			callTree.containsAll(expectedTree)	
-	}
-	
 
 	@DataSet("CallStepManagerServiceIT.dataset.xml")
 	def "should deny step call creation because the callse and calling test cases are the same"(){
@@ -99,11 +87,11 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 			
 		when :
 			callStepService.addCallTestStep(10l, 1l)
-			def callTree = callStepService.getTestCaseCallTree(10l)
+			def callTree = callTreeFinder.getTestCaseCallTree(10l)
 			
 		
 		then :
-			callTree.matches (expectedTree)		
+			callTree.matches expectedTree		
 		
 	}
 	

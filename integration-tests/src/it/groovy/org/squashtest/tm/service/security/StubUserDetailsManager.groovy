@@ -18,38 +18,42 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security;
+package org.squashtest.tm.service.security
 
-import org.squashtest.it.infrastructure.Stub;
+import org.springframework.dao.DataAccessException
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.provisioning.UserDetailsManager;
 
-@Stub
-public class StubPermissionEvaluationService implements PermissionEvaluationService {
+class StubUserDetailsManager implements UserDetailsManager {
 
-	public StubPermissionEvaluationService() {
-		super();
-		// TODO Auto-generated constructor stub
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+		return {} as UserDetails;
 	}
 
 	@Override
-	public boolean hasRoleOrPermissionOnObject(String role, String permission, Object object) {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
-	public boolean canRead(Object object) {
-		return true;
+	public void createUser(UserDetails user) {
 
 	}
 
 	@Override
-	public boolean hasMoreThanRead(Object object) {
-		// TODO Auto-generated method stub
-		return true;
+	public void updateUser(UserDetails user) {
+
 	}
 
 	@Override
-	public boolean hasRoleOrPermissionOnObject(String role, String permission, Long entityId, String entityClassName) {
+	public void deleteUser(String username) {
+
+	}
+
+	@Override
+	public void changePassword(String oldPassword, String newPassword) {
+
+	}
+
+	@Override
+	public boolean userExists(String username) {
 		return true;
 	}
 

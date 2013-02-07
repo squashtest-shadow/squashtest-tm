@@ -18,39 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security;
+package org.squashtest.tm.service.security
 
-import org.squashtest.it.infrastructure.Stub;
+import java.util.List
 
-@Stub
-public class StubPermissionEvaluationService implements PermissionEvaluationService {
+import org.springframework.security.acls.domain.PermissionFactory;
+import org.springframework.security.acls.model.Permission;
 
-	public StubPermissionEvaluationService() {
-		super();
-		// TODO Auto-generated constructor stub
+class StubPermissionFactory implements PermissionFactory {
+
+	@Override
+	public Permission buildFromMask(int mask) {
+		return {} as Permission;
 	}
 
 	@Override
-	public boolean hasRoleOrPermissionOnObject(String role, String permission, Object object) {
-		// TODO Auto-generated method stub
-		return true;
+	public Permission buildFromName(String name) {
+		return {} as Permission;
 	}
 
 	@Override
-	public boolean canRead(Object object) {
-		return true;
-
-	}
-
-	@Override
-	public boolean hasMoreThanRead(Object object) {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
-	public boolean hasRoleOrPermissionOnObject(String role, String permission, Long entityId, String entityClassName) {
-		return true;
+	public List<Permission> buildFromNames(List<String> names) {
+		return {} as Permission;
 	}
 
 }

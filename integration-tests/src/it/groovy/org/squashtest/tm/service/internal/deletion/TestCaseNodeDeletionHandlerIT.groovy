@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
 
@@ -40,7 +41,7 @@ import spock.unitils.UnitilsSupport
 public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 
 	@Inject
-	private TestCaseNodeDeletionHandlerImpl deletionHandler;
+	private TestCaseNodeDeletionHandler deletionHandler;
 	
 	@Inject
 	private TestCaseLibraryNavigationService tcNavService;

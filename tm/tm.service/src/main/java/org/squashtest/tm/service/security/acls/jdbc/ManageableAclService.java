@@ -18,39 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security;
+package org.squashtest.tm.service.security.acls.jdbc;
 
-import org.squashtest.it.infrastructure.Stub;
+import javax.validation.constraints.NotNull;
 
-@Stub
-public class StubPermissionEvaluationService implements PermissionEvaluationService {
+import org.springframework.security.acls.model.AlreadyExistsException;
+import org.springframework.security.acls.model.ObjectIdentity;
 
-	public StubPermissionEvaluationService() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+public interface ManageableAclService {
 
-	@Override
-	public boolean hasRoleOrPermissionOnObject(String role, String permission, Object object) {
-		// TODO Auto-generated method stub
-		return true;
-	}
+	/**
+	 * Creates (persists) a not noll, not existing object identity
+	 * 
+	 * @param objectIdentity
+	 * @throws AlreadyExistsException
+	 */
+	void createObjectIdentity(@NotNull ObjectIdentity objectIdentity) throws AlreadyExistsException;
 
-	@Override
-	public boolean canRead(Object object) {
-		return true;
-
-	}
-
-	@Override
-	public boolean hasMoreThanRead(Object object) {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	@Override
-	public boolean hasRoleOrPermissionOnObject(String role, String permission, Long entityId, String entityClassName) {
-		return true;
-	}
+	/**
+	 * @param objectIdentity
+	 */
+	void removeObjectIdentity(ObjectIdentity objectIdentity);
 
 }

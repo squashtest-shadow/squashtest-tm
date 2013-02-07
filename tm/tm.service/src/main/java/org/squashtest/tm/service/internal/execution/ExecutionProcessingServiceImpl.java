@@ -95,7 +95,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	}
 
 	@Override
-	public void setExecutionStepStatus(Long executionStepId, ExecutionStatus status) {
+	public void changeExecutionStepStatus(Long executionStepId, ExecutionStatus status) {
 		ExecutionStep step = executionStepDao.findById(executionStepId);
 		ExecutionStatus formerStatus = step.getExecutionStatus();
 

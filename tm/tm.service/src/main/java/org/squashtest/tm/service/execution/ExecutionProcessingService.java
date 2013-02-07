@@ -78,7 +78,7 @@ public interface ExecutionProcessingService {
 	 * @param status
 	 *            the new status
 	 */
-	void setExecutionStepStatus(Long executionStepId, ExecutionStatus status);
+	void changeExecutionStepStatus(Long executionStepId, ExecutionStatus status);
 
 	void setExecutionStatus(Long executionId, ExecutionStatus status);
 

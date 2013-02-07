@@ -79,7 +79,7 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService;
  * @author bsiri
  */
 @Transactional
-public class JdbcManageableAclService extends JdbcAclService implements ObjectAclService {
+public class JdbcManageableAclService extends JdbcAclService implements ManageableAclService, ObjectAclService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JdbcManageableAclService.class);
 
@@ -175,12 +175,10 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		super(dataSource, lookupStrategy);
 	}
 
-	/**
-	 * Creates (persists) a not noll, not existing object identity
-	 * 
-	 * @param objectIdentity
-	 * @throws AlreadyExistsException
+	/* (non-Javadoc)
+	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#createObjectIdentity(org.springframework.security.acls.model.ObjectIdentity)
 	 */
+	@Override
 	public void createObjectIdentity(@NotNull ObjectIdentity objectIdentity) throws AlreadyExistsException {
 		LOGGER.info("Attempting to create the Object Identity " + objectIdentity);
 
@@ -236,11 +234,8 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		}
 	}
 
-	/**
-	 * Returns all permission groups for a namespace. A namespace is the start of a group's qualified name.
-	 * 
-	 * @param namespace
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#findAllPermissionGroupsByNamespace(java.lang.String)
 	 */
 	@Override
 	public List<PermissionGroup> findAllPermissionGroupsByNamespace(@NotNull String namespace) {
@@ -263,6 +258,9 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		evictFromCache(entityRef);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#addNewResponsibility(java.lang.String, org.springframework.security.acls.model.ObjectIdentity, java.lang.String)
+	 */
 	@Override
 	public void addNewResponsibility(@NotNull String userLogin, @NotNull ObjectIdentity entityRef,
 			@NotNull String qualifiedName) {
@@ -277,12 +275,18 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		evictFromCache(entityRef);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#retrieveClassAclGroupFromUserLogin(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public List<Object[]> retrieveClassAclGroupFromUserLogin(@NotNull String userLogin, String qualifiedClassName) {
 		return jdbcTemplate.query(FIND_ACL_FOR_CLASS_FROM_USER, new Object[] { userLogin, qualifiedClassName },
 				AclGroupMapper);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#findObjectWithoutPermissionByLogin(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public List<Long> findObjectWithoutPermissionByLogin(String userLogin, String qualifiedClass) {
 		List<BigInteger> reslult = jdbcTemplate.queryForList(FIND_OBJECT_WITHOUT_PERMISSION, new Object[] {
@@ -294,6 +298,9 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		return finalResult;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#findUsersWithExecutePermission(java.util.List)
+	 */
 	@Override
 	public List<String> findUsersWithExecutePermission(List<ObjectIdentity> entityRefs) {
 		List<Permission> permissions = new ArrayList<Permission>();
@@ -338,6 +345,9 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		return resultSidList;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#findUsersWithWritePermission(java.util.List)
+	 */
 	@Override
 	public List<String> findUsersWithWritePermission(@NotNull List<ObjectIdentity> entityRefs) {
 		List<Permission> permissions = new ArrayList<Permission>();
@@ -351,14 +361,19 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		}
 	}
 
-	
+	/* (non-Javadoc)
+	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#retriveUserAndAclGroupNameFromIdentityAndClass(long, java.lang.Class)
+	 */
     @Override
     public List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass) {
             return jdbcTemplate.query(USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS, new Object[] { entityId, entityClass.getCanonicalName() },
                             AclGroupMapper);
 
     }
-	
+
+	/* (non-Javadoc)
+	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#findUsersWithoutPermissionByObject(long, java.lang.String)
+	 */
 	@Override
 	public List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass, Sorting sorting, Filtering filtering) {
 		
@@ -401,8 +416,8 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		return finalResult;
 	}
 
-	/**
-	 * @param objectIdentity
+	/* (non-Javadoc)
+	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#removeObjectIdentity(org.springframework.security.acls.model.ObjectIdentity)
 	 */
 	public void removeObjectIdentity(ObjectIdentity objectIdentity) {
 		LOGGER.info("Attempting to delete the Object Identity " + objectIdentity);
@@ -417,8 +432,8 @@ public class JdbcManageableAclService extends JdbcAclService implements ObjectAc
 		evictFromCache(objectIdentity);
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.security.acls.model.ObjectAclService#removeAllResponsibilities(org.springframework.security.acls.model.ObjectIdentity)
+	/* (non-Javadoc)
+	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#removeAllResponsibilities(org.springframework.security.acls.model.ObjectIdentity)
 	 */
 	@Override
 	public void removeAllResponsibilities(ObjectIdentity entityRef) {
