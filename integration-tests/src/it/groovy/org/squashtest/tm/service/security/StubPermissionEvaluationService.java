@@ -53,4 +53,9 @@ public class StubPermissionEvaluationService implements PermissionEvaluationServ
 		return true;
 	}
 
+	@Override
+	public boolean hasRole(String role) {
+		return true;
+	}
+
 }
