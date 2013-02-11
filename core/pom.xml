@@ -26,5 +26,6 @@
 		<module>launcher</module>
 	  <module>core.dynamicmanager</module>
 	  <module>core.jasperreport.fragment</module>
-	</modules>
+    <module>core.wizard.api</module>
+  </modules>
 </project>

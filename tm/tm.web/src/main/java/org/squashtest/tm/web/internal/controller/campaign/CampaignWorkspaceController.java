@@ -20,17 +20,30 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
+import java.util.Collection;
+
+import javax.inject.Inject;
+
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.squashtest.tm.api.wizard.WorkspaceWizard;
+import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
+import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
 @Controller
 @RequestMapping("/campaign-workspace")
 public class CampaignWorkspaceController extends WorkspaceController<CampaignLibrary> {
+	@Inject
+	@Qualifier("squashtest.tm.service.CampaignsWorkspaceService")
 	private WorkspaceService<CampaignLibrary> workspaceService;
+
+	@Inject
+	private WorkspaceWizardManager workspaceWizardManager;
 
 	@Override
 	protected WorkspaceService<CampaignLibrary> getWorkspaceService() {
@@ -42,9 +55,40 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 		return "page/campaign-workspace";
 	}
 
-	@ServiceReference(serviceBeanName="squashtest.tm.service.CampaignsWorkspaceService")
-	public final void setWorkspaceService(WorkspaceService<CampaignLibrary> workspaceService) {
-		this.workspaceService = workspaceService;
+	@ModelAttribute("wizards")
+	public MenuItem[] getWorkspaceWizards() {
+		Collection<WorkspaceWizard> wizards = workspaceWizardManager.findAllByWorkspace(WorkspaceType.CAMPAIGN_WORKSPACE);
+
+		return menuItems(wizards);
+	}
+
+	/**
+	 * @param wizards
+	 * @return
+	 */
+	private MenuItem[] menuItems(Collection<WorkspaceWizard> wizards) {
+		MenuItem[] res = new MenuItem[wizards.size()];
+		int i = 0;
+
+		for (WorkspaceWizard wizard : wizards) {
+			res[i] = createMenuItem(wizard);
+			i++;
+		}
+
+		return res;
+	}
+
+	/**
+	 * @param wizard
+	 * @return
+	 */
+	private MenuItem createMenuItem(WorkspaceWizard wizard) {
+		MenuItem item = new MenuItem();
+		item.setId(wizard.getId());
+		item.setLabel(wizard.getWizardMenu().getLabel());
+		item.setTooltip(wizard.getWizardMenu().getTooltip());
+		item.setUrl(wizard.getWizardMenu().getUrl());
+		return item;
 	}
 
 }

@@ -119,7 +119,7 @@
 				},
 				"crrm": {
 					"move" : {
-						"check_move" : treeCheckDnd
+						"check_move" : squashtm.tree.treeCheckDnd
 							
 					} 
 				}, 

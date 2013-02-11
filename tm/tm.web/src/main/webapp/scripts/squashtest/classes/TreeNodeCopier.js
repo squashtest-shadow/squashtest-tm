@@ -21,144 +21,154 @@
 function TreeNodeCopier(initObj) {
 	// properties
 	this.tree = $.jstree._reference(initObj.treeSelector);
-	this.errMessage= initObj.errMessage;
-	this.url= initObj.url;
-	
-
+	this.errMessage = initObj.errMessage;
+	this.url = initObj.url;
 
 	// ***************** private methods *********************
-	
-	var displayError = function (){
-		if (arguments.length==0){
+
+	var displayError = function() {
+		if (arguments.length == 0) {
 			squashtm.notification.showInfo(this.errMessage);
-		}else{
+		} else {
 			squashtm.notification.showInfo(arguments[0]);
 		}
 	};
 
-	var reset = function (){
+	var reset = function() {
 		$.cookie('squash-copy-nodes', null);
 	};
-	
-	var retrieve = function (){
+
+	var retrieve = function() {
 		var data = $.cookie('squash-copy-nodes');
 		return JSON.parse(data);
 	};
 
-	var store = function (nodesData, libraryId){
-	
+	var store = function(nodesData, libraryId) {
+
 		var data = {
 			library : libraryId,
 			nodes : nodesData
 		}
-		
+
 		var jsonData = JSON.stringify(data);
-		
+
 		$.cookie('squash-copy-nodes', jsonData);
 	};
-	
-	
-	var denyPaste = function (flag){
-		switch (flag){
-			case "not-unique-editable" : displayError(initObj.notOneEditable); break;
-			case "wrong-library"	:	displayError(initObj.pasteNotSameProject); break;
-			case "target-type-invalid" : displayError(initObj.pasteNotHere); break;
-			case "buffer-empty" : displayError(initObj.nothingToPaste); break;		
+
+	var denyPaste = function(flag) {
+		switch (flag) {
+		case "not-unique-editable":
+			displayError(initObj.notOneEditable);
+			break;
+		case "wrong-library":
+			displayError(initObj.pasteNotSameProject);
+			break;
+		case "target-type-invalid":
+			displayError(initObj.pasteNotHere);
+			break;
+		case "buffer-empty":
+			displayError(initObj.nothingToPaste);
+			break;
 		}
 	}
 
-	
-	
 	// ****************** public methods **********************
-	
+
 	// ****** returns a boolean *************
-	
-	this.mayCopy = function (){
-		
+
+	this.mayCopy = function() {
+
 		var nodes = this.tree.get_selected();
-		
-		var consistentKind = (
-			nodes.areNodes() ||
-			nodes.areResources() ||
-			nodes.areViews()		
-		);
-		
+
+		var consistentKind = (nodes.areNodes() || nodes.areResources() || nodes.areViews());
+
 		var sameLib = nodes.areSameLibs();
-		
+
 		return (consistentKind && sameLib);
-		
+
 	}
-	
-	this.copyNodesToCookie = function (){
-		
-		reset();	
-		
-		if ( ! this.mayCopy() ){
+
+	this.copyNodesToCookie = function() {
+
+		reset();
+
+		if (!this.mayCopy()) {
 			displayError(initObj.errMessage);
 			return;
 		}
-		
+
 		var nodes = this.tree.get_selected();
-		
+
 		var nodesData = nodes.toData();
 		var libId = nodes.getLibrary().getDomId();
-		
+
 		store(nodesData, libId);
 	};
-	
+
 	// *** that function checks that the operation is indeed allowed
 	// *** the returned value is a status as string giving informations about
 	// *** why the user can't perform the operation
-	this.mayPaste = function (){
-		
-		var data = retrieve();		
-		if (data == null) return "buffer-empty";
-		
+	this.mayPaste = function() {
+
+		var data = retrieve();
+		if (data == null)
+			return "buffer-empty";
+
 		var nodes = this.tree.findNodes(data.nodes);
-		if (nodes.length == 0) return "buffer-empty";
-		
+		if (nodes.length == 0)
+			return "buffer-empty";
+
 		var target = this.tree.get_selected();
-		
-		var isUnique = (target.length == 1);		
+
+		var isUnique = (target.length == 1);
 		var isCreatable = target.isCreatable();
-		
-		if (!(isUnique && (isCreatable))) return 'not-unique-editable';
-		
+
+		if (!(isUnique && (isCreatable)))
+			return 'not-unique-editable';
+
 		var sameLib = (target.getLibrary().getDomId() == data.library);
-		
+
 		var validTarget = target.acceptsAsContent(nodes);
-		
-		if (! sameLib) return 'wrong-library';
-		
-		if (! validTarget) return 'target-type-invalid';
-		
+
+		if (!sameLib)
+			return 'wrong-library';
+
+		if (!validTarget)
+			return 'target-type-invalid';
+
 		return 'OK';
 	};
-	
-	
-	this.preparePasteData = function (nodes, target){
-	
+
+	this.preparePasteData = function(nodes, target) {
+
 		var destinationType;
 		var url;
-		
-		// todo : makes something better if we can refractor the whole service in depth one day.
-		switch(target.getDomType()){
-			case "drive" : 		destinationType = "library"; 
-								break;
-								
-			case "folder" : 	destinationType = "folder"; 
-								break;
-								
-			case "file" : 		destinationType = "campaign"; 
-								break;
-								
-			case "resource" : 	destinationType = "iteration"; 
-								break;
-			default : "azeporiapzeorj"; //should not happen if this.mayPaste() did its job.
+
+		// todo : makes something better if we can refractor the whole service
+		// in depth one day.
+		switch (target.getDomType()) {
+		case "drive":
+			destinationType = "library";
+			break;
+
+		case "folder":
+			destinationType = "folder";
+			break;
+
+		case "file":
+			destinationType = "campaign";
+			break;
+
+		case "resource":
+			destinationType = "iteration";
+			break;
+		default:
+			"azeporiapzeorj"; // should not happen if this.mayPaste() did its
+								// job.
 		}
-		
-		//here we mimick the move_object used by tree.moveNode, defined in
-		//jquery.squashtm.jstree.ext.js.
+
+		// here we mimick the move_object used by tree.moveNode, defined in
+		// jquery.squashtm.jstree.ext.js.
 		var pasteData = {
 			inst : this.tree,
 			sendData : {
@@ -169,42 +179,37 @@ function TreeNodeCopier(initObj) {
 			newParent : target,
 			url : nodes.getCopyUrl()
 		}
-		
-				
-		//another special delivery for iterations (also should be refractored)
-		if (target.is(':campaign')){
+
+		// another special delivery for iterations (also should be refractored)
+		if (target.is(':campaign')) {
 			pasteData.sendData["next-iteration-number"] = target.getChildren().length;
 		}
-	
+
 		return pasteData;
-	
-	};	
-	
-	this.pasteNodesFromCookie = function (){
-		
+
+	};
+
+	this.pasteNodesFromCookie = function() {
+
 		var flag = this.mayPaste();
 		var tree = this.tree;
-		if ( flag!="OK" ){
+		if (flag != "OK") {
 			denyPaste(flag);
 			return;
 		}
-		
+
 		var target = tree.get_selected();
 		var data = retrieve();
 		var nodes = tree.findNodes(data.nodes);
-		
+
 		target.open();
-		
+
 		var pasteData = this.preparePasteData(nodes, target);
 
-		
-		//now we can proceed
-		copyNode(pasteData, pasteData.url).fail(function(json){
-				tree.refresh();
-				});
+		// now we can proceed
+		squashtm.tree.copyNode(pasteData, pasteData.url).fail(function(json) {
+			tree.refresh();
+		});
 	};
-	
-	
-	
-}
 
+}

@@ -462,6 +462,6 @@
 		};
 
 		return this;
-	}
+	};
 
 })(jQuery);

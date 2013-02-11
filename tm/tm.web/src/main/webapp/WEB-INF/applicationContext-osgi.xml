@@ -148,13 +148,14 @@
 
   <osgi:reference id="squashtest.tm.service.AdministrationService" bean-name="squashtest.tm.service.AdministrationService"
     interface="org.squashtest.tm.service.user.AdministrationService" availability="mandatory" />
-    
-<osgi:reference id="squashtest.tm.service.TeamModificationService" bean-name="squashtest.tm.service.TeamModificationService" availability="mandatory">
-		<osgi:interfaces>
-			<value>org.squashtest.tm.service.user.TeamModificationService</value>
-			<value>org.squashtest.tm.service.user.TeamFinderService</value>
-		</osgi:interfaces>
-	</osgi:reference>
+
+  <osgi:reference id="squashtest.tm.service.TeamModificationService" bean-name="squashtest.tm.service.TeamModificationService"
+    availability="mandatory">
+    <osgi:interfaces>
+      <value>org.squashtest.tm.service.user.TeamModificationService</value>
+      <value>org.squashtest.tm.service.user.TeamFinderService</value>
+    </osgi:interfaces>
+  </osgi:reference>
   <osgi:reference id="squashtest.tm.service.ProjectManagerService" bean-name="squashtest.tm.service.ProjectManagerService"
     availability="mandatory">
     <osgi:interfaces>
@@ -218,22 +219,26 @@
       <value>org.squashtest.tm.service.customfield.CustomFieldValueManagerService</value>
     </osgi:interfaces>
   </osgi:reference>
-  
-  <osgi:list id="squash.tm.report.ReportPlugins" interface="org.squashtest.tm.api.report.ReportPlugin">
+
+  <osgi:reference id="squashtest.tm.service.DenormalizedFieldValueFinder" bean-name="squashtest.tm.service.DenormalizedFieldValueFinder"
+    interface="org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder" availability="mandatory" />
+
+  <osgi:reference id="squashtest.tm.service.CampaignsWorkspaceService" bean-name="squashtest.tm.service.CampaignsWorkspaceService"
+    interface="org.squashtest.tm.service.library.WorkspaceService" availability="mandatory" />
+
+
+  <osgi:list id="squash.tm.report.ReportPlugins" interface="org.squashtest.tm.api.report.ReportPlugin" cardinality="0..N">
     <osgi:listener ref="squash.tm.report.ReportsRegistry" bind-method="registerReports" unbind-method="unregisterReports" />
     <osgi:listener ref="squash.tm.report.JasperReportsViewDefinitionsRegistry" bind-method="registerViews"
       unbind-method="registerViews" />
   </osgi:list>
-  
-<osgi:reference id="squashtest.tm.service.DenormalizedFieldValueFinder"
-		bean-name="squashtest.tm.service.DenormalizedFieldValueFinder"
-		interface="org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder"
-		availability="mandatory" />
 
+  <osgi:list id="squash.tm.wizard.WorkspaceWizards"  interface="org.squashtest.tm.api.wizard.WorkspaceWizard">
+  </osgi:list>
 
   <osgix:cm-properties id="squashtest.core.auth.config" persistent-id="org.squashtest.csp.core.auth.config" />  
     
-  <!-- the following is an heresy imposed by multi security contexts across OSGI bundles.-->    
+  <!-- the following is an heresy imposed by multi security contexts across OSGI bundles.-->
   <osgix:cm-properties id="squashtest.tm.uploadfilter.config" persistent-id="org.squashtest.csp.tm.web.uploadfilter.config" />
 
   <!-- pretty much the same problem here. To be specific, that thing should be instanciated here in core.service. the reason 

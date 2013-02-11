@@ -34,8 +34,9 @@ requirejs.config({
 	],
 
 	/*
-	 * rules for paths naming: * third party lib: unversionned lib
-	 * name * non AMD squash lib: replace "squashtm" by "squash" in js
+	 * rules for paths naming: 
+	 * * third party lib: unversionned lib name 
+	 * * non AMD squash lib: replace "squashtm" by "squash" in js
 	 * file name and remove any unrequired "ext" suffix.
 	 */
 	paths: {
@@ -161,12 +162,12 @@ requirejs.config({
 			exports: "jquerySquashtmJeditable"
 		},
 		"squashtest/classes/TreeEventHandler": {
-			deps: [ "squashtest/classes/Event" ],
+			deps: [ "squashtest/classes/Event", "jquery.squash.jstree" ],
 			exports: "TreeEventHandler"
 		},
 		
 		"squashtest/classes/TreeNodeCopier": {
-			deps: [ "jquery" ],
+			deps: [ "jquery", "jquery.squash.jstree" ],
 			exports: "TreeNodeCopier"
 		},
 		"jquery.squash.jstree-node": {
@@ -175,7 +176,7 @@ requirejs.config({
 		},
 		"jquery.squash.jstree": {
 			deps: [ "jquery", "jstree", "jquery.squash.jstree-node" ],
-			exports: "jquerySquashtmJstree"
+			exports: "squashtm.tree"
 		},
 		"jquery.squash.linkabletree": {
 			deps: [ "jquery", "jquery.squash.jstree" ],

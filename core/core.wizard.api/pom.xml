@@ -1,20 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>squashtest-csp-core</artifactId>
     <groupId>org.squashtest.tm</groupId>
+    <artifactId>squashtest-csp-core</artifactId>
     <version>1.5.0.IT49-SNAPSHOT</version>
   </parent>
-
-  <artifactId>core.foundation</artifactId>
+  
+  <artifactId>core.wizard.api</artifactId>
   <name>${project.groupId}.${project.artifactId}</name>
-  <description>Library of foundation / low level / utility classes used by Squash TM</description>
+  <description>Squash TM API required to provide reports as plugins</description>
   <packaging>bundle</packaging>
 
   <dependencies>
-		<!-- ====== SQUASHTEST ====== -->
+    <!-- ====== SQUASHTEST ====== -->
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.foundation</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>spock-test-dependencies</artifactId>
@@ -22,15 +32,7 @@
       <type>pom</type>
       <scope>test</scope>
     </dependency>
-		<!-- ====== /SQUASHTEST ====== -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.context</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>com.springsource.javax.validation</artifactId>
-    </dependency>
+    <!-- ====== /SQUASHTEST ====== -->
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
@@ -46,12 +48,12 @@
         <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
 
-			<!-- ====== SPOCK TESTS ====== -->
+      <!-- ====== SPOCK TESTS ====== -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
-			<!-- ====== /SPOCK TESTS ====== -->
+      <!-- ====== /SPOCK TESTS ====== -->
 
       <plugin>
         <groupId>org.apache.felix</groupId>

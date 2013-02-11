@@ -734,3 +734,10 @@ predefined for future evolutions :
     border: medium none;
     min-height: 0;
 }
+
+/*****************************************
+ * various icons
+ ****************************************/
+.ui-icon-wizard {
+	background: url("../images/icon_wizard.gif") no-repeat;
+}

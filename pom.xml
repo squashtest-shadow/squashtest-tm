@@ -237,7 +237,7 @@
       </plugin>
 
       <plugin>
-				<!-- Checks license headers throughout the project -->
+		<!-- Checks license headers throughout the project -->
         <groupId>com.mycila.maven-license-plugin</groupId>
         <artifactId>maven-license-plugin</artifactId>
         <inherited>false</inherited>
