@@ -49,7 +49,6 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -75,7 +74,7 @@ public class TeamController {
 	
 	@Inject PermissionEvaluationService permissionEvaluationService;
 	
-	private static final String TEAM_ID_ULR = "/{teamId}";
+	private static final String TEAM_ID_URL = "/{teamId}";
 
 	private DatatableMapper<Integer> teamsMapper = new IndexBasedMapper(9)
 			.mapAttribute(Team.class, "name", String.class, 2)
@@ -153,7 +152,7 @@ public class TeamController {
 	 * 
 	 * @param teamId
 	 */
-	@RequestMapping(value = TEAM_ID_ULR, method = RequestMethod.DELETE)
+	@RequestMapping(value = TEAM_ID_URL, method = RequestMethod.DELETE)
 	@ResponseBody
 	public void deleteTeam(@PathVariable long teamId) {
 		service.deleteTeam(teamId);
@@ -164,7 +163,7 @@ public class TeamController {
 	 * 
 	 * @param teamId
 	 */
-	@RequestMapping(value = TEAM_ID_ULR, method = RequestMethod.GET)
+	@RequestMapping(value = TEAM_ID_URL, method = RequestMethod.GET)
 	public String showTeamModificationPage(@PathVariable Long teamId, Model model) {
 		if(!permissionEvaluationService.hasRole("ROLE_ADMIN")){
 			throw new AccessDeniedException("Access is denied");
@@ -174,18 +173,25 @@ public class TeamController {
 		return "team-modification.html";
 	}
 	
-	@RequestMapping(value = TEAM_ID_ULR , method = RequestMethod.POST, params = "id=team-description")
+	@RequestMapping(value = TEAM_ID_URL , method = RequestMethod.POST, params = "id=team-description")
 	@ResponseBody 
 	public String changeDescription(@PathVariable Long teamId , @RequestParam String value ){
 		service.changeDescription(teamId, value);
 		return value;
 	}
 	
-	@RequestMapping(value = TEAM_ID_ULR+"/name" , method = RequestMethod.POST)
+	@RequestMapping(value = TEAM_ID_URL+"/name" , method = RequestMethod.POST)
 	@ResponseBody 
 	public RenameModel changeName(@PathVariable Long teamId , @RequestParam String value ){
 		service.changeName(teamId, value);
 		return new RenameModel(value);
+	}
+	
+	@RequestMapping(value = TEAM_ID_URL+"/general")
+	public String refreshGeneralInfos(@PathVariable("teamId") long teamId, Model model){
+		Team team = service.findById(teamId);
+		model.addAttribute("auditableEntity", team);
+		return "fragments-utils/general-information-panel.html";
 	}
 
 }

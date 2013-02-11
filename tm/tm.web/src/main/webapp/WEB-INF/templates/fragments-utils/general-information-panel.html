@@ -42,12 +42,13 @@ DEV NOTES :
 
 	
 <div th:fragment="general-information-panel" th:remove="tag">
-	<div class="toolbar-information-panel">			 
-		<div id="general-information-panel" class="information-panel" 
+	<div class="toolbar-information-panel" 
 			th:with="noCreateInfo = ${withoutCreationInfo}?: ${T(java.lang.Boolean).FALSE},
 					 entity = (${auditableEntity}?: ${auditableEntity.createdBy}),
 					 dateformat=#{squashtm.dateformat},
-					 url = ${entityUrl}">
+					 url = ${entityUrl}">		
+					 	 
+		<div id="general-information-panel" class="information-panel" >
 					 
 			<span th:unless="${noCreateInfo}" th:text="#{label.CreatedOn}+'  '">created on </span>
 			<span th:unless="${noCreateInfo}" id="created-on" th:text="${#dates.format(entity.createdOn, dateformat)}+' ('+${entity.createdBy}+')'">01/01/01 (bob)</span>
@@ -63,15 +64,17 @@ DEV NOTES :
 		</div>
 		<script th:inline="javascript" th:if="${url!=null}">
 		/*<![CDATA[*/
-		  $(function(){
-			  var url = /*[[${url}+'/general']]*/"http://localhost/entity/general";
-			  $("#general-information-panel").unbind('ajaxSuccess')
-			  								 .bind('ajaxSuccess', function(event, xhr, settings){
-			  									if (settings.type == 'POST'){
-			  										$(this).load(url);
-			  									} 
-			  								 });
-		  })
+		  require(["common"], function(){
+			  require(["jquery"], function($){
+				  var url = /*[[${url}+'/general']]*/"http://localhost/entity/general";
+				  $("#general-information-panel").unbind('ajaxSuccess')
+				  								 .bind('ajaxSuccess', function(event, xhr, settings){
+				  									if (settings.type == 'POST'){
+				  										$(this).load(url);
+				  									} 
+				  								 });				  
+			  });
+		  });
 		/*]]>*/
 		</script>
 	</div>	
