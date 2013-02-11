@@ -24,8 +24,11 @@ import java.util.Date;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
+import org.squashtest.tm.domain.campaign.Campaign;
 
 @Transactional
+@DynamicManager(name="squashtest.tm.service.CampaignModificationService" , entity=Campaign.class)
 public interface CampaignModificationService extends CustomCampaignModificationService, CampaignFinder {
 	final String SMALL_EDIT_CAMAIGN_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
 		+ "or hasRole('ROLE_ADMIN')";

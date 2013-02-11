@@ -22,8 +22,11 @@ package org.squashtest.tm.service.bugtracker;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 
 @Transactional
+@DynamicManager(name = "squashtest.tm.service.BugTrackerModificationService", entity = BugTracker.class)
 public interface BugTrackerModificationService extends CustomBugTrackerModificationService {
 		@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void changeName(long bugtrackerId, String newName);

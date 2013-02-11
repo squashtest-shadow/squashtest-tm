@@ -32,4 +32,6 @@ public @interface DynamicDao {
 	Class<?> entity();
 //	String customDaoName() default "";
 //	boolean lookupCustomDao() default true;
+	boolean hasCustomImplementation() default true;
+	String sessionFactoryName() default "squashtest.tm.persistence.hibernate.SessionFactory";
 }

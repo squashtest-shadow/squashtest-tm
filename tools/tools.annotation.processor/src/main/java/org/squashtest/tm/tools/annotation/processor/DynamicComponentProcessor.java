@@ -58,7 +58,10 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 
 	protected static final String DYNAMIC_COMPONENT_TEMPLATE = "  <bean id=\"{0}\" class=\"{1}\">\n"
 			+ "    <property name=\"componentType\" value=\"{2}\" />\n"
-			+ "    <property name=\"entityType\" value=\"{3}\" />\n" + "  </bean>\n";
+			+ "    <property name=\"entityType\" value=\"{3}\" />\n"
+			+ "    <property name=\"sessionFactory\" ref=\"{4}\" />\n"
+			+ "    <property name=\"lookupCustomImplementation\" value=\"{5}\" />\n" 
+			+ "  </bean>\n";
 
 	private Filer filer;
 	private Messager messager;
@@ -96,8 +99,8 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 
 	private void enqueueComponents(RoundEnvironment roundEnvironment) {
 		for (Element annotated : roundEnvironment.getElementsAnnotatedWith(annotationClass())) {
-			messager.printMessage(Kind.NOTE, "Enqueued dynamic component " + annotationClass().getSimpleName(),
-					annotated);
+//			messager.printMessage(Kind.NOTE, "INFO Enqueued dynamic component " + annotationClass().getSimpleName(),
+//					annotated);
 
 			if (checkTarget(annotationClass(), annotated)) {
 				dynamicComponents.add(annotated);
@@ -112,7 +115,7 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 	 */
 	private boolean checkTarget(Class<ANNOTATION> annotation, Element annotated) {
 		if (!annotated.getKind().isInterface()) {
-			messager.printMessage(Kind.ERROR, "Only interfaces can be annotated @" + annotation.getSimpleName(),
+			messager.printMessage(Kind.ERROR, "ERROR Only interfaces can be annotated @" + annotation.getSimpleName(),
 					annotated);
 
 			return false;
@@ -128,8 +131,8 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 			writer = openWriter();
 			outputSpringContextFile(writer);
 		} catch (IOException e) {
-			messager.printMessage(Kind.WARNING, "Error during processing of @" + annotationClass().getSimpleName()
-					+ " annotations"); 
+			messager.printMessage(Kind.WARNING, "WARNING Error during processing of @" + annotationClass().getSimpleName()
+					+ " annotations");
 			e.printStackTrace(); // NOSONAR : I dont want no logger
 		} finally {
 			if (writer != null) {
@@ -143,8 +146,8 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 		writer.append(FILE_HEADER);
 
 		for (Element manager : dynamicComponents) {
-			messager.printMessage(Kind.NOTE,
-					"Processing @" + annotationClass().getSimpleName() + ' ' + manager.getSimpleName(), manager);
+//			messager.printMessage(Kind.NOTE,
+//					"INFO Processing @" + annotationClass().getSimpleName() + ' ' + manager.getSimpleName(), manager);
 
 			String beanDefinition = buildBeanDefinition(manager);
 
@@ -157,8 +160,7 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 	private Writer openWriter() throws IOException {
 		FileObject file;
 		Writer writer;
-		file = filer
-				.createResource(StandardLocation.SOURCE_OUTPUT, "spring", generatedFileName(), (Element[]) null);
+		file = filer.createResource(StandardLocation.SOURCE_OUTPUT, "spring", generatedFileName(), (Element[]) null);
 
 		writer = file.openWriter();
 		return writer;
@@ -183,8 +185,11 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 		CharSequence managerClass = ((TypeElement) component).getQualifiedName();
 		TypeMirror entityClass = extractEntityClass(definition);
 
+		CharSequence sessionFactoryName = sessionFactoryName(definition, component);
+		boolean lookupCustomImplementation = lookupCustomImplementation(definition);
+
 		String beanDefinition = MessageFormat.format(DYNAMIC_COMPONENT_TEMPLATE, beanName, beanFactoryClass(),
-				managerClass, entityClass);
+				managerClass, entityClass, sessionFactoryName, lookupCustomImplementation);
 		return beanDefinition;
 	}
 
@@ -225,4 +230,33 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 	protected abstract String beanFactoryClass();
 
 	protected abstract String generatedFileName();
+
+	/**
+	 * @param definition
+	 * @return whether dynamic component factory should lookup custom implementation or not.
+	 */
+	protected abstract boolean lookupCustomImplementation(ANNOTATION definition);
+
+	/**
+	 * This method should issue an error if no sessionFactoryName is extractible from annotation.
+	 * 
+	 * @param definition
+	 * @param component 
+	 * @return the bean name of the session factory which should be used.
+	 */
+	protected abstract CharSequence sessionFactoryName(ANNOTATION definition, Element component);
+
+	/**
+	 * @return the messager
+	 */
+	protected final Messager getMessager() {
+		return messager;
+	}
+
+	protected void checkSessionFactoryName(String name, Element component) {
+		if (StringUtils.isBlank(name)) {
+			getMessager().printMessage(Kind.ERROR, "ERROR Session factory name should not be blank", component);
+		}
+	}
+
 }

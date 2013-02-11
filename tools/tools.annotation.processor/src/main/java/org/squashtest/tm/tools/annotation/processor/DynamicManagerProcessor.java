@@ -24,6 +24,7 @@ package org.squashtest.tm.tools.annotation.processor;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 
@@ -68,6 +69,26 @@ public class DynamicManagerProcessor extends DynamicComponentProcessor<DynamicMa
 	@Override
 	protected String beanName(DynamicManager componentDefinition) {
 		return componentDefinition.name();
+	}
+
+	/**
+	 * @see org.squashtest.tm.tools.annotation.processor.DynamicComponentProcessor#lookupCustomImplementation(java.lang.annotation.Annotation)
+	 */
+	@Override
+	protected boolean lookupCustomImplementation(DynamicManager definition) {
+		return definition.hasCustomImplementation();
+	}
+
+	/**
+	 * @see org.squashtest.tm.tools.annotation.processor.DynamicComponentProcessor#sessionFactoryName(java.lang.annotation.Annotation)
+	 */
+	@Override
+	protected CharSequence sessionFactoryName(DynamicManager definition, Element component) {
+		String name = definition.sessionFactoryName();
+
+		checkSessionFactoryName(name, component);
+
+		return name;
 	}
 
 }

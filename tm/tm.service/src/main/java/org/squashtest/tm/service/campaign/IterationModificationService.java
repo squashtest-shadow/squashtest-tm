@@ -24,8 +24,11 @@ import java.util.Date;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
+import org.squashtest.tm.domain.campaign.Iteration;
 
 @Transactional
+@DynamicManager(name = "squashtest.tm.service.IterationModificationService", entity = Iteration.class)
 public interface IterationModificationService extends CustomIterationModificationService {
 
 	final String SMALLEDIT_ITERATION_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
