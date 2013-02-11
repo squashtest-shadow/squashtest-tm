@@ -142,6 +142,7 @@
 
           <div class="fragment-body unstyled">
             <div id="team-toolbar" class="toolbar-class ui-corner-all ">
+			  <div th:include="fragments-utils/various-snippets :: general-information-panel" th:with="auditableEntity=${team}" th:remove="tag"/>
               <div class="toolbar-button-panel">
                 <input type="button" th:value="#{ label.Rename }" value="Rename" id="rename-team-button" class="button" />
                 <input type="button" th:value="#{ label.Remove }" value="Remove" id="delete-team-button" class="button" />

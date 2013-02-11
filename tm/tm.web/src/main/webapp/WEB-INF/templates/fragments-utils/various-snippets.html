@@ -1,0 +1,78 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+
+<div th:remove="tag">
+<!--
+
+USAGE :
+
+	the next fragment accepts the following variables in its context :
+		- auditableEntity : an object representing the entity we want the general informations. MANDATORY.
+		- entityUrl : rest url of that entity. If set, this component will pull the informations itself from entityUrl/general. Defaults to null.
+		- withoutCreationInfo : boolean. If set, the part created by / on will be skipped and only the modified by / on will be displayed. Defaults to false.
+ 
+DEV NOTES :
+
+	- th:with : the default value for entity is ${auditableEntity.getCreatedBy()}. If the entity is null this will cause an early null pointer exception, just as we need.
+ 	- ripped from general-information-panel.tag
+ -->
+</div>
+
+
+	
+<div th:fragment="general-information-panel" th:remove="tag">
+	<div class="toolbar-information-panel">			 
+		<div id="general-information-panel" class="information-panel" 
+			th:with="noCreateInfo = ${withoutCreationInfo}?: ${T(java.lang.Boolean).FALSE},
+					 entity = (${auditableEntity}?: ${auditableEntity.createdBy}),
+					 dateformat=#{squashtm.dateformat},
+					 url = ${entityUrl}">
+					 
+			<span th:unless="${noCreateInfo}" th:text="#{label.CreatedOn}+'  '">created on </span>
+			<span th:unless="${noCreateInfo}" id="created-on" th:text="${#dates.format(entity.createdOn, dateformat)}+' ('+${entity.createdBy}+')'">01/01/01 (bob)</span>
+			<br   th:unless="${noCreateInfo}" />
+			<span th:text="#{label.UpdatedOn}+'  '">updated on </span>
+			<span id="last-modified-on" th:text="${entity.lastModifiedOn} ?
+													${#dates.format(entity.lastModifiedOn, dateformat)}+' ('+${entity.lastModifiedBy}+')' :
+													'('+#{label.lower.Never}+')'
+												">(nevah)</span> 			 
+			<br />
+			
+		
+		</div>
+		<script th:inline="javascript" th:if="${url!=null}">
+		/*<![CDATA[*/
+		  $(function(){
+			  var url = /*[[${url}+'/general']]*/"http://localhost/entity/general";
+			  $("#general-information-panel").unbind('ajaxSuccess')
+			  								 .bind('ajaxSuccess', function(event, xhr, settings){
+			  									if (settings.type == 'POST'){
+			  										$(this).load(url);
+			  									} 
+			  								 });
+		  })
+		/*]]>*/
+		</script>
+	</div>	
+</div>
