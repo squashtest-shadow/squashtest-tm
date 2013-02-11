@@ -124,19 +124,25 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
 			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID  where cu.LOGIN = ? and ac.CLASSNAME = ?";
 
-	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS = "select arse.PARTY_ID, ag.ID, ag.QUALIFIED_NAME from  "
-			+ "ACL_GROUP ag  inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID  "
-			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID  "
-			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID "
-			+ "inner join CORE_USER cu on arse.PARTY_ID = cu.PARTY_ID "
+	
+	//11-02-13 : this query is ready for task 1865 
+	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS = "select arse.PARTY_ID, ag.ID, ag.QUALIFIED_NAME, CONCAT(IFNULL(cu.LOGIN, ''), IFNULL(ct.NAME, '')) as sorting_key from "
+			+ "ACL_GROUP ag inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
+			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
+			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " 
+			+ "left outer join CORE_USER cu on arse.PARTY_ID = cu.PARTY_ID "
+			+ "left outer join CORE_TEAM ct on arse.PARTY_ID = ct.PARTY_ID "
 			+ "where oid.IDENTITY = ? and ac.CLASSNAME = ? ";
 	
-	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS_FILTERED = "select arse.USER_ID, ag.ID, ag.QUALIFIED_NAME from "
-			+ "ACL_GROUP ag " + "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
-			+ "inner join CORE_USER cu on arse.USER_ID = cu.ID "
+	//11-02-13 : this query is ready for task 1865 
+	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS_FILTERED = "select arse.PARTY_ID, ag.ID, ag.QUALIFIED_NAME, CONCAT(IFNULL(cu.LOGIN, ''), IFNULL(ct.NAME, '')) as sorting_key from "
+			+ "ACL_GROUP ag inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
-			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " + "where oid.IDENTITY = ? and ac.CLASSNAME = ? "
-			+ "and cu.LOGIN like ? ";
+			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " 
+			+ "left outer join CORE_USER cu on arse.PARTY_ID = cu.PARTY_ID "
+			+ "left outer join CORE_TEAM ct on arse.PARTY_ID = ct.PARTY_ID "
+			+ "where oid.IDENTITY = ? and ac.CLASSNAME = ? "
+			+ "and cu.LOGIN like ? or ct.name = ?";
 		
 	
 
@@ -383,7 +389,8 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		
 		if (filtering.isDefined()){ 
 			baseQuery = USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS_FILTERED;
-			arguments = new Object[]{entityId, entityClass.getCanonicalName(), "%"+filtering.getFilter()+"%"};
+			String filter = "%"+filtering.getFilter()+"%";
+			arguments = new Object[]{entityId, entityClass.getCanonicalName(), filter, filter};
 		}
 		else{
 			baseQuery = USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS;
@@ -391,7 +398,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		}
 		
 		if (sorting.getSortedAttribute().equals("login")){
-			orderByClause=" order by cu.LOGIN ";
+			orderByClause=" order by sorting_key ";
 		}
 		else{
 			orderByClause=" order by ag.QUALIFIED_NAME ";
