@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
@@ -68,10 +69,10 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 	}
 	
 	@Override
-	public PagedCollectionHolder<List<Team>> findAllFiltered(PagingAndSorting filter) {
-		List<Team> teams = teamDao.findSortedTeams(filter);
+	public PagedCollectionHolder<List<Team>> findAllFiltered(PagingAndSorting paging, Filtering filtering) {
+		List<Team> teams = teamDao.findSortedTeams(paging, filtering);
 		long count = teamDao.count();
-		return new PagingBackedPagedCollectionHolder<List<Team>>(filter, count, teams);
+		return new PagingBackedPagedCollectionHolder<List<Team>>(paging, count, teams);
 	}
 
 	@Override

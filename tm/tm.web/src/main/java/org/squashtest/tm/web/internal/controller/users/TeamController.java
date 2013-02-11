@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
@@ -52,6 +53,7 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -59,6 +61,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 /**
  * @author mpagnon
  * 
@@ -76,14 +79,14 @@ public class TeamController {
 	
 	private static final String TEAM_ID_URL = "/{teamId}";
 
-	private DatatableMapper<Integer> teamsMapper = new IndexBasedMapper(9)
-			.mapAttribute(Team.class, "name", String.class, 2)
-			.mapAttribute(Team.class, "description", String.class, 3)
-			.mapAttribute(Team.class, "members.size", Long.class, 4)
-			.mapAttribute(Team.class, "audit.createdOn", Date.class, 5)
-			.mapAttribute(Team.class, "audit.createdBy", String.class, 6)
-			.mapAttribute(Team.class, "audit.lastModifiedOn", Date.class, 7)
-			.mapAttribute(Team.class, "audit.lastModifiedBy", String.class, 8);
+	private DatatableMapper<String> teamsMapper = new NameBasedMapper(9)
+			.mapAttribute(Team.class, "name", String.class, "name")
+			.mapAttribute(Team.class, "description", String.class, "description")
+			.mapAttribute(Team.class, "members.size", Long.class, "nb-associated-users")
+			.mapAttribute(Team.class, "audit.createdOn", Date.class, "created-on")
+			.mapAttribute(Team.class, "audit.createdBy", String.class, "created-by")
+			.mapAttribute(Team.class, "audit.lastModifiedOn", Date.class, "last-mod-on")
+			.mapAttribute(Team.class, "audit.lastModifiedBy", String.class, "last-mod-by");
 	
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TeamController.class);
@@ -139,9 +142,11 @@ public class TeamController {
 	@RequestMapping( method = RequestMethod.GET, params = "sEcho")
 	@ResponseBody
 	public DataTableModel getTableModel(final DataTableDrawParameters params, final Locale locale) {
-		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, teamsMapper, SortedAttributeSource.SINGLE_ENTITY);
+		
+		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, teamsMapper, SortedAttributeSource.SINGLE_ENTITY);
+		Filtering filtering = new  DataTableFiltering(params);
 
-		PagedCollectionHolder<List<Team>> holder = service.findAllFiltered(filter);
+		PagedCollectionHolder<List<Team>> holder = service.findAllFiltered(paging, filtering);
 
 		return new TeamsDataTableModelHelper(locale, messageSource).buildDataModel(holder, params.getsEcho());
 	}

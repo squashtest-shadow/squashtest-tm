@@ -24,7 +24,11 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
@@ -37,21 +41,35 @@ public class HibernateTeamDao extends HibernateEntityDao<Team> implements Custom
 
 
 	@Override
-	public List<Team> findSortedTeams(PagingAndSorting filter) {
+	public List<Team> findSortedTeams(PagingAndSorting paging, Filtering filter) {
 		Session session = currentSession();
 		Criteria crit = session.createCriteria(Team.class, "Team");
 		
 		/* add ordering */
-		String sortedAttribute = filter.getSortedAttribute();
+		String sortedAttribute = paging.getSortedAttribute();
 		if (sortedAttribute != null) {
-			SortingUtils.addOrder(crit, filter);
+			SortingUtils.addOrder(crit, paging);
+		}
+		
+		/* add filtering */
+		if  (filter.isDefined()){
+			crit = crit.add(_addFiltering(filter));
 		}
 
 		/* result range */
-		PagingUtils.addPaging(crit, filter);
+		PagingUtils.addPaging(crit, paging);
 
 		return crit.list();
 		
+	}
+	
+	
+	private Criterion _addFiltering(Filtering filtering){
+		String filter = filtering.getFilter();
+		return Restrictions.disjunction()
+						  .add(Restrictions.like("Team.name", filter, MatchMode.ANYWHERE))
+						  .add(Restrictions.like("Team.audit.createdBy", filter, MatchMode.ANYWHERE))
+						  .add(Restrictions.like("Team.audit.lastModifiedBy", filter, MatchMode.ANYWHERE));
 	}
 
 }

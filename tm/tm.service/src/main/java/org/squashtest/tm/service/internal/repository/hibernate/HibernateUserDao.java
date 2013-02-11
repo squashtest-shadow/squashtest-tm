@@ -84,11 +84,7 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 			}
 		}
 		
-		/* add filtering if need be */
-		if (filter.isDefined()){
-			
-		}
-		
+
 		/* result range */
 		crit.setFirstResult(sorter.getFirstItemIndex());
 		crit.setMaxResults(sorter.getPageSize());

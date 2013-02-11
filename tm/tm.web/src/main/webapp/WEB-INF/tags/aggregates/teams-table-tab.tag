@@ -32,13 +32,13 @@
 		<tr>
 			<th>Id(masked)</th>
 			<th>#</th>
-			<th><f:message key="label.Name" /></th>
+			<th class="datatable-filterable"><f:message key="label.Name" /></th>
 			<th><f:message key="label.Description"/></th>
 			<th><f:message key="label.numberOfAssociatedUsers"/></th>
 			<th><f:message key="label.CreatedOn" /></th>
-			<th><f:message key="label.createdBy" /></th>
+			<th class="datatable-filterable"><f:message key="label.createdBy" /></th>
 			<th><f:message key="label.modifiedOn"/></th>
-			<th><f:message key="label.modifiedBy"/></th>
+			<th class="datatable-filterable"><f:message key="label.modifiedBy"/></th>
 			<th>&nbsp;</th>	
 		</tr>
 	</thead>

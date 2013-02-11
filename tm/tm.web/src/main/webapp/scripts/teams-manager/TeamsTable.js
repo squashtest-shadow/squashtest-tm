@@ -38,6 +38,7 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 					},
 					"sAjaxSource": squashtm.app.contextRoot + "/teams", 
 					"bDeferRender": true,
+					"bFilter" : true,
 					"fnRowCallback": this.teamTableRowCallback,
 					"aaSorting": [ [ 2, "asc" ] ], 
 					"aoColumnDefs": [ {
@@ -87,7 +88,8 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 						"sClass" : "centered delete-button",
 						"sWidth" : "2em",
 						"bSortable": false
-					}]
+					}],
+					"sDom" : 'ft<"dataTables_footer"lirp>'
 			}, squashConf = {
 					enableHover : true,
 					bindLinks : {

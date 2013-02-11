@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.Team;
 
@@ -31,7 +32,7 @@ public interface CustomTeamDao {
 	 * @param filter
 	 * @return
 	 */
-	List<Team> findSortedTeams(PagingAndSorting filter);
+	List<Team> findSortedTeams(PagingAndSorting paging, Filtering filtering);
 	
 	
 }
