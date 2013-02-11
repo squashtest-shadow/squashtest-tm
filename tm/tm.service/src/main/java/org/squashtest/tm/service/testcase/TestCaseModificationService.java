@@ -22,12 +22,15 @@ package org.squashtest.tm.service.testcase;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 
 @Transactional
+@DynamicManager(name="squashtest.tm.service.TestCaseModificationService", entity = TestCase.class)
 public interface TestCaseModificationService extends CustomTestCaseModificationService {
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
 	void changeDescription(long testCaseId, String newDescription);

@@ -22,8 +22,10 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 
+@DynamicDao(entity=ProjectTemplate.class)
 public interface ProjectTemplateDao {
 	ProjectTemplate findById(long id);
 

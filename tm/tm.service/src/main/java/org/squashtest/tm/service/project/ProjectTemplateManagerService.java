@@ -21,7 +21,10 @@
 package org.squashtest.tm.service.project;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
+import org.squashtest.tm.domain.project.ProjectTemplate;
 
 @Transactional
+@DynamicManager(name="squashtest.tm.service.ProjectTemplateManagerService", entity = ProjectTemplate.class)
 public interface ProjectTemplateManagerService extends CustomProjectTemplateManagerService, ProjectTemplateFinder {
 }

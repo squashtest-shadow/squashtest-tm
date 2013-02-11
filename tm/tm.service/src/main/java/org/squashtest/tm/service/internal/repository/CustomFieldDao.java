@@ -24,9 +24,10 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
-
+@DynamicDao(entity = CustomField.class)
 public interface CustomFieldDao extends CustomCustomFieldDao {
 
 	List<CustomField> findAll();

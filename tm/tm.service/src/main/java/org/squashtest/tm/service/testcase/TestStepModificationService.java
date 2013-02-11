@@ -21,8 +21,11 @@
 package org.squashtest.tm.service.testcase;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
+import org.squashtest.tm.domain.testcase.TestStep;
 
 @Transactional
+@DynamicManager(name="squashtest.tm.service.TestStepModificationService", entity = TestStep.class)
 public interface TestStepModificationService extends CustomTestStepModificationService, TestStepFinder {
 	
 	

@@ -22,10 +22,11 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
-
+@DynamicDao(entity=CustomFieldBinding.class)
 public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao {
 	
 

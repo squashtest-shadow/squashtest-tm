@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
 import org.squashtest.tm.domain.users.Team;
 
@@ -31,6 +32,7 @@ import org.squashtest.tm.domain.users.Team;
  * @author mpagnon
  * 
  */
+@DynamicDao(entity = Team.class, hasCustomImplementation = false)
 public interface TeamDao extends CustomTeamDao{
 	/**
 	 * Will persist a new team.

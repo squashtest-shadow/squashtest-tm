@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -36,6 +37,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
  * 
  */
 @Transactional
+@DynamicManager(name = "squashtest.tm.service.RequirementVersionManagerService", entity = RequirementVersion.class)
 public interface RequirementVersionManagerService extends CustomRequirementVersionManagerService {
 	@Transactional(readOnly = true)
 	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")

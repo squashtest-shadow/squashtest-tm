@@ -22,9 +22,11 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 
+@DynamicDao(entity = RequirementAuditEvent.class, hasCustomImplementation = false)
 public interface RequirementAuditEventDao {
 	void persist(RequirementAuditEvent event);
 

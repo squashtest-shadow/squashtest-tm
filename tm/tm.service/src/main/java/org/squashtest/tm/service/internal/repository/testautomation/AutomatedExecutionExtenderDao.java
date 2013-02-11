@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 
@@ -33,6 +34,7 @@ import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
  * @author Gregory Fouquet
  * 
  */
+@DynamicDao(entity = AutomatedExecutionExtender.class, hasCustomImplementation = false)
 public interface AutomatedExecutionExtenderDao{
 	
 	AutomatedExecutionExtender findById(long executionId);

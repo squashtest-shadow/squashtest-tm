@@ -22,9 +22,12 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.TestSuite;
 
+@DynamicDao(entity=TestSuite.class)
 public interface TestSuiteDao extends CustomTestSuiteDao {
  
 	List<IterationTestPlanItem> findAllTestPlanItemsPaged(long testSuiteId, Paging paging);

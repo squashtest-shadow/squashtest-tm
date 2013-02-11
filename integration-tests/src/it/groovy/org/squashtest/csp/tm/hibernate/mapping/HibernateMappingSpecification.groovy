@@ -33,7 +33,7 @@ import spock.lang.Specification;
 /**
  * Superclass for hibernate mapping integration tests.
  */
-@ContextConfiguration(["classpath:repository/dependencies-scan-context.xml", "classpath:no-validation-config-context.xml", "classpath*:META-INF/**/datasource-context.xml", "classpath*:META-INF/**/repository-context.xml"])
+@ContextConfiguration(["classpath:repository/dependencies-scan-context.xml", "classpath:no-validation-config-context.xml", "classpath*:META-INF/**/datasource-context.xml", "classpath*:META-INF/**/repository-context.xml", "classpath*:META-INF/**/dynamicdao-context.xml"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
 abstract class HibernateMappingSpecification extends Specification {
 	@Inject SessionFactory sessionFactory;

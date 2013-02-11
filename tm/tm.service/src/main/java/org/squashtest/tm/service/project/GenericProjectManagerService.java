@@ -23,12 +23,15 @@ package org.squashtest.tm.service.project;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
+import org.squashtest.tm.domain.project.GenericProject;
 
 /**
  * @author Gregory Fouquet
  *
  */
 @Transactional
+@DynamicManager(name="squashtest.tm.service.GenericProjectManagerService", entity = GenericProject.class)
 public interface GenericProjectManagerService extends CustomGenericProjectManager, GenericProjectFinder {
 	public static final String ADMIN_OR_PROJECT_MANAGER = "hasPermission(#arg0, 'org.squashtest.tm.domain.project.GenericProject', 'MANAGEMENT') or hasRole('ROLE_ADMIN')";
 

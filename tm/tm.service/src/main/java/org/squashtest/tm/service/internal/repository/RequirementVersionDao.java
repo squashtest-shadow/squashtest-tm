@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
@@ -31,6 +32,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
  * @author Gregory Fouquet
  *
  */
+@DynamicDao(entity=RequirementVersion.class)
 public interface RequirementVersionDao extends CustomRequirementVersionDao {
 	List<RequirementVersion> findAllByIds(Collection<Long> ids);
 
