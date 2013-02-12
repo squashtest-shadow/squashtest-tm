@@ -69,6 +69,13 @@
  * 
  * static functions : ----------
  * 
+ * $.fn.squashTable.configuration{
+ * 		fromDOM(table) : table is either a selector or a jquery object pointing to the datatable. 
+ * 						 returns [ datatableSettings, squashSettings ] on the basis of what could be found on various 'data-*' attributes of the nodes. 
+ * 								 Best is to read the code and see what's available in there.
+ * }
+ * 
+ * 
  * $.fn.squashTable.decorator{
  * 		rewriteSentData(datatableSettings) : will decorate the datatableSettigns.fnServerData with a preprocessor that will turn the mDataProp_x to
  * 											 something that makes sense to Spring databinder - eg, will write mDataProp[x] instead. 
@@ -210,25 +217,27 @@
  *  Configuration as follow : 
  * Configuration as follow : url : the url where to post the 'delete' instruction. Supports placeholders.
  * 							popupmessage : the message that will be displayed 
- * 							tooltip : the tooltip
- * 							displayed by the button success : a callback on the ajax call when successful
+ * 							tooltip : the tooltip displayed by the button 
+ * 							success : a callback on the ajax call when successful
  * 							fail : a callback on the ajax call when failed. 
  * 							dataType : the dataType parameter for the post. (default = "text")
+ * 
+ * NEW : 
+ * 	delegate : jquery selector of another popup, that will be used instead of the generated one. 
  * 
  * ============== Add hyperlink to a cell==========================================
  * 
  *  Member name : 'bindLinks' 
- *
- * 
  * 
  *  If set then will look for cells  according to the parameters given and make their text a link to the wanted url.
  * for cells according to the parameters given and make their text a link to the
- * wanted url. Configuration as follow: list : a list of object to represent
+ * wanted url. Configuration as follow: 
+ * list : a list of object to represent
  * each td of a row to make as url Object params as follow : 
  * -url : the url to wrap the text with (place holder will be set to row object id) 
  * -target : the td rank in the row (starts with 1)
  * -targetClass : alternate to the above, uses css class to find its target
- *-isOpenInTab : boolean to set the target of the url to "_blank" or not.
+ * -isOpenInTab : boolean to set the target of the url to "_blank" or not.
  
  ============== Add Buttons to a cell==========================================
 
@@ -749,29 +758,33 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			// 'tr' one
 			var jqRow = $(row);
 			jqRow.addClass('ui-state-row-selected');
-		
-
-			oneShotConfirm(conf.tooltip || "", conf.popupmessage || "",
-					popconf.oklabel, popconf.cancellabel).done(
-					function() {
-						var finalUrl = _resolvePlaceholders.call(self,
-								conf.url, self.fnGetData(row));
-						var request;
-						
-						request = $.ajax({
-							type : 'delete',
-							url : finalUrl,
-							dataType : self.squashSettings.deleteButtons.dataType || "text",
+			
+			if (conf.delegate!==undefined){
+				$(conf.delegate).dialog('open');
+			}
+			else{
+				oneShotConfirm(conf.tooltip || "", conf.popupmessage || "",
+						popconf.oklabel, popconf.cancellabel).done(
+						function() {
+							var finalUrl = _resolvePlaceholders.call(self,
+									conf.url, self.fnGetData(row));
+							var request;
+							
+							request = $.ajax({
+								type : 'delete',
+								url : finalUrl,
+								dataType : self.squashSettings.deleteButtons.dataType || "text",
+							});
+							
+							if (conf.success)
+								request.done(conf.success);
+							if (conf.fail)
+								request.fail(conf.fail);
+	
+						}).fail(function() {
+							jqRow.removeClass('ui-state-row-selected');
 						});
-						
-						if (conf.success)
-							request.done(conf.success);
-						if (conf.fail)
-							request.fail(conf.fail);
-
-					}).fail(function() {
-				jqRow.removeClass('ui-state-row-selected');
-			});
+			}
 		});
 	}
 	;
@@ -930,7 +943,128 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	
 	// ************************ functions used by the static functions *****************************
 	
-	function fnRewriteData(aoData){
+	// ******** configurator 
+	
+	function _parseAssignation(atom){
+		var members = atom.split(/\s*=\s*/);
+		return {
+			name : members[0],
+			value : (members.length>1) ? members[1] : 'true'
+		}
+		
+	}
+
+	function _parseSequence(seq){
+		var result = [];
+		var statements = seq.split(/\s*,\s*/);
+		var i = 0, 
+			length = statements.length;
+		
+		for (i=0;i < length; i++){
+			var stmt = statements[i];
+			var parser = (stmt.indexOf(',')!==-1) ? _parseSequence : _parseAssignation;
+			result.push(parser(stmt));
+		}
+		
+		return result;
+	}
+	
+	
+	function _loopConfiguration(defs, handlers, conf){
+
+		var hKey,
+		dcount=0,
+		dlength = defs.length;
+	
+		
+		for (dcount=0;dcount<dlength;dcount++){
+			
+			for (hKey in handlers){
+				if (defs[dcount].name=== hKey){
+					handlers[hKey](conf, defs[dcount]);
+					break;
+				}
+			}
+		}		
+	}
+	
+	
+	function _tableDefs($table, conf){
+
+		var defSeq = $table.data('def') || '';		
+		var defs = _parseSequence(defSeq);
+		
+		var handlers = $.fn.squashTable.configurator._DOMExprHandlers.table;
+		
+		return _loopConfiguration(defs, handlers, conf);
+		
+	}
+	
+	
+	
+	function _colDefs($table, conf){
+		
+		var defaultCol = {
+			bVisible : true,
+			bSortable : false,
+			sClass : ''
+		};
+		
+		var headers  = $table.find('thead th'),
+			handlers = $.fn.squashTable.configurator._DOMExprHandlers.columns;
+		
+		conf.table.aoColumnDefs = conf.table.aoColumnDefs || [];
+		
+		headers.each(function(index){
+			var td = $(this),
+				defSeq = td.data('def') || '',
+				defs = _parseSequence(defSeq);
+			
+			conf.current = $.extend({},defaultCol);
+			conf.current.aTargets = [index];
+				
+			_loopConfiguration(defs, handlers, conf);
+			conf.table.aoColumnDefs.push(conf.current);
+		});
+		
+	}
+	
+	
+	function _bodyDefs($table, conf){
+		var len = $table.find('tbody tr').length;
+		if (len > 0){
+			conf.table.iDeferLoading = len;
+		}
+	}
+	
+	
+	
+	function _fromDOM($table){
+		
+		var conf = {
+			table : {},
+			squash : {}
+		}
+
+		
+		//table level definition
+		_tableDefs($table, conf);
+		
+		//column level definition
+		_colDefs($table, conf);
+		
+		//body level definition
+		_bodyDefs($table, conf);
+		
+		return conf;
+		
+	}
+	
+	
+	// ******** decorator
+	
+	
+	function _fnRewriteData(aoData){
 		var i = 0,
 			length = aoData.length,
 			regexp = /mDataProp_(\d+)/,
@@ -952,7 +1086,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	 * 
 	 **************************************************************************/
 
-	var datatableDefaults = squashtm.datatable.defaults;
+	var datatableDefaults = $.extend(true, {},squashtm.datatable.defaults);
 
 	var squashDefaults = {
 		dataKeys : {
@@ -997,12 +1131,13 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		/*
 		 * else we will initialize a new instance.
 		 */
+		
+		//first we parse the dom, looking for informations in the dom
+		
+		var domConf = $.fn.squashTable.configurator.fromDOM(this);
 
-		var datatableEffective = $.extend(true, {}, datatableDefaults,
-				datatableSettings);
-		
-		
-		var squashEffective = $.extend(true, {}, squashDefaults, squashSettings);
+		var datatableEffective = $.extend(true, {}, datatableDefaults, domConf.table, datatableSettings);	
+		var squashEffective = $.extend(true, {}, squashDefaults, domConf.squash, squashSettings);
 
 		/* ************** squash init first *********************** */
 
@@ -1130,13 +1265,61 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 	$.fn.squashTable.instances = existingInstances || {}; // end of the hack
 	
-	//static methods 
+	//****************************** static methods ********************************************
+	
+	$.fn.squashTable.configurator = {
+		
+		fromDOM : function(table){
+			var dTable = (typeof table==="string") ? $(table) : table;
+			return _fromDOM(dTable);
+		},
+		
+		_DOMExprHandlers : {
+			table : {
+				'ajaxsource' : function(conf, assignation) { conf.table.sAjaxSource=assignation.value;},
+				'filter' : function(conf, assignation) { var cnf = conf.table; cnf.bFilter=assignation.value; cnf.sDom = 'ft<"dataTables_footer"lirp>';},
+				'langage' : function(conf, assignation) {conf.table.oLanguage = conf.table.oLanguage || {}; conf.table.oLanguage.sUrl = assignation.value;},
+				'hover' : function(conf, assignation) { conf.squash.enableHover = assignation.value;}
+			},
+			columns : {
+				'invisible' : 	function(conf, assignation) { conf.current.bVisible = false;},
+				'sortable' : 	function(conf, assignation) { conf.current.bSortable = true;},
+				'narrow' : 		function(conf, assignation) { conf.current.sWidth = '2em';},
+				'filter' : 		function(conf, assignation) { conf.current.sClass +=' datatable-filterable';},
+				'map' : 		function(conf, assignation) { conf.current.mDataProp = assignation.value;},
+				'select' : 		function(conf, assignation) { conf.current.sWidth = '2em'; conf.current.sClass += ' select-handle centered';},
+				'target' :		function(conf, assignation) { conf.current.aTargets = [assignation.value];},
+				'delete-button':function(conf, assignation) { 
+									var cls = 'delete-'+Math.random().toString().substr(2,3);
+									conf.current.sClass +=' delete-button centered '+cls; 
+									conf.current.sWidth = '2em';
+									
+									var selector = assignation.value;
+									conf.squash.deleteButtons = {
+										delegate : selector,
+										tooltip : $(selector).prev().find('span.ui-dialog-title').text(),
+										success : function(){$("."+cls+":first").parents('table').squashTable().refresh()}
+									};
+								},
+				'link' : 		function(conf, assignation) { 
+									var cls = 'link-'+Math.random().toString().substr(2,3); 
+									conf.current.sClass += ' '+cls;
+									conf.squash.bindLinks = conf.squash.bindLinks || { list : [] };
+									conf.squash.bindLinks.list.push({
+										url : assignation.value,
+										targetClass : cls
+									});
+								}
+			}	                
+		}
+	};
+	
 	$.fn.squashTable.decorator = {
 		rewriteSentData : function(datatableSettings){
 			var oldfnServerParams = datatableSettings.fnServerParams;
 			datatableSettings.fnServerParams = function(aoData){
 				if (oldfnServerParams!==undefined) oldfnServerParams.call(this, aoData);
-				fnRewriteData(aoData);				
+				_fnRewriteData(aoData);				
 			}
 		}
 			

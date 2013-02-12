@@ -54,6 +54,8 @@ define(
 							this.confirmDeletionDialog.on(
 									"confirmdialogconfirm", $.proxy(
 											this.deleteTeam, this));
+							
+							this.configureMembersTable();
 						},
 
 						events : {
@@ -124,6 +126,10 @@ define(
 
 							$('#team-description').richEditable(settings)
 									.addClass("editable");
+						},
+						
+						configureMembersTable : function(){
+							$("#members-table").squashTable({},{});		//let's try pure DOM conf							
 						},
 
 						renameTeam : function() {
