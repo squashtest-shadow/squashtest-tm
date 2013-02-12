@@ -1044,7 +1044,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		var conf = {
 			table : {},
 			squash : {}
-		}
+		};
 
 		
 		//table level definition
