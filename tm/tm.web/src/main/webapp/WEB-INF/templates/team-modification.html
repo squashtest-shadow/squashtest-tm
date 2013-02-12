@@ -32,7 +32,7 @@
 	squashtm.app = {
 		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 		teamMod : {
-			teamUrl : /*[[ @{'/teams/'+${team.id}} ]]*/"http://localhost:8080/teams/1",
+			teamUrl : /*[[ @{/administration/teams/__${team.id}__} ]]*/"http://localhost:8080/administration/teams/1",
 			richEditPlaceHolder : /*[[#{rich-edit.placeholder}]]*/'(Click to edit ...)',
 			richEditLanguageValue : /*[[#{rich-edit.language.value}]]*/'fr',
 			richEditsubmitLabel : /*[[#{rich-edit.button.ok.label}]]*/'submit',
@@ -43,6 +43,7 @@
 			renameLabel : /*[[#{label.Rename}]]*/'Rename',
 			renameTeamTitle : /*[[#{title.renameTeam}]]*/'Rename Team',
 			descriptionPanelLabel: /*[[#{label.Description}]]*/'Desc',
+			membersPanelLabel : /*[[#{label.Members}]]*/'Add member'
 		},
 		
 		projectFilterConf : {
@@ -142,22 +143,61 @@
 
           <div class="fragment-body unstyled">
             <div id="team-toolbar" class="toolbar-class ui-corner-all ">
+            
+             
 			  <div th:include="fragments-utils/general-information-panel :: general-information-panel" 
-			  	   th:with="auditableEntity=${team},entityUrl=@{/teams/__${team.id}__}" th:remove="tag"/>
-			  	   
+			  	   th:with="auditableEntity=${team},entityUrl=@{/administration/teams/__${team.id}__}" th:remove="tag"/>
+			      
               <div class="toolbar-button-panel">
                 <input type="button" th:value="#{ label.Rename }" value="Rename" id="rename-team-button" class="button" />
                 <input type="button" th:value="#{ label.Remove }" value="Remove" id="delete-team-button" class="button" />
               </div>
             </div>
             <br /> <br />
+            
             <div class="toggle-panel ">
               <span class="not-displayed toogle-panel-buttons"></span>
               <div id="team-description-panel" class="description-panel toggle-panel-main">                
                     <div id="team-description" th:utext="${team.description}">Description</div>
               </div>
             </div>
+            
+            <div class="toggle-panel">
+            	<span class="not-displayed toggle-panel-buttons">
+            		<input type="button" id="members-add-button" value="+" ></input>
+            		<input type="button" id="members-removeall-button" th:value="#{label.RemoveMember}" ></input>
+            	</span> 
+            	<div id="members-panel" class="toggle-panel-main">
+            		
+            		<table id="members-table" th:attr="data-ajaxsource=@{/administration/teams/__${team.id}__/members}, data-def='filter'">
+            			<thead>
+            				<tr>
+            					<th th:attr="data-def='invisible, map=user-id'">user-id</th>
+            					
+	            				<th th:attr="data-def='handle, map=user-index'">#</th>
+	            				
+	            				<th th:attr="data-def='sortable, map=user-name, class=hyperlink-user-info', 
+	            							data-link='link-user-info='+@{/administration/user/{user-id}/info}"
+	            					th:text="#{label.User}">user</th>
+	            					
+	            				<th th:attr="data-features='delete, map=empty-delete-holder', 
+	            							 data-delete=@{/administration/teams/__${team.id}__/members/{user-id}}"> </th>
+            				</tr>
+            			</thead>
+            			<tbody>
+            				<tr th:each="user : ${users}">
+            					<td th:text="${user['user-id']}">100</td>
+            					<td th:text="${user['user-index']}">1</td>
+            					<td th:text="${user['user-name']}">bob</td>
+            					<td> </td>
+            				</tr>
+            			</tbody>
+            		</table>
+            		
+            	</div>
+            </div>
         
+			           
           <div id="delete-warning-pane" class="not-displayed popup-dialog" title="Delete"
             th:title="#{label.Remove}">
             <div class="alert">
@@ -168,6 +208,17 @@
               <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}" />
             </div>
           </div>
+          
+         
+          <div id="members-removeall-dialog" class="not-displayed popup-dialog" th:title="#{title.RemoveMember}">
+         	 <div th:text="#{message.RemoveMember}">roundhouse-kick selected users ?</div>
+         	 <div class="popup-dialog-buttonpane">
+         	 	<input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"/>
+         	 	<input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
+         	 </div>
+          </div>
+          
+          
         </div>
       </div>
     </div>

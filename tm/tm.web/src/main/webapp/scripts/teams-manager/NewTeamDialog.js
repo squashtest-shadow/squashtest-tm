@@ -66,7 +66,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 			
 			$.ajax({ 
 				type: 'post', 
-				url:  squashtm.app.contextRoot + "/teams/new",
+				url:  squashtm.app.contextRoot + "/administration/teams/new",
 				dataType: 'json', 
 				// note : we cannot use promise api with async param. see http://bugs.jquery.com/ticket/11013#comment:40
 				async: false, 

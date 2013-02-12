@@ -96,6 +96,12 @@ define(
 							};
 							this.$("#team-description-panel").togglePanel(
 									descSettings);
+							
+							var usersSettings = {
+								initiallyOpen : true,
+								title : teamMod.membersPanelLabel
+							};
+							this.$("#members-panel").togglePanel(usersSettings);
 
 						},
 
@@ -104,7 +110,7 @@ define(
 								url : teamMod.teamUrl,
 								ckeditor : {
 									customConfig : squashtm.app.contextRoot
-											+ "./styles/ckeditor/ckeditor-config.js",
+											+ "/styles/ckeditor/ckeditor-config.js",
 									language : teamMod.richEditLanguageValue
 								},
 								placeholder : teamMod.richEditPlaceHolder,

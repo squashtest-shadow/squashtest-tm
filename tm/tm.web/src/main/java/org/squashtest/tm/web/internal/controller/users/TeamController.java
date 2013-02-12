@@ -21,6 +21,7 @@
 
 package org.squashtest.tm.web.internal.controller.users;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ import javax.validation.Valid;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -44,11 +46,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
+import org.squashtest.tm.core.foundation.collection.DefaultPaging;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.users.Team;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -60,14 +68,13 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 /**
  * @author mpagnon
  * 
  */
 @Controller
-@RequestMapping("/teams")
+@RequestMapping("/administration/teams")
 public class TeamController {
 	@Inject
 	private TeamModificationService service;
@@ -75,7 +82,8 @@ public class TeamController {
 	@Inject
 	private InternationalizationHelper messageSource;
 	
-	@Inject PermissionEvaluationService permissionEvaluationService;
+	@Inject 
+	private PermissionEvaluationService permissionEvaluationService;
 	
 	private static final String TEAM_ID_URL = "/{teamId}";
 
@@ -87,6 +95,9 @@ public class TeamController {
 			.mapAttribute(Team.class, "audit.createdBy", String.class, "created-by")
 			.mapAttribute(Team.class, "audit.lastModifiedOn", Date.class, "last-mod-on")
 			.mapAttribute(Team.class, "audit.lastModifiedBy", String.class, "last-mod-by");
+	
+	private DatatableMapper<String> membersMapper = new NameBasedMapper(1)
+																.mapAttribute(User.class, "composite identifier", String.class, "user-name");
 	
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TeamController.class);
@@ -117,6 +128,29 @@ public class TeamController {
 			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;
 		}
+	}
+	
+	
+	
+	private static class MembersTableModelHelper extends DataTableModelHelper<User>{
+		private InternationalizationHelper messageSource;
+		private Locale locale;
+		private MembersTableModelHelper(Locale locale, InternationalizationHelper messageSource){
+			this.locale = locale;
+			this.messageSource = messageSource;
+		}
+		@Override
+		protected Map<?,?> buildItemData(User item) {
+			Map<String,Object> res = new HashMap<String, Object>();
+			res.put("user-id", item.getId());
+			res.put("user-index", getCurrentIndex());
+			res.put("user-name", item.getFirstName()+" "+item.getLastName()+" ("+item.getLogin()+")");
+			res.put("empty-delete-holder", null);
+			return res;
+		}
+		
+		
+		
 	}
 
 	/**
@@ -175,6 +209,11 @@ public class TeamController {
 		}
 		Team team = service.findById(teamId);
 		model.addAttribute("team", team);
+		
+		List<?> userModel = _getAssociateUserTableModel(new DefaultPagingAndSorting(), DefaultFiltering.NO_FILTERING, "").getAaData();
+		model.addAttribute("users", userModel);
+		
+		
 		return "team-modification.html";
 	}
 	
@@ -199,4 +238,46 @@ public class TeamController {
 		return "fragments-utils/general-information-panel.html";
 	}
 
+	
+	
+	
+	@RequestMapping(value=TEAM_ID_URL+"/members", method = RequestMethod.GET, params="sEcho")
+	public DataTableModel getAssociateUserTableModel(DataTableDrawParameters params){
+		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, membersMapper, SortedAttributeSource.SINGLE_ENTITY);
+		Filtering filtering = new DataTableFiltering(params);
+		return _getAssociateUserTableModel(paging, filtering, params.getsEcho());
+	}
+	
+	private DataTableModel _getAssociateUserTableModel(PagingAndSorting paging, Filtering filtering, String secho){
+		
+		Locale locale = LocaleContextHolder.getLocale();
+		
+		//TODO : wire with an actual service call
+		PagedCollectionHolder<List<User>> holder = _mockUserList();
+		
+		
+		return new MembersTableModelHelper(locale, messageSource).buildDataModel(holder, secho);
+	}
+	
+	
+	
+	// ***************** scaffolding **************************
+	
+	private PagedCollectionHolder<List<User>> _mockUserList(){
+		
+		List<User> fakeUsers = new ArrayList<User>(4);
+		
+		for (int i=0;i<4;i++){
+			User user = new User();
+			user.setFirstName("firstname_"+i);
+			user.setLastName("lastname_"+i);
+			user.setLogin("login_"+i);
+			fakeUsers.add(user);
+		}
+		
+		Paging paging = new DefaultPaging(0);
+		PagedCollectionHolder<List<User>> holder = new PagingBackedPagedCollectionHolder<List<User>>(paging, 4, fakeUsers);
+		
+		return holder;
+	}
 }
