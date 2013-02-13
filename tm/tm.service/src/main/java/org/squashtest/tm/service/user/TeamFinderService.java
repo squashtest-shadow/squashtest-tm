@@ -36,4 +36,5 @@ public interface TeamFinderService extends CustomTeamFinderService {
 	List<Team> findAll();
 
 	Team findById(Long teamId);
+	
 }

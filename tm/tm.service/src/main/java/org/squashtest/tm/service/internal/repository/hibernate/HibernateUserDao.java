@@ -30,6 +30,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -164,6 +165,11 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 			return executeListNamedQuery("user.findUsersByLoginList", setParams);
 		}
 	}
+	
+	@Override
+	public List<User> findAllNonTeamMembers(final long teamId) {
+		return executeListNamedQuery("user.findAllNonTeamMembers", new SetTeamIdParameterCallback(teamId));
+	}
 
 	
 	@Override
@@ -189,4 +195,15 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		}
 	}
 
+	private static final class SetTeamIdParameterCallback implements SetQueryParametersCallback{
+		private long teamId;
+		private SetTeamIdParameterCallback(long teamId){
+			this.teamId = teamId;
+		}
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameter("teamId", teamId, LongType.INSTANCE);
+		}
+	}
+	
 }

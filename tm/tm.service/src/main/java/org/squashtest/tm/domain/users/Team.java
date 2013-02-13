@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.users;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -80,5 +81,20 @@ public class Team extends Party{
 		return members;
 	}
 	
+	public void addMember(User user){
+		members.add(user);
+	}
+	
+	public void addMembers(Collection<User> users){
+		members.addAll(users);
+	}
+	
+	public void removeMember(User user){
+		members.remove(user);
+	}
+	
+	public void removeMember(Collection<User> users){
+		members.removeAll(users);
+	}
 
 }

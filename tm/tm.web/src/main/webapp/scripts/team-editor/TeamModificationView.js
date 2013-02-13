@@ -95,18 +95,14 @@ define(
 						addMember : function(event){
 							var dialog = this.addMemberDialog;
 							var login = dialog.find('#add-member-input').val();
-							if (login===null || login===undefined || login.length === 0){
-								dialog.activate('no-selected-users');
-							}
-							else{
-								$.ajax({
-									url : document.location.href+"/members/"+login,
-									type : 'PUT'
-								}).success(function(){
-									dialog.confirmDialog('close');
-									$("#members-table").squashTable().refresh();
-								});
-							}
+							
+							$.ajax({
+								url : document.location.href+"/members/"+login,
+								type : 'PUT'
+							}).success(function(){
+								dialog.confirmDialog('close');
+								$("#members-table").squashTable().refresh();
+							});
 						},
 
 						replacePlaceHolderByValue : function(index, message, replaceValue) {
@@ -234,8 +230,14 @@ define(
 							var addMemberDialog = this.$("#add-member-dialog").confirmDialog();
 							
 							addMemberDialog.on("confirmdialogvalidate", function(){
-								addMemberDialog.activate('no-selected-users');
-								return false;
+								var login = addMemberDialog.find('#add-member-input').val();
+								if (login===null || login===undefined || login.length === 0){
+									dialog.activate('no-selected-users');
+									return false;
+								}
+								else{
+									return true;
+								}
 							});
 							
 							addMemberDialog.on("confirmdialogconfirm", $.proxy(this.addMember, this));	

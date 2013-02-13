@@ -215,7 +215,7 @@ public class TeamController {
 		Team team = service.findById(teamId);
 		model.addAttribute("team", team);
 		
-		List<?> userModel = _getAssociateUserTableModel(new DefaultPagingAndSorting(), DefaultFiltering.NO_FILTERING, "").getAaData();
+		List<?> userModel = _getMembersTableModel(new DefaultPagingAndSorting(), DefaultFiltering.NO_FILTERING, "").getAaData();
 		model.addAttribute("users", userModel);
 		
 		
@@ -249,10 +249,11 @@ public class TeamController {
 	
 	
 	@RequestMapping(value=TEAM_ID_URL+"/members", method = RequestMethod.GET, params="sEcho")
-	public DataTableModel getAssociateUserTableModel(DataTableDrawParameters params){
+	@ResponseBody
+	public DataTableModel getMembersTableModel(DataTableDrawParameters params){
 		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, membersMapper, SortedAttributeSource.SINGLE_ENTITY);
 		Filtering filtering = new DataTableFiltering(params);
-		return _getAssociateUserTableModel(paging, filtering, params.getsEcho());
+		return _getMembersTableModel(paging, filtering, params.getsEcho());
 	}
 	
 	
@@ -266,7 +267,7 @@ public class TeamController {
 	@ResponseBody
 	public Collection<UserModel> getNonMembers(@PathVariable("teamId") long teamId){
 		//TODO
-		List<User> nonMembers = _mockUserList().getPagedItems();
+		List<User> nonMembers = service.findAllNonMemberUsers(teamId);
 		return CollectionUtils.collect(nonMembers, new UserModelCreator());
 	}
 	
@@ -274,7 +275,7 @@ public class TeamController {
 	@RequestMapping(value=TEAM_ID_URL+"/members/{logins}", method = RequestMethod.PUT)
 	@ResponseBody
 	public void addMembers(@PathVariable("teamId") long teamId, @PathVariable("logins") List<String> userlogins){
-		//TODO
+		service.addMembers(teamId, userlogins);
 	}
 	
 	
@@ -282,7 +283,7 @@ public class TeamController {
 	
 	
 	
-	private DataTableModel _getAssociateUserTableModel(PagingAndSorting paging, Filtering filtering, String secho){
+	private DataTableModel _getMembersTableModel(PagingAndSorting paging, Filtering filtering, String secho){
 		
 		Locale locale = LocaleContextHolder.getLocale();
 		

@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.user;
 
+import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
@@ -56,4 +58,14 @@ public interface CustomTeamModificationService extends CustomTeamFinderService{
 	 */
 	void changeName(long teamId, String name);
 
+	
+	
+	/**
+	 * Add one or more members, identified by their login, to a team identified by its id.
+	 * 
+	 * @param teamId
+	 * @param logins
+	 */
+	void addMembers(long teamId, List<String> logins);
+	
 }

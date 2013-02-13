@@ -40,7 +40,7 @@ public interface UserDao extends EntityDao<User> {
 	
 	User findUserByLogin(String login);
 
-	List<User> findUsersByLoginList(List<String> idList);
+	List<User> findUsersByLoginList(List<String> loginList);
 	
 	/**
 	 * checks if a user already exist with the same login in the database.<br>
@@ -48,4 +48,6 @@ public interface UserDao extends EntityDao<User> {
 	 * @param login	 * 
 	 */
 	void checkLoginAvailability(String login) ;
+	
+	List<User> findAllNonTeamMembers(long teamId);
 }

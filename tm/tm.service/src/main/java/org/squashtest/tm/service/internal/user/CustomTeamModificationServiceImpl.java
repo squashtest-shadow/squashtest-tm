@@ -31,8 +31,10 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.users.Team;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.TeamDao;
+import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.CustomTeamModificationService;
 @Service("CustomTeamModificationService")
@@ -41,6 +43,9 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 
 	@Inject
 	private TeamDao teamDao;
+	
+	@Inject
+	private UserDao userDao;
 	
 	@Inject
 	private ObjectAclService aclService;
@@ -83,6 +88,18 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		Team team = teamDao.findById(teamId);
 		team.setName(name);
 		
+	}
+
+	@Override
+	public void addMembers(long teamId, List<String> logins) {
+		List<User> users = userDao.findUsersByLoginList(logins);
+		Team team = teamDao.findById(teamId);
+		team.addMembers(users);
+	}
+	
+	@Override
+	public List<User> findAllNonMemberUsers(long teamId) {
+		return userDao.findAllNonTeamMembers(teamId);
 	}
 
 }

@@ -26,6 +26,7 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.Team;
+import org.squashtest.tm.domain.users.User;
 /**
 * Holder for non dynamically generated find methods for {@link Team}
  * @author mpagnon
@@ -34,4 +35,7 @@ import org.squashtest.tm.domain.users.Team;
 public interface CustomTeamFinderService {
 
 	PagedCollectionHolder<List<Team>> findAllFiltered(PagingAndSorting sorting, Filtering filtering);
+	
+
+	List<User> findAllNonMemberUsers(long teamId);
 }
