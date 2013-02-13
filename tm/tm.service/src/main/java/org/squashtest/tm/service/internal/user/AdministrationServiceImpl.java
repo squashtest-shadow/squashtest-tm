@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;

@@ -20,7 +20,8 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.CampaignLibrary
@@ -28,9 +29,8 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.campaign.IterationModificationService
 import org.squashtest.tm.service.internal.campaign.CampaignLibraryNavigationServiceImpl
-import org.squashtest.tm.service.internal.campaign.IterationTestPlanManager
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
-import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
+import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService
 import org.squashtest.tm.service.internal.repository.CampaignDao
 import org.squashtest.tm.service.internal.repository.CampaignFolderDao
 import org.squashtest.tm.service.internal.repository.CampaignLibraryDao
@@ -50,7 +50,6 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 	PermissionEvaluationService permissionService = Mock()
 	IterationModificationService iterationModificationService = Mock()
 	IterationDao iterationDao = Mock()
-	IterationTestPlanManager iterationTestPlanManager = Mock()
 	PrivateCustomFieldValueService customFieldService = Mock()
 
 	def setup() {
@@ -60,7 +59,6 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 		service.iterationModificationService = iterationModificationService
 		service.iterationDao = iterationDao
-		service.iterationTestPlanManager = iterationTestPlanManager
 
 		use (ReflectionCategory) {
 			AbstractLibraryNavigationService.set(field: "permissionService", of: service, to: permissionService)

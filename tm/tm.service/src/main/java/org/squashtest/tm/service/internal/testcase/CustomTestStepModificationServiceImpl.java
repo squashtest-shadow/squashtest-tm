@@ -116,7 +116,7 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 		return step;
 	}
 
-	private class TestStepUpdater implements TestStepVisitor {
+	private final class TestStepUpdater implements TestStepVisitor {
 
 		private String expectedResult;
 		private String action;

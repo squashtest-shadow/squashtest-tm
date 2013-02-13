@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.model.datatable;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
 /**
  * PagingAndSortingAdapter backed by a DataTableDrawParameters and a DataTableMapper (for sorting purposes).

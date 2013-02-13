@@ -268,7 +268,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	private void setReferencedTestCase(TestCase testCase) {
 		referencedTestCase = testCase;
 
-		if(testCase.getReference() != null && testCase.getReference() != ""){
+		if(testCase.getReference() != null && !testCase.getReference().equals("")){
 			setName(testCase.getReference()+" - "+testCase.getName());
 		} else {
 			setName(testCase.getName());

@@ -56,7 +56,6 @@ import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
@@ -80,8 +79,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	
 	@Inject
 	private GenericProjectDao genericProjectDao;
-	@Inject
-	private ProjectDao projectDao;
 	@Inject
 	private BugTrackerBindingDao bugTrackerBindingDao;
 	@Inject

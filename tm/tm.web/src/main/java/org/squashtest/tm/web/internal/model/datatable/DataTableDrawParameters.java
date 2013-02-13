@@ -125,9 +125,7 @@ public class DataTableDrawParameters {
 			Integer propIndex = Integer.valueOf(unknownAttribute.substring(M_DATA_PROP_SUFFIX_INDEX));
 			mDataProp.put(propIndex, value);
 		}
-		else{
-			// f*** it
-		}
+//		else  f*** it 
 	}
 	
 }

@@ -36,7 +36,6 @@ import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
-import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 
@@ -51,9 +50,6 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
-
-	@Inject
-	private DenormalizedFieldValueDao denormalizedFieldValueDao;
 
 	@Override
 	public Execution findAndInitExecution(Long executionId) {

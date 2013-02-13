@@ -109,27 +109,27 @@ public class TreeNodeCopier implements NodeVisitor {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void visit(Folder source, FolderDao dao) {
-		Folder<?> copy = (Folder<?>) source.createCopy();
-		persistCopy(copy, dao);
+		Folder<?> copyFolder = (Folder<?>) source.createCopy();
+		persistCopy(copyFolder, dao);
 		// XXX try to put this before binding the copy to the source's content so that we dont need to remove stuff from nextsSourcesByDestination afterwards
-		saveNextToCopy((NodeContainer<TreeNode>) source, copy);
+		saveNextToCopy((NodeContainer<TreeNode>) source, copyFolder);
 	}
 
 	@Override
 	public void visit(Campaign source) {
-		Campaign copy = source.createCopy();
-		persistCopy(copy, campaignDao);
-		copyCustomFields(source, copy);
+		Campaign copyCampaign = source.createCopy();
+		persistCopy(copyCampaign, campaignDao);
+		copyCustomFields(source, copyCampaign);
 		// XXX try to put this before binding the copy to the source's content so that we dont need to remove stuff from nextsSourcesByDestination afterwards
-		saveNextToCopy(source, copy);
+		saveNextToCopy(source, copyCampaign);
 	}
 
 	@Override
 	public void visit(Iteration source) {
-		Iteration copy = source.createCopy();
-		persitIteration(copy);
-		copyCustomFields(source, copy);
-		copyIterationTestSuites(source, copy);
+		Iteration copyIteration = source.createCopy();
+		persitIteration(copyIteration);
+		copyCustomFields(source, copyIteration);
+		copyIterationTestSuites(source, copyIteration);
 		// Why not doing "saveNextToCopy" ?
 		// ===============================
 		// Because, because the requirements for "copying an test-suite alone" and
@@ -142,10 +142,10 @@ public class TreeNodeCopier implements NodeVisitor {
 
 	@Override
 	public void visit(TestSuite source) {		
-			TestSuite copy = source.createCopy();
-			persistCopy(copy, testSuiteDao);
-			copyCustomFields(source, copy);			
-			copyTestSuiteTestPlanToDestinationIteration(source, copy);		
+			TestSuite copyTestSuite = source.createCopy();
+			persistCopy(copyTestSuite, testSuiteDao);
+			copyCustomFields(source, copyTestSuite);			
+			copyTestSuiteTestPlanToDestinationIteration(source, copyTestSuite);		
 	}
 
 	private void copyTestSuiteTestPlanToDestinationIteration(TestSuite source, TestSuite copy) {
@@ -162,11 +162,11 @@ public class TreeNodeCopier implements NodeVisitor {
 
 	@Override
 	public void visit(Requirement source) {
-		Requirement copy = source.createCopy();
+		Requirement copyRequirement = source.createCopy();
 		TreeMap<RequirementVersion, RequirementVersion> previousVersionsCopiesBySources = source
-				.addPreviousVersionsCopiesToCopy(copy);
-		persistCopy(copy, requirementDao);
-		copyCustomFields(source.getCurrentVersion(), copy.getCurrentVersion());
+				.addPreviousVersionsCopiesToCopy(copyRequirement);
+		persistCopy(copyRequirement, requirementDao);
+		copyCustomFields(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
 		for (Entry<RequirementVersion, RequirementVersion> previousVersionCopyBySource : previousVersionsCopiesBySources
 				.entrySet()) {
 			RequirementVersion sourceVersion = previousVersionCopyBySource.getKey();
@@ -177,9 +177,9 @@ public class TreeNodeCopier implements NodeVisitor {
 
 	@Override
 	public void visit(TestCase source) {
-		TestCase copy = source.createCopy();
-		persistTestCase(copy);
-		copyCustomFields(source, copy);
+		TestCase copyTestCase = source.createCopy();
+		persistTestCase(copyTestCase);
+		copyCustomFields(source, copyTestCase);
 	}
 
 	@Override
@@ -242,7 +242,7 @@ public class TreeNodeCopier implements NodeVisitor {
 		}
 	}
 	
-	private class TestStepCufCopier implements TestStepVisitor{
+	private final class TestStepCufCopier implements TestStepVisitor{
 		private PrivateCustomFieldValueService customFieldValueManagerService;
 		private TestStep sourceStep;
 
@@ -259,7 +259,7 @@ public class TreeNodeCopier implements NodeVisitor {
 
 		@Override
 		public void visit(CallTestStep visited) {
-			// TODO Auto-generated method stub
+			// do nothing
 			
 		}
 		
@@ -274,11 +274,11 @@ public class TreeNodeCopier implements NodeVisitor {
 
 	
 	@SuppressWarnings("unchecked")
-	private <T extends TreeNode>void persistCopy(T copy, EntityDao<T> dao) {
-		renameIfNeeded((Copiable) copy);
-		dao.persist(copy);
-		((NodeContainer<T>)destination).addContent(copy);
-		this.copy = copy;
+	private <T extends TreeNode>void persistCopy(T copyParam, EntityDao<T> dao) {
+		renameIfNeeded((Copiable) copyParam);
+		dao.persist(copyParam);
+		((NodeContainer<T>)destination).addContent(copyParam);
+		this.copy = copyParam;
 	}
 	
 	
@@ -291,17 +291,17 @@ public class TreeNodeCopier implements NodeVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void persitIteration(Iteration copy) {
-		renameIfNeeded((Copiable) copy);
-		iterationDao.persistIterationAndTestPlan(copy);
-		((NodeContainer<Iteration>)destination).addContent(copy);
-		this.copy = copy;
+	private void persitIteration(Iteration copyParam) {
+		renameIfNeeded((Copiable) copyParam);
+		iterationDao.persistIterationAndTestPlan(copyParam);
+		((NodeContainer<Iteration>)destination).addContent(copyParam);
+		this.copy = copyParam;
 	}
 
-	private <T extends Copiable> void renameIfNeeded(T copy) {
-		if (!destination.isContentNameAvailable(copy.getName())) {
-			String newName = LibraryUtils.generateUniqueCopyName(destination.getContentNames(), copy.getName());
-			copy.setName(newName);
+	private <T extends Copiable> void renameIfNeeded(T copyParam) {
+		if (!destination.isContentNameAvailable(copyParam.getName())) {
+			String newName = LibraryUtils.generateUniqueCopyName(destination.getContentNames(), copyParam.getName());
+			copyParam.setName(newName);
 		}
 	}
 	

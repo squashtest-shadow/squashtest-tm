@@ -503,7 +503,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return retriever.getResult();
 		
 	}
-	private class ActionStepRetreiver implements TestStepVisitor{
+	private final class ActionStepRetreiver implements TestStepVisitor{
 		
 		private List<ActionTestStep> result;
 		

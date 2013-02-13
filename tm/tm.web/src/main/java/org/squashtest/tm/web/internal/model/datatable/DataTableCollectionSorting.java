@@ -24,7 +24,6 @@ import javax.validation.constraints.NotNull;
 
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
 public class DataTableCollectionSorting extends DataTablePaging implements CollectionSorting {
 	

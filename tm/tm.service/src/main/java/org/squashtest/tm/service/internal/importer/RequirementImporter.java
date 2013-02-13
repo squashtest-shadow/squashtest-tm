@@ -26,7 +26,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
@@ -38,8 +37,6 @@ public class RequirementImporter {
 
 	@Inject
 	private RequirementLibraryNavigationService service;
-	@Inject
-	private SessionFactory sessionFactory;
 
 	private RequirementParser parser = new RequirementParserImpl();
 

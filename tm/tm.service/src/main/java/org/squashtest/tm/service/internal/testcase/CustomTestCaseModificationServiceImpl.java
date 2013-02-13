@@ -282,7 +282,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			updateImportanceIfCallStep(testCase, copyStep);
 		}
 	}
-	private class TestStepCustomFieldCopier implements TestStepVisitor{
+	private final class TestStepCustomFieldCopier implements TestStepVisitor{
 		TestStep original;
 		private TestStepCustomFieldCopier(TestStep original){
 			this.original = original;

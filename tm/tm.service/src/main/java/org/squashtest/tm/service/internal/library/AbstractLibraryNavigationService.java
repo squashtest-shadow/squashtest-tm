@@ -30,7 +30,6 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.NullArgumentException;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.BoundEntity;

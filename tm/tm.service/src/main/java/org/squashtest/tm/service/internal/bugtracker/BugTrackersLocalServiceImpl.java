@@ -486,8 +486,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	private Map<BugTracker, List<String>> organizeIssueRemoteIdsByBugTrackers(
 			List<Object[]> sortedIssueListIdsAndIssueRemoteIds) {
 		Map<Long, List<String>> organizedRemoteIds = organizeRemoteIdsByBugTrackerId(sortedIssueListIdsAndIssueRemoteIds);
-		Map<BugTracker, List<String>> remoteIdsByBugTracker = replaceBugTrackerIdByBugtracker(organizedRemoteIds);
-		return remoteIdsByBugTracker;
+		return  replaceBugTrackerIdByBugtracker(organizedRemoteIds);
 	}
 
 	private Map<BugTracker, List<String>> replaceBugTrackerIdByBugtracker(Map<Long, List<String>> organizedRemoteIds) {

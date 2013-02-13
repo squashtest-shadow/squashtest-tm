@@ -206,7 +206,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 */
 	public T getNode(Long key){
 		
-		if (key == null) return null;
+		if (key == null){ return null;}
 		
 		for (T node : getAllNodes()){
 			if (node.getKey().equals(key)) {return node;}		

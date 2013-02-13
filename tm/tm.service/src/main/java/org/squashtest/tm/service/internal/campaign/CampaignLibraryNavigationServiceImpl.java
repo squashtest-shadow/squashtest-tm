@@ -68,9 +68,6 @@ public class CampaignLibraryNavigationServiceImpl extends
 	private CampaignLibraryDao campaignLibraryDao;
 
 	@Inject
-	private IterationTestPlanManager iterationTestPlanManager;
-
-	@Inject
 	private CampaignFolderDao campaignFolderDao;
 
 	@Inject

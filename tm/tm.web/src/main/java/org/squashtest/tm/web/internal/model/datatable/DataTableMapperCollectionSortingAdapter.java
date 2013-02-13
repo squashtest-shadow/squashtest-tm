@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.model.datatable;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 /**
  * 
  * @author Gregory Fouquet

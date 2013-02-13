@@ -82,7 +82,7 @@ public class CustomFieldBindingModel {
 	}
 
 	public void setRenderingLocations(RenderingLocationModel[] renderingLocations) {
-		this.renderingLocations = renderingLocations;
+		this.renderingLocations = renderingLocations.clone();
 	}
 
 }

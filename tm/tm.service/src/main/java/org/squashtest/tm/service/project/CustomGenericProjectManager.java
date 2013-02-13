@@ -76,7 +76,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 	 * @param TMprojectId
 	 * @param TAproject
 	 */
-	void bindTestAutomationProject(long TMprojectId, TestAutomationProject TAproject);
+	void bindTestAutomationProject(long tmProjectId, TestAutomationProject taProject);
 
 	void unbindTestAutomationProject(long projectId, long taProjectId);
 

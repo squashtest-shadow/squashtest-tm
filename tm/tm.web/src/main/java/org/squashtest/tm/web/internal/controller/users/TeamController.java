@@ -105,7 +105,7 @@ public class TeamController {
 	 * Will help to create the {@link DataTableModel} to fill the data-table of teams
 	 * 
 	 */
-	private class TeamsDataTableModelHelper extends DataTableModelHelper<Team> {
+	private final class TeamsDataTableModelHelper extends DataTableModelHelper<Team> {
 		private InternationalizationHelper messageSource;
 		private Locale locale;
 		private TeamsDataTableModelHelper(Locale locale, InternationalizationHelper messageSource){
@@ -132,7 +132,7 @@ public class TeamController {
 	
 	
 	
-	private static class MembersTableModelHelper extends DataTableModelHelper<User>{
+	private final static class MembersTableModelHelper extends DataTableModelHelper<User>{
 		private InternationalizationHelper messageSource;
 		private Locale locale;
 		private MembersTableModelHelper(Locale locale, InternationalizationHelper messageSource){

@@ -46,7 +46,6 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingModificationServi
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
 
 @Service("squashtest.tm.service.CustomFieldBindingService")
 @Transactional
@@ -54,10 +53,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	@Inject
 	private CustomFieldDao customFieldDao;
-
-	@Inject
-	private ProjectDao projectDao;
-
+	
 	@Inject
 	private CustomFieldBindingDao customFieldBindingDao;
 

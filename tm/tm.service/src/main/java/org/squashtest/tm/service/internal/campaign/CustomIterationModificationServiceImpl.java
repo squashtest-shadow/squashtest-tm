@@ -354,7 +354,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	private boolean stepIsFromSameProjectAsTC(TestCase sourceTC, ActionTestStep sourceStep) {
-		return sourceStep.getProject().getId() == sourceTC.getProject().getId();
+		return sourceStep.getProject().getId().equals(sourceTC.getProject().getId());
 	}
 
 	public Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {

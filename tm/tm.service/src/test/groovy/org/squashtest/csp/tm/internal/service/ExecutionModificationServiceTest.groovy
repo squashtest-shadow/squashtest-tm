@@ -20,30 +20,30 @@
  */
 package org.squashtest.csp.tm.internal.service
 
-import org.squashtest.tm.domain.attachment.Attachment
 import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseStatus
-import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseType
-import org.squashtest.tm.service.internal.campaign.CustomIterationModificationServiceImpl;
-import org.squashtest.tm.service.internal.execution.ExecutionModificationServiceImpl;
-import org.squashtest.tm.service.internal.execution.ExecutionProcessingServiceImpl;
+import org.squashtest.tm.service.internal.campaign.CustomIterationModificationServiceImpl
+import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
+import org.squashtest.tm.service.internal.execution.ExecutionModificationServiceImpl
+import org.squashtest.tm.service.internal.execution.ExecutionProcessingServiceImpl
 import org.squashtest.tm.service.internal.repository.CampaignDao
 import org.squashtest.tm.service.internal.repository.ExecutionDao
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao
 import org.squashtest.tm.service.internal.repository.ItemTestPlanDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
-import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
-import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
+import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker
 
 import spock.lang.Specification
 
@@ -89,11 +89,16 @@ public class ExecutionModificationServiceTest extends Specification {
 		ActionTestStep ts4 = new ActionTestStep(action:"action 4")
 		ActionTestStep ts5 = new ActionTestStep(action:"action 5")
 		
-		Project project = new Project() 
+		Project project = Mock() 
 
 		TestCase testCase = Mock()
 		testCase.getSteps() >> [ts1, ts2, ts3, ts4, ts5]
-		testCase.getId() >> 1
+		ts1.setTestCase(testCase);
+		ts2.setTestCase(testCase);
+		ts3.setTestCase(testCase);
+		ts4.setTestCase(testCase);
+		ts5.setTestCase(testCase);
+		testCase.getId() >> 1L
 		testCase.getAllAttachments() >> new HashSet<Attachment>()
 		testCase.getPrerequisite() >> "prerequisite"
 		testCase.getImportance() >> TestCaseImportance.LOW
@@ -103,6 +108,7 @@ public class ExecutionModificationServiceTest extends Specification {
 		testCase.getDescription() >> ""
 		testCase.getReference() >> ""
 		testCase.getProject() >> project
+		project.getId() >> 1L
 		ts1.setTestCase(testCase)
 		ts2.setTestCase(testCase)
 		ts3.setTestCase(testCase)

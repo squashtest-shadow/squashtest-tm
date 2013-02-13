@@ -286,6 +286,27 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 		TestCase testCase = new TestCase();
 
+		testCase = setTestCaseCreatedOnByInfos(pseudoTestCase, summary, testCase);
+
+		setTestCaseDescription(pseudoTestCase, testCase);
+
+		setTestCasePrerequisite(pseudoTestCase, testCase);
+
+		setTestCaseImportance(pseudoTestCase, summary, testCase);
+
+		setTestCaseNature(pseudoTestCase, summary, testCase);
+		
+		setTestCaseType(pseudoTestCase, summary, testCase);
+		
+		setTestCaseStatus(pseudoTestCase, summary, testCase);
+		
+		setTestCaseSteps(pseudoTestCase, testCase);
+
+		return testCase;
+	}
+
+	private TestCase setTestCaseCreatedOnByInfos(PseudoTestCase pseudoTestCase, ImportSummaryImpl summary,
+			TestCase testCase) {
 		if ((pseudoTestCase.createdOnDate != null) && (pseudoTestCase.createdBy != null)) {
 			testCase = new TestCase(pseudoTestCase.createdOnDate, pseudoTestCase.createdBy);
 
@@ -300,16 +321,57 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 				testCase = new TestCase();
 			}
 		}
+		return testCase;
+	}
 
-		// the description
-		String desc = pseudoTestCase.formatDescription();
-		testCase.setDescription(desc);
+	private void setTestCaseSteps(PseudoTestCase pseudoTestCase, TestCase testCase) {
+		List<TestStep> steps = pseudoTestCase.formatSteps();
 
-		// the prerequisites
-		String prereqs = pseudoTestCase.formatPreRequisites();
-		testCase.setPrerequisite(prereqs);
+		for (TestStep step : steps) {
+			testCase.addStep(step);
+		}
+	}
 
-		// the importance
+	private void setTestCaseStatus(PseudoTestCase pseudoTestCase, ImportSummaryImpl summary, TestCase testCase) {
+		try {
+			TestCaseStatus status = pseudoTestCase.formatStatus();
+			testCase.setStatus(status);
+
+		} catch (IllegalArgumentException ex) {
+
+			LOGGER.warn(ex.getMessage());
+			summary.incrModified();
+			testCase.setStatus(TestCaseStatus.defaultValue());
+		}
+	}
+
+	private void setTestCaseType(PseudoTestCase pseudoTestCase, ImportSummaryImpl summary, TestCase testCase) {
+		try {
+			TestCaseType type = pseudoTestCase.formatType();
+			testCase.setType(type);
+
+		} catch (IllegalArgumentException ex) {
+
+			LOGGER.warn(ex.getMessage());
+			summary.incrModified();
+			testCase.setType(TestCaseType.defaultValue());
+		}
+	}
+
+	private void setTestCaseNature(PseudoTestCase pseudoTestCase, ImportSummaryImpl summary, TestCase testCase) {
+		try {
+			TestCaseNature nature = pseudoTestCase.formatNature();
+			testCase.setNature(nature);
+
+		} catch (IllegalArgumentException ex) {
+
+			LOGGER.warn(ex.getMessage());
+			summary.incrModified();
+			testCase.setNature(TestCaseNature.defaultValue());
+		}
+	}
+
+	private void setTestCaseImportance(PseudoTestCase pseudoTestCase, ImportSummaryImpl summary, TestCase testCase) {
 		try {
 
 			TestCaseImportance importance = pseudoTestCase.formatImportance();
@@ -321,51 +383,16 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 			summary.incrModified();
 			testCase.setImportance(TestCaseImportance.defaultValue());
 		}
+	}
 
-		// nature
-		try {
-			TestCaseNature nature = pseudoTestCase.formatNature();
-			testCase.setNature(nature);
+	private void setTestCasePrerequisite(PseudoTestCase pseudoTestCase, TestCase testCase) {
+		String prereqs = pseudoTestCase.formatPreRequisites();
+		testCase.setPrerequisite(prereqs);
+	}
 
-		} catch (IllegalArgumentException ex) {
-
-			LOGGER.warn(ex.getMessage());
-			summary.incrModified();
-			testCase.setNature(TestCaseNature.defaultValue());
-		}
-		
-		// type
-		try {
-			TestCaseType type = pseudoTestCase.formatType();
-			testCase.setType(type);
-
-		} catch (IllegalArgumentException ex) {
-
-			LOGGER.warn(ex.getMessage());
-			summary.incrModified();
-			testCase.setType(TestCaseType.defaultValue());
-		}
-		
-		// status
-		try {
-			TestCaseStatus status = pseudoTestCase.formatStatus();
-			testCase.setStatus(status);
-
-		} catch (IllegalArgumentException ex) {
-
-			LOGGER.warn(ex.getMessage());
-			summary.incrModified();
-			testCase.setStatus(TestCaseStatus.defaultValue());
-		}
-		
-		// test steps
-		List<TestStep> steps = pseudoTestCase.formatSteps();
-
-		for (TestStep step : steps) {
-			testCase.addStep(step);
-		}
-
-		return testCase;
+	private void setTestCaseDescription(PseudoTestCase pseudoTestCase, TestCase testCase) {
+		String desc = pseudoTestCase.formatDescription();
+		testCase.setDescription(desc);
 	}
 
 	/**

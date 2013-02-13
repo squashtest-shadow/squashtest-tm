@@ -22,7 +22,7 @@ package org.squashtest.tm.service.security;
 
 import org.springframework.security.access.AccessDeniedException;
 
-public class PermissionsUtils {
+public final class PermissionsUtils {
 
 	private PermissionsUtils(){
 		

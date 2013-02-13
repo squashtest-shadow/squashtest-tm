@@ -48,7 +48,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSo
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 /**

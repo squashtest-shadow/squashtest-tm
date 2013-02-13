@@ -23,8 +23,6 @@ package org.squashtest.tm.service.internal.importer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 
 /**
@@ -37,8 +35,6 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 	private Double id = null;
 	private List<PseudoRequirementVersion> pseudoRequirementVersions; 
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(PseudoRequirement.class);
-	
 	public PseudoRequirement(String label2, int rowNumber) {
 		PseudoRequirementVersion pseudoRequirementVersion = new PseudoRequirementVersion(label2, rowNumber, this);
 		pseudoRequirementVersions = new ArrayList<PseudoRequirementVersion>();

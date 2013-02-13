@@ -27,7 +27,6 @@ import javax.inject.Named;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityGenerator;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;

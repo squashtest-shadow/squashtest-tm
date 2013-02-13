@@ -67,12 +67,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 
 		// check. Note : we wont recursively check for the whole hierarchy as it's supposed to have the same
 		// identity holder
-		for (Long id : list) {
-			COPIED node = copiedDao.findById(id);
-
-			PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(container, CREATE),
-					new SecurityCheckableObject(node, READ));
-		}
+		checkPermissions(list, container);
 
 		// proceed : will copy and persist each node of copied trees generation by generation.
 		List<COPIED> nodeList = new ArrayList<COPIED>(list.size());
@@ -83,12 +78,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 		Map<NodeContainer<TreeNode>, Collection<TreeNode>> parents = null;
 
 		// copy first generation and memorize copied entities
-		for (Long id : list) {
-			COPIED node = copiedDao.findById(id);
-
-			COPIED copy = (COPIED) createCopier().copy(node, (NodeContainer<TreeNode>) container, nextGeneration);
-			nodeList.add(copy);
-		}
+		copyFirstGeneration(list, container, nodeList, nextGeneration);
 
 		// loop on all following generations
 		while (!nextGeneration.isEmpty()) {
@@ -114,18 +104,42 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 				nextGeneration = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
 
 				// loop in all node of source generation and copy them
-				for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> sourceEntry : sourceGeneration.entrySet()) {
-					Collection<TreeNode> sources = sourceEntry.getValue();
-					NodeContainer<TreeNode> destination = sourceEntry.getKey();
-					for (TreeNode source : sources) {
-						createCopier().copy(source, destination, nextGeneration);
-					}
-				}
+				copyAllNodesOfSource(nextGeneration, sourceGeneration);
 			}
 
 		}
 		// after copying last row, evict source generation and their parents. They will never be grandparents.
 		return nodeList;
+	}
+
+	private void copyAllNodesOfSource(Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextGeneration,
+			Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceGeneration) {
+		for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> sourceEntry : sourceGeneration.entrySet()) {
+			Collection<TreeNode> sources = sourceEntry.getValue();
+			NodeContainer<TreeNode> destination = sourceEntry.getKey();
+			for (TreeNode source : sources) {
+				createCopier().copy(source, destination, nextGeneration);
+			}
+		}
+	}
+
+	private void copyFirstGeneration(List<Long> list, CONTAINER container, List<COPIED> nodeList,
+			Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextGeneration) {
+		for (Long id : list) {
+			COPIED node = copiedDao.findById(id);
+
+			COPIED copy = (COPIED) createCopier().copy(node, (NodeContainer<TreeNode>) container, nextGeneration);
+			nodeList.add(copy);
+		}
+	}
+
+	private void checkPermissions(List<Long> list, CONTAINER container) {
+		for (Long id : list) {
+			COPIED node = copiedDao.findById(id);
+
+			PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(container, CREATE),
+					new SecurityCheckableObject(node, READ));
+		}
 	}
 
 	private TreeNodeCopier createCopier() {

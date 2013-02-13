@@ -80,7 +80,7 @@ public class AoColumnDef {
 	}
 
 	public void setaTargets(int[] aTargets) {
-		this.aTargets = aTargets;
+		this.aTargets = aTargets.clone();
 	}
 
 	public void setmDataProp(String mDataProp) {

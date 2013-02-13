@@ -41,6 +41,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,7 +68,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 
 @Controller
 @RequestMapping("/executions/{executionId}")
@@ -160,7 +160,7 @@ public class ExecutionModificationController {
 
 	}
 
-	private static class ExecutionStepTableColumnDefHelper {
+	private static final class ExecutionStepTableColumnDefHelper {
 		private static final List<AoColumnDef> baseColumns = new ArrayList<AoColumnDef>(5);
 		static {
 			String smallWidth = "2em";

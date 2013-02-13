@@ -43,7 +43,8 @@ public class AdministrationStatistics {
 	 * 
 	 * @param result
 	 */
-	public AdministrationStatistics(Object[] result) {
+	public AdministrationStatistics(Object[] resultParam) {
+		Object[] result = resultParam.clone();
 		this.projectsNumber = (Long) result[0];
 		this.usersNumber = (Long) result[1];
 		this.requirementsNumber = (Long) result[2];

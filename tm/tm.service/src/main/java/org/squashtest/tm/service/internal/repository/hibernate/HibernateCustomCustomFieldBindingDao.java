@@ -90,7 +90,7 @@ public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<Cus
 	// ********************** static classes ******************************
 
 	
-	private static class SetBindingIdsParameterCallback implements SetQueryParametersCallback{
+	private static final class SetBindingIdsParameterCallback implements SetQueryParametersCallback{
 		
 		List<Long> ids;
 		

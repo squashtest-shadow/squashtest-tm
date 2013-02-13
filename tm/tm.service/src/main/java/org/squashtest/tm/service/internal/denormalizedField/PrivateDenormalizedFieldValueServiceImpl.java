@@ -102,7 +102,7 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 		
 		while(iterator.hasNext()){
 			CustomFieldValue cufValue = iterator.next();
-			if(cufValue.getCustomField().getId() == binding.getCustomField().getId()){
+			if(cufValue.getCustomField().getId().equals(binding.getCustomField().getId())){
 				iterator.remove();
 				return cufValue;
 			}

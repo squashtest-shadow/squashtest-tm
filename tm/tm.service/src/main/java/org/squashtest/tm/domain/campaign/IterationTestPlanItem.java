@@ -293,10 +293,10 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 				this.lastExecutedOn = null;
 				this.lastExecutedBy = null;
 			}
-			Iteration iteration = this.getIteration();
+			Iteration iter = this.getIteration();
 
-			if (iteration != null) {
-				iteration.updateAutoDatesAfterExecutionDetach(this, execution);
+			if (iter != null) {
+				iter.updateAutoDatesAfterExecutionDetach(this, execution);
 			}
 		}
 

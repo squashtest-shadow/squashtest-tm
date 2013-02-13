@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -42,7 +41,6 @@ import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
-import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 import org.squashtest.tm.service.user.UserAccountService;
@@ -55,10 +53,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	
 	@Inject
 	private AutomatedSuiteDao autoSuiteDao;
-	
-	@Inject
-	private InsecureTestAutomationManagementService automationService;
-	
+
 	@Inject
 	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
 

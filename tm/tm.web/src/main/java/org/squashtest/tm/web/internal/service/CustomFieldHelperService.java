@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -48,7 +49,6 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 
 
 /**
@@ -244,9 +244,9 @@ public class CustomFieldHelperService {
 				return Collections.emptyList();
 			}
 			
-			List<CustomFieldValue> values = cufValuesService.findAllCustomFieldValues(entities, customFields);
+			List<CustomFieldValue> cufValues = cufValuesService.findAllCustomFieldValues(entities, customFields);
 
-			return values;
+			return cufValues;
 		}
 
 		

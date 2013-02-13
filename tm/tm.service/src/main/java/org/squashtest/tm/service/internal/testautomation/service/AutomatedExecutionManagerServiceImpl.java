@@ -27,7 +27,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
