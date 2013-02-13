@@ -22,6 +22,7 @@
 package org.squashtest.tm.web.internal.controller.users;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +62,7 @@ import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.TeamModificationService;
+import org.squashtest.tm.web.internal.controller.administration.UserModel;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
@@ -106,6 +110,7 @@ public class TeamController {
 	 * 
 	 */
 	private final class TeamsDataTableModelHelper extends DataTableModelHelper<Team> {
+
 		private InternationalizationHelper messageSource;
 		private Locale locale;
 		private TeamsDataTableModelHelper(Locale locale, InternationalizationHelper messageSource){
@@ -131,7 +136,7 @@ public class TeamController {
 	}
 	
 	
-	
+
 	private final static class MembersTableModelHelper extends DataTableModelHelper<User>{
 		private InternationalizationHelper messageSource;
 		private Locale locale;
@@ -239,6 +244,8 @@ public class TeamController {
 	}
 
 	
+	// ************************************ team members section ************************ 
+	
 	
 	
 	@RequestMapping(value=TEAM_ID_URL+"/members", method = RequestMethod.GET, params="sEcho")
@@ -247,6 +254,33 @@ public class TeamController {
 		Filtering filtering = new DataTableFiltering(params);
 		return _getAssociateUserTableModel(paging, filtering, params.getsEcho());
 	}
+	
+	
+	@RequestMapping(value=TEAM_ID_URL+"/members/{memberIds}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void removeMember(@PathVariable("teamId") long teamId, @PathVariable("memberId") List<Long> memberIds){
+		//TODO
+	}
+	
+	@RequestMapping(value=TEAM_ID_URL+"/non-members", headers="Accept=application/json")
+	@ResponseBody
+	public Collection<UserModel> getNonMembers(@PathVariable("teamId") long teamId){
+		//TODO
+		List<User> nonMembers = _mockUserList().getPagedItems();
+		return CollectionUtils.collect(nonMembers, new UserModelCreator());
+	}
+	
+	
+	@RequestMapping(value=TEAM_ID_URL+"/members/{logins}", method = RequestMethod.PUT)
+	@ResponseBody
+	public void addMembers(@PathVariable("teamId") long teamId, @PathVariable("logins") List<String> userlogins){
+		//TODO
+	}
+	
+	
+	// ******************************* private *************************************
+	
+	
 	
 	private DataTableModel _getAssociateUserTableModel(PagingAndSorting paging, Filtering filtering, String secho){
 		
@@ -260,6 +294,61 @@ public class TeamController {
 	}
 	
 	
+	
+	// ************************* private classes ***********************
+	
+	
+	private static final class UserModelCreator implements Transformer{
+		@Override
+		public Object transform(Object user) {
+			return new UserModel((User) user);
+		}
+	}
+	
+	
+	private static final class TeamsDataTableModelHelper extends DataTableModelHelper<Team> {
+		private InternationalizationHelper messageSource;
+		private Locale locale;
+		private TeamsDataTableModelHelper(Locale locale, InternationalizationHelper messageSource){
+			this.locale = locale;
+			this.messageSource = messageSource;
+		}
+		@Override
+		public Map<String, Object> buildItemData(Team item) {
+			final AuditableMixin auditable = (AuditableMixin) item;
+			Map<String, Object> res = new HashMap<String, Object>();
+			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
+			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+			res.put("name", item.getName());
+			res.put("description", item.getDescription());
+			res.put("nb-associated-users", item.getMembers().size());
+			res.put("created-on", messageSource.localizeDate(auditable.getCreatedOn(), locale));
+			res.put("created-by", auditable.getCreatedBy());
+			res.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
+			res.put("last-mod-by", auditable.getLastModifiedBy());			
+			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
+			return res;
+		}
+	}
+	
+	private static final class MembersTableModelHelper extends DataTableModelHelper<User>{
+		private InternationalizationHelper messageSource;
+		private Locale locale;
+		private MembersTableModelHelper(Locale locale, InternationalizationHelper messageSource){
+			this.locale = locale;
+			this.messageSource = messageSource;
+		}
+		@Override
+		protected Map<?,?> buildItemData(User item) {
+			Map<String,Object> res = new HashMap<String, Object>();
+			res.put("user-id", item.getId());
+			res.put("user-index", getCurrentIndex());
+			res.put("user-name", item.getFirstName()+" "+item.getLastName()+" ("+item.getLogin()+")");
+			res.put("empty-delete-holder", null);
+			return res;
+		}
+	}
+
 	
 	// ***************** scaffolding **************************
 	

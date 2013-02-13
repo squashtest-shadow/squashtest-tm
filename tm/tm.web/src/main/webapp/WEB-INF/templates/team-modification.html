@@ -43,7 +43,7 @@
 			renameLabel : /*[[#{label.Rename}]]*/'Rename',
 			renameTeamTitle : /*[[#{title.renameTeam}]]*/'Rename Team',
 			descriptionPanelLabel: /*[[#{label.Description}]]*/'Desc',
-			membersPanelLabel : /*[[#{label.Members}]]*/'Add member'
+			membersPanelLabel : /*[[#{label.Members}]]*/'Teammates'
 		},
 		
 		projectFilterConf : {
@@ -146,7 +146,7 @@
             
              
 			  <div th:include="fragments-utils/general-information-panel :: general-information-panel" 
-			  	   th:with="auditableEntity=${team},entityUrl=@{/administration/teams/__${team.id}__}" th:remove="tag"/>
+			  	   th:with="auditableEntity=${team},entityUrl=@{/administration/teams/__${team.id}__}" th:remove="tag"></div>
 			      
               <div class="toolbar-button-panel">
                 <input type="button" th:value="#{ label.Rename }" value="Rename" id="rename-team-button" class="button" />
@@ -164,13 +164,13 @@
             
             <div class="toggle-panel">
             	<span class="not-displayed toggle-panel-buttons">
-            		<input type="button" id="members-add-button" value="+" ></input>
-            		<input type="button" id="members-removeall-button" th:value="#{label.RemoveMember}" ></input>
+            		<input type="button" id="add-member-button" value="+" ></input>
+            		<input type="button" id="remove-members-button" th:value="#{label.RemoveMember}" ></input>
             	</span> 
             	<div id="members-panel" class="toggle-panel-main">
             		
             		<table id="members-table" 
-            			   th:attr="data-def='filter, hover, ajaxsource='+@{/administration/teams/__${team.id}__/members}+',language='+@{/squash/datatables/language}">
+            			   th:attr="data-def='filter, hover, datakeys-id=user-id ,ajaxsource='+@{/administration/teams/__${team.id}__/members}+',language='+@{/squash/datatables/language}">
             			<thead>
             				<tr>
             					<th th:attr="data-def='invisible, map=user-id'">user-id</th>
@@ -180,7 +180,7 @@
 	            				<th th:attr="data-def='sortable, map=user-name, filter, link='+@{/administration/users/{user-id}/info}"
 	            					th:text="#{label.User}">user</th>
 	            					
-	            				<th th:attr="data-def='delete-button=#members-removeall-dialog, map=empty-delete-holder'"> </th>
+	            				<th th:attr="data-def='delete-button=#remove-members-dialog, map=empty-delete-holder'"> </th>
             				</tr>
             			</thead>
             			<tbody>
@@ -195,41 +195,62 @@
             	</div>
             </div>
         
-			           
-          <div id="delete-warning-pane" class="not-displayed popup-dialog" title="Delete"
-            th:title="#{label.Remove}">
-            <div class="alert">
-              <span th:text="#{message.team.remove}">Do you wanna remove team ?</span>
-            </div>
-            <div class="popup-dialog-buttonpane">
-              <input class="confirm" type="button" value="Proceed" th:value="#{label.Confirm}" />
-              <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}" />
-            </div>
-          </div>
-          
-         
-          <div id="members-removeall-dialog" class="not-displayed popup-dialog" th:title="#{title.RemoveMember}">
-         	 <div th:text="#{message.RemoveMember}">roundhouse-kick selected users ?</div>
-         	 <div class="popup-dialog-buttonpane">
-         	 	<input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"/>
-         	 	<input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
-         	 </div>
-          </div>
-          
-          
+  
+  
+		  <div id="rename-team-popup" class="not-displayed popup-dialog">
+		    <label for="rename-team-input" th:text="#{ label.Rename }">Rename</label> <input type="text" id="rename-team-input"
+		      maxlength="50" size="50" /> <br /> <span class="error-message name-error"></span>
+		  </div>
+		
+		
+		   <div id="delete-warning-pane" class="not-displayed popup-dialog" title="Delete"
+		    th:title="#{label.Remove}">
+		    <div class="alert">
+		      <span th:text="#{message.team.remove}">Do you wanna remove team ?</span>
+		    </div>
+		    <div class="popup-dialog-buttonpane">
+		      <input class="confirm" type="button" value="Proceed" th:value="#{label.Confirm}" />
+		      <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}" />
+		    </div>
+		  </div>
+		  
+		 
+		  <div id="remove-members-dialog" class="popup-dialog not-displayed" th:title="#{title.RemoveMember}">
+		 	 <div th:text="#{message.RemoveMember}">roundhouse-kick selected users to oblivion ?</div>
+		 	 <div class="popup-dialog-buttonpane">
+		 	 	<input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"/>
+		 	 	<input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
+		 	 </div>
+		  </div>
+		  
+		  <div id="no-selected-users" class="popup-dialog not-displayed" title="">
+		  	 <span th:text="#{message.NoMemberSelected}"></span>
+		  </div>
+		  
+		  
+		  <div id="add-member-dialog" class="not-displayed popup-dialog" title="Add Member" th:title="#{title.AddMember}">
+		  	<div class="main">
+				<label for="add-members-input" th:text="#{label.User}">which one </label>
+				<input type="text" id="add-member-input"/>
+			</div>
+			<div class="wait please-wait-message waiting-loading" th:text="#{message.PleaseWait}">zzz</div>
+			<div class="no-more-users" th:text="#{message.AllUsersAlreadyLinkedToTeam}">no more users to bind</div>
+			<div class="no-selected-users" th:text="#{message.NoMemberSelected}"></div>
+		 	 <div class="popup-dialog-buttonpane">
+		 	 	<input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"/>
+		 	 	<input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
+		 	 </div>
+		  </div>			           
+
+
         </div>
       </div>
     </div>
   </div>
   </div>
   <!--    ====================================POPUPS======================================================  -->
-  <!--    	RENAME POPUP -->
-  <div id="rename-team-popup" class="not-displayed popup-dialog">
-    <label for="rename-team-input" th:text="#{ label.Rename }">Rename</label> <input type="text" id="rename-team-input"
-      maxlength="50" size="50" /> <br /> <span class="error-message name-error"></span>
-  </div>
 
- 
+          
 
 </body>
 </html>

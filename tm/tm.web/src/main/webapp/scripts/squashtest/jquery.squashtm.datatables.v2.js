@@ -722,8 +722,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			}		
 		});
 
-	}
-	;
+	};
 
 	function _configureDeleteButtons() {
 		var deleteConf = this.squashSettings.deleteButtons;
@@ -742,8 +741,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			}
 		});
 
-	}
-	;
+	};
 	
 	function _bindDeleteButtons() {
 		var conf = this.squashSettings.deleteButtons;
@@ -760,7 +758,11 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			jqRow.addClass('ui-state-row-selected');
 			
 			if (conf.delegate!==undefined){
-				$(conf.delegate).dialog('open');
+				try{
+					$(conf.delegate).dialog('open');
+				}catch(thisIsNoDialog){
+					$(conf.delegate).confirmDialog('open');	//a shot in the dark
+				}
 			}
 			else{
 				oneShotConfirm(conf.tooltip || "", conf.popupmessage || "",
@@ -1276,10 +1278,11 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		
 		_DOMExprHandlers : {
 			table : {
-				'ajaxsource' : function(conf, assignation) { conf.table.sAjaxSource=assignation.value;},
-				'filter' : function(conf, assignation) { var cnf = conf.table; cnf.bFilter=assignation.value; cnf.sDom = 'ft<"dataTables_footer"lirp>';},
-				'langage' : function(conf, assignation) {conf.table.oLanguage = conf.table.oLanguage || {}; conf.table.oLanguage.sUrl = assignation.value;},
-				'hover' : function(conf, assignation) { conf.squash.enableHover = assignation.value;}
+				'ajaxsource' : 	function(conf, assignation) { conf.table.sAjaxSource=assignation.value;},
+				'filter' : 		function(conf, assignation) { var cnf = conf.table; cnf.bFilter=assignation.value; cnf.sDom = 'ft<"dataTables_footer"lirp>';},
+				'langage' : 	function(conf, assignation) { conf.table.oLanguage = conf.table.oLanguage || {}; conf.table.oLanguage.sUrl = assignation.value;},
+				'hover' : 		function(conf, assignation) { conf.squash.enableHover = assignation.value;},
+				'datakeys-id' : function(conf, assignation) { conf.squash.dataKeys = conf.squash.dataKeys || {}; conf.squash.dataKeys.entityId = assignation.value;}
 			},
 			columns : {
 				'invisible' : 	function(conf, assignation) { conf.current.bVisible = false;},
@@ -1297,8 +1300,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 									var selector = assignation.value;
 									conf.squash.deleteButtons = {
 										delegate : selector,
-										tooltip : $(selector).prev().find('span.ui-dialog-title').text(),
-										success : function(){$("."+cls+":first").parents('table').squashTable().refresh()}
+										tooltip : $(selector).prev().find('span.ui-dialog-title').text()
 									};
 								},
 				'link' : 		function(conf, assignation) { 

@@ -33,40 +33,41 @@ define(
 
 							this.configureTogglePanels();
 							this.configureEditables();
+							
 							this.configureRenamePopup();
-							this.configureButtons();
-							//===============toogle buttons=================
-							// this line below is here because toggle panel
-							// buttons cannot be bound with the 'events'
-							// property of Backbone.View.
-							// my guess is that the event is bound to the button
-							// before it is moved from it's "span.not-displayed"
-							// to the toggle panel header.
-							// TODO change our way to make toggle panels buttons
-							// this.$("#add-user-button").on("click",
-							// $.proxy(this.openAddUserPopup, this));
-							//=============/toogle buttons===================
-							// dialog is moved from DOM when widgetized => we
-							// need to store it
-							this.confirmDeletionDialog = this.$(
-									"#delete-warning-pane").confirmDialog();
-							// ...and we cannot use the events hash
-							this.confirmDeletionDialog.on(
-									"confirmdialogconfirm", $.proxy(
-											this.deleteTeam, this));
+							this.configureDeletionDialog();
+							this.configureRemoveMemberDialog();
+							this.configureNoMemberSelectedDialog();
+							this.configureAddMemberDialog();
 							
 							this.configureMembersTable();
+
+							this.configureButtons();							
+
 						},
 
 						events : {
-
-							"click #delete-team-button" : "confirmTeamDeletion"
+							"click #delete-team-button" : "confirmTeamDeletion",
 						},
 
-						confirmTeamDeletion : function(event) {
+						confirmTeamDeletion : function(event) {							
 							this.confirmDeletionDialog.confirmDialog("open");
 						},
-
+						
+						confirmRemoveMember : function(event){
+							var hasMember = ($("#members-table").squashTable().getSelectedIds().length>0);
+							if (hasMember){
+								this.confirmRemoveMemberDialog.confirmDialog("open");
+							}
+							else{
+								this.noMemberSelectedDialog.messageDialog('open');
+							}
+						},
+						
+						openAddMember : function(){
+							this.addMemberDialog.confirmDialog('open');
+						},
+						
 						deleteTeam : function(event) {
 							var self = this;
 
@@ -78,9 +79,37 @@ define(
 							});
 
 						},
+						
+						removeMembers : function(event){
+							var table = $("#members-table").squashTable();
+							var ids = table.getSelectedIds();
+							if (ids.length === 0) return;
+							
+							$.ajax({
+								url : document.location.href+"/members/"+ids.join(','),
+								type : 'delete'
+							}).done(table.refresh);
+							
+						},
+						
+						addMember : function(event){
+							var dialog = this.addMemberDialog;
+							var login = dialog.find('#add-member-input').val();
+							if (login===null || login===undefined || login.length === 0){
+								dialog.activate('no-selected-users');
+							}
+							else{
+								$.ajax({
+									url : document.location.href+"/members/"+login,
+									type : 'PUT'
+								}).success(function(){
+									dialog.confirmDialog('close');
+									$("#members-table").squashTable().refresh();
+								});
+							}
+						},
 
-						replacePlaceHolderByValue : function(index, message,
-								replaceValue) {
+						replacePlaceHolderByValue : function(index, message, replaceValue) {
 							var pattern = /\{[\d,\w,\s]*\}/;
 							var match = pattern.exec(message);
 							var pHolder = match[index];
@@ -89,6 +118,19 @@ define(
 
 						configureButtons : function() {
 							$.squash.decorateButtons();
+							//===============toogle buttons=================
+							// this line below is here because toggle panel
+							// buttons cannot be bound with the 'events'
+							// property of Backbone.View.
+							// my guess is that the event is bound to the button
+							// before it is moved from it's "span.not-displayed"
+							// to the toggle panel header.
+							// TODO change our way to make toggle panels buttons
+							//=============/toogle buttons===================
+							
+							this.$("#remove-members-button").on('click',$.proxy(this.confirmRemoveMember,this));
+							this.$("#add-member-button").on('click',$.proxy(this.openAddMember, this));						
+						
 						},
 
 						configureTogglePanels : function() {
@@ -112,7 +154,7 @@ define(
 								url : teamMod.teamUrl,
 								ckeditor : {
 									customConfig : squashtm.app.contextRoot
-											+ "/styles/ckeditor/ckeditor-config.js",
+											+ "styles/ckeditor/ckeditor-config.js",
 									language : teamMod.richEditLanguageValue
 								},
 								placeholder : teamMod.richEditPlaceHolder,
@@ -164,16 +206,77 @@ define(
 									'click' : this.closePopup
 								} ]
 							};
+							
 							squashtm.popup.create(params);
-							$("#rename-team-popup").bind(
-									"dialogopen",
-									function(event, ui) {
-										var name = $.trim($('#team-name-header')
-												.text());
-										$("#rename-team-input")
-												.val($.trim(name));
-									});
+							
+							$("#rename-team-popup").bind("dialogopen",function(event, ui) {
+								var name = $.trim($('#team-name-header').text());								
+								$("#rename-team-input").val($.trim(name));
+							});
 
+						},
+						
+						configureDeletionDialog : function(){							
+							this.confirmDeletionDialog = this.$("#delete-warning-pane").confirmDialog();
+							this.confirmDeletionDialog.on("confirmdialogconfirm", $.proxy(this.deleteTeam, this));
+						},
+						
+						configureRemoveMemberDialog : function(){							
+							this.confirmRemoveMemberDialog = this.$("#remove-members-dialog").confirmDialog();
+							this.confirmRemoveMemberDialog.on("confirmdialogconfirm", $.proxy(this.removeMembers, this));													
+						},
+						
+						configureNoMemberSelectedDialog : function(){
+							this.noMemberSelectedDialog = this.$("#no-selected-users").messageDialog();														
+						},
+						
+						configureAddMemberDialog : function(){
+							var addMemberDialog = this.$("#add-member-dialog").confirmDialog();
+							
+							addMemberDialog.on("confirmdialogvalidate", function(){
+								addMemberDialog.activate('no-selected-users');
+								return false;
+							});
+							
+							addMemberDialog.on("confirmdialogconfirm", $.proxy(this.addMember, this));	
+							
+							addMemberDialog.find('#add-member-input').autocomplete();
+							
+							addMemberDialog.on('confirmdialogopen', function(){
+								var dialog = addMemberDialog;
+								var input = dialog.find('#add-member-input');
+								dialog.activate('wait');
+								$.ajax({
+									url : document.location.href+"/non-members",
+									dataType : 'json'
+								}).success(function(json){
+									if (json.length>0){
+										var source = _.map(json, function(user){return user.login});
+										input.autocomplete("option", "source", source);
+										dialog.activate('main');
+									}
+									else{
+										dialog.activate('no-more-users');
+									}
+								});								
+							});
+							
+							addMemberDialog.activate = function(arg){
+								var cls = '.'+arg;
+								this.find('div').not('.popup-dialog-buttonpane')
+									.filter(cls).show().end()
+									.not(cls).hide();
+								if (arg!=='main'){
+									this.next().find('button:first').hide();
+								}
+								else{
+									this.next().find('button:first').show();
+								}
+							};
+							
+
+							
+							this.addMemberDialog = addMemberDialog;
 						},
 
 						closePopup : function() {

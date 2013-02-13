@@ -32,7 +32,7 @@ import org.squashtest.tm.domain.users.Team;
  * @author mpagnon
  * 
  */
-@DynamicDao(entity = Team.class, hasCustomImplementation = false)
+@DynamicDao(entity = Team.class)
 public interface TeamDao extends CustomTeamDao{
 	/**
 	 * Will persist a new team.

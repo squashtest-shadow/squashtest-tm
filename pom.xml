@@ -310,6 +310,8 @@
 						<exclude>integration-tests/src/it/resources/**</exclude>
 						<!--other -->
 						<exclude>**/new_report.rptdesign</exclude>
+						<!-- generated xml (dev) -->
+						<exclude>**/tm.service/META-INF/**</exclude>
 					</excludes>
 					<mapping>
 						<tag>DYNASCRIPT_STYLE</tag>
