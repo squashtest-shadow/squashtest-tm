@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,6 +50,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
@@ -58,9 +60,15 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.acls.PermissionGroup;
+import org.squashtest.tm.service.user.AdministrationService;
+import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.web.internal.controller.administration.UserModel;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -88,7 +96,12 @@ public class TeamController {
 	
 	@Inject 
 	private PermissionEvaluationService permissionEvaluationService;
+
+	@Inject
+	private TeamFinderService teamFinderService;
 	
+	private ProjectsPermissionManagementService permissionService;
+
 	private static final String TEAM_ID_URL = "/{teamId}";
 
 	private DatatableMapper<String> teamsMapper = new NameBasedMapper(9)
@@ -99,7 +112,12 @@ public class TeamController {
 			.mapAttribute(Team.class, "audit.createdBy", String.class, "created-by")
 			.mapAttribute(Team.class, "audit.lastModifiedOn", Date.class, "last-mod-on")
 			.mapAttribute(Team.class, "audit.lastModifiedBy", String.class, "last-mod-by");
-	
+
+	@ServiceReference
+	public void setProjectsPermissionManagementService(ProjectsPermissionManagementService permissionService) {
+		this.permissionService = permissionService;
+	}
+
 	private DatatableMapper<String> membersMapper = new NameBasedMapper(1)
 																.mapAttribute(User.class, "firstName", String.class, "user-name");
 	
@@ -226,6 +244,51 @@ public class TeamController {
 		service.addMembers(teamId, userlogins);
 	}
 	
+	// **************************** team permission section ************************
+	
+	@RequestMapping(value = TEAM_ID_URL+"/add-permission", method = RequestMethod.POST)
+	@ResponseBody
+	public void addNewPermission(@RequestParam("project") long projectId, @PathVariable long teamId,
+			@RequestParam String permission) {
+		permissionService.addNewPermissionToProject(teamId, projectId, permission);
+	}
+
+	@RequestMapping(value = TEAM_ID_URL+"/remove-permission", method = RequestMethod.POST)
+	@ResponseBody
+	public void removePermission(@RequestParam("project") long projectId, @PathVariable long teamId) {
+		permissionService.removeProjectPermission(teamId, projectId);
+	}
+
+	@RequestMapping(value = TEAM_ID_URL+"/permission-popup", method = RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView getPermissionPopup(@PathVariable long teamId) {
+		Team team = teamFinderService.findById(teamId);
+		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
+		List<Project> projectList = permissionService.findProjectWithoutPermissionByParty(teamId);
+
+		ModelAndView mav = new ModelAndView("fragment/teams/team-permission-popup");
+		mav.addObject("team", team);
+		mav.addObject("projectList", projectList);
+		mav.addObject("permissionList", permissionList);
+		return mav;
+	}
+
+	@RequestMapping(value = TEAM_ID_URL+"/permission-table", method = RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView getPermissionTableModel(DataTableDrawParameters params, @PathVariable long teamId) {
+		Team team = teamFinderService.findById(teamId);
+		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
+		List<ProjectPermission> projectPermissions = permissionService.findProjectPermissionByParty(teamId);
+
+		ModelAndView mav = new ModelAndView("fragment/teams/team-permission-table");
+		mav.addObject("team", team);
+		mav.addObject("permissionList", permissionList);
+		mav.addObject("projectPermissionList", projectPermissions);
+		return mav;
+	}
+
+	
+
 	
 	// ******************************* private *************************************
 	
@@ -292,7 +355,6 @@ public class TeamController {
 			return res;
 		}
 	}
-
 	
 	// ***************** scaffolding **************************
 	

@@ -49,6 +49,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
@@ -222,6 +223,17 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		return permissionsManager.findUserPermissionsBeanByProject(sorting, filtering, projectId);
 	}
 
+	@Override
+	public List<PartyProjectPermissionsBean> findPartyPermissionsBeansByProject(long projectId) {
+		return permissionsManager.findPartyPermissionsBeanByProject(projectId);
+	}
+	
+	@Override
+	public PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionsBeanByProject(
+			PagingAndSorting sorting, Filtering filtering, long projectId) {
+		return permissionsManager.findPartyPermissionsBeanByProject(sorting, filtering, projectId);
+	}
+	
 	@Override
 	public List<PermissionGroup> findAllPossiblePermission() {
 		return permissionsManager.findAllPossiblePermission();

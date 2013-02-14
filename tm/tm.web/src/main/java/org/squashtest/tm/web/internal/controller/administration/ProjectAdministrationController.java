@@ -39,6 +39,7 @@ import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectFinder;
@@ -84,8 +85,8 @@ public class ProjectAdministrationController {
 		
 		
 		//user permissions data
-		List<UserProjectPermissionsBean> userProjectPermissionsBean = projectFinder.findUserPermissionsBeansByProject(projectId);		
-		List<Map<?,?>> userPermissions = new UserPermissionDatatableModelHelper().buildAllData(userProjectPermissionsBean);
+		List<PartyProjectPermissionsBean> partyProjectPermissionsBean = projectFinder.findPartyPermissionsBeansByProject(projectId);		
+		List<Map<?,?>> partyPermissions = new PartyPermissionDatatableModelHelper().buildAllData(partyProjectPermissionsBean);
 		
 		List<PermissionGroup> availablePermissions = projectFinder.findAllPossiblePermission();
 		
@@ -106,7 +107,7 @@ public class ProjectAdministrationController {
 		mav.addObject("boundTAProjects", boundProjects);
 		mav.addObject("bugtrackersList", JsonHelper.serialize(comboDataMap));
 		mav.addObject("bugtrackersListEmpty", comboDataMap.size() == 1);
-		mav.addObject("userPermissions", userPermissions);
+		mav.addObject("userPermissions", partyPermissions);
 		mav.addObject("availablePermissions", availablePermissions);
 		
 		return mav;

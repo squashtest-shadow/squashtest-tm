@@ -28,6 +28,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
@@ -51,6 +52,10 @@ public interface CustomGenericProjectFinder {
 	List<UserProjectPermissionsBean> findUserPermissionsBeansByProject(long projectId);
 	
 	PagedCollectionHolder<List<UserProjectPermissionsBean>> findUserPermissionsBeanByProject(PagingAndSorting sorting, Filtering filtering, long projectId);
+	
+	List<PartyProjectPermissionsBean> findPartyPermissionsBeansByProject(long projectId);
+	
+	PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionsBeanByProject(PagingAndSorting sorting, Filtering filtering, long projectId);
 	
 	List<PermissionGroup> findAllPossiblePermission();
 

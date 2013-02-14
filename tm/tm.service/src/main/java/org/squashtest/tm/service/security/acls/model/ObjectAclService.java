@@ -48,8 +48,12 @@ public interface ObjectAclService {
 
 	List<Object[]> retrieveClassAclGroupFromUserLogin(String userLogin, String qualifiedClassName);
 
+	List<Object[]> retrieveClassAclGroupFromPartyId(long partyId, String qualifiedClassName);
+	
 	List<Long> findObjectWithoutPermissionByLogin(String userLogin, String qualifiedClass);
 
+	List<Long> findObjectWithoutPermissionByPartyId(long partyId, String qualifiedClass);
+	
 	void addNewResponsibility(String userLogin, ObjectIdentity entityRef, String qualifiedName);
 
 	List<String> findUsersWithWritePermission(List<ObjectIdentity> entityRefs);
@@ -61,6 +65,8 @@ public interface ObjectAclService {
 	 */
 	List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass);
 	
+	List<Object[]> retrievePartyAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass);
+	
 	/**
 	 * Same as {@link #retriveUserAndAclGroupNameFromIdentityAndClass(long, Class)}, sorted and filtered version
 	 * @param objectId
@@ -69,6 +75,8 @@ public interface ObjectAclService {
 	 */
 	List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass, Sorting sorting, Filtering filtering);
 
+	List<Object[]> retrievePartyAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass, Sorting sorting, Filtering filtering);
+	
 	List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName);
 
 	List<String> findUsersWithExecutePermission(List<ObjectIdentity> entityRefs);

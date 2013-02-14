@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "team-editor/TeamModificationView.js","app/ws/squashtm.workspace", "domReady" ], function($,TeamModificationView, WS, domReady) {
+	require([ "jquery", "team-editor/TeamModificationView","app/ws/squashtm.workspace", "domReady" ], function($,TeamModificationView, WS, domReady) {
 		var goBack = function() {
 			document.location.href = squashtm.app.contextRoot + "/administration/users/list";
 		};

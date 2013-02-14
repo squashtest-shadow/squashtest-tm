@@ -238,7 +238,7 @@
 				<%----------------------------------- USER PANEL -----------------------------------------------%>
 			<f:message key="title.AddPermission" var="addButtonTitle" />
 			<comp:toggle-panel id="project-users-panel"
-				titleKey="project.users.panel.title" isContextual="true" open="true"
+				titleKey="label.Permissions" isContextual="true" open="true"
 				classes="users-panel">
 	
 				<jsp:attribute name="panelButtons">

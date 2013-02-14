@@ -28,6 +28,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectPermission;
+import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
@@ -45,9 +46,17 @@ public interface ProjectsPermissionFinder {
 
 	List<Project> findProjectWithoutPermissionByLogin(String userLogin);
 
+	List<ProjectPermission> findProjectPermissionByParty(long partyId);
+
+	List<Project> findProjectWithoutPermissionByParty(long partyId);
+	
 	List<UserProjectPermissionsBean> findUserPermissionsBeanByProject(long projectId);	
 	
 	PagedCollectionHolder<List<UserProjectPermissionsBean>> findUserPermissionsBeanByProject(PagingAndSorting sorting, Filtering filtering, long projectId);
+
+	List<PartyProjectPermissionsBean> findPartyPermissionsBeanByProject(long projectId);	
+	
+	PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionsBeanByProject(PagingAndSorting sorting, Filtering filtering, long projectId);
 	
 	List<User> findUserWithoutPermissionByProject(long projectId);
 
