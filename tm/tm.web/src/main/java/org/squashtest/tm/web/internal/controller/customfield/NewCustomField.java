@@ -99,6 +99,6 @@ public class NewCustomField extends CustomField {
 	 *            the options to set
 	 */
 	public void setOptions(String[][] options) {
-		this.options = options;
+		this.options = options.clone();
 	}
 }

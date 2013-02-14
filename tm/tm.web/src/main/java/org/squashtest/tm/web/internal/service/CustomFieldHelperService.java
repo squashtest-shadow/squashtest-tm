@@ -349,23 +349,23 @@ public class CustomFieldHelperService {
 			return result;
 		}
 
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			BindingTarget other = (BindingTarget) obj;
-			if (bindableEntity != other.bindableEntity)
-				return false;
-			if (projectId == null) {
-				if (other.projectId != null)
-					return false;
-			} else if (!projectId.equals(other.projectId))
-				return false;
-			return true;
+		@Override//NOSONAR  code generation, assumed to be safe
+		public boolean equals(Object obj) {//NOSONAR
+			if (this == obj)//NOSONAR
+				return true;//NOSONAR
+			if (obj == null)//NOSONAR
+				return false;//NOSONAR
+			if (getClass() != obj.getClass())//NOSONAR
+				return false;//NOSONAR
+			BindingTarget other = (BindingTarget) obj;//NOSONAR
+			if (bindableEntity != other.bindableEntity)//NOSONAR
+				return false;//NOSONAR
+			if (projectId == null) {//NOSONAR
+				if (other.projectId != null)//NOSONAR
+					return false;//NOSONAR
+			} else if (!projectId.equals(other.projectId))//NOSONAR
+				return false;//NOSONAR
+			return true;//NOSONAR
 		}
 		
 		

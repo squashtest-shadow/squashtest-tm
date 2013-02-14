@@ -234,7 +234,6 @@ public class TreeNodeCopier implements NodeVisitor {
 		customFieldValueManagerService.copyCustomFieldValues(source, copy);
 		//do the same for the steps if any
 		int total=copy.getSteps().size();
-		StepCustomFieldCopier cufCopier = new StepCustomFieldCopier();
 		for (int i=0;i<total;i++){
 			TestStep copyStep = copy.getSteps().get(i);
 			TestStep sourceStep = source.getSteps().get(i);
@@ -305,28 +304,5 @@ public class TreeNodeCopier implements NodeVisitor {
 		}
 	}
 	
-	// ***************** utilities etc **********************
-	
-	private class StepCustomFieldCopier implements TestStepVisitor{
-
-		private TestStep originalStep;
-		
-		public void setOriginalStep(TestStep step){
-			this.originalStep = step;
-		}
-		
-		@Override
-		public void visit(ActionTestStep visited) {
-			customFieldValueManagerService.copyCustomFieldValues((ActionTestStep)originalStep, visited);
-		}
-
-		@Override
-		public void visit(CallTestStep visited) {
-			//nothing
-		}
-		
-		
-		
-	}
 
 }
