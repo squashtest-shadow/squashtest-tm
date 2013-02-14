@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.user;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -91,6 +92,11 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 	}
 
 	@Override
+	public void addMember(long teamId, String login) {
+		addMembers(teamId, Arrays.asList(login));
+	}
+	
+	@Override
 	public void addMembers(long teamId, List<String> logins) {
 		List<User> users = userDao.findUsersByLoginList(logins);
 		Team team = teamDao.findById(teamId);
@@ -100,6 +106,28 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 	@Override
 	public List<User> findAllNonMemberUsers(long teamId) {
 		return userDao.findAllNonTeamMembers(teamId);
+	}
+	
+	
+	@Override
+	public void removeMember(long teamId, long memberId) {
+		User user = userDao.findById(memberId);
+		Team team = teamDao.findById(teamId);
+		team.removeMember(user);
+	}
+	
+	@Override
+	public void removeMembers(long teamId, List<Long> memberIds) {
+		List<User> users = userDao.findAllByIds(memberIds);
+		Team team = teamDao.findById(teamId);
+		team.removeMember(users);
+	}
+
+	@Override
+	public PagedCollectionHolder<List<User>> findAllTeamMembers(long teamId, PagingAndSorting sorting, Filtering filtering) {
+		List<User> teamMates = userDao.findAllTeamMembers(teamId, sorting, filtering);
+		long allMates = userDao.countAllTeamMembers(teamId);
+		return new PagingBackedPagedCollectionHolder<List<User>>(sorting, allMates, teamMates);
 	}
 
 }

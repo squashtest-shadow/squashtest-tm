@@ -88,7 +88,7 @@ define(
 							$.ajax({
 								url : document.location.href+"/members/"+ids.join(','),
 								type : 'delete'
-							}).done(table.refresh);
+							}).done($.proxy(table.refresh, table));
 							
 						},
 						

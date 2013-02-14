@@ -38,4 +38,7 @@ public interface CustomTeamFinderService {
 	
 
 	List<User> findAllNonMemberUsers(long teamId);
+	
+	
+	PagedCollectionHolder<List<User>> findAllTeamMembers(long teamId, PagingAndSorting sorting, Filtering filtering);
 }

@@ -50,4 +50,8 @@ public interface UserDao extends EntityDao<User> {
 	void checkLoginAvailability(String login) ;
 	
 	List<User> findAllNonTeamMembers(long teamId);
+	
+	List<User> findAllTeamMembers(long teamId, PagingAndSorting paging, Filtering filtering);
+	
+	int countAllTeamMembers(long teamId);
 }

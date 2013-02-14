@@ -20,24 +20,33 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.Transformer;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.ResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.LoginAlreadyExistsException;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
+import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
+import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.UserDao;
 
 @Repository
@@ -180,8 +189,59 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 
 	}
 	
+	@Override
+	public int countAllTeamMembers(long teamId) {
+		Query query = currentSession().getNamedQuery("user.countAllTeamMembers");
+		query.setParameter("teamId", teamId, LongType.INSTANCE);
+		return (Integer)query.uniqueResult();
+	}
+	
+	@Override
+	public List<User> findAllTeamMembers(long teamId, PagingAndSorting paging,
+			Filtering filtering) {
+		
+		Criteria crit = currentSession().createCriteria(Team.class, "Team")
+										.add(Restrictions.eq("Team.id", teamId))
+										.createCriteria("Team.members", "User")
+										.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+		
+		/* add ordering */
+		String sortedAttribute = paging.getSortedAttribute();
+		if (sortedAttribute != null) {
+			SortingUtils.addOrder(crit, paging);
+		}
+		
+		/* add filtering */
+		if  (filtering.isDefined()){
+			crit = crit.add(_filterMembers(filtering));
+		}
+
+		/* result range */
+		PagingUtils.addPaging(crit, paging);
+
+		
+		return collectFromMapList(crit.list(), "User");
+		
+	}
+	
+	private Criterion _filterMembers(Filtering filtering){
+		String filter = filtering.getFilter();
+		return Restrictions.disjunction()
+						  .add(Restrictions.like("User.firstName", filter, MatchMode.ANYWHERE))
+						  .add(Restrictions.like("User.lastName", filter, MatchMode.ANYWHERE))
+						  .add(Restrictions.like("User.login", filter, MatchMode.ANYWHERE));
+	}
+	
 	
 	// **************** private code ****************************
+	
+	private <X> List<X> collectFromMapList(List hibernateResult, String alias){
+		List<X> collected = new ArrayList(hibernateResult.size());
+		for (Map<String, ?> result : (List<Map<String, ?>>) hibernateResult){
+			collected.add((X)(result.get(alias)));
+		}
+		return collected;
+	}
 	
 
 	private static final class SetUserIdsParameterCallback implements SetQueryParametersCallback{

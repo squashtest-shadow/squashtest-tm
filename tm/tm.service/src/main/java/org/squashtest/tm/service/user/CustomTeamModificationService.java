@@ -59,6 +59,14 @@ public interface CustomTeamModificationService extends CustomTeamFinderService{
 	void changeName(long teamId, String name);
 
 	
+	/**
+	 * Add one member, identified by its login
+	 * 
+	 * @param teamId
+	 * @param login
+	 */
+	void addMember(long teamId, String login);
+	
 	
 	/**
 	 * Add one or more members, identified by their login, to a team identified by its id.
@@ -67,5 +75,13 @@ public interface CustomTeamModificationService extends CustomTeamFinderService{
 	 * @param logins
 	 */
 	void addMembers(long teamId, List<String> logins);
+	
+	
+	void removeMember(long teamId, long memberId);
+	
+	void removeMembers(long teamId, List<Long> memberIds);
+	
+	
+	
 	
 }

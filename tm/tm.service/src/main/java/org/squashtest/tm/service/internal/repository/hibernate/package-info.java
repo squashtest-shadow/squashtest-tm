@@ -204,6 +204,7 @@
 		@NamedQuery(name = "user.findUsersByLoginList", query = "from User fetch all properties where login in (:userIds)"),
 		@NamedQuery(name = "user.findUserByLogin", query = "from User fetch all properties where login = :userLogin"),
 		@NamedQuery(name = "user.findAllNonTeamMembers", query = "select u from User u, Team t where u not member of t.members and t.id = :teamId "),
+		@NamedQuery(name = "user.countAllTeamMembers",   query = "select members.size from Team where id = :teamId"),
 		
 
 		//RequirementAuditEvent

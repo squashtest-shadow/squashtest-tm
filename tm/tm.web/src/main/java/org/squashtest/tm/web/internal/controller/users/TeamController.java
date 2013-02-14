@@ -101,7 +101,7 @@ public class TeamController {
 			.mapAttribute(Team.class, "audit.lastModifiedBy", String.class, "last-mod-by");
 	
 	private DatatableMapper<String> membersMapper = new NameBasedMapper(1)
-																.mapAttribute(User.class, "composite identifier", String.class, "user-name");
+																.mapAttribute(User.class, "firstName", String.class, "user-name");
 	
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TeamController.class);
@@ -182,7 +182,7 @@ public class TeamController {
 	@ResponseBody
 	public DataTableModel getTableModel(final DataTableDrawParameters params, final Locale locale) {
 		
-		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, teamsMapper, SortedAttributeSource.SINGLE_ENTITY);
+		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, teamsMapper);
 		Filtering filtering = new  DataTableFiltering(params);
 
 		PagedCollectionHolder<List<Team>> holder = service.findAllFiltered(paging, filtering);
@@ -215,7 +215,7 @@ public class TeamController {
 		Team team = service.findById(teamId);
 		model.addAttribute("team", team);
 		
-		List<?> userModel = _getMembersTableModel(new DefaultPagingAndSorting(), DefaultFiltering.NO_FILTERING, "").getAaData();
+		List<?> userModel = _getMembersTableModel(teamId, new DefaultPagingAndSorting(), DefaultFiltering.NO_FILTERING, "").getAaData();
 		model.addAttribute("users", userModel);
 		
 		
@@ -250,23 +250,22 @@ public class TeamController {
 	
 	@RequestMapping(value=TEAM_ID_URL+"/members", method = RequestMethod.GET, params="sEcho")
 	@ResponseBody
-	public DataTableModel getMembersTableModel(DataTableDrawParameters params){
+	public DataTableModel getMembersTableModel(DataTableDrawParameters params, @PathVariable("teamId") long teamId){
 		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, membersMapper, SortedAttributeSource.SINGLE_ENTITY);
 		Filtering filtering = new DataTableFiltering(params);
-		return _getMembersTableModel(paging, filtering, params.getsEcho());
+		return _getMembersTableModel(teamId, paging, filtering, params.getsEcho());
 	}
 	
 	
 	@RequestMapping(value=TEAM_ID_URL+"/members/{memberIds}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void removeMember(@PathVariable("teamId") long teamId, @PathVariable("memberId") List<Long> memberIds){
-		//TODO
+	public void removeMember(@PathVariable("teamId") long teamId, @PathVariable("memberIds") List<Long> memberIds){
+		service.removeMembers(teamId, memberIds);
 	}
 	
 	@RequestMapping(value=TEAM_ID_URL+"/non-members", headers="Accept=application/json")
 	@ResponseBody
 	public Collection<UserModel> getNonMembers(@PathVariable("teamId") long teamId){
-		//TODO
 		List<User> nonMembers = service.findAllNonMemberUsers(teamId);
 		return CollectionUtils.collect(nonMembers, new UserModelCreator());
 	}
@@ -283,14 +282,9 @@ public class TeamController {
 	
 	
 	
-	private DataTableModel _getMembersTableModel(PagingAndSorting paging, Filtering filtering, String secho){
-		
+	private DataTableModel _getMembersTableModel(long teamId, PagingAndSorting paging, Filtering filtering, String secho){
 		Locale locale = LocaleContextHolder.getLocale();
-		
-		//TODO : wire with an actual service call
-		PagedCollectionHolder<List<User>> holder = _mockUserList();
-		
-		
+		PagedCollectionHolder<List<User>> holder = service.findAllTeamMembers(teamId, paging, filtering);
 		return new MembersTableModelHelper(locale, messageSource).buildDataModel(holder, secho);
 	}
 	
