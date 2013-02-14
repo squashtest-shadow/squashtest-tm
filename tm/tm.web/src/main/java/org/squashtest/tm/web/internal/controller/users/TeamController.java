@@ -105,58 +105,7 @@ public class TeamController {
 	
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TeamController.class);
-	/**
-	 * Will help to create the {@link DataTableModel} to fill the data-table of teams
-	 * 
-	 */
-	private final class TeamsDataTableModelHelper extends DataTableModelHelper<Team> {
-
-		private InternationalizationHelper messageSource;
-		private Locale locale;
-		private TeamsDataTableModelHelper(Locale locale, InternationalizationHelper messageSource){
-			this.locale = locale;
-			this.messageSource = messageSource;
-		}
-		@Override
-		public Map<String, Object> buildItemData(Team item) {
-			final AuditableMixin auditable = (AuditableMixin) item;
-			Map<String, Object> res = new HashMap<String, Object>();
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put("name", item.getName());
-			res.put("description", item.getDescription());
-			res.put("nb-associated-users", item.getMembers().size());
-			res.put("created-on", messageSource.localizeDate(auditable.getCreatedOn(), locale));
-			res.put("created-by", auditable.getCreatedBy());
-			res.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
-			res.put("last-mod-by", auditable.getLastModifiedBy());			
-			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
-			return res;
-		}
-	}
 	
-	
-
-	private final static class MembersTableModelHelper extends DataTableModelHelper<User>{
-		private InternationalizationHelper messageSource;
-		private Locale locale;
-		private MembersTableModelHelper(Locale locale, InternationalizationHelper messageSource){
-			this.locale = locale;
-			this.messageSource = messageSource;
-		}
-		@Override
-		protected Map<?,?> buildItemData(User item) {
-			Map<String,Object> res = new HashMap<String, Object>();
-			res.put("user-id", item.getId());
-			res.put("user-index", getCurrentIndex());
-			res.put("user-name", item.getFirstName()+" "+item.getLastName()+" ("+item.getLogin()+")");
-			res.put("empty-delete-holder", null);
-			return res;
-		}
-		
-		
-		
-	}
 
 	/**
 	 * Creates a new Team 
