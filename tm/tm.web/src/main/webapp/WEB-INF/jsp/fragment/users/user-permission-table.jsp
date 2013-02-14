@@ -27,8 +27,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 	<comp:decorate-ajax-search-table tableId="project-permission-table" >
-		<jsp:attribute name="rowCallback">addDeleteButtonCallBack</jsp:attribute>
-		<jsp:attribute name="drawCallback">refreshTableCallBack</jsp:attribute>
+		<jsp:attribute name="rowCallback">squashtm.app.UMod.addDeleteButtonCallBack</jsp:attribute>
+		<jsp:attribute name="drawCallback">squashtm.app.UMod.refreshTableCallBack</jsp:attribute>
 		<jsp:attribute name="columnDefs">
 			<dt:column-definition targets="0" sortable="false" visible="false" />
 			<dt:column-definition targets="1, 2" sortable="true" />

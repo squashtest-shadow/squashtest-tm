@@ -36,7 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +54,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectPermission;
+import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
@@ -158,15 +161,28 @@ public class UserAdministrationController {
 		adminService.deactivateUser(userId);
 	}
 	
+//	@RequestMapping(value = USER_URL+"/info", method = RequestMethod.GET)
+//	public ModelAndView getUserInfos(@PathVariable long userId) {
+//		User user = adminService.findUserById(userId);
+//		List<UsersGroup> usersGroupList = adminService.findAllUsersGroupOrderedByQualifiedName();
+//		ModelAndView mav = new ModelAndView("page/users/user-info");
+//		mav.addObject("usersGroupList", usersGroupList);
+//		mav.addObject("user", user);
+//		return mav;
+//	}
+	/**
+	 * Will return a view for the user of the given id
+	 * 
+	 * @param userId
+	 */
 	@RequestMapping(value = USER_URL+"/info", method = RequestMethod.GET)
-	public ModelAndView getUserInfos(@PathVariable long userId) {
+	public String getUserInfos(@PathVariable Long userId, Model model) {
 		User user = adminService.findUserById(userId);
 		List<UsersGroup> usersGroupList = adminService.findAllUsersGroupOrderedByQualifiedName();
-		ModelAndView mav = new ModelAndView("page/users/user-info");
-		mav.addObject("usersGroupList", usersGroupList);
-		mav.addObject("user", user);
-		return mav;
+		model.addAttribute("usersGroupList", usersGroupList);
+		model.addAttribute("user", user);return "user-modification.html";
 	}
+	
 
 	@RequestMapping(value = USER_URL+"/change-group", method = RequestMethod.POST)
 	public @ResponseBody

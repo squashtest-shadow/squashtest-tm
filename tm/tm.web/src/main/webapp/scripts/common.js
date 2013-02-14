@@ -24,15 +24,13 @@ requirejs.config({
     "custom-field-editor",
     "custom-field-binding",
     "custom-field-values",
-    "execution-processing", 
+    "execution-processing",
     "projects-manager", 
     "teams-manager",
-   
     "project",
     "contextual-content-handlers",
     "test-cases-management",
     "users-manager",
-    
 	],
 
 	/*
@@ -53,7 +51,7 @@ requirejs.config({
 		"backbone": "lib/backbone/backbone-0.9.2", 
 		"ckeditor": "ckeditor/ckeditor", 
 		"jquery.ckeditor": "ckeditor/adapters/jquery", 
-		"jeditable": "jquery/jquery.jeditable", 
+		"jeditable": "jquery/jquery.jeditable",
 		"jeditable.ckeditor": "jquery/jquery.jeditable.ckeditor", 
 		"jeditable.datepicker": "jquery/jquery.jeditable.datepicker", 
 		"jeditable.simpleJEditable": "squashtest/classes/SimpleJEditable",
