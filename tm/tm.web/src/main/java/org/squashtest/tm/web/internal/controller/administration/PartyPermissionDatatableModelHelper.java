@@ -25,8 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
-import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 
@@ -47,12 +47,14 @@ public class PartyPermissionDatatableModelHelper extends DataTableModelHelper<Pa
 	protected Map<?,?> buildItemData(PartyProjectPermissionsBean item) {
 		
 		Map<Object, Object> result = new HashMap<Object, Object>();
-		String name = item.getParty().getClass().getName();
+		Party party = item.getParty();
 		PermissionGroup group = item.getPermissionGroup();
 		
-		result.put("user", name);
-		result.put("user-index", getCurrentIndex());
+		result.put("party-id", party.getId());
+		result.put("party-name", party.getName());
+		result.put("party-index", getCurrentIndex());
 		result.put("permission-group", group);
+		result.put("party-type", party.getType());
 		result.put("empty-delete-holder", null);
 		
 		return result;

@@ -49,6 +49,7 @@ import org.squashtest.tm.domain.audit.Auditable;
 })
 public class Team extends Party{
 	
+	private final static String TYPE = "TEAM";
 	
 	@NotBlank
 	@Size(min = 0, max = 50)
@@ -61,6 +62,7 @@ public class Team extends Party{
 	@JoinTable(name = "CORE_TEAM_MEMBER", joinColumns = @JoinColumn(name = "TEAM_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
 	private final Set<User> members = new HashSet<User>();
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -96,5 +98,8 @@ public class Team extends Party{
 	public void removeMember(Collection<User> users){
 		members.removeAll(users);
 	}
-
+	
+	public String getType(){
+		return TYPE;
+	}
 }

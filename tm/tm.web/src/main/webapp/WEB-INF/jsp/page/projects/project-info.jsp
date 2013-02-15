@@ -249,9 +249,11 @@
 					<table id="user-permissions-table">
 						<thead>
 							<tr>
-								<th class="user-index">#</th>
-								<th class="user-login datatable-filterable"><f:message key="user.header.title" /></th>
+								<th class="party-index">#</th>
+								<th class="party-id"></th>
+								<th class="party-name datatable-filterable"><f:message key="party.header.title" /></th>
 								<th class="user-permission"><f:message key="project.permission.table.profile.label" /></th>
+								<th class="party-type datatable-filterable"><f:message key="party.type" /></th>
 								<th class="empty-delete-holder"> </th>
 							</tr>
 						</thead>
@@ -299,9 +301,9 @@
 			
 				<f:message var="label" key="label.Add" />
 				'${ label }': function() {
-					var userLogin = $("#user-input").val();
+					var partyId = $("#party-id").val();
 					var permission = $("#permission-input").val();
-					var url = squashtm.app.contextRoot+"/generic-projects/${adminproject.project.id}/users/"+userLogin+"/permissions/"+permission;
+					var url = squashtm.app.contextRoot+"/generic-projects/${adminproject.project.id}/parties/"+partyId+"/permissions/"+permission;
 					$.ajax({
 						url : url,
 						type : 'PUT',

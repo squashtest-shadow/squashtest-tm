@@ -29,6 +29,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
@@ -67,6 +68,8 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 
 	User findUserByLogin(String userLogin);
 
+	Party findPartyById(long partyId);
+	
 	// **************************** test automation extension ********************
 
 	

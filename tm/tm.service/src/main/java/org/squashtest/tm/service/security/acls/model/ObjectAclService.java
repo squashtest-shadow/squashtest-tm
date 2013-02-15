@@ -56,6 +56,8 @@ public interface ObjectAclService {
 	
 	void addNewResponsibility(String userLogin, ObjectIdentity entityRef, String qualifiedName);
 
+	void addNewResponsibility(long partyId, ObjectIdentity entityRef, String qualifiedName);
+	
 	List<String> findUsersWithWritePermission(List<ObjectIdentity> entityRefs);
 	/**
 	 * Will find squash User ids and theirs permission names for the given acl_object_identity.identity and acl_object_identity.className
@@ -79,6 +81,8 @@ public interface ObjectAclService {
 	
 	List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName);
 
+	List<Long> findPartiesWithoutPermissionByObject(long objectId, String qualifiedClassName);
+	
 	List<String> findUsersWithExecutePermission(List<ObjectIdentity> entityRefs);
 	
 	/**

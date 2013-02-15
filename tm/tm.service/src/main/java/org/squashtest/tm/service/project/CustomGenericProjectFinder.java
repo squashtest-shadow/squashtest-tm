@@ -28,6 +28,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
@@ -61,4 +62,5 @@ public interface CustomGenericProjectFinder {
 
 	List<User> findUserWithoutPermissionByProject(long projectId);
 	
+	List<Party> findPartyWithoutPermissionByProject(long projectId);
 }

@@ -35,6 +35,9 @@ import javax.persistence.Table;
 @Table(name = "CORE_PARTY")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Party {
+	
+	private final static String TYPE = "PARTY";
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "PARTY_ID")
@@ -55,4 +58,11 @@ public class Party {
 		return id;
 	}
 
+	public String getName(){
+		return "";
+	}
+	
+	public String getType(){
+		return TYPE;
+	}
 }

@@ -143,6 +143,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		return genericProjectFinder.findAllByIds(idList);
 	}
 
+	
 	@Override
 	public List<ProjectPermission> findProjectPermissionByParty(long partyId) {
 		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
@@ -164,21 +165,21 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	}
 	
 	@Override
-	public void addNewPermissionToProject(long userId, long projectId, String permissionName) {
+	public void addNewPermissionToProject(long partyId, long projectId, String permissionName) {
 		ObjectIdentity projectRef = createProjectIdentity(projectId);
-		User user = userDao.findById(userId);
-		aclService.addNewResponsibility(user.getLogin(), projectRef, permissionName);
+		Party party = partyDao.findById(partyId);
+		aclService.addNewResponsibility(party.getId(), projectRef, permissionName);
 
 		GenericProject project = genericProjectFinder.findById(projectId);
 
 		ObjectIdentity rlibraryRef = createRequirementLibraryIdentity(project);
-		aclService.addNewResponsibility(user.getLogin(), rlibraryRef, permissionName);
+		aclService.addNewResponsibility(party.getId(), rlibraryRef, permissionName);
 
 		ObjectIdentity tclibraryRef = createTestCaseLibraryIdentity(project);
-		aclService.addNewResponsibility(user.getLogin(), tclibraryRef, permissionName);
+		aclService.addNewResponsibility(party.getId(), tclibraryRef, permissionName);
 
 		ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
-		aclService.addNewResponsibility(user.getLogin(), clibraryRef, permissionName);
+		aclService.addNewResponsibility(party.getId(), clibraryRef, permissionName);
 
 	}
 
@@ -247,6 +248,15 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		return userDao.findAllByIds(idList);
 	}
 
+	@Override
+	public List<Party> findPartyWithoutPermissionByProject(long projectId) {
+		List<Long> idList = aclService.findPartiesWithoutPermissionByObject(projectId, PROJECT_CLASS_NAME);
+		if (idList == null || idList.isEmpty()) {
+			return null;
+		}
+		return partyDao.findAllByIds(idList);
+	}
+	
 	/**
 	 * @see ProjectsPermissionManagementService#copyAssignedUsersFromTemplate(Project, ProjectTemplate)
 	 */

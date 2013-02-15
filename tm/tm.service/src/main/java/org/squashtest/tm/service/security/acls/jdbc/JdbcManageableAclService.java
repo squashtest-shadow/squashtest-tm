@@ -111,6 +111,14 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 	private static final String SELECT_CLASS_PRIMARY_KEY = "select ID from ACL_CLASS where CLASSNAME = ?";
 	private static final String FIND_ALL_ACL_GROUPS_BY_NAMESPACE = "select ID, QUALIFIED_NAME from ACL_GROUP where QUALIFIED_NAME like ?";
 
+
+	private static final String INSERT_PARTY_ACL_RESPONSABILITY_SCOPE = "insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (PARTY_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID) "
+			+ "values (?, "
+			+ "(select ID from ACL_GROUP where QUALIFIED_NAME = ?), "
+			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid "
+			+ "inner join ACL_CLASS c on c.ID = oid.CLASS_ID " 
+			+ "where CLASSNAME = ?  and oid.IDENTITY = ? )) ";
+	
 	private static final String INSERT_ACL_RESPONSABILITY_SCOPE = "insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (PARTY_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID) "
 			+ "values ((select PARTY_ID from CORE_USER where login = ?), "
 			+ "(select ID from ACL_GROUP where QUALIFIED_NAME = ?), "
@@ -148,6 +156,11 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "where oid.IDENTITY = ? and ac.CLASSNAME = ? "
 			+ "and cu.LOGIN like ? or ct.name = ?";
 
+	private static final String DELETE_PARTY_RESPONSABILITY_ENTRY = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "
+			+ "where PARTY_ID = ?  and OBJECT_IDENTITY_ID = "
+			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid  inner join ACL_CLASS c on c.ID = oid.CLASS_ID "
+			+ "where oid.IDENTITY = ? and c.CLASSNAME = ?)";
+	
 	private static final String DELETE_RESPONSABILITY_ENTRY = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "
 			+ "where PARTY_ID = (select PARTY_ID from CORE_USER where login = ?)  and OBJECT_IDENTITY_ID = "
 			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid  inner join ACL_CLASS c on c.ID = oid.CLASS_ID "
@@ -177,6 +190,12 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "inner join ACL_CLASS ac on ac.ID = aoi.CLASS_ID "
 			+ "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = aoi.ID "
 			+ "where u.PARTY_ID = arse.PARTY_ID  and ac.CLASSNAME = ?  and aoi.IDENTITY = ?) ";
+
+	private static final String FIND_PARTIES_WITHOUT_PERMISSION_BY_OBJECT = "select p.PARTY_ID from CORE_PARTY p "
+			+ "where not exists (select 1  from ACL_OBJECT_IDENTITY aoi "
+			+ "inner join ACL_CLASS ac on ac.ID = aoi.CLASS_ID "
+			+ "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = aoi.ID "
+			+ "where p.PARTY_ID = arse.PARTY_ID  and ac.CLASSNAME = ?  and aoi.IDENTITY = ?) ";
 	
 	private static final String DELETE_OBJECT_IDENTITY = "delete from ACL_OBJECT_IDENTITY where IDENTITY = ? and CLASS_ID = ?";
 	
@@ -274,6 +293,13 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 
 		evictFromCache(entityRef);
 	}
+	
+	public void removeAllResponsibilities(@NotNull long partyId, @NotNull ObjectIdentity entityRef) {
+		jdbcTemplate.update(DELETE_PARTY_RESPONSABILITY_ENTRY,
+				new Object[] { partyId, entityRef.getIdentifier(), entityRef.getType() });
+
+		evictFromCache(entityRef);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#addNewResponsibility(java.lang.String, org.springframework.security.acls.model.ObjectIdentity, java.lang.String)
@@ -285,6 +311,13 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		insertResponsibility(userLogin, entityRef, qualifiedName);
 	}
 
+	@Override
+	public void addNewResponsibility(@NotNull long partyId, @NotNull ObjectIdentity entityRef,
+			@NotNull String qualifiedName) {
+		removeAllResponsibilities(partyId, entityRef);
+		insertResponsibility(partyId, entityRef, qualifiedName);
+	}
+	
 	private void insertResponsibility(String userLogin, ObjectIdentity entityRef, String permissionGroupName) {
 		jdbcTemplate.update(INSERT_ACL_RESPONSABILITY_SCOPE,
 				new Object[] { userLogin, permissionGroupName, entityRef.getType(), entityRef.getIdentifier() });
@@ -292,6 +325,12 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		evictFromCache(entityRef);
 	}
 
+	private void insertResponsibility(long partyId, ObjectIdentity entityRef, String permissionGroupName) {
+		jdbcTemplate.update(INSERT_PARTY_ACL_RESPONSABILITY_SCOPE,
+				new Object[] { partyId, permissionGroupName, entityRef.getType(), entityRef.getIdentifier() });
+
+		evictFromCache(entityRef);
+	}
 	/* (non-Javadoc)
 	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#retrieveClassAclGroupFromUserLogin(java.lang.String, java.lang.String)
 	 */
@@ -493,6 +532,17 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		return finalResult;
 	}
 
+	@Override
+	public List<Long> findPartiesWithoutPermissionByObject(long objectId, String qualifiedClassName) {
+		List<BigInteger> result = jdbcTemplate.queryForList(FIND_PARTIES_WITHOUT_PERMISSION_BY_OBJECT, new Object[] {
+				qualifiedClassName, objectId }, BigInteger.class);
+		List<Long> finalResult = new ArrayList<Long>();
+		for (BigInteger bigInteger : result) {
+			finalResult.add(bigInteger.longValue());
+		}
+		return finalResult;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#removeObjectIdentity(org.springframework.security.acls.model.ObjectIdentity)
 	 */

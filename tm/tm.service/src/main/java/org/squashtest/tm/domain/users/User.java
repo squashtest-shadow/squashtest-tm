@@ -39,6 +39,8 @@ import org.squashtest.tm.domain.audit.Auditable;
 @PrimaryKeyJoinColumn(name = "PARTY_ID")
 public class User extends Party {
 
+	private final static String TYPE = "USER";
+	
 	@Transient
 	public static final Long NO_USER_ID = 0l;
 
@@ -104,5 +106,12 @@ public class User extends Party {
 		return teams;
 	}
 	
+	@Override
+	public String getName(){
+		return this.firstName+" "+this.lastName+" ("+this.login+")";
+	}
 	
+	public String getType(){
+		return TYPE;
+	}
 }

@@ -49,6 +49,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
@@ -57,6 +58,7 @@ import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
+import org.squashtest.tm.service.internal.repository.PartyDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
@@ -88,6 +90,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private SessionFactory sessionFactory;
 	@Inject
 	private UserDao userDao;
+	@Inject
+	private PartyDao partyDao;
 	@Inject
 	private ObjectIdentityService objectIdentityService;
 	@Inject
@@ -245,10 +249,20 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
+	public List<Party> findPartyWithoutPermissionByProject(long projectId) {
+		return permissionsManager.findPartyWithoutPermissionByProject(projectId);
+	}
+	
+	@Override
 	public User findUserByLogin(String userLogin) {
 		return userDao.findUserByLogin(userLogin);
 	}
 
+	@Override
+	public Party findPartyById(long partyId) {
+		return partyDao.findById(partyId);
+	}
+	
 	// ********************************** Test automation section *************************************
 
 	@Override

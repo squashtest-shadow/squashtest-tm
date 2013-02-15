@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.List;
+
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.domain.users.Party;
 
@@ -42,6 +44,9 @@ public interface PartyDao {
 	 */
 	Party findById(long partyId);
 
+	
+	List<Party> findAllByIds(List<Long> idList);
+	
 	/**
 	 * Simply delete the given {@link Party}
 	 * 
