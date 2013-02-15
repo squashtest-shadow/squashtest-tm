@@ -238,10 +238,9 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		customFieldValuesService.createAllCustomFieldValues(entity);
 	}
 
-	
 	protected void createCustomFieldValues(Collection<? extends BoundEntity> entities){
 		for (BoundEntity entity : entities){
-			createCustomFieldsValues(entity);
+			createCustomFieldValues(entity);
 		}
 	}
 	
@@ -419,9 +418,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	/* ************************* private stuffs ************************* */
 
-	protected void createCustomFieldsValues(BoundEntity entity) {
 
-	}
 
 	protected void checkPermission(SecurityCheckableObject... checkableObjects) {
 		PermissionsUtils.checkPermission(permissionService, checkableObjects);
