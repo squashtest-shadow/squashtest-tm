@@ -38,7 +38,7 @@ define(
 								closeOnSuccess : false,
 								buttons : [ {
 									'text' : UMod.message.confirmLabel,
-									'click' : self.submitPassword
+									'click' : function(){self.submitPassword.call(self);},
 								} ],
 								width : 420,
 							};
@@ -52,21 +52,21 @@ define(
 
 						submitPassword : function() {
 							self = this;
-							if (!self.validatePassword())
+							if (!self.validatePassword.call(self))
 								return;
 
 							var oldPassword = $("#oldPassword").val();
 							var newPassword = $("#newPassword").val();
 
 							$.ajax({
-								url : "${url}",
+								url : UMod.user.url.simple,
 								type : "POST",
 								dataType : "json",
 								data : {
 									"oldPassword" : oldPassword,
 									"newPassword" : newPassword
 								},
-								success : self.userPasswordSuccess
+								success : function(){self.userPasswordSuccess.call(self);}
 							});
 
 						},
@@ -74,6 +74,7 @@ define(
 						// <%-- we validate the passwords only. Note that
 						// validation also occurs server side. --%>
 						validatePassword : function() {
+							var self = this;
 							// first, clear error messages
 							$("#user-account-password-panel span.error-message")
 									.html('');
@@ -85,19 +86,19 @@ define(
 							var confirmPassOkay = true;
 							var samePassesOkay = true;
 
-							if (!isFilled("#oldPassword")) {
+							if (!self.isFilled("#oldPassword")) {
 								$("span.error-message.oldPassword-error").html(
 										UMod.message.oldPassError);
 								oldPassOkay = false;
 							}
 
-							if (!isFilled("#newPassword")) {
+							if (!self.isFilled("#newPassword")) {
 								$("span.error-message.newPassword-error").html(
 										UMod.message.newPassError);
 								newPassOkay = false;
 							}
 
-							if (!isFilled("#user-account-confirmpass")) {
+							if (!self.isFilled("#user-account-confirmpass")) {
 								$(
 										"span.error-message.user-account-confirmpass-error")
 										.html(UMod.message.confirmPassError);
@@ -139,7 +140,7 @@ define(
 						},
 
 						userPasswordSuccess : function() {
-							this.dialog('close');
+							$(this.el).dialog('close');
 							squashtm.notification
 									.showInfo(UMod.message.passSuccess);
 						},

@@ -161,15 +161,6 @@ public class UserAdministrationController {
 		adminService.deactivateUser(userId);
 	}
 	
-//	@RequestMapping(value = USER_URL+"/info", method = RequestMethod.GET)
-//	public ModelAndView getUserInfos(@PathVariable long userId) {
-//		User user = adminService.findUserById(userId);
-//		List<UsersGroup> usersGroupList = adminService.findAllUsersGroupOrderedByQualifiedName();
-//		ModelAndView mav = new ModelAndView("page/users/user-info");
-//		mav.addObject("usersGroupList", usersGroupList);
-//		mav.addObject("user", user);
-//		return mav;
-//	}
 	/**
 	 * Will return a view for the user of the given id
 	 * 

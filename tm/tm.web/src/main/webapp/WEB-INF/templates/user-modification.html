@@ -53,24 +53,25 @@
 					richEditPlaceHolder : /*[[#{rich-edit.placeholder}]]*/'(Click to edit ...)',
 					okLabel : /*[[ #{label.Ok}]]*/ "ok",
 					cancelLabel : /*[[ #{label.Cancel} ]]*/ 'Cancel',
-						teamsPanelTitle :/*[[ #{label.teams} ]]*/ "teams",
-						changePasswordPopupTitle : /*[[ #{user.account.password.label} ]]*/ "change password",
-						confirmLabel : /*[[ #{label.Confirm} ]]*/'Confirmer',
-						addPermissionPopupTitle : /*[[#{title.AddPermission}]]*/ "add permission",
-						addLabel : /*[[#{label.Add}]]*/ "add",
-						oldPassError :  /*[[ #{user.account.oldpass.error} ]]*/ "old Pass Error",
-				newPassError :  /*[[ #{user.account.newpass.error} ]]*/ "new Pass Error",
-				confirmPassError :  /*[[ #{user.account.confirmpass.error} ]]*/ "confirm pass error",
-				samePassError :  /*[[ #{user.account.newpass.differ.error} ]]*/ "same pass error",	
+					teamsPanelTitle :/*[[ #{label.teams} ]]*/ "teams",
+					changePasswordPopupTitle : /*[[ #{user.account.password.label} ]]*/ "change password",
+					confirmLabel : /*[[ #{label.Confirm} ]]*/'Confirmer',
+					addPermissionPopupTitle : /*[[#{title.AddPermission}]]*/ "add permission",
+					addLabel : /*[[#{label.Add}]]*/ "add",
+					oldPassError :  /*[[ #{user.account.oldpass.error} ]]*/ "old Pass Error",
+					newPassError :  /*[[ #{user.account.newpass.error} ]]*/ "new Pass Error",
+					confirmPassError :  /*[[ #{user.account.confirmpass.error} ]]*/ "confirm pass error",
+					samePassError :  /*[[ #{user.account.newpass.differ.error} ]]*/ "same pass error",	
 				},
 				permission : {
 					url : {
-						table : /*[[ @{'/administration/users/'+${user.id}+'/permission-table'} ]]*/ "/administration/users/1/permission-table",
-						popup : /*[[ @{'/administration/users/'+${user.id}+'/permission-popup'} ]]*/ "/administration/users/1/permission-table",
-						add : /*[[ @{'/administration/users/'+${user.id}+'/add-permission'} ]]*/ "/administration/users/1/permission-table",
-						remove : /*[[ @{'/administration/users/'+${user.id}+'/remove-permission'} ]]*/ "/administration/users/1/permission-table",
+							table : /*[[ @{'/administration/users/'+${user.id}+'/permission-table'} ]]*/ "/administration/users/1/permission-table",
+							popup : /*[[ @{'/administration/users/'+${user.id}+'/permission-popup'} ]]*/ "/administration/users/1/permission-table",
+							add : /*[[ @{'/administration/users/'+${user.id}+'/add-permission'} ]]*/ "/administration/users/1/permission-table",
+							remove : /*[[ @{'/administration/users/'+${user.id}+'/remove-permission'} ]]*/ "/administration/users/1/permission-table",
 						}
 				}
+				
 		},
 		
 		projectFilterConf : {
@@ -180,7 +181,7 @@
 						<div id="user-toolbar" class="toolbar-class ui-corner-all ">
 
 							<div th:include="fragments-utils/general-information-panel :: general-information-panel"
-								th:with="auditableEntity=${user},entityUrl=@{/administration/users/__${user.id}__}"
+								th:with="auditableEntity=${user},entityUrl=@{/users/__${user.id}__}"
 								th:remove="tag" />
 
 							<div class="toolbar-button-panel">
