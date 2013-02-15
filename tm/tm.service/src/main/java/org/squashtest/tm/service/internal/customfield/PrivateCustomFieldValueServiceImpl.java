@@ -29,6 +29,8 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -165,13 +167,8 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	public void cascadeCustomFieldValuesDeletion(List<Long> customFieldBindingIds) {
 
 		List<CustomFieldValue> allValues = customFieldValueDao.findAllCustomValuesOfBindings(customFieldBindingIds);
-
-		List<Long> ids = new ArrayList<Long>(allValues.size());
-		for (CustomFieldValue value : allValues) {
-			ids.add(value.getId());
-		}
-
-		customFieldValueDao.deleteAll(ids);
+		_deleteCustomFieldValues(allValues);
+		
 	}
 
 	@Override
@@ -186,7 +183,13 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		}
 
 	}
-
+	
+	
+	private void _deleteCustomFieldValues(List<CustomFieldValue> values){
+		List<Long> valueIds = _collectValueIds(values);
+		customFieldValueDao.deleteAll(valueIds);
+	}
+	
 	@Override
 	public void deleteAllCustomFieldValues(BoundEntity entity) {
 		customFieldValueDao.deleteAllForEntity(entity.getBoundEntityId(), entity.getBoundEntityType());
@@ -213,8 +216,11 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Override
 	public void copyCustomFieldValuesContent(BoundEntity source, BoundEntity recipient) {
-		List<CustomFieldValuesPair> pairs = customFieldValueDao.findPairedCustomFieldValues(
-				source.getBoundEntityType(), source.getBoundEntityId(), recipient.getBoundEntityId());
+		
+		List<CustomFieldValuesPair> pairs = customFieldValueDao.findPairedCustomFieldValues(source.getBoundEntityType(), 
+																							source.getBoundEntityId(), 
+																							recipient.getBoundEntityId());
+		
 		for (CustomFieldValuesPair pair : pairs) {
 			pair.copyContent();
 		}
@@ -233,10 +239,55 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 		changedValue.setValue(newValue);
 	}
+	
+	
+	@Override
+	//basically it's a copypasta of createAllCustomFieldValues, with some extra code in it.
+	public void migrateCustomFieldValues(BoundEntity entity){
+
+		List<CustomFieldBinding> newBindings = customFieldBindingDao.findAllForProjectAndEntity(entity.getProject().getId(), 
+																							   	entity.getBoundEntityType());
+
+		List<CustomFieldValue> formerValues	= customFieldValueDao.findAllCustomValues(entity.getBoundEntityId(), 
+																					  entity.getBoundEntityType());
+
+		
+		for (CustomFieldBinding binding : newBindings) {
+			
+			CustomFieldValue newValue = binding.createNewValue();
+			
+			for (CustomFieldValue formerValue : formerValues){
+				if (formerValue.representsSameCustomField(newValue)){
+					newValue.setValue(formerValue.getValue());
+					break;
+				}
+			}
+			
+			newValue.setBoundEntity(entity);
+			customFieldValueDao.persist(newValue);
+		}	
+		
+		_deleteCustomFieldValues(formerValues);
+		
+	}
 
 	
+	@Override
+	public void migrateCustomFieldValues(Collection<BoundEntity> entities) {
+		for (BoundEntity entity : entities){
+			migrateCustomFieldValues(entity);
+		}
+	}
+	
 	// *********************** private convenience methods ********************
-
+	 
+	private List<Long> _collectValueIds(List<CustomFieldValue> values){
+		List<Long> ids = new ArrayList<Long>(values.size());
+		CollectionUtils.collect(values, new IdCollector());
+		return ids;
+	}
+	
+	
 	private Map<BindableEntity, List<Long>> _breakEntitiesIntoCompositeIds(Collection<? extends BoundEntity> boundEntities) {
 		
 		Map<BindableEntity, List<Long>> segregatedEntities = new HashMap<BindableEntity, List<Long>>(3); //3 is just a guess
@@ -250,4 +301,15 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		}
 		return segregatedEntities;
 	}
+	
+
+
+	private static final class IdCollector implements Transformer{
+		@Override
+		public Object transform(Object value) {
+			return ((CustomFieldValue)value).getId();
+		}
+	}
+	
+
 }

@@ -130,4 +130,12 @@ public class CustomFieldValue {
 		copy.setValue(this.value);
 		return copy;
 	}
+	
+	public boolean representsSameBinding(CustomFieldValue otherValue){
+		return otherValue.getBinding().getId().equals(binding.getId());
+	}
+	
+	public boolean representsSameCustomField(CustomFieldValue otherValue){
+		return otherValue.getCustomField().getId().equals(getCustomField().getId());
+	}
 }
