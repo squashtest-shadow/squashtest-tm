@@ -260,7 +260,6 @@ public class TeamController {
 	}
 
 	@RequestMapping(value = TEAM_ID_URL+"/permission-popup", method = RequestMethod.GET)
-	@ResponseBody
 	public ModelAndView getPermissionPopup(@PathVariable long teamId) {
 		Team team = teamFinderService.findById(teamId);
 		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
@@ -274,7 +273,6 @@ public class TeamController {
 	}
 
 	@RequestMapping(value = TEAM_ID_URL+"/permission-table", method = RequestMethod.GET)
-	@ResponseBody
 	public ModelAndView getPermissionTableModel(DataTableDrawParameters params, @PathVariable long teamId) {
 		Team team = teamFinderService.findById(teamId);
 		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();

@@ -20,11 +20,12 @@
  */
 define(
 		[ "jquery", "backbone", "underscore", "app/util/StringUtil",
+		  "./TeamPermissionPanel",
 				"jquery.squash", "jqueryui", "jquery.squash.togglepanel",
 				"jquery.squash.datatables", "jquery.squash.oneshotdialog",
 				"jquery.squash.messagedialog", "jquery.squash.confirmdialog",
 				, "jquery.squash.jeditable" ],
-		function($, Backbone, _, StringUtil) {
+		function($, Backbone, _, StringUtil, TeamPermissionPanel) {
 			var teamMod = squashtm.app.teamMod;
 			var TeamModificationView = Backbone.View
 					.extend({
@@ -41,7 +42,7 @@ define(
 							this.configureAddMemberDialog();
 							
 							this.configureMembersTable();
-
+							new TeamPermissionPanel();
 							this.configureButtons();							
 
 						},
@@ -287,5 +288,6 @@ define(
 						},
 
 					});
+			
 			return TeamModificationView;
 		});

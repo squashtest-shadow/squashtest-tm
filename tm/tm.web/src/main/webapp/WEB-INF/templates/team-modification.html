@@ -45,9 +45,28 @@
 			renameLabel : /*[[#{label.Rename}]]*/'Rename',
 			renameTeamTitle : /*[[#{title.renameTeam}]]*/'Rename Team',
 			descriptionPanelLabel : /*[[#{label.Description}]]*/'Desc',
-			membersPanelLabel : /*[[#{label.Members}]]*/'Teammates'
+			membersPanelLabel : /*[[#{label.Members}]]*/'Teammates',
+			permissionsPanelTitle : /*[[ #{user.project-rights.title.label} ]]*/ "Permissions",
+			message :{
+				addPermissionPopupTitle : /*[[#{title.AddPermission}]]*/ 'add permission',
+				error : /*[[ #{popup.title.error} ]]*/ "Error",
+				empty : /*[[ #{message.AllProjectsAlreadyLinkedToUser} ]]*/ "tous les projets sont liés à l'utilisateur",
+				permissionsPanelTitle : /*[[ #{user.project-rights.title.label} ]]*/ "Permissions",
+				addLabel : /*[[#{label.Add}]]*/ "add",
+				cancelLabel : /*[[ #{label.Cancel} ]]*/ 'Cancel'
+			},
+			permission : {
+				url : {
+						table : /*[[ @{'/administration/teams/'+${team.id}+'/permission-table'} ]]*/ "/administration/teams/1/permission-table",
+						popup : /*[[ @{'/administration/teams/'+${team.id}+'/permission-popup'} ]]*/ "/administration/teams/1/permission-table",
+						add : /*[[ @{'/administration/teams/'+${team.id}+'/add-permission'} ]]*/ "/administration/teams/1/permission-table",
+						remove : /*[[ @{'/administration/teams/'+${team.id}+'/remove-permission'} ]]*/ "/administration/teams/1/permission-table",
+					}
+			}
 		},
 
+
+		
 		projectFilterConf : {
 			url : /*[[ @{/global-filter/filter} ]]*/'/global-filter/filter',
 			title : /*[[ #{dialog.settings.filter.title} ]]*/'Filtre de projets',
@@ -215,17 +234,20 @@
 							</div>
 						</div>
 
-						<div class="toggle-panel">
-							<span class="not-displayed toggle-panel-buttons"> 
-								<input type="button" id="add-permission-button" value="+"></input>
+				<!-- ============================================ Permissions ======================================= -->
+
+						<div id="permissions" class="toggle-panel">
+							<span class="not-displayed toggle-panel-buttons"> <input
+								id="add-permission-button" th:title="${addButtonTitle}"
+								title="add" type="button" value="+" class="button" />
 							</span>
-							<div id="permission-panel" class="toggle-panel-main">
-								<table id="permission-table" th:attr="data-def='filter, hover, datakeys-id=user-id ,ajaxsource='+@{/administration/teams/__${team.id}__/permission-table}+',language='+@{/squash/datatables/language}">
-									<thead>
-									</thead>
-									<tbody>
-									</tbody>
-								</table>
+							<div id="project-permission-panel" class="toggle-panel-main">
+								<div id="permission-table"></div>
+								<div id="permission-row-buttons" class="not-displayed">
+									<a id="delete-permission-button" href="#"
+										class="delete-permission-button"
+										th:text="#{tree.button.delete.label}"> Delete </a>
+								</div>
 							</div>
 						</div>
 
@@ -295,7 +317,9 @@
 	</div>
 	<!--    ====================================POPUPS======================================================  -->
 
-
+	<div id="add-permission-dialog" class="not-displayed popup-dialog">
+		<div id="permission-popup"></div>
+	</div>
 
 </body>
 </html>
