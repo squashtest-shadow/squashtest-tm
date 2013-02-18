@@ -50,11 +50,9 @@ public class TreeNodeCopierTest extends Specification{
 			TestCaseFolder folder = Mock()
 			folder.isContentNameAvailable(_) >> true
 
-		and : "the next generation to copy"
-			def nextsSourceByDestination = new HashMap();
 		
 		when :
-			def result = copier.copy(tcOrig, folder, nextsSourceByDestination)
+			def result = copier.performOperation(tcOrig, folder)
 		
 		
 		then :
@@ -75,11 +73,10 @@ public class TreeNodeCopierTest extends Specification{
 			folder.isContentNameAvailable(_) >> false
 			
 			folder.getContentNames()>>  ["NX_OHNOZ", "NX_OHNOZ-Copie1", "NX_OHNOZ-Copie3"]
-		and : "the next generation to copy"
-			def nextsSourceByDestination = new HashMap()
+
 					
 		when :
-			def result = copier.copy(tcOrig, folder, nextsSourceByDestination)
+			def result = copier.performOperation(tcOrig, folder)
 		
 		
 		then :
@@ -98,11 +95,10 @@ public class TreeNodeCopierTest extends Specification{
 			TestCaseFolder folder = Mock();
 			folder.isContentNameAvailable(_) >> false;
 			folder.getContentNames() >> ["NX_OHNOZ-Copie999"]
-		and : "the next generation to copy"
-			def nextsSourceByDestination = new HashMap()
+
 					
 		when :
-			def result = copier.copy(tcOrig, folder, nextsSourceByDestination)
+			def result = copier.performOperation(tcOrig, folder)
 		
 		
 		then :
@@ -119,11 +115,10 @@ public class TreeNodeCopierTest extends Specification{
 			TestCaseFolder folder = Mock()
 			folder.isContentNameAvailable(_) >> false
 			folder.getContentNames() >>  ["NX_OHNOZ", "NX_OHNOZ-Copie1", "NX_OHNOZ-Copie1-Copie7"]
-		and : "the next generation to copy"
-			def nextsSourceByDestination = new HashMap()		
+		
 		
 		when :
-			def result = copier.copy(tcOrig, folder, nextsSourceByDestination)
+			def result = copier.performOperation(tcOrig, folder)
 		
 		
 		then :
@@ -139,13 +134,9 @@ public class TreeNodeCopierTest extends Specification{
 			TestCaseFolder folder = new TestCaseFolder()
 			folder.addContent(new TestCase(name:"NX_OHNOZ-Copie1"))
 			folder.addContent(new TestCase(name:"NX_OHNOZ-Copie1-Copie7"))
-		and : "the next generation to copy"
-			def nextsSourceByDestination = new HashMap()
-			
-		
-		
+
 		when :
-			def result = copier.copy(tcOrig, folder, nextsSourceByDestination)
+			def result = copier.performOperation(tcOrig, folder)
 		
 		
 		then :

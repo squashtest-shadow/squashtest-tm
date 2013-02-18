@@ -36,15 +36,36 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 
-public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED extends TreeNode> {
+
+/**
+ * Careful : As of Squash TM 1.5.0 this object becomes stateful, in layman words you need one instance per operation.
+ * 
+ * 
+ * @author gfouquet, mpagnon, bsiri
+ *
+ * @param <CONTAINER>
+ * @param <NODE>
+ */
+
+/*
+ * for documentation purposes :
+ * @Scope("prototype")
+ */
+public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends TreeNode> {
+	
 
 	private static final String CREATE = "CREATE";
 	private static final String READ = "READ";
 
-	private ObjectFactory<TreeNodeCopier> copier;
+	
+	// **************** collaborators **************************
+	
+	private ObjectFactory<TreeNodeCopier> copierFactory;
+	private TreeNodeCopier operation;
+	
 	private GenericDao<Object> genericDao;
 	private EntityDao<CONTAINER> containerDao;
-	private EntityDao<COPIED> copiedDao;
+	private EntityDao<NODE> nodeDao;
 	private PermissionEvaluationService permissionService;
 
 	public void setGenericDao(GenericDao<Object> genericDao) {
@@ -55,87 +76,126 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 		this.containerDao = containerDao;
 	}
 
-	public void setCopiedDao(EntityDao<COPIED> copiedDao) {
-		this.copiedDao = copiedDao;
+	public void setNodeDao(EntityDao<NODE> nodeDao) {
+		this.nodeDao = nodeDao;
+	}
+	
+	public void setCopierFactory(ObjectFactory<TreeNodeCopier> copierFactory) {
+		this.copierFactory = copierFactory;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<COPIED> pasteNodes(long containerId, List<Long> list) {
+	public void setPermissionService(PermissionEvaluationService permissionService) {
+		this.permissionService = permissionService;
+	}
+	
+	
+	// ***************** treatment-scoped variables ****************
+	
+	List<NODE> outputList;
+	Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer;
+	Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceLayer;
+	Map<NodeContainer<TreeNode>, Collection<TreeNode>> parents;	
+	
+	
+	
+	//******************* code *****************************
 
-		// fetch
+	public List<NODE> pasteNodes(long containerId, List<Long> list) {
+
+		// fetch 
 		CONTAINER container = containerDao.findById(containerId);
 
-		// check. Note : we wont recursively check for the whole hierarchy as it's supposed to have the same
-		// identity holder
+		
+		// check 
+		// Note : we wont recursively check for the whole hierarchy as it's  supposed to have the same identity holder
 		checkPermissions(list, container);
 
-		// proceed : will copy and persist each node of copied trees generation by generation.
-		List<COPIED> nodeList = new ArrayList<COPIED>(list.size());
+		
+		// proceed : will process the nodes layer by layer. 
+		
+		init(list.size());
 
-		// initialize generation memorizers = list of destination/sources couples
-		Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextGeneration = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
-		Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceGeneration = null;
-		Map<NodeContainer<TreeNode>, Collection<TreeNode>> parents = null;
-
-		// copy first generation and memorize copied entities
-		copyFirstGeneration(list, container, nodeList, nextGeneration);
+		// process the first layer and memorize processed entities
+		processFirstLayer(container,list);
 
 		// loop on all following generations
-		while (!nextGeneration.isEmpty()) {
-			removeCopiedNodesFromNextGeneration(nodeList, nextGeneration);
+		while (!nextLayer.isEmpty()) {
 
-			if (!nextGeneration.isEmpty()) {
-				if (parents != null) {
-					// if we cont flush and then evict, some entities might not be persisted
-					genericDao.flush();
-					// when moving to a next row, evict the parents that just became grandparents.
-					// note: will note evict the nodes to return because they never been in the "sourceRow" map.
-					for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> grandParentGenerationEntry : parents
-							.entrySet()) {
-						NodeContainer<TreeNode> grandPa = grandParentGenerationEntry.getKey();
-						Collection<TreeNode> grandPas = grandParentGenerationEntry.getValue();
-						genericDao.clearFromCache(grandPa);
-						genericDao.clearFromCache(grandPas);
-					}
-				}
-				// move to next generation
-				parents = sourceGeneration;
-				sourceGeneration = nextGeneration;
-				nextGeneration = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
+			removeProcessedNodesFromCache();
+			
+			shiftToNextLayer();
 
-				// loop in all node of source generation and copy them
-				copyAllNodesOfSource(nextGeneration, sourceGeneration);
-			}
+			processLayer();		
 
 		}
-		// after copying last row, evict source generation and their parents. They will never be grandparents.
-		return nodeList;
+		
+		return outputList;
 	}
 
-	private void copyAllNodesOfSource(Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextGeneration,
-			Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceGeneration) {
-		for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> sourceEntry : sourceGeneration.entrySet()) {
+	
+	
+	private void init(int nbCopiedNodes){
+		operation = createCopier();
+		outputList = new ArrayList<NODE>(nbCopiedNodes);
+		nextLayer = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
+		sourceLayer = null;
+		parents = null;		
+	}
+
+	
+	private void removeProcessedNodesFromCache() {
+		if (parents != null) {
+			// if we cont flush and then evict, some entities might not be persisted
+			genericDao.flush();
+			// when moving to a next layer, evict the nodes that won't be used anymore - those who will not receive content anymore.
+			// note: will note evict the nodes to return because they never been in the "sourceLayer" map.
+			for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> processedLayerEntry : parents.entrySet()) {
+				NodeContainer<TreeNode> container = processedLayerEntry.getKey();
+				Collection<TreeNode> content = processedLayerEntry.getValue();
+				genericDao.clearFromCache(container);
+				genericDao.clearFromCache(content);
+			}
+		}
+	}	
+	
+	private void shiftToNextLayer() {
+		parents = sourceLayer;
+		sourceLayer = nextLayer;
+		nextLayer = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
+	}
+	
+	
+	private void processFirstLayer(CONTAINER container, List<Long> list) {
+		for (Long id : list) {
+			NODE srcNode = nodeDao.findById(id);
+
+			NODE outputNode = (NODE) operation.performOperation(srcNode, (NodeContainer<TreeNode>) container);
+			appendNextLayerNodes(srcNode, outputNode);
+			outputList.add(outputNode);
+		}
+		removeSourceNodesFromNextGen();
+	}
+
+	private void processLayer() {
+		
+		for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> sourceEntry : sourceLayer.entrySet()) {
+			
 			Collection<TreeNode> sources = sourceEntry.getValue();
 			NodeContainer<TreeNode> destination = sourceEntry.getKey();
+			
 			for (TreeNode source : sources) {
-				createCopier().copy(source, destination, nextGeneration);
+				TreeNode outputNode = operation.performOperation(source, destination);
+				appendNextLayerNodes(source, outputNode);
 			}
 		}
+		removeSourceNodesFromNextGen();
 	}
 
-	private void copyFirstGeneration(List<Long> list, CONTAINER container, List<COPIED> nodeList,
-			Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextGeneration) {
-		for (Long id : list) {
-			COPIED node = copiedDao.findById(id);
 
-			COPIED copy = (COPIED) createCopier().copy(node, (NodeContainer<TreeNode>) container, nextGeneration);
-			nodeList.add(copy);
-		}
-	}
 
 	private void checkPermissions(List<Long> list, CONTAINER container) {
 		for (Long id : list) {
-			COPIED node = copiedDao.findById(id);
+			NODE node = nodeDao.findById(id);
 
 			PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(container, CREATE),
 					new SecurityCheckableObject(node, READ));
@@ -143,33 +203,31 @@ public class PasteStrategy<CONTAINER extends NodeContainer<COPIED>, COPIED exten
 	}
 
 	private TreeNodeCopier createCopier() {
-		return copier.getObject();
+		return copierFactory.getObject();
 	}
 
-	// this is to avoid infinite loop in case someone copy a folder and paste it into itself.
-	// XXX maybe we can avoid this with a finer control of what's put in nextGeneration
-	private void removeCopiedNodesFromNextGeneration(List<COPIED> nodeList,
-			Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextGeneration) {
-		for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> nextGenerationEntry : nextGeneration.entrySet()) {
-			nextGenerationEntry.getValue().removeAll(nodeList);
+	private void removeSourceNodesFromNextGen() {
+		for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> nextGenerationEntry : nextLayer.entrySet()) {
+			nextGenerationEntry.getValue().removeAll(outputList);
 		}
 
 	}
 
-	/**
-	 * @param copier
-	 *            the copier to set
-	 */
-	public void setCopier(ObjectFactory<TreeNodeCopier> copier) {
-		this.copier = copier;
+	private void appendNextLayerNodes(TreeNode destNode, TreeNode sourceNode){
+		//must map the children of sourceNode to destNode into the nextLayer map
+		//do not add children if some of them are members of outputList
+		
+		/**
+		 * 	// this is to avoid infinite loop in case someone copy a folder and paste it into itself (yeah, it is technically possible)
+	// XXX maybe we can avoid this with a finer control of what's put in nextGeneration
+	private void postProcessLayer() {
+		for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> nextGenerationEntry : nextLayer.entrySet()) {
+			nextGenerationEntry.getValue().removeAll(outputList);
+		}
+
+	}
+		 */
 	}
 
-	/**
-	 * @param permissionService
-	 *            the permissionService to set
-	 */
-	public void setPermissionService(PermissionEvaluationService permissionService) {
-		this.permissionService = permissionService;
-	}
 
 }

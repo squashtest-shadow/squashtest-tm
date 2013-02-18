@@ -21,6 +21,8 @@
 package org.squashtest.csp.tm.internal.service
 
 
+import javax.inject.Provider;
+
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
@@ -38,7 +40,9 @@ class AbstractLibraryNavigationServiceTest extends Specification {
 	private PasteStrategy<TestCaseFolder, TestCaseLibraryNode> pasteToFolderStrategy = Mock()
 	
 	def setup(){
-		service.pasteToTestCaseFolderStrategy = pasteToFolderStrategy
+		def provider = Mock(Provider)
+		provider.get() >> pasteToFolderStrategy
+		service.pasteToTestCaseFolderStrategyProvider = provider
 	}
 
 	

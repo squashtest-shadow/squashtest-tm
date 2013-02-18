@@ -21,12 +21,9 @@
 package org.squashtest.tm.service.internal.library;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.inject.Inject;
@@ -69,7 +66,7 @@ import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 
 @Component
 @Scope("prototype")
-public class TreeNodeCopier implements NodeVisitor {
+public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	@Inject
 	private RequirementDao requirementDao;
 	@Inject
@@ -93,14 +90,11 @@ public class TreeNodeCopier implements NodeVisitor {
 	@Inject
 	private PrivateCustomFieldValueService customFieldValueManagerService;
 
-	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextsSourcesByDestination;
+	
 	private NodeContainer<? extends TreeNode> destination;
 	private TreeNode copy;
 
-
-	public TreeNode copy(TreeNode source, NodeContainer<TreeNode> destination,
-			Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextsSourcesByDestination) {
-		this.nextsSourcesByDestination = nextsSourcesByDestination;
+	public TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination) {
 		this.destination = destination;
 		copy = null;
 		source.accept(this);
@@ -111,8 +105,6 @@ public class TreeNodeCopier implements NodeVisitor {
 	public void visit(Folder source, FolderDao dao) {
 		Folder<?> copyFolder = (Folder<?>) source.createCopy();
 		persistCopy(copyFolder, dao);
-		// XXX try to put this before binding the copy to the source's content so that we dont need to remove stuff from nextsSourcesByDestination afterwards
-		saveNextToCopy((NodeContainer<TreeNode>) source, copyFolder);
 	}
 
 	@Override
@@ -120,8 +112,6 @@ public class TreeNodeCopier implements NodeVisitor {
 		Campaign copyCampaign = source.createCopy();
 		persistCopy(copyCampaign, campaignDao);
 		copyCustomFields(source, copyCampaign);
-		// XXX try to put this before binding the copy to the source's content so that we dont need to remove stuff from nextsSourcesByDestination afterwards
-		saveNextToCopy(source, copyCampaign);
 	}
 
 	@Override
@@ -130,14 +120,6 @@ public class TreeNodeCopier implements NodeVisitor {
 		persitIteration(copyIteration);
 		copyCustomFields(source, copyIteration);
 		copyIterationTestSuites(source, copyIteration);
-		// Why not doing "saveNextToCopy" ?
-		// ===============================
-		// Because, because the requirements for "copying an test-suite alone" and
-		// "copying test-suites of a copied iteration" are different.
-		// 1/ when copying a test-suite alone all test-plan item of the concerned test-suite will be added to the
-		// iteration even if there were already contained by the iteration.
-		// 2/ when copying an interaction, it's copied test-suite should be bound to the already copied
-		// iteration-test-plan-items.
 	}
 
 	@Override
@@ -262,13 +244,6 @@ public class TreeNodeCopier implements NodeVisitor {
 			
 		}
 		
-	}
-	@SuppressWarnings("unchecked")
-	private void saveNextToCopy(NodeContainer<? extends TreeNode> source, NodeContainer<? extends TreeNode> copy) {
-		if (source.hasContent()) {
-			Set<TreeNode> sourceContent = new HashSet<TreeNode>(source.getContent()); 
-			nextsSourcesByDestination.put((NodeContainer<TreeNode>) copy, sourceContent);
-		}
 	}
 
 	
