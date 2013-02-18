@@ -97,4 +97,46 @@ class StubObjectAclService implements ObjectAclService {
 		return Collections.emptyList();
 	}
 
+	@Override
+	public List<Object[]> retrieveClassAclGroupFromPartyId(long partyId,
+			String qualifiedClassName) {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Long> findObjectWithoutPermissionByPartyId(long partyId,
+			String qualifiedClass) {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Object[]> retrievePartyAndAclGroupNameFromIdentityAndClass(
+			long entityId, Class<?> entityClass) {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Object[]> retrievePartyAndAclGroupNameFromIdentityAndClass(
+			long entityId, Class<?> entityClass, Sorting sorting,
+			Filtering filtering) {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Long> findPartiesWithoutPermissionByObject(long objectId,
+			String qualifiedClassName) {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public void removeAllResponsibilities(long partyId, ObjectIdentity entityRef) {
+		
+	}
+
+	@Override
+	public void addNewResponsibility(long partyId, ObjectIdentity entityRef,
+			String qualifiedName) {
+		
+	}
+
 }

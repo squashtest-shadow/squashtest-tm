@@ -23,15 +23,25 @@ package org.squashtest.tm.web.internal.controller.administration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 
 public class PartyPermissionDatatableModelHelper extends DataTableModelHelper<PartyProjectPermissionsBean>{
 
+	private InternationalizationHelper messageSource;
+	private Locale locale;
+
+	public PartyPermissionDatatableModelHelper(Locale locale, InternationalizationHelper messageSource) {
+		this.locale = locale;
+		this.messageSource = messageSource;
+	}
+	
 	public List<Map<?,?>> buildAllData(List<PartyProjectPermissionsBean> source){
 		List<Map<?,?>> result = new ArrayList<Map<?,?>>(source.size());
 		for (PartyProjectPermissionsBean item : source){
@@ -54,7 +64,7 @@ public class PartyPermissionDatatableModelHelper extends DataTableModelHelper<Pa
 		result.put("party-name", party.getName());
 		result.put("party-index", getCurrentIndex());
 		result.put("permission-group", group);
-		result.put("party-type", party.getType());
+		result.put("party-type", messageSource.internationalize("label."+party.getType().toLowerCase(), locale));
 		result.put("empty-delete-holder", null);
 		
 		return result;

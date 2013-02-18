@@ -184,21 +184,21 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	}
 
 	@Override
-	public void removeProjectPermission(long userId, long projectId) {
+	public void removeProjectPermission(long partyId, long projectId) {
 		ObjectIdentity projectRef = createProjectIdentity(projectId);
-		User user = userDao.findById(userId);
-		aclService.removeAllResponsibilities(user.getLogin(), projectRef);
+
+		aclService.removeAllResponsibilities(partyId, projectRef);
 
 		GenericProject project = genericProjectFinder.findById(projectId);
 
 		ObjectIdentity rlibraryRef = createRequirementLibraryIdentity(project);
-		aclService.removeAllResponsibilities(user.getLogin(), rlibraryRef);
+		aclService.removeAllResponsibilities(partyId, rlibraryRef);
 
 		ObjectIdentity tclibraryRef = createTestCaseLibraryIdentity(project);
-		aclService.removeAllResponsibilities(user.getLogin(), tclibraryRef);
+		aclService.removeAllResponsibilities(partyId, tclibraryRef);
 
 		ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
-		aclService.removeAllResponsibilities(user.getLogin(), clibraryRef);
+		aclService.removeAllResponsibilities(partyId, clibraryRef);
 	}
 
 	@Override

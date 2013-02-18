@@ -34,9 +34,11 @@ define(["jquery", "jquery.squash.datatables"], function($){
 			var $this = $(this);
 			var tr = $this.parents("tr").get(0);	
 			var data = $("#user-permissions-table").squashTable().fnGetData(tr);
-			var userId = data['user']['id'];			
+			var partyId = data['party-id'];			
 			
-			var url = squashtm.app.contextRoot+"/generic-projects/"+projectId+"/users/"+userId+"/permissions/"+$this.val();
+			//the slash at the end of the url below cannot be removed because it would cause the last part of the
+			//permission to be interpreted as a file extension by spring MVC
+			var url = squashtm.app.contextRoot+"/generic-projects/"+projectId+"/parties/"+partyId+"/permissions/"+$this.val()+"/";
 	
 			$.ajax({
 				  type: 'POST',
@@ -100,15 +102,17 @@ define(["jquery", "jquery.squash.datatables"], function($){
 			"iDeferLoading" : userPermissions.length,
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": squashtm.app.contextRoot+"/generic-projects/"+settings.basic.projectId+"/user-permissions",
+			"sAjaxSource": squashtm.app.contextRoot+"/generic-projects/"+settings.basic.projectId+"/party-permissions",
 			"aaData" : userPermissions,		
 			"sDom" : 'ft<"dataTables_footer"lirp>',
 			"aaSorting": [[1,'asc']],
 			"aoColumnDefs": [	
-			    {'bSortable' : false, 'mDataProp' : 'user-index', 'aTargets' : [0], 'sWidth' : '2em', 'sClass' : 'centered'},
-			    {'bSortable' : true , 'mDataProp' : 'user.login', 'aTargets' : [1], 'sClass' : 'user-reference centered'},
-			    {'bSortable' : true , 'mDataProp' : 'permission-group.qualifiedName', 'aTargets' : [2], 'sClass' : 'permissions-cell centered'},
-			    {'bSortable' : false, 'mDataProp' : 'empty-delete-holder', 'aTargets' : [3], 'sWidth' : '2em', 'sClass' : "delete-button centered" }
+			    {'bSortable' : false, 'mDataProp' : 'party-index', 'aTargets' : [0], 'sWidth' : '2em', 'sClass' : 'centered'},
+			    {'bSortable' : false , 'mDataProp' : 'party-id', 'aTargets' : [1], 'sClass' : 'party-id centered', 'bVisible' : false},
+			    {'bSortable' : true , 'mDataProp' : 'party-name', 'aTargets' : [2], 'sClass' : 'party-name centered'},
+			    {'bSortable' : true , 'mDataProp' : 'permission-group.qualifiedName', 'aTargets' : [3], 'sClass' : 'permissions-cell centered'},
+			    {'bSortable' : true , 'mDataProp' : 'party-type', 'aTargets' : [4], 'sClass' : 'party-type centered'},
+			    {'bSortable' : false, 'mDataProp' : 'empty-delete-holder', 'aTargets' : [5], 'sWidth' : '2em', 'sClass' : "delete-button centered" }
 			] 				
 		};
 		
@@ -121,12 +125,12 @@ define(["jquery", "jquery.squash.datatables"], function($){
 			},
 			deleteButtons : {
 				popupmessage : language.deleteMessage,
-				url : squashtm.app.contextRoot+"/generic-projects/"+settings.basic.projectId+"/users/{user.id}/permissions",
+				url : squashtm.app.contextRoot+"/generic-projects/"+settings.basic.projectId+"/parties/{party-id}/permissions",
 				tooltip : language.deleteTooltip,
 				success : refreshTableAndPopup
 			},
 			bindLinks : {
-				list : [{ url : squashtm.app.contextRoot+"/administration/users/{user.id}/info", targetClass : 'user-reference' }]
+				list : [{ url : squashtm.app.contextRoot+"/administration/parties/{party-id}/info", targetClass : 'party-reference' }]
 			}
 			
 		}

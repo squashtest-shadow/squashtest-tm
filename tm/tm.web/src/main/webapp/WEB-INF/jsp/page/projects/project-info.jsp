@@ -299,11 +299,13 @@
 				openedBy="add-permission-button">
 			<jsp:attribute name="buttons">
 			
+				<%--- the slash at the end of the url below cannot be removed because it would cause the last part of the
+				permission to be interpreted as a file extension by spring MVC --%>
 				<f:message var="label" key="label.Add" />
 				'${ label }': function() {
 					var partyId = $("#party-id").val();
 					var permission = $("#permission-input").val();
-					var url = squashtm.app.contextRoot+"/generic-projects/${adminproject.project.id}/parties/"+partyId+"/permissions/"+permission;
+					var url = squashtm.app.contextRoot+"/generic-projects/${adminproject.project.id}/parties/"+partyId+"/permissions/"+permission+"/";
 					$.ajax({
 						url : url,
 						type : 'PUT',

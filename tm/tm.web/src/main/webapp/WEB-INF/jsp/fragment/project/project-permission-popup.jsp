@@ -27,10 +27,11 @@
 <table>
 	<tr>
 	<td> 
-		<span> <f:message key="user.login.label" /></span>
+		<span> <f:message key="party.label" /></span>
 	</td>
 	<td> 
-	<input id="user-input"/> 
+	<input id="party-input"/> 
+	<input type="hidden" id="party-id"/>
 	</td>
 	</tr>
 	
@@ -51,12 +52,23 @@
 <script>
 $(function() {
 	var availableTags = [""
-		<c:forEach items="${userList}" var="user">
-			,"${user.login}"
+		<c:forEach items="${partyList}" var="party">
+			,"${party.name}"
 		</c:forEach>
 		];
-	$( "#user-input" ).autocomplete({
-		source: availableTags
+	
+	var map = new Object();
+	
+	<c:forEach items="${partyList}" var="party">
+		map["${party.name}"] = "${party.id}";
+	</c:forEach>
+	
+	
+	$( "#party-input" ).autocomplete({
+		source: availableTags,
+		 change: function (event, ui) { 
+			 $("#party-id").val(map[$("#party-input").val()]);
+		   }
 	});
 });
 </script>

@@ -39,6 +39,7 @@ public interface ObjectAclService {
 	 */
 	void removeAllResponsibilities(String userLogin, ObjectIdentity entityRef);
 
+	void removeAllResponsibilities(long partyId, ObjectIdentity entityRef);
 	/**
 	 * Removes ALL RESPONSIBILITIES from the given object.
 	 * 

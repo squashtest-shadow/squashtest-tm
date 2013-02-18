@@ -24,6 +24,7 @@ package org.squashtest.tm.web.internal.controller.project;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -326,16 +327,14 @@ public class GenericProjectController {
 	
 	@RequestMapping(value = PROJECT_ID_ULR+"/party-permissions", method = RequestMethod.GET)
 	@ResponseBody
-	public DataTableModel getPartyPermissionTable(DataTableDrawParameters params, @PathVariable("projectId") long projectId) {
+	public DataTableModel getPartyPermissionTable(DataTableDrawParameters params, @PathVariable("projectId") long projectId, final Locale locale) {
 
 		PagingAndSorting sorting = new DataTableMapperPagingAndSortingAdapter(params, partyPermissionMapper, SortedAttributeSource.SINGLE_ENTITY);
 		Filtering filtering = new DataTableFiltering(params);
 		
 		PagedCollectionHolder<List<PartyProjectPermissionsBean>> partyPermissions = projectManager.findPartyPermissionsBeanByProject(sorting, filtering, projectId);
 		
-		return new PartyPermissionDatatableModelHelper().buildDataModel(partyPermissions, params.getsEcho());
-		
-		
+		return new PartyPermissionDatatableModelHelper(locale, messageSource).buildDataModel(partyPermissions, params.getsEcho());
 	}
 	
 	
@@ -345,11 +344,23 @@ public class GenericProjectController {
 		projectManager.addNewPermissionToProject(user, projectId, permission);
 	}
 
+	@RequestMapping(value = PROJECT_ID_ULR+"/parties/{partyId}/permissions/{permission}", method = RequestMethod.POST)
+	public @ResponseBody
+	void addNewPartyPermission(@PathVariable("partyId") long partyId, @PathVariable("projectId") long projectId, @PathVariable("permission") String permission) {
+		projectManager.addNewPermissionToProject(partyId, projectId, permission);
+	}
+
 	
 	@RequestMapping(value = PROJECT_ID_ULR+"/users/{userId}/permissions", method = RequestMethod.DELETE)
 	public @ResponseBody
 	void removePermission(@PathVariable("userId") long userId, @PathVariable long projectId) {
 		projectManager.removeProjectPermission(userId, projectId);
+	}
+
+	@RequestMapping(value = PROJECT_ID_ULR+"/parties/{partyId}/permissions", method = RequestMethod.DELETE)
+	public @ResponseBody
+	void removePartyPermission(@PathVariable("partyId") long partyId, @PathVariable long projectId) {
+		projectManager.removeProjectPermission(partyId, projectId);
 	}
 
 	
@@ -426,7 +437,6 @@ public class GenericProjectController {
 			return res;
 		}
 	}
-	
 
 	private static final class ProjectDataTableModelHelper extends DataTableModelHelper<GenericProject> {
 		private InternationalizationHelper messageSource;

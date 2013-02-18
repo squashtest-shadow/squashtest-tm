@@ -45,6 +45,7 @@ import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 @Controller
 @RequestMapping("/administration/projects")
@@ -57,7 +58,7 @@ public class ProjectAdministrationController {
 	@Inject
 	private BugTrackerFinderService bugtrackerFinderService;
 	@Inject
-	private MessageSource messageSource;
+	private InternationalizationHelper messageSource;
 	
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
@@ -86,7 +87,7 @@ public class ProjectAdministrationController {
 		
 		//user permissions data
 		List<PartyProjectPermissionsBean> partyProjectPermissionsBean = projectFinder.findPartyPermissionsBeansByProject(projectId);		
-		List<Map<?,?>> partyPermissions = new PartyPermissionDatatableModelHelper().buildAllData(partyProjectPermissionsBean);
+		List<Map<?,?>> partyPermissions = new PartyPermissionDatatableModelHelper(locale,messageSource).buildAllData(partyProjectPermissionsBean);
 		
 		List<PermissionGroup> availablePermissions = projectFinder.findAllPossiblePermission();
 		
