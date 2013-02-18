@@ -43,8 +43,11 @@ import org.squashtest.tm.domain.audit.Auditable;
 @PrimaryKeyJoinColumn(name = "PARTY_ID")
 @NamedQueries(value = {
 @NamedQuery(name="Team.findAllByName", query="select t from Team t where t.name = ?"),
+@NamedQuery(name="Team.findAllByIds", query="select t from Team t where t.id in ?"),
 @NamedQuery(name="Team.findAll", query="from Team "),
-@NamedQuery(name="Team.count", query="select count(*) from Team ")
+@NamedQuery(name="Team.count", query="select count(*) from Team "),
+@NamedQuery(name="Team.countAssociatedTeams", query="select count(*) from Team t join t.members m where m.id = ?"),
+@NamedQuery(name="Team.findAllNonAssociatedTeams", query="select t from Team t where t.id not in (select ti.id from Team ti join ti.members m where m.id = ?)"),
 
 })
 public class Team extends Party{

@@ -20,6 +20,22 @@
  */
 package org.squashtest.tm.domain;
 
+/**
+ * Bean that stores the number of some entities in the database. <br>
+ * Contains the following properties :
+ * <ul>
+ * <li>projectsNumber</li>
+ * <li>usersNumber</li>
+ * <li>requirementsNumber</li>
+ * <li>testCasesNumber</li>
+ * <li>campaignsNumber</li>
+ * <li>iterationsNumber</li>
+ * <li>executionsNumber</li>
+ * </ul>
+ * 
+ * @author mpagnon
+ * 
+ * **/
 public class AdministrationStatistics {
 	private long projectsNumber;
 	private long usersNumber;

@@ -30,9 +30,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.AdministrationStatistics;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.service.configuration.ConfigurationService;
@@ -40,6 +43,7 @@ import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.repository.AdministrationDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.repository.UsersGroupDao;
 import org.squashtest.tm.service.security.AdministratorAuthenticationService;
@@ -47,11 +51,6 @@ import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
 /**
- * 
- * 
- * //TODO : should be in core.service
- * 
- * 
  * 
  * @author bsiri
  * 
@@ -77,6 +76,9 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Inject
 	private ConfigurationService configurationService;
+	
+	@Inject
+	private TeamDao teamDao;
 	
 	@Inject
 	private AdministratorAuthenticationService adminAuthentService;
@@ -162,7 +164,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void addUser(User aUser, long groupId, String password) {
-		// FIXME : also check the auth part when time is come
+		// FIXME : also check the auth part when time has come
 		
 		userDao.checkLoginAvailability(aUser.getLogin());
 		
@@ -174,6 +176,11 @@ public class AdministrationServiceImpl implements AdministrationService {
 		userDao.persist(aUser);
 	}
 
+
+	/**
+	 * @see AdministrationService#modifyUserActiveParam(long, boolean)
+	 */
+	@Deprecated
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void modifyUserActiveParam(long userId, boolean active) {
@@ -246,8 +253,61 @@ public class AdministrationServiceImpl implements AdministrationService {
 		adminAuthentService.resetUserPassword(user.getLogin(), newPassword);
 	}
 
+	/**
+	 * @see AdministrationService#findAdministrationStatistics()
+	 */	
 	@Override
 	public AdministrationStatistics findAdministrationStatistics() {
 		return adminDao.findAdministrationStatistics();
+	}
+
+
+	/**
+	 * @see AdministrationService#deassociateTeams(long, List)
+	 */
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void deassociateTeams(long userId, List<Long> teamIds) {
+		User user = userDao.findById(userId);
+		user.removeTeams(teamIds);
+	}
+
+
+	/**
+	 * @see AdministrationService#associateToTeams(long, List)
+	 */
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void associateToTeams(long userId, List<Long> teamIds) {
+		User user = userDao.findById(userId);
+		List<Team> teams = teamDao.findAllByIds(teamIds);
+		for (Team team : teams) {
+			team.addMember(user);
+			user.addTeam(team);
+		}
+		
+	}
+
+	/**
+	 * @see AdministrationService#findSortedAssociatedTeams(long, PagingAndSorting, Filtering)
+	 */
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public PagedCollectionHolder<List<Team>> findSortedAssociatedTeams(long userId, PagingAndSorting paging,
+			Filtering filtering) {
+		List<Team> associatedTeams = teamDao.findSortedAssociatedTeams(userId, paging, filtering);
+		long associatedTeamsTotal = teamDao.countAssociatedTeams(userId);
+		return new PagingBackedPagedCollectionHolder<List<Team>>(paging, associatedTeamsTotal, associatedTeams);
+		
+	}
+
+
+	/**
+	 * @see AdministrationService#findAllNonAssociatedTeams(long)
+	 */
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public List<Team> findAllNonAssociatedTeams(long userId) {
+		return teamDao.findAllNonAssociatedTeams(userId);
 	}
 }

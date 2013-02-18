@@ -24,7 +24,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ],
 		function($, Backbone, _, StringUtil) {
 			var UMod = squashtm.app.UMod;
-			var UserTeamPanel = Backbone.View.extend({
+			var UserTeamsPanel = Backbone.View.extend({
 				el : "#teams",
 				initialize : function() {
 					this.makeTogglePanel();
@@ -33,21 +33,20 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					this.configureButtons();
 				},
 				events : {},
-				makeTogglePanel : function(){
+				makeTogglePanel : function() {
 					var infoSettings = {
-							initiallyOpen : true,
-							title : UMod.message.teamsPanelTitle,
-						};
-						this.$("#teams-panel").togglePanel(
-								infoSettings);
+						initiallyOpen : true,
+						title : UMod.message.teamsPanelTitle,
+					};
+					this.$("#teams-panel").togglePanel(infoSettings);
 				},
-				configurePopups :function(){
-//					this.configureRemoveMemberDialog();
-//					this.configureNoMemberSelectedDialog();
-//					this.configureAddMemberDialog();
+				configurePopups : function() {
+					this.configureRemoveTeamDialog();
+					this.configureNoTeamSelectedDialog();
+					this.configureAddTeamDialog();
 				},
 				configureButtons : function() {
-					//===============toogle buttons=================
+					// ===============toogle buttons=================
 					// this line below is here because toggle panel
 					// buttons cannot be bound with the 'events'
 					// property of Backbone.View.
@@ -55,115 +54,139 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					// before it is moved from it's "span.not-displayed"
 					// to the toggle panel header.
 					// TODO change our way to make toggle panels buttons
-					//=============/toogle buttons===================
-					
-//					this.$("#remove-members-button").on('click',$.proxy(this.confirmRemoveMember,this));
-//					this.$("#add-member-button").on('click',$.proxy(this.openAddMember, this));						
-				
+					// =============/toogle buttons===================
+
+					this.$("#remove-teams-button").on('click',
+							$.proxy(this.confirmRemoveTeam, this));
+					this.$("#add-team-button").on('click',
+							$.proxy(this.openAddTeam, this));
+
 				},
 
-//				configureTable : function(){
-//					$("#members-table").squashTable({},{});		//let's try pure DOM conf							
-//				},
-//				confirmRemoveMember : function(event){
-//					var hasMember = ($("#members-table").squashTable().getSelectedIds().length>0);
-//					if (hasMember){
-//						this.confirmRemoveMemberDialog.confirmDialog("open");
-//					}
-//					else{
-//						this.noMemberSelectedDialog.messageDialog('open');
-//					}
-//				},
-//				
-//				openAddMember : function(){
-//					this.addMemberDialog.confirmDialog('open');
-//				},
+				configureTable : function() {
+					$("#teams-table").squashTable({}, {}); // pure DOM conf
+				},
+				confirmRemoveTeam : function(event) {
+					var hasTeam = ($("#teams-table").squashTable()
+							.getSelectedIds().length > 0);
+					if (hasTeam) {
+						this.confirmRemoveTeamDialog.confirmDialog("open");
+					} else {
+						this.noTeamSelectedDialog.messageDialog('open');
+					}
+				},
 
-//				removeMembers : function(event){
-//					var table = $("#members-table").squashTable();
-//					var ids = table.getSelectedIds();
-//					if (ids.length === 0) return;
-//					
-//					$.ajax({
-//						url : document.location.href+"/members/"+ids.join(','),
-//						type : 'delete'
-//					}).done($.proxy(table.refresh, table));
-//					
-//				},
-				
-//				addMember : function(event){
-//					var dialog = this.addMemberDialog;
-//					var login = dialog.find('#add-member-input').val();
-//					
-//					$.ajax({
-//						url : document.location.href+"/members/"+login,
-//						type : 'PUT'
-//					}).success(function(){
-//						dialog.confirmDialog('close');
-//						$("#members-table").squashTable().refresh();
-//					});
-//				},
-				
-//				configureRemoveMemberDialog : function(){							
-//				this.confirmRemoveMemberDialog = this.$("#remove-members-dialog").confirmDialog();
-//				this.confirmRemoveMemberDialog.on("confirmdialogconfirm", $.proxy(this.removeMembers, this));													
-//			},
-//			
-//			configureNoMemberSelectedDialog : function(){
-//				this.noMemberSelectedDialog = this.$("#no-selected-users").messageDialog();														
-//			},
-			
-//			configureAddMemberDialog : function(){
-//				var addMemberDialog = this.$("#add-member-dialog").confirmDialog();
-//				
-//				addMemberDialog.on("confirmdialogvalidate", function(){
-//					var login = addMemberDialog.find('#add-member-input').val();
-//					if (login===null || login===undefined || login.length === 0){
-//						dialog.activate('no-selected-users');
-//						return false;
-//					}
-//					else{
-//						return true;
-//					}
-//				});
-//				
-//				addMemberDialog.on("confirmdialogconfirm", $.proxy(this.addMember, this));	
-//				
-//				addMemberDialog.find('#add-member-input').autocomplete();
-//				
-//				addMemberDialog.on('confirmdialogopen', function(){
-//					var dialog = addMemberDialog;
-//					var input = dialog.find('#add-member-input');
-//					dialog.activate('wait');
-//					$.ajax({
-//						url : document.location.href+"/non-members",
-//						dataType : 'json'
-//					}).success(function(json){
-//						if (json.length>0){
-//							var source = _.map(json, function(user){return user.login});
-//							input.autocomplete("option", "source", source);
-//							dialog.activate('main');
-//						}
-//						else{
-//							dialog.activate('no-more-users');
-//						}
-//					});								
-//				});
-//				
-//				addMemberDialog.activate = function(arg){
-//					var cls = '.'+arg;
-//					this.find('div').not('.popup-dialog-buttonpane')
-//						.filter(cls).show().end()
-//						.not(cls).hide();
-//					if (arg!=='main'){
-//						this.next().find('button:first').hide();
-//					}
-//					else{
-//						this.next().find('button:first').show();
-//					}
-//				};
-//				
-//
-//				
-//				this.addMemberDialog = addMemberDialog;
-//			},
+				openAddTeam : function() {
+					this.addTeamDialog.confirmDialog('open');
+				},
+
+				removeTeams : function(event) {
+					var table = $("#teams-table").squashTable();
+					var ids = table.getSelectedIds();
+					if (ids.length === 0)
+						return;
+
+					$.ajax({
+						url : UMod.user.url.simple + "teams/" + ids.join(','),
+						type : 'delete'
+					}).done($.proxy(table.refresh, table));
+
+				},
+
+				addTeam : function(event) {
+					var dialog = this.addTeamDialog;
+					var name = dialog.find('#add-team-input').val();
+					var id = this.getIdOfNonAssociatedTeam(name);
+					$.ajax({
+						url : UMod.user.url.simple + "teams/" + id,
+						type : 'PUT'
+					}).success(function() {
+						dialog.confirmDialog('close');
+						$("#teams-table").squashTable().refresh();
+					});
+				},
+				getIdOfNonAssociatedTeam : function(name) {
+					var dialog = this.addTeamDialog;
+					var nonAssociatedTeams = dialog.nonAssociatedTeams;
+					if (nonAssociatedTeams.length > 0) {
+						for ( var i = 0; i < nonAssociatedTeams.length; i++) {
+							var nonAssociatedTeam = nonAssociatedTeams[i];
+							if (nonAssociatedTeam.name === name) {
+								return nonAssociatedTeam.id;
+							}
+						}
+					}
+					return 0;
+				},
+				configureRemoveTeamDialog : function() {
+					this.confirmRemoveTeamDialog = $("#remove-teams-dialog")
+							.confirmDialog();
+					this.confirmRemoveTeamDialog.on("confirmdialogconfirm", $
+							.proxy(this.removeTeams, this));
+				},
+
+				configureNoTeamSelectedDialog : function() {
+					this.noTeamSelectedDialog = $("#no-selected-teams")
+							.messageDialog();
+				},
+
+				configureAddTeamDialog : function() {
+					var addTeamDialog = $("#add-team-dialog").confirmDialog();
+
+					addTeamDialog.on("confirmdialogvalidate", function() {
+						var name = addTeamDialog.find('#add-team-input').val();
+						if (name === null || name === undefined
+								|| name.length === 0) {
+							dialog.activate('no-selected-teams');
+							return false;
+						} else {
+							return true;
+						}
+					});
+
+					addTeamDialog.on("confirmdialogconfirm", $.proxy(
+							this.addTeam, this));
+
+					addTeamDialog.find('#add-team-input').autocomplete();
+
+					addTeamDialog.on('confirmdialogopen', function() {
+						var dialog = addTeamDialog;
+						var input = dialog.find('#add-team-input');
+						dialog.activate('wait');
+						dialog.nonAssociatedTeams = [];
+						$.ajax(
+								{
+									url : UMod.user.url.simple
+											+ "non-associated-teams",
+									dataType : 'json'
+								}).success(function(json) {
+							if (json.length > 0) {
+								var source = _.map(json, function(team) {
+									return team.name;
+								});
+								input.autocomplete("option", "source", source);
+								dialog.nonAssociatedTeams = json;
+								dialog.activate('main');
+							} else {
+								dialog.activate('no-more-teams');
+							}
+
+						});
+					});
+
+					addTeamDialog.activate = function(arg) {
+						var cls = '.' + arg;
+						this.find('div').not('.popup-dialog-buttonpane')
+								.filter(cls).show().end().not(cls).hide();
+						if (arg !== 'main') {
+							this.next().find('button:first').hide();
+						} else {
+							this.next().find('button:first').show();
+						}
+					};
+
+					this.addTeamDialog = addTeamDialog;
+				},
+			});
+			return UserTeamsPanel;
+		});

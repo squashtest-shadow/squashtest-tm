@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2012 Henix, henix.fr
  *
@@ -18,18 +18,44 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-require([ "common" ], function(common) {
-	require([ "jquery", "user-editor/UserModificationView","app/ws/squashtm.workspace", "domReady" ], function($,UserModificationView, WS, domReady) {
-		var goBack = function() {
-			document.location.href = squashtm.app.contextRoot + "/administration/users/list";
-		};
-		
-		domReady(function() {
-			WS.init("");
-			var view = new UserModificationView();
-			$("#back").button().on("click", goBack);
-			view.on("user.delete", goBack);
-		});
-		
-	});
-});
+package org.squashtest.tm.web.internal.controller.users;
+
+import org.squashtest.tm.domain.users.Team;
+/**
+ * Simple bean with id and name of a team
+ * @author mpagnon
+ *
+ */
+public class TeamModel {
+	private Long id;
+	private String name;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public TeamModel(Long id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+
+	public TeamModel(Team team) {
+		super();
+		this.setId(team.getId());
+		this.setName(team.getName());
+	}
+
+}

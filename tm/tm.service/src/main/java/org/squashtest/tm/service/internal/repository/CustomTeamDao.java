@@ -25,6 +25,7 @@ import java.util.List;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.Team;
+import org.squashtest.tm.domain.users.User;
 
 public interface CustomTeamDao {
 	/**
@@ -33,6 +34,18 @@ public interface CustomTeamDao {
 	 * @return
 	 */
 	List<Team> findSortedTeams(PagingAndSorting paging, Filtering filtering);
-	
-	
+
+	/**
+	 * Will find {@link Team}s associated to concerned user organized with the given pagin and filtering params.
+	 * 
+	 * @param userId
+	 *            : id of the concerned {@link User}
+	 * @param paging
+	 *            : {@link PagingAndSorting} according to which result will be organized.
+	 * @param filtering
+	 *            : {@link Filtering} according to which result will be organized.
+	 * @return paged and filtered list of {@link Team}s associated to concerned {@link User}
+	 */
+	List<Team> findSortedAssociatedTeams(long userId, PagingAndSorting paging, Filtering filtering);
+
 }

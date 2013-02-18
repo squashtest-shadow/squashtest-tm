@@ -21,6 +21,8 @@
 package org.squashtest.tm.domain.users;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -104,6 +106,24 @@ public class User extends Party {
 
 	public Set<Team> getTeams() {
 		return teams;
+	}
+
+	public void addTeam(Team team) {
+		this.teams.add(team);
+		
+	}
+
+	public void removeTeams(List<Long> teamIds) {
+		Iterator<Team> iterator  = teams.iterator();
+		while(iterator.hasNext()){
+			Team team = iterator.next();
+			if(teamIds.contains(team.getId())){
+				team.removeMember(this);
+				iterator.remove();
+			}
+		}
+		
+		
 	}
 	
 	@Override

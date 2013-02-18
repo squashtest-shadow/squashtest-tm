@@ -71,4 +71,27 @@ public interface TeamDao extends CustomTeamDao{
 	 * @return amount of {@link Team} in database
 	 */
 	long count();
+	
+	/**
+	 * Find all teams matching the given ids
+	 * 
+	 * @param teamIds : ids of {@link Team}s to return
+	 * @return List of matching {@link Team}s.
+	 */
+	List<Team> findAllByIds(List<Long> teamIds);
+	
+	/**
+	 * Will count the number of Teams where the concerned user is member.
+	 * @param userId : id of the concerned user
+	 * @return the total number of teams associated to the user
+	 */
+	long countAssociatedTeams(long userId);
+	
+	/**
+	 * Will return all {@link Team}s that don't have the concerned user as a member.
+	 * @param userId : the id of the concerned user
+	 * @return
+	 */
+	List<Team> findAllNonAssociatedTeams(long userId);
+
 }

@@ -59,7 +59,7 @@ define(
 							var newPassword = $("#newPassword").val();
 
 							$.ajax({
-								url : UMod.user.url.simple,
+								url : UMod.user.url.admin,
 								type : "POST",
 								dataType : "json",
 								data : {

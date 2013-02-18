@@ -59,7 +59,7 @@ define(
 							var self = this;
 							$.ajax({
 								type : 'delete',
-								url : UMod.user.url.simple,
+								url : UMod.user.url.admin,
 								data : {},
 								dataType : 'json',
 								
@@ -96,7 +96,7 @@ define(
 									okLabel : UMod.message.okLabel,
 									cancelLabel : UMod.message.cancelLabel
 								},
-								targetUrl : UMod.user.url.simple,
+								targetUrl : UMod.user.url.admin,
 								componentId : imputId,
 								jeditableSettings : {}
 							});

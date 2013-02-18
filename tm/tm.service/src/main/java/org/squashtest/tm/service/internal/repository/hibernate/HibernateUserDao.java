@@ -20,22 +20,16 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.collections.Transformer;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.ResultTransformer;
-import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.Filtering;
@@ -235,15 +229,6 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 	
 	// **************** private code ****************************
 	
-	private <X> List<X> collectFromMapList(List hibernateResult, String alias){
-		List<X> collected = new ArrayList(hibernateResult.size());
-		for (Map<String, ?> result : (List<Map<String, ?>>) hibernateResult){
-			collected.add((X)(result.get(alias)));
-		}
-		return collected;
-	}
-	
-
 	private static final class SetUserIdsParameterCallback implements SetQueryParametersCallback{
 		private List<String> idList;
 		private SetUserIdsParameterCallback(List<String> idList){

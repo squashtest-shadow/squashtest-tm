@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -170,5 +171,13 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	 */
 	protected final List<ENTITY_TYPE> findSorted(PagingAndSorting pagingAndSorting) {
 		return findSorted(pagingAndSorting, entityType, entityType.getSimpleName());
+	}
+	
+	protected <X> List<X> collectFromMapList(List<X> hibernateResult, String alias){
+		List<X> collected = new ArrayList<X>(hibernateResult.size());
+		for (Map<String, X> result : (List<Map<String, X>>) hibernateResult){
+			collected.add(result.get(alias));
+		}
+		return collected;
 	}
 }

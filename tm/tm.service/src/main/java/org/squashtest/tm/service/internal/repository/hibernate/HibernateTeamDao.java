@@ -31,28 +31,27 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.Team;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTeamDao;
 
-
 @Repository("CustomTeamDao")
 public class HibernateTeamDao extends HibernateEntityDao<Team> implements CustomTeamDao {
-
 
 	@Override
 	public List<Team> findSortedTeams(PagingAndSorting paging, Filtering filter) {
 		Session session = currentSession();
 		Criteria crit = session.createCriteria(Team.class, "Team");
-		
+
 		/* add ordering */
 		String sortedAttribute = paging.getSortedAttribute();
 		if (sortedAttribute != null) {
 			SortingUtils.addOrder(crit, paging);
 		}
-		
+
 		/* add filtering */
-		if  (filter.isDefined()){
+		if (filter.isDefined()) {
 			crit = crit.add(_addFiltering(filter));
 		}
 
@@ -60,16 +59,48 @@ public class HibernateTeamDao extends HibernateEntityDao<Team> implements Custom
 		PagingUtils.addPaging(crit, paging);
 
 		return crit.list();
-		
+
 	}
-	
-	
-	private Criterion _addFiltering(Filtering filtering){
+
+	private Criterion _addFiltering(Filtering filtering) {
 		String filter = filtering.getFilter();
-		return Restrictions.disjunction()
-						  .add(Restrictions.like("Team.name", filter, MatchMode.ANYWHERE))
-						  .add(Restrictions.like("Team.audit.createdBy", filter, MatchMode.ANYWHERE))
-						  .add(Restrictions.like("Team.audit.lastModifiedBy", filter, MatchMode.ANYWHERE));
+		return Restrictions.disjunction().add(Restrictions.like("Team.name", filter, MatchMode.ANYWHERE))
+				.add(Restrictions.like("Team.audit.createdBy", filter, MatchMode.ANYWHERE))
+				.add(Restrictions.like("Team.audit.lastModifiedBy", filter, MatchMode.ANYWHERE));
 	}
+
+	/**
+	 * @see CustomTeamDao#findSortedAssociatedTeams(long, PagingAndSorting, Filtering)
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Team> findSortedAssociatedTeams(long userId, PagingAndSorting paging, Filtering filtering) {
+
+		Criteria crit = currentSession().createCriteria(User.class, "User").add(Restrictions.eq("User.id", userId))
+				.createCriteria("User.teams", "Team").setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+
+		/* add ordering */
+		String sortedAttribute = paging.getSortedAttribute();
+		if (sortedAttribute != null) {
+			SortingUtils.addOrder(crit, paging);
+		}
+
+		/* add filtering */
+		if (filtering.isDefined()) {
+			crit = crit.add(filterAssociatedTeams(filtering));
+		}
+
+		/* result range */
+		PagingUtils.addPaging(crit, paging);
+		
+		return collectFromMapList(crit.list(), "Team");
+	}
+
+	private Criterion filterAssociatedTeams(Filtering filtering) {
+		String filter = filtering.getFilter();
+		return Restrictions.disjunction().add(Restrictions.like("Team.name", filter, MatchMode.ANYWHERE));
+	}
+	
+	
 
 }
