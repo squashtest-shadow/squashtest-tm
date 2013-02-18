@@ -89,14 +89,14 @@ public class TreeNodeCopier implements NodeVisitor {
 	@Inject
 	private ItemTestPlanDao iterationTestPlanItemDao;
 	@Inject
+	private IterationTestPlanManager iterationTestPlanManager;
+	@Inject
 	private PrivateCustomFieldValueService customFieldValueManagerService;
 
 	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextsSourcesByDestination;
 	private NodeContainer<? extends TreeNode> destination;
 	private TreeNode copy;
 
-	@Inject
-	private IterationTestPlanManager iterationTestPlanManager;
 
 	public TreeNode copy(TreeNode source, NodeContainer<TreeNode> destination,
 			Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextsSourcesByDestination) {

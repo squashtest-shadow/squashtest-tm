@@ -390,11 +390,15 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		return LibraryUtils.generateUniqueCopyNumber(copiesNames, sourceName, COPY_TOKEN);
 	}
 
+	/*
+	 * BSR : I've commented that seemingly unused method on the 13-02-18. If you read this and two month have passed without incidents then you should remove it definitely.
+	 * 
 	@SuppressWarnings("unchecked")
 	public FOLDER createCopyFolder(long folderId) {
 		FOLDER original = getFolderDao().findById(folderId);
 		return (FOLDER) original.createCopy();
 	}
+	*/
 
 	/* ***************************** deletion operations *************************** */
 

@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +98,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private PrivateDenormalizedFieldValueService denormalizedFieldValueService;
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToIterationStrategy")
-	private PasteStrategy<Iteration, TestSuite> pasteToIterationStrategy;
+	private Provider<PasteStrategy<Iteration, TestSuite>> pasteToIterationStrategyProvider;
 	@Inject
 	private ProjectsPermissionFinder projectsPermissionFinder;
 	@Inject
@@ -305,14 +306,14 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public TestSuite copyPasteTestSuiteToIteration(long testSuiteId, long iterationId) {
-		return pasteToIterationStrategy.pasteNodes(iterationId, Arrays.asList(testSuiteId)).get(0);
+		return pasteToIterationStrategyProvider.get().pasteNodes(iterationId, Arrays.asList(testSuiteId)).get(0);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, long iterationId) {
-		return pasteToIterationStrategy.pasteNodes(iterationId, Arrays.asList(testSuiteIds));
+		return pasteToIterationStrategyProvider.get().pasteNodes(iterationId, Arrays.asList(testSuiteIds));
 	}
 
 	@Override

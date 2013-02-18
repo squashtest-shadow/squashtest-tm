@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostFilter;
@@ -80,10 +81,10 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	private LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy;
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToTestCaseFolderStrategy")
-	private PasteStrategy<TestCaseFolder, TestCaseLibraryNode> pasteToTestCaseFolderStrategy;
+	private Provider<PasteStrategy<TestCaseFolder, TestCaseLibraryNode>> pasteToTestCaseFolderStrategyProvider;
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToTestCaseLibraryStrategy")
-	private PasteStrategy<TestCaseLibrary, TestCaseLibraryNode> pasteToTestCaseLibraryStrategy;
+	private Provider<PasteStrategy<TestCaseLibrary, TestCaseLibraryNode>> pasteToTestCaseLibraryStrategyProvider;
 	
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
@@ -113,12 +114,12 @@ public class TestCaseLibraryNavigationServiceImpl extends
 
 	@Override
 	protected PasteStrategy<TestCaseFolder, TestCaseLibraryNode> getPasteToFolderStrategy() {
-		return pasteToTestCaseFolderStrategy;
+		return pasteToTestCaseFolderStrategyProvider.get();
 	}
 
 	@Override
 	protected PasteStrategy<TestCaseLibrary, TestCaseLibraryNode> getPasteToLibraryStrategy() {
-		return pasteToTestCaseLibraryStrategy;
+		return pasteToTestCaseLibraryStrategyProvider.get();
 	}
 
 	@Override

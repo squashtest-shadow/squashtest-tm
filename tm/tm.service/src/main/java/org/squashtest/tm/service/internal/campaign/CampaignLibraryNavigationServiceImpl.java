@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -88,21 +89,26 @@ public class CampaignLibraryNavigationServiceImpl extends
 
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
+	
+	@Inject
+	private CampaignNodeDeletionHandler deletionHandler;
 
 	@Inject
 	@Qualifier("squashtest.tm.service.CampaignLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<CampaignLibrary, CampaignLibraryNode> libraryStrategy;
 
-	@Inject
-	private CampaignNodeDeletionHandler deletionHandler;
 	
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToCampaignFolderStrategy")
-	private PasteStrategy<CampaignFolder, CampaignLibraryNode> pasteToCampaignFolderStrategy;
+	private Provider<PasteStrategy<CampaignFolder, CampaignLibraryNode>> pasteToCampaignFolderStrategyProvider;
 	
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToCampaignLibraryStrategy")
-	private PasteStrategy<CampaignLibrary, CampaignLibraryNode> pasteToCampaignLibraryStrategy;
+	private Provider<PasteStrategy<CampaignLibrary, CampaignLibraryNode>> pasteToCampaignLibraryStrategyProvider;
+
+	@Inject
+	@Qualifier("squashtest.tm.service.internal.PasteToCampaignStrategy")
+	private Provider<PasteStrategy<Campaign, Iteration>> pasteToCampaignStrategyProvider;
 
 	@Override
 	protected NodeDeletionHandler<CampaignLibraryNode, CampaignFolder> getDeletionHandler() {
@@ -112,23 +118,19 @@ public class CampaignLibraryNavigationServiceImpl extends
 	
 	@Override
 	protected PasteStrategy<CampaignFolder, CampaignLibraryNode> getPasteToFolderStrategy() {
-		return pasteToCampaignFolderStrategy;
+		return pasteToCampaignFolderStrategyProvider.get();
 	}
 
 	@Override
 	protected PasteStrategy<CampaignLibrary, CampaignLibraryNode> getPasteToLibraryStrategy() {
-		return pasteToCampaignLibraryStrategy;
+		return pasteToCampaignLibraryStrategyProvider.get();
 	}
-
-	@Inject
-	@Qualifier("squashtest.tm.service.internal.PasteToCampaignStrategy")
-	private PasteStrategy<Campaign, Iteration> pasteToCampaignStrategy;
 
 	@Override
 	@PreAuthorize("(hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE')) "
 			+ OR_HAS_ROLE_ADMIN)
 	public List<Iteration> copyIterationsToCampaign(long campaignId, Long[] iterationsIds) {
-		return	pasteToCampaignStrategy.pasteNodes(campaignId, Arrays.asList(iterationsIds));
+		return	pasteToCampaignStrategyProvider.get().pasteNodes(campaignId, Arrays.asList(iterationsIds));
 	}
 
 	@Override

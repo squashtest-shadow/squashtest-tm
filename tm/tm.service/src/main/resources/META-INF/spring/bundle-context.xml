@@ -144,49 +144,49 @@
   </bean>
 
   <bean id="squashtest.tm.service.internal.PasteToTestCaseFolderStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
-    parent="parent.PasteStrategy">
+    parent="parent.PasteStrategy" scope="prototype">
     <property name="containerDao" ref="hibernateTestCaseFolderDao" />
     <property name="copiedDao" ref="squashtest.tm.repository.TestCaseLibraryNodeDao" />
   </bean>
 
   <bean id="squashtest.tm.service.internal.PasteToTestCaseLibraryStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
-    parent="parent.PasteStrategy">
+    parent="parent.PasteStrategy" scope="prototype">
     <property name="containerDao" ref="hibernateTestCaseLibraryDao" />
     <property name="copiedDao" ref="squashtest.tm.repository.TestCaseLibraryNodeDao" />
   </bean>
 
   <bean id="squashtest.tm.service.internal.PasteToRequirementFolderStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
-    parent="parent.PasteStrategy">
+    parent="parent.PasteStrategy" scope="prototype">
     <property name="containerDao" ref="hibernateRequirementFolderDao" />
     <property name="copiedDao" ref="squashtest.tm.repository.RequirementLibraryNodeDao" />
   </bean>
 
   <bean id="squashtest.tm.service.internal.PasteToRequirementLibraryStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
-    parent="parent.PasteStrategy">
+    parent="parent.PasteStrategy" scope="prototype">
     <property name="containerDao" ref="hibernateRequirementLibraryDao" />
     <property name="copiedDao" ref="squashtest.tm.repository.RequirementLibraryNodeDao" />
   </bean>
 
   <bean id="squashtest.tm.service.internal.PasteToCampaignFolderStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
-    parent="parent.PasteStrategy">
+    parent="parent.PasteStrategy" scope="prototype">
     <property name="containerDao" ref="hibernateCampaignFolderDao" />
     <property name="copiedDao" ref="squashtest.tm.repository.CampaignLibraryNodeDao" />
   </bean>
 
   <bean id="squashtest.tm.service.internal.PasteToCampaignLibraryStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
-    parent="parent.PasteStrategy">
+    parent="parent.PasteStrategy" scope="prototype">
     <property name="containerDao" ref="hibernateCampaignLibraryDao" />
     <property name="copiedDao" ref="squashtest.tm.repository.CampaignLibraryNodeDao" />
   </bean>
 
   <bean id="squashtest.tm.service.internal.PasteToCampaignStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
-    parent="parent.PasteStrategy">
+    parent="parent.PasteStrategy" scope="prototype">
     <property name="containerDao" ref="hibernateCampaignDao" />
     <property name="copiedDao" ref="hibernateIterationDao" />
   </bean>
 
   <bean id="squashtest.tm.service.internal.PasteToIterationStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
-    parent="parent.PasteStrategy">
+    parent="parent.PasteStrategy" scope="prototype">
     <property name="containerDao" ref="hibernateIterationDao" />
     <property name="copiedDao" ref="testSuiteDao" />
   </bean>

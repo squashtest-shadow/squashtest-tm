@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
@@ -92,10 +93,10 @@ public class RequirementLibraryNavigationServiceImpl extends
 	private RequirementTestCaseLinksImporter requirementTestCaseLinksImporter;
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToRequirementFolderStrategy")
-	private PasteStrategy<RequirementFolder, RequirementLibraryNode> pasteToRequirementFolderStrategy;
+	private Provider<PasteStrategy<RequirementFolder, RequirementLibraryNode>> pasteToRequirementFolderStrategyProvider;
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToRequirementLibraryStrategy")
-	private PasteStrategy<RequirementLibrary, RequirementLibraryNode> pasteToRequirementLibraryStrategy;
+	private Provider<PasteStrategy<RequirementLibrary, RequirementLibraryNode>> pasteToRequirementLibraryStrategyProvider;
 
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
@@ -126,12 +127,12 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Override
 	protected PasteStrategy<RequirementFolder, RequirementLibraryNode> getPasteToFolderStrategy() {
-		return pasteToRequirementFolderStrategy;
+		return pasteToRequirementFolderStrategyProvider.get();
 	}
 
 	@Override
 	protected PasteStrategy<RequirementLibrary, RequirementLibraryNode> getPasteToLibraryStrategy() {
-		return pasteToRequirementLibraryStrategy;
+		return pasteToRequirementLibraryStrategyProvider.get();
 	}
 
 	@Override
