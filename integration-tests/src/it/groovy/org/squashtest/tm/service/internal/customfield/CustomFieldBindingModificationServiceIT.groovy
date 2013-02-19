@@ -90,19 +90,18 @@ class CustomFieldBindingModificationServiceIT extends DbunitServiceSpecification
 			
 		
 	}
-	//TODO fix with 1272
-//	
-//	def "when removing a custom field binding, should cascade delete the concerned custom field values"(){
-//		
-//		when :
-//			service.removeCustomFieldBindings([111l, 112l])
-//			def customFields = listQuery("from CustomFieldValue")
-//		
-//		
-//		then :
-//			customFields.size() == 0
-//		
-//	}
+	
+	def "when removing a custom field binding, should cascade delete the concerned custom field values"(){
+		
+		when :
+			service.removeCustomFieldBindings([111l, 112l])
+			def customFields = listQuery("from CustomFieldValue")
+		
+		
+		then :
+			customFields.size() == 0
+		
+	}
 	
 	def "should reorder the bindings"(){
 		

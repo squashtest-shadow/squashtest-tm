@@ -40,24 +40,23 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	private TestCaseLibraryNavigationService navService
-	//TODO fix with 1272
-//	
-//	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste folder with test-cases.xml")
-//	def "should copy paste folder with test-cases"(){
-//		given:
-//		Long[] sourceIds = [1L]
-//		Long destinationId = 2L
-//		
-//		when:
-//		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
-//		
-//		then:"test-case folder has 2 test-cases"
-//		nodes.get(0) instanceof TestCaseFolder
-//		TestCaseFolder folderCopy = (TestCaseFolder) nodes.get(0)
-//		folderCopy.content.size() == 2
-//		folderCopy.content.find {it.name == "test-case10"} != null
-//		folderCopy.content.find {it.name == "test-case11"} != null		
-//	}
-//	
+	
+	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste folder with test-cases.xml")
+	def "should copy paste folder with test-cases"(){
+		given:
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when:
+		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
+		
+		then:"test-case folder has 2 test-cases"
+		nodes.get(0) instanceof TestCaseFolder
+		TestCaseFolder folderCopy = (TestCaseFolder) nodes.get(0)
+		folderCopy.content.size() == 2
+		folderCopy.content.find {it.name == "test-case10"} != null
+		folderCopy.content.find {it.name == "test-case11"} != null		
+	}
+	
 	
 }
