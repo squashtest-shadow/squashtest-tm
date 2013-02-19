@@ -90,11 +90,12 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	@Inject
 	private PrivateCustomFieldValueService customFieldValueManagerService;
 
-	
 	private NodeContainer<? extends TreeNode> destination;
 	private TreeNode copy;
+	private boolean okToGoDeeper = true;
 
 	public TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination) {
+		this.okToGoDeeper = true;
 		this.destination = destination;
 		copy = null;
 		source.accept(this);
@@ -114,20 +115,35 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		copyCustomFields(source, copyCampaign);
 	}
 
+	/**
+	 * Will copy paste the iteration with it's test-suites.<br>
+	 * Hence it is not ok to go deeper with the paste strategy : we don't want the test-suites to be copied twice.<br>
+	 * <br>
+	 * <h4>Why don't we use the paste strategy to go through the test-suites ?</h4> Because of functional rules : the requirements for
+	 * "copying an test-suite alone" and "copying test-suites of a copied iteration" are different.
+	 * <ol>
+	 * <li>When copying a test-suite alone all test-plan item of the concerned test-suite will be added to the iteration
+	 * even if there were already contained by the iteration.</li>
+	 * <li>When copying an interaction, it's copied test-suite should be bound to the already copied
+	 * iteration-test-plan-items.</li>
+	 * </ol>
+	 */
 	@Override
 	public void visit(Iteration source) {
 		Iteration copyIteration = source.createCopy();
 		persitIteration(copyIteration);
 		copyCustomFields(source, copyIteration);
 		copyIterationTestSuites(source, copyIteration);
+		this.okToGoDeeper = false;
+
 	}
 
 	@Override
-	public void visit(TestSuite source) {		
-			TestSuite copyTestSuite = source.createCopy();
-			persistCopy(copyTestSuite, testSuiteDao);
-			copyCustomFields(source, copyTestSuite);			
-			copyTestSuiteTestPlanToDestinationIteration(source, copyTestSuite);		
+	public void visit(TestSuite source) {
+		TestSuite copyTestSuite = source.createCopy();
+		persistCopy(copyTestSuite, testSuiteDao);
+		copyCustomFields(source, copyTestSuite);
+		copyTestSuiteTestPlanToDestinationIteration(source, copyTestSuite);
 	}
 
 	private void copyTestSuiteTestPlanToDestinationIteration(TestSuite source, TestSuite copy) {
@@ -139,8 +155,6 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		}
 		copy.bindTestPlanItems(copyOfTestPlan);
 	}
-
-
 
 	@Override
 	public void visit(Requirement source) {
@@ -202,32 +216,30 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		}
 		testSuiteCopy.bindTestPlanItems(testPlanItemsToBind);
 	}
-	
-	
+
 	/**
 	 * @see PrivateCustomFieldValueService#copyCustomFieldValues(BoundEntity, BoundEntity)
 	 */
 	private void copyCustomFields(BoundEntity source, BoundEntity copy) {
 		customFieldValueManagerService.copyCustomFieldValues(source, copy);
 	}
-	
-	
+
 	private void copyCustomFields(TestCase source, TestCase copy) {
 		customFieldValueManagerService.copyCustomFieldValues(source, copy);
-		//do the same for the steps if any
-		int total=copy.getSteps().size();
-		for (int i=0;i<total;i++){
+		// do the same for the steps if any
+		int total = copy.getSteps().size();
+		for (int i = 0; i < total; i++) {
 			TestStep copyStep = copy.getSteps().get(i);
 			TestStep sourceStep = source.getSteps().get(i);
 			copyStep.accept(new TestStepCufCopier(customFieldValueManagerService, sourceStep));
 		}
 	}
-	
-	private final class TestStepCufCopier implements TestStepVisitor{
+
+	private final class TestStepCufCopier implements TestStepVisitor {
 		private PrivateCustomFieldValueService customFieldValueManagerService;
 		private TestStep sourceStep;
 
-		private TestStepCufCopier(PrivateCustomFieldValueService customFieldValueManagerService, TestStep sourceStep){
+		private TestStepCufCopier(PrivateCustomFieldValueService customFieldValueManagerService, TestStep sourceStep) {
 			this.customFieldValueManagerService = customFieldValueManagerService;
 			this.sourceStep = sourceStep;
 		}
@@ -235,40 +247,38 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		@Override
 		public void visit(ActionTestStep visited) {
 			customFieldValueManagerService.copyCustomFieldValues((ActionTestStep) sourceStep, visited);
-			
+
 		}
 
 		@Override
 		public void visit(CallTestStep visited) {
 			// do nothing
-			
+
 		}
-		
+
 	}
 
-	
 	@SuppressWarnings("unchecked")
-	private <T extends TreeNode>void persistCopy(T copyParam, EntityDao<T> dao) {
+	private <T extends TreeNode> void persistCopy(T copyParam, EntityDao<T> dao) {
 		renameIfNeeded((Copiable) copyParam);
 		dao.persist(copyParam);
-		((NodeContainer<T>)destination).addContent(copyParam);
+		((NodeContainer<T>) destination).addContent(copyParam);
 		this.copy = copyParam;
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
-	private void persistTestCase(TestCase testCase){
+	private void persistTestCase(TestCase testCase) {
 		renameIfNeeded(testCase);
 		testCaseDao.persistTestCaseAndSteps(testCase);
-		((NodeContainer<TestCase>)destination).addContent(testCase);
-		this.copy = testCase;		
+		((NodeContainer<TestCase>) destination).addContent(testCase);
+		this.copy = testCase;
 	}
 
 	@SuppressWarnings("unchecked")
 	private void persitIteration(Iteration copyParam) {
 		renameIfNeeded((Copiable) copyParam);
 		iterationDao.persistIterationAndTestPlan(copyParam);
-		((NodeContainer<Iteration>)destination).addContent(copyParam);
+		((NodeContainer<Iteration>) destination).addContent(copyParam);
 		this.copy = copyParam;
 	}
 
@@ -278,6 +288,10 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 			copyParam.setName(newName);
 		}
 	}
-	
+
+	@Override
+	public boolean isOkToGoDeeper() {
+		return this.okToGoDeeper;
+	}
 
 }

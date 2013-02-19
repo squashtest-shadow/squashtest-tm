@@ -29,11 +29,10 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -167,7 +166,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	public void cascadeCustomFieldValuesDeletion(List<Long> customFieldBindingIds) {
 
 		List<CustomFieldValue> allValues = customFieldValueDao.findAllCustomValuesOfBindings(customFieldBindingIds);
-		_deleteCustomFieldValues(allValues);
+		deleteCustomFieldValues(allValues);
 		
 	}
 
@@ -185,8 +184,8 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	}
 	
 	
-	private void _deleteCustomFieldValues(List<CustomFieldValue> values){
-		List<Long> valueIds = _collectValueIds(values);
+	private void deleteCustomFieldValues(List<CustomFieldValue> values){
+		List<Long> valueIds = IdentifiedUtil.extractIds(values);
 		customFieldValueDao.deleteAll(valueIds);
 	}
 	
@@ -267,7 +266,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			customFieldValueDao.persist(newValue);
 		}	
 		
-		_deleteCustomFieldValues(formerValues);
+		deleteCustomFieldValues(formerValues);
 		
 	}
 
@@ -281,11 +280,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	
 	// *********************** private convenience methods ********************
 	 
-	private List<Long> _collectValueIds(List<CustomFieldValue> values){
-		List<Long> ids = new ArrayList<Long>(values.size());
-		CollectionUtils.collect(values, new IdCollector());
-		return ids;
-	}
+	
 	
 	
 	private Map<BindableEntity, List<Long>> _breakEntitiesIntoCompositeIds(Collection<? extends BoundEntity> boundEntities) {
@@ -301,15 +296,5 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		}
 		return segregatedEntities;
 	}
-	
-
-
-	private static final class IdCollector implements Transformer{
-		@Override
-		public Object transform(Object value) {
-			return ((CustomFieldValue)value).getId();
-		}
-	}
-	
 
 }

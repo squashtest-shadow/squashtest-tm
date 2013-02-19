@@ -30,6 +30,7 @@ import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -54,6 +55,7 @@ import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
+import org.squashtest.tm.service.internal.library.TreeNodeCopier;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
@@ -103,6 +105,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private ProjectsPermissionFinder projectsPermissionFinder;
 	@Inject
 	private UserAccountService userService;
+	@Inject
+	private ObjectFactory<TreeNodeCopier> treeNodeCopierFactory;
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
@@ -306,14 +310,20 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public TestSuite copyPasteTestSuiteToIteration(long testSuiteId, long iterationId) {
-		return pasteToIterationStrategyProvider.get().pasteNodes(iterationId, Arrays.asList(testSuiteId)).get(0);
+		return createCopyToIterationStrategy().pasteNodes(iterationId, Arrays.asList(testSuiteId)).get(0);
+	}
+
+	private PasteStrategy<Iteration, TestSuite> createCopyToIterationStrategy() {
+		PasteStrategy<Iteration, TestSuite> pasteStrategy = pasteToIterationStrategyProvider.get();
+		pasteStrategy.setPasteOperationFactory(treeNodeCopierFactory);
+		return pasteStrategy;
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, long iterationId) {
-		return pasteToIterationStrategyProvider.get().pasteNodes(iterationId, Arrays.asList(testSuiteIds));
+		return createCopyToIterationStrategy().pasteNodes(iterationId, Arrays.asList(testSuiteIds));
 	}
 
 	@Override

@@ -105,7 +105,6 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		nodes.get(0) instanceof RequirementFolder
 	}
 	
-	//TODO fix with 1272
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste folder with requirements.xml")
 	def "should copy paste folder with requirements"(){
 		given:

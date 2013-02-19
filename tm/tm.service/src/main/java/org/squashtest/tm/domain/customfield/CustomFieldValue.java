@@ -30,11 +30,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.apache.commons.lang.StringUtils;
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.exception.customfield.BindableEntityMismatchException;
 import org.squashtest.tm.exception.customfield.MandatoryCufException;
 
 @Entity
-public class CustomFieldValue {
+public class CustomFieldValue implements Identified {
 
 	@Id
 	@GeneratedValue
