@@ -130,7 +130,9 @@ public class CampaignLibraryNavigationServiceImpl extends
 	@PreAuthorize("(hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE')) "
 			+ OR_HAS_ROLE_ADMIN)
 	public List<Iteration> copyIterationsToCampaign(long campaignId, Long[] iterationsIds) {
-		return	pasteToCampaignStrategyProvider.get().pasteNodes(campaignId, Arrays.asList(iterationsIds));
+		PasteStrategy<Campaign, Iteration> pasteStrategy = pasteToCampaignStrategyProvider.get();
+		makeCopierStrategy(pasteStrategy);
+		return	pasteStrategy.pasteNodes(campaignId, Arrays.asList(iterationsIds));
 	}
 
 	@Override

@@ -60,8 +60,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	
 	// **************** collaborators **************************
 	
-	private ObjectFactory<TreeNodeCopier> copierFactory;
-	private TreeNodeCopier operation;
+	private ObjectFactory<? extends PasteOperation> pasteOperationFactory;
+	private PasteOperation operation;
 	
 	private GenericDao<Object> genericDao;
 	private EntityDao<CONTAINER> containerDao;
@@ -80,8 +80,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		this.nodeDao = nodeDao;
 	}
 	
-	public void setCopierFactory(ObjectFactory<TreeNodeCopier> copierFactory) {
-		this.copierFactory = copierFactory;
+	public void setPasteOperationFactory(ObjectFactory<? extends PasteOperation> pasteOperationFactory) {
+		this.pasteOperationFactory = pasteOperationFactory;
 	}
 
 	public void setPermissionService(PermissionEvaluationService permissionService) {
@@ -111,8 +111,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		checkPermissions(list, container);
 
 		
-		// proceed : will process the nodes layer by layer. 
-		
+		// proceed : will process the nodes layer by layer. 		
 		init(list.size());
 
 		// process the first layer and memorize processed entities
@@ -135,7 +134,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	
 	
 	private void init(int nbCopiedNodes){
-		operation = createCopier();
+		operation = createOperation();
 		outputList = new ArrayList<NODE>(nbCopiedNodes);
 		nextLayer = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
 		sourceLayer = null;
@@ -202,8 +201,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		}
 	}
 
-	private TreeNodeCopier createCopier() {
-		return copierFactory.getObject();
+	private PasteOperation createOperation() {
+		return pasteOperationFactory.getObject();
 	}
 
 	private void removeSourceNodesFromNextGen() {
@@ -217,17 +216,19 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		//must map the children of sourceNode to destNode into the nextLayer map
 		//do not add children if some of them are members of outputList
 		
-		/**
-		 * 	// this is to avoid infinite loop in case someone copy a folder and paste it into itself (yeah, it is technically possible)
-	// XXX maybe we can avoid this with a finer control of what's put in nextGeneration
+	
+		
+	}
+	
+	/**
+	* 	// this is to avoid infinite loop in case someone copy a folder and paste it into itself (yeah, it is technically possible)
+	// XXX maybe we can avoid this with a finer control of what's put in nextGeneration*/
 	private void postProcessLayer() {
-		for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> nextGenerationEntry : nextLayer.entrySet()) {
-			nextGenerationEntry.getValue().removeAll(outputList);
-		}
+	for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> nextGenerationEntry : nextLayer.entrySet()) {
+		nextGenerationEntry.getValue().removeAll(outputList);
+	}
 
-	}
-		 */
-	}
+}
 
 
 }

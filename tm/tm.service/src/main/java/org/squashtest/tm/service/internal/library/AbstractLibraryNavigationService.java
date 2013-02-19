@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -121,7 +122,10 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	
 	@Inject
 	private PrivateCustomFieldValueService customFieldValuesService;
-
+	@Inject
+	private ObjectFactory<TreeNodeCopier> treeNodeCopierProvider;
+	
+	
 	public AbstractLibraryNavigationService() {
 		super();
 	}
@@ -377,12 +381,16 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	@Override
 	public List<NODE> copyNodesToFolder(long destinationId, Long[] sourceNodesIds) {
-		return getPasteToFolderStrategy().pasteNodes(destinationId, Arrays.asList(sourceNodesIds));
+		PasteStrategy<FOLDER,NODE> pasteStrategy = getPasteToFolderStrategy();
+		 makeCopierStrategy(pasteStrategy);
+		return pasteStrategy.pasteNodes(destinationId, Arrays.asList(sourceNodesIds));
 	}
 
 	@Override
 	public List<NODE> copyNodesToLibrary(long destinationId, Long[] targetIds) {
-		return getPasteToLibraryStrategy().pasteNodes(destinationId, Arrays.asList(targetIds));
+		PasteStrategy<LIBRARY, NODE> pasteStrategy = getPasteToLibraryStrategy();
+		makeCopierStrategy(pasteStrategy);
+		return pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds));
 	}
 
 	public int generateUniqueCopyNumber(List<String> copiesNames, String sourceName) {
@@ -422,7 +430,9 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	/* ************************* private stuffs ************************* */
 
-
+	protected void makeCopierStrategy(PasteStrategy<?,?> pasteStrategy){
+		pasteStrategy.setPasteOperationFactory(treeNodeCopierProvider);
+	}
 
 	protected void checkPermission(SecurityCheckableObject... checkableObjects) {
 		PermissionsUtils.checkPermission(permissionService, checkableObjects);

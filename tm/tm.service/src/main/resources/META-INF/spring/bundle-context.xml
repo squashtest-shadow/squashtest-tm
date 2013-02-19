@@ -139,7 +139,6 @@
 
   <bean id="parent.PasteStrategy" abstract="true">
     <property name="permissionService" ref="squashtest.core.security.PermissionEvaluationService" />
-    <property name="copierFactory" ref="treeNodeCopierProvider" />
     <property name="genericDao" ref="hibernateObjectDao" />
   </bean>
 
