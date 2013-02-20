@@ -23,6 +23,7 @@ package org.squashtest.csp.core.bugtracker.service;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
@@ -48,5 +49,25 @@ public class BugTrackerContext implements Serializable {
 	public boolean hasCredentials(BugTracker bugTracker) {
 		AuthenticationCredentials credentials = bugTrackersCredentials.get(bugTracker.getId()) ;
 		return credentials != null;
+	}
+	
+	/**
+	 * Will merge the mapping from the other context into this one. The credentials defined in this instance take precedence in case
+	 * of conflicts. 
+	 * 
+	 * @param anotherContext
+	 */
+	public void absorb(BugTrackerContext anotherContext){
+		
+		for (Entry<Long, AuthenticationCredentials> anotherEntry : anotherContext.bugTrackersCredentials.entrySet()){
+			
+			Long id = anotherEntry.getKey();
+			AuthenticationCredentials creds = anotherEntry.getValue();
+			
+			if (! bugTrackersCredentials.containsKey(id)){
+				bugTrackersCredentials.put(id, creds);
+			}
+		}
+		
 	}
 }

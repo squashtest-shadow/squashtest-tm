@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.task.TaskExecutor;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
@@ -58,6 +59,8 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 	private ProjectFinder projectFinder;
 
 	private BugTrackerFinderService bugTrackerFinder;
+	
+	private TaskExecutor taskExecutor;
 
 	public void setProjectFinder(ProjectFinder projectFinder) {
 		this.projectFinder = projectFinder;
@@ -70,13 +73,50 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 	public void setBugTrackerFinder(BugTrackerFinderService bugTrackerFinder){
 		this.bugTrackerFinder = bugTrackerFinder;
 	}
+	
+	public void setTaskExecutor(TaskExecutor taskExecutor){
+		this.taskExecutor = taskExecutor;
+	}
 
 	@Override
 	public void onSuccess(String username, String password, HttpSession session) {
-		if (bugTrackersLocalService == null) {
+		//skip if we cannot perform the operation asynchronously
+		if (taskExecutor != null){
+			LOGGER.info("Threadpool service not ready. Skipping autologging.");
+		}
+		//skip if the required service is not up yet
+		else if (bugTrackersLocalService == null) {
 			LOGGER.info("no bugtracker available (service not ready yet). Skipping autologging.");
+		} 
+		//let's do it.
+		else{
+			Runnable autoconnector = new AsynchronousBugTrackerAutoconnect(username, password, session);
+			taskExecutor.equals(autoconnector);
+		}
+	}
 
-		} else {
+
+	private class AsynchronousBugTrackerAutoconnect implements Runnable{
+		
+		private String username;
+		private String password;
+		private HttpSession session;
+		
+		
+
+		public AsynchronousBugTrackerAutoconnect(String username,
+				String password, HttpSession session) {
+			super();
+			this.username = username;
+			this.password = password;
+			this.session = session;
+		}
+
+
+
+		@Override
+		public void run() {
+
 			BugTrackerContext newContext = new BugTrackerContext();
 			List<BugTracker> bugTrackers = findBugTrackers();
 			
@@ -95,19 +135,38 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 							+ "credentials. He will have to connect manually later. Exception thrown is :", ex);
 				}
 			}
+			
 			// store context into session
+			mergeIntoSession(newContext);
+	
+		}
+		
+		private List<BugTracker> findBugTrackers() {
+			List<Project> readableProjects = projectFinder.findAllReadable();
+			List<Long> projectIds = IdentifiedUtil.extractIds(readableProjects);
+			return bugTrackerFinder.findDistinctBugTrackersForProjects(projectIds);
+		}
+		
+		//This method deals with the (rare) case where the operation took so long that another request had created the bugtracker context in the mean time.
+		//In this case, the data already present has precedence.
+		private void mergeIntoSession(BugTrackerContext newContext){
+			
+			BugTrackerContext existingContext = (BugTrackerContext)session.getAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY);
+			
+			if (existingContext == null){
+				//if no existing context was found the newContext is entirely stored
+				session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
+			}
+			else{
+				existingContext.absorb(newContext);
+			}
+			
 			session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
 			LOGGER.debug("BugTrackerContext stored to session");
 		}
 
+		
 	}
-
-	private List<BugTracker> findBugTrackers() {
-		List<Project> readableProjects = projectFinder.findAllReadable();
-		List<Long> projectIds = IdentifiedUtil.extractIds(readableProjects);
-		return bugTrackerFinder.findDistinctBugTrackersForProjects(projectIds);
-	}
-
 	
 
 }
