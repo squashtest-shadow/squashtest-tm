@@ -40,7 +40,6 @@ define(
 							this.configureRemoveMemberDialog();
 							this.configureNoMemberSelectedDialog();
 							this.configureAddMemberDialog();
-							
 							this.configureMembersTable();
 							new TeamPermissionPanel();
 							this.configureButtons();							
@@ -137,7 +136,13 @@ define(
 							};
 							this.$("#team-description-panel").togglePanel(
 									descSettings);
-							
+				
+							/*var permissionSettings = {
+									initiallyOpen : true,
+									title : teamMod.permissionPanelLabel
+								};
+							this.$("#project-permission-panel").togglePanel(permissionSettings);*/
+								
 							var usersSettings = {
 								initiallyOpen : true,
 								title : teamMod.membersPanelLabel
@@ -168,9 +173,9 @@ define(
 						},
 						
 						configureMembersTable : function(){
-							$("#members-table").squashTable({},{});		//let's try pure DOM conf							
+							$("#members-table").squashTable({},{});		//let's try pure DOM conf		
 						},
-
+						
 						renameTeam : function() {
 							var newNameVal = $("#rename-team-input").val();
 							$.ajax({

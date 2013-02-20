@@ -48,6 +48,8 @@ public interface ProjectsPermissionFinder {
 	List<Project> findProjectWithoutPermissionByLogin(String userLogin);
 
 	List<ProjectPermission> findProjectPermissionByParty(long partyId);
+	
+	PagedCollectionHolder<List<ProjectPermission>> findProjectPermissionByParty(long partyId, PagingAndSorting sorting, Filtering filtering);
 
 	List<Project> findProjectWithoutPermissionByParty(long partyId);
 	

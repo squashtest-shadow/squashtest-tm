@@ -67,10 +67,10 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
-import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.web.internal.controller.administration.UserModel;
+import org.squashtest.tm.web.internal.controller.project.ProjectModel;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
@@ -121,6 +121,11 @@ public class TeamController {
 	private DatatableMapper<String> membersMapper = new NameBasedMapper(1)
 																.mapAttribute(User.class, "firstName", String.class, "user-name");
 	
+	
+	private DatatableMapper<String> permissionMapper = new NameBasedMapper(1)
+														.mapAttribute(ProjectPermission.class, "project.name", String.class, "project-name");
+
+
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TeamController.class);
 	
@@ -182,9 +187,15 @@ public class TeamController {
 		Team team = service.findById(teamId);
 		model.addAttribute("team", team);
 		
+		List<?> permissionModel = _getPermissionTableModel(teamId, new DefaultPagingAndSorting(), DefaultFiltering.NO_FILTERING, "").getAaData();
+		model.addAttribute("permissions",permissionModel);
+		
 		List<?> userModel = _getMembersTableModel(teamId, new DefaultPagingAndSorting(), DefaultFiltering.NO_FILTERING, "").getAaData();
 		model.addAttribute("users", userModel);
-		
+			
+		Map<String,Object> permissionPopupModel = getPermissionPopup(teamId);
+		model.addAttribute("permissionList",permissionPopupModel.get("permissionList"));
+		model.addAttribute("myprojectList",((List<ProjectModel>) permissionPopupModel.get("myprojectList")));
 		
 		return "team-modification.html";
 	}
@@ -260,32 +271,34 @@ public class TeamController {
 	}
 
 	@RequestMapping(value = TEAM_ID_URL+"/permission-popup", method = RequestMethod.GET)
-	public ModelAndView getPermissionPopup(@PathVariable long teamId) {
+	public @ResponseBody Map<String,Object> getPermissionPopup(@PathVariable long teamId) {
 		Team team = teamFinderService.findById(teamId);
 		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
 		List<Project> projectList = permissionService.findProjectWithoutPermissionByParty(teamId);
-
-		ModelAndView mav = new ModelAndView("fragment/teams/team-permission-popup");
-		mav.addObject("team", team);
-		mav.addObject("projectList", projectList);
-		mav.addObject("permissionList", permissionList);
-		return mav;
-	}
-
-	@RequestMapping(value = TEAM_ID_URL+"/permission-table", method = RequestMethod.GET)
-	public ModelAndView getPermissionTableModel(DataTableDrawParameters params, @PathVariable long teamId) {
-		Team team = teamFinderService.findById(teamId);
-		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
-		List<ProjectPermission> projectPermissions = permissionService.findProjectPermissionByParty(teamId);
-
-		ModelAndView mav = new ModelAndView("fragment/teams/team-permission-table");
-		mav.addObject("team", team);
-		mav.addObject("permissionList", permissionList);
-		mav.addObject("projectPermissionList", projectPermissions);
-		return mav;
+ 
+		List<ProjectModel> projectModelList = new ArrayList<ProjectModel>();
+		if(projectList != null){
+			for(Project project : projectList){
+				projectModelList.add(new ProjectModel(project));
+			}
+		}
+		
+		Map<String, Object> res = new HashMap<String, Object>();
+		res.put("team", team);
+		res.put("myprojectList", projectModelList);
+		res.put("permissionList", permissionList);
+		
+		return res;
 	}
 
 	
+	@RequestMapping(value = TEAM_ID_URL+"/permissions", method = RequestMethod.GET, params="sEcho")
+	@ResponseBody
+	public DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable("teamId") long teamId) {
+		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, permissionMapper, SortedAttributeSource.SINGLE_ENTITY);
+		Filtering filtering = new DataTableFiltering(params);
+		return _getPermissionTableModel(teamId, paging, filtering, params.getsEcho());
+	}
 
 	
 	// ******************************* private *************************************
@@ -298,6 +311,16 @@ public class TeamController {
 		return new MembersTableModelHelper(locale, messageSource).buildDataModel(holder, secho);
 	}
 	
+	private DataTableModel _getPermissionTableModel(long teamId, PagingAndSorting paging, Filtering filtering, String secho){
+		Locale locale = LocaleContextHolder.getLocale();
+		Team team = teamFinderService.findById(teamId);
+		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
+		PagedCollectionHolder<List<ProjectPermission>> holder = permissionService.findProjectPermissionByParty(teamId,paging,filtering);
+		return new PermissionTableModelHelper(locale,messageSource,permissionList).buildDataModel(holder, secho);
+	}
+
+
+
 	
 	
 	// ************************* private classes ***********************
@@ -310,6 +333,32 @@ public class TeamController {
 		}
 	}
 	
+	private static final class PermissionTableModelHelper extends DataTableModelHelper<ProjectPermission> {
+		
+		private InternationalizationHelper messageSource;
+		private Locale locale;
+		private List<PermissionGroup> permissionList;
+		
+		private PermissionTableModelHelper(Locale locale, InternationalizationHelper messageSource, List<PermissionGroup> permissionList){
+			this.locale = locale;
+			this.messageSource = messageSource;
+			this.permissionList = permissionList;
+		}
+		
+		@Override
+		public Map<String, Object> buildItemData(ProjectPermission item) {
+			Map<String, Object> res = new HashMap<String, Object>();
+			res.put("project-id",item.getProject().getId());
+			res.put("project-index", getCurrentIndex());
+			res.put("project-name",item.getProject().getName());
+			res.put("permission-id",item.getPermissionGroup().getId());
+			res.put("permission-name",item.getPermissionGroup().getQualifiedName());
+			res.put("permission-simplename", item.getPermissionGroup().getSimpleName());
+			res.put("permission-list", permissionList);
+			res.put("empty-delete-holder", null);
+			return res;
+		}
+	}
 	
 	private static final class TeamsDataTableModelHelper extends DataTableModelHelper<Team> {
 		private InternationalizationHelper messageSource;

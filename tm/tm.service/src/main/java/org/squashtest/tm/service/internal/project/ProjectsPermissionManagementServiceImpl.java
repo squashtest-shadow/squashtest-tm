@@ -156,6 +156,22 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	}
 
 	@Override
+	public PagedCollectionHolder<List<ProjectPermission>> findProjectPermissionByParty(long partyId, PagingAndSorting sorting, Filtering filtering){
+		
+		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
+		
+		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAME);
+		int total = result.size();
+		
+		for (Object[] objects : result) {
+			GenericProject project = genericProjectFinder.findById((Long) objects[0]);
+			newResult.add(new ProjectPermission(project, (PermissionGroup) objects[1]));
+		}
+		
+		return new PagingBackedPagedCollectionHolder<List<ProjectPermission>>(sorting, total, newResult);
+	}
+	
+	@Override
 	public List<Project> findProjectWithoutPermissionByParty(long partyId) {
 		List<Long> idList = aclService.findObjectWithoutPermissionByPartyId(partyId, PROJECT_CLASS_NAME);
 		if (idList == null || idList.isEmpty()) {

@@ -24,6 +24,7 @@ package org.squashtest.tm.web.internal.controller.users;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -32,6 +33,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,9 +44,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
@@ -81,6 +87,28 @@ public class UserController {
 		User user = service.findUserById(userId);
 		model.addAttribute("auditableEntity", user);
 		return "fragments-utils/general-information-panel.html";
+	}
+
+	private ProjectsPermissionManagementService permissionService;
+	
+	@ServiceReference
+	public void setProjectsPermissionManagementService(ProjectsPermissionManagementService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	
+	private DatatableMapper<String> permissionMapper = new NameBasedMapper(1)
+														.mapAttribute(ProjectPermission.class, "project.name", String.class, "project-name");
+
+
+	
+	//*************************************permission*****************************
+	@RequestMapping(value = USER_ID_URL + "/permissions", method = RequestMethod.GET, params = "sEcho")
+	@ResponseBody
+	public DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable("userId") long userId) {
+		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, permissionMapper, SortedAttributeSource.SINGLE_ENTITY);
+		Filtering filtering = new DataTableFiltering(params);
+		return _getPermissionTableModel(userId, paging, filtering, params.getsEcho());
 	}
 
 	// ************************************ team section ************************
@@ -145,5 +173,33 @@ public class UserController {
 		}
 	}
 
+	private DataTableModel _getPermissionTableModel(long userId, PagingAndSorting paging, Filtering filtering, String secho){
+		Locale locale = LocaleContextHolder.getLocale();
+		PagedCollectionHolder<List<ProjectPermission>> holder = permissionService.findProjectPermissionByParty(userId,paging,filtering);
+		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
+		return new PermissionTableModelHelper(permissionList).buildDataModel(holder, secho);
+	}
 
+	private static final class PermissionTableModelHelper extends DataTableModelHelper<ProjectPermission> {
+
+		private List<PermissionGroup> permissionList;
+		
+		private PermissionTableModelHelper(List<PermissionGroup> permissionList){
+			this.permissionList = permissionList;
+		}
+		
+		@Override
+		public Map<String, Object> buildItemData(ProjectPermission item) {
+			Map<String, Object> res = new HashMap<String, Object>();
+			res.put("project-id",item.getProject().getId());
+			res.put("project-index", getCurrentIndex());
+			res.put("project-name",item.getProject().getName());
+			res.put("permission-id",item.getPermissionGroup().getId());
+			res.put("permission-name",item.getPermissionGroup().getQualifiedName());
+			res.put("permission-simplename", item.getPermissionGroup().getSimpleName());
+			res.put("permission-list", permissionList);
+			res.put("empty-delete-holder", null);
+			return res;
+		}
+	}
 }

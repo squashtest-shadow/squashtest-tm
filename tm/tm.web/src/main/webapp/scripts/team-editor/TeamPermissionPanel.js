@@ -29,72 +29,10 @@ define(
 					.extend({
 						el : "#permissions",
 						initialize : function() {
-							//TODO  add permission popup and table jsps in html and fix external javascript
-							var self = this;
-							teamMod.refreshTableCallBack = function(){self.refreshTableCallBack.call(self);};
-							teamMod.addDeleteButtonCallBack = function(row, data,
-									displayIndex){self.addDeleteButtonCallBack.call(self, row, data,
-											displayIndex);};
-							this.refreshPermissionTableAndPopup();
-							$("#add-permission-button").button();
-							$("#add-permission-dialog")
-									.bind("dialogopen",
-											function(event, ui) {
-												if ($("#project-input option:last-child")
-														.html() == null) {
-													$(this).dialog('close');
-													$.squash.openMessage(
-															teamMod.message.error,
-															teamMod.message.empty);
-												}
-											});
-
-							$(".select-class")
-									.live(
-											'change',
-											function() {
-												var url = teamMod.permission.url.add;
-												var tr = $(this).parents("tr");
-												var projectId = $(tr)
-														.attr("id");
-
-												$.ajax({
-															type : 'POST',
-															url : url,
-															data : "project="
-																	+ projectId
-																	+ "&permission="
-																	+ $(this)
-																			.val(),
-															dataType : 'json',
-															success : function() {
-																self.refreshPermissionTableAndPopup();
-															}
-														});
-											});
-
-							$(".delete-permission-button")
-									.live(
-											'click',
-											function() {
-												var url = teamMod.permission.url.remove;
-												var tr = $(this).parents("tr");
-												var projectId = $(tr)
-														.attr("id");
-
-												$
-														.ajax({
-															type : 'POST',
-															url : url,
-															data : "project="
-																	+ projectId,
-															success : function() {
-																self.refreshPermissionTableAndPopup();
-															}
-														});
-											});
 							this.makeTogglePanel();
+							this.configureTable();
 							this.configurePopups();
+							this.configureButtons();
 						},
 						events : {},
 						makeTogglePanel : function() {
@@ -105,11 +43,75 @@ define(
 							this.$("#project-permission-panel").togglePanel(
 									infoSettings);
 						},
+						configureTable : function() {
+							$("#permission-table").squashTable({}, {}); 
+						},
 						configurePopups : function() {
 							this.configureAddPermissionDialog();
 						},
+						configureButtons : function() {
+							this.$("#add-permission-button").on('click',
+									$.proxy(this.openAddPermission, this));
+						},
+						openAddPermission : function() {
+							this.addTeamDialog.confirmDialog('open');
+						},
 						configureAddPermissionDialog : function() {
-							var self = this;
+							var addTeamDialog = $("#add-permission-dialog").confirmDialog();
+							
+							addTeamDialog.on("confirmdialogvalidate", function() {
+								var name = addTeamDialog.find('#add-permission-input').val();
+								if (name === null || name === undefined
+										|| name.length === 0) {
+									dialog.activate('no-selected-teams');
+									return false;
+								} else {
+									return true;
+								}
+							});
+
+							addTeamDialog.on("confirmdialogconfirm", $.proxy(
+									this.addTeam, this));
+
+							addTeamDialog.on('confirmdialogopen', function() {
+								var dialog = addTeamDialog;
+								var input = dialog.find('#add-permission-input');
+								dialog.activate('wait');
+								dialog.nonAssociatedTeams = [];
+								$.ajax(
+										{
+											url : UMod.user.url.simple
+													+ "non-associated-teams",
+											dataType : 'json'
+										}).success(function(json) {
+									if (json.length > 0) {
+										var source = _.map(json, function(team) {
+											return team.name;
+										});
+										input.autocomplete("option", "source", source);
+										dialog.nonAssociatedTeams = json;
+										dialog.activate('main');
+									} else {
+										dialog.activate('no-more-teams');
+									}
+
+								});
+							});
+
+							addTeamDialog.activate = function(arg) {
+								var cls = '.' + arg;
+								this.find('div').not('.popup-dialog-buttonpane')
+										.filter(cls).show().end().not(cls).hide();
+								if (arg !== 'main') {
+									this.next().find('button:first').hide();
+								} else {
+									this.next().find('button:first').show();
+								}
+							};
+
+							this.addTeamDialog = addTeamDialog;
+						},			
+							/*var self = this;
 							var params = {
 								selector : "#add-permission-dialog",
 								title : teamMod.message.addPermissionPopupTitle,
@@ -149,22 +151,14 @@ define(
 								width : 420,
 							};
 
-							squashtm.popup.create(params);
-						},
+							//squashtm.popup.create(params);
+						},*/
 						addDeleteButtonCallBack : function(row, data,
 								displayIndex) {
 							var id = this.getPermissionTableRowId(data);
 							addDeleteButtonToRow(row, id,
 									'delete-permission-button');
 							return row;
-						},
-						refreshPermissionTableAndPopup : function() {
-							$("#permission-table").empty();
-							$("#permission-table").load(
-									teamMod.permission.url.table);
-							$("#permission-popup").empty();
-							$("#permission-popup").load(
-									teamMod.permission.url.popup);
 						},
 						refreshTableCallBack : function() {
 							decorateDeleteButtons($(

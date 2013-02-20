@@ -28,8 +28,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				el : "#teams",
 				initialize : function() {
 					this.makeTogglePanel();
-					this.configurePopups();
 					this.configureTable();
+					this.configurePopups();
 					this.configureButtons();
 				},
 				events : {},
