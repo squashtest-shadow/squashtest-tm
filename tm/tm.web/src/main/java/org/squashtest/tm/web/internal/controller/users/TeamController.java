@@ -195,7 +195,7 @@ public class TeamController {
 			
 		Map<String,Object> permissionPopupModel = getPermissionPopup(teamId);
 		model.addAttribute("permissionList",permissionPopupModel.get("permissionList"));
-		model.addAttribute("myprojectList",((List<ProjectModel>) permissionPopupModel.get("myprojectList")));
+		model.addAttribute("myprojectList",permissionPopupModel.get("myprojectList"));
 		
 		return "team-modification.html";
 	}
@@ -272,7 +272,6 @@ public class TeamController {
 
 	@RequestMapping(value = TEAM_ID_URL+"/permission-popup", method = RequestMethod.GET)
 	public @ResponseBody Map<String,Object> getPermissionPopup(@PathVariable long teamId) {
-		Team team = teamFinderService.findById(teamId);
 		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
 		List<Project> projectList = permissionService.findProjectWithoutPermissionByParty(teamId);
  
@@ -284,7 +283,6 @@ public class TeamController {
 		}
 		
 		Map<String, Object> res = new HashMap<String, Object>();
-		res.put("team", team);
 		res.put("myprojectList", projectModelList);
 		res.put("permissionList", permissionList);
 		

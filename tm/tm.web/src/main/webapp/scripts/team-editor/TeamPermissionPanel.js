@@ -34,7 +34,29 @@ define(
 							this.configurePopups();
 							this.configureButtons();
 						},
-						events : {},
+						events : {
+							"change .permission-list": "changePermission"
+						},
+						
+						changePermission :function(event) {
+							
+							var self = event.target;
+							var permission_id = $("option:selected",self).attr('id');
+							var project_id = $(self).attr('id').replace("permission-list-","");
+							
+							$.ajax({
+								type : 'POST',
+								url : teamMod.permission.url.add,
+								data : {
+								project : project_id,
+								permission : permission_id
+								},
+								dataType : "json",
+								success : function() {
+								
+								}
+								});
+						},
 						makeTogglePanel : function() {
 							var infoSettings = {
 								initiallyOpen : true,
@@ -43,62 +65,130 @@ define(
 							this.$("#project-permission-panel").togglePanel(
 									infoSettings);
 						},
+						decorateRow : function(self) {
+							return function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+								$.ajax({
+									url : teamMod.permission.url.popup,
+									dataType : 'json'
+								}).success(function(json) {
+									var permission = aData.permission-simplename;
+									var cell = $(nRow.children[2]);
+									cell.html("<select></select>");
+									var selected = "";
+									for(var i=0; i<json.permissionList.length;i++){
+										var text = "user.project-rights."+json.permissionList[i].simpleName+".label";
+										var value = json.permissionList[i].id;
+										if(json.permissionList[i].simpleName === permission){
+											$('select').val(json.permissionList[i].id);
+										}
+											$("select",cell).append(new Option(text, value));
+										}
+									}
+								});
+							}
+						},
 						configureTable : function() {
-							$("#permission-table").squashTable({}, {}); 
+							$("#permission-table").squashTable({
+								"fnRowCallback" : this.decorateRow(this)
+							}, {}); 
 						},
 						configurePopups : function() {
 							this.configureAddPermissionDialog();
+							this.configureRemovePermissionDialog();
 						},
 						configureButtons : function() {
 							this.$("#add-permission-button").on('click',
 									$.proxy(this.openAddPermission, this));
 						},
-						openAddPermission : function() {
-							this.addTeamDialog.confirmDialog('open');
+						confirmRemovePermission : function(event) {
+							var hasPermission = ($("#permission-table").squashTable()
+									.getSelectedIds().length > 0);
+							if (hasPermission) {
+								this.confirmRemovePermissionDialog.confirmDialog("open");
+							}
 						},
-						configureAddPermissionDialog : function() {
-							var addTeamDialog = $("#add-permission-dialog").confirmDialog();
-							
-							addTeamDialog.on("confirmdialogvalidate", function() {
-								var name = addTeamDialog.find('#add-permission-input').val();
-								if (name === null || name === undefined
-										|| name.length === 0) {
-									dialog.activate('no-selected-teams');
-									return false;
-								} else {
-									return true;
-								}
+						openAddPermission : function() {
+							this.addPermissionDialog.confirmDialog('open');
+						},
+						
+						removePermissions : function(event) {
+							var table = $("#permission-table").squashTable();
+							var ids = table.getSelectedIds();
+							$.ajax({
+								url : teamMod.permission.url.remove,
+								type : 'post',
+								data : {
+									project : ids[0]}
+							}).done(function(){
+								$("#permission-table").squashTable().refresh();
 							});
 
-							addTeamDialog.on("confirmdialogconfirm", $.proxy(
-									this.addTeam, this));
+						},
 
-							addTeamDialog.on('confirmdialogopen', function() {
-								var dialog = addTeamDialog;
+						addPermission : function(event) {
+							var dialog = this.addPermissionDialog;
+							var name = dialog.find('#add-permission-input').val();
+						},
+
+						configureRemovePermissionDialog : function() {
+							this.confirmRemovePermissionDialog = $("#remove-permission-dialog")
+									.confirmDialog();
+							this.confirmRemovePermissionDialog.on("confirmdialogconfirm", $
+									.proxy(this.removePermissions, this));
+						},
+
+						configureAddPermissionDialog : function() {
+							var addPermissionDialog = $("#add-permission-dialog").confirmDialog();
+							var table = $("#permission-table").squashTable();
+							addPermissionDialog.on("confirmdialogvalidate", function() {
+								$.ajax({
+									type : 'POST',
+									url : teamMod.permission.url.add,
+									data : {
+									project : $(
+									"#project-input").val(),
+									permission : $(
+									"#permission-input").val()
+									},
+									dataType : "json",
+									success : function() {
+										$("#permission-table").squashTable().refresh();
+										
+										}
+									});
+							});
+
+							addPermissionDialog.on("confirmdialogconfirm", $.proxy(
+									this.addPermission, this));
+
+							addPermissionDialog.find('#add-permission-input').autocomplete();
+
+							addPermissionDialog.on('confirmdialogopen', function() {
+								var dialog = addPermissionDialog;
 								var input = dialog.find('#add-permission-input');
 								dialog.activate('wait');
-								dialog.nonAssociatedTeams = [];
+								
 								$.ajax(
 										{
-											url : UMod.user.url.simple
-													+ "non-associated-teams",
+											url : teamMod.permission.url.popup,
 											dataType : 'json'
 										}).success(function(json) {
-									if (json.length > 0) {
-										var source = _.map(json, function(team) {
-											return team.name;
-										});
-										input.autocomplete("option", "source", source);
-										dialog.nonAssociatedTeams = json;
-										dialog.activate('main');
+									if (json.myprojectList.length === 0) {
+										dialog.activate('no-more-projects');
 									} else {
-										dialog.activate('no-more-teams');
+										$("#project-input").html("");
+										for(var i=0; i<json.myprojectList.length;i++){
+											var text = json.myprojectList[i].name;
+											var value = json.myprojectList[i].id;
+											$("#project-input").append(new Option(text, value));
+										}
+										dialog.activate('main');
 									}
 
 								});
 							});
 
-							addTeamDialog.activate = function(arg) {
+							addPermissionDialog.activate = function(arg) {
 								var cls = '.' + arg;
 								this.find('div').not('.popup-dialog-buttonpane')
 										.filter(cls).show().end().not(cls).hide();
@@ -109,65 +199,8 @@ define(
 								}
 							};
 
-							this.addTeamDialog = addTeamDialog;
-						},			
-							/*var self = this;
-							var params = {
-								selector : "#add-permission-dialog",
-								title : teamMod.message.addPermissionPopupTitle,
-								openedBy : "#add-permission-button",
-								isContextual : true,
-								buttons : [
-										{'text' : teamMod.message.addLabel,
-										'click' : function() {
-												$.ajax({
-													type : 'POST',
-													url : teamMod.permission.url.add,
-													data : {
-														project : $(
-																"#project-input")
-																.val(),
-														permission : $(
-																"#permission-input")
-																.val()
-													},
-													dataType : "json",
-													success : function() {
-														self.refreshPermissionTableAndPopup();
-													}
-												});
-											}
-
-										},
-										{
-											'text' : teamMod.message.cancelLabel,
-											'click' : function() {
-												$(this)
-														.data("answer",
-																"cancel");
-												$(this).dialog('close');
-											},
-										} ],
-								width : 420,
-							};
-
-							//squashtm.popup.create(params);
-						},*/
-						addDeleteButtonCallBack : function(row, data,
-								displayIndex) {
-							var id = this.getPermissionTableRowId(data);
-							addDeleteButtonToRow(row, id,
-									'delete-permission-button');
-							return row;
-						},
-						refreshTableCallBack : function() {
-							decorateDeleteButtons($(
-									'.delete-permission-button', this));
-						},
-						getPermissionTableRowId : function(rowData) {
-							return rowData[0];
-						},
-
+							this.addPermissionDialog = addPermissionDialog;
+						},						
 					});
 			return TeamPermissionPanel;
 		});

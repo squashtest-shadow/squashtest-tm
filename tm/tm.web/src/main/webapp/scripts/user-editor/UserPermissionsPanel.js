@@ -34,7 +34,30 @@ define(
 							this.configurePopups();
 							this.configureButtons();
 						},
-						events : {},
+						events : {
+							"change .permission-list": "changePermission"
+						},
+						
+						changePermission :function(event) {
+							
+							var self = event.target;
+							var permission_id = $("option:selected",self).attr('id');
+							var project_id = $(self).attr('id').replace("permission-list-","");
+							
+							$.ajax({
+								type : 'POST',
+								url : UMod.permission.url.add,
+								data : {
+								project : project_id,
+								permission : permission_id
+								},
+								dataType : "json",
+								success : function() {
+								
+								}
+								});
+						},
+						
 						makeTogglePanel : function() {
 							var infoSettings = {
 								initiallyOpen : true,
@@ -43,24 +66,51 @@ define(
 							this.$("#project-permission-panel").togglePanel(
 									infoSettings);
 						},
+						decorateRow : function(self) {
+							return function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+								$.ajax({
+									url : UMod.permission.url.popup,
+									dataType : 'json'
+								}).success(function(json) {
+									//for each line
+									for(var i=1; i<$("tr", "#permission-table").length;i++){
+										var cell = $($("td", $("tr", "#permission-table")[i])[2]);
+										var currentValue = cell.html();
+										cell.html("<select></select>");
+										var selected = "";
+										for(var i=0; i<json.permissionList.length;i++){
+											var text = "user.project-rights."+json.permissionList[i].simpleName+".label";
+											var value = json.permissionList[i].id;
+											if(json.permissionList[i].simpleName === currentValue){
+												//add select value
+											}
+											$("select",cell).append(new Option(text, value));
+										}
+									}
+										
+				
+									});
+							}
+						},
 						configureTable : function() {
-							$("#permission-table").squashTable({}, {}); // pure DOM conf
+							$("#permission-table").squashTable({
+								"fnRowCallback" : this.decorateRow(this)
+							}, {}); // pure DOM conf
 						},
 						configurePopups : function() {
 							this.configureAddPermissionDialog();
+							this.configureRemovePermissionDialog();
 						},
 						configureButtons : function() {
 							this.$("#add-permission-button").on('click',
 									$.proxy(this.openAddPermission, this));
 						},
 						
-						confirmRemoveTeam : function(event) {
-							var hasTeam = ($("#permission-table").squashTable()
+						confirmRemovePermission : function(event) {
+							var hasPermission = ($("#permission-table").squashTable()
 									.getSelectedIds().length > 0);
-							if (hasTeam) {
-								this.confirmRemoveTeamDialog.confirmDialog("open");
-							} else {
-								this.noTeamSelectedDialog.messageDialog('open');
+							if (hasPermission) {
+								this.confirmRemovePermissionDialog.confirmDialog("open");
 							}
 						},
 
@@ -68,59 +118,35 @@ define(
 							this.addPermissionDialog.confirmDialog('open');
 						},
 
-						removeTeams : function(event) {
+						removePermissions : function(event) {
 							var table = $("#permission-table").squashTable();
 							var ids = table.getSelectedIds();
-							if (ids.length === 0)
-								return;
-
 							$.ajax({
-								url : UMod.user.url.simple + "teams/" + ids.join(','),
-								type : 'delete'
-							}).done($.proxy(table.refresh, table));
-
-						},
-
-						addTeam : function(event) {
-							var dialog = this.addPermissionDialog;
-							var name = dialog.find('#add-permission-input').val();
-							var id = this.getIdOfNonAssociatedTeam(name);
-							$.ajax({
-								url : UMod.user.url.simple + "teams/" + id,
-								type : 'PUT'
-							}).success(function() {
-								dialog.confirmDialog('close');
+								url : UMod.permission.url.remove,
+								type : 'post',
+								data : {
+									project : ids[0]}
+							}).done(function(){
 								$("#permission-table").squashTable().refresh();
 							});
-						},
-						getIdOfNonAssociatedTeam : function(name) {
-							var dialog = this.addPermissionDialog;
-							var nonAssociatedTeams = dialog.nonAssociatedTeams;
-							if (nonAssociatedTeams.length > 0) {
-								for ( var i = 0; i < nonAssociatedTeams.length; i++) {
-									var nonAssociatedTeam = nonAssociatedTeams[i];
-									if (nonAssociatedTeam.name === name) {
-										return nonAssociatedTeam.id;
-									}
-								}
-							}
-							return 0;
-						},
-						configureRemoveTeamDialog : function() {
-							this.confirmRemoveTeamDialog = $("#remove-teams-dialog")
-									.confirmDialog();
-							this.confirmRemoveTeamDialog.on("confirmdialogconfirm", $
-									.proxy(this.removeTeams, this));
+
 						},
 
-						configureNoTeamSelectedDialog : function() {
-							this.noTeamSelectedDialog = $("#no-selected-teams")
-									.messageDialog();
+						addPermission : function(event) {
+							var dialog = this.addPermissionDialog;
+							var name = dialog.find('#add-permission-input').val();
+						},
+
+						configureRemovePermissionDialog : function() {
+							this.confirmRemovePermissionDialog = $("#remove-permission-dialog")
+									.confirmDialog();
+							this.confirmRemovePermissionDialog.on("confirmdialogconfirm", $
+									.proxy(this.removePermissions, this));
 						},
 
 						configureAddPermissionDialog : function() {
 							var addPermissionDialog = $("#add-permission-dialog").confirmDialog();
-							
+							var table = $("#permission-table").squashTable();
 							addPermissionDialog.on("confirmdialogvalidate", function() {
 								$.ajax({
 									type : 'POST',
@@ -133,13 +159,14 @@ define(
 									},
 									dataType : "json",
 									success : function() {
-									
-									}
+										$("#permission-table").squashTable().refresh();
+										
+										}
 									});
 							});
 
 							addPermissionDialog.on("confirmdialogconfirm", $.proxy(
-									this.addTeam, this));
+									this.addPermission, this));
 
 							addPermissionDialog.find('#add-permission-input').autocomplete();
 
@@ -147,22 +174,22 @@ define(
 								var dialog = addPermissionDialog;
 								var input = dialog.find('#add-permission-input');
 								dialog.activate('wait');
-								dialog.nonAssociatedTeams = [];
+								
 								$.ajax(
 										{
-											url : UMod.user.url.simple
-													+ "non-associated-teams",
+											url : UMod.permission.url.popup,
 											dataType : 'json'
 										}).success(function(json) {
-									if (json.length > 0) {
-										var source = _.map(json, function(team) {
-											return team.name;
-										});
-										input.autocomplete("option", "source", source);
-										dialog.nonAssociatedTeams = json;
-										dialog.activate('main');
+									if (json.projectList.length === 0) {
+										dialog.activate('no-more-projects');
 									} else {
-										dialog.activate('no-more-teams');
+										$("#project-input").html("");
+										for(var i=0; i<json.projectList.length;i++){
+											var text = json.projectList[i].name;
+											var value = json.projectList[i].id;
+											$("#project-input").append(new Option(text, value));
+										}
+										dialog.activate('main');
 									}
 
 								});

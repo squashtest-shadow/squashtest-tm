@@ -33,53 +33,53 @@
 <script type="text/javascript" th:inline="javascript">
 	var squashtm = {};
 	squashtm.app = {
-		contextRoot : /*[[ @{/} ]]*/ "http://localhost:8080/squash",
+		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 		UMod : {
-				user : {
-					url : {
-						admin : /*[[ @{'/administration/users/'+${user.id}+'/'} ]]*/"/administration/users/1/",
-						simple : /*[[ @{'/users/'+${user.id}+'/'} ]]*/"/users/1/",
-						changeGroup : /*[[ @{'/administration/users/'+${user.id}+'/change-group'} ]]*/"/administration/users/1/change-group",
-					},
+			user : {
+				url : {
+					admin : /*[[ @{'/administration/users/'+${user.id}+'/'} ]]*/"/administration/users/1/",
+					simple : /*[[ @{'/users/'+${user.id}+'/'} ]]*/"/users/1/",
+					changeGroup : /*[[ @{'/administration/users/'+${user.id}+'/change-group'} ]]*/"/administration/users/1/change-group",
 				},
-				users : {
-					url : /*[[ @{/administration/users/} ]]*/"/administration/users/",
-				},
-				message :{
-					passSuccess : /*[[ #{user.account.changepass.success} ]]*/ "cool it worked ! ",
-					error : /*[[ #{popup.title.error} ]]*/ "Error",
-					empty : /*[[ #{message.AllProjectsAlreadyLinkedToUser} ]]*/ "tous les projets sont liés à l'utilisateur",
-					userInfoPanelTitle : /*[[ #{user.info.panel.title} ]]*/ "Infos Utilisateur",
-					permissionsPanelTitle : /*[[ #{user.project-rights.title.label} ]]*/ "Permissions",
-					richEditPlaceHolder : /*[[#{rich-edit.placeholder}]]*/'(Click to edit ...)',
-					okLabel : /*[[ #{label.Ok}]]*/ "ok",
-					cancelLabel : /*[[ #{label.Cancel} ]]*/ 'Cancel',
-					teamsPanelTitle :/*[[ #{label.teams} ]]*/ "teams",
-					changePasswordPopupTitle : /*[[ #{user.account.password.label} ]]*/ "change password",
-					confirmLabel : /*[[ #{label.Confirm} ]]*/'Confirmer',
-					addPermissionPopupTitle : /*[[#{title.AddPermission}]]*/ "add permission",
-					addLabel : /*[[#{label.Add}]]*/ "add",
-					oldPassError :  /*[[ #{user.account.oldpass.error} ]]*/ "old Pass Error",
-					newPassError :  /*[[ #{user.account.newpass.error} ]]*/ "new Pass Error",
-					confirmPassError :  /*[[ #{user.account.confirmpass.error} ]]*/ "confirm pass error",
-					samePassError :  /*[[ #{user.account.newpass.differ.error} ]]*/ "same pass error",	
-				},
-				permission : {
-					url : {
-							table : /*[[ @{'/administration/users/'+${user.id}+'/permissions'} ]]*/ "/administration/users/1/permissions",
-							popup : /*[[ @{'/administration/users/'+${user.id}+'/permission-popup'} ]]*/ "/administration/users/1/permission-popup",
-							add : /*[[ @{'/administration/users/'+${user.id}+'/add-permission'} ]]*/ "/administration/users/1/add-permission",
-							remove : /*[[ @{'/administration/users/'+${user.id}+'/remove-permission'} ]]*/ "/administration/users/1/remove-permission",
-						}
+			},
+			users : {
+				url : /*[[ @{/administration/users/} ]]*/"/administration/users/",
+			},
+			message : {
+				passSuccess : /*[[ #{user.account.changepass.success} ]]*/"cool it worked ! ",
+				error : /*[[ #{popup.title.error} ]]*/"Error",
+				empty : /*[[ #{message.AllProjectsAlreadyLinkedToUser} ]]*/"tous les projets sont liés à l'utilisateur",
+				userInfoPanelTitle : /*[[ #{user.info.panel.title} ]]*/"Infos Utilisateur",
+				permissionsPanelTitle : /*[[ #{user.project-rights.title.label} ]]*/"Permissions",
+				richEditPlaceHolder : /*[[#{rich-edit.placeholder}]]*/'(Click to edit ...)',
+				okLabel : /*[[ #{label.Ok}]]*/"ok",
+				cancelLabel : /*[[ #{label.Cancel} ]]*/'Cancel',
+				teamsPanelTitle : /*[[ #{label.teams} ]]*/"teams",
+				changePasswordPopupTitle : /*[[ #{user.account.password.label} ]]*/"change password",
+				confirmLabel : /*[[ #{label.Confirm} ]]*/'Confirmer',
+				addPermissionPopupTitle : /*[[#{title.AddPermission}]]*/"add permission",
+				addLabel : /*[[#{label.Add}]]*/"add",
+				oldPassError : /*[[ #{user.account.oldpass.error} ]]*/"old Pass Error",
+				newPassError : /*[[ #{user.account.newpass.error} ]]*/"new Pass Error",
+				confirmPassError : /*[[ #{user.account.confirmpass.error} ]]*/"confirm pass error",
+				samePassError : /*[[ #{user.account.newpass.differ.error} ]]*/"same pass error",
+			},
+			permission : {
+				url : {
+					table : /*[[ @{'/administration/users/'+${user.id}+'/permissions'} ]]*/"/administration/users/1/permissions",
+					popup : /*[[ @{'/administration/users/'+${user.id}+'/permission-popup'} ]]*/"/administration/users/1/permission-popup",
+					add : /*[[ @{'/administration/users/'+${user.id}+'/add-permission'} ]]*/"/administration/users/1/add-permission",
+					remove : /*[[ @{'/administration/users/'+${user.id}+'/remove-permission'} ]]*/"/administration/users/1/remove-permission",
 				}
-				
+			}
+
 		},
-		
+
 		projectFilterConf : {
 			url : /*[[ @{/global-filter/filter} ]]*/'/global-filter/filter',
 			title : /*[[ #{dialog.settings.filter.title} ]]*/'Filtre de projets',
 			confirmLabel : /*[[ #{label.Confirm} ]]*/'Confirmer',
-			
+
 		},
 		menuBarConf : {
 			boxSelector : "#menu-toggle-filter-ckbox",
@@ -88,7 +88,8 @@
 			enabledTxt : /*[[ #{workspace.menubar.filter.enabled.label} ]]*/'Actif',
 			disabledTxt : /*[[ #{workspace.menubar.filter.disabled.label} ]]*/'Inactif',
 			enabledCallbacks : [ function() {
-				$("div.tree-filter-reminder-div > span").removeClass("not-displayed");
+				$("div.tree-filter-reminder-div > span").removeClass(
+						"not-displayed");
 			} ],
 		},
 		notificationConf : {
@@ -98,8 +99,8 @@
 	};
 </script>
 <script data-main="../../scripts/user-modification.js"
-  th:attr="data-main=@{/scripts/user-modification.js}" src="../../scripts/require.js"
-  th:src="@{/scripts/require-min.js}">
+	th:attr="data-main=@{/scripts/user-modification.js}"
+	src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
 	
 </script>
 <!-- common head -->
@@ -181,7 +182,8 @@
 					<div class="fragment-body unstyled">
 						<div id="user-toolbar" class="toolbar-class ui-corner-all ">
 
-							<div th:include="fragments-utils/general-information-panel :: general-information-panel"
+							<div
+								th:include="fragments-utils/general-information-panel :: general-information-panel"
 								th:with="auditableEntity=${user},entityUrl=@{/users/__${user.id}__}"
 								th:remove="tag" />
 
@@ -231,11 +233,12 @@
 										<label for="user-group" th:text="#{label.UserGroup}">User
 											Group</label>
 										<div class="display-table-cell">
-											<select id="user-group" >
+											<select id="user-group">
 												<option th:each="group : ${ usersGroupList }"
 													th:id="${group.qualifiedName}"
 													id="squashtest.authz.group.core.Admin" value="1"
-													th:value="${group.id}" th:selected="${ group.simpleName == user.group.simpleName } ? 'selected'"
+													th:value="${group.id}"
+													th:selected="${ group.simpleName == user.group.simpleName } ? 'selected'"
 													th:text="#{'user.account.group.'+${group.qualifiedName}+'.label'}">Admin
 												</option>
 											</select>
@@ -255,21 +258,19 @@
 							</span>
 							<div id="project-permission-panel" class="toggle-panel-main">
 								<table id="permission-table"
-								 th:attr="data-def='filter, hover, datakeys-id=project.id ,ajaxsource='+@{/users/__${user.id}__/permissions}+',language='+@{/squash/datatables/language}">
+									th:attr="data-def='filter, hover, datakeys-id=project-id ,ajaxsource='+@{/users/__${user.id}__/permissions}+',language='+@{/squash/datatables/language}">
 									<thead>
 										<tr>
 											<th th:attr="data-def='invisible, map=project-id'">user-id</th>
 
 											<th th:attr="data-def='select, map=project-index'">#</th>
 
-											<th
-												th:attr="data-def='sortable, map=project-name'"
+											<th th:attr="data-def='sortable, map=project-name'"
 												th:text="#{projects.label}">user</th>
-											<th
-												th:attr="data-def='sortable, map=permission-name'"
+											<th th:attr="data-def='sortable, map=permission-name'"
 												th:text="#{project.permission.table.profile.label}">user</th>
 											<th
-												th:attr="data-def='delete-button=#remove-members-dialog, map=empty-delete-holder'">
+												th:attr="data-def='delete-button=#remove-permission-dialog, map=empty-delete-holder'">
 											</th>
 										</tr>
 									</thead>
@@ -278,16 +279,14 @@
 											<td th:text="${permission['project-id']}">100</td>
 											<td th:text="${permission['project-index']}">100</td>
 											<td th:text="${permission['project-name']}">1</td>
-											<td>
-												<select id="permission-list" >
+											<td><select class="permission-list" th:id="'permission-list-'+${permission['project-id']}">
 													<option th:each="plist : ${permission['permission-list']}"
-														th:id="${plist.qualifiedName}"
-														th:value="${plist.id}" th:selected="${ plist.simpleName == permission['permission-simplename'] } ? 'selected'"
+														th:id="${plist.qualifiedName}" th:value="${plist.id}"
+														th:selected="${ plist.simpleName == permission['permission-simplename'] } ? 'selected'"
 														th:text="#{'user.project-rights.'+${plist.simpleName}+'.label'}">Admin
 													</option>
-												</select>
-											</td>
-											<td></td> 
+											</select></td>
+											<td></td>
 										</tr>
 									</tbody>
 								</table>
@@ -295,40 +294,44 @@
 						</div>
 						<!-- ============================================/ Permissions ======================================= -->
 						<!-- ============================================ Teams ======================================= -->
-						
-						  <div id="teams" class="toggle-panel">
-            	<span class="not-displayed toggle-panel-buttons">
-            		<input type="button" id="add-team-button" value="+" ></input>
-            		<input type="button" id="remove-teams-button" th:value="#{label.unsubscribeToTeams}" ></input>
-            	</span> 
-            	<div id="teams-panel" class="toggle-panel-main">
-            		
-            		<table id="teams-table" 
-            			   th:attr="data-def='filter, hover, datakeys-id=team-id ,ajaxsource='+@{/users/__${user.id}__/teams}+',language='+@{/squash/datatables/language}">
-            			<thead>
-            				<tr>
-            					<th th:attr="data-def='invisible, map=team-id'">team-id</th>
-            					
-	            				<th th:attr="data-def='select, map=team-index'">#</th>
-	            				
-	            				<th th:attr="data-def='sortable, map=team-name, filter, link='+@{/administration/teams/{team-id}}"
-	            					th:text="#{label.team}">team</th>
-	            					
-	            				<th th:attr="data-def='delete-button=#remove-teams-dialog, map=empty-delete-holder'"> </th>
-            				</tr>
-            			</thead>
-            			<tbody>
-            				<tr th:each="team : ${teams}">
-            					<td th:text="${team['team-id']}">100</td>
-            					<td th:text="${team['team-index']}">1</td>
-            					<td th:text="${team['team-name']}">bob</td>
-            					<td> </td>
-            				</tr>
-            			</tbody>
-            		</table>            		
-            	</div>
-            </div>
-        
+
+						<div id="teams" class="toggle-panel">
+							<span class="not-displayed toggle-panel-buttons"> <input
+								type="button" id="add-team-button" value="+"></input> <input
+								type="button" id="remove-teams-button"
+								th:value="#{label.unsubscribeToTeams}"></input>
+							</span>
+							<div id="teams-panel" class="toggle-panel-main">
+
+								<table id="teams-table"
+									th:attr="data-def='filter, hover, datakeys-id=team-id ,ajaxsource='+@{/users/__${user.id}__/teams}+',language='+@{/squash/datatables/language}">
+									<thead>
+										<tr>
+											<th th:attr="data-def='invisible, map=team-id'">team-id</th>
+
+											<th th:attr="data-def='select, map=team-index'">#</th>
+
+											<th
+												th:attr="data-def='sortable, map=team-name, filter, link='+@{/administration/teams/{team-id}}"
+												th:text="#{label.team}">team</th>
+
+											<th
+												th:attr="data-def='delete-button=#remove-teams-dialog, map=empty-delete-holder'">
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="team : ${teams}">
+											<td th:text="${team['team-id']}">100</td>
+											<td th:text="${team['team-index']}">1</td>
+											<td th:text="${team['team-name']}">bob</td>
+											<td></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
 						<!-- ============================================ /Teams ======================================= -->
 					</div>
 				</div>
@@ -336,7 +339,7 @@
 		</div>
 	</div>
 	<!--    ====================================POPUPS======================================================  -->
-	
+
 
 
 	<div id="password-change-popup" class="not-displayed popup-dialog">
@@ -364,68 +367,87 @@
 		<span class="error-message user-account-changepass-status-error"></span>
 	</div>
 
-		  <div id="remove-teams-dialog" class="popup-dialog not-displayed" th:title="#{title.unsubscribeToTeams}">
-		 	 <div th:text="#{message.unsubscribeToTeams}"> ?</div>
-		 	 <div class="popup-dialog-buttonpane">
-		 	 	<input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"/>
-		 	 	<input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
-		 	 </div>
-		  </div>
-		  
-		  <div id="no-selected-teams" class="popup-dialog not-displayed" title="#{popup.title.error}">
-		  	 <span th:text="#{message.noTeamSelected}"></span>
-		  </div>
-		  
-		  
-		  <div id="add-team-dialog" class="not-displayed popup-dialog" title="Add Team" th:title="#{title.subscribeToTeam}">
-		  	<div class="main">
-				<label for="add-teams-input" th:text="#{label.team}">which one </label>
-				<input type="text" id="add-team-input"/>
-			</div>
-			<div class="wait please-wait-message waiting-loading" th:text="#{message.PleaseWait}">zzz</div>
-			<div class="no-more-teams" th:text="#{message.allTeamsAlreadyLinkedToUser}">no more teams to bind</div>
-			<div class="no-selected-teams" th:text="#{message.noTeamSelected}"></div>
-		 	 <div class="popup-dialog-buttonpane">
-		 	 	<input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"/>
-		 	 	<input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
-		 	 </div>
-		  </div>
-		  
-			<div id="add-permission-dialog" class="not-displayed popup-dialog" title="AddPermission" th:title="#{title.AddPermission}">
-				<table id="add-permission-dialog-table">
-					<tr>
-					<td> 
-						<label th:text="#{label.project}"></label>
-					</td>
-					<td> 
-					<select id="project-input"> 
-						<option  th:each="myproject : ${projectList}"
-							th:value="${myproject.id}" 
-							th:id="${myproject.name}"
-							th:text="${myproject.name}">Nom</option>
-					</select>
-					</td>
-					</tr>
-					
-					<tr>
-					<td> 
-						<label th:text="#{label.Permission}"></label> 
-					</td>
-					<td> 
-					<select id="permission-input"> 
+	<div id="remove-teams-dialog" class="popup-dialog not-displayed"
+		th:title="#{title.unsubscribeToTeams}">
+		<div th:text="#{message.unsubscribeToTeams}">?</div>
+		<div class="popup-dialog-buttonpane">
+			<input class="confirm" type="button" value="confirm"
+				th:value="#{label.Confirm}" /> <input class="cancel" type="button"
+				value="cancel" th:value="#{label.Cancel}" />
+		</div>
+	</div>
+
+	<div id="no-selected-teams" class="popup-dialog not-displayed"
+		title="#{popup.title.error}">
+		<span th:text="#{message.noTeamSelected}"></span>
+	</div>
+
+
+	<div id="add-team-dialog" class="not-displayed popup-dialog"
+		title="Add Team" th:title="#{title.subscribeToTeam}">
+		<div class="main">
+			<label for="add-teams-input" th:text="#{label.team}">which
+				one </label> <input type="text" id="add-team-input" />
+		</div>
+		<div class="wait please-wait-message waiting-loading"
+			th:text="#{message.PleaseWait}">zzz</div>
+		<div class="no-more-teams"
+			th:text="#{message.allTeamsAlreadyLinkedToUser}">no more teams
+			to bind</div>
+		<div class="no-selected-teams" th:text="#{message.noTeamSelected}"></div>
+		<div class="popup-dialog-buttonpane">
+			<input class="confirm" type="button" value="confirm"
+				th:value="#{label.Confirm}" /> <input class="cancel" type="button"
+				value="cancel" th:value="#{label.Cancel}" />
+		</div>
+	</div>
+
+	<div id="remove-permission-dialog" class="popup-dialog not-displayed"
+		th:title="#{title.RemovePermission}">
+		<div th:text="#{message.permissions.remove}"></div>
+		<div class="popup-dialog-buttonpane">
+			<input class="confirm" type="button" value="confirm"
+				th:value="#{label.Confirm}" /> <input class="cancel" type="button"
+				value="cancel" th:value="#{label.Cancel}" />
+		</div>
+	</div>
+
+	<div id="add-permission-dialog" class="not-displayed popup-dialog"
+		title="AddPermission" th:title="#{title.AddPermission}">
+		<div class="main">
+			<table id="add-permission-dialog-table">
+				<tr>
+					<td><label th:text="#{label.project}"></label></td>
+					<td><select id="project-input">
+							<option th:each="myproject : ${projectList}"
+								th:value="${myproject.id}" th:id="${myproject.name}"
+								th:text="${myproject.name}">Nom</option>
+					</select></td>
+				</tr>
+	
+				<tr>
+					<td><label th:text="#{label.Permission}"></label></td>
+					<td><select id="permission-input">
 							<option th:each="permission : ${permissionList}"
-							th:value="${permission.qualifiedName}"
-							th:id="${permission.simpleName}"
-							th:text="#{'user.project-rights.'+${permission.simpleName}+'.label'}">
+								th:value="${permission.qualifiedName}"
+								th:id="${permission.simpleName}"
+								th:text="#{'user.project-rights.'+${permission.simpleName}+'.label'}">
 							</option>
-					</select>
-					</td>
-					</tr>
-				</table>
-				<div class="popup-dialog-buttonpane">
-		 	 		<input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"/>
-		 	 		<input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
-		 	 	</div>
-			</div>
+					</select></td>
+				</tr>
+			</table>
+		</div>
+		<div class="wait please-wait-message waiting-loading"
+			th:text="#{message.PleaseWait}">zzz</div>
+		<div class="no-more-projects"
+			th:text="#{message.AllProjectsAlreadyLinkedToUser}">no more teams
+			to bind
+		</div>
+		<div class="popup-dialog-buttonpane">
+			<input class="confirm" type="button" value="confirm"
+				th:value="#{label.Confirm}" /> <input class="cancel" type="button"
+				value="cancel" th:value="#{label.Cancel}" />
+		</div>
+	</div>
 </body>
 </html>

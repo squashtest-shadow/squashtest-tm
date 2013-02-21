@@ -64,6 +64,7 @@ import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.service.user.AdministrationService;
+import org.squashtest.tm.web.internal.controller.project.ProjectModel;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
@@ -255,10 +256,14 @@ public class UserAdministrationController {
 		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
 		List<Project> projectList = permissionService.findProjectWithoutPermissionByLogin(user.getLogin());
 
-		
+		List<ProjectModel> projectModelList = new ArrayList<ProjectModel>();
+		if(projectList != null){
+			for(Project project : projectList){
+				projectModelList.add(new ProjectModel(project));
+			}
+		}
 		Map<String, Object> res = new HashMap<String, Object>();
-		res.put("user", user);
-		res.put("projectList", projectList);
+		res.put("projectList", projectModelList);
 		res.put("permissionList", permissionList);
 		
 		return res;
