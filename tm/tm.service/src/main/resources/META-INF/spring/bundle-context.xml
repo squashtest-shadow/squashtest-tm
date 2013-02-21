@@ -136,9 +136,16 @@
   <bean id="treeNodeCopierProvider" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
     <property name="targetBeanName" value="treeNodeCopier" />
   </bean>
+  
+   <bean id="firstLayerMoverProvider" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
+    <property name="targetBeanName" value="firstLayerTreeNodeMover" />
+  </bean>
+  
+   <bean id="nextLayersMoverProvider" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
+    <property name="targetBeanName" value="nextLayersTreeNodeMover" />
+  </bean>
 
   <bean id="parent.PasteStrategy" abstract="true">
-    <property name="permissionService" ref="squashtest.core.security.PermissionEvaluationService" />
     <property name="genericDao" ref="hibernateObjectDao" />
   </bean>
 

@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.domain.library;
 
+import org.squashtest.tm.domain.project.Project;
+
+
 
 /**
  * Holds TreeNode methods.
@@ -30,4 +33,5 @@ package org.squashtest.tm.domain.library;
  */
 public interface TreeNode {
 	void accept(NodeVisitor visitor);
+	Project getProject();
 }

@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.List;
 
 import org.squashtest.tm.domain.bugtracker.Issue;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 
 public interface IssueDao extends EntityDao<Issue> {
@@ -89,5 +90,19 @@ public interface IssueDao extends EntityDao<Issue> {
 	 * @return the number of Issues detected by the given execution / execution Steps
 	 */
 	Integer countIssuesfromExecutionAndExecutionSteps(List<Long> executionsIds, List<Long> executionStepsIds);
+
+	/**
+	 * Will find all issues declared in the iteration of the given id.
+	 * @param id : the id of the concerned {@linkplain Iteration}
+	 * @return the list of the iteration's {@link Issue}s
+	 */
+	List<Issue> findAllForIteration(Long id);
+
+	/**
+	 * Will find all issues declared in the test suite of the given id.
+	 * @param id : the id of the concerned {@linkplain TestSuite}
+	 * @return the list of the suite's {@link Issue}s
+	 */
+	List<Issue> findAllForTestSuite(Long id);
 
 }

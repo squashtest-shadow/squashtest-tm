@@ -22,10 +22,8 @@ package org.squashtest.tm.service.internal.library;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -107,7 +105,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	@Inject
 	private PermissionEvaluationService permissionService;
-	
+
 	protected abstract FolderDao<FOLDER, NODE> getFolderDao();
 
 	protected abstract LibraryDao<LIBRARY, NODE> getLibraryDao();
@@ -115,17 +113,20 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	protected abstract LibraryNodeDao<NODE> getLibraryNodeDao();
 
 	protected abstract NodeDeletionHandler<NODE, FOLDER> getDeletionHandler();
-	
+
 	protected abstract PasteStrategy<FOLDER, NODE> getPasteToFolderStrategy();
-	
+
 	protected abstract PasteStrategy<LIBRARY, NODE> getPasteToLibraryStrategy();
-	
+
 	@Inject
 	private PrivateCustomFieldValueService customFieldValuesService;
 	@Inject
 	private ObjectFactory<TreeNodeCopier> treeNodeCopierProvider;
-	
-	
+	@Inject
+	private ObjectFactory<FirstLayerTreeNodeMover> firstLayerMoverProvider;
+	@Inject
+	private ObjectFactory<NextLayersTreeNodeMover> nextLayersMoverProvider;
+
 	public AbstractLibraryNavigationService() {
 		super();
 	}
@@ -234,155 +235,79 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	public LIBRARY findLibraryOfRootNodeIfExist(NODE node) {
 		return getLibraryDao().findByRootContent(node);
 	}
-	
-	
+
 	// ************************* custom field values *************************
 
 	protected void createCustomFieldValues(BoundEntity entity) {
 		customFieldValuesService.createAllCustomFieldValues(entity);
 	}
 
-	protected void createCustomFieldValues(Collection<? extends BoundEntity> entities){
-		for (BoundEntity entity : entities){
+	protected void createCustomFieldValues(Collection<? extends BoundEntity> entities) {
+		for (BoundEntity entity : entities) {
 			createCustomFieldValues(entity);
 		}
 	}
-	
-	//initialCustomFieldValues maps the id of a CustomField to the value of the corresponding CustomFieldValues for that BoundEntity.
-	//read it again until it makes sense.
-	//it assumes that the CustomFieldValues instances already exists.
-	protected void initCustomFieldValues(BoundEntity entity, Map<Long, String> initialCustomFieldValues){
-		
+
+	// initialCustomFieldValues maps the id of a CustomField to the value of the corresponding CustomFieldValues for
+	// that BoundEntity.
+	// read it again until it makes sense.
+	// it assumes that the CustomFieldValues instances already exists.
+	protected void initCustomFieldValues(BoundEntity entity, Map<Long, String> initialCustomFieldValues) {
+
 		List<CustomFieldValue> persistentValues = customFieldValuesService.findAllCustomFieldValues(entity);
-		
-		for (CustomFieldValue value : persistentValues){
-			Long customFieldId = value.getCustomField()
-									  .getId();
-			
-			if (initialCustomFieldValues.containsKey(customFieldId)){
+
+		for (CustomFieldValue value : persistentValues) {
+			Long customFieldId = value.getCustomField().getId();
+
+			if (initialCustomFieldValues.containsKey(customFieldId)) {
 				String newValue = initialCustomFieldValues.get(customFieldId);
 				value.setValue(newValue);
 			}
-			
+
 		}
 	}
-	
 
 	/* ********************** move operations *************************** */
-
-	private void removeFromLibrary(LIBRARY library, NODE node) {
-		try {
-			library.removeContent(node);
-		} catch (NullArgumentException dne) {
-			throw new CannotMoveNodeException();
-		}
-	}
-
-	private void addNodesToLibrary(LIBRARY library, Long[] targetIds) {
-		try {
-			for (Long id : targetIds) {
-				NODE node = getLibraryNodeDao().findById(id);
-				library.addContent(node);
-			}
-		} catch (DuplicateNameException dne) {
-			throw new CannotMoveNodeException();
-		}
-	}
-
-	private void removeFromFolder(FOLDER folder, NODE node) {
-		folder.removeContent(node);
-
-	}
-
-	private void addNodesToFolder(FOLDER folder, Long[] targetIds) {
-		for (Long id : targetIds) {
-			NODE node = getLibraryNodeDao().findById(id);
-			folder.addContent(node);
-		}
-	}
-
 	@Override
-	public void modeNodesToFolder(long destinationId, Long[] targetIds) {
-
+	public void moveNodesToFolder(long destinationId, Long[] targetIds) {
 		if (targetIds.length == 0) {
 			return;
 		}
-
-		// fetch
-		FOLDER destinationFolder = getFolderDao().findById(destinationId);
-		Map<NODE, Object> nodesAndTheirParents = new HashMap<NODE, Object>();
-
-		// security check
-		for (Long id : targetIds) {
-			NODE node = getLibraryNodeDao().findById(id);
-			LIBRARY parentLib = getLibraryDao().findByRootContent(node);
-
-			Object parentObject = (parentLib != null) ? parentLib : getFolderDao().findByContent(node);
-
-			checkPermission(new SecurityCheckableObject(destinationFolder, CREATE), new SecurityCheckableObject(
-					parentObject, "DELETE"), new SecurityCheckableObject(node, READ));
-
-			nodesAndTheirParents.put(node, parentObject);
-
+		try {
+			PasteStrategy<FOLDER, NODE> pasteStrategy = getPasteToFolderStrategy();
+			makeMoverStrategy(pasteStrategy);
+			pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds));
+		} catch (NullArgumentException dne) {
+			throw new CannotMoveNodeException();
+		} catch (DuplicateNameException dne) {
+			throw new CannotMoveNodeException();
 		}
-		removeNodesFromTheirParents(nodesAndTheirParents);
-
-		getFolderDao().flush();
-		addNodesToFolder(destinationFolder, targetIds);
 
 	}
 
 	@Override
 	public void moveNodesToLibrary(long destinationId, Long[] targetIds) {
-
 		if (targetIds.length == 0) {
 			return;
 		}
-
-		// fetch
-		LIBRARY destinationLibrary = getLibraryDao().findById(destinationId);
-		Map<NODE, Object> nodesAndTheirParents = new HashMap<NODE, Object>();
-
-		// security check
-		for (Long id : targetIds) {
-			NODE node = getLibraryNodeDao().findById(id);
-			LIBRARY parentLib = getLibraryDao().findByRootContent(node);
-			Object parentObject = (parentLib != null) ? parentLib : getFolderDao().findByContent(node);
-
-			checkPermission(new SecurityCheckableObject(destinationLibrary, CREATE), new SecurityCheckableObject(
-					parentObject, "DELETE"), new SecurityCheckableObject(node, READ));
-
-			nodesAndTheirParents.put(node, parentObject);
+		try {
+			PasteStrategy<LIBRARY, NODE> pasteStrategy = getPasteToLibraryStrategy();
+			makeMoverStrategy(pasteStrategy);
+			pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds));
+		} catch (NullArgumentException dne) {
+			throw new CannotMoveNodeException();
+		} catch (DuplicateNameException dne) {
+			throw new CannotMoveNodeException();
 		}
 
-		// proceed
-		removeNodesFromTheirParents(nodesAndTheirParents);
-
-		getFolderDao().flush();
-
-		addNodesToLibrary(destinationLibrary, targetIds);
-	}
-
-	@SuppressWarnings("unchecked")
-	private void removeNodesFromTheirParents(Map<NODE, Object> nodesAndTheirParents) {
-		for (Entry<NODE, Object> nodeAndItsParent : nodesAndTheirParents.entrySet()) {
-			NODE node = nodeAndItsParent.getKey();
-			try {
-				LIBRARY parentLib = (LIBRARY) nodeAndItsParent.getValue();
-				removeFromLibrary(parentLib, node);
-			} catch (Exception e) {
-				FOLDER parentFolder = (FOLDER) nodeAndItsParent.getValue();
-				removeFromFolder(parentFolder, node);
-			}
-		}
 	}
 
 	/* ********************************* copy operations ****************************** */
 
 	@Override
 	public List<NODE> copyNodesToFolder(long destinationId, Long[] sourceNodesIds) {
-		PasteStrategy<FOLDER,NODE> pasteStrategy = getPasteToFolderStrategy();
-		 makeCopierStrategy(pasteStrategy);
+		PasteStrategy<FOLDER, NODE> pasteStrategy = getPasteToFolderStrategy();
+		makeCopierStrategy(pasteStrategy);
 		return pasteStrategy.pasteNodes(destinationId, Arrays.asList(sourceNodesIds));
 	}
 
@@ -399,14 +324,12 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	}
 
 	/*
-	 * BSR : I've commented that seemingly unused method on the 13-02-18. If you read this and two month have passed without incidents then you should remove it definitely.
+	 * BSR : I've commented that seemingly unused method on the 13-02-18. If you read this and two month have passed
+	 * without incidents then you should remove it definitely.
 	 * 
-	@SuppressWarnings("unchecked")
-	public FOLDER createCopyFolder(long folderId) {
-		FOLDER original = getFolderDao().findById(folderId);
-		return (FOLDER) original.createCopy();
-	}
-	*/
+	 * @SuppressWarnings("unchecked") public FOLDER createCopyFolder(long folderId) { FOLDER original =
+	 * getFolderDao().findById(folderId); return (FOLDER) original.createCopy(); }
+	 */
 
 	/* ***************************** deletion operations *************************** */
 
@@ -430,8 +353,14 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	/* ************************* private stuffs ************************* */
 
-	protected void makeCopierStrategy(PasteStrategy<?,?> pasteStrategy){
-		pasteStrategy.setPasteOperationFactory(treeNodeCopierProvider);
+	protected void makeCopierStrategy(PasteStrategy<?, ?> pasteStrategy) {
+		pasteStrategy.setFirstLayerOperationFactory(treeNodeCopierProvider);
+		pasteStrategy.setNextLayersOperationFactory(treeNodeCopierProvider);
+	}
+
+	protected void makeMoverStrategy(PasteStrategy<?, ?> pasteStrategy) {
+		pasteStrategy.setFirstLayerOperationFactory(firstLayerMoverProvider);
+		pasteStrategy.setNextLayersOperationFactory(nextLayersMoverProvider);
 	}
 
 	protected void checkPermission(SecurityCheckableObject... checkableObjects) {

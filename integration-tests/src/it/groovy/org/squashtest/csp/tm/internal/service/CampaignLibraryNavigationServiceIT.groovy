@@ -37,6 +37,7 @@ import org.squashtest.tm.service.campaign.CampaignLibrariesCrudService
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.unitils.dbunit.annotation.DataSet
+import org.unitils.dbunit.annotation.ExpectedDataSet;
 
 import spock.unitils.UnitilsSupport
 
@@ -375,6 +376,85 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		campaign11Copy.iterations.isEmpty()
 	}
 	
+	@DataSet("CampaignLibraryNavigationServiceIT.should move to same project f+c.xml")
+	@ExpectedDataSet("CampaignLibraryNavigationServiceIT.should move to same project f+c-result.xml")
+	def "should move folder + campaigns to same project"(){
+		given : 
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when: navService.moveNodesToFolder(destinationId, sourceIds)
+		
+		then:"expected dataset is verified"
+		session.flush()
+	}
+	
+	
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.should move to another project f+c.xml")
+	@ExpectedDataSet("CampaignLibraryNavigationServiceIT.should move to another project f+c-result.xml")
+	def "should move folder + campaigns to another project"(){
+		given :
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when: navService.moveNodesToFolder(destinationId, sourceIds)
+		
+		then:"expected dataset is verified"
+		session.flush()
+	}
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.should move to another project f+c + cufs.xml")
+	@ExpectedDataSet("CampaignLibraryNavigationServiceIT.should move to another project f+c + cufs-result.xml")
+	def "should move folder + campaigns  with cufs to another project"(){
+		given :
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when: navService.moveNodesToFolder(destinationId, sourceIds)
+		
+		then:"expected dataset is verified"
+		session.flush()
+	}
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.should move to another project f+c+i+s + cufs + execs.xml")
+	@ExpectedDataSet("CampaignLibraryNavigationServiceIT.should move to another project f+c+i+s + cufs + execs-result.xml")
+	def "should move folder + campaigns + iterations + suites with cufs and issues to another project"(){
+		given :
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when: navService.moveNodesToFolder(destinationId, sourceIds)
+		
+		then:"expected dataset is verified"
+		session.flush()
+	}
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.should move to another project and keep issues.xml")
+	@ExpectedDataSet("CampaignLibraryNavigationServiceIT.should move to another project and keep issues-result.xml")
+	def "should move to another project and keep issues"(){
+		given :"a dataset with 2 projects having the same bugtracker"
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when: navService.moveNodesToFolder(destinationId, sourceIds)
+		
+		then:"issues are kept"
+		session.flush()
+	}
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.should move to another project and remove issues.xml")
+	@ExpectedDataSet("CampaignLibraryNavigationServiceIT.should move to another project and remove issues-result.xml")
+	def "should move to another project and remove issues"(){
+		given :"a dataset with 2 projects having different bugtrackers"
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when: navService.moveNodesToFolder(destinationId, sourceIds)
+		
+		then:"issues are removed"
+		session.flush()
+	}
 	
 	def GenericProject createProject(){
 		Project p = new Project();
@@ -382,5 +462,7 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		p.description = "eaerazer"
 		return p
 	}
+
+	
 	
 }

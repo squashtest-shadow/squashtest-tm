@@ -25,7 +25,7 @@ import java.util.List;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.LibraryNode;
 
-public interface FolderDao<FOLDER extends Folder<NODE>, NODE extends LibraryNode> extends EntityDao<FOLDER> {
+public interface FolderDao<FOLDER extends Folder<? extends NODE>, NODE extends LibraryNode> extends EntityDao<FOLDER> {
 
 	List<NODE> findAllContentById(long folderId);
 

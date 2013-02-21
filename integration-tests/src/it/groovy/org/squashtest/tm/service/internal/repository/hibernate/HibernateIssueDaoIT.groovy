@@ -32,7 +32,7 @@ import spock.unitils.UnitilsSupport
 class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@Inject IssueDao issueDao
 
-	@DataSet("HibernateIssueDaoIT.should return sorted issues.xml")
+	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return sorted issues from execs/exec-steps"(){
 		given:
 		List<Long> execIds = [101L, 400L, 201L, 100L]
@@ -71,7 +71,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		result == [[100L, "11", 1L], [1000L, "22", 1L]]
 	}
 
-	@DataSet("HibernateIssueDaoIT.should return sorted issues.xml")
+	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return sorted issues from execs/exec-steps2"(){
 		given:
 		List<Long> execIds = [101L, 400L, 201L, 100L]
@@ -113,7 +113,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		]
 	}
 
-	@DataSet("HibernateIssueDaoIT.should return sorted issues.xml")
+	@DataSet("HibernateIssueDaoIT.xml")
 	def "should count issues for execution and execution steps"(){
 		given:
 		List<Long> execIds = [101L, 400L, 201L, 100L]
@@ -125,7 +125,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		result == 4
 	}
 	
-	@DataSet("HibernateIssueDaoIT.should return sorted issues.xml")
+	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return sorted issues from issue list ids"(){
 		given:
 		List<Long> issueListIds = [101L, 400L, 201L, 100L, 1011L, 2010L, 1000L]
@@ -167,7 +167,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		]
 	}
 	
-	@DataSet("HibernateIssueDaoIT.should return sorted issues.xml")
+	@DataSet("HibernateIssueDaoIT.xml")
 	def "should count issues for issue list ids and bugtracker id"(){
 		given:
 		List<Long> issueListIds = [101L, 400L, 201L, 100L, 1010L, 1011L, 2010L, 1000L]
@@ -177,6 +177,30 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 
 		then:
 		result == 4
+	}
+	
+	@DataSet("HibernateIssueDaoIT.xml")
+	def "should return issues for iteration"(){
+		given : 
+		def iterationId = 1L
+		
+		when : def result = issueDao.findAllForIteration(iterationId)
+		
+		then :
+		result.size() == 3;
+		result.collect({it.id}).containsAll([1L, 2L, 3L]);
+	}
+	
+	@DataSet("HibernateIssueDaoIT.test suite.xml")
+	def "should return issues for test suite"(){
+		given :
+		def testSuiteId = 30L
+		
+		when : def result = issueDao.findAllForTestSuite(testSuiteId)
+		
+		then :
+		result.size() == 3;
+		result.collect({it.id}).containsAll([1L, 2L, 3L]);
 	}
 	
 	

@@ -99,4 +99,10 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 		
 	}
 
+	@Override
+	public void removeAll(List<ENTITY> entities) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

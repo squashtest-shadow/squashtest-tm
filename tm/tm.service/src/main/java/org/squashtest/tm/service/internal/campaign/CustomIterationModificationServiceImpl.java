@@ -315,7 +315,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	private PasteStrategy<Iteration, TestSuite> createCopyToIterationStrategy() {
 		PasteStrategy<Iteration, TestSuite> pasteStrategy = pasteToIterationStrategyProvider.get();
-		pasteStrategy.setPasteOperationFactory(treeNodeCopierFactory);
+		pasteStrategy.setFirstLayerOperationFactory(treeNodeCopierFactory);
+		pasteStrategy.setNextLayersOperationFactory(treeNodeCopierFactory);
 		return pasteStrategy;
 	}
 

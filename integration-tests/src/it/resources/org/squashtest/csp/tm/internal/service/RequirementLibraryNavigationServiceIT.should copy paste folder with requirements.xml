@@ -47,11 +47,11 @@
 <REQUIREMENT_LIBRARY_NODE CREATED_BY="dbunit" CREATED_ON="2012-11-13" RLN_ID="2"/>
 <REQUIREMENT_FOLDER RLN_ID="2"  RES_ID="2"/>
 
-<RESOURCE/>
-<SIMPLE_RESOURCE/>
-<REQUIREMENT_VERSION/>
-<REQUIREMENT_LIBRARY_NODE/>
-<REQUIREMENT/>
-<REQUIREMENT_FOLDER/>
+<resource/>
+<simple_resource/>
+<requirement_version/>
+<requirement_library_node/>
+<requirement/>
+<requirement_folder/>
 
 </dataset>

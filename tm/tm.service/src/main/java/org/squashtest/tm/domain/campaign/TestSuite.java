@@ -377,12 +377,17 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 
 	@Override
 	public Project getProject() {
+		if(iteration != null){
 		return iteration.getProject();
+		}else{
+			return null;
+		}
 	}
 
 	@Override
 	public void accept(NodeVisitor visitor) {
 		visitor.visit(this);
 	}
+
 	
 }

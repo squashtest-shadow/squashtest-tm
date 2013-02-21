@@ -60,9 +60,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	@Inject
 	private PermissionEvaluationService permissionService;
 
-
-	public void setPermissionService(
-			PermissionEvaluationService permissionService) {
+	public void setPermissionService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
 	}
 
@@ -93,57 +91,55 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	public List<CustomFieldValue> findAllCustomFieldValues(Long boundEntityId, BindableEntity bindableEntity) {
 
 		BoundEntity boundEntity = boundEntityDao.findBoundEntity(boundEntityId, bindableEntity);
-		
+
 		if (!permissionService.canRead(boundEntity)) {
 			throw new AccessDeniedException("Access is denied");
 		}
-		
+
 		return findAllCustomFieldValues(boundEntity);
 	}
 
-	
 	@Override
 	// well I'll skip the security check for this one because we don't really want to kill the db
 	public List<CustomFieldValue> findAllCustomFieldValues(Collection<? extends BoundEntity> boundEntities) {
-		
-		//first, because the entities might be of different kind we must segregate them.
+
+		// first, because the entities might be of different kind we must segregate them.
 		Map<BindableEntity, List<Long>> compositeIds = _breakEntitiesIntoCompositeIds(boundEntities);
-		
-		//second, one can now call the db and consolidate the result.
+
+		// second, one can now call the db and consolidate the result.
 		List<CustomFieldValue> result = new ArrayList<CustomFieldValue>();
-		
-		for (Entry<BindableEntity, List<Long>> entry : compositeIds.entrySet()){
-			
+
+		for (Entry<BindableEntity, List<Long>> entry : compositeIds.entrySet()) {
+
 			result.addAll(customFieldValueDao.batchedFindAllCustomValuesFor(entry.getValue(), entry.getKey()));
-			
+
 		}
-		
+
 		return result;
-		
-	}
-	
-	// same : no sec, a gesture of mercy for the database
-	@Override
-	public List<CustomFieldValue> findAllCustomFieldValues(Collection<? extends BoundEntity> boundEntities, 
-														   Collection<CustomField> restrictedToThoseCustomfields) {
-		
-		//first, because the entities might be of different kind we must segregate them.
-		Map<BindableEntity, List<Long>> compositeIds = _breakEntitiesIntoCompositeIds(boundEntities);
-		
-		//second, one can now call the db and consolidate the result.
-		List<CustomFieldValue> result = new ArrayList<CustomFieldValue>();
-		
-		for (Entry<BindableEntity, List<Long>> entry : compositeIds.entrySet()){
-			
-			result.addAll(customFieldValueDao.batchedRestrictedFindAllCustomValuesFor(entry.getValue(), entry.getKey(), restrictedToThoseCustomfields));
-			
-		}
-		
-		return result;
-		
+
 	}
 
-	
+	// same : no sec, a gesture of mercy for the database
+	@Override
+	public List<CustomFieldValue> findAllCustomFieldValues(Collection<? extends BoundEntity> boundEntities,
+			Collection<CustomField> restrictedToThoseCustomfields) {
+
+		// first, because the entities might be of different kind we must segregate them.
+		Map<BindableEntity, List<Long>> compositeIds = _breakEntitiesIntoCompositeIds(boundEntities);
+
+		// second, one can now call the db and consolidate the result.
+		List<CustomFieldValue> result = new ArrayList<CustomFieldValue>();
+
+		for (Entry<BindableEntity, List<Long>> entry : compositeIds.entrySet()) {
+
+			result.addAll(customFieldValueDao.batchedRestrictedFindAllCustomValuesFor(entry.getValue(), entry.getKey(),
+					restrictedToThoseCustomfields));
+
+		}
+
+		return result;
+
+	}
 
 	@Override
 	public void cascadeCustomFieldValuesCreation(CustomFieldBinding binding) {
@@ -167,7 +163,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 		List<CustomFieldValue> allValues = customFieldValueDao.findAllCustomValuesOfBindings(customFieldBindingIds);
 		deleteCustomFieldValues(allValues);
-		
+
 	}
 
 	@Override
@@ -182,13 +178,12 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		}
 
 	}
-	
-	
-	private void deleteCustomFieldValues(List<CustomFieldValue> values){
+
+	private void deleteCustomFieldValues(List<CustomFieldValue> values) {
 		List<Long> valueIds = IdentifiedUtil.extractIds(values);
 		customFieldValueDao.deleteAll(valueIds);
 	}
-	
+
 	@Override
 	public void deleteAllCustomFieldValues(BoundEntity entity) {
 		customFieldValueDao.deleteAllForEntity(entity.getBoundEntityId(), entity.getBoundEntityType());
@@ -215,11 +210,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Override
 	public void copyCustomFieldValuesContent(BoundEntity source, BoundEntity recipient) {
-		
-		List<CustomFieldValuesPair> pairs = customFieldValueDao.findPairedCustomFieldValues(source.getBoundEntityType(), 
-																							source.getBoundEntityId(), 
-																							recipient.getBoundEntityId());
-		
+
+		List<CustomFieldValuesPair> pairs = customFieldValueDao.findPairedCustomFieldValues(
+				source.getBoundEntityType(), source.getBoundEntityId(), recipient.getBoundEntityId());
+
 		for (CustomFieldValuesPair pair : pairs) {
 			pair.copyContent();
 		}
@@ -238,57 +232,53 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 		changedValue.setValue(newValue);
 	}
-	
-	
+
 	@Override
-	//basically it's a copypasta of createAllCustomFieldValues, with some extra code in it.
-	public void migrateCustomFieldValues(BoundEntity entity){
+	// basically it's a copypasta of createAllCustomFieldValues, with some extra code in it.
+	public void migrateCustomFieldValues(BoundEntity entity) {
 
-		List<CustomFieldBinding> newBindings = customFieldBindingDao.findAllForProjectAndEntity(entity.getProject().getId(), 
-																							   	entity.getBoundEntityType());
+		List<CustomFieldValue> valuesToUpdate = customFieldValueDao.findAllCustomValues(entity.getBoundEntityId(),
+				entity.getBoundEntityType());
+		if (entity.getProject() != null) {
+			List<CustomFieldBinding> projectBindings = customFieldBindingDao.findAllForProjectAndEntity(entity
+					.getProject().getId(), entity.getBoundEntityType());
 
-		List<CustomFieldValue> formerValues	= customFieldValueDao.findAllCustomValues(entity.getBoundEntityId(), 
-																					  entity.getBoundEntityType());
+			for (CustomFieldBinding binding : projectBindings) {
 
-		
-		for (CustomFieldBinding binding : newBindings) {
-			
-			CustomFieldValue newValue = binding.createNewValue();
-			
-			for (CustomFieldValue formerValue : formerValues){
-				if (formerValue.representsSameCustomField(newValue)){
-					newValue.setValue(formerValue.getValue());
-					break;
+				CustomFieldValue updatedValue = binding.createNewValue();
+
+				for (CustomFieldValue formerValue : valuesToUpdate) {
+					if (formerValue.representsSameCustomField(updatedValue)) {
+						updatedValue.setValue(formerValue.getValue());
+						break;
+					}
 				}
+
+				updatedValue.setBoundEntity(entity);
+				customFieldValueDao.persist(updatedValue);
 			}
-			
-			newValue.setBoundEntity(entity);
-			customFieldValueDao.persist(newValue);
-		}	
-		
-		deleteCustomFieldValues(formerValues);
-		
+		}
+		deleteCustomFieldValues(valuesToUpdate);
+
 	}
 
-	
 	@Override
 	public void migrateCustomFieldValues(Collection<BoundEntity> entities) {
-		for (BoundEntity entity : entities){
+		for (BoundEntity entity : entities) {
 			migrateCustomFieldValues(entity);
 		}
 	}
-	
+
 	// *********************** private convenience methods ********************
-	 
-	
-	
-	
-	private Map<BindableEntity, List<Long>> _breakEntitiesIntoCompositeIds(Collection<? extends BoundEntity> boundEntities) {
-		
-		Map<BindableEntity, List<Long>> segregatedEntities = new HashMap<BindableEntity, List<Long>>(3); //3 is just a guess
-		for (BoundEntity entity : boundEntities){
+
+	private Map<BindableEntity, List<Long>> _breakEntitiesIntoCompositeIds(
+			Collection<? extends BoundEntity> boundEntities) {
+
+		Map<BindableEntity, List<Long>> segregatedEntities = new HashMap<BindableEntity, List<Long>>(3); // 3 is just a
+																											// guess
+		for (BoundEntity entity : boundEntities) {
 			List<Long> idList = segregatedEntities.get(entity.getBoundEntityType());
-			if (idList == null){
+			if (idList == null) {
 				idList = new ArrayList<Long>();
 				segregatedEntities.put(entity.getBoundEntityType(), idList);
 			}

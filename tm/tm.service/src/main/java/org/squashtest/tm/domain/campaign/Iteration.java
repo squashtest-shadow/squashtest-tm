@@ -483,8 +483,13 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		return attachmentList;
 	}
 
+	@Override
 	public Project getProject() {
+		if(campaign!=null){
 		return campaign.getProject();
+		}else{
+			return null;
+		}
 	}
 
 	@AclConstrainedObject
@@ -730,5 +735,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		}
 		return testSuitesNames;
 	}
+
+	
 
 }

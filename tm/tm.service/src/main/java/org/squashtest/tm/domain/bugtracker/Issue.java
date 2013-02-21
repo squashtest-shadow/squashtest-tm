@@ -29,25 +29,37 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 
 @Entity
+@NamedQueries(value = {
+		@NamedQuery(name = "Issue.findAllForIteration", query = "select i from Issue i where i.id in "
+				+ "(select ei.id from Iteration it join it.testPlans itp join itp.executions e join e.issueList eil join eil.issues ei where it.id = :id)"
+				+ " or i.id in "
+				+ "(select esi.id from Iteration it join it.testPlans itp join itp.executions e join e.steps es join es.issueList esil join esil.issues esi where it.id = :id) "),
+		@NamedQuery(name = "Issue.findAllForTestSuite", query = "select i from Issue i where i.id in "
+				+"(select ei.id from IterationTestPlanItem itp join itp.testSuite ts join itp.executions e join e.issueList eil join eil.issues ei where ts.id = :id)"
+				+" or id.id in "
+				+"(select esi.id from IterationTestPlanItem itp join itp.testSuite ts join itp.executions e join e.steps es join es.issueList esil join esil.issues esi where ts.id = :id)"),
+
+})
 public class Issue {
 	@Id
 	@GeneratedValue
 	@Column(name = "ISSUE_ID")
 	private Long id;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "ISSUE_LIST_ID")
 	private IssueList issueList;
-	
+
 	@OneToOne(optional = false)
-	@ForeignKey(name="FK_Issue_Bugtracker")
-	@JoinColumn(name="BUGTRACKER_ID")
+	@ForeignKey(name = "FK_Issue_Bugtracker")
+	@JoinColumn(name = "BUGTRACKER_ID")
 	private BugTracker bugtracker;
-	
-	
+
 	private String remoteIssueId;
 
 	public Long getId() {
@@ -62,11 +74,11 @@ public class Issue {
 		this.remoteIssueId = btId;
 	}
 
-	public IssueList getIssueList(){
+	public IssueList getIssueList() {
 		return issueList;
 	}
-	
-	void setIssueList(IssueList issueList){
+
+	void setIssueList(IssueList issueList) {
 		this.issueList = issueList;
 	}
 
@@ -77,9 +89,5 @@ public class Issue {
 	public void setBugtracker(BugTracker bugtracker) {
 		this.bugtracker = bugtracker;
 	}
-	
-	
-	
-	
-	
+
 }

@@ -39,4 +39,6 @@ public class HibernateAdministrationDao extends HibernateDao<Object> implements 
 		Object[] result =	executeEntityNamedQuery("administration.findAdministrationStatistics");
 		return new AdministrationStatistics(result);
 	}
+
+
 }

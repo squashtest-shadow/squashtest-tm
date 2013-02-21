@@ -180,4 +180,5 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 		}
 		return collected;
 	}
+	
 }

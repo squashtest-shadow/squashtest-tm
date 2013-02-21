@@ -32,6 +32,8 @@ public interface GenericDao<ENTITY_TYPE> {
 
 	void remove(ENTITY_TYPE entity);
 	
+	void removeAll(List<ENTITY_TYPE> entities);
+	
 	void clearFromCache(ENTITY_TYPE entity);
 	
 	void clearFromCache(Collection<ENTITY_TYPE> entities);

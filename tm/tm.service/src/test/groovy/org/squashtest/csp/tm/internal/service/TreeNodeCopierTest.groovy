@@ -19,12 +19,15 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.csp.tm.internal.service
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.library.TreeNodeCopier
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
+import org.squashtest.tm.service.security.PermissionEvaluationService
 
 import spock.lang.Specification
 
@@ -35,16 +38,21 @@ public class TreeNodeCopierTest extends Specification{
 	private TestCaseDao testCaseDao = Mock()
 	private TestCaseFolderDao testCaseFolderDao = Mock()
 	private PrivateCustomFieldValueService customFieldValueManagerService = Mock()
+	private PermissionEvaluationService permissionService = Mock()
+	
 	
 	def setup(){
 		copier.testCaseDao = testCaseDao;
 		copier.testCaseFolderDao = testCaseFolderDao
 		copier.customFieldValueManagerService = customFieldValueManagerService
+		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
+		copier.permissionService = permissionService
 		}
 
 	def "should copy a node without renaming it because the name was available"(){
 		given :
 			TestCase tcOrig =  new TestCase(name:"test case okay");
+			tcOrig.notifyAssociatedWithProject(new Project())
 		
 		and : "the folder"
 			TestCaseFolder folder = Mock()
@@ -66,7 +74,7 @@ public class TreeNodeCopierTest extends Specification{
 		given : "the test case and it's copy"
 		
 			TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
-			
+			tcOrig.notifyAssociatedWithProject(new Project())
 		and : "the folder"
 			TestCaseFolder folder = Mock()
 			
@@ -89,7 +97,7 @@ public class TreeNodeCopierTest extends Specification{
 	def "should copy a node and rename it as the 1000th copy"(){
 		given : "the test case and it's copy"		
 			TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
-			
+			tcOrig.notifyAssociatedWithProject(new Project())
 			
 		and : "the folder"
 			TestCaseFolder folder = Mock();
@@ -110,7 +118,7 @@ public class TreeNodeCopierTest extends Specification{
 	def "should copy a node and rename it as the 2th copy"(){
 		given : "the test case and it's copy"
 			TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
-			
+			tcOrig.notifyAssociatedWithProject(new Project())
 		and : "the folder"
 			TestCaseFolder folder = Mock()
 			folder.isContentNameAvailable(_) >> false
@@ -129,6 +137,7 @@ public class TreeNodeCopierTest extends Specification{
 	def "should copy a node and not rename despite copies are present since the original name is available anyway"(){
 		given : "the test case and it's copy"
 			TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
+			tcOrig.notifyAssociatedWithProject(new Project())
 			
 		and : "the folder"
 			TestCaseFolder folder = new TestCaseFolder()

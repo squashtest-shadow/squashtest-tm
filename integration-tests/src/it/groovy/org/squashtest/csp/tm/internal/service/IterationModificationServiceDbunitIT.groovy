@@ -46,7 +46,8 @@ class IterationModificationServiceDbunitIT extends DbunitServiceSpecification {
 	@Inject
 	IterationModificationService iterService
 
-	@Inject SessionFactory sessionFactory
+	@Inject
+	SessionFactory sessionFactory
 
 	@DataSet("IterationModificationServiceDbunitIT.should copy-paste a TestSuite.xml")
 	def "should copy-paste a TestSuite"(){

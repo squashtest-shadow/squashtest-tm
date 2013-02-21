@@ -366,7 +366,11 @@ public class RequirementVersion extends Resource implements BoundEntity{
 
 	@Override
 	public Project getProject() {
-		return requirement.getProject();
+		if(requirement != null){
+			return requirement.getProject();
+		}else{
+			return null;
+		}
 	}
 	
 }

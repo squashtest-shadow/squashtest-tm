@@ -57,6 +57,7 @@ import org.squashtest.tm.service.security.annotation.InheritsAcls;
 
 @Persister(impl=TestStepPersister.class)
 public abstract class TestStep {
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "TEST_STEP_ID")

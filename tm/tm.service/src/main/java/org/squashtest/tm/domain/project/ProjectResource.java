@@ -38,12 +38,5 @@ public interface ProjectResource<P extends GenericProject> {
 	
 	Library<?> getLibrary();
 
-	/**
-	 * Notifies this resource now belongs to the given project. {@link ProjectResource#getProject()} should
-	 * return this project afterwards.
-	 * 
-	 * @param project
-	 *            should not be <code>null</code>
-	 */
-	void notifyAssociatedWithProject(P project);
+	
 }

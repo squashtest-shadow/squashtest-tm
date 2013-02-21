@@ -61,7 +61,7 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	 */
 	List<NODE> copyNodesToLibrary(long destinationId, Long[] targetId);
 
-	void modeNodesToFolder(long destinationId, Long[] targetId);
+	void moveNodesToFolder(long destinationId, Long[] targetId);
 
 	void moveNodesToLibrary(long destinationId, Long[] targetId);
 

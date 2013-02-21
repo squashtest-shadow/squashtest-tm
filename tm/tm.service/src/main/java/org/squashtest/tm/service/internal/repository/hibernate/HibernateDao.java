@@ -225,5 +225,12 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	protected final void removeEntity(ENTITY_TYPE entity) {
 		currentSession().delete(entity);
 	}
-
+	
+	@Override
+	public void removeAll(List<ENTITY_TYPE> entities) {
+		for (ENTITY_TYPE entity : entities) {
+			this.removeEntity(entity);
+		}
+		
+	}
 }

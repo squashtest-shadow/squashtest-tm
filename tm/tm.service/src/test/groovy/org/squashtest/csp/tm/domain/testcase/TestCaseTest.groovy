@@ -23,8 +23,10 @@ package org.squashtest.csp.tm.domain.testcase
 import static org.squashtest.tm.domain.testcase.TestCaseType.*
 
 import org.apache.commons.lang.NullArgumentException
+import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
@@ -37,9 +39,9 @@ import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.domain.testcase.TestStep
-import org.squashtest.tm.exception.RequirementAlreadyVerifiedException;
-import org.squashtest.tm.exception.RequirementVersionNotLinkableException;
-import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.exception.RequirementAlreadyVerifiedException
+import org.squashtest.tm.exception.RequirementVersionNotLinkableException
+import org.squashtest.tm.exception.UnknownEntityException
 
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -228,6 +230,8 @@ class TestCaseTest extends Specification {
 	def "copy of a test case should have the same simple properties"() {
 		given:
 		TestCase source = new TestCase()
+		source.notifyAssociatedWithProject(new Project())
+		
 		source[propName] = propValue
 
 		when:
@@ -252,6 +256,7 @@ class TestCaseTest extends Specification {
 	def "copy of a test case should have the same steps"() {
 		given:
 		TestCase source = new TestCase()
+		source.notifyAssociatedWithProject(new Project())
 		ActionTestStep sourceStep = new ActionTestStep(action: "fingerpoke opponent", expectedResult: "win the belt")
 		source.steps << sourceStep
 
@@ -268,6 +273,7 @@ class TestCaseTest extends Specification {
 	def "copy of a test case should verify the same requirements"() {
 		given:
 		TestCase source = new TestCase()
+		source.notifyAssociatedWithProject(new Project())
 		RequirementVersion req = new RequirementVersion(name: "")
 		source.addVerifiedRequirementVersion req
 

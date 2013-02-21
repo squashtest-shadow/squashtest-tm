@@ -240,7 +240,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 					@RequestParam("destination-type") String destType) {
 		
 		if (destType.equals("folder")){
-			getLibraryNavigationService().modeNodesToFolder(destinationId, objectIds);
+			getLibraryNavigationService().moveNodesToFolder(destinationId, objectIds);
 		}
 		else if (destType.equals("library")){
 			getLibraryNavigationService().moveNodesToLibrary(destinationId, objectIds);

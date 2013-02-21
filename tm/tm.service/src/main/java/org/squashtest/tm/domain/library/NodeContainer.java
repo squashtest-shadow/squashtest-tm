@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.exception.DuplicateNameException;
 
 /**
@@ -52,5 +53,11 @@ public interface NodeContainer<NODE extends TreeNode> extends Identified{
 	void removeContent(NODE contentToRemove) throws NullArgumentException;
 
 	List<String> getContentNames();
+	
+	/**
+	 * A node container can be a library. That can be bound to a project template.
+	 * @return
+	 */
+	GenericProject getProject();
 
 }

@@ -34,9 +34,6 @@ import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.service.internal.repository.EntityDao;
 import org.squashtest.tm.service.internal.repository.GenericDao;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.service.security.PermissionsUtils;
-import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 /**
  * Careful : As of Squash TM 1.5.0 this object becomes stateful, in layman words you need one instance per operation.
@@ -55,20 +52,18 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
  */
 public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends TreeNode> {
 
-	private static final String CREATE = "CREATE";
-	private static final String READ = "READ";
 
 	// **************** collaborators **************************
 
-	private ObjectFactory<? extends PasteOperation> pasteOperationFactory;
+	private ObjectFactory<? extends PasteOperation> nextLayersOperationFactory;
+	private ObjectFactory<? extends PasteOperation> firstLayerOperationFactory;
 	@Inject
 	private ObjectFactory<NextLayerFeeder> nextLayerFeederOperationFactory;
-	private PasteOperation operation;
-
+	private PasteOperation firstOperation;
+	private PasteOperation nextsOperation;
 	private GenericDao<Object> genericDao;
 	private EntityDao<CONTAINER> containerDao;
 	private EntityDao<NODE> nodeDao;
-	private PermissionEvaluationService permissionService;
 
 	public void setGenericDao(GenericDao<Object> genericDao) {
 		this.genericDao = genericDao;
@@ -82,16 +77,16 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		this.nodeDao = nodeDao;
 	}
 
-	public void setPasteOperationFactory(ObjectFactory<? extends PasteOperation> pasteOperationFactory) {
-		this.pasteOperationFactory = pasteOperationFactory;
+	public void setNextLayersOperationFactory(ObjectFactory<? extends PasteOperation> nextLayersOperationFactory) {
+		this.nextLayersOperationFactory = nextLayersOperationFactory;
+	}
+
+	public void setFirstLayerOperationFactory(ObjectFactory<? extends PasteOperation> firstLayerOperationFactory) {
+		this.firstLayerOperationFactory = firstLayerOperationFactory;
 	}
 
 	public void setNextLayerFeederOperationFactory(ObjectFactory<NextLayerFeeder> nextLayerFeederOperationFactory) {
 		this.nextLayerFeederOperationFactory = nextLayerFeederOperationFactory;
-	}
-
-	public void setPermissionService(PermissionEvaluationService permissionService) {
-		this.permissionService = permissionService;
 	}
 
 	// ***************** treatment-scoped variables ****************
@@ -106,11 +101,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	public List<NODE> pasteNodes(long containerId, List<Long> list) {
 
 		// fetch
-		CONTAINER container = containerDao.findById(containerId);
-		// check
-		// Note : we wont recursively check for the whole hierarchy as it's supposed to have the same identity holder
-		// TODO checkPermission should be node by paste operation
-		checkPermissions(list, container);
+		CONTAINER container = containerDao.findById(containerId);		
 
 		// proceed : will process the nodes layer by layer.
 		init(list.size());
@@ -133,7 +124,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	}
 
 	private void init(int nbCopiedNodes) {
-		operation = createOperation();
+		firstOperation= createFirstLayerOperation();
+		nextsOperation = createNextLayerOperation();
 		outputList = new ArrayList<NODE>(nbCopiedNodes);
 		nextLayer = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
 		sourceLayer = null;
@@ -165,9 +157,9 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private void processFirstLayer(CONTAINER container, List<Long> list) {
 		for (Long id : list) {
 			NODE srcNode = nodeDao.findById(id);
-			NODE outputNode = (NODE) operation.performOperation(srcNode, (NodeContainer<TreeNode>) container);
+			NODE outputNode = (NODE) firstOperation.performOperation(srcNode, (NodeContainer<TreeNode>) container);
 			outputList.add(outputNode);
-			if (operation.isOkToGoDeeper()) {
+			if (firstOperation.isOkToGoDeeper()) {
 				appendNextLayerNodes(srcNode, outputNode);
 			}			
 		}
@@ -182,8 +174,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			NodeContainer<TreeNode> destination = sourceEntry.getKey();
 
 			for (TreeNode source : sources) {
-				TreeNode outputNode = operation.performOperation(source, destination);
-				if (operation.isOkToGoDeeper()) {
+				TreeNode outputNode = nextsOperation.performOperation(source, destination);	
+				if (nextsOperation.isOkToGoDeeper()) {
 					appendNextLayerNodes(source, outputNode);
 				}
 			}
@@ -191,16 +183,12 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		
 	}
 
-	private void checkPermissions(List<Long> list, CONTAINER container) {
-		for (Long id : list) {
-			NODE node = nodeDao.findById(id);
-			PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(container, CREATE),
-					new SecurityCheckableObject(node, READ));
-		}
+	private PasteOperation createNextLayerOperation() {
+		return nextLayersOperationFactory.getObject();
 	}
-
-	private PasteOperation createOperation() {
-		return pasteOperationFactory.getObject();
+	
+	private PasteOperation createFirstLayerOperation() {
+		return firstLayerOperationFactory.getObject();
 	}
 
 	

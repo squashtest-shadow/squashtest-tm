@@ -404,10 +404,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	}
 
-	// initialCustomFieldValues maps the id of a CustomField to the value of the
-	// corresponding CustomFieldValues for that BoundEntity.
-	// read it again until it makes sense.
-	// it assumes that the CustomFieldValues instances already exists.
+	/** initialCustomFieldValues maps the id of a CustomField to the value of the
+	* corresponding CustomFieldValues for that BoundEntity.
+	* read it again until it makes sense.
+	* it assumes that the CustomFieldValues instances already exists.
+	 * 
+	 * @param entity
+	 * @param initialCustomFieldValues
+	 */
 	protected void initCustomFieldValues(BoundEntity entity, Map<Long, String> initialCustomFieldValues) {
 
 		List<CustomFieldValue> persistentValues = customFieldValuesService.findAllCustomFieldValues(entity);

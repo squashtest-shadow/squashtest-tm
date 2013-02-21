@@ -240,4 +240,15 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		}
 	}
 
+	@Override
+	public List<Issue> findAllForIteration(Long id) {
+		return executeListNamedQuery("Issue.findAllForIteration", new SetIdParameter("id", id));
+		
+	}
+
+	@Override
+	public List<Issue> findAllForTestSuite(Long id) {
+		return executeListNamedQuery("Issue.findAllForTestSuite", new SetIdParameter("id", id));
+	}
+
 }

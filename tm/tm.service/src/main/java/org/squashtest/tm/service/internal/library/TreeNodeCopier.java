@@ -41,6 +41,8 @@ import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.library.TreeNode;
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -63,10 +65,13 @@ import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
+import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 @Component
 @Scope("prototype")
-public class TreeNodeCopier implements NodeVisitor, PasteOperation {
+public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	@Inject
 	private RequirementDao requirementDao;
 	@Inject
@@ -89,23 +94,43 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	private IterationTestPlanManager iterationTestPlanManager;
 	@Inject
 	private PrivateCustomFieldValueService customFieldValueManagerService;
+	@Inject
+	private TreeNodeUpdater treeNodeUpdater;
+	@Inject
+	private PermissionEvaluationService permissionService;
 
 	private NodeContainer<? extends TreeNode> destination;
 	private TreeNode copy;
 	private boolean okToGoDeeper = true;
+	private boolean projectChanged = true;
 
 	public TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination) {
+		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(destination, "CREATE"),
+				new SecurityCheckableObject(source, "READ"));
 		this.okToGoDeeper = true;
 		this.destination = destination;
+		this.projectChanged = projectchanged(source);
 		copy = null;
 		source.accept(this);
+		if(projectChanged){
+			copy.accept(treeNodeUpdater);
+		}
 		return copy;
+		
+		
+	}
+
+	private boolean projectchanged(TreeNode source) {
+		Project projectSource = source.getProject();
+		GenericProject projectDestination = destination.getProject();
+		return (projectSource !=null && projectDestination != null && !projectSource.getId().equals(projectDestination.getId()));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void visit(Folder source, FolderDao dao) {
 		Folder<?> copyFolder = (Folder<?>) source.createCopy();
 		persistCopy(copyFolder, dao);
+		
 	}
 
 	@Override
@@ -113,6 +138,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		Campaign copyCampaign = source.createCopy();
 		persistCopy(copyCampaign, campaignDao);
 		copyCustomFields(source, copyCampaign);
+		
 	}
 
 	/**
@@ -135,6 +161,11 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		copyCustomFields(source, copyIteration);
 		copyIterationTestSuites(source, copyIteration);
 		this.okToGoDeeper = false;
+		if(projectChanged){
+			for(TestSuite suite : source.getTestSuites()){
+				suite.accept(treeNodeUpdater);
+			}
+		}
 
 	}
 
@@ -144,6 +175,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		persistCopy(copyTestSuite, testSuiteDao);
 		copyCustomFields(source, copyTestSuite);
 		copyTestSuiteTestPlanToDestinationIteration(source, copyTestSuite);
+		
 	}
 
 	private void copyTestSuiteTestPlanToDestinationIteration(TestSuite source, TestSuite copy) {
@@ -169,6 +201,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 			RequirementVersion copyVersion = previousVersionCopyBySource.getValue();
 			copyCustomFields(sourceVersion, copyVersion);
 		}
+		
 	}
 
 	@Override
@@ -176,22 +209,25 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		TestCase copyTestCase = source.createCopy();
 		persistTestCase(copyTestCase);
 		copyCustomFields(source, copyTestCase);
+		
 	}
 
 	@Override
 	public void visit(CampaignFolder campaignFolder) {
 		visit(campaignFolder, campaignFolderDao);
+		
 	}
 
 	@Override
 	public void visit(RequirementFolder requirementFolder) {
 		visit(requirementFolder, requirementFolderDao);
+		
 	}
 
 	@Override
 	public void visit(TestCaseFolder testCaseFolder) {
 		visit(testCaseFolder, testCaseFolderDao);
-
+		
 	}
 
 	/**************************************************** PRIVATE **********************************************************/

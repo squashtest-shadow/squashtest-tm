@@ -46,6 +46,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.audit.AuditableMixin;
@@ -67,6 +69,7 @@ import org.squashtest.tm.exception.UnknownEntityException;
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity {
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.testcase.TestCase";
 	private static final String SIMPLE_CLASS_NAME = "TestCase";
 
@@ -306,7 +309,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		copy.addCopiesOfAttachments(this);
 		copy.verifiesRequirementsVerifiedBy(this);
 		copy.notifyAssociatedWithProject(this.getProject());
-
+		if(this.automatedTest != null){
+			try{
+			copy.setAutomatedTest(this.automatedTest);
+			}catch(UnallowedTestAssociationException e){
+				LOGGER.error("data inconsistancy : the test case #{} has a script even if it's project isn't test automation enabled", this.getId());
+			}
+		}
 		return copy;
 	}
 
