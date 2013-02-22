@@ -138,7 +138,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID  where arse.PARTY_ID = ? and ac.CLASSNAME = ?";
 	
 	//11-02-13 : this query is ready for task 1865 
-	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS = "select arse.PARTY_ID, ag.ID, ag.QUALIFIED_NAME, CONCAT(IFNULL(cu.LOGIN, ''), IFNULL(ct.NAME, '')) as sorting_key from "
+	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS = "select arse.PARTY_ID, ag.ID, ag.QUALIFIED_NAME, CONCAT(IFNULL(cu.LOGIN, ''), IFNULL(ct.NAME, '')) as sorting_key, CONCAT(IFNULL(cu.LOGIN, 'TEAM'), IFNULL(ct.NAME, 'USER')) as party_type from "
 			+ "ACL_GROUP ag inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
 			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " 
@@ -147,7 +147,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "where oid.IDENTITY = ? and ac.CLASSNAME = ? ";
 	
 	//11-02-13 : this query is ready for task 1865 
-	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS_FILTERED = "select arse.PARTY_ID, ag.ID, ag.QUALIFIED_NAME, CONCAT(IFNULL(cu.LOGIN, ''), IFNULL(ct.NAME, '')) as sorting_key from "
+	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS_FILTERED = "select arse.PARTY_ID, ag.ID, ag.QUALIFIED_NAME, CONCAT(IFNULL(cu.LOGIN, ''), IFNULL(ct.NAME, '')) as sorting_key, CONCAT(IFNULL(cu.LOGIN, 'TEAM'), IFNULL(ct.NAME, 'USER')) as party_type from "
 			+ "ACL_GROUP ag inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
 			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID " 
@@ -343,6 +343,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 	
 	@Override
 	public List<Object[]> retrieveClassAclGroupFromPartyId(@NotNull long partyId, String qualifiedClassName) {
+
 		return jdbcTemplate.query(FIND_ACL_FOR_CLASS_FROM_PARTY, new Object[] { partyId, qualifiedClassName },
 				AclGroupMapper);
 	}
@@ -473,7 +474,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			baseQuery = USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS;
 			arguments = new Object[]{entityId, entityClass.getCanonicalName()};
 		}
-		
+	
 		if (sorting.getSortedAttribute().equals("login")){
 			orderByClause=" order by sorting_key ";
 		}
@@ -506,11 +507,13 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			arguments = new Object[]{entityId, entityClass.getCanonicalName()};
 		}
 		
-		if (sorting.getSortedAttribute().equals("login")){
+		if (sorting.getSortedAttribute().equals("name")){
 			orderByClause=" order by sorting_key ";
 		}
-		else{
+		else if(sorting.getSortedAttribute().equals("qualifiedName")){
 			orderByClause=" order by ag.QUALIFIED_NAME ";
+		} else {
+			orderByClause=" order by party_type ";
 		}
 		orderByClause+= sorting.getSortOrder().getCode();
 		

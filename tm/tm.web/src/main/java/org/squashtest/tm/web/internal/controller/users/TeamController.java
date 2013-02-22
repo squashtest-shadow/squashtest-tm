@@ -322,7 +322,6 @@ public class TeamController {
 	
 	private DataTableModel _getPermissionTableModel(long teamId, PagingAndSorting paging, Filtering filtering, String secho){
 		Locale locale = LocaleContextHolder.getLocale();
-		Team team = teamFinderService.findById(teamId);
 		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
 		PagedCollectionHolder<List<ProjectPermission>> holder = permissionService.findProjectPermissionByParty(teamId,paging,filtering);
 		return new PermissionTableModelHelper(locale,messageSource,permissionList).buildDataModel(holder, secho);
