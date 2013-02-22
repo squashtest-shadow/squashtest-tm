@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "domReady", "./ProjectsManager", "./project-info-manager"], function($, domReady, ProjectsManager, infoManager) {
+define(["jquery", "domReady", "./show-projects/ProjectsManager", "./project-info/project-info-manager"], function($, domReady, ProjectsManager, infoManager) {
 	
 	
 	function initShowProjects(){
