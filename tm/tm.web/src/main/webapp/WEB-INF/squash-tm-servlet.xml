@@ -96,19 +96,6 @@
   <mvc:resources location="/scripts/" mapping="/scripts/**" />
   <mvc:resources location="/styles/" mapping="/styles/**" />
 
-	<!-- Message source for this context, loaded from localized "messages_xx" 
-		files. -->
-  <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-    <property name="basenames">
-      <list>
-				<!-- TODO have to find something better, core is coupled to its components... -->
-        <value>/WEB-INF/messages/core/messages</value>
-        <value>/WEB-INF/messages/tm/messages</value>
-        <value>org/springframework/security/messages</value>
-      </list>
-    </property>
-  </bean>
-
   <mvc:interceptors>
     <bean class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
       <property name="sessionFactory" ref="squashtest.tm.persistence.hibernate.SessionFactory" />
