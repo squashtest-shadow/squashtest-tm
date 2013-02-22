@@ -71,19 +71,21 @@ define(
 									url : teamMod.permission.url.popup,
 									dataType : 'json'
 								}).success(function(json) {
-									var permission = aData.permission-simplename;
+									var permission = aData["permission-simplename"];
 									var cell = $(nRow.children[2]);
-									cell.html("<select></select>");
+									cell.html("<select class='permission-list' id='permission-list-"+aData["project-id"]+"'></select>");
 									var selected = "";
 									for(var i=0; i<json.permissionList.length;i++){
-										var text = "user.project-rights."+json.permissionList[i].simpleName+".label";
+										var text = json.permissionList[i].displayName;
 										var value = json.permissionList[i].id;
+										var option = new Option(text, value);
+										option.id = json.permissionList[i].qualifiedName;
+										$("select",cell).append(option);
 										if(json.permissionList[i].simpleName === permission){
-											$('select').val(json.permissionList[i].id);
-										}
-											$("select",cell).append(new Option(text, value));
+											$("select",cell).val(json.permissionList[i].id);
 										}
 									}
+									
 								});
 							}
 						},
@@ -91,6 +93,7 @@ define(
 							$("#permission-table").squashTable({
 								"fnRowCallback" : this.decorateRow(this)
 							}, {}); 
+							$("#permission-table").squashTable().refresh();
 						},
 						configurePopups : function() {
 							this.configureAddPermissionDialog();

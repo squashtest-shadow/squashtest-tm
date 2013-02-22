@@ -72,30 +72,28 @@ define(
 									url : UMod.permission.url.popup,
 									dataType : 'json'
 								}).success(function(json) {
-									//for each line
-									for(var i=1; i<$("tr", "#permission-table").length;i++){
-										var cell = $($("td", $("tr", "#permission-table")[i])[2]);
-										var currentValue = cell.html();
-										cell.html("<select></select>");
-										var selected = "";
-										for(var i=0; i<json.permissionList.length;i++){
-											var text = "user.project-rights."+json.permissionList[i].simpleName+".label";
-											var value = json.permissionList[i].id;
-											if(json.permissionList[i].simpleName === currentValue){
-												//add select value
-											}
-											$("select",cell).append(new Option(text, value));
+									var permission = aData["permission-simplename"];
+									var cell = $(nRow.children[2]);
+									cell.html("<select class='permission-list' id='permission-list-"+aData["project-id"]+"'></select>");
+									for(var i=0; i<json.permissionList.length;i++){
+										var text = json.permissionList[i].displayName;
+										var value = json.permissionList[i].id;
+										var option = new Option(text, value);
+										option.id = json.permissionList[i].qualifiedName;
+										$("select",cell).append(option);
+										if(json.permissionList[i].simpleName === permission){
+											$("select",cell).val(json.permissionList[i].id);
 										}
 									}
-										
-				
-									});
+									
+								});
 							}
 						},
 						configureTable : function() {
 							$("#permission-table").squashTable({
 								"fnRowCallback" : this.decorateRow(this)
 							}, {}); // pure DOM conf
+							$("#permission-table").squashTable().refresh();
 						},
 						configurePopups : function() {
 							this.configureAddPermissionDialog();
