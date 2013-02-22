@@ -569,27 +569,18 @@ squashtm.tree = squashtm.tree || {};
 			container.bindFirst('click', 'a', function(event, data) {
 				if (event.detail && event.detail > 1) {
 					event.stopImmediatePropagation(); // cancel
-					// the
-					// multiple
-					// click
-					// event
-					// for
-					// ff
-					// and
-					// chrome
+					// the multiple click event for ff and chrome
 				} else {
 					handleNodeClick(tree, event);
 				}
 				return false; // return false to prevent
-				// navigation in page (# appears
-				// at the end of the URL)
+				// navigation in page (# appears at the end of the URL)
 			});
 
 			container.bindFirst('dblclick', 'a', function(event, data) {
 				handleNodeDblClick(tree, event);
 				return false; // return false to prevent
-				// navigation in page (# appears
-				// at the end of the URL)
+				// navigation in page (# appears at the end of the URL)
 			});
 
 			/*
@@ -654,12 +645,10 @@ squashtm.tree = squashtm.tree || {};
 			selectionIsDeletableAttr : function(selectedNodes) {
 
 				// that variable will be set to true if at least
-				// one selected
-				// node is not editable.
+				// one selected node is not editable.
 				var noDelete = (selectedNodes.not(":deletable").length > 0);
 				// selection is not editable if no node is
-				// selected or one node
-				// of the selection is not editable
+				// selected or one node of the selection is not editable
 				if (noDelete)
 					return "noDelete";
 				else if (selectedNodes.length === 0)
@@ -669,8 +658,7 @@ squashtm.tree = squashtm.tree || {};
 			},
 
 			selectionIsOneEditableNode : function(selectedNodes) {
-				// true if only one node is selected and is
-				// editable
+				// true if only one node is selected and is editable
 				if (!selectedNodes.not(":editable").length > 0 && selectedNodes.length === 1)
 					return "OK";
 				else
@@ -687,8 +675,7 @@ squashtm.tree = squashtm.tree || {};
 			},
 
 			selectionIsDeletable : function(selectedNodes) {
-				// all nodes are deletables excepted project
-				// libraries
+				// all nodes are deletables excepted project libraries
 				var isDelete = this.selectionIsDeletableAttr(selectedNodes);
 				if (isDelete != "OK")
 					return isDelete;
@@ -701,8 +688,7 @@ squashtm.tree = squashtm.tree || {};
 			selectionIsCopyable : function(selectedNodes) {
 				// all nodes except libraries are copyable
 				// if iterations are selected with other nodes
-				// type the
-				// selection is not copyable
+				// type the selection is not copyable
 				var isCreate = this.selectionIsCreatable(selectedNodes);
 				if (isCreate != "OK")
 					return isCreate;
@@ -720,8 +706,7 @@ squashtm.tree = squashtm.tree || {};
 				if (isOneCreate != "OK")
 					return isOneCreate;
 				// only libraries and folders are allowed for
-				// creation of folder
-				// and files
+				// creation of folder and files
 				else if (selectedNodes.attr('rel') == "drive" || selectedNodes.attr('rel') == "folder") {
 					return "OK";
 				} else
@@ -1149,22 +1134,22 @@ squashtm.tree = squashtm.tree || {};
 
 		this.buttons = {};
 
-		var enableHandler = function($el) {
+		var enableHandler = function() {
 			return function() {
-				$el.removeClass('menu-disabled');
+				$(this).removeClass('menu-disabled');
 			};
 		};
 
-		var disableHandler = function($el) {
+		var disableHandler = function() {
 			return function() {
-				$el.addClass('menu-disabled');
+				$(this).addClass('menu-disabled');
 			};
 		};
 
-		var clickHandler = function($el) {
+		var clickHandler = function() {
 			return function(event) {
 				event.preventDefault();
-				if ($el.is('.menu-disabled')) {
+				if ($(this).is('.menu-disabled')) {
 					event.stopImmediatePropagation();
 				}
 			};
@@ -1176,10 +1161,9 @@ squashtm.tree = squashtm.tree || {};
 			// in the cloned content.
 			var selector = ".fg-menu-container " + options.params[getter];
 			var button = $(selector);
-			var $this = $(this);
-			button.enable = enableHandler($this);
-			button.disable = disableHandler($this);
-			button.click(clickHandler($this));
+			button.enable = enableHandler();
+			button.disable = disableHandler();
+			button.click(clickHandler());
 
 			this.buttons[getter] = button;
 		}
