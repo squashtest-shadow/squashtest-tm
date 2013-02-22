@@ -248,6 +248,7 @@
   </osgi:list>
 
   <osgi:list id="squash.tm.wizard.WorkspaceWizards"  interface="org.squashtest.tm.api.wizard.WorkspaceWizard">
+    <osgi:listener ref="squash.tm.report.WorkspaceWizardManager" bind-method="registerWizard" unbind-method="unregisterWizard" />
   </osgi:list>
 
   <osgix:cm-properties id="squashtest.core.auth.config" persistent-id="org.squashtest.csp.core.auth.config" />  

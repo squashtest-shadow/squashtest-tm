@@ -53,10 +53,9 @@
     <property name="maxUploadSize" value="${uploadfilter.upload.sizeLimitInBytes}" />
     <property name="defaultEncoding" value="UTF-8" />
   </bean>
-	
-	<bean id="workspaceWizardManagerImpl" class="org.squashtest.tm.web.internal.wizard.WorkspaceWizardManagerImpl">
-  <property name="workspaceWizards" ref="squash.tm.wizard.WorkspaceWizards"></property>
-  </bean>
+
+    <!-- This bean is referenced by an osgi:list, so it has to be instanciated in appContext*xml (not visible when in *servlet.xml) -->	
+	<bean id="squash.tm.report.WorkspaceWizardManager" class="org.squashtest.tm.web.internal.wizard.WorkspaceWizardManagerImpl" />
 	<!--  TODO
 		once everyting it takes is implemented, replace the class of this resolver by the following :
 		class="org.squashtest.tm.web.internal.fileupload.ProgressAwareMultipartResolver">

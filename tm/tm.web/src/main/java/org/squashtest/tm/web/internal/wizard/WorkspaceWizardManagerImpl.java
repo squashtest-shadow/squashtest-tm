@@ -22,12 +22,12 @@
 package org.squashtest.tm.web.internal.wizard;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.springframework.stereotype.Service;
+import org.apache.commons.collections.map.MultiValueMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 
@@ -35,29 +35,61 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
  * @author Gregory Fouquet
  * 
  */
-public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
-	private List<WorkspaceWizard> workspaceWizards;
+public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, WorkspaceWizardRegistry {
+	private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceWizardManagerImpl.class);
+	private final MultiValueMap wizardsByWorkspace = new MultiValueMap();
+	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
 	/**
 	 * @see org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager#findAllByWorkspace(WorkspaceType)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<WorkspaceWizard> findAllByWorkspace(WorkspaceType workspace) {
-		return workspaceWizards;
+		try {
+			lock.readLock().lock();
+			return wizardsByWorkspace.getCollection(workspace);
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	/**
-	 * @return the workspaceWizards
+	 * @see org.squashtest.tm.web.internal.wizard.WorkspaceWizardRegistry#registerWizard(org.squashtest.tm.api.wizard.WorkspaceWizard,
+	 *      java.util.Map)
 	 */
-	public List<WorkspaceWizard> getWorkspaceWizards() {
-		return workspaceWizards;
+	@Override
+	public void registerWizard(WorkspaceWizard wizard, Map<?, ?> properties) {
+		if (wizard != null) {
+			LOGGER.info("Registering workspace wizard {} for workspace {}", wizard, wizard.getDisplayWorkspace());
+			LOGGER.trace("Registration properties : {}", properties);
+			try {
+				lock.writeLock().lock();
+				wizardsByWorkspace.put(wizard.getDisplayWorkspace(), wizard);
+			} finally {
+				lock.writeLock().unlock();
+			}
+
+		}
 	}
 
 	/**
-	 * @param workspaceWizards the workspaceWizards to set
+	 * @see org.squashtest.tm.web.internal.wizard.WorkspaceWizardRegistry#unregisterWizard(org.squashtest.tm.api.wizard.WorkspaceWizard,
+	 *      java.util.Map)
 	 */
-	public void setWorkspaceWizards(List<WorkspaceWizard> workspaceWizards) {
-		this.workspaceWizards = workspaceWizards;
+	@Override
+	public void unregisterWizard(WorkspaceWizard wizard, Map<?, ?> properties) {
+		if (wizard != null) {
+			LOGGER.info("Unregistering workspace wizard {} for workspace {}", wizard, wizard.getDisplayWorkspace());
+			LOGGER.trace("Unregistration properties : {}", properties);
+			try {
+				lock.writeLock().lock();
+				wizardsByWorkspace.remove(wizard.getDisplayWorkspace(), wizard);
+			} finally {
+				lock.writeLock().unlock();
+			}
+		}
+
 	}
 
 }
