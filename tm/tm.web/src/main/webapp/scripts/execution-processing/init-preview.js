@@ -99,7 +99,7 @@ define(["jquery", "module", "jquery.squash.squashbutton", "jquery.squash.togglep
 		$(".load-links-right-frame a").click(clickHandlers.links);
 		
 		
-	};
+	}
 	
 	return initPreview;
 	

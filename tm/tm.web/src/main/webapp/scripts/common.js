@@ -30,7 +30,7 @@ requirejs.config({
     "project",
     "contextual-content-handlers",
     "test-cases-management",
-    "users-manager",
+    "users-manager"
 	],
 
 	/*
