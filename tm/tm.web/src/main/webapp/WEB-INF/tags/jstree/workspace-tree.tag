@@ -49,56 +49,6 @@
 </tree:_html-tree>
 
 <script type="text/javascript">
-
-
-	function liNode(node) {
-		if ($(node).is("a")) {
-			return $(node).parent();
-		}	
-		return $(node);
-	}
-	
-	function isFolder(node){
-		return node.is(":folder") ? 1 : 0;			
-	}
-	
-	function isIteration(node){
-		return node.is(":iteration") ? 1 : 0;			
-	}
-	
-	function isRoot(node){
-		return node.is(":library") ? 1 : 0;			
-	}
-	
-	function getId(node) {
-		var id = node.attr("resid");
-		return id;
-	}
-	
-	
-	function getIds(tabNode, method) {
-		var tabId = [];
-		if (method == 1){
-			tabNode.rslt.obj.each(function (i) {
-				tabId[i] = $(this).attr("resid");
-			});
-		}
-		if (method == 2){
-			tabNode.rslt.o.each(function (i) {
-				tabId[i] = $(this).attr("resid");
-			});
-		}
-		if (method == 3){
-			tabNode.each(function (i) {
-				tabId[i] = $(this).attr("resid");
-			});
-		} 
-		return tabId;
-	}
-	
-	
-
-
 	$(function () {
 		var tree_icons = {
 			drive_icon : "${ pageContext.servletContext.contextPath }/images/root.png",
@@ -108,8 +58,7 @@
 			view_icon : "${ pageContext.servletContext.contextPath }/images/Icon_Tree_TestSuite.png"				
 		};
 
-		$("#${ id }")	
-		.jstree({ 
+		$("#${ id }").jstree({ 
 				<%-- cookie plugin should be defined after ui otherwise tree select state wont be restored --%>	
 				"plugins" : ["json_data", "ui", "types", "sort", "crrm", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ], 			
 				

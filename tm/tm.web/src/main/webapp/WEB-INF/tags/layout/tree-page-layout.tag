@@ -57,17 +57,17 @@
 <%-- from sub-page-layout --%>
 
 <%@ attribute name="subPageTitle" fragment="true" description="the sub page has its own title. Define it there."%>
-<%@ attribute name="subPageButtons" fragment="true" description="Unlike a regular workspace, a sub page exists to perform 
-																	a one shot operation. Those operations are proposed in a dedicated action panel.
-																	That action panel already propose a 'go back' button."	 %>
-
-
+<%@ attribute name="subPageButtons" fragment="true" 
+	description="Unlike a regular workspace, a sub page exists to perform 
+		a one shot operation. Those operations are proposed in a dedicated action panel.
+		That action panel already propose a 'go back' button."	 %>
 
 <%-- tree-page-layout speecifics --%>
 
-<%@ attribute name="isSubPaged" required="false"  description="boolean. if set to true, the layout will be applied in a sub-paged form. Basically
-it will insert sub-page-layout.tag between the top template and this one." %>
-<%@ attribute name="isRequirementPaneSearchOn" required="false" description="boolean. If set to true, activate the test plan manager pane which allows to search test cases by requirement" %>
+<%@ attribute name="isSubPaged" required="false"  
+	description="boolean. if set to true, the layout will be applied in a sub-paged form. Basically it will insert sub-page-layout.tag between the top template and this one." %>
+<%@ attribute name="isRequirementPaneSearchOn" required="false" 
+	description="boolean. If set to true, activate the test plan manager pane which allows to search test cases by requirement" %>
 
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -81,41 +81,39 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 <c:url var="path" value="${ pageContext.servletContext.contextPath }"/>
 
 
-<c:set var="tabbedPaneSCript" >
+<c:set var="tabbedPaneScript" >
 	<script type="text/javascript">
+		
+		<%--  
+			In test plan management, there's the classic search interface and the possibility to find test plan by requirement.
+			In this case, there's two div used to display the results. 
+			Here we define which tab is currently used with selectedTab.
+			selectedTab is used in show-iteration-test-plan-manager, search-panel*...
+		--%>
+		//The selected pane number. Always the first one (0) by default
+		selectedTab = 0;
+
+		$(function(){
+			$( "#tabbed-pane" ).tabs();
 			
-			<%--  
-				In test plan management, there's the classic search interface and the possibility to find test plan by requirement.
-				In this case, there's two div used to display the results. 
-				Here we define which tab is currently used with selectedTab.
-				selectedTab is used in show-iteration-test-plan-manager, search-panel*...
-			--%>
-			//The selected pane number. Always the first one (0) by default
-			selectedTab = 0;
-
-			$(function(){
-				$( "#tabbed-pane" ).tabs();
-				
-				require( ["common"], function(){
-					require(["squash/squashtm.tree-page-resizer"], function(resizer){
-						
-						var conf = {
-							leftSelector : "#tree-panel-left",
-							rightSelector : "#contextual-content"
-						}
-						
-						resizer.init(conf);
-					});					
-				});
-				
-				$( "#tabbed-pane" ).bind( "tabsselect", function(event, ui) {
-					  //change the number of the selected pane 
-					 selectedTab =  ui.index;
-				});			
+			require( ["common"], function(){
+				require(["squash/squashtm.tree-page-resizer"], function(resizer){
+					
+					var conf = {
+						leftSelector : "#tree-panel-left",
+						rightSelector : "#contextual-content"
+					}
+					
+					resizer.init(conf);
+				});					
 			});
-
-		</script>	
-
+			
+			$( "#tabbed-pane" ).bind( "tabsselect", function(event, ui) {
+				  //change the number of the selected pane 
+				 selectedTab =  ui.index;
+			});			
+		});
+	</script>	
 </c:set>
 
 
@@ -125,9 +123,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 	<jsp:attribute name="head" >	
 	 	<jsp:invoke fragment="head"/>
 		<%-- tabed tree panel specific code --%>
-		${tabbedPaneSCript}
-	
-		
+		${tabbedPaneScript}
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">	
@@ -153,56 +149,52 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 		
 	<jsp:attribute name="content">
 	<%-- now the actual specifics for the tree-page-layout itself --%>
-	
-			<div id="tree-panel-left">
-				<div class="position-layout-fix">
-					<div id="tabbed-pane">
-					
-						<ul>
-							<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
-							<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>
-							<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-								<li class="tab"> <a href="#requirement-search-pane"><f:message key="tabbed_panel.requirement.pane.label"/></a></li>
-							</c:if>						
-						</ul>
-						
-						
-						<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
-							<jsp:invoke fragment="tree" />
-						</div>
-						
-						<div id="search-pane">
-							<c:choose>
-							<c:when test="${not empty linkable}">
-							<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
-							</c:when>
-							<c:otherwise>
-							<layout:search-panel workspace="${ highlightedWorkspace }"/>
-							</c:otherwise>
-							</c:choose>
-						</div>
+		<div id="tree-panel-left">
+			<div class="position-layout-fix">
+				<div id="tabbed-pane">
+					<ul>
+						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
+						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>
 						<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-							<div id="requirement-search-pane">
-								<layout:search-panel-by-requirement />
-							</div>
-						</c:if>
-						
-	
+							<li class="tab"> <a href="#requirement-search-pane"><f:message key="tabbed_panel.requirement.pane.label"/></a></li>
+						</c:if>						
+					</ul>
+					
+					<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
+						<jsp:invoke fragment="tree" />
 					</div>
+					
+					<div id="search-pane">
+						<c:choose>
+						<c:when test="${not empty linkable}">
+						<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
+						</c:when>
+						<c:otherwise>
+						<layout:search-panel workspace="${ highlightedWorkspace }"/>
+						</c:otherwise>
+						</c:choose>
+					</div>
+					
+					<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
+					<div id="requirement-search-pane">
+						<layout:search-panel-by-requirement />
+					</div>
+					</c:if>
+					
+
 				</div>
 			</div>
-			
-			
+		</div>
 		
-			<script type="text/javascript">
-				$(function(){
-					squashtm.contextualContent = $('#contextual-content').contextualContent();
-				});		
-			</script>
+		<script type="text/javascript">
+			$(function(){
+				squashtm.contextualContent = $('#contextual-content').contextualContent();
+			});		
+		</script>
 			
-			<div id="contextual-content">
-				<jsp:invoke fragment="contextualContent" />
-			</div>
+		<div id="contextual-content">
+			<jsp:invoke fragment="contextualContent" />
+		</div>
 	</jsp:attribute>
 </layout:sub-page-layout>
 </c:when>
@@ -212,7 +204,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 	<jsp:attribute name="head" >	
 		<jsp:invoke fragment="head"/>
 
-		${tabbedPaneSCript}
+		${tabbedPaneScript}
 		
 	</jsp:attribute>
 	
@@ -231,52 +223,51 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 
 	<jsp:attribute name="content">
 	<%-- now the actual specifics for the tree-page-layout itself --%>
-	
-			<div id="tree-panel-left">
-				<div class="position-layout-fix">
-					<div id="tabbed-pane">
-					
-						<ul>
-							<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
-							<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>
-							<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-								<li class="tab"> <a href="#requirement-search-pane"><f:message key="tabbed_panel.requirement.pane.label"/></a></li>
-							</c:if>
-						</ul>
-	
-						<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
-							<jsp:invoke fragment="tree" />
-						</div>
-						
-						<div id="search-pane">
-							<c:choose>
-							<c:when test="${not empty linkable}">
-							<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
-							</c:when>
-							<c:otherwise>
-							<layout:search-panel workspace="${ highlightedWorkspace }"/>
-							</c:otherwise>
-							</c:choose>
-						</div>
+		<div id="tree-panel-left">
+			<div class="position-layout-fix">
+				<div id="tabbed-pane">
+					<ul>
+						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
+						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>
 						<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-							<div id="requirement-search-pane">
-								<layout:search-panel-by-requirement />
-							</div>
+							<li class="tab"> <a href="#requirement-search-pane"><f:message key="tabbed_panel.requirement.pane.label"/></a></li>
 						</c:if>
-									
+					</ul>
+
+					<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
+						<jsp:invoke fragment="tree" />
 					</div>
+					
+					<div id="search-pane">
+						<c:choose>
+						<c:when test="${not empty linkable}">
+						<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
+						</c:when>
+						<c:otherwise>
+						<layout:search-panel workspace="${ highlightedWorkspace }"/>
+						</c:otherwise>
+						</c:choose>
+					</div>
+					
+					<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
+					<div id="requirement-search-pane">
+						<layout:search-panel-by-requirement />
+					</div>
+					</c:if>
+								
 				</div>
 			</div>
-			
-			
-			<script type="text/javascript">
-					$(function(){
-						squashtm.contextualContent = $('#contextual-content').contextualContent();
-					});		
-			</script>
-			<div id="contextual-content">
-				<jsp:invoke fragment="contextualContent" />
-			</div>
+		</div>
+		
+		<script type="text/javascript">
+			$(function(){
+				squashtm.contextualContent = $('#contextual-content').contextualContent();
+			});		
+		</script>
+		
+		<div id="contextual-content">
+			<jsp:invoke fragment="contextualContent" />
+		</div>
 	</jsp:attribute>
 </layout:common-import-outer-frame-layout>
 </c:otherwise>

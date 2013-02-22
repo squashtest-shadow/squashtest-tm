@@ -991,6 +991,9 @@ function copyNode(data, url){
  * @param data : the move_node object @param url : the url to post to.
  */
 function moveNode(data, url){
+	var isRoot = function(node) {
+		return node.is(":library") ? 1 : 0;
+	}
 
 	var tree=data.inst;
 	var nodeData = data.args[0];

@@ -35,20 +35,6 @@
 
 <script type="text/javascript">
 	
-	function liNode(node) {
-		if ($(node).is("a")) {
-			return $(node).parent();
-		}	
-		return $(node);
-	}
-	
-
-	function getId(node) {
-		var id = node.attr("resid");
-		return id;
-	}
-
-
 	$(function () {
 		var tree_icons = {
 			drive_icon : "${ pageContext.servletContext.contextPath }/images/root.png",
