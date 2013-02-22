@@ -1282,7 +1282,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 				'filter' : 		function(conf, assignation) { var cnf = conf.table; cnf.bFilter=assignation.value; cnf.sDom = 'ft<"dataTables_footer"lirp>';},
 				'langage' : 	function(conf, assignation) { conf.table.oLanguage = conf.table.oLanguage || {}; conf.table.oLanguage.sUrl = assignation.value;},
 				'hover' : 		function(conf, assignation) { conf.squash.enableHover = assignation.value;},
-				'datakeys-id' : function(conf, assignation) { conf.squash.dataKeys = conf.squash.dataKeys || {}; conf.squash.dataKeys.entityId = assignation.value;}
+				'datakeys-id' : function(conf, assignation) { conf.squash.dataKeys = conf.squash.dataKeys || {}; conf.squash.dataKeys.entityId = assignation.value;},
+				'pagesize' : 	function(conf, assignation) { conf.table.iDisplayLength = assignation.value;}
 			},
 			columns : {
 				'invisible' : 	function(conf, assignation) { conf.current.bVisible = false;},

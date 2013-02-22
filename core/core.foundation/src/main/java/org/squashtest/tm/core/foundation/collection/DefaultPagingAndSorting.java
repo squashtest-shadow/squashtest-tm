@@ -23,6 +23,7 @@ package org.squashtest.tm.core.foundation.collection;
 public class DefaultPagingAndSorting implements PagingAndSorting{
 
 	private String sortedAttribute;
+	private Integer pageSize = 10;
 	
 	public DefaultPagingAndSorting(){
 		super();
@@ -33,8 +34,20 @@ public class DefaultPagingAndSorting implements PagingAndSorting{
 		super();
 		this.sortedAttribute = sortedAttribute;
 	}
-
 	
+	
+
+	public DefaultPagingAndSorting(Integer pageSize) {
+		super();
+		this.pageSize = pageSize;
+	}
+
+
+	public DefaultPagingAndSorting(String sortedAttribute, Integer pageSize) {
+		super();
+		this.sortedAttribute = sortedAttribute;
+		this.pageSize = pageSize;
+	}
 
 	public void setSortedAttribute(String sortedAttribute) {
 		this.sortedAttribute = sortedAttribute;
@@ -48,7 +61,7 @@ public class DefaultPagingAndSorting implements PagingAndSorting{
 
 	@Override
 	public int getPageSize() {
-		return 10;
+		return pageSize;
 	}
 
 	@Override

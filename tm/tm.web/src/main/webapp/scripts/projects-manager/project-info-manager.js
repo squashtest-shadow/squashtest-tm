@@ -97,7 +97,7 @@ define(["jquery", "jquery.squash.datatables"], function($){
 			"bFilter": true,
 			"bPaginate": true,
 			"sPaginationType": "squash",
-			"iDisplayLength": 10,
+			"iDisplayLength": 25,
 			"fnDrawCallback" : drawCallback,
 			"iDeferLoading" : userPermissions.length,
 			"bProcessing": true,

@@ -253,7 +253,7 @@
 								<th class="party-id"></th>
 								<th class="party-name datatable-filterable"><f:message key="party.header.title" /></th>
 								<th class="user-permission"><f:message key="project.permission.table.profile.label" /></th>
-								<th class="party-type datatable-filterable"><f:message key="party.type" /></th>
+								<th class="party-type"><f:message key="party.type" /></th>
 								<th class="empty-delete-holder"> </th>
 							</tr>
 						</thead>

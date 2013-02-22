@@ -35,7 +35,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -86,7 +88,7 @@ public class ProjectAdministrationController {
 		
 		
 		//user permissions data
-		List<PartyProjectPermissionsBean> partyProjectPermissionsBean = projectFinder.findPartyPermissionsBeansByProject(projectId);		
+		List<PartyProjectPermissionsBean> partyProjectPermissionsBean = projectFinder.findPartyPermissionsBeanByProject(new DefaultPagingAndSorting("login", 25), DefaultFiltering.NO_FILTERING, projectId).getPagedItems();		
 		List<Map<?,?>> partyPermissions = new PartyPermissionDatatableModelHelper(locale,messageSource).buildAllData(partyProjectPermissionsBean);
 		
 		List<PermissionGroup> availablePermissions = projectFinder.findAllPossiblePermission();
