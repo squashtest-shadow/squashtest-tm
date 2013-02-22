@@ -19,41 +19,70 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * squashButton widget. Applies standard theme to buttons
+ * squashButton widget. Applies standard theme to buttons.
+ * 
+ * If the button has a data-icon attribute, it will be used as primary icon. If
+ * a primary icon is defined in options, it will override the attribute-defined
+ * icon.
+ * 
+ * If the button has a data-text="false" attribute, then no text is shown.
  * 
  * @author Gregory Fouquet
  */
-(function ($) {
+(function($) {
 	$.widget("squash.squashButton", $.ui.button, {
-		_trigger : function (type, event, data) {
-			this._super(type, event, data);			
-			this.element.removeClass("ui-state-focus ui-state-hover");			
+		_trigger : function(type, event, data) {
+			this._super(type, event, data);
+			this.element.removeClass("ui-state-focus ui-state-hover");
 			return this;
 		},
 
-		_setOption : function (key, value) {
+		_create : function() {
+			// note: icons defaults to {primary: null, secondary: null}
+			var icons = this.options.icons;
+			var $el = $(this.element);
+			var dataIcon = $el.data("icon");
+			var dataText = $el.data("text");
+
+			if (!icons.primary && dataIcon) {
+				icons.primary = dataIcon;
+			}
+
+			// note: options.text defaults to true.
+			if (dataText === false) {
+				this.options.text = false;
+			}
+			// else, dataText is either true or crap
+
+			this._super();
+		},
+
+		_setOption : function(key, value) {
 			return this._super(key, value);
 		}
-		
+
 	});
 
 	/**
-	 * Adds functions in the $.squash namespace : 
-	 * $.squash.decorateButtons() will decorate all links and buttons whit the "button" class with the squashButton widget.
+	 * Adds functions in the $.squash namespace : $.squash.decorateButtons()
+	 * will decorate all links and buttons whit the "button" class with the
+	 * squashButton widget.
 	 */
 	$.extend($.squash, {
-		decorateButtons : function () {
-			$("a.button, input:submit.button, input:button.button").squashButton();
+		decorateButtons : function() {
+			$("a.button, input:submit.button, input:button.button")
+					.squashButton();
 		}
 	});
-	
+
 	/**
-	 * Adds methods to $() 
-	 * $().decorateButtons() will decorate all links and buttons whit the "button" class with the squashButton widget.
+	 * Adds methods to $() $().decorateButtons() will decorate all links and
+	 * buttons whit the "button" class with the squashButton widget.
 	 */
 	$.fn.extend({
-		decorateButtons : function () {
-			$(this).find("a.button, input:submit.button, input:button.button").squashButton();
+		decorateButtons : function() {
+			$(this).find("a.button, input:submit.button, input:button.button")
+					.squashButton();
 		}
 	});
 }(jQuery));
