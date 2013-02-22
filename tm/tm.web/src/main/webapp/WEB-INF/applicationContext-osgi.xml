@@ -34,12 +34,16 @@
 		is to facilitate integration testing of the bundle outside of an OSGi container -->
 
 
-  <osgi:reference id="core.executor.service" bean-name="core.executor.service">
+
+  <osgi:reference id="core.executor.service" cardinality="0..1" timeout="4000">
     <osgi:interfaces>
+      <value>org.springframework.scheduling.TaskScheduler</value>
       <value>org.springframework.core.task.TaskExecutor</value>
+      <value>org.springframework.core.task.AsyncTaskExecutor</value>
+      <value>org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler</value>
     </osgi:interfaces>  
   </osgi:reference>
-	
+
 	<!-- Security services -->
 	
   <osgi:reference id="squashtest.core.security.ObjectIdentityRetrievalStrategy" bean-name="squashtest.core.security.ObjectIdentityRetrievalStrategy"
@@ -140,6 +144,8 @@
   <!-- bug tracker services -->
   <osgi:reference id="squashtest.tm.service.BugTrackersLocalService" bean-name="squashtest.tm.service.BugTrackersLocalService"
     interface="org.squashtest.tm.service.bugtracker.BugTrackersLocalService" availability="mandatory" />
+    
+    
   <osgi:reference id="squashtest.tm.service.BugTrackerManagerService" bean-name="squashtest.tm.service.BugTrackerManagerService"
     availability="mandatory">
     <osgi:interfaces>

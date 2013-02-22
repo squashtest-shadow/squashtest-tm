@@ -27,6 +27,8 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
@@ -74,6 +76,7 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 		this.bugTrackerFinder = bugTrackerFinder;
 	}
 	
+	
 	public void setTaskExecutor(TaskExecutor taskExecutor){
 		this.taskExecutor = taskExecutor;
 	}
@@ -81,7 +84,7 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 	@Override
 	public void onSuccess(String username, String password, HttpSession session) {
 		//skip if we cannot perform the operation asynchronously
-		if (taskExecutor != null){
+		if (taskExecutor == null){
 			LOGGER.info("Threadpool service not ready. Skipping autologging.");
 		}
 		//skip if the required service is not up yet
@@ -90,8 +93,9 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 		} 
 		//let's do it.
 		else{
+			LOGGER.info("Autologging against known bugtrackers...");
 			Runnable autoconnector = new AsynchronousBugTrackerAutoconnect(username, password, session);
-			taskExecutor.equals(autoconnector);
+			taskExecutor.execute(autoconnector);
 		}
 	}
 
@@ -101,7 +105,7 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 		private String username;
 		private String password;
 		private HttpSession session;
-		
+		private SecurityContext secContext;
 		
 
 		public AsynchronousBugTrackerAutoconnect(String username,
@@ -110,6 +114,7 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 			this.username = username;
 			this.password = password;
 			this.session = session;
+			this.secContext = SecurityContextHolder.getContext();
 		}
 
 
@@ -117,6 +122,8 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 		@Override
 		public void run() {
 
+			SecurityContextHolder.setContext(secContext);
+			
 			BugTrackerContext newContext = new BugTrackerContext();
 			List<BugTracker> bugTrackers = findBugTrackers();
 			

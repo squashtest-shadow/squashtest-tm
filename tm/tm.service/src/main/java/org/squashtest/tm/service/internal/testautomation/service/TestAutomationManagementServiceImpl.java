@@ -411,12 +411,22 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	}
 	
 	
+	/**
+	 * That wrapper is a TestAutomationCallbackService, that ensures that the security context is properly set for any thread that requires its services.
+	 * @author bsiri
+	 *
+	 */
 	private static class CallbackServiceSecurityWrapper implements TestAutomationCallbackService{
 
 		private SecurityContext secContext;
 		
 		private TestAutomationCallbackService wrapped;
 		
+		
+		/*
+		 * the SecurityContext here is the one from the original thread. The others methods will use that instance of SecurityContext 
+		 * for all their operations from now on (see the code, it's straightforward).
+		 */
 		CallbackServiceSecurityWrapper(TestAutomationCallbackService service){
 			secContext = SecurityContextHolder.getContext();
 			wrapped = service;
