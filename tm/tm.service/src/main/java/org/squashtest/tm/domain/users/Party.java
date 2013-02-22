@@ -34,7 +34,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "CORE_PARTY")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Party {
+public abstract class Party {
 	
 	private final static String TYPE = "PARTY";
 	
@@ -65,4 +65,8 @@ public class Party {
 	public String getType(){
 		return TYPE;
 	}
+	
+	abstract void accept(PartyVisitor visitor);
+	
+	
 }

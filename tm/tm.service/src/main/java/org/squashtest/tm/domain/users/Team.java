@@ -105,4 +105,10 @@ public class Team extends Party{
 	public String getType(){
 		return TYPE;
 	}
+	
+	@Override
+	void accept(PartyVisitor visitor) {
+		visitor.visit(this);
+	}
+	
 }

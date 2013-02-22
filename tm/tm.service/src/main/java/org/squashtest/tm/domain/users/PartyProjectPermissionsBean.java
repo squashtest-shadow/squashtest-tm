@@ -33,8 +33,6 @@ import org.squashtest.tm.service.security.acls.PermissionGroup;
  */
 public class PartyProjectPermissionsBean {
 
-	private final static String TEAM_CLASS = "org.squashtest.tm.domain.users.Team"; 
-	private final static String USER_CLASS = "org.squashtest.tm.domain.users.User"; 
 	private Party party;
 	private PermissionGroup permissionGroup;
 
@@ -52,19 +50,25 @@ public class PartyProjectPermissionsBean {
 	}
 	
 	public boolean isTeam(){
-		boolean result = false;
-		if(party.getClass().getName().equals(TEAM_CLASS)){
-			result = true;
-		}
-		return result;
+		return new PartyVisitor() {
+			
+			public boolean isTeam = false;
+			
+			@Override
+			public void visit(Team team) {
+				isTeam = true;
+			}
+			
+			@Override
+			public void visit(User user) {
+				isTeam = false;
+			}
+			
+		}.isTeam;
 	}
 	
 	public boolean isUser(){
-		boolean result = false;
-		if(party.getClass().getName().equals(USER_CLASS)){
-			result = true;
-		}
-		return result;
+		return ! isTeam();
 	}
 	
 	public PermissionGroup getPermissionGroup() {
@@ -74,4 +78,7 @@ public class PartyProjectPermissionsBean {
 	public void setPermissionGroup(PermissionGroup permissionGroup) {
 		this.permissionGroup = permissionGroup;
 	}
+	
+	
+	
 }
