@@ -30,8 +30,6 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
-import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
 
 /**
@@ -43,32 +41,24 @@ public interface ProjectsPermissionFinder {
 
 	List<PermissionGroup> findAllPossiblePermission();
 
-	List<ProjectPermission> findProjectPermissionByLogin(String userLogin);
-
-	List<Project> findProjectWithoutPermissionByLogin(String userLogin);
-
 	List<ProjectPermission> findProjectPermissionByParty(long partyId);
 	
 	PagedCollectionHolder<List<ProjectPermission>> findProjectPermissionByParty(long partyId, PagingAndSorting sorting, Filtering filtering);
 
 	List<Project> findProjectWithoutPermissionByParty(long partyId);
-	
-	List<UserProjectPermissionsBean> findUserPermissionsBeanByProject(long projectId);	
-	
-	PagedCollectionHolder<List<UserProjectPermissionsBean>> findUserPermissionsBeanByProject(PagingAndSorting sorting, Filtering filtering, long projectId);
 
 	List<PartyProjectPermissionsBean> findPartyPermissionsBeanByProject(long projectId);	
 	
 	PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionsBeanByProject(PagingAndSorting sorting, Filtering filtering, long projectId);
 	
-	List<User> findUserWithoutPermissionByProject(long projectId);
-
 	List<Party> findPartyWithoutPermissionByProject(long projectId);
 	/**
 	 * @param userId
 	 * @param projectId
 	 */
 	void removeProjectPermission(long userId, long projectId);
+	
+	public boolean isInPermissionGroup(long partyId, Long projectId, String permissionGroup);
 	
 	public boolean isInPermissionGroup(String userLogin, Long projectId, String permissionGroup);
 }

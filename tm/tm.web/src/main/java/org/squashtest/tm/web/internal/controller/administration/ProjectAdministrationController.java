@@ -27,7 +27,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,7 +41,6 @@ import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
-import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.service.security.acls.PermissionGroup;

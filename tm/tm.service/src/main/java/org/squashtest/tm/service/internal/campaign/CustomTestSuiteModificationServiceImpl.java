@@ -176,7 +176,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	public List<IterationTestPlanItem> filterTestSuiteByUser(List<IterationTestPlanItem> testPlanItems, String userLogin, Long projectId) {
 
 		List<IterationTestPlanItem> testPlanItemsToReturn = new ArrayList<IterationTestPlanItem>();
-
+		
 		if(projectsPermissionFinder.isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")){
 			
 			for(IterationTestPlanItem testPlanItem: testPlanItems){

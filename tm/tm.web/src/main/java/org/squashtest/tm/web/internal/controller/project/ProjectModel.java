@@ -21,7 +21,7 @@
 package org.squashtest.tm.web.internal.controller.project;
 
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.users.User;
+
 
 public class ProjectModel {
 

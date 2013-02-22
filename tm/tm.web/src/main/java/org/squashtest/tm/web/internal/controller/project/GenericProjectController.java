@@ -24,7 +24,6 @@ package org.squashtest.tm.web.internal.controller.project;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,8 +59,6 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
-import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.tm.exception.LoginDoNotExistException;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.UnknownEntityException;
@@ -70,7 +67,6 @@ import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.web.internal.controller.administration.PartyPermissionDatatableModelHelper;
-import org.squashtest.tm.web.internal.controller.administration.UserPermissionDatatableModelHelper;
 import org.squashtest.tm.web.internal.helper.ProjectHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -116,13 +112,6 @@ public class GenericProjectController {
 												.mapAttribute(GenericProject.class, "audit.lastModifiedOn", Date.class, "last-mod-on")
 												.mapAttribute(GenericProject.class, "audit.lastModifiedBy", String.class, "last-mod-by");
 
-	
-	private DatatableMapper permissionsMapper = new NameBasedMapper(3)
-													.mapAttribute(User.class, "index", Integer.class, "user-index")
-													.mapAttribute(User.class, "login", String.class, "user.login")
-													.mapAttribute(PermissionGroup.class, "qualifiedName", String.class, "permission-group.qualifiedName");
-	
-	
 	private DatatableMapper partyPermissionMapper = new NameBasedMapper(5)
 													.mapAttribute(Party.class, "index", Integer.class, "party-index")
 													.mapAttribute(Party.class, "id", Long.class, "party-id")
@@ -280,21 +269,7 @@ public class GenericProjectController {
 		
 		return mav;
 	}
-	
-	@RequestMapping(value = PROJECT_ID_ULR+"/users/{userLogin}/permissions/{permission}", method = RequestMethod.PUT )
-	public @ResponseBody
-	void addNewPermissionWithLogin(@PathVariable("userLogin") String userLogin, @PathVariable("projectId") long projectId, @PathVariable("permission") String permission) {
-		
-		User user = projectManager.findUserByLogin(userLogin);
-		
-		if (user == null) {
-			throw new LoginDoNotExistException();
-		}
-		
-		projectManager.addNewPermissionToProject(user.getId(), projectId, permission);
-		
-	}
-	
+
 	@RequestMapping(value = PROJECT_ID_ULR+"/parties/{partyId}/permissions/{permission}", method = RequestMethod.PUT )
 	public @ResponseBody
 	void addNewPermissionWithPartyId(@PathVariable("partyId") long partyId, @PathVariable("projectId") long projectId, @PathVariable("permission") String permission) {
@@ -311,20 +286,6 @@ public class GenericProjectController {
 
 	// ***************************** permission table *************************************
 
-	@RequestMapping(value = PROJECT_ID_ULR+"/user-permissions", method = RequestMethod.GET)
-	@ResponseBody
-	public DataTableModel getPermissionTable(DataTableDrawParameters params, @PathVariable("projectId") long projectId) {
-
-		PagingAndSorting sorting = new DataTableMapperPagingAndSortingAdapter(params, permissionsMapper, SortedAttributeSource.SINGLE_ENTITY);
-		Filtering filtering = new DataTableFiltering(params);
-		
-		PagedCollectionHolder<List<UserProjectPermissionsBean>> userPermissions = projectManager.findUserPermissionsBeanByProject(sorting, filtering, projectId);
-		
-		return new UserPermissionDatatableModelHelper().buildDataModel(userPermissions, params.getsEcho());
-		
-		
-	}
-	
 	@RequestMapping(value = PROJECT_ID_ULR+"/party-permissions", method = RequestMethod.GET)
 	@ResponseBody
 	public DataTableModel getPartyPermissionTable(DataTableDrawParameters params, @PathVariable("projectId") long projectId, final Locale locale) {
@@ -336,25 +297,11 @@ public class GenericProjectController {
 		
 		return new PartyPermissionDatatableModelHelper(locale, messageSource).buildDataModel(partyPermissions, params.getsEcho());
 	}
-	
-	
-	@RequestMapping(value = PROJECT_ID_ULR+"/users/{userId}/permissions/{permission}", method = RequestMethod.POST)
-	public @ResponseBody
-	void addNewPermission(@PathVariable("userId") long user, @PathVariable("projectId") long projectId, @PathVariable("permission") String permission) {
-		projectManager.addNewPermissionToProject(user, projectId, permission);
-	}
 
 	@RequestMapping(value = PROJECT_ID_ULR+"/parties/{partyId}/permissions/{permission}", method = RequestMethod.POST)
 	public @ResponseBody
 	void addNewPartyPermission(@PathVariable("partyId") long partyId, @PathVariable("projectId") long projectId, @PathVariable("permission") String permission) {
 		projectManager.addNewPermissionToProject(partyId, projectId, permission);
-	}
-
-	
-	@RequestMapping(value = PROJECT_ID_ULR+"/users/{userId}/permissions", method = RequestMethod.DELETE)
-	public @ResponseBody
-	void removePermission(@PathVariable("userId") long userId, @PathVariable long projectId) {
-		projectManager.removeProjectPermission(userId, projectId);
 	}
 
 	@RequestMapping(value = PROJECT_ID_ULR+"/parties/{partyId}/permissions", method = RequestMethod.DELETE)

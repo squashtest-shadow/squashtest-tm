@@ -37,7 +37,7 @@ public interface ObjectAclService {
 	 * @param namespace
 	 * @return
 	 */
-	void removeAllResponsibilities(String userLogin, ObjectIdentity entityRef);
+	//void removeAllResponsibilities(String userLogin, ObjectIdentity entityRef);
 
 	void removeAllResponsibilities(long partyId, ObjectIdentity entityRef);
 	/**
@@ -47,15 +47,15 @@ public interface ObjectAclService {
 	 */
 	void removeAllResponsibilities(ObjectIdentity entityRef);
 
-	List<Object[]> retrieveClassAclGroupFromUserLogin(String userLogin, String qualifiedClassName);
+	//List<Object[]> retrieveClassAclGroupFromUserLogin(String userLogin, String qualifiedClassName);
 
 	List<Object[]> retrieveClassAclGroupFromPartyId(long partyId, String qualifiedClassName);
 	
-	List<Long> findObjectWithoutPermissionByLogin(String userLogin, String qualifiedClass);
+	//List<Long> findObjectWithoutPermissionByLogin(String userLogin, String qualifiedClass);
 
 	List<Long> findObjectWithoutPermissionByPartyId(long partyId, String qualifiedClass);
 	
-	void addNewResponsibility(String userLogin, ObjectIdentity entityRef, String qualifiedName);
+	//void addNewResponsibility(String userLogin, ObjectIdentity entityRef, String qualifiedName);
 
 	void addNewResponsibility(long partyId, ObjectIdentity entityRef, String qualifiedName);
 	
@@ -66,7 +66,7 @@ public interface ObjectAclService {
 	 * @param objectClassName : the acl_object_identity.acl_class.className
 	 * @return a list of Object[] containing at index 0 the user id and , at index 1, the user's acl_group.qualified_name for the given acl_object.
 	 */
-	List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass);
+	//List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass);
 	
 	List<Object[]> retrievePartyAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass);
 	
@@ -76,11 +76,11 @@ public interface ObjectAclService {
 	 * @param qualifiedClassName
 	 * @return
 	 */
-	List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass, Sorting sorting, Filtering filtering);
+	//List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass, Sorting sorting, Filtering filtering);
 
 	List<Object[]> retrievePartyAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass, Sorting sorting, Filtering filtering);
 	
-	List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName);
+	//List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName);
 
 	List<Long> findPartiesWithoutPermissionByObject(long objectId, String qualifiedClassName);
 	

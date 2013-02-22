@@ -57,7 +57,6 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectPermission;
-import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
@@ -66,7 +65,6 @@ import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.web.internal.controller.project.ProjectModel;
 import org.squashtest.tm.web.internal.controller.users.PermissionGroupModel;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -256,7 +254,7 @@ public class UserAdministrationController {
 		Locale locale = LocaleContextHolder.getLocale();
 		User user = adminService.findUserById(userId);
 		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
-		List<Project> projectList = permissionService.findProjectWithoutPermissionByLogin(user.getLogin());
+		List<Project> projectList = permissionService.findProjectWithoutPermissionByParty(userId);
 
 		List<PermissionGroupModel>  permissionGroupModelList = new ArrayList<PermissionGroupModel>();
 		if(permissionList != null){

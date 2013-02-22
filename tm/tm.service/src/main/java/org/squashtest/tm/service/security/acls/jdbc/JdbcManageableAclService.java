@@ -118,19 +118,6 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid "
 			+ "inner join ACL_CLASS c on c.ID = oid.CLASS_ID " 
 			+ "where CLASSNAME = ?  and oid.IDENTITY = ? )) ";
-	
-	private static final String INSERT_ACL_RESPONSABILITY_SCOPE = "insert into ACL_RESPONSIBILITY_SCOPE_ENTRY (PARTY_ID, ACL_GROUP_ID, OBJECT_IDENTITY_ID) "
-			+ "values ((select PARTY_ID from CORE_USER where login = ?), "
-			+ "(select ID from ACL_GROUP where QUALIFIED_NAME = ?), "
-			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid "
-			+ "inner join ACL_CLASS c on c.ID = oid.CLASS_ID " 
-			+ "where CLASSNAME = ?  and oid.IDENTITY = ? )) ";
-
-	private static final String FIND_ACL_FOR_CLASS_FROM_USER = "select oid.IDENTITY, ag.ID, ag.QUALIFIED_NAME from "
-			+ "ACL_GROUP ag  inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
-			+ "inner join CORE_USER cu on arse.PARTY_ID = cu.PARTY_ID "
-			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
-			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID  where cu.LOGIN = ? and ac.CLASSNAME = ?";
 
 	private static final String FIND_ACL_FOR_CLASS_FROM_PARTY = "select oid.IDENTITY, ag.ID, ag.QUALIFIED_NAME from "
 			+ "ACL_GROUP ag  inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
@@ -160,21 +147,6 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "where PARTY_ID = ?  and OBJECT_IDENTITY_ID = "
 			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid  inner join ACL_CLASS c on c.ID = oid.CLASS_ID "
 			+ "where oid.IDENTITY = ? and c.CLASSNAME = ?)";
-	
-	private static final String DELETE_RESPONSABILITY_ENTRY = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "
-			+ "where PARTY_ID = (select PARTY_ID from CORE_USER where login = ?)  and OBJECT_IDENTITY_ID = "
-			+ "(select oid.ID from ACL_OBJECT_IDENTITY oid  inner join ACL_CLASS c on c.ID = oid.CLASS_ID "
-			+ "where oid.IDENTITY = ? and c.CLASSNAME = ?)";
-
-	private static final String FIND_OBJECT_WITHOUT_PERMISSION = "select nro.IDENTITY from ACL_OBJECT_IDENTITY nro "
-			+ "inner join ACL_CLASS nrc on nro.CLASS_ID = nrc.ID " 
-			+ "where nrc.CLASSNAME = ? "
-			+ "and not exists (select 1 "
-			+ "from ACL_OBJECT_IDENTITY ro "
-			+ "inner join ACL_CLASS rc on rc.ID = ro.CLASS_ID "
-			+ "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY r on r.OBJECT_IDENTITY_ID = ro.ID "
-			+ "inner join CORE_USER u on u.PARTY_ID = r.PARTY_ID "
-			+ "where ro.ID = nro.ID and rc.ID = nrc.ID and u.LOGIN = ?) ";
 
 	private static final String FIND_OBJECT_WITHOUT_PERMISSION_BY_PARTY = "select nro.IDENTITY from ACL_OBJECT_IDENTITY nro "
 			+ "inner join ACL_CLASS nrc on nro.CLASS_ID = nrc.ID " 
@@ -184,12 +156,6 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "inner join ACL_CLASS rc on rc.ID = ro.CLASS_ID "
 			+ "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY r on r.OBJECT_IDENTITY_ID = ro.ID "
 			+ "where ro.ID = nro.ID and rc.ID = nrc.ID and r.PARTY_ID = ?) ";
-	
-	private static final String FIND_USERS_WITHOUT_PERMISSION_BY_OBJECT = "select u.PARTY_ID from CORE_USER u "
-			+ "where not exists (select 1  from ACL_OBJECT_IDENTITY aoi "
-			+ "inner join ACL_CLASS ac on ac.ID = aoi.CLASS_ID "
-			+ "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = aoi.ID "
-			+ "where u.PARTY_ID = arse.PARTY_ID  and ac.CLASSNAME = ?  and aoi.IDENTITY = ?) ";
 
 	private static final String FIND_PARTIES_WITHOUT_PERMISSION_BY_OBJECT = "select p.PARTY_ID from CORE_PARTY p "
 			+ "where not exists (select 1  from ACL_OBJECT_IDENTITY aoi "
@@ -283,32 +249,14 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 	 * Removes all responsibilities a user might have on a entity. In other words, the given user will no longer have
 	 * any permission on the entity.
 	 * 
-	 * @param userLogin
+	 * @param partyId
 	 * @param objectIdentity
 	 */
-	@Override
-	public void removeAllResponsibilities(@NotNull String userLogin, @NotNull ObjectIdentity entityRef) {
-		jdbcTemplate.update(DELETE_RESPONSABILITY_ENTRY,
-				new Object[] { userLogin, entityRef.getIdentifier(), entityRef.getType() });
-
-		evictFromCache(entityRef);
-	}
-	
 	public void removeAllResponsibilities(@NotNull long partyId, @NotNull ObjectIdentity entityRef) {
 		jdbcTemplate.update(DELETE_PARTY_RESPONSABILITY_ENTRY,
 				new Object[] { partyId, entityRef.getIdentifier(), entityRef.getType() });
 
 		evictFromCache(entityRef);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#addNewResponsibility(java.lang.String, org.springframework.security.acls.model.ObjectIdentity, java.lang.String)
-	 */
-	@Override
-	public void addNewResponsibility(@NotNull String userLogin, @NotNull ObjectIdentity entityRef,
-			@NotNull String qualifiedName) {
-		removeAllResponsibilities(userLogin, entityRef);
-		insertResponsibility(userLogin, entityRef, qualifiedName);
 	}
 
 	@Override
@@ -317,13 +265,6 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		removeAllResponsibilities(partyId, entityRef);
 		insertResponsibility(partyId, entityRef, qualifiedName);
 	}
-	
-	private void insertResponsibility(String userLogin, ObjectIdentity entityRef, String permissionGroupName) {
-		jdbcTemplate.update(INSERT_ACL_RESPONSABILITY_SCOPE,
-				new Object[] { userLogin, permissionGroupName, entityRef.getType(), entityRef.getIdentifier() });
-
-		evictFromCache(entityRef);
-	}
 
 	private void insertResponsibility(long partyId, ObjectIdentity entityRef, String permissionGroupName) {
 		jdbcTemplate.update(INSERT_PARTY_ACL_RESPONSABILITY_SCOPE,
@@ -331,16 +272,8 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 
 		evictFromCache(entityRef);
 	}
-	/* (non-Javadoc)
-	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#retrieveClassAclGroupFromUserLogin(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public List<Object[]> retrieveClassAclGroupFromUserLogin(@NotNull String userLogin, String qualifiedClassName) {
-		return jdbcTemplate.query(FIND_ACL_FOR_CLASS_FROM_USER, new Object[] { userLogin, qualifiedClassName },
-				AclGroupMapper);
-	}
 
-	
+
 	@Override
 	public List<Object[]> retrieveClassAclGroupFromPartyId(@NotNull long partyId, String qualifiedClassName) {
 
@@ -348,21 +281,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 				AclGroupMapper);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#findObjectWithoutPermissionByLogin(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public List<Long> findObjectWithoutPermissionByLogin(String userLogin, String qualifiedClass) {
-		List<BigInteger> reslult = jdbcTemplate.queryForList(FIND_OBJECT_WITHOUT_PERMISSION, new Object[] {
-				qualifiedClass, userLogin }, BigInteger.class);
-		List<Long> finalResult = new ArrayList<Long>();
-		for (BigInteger bigInteger : reslult) {
-			finalResult.add(bigInteger.longValue());
-		}
-		return finalResult;
-	}
 
-	
 	@Override
 	public List<Long> findObjectWithoutPermissionByPartyId(long partyId, String qualifiedClass) {
 		List<BigInteger> reslult = jdbcTemplate.queryForList(FIND_OBJECT_WITHOUT_PERMISSION_BY_PARTY, new Object[] {
@@ -439,15 +358,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 
 	/* (non-Javadoc)
 	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#retriveUserAndAclGroupNameFromIdentityAndClass(long, java.lang.Class)
-	 */
-    @Override
-    public List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass) {
-            return jdbcTemplate.query(USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS, new Object[] { entityId, entityClass.getCanonicalName() },
-                            AclGroupMapper);
-
-    }
-
-    
+	 */    
     @Override
     public List<Object[]> retrievePartyAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass) {
             return jdbcTemplate.query(USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS, new Object[] { entityId, entityClass.getCanonicalName() },
@@ -458,38 +369,6 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 	/* (non-Javadoc)
 	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#findUsersWithoutPermissionByObject(long, java.lang.String)
 	 */
-	@Override
-	public List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass, Sorting sorting, Filtering filtering) {
-		
-		String baseQuery;
-		String orderByClause;
-		Object[] arguments;
-		
-		if (filtering.isDefined()){ 
-			baseQuery = USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS_FILTERED;
-			String filter = "%"+filtering.getFilter()+"%";
-			arguments = new Object[]{entityId, entityClass.getCanonicalName(), filter, filter};
-		}
-		else{
-			baseQuery = USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS;
-			arguments = new Object[]{entityId, entityClass.getCanonicalName()};
-		}
-	
-		if (sorting.getSortedAttribute().equals("login")){
-			orderByClause=" order by sorting_key ";
-		}
-		else{
-			orderByClause=" order by ag.QUALIFIED_NAME ";
-		}
-		orderByClause+= sorting.getSortOrder().getCode();
-		
-		
-		String finalQuery = baseQuery + orderByClause;
-		
-		return jdbcTemplate.query(finalQuery, arguments , AclGroupMapper);
-
-	}
-
 	@Override
 	public List<Object[]> retrievePartyAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass, Sorting sorting, Filtering filtering) {
 		
@@ -524,17 +403,6 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 
 	}
 	
-	@Override
-	public List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName) {
-		List<BigInteger> result = jdbcTemplate.queryForList(FIND_USERS_WITHOUT_PERMISSION_BY_OBJECT, new Object[] {
-				qualifiedClassName, objectId }, BigInteger.class);
-		List<Long> finalResult = new ArrayList<Long>();
-		for (BigInteger bigInteger : result) {
-			finalResult.add(bigInteger.longValue());
-		}
-		return finalResult;
-	}
-
 	@Override
 	public List<Long> findPartiesWithoutPermissionByObject(long objectId, String qualifiedClassName) {
 		List<BigInteger> result = jdbcTemplate.queryForList(FIND_PARTIES_WITHOUT_PERMISSION_BY_OBJECT, new Object[] {

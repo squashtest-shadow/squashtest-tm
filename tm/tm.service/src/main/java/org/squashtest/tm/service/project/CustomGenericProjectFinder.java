@@ -30,8 +30,7 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
-import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
+
 import org.squashtest.tm.service.security.acls.PermissionGroup;
 /**
  * Holder for non dynamically generated find methods for both Project and ProjectTemplate
@@ -50,17 +49,11 @@ public interface CustomGenericProjectFinder {
 	
 	List<TestAutomationProject> findBoundTestAutomationProjects(long projectId);
 
-	List<UserProjectPermissionsBean> findUserPermissionsBeansByProject(long projectId);
-	
-	PagedCollectionHolder<List<UserProjectPermissionsBean>> findUserPermissionsBeanByProject(PagingAndSorting sorting, Filtering filtering, long projectId);
-	
 	List<PartyProjectPermissionsBean> findPartyPermissionsBeansByProject(long projectId);
 	
 	PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionsBeanByProject(PagingAndSorting sorting, Filtering filtering, long projectId);
 	
 	List<PermissionGroup> findAllPossiblePermission();
 
-	List<User> findUserWithoutPermissionByProject(long projectId);
-	
 	List<Party> findPartyWithoutPermissionByProject(long projectId);
 }

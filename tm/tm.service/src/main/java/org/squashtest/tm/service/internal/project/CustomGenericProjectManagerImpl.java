@@ -51,8 +51,6 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
-import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
@@ -217,17 +215,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
-	public List<UserProjectPermissionsBean> findUserPermissionsBeansByProject(long projectId) {
-		return permissionsManager.findUserPermissionsBeanByProject(projectId);
-	}
-	
-	@Override
-	public PagedCollectionHolder<List<UserProjectPermissionsBean>> findUserPermissionsBeanByProject(
-			PagingAndSorting sorting, Filtering filtering, long projectId) {
-		return permissionsManager.findUserPermissionsBeanByProject(sorting, filtering, projectId);
-	}
-
-	@Override
 	public List<PartyProjectPermissionsBean> findPartyPermissionsBeansByProject(long projectId) {
 		return permissionsManager.findPartyPermissionsBeanByProject(projectId);
 	}
@@ -244,18 +231,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
-	public List<User> findUserWithoutPermissionByProject(long projectId) {
-		return permissionsManager.findUserWithoutPermissionByProject(projectId);
-	}
-
-	@Override
 	public List<Party> findPartyWithoutPermissionByProject(long projectId) {
 		return permissionsManager.findPartyWithoutPermissionByProject(projectId);
-	}
-	
-	@Override
-	public User findUserByLogin(String userLogin) {
-		return userDao.findUserByLogin(userLogin);
 	}
 
 	@Override
@@ -368,5 +345,4 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		bugtrackerBinding.setProjectName(projectBugTrackerName);
 
 	}
-
 }
