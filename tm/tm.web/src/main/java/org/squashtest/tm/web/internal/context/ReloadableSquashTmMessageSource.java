@@ -26,8 +26,6 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -81,7 +79,7 @@ public class ReloadableSquashTmMessageSource extends ReloadableResourceBundleMes
 		super.setBasenames(basenames);
 	}
 
-	private final void registerFragmentMessageProperties() {
+	private void registerFragmentMessageProperties() {
 		try {
 			Set<String> consolidatedBasenames = new HashSet<String>();
 
@@ -136,7 +134,7 @@ public class ReloadableSquashTmMessageSource extends ReloadableResourceBundleMes
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	@Override
-	public final void afterPropertiesSet() throws Exception {
+	public final void afterPropertiesSet() {
 		registerFragmentMessageProperties();
 		
 	}
