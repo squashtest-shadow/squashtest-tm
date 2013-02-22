@@ -304,7 +304,7 @@ public class TeamController {
 	@RequestMapping(value = TEAM_ID_URL+"/permissions", method = RequestMethod.GET, params="sEcho")
 	@ResponseBody
 	public DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable("teamId") long teamId) {
-		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, permissionMapper, SortedAttributeSource.SINGLE_ENTITY);
+		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, permissionMapper);
 		Filtering filtering = new DataTableFiltering(params);
 		return _getPermissionTableModel(teamId, paging, filtering, params.getsEcho());
 	}
@@ -366,6 +366,7 @@ public class TeamController {
 			res.put("permission-displayname", messageSource.getMessage("user.project-rights."+item.getPermissionGroup().getSimpleName()+".label", null, locale));
 			res.put("permission-list", permissionList);
 			res.put("empty-delete-holder", null);
+			res.put("empty-permission-list-holder", null);
 			return res;
 		}
 	}

@@ -215,10 +215,10 @@
 											<th th:attr="data-def='select, map=project-index'">#</th>
 
 											<th
-												th:attr="data-def='sortable, map=project-name'"
+												th:attr="data-def='sortable, map=project-name, filter, link='+@{/administration/projects/{project-id}/info}"
 												th:text="#{projects.label}">user</th>
 											<th
-												th:attr="data-def='sortable, map=permission-name'"
+												th:attr="data-def='sortable, map=empty-permission-list-holder'"
 												th:text="#{project.permission.table.profile.label}">user</th>
 											<th
 												th:attr="data-def='delete-button=#remove-permission-dialog, map=empty-delete-holder'">

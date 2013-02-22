@@ -199,6 +199,7 @@ public class UserController {
 			res.put("permission-simplename", item.getPermissionGroup().getSimpleName());
 			res.put("permission-list", permissionList);
 			res.put("empty-delete-holder", null);
+			res.put("empty-permission-list-holder", null);
 			return res;
 		}
 	}
