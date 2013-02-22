@@ -85,6 +85,10 @@
  * jsTree core 1.0
  */
 (function ($) {
+	if($.fn.jstree !== undefined || $.jstree !== undefined) {
+		// already loaded -> bail out
+		return;
+	}
 	// private variables 
 	var instances = [],			// instance array (used by $.jstree.reference/create/focused)
 		focused_instance = -1,	// the index in the instance array of the currently focused instance
