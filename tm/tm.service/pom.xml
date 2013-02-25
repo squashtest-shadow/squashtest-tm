@@ -318,8 +318,11 @@
 								<configuration>
 									<outputDirectory>${basedir}/META-INF/spring/</outputDirectory>
 									<resources>
-										<resource>
-											<directory>${project.build.outputDirectory}/META-INF/spring/**</directory>
+										<resource>										
+											<directory>${project.build.directory}/generated-resources/META-INF/spring</directory>
+											<includes>
+												<include>**/*.xml</include>
+											</includes>
 										</resource>
 									</resources>
 								</configuration>
