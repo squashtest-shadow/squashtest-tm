@@ -137,6 +137,17 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	}
 
 	@Override
+	public List<ProjectPermission> findProjectPermissionByUserLogin(String userLogin) {
+		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
+		List<Object[]> result = aclService.retrieveClassAclGroupFromUserLogin(userLogin, PROJECT_CLASS_NAME);
+		for (Object[] objects : result) {
+			GenericProject project = genericProjectFinder.findById((Long) objects[0]);
+			newResult.add(new ProjectPermission(project, (PermissionGroup) objects[1]));
+		}
+		return newResult;
+	}
+	
+	@Override
 	public PagedCollectionHolder<List<ProjectPermission>> findProjectPermissionByParty(long partyId, PagingAndSorting sorting, Filtering filtering){
 		
 		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
@@ -344,4 +355,6 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		
 		return isInGroup;
 	}
+
+	
 }

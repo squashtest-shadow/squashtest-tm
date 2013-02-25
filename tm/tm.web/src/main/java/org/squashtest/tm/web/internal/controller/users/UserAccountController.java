@@ -61,7 +61,7 @@ public class UserAccountController {
 	@RequestMapping(method=RequestMethod.GET)
 	public ModelAndView getUserAccountDetails(){
 		User user = userService.findCurrentUser();
-		List<ProjectPermission> projectPermissions = permissionFinder.findProjectPermissionByParty(user.getId());
+		List<ProjectPermission> projectPermissions = permissionFinder.findProjectPermissionByUserLogin(user.getLogin());
 
 		ModelAndView mav = new ModelAndView("page/users/user-account");
 		mav.addObject("user", user);

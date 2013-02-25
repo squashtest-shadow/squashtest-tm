@@ -42,6 +42,8 @@ public interface ProjectsPermissionFinder {
 	List<PermissionGroup> findAllPossiblePermission();
 
 	List<ProjectPermission> findProjectPermissionByParty(long partyId);
+
+	List<ProjectPermission> findProjectPermissionByUserLogin(String userLogin);
 	
 	PagedCollectionHolder<List<ProjectPermission>> findProjectPermissionByParty(long partyId, PagingAndSorting sorting, Filtering filtering);
 

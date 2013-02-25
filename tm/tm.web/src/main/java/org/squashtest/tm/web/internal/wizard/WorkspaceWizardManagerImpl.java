@@ -22,6 +22,7 @@
 package org.squashtest.tm.web.internal.wizard;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -48,7 +49,11 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 	public Collection<WorkspaceWizard> findAllByWorkspace(WorkspaceType workspace) {
 		try {
 			lock.readLock().lock();
-			return wizardsByWorkspace.getCollection(workspace);
+			Collection<WorkspaceWizard> collection = wizardsByWorkspace.getCollection(workspace);
+			if(collection == null){
+				collection = Collections.EMPTY_SET;
+			}
+			return collection; 
 		} finally {
 			lock.readLock().unlock();
 		}

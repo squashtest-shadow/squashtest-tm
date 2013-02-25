@@ -48,6 +48,8 @@ public interface ObjectAclService {
 
 	List<Object[]> retrieveClassAclGroupFromPartyId(long partyId, String qualifiedClassName);
 
+	List<Object[]> retrieveClassAclGroupFromUserLogin(String userLogin, String qualifiedClassName);
+	
 	List<Object[]> retrieveClassAclGroupFromPartyId(long partyId, String qualifiedClassName,Sorting sorting, Filtering filtering);
 
 	List<Long> findObjectWithoutPermissionByPartyId(long partyId, String qualifiedClass);
