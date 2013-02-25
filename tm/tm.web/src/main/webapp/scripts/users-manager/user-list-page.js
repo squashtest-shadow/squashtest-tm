@@ -185,7 +185,7 @@ define(["jquery", "jquery.squash.datatables"], function($){
 				cancellabel : settings.language.cancel
 			},
 			deleteButtons : {
-				url : settings.urls.baseUrl+"/delete/{user-id}",
+				url : settings.urls.baseUrl+"/{user-id}",
 				popupmessage : settings.language.deleteMessage,
 				tooltip : settings.language.deleteTooltip,
 				success : function(){
