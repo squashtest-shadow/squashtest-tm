@@ -124,7 +124,7 @@ class JdbcManageableAclServiceIT extends Specification {
 	@DataSet("JdbcManageableAclServiceIT.should retrieve acl group user.xml")
 	def "should retrieve acl group for user"() {
 		when:
-		def res = service.retrieveClassAclGroupFromUserLogin("batman", "batmobile")
+		def res = service.retrieveClassAclGroupFromPartyId(10, "batmobile")
 
 
 		then:
@@ -137,7 +137,7 @@ class JdbcManageableAclServiceIT extends Specification {
 	@DataSet("JdbcManageableAclServiceIT.should retrieve acl group user.xml")
 	def "sould fiind object without permission"() {
 		when:
-		def res = service.findObjectWithoutPermissionByLogin ("batman", "batmobile")
+		def res = service.findObjectWithoutPermissionByPartyId (10, "batmobile")
 		System.out.println(res.toString());
 
 		then:

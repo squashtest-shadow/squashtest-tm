@@ -31,100 +31,9 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 class StubObjectAclService implements ObjectAclService {
 
 	@Override
-	public List<PermissionGroup> findAllPermissionGroupsByNamespace(String namespace) {
-		return Collections.emptyList();
-	}
+	public List<PermissionGroup> findAllPermissionGroupsByNamespace(
+			String namespace) {
 
-	/* (non-Javadoc)
-	 * @see org.squashtest.tm.service.security.acls.model.ObjectAclService#retriveUserAndAclGroupNameFromIdentityAndClass(long, java.lang.Class, org.squashtest.tm.core.foundation.collection.Sorting, org.squashtest.tm.core.foundation.collection.Filtering)
-	 */
-	@Override
-	public List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass,
-			Sorting sorting, Filtering filtering) {
-		return Collections.emptyList();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.squashtest.tm.service.security.acls.model.ObjectAclService#removeAllResponsibilitiesForParty(long)
-	 */
-	@Override
-	public void removeAllResponsibilitiesForParty(long partyId) {
-		
-	}
-
-	@Override
-	public void removeAllResponsibilities(String userLogin, ObjectIdentity entityRef) {
-
-	}
-
-	@Override
-	public void removeAllResponsibilities(ObjectIdentity entityRef) {
-
-	}
-
-	@Override
-	public List<Object[]> retrieveClassAclGroupFromUserLogin(String userLogin, String qualifiedClassName) {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public List<Long> findObjectWithoutPermissionByLogin(String userLogin, String qualifiedClass) {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public void addNewResponsibility(String userLogin, ObjectIdentity entityRef, String qualifiedName) {
-
-	}
-
-	@Override
-	public List<String> findUsersWithWritePermission(List<ObjectIdentity> entityRefs) {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public List<Object[]> retriveUserAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass) {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public List<Long> findUsersWithoutPermissionByObject(long objectId, String qualifiedClassName) {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public List<String> findUsersWithExecutePermission(List<ObjectIdentity> entityRefs) {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public List<Object[]> retrieveClassAclGroupFromPartyId(long partyId,
-			String qualifiedClassName) {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public List<Long> findObjectWithoutPermissionByPartyId(long partyId,
-			String qualifiedClass) {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public List<Object[]> retrievePartyAndAclGroupNameFromIdentityAndClass(
-			long entityId, Class<?> entityClass) {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public List<Object[]> retrievePartyAndAclGroupNameFromIdentityAndClass(
-			long entityId, Class<?> entityClass, Sorting sorting,
-			Filtering filtering) {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public List<Long> findPartiesWithoutPermissionByObject(long objectId,
-			String qualifiedClassName) {
 		return Collections.emptyList();
 	}
 
@@ -134,8 +43,68 @@ class StubObjectAclService implements ObjectAclService {
 	}
 
 	@Override
+	public void removeAllResponsibilities(ObjectIdentity entityRef) {
+		
+	}
+
+	@Override
+	public List<Object[]> retrieveClassAclGroupFromPartyId(long partyId,
+			String qualifiedClassName) {
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Long> findObjectWithoutPermissionByPartyId(long partyId,
+			String qualifiedClass) {
+
+		return Collections.emptyList();
+	}
+
+	@Override
 	public void addNewResponsibility(long partyId, ObjectIdentity entityRef,
 			String qualifiedName) {
+		
+	}
+
+	@Override
+	public List<String> findUsersWithWritePermission(
+			List<ObjectIdentity> entityRefs) {
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Object[]> retrievePartyAndAclGroupNameFromIdentityAndClass(
+			long entityId, Class<?> entityClass) {
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Object[]> retrievePartyAndAclGroupNameFromIdentityAndClass(
+			long entityId, Class<?> entityClass, Sorting sorting,
+			Filtering filtering) {
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Long> findPartiesWithoutPermissionByObject(long objectId,
+			String qualifiedClassName) {
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<String> findUsersWithExecutePermission(
+			List<ObjectIdentity> entityRefs) {
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public void removeAllResponsibilitiesForParty(long partyId) {
 		
 	}
 
