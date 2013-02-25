@@ -141,7 +141,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		
 		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
 		
-		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAME);
+		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAME,sorting,filtering);
 		int total = result.size();
 		
 		for (Object[] objects : result) {

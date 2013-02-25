@@ -121,8 +121,9 @@ public class TeamController {
 																.mapAttribute(User.class, "firstName", String.class, "user-name");
 	
 	
-	private DatatableMapper<String> permissionMapper = new NameBasedMapper(1)
-														.mapAttribute(ProjectPermission.class, "project.name", String.class, "project-name");
+	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2)
+															.mapAttribute(ProjectPermission.class, "project.name", String.class, "project-name")
+															.mapAttribute(ProjectPermission.class, "permissionGroup.qualifiedName", String.class, "permission-name");
 
 
 	

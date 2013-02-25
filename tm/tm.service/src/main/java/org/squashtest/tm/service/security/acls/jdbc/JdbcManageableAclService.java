@@ -119,9 +119,19 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "inner join ACL_CLASS c on c.ID = oid.CLASS_ID " 
 			+ "where CLASSNAME = ?  and oid.IDENTITY = ? )) ";
 
-	private static final String FIND_ACL_FOR_CLASS_FROM_PARTY = "select oid.IDENTITY, ag.ID, ag.QUALIFIED_NAME from "
+	
+	private static final String FIND_ACL_FOR_CLASS_FROM_PARTY_FILTERED = "select oid.IDENTITY, ag.ID, ag.QUALIFIED_NAME as sorting_key, IFNULL(pro.NAME,'') as project_name from "
 			+ "ACL_GROUP ag  inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
+			+ "left outer join PROJECT pro on pro.PROJECT_ID = oid.IDENTITY "
+			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID  where arse.PARTY_ID = ? and ac.CLASSNAME = ?"
+			+ "and pro.NAME like ?";
+	
+	
+	private static final String FIND_ACL_FOR_CLASS_FROM_PARTY = "select oid.IDENTITY, ag.ID, ag.QUALIFIED_NAME as sorting_key, IFNULL(pro.NAME,'') as project_name from "
+			+ "ACL_GROUP ag  inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
+			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
+			+ "left outer join PROJECT pro on pro.PROJECT_ID = oid.IDENTITY "
 			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID  where arse.PARTY_ID = ? and ac.CLASSNAME = ?";
 	
 	//11-02-13 : this query is ready for task 1865 
@@ -281,6 +291,38 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 				AclGroupMapper);
 	}
 	
+	//TODO
+	@Override
+	public List<Object[]> retrieveClassAclGroupFromPartyId(@NotNull long partyId, String qualifiedClassName, Sorting sorting, Filtering filtering) {
+
+		String baseQuery;
+		String orderByClause;
+		Object[] arguments;
+		
+		
+		if (filtering.isDefined()){ 
+			baseQuery = FIND_ACL_FOR_CLASS_FROM_PARTY_FILTERED;
+			String filter = "%"+filtering.getFilter()+"%";
+			arguments = new Object[]{partyId, qualifiedClassName, filter};
+		}
+		else{
+			baseQuery = FIND_ACL_FOR_CLASS_FROM_PARTY;
+			arguments = new Object[]{partyId, qualifiedClassName};
+		}
+		
+		if (sorting.getSortedAttribute() != null && sorting.getSortedAttribute().contains("project.name")){
+			orderByClause=" order by project_name ";
+		}
+		else{
+			orderByClause=" order by sorting_key ";
+		}
+			
+		orderByClause+= sorting.getSortOrder().getCode();
+		
+		String finalQuery = baseQuery + orderByClause;
+		
+		return jdbcTemplate.query(finalQuery, arguments, AclGroupMapper);
+	}
 
 	@Override
 	public List<Long> findObjectWithoutPermissionByPartyId(long partyId, String qualifiedClass) {

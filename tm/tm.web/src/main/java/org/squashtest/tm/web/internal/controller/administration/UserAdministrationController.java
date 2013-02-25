@@ -101,8 +101,9 @@ public class UserAdministrationController {
 											.mapAttribute(User.class, "audit.lastModifiedOn", Date.class, "user-modified-on")
 											.mapAttribute(User.class, "audit.lastModifiedBy", String.class, "user-modified-by");
 
-	private DatatableMapper<String> permissionMapper = new NameBasedMapper(1)
-											.mapAttribute(ProjectPermission.class, "project.name", String.class, "project-name");
+	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2)
+											.mapAttribute(ProjectPermission.class, "project.name", String.class, "project-name")
+											.mapAttribute(ProjectPermission.class, "permissionGroup.qualifiedName", String.class, "permission-name");
 	
 	@ServiceReference
 	public void setAdministrationService(AdministrationService adminService) {
