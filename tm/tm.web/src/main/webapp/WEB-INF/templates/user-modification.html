@@ -258,7 +258,7 @@
 							</span>
 							<div id="project-permission-panel" class="toggle-panel-main">
 								<table id="permission-table"
-									th:attr="data-def='filter, hover, datakeys-id=project-id ,ajaxsource='+@{/users/__${user.id}__/permissions}+',language='+@{/squash/datatables/language}">
+									th:attr="data-def='filter, hover, datakeys-id=project-id ,ajaxsource='+@{/administration/users/__${user.id}__/permissions}+',language='+@{/squash/datatables/language}">
 									<thead>
 										<tr>
 											<th th:attr="data-def='invisible, map=project-id'">user-id</th>

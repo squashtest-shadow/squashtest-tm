@@ -278,11 +278,11 @@ public class UserAdministrationController {
 		return res;
 	}
 
-	@RequestMapping(value = USER_URL+"/permission-table", method = RequestMethod.GET, params="sEcho")
-	public 	@ResponseBody DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable("teamId") long teamId) {
+	@RequestMapping(value = USER_URL+"/permissions", method = RequestMethod.GET, params="sEcho")
+	public 	@ResponseBody DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable("userId") long userId) {
 		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, permissionMapper, SortedAttributeSource.SINGLE_ENTITY);
 		Filtering filtering = new DataTableFiltering(params);
-		return _getPermissionTableModel(teamId, paging, filtering, params.getsEcho());
+		return _getPermissionTableModel(userId, paging, filtering, params.getsEcho());
 	}
 
 	private String formatString(String arg, Locale locale) {
@@ -338,11 +338,12 @@ public class UserAdministrationController {
 			res.put("permission-simplename", item.getPermissionGroup().getSimpleName());
 			res.put("permission-displayname", messageSource.getMessage("user.project-rights."+item.getPermissionGroup().getSimpleName()+".label", null, locale));
 			res.put("permission-list", permissionList);
+			res.put("empty-delete-holder", null);
+			res.put("empty-permission-list-holder", null);
 			return res;
 		}
 	}
-	
-	
+
 	/**
 	 * Builds datatable model for users table
 	 */
