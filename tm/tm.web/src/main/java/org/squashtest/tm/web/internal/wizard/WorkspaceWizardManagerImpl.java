@@ -21,25 +21,37 @@
 
 package org.squashtest.tm.web.internal.wizard;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import javax.inject.Inject;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.service.project.ProjectFinder;
 
 /**
  * @author Gregory Fouquet
  * 
  */
 public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, WorkspaceWizardRegistry {
+	
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceWizardManagerImpl.class);
 	private final MultiValueMap wizardsByWorkspace = new MultiValueMap();
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+	
+	@Inject
+	private ProjectFinder projectFinder;
+	
+	
 
 	/**
 	 * @see org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager#findAllByWorkspace(WorkspaceType)
@@ -97,4 +109,34 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 
 	}
 
+	
+	
+	
+	@Override
+	public Collection<WorkspaceWizard> findEnabledWizards(long projectId) {
+		return findEnabledWizards(projectId, WorkspaceType.TEST_CASE_WORKSPACE, WorkspaceType.REQUIREMENT_WORKSPACE, WorkspaceType.CAMPAIGN_WORKSPACE);
+	}
+
+	
+	@Override
+	public Collection<WorkspaceWizard> findEnabledWizards(long projectId, WorkspaceType... workspace) {
+		//TODO
+		return Collections.emptyList();
+	}
+	
+
+	@Override
+	public Collection<WorkspaceWizard> findDisabledWizards(long projectId) {
+		return findDisabledWizards(projectId, WorkspaceType.TEST_CASE_WORKSPACE, WorkspaceType.REQUIREMENT_WORKSPACE, WorkspaceType.CAMPAIGN_WORKSPACE);
+	}
+	
+
+	@Override
+	public Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType... workspace) {
+		//TODO
+		return findAllByWorkspace(WorkspaceType.TEST_CASE_WORKSPACE);
+	}
+	
+
+	
 }

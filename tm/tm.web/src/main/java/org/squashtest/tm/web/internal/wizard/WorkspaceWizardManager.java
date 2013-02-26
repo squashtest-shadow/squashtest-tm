@@ -31,5 +31,45 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
  * 
  */
 public interface WorkspaceWizardManager {
+	
+	
 	Collection<WorkspaceWizard> findAllByWorkspace(WorkspaceType workspace);
+	
+	
+	/**
+	 * returns all the wizards enabled for that project, regardless of the workspace type.
+	 * 
+	 * @param projectId
+	 * @return
+	 */
+	Collection<WorkspaceWizard> findEnabledWizards(long projectId);
+	
+	/**
+	 * returns all the wizards enabled for that project, restricted to those of the corresponding workspace type.
+	 * 
+	 * @param projectId
+	 * @return
+	 */
+	Collection<WorkspaceWizard> findEnabledWizards(long projectId, WorkspaceType... workspace);
+	
+	
+	/**
+	 * returns all the wizards disabled for that project, regardless of the workspace type.
+	 * 
+	 * @param projectId
+	 * @return
+	 */
+	Collection<WorkspaceWizard> findDisabledWizards(long projectId);
+	
+	
+	/**
+	 * returns all the wizards disabled for that project, restricted to those of the corresponding workspace type.
+	 * 
+	 * @param projectId
+	 * @return
+	 */
+	Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType... workspace);
+	
 }
+
+

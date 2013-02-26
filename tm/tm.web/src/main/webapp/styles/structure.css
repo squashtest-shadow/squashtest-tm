@@ -149,23 +149,6 @@ div.fragment-tabs {
 }
 
 
-.waiting-loading{
-	background-color: #EBEAE5;
-	background-image: url('../images/ajax-loader.gif');
-	background-position: center center;
-	background-repeat: no-repeat;
-	opacity: 0.2;	
-	filter: alpha(opacity=20);
-}
-
-.minimal-height{
-	min-height : 50px;	
-}
-
-.full-width{
-	width : 100%;	
-}
-
 div.fragment-tabs>ul {
 	border-bottom: 1px solid black !important;
 	border-radius: 0px 0px 0px 0px !important;
@@ -312,11 +295,7 @@ div#requirement-search-pane {
 	padding: 1em 0 0;
 }
 
-.searched-project {
-	color: white;
-	border: 1px solid #2E2E2E;
-	background: #2E2E2E;
-}
+
 
 div#search-result a {
 	text-decoration: none;
@@ -381,10 +360,6 @@ div#information-content {
 	position: absolute;
 	right: 0;
 	top: 0.6cm;
-}
-
-span.little-text {
-	font-size: 8px;
 }
 
 div.snap-right>a.button.test-step-toolbar-button {
@@ -917,95 +892,6 @@ table#test-steps-table > tbody > tr > td > a {
 }
 
 
-.linkWise:HOVER {
-	
-    text-decoration: underline;
-    cursor: pointer;
-}
-.popup-notification {
-	color: #555555;
-	font-size: 0.8em;
-	font-style: italic;
-	margin-top:20px;
-	text-align:right;
-}
-
-select option,select {
-	max-width: 400px;
-}
-
-.error-message {
-	color: #99352B;
-}
-
-.export-requirement-link {
-	bottom: 1px;
-	float: left;
-	position: absolute;
-	text-decoration: none;
-}
-
-.filter-enabled {
-	color: #B9121B;
-}
-
-.std-height {
-	height: 14px;
-}
-
-.gray-text {
-	color: #888888;
-}
-
-.not-displayed {
-	display: none;
-}
-
-.not-visible, .unstyled {
-	visibility: hidden;
-}
-
-.centered {
-	text-align: center;
-}
-
-.left-aligned {
-	text-align: left;
-}
-
-.right-aligned {
-	text-align: right;
-}
-
-.v-centered {
-	vertical-align: middle;
-}
-
-.icon {
-	float: left;
-	margin-right: 0.3em;
-}
-
-.snap-left {
-	float: left;
-}
-
-.snap-right {
-	float: right;
-}
-
-.unsnap {
-	clear: both;
-}
-
-tr td.drag-handle {
-	cursor: pointer;
-}
-
-tr.nodrop td.drag-handle {
-	cursor: n-resize;
-}
-
 td.button-cell, th.button-cell, td.icon-cell, th.icon-cell {
 	width: 2em;
 }
@@ -1050,14 +936,6 @@ div#project-description-table .projectActive {
 
 div.information-panel p {
 	margin: 0;
-}
-
-.smallfonts {
-	font-size: 0.8em;
-}
-
-.space {
-	margin-top: 1.6em;
 }
 
 /* ------->>> association interface <<<---------------------*/
@@ -1110,19 +988,6 @@ div.information-panel p {
 
 .nav-up-layout #footer {
 	
-}
-
-/* ---------------------------------------------------------*/
-/* ---------------->>> Hypenation <<<------------------*/
-/* ---------------------------------------------------------*/
-p {
-    -ms-word-break: break-all;
-    word-break: break-all;
-    word-break: break-word;
-	-moz-hyphens: auto;
-	-webkit-hyphens: auto;
-	hyphens: auto;
-	hyphenate: auto;
 }
 
 /* ---------------------------------------------------------*/

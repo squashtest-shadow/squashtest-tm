@@ -51,8 +51,12 @@
 </s:url>
 
 
-<s:url var="customFieldManagerURL" value="/administration/project/{projectId}/custom-fields-binding">
-	<s:param name="projectId" value="${adminproject.project.id}"/>
+<s:url var="customFieldManagerURL" 	value="/administration/projects/{projectId}/custom-fields-binding">
+	<s:param name="projectId" 		value="${adminproject.project.id}"/>
+</s:url>
+
+<s:url var="wizardsManagerURL"      value="/administration/projects/{projectId}/wizards">
+	<s:param name="projectId" 	    value="${adminproject.project.id}" />
 </s:url>
 
 <layout:info-page-layout titleKey="workspace.project.info.title" isSubPaged="true">
@@ -141,6 +145,7 @@
 			<ul>
 				<li><a href="#main-informations"><f:message key="tabs.label.mainpanel"/></a></li>
 				<li><a href="${customFieldManagerURL}"><f:message key="tabs.label.cufbinding"/></a></li>
+				<li><a href="${wizardsManagerURL}"><f:message key="tabs.label.wizards"/></a></li>
 			</ul>
 		
 			<%----------------------------------- INFORMATION PANEL -----------------------------------------------%>
@@ -437,16 +442,9 @@
 		projectsManager.projectInfo.initUserPermissions(permSettings);
 		
 
-		//tab 
- 		function beforeLoad(event, ui) {
-			if (document.getElementById("cuf-binding-administration") !== null) {
-				event.preventDefault();
-				return false;
-			}  			
- 		};
 
 		Frag.init({
-			beforeLoad : beforeLoad
+			beforeLoad : Frag.confHelper.fnCacheRequests
 		});								
 	}
 	

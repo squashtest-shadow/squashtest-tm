@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
@@ -35,7 +36,7 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 
 
 @Controller
-@RequestMapping("administration/project/{projectId}/custom-fields-binding")
+@RequestMapping("administration/projects/{projectId}/custom-fields-binding")
 public class CustomFieldBindingManagerController {
 
 	private CustomFieldBindingFinderService service;
@@ -52,7 +53,7 @@ public class CustomFieldBindingManagerController {
 	public ModelAndView getManager(@PathVariable("projectId") Long projectId){
 		
 		List<CustomFieldBinding> testCaseBindings = service.findCustomFieldsForProjectAndEntity
-													(projectId, BindableEntity.TEST_CASE, new DefaultPaging()).getPagedItems();
+													(projectId, BindableEntity.TEST_CASE, new DefaultPagingAndSorting(DEFAULT_PAGE_SIZE)).getPagedItems();
 		
 		List<CustomFieldBinding> testStepBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_STEP);
 		List<CustomFieldBinding> requirementBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_VERSION);
@@ -60,7 +61,7 @@ public class CustomFieldBindingManagerController {
 		List<CustomFieldBinding> iterationBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.ITERATION);
 		List<CustomFieldBinding> testSuiteBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_SUITE);
 		
-		ModelAndView mav = new ModelAndView("custom-field-binding.html");
+		ModelAndView mav = new ModelAndView("project-tabs/custom-field-binding.html");
 		mav.addObject("testCaseBindings", testCaseBindings);
 		mav.addObject("testStepBindings", testStepBindings);
 		mav.addObject("requirementBindings", requirementBindings);
@@ -76,24 +77,5 @@ public class CustomFieldBindingManagerController {
 
 
 	
-	// **************************** inner classes **************************
-
-	private static class DefaultPaging implements Paging{
-		@Override
-		public int getFirstItemIndex() {
-			return 0;
-		}
-		
-		@Override
-		public int getPageSize() {
-			return DEFAULT_PAGE_SIZE;
-		}
-		
-		@Override
-		public boolean shouldDisplayAll() {
-			return false;
-		}
-		
-	}
 	
 }

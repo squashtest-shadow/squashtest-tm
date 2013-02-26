@@ -1,0 +1,95 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<div th:remove="all">
+	<!--  
+		This snippet of html describes the template for the plugin panel of a project.
+		
+		Required variables are :
+			
+			* tcWorkspacePlugins : a collection of WorkspaceWizardModel for the test case workspace
+			* reqWorkspacePlugins : same, for the requirements workspace
+			* campWorkspacePlugins : same, for the campaigns workspace
+
+
+	 -->
+
+</div>
+
+
+<div id="workspace-wizards-tab">
+
+	<div th:include="project-tabs/workspace-wizards-tab :: wizards-panel" th:with="domain = 'test-case', plugins = ${tcWorkspacePlugins}" />
+
+	<div th:include="project-tabs/workspace-wizards-tab :: wizards-panel" th:with="domain = 'requirement', plugins = ${reqWorkspacePlugins}" />
+
+	<div th:include="project-tabs/workspace-wizards-tab :: wizards-panel" th:with="domain = 'campaign', plugins = ${campWorkspacePlugins}" />
+	
+</div>
+
+
+
+<div th:remove="all">
+<!-- 
+	arguments are :
+		* plugins : a collection of WorkspaceWizardModel
+		* domain : an identifier (like test-case, campaign etc)
+-->
+
+</div>
+<div th:fragment="wizards-panel" th:remove="all">
+
+
+	<div class="toggle-panel" th:with="baseID = ${domain}+'-workspace-wizard'" th:title="#{title.workspace-wizards.administration.__${domain}__}">
+		
+		<div th:id="${baseID}+'-panel'" class="toggle-panel-main">
+
+			<div th:id="${baseID}+'-list'">
+
+				<table>
+				
+					<thead>
+						<tr>
+							<td class="not-displayed">plugin id (not displayed)</td>
+							<td class="narrow" th:text="#{label.Enabled}"></td>
+							<td th:text="#{label.PluginName}"></td>
+						</tr>
+					</thead>
+					
+					<tbody class="y-scollable medium-height">
+						<tr th:each="plugin : ${plugins}">
+							<td th:text="${plugin.id}"></td>
+							<td><input type="checkbox" th:checked="${plugin.globallyEnabled}" /></td>
+							<td th:text="${plugin.displayableName}"></td>
+						</tr>
+					</tbody>
+					
+				</table>
+
+			</div>
+
+		</div>
+	</div>
+
+
+</div>

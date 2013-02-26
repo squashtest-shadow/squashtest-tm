@@ -86,6 +86,22 @@ squashtm.fragmenttabs = (function ($, window) {
 			}
 			
 			$('.fragment-tabs').tabs(args);
+		},
+		confHelper : {
+			fnCacheRequests : function (event, ui){
+		
+				var contentCache = $(this).data('content-cache') || [];
+				var targetUrl = ui.ajaxSettings.url;
+				
+				if ($.inArray(targetUrl, contentCache) !== -1){
+					event.preventDefault();
+					return false;
+				}
+				else{
+					contentCache.push(targetUrl);
+					$(this).data('content-cache', contentCache);
+				}
+			}
 		}
 	};
 })(jQuery, window);
