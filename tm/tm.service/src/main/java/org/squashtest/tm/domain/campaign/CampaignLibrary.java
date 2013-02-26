@@ -24,8 +24,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -64,6 +69,13 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	private final AttachmentList attachmentList = new AttachmentList();
 
 
+	@ElementCollection
+	@CollectionTable(name = "CAMPAIGN_LIBRARY_PLUGINS", joinColumns = @JoinColumn(name = "CL_ID"))
+	@Enumerated(EnumType.STRING)
+	@Column(name = "PLUGIN_ID")
+	private Set<String> enabledPlugins = new HashSet<String>(5);
+	
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -100,6 +112,30 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 		this.project = p;
 	}
 
+	
+	// ***************************** PluginReferencer section ****************************
+	
+	@Override
+	public Set<String> getEnabledPlugins() {
+		return enabledPlugins;
+	}
+	
+	@Override
+	public void enablePlugin(String pluginId) {
+		enabledPlugins.add(pluginId);
+	}
+	
+	@Override
+	public void disablePlugin(String pluginId) {
+		enabledPlugins.remove(pluginId);
+	}
+	
+	@Override
+	public boolean isPluginEnabled(String pluginId) {
+		return (enabledPlugins.contains(pluginId));
+	}
+
+	
 	/* ***************************** SelfClassAware section ******************************* */
 
 	@Override

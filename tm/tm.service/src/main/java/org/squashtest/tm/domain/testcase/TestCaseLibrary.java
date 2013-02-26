@@ -24,8 +24,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -59,6 +64,14 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
+	
+	
+	@ElementCollection
+	@CollectionTable(name = "TEST_CASE_LIBRARY_PLUGINS", joinColumns = @JoinColumn(name = "TCL_ID"))
+	@Enumerated(EnumType.STRING)
+	@Column(name = "PLUGIN_ID")
+	private Set<String> enabledPlugins = new HashSet<String>(5);
+	
 
 	public Set<TestCaseLibraryNode> getRootContent() {
 		return rootContent;
@@ -87,6 +100,28 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 		rootContent.remove(node);
 
 	}
+	
+	// ***************************** PluginReferencer section ****************************
+	
+	@Override
+	public Set<String> getEnabledPlugins() {
+		return enabledPlugins;
+	}
+	
+	@Override
+	public void enablePlugin(String pluginId) {
+		enabledPlugins.add(pluginId);
+	}
+	
+	@Override
+	public void disablePlugin(String pluginId) {
+		enabledPlugins.remove(pluginId);
+	}
+	
+	@Override
+	public boolean isPluginEnabled(String pluginId) {
+		return (enabledPlugins.contains(pluginId));
+	}
 
 	/* ***************************** SelfClassAware section ******************************* */
 
@@ -114,4 +149,5 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 		visitor.visit(this);
 		
 	}
+
 }

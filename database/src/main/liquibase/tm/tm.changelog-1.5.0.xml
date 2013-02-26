@@ -312,5 +312,39 @@
 		<dropColumn tableName="ITERATION_TEST_PLAN_ITEM" columnName="TEST_SUITE"/>
 	</changeSet>
 	
+	
+	<!--  ============================================ FEAT 1902 ======================================== -->
+	
+	<changeSet id="tm-1.5.0.00-feat-1902.01" author="bsiri">
+		<comment>creating the tables and references for the workspace plugins</comment>
+		
+		<createTable tableName="TEST_CASE_LIBRARY_PLUGINS" >
+			<column name="LIBRARY_ID" type="BIGINT">
+				<constraints nullable="false" references="TEST_CASE_LIBRARY(TCL_ID)" foreignKeyName="fk_plugin_tclib"/>
+			</column>
+			<column name="PLUGIN_ID" type="java.sql.Types.VARCHAR(30)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createTable tableName="REQUIREMENT_LIBRARY_PLUGINS" >
+			<column name="LIBRARY_ID" type="BIGINT">
+				<constraints nullable="false" references="REQUIREMENT_LIBRARY(RL_ID)" foreignKeyName="fk_plugin_rlib"/>
+			</column>
+			<column name="PLUGIN_ID" type="java.sql.Types.VARCHAR(30)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		
+		<createTable tableName="CAMPAIGN_LIBRARY_PLUGINS" >
+			<column name="LIBRARY_ID" type="BIGINT">
+				<constraints nullable="false" references="CAMPAIGN_LIBRARY(CL_ID)" foreignKeyName="fk_plugin_clib"/>
+			</column>
+			<column name="PLUGIN_ID" type="java.sql.Types.VARCHAR(30)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>				
+	</changeSet>
+	
 </databaseChangeLog>
  

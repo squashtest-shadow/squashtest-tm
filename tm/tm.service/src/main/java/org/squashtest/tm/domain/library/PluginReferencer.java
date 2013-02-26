@@ -20,16 +20,35 @@
  */
 package org.squashtest.tm.domain.library;
 
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.SelfClassAware;
-import org.squashtest.tm.domain.attachment.AttachmentHolder;
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.ProjectResource;
-/**
- * Interface for project libraries;
- *
- * @param <NODE> type of contained node.
- */
-public interface Library<NODE extends LibraryNode> extends ProjectResource<GenericProject>, SelfClassAware, NodeContainer<NODE>, Identified, AttachmentHolder, PluginReferencer {
-	public void notifyAssociatedWithProject(GenericProject p) ;
+import java.util.Set;
+
+public interface PluginReferencer {
+
+	
+	
+	/**
+	 * @return the set of plugin ids that are enabled for this instance.
+	 */
+	Set<String> getEnabledPlugins();
+	
+	/**
+	 * tells this instance that the plugin referenced by pluginId is now enabled 
+	 * @param pluginId
+	 */
+	void enablePlugin(String pluginId);
+	
+	/**
+	 * tells this instance that the plugin referenced by pluginId is now disabled 
+	 * @param pluginId
+	 */
+	void disablePlugin(String pluginId);
+	
+	
+	/**
+	 * tells whether the given plugin is enabled for this instance.
+	 * @param pluginId
+	 * @return
+	 */
+	boolean isPluginEnabled(String pluginId);
+	
 }

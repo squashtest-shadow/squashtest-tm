@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.project;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
@@ -40,6 +41,7 @@ import org.squashtest.tm.service.security.annotation.AclConstrainedObject;
  *            The type of nodes this library contains.
  */
 public abstract class GenericLibrary<NODE extends LibraryNode> implements Library<NODE> {
+
 
 	public GenericLibrary() {
 		super();
@@ -105,4 +107,7 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 		}
 		return contentNames;
 	}
+	
+
+	
 }
