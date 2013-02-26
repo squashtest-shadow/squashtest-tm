@@ -18,20 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception;
+package org.squashtest.tm.exception.library;
 
-/**
- * Exception thrown while doing a verified requirement related operation
- *
- * @author Gregory Fouquet
- *
- */
-public abstract class VerifiedRequirementException extends RuntimeException {
+import org.squashtest.tm.core.foundation.exception.ActionException;
+
+public class CannotDeleteProjectException extends ActionException {
 
 	/**
-	 *
+	 * 
 	 */
-	private static final long serialVersionUID = -1907623035129595748L;
+	private static final long serialVersionUID = 6224996610418283183L;
+	private static final String CANNOT_DELETE_MESSAGE_KEY = "squashtm.action.exception.cannot.delete.project";
 
-	public abstract String getShortName();
+	public CannotDeleteProjectException(Exception ex) {
+		super(ex);
+	}
+
+	public CannotDeleteProjectException(String message) {
+		super(message);
+	}
+
+	public CannotDeleteProjectException() {
+
+	}
+
+	@Override
+	public String getI18nKey() {
+		return CANNOT_DELETE_MESSAGE_KEY;
+	}
+
 }

@@ -18,29 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception;
+package org.squashtest.tm.exception.library;
 
-/**
- * Indicates we try to run an execution which has no step.
- * 
- * @author Gregory Fouquet
- * 
- */
-public class ExecutionHasNoStepsException extends RunExecutionException {
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
-	/** 
+public class RightsUnsuficientsForOperationException extends ActionException {
+
+	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2966972992411380380L;
-	private static final String EXECUTION_HAS_NO_STEPS_KEY = "squashtm.action.exception.execution.has.no.steps";
-
-	public ExecutionHasNoStepsException() {
-		super("Execution has no steps");
+	private static final long serialVersionUID = 5665631267216911910L;	
+	private static final String KEY = "squashtm.action.exception.rightUnsuficients";
+	
+	
+	public RightsUnsuficientsForOperationException(Exception ex){
+		super(ex);
 	}
-
+	
+	public RightsUnsuficientsForOperationException(String message){
+		super(message);
+	}
+	
+	public RightsUnsuficientsForOperationException(){
+		
+	}
+	
 	@Override
 	public String getI18nKey() {
-		return EXECUTION_HAS_NO_STEPS_KEY;
+		return KEY;
 	}
+	
 
+	
+	
 }

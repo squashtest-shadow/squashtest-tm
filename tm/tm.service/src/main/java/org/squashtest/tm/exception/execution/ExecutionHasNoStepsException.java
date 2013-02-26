@@ -18,33 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception;
+package org.squashtest.tm.exception.execution;
 
-import org.squashtest.tm.core.foundation.exception.ActionException;
+/**
+ * Indicates we try to run an execution which has no step.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public class ExecutionHasNoStepsException extends RunExecutionException {
 
-public class LoginAlreadyExistsException extends ActionException {
-
-	/**
+	/** 
 	 * 
 	 */
-	private static final long serialVersionUID = -2679054987340981477L;
-	private static final String MESSAGE_KEY = "squashtm.action.exception.login.exists.label";
+	private static final long serialVersionUID = 2966972992411380380L;
+	private static final String EXECUTION_HAS_NO_STEPS_KEY = "squashtm.action.exception.execution.has.no.steps";
 
-	public LoginAlreadyExistsException(Exception ex) {
-		super(ex);
-	}
-
-	public LoginAlreadyExistsException(String message) {
-		super(message);
-	}
-
-	public LoginAlreadyExistsException() {
-
+	public ExecutionHasNoStepsException() {
+		super("Execution has no steps");
 	}
 
 	@Override
 	public String getI18nKey() {
-		return MESSAGE_KEY;
+		return EXECUTION_HAS_NO_STEPS_KEY;
 	}
 
 }

@@ -18,46 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception;
-
-import javax.validation.constraints.NotNull;
-
-import org.squashtest.tm.domain.requirement.RequirementVersion;
+package org.squashtest.tm.exception.execution;
 
 /**
- * A Requirement was bound to be verified by a new TestCase while it is not linkable.
- *
+ * Indicates we tried to run an execution which has no runnable step.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-public class RequirementVersionNotLinkableException extends VerifiedRequirementException {
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -8966011219923689657L;
-
-	private final RequirementVersion notLinkableRequirement;
+public class ExecutionHasNoRunnableStepException extends RunExecutionException {
 
 	/**
-	 * @param notLinkableRequirement
-	 */
-	public RequirementVersionNotLinkableException(@NotNull RequirementVersion notLinkableRequirement) {
-		super();
-		this.notLinkableRequirement = notLinkableRequirement;
-	}
-
-	public RequirementVersion getNotLinkableRequirement() {
-		return notLinkableRequirement;
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * 
-	 * @see org.squashtest.tm.domain.VerifiedRequirementException#getShortName()
 	 */
+	private static final long serialVersionUID = -5950946392120066945L;
+	private static final String EXECUTION_HAS_NO_RUNNABLE_STEPS_KEY = "squashtm.action.exception.execution.has.no.runnable.steps";
+
 	@Override
-	public String getShortName() {
-		return "version-not-linkable";
+	public String getI18nKey() {
+		return EXECUTION_HAS_NO_RUNNABLE_STEPS_KEY;
 	}
 
+	public ExecutionHasNoRunnableStepException() {
+		super("Execution has no runnable step");
+	}
 }

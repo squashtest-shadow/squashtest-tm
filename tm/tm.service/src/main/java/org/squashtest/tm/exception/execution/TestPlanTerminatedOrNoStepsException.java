@@ -18,28 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception;
+package org.squashtest.tm.exception.execution;
 
 import org.squashtest.tm.core.foundation.exception.ActionException;
 
-public class LoginDoNotExistException extends ActionException {
-
-	@Override
-	public String getI18nKey() {
-		return "squashtm.action.exception.login.doesnt.exist.label";
-	}
+public class TestPlanTerminatedOrNoStepsException extends ActionException {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
+	private static final String ERROR_MESSAGE_KEY = "squashtm.action.exception.testsuite.testplan.terminated.or.no.steps";
 
-	public LoginDoNotExistException() {
-		super();
+	public TestPlanTerminatedOrNoStepsException() {
+		super(" no execution is to be resumed because : all terminated, or no execution-step on executions");
 	}
 
-	public LoginDoNotExistException(String message) {
-		super(message);
+	@Override
+	public String getI18nKey() {
+		return ERROR_MESSAGE_KEY;
 	}
 
 }

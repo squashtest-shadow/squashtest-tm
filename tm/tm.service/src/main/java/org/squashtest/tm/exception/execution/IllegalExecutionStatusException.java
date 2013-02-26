@@ -18,35 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception;
+package org.squashtest.tm.exception.execution;
 
-import org.squashtest.tm.core.foundation.exception.ActionException;
+public class IllegalExecutionStatusException extends RuntimeException {
 
-/**
- * Thrown when trying to delete a TestCase that is called by another TestCase.
- *
- * @author Gregory Fouquet
- *
- */
-public class NotDeletableException extends ActionException {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-	private static final long serialVersionUID = -2560628563913390771L;
-	private static final String NOT_DELETABLE_MESSAGE_KEY =  "squashtm.action.exception.notdeletable.label";
-
-	private final long testCaseId;
-
-	public NotDeletableException(long testCaseId) {
-		super("Cannot delete TestCase[id:" + testCaseId + "] because it is called by another TestCase");
-		this.testCaseId = testCaseId;
-	}
-
-	public long getTestCaseId() {
-		return testCaseId;
-	}
 	
-	@Override
-	public String getI18nKey() {
-		return NOT_DELETABLE_MESSAGE_KEY;
-	}	
-
 }

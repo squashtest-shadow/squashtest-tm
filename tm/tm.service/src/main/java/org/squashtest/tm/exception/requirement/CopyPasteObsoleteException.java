@@ -18,34 +18,38 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception;
+package org.squashtest.tm.exception.requirement;
 
 import org.squashtest.tm.core.foundation.exception.ActionException;
 
-public class TestPlanItemNotExecutableException extends ActionException {
+public class CopyPasteObsoleteException extends ActionException {
 
+	
 	/**
-	 * 
+	 *TODO generate serialVersionUID my eclipse couldn't thanks. mpagnon
 	 */
-	private static final long serialVersionUID = 7668234787125033427L;
-	private static final String ERROR_MESSAGE_KEY = "squashtm.action.exception.cannotcreateexecution.label";
+	private static final long serialVersionUID = 1L;
+	private static final String COPY_OBSOLETE_MESSAGE_KEY = "squashtm.action.exception.copy.paste.obsolete";
 	
 	
-	public TestPlanItemNotExecutableException(Exception ex) {
+	public CopyPasteObsoleteException(Exception ex){
 		super(ex);
 	}
 	
-	public TestPlanItemNotExecutableException(String message) {
+	public CopyPasteObsoleteException(String message){
 		super(message);
 	}
 	
-	public TestPlanItemNotExecutableException(){
+	public CopyPasteObsoleteException(){
 		
 	}
 	
 	@Override
 	public String getI18nKey() {
-		return ERROR_MESSAGE_KEY;
+		return COPY_OBSOLETE_MESSAGE_KEY;
 	}
+	
+
+	
 	
 }

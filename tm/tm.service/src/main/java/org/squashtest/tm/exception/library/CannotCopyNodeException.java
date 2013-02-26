@@ -18,33 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception;
+package org.squashtest.tm.exception.library;
 
 import org.squashtest.tm.core.foundation.exception.ActionException;
 
-public class CannotDeleteProjectException extends ActionException {
+public class CannotCopyNodeException extends ActionException {
 
 	/**
-	 * 
+	 *TODO my eclipse couldn't
 	 */
-	private static final long serialVersionUID = 6224996610418283183L;
-	private static final String CANNOT_DELETE_MESSAGE_KEY = "squashtm.action.exception.cannot.delete.project";
-
-	public CannotDeleteProjectException(Exception ex) {
-		super(ex);
+	private static final long serialVersionUID = 1L;
+	private String nodeType;
+	
+	public CannotCopyNodeException(String nodeType){
+		super("Cannot copy node of type "+nodeType);
+		this.nodeType = nodeType;
 	}
-
-	public CannotDeleteProjectException(String message) {
-		super(message);
-	}
-
-	public CannotDeleteProjectException() {
-
-	}
-
+	
 	@Override
-	public String getI18nKey() {
-		return CANNOT_DELETE_MESSAGE_KEY;
+	public String getI18nKey() {	
+		return "message.exception."+nodeType+".cannotCopyNode";
 	}
 
+	
 }

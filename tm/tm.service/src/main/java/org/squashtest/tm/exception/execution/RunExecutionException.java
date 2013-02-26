@@ -18,25 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception;
+package org.squashtest.tm.exception.execution;
 
 import org.squashtest.tm.core.foundation.exception.ActionException;
 
-public class TestPlanTerminatedOrNoStepsException extends ActionException {
+/**
+ * Something happened while trying to run an execution.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public abstract class RunExecutionException extends ActionException {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2L;
-	private static final String ERROR_MESSAGE_KEY = "squashtm.action.exception.testsuite.testplan.terminated.or.no.steps";
+	private static final long serialVersionUID = 6362259582776701922L;
 
-	public TestPlanTerminatedOrNoStepsException() {
-		super(" no execution is to be resumed because : all terminated, or no execution-step on executions");
-	}
-
-	@Override
-	public String getI18nKey() {
-		return ERROR_MESSAGE_KEY;
+	/**
+	 * @param message
+	 */
+	public RunExecutionException(String message) {
+		super(message);
 	}
 
 }

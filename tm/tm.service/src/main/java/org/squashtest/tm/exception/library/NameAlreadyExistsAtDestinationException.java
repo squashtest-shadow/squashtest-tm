@@ -18,27 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception;
+package org.squashtest.tm.exception.library;
 
 import org.squashtest.tm.core.foundation.exception.ActionException;
 
-public class CannotCopyNodeException extends ActionException {
+public class NameAlreadyExistsAtDestinationException extends ActionException {
 
 	/**
-	 *TODO my eclipse couldn't
+	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-	private String nodeType;
+	private static final long serialVersionUID = 5665631267216911910L;	
+	private static final String CANNOT_MOVE_MESSAGE_KEY = "squashtm.action.exception.cannotmovenode.label";
 	
-	public CannotCopyNodeException(String nodeType){
-		super("Cannot copy node of type "+nodeType);
-		this.nodeType = nodeType;
+	
+	public NameAlreadyExistsAtDestinationException(Exception ex){
+		super(ex);
+	}
+	
+	public NameAlreadyExistsAtDestinationException(String message){
+		super(message);
+	}
+	
+	public NameAlreadyExistsAtDestinationException(){
+		
 	}
 	
 	@Override
-	public String getI18nKey() {	
-		return "message.exception."+nodeType+".cannotCopyNode";
+	public String getI18nKey() {
+		return CANNOT_MOVE_MESSAGE_KEY;
 	}
+	
 
+	
 	
 }

@@ -18,28 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception;
+package org.squashtest.tm.exception.requirement;
 
 import org.squashtest.tm.core.foundation.exception.ActionException;
 
-/**
- * Something happened while trying to run an execution.
- * 
- * @author Gregory Fouquet
- * 
- */
-public abstract class RunExecutionException extends ActionException {
+public class IllegalRequirementModificationException extends ActionException {
+	
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6362259582776701922L;
-
-	/**
-	 * @param message
-	 */
-	public RunExecutionException(String message) {
+	private static final long serialVersionUID = 4901610054565947807L;
+	private static final String illegalReqModificationException = "squashtm.action.exception.illegalrequirementmodification.label";
+	
+	
+	public IllegalRequirementModificationException(Exception ex){
+		super(ex);
+	}
+	
+	public IllegalRequirementModificationException(String message){
 		super(message);
 	}
-
+	
+	public IllegalRequirementModificationException(){
+		
+	}
+	
+	@Override
+	public String getI18nKey() {
+		return illegalReqModificationException;
+	}
 }

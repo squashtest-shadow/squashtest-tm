@@ -18,14 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception;
+package org.squashtest.tm.exception.execution;
 
-public class IllegalExecutionStatusException extends RuntimeException {
+import org.squashtest.tm.core.foundation.exception.ActionException;
+
+public class TestPlanItemNotExecutableException extends ActionException {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 7668234787125033427L;
+	private static final String ERROR_MESSAGE_KEY = "squashtm.action.exception.cannotcreateexecution.label";
+	
+	
+	public TestPlanItemNotExecutableException(Exception ex) {
+		super(ex);
+	}
+	
+	public TestPlanItemNotExecutableException(String message) {
+		super(message);
+	}
+	
+	public TestPlanItemNotExecutableException(){
+		
+	}
+	
+	@Override
+	public String getI18nKey() {
+		return ERROR_MESSAGE_KEY;
+	}
 	
 }
