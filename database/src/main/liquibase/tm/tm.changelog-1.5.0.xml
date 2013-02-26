@@ -305,8 +305,10 @@
 		<comment>migrate data to table item_test_plan_test_suite</comment>
 		<sql>
 			insert into ITEM_TEST_PLAN_TEST_SUITE (ITEM_TEST_PLAN_ID, SUITE_ID)
-			select ITEM_TEST_PLAN_ID, TEST_SUITE from ITERATION_TEST_PLAN_ITEM;
+			select ITEM_TEST_PLAN_ID, TEST_SUITE from ITERATION_TEST_PLAN_ITEM
+			where TEST_SUITE IS NOT NULL;
 		</sql>
+		 <dropForeignKeyConstraint baseTableName="ITERATION_TEST_PLAN_ITEM" constraintName="FK_ITPI_TESTSUITE" />
 		<dropColumn tableName="ITERATION_TEST_PLAN_ITEM" columnName="TEST_SUITE"/>
 	</changeSet>
 	
