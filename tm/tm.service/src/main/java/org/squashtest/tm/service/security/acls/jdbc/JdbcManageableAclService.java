@@ -127,12 +127,17 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID  where arse.PARTY_ID = ? and ac.CLASSNAME = ?"
 			+ "and pro.NAME like ?";
 	
-	private static final String FIND_ACL_FOR_CLASS_FROM_USER = "select oid.IDENTITY, ag.ID, ag.QUALIFIED_NAME from "
-			+ "ACL_GROUP ag  inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
-			+ "inner join CORE_USER cu on arse.PARTY_ID = cu.PARTY_ID "
-			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
-			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID  where cu.LOGIN = ? and ac.CLASSNAME = ?";
+	private static final String FIND_ACL_FOR_CLASS_FROM_USER = "select oid.IDENTITY, ag.ID, ag.QUALIFIED_NAME from " 
+			+ "ACL_GROUP ag  inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID " 
+			+ "inner join CORE_PARTY cu on arse.PARTY_ID = cu.PARTY_ID " 
+			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID " 
+			+ "left join CORE_TEAM team on team.PARTY_ID = cu.PARTY_ID "
+			+ "left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID "
+			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID, "
+			+ "CORE_USER u "
+			+ "where((u.PARTY_ID = tmemb.USER_ID) or (u.PARTY_ID = cu.PARTY_ID)) and (u.LOGIN = ? ) and (ac.CLASSNAME = ? ) ";
 			
+	
 	private static final String FIND_ACL_FOR_CLASS_FROM_PARTY = "select oid.IDENTITY, ag.ID, ag.QUALIFIED_NAME as sorting_key, IFNULL(pro.NAME,'') as project_name from "
 			+ "ACL_GROUP ag  inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
@@ -362,6 +367,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 	private List<String> findUsersWithPermissions(List<ObjectIdentity> entityRefs, List<Permission> permissionsList) {
 		List<String> resultSidList = new ArrayList<String>();
 		Collection<Acl> aclList;
+		aclCache.clearCache();
 		try {
 			aclList = readAclsById(entityRefs).values();
 		} catch (NotFoundException nfe) {
