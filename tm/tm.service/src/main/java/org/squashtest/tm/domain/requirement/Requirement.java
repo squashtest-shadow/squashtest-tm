@@ -39,8 +39,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.tm.domain.library.NodeVisitor;
-import org.squashtest.tm.exception.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
+import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 
 /**
  * Entity requirement

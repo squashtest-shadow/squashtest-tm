@@ -42,6 +42,7 @@ import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -55,6 +56,7 @@ import org.squashtest.tm.domain.library.ExportData;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
@@ -218,15 +220,18 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 							  @RequestParam("destination-type") String destType) {
 		
 		List<NODE> nodeList;
- 		
-		if (destType.equals("folder")){
-			nodeList = getLibraryNavigationService().copyNodesToFolder(destinationId, objectIds);
-		}
-		else if (destType.equals("library")){
-			nodeList = getLibraryNavigationService().copyNodesToLibrary(destinationId, objectIds);
-		}
-		else{
-			throw new IllegalArgumentException("copy nodes : specified destination type doesn't exists : "+destType);
+ 		try{
+			if (destType.equals("folder")){
+				nodeList = getLibraryNavigationService().copyNodesToFolder(destinationId, objectIds);
+			}
+			else if (destType.equals("library")){
+				nodeList = getLibraryNavigationService().copyNodesToLibrary(destinationId, objectIds);
+			}
+			else{
+				throw new IllegalArgumentException("copy nodes : specified destination type doesn't exists : "+destType);
+			}
+ 		}catch(AccessDeniedException ade){
+			throw new RightsUnsuficientsForOperationException();
 		}
 		
 		return createJsTreeModel(nodeList);
@@ -238,17 +243,19 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	void moveNode(@RequestParam("object-ids[]") Long[] objectIds, 
 					@RequestParam("destination-id") long destinationId, 
 					@RequestParam("destination-type") String destType) {
-		
-		if (destType.equals("folder")){
-			getLibraryNavigationService().moveNodesToFolder(destinationId, objectIds);
+		try{
+			if (destType.equals("folder")){
+				getLibraryNavigationService().moveNodesToFolder(destinationId, objectIds);
+			}
+			else if (destType.equals("library")){
+				getLibraryNavigationService().moveNodesToLibrary(destinationId, objectIds);
+			}
+			else{
+				throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "+destType);
+			}
+		}catch(AccessDeniedException ade){
+			throw new RightsUnsuficientsForOperationException();
 		}
-		else if (destType.equals("library")){
-			getLibraryNavigationService().moveNodesToLibrary(destinationId, objectIds);
-		}
-		else{
-			throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "+destType);
-		}
-		
 		
 	}
 	

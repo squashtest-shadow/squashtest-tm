@@ -42,9 +42,9 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.exception.IllegalRequirementModificationException;
-import org.squashtest.tm.exception.RequirementAlreadyVerifiedException;
-import org.squashtest.tm.exception.RequirementVersionNotLinkableException;
+import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
+import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
+import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 import org.squashtest.tm.service.security.annotation.InheritsAcls;
 
 /**

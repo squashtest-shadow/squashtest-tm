@@ -47,7 +47,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.exception.VerifiedRequirementException;
+import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.helper.VerifiedRequirementActionSummaryBuilder;

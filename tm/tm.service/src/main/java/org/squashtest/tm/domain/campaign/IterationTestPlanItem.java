@@ -56,7 +56,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.NotAutomatedException;
-import org.squashtest.tm.exception.TestPlanItemNotExecutableException;
+import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.security.annotation.InheritsAcls;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 

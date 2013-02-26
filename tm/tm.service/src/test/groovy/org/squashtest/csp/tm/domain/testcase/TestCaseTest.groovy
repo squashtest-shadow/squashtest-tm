@@ -39,9 +39,9 @@ import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.domain.testcase.TestStep
-import org.squashtest.tm.exception.RequirementAlreadyVerifiedException
-import org.squashtest.tm.exception.RequirementVersionNotLinkableException
 import org.squashtest.tm.exception.UnknownEntityException
+import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
+import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 
 import spock.lang.Specification
 import spock.lang.Unroll

@@ -26,9 +26,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
-import org.squashtest.tm.exception.RequirementAlreadyVerifiedException;
-import org.squashtest.tm.exception.RequirementVersionNotLinkableException;
-import org.squashtest.tm.exception.VerifiedRequirementException;
+import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
+import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
+import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 
 /**
  * Helper class which builds a summary for a verified requirements related action. This summary is to be sent to the

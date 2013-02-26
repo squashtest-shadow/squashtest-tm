@@ -76,10 +76,10 @@ import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.exception.ExecutionHasNoRunnableStepException;
-import org.squashtest.tm.exception.ExecutionHasNoStepsException;
-import org.squashtest.tm.exception.IllegalExecutionStatusException;
 import org.squashtest.tm.exception.NotAutomatedException;
+import org.squashtest.tm.exception.execution.ExecutionHasNoRunnableStepException;
+import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
+import org.squashtest.tm.exception.execution.IllegalExecutionStatusException;
 import org.squashtest.tm.service.security.annotation.AclConstrainedObject;
 
 @Auditable

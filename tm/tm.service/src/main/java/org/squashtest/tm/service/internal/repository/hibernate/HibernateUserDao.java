@@ -37,7 +37,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.exception.LoginAlreadyExistsException;
+import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;

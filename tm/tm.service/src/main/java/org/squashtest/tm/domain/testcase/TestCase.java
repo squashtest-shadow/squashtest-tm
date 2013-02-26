@@ -58,9 +58,9 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
-import org.squashtest.tm.exception.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 
 /**
  * @author Gregory Fouquet

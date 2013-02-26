@@ -132,7 +132,7 @@
 	                    	inside : true
 	                	};	                	
             		},
-            		"drag_target" : false
+            		"drag_target" : false,
 				},
 				
 				"ui": {
@@ -193,7 +193,21 @@
 				},
 				
 				"workspace_tree" : {
-					cannotMoveMessage : '<f:message key="squashtm.action.exception.cannotmovenode.label" />'					
+					cannotMoveMessage : '<f:message key="squashtm.action.exception.cannotmovenode.label" />',
+					<c:choose>
+						<c:when test="${ workspaceType == 'test-case' }">
+							warnMoveToDifferentLibrary : "<f:message key = 'message.warnMoveToDifferentLibrary.testCase' />",	
+							warnCopyToDifferentLibrary : "<f:message key = 'message.warnCopyToDifferentLibrary.testCase' />",
+						</c:when>
+						<c:when test="${ workspaceType == 'campaign' }">
+							warnMoveToDifferentLibrary : "<f:message key = 'message.warnMoveToDifferentLibrary.campaign' />",	
+							warnCopyToDifferentLibrary : "<f:message key = 'message.warnCopyToDifferentLibrary' />",
+						</c:when>
+						<c:otherwise>
+							warnMoveToDifferentLibrary : "<f:message key = 'message.warnMoveToDifferentLibrary' />",	
+							warnCopyToDifferentLibrary : "<f:message key = 'message.warnCopyToDifferentLibrary' />",
+						</c:otherwise>
+					</c:choose>		
 				}
 			});
 	});

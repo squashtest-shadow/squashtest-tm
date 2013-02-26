@@ -29,8 +29,8 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.exception.IllegalRequirementModificationException;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
+import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 
 import spock.lang.Specification
 import spock.lang.Unroll

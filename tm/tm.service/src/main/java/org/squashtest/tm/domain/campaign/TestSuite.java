@@ -49,8 +49,8 @@ import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.exception.EmptyTestSuiteTestPlanException;
-import org.squashtest.tm.exception.TestPlanItemNotExecutableException;
+import org.squashtest.tm.exception.execution.EmptyTestSuiteTestPlanException;
+import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.security.annotation.InheritsAcls;
 
 @Auditable

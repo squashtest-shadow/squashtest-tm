@@ -31,8 +31,8 @@ import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.exception.CopyPasteObsoleteException
-import org.squashtest.tm.exception.IllegalRequirementModificationException;
+import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
+import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet;

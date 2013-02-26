@@ -37,8 +37,8 @@ import org.squashtest.tm.domain.library.ExportData;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
-import org.squashtest.tm.exception.CannotMoveNodeException;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.FolderDao;
@@ -278,9 +278,9 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			makeMoverStrategy(pasteStrategy);
 			pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds));
 		} catch (NullArgumentException dne) {
-			throw new CannotMoveNodeException();
+			throw new NameAlreadyExistsAtDestinationException();
 		} catch (DuplicateNameException dne) {
-			throw new CannotMoveNodeException();
+			throw new NameAlreadyExistsAtDestinationException();
 		}
 
 	}
@@ -295,9 +295,9 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			makeMoverStrategy(pasteStrategy);
 			pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds));
 		} catch (NullArgumentException dne) {
-			throw new CannotMoveNodeException();
+			throw new NameAlreadyExistsAtDestinationException();
 		} catch (DuplicateNameException dne) {
-			throw new CannotMoveNodeException();
+			throw new NameAlreadyExistsAtDestinationException();
 		}
 
 	}
@@ -309,6 +309,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		PasteStrategy<FOLDER, NODE> pasteStrategy = getPasteToFolderStrategy();
 		makeCopierStrategy(pasteStrategy);
 		return pasteStrategy.pasteNodes(destinationId, Arrays.asList(sourceNodesIds));
+		
 	}
 
 	@Override
@@ -316,6 +317,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		PasteStrategy<LIBRARY, NODE> pasteStrategy = getPasteToLibraryStrategy();
 		makeCopierStrategy(pasteStrategy);
 		return pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds));
+		
 	}
 
 	public int generateUniqueCopyNumber(List<String> copiesNames, String sourceName) {

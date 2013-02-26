@@ -290,24 +290,21 @@ squashtm.tree = squashtm.tree || {};
 			var jqSrc = $(src).treeNode();
 			var jqDest = $(dest).treeNode();
 			var jqObject = $(object).treeNode();
+			
+			
 
 			// check if the node is draggable first
-			if (!jqObject.isCreatable()) {
-				return false;
-			}
-
-			// check if the src and dest are within the same project. If they aren't
-			// themselve a drive we
-			// need to look for them.
-			var srcDrive = jqSrc.getLibrary();
-			var destDrive = jqDest.getLibrary();
-
-			if (!srcDrive.isSame(destDrive)) {
+			if (jqObject.is(':library')) {
 				return false;
 			}
 
 			// check that the destination type is legal
-			if (!jqDest.acceptsAsContent(jqObject)) {
+			if (!jqDest.acceptsAsContent(jqObject) || !jqDest.isCreatable()) {
+				return false;
+			}
+			
+			//do not allow move if src is not deletable
+			if(!jqSrc.isDeletable() && !squashtm.keyEventListener.ctrl){
 				return false;
 			}
 
@@ -315,6 +312,9 @@ squashtm.tree = squashtm.tree || {};
 			if ((jqObject.is(':resource') || (jqObject.is(':view'))) && !squashtm.keyEventListener.ctrl) {
 				return false;
 			}
+			
+			m.differentLibraries = moveFromDifferentLibraries(m);
+
 
 		} catch (invalid_node) {
 			return false;
@@ -356,7 +356,26 @@ squashtm.tree = squashtm.tree || {};
 		}
 		return okay;
 	}
-
+	
+	/**
+	 * This method checks if the move will be inter-project or not.
+	 */
+	 function moveFromDifferentLibraries(data){
+		var dest = data.np;
+		var object = data.o;
+		var movedFromLibs = object.collect(function(elt){
+			return $(elt).treeNode().getLibrary().attr("id");
+		});
+		if(movedFromLibs.lenght > 0){
+		return true;
+		}
+		var destLibrary = $(dest).treeNode().getLibrary().attr("id");
+		if(movedFromLibs[0] != destLibrary){
+		return true;
+		}
+		return false;
+	 }
+	 
 	/*
 	 * ***************************** node copy section
 	 * ****************************************
@@ -399,7 +418,7 @@ squashtm.tree = squashtm.tree || {};
 		return squashtm.treemenu.treeNodeCopier.preparePasteData(nodes, target);
 
 	}
-
+	
 	/*
 	 * will erase fake copies in the tree, send the copied node data to the server,
 	 * and insert the returned nodes.
@@ -439,16 +458,6 @@ squashtm.tree = squashtm.tree || {};
 	 * ******************************* leaf URL management code
 	 * *************************************
 	 */
-	function unselectDescendantsAndOtherProjectsSelections(liNode, tree) {
-		var previouslySelected = tree.get_selected();
-		if (previouslySelected.length > 0) {
-			var descendants = unselectDescendants(liNode, tree);
-			previouslySelected = $(previouslySelected).not(descendants);
-			if (previouslySelected.length > 0) {
-				unselectOtherProjectsSelections(liNode, tree, previouslySelected);
-			}
-		}
-	}
 	/**
 	 * Unselects the nodes of the given tree which are descendants of the given
 	 * liNode.
@@ -457,16 +466,20 @@ squashtm.tree = squashtm.tree || {};
 	 * @param tree
 	 */
 	function unselectDescendants(liNode, tree) {
-		var descendants = $(liNode).find('li');
-
-		if (descendants.length > 0) {
-			$(descendants).each(function(index, element) {
-				tree.deselect_node(element);
-			});
+		var previouslySelected = tree.get_selected();
+		if (previouslySelected.length > 0) {
+			var descendants = $(liNode).find('li');
+			if (descendants.length > 0) {
+				$(descendants).each(function(index, element) {
+					tree.deselect_node(element);
+				});
+			}			
 		}
-		return descendants;
 	}
+	
+	
 	/**
+	 * unused
 	 * Unselects the nodes of the given tree which are not descendants of the same
 	 * project as the given liNode.
 	 * 
@@ -475,6 +488,8 @@ squashtm.tree = squashtm.tree || {};
 	 * @param previouslySelected
 	 */
 	function unselectOtherProjectsSelections(liNode, tree, previouslySelected) {
+		var previouslySelected = tree.get_selected();
+		if (previouslySelected.length > 0) {
 		var libraryOfSelectedNode;
 		if ($(liNode).is('[rel|="drive"]')) {
 			libraryOfSelectedNode = $(liNode)[0];
@@ -488,6 +503,7 @@ squashtm.tree = squashtm.tree || {};
 		$(nodesToUnselect).each(function(index, element) {
 			tree.deselect_node(element);
 		});
+		}
 
 	}
 
@@ -689,10 +705,7 @@ squashtm.tree = squashtm.tree || {};
 				// all nodes except libraries are copyable
 				// if iterations are selected with other nodes
 				// type the selection is not copyable
-				var isCreate = this.selectionIsCreatable(selectedNodes);
-				if (isCreate != "OK")
-					return isCreate;
-				else if (selectedNodes.is(":library"))
+				if (selectedNodes.is(":library"))
 					return "noCopyLibrary";
 				else if (selectedNodes.is(":iteration") && selectedNodes.is(":node"))
 					return "noCopyIteration+Other";
@@ -828,17 +841,16 @@ squashtm.tree = squashtm.tree || {};
 				if (selectedNodes.length === 0)
 					return operations;
 				operations += "export ";
+				if (this.selectionIsCopyable(selectedNodes) == "OK") {
+						operations += "copy ";
+					}
 				if (!this.selectionIsEditable(selectedNodes) == "OK") {
 					return operations;
 
 				} else {
 					if (this.selectionIsDeletable(selectedNodes) == "OK") {
 						operations += "delete ";
-					}
-
-					if (this.selectionIsCopyable(selectedNodes) == "OK") {
-						operations += "copy ";
-					}
+					}			
 
 					if (this.selectionIsOneEditableNode(selectedNodes) == "OK") {
 						if (this.selectionIsCreateFolderAllowed(selectedNodes) == "OK") {
@@ -921,12 +933,70 @@ squashtm.tree = squashtm.tree || {};
 				});
 			}
 
+			/**
+			* DnD move
+			* Method is called after every check id done to allow the operation.
+			*/
+			function doDnDMoveNodes(moveObject, data){
 			
+				var url = $(moveObject.o).treeNode().getMoveUrl();
+
+						moveNode(data, url).fail(
+								function(jqXHR) {														
+											try {squashtm.notification.handleJsonResponseError(jqXHR).done(function(){data.inst.refresh();});}
+											catch(e){data.inst.refresh();}
+											});
+			
+			}
 			var container = this.get_container();
 
 			this.eventHandler = new TreeEventHandler({
 				tree : this
 			});
+			
+			/**
+			* DnD copy node method.
+			* This method is called after all check is done to allow the operation.
+			*/
+			function doDnDCopyNodes(moveObject, data) {
+				// we need to destroy
+				// the copies first,
+				// since we'll
+				// use our owns.
+				destroyJTreeCopies(moveObject, data.inst);
+
+				// now let's post.
+				// Again, as annoying as
+				// it is, the
+				// url depends on th
+				// nature of the nodes.
+				var jqObjects = $(moveObject.o);
+				var url = jqObjects.treeNode().getCopyUrl();
+				var newData = moveObjectToCopyData(data);
+
+				copyNode(newData, url).fail(function() {
+					data.inst.refresh();
+				}).done(function() {
+					// Begin [Feat 1299] this is to make the
+					// following cases work :
+					// case 1 : one is
+					// viewing a campaign and copy-paste one of
+					// it's iterations with Ctrl + drag and drop
+					// => the statistics of the still displayed
+					// campaign have changed = > we need to
+					// refresh them
+					// case 2 : one is viewing an
+					// iteration and copy-paste one of it's
+					// test-suite with Ctrl + drag and drop =>
+					// the statistics of the still displayed
+					// iteration have changed => we need to
+					// refresh them
+					if (typeof (refreshStatistics) == "function") {
+						refreshStatistics();
+					}
+					// End [Feat 1299]
+				});
+			}
 
 			// with the import option an action can be done in
 			// the tree even with no selected node.
@@ -940,7 +1010,7 @@ squashtm.tree = squashtm.tree || {};
 
 			container.bind("select_node.jstree", function(event, data) {
 
-				unselectDescendantsAndOtherProjectsSelections(data.rslt.obj, self);
+				unselectDescendants(data.rslt.obj, self);
 				operations = data.inst.allowedOperations();
 				updateTreebuttons(operations);
 
@@ -976,59 +1046,38 @@ squashtm.tree = squashtm.tree || {};
 						if (moveObject !== null && moveObject !== undefined && moveObject.cr !== undefined) {
 
 							if (squashtm.keyEventListener.ctrl) {
-								// we need to destroy
-								// the copies first,
-								// since we'll
-								// use our owns.
-								destroyJTreeCopies(moveObject, data.inst);
-
-								// now let's post.
-								// Again, as annoying as
-								// it is, the
-								// url depends on th
-								// nature of the nodes.
-								var jqObjects = $(moveObject.o);
-								var url = jqObjects.treeNode().getCopyUrl();
-
-								var newData = moveObjectToCopyData(data);
-
-								copyNode(newData, url).fail(function() {
-									data.inst.refresh();
-								}).done(function() {
-									// Begin [Feat 1299] this is to make the
-									// following cases work :
-									// case 1 : one is
-									// viewing a campaign and copy-paste one of
-									// it's iterations with Ctrl + drag and drop
-									// => the statistics of the still displayed
-									// campaign have changed = > we need to
-									// refresh them
-									// case 2 : one is viewing an
-									// iteration and copy-paste one of it's
-									// test-suite with Ctrl + drag and drop =>
-									// the statistics of the still displayed
-									// iteration have changed => we need to
-									// refresh them
-									if (typeof (refreshStatistics) == "function") {
-										refreshStatistics();
-									}
-									// End [Feat 1299]
-								});
+							
+								
+									if(data.rslt.differentLibraries) {
+									 //warn user if move is inter-project
+										oneShotConfirm('Info', self._get_settings().workspace_tree.warnCopyToDifferentLibrary, squashtm.message.confirm,
+											squashtm.message.cancel)
+											.done(function() {
+												doDnDCopyNodes(moveObject, data);
+											}).fail(function(){
+												data.inst.refresh();
+											});
+									}else{
+									doDnDCopyNodes(moveObject, data);
+								}
 							} else {
 								// check if we can move
 								// the object
 								if (checkMoveIsAuthorized(data)) {
-
-									var url = $(moveObject.o).treeNode().getMoveUrl();
-
-									moveNode(data, url).fail(
-											function(jqXHR) {
-												$.squash.openMessage('',
-														self._get_settings().workspace_tree.cannotMoveMessage).done(
-														function() {
-															data.inst.refresh();
-														});
+									
+									//warn user if move is inter-project
+									if(data.rslt.differentLibraries) {
+									oneShotConfirm('Info', self._get_settings().workspace_tree.warnMoveToDifferentLibrary, squashtm.message.confirm,
+											squashtm.message.cancel)
+											.done(function() {
+												doDnDMoveNodes(moveObject, data);
+											}).fail(function(){
+												data.inst.refresh();
 											});
+									}else{
+										doDnDMoveNodes(moveObject, data);
+									}
+											
 								} else {
 									$.squash.openMessage('', self._get_settings().workspace_tree.cannotMoveMessage)
 											.done(function() {

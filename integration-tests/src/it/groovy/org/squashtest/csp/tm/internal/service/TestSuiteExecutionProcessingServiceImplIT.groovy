@@ -25,8 +25,8 @@ import javax.inject.Inject
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.execution.Execution
-import org.squashtest.tm.exception.EmptyTestSuiteTestPlanException
-import org.squashtest.tm.exception.TestPlanItemNotExecutableException
+import org.squashtest.tm.exception.execution.EmptyTestSuiteTestPlanException;
+import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService
 import org.unitils.dbunit.annotation.DataSet
 

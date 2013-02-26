@@ -154,5 +154,6 @@ define([ "jquery", "app/lnf/Forms", "jquery.squash.messagedialog" ], function($,
 		
 	};
 	
+	
 	return squashtm.notification;
 });

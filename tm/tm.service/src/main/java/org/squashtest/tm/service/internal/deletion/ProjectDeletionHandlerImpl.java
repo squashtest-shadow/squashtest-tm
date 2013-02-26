@@ -40,7 +40,7 @@ import org.squashtest.tm.domain.project.ProjectVisitor;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.exception.CannotDeleteProjectException;
+import org.squashtest.tm.exception.library.CannotDeleteProjectException;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;

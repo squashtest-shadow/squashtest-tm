@@ -29,7 +29,7 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.project.ProjectVisitor;
-import org.squashtest.tm.exception.CannotDeleteProjectException;
+import org.squashtest.tm.exception.library.CannotDeleteProjectException;
 @Component
 @Scope("prototype")
 public class GenericToAdministrableProject implements ProjectVisitor {

@@ -29,7 +29,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.exception.VerifiedRequirementException;
+import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 
 /**
  * Service for management of Requirements verified by a {@link TestCase}

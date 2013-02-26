@@ -27,7 +27,7 @@ import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.exception.IllegalRequirementModificationException
+import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 
 class RequirementMappingIT extends HibernateMappingSpecification {
 

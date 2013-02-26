@@ -34,8 +34,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.exception.TestPlanItemNotExecutableException;
-import org.squashtest.tm.exception.TestPlanTerminatedOrNoStepsException;
+import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
+import org.squashtest.tm.exception.execution.TestPlanTerminatedOrNoStepsException;
 import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
 
 /**
