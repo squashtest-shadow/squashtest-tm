@@ -108,4 +108,18 @@ class StubObjectAclService implements ObjectAclService {
 		
 	}
 
+	@Override
+	public List<Object[]> retrieveClassAclGroupFromUserLogin(String userLogin,
+			String qualifiedClassName) {
+		
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Object[]> retrieveClassAclGroupFromPartyId(long partyId,
+			String qualifiedClassName, Sorting sorting, Filtering filtering) {
+		
+		return Collections.emptyList();
+	}
+
 }
