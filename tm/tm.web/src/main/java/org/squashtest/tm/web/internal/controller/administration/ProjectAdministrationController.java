@@ -148,6 +148,7 @@ public class ProjectAdministrationController {
 		model.addAttribute("tcWorkspacePlugins", tcWorkspacePlugins);
 		model.addAttribute("reqWorkspacePlugins", reqWorkspacePlugins);
 		model.addAttribute("campWorkspacePlugins", campWorkspacePlugins);
+		model.addAttribute("projectId", projectId);
 		
 		return "project-tabs/workspace-wizards-tab.html";
 		

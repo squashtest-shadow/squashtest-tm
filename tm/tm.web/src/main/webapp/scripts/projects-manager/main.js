@@ -40,7 +40,8 @@ define(["jquery", "domReady", "./show-projects/ProjectsManager", "./project-info
 			init : initShowProjects
 		},
 		projectInfo : {
-			initUserPermissions : infoManager.initUserPermissions
+			initUserPermissions : infoManager.initUserPermissions,
+			initWizardsTab : infoManager.initWizardsTab
 		}
 	};
 });

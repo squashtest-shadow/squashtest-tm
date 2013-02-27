@@ -45,6 +45,23 @@
 
 	<div th:include="project-tabs/workspace-wizards-tab :: wizards-panel" th:with="domain = 'campaign', plugins = ${campWorkspacePlugins}" />
 	
+	
+	
+	
+	<script type="text/javascript" th:inline="javascript">
+	/*<![CDATA[*/
+		$(function(){
+			require(["projects-manager"], function(manager){
+				manager.projectInfo.initWizardsTab({
+					projectUrl : /*[[@{/administration/projects/__${projectId}__}]]*/"/administration/projects/14",
+					tcWorkspacePlugins : /*[[${tcWorkspacePlugins}]]*/[],
+					reqWorkspacePlugins : /*[[${reqWorkspacePlugins}]]*/[],
+					campWorkspacePlugins : /*[[${campWorkspacePlugins}]]*/[],
+				});
+			});
+		});		          
+	/*]]>*/
+	</script>
 </div>
 
 
@@ -60,11 +77,11 @@
 <div th:fragment="wizards-panel" th:remove="all">
 
 
-	<div class="toggle-panel" th:with="baseID = ${domain}+'-workspace-wizard'" th:title="#{title.workspace-wizards.administration.__${domain}__}">
+	<div class="toggle-panel" th:with="baseID = ${domain}+'-workspace-wizard'">
 		
-		<div th:id="${baseID}+'-panel'" class="toggle-panel-main">
+		<div th:id="${baseID}+'-panel'" class="toggle-panel-main"  th:title="#{title.workspace-wizards.administration.__${domain}__}">
 
-			<div th:id="${baseID}+'-list'">
+			<div th:id="${baseID}+'-list'" class="wizard-list">
 
 				<table>
 				
@@ -79,13 +96,12 @@
 					<tbody class="y-scollable medium-height">
 						<tr th:each="plugin : ${plugins}">
 							<td class="not-displayed" th:text="${plugin.id}"></td>
-							<td><input type="checkbox" th:checked="${plugin.enabled}" /></td>
+							<td><input type="checkbox" th:checked="${plugin.enabled}" class="plugin-enabled" /></td>
 							<td th:text="${plugin.displayableName}"></td>
 						</tr>
 					</tbody>
 					
 				</table>
-
 			</div>
 
 		</div>
