@@ -39,6 +39,7 @@ import org.apache.commons.lang.NullArgumentException;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.FolderSupport;
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.SimpleResource;
@@ -81,9 +82,13 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	@Override
 	public void accept(RequirementLibraryNodeVisitor visitor) {
 		visitor.visit(this);
-
 	}
-
+	
+	@Override
+	public void accept(NodeContainerVisitor visitor) {
+		visitor.visit(this);
+	}
+	
 	@Override
 	public void removeContent(RequirementLibraryNode contentToRemove) throws NullArgumentException {
 		content.remove(contentToRemove);

@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.exception.library.CannotMoveInHimselfException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
@@ -106,6 +107,32 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		
 		then:"no exception is thrown"
 		true
+	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should not move in himself.xml")
+	def "should not move in himself"(){
+		given:
+		Long[] sourceIds = [1L]
+		Long destinationId = 1L
+		
+		when:
+		navService.moveNodesToFolder(destinationId, sourceIds);
+		
+		then:
+		thrown (CannotMoveInHimselfException)
+	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should not move in himself.xml")
+	def "should not move in his descendent"(){
+		given:
+		Long[] sourceIds = [13L]
+		Long destinationId = 1L
+		
+		when:
+		navService.moveNodesToFolder(destinationId, sourceIds);
+		
+		then:
+		thrown (CannotMoveInHimselfException)
 	}
 	
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste folder with requirements.xml")

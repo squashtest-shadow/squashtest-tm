@@ -18,28 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.math.BigInteger;
 import java.util.List;
 
-import org.squashtest.tm.domain.library.LibraryNode;
+import org.hibernate.transform.ResultTransformer;
 
-public interface LibraryNodeDao<NODE extends LibraryNode> extends EntityDao<NODE>{
-
-	/**
-	 * Returns the path of the given entity. The path is the concatenation of the ancestor names, sorted by ancestry. It does not begin with /&ltproject-name&gt; 
-	 * 
-	 * @param entityId
-	 * @return
-	 */
-	List<String> getParentsName(long entityId);
+public class SqLIdResultTransformer implements ResultTransformer {
+		
+		@Override
+		public Object transformTuple(Object[] tuple, String[] aliases) {
+			return ((BigInteger)tuple[0]).longValue();
+		
+		}
+		
+		@Override
+		public List transformList(List collection) {
+			return collection;
+		}
 	
-	/**
-	 * Returns the ids path. The path is a list of ids sorted by ancestry: first = elder, last = younger.
-	 * The list contains only ids of library nodes.
-	 * 
-	 * @param entityId
-	 * @return ids of all entity parents sorted from elder to younger.
-	 */
-	List<Long> getParentsIds(long entityId);
 }

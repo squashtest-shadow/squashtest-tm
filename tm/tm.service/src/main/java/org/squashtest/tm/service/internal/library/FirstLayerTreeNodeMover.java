@@ -20,25 +20,36 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.library.NodeContainer;
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
+import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.exception.library.CannotMoveInHimselfException;
 import org.squashtest.tm.service.internal.campaign.IterationTestPlanManager;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
@@ -47,6 +58,7 @@ import org.squashtest.tm.service.internal.repository.CampaignLibraryDao;
 import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.ItemTestPlanDao;
 import org.squashtest.tm.service.internal.repository.LibraryDao;
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 import org.squashtest.tm.service.internal.repository.RequirementLibraryDao;
@@ -67,6 +79,15 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 @Component
 @Scope("prototype")
 public class FirstLayerTreeNodeMover  implements NodeVisitor, PasteOperation {
+	@Inject
+	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
+	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
+	@Inject
+	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
+	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
+	@Inject
+	@Qualifier("squashtest.tm.repository.CampaignLibraryNodeDao")
+	private LibraryNodeDao<CampaignLibraryNode> campaignLibraryNodeDao;
 	@Inject
 	private RequirementDao requirementDao;
 	@Inject
@@ -103,6 +124,8 @@ public class FirstLayerTreeNodeMover  implements NodeVisitor, PasteOperation {
 		//initialize attributes
 		this.destination = destination;
 		movedNode = null;
+		//check destination's hierarchy doesn't contain node to move
+		checkNotMovedInHimself(toMove);
 		//project changed ? 
 		Project sourceProject = toMove.getProject();
 		GenericProject destinationProject = destination.getProject();
@@ -115,7 +138,6 @@ public class FirstLayerTreeNodeMover  implements NodeVisitor, PasteOperation {
 		return movedNode;
 	}
 
-	/**************************************************** PRIVATE **********************************************************/
 	@Override
 	public boolean isOkToGoDeeper() {
 		return this.projectChanged;
@@ -212,6 +234,97 @@ public class FirstLayerTreeNodeMover  implements NodeVisitor, PasteOperation {
 	 */
 	private boolean changedProject(Project sourceProject , GenericProject destinationProject) {		
 		return (sourceProject != null && destinationProject != null && !sourceProject.getId().equals(destinationProject.getId()));
+	}
+	
+	/**
+	 * Will check it treeNode to move is not his destination and if it is not contained in the hierarchy of it's destination.
+	 * @param toMove
+	 * @return 
+	 */
+	private void checkNotMovedInHimself(TreeNode toMove) {
+		destination.accept(new CheckMovedInHimselfVisitor(toMove));
+	}
+	
+	private class CheckMovedInHimselfVisitor implements NodeContainerVisitor{
+		
+	private TreeNode toMove;
+
+		public CheckMovedInHimselfVisitor(TreeNode toMove) {
+			this.toMove = toMove;
+		}
+
+		@Override
+		public void visit(CampaignLibrary campaignLibrary) {
+			//NOOPE
+		}
+
+		@Override
+		public void visit(RequirementLibrary requirementLibrary) {
+			//NOOPE
+			
+		}
+
+		@Override
+		public void visit(TestCaseLibrary testCaseLibrary) {
+			//NOOPE
+			
+		}
+
+		@Override
+		public void visit(CampaignFolder campaignFolder) {
+			Long toMoveId = ((CampaignLibraryNode)toMove).getId();
+			checkHierarchy(toMoveId, campaignFolder.getId(), campaignLibraryNodeDao);
+		}
+
+
+		@Override
+		public void visit(RequirementFolder requirementFolder) {
+			Long toMoveId = ((RequirementLibraryNode)toMove).getId();			
+			checkHierarchy(toMoveId, requirementFolder.getId(), requirementLibraryNodeDao);
+		}
+
+		@Override
+		public void visit(TestCaseFolder testCaseFolder) {
+			Long toMoveId = ((TestCaseLibraryNode)toMove).getId();			
+			checkHierarchy(toMoveId, testCaseFolder.getId(), testCaseLibraryNodeDao);
+		}
+
+		@Override
+		public void visit(Campaign campaign) {
+			//NOOPE
+			
+		}
+
+		@Override
+		public void visit(Iteration iteration) {
+			//NOOPE
+			
+		}
+
+
+		private void checkHierarchy(Long tocheckId, Long hierarchySourceId,
+				LibraryNodeDao<? extends LibraryNode> libraryNodeDao) {
+			
+			if(tocheckId.equals(hierarchySourceId)){
+				throw new CannotMoveInHimselfException();
+			} else if(hierarchyContains(libraryNodeDao, hierarchySourceId, tocheckId)){
+				throw new CannotMoveInHimselfException();
+			}
+			
+			
+		}
+		
+		private boolean hierarchyContains(LibraryNodeDao<? extends LibraryNode>  libraryNodeDao, Long hierarchySourceId,
+				Long tocheck) {
+			List<Long> hierarchyIds = libraryNodeDao.getParentsIds(hierarchySourceId);
+			for(Long id : hierarchyIds){
+				if(id.equals(tocheck)){
+					return true;
+				}
+			}
+			return false;
+		}
+		
 	}
 
 	

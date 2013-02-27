@@ -60,6 +60,7 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.library.Copiable;
 import org.squashtest.tm.domain.library.NodeContainer;
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.project.Project;
@@ -698,6 +699,12 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@Override
 	public void accept(NodeVisitor visitor) {
 		visitor.visit(this);
+	}
+	
+	@Override
+	public void accept(NodeContainerVisitor visitor) {
+		visitor.visit(this);
+		
 	}
 
 	@Override

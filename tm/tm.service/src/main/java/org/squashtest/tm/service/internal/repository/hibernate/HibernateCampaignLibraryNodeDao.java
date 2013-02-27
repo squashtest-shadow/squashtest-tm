@@ -34,9 +34,17 @@ public class HibernateCampaignLibraryNodeDao extends HibernateEntityDao<Campaign
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getParentsName(long entityId) {
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.campaignLibraryNode_findSortedParentNames);
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.CLN_FIND_SORTED_PARENT_NAMES);
 		query.setParameter("nodeId", entityId, LongType.INSTANCE);
 		return query.list();
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> getParentsIds(long entityId) {
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.CLN_FIND_SORTED_PARENT_IDS);
+		query.setResultTransformer(new SqLIdResultTransformer());
+		query.setParameter("nodeId", entityId, LongType.INSTANCE);
+		return query.list();
+	}
 }

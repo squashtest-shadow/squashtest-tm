@@ -37,7 +37,16 @@ public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<Requi
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getParentsName(long entityId) {
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.requirementLibraryNode_findSortedParentNames);
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.RLN_FIND_SORTED_PARENT_NAMES);
+		query.setParameter("nodeId", entityId, LongType.INSTANCE);
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> getParentsIds(long entityId) {
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.RLN_FIND_SORTED_PARENT_IDS);
+		query.setResultTransformer(new SqLIdResultTransformer());
 		query.setParameter("nodeId", entityId, LongType.INSTANCE);
 		return query.list();
 	}

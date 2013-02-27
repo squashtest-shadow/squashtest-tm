@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.library.Copiable
 import org.squashtest.tm.domain.library.Folder
 import org.squashtest.tm.domain.library.Library
 import org.squashtest.tm.domain.library.LibraryNode
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
@@ -141,6 +142,7 @@ class DummyFolder  extends DummyNode  implements Folder<DummyNode>{
 	Set getContent() {}
 	@Override
 	void addContent(LibraryNode node) {}
+	 void accept(NodeContainerVisitor visitor) {}
 	@Override
 	void removeContent(LibraryNode node){}
 	@Override
@@ -178,6 +180,7 @@ class DummyLibrary implements Library<DummyNode> {
 	public void removeRootContent(DummyNode node) {}
 	public boolean isContentNameAvailable(String name) {}
 	Set getRootContent() {}
+	void accept(NodeContainerVisitor visitor) {}
 	@Override
 	Set getContent(){
 		return null;

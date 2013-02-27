@@ -34,12 +34,20 @@ public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCase
 
 	
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getParentsName(long entityId) {
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.testCaseLibraryNode_findSortedParentNames);
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_FIND_SORTED_PARENT_NAMES);
 		query.setParameter("nodeId", entityId, LongType.INSTANCE);
 		return query.list();
 	}
 	
-	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> getParentsIds(long entityId) {
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_FIND_SORTED_PARENT_IDS);
+		query.setResultTransformer(new SqLIdResultTransformer());
+		query.setParameter("nodeId", entityId, LongType.INSTANCE);
+		return query.list();
+	}
 }

@@ -34,4 +34,5 @@ import org.squashtest.tm.domain.project.Project;
 public interface TreeNode {
 	void accept(NodeVisitor visitor);
 	Project getProject();
+	
 }

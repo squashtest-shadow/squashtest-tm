@@ -35,6 +35,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.NullArgumentException;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.FolderSupport;
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.project.Project;
  
@@ -68,7 +69,12 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	@Override
 	public void accept(TestCaseLibraryNodeVisitor visitor) {
 		visitor.visit(this);
-
+	}
+	
+	@Override
+	public void accept(NodeContainerVisitor visitor) {
+		visitor.visit(this);
+		
 	}
 
 	@Override

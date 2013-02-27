@@ -34,6 +34,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.project.GenericLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
 
@@ -119,6 +120,10 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	}
 
 	
-	
+	@Override
+	public void accept(NodeContainerVisitor visitor) {
+		visitor.visit(this);
+		
+	}
 
 }

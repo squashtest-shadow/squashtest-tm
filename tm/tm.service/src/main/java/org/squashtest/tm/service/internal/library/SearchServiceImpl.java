@@ -176,8 +176,7 @@ public class SearchServiceImpl implements SearchService {
 		return filtered;
 	}
 
-	// ------------------------------------------------------------------------------------------TODO mutualize
-	// duplicated code
+	// -------------------------------------TODO mutualize duplicated code
 	@Override
 	public List<String> findBreadCrumbForRequirement(String className, Long nodeId, String rejex) {
 		RequirementLibraryNode node = null;

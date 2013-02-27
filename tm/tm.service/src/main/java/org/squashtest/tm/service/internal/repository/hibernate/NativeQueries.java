@@ -148,27 +148,37 @@ public final class NativeQueries {
 	
 	
 	/* ********************************************* tree path queries ********************************************************************* */
+	private static final String CLN_FIND_SORTED_PARENTS = " from CAMPAIGN_LIBRARY_NODE cln "+
+															   "inner join CLN_RELATIONSHIP_CLOSURE clos "+
+															   "on clos.ancestor_id = cln.cln_id "+
+															   "where clos.descendant_id = :nodeId "+
+															   "order by clos.depth desc";
 	
-	public static final String campaignLibraryNode_findSortedParentNames = "select cln.name from CAMPAIGN_LIBRARY_NODE cln "+
-																		   "inner join CLN_RELATIONSHIP_CLOSURE clos "+
-																		   "on clos.ancestor_id = cln.cln_id "+
-																		   "where clos.descendant_id = :nodeId "+
-																		   "order by clos.depth desc";
+	public static final String CLN_FIND_SORTED_PARENT_NAMES = "select cln.name "+CLN_FIND_SORTED_PARENTS;	
+	public static final String CLN_FIND_SORTED_PARENT_IDS = "select cln.cln_id "+CLN_FIND_SORTED_PARENTS;
 	
-	public static final String testCaseLibraryNode_findSortedParentNames = "select tcln.name from TEST_CASE_LIBRARY_NODE tcln "+
-																		   "inner join TCLN_RELATIONSHIP_CLOSURE clos "+
-																		   "on clos.ancestor_id = tcln.tcln_id "+
-																		   "where clos.descendant_id = :nodeId "+
-																		   "order by clos.depth desc";
+	private static final String TCLN_FIND_SORTED_PARENTS = " from TEST_CASE_LIBRARY_NODE tcln "+
+													   "inner join TCLN_RELATIONSHIP_CLOSURE clos "+
+													   "on clos.ancestor_id = tcln.tcln_id "+
+													   "where clos.descendant_id = :nodeId "+
+													   "order by clos.depth desc";
 	
+	public static final String TCLN_FIND_SORTED_PARENT_NAMES = "select tcln.name "+TCLN_FIND_SORTED_PARENTS;
+	public static final String TCLN_FIND_SORTED_PARENT_IDS = "select tcln.tcln_id " +TCLN_FIND_SORTED_PARENTS;
 	
-	public static final String requirementLibraryNode_findSortedParentNames = "select rs.name from RESOURCE rs "+
-																			  "join REQUIREMENT_FOLDER rf "+
-			                                                                  "on rs.res_id = rf.res_id "+
-																			  "join REQUIREMENT_LIBRARY_NODE rln "+
-																			  "on rf.rln_id = rln.rln_id "+
-																			  "inner join RLN_RELATIONSHIP_CLOSURE clos "+
-																			  "on clos.ancestor_id = rln.rln_id "+
-																			  "where clos.descendant_id = :nodeId "+
-																			  "order by clos.depth desc";
+	public static final String RLN_FIND_SORTED_PARENT_NAMES = "select rs.name from RESOURCE rs "+
+			  "join REQUIREMENT_FOLDER rf "+
+              "on rs.res_id = rf.res_id "+
+			  "join REQUIREMENT_LIBRARY_NODE rln "+
+			  "on rf.rln_id = rln.rln_id "+
+			  "inner join RLN_RELATIONSHIP_CLOSURE clos "+
+			  "on clos.ancestor_id = rln.rln_id "+
+			  "where clos.descendant_id = :nodeId "+
+			  "order by clos.depth desc";
+	
+	public static final String RLN_FIND_SORTED_PARENT_IDS = "select rln.rln_id from REQUIREMENT_LIBRARY_NODE rln "+
+			   "inner join RLN_RELATIONSHIP_CLOSURE clos "+
+			   "on clos.ancestor_id = rln.rln_id "+
+			   "where clos.descendant_id = :nodeId "+
+			   "order by clos.depth desc";
 }

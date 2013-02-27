@@ -43,6 +43,7 @@ import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.library.NodeContainer;
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -74,7 +75,13 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		visitor.visit(this);
 
 	}
-
+	
+	@Override
+	public void accept(NodeContainerVisitor visitor) {
+		visitor.visit(this);
+		
+	}
+	
 	public void setScheduledStartDate(Date startDate) {
 		getScheduledPeriod().setScheduledStartDate(startDate);
 	}
@@ -427,6 +434,8 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		}
 		return iterationNames;
 	}
+
+	
 	
 
 	

@@ -18,28 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.exception.library;
 
-import java.util.List;
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
-import org.squashtest.tm.domain.library.LibraryNode;
-
-public interface LibraryNodeDao<NODE extends LibraryNode> extends EntityDao<NODE>{
+public class CannotMoveInHimselfException extends ActionException {
 
 	/**
-	 * Returns the path of the given entity. The path is the concatenation of the ancestor names, sorted by ancestry. It does not begin with /&ltproject-name&gt; 
-	 * 
-	 * @param entityId
-	 * @return
+	 *TODO my eclipse couldn't
 	 */
-	List<String> getParentsName(long entityId);
+	private static final long serialVersionUID = 1L;
 	
-	/**
-	 * Returns the ids path. The path is a list of ids sorted by ancestry: first = elder, last = younger.
-	 * The list contains only ids of library nodes.
-	 * 
-	 * @param entityId
-	 * @return ids of all entity parents sorted from elder to younger.
-	 */
-	List<Long> getParentsIds(long entityId);
+	
+	public CannotMoveInHimselfException(){
+		super("Cannot move node in himself");
+		
+	}
+	
+	@Override
+	public String getI18nKey() {	
+		return "message.exception.cannotMoveInHimself";
+	}
+
+	
 }

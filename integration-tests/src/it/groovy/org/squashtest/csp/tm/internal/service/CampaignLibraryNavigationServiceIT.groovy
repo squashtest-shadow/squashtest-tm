@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.exception.DuplicateNameException
+import org.squashtest.tm.exception.library.CannotMoveInHimselfException;
 import org.squashtest.tm.service.campaign.CampaignLibrariesCrudService
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
 import org.squashtest.tm.service.project.GenericProjectManagerService
@@ -389,6 +390,27 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		session.flush()
 	}
 	
+	@DataSet("CampaignLibraryNavigationServiceIT.should not move in himself.xml")
+	def "should not move in himself"(){
+		given :
+		Long[] sourceIds = [1L]
+		Long destinationId = 1L
+		
+		when: navService.moveNodesToFolder(destinationId, sourceIds)
+		
+		then:thrown(CannotMoveInHimselfException)
+	}
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.should not move in himself.xml")
+	def "should not move in his decendents"(){
+		given :
+		Long[] sourceIds = [13L]
+		Long destinationId = 1L
+		
+		when: navService.moveNodesToFolder(destinationId, sourceIds)
+		
+		then:thrown(CannotMoveInHimselfException)
+	}
 	
 	
 	@DataSet("CampaignLibraryNavigationServiceIT.should move to another project f+c.xml")

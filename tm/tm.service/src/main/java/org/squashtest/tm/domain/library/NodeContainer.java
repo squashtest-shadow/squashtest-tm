@@ -59,5 +59,7 @@ public interface NodeContainer<NODE extends TreeNode> extends Identified{
 	 * @return
 	 */
 	GenericProject getProject();
+	
+	void accept(NodeContainerVisitor visitor);
 
 }

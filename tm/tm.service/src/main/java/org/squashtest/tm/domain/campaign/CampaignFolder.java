@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.FolderSupport;
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.project.Project;
 
@@ -64,7 +65,11 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 		visitor.visit(this);
 
 	}
-
+	@Override
+	public void accept(NodeContainerVisitor visitor) {
+		visitor.visit(this);
+		
+	}
 	@Override
 	public void removeContent(CampaignLibraryNode node) throws NullArgumentException {
 		content.remove(node);

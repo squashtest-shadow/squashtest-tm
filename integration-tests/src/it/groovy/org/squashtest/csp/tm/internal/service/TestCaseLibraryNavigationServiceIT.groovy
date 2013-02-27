@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.exception.library.CannotMoveInHimselfException;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet;
@@ -102,6 +103,32 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		
 		then:"expected dataset is verified"
 		session.flush()
+	}
+	
+	@DataSet("TestCaseLibraryNavigationServiceIT.should not move in himself.xml")
+	def "should not move in himself"(){
+		given:
+		Long[] sourceIds = [1L]
+		Long destinationId = 1L
+		
+		when:
+		navService.moveNodesToFolder(destinationId, sourceIds)
+		
+		then:
+		thrown (CannotMoveInHimselfException)
+	}
+	
+	@DataSet("TestCaseLibraryNavigationServiceIT.should not move in himself.xml")
+	def "should not move in his hierarchy"(){
+		given:
+		Long[] sourceIds = [13L]
+		Long destinationId = 1L
+		
+		when:
+		navService.moveNodesToFolder(destinationId, sourceIds)
+		
+		then:
+		thrown (CannotMoveInHimselfException)
 	}
 	
 	@DataSet("TestCaseLibraryNavigationServiceIT.should move to other project.xml")
