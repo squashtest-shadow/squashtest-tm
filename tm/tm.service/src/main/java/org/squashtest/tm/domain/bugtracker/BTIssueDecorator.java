@@ -38,7 +38,7 @@ public class BTIssueDecorator extends BTIssue {
 	public BTIssueDecorator(BTIssue issue) {
 		this.issue = issue;
 	}
-	
+
 	public long getIssueId() {
 		return issueId;
 	}

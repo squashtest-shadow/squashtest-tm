@@ -38,6 +38,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
@@ -106,8 +107,9 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID", insertable = false, updatable = false))
 	private Iteration iteration;
 
-	@ManyToOne
-	private TestSuite testSuite;
+	@ManyToMany
+	@JoinTable(name = "ITEM_TEST_PLAN_TEST_SUITE", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"), inverseJoinColumns = @JoinColumn(name = "SUITE_ID", referencedColumnName="ID"))
+	private List<TestSuite> testSuites = new ArrayList<TestSuite>();
 
 	public IterationTestPlanItem() {
 		super();
@@ -360,7 +362,11 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 	}
 
 	public TestSuite getTestSuite() {
-		return testSuite;
+		TestSuite suite = null;
+		if(testSuites.size() > 0){
+			suite = testSuites.get(0);
+		}
+		return suite;
 	}
 
 	public void setTestSuite(TestSuite suite) {
@@ -368,9 +374,19 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 			throw new IllegalArgumentException("Item[" + id + "] dont belong to Iteration["
 					+ suite.getIteration().getId() + "], it cannot be bound to TestSuite['" + suite.getName() + "']");
 		}
-		this.testSuite = suite;
+		this.testSuites.add(suite);
 	}
 
+
+	public List<TestSuite> getTestSuites() {
+		return testSuites;
+	}
+
+	public void setTestSuites(List<TestSuite> testSuites) {
+		this.testSuites = testSuites;
+	}
+
+	
 	/* package */void setIteration(Iteration iteration) {
 		this.iteration = iteration;
 

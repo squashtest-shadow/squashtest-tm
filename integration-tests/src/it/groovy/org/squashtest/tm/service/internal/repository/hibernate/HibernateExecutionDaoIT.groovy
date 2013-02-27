@@ -68,6 +68,7 @@ class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 		
 	}
 	
+	/*
 	@DataSet("HibernateExecutionDaoIT.should find executions by test case.xml")
 	@Unroll("should find executions #expectedIds sorted by #sortedAttribute")
 	def "should find executions sorted by .."() {
@@ -95,5 +96,5 @@ class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 		"Execution.executionStatus" | [494, 580, 627]
 		"Execution.lastExecutedBy"  | [494, 580, 627]
 		"Execution.lastExecutedOn"  | [494, 580, 627]
-	}
+	}*/
 }

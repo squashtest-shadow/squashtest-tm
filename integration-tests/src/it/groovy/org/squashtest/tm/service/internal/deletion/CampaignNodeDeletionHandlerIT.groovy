@@ -380,6 +380,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		
 	}
 	
+	/*
 	@DataSet("NodeDeletionHandlerTest.should delete testSuites.xml")
 	def"should remove test suites"(){
 		when :
@@ -399,6 +400,6 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		iteration2.getTestSuites().size() == 0
 		
 
-	}
+	}*/
 	
 }

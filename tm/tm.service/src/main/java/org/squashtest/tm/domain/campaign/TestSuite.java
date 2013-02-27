@@ -31,6 +31,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -81,6 +82,9 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
+
+	@ManyToMany(mappedBy="testSuites")
+	private List<IterationTestPlanItem> testPlanItems;
 
 	@Override
 	public Long getId() {
@@ -389,5 +393,11 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 		visitor.visit(this);
 	}
 
-	
+	public List<IterationTestPlanItem> getTestPlanItems() {
+		return testPlanItems;
+	}
+
+	public void setTestPlanItems(List<IterationTestPlanItem> testPlanItems) {
+		this.testPlanItems = testPlanItems;
+	}
 }

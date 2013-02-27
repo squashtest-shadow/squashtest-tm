@@ -67,6 +67,7 @@ class TestSuiteTestPlanManagerServiceImplIT extends DbunitServiceSpecification {
 			iter.getTestPlans().size()==4
 	}
 	
+	/*
 	@DataSet("TestSuiteTestPlanManager.should keep test plan on iteration.xml")
 	def "should keep test plan on iteration"(){
 		
@@ -81,7 +82,7 @@ class TestSuiteTestPlanManagerServiceImplIT extends DbunitServiceSpecification {
 		then :
 			testSuiteDao.findAllTestPlanItemsPaged(testSuiteId, paging).size()==2
 			iter.getTestPlans().size()==4
-	}
+	}*/
 	
 	@DataSet("TestSuiteTestPlanManager.should keep test plan on iteration.xml")
 	def "should take away test plan from iteration as well as test suite"(){

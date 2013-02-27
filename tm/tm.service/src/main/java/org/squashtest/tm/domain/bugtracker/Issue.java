@@ -40,9 +40,9 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 				+ " or i.id in "
 				+ "(select esi.id from Iteration it join it.testPlans itp join itp.executions e join e.steps es join es.issueList esil join esil.issues esi where it.id = :id) "),
 		@NamedQuery(name = "Issue.findAllForTestSuite", query = "select i from Issue i where i.id in "
-				+"(select ei.id from IterationTestPlanItem itp join itp.testSuite ts join itp.executions e join e.issueList eil join eil.issues ei where ts.id = :id)"
+				+"(select ei.id from IterationTestPlanItem itp join itp.testSuites ts join itp.executions e join e.issueList eil join eil.issues ei where :id in (select suites.id from itp.testSuites suites))"
 				+" or id.id in "
-				+"(select esi.id from IterationTestPlanItem itp join itp.testSuite ts join itp.executions e join e.steps es join es.issueList esil join esil.issues esi where ts.id = :id)"),
+				+"(select esi.id from IterationTestPlanItem itp join itp.testSuites ts join itp.executions e join e.steps es join es.issueList esil join esil.issues esi where :id in (select suites.id from itp.testSuites suites))"),
 
 })
 public class Issue {

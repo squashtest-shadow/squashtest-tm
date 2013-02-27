@@ -294,7 +294,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		for (TestSuite testSuite : testSuites) {
 			attachmentListIds.add(testSuite.getAttachmentList().getId());
 			for (IterationTestPlanItem testPlanItem : testSuite.getTestPlan()) {
-				testPlanItem.setTestSuite(null);
+				testPlanItem.getTestSuites().clear();
 			}
 			testSuite.getIteration().removeTestSuite(testSuite);
 			
