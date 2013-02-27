@@ -24,6 +24,7 @@ package org.squashtest.tm.service.project;
 import java.util.List;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -120,4 +121,15 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 	
 	
 	
+	// ****************************** wizards management ***********************
+	
+	/**
+	 * enables the given wizard for the given workspace of the given project
+	 */
+	void enableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId);
+	
+	/**
+	 * enables the given wizard for the given workspace of the given project
+	 */
+	void disableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId);
 }

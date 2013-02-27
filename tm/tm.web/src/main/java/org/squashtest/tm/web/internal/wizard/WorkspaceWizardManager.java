@@ -33,6 +33,9 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
 public interface WorkspaceWizardManager {
 	
 	
+	WorkspaceWizard findById(String wizardId);
+	
+	
 	Collection<WorkspaceWizard> findAllByWorkspace(WorkspaceType workspace);
 	
 	
@@ -86,6 +89,9 @@ public interface WorkspaceWizardManager {
 	 * @return
 	 */
 	Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType... workspaces);
+	
+	
+
 	
 }
 

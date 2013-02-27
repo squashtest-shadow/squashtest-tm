@@ -77,8 +77,8 @@ define([ "jquery", "backbone", "jquery.squash.togglepanel", "jqueryui" ], functi
 				this.on('change:enabled', function(model){
 					var url = this.url+"/"+model.id+"/";
 					var method = (model.attributes.enabled) ? "POST" : "DELETE"
-					//$.post(url);
-					console.log(url+" : "+method);
+					$.ajax({url : url, type : method});
+					//console.log(url+" : "+method);
 				});
 			}
 		});		

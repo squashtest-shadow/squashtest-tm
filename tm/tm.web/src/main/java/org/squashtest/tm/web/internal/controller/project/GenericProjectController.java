@@ -104,6 +104,8 @@ public class GenericProjectController {
 	@Inject
 	private BugTrackerFinderService bugtrackerFinderService;
 	
+	@Inject
+	private WorkspaceWizardManager wizardManager;
 	
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(GenericProjectController.class);
@@ -369,6 +371,24 @@ public class GenericProjectController {
 	@ResponseBody
 	public void unbindProject(@PathVariable(PROJECT_ID) Long projectId, @PathVariable("taProjectId") Long taProjectId){
 		projectManager.unbindTestAutomationProject(projectId, taProjectId);
+	}
+	
+	
+	//************************* wizards administration ***********************
+	
+	
+	@RequestMapping(value = PROJECT_ID_URL+"/{workspaceName:[a-z-]+}-library-wizards/{wizardId}/", method = RequestMethod.POST)
+	@ResponseBody
+	public void enableWizard(@PathVariable("projectId") long projectId, @PathVariable("wizardId") String wizardId){
+		WorkspaceWizard wizard = wizardManager.findById(wizardId);
+		projectManager.enableWizardForWorkspace(projectId, wizard.getDisplayWorkspace(), wizardId);
+	}
+	
+	@RequestMapping(value = PROJECT_ID_URL+"/{workspaceName:[a-z-]+}-library-wizards/{wizardId}/", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void disableWizard(@PathVariable("projectId") long projectId, @PathVariable("wizardId") String wizardId){
+		WorkspaceWizard wizard = wizardManager.findById(wizardId);
+		projectManager.disableWizardForWorkspace(projectId, wizard.getDisplayWorkspace(), wizardId);
 	}
 	
 	

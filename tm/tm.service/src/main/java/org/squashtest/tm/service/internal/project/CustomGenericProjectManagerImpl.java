@@ -34,12 +34,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
@@ -345,4 +347,36 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		bugtrackerBinding.setProjectName(projectBugTrackerName);
 
 	}
+	
+	
+	@Override
+	@PreAuthorize(IS_ADMIN_OR_MANAGER)
+	public void enableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId) {
+		PluginReferencer library = findLibrary(projectId, workspace);
+		library.enablePlugin(wizardId);
+	}
+	
+	
+	@Override
+	@PreAuthorize(IS_ADMIN_OR_MANAGER)
+	public void disableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId) {
+		PluginReferencer library = findLibrary(projectId, workspace);
+		library.disablePlugin(wizardId);
+	}
+	
+	
+	
+	// **************** private stuffs **************
+	
+	private PluginReferencer findLibrary(long projectId, WorkspaceType workspace){
+		GenericProject project = genericProjectDao.findById(projectId);
+		
+		switch(workspace){
+			case TEST_CASE_WORKSPACE : 		return project.getTestCaseLibrary();
+			case REQUIREMENT_WORKSPACE : 	return project.getRequirementLibrary();
+			case CAMPAIGN_WORKSPACE : 		return project.getCampaignLibrary();
+			default : throw new IllegalArgumentException("WorkspaceType "+workspace+" is unknown and is not covered");
+		}
+	}
+	
 }

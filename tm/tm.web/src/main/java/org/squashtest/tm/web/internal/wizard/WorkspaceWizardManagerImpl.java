@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -34,8 +35,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.project.GenericProjectFinder;
+import static org.squashtest.tm.api.workspace.WorkspaceType.*;
 
 /**
  * @author Gregory Fouquet
@@ -57,25 +60,7 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 	public void setProjectFinder(GenericProjectFinder projectFinder) {
 		this.projectFinder = projectFinder;
 	}
-
-	/**
-	 * @see org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager#findAllByWorkspace(WorkspaceType)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public Collection<WorkspaceWizard> findAllByWorkspace(WorkspaceType workspace) {
-		try {
-			lock.readLock().lock();
-			Collection<WorkspaceWizard> collection = wizardsByWorkspace.getCollection(workspace);
-			if(collection == null){
-				collection = Collections.EMPTY_SET;
-			}
-			return new ArrayList<WorkspaceWizard>(collection);	//ensures that the original collection won't be altered 
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-
+	
 	/**
 	 * @see org.squashtest.tm.web.internal.wizard.WorkspaceWizardRegistry#registerWizard(org.squashtest.tm.api.wizard.WorkspaceWizard,
 	 *      java.util.Map)
@@ -113,8 +98,43 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 		}
 
 	}
-
 	
+
+	/**
+	 * @see org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager#findAllByWorkspace(WorkspaceType)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection<WorkspaceWizard> findAllByWorkspace(WorkspaceType workspace) {
+		try {
+			lock.readLock().lock();
+			Collection<WorkspaceWizard> collection = wizardsByWorkspace.getCollection(workspace);
+			if(collection == null){
+				collection = Collections.EMPTY_SET;
+			}
+			return new ArrayList<WorkspaceWizard>(collection);	//ensures that the original collection won't be altered 
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
+
+
+
+	@Override
+	public WorkspaceWizard findById(String wizardId) {
+		try {
+			lock.readLock().lock();
+			Collection<WorkspaceWizard> allWizards = wizardsByWorkspace.values();
+			for (WorkspaceWizard wizard : allWizards){
+				if (wizard.getId().equals(wizardId)){
+					return wizard;
+				}
+			}
+			throw new NoSuchElementException("cannot find WorkspaceWizard with id "+wizardId);
+		} finally {
+			lock.readLock().unlock();
+		}		
+	}
 	
 	
 	@Override
@@ -174,20 +194,24 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 		return allWizards;
 	}
 	
-
+	
 
 	// ******************************** private stuffs *************************
 
-	private Collection<String> findEnabledWizardIds(long projectId, WorkspaceType workspace) {
+	
+	private PluginReferencer findLibrary(long projectId, WorkspaceType workspace){
 		GenericProject project = projectFinder.findById(projectId);
 		
 		switch(workspace){
-			case TEST_CASE_WORKSPACE : 		return project.getTestCaseLibrary().getEnabledPlugins();
-			case REQUIREMENT_WORKSPACE : 	return project.getRequirementLibrary().getEnabledPlugins();
-			case CAMPAIGN_WORKSPACE : 		return project.getCampaignLibrary().getEnabledPlugins();
-			default : throw new IllegalArgumentException("WorkspaceType "+workspace+" is not covered by this method");
+			case TEST_CASE_WORKSPACE : 		return project.getTestCaseLibrary();
+			case REQUIREMENT_WORKSPACE : 	return project.getRequirementLibrary();
+			case CAMPAIGN_WORKSPACE : 		return project.getCampaignLibrary();
+			default : throw new IllegalArgumentException("WorkspaceType "+workspace+" is unknown and not covered by this class");
 		}
-
+	}
+	
+	private Collection<String> findEnabledWizardIds(long projectId, WorkspaceType workspace) {
+		return findLibrary(projectId, workspace).getEnabledPlugins();
 	}
 	
 	private static final class BelongsToList implements Predicate{

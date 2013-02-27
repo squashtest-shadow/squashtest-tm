@@ -322,7 +322,7 @@
 			<column name="LIBRARY_ID" type="BIGINT">
 				<constraints nullable="false" references="TEST_CASE_LIBRARY(TCL_ID)" foreignKeyName="fk_plugin_tclib"/>
 			</column>
-			<column name="PLUGIN_ID" type="java.sql.Types.VARCHAR(30)">
+			<column name="PLUGIN_ID" type="java.sql.Types.VARCHAR(100)">
 				<constraints nullable="false"/>
 			</column>
 		</createTable>
@@ -331,7 +331,7 @@
 			<column name="LIBRARY_ID" type="BIGINT">
 				<constraints nullable="false" references="REQUIREMENT_LIBRARY(RL_ID)" foreignKeyName="fk_plugin_rlib"/>
 			</column>
-			<column name="PLUGIN_ID" type="java.sql.Types.VARCHAR(30)">
+			<column name="PLUGIN_ID" type="java.sql.Types.VARCHAR(100)">
 				<constraints nullable="false"/>
 			</column>
 		</createTable>
@@ -340,7 +340,7 @@
 			<column name="LIBRARY_ID" type="BIGINT">
 				<constraints nullable="false" references="CAMPAIGN_LIBRARY(CL_ID)" foreignKeyName="fk_plugin_clib"/>
 			</column>
-			<column name="PLUGIN_ID" type="java.sql.Types.VARCHAR(30)">
+			<column name="PLUGIN_ID" type="java.sql.Types.VARCHAR(100)">
 				<constraints nullable="false"/>
 			</column>
 		</createTable>				
