@@ -136,3 +136,5 @@ syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
 syntax: regexp
 ^tm/tm\.service/META-INF/.*$
+^plugins/plugin\.workspacewizard\.test/target$
+^plugins/plugin\.workspacewizard\.test/META-INF$

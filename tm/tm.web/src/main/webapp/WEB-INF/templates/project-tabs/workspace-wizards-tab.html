@@ -78,8 +78,8 @@
 					
 					<tbody class="y-scollable medium-height">
 						<tr th:each="plugin : ${plugins}">
-							<td th:text="${plugin.id}"></td>
-							<td><input type="checkbox" th:checked="${plugin.globallyEnabled}" /></td>
+							<td class="not-displayed" th:text="${plugin.id}"></td>
+							<td><input type="checkbox" th:checked="${plugin.enabled}" /></td>
 							<td th:text="${plugin.displayableName}"></td>
 						</tr>
 					</tbody>

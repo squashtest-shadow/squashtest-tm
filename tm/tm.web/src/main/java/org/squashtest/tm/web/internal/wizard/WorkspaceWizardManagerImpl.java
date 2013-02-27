@@ -18,16 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.squashtest.tm.web.internal.wizard;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -50,10 +48,15 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 	private final MultiValueMap wizardsByWorkspace = new MultiValueMap();
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 	
-	@Inject
+	
 	private GenericProjectFinder projectFinder;
 	
 	
+	
+
+	public void setProjectFinder(GenericProjectFinder projectFinder) {
+		this.projectFinder = projectFinder;
+	}
 
 	/**
 	 * @see org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager#findAllByWorkspace(WorkspaceType)
@@ -67,7 +70,7 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 			if(collection == null){
 				collection = Collections.EMPTY_SET;
 			}
-			return collection; 
+			return new ArrayList<WorkspaceWizard>(collection);	//ensures that the original collection won't be altered 
 		} finally {
 			lock.readLock().unlock();
 		}

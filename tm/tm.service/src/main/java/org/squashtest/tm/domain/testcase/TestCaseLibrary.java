@@ -67,7 +67,7 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	
 	
 	@ElementCollection
-	@CollectionTable(name = "TEST_CASE_LIBRARY_PLUGINS", joinColumns = @JoinColumn(name = "TCL_ID"))
+	@CollectionTable(name = "TEST_CASE_LIBRARY_PLUGINS", joinColumns = @JoinColumn(name = "LIBRARY_ID"))
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PLUGIN_ID")
 	private Set<String> enabledPlugins = new HashSet<String>(5);

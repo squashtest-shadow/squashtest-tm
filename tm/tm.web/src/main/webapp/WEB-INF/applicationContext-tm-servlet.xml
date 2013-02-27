@@ -55,7 +55,10 @@
   </bean>
 
     <!-- This bean is referenced by an osgi:list, so it has to be instanciated in appContext*xml (not visible when in *servlet.xml) -->	
-	<bean id="squash.tm.report.WorkspaceWizardManager" class="org.squashtest.tm.web.internal.wizard.WorkspaceWizardManagerImpl" />
+	<bean id="squash.tm.report.WorkspaceWizardManager" class="org.squashtest.tm.web.internal.wizard.WorkspaceWizardManagerImpl" >
+		<property name="projectFinder" ref="squashtest.tm.service.GenericProjectManagerService" />
+	</bean>
+	
 	<!--  TODO
 		once everyting it takes is implemented, replace the class of this resolver by the following :
 		class="org.squashtest.tm.web.internal.fileupload.ProgressAwareMultipartResolver">

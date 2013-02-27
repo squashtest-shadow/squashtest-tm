@@ -16,5 +16,6 @@
 		<module>plugin.report.std</module>
 		<module>plugin.report.test</module>
 		<module>plugin.testautomation.jenkins</module>
+		<module>plugin.workspacewizard.test</module>
 	</modules>
 </project>
