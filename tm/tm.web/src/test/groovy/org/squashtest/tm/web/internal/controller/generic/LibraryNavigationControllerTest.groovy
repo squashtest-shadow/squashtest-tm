@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
+import java.util.Set;
+
 import org.apache.commons.lang.NullArgumentException
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.library.Copiable
@@ -218,5 +220,24 @@ class DummyLibrary implements Library<DummyNode> {
 		return null;
 	}
 	
+	@Override
+	public Set<String> getEnabledPlugins() {
+		return []
+	}
+	
+	@Override
+	public void disablePlugin(String pluginId) {
+		
+	}
+	
+	@Override
+	public void enablePlugin(String pluginId) {
+		
+	}
+	
+	@Override
+	public boolean isPluginEnabled(String pluginId) {
+		return false;
+	}
 }
 

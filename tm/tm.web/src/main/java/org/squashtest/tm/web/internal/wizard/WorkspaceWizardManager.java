@@ -42,7 +42,7 @@ public interface WorkspaceWizardManager {
 	 * @param projectId
 	 * @return
 	 */
-	Collection<WorkspaceWizard> findEnabledWizards(long projectId);
+	Collection<WorkspaceWizard> findEnabledWizards(long projectId);	
 	
 	/**
 	 * returns all the wizards enabled for that project, restricted to those of the corresponding workspace type.
@@ -50,8 +50,17 @@ public interface WorkspaceWizardManager {
 	 * @param projectId
 	 * @return
 	 */
-	Collection<WorkspaceWizard> findEnabledWizards(long projectId, WorkspaceType... workspace);
+	Collection<WorkspaceWizard> findEnabledWizards(long projectId, WorkspaceType workspace);
 	
+	/**
+	 * returns all the wizards enabled for that project, restricted to those of the corresponding workspace types.
+	 * 
+	 * @param projectId
+	 * @return
+	 */
+	Collection<WorkspaceWizard> findEnabledWizards(long projectId, WorkspaceType... workspaces);
+	
+
 	
 	/**
 	 * returns all the wizards disabled for that project, regardless of the workspace type.
@@ -61,14 +70,22 @@ public interface WorkspaceWizardManager {
 	 */
 	Collection<WorkspaceWizard> findDisabledWizards(long projectId);
 	
-	
 	/**
 	 * returns all the wizards disabled for that project, restricted to those of the corresponding workspace type.
 	 * 
 	 * @param projectId
 	 * @return
 	 */
-	Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType... workspace);
+	Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType workspace);
+	
+	
+	/**
+	 * returns all the wizards disabled for that project, restricted to those of the corresponding workspace types.
+	 * 
+	 * @param projectId
+	 * @return
+	 */
+	Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType... workspaces);
 	
 }
 

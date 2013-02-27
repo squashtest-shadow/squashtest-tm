@@ -21,21 +21,23 @@
 
 package org.squashtest.tm.web.internal.wizard;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
-import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.service.project.GenericProjectFinder;
 
 /**
  * @author Gregory Fouquet
@@ -49,7 +51,7 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 	
 	@Inject
-	private ProjectFinder projectFinder;
+	private GenericProjectFinder projectFinder;
 	
 	
 
@@ -116,12 +118,28 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 	public Collection<WorkspaceWizard> findEnabledWizards(long projectId) {
 		return findEnabledWizards(projectId, WorkspaceType.TEST_CASE_WORKSPACE, WorkspaceType.REQUIREMENT_WORKSPACE, WorkspaceType.CAMPAIGN_WORKSPACE);
 	}
+	
+
+	@Override
+	public Collection<WorkspaceWizard> findEnabledWizards(long projectId,WorkspaceType workspace) {
+		
+		Collection<WorkspaceWizard> wizards = findAllByWorkspace(workspace);
+		Collection<String> enabledWizardIds = findEnabledWizardIds(projectId, workspace);
+		
+		Predicate predicate = new BelongsToList(enabledWizardIds); 
+		CollectionUtils.filter(wizards, predicate);		
+		
+		return wizards;
+	}
 
 	
 	@Override
-	public Collection<WorkspaceWizard> findEnabledWizards(long projectId, WorkspaceType... workspace) {
-		//TODO
-		return Collections.emptyList();
+	public Collection<WorkspaceWizard> findEnabledWizards(long projectId, WorkspaceType... workspaces) {
+		Collection<WorkspaceWizard> allWizards = new HashSet<WorkspaceWizard>(); 
+		for (WorkspaceType workspace : workspaces ){
+			allWizards.addAll( findEnabledWizards( projectId, workspace)  );
+		}
+		return allWizards;
 	}
 	
 
@@ -132,11 +150,73 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 	
 
 	@Override
-	public Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType... workspace) {
-		//TODO
-		return findAllByWorkspace(WorkspaceType.TEST_CASE_WORKSPACE);
+	public Collection<WorkspaceWizard> findDisabledWizards(long projectId,	WorkspaceType workspace) {
+		Collection<WorkspaceWizard> wizards = findAllByWorkspace(workspace);
+		Collection<String> enabledWizardIds = findEnabledWizardIds(projectId, workspace);
+		
+		Predicate predicate = new AbsentFromList(enabledWizardIds); 
+		CollectionUtils.filter(wizards, predicate);		
+		
+		return wizards;
+
+	}
+	
+	@Override
+	public Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType... workspaces) {
+		Collection<WorkspaceWizard> allWizards = new HashSet<WorkspaceWizard>(); 
+		
+		for (WorkspaceType workspace : workspaces ){
+			allWizards.addAll( findDisabledWizards( projectId, workspace)  );
+		}
+		return allWizards;
 	}
 	
 
+
+	// ******************************** private stuffs *************************
+
+	private Collection<String> findEnabledWizardIds(long projectId, WorkspaceType workspace) {
+		GenericProject project = projectFinder.findById(projectId);
+		
+		switch(workspace){
+			case TEST_CASE_WORKSPACE : 		return project.getTestCaseLibrary().getEnabledPlugins();
+			case REQUIREMENT_WORKSPACE : 	return project.getRequirementLibrary().getEnabledPlugins();
+			case CAMPAIGN_WORKSPACE : 		return project.getCampaignLibrary().getEnabledPlugins();
+			default : throw new IllegalArgumentException("WorkspaceType "+workspace+" is not covered by this method");
+		}
+
+	}
+	
+	private static final class BelongsToList implements Predicate{
+
+		Collection<String> wizardIds;
+		
+		public BelongsToList(Collection<String> wizardIds){
+			this.wizardIds = wizardIds;
+		}
+		
+		@Override
+		public boolean evaluate(Object wizz) {
+			String id = ((WorkspaceWizard)wizz).getId();
+			return wizardIds.contains(id);
+		}
+		
+	}
+	
+	private static final class AbsentFromList implements Predicate{
+
+		Collection<String> wizardIds;
+		
+		public AbsentFromList(Collection<String> wizardIds){
+			this.wizardIds = wizardIds;
+		}
+		
+		@Override
+		public boolean evaluate(Object wizz) {
+			String id = ((WorkspaceWizard)wizz).getId();
+			return ! wizardIds.contains(id);
+		}
+		
+	}
 	
 }

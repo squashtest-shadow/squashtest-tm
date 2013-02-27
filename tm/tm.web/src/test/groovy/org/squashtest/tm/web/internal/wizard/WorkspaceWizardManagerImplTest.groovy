@@ -24,6 +24,12 @@ package org.squashtest.tm.web.internal.wizard;
 import org.squashtest.tm.api.widget.MenuItem;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+import static org.squashtest.tm.api.workspace.WorkspaceType.*;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.service.project.GenericProjectFinder;
 
 import spock.lang.Specification;
 
@@ -32,7 +38,23 @@ import spock.lang.Specification;
  *
  */
 class WorkspaceWizardManagerImplTest extends Specification {
-	WorkspaceWizardManagerImpl manager = new WorkspaceWizardManagerImpl()
+	
+	WorkspaceWizardManagerImpl manager
+	GenericProjectFinder pfinder
+	
+	GenericProject project = Mock()	
+	TestCaseLibrary tclib = Mock()
+	RequirementLibrary rlib = Mock()
+	CampaignLibrary clib = Mock()
+	
+	
+	def setup(){
+		manager = new WorkspaceWizardManagerImpl()
+		pfinder = Mock()
+		initProjectFinder()
+		manager.projectFinder = pfinder;
+	}
+	
 	
 	def "should find all #workspace wizards"() {
 		given: 
@@ -41,7 +63,7 @@ class WorkspaceWizardManagerImplTest extends Specification {
 				"campaign"
 			}
 			WorkspaceType getDisplayWorkspace() {
-				WorkspaceType.CAMPAIGN_WORKSPACE
+				CAMPAIGN_WORKSPACE
 			}
 			MenuItem getWizardMenu() {
 				
@@ -56,7 +78,7 @@ class WorkspaceWizardManagerImplTest extends Specification {
 				"requirement"
 			}
 			WorkspaceType getDisplayWorkspace() {
-				WorkspaceType.REQUIREMENT_WORKSPACE
+				REQUIREMENT_WORKSPACE
 			}
 			MenuItem getWizardMenu() {
 				
@@ -71,7 +93,7 @@ class WorkspaceWizardManagerImplTest extends Specification {
 				"test case"
 			}
 			WorkspaceType getDisplayWorkspace() {
-				WorkspaceType.TEST_CASE_WORKSPACE
+				TEST_CASE_WORKSPACE
 			}
 			MenuItem getWizardMenu() {
 				
@@ -89,8 +111,154 @@ class WorkspaceWizardManagerImplTest extends Specification {
 		
 		where:
 		workspace                           | id
-		WorkspaceType.TEST_CASE_WORKSPACE   | "test case"
-		WorkspaceType.REQUIREMENT_WORKSPACE | "requirement"
-		WorkspaceType.CAMPAIGN_WORKSPACE    | "campaign"
+		TEST_CASE_WORKSPACE   				| "test case"
+		REQUIREMENT_WORKSPACE 				| "requirement"
+		CAMPAIGN_WORKSPACE    				| "campaign"
 	}
+	
+	
+	
+	def "should find the enabled wizards for test case library"(){
+	
+		given : 
+			def allwizs = batchMockWizards()
+			registerAll(allwizs)
+			enableTCWizs(["alpha-test-case", "charlie-test-case"])
+			
+		when :
+			def res = manager.findEnabledWizards(14l, TEST_CASE_WORKSPACE)
+			
+		then :
+			res.collect{ return [ it.getId(), it.getDisplayWorkspace()] as Set } as Set ==
+				[ 
+					["alpha-test-case", TEST_CASE_WORKSPACE] as Set,
+					["charlie-test-case", TEST_CASE_WORKSPACE] as Set,
+				] as Set
+	}
+	
+	def "should find all the enabled wizards"(){
+		
+		given :
+			def allwizs = batchMockWizards()
+			registerAll(allwizs)
+			enableTCWizs(["alpha-test-case"])
+			enableRWizs(["bravo-requirement"])
+			enableCWizs(["charlie-campaign"])
+			
+		when :
+			def res = manager.findEnabledWizards(14l)
+			
+		then :
+			res.collect{ return [ it.getId(), it.getDisplayWorkspace()] as Set } as Set ==
+				[
+					["alpha-test-case", TEST_CASE_WORKSPACE] as Set,
+					["bravo-requirement", REQUIREMENT_WORKSPACE] as Set,
+					["charlie-campaign", CAMPAIGN_WORKSPACE] as Set
+				] as Set
+	}
+	
+	def "should find the disabled wizards for test case library"(){
+	
+		given :
+			def allwizs = batchMockWizards()
+			registerAll(allwizs)
+			enableTCWizs(["alpha-test-case", "charlie-test-case"])
+			
+		when :
+			def res = manager.findDisabledWizards(14l, TEST_CASE_WORKSPACE)
+			
+		then :
+			res.collect{ return [ it.getId(), it.getDisplayWorkspace()] as Set } as Set ==
+				[
+					["bravo-test-case", TEST_CASE_WORKSPACE] as Set
+				] as Set
+	}
+		
+	def "should find all the disabled wizards"(){
+			
+		given :
+			def allwizs = batchMockWizards()
+			registerAll(allwizs)
+			enableTCWizs(["alpha-test-case"])
+			enableRWizs(["bravo-requirement"])
+			enableCWizs(["charlie-campaign"])
+			
+		when :
+			def res = manager.findDisabledWizards(14l)
+			
+		then :
+			res.collect{ return [ it.getId(), it.getDisplayWorkspace()] as Set } as Set ==
+				[
+					["bravo-test-case", TEST_CASE_WORKSPACE] as Set,
+					["charlie-test-case", TEST_CASE_WORKSPACE] as Set,
+					["alpha-requirement", REQUIREMENT_WORKSPACE] as Set,
+					["charlie-requirement", REQUIREMENT_WORKSPACE] as Set,
+					["alpha-campaign", CAMPAIGN_WORKSPACE] as Set,
+					["bravo-campaign", CAMPAIGN_WORKSPACE] as Set
+				] as Set
+	}
+
+	
+	
+	// *************** utilities *****************************
+	
+	def mockWizard = { id, type -> 
+		WorkspaceWizard wizard = Mock()
+		wizard.getId() >> id
+		wizard.getDisplayWorkspace() >> type
+		return wizard
+	}
+	
+	def fromwktypename = {
+		if (it.equals("test-case")) 	return TEST_CASE_WORKSPACE
+		if (it.equals("requirement")) 	return REQUIREMENT_WORKSPACE
+		if (it.equals("campaign")) 		return CAMPAIGN_WORKSPACE
+	}
+	
+	def batchMockWizards = {
+		def allwizzs = []
+		["alpha", "bravo", "charlie"].each{ id ->
+			["test-case", "requirement", "campaign"].each{ wkp ->
+				allwizzs << mockWizard("$id-$wkp",fromwktypename(wkp))
+			}
+		}
+		return allwizzs
+	} 
+	
+	def registerAll = {  wizzs ->
+		wizzs.each { manager.registerWizard it, [:] }
+	}
+	
+	
+	def initProjectFinder(){
+				
+		project = Mock()		
+		tclib = Mock()
+		rlib = Mock()		
+		clib = Mock()
+		
+		project.getTestCaseLibrary() >> tclib
+		project.getRequirementLibrary() >> rlib
+		project.getCampaignLibrary() >> clib
+		
+		tclib.getEnabledPlugins()
+		rlib.getEnabledPlugins() 
+		clib.getEnabledPlugins() 
+		
+		pfinder.findById(_) >> project
+	}
+	
+	
+	def enableTCWizs(wizIds){
+		tclib.getEnabledPlugins() >> wizIds
+	}
+	
+	def enableRWizs(wizIds){
+		rlib.getEnabledPlugins() >> wizIds
+	}
+	
+	def enableCWizs(wizIds){
+		clib.getEnabledPlugins() >> wizIds
+	}
+	
 }
