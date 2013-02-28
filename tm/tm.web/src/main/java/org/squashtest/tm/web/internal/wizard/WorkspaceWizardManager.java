@@ -36,6 +36,9 @@ public interface WorkspaceWizardManager {
 	WorkspaceWizard findById(String wizardId);
 	
 	
+	Collection<WorkspaceWizard> findAll();
+	
+	
 	Collection<WorkspaceWizard> findAllByWorkspace(WorkspaceType workspace);
 	
 	

@@ -377,14 +377,14 @@ public class GenericProjectController {
 	//************************* wizards administration ***********************
 	
 	
-	@RequestMapping(value = PROJECT_ID_URL+"/{workspaceName:[a-z-]+}-library-wizards/{wizardId}/", method = RequestMethod.POST)
+	@RequestMapping(value = PROJECT_ID_URL+"/wizards/{wizardId}/", method = RequestMethod.POST)
 	@ResponseBody
 	public void enableWizard(@PathVariable("projectId") long projectId, @PathVariable("wizardId") String wizardId){
 		WorkspaceWizard wizard = wizardManager.findById(wizardId);
 		projectManager.enableWizardForWorkspace(projectId, wizard.getDisplayWorkspace(), wizardId);
 	}
 	
-	@RequestMapping(value = PROJECT_ID_URL+"/{workspaceName:[a-z-]+}-library-wizards/{wizardId}/", method = RequestMethod.DELETE)
+	@RequestMapping(value = PROJECT_ID_URL+"/wizards/{wizardId}/", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void disableWizard(@PathVariable("projectId") long projectId, @PathVariable("wizardId") String wizardId){
 		WorkspaceWizard wizard = wizardManager.findById(wizardId);

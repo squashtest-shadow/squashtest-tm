@@ -136,6 +136,16 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 		}		
 	}
 	
+	@Override
+	public Collection<WorkspaceWizard> findAll() {
+		try {
+			lock.readLock().lock();
+			return wizardsByWorkspace.values();
+		} finally {
+			lock.readLock().unlock();
+		}			
+	}
+	
 	
 	@Override
 	public Collection<WorkspaceWizard> findEnabledWizards(long projectId) {

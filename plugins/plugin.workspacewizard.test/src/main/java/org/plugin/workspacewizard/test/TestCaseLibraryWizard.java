@@ -43,6 +43,8 @@ public class TestCaseLibraryWizard extends MultiWorkspaceWizard{
 		return ID+".testcase";
 	}
 	
-
+	public String getName(){
+		return NAME + " (test cases)";
+	}
 	
 }

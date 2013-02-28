@@ -43,5 +43,8 @@ public class RequirementLibraryWizard extends MultiWorkspaceWizard{
 		return ID+".requirement";
 	}
 	
+	public String getName(){
+		return NAME + " (requirements)";
+	}
 	
 }

@@ -43,4 +43,8 @@ public class CampaignLibraryWizard extends MultiWorkspaceWizard{
 		return ID+".campaign";
 	}
 	
+	public String getName(){
+		return NAME + " (campaigns)";
+	}
+	
 }

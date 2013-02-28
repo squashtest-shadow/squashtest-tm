@@ -21,6 +21,7 @@
 
 define([ "jquery", "backbone", "jquery.squash.togglepanel", "jqueryui" ], function($, Backbone){
 			
+	
 
 	var WizardPanelView = Backbone.View.extend({
 				
@@ -39,18 +40,27 @@ define([ "jquery", "backbone", "jquery.squash.togglepanel", "jqueryui" ], functi
 			var tbody = this.$el.find('table tbody'),
 				model = this.options.model,
 				i = 0,
-				modelLength = model.length;
+				available = this.options.available,	//TODO : load through ajax on render
+				availableLength = available.length,
+				collection = this.collection;
 			
 			tbody.empty();
 			
 			var rows = $();
-			for (var i=0;i<modelLength;i++){
-				var item = model.at(i);
-				var newRow = $('tr');
-				newRow.append($('<td class="not-displayed>'+item.id+'</td>'));
+			for (var i=0;i<availableLength;i++){
+				
+				var item = available[i];
+				var newRow = $('<tr/>');
+				
+				newRow.append($('<td class="not-displayed">'+item.id+'</td>'));
 				newRow.append($('<td><input type="checkbox" class="plugin-enabled"/></td>'));
 				newRow.append($('<td>'+item.displayableName+'</td>'));
+				
+				if (collection.get(item.id)!==undefined){
+					newRow.find('input.plugin-enabled').prop('checked', true);
+				}
 				rows = rows.add(newRow);
+				
 			}
 			
 			tbody.append(rows);
@@ -60,58 +70,51 @@ define([ "jquery", "backbone", "jquery.squash.togglepanel", "jqueryui" ], functi
 		updateModel : function(event){
 			
 			var $target = $(event.target);
-			var newValue = $target.prop('checked');
-			
+			var isSelected = $target.prop('checked');			
 			var id = $target.parent('td').prev().text();
-			var model = this.collection.get(id).set({enabled : newValue});
+
+			if (isSelected){
+				this.collection.add({id : id});
+			}
+			else{
+				this.collection.remove(id);
+			}
 		}
 
 	});
 	
 	
-	function initPanel(subSettings){		
+	function initWizardTabView(settings){	
 		
-		var WizardCollection = Backbone.Collection.extend({
-			url : subSettings.url,
+
+		
+		var WizardEnabledCollection = Backbone.Collection.extend({
+			url : settings.projectUrl,
 			initialize : function(){
-				this.on('change:enabled', function(model){
-					var url = this.url+"/"+model.id+"/";
-					var method = (model.attributes.enabled) ? "POST" : "DELETE"
-					$.ajax({url : url, type : method});
-					//console.log(url+" : "+method);
+				this.on('add', function(model){
+					$.post(this.url+"/"+model.id+"/");
 				});
-			}
-		});		
-		
-		var wizardCollection = new WizardCollection();
-		
-		wizardCollection.add(subSettings.model);
-		
-		new WizardPanelView({ el : subSettings.selector, collection : wizardCollection });
-		
-	};
-	
-	
-	function initWizardTabView(settings){
-		initPanel({
-			url : settings.projectUrl+"/test-case-library-wizards",
-			selector : "#test-case-workspace-wizard-panel",
-			model : settings.tcWorkspacePlugins
+				this.on('remove', function(model){
+					$.ajax({url : this.url+"/"+model.id+"/", type : 'DELETE'});
+				});
+			}			
+		});
+				
+		var models = $.map(settings.enabledWizards, function(wiz){
+			return new Backbone.Model({id : wiz});
 		});
 		
-		initPanel({
-			url : settings.projectUrl+"/requirement-library-wizards",
-			selector : "#requirement-workspace-wizard-panel",
-			model : settings.reqWorkspacePlugins
-		});
-		
-		initPanel({
-			url : settings.projectUrl+"/campaign-library-wizards",
-			selector : "#campaign-workspace-wizard-panel",
-			model : settings.campWorkspacePlugins
-		});	
+		var enabledCollection = new WizardEnabledCollection();
+		enabledCollection.reset(models, {silent : true});
+				
+		new WizardPanelView({ 
+			el : "#workspace-wizards-panel", 
+			collection : enabledCollection,
+			available : settings.availableWizards
+		}).render();
 		
 	};
+
 
 	return initWizardTabView;
 });

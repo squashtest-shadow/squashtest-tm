@@ -46,6 +46,7 @@ import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.domain.project.AdministrableProject;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
@@ -134,22 +135,18 @@ public class ProjectAdministrationController {
 	
 	@RequestMapping(value = "{projectId}/wizards")
 	public String getWizardsManager(@PathVariable("projectId") Long projectId, Model model){
+			
+		GenericProject project = projectFinder.findById(projectId); 
 		
-		Collection<WorkspaceWizardModel> tcWorkspacePlugins = new ArrayList<WorkspaceWizardModel>();
-		tcWorkspacePlugins.addAll( toWorkspaceWizardModel( wizardManager.findEnabledWizards(projectId,  WorkspaceType.TEST_CASE_WORKSPACE), true, projectId)  );
-		tcWorkspacePlugins.addAll( toWorkspaceWizardModel( wizardManager.findDisabledWizards(projectId, WorkspaceType.TEST_CASE_WORKSPACE), false, projectId)  );
+		Collection<WorkspaceWizardModel> availableWizards = toWizardModel( wizardManager.findAll() );
+		
+		Collection<String> enabledWizards = new ArrayList<String>();
+		enabledWizards.addAll(project.getTestCaseLibrary().getEnabledPlugins());
+		enabledWizards.addAll(project.getRequirementLibrary().getEnabledPlugins());
+		enabledWizards.addAll(project.getCampaignLibrary().getEnabledPlugins());
 
-		Collection<WorkspaceWizardModel> reqWorkspacePlugins = new ArrayList<WorkspaceWizardModel>();
-		reqWorkspacePlugins.addAll( toWorkspaceWizardModel( wizardManager.findEnabledWizards(projectId,  WorkspaceType.REQUIREMENT_WORKSPACE), true, projectId)  );
-		reqWorkspacePlugins.addAll( toWorkspaceWizardModel( wizardManager.findDisabledWizards(projectId, WorkspaceType.REQUIREMENT_WORKSPACE), false, projectId)  );
-		
-		Collection<WorkspaceWizardModel> campWorkspacePlugins = new ArrayList<WorkspaceWizardModel>();
-		campWorkspacePlugins.addAll( toWorkspaceWizardModel( wizardManager.findEnabledWizards(projectId,  WorkspaceType.CAMPAIGN_WORKSPACE), true, projectId)  );
-		campWorkspacePlugins.addAll( toWorkspaceWizardModel( wizardManager.findDisabledWizards(projectId, WorkspaceType.CAMPAIGN_WORKSPACE), false, projectId)  );
-		
-		model.addAttribute("tcWorkspacePlugins", tcWorkspacePlugins);
-		model.addAttribute("reqWorkspacePlugins", reqWorkspacePlugins);
-		model.addAttribute("campWorkspacePlugins", campWorkspacePlugins);
+		model.addAttribute("availableWizards", availableWizards);
+		model.addAttribute("enabledWizards", enabledWizards);		
 		model.addAttribute("projectId", projectId);
 		
 		return "project-tabs/workspace-wizards-tab.html";
@@ -159,15 +156,13 @@ public class ProjectAdministrationController {
 
 	
 	
-	private Collection<WorkspaceWizardModel> toWorkspaceWizardModel(Collection<WorkspaceWizard> wizards, boolean enabled, long projectId){
+	private Collection<WorkspaceWizardModel> toWizardModel(Collection<WorkspaceWizard> wizards){
 		Locale locale = LocaleContextHolder.getLocale(); 
 		List<WorkspaceWizardModel> output = new ArrayList<WorkspaceWizardModel>(wizards.size());
 		
 		for (WorkspaceWizard wizard : wizards){
 			WorkspaceWizardModel model = new WorkspaceWizardModel(wizard);
 			model.setType(messageSource.getMessage("label.Wizard", null, locale));
-			model.setProjectId(projectId);
-			model.setEnabled(enabled);
 			output.add(model);
 		}
 		

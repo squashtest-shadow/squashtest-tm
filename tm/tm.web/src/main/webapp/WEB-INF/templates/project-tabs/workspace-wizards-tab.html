@@ -27,9 +27,9 @@
 		
 		Required variables are :
 			
-			* tcWorkspacePlugins : a collection of WorkspaceWizardModel for the test case workspace
-			* reqWorkspacePlugins : same, for the requirements workspace
-			* campWorkspacePlugins : same, for the campaigns workspace
+			* projectId : the project Id
+			* availableWizards : the collection of WorkspaceWizardModel representing the available wizards
+			* enabledWizards : the collection of ids of enabled wizards for this project
 
 
 	 -->
@@ -39,52 +39,14 @@
 
 <div id="workspace-wizards-tab">
 
-	<div th:include="project-tabs/workspace-wizards-tab :: wizards-panel" th:with="domain = 'test-case', plugins = ${tcWorkspacePlugins}" />
-
-	<div th:include="project-tabs/workspace-wizards-tab :: wizards-panel" th:with="domain = 'requirement', plugins = ${reqWorkspacePlugins}" />
-
-	<div th:include="project-tabs/workspace-wizards-tab :: wizards-panel" th:with="domain = 'campaign', plugins = ${campWorkspacePlugins}" />
 	
-	
-	
-	
-	<script type="text/javascript" th:inline="javascript">
-	/*<![CDATA[*/
-		$(function(){
-			require(["projects-manager"], function(manager){
-				manager.projectInfo.initWizardsTab({
-					projectUrl : /*[[@{/generic-projects/__${projectId}__}]]*/"/generic-projects/14",
-					tcWorkspacePlugins : /*[[${tcWorkspacePlugins}]]*/[],
-					reqWorkspacePlugins : /*[[${reqWorkspacePlugins}]]*/[],
-					campWorkspacePlugins : /*[[${campWorkspacePlugins}]]*/[],
-				});
-			});
-		});		          
-	/*]]>*/
-	</script>
-</div>
-
-
-
-<div th:remove="all">
-<!-- 
-	arguments are :
-		* plugins : a collection of WorkspaceWizardModel
-		* domain : an identifier (like test-case, campaign etc)
--->
-
-</div>
-<div th:fragment="wizards-panel" th:remove="all">
-
-
-	<div class="toggle-panel" th:with="baseID = ${domain}+'-workspace-wizard'">
+	<div class="toggle-panel" th:with="baseID = 'workspace-wizards'">
 		
-		<div th:id="${baseID}+'-panel'" class="toggle-panel-main"  th:title="#{title.workspace-wizards.administration.__${domain}__}">
+		<div th:id="${baseID}+'-panel'" class="toggle-panel-main"  th:title="#{title.workspace-wizards.administration}">
 
 			<div th:id="${baseID}+'-list'" class="wizard-list">
 
 				<table>
-				
 					<thead>
 						<tr>
 							<td class="not-displayed">plugin id (not displayed)</td>
@@ -94,11 +56,7 @@
 					</thead>
 					
 					<tbody class="y-scollable medium-height">
-						<tr th:each="plugin : ${plugins}">
-							<td class="not-displayed" th:text="${plugin.id}"></td>
-							<td><input type="checkbox" th:checked="${plugin.enabled}" class="plugin-enabled" /></td>
-							<td th:text="${plugin.displayableName}"></td>
-						</tr>
+						<!--  populated via js -->
 					</tbody>
 					
 				</table>
@@ -106,6 +64,19 @@
 
 		</div>
 	</div>
-
-
+		
+	<script type="text/javascript" th:inline="javascript">
+	/*<![CDATA[*/
+		$(function(){
+			require(["projects-manager"], function(manager){
+				manager.projectInfo.initWizardsTab({
+					projectUrl : /*[[@{/generic-projects/__${projectId}__/wizards}]]*/"/generic-projects/14/wizards",
+					availableWizards : /*[[${availableWizards}]]*/[],
+					enabledWizards : /*[[${enabledWizards}]]*/[]
+				});
+			});
+		});		          
+	/*]]>*/
+	</script>
 </div>
+

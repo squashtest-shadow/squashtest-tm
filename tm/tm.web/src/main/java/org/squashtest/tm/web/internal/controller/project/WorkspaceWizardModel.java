@@ -34,9 +34,6 @@ public class WorkspaceWizardModel {
 	
 	private String displayableName;
 	
-	private Long projectId;
-	private boolean enabled;
-	
 	
 	public String getId() {
 		return id;
@@ -93,21 +90,6 @@ public class WorkspaceWizardModel {
 		this.displayableName = displayableName;
 	}
 
-	public Long getProjectId() {
-		return projectId;
-	}
-	
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
 
 	public WorkspaceType setDisplayWorkspace() {
 		return displayWorkspace;

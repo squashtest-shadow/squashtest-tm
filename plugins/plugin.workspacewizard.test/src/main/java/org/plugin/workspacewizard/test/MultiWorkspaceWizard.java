@@ -28,7 +28,7 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
 public abstract class MultiWorkspaceWizard implements WorkspaceWizard{
 	
 	protected static final String ID = "squasthm.test.multiworkspace";
-	private static final String NAME = "wizard de test multiworkspace";
+	protected static final String NAME = "wizard de test multiworkspace";
 
 	@Override
 	public String getName(){
