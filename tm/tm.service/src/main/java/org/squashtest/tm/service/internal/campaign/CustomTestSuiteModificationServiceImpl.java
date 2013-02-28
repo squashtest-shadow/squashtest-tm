@@ -87,6 +87,14 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 		TestSuite suite = testSuiteDao.findById(suiteId);
 		suite.bindTestPlanItemsById(itemTestPlanIds);
 	}
+	
+	@Override()
+	public void bindTestPlanToMultipleSuites(List<Long> suiteIds, List<Long> itemTestPlanIds){
+		
+		for(Long id : suiteIds){
+			bindTestPlan(id, itemTestPlanIds);
+		}
+	}
 
 	@Override
 	@PreAuthorize("hasPermission(#testSuite, 'LINK') or hasRole('ROLE_ADMIN')")
@@ -95,6 +103,14 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 		testSuite.bindTestPlanItems(itemTestPlans);
 	}
 
+	@Override()
+	public void bindTestPlanToMultipleSuitesObj(List<TestSuite> testSuites, List<IterationTestPlanItem> itemTestPlans){
+		
+		for(TestSuite suite : testSuites){
+			bindTestPlanObj(suite, itemTestPlans);
+		}
+	}
+	
 	@Override
 	@PreAuthorize("hasPermission(#testSuite, 'LINK') or hasRole('ROLE_ADMIN')")
 	public void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {

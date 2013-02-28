@@ -50,8 +50,7 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	
 	/**
 	 * <p>That method will attach several {@link IterationTestPlanItem} to the given TestSuite. As usual, they
-	 * are identified using their Ids. Since a given item can be bound to at most one test suite, the item
-	 * be deassociated from its former TestSuite.</p>
+	 * are identified using their Ids.</p>
 	 * 
 	 * <p>The implementation must also check that all these entities all belong to the same iteration or throw an unchecked exception
 	 * if not. TODO : define that exception.</p> 
@@ -62,9 +61,20 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	void bindTestPlan(long suiteId, List<Long> itemTestPlanIds);
 
 	/**
+	 * <p>That method will attach several {@link IterationTestPlanItem} to several TestSuite. As usual, they
+	 * are identified using their Ids.</p>
+	 * 
+	 * <p>The implementation must also check that all these entities all belong to the same iteration or throw an unchecked exception
+	 * if not. TODO : define that exception.</p> 
+	 * 
+	 * @param suiteIds
+	 * @param itemTestPlanIds
+	 */
+	void bindTestPlanToMultipleSuites(List<Long> suiteIds, List<Long> itemTestPlanIds);
+	
+	/**
 	 * <p>That method will attach several {@link IterationTestPlanItem} to the given TestSuite. They
-	 * are identified using their Objects. Since a given item can be bound to at most one test suite, the item
-	 * be deassociated from its former TestSuite.</p>
+	 * are identified using their Objects.</p>
 	 * 
 	 * <p>These entities all belong to the same iteration since they have previously been attached to it.</p> 
 	 * 
@@ -74,9 +84,19 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	void bindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans);
 
 	/**
+	 * <p>That method will attach several {@link IterationTestPlanItem} to the given TestSuites. They
+	 * are identified using their Objects.</p>
+	 * 
+	 * <p>These entities all belong to the same iteration since they have previously been attached to it.</p> 
+	 * 
+	 * @param testSuites
+	 * @param itemTestPlans
+	 */
+	void bindTestPlanToMultipleSuitesObj(List<TestSuite> testSuites, List<IterationTestPlanItem> itemTestPlans);
+
+	/**
 	 * <p>That method will detach several {@link IterationTestPlanItem} from the given TestSuite. They
-	 * are identified using their Objects. Since a given item can be bound to at most one test suite, the item
-	 * be deassociated from its former TestSuite.</p>
+	 * are identified using their Objects.</p>
 	 * 
 	 * <p>These entities all belong to the same iteration since they have previously been attached to it.</p> 
 	 * 
