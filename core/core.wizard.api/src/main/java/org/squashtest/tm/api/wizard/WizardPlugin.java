@@ -35,11 +35,5 @@ public interface WizardPlugin extends Plugin {
 	 */
 	String getName();
 
-	/**
-	 * This wizard's persistent, globally unique identifier. A good value would be the osgi service name of this plugin. Should not
-	 * return null.
-	 * 
-	 * @return
-	 */
-	String getId();
+
 }

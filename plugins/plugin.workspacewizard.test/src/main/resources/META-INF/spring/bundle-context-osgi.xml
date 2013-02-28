@@ -34,13 +34,14 @@
 	<bean class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
 	 -->
 
-	<osgi:service ref="squashtm.librarywizard.testcase" interface="org.squashtest.tm.api.wizard.WorkspaceWizard" />
-	<osgi:service ref="squashtm.librarywizard.requirement" interface="org.squashtest.tm.api.wizard.WorkspaceWizard" />
-	<osgi:service ref="squashtm.librarywizard.campaign" interface="org.squashtest.tm.api.wizard.WorkspaceWizard" />
+	<osgi:service ref="squashtm.test.campaign.creator" 					interface="org.squashtest.tm.api.wizard.WorkspaceWizard" />
+	<osgi:service ref="squashtm.test.campaign.dateupdater" 				interface="org.squashtest.tm.api.wizard.WorkspaceWizard" />
+	<osgi:service ref="squashtm.test.requirement.test-case.manager" 	interface="org.squashtest.tm.api.wizard.WorkspaceWizard" />
+	<osgi:service ref="squashtm.test.requirement.versions.manager" 		interface="org.squashtest.tm.api.wizard.WorkspaceWizard" />
+	<osgi:service ref="squashtm.test.test-cases.creator" 				interface="org.squashtest.tm.api.wizard.WorkspaceWizard" />
+	<osgi:service ref="squashtm.test.test-steps.manager" 				interface="org.squashtest.tm.api.wizard.WorkspaceWizard" />
 	
-	<osgi:service ref="squashtm.creator.testcase" interface="org.squashtest.tm.api.wizard.WorkspaceWizard" />
-	<osgi:service ref="squashtm.manager.requirement" interface="org.squashtest.tm.api.wizard.WorkspaceWizard" />
-	<osgi:service ref="squashtm.splitter.iteration" interface="org.squashtest.tm.api.wizard.WorkspaceWizard" />
+
 
 </beans>
  

@@ -23,7 +23,9 @@ package org.squashtest.tm.api.wizard;
 
 import javax.annotation.PostConstruct;
 
+import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.osgi.context.BundleContextAware;
 import org.squashtest.tm.api.widget.MenuItem;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.i18n.ContextBasedInternationalized;
@@ -33,11 +35,27 @@ import org.squashtest.tm.core.foundation.lang.Assert;
  * @author Gregory Fouquet
  * 
  */
-public class InternationalizedWorkspaceWizard extends ContextBasedInternationalized implements WorkspaceWizard,
-		BeanNameAware {
+public class InternationalizedWorkspaceWizard extends ContextBasedInternationalized 
+											  implements WorkspaceWizard, BeanNameAware, BundleContextAware {
+	
+
+	private BundleContext bundleContext;
+	
 	private WorkspaceType displayWorkspace;
 	private MenuItem wizardMenu;
 	private String id;
+	
+	private String filename;
+	private String version;
+	
+	
+	 public void setBundleContext(BundleContext bundleContext){
+		 this.bundleContext = bundleContext;
+		 filename = bundleContext.getBundle().getSymbolicName();
+		 version = bundleContext.getBundle().getVersion().toString();
+	 }
+	
+	
 	/**
 	 * i18n key of this wizard's name
 	 */
@@ -82,6 +100,16 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	@Override
 	public String getId() {
 		return id;
+	}
+	
+	@Override
+	public String getFilename() {
+		return filename;
+	}
+
+	@Override
+	public String getVersion() {
+		return version;
 	}
 
 	/**

@@ -26,5 +26,27 @@ package org.squashtest.tm.api.plugin;
  *
  */
 public interface Plugin {
+	
+	/**
+	 * This plugin persistent, globally unique identifier. A good value would be the osgi service name of this plugin. Should not
+	 * return null.
+	 * 
+	 * @return
+	 */
+	String getId();
+	
+	
+	/**
+	 * Returns the version of this plugin.
+	 * 
+	 * @return
+	 */
+	String getVersion();
+	
+	
+	/**
+	 * @return the file name (eg a .jar) from which comes this plugin
+	 */
+	String getFilename();
 
 }
