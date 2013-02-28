@@ -127,7 +127,7 @@ function TestSuiteModel(settings) {
 			dataType : 'json'
 		}).success(function (json) {
 			self.data.push(json);
-			var evt = { evt_name : "add" };
+			var evt = { evt_name : "add" , newSuite : json};
 			notifyListeners(evt);
 			notifyContextualContent(evt);
 		})

@@ -18,7 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+function TestSuiteMenuCheckedSuites(){
+	var checkedIds = [];
+	this.get = function(){
+		return this.checkedIds;
+	};
+	this.reset = function(){
+		this.checkedIds = [];		
+	};
+	this.add = function(id){
+		this.checkedIds.push(id);
+	};
+	this.remove = function(id){
+	
+	 var index = jQuery.inArray(id, this.checkedIds);
+	 if(index){
+	 this.checkedIds.splice(index, 1);
+	};
+}
 function TestSuiteMenuControl(){
 	var self=this;
 	
@@ -100,7 +117,7 @@ function TestSuiteMenu(settings){
 	
 	var makeItem = $.proxy(function (json){
 		var node=$("<li/>" );
-		var checkbox = $("<input/>", { 'value' : json.id , 'id': 'menu-suite-#'+json.id , 'type':'checkbox', 'checked':'checked', 'name':'menu-suite-item'});
+		var checkbox = $("<input/>", { 'value' : json.id , 'id': 'menu-suite-#'+json.id , 'type':'checkbox', 'name':'menu-suite-item'});
 		node.append(checkbox);
 		var label = $("<label/>", {'for': 'menu-suite-#'+json.id, 'class':'afterDisabled'});
 		label.text(json.name);
@@ -164,6 +181,7 @@ function TestSuiteMenu(settings){
 		container.append(okCancellButtons);
 		this.menu.content=container.html();		
 		
+		this.checkedSuites.reset();
 		
 	}, this);
 	
@@ -216,18 +234,28 @@ function TestSuiteMenu(settings){
 		if ((evt===undefined) || 
 			(evt.evt_name=="rename") || 
 			(evt.evt_name=="remove") ||
-			(evt.evt_name=="add")	||
 			(evt.evt_name=="refresh")
 			){
 			var wasOpen = this.menu.menuOpen;
 			initializeContent();
 			redrawIfNeeded(wasOpen);
-		}			
+		}
+		else if (evt.evt_name=="add"){
+			var wasOpen = this.menu.menuOpen;
+			addSuiteToMenuContent(evt);
+			// redrawIfNeeded(wasOpen);
+		}
 	};
 	
 	/* *********************** handlers ***************** */
 	
 	
+	var addSuiteToMenuContent = $.proxy(function(evt){
+		this.checkedSuites.add(evt.newSuite.id);
+		var item = makeItem(evt.newSuite);
+		item.find("input").attr("checked","checked");$(item).attr("checked", "checked");
+		this.menu.getContainer().find('ul.suite-manager-menu-mainlist').append(item);
+	}, this);
 	
 	var addSuite = $.proxy(function (){
 		var self=this;
@@ -237,48 +265,49 @@ function TestSuiteMenu(settings){
 	}, this);
 	
 	
-	var bindSuiteItemsGeneral = $.proxy(function (){
-		var self=this;
-		var toSend = {};
-		var suiteIds = collectCheckedSuitesIds();
-		if(suiteIds.length <1){
-		$(settings.emptySuiteSelectionMessageSelector).openMessage();
-		}
-		toSend['test-suites[]'] = suiteIds;
-		toSend['test-cases[]'] = getDatatableSelected();
-		
-		self.model.postBind(toSend)
-		.success(function (){
-			self.menu.kill();
-		});
-	},this);
-	
-	var collectCheckedSuitesIds = $.proxy(function(){
-		return this.menu.getContainer()
-		.find("input[type=checkbox][name=menu-suite-item]")
-		.filter(function(index){
-			return $(this).is(":checked");
-		})
-		.collect(function(elt){
-			return elt.value;
-		});		
-	}, this);
 	
 	var stopEventPropagation = $.proxy(function (){
 		var container = this.menu.getContainer();
-		container.delegate('div, ul, li, input:checkbox[name=menu-suite-item], label', 'click', function (evt){
+		container.delegate('div, ul, li,  label', 'click', function (evt){
 			evt.stopImmediatePropagation();
 		});
 	}, this);
 	
+	var bindCheckboxes = $.proxy(function (evt){
+	var self = this;
+		var container = this.menu.getContainer();
+		container.delegate('input:checkbox','change', function (evt){
+			evt.stopImmediatePropagation();
+			var checkbx = evt.currentTarget
+			if($(checkbx).is(":checked")){
+				self.checkedSuites.add(checkbx.value);
+			}else{
+				self.checkedSuites.remove(checkbx.value);
+			}
+			
+		});
+		},this);
+	
 	var bindOkButton = $.proxy(function(){
+	var self = this;
 		var container = this.menu.getContainer();
 		container.delegate('.suite-manager-menu-ok-button', 'click', function (evt){
 			evt.stopImmediatePropagation();
 			if(getDatatableSelected().length ==  0) {
 				$(settings.emptySelectionMessageSelector).openMessage();
 			} else {
-				bindSuiteItemsGeneral();
+				var toSend = {};
+				var suiteIds = self.checkedSuites.get();
+				if(suiteIds.length <1){
+					$(settings.emptySuiteSelectionMessageSelector).openMessage();
+				}else{
+					toSend['test-suites[]'] = suiteIds;
+					toSend['test-cases[]'] = getDatatableSelected();					
+					self.model.postBind(toSend)
+					.success(function (){
+						self.menu.kill();
+					});
+				}
 			}
 		});
 	}, this);
@@ -326,6 +355,7 @@ function TestSuiteMenu(settings){
 		bindInput();
 		bindOkButton();
 		bindCancelButton();
+		bindCheckboxes();
 		
 	}, this);
 	
@@ -358,7 +388,7 @@ function TestSuiteMenu(settings){
 	this.datatableSelector = settings.datatableSelector;
 	
 	if (settings.isContextual!==undefined) this.isContextual = settings.isContextual; 
-
+	this.checkedSuites = new TestSuiteMenuCheckedSuites();
 	this.instance = $(settings.instanceSelector);
 	this.control = new TestSuiteMenuControl();
 	this.okCancellButtons = new TestSuiteMenuOkCancellButtons();
