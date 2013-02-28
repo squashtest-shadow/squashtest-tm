@@ -50,19 +50,14 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.library.CannotMoveInHimselfException;
-import org.squashtest.tm.service.internal.campaign.IterationTestPlanManager;
-import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
 import org.squashtest.tm.service.internal.repository.CampaignLibraryDao;
 import org.squashtest.tm.service.internal.repository.FolderDao;
-import org.squashtest.tm.service.internal.repository.ItemTestPlanDao;
 import org.squashtest.tm.service.internal.repository.LibraryDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
-import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 import org.squashtest.tm.service.internal.repository.RequirementLibraryDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -89,23 +84,13 @@ public class FirstLayerTreeNodeMover  implements NodeVisitor, PasteOperation {
 	@Qualifier("squashtest.tm.repository.CampaignLibraryNodeDao")
 	private LibraryNodeDao<CampaignLibraryNode> campaignLibraryNodeDao;
 	@Inject
-	private RequirementDao requirementDao;
-	@Inject
 	private RequirementFolderDao requirementFolderDao;
-	@Inject
-	private TestCaseDao testCaseDao;
 	@Inject
 	private TestCaseFolderDao testCaseFolderDao;
 	@Inject
 	private CampaignDao campaignDao;
 	@Inject
 	private CampaignFolderDao campaignFolderDao;
-	@Inject
-	private ItemTestPlanDao iterationTestPlanItemDao;
-	@Inject
-	private IterationTestPlanManager iterationTestPlanManager;
-	@Inject
-	private PrivateCustomFieldValueService customFieldValueManagerService;
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
 	@Inject

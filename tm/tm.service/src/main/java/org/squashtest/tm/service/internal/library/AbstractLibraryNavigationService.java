@@ -28,6 +28,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,7 +96,7 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 @Transactional
 public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<NODE>, FOLDER extends Folder<NODE>, NODE extends LibraryNode>
 		implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractLibraryNavigationService.class);
 	private static final String CREATE = "CREATE";
 	private static final String READ = "READ";
 
@@ -278,9 +280,9 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			makeMoverStrategy(pasteStrategy);
 			pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds));
 		} catch (NullArgumentException dne) {
-			throw new NameAlreadyExistsAtDestinationException();
+			throw new NameAlreadyExistsAtDestinationException(dne);
 		} catch (DuplicateNameException dne) {
-			throw new NameAlreadyExistsAtDestinationException();
+			throw new NameAlreadyExistsAtDestinationException(dne);
 		}
 
 	}
@@ -295,9 +297,9 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			makeMoverStrategy(pasteStrategy);
 			pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds));
 		} catch (NullArgumentException dne) {
-			throw new NameAlreadyExistsAtDestinationException();
+			throw new NameAlreadyExistsAtDestinationException(dne);
 		} catch (DuplicateNameException dne) {
-			throw new NameAlreadyExistsAtDestinationException();
+			throw new NameAlreadyExistsAtDestinationException(dne);
 		}
 
 	}

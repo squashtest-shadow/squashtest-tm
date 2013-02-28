@@ -40,7 +40,7 @@
 <%@ taglib prefix="comp" 	tagdir="/WEB-INF/tags/component" %>	
 <%@ taglib prefix="fn"		uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<s:url var="managerScriptUrl" value="/scripts/squashtest/classes/TestSuiteManager.js"  />  
+<s:url var="managerScriptUrl" value="/scripts/squashtest/classes/TestSuiteManager.js"  /> 
 <s:url var="modelScriptUrl" value="/scripts/squashtest/classes/TestSuiteModel.js"  /> 
 <s:url var="menuScriptUrl" value="/scripts/squashtest/classes/TestSuiteMenu.js" /> 
 <s:url var="baseSuiteUrl" value="/test-suites" /> 
@@ -91,6 +91,12 @@
 	</jsp:attribute>
 </pop:popup>
 
+<div id="suite-menu-empty-selection-popup" class="not-visible"
+				title="<f:message key='title.suite.menu.emptySelection' />">
+				<div>
+					<f:message key="message.suite.menu.emptySelection" />
+				</div>
+			</div>
 <%-- ====================== /POPUP STRUCTURE DEFINITION  ========================= --%>
 
 <f:message var="defaultMessage" key="dialog.testsuites.defaultmessage" />
@@ -176,7 +182,8 @@
 				model : squashtm.testSuiteManagement.testSuiteModel,
 				datatableSelector : "#${datatableId}",
 				isContextual : true,
-				emptySelectionMessageSelector: "#${ emptySelectionMessageId }"
+				emptySelectionMessageSelector: "#${ emptySelectionMessageId }",
+				emptySuiteSelectionMessageSelector: "#suite-menu-empty-selection-popup",
 			};
 			
 			squashtm.testSuiteManagement.testSuiteMenu = new TestSuiteMenu(menuSettings);

@@ -175,7 +175,7 @@ function TestSuiteModel(settings) {
 	}
 
 	this.postBind = function (toSend) {
-		var url = this.baseUpdateUrl + "/" + toSend.id + "/test-cases";
+		var url = this.baseUpdateUrl +"/test-cases";
 
 		return $.ajax({
 			'url' : url,

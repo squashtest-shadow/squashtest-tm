@@ -52,7 +52,37 @@ function TestSuiteMenuControl(){
 	makeControl();
 
 }
+function TestSuiteMenuOkCancellButtons(){
+	var self=this;
+	
+	var makeButtons = $.proxy(function (){
+		var node = $("<div/>", {'class':'snap-right'});
+		
+		var okButton = $("<button/>", { 'role' : 'button', 'class' : 'button suite-manager-menu-ok-button'} );
+		okButton.text('OK');
+		okButton.button();
+		node.append(okButton);
+		
+		var cancelButton = $("<button/>", { 'role' : 'button', 'class' : 'button suite-manager-menu-cancel-button'});
+		cancelButton.text(squashtm.message.cancel);
+		cancelButton.button();
+					  
+		node.append(cancelButton);
+		
+		var superDiv = $("<div/>");
+		superDiv.append(node);
+		
+		this.buttons=superDiv;
+		
+	}, this);
+	
+	this.getButtonsHtml = function (){
+		return this.buttons.html();
+	};
+	
+	makeButtons();
 
+}
 /*
   this version of fg-menu is able to replace the content dynamically, recreating the internal structure when needed.
 */
@@ -70,9 +100,11 @@ function TestSuiteMenu(settings){
 	
 	var makeItem = $.proxy(function (json){
 		var node=$("<li/>" );
-		var a = $("<a/>", { 'href' : '#', 'data-suite-id' : json.id });
-		node.append(a);
-		a.text(json.name);
+		var checkbox = $("<input/>", { 'value' : json.id , 'id': 'menu-suite-#'+json.id , 'type':'checkbox', 'checked':'checked', 'name':'menu-suite-item'});
+		node.append(checkbox);
+		var label = $("<label/>", {'for': 'menu-suite-#'+json.id, 'class':'afterDisabled'});
+		label.text(json.name);
+		node.append(label);
 		return node;
 	}, this);
 
@@ -86,14 +118,14 @@ function TestSuiteMenu(settings){
 	
 	var getItemDomId = function (elt){
 		if (elt.firstElementChild!==undefined){
-			return elt.firstElementChild.getAttribute('data-suite-id');		
+			return elt.firstElementChild.getAttribute('value');		
 		}else{
-			return elt.firstChild.getAttribute('data-suite-id');		
+			return elt.firstChild.getAttribute('value');		
 		}			
 	}
 	
 	var getSpanDomId = function (elt){
-		return elt.getAttribute('data-suite-id');
+		return elt.getAttribute('value');
 	}
 	
 	var getItemId = function (jqElt){
@@ -103,7 +135,7 @@ function TestSuiteMenu(settings){
 	
 	var initializeContent = $.proxy(function (){	
 		//generate new content
-		var model = this.model.getData();		
+		var model = this.model.getData();
 		var list = makeList();
 		
 		for (var i in model){
@@ -123,11 +155,13 @@ function TestSuiteMenu(settings){
 		//the horizontal rule + the control
 		var hr = $('<hr/>');
 		var control = this.control.getControlHtml();
-			
+		var okCancellButtons = this.okCancellButtons.getButtonsHtml();
 		//now set the content
 		var container = $("<div>").append(list);
 		container.append(hr);
 		container.append(control);
+		container.append(hr.clone());
+		container.append(okCancellButtons);
 		this.menu.content=container.html();		
 		
 		
@@ -198,15 +232,19 @@ function TestSuiteMenu(settings){
 	var addSuite = $.proxy(function (){
 		var self=this;
 		var name = this.menu.getContainer().find('.suite-manager-menu-input').val();
-		this.model.postNew(name).error(displayAddSuiteError).success(function (json) {
-			bindSuiteItemsGeneral(json.id);
-		});			
+		this.model.postNew(name).error(displayAddSuiteError);
+		
 	}, this);
 	
-	var bindSuiteItemsGeneral = $.proxy(function (itemId){
+	
+	var bindSuiteItemsGeneral = $.proxy(function (){
 		var self=this;
 		var toSend = {};
-		toSend.id = itemId;
+		var suiteIds = collectCheckedSuitesIds();
+		if(suiteIds.length <1){
+		$(settings.emptySuiteSelectionMessageSelector).openMessage();
+		}
+		toSend['test-suites[]'] = suiteIds;
 		toSend['test-cases[]'] = getDatatableSelected();
 		
 		self.model.postBind(toSend)
@@ -215,16 +253,43 @@ function TestSuiteMenu(settings){
 		});
 	},this);
 	
-	var bindSuiteItems = $.proxy(function (){
-		this.menu.chooseItem = function (item){
-			var toSendId = getSpanDomId(item);
-			
+	var collectCheckedSuitesIds = $.proxy(function(){
+		return this.menu.getContainer()
+		.find("input[type=checkbox][name=menu-suite-item]")
+		.filter(function(index){
+			return $(this).is(":checked");
+		})
+		.collect(function(elt){
+			return elt.value;
+		});		
+	}, this);
+	
+	var stopEventPropagation = $.proxy(function (){
+		var container = this.menu.getContainer();
+		container.delegate('div, ul, li, input:checkbox[name=menu-suite-item], label', 'click', function (evt){
+			evt.stopImmediatePropagation();
+		});
+	}, this);
+	
+	var bindOkButton = $.proxy(function(){
+		var container = this.menu.getContainer();
+		container.delegate('.suite-manager-menu-ok-button', 'click', function (evt){
+			evt.stopImmediatePropagation();
 			if(getDatatableSelected().length ==  0) {
 				$(settings.emptySelectionMessageSelector).openMessage();
 			} else {
-				bindSuiteItemsGeneral(toSendId);				
+				bindSuiteItemsGeneral();
 			}
-		}
+		});
+	}, this);
+	
+	var bindCancelButton = $.proxy(function(){
+		var container = this.menu.getContainer();
+		var self = this;
+		container.delegate('.suite-manager-menu-cancel-button', 'click', function (evt){
+			evt.stopImmediatePropagation();
+			self.menu.kill();
+		});
 	}, this);
 	
 	var showMenuHandler = $.proxy(function (){
@@ -234,10 +299,10 @@ function TestSuiteMenu(settings){
 			}
 	}, this);
 	
-	var bindButton = $.proxy(function (){
+	var bindAddButton = $.proxy(function (){
 		var container = this.menu.getContainer();
 		container.delegate('.suite-manager-menu-button', 'click', function (evt){
-			evt.stopImmediatePropagation();
+			evt.stopImmediatePropagation();			
 			addSuite();
 		});
 	},this);
@@ -253,12 +318,15 @@ function TestSuiteMenu(settings){
 				addSuite();
 			}
 		});
-	}, this);
+	}, this); 
 	
 	var initHandlerBinding = $.proxy(function (){
-		bindSuiteItems();
-		bindButton();
+		stopEventPropagation();
+		bindAddButton();
 		bindInput();
+		bindOkButton();
+		bindCancelButton();
+		
 	}, this);
 	
 	var setContextual = $.proxy(function (){
@@ -266,7 +334,7 @@ function TestSuiteMenu(settings){
 		this.menu.create = function (){
 			oldCreate.call(this);
 			this.getContainer().parent().addClass('is-contextual');
-		}
+		};
 	}, this);
 		
 	/* *********************** init ********************* */
@@ -293,7 +361,7 @@ function TestSuiteMenu(settings){
 
 	this.instance = $(settings.instanceSelector);
 	this.control = new TestSuiteMenuControl();
-
+	this.okCancellButtons = new TestSuiteMenuOkCancellButtons();
 	this.model.addListener(this);
 	
 	
