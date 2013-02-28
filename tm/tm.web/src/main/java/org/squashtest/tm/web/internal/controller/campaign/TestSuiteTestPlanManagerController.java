@@ -22,8 +22,10 @@ package org.squashtest.tm.web.internal.controller.campaign;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -259,6 +261,15 @@ public class TestSuiteTestPlanManagerController {
 		
 		return new IterationTestPlanItemDataTableModelHelper(messageSource, locale).buildDataModel(holder, params.getsEcho());
 
+	}
+	
+	@RequestMapping(value = "/test-suites/test-cases", method = RequestMethod.POST, params = {"test-cases[]", "test-suites[]"})
+	public @ResponseBody
+	Map<String,List<Long>> bindTestPlan( @RequestParam("test-cases[]") List<Long> itpIds, @RequestParam("test-suites[]") List<Long> suitesIds) {
+		service.bindTestPlanToMultipleSuites(suitesIds, itpIds);
+		Map<String, List<Long>> result = new HashMap<String, List<Long>>();
+		result.put("ids", suitesIds);
+		return result;
 	}
 	
 	private static class IterationTestPlanItemDataTableModelHelper extends DataTableModelHelper<IterationTestPlanItem>{

@@ -240,14 +240,7 @@ public class TestSuiteModificationController {
 		return result;
 	}
 
-	@RequestMapping(value = "/test-cases", method = RequestMethod.POST, params = "test-cases[]")
-	public @ResponseBody
-	Map<String, String> bindTestPlan(@PathVariable("id") long suiteId, @RequestParam("test-cases[]") List<Long> itpIds) {
-		service.bindTestPlan(suiteId, itpIds);
-		Map<String, String> result = new HashMap<String, String>();
-		result.put("id", Long.toString(suiteId));
-		return result;
-	}
+	
 
 	/***
 	 * Method called when you drag a test case and change its position in the selected iteration

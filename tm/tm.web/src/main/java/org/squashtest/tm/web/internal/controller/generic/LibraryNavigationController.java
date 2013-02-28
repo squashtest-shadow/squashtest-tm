@@ -231,7 +231,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 				throw new IllegalArgumentException("copy nodes : specified destination type doesn't exists : "+destType);
 			}
  		}catch(AccessDeniedException ade){
-			throw new RightsUnsuficientsForOperationException();
+			throw new RightsUnsuficientsForOperationException(ade);
 		}
 		
 		return createJsTreeModel(nodeList);
@@ -254,7 +254,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 				throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "+destType);
 			}
 		}catch(AccessDeniedException ade){
-			throw new RightsUnsuficientsForOperationException();
+			throw new RightsUnsuficientsForOperationException(ade);
 		}
 		
 	}
