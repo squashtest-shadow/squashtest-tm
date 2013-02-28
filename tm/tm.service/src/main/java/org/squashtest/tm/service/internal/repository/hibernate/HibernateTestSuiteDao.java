@@ -82,7 +82,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 		};
 
-		return executeListNamedQuery("testSuite.findTestPlanPaged", callback);
+		return executeListNamedQuery("TestSuite.findAllTestPlanItemsPaged", callback);
 	}
 
 	private Long countTestPlanItems(long testSuiteId) {

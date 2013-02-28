@@ -346,5 +346,15 @@
 		</createTable>				
 	</changeSet>
 	
+	<!-- ============================================FEAT 1984========================================= -->
+	<changeSet id="tm-1.5.0.00-feat-1984.03" author="flaurens">
+		<comment>add column for ordering to table ITEM_TEST_PLAN_TEST_SUITE</comment>
+		<addColumn tableName="ITEM_TEST_PLAN_TEST_SUITE">
+		 	<column name="ITEM_TEST_PLAN_ORDER" type="INT" defaultValue="1">
+		 		<constraints nullable="false"/>
+		 	</column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
  

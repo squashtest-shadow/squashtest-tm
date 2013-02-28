@@ -34,6 +34,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -84,6 +85,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	private final AttachmentList attachmentList = new AttachmentList();
 
 	@ManyToMany(mappedBy="testSuites")
+	@OrderColumn(name="ITEM_TEST_PLAN_ORDER")
 	private List<IterationTestPlanItem> testPlanItems;
 
 	@Override
