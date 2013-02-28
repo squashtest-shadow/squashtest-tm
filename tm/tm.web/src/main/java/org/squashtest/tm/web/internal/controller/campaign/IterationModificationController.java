@@ -448,7 +448,7 @@ public class IterationModificationController {
 			final String latestExecutionMode = messageSource.internationalize(item.getExecutionMode(), locale);
 			final String automationMode = item.isAutomated() ? "A" : "M";
 
-			String testSuiteName;
+			String testSuiteNameList = "";
 			Long assignedId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
 
 			if (item.isTestCaseDeleted()) {
@@ -463,10 +463,14 @@ public class IterationModificationController {
 				importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
 			}
 
-			if (item.getTestSuite() == null) {
-				testSuiteName = formatNone(locale, messageSource);
+			if (item.getTestSuites().isEmpty()) {
+				testSuiteNameList = formatNone(locale, messageSource);
 			} else {
-				testSuiteName = item.getTestSuite().getName();
+				int i=0;
+				while(i<item.getTestSuites().size()-1){
+					testSuiteNameList += item.getTestSuites().get(i).getName()+",";
+				}
+				testSuiteNameList += item.getTestSuites().get(i).getName();
 			}
 
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
@@ -476,7 +480,7 @@ public class IterationModificationController {
 			res.put("tc-name", testCaseName);
 			res.put("importance", importance);
 			res.put("type", latestExecutionMode);
-			res.put("suite", testSuiteName);
+			res.put("suite", testSuiteNameList);
 			res.put("status", messageSource.internationalize(item.getExecutionStatus(), locale));
 			res.put("last-exec-by", formatString(item.getLastExecutedBy(), locale, messageSource));
 			res.put("assigned-to", assignedId);

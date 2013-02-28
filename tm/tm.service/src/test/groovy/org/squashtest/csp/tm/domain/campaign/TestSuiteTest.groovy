@@ -80,9 +80,9 @@ class TestSuiteTest extends Specification {
 		suite.bindTestPlanItems(items)
 
 		then :
-		1 * items[0].setTestSuite(suite)
-		1 * items[1].setTestSuite(suite)
-		1 * items[2].setTestSuite(suite)
+		1 * items[0].addTestSuite(suite)
+		1 * items[1].addTestSuite(suite)
+		1 * items[2].addTestSuite(suite)
 	}
 
 	def "should associate with a bunch of item test plan"(){
@@ -103,9 +103,9 @@ class TestSuiteTest extends Specification {
 		suite.bindTestPlanItemsById([0l, 1l, 2l])
 
 		then :
-		1 * items[0].setTestSuite(suite)
-		1 * items[1].setTestSuite(suite)
-		1 * items[2].setTestSuite(suite)
+		1 * items[0].addTestSuite(suite)
+		1 * items[1].addTestSuite(suite)
+		1 * items[2].addTestSuite(suite)
 	}
 
 	def "should reorder item test plans (1)"(){
@@ -275,12 +275,12 @@ class TestSuiteTest extends Specification {
 		and:
 		IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
 		iteration.addTestPlan(item)
-		item.setTestSuite(testSuite)
+		item.addTestSuite(testSuite)
 
 		and:
 		IterationTestPlanItem otherItem = new IterationTestPlanItem(Mock(TestCase))
 		iteration.addTestPlan(otherItem)
-		otherItem.setTestSuite(testSuite)
+		otherItem.addTestSuite(testSuite)
 
 		when:
 		def res = testSuite.getFirstTestPlanItem()
@@ -321,12 +321,12 @@ class TestSuiteTest extends Specification {
 			IterationTestPlanItem.set field: "id", of: item, to: 30L
 		}
 		testSuite.iteration.addTestPlan(item)
-		item.setTestSuite(testSuite)
+		item.addTestSuite(testSuite)
 
 		and:
 		IterationTestPlanItem otherItem = new IterationTestPlanItem(Mock(TestCase))
 		testSuite.iteration.addTestPlan(otherItem)
-		otherItem.setTestSuite(testSuite)
+		otherItem.addTestSuite(testSuite)
 		use (ReflectionCategory) {
 			IterationTestPlanItem.set field: "id", of: otherItem, to: 40L
 			IterationTestPlanItem.set field: "referencedTestCase", of: otherItem, to: null
@@ -351,7 +351,7 @@ class TestSuiteTest extends Specification {
 			IterationTestPlanItem.set field: "id", of: item, to: 10L
 		}
 		iteration.addTestPlan(item)
-		item.setTestSuite(testSuite)
+		item.addTestSuite(testSuite)
 
 		when:
 		def res = testSuite.isLastExecutableTestPlanItem(30L)
@@ -397,7 +397,7 @@ class TestSuiteTest extends Specification {
 			IterationTestPlanItem.set field: "id", of: item, to: 10L
 		}
 		iteration.addTestPlan(item)
-		item.setTestSuite(testSuite)
+		item.addTestSuite(testSuite)
 
 		and:"item2 linked iteration ONLY"
 		IterationTestPlanItem item2 = new IterationTestPlanItem(testCase)
@@ -412,7 +412,7 @@ class TestSuiteTest extends Specification {
 			IterationTestPlanItem.set field: "id", of: item3, to: 30L
 		}
 		iteration.addTestPlan(item3)
-		item3.setTestSuite(testSuite)
+		item3.addTestSuite(testSuite)
 
 
 		when:
@@ -479,7 +479,7 @@ class TestSuiteTest extends Specification {
 				IterationTestPlanItem.set field: "id", of: item, to: id
 			}
 			iteration.addTestPlan(item)
-			item.setTestSuite(testSuite)
+			item.addTestSuite(testSuite)
 		}
 
 		return testSuite
@@ -515,7 +515,7 @@ class TestSuiteTest extends Specification {
 		and:
 		IterationTestPlanItem otherItem = new IterationTestPlanItem(Mock(TestCase))
 		iteration.addTestPlan(otherItem)
-		otherItem.setTestSuite(testSuite)
+		otherItem.addTestSuite(testSuite)
 		use (ReflectionCategory) {
 			IterationTestPlanItem.set field: "id", of: otherItem, to: 20L
 			IterationTestPlanItem.set field: "referencedTestCase", of: otherItem, to: null
@@ -527,7 +527,7 @@ class TestSuiteTest extends Specification {
 			IterationTestPlanItem.set field: "id", of: item, to: 10L
 		}
 		iteration.addTestPlan(item)
-		item.setTestSuite(testSuite)
+		item.addTestSuite(testSuite)
 		
 		when:
 		def res = testSuite.isFirstExecutableTestPlanItem(10L)
@@ -548,7 +548,7 @@ class TestSuiteTest extends Specification {
 			IterationTestPlanItem.set field: "id", of: item, to: 10L
 		}
 		iteration.addTestPlan(item)
-		item.setTestSuite(testSuite)
+		item.addTestSuite(testSuite)
 
 		when:
 		def res = testSuite.isFirstExecutableTestPlanItem(30L)

@@ -380,7 +380,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		
 	}
 	
-	/*
+
 	@DataSet("NodeDeletionHandlerTest.should delete testSuites.xml")
 	def"should remove test suites"(){
 		when :
@@ -390,9 +390,9 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		allDeleted("AttachmentList", [12l, 13L])
 		
 		IterationTestPlanItem iterationTestPlanItem=findEntity(IterationTestPlanItem.class, 121l)
-		iterationTestPlanItem.getTestSuite() == null
+		iterationTestPlanItem.getTestSuites().size() == 0
 		IterationTestPlanItem iterationTestPlanItem2=findEntity(IterationTestPlanItem.class, 122l)
-		iterationTestPlanItem2.getTestSuite() == null
+		iterationTestPlanItem2.getTestSuites().size() == 0
 		
 		Iteration iteration = findEntity(Iteration.class, 11L)
 		iteration.getTestSuites().size() == 0
@@ -400,6 +400,6 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		iteration2.getTestSuites().size() == 0
 		
 
-	}*/
+	}
 	
 }

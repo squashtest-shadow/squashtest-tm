@@ -192,14 +192,16 @@ public class ExecutionRunnerControllerHelper {
 	
 		Execution execution = executionProcessingService.findExecution(executionId);
 		IterationTestPlanItem itpi = execution.getTestPlan();
-		TestSuite ts = itpi.getTestSuite();
+		List<TestSuite> ts = itpi.getTestSuites();
 		
 		
 		model.addAttribute("optimized", false);
 		model.addAttribute("suitemode", true);
 		
-		addTestPlanItemUrl(ts.getId(), itpi.getId(), model);
-		addHasNextTestCase(ts.getId(), itpi.getId(), model);
+		for(TestSuite suite : ts){
+			addTestPlanItemUrl(suite.getId(), itpi.getId(), model);
+			addHasNextTestCase(suite.getId(), itpi.getId(), model);
+		}
 		addCurrentStepUrl(executionId, model);
 		
 	}
@@ -215,14 +217,16 @@ public class ExecutionRunnerControllerHelper {
 		
 		Execution execution = executionProcessingService.findExecution(executionId);
 		IterationTestPlanItem itpi = execution.getTestPlan();
-		TestSuite ts = itpi.getTestSuite();
+		List<TestSuite> ts = itpi.getTestSuites();
 		
 		
 		model.addAttribute("optimized", false);
 		model.addAttribute("suitemode", true);
 		
-		addTestPlanItemUrl(ts.getId(), itpi.getId(), model);
-		addHasNextTestCase(ts.getId(), itpi.getId(), model);
+		for(TestSuite suite : ts){
+			addTestPlanItemUrl(suite.getId(), itpi.getId(), model);
+			addHasNextTestCase(suite.getId(), itpi.getId(), model);
+		}
 		addCurrentStepUrl(executionId, model);
 		
 	}
@@ -328,17 +332,19 @@ public class ExecutionRunnerControllerHelper {
 	private void _stuffWithSuiteRelatedInfos(Execution execution, RunnerState state, String contextPath){
 		
 		IterationTestPlanItem item = execution.getTestPlan();
-		TestSuite suite = item.getTestSuite();
+		List<TestSuite> suiteList = item.getTestSuites();
 		
-		boolean hasNextTestCase = testSuiteExecutionProcessingService.hasMoreExecutableItems(suite.getId(),
-				item.getId());
+		for(TestSuite suite : suiteList){
 		
-		String nextExecutionUrl = contextPath + "/" + MessageFormat.format(NEXT_EXECUTION_URL, suite.getId(), item.getId());
+			boolean hasNextTestCase = testSuiteExecutionProcessingService.hasMoreExecutableItems(suite.getId(),
+					item.getId());
+			
+			String nextExecutionUrl = contextPath + "/" + MessageFormat.format(NEXT_EXECUTION_URL, suite.getId(), item.getId());
+			
+			state.setLastTestCase(! hasNextTestCase);
+			state.setNextTestCaseUrl(nextExecutionUrl);
 		
-		state.setLastTestCase(! hasNextTestCase);
-		state.setNextTestCaseUrl(nextExecutionUrl);
-		
-		
+		}
 	}
 	
 	private void _stuffWithPopupMessages(RunnerState state, Locale locale){

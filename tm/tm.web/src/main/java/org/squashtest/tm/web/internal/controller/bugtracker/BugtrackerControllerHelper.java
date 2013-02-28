@@ -433,13 +433,13 @@ public final class BugtrackerControllerHelper {
 	private static final class IterationModelOwnershipNamebuilder extends IssueOwnershipAbstractNameBuilder {
 		@Override
 		String buildExecName(Execution bugged) {
-			String suiteName = findTestSuiteName(bugged);
-			if (suiteName.equals("")) {
+			String suiteNameList = findTestSuiteNameList(bugged);
+			if (suiteNameList.equals("")) {
 				return messageSource.getMessage("squashtm.generic.hierarchy.execution.name.noSuite", new Object[] {
 						bugged.getName(), bugged.getExecutionOrder() + 1 }, locale);
 			} else {
 				return messageSource.getMessage("squashtm.generic.hierarchy.execution.name",
-						new Object[] { bugged.getName(), suiteName, bugged.getExecutionOrder() + 1 }, locale);
+						new Object[] { bugged.getName(), suiteNameList, bugged.getExecutionOrder() + 1 }, locale);
 			}
 		}
 
@@ -478,13 +478,13 @@ public final class BugtrackerControllerHelper {
 
 		String buildExecName(Execution execution) {
 			String iterationName = findIterationName(execution);
-			String suiteName = findTestSuiteName(execution);
-			if (suiteName.equals("")) {
+			String suiteNameList = findTestSuiteNameList(execution);
+			if (suiteNameList.equals("")) {
 				return messageSource.getMessage("squashtm.test-case.hierarchy.execution.name.noSuite", new Object[] {
 						iterationName, execution.getExecutionOrder() + 1 }, locale);
 			} else {
 				return messageSource.getMessage("squashtm.test-case.hierarchy.execution.name", new Object[] {
-						iterationName, suiteName, execution.getExecutionOrder() + 1 }, locale);
+						iterationName, suiteNameList, execution.getExecutionOrder() + 1 }, locale);
 			}
 		}
 
@@ -495,13 +495,17 @@ public final class BugtrackerControllerHelper {
 
 	}
 
-	private static String findTestSuiteName(Execution execution) {
-		TestSuite buggedSuite = execution.getTestPlan().getTestSuite();
-		String suiteName = "";
-		if (buggedSuite != null) {
-			suiteName = buggedSuite.getName();
+	private static String findTestSuiteNameList(Execution execution) {
+		List<TestSuite> buggedSuites = execution.getTestPlan().getTestSuites();
+		String testSuiteNames = "";
+		if (!buggedSuites.isEmpty()) {
+			int i = 0;
+			while (i < buggedSuites.size() - 1) {
+				testSuiteNames += buggedSuites.get(i).getName() + ",";
+			}
+			testSuiteNames += buggedSuites.get(i).getName();
 		}
-		return suiteName;
+		return testSuiteNames;
 	}
 
 	private static String findIterationName(Execution execution) {

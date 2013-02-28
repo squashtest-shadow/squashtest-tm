@@ -361,15 +361,7 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 		return getReferencedTestCase() == null;
 	}
 
-	public TestSuite getTestSuite() {
-		TestSuite suite = null;
-		if(testSuites.size() > 0){
-			suite = testSuites.get(0);
-		}
-		return suite;
-	}
-
-	public void setTestSuite(TestSuite suite) {
+	public void addTestSuite(TestSuite suite) {
 		if (suite != null && !this.iteration.equals(suite.getIteration())) {
 			throw new IllegalArgumentException("Item[" + id + "] dont belong to Iteration["
 					+ suite.getIteration().getId() + "], it cannot be bound to TestSuite['" + suite.getName() + "']");
@@ -377,6 +369,16 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 		this.testSuites.add(suite);
 	}
 
+	public void removeTestSuite(TestSuite suite) {
+		long suiteId = suite.getId();
+		List<TestSuite> toRemove = new ArrayList<TestSuite>();
+		for(TestSuite testSuite : this.testSuites){
+			if(testSuite.getId() == suiteId){
+				toRemove.add(testSuite);
+			}
+		}
+		this.testSuites.removeAll(toRemove);
+	}
 
 	public List<TestSuite> getTestSuites() {
 		return testSuites;

@@ -153,9 +153,9 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	}
 
 	private boolean boundToThisSuite(IterationTestPlanItem item) {
-		TestSuite that = item.getTestSuite();
+		List<TestSuite> suites = item.getTestSuites();
 
-		return that != null && isSame(that);
+		return suites.size() > 0 && hasSame(suites);
 	}
 
 	/**
@@ -164,13 +164,26 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	 * @param that
 	 * @return
 	 */
-	private boolean isSame(TestSuite that) {
-		if (this.id == null) {
-			return this.equals(that);
+	private boolean hasSame(List<TestSuite> suites) {
+	
+		boolean result = false;
+		
+		for(TestSuite suite : suites){
+		
+			if (this.id == null) {
+				if(this.equals(suite)){
+					result = true;
+				}
+			} else {
+				// id not null -> persistent entity -> we cant use equals() because "that" might be a proxy so equals() would
+				// return false
+				if(this.id.equals(suite.getId())){
+					result = true;
+				}
+			}
 		}
-		// id not null -> persistent entity -> we cant use equals() because "that" might be a proxy so equals() would
-		// return false
-		return this.id.equals(that.getId());
+		
+		return result;
 	}
 
 	public IterationTestPlanItem getFirstTestPlanItem() {
@@ -190,13 +203,13 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	 */
 	public void bindTestPlanItems(List<IterationTestPlanItem> items) {
 		for (IterationTestPlanItem item : items) {
-			item.setTestSuite(this);
+			item.addTestSuite(this);
 		}
 	}
 
 	public void unBindTestPlan(List<IterationTestPlanItem> items) {
 		for (IterationTestPlanItem item : items) {
-			item.setTestSuite(null);
+			item.removeTestSuite(this);
 		}
 	}
 
@@ -209,7 +222,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 		for (Long itemId : itemIds) {
 			for (IterationTestPlanItem item : iteration.getTestPlans()) {
 				if (item.getId().equals(itemId)) {
-					item.setTestSuite(this);
+					item.addTestSuite(this);
 				}
 			}
 		}

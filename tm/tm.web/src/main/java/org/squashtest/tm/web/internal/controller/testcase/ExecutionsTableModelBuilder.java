@@ -35,11 +35,13 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 
 /**
- * Builder of {@link DataTableModel} for the table of a test case's executions. 
+ * Builder of {@link DataTableModel} for the table of a test case's executions.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-/* package-private */ class ExecutionsTableModelBuilder extends DataTableModelHelper<Execution> {
+/* package-private */class ExecutionsTableModelBuilder extends
+		DataTableModelHelper<Execution> {
 	/**
 	 * The locale to use to format the labels.
 	 */
@@ -49,7 +51,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 	 */
 	private final InternationalizationHelper i18nHelper;
 
-	public ExecutionsTableModelBuilder(@NotNull Locale locale, @NotNull InternationalizationHelper i18nHelper) {
+	public ExecutionsTableModelBuilder(@NotNull Locale locale,
+			@NotNull InternationalizationHelper i18nHelper) {
 		super();
 		this.locale = locale;
 		this.i18nHelper = i18nHelper;
@@ -59,26 +62,38 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 	protected Object buildItemData(Execution item) {
 		IterationTestPlanItem testPlanItem = item.getTestPlan();
 		Iteration iteration = testPlanItem.getIteration();
-		
+
 		Map<String, Object> data = new HashMap<String, Object>(11);
 		data.put("exec-id", item.getId());
 		data.put("project-name", iteration.getProject().getName());
 		data.put("campaign-name", iteration.getCampaign().getName());
 		data.put("iteration-name", iteration.getName());
 		data.put("exec-name", item.getName());
-		data.put("exec-mode", i18nHelper.internationalize(item.getExecutionMode().getI18nKey(), locale));
-		data.put("test-suite-name", testSuiteName(testPlanItem));
+		data.put("exec-mode", i18nHelper.internationalize(item
+				.getExecutionMode().getI18nKey(), locale));
+		data.put("test-suite-name", testSuiteNameList(testPlanItem));
 		data.put("raw-exec-status", item.getExecutionStatus().name());
-		data.put("exec-status", i18nHelper.internationalize(item.getExecutionStatus().getI18nKey(), locale));
+		data.put("exec-status", i18nHelper.internationalize(item
+				.getExecutionStatus().getI18nKey(), locale));
 		data.put("last-exec-by", item.getLastExecutedBy());
-		data.put("last-exec-on", i18nHelper.localizeShortDate(item.getLastExecutedOn(), locale));
-		
+		data.put("last-exec-on",
+				i18nHelper.localizeShortDate(item.getLastExecutedOn(), locale));
+
 		return data;
 	}
 
-	private String testSuiteName(IterationTestPlanItem item) {
-		TestSuite suite = item.getTestSuite(); 
-		return suite == null ? "" : suite.getName();
+	private String testSuiteNameList(IterationTestPlanItem item) {
+		String testSuiteNameList = "";
+		if (item.getTestSuites().isEmpty()) {
+			testSuiteNameList = "";
+		} else {
+			int i = 0;
+			while (i < item.getTestSuites().size() - 1) {
+				testSuiteNameList += item.getTestSuites().get(i).getName() + ",";
+			}
+			testSuiteNameList += item.getTestSuites().get(i).getName();
+		}
+		return testSuiteNameList;
 	}
 
 }
