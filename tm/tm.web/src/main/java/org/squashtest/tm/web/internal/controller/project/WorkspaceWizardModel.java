@@ -107,7 +107,8 @@ public class WorkspaceWizardModel {
 		this.id = wizard.getId();
 		this.label = wizard.getName();
 		this.displayWorkspace = wizard.getDisplayWorkspace();
-		//TODO : metadata (version and filename)
+		this.version = wizard.getVersion();
+		this.filename = wizard.getFilename();
 	}
 		
 	

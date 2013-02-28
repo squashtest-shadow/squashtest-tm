@@ -18,38 +18,4 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.plugin.workspacewizard.test.utils;
-
-import org.squashtest.tm.api.widget.MenuItem;
-
-public class DefaultMenuItem implements MenuItem{
-
-	private String label;
-	private String tooltip;
-	private String url;
-	
-	
-	
-	public DefaultMenuItem(String label, String tooltip, String url) {
-		super();
-		this.label = label;
-		this.tooltip = tooltip;
-		this.url = url;
-	}
-
-	@Override
-	public String getLabel() {
-		return label;
-	}
-
-	@Override
-	public String getTooltip() {
-		return tooltip;
-	}
-
-	@Override
-	public String getUrl() {
-		return url;
-	}
-
-}
+package org.squashtest.tm.wizards.test;

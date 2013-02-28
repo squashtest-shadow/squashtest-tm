@@ -32,6 +32,7 @@ define([ "jquery", "backbone", "jquery.squash.togglepanel", "jqueryui" ], functi
 		},
 	
 		events : {
+			'click tr' : 'tickCheckbox',
 			'change input.plugin-enabled' : 'updateModel'
 		},
 		
@@ -50,10 +51,10 @@ define([ "jquery", "backbone", "jquery.squash.togglepanel", "jqueryui" ], functi
 			for (var i=0;i<availableLength;i++){
 				
 				var item = available[i];
-				var newRow = $('<tr/>');
+				var newRow = $('<tr class="cursor-arrow"/>');
 				
 				newRow.append($('<td class="not-displayed">'+item.id+'</td>'));
-				newRow.append($('<td><input type="checkbox" class="plugin-enabled"/></td>'));
+				newRow.append($('<td class="centered narrow"><input type="checkbox" class="plugin-enabled"/></td>'));
 				newRow.append($('<td>'+item.displayableName+'</td>'));
 				
 				if (collection.get(item.id)!==undefined){
@@ -65,6 +66,15 @@ define([ "jquery", "backbone", "jquery.squash.togglepanel", "jqueryui" ], functi
 			
 			tbody.append(rows);
 			
+		},
+		
+		tickCheckbox : function(event){
+			var $checkbox = $(event.currentTarget).find('input.plugin-enabled');
+			if (! $(event.target).is('input.plugin-enabled')){
+				var state = $checkbox.prop('checked');
+				$checkbox.prop('checked', !state);
+				this.updateModel({target : $checkbox.get(0)});
+			}
 		},
 		
 		updateModel : function(event){

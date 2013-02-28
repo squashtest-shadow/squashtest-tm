@@ -71,6 +71,12 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			String getName() {
 				
 			}
+			String getVersion(){
+				return "1.0"
+			}
+			String getFilename(){
+				return "myjar"
+			}
 		}, Collections.emptyMap()
 
 		manager.registerWizard new WorkspaceWizard() {
@@ -86,6 +92,12 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			String getName() {
 				
 			}
+			String getVersion(){
+				return "1.0"
+			}
+			String getFilename(){
+				return "myjar"
+			}
 		}, Collections.emptyMap()
 		
 		manager.registerWizard new WorkspaceWizard() {
@@ -100,6 +112,12 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			}
 			String getName() {
 				
+			}
+			String getVersion(){
+				return "1.0"
+			}
+			String getFilename(){
+				return "myjar"
 			}
 		}, Collections.emptyMap()
 		

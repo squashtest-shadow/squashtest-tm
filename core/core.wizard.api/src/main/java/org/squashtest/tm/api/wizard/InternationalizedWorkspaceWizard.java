@@ -51,8 +51,8 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	
 	 public void setBundleContext(BundleContext bundleContext){
 		 this.bundleContext = bundleContext;
-		 filename = bundleContext.getBundle().getSymbolicName();
 		 version = bundleContext.getBundle().getVersion().toString();
+		 filename = bundleContext.getBundle().getSymbolicName();	//make better than this	
 	 }
 	
 	

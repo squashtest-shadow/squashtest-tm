@@ -45,38 +45,38 @@
 	<!--  ========================= wizards ============================ -->
 
 	<bean id="squashtm.test.campaign.creator" class="org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard">
-		<property name="displayWorkspace"><value type="org.squashtest.tm.api.workspace.WorkspaceType">CAMPAIGN_WORKSPACE</value></property>
+		<property name="displayWorkspace" value="CAMPAIGN_WORKSPACE" />
 		<property name="nameKey" value="campaign.creator.name"/>
 		<property name="wizardMenu" ref="campaign.creator.menu"/>
 	</bean>
 
 	<bean id="squashtm.test.campaign.dateupdater" class="org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard">
-		<property name="displayWorkspace"><value type="org.squashtest.tm.api.workspace.WorkspaceType">CAMPAIGN_WORKSPACE</value></property>
+		<property name="displayWorkspace" value="CAMPAIGN_WORKSPACE" />
 		<property name="nameKey" value="campaign.dateupdater.name"/>
 		<property name="wizardMenu" ref="campaign.dateupdater.menu"/>
 	</bean>
 
 
 	<bean id="squashtm.test.requirement.test-case.manager" class="org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard">
-		<property name="displayWorkspace"><value type="org.squashtest.tm.api.workspace.WorkspaceType">REQUIREMENT_WORKSPACE</value></property>
+		<property name="displayWorkspace" value="REQUIREMENT_WORKSPACE" />
 		<property name="nameKey" value="requirement.test-case.manager.name"/>
 		<property name="wizardMenu" ref="requirement.test-case.manager.menu"/>
 	</bean>
 	
 	<bean id="squashtm.test.requirement.versions.manager" class="org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard">
-		<property name="displayWorkspace"><value type="org.squashtest.tm.api.workspace.WorkspaceType">REQUIREMENT_WORKSPACE</value></property>
+		<property name="displayWorkspace" value="REQUIREMENT_WORKSPACE" />
 		<property name="nameKey" value="requirement.versions.manager.name"/>
 		<property name="wizardMenu" ref="requirement.versions.manager.menu"/>
 	</bean>	
 
 	<bean id="squashtm.test.test-cases.creator" class="org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard">
-		<property name="displayWorkspace"><value type="org.squashtest.tm.api.workspace.WorkspaceType">TEST_CASE_WORKSPACE</value></property>
+		<property name="displayWorkspace" value="TEST_CASE_WORKSPACE" />
 		<property name="nameKey" value="test-cases.creator.name"/>
 		<property name="wizardMenu" ref="test-cases.creator.menu"/>
 	</bean>	
 	
 	<bean id="squashtm.test.test-steps.manager" class="org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard">
-		<property name="displayWorkspace"><value type="org.squashtest.tm.api.workspace.WorkspaceType">TEST_CASE_WORKSPACE</value></property>
+		<property name="displayWorkspace" value="TEST_CASE_WORKSPACE" />
 		<property name="nameKey" value="test-steps.manager.name"/>
 		<property name="wizardMenu" ref="test-steps.manager.menu"/>
 	</bean>		

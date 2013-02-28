@@ -26,11 +26,6 @@ requirejs.config({
     "custom-field-values",
     "execution-processing",
     "projects-manager",
-    /*{
-    	main : "main",
-    	location : "http://localhost/scripts/scripts/projects-manager",
-    	name : "projects-manager"
-    },*/
     "teams-manager",
     "project",
     "contextual-content-handlers",
