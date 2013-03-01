@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 @DynamicDao(entity=TestSuite.class)
 public interface TestSuiteDao extends CustomTestSuiteDao {
  
-	List<IterationTestPlanItem> findAllTestPlanItemsPaged(long testSuiteId, Paging paging);
+	//List<IterationTestPlanItem> findAllTestPlanItemsPaged(long testSuiteId, Paging paging);
 
 	long countTestPlanItems(long testSuiteId);
 }

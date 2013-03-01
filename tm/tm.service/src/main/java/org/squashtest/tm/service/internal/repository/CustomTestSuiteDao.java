@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -48,4 +49,6 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite>{
 			List<Long> testPlanItemIds);
 	
 	List<Execution> findAllExecutionByTestSuite(long testSuiteId);
+	
+	List<IterationTestPlanItem> findAllTestPlanItemsPaged(long testSuiteId, Paging paging);
 }
