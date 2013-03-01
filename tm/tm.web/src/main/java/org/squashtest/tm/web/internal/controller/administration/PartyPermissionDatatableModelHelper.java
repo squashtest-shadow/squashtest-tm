@@ -28,7 +28,7 @@ import java.util.Map;
 
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
-import org.squashtest.tm.service.security.acls.PermissionGroup;
+import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 

@@ -28,7 +28,7 @@ import org.hibernate.type.Type;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.audit.AuditableSupport;
-import org.squashtest.tm.service.security.UserContextHolder;
+import org.squashtest.tm.security.UserContextHolder;
 
 /**
  * This interceptor transparently logs creation / last modification data of any {@link Auditable} entity.

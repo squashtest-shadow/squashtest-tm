@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.users;
 
-import org.squashtest.tm.service.security.acls.PermissionGroup;
+import org.squashtest.tm.security.acls.PermissionGroup;
 
 public class PermissionGroupModel {
 

@@ -31,7 +31,7 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 
-import org.squashtest.tm.service.security.acls.PermissionGroup;
+import org.squashtest.tm.security.acls.PermissionGroup;
 /**
  * Holder for non dynamically generated find methods for both Project and ProjectTemplate
  * @author mpagnon

@@ -44,11 +44,11 @@ import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UserProjectPermissionsBean;
+import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
-import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 
 @Service("squashtest.tm.service.ProjectsPermissionManagementService")

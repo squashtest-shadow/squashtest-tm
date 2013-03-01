@@ -51,8 +51,8 @@ import org.springframework.security.acls.model.Sid;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.Sorting;
-import org.squashtest.tm.service.security.acls.CustomPermission;
-import org.squashtest.tm.service.security.acls.PermissionGroup;
+import org.squashtest.tm.security.acls.CustomPermission;
+import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 
 /**

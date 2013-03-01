@@ -32,9 +32,9 @@ import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.security.acls.CustomPermission;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserContextService;
-import org.squashtest.tm.service.security.acls.CustomPermission;
 
 @Service("squashtest.core.security.PermissionEvaluationService")
 @Transactional(readOnly = true)

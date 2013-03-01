@@ -340,7 +340,12 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 
-		Execution execution = item.createExecution(testCaseCyclicCallChecker);
+		testCaseCyclicCallChecker.checkNoCyclicCall(item.getReferencedTestCase());
+		
+		//if passes, let's move to the next step
+		
+		Execution execution = item.createExecution();
+		
 		// if we don't persist before we add, add will trigger an update of item.testPlan which fail because execution
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
 		executionDao.persist(execution);
@@ -371,7 +376,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	public Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 
-		Execution execution = item.createAutomatedExecution(testCaseCyclicCallChecker);
+		Execution execution = item.createAutomatedExecution();
 
 		executionDao.persist(execution);
 		item.addExecution(execution);

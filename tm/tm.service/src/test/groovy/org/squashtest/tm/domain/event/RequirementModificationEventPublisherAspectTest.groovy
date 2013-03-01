@@ -26,8 +26,8 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.resource.Resource
-import org.squashtest.tm.service.internal.event.RequirementAuditor
-import org.squashtest.tm.service.security.UserContextHolder
+import org.squashtest.tm.event.RequirementAuditor;
+import org.squashtest.tm.security.UserContextHolder;
 
 import spock.lang.Specification
 import spock.lang.Unroll

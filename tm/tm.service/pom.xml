@@ -45,6 +45,11 @@
 		<!--======= SQUASHTEST MODULES ======== -->
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
+			<artifactId>tm.domain</artifactId>
+			<version>${project.version}</version>
+		</dependency>		
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
 			<artifactId>core.foundation</artifactId>
 			<version>${project.version}</version>
 		</dependency>

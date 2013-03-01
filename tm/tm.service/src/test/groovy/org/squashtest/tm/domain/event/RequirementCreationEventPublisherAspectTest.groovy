@@ -24,9 +24,9 @@ import org.springframework.security.core.Authentication
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.service.internal.event.RequirementAuditor
+import org.squashtest.tm.event.RequirementAuditor;
+import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.internal.repository.RequirementDao
-import org.squashtest.tm.service.security.UserContextHolder
 
 import spock.lang.Specification
 
