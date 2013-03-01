@@ -501,12 +501,13 @@ public final class BugtrackerControllerHelper {
 		if (!buggedSuites.isEmpty()) {
 			int i = 0;
 			while (i < buggedSuites.size() - 1) {
-				testSuiteNames += buggedSuites.get(i).getName() + ",";
+				testSuiteNames += buggedSuites.get(i).getName() + ", ";
+				i++;
 			}
 			testSuiteNames += buggedSuites.get(i).getName();
 		}
 		return testSuiteNames;
-	}
+	}	
 
 	private static String findIterationName(Execution execution) {
 		Iteration iteration = execution.getTestPlan().getIteration();

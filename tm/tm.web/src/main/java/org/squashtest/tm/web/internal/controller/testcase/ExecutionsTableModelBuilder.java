@@ -89,7 +89,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 		} else {
 			int i = 0;
 			while (i < item.getTestSuites().size() - 1) {
-				testSuiteNameList += item.getTestSuites().get(i).getName() + ",";
+				testSuiteNameList += item.getTestSuites().get(i).getName() + ", ";
+				i++;
 			}
 			testSuiteNameList += item.getTestSuites().get(i).getName();
 		}
