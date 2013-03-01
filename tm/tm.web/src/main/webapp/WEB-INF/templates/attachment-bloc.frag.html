@@ -1,0 +1,89 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<!-- common head -->
+<link rel="stylesheet" type="text/css" media="all"
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css"
+	th:href="@{/styles/master.css}" />
+<!-- /common head -->
+<link rel="stylesheet" type="text/css" media="all"
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.blue.css"
+	th:href="@{/styles/master.blue.css}" />
+</head>
+<body>
+	<div th:remove="all">
+		<!--  
+	parameters are :
+		
+		attachable : boolean that says whether user has attach right on attachable entity
+		attachableEntity : an attachable entity
+
+ -->
+	</div>
+	<div th:fragment="attachment-bloc">
+	<script  th:remove="all" data-main="../../scripts/attachment-bloc.frag.js"
+			src="../../scripts/require.js"></script>
+		<script type="text/javascript" th:inline="javascript">
+			if (!squashtm) {
+				var squashtm = {};
+			}
+			if (!squashtm.app) {
+				squashtm.app = {
+					contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+				};
+			}
+			squashtm.app.attachmentBlocSettings = {
+				attachmentBlocOpened : /*[[ ${attachableEntity.attachmentList.notEmpty} ]]*/true,
+				attachmentBlocTitle : /*[[ #{label.Attachments} ]]*/'Attachments',
+				attachmentManagerUrl : /*[[ @{/attach-list/} + ${attachableEntity.attachmentList.id} + '/attachments/manager?workspace=' + ${workspace} ]]*/'http://localhost:8080/squash/attach-list/1/attachments/manager?workspace=test-case' ,
+				attachmentsList : /*[[ @{/attach-list/} + ${attachableEntity.attachmentList.id} + '/attachments/display' ]]*/'http://localhost:8080/squash/attach-list/1/attachments/display',
+			};
+		</script>
+
+		<div class="toggle-panel">
+			<span class="not-displayed toggle-panel-buttons"> <input
+				th:if="${attachable}" id="upload-attachment-button" type="button"
+				th:value="#{label.UploadAttachment}" value="Upload" class="button" />
+				<input th:if="${attachable}" id="manage-attachment-bloc-button"
+				type="button" th:value="#{label.Organize}" value="Organize"
+				class="button" />
+			</span>
+			<div class="toggle-panel-main" id="attachment-panel">
+				<div id="attachment-container" class="div-attachments"></div>
+			</div>
+		</div>
+
+		<div id="add-attachment-popup-frag"
+			th:include="add-attachment-popup.frag :: add-attachment-popup">ATTACHMENT-POPUP</div>
+
+		<!-- <comp:add-attachment-popup paramName="attachment" url="${uploadAttachmentUrl}"   -->
+		<!-- 				openedBy="upload-attachment-button"	submitCallback="reloadAttachments"/> -->
+
+
+
+	</div>
+</body>
+</html>

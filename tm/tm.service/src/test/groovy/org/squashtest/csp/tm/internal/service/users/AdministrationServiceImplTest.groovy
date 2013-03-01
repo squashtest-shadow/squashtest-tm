@@ -1,0 +1,88 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2012 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.csp.tm.internal.service.users
+
+import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.domain.users.Team
+import org.squashtest.tm.domain.users.User
+import org.squashtest.tm.service.configuration.ConfigurationService
+import org.squashtest.tm.service.internal.repository.AdministrationDao
+import org.squashtest.tm.service.internal.repository.ProjectDao
+import org.squashtest.tm.service.internal.repository.TeamDao
+import org.squashtest.tm.service.internal.repository.UserDao
+import org.squashtest.tm.service.internal.repository.UsersGroupDao
+import org.squashtest.tm.service.internal.user.AdministrationServiceImpl
+import org.squashtest.tm.service.security.AdministratorAuthenticationService
+import org.squashtest.tm.service.user.UserAccountService
+
+import spock.lang.Specification
+
+class AdministrationServiceImplTest extends Specification {
+	
+	AdministrationServiceImpl service = new AdministrationServiceImpl()
+	
+	UserAccountService userAccountService = Mock()
+	ProjectDao projectDao = Mock()
+	UserDao userDao = Mock()
+	UsersGroupDao groupDao = Mock()	
+	AdministrationDao adminDao = Mock()
+	ConfigurationService configurationService = Mock()	
+	TeamDao teamDao = Mock()	
+	AdministratorAuthenticationService adminAuthentService = Mock()
+	
+	
+	def setup(){
+		service.userAccountService = userAccountService
+		service.projectDao = projectDao
+		service.userDao = userDao
+		service.groupDao = groupDao
+		service.adminDao = adminDao
+		service.configurationService = configurationService
+		service.teamDao = teamDao
+		service.adminAuthentService = adminAuthentService
+	}
+
+	def "should associate user to team"(){
+		given : 
+			User user = Mock()
+			Team team = Mock()
+			def teams = [team]
+			userDao.findById(1L)>>user
+			teamDao.findAllByIds([2L])>> teams
+			
+		when : 
+			service.associateToTeams(1L, [2L])
+		then : 
+			1* user.addTeam(team)
+			1* team.addMember(user)
+	}
+	
+	def "should deassociate team from user"(){
+		given : 
+			User user = Mock()
+			def teamIds = [2L]
+			userDao.findById(1L) >> user
+		when : 
+			service.deassociateTeams(1L, [2L])
+		then : 
+			1*user.removeTeams([2L])
+	}
+}
