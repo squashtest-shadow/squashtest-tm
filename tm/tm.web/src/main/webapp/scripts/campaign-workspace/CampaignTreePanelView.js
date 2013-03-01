@@ -21,15 +21,34 @@
 /**
  * This is a template for a backbone module
  */
-define([ "jquery", "backbone", "handlebars", "campaign-workspace/CampaignWizardMenu" ], function($, Backbone, Handlebars, CampaignWizardMenu) {
-	var View = Backbone.View.extend({
-		el: "#tabbed-pane",
-		initialize: function() {
-			new CampaignWizardMenu({collection: this.model.wizards});
-		}, 
-		events: {
+define([ "jquery", "backbone", "handlebars", "campaign-workspace/CampaignWizardMenu", "jquery.squash.jstree" ], function($, Backbone,
+		Handlebars, CampaignWizardMenu) {
+	var View = Backbone.View.extend({		
+		el : "#tabbed-pane",
+		
+		initialize : function() {
+			this.menu = new CampaignWizardMenu({
+				collection : this.model.wizards
+			});
+			
+			var tree = this.$("#tree");
+			
+			// apparently, jstree events dont bubble correctly, backbone cant capture events
+			// $().on changes this to emitter DOM -> proxy
+			tree.on("select_node.jstree deselect_node.jstree deselect_all.jstree", $.proxy(this._notifyTreeSelectionChanged, this));
+			
+			// initialize menu state
+			this.menu.refreshAccess(tree.jstree("get_instance").get_selected());
+		},
+		
+		events : {
+		},
+
+		_notifyTreeSelectionChanged : function(event, data) {
+			this.menu.refreshAccess(data.inst.get_selected());
 		}
+		
 	});
-	
+
 	return View;
 });

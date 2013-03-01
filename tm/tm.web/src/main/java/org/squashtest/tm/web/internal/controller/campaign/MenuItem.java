@@ -21,6 +21,8 @@
 
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import org.squashtest.tm.api.security.acls.AccessRule;
+
 /**
  * Data structure for (wizard) menu items
  * 
@@ -32,6 +34,7 @@ public class MenuItem {
 	private String label;
 	private String tooltip;
 	private String url;
+	private AccessRule accessRule;
 
 	/**
 	 * @return the id
@@ -97,7 +100,21 @@ public class MenuItem {
 	 * 
 	 */
 	public MenuItem() {
-		// TODO Auto-generated constructor stub
+		super();
+	}
+
+	/**
+	 * @return the accessRule
+	 */
+	public AccessRule getAccessRule() {
+		return accessRule;
+	}
+
+	/**
+	 * @param accessRule the accessRule to set
+	 */
+	public void setAccessRule(AccessRule accessRule) {
+		this.accessRule = accessRule;
 	}
 
 }

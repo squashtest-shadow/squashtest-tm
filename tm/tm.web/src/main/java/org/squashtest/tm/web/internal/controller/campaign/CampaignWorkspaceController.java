@@ -88,6 +88,7 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 		item.setLabel(wizard.getWizardMenu().getLabel());
 		item.setTooltip(wizard.getWizardMenu().getTooltip());
 		item.setUrl(wizard.getWizardMenu().getUrl());
+		item.setAccessRule(wizard.getWizardMenu().getAccessRule());
 		return item;
 	}
 

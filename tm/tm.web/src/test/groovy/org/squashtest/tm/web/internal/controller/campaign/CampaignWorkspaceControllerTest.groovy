@@ -21,6 +21,7 @@
 
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import org.squashtest.tm.api.security.acls.AccessRule;
 import org.squashtest.tm.api.widget.MenuItem;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
@@ -41,12 +42,15 @@ class CampaignWorkspaceControllerTest extends Specification {
 	
 	def "should return JSON'd workspace wizards menu items"() {
 		given:
+		AccessRule rule = new AccessRule() {};
+		
 		WorkspaceWizard w1 = Mock()
 		w1.getId() >> "gdlf"
 		MenuItem m1 = Mock()
 		m1.getLabel() >> "gandalf"
 		m1.getTooltip() >> "the grey sorcerer"
 		m1.getUrl() >> "middle-earth"
+		m1.getAccessRule() >> rule
 		w1.getWizardMenu() >> m1
 		
 		WorkspaceWizard w2 = Mock()
@@ -55,6 +59,7 @@ class CampaignWorkspaceControllerTest extends Specification {
 		m2.getLabel() >> "garcimore"
 		m2.getTooltip() >> "ptet ca marche"
 		m2.getUrl() >> "tf1"
+		m2.getAccessRule() >> rule
 		w2.getWizardMenu() >> m2
 
 		wizardManager.findAllByWorkspace(_) >> [w1, w2]
@@ -67,6 +72,7 @@ class CampaignWorkspaceControllerTest extends Specification {
 		res*.label == ["gandalf", "garcimore"]
 		res*.tooltip == ["the grey sorcerer", "ptet ca marche"]
 		res*.url == ["middle-earth", "tf1"]
+		res*.accessRule == [rule, rule]
 	} 
 	def "should return no workspace wizards menu items"() {
 		given:

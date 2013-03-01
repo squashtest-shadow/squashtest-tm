@@ -21,37 +21,125 @@
 /**
  * This is a template for a backbone module
  */
-define([ "jquery", "backbone", "handlebars", "jqueryui", "jquery.squash.squashbutton", "jquery.squash.jstree" ], function($, Backbone, Handlebars) {
+define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui", "jquery.squash.squashbutton",
+		"jquery.squash.jstree" ], function($, Backbone, Handlebars, _) {
 	var View = Backbone.View.extend({
-		el: "#wizard-tree-pane",
-		initialize: function() {
+		el : "#wizard-tree-pane",
+
+		initialize : function() {
 			var enabled = this.collection && (this.collection.length > 0);
-			this.menu = this.$("#wizard-tree-button").squashButton({ disabled: !enabled });
 			
+			_.each(this.collection, function(wiz) {
+				// better when no dots in html ids
+				wiz.name = wiz.id.replace(/\./g, "-");
+			});
+
+			this.menu = this.$("#wizard-tree-button").squashButton({
+				disabled : !enabled
+			});
+
 			this.render();
-		}, 
-		render: function() {
-			if (this.collection.length > 0) {
-				var source   = this.$("#wizard-tree-menu-template").html();
-				var template = Handlebars.compile(source);
-				
-				var options = {
-						html: template({ wizards: this.collection }), 
-						params: {}
-				};
-				
-				for (var wiz in this.collection) {
-					options.params[wiz.name] = wiz.name;
-				}
-				
-				this.menu.treeMenu(options);				
-			}
-			return this;
-			
 		},
-		events: {
+
+		render : function() {
+			if (this.collection.length > 0) {
+				var source = this.$("#wizard-tree-menu-template").html();
+				var template = Handlebars.compile(source);
+
+				var options = {
+					html : template({
+						wizards : this.collection
+					}),
+					params : {}
+				};
+
+				_.each(this.collection, function(wiz) {
+					options.params[wiz.name] = "#" + wiz.name;
+				});
+
+				this.menu.treeMenu(options);
+			}
+
+			return this;
+		},
+
+		/**
+		 * Refreshes the access to the menu items
+		 */
+		refreshAccess : function(selectedNodes) {
+			var refreshItemAccess = this._refreshItemAccessHandler(selectedNodes);
+			_.each(this.collection, refreshItemAccess);
+		},
+
+		/**
+		 * Returns a handler for refreshing a menu item in the given node
+		 * context.
+		 */
+		_refreshItemAccessHandler : function(selectedNodes) {
+			var self = this;
+			return function(item) {
+				var accessRule = item.accessRule;
+				var enabled = self._checkSelectionMode(selectedNodes, accessRule) &&
+						self._checkPermission(selectedNodes, accessRule) &&
+						self._checkWizardActivation(selectedNodes, item);
+
+				if (enabled) {
+					self.menu.buttons[item.name].enable();
+					
+				} else {
+					self.menu.buttons[item.name].disable();
+					
+				}
+			};
+		},
+
+		/**
+		 * Checks that the node context matches the selection mode defined in
+		 * access rule.
+		 */
+		_checkSelectionMode : function(selectedNodes, accessRule) {
+			var res;
+			switch (accessRule.selectionMode) {
+			case "SINGLE_SELECTION":
+				res = selectedNodes.length === 1;
+				break;
+			case "MULTIPLE_SELECTION":
+				res = selectedNodes.length > 0;
+				break;
+			}
+			return res;
+		},
+
+		/**
+		 * Checks that the current node context matches the required permissions
+		 * for wizard execution.
+		 */
+		_checkPermission : function(selectedNodes, accessRule) {
+			var self = this;
+			var reducePermission = function(node) {
+				return function(reduced, rule) {
+					return reduced || self._nodeMatchesRule(node, rule);
+				};
+			};
+
+			return _.reduce(selectedNodes, function(reduced, node) {
+				return reduced && _.reduce(accessRule.rules, reducePermission(node), false);
+			}, true);
+		},
+		
+		_nodeMatchesRule : function(node, rule) {
+			var $node = $(node).treeNode();
+			return $node.isAuthorized(rule.permission) && $node.is(":" + rule.nodeType.toLowerCase());
+		}, 
+
+		/**
+		 * Checks that the given wizard is activated for the project of selected
+		 * nodes
+		 */
+		_checkWizardActivation : function(selectedNodes, wizard) {
+			return true;
 		}
 	});
-	
+
 	return View;
 });
