@@ -60,6 +60,7 @@ import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.TestAutomationFinderService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -287,7 +288,7 @@ public class TestSuiteModificationController {
 
 	}
 	
-	@RequestMapping(value = "/test-plan/table", params = "sEcho")
+	@RequestMapping(value = "/test-plan/table", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getTestPlanModel(@PathVariable long id, final DataTableDrawParameters params, final Locale locale) {
 

@@ -20,18 +20,15 @@
  */
 package org.squashtest.tm.domain.requirement
 
-import static RequirementStatus.*
+import static org.squashtest.tm.domain.requirement.RequirementStatus.*
 
+import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.attachment.Attachment
-import org.squashtest.tm.domain.requirement.Requirement
-import org.squashtest.tm.domain.requirement.RequirementCriticality
-import org.squashtest.tm.domain.requirement.RequirementStatus
-import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
-import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
+import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException
+import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException
 
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -148,23 +145,24 @@ class RequirementVersionTest extends Specification {
 		]
 	}
 
-	@Unroll("should allow removal of a test case for #status ")
-	def "non obsolete requirements should allow removal of a test case "() {
-		given :
-		def tc = new TestCase(name:"tc", description:"tc")
-		RequirementVersion requirementVersion = prepareRequirement(status, tc)
-		when :
-		requirementVersion.removeVerifyingTestCase(tc)
-		then :
-		notThrown(IllegalRequirementModificationException)
-
-		where :
-		status << [
-			WORK_IN_PROGRESS,
-			UNDER_REVIEW,
-			APPROVED
-		]
-	}
+	// TODO move in service
+//	@Unroll("should allow removal of a test case for #status ")
+//	def "non obsolete requirements should allow removal of a test case "() {
+//		given :
+//		def tc = new TestCase(name:"tc", description:"tc")
+//		RequirementVersion requirementVersion = prepareRequirement(status, tc)
+//		when :
+//		requirementVersion.removeVerifyingTestCase(tc)
+//		then :
+//		notThrown(IllegalRequirementModificationException)
+//
+//		where :
+//		status << [
+//			WORK_IN_PROGRESS,
+//			UNDER_REVIEW,
+//			APPROVED
+//		]
+//	}
 
 	def "obsolete requirements should not allow verification of a test case"() {
 		given :

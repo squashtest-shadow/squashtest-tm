@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.tm.internal.service
 
+import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
@@ -32,13 +33,14 @@ import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.resource.Resource
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
-import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl;
+import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
 import org.squashtest.tm.service.internal.repository.RequirementLibraryDao
+import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
-import org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerServiceImpl;
-import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl;
+import org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerServiceImpl
+import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl
 
 import spock.lang.Specification
 
@@ -48,6 +50,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	RequirementLibraryDao requirementLibraryDao = Mock()
 	RequirementVersionDao requirementVersionDao = Mock()
 	LibraryNodeDao<RequirementLibraryNode> nodeDao = Mock()
+	RequirementVersionCoverageDao requirementVersionCoverageDao = Mock()
 	TestCaseImportanceManagerServiceImpl testCaseImportanceManagerService = Mock()
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
 	LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy = Mock()
@@ -59,6 +62,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		service.requirementVersionDao = requirementVersionDao
 		service.requirementLibraryNodeDao = nodeDao
 		service.testCaseImportanceManagerService = testCaseImportanceManagerService
+		service.requirementVersionCoverageDao = requirementVersionCoverageDao
 	}
 
 
@@ -132,26 +136,28 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 			Resource.set field: "id", of: req5, to: 5L
 			Resource.set field: "id", of: req15, to: 15L
 		}
-		requirementVersionDao.findAllByIds([15]) >> [req15]
-
+		requirementVersionDao.findAllByIds([15L])>> [req15]
 		and: "a test case which verifies these requirements"
 		TestCase testCase = new TestCase()
 		testCase.addVerifiedRequirementVersion req5
 		testCase.addVerifiedRequirementVersion req15
-		testCaseDao.findById(10) >> testCase
+		testCaseDao.findById(10L) >> testCase
 
 		when:
-		service.removeVerifiedRequirementVersionsFromTestCase([15], 10)
+		service.removeVerifiedRequirementVersionsFromTestCase([15L], 10L)
 
 		then:
-		testCase.verifiedRequirementVersions.containsExactly([req5])
+		testCase.getVerifiedRequirementVersions().containsExactly([req5])
 	}
 
 	def "should remove single requirement from test case's verified requirements"() {
 		given: "a requirement"
-		RequirementVersion req = Mock()
-		req.id >> 5
+		RequirementVersion req = new RequirementVersion()
+		use (ReflectionCategory) {
+			Resource.set field: "id", of: req, to: 5L
+		}
 		requirementVersionDao.findById(5) >> req
+		
 
 		and: " a test case which verifies this requirements"
 		TestCase testCase = new TestCase()

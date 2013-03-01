@@ -26,6 +26,7 @@ import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 
@@ -97,7 +98,7 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 		doInTransaction {
 			Requirement req2 = it.get(Requirement, req.id)
 			TestCase tc2 = it.get(TestCase, tc.id)
-			req2.currentVersion.addVerifyingTestCase tc2
+			RequirementVersionCoverage coverage = req2.currentVersion.addVerifyingTestCase tc2
 		}
 
 		Requirement rq = doInTransaction {

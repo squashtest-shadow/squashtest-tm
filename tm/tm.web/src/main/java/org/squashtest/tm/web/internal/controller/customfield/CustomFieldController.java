@@ -52,6 +52,7 @@ import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.exception.DomainException;
 import org.squashtest.tm.service.customfield.CustomFieldManagerService;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
@@ -323,7 +324,7 @@ public class CustomFieldController {
 	 *            the {@link DataTableDrawParameters} for the custom field's options table
 	 * @return the {@link DataTableModel} with organized {@link CustomFieldOption} infos.
 	 */
-	@RequestMapping(value = "/{customFieldId}/options", method = RequestMethod.GET, params = "sEcho")
+	@RequestMapping(value = "/{customFieldId}/options", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getCustomFieldsTableModel(@PathVariable long customFieldId,
 			final DataTableDrawParameters params) {

@@ -211,67 +211,14 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 			it.get(TestCase, tc.id).addVerifiedRequirementVersion(r.currentVersion)
 		})
 		TestCase res = doInTransaction ({
-			it.createQuery("from TestCase tc left join fetch tc.verifiedRequirementVersions where tc.id = " + tc.id).uniqueResult()
+			it.createQuery("from TestCase tc left join fetch tc.requirementVersionCoverages where tc.id = " + tc.id).uniqueResult()
 		})
 
 		then:
 		res.verifiedRequirementVersions.size() == 1
 
 		cleanup:
-		doInTransaction({
-			def tcc = it.get(TestCase, tc.id)
-			def rr = it.get(Requirement, r.id)
-
-			tcc.removeVerifiedRequirementVersion rr.currentVersion
-			it.delete tcc
-
-			it.delete rr
-		})
-	}
-
-	def "should remove a Requirement Version verified by a TestCase"() {
-		given:
-		TestCase tc = new TestCase(name: "link")
-		persistFixture tc
-
-		and:
-		Requirement r = new Requirement(new RequirementVersion(name: "link"))
-		persistFixture r
-
-		and:
-		doInTransaction({
-			it.get(TestCase, tc.id).addVerifiedRequirementVersion(r.currentVersion)
-		})
-
-		when:
-		doInTransaction({
-			TestCase tcc = it.load(TestCase, tc.id)
-			RequirementVersion rvv = it.load(RequirementVersion, r.currentVersion.id)
-			tcc.removeVerifiedRequirementVersion(rvv)
-		})
-
-
-		def actualTC = {
-			doInTransaction ({
-				def res = it.load(TestCase, tc.id)
-				res.verifiedRequirementVersions.size()
-				return res
-			})
-		}
-
-		then:
-		actualTC().verifiedRequirementVersions.size() == 0
-
-		cleanup:
-		doInTransaction({
-			def tcc = it.get(TestCase, tc.id)
-			def rr = it.get(Requirement, r.id)
-
-			tcc.removeVerifiedRequirementVersion rr.currentVersion
-			it.delete tcc
-
-			it.delete rr
-		})
+		deleteFixture r, tc
 	}
 
 	def "should retrieve test cases with a creator"(){
@@ -330,48 +277,40 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		deleteFixture e1, e2, itp, tc
 	}
 
-	def "should persist a test case verifying an existing requirement version"() {
-		given:
-		Requirement req = new Requirement(new RequirementVersion(name: "req"))
-		persistFixture req
-
-		and:
-		TestCase tc = new TestCase(name: "tc")
-		ActionTestStep s = new ActionTestStep(action: "step")
-		tc.steps << s
-
-		when:
-		use (HibernateOperationCategory) {
-			sessionFactory.doInSession {
-				Requirement r = it.get(Requirement, req.id)
-				r.description = "bar"
-				r.currentVersion.addVerifyingTestCase(tc)
-				it.persist tc
-			}
-		}
-
-		def res = {
-			use (HibernateOperationCategory) {
-				sessionFactory.doInSession {
-					it.createQuery("select tc from TestCase tc join fetch tc.steps join fetch tc.verifiedRequirementVersions where tc.id = $tc.id").uniqueResult()
-				}
-			}
-		}
-
-		then:
-		res() != null
-		res().steps.size() == 1
-		res().verifiedRequirementVersions.size() == 1
-
-		cleanup:
-		use (HibernateOperationCategory) {
-			sessionFactory.doInSession {
-				Requirement r = it.get(Requirement, req.id)
-				TestCase ttcc = it.get(TestCase, tc.id)
-				r.currentVersion.removeVerifyingTestCase(ttcc)
-			}
-		}
-
-		deleteFixture req, tc, s
-	}
+//	def "should persist a test case verifying an existing requirement version"() {
+//		given:
+//		Requirement req = new Requirement(new RequirementVersion(name: "req"))
+//		persistFixture req
+//
+//		and:
+//		TestCase tc = new TestCase(name: "tc")
+//		ActionTestStep s = new ActionTestStep(action: "step")
+//		tc.steps << s
+//
+//		when:
+//		use (HibernateOperationCategory) {
+//			sessionFactory.doInSession {
+//				Requirement r = it.get(Requirement, req.id)
+//				r.description = "bar"
+//				r.currentVersion.addVerifyingTestCase(tc)
+//				
+//			}
+//		}
+//
+//		def res = {
+//			use (HibernateOperationCategory) {
+//				sessionFactory.doInSession {
+//					it.createQuery("select tc from TestCase tc join fetch tc.steps join fetch tc.requirementVersionCoverages where tc.id = $tc.id").uniqueResult()
+//				}
+//			}
+//		}
+//
+//		then:
+//		res() != null
+//		res().steps.size() == 1
+//		res().verifiedRequirementVersions.size() == 1
+//
+//		cleanup:
+//		deleteFixture req, tc, s
+//	}
 }

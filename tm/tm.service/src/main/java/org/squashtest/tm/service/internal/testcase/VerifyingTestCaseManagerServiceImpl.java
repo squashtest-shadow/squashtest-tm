@@ -39,6 +39,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
@@ -46,6 +47,7 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
@@ -65,6 +67,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	private RequirementVersionDao requirementVersionDao;
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
+	@Inject
+	private RequirementVersionCoverageDao requirementVersionCoverageDao;
 
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
@@ -134,10 +138,10 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		List<TestCase> testCases = testCaseDao.findAllByIds(testCasesIds);
 
 		if (!testCases.isEmpty()) {
-			RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
-
-			for (TestCase testCase : testCases) {
-				requirementVersion.removeVerifyingTestCase(testCase);
+			List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao.findAllByRequirementVersionAndTestCases(testCasesIds, requirementVersionId);
+			for(RequirementVersionCoverage coverage : coverages){
+				coverage.removeFromAll();
+				requirementVersionCoverageDao.delete(coverage);
 			}
 			testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(testCasesIds,
 					requirementVersionId);
@@ -147,11 +151,9 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	@Override
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK') or hasRole('ROLE_ADMIN')")
 	public void removeVerifyingTestCaseFromRequirementVersion(long testCaseId, long requirementVersionId) {
-
-		RequirementVersion req = requirementVersionDao.findById(requirementVersionId);
-		TestCase testCase = testCaseDao.findById(testCaseId);
-
-		req.removeVerifyingTestCase(testCase);
+		RequirementVersionCoverage coverage = requirementVersionCoverageDao.findByRequirementVersionAndTestCase(requirementVersionId, testCaseId);
+		coverage.removeFromAll();
+		requirementVersionCoverageDao.delete(coverage);
 		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(Arrays.asList(testCaseId),
 				requirementVersionId);
 	}

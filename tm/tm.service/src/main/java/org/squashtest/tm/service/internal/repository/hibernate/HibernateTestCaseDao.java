@@ -393,8 +393,9 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	private DetachedCriteria createFindAllByRequirementCriteria(RequirementSearchCriteria criteria) {
 		DetachedCriteria crit = DetachedCriteria.forClass(TestCase.class);
-		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		DetachedCriteria reqCrit = crit.createCriteria("verifiedRequirementVersions");
+		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);	
+		crit.createAlias("requirementVersionCoverages", "rvc");
+		DetachedCriteria reqCrit = crit.createCriteria("rvc.verifiedRequirementVersion");
 
 		if (criteria.getName() != null) {
 			reqCrit.add(Restrictions.ilike("name", criteria.getName(), MatchMode.ANYWHERE));
@@ -452,8 +453,9 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private Criteria createFindAllVerifyingCriteria(PagingAndSorting sorting) {
 		
 		Criteria crit = currentSession().createCriteria(TestCase.class, "TestCase");
-		crit.createAlias("verifiedRequirementVersions", "RequirementVersion");
-		crit.createAlias("verifiedRequirementVersions.requirement", "Requirement", Criteria.LEFT_JOIN);
+		crit.createAlias("requirementVersionCoverages", "rvc");
+		crit.createAlias("rvc.verifiedRequirementVersion", "RequirementVersion");
+		crit.createAlias("RequirementVersion.requirement", "Requirement", Criteria.LEFT_JOIN);
 		crit.createAlias("project", "Project", Criteria.LEFT_JOIN);
 		
 		List<Sorting> effectiveSortings = createEffectiveSorting(sorting);

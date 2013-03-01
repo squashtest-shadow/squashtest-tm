@@ -62,6 +62,7 @@ import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -144,7 +145,7 @@ public class ExecutionModificationController {
 		return codes;
 	}
 
-	@RequestMapping(value = "/steps", method = RequestMethod.GET, params = "sEcho")
+	@RequestMapping(value = "/steps", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getStepsTableModel(@PathVariable long executionId, DataTableDrawParameters params,
 			final Locale locale) {
@@ -271,7 +272,7 @@ public class ExecutionModificationController {
 		}
 	}
 
-	@RequestMapping(value = "/auto-steps", method = RequestMethod.GET, params = "sEcho")
+	@RequestMapping(value = "/auto-steps", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getAutoStepsTableModel(@PathVariable long executionId, DataTableDrawParameters params,
 			final Locale locale) {

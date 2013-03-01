@@ -389,10 +389,10 @@
 						   open="true">
 			<jsp:attribute name="panelButtons">
 			<c:if test="${ linkable }">
-				<f:message var="associateLabel"	key="test-case.verified_requirements.manage.button.label" />
+				<f:message var="associateLabel"	key="label.associateRequirements" />
 				<input id="verified-req-button" type="button" value="${associateLabel}" class="button" />
 				
-				<f:message var="removeLabel" key="test-case.verified_requirement_item.remove.button.label" />
+				<f:message var="removeLabel" key="label.removeRequirementsAssociation" />
 				<input id="remove-verified-requirements-button" type="button" value="${ removeLabel }" class="button" />
 			</c:if>
 			</jsp:attribute>

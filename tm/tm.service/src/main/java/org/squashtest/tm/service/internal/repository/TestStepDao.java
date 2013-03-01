@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestStep;
 
 public interface TestStepDao extends EntityDao<TestStep>{
@@ -40,5 +42,20 @@ public interface TestStepDao extends EntityDao<TestStep>{
 	 * @return
 	 */
 	int findPositionOfStep(Long testStepId);
+
+	/**
+	 * Will return a sorted page of verified requirements for the test step matching the given id.
+	 * @param testStepId : the id of the concerned test-step
+	 * @param paging : the paging and sorting params to match
+	 * @return a list of {@link RequirementVersion} representing a sorted page of verified requirements
+	 */
+	List<RequirementVersion> findSortedVerifiedRequirementVersions(long testStepId, PagingAndSorting paging);
+	
+	/**
+	 * Will return the total of {@link RequirementVersion} verified by the {@link TestStep} matching the given id.
+	 * @param testStepId : the id of the concerned {@link TestStep}
+	 * @return : number of total verified requirement versions for the concerned test step.
+	 */
+	long countVerifiedRequirements(long testStepId);
 
 }

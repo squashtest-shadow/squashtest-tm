@@ -43,10 +43,12 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
@@ -64,6 +66,9 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
+	
+	@Inject
+	private RequirementVersionCoverageDao requirementVersionCoverageDao;
 
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
@@ -130,31 +135,31 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	}
 
 	@Override
-	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
-	public void removeVerifiedRequirementVersionsFromTestCase(List<Long> requirementsIds, long testCaseId) {
-		List<RequirementVersion> reqs = requirementVersionDao.findAllByIds(requirementsIds);
-
-		if (!reqs.isEmpty()) {
-			TestCase testCase = testCaseDao.findById(testCaseId);
-
-			for (RequirementVersion requirement : reqs) {
-				testCase.removeVerifiedRequirementVersion(requirement);
+		@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
+		public void removeVerifiedRequirementVersionsFromTestCase(List<Long> requirementVersionsIds, long testCaseId) {
+			List<RequirementVersion> reqs = requirementVersionDao.findAllByIds(requirementVersionsIds);
+	
+			if (!reqs.isEmpty()) {
+				TestCase testCase = testCaseDao.findById(testCaseId);	
+				List<RequirementVersionCoverage> requirementVersionCoverages = testCase.findRequirementVersionCoverageForRequirements(requirementVersionsIds);
+				for(RequirementVersionCoverage coverage : requirementVersionCoverages){
+					coverage.removeFromAll();
+					requirementVersionCoverageDao.delete(coverage);
+				}
+				testCaseImportanceManagerService
+						.changeImportanceIfRelationsRemovedFromTestCase(requirementVersionsIds, testCaseId);
 			}
-
-			testCaseImportanceManagerService
-					.changeImportanceIfRelationsRemovedFromTestCase(requirementsIds, testCaseId);
 		}
-	}
 
 	@Override
 	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
-	public void removeVerifiedRequirementVersionFromTestCase(long requirementId, long testCaseId) {
-		RequirementVersion req = requirementVersionDao.findById(requirementId);
+	public void removeVerifiedRequirementVersionFromTestCase(long requirementVersionId, long testCaseId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
+		RequirementVersionCoverage coverage = testCase.findRequirementVersionCoverageForRequirement(requirementVersionId);
+		coverage.removeFromAll();
+		requirementVersionCoverageDao.delete(coverage);
 
-		testCase.removeVerifiedRequirementVersion(req);
-
-		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(Arrays.asList(requirementId),
+		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(Arrays.asList(requirementVersionId),
 				testCaseId);
 	}
 
@@ -171,14 +176,12 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public int changeVerifiedRequirementVersionOnTestCase(long oldVerifiedRequirementVersionId,
 			long newVerifiedRequirementVersionId, long testCaseId) {
-		RequirementVersion oldReq = requirementVersionDao.findById(oldVerifiedRequirementVersionId);
 		RequirementVersion newReq = requirementVersionDao.findById(newVerifiedRequirementVersionId);
-		TestCase testCase = testCaseDao.findById(testCaseId);
-
-		testCase.removeVerifiedRequirementVersion(oldReq);
-
-		testCase.addVerifiedRequirementVersion(newReq);
-
+		RequirementVersionCoverage coverage = requirementVersionCoverageDao.findByRequirementVersionAndTestCase(oldVerifiedRequirementVersionId, testCaseId);
+		RequirementVersion old = coverage.getVerifiedRequirementVersion();
+		old.removeRequirementVersionCoverage(coverage);
+		coverage.setVerifiedRequirementVersion(newReq);
+		newReq.addRequirementCoverage(coverage);
 		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(
 				Arrays.asList(newVerifiedRequirementVersionId), testCaseId);
 

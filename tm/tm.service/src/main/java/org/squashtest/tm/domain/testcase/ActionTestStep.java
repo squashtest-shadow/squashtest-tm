@@ -28,10 +28,14 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
@@ -43,6 +47,9 @@ import org.squashtest.tm.domain.project.Project;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
+@NamedQueries({
+	@NamedQuery(name="TestStep.countVerifiedRequirementsByTestStepId", query="select count (rv) from RequirementVersion rv join rv.requirementVersionCoverages rvc join rvc.verifyingSteps astep where astep.id = :id"),	
+})
 public class ActionTestStep extends TestStep implements BoundEntity, AttachmentHolder {
 	@Lob
 	@Basic(optional = false)
@@ -54,7 +61,12 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, optional = false)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
+	
+	@ManyToMany
+	@JoinTable(name = "VERIFYING_STEPS", joinColumns = @JoinColumn(name = "TEST_STEP_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "REQUIREMENT_VERSION_COVERAGE_ID", updatable = false, insertable = false))
+	private List<RequirementVersionCoverage> requirementVersionCoverages= new ArrayList<RequirementVersionCoverage>();
 
+	
 	public ActionTestStep() {
 		super();
 	}
@@ -136,5 +148,13 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	public Project getProject() {
 		return getTestCase().getProject();
 	}
+	/**
+	 * Simply remove the RequirementVersionCoverage from this.requirementVersionCoverages.
+	 * @param requirementVersionCoverage : the entity to remove from this step's {@link RequirementVersionCoverage}s list.
+	 */
+	public void removeRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
+		this.requirementVersionCoverages.remove(requirementVersionCoverage);		
+	}
 
+	
 }

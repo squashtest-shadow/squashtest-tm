@@ -54,6 +54,7 @@
         <value>org.squashtest.tm.domain.testcase.TestStep</value>
         <value>org.squashtest.tm.domain.testcase.ActionTestStep</value>
         <value>org.squashtest.tm.domain.testcase.CallTestStep</value>
+        <value>org.squashtest.tm.domain.testcase.RequirementVersionCoverage</value>
 
         <value>org.squashtest.tm.domain.requirement.RequirementLibrary</value>
         <value>org.squashtest.tm.domain.requirement.Requirement</value>

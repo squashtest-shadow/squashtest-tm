@@ -57,9 +57,9 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.ANY, null); // yeah, it's a null.
 
 		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.SHOULD_BE_VERIFIED,
-				Restrictions.isNotEmpty("res.verifyingTestCases"));
+				Restrictions.isNotEmpty("res.requirementVersionCoverages"));
 		HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.put(VerificationCriterion.SHOULD_NOT_BE_VERIFIED,
-				Restrictions.isEmpty("res.verifyingTestCases"));
+				Restrictions.isEmpty("res.requirementVersionCoverages"));
 
 	}
 	private static final String RES_NAME = "res.name";
@@ -306,10 +306,10 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RequirementCriticality> findDistinctRequirementsCriticalities(List<Long> requirementsIds) {
-		if (!requirementsIds.isEmpty()) {
+	public List<RequirementCriticality> findDistinctRequirementsCriticalities(List<Long> requirementVersionsIds) {
+		if (!requirementVersionsIds.isEmpty()) {
 			Query query = currentSession().getNamedQuery("requirementVersion.findDistinctRequirementsCriticalities");
-			query.setParameterList("requirementsIds", requirementsIds);
+			query.setParameterList("requirementsIds", requirementVersionsIds);
 			return query.list();
 		} else {
 			return Collections.emptyList();

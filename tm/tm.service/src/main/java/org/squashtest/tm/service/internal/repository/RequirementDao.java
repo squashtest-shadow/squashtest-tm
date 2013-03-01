@@ -72,10 +72,10 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	/**
 	 * returns the list of distinct requirementCriticalities found for all requirementsIds
 	 * 
-	 * @param requirementsIds
+	 * @param requirementVersionsIds
 	 * @return
 	 */
-	List<RequirementCriticality> findDistinctRequirementsCriticalities(List<Long> requirementsIds);
+	List<RequirementCriticality> findDistinctRequirementsCriticalities(List<Long> requirementVersionsIds);
 
 	/**
 	 * returns the list of all requirement versions

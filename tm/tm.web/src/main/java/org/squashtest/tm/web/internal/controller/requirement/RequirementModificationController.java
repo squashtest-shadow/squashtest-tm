@@ -58,6 +58,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.requirement.RequirementModificationService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -337,7 +338,7 @@ public class RequirementModificationController {
 		return "page/requirements/versions-manager";
 	}
 
-	@RequestMapping(value = "/versions/table", params = "sEcho")
+	@RequestMapping(value = "/versions/table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getRequirementVersionsTableModel(@PathVariable long requirementId,
 			DataTableDrawParameters params, final Locale locale) {

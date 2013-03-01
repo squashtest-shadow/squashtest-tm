@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2012 Henix, henix.fr
  *
@@ -18,12 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testcase;
-
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.testcase.TestStep;
-
-@Transactional(readOnly = true)
-public interface TestStepFinder extends CustomTestStepFinder{
-	TestStep findById(long id);
-}
+require([ "common" ], function(common) {
+	require([ "jquery",  "domReady","verified-requirements/VerifiedRequirementsPanel" ], function($, domReady, VerifiedRequirementsPanel) {
+		domReady(function() {
+		
+			new VerifiedRequirementsPanel();
+			
+		});
+	});
+});

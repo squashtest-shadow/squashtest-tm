@@ -207,7 +207,7 @@
 							</span>
 							<div id="project-permission-panel" class="toggle-panel-main">
 								<table id="permission-table"
-									th:attr="data-def='filter, hover, datakeys-id=project-id ,ajaxsource='+@{/administration/teams/__${team.id}__/permissions}+',language='+@{/squash/datatables/language}">
+									th:attr="data-def='filter, hover, pre-filled, datakeys-id=project-id ,ajaxsource='+@{/administration/teams/__${team.id}__/permissions}+',language='+@{/squash/datatables/language}">
 									<thead>
 										<tr>
 											<th th:attr="data-def='invisible, map=project-id'">user-id</th>
@@ -257,7 +257,7 @@
 							<div id="members-panel" class="toggle-panel-main">
 
 								<table id="members-table"
-									th:attr="data-def='filter, hover, datakeys-id=user-id , pagesize=10, ajaxsource='+@{/administration/teams/__${team.id}__/members}+',language='+@{/squash/datatables/language}">
+									th:attr="data-def='filter, hover, pre-filled, datakeys-id=user-id , pagesize=10, ajaxsource='+@{/administration/teams/__${team.id}__/members}+',language='+@{/squash/datatables/language}">
 									<thead>
 										<tr>
 											<th th:attr="data-def='invisible, map=user-id'">user-id</th>

@@ -24,9 +24,7 @@ package org.squashtest.tm.web.internal.controller.project;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,9 +38,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,7 +51,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.plugin.EntityType;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
-import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -74,6 +69,7 @@ import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.PartyPermissionDatatableModelHelper;
 import org.squashtest.tm.web.internal.helper.ProjectHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -133,7 +129,7 @@ public class GenericProjectController {
 													.mapAttribute(Party.class, "type", String.class, "party-type")
 													.mapAttribute(PermissionGroup.class, "qualifiedName", String.class, "permission-group.qualifiedName");
 	
-	@RequestMapping(value = "", params = "sEcho", method = RequestMethod.GET)
+	@RequestMapping(value = "", params = RequestParams.S_ECHO_PARAM, method = RequestMethod.GET)
 	public @ResponseBody
 	DataTableModel getProjectsTableModel(final DataTableDrawParameters params, final Locale locale) {
 		
@@ -329,7 +325,7 @@ public class GenericProjectController {
 	
 	
 	//filtering and sorting not supported for now
-	@RequestMapping(value = PROJECT_ID_URL+"/test-automation-projects", method=RequestMethod.GET, params = "sEcho")
+	@RequestMapping(value = PROJECT_ID_URL+"/test-automation-projects", method=RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getProjectsTableModel(@PathVariable(PROJECT_ID) long projectId, final DataTableDrawParameters params) {
 		List<TestAutomationProject> taProjects = projectManager.findBoundTestAutomationProjects(projectId);

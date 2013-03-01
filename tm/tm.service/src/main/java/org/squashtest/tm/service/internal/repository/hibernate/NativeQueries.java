@@ -137,11 +137,11 @@ public final class NativeQueries {
 
 	public static final String testCase_sql_setNullCallingExecutionSteps = "update EXECUTION_STEP step set step.test_step_id = null where step.test_step_id in (:testStepIds)";
 
-	public static final String testCase_sql_removeVerifyingTestCaseList = "delete from TEST_CASE_VERIFIED_REQUIREMENT_VERSION where verifying_test_case_id in (:testCaseIds)";
+	public static final String testCase_sql_removeVerifyingTestCaseList = "delete from REQUIREMENT_VERSION_COVERAGE where verifying_test_case_id in (:testCaseIds)";
 
 	public static final String testCase_sql_removeTestStepFromList = "delete from TEST_CASE_STEPS where step_id in (:testStepIds)";
 
-	public static final String requirement_sql_removeFromVerifiedRequirementLists = " delete from TEST_CASE_VERIFIED_REQUIREMENT_VERSION "
+	public static final String requirement_sql_removeFromVerifiedRequirementLists = " delete from REQUIREMENT_VERSION_COVERAGE "
 			+ " where verified_req_version_id in ( "
 			+ " select req_v.res_id from REQUIREMENT_VERSION req_v where req_v.requirement_id in (:requirementIds) "
 			+ ")";

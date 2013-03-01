@@ -1279,6 +1279,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		_DOMExprHandlers : {
 			table : {
 				'ajaxsource' : 	function(conf, assignation) { conf.table.sAjaxSource=assignation.value;},
+				'pre-filled' : function(conf, assignation) {conf.table.iDeferLoading=0;},
 				'filter' : 		function(conf, assignation) { var cnf = conf.table; cnf.bFilter=assignation.value; cnf.sDom = 'ft<"dataTables_footer"lirp>';},
 				'langage' : 	function(conf, assignation) { conf.table.oLanguage = conf.table.oLanguage || {}; conf.table.oLanguage.sUrl = assignation.value;},
 				'hover' : 		function(conf, assignation) { conf.squash.enableHover = assignation.value;},

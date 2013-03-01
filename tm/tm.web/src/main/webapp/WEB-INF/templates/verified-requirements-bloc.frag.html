@@ -1,0 +1,125 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<!-- common head -->
+<link rel="stylesheet" type="text/css" media="all"
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css"
+	th:href="@{/styles/master.css}" />
+<!-- /common head -->
+<link rel="stylesheet" type="text/css" media="all"
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.blue.css"
+	th:href="@{/styles/master.blue.css}" />
+</head>
+<body>
+	<div th:remove="all">
+		<!--  
+	parameters are :
+		
+		linkable : boolean that says whether user has link right on requirementVerifier entity
+		requirementVerifier : a requirement verifier entity
+
+ -->
+	</div>
+	<div id="verified-requirements-bloc-frag" th:fragment="verified-requirements-bloc">
+	<script  th:remove="all" data-main="../../scripts/verified-requirement-bloc.frag.js"
+			src="../../scripts/require.js"></script>
+		<script type="text/javascript" th:inline="javascript">
+			if (!squashtm) {
+				var squashtm = {};
+			}
+			if (!squashtm.app) {
+				squashtm.app = {
+					contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+				};
+			}
+			squashtm.app.verifiedRequirementsBlocSettings = {
+				linkable : /*[[ ${linkable} ]]*/ true,
+				oppened : ! /*[[ ${requirementVerifier.verifier.verifiedRequirementVersions.empty} ]]*/ false,
+				title : /*[[ #{label.verifiedRequirements.__${requirementVerifier.type}__} ]]*/'Verified Requirements',
+				url : /*[[ @{/__${requirementVerifier.type}__/__${requirementVerifier.verifier.id}__/verified-requirement-versions/} ]]*/'http://localhost:8080/squash/test-steps/1/verified-requirements/' ,
+			};
+		</script>
+
+		<div class="toggle-panel">
+			<span class="not-displayed toggle-panel-buttons"> <input
+				th:if="${linkable}" id="add-verified-requirements-button" type="button"
+				th:value="#{label.associateRequirements}" value="Associate Requirements" class="button" />
+				<input th:if="${linkable}" id="remove-verified-requirements-button"
+				type="button" th:value="#{label.removeRequirementsAssociation}" value="Remove these associations"
+				class="button" />
+			</span>
+			<div class="toggle-panel-main" id="verified-requirements-panel">
+				<table id="verified-requirement-table" th:attr="data-def='hover, pre-filled, datakeys-id=entity-id , ajaxsource='+@{/__${requirementVerifier.type}__/__${requirementVerifier.verifier.id}__/verified-requirement-versions/}+', language='+@{/squash/datatables/language}">
+					<thead>
+						<tr>
+							<th th:attr="data-def='select, map=entity-index'" >#</th>
+							<th th:attr="data-def='sortable, map=project'" th:text="#{label.project}" >Project</th>
+							<th th:attr="data-def='sortable, map=entity-id'" th:text="#{report.requirementexport.id}">Id</th>
+							<th th:attr="data-def='sortable, map=reference'" th:text="#{requirement.reference.label}">Reference</th>
+							<th th:attr="data-def='sortable, map=name'" th:text="#{requirement.name.label}">Name</th>
+							<th th:attr="data-def='sortable, map=version'" th:text="#{requirement-version.version-number.label}">Version#</th>
+							<th th:attr="data-def='sortable, map=criticality'" th:text="#{requirement.criticality.label}">Critical</th>
+							<th th:attr="data-def='sortable, map=category'" th:text="#{requirement.category.label}">Functional</th>
+							<th th:attr="data-def='delete-button=#remove-verified-requirement-dialog, map=empty-delete-holder'">&nbsp;</th>
+							<th th:attr="data-def='invisible, map=status'">status(masked)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="requirement, iterStat : ${requirementVerifier.verifier.verifiedRequirementVersions}">
+							<td th:text="${iterStat.count}">1</td>
+							<td th:text="*{project}">project</td>
+							<td th:text="*{id}">1221</td>
+							<td th:text="*{reference}">ref 1</td>
+							<td th:text="*{name}">name 1</td>
+							<td th:text="*{versionNumber}">3</td>
+							<td th:text="#{_${requirement.criticality.i18nKey}_">Criticality</td>
+							<td th:text="#{_${requirement.category.i18nKey}_}">Category</td>
+							<td class="delete-button"></td>
+							<td th:text="*{status}">OBSOLETE</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	
+	<div id="remove-verified-requirement-dialog" class="popup-dialog not-displayed"
+		th:title="#{label.Confirm}">
+		<div th:text="#{dialog.remove-requirement-version-association.message}"></div>
+		<div class="popup-dialog-buttonpane">
+			<input class="confirm" type="button" value="confirm"
+				th:value="#{label.Confirm}" /> <input class="cancel" type="button"
+				value="cancel" th:value="#{label.Cancel}" />
+		</div>
+	</div>
+	
+	<div id="no-selected-requirement-dialog" class="popup-dialog not-displayed"
+		th:title="#{popup.title.error}" title="error">
+		<span th:text="#{message.EmptyTableSelection}">empty selection table</span>
+	</div>
+	
+</body>
+</html>

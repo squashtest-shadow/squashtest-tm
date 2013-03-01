@@ -55,6 +55,7 @@ import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -305,7 +306,7 @@ public class CampaignModificationController {
 
 	// ****************************** Test Plan **********************************
 
-	@RequestMapping(value = "/test-plan/table", params = "sEcho")
+	@RequestMapping(value = "/test-plan/table", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getTestCasesTableModel(@PathVariable("campaignId") long campaignId,
 			final DataTableDrawParameters params, final Locale locale) {
@@ -317,7 +318,7 @@ public class CampaignModificationController {
 		return new TestCaseTableModelHelper(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}
 
-	@RequestMapping(value = "/test-plan/manager/table", params = "sEcho")
+	@RequestMapping(value = "/test-plan/manager/table", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getLinkableTestCasesTableModel(@PathVariable("campaignId") long campaignId,
 			final DataTableDrawParameters params, final Locale locale) {

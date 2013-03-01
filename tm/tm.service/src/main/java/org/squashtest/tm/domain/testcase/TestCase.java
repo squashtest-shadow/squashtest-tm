@@ -38,7 +38,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
@@ -85,33 +84,36 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	private TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
-
+	
+	@NotNull
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "STEP_ORDER")
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
 	private final List<TestStep> steps = new ArrayList<TestStep>();
 
-	/**
-	 * Collection of {@link RequirementVersion}s which are verified by this {@link TestCase}
-	 */
-	@ManyToMany
-	@JoinTable(name = "TEST_CASE_VERIFIED_REQUIREMENT_VERSION", joinColumns = @JoinColumn(name = "VERIFYING_TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "VERIFIED_REQ_VERSION_ID"))
-	private final Set<RequirementVersion> verifiedRequirementVersions = new HashSet<RequirementVersion>();
-
+	@NotNull
+	@OneToMany(cascade = { CascadeType.ALL})
+	@JoinColumn(name="VERIFYING_TEST_CASE_ID")
+	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<RequirementVersionCoverage>();
+	
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	private TestCaseImportance importance = LOW;
-
+	
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_NATURE")
 	private TestCaseNature nature = TestCaseNature.UNDEFINED;
 	
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_TYPE")
 	private TestCaseType type = TestCaseType.UNDEFINED;
 
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_STATUS")
@@ -230,76 +232,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		}
 	}
 
-	/**
-	 * 
-	 * @return UNMODIFIABLE VIEW of verified requirements.
-	 */
-	public Set<RequirementVersion> getVerifiedRequirementVersions() {
-		return Collections.unmodifiableSet(verifiedRequirementVersions);
-	}
-
+	
 	@Override
 	public void accept(TestCaseLibraryNodeVisitor visitor) {
 		visitor.visit(this);
 
 	}
 
-	/**
-	 * Adds a {@link RequirementVersion} verified by this {@link TestCase}
-	 * 
-	 * @param requirementVersion
-	 *            requirement to add, should not be null.
-	 * @throws RequirementAlreadyVerifiedException
-	 *             if this test case already verifies another version of the same requirment
-	 */
-	public void addVerifiedRequirementVersion(@NotNull RequirementVersion requirementVersion)
-			throws RequirementAlreadyVerifiedException {
-		checkRequirementNotVerified(requirementVersion);
-		forceAddVerifiedRequirement(requirementVersion);
-	}
-
-	/**
-	 * This should be used when making a copy of a {@link RequirementVersion} to have the copy verified by this
-	 * {@link TestCase}.
-	 * 
-	 * When making a copy of a requirement, we cannot use {@link #addVerifiedRequirementVersion(RequirementVersion)}
-	 * because of the single requirement check.
-	 * 
-	 * @param requirementVersionCopy
-	 *            a copy of an existing requirement version. It should not have a requirement yet.
-	 */
-	public void addCopyOfVerifiedRequirementVersion(RequirementVersion requirementVersionCopy) {
-		if (requirementVersionCopy.getRequirement() != null) {
-			throw new IllegalArgumentException("RequirementVersion should not be associated to a requirement yet");
-		}
-
-		forceAddVerifiedRequirement(requirementVersionCopy);
-	}
-
-	private void forceAddVerifiedRequirement(RequirementVersion requirementVersionCopy) {
-		requirementVersionCopy.notifyVerifiedBy(this);
-		verifiedRequirementVersions.add(requirementVersionCopy);
-	}
-
-	/**
-	 * @param version
-	 * @throws RequirementAlreadyVerifiedException
-	 */
-	public void checkRequirementNotVerified(RequirementVersion version) throws RequirementAlreadyVerifiedException {
-		Requirement req = version.getRequirement();
-
-		for (RequirementVersion verified : verifiedRequirementVersions) {
-			if (req.equals(verified.getRequirement())) {
-				throw new RequirementAlreadyVerifiedException(version, this);
-			}
-		}
-
-	}
-
-	public void removeVerifiedRequirementVersion(@NotNull RequirementVersion requirement) {
-		requirement.notifyNoLongerVerifiedBy(this);
-		verifiedRequirementVersions.remove(requirement);
-	}
 
 	@Override
 	public TestCase createCopy() {
@@ -332,13 +271,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		}
 	}
 
-	private void verifiesRequirementsVerifiedBy(TestCase source) {
-		for (RequirementVersion requirement : source.verifiedRequirementVersions) {
-			if (requirement.getStatus().isRequirementLinkable()) {
-				this.addVerifiedRequirementVersion(requirement);
-			}
-		}
-	}
+	
 
 	private void setSimplePropertiesUsing(TestCase source) {
 		this.setName(source.getName());
@@ -445,21 +378,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		// }
 	}
 
-	/**
-	 * This test case verifies the given requirement using its default verifiable version.
-	 * 
-	 * @param requirement
-	 * @throws NoVerifiableRequirementVersionException
-	 *             when there is no suitable version to be added
-	 * @throws RequirementAlreadyVerifiedException
-	 *             when this test case already verifies some version of the requirement.
-	 */
-	public void addVerifiedRequirement(@NotNull Requirement requirement)
-			throws NoVerifiableRequirementVersionException, RequirementAlreadyVerifiedException {
-		RequirementVersion candidate = requirement.getDefaultVerifiableVersion();
-		addVerifiedRequirementVersion(candidate);
-	}
-
+	
 	// *************** test automation section ******************
 
 	public AutomatedTest getAutomatedTest() {
@@ -535,6 +454,158 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		}
 		
 	}
+	
+	//=====================Requirement verifying section====================
+	
+		
+	/**
+	 * 
+	 * @return UNMODIFIABLE VIEW of verified requirements.
+	 */
+	public Set<RequirementVersion> getVerifiedRequirementVersions() {
+		Set<RequirementVersion> verified = new HashSet<RequirementVersion>();
+		for(RequirementVersionCoverage coverage : requirementVersionCoverages){
+			verified.add(coverage.getVerifiedRequirementVersion());
+		}
+		return Collections.unmodifiableSet(verified);
+	}
 
+
+	/**
+	 * Adds a {@link RequirementVersion} verified by this {@link RequirementVerifier}
+	 * 
+	 * @param requirementVersion
+	 *            requirement to add, should not be null.
+	 * @throws RequirementAlreadyVerifiedException
+	 *             if this requirement verifier verifies another version of the same requirement
+	 * @return the new {@link RequirementVersionCoverage}
+	 */
+	public RequirementVersionCoverage addVerifiedRequirementVersion(@NotNull RequirementVersion requirementVersion)
+			throws RequirementAlreadyVerifiedException {
+		
+		checkRequirementNotVerified(requirementVersion);
+		return forceAddVerifiedRequirement(requirementVersion);
+	}
+
+	/**
+	 * This should be used when making a copy of a {@link RequirementVersion} to have the copy verified by this
+	 * {@link RequirementVerifier}.
+	 * 
+	 * When making a copy of a requirement, we cannot use {@link #addVerifiedRequirementVersion(RequirementVersion)}
+	 * because of the single requirement check.
+	 * 
+	 * @param requirementVersionCopy
+	 *            a copy of an existing requirement version. It should not have a requirement yet.
+	 * 
+	 * @return the new {@link RequirementVersionCoverage}
+	 */
+	public RequirementVersionCoverage addCopyOfVerifiedRequirementVersion(RequirementVersion requirementVersionCopy) {
+		if (requirementVersionCopy.getRequirement() != null) {
+			throw new IllegalArgumentException("RequirementVersion should not be associated to a requirement yet");
+		}
+		return forceAddVerifiedRequirement(requirementVersionCopy);
+	}
+
+	/**
+	 * @param version
+	 * @throws RequirementAlreadyVerifiedException
+	 */
+	public void checkRequirementNotVerified(RequirementVersion version) throws RequirementAlreadyVerifiedException {
+		Requirement req = version.getRequirement();
+
+		for (RequirementVersion verified : getVerifiedRequirementVersions()) {
+			if (req.equals(verified.getRequirement())) {
+				throw new RequirementAlreadyVerifiedException(version, this);
+			}
+		}
+
+	}
+	/**
+	 * 
+	 * @param requirementVersion
+	 * @return the new {@link RequirementVersionCoverage}
+	 */
+	private RequirementVersionCoverage forceAddVerifiedRequirement(RequirementVersion requirementVersion) {
+		return new RequirementVersionCoverage(requirementVersion, this);		
+	}
+	/**
+	 * Set the verifying test case as this, and add the coverage the the this.requirementVersionCoverage
+	 * @param requirementVersionCoverage
+	 */
+	public void addRequirementCoverage(RequirementVersionCoverage requirementVersionCoverage) {
+		requirementVersionCoverage.setVerifyingTestCase(this);
+		this.requirementVersionCoverages.add(requirementVersionCoverage);		
+	}
+
+	/**
+	 * This requirement verifier verifies the given requirement using its default verifiable version.
+	 * 
+	 * @param requirement
+	 * @throws NoVerifiableRequirementVersionException
+	 *             when there is no suitable version to be added
+	 * @throws RequirementAlreadyVerifiedException
+	 *             when this requirement verifier already verifies some version of the requirement.
+	 */
+	public void addVerifiedRequirement(@NotNull Requirement requirement)
+			throws NoVerifiableRequirementVersionException, RequirementAlreadyVerifiedException {
+		RequirementVersion candidate = requirement.getDefaultVerifiableVersion();
+		addVerifiedRequirementVersion(candidate);		
+	}
+	
+	private void verifiesRequirementsVerifiedBy(TestCase source) {
+		for (RequirementVersion requirementVersion : source.getVerifiedRequirementVersions()) {
+			if (requirementVersion.getStatus().isRequirementLinkable()) {
+				this.addVerifiedRequirementVersion(requirementVersion);
+			}
+		}
+	}
+
+	public boolean hasStep(TestStep step) {
+		for(TestStep step2 : steps){
+			if(step2.getId().equals(step.getId())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Simply remove the RequirementVersionCoverage from this.requirementVersionCoverages.
+	 * @param requirementVersionCoverage : the entity to remove from this test case's {@link RequirementVersionCoverage}s list.
+	 */
+	public void removeRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
+		this.requirementVersionCoverages.remove(requirementVersionCoverage);
+		
+	}
+	
+	/**
+	 * Will return the list of this test-case's {@link RequirementVersionCoverage} that concerns {@link RequirementVersion} matching the given requirementVersionsIds.
+	 * @param requirementVersionsIds : the ids of the verified {@link RequirementVersion}
+	 * @return the list of corresponding {@link RequirementVersionCoverage}
+	 */
+	public List<RequirementVersionCoverage> findRequirementVersionCoverageForRequirements(List<Long> requirementVersionsIds) {
+		List<RequirementVersionCoverage> result = new ArrayList<RequirementVersionCoverage>(requirementVersionsIds.size());
+		for(RequirementVersionCoverage possibleMatch : this.requirementVersionCoverages){
+			if(requirementVersionsIds.contains(possibleMatch.getVerifiedRequirementVersion().getId())){
+				result.add(possibleMatch);
+			}
+		}
+		return result;
+	}
+	/**
+	 * Will return the {@link RequirementVersionCoverage} corresponding to the {@link RequirementVersion} matching the given id.
+	 * @param requirementVersionId : the id of the concerned {@link RequirementVersion}
+	 * @return the matching {@link RequirementVersionCoverage}
+	 */
+	public RequirementVersionCoverage findRequirementVersionCoverageForRequirement(long requirementVersionId) {
+		for(RequirementVersionCoverage possibleMatch : this.requirementVersionCoverages){
+			if(possibleMatch.getVerifiedRequirementVersion().getId().equals(requirementVersionId)){
+				return possibleMatch;
+			}
+		}
+		return null;
+		
+	}
+	
 
 }

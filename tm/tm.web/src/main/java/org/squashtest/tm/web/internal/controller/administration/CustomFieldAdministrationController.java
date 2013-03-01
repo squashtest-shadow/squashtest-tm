@@ -42,6 +42,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.service.customfield.CustomFieldManagerService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -117,7 +118,7 @@ public class CustomFieldAdministrationController {
 	 * @param locale the browser selected locale
 	 * @return the {@link DataTableModel} with organized {@link CustomField} infos.
 	 */
-	@RequestMapping(method = RequestMethod.GET, params = "sEcho")
+	@RequestMapping(method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getCustomFieldsTableModel(final DataTableDrawParameters params, final Locale locale) {
 		PagingAndSorting filter =  new DataTableMapperPagingAndSortingAdapter(params, customFieldTableMapper); 

@@ -99,7 +99,7 @@ class HibernateRequirementDeletionDaoIT extends DbunitDaoSpecification {
 		Query query_select_librairy_node = getSession().createSQLQuery(sql_select_librairy_node);
 		def resLibrairy_node = query_select_librairy_node.list()
 		
-		String sql_select_test_case_verified_req_vers = "select verified_req_version_id from test_case_verified_requirement_version where verified_req_version_id in (15, 25, 30, 40)";
+		String sql_select_test_case_verified_req_vers = "select verified_req_version_id from requirement_version_coverage where verified_req_version_id in (15, 25, 30, 40)";
 		Query query_select_test_case_verified_req_vers = getSession().createSQLQuery(sql_select_test_case_verified_req_vers);
 		def resTestCaseVerifiedReqVers = query_select_test_case_verified_req_vers.list()
 		

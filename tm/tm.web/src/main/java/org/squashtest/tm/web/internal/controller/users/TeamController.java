@@ -68,6 +68,7 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.service.user.TeamModificationService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.UserModel;
 import org.squashtest.tm.web.internal.controller.project.ProjectModel;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -150,7 +151,7 @@ public class TeamController {
 	 *            the {@link DataTableDrawParameters} for the teams table
 	 * @return the {@link DataTableModel} with organized {@link Team} infos.
 	 */
-	@RequestMapping( method = RequestMethod.GET, params = "sEcho")
+	@RequestMapping( method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getTableModel(final DataTableDrawParameters params, final Locale locale) {
 		
@@ -187,10 +188,10 @@ public class TeamController {
 		Team team = service.findById(teamId);
 		model.addAttribute("team", team);
 		
-		List<?> permissionModel = _getPermissionTableModel(teamId, new DefaultPagingAndSorting(), DefaultFiltering.NO_FILTERING, "").getAaData();
+		List<?> permissionModel = getPermissionTableModel(teamId, new DefaultPagingAndSorting(), DefaultFiltering.NO_FILTERING, "").getAaData();
 		model.addAttribute("permissions",permissionModel);
 		
-		List<?> userModel = _getMembersTableModel(teamId, new DefaultPagingAndSorting(), DefaultFiltering.NO_FILTERING, "").getAaData();
+		List<?> userModel = getMembersTableModel(teamId, new DefaultPagingAndSorting(), DefaultFiltering.NO_FILTERING, "").getAaData();
 		model.addAttribute("users", userModel);
 			
 		Map<String,Object> permissionPopupModel = getPermissionPopup(teamId);
@@ -226,12 +227,12 @@ public class TeamController {
 	
 	
 	
-	@RequestMapping(value=TEAM_ID_URL+"/members", method = RequestMethod.GET, params="sEcho")
+	@RequestMapping(value=TEAM_ID_URL+"/members", method = RequestMethod.GET, params=RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getMembersTableModel(DataTableDrawParameters params, @PathVariable("teamId") long teamId){
 		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, membersMapper, SortedAttributeSource.SINGLE_ENTITY);
 		Filtering filtering = new DataTableFiltering(params);
-		return _getMembersTableModel(teamId, paging, filtering, params.getsEcho());
+		return getMembersTableModel(teamId, paging, filtering, params.getsEcho());
 	}
 	
 	
@@ -282,7 +283,6 @@ public class TeamController {
 				PermissionGroupModel model = new PermissionGroupModel(permission);
 				model.setDisplayName(messageSource.getMessage("user.project-rights."+model.getSimpleName()+".label", null, locale));
 				permissionGroupModelList.add(model);
-				
 			}
 		}
 		
@@ -301,12 +301,12 @@ public class TeamController {
 	}
 
 	
-	@RequestMapping(value = TEAM_ID_URL+"/permissions", method = RequestMethod.GET, params="sEcho")
+	@RequestMapping(value = TEAM_ID_URL+"/permissions", method = RequestMethod.GET, params=RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable("teamId") long teamId) {
 		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, permissionMapper);
 		Filtering filtering = new DataTableFiltering(params);
-		return _getPermissionTableModel(teamId, paging, filtering, params.getsEcho());
+		return getPermissionTableModel(teamId, paging, filtering, params.getsEcho());
 	}
 
 	
@@ -314,13 +314,13 @@ public class TeamController {
 	
 	
 	
-	private DataTableModel _getMembersTableModel(long teamId, PagingAndSorting paging, Filtering filtering, String secho){
+	private DataTableModel getMembersTableModel(long teamId, PagingAndSorting paging, Filtering filtering, String secho){
 		Locale locale = LocaleContextHolder.getLocale();
 		PagedCollectionHolder<List<User>> holder = service.findAllTeamMembers(teamId, paging, filtering);
 		return new MembersTableModelHelper(locale, messageSource).buildDataModel(holder, secho);
 	}
 	
-	private DataTableModel _getPermissionTableModel(long teamId, PagingAndSorting paging, Filtering filtering, String secho){
+	private DataTableModel getPermissionTableModel(long teamId, PagingAndSorting paging, Filtering filtering, String secho){
 		Locale locale = LocaleContextHolder.getLocale();
 		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
 		PagedCollectionHolder<List<ProjectPermission>> holder = permissionService.findProjectPermissionByParty(teamId,paging,filtering);

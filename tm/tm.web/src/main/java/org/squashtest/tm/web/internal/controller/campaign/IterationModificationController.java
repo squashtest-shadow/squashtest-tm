@@ -64,6 +64,7 @@ import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.TestAutomationFinderService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -413,7 +414,7 @@ public class IterationModificationController {
 
 	}
 
-	@RequestMapping(value = "/test-plan", params = "sEcho")
+	@RequestMapping(value = "/test-plan", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getTestPlanModel(@PathVariable Long iterationId, final DataTableDrawParameters params,
 			final Locale locale) {

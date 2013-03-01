@@ -37,6 +37,7 @@ public abstract class DataTableModelHelper<X> {
 	public final static String DEFAULT_ATTACH_LIST_ID_KEY = "attach-list-id";
 	public final static String DEFAULT_EMPTY_DELETE_HOLDER_KEY = "empty-delete-holder";
 	public final static String DEFAULT_EMPTY_EXECUTE_HOLDER_KEY = "empty-execute-holder";
+	public final static String NAME_KEY	= "name";
 	
 	private long currentIndex = 0;
 	

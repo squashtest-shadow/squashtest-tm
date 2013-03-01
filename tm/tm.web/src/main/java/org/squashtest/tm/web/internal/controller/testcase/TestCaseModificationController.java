@@ -76,6 +76,7 @@ import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.testcase.ActionStepFormModel.ActionStepFormModelValidator;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
@@ -100,33 +101,33 @@ import org.squashtest.tm.web.internal.service.CustomFieldHelperService.Helper;
 public class TestCaseModificationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);
 	
-	private static final String NAME_KEY = "name";
-	private static final String S_ECHO_PARAM = "sEcho";
+	
+	
 	private static final String TEST_CASE_ = "test case ";
 	private static final String COPIED_STEP_ID_PARAM = "copiedStepId[]";
 
 	private final DatatableMapper verifiedReqMapper = new IndexBasedMapper(7)
-															.mapAttribute(Project.class, NAME_KEY, String.class, 1)
+															.mapAttribute(Project.class, "name", String.class, 1)
 															.mapAttribute(RequirementVersion.class, "id", Long.class, 2)
 															.mapAttribute(RequirementVersion.class, "reference", String.class, 3)
-															.mapAttribute(RequirementVersion.class, NAME_KEY, String.class, 4)
+															.mapAttribute(RequirementVersion.class, "name", String.class, 4)
 															.mapAttribute(RequirementVersion.class, "versionNumber", Integer.class, 5)
 															.mapAttribute(RequirementVersion.class, "criticality", RequirementCriticality.class, 6)
 															.mapAttribute(RequirementVersion.class, "category", RequirementCategory.class, 7);
 
 	private final DatatableMapper referencingTestCaseMapper = new IndexBasedMapper(6)
-																	.mapAttribute(Project.class, NAME_KEY, String.class, 2)
+																	.mapAttribute(Project.class, "name", String.class, 2)
 																	.mapAttribute(TestCase.class, "reference", String.class, 3)
-																	.mapAttribute(TestCase.class, NAME_KEY, String.class, 4)
+																	.mapAttribute(TestCase.class, "name", String.class, 4)
 																	.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 5);
 
 	private final DatatableMapper execsTableMapper = new IndexBasedMapper(11)
-														.mapAttribute(Project.class, NAME_KEY, String.class, 1)
-														.mapAttribute(Campaign.class, NAME_KEY, String.class, 2)
-														.mapAttribute(Iteration.class, NAME_KEY, String.class, 3)
-														.mapAttribute(Execution.class, NAME_KEY, String.class, 4)
+														.mapAttribute(Project.class, "name", String.class, 1)
+														.mapAttribute(Campaign.class, "name", String.class, 2)
+														.mapAttribute(Iteration.class, "name", String.class, 3)
+														.mapAttribute(Execution.class, "name", String.class, 4)
 														.mapAttribute(Execution.class, "executionMode", TestCaseExecutionMode.class, 5)
-														.mapAttribute(TestSuite.class, NAME_KEY, String.class, 6)
+														.mapAttribute(TestSuite.class, "name", String.class, 6)
 														.mapAttribute(Execution.class, "executionStatus", ExecutionStatus.class, 8)
 														.mapAttribute(Execution.class, "lastExecutedBy", String.class, 9)
 														.mapAttribute(Execution.class, "lastExecutedOn", Date.class, 10);
@@ -284,7 +285,7 @@ public class TestCaseModificationController {
 		
 	}
 	
-	@RequestMapping(value = "/steps-table", params = S_ECHO_PARAM)
+	@RequestMapping(value = "/steps-table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getStepsTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
 			Locale locale) {
@@ -563,7 +564,7 @@ public class TestCaseModificationController {
 		return testCase;
 	}
 
-	@RequestMapping(value = "/all-verified-requirements-table", params = S_ECHO_PARAM)
+	@RequestMapping(value = "/all-verified-requirements-table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getAllVerifiedRequirementsTableModel(@PathVariable long testCaseId,
 			final DataTableDrawParameters params, final Locale locale) {
@@ -590,7 +591,7 @@ public class TestCaseModificationController {
 		return new DataTableMapperPagingAndSortingAdapter(params, mapper);
 	}
 
-	@RequestMapping(value = "/calling-test-case-table", params = S_ECHO_PARAM)
+	@RequestMapping(value = "/calling-test-case-table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getCallingTestCaseTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
 			final Locale locale) {
@@ -649,7 +650,7 @@ public class TestCaseModificationController {
 		this.executionFinder = executionFinder;
 	}
 
-	@RequestMapping(value = "/executions", params = S_ECHO_PARAM)
+	@RequestMapping(value = "/executions", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getExecutionsTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
 			Locale locale) {

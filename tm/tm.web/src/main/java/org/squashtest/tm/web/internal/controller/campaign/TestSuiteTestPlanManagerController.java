@@ -57,6 +57,7 @@ import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -249,7 +250,7 @@ public class TestSuiteTestPlanManagerController {
 		return FALSE;
 	}
 	
-	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-cases/table", params = "sEcho")
+	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-cases/table", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getTestPlanModel(@PathVariable Long id, final DataTableDrawParameters params,
 			final Locale locale) {

@@ -50,6 +50,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.VerifiedRequirementActionSummaryBuilder;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -148,7 +149,7 @@ public class VerifyingTestCaseManagerController {
 		verifyingTestCaseManager.removeVerifyingTestCaseFromRequirementVersion(testCaseId, requirementVersionId);
 	}
 
-	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/table", params = "sEcho")
+	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/table", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getVerifiedTestCasesTableModel(@PathVariable long requirementVersionId,
 			DataTableDrawParameters params, Locale locale) {

@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -63,15 +62,16 @@ import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.service.user.AdministrationService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.project.ProjectModel;
 import org.squashtest.tm.web.internal.controller.users.PermissionGroupModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
+import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -134,7 +134,7 @@ public class UserAdministrationController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "/table", params = "sEcho", method = RequestMethod.GET)
+	@RequestMapping(value = "/table", params = RequestParams.S_ECHO_PARAM, method = RequestMethod.GET)
 	public @ResponseBody
 	DataTableModel getTable(final  DataTableDrawParameters params, final Locale locale) {
 		LOGGER.trace("getTable called ");
@@ -279,7 +279,7 @@ public class UserAdministrationController {
 		return res;
 	}
 
-	@RequestMapping(value = USER_URL+"/permissions", method = RequestMethod.GET, params="sEcho")
+	@RequestMapping(value = USER_URL+"/permissions", method = RequestMethod.GET, params=RequestParams.S_ECHO_PARAM)
 	public 	@ResponseBody DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable("userId") long userId) {
 		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, permissionMapper, SortedAttributeSource.SINGLE_ENTITY);
 		Filtering filtering = new DataTableFiltering(params);

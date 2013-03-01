@@ -40,6 +40,7 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -93,7 +94,7 @@ public class BugTrackerAdministrationController {
 		return mav;
 	}
 
-	@RequestMapping(value = "/list", params = "sEcho")
+	@RequestMapping(value = "/list", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getBugtrackerTableModel(final DataTableDrawParameters params, final Locale locale) {
 

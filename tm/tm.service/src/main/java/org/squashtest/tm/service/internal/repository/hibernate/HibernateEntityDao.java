@@ -110,6 +110,7 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 
 	/**
 	 * Will find all Entities ordered according to the given params.
+	 * @deprecated unused
 	 * 
 	 * @param filter
 	 *            the {@link CollectionSorting} that holds the order and paging params.
@@ -120,6 +121,7 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	protected final List<ENTITY_TYPE> findSorted(CollectionSorting filter, Class<ENTITY_TYPE> classe, String alias) {
 		Session session = currentSession();
 
@@ -145,19 +147,19 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	}
 
 	@SuppressWarnings("unchecked")
-	protected final List<ENTITY_TYPE> findSorted(PagingAndSorting filter, Class<ENTITY_TYPE> classe, String alias) {
+	protected final List<ENTITY_TYPE> findSorted(PagingAndSorting pagingAndSorting, Class<ENTITY_TYPE> classe, String alias) {
 		Session session = currentSession();
 
 		Criteria crit = session.createCriteria(classe, alias);
 
 		/* add ordering */
-		String sortedAttribute = filter.getSortedAttribute();
+		String sortedAttribute = pagingAndSorting.getSortedAttribute();
 		if (sortedAttribute != null) {
-			SortingUtils.addOrder(crit, filter);
+			SortingUtils.addOrder(crit, pagingAndSorting);
 		}
 
 		/* result range */
-		PagingUtils.addPaging(crit, filter);
+		PagingUtils.addPaging(crit, pagingAndSorting);
 
 		return crit.list();
 	}

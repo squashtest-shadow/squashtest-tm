@@ -22,21 +22,26 @@ package org.squashtest.csp.tm.internal.service
 
 import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
-import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl;
+import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
+import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
-import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl;
-import org.squashtest.tm.service.internal.testcase.VerifyingTestCaseManagerServiceImpl;
-import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
+import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl
+import org.squashtest.tm.service.internal.testcase.VerifyingTestCaseManagerServiceImpl
+import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService
 
 import spock.lang.Specification
 
@@ -52,6 +57,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 	LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy = Mock()
 	LibraryNodeDao<TestCaseLibraryNode> nodeDao = Mock()
 	TestCaseImportanceManagerServiceImpl testCaseImportanceServiceImpl = Mock()
+	RequirementVersionCoverageDao requirementVersionCoverageDao = Mock()
 
 	def setup() {
 		CollectionAssertions.declareContainsExactly()
@@ -63,6 +69,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		service.libraryStrategy = libraryStrategy
 		service.testCaseLibraryNodeDao = testCaseLibraryNodeDao
 		service.testCaseImportanceManagerService = testCaseImportanceServiceImpl
+		service.requirementVersionCoverageDao = requirementVersionCoverageDao
 	}
 
 	def "should find libraries of linkable test Case"() {
@@ -128,17 +135,16 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 	def "should remove requirements from test case's verified requirements"() {
 		given: "some requirements"
 		TestCase tc5 = new TestCase()
-		tc5.id >> 5
+		tc5.id >> 5L
 		TestCase tc15 = new TestCase()
-		tc15.id >> 15
-		testCaseDao.findAllByIds([15]) >> [tc15]
-
+		tc15.id >> 15L
+		testCaseDao.findAllByIds([15L]) >> [tc15]
 		and: " a test case which verifies these requirements"
 		RequirementVersion rv = new RequirementVersion()
-		rv.addVerifyingTestCase tc5
-		rv.addVerifyingTestCase tc15
-		requirementVersionDao.findById(10) >> rv
-
+		RequirementVersionCoverage rvc5 = rv.addVerifyingTestCase tc5
+		RequirementVersionCoverage rvc15 = rv.addVerifyingTestCase tc15
+		requirementVersionDao.findById(10L) >> rv
+		requirementVersionCoverageDao.findAllByRequirementVersionAndTestCases([15L], 10L)>>[rvc15]
 		when:
 		service.removeVerifyingTestCasesFromRequirementVersion([15], 10)
 
@@ -149,19 +155,44 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 	def "should remove single requirement from test case's verified requirements"() {
 		given: "a requirement"
 		TestCase tq = new TestCase()
-		tq.id >> 5
-		testCaseDao.findById(5) >> tq
+		tq.id >> 5L
+		testCaseDao.findById(5L) >> tq
 
 		and: " a test case which verifies this requirements"
 		RequirementVersion rv = new RequirementVersion()
-		rv.id >> 10
-		rv.addVerifyingTestCase tq
-		requirementVersionDao.findById(10) >> rv
-
+		rv.id >> 10L
+		RequirementVersionCoverage rvc = rv.addVerifyingTestCase tq
+		requirementVersionDao.findById(10L) >> rv
+		requirementVersionCoverageDao.findByRequirementVersionAndTestCase(10L, 5L)>>rvc
 		when:
-		service.removeVerifyingTestCaseFromRequirementVersion(5, 10)
+		service.removeVerifyingTestCaseFromRequirementVersion(5L, 10L)
 
 		then:
 		rv.verifyingTestCases.size() == 0
+		tq.verifiedRequirementVersions.size() == 0
+	}
+	def "should not be able to unverify an obsolete requirement"() {
+		given:
+		TestCase tc = new TestCase()
+		tc.id >> 5L
+		testCaseDao.findById(5L) >> tc
+		and:
+		RequirementVersion req = new RequirementVersion(status: RequirementStatus.OBSOLETE)
+		req.id >> 10L
+		requirementVersionDao.findById(10L) >> req
+		RequirementVersionCoverage rvc = new RequirementVersionCoverage();
+		rvc.setVerifiedRequirementVersion(req)
+		rvc.setVerifyingTestCase(tc)
+		use (ReflectionCategory) {
+			RequirementVersion.set field: "requirementVersionCoverages", of: req, to: [rvc]as Set
+			TestCase.set field: "requirementVersionCoverages", of: tc, to: [rvc]as Set
+		}
+		requirementVersionCoverageDao.findByRequirementVersionAndTestCase(10L, 5L)>>rvc
+
+		when:
+		service.removeVerifyingTestCaseFromRequirementVersion(5L, 10L)
+
+		then:
+		thrown(RequirementVersionNotLinkableException)
 	}
 }

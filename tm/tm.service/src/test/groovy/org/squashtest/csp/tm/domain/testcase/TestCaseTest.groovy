@@ -40,8 +40,8 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.exception.UnknownEntityException
-import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
-import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
+import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException
+import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException
 
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -181,19 +181,6 @@ class TestCaseTest extends Specification {
 		testCase.verifiedRequirementVersions.contains r
 	}
 
-	def "should remove a verified requirement"() {
-		given:
-		RequirementVersion r = new RequirementVersion()
-		use (ReflectionCategory) {
-			TestCase.set field: "verifiedRequirementVersions", of: testCase, to: ([r]as Set)
-		}
-
-		when:
-		testCase.removeVerifiedRequirementVersion(r)
-
-		then:
-		!testCase.verifiedRequirementVersions.contains(r)
-	}
 
 	def "should return position of step"() {
 		given:
@@ -311,43 +298,7 @@ class TestCaseTest extends Specification {
 		then:
 		thrown(RequirementVersionNotLinkableException)
 	}
-
-	def "when unverifying a requirement, the requirement should also not be verified by the test case"() {
-		given:
-		TestCase tc = new TestCase()
-
-		and:
-		RequirementVersion req = new RequirementVersion()
-		use (ReflectionCategory) {
-			RequirementVersion.set field: "verifyingTestCases", of: req, to: [tc]as Set
-			TestCase.set field: "verifiedRequirementVersions", of: tc, to: [req]as Set
-		}
-
-		when:
-		tc.removeVerifiedRequirementVersion req
-
-		then:
-		!req.verifyingTestCases.contains(tc)
-	}
-
-	//	def "should not be able to unverify an obsolete requirement"() {
-	//		given:
-	//		TestCase tc = new TestCase()
-	//
-	//		and:
-	//		RequirementVersion req = new RequirementVersion(status: RequirementStatus.OBSOLETE)
-	//		use (ReflectionCategory) {
-	//			RequirementVersion.set field: "verifyingTestCases", of: req, to: [tc]as Set
-	//			TestCase.set field: "verifiedRequirementVersions", of: tc, to: [req]as Set
-	//		}
-	//
-	//		when:
-	//		tc.removeVerifiedRequirementVersion req
-	//
-	//		then:
-	//		thrown(RequirementVersionNotLinkableException)
-	//	}
-
+	
 	def "should not verify 2 versions of same requirement"() {
 		given:
 		Requirement req = new Requirement(new RequirementVersion())
@@ -368,12 +319,12 @@ class TestCaseTest extends Specification {
 		Requirement req = Mock()
 		RequirementVersion verifiableVersion = Mock()
 		req.defaultVerifiableVersion >> verifiableVersion
-
 		when:
 		testCase.addVerifiedRequirement(req)
 
 		then:
-		testCase.verifiedRequirementVersions.containsExactly([verifiableVersion])
+		testCase.requirementVersionCoverages.size() == 1
+		1*verifiableVersion.addRequirementCoverage(_)
 	}
 	def "should remove automated script link"(){
 		given : 
@@ -389,4 +340,5 @@ class TestCaseTest extends Specification {
 		automatedTestCase.automatedTest == null;
 		
 	}
+	
 }

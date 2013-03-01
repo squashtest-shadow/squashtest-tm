@@ -81,7 +81,7 @@ public interface TestCaseImportanceManagerService {
 	 * and, if necessary, will update the importance of any test-case calling the parameter test-case.
 	 * </p>
 	 * 
-	 * @param requirementsIds
+	 * @param requirementVersionsIds
 	 * @param testCaseId
 	 */
 	void changeImportanceIfRelationsRemovedFromTestCase(List<Long> requirementVersionsIds, long testCaseId);
@@ -132,5 +132,6 @@ public interface TestCaseImportanceManagerService {
 	 *            the test case where the requirements are removed from
 	 */
 	void changeImportanceIfRelationRemoved(TestCaseImportance reqCritImportance, TestCase testCase);
+
 
 }

@@ -30,8 +30,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
@@ -57,12 +58,11 @@ import org.squashtest.tm.service.security.annotation.InheritsAcls;
 @PrimaryKeyJoinColumn(name = "RES_ID")
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
 public class RequirementVersion extends Resource implements BoundEntity{
-	/**
-	 * Collection of {@link TestCase} verifying by this {@link Requirement}
-	 */
+	
 	@NotNull
-	@ManyToMany(mappedBy = "verifiedRequirementVersions")
-	private final Set<TestCase> verifyingTestCases = new HashSet<TestCase>();
+	@OneToMany(cascade = { CascadeType.ALL })
+	@JoinColumn(name="VERIFIED_REQ_VERSION_ID")
+	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<RequirementVersionCoverage>();
 
 	/***
 	 * The requirement reference. It should usually be set by the Requirement.
@@ -112,7 +112,11 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	 * Returns an UNMODIFIABLE VIEW of the verifying test cases.
 	 */
 	public Set<TestCase> getVerifyingTestCases() {
-		return Collections.unmodifiableSet(verifyingTestCases);
+		Set<TestCase> testCases  = new HashSet<TestCase>();
+		for(RequirementVersionCoverage coverage : this.requirementVersionCoverages){
+			testCases.add(coverage.getVerifyingTestCase());
+		}
+		return Collections.unmodifiableSet(testCases);
 	}
 
 	/**
@@ -121,14 +125,11 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	 * @throws RequirementVersionNotLinkableException
 	 * @throws RequirementAlreadyVerifiedException
 	 *             if another version of the same requirement is already verified by this test case.
+	 * @return the new {@link RequirementVersionCoverage}
 	 */
-	public void addVerifyingTestCase(@NotNull TestCase testCase) throws RequirementVersionNotLinkableException,
+	public RequirementVersionCoverage addVerifyingTestCase(@NotNull TestCase testCase) throws RequirementVersionNotLinkableException,
 			RequirementAlreadyVerifiedException {
-		testCase.addVerifiedRequirementVersion(this);
-	}
-
-	public void removeVerifyingTestCase(@NotNull TestCase testCase) throws RequirementVersionNotLinkableException {
-		testCase.removeVerifiedRequirementVersion(this);
+		return testCase.addVerifiedRequirementVersion(this);
 	}
 
 	private void checkLinkable() {
@@ -233,17 +234,14 @@ public class RequirementVersion extends Resource implements BoundEntity{
 		return getStatus().isRequirementModifiable();
 	}
 
-	public void notifyVerifiedBy(@NotNull TestCase testCase) {
+	public void notifyVerifiedBy(@NotNull TestCase verifier) {
 		checkLinkable();
-		verifyingTestCases.add(testCase);
+		//TODO ?
+		
 
 	}
 
-	public void notifyNoLongerVerifiedBy(@NotNull TestCase testCase) {
-		// checkLinkable();
-		verifyingTestCases.remove(testCase);
-
-	}
+	
 
 	/**
 	 * @return the requirement
@@ -282,14 +280,16 @@ public class RequirementVersion extends Resource implements BoundEntity{
 		copy.versionNumber = this.versionNumber;
 		copy.requirement = null;
 
-		for (TestCase verifying : this.verifyingTestCases) {
-			verifying.addCopyOfVerifiedRequirementVersion(copy);
+		for (RequirementVersionCoverage requirementVersionCoverage : this.requirementVersionCoverages) {
+			copy.addRequirementCoverage(requirementVersionCoverage.copyVerifying());			
 		}
 
 		attachCopiesOfAttachmentsTo(copy);
 
 		return copy;
 	}
+
+	
 
 	private void attachCopiesOfAttachmentsTo(RequirementVersion copy) {
 		for (Attachment attachment : this.getAttachmentList().getAllAttachments()) {
@@ -371,6 +371,26 @@ public class RequirementVersion extends Resource implements BoundEntity{
 		}else{
 			return null;
 		}
+	}
+
+	/**
+	 * Sets the coverage's verified requirement as this and add the coverage to this.requirementVersionCoverage
+	 * @param coverage
+	 */
+	public void addRequirementCoverage(RequirementVersionCoverage coverage) {
+		checkLinkable();
+		coverage.setVerifiedRequirementVersion(this);
+		this.requirementVersionCoverages.add(coverage);		
+	}
+	
+	/**
+	 * Simply remove the RequirementVersionCoverage from this.requirementVersionCoverages.
+	 * @param requirementVersionCoverage : the entity to remove from this requirement version's {@link RequirementVersionCoverage}s list.
+	 */
+	public void removeRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
+		checkLinkable();
+		this.requirementVersionCoverages.remove(requirementVersionCoverage);
+		
 	}
 	
 }

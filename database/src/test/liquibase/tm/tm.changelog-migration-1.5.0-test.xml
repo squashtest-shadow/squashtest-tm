@@ -94,6 +94,17 @@
 		</sql>
 
 	</changeSet>
+	<changeSet id="tm-1.5.0-feat-2003-test-a" author="mpagnon">
+	<comment>We save the data from the table TEST_CASE_VERIFIED_REQUIREMENT_VERSION</comment>
+	<createTable tableName="TEMP_VERIFIED">		
+			<column name="VERIFIED_REQ_VERSION_ID" type="BIGINT" />				
+			<column name="VERIFYING_TEST_CASE_ID" type="BIGINT"  />
+		</createTable>
+		<sql>
+			Insert into TEMP_VERIFIED(VERIFIED_REQ_VERSION_ID, VERIFYING_TEST_CASE_ID)
+			select VERIFIED_REQ_VERSION_ID, VERIFYING_TEST_CASE_ID from TEST_CASE_VERIFIED_REQUIREMENT_VERSION;
+		</sql>
+	</changeSet>
 	<!-- =================================================================================================================== -->
 	<!-- ___________________________________________________________INCLUDE 
 		CHANGELOG_______________________________________ -->
@@ -239,5 +250,36 @@
 		<sql>
 			drop table `TEMP_CGRPM_INFOS`;
 		</sql>
+	</changeSet>
+	
+	<changeSet id="tm-1.5.0-feat-2003-test-00" author="mpagnon">
+		<preConditions>
+			<tableExists tableName="REQUIREMENT_VERSION_COVERAGE" />
+			<tableExists tableName="VERIFYING_STEPS"/>
+			<foreignKeyConstraintExists foreignKeyName="fk_verified_req_version"/>
+			<foreignKeyConstraintExists foreignKeyName="fk_verifying_test_case"/>
+			<foreignKeyConstraintExists foreignKeyName="fk_verifying_step_requirement_version_coverage"/>
+			<foreignKeyConstraintExists foreignKeyName="fk_verifying_step_action_test_step"/>
+			<primaryKeyExists tableName="REQUIREMENT_VERSION_COVERAGE" primaryKeyName="REQUIREMENT_VERSION_COVERAGE_ID"/>
+			<not>
+				<tableExists tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" />
+			</not>			
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-1.5.0-feat-2003-test-01" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from TEMP_VERIFIED
+				temp
+				where not exists(
+				select * from REQUIREMENT_VERSION_COVERAGE rvc
+				where rvc.VERIFIED_REQ_VERSION_ID = temp.VERIFIED_REQ_VERSION_ID
+				and rvc.VERIFYING_TEST_CASE_ID = temp.VERIFYING_TEST_CASE_ID)
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-1.5.0-feat-2003-test-02" author="mpagnon">
+		<dropTable tableName="TEMP_VERIFIED"/>
 	</changeSet>
 </databaseChangeLog>

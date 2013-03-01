@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.event.ChangedProperty;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
@@ -63,7 +64,7 @@ public class RequirementAuditTrailController {
 		this.auditTrailService = auditTrailService;
 	}
 
-	@RequestMapping(value = "{requirementVersionId}/events-table", params = "sEcho")
+	@RequestMapping(value = "{requirementVersionId}/events-table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getEventsTableModel(@PathVariable long requirementVersionId, DataTableDrawParameters drawParams,
 			Locale locale) {

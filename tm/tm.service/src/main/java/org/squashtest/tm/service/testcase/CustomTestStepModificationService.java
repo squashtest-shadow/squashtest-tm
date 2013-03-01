@@ -27,7 +27,7 @@ import java.util.Map;
  * @author mpagnon
  *
  */
-public interface CustomTestStepModificationService  {
+public interface CustomTestStepModificationService  extends CustomTestStepFinder{
 	
 	/**
 	 * Will update the TestStep of the given id with the given params.

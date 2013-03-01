@@ -38,15 +38,15 @@ public class RequirementAlreadyVerifiedException extends VerifiedRequirementExce
 	 * requirement version candidate dto verification.
 	 */
 	private final RequirementVersion candidateVersion;
-	private final TestCase verifyingTestCase;
+	private final TestCase verifyier;
 
 	/**
 	 * @param version
-	 * @param testCase
+	 * @param verifier
 	 */
-	public RequirementAlreadyVerifiedException(@NotNull RequirementVersion version, @NotNull TestCase testCase) {
+	public RequirementAlreadyVerifiedException(@NotNull RequirementVersion version, @NotNull TestCase verifier) {
 		this.candidateVersion = version;
-		this.verifyingTestCase = testCase;
+		this.verifyier = verifier;
 	}
 
 	/**
@@ -57,10 +57,10 @@ public class RequirementAlreadyVerifiedException extends VerifiedRequirementExce
 	}
 
 	/**
-	 * @return the testCase
+	 * @return the requirement verifier
 	 */
 	public TestCase getVerifyingTestCase() {
-		return verifyingTestCase;
+		return verifyier;
 	}
 
 	/*

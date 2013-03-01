@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldBindingModel;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
@@ -98,7 +99,7 @@ public class CustomFieldBindingController {
 		
 	}
 	
-	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity", "sEcho"})
+	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity", RequestParams.S_ECHO_PARAM})
 	@ResponseBody
 	public DataTableModel findAllCustomFieldsTableForProject
 			(@RequestParam("projectId") Long projectId, 

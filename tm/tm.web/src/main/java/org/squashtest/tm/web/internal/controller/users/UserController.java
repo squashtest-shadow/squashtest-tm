@@ -45,6 +45,7 @@ import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.AdministrationService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -85,7 +86,7 @@ public class UserController {
 
 	// ************************************ team section ************************
 
-	@RequestMapping(value = USER_ID_URL + "/teams", method = RequestMethod.GET, params = "sEcho")
+	@RequestMapping(value = USER_ID_URL + "/teams", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getTeamsTableModel(DataTableDrawParameters params, @PathVariable("userId") long userId) {
 		LOGGER.info("Find associated teams table model for user #{}", userId);

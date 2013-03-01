@@ -66,7 +66,8 @@ public class HibernateRequirementVersionDao implements CustomRequirementVersionD
 	private Criteria createFindAllVerifiedCriteria(PagingAndSorting pagingAndSorting) {
 		Criteria crit = currentSession().createCriteria(RequirementVersion.class, "RequirementVersion");
 		crit.createAlias("requirement", "Requirement", Criteria.LEFT_JOIN);
-		crit.createAlias("verifyingTestCases", "TestCase");
+		crit.createAlias("requirementVersionCoverages", "rvc");
+		crit.createAlias("rvc.verifyingTestCase", "TestCase");
 		crit.createAlias("requirement.project", "Project", Criteria.LEFT_JOIN);
 
 		PagingUtils.addPaging(crit, pagingAndSorting);

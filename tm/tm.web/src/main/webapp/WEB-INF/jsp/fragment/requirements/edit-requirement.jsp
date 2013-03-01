@@ -314,7 +314,8 @@ that page won't be editable if
 		<jsp:attribute name="panelButtons">
 			<c:if test="${ linkable }">
 				<f:message var="associateLabel" key="requirement.verifying_test-case.manage.button.label"/>
-				<f:message var="removeLabel" key="test-case.verified_requirement_item.remove.button.label"/>
+				<f:message var="removeLabel" key="label.removeRequirementsAssociationl"/>
+				
 				
 				<input id="verifying-test-case-button" type="button" class="button" value="${ associateLabel }"/>
 				<input id="remove-verifying-test-case-button" type="button" class="button" value="${ removeLabel }"/>

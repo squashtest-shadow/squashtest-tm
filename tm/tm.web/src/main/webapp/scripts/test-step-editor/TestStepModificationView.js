@@ -18,12 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "./TestStepInfoModel", "app/lnf/Forms", "jquery.squash",
+define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/VerifiedRequirementsPanel","app/lnf/Forms", "jquery.squash",
 		"jqueryui", "jquery.squash.togglepanel", "jquery.ckeditor",
 		"jeditable", "ckeditor", "jeditable.ckeditor",
 		"jquery.squash.jeditable", "jquery.squash.squashbutton",
 		"datepicker/require.jquery.squash.datepicker-locales", ], function($,
-		Backbone, TestStepInfoModel, Forms) {
+		Backbone, TestStepInfoModel, VerifiedRequirementsPanel, Forms) {
 	var editTCS = squashtm.app.editTCS;
 	/*
 	 * Defines the controller for the custom fields table.
@@ -31,6 +31,9 @@ define([ "jquery", "backbone", "./TestStepInfoModel", "app/lnf/Forms", "jquery.s
 	var TestStepModificationView = Backbone.View.extend({
 		el : "#information-content",
 		initialize : function() {
+			if(squashtm.app.verifiedRequirementsBlocSettings){
+				this.verifiedRequirementPanel = new VerifiedRequirementsPanel();
+			}
 			this.configureTogglePanels();
 			this.configureCKEs();
 			this.configureButtons();
