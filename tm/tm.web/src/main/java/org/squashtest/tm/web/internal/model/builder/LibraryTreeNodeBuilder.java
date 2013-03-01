@@ -20,7 +20,14 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import static org.squashtest.tm.api.security.acls.Permission.CREATE;
+import static org.squashtest.tm.api.security.acls.Permission.DELETE;
+import static org.squashtest.tm.api.security.acls.Permission.EXECUTE;
+import static org.squashtest.tm.api.security.acls.Permission.SMALL_EDIT;
+import static org.squashtest.tm.api.security.acls.Permission.WRITE;
+
 import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
@@ -28,11 +35,12 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 
 /**
  * Superclass which builds a {@link JsTreeNode} from a LibraryNode.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public abstract class LibraryTreeNodeBuilder<T extends LibraryNode> {
+	private static final Permission[] NODE_PERMISSIONS = { WRITE, CREATE, DELETE, SMALL_EDIT };
 	private final PermissionEvaluationService permissionEvaluationService;
 	private T node;
 	private JsTreeNode builtNode;
@@ -45,7 +53,7 @@ public abstract class LibraryTreeNodeBuilder<T extends LibraryNode> {
 	/**
 	 * Hook for template method {@link #build()}. Implementors should add to the {@link JsTreeNode} attributes specific
 	 * to the {@link LibraryNode}.
-	 *
+	 * 
 	 * @param libraryNode
 	 * @param treeNode
 	 * @see #build()
@@ -54,7 +62,7 @@ public abstract class LibraryTreeNodeBuilder<T extends LibraryNode> {
 
 	/**
 	 * Adds to the node being build attributes for a leaf node
-	 *
+	 * 
 	 * @param resType
 	 *            the nodeType attribute of the node
 	 */
@@ -66,7 +74,7 @@ public abstract class LibraryTreeNodeBuilder<T extends LibraryNode> {
 
 	/**
 	 * Adds to the node being build attributes for a folder node
-	 *
+	 * 
 	 * @param resType
 	 */
 	protected final void addFolderAttributes(String resType) {
@@ -77,18 +85,17 @@ public abstract class LibraryTreeNodeBuilder<T extends LibraryNode> {
 
 	/**
 	 * Builds a {@link JsTreeNode} from the {@link LibraryNode} previously set with {@link #setNode(LibraryNode)}
-	 *
+	 * 
 	 * @return
 	 */
 	public final JsTreeNode build() {
 		builtNode = new JsTreeNode();
 
-		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "SMALL_EDIT", node) ;
-		builtNode.addAttr("smallEdit", String.valueOf(editable));
-		boolean creatable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "CREATE", node);
-		builtNode.addAttr("creatable", String.valueOf(creatable));
-		boolean deletable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "DELETE", node);
-		builtNode.addAttr("deletable", String.valueOf(deletable));
+		for (Permission permission : NODE_PERMISSIONS) {
+			boolean hasPermission = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN",
+					permission.name(), node);
+			builtNode.addAttr(permission.getQuality(), String.valueOf(hasPermission));
+		}
 		addCommonAttributes();
 		addCustomAttributes(node, builtNode);
 
@@ -104,9 +111,9 @@ public abstract class LibraryTreeNodeBuilder<T extends LibraryNode> {
 		builtNode.addAttr("id", node.getClass().getSimpleName() + '-' + node.getId());
 	}
 
-	/**s
-	 * sets the {@link LibraryNode} which will be used to build a {@link JsTreeNode}
-	 *
+	/**
+	 * s sets the {@link LibraryNode} which will be used to build a {@link JsTreeNode}
+	 * 
 	 * @param node
 	 * @return
 	 */

@@ -57,13 +57,10 @@ public class TestCaseExecutionRunnerController {
 		this.executionProcessingService = executionProcService;
 	}
 	
-
-	
 	//redirects to something served by ExecutionProcessingController
 	private String getRedirectExecURL(long executionId, boolean optimized, boolean suitemode){
 		return "/execute/"+executionId+"?optimized="+optimized+"&suitemode="+suitemode;
 	}
-	
 	
 	@RequestMapping(params = {"optimized=true", "suitemode=false"})
 	public String startResumeExecutionInOptimizedRunner(@PathVariable long executionId, Model model, HttpServletRequest context, Locale locale) {
@@ -75,8 +72,6 @@ public class TestCaseExecutionRunnerController {
 		
 	}
 
-	
-
 	@RequestMapping(params = {"optimized=false", "suitemode=false"})
 	public String startResumeExecutionInClassicRunner(@PathVariable long executionId, Model model) {
 		
@@ -84,7 +79,6 @@ public class TestCaseExecutionRunnerController {
 		return "redirect:" + getRedirectExecURL(executionId, false, false);		
 		
 	}
-	
 	
 	@RequestMapping(params = "dry-run")
 	@ResponseBody

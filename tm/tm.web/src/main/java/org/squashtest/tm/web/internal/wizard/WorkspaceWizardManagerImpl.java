@@ -38,29 +38,26 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.project.GenericProjectFinder;
-import static org.squashtest.tm.api.workspace.WorkspaceType.*;
 
 /**
  * @author Gregory Fouquet
  * 
  */
 public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, WorkspaceWizardRegistry {
-	
-	
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceWizardManagerImpl.class);
+
+	/**
+	 * Wizards mapped by workspace. This should only be accessed after requesting a read or write {@link #lock}
+	 */
 	private final MultiValueMap wizardsByWorkspace = new MultiValueMap();
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-	
-	
+
 	private GenericProjectFinder projectFinder;
-	
-	
-	
 
 	public void setProjectFinder(GenericProjectFinder projectFinder) {
 		this.projectFinder = projectFinder;
 	}
-	
+
 	/**
 	 * @see org.squashtest.tm.web.internal.wizard.WorkspaceWizardRegistry#registerWizard(org.squashtest.tm.api.wizard.WorkspaceWizard,
 	 *      java.util.Map)
@@ -98,7 +95,6 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 		}
 
 	}
-	
 
 	/**
 	 * @see org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager#findAllByWorkspace(WorkspaceType)
@@ -123,33 +119,26 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 		try {
 			lock.readLock().lock();
 			Collection<WorkspaceWizard> collection = wizardsByWorkspace.getCollection(workspace);
-			if(collection == null){
+			if (collection == null) {
 				collection = Collections.EMPTY_SET;
 			}
-			return new ArrayList<WorkspaceWizard>(collection);	//ensures that the original collection won't be altered 
+			return new ArrayList<WorkspaceWizard>(collection); // ensures that the original collection won't be altered
 		} finally {
 			lock.readLock().unlock();
 		}
 	}
 
-
-
 	@Override
 	public WorkspaceWizard findById(String wizardId) {
-		try {
-			lock.readLock().lock();
-			Collection<WorkspaceWizard> allWizards = wizardsByWorkspace.values();
-			for (WorkspaceWizard wizard : allWizards){
-				if (wizard.getId().equals(wizardId)){
-					return wizard;
-				}
+		for (WorkspaceWizard wizard : findAll()) {
+			if (wizard.getId().equals(wizardId)) {
+				return wizard;
 			}
-			throw new NoSuchElementException("cannot find WorkspaceWizard with id "+wizardId);
-		} finally {
-			lock.readLock().unlock();
-		}		
+		}
+		throw new NoSuchElementException("cannot find WorkspaceWizard with id " + wizardId);
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<WorkspaceWizard> findAll() {
 		try {
@@ -157,117 +146,116 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 			return wizardsByWorkspace.values();
 		} finally {
 			lock.readLock().unlock();
-		}			
+		}
 	}
-	
-	
-	@Override
-	public Collection<WorkspaceWizard> findEnabledWizards(long projectId) {
-		return findEnabledWizards(projectId, WorkspaceType.TEST_CASE_WORKSPACE, WorkspaceType.REQUIREMENT_WORKSPACE, WorkspaceType.CAMPAIGN_WORKSPACE);
-	}
-	
 
 	@Override
-	public Collection<WorkspaceWizard> findEnabledWizards(long projectId,WorkspaceType workspace) {
-		
+	public Collection<WorkspaceWizard> findEnabledWizards(long projectId) {
+		return findEnabledWizards(projectId, WorkspaceType.TEST_CASE_WORKSPACE, WorkspaceType.REQUIREMENT_WORKSPACE,
+				WorkspaceType.CAMPAIGN_WORKSPACE);
+	}
+
+	@Override
+	public Collection<WorkspaceWizard> findEnabledWizards(long projectId, WorkspaceType workspace) {
+
 		Collection<WorkspaceWizard> wizards = findAllByWorkspace(workspace);
 		Collection<String> enabledWizardIds = findEnabledWizardIds(projectId, workspace);
-		
-		Predicate predicate = new BelongsToList(enabledWizardIds); 
-		CollectionUtils.filter(wizards, predicate);		
-		
+
+		Predicate predicate = new BelongsToList(enabledWizardIds);
+		CollectionUtils.filter(wizards, predicate);
+
 		return wizards;
 	}
 
-	
 	@Override
 	public Collection<WorkspaceWizard> findEnabledWizards(long projectId, WorkspaceType... workspaces) {
-		Collection<WorkspaceWizard> allWizards = new HashSet<WorkspaceWizard>(); 
-		for (WorkspaceType workspace : workspaces ){
-			allWizards.addAll( findEnabledWizards( projectId, workspace)  );
+		Collection<WorkspaceWizard> allWizards = new HashSet<WorkspaceWizard>();
+		for (WorkspaceType workspace : workspaces) {
+			allWizards.addAll(findEnabledWizards(projectId, workspace));
 		}
 		return allWizards;
 	}
-	
 
 	@Override
 	public Collection<WorkspaceWizard> findDisabledWizards(long projectId) {
-		return findDisabledWizards(projectId, WorkspaceType.TEST_CASE_WORKSPACE, WorkspaceType.REQUIREMENT_WORKSPACE, WorkspaceType.CAMPAIGN_WORKSPACE);
+		return findDisabledWizards(projectId, WorkspaceType.TEST_CASE_WORKSPACE, WorkspaceType.REQUIREMENT_WORKSPACE,
+				WorkspaceType.CAMPAIGN_WORKSPACE);
 	}
-	
 
 	@Override
-	public Collection<WorkspaceWizard> findDisabledWizards(long projectId,	WorkspaceType workspace) {
+	public Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType workspace) {
 		Collection<WorkspaceWizard> wizards = findAllByWorkspace(workspace);
 		Collection<String> enabledWizardIds = findEnabledWizardIds(projectId, workspace);
-		
-		Predicate predicate = new AbsentFromList(enabledWizardIds); 
-		CollectionUtils.filter(wizards, predicate);		
-		
+
+		Predicate predicate = new AbsentFromList(enabledWizardIds);
+		CollectionUtils.filter(wizards, predicate);
+
 		return wizards;
 
 	}
-	
+
 	@Override
 	public Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType... workspaces) {
-		Collection<WorkspaceWizard> allWizards = new HashSet<WorkspaceWizard>(); 
-		
-		for (WorkspaceType workspace : workspaces ){
-			allWizards.addAll( findDisabledWizards( projectId, workspace)  );
+		Collection<WorkspaceWizard> allWizards = new HashSet<WorkspaceWizard>();
+
+		for (WorkspaceType workspace : workspaces) {
+			allWizards.addAll(findDisabledWizards(projectId, workspace));
 		}
 		return allWizards;
 	}
-	
-	
 
 	// ******************************** private stuffs *************************
 
-	
-	private PluginReferencer findLibrary(long projectId, WorkspaceType workspace){
+	private PluginReferencer findLibrary(long projectId, WorkspaceType workspace) {
 		GenericProject project = projectFinder.findById(projectId);
-		
-		switch(workspace){
-			case TEST_CASE_WORKSPACE : 		return project.getTestCaseLibrary();
-			case REQUIREMENT_WORKSPACE : 	return project.getRequirementLibrary();
-			case CAMPAIGN_WORKSPACE : 		return project.getCampaignLibrary();
-			default : throw new IllegalArgumentException("WorkspaceType "+workspace+" is unknown and not covered by this class");
+
+		switch (workspace) {
+		case TEST_CASE_WORKSPACE:
+			return project.getTestCaseLibrary();
+		case REQUIREMENT_WORKSPACE:
+			return project.getRequirementLibrary();
+		case CAMPAIGN_WORKSPACE:
+			return project.getCampaignLibrary();
+		default:
+			throw new IllegalArgumentException("WorkspaceType " + workspace
+					+ " is unknown and not covered by this class");
 		}
 	}
-	
+
 	private Collection<String> findEnabledWizardIds(long projectId, WorkspaceType workspace) {
 		return findLibrary(projectId, workspace).getEnabledPlugins();
 	}
-	
-	private static final class BelongsToList implements Predicate{
+
+	private static final class BelongsToList implements Predicate {
 
 		Collection<String> wizardIds;
-		
-		public BelongsToList(Collection<String> wizardIds){
+
+		public BelongsToList(Collection<String> wizardIds) {
 			this.wizardIds = wizardIds;
 		}
-		
+
 		@Override
 		public boolean evaluate(Object wizz) {
-			String id = ((WorkspaceWizard)wizz).getId();
+			String id = ((WorkspaceWizard) wizz).getId();
 			return wizardIds.contains(id);
 		}
-		
+
 	}
-	
-	private static final class AbsentFromList implements Predicate{
+
+	private static final class AbsentFromList implements Predicate {
 
 		Collection<String> wizardIds;
-		
-		public AbsentFromList(Collection<String> wizardIds){
+
+		public AbsentFromList(Collection<String> wizardIds) {
 			this.wizardIds = wizardIds;
 		}
-		
+
 		@Override
 		public boolean evaluate(Object wizz) {
-			String id = ((WorkspaceWizard)wizz).getId();
-			return ! wizardIds.contains(id);
+			String id = ((WorkspaceWizard) wizz).getId();
+			return !wizardIds.contains(id);
 		}
-		
+
 	}
-	
+
 }
