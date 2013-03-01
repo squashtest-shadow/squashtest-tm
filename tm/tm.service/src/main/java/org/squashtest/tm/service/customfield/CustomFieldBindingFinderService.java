@@ -59,7 +59,18 @@ public interface CustomFieldBindingFinderService {
 	 * @return
 	 */
 	List<CustomField> findAvailableCustomFields(long projectId, BindableEntity entity);
+	
+	
+	/**
+	 * Returns the complementary of {@link #findAvailableCustomFields(long, BindableEntity)}
+	 * 
+	 * @param projectId
+	 * @param entity
+	 * @return
+	 */
+	List<CustomField> findBoundCustomFields(long projectId, BindableEntity entity);
 
+	
 	/**
 	 * returns all the custom field bindings associated to a {@linkplain GenericProject}.
 	 * 

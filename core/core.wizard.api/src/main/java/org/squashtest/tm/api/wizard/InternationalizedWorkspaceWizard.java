@@ -26,6 +26,7 @@ import javax.annotation.PostConstruct;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.osgi.context.BundleContextAware;
+import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.widget.MenuItem;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.i18n.ContextBasedInternationalized;
@@ -52,7 +53,7 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	 public void setBundleContext(BundleContext bundleContext){
 		 this.bundleContext = bundleContext;
 		 version = bundleContext.getBundle().getVersion().toString();
-		 filename = bundleContext.getBundle().getSymbolicName();	//make better than this	
+		 filename = bundleContext.getBundle().getSymbolicName();	//TODO : make better than this	
 	 }
 	
 	
@@ -132,6 +133,18 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	public void setDisplayWorkspace(WorkspaceType displayWorkspace) {
 		this.displayWorkspace = displayWorkspace;
 	}
+	
+	
+	/**
+	 * This default validation always passes.
+	 * 
+	 * @see org.squashtest.tm.api.wizard.WorkspaceWizard#validate(EntityReference)
+	 */
+	@Override
+	public void validate(EntityReference reference) {
+		//defaults : allways passes
+	}
+	
 
 	@PostConstruct
 	public void checkBeanState() {

@@ -81,6 +81,12 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	public List<CustomField> findAvailableCustomFields(long projectId, BindableEntity entity) {
 		return customFieldDao.findAllBindableCustomFields(projectId, entity);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<CustomField> findBoundCustomFields(long projectId, BindableEntity entity) {
+		return customFieldDao.findAllBoundCustomFields(projectId, entity);
+	}
 
 	@Override
 	@Transactional(readOnly = true)

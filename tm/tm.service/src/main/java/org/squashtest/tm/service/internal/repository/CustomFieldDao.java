@@ -42,6 +42,16 @@ public interface CustomFieldDao extends CustomCustomFieldDao {
 	 * @return
 	 */
 	List<CustomField> findAllBindableCustomFields(Long projectId, BindableEntity bindableEntity);
+	
+	
+	/**
+	 * returns the complementary of {@link #findAllBindableCustomFields(Long, BindableEntity)}
+	 * 
+	 * @param projectId
+	 * @param bindableEntity
+	 * @return
+	 */
+	List<CustomField> findAllBoundCustomFields(Long projectId, BindableEntity bindableEntity);
 
 	void persist(CustomField customField);
 

@@ -21,37 +21,24 @@
 
 package org.squashtest.tm.api.wizard;
 
-import org.squashtest.tm.api.plugin.EntityReference;
-import org.squashtest.tm.api.widget.MenuItem;
-import org.squashtest.tm.api.workspace.WorkspaceType;
+public class WizardValidationException extends RuntimeException {
+	private static final long serialVersionUID = 1L;
 
-/**
- * 
- * @author Gregory Fouquet
- * 
- */
-public interface WorkspaceWizard extends WizardPlugin {
-	/**
-	 * This wizard is available for display in the workspace returned by this method.
-	 * 
-	 * @return the {@link WorkspaceType} where this wizard can be started / displayed. SHould not return
-	 *         <code>null</code>
-	 */
-	WorkspaceType getDisplayWorkspace();
+	public WizardValidationException() {
+		super();
+	}
 
-	/**
-	 * {@link MenuItem} which should be used to generate a menu in the workspace's wizard menu.
-	 * 
-	 * @return
-	 */
-	MenuItem getWizardMenu();
+	public WizardValidationException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+	}
+
+	public WizardValidationException(String arg0) {
+		super(arg0);
+	}
+
+	public WizardValidationException(Throwable arg0) {
+		super(arg0);
+	}
 	
-
-	/**
-	 * Asks the plugin to validate against an EntityReference. Must either succeed, or throw a {@link WizardValidationException}.
-	 * 
-	 * @param reference to a given object
-	 */
-	void validate(EntityReference reference);
 	
 }

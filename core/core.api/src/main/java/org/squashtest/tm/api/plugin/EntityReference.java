@@ -61,6 +61,11 @@ public class EntityReference {
 		return id;
 	}
 
+	@Override
+	public String toString(){
+		return "["+type.toString()+":"+id+"]";
+	}
+	
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
