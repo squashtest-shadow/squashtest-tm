@@ -28,69 +28,68 @@
  *
  */
 
-(function ($) {
+(function($) {
 
 	/*
 	 * we first define some closures.
 	 */
-	var buildGetContent = function (treeNode) {
+	var buildGetContent = function(treeNode) {
 		var root = treeNode.getBaseUrl();
 		switch (treeNode.getResType()) {
 		case "requirements":
 		case "test-cases":
-			return function () {
+			return function() {
 				return null;
 			};
 			break;
 		default:
-			return function () {
+			return function() {
 				var wkspce = treeNode.getWorkspace();
 				var dmtpe = treeNode.getDomType();
 				var id = treeNode.getResId();
-				return this.getBrowserUrl() + '/' + dmtpe + "s/" + id
-						+ "/content";
+				return this.getBrowserUrl() + '/' + dmtpe + "s/" + id + "/content";
 			}
 		}
 	}
-	
-	
-	var buildRefreshLabel = function(treeNode){
-		
-		switch(treeNode.getResType()){
-		case "requirements" :
-		case "test-cases" :
-			return function(){
+
+	var buildRefreshLabel = function(treeNode) {
+
+		switch (treeNode.getResType()) {
+		case "requirements":
+		case "test-cases":
+			return function() {
 				var name = this.getName();
 				var reference = this.getReference() || "";
-				if (reference.length>0){
-					reference+=" - ";
+				if (reference.length > 0) {
+					reference += " - ";
 				}
-				this.getTree().set_text(this, reference+name);
+				this.getTree().set_text(this, reference + name);
 			};
 			break;
-			
-		case "iterations" :
-			return function(){
+
+		case "iterations":
+			return function() {
 				var name = this.getName();
 				var index = this.getIndex() || "";
-				if (index.length>0){
-					index+=" - ";
-				};
-				this.getTree().set_text(this, index+name);
+				if (index.length > 0) {
+					index += " - ";
+				}
+				;
+				this.getTree().set_text(this, index + name);
 			};
 			break;
-			
-		default :
-			return function(){
+
+		default:
+			return function() {
 				var name = this.getName();
 				this.getTree().set_text(this, name);
 			}
 			break;
 		}
-		
+
 	}
 
-	$.fn.treeNode = function () {
+	$.fn.treeNode = function() {
 
 		// check validity of this call to treeNode();
 		var lt = this.length;
@@ -107,73 +106,99 @@
 		// ************* methods for 1-sized jquery object **************
 
 		// ************ basic getters
-		this.getTree = function () {
+		this.getTree = function() {
 			return this.tree;
 		};
 
-		this.getDomId = function () {
+		this.getDomId = function() {
 			return this.reference.attr('id');
 		};
 
-		this.getDomType = function () {
+		this.getDomType = function() {
 			return this.reference.attr('rel');
 		};
 
-		this.getResId = function () {
+		this.getResId = function() {
 			return this.reference.attr('resid');
 		};
 
-		this.getResType = function () {
+		this.getResType = function() {
 			return this.reference.attr('restype');
 		};
-		
-		this.isEditable = function(){
+
+		this.isEditable = function() {
 			return this.reference.attr('smallEdit') === "true";
 		};
-		
-		this.isCreatable = function(){
+
+		this.isCreatable = function() {
 			return this.reference.attr('creatable') === "true";
 		};
-		
-		this.isDeletable = function(){
+
+		this.isDeletable = function() {
 			return this.reference.attr('deletable') === "true";
 		};
+		
+		/**
+		 * Checks if some permission is authorized for this node.
+		 */
+		this.isAuthorized = function(permission) {
+			// binds a permission to its quality, 
+			var qualities = {
+				READ : "readable",
+				SMALL_EDIT : "smallEdit",
+				WRITE : "editable",
+				CREATE : "creatable",
+				DELETE : "deletable",
+				EXECUTE : "executable"
+			};
+			
+			if (permission === "ANY") {
+				return true;
+			}
+			
+			var candidate = qualities[permission];
+			if (candidate) {
+				return this.reference.attr(candidate) === "true";
+			} 
+			// permission not defined => not authorized
+			return false;
+		};
 
-		this.getName = function () {
+		this.getName = function() {
 			return this.reference.attr('name');
 		};
-		
-		this.getReference = function(){
+
+		this.getReference = function() {
 			return this.reference.attr('reference');
 		};
-		
-		this.getIndex = function(){
-			return this.reference.attr('iterationIndex');			
+
+		this.getIndex = function() {
+			return this.reference.attr('iterationIndex');
 		};
 
 		this.getPath = function() {
 			return this.getAncestors().all('getName').join().replace(/,/g, '/');
 		};
-		
-		this.getProjectId = function(){
+
+		this.getProjectId = function() {
 			return this.getLibrary().attr('project');
 		};
-		
+
 		// ************ some setters **************
-		
-		this.setName = function(name){
+
+		this.setName = function(name) {
 			this.reference.attr('name', name);
 			this.refreshLabel();
 		};
-		
-		this.setReference = function(reference){
+
+		this.setReference = function(reference) {
 			this.reference.attr('reference', reference);
 			this.refreshLabel();
 		}
 
 		// ************ relationships getters
 
-		this.getLibrary = function () {
+		this.getLibrary = function() {
 			if (this.reference.is(':library')) {
 				return this;
 			} else {
@@ -182,23 +207,23 @@
 			}
 		};
 
-		this.getParent = function () {
+		this.getParent = function() {
 			return this.reference.parents("li").first().treeNode();
 		};
 
-		this.getWorkspace = function () {
+		this.getWorkspace = function() {
 			return this.getLibrary().getResType().replace('-libraries', '');
 		};
 
-		this.getChildren = function () {
+		this.getChildren = function() {
 			var children = this.tree._get_children(this);
 			return (children.length) ? children.treeNode() : $();
 		};
 
-		this.getPrevious = function () {
+		this.getPrevious = function() {
 			if (this.is(':library')) {
 				return this;
-			};
+			}
 
 			var prev = this.reference.prev();
 
@@ -208,24 +233,23 @@
 				return this.getParent();
 			}
 		};
-		
-		
-		this.getAncestors = function(){
+
+		this.getAncestors = function() {
 			return this.parents('li', this.tree).add(this).treeNode();
 		};
 
 		// ***************** tree actions
 
-		this.deselectChildren = function () {
+		this.deselectChildren = function() {
 			this.tree.deselect_all(this);
 		};
 
-		this.refresh = function () {
+		this.refresh = function() {
 
 			this.tree.refresh(this);
 		};
 
-		this.isOpen = function () {
+		this.isOpen = function() {
 			// isOpen returns true when open, but something not specified when
 			// it's not
 			// hence the return thing below
@@ -233,71 +257,66 @@
 			return (isOpen != true) ? false : true;
 		};
 
-		this.open = function () {
+		this.open = function() {
 			var defer = $.Deferred();
 			this.tree.open_node(this, defer.resolve);
 			return defer.promise();
 		};
 
-		this.load = function () {
+		this.load = function() {
 			var defer = $.Deferred();
 			this.tree.load_node(this, defer.resolve, defer.reject);
 			return defer.promise();
 		};
 
-		this.close = function () {
+		this.close = function() {
 			this.tree.close_node(this);
 		};
 
-		this.appendNode = function (data) {
+		this.appendNode = function(data) {
 			var defer = $.Deferred();
-			var res = this.tree.create_node(this, 'last', data, defer.resolve,
-					true);
+			var res = this.tree.create_node(this, 'last', data, defer.resolve, true);
 			var newNode = res.treeNode();
 			return [ newNode, defer.promise() ];
 		};
 
-		this.select = function () {
+		this.select = function() {
 			this.tree.select_node(this);
 		};
 
-		this.deselect = function () {
+		this.deselect = function() {
 			this.tree.deselect_node(this);
 		};
 
 		// *********** tests
 
-		this.isBrother = function (otherNode) {
+		this.isBrother = function(otherNode) {
 			var myParent = this.getParent();
 			var itsParent = otherNode.getParent();
 			return (myParent.getDomId() === itsParent.getDomId());
 		};
 
-		this.sameLib = function (otherNode) {
+		this.sameLib = function(otherNode) {
 			var myLib = this.getLibrary();
 			var itsLib = otherNode.getLibrary();
 			return (myLib.getDomId() == itsLib.getDomId());
 		};
 
-		this.isSame = function (otherNode) {
+		this.isSame = function(otherNode) {
 			return (this.getDomId() == otherNode.getDomId());
 		};
 
-		this.match = function (matchObject) {
+		this.match = function(matchObject) {
 			for ( var ppt in matchObject) {
 				if (!(this.attr(ppt) == matchObject[ppt]))
 					return false;
 			}
 			return true;
 		};
-		
-		this.acceptsAsContent = function(nodes){
-			return (
-				( this.is(':library') && nodes.areNodes() )	||
-				( this.is(':folder') && nodes.areNodes() )	||
-				( this.is(':file') && nodes.areResources() ) ||
-				( this.is(':resource') && nodes.areViews() )
-			);				
+
+		this.acceptsAsContent = function(nodes) {
+			return ((this.is(':library') && nodes.areNodes()) || (this.is(':folder') && nodes.areNodes()) ||
+					(this.is(':file') && nodes.areResources()) || (this.is(':resource') && nodes.areViews()));
 		};
 
 		// ************* methods for multiple matched elements ************
@@ -307,8 +326,8 @@
 		// returns a collection of object which properties are the lowercased
 		// name of the
 		// methods (minus 'get' if present) and the corresponding values.
-		this.all = function (strOrArray) {
-			return this.collect(function (elt) {
+		this.all = function(strOrArray) {
+			return this.collect(function(elt) {
 				if (typeof strOrArray == 'string') {
 					return $(elt).treeNode()[strOrArray]();
 				} else {
@@ -330,7 +349,7 @@
 		// the specified attributes.
 		//
 		// if no argument is specified, defaults to restype and resid.
-		this.toData = function () {
+		this.toData = function() {
 
 			var attributes;
 
@@ -339,7 +358,7 @@
 			else
 				attributes = arguments[0];
 
-			return this.collect(function (elt) {
+			return this.collect(function(elt) {
 				var res = {};
 				var localNode = $(elt);
 				for ( var i in attributes) {
@@ -353,7 +372,7 @@
 		// given a matchObject describing the name/value dom attributes they all
 		// must share,
 		// returns true if they all have the same or false if they differ.
-		this.allMatch = function (matchObject) {
+		this.allMatch = function(matchObject) {
 
 			if (this.length == 0)
 				return false;
@@ -379,26 +398,26 @@
 		// pptArray : an array with the names of the dom properties we want to
 		// restrict our
 		// comparison to.
-		this.haveSame = function (pptArray) {
+		this.haveSame = function(pptArray) {
 			var res = this.toData(pptArray);
 			return this.allMatch(res[0]);
 		};
 
-		this.areSameLibs = function () {
-			var libs = this.collect(function (elt) {
+		this.areSameLibs = function() {
+			var libs = this.collect(function(elt) {
 				return $(elt).treeNode().getLibrary().getDomId();
 			});
 			return ($.unique(libs).length == 1);
 		};
 
-		this.areAllBrothers = function () {
-			var parents = this.collect(function (elt) {
+		this.areAllBrothers = function() {
+			var parents = this.collect(function(elt) {
 				return $(elt).treeNode().getParent().getDomId();
 			});
 			return ($.unique(parents).length == 1);
 		};
 
-		this.areNodes = function () {
+		this.areNodes = function() {
 			var types = this.all('getDomType');
 
 			for ( var i = 0; i < types.length; i++) {
@@ -409,13 +428,13 @@
 			return true;
 		};
 
-		this.areResources = function () {
+		this.areResources = function() {
 			return this.allMatch({
 				rel : 'resource'
 			});
 		};
 
-		this.areViews = function () {
+		this.areViews = function() {
 			return this.allMatch({
 				rel : 'view'
 			});
@@ -423,24 +442,22 @@
 
 		// *************** urls
 
-		this.getResourceUrl = function () {
-			return this.getBaseUrl() + this.getResType() + "/"
-					+ this.getResId();
+		this.getResourceUrl = function() {
+			return this.getBaseUrl() + this.getResType() + "/" + this.getResId();
 		};
 
-		this.getBaseUrl = function () {
+		this.getBaseUrl = function() {
 			return this.tree.data.squash.rootUrl + "/";
 		};
 
-		this.getBrowserUrl = function () {
+		this.getBrowserUrl = function() {
 			return this.getBaseUrl() + this.getWorkspace() + "-browser";
 		};
 
 		this.getContentUrl = buildGetContent(this);
 		this.refreshLabel = buildRefreshLabel(this);
-		
 
-		this.getCopyUrl = function () {
+		this.getCopyUrl = function() {
 			switch (this.getDomType()) {
 			case "folder":
 			case "file":
@@ -452,7 +469,7 @@
 			}
 		};
 
-		this.getMoveUrl = function () {
+		this.getMoveUrl = function() {
 			switch (this.getDomType()) {
 			case "folder":
 			case "file":

@@ -21,9 +21,7 @@
 /**
  * Common functions for JsTree manipulation
  * 
- * Exposes functions : 
- * squashtm.tree.treeCheckDnd
- * squashtm.tree.copyNode
+ * Exposes functions : squashtm.tree.treeCheckDnd squashtm.tree.copyNode
  * 
  * @author Gregory Fouquet, Benoit Siri
  */
@@ -145,18 +143,20 @@ squashtm.tree = squashtm.tree || {};
 	/* *************************** node click behaviour ********************* */
 
 	/**
-	 * Behaviour of a node when clicked or double clicked. There are two possible
-	 * paths : 1) the node is not a container (files, resources) : a/ click events :
-	 * proceed, b/ double click event (and further click event) : cancel that event
-	 * and let the first one complete. 2) the node is a container (libraries,
-	 * folders, campaigns) : a/ click event : start a timer. If the timer is not
-	 * canceled, fire a specific click.jstree event. b/ double click event (and
-	 * further click event) : toggle the node and stop event propagation.
+	 * Behaviour of a node when clicked or double clicked. There are two
+	 * possible paths : 1) the node is not a container (files, resources) : a/
+	 * click events : proceed, b/ double click event (and further click event) :
+	 * cancel that event and let the first one complete. 2) the node is a
+	 * container (libraries, folders, campaigns) : a/ click event : start a
+	 * timer. If the timer is not canceled, fire a specific click.jstree event.
+	 * b/ double click event (and further click event) : toggle the node and
+	 * stop event propagation.
 	 * 
-	 * Basically we'll stop the event propagation everytime except for case 1-a. The
-	 * case 2-a actually do not let the event propagate : it fires a new
-	 * 'click.jstree' event instead. The reason for this is because the following
-	 * handler is bound to 'click' and we don't want it to be called again.
+	 * Basically we'll stop the event propagation everytime except for case 1-a.
+	 * The case 2-a actually do not let the event propagate : it fires a new
+	 * 'click.jstree' event instead. The reason for this is because the
+	 * following handler is bound to 'click' and we don't want it to be called
+	 * again.
 	 * 
 	 * cases 1-a and 2-a are treated in handleNodeClick, while 1-b and 2-b are
 	 * treated in handleNodeDblClick.
@@ -165,14 +165,14 @@ squashtm.tree = squashtm.tree || {};
 	 * 
 	 */
 
-
 	/**
 	 * 
-	 * That function clean the contextual content from its temporary widgets. The
-	 * goal is to prevent undesired interactions between page controls.
+	 * That function clean the contextual content from its temporary widgets.
+	 * The goal is to prevent undesired interactions between page controls.
 	 * 
 	 * @param targetSelector
-	 *            a jQuery selector being the handle to the contextual content div.
+	 *            a jQuery selector being the handle to the contextual content
+	 *            div.
 	 */
 	function clearContextualContent(targetSelector) {
 		$('.is-contextual').each(function() {
@@ -187,8 +187,8 @@ squashtm.tree = squashtm.tree || {};
 	 * **********************************************
 	 */
 	/**
-	 * Post new contents to the url determined by the selected node of a tree and
-	 * creates a new node with returned JSON data.
+	 * Post new contents to the url determined by the selected node of a tree
+	 * and creates a new node with returned JSON data.
 	 * 
 	 * @param treeId
 	 *            html id of the tree
@@ -324,15 +324,15 @@ squashtm.tree = squashtm.tree || {};
 	}
 
 	/*
-	 * This method checks if we can move the object is the dest folder returns true
-	 * if it's ok to move the object. Note that contrary to
+	 * This method checks if we can move the object is the dest folder returns
+	 * true if it's ok to move the object. Note that contrary to
 	 * treeCheckDnd(moveObject), that code is called only for "move", not "copy"
 	 * operations, and thus is not part of the aforementioned function.
 	 * 
-	 * A second reasons is that we don't want to forbid the operation a-priori : we
-	 * cancel it a-posteriori. Thus, the user will know why the operation could not
-	 * be performed instead of wondering why the hell he cannot move the bloody
-	 * node.
+	 * A second reasons is that we don't want to forbid the operation a-priori :
+	 * we cancel it a-posteriori. Thus, the user will know why the operation
+	 * could not be performed instead of wondering why the hell he cannot move
+	 * the bloody node.
 	 */
 	function checkMoveIsAuthorized(data) {
 		var dest = data.rslt.np;
@@ -382,8 +382,8 @@ squashtm.tree = squashtm.tree || {};
 	 */
 
 	/*
-	 * jstree inserts dumb copies when we ask for copies. We need to destroy them
-	 * before inserting the correct ones incoming from the server.
+	 * jstree inserts dumb copies when we ask for copies. We need to destroy
+	 * them before inserting the correct ones incoming from the server.
 	 * 
 	 * @param object : the move_object returned as part of the data of the event
 	 * mode_node.jstree.
@@ -420,8 +420,8 @@ squashtm.tree = squashtm.tree || {};
 	}
 	
 	/*
-	 * will erase fake copies in the tree, send the copied node data to the server,
-	 * and insert the returned nodes.
+	 * will erase fake copies in the tree, send the copied node data to the
+	 * server, and insert the returned nodes.
 	 * 
 	 * @param data : the data associated to the event move_node.jstree
 	 * 
@@ -510,10 +510,10 @@ squashtm.tree = squashtm.tree || {};
 	function findSelectedNodes(tree) {
 		return tree.find('.jstree-clicked').parent('li');
 	}
-		
-	squashtm.tree.treeCheckDnd = treeCheckDnd; 
-	squashtm.tree.copyNode = copyNode; 
-	
+
+	squashtm.tree.treeCheckDnd = treeCheckDnd;
+	squashtm.tree.copyNode = copyNode;
+
 	/*
 	 * squash tree plugin
 	 */
@@ -521,9 +521,9 @@ squashtm.tree = squashtm.tree || {};
 		__init : function() {
 
 			/**
-			 * here we want to delay the event for folders, libraries and campaign (waiting
-			 * for a possible dblclick), while letting the event through for the other kind
-			 * of nodes.
+			 * here we want to delay the event for folders, libraries and
+			 * campaign (waiting for a possible dblclick), while letting the
+			 * event through for the other kind of nodes.
 			 */
 			function handleNodeClick(tree, event) {
 				var target = $(event.target).treeNode();
@@ -542,8 +542,9 @@ squashtm.tree = squashtm.tree || {};
 			}
 
 			/**
-			 * here we handle dblclicks. basically we don't want the event to be processed
-			 * twice, except for containers that will toggle their open-close status.
+			 * here we handle dblclicks. basically we don't want the event to be
+			 * processed twice, except for containers that will toggle their
+			 * open-close status.
 			 */
 			function handleNodeDblClick(tree, event) {
 				var target = $(event.target);
@@ -553,8 +554,7 @@ squashtm.tree = squashtm.tree || {};
 				clearTimeout(tree.data.squash.clicktimer);
 				tree.toggle_node(node);
 			}
-			
-			
+
 			var tree = this;
 			var s = this._get_settings().squash;
 			tree.data.squash.timeout = s.timeout;
@@ -895,7 +895,8 @@ squashtm.tree = squashtm.tree || {};
 		__init : function() {
 			/*
 			 * 
-			 * @param data : the move_node object @param url : the url to post to.
+			 * @param data : the move_node object @param url : the url to post
+			 * to.
 			 */
 			function moveNode(data, url) {
 				var isRoot = function(node) {
@@ -1044,7 +1045,6 @@ squashtm.tree = squashtm.tree || {};
 						var moveObject = data.args[0];
 
 						if (moveObject !== null && moveObject !== undefined && moveObject.cr !== undefined) {
-
 							if (squashtm.keyEventListener.ctrl) {
 							
 								
@@ -1080,9 +1080,7 @@ squashtm.tree = squashtm.tree || {};
 											
 								} else {
 									$.squash.openMessage('', self._get_settings().workspace_tree.cannotMoveMessage)
-											.done(function() {
-												data.inst.refresh();
-											});
+											.done(data.inst.refresh);
 								}
 							}
 						}
@@ -1132,7 +1130,7 @@ squashtm.tree = squashtm.tree || {};
 		}
 
 	});
-	
+
 	/**
 	 * definition of the treemenu buttons.
 	 * 
@@ -1153,7 +1151,6 @@ squashtm.tree = squashtm.tree || {};
 	 * specifically the methods showMenu() and kill(), due to the careless
 	 * managment of event unbinding.
 	 */
-
 	$.fn.treeMenu = function(contentSelector, params, widthParam) {
 		var options;
 
