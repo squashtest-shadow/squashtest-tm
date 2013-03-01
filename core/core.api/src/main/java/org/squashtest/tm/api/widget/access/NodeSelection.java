@@ -19,42 +19,62 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.api.widget;
+package org.squashtest.tm.api.widget.access;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.validation.constraints.NotNull;
 
 import org.squashtest.tm.api.security.acls.AccessRule;
+import org.squashtest.tm.core.foundation.lang.Assert;
 
 /**
- * Describes a menu item.
- * 
  * @author Gregory Fouquet
  * 
  */
-public interface MenuItem {
-	/**
-	 * Should return this menu item's label. Should never return <code>null</code>
-	 * 
-	 * @return
-	 */
-	String getLabel();
+class NodeSelection implements AccessRule {
+	private final SelectionMode selectionMode;
+
+	private final Set<AccessRule> rules = new HashSet<AccessRule>();
 
 	/**
-	 * May return this menu item's tooltip. Should not return <code>null</code>
 	 * 
-	 * @return
 	 */
-	String getTooltip();
+	public NodeSelection(@NotNull SelectionMode selectionMode) {
+		super();
+		this.selectionMode = selectionMode;
+		Assert.parameterNotNull(selectionMode, "selectionMode");
+	}
 
 	/**
-	 * Should return the CONTEXT RELATIVE URL bound to this menu item.
-	 * 
-	 * @return
+	 * @param selectedNodePermission
 	 */
-	String getUrl();
+	public void addRule(SelectedNodePermission selectedNodePermission) {
+		getRules().add(selectedNodePermission);
+
+	}
 
 	/**
-	 * Should return the access rule for this menu item.
-	 * 
-	 * @return
+	 * @param anyNode
 	 */
-	AccessRule getAccessRule();
+	public void addRule(AnyNode anyNode) {
+		getRules().add(anyNode);
+
+	}
+
+	/**
+	 * @return the selectionMode
+	 */
+	public SelectionMode getSelectionMode() {
+		return selectionMode;
+	}
+
+	/**
+	 * @return the rules
+	 */
+	public Set<AccessRule> getRules() {
+		return rules;
+	}
+
 }

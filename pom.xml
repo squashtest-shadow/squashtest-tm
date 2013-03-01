@@ -506,7 +506,6 @@
     </profile>
   </profiles>
 
-
   <repositories>
     <repository>
       <id>squash-release-repo</id>

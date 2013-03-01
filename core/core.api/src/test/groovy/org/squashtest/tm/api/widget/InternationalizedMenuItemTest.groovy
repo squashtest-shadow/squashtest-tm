@@ -23,13 +23,14 @@ package org.squashtest.tm.api.widget
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.squashtest.tm.api.widget.InternationalizedMenuItem;
 import org.squashtest.tm.core.foundation.i18n.Labelled;
 
 import spock.lang.Specification
 import spock.lang.Unroll;
 
 /**
- * @author Gregory
+ * @author Gregory　Fouquet
  *
  */
 class InternationalizedMenuItemTest extends Specification {

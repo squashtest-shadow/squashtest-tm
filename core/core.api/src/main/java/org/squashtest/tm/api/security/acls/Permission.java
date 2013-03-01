@@ -18,22 +18,39 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security;
 
-import org.springframework.security.access.AccessDeniedException;
+package org.squashtest.tm.api.security.acls;
 
-public final class PermissionsUtils {
+/**
+ * Enum of Squash permission. Should match the one defined as Spring Security base / custom permissions 
+ * @author Gregory Fouquet
+ *
+ */
+public enum Permission {
+	READ("readable"), 
+	WRITE("editable"), 
+	CREATE("creatable"), 
+	DELETE("deletable"),
+	ADMIN("administrable"), 
+	SMALL_EDIT("smallEdit"), 
+	EXECUTE("executable"), 
+	MANAGEMENT("manageable"), 
+	LINK("linkable"), 
+	IMPORT("importable"), 
+	ATTACH("attachable"), 
+	ANY("any");
+	
+	private final String quality;
 
-	private PermissionsUtils(){
-		super();
+	private Permission(String quality) {
+		this.quality = quality;
+	}
+
+	/**
+	 * @return the quality
+	 */
+	public String getQuality() {
+		return quality;
 	}
 	
-	public static final void checkPermission(PermissionEvaluationService permissionService, SecurityCheckableObject... checkableObjects) {
-		for (SecurityCheckableObject object : checkableObjects) {
-			if (!permissionService
-					.hasRoleOrPermissionOnObject("ROLE_ADMIN", object.getPermission(), object.getObject())) {
-				throw new AccessDeniedException("Access is denied");
-			}
-		}
-	}
 }

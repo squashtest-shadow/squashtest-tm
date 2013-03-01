@@ -18,22 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security;
 
-import org.springframework.security.access.AccessDeniedException;
+package org.squashtest.tm.api.security.acls;
 
-public final class PermissionsUtils {
+/**
+ * @author Gregory　Fouquet
+ *
+ */
+public interface AccessRule {
 
-	private PermissionsUtils(){
-		super();
-	}
-	
-	public static final void checkPermission(PermissionEvaluationService permissionService, SecurityCheckableObject... checkableObjects) {
-		for (SecurityCheckableObject object : checkableObjects) {
-			if (!permissionService
-					.hasRoleOrPermissionOnObject("ROLE_ADMIN", object.getPermission(), object.getObject())) {
-				throw new AccessDeniedException("Access is denied");
-			}
-		}
-	}
 }

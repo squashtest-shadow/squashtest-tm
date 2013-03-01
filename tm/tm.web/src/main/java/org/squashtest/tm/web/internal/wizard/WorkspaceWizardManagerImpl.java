@@ -103,9 +103,23 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 	/**
 	 * @see org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager#findAllByWorkspace(WorkspaceType)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<WorkspaceWizard> findAllByWorkspace(WorkspaceType workspace) {
+		Collection<WorkspaceWizard> res = readWizards(workspace);
+		if (res == null) {
+			res = Collections.emptyList();
+		}
+		return res;
+	}
+
+	/**
+	 * Requests a read lock and fetches the list of wizards for the given workspace. Returned list might be null.
+	 * 
+	 * @param workspace
+	 * @return the potentially null collection of wizards for the given workspace.
+	 */
+	@SuppressWarnings("unchecked")
+	private Collection<WorkspaceWizard> readWizards(WorkspaceType workspace) {
 		try {
 			lock.readLock().lock();
 			Collection<WorkspaceWizard> collection = wizardsByWorkspace.getCollection(workspace);

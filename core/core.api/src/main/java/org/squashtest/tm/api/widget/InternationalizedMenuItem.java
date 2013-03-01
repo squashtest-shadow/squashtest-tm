@@ -21,8 +21,11 @@
 
 package org.squashtest.tm.api.widget;
 
-import javax.annotation.PostConstruct;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.squashtest.tm.api.security.acls.AccessRule;
+import org.squashtest.tm.api.widget.access.AccessRuleBuilder;
 import org.squashtest.tm.core.foundation.i18n.Labelled;
 import org.squashtest.tm.core.foundation.lang.Assert;
 
@@ -33,9 +36,16 @@ import org.squashtest.tm.core.foundation.lang.Assert;
  * @author Gregory Fouquet
  * 
  */
-public class InternationalizedMenuItem extends Labelled implements MenuItem {
+public class InternationalizedMenuItem extends Labelled implements MenuItem, InitializingBean {
+	private static final Logger LOGGER = LoggerFactory.getLogger(InternationalizedMenuItem.class);
+
 	private String tooltipKey;
 	private String url;
+	private AccessRule accessRule;
+
+	public InternationalizedMenuItem() {
+		super();
+	}
 
 	/**
 	 * Tooltip is internationalized.
@@ -64,16 +74,64 @@ public class InternationalizedMenuItem extends Labelled implements MenuItem {
 	}
 
 	/**
-	 * @param url the url to set
+	 * @param url
+	 *            the url to set
 	 */
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	
-	@PostConstruct
-	public void checkBeanState() {
+
+	private void checkBeanState() {
 		Assert.propertyNotBlank(url, "url property should not be blank");
 		Assert.propertyNotBlank(tooltipKey, "tooltipKey property should not be null");
+		initializeAccessRule();
+		Assert.propertyNotNull(accessRule, "accessRule property should not be null");
+	}
+
+	/**
+	 * Anybody can access this widget. Override to customize.
+	 * 
+	 * @return
+	 */
+	private void initializeAccessRule() {
+		if (accessRule == null) {
+			accessRule = AccessRuleBuilder.anybody();
+			LOGGER.debug("Access rule set to anybody");
+		}
+	}
+
+	/**
+	 * @see org.squashtest.tm.api.widget.MenuItem#getAccessRule()
+	 */
+	@Override
+	public AccessRule getAccessRule() {
+		return accessRule;
+	}
+
+	/**
+	 * @param accessRule
+	 *            the accessRule to set
+	 */
+	public void setAccessRule(AccessRule accessRule) {
+		this.accessRule = accessRule;
+	}
+
+	/**
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	@Override
+	public final void afterPropertiesSet() throws Exception {
+		doInitialize();
+		checkBeanState();
+
+	}
+
+	/**
+	 * Hook whichcan be overriden by subclasses do perform further initialization.
+	 */
+	protected void doInitialize() {
+		// NOOP
+
 	}
 
 }

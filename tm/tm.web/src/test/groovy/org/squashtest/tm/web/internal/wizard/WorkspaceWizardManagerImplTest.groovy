@@ -56,6 +56,11 @@ class WorkspaceWizardManagerImplTest extends Specification {
 		manager.projectFinder = pfinder;
 	}
 	
+	def "find all should never return null"() {
+		expect:
+		manager.findAllByWorkspace(WorkspaceType.CAMPAIGN_WORKSPACE) != null
+	}
+	
 	
 	def "should find all #workspace wizards"() {
 		given: 
