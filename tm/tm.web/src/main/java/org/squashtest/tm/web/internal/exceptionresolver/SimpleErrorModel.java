@@ -19,28 +19,25 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.api.wizard;
+package org.squashtest.tm.web.internal.exceptionresolver;
 
-import org.squashtest.tm.core.foundation.exception.SimpleException;
+public class SimpleErrorModel {
+	private String error;
 
-public class WizardValidationException extends RuntimeException implements SimpleException {
-	private static final long serialVersionUID = 1L;
+	public String getError() {
+		return error;
+	}
 
-	public WizardValidationException() {
+	public void setError(String error) {
+		this.error = error;
+	}
+
+	public SimpleErrorModel(String error) {
+		super();
+		this.error = error;
+	}
+	
+	public SimpleErrorModel(){
 		super();
 	}
-
-	public WizardValidationException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
-
-	public WizardValidationException(String arg0) {
-		super(arg0);
-	}
-
-	public WizardValidationException(Throwable arg0) {
-		super(arg0);
-	}
-	
-	
 }

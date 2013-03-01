@@ -18,29 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.core.foundation.exception;
 
-package org.squashtest.tm.api.wizard;
-
-import org.squashtest.tm.core.foundation.exception.SimpleException;
-
-public class WizardValidationException extends RuntimeException implements SimpleException {
-	private static final long serialVersionUID = 1L;
-
-	public WizardValidationException() {
-		super();
-	}
-
-	public WizardValidationException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
-
-	public WizardValidationException(String arg0) {
-		super(arg0);
-	}
-
-	public WizardValidationException(Throwable arg0) {
-		super(arg0);
-	}
-	
-	
+/**
+ * Exceptions implementing that interface tells the app that just displaying the message is ok : no localization, no structure, no stacktrace
+ * 
+ * @author bsiri
+ *
+ */
+public interface SimpleException {
+	public String getMessage();
 }
