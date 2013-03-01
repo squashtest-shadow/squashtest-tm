@@ -54,7 +54,7 @@ requirejs.config({
 		"jquery.squash.datatables": "squashtest/jquery.squashtm.datatables.v2",
 		"handlebars": "lib/handlebars/handlebars-1.0.rc.1",
 		"underscore": "lib/underscore/underscore-1.4.2",
-		"backbone": "lib/backbone/backbone-0.9.2", 
+		"backbone": "lib/backbone/backbone-0.9.10", 
 		"ckeditor": "ckeditor/ckeditor", 
 		"jquery.ckeditor": "ckeditor/adapters/jquery", 
 		"jeditable": "jquery/jquery.jeditable",
