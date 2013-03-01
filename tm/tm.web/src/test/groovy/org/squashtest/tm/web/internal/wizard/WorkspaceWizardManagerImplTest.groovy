@@ -21,6 +21,7 @@
 
 package org.squashtest.tm.web.internal.wizard;
 
+import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.widget.MenuItem;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
@@ -77,6 +78,9 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			String getFilename(){
 				return "myjar"
 			}
+			void validate(EntityReference ref){
+				
+			}
 		}, Collections.emptyMap()
 
 		manager.registerWizard new WorkspaceWizard() {
@@ -98,6 +102,9 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			String getFilename(){
 				return "myjar"
 			}
+			void validate(EntityReference ref){
+				
+			}
 		}, Collections.emptyMap()
 		
 		manager.registerWizard new WorkspaceWizard() {
@@ -118,6 +125,9 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			}
 			String getFilename(){
 				return "myjar"
+			}
+			void validate(EntityReference ref){
+				
 			}
 		}, Collections.emptyMap()
 		

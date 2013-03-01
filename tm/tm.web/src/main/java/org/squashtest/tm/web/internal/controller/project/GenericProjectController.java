@@ -52,6 +52,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.api.plugin.EntityReference;
+import org.squashtest.tm.api.plugin.EntityType;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
@@ -381,7 +383,10 @@ public class GenericProjectController {
 	@ResponseBody
 	public void enableWizard(@PathVariable("projectId") long projectId, @PathVariable("wizardId") String wizardId){
 		WorkspaceWizard wizard = wizardManager.findById(wizardId);
+		
+		wizard.validate(new EntityReference(EntityType.PROJECT, projectId));
 		projectManager.enableWizardForWorkspace(projectId, wizard.getDisplayWorkspace(), wizardId);
+		
 	}
 	
 	@RequestMapping(value = PROJECT_ID_URL+"/wizards/{wizardId}/", method = RequestMethod.DELETE)

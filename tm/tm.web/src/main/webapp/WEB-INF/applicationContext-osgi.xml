@@ -170,8 +170,7 @@
       <value>org.squashtest.tm.service.user.TeamFinderService</value>
     </osgi:interfaces>
   </osgi:reference>
-  <osgi:reference id="squashtest.tm.service.ProjectManagerService" bean-name="squashtest.tm.service.ProjectManagerService"
-    availability="mandatory">
+  <osgi:reference id="squashtest.tm.service.ProjectManagerService"  availability="mandatory">
     <osgi:interfaces>
       <value>org.squashtest.tm.service.project.ProjectManagerService</value>
       <value>org.squashtest.tm.service.project.ProjectFinder</value>
@@ -212,7 +211,7 @@
 
   <!-- CUF services -->
 
-  <osgi:reference id="squashtest.tm.service.CustomFieldBindingFinder" bean-name="squashtest.tm.service.CustomFieldBindingFinder"
+  <osgi:reference id="squashtest.tm.service.CustomFieldBindingFinder" 
     interface="org.squashtest.tm.service.customfield.CustomFieldBindingFinderService" availability="mandatory" />
 
   <osgi:reference id="squashtest.tm.service.CustomFieldBindingModifier" bean-name="squashtest.tm.service.CustomFieldBindingModifier"

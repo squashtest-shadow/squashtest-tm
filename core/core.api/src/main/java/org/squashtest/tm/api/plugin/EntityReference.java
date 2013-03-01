@@ -39,7 +39,7 @@ public class EntityReference {
 	 */
 	private final Long id;
 
-	private EntityReference(EntityType entityType, Long entityId) {
+	public EntityReference(EntityType entityType, Long entityId) {
 		super();
 		this.type = entityType;
 		this.id = entityId;

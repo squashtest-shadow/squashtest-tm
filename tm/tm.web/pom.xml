@@ -40,7 +40,7 @@
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.report.api</artifactId>
       <version>${project.version}</version>
-    </dependency>
+    </dependency>  
     <!--<dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.wizard.api</artifactId>
