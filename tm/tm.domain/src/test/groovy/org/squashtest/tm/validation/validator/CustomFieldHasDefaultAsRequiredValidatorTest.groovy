@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.internal.validation.validator
+package org.squashtest.tm.validation.validator
 
 import org.squashtest.tm.domain.customfield.CustomField
-import org.squashtest.tm.service.internal.validation.validator.CustomFieldHasDefaultAsRequiredValidator
+import org.squashtest.tm.validation.validator.CustomFieldHasDefaultAsRequiredValidator
 
 import spock.lang.Specification
 import spock.lang.Unroll

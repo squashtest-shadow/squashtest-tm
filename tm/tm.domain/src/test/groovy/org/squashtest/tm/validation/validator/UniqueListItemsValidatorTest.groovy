@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.internal.validation.validator
+package org.squashtest.tm.validation.validator
 
-import org.squashtest.tm.service.internal.validation.validator.UniqueListItemsValidator;
+import org.squashtest.tm.validation.validator.UniqueListItemsValidator;
 
 import spock.lang.Specification
 import spock.lang.Unroll;

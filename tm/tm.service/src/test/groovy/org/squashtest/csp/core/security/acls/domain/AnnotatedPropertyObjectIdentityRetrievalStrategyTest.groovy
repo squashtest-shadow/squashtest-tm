@@ -20,9 +20,8 @@
  */
 package org.squashtest.csp.core.security.acls.domain
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.service.security.acls.domain.AnnotatedPropertyObjectIdentityRetrievalStrategy
-import org.squashtest.tm.service.security.annotation.AclConstrainedObject
+import org.squashtest.tm.security.annotation.AclConstrainedObject
 
 import spock.lang.Specification
 

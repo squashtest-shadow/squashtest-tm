@@ -138,3 +138,7 @@ syntax: regexp
 ^tm/tm\.service/META-INF/.*$
 ^plugins/plugin\.workspacewizard\.test/target$
 ^plugins/plugin\.workspacewizard\.test/META-INF$
+^tm/tm\.aspects/target$
+^tm/tm\.aspects/META-INF$
+^tm/tm\.domain/target$
+^tm/tm\.domain/META-INF/.*$
