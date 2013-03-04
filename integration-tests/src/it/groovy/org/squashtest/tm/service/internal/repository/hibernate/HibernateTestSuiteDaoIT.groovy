@@ -45,7 +45,7 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 
 		given :
 //		we associate the last test case to the test suite via an iteration test plan item
-		String sql = "insert into ITEM_TEST_PLAN_TEST_SUITE ( ITEM_TEST_PLAN_ID , SUITE_ID ) values ( :test_plan_id , :test_suite_id )";
+		String sql = "insert into TEST_SUITE_TEST_PLAN_ITEM ( TPI_ID , SUITE_ID ) values ( :test_plan_id , :test_suite_id )";
 		
 		Query query = getSession().createSQLQuery(sql);
 		query.setParameter("test_suite_id", 1);
@@ -134,7 +134,7 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 
 		given :
 	//		we associate the last test case to the test suite via an iteration test plan item
-			String sql = "insert into ITEM_TEST_PLAN_TEST_SUITE ( ITEM_TEST_PLAN_ID , SUITE_ID ) values ( :test_plan_id , :test_suite_id )";
+			String sql = "insert into TEST_SUITE_TEST_PLAN_ITEM ( TPI_ID , SUITE_ID ) values ( :test_plan_id , :test_suite_id )";
 			Query query = getSession().createSQLQuery(sql);
 			query.setParameter("test_suite_id", 1);
 			query.setParameter("test_plan_id", 5);

@@ -126,7 +126,7 @@ class TestSuiteTest extends Specification {
 
 		and :
 		suite.bindTestPlanItems(items[2, 4, 6, 7, 8, 9])
-
+		
 		and :
 
 		def toMove = items[4, 6, 7]
@@ -137,7 +137,7 @@ class TestSuiteTest extends Specification {
 
 		then :
 		suite.getTestPlan() == items[4, 6, 7, 2, 8, 9]
-		iteration.getTestPlans() == items[0, 1, 4, 6, 7, 2, 3, 5, 8, 9]
+		iteration.getTestPlans() == items[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 	}
 
 	def "should reorder item test plans (2)"(){
@@ -169,7 +169,7 @@ class TestSuiteTest extends Specification {
 
 		then :
 		suite.getTestPlan() == items[2, 8, 4, 6, 7, 9]
-		iteration.getTestPlans() == items[0, 1, 2, 3, 5, 8, 4, 6, 7, 9]
+		iteration.getTestPlans() == items[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 	}
 
 	def "copy of a TestSuite's test plan should avoid deleted testCases"() {

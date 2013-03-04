@@ -84,9 +84,9 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 
-	@ManyToMany(mappedBy="testSuites")
-	@OrderColumn(name="ITEM_TEST_PLAN_ORDER")
-	private List<IterationTestPlanItem> testPlanItems;
+	@ManyToMany(mappedBy="testSuites", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OrderColumn(name="TEST_PLAN_ORDER")
+	private List<IterationTestPlanItem> testPlan = new LinkedList<IterationTestPlanItem>();
 
 	@Override
 	public Long getId() {
@@ -135,25 +135,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 		return attachmentList;
 	}
 
-	/**
-	 * Warning : that property builds a new list every time. If you want to change the content of the list, use the
-	 * other dedicated accessors ( {@link #addTestPlan(List))} or the other one)
-	 * 
-	 * @return
-	 */
-	public List<IterationTestPlanItem> getTestPlan() {
-		// the test plan is not gotten through mapping hibernate because we need
-		// the order that is only held by
-		// iteration
-		List<IterationTestPlanItem> testPlan = new LinkedList<IterationTestPlanItem>();
-		for (IterationTestPlanItem item : iteration.getTestPlans()) {
-			if (boundToThisSuite(item)) {
-				testPlan.add(item);
-			}
-		}
-		return testPlan;
-	}
-
+	
 	private boolean boundToThisSuite(IterationTestPlanItem item) {
 		List<TestSuite> suites = item.getTestSuites();
 
@@ -189,10 +171,8 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	}
 
 	public IterationTestPlanItem getFirstTestPlanItem() {
-		for (IterationTestPlanItem item : iteration.getTestPlans()) {
-			if (boundToThisSuite(item)) {
+		for (IterationTestPlanItem item : this.getTestPlan()) {
 				return item;
-			}
 		}
 
 		throw new EmptyTestSuiteTestPlanException(this);
@@ -205,16 +185,36 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	 */
 	public void bindTestPlanItems(List<IterationTestPlanItem> items) {
 		for (IterationTestPlanItem item : items) {
+			if(!boundToThisSuite(item)){
+				this.testPlan.add(item);
+				item.addTestSuite(this);
+			}
+		}
+	}
+
+	public void bindTestPlanItem(IterationTestPlanItem item) {
+		if(!boundToThisSuite(item)){
+			this.testPlan.add(item);
 			item.addTestSuite(this);
 		}
 	}
-
+	
 	public void unBindTestPlan(List<IterationTestPlanItem> items) {
 		for (IterationTestPlanItem item : items) {
-			item.removeTestSuite(this);
+			if(boundToThisSuite(item)){
+				this.testPlan.remove(item);
+				item.removeTestSuite(this);
+			}
 		}
 	}
 
+	public void unBindTestPlan(IterationTestPlanItem item) {
+		if(boundToThisSuite(item)){
+			this.testPlan.remove(item);
+			item.removeTestSuite(this);
+		}
+	}
+	
 	/**
 	 * Binds the test plan items to this test suite using their id to retrieve them from the iteration.
 	 * 
@@ -223,8 +223,9 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	public void bindTestPlanItemsById(List<Long> itemIds) {
 		for (Long itemId : itemIds) {
 			for (IterationTestPlanItem item : iteration.getTestPlans()) {
-				if (item.getId().equals(itemId)) {
+				if (item.getId().equals(itemId) && !boundToThisSuite(item)) {
 					item.addTestSuite(this);
+					this.testPlan.add(item);
 				}
 			}
 		}
@@ -238,12 +239,10 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	 */
 	public void reorderTestPlan(int newIndex, List<IterationTestPlanItem> movedItems) {
 
-		IterationTestPlanItem anchorItem = getTestPlan().get(newIndex);
-		Iteration iterationThis = getIteration();
-
-		int anchorIndex = iterationThis.getIndexOf(anchorItem);
-		iterationThis.moveTestPlans(anchorIndex, movedItems);
-
+		if(!testPlan.isEmpty()) {
+			testPlan.removeAll(movedItems);
+			testPlan.addAll(newIndex, movedItems);
+		}
 	}
 
 	/**
@@ -297,7 +296,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	}
 
 	public boolean isLastExecutableTestPlanItem(long itemId) {
-		List<IterationTestPlanItem> testPlan = iteration.getTestPlans();
+		List<IterationTestPlanItem> testPlan = this.testPlan;
 		for (int i = testPlan.size() - 1; i >= 0; i--) {
 			IterationTestPlanItem item = testPlan.get(i);
 
@@ -320,9 +319,8 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	 * Determines if the item is the first of the test plan of the test suite
 	 */
 	public boolean isFirstExecutableTestPlanItem(long itemId) {
-		List<IterationTestPlanItem> testPlanInIteration = iteration.getTestPlans();
 
-		for (IterationTestPlanItem iterationTestPlanItem : testPlanInIteration) {
+		for (IterationTestPlanItem iterationTestPlanItem : this.testPlan) {
 			if (boundToThisSuite(iterationTestPlanItem) && !iterationTestPlanItem.isTestCaseDeleted()) { // &&
 																											// iterationTestPlanItem.isExecutableThroughTestSuite()
 				return itemId == iterationTestPlanItem.getId();
@@ -408,11 +406,11 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 		visitor.visit(this);
 	}
 
-	public List<IterationTestPlanItem> getTestPlanItems() {
-		return testPlanItems;
+	public List<IterationTestPlanItem> getTestPlan() {
+		return testPlan;
 	}
 
-	public void setTestPlanItems(List<IterationTestPlanItem> testPlanItems) {
-		this.testPlanItems = testPlanItems;
+	public void setTestPlan(List<IterationTestPlanItem> testPlan) {
+		this.testPlan = testPlan;
 	}
 }

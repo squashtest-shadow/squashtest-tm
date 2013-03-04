@@ -286,25 +286,25 @@
 	<!-- ============================================FEAT 1984========================================= -->
 	<changeSet id="tm-1.5.0.00-feat-1984.01" author="flaurens">
 		<comment>create table item_test_plan_test_suite</comment>
-		<createTable tableName="ITEM_TEST_PLAN_TEST_SUITE">
-			<column name="ITEM_TEST_PLAN_ID" type="BIGINT">
-				<constraints nullable="false" foreignKeyName="fk_item_test_plan_test_suite_item_test_plan"
+		<createTable tableName="TEST_SUITE_TEST_PLAN_ITEM">
+			<column name="TPI_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_test_suite_test_plan_item_test_plan_item"
 					references="ITERATION_TEST_PLAN_ITEM(ITEM_TEST_PLAN_ID)" />
 			</column>
 			<column name="SUITE_ID" type="BIGINT">
-				<constraints nullable="false" foreignKeyName="fk_item_test_plan_test_suite_test_suite"
+				<constraints nullable="false" foreignKeyName="fk_test_suite_test_plan_item_test_suite"
 					references="TEST_SUITE(ID)" />
 			</column>
 		</createTable>
 		
-		<addPrimaryKey tableName="ITEM_TEST_PLAN_TEST_SUITE" columnNames="ITEM_TEST_PLAN_ID, SUITE_ID"
-			constraintName="pk_item_test_plan_test_suite" />
+		<addPrimaryKey tableName="TEST_SUITE_TEST_PLAN_ITEM" columnNames="TPI_ID, SUITE_ID"
+			constraintName="pk_test_suite_test_plan_item" />
 	</changeSet>
 
 	<changeSet id="tm-1.5.0.00-feat-1984.02" author="flaurens">
-		<comment>migrate data to table item_test_plan_test_suite</comment>
+		<comment>migrate data to table test_suite_test_plan_item</comment>
 		<sql>
-			insert into ITEM_TEST_PLAN_TEST_SUITE (ITEM_TEST_PLAN_ID, SUITE_ID)
+			insert into TEST_SUITE_TEST_PLAN_ITEM (TPI_ID, SUITE_ID)
 			select ITEM_TEST_PLAN_ID, TEST_SUITE from ITERATION_TEST_PLAN_ITEM
 			where TEST_SUITE IS NOT NULL;
 		</sql>
@@ -348,9 +348,9 @@
 	
 	<!-- ============================================FEAT 1984========================================= -->
 	<changeSet id="tm-1.5.0.00-feat-1984.03" author="flaurens">
-		<comment>add column for ordering to table ITEM_TEST_PLAN_TEST_SUITE</comment>
-		<addColumn tableName="ITEM_TEST_PLAN_TEST_SUITE">
-		 	<column name="ITEM_TEST_PLAN_ORDER" type="INT" defaultValue="1">
+		<comment>add column for ordering to table TEST_SUITE_TEST_PLAN_ITEM</comment>
+		<addColumn tableName="TEST_SUITE_TEST_PLAN_ITEM">
+		 	<column name="TEST_PLAN_ORDER" type="INT" defaultValue="1">
 		 		<constraints nullable="false"/>
 		 	</column>
 		</addColumn>
