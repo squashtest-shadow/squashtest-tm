@@ -96,13 +96,23 @@ define([ "jquery", "backbone", "jquery.squash.togglepanel", "jqueryui" ], functi
 	
 	function initWizardTabView(settings){	
 		
-
-		
 		var WizardEnabledCollection = Backbone.Collection.extend({
 			url : settings.projectUrl,
 			initialize : function(){
 				this.on('add', function(model){
-					$.post(this.url+"/"+model.id+"/");
+					var self=this;
+					var ajaxConf = {
+						url : this.url+"/"+model.id+"/",
+						type : 'POST',
+						dataType : 'text'
+					};
+					$.ajax(ajaxConf)
+					.fail(function(xhr){
+						squashtm.notification.showInfo(xhr.responseText);
+						self.remove(model, {silent : true});
+						self.panelView.render();
+						return false;
+					});
 				});
 				this.on('remove', function(model){
 					$.ajax({url : this.url+"/"+model.id+"/", type : 'DELETE'});
@@ -117,11 +127,13 @@ define([ "jquery", "backbone", "jquery.squash.togglepanel", "jqueryui" ], functi
 		var enabledCollection = new WizardEnabledCollection();
 		enabledCollection.reset(models, {silent : true});
 				
-		new WizardPanelView({ 
+		var panelView = new WizardPanelView({ 
 			el : "#workspace-wizards-panel", 
 			collection : enabledCollection,
 			available : settings.availableWizards
 		}).render();
+		
+		enabledCollection.panelView = panelView;
 		
 	};
 

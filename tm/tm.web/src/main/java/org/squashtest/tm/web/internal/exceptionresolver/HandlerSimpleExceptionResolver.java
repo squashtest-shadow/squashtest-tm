@@ -84,8 +84,7 @@ public class HandlerSimpleExceptionResolver extends AbstractHandlerExceptionReso
 	}
 
 	private ModelAndView formatJsonResponse(HttpServletResponse response, String message) {
-		SimpleErrorModel error = new SimpleErrorModel(message);
-		return new ModelAndView(new MappingJacksonJsonView(), "simpleError", error);
+		return new ModelAndView(new MappingJacksonJsonView(), "error", message);
 	}
 
 
