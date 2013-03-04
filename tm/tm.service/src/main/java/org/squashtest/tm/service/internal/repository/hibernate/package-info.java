@@ -96,16 +96,16 @@
 		@NamedQuery(name = "iteration.countRunningOrDoneExecutions", query = "select count(tps) from Iteration iter join iter.testPlans tps join tps.executions exes where iter.id =:iterationId and exes.executionStatus <> 'READY'"),
 		
 		//TestSuite
-		@NamedQuery(name = "TestSuite.findAllTestPlanItemsPaged", query = "select tp from TestSuite ts join ts.iteration it join it.testPlans tp join tp.testSuites tss where ts.id = ? and ts.id = tss.id order by index(tp)"),
-		@NamedQuery(name = "TestSuite.countTestPlanItems", query = "select count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp join tp.testSuites tss where ts.id = ? and ts.id = tss.id"),
-		@NamedQuery(name = "testSuite.countStatuses", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.iteration it join it.testPlans tp join tp.testSuites tss where ts.id = :id and :id2 = tss.id group by tp.executionStatus"),
-		@NamedQuery(name = "testSuite.findTestPlanFiltered", query = "select tpi from TestSuite ts join ts.testPlanItems tpi where ts.id = :testSuiteId and index(tpi) between :firstIndex and :lastIndex order by index(tpi)"),
+		@NamedQuery(name = "TestSuite.findAllTestPlanItemsPaged", query = "select tp from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ? and ts.id = tss.id order by index(tp)"),
+		@NamedQuery(name = "TestSuite.countTestPlanItems", query = "select count(tp) from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ? and ts.id = tss.id"),
+		@NamedQuery(name = "testSuite.countStatuses", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = :id and :id2 = tss.id group by tp.executionStatus"),
+		@NamedQuery(name = "testSuite.findTestPlanFiltered", query = "select tpi from TestSuite ts join ts.testPlan tpi where ts.id = :testSuiteId and index(tpi) between :firstIndex and :lastIndex order by index(tpi)"),
 		
-		@NamedQuery(name = "testSuite.findTestPlanPartition", query = "select plan from TestSuite ts join ts.iteration iter join iter.testPlans plan where plan.id in (:itemIds) and ts.id = :suiteId order by index(plan)"),
+		@NamedQuery(name = "testSuite.findTestPlanPartition", query = "select plan from TestSuite ts join ts.testPlan plan where plan.id in (:itemIds) and ts.id = :suiteId order by index(plan)"),
 		@NamedQuery(name = "testSuite.findAllExecutions", query = "select itpi.executions from IterationTestPlanItem itpi join itpi.testSuites tss where ? = tss.id "),
 		
 		@NamedQuery(name = "testSuite.findAllByIterationId", query = "select ts from TestSuite ts join ts.iteration i where i.id = ?"),
-		@NamedQuery(name = "testSuite.findLaunchableTestPlan", query = "select tp from TestSuite ts join ts.iteration it join it.testPlans tp join tp.testSuites tss where ts.id = ? and ? = tss.id and ((tp.referencedTestCase is not null) or (tp.executions is not empty)) order by index(tp)"),
+		@NamedQuery(name = "testSuite.findLaunchableTestPlan", query = "select tp from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ? and ? = tss.id and ((tp.referencedTestCase is not null) or (tp.executions is not empty)) order by index(tp)"),
 		
 		//TestCase
 		@NamedQuery(name = "testCase.findNamesInFolderStartingWith", query = "select c.name from TestCaseFolder f join f.content c where f.id = :containerId and c.name like :nameStart"),

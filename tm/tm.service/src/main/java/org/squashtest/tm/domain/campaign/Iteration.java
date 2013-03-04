@@ -338,6 +338,9 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 
 		if (localTestPlan != null) {
 			testPlans.remove(testPlan);
+			for(TestSuite testSuite : this.testSuites){
+				testSuite.getTestPlan().remove(testPlan);
+			}
 		}
 
 	}

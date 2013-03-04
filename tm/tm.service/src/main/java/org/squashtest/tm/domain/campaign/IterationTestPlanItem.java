@@ -107,8 +107,7 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID", insertable = false, updatable = false))
 	private Iteration iteration;
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinTable(name = "TEST_SUITE_TEST_PLAN_ITEM", joinColumns = @JoinColumn(name = "TPI_ID", referencedColumnName="ITEM_TEST_PLAN_ID"), inverseJoinColumns = @JoinColumn(name = "SUITE_ID", referencedColumnName="ID"))
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy="testPlan")
 	private List<TestSuite> testSuites = new ArrayList<TestSuite>();
 
 	public IterationTestPlanItem() {
@@ -383,7 +382,7 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 	}
 
 	public List<TestSuite> getTestSuites() {
-		return testSuites;
+		return this.testSuites;
 	}
 
 	public void setTestSuites(List<TestSuite> testSuites) {

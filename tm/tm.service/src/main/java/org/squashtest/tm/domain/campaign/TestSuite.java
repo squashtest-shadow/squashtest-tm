@@ -84,8 +84,9 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 
-	@ManyToMany(mappedBy="testSuites", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name="TEST_PLAN_ORDER")
+	@JoinTable(name = "TEST_SUITE_TEST_PLAN_ITEM", inverseJoinColumns = @JoinColumn(name = "TPI_ID", referencedColumnName="ITEM_TEST_PLAN_ID"), joinColumns = @JoinColumn(name = "SUITE_ID", referencedColumnName="ID"))
 	private List<IterationTestPlanItem> testPlan = new LinkedList<IterationTestPlanItem>();
 
 	@Override
@@ -195,7 +196,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	public void bindTestPlanItem(IterationTestPlanItem item) {
 		if(!boundToThisSuite(item)){
 			this.testPlan.add(item);
-			item.addTestSuite(this);
+			item.getTestSuites().add(this);
 		}
 	}
 	
@@ -224,7 +225,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 		for (Long itemId : itemIds) {
 			for (IterationTestPlanItem item : iteration.getTestPlans()) {
 				if (item.getId().equals(itemId) && !boundToThisSuite(item)) {
-					item.addTestSuite(this);
+					item.getTestSuites().add(this);
 					this.testPlan.add(item);
 				}
 			}

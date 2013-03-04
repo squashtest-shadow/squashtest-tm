@@ -296,9 +296,6 @@
 					references="TEST_SUITE(ID)" />
 			</column>
 		</createTable>
-		
-		<addPrimaryKey tableName="TEST_SUITE_TEST_PLAN_ITEM" columnNames="TPI_ID, SUITE_ID"
-			constraintName="pk_test_suite_test_plan_item" />
 	</changeSet>
 
 	<changeSet id="tm-1.5.0.00-feat-1984.02" author="flaurens">
@@ -350,8 +347,8 @@
 	<changeSet id="tm-1.5.0.00-feat-1984.03" author="flaurens">
 		<comment>add column for ordering to table TEST_SUITE_TEST_PLAN_ITEM</comment>
 		<addColumn tableName="TEST_SUITE_TEST_PLAN_ITEM">
-		 	<column name="TEST_PLAN_ORDER" type="INT" defaultValue="1">
-		 		<constraints nullable="false"/>
+		 	<column name="TEST_PLAN_ORDER" type="INT">
+		 		<constraints nullable="true" />
 		 	</column>
 		</addColumn>
 	</changeSet>

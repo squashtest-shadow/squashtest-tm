@@ -75,7 +75,6 @@ class TestSuiteTest extends Specification {
 		3.times{items << Mock(IterationTestPlanItem)}
 		and :
 		def suite = new TestSuite()
-
 		when :
 		suite.bindTestPlanItems(items)
 
