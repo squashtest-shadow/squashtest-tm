@@ -42,6 +42,17 @@ public class HTMLCleanupUtilsTest extends Specification {
 			result == stripped
 		
 	}
+	
+	def "should gracfully handle null arguments when removing html tags"(){
+		given :
+			String dirtyString= null;
+		
+		when :
+			def result = HTMLCleanupUtils.htmlToText(dirtyString);
+		
+		then :
+			result == "";
+	}
 		
 	def "should escape html"(){	
 	
@@ -73,6 +84,16 @@ public class HTMLCleanupUtilsTest extends Specification {
 		
 	}
 	
+	def "should gracfully handle null arguments when escaping html"(){
+		given :
+			String dirtyString= null;
+		
+		when :
+			def result = HTMLCleanupUtils.forceHtmlEscape(dirtyString);
+		
+		then :
+			result == "";
+	}
 	
 	def "should strip javascript tags"(){
 		
@@ -90,6 +111,16 @@ public class HTMLCleanupUtilsTest extends Specification {
 			
 	}
 
-
+	
+	def "should gracfully handle null arguments when stripping javascript"(){
+		given :
+			String dirtyString= null;
+		
+		when :
+			def result = HTMLCleanupUtils.stripJavascript(dirtyString);
+		
+		then :
+			result == "";
+	}
 	
 }

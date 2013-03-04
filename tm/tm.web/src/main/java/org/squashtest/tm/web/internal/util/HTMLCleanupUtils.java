@@ -37,9 +37,12 @@ public final class HTMLCleanupUtils {
 
 	public static String htmlToText(String html){
 		
-		String replacedDescription = html.replaceFirst("\n", "");
-		Source htmlSource = new Source(replacedDescription);
-		Segment htmlSegment = new Segment(htmlSource, 0, replacedDescription.length());
+		String fixedHtml = (html!=null) ? html : "";
+		
+		String replacedHtml = fixedHtml.replaceFirst("\n", "");
+		
+		Source htmlSource = new Source(replacedHtml);
+		Segment htmlSegment = new Segment(htmlSource, 0, replacedHtml.length());
 		Renderer htmlRend = new Renderer(htmlSegment);
 		String encoded = htmlRend.toString();
 		return encoded.trim();
@@ -48,14 +51,19 @@ public final class HTMLCleanupUtils {
 	
 	/* note : Unescape is idempotent when applied on unescaped data. We use that trick to prevent double html encoding*/ 
 	public static String forceHtmlEscape(String html){
-		String unescaped = HtmlUtils.htmlUnescape(html);	
+		
+		String fixedHtml = (html!=null) ? html : "";
+		
+		String unescaped = HtmlUtils.htmlUnescape(fixedHtml);			
 		return HtmlUtils.htmlEscape(unescaped);
 	}
 	
 	/* naive implementation, needs numerous improvements */
 	public static String stripJavascript(String html){
 		
-		Source source = new Source(html);
+		String fixedHtml = (html!=null) ? html : "";
+		
+		Source source = new Source(fixedHtml);
 		OutputDocument output = new OutputDocument(source);
 		
 		for (Tag tag : source.getAllStartTags()){
