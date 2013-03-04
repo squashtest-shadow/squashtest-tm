@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.event;
+package org.squashtest.tm.service.internal.event;
 
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
+import org.squashtest.tm.domain.event.AbstractRequirementEventPublisher;
+import org.squashtest.tm.domain.event.RequirementCreation;
 
 /**
  * This aspect advises a RequirementVersion's state change from transient to persistent and raises a creation event.
