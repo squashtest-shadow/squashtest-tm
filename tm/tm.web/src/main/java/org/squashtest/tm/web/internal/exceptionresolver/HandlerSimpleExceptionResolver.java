@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.exceptionresolver;
 import java.util.Enumeration;
 import java.util.Map;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -111,9 +112,10 @@ public class HandlerSimpleExceptionResolver extends AbstractHandlerExceptionReso
 		@Override
 		protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
 				HttpServletResponse response) throws Exception {
+			String encoding = response.getCharacterEncoding(); 
 			for (Object obj : model.values()) {
-				response.getOutputStream().write(obj.toString().getBytes());
-				response.getOutputStream().write('\n');
+				response.getOutputStream().write(obj.toString().getBytes(encoding));
+				response.getOutputStream().print('\n');
 			}
 
 		}

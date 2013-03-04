@@ -104,7 +104,8 @@ define([ "jquery", "backbone", "jquery.squash.togglepanel", "jqueryui" ], functi
 					var ajaxConf = {
 						url : this.url+"/"+model.id+"/",
 						type : 'POST',
-						dataType : 'text'
+						dataType : 'text',
+						global : false		//we will handle potential exceptions locally
 					};
 					$.ajax(ajaxConf)
 					.fail(function(xhr){
@@ -131,7 +132,9 @@ define([ "jquery", "backbone", "jquery.squash.togglepanel", "jqueryui" ], functi
 			el : "#workspace-wizards-panel", 
 			collection : enabledCollection,
 			available : settings.availableWizards
-		}).render();
+		});
+		
+		panelView.render();
 		
 		enabledCollection.panelView = panelView;
 		

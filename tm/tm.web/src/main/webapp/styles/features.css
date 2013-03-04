@@ -156,6 +156,9 @@ tr.nodrop td.drag-handle {
 }
 
 
+.cursor-arrow{
+	cursor : default;	
+}
 
 span.little-text {
 	font-size: 8px;
