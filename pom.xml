@@ -60,7 +60,6 @@
 
     <verbose.compiler>false</verbose.compiler>
     <hibernate.version>3.6.10.Final.B</hibernate.version>
-    <jetty.version>6.1.9</jetty.version>
   </properties>
 
   <dependencyManagement>

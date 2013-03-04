@@ -283,7 +283,25 @@
 		</profile>
 	</profiles>
 
+	<dependencyManagement>
+		<dependencies>
+			<!-- ====== INFRASTRUCTURE DEFINITIONS === -->
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>provision-bom</artifactId>
+			<version>1.0-SNAPSHOT</version>		
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+	
+		<!-- ====== /INFRASTRUCTURE DEFINITIONS === -->		
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
+	
+
+	
 		<!-- ====== SQUASHTEST ====== -->
 		<!-- Squashtest core modules -->
 		<dependency>
@@ -400,28 +418,23 @@
 		<dependency>
 			<groupId>org.springframework.osgi</groupId>
 			<artifactId>spring-osgi-web</artifactId>
-			<version>${springdm.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.osgi</groupId>
 			<artifactId>spring-osgi-web-extender</artifactId>
-			<version>${springdm.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- Deploys WARs to Jetty -->
 		<dependency>
 			<groupId>org.springframework.osgi</groupId>
 			<artifactId>jetty.web.extender.fragment.osgi</artifactId>
-			<version>1.0.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- Bootstraps a Jetty instance -->
 		<dependency>
 			<groupId>org.springframework.osgi</groupId>
 			<artifactId>jetty.start.osgi</artifactId>
-			<version>1.0.0</version>
-			<scope>runtime</scope>
 		</dependency>
 		<!-- ====== /SPRING DM WEB EXTENDER ====== -->
 
@@ -429,13 +442,11 @@
 		<dependency>
 			<groupId>org.mortbay.jetty</groupId>
 			<artifactId>com.springsource.org.mortbay.jetty.server</artifactId>
-			<version>6.1.9</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mortbay.jetty</groupId>
 			<artifactId>com.springsource.org.mortbay.util</artifactId>
-			<version>6.1.9</version>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- ====== /JETTY ====== -->
