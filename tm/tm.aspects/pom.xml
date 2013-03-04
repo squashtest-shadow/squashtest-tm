@@ -11,7 +11,7 @@
 	<artifactId>tm.aspects</artifactId>
 	<name>${project.groupId}.${project.artifactId}</name>
 	<description>Squash TM aspects </description>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 
 
 	<dependencies>
@@ -36,26 +36,27 @@
 	</dependencies>
 
 	<build>
-		<sourceDirectory>src/main/aspects</sourceDirectory>
+		<sourceDirectory>src/main/aspect</sourceDirectory>
 
 		<plugins>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<dependencies>
-					<dependency>
-						<groupId>org.squashtest.tm</groupId>
-						<artifactId>tools.annotation.processor</artifactId>
-						<version>${project.version}</version>
-					</dependency>
-				</dependencies>
-				<configuration>
-					<generatedSourcesDirectory>${project.build.directory}/generated-resources/META-INF</generatedSourcesDirectory>
-				</configuration>
 			</plugin>
 
-		
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+				<version>1.4</version>
+				<configuration>
+					<showWeaveInfo>${verbose.compiler}</showWeaveInfo>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+					<compatibilityLevel>${jdk.version}</compatibilityLevel>
+				</configuration>
+			</plugin>		
 
 
 			<plugin>
