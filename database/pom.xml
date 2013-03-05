@@ -12,17 +12,6 @@
 	<description>Squash TM - Database definition</description>
 
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<artifactId>provision-bom</artifactId>
-				<groupId>org.squashtest.tm</groupId>
-				<version>1.0-SNAPSHOT</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<dependencies>
 		<dependency>

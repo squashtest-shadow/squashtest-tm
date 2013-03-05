@@ -1,5 +1,4 @@
 Bundle-ManifestVersion: 2
-Spring-DM-Version: ${springdm.version}
 Bundle-Name: ${bundle.name}
 Bundle-SymbolicName: ${bundle.symbolicName}
 Excluded-Exports: *.internal*
