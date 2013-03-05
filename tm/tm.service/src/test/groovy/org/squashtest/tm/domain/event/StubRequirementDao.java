@@ -30,12 +30,13 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.service.internal.repository.RequirementDao;
 
 /**
  * @author Gregory Fouquet
  * 
  */
-public class StubRequirementDao extends StubEntityDao<Requirement> /*implements RequirementDao*/ {
+public class StubRequirementDao extends StubEntityDao<Requirement> implements RequirementDao {
 
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.RequirementDao#findAllByIds(java.util.Collection)

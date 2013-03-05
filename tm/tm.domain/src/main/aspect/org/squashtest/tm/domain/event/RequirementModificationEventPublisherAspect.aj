@@ -21,7 +21,6 @@
 package org.squashtest.tm.domain.event;
 
 import java.lang.reflect.Method;
-import javax.inject.Inject;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;

@@ -22,12 +22,13 @@ package org.squashtest.tm.domain.event;
 
 import java.util.Collection;
 import java.util.List;
+import org.squashtest.tm.service.internal.repository.EntityDao;
 
 /**
  * @author Gregory Fouquet
  * 
  */
-class StubEntityDao<ENTITY> /*implements EntityDao<ENTITY>*/ {
+class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.EntityDao#findById(long)
