@@ -472,6 +472,9 @@ public class IterationModificationController {
 					i++;
 				}
 				testSuiteNameList += item.getTestSuites().get(i).getName();
+				if(testSuiteNameList.length() > 20){
+					testSuiteNameList = testSuiteNameList.substring(0, 16)+"...";
+				}
 			}
 
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());

@@ -312,6 +312,9 @@ public class IterationTestPlanManagerController {
 			}
 			testSuiteNameList += item.getTestSuites().get(i).getName();
 		}
+		if(testSuiteNameList.length() > 20){
+			testSuiteNameList = testSuiteNameList.substring(0, 16)+"...";
+		}
 		return  testSuiteNameList;
 	}
 

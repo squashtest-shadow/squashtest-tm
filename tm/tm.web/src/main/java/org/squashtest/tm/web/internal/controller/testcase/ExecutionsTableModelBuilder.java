@@ -94,6 +94,9 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 			}
 			testSuiteNameList += item.getTestSuites().get(i).getName();
 		}
+		if(testSuiteNameList.length() > 20){
+			testSuiteNameList = testSuiteNameList.substring(0, 16)+"...";
+		}
 		return testSuiteNameList;
 	}
 

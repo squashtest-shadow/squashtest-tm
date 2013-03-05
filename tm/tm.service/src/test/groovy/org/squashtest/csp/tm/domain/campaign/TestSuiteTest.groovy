@@ -72,7 +72,7 @@ class TestSuiteTest extends Specification {
 	def "should associate with a bunch of items test plan"(){
 		given :
 		def items = []
-		3.times{items << Mock(IterationTestPlanItem)}
+		3.times{items <<  mockITP(it)}
 		and :
 		def suite = new TestSuite()
 		when :
@@ -262,6 +262,7 @@ class TestSuiteTest extends Specification {
 	def mockITP = {
 		def m = Mock(IterationTestPlanItem)
 		m.getId() >> it
+		m.getTestSuites() >> new ArrayList<TestSuite>();
 		return m
 	}
 
@@ -274,12 +275,12 @@ class TestSuiteTest extends Specification {
 		and:
 		IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
 		iteration.addTestPlan(item)
-		item.addTestSuite(testSuite)
+		testSuite.bindTestPlanItem(item)
 
 		and:
 		IterationTestPlanItem otherItem = new IterationTestPlanItem(Mock(TestCase))
 		iteration.addTestPlan(otherItem)
-		otherItem.addTestSuite(testSuite)
+		testSuite.bindTestPlanItem(otherItem)
 
 		when:
 		def res = testSuite.getFirstTestPlanItem()
@@ -396,7 +397,7 @@ class TestSuiteTest extends Specification {
 			IterationTestPlanItem.set field: "id", of: item, to: 10L
 		}
 		iteration.addTestPlan(item)
-		item.addTestSuite(testSuite)
+		testSuite.bindTestPlanItem(item)
 
 		and:"item2 linked iteration ONLY"
 		IterationTestPlanItem item2 = new IterationTestPlanItem(testCase)
@@ -411,7 +412,7 @@ class TestSuiteTest extends Specification {
 			IterationTestPlanItem.set field: "id", of: item3, to: 30L
 		}
 		iteration.addTestPlan(item3)
-		item3.addTestSuite(testSuite)
+		testSuite.bindTestPlanItem(item3)
 
 
 		when:
@@ -478,7 +479,7 @@ class TestSuiteTest extends Specification {
 				IterationTestPlanItem.set field: "id", of: item, to: id
 			}
 			iteration.addTestPlan(item)
-			item.addTestSuite(testSuite)
+			testSuite.bindTestPlanItem(item);
 		}
 
 		return testSuite
@@ -514,7 +515,7 @@ class TestSuiteTest extends Specification {
 		and:
 		IterationTestPlanItem otherItem = new IterationTestPlanItem(Mock(TestCase))
 		iteration.addTestPlan(otherItem)
-		otherItem.addTestSuite(testSuite)
+		testSuite.bindTestPlanItem(otherItem)
 		use (ReflectionCategory) {
 			IterationTestPlanItem.set field: "id", of: otherItem, to: 20L
 			IterationTestPlanItem.set field: "referencedTestCase", of: otherItem, to: null
@@ -526,7 +527,7 @@ class TestSuiteTest extends Specification {
 			IterationTestPlanItem.set field: "id", of: item, to: 10L
 		}
 		iteration.addTestPlan(item)
-		item.addTestSuite(testSuite)
+		testSuite.bindTestPlanItem(item)
 		
 		when:
 		def res = testSuite.isFirstExecutableTestPlanItem(10L)

@@ -506,6 +506,9 @@ public final class BugtrackerControllerHelper {
 			}
 			testSuiteNames += buggedSuites.get(i).getName();
 		}
+		if(testSuiteNames.length() > 20){
+			testSuiteNames = testSuiteNames.substring(0, 16)+"...";
+		}
 		return testSuiteNames;
 	}	
 

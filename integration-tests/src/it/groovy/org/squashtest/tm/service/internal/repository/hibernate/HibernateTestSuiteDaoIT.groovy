@@ -45,11 +45,12 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 
 		given :
 //		we associate the last test case to the test suite via an iteration test plan item
-		String sql = "insert into TEST_SUITE_TEST_PLAN_ITEM ( TPI_ID , SUITE_ID ) values ( :test_plan_id , :test_suite_id )";
+		String sql = "insert into TEST_SUITE_TEST_PLAN_ITEM ( TPI_ID , SUITE_ID , TEST_PLAN_ORDER ) values ( :test_plan_id , :test_suite_id , :order )";
 		
 		Query query = getSession().createSQLQuery(sql);
 		query.setParameter("test_suite_id", 1);
 		query.setParameter("test_plan_id", 5);
+		query.setParameter("order", 1);
 		query.executeUpdate();
 		getSession().flush();
 		
@@ -67,18 +68,6 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 		listTPI1.collect { it.id } == [2, 5, 6, 9]
 		listTPI2.size()==6
 		listTPI2.collect { it.id } == [3, 4, 7, 8, 10, 11]
-	}
-	
-	
-	@DataSet("HibernateTestSuiteDaoIT.should  find an ordered list of itpi.xml")
-	def "should fetch a test suite -> test plan ordered by the iteration test plan order"(){
-		
-		when :
-			def found = testSuiteDao.findTestPlanPartition(1l, [3l, 4l, 6l])
-			
-		then :
-			found*.id == [6l, 3l, 4l]
-		
 	}
 	
 	@DataSet("HibernateTestSuiteDaoIT.should return list of executions.xml")
@@ -134,10 +123,11 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 
 		given :
 	//		we associate the last test case to the test suite via an iteration test plan item
-			String sql = "insert into TEST_SUITE_TEST_PLAN_ITEM ( TPI_ID , SUITE_ID ) values ( :test_plan_id , :test_suite_id )";
+			String sql = "insert into TEST_SUITE_TEST_PLAN_ITEM ( TPI_ID , SUITE_ID , TEST_PLAN_ORDER ) values ( :test_plan_id , :test_suite_id , :order )";
 			Query query = getSession().createSQLQuery(sql);
 			query.setParameter("test_suite_id", 1);
 			query.setParameter("test_plan_id", 5);
+			query.setParameter("order", 1);
 			query.executeUpdate();
 			getSession().flush();
 
