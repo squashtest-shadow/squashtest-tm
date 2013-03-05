@@ -101,17 +101,18 @@ public class BugtrackerController {
 	private static final String TEST_CASE_TYPE = "test-case";
 	private static final String BUGTRACKER_ID = "bugTrackerId";
 	private static final String EMPTY_BUGTRACKER_MAV = "fragment/issues/bugtracker-panel-empty";
-	
+
 	private static final String STYLE = "style";
 	private static final String TOGGLE = "toggle";
 
 	@Inject
 	private MessageSource messageSource;
-	
+
 	@ServiceReference
-	public void setProjectFinder(ProjectFinder projectFinder){
+	public void setProjectFinder(ProjectFinder projectFinder) {
 		this.projectFinder = projectFinder;
 	}
+
 	@ServiceReference
 	public void setCampaignFinder(CampaignFinder campaignFinder) {
 		this.campaignFinder = campaignFinder;
@@ -158,24 +159,24 @@ public class BugtrackerController {
 	@RequestMapping(value = "workspace-button", method = RequestMethod.GET)
 	public ModelAndView getNavButton(Locale locale) {
 		List<Project> projects = projectFinder.findAllReadable();
-		List<Long> projectsIds = IdentifiedUtil.extractIds(projects); 
+		List<Long> projectsIds = IdentifiedUtil.extractIds(projects);
 		List<BugTracker> readableBugTrackers = bugTrackerFinderService.findDistinctBugTrackersForProjects(projectsIds);
-		 if (readableBugTrackers.isEmpty()) {
+		if (readableBugTrackers.isEmpty()) {
 			LOGGER.trace("no bugtracker");
 			return new ModelAndView("fragment/issues/bugtracker-panel-empty");
-		 } else {
-			 LOGGER.trace("return bugtracker nav button");
-			 ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-nav-button");
-			 mav.addObject("bugtrackers", readableBugTrackers);
-			 return mav;
-		 }
+		} else {
+			LOGGER.trace("return bugtracker nav button");
+			ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-nav-button");
+			mav.addObject("bugtrackers", readableBugTrackers);
+			return mav;
+		}
 	}
 
 	@RequestMapping(value = "{bugtrackerId}/workspace", method = RequestMethod.GET)
 	public ModelAndView showWorkspace(@PathVariable Long bugtrackerId) {
 		BugTracker bugTracker = bugTrackerFinderService.findById(bugtrackerId);
 		ModelAndView mav = new ModelAndView("page/bugtracker-workspace");
-		 mav.addObject("bugtrackerUrl", bugTracker.getUrl().toString());
+		mav.addObject("bugtrackerUrl", bugTracker.getUrl().toString());
 		return mav;
 	}
 
@@ -223,8 +224,8 @@ public class BugtrackerController {
 			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(EXECUTION_STEP_TYPE, stepId, npException);
 		}
 
-		return new StepIssuesTableModel(bugTrackersLocalService).buildDataModel(filteredCollection, sorter.getFirstItemIndex() + 1,
-				params.getsEcho());
+		return new StepIssuesTableModel(bugTrackersLocalService).buildDataModel(filteredCollection,
+				sorter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
@@ -309,8 +310,8 @@ public class BugtrackerController {
 			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(EXECUTION_TYPE, execId, npException);
 		}
 
-		return new ExecutionIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(filteredCollection,
-				sorter.getFirstItemIndex() + 1, params.getsEcho());
+		return new ExecutionIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
+				filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
@@ -387,8 +388,8 @@ public class BugtrackerController {
 		} catch (NullArgumentException npException) {
 			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(TEST_CASE_TYPE, tcId, npException);
 		}
-		return new TestCaseIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(filteredCollection,
-				sorter.getFirstItemIndex() + 1, params.getsEcho());
+		return new TestCaseIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
+				filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
@@ -433,8 +434,8 @@ public class BugtrackerController {
 		} catch (NullArgumentException npException) {
 			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(ITERATION_TYPE, iterId, npException);
 		}
-		return new IterationIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(filteredCollection,
-				sorter.getFirstItemIndex() + 1, params.getsEcho());
+		return new IterationIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
+				filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
@@ -479,8 +480,8 @@ public class BugtrackerController {
 		} catch (NullArgumentException npException) {
 			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(CAMPAIGN_TYPE, campId, npException);
 		}
-		return new IterationIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(filteredCollection,
-				sorter.getFirstItemIndex() + 1, params.getsEcho());
+		return new IterationIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
+				filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
 	}
 
 	/* **************************************************************************************************************
@@ -524,8 +525,8 @@ public class BugtrackerController {
 		} catch (NullArgumentException npException) {
 			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(TEST_SUITE_TYPE, testSuiteId, npException);
 		}
-		return new IterationIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(filteredCollection,
-				sorter.getFirstItemIndex() + 1, params.getsEcho());
+		return new IterationIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
+				filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
@@ -551,9 +552,9 @@ public class BugtrackerController {
 
 	}
 
-	@RequestMapping(value = "/status", method = RequestMethod.GET, params={"projectId"} )
+	@RequestMapping(value = "/status", method = RequestMethod.GET, params = { "projectId" })
 	public @ResponseBody
-	Object getBugTrackerStatus(@RequestParam("projectId")Long projectId) {
+	Object getBugTrackerStatus(@RequestParam("projectId") Long projectId) {
 		String strStatus = null;
 
 		BugTrackerStatus status = checkStatus(projectId);
@@ -594,9 +595,10 @@ public class BugtrackerController {
 
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/issues/{issueId}", method = RequestMethod.DELETE)
-	public @ResponseBody void detachIssue(@PathVariable("issueId") Long issueId) {		
+	public @ResponseBody
+	void detachIssue(@PathVariable("issueId") Long issueId) {
 		bugTrackersLocalService.detachIssue(issueId);
 	}
 
@@ -640,7 +642,8 @@ public class BugtrackerController {
 	 * 
 	 * If the bugtracker isn'st defined no panel will be sent at all.
 	 */
-	private ModelAndView makeIssuePanel(Identified entity, String type, Locale locale, String panelStyle, Project project) {
+	private ModelAndView makeIssuePanel(Identified entity, String type, Locale locale, String panelStyle,
+			Project project) {
 		if (project.isBugtrackerConnected()) {
 			BugTrackerStatus status = checkStatus(project.getId());
 			// JSON STATUS TODO
@@ -657,7 +660,7 @@ public class BugtrackerController {
 			mav.addObject("bugTrackerStatus", status);
 			mav.addObject("project", project);
 			mav.addObject("bugTracker", project.findBugTracker());
-			mav.addObject("delete","");
+			mav.addObject("delete", "");
 			return mav;
 		} else {
 			return new ModelAndView(EMPTY_BUGTRACKER_MAV);
@@ -671,14 +674,14 @@ public class BugtrackerController {
 		return bugTrackersLocalService.checkBugTrackerStatus(projectId);
 	}
 
-	
-	private static final class IssueCollectionSorting implements CollectionSorting{
-		
+	private static final class IssueCollectionSorting implements CollectionSorting {
+
 		private DataTableDrawParameters params;
 
-		private IssueCollectionSorting(final DataTableDrawParameters params){
+		private IssueCollectionSorting(final DataTableDrawParameters params) {
 			this.params = params;
 		}
+
 		@Override
 		public int getFirstItemIndex() {
 			return params.getiDisplayStart();
@@ -698,26 +701,16 @@ public class BugtrackerController {
 		public int getPageSize() {
 			return params.getiDisplayLength();
 		}
-		
+
 		@Override
 		public boolean shouldDisplayAll() {
-			return (getPageSize()<0);
+			return (getPageSize() < 0);
 		}
-		
-	}
-	
 
-	private FilteredCollectionHolder<List<IssueOwnership<BTIssue>>> makeEmptyCollectionHolder(String entityName,
-			Long entityId, Exception cause) {
-		LOGGER.trace("BugTrackerController : fetching known issues for  " + entityName + " " + entityId
-				+ " failed, exception : ", cause);
-		List<IssueOwnership<BTIssue>> emptyList = new LinkedList<IssueOwnership<BTIssue>>();
-		return new FilteredCollectionHolder<List<IssueOwnership<BTIssue>>>(0, emptyList);
 	}
 
-	
-	private FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> makeEmptyIssueDecoratorCollectionHolder(String entityName,
-			Long entityId, Exception cause) {
+	private FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> makeEmptyIssueDecoratorCollectionHolder(
+			String entityName, Long entityId, Exception cause) {
 		LOGGER.trace("BugTrackerController : fetching known issues for  " + entityName + " " + entityId
 				+ " failed, exception : ", cause);
 		List<IssueOwnership<BTIssueDecorator>> emptyList = new LinkedList<IssueOwnership<BTIssueDecorator>>();

@@ -228,7 +228,7 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 
 	private static final class BelongsToList implements Predicate {
 
-		Collection<String> wizardIds;
+		private Collection<String> wizardIds;
 
 		public BelongsToList(Collection<String> wizardIds) {
 			this.wizardIds = wizardIds;
@@ -244,7 +244,7 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 
 	private static final class AbsentFromList implements Predicate {
 
-		Collection<String> wizardIds;
+		private Collection<String> wizardIds;
 
 		public AbsentFromList(Collection<String> wizardIds) {
 			this.wizardIds = wizardIds;

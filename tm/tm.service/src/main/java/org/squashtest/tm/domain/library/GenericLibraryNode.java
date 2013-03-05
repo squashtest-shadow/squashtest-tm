@@ -114,8 +114,8 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 	
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
+		final int prime = 67;
+		int result = 3;
 		result = prime * result
 				+ ((getAttachmentList() == null) ? 0 : getAttachmentList().hashCode());
 		result = prime * result
@@ -126,36 +126,36 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 	}
 
 	@Override //NOSONAR code generation, assumed to be safe
-	public boolean equals(Object obj) {//NOSONAR 
-		if (this == obj)//NOSONAR 
-			return true;//NOSONAR 
-		if (obj == null)//NOSONAR 
-			return false;//NOSONAR 
-		if (! ( this.getClass().isAssignableFrom(obj.getClass()) || obj.getClass().isAssignableFrom(getClass()) ))//NOSONAR 
-			return false;//NOSONAR 
-		GenericLibraryNode other = (GenericLibraryNode) obj;//NOSONAR 
-		if (getAttachmentList() == null) {//NOSONAR 
-			if (other.getAttachmentList() != null)//NOSONAR 
-				return false;//NOSONAR 
-		} else if (!getAttachmentList().equals(other.getAttachmentList()))//NOSONAR 
-			return false;//NOSONAR 
-		if (getDescription() == null) {//NOSONAR 
-			if (other.getDescription() != null)//NOSONAR 
-				return false;//NOSONAR 
-		} else if (!getDescription().equals(other.getDescription()))//NOSONAR 
-			return false;//NOSONAR 
-		if (getId() == null) {//NOSONAR 
-			if (other.getId() != null)//NOSONAR 
-				return false;//NOSONAR 
-		} else if (!getId().equals(other.getId()))//NOSONAR 
-			return false;//NOSONAR 
-		if (getName() == null) {//NOSONAR 
-			if (other.getName() != null)//NOSONAR 
-				return false;//NOSONAR 
-		} else if (!getName().equals(other.getName()))//NOSONAR 
-			return false;//NOSONAR 
-		return true;//NOSONAR 
-	}
+	public boolean equals(Object obj) {// GENERATED:START
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (! ( this.getClass().isAssignableFrom(obj.getClass()) || obj.getClass().isAssignableFrom(getClass()) ))
+			return false;
+		GenericLibraryNode other = (GenericLibraryNode) obj;
+		if (getAttachmentList() == null) {
+			if (other.getAttachmentList() != null)
+				return false;
+		} else if (!getAttachmentList().equals(other.getAttachmentList()))
+			return false;
+		if (getDescription() == null) {
+			if (other.getDescription() != null)
+				return false;
+		} else if (!getDescription().equals(other.getDescription()))
+			return false;
+		if (getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!getId().equals(other.getId()))
+			return false;
+		if (getName() == null) {
+			if (other.getName() != null)
+				return false;
+		} else if (!getName().equals(other.getName()))
+			return false;
+		return true;
+	} // GENERATED:END
 
 
 

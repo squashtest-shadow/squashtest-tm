@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.administration;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +35,6 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,20 +49,15 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
-import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
-import org.squashtest.tm.service.security.acls.PermissionGroup;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.project.ProjectModel;
-import org.squashtest.tm.web.internal.controller.users.PermissionGroupModel;
+import org.squashtest.tm.web.internal.controller.users.PartyControllerSupport;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -77,14 +70,13 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 @Controller
 @RequestMapping("/administration/users")
-public class UserAdministrationController {
+public class UserAdministrationController extends PartyControllerSupport {
 
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserAdministrationController.class);
 	private static final String USER_URL = "/{userId}";
 	
 	private AdministrationService adminService;
-	private ProjectsPermissionManagementService permissionService;
 
 	@Inject
 	private MessageSource messageSource;
@@ -109,12 +101,6 @@ public class UserAdministrationController {
 	public void setAdministrationService(AdministrationService adminService) {
 		this.adminService = adminService;
 	}
-
-	@ServiceReference
-	public void setProjectsPermissionManagementService(ProjectsPermissionManagementService permissionService) {
-		this.permissionService = permissionService;
-	}
-	
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView getUserList(Locale locale) {
@@ -161,6 +147,7 @@ public class UserAdministrationController {
 	
 
 
+	@SuppressWarnings("rawtypes")
 	private DataTableSorting createSorting(final DataTableDrawParameters params, final DatatableMapper mapper) {
 		return new DataTableSorting(params, mapper);
 	}
@@ -181,7 +168,7 @@ public class UserAdministrationController {
 		User user = adminService.findUserById(userId);
 		List<UsersGroup> usersGroupList = adminService.findAllUsersGroupOrderedByQualifiedName();
 		
-		List<?> permissionModel = _getPermissionTableModel(userId, new DefaultPagingAndSorting(), DefaultFiltering.NO_FILTERING, "").getAaData();
+		List<?> permissionModel = createPermissionTableModel(userId, new DefaultPagingAndSorting(), DefaultFiltering.NO_FILTERING, "").getAaData();
 		model.addAttribute("permissions",permissionModel);
 		
 		Map<String,Object> permissionPopupModel = getPermissionPopup(userId);
@@ -252,38 +239,14 @@ public class UserAdministrationController {
 
 	@RequestMapping(value = USER_URL+"/permission-popup", method = RequestMethod.GET)
 	public @ResponseBody Map<String,Object> getPermissionPopup(@PathVariable long userId) {
-		Locale locale = LocaleContextHolder.getLocale();
-		User user = adminService.findUserById(userId);
-		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
-		List<Project> projectList = permissionService.findProjectWithoutPermissionByParty(userId);
-
-		List<PermissionGroupModel>  permissionGroupModelList = new ArrayList<PermissionGroupModel>();
-		if(permissionList != null){
-			for(PermissionGroup permission : permissionList){
-				PermissionGroupModel model = new PermissionGroupModel(permission);
-				model.setDisplayName(messageSource.getMessage("user.project-rights."+model.getSimpleName()+".label", null, locale));
-				permissionGroupModelList.add(model);
-				
-			}
-		}
-		List<ProjectModel> projectModelList = new ArrayList<ProjectModel>();
-		if(projectList != null){
-			for(Project project : projectList){
-				projectModelList.add(new ProjectModel(project));
-			}
-		}
-		Map<String, Object> res = new HashMap<String, Object>();
-		res.put("projectList", projectModelList);
-		res.put("permissionList", permissionGroupModelList);
-		
-		return res;
+		return createPermissionPopupModel(userId);
 	}
 
 	@RequestMapping(value = USER_URL+"/permissions", method = RequestMethod.GET, params=RequestParams.S_ECHO_PARAM)
 	public 	@ResponseBody DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable("userId") long userId) {
 		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, permissionMapper, SortedAttributeSource.SINGLE_ENTITY);
 		Filtering filtering = new DataTableFiltering(params);
-		return _getPermissionTableModel(userId, paging, filtering, params.getsEcho());
+		return createPermissionTableModel(userId, paging, filtering, params.getsEcho());
 	}
 
 	private String formatString(String arg, Locale locale) {
@@ -309,41 +272,6 @@ public class UserAdministrationController {
 	}
 	
 	
-	private DataTableModel _getPermissionTableModel(long userId, PagingAndSorting paging, Filtering filtering, String secho){
-		Locale locale = LocaleContextHolder.getLocale();
-		PagedCollectionHolder<List<ProjectPermission>> holder = permissionService.findProjectPermissionByParty(userId,paging,filtering);
-		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
-		return new PermissionTableModelHelper(locale,messageSource,permissionList).buildDataModel(holder, secho);
-	}
-
-	private static final class PermissionTableModelHelper extends DataTableModelHelper<ProjectPermission> {
-
-		private List<PermissionGroup> permissionList;
-		private MessageSource messageSource;
-		private Locale locale;
-		
-		private PermissionTableModelHelper(Locale locale, MessageSource messageSource, List<PermissionGroup> permissionList){
-			this.locale = locale;
-			this.messageSource = messageSource;
-			this.permissionList = permissionList;
-		}
-		
-		@Override
-		public Map<String, Object> buildItemData(ProjectPermission item) {
-			Map<String, Object> res = new HashMap<String, Object>();
-			res.put("project-id",item.getProject().getId());
-			res.put("project-index", getCurrentIndex());
-			res.put("project-name",item.getProject().getName());
-			res.put("permission-id",item.getPermissionGroup().getId());
-			res.put("permission-name",item.getPermissionGroup().getQualifiedName());
-			res.put("permission-simplename", item.getPermissionGroup().getSimpleName());
-			res.put("permission-displayname", messageSource.getMessage("user.project-rights."+item.getPermissionGroup().getSimpleName()+".label", null, locale));
-			res.put("permission-list", permissionList);
-			res.put("empty-delete-holder", null);
-			res.put("empty-permission-list-holder", null);
-			return res;
-		}
-	}
 
 	/**
 	 * Builds datatable model for users table

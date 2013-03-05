@@ -37,7 +37,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.project.GenericLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -60,11 +59,6 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 
 	@OneToOne(mappedBy = "requirementLibrary")
 	private GenericProject project;	
-	
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinColumn(name = "ATTACHMENT_LIST_ID")
-	private final AttachmentList attachmentList = new AttachmentList();
-
 	
 	@ElementCollection
 	@CollectionTable(name = "REQUIREMENT_LIBRARY_PLUGINS", joinColumns = @JoinColumn(name = "LIBRARY_ID"))
@@ -149,12 +143,6 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	public boolean hasContent() {
 		return (rootContent.size() > 0);
 	}
-
-	@Override
-	public AttachmentList getAttachmentList() {
-		return attachmentList;
-	}
-
 	
 	@Override
 	public void accept(NodeContainerVisitor visitor) {

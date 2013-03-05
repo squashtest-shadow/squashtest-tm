@@ -52,6 +52,6 @@ public interface WorkspaceWizard extends WizardPlugin {
 	 * 
 	 * @param reference to a given object
 	 */
-	void validate(EntityReference reference);
+	void validate(EntityReference reference) throws WizardValidationException;
 	
 }

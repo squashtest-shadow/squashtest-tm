@@ -30,7 +30,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -38,7 +37,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.project.GenericLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -61,11 +59,6 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	@OneToOne(mappedBy = "testCaseLibrary")
 	private GenericProject project;
 		
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinColumn(name = "ATTACHMENT_LIST_ID")
-	private final AttachmentList attachmentList = new AttachmentList();
-	
-	
 	@ElementCollection
 	@CollectionTable(name = "TEST_CASE_LIBRARY_PLUGINS", joinColumns = @JoinColumn(name = "LIBRARY_ID"))
 	@Enumerated(EnumType.STRING)
@@ -138,10 +131,6 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	@Override
 	public boolean hasContent() {
 		return (rootContent.size() > 0);
-	}
-	@Override
-	public AttachmentList getAttachmentList() {
-		return attachmentList;
 	}
 	
 	@Override

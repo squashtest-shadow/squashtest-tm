@@ -23,8 +23,13 @@ package org.squashtest.tm.domain.project;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.JoinColumn;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.library.LibraryNodeUtils;
@@ -39,8 +44,11 @@ import org.squashtest.tm.service.security.annotation.AclConstrainedObject;
  * @param <NODE>
  *            The type of nodes this library contains.
  */
+@MappedSuperclass
 public abstract class GenericLibrary<NODE extends LibraryNode> implements Library<NODE> {
-
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "ATTACHMENT_LIST_ID")
+	private final AttachmentList attachmentList = new AttachmentList();
 
 	public GenericLibrary() {
 		super();
@@ -106,7 +114,10 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 		}
 		return contentNames;
 	}
-	
 
-	
+	@Override
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
+	}
+
 }

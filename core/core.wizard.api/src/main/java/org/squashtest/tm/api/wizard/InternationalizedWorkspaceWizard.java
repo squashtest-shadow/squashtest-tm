@@ -36,27 +36,21 @@ import org.squashtest.tm.core.foundation.lang.Assert;
  * @author Gregory Fouquet
  * 
  */
-public class InternationalizedWorkspaceWizard extends ContextBasedInternationalized 
-											  implements WorkspaceWizard, BeanNameAware, BundleContextAware {
-	
+public class InternationalizedWorkspaceWizard extends ContextBasedInternationalized implements WorkspaceWizard,
+		BeanNameAware, BundleContextAware {
 
-	private BundleContext bundleContext;
-	
 	private WorkspaceType displayWorkspace;
 	private MenuItem wizardMenu;
 	private String id;
-	
+
 	private String filename;
 	private String version;
-	
-	
-	 public void setBundleContext(BundleContext bundleContext){
-		 this.bundleContext = bundleContext;
-		 version = bundleContext.getBundle().getVersion().toString();
-		 filename = bundleContext.getBundle().getSymbolicName();	//TODO : make better than this	
-	 }
-	
-	
+
+	public void setBundleContext(BundleContext bundleContext) {
+		version = bundleContext.getBundle().getVersion().toString();
+		filename = bundleContext.getBundle().getSymbolicName(); // TODO : make better than this
+	}
+
 	/**
 	 * i18n key of this wizard's name
 	 */
@@ -102,7 +96,7 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	public String getId() {
 		return id;
 	}
-	
+
 	@Override
 	public String getFilename() {
 		return filename;
@@ -114,27 +108,29 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	}
 
 	/**
-	 * @param nameKey the nameKey to set
+	 * @param nameKey
+	 *            the nameKey to set
 	 */
 	public void setNameKey(String nameKey) {
 		this.nameKey = nameKey;
 	}
 
 	/**
-	 * @param wizardMenu the wizardMenu to set
+	 * @param wizardMenu
+	 *            the wizardMenu to set
 	 */
 	public void setWizardMenu(MenuItem wizardMenu) {
 		this.wizardMenu = wizardMenu;
 	}
 
 	/**
-	 * @param displayWorkspace the displayWorkspace to set
+	 * @param displayWorkspace
+	 *            the displayWorkspace to set
 	 */
 	public void setDisplayWorkspace(WorkspaceType displayWorkspace) {
 		this.displayWorkspace = displayWorkspace;
 	}
-	
-	
+
 	/**
 	 * This default validation always passes.
 	 * 
@@ -142,9 +138,8 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	 */
 	@Override
 	public void validate(EntityReference reference) {
-		//defaults : allways passes
+		// defaults : allways passes
 	}
-	
 
 	@PostConstruct
 	public void checkBeanState() {
