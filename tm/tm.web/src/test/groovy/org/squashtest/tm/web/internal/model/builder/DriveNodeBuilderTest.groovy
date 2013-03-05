@@ -81,4 +81,17 @@ class DriveNodeBuilderTest extends Specification {
 		then:
 		res.attr['editable'] == 'true'
 	}
+
+	def "node should reference authorized wizards"() {
+		given:
+		def library = theTestCaseLibrary(10L).ofProject("foo")
+		library.enablePlugin("foo");
+		library.enablePlugin("bar");
+		
+		when:
+		JsTreeNode res = builder.setModel(library).build();
+
+		then:
+		res.attr["wizards"].collect { it } ==  ["foo", "bar"]
+	}
 }

@@ -77,17 +77,17 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui", "jquery.s
 		 */
 		_refreshItemAccessHandler : function(selectedNodes) {
 			var self = this;
-			return function(item) {
-				var accessRule = item.accessRule;
+			return function(wizard) {
+				var accessRule = wizard.accessRule;
 				var enabled = self._checkSelectionMode(selectedNodes, accessRule) &&
 						self._checkPermission(selectedNodes, accessRule) &&
-						self._checkWizardActivation(selectedNodes, item);
+						self._checkWizardActivation(selectedNodes, wizard);
 
 				if (enabled) {
-					self.menu.buttons[item.name].enable();
+					self.menu.buttons[wizard.name].enable();
 					
 				} else {
-					self.menu.buttons[item.name].disable();
+					self.menu.buttons[wizard.name].disable();
 					
 				}
 			};
@@ -137,7 +137,9 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui", "jquery.s
 		 * nodes
 		 */
 		_checkWizardActivation : function(selectedNodes, wizard) {
-			return true;
+			return _.reduce(selectedNodes, function(reduced, node) {
+				return reduced && $(node).treeNode().isWorkspaceWizardEnabled(wizard);
+			}, true);
 		}
 	});
 

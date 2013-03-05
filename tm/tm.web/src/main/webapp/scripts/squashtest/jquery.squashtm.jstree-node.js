@@ -132,12 +132,12 @@
 		this.isDeletable = function() {
 			return this.reference.attr('deletable') === "true";
 		};
-		
+
 		/**
 		 * Checks if some permission is authorized for this node.
 		 */
 		this.isAuthorized = function(permission) {
-			// binds a permission to its quality, 
+			// binds a permission to its quality,
 			var qualities = {
 				READ : "readable",
 				SMALL_EDIT : "smallEdit",
@@ -146,17 +146,27 @@
 				DELETE : "deletable",
 				EXECUTE : "executable"
 			};
-			
+
 			if (permission === "ANY") {
 				return true;
 			}
-			
+
 			var candidate = qualities[permission];
 			if (candidate) {
 				return this.reference.attr(candidate) === "true";
-			} 
+			}
 			// permission not defined => not authorized
 			return false;
+		};
+		/**
+		 * Checks if a given workspace wizard is enabled for this node.
+		 * @param wizard an object with an id property which will be used to perfprm the check
+		 */
+		this.isWorkspaceWizardEnabled = function(wizard) {
+			// enabled wizards list is flattened into comma-separated string
+			var enabledWizardsAttr = this.getLibrary().attr("wizards");
+			var enabledWizards = (enabledWizardsAttr === undefined) ? [] : enabledWizardsAttr.split(",");
+			return enabledWizards && ($.inArray(wizard.id, enabledWizards) > -1);
 		};
 
 		this.getName = function() {

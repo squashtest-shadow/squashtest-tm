@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.model.jstree;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class JsTreeNode {
 	private JsTreeNodeData data = new JsTreeNodeData();
 
 	// Attributes of the node (e.g. : id, class...)
-	private Map<String, String> attr = new HashMap<String, String>();
+	private Map<String, Object> attr = new HashMap<String, Object>();
 
 	private State state = State.closed;
 
@@ -49,12 +50,20 @@ public class JsTreeNode {
 		return data;
 	}
 
-	public Map<String, String> getAttr() {
+	public Map<String, Object> getAttr() {
 		return attr;
 	}
 
 	public void addAttr(String key, String value) {
 		this.attr.put(key, value);
+	}
+
+	public void addAttr(String key, Number value) {
+		this.attr.put(key, value);
+	}
+
+	public void addAttr(String key, Collection<?> values) {
+		this.attr.put(key, values);
 	}
 
 	public State getState() {
