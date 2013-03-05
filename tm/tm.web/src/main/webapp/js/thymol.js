@@ -1,26 +1,6 @@
-/*
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2012 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
- */
 /*-------------------- Thymol - the flavour of Thymeleaf --------------------*
 
-   Thymol version 0.1.1-SNAPSHOT Copyright 2012 James J. Benson.
+   Thymol version 0.1.2 Copyright 2012 James J. Benson.
    jjbenson .AT. users.sf.net
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,6 +19,7 @@
 
 var thURL = "http://www.thymeleaf.org";
 var thPrefix = "th";
+var thProtocol = "file:///";
 var thCache = new Object;
 
 $(function() {
@@ -46,7 +27,7 @@ $(function() {
 });
 
 var thymol = function() {
-
+	
 	var urlParams = {};
 	(function() {
 		var e, a = /\+/g, r = /([^&=]+)=?([^&]*)/g, d = function(s) {
@@ -59,26 +40,13 @@ var thymol = function() {
 		}
 	})();
 
-	var debug = false;
-
-	var thDebugParam = urlParams["thDebug"];
-	if (thDebugParam) {
-		debug = thDebugParam.getBooleanValue();
-	}
-	else {
-		try {			
-			if( !(typeof thDebug === "undefined") ) {
-				if ( thDebug != null) {
-					debug = (thDebug==true);
-				}								
-			}
-		}
-		catch (err) {
-		}				
-	}
+	var debug = getThParam("thDebug",true,false);
+	var root = getThParam("thRoot",false,true);
+	var path = getThParam("thPath",false,true);
 
 	$.ajaxSetup({
-		async : false
+		async : false,
+		isLocal : true
 	});
 
 	(function() {
@@ -102,11 +70,12 @@ var thymol = function() {
 	var thCase = new ThObj("case");
 
 	var thFragEscp = "[" + thPrefix + "\\:fragment='";
-	var root = new ThNode(document, false, null, null, null, document.nodeName, "::", false, document);
-	process(root);
+	var base = new ThNode(document, false, null, null, null, document.nodeName, "::", false, document);
+	process(base);
+	return;
 
-	function process(root) {
-		var n = root;
+	function process(base) {
+		var n = base;
 		while (n.thDoc) {
 			getChildren(n);
 			if (n.firstChild && n.firstChild.thDoc && !n.visited) {
@@ -119,7 +88,7 @@ var thymol = function() {
 					n = n.nextSibling;
 				}
 				else {
-					if (n == root)
+					if (n == base)
 						break;
 					else {
 						n = n.parentDoc;
@@ -143,7 +112,6 @@ var thymol = function() {
 				}
 			});
 		});
-
 		var thInclSpecs = $(thIncl.escp, base.thDoc);
 		var thSubsSpecs = $(thSubs.escp, base.thDoc);
 		ths = $(thInclSpecs).add(thSubsSpecs);
@@ -184,7 +152,6 @@ var thymol = function() {
 					negate = true;
 					param = args[1].substring(1);
 				}
-				;
 				if ((!negate && isTrue(param)) || (negate && !isTrue(param))) {
 					if (thUnless.name == attr.name) { // true for "if" and
 						// false for "unless"
@@ -240,16 +207,16 @@ var thymol = function() {
 		var filePart = null;
 		var fragmentPart = "::";
 		if (attr.value.indexOf("::") < 0) {
-			filePart = substitute(attr.value);
+			filePart = getFilePart(attr.value); 
 		}
 		else {
 			var names = attr.value.split("::");
-			filePart = substitute(names[0].trim());
+			filePart = getFilePart(names[0].trim());
 			fragmentPart = substitute(names[1].trim());
 		}
-		var isNode = (thSubs == attr.localName);
+		var isNode = (thSubs.name == attr.localName);
 		if (thCache[filePart] != null && thCache[filePart][fragmentPart] != null) {
-			isNode = ((thSubs == attr.localName) || (fragmentPart == "::"));
+			isNode = ((thSubs.name == attr.localName) || (fragmentPart == "::"));
 			importNode = new ThNode(thCache[filePart][fragmentPart], false, base, null, null, filePart, fragmentPart, isNode, element);
 		}
 		else {
@@ -275,7 +242,7 @@ var thymol = function() {
 				else if (debug) {
 					window.alert("file read failed: " + filePart + " fragment: " + fragmentPart);
 				}
-			}, "xml");
+	    	}, "xml");
 			if (importNode == null && debug) {
 				window.alert("fragment import failed: " + filePart + " fragment: " + fragmentPart);
 			}
@@ -283,13 +250,33 @@ var thymol = function() {
 		element.removeAttribute(attr.name);		
 		return importNode;
 	}
+	
+	function getFilePart(part) {
+		var result = substitute(part);
+		if( result.charAt(0) != '.' ) {	// Initial period character indicates a relative path
+			if( result.indexOf('/') >= 0 ) {	// If it doesn't start with a '.', and there are no path separators, it's also treated as relative
+				result = thProtocol + root + path + result;													
+			}
+		}
+		return result;
+	}
 
 	function doReplace(isNode, element, content) {
 		if (isNode) {
 			element.parentNode.replaceChild(content.cloneNode(true), element);
 		}
-		else {
-			element.innerHTML = content.innerHTML;
+		else {			
+			try {
+				element.innerHTML = content.innerHTML;
+			}
+			catch (err) { // Work-around for IE
+				while (element.firstChild != null) {
+					element.removeChild(element.firstChild);
+				}
+				for (i = 0; i < content.childNodes.length; i++) {
+					element.appendChild(content.childNodes[i].cloneNode(true));
+				}
+			}			
 		}
 	}
 
@@ -344,6 +331,46 @@ var thymol = function() {
 			}		
 		}			
 		return result;
+	}
+
+	function getThParam(paramName,isBoolean,isPath) {
+		var localValue;
+		if( isBoolean ) {
+			localValue = false;
+		}
+		else {
+			localValue = "";			
+		}
+		var theParam = urlParams[paramName];
+		if (isBoolean && theParam) {
+			localValue = theParam.getBooleanValue();
+		}
+		else {
+			var paramValue;
+			try {			
+				paramValue = eval(paramName);
+				if( !(typeof paramValue === "undefined") ) {
+					if( paramValue != null ) {
+						if ( isBoolean ) {
+							localValue = (paramValue==true);
+						}								
+						else {
+							localValue = paramValue;							
+						}
+					}
+				}
+			}
+			catch (err) {
+				if (err instanceof ReferenceError) {					
+				}
+				if (err instanceof EvalError) {					
+				}
+			}				
+		}
+		if( !isBoolean && isPath && localValue.length > 0 && localValue.charAt(localValue.length-1) != '/' ) {
+			localValue = localValue + '/';
+		}
+		return localValue;
 	}
 
 };

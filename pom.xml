@@ -290,6 +290,7 @@
             <exclude>**/.hgtags</exclude>
             <exclude>**/.hgignore</exclude>
 						<!-- third-party javascript libraries -->
+            <exclude>**/js/**/*.*</exclude>
             <exclude>**/scripts/ckeditor/**/*.*</exclude>
             <exclude>**/scripts/datatables/**/*.*</exclude>
             <exclude>**/scripts/jquery/**/*.*</exclude>
