@@ -9,6 +9,8 @@
 	<artifactId>plugin.bugtracker.mantis</artifactId>
 	<name>plugin.bugtracker.mantis</name>
 	<description>Squash TM connector for MantisBT bugtrackers</description>
+	<packaging>bundle</packaging>
+	
 	<properties>
 		<bundle.name>${project.groupId}.${project.artifactId}</bundle.name>
 		<bundle.symbolicName>${bundle.name}</bundle.symbolicName>
@@ -200,25 +202,19 @@
 				</dependencies>
 			</plugin>
       <!-- ====== /AXIS 1.4 ====== -->
+      
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>com.springsource.bundlor</groupId>
-				<artifactId>com.springsource.bundlor.maven</artifactId>
-				<executions>
-					<execution>
-						<id>bundlor</id>
-						<goals>
-							<goal>bundlor</goal>
-						</goals>
-					</execution>
-				</executions>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
 				<configuration>
-					<removeNullHeaders>true</removeNullHeaders>
+					<instructions>
+						<_include>bnd.bnd</_include>
+					</instructions>
 				</configuration>
 			</plugin>
+			
+			<!--
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -229,6 +225,7 @@
 					</archive>
 				</configuration>
 			</plugin>
+			  -->
 			<!-- ====== SPOCK TESTS ====== -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

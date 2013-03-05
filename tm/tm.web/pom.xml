@@ -137,7 +137,6 @@
     <dependency>
       <groupId>org.springframework.osgi</groupId>
       <artifactId>spring-osgi-web</artifactId>
-      <version>${springdm.version}</version>
       <scope>runtime</scope>
     </dependency>
 		<!-- ====== /SPRING DM WEB CONTEXT ====== -->

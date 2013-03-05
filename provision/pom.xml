@@ -283,7 +283,8 @@
 		</profile>
 	</profiles>
 
-	<dependencies>
+		<dependencies>
+	
 		<!-- ====== SQUASHTEST ====== -->
 		<!-- Squashtest core modules -->
 		<dependency>
