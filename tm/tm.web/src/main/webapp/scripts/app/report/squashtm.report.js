@@ -250,7 +250,6 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui", "jeditable
 	
 	function buildViewUrl(index, format) {
 		// see [Issue 1205] for why "document.location.protocol"
-
 		return document.location.protocol + '//' + document.location.host + config.reportUrl + "/views/" + index + "/formats/" + format;
 
 	}

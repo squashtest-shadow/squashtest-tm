@@ -37,13 +37,17 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui", "jquery.s
 			this.menu = this.$("#wizard-tree-button").squashButton({
 				disabled : !enabled
 			});
-
+			this.formContainer = this.$("#start-ws-wizard-container");
+			
 			this.render();
+			
+			// in a perfect world, we would write $("container").on("click", "a", ...) but menu breaks event bubbling
+			$("#ws-wizard-tree-menu a").on("click", $.proxy(this._onMenuClicked, this));
 		},
 
 		render : function() {
 			if (this.collection.length > 0) {
-				var source = this.$("#wizard-tree-menu-template").html();
+				var source = this.$("#ws-wizard-tree-menu-template").html();
 				var template = Handlebars.compile(source);
 
 				var options = {
@@ -64,13 +68,21 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui", "jquery.s
 		},
 
 		/**
+		 * Notifies the menu of new nodes selection and refreshes the menu access.
+		 */
+		refreshSelection : function(selectedNodes) {
+			this.selectedNodes = selectedNodes;
+			this.refreshAccess(selectedNodes);
+		}, 
+		
+		/**
 		 * Refreshes the access to the menu items
 		 */
 		refreshAccess : function(selectedNodes) {
 			var refreshItemAccess = this._refreshItemAccessHandler(selectedNodes);
 			_.each(this.collection, refreshItemAccess);
 		},
-
+		
 		/**
 		 * Returns a handler for refreshing a menu item in the given node
 		 * context.
@@ -140,6 +152,26 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui", "jquery.s
 			return _.reduce(selectedNodes, function(reduced, node) {
 				return reduced && $(node).treeNode().isWorkspaceWizardEnabled(wizard);
 			}, true);
+		}, 
+		
+		/**
+		 * Event handler triggered when menu item is clicked. Posts the selected nodes to the wizard's url
+		 */
+		_onMenuClicked : function(event, data) {
+			var wizard = _.find(this.collection, function(wizard) {
+				return wizard.name === event.target.id;
+			});
+			
+			var postData = { url : wizard.url };
+			postData.nodes = _.map(this.selectedNodes, function(node) {
+				var $node = $(node).treeNode();
+				return { type : $node.getResType(), id : $node.getResId() };
+			});
+			
+			var source = this.$("#start-ws-wizard-form-template").html();
+			var template = Handlebars.compile(source);
+			this.formContainer.html(template(postData));
+			this.formContainer.find("form").submit();
 		}
 	});
 

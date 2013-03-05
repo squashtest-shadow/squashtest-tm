@@ -35,17 +35,17 @@ define([ "jquery", "backbone", "handlebars", "workspace/WorkspaceWizardMenu", "j
 			
 			// apparently, jstree events dont bubble correctly, backbone cant capture events
 			// $().on changes this to emitter DOM -> proxy
-			tree.on("select_node.jstree deselect_node.jstree deselect_all.jstree", $.proxy(this._notifyTreeSelectionChanged, this));
+			tree.on("select_node.jstree deselect_node.jstree deselect_all.jstree", $.proxy(this._onTreeSelectionChanged, this));
 			
 			// initialize menu state
-			this.menu.refreshAccess(tree.jstree("get_instance").get_selected());
+			this.menu.refreshSelection(tree.jstree("get_instance").get_selected());
 		},
 		
 		events : {
 		},
 
-		_notifyTreeSelectionChanged : function(event, data) {
-			this.menu.refreshAccess(data.inst.get_selected());
+		_onTreeSelectionChanged : function(event, data) {
+			this.menu.refreshSelection(data.inst.get_selected());
 		}
 		
 	});

@@ -65,15 +65,24 @@
 <c:if test="${ not empty wizards }">
 <div id="wizard-tree-pane" class="button-group">
 	<a id="wizard-tree-button" class="not-displayed" href="JavaScript:void(0);" data-icon="ui-icon-wizard" data-text="false"><f:message key="label.wizards" />...</a>
-	<script id="wizard-tree-menu-template" type="text/x-handlebars-template">
-		<div id="wizard-tree-menu"> 
+	<script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">
+		<div id="ws-wizard-tree-menu"> 
 			<ul>
 				{{#each wizards}}
-				<li><a id="{{this.name}}" class="menu-disabled" href="{{this.url}}" title="{{this.tooltip}}">{{this.label}}...</a></li>
+				<li><a id="{{this.name}}" class="menu-disabled" href="javascript:void(0)" title="{{this.tooltip}}">{{this.label}}...</a></li>
 				{{/each}}
 			</ul>
 		</div>
 	</script>
+	<script id="start-ws-wizard-form-template" type="text/x-handlebars-template">
+		<form id="start-ws-wizard-form" action="{{url}}" method="post"> 
+			{{#each nodes}}
+			<input type="hidden" name="{{this.type}}" value="{{this.id}}" />
+			{{/each}}
+		</form>
+	</script>
+	<div id="start-ws-wizard-container" class="not-displayed">
+	</div>
 </div>
 </c:if>
 <div class="button-group">
