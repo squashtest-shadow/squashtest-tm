@@ -102,7 +102,7 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager, Works
 	@Override
 	public Collection<WorkspaceWizard> findAllByWorkspace(WorkspaceType workspace) {
 		Collection<WorkspaceWizard> res = readWizards(workspace);
-		if (res == null) {
+		if (res == null) { // NOSONAR res may be null
 			res = Collections.emptyList();
 		}
 		return res;

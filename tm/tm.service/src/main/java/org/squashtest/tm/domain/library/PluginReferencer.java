@@ -23,8 +23,6 @@ package org.squashtest.tm.domain.library;
 import java.util.Set;
 
 public interface PluginReferencer {
-
-	
 	
 	/**
 	 * @return the set of plugin ids that are enabled for this instance.

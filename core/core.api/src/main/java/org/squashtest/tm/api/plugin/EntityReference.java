@@ -70,19 +70,19 @@ public class EntityReference {
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
-	public int hashCode() { // NOSONAR generated
+	public int hashCode() { // GENERATED:START
 		final int prime = 43;
 		int result = 29;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
-	}
+	} // GENERATED:END
 
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object obj) { // NOSONAR generated
+	public boolean equals(Object obj) { // GENERATED:START
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -98,5 +98,5 @@ public class EntityReference {
 		if (type != other.type)
 			return false;
 		return true;
-	}
+	} // GENERATED:END
 }

@@ -64,19 +64,19 @@ class SelectedNodePermission implements AccessRule {
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
-	public int hashCode() { // NOSONAR generated
+	public int hashCode() { // GENERATED:START
 		final int prime = 31;
 		int result = 7;
 		result = prime * result + ((getNodeType() == null) ? 0 : getNodeType().hashCode());
 		result = prime * result + ((getPermission() == null) ? 0 : getPermission().hashCode());
 		return result;
-	}
+	} // GENERATED:END
 
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object obj) { // NOSONAR generated
+	public boolean equals(Object obj) { // GENERATED:START
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -89,6 +89,6 @@ class SelectedNodePermission implements AccessRule {
 		if (getPermission() != other.getPermission())
 			return false;
 		return true;
-	}
+	} // GENERATED:END
 
 }

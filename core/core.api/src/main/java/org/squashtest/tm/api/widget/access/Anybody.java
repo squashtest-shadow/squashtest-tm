@@ -24,15 +24,20 @@ package org.squashtest.tm.api.widget.access;
 import org.squashtest.tm.api.security.acls.AccessRule;
 
 /**
- * @author Gregory
- *
+ * @author Gregory Fouquet
+ * 
  */
 class Anybody implements AccessRule {
 	private static Anybody instance;
+
 	public static final Anybody instance() {
 		if (instance == null) {
 			instance = new Anybody();
 		}
 		return instance;
+	}
+
+	private Anybody() {
+		super();
 	}
 }

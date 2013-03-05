@@ -32,4 +32,5 @@ import org.squashtest.tm.domain.project.ProjectResource;
  */
 public interface Library<NODE extends LibraryNode> extends ProjectResource<GenericProject>, SelfClassAware, NodeContainer<NODE>, Identified, AttachmentHolder, PluginReferencer {
 	public void notifyAssociatedWithProject(GenericProject p) ;
+
 }

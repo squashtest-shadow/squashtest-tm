@@ -41,16 +41,15 @@
 			return function() {
 				return null;
 			};
-			break;
 		default:
 			return function() {
 				var wkspce = treeNode.getWorkspace();
 				var dmtpe = treeNode.getDomType();
 				var id = treeNode.getResId();
 				return this.getBrowserUrl() + '/' + dmtpe + "s/" + id + "/content";
-			}
+			};
 		}
-	}
+	};
 
 	var buildRefreshLabel = function(treeNode) {
 
@@ -65,7 +64,6 @@
 				}
 				this.getTree().set_text(this, reference + name);
 			};
-			break;
 
 		case "iterations":
 			return function() {
@@ -74,20 +72,17 @@
 				if (index.length > 0) {
 					index += " - ";
 				}
-				;
 				this.getTree().set_text(this, index + name);
 			};
-			break;
 
 		default:
 			return function() {
 				var name = this.getName();
 				this.getTree().set_text(this, name);
-			}
-			break;
+			};
 		}
 
-	}
+	};
 
 	$.fn.treeNode = function() {
 
@@ -194,7 +189,7 @@
 		this.setReference = function(reference) {
 			this.reference.attr('reference', reference);
 			this.refreshLabel();
-		}
+		};
 
 		// ************ relationships getters
 
@@ -353,7 +348,7 @@
 
 			var attributes;
 
-			if (arguments.length == 0)
+			if (arguments.length === 0)
 				attributes = [ "restype", "resid" ];
 			else
 				attributes = arguments[0];
@@ -374,7 +369,7 @@
 		// returns true if they all have the same or false if they differ.
 		this.allMatch = function(matchObject) {
 
-			if (this.length == 0)
+			if (this.length === 0)
 				return false;
 
 			var shrinkingSet = this;
@@ -438,7 +433,7 @@
 			return this.allMatch({
 				rel : 'view'
 			});
-		}
+		};
 
 		// *************** urls
 

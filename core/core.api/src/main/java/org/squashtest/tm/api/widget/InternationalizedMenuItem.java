@@ -120,7 +120,7 @@ public class InternationalizedMenuItem extends Labelled implements MenuItem, Ini
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	@Override
-	public final void afterPropertiesSet() throws Exception {
+	public final void afterPropertiesSet() {
 		doInitialize();
 		checkBeanState();
 
