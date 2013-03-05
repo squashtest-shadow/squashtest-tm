@@ -21,13 +21,13 @@
 /**
  * This is a template for a backbone module
  */
-define([ "jquery", "backbone", "handlebars", "campaign-workspace/CampaignWizardMenu", "jquery.squash.jstree" ], function($, Backbone,
-		Handlebars, CampaignWizardMenu) {
+define([ "jquery", "backbone", "handlebars", "workspace/WorkspaceWizardMenu", "jquery.squash.jstree" ], function($, Backbone,
+		Handlebars, WorkspaceWizardMenu) {
 	var View = Backbone.View.extend({		
 		el : "#tabbed-pane",
 		
 		initialize : function() {
-			this.menu = new CampaignWizardMenu({
+			this.menu = new WorkspaceWizardMenu({
 				collection : this.model.wizards
 			});
 			

@@ -19,29 +19,33 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.web.internal.controller.campaign;
+package org.squashtest.tm.web.internal.controller.generic;
 
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.api.security.acls.AccessRule;
 import org.squashtest.tm.api.widget.MenuItem;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
+import org.squashtest.tm.web.internal.controller.campaign.CampaignWorkspaceController;
+import org.squashtest.tm.web.internal.controller.report.ReportWorkspaceController;
+import org.squashtest.tm.web.internal.controller.requirement.RequirementWorkspaceController;
+import org.squashtest.tm.web.internal.controller.testcase.TestCaseWorkspaceController;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
 import spock.lang.Specification;
+import spock.lang.Unroll;
 
 /**
  * @author Gregory Fouquet
  *
  */
-class CampaignWorkspaceControllerTest extends Specification {
-	CampaignWorkspaceController controller = new CampaignWorkspaceController()
+class WorkspaceControllerTest extends Specification {
 	WorkspaceWizardManager wizardManager = Mock()
 	
-	def setup() {
-		controller.workspaceWizardManager = wizardManager
-	}
-	
-	def "should return JSON'd workspace wizards menu items"() {
+	@Unroll
+	def "#controller should return JSON'd workspace wizards menu items"() {
 		given:
+		injectDependencies controller
+
 		AccessRule rule = new AccessRule() {};
 		
 		WorkspaceWizard w1 = Mock()
@@ -73,9 +77,22 @@ class CampaignWorkspaceControllerTest extends Specification {
 		res*.tooltip == ["the grey sorcerer", "ptet ca marche"]
 		res*.url == ["middle-earth", "tf1"]
 		res*.accessRule == [rule, rule]
+		
+		where: 
+		controller << [new CampaignWorkspaceController(), new TestCaseWorkspaceController(), new RequirementWorkspaceController()]
 	} 
-	def "should return no workspace wizards menu items"() {
+
+	private injectDependencies(controller) {
+		use (ReflectionCategory) {
+			WorkspaceController.set field: "workspaceWizardManager", of: controller, to: wizardManager
+		}
+	}
+	
+	@Unroll
+	def "#controller should return no workspace wizards menu items"() {
 		given:
+		injectDependencies controller
+
 		List wizards = [] 
 		wizardManager.findAllByWorkspace(_) >> wizards
 		
@@ -84,5 +101,8 @@ class CampaignWorkspaceControllerTest extends Specification {
 		
 		then:
 		res == []
+
+		where: 
+		controller << [new CampaignWorkspaceController(), new TestCaseWorkspaceController(), new RequirementWorkspaceController()]
 	} 
 }

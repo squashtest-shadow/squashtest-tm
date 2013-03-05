@@ -21,8 +21,6 @@
 
 --%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<%@ taglib prefix="treepopup" tagdir="/WEB-INF/tags/treepopups" %>
 <%@ taglib prefix="json"  uri="http://org.squashtest.tm/taglib/json" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <layout:workspace-page-layout resourceName="campaign">

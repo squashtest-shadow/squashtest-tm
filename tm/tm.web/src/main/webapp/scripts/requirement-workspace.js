@@ -29,7 +29,7 @@ require([ "common" ], function() {
 		resizer.init(conf);
 
 		new WorkspaceTreePanelView({
-			model : squashtm.app.campaignWorkspace
+			model : squashtm.app.requirementWorkspace
 		});
 	});
 });

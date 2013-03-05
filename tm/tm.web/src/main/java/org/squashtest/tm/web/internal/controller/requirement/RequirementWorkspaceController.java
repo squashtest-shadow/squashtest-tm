@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
@@ -148,6 +149,13 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 		mav.addObject("editableLibraries", libraries);
 
 		return mav;
+	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#getWorkspaceType()
+	 */
+	protected WorkspaceType getWorkspaceType() {
+		return WorkspaceType.REQUIREMENT_WORKSPACE;
 	}
 
 }

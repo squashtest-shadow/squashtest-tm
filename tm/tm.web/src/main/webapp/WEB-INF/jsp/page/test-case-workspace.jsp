@@ -21,10 +21,22 @@
 
 --%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
+<%@ taglib prefix="json"  uri="http://org.squashtest.tm/taglib/json" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <layout:workspace-page-layout resourceName="test-case">
 	<jsp:attribute name="head">
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.green.css" />
+		<script type="text/javascript">
+			var squashtm = squashtm || {};
+			squashtm.app = squashtm.app || {};
+			squashtm.app.testCaseWorkspace = {
+				wizards: ${ json:marshall(wizards) }<%-- that was a JSP expression --%>
+			}
+			
+			require( ["common"], function(){
+				require(["test-case-workspace"], function() {
+				});
+			});
+		</script>		
 	</jsp:attribute>
 </layout:workspace-page-layout>
