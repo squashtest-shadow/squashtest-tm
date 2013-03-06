@@ -161,8 +161,8 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui", "jquery.s
 			var wizard = _.find(this.collection, function(wizard) {
 				return wizard.name === event.target.id;
 			});
-			
-			var postData = { url : wizard.url };
+
+			var postData = { url : squashtm.app.contextRoot + "/" + wizard.url };
 			postData.nodes = _.map(this.selectedNodes, function(node) {
 				var $node = $(node).treeNode();
 				return { type : $node.getResType(), id : $node.getResId() };
