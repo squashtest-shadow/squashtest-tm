@@ -397,5 +397,36 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	
+	<changeSet id="tm-1.5.0.00-feat-1966.01" author="bsiri">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+		<dbms type="mysql"/>
+		</preConditions>
+		
+		<comment>fixing mysql text data type for Squash schema version 1.4.x and before (see issue 1966). Dev note : it would have been best to use
+		the tag &lt;modifyColumn&gt; instead of raw sql, because the xml could have been efficiently parsed by the dbdoc generator. 
+		However the dbdoc does not tell which datatype the columns anyway (for now), so let us say that the following raw sql is just fine.</comment>
+		
+		<sql>
+			ALTER TABLE TEST_CASE_LIBRARY_NODE MODIFY DESCRIPTION longtext;
+			ALTER TABLE CAMPAIGN_LIBRARY_NODE MODIFY DESCRIPTION longtext;
+			ALTER TABLE ITERATION MODIFY DESCRIPTION longtext;
+			ALTER TABLE TEST_SUITE MODIFY DESCRIPTION longtext;
+			ALTER TABLE PROJECT MODIFY DESCRIPTION longtext;
+			ALTER TABLE TEST_CASE MODIFY PREREQUISITE longtext;
+			ALTER TABLE RESOURCE MODIFY DESCRIPTION longtext;
+			ALTER TABLE REQUIREMENT_LARGE_PROPERTY_CHANGE MODIFY OLD_VALUE longtext;
+			ALTER TABLE REQUIREMENT_LARGE_PROPERTY_CHANGE MODIFY NEW_VALUE longtext;
+			ALTER TABLE EXECUTION MODIFY DESCRIPTION longtext;
+			ALTER TABLE EXECUTION MODIFY PREREQUISITE longtext;
+			ALTER TABLE EXECUTION_STEP MODIFY ACTION longtext;
+			ALTER TABLE EXECUTION_STEP MODIFY EXPECTED_RESULT longtext;
+			ALTER TABLE EXECUTION_STEP MODIFY COMMENT longtext;
+			ALTER TABLE ACTION_TEST_STEP MODIFY ACTION longtext;
+			ALTER TABLE ACTION_TEST_STEP MODIFY EXPECTED_RESULT longtext;		
+		</sql>
+	
+	</changeSet>
 </databaseChangeLog>
  
