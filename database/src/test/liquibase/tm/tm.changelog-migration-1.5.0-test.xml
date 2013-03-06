@@ -256,11 +256,7 @@
 		<preConditions>
 			<tableExists tableName="REQUIREMENT_VERSION_COVERAGE" />
 			<tableExists tableName="VERIFYING_STEPS"/>
-			<foreignKeyConstraintExists foreignKeyName="FK_VERIFIED_REQ_VERSION"/>
-			<foreignKeyConstraintExists foreignKeyName="FK_VERIFYING_TEST_CASE"/>
-			<foreignKeyConstraintExists foreignKeyName="FK_VERIFYING_STEP_REQUIREMENT_VERSION_COVERAGE"/>
-			<foreignKeyConstraintExists foreignKeyName="FK_VERIFYING_STEP_ACTION_TEST_STEP"/>
-			<primaryKeyExists tableName="REQUIREMENT_VERSION_COVERAGE" primaryKeyName="REQUIREMENT_VERSION_COVERAGE_ID"/>
+			<primaryKeyExists tableName="REQUIREMENT_VERSION_COVERAGE" primaryKeyName="requirement_version_coverage_id"/>
 			<not>
 				<tableExists tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" />
 			</not>			

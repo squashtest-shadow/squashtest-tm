@@ -357,23 +357,23 @@
 	<changeSet id="tm-1.5.0.00-feat-2003.01" author="mpagnon">
 		<comment>Action Steps now cover Requirements versions. We need to create a new table that will be an enhancement of the TEST_CASE_VERIFIED_REQUIREMENT_VERSION one.</comment>
 		<comment>We drop the constraint of the old TEST_CASE_VERIFIED_REQUIREMENT_VERSION so that we can create ones with the same names on the new REQUIREMENT_VERSION_COVERAGE table</comment>
-		<dropForeignKeyConstraint baseTableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" constraintName="FK_VERIFIED_REQ_VERSION"/>
-		<dropForeignKeyConstraint baseTableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" constraintName="FK_VERIFYING_TEST_CASE"/>
-		<dropUniqueConstraint tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" constraintName="UC_TC_VERIFIES_REQ_VERSION"/>
+		<dropForeignKeyConstraint baseTableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" constraintName="fk_verified_req_version"/>
+		<dropForeignKeyConstraint baseTableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" constraintName="fk_verifying_test_case"/>
+		<dropUniqueConstraint tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" constraintName="uc_tc_verifies_req_version"/>
 		<comment>The new table is called  "REQUIREMENT_VERSION_COVERAGE"</comment>
 		<createTable tableName="REQUIREMENT_VERSION_COVERAGE">
 			<column name="REQUIREMENT_VERSION_COVERAGE_ID" autoIncrement="true" remarks="generated surrogate key" type="BIGINT">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_requirement_version_coverage" />
 			</column>
 			<column name="VERIFIED_REQ_VERSION_ID" type="BIGINT" remarks="FK to the verified requirement version">
-				<constraints references="REQUIREMENT_VERSION(RES_ID)" foreignKeyName="FK_VERIFIED_REQ_VERSION" /></column>
+				<constraints references="REQUIREMENT_VERSION(RES_ID)" foreignKeyName="fk_verified_req_version" /></column>
 			<column name="VERIFYING_TEST_CASE_ID" type="BIGINT" remarks="FK to the verifying test case">
-				<constraints references="TEST_CASE(TCLN_ID)" foreignKeyName="FK_VERIFYING_TEST_CASE" />
+				<constraints references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_verifying_test_case" />
 			</column>
 		</createTable>
 		<addNotNullConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnName="VERIFIED_REQ_VERSION_ID" columnDataType="BIGINT(20)"/>
 		<addNotNullConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnName="VERIFYING_TEST_CASE_ID" columnDataType="BIGINT(20)"/>
-		<addUniqueConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnNames="VERIFIED_REQ_VERSION_ID, VERIFYING_TEST_CASE_ID" constraintName="UC_TC_VERIFIES_REQ_VERSION"/>
+		<addUniqueConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnNames="VERIFIED_REQ_VERSION_ID, VERIFYING_TEST_CASE_ID" constraintName="uc_tc_verifies_req_version"/>
 	</changeSet>
 	<changeSet id="tm-1.5.0.00-feat-2003.02" author="mpagnon">
 		<comment>We migrate datas from TEST_CASE_VERIFIED_REQUIREMENT_VERSION to REQUIREMENT_VERSION_COVERAGE.</comment>
@@ -390,10 +390,10 @@
 		<comment>Let's add a table VERIFYING_STEPS to hold the steps that are concerned by the requirement coverage</comment>
 		<createTable tableName="VERIFYING_STEPS">
 			<column name="REQUIREMENT_VERSION_COVERAGE_ID" type="BIGINT" remarks="FK to the concerned requirement-version-coverage">
-				<constraints nullable="false" references="REQUIREMENT_VERSION_COVERAGE(REQUIREMENT_VERSION_COVERAGE_ID)" foreignKeyName="FK_VERIFYING_STEP_REQUIREMENT_VERSION_COVERAGE"/>
+				<constraints nullable="false" references="REQUIREMENT_VERSION_COVERAGE(REQUIREMENT_VERSION_COVERAGE_ID)" foreignKeyName="fk_verifying_step_requirement_version_coverage"/>
 			</column>
 			<column name="TEST_STEP_ID" type="BIGINT" remarks="FK to the concerned action test step">
-				<constraints nullable="false" references="ACTION_TEST_STEP(TEST_STEP_ID)" foreignKeyName="FK_VERIFYING_STEP_ACTION_TEST_STEP" />
+				<constraints nullable="false" references="ACTION_TEST_STEP(TEST_STEP_ID)" foreignKeyName="fk_verifying_step_action_test_step" />
 			</column>
 		</createTable>
 	</changeSet>
