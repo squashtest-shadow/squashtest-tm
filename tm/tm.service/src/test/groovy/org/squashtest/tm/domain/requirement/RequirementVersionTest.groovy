@@ -26,9 +26,9 @@ import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.attachment.Attachment
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException
-import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException
 
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -127,66 +127,7 @@ class RequirementVersionTest extends Specification {
 		"criticality" | RequirementCriticality.MAJOR
 	}
 
-	@Unroll("should allow verification of a test case for #status ")
-	def "non obsolete requirements should allow verification of a test case"() {
-		given :
-		def tc = new TestCase(name:"tc", description:"tc")
-		RequirementVersion requirementVersion = prepareRequirement(status)
-		when :
-		requirementVersion.addVerifyingTestCase(tc)
-		then :
-		notThrown(IllegalRequirementModificationException)
 
-		where :
-		status << [
-			WORK_IN_PROGRESS,
-			UNDER_REVIEW,
-			APPROVED
-		]
-	}
-
-	// TODO move in service
-//	@Unroll("should allow removal of a test case for #status ")
-//	def "non obsolete requirements should allow removal of a test case "() {
-//		given :
-//		def tc = new TestCase(name:"tc", description:"tc")
-//		RequirementVersion requirementVersion = prepareRequirement(status, tc)
-//		when :
-//		requirementVersion.removeVerifyingTestCase(tc)
-//		then :
-//		notThrown(IllegalRequirementModificationException)
-//
-//		where :
-//		status << [
-//			WORK_IN_PROGRESS,
-//			UNDER_REVIEW,
-//			APPROVED
-//		]
-//	}
-
-	def "obsolete requirements should not allow verification of a test case"() {
-		given :
-		def tc = new TestCase(name:"tc", description:"tc")
-		RequirementVersion requirementVersion = prepareRequirement(OBSOLETE)
-
-		when :
-		requirementVersion.addVerifyingTestCase(tc)
-
-		then :
-		thrown(RequirementVersionNotLinkableException)
-	}
-
-//	def "obsolete requirements should not allow removal of a test case "() {
-//		given :
-//		def tc = new TestCase(name:"tc", description:"tc")
-//		RequirementVersion requirementVersion = prepareRequirement(OBSOLETE, tc)
-//
-//		when :
-//		requirementVersion.removeVerifyingTestCase(tc)
-//
-//		then :
-//		thrown(RequirementVersionNotLinkableException)
-//	}
 
 	@Unroll("should allow status change when current status is #status")
 	def "should allow status change"() {
@@ -279,24 +220,12 @@ class RequirementVersionTest extends Specification {
 		]
 	}
 
-	//that (naive) method builds requirements with initial status that could bypass the workflow.
-	private RequirementVersion prepareRequirement(RequirementStatus status){
-		def req = new RequirementVersion(name:"req", description:"this is a req");
-
-		for (iterStatus in RequirementStatus.values()) {
-			req.status = iterStatus;
-			if (iterStatus == status) {
-				break;
-			}
-		}
-
-		return req;
-	}
+	
 
 	//same
 	private RequirementVersion prepareRequirement(RequirementStatus status, TestCase testCase){
 		def req = new RequirementVersion(name:"req", description:"this is a req");
-		req.addVerifyingTestCase(testCase)
+		new RequirementVersionCoverage(req, testCase);
 
 		for (iterStatus in RequirementStatus.values()){
 			req.status = iterStatus;
@@ -308,16 +237,6 @@ class RequirementVersionTest extends Specification {
 		return req;
 	}
 
-	def "when verified by a test case, the test case should also veryfy the requirementVersion"() {
-		given:
-		TestCase tc = new TestCase()
-
-		when:
-		requirementVersion.addVerifyingTestCase tc
-
-		then:
-		tc.verifiedRequirementVersions.contains requirementVersion
-	}
 
 	def "requirement version should have an attachment list"() {
 		expect:
@@ -340,10 +259,6 @@ class RequirementVersionTest extends Specification {
 		Requirement   req = new Requirement(source);
 
 		and:
-		TestCase verifying = new TestCase()
-		source.addVerifyingTestCase verifying
-
-		and:
 		Attachment attachment = new Attachment()
 		source.attachmentList.addAttachment attachment
 
@@ -358,9 +273,6 @@ class RequirementVersionTest extends Specification {
 		copy.criticality == source.criticality
 		copy.requirement == null
 		copy.versionNumber == source.versionNumber
-
-		copy.verifyingTestCases.containsExactly([verifying])
-		verifying.verifiedRequirementVersions.containsExactly([source, copy])
 
 		copy.attachmentList.allAttachments.size() == 1
 		!copy.attachmentList.allAttachments.contains(attachment)
@@ -379,11 +291,11 @@ class RequirementVersionTest extends Specification {
 			RequirementVersion.set field: "criticality", of: previousVersion, to: RequirementCriticality.MAJOR
 		}
 
-		Requirement   req = new Requirement(previousVersion)
+		Requirement  req = new Requirement(previousVersion)
 
 		and:
 		TestCase verifying = new TestCase()
-		previousVersion.addVerifyingTestCase verifying
+		new RequirementVersionCoverage(previousVersion, verifying)
 
 		and:
 		Attachment attachment = new Attachment()
@@ -405,6 +317,21 @@ class RequirementVersionTest extends Specification {
 
 		nextVersion.attachmentList.allAttachments.size() == 1
 		!nextVersion.attachmentList.allAttachments.contains(attachment)
+	}
+	
+	
+	//that (naive) method builds requirements with initial status that could bypass the workflow.
+	private RequirementVersion prepareRequirement(RequirementStatus status){
+		def req = new RequirementVersion(name:"req", description:"this is a req");
+
+		for (iterStatus in RequirementStatus.values()) {
+			req.status = iterStatus;
+			if (iterStatus == status) {
+				break;
+			}
+		}
+
+		return req;
 	}
 
 }

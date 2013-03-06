@@ -118,7 +118,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		while(iterator.hasNext()){
 		TestCase testCase = iterator.next();
 			try {
-				requirementVersion.addVerifyingTestCase(testCase);
+				RequirementVersionCoverage coverage = new RequirementVersionCoverage(requirementVersion, testCase);
+				requirementVersionCoverageDao.persist(coverage);
 				
 			} catch (RequirementAlreadyVerifiedException ex) {
 				rejections.add(ex);
@@ -138,9 +139,9 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		List<TestCase> testCases = testCaseDao.findAllByIds(testCasesIds);
 
 		if (!testCases.isEmpty()) {
-			List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao.findAllByRequirementVersionAndTestCases(testCasesIds, requirementVersionId);
+			List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao.findForRequirementVersionAndTestCases(testCasesIds, requirementVersionId);
 			for(RequirementVersionCoverage coverage : coverages){
-				coverage.removeFromAll();
+				coverage.checkDeletable();
 				requirementVersionCoverageDao.delete(coverage);
 			}
 			testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(testCasesIds,
@@ -151,8 +152,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	@Override
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK') or hasRole('ROLE_ADMIN')")
 	public void removeVerifyingTestCaseFromRequirementVersion(long testCaseId, long requirementVersionId) {
-		RequirementVersionCoverage coverage = requirementVersionCoverageDao.findByRequirementVersionAndTestCase(requirementVersionId, testCaseId);
-		coverage.removeFromAll();
+		RequirementVersionCoverage coverage = requirementVersionCoverageDao.findForRequirementVersionAndTestCase(requirementVersionId, testCaseId);
+		coverage.checkDeletable();
 		requirementVersionCoverageDao.delete(coverage);
 		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(Arrays.asList(testCaseId),
 				requirementVersionId);

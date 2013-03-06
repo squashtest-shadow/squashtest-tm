@@ -29,6 +29,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 
 /**
@@ -83,6 +84,7 @@ public interface VerifiedRequirementsManagerService {
 	 * @param testCaseId
 	 * @param oldVerifiedRequirementVersionId
 	 * @param newVerifiedRequirementVersionId
+	 * @throws RequirementVersionNotLinkableException
 	 */
 	int changeVerifiedRequirementVersionOnTestCase(long oldVerifiedRequirementVersionId, long newVerifiedRequirementVersionId, long testCaseId);
 

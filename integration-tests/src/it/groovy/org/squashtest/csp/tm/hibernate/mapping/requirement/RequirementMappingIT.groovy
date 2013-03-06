@@ -85,30 +85,5 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 		thrown (JDBCException)
 	}
 
-	def "should add a test case to the requirements verified test Cases"() {
-		given:
-		def version = new RequirementVersion(name: "req")
-		Requirement req = new Requirement(version)
-		persistFixture req
-		and :
-		TestCase tc = new TestCase(name: "tc")
-		persistFixture tc
-
-		when :
-		doInTransaction {
-			Requirement req2 = it.get(Requirement, req.id)
-			TestCase tc2 = it.get(TestCase, tc.id)
-			RequirementVersionCoverage coverage = req2.currentVersion.addVerifyingTestCase tc2
-		}
-
-		Requirement rq = doInTransaction {
-			Requirement rqs = it.get(Requirement, req.id)
-			// initializes the collection. Hibernate.initialize cannot be used because getVerifyingTestCases() dont return the actual persistent collection.
-			rqs.currentVersion.verifyingTestCases.size()
-			return rqs
-		}
-
-		then :
-		rq.currentVersion.verifyingTestCases.size() == 1
-	}
+	
 }

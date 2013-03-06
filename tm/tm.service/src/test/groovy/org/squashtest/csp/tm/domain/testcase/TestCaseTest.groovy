@@ -27,9 +27,6 @@ import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.requirement.Requirement
-import org.squashtest.tm.domain.requirement.RequirementStatus
-import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
@@ -40,8 +37,6 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.exception.UnknownEntityException
-import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException
-import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException
 
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -170,17 +165,7 @@ class TestCaseTest extends Specification {
 		testCase.steps.collect{ it.action } == result.collect{ it.action }
 	}
 
-	def "should add a verified requirement"() {
-		given:
-		RequirementVersion r = new RequirementVersion()
-
-		when:
-		testCase.addVerifiedRequirementVersion(r)
-
-		then:
-		testCase.verifiedRequirementVersions.contains r
-	}
-
+	
 
 	def "should return position of step"() {
 		given:
@@ -257,75 +242,7 @@ class TestCaseTest extends Specification {
 		!copy.steps[0].is(sourceStep)
 	}
 
-	def "copy of a test case should verify the same requirements"() {
-		given:
-		TestCase source = new TestCase()
-		source.notifyAssociatedWithProject(new Project())
-		RequirementVersion req = new RequirementVersion(name: "")
-		source.addVerifiedRequirementVersion req
-
-		when:
-		def copy = source.createCopy()
-
-		then:
-		copy.verifiedRequirementVersions == source.verifiedRequirementVersions
-	}
-
-	def "when verifying a requirement, the requirement should also be verified by the test case"() {
-		given:
-		TestCase tc = new TestCase()
-
-		and:
-		RequirementVersion req = new RequirementVersion()
-
-		when:
-		tc.addVerifiedRequirementVersion req
-
-		then:
-		req.verifyingTestCases.contains tc
-	}
-
-	def "should not be able to verify an obsolete requirement"() {
-		given:
-		TestCase tc = new TestCase()
-
-		and:
-		RequirementVersion req = new RequirementVersion(status: RequirementStatus.OBSOLETE)
-
-		when:
-		tc.addVerifiedRequirementVersion req
-
-		then:
-		thrown(RequirementVersionNotLinkableException)
-	}
 	
-	def "should not verify 2 versions of same requirement"() {
-		given:
-		Requirement req = new Requirement(new RequirementVersion())
-		testCase.addVerifiedRequirementVersion(req.currentVersion)
-
-		and:
-		req.increaseVersion()
-
-		when:
-		testCase.addVerifiedRequirementVersion(req.currentVersion)
-
-		then:
-		thrown(RequirementAlreadyVerifiedException)
-	}
-
-	def "should verify the default verifiable version"() {
-		given:
-		Requirement req = Mock()
-		RequirementVersion verifiableVersion = Mock()
-		req.defaultVerifiableVersion >> verifiableVersion
-		when:
-		testCase.addVerifiedRequirement(req)
-
-		then:
-		testCase.requirementVersionCoverages.size() == 1
-		1*verifiableVersion.addRequirementCoverage(_)
-	}
 	def "should remove automated script link"(){
 		given : 
 		TestCase automatedTestCase = new TestCase();

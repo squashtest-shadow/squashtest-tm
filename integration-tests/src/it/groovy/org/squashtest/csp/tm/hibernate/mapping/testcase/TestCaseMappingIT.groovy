@@ -197,30 +197,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		deleteFixture tc, s1, s2
 	}
 
-	def "should add a Requirement Version verified by a TestCase"() {
-		given:
-		TestCase tc = new TestCase(name: "link")
-		persistFixture tc
-
-		and:
-		Requirement r = new Requirement(new RequirementVersion(name: "link"))
-		persistFixture r
-
-		when:
-		doInTransaction({
-			it.get(TestCase, tc.id).addVerifiedRequirementVersion(r.currentVersion)
-		})
-		TestCase res = doInTransaction ({
-			it.createQuery("from TestCase tc left join fetch tc.requirementVersionCoverages where tc.id = " + tc.id).uniqueResult()
-		})
-
-		then:
-		res.verifiedRequirementVersions.size() == 1
-
-		cleanup:
-		deleteFixture r, tc
-	}
-
+	
 	def "should retrieve test cases with a creator"(){
 
 		given: "a test case"

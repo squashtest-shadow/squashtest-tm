@@ -27,7 +27,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 
-public interface CustomTeamDao {
+public interface CustomTeamDao extends EntityDao<Team>{
 	/**
 	 * 
 	 * @param filter

@@ -20,13 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 
-@DynamicDao(entity=TestSuite.class)
-public interface TestSuiteDao extends CustomTestSuiteDao {
- 
-	//List<IterationTestPlanItem> findAllTestPlanItemsPaged(long testSuiteId, Paging paging);
+public interface CustomRequirementVersionCoverageDao extends EntityDao<RequirementVersionCoverage>{
+	
 
-	long countTestPlanItems(long testSuiteId);
 }

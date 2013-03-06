@@ -144,7 +144,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> {
 	}
 
 	/**
-	 * Will create copies for all non obsolete versions younger than the current version, and add it to the copy.
+	 * Will create copies for all non obsolete versions older than the current version, and add it to the copy.
 	 * 
 	 * @param copy : The requirement copy
 	 * @return a TreeMap of RequirementVersion copy by source ordered younger to older.

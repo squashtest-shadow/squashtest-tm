@@ -25,6 +25,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.library.TreeNodeCopier
+import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
 import org.squashtest.tm.service.security.PermissionEvaluationService
@@ -39,6 +40,7 @@ public class TreeNodeCopierTest extends Specification{
 	private TestCaseFolderDao testCaseFolderDao = Mock()
 	private PrivateCustomFieldValueService customFieldValueManagerService = Mock()
 	private PermissionEvaluationService permissionService = Mock()
+	private RequirementVersionCoverageDao requirementVersionCoverageDao = Mock()
 	
 	
 	def setup(){
@@ -47,6 +49,7 @@ public class TreeNodeCopierTest extends Specification{
 		copier.customFieldValueManagerService = customFieldValueManagerService
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 		copier.permissionService = permissionService
+		copier.requirementVersionCoverageDao = requirementVersionCoverageDao
 		}
 
 	def "should copy a node without renaming it because the name was available"(){

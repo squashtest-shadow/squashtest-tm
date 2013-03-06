@@ -56,7 +56,6 @@ import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
@@ -92,7 +91,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private final List<TestStep> steps = new ArrayList<TestStep>();
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.ALL})
+	@OneToMany(cascade = { CascadeType.REMOVE,CascadeType.REFRESH, CascadeType.MERGE })
 	@JoinColumn(name="VERIFYING_TEST_CASE_ID")
 	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<RequirementVersionCoverage>();
 	
@@ -240,19 +239,25 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 
+	/**
+	 * Will create a copy from this instance. <br>
+	 * Will copy all properties, steps, automated scripts.<br>
+	 * ! Will not copy {@link RequirementVersionCoverage}s !
+	 * @return a copy of this {@link TestCase}
+	 */
 	@Override
 	public TestCase createCopy() {
 		TestCase copy = new TestCase();
 		copy.setSimplePropertiesUsing(this);
 		copy.addCopiesOfSteps(this);
 		copy.addCopiesOfAttachments(this);
-		copy.verifiesRequirementsVerifiedBy(this);
+		
 		copy.notifyAssociatedWithProject(this.getProject());
 		if(this.automatedTest != null){
 			try{
 			copy.setAutomatedTest(this.automatedTest);
 			}catch(UnallowedTestAssociationException e){
-				LOGGER.error("data inconsistancy : the test case #{} has a script even if it's project isn't test automation enabled", this.getId());
+				LOGGER.error("data inconsistancy : this test case (#{}) has a script even if it's project isn't test automation enabled", this.getId());
 			}
 		}
 		return copy;
@@ -472,41 +477,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 
 	/**
-	 * Adds a {@link RequirementVersion} verified by this {@link RequirementVerifier}
-	 * 
-	 * @param requirementVersion
-	 *            requirement to add, should not be null.
-	 * @throws RequirementAlreadyVerifiedException
-	 *             if this requirement verifier verifies another version of the same requirement
-	 * @return the new {@link RequirementVersionCoverage}
-	 */
-	public RequirementVersionCoverage addVerifiedRequirementVersion(@NotNull RequirementVersion requirementVersion)
-			throws RequirementAlreadyVerifiedException {
-		
-		checkRequirementNotVerified(requirementVersion);
-		return forceAddVerifiedRequirement(requirementVersion);
-	}
-
-	/**
-	 * This should be used when making a copy of a {@link RequirementVersion} to have the copy verified by this
-	 * {@link RequirementVerifier}.
-	 * 
-	 * When making a copy of a requirement, we cannot use {@link #addVerifiedRequirementVersion(RequirementVersion)}
-	 * because of the single requirement check.
-	 * 
-	 * @param requirementVersionCopy
-	 *            a copy of an existing requirement version. It should not have a requirement yet.
-	 * 
-	 * @return the new {@link RequirementVersionCoverage}
-	 */
-	public RequirementVersionCoverage addCopyOfVerifiedRequirementVersion(RequirementVersion requirementVersionCopy) {
-		if (requirementVersionCopy.getRequirement() != null) {
-			throw new IllegalArgumentException("RequirementVersion should not be associated to a requirement yet");
-		}
-		return forceAddVerifiedRequirement(requirementVersionCopy);
-	}
-
-	/**
 	 * @param version
 	 * @throws RequirementAlreadyVerifiedException
 	 */
@@ -514,52 +484,40 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		Requirement req = version.getRequirement();
 
 		for (RequirementVersion verified : getVerifiedRequirementVersions()) {
-			if (req.equals(verified.getRequirement())) {
+			if (verified != null && req.equals(verified.getRequirement())) {
 				throw new RequirementAlreadyVerifiedException(version, this);
 			}
 		}
 
 	}
-	/**
-	 * 
-	 * @param requirementVersion
-	 * @return the new {@link RequirementVersionCoverage}
-	 */
-	private RequirementVersionCoverage forceAddVerifiedRequirement(RequirementVersion requirementVersion) {
-		return new RequirementVersionCoverage(requirementVersion, this);		
-	}
+	
 	/**
 	 * Set the verifying test case as this, and add the coverage the the this.requirementVersionCoverage
 	 * @param requirementVersionCoverage
 	 */
 	public void addRequirementCoverage(RequirementVersionCoverage requirementVersionCoverage) {
-		requirementVersionCoverage.setVerifyingTestCase(this);
 		this.requirementVersionCoverages.add(requirementVersionCoverage);		
+	}
+	
+	/**
+	 * Copy this.requirementVersionCoverages . All {@link RequirementVersionCoverage} having for verifying test case the copy param.
+	 * @param copy : the {@link TestCase} that will verify the copied coverages
+	 * @return : the copied {@link RequirementVersionCoverage}s
+	 */
+	public List<RequirementVersionCoverage> createRequirementVersionCoveragesForCopy(TestCase copy) {
+		List<RequirementVersionCoverage> createdCoverages = new ArrayList<RequirementVersionCoverage>();
+		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
+			createdCoverages.add( coverage.copyForTestCase(copy));
+		}
+		return createdCoverages;
 	}
 
 	/**
-	 * This requirement verifier verifies the given requirement using its default verifiable version.
+	 * Returns true if a step of the same id is found in this.steps.
 	 * 
-	 * @param requirement
-	 * @throws NoVerifiableRequirementVersionException
-	 *             when there is no suitable version to be added
-	 * @throws RequirementAlreadyVerifiedException
-	 *             when this requirement verifier already verifies some version of the requirement.
+	 * @param step : the step to check 
+	 * @return true if this {@link TestCase} has the given step.
 	 */
-	public void addVerifiedRequirement(@NotNull Requirement requirement)
-			throws NoVerifiableRequirementVersionException, RequirementAlreadyVerifiedException {
-		RequirementVersion candidate = requirement.getDefaultVerifiableVersion();
-		addVerifiedRequirementVersion(candidate);		
-	}
-	
-	private void verifiesRequirementsVerifiedBy(TestCase source) {
-		for (RequirementVersion requirementVersion : source.getVerifiedRequirementVersions()) {
-			if (requirementVersion.getStatus().isRequirementLinkable()) {
-				this.addVerifiedRequirementVersion(requirementVersion);
-			}
-		}
-	}
-
 	public boolean hasStep(TestStep step) {
 		for(TestStep step2 : steps){
 			if(step2.getId().equals(step.getId())){
@@ -571,41 +529,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	
 	/**
 	 * Simply remove the RequirementVersionCoverage from this.requirementVersionCoverages.
-	 * @param requirementVersionCoverage : the entity to remove from this test case's {@link RequirementVersionCoverage}s list.
-	 */
+	* @param requirementVersionCoverage : the entity to remove from this test case's {@link RequirementVersionCoverage}s list.
+	*/
 	public void removeRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
-		this.requirementVersionCoverages.remove(requirementVersionCoverage);
-		
-	}
-	
-	/**
-	 * Will return the list of this test-case's {@link RequirementVersionCoverage} that concerns {@link RequirementVersion} matching the given requirementVersionsIds.
-	 * @param requirementVersionsIds : the ids of the verified {@link RequirementVersion}
-	 * @return the list of corresponding {@link RequirementVersionCoverage}
-	 */
-	public List<RequirementVersionCoverage> findRequirementVersionCoverageForRequirements(List<Long> requirementVersionsIds) {
-		List<RequirementVersionCoverage> result = new ArrayList<RequirementVersionCoverage>(requirementVersionsIds.size());
-		for(RequirementVersionCoverage possibleMatch : this.requirementVersionCoverages){
-			if(requirementVersionsIds.contains(possibleMatch.getVerifiedRequirementVersion().getId())){
-				result.add(possibleMatch);
-			}
+			this.requirementVersionCoverages.remove(requirementVersionCoverage);
+			
 		}
-		return result;
-	}
-	/**
-	 * Will return the {@link RequirementVersionCoverage} corresponding to the {@link RequirementVersion} matching the given id.
-	 * @param requirementVersionId : the id of the concerned {@link RequirementVersion}
-	 * @return the matching {@link RequirementVersionCoverage}
-	 */
-	public RequirementVersionCoverage findRequirementVersionCoverageForRequirement(long requirementVersionId) {
-		for(RequirementVersionCoverage possibleMatch : this.requirementVersionCoverages){
-			if(possibleMatch.getVerifiedRequirementVersion().getId().equals(requirementVersionId)){
-				return possibleMatch;
-			}
-		}
-		return null;
 		
-	}
 	
 
 }

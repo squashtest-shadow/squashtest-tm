@@ -36,7 +36,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
  * 
  */
 @DynamicDao(entity = RequirementVersionCoverage.class)
-public interface RequirementVersionCoverageDao {
+public interface RequirementVersionCoverageDao extends CustomRequirementVersionCoverageDao{
 	/**
 	 * Will persist a new requirementVersionCoverage.
 	 * 
@@ -75,7 +75,7 @@ public interface RequirementVersionCoverageDao {
 	 * @param verifyingTestCaseId : the id of the verifying {@link TestCase}
 	 * @return the corresponding {@link RequirementVersionCoverage}
 	 */
-	RequirementVersionCoverage findByRequirementVersionAndTestCase(@QueryParam("rvId") long verifiedRequirementVersionId, @QueryParam("tcId") long verifyingTestCaseId);
+	RequirementVersionCoverage findForRequirementVersionAndTestCase(@QueryParam("rvId") long verifiedRequirementVersionId, @QueryParam("tcId") long verifyingTestCaseId);
 	
 	/**
 	 * Will return the {@link RequirementVersionCoverage} entities matching the verified requirementVersion and one of the verifying test case params.
@@ -83,8 +83,19 @@ public interface RequirementVersionCoverageDao {
 	 * @param verifiedRequirementVersionId : the id of the concerned {@link RequirementVersion}
 	 * @return
 	 */
-	List<RequirementVersionCoverage> findAllByRequirementVersionAndTestCases(@QueryParam("tcIds") List<Long> verifyingTestCasesIds,
+	List<RequirementVersionCoverage> findForRequirementVersionAndTestCases(@QueryParam("tcIds") List<Long> verifyingTestCasesIds,
 			@QueryParam("rvId")	long verifiedRequirementVersionId);
+
+	/**
+	 * Will return the {@link RequirementVersionCoverage} entities matching the verifying test-case and one of the verified requirement versions
+	 * @param verifiedRequirementVersionsIds : the ids of the concerned {@link RequirementVersion}s
+	 * @param verifyingTestCaseId : the id of the concerned {@link TestCase}
+	 * @return
+	 */
+	List<RequirementVersionCoverage> findForTestCaseAndRequirementVersions(@QueryParam("rvIds") List<Long> verifiedRequirementVersionsIds,
+			@QueryParam("tcId")	long verifyingTestCaseId);
+
+	
 	
 
 }

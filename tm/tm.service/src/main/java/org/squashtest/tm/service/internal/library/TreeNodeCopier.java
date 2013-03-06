@@ -48,6 +48,7 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -62,6 +63,7 @@ import org.squashtest.tm.service.internal.repository.ItemTestPlanDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
+import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
@@ -98,6 +100,8 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	private TreeNodeUpdater treeNodeUpdater;
 	@Inject
 	private PermissionEvaluationService permissionService;
+	@Inject
+	private RequirementVersionCoverageDao requirementVersionCoverageDao;
 
 	private NodeContainer<? extends TreeNode> destination;
 	private TreeNode copy;
@@ -190,28 +194,35 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 
 	@Override
 	public void visit(Requirement source) {
+		//copy simple attributes of requirement
 		Requirement copyRequirement = source.createCopy();
+		//create copies for requirement versions and remember version's sources
 		TreeMap<RequirementVersion, RequirementVersion> previousVersionsCopiesBySources = source
 				.addPreviousVersionsCopiesToCopy(copyRequirement);
 		persistCopy(copyRequirement, requirementDao);
+		//copy custom fields and requirement-version coverages for Current Version
 		copyCustomFields(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
+		copyRequirementVersionCoverages(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
+		//copy custom fields and requirement-version coverages for older versions
 		for (Entry<RequirementVersion, RequirementVersion> previousVersionCopyBySource : previousVersionsCopiesBySources
 				.entrySet()) {
+			//retrieve entities from entry
 			RequirementVersion sourceVersion = previousVersionCopyBySource.getKey();
 			RequirementVersion copyVersion = previousVersionCopyBySource.getValue();
+			//copy cufs and coverages for entities
+			copyRequirementVersionCoverages(sourceVersion, copyVersion);
 			copyCustomFields(sourceVersion, copyVersion);
 		}
-		
 	}
-
+	
 	@Override
 	public void visit(TestCase source) {
 		TestCase copyTestCase = source.createCopy();
 		persistTestCase(copyTestCase);
 		copyCustomFields(source, copyTestCase);
-		
+		copyRequirementVersionCoverage(source, copyTestCase);
 	}
-
+	
 	@Override
 	public void visit(CampaignFolder campaignFolder) {
 		visit(campaignFolder, campaignFolderDao);
@@ -328,6 +339,16 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	@Override
 	public boolean isOkToGoDeeper() {
 		return this.okToGoDeeper;
+	}
+	
+	private void copyRequirementVersionCoverages(RequirementVersion sourceVersion, RequirementVersion copyVersion) {
+		List<RequirementVersionCoverage> copies = sourceVersion.createRequirementVersionCoveragesForCopy(copyVersion);
+		requirementVersionCoverageDao.persist(copies);
+	}
+
+	private void copyRequirementVersionCoverage(TestCase source, TestCase copyTestCase) {
+		List<RequirementVersionCoverage> copies = source.createRequirementVersionCoveragesForCopy(copyTestCase);
+		requirementVersionCoverageDao.persist(copies);
 	}
 
 }

@@ -18,15 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.internal.repository.hibernate;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.springframework.stereotype.Repository;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
+import org.squashtest.tm.service.internal.repository.CustomRequirementVersionCoverageDao;
 
-@DynamicDao(entity=TestSuite.class)
-public interface TestSuiteDao extends CustomTestSuiteDao {
- 
-	//List<IterationTestPlanItem> findAllTestPlanItemsPaged(long testSuiteId, Paging paging);
+@Repository("CustomRequirementVersionCoverageDao")
+public class HibernateRequirementVersionCoverageDao extends HibernateEntityDao<RequirementVersionCoverage> implements CustomRequirementVersionCoverageDao {
 
-	long countTestPlanItems(long testSuiteId);
+
 }

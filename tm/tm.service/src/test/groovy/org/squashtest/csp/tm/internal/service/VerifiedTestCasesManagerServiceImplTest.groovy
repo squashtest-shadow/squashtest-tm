@@ -122,7 +122,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		def requirement = new Requirement(requirementVersion)
 		requirement.increaseVersion()
 		def verifiedVersion = requirement.currentVersion
-		tc5.addVerifiedRequirementVersion verifiedVersion
+		new RequirementVersionCoverage(verifiedVersion, tc5)
 
 		when:
 		def rejected = service.addVerifyingTestCasesToRequirementVersion([5], 10)
@@ -141,15 +141,15 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		testCaseDao.findAllByIds([15L]) >> [tc15]
 		and: " a test case which verifies these requirements"
 		RequirementVersion rv = new RequirementVersion()
-		RequirementVersionCoverage rvc5 = rv.addVerifyingTestCase tc5
-		RequirementVersionCoverage rvc15 = rv.addVerifyingTestCase tc15
+		RequirementVersionCoverage rvc5 = new RequirementVersionCoverage(rv, tc5)
+		RequirementVersionCoverage rvc15 = new RequirementVersionCoverage(rv, tc15)
 		requirementVersionDao.findById(10L) >> rv
-		requirementVersionCoverageDao.findAllByRequirementVersionAndTestCases([15L], 10L)>>[rvc15]
+		requirementVersionCoverageDao.findForRequirementVersionAndTestCases([15L], 10L)>>[rvc15]
 		when:
 		service.removeVerifyingTestCasesFromRequirementVersion([15], 10)
 
 		then:
-		rv.verifyingTestCases.containsExactly([tc5])
+		1*requirementVersionCoverageDao.delete(_)
 	}
 
 	def "should remove single requirement from test case's verified requirements"() {
@@ -161,15 +161,14 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		and: " a test case which verifies this requirements"
 		RequirementVersion rv = new RequirementVersion()
 		rv.id >> 10L
-		RequirementVersionCoverage rvc = rv.addVerifyingTestCase tq
+		RequirementVersionCoverage rvc = new RequirementVersionCoverage(rv, tq)
 		requirementVersionDao.findById(10L) >> rv
-		requirementVersionCoverageDao.findByRequirementVersionAndTestCase(10L, 5L)>>rvc
+		requirementVersionCoverageDao.findForRequirementVersionAndTestCase(10L, 5L)>>rvc
 		when:
 		service.removeVerifyingTestCaseFromRequirementVersion(5L, 10L)
 
 		then:
-		rv.verifyingTestCases.size() == 0
-		tq.verifiedRequirementVersions.size() == 0
+		1*requirementVersionCoverageDao.delete(_)
 	}
 	def "should not be able to unverify an obsolete requirement"() {
 		given:
@@ -181,13 +180,13 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		req.id >> 10L
 		requirementVersionDao.findById(10L) >> req
 		RequirementVersionCoverage rvc = new RequirementVersionCoverage();
-		rvc.setVerifiedRequirementVersion(req)
-		rvc.setVerifyingTestCase(tc)
 		use (ReflectionCategory) {
+			RequirementVersionCoverage.set field:"verifiedRequirementVersion", of: rvc, to : req
+			RequirementVersionCoverage.set field:"verifyingTestCase", of: rvc, to: tc
 			RequirementVersion.set field: "requirementVersionCoverages", of: req, to: [rvc]as Set
 			TestCase.set field: "requirementVersionCoverages", of: tc, to: [rvc]as Set
 		}
-		requirementVersionCoverageDao.findByRequirementVersionAndTestCase(10L, 5L)>>rvc
+		requirementVersionCoverageDao.findForRequirementVersionAndTestCase(10L, 5L)>>rvc
 
 		when:
 		service.removeVerifyingTestCaseFromRequirementVersion(5L, 10L)

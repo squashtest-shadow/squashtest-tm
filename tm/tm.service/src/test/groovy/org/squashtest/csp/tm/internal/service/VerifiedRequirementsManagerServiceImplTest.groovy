@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.resource.Resource
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
 import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl
@@ -139,15 +140,15 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		requirementVersionDao.findAllByIds([15L])>> [req15]
 		and: "a test case which verifies these requirements"
 		TestCase testCase = new TestCase()
-		testCase.addVerifiedRequirementVersion req5
-		testCase.addVerifiedRequirementVersion req15
+		RequirementVersionCoverage rvc5 = new RequirementVersionCoverage(req5, testCase)
+		RequirementVersionCoverage rvc15 = new RequirementVersionCoverage(req15, testCase)
 		testCaseDao.findById(10L) >> testCase
-
+		requirementVersionCoverageDao.findForTestCaseAndRequirementVersions([15L], 10L)>>[rvc15]
 		when:
 		service.removeVerifiedRequirementVersionsFromTestCase([15L], 10L)
 
 		then:
-		testCase.getVerifiedRequirementVersions().containsExactly([req5])
+		1*requirementVersionCoverageDao.delete(_)
 	}
 
 	def "should remove single requirement from test case's verified requirements"() {
@@ -161,14 +162,16 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 
 		and: " a test case which verifies this requirements"
 		TestCase testCase = new TestCase()
-		testCase.addVerifiedRequirementVersion req
-		testCaseDao.findById(10) >> testCase
+		RequirementVersionCoverage rvc5 =  new RequirementVersionCoverage(req, testCase)
+		testCaseDao.findById(10L) >> testCase
+		
+		requirementVersionCoverageDao.findForRequirementVersionAndTestCase(5L, 10L)>> rvc5
 
 		when:
-		service.removeVerifiedRequirementVersionFromTestCase(5, 10)
+		service.removeVerifiedRequirementVersionFromTestCase(5L, 10L)
 
 		then:
-		testCase.verifiedRequirementVersions.size() == 0
+		1*requirementVersionCoverageDao.delete(_)
 	}
 
 	def "should return the first 2 verified requirements"() {

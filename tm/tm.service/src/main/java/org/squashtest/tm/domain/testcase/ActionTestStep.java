@@ -62,7 +62,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 	
-	@ManyToMany
+	@ManyToMany(cascade = {CascadeType.REFRESH})
 	@JoinTable(name = "VERIFYING_STEPS", joinColumns = @JoinColumn(name = "TEST_STEP_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "REQUIREMENT_VERSION_COVERAGE_ID", updatable = false, insertable = false))
 	private List<RequirementVersionCoverage> requirementVersionCoverages= new ArrayList<RequirementVersionCoverage>();
 

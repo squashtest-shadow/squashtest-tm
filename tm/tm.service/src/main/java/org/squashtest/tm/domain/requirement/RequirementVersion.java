@@ -20,8 +20,10 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -60,7 +62,7 @@ import org.squashtest.tm.service.security.annotation.InheritsAcls;
 public class RequirementVersion extends Resource implements BoundEntity{
 	
 	@NotNull
-	@OneToMany(cascade = { CascadeType.ALL })
+	@OneToMany(cascade = { CascadeType.REMOVE,CascadeType.REFRESH, CascadeType.MERGE })
 	@JoinColumn(name="VERIFIED_REQ_VERSION_ID")
 	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<RequirementVersionCoverage>();
 
@@ -120,19 +122,9 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	}
 
 	/**
-	 * 
-	 * @param testCase
 	 * @throws RequirementVersionNotLinkableException
-	 * @throws RequirementAlreadyVerifiedException
-	 *             if another version of the same requirement is already verified by this test case.
-	 * @return the new {@link RequirementVersionCoverage}
 	 */
-	public RequirementVersionCoverage addVerifyingTestCase(@NotNull TestCase testCase) throws RequirementVersionNotLinkableException,
-			RequirementAlreadyVerifiedException {
-		return testCase.addVerifiedRequirementVersion(this);
-	}
-
-	private void checkLinkable() {
+	public void checkLinkable() {
 		if (!status.isRequirementLinkable()) {
 			throw new RequirementVersionNotLinkableException(this);
 		}
@@ -234,15 +226,6 @@ public class RequirementVersion extends Resource implements BoundEntity{
 		return getStatus().isRequirementModifiable();
 	}
 
-	public void notifyVerifiedBy(@NotNull TestCase verifier) {
-		checkLinkable();
-		//TODO ?
-		
-
-	}
-
-	
-
 	/**
 	 * @return the requirement
 	 */
@@ -271,7 +254,9 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	}
 	
 	/**
-	 * Will create a copy of the requirement version with all attributes, attachments and test-case associations.
+	 * Will create a copy of the requirement version with all attributes, and attachments.
+	 * Does not copy requirementVersionCoverages.
+	 * 
 	 * @return the requirement-version copy.
 	 */
 	public RequirementVersion createPastableCopy() {
@@ -279,11 +264,6 @@ public class RequirementVersion extends Resource implements BoundEntity{
 		copy.status = this.status;
 		copy.versionNumber = this.versionNumber;
 		copy.requirement = null;
-
-		for (RequirementVersionCoverage requirementVersionCoverage : this.requirementVersionCoverages) {
-			copy.addRequirementCoverage(requirementVersionCoverage.copyVerifying());			
-		}
-
 		attachCopiesOfAttachmentsTo(copy);
 
 		return copy;
@@ -374,23 +354,48 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	}
 
 	/**
-	 * Sets the coverage's verified requirement as this and add the coverage to this.requirementVersionCoverage
+	 * Simply add the coverage to this.requirementVersionCoverage
 	 * @param coverage
 	 */
 	public void addRequirementCoverage(RequirementVersionCoverage coverage) {
-		checkLinkable();
-		coverage.setVerifiedRequirementVersion(this);
-		this.requirementVersionCoverages.add(coverage);		
+		this.requirementVersionCoverages.add(coverage);
 	}
 	
 	/**
 	 * Simply remove the RequirementVersionCoverage from this.requirementVersionCoverages.
 	 * @param requirementVersionCoverage : the entity to remove from this requirement version's {@link RequirementVersionCoverage}s list.
+	 * @throws RequirementVersionNotLinkableException
 	 */
 	public void removeRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
 		checkLinkable();
 		this.requirementVersionCoverages.remove(requirementVersionCoverage);
 		
 	}
+	
+	/**
+	 * Will create a copy of this.requirementVersionCoverages. Each {@link RequirementVersionCoverage} having, instead of this the copyVersion param as their verifiedRequirementVersion. 
+	 * @param copyVersion
+	 * @return the copies of {@link RequirementVersionCoverage}s
+	 * @throws RequirementVersionNotLinkableException
+	 * @throws RequirementAlreadyVerifiedException
+	 */
+	public List<RequirementVersionCoverage> createRequirementVersionCoveragesForCopy(RequirementVersion copyVersion) {
+		List<RequirementVersionCoverage> copies = new ArrayList<RequirementVersionCoverage>();
+		for(RequirementVersionCoverage coverage : this.requirementVersionCoverages){
+			RequirementVersionCoverage verifyingCopy = coverage.copyForRequirementVersion(copyVersion); 
+			copies.add(verifyingCopy);
+		}
+		return (copies);
+	}
+
+	public Set<RequirementVersionCoverage> getRequirementVersionCoverages() {
+		return requirementVersionCoverages;
+	}
+
+	public void setRequirementVersionCoverages(Set<RequirementVersionCoverage> requirementVersionCoverages) {
+		this.requirementVersionCoverages = requirementVersionCoverages;
+	}
+	
+	
 	
 }
