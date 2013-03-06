@@ -132,12 +132,12 @@ define(["jquery", "jquery.squash.datatables"], function($){
 	}
 	
 	
-	function initButtons(){
+	function initButtons(settings){
 		$('#add-user-button').button();
 		$("#add-user-dialog").bind( "dialogclose", cleanUp);
 		
 		$("#back").button().click(function(){
-			document.location.href= "${administrationUrl}";
+			document.location.href = settings.urls.backUrl;
 		});		
 	}
 	
@@ -214,7 +214,7 @@ define(["jquery", "jquery.squash.datatables"], function($){
 	
 	
 	function init(settings){
-		initButtons();
+		initButtons(settings);
 		initTable(settings);
 		initDialog(settings);
 	}
