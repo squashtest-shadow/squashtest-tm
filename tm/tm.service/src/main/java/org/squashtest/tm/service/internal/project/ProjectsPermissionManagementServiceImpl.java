@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.project;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -55,8 +56,8 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissionManagementService {
 
 	private static final String NAMESPACE = "squashtest.acl.group.tm";
-	private static final String PROJECT_CLASS_NAME = "org.squashtest.tm.domain.project.Project";
-
+	private static final List<String> PROJECT_CLASS_NAMES = new ArrayList<String>(Arrays.asList("org.squashtest.tm.domain.project.Project", "org.squashtest.tm.domain.project.ProjectTemplate"));
+	
 	@Inject
 	private ObjectAclService aclService;
 
@@ -128,7 +129,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	@Override
 	public List<ProjectPermission> findProjectPermissionByParty(long partyId) {
 		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
-		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAME);
+		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAMES);
 		for (Object[] objects : result) {
 			GenericProject project = genericProjectFinder.findById((Long) objects[0]);
 			newResult.add(new ProjectPermission(project, (PermissionGroup) objects[1]));
@@ -139,7 +140,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	@Override
 	public List<ProjectPermission> findProjectPermissionByUserLogin(String userLogin) {
 		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
-		List<Object[]> result = aclService.retrieveClassAclGroupFromUserLogin(userLogin, PROJECT_CLASS_NAME);
+		List<Object[]> result = aclService.retrieveClassAclGroupFromUserLogin(userLogin, PROJECT_CLASS_NAMES);
 		for (Object[] objects : result) {
 			GenericProject project = genericProjectFinder.findById((Long) objects[0]);
 			newResult.add(new ProjectPermission(project, (PermissionGroup) objects[1]));
@@ -152,7 +153,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		
 		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
 		
-		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAME,sorting,filtering);
+		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAMES,sorting,filtering);
 		int total = result.size();
 		
 		for (Object[] objects : result) {
@@ -164,12 +165,13 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	}
 	
 	@Override
-	public List<Project> findProjectWithoutPermissionByParty(long partyId) {
-		List<Long> idList = aclService.findObjectWithoutPermissionByPartyId(partyId, PROJECT_CLASS_NAME);
+	public List<GenericProject> findProjectWithoutPermissionByParty(long partyId) {
+		List<Long> idList = aclService.findObjectWithoutPermissionByPartyId(partyId, PROJECT_CLASS_NAMES);
 		if (idList == null || idList.isEmpty()) {
 			return null;
 		}
 		return genericProjectFinder.findAllByIds(idList);
+		
 	}
 	
 	@Override
@@ -230,7 +232,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	
 	@Override
 	public List<Party> findPartyWithoutPermissionByProject(long projectId) {
-		List<Long> idList = aclService.findPartiesWithoutPermissionByObject(projectId, PROJECT_CLASS_NAME);
+		List<Long> idList = aclService.findPartiesWithoutPermissionByObject(projectId, PROJECT_CLASS_NAMES);
 		if (idList == null || idList.isEmpty()) {
 			return null;
 		}

@@ -56,7 +56,7 @@ public interface GenericProjectDao extends CustomGenericProjectDao {
 	 * @param idList
 	 * @return
 	 */
-	List<Project> findAllByIds(List<Long> ids);
+	List<GenericProject> findAllByIds(List<Long> ids);
 	/**
 	 * Simply remove entity
 	 * @param project : the {@link GenericProject} to remove

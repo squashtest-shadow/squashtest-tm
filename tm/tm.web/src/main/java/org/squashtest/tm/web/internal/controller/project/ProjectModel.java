@@ -20,7 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.project;
 
-import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.project.GenericProject;
+
 
 
 public class ProjectModel {
@@ -47,7 +48,7 @@ public class ProjectModel {
 		this.name = name;
 	}
 	
-	public ProjectModel(Project project){
+	public ProjectModel(GenericProject project){
 		super();
 		this.id = project.getId();
 		this.name = project.getName();

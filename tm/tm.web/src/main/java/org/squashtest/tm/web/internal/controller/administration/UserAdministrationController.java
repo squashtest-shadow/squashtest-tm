@@ -51,6 +51,7 @@ import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
@@ -270,7 +271,6 @@ public class UserAdministrationController extends PartyControllerSupport {
 	private String formatNoData(Locale locale) {
 		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}
-	
 	
 
 	/**

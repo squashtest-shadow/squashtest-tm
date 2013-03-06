@@ -48,14 +48,22 @@ public interface ObjectAclService {
 
 	List<Object[]> retrieveClassAclGroupFromPartyId(long partyId, String qualifiedClassName);
 
+	List<Object[]> retrieveClassAclGroupFromPartyId(long partyId, List<String> qualifiedClassNames);
+	
 	List<Object[]> retrieveClassAclGroupFromUserLogin(String userLogin, String qualifiedClassName);
+
+	List<Object[]> retrieveClassAclGroupFromUserLogin(String userLogin, List<String> qualifiedClassNames);
 	
 	List<Object[]> retrieveClassAclGroupFromPartyId(long partyId, String qualifiedClassName,Sorting sorting, Filtering filtering);
 
+	List<Object[]> retrieveClassAclGroupFromPartyId(long partyId, List<String> qualifiedClassNames,Sorting sorting, Filtering filtering);
+	
 	List<Long> findObjectWithoutPermissionByPartyId(long partyId, String qualifiedClass);
 
-	void addNewResponsibility(long partyId, ObjectIdentity entityRef, String qualifiedName);
+	List<Long> findObjectWithoutPermissionByPartyId(long partyId, List<String> qualifiedClasses);
 	
+	void addNewResponsibility(long partyId, ObjectIdentity entityRef, String qualifiedName);
+
 	List<String> findUsersWithWritePermission(List<ObjectIdentity> entityRefs);
 	/**
 	 * Will find squash User ids and theirs permission names for the given acl_object_identity.identity and acl_object_identity.className
@@ -74,6 +82,9 @@ public interface ObjectAclService {
 	List<Object[]> retrievePartyAndAclGroupNameFromIdentityAndClass(long entityId, Class<?> entityClass, Sorting sorting, Filtering filtering);
 
 	List<Long> findPartiesWithoutPermissionByObject(long objectId, String qualifiedClassName);
+
+	List<Long> findPartiesWithoutPermissionByObject(long objectId, List<String> qualifiedClassNames);
+	
 	
 	List<String> findUsersWithExecutePermission(List<ObjectIdentity> entityRefs);
 	
