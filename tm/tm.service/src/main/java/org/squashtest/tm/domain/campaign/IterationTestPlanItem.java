@@ -385,6 +385,19 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 		return this.testSuites;
 	}
 
+	public String getTestSuiteNames() {
+		
+		StringBuilder builder = new StringBuilder();
+		
+		for(TestSuite suite : testSuites){
+			builder.append(suite +", ");
+		}
+		String nameList = builder.toString();
+		nameList = nameList.trim().substring(0, nameList.lastIndexOf(","));
+
+		return nameList;
+	}
+	
 	public void setTestSuites(List<TestSuite> testSuites) {
 		this.testSuites = testSuites;
 	}
