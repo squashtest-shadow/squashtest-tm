@@ -465,10 +465,7 @@
 	
 	<comp:attachment-tab tabId="tabs-3" entity="${ iteration }"	editable="${ attachable }" />
 
-	
-	<%------------------------------  Bugtracker div (populated later if needed)  --------------- --%>
-	
- 	<div id="bugtracker-section-div"></div>
+
 
 
 	<%-- ---------------------deletion popup------------------------------ --%>

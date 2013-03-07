@@ -375,11 +375,7 @@
 
 	<comp:attachment-tab tabId="tabs-3" entity="${ campaign }"	editable="${ attachable }" />
 	
-	<%------------------------------  Bugtracker div (populated later if needed)  --------------- --%>
-	
- 	<div id="bugtracker-section-div"></div>
-	
-	
+
 </div>
 <%--------------------------- Deletion confirmation popup -------------------------------------%>
 <c:if test="${ deletable }">

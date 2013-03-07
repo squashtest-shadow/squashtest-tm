@@ -253,7 +253,28 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		cleanup:
 		deleteFixture e1, e2, itp, tc
 	}
-
+	
+	/*
+	def "should persist a test case with its steps "(){
+		
+		given :
+			def testCase = new TestCase(name:"test-case", description:"<p>one more</p>")
+			def step1 = new ActionTestStep(action:"action1", expectedResult:"result1")
+			def step2 = new ActionTestStep(action:"action2", expectedResult:"result2")
+			
+			testCase.addStep step1
+			testCase.addStep step2
+		
+		when :
+			doInTransaction({
+				it.persist testCase	
+			})
+		
+		then :
+			notThrown Exception
+		
+	}
+*/
 //	def "should persist a test case verifying an existing requirement version"() {
 //		given:
 //		Requirement req = new Requirement(new RequirementVersion(name: "req"))

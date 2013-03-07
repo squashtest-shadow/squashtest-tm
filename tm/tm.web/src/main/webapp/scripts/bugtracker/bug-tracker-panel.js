@@ -19,13 +19,21 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "jqueryui"], function($){
-	
 	return {
 		load : function(conf){
-			// first : add the tab entry 
- 			$("div.fragment-tabs").tabs( "add" , "#bugtracker-section-div" , conf.label);
- 			// second : load the bugtracker section 
+			
+			// first : add the tab entry 			
+			var tab = $("div.fragment-tabs");
+			
  			var btDiv = $("#bugtracker-section-div");
+ 			if (btDiv.length==0){
+ 				btDiv = $('<div id="bugtracker-section-div"/>');
+ 				btDiv.appendTo(tab);
+ 			}
+ 			
+ 			tab.tabs( "add" , "#bugtracker-section-div" , conf.label);
+ 			
+ 			// second : load the bugtracker section 
  			btDiv.load(conf.url+"?style=fragment-tab", function(){btDiv.addClass("table-tab");}); 				
 		}
 		
