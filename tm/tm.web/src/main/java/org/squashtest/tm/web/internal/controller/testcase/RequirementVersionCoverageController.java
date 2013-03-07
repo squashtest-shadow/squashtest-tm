@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.reqtc;
+package org.squashtest.tm.web.internal.controller.testcase;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,13 +43,13 @@ import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
  * 
  */
 @Controller
-@RequestMapping(value = "/req-tc")
-public class RequirementTestCaseController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementTestCaseController.class);
+@RequestMapping(value = "/requirement-version-coverage")
+public class RequirementVersionCoverageController {
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementVersionCoverageController.class);
 	@Inject
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
 	
-	@RequestMapping(value="/import-links/upload", method = RequestMethod.POST,  params = "upload-ticket")
+	@RequestMapping(value="/upload", method = RequestMethod.POST,  params = "upload-ticket")
 	public ModelAndView importArchive(@RequestParam("archive") MultipartFile archive) throws IOException{
 		LOGGER.debug("Start upload links requirement/test-cases");
 		InputStream stream = archive.getInputStream();

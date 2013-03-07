@@ -34,7 +34,7 @@
 <%@ attribute name="treeSelector" 		required="true" description="jquery selector of the tree instance" %>
 <%@ attribute name="treeNodeButton"		required="true" description="the javascript button that will open the dialog" %>
 
-<s:url var="importUrl" value="/req-tc/import-links/upload"/>
+<s:url var="importUrl" value="/requirement-version-coverage/upload"/>
 
 <%-- 
 	Note : as long as this popup is open if and only if exactly one drive node is selected, the following code is safe.
