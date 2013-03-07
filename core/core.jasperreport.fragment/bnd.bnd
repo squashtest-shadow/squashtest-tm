@@ -1,4 +1,0 @@
--include: pom.xml
-Fragment-Host: org.squashtest.net.sf.jasperreports
-Bundle-ClassPath: .
-Include-Resource: src/main/resources

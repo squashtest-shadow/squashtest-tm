@@ -344,12 +344,14 @@
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>
+		
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>tm.web</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
+		
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>tm.service</artifactId>
@@ -361,6 +363,13 @@
 			<artifactId>database.h2.fragment</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>core.jasperreports.fragment</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
 		<!-- ====== /SQUASHTEST ====== -->
 
 		<!-- ====== CONFIG ADMIN COMPENDIUM SERVICE ====== -->
