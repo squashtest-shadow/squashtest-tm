@@ -50,9 +50,9 @@ import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableExce
  *
  */
 @NamedQueries({
-	@NamedQuery(name="RequirementVersionCoverage.findForRequirementVersionAndTestCase", query="select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where rv.id = :rvId and tc.id = :tcId"),
-	@NamedQuery(name="RequirementVersionCoverage.findForRequirementVersionAndTestCases", query="select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where rv.id = :rvId and tc.id in :tcIds"),
-	@NamedQuery(name="RequirementVersionCoverage.findForTestCaseAndRequirementVersions", query="select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where tc.id = :tcId and rv.id in :rvIds"),
+	@NamedQuery(name="RequirementVersionCoverage.byRequirementVersionAndTestCase", query="select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where rv.id = :rvId and tc.id = :tcId"),
+	@NamedQuery(name="RequirementVersionCoverage.byRequirementVersionAndTestCases", query="select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where rv.id = :rvId and tc.id in :tcIds"),
+	@NamedQuery(name="RequirementVersionCoverage.byTestCaseAndRequirementVersions", query="select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where tc.id = :tcId and rv.id in :rvIds"),
 })
 @Entity
 public class RequirementVersionCoverage implements Identified {

@@ -99,7 +99,6 @@ public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponent
 	protected List<DynamicComponentInvocationHandler> createInvocationHandlers() {
 		ArrayList<DynamicComponentInvocationHandler> handlers = new ArrayList<DynamicComponentInvocationHandler>(HANDLERS_COUNT);
 
-		handlers.add(new ArbitraryQueryHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new PersistEntityHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new DeleteEntityHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new FindByIdHandler(sessionFactory));
@@ -108,7 +107,8 @@ public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponent
 		handlers.add(new ListOfEntitiesFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new EntityFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new CountNamedQueryHandler<ENTITY>(entityType, sessionFactory));
-	
+		handlers.add(new ArbitraryQueryHandler<ENTITY>(entityType, sessionFactory));
+		
 		return handlers;
 	}
 

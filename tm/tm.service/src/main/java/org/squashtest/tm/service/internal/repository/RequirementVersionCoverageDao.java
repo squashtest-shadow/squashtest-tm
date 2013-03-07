@@ -75,7 +75,7 @@ public interface RequirementVersionCoverageDao extends CustomRequirementVersionC
 	 * @param verifyingTestCaseId : the id of the verifying {@link TestCase}
 	 * @return the corresponding {@link RequirementVersionCoverage}
 	 */
-	RequirementVersionCoverage findForRequirementVersionAndTestCase(@QueryParam("rvId") long verifiedRequirementVersionId, @QueryParam("tcId") long verifyingTestCaseId);
+	RequirementVersionCoverage byRequirementVersionAndTestCase(@QueryParam("rvId") long verifiedRequirementVersionId, @QueryParam("tcId") long verifyingTestCaseId);
 	
 	/**
 	 * Will return the {@link RequirementVersionCoverage} entities matching the verified requirementVersion and one of the verifying test case params.
@@ -83,7 +83,7 @@ public interface RequirementVersionCoverageDao extends CustomRequirementVersionC
 	 * @param verifiedRequirementVersionId : the id of the concerned {@link RequirementVersion}
 	 * @return
 	 */
-	List<RequirementVersionCoverage> findForRequirementVersionAndTestCases(@QueryParam("tcIds") List<Long> verifyingTestCasesIds,
+	List<RequirementVersionCoverage> byRequirementVersionAndTestCases(@QueryParam("tcIds") List<Long> verifyingTestCasesIds,
 			@QueryParam("rvId")	long verifiedRequirementVersionId);
 
 	/**
@@ -92,7 +92,7 @@ public interface RequirementVersionCoverageDao extends CustomRequirementVersionC
 	 * @param verifyingTestCaseId : the id of the concerned {@link TestCase}
 	 * @return
 	 */
-	List<RequirementVersionCoverage> findForTestCaseAndRequirementVersions(@QueryParam("rvIds") List<Long> verifiedRequirementVersionsIds,
+	List<RequirementVersionCoverage> byTestCaseAndRequirementVersions(@QueryParam("rvIds") List<Long> verifiedRequirementVersionsIds,
 			@QueryParam("tcId")	long verifyingTestCaseId);
 
 	

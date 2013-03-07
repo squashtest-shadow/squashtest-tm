@@ -144,7 +144,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		RequirementVersionCoverage rvc5 = new RequirementVersionCoverage(rv, tc5)
 		RequirementVersionCoverage rvc15 = new RequirementVersionCoverage(rv, tc15)
 		requirementVersionDao.findById(10L) >> rv
-		requirementVersionCoverageDao.findForRequirementVersionAndTestCases([15L], 10L)>>[rvc15]
+		requirementVersionCoverageDao.byRequirementVersionAndTestCases([15L], 10L)>>[rvc15]
 		when:
 		service.removeVerifyingTestCasesFromRequirementVersion([15], 10)
 
@@ -163,7 +163,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		rv.id >> 10L
 		RequirementVersionCoverage rvc = new RequirementVersionCoverage(rv, tq)
 		requirementVersionDao.findById(10L) >> rv
-		requirementVersionCoverageDao.findForRequirementVersionAndTestCase(10L, 5L)>>rvc
+		requirementVersionCoverageDao.byRequirementVersionAndTestCase(10L, 5L)>>rvc
 		when:
 		service.removeVerifyingTestCaseFromRequirementVersion(5L, 10L)
 
@@ -186,7 +186,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 			RequirementVersion.set field: "requirementVersionCoverages", of: req, to: [rvc]as Set
 			TestCase.set field: "requirementVersionCoverages", of: tc, to: [rvc]as Set
 		}
-		requirementVersionCoverageDao.findForRequirementVersionAndTestCase(10L, 5L)>>rvc
+		requirementVersionCoverageDao.byRequirementVersionAndTestCase(10L, 5L)>>rvc
 
 		when:
 		service.removeVerifyingTestCaseFromRequirementVersion(5L, 10L)

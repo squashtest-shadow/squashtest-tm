@@ -127,7 +127,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 			List<RequirementVersion> reqs = requirementVersionDao.findAllByIds(requirementVersionsIds);
 	
 			if (!reqs.isEmpty()) {
-				List<RequirementVersionCoverage> requirementVersionCoverages = requirementVersionCoverageDao.findForTestCaseAndRequirementVersions(requirementVersionsIds, testCaseId);
+				List<RequirementVersionCoverage> requirementVersionCoverages = requirementVersionCoverageDao.byTestCaseAndRequirementVersions(requirementVersionsIds, testCaseId);
 				for(RequirementVersionCoverage coverage : requirementVersionCoverages){
 					coverage.checkDeletable();
 					requirementVersionCoverageDao.delete(coverage);
@@ -140,7 +140,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@Override
 	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public void removeVerifiedRequirementVersionFromTestCase(long requirementVersionId, long testCaseId) {
-		RequirementVersionCoverage coverage = requirementVersionCoverageDao.findForRequirementVersionAndTestCase(requirementVersionId, testCaseId);
+		RequirementVersionCoverage coverage = requirementVersionCoverageDao.byRequirementVersionAndTestCase(requirementVersionId, testCaseId);
 		coverage.checkDeletable();
 		requirementVersionCoverageDao.delete(coverage);
 		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(Arrays.asList(requirementVersionId),
@@ -161,7 +161,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	public int changeVerifiedRequirementVersionOnTestCase(long oldVerifiedRequirementVersionId,
 			long newVerifiedRequirementVersionId, long testCaseId) {
 		RequirementVersion newReq = requirementVersionDao.findById(newVerifiedRequirementVersionId);
-		RequirementVersionCoverage coverage = requirementVersionCoverageDao.findForRequirementVersionAndTestCase(oldVerifiedRequirementVersionId, testCaseId);
+		RequirementVersionCoverage coverage = requirementVersionCoverageDao.byRequirementVersionAndTestCase(oldVerifiedRequirementVersionId, testCaseId);
 //		RequirementVersion old = coverage.getVerifiedRequirementVersion();
 //		old.removeRequirementVersionCoverage(coverage);
 		coverage.setVerifiedRequirementVersion(newReq);
