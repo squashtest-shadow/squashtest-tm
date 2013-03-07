@@ -360,8 +360,8 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 		return getReferencedTestCase() == null;
 	}
 
-	public void addTestSuite(TestSuite suite) {
-		if (suite != null && !this.iteration.equals(suite.getIteration())) {
+	public void addTestSuite(@NotNull TestSuite suite) {
+		if (!this.iteration.equals(suite.getIteration())) {
 			throw new IllegalArgumentException("Item[" + id + "] dont belong to Iteration["
 					+ suite.getIteration().getId() + "], it cannot be bound to TestSuite['" + suite.getName() + "']");
 		}

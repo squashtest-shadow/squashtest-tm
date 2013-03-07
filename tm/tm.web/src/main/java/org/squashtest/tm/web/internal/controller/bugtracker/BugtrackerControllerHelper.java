@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
+import org.squashtest.tm.web.internal.controller.campaign.TestSuiteHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
@@ -315,13 +316,14 @@ public final class BugtrackerControllerHelper {
 
 		@Override
 		public Map<String, Object> buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
-			
+
 			BTIssueDecorator issue = ownership.getIssue();
 
 			Map<String, Object> result = new HashMap<String, Object>(9);
-			
-			result.put("issue-url", bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
-														    .toExternalForm());
+
+			result.put("issue-url",
+					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
+							.toExternalForm());
 			result.put("remote-id", issue.getId());
 			result.put("summary", issue.getSummary());
 			result.put("priority", issue.getPriority().getName());
@@ -330,7 +332,7 @@ public final class BugtrackerControllerHelper {
 			result.put("owner", nameBuilder.buildName(ownership.getOwner()));
 			result.put("empty-placeholder", "");
 			result.put("local-id", issue.getIssueId());
-			
+
 			return result;
 		}
 	}
@@ -355,21 +357,20 @@ public final class BugtrackerControllerHelper {
 
 		@Override
 		public Map<String, Object> buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
-			
+
 			BTIssueDecorator issue = ownership.getIssue();
 			Map<String, Object> result = new HashMap<String, Object>();
-			
-			result.put("issue-url", bugTrackersLocalService.getIssueUrl(
-									issue.getId(), ownership.getOwner().getBugTracker())
-									.toExternalForm()
-					   );
-			
+
+			result.put("issue-url",
+					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
+							.toExternalForm());
+
 			result.put("remote-id", issue.getId());
 			result.put("summary", issue.getSummary());
 			result.put("priority", issue.getPriority().getName());
 			result.put("empty-placeholder", "");
 			result.put("local-id", issue.getIssueId());
-			
+
 			return result;
 		}
 	}
@@ -377,7 +378,7 @@ public final class BugtrackerControllerHelper {
 	/**
 	 * 
 	 * Build a different description String depending on IssueDetectorType.
-	 *
+	 * 
 	 */
 	private interface IssueOwnershipNameBuilder {
 		void setMessageSource(MessageSource source);
@@ -386,11 +387,11 @@ public final class BugtrackerControllerHelper {
 
 		String buildName(IssueDetector bugged);
 	}
-	
+
 	/**
 	 * 
 	 * Holds generic code to differentiate IssueDetectorTypes
-	 *
+	 * 
 	 */
 	private abstract static class IssueOwnershipAbstractNameBuilder implements IssueOwnershipNameBuilder {
 		protected Locale locale;
@@ -405,7 +406,7 @@ public final class BugtrackerControllerHelper {
 		public void setMessageSource(MessageSource source) {
 			this.messageSource = source;
 		}
-		
+
 		@Override
 		public String buildName(IssueDetector bugged) {
 			String name = "this is clearly a bug";
@@ -420,15 +421,17 @@ public final class BugtrackerControllerHelper {
 
 			return name;
 		}
-		
+
 		abstract String buildStepName(ExecutionStep executionStep);
-		abstract String buildExecName(Execution execution) ;
-		
+
+		abstract String buildExecName(Execution execution);
+
 	}
+
 	/**
 	 * 
 	 * Implements builder for IssueDetector's description to display in Iteration's Issues table.
-	 *
+	 * 
 	 */
 	private static final class IterationModelOwnershipNamebuilder extends IssueOwnershipAbstractNameBuilder {
 		@Override
@@ -448,17 +451,18 @@ public final class BugtrackerControllerHelper {
 			return buildExecName(executionStep.getExecution());
 		}
 	}
+
 	/**
 	 * 
 	 * Implements builder for IssueDetector's description to display in Execution's Issues table.
-	 *
+	 * 
 	 */
 	private static final class ExecutionModelOwnershipNamebuilder extends IssueOwnershipAbstractNameBuilder {
 		@Override
 		public String buildExecName(Execution bugged) {
-			 return "";
+			return "";
 		}
-		
+
 		@Override
 		String buildStepName(ExecutionStep bugged) {
 			Integer index = bugged.getExecutionStepOrder() + 1;
@@ -466,13 +470,12 @@ public final class BugtrackerControllerHelper {
 					locale);
 		}
 
-		
-
 	}
+
 	/**
 	 * 
 	 * Implements builder for IssueDetector's description to display in TestCase's Issues table.
-	 *
+	 * 
 	 */
 	private static final class TestCaseModelOwnershipNamebuilder extends IssueOwnershipAbstractNameBuilder {
 
@@ -497,20 +500,8 @@ public final class BugtrackerControllerHelper {
 
 	private static String findTestSuiteNameList(Execution execution) {
 		List<TestSuite> buggedSuites = execution.getTestPlan().getTestSuites();
-		String testSuiteNames = "";
-		if (!buggedSuites.isEmpty()) {
-			int i = 0;
-			while (i < buggedSuites.size() - 1) {
-				testSuiteNames += buggedSuites.get(i).getName() + ", ";
-				i++;
-			}
-			testSuiteNames += buggedSuites.get(i).getName();
-		}
-		if(testSuiteNames.length() > 20){
-			testSuiteNames = testSuiteNames.substring(0, 16)+"...";
-		}
-		return testSuiteNames;
-	}	
+		return TestSuiteHelper.buildEllipsedSuiteNameList(buggedSuites, 20);
+	}
 
 	private static String findIterationName(Execution execution) {
 		Iteration iteration = execution.getTestPlan().getIteration();

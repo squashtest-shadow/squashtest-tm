@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.exceptionresolver;
 import java.util.Enumeration;
 import java.util.Map;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -68,23 +67,23 @@ public class HandlerSimpleExceptionResolver extends AbstractHandlerExceptionReso
 		String message = simpleEx.getMessage();
 		
 		if (clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
-			return formatJsonResponse(response, message);
+			return formatJsonResponse(message);
 		}
 
 		else if (clientAcceptsMIME(request, MimeType.TEXT_PLAIN)) {
-			return formatPlainTextResponse(response, message);
+			return formatPlainTextResponse(message);
 
 		}
 
 		return null;
 	}
 
-	private ModelAndView formatPlainTextResponse(HttpServletResponse response, String message) {
+	private ModelAndView formatPlainTextResponse(String message) {
 		AbstractView view = new PlainTextView();
 		return new ModelAndView(view, "simpleError", message);
 	}
 
-	private ModelAndView formatJsonResponse(HttpServletResponse response, String message) {
+	private ModelAndView formatJsonResponse(String message) {
 		return new ModelAndView(new MappingJacksonJsonView(), "error", message);
 	}
 

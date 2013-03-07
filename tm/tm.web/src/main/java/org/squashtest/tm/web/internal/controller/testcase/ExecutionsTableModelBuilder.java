@@ -29,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.web.internal.controller.campaign.TestSuiteHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
@@ -82,21 +83,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 	}
 
 	private String testSuiteNameList(IterationTestPlanItem item) {
-		String testSuiteNameList = "";
-		if (item.getTestSuites().isEmpty()) {
-			testSuiteNameList = "";
-		} else {
-			int i = 0;
-			while (i < item.getTestSuites().size() - 1) {
-				testSuiteNameList += item.getTestSuites().get(i).getName() + ", ";
-				i++;
-			}
-			testSuiteNameList += item.getTestSuites().get(i).getName();
-		}
-		if(testSuiteNameList.length() > 20){
-			testSuiteNameList = testSuiteNameList.substring(0, 16)+"...";
-		}
-		return testSuiteNameList;
+		return TestSuiteHelper.buildEllipsedSuiteNameList(item.getTestSuites(), 20);
 	}
 
 }

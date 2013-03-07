@@ -467,15 +467,7 @@ public class IterationModificationController {
 			if (item.getTestSuites().isEmpty()) {
 				testSuiteNameList = formatNone(locale, messageSource);
 			} else {
-				int i=0;
-				while(i<item.getTestSuites().size()-1){
-					testSuiteNameList += item.getTestSuites().get(i).getName()+", ";
-					i++;
-				}
-				testSuiteNameList += item.getTestSuites().get(i).getName();
-				if(testSuiteNameList.length() > 20){
-					testSuiteNameList = testSuiteNameList.substring(0, 16)+"...";
-				}
+				testSuiteNameList = TestSuiteHelper.buildEllipsedSuiteNameList(item.getTestSuites(), 20);
 			}
 
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());

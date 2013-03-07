@@ -36,7 +36,6 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -263,9 +262,8 @@ public class TeamController extends PartyControllerSupport {
 	// ******************************* private *************************************
 
 	private DataTableModel createMembersTableModel(long teamId, PagingAndSorting paging, Filtering filtering, String secho) {
-		Locale locale = LocaleContextHolder.getLocale();
 		PagedCollectionHolder<List<User>> holder = service.findAllTeamMembers(teamId, paging, filtering);
-		return new MembersTableModelHelper(locale, messageSource).buildDataModel(holder, secho);
+		return new MembersTableModelHelper().buildDataModel(holder, secho);
 	}
 
 	@RequestMapping(value = TEAM_ID_URL + "/permission-popup", method = RequestMethod.GET)
@@ -309,7 +307,7 @@ public class TeamController extends PartyControllerSupport {
 	}
 	
 	private static final class MembersTableModelHelper extends DataTableModelHelper<User>{
-		private MembersTableModelHelper(Locale locale, InternationalizationHelper messageSource) {
+		private MembersTableModelHelper() {
 			super();
 		}
 		@Override

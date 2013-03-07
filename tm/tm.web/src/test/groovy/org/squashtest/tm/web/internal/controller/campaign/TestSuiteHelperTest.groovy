@@ -18,13 +18,41 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller;
 
-public final class RequestParams {
+package org.squashtest.tm.web.internal.controller.campaign;
 
-	private RequestParams() {
-		super();
+import static org.junit.Assert.*;
+
+import org.squashtest.tm.domain.campaign.TestSuite;
+
+import spock.lang.Specification;
+import spock.lang.Unroll;
+
+/**
+ * @author Gregory Fouquet
+ *
+ */
+class TestSuiteHelperTest extends Specification {
+	@Unroll
+	def "[#name1, #name2] should produce name list #result"() {
+		given:
+		List suites = []
+
+		TestSuite ts = Mock()
+		ts.getName() >> name1
+		suites << ts
+		
+		ts = Mock()
+		ts.getName() >> name2
+		suites << ts
+		
+		expect:
+		result == TestSuiteHelper.buildEllipsedSuiteNameList(suites, 20);
+		
+		where:
+		name1 | name2 | result
+		"1234567890" | "345678" | "1234567890, 345678"
+		"1234567890" | "34567890" | "1234567890, 34567890"
+		"1234567890" | "345678901" | "1234567890, 3456..."
 	}
-
-	public static final String S_ECHO_PARAM = "sEcho";
 }

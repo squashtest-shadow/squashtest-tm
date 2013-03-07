@@ -298,7 +298,6 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	}
 
 	public boolean isLastExecutableTestPlanItem(long itemId) {
-		List<IterationTestPlanItem> testPlan = this.testPlan;
 		for (int i = testPlan.size() - 1; i >= 0; i--) {
 			IterationTestPlanItem item = testPlan.get(i);
 
@@ -370,8 +369,6 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	}
 
 	private List<IterationTestPlanItem> getRemainingPlanById(long testPlanItemId) {
-		List<IterationTestPlanItem> testPlan = this.getTestPlan();
-
 		for (int i = 0; i < testPlan.size(); i++) {
 			if (testPlanItemId == testPlan.get(i).getId()) {
 				return testPlan.subList(i + 1, testPlan.size());
