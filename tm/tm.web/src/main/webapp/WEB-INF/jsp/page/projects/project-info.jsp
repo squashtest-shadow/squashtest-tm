@@ -299,6 +299,7 @@
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
 		
 			<%----------------------------------- add User Popup-----------------------------------------------%>
+		<f:message var="noUserSelectedError" key="error.permissions.noUserSelected" />
 		<comp:popup id="add-permission-dialog"
 				titleKey="title.AddPermission" isContextual="true"
 				openedBy="add-permission-button">
@@ -309,12 +310,18 @@
 				<f:message var="label" key="label.Add" />
 				'${ label }': function() {
 					var partyId = $("#party-id").val();
-					var permission = $("#permission-input").val();
-					var url = squashtm.app.contextRoot+"/generic-projects/${adminproject.project.id}/parties/"+partyId+"/permissions/"+permission+"/";
-					$.ajax({
-						url : url,
-						type : 'PUT',
-					}).success(refreshTableAndPopup);					
+					
+					if (partyId == "" || partyId === null || partyId === undefined){
+						squashtm.notification.showInfo("${noUserSelectedError}");
+					}
+					else{					
+						var permission = $("#permission-input").val();
+						var url = squashtm.app.contextRoot+"/generic-projects/${adminproject.project.id}/parties/"+partyId+"/permissions/"+permission+"/";
+						$.ajax({
+							url : url,
+							type : 'PUT',
+						}).success(refreshTableAndPopup);	
+					}				
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
