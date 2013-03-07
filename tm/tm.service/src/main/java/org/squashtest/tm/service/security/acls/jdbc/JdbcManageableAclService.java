@@ -295,13 +295,19 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 
 	@Override
 	public List<Object[]> retrieveClassAclGroupFromPartyId(@NotNull long partyId, String qualifiedClassName) {
-
-		return jdbcTemplate.query(FIND_ACL_FOR_CLASS_FROM_PARTY, new Object[] { partyId, qualifiedClassName },
-				AclGroupMapper);
+		List<String> qualifiedClassNames = new ArrayList<String>();
+		qualifiedClassNames.add(qualifiedClassName);
+		return retrieveClassAclGroupFromPartyId(partyId, qualifiedClassNames);
 	}
 	
+	/**
+	 * Only a size of 1 or 2 is supported for now for the second parameter.
+	 */
 	@Override
 	public List<Object[]> retrieveClassAclGroupFromPartyId(long partyId, List<String> qualifiedClassNames) {
+		
+		qualifiedClassNames = adaptQualifiedClassNameList(qualifiedClassNames);
+		
 		return jdbcTemplate.query(FIND_ACL_FOR_CLASS_FROM_PARTY, new Object[] { partyId, qualifiedClassNames.get(0),qualifiedClassNames.get(1) },
 				AclGroupMapper);
 	}
@@ -311,12 +317,14 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			String qualifiedClassName) {
 		List<String> qualifiedClassNames = new ArrayList<String>();
 		qualifiedClassNames.add(qualifiedClassName);
-		qualifiedClassNames.add(qualifiedClassName);
 		return retrieveClassAclGroupFromUserLogin(userLogin,qualifiedClassNames);
 	}
 	
 	@Override
 	public List<Object[]> retrieveClassAclGroupFromUserLogin(String userLogin, List<String> qualifiedClassNames) {
+		
+		qualifiedClassNames = adaptQualifiedClassNameList(qualifiedClassNames);
+		
 		return jdbcTemplate.query(FIND_ACL_FOR_CLASS_FROM_USER, new Object[] { userLogin, qualifiedClassNames.get(0), qualifiedClassNames.get(1)},
 				AclGroupMapper);
 	}
@@ -326,10 +334,12 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 	public List<Object[]> retrieveClassAclGroupFromPartyId(@NotNull long partyId, String qualifiedClassName, Sorting sorting, Filtering filtering) {
 		List<String> qualifiedClassNames = new ArrayList<String>();
 		qualifiedClassNames.add(qualifiedClassName);
-		qualifiedClassNames.add(qualifiedClassName);
 		return retrieveClassAclGroupFromPartyId(partyId,qualifiedClassNames);
 	}
 
+	/**
+	 * Only a size of 1 or 2 is supported for now for the second parameter.
+	 */
 	@Override
 	public List<Object[]> retrieveClassAclGroupFromPartyId(long partyId,
 			List<String> qualifiedClassNames, Sorting sorting, Filtering filtering) {
@@ -338,6 +348,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		String orderByClause;
 		Object[] arguments;
 		
+		qualifiedClassNames = adaptQualifiedClassNameList(qualifiedClassNames);
 		
 		if (filtering.isDefined()){ 
 			baseQuery = FIND_ACL_FOR_CLASS_FROM_PARTY_FILTERED;
@@ -370,8 +381,15 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		return findObjectWithoutPermissionByPartyId(partyId,qualifiedClassNames);
 	}
 	
+
+	/**
+	 * Only a size of 1 or 2 is supported for now for the second parameter.
+	 */
 	@Override
 	public List<Long> findObjectWithoutPermissionByPartyId(long partyId, List<String> qualifiedClasses) {
+		
+		qualifiedClasses = adaptQualifiedClassNameList(qualifiedClasses);
+		
 		List<BigInteger> reslult = jdbcTemplate.queryForList(FIND_OBJECT_WITHOUT_PERMISSION_BY_PARTY, new Object[] {
 				qualifiedClasses.get(0),qualifiedClasses.get(1), partyId }, BigInteger.class);
 		List<Long> finalResult = new ArrayList<Long>();
@@ -499,8 +517,14 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		return findPartiesWithoutPermissionByObject(objectId,qualifiedClassNames);
 	}
 	
+	/**
+	 * Only a size of 1 or 2 is supported for now for the second parameter.
+	 */
 	@Override
 	public List<Long> findPartiesWithoutPermissionByObject(long objectId, List<String> qualifiedClassNames) {
+		
+		qualifiedClassNames = adaptQualifiedClassNameList(qualifiedClassNames);
+		
 		List<BigInteger> result = jdbcTemplate.queryForList(FIND_PARTIES_WITHOUT_PERMISSION_BY_OBJECT, new Object[] {
 				qualifiedClassNames.get(0),qualifiedClassNames.get(1), objectId }, BigInteger.class);
 		List<Long> finalResult = new ArrayList<Long>();
@@ -543,7 +567,19 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		
 	}
 
-
+	private List<String> adaptQualifiedClassNameList(List<String> qualifiedClassNameList){
+		
+		if( qualifiedClassNameList == null ||  qualifiedClassNameList.isEmpty() || 
+				qualifiedClassNameList.size() > 2){
+			throw new UnsupportedQualifiedNameListSizeException();
+		}
+		
+		if(qualifiedClassNameList.size() == 1){
+			 qualifiedClassNameList.add(qualifiedClassNameList.get(0));
+		}
+		
+		return qualifiedClassNameList;
+	}
 
 
 
