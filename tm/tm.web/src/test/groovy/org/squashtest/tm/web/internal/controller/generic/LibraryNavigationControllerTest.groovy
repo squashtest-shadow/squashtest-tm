@@ -34,7 +34,7 @@ import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.library.LibraryNavigationService
-import org.squashtest.tm.service.security.annotation.AclConstrainedObject
+import org.squashtest.tm.security.annotation.AclConstrainedObject
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 
 import spock.lang.Specification

@@ -59,6 +59,11 @@
 			<artifactId>tm.service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>tm.domain</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!--======= /SQUASHTEST MODULES ======== -->
 
 		<dependency>
