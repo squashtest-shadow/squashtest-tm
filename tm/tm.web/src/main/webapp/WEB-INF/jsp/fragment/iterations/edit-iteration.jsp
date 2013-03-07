@@ -242,8 +242,6 @@
 	</c:if>
 </div>
 
-<comp:fragment-tabs />
-
 <div class="fragment-tabs fragment-body">
 	<ul>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
@@ -464,10 +462,13 @@
 	</div>
 
 	<%------------------------------ Attachments bloc ------------------------------------------- --%>
-	<comp:attachment-tab tabId="tabs-3" entity="${ iteration }"
-		editable="${ attachable }" />
+	
+	<comp:attachment-tab tabId="tabs-3" entity="${ iteration }"	editable="${ attachable }" />
 
-
+	
+	<%------------------------------  Bugtracker div (populated later if needed)  --------------- --%>
+	
+ 	<div id="bugtracker-section-div"></div>
 
 
 	<%-- ---------------------deletion popup------------------------------ --%>
@@ -559,14 +560,11 @@
 	<comp:automated-suite-overview-popup />
 	</c:if>
 	<%------------------------------------------/automated suite overview --------------------------------------------%>
-<%------------------------------ bugs section -------------------------------%>
-<c:if test="${iteration.project.bugtrackerConnected }">
-	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
-</c:if>
-<%------------------------------ /bugs section -------------------------------%>
+	
+
 <comp:decorate-buttons />
 
-
+ <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script type="text/javascript">
 
 	var identity = { obj_id : ${iteration.id}, obj_restype : "iterations"  };
@@ -574,7 +572,7 @@
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
+			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker"], function($, contentHandlers, Frag, bugtracker){
 
 				var nameHandler = contentHandlers.getSimpleNameHandler();
 				
@@ -588,11 +586,29 @@
 					document.location.href = "${testPlanManagerUrl}";
 				});
 				</c:if>			
+
+				
+				//****** tabs configuration *******
+				
+				var fragConf = {
+					beforeLoad : Frag.confHelper.fnCacheRequests	
+				};
+				Frag.init(fragConf);
+				
+				<c:if test="${iteration.project.bugtrackerConnected}">
+				bugtracker.btPanel.load({
+					url : "${btEntityUrl}",
+					label : "${tabIssueLabel}"
+				});
+				</c:if>
+				
+				
 				
 				<c:if test="${hasCUF}">
 				<%-- loading the custom field panel --%>
 				$("#iteration-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${iteration.boundEntityId}&boundEntityType=${iteration.boundEntityType}"); 				
 				</c:if>	
+				
 		
 				
 			});

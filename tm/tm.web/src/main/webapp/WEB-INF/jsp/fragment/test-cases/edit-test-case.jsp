@@ -453,10 +453,10 @@
 
 	<%------------------------------ /Attachments bloc ---------------------------------------------%>
 
-	<%------------------------------ bugs section -------------------------------%>
-	<c:if test="${testCase.project.bugtrackerConnected }">
-		<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
-	</c:if>
+<%------------------------------  Bugtracker div (populated later if needed)  --------------- --%>
+	
+ 	<div id="bugtracker-section-div"></div>
+
 
 	<%------------------------------ /bugs section -------------------------------%>
 
@@ -479,6 +479,7 @@
 <%-- ----------------------------------------- Remaining of the javascript initialization ----------------------------- --%>
 	
 
+ <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script type="text/javascript">
 
 	function addHLinkToCallingTestCasesName(row, data) {
@@ -566,7 +567,7 @@
 		
 		
 		//init the renaming listener
-		require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
+		require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "jqueryui"], function($, contentHandlers, Frag, bugtracker){
 			
 			var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
 			
@@ -579,7 +580,32 @@
 			
 			squashtm.contextualContent.addListener(nameHandler);
 			
+			//****** tabs configuration *******
+			
+			var fragConf = {
+				beforeLoad : Frag.confHelper.fnCacheRequests	
+			};
+			Frag.init(fragConf);
+			
+			<c:if test="${testCase.project.bugtrackerConnected }">
+			bugtracker.btPanel.load({
+				url : "${btEntityUrl}",
+				label : "${tabIssueLabel}"
+			});
+			</c:if>
+			
 		});
+		
+		//**** cuf sections ************
+		
+		<c:if test="${hasCUF}">
+		//load the custom fields
+		$.get("${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}")
+		.success(function(data){
+			$("#test-case-description-table").append(data);
+		});
+		</c:if>
+		
 		
 	});
 
@@ -611,5 +637,4 @@
 <%-- /Test Automation code  --%>
 
 
-<comp:fragment-tabs cacheRequests="true" />
 

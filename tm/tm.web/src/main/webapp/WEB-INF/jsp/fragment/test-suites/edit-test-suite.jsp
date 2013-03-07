@@ -343,7 +343,9 @@
 			objectUrl="${ testSuiteUrl }" isContextual="${ ! param.isInfoPage }" />
 	</c:if>
 </div>
-<comp:fragment-tabs />
+
+
+
 <div class="fragment-tabs fragment-body">
 	<ul>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
@@ -598,10 +600,11 @@
 	<comp:automated-suite-overview-popup />
 </c:if>
 <%------------------------------------------/automated suite overview --------------------------------------------%>
-<%------------------------------ bugs section -------------------------------%>
-<c:if test="${testSuite.iteration.project.bugtrackerConnected }">
-	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
-</c:if>
+
+<%------------------------------  Bugtracker div (populated later if needed)  --------------- --%>
+	
+ 	<div id="bugtracker-section-div"></div>
+
 <%------------------------------ /bugs section -------------------------------%>
 
 <c:if test="${ creatable }">
@@ -624,12 +627,38 @@
 			dialog.confirmDialog( "open" );
 			return false;
 		});
-		
-		<c:if test="${hasCUF}">
-		<%-- loading the custom field panel --%>
-		$("#test-suite-custom-fields-content").load("${customFieldsValuesURL}?boundEntityId=${testSuite.boundEntityId}&boundEntityType=${testSuite.boundEntityType}"); 				
-    	</c:if>
 	});
 </script>
+
 </c:if>
+ <f:message key="tabs.label.issues" var="tabIssueLabel"/>
+<script>
+	require(["domReady", "require"], function(domReady, require){
+		domReady(function(){	
+			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker"], function($, contentHandlers, Frag, bugtracker){
+				
+				//****** tabs configuration *******
+				
+				var fragConf = {
+					beforeLoad : Frag.confHelper.fnCacheRequests	
+				};
+				Frag.init(fragConf);
+				
+				<c:if test="${testSuite.iteration.project.bugtrackerConnected}">
+				bugtracker.btPanel.load({
+					url : "${btEntityUrl}",
+					label : "${tabIssueLabel}"
+				});
+				</c:if>
+				
+				
+				
+				<c:if test="${hasCUF}">
+				<%-- loading the custom field panel --%>
+				$("#test-suite-custom-fields-content").load("${customFieldsValuesURL}?boundEntityId=${testSuite.boundEntityId}&boundEntityType=${testSuite.boundEntityType}"); 				
+		    	</c:if>
+			});
+		});
+	});
+</script>
 <comp:decorate-buttons />

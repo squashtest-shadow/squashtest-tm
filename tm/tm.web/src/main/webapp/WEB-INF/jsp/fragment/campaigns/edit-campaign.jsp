@@ -168,7 +168,9 @@
 			objectUrl="${ campaignUrl }" isContextual="${ ! param.isInfoPage }" />
 	</c:if>
 </div>
-<comp:fragment-tabs />
+
+
+
 <div class="fragment-tabs fragment-body">
 	<ul>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
@@ -216,8 +218,7 @@
 		<%----------------------------------- Custom Fields -----------------------------------------------%>
 		
 		<comp:toggle-panel id="campaign-custom-fields" 
-			titleKey="generics.customfieldvalues.title" isContextual="true"
-			open="${hasCUF}">
+			titleKey="generics.customfieldvalues.title" isContextual="true"	open="${hasCUF}">
 			<jsp:attribute name="body">
 				<div id="campaign-custom-fields-content" class="display-table">
 				<div class="waiting-loading minimal-height"></div>
@@ -372,8 +373,13 @@
 
 	<%------------------------------ Attachments bloc ---------------------------------------------%>
 
-	<comp:attachment-tab tabId="tabs-3" entity="${ campaign }"
-		editable="${ attachable }" />
+	<comp:attachment-tab tabId="tabs-3" entity="${ campaign }"	editable="${ attachable }" />
+	
+	<%------------------------------  Bugtracker div (populated later if needed)  --------------- --%>
+	
+ 	<div id="bugtracker-section-div"></div>
+	
+	
 </div>
 <%--------------------------- Deletion confirmation popup -------------------------------------%>
 <c:if test="${ deletable }">
@@ -445,13 +451,8 @@
 </comp:popup>
 
 
-<%------------------------------ bugs section -------------------------------%>
-<c:if test="${campaign.project.bugtrackerConnected }">
-	<comp:issues-tab btEntityUrl="${ btEntityUrl }" />
-</c:if>
-<%------------------------------ /bugs section -------------------------------%>
 
-
+ <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script type="text/javascript">
 
 	var identity = { obj_id : ${campaign.id}, obj_restype : "campaigns"  };
@@ -459,7 +460,7 @@
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers","jqueryui"], function($, contentHandlers){
+			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "jqueryui"], function($, contentHandlers, Frag, bugtracker){
 				
 				$('#delete-campaign-button').button();
 				$('#rename-campaign-button').button();
@@ -471,6 +472,22 @@
 				nameHandler.nameDisplay = "#campaign-name";
 				
 				squashtm.contextualContent.addListener(nameHandler);				
+				
+				
+				
+				//****** tabs configuration *******
+				
+				var fragConf = {
+					beforeLoad : Frag.confHelper.fnCacheRequests	
+				};
+				Frag.init(fragConf);
+				
+				<c:if test="${campaign.project.bugtrackerConnected}">
+				bugtracker.btPanel.load({
+					url : "${btEntityUrl}",
+					label : "${tabIssueLabel}"
+				});
+				</c:if>
 				
 			});
 		});

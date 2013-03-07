@@ -26,7 +26,9 @@
 <%@ attribute name="beforeLoad" required="false" description="javascript function identifier. if set, will add a beforeLoad hook to the configuration of the tabs." %>
 <%@ attribute name="cacheRequests" type="java.lang.Boolean"  required="false"  description="boolean. if set, will cache the ajax calls to the server to prevent multiple reload. Note that unfortunately it will void any 'beforeLoad' attribute. Default is false." %>
 
+ 
 <script type="text/javascript" src="<c:url value='/scripts/squash/squashtm.fragmenttabs.js' />"></script>
+
 <script type="text/javascript">
 	$(function() {
 		require(["jquery","jquery.squash.fragmenttabs"], function($,Frag){
