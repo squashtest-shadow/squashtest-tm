@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
@@ -95,6 +96,30 @@ public interface RequirementVersionCoverageDao extends CustomRequirementVersionC
 	List<RequirementVersionCoverage> byTestCaseAndRequirementVersions(@QueryParam("rvIds") List<Long> verifiedRequirementVersionsIds,
 			@QueryParam("tcId")	long verifyingTestCaseId);
 
+	/**
+	 * Returns the total amount of {@link RequirementVersionCoverage} witch verifying {@link TestCase}'s id matches the given param.
+	 * 
+	 * @param testCaseId : the id of the verifying {@link TestCase}
+	 * @return the amount of {@link RequirementVersionCoverage} for this test case
+	 */
+	long numberByTestCase(@QueryParam("tcId") long testCaseId);
+	
+	/**
+	 * Returns the total amount of {@link RequirementVersion} witch verifying {@link TestCase}'s id matches on of the given id params.
+	 * 
+	 * @param testCaseIds : the ids of verifying {@link TestCase}s
+	 * @return the amount of distinct {@link RequirementVersion} for these test cases
+	 */
+	long numberDistinctVerifiedByTestCases(@QueryParam("tcIds") Collection<Long> testCaseIds);
+	
+	/**
+	 * Returns the total amount of distinct {@link RequirementVersionCover} witch verifying {@link TestCase}'s id matches on of the given id params.
+	 * 
+	 * @param testCaseIds : the ids of verifying {@link TestCase}s
+	 * @return the amount of {@link RequirementVersionCoverage} for these test cases
+	 */
+	long numberByTestCases(@QueryParam("tcIds") Collection<Long> testCaseIds);
+	
 	
 	
 

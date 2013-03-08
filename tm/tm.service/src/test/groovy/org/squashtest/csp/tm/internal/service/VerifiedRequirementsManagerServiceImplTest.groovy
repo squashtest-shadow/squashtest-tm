@@ -41,6 +41,7 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageD
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerServiceImpl
+import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
 import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl
 
 import spock.lang.Specification
@@ -51,6 +52,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	RequirementLibraryDao requirementLibraryDao = Mock()
 	RequirementVersionDao requirementVersionDao = Mock()
 	LibraryNodeDao<RequirementLibraryNode> nodeDao = Mock()
+	TestCaseCallTreeFinder callTreeFinder = Mock()
 	RequirementVersionCoverageDao requirementVersionCoverageDao = Mock()
 	TestCaseImportanceManagerServiceImpl testCaseImportanceManagerService = Mock()
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
@@ -64,6 +66,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		service.requirementLibraryNodeDao = nodeDao
 		service.testCaseImportanceManagerService = testCaseImportanceManagerService
 		service.requirementVersionCoverageDao = requirementVersionCoverageDao
+		service.callTreeFinder = callTreeFinder
 	}
 
 
@@ -181,9 +184,9 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		filter.getPageSize() >> 2
 
 		and:
-		requirementVersionDao.findAllVerifiedByTestCase(10, filter) >> [
-			Mock(Requirement),
-			Mock(Requirement)
+		requirementVersionCoverageDao.findAllByTestCaseId(10, filter) >> [
+			Mock(RequirementVersionCoverage),
+			Mock(RequirementVersionCoverage)
 		]
 
 		when:
@@ -198,14 +201,149 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		PagingAndSorting filter = Mock()
 		filter.getFirstItemIndex() >> 0
 		filter.getPageSize() >> 2
-
+		requirementVersionCoverageDao.findAllByTestCaseId(10, filter)>> [Mock(RequirementVersionCoverage),Mock(RequirementVersionCoverage)]
 		and:
-		requirementVersionDao.countVerifiedByTestCase(10) >> 5
+		requirementVersionCoverageDao.numberByTestCase(10) >> 5
 
 		when:
 		PagedCollectionHolder res = service.findAllDirectlyVerifiedRequirementsByTestCaseId(10, filter)
 
 		then:
 		res.totalNumberOfItems == 5
+	}
+	
+	def "should find directly verified requiremnts in verified list"() {
+		given: "sorting directives"
+		PagingAndSorting sorting = Mock()
+
+		and: "the looked up test case with 1 verified requirement"
+		TestCase testCase = Mock()
+		testCaseDao.findById(10L) >> testCase
+
+		RequirementVersion directlyVerified = Mock()
+		directlyVerified.id >> 100L
+		
+		RequirementVersionCoverage coverage = Mock()
+		coverage.verifiedRequirementVersion >> directlyVerified
+		
+		
+		testCase.verifies(directlyVerified)>> true
+
+		testCase.getRequirementVersionCoverages() >> [coverage]
+
+
+		and:
+		requirementVersionCoverageDao.findDistinctRequirementVersionsByTestCases({ [10L].containsAll(it) }, _) >> [directlyVerified]
+
+
+		and : "the looked up test case calls no test case"
+		callTreeFinder.getTestCaseCallTree(_) >> []
+
+
+		when:
+		PagedCollectionHolder verifieds = service.findAllVerifiedRequirementsByTestCaseId(10L, sorting)
+
+		then:
+		verifieds.pagedItems.collect {it.id} == [100L]
+		verifieds.pagedItems.collect { it.directVerification } == [true]
+	}
+
+	def "should find 1st level indirectly verified requiremnts in verified list"() {
+		given: "sorting directives"
+		PagingAndSorting sorting = Mock()
+
+		and: "the looked up test case with no verified requirement"
+		TestCase testCase = Mock()
+		testCaseDao.findById(10L) >> testCase
+
+		testCase.getRequirementVersionCoverages() >> []
+
+
+		and : "the looked up test case calls a test case"
+		long callee = 20L
+		callTreeFinder.getTestCaseCallTree(_) >> [callee]
+
+
+		and: "the callee verifies a requiremnt"
+		RequirementVersionCoverage rvc = Mock()
+		RequirementVersion verified = Mock()
+		rvc.verifiedRequirementVersion >> verified
+		verified.id >> 100L
+		requirementVersionCoverageDao.findDistinctRequirementVersionsByTestCases({[10L, 20L].containsAll(it) }, _) >> [verified]
+
+
+
+		when:
+		PagedCollectionHolder verifieds = service.findAllVerifiedRequirementsByTestCaseId(10, sorting)
+
+		then:
+		verifieds.pagedItems.collect{it.id} == [100L]
+		verifieds.pagedItems.collect { it.directVerification } == [false]
+	}
+
+
+
+	def "should find 2nd level indirectly verified requiremnts in verified list"() {
+		given: "sorting directives"
+		PagingAndSorting sorting = Mock()
+
+		and: "the looked up test case with no verified requirement"
+		TestCase testCase = Mock()
+		testCaseDao.findById(10L) >> testCase
+
+		testCase.getRequirementVersionCoverages() >> []
+
+
+
+		and : "the looked up test case calls a test case that calls a test case (L2)"
+		long firstLevelCallee = 20L
+		long secondLevelCallee = 30L
+		callTreeFinder.getTestCaseCallTree(_) >> [
+			firstLevelCallee,
+			secondLevelCallee
+		]
+
+
+
+		and: "the L2 callee verifies a requiremnt"
+		RequirementVersionCoverage rvc = Mock()
+		RequirementVersion verified = Mock()
+		rvc.verifiedRequirementVersion >> verified
+		verified.id >> 100L
+		requirementVersionCoverageDao.findDistinctRequirementVersionsByTestCases({[10L, 20L, 30L].containsAll(it) }, _) >> [verified]
+
+		when:
+		PagedCollectionHolder verifieds = service.findAllVerifiedRequirementsByTestCaseId(10, sorting)
+
+		then:
+		verifieds.pagedItems.collect{it.id}==[100L]
+		verifieds.pagedItems.collect { it.directVerification } == [false]
+	}
+
+
+
+	def "should count verified requiremnts in verified list"() {
+		given: "sorting directives"
+		PagingAndSorting sorting = Mock()
+
+		and: "the looked up test case"
+		TestCase testCase = Mock()
+		testCaseDao.findById(10L) >> testCase
+
+		testCase.getRequirementVersionCoverages() >> []
+
+		and: "the looked up test case calls no test case"
+		callTreeFinder.getTestCaseCallTree(10L) >> []
+
+		and:
+		requirementVersionCoverageDao.findDistinctRequirementVersionsByTestCases({ [10L].containsAll(it) }, _) >> []
+
+		and:
+		requirementVersionCoverageDao.numberDistinctVerifiedByTestCases({ [10L].containsAll(it) }) >> 666
+		when:
+		PagedCollectionHolder verifieds = service.findAllVerifiedRequirementsByTestCaseId(10, sorting)
+
+		then:
+		verifieds.totalNumberOfItems == 666
 	}
 }

@@ -28,7 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 
@@ -89,15 +91,34 @@ public interface VerifiedRequirementsManagerService {
 	int changeVerifiedRequirementVersionOnTestCase(long oldVerifiedRequirementVersionId, long newVerifiedRequirementVersionId, long testCaseId);
 
 	/**
-	 * Returns the filtered list of {@link RequirementVersion}s directly verified by a test case.
+	 * Returns the filtered list of {@link VerifiedRequirement}s directly verified by a test case.
+	 * The non directly verified requirements (by called test-cases) are NOT included in the result.
 	 * 
-	 * @param testCaseId
-	 * @param filter
-	 * @return
+	 * @param testCaseId : the id of the concerned {@link TestCase}.
+	 * @param pas: the {@link PagingAndSorting} to organize the result with
+	 * @return a {@link PagedCollectionHolder} of {@link VerifiedRequirement} containing directly verified requirements for the test case of the given id.
 	 */
 	@Transactional(readOnly = true)
-	PagedCollectionHolder<List<RequirementVersion>> findAllDirectlyVerifiedRequirementsByTestCaseId(long testCaseId,
+	PagedCollectionHolder<List<VerifiedRequirement>> findAllDirectlyVerifiedRequirementsByTestCaseId(long testCaseId,
 			PagingAndSorting pas);
 
+	/**	
+	 * Returns all {@link VerifiedRequirement} for the TestCase matching the given id. VerifiedRequirements verified by the {@link CallTestStep}s of the TestCase will be included.
+	 * @param testCaseId : the id of the concerned {@link TestCase}
+	 * @param pas : the {@link PagingAndSorting} to organize the result with
+	 * @return a {@link PagedCollectionHolder} of {@link VerifiedRequirement} containing directly and non directly (call steps) verified requirements for the test case of the given id.
+	 */
+	PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
+			PagingAndSorting pas);
 	
+	/**
+	 * Will find all {@link RequirementVersion} verified by the test case containing the step of the given id.
+	 * The result will be paged according to the given {@link PagingAndSorting} param.
+	 * 
+	 * @param testStepId : the id of the concerned {@link TestStep}
+	 * @param paging : the {@link PagingAndSorting} to organize the result with
+	 * @return the list of verified requirements, paged and sorted.
+	 */
+	PagedCollectionHolder<List<VerifiedRequirement>> findAllDirectlyVerifiedRequirementsByTestStepId(long testStepId,
+			PagingAndSorting paging);
 }

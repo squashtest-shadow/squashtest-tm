@@ -20,11 +20,9 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,13 +33,9 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -57,11 +51,9 @@ import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
-import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
-import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
@@ -92,8 +84,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Named("squashtest.tm.service.internal.TestCaseManagementService")
 	private NodeManagementService<TestCase, TestCaseLibraryNode, TestCaseFolder> testCaseManagementService;
 
-	@Inject
-	private RequirementVersionDao requirementVersionDao;
 
 	@Inject
 	private TestCaseNodeDeletionHandler deletionHandler;
@@ -106,7 +96,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestCaseCallTreeFinder callTreeFinder;
-
 	/* *************** TestCase section ***************************** */
 
 	@Override
@@ -303,50 +292,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
-			PagingAndSorting pas) {
-		LOGGER.debug("Looking for verified requirements of TestCase[id:{}]", testCaseId);
+	
 
-		Set<Long> calleesIds = callTreeFinder.getTestCaseCallTree(testCaseId);
-
-		calleesIds.add(testCaseId);
-
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Fetching Requirements verified by TestCases " + calleesIds);
-		}
-		List<RequirementVersion> verified = requirementVersionDao.findAllVerifiedByTestCases(calleesIds, pas);
-
-		TestCase mainTestCase = testCaseDao.findById(testCaseId);
-
-		List<VerifiedRequirement> verifiedReqs = buildVerifiedRequirementList(
-				mainTestCase.getVerifiedRequirementVersions(), verified);
-
-		long verifiedCount = requirementVersionDao.countVerifiedByTestCases(calleesIds);
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Total count of verified requirements : " + verifiedCount);
-		}
-
-		return new PagingBackedPagedCollectionHolder<List<VerifiedRequirement>>(pas, verifiedCount, verifiedReqs);
-	}
-
-	/*
-	 * 
-	 */
-	private List<VerifiedRequirement> buildVerifiedRequirementList(
-			final Collection<RequirementVersion> directlyVerifiedList, List<RequirementVersion> verified) {
-
-		List<VerifiedRequirement> toReturn = new ArrayList<VerifiedRequirement>(verified.size());
-
-		for (RequirementVersion req : verified) {
-			boolean directlyVerified = directlyVerifiedList.contains(req);
-
-			toReturn.add(new VerifiedRequirement(req, directlyVerified));
-		}
-
-		return toReturn;
-	}
+	
 
 	@Override
 	@Transactional(readOnly = true)

@@ -23,19 +23,14 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
-import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 
 @Repository
@@ -119,27 +114,5 @@ public class HibernateTestStepDao extends HibernateEntityDao<TestStep> implement
 		
 	}
 
-	@Override
-	public List<RequirementVersion> findSortedVerifiedRequirementVersions(long testStepId, PagingAndSorting paging) {
-		Session session = currentSession();
-
-		Criteria crit = session.createCriteria(RequirementVersion.class, "RequirementVersion").createAlias("RequirementVersion.requirement", "requirement").createAlias("RequirementVersion.verifyingActionTestSteps", "actionStep").add(Restrictions.eq("actionStep.id", testStepId));
-
-		/* add ordering */
-		String sortedAttribute = paging.getSortedAttribute();
-		if (sortedAttribute != null) {
-			SortingUtils.addOrder(crit, paging);
-		}
-
-		/* result range */
-		PagingUtils.addPaging(crit, paging);
-
-		return crit.list();
-	}
-
-	@Override
-	public long countVerifiedRequirements(long testStepId) {
-		return executeEntityNamedQuery("TestStep.countVerifiedRequirementsByTestStepId", new SetIdParameter("id", testStepId));
-	}
-
+	
 }

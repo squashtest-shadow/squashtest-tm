@@ -43,16 +43,20 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 
 /**
- * Entity representing a The coverage of a {@link RequirementVersion} by a {@link TestCase}.
- * The {@link ActionTestStep} responsible for the requirement coverage can be specified in the verifyingSteps property.
+ * Entity representing a The coverage of a {@link RequirementVersion} by a {@link TestCase}. The {@link ActionTestStep}
+ * responsible for the requirement coverage can be specified in the verifyingSteps property.
  * 
  * @author mpagnon
- *
+ * 
  */
 @NamedQueries({
-	@NamedQuery(name="RequirementVersionCoverage.byRequirementVersionAndTestCase", query="select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where rv.id = :rvId and tc.id = :tcId"),
-	@NamedQuery(name="RequirementVersionCoverage.byRequirementVersionAndTestCases", query="select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where rv.id = :rvId and tc.id in :tcIds"),
-	@NamedQuery(name="RequirementVersionCoverage.byTestCaseAndRequirementVersions", query="select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where tc.id = :tcId and rv.id in :rvIds"),
+		@NamedQuery(name = "RequirementVersionCoverage.byRequirementVersionAndTestCase", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where rv.id = :rvId and tc.id = :tcId"),
+		@NamedQuery(name = "RequirementVersionCoverage.byRequirementVersionAndTestCases", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where rv.id = :rvId and tc.id in :tcIds"),
+		@NamedQuery(name = "RequirementVersionCoverage.byTestCaseAndRequirementVersions", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where tc.id = :tcId and rv.id in :rvIds"),
+		@NamedQuery(name = "RequirementVersionCoverage.numberByTestCase", query = "select count(rvc) from RequirementVersionCoverage rvc join rvc.verifyingTestCase tc where tc.id = :tcId"),
+		@NamedQuery(name = "RequirementVersionCoverage.numberByTestCases", query = "select count(rvc) from RequirementVersionCoverage rvc join rvc.verifyingTestCase tc where tc.id in :tcIds"),
+		@NamedQuery(name = "RequirementVersionCoverage.numberDistinctVerifiedByTestCases", query = "select count(distinct rv) from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where tc.id in :tcIds")
+
 })
 @Entity
 public class RequirementVersionCoverage implements Identified {
@@ -60,17 +64,17 @@ public class RequirementVersionCoverage implements Identified {
 	@GeneratedValue
 	@Column(name = "REQUIREMENT_VERSION_COVERAGE_ID")
 	private Long id;
-	
+
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID", referencedColumnName = "TCLN_ID")
 	private TestCase verifyingTestCase;
-	
+
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "VERIFIED_REQ_VERSION_ID", referencedColumnName = "RES_ID")
 	private RequirementVersion verifiedRequirementVersion;
-	
+
 	@NotNull
 	@OneToMany
 	@JoinTable(name = "VERIFYING_STEPS", joinColumns = @JoinColumn(name = "REQUIREMENT_VERSION_COVERAGE_ID"), inverseJoinColumns = @JoinColumn(name = "TEST_STEP_ID"))
@@ -81,7 +85,7 @@ public class RequirementVersionCoverage implements Identified {
 	}
 
 	public void setVerifyingTestCase(TestCase verifyingTestCase) {
-		if(this.verifiedRequirementVersion != null){
+		if (this.verifiedRequirementVersion != null) {
 			verifyingTestCase.checkRequirementNotVerified(verifiedRequirementVersion);
 		}
 		this.verifyingTestCase = verifyingTestCase;
@@ -92,13 +96,12 @@ public class RequirementVersionCoverage implements Identified {
 	}
 
 	public void setVerifiedRequirementVersion(RequirementVersion verifiedRequirementVersion) {
-		if(this.verifyingTestCase != null){
+		if (this.verifyingTestCase != null) {
 			this.verifyingTestCase.checkRequirementNotVerified(verifiedRequirementVersion);
 		}
 		verifiedRequirementVersion.checkLinkable();
 		this.verifiedRequirementVersion = verifiedRequirementVersion;
-		
-		
+
 	}
 
 	public Long getId() {
@@ -108,22 +111,22 @@ public class RequirementVersionCoverage implements Identified {
 	public List<ActionTestStep> getVerifyingSteps() {
 		return verifyingSteps;
 	}
-	
-	public void addAllVerifyingSteps(Collection<ActionTestStep> steps){
+
+	public void addAllVerifyingSteps(Collection<ActionTestStep> steps) {
 		checkStepsBelongToTestCase(steps);
 		this.verifyingSteps.addAll(steps);
 	}
-	
+
 	private void checkStepsBelongToTestCase(Collection<ActionTestStep> steps) {
-		for(ActionTestStep step : steps){
-			if(verifyingTestCase.hasStep(step)){
-				//TODO throw StepDoesNotBelongToTestCaseException;
+		for (ActionTestStep step : steps) {
+			if (verifyingTestCase.hasStep(step)) {
+				// TODO throw StepDoesNotBelongToTestCaseException;
 			}
 		}
-		
+
 	}
-	
-	RequirementVersionCoverage(){
+
+	RequirementVersionCoverage() {
 		super();
 	}
 
@@ -132,7 +135,7 @@ public class RequirementVersionCoverage implements Identified {
 		this.verifyingTestCase = verifyingTestCase;
 		verifyingTestCase.addRequirementCoverage(this);
 	}
-	
+
 	/**
 	 * @throws RequirementVersionNotLinkableException
 	 * @param verifiedRequirementVersion
@@ -143,8 +146,6 @@ public class RequirementVersionCoverage implements Identified {
 		this.verifiedRequirementVersion = verifiedRequirementVersion;
 		verifiedRequirementVersion.addRequirementCoverage(this);
 	}
-	
-	
 
 	/**
 	 * @throws RequirementAlreadyVerifiedException
@@ -153,15 +154,16 @@ public class RequirementVersionCoverage implements Identified {
 	 * @param testCase
 	 */
 	public RequirementVersionCoverage(RequirementVersion requirementVersion, TestCase testCase) {
-		//check
+		// check
 		testCase.checkRequirementNotVerified(requirementVersion);
 		requirementVersion.checkLinkable();
-		//set
+		// set
 		testCase.addRequirementCoverage(this);
-		this.verifyingTestCase = testCase;		
+		this.verifyingTestCase = testCase;
 		requirementVersion.addRequirementCoverage(this);
 		this.verifiedRequirementVersion = requirementVersion;
 	}
+
 	/**
 	 * @throws RequirementAlreadyVerifiedException
 	 * @throws RequirementVersionNotLinkableException
@@ -169,36 +171,35 @@ public class RequirementVersionCoverage implements Identified {
 	 * @param testCase
 	 */
 	public RequirementVersionCoverage(Requirement requirement, TestCase testCase) {
-		//check
+		// check
 		testCase.checkRequirementNotVerified(requirement.getCurrentVersion());
 		requirement.getCurrentVersion().checkLinkable();
-		//set
+		// set
 		testCase.addRequirementCoverage(this);
-		this.verifyingTestCase = testCase;		
+		this.verifyingTestCase = testCase;
 		requirement.getCurrentVersion().addRequirementCoverage(this);
 		this.verifiedRequirementVersion = requirement.getCurrentVersion();
 	}
 
-
-	public RequirementVersionCoverage copyForRequirementVersion(RequirementVersion rvCopy){
+	public RequirementVersionCoverage copyForRequirementVersion(RequirementVersion rvCopy) {
 		RequirementVersionCoverage rvcCopy = new RequirementVersionCoverage(this.verifyingTestCase);
 		rvcCopy.addAllVerifyingSteps(this.verifyingSteps);
 		rvcCopy.setVerifiedRequirementVersion(rvCopy);
 		return rvcCopy;
 	}
 
-	public RequirementVersionCoverage copyForTestCase(TestCase tcCopy){
-		//copy verified requirement
+	public RequirementVersionCoverage copyForTestCase(TestCase tcCopy) {
+		// copy verified requirement
 		RequirementVersionCoverage rvcCopy = new RequirementVersionCoverage(this.verifiedRequirementVersion);
 		// set verifying test case
 		rvcCopy.setVerifyingTestCase(tcCopy);
-		//set verifying steps
+		// set verifying steps
 		List<ActionTestStep> stepToVerify = new ArrayList<ActionTestStep>(this.verifyingSteps.size());
-		for(ActionTestStep step : this.verifyingSteps){
+		for (ActionTestStep step : this.verifyingSteps) {
 			int indexInSource = this.verifyingTestCase.getPositionOfStep(step.getId());
-			stepToVerify.add((ActionTestStep)tcCopy.getSteps().get(indexInSource));
+			stepToVerify.add((ActionTestStep) tcCopy.getSteps().get(indexInSource));
 		}
-		rvcCopy.addAllVerifyingSteps(stepToVerify);		
+		rvcCopy.addAllVerifyingSteps(stepToVerify);
 		return rvcCopy;
 	}
 
@@ -208,6 +209,20 @@ public class RequirementVersionCoverage implements Identified {
 	public void checkDeletable() {
 		this.verifiedRequirementVersion.checkLinkable();
 	}
-	
-	
+
+	/**
+	 * Returns true if the given step id matches on of the verifying steps id.
+	 * 
+	 * @param stepId
+	 * @return
+	 */
+	public boolean hasStepAsVerifying(long stepId) {
+		for (ActionTestStep step : this.verifyingSteps) {
+			if (step.getId().equals(stepId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

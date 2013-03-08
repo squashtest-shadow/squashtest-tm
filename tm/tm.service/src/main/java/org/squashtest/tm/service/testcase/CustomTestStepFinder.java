@@ -20,22 +20,7 @@
  */
 package org.squashtest.tm.service.testcase;
 
-import java.util.List;
-
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.TestStep;
 
 public interface CustomTestStepFinder {
-	/**
-	 * Will find all {@link RequirementVersion} verified by the test step of the given id.
-	 * The result will be paged according to the given {@link PagingAndSorting} param.
-	 * 
-	 * @param testStepId : the id of the concerned {@link TestStep}
-	 * @param paging : the params according to what the result will be organized.
-	 * @return the list of verified requirements, paged and sorted.
-	 */
-	PagedCollectionHolder<List<RequirementVersion>> findSortedVerifiedRequirementVersions(long testStepId,
-			PagingAndSorting paging);
+	
 }

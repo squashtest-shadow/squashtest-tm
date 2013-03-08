@@ -43,83 +43,6 @@ class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 		ListAssertions.declareIdsEqual()
 	}
 
-	@DataSet("HibernateRequirementVersionDaoIT.should count requirements verified by list of test cases.xml")
-	def "should find all requirements verified by list of test cases sorted by id"() {
-		PagingAndSorting sorting = Mock()
-		sorting.firstItemIndex >> 0
-		sorting.pageSize >> 10
-		sorting.sortedAttribute >> "RequirementVersion.id"
-		sorting.sortOrder >> SortOrder.ASCENDING
-
-		when:
-		def reqs = versionDao.findAllVerifiedByTestCases([100L, 200L], sorting)
-
-		then:
-		reqs.collect { it.id } == [10L, 20L, 30L]
-	}
-	@DataSet("HibernateRequirementVersionDaoIT.should count requirements verified by list of test cases.xml")
-	def "should find all requirements verified by list of test cases sorted by desc name"() {
-		PagingAndSorting sorting = Mock()
-		sorting.firstItemIndex >> 0
-		sorting.pageSize >> 10
-		sorting.sortedAttribute >> "RequirementVersion.name"
-		sorting.sortOrder >> SortOrder.DESCENDING
-
-		when:
-		def reqs = versionDao.findAllVerifiedByTestCases([100L, 200L], sorting)
-
-		then:
-		reqs.collect { it.name } == ["vingt", "30", "10"]
-	}
-
-	@DataSet("HibernateRequirementVersionDaoIT.should count requirements verified by list of test cases.xml")
-	def "should find paged list of requirements verified by list of test cases"() {
-		PagingAndSorting sorting = Mock()
-		sorting.firstItemIndex >> 1
-		sorting.pageSize >> 1
-		sorting.sortedAttribute >> "RequirementVersion.id"
-		sorting.sortOrder >> SortOrder.ASCENDING
-
-		when:
-		def reqs = versionDao.findAllVerifiedByTestCases([100L, 200L], sorting)
-
-		then:
-		reqs.collect { it.id } == [20L]
-	}
-
-	@DataSet("HibernateRequirementVersionDaoIT.should count requirements verified by list of test cases.xml")
-	def "should count requirements verified by list of test cases"() {
-		when:
-		def count = versionDao.countVerifiedByTestCases([100L, 200L])
-
-		then:
-		count == 3
-	}
-
-	@DataSet("HibernateRequirementVersionDaoIT.should find all requirements versions by id.xml")
-	def "should find all requirements versions by id"() {
-		when:
-		def res = versionDao.findAllByIds([10L, 20L])
-
-		then:
-		res.containsExactlyIds([10L, 20L])
-	}
-
-	@DataSet("HibernateTestCaseDaoIT.should find requirement versions directly verified by a test case sorted by name.xml")
-	def "should find requirement versions directly verified by a test case sorted by name"() {
-		given:
-		PagingAndSorting pas = Mock()
-		pas.firstItemIndex >> 0
-		pas.pageSize >> 10
-		pas.sortedAttribute >> "RequirementVersion.name"
-		pas.sortOrder >> SortOrder.ASCENDING
-
-		when:
-		def res = versionDao.findAllVerifiedByTestCase(100, pas)
-
-		then:
-		res.idsEqual([20L, 10L])
-	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find requirement versions directly verified by a test case sorted by name.xml")
 	def "should count requirements verified by a test case"() {
@@ -150,5 +73,14 @@ class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 
 		then:
 		res*.id == [20L]
+	}
+	
+	@DataSet("HibernateRequirementVersionDaoIT.should find all requirements versions by id.xml")
+	def "should find all requirements versions by id"() {
+		when:
+		def res = versionDao.findAllByIds([10L, 20L])
+
+		then:
+		res.containsExactlyIds([10L, 20L])
 	}
 }

@@ -73,7 +73,6 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
-import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -103,16 +102,7 @@ public class TestCaseModificationController {
 	private static final String TEST_CASE_ = "test case ";
 	private static final String COPIED_STEP_ID_PARAM = "copiedStepId[]";
 
-	private final DatatableMapper verifiedReqMapper = new IndexBasedMapper(7)
-			.mapAttribute(Project.class, "name", String.class, 1)
-			.mapAttribute(RequirementVersion.class, "id", Long.class, 2)
-			.mapAttribute(RequirementVersion.class, "reference", String.class, 3)
-			.mapAttribute(RequirementVersion.class, "name", String.class, 4)
-			.mapAttribute(RequirementVersion.class, "versionNumber", Integer.class, 5)
-			.mapAttribute(RequirementVersion.class, "criticality", RequirementCriticality.class, 6)
-			.mapAttribute(RequirementVersion.class, "category", RequirementCategory.class, 7);
-
-	private final DatatableMapper referencingTestCaseMapper = new IndexBasedMapper(6)
+		private final DatatableMapper referencingTestCaseMapper = new IndexBasedMapper(6)
 			.mapAttribute(Project.class, "name", String.class, 2)
 			.mapAttribute(TestCase.class, "reference", String.class, 3)
 			.mapAttribute(TestCase.class, "name", String.class, 4)
@@ -558,32 +548,6 @@ public class TestCaseModificationController {
 		return testCase;
 	}
 
-	@RequestMapping(value = "/all-verified-requirements-table", params = RequestParams.S_ECHO_PARAM)
-	@ResponseBody
-	public DataTableModel getAllVerifiedRequirementsTableModel(@PathVariable long testCaseId,
-			final DataTableDrawParameters params, final Locale locale) {
-
-		PagingAndSorting pas = createPagingAndSorting(params, verifiedReqMapper);
-
-		PagedCollectionHolder<List<VerifiedRequirement>> holder = testCaseModificationService
-				.findAllVerifiedRequirementsByTestCaseId(testCaseId, pas);
-
-		return new DataTableModelHelper<VerifiedRequirement>() {
-			@Override
-			public Object[] buildItemData(VerifiedRequirement item) {
-				return new Object[] { getCurrentIndex(), item.getProject().getName(), item.getId(),
-						item.getReference(), item.getName(), item.getDecoratedRequirement().getVersionNumber(),
-						internationalizationHelper.internationalize(item.getCriticality(), locale),
-						internationalizationHelper.internationalize(item.getCategory(), locale), "",
-						item.getDecoratedRequirement().getStatus().name(), item.isDirectVerification() };
-			}
-		}.buildDataModel(holder, params.getsEcho());
-
-	}
-
-	private PagingAndSorting createPagingAndSorting(DataTableDrawParameters params, DatatableMapper mapper) {
-		return new DataTableMapperPagingAndSortingAdapter(params, mapper);
-	}
 
 	@RequestMapping(value = "/calling-test-case-table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody

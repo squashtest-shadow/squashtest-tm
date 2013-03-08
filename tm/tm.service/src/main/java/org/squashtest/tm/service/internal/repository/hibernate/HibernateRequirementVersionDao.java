@@ -20,14 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -48,62 +45,15 @@ public class HibernateRequirementVersionDao implements CustomRequirementVersionD
 	@Inject
 	private SessionFactory sessionFactory;
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<RequirementVersion> findAllVerifiedByTestCases(Collection<Long> verifiersIds,
-			PagingAndSorting pagingAndSorting) {
-		if (verifiersIds.isEmpty()) {
-			return Collections.emptyList();
-		}
+	
+	
 
-		Criteria crit = createFindAllVerifiedCriteria(pagingAndSorting);
-
-		crit.add(Restrictions.in("TestCase.id", verifiersIds)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-		return crit.list();
-	}
-
-	private Criteria createFindAllVerifiedCriteria(PagingAndSorting pagingAndSorting) {
-		Criteria crit = currentSession().createCriteria(RequirementVersion.class, "RequirementVersion");
-		crit.createAlias("requirement", "Requirement", Criteria.LEFT_JOIN);
-		crit.createAlias("requirementVersionCoverages", "rvc");
-		crit.createAlias("rvc.verifyingTestCase", "TestCase");
-		crit.createAlias("requirement.project", "Project", Criteria.LEFT_JOIN);
-
-		PagingUtils.addPaging(crit, pagingAndSorting);
-		SortingUtils.addOrder(crit, pagingAndSorting);
-
-		return crit;
-	}
-
-	@Override
-	public long countVerifiedByTestCases(Collection<Long> verifiersIds) {
-		if (verifiersIds.isEmpty()) {
-			return 0;
-		}
-
-		Query query = currentSession().getNamedQuery("requirementVersion.countVerifiedByTestCases");
-		query.setParameterList("verifiersIds", verifiersIds);
-		return (Long) query.uniqueResult();
-	}
-
+	
 	private Session currentSession() {
 		return sessionFactory.getCurrentSession();
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.internal.repository.CustomRequirementVersionDao#findAllVerifiedByTestCase(long,
-	 *      org.squashtest.tm.core.foundation.collection.PagingAndSorting)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<RequirementVersion> findAllVerifiedByTestCase(long verifierId, PagingAndSorting pas) {
-		Criteria crit = createFindAllVerifiedCriteria(pas);
 
-		crit.add(Restrictions.eq("TestCase.id", Long.valueOf(verifierId)));
-
-		return crit.list();
-	}
 
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.CustomRequirementVersionDao#findAllByRequirement(long,

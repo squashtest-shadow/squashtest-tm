@@ -221,74 +221,7 @@ class TestCaseModificationControllerTest extends Specification {
 		res.modelMap['testCase'] == tc
 	}
 
-	def "should build table model for verified requirements"() {
-		given:
-		DataTableDrawParameters request = new DataTableDrawParameters(sEcho: "echo", iDisplayStart: 0, iDisplayLength: 100)
 
-		and:
-		PagedCollectionHolder holder = Mock()
-		holder.pagedItems >> []
-		testCaseModificationService.findAllVerifiedRequirementsByTestCaseId(10, _) >> holder
-
-		when:
-		def res = controller.getAllVerifiedRequirementsTableModel(10, request, Locale.getDefault())
-
-		then:
-		res.sEcho == "echo"
-		res.iTotalDisplayRecords == 0
-		res.iTotalRecords == 0
-	}
-
-	def "should build verified requirements model from 1 row of 5"() {
-		given:
-		Requirement req = Mock()
-		req.name >> "foo"
-		req.id >> 15
-
-		Project project = Mock()
-		req.project >> project
-		project.name >> "bar"
-
-		and:
-		FilteredCollectionHolder<List<Requirement>> holder = Mock()
-		holder.filteredCollection >> [req]
-		holder.unfilteredResultCount >> 5
-
-
-
-		when:
-
-		//well, groovy
-
-		def helper = [
-			buildItemData: { item ->
-				[
-					item.getId(),
-					1,
-					item.getProject().getName(),
-					item.getName(),
-					"" ] as Object[];
-			}
-
-		] as DataTableModelHelper<Requirement>;
-
-
-		def res = helper.buildDataModel(holder, 1,"echo");
-
-		then:
-		res.sEcho == "echo"
-		res.iTotalDisplayRecords == 5
-		res.iTotalRecords == 5
-		res.aaData == [
-			[
-				15,
-				1,
-				"bar",
-				"foo",
-				""
-			]
-		]
-	}
 
 	def "should adapt table draw parameters to collection filter"() {
 		given:

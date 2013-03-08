@@ -20,9 +20,40 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
+import org.squashtest.tm.domain.testcase.TestCase;
 
 public interface CustomRequirementVersionCoverageDao extends EntityDao<RequirementVersionCoverage>{
+
+	/**
+	 * Returns a paged and ordered list taken from all {@link RequirementVersionCoverage} directly linked to the {@link TestCase} matching the given id param.
+	 * @param testCaseId : the id of the verifying {@link TestCase}
+	 * @param pas : the {@link PagingAndSorting} param to organize the result with
+	 * @return : a list of {@link RequirementVersionCoverage} representing a sorted page of all direct coverages for the given test case
+	 */
+	List<RequirementVersionCoverage> findAllByTestCaseId(long testCaseId, PagingAndSorting pas);
 	
+
+	
+	/**
+	 * Returns a paged and ordered list taken from all {@link RequirementVersionCoverage} directly linked to one of the {@link TestCase}s matching the given ids param.
+	 * @param testCaseIds : the ids of the verifying {@link TestCase}s
+	 * @param pas : the {@link PagingAndSorting} param to organize the result with
+	 * @return : a list of {@link RequirementVersionCoverage} representing a sorted page of all direct coverages for the given test cases
+	 */
+	List<RequirementVersionCoverage> findAllByTestCases(Collection<Long> testCaseIds, PagingAndSorting pas);
+	
+	/**
+	 * Returns a paged and ordered list taken from all DISTINCT {@link RequirementVersion} linked to at least one of the {@link TestCase}s matching the given ids param.
+	 * @param testCaseIds : the ids of the verifying {@link TestCase}s
+	 * @param pas : the {@link PagingAndSorting} param to organize the result with
+	 * @return : a list of {@link RequirementVersion} representing a sorted page of distinct requirements for the given test cases
+	 */
+	List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds, PagingAndSorting pas);
 
 }

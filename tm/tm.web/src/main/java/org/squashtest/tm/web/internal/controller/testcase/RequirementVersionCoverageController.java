@@ -28,13 +28,16 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.service.importer.ImportRequirementTestCaseLinksSummary;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 
 /**
  * Controller which processes requests related to links between Requirement and Test-Case
@@ -48,6 +51,8 @@ public class RequirementVersionCoverageController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementVersionCoverageController.class);
 	@Inject
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
+	@Inject
+	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 	
 	@RequestMapping(value="/upload", method = RequestMethod.POST,  params = "upload-ticket")
 	public ModelAndView importArchive(@RequestParam("archive") MultipartFile archive) throws IOException{
@@ -58,6 +63,14 @@ public class RequirementVersionCoverageController {
 		mav.addObject("summary", summary);
 		return mav;
 		
+	}
+	
+	@RequestMapping(value = "{requirementVersionCoverageId}", method = RequestMethod.DELETE)
+	public @ResponseBody
+	void removeVerifiedRequirementVersionFromTestCase(@PathVariable long requirementVersionId,
+			@PathVariable long testCaseId) {
+		verifiedRequirementsManagerService.removeVerifiedRequirementVersionFromTestCase(requirementVersionId, testCaseId);
+
 	}
 	
 }

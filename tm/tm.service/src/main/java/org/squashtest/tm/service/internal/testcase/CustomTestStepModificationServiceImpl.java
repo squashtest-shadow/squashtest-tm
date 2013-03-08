@@ -34,10 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -145,12 +141,5 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 
 	}
 
-	@Override
-	public PagedCollectionHolder<List<RequirementVersion>> findSortedVerifiedRequirementVersions(long testStepId,
-			PagingAndSorting paging) {
-		List<RequirementVersion> verifiedRequirementVersions = testStepDao.findSortedVerifiedRequirementVersions(testStepId, paging);
-		long count = testStepDao.countVerifiedRequirements(testStepId);
-		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(paging, count, verifiedRequirementVersions);
-	}
 
 }

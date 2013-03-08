@@ -34,8 +34,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
@@ -47,9 +45,6 @@ import org.squashtest.tm.domain.project.Project;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
-@NamedQueries({
-	@NamedQuery(name="TestStep.countVerifiedRequirementsByTestStepId", query="select count (rv) from RequirementVersion rv join rv.requirementVersionCoverages rvc join rvc.verifyingSteps astep where astep.id = :id"),	
-})
 public class ActionTestStep extends TestStep implements BoundEntity, AttachmentHolder {
 	@Lob
 	@Basic(optional = false)

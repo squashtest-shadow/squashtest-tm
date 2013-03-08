@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -45,6 +46,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
@@ -52,6 +54,9 @@ import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.repository.TestStepDao;
+import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
+import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 @Service("squashtest.tm.service.VerifiedRequirementsManagerService")
@@ -63,9 +68,15 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 	@Inject
 	private TestCaseDao testCaseDao;
+	
+	@Inject
+	private TestStepDao testStepDao;
 
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
+
+	@Inject private TestCaseCallTreeFinder callTreeFinder;
+
 	
 	@Inject
 	private RequirementVersionCoverageDao requirementVersionCoverageDao;
@@ -147,25 +158,13 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 				testCaseId);
 	}
 
-	/*
-	 * This service associates a new verified requirement to the test case
-	 * 
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.squashtest.csp.tm.service.VerifiedRequirementsManagerService#changeVerifiedRequirementVersionOnTestCase(long,
-	 * long, long)
-	 */
 	@Override
 	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public int changeVerifiedRequirementVersionOnTestCase(long oldVerifiedRequirementVersionId,
 			long newVerifiedRequirementVersionId, long testCaseId) {
 		RequirementVersion newReq = requirementVersionDao.findById(newVerifiedRequirementVersionId);
 		RequirementVersionCoverage coverage = requirementVersionCoverageDao.byRequirementVersionAndTestCase(oldVerifiedRequirementVersionId, testCaseId);
-//		RequirementVersion old = coverage.getVerifiedRequirementVersion();
-//		old.removeRequirementVersionCoverage(coverage);
 		coverage.setVerifiedRequirementVersion(newReq);
-//		newReq.addRequirementCoverage(coverage);
 		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(
 				Arrays.asList(newVerifiedRequirementVersionId), testCaseId);
 
@@ -189,16 +188,23 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	 * 
 	 * (non-Javadoc)
 	 * 
-	 * @see org.squashtest.csp.tm.service.TestCaseModificationService#findVerifiedRequirementsByTestCaseId(long,
-	 * org.squashtest.tm.service.foundation.collection.CollectionSorting)
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
-	public PagedCollectionHolder<List<RequirementVersion>> findAllDirectlyVerifiedRequirementsByTestCaseId(
-			long testCaseId, PagingAndSorting pas) {
-		List<RequirementVersion> verifiedReqs = requirementVersionDao.findAllVerifiedByTestCase(testCaseId, pas);
-		long verifiedCount = requirementVersionDao.countVerifiedByTestCase(testCaseId);
-		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(pas, verifiedCount, verifiedReqs);
+	public PagedCollectionHolder<List<VerifiedRequirement>> findAllDirectlyVerifiedRequirementsByTestCaseId(
+			long testCaseId, PagingAndSorting pagingAndSorting) {
+		List<RequirementVersionCoverage> reqVersionCoverages = requirementVersionCoverageDao.findAllByTestCaseId(testCaseId, pagingAndSorting);
+		long verifiedCount = requirementVersionCoverageDao.numberByTestCase(testCaseId);
+		return new PagingBackedPagedCollectionHolder<List<VerifiedRequirement>>(pagingAndSorting, verifiedCount, convertInDirectlyVerified(reqVersionCoverages));
+	}
+
+	private List<VerifiedRequirement> convertInDirectlyVerified(List<RequirementVersionCoverage> reqVersionCoverages) {
+		List<VerifiedRequirement> result = new ArrayList<VerifiedRequirement>(reqVersionCoverages.size());
+		for(RequirementVersionCoverage rvc : reqVersionCoverages){
+			VerifiedRequirement convertionResult = new VerifiedRequirement(rvc, true);
+			result.add(convertionResult);
+		}
+		return result;
 	}
 
 	@Override
@@ -239,4 +245,62 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		return rejections;
 
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
+			PagingAndSorting pas) {
+
+		LOGGER.debug("Looking for verified requirements of TestCase[id:{}]", testCaseId);
+
+		Set<Long> calleesIds = callTreeFinder.getTestCaseCallTree(testCaseId);
+
+		calleesIds.add(testCaseId);
+
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Fetching Requirements verified by TestCases " + calleesIds);
+		}
+		List<RequirementVersion> pagedVersionVerifiedByCalles = requirementVersionCoverageDao.findDistinctRequirementVersionsByTestCases(calleesIds, pas);
+
+		TestCase mainTestCase = testCaseDao.findById(testCaseId);
+
+		List<VerifiedRequirement> pagedVerifiedReqs = buildVerifiedRequirementList(
+				mainTestCase, pagedVersionVerifiedByCalles);
+
+		long totalVerified = requirementVersionCoverageDao.numberDistinctVerifiedByTestCases(calleesIds);
+		
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Total count of verified requirements : " + totalVerified);
+		}
+
+		return new PagingBackedPagedCollectionHolder<List<VerifiedRequirement>>(pas, totalVerified, pagedVerifiedReqs);
+	}
+	
+	
+	private List<VerifiedRequirement> buildVerifiedRequirementList(
+			final TestCase main , List<RequirementVersion> pagedVersionVerifiedByCalles) {
+
+		List<VerifiedRequirement> toReturn = new ArrayList<VerifiedRequirement>(pagedVersionVerifiedByCalles.size());
+		for(RequirementVersionCoverage directRvc : main.getRequirementVersionCoverages()){
+			toReturn.add(new VerifiedRequirement(directRvc, true));
+		}
+		
+		for (RequirementVersion calledVersion : pagedVersionVerifiedByCalles) {
+			if(!main.verifies(calledVersion)){
+					toReturn.add(new VerifiedRequirement(calledVersion, false));
+			}
+		}
+
+		return toReturn;
+	}
+
+	@Override
+	public PagedCollectionHolder<List<VerifiedRequirement>> findAllDirectlyVerifiedRequirementsByTestStepId(
+			long testStepId, PagingAndSorting paging) {
+		TestStep step = testStepDao.findById(testStepId);
+		return findAllVerifiedRequirementsByTestCaseId(step.getTestCase().getId(), paging);
+	}
+	
+
+
 }

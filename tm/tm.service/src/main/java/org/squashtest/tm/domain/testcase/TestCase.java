@@ -535,6 +535,27 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 			this.requirementVersionCoverages.remove(requirementVersionCoverage);
 			
 		}
+
+	/***
+	 * 
+	 * @return an unmodifiable set of the test case {@link RequirementVersionCoverage}s
+	 */
+	public Set<RequirementVersionCoverage> getRequirementVersionCoverages() {
+		return Collections.unmodifiableSet(this.requirementVersionCoverages);
+	}
+
+	/**
+	 * @param calledVersion
+	 * @return true if this {@link TestCase} verifies the {@link RequirementVersion}
+	 */
+	public boolean verifies(RequirementVersion rVersion) {
+		for(RequirementVersionCoverage coverage : this.requirementVersionCoverages){
+			if(coverage.getVerifiedRequirementVersion().getId().equals(rVersion.getId())){
+				return true;
+			}
+		}
+		return false;
+	}
 		
 	
 

@@ -20,56 +20,73 @@
  */
 package org.squashtest.tm.service.requirement;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 
 /**
- * Partial view of a {@link Requirement} verified by some test case.
+ * Partial view of a {@link RequirementVersionCoverage} verified by some test case.
  *
- * @author Gregory Fouquet
+ * @author Gregory Fouquet, mpagnon
  *
  */
 public class VerifiedRequirement {
-	private final RequirementVersion decoratedRequirement;
+	private final RequirementVersionCoverage requirementVersionCoverage;
 	/**
 	 * In the context of a given test case, the test case directly verifies this requirement (ie not through a test case
 	 * call).
 	 */
 	private final boolean directVerification;
 
-	public VerifiedRequirement(@NotNull RequirementVersion decoratedRequirement, boolean directVerification) {
+	public VerifiedRequirement(@NotNull RequirementVersionCoverage requirementVersionCoverage, boolean directVerification) {
 		super();
-		this.decoratedRequirement = decoratedRequirement;
+		this.requirementVersionCoverage = requirementVersionCoverage;
 		this.directVerification = directVerification;
 	}
-
-	public Project getProject() {
-		return decoratedRequirement.getRequirement().getProject();
+	public VerifiedRequirement(@NotNull RequirementVersion version, boolean directlyVerified) {
+		super();
+		this.requirementVersionCoverage = new RequirementVersionCoverage(version);
+		this.directVerification = directlyVerified;
 	}
-
+	private RequirementVersion getVerifiedRequirementVersion(){
+		return this.requirementVersionCoverage.getVerifiedRequirementVersion();
+	}
+	public Project getProject() {
+		return getVerifiedRequirementVersion().getRequirement().getProject();
+	}
+	public RequirementStatus getStatus(){
+		return getVerifiedRequirementVersion().getStatus();
+	}
 	public String getName() {
-		return decoratedRequirement.getName();
+		return getVerifiedRequirementVersion().getName();
+	}
+	
+	public int getVersionNumber(){
+		return getVerifiedRequirementVersion().getVersionNumber();
 	}
 
 	public String getDescription() {
-		return decoratedRequirement.getDescription();
+		return getVerifiedRequirementVersion().getDescription();
 	}
 
 	public String getReference() {
-		return decoratedRequirement.getReference();
+		return getVerifiedRequirementVersion().getReference();
 	}
 
 	public RequirementCriticality getCriticality() {
-		return decoratedRequirement.getCriticality();
+		return getVerifiedRequirementVersion().getCriticality();
 	}
 	
 	public RequirementCategory getCategory() {
-		return decoratedRequirement.getCategory();
+		return getVerifiedRequirementVersion().getCategory();
 	}
 
 	public boolean isDirectVerification() {
@@ -77,10 +94,14 @@ public class VerifiedRequirement {
 	}
 
 	public Long getId() {
-		return decoratedRequirement.getId();
+		return getVerifiedRequirementVersion().getId();
+	}
+	public List<ActionTestStep> getVerifyingSteps(){
+		return requirementVersionCoverage.getVerifyingSteps();
+	}
+	public boolean hasStepAsVerifying(long stepId) {
+		return requirementVersionCoverage.hasStepAsVerifying(stepId);
 	}
 	
-	public RequirementVersion getDecoratedRequirement() {
-		return decoratedRequirement;
-	}
+	
 }

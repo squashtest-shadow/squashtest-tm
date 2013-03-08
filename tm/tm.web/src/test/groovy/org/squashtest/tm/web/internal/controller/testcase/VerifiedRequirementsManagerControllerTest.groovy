@@ -24,16 +24,20 @@ import javax.inject.Provider
 
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException
+import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
+import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 
 import spock.lang.Specification
 
@@ -104,13 +108,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		1 * verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestCase([5, 15], 10)
 	}
 
-	def "should remove single requirement from verified requirements of test case"() {
-		when:
-		controller.removeVerifiedRequirementVersionFromTestCase(20, 10)
-
-		then:
-		1 * verifiedRequirementsManagerService.removeVerifiedRequirementVersionFromTestCase(20, 10)
-	}
+	
 
 	def "should return rapport of requirements which could not be added"() {
 		given:
@@ -123,5 +121,75 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 
 		then:
 		res.noVerifiableVersionRejections
+	}
+	
+	def "should build table model for verified requirements"() {
+		given:
+		DataTableDrawParameters request = new DataTableDrawParameters(sEcho: "echo", iDisplayStart: 0, iDisplayLength: 100)
+
+		and:
+		PagedCollectionHolder holder = Mock()
+		holder.pagedItems >> []
+		verifiedRequirementsManagerService.findAllVerifiedRequirementsByTestCaseId(10, _) >> holder
+
+		when:
+		def res = controller.getAllVerifiedRequirementsTableModel(10, request, Locale.getDefault())
+
+		then:
+		res.sEcho == "echo"
+		res.iTotalDisplayRecords == 0
+		res.iTotalRecords == 0
+	}
+
+	//TODO move : i think this should belong to a DataTableModelHelperTest 
+	def "should build verified requirements model from 1 row of 5"() {
+		given:
+		Requirement req = Mock()
+		req.name >> "foo"
+		req.id >> 15
+
+		Project project = Mock()
+		req.project >> project
+		project.name >> "bar"
+
+		and:
+		FilteredCollectionHolder<List<Requirement>> holder = Mock()
+		holder.filteredCollection >> [req]
+		holder.unfilteredResultCount >> 5
+
+
+
+		when:
+
+		//well, groovy
+
+		def helper = [
+			buildItemData: { item ->
+				[
+					item.getId(),
+					1,
+					item.getProject().getName(),
+					item.getName(),
+					"" ] as Object[];
+			}
+
+		] as DataTableModelHelper<Requirement>;
+
+
+		def res = helper.buildDataModel(holder, 1,"echo");
+
+		then:
+		res.sEcho == "echo"
+		res.iTotalDisplayRecords == 5
+		res.iTotalRecords == 5
+		res.aaData == [
+			[
+				15,
+				1,
+				"bar",
+				"foo",
+				""
+			]
+		]
 	}
 }
