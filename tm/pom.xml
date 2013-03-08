@@ -3,12 +3,12 @@
 	<parent>
 		<artifactId>squashtest-parent-pom</artifactId>
 		<groupId>org.squashtest.tm</groupId>
-		<version>1.5.0.IT49-B</version>
+		<version>1.5.0.IT50-SNAPSHOT</version>
 		<relativePath>../parent-pom</relativePath>
 	</parent>
 	<groupId>org.squashtest.tm</groupId>
 	<artifactId>squashtest-csp-tm</artifactId>
-	<version>1.5.0.IT49-B</version>
+	<version>1.5.0.IT50-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>squashtest-csp-tm</name>
 	<description>Umbrella project for the CSP Test Management module</description>
