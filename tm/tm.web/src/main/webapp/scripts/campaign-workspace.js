@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
-	require([ "jquery", "domReady", "workspace/WorkspaceTreePanelView", "squash/squashtm.tree-page-resizer" ],
-		function($, domReady, WorkspaceTreePanelView, resizer) {
+	require([ "workspace/WorkspaceTreePanelView", "squash/squashtm.tree-page-resizer" ],
+		function(WorkspaceTreePanelView, resizer) {
 		var conf = {
 			leftSelector : "#tree-panel-left",
 			rightSelector : "#contextual-content"
