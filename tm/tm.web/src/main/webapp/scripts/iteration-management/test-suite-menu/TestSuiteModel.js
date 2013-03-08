@@ -27,6 +27,8 @@
  
  ********************* */
 
+define(["jquery","jqueryui"],function($){
+	
 function TestSuiteModel(settings) {
 
 	this.createUrl = settings.createUrl;
@@ -203,3 +205,6 @@ function TestSuiteModel(settings) {
 	}	
 
 }
+
+	return TestSuiteModel;
+});

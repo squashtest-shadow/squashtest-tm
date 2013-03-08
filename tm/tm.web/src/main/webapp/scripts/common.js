@@ -31,12 +31,8 @@ requirejs.config({
     "contextual-content-handlers",
     "test-cases-management",
     "users-manager",
-    //"bugtracker",
-    {
-    	main : "main",
-    	name : "bugtracker",
-    	location : "http://localhost/scripts/scripts/bugtracker"
-    }
+    "bugtracker",
+    "iteration-management"
 	],
 
 	/*

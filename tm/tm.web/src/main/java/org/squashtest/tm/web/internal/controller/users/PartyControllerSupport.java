@@ -35,6 +35,7 @@ import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
@@ -71,7 +72,7 @@ public abstract class PartyControllerSupport {
 	protected Map<String, Object> createPermissionPopupModel(long partyId) {
 		Locale locale = LocaleContextHolder.getLocale();
 		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
-		List<Project> projectList = permissionService.findProjectWithoutPermissionByParty(partyId);
+		List<GenericProject> projectList = permissionService.findProjectWithoutPermissionByParty(partyId);
 
 		List<PermissionGroupModel> permissionGroupModelList = new ArrayList<PermissionGroupModel>();
 		if (permissionList != null) {
@@ -86,7 +87,7 @@ public abstract class PartyControllerSupport {
 
 		List<ProjectModel> projectModelList = new ArrayList<ProjectModel>();
 		if (projectList != null) {
-			for (Project project : projectList) {
+			for (GenericProject project : projectList) {
 				projectModelList.add(new ProjectModel(project));
 			}
 		}

@@ -18,88 +18,94 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-function TestSuiteMenuCheckedSuites(){
-	var checkedIds = [];
-	this.get = function(){
-		return this.checkedIds;
-	};
-	this.reset = function(){
-		this.checkedIds = [];		
-	};
-	this.add = function(id){
-		this.checkedIds.push(id);
-	};
-	this.remove = function(id){
+
+define(["jquery","jqueryui"],function($){
+
+	function TestSuiteMenuCheckedSuites(){
+		var checkedIds = [];
+		this.get = function(){
+			return this.checkedIds;
+		};
+		this.reset = function(){
+			this.checkedIds = [];		
+		};
+		this.add = function(id){
+			this.checkedIds.push(id);
+		};
+		this.remove = function(id){
+		
+		 var index = jQuery.inArray(id, this.checkedIds);
+		 if(index){
+		 this.checkedIds.splice(index, 1);
+		};
+	}
+	}
+		
+	function TestSuiteMenuControl(){
+		var self=this;
+		
+		var makeControl = $.proxy(function (){
+			var node = $("<div/>");
+			
+			var input = $("<input/>", { 'type' : 'text', 'class' : 'suite-manager-menu-input'} );
+			node.append(input);
+			
+			var button = $("<button/>", { 'role' : 'button', 'class' : 'button suite-manager-menu-button'});
+			button.button({ 
+							'text': false, 
+							icons: {
+								primary:'ui-icon-circle-plus'
+								}
+						  });
+						  
+			node.append(button);
+			
+			var superDiv = $("<div/>");
+			superDiv.append(node);
+			
+			this.control=superDiv;
+			
+		}, this);
+		
+		this.getControlHtml = function (){
+			return this.control.html();
+		}
+		
+		makeControl();
 	
-	 var index = jQuery.inArray(id, this.checkedIds);
-	 if(index){
-	 this.checkedIds.splice(index, 1);
-	};
-}
-function TestSuiteMenuControl(){
-	var self=this;
-	
-	var makeControl = $.proxy(function (){
-		var node = $("<div/>");
-		
-		var input = $("<input/>", { 'type' : 'text', 'class' : 'suite-manager-menu-input'} );
-		node.append(input);
-		
-		var button = $("<button/>", { 'role' : 'button', 'class' : 'button suite-manager-menu-button'});
-		button.button({ 
-						'text': false, 
-						icons: {
-							primary:'ui-icon-circle-plus'
-							}
-					  });
-					  
-		node.append(button);
-		
-		var superDiv = $("<div/>");
-		superDiv.append(node);
-		
-		this.control=superDiv;
-		
-	}, this);
-	
-	this.getControlHtml = function (){
-		return this.control.html();
 	}
 	
-	makeControl();
-
-}
-function TestSuiteMenuOkCancellButtons(){
-	var self=this;
+	function TestSuiteMenuOkCancellButtons(){
+		var self=this;
+		
+		var makeButtons = $.proxy(function (){
+			var node = $("<div/>", {'class':'snap-right'});
+			
+			var okButton = $("<button/>", { 'role' : 'button', 'class' : 'button suite-manager-menu-ok-button'} );
+			okButton.text('OK');
+			okButton.button();
+			node.append(okButton);
+			
+			var cancelButton = $("<button/>", { 'role' : 'button', 'class' : 'button suite-manager-menu-cancel-button'});
+			cancelButton.text(squashtm.message.cancel);
+			cancelButton.button();
+						  
+			node.append(cancelButton);
+			
+			var superDiv = $("<div/>");
+			superDiv.append(node);
+			
+			this.buttons=superDiv;
+			
+		}, this);
+		
+		this.getButtonsHtml = function (){
+			return this.buttons.html();
+		};
+		
+		makeButtons();
 	
-	var makeButtons = $.proxy(function (){
-		var node = $("<div/>", {'class':'snap-right'});
-		
-		var okButton = $("<button/>", { 'role' : 'button', 'class' : 'button suite-manager-menu-ok-button'} );
-		okButton.text('OK');
-		okButton.button();
-		node.append(okButton);
-		
-		var cancelButton = $("<button/>", { 'role' : 'button', 'class' : 'button suite-manager-menu-cancel-button'});
-		cancelButton.text(squashtm.message.cancel);
-		cancelButton.button();
-					  
-		node.append(cancelButton);
-		
-		var superDiv = $("<div/>");
-		superDiv.append(node);
-		
-		this.buttons=superDiv;
-		
-	}, this);
-	
-	this.getButtonsHtml = function (){
-		return this.buttons.html();
-	};
-	
-	makeButtons();
-
-}
+	}
 /*
   this version of fg-menu is able to replace the content dynamically, recreating the internal structure when needed.
 */
@@ -403,4 +409,7 @@ function TestSuiteMenu(settings){
 	initializeContent();	
 	
 }
+
+	return TestSuiteMenu;
+});
 

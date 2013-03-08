@@ -393,7 +393,9 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 			builder.append(suite +", ");
 		}
 		String nameList = builder.toString();
-		nameList = nameList.trim().substring(0, nameList.lastIndexOf(","));
+		if(nameList.length() > 0){
+			nameList = nameList.trim().substring(0, nameList.lastIndexOf(","));
+		}
 
 		return nameList;
 	}

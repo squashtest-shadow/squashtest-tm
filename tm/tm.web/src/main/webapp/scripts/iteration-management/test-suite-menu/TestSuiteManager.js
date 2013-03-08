@@ -23,6 +23,8 @@
  *
  */
 
+define(["jquery","jqueryui"],function($){
+
 function TestSuiteManagerControl(settings) {
 
 	this.manager = settings.manager;
@@ -426,3 +428,6 @@ function TestSuiteManager(settings) {
 	
 
 }
+
+ return TestSuiteManager;
+});

@@ -40,9 +40,7 @@
 <%@ taglib prefix="comp" 	tagdir="/WEB-INF/tags/component" %>	
 <%@ taglib prefix="fn"		uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<s:url var="managerScriptUrl" value="/scripts/squashtest/classes/TestSuiteManager.js"  /> 
-<s:url var="modelScriptUrl" value="/scripts/squashtest/classes/TestSuiteModel.js"  /> 
-<s:url var="menuScriptUrl" value="/scripts/squashtest/classes/TestSuiteMenu.js" /> 
+ 
 <s:url var="baseSuiteUrl" value="/test-suites" /> 
  
  <%-- ====================== POPUP STRUCTURE DEFINITION ========================= --%>
@@ -105,92 +103,17 @@
 
 <script type="text/javascript">
 	
-	function loadTestSuiteModelScript(){
-		return $.ajax({
-			cache : true,
-			type : 'GET',
-			url : "${modelScriptUrl}",
-			dataType : 'script'
-		});
-	}
+$(function(){	
 	
+	require(["iteration-management"], function(main){
+		
+		var initData = [
+						<c:forEach var="suite" items="${suiteList}" varStatus="status">
+							{ id : '${suite.id}', name : '${fn:replace(suite.name, "'", "\\'")}' }<c:if test="${not status.last}">,</c:if>
+						</c:forEach>
+					];
 	
-	function loadTestSuiteManagerScript(){
-		return $.ajax({
-			cache : true,
-			type : 'GET',
-			url : "${managerScriptUrl}",
-			dataType : 'script'
-		});		
-	}
-	
-	function loadTestSuiteMenuScript(){
-		return $.ajax({
-			cache : true,
-			type : 'GET',
-			url : "${menuScriptUrl}",
-			dataType : 'script'
-		});		
-	}
-
-	
-	$(function(){		
-		$.when(loadTestSuiteModelScript(), loadTestSuiteManagerScript(), loadTestSuiteMenuScript()) 		
-		.then(function(){				
-			
-			var initData = [
-				<c:forEach var="suite" items="${suiteList}" varStatus="status">
-					{ id : '${suite.id}', name : '${fn:replace(suite.name, "'", "\\'")}' }<c:if test="${not status.last}">,</c:if>
-				</c:forEach>
-			];
-			
-
-			squashtm.testSuiteManagement= {};
-
-			/* ****************** define the main model ******************** */
-			
-			var modelSettings = {
-				createUrl : "${testSuitesUrl}/new",	
-				baseUpdateUrl : "${baseSuiteUrl}",
-				getUrl : "${testSuitesUrl}",
-				removeUrl : "${testSuitesUrl}/delete",
-				initData : initData
-			};
-			
-			
-			squashtm.testSuiteManagement.testSuiteModel = new TestSuiteModel(modelSettings);
-			
-			
-
-			/* ***************** define the suite manager ******************* */
-			
-			var managerSettings = {
-				instance : $("#${popupId} .main-div-suites"),
-				model : squashtm.testSuiteManagement.testSuiteModel,
-				defaultMessage : "${defaultMessage}",
-				deleteConfirmMessage : "${deleteMessage}",
-				deleteConfirmTitle : "${deleteTitle}"
-			};
-			
-			squashtm.testSuiteManagement.testSuiteManager = new TestSuiteManager(managerSettings);
-			
-			
-			/* ****************** define the suite menu *********************** */ 
-			
-			var menuSettings = {
-				instanceSelector : "#${menuId}",
-				model : squashtm.testSuiteManagement.testSuiteModel,
-				datatableSelector : "#${datatableId}",
-				isContextual : true,
-				emptySelectionMessageSelector: "#${ emptySelectionMessageId }",
-				emptySuiteSelectionMessageSelector: "#suite-menu-empty-selection-popup",
-			};
-			
-			squashtm.testSuiteManagement.testSuiteMenu = new TestSuiteMenu(menuSettings);
-			
-			/* ********define on the fly a listener for the datatable ********* */
-			
-			var tableListener = {
+		var tableListener = {
 				update : function(evt){
 					//"add" is none of our business.
 					if ((evt===undefined) || (evt.evt_name=="remove") || (evt.evt_name=="rename") || (evt.evt_name =="bind")){
@@ -198,14 +121,42 @@
 					}
 				}
 			};
-			
-			squashtm.testSuiteManagement.testSuiteModel.addListener(tableListener);
-			
-			
-			//now we can make reappear
-			$("#${popupId} .main-div-suites").removeClass("not-displayed");
-		});
-	});
+		
+		var modelSettings = {
+				createUrl : "${testSuitesUrl}/new",	
+				baseUpdateUrl : "${baseSuiteUrl}",
+				getUrl : "${testSuitesUrl}",
+				removeUrl : "${testSuitesUrl}/delete",
+				initData : initData
+			};
+		
+		var managerSettings = {
+				instance : $("#${popupId} .main-div-suites"),
+				defaultMessage : "${defaultMessage}",
+				deleteConfirmMessage : "${deleteMessage}",
+				deleteConfirmTitle : "${deleteTitle}"
+			};
+		
+		var menuSettings = {
+				instanceSelector : "#${menuId}",
+				datatableSelector : "#${datatableId}",
+				isContextual : true,
+				emptySelectionMessageSelector: "#${ emptySelectionMessageId }",
+				emptySuiteSelectionMessageSelector: "#suite-menu-empty-selection-popup",
+			};
+		
+		var config = {
+				modelSettings : modelSettings,
+				managerSettings: managerSettings,
+				menuSettings : menuSettings,
+				tableListener : tableListener
+			};
+		
+		main.initTestSuiteMenu(config);
 
+		//now we can make reappear
+		$("#${popupId} .main-div-suites").removeClass("not-displayed");
+	});
+});
 
 </script>
