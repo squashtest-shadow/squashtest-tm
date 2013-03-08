@@ -173,11 +173,11 @@ requirejs.config({
 			exports: "TreeNodeCopier"
 		},
 		"jquery.squash.jstree-node": {
-			deps: [ "jquery", "jstree" ],
+			deps: [ "jquery", "jstree", "jquery.squash" ],
 			exports: "jquerySquashtmJstreeNode"
 		},
 		"jquery.squash.jstree": {
-			deps: [ "jquery", "jstree", "jquery.squash.jstree-node" ],
+			deps: [ "jquery", "jstree", "jquery.squash.jstree-node", "jquery.squash" ],
 			exports: "squashtm.tree"
 		},
 		"jquery.squash.linkabletree": {
