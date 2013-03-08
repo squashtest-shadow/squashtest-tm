@@ -75,6 +75,47 @@ import org.hibernate.persister.entity.JoinedSubclassEntityPersister;
  * 
  * 
  */
+
+/*
+ * Update 08/03/13 : Issue 1980 (https://ci.squashtest.org/mantis/view.php?id=1980)
+ * 
+ * First, I'd like you to know that I swear I've tried everything ( mapping using @SecondaryTable + inverse=true, custom @SQLInsert, orthodox and unorthodox mapping, 
+ * voodoo and else) before relying on this.
+ * 
+ * 
+ * Why
+ * ======================
+ * 
+ * This issue is related to the cascade-persist of a test case and its steps. What should normally happen is the following :
+ * 
+ *  1/ persist the data in table TEST_STEP
+ *  2/ persist the data in the table subclasses 
+ *  3/ persist the other join tables
+ *  
+ *  For each of those operations it's supposed to check that the join pointing to the current table is not an inverse relation. That information is normally 
+ *  supplied by the  . However, here is 
+ *  the default implementation straight from org.hibernate.persister.entity.AbstractEntityPersister : 
+ *  
+ *  [quote]
+ *  protected boolean isInverseTable(int j) {
+ *		return false;
+ *	}
+ *	[/quote]
+ *	
+ *	And here is how Gavin King solved the problem : by delegating to me.
+ *
+ *  The consequence, regarding cascade persistence, is that the join table TEST_CASE_STEPS is handled by the CollectionPersister managing TestCase#steps but also by the 
+ *  TestStep persister, which has no clue of what index it should insert the TestStep. This leads to double-insertion in the database, with null data for the order column.
+ *  But the TestStepPersister should never worry about TEST_CASE_STEPS in the first place !
+ *
+ *	
+ * How 
+ * =======================
+ * 
+ * Override isInverseTable and return the information that should have been read from the metadata : the bloody TEST_CASE_STEPS table is an INVERTED TABLE.
+ * 
+ * 
+ */
 public class TestStepPersister extends JoinedSubclassEntityPersister {
 
 	private static final String NONFORMATTED_TABLE_NAME = "TEST_CASE_STEPS";
@@ -105,7 +146,7 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 
 	
 	/*
-	 * This override is the very reason of that class(non-Javadoc)
+	 * This override is the very reason of that class
 	 * @see org.hibernate.persister.entity.JoinedSubclassEntityPersister#getSubclassTableKeyColumns(int)
 	 */
 	@Override
@@ -118,6 +159,20 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 		}
 	}
 
+	/*
+	 * @See org.hibernate.persister.entity.AbstractEntityPersister#isInverseTable(int)
+	 */
+	@Override
+	protected boolean isInverseTable(int j){
+		if (isTheJoinTable(j)){
+			return true;
+		}
+		else{
+			return super.isInverseTable(j);
+		}
+	}
+
+	
 	
 	private boolean isTheJoinTable(int index){
 		if (_cachedIndex==-1){
@@ -153,7 +208,7 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 				return;
 			}
 		}
-		throw new IllegalArgumentException("TestStepPersister : could not find the join table TEST_CASE_STEPS");
+		throw new IllegalArgumentException("TestStepPersister : could not find the join table "+NONFORMATTED_TABLE_NAME);
 	}
 	
 	
