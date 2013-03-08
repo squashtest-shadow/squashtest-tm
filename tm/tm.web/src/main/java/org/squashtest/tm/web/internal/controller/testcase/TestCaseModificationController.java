@@ -95,93 +95,93 @@ import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 import org.squashtest.tm.web.internal.service.CustomFieldHelperService;
 import org.squashtest.tm.web.internal.service.CustomFieldHelperService.Helper;
 
-
 @Controller
 @RequestMapping("/test-cases/{testCaseId}")
 public class TestCaseModificationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);
-	
-	
-	
+
 	private static final String TEST_CASE_ = "test case ";
 	private static final String COPIED_STEP_ID_PARAM = "copiedStepId[]";
 
 	private final DatatableMapper verifiedReqMapper = new IndexBasedMapper(7)
-															.mapAttribute(Project.class, "name", String.class, 1)
-															.mapAttribute(RequirementVersion.class, "id", Long.class, 2)
-															.mapAttribute(RequirementVersion.class, "reference", String.class, 3)
-															.mapAttribute(RequirementVersion.class, "name", String.class, 4)
-															.mapAttribute(RequirementVersion.class, "versionNumber", Integer.class, 5)
-															.mapAttribute(RequirementVersion.class, "criticality", RequirementCriticality.class, 6)
-															.mapAttribute(RequirementVersion.class, "category", RequirementCategory.class, 7);
+			.mapAttribute(Project.class, "name", String.class, 1)
+			.mapAttribute(RequirementVersion.class, "id", Long.class, 2)
+			.mapAttribute(RequirementVersion.class, "reference", String.class, 3)
+			.mapAttribute(RequirementVersion.class, "name", String.class, 4)
+			.mapAttribute(RequirementVersion.class, "versionNumber", Integer.class, 5)
+			.mapAttribute(RequirementVersion.class, "criticality", RequirementCriticality.class, 6)
+			.mapAttribute(RequirementVersion.class, "category", RequirementCategory.class, 7);
 
 	private final DatatableMapper referencingTestCaseMapper = new IndexBasedMapper(6)
-																	.mapAttribute(Project.class, "name", String.class, 2)
-																	.mapAttribute(TestCase.class, "reference", String.class, 3)
-																	.mapAttribute(TestCase.class, "name", String.class, 4)
-																	.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 5);
+			.mapAttribute(Project.class, "name", String.class, 2)
+			.mapAttribute(TestCase.class, "reference", String.class, 3)
+			.mapAttribute(TestCase.class, "name", String.class, 4)
+			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 5);
 
 	private final DatatableMapper execsTableMapper = new IndexBasedMapper(11)
-														.mapAttribute(Project.class, "name", String.class, 1)
-														.mapAttribute(Campaign.class, "name", String.class, 2)
-														.mapAttribute(Iteration.class, "name", String.class, 3)
-														.mapAttribute(Execution.class, "name", String.class, 4)
-														.mapAttribute(Execution.class, "executionMode", TestCaseExecutionMode.class, 5)
-														.mapAttribute(TestSuite.class, "name", String.class, 6)
-														.mapAttribute(Execution.class, "executionStatus", ExecutionStatus.class, 8)
-														.mapAttribute(Execution.class, "lastExecutedBy", String.class, 9)
-														.mapAttribute(Execution.class, "lastExecutedOn", Date.class, 10);
+			.mapAttribute(Project.class, "name", String.class, 1).mapAttribute(Campaign.class, "name", String.class, 2)
+			.mapAttribute(Iteration.class, "name", String.class, 3)
+			.mapAttribute(Execution.class, "name", String.class, 4)
+			.mapAttribute(Execution.class, "executionMode", TestCaseExecutionMode.class, 5)
+			.mapAttribute(TestSuite.class, "name", String.class, 6)
+			.mapAttribute(Execution.class, "executionStatus", ExecutionStatus.class, 8)
+			.mapAttribute(Execution.class, "lastExecutedBy", String.class, 9)
+			.mapAttribute(Execution.class, "lastExecutedOn", Date.class, 10);
 
 	private TestCaseModificationService testCaseModificationService;
 
 	private ExecutionFinder executionFinder;
-	
+
 	@Inject
 	private CallStepManagerService callStepManager;
-	
-	
+
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
-	
+
 	@Inject
 	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
 
 	@Inject
 	private Provider<TestCaseNatureJeditableComboDataBuilder> natureComboBuilderProvider;
-	
+
 	@Inject
 	private Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider;
 
-	
 	// ****** custom field services ******************
 
 	@Inject
 	private CustomFieldHelperService cufHelperService;
 
 	// ****** /custom field services ******************
-	
+
 	@Inject
 	private Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider;
-	
+
 	@Inject
 	private Provider<LevelLabelFormatter> levelLabelFormatterProvider;
 
 	@Inject
 	private Provider<LevelLabelFormatterWithoutOrder> levelLabelFormatterWithoutOrderProvider;
-	
+
 	@ServiceReference
 	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
 		this.testCaseModificationService = testCaseModificationService;
 	}
-	
+
 	@InitBinder("add-test-step")
-	public void addTestCaseBinder(WebDataBinder binder){
+	public void addTestCaseBinder(WebDataBinder binder) {
 		ActionStepFormModelValidator validator = new ActionStepFormModelValidator();
 		validator.setMessageSource(internationalizationHelper);
 		binder.setValidator(validator);
 	}
-	
 
+	/**
+	 * Returns the fragment html view of test case
+	 * 
+	 * @param testCaseId
+	 * @param locale
+	 * @return
+	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showTestCase(@PathVariable long testCaseId, Locale locale) {
 		ModelAndView mav = new ModelAndView("fragment/test-cases/edit-test-case");
@@ -192,7 +192,13 @@ public class TestCaseModificationController {
 		return mav;
 	}
 
-
+	/**
+	 * Returns the full-page html view of test case
+	 * 
+	 * @param testCaseId
+	 * @param locale
+	 * @return
+	 */
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public ModelAndView showTestCaseInfo(@PathVariable long testCaseId, Locale locale) {
 
@@ -207,10 +213,9 @@ public class TestCaseModificationController {
 	}
 
 	private void populateModelWithTestCaseEditionData(ModelAndView mav, TestCase testCase, Locale locale) {
-		
 
 		boolean hasCUF = cufHelperService.hasCustomFields(testCase);
-		
+
 		// Convert execution mode with local parameter
 		List<OptionTag> executionModes = new ArrayList<OptionTag>();
 		for (TestCaseExecutionMode executionMode : TestCaseExecutionMode.values()) {
@@ -239,52 +244,48 @@ public class TestCaseModificationController {
 	private String buildNatureComboData(TestCase testCase, Locale locale) {
 		return natureComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
-	
+
 	private String buildTypeComboData(TestCase testCase, Locale locale) {
 		return typeComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
-	
+
 	private String buildStatusComboData(TestCase testCase, Locale locale) {
 		return statusComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
-	
+
 	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
 		return internationalizationHelper.internationalize(mode, locale);
 	}
 
-	
-	@RequestMapping(value="/steps/panel")
-	public String getTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model, Locale locale){
-		
-		//the main entities
+	@RequestMapping(value = "/steps/panel")
+	public String getTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model, Locale locale) {
+
+		// the main entities
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));	
-		
-		//the custom fields definitions
-		Helper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps).setRenderingLocations(RenderingLocation.STEP_TABLE)
-																			  .restrictToCommonFields();
-		
+		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));
+
+		// the custom fields definitions
+		Helper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps)
+				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
+
 		List<CustomFieldModel> cufDefinitions = helper.getCustomFieldConfiguration();
 		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
 
-
-		//process the data
+		// process the data
 		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
 		builder.usingCustomFields(cufValues, cufDefinitions.size());
-		List<Map<?,?>>  stepsData = builder.buildAllData(steps);
-		
-		
-		//populate the model
+		List<Map<?, ?>> stepsData = builder.buildAllData(steps);
+
+		// populate the model
 		model.addAttribute("testCase", testCase);
 		model.addAttribute("stepsData", stepsData);
 		model.addAttribute("cufDefinitions", cufDefinitions);
-		
-		
-		//return
+
+		// return
 		return "test-cases-tabs/test-steps-tab.html";
-		
+
 	}
-	
+
 	@RequestMapping(value = "/steps-table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getStepsTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
@@ -296,18 +297,16 @@ public class TestCaseModificationController {
 
 		FilteredCollectionHolder<List<TestStep>> holder = testCaseModificationService.findStepsByTestCaseIdFiltered(
 				testCaseId, filter);
-		
-		//cufs 
+
+		// cufs
 		Helper<ActionTestStep> helper = cufHelperService.newStepsHelper(holder.getFilteredCollection())
-														.setRenderingLocations(RenderingLocation.STEP_TABLE)
-														.restrictToCommonFields();
+				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
 		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
 
-		//generate the model
+		// generate the model
 		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
 		builder.usingCustomFields(cufValues);
-		return builder.buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho());
-
+		return builder.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
@@ -317,16 +316,14 @@ public class TestCaseModificationController {
 			@PathVariable long testCaseId) {
 
 		ActionTestStep step = stepModel.getActionTestStep();
-		
+
 		Map<Long, String> customFieldValues = stepModel.getCustomFields();
-		
+
 		testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues);
 
 		LOGGER.trace(TEST_CASE_ + testCaseId + ": step added, action : " + step.getAction() + ", expected result : "
 				+ step.getExpectedResult());
 	}
-	
-	
 
 	@RequestMapping(value = "/steps/paste", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })
 	@ResponseBody
@@ -344,7 +341,8 @@ public class TestCaseModificationController {
 
 	@RequestMapping(value = "/steps/paste-last-index", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })
 	@ResponseBody
-	public void pasteStepLastIndex(@RequestParam(COPIED_STEP_ID_PARAM) String[] copiedStepId, @PathVariable long testCaseId) {
+	public void pasteStepLastIndex(@RequestParam(COPIED_STEP_ID_PARAM) String[] copiedStepId,
+			@PathVariable long testCaseId) {
 
 		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepId);
 
@@ -369,7 +367,6 @@ public class TestCaseModificationController {
 	public void changeStepsIndex(@RequestParam("itemIds[]") List<Long> itemIds, @RequestParam("newIndex") int newIndex,
 			@PathVariable long testCaseId) {
 
-		
 		testCaseModificationService.changeTestStepsPosition(testCaseId, newIndex, itemIds);
 
 	}
@@ -431,17 +428,15 @@ public class TestCaseModificationController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-nature", VALUE })
-	public String changeNature(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseNature nature,
-			Locale locale) {
+	public String changeNature(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseNature nature, Locale locale) {
 		testCaseModificationService.changeNature(testCaseId, nature);
 
 		return formatNature(nature, locale);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-type", VALUE })
-	public String changeType(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseType type,
-			Locale locale) {
+	public String changeType(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseType type, Locale locale) {
 		testCaseModificationService.changeType(testCaseId, type);
 
 		return formatType(type, locale);
@@ -449,13 +444,12 @@ public class TestCaseModificationController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-status", VALUE })
-	public String changeStatus(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseStatus status,
-			Locale locale) {
+	public String changeStatus(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseStatus status, Locale locale) {
 		testCaseModificationService.changeStatus(testCaseId, status);
 
 		return formatStatus(status, locale);
 	}
-	
+
 	@RequestMapping(value = "/importanceAuto", method = RequestMethod.POST, params = { "importanceAuto" })
 	@ResponseBody
 	public String changeImportanceAuto(@PathVariable long testCaseId,
@@ -483,7 +477,7 @@ public class TestCaseModificationController {
 
 		testCaseModificationService.rename(testCaseId, newName);
 		LOGGER.info("TestCaseModificationController : renaming {} as {}", testCaseId, newName);
-		
+
 		return new RenameModel(newName);
 
 	}
@@ -495,7 +489,7 @@ public class TestCaseModificationController {
 		TestCaseImportance importance = testCase.getImportance();
 		return formatImportance(importance, locale);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/nature", method = RequestMethod.GET)
 	public String getNature(@PathVariable long testCaseId, Locale locale) {
@@ -511,7 +505,7 @@ public class TestCaseModificationController {
 		TestCaseType type = testCase.getType();
 		return formatType(type, locale);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/status", method = RequestMethod.GET)
 	public String getStatus(@PathVariable long testCaseId, Locale locale) {
@@ -519,7 +513,7 @@ public class TestCaseModificationController {
 		TestCaseStatus status = testCase.getStatus();
 		return formatStatus(status, locale);
 	}
-	
+
 	private String formatImportance(TestCaseImportance importance, Locale locale) {
 		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(importance);
 	}
@@ -527,15 +521,15 @@ public class TestCaseModificationController {
 	private String formatNature(TestCaseNature nature, Locale locale) {
 		return levelLabelFormatterWithoutOrderProvider.get().useLocale(locale).formatLabel(nature);
 	}
-	
+
 	private String formatType(TestCaseType type, Locale locale) {
 		return levelLabelFormatterWithoutOrderProvider.get().useLocale(locale).formatLabel(type);
 	}
-	
+
 	private String formatStatus(TestCaseStatus status, Locale locale) {
 		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(status);
 	}
-	
+
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
 	public ModelAndView refreshGeneralInfos(@PathVariable long testCaseId) {
 
@@ -577,9 +571,9 @@ public class TestCaseModificationController {
 		return new DataTableModelHelper<VerifiedRequirement>() {
 			@Override
 			public Object[] buildItemData(VerifiedRequirement item) {
-				return new Object[] { getCurrentIndex(), item.getProject().getName(), item.getId(), 
+				return new Object[] { getCurrentIndex(), item.getProject().getName(), item.getId(),
 						item.getReference(), item.getName(), item.getDecoratedRequirement().getVersionNumber(),
-						internationalizationHelper.internationalize(item.getCriticality(), locale), 
+						internationalizationHelper.internationalize(item.getCriticality(), locale),
 						internationalizationHelper.internationalize(item.getCategory(), locale), "",
 						item.getDecoratedRequirement().getStatus().name(), item.isDirectVerification() };
 			}
@@ -606,8 +600,9 @@ public class TestCaseModificationController {
 		return new DataTableModelHelper<TestCase>() {
 			@Override
 			public Object[] buildItemData(TestCase item) {
-				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(), item.getReference(),
-						item.getName(), internationalizationHelper.internationalize(item.getExecutionMode(), locale) };
+				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(),
+						item.getReference(), item.getName(),
+						internationalizationHelper.internationalize(item.getExecutionMode(), locale) };
 			}
 		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 
@@ -658,10 +653,12 @@ public class TestCaseModificationController {
 
 		PagedCollectionHolder<List<Execution>> executions = executionFinder.findAllByTestCaseId(testCaseId, pas);
 
-		return new ExecutionsTableModelBuilder(locale, internationalizationHelper).buildDataModel(executions, params.getsEcho());
+		return new ExecutionsTableModelBuilder(locale, internationalizationHelper).buildDataModel(executions,
+				params.getsEcho());
 	}
 
 	private PagingAndSorting createPagingAndSorting(DataTableDrawParameters params) {
 		return new DataTableMapperPagingAndSortingAdapter(params, execsTableMapper);
 	}
+	
 }
