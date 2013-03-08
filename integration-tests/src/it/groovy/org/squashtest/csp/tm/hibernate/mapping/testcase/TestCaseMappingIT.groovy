@@ -254,7 +254,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		deleteFixture e1, e2, itp, tc
 	}
 	
-	/*
+	
 	def "should persist a test case with its steps "(){
 		
 		given :
@@ -274,7 +274,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 			notThrown Exception
 		
 	}
-*/
+
 //	def "should persist a test case verifying an existing requirement version"() {
 //		given:
 //		Requirement req = new Requirement(new RequirementVersion(name: "req"))

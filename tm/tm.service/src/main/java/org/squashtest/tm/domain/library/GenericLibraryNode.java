@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.library;
 
 import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -41,7 +42,7 @@ import org.squashtest.tm.domain.project.Project;
  */
 @MappedSuperclass
 public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolder {
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
 
