@@ -122,8 +122,8 @@ function TestSuiteMenu(settings){
 	}, this);
 	
 	var makeItem = $.proxy(function (json){
-		var node=$("<li/>" );
-		var checkbox = $("<input/>", { 'value' : json.id , 'id': 'menu-suite-#'+json.id , 'type':'checkbox', 'name':'menu-suite-item'});
+		var node=$("<li/>", {'class' : 'suite-item'} );
+		var checkbox = $("<input/>", { 'data-suite-id' : json.id , 'id': 'menu-suite-#'+json.id , 'type':'checkbox', 'name':'menu-suite-item'});
 		node.append(checkbox);
 		var label = $("<label/>", {'for': 'menu-suite-#'+json.id, 'class':'afterDisabled'});
 		label.text(json.name);
@@ -141,9 +141,9 @@ function TestSuiteMenu(settings){
 	
 	var getItemDomId = function (elt){
 		if (elt.firstElementChild!==undefined){
-			return elt.firstElementChild.getAttribute('value');		
+			return elt.firstElementChild.getAttribute('data-suite-id');		
 		}else{
-			return elt.firstChild.getAttribute('value');		
+			return elt.firstChild.getAttribute('data-suite-id');		
 		}			
 	}
 	
@@ -189,6 +189,10 @@ function TestSuiteMenu(settings){
 		
 		this.checkedSuites.reset();
 		
+	}, this);
+	
+	var getCheckboxes = $.proxy(function(){
+		return this.menu.getContainer().find('input[name="menu-suite-item"]');
 	}, this);
 	
 	/*
@@ -284,11 +288,11 @@ function TestSuiteMenu(settings){
 		var container = this.menu.getContainer();
 		container.delegate('input:checkbox','change', function (evt){
 			evt.stopImmediatePropagation();
-			var checkbx = evt.currentTarget
-			if($(checkbx).is(":checked")){
-				self.checkedSuites.add(checkbx.value);
+			var checkbx = $(evt.currentTarget)
+			if(checkbx.is(":checked")){
+				self.checkedSuites.add(checkbx.data('suite-id'));
 			}else{
-				self.checkedSuites.remove(checkbx.value);
+				self.checkedSuites.remove(checkbx.data('suite-id'));
 			}
 			
 		});
@@ -331,7 +335,9 @@ function TestSuiteMenu(settings){
 			if(getDatatableSelected().length ==  0) {
 				this.menu.kill();
 				$(settings.emptySelectionMessageSelector).openMessage();
-			}
+			};
+			getCheckboxes().prop('checked', false);	//reset the checkboxes
+			this.checkedSuites.reset();				//reset the model
 	}, this);
 	
 	var bindAddButton = $.proxy(function (){
