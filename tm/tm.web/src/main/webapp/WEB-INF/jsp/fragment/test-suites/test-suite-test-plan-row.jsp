@@ -42,7 +42,7 @@
 <c:set var="textcolor" value="#555555" />
 
 
-<td colspan="10"><table>
+<td colspan="12"><table>
 		<!-- -----------------------------------------------ROW OF EXECUTION -->
 		<c:forEach items="${ executions }" var="execution" varStatus="status">
 			<tr>
@@ -80,7 +80,8 @@
 					</c:otherwise>
 				</c:choose>
 				</td>
-				<td style="width: 1.5em;" class="centered"><authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
+				<td style="width: 2em;"><!-- todo : run the execution button --></td>
+				<td style="width: 2em;" class="centered"><authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
 						<a id="delete-execution-table-button-${execution.id}" href="javascript:void(0)"
 							class="delete-execution-table-button" title='<f:message key="label.removeExecution"/>' ></a>
 					</authz:authorized>
@@ -92,7 +93,7 @@
 		<!-- ---------------------------------------------ROW NEW EXECUTION -->
 		<c:if test="${ executable }">
 			<tr>
-				<td colspan="10" style="text-align: left;"> <a id="new-exec-${testPlanItem.id}" style="font-size:0.8em;"
+				<td colspan="12" style="text-align: left;"> <a id="new-exec-${testPlanItem.id}" style="font-size:0.8em;"
 						class="button new-exec" href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
 								key="execution.iteration-test-plan-row.new" /> </a> 
 								
