@@ -36,7 +36,7 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
  * @author Gregory Fouquet
  * 
  */
-public interface CustomTestCaseModificationService extends TestCaseFinder {
+public interface CustomTestCaseModificationService extends CustomTestCaseFinder {
 	
 	void rename(long testCaseId, String newName);
 

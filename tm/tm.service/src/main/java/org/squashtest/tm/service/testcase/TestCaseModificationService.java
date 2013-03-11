@@ -31,7 +31,7 @@ import org.squashtest.tm.domain.testcase.TestCaseType;
 
 @Transactional
 @DynamicManager(name="squashtest.tm.service.TestCaseModificationService", entity = TestCase.class)
-public interface TestCaseModificationService extends CustomTestCaseModificationService {
+public interface TestCaseModificationService extends CustomTestCaseModificationService, TestCaseFinder {
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
 	void changeDescription(long testCaseId, String newDescription);
 	

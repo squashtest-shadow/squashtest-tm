@@ -68,14 +68,13 @@ class TestCaseModificationServiceImp2lIT extends HibernateServiceSpecification {
 
 
 
-
 	def "should allow to create a second test case having the same name than a previously removed test case"(){
 
 		given :
 		def tc = service.findById(testCaseId);
 
 		def tc2 = new TestCase();
-		tc2.name = tc.name;
+		tc2.name = "test case 1";
 		
 		navService.deleteNodes([Long.valueOf(testCaseId)])
 		

@@ -426,4 +426,12 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		return p
 	}
 	
+	@DataSet("TestCaseModificationServiceImplIT.should find test cases.xml")
+	def "should find all test cases by ids"(){
+		when :
+		def res = service.findAllByIds([10L, 30L])
+		
+		then:
+		res*.getId() == [10L, 30L]
+	}
 }

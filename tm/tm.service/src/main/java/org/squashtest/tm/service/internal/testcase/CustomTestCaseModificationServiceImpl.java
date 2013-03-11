@@ -103,8 +103,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	protected PrivateCustomFieldValueService customFieldValuesService;
-	
-	@Inject private TestCaseCallTreeFinder callTreeFinder;
+
+	@Inject
+	private TestCaseCallTreeFinder callTreeFinder;
 
 	/* *************** TestCase section ***************************** */
 
@@ -112,13 +113,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
 	public void rename(long testCaseId, String newName) throws DuplicateNameException {
 		testCaseManagementService.renameNode(testCaseId, newName);
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
-	@Transactional(readOnly = true)
-	public TestCase findById(long testCaseId) {
-		return testCaseDao.findById(testCaseId);
 	}
 
 	@Override
@@ -149,10 +143,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
-	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, String> customFieldValues) {
+	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep,
+			Map<Long, String> customFieldValues) {
 
 		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep);
-		initCustomFieldValues((ActionTestStep)step, customFieldValues);
+		initCustomFieldValues((ActionTestStep) step, customFieldValues);
 		return step;
 	}
 
@@ -263,9 +258,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestStep copyStep = original.createCopy();
 		testStepDao.persist(copyStep);
 		copyStep.accept(new TestStepCustomFieldCopier(original));
-		
-		
-		
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		if (position != null) {
@@ -282,24 +274,28 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			updateImportanceIfCallStep(testCase, copyStep);
 		}
 	}
-	private final class TestStepCustomFieldCopier implements TestStepVisitor{
+
+	private final class TestStepCustomFieldCopier implements TestStepVisitor {
 		TestStep original;
-		private TestStepCustomFieldCopier(TestStep original){
+
+		private TestStepCustomFieldCopier(TestStep original) {
 			this.original = original;
 		}
+
 		@Override
 		public void visit(ActionTestStep visited) {
 			customFieldValuesService.copyCustomFieldValues((ActionTestStep) original, visited);
-			
+
 		}
 
 		@Override
 		public void visit(CallTestStep visited) {
-			//NOPE
-			
+			// NOPE
+
 		}
-		
+
 	}
+
 	private void updateImportanceIfCallStep(TestCase parentTestCase, TestStep copyStep) {
 		if (copyStep instanceof CallTestStep) {
 			TestCase called = ((CallTestStep) copyStep).getCalledTestCase();
@@ -404,10 +400,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	}
 
-	/** initialCustomFieldValues maps the id of a CustomField to the value of the
-	* corresponding CustomFieldValues for that BoundEntity.
-	* read it again until it makes sense.
-	* it assumes that the CustomFieldValues instances already exists.
+	/**
+	 * initialCustomFieldValues maps the id of a CustomField to the value of the corresponding CustomFieldValues for
+	 * that BoundEntity. read it again until it makes sense. it assumes that the CustomFieldValues instances already
+	 * exists.
 	 * 
 	 * @param entity
 	 * @param initialCustomFieldValues
@@ -426,28 +422,5 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		}
 	}
-	
-	// ***************** utilities etc **********************
-	
-	private class StepCustomFieldCopier implements TestStepVisitor{
 
-		private TestStep originalStep;
-		
-		public void setOriginalStep(TestStep step){
-			this.originalStep = step;
-		}
-		
-		@Override
-		public void visit(ActionTestStep visited) {
-			customFieldValuesService.copyCustomFieldValues((ActionTestStep)originalStep, visited);
-		}
-
-		@Override
-		public void visit(CallTestStep visited) {
-			//nothing
-		}
-		
-		
-		
-	}
 }

@@ -73,8 +73,7 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 		attachListId = testCase.attachmentList.id;
 	}
 
-
-
+	@Transactional
 	def "should create an AttachmentList along with a TestCase"(){
 		given :
 
@@ -275,13 +274,12 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 		shouldBeFalse == false;
 		shouldBeTrue == true;
 	}
-	
-	
+
+
 	def GenericProject createProject(){
 		Project p = new Project();
 		p.name = Double.valueOf(Math.random()).toString();
 		p.description = "eaerazer"
 		return p
 	}
-
 }

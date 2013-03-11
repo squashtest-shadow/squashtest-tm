@@ -660,5 +660,5 @@ public class TestCaseModificationController {
 	private PagingAndSorting createPagingAndSorting(DataTableDrawParameters params) {
 		return new DataTableMapperPagingAndSortingAdapter(params, execsTableMapper);
 	}
-	
+
 }

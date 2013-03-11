@@ -18,33 +18,46 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testcase;
 
-import java.util.Collection;
-import java.util.List;
+package org.squashtest.tm.web.internal.model.json;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 /**
  * @author Gregory Fouquet
  * 
  */
-@Transactional(readOnly = true)
-public interface TestCaseFinder extends CustomTestCaseFinder {
-	@PostAuthorize("hasPermission(returnObject , 'READ') or hasRole('ROLE_ADMIN')")
-	TestCase findById(long testCaseId);
+public class JsonInternationalizableEnum<E extends Enum<?> & Internationalizable> {
+	private E value;
+	private String label;
+
+	public JsonInternationalizableEnum() {
+		super();
+	}
+
+	public String getId() {
+		return value.name();
+	}
+
+	public String getLabel() {
+		return label;
+	}
 
 	/**
-	 * Fetches all the test cases matching the given list of ids.
-	 * 
-	 * @param ids
-	 * @return
+	 * @param value
+	 *            the value to set
 	 */
-	@PostFilter("hasPermission(filterObject , 'READ') or hasRole('ROLE_ADMIN')")
-	List<TestCase> findAllByIds(@NotNull Collection<Long> ids);
+	public void setValue(@NotNull E value) {
+		this.value = value;
+	}
+
+	/**
+	 * @param label
+	 *            the label to set
+	 */
+	public void setLabel(@NotNull String label) {
+		this.label = label;
+	}
 }

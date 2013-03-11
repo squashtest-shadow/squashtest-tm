@@ -18,33 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testcase;
 
-import java.util.Collection;
-import java.util.List;
+package org.squashtest.tm.web.internal.model.json
 
-import javax.validation.constraints.NotNull;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
 
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.testcase.TestCase;
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
-@Transactional(readOnly = true)
-public interface TestCaseFinder extends CustomTestCaseFinder {
-	@PostAuthorize("hasPermission(returnObject , 'READ') or hasRole('ROLE_ADMIN')")
-	TestCase findById(long testCaseId);
+class JsonProjectTest extends Specification {
+	def "should build json project"() {
+		given:
+		Project p = new Project(name: "foo")
+		use (ReflectionCategory) {
+			GenericProject.set field: "id", of: p, to: 10000L
+		}
 
-	/**
-	 * Fetches all the test cases matching the given list of ids.
-	 * 
-	 * @param ids
-	 * @return
-	 */
-	@PostFilter("hasPermission(filterObject , 'READ') or hasRole('ROLE_ADMIN')")
-	List<TestCase> findAllByIds(@NotNull Collection<Long> ids);
+		when:
+		def res = JsonProject.toJson(p)
+		
+		then:
+		res.id == 10000L
+		res.uri == "/projects/10000"
+		res.name == "foo"
+	}
 }

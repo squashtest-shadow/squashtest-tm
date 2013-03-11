@@ -18,33 +18,50 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testcase;
 
-import java.util.Collection;
-import java.util.List;
+package org.squashtest.tm.web.internal.model.json;
 
-import javax.validation.constraints.NotNull;
-
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.project.Project;
 
 /**
  * @author Gregory Fouquet
  * 
  */
-@Transactional(readOnly = true)
-public interface TestCaseFinder extends CustomTestCaseFinder {
-	@PostAuthorize("hasPermission(returnObject , 'READ') or hasRole('ROLE_ADMIN')")
-	TestCase findById(long testCaseId);
+public class JsonProject {
+	private long id;
+	private String uri;
+	private String name;
 
 	/**
-	 * Fetches all the test cases matching the given list of ids.
-	 * 
-	 * @param ids
+	 * @param project
 	 * @return
 	 */
-	@PostFilter("hasPermission(filterObject , 'READ') or hasRole('ROLE_ADMIN')")
-	List<TestCase> findAllByIds(@NotNull Collection<Long> ids);
+	public static JsonProject toJson(Project project) {
+		JsonProject res = new JsonProject();
+		res.id = project.getId();
+		res.uri = "/projects/" + res.id;
+		res.name = project.getName();
+		return res;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public long getId() {
+		return id;
+	}
+
+	/**
+	 * @return the uri
+	 */
+	public String getUri() {
+		return uri;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
 }
