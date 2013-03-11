@@ -178,13 +178,13 @@ define(
 											url : UMod.permission.url.popup,
 											dataType : 'json'
 										}).success(function(json) {
-									if (json.projectList.length === 0) {
+									if (json.myprojectList.length === 0) {
 										dialog.activate('no-more-projects');
 									} else {
 										$("#project-input").html("");
-										for(var i=0; i<json.projectList.length;i++){
-											var text = json.projectList[i].name;
-											var value = json.projectList[i].id;
+										for(var i=0; i<json.myprojectList.length;i++){
+											var text = json.myprojectList[i].name;
+											var value = json.myprojectList[i].id;
 											$("#project-input").append(new Option(text, value));
 										}
 										dialog.activate('main');

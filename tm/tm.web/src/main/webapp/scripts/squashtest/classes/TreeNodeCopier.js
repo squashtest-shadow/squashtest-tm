@@ -204,7 +204,7 @@ function TreeNodeCopier(initObj) {
 			}
 		}
 		if(!sameLib){
-			oneShotConfirm('Info', self._get_settings().workspace_tree.warnCopyToDifferentLibrary, squashtm.message.confirm,
+			oneShotConfirm('Info', tree._get_settings().workspace_tree.warnCopyToDifferentLibrary, squashtm.message.confirm,
 				squashtm.message.cancel)
 				.done(function() {
 					doPasteNodesFromCookies.call(self, tree, target, data);
