@@ -48,6 +48,11 @@
 		linkableTree: function (settings) {
 			settings = $.extend(defaultSettings, settings);
 			
+			var contextPath = settings.contextPath;
+			if (contextPath.charAt(contextPath.length -1) === "/") {
+				settings.contextPath = contextPath.slice(0, -1);
+			}
+			
 			var icons = {
 				drive : settings.contextPath + "/images/root.png",
 				folder : settings.contextPath + "/images/Icon_Tree_Folder.png",

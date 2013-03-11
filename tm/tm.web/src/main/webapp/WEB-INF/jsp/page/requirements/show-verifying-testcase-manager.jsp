@@ -49,7 +49,7 @@
 			<%-- tree population callbacks --%>
 			
 			function getTestCasesIds(){
-				var tab =  new Array();
+				var tab =  [];
 				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
 				var tree = $( '#linkable-test-cases-tree' );
 				if (selected == 0){
@@ -103,7 +103,7 @@
 				
 				$( '#add-items-button' ).click(function() {
 					var tree = $( '#linkable-test-cases-tree' );
-					var ids = new Array();
+					var ids = [];
 					
 					ids = getTestCasesIds();
 					

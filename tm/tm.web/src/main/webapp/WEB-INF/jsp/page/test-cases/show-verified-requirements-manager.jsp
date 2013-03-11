@@ -103,7 +103,7 @@
 				<%-- verified requirements addition --%>
 				$( '#add-items-button' ).click(function() {
 					var tree = $( '#linkable-requirements-tree' );
-					var ids = new Array();
+					var ids = [];
 					ids = getRequirementsIds();
 			
 					if (ids.length > 0) {
