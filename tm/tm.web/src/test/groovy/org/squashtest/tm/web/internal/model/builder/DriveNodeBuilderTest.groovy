@@ -46,7 +46,7 @@ class DriveNodeBuilderTest extends Specification {
 		res.attr['resId'] == "10"
 		res.attr['resType'] == 'test-case-libraries'
 		res.title == "foo"
-		res.state == JsTreeNode.State.leaf
+		res.state == JsTreeNode.State.leaf.name()
 		res.attr['editable'] == 'false'
 	}
 

@@ -46,7 +46,7 @@ class IterationNodeBuilderTest extends Specification {
 		then:
 		res.attr['rel'] == "resource"
 		res.attr['resId'] == "10"
-		res.state == State.leaf
+		res.state == State.leaf.name()
 		res.attr['resType'] == "iterations"
 		res.title == "5 - it"
 	}

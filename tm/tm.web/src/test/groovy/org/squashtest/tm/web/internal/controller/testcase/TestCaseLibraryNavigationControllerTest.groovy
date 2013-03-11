@@ -79,7 +79,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		def res = controller.createTreeNodeFromLibraryNode(node)
 
 		then:
-		res.state == State.leaf
+		res.state == State.leaf.name()
 	}
 	def "should create a node of closed folder type"() {
 		given:
@@ -90,7 +90,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		def res = controller.createTreeNodeFromLibraryNode(node)
 
 		then:
-		res.state == State.closed
+		res.state == State.closed.name()
 	}
 
 	def "should return content of folder"() {

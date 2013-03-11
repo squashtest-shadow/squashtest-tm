@@ -48,7 +48,7 @@ class CampaignLibraryTreeNodeBuilderTest extends Specification {
 		res.attr['resId'] == "${node.id}"
 		res.attr['rel'] == "folder"
 		res.attr['resType'] == "campaign-folders"
-		res.state == State.leaf
+		res.state == State.leaf.name()
 	}
 	def "should build a Campaign node"() {
 		given:
@@ -66,7 +66,7 @@ class CampaignLibraryTreeNodeBuilderTest extends Specification {
 		res.attr['resId'] == "${node.id}"
 		res.attr['resType'] == "campaigns"
 		res.attr['rel'] == "file"
-		res.state == State.leaf
+		res.state == State.leaf.name()
 	}
 	
 	def "should build a folder with leaf state"(){
@@ -77,7 +77,7 @@ class CampaignLibraryTreeNodeBuilderTest extends Specification {
 			def res = builder.setNode(node).build()
 		
 		then :
-			res.state == State.leaf
+			res.state == State.leaf.name()
 		
 	}
 	
@@ -90,7 +90,7 @@ class CampaignLibraryTreeNodeBuilderTest extends Specification {
 			def res = builder.setNode(node).build()
 		
 		then :
-			res.state == State.closed
+			res.state == State.closed.name()
 		
 	}
 	

@@ -66,8 +66,8 @@ public class JsTreeNode {
 		this.attr.put(key, values);
 	}
 
-	public State getState() {
-		return state;
+	public String getState() {
+		return state.name();
 	}
 
 	public void setState(State state) {

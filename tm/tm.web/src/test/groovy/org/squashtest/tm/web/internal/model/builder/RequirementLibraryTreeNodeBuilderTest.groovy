@@ -50,7 +50,7 @@ class RequirementLibraryTreeNodeBuilderTest extends Specification {
 		res.attr['resId'] == "${node.id}"
 		res.attr['rel'] == "folder"
 		res.attr['resType'] == "requirement-folders"
-		res.state == State.leaf
+		res.state == State.leaf.name()
 	}
 	def "should build a Requirement node"() {
 		given:
@@ -69,7 +69,7 @@ class RequirementLibraryTreeNodeBuilderTest extends Specification {
 		res.attr['resId'] == "${node.id}"
 		res.attr['resType'] == "requirements"
 		res.attr['rel'] == "file"
-		res.state == State.leaf
+		res.state == State.leaf.name()
 	}
 	
 	def "should build a folder with leaf state"(){
@@ -80,7 +80,7 @@ class RequirementLibraryTreeNodeBuilderTest extends Specification {
 			def res = builder.setNode(node).build()
 		
 		then :
-			res.state == State.leaf
+			res.state == State.leaf.name()
 		
 	}
 	
@@ -93,7 +93,7 @@ class RequirementLibraryTreeNodeBuilderTest extends Specification {
 			def res = builder.setNode(node).build()
 		
 		then :
-			res.state == State.closed
+			res.state == State.closed.name()
 		
 	}
 	

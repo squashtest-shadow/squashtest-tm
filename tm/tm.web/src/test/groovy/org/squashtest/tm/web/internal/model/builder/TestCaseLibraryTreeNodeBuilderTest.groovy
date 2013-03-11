@@ -49,7 +49,7 @@ class TestCaseLibraryTreeNodeBuilderTest extends Specification {
 		res.attr['resId'] == "${node.id}"
 		res.attr['rel'] == "file"
 		res.attr['resType'] == "test-cases"
-		res.state == State.leaf
+		res.state == State.leaf.name()
 	}
 
 	def "should build a TestCaseFolder node"() {
@@ -68,7 +68,7 @@ class TestCaseLibraryTreeNodeBuilderTest extends Specification {
 		res.attr['resId'] == "${node.id}"
 		res.attr['rel'] == "folder"
 		res.attr['resType'] == "test-case-folders"
-		res.state == State.leaf
+		res.state == State.leaf.name()
 	}
 	
 	def "should build a folder with leaf state"(){
@@ -79,7 +79,7 @@ class TestCaseLibraryTreeNodeBuilderTest extends Specification {
 			def res = builder.setNode(node).build()
 		
 		then :
-			res.state == State.leaf
+			res.state == State.leaf.name()
 		
 	}
 	
@@ -92,7 +92,7 @@ class TestCaseLibraryTreeNodeBuilderTest extends Specification {
 			def res = builder.setNode(node).build()
 		
 		then :
-			res.state == State.closed
+			res.state == State.closed.name()
 		
 	}
 	
