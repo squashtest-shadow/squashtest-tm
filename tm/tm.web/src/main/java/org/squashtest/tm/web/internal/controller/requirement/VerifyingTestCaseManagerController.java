@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -53,6 +52,7 @@ import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.VerifiedRequirementActionSummaryBuilder;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -62,9 +62,9 @@ import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
 /**
  * Controller for verified requirements management page.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 @Controller
 public class VerifyingTestCaseManagerController {
@@ -81,10 +81,10 @@ public class VerifyingTestCaseManagerController {
 	private RequirementVersionManagerService requirementVersionFinder;
 
 	private final DatatableMapper verifyingTcMapper = new IndexBasedMapper(6)
-														  .mapAttribute(Project.class, "name", String.class, 2)
-														  .mapAttribute(TestCase.class, "reference", String.class, 3)
-														  .mapAttribute(TestCase.class, "name", String.class, 4)
-														  .mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 5);
+			.mapAttribute(Project.class, "name", String.class, 2)
+			.mapAttribute(TestCase.class, "reference", String.class, 3)
+			.mapAttribute(TestCase.class, "name", String.class, 4)
+			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 5);
 
 	@ServiceReference
 	public void setVerifyingTestCaseManager(VerifyingTestCaseManagerService verifyingTestCaseManagerService) {
@@ -102,7 +102,8 @@ public class VerifyingTestCaseManagerController {
 		List<TestCaseLibrary> linkableLibraries = verifyingTestCaseManager.findLinkableTestCaseLibraries();
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
-		model.addAttribute("requirement", requirementVersion.getRequirement()); //this is done because of RequirementViewInterceptor
+		model.addAttribute("requirement", requirementVersion.getRequirement()); // this is done because of
+																				// RequirementViewInterceptor
 		model.addAttribute("requirementVersion", requirementVersion);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
 
@@ -111,14 +112,7 @@ public class VerifyingTestCaseManagerController {
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {
 		DriveNodeBuilder builder = driveNodeBuilder.get();
-
-		List<JsTreeNode> linkableLibrariesModel = new ArrayList<JsTreeNode>();
-
-		for (TestCaseLibrary library : linkableLibraries) {
-			JsTreeNode libraryNode = builder.setModel(library).build();
-			linkableLibrariesModel.add(libraryNode);
-		}
-		return linkableLibrariesModel;
+		return new JsTreeNodeListBuilder<TestCaseLibrary>(builder).setModel(linkableLibraries).build();
 	}
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
@@ -178,7 +172,7 @@ public class VerifyingTestCaseManagerController {
 			type = formatExecutionMode(tc.getExecutionMode(), locale);
 
 			model.addRow(new Object[] { tc.getId(), holder.getFirstItemIndex() + i + 1, tc.getProject().getName(),
-					tc.getReference(),tc.getName(), type, "" });
+					tc.getReference(), tc.getName(), type, "" });
 		}
 
 		model.displayRowsFromTotalOf(holder.getTotalNumberOfItems());
