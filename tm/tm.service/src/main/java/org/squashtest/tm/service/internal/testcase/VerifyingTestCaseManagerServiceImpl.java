@@ -141,7 +141,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		if (!testCases.isEmpty()) {
 			List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao.byRequirementVersionAndTestCases(testCasesIds, requirementVersionId);
 			for(RequirementVersionCoverage coverage : coverages){
-				coverage.checkDeletable();
+				coverage.checkCanRemoveTestCaseFromRequirementVersion();
 				requirementVersionCoverageDao.delete(coverage);
 			}
 			testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(testCasesIds,
@@ -153,7 +153,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK') or hasRole('ROLE_ADMIN')")
 	public void removeVerifyingTestCaseFromRequirementVersion(long testCaseId, long requirementVersionId) {
 		RequirementVersionCoverage coverage = requirementVersionCoverageDao.byRequirementVersionAndTestCase(requirementVersionId, testCaseId);
-		coverage.checkDeletable();
+		coverage.checkCanRemoveTestCaseFromRequirementVersion();
 		requirementVersionCoverageDao.delete(coverage);
 		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(Arrays.asList(testCaseId),
 				requirementVersionId);

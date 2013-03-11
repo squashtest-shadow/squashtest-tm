@@ -18,21 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TestCaseVerifiedRequirementsTable",
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel",
 		"jquery.squash.datatables", "jquery.squash.oneshotdialog",
 		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ],
-		function($, Backbone, _, StringUtil) {
+		function($, Backbone, _, StringUtil, VerifiedRequirementsTable) {
 			var VRBS = squashtm.app.verifiedRequirementsBlocSettings;
 			var VerifiedRequirementsPanel = Backbone.View.extend({
+				
 				el : "#verified-requirements-bloc-frag",
+				
 				initialize : function() {
 					this.makeTogglePanel();
-					this.configureTable();
-					this.configurePopups();
-					this.configureButtons();
+					this.table = new VerifiedRequirementsTable();
+					this.configureButtons.call(this);
 				},
+				
 				events : {},
+				
 				makeTogglePanel : function() {
 					var infoSettings = {
 						initiallyOpen : VRBS.oppened,
@@ -40,11 +43,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					};
 					this.$("#verified-requirements-panel").togglePanel(infoSettings);
 				},
-				configurePopups : function() {
-					this.configureRemoveRequirementDialog();
-					this.configureNoRequirementSelectedDialog();
-				},
+				
 				configureButtons : function() {
+					var self = this;
 					// ===============toogle buttons=================
 					// this line below is here because toggle panel
 					// buttons cannot be bound with the 'events'
@@ -54,56 +55,15 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					// to the toggle panel header.
 					// TODO change our way to make toggle panels buttons
 					// =============/toogle buttons===================
-
 					this.$("#remove-verified-requirements-button").on('click',
-							$.proxy(this.confirmRemoveRequirement, this));
+							function(){self.table.removeSelectedRequirements();});
 					this.$("#add-verified-requirements-button").on('click',
-							$.proxy(this.goToRequirementManager, this));
-
+							self.goToRequirementManager);
 				},
-
-				configureTable : function() {
-					$("#verified-requirement-table").squashTable({}, {}); // pure DOM conf
-				},
-				confirmRemoveRequirement : function(event) {
-					var hasRequirement = ($("#verified-requirement-table").squashTable()
-							.getSelectedIds().length > 0);
-					if (hasRequirement) {
-						this.confirmRemoveRequirementDialog.confirmDialog("open");
-					} else {
-						this.noRequirementSelectedDialog.messageDialog('open');
-					}
-				},
-
+				
 				goToRequirementManager : function() {
 					document.location.href = VRBS.url + "manager";
 				},
-
-				removeRequirements : function(event) {
-					var table = $("#verified-requirement-table").squashTable();
-					var ids = table.getSelectedIds();
-					if (ids.length === 0)
-						return;
-
-					$.ajax({
-						url : VRBS.url + ids.join(','),
-						type : 'delete'
-					}).done($.proxy(table.refresh, table));
-
-				},
-
-				configureRemoveRequirementDialog : function() {
-					this.confirmRemoveRequirementDialog = $("#remove-verified-requirement-dialog")
-							.confirmDialog();
-					this.confirmRemoveRequirementDialog.on("confirmdialogconfirm", $
-							.proxy(this.removeRequirements, this));
-				},
-
-				configureNoRequirementSelectedDialog : function() {
-					this.noRequirementSelectedDialog = $("#no-selected-requirement-dialog")
-							.messageDialog();
-				},
-
 				
 			});
 			return VerifiedRequirementsPanel;

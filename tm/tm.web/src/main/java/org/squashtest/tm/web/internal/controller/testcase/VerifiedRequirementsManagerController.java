@@ -42,10 +42,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
@@ -78,7 +78,6 @@ public class VerifiedRequirementsManagerController {
 	/**
 	 * 
 	 */
-	private static final String REQUIREMENT_VERSIONS_IDS = "requirementVersionsIds[]";
 
 	private static final String REQUIREMENTS_IDS = "requirementsIds[]";
 	
@@ -153,15 +152,15 @@ public class VerifiedRequirementsManagerController {
 		return VerifiedRequirementActionSummaryBuilder.buildAddActionSummary(rejections);
 	}
 
-	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions", method = RequestMethod.DELETE, params = REQUIREMENT_VERSIONS_IDS)
+	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/{requirementVersionsIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
 	void removeVerifiedRequirementVersionsFromTestCase(
-			@RequestParam(REQUIREMENT_VERSIONS_IDS) List<Long> requirementVersionsIds, @PathVariable long testCaseId) {
+			 @PathVariable List<Long> requirementVersionsIds, @PathVariable long testCaseId) {
 		verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestCase(requirementVersionsIds, testCaseId);
 
 	}
 	
-	@RequestMapping(value = "/verified-requirement-versions", params = {RequestParams.S_ECHO_PARAM, "includeCallSteps=true"})
+	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions", params = {RequestParams.S_ECHO_PARAM, "includeCallSteps"})
 		@ResponseBody
 		public DataTableModel getAllVerifiedRequirementsTableModel(@PathVariable long testCaseId,
 				final DataTableDrawParameters params, final Locale locale) {
@@ -174,6 +173,7 @@ public class VerifiedRequirementsManagerController {
 			return new TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper).buildDataModel(holder, params.getsEcho());
 	
 		}
+	
 	private static final class TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper extends TestCaseVerifiedRequirementsDataTableModelHelper{
 		
 		public TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper(Locale locale, InternationalizationHelper internationalizationHelper){
@@ -234,12 +234,12 @@ public class VerifiedRequirementsManagerController {
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put("name", item.getName());
-			res.put("project", item.getProject());
+			res.put("project", item.getProject().getName());
 			res.put("reference", item.getReference());
-			res.put("version", item.getVersionNumber());
+			res.put("versionNumber", item.getVersionNumber());
 			res.put("criticality", internationalizationHelper.getMessage(item.getCriticality().getI18nKey(), null, locale));
 			res.put("category", internationalizationHelper.getMessage(item.getCategory().getI18nKey(), null, locale));
-			res.put("status", item.getStatus());			
+			res.put("status", item.getStatus().toString());			
 			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;
 		}
@@ -289,13 +289,13 @@ public class VerifiedRequirementsManagerController {
 	}
 	
 	private DatatableMapper<String> verifiedRequirementVersionsMapper = new NameBasedMapper(7)
-	.mapAttribute(RequirementVersionCoverage.class, "verifiedRequirementVersion.id", String.class, "entity-id")
-	.mapAttribute(RequirementVersionCoverage.class, "verifiedRequirementVersion.name", String.class, "name")
-	.mapAttribute(RequirementVersionCoverage.class, "verifiedRequirementVersion.requirement.project", String.class, "project")
-	.mapAttribute(RequirementVersionCoverage.class, "verifiedRequirementVersion.reference", String.class, "reference")
-	.mapAttribute(RequirementVersionCoverage.class, "verifiedRequirementVersion.version", String.class, "versionNumber")
-	.mapAttribute(RequirementVersionCoverage.class, "verifiedRequirementVersion.criticality", String.class, "criticality")
-	.mapAttribute(RequirementVersionCoverage.class, "verifiedRequirementVersion.category", String.class, "category");
+	.mapAttribute(RequirementVersion.class, "id", String.class, "entity-id")
+	.mapAttribute(RequirementVersion.class, "name", String.class, "name")
+	.mapAttribute(Project.class, "name", String.class, "project")
+	.mapAttribute(RequirementVersion.class, "reference", String.class, "reference")
+	.mapAttribute(RequirementVersion.class, "versionNumber", String.class, "versionNumber")
+	.mapAttribute(RequirementVersion.class, "criticality", String.class, "criticality")
+	.mapAttribute(RequirementVersion.class, "category", String.class, "category");
 	
 	
 }

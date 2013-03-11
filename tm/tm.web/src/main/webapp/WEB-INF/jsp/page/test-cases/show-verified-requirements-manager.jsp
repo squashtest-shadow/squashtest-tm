@@ -32,7 +32,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <c:url var="testCaseUrl" value="/requirements/${ testCase.id }" />
 <c:url var="treeBaseUrl" value="/requirement-browser/"/>
-<c:url var="verifiedRequirementsTableUrl" value="/test-cases/${testCase.id}/verified-requirement-versions/table" />
 <c:url var="verifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirement-versions" />
 <c:url var="nonVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/non-verified-requirement-versions" />
 
@@ -43,12 +42,11 @@
 	<jsp:attribute name="head">
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.green.css" />
 		
-		<aggr:decorate-verified-requirements-table tableModelUrl="${ verifiedRequirementsTableUrl }" verifiedRequirementsUrl="${ verifiedRequirementsUrl }" 
-				nonVerifiedRequirementsUrl="${ nonVerifiedRequirementsUrl }" batchRemoveButtonId="remove-items-button" />
-				
+<%-- 		<aggr:decorate-verified-requirements-table tableModelUrl="${ verifiedRequirementsTableUrl }" verifiedRequirementsUrl="${ verifiedRequirementsUrl }"  --%>
+<%-- 				nonVerifiedRequirementsUrl="${ nonVerifiedRequirementsUrl }" batchRemoveButtonId="remove-items-button" /> --%>
 		<c:url var="addVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirements" />
 		<script type="text/javascript">
-
+			
 			function getRequirementsIds(){
 				var tab =  new Array();
 				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
@@ -140,7 +138,7 @@
 	
 	<jsp:attribute name="tablePane">
 	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testCaseUrl }" isContextual="false"/>
-		<aggr:verified-requirements-table/>
+		<aggr:verified-requirements-table verifiedRequirementsUrl="${verifiedRequirementsUrl}"/>
 		<div id="add-summary-dialog" class="not-displayed" title="<f:message key='test-case.verified-requirement-version.add-summary-dialog.title' />">
 			<ul><li>summary message here</li></ul>
 		</div>

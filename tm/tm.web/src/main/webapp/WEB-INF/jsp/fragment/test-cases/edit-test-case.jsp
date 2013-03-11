@@ -51,9 +51,9 @@
 <s:url var="testCaseInfoUrl" value="/test-cases/{tcId}/general">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
-
+<c:url var="verifiedRequirementsUrl" value="/test-cases/${testCase.id }/verified-requirement-versions"/>
 <c:url var="verifiedRequirementsTableUrl"
-	value="/test-cases/${testCase.id}/all-verified-requirements-table" />
+	value="/test-cases/${testCase.id}/verified-requirement-versions?includeCallSteps=true" />
 <s:url var="updateStepUrl" value="/test-cases/{tcId}/steps/">
 	<s:param name="tcId" value="${testCase.id}" />
 </s:url>
@@ -382,32 +382,7 @@
 
 
 		<%--------------------------- Verified Requirements section ------------------------------------%>
-
-		<comp:toggle-panel id="verified-requirements-panel"
-						   titleKey="test-case.verified_requirements.panel.title"
-						   isContextual="true" 
-						   open="true">
-			<jsp:attribute name="panelButtons">
-			<c:if test="${ linkable }">
-				<f:message var="associateLabel"	key="label.associateRequirements" />
-				<input id="verified-req-button" type="button" value="${associateLabel}" class="button" />
-				
-				<f:message var="removeLabel" key="label.removeRequirementsAssociation" />
-				<input id="remove-verified-requirements-button" type="button" value="${ removeLabel }" class="button" />
-			</c:if>
-			</jsp:attribute>
-
-			<jsp:attribute name="body">
-			<aggr:decorate-verified-requirements-table
-						tableModelUrl="${ verifiedRequirementsTableUrl }"
-						verifiedRequirementsUrl="${ verifiedRequirementsUrl }"
-						batchRemoveButtonId="remove-verified-requirements-button"
-						nonVerifiedRequirementsUrl="${ nonVerifiedRequirementsUrl }"
-						editable="${ linkable }"
-						updateImportanceMethod="refreshTCImportance" />
-			<aggr:verified-requirements-table />
-			</jsp:attribute>
-		</comp:toggle-panel>
+		<aggr:test-case-verified-requirement-bloc linkable="${ linkable }" verifiedRequirementsTableUrl="${ verifiedRequirementsTableUrl }" verifiedRequirementsUrl="${verifiedRequirementsUrl }" containerId="contextual-content"/>
 
 
 		<%--------------------------- calling test case section ------------------------------------%>
@@ -509,14 +484,14 @@
 	
 	function deleteTestCaseSuccess() {
 		<c:choose>
-		<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-		<c:when test="${param['isInfoPage']}" >		
-		document.location.href="${workspaceUrl}" ;
-		</c:when>
-		<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
-		<c:otherwise>
-		location.reload(true);
-		</c:otherwise>
+			<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
+			<c:when test="${param['isInfoPage']}" >		
+				document.location.href="${workspaceUrl}" ;
+			</c:when>
+			<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
+			<c:otherwise>
+				location.reload(true);
+			</c:otherwise>
 		</c:choose>		
 	}
 	
@@ -552,12 +527,6 @@
 			$("#test-case-description-table").append(data);
 		});
 		</c:if>
-		
-		
-		//init the requirements manager button
-		$("#verified-req-button").button().click(function() {
-			document.location.href = "${verifiedReqsManagerUrl}";
-		});
 		
 		
 		//init the renaming listener

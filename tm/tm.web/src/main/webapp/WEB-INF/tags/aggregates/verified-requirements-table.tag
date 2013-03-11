@@ -22,28 +22,87 @@
 --%>
 <%@ tag body-content="empty" description="inserts the html table of verified resquirements" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<table id="verified-requirements-table">
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
+<%@ attribute name="verifiedRequirementsUrl" required="true"
+	description="URL to manipulate the verified requirements" %>
+<%@ attribute name="containerId" required="true" description="if of dom container that will hold the table events" %>
+<%@ attribute name="verifiedRequirementsTableUrl" required="true"
+	description="URL for the verified requirements table" %>
+<%@ attribute name="linkable" required="true" description=" boolean that says if the concerned test case is viewed by a user who has LINK rights on this entity" %>
+<s:url var="tableLanguageUrl" value="/squash/datatables/language" />
+<s:url var="requirementVersionsUrl" value="/requirement-versions"/>
+<s:url var="root" value="/" />
+<!-- Attention ! une version thymeleaf de ce bloc est disponible : templates/verified-requirements-bloc.frag.html} -->
+	<script type="text/javascript" th:inline="javascript">
+			if (!squashtm) {
+				var squashtm = {};
+			}
+			if (!squashtm.app) {
+				squashtm.app = {
+					contextRoot : "${root}",
+				};
+			}
+			squashtm.app.verifiedRequirementsTableSettings = {
+				containerId : "${containerId}",
+				linkable : "${linkable}",
+				url :"${verifiedRequirementsUrl}",
+				messages : {
+					cancel : "<f:message key='label.Cancel' />",
+					ok : "<f:message key='rich-edit.button.ok.label' />",
+				},
+			};
+		</script>
+
+<table id="verified-requirements-table" 
+data-def='hover,  datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTableUrl }, language=${tableLanguageUrl}'>
 	<thead>
 		<tr>
-			<th>#</th>
-			<th><f:message key="label.project" /></th>
-			<th><f:message key="report.requirementexport.id"/></th>
-			<th><f:message key="requirement.reference.label"/></th>
-			<th><f:message key="requirement.name.label" /></th>
-			<th><f:message key="requirement-version.version-number.label" /></th>
-			<th><f:message key="requirement.criticality.label"/></th>
-			<th><f:message key="requirement.category.label"/></th>
-			<th>&nbsp;</th>		
-			<th>status(masked)</th>		
-			<th>isDirectlyVerified(masked)</th>	
+			<th data-def="select, map=entity-index">#</th>
+			<th data-def="sortable, map=project"><f:message key="label.project" /></th>
+			<th data-def="sortable, map=entity-id"><f:message key="report.requirementexport.id"/></th>
+			<th data-def="sortable, map=reference"><f:message key="requirement.reference.label"/></th>
+			<th data-def="sortable, map=name, link=${requirementVersionsUrl}/{entity-id}/info"><f:message key="requirement.name.label" /></th>
+			<th data-def="sClass=versionNumber, sortable, map=versionNumber"><f:message key="requirement-version.version-number.label" /></th>
+			<th data-def="sortable, map=criticality"><f:message key="requirement.criticality.label"/></th>
+			<th data-def="sortable, map=category"><f:message key="requirement.category.label"/></th>
+			<th data-def='sClass=delete-button, map=empty-delete-holder'>&nbsp;</th>
+			<th data-def="invisible, map=status">status(masked)</th>
+			<th data-def="invisible, map=directlyVerified">isDirectlyVerified(masked)</th>
 		</tr>
 	</thead>
 	<tbody>
 		<%-- Will be populated through ajax --%>
 	</tbody>
 </table>
+
 <div id="verified-requirement-row-buttons" class="not-displayed">
 	<a id="delete-verified-requirement-button" href="javascript:void(0)"	class="delete-verified-requirement-button">
 		<f:message key="test-case.verified_requirement_item.remove.button.label" />
 	</a>
+</div>
+
+<div id="remove-verified-requirement-version-dialog" class="popup-dialog not-displayed" title="<f:message key='label.Confirm'/>">
+<div><f:message key='dialog.remove-requirement-version-association.message' /></div>
+<div class="popup-dialog-buttonpane">
+			<input class="confirm" type="button" value="<f:message key='label.Confirm'/>" />
+			 <input class="cancel" type="button" value="<f:message key='label.Cancel'/>" />
+		</div>
+</div>
+
+<div id="remove-obsolete-verified-requirement-version-dialog" class="popup-dialog not-displayed" title="<f:message key='dialog.obsolete.requirement.version.removal.confirm.title'/>">
+<div><f:message key='dialog.obsolete.requirement.version.removal.confirm.text' /></div>
+<div class="popup-dialog-buttonpane">
+			<input class="confirm" type="button" value="<f:message key='label.Confirm'/>" />
+			 <input class="cancel" type="button" value="<f:message key='label.Cancel'/>" />
+		</div>
+</div>
+
+<div id="no-selected-requirement-dialog" class="popup-dialog not-displayed"
+		title="<f:message key='popup.title.error' />">
+		<span><f:message key="message.EmptyTableSelection"/></span>
+</div>
+
+<div id="no-selected-direct-requirement-dialog" class="popup-dialog not-displayed"
+		title="<f:message key='popup.title.error' />">
+		<span><f:message key="verified-requirements.table.indirectverifiedrequirements.removalattemptsforbidden.label"/></span>
 </div>

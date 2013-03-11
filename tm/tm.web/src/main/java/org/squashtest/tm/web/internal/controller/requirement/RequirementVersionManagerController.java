@@ -22,12 +22,18 @@ package org.squashtest.tm.web.internal.controller.requirement;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.Level;
+import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
@@ -66,8 +73,11 @@ public class RequirementVersionManagerController {
 	private Provider<LevelLabelFormatter> levelFormatterProvider;
 	@Inject
 	private Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider;
+	@Inject
+	private MessageSource messageSource;
 
 	private RequirementVersionManagerService requirementVersionManager;
+	
 	
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
@@ -189,5 +199,69 @@ public class RequirementVersionManagerController {
 	public String showRequirementVersionEditor(@PathVariable long requirementVersionId, Model model, Locale locale) {
 		populateRequirementEditorModel(requirementVersionId, model, locale);
 		return "page/requirements/requirement-version-editor";
-	}	
+	}
+	
+	/**
+	 * Returns a map of all requirement version's siblings, including itself.
+	 * The map will be filled with strings:<br>
+	 * -the key being the id of the version <br>
+	 * -and the value being "versionNumber (versionStatus)"<br>
+	 * <br>
+	 * Versions having an {@link RequirementStatus#OBSOLETE} status are not included in the result.<br>
+	 * Last map entry is key= "selected", value = id of concerned requirement.
+	 * 
+	 * @param locale
+	 * @param requirementVersionId : the id of the concerned requirement version.
+	 * @return a {@link Map} with key = "id" and value ="versionNumber (versionStatus)",
+	 * <br> obsolete versions excluded,
+	 * <br> last entry is key="selected", value= id of concerned requirement.
+	 */
+	@RequestMapping(value = "/version-numbers", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, String> showAllVersions(Locale locale, @PathVariable long requirementVersionId) {
+		Map<String, String> versionsNumbersById = new LinkedHashMap<String, String>();
+
+		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
+
+		Requirement requirement = requirementVersion.getRequirement();
+
+		// Retrieve all versions of the requirement
+		List<RequirementVersion> requirementVersions = requirement.getRequirementVersions();
+
+		// We duplicate the list before we sort it
+		List<RequirementVersion> cloneRequirementVersions = new ArrayList<RequirementVersion>();
+
+		for (RequirementVersion rv : requirementVersions) {
+			cloneRequirementVersions.add(rv);
+		}
+
+		Collections.sort(cloneRequirementVersions, new MyRequirementVersionsDecOrder());
+
+		String status = "";
+
+		for (RequirementVersion version : cloneRequirementVersions) {
+			if (version.getStatus() != RequirementStatus.OBSOLETE) {
+				status = messageSource.getMessage("requirement.status." + version.getStatus().name(), null, locale);
+				versionsNumbersById.put("" + version.getId(), "" + version.getVersionNumber() + " (" + status + ")");
+			}
+		}
+		versionsNumbersById.put("selected", "" + requirementVersionId);
+
+		return versionsNumbersById;
+	}
+	
+	/**
+	 * Comparator for RequieredVersions
+	 * 
+	 * @author FOG
+	 * 
+	 */
+	public class MyRequirementVersionsDecOrder implements Comparator<RequirementVersion> {
+
+		@Override
+		public int compare(RequirementVersion rV1, RequirementVersion rV2) {
+			return (rV1.getVersionNumber() > rV2.getVersionNumber() ? -1 : (rV1.getVersionNumber() == rV2
+					.getVersionNumber() ? 0 : 1));
+		}
+	}
 }

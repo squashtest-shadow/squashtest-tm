@@ -40,13 +40,15 @@
 		
 		linkable : boolean that says whether user has link right on requirementVerifier entity
 		requirementVerifier : a requirement verifier entity
+		container : if of dom container that will hold the table events
 
  -->
 	</div>
 	<div id="verified-requirements-bloc-frag" th:fragment="verified-requirements-bloc">
 	<script  th:remove="all" data-main="../../scripts/verified-requirement-bloc.frag.js"
 			src="../../scripts/require.js"></script>
-		<script type="text/javascript" th:inline="javascript">
+		
+<script type="text/javascript" th:inline="javascript">
 			if (!squashtm) {
 				var squashtm = {};
 			}
@@ -56,13 +58,13 @@
 				};
 			}
 			squashtm.app.verifiedRequirementsBlocSettings = {
-				linkable : /*[[ ${linkable} ]]*/ true,
+				linkable : /*[[ ${linkable} ]]*/ true, 
+				containerId : /*[[ ${containerId} ]]*/ "verified-requirements-bloc-frag",
 				oppened : ! /*[[ ${requirementVerifier.verifier.verifiedRequirementVersions.empty} ]]*/ false,
 				title : /*[[ #{label.verifiedRequirements.__${requirementVerifier.type}__} ]]*/'Verified Requirements',
 				url : /*[[ @{/__${requirementVerifier.type}__/__${requirementVerifier.verifier.id}__/verified-requirement-versions/} ]]*/'http://localhost:8080/squash/test-steps/1/verified-requirements/' ,
 			};
 		</script>
-
 		<div class="toggle-panel">
 			<span class="not-displayed toggle-panel-buttons"> <input
 				th:if="${linkable}" id="add-verified-requirements-button" type="button"
@@ -72,18 +74,18 @@
 				class="button" />
 			</span>
 			<div class="toggle-panel-main" id="verified-requirements-panel">
-				<table id="verified-requirement-table" th:attr="data-def='hover, pre-filled, datakeys-id=entity-id , ajaxsource='+@{/__${requirementVerifier.type}__/__${requirementVerifier.verifier.id}__/verified-requirement-versions/}+', language='+@{/squash/datatables/language}">
+				<table id="verified-requirements-table" th:attr="data-def='hover, pre-filled, datakeys-id=entity-id, ajaxsource='+@{/__${requirementVerifier.type}__/__${requirementVerifier.verifier.id}__/verified-requirement-versions/}+', language='+@{/squash/datatables/language}">
 					<thead>
 						<tr>
 							<th th:attr="data-def='select, map=entity-index'" >#</th>
 							<th th:attr="data-def='sortable, map=project'" th:text="#{label.project}" >Project</th>
 							<th th:attr="data-def='sortable, map=entity-id'" th:text="#{report.requirementexport.id}">Id</th>
 							<th th:attr="data-def='sortable, map=reference'" th:text="#{requirement.reference.label}">Reference</th>
-							<th th:attr="data-def='sortable, map=name'" th:text="#{requirement.name.label}">Name</th>
-							<th th:attr="data-def='sortable, map=version'" th:text="#{requirement-version.version-number.label}">Version#</th>
+							<th th:attr="data-def='sortable, map=name, link='+@{/requirment_versions/{entity-id}/info}" th:text="#{requirement.name.label}">Name</th>
+							<th th:attr="data-def='sortable, map=versionNumber'" th:text="#{requirement-version.version-number.label}">Version#</th>
 							<th th:attr="data-def='sortable, map=criticality'" th:text="#{requirement.criticality.label}">Critical</th>
 							<th th:attr="data-def='sortable, map=category'" th:text="#{requirement.category.label}">Functional</th>
-							<th th:attr="data-def='delete-button=#remove-verified-requirement-dialog, map=empty-delete-holder'">&nbsp;</th>
+							<th th:attr="data-def='sClass=delete-button, map=empty-delete-holder'">&nbsp;</th>
 							<th th:attr="data-def='invisible, map=status'">status(masked)</th>
 						</tr>
 					</thead>

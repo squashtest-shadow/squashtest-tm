@@ -86,7 +86,7 @@ public class RequirementVersionCoverage implements Identified {
 
 	public void setVerifyingTestCase(TestCase verifyingTestCase) {
 		if (this.verifiedRequirementVersion != null) {
-			verifyingTestCase.checkRequirementNotVerified(verifiedRequirementVersion);
+			verifyingTestCase.checkRequirementNotVerified(this, verifiedRequirementVersion);
 		}
 		this.verifyingTestCase = verifyingTestCase;
 	}
@@ -97,7 +97,9 @@ public class RequirementVersionCoverage implements Identified {
 
 	public void setVerifiedRequirementVersion(RequirementVersion verifiedRequirementVersion) {
 		if (this.verifyingTestCase != null) {
-			this.verifyingTestCase.checkRequirementNotVerified(verifiedRequirementVersion);
+			if(this.verifiedRequirementVersion != null){
+				this.verifyingTestCase.checkRequirementNotVerified(this, verifiedRequirementVersion);
+			}
 		}
 		verifiedRequirementVersion.checkLinkable();
 		this.verifiedRequirementVersion = verifiedRequirementVersion;
@@ -206,7 +208,7 @@ public class RequirementVersionCoverage implements Identified {
 	/**
 	 * @throws RequirementVersionNotLinkableException
 	 */
-	public void checkDeletable() {
+	public void checkCanRemoveTestCaseFromRequirementVersion() {
 		this.verifiedRequirementVersion.checkLinkable();
 	}
 

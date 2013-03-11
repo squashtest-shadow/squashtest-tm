@@ -23,10 +23,7 @@ package org.squashtest.tm.web.internal.controller.requirement;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -36,7 +33,6 @@ import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -89,9 +85,8 @@ public class RequirementModificationController {
 	
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
-	
-
 	private RequirementModificationService requirementModService;
+	@Inject
 	private RequirementVersionManagerService versionFinder;
 
 	private final DatatableMapper versionMapper = new IndexBasedMapper(7)
@@ -107,13 +102,7 @@ public class RequirementModificationController {
 		requirementModService = service;
 	}
 
-	@ServiceReference
-	public void setRequirementVersionManagerService(RequirementVersionManagerService service) {
-		versionFinder = service;
-	}
 
-	@Inject
-	private MessageSource messageSource;
 
 	// will return the Requirement in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
@@ -231,56 +220,8 @@ public class RequirementModificationController {
 	public void createNewVersion(@PathVariable long requirementId) {
 		requirementModService.createNewVersion(requirementId);
 	}
-
-	@RequestMapping(value = "/versions/version-number", method = RequestMethod.GET)
-	@ResponseBody
-	public Map<String, String> showAllVersions(Locale locale, @PathVariable long requirementId) {
-		Map<String, String> versionsNumbersById = new LinkedHashMap<String, String>();
-
-		RequirementVersion requirementVersion = versionFinder.findById(requirementId);
-
-		Requirement requirement = requirementVersion.getRequirement();
-
-		// Retrieve all versions of the requirement
-		List<RequirementVersion> requirementVersions = requirement.getRequirementVersions();
-
-		// We duplicate the list before we sort it
-		List<RequirementVersion> cloneRequirementVersions = new ArrayList<RequirementVersion>();
-
-		for (RequirementVersion rv : requirementVersions) {
-			cloneRequirementVersions.add(rv);
-		}
-
-		Collections.sort(cloneRequirementVersions, new MyRequirementVersionsDecOrder());
-
-		String status = "";
-
-		for (RequirementVersion version : cloneRequirementVersions) {
-			if (version.getStatus() != RequirementStatus.OBSOLETE) {
-				status = messageSource.getMessage("requirement.status." + version.getStatus().name(), null, locale);
-				versionsNumbersById.put("" + version.getId(), "" + version.getVersionNumber() + " (" + status + ")");
-			}
-		}
-		versionsNumbersById.put("selected", "" + requirementId);
-
-		return versionsNumbersById;
-	}
-
-	/**
-	 * Comparator for RequieredVersions
-	 * 
-	 * @author FOG
-	 * 
-	 */
-	public class MyRequirementVersionsDecOrder implements Comparator<RequirementVersion> {
-
-		@Override
-		public int compare(RequirementVersion rV1, RequirementVersion rV2) {
-			return (rV1.getVersionNumber() > rV2.getVersionNumber() ? -1 : (rV1.getVersionNumber() == rV2
-					.getVersionNumber() ? 0 : 1));
-		}
-	}
-
+	
+	
 	/**
 	 * The change status combobox is filtered and only proposes the status to which it is legal to switch to. That
 	 * method will generate a map for that purpose. Pretty much like
@@ -375,8 +316,4 @@ public class RequirementModificationController {
 
 	}
 
-	@ServiceReference
-	public void setVersionFinder(RequirementVersionManagerService versionFinder) {
-		this.versionFinder = versionFinder;
-	}
 }

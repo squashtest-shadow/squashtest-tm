@@ -477,15 +477,21 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 
 	/**
+	 * 
+	 * Checks if the given version is already verified, avoiding to look at the given requirementVersionCoverage.
+	 * 
+	 * @param requirementVersionCoverage 
 	 * @param version
 	 * @throws RequirementAlreadyVerifiedException
 	 */
-	public void checkRequirementNotVerified(RequirementVersion version) throws RequirementAlreadyVerifiedException {
+	public void checkRequirementNotVerified(RequirementVersionCoverage requirementVersionCoverage, RequirementVersion version) throws RequirementAlreadyVerifiedException {
 		Requirement req = version.getRequirement();
-
-		for (RequirementVersion verified : getVerifiedRequirementVersions()) {
+		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
+			if(coverage != requirementVersionCoverage){
+				RequirementVersion verified = coverage.getVerifiedRequirementVersion();
 			if (verified != null && req.equals(verified.getRequirement())) {
 				throw new RequirementAlreadyVerifiedException(version, this);
+			}
 			}
 		}
 
@@ -555,6 +561,21 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * checks if the given version is already verified.
+	 * @param version
+	 * @throws RequirementAlreadyVerifiedException
+	 */
+	public void checkRequirementNotVerified(RequirementVersion version) throws RequirementAlreadyVerifiedException {
+		Requirement req = version.getRequirement();
+		for (RequirementVersion verified : this.getVerifiedRequirementVersions()) {
+			if (verified != null && req.equals(verified.getRequirement())) {
+				throw new RequirementAlreadyVerifiedException(version, this);
+			}			
+		}
+
 	}
 		
 	

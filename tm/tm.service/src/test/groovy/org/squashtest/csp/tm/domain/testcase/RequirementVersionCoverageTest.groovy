@@ -172,7 +172,7 @@ class RequirementVersionCoverageTest extends Specification {
 		def tc = new TestCase(name:"tc", description:"tc")
 		RequirementVersionCoverage rvc = prepareRVC(status, tc)
 		when :
-		rvc.checkDeletable()
+		rvc.checkCanRemoveTestCaseFromRequirementVersion()
 		then :
 		notThrown(RequirementVersionNotLinkableException)
 
@@ -191,7 +191,7 @@ class RequirementVersionCoverageTest extends Specification {
 			RequirementVersionCoverage rvc = prepareRVC(OBSOLETE, tc)
 	
 			when :
-			rvc.checkDeletable()
+			rvc.checkCanRemoveTestCaseFromRequirementVersion()
 				
 			then :
 			thrown(RequirementVersionNotLinkableException)

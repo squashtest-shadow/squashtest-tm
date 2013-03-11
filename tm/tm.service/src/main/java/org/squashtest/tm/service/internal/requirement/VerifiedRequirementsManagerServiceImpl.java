@@ -75,7 +75,8 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
 
-	@Inject private TestCaseCallTreeFinder callTreeFinder;
+	@Inject
+	private TestCaseCallTreeFinder callTreeFinder;
 
 	
 	@Inject
@@ -140,7 +141,6 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 			if (!reqs.isEmpty()) {
 				List<RequirementVersionCoverage> requirementVersionCoverages = requirementVersionCoverageDao.byTestCaseAndRequirementVersions(requirementVersionsIds, testCaseId);
 				for(RequirementVersionCoverage coverage : requirementVersionCoverages){
-					coverage.checkDeletable();
 					requirementVersionCoverageDao.delete(coverage);
 				}
 				testCaseImportanceManagerService
@@ -152,7 +152,6 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public void removeVerifiedRequirementVersionFromTestCase(long requirementVersionId, long testCaseId) {
 		RequirementVersionCoverage coverage = requirementVersionCoverageDao.byRequirementVersionAndTestCase(requirementVersionId, testCaseId);
-		coverage.checkDeletable();
 		requirementVersionCoverageDao.delete(coverage);
 		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(Arrays.asList(requirementVersionId),
 				testCaseId);

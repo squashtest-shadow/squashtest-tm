@@ -305,6 +305,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			return null;
 		}
 	}
+	
 
 	/**
 	 * Enables DnD on the given table.
@@ -541,7 +542,13 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 		return ids;
 	}
+	function _getSelectedRows(){
+		var rows = this.fnGetNodes();	
+		return $(rows).not(function(index, row) {
+			return !$(row).hasClass('ui-state-row-selected');
+		});
 
+	}
 	function _addHLinkToCellText(td, url, isOpenInTab) {
 
 		var link = $('<a></a>');
@@ -711,19 +718,25 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 				template = '<a href="javascript:void(0)" class="tableButton" title="'+ button.tooltip+'" />';
 			}			
 			var cells = $(button.tdSelector, self);
-			cells.html(template);
-			if(button.uiIcon){
-				cells.find('.tableButton').button({
-					text : false,
-					icons : {
-						primary : button.uiIcon
+			$(cells).each(function(i, cell){
+				var row = $(cell).parent("tr")[0];
+				var data = self.fnGetData(row);
+				if(button.condition && button.condition(row, data) || !button.condition){
+					$(cell).html(template);
+					if(button.uiIcon){
+						$(cell).find('.tableButton').button({
+							text : false,
+							icons : {
+								primary : button.uiIcon
+							}
+						});
 					}
-				});
-			}		
+				}
+			});
 		});
 
 	};
-
+	
 	function _configureDeleteButtons() {
 		var deleteConf = this.squashSettings.deleteButtons;
 		if (!deleteConf)
@@ -1152,6 +1165,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		this.saveTableSelection = _saveTableSelection;
 		this.restoreTableSelection = _restoreTableSelection;
 		this.getSelectedIds = _getSelectedIds;
+		this.getSelectedRows = _getSelectedRows;
 		this.addHLinkToCellText = _addHLinkToCellText;
 		this.selectRows = _selectRows;
 		this.deselectRows = _deselectRows;
@@ -1282,7 +1296,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		_DOMExprHandlers : {
 			table : {
 				'ajaxsource' : 	function(conf, assignation) { conf.table.sAjaxSource=assignation.value;},
-				'pre-filled' : function(conf, assignation) {conf.table.iDeferLoading=0;},
+				'pre-filled' :  function(conf, assignation) {conf.table.iDeferLoading=0;},
 				'filter' : 		function(conf, assignation) { var cnf = conf.table; cnf.bFilter=assignation.value; cnf.sDom = 'ft<"dataTables_footer"lirp>';},
 				'langage' : 	function(conf, assignation) { conf.table.oLanguage = conf.table.oLanguage || {}; conf.table.oLanguage.sUrl = assignation.value;},
 				'hover' : 		function(conf, assignation) { conf.squash.enableHover = assignation.value;},
@@ -1294,6 +1308,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 				'sortable' : 	function(conf, assignation) { conf.current.bSortable = true;},
 				'narrow' : 		function(conf, assignation) { conf.current.sWidth = '2em';},
 				'filter' : 		function(conf, assignation) { conf.current.sClass +=' datatable-filterable';},
+				'sClass' : 		function(conf, assignation) { conf.current.sClass += ' '+assignation.value;},
 				'map' : 		function(conf, assignation) { conf.current.mDataProp = assignation.value;},
 				'select' : 		function(conf, assignation) { conf.current.sWidth = '2em'; conf.current.sClass += ' select-handle centered';},
 				'target' :		function(conf, assignation) { conf.current.aTargets = [assignation.value];},
