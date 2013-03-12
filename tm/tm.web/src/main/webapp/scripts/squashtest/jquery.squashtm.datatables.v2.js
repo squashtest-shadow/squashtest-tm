@@ -1117,7 +1117,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	 * 
 	 * So we're saving it in case it already exists, and rebind it below.
 	 */
-	if ($.fn.squashTable) var existingInstances = $.fn.squashTable.instances;
+	if ($.fn.squashTable) {
+		var existingInstances = $.fn.squashTable.instances;
+	}
 
 	$.fn.squashTable = function(datatableSettings, squashSettings) {
 
@@ -1164,10 +1166,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		this.restoreTableSelection = _restoreTableSelection;
 		this.applyFilteredStyle = _applyFilteredStyle;
 		
-		if(squashSettings.bindDeleteButtons != null){
+		if(squashSettings && squashSettings.bindDeleteButtons){
 			this.bindDeleteButtons = squashSettings.bindDeleteButtons;
-		}
-		else{
+		} else {
 			this.bindDeleteButtons = _bindDeleteButtons;
 		}
 		
@@ -1263,6 +1264,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		}
 		;
 		this.addClass("is-contextual");
+		
+		return this;
 	};
 
 	$.fn.squashTable.instances = existingInstances || {}; // end of the hack
