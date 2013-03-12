@@ -29,9 +29,66 @@ import java.util.List;
  */
 public interface TestCaseSearchCriteria {
 
-	String getName();
+
+	/**
+	 * Tells whether the result set should include folders matching the criterion
+	 * 
+	 * @return
+	 */
+	boolean includeFoldersInResult();
 	
+	
+	/**
+	 * Tells whether the result set should group the data by projects. If false, the data will 
+	 * only be sorted by name.
+	 * 
+	 * @return
+	 */
 	boolean isGroupByProject();
+	
+	
+	boolean usesNameFilter();
+	
+	/**
+	 * Tells whether a criterion regarding importance had been set in the query or not
+	 * 
+	 * @return
+	 */
+	boolean usesImportanceFilter();
+	
+	/**
+	 * Tells whether a criterion regarding nature had been set in the query or not
+	 * 
+	 * @return
+	 */
+	boolean usesNatureFilter();
+	
+	/**
+	 * Tells whether a criterion regarding type had been set in the query or not
+	 * 
+	 * @return
+	 */
+	boolean usesTypeFilter();
+	
+	
+	/**
+	 * Tells whether a criterion regarding status had been set in the query or not
+	 * 
+	 * @return
+	 */
+	boolean usesStatusFilter();
+	
+	
+
+	/**
+	 * returns the piece of the name of the test case that are looked for. Wildcards before and 
+	 * after should not be included. 
+	 * 
+	 * @return
+	 */
+	String getNameFilter();
+	
+	
 	
 	
 	/**

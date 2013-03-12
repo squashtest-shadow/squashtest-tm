@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria;
@@ -32,7 +33,7 @@ import org.squashtest.tm.domain.testcase.TestCaseType;
 
 public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 
-	private String name = null;
+	private String nameFilter = null;
 	private boolean groupByProject = false;
 	private String[] importances;	
 	private String[] natures;
@@ -51,30 +52,52 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 	}
 
 	@Override
-	public String getName() {
-		return name;
+	public String getNameFilter() {
+		return nameFilter;
+	}
+	
+	@Override
+	public boolean usesNameFilter(){
+		return StringUtils.isNotBlank(nameFilter);
 	}
 
 	@Override
 	public boolean isGroupByProject() {
 		return groupByProject;
 	}
-
+	
+	@Override
 	public boolean usesImportanceFilter(){
 		return (importances.length > 0);
 	}
 	
+	@Override
 	public boolean usesNatureFilter(){
 		return (natures.length > 0);
 	}
 	
+	@Override
 	public boolean usesTypeFilter(){
 		return (types.length > 0);
 	}
 	
+	@Override
 	public boolean usesStatusFilter(){
 		return (statuses.length > 0);
 	}
+	
+	@Override
+	public boolean includeFoldersInResult(){
+		//naive, arbitrary implementation here
+		//means that we do not filter on any testcase-specific attributes
+		return ! (
+			usesImportanceFilter()  ||
+			usesNatureFilter()		||
+			usesTypeFilter()		||
+			usesStatusFilter()
+		);
+	}
+	
 	
 	@Override
 	public List<TestCaseImportance> getImportanceFilterSet() {		
@@ -129,7 +152,7 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 	}
 	
 	public void setName(String name){
-		this.name=name;
+		this.nameFilter=name;
 	}
 	
 	public void isGroupByProject(boolean groupByProject){

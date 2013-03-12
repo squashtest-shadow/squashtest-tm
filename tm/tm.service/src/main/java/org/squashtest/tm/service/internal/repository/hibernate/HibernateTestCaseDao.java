@@ -523,38 +523,39 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestCaseLibraryNode> findBySearchCriteria(TestCaseSearchCriteria criteria) {
+		
 		Criteria hCriteria;
 
-		if (usesImportance(criteria)) {
-			hCriteria = testCaseRootedCriteria(criteria);
-		} else {
-			hCriteria = tcNodeRootedCriteria(criteria);
+		if (criteria.includeFoldersInResult()){
+			hCriteria = currentSession().createCriteria(TestCaseLibraryNode.class);
+		}
+		else{
+			hCriteria = currentSession().createCriteria(TestCase.class);
 		}
 		
-		if (usesNature(criteria)) {
-			hCriteria = testCaseRootedCriteria(criteria);
-		} else {
-			hCriteria = tcNodeRootedCriteria(criteria);
+		if (criteria.usesNameFilter()) {
+			hCriteria.add(Restrictions.ilike("name", criteria.getNameFilter(), MatchMode.ANYWHERE));
+		}
+		
+		if (criteria.usesImportanceFilter()) {
+			hCriteria.add(Restrictions.in("importance", criteria.getImportanceFilterSet()));
 		}
 
-		if (usesType(criteria)) {
-			hCriteria = testCaseRootedCriteria(criteria);
-		} else {
-			hCriteria = tcNodeRootedCriteria(criteria);
+		if (criteria.usesNatureFilter()) {
+			hCriteria.add(Restrictions.in("nature", criteria.getNatureFilterSet()));
 		}
 
-		if (usesStatus(criteria)) {
-			hCriteria = testCaseRootedCriteria(criteria);
-		} else {
-			hCriteria = tcNodeRootedCriteria(criteria);
+		if (criteria.usesTypeFilter()) {
+			hCriteria.add(Restrictions.in("type", criteria.getTypeFilterSet()));
 		}
+		
+		if (criteria.usesStatusFilter()) {
+			hCriteria.add(Restrictions.in("status", criteria.getStatusFilterSet()));
+		}
+		
 		
 		if (criteria.isGroupByProject()) {
 			hCriteria.addOrder(Order.asc(PROJECT));
-		}
-
-		if (StringUtils.isNotBlank(criteria.getName())) {
-			hCriteria.add(Restrictions.ilike("name", criteria.getName(), MatchMode.ANYWHERE));
 		}
 
 		hCriteria.addOrder(Order.asc("name"));
@@ -563,42 +564,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	}
 
-	private boolean usesImportance(TestCaseSearchCriteria criteria) {
-		return (!criteria.getImportanceFilterSet().isEmpty());
-	}
 
-	private boolean usesNature(TestCaseSearchCriteria criteria) {
-		return (!criteria.getNatureFilterSet().isEmpty());
-	}
-	
-	private boolean usesType(TestCaseSearchCriteria criteria) {
-		return (!criteria.getTypeFilterSet().isEmpty());
-	}
-
-	private boolean usesStatus(TestCaseSearchCriteria criteria) {
-		return (!criteria.getTypeFilterSet().isEmpty());
-	}
-	
-	private Criteria testCaseRootedCriteria(TestCaseSearchCriteria criteria) {
-		Criteria crit = currentSession().createCriteria(TestCase.class);
-		if (!criteria.getImportanceFilterSet().isEmpty()) {
-			crit.add(Restrictions.in("importance", criteria.getImportanceFilterSet()));
-		}
-		if (!criteria.getNatureFilterSet().isEmpty()) {
-			crit.add(Restrictions.in("nature", criteria.getNatureFilterSet()));
-		}
-		if (!criteria.getTypeFilterSet().isEmpty()) {
-			crit.add(Restrictions.in("type", criteria.getTypeFilterSet()));
-		}
-		if (!criteria.getStatusFilterSet().isEmpty()) {
-			crit.add(Restrictions.in("status", criteria.getStatusFilterSet()));
-		}
-		return crit;
-	}
-
-	private Criteria tcNodeRootedCriteria(TestCaseSearchCriteria criteria) {
-		return currentSession().createCriteria(TestCaseLibraryNode.class);
-	}
 
 	@Override
 	public List<Execution> findAllExecutionByTestCase(Long tcId) {

@@ -20,8 +20,12 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+
 import javax.inject.Inject
 
+import org.codehaus.groovy.runtime.InvokerHelper;
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
@@ -38,6 +42,7 @@ import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.service.foundation.collection.CollectionSorting
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.unitils.dbunit.annotation.DataSet
+import java.lang.reflect.Proxy;
 
 import spock.unitils.UnitilsSupport
 
@@ -401,15 +406,19 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		
 		given :
 			
-			def criteria = Mock(TestCaseSearchCriteria)
-			criteria.getName() >> "roject"
-			criteria.isGroupByProject() >> false
-			criteria.getImportanceFilterSet() >> Collections.emptyList();
-			criteria.getNatureFilterSet() >> Collections.emptyList();
-			criteria.getTypeFilterSet() >> Collections.emptyList();
-			criteria.getStatusFilterSet() >> Collections.emptyList();
+			def nameFilter = "roject"
+			def groupByProject = false
+			def importances = [] 
+			def natures = [] 
+			def types = [] 
+			def statuses = [] 
+			
+		and : 
+			def criteria = mockTestCaseSearchCriteria(nameFilter, groupByProject, importances,
+							natures, types, statuses)
 			
 		when :
+						
 			def result = testCaseDao.findBySearchCriteria(criteria)
 			
 		then :
@@ -428,17 +437,20 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestCaseDaoIT.search-by-criteria-setup.xml")
 	def "should find the test cases and folders ordered by names, grouped by project and no importance filter"(){
 		
+
 		given :
-			
-			def criteria = Mock(TestCaseSearchCriteria)
-			criteria.getName() >> "roject"
-			criteria.isGroupByProject() >> true
-			criteria.getImportanceFilterSet() >> Collections.emptyList();
-			criteria.getNatureFilterSet() >> Collections.emptyList();
-			criteria.getTypeFilterSet() >> Collections.emptyList();
-			criteria.getStatusFilterSet() >> Collections.emptyList();
+		
+			def nameFilter = "roject"
+			def groupByProject = true
+			def importances = []
+			def natures = []
+			def types = []
+			def statuses = []
 			
 		when :
+	
+			def criteria = mockTestCaseSearchCriteria(nameFilter, groupByProject, importances,
+							natures, types, statuses)
 			def result = testCaseDao.findBySearchCriteria(criteria)
 			
 		then :
@@ -455,17 +467,20 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	
 	@DataSet("HibernateTestCaseDaoIT.search-by-criteria-setup.xml")
 	def "should find test cases ordered by names, not grouped by project and having importance MEDIUM and HIGH"(){
-		
+
 		given :
-			def criteria = Mock(TestCaseSearchCriteria)
-			criteria.getName() >> "roject"
-			criteria.isGroupByProject() >> false
-			criteria.getImportanceFilterSet() >> [TestCaseImportance.MEDIUM, TestCaseImportance.HIGH] 
-			criteria.getNatureFilterSet() >> [TestCaseNature.UNDEFINED]
-			criteria.getTypeFilterSet() >> [TestCaseType.UNDEFINED]
-			criteria.getStatusFilterSet() >> [TestCaseStatus.WORK_IN_PROGRESS]
 			
-		when :
+			def nameFilter = "roject"
+			def groupByProject = false
+			def importances = [TestCaseImportance.MEDIUM, TestCaseImportance.HIGH] 
+			def natures = [TestCaseNature.UNDEFINED]
+			def types = [TestCaseType.UNDEFINED]
+			def statuses =[TestCaseStatus.WORK_IN_PROGRESS]
+			
+		when : 
+			def criteria = mockTestCaseSearchCriteria(nameFilter, groupByProject, importances,
+							natures, types, statuses)												
+		
 			def result = testCaseDao.findBySearchCriteria(criteria)
 		
 		then :
@@ -476,6 +491,11 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			]
 	
 	}
+	
+	
+	
+	
+	
 	
 	@DataSet("HibernateTestCaseDaoIT.should return list of executions.xml")
 	def "should return list of executions"(){
@@ -540,4 +560,81 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def name = result.collectNested {  it.name }
 		name.containsAll(["un-nameStart-token", "neuf-token","token douze", "dix token foo"])
 	}
+	
+	
+	
+	
+	// ************* scaffolding ************
+	
+	private TestCaseSearchCriteria mockTestCaseSearchCriteria(String name, boolean groupByProject,
+			List importances, List natures, List types,List statuses){
+		
+		def attributes = [
+			"NameFilter" : name,
+			"groupByProject" : groupByProject,
+			"ImportanceFilter" : importances,
+			"NatureFilter" : natures,	
+			"TypeFilter" : types,
+			"StatusFilter" : statuses
+		]
+
+		def handler = new SearchCriteriaHandler(attributes)
+		
+		TestCaseSearchCriteria crit = Proxy.newProxyInstance(TestCaseSearchCriteria.class.getClassLoader(),
+                                          [TestCaseSearchCriteria.class ] as Class[],
+                                          handler);
+									  
+		return crit;
+	}
+			
+			
+			
+	//cannot make it more groovy because java native code wouldn't mix well with other kinds of proxies
+	class SearchCriteriaHandler implements InvocationHandler{
+		
+		Map attributes
+		
+		SearchCriteriaHandler(attributes){
+			this.attributes = attributes;
+		} 
+		
+		
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args)
+				throws Throwable {
+					
+			def mName = method.name	
+				
+			def matchUses = mName =~ /uses(.*)/
+			
+			if ( matchUses.find() ){
+				return ! (attributes[matchUses[0][1]].isEmpty())
+			}
+			
+			def matchGet = mName =~ /get(.*)Set/
+			
+			if (matchGet.find()){
+				return attributes[matchGet[0][1]]
+			}
+			
+			//others
+			
+			if (mName == "getNameFilter"){
+				return attributes["NameFilter"]
+			}
+			
+			if (mName == "includeFoldersInResult"){
+				return  attributes["ImportanceFilter"].isEmpty() &&
+						attributes["NatureFilter"].isEmpty() &&
+						attributes["TypeFilter"].isEmpty() &&
+						attributes["StatusFilter"].isEmpty()
+			}
+			
+			if (mName == "isGroupByProject"){
+				return attributes["groupByProject"]
+			}
+		}
+	}
+		
+
 }
