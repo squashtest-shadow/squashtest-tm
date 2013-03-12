@@ -24,12 +24,12 @@
 
 <c:choose>
 <c:when test="${initParam['stage'] == 'RELEASE'}">
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-1.8.2.min.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-ui-1.9.0.custom.min.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-ui-1.9.2.custom.min.js"></script>
 </c:when>
 <c:otherwise>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-1.8.2.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-ui-1.9.0.custom.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-1.8.3.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-ui-1.9.2.custom.js"></script>
 </c:otherwise>
 </c:choose>
 
