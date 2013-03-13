@@ -245,16 +245,24 @@
  * example : buttons = [
  *				{ 	tooltip : "tooltip",
  *				  	cssClass : "classa",
+ *					condition : function(row, data){return data["isThat"];};
  *					tdSelector : "td.run-step-button",
- *					image : "/squash/images/execute.png",
+ *					image : "/squash/images/execute.png", // or function(row, data){return "/squash/images/execute.png";},
+ *					onClick : function(table, cell){ doThatWithTableAndCell(table, cell);}
+ *				},
+ *				{ 	tooltip : "tooltip",
+ *				  	cssClass : "classa",
+ *					tdSelector : "td.run-step-button",
  *					onClick : function(table, cell){ doThatWithTableAndCell(table, cell);}
  *				}
  *			];
  *	the buttons items properties are : 
  *			.tooltip : the button's tooltip
  *			.cssClass : some css class added to the input button
+ *			.condition : a function returning a boolean that says if the button is added to the row. if this property is not set the button will be added everywhere
  *			.tdSelector : the css selector to use to retreive the cells where to put the button
  *			.image : if the button is to be an input of type"image" set this property to the wanted image's src
+ *					 can be also a function that returns the src image. 
  *			.uiIcon : if the button is to be a jqueryUi icon, set this property to the wanted icon name
  *			.onClick : a function that will be called with the parametters table and clicked td
 
@@ -712,7 +720,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		if (!buttons) return;
 		$(buttons).each(function(i, button) {
 			var template = '<input  class="tableButton" title="'+ button.tooltip+'" type="button" />';
-			if(button.image){
+			if(button.image && typeof button.image != "function"){				
 				template = '<input class="tableButton" title="'+ button.tooltip+'" type="image" src="'+button.image+'">' ;
 			}else if(button.uiIcon){
 				template = '<a href="javascript:void(0)" class="tableButton" title="'+ button.tooltip+'" />';
@@ -722,6 +730,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 				var row = $(cell).parent("tr")[0];
 				var data = self.fnGetData(row);
 				if(button.condition && button.condition(row, data) || !button.condition){
+					if(button.image && typeof button.image == "function"){
+						template = '<input class="tableButton" title="'+ button.tooltip+'" type="image" src="'+button.image(row, data)+'">' ;
+					}
 					$(cell).html(template);
 					if(button.uiIcon){
 						$(cell).find('.tableButton').button({

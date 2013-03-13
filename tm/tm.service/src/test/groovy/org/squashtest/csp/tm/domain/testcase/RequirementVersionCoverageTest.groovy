@@ -130,7 +130,7 @@ class RequirementVersionCoverageTest extends Specification {
 
 		then:
 		copies.get(0).getVerifyingSteps().size() == 1
-		copies.get(0).getVerifyingSteps().get(0) == copy.getSteps().get(0)
+		copies.get(0).getVerifyingSteps().iterator().next() == copy.getSteps().get(0)
 	}
 
 	
@@ -163,7 +163,7 @@ class RequirementVersionCoverageTest extends Specification {
 		then:
 		copies.get(0).getVerifiedRequirementVersion() == copy
 		copies.get(0).getVerifyingTestCase() == tc
-		copies.get(0).getVerifyingSteps().get(0) == step1
+		copies.get(0).getVerifyingSteps().iterator().next() == step1
 	}
 	
 	@Unroll("should allow removal of a test case for #status ")

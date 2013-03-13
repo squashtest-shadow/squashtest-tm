@@ -44,6 +44,7 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -95,36 +96,14 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(List<Long> requirementsIds,
 			long testCaseId) {
-		List<RequirementLibraryNode> nodes = requirementLibraryNodeDao.findAllByIds(requirementsIds);
-
-		if (!nodes.isEmpty()) {
-			return doAddVerifiedRequirementNodesToTestCase(nodes, testCaseId);
-		}
-
-		return Collections.emptyList();
-	}
-
-	@SuppressWarnings("rawtypes")
-	private Collection<VerifiedRequirementException> doAddVerifiedRequirementNodesToTestCase(
-			List<RequirementLibraryNode> nodes, long testCaseId) {
-		List<Requirement> requirements = new RequirementNodeWalker().walk(nodes);
+		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementsIds);
 		TestCase testCase = testCaseDao.findById(testCaseId);
-
-		if (!requirements.isEmpty()) {
-			return doAddVerifiedRequirementsToTestCase(requirements, testCase);
+		if(!requirementVersions.isEmpty()){
+			return doAddVerifyingRequirementVersionsToTestCase(requirementVersions, testCase);
 		}
-
 		return Collections.emptyList();
 	}
-
-	private Collection<VerifiedRequirementException> doAddVerifiedRequirementsToTestCase(
-			List<Requirement> requirements, TestCase testCase) {
-		List<RequirementVersion> requirementVersions = extractVersions(requirements);
-		Collection<VerifiedRequirementException> rejections = doAddVerifyingRequirementVersionsToTestCase(requirementVersions, testCase);		
-		testCaseImportanceManagerService.changeImportanceIfRelationsAddedToTestCase(requirementVersions, testCase);
-		return rejections;
-	}
-
+	
 	private List<RequirementVersion> extractVersions(List<Requirement> requirements) {
 		List<RequirementVersion> rvs = new ArrayList<RequirementVersion>(requirements.size());
 		for (Requirement requirement : requirements) {
@@ -136,9 +115,8 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@Override
 		@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 		public void removeVerifiedRequirementVersionsFromTestCase(List<Long> requirementVersionsIds, long testCaseId) {
-			List<RequirementVersion> reqs = requirementVersionDao.findAllByIds(requirementVersionsIds);
-	
-			if (!reqs.isEmpty()) {
+			
+			if (!requirementVersionsIds.isEmpty()) {
 				List<RequirementVersionCoverage> requirementVersionCoverages = requirementVersionCoverageDao.byTestCaseAndRequirementVersions(requirementVersionsIds, testCaseId);
 				for(RequirementVersionCoverage coverage : requirementVersionCoverages){
 					requirementVersionCoverageDao.delete(coverage);
@@ -246,6 +224,55 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	}
 	
 	@Override
+	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestStep(List<Long> requirementsIds,
+			long testStepId) {
+		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementsIds);
+		if(!requirementVersions.isEmpty()){
+			ActionTestStep step = testStepDao.findActionTestStepById(testStepId);
+			TestCase testCase = step.getTestCase();
+			Collection<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>();
+			Iterator<RequirementVersion> iterator = requirementVersions.iterator();
+			while (iterator.hasNext()) {
+				RequirementVersion requirementVersion = iterator.next();
+				try {
+					RequirementVersionCoverage coverage = requirementVersionCoverageDao.byRequirementVersionAndTestCase(requirementVersion.getId(), testCase.getId());
+					if(coverage == null){
+						RequirementVersionCoverage newCoverage = new RequirementVersionCoverage(requirementVersion, testCase);
+						newCoverage.addAllVerifyingSteps(Arrays.asList(step));
+					}else{						
+						coverage.addAllVerifyingSteps(Arrays.asList(step));
+						iterator.remove();
+					}
+					requirementVersionCoverageDao.persist(coverage);
+				} catch (RequirementAlreadyVerifiedException ex) {
+					LOGGER.warn(ex.getMessage());
+					rejections.add(ex);
+					iterator.remove();
+				}catch (RequirementVersionNotLinkableException ex) {
+					LOGGER.warn(ex.getMessage());
+					rejections.add(ex);
+					iterator.remove();
+				}
+			}
+			testCaseImportanceManagerService.changeImportanceIfRelationsAddedToTestCase(requirementVersions, testCase);	
+			return rejections;
+		}
+	return Collections.emptyList();
+	}
+	
+	private List<RequirementVersion> findRequirementVersions(List<Long> requirementsIds) {
+		List<RequirementLibraryNode> nodes = requirementLibraryNodeDao.findAllByIds(requirementsIds);
+		if (!nodes.isEmpty()) {
+			List<Requirement> requirements = new RequirementNodeWalker().walk(nodes);
+				if (!requirements.isEmpty()) {
+					List<RequirementVersion> requirementVersions = extractVersions(requirements);
+					return requirementVersions;
+				}
+		}
+		return Collections.emptyList();
+	}
+
+	@Override
 	@Transactional(readOnly = true)
 	public PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
 			PagingAndSorting pas) {
@@ -298,6 +325,16 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 			long testStepId, PagingAndSorting paging) {
 		TestStep step = testStepDao.findById(testStepId);
 		return findAllVerifiedRequirementsByTestCaseId(step.getTestCase().getId(), paging);
+	}
+
+	
+
+	@Override
+	public void removeVerifiedRequirementVersionsFromTestStep(List<Long> requirementVersionsIds, long testStepId) {
+		List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao.byRequirementVersionsAndTestStep(requirementVersionsIds, testStepId);
+		for(RequirementVersionCoverage coverage : coverages){
+			coverage.removeVerifyingStep(testStepId);
+		}
 	}
 	
 

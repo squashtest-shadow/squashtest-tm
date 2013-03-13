@@ -189,13 +189,15 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[0], 'mDataProp':'step-id'},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[1], 'mDataProp':'step-index', 'sClass':'select-handle centered '+dragClass, 'sWidth':'2em'},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[2], 'mDataProp':'attach-list-id', 'sClass':'centered has-attachment-cell', 'sWidth':'2em'},
-			  {'bVisible':true,  'bSortable':false, 'aTargets':[3], 'mDataProp':'step-action', 'sClass':'called-tc-cell '+editActionClass},
-			  {'bVisible':true,  'bSortable':false, 'aTargets':[4], 'mDataProp':'step-result', 'sClass': editResultClass},
-			  {'bVisible':false, 'bSortable':false, 'aTargets':[5], 'mDataProp':'nb-attachments'},
-			  {'bVisible':false, 'bSortable':false, 'aTargets':[6], 'mDataProp':'step-type'},
-			  {'bVisible':false, 'bSortable':false, 'aTargets':[7], 'mDataProp':'called-tc-id'},
-			  {'bVisible':true,  'bSortable':false, 'aTargets':[8], 'mDataProp':'empty-browse-holder', 'sClass':'centered browse-button', 'sWidth':'2em'},
-			  {'bVisible':true,  'bSortable':false, 'aTargets':[9], 'mDataProp':'empty-delete-holder', 'sClass':'centered '+deleteClass, 'sWidth':'2em'}
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[3], 'mDataProp':'empty-requirements-holder', 'sClass':'centered requirements-button', 'sWidth':'2em'},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[4], 'mDataProp':'step-action', 'sClass':'called-tc-cell '+editActionClass},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[5], 'mDataProp':'step-result', 'sClass': editResultClass},
+			  {'bVisible':false, 'bSortable':false, 'aTargets':[6], 'mDataProp':'nb-attachments'},
+			  {'bVisible':false, 'bSortable':false, 'aTargets':[7], 'mDataProp':'step-type'},
+			  {'bVisible':false, 'bSortable':false, 'aTargets':[8], 'mDataProp':'called-tc-id'},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[9], 'mDataProp':'empty-browse-holder', 'sClass':'centered browse-button', 'sWidth':'2em'},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[10], 'mDataProp':'empty-delete-holder', 'sClass':'centered '+deleteClass, 'sWidth':'2em'},
+			  {'bVisible':false, 'bSortable':false, 'aTargets':[11], 'mDataProp':'has-requirements'},
 			]
 			
 		};
@@ -231,7 +233,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 				]
 			},
 			
-			buttons : [{ tooltip : "browse",
+			buttons : [{ tooltip : language.edit,
 				cssClass : "",
 				tdSelector : "td.browse-button",
 				image : "/squash/images/pencil.png",
@@ -241,6 +243,18 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 					var url = urls.steps + stepId;
 					window.open(url, '_blank');
 					window.focus();
+				}
+			},
+			{ tooltip : language.requirements,
+				cssClass : "",
+				tdSelector : "td.requirements-button",
+				image : function(row, data){ if(data["has-requirements"]){ return "/squash/images/Icon_Tree_Requirement.png";} return "/squash/images/Icon_Tree_Requirement_off.png"},
+				condition : function(row, data){ return data["step-type"] == "action";},
+				onClick : function(table, cell){
+					var row = cell.parentNode.parentNode; 
+					var stepId = table.getODataId(row);
+					var url = urls.steps + stepId +"/verified-requirement-versions/manager";
+					document.location.href = url;
 				}
 			}]
 			

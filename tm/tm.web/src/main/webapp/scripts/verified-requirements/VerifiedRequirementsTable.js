@@ -54,22 +54,26 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 						"fnRowCallback" : this.requirementsTableRowCallback,
 						"fnDrawCallback": this.requirementsTableDrawCallback,
 						};},
+						
 				squashSettings : function(self){
 					return {
-							buttons : [{ tooltip : "remove",
+							buttons : [{ tooltip : VRTS.messages.remove,
 								cssClass : "",
 								tdSelector : "td.delete-button",
 								uiIcon : "ui-icon-minus",
 								onClick : this.removeRowRequirementVersion,
 							}]};},
+							
 				configureTable : function() {
 					var self = this;					
 					$(this.el).squashTable(self.dataTableSettings(self),self.squashSettings(self));
 					this.table = $(this.el).squashTable();
 				},
 				
-				_requirementsTableDrawCallback : function () {					
+				_requirementsTableDrawCallback : function () {
+					if(this.table){//We do not restore table selection for first drawing on pre-filled tables.
 					restoreTableSelection(this.table, function(data){return data["entity-id"];});
+					}
 				},
 				
 				_requirementsTableRowCallback: function (row, data, displayIndex) {
@@ -83,10 +87,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					var row = cell.parentNode.parentNode;
 					this.confirmRemoveRequirements([row]);
 				},
+				
 				_removeSelectedRequirements : function() {
 					var rows = this.table.getSelectedRows();
 					this.confirmRemoveRequirements(rows);
 				},
+				
 				_confirmRemoveRequirements : function(rows){
 					var self = this;
 					this.toDeleteIds = [];
@@ -105,6 +111,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					}
 									
 				},
+				
 				_removeRequirements : function() {
 					var self = this;
 					var ids = 	this.toDeleteIds;

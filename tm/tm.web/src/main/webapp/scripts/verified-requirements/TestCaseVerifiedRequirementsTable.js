@@ -34,9 +34,13 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil" , "./Verified
 					events : {},
 					
 					squashSettings : function(self){
-								return {buttons : [{ tooltip : "remove",
+							
+								return {buttons : [{ tooltip :  VRTS.messages.remove,
 									cssClass : "",
-									condition : function(row, data){return data["directlyVerified"] && VRTS.linkable},
+									condition : function(row, data){ 
+										var verified = data["directlyVerified"] == "false" ? false : data["directlyVerified"];
+										return verified && VRTS.linkable;
+										},
 									tdSelector : "td.delete-button",
 									uiIcon : "ui-icon-minus",
 									onClick : self.removeRowRequirementVersion,
@@ -49,7 +53,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil" , "./Verified
 						var hasRequirement = (rvIds.length > 0);
 						if (hasRequirement) {
 							var indirects = $(rows).not(function(index,row){
-								return self.table.fnGetData(row)["directlyVerified"];
+								var data = self.table.fnGetData(row);
+								return  data["directlyVerified"] == "false" ? false : data["directlyVerified"];
 							});
 							if (indirects.length >0){
 								this.noDirectRequirementSelectedDialog.messageDialog("open");
@@ -71,10 +76,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil" , "./Verified
 					},
 					
 					_requirementsTableRowCallback: function (row, data, displayIndex) {
-						if(VRTS.linkable && data["directlyVerified"]  && data["status"] !="OBSOLETE"){
+						var verified = data["directlyVerified"] == "false" ? false : data["directlyVerified"];
+						if(VRTS.linkable && verified  && data["status"] !="OBSOLETE"){
 							this.addSelectEditableToVersionNumber(row, data);
 						}
 						this.discriminateDirectVerifications(row, data, displayIndex);
+						this.addLinkToTestStep(row, data, displayIndex);
 						return row;
 					},
 
@@ -87,7 +94,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil" , "./Verified
 					
 					
 					discriminateDirectVerifications : function (row, data, displayIndex){
-							if (!data["directlyVerified"]){
+						var verified = data["directlyVerified"] == "false" ? false : data["directlyVerified"];
+							if (!verified){
 								$(row).addClass("requirement-indirect-verification");
 								$('td.delete-button', row).html(''); //remove the delete button
 							}else{
@@ -95,6 +103,19 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil" , "./Verified
 							}
 							
 					},
+					
+					addLinkToTestStep: function (row, data, displayIndex){
+						var spans = $("span.verifyingStep", row);
+						var span = $(spans[0]);
+						if(span){
+							var stepIndex = span.text();
+							var stepId = span.attr("dataId");
+							var link = $("<a/>", { 'href' : squashtm.app.contextRoot+"/test-steps/"+stepId});
+							link.text(stepIndex);
+							var cell = span.parent("td");
+							cell.html(link);
+						}
+					}
 					
 					
 

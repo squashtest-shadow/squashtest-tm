@@ -21,6 +21,8 @@
 package org.squashtest.tm.domain.testcase;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -59,7 +61,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	
 	@ManyToMany(cascade = {CascadeType.REFRESH})
 	@JoinTable(name = "VERIFYING_STEPS", joinColumns = @JoinColumn(name = "TEST_STEP_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "REQUIREMENT_VERSION_COVERAGE_ID", updatable = false, insertable = false))
-	private List<RequirementVersionCoverage> requirementVersionCoverages= new ArrayList<RequirementVersionCoverage>();
+	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<RequirementVersionCoverage>(0);
 
 	
 	public ActionTestStep() {
@@ -150,6 +152,16 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	public void removeRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
 		this.requirementVersionCoverages.remove(requirementVersionCoverage);		
 	}
+
+	/**
+	 * 
+	 * @return an UNMODIFIABLE set of this {@link ActionTestStep}'s {@link RequirementVersionCoverage}s.
+	 */
+	public Set<RequirementVersionCoverage> getRequirementVersionCoverages() {
+		return Collections.unmodifiableSet(this.requirementVersionCoverages);
+	}
+	
+	
 
 	
 }

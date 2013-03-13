@@ -93,7 +93,8 @@
 			<tr>
 				<th>id (masked)</th>
 				<th>#</th>
-				<th th:text="#{table.column-header.has-attachment.label}">0</th>
+				<th th:text="#{table.column-header.has-attachment.label}">0</th>				
+				<th th:text="#{label.requirement.short}"> </th> <!-- requirements -->
 				<th th:text="#{label.Actions}">Actions</th>
 				<th th:text="#{label.ExpectedResults}">Expected results</th>
 				<th>nbAttach(masked)</th>
@@ -172,7 +173,9 @@
 						addAnotherStep : /*[[#{label.addAnother}]]*/"add another",
 						ckeLang : /*[[#{rich-edit.language.value}]]*/"ph",
 						placeholder : /*[[#{rich-edit.placeholder}]]*/"insert something here",
-						submit : /*[[#{rich-edit.button.ok.label}]]*/"submit"
+						submit : /*[[#{rich-edit.button.ok.label}]]*/"submit",
+						requirements : /*[[#{label.requirements}]]*/"requirements",
+						edit : /*[[#{label.edit}]]*/"edit",
 					},
 					
 					permissions :{

@@ -23,11 +23,13 @@ package org.squashtest.tm.web.internal.controller.testcase;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -93,13 +95,11 @@ public class VerifiedRequirementsManagerController {
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 	@Inject
 	private RequirementLibraryFinderService requirementLibraryFinder;
-	@Inject
-	private TestCaseModificationService testCaseFinder;
 
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/manager", method = RequestMethod.GET)
-	public String showManager(@PathVariable long testCaseId, Model model) {
-		TestCase testCase = testCaseFinder.findById(testCaseId);
+	public String showTestCaseManager(@PathVariable long testCaseId, Model model) {
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		List<RequirementLibrary> linkableLibraries = requirementLibraryFinder
 				.findLinkableRequirementLibraries();
 
@@ -109,6 +109,20 @@ public class VerifiedRequirementsManagerController {
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
 
 		return "page/test-cases/show-verified-requirements-manager";
+	}
+	
+	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/manager", method = RequestMethod.GET)
+	public String showTestStepManager(@PathVariable long testStepId, Model model) {
+		TestStep testStep = testStepService.findById(testStepId);
+		List<RequirementLibrary> linkableLibraries = requirementLibraryFinder
+				.findLinkableRequirementLibraries();
+
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
+
+		model.addAttribute("testStep", testStep);
+		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
+
+		return "page/test-cases/show-step-verified-requirements-manager";
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<RequirementLibrary> linkableLibraries) {
@@ -128,6 +142,28 @@ public class VerifiedRequirementsManagerController {
 			@PathVariable long testCaseId) {
 		Collection<VerifiedRequirementException> rejections = verifiedRequirementsManagerService
 				.addVerifiedRequirementsToTestCase(requirementsIds, testCaseId);
+
+		return buildSummary(rejections);
+
+	}
+	
+	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS)
+	public @ResponseBody
+	Map<String, Object> addVerifiedRequirementsToTestStep(@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds,
+			@PathVariable long testStepId) {
+		Collection<VerifiedRequirementException> rejections = verifiedRequirementsManagerService
+				.addVerifiedRequirementsToTestStep(requirementsIds, testStepId);
+
+		return buildSummary(rejections);
+
+	}
+	
+	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/{requirementVersionId}", method = RequestMethod.POST)
+	public @ResponseBody
+	Map<String, Object> addVerifiedRequirementToTestStep(@PathVariable long requirementVersionId,
+			@PathVariable long testStepId) {
+		Collection<VerifiedRequirementException> rejections = verifiedRequirementsManagerService
+				.addVerifiedRequirementsToTestStep(Arrays.asList(requirementVersionId), testStepId);
 
 		return buildSummary(rejections);
 
@@ -160,9 +196,17 @@ public class VerifiedRequirementsManagerController {
 
 	}
 	
+	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/{requirementVersionsIds}", method = RequestMethod.DELETE)
+	public @ResponseBody
+	void removeVerifiedRequirementVersionsFromTestStep(
+			 @PathVariable List<Long> requirementVersionsIds, @PathVariable long testStepId) {
+		verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestStep(requirementVersionsIds, testStepId);
+
+	}
+	
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions", params = {RequestParams.S_ECHO_PARAM, "includeCallSteps"})
 		@ResponseBody
-		public DataTableModel getAllVerifiedRequirementsTableModel(@PathVariable long testCaseId,
+		public DataTableModel getTestCaseWithCallStepsVerifiedRequirementsTableModel(@PathVariable long testCaseId,
 				final DataTableDrawParameters params, final Locale locale) {
 	
 			PagingAndSorting pas = new DataTableMapperPagingAndSortingAdapter(params, verifiedRequirementVersionsMapper);
@@ -191,7 +235,7 @@ public class VerifiedRequirementsManagerController {
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions", method=RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
-	public DataTableModel getVerifiedRequirementsTableModel(@PathVariable long testCaseId,
+	public DataTableModel getTestCaseVerifiedRequirementsTableModel(@PathVariable long testCaseId,
 			final DataTableDrawParameters params, final Locale locale) {
 
 		PagingAndSorting pagingAndSorting = new DataTableMapperPagingAndSortingAdapter(params, verifiedRequirementVersionsMapper);
@@ -213,7 +257,7 @@ public class VerifiedRequirementsManagerController {
 	 */
 	@RequestMapping(value="/test-steps/{testStepId}/verified-requirement-versions", method=RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
-	public DataTableModel getVerifiedRequirementTable(DataTableDrawParameters params, @PathVariable long testStepId){
+	public DataTableModel getStepVerifiedRequirementTableModel(DataTableDrawParameters params, @PathVariable long testStepId){
 		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, verifiedRequirementVersionsMapper, SortedAttributeSource.SINGLE_ENTITY);
 		Locale locale = LocaleContextHolder.getLocale();
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService.findAllDirectlyVerifiedRequirementsByTestStepId(testStepId, paging);;
@@ -259,10 +303,11 @@ public class VerifiedRequirementsManagerController {
 		}
 		private String getVerifyingSteps(VerifiedRequirement item) {
 			String result = "";
-			List<ActionTestStep> steps = item.getVerifyingSteps();
-			if(steps.size() > 0){
+			Set<ActionTestStep> steps = item.getVerifyingSteps();
+			if(!steps.isEmpty()){
 				if(steps.size() == 1){
-					result = steps.get(0).getId().toString();
+					ActionTestStep step = steps.iterator().next();
+					result = "<span class='verifyingStep' dataId='"+step.getId()+"'>"+step.getIndex()+1+"</span>";
 				}else{
 					result = "&#42;";
 				}
@@ -281,7 +326,8 @@ public class VerifiedRequirementsManagerController {
 		@Override
 		public Map<String, Object> buildItemData(VerifiedRequirement item) {
 			Map<String, Object> res = super.buildItemData(item);
-			res.put("stepVerified", item.hasStepAsVerifying(stepId));
+			res.put("verifiedByStep", item.hasStepAsVerifying(stepId));
+			res.put("empty-link-checkbox", "");
 			return res;
 		}
 

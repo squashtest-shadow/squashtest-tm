@@ -27,6 +27,7 @@ import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 
@@ -82,7 +83,7 @@ public interface RequirementVersionCoverageDao extends CustomRequirementVersionC
 	 * Will return the {@link RequirementVersionCoverage} entities matching the verified requirementVersion and one of the verifying test case params.
 	 * @param verifyingTestCasesIds : the ids of the concerned {@link TestCase}s
 	 * @param verifiedRequirementVersionId : the id of the concerned {@link RequirementVersion}
-	 * @return
+	 * @return a list of matching {@link RequirementVersionCoverage}
 	 */
 	List<RequirementVersionCoverage> byRequirementVersionAndTestCases(@QueryParam("tcIds") List<Long> verifyingTestCasesIds,
 			@QueryParam("rvId")	long verifiedRequirementVersionId);
@@ -91,11 +92,19 @@ public interface RequirementVersionCoverageDao extends CustomRequirementVersionC
 	 * Will return the {@link RequirementVersionCoverage} entities matching the verifying test-case and one of the verified requirement versions
 	 * @param verifiedRequirementVersionsIds : the ids of the concerned {@link RequirementVersion}s
 	 * @param verifyingTestCaseId : the id of the concerned {@link TestCase}
-	 * @return
+	 * @return a list of matching {@link RequirementVersionCoverage}
 	 */
 	List<RequirementVersionCoverage> byTestCaseAndRequirementVersions(@QueryParam("rvIds") List<Long> verifiedRequirementVersionsIds,
 			@QueryParam("tcId")	long verifyingTestCaseId);
 
+	/**
+	 * will return the {@link RequirementVersionCoverage} entities matching one of the verified requirement version and linked to the test step.
+	 * @param verifiedRequirementVersionsIds : the ids of the concerned {@link RequirementVersion}s
+	 * @param testStepId : the id of the concerned {@link ActionTestStep}
+	 * @return the list of matching {@link RequirementVersionCoverage}
+	 */
+	List<RequirementVersionCoverage> byRequirementVersionsAndTestStep(@QueryParam("rvIds") List<Long> verifiedRequirementVersionsIds, @QueryParam("stepId")long testStepId);
+	
 	/**
 	 * Returns the total amount of {@link RequirementVersionCoverage} witch verifying {@link TestCase}'s id matches the given param.
 	 * 
@@ -119,7 +128,7 @@ public interface RequirementVersionCoverageDao extends CustomRequirementVersionC
 	 * @return the amount of {@link RequirementVersionCoverage} for these test cases
 	 */
 	long numberByTestCases(@QueryParam("tcIds") Collection<Long> testCaseIds);
-	
+
 	
 	
 

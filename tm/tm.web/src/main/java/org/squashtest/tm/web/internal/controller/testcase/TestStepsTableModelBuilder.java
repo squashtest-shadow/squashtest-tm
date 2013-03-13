@@ -85,9 +85,10 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 		item.put("nb-attachments", visited.getAttachmentList().size());
 		item.put("step-type", "action");
 		item.put("called-tc-id", null);
+		item.put("empty-requirements-holder", null);
 		item.put("empty-browse-holder", null);
 		item.put("empty-delete-holder", null);
-		
+		item.put("has-requirements", !visited.getRequirementVersionCoverages().isEmpty());		
 		decorateWithCustomFields(item);
 		
 		lastBuiltItem = item;
@@ -111,9 +112,10 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 		item.put("nb-attachments", null);
 		item.put("step-type", "call");
 		item.put("called-tc-id", called.getId());
+		item.put("empty-requirements-holder", null);
 		item.put("empty-browse-holder", null);
 		item.put("empty-delete-holder", null);
-
+		item.put("has-requirements", false);
 		decorateWithCustomFields(item);
 		
 		lastBuiltItem = item;

@@ -20,7 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 public class RequirementVerifierView {
@@ -38,7 +43,7 @@ public class RequirementVerifierView {
 		this.verifyingStep = verifyingStep;
 		type = "test-step";
 	}
-
+	
 	public TestCase getVerifier() {
 		return verifier;
 	}
@@ -61,6 +66,42 @@ public class RequirementVerifierView {
 
 	public void setVerifyingStep(ActionTestStep verifyingStep) {
 		this.verifyingStep = verifyingStep;
+	}
+	
+	public List<RequirementVersionCoverageView> getCoverages(){
+		List<RequirementVersionCoverageView> coverages = new ArrayList<RequirementVersionCoverageView>(0);
+		for(RequirementVersionCoverage rc : verifier.getRequirementVersionCoverages()){
+			RequirementVersionCoverageView coverage = new RequirementVersionCoverageView(rc, verifyingStep);
+			coverages.add(coverage);
+		}
+		return coverages;
+	}
+	
+	public static final class RequirementVersionCoverageView{
+		private RequirementVersion version;
+		private boolean verifiedByStep = false;
+
+		public RequirementVersionCoverageView(RequirementVersionCoverage rc, ActionTestStep step) {
+			this.version = rc.getVerifiedRequirementVersion();
+			if(step != null){
+				for(ActionTestStep verifyingStep : rc.getVerifyingSteps()){
+					if(step.getId().equals(verifyingStep.getId())){
+						verifiedByStep = true;
+						break;
+					}
+				}
+			}
+		}
+
+		public RequirementVersion getVersion() {
+			return version;
+		}
+
+		public boolean isVerifiedByStep() {
+			return verifiedByStep;
+		}
+		
+		
 	}
 	
 	

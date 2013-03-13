@@ -93,7 +93,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE,CascadeType.REFRESH, CascadeType.MERGE })
 	@JoinColumn(name="VERIFYING_TEST_CASE_ID")
-	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<RequirementVersionCoverage>();
+	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<RequirementVersionCoverage>(0);
 	
 	@NotNull
 	@Enumerated(EnumType.STRING)

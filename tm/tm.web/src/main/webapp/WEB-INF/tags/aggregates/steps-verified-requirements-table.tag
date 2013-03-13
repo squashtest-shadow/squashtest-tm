@@ -20,21 +20,18 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty" description="inserts the html table of verified resquirements" %>
+<%@ tag body-content="empty" description="inserts the html table of verified requirements" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ attribute name="verifiedRequirementsUrl" required="true"
-	description="URL to manipulate the verified requirements" %>
+<%@ attribute name="testStep" required="true"  type="java.lang.Object" description="the concerned test step" %>
 <%@ attribute name="containerId" required="true" description="if of dom container that will hold the table events" %>
-<%@ attribute name="verifiedRequirementsTableUrl" required="true"
-	description="URL for the verified requirements table" %>
-<%@ attribute name="linkable" required="true" description=" boolean that says if the concerned test case is viewed by a user who has LINK rights on this entity" %>
-<%@ attribute name="includeIndirectlyVerified" required="true" description="boolean that says if the table must include indirectly verified requirements" %>
-<s:url var="tableLanguageUrl" value="/datatables/messages" />
-<s:url var="requirementVersionsUrl" value="/requirement-versions"/>
-<s:url var="root" value="/" />
-<%-- Attention ! si vous refactorez cette page vous pouvez utiliser la version thymeleaf de la table des test-steps : templates/verified-requirements-bloc.frag.html --%>
+<c:url var="tableLanguageUrl" value="datatables/messages" />
+<c:url var="requirementVersionsUrl" value="/requirement-versions" />
+<c:url var="verifiedRequirementsUrl" value="/test-cases/${ testStep.testCase.id }/verified-requirement-versions" />
+<c:url var="stepVerifiedRequirementsUrl" value="/test-steps/${ testStep.id }/verified-requirement-versions" />
+<c:url var="root" value="/" />
+<%-- This tag is used for requirement/testStep manager --%>
+<%-- Warning ! if you migrate the page in tymeleaf go see : templates/verified-requirements-bloc.frag.html --%>
 	<script type="text/javascript" th:inline="javascript">
 			if (!squashtm) {
 				var squashtm = {};
@@ -46,8 +43,9 @@
 			}
 			squashtm.app.verifiedRequirementsTableSettings = {
 				containerId : "${containerId}",
-				linkable : "${linkable}",
+				linkable : true,
 				url :"${verifiedRequirementsUrl}",
+				stepUrl : "${stepVerifiedRequirementsUrl}",
 				messages : {
 					cancel : "<f:message key='label.Cancel' />",
 					ok : "<f:message key='rich-edit.button.ok.label' />",
@@ -55,12 +53,17 @@
 				},
 			};
 		</script>
-
+		<div class="toolbar">
+<input  id="remove-verified-requirements-from-step-button"
+				type="button" value="<f:message key='label.removeRequirementsAssociation.test-steps'/>"
+				class="button" />
+				</div>
 <table id="verified-requirements-table" 
-data-def='hover,  datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTableUrl }, language=${tableLanguageUrl}'>
+data-def='hover,  datakeys-id=entity-id ,ajaxsource=${ stepVerifiedRequirementsUrl }, language=${tableLanguageUrl}'>
 	<thead>
 		<tr>
 			<th data-def="select, map=entity-index">#</th>
+			<th data-def='sClass=link-checkbox, map=empty-link-checkbox'>&nbsp;</th>
 			<th data-def="sortable, map=project"><f:message key="label.project" /></th>
 			<th data-def="sortable, map=entity-id"><f:message key="report.requirementexport.id"/></th>
 			<th data-def="sortable, map=reference"><f:message key="requirement.reference.label"/></th>
@@ -68,12 +71,10 @@ data-def='hover,  datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTable
 			<th data-def="sClass=versionNumber, sortable, map=versionNumber"><f:message key="requirement-version.version-number.label" /></th>
 			<th data-def="sortable, map=criticality"><f:message key="requirement.criticality.label"/></th>
 			<th data-def="sortable, map=category"><f:message key="requirement.category.label"/></th>
-			<th data-def='map=verifyingSteps'><f:message key="label.test-step.short"/></th>
-			<th data-def='sClass=delete-button, map=empty-delete-holder'>&nbsp;</th>			
+			<th data-def='sClass=delete-button, map=empty-delete-holder'>&nbsp;</th>
 			<th data-def="invisible, map=status">status(masked)</th>
-			<c:if test="${includeIndirectlyVerified }">
-				<th data-def="invisible, map=directlyVerified">isDirectlyVerified(masked)</th>
-			</c:if>
+			<th data-def='invisible, map=verifiedByStep'>verifiedByStep(masked)</th>
+			
 		</tr>
 	</thead>
 	<tbody>
@@ -96,14 +97,15 @@ data-def='hover,  datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTable
 			 <input class="cancel" type="button" value="<f:message key='label.Cancel'/>" />
 		</div>
 </div>
+<div id="remove-verified-requirement-version-from-step-dialog" class="popup-dialog not-displayed" title="<f:message key='label.Confirm'/>">
+<div><f:message key='message.remove-requirement-version.step' /></div>
+<div class="popup-dialog-buttonpane">
+			<input class="confirm" type="button" value="<f:message key='label.Confirm'/>" />
+			 <input class="cancel" type="button" value="<f:message key='label.Cancel'/>" />
+		</div>
+</div>
 
 <div id="no-selected-requirement-dialog" class="popup-dialog not-displayed"
 		title="<f:message key='popup.title.error' />">
 		<span><f:message key="message.EmptyTableSelection"/></span>
 </div>
-<c:if test="${includeIndirectlyVerified }">
-<div id="no-selected-direct-requirement-dialog" class="popup-dialog not-displayed"
-		title="<f:message key='popup.title.error' />">
-		<span><f:message key="verified-requirements.table.indirectverifiedrequirements.removalattemptsforbidden.label"/></span>
-</div>
-</c:if>

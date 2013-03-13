@@ -35,6 +35,7 @@ import org.squashtest.tm.service.requirement.RequirementLibraryFinderService
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService
+import org.squashtest.tm.service.testcase.TestStepModificationService
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
@@ -48,12 +49,14 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 	Provider driveNodeBuilder = Mock()
 	TestCaseModificationService testCaseFinder = Mock()
 	RequirementLibraryFinderService requirementLibraryFinder = Mock()
+	TestStepModificationService testStepService = Mock()
 
 	def setup() {
 		controller.verifiedRequirementsManagerService = verifiedRequirementsManagerService
 		controller.driveNodeBuilder = driveNodeBuilder
-		controller.testCaseFinder = testCaseFinder
+		controller.testCaseModificationService = testCaseFinder
 		controller.requirementLibraryFinder = requirementLibraryFinder
+		controller.testStepService = testStepService;
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService))
 	}
 
@@ -62,7 +65,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		requirementLibraryFinder.findLinkableRequirementLibraries() >> []
 
 		when:
-		def res = controller.showManager(20L, Mock(Model))
+		def res = controller.showTestCaseManager(20L, Mock(Model))
 
 		then:
 		res == "page/test-cases/show-verified-requirements-manager"
@@ -85,7 +88,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		def model = new ExtendedModelMap()
 
 		when:
-		def res = controller.showManager(20L, model)
+		def res = controller.showTestCaseManager(20L, model)
 
 		then:
 		model['testCase'] == testCase
@@ -133,7 +136,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		verifiedRequirementsManagerService.findAllVerifiedRequirementsByTestCaseId(10, _) >> holder
 
 		when:
-		def res = controller.getAllVerifiedRequirementsTableModel(10, request, Locale.getDefault())
+		def res = controller.getTestCaseWithCallStepsVerifiedRequirementsTableModel(10, request, Locale.getDefault())
 
 		then:
 		res.sEcho == "echo"

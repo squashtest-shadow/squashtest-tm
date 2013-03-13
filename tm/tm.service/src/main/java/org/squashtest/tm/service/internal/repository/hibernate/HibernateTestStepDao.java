@@ -29,6 +29,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
@@ -112,6 +113,11 @@ public class HibernateTestStepDao extends HibernateEntityDao<TestStep> implement
 			
 		}
 		
+	}
+
+	@Override
+	public ActionTestStep findActionTestStepById(long testStepId) {
+		return (ActionTestStep) currentSession().get(ActionTestStep.class , testStepId);
 	}
 
 	

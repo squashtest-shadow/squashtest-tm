@@ -51,19 +51,25 @@ class TestStepsTableModelBuilderTest extends Specification {
 		def data = builder.buildItemData(step);
 
 		then:
+
 		data == [
-				 "step-id" : step.id, 
-				 "step-index" : stepIndex, 
-				 "nb-attachments" : step.attachmentList.size(),
-				 "attach-list-id" : step.attachmentList.id,
-				 "step-action" : "action", 
-				 "step-result" : step.expectedResult,
-				 "step-type" : "action",
-				 "called-tc-id" : null,
-				 "empty-delete-holder" : null,
-				 "empty-browse-holder" : null,
-				 "customFields" : [:]
-			]	
+			"step-id":10L,
+			"empty-browse-holder":null,
+			"customFields":[:],
+			"nb-attachments":0,
+			"empty-requirements-holder":null,
+			"step-index":0,
+			"step-type": "action",
+			"attach-list-id":100L,
+			"step-result": "expected",
+			"has-requirements":false,
+			"called-tc-id":null,
+			"empty-delete-holder":null,
+			"step-action": "action"
+			]
+
+
+
 	}
 
 	def "Should build model for a CallTestStep"() {
@@ -85,19 +91,21 @@ class TestStepsTableModelBuilderTest extends Specification {
 
 		then:
 		
-		data == [
-			"step-id" : step.id,
-			"step-index" : stepIndex,
-			"nb-attachments" : null,
-			"attach-list-id" : null,
-			"step-action" : "Call : callee",
-			"step-result" : null,
-			"step-type" : "call",
-			"called-tc-id" : callee.id,
-			"empty-delete-holder" : null,
-			"empty-browse-holder" : null,
-			"customFields" : [:]
-	   ]
-	
+		data == ["step-id":10L, 
+			"empty-browse-holder":null, 
+			"customFields":[:], 
+			"nb-attachments":null, 
+			"empty-requirements-holder":null, 
+			"step-index":0, 
+			"step-type":"call", 
+			"attach-list-id":null, 
+			"step-result":null, 
+			"has-requirements":false,
+			"called-tc-id":100L, 
+			"empty-delete-holder":null, 
+			"step-action":"Call : callee"
+			]
+		
+		
 	}
 }

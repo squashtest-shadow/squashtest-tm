@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery",  "domReady","verifPanel" ], function($, domReady, VerifiedRequirementsPanel) {
+	require([ "jquery",  "domReady","./verified-requirements/TestStepVerifiedRequirementsPanel" ], function($, domReady, TestStepVerifiedRequirementsPanel) {
 		domReady(function() {
 		
-			new VerifiedRequirementsPanel();
+			new TestStepVerifiedRequirementsPanel();
 			
 		});
 	});

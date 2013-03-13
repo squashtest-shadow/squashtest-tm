@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -53,14 +54,25 @@ public interface VerifiedRequirementsManagerService {
 			long testCaseId);
 	
 	/**
-	 * Adds a list of requirement-versions to the ones verified by a test case. If the version or a sister is already verified, nothing
+	 * Adds a list of requirement-versions to the ones verified by the step's test case and bind them to the step. If the version  already verified by the test case, it is only bound to the step.
+	 * If a sister version is already bound to the test case the version is not added.
+	 * 
+	 * @param requirementsIds
+	 * @param testStepId : the id of the concerned {@link ActionTestStep}
+	 * @return 
+	 */
+	Collection<VerifiedRequirementException> addVerifiedRequirementsToTestStep(List<Long> requirementsIds,
+			long testStepId);
+	
+	/**
+	 * Adds a list of requirement-versions to the ones verified by a test case. If the version or a sister is already verified, the requirement is not added and nothing
 	 * special happens.
 	 * 
 	 * @param requirementVersionsByTestCase : list of requirementVersions mapped by test-case
 	 * @return 
 	 */
 	Collection<VerifiedRequirementException> addVerifyingRequirementVersionsToTestCase(Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCase);
-
+	
 	/**
 	 * Removes a list of requirements from the ones verified by a test case. If a requirement is not verified by the
 	 * test case, nothing special happens.
@@ -78,6 +90,15 @@ public interface VerifiedRequirementsManagerService {
 	 * @param requirementsIds
 	 */
 	void removeVerifiedRequirementVersionFromTestCase(long requirementVersionId, long testCaseId);
+	
+	/**
+	 * Removes a requirement from the step but not from the test case. If the requirement was not previously verified by
+	 * the test step, nothing special happens.
+	 * 
+	 * @param testStepId
+	 * @param requirementsIds
+	 */
+	void removeVerifiedRequirementVersionsFromTestStep(List<Long> requirementVersionsIds, long testStepId);
 	
 	/**
 	 * Removes a requirement version from the given test case and replaces it with the wanted version
@@ -121,4 +142,7 @@ public interface VerifiedRequirementsManagerService {
 	 */
 	PagedCollectionHolder<List<VerifiedRequirement>> findAllDirectlyVerifiedRequirementsByTestStepId(long testStepId,
 			PagingAndSorting paging);
+
+
+	
 }

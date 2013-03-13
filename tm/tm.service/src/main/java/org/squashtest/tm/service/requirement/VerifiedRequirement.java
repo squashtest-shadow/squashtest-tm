@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
@@ -96,7 +96,7 @@ public class VerifiedRequirement {
 	public Long getId() {
 		return getVerifiedRequirementVersion().getId();
 	}
-	public List<ActionTestStep> getVerifyingSteps(){
+	public Set<ActionTestStep> getVerifyingSteps(){
 		return requirementVersionCoverage.getVerifyingSteps();
 	}
 	public boolean hasStepAsVerifying(long stepId) {

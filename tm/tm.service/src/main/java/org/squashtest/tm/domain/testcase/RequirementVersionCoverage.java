@@ -22,7 +22,10 @@ package org.squashtest.tm.domain.testcase;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -55,8 +58,8 @@ import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableExce
 		@NamedQuery(name = "RequirementVersionCoverage.byTestCaseAndRequirementVersions", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where tc.id = :tcId and rv.id in :rvIds"),
 		@NamedQuery(name = "RequirementVersionCoverage.numberByTestCase", query = "select count(rvc) from RequirementVersionCoverage rvc join rvc.verifyingTestCase tc where tc.id = :tcId"),
 		@NamedQuery(name = "RequirementVersionCoverage.numberByTestCases", query = "select count(rvc) from RequirementVersionCoverage rvc join rvc.verifyingTestCase tc where tc.id in :tcIds"),
-		@NamedQuery(name = "RequirementVersionCoverage.numberDistinctVerifiedByTestCases", query = "select count(distinct rv) from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where tc.id in :tcIds")
-
+		@NamedQuery(name = "RequirementVersionCoverage.numberDistinctVerifiedByTestCases", query = "select count(distinct rv) from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where tc.id in :tcIds"),
+		@NamedQuery(name = "RequirementVersionCoverage.byRequirementVersionsAndTestStep", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingSteps step where step.id = :stepId and rv.id in :rvIds"),
 })
 @Entity
 public class RequirementVersionCoverage implements Identified {
@@ -78,7 +81,7 @@ public class RequirementVersionCoverage implements Identified {
 	@NotNull
 	@OneToMany
 	@JoinTable(name = "VERIFYING_STEPS", joinColumns = @JoinColumn(name = "REQUIREMENT_VERSION_COVERAGE_ID"), inverseJoinColumns = @JoinColumn(name = "TEST_STEP_ID"))
-	private List<ActionTestStep> verifyingSteps = new ArrayList<ActionTestStep>();
+	private Set<ActionTestStep> verifyingSteps = new HashSet<ActionTestStep>();
 
 	public TestCase getVerifyingTestCase() {
 		return verifyingTestCase;
@@ -110,12 +113,13 @@ public class RequirementVersionCoverage implements Identified {
 		return id;
 	}
 
-	public List<ActionTestStep> getVerifyingSteps() {
+	public Set<ActionTestStep> getVerifyingSteps() {
 		return verifyingSteps;
 	}
 
 	public void addAllVerifyingSteps(Collection<ActionTestStep> steps) {
 		checkStepsBelongToTestCase(steps);
+		
 		this.verifyingSteps.addAll(steps);
 	}
 
@@ -225,6 +229,22 @@ public class RequirementVersionCoverage implements Identified {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Will remove the step matching the given id from this.verifyingSteps.
+	 * If the step is not found nothing special happens.
+	 * @param testStepId : the id of the step to remove.
+	 */
+	public void removeVerifyingStep(long testStepId) {
+		Iterator<ActionTestStep> iterator = this.verifyingSteps.iterator();
+		while(iterator.hasNext()){
+			ActionTestStep step = iterator.next();
+			if(step.getId().equals(testStepId)){
+				iterator.remove();
+			}
+		}
+		
 	}
 
 }

@@ -467,8 +467,6 @@
 		$.ajax({
 			type : 'GET',
 			data : {},
-			success : function(importance){refreshTCImportanceSuccess(importance);},
-			error : function(){refreshTCImportanceFail();},
 			dataType : "text",
 			url : '${getImportance}'			
 		})
@@ -479,7 +477,8 @@
 			$.squash.openMessage("<f:message key='popup.title.error' />", "fail to refresh importance");
 		});
 	}
-
+	
+	
 
 	
 	function deleteTestCaseSuccess() {
@@ -519,6 +518,7 @@
 			
 		});
 		
+		$("#contextual-content").on("verifiedrequirementversions.refresh", refreshTCImportance);
 		
 		<c:if test="${hasCUF}">
 		//load the custom fields

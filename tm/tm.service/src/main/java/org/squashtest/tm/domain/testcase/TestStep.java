@@ -80,6 +80,19 @@ public abstract class TestStep {
 	public TestCase getTestCase(){
 		return testCase;
 	}
+	
+	/**
+	 * @see {@link TestCase#getPositionOfStep(long)}
+	 * @return {@link TestCase#getPositionOfStep(long)} or -1 if testCase is null
+	 * @throws {@link UnknownElementException}
+	 */
+	public int getIndex(){
+		int result = -1;
+		if(testCase != null){
+			result =  testCase.getPositionOfStep(this.id);
+		}
+		return result;
+	}
 
 	/**
 	 * Should create a transient copy of this {@link TestStep} according to business rules. Business rules should be

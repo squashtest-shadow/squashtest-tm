@@ -83,19 +83,21 @@ public class TestStepController {
 		model.addAttribute("writable", writable); // right to modify steps
 		boolean attachable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "ATTACH", testStep);
 		model.addAttribute("attachable", attachable); // right to modify steps
-		
-		
+		boolean linkable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "LINK", testStep);
+		model.addAttribute("linkable", linkable); // right to bind steps to requirement
 		
 		// end waiting for [Task 1843]
 		// ------------------------------------ATTACHMENT  AND CUF PART
 		boolean hasCUF = false;
 		List<CustomFieldValue> values = Collections.emptyList();
+		//Properties for ActionTestStep only
 		if (testStepView.getActionStep() != null) {
+			//attachments
 			model.addAttribute("attachableEntity", testStepView.getActionStep());
+			//cufs
 			values = cufValueFinder.findAllCustomFieldValues(testStepView.getActionStep().getBoundEntityId(),
 					testStepView.getActionStep().getBoundEntityType());hasCUF = cufValueFinder.hasCustomFields(testStepView.getActionStep());
-			boolean linkable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "LINK", testStep);
-			model.addAttribute("linkable", linkable); // right to bind steps to requirement
+			//verified requirements
 			RequirementVerifierView requirementVerifierView = new RequirementVerifierView(testStepView.getActionStep());
 			model.addAttribute("requirementVerifier", requirementVerifierView);
 		}

@@ -171,13 +171,15 @@ div.fragment-tabs>div {
 	padding: 0;
 }
 
-div.fragment-tabs>div.table-tab>div.toolbar {
+/* div.fragment-tabs>div.table-tab> *//*2013/03/14 if no incidence after 3 month you can remove this comment*/
+div.toolbar {
 	font-size: 0.8em;
 	position: relative;
 	text-align: right;
 }
 
-div.fragment-tabs>div.table-tab>div.toolbar span.group {
+/* div.fragment-tabs>div.table-tab> */ /*2013/03/14 if no incidence after 3 month you can remove this comment*/
+div.toolbar span.group {
 	margin-left: 20px;
 }
 
