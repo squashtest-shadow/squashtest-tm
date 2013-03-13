@@ -50,6 +50,7 @@
 				linkable : "${linkable}",
 				oppened : true,
 				title : "<f:message key='label.verifiedRequirements.test-cases' />",
+				url :"${verifiedRequirementsUrl}",
 			};
 </script>
 <div id="verified-requirements-bloc-frag">
@@ -64,7 +65,7 @@
 			</c:if>
 		</span>
 		<div class="toggle-panel-main" id="verified-requirements-panel">
-			<aggr:verified-requirements-table linkable="${ linkable }" verifiedRequirementsTableUrl="${ verifiedRequirementsTableUrl }" verifiedRequirementsUrl="${verifiedRequirementsUrl }" containerId="contextual-content" />
+			<aggr:verified-requirements-table includeIndirectlyVerified="${ true }" linkable="${ linkable }" verifiedRequirementsTableUrl="${ verifiedRequirementsTableUrl }" verifiedRequirementsUrl="${verifiedRequirementsUrl }" containerId="contextual-content" />
 		</div>
 	</div>
 </div>

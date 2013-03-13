@@ -23,16 +23,18 @@
 <%@ tag body-content="empty" description="inserts the html table of verified resquirements" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ attribute name="verifiedRequirementsUrl" required="true"
 	description="URL to manipulate the verified requirements" %>
 <%@ attribute name="containerId" required="true" description="if of dom container that will hold the table events" %>
 <%@ attribute name="verifiedRequirementsTableUrl" required="true"
 	description="URL for the verified requirements table" %>
 <%@ attribute name="linkable" required="true" description=" boolean that says if the concerned test case is viewed by a user who has LINK rights on this entity" %>
+<%@ attribute name="includeIndirectlyVerified" required="true" description="boolean that says if the table must include indirectly verified requirements" %>
 <s:url var="tableLanguageUrl" value="/squash/datatables/language" />
 <s:url var="requirementVersionsUrl" value="/requirement-versions"/>
 <s:url var="root" value="/" />
-<!-- Attention ! une version thymeleaf de ce bloc est disponible : templates/verified-requirements-bloc.frag.html} -->
+<%-- Attention ! si vous refactorez cette page vous pouvez utiliser la version thymeleaf de la table des test-steps : templates/verified-requirements-bloc.frag.html --%>
 	<script type="text/javascript" th:inline="javascript">
 			if (!squashtm) {
 				var squashtm = {};
@@ -67,19 +69,15 @@ data-def='hover,  datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTable
 			<th data-def="sortable, map=category"><f:message key="requirement.category.label"/></th>
 			<th data-def='sClass=delete-button, map=empty-delete-holder'>&nbsp;</th>
 			<th data-def="invisible, map=status">status(masked)</th>
-			<th data-def="invisible, map=directlyVerified">isDirectlyVerified(masked)</th>
+			<c:if test="${includeIndirectlyVerified }">
+				<th data-def="invisible, map=directlyVerified">isDirectlyVerified(masked)</th>
+			</c:if>
 		</tr>
 	</thead>
 	<tbody>
 		<%-- Will be populated through ajax --%>
 	</tbody>
 </table>
-
-<div id="verified-requirement-row-buttons" class="not-displayed">
-	<a id="delete-verified-requirement-button" href="javascript:void(0)"	class="delete-verified-requirement-button">
-		<f:message key="test-case.verified_requirement_item.remove.button.label" />
-	</a>
-</div>
 
 <div id="remove-verified-requirement-version-dialog" class="popup-dialog not-displayed" title="<f:message key='label.Confirm'/>">
 <div><f:message key='dialog.remove-requirement-version-association.message' /></div>
@@ -101,8 +99,9 @@ data-def='hover,  datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTable
 		title="<f:message key='popup.title.error' />">
 		<span><f:message key="message.EmptyTableSelection"/></span>
 </div>
-
+<c:if test="${includeIndirectlyVerified }">
 <div id="no-selected-direct-requirement-dialog" class="popup-dialog not-displayed"
 		title="<f:message key='popup.title.error' />">
 		<span><f:message key="verified-requirements.table.indirectverifiedrequirements.removalattemptsforbidden.label"/></span>
 </div>
+</c:if>

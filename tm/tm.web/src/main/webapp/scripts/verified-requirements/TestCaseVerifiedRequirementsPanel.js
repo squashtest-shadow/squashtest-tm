@@ -62,7 +62,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TestCaseV
 				},
 				
 				goToRequirementManager : function() {
-					document.location.href = VRBS.url + "manager";
+					document.location.href = VRBS.url + "/manager";
 				},
 				
 			});

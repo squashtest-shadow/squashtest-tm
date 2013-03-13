@@ -33,7 +33,6 @@
 <c:url var="testCaseUrl" value="/requirements/${ testCase.id }" />
 <c:url var="treeBaseUrl" value="/requirement-browser/"/>
 <c:url var="verifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirement-versions" />
-<c:url var="nonVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/non-verified-requirement-versions" />
 
 <layout:tree-picker-layout workspaceTitleKey="workspace.test-case.title" 
 						   highlightedWorkspace="test-case"
@@ -42,8 +41,6 @@
 	<jsp:attribute name="head">
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.green.css" />
 		
-<%-- 		<aggr:decorate-verified-requirements-table tableModelUrl="${ verifiedRequirementsTableUrl }" verifiedRequirementsUrl="${ verifiedRequirementsUrl }"  --%>
-<%-- 				nonVerifiedRequirementsUrl="${ nonVerifiedRequirementsUrl }" batchRemoveButtonId="remove-items-button" /> --%>
 		<c:url var="addVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirements" />
 		<script type="text/javascript">
 			
@@ -95,9 +92,12 @@
 				var addHandler = function(data) {
 					showAddSummary(data);
 					<%-- uh, dependency on something defined in decorate-verified-requirements-table --%>
-					squashtm.verifiedRequirements.refreshVerifiedRequirements();
+					squashtm.verifiedRequirementsTable.refresh();
 				};
-					
+				<%-- verified requirements removal --%>
+				$('#remove-items-button').click(function(){
+					squashtm.verifiedRequirementsTable.removeSelectedRequirements();
+				});
 				<%-- verified requirements addition --%>
 				$( '#add-items-button' ).click(function() {
 					var tree = $( '#linkable-requirements-tree' );
@@ -138,7 +138,11 @@
 	
 	<jsp:attribute name="tablePane">
 	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testCaseUrl }" isContextual="false"/>
-		<aggr:verified-requirements-table verifiedRequirementsUrl="${verifiedRequirementsUrl}"/>
+		<aggr:verified-requirements-table includeIndirectlyVerified="${ false }" linkable="${ true }" verifiedRequirementsTableUrl="${ verifiedRequirementsUrl }" verifiedRequirementsUrl="${verifiedRequirementsUrl }" containerId="contextual-content" />
+		<%-- Script is loaded here so that squashtm.app.verifiedRequirementsTableSettings is defined --%>
+		<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/test-case-directly-verified-requirement-table.js"></script>
+		<%-- <script type="text/javascript" src="http://localhost/scripts/test-case-directly-verified-requirement-table.js"></script> --%>
+		
 		<div id="add-summary-dialog" class="not-displayed" title="<f:message key='test-case.verified-requirement-version.add-summary-dialog.title' />">
 			<ul><li>summary message here</li></ul>
 		</div>

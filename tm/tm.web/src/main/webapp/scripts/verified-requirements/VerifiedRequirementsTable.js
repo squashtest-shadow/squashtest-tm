@@ -46,7 +46,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				configurePopups : function() {
 					this.configureRemoveRequirementDialogs.call(this);
 					this.configureNoRequirementSelectedDialog.call(this);
-					this.configureNoDirectRequirementSelectedDialog.call(this);
 				},
 				dataTableSettings: function(self){
 				return{
@@ -74,7 +73,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				},
 				
 				_requirementsTableRowCallback: function (row, data, displayIndex) {
-					if(VRTS.linkable){
+					if(VRTS.linkable &&  data["status"] !="OBSOLETE"){
 						this.addSelectEditableToVersionNumber(row, data);
 					}
 					return row;
@@ -148,7 +147,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					var self = this;
 					var urlPOST= VRTS.url +'/'+ data["entity-id"];
 					var urlGET= squashtm.app.contextRoot +'/requirement-versions/'+ data["entity-id"] + '/version-numbers';
-					if (data["directlyVerified"] && data["status"] !="OBSOLETE"){
+					
 						// the table needs to be redrawn after each return of the POST so we implement the posting workflow 
 						$( 'td.versionNumber', row ).editable(function(value, settings) {
 								var innerPOSTData;
@@ -167,7 +166,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 							loadurl : urlGET,
 							onsubmit : function() {}, //- do nothing for now 
 						});
-					}
+					
 				},
 				
 				

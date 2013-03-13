@@ -71,7 +71,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil" , "./Verified
 					},
 					
 					_requirementsTableRowCallback: function (row, data, displayIndex) {
-						if(VRTS.linkable ){
+						if(VRTS.linkable && data["directlyVerified"]  && data["status"] !="OBSOLETE"){
 							this.addSelectEditableToVersionNumber(row, data);
 						}
 						this.discriminateDirectVerifications(row, data, displayIndex);
