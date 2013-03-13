@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/VerifiedRequirementsPanel","app/lnf/Forms", "jquery.squash",
+define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/TestStepVerifiedRequirementsPanel","app/lnf/Forms", "jquery.squash",
 		"jqueryui", "jquery.squash.togglepanel", "jquery.ckeditor",
 		"jeditable", "ckeditor", "jeditable.ckeditor",
 		"jquery.squash.jeditable", "jquery.squash.squashbutton",

@@ -23,14 +23,11 @@ package org.squashtest.tm.service.testcase;
 
 import java.util.List;
 
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
-import org.squashtest.tm.service.requirement.VerifiedRequirement;
 
 /**
  * @author Gregory
@@ -43,15 +40,6 @@ public interface CustomTestCaseFinder {
 	List<TestStep> findStepsByTestCaseId(long testCaseId);
 
 	FilteredCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId, Paging filter);
-
-	/**
-	 * @param testCaseId
-	 * @param pas
-	 * @return
-	 */
-	@Deprecated
-	PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
-			PagingAndSorting pas);
 
 	/**
 	 * That method returns the list of test cases having at least one CallTestStep directly calling the test case
