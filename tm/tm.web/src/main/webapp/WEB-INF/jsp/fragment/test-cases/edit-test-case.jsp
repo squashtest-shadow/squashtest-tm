@@ -507,48 +507,48 @@ $(function() {
 <c:if test="${ writable }">
 
 	<%-- ------------------------------ Add Test Step Dialog ------------------------------------------------ --%>
-	<comp:popup id="add-test-step-dialog"
+	<pop:popup id="add-test-step-dialog"
 		titleKey="title.AddTestStep" isContextual="true"
 		openedBy="add-test-step-button" closeOnSuccess="${false}">
 		<jsp:attribute name="buttons">
+		
+			<f:message var="addLabel" key="label.Add" />
+			'${ addLabel }': function() {
+				var url = "${ addStepUrl }";
+				<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
+					useData="true" successHandler="addTestStepSuccess">		
+					<jq:params-bindings action="#add-test-step-action"
+						expectedResult="#add-test-step-result" />
+				</jq:ajaxcall>					
+			},
+			<f:message var="addAnotherLabel" key="dialog.button.add.another.label" />
+			'${ addAnotherLabel }': function() {
+				var url = "${ addStepUrl }";
+				<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
+					useData="true" successHandler="addTestStepSuccessAnother">		
+					<jq:params-bindings action="#add-test-step-action"
+						expectedResult="#add-test-step-result" />
+				</jq:ajaxcall>					
+			},			
+			<pop:cancel-button />
+		</jsp:attribute>
+		<jsp:attribute name="body">
+			<div class="centered" style="text-align: center; margin-bottom: 2em;">
+				<label style="font-weight: bold;" for="add-test-step-action"><f:message
+							key="label.Actions" />
+					</label>
+				<textarea id="add-test-step-action"></textarea>
+				<comp:error-message forField="action" />	
+			</div>
+			<div class="centered">
+				<label style="font-weight: bold;" for="add-test-step-result"><f:message
+							key="label.ExpectedResults" />
+					</label>
+				<textarea id="add-test-step-result"></textarea>
+			</div>
 	
-		<f:message var="addLabel" key="label.Add" />
-		'${ addLabel }': function() {
-			var url = "${ addStepUrl }";
-			<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
-				useData="true" successHandler="addTestStepSuccess">		
-				<jq:params-bindings action="#add-test-step-action"
-					expectedResult="#add-test-step-result" />
-			</jq:ajaxcall>					
-		},
-		<f:message var="addAnotherLabel" key="dialog.button.add.another.label" />
-		'${ addAnotherLabel }': function() {
-			var url = "${ addStepUrl }";
-			<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
-				useData="true" successHandler="addTestStepSuccessAnother">		
-				<jq:params-bindings action="#add-test-step-action"
-					expectedResult="#add-test-step-result" />
-			</jq:ajaxcall>					
-		},			
-		<pop:cancel-button />
-	</jsp:attribute>
-		<jsp:body>
-		<div class="centered" style="text-align: center; margin-bottom: 2em;">
-			<label style="font-weight: bold;" for="add-test-step-action"><f:message
-						key="label.Actions" />
-				</label>
-			<textarea id="add-test-step-action"></textarea>
-			<comp:error-message forField="action" />	
-		</div>
-		<div class="centered">
-			<label style="font-weight: bold;" for="add-test-step-result"><f:message
-						key="label.ExpectedResults" />
-				</label>
-			<textarea id="add-test-step-result"></textarea>
-		</div>
-
-	</jsp:body>
-	</comp:popup>
+		</jsp:attribute>
+	</pop:popup>
 	<script>
 function addTestStepSuccess(){
 	if ($("#add-test-step-dialog").dialog("isOpen")==true) $( "#add-test-step-dialog" ).dialog('close');

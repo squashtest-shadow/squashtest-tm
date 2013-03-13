@@ -223,8 +223,8 @@ var squashtm = squashtm || {};
 		// popup invokation
 		target.dialog(defaults);
 
-		if (settings.closeOnSuccess === undefined
-				|| settings.closeOnSuccess) {
+		if (defaults.closeOnSuccess === undefined
+				|| defaults.closeOnSuccess) {
 			target.ajaxSuccess(function () {
 				if (target.dialog('isOpen') === true)
 					target.dialog('close');
@@ -238,15 +238,27 @@ var squashtm = squashtm || {};
 			}
 		});
 
-		if (settings.openedBy) {
-			$(settings.openedBy).click(function () {
+		if (defaults.openedBy) {
+			$(defaults.openedBy).click(function () {
 				target.dialog('open');
 				return false;
 			});
 		}
 
-		if (settings.isContextual) {
+		if (defaults.isContextual) {
 			target.addClass('is-contextual');
+		}
+		
+		//hook on remove : remove the instances of CKEditor
+		if (defaults.usesRichEdit){
+			target.on('remove', function(){
+				target.find('textarea').each(function(){
+					var ckInstance = CKEDITOR.instances[this.id];
+					if (ckInstance) {
+						ckInstance.destroy(true);
+					}
+				});
+			});
 		}
 		
 		return self;
