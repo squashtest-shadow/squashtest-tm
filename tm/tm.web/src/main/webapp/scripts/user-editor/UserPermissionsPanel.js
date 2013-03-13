@@ -93,7 +93,6 @@ define(
 							$("#permission-table").squashTable({
 								"fnRowCallback" : this.decorateRow(this)
 							}, {}); // pure DOM conf
-							$("#permission-table").squashTable().refresh();
 						},
 						configurePopups : function() {
 							this.configureAddPermissionDialog();
