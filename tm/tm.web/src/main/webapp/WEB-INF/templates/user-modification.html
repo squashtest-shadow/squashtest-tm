@@ -258,7 +258,7 @@
 							</span>
 							<div id="project-permission-panel" class="toggle-panel-main">
 								<table id="permission-table"
-									th:attr="data-def='filter, hover, pre-filled, datakeys-id=project-id ,ajaxsource='+@{/administration/users/__${user.id}__/permissions}+',language='+@{/squash/datatables/language}">
+									th:attr="data-def='filter, hover, pre-filled, datakeys-id=project-id ,ajaxsource='+@{/administration/users/__${user.id}__/permissions}+',language='+@{/datatables/messages}">
 									<thead>
 										<tr>
 											<th th:attr="data-def='invisible, map=project-id'">user-id</th>
@@ -304,7 +304,7 @@
 							<div id="teams-panel" class="toggle-panel-main">
 
 								<table id="teams-table"
-									th:attr="data-def='filter, hover, pre-filled, datakeys-id=team-id ,ajaxsource='+@{/users/__${user.id}__/teams}+',language='+@{/squash/datatables/language}">
+									th:attr="data-def='filter, hover, pre-filled, datakeys-id=team-id ,ajaxsource=' + @{/users/__${user.id}__/teams} + ',language=' + @{/datatables/messages}">
 									<thead>
 										<tr>
 											<th th:attr="data-def='invisible, map=team-id'">team-id</th>
@@ -312,7 +312,7 @@
 											<th th:attr="data-def='select, map=team-index'">#</th>
 
 											<th
-												th:attr="data-def='sortable, map=team-name, filter, link='+@{/administration/teams/{team-id}}"
+												th:attr="data-def='sortable, map=team-name, filter, link=' + @{/administration/teams/{team-id}}"
 												th:text="#{label.team}">team</th>
 
 											<th

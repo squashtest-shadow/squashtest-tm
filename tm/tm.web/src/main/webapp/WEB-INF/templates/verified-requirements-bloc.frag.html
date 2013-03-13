@@ -74,7 +74,7 @@
 				class="button" />
 			</span>
 			<div class="toggle-panel-main" id="verified-requirements-panel">
-				<table id="verified-requirements-table" th:attr="data-def='hover, pre-filled, datakeys-id=entity-id, ajaxsource='+@{/__${requirementVerifier.type}__/__${requirementVerifier.verifier.id}__/verified-requirement-versions/}+', language='+@{/squash/datatables/language}">
+				<table id="verified-requirements-table" th:attr="data-def='hover, pre-filled, datakeys-id=entity-id, ajaxsource='+@{/__${requirementVerifier.type}__/__${requirementVerifier.verifier.id}__/verified-requirement-versions/}+', language='+@{/datatables/messages}">
 					<thead>
 						<tr>
 							<th th:attr="data-def='select, map=entity-index'" >#</th>
