@@ -390,7 +390,7 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 		StringBuilder builder = new StringBuilder();
 		
 		for(TestSuite suite : testSuites){
-			builder.append(suite +", ");
+			builder.append(suite.getName() +", ");
 		}
 		String nameList = builder.toString();
 		if(nameList.length() > 0){
