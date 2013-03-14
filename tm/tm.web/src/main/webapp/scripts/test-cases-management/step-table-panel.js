@@ -100,7 +100,8 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 	}
 	
 	function removeStepSuccess(){
-		alert('I should throw an event there so that I can say I need to refresh the requirement table (refreshStepsAndImportance)');
+		refresh();
+		$("#contextual-content").trigger("testStepsTable.removedSteps");
 	}
 	
 	
@@ -270,7 +271,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 					url : urls.singleDelete,
 					popupmessage : language.deleteSingleConfirm,
 					tooltip : language.deleteTitle,
-					success : refresh
+					success : removeStepSuccess
 				},
 				
 

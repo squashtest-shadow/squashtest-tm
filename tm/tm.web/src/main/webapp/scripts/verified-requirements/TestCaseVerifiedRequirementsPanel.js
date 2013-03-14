@@ -29,6 +29,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TestCaseV
 				el : "#verified-requirements-bloc-frag",
 				
 				initialize : function() {
+					VRBS = squashtm.app.verifiedRequirementsBlocSettings;
 					this.makeTogglePanel();
 					this.table = new VerifiedRequirementsTable();
 					this.configureButtons.call(this);

@@ -25,7 +25,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ attribute name="testStep" required="true"  type="java.lang.Object" description="the concerned test step" %>
 <%@ attribute name="containerId" required="true" description="if of dom container that will hold the table events" %>
-<c:url var="tableLanguageUrl" value="datatables/messages" />
+<c:url var="tableLanguageUrl" value="/datatables/messages" />
 <c:url var="requirementVersionsUrl" value="/requirement-versions" />
 <c:url var="verifiedRequirementsUrl" value="/test-cases/${ testStep.testCase.id }/verified-requirement-versions" />
 <c:url var="stepVerifiedRequirementsUrl" value="/test-steps/${ testStep.id }/verified-requirement-versions" />
@@ -33,6 +33,15 @@
 <%-- This tag is used for requirement/testStep manager --%>
 <%-- Warning ! if you migrate the page in tymeleaf go see : templates/verified-requirements-bloc.frag.html --%>
 	<script type="text/javascript" th:inline="javascript">
+
+	require([ "common" ], function(common) {
+		require([ "jquery",  "domReady","verified-requirements/TestStepVerifiedRequirementsTable" ], function($, domReady, TestStepVerifiedRequirementsTable) {
+			domReady(function() {
+				
+				squashtm.verifiedRequirementsTable = new TestStepVerifiedRequirementsTable();
+			});
+		});
+	});
 			if (!squashtm) {
 				var squashtm = {};
 			}

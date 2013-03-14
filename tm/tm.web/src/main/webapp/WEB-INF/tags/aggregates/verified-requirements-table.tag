@@ -35,6 +35,37 @@
 <s:url var="requirementVersionsUrl" value="/requirement-versions"/>
 <s:url var="root" value="/" />
 <%-- Attention ! si vous refactorez cette page vous pouvez utiliser la version thymeleaf de la table des test-steps : templates/verified-requirements-bloc.frag.html --%>
+	
+	<c:choose>
+	<c:when test="${includeIndirectlyVerified}">
+	<script type="text/javascript" th:inline="javascript">
+		require([ "common" ], function(common) {
+			require([ "jquery",  "domReady","verified-requirements/TestCaseVerifiedRequirementsPanel" ], function($, domReady, TestCaseVerifiedRequirementsPanel) {
+				domReady(function() {
+					
+					var panel = new TestCaseVerifiedRequirementsPanel();
+					$("#contextual-content").on("testStepsTable.removedSteps", panel.table.refresh);
+					
+				});
+			});
+		});
+		</script>
+	</c:when>
+	<c:otherwise>
+	<script type="text/javascript" th:inline="javascript">
+		require([ "common" ], function(common) {
+			require([ "jquery",  "domReady","verified-requirements/TestCaseDirectVerifiedRequirementsTable" ], function($, domReady, TestCaseDirectVerifiedRequirementsTable) {
+				domReady(function() {
+					
+					squashtm.verifiedRequirementsTable = new TestCaseDirectVerifiedRequirementsTable();
+					
+					
+				});
+			});
+		});
+		</script>
+	</c:otherwise>
+	</c:choose>
 	<script type="text/javascript" th:inline="javascript">
 			if (!squashtm) {
 				var squashtm = {};

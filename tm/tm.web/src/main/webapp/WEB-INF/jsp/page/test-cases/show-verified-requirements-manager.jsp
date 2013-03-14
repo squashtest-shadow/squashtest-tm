@@ -139,11 +139,7 @@
 	<jsp:attribute name="tablePane">
 	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testCaseUrl }" isContextual="false"/>
 		<aggr:verified-requirements-table includeIndirectlyVerified="${ false }" linkable="${ true }" verifiedRequirementsTableUrl="${ verifiedRequirementsUrl }" verifiedRequirementsUrl="${verifiedRequirementsUrl }" containerId="contextual-content" />
-		<%-- Script is loaded here so that squashtm.app.verifiedRequirementsTableSettings is defined --%>
-		<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/test-case-directly-verified-requirement-table.js"></script>
-		<%-- <script type="text/javascript" src="http://localhost/scripts/test-case-directly-verified-requirement-table.js"></script> --%>
-		
-		<div id="add-summary-dialog" class="not-displayed" title="<f:message key='test-case.verified-requirement-version.add-summary-dialog.title' />">
+			<div id="add-summary-dialog" class="not-displayed" title="<f:message key='test-case.verified-requirement-version.add-summary-dialog.title' />">
 			<ul><li>summary message here</li></ul>
 		</div>
 	</jsp:attribute>

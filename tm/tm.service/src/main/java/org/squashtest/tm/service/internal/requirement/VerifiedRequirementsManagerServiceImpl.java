@@ -239,11 +239,11 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 					if(coverage == null){
 						RequirementVersionCoverage newCoverage = new RequirementVersionCoverage(requirementVersion, testCase);
 						newCoverage.addAllVerifyingSteps(Arrays.asList(step));
+						requirementVersionCoverageDao.persist(newCoverage);
 					}else{						
 						coverage.addAllVerifyingSteps(Arrays.asList(step));
 						iterator.remove();
-					}
-					requirementVersionCoverageDao.persist(coverage);
+					}					
 				} catch (RequirementAlreadyVerifiedException ex) {
 					LOGGER.warn(ex.getMessage());
 					rejections.add(ex);

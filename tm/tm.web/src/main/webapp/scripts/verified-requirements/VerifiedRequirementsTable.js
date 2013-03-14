@@ -29,6 +29,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				el : "#verified-requirements-table",
 				
 				initialize : function() {
+					VRTS = squashtm.app.verifiedRequirementsTableSettings;
 					this.removeRequirements = $.proxy(this._removeRequirements, this);
 					this.removeRowRequirementVersion = $.proxy(this._removeRowRequirementVersion, this);
 					this.requirementsTableDrawCallback = $.proxy(this._requirementsTableDrawCallback, this);

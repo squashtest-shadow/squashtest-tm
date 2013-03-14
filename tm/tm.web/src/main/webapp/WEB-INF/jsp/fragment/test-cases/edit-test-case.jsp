@@ -520,6 +520,7 @@
 		
 		$("#contextual-content").on("verifiedrequirementversions.refresh", refreshTCImportance);
 		
+		
 		<c:if test="${hasCUF}">
 		//load the custom fields
 		$.get("${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}")
