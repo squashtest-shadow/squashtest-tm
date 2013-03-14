@@ -67,6 +67,7 @@
 					});
 					
 					$.squash.decorateButtons();
+					$("#j_username").focus();
             	});
             });
           });
