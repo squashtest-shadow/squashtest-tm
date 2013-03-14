@@ -45,7 +45,7 @@ requirejs.config({
 		"domReady": "lib/require/domReady",
 		/* CAVEAT: as we defined a "jquery" path, any module named "jquery/my.module" will be interpolated as "/lib/jquery/../my.module" */
 		"jquery": "lib/jquery/jquery-1.8.3.min",
-		"jqueryui": "lib/jquery/jquery-ui-1.9.2.custom.min",
+		"jqueryui": "lib/jquery/jquery-ui-1.9.0.custom.min",
 		"datatables": "datatables/jquery.dataTables.min",
 		"squash.datatables": "squashtest/jquery.squashtm.datatables",
 		"jquery.squash.datatables": "squashtest/jquery.squashtm.datatables.v2",
