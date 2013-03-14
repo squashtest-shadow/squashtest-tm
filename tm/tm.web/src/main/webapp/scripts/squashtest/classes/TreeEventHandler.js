@@ -49,19 +49,19 @@
  /* *************************** update Events ********************* */
 
  function updateEventPaste(event, tree){
+	
  	var destination = tree.findNodes({ restype : event.evt_destination.obj_restype, resid : event.evt_destination.obj_id });
- 	if(!destination.isOpen()){
- 		destination.open();
- 	}
- 	destination.children("ul").remove();
- 	destination.load()
- 	.done(function (){	
- 		if(event instanceof EventDuplicate){			
- 			var source = tree.findNodes({ restype : event.evt_source.obj_restype , resid : event.evt_source.obj_id });
- 			source.deselect();
+
+	destination.getChildren().each(function(){tree.delete_node(this);});
+ 	
+	destination.load()
+ 	.done(function (){	 	
+		if(!destination.isOpen()){
+			destination.open();
+		}
+ 		if(event instanceof EventDuplicate){		
  			var duplicate = tree.findNodes({ restype : event.evt_duplicate.obj_restype, resid : event.evt_duplicate.obj_id });
- 			duplicate.select();
- 			
+ 			duplicate.select(); 			
  		}	
  	});
 
