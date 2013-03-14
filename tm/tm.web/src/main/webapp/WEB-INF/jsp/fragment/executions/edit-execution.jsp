@@ -34,7 +34,8 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 
 
-<comp:rich-jeditable-header />
+
+
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" />
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
@@ -43,8 +44,7 @@
 <c:set var="automated"
 	value="${ execution.executionMode == 'AUTOMATED' }" />
 
-<script type="text/javascript"
-	src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.dateformat.js"></script>
+<script type="text/javascript"	src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.dateformat.js"></script>
 
 <%-------------------------- urls ------------------------------%>
 
@@ -342,106 +342,106 @@
 	<f:message var="statusRunning" key="execution.execution-status.RUNNING" />
 	<f:message var="statusReady" key="execution.execution-status.READY" />
 
-
-
 	<script type="text/javascript">
 	
 	$(function(){
-		
-		
-		// ************** execution table *********************
-		var tableSettings = {
-			"oLanguage":{
-				"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
-				"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
-				"sInfo": '<f:message key="generics.datatable.info" />',
-				"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
-				"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
-				"oPaginate":{
-					"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
-					"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
-					"sNext":     '<f:message key="generics.datatable.paginate.next" />',
-					"sLast":     '<f:message key="generics.datatable.paginate.last" />'
-				}
-			},	
-			"sAjaxSource": "${executionStepsUrl}", 
-			"aoColumnDefs": ${stepsAoColumnDefs},
-		};
-		
-		var squashSettings = {
-				
-			enableHover : true
-			<c:if test="${ !automated }">
-			,executionStatus : {
-				untestable : "${statusUntestable}",
-				blocked : "${statusBlocked}",
-				failure : "${statusFailure}",
-				success : "${statusSuccess}",
-				running : "${statusRunning}",
-				ready : "${statusReady}"
-			}	</c:if>
-		};
-	
-		
-		
-		<c:if test="${ editable }">
-		squashSettings.richEditables = {
-			conf : {
-				ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },
-				placeholder: '<f:message key="rich-edit.placeholder" />',
-				submit: '<f:message key="rich-edit.button.ok.label" />',
-				cancel: '<f:message key="label.Cancel" />',
-				indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />' 				
-			},
-			targets : {
-				"rich-editable-comment" : "${ executionStepsUrl }/{entity-id}/comment"
-			}
-		};
-		squashSettings.attachments = { 
-			url : "${stepAttachmentManagerUrl}/{attach-list-id}/attachments/manager?workspace=campaign"
-		}
-		
-		</c:if>
-		squashSettings.buttons = [
-				{ tooltip : "tooltip",
-					cssClass : "",
-					tdSelector : "td.run-step-button",
-					image : "/squash/images/execute.png",
-					onClick : function(table, cell){
-						var executionId = "${execution.id}";
-						var row = cell.parentNode.parentNode; // hopefully, that's the
-						// 'tr' one
-						var executionStepId = table.getODataId(row);
-							var url = "http://localhost:8080/squash/execute/"+executionId+"/step/"+executionStepId;
-										var data = {
-											'optimized' : 'false',
-											'suitemode' : 'false'
-										};
-										var winDef = {
-											name : "classicExecutionRunner",
-											features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
-										};
-										$.open(url, data, winDef);
+		require(["jquery.squash.datatables", "jquery.squash.jeditable"], function(){
+			
+			
+			// ************** execution table *********************
+			var tableSettings = {
+				"oLanguage":{
+					"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
+					"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
+					"sInfo": '<f:message key="generics.datatable.info" />',
+					"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
+					"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
+					"oPaginate":{
+						"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
+						"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
+						"sNext":     '<f:message key="generics.datatable.paginate.next" />',
+						"sLast":     '<f:message key="generics.datatable.paginate.last" />'
 					}
+				},	
+				"sAjaxSource": "${executionStepsUrl}", 
+				"aoColumnDefs": ${stepsAoColumnDefs},
+			};
+			
+			var squashSettings = {
+					
+				enableHover : true
+				<c:if test="${ !automated }">
+				,executionStatus : {
+					untestable : "${statusUntestable}",
+					blocked : "${statusBlocked}",
+					failure : "${statusFailure}",
+					success : "${statusSuccess}",
+					running : "${statusRunning}",
+					ready : "${statusReady}"
+				}	</c:if>
+			};
+		
+			
+			
+			<c:if test="${ editable }">
+			squashSettings.richEditables = {
+				conf : {
+					ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },
+					placeholder: '<f:message key="rich-edit.placeholder" />',
+					submit: '<f:message key="rich-edit.button.ok.label" />',
+					cancel: '<f:message key="label.Cancel" />',
+					indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />' 				
+				},
+				targets : {
+					"rich-editable-comment" : "${ executionStepsUrl }/{entity-id}/comment"
 				}
-			];
-		
-		$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
-		
-		
-		// ************** bugtracker section ******************************
-	 	
-	 	$("#bugtracker-section-div").load("${btEntityUrl}");
-		
-		
-	 	// ************** handle for refershing the page (called by the execution popup) ******************
-	 	
-	 	squashtm.execution = squashtm.execution || {};
-	 	squashtm.execution.refresh = $.proxy(function(){
-	 		$("#execution-execution-steps-table").squashTable().refresh();	
-	 		$("#general-informations-panel").load("${executionInfoUrl}");
-	 	}, window);
-		
+			};
+			squashSettings.attachments = { 
+				url : "${stepAttachmentManagerUrl}/{attach-list-id}/attachments/manager?workspace=campaign"
+			}
+			
+			</c:if>
+			squashSettings.buttons = [
+					{ tooltip : "tooltip",
+						cssClass : "",
+						tdSelector : "td.run-step-button",
+						image : "/squash/images/execute.png",
+						onClick : function(table, cell){
+							var executionId = "${execution.id}";
+							var row = cell.parentNode.parentNode; // hopefully, that's the
+							// 'tr' one
+							var executionStepId = table.getODataId(row);
+								var url = "http://localhost:8080/squash/execute/"+executionId+"/step/"+executionStepId;
+								var data = {
+									'optimized' : 'false',
+									'suitemode' : 'false'
+								};
+								var winDef = {
+									name : "classicExecutionRunner",
+									features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
+								};
+								$.open(url, data, winDef);
+						}
+					}
+				];
+			
+			$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
+			
+			
+			// ************** bugtracker section ******************************
+		 	
+		 	$("#bugtracker-section-div").load("${btEntityUrl}");
+			
+			
+		 	// ************** handle for refershing the page (called by the execution popup) ******************
+		 	
+		 	squashtm.execution = squashtm.execution || {};
+		 	squashtm.execution.refresh = $.proxy(function(){
+		 		$("#execution-execution-steps-table").squashTable().refresh();	
+		 		$("#general-informations-panel").load("${executionInfoUrl}");
+		 	}, window);
+			
+		});
 	});
 	</script>
 
