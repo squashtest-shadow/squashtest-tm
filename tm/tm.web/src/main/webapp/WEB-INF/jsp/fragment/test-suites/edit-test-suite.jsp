@@ -655,6 +655,13 @@
 				<%-- loading the custom field panel --%>
 				$("#test-suite-custom-fields-content").load("${customFieldsValuesURL}?boundEntityId=${testSuite.boundEntityId}&boundEntityType=${testSuite.boundEntityType}"); 				
 		    	</c:if>
+		    	
+		    	
+			 	squashtm.execution = squashtm.execution || {};
+			 	squashtm.execution.refresh = $.proxy(function(){
+			 		refreshTestPlansWithoutSelection();
+			 		$('#general-informations-panel').load('${testSuiteInfoUrl}');	
+			 	}, window);
 			});
 		});
 	});

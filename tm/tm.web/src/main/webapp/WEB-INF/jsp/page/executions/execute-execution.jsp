@@ -97,7 +97,9 @@
 				var hasNextStep = ${ (not empty hasNextStep) and hasNextStep };
 	
 				function refreshParent(){
-					window.opener.location.href = window.opener.location.href;
+					if (window.opener.squashtm.execution){
+						window.opener.squashtm.execution.refresh();
+					}
 					if (window.opener.progressWindow) {
 						window.opener.progressWindow.close();
 					}

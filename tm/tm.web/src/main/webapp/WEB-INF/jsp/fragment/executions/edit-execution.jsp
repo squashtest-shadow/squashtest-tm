@@ -278,6 +278,63 @@
 	</comp:toggle-panel>
 
 
+
+
+
+	
+
+	<%-------------------------------------- Comment --------------------------------------------------%>
+
+	<c:if test="${ editable }">
+		<comp:rich-jeditable targetUrl="${ executionUrl }" componentId="execution-description" />
+	</c:if>
+	<f:message var="executionComment" key="execution.description.panel.title" />
+	<comp:toggle-panel id="execution-description-panel" title="${executionComment}" isContextual="true" open="false">
+		<jsp:attribute name="body">
+		<div id="execution-description">${ execution.description }</div>
+	</jsp:attribute>
+	</comp:toggle-panel>
+
+	<%------------------------------ Attachments bloc ---------------------------------------------%>
+
+	<comp:attachment-bloc entity="${execution}" workspaceName="campaign" editable="${ editable }" />
+
+
+	<%------------------------------ bugs section -------------------------------%>
+
+	<div id="bugtracker-section-div"></div>
+
+	<%------------------------------ /bugs section -------------------------------%>
+
+	<%--------------------------- Deletion confirmation popup -------------------------------------%>
+
+
+	<comp:popup id="delete-execution-confirm"
+		titleKey="dialog.delete-execution.title" isContextual="true"
+		openedBy="delete-execution-button">
+		<jsp:attribute name="buttons">
+		<f:message var="label" key="label.Confirm" />
+		'${ label }': function() {
+			var url = "${executionUrl}";
+			<jq:ajaxcall url="url" httpMethod="DELETE"
+				successHandler="deleteExecutionSuccess"
+				errorHandler="deleteExecutionFailure">					
+			</jq:ajaxcall>
+		},			
+		<pop:cancel-button />
+	</jsp:attribute>
+		<jsp:body>
+		<b><f:message key="dialog.delete-execution.message" />
+			</b>
+		<br />				
+	</jsp:body>
+	</comp:popup>
+
+	<%--------------------------- /Deletion confirmation popup -------------------------------------%>
+
+
+
+
 	<f:message var="statusUntestable" key="execution.execution-status.UNTESTABLE" />
 	<f:message var="statusBlocked" key="execution.execution-status.BLOCKED" />
 	<f:message var="statusFailure" key="execution.execution-status.FAILURE" />
@@ -285,11 +342,14 @@
 	<f:message var="statusRunning" key="execution.execution-status.RUNNING" />
 	<f:message var="statusReady" key="execution.execution-status.READY" />
 
+
+
 	<script type="text/javascript">
-
-
+	
 	$(function(){
 		
+		
+		// ************** execution table *********************
 		var tableSettings = {
 			"oLanguage":{
 				"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
@@ -308,19 +368,19 @@
 			"aoColumnDefs": ${stepsAoColumnDefs},
 		};
 		
-			var squashSettings = {
-					
-				enableHover : true
-				<c:if test="${ !automated }">
-				,executionStatus : {
-					untestable : "${statusUntestable}",
-					blocked : "${statusBlocked}",
-					failure : "${statusFailure}",
-					success : "${statusSuccess}",
-					running : "${statusRunning}",
-					ready : "${statusReady}"
-				}	</c:if>
-			};
+		var squashSettings = {
+				
+			enableHover : true
+			<c:if test="${ !automated }">
+			,executionStatus : {
+				untestable : "${statusUntestable}",
+				blocked : "${statusBlocked}",
+				failure : "${statusFailure}",
+				success : "${statusSuccess}",
+				running : "${statusRunning}",
+				ready : "${statusReady}"
+			}	</c:if>
+		};
 	
 		
 		
@@ -367,64 +427,23 @@
 			];
 		
 		$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
+		
+		
+		// ************** bugtracker section ******************************
+	 	
+	 	$("#bugtracker-section-div").load("${btEntityUrl}");
+		
+		
+	 	// ************** handle for refershing the page (called by the execution popup) ******************
+	 	
+	 	squashtm.execution = squashtm.execution || {};
+	 	squashtm.execution.refresh = $.proxy(function(){
+	 		$("#execution-execution-steps-table").squashTable().refresh();	
+	 		$("#general-informations-panel").load("${executionInfoUrl}");
+	 	}, window);
+		
 	});
-</script>
-
-	<%-------------------------------------- Comment --------------------------------------------------%>
-
-	<c:if test="${ editable }">
-		<comp:rich-jeditable targetUrl="${ executionUrl }" componentId="execution-description" />
-	</c:if>
-	<f:message var="executionComment" key="execution.description.panel.title" />
-	<comp:toggle-panel id="execution-description-panel" title="${executionComment}" isContextual="true" open="false">
-		<jsp:attribute name="body">
-		<div id="execution-description">${ execution.description }</div>
-	</jsp:attribute>
-	</comp:toggle-panel>
-
-	<%------------------------------ Attachments bloc ---------------------------------------------%>
-
-	<comp:attachment-bloc entity="${execution}" workspaceName="campaign" editable="${ editable }" />
-
-
-	<%------------------------------ bugs section -------------------------------%>
-	<%--
-	this section is loaded asynchronously. The bugtracker might be out of reach indeed.
- --%>
-	<script type="text/javascript">
- 	$(function(){
- 		$("#bugtracker-section-div").load("${btEntityUrl}");
- 	});
- </script>
-	<div id="bugtracker-section-div"></div>
-
-	<%------------------------------ /bugs section -------------------------------%>
-
-	<%--------------------------- Deletion confirmation popup -------------------------------------%>
-
-
-	<comp:popup id="delete-execution-confirm"
-		titleKey="dialog.delete-execution.title" isContextual="true"
-		openedBy="delete-execution-button">
-		<jsp:attribute name="buttons">
-		<f:message var="label" key="label.Confirm" />
-		'${ label }': function() {
-			var url = "${executionUrl}";
-			<jq:ajaxcall url="url" httpMethod="DELETE"
-				successHandler="deleteExecutionSuccess"
-				errorHandler="deleteExecutionFailure">					
-			</jq:ajaxcall>
-		},			
-		<pop:cancel-button />
-	</jsp:attribute>
-		<jsp:body>
-		<b><f:message key="dialog.delete-execution.message" />
-			</b>
-		<br />				
-	</jsp:body>
-	</comp:popup>
-
-	<%--------------------------- /Deletion confirmation popup -------------------------------------%>
+	</script>
 
 </div>
 

@@ -506,43 +506,29 @@
 		</jsp:attribute>
 			<jsp:body>
 			<script type="text/javascript">
-				$("#batch-assign-test-case")
-						.bind(
-								"dialogopen",
-								function(event, ui) {
-									var table = $('#test-plans-table')
-											.dataTable();
-									var ids = getIdsOfSelectedTableRows(table,
-											getTestPlansTableRowId);
+				$("#batch-assign-test-case").bind("dialogopen",function(event, ui) {
+					
+					var table = $('#test-plans-table').dataTable();
+					var ids = getIdsOfSelectedTableRows(table,	getTestPlansTableRowId);
 
-									if (ids.length > 0) {
-										var pop = this;
+					if (ids.length > 0) {
+						var pop = this;
+						$.get("${assignableUsersUrl}","json")
+						.success(function(jsonList) {
+							var select = $(".batch-select", pop);
+							select.empty();
+							for ( var i = 0; i < jsonList.length; i++) {
+								select.append('<option value="'+jsonList[i].id+'">'
+												+ jsonList[i].login
+												+ '</option>');
+							}
+						});
+					} else {
+						$.squash.openMessage("<f:message key='popup.title.error' />", "${emptyMessage}");
+						$(this).dialog('close');
+					}
 
-										$
-												.get("${assignableUsersUrl}",
-														"json")
-												.success(
-														function(jsonList) {
-															var select = $(
-																	".batch-select",
-																	pop);
-															select.empty();
-															for ( var i = 0; i < jsonList.length; i++) {
-																select
-																		.append('<option value="'+jsonList[i].id+'">'
-																				+ jsonList[i].login
-																				+ '</option>');
-															}
-														});
-									} else {
-										$.squash
-												.openMessage(
-														"<f:message key='popup.title.error' />",
-														"${emptyMessage}");
-										$(this).dialog('close');
-									}
-
-								});
+				});
 			</script>
 			<span><f:message key="message.AssignTestCaseToUser" />
 				</span>
@@ -606,7 +592,11 @@
 				$("#iteration-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${iteration.boundEntityId}&boundEntityType=${iteration.boundEntityType}"); 				
 				</c:if>	
 				
-		
+			 	squashtm.execution = squashtm.execution || {};
+			 	squashtm.execution.refresh = $.proxy(function(){
+			 		$("#test-plans-table").squashTable().refresh();
+			 		$('#general-informations-panel').load('${iterationInfoUrl}');
+			 	}, window);
 				
 			});
 		});

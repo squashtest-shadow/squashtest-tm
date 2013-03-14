@@ -373,18 +373,18 @@ public class ExecutionModificationController {
 	}
 
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
-	public ModelAndView refreshGeneralInfos(@PathVariable long libraryId, @PathVariable long executionId) {
+	public ModelAndView refreshGeneralInfos(@PathVariable long executionId) {
 
 		Execution execution = executionModService.findAndInitExecution(executionId);
 
-		ModelAndView mav = new ModelAndView("fragment/generics/execution-information-fragment");
+		ModelAndView mav = new ModelAndView("fragment/executions/execution-information-fragment");
 
-		mav.addObject("auditableEntity", execution);
+		mav.addObject("execution", execution);
 
 		return mav;
 	}
 
-	// still to be done.
+	
 
 	@RequestMapping(method = RequestMethod.DELETE)
 	public @ResponseBody
