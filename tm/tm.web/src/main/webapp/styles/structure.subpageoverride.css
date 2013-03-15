@@ -91,6 +91,10 @@
 	top : 0.5cm;	
 }
 
+.sub-page-content .wizard-tree-picker {
+	display: inline;
+}
+
 .sub-page-content .wizard-navigation-pane {
 	position: fixed;
 	bottom: 10%;
