@@ -331,13 +331,8 @@
 			</jsp:body>
 		</comp:popup>
 		<%----------------------------------- /add User Popup-----------------------------------------------%>
-<comp:decorate-buttons />
 	</jsp:attribute>
 </layout:info-page-layout>
-<script type="text/javascript">
-
-
-</script>
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
@@ -431,6 +426,7 @@
 		
 		// permissions popup
 		reloadPermissionPopup();
+		$("#add-permission-dialog").on('dialogopen', function(){$("#party-id").val('');});
 
 		//user permissions table
 		var permSettings = {
@@ -447,8 +443,7 @@
 		};
 		
 		projectsManager.projectInfo.initUserPermissions(permSettings);
-		
-
+				
 
 		Frag.init({
 			beforeLoad : Frag.confHelper.fnCacheRequests
