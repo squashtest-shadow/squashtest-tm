@@ -53,26 +53,31 @@ class HibernateRequirementLibraryDaoIT extends HibernateDaoSpecification {
 		content[0].id == f.id
 
 		cleanup:
-		deleteFixture lib,p
+		deleteFixture f, lib, p
 	}
 
 	def "should find all libraries"() {
-		setup:
+		given :
 		RequirementLibrary l1  = new RequirementLibrary();
-		persistFixture l1
+		Project p1 = new Project(name: "p1")
+		p1.requirementLibrary = l1
+		persistFixture p1,l1
+		
 		RequirementLibrary l2  = new RequirementLibrary();
-		persistFixture l2
+		Project p2 = new Project(name: "p2")
+		p2.requirementLibrary = l2
+		persistFixture p2,l2
 
 		when:
 		def libs = dao.findAll()
 
 		then:
-		// FIXME assertion sould be ==
-		libs.size() >= 2
+		
+		libs.size() == 2
 
 		cleanup:
-		deleteFixture l1
-		deleteFixture l2
+		deleteFixture l1,p1
+		deleteFixture l2,p2
 	}
 
 	def "should find library by id"() {
