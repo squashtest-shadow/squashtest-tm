@@ -22,6 +22,7 @@
 --%>
 <%@ tag body-content="empty" description="inserts the content of the team tab" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <div id="team-table-pane" class="table-tab" >
 <div class="toolbar">
 <button id="new-team-button"><f:message key="label.addTeam"/></button>
@@ -59,6 +60,7 @@
     		<td class="controls">
           <input id="add-team-name" name="add-team-name" type="text" size="50" maxlength="255" />
     		  <span class="help-inline">&nbsp;</span>
+    		  <comp:error-message forField="name"/>
         </td>
     	</tr>
        	<tr class="control-group">
