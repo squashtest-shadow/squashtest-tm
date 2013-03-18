@@ -52,8 +52,8 @@ class HibernateRequirementLibraryDaoIT extends HibernateDaoSpecification {
 		content.size() == 1
 		content[0].id == f.id
 
-		//cleanup:
-		//deleteFixture lib,p
+		cleanup:
+		deleteFixture lib,p
 	}
 
 	def "should find all libraries"() {
