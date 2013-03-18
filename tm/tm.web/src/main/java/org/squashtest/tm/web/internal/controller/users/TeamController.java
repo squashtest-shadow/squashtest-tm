@@ -93,7 +93,7 @@ public class TeamController extends PartyControllerSupport {
 	private DatatableMapper<String> teamsMapper = new NameBasedMapper(9)
 			.mapAttribute(Team.class, "name", String.class, "name")
 			.mapAttribute(Team.class, "description", String.class, "description")
-			.mapAttribute(Team.class, "members.size", Long.class, "nb-associated-users")
+			.mapAttribute(Team.class, "size", Long.class, "nb-associated-users")	//WARNING : the 'size' attribute doesn't actually exist. It's a trick, see HibernateTeamDao#findSortedTeams. see #1968 
 			.mapAttribute(Team.class, "audit.createdOn", Date.class, "created-on")
 			.mapAttribute(Team.class, "audit.createdBy", String.class, "created-by")
 			.mapAttribute(Team.class, "audit.lastModifiedOn", Date.class, "last-mod-on")

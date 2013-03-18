@@ -24,6 +24,8 @@ public class DefaultPagingAndSorting implements PagingAndSorting{
 
 	private String sortedAttribute;
 	private Integer pageSize = 10;
+	private Integer firstIndex = 0;
+	private SortOrder order = SortOrder.ASCENDING;
 	
 	public DefaultPagingAndSorting(){
 		super();
@@ -35,8 +37,6 @@ public class DefaultPagingAndSorting implements PagingAndSorting{
 		this.sortedAttribute = sortedAttribute;
 	}
 	
-	
-
 	public DefaultPagingAndSorting(Integer pageSize) {
 		super();
 		this.pageSize = pageSize;
@@ -54,9 +54,13 @@ public class DefaultPagingAndSorting implements PagingAndSorting{
 	}
 
 
+	public void setFirstItemIndex(int index){
+		this.firstIndex = index;
+	}
+	
 	@Override
 	public int getFirstItemIndex() {
-		return 0;
+		return firstIndex;
 	}
 
 	@Override
@@ -74,9 +78,13 @@ public class DefaultPagingAndSorting implements PagingAndSorting{
 		return sortedAttribute;
 	}
 
+	public void setSortOrder(SortOrder order){
+		this.order = order;
+	}
+	
 	@Override
 	public SortOrder getSortOrder() {
-		return SortOrder.ASCENDING;
+		return order;
 	}
 
 }
