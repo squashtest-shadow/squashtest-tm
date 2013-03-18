@@ -77,7 +77,7 @@ class HibernateTeamDaoIT extends DbunitDaoSpecification{
 	def "should sort the teams by name desc"(){
 		
 		given :
-			PagingAndSorting paging = new DefaultPagingAndSorting(sortedAttribute:"name", order : SortOrder.DESCENDING)
+			PagingAndSorting paging = new DefaultPagingAndSorting(sortedAttribute:"Team.name", order : SortOrder.DESCENDING)
 	
 		and :
 			Filtering filter = DefaultFiltering.NO_FILTERING
@@ -95,7 +95,7 @@ class HibernateTeamDaoIT extends DbunitDaoSpecification{
 	def "should sort the teams by size desc"(){
 		
 		given :
-			PagingAndSorting paging = new DefaultPagingAndSorting(sortedAttribute:"size", order : SortOrder.DESCENDING)
+			PagingAndSorting paging = new DefaultPagingAndSorting(sortedAttribute:"Team.size", order : SortOrder.DESCENDING)
 	
 		and :
 			Filtering filter = DefaultFiltering.NO_FILTERING
@@ -113,7 +113,7 @@ class HibernateTeamDaoIT extends DbunitDaoSpecification{
 	def "should sort the teams by size asc and looking only for those having 'ple' in their name"(){
 		
 		given :
-			PagingAndSorting paging = new DefaultPagingAndSorting(sortedAttribute:"size", order : SortOrder.ASCENDING)
+			PagingAndSorting paging = new DefaultPagingAndSorting(sortedAttribute:"Team.size", order : SortOrder.ASCENDING)
 	
 		and :
 			Filtering filter = new DefaultFiltering(null, "ple")
