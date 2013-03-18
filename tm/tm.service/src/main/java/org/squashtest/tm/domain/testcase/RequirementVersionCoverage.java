@@ -44,6 +44,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
+import org.squashtest.tm.exception.testcase.StepDoesNotBelongToTestCaseException;
 
 /**
  * Entity representing a The coverage of a {@link RequirementVersion} by a {@link TestCase}. The {@link ActionTestStep}
@@ -82,65 +83,6 @@ public class RequirementVersionCoverage implements Identified {
 	@OneToMany
 	@JoinTable(name = "VERIFYING_STEPS", joinColumns = @JoinColumn(name = "REQUIREMENT_VERSION_COVERAGE_ID"), inverseJoinColumns = @JoinColumn(name = "TEST_STEP_ID"))
 	private Set<ActionTestStep> verifyingSteps = new HashSet<ActionTestStep>();
-
-	public TestCase getVerifyingTestCase() {
-		return verifyingTestCase;
-	}
-
-	public void setVerifyingTestCase(TestCase verifyingTestCase) {
-		if (this.verifiedRequirementVersion != null) {
-			verifyingTestCase.checkRequirementNotVerified(this, verifiedRequirementVersion);
-		}
-		this.verifyingTestCase = verifyingTestCase;
-	}
-
-	public RequirementVersion getVerifiedRequirementVersion() {
-		return verifiedRequirementVersion;
-	}
-
-	public void setVerifiedRequirementVersion(RequirementVersion verifiedRequirementVersion) {
-		if (this.verifyingTestCase != null) {
-			if(this.verifiedRequirementVersion != null){
-				this.verifyingTestCase.checkRequirementNotVerified(this, verifiedRequirementVersion);
-			}
-		}
-		verifiedRequirementVersion.checkLinkable();
-		this.verifiedRequirementVersion = verifiedRequirementVersion;
-
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public Set<ActionTestStep> getVerifyingSteps() {
-		return verifyingSteps;
-	}
-
-	public void addAllVerifyingSteps(Collection<ActionTestStep> steps) {
-		checkStepsBelongToTestCase(steps);
-		
-		this.verifyingSteps.addAll(steps);
-	}
-
-	private void checkStepsBelongToTestCase(Collection<ActionTestStep> steps) {
-		for (ActionTestStep step : steps) {
-			if (verifyingTestCase.hasStep(step)) {
-				// TODO throw StepDoesNotBelongToTestCaseException;
-			}
-		}
-
-	}
-
-	RequirementVersionCoverage() {
-		super();
-	}
-
-	private RequirementVersionCoverage(TestCase verifyingTestCase) {
-		super();
-		this.verifyingTestCase = verifyingTestCase;
-		verifyingTestCase.addRequirementCoverage(this);
-	}
 
 	/**
 	 * @throws RequirementVersionNotLinkableException
@@ -186,6 +128,83 @@ public class RequirementVersionCoverage implements Identified {
 		requirement.getCurrentVersion().addRequirementCoverage(this);
 		this.verifiedRequirementVersion = requirement.getCurrentVersion();
 	}
+	
+	public TestCase getVerifyingTestCase() {
+		return verifyingTestCase;
+	}
+
+	public void setVerifyingTestCase(TestCase verifyingTestCase) {
+		if (this.verifiedRequirementVersion != null) {
+			verifyingTestCase.checkRequirementNotVerified(this, verifiedRequirementVersion);
+		}
+		this.verifyingTestCase = verifyingTestCase;
+	}
+
+	public RequirementVersion getVerifiedRequirementVersion() {
+		return verifiedRequirementVersion;
+	}
+
+	public void setVerifiedRequirementVersion(RequirementVersion verifiedRequirementVersion) {
+		if (this.verifyingTestCase != null) {
+			if(this.verifiedRequirementVersion != null){
+				this.verifyingTestCase.checkRequirementNotVerified(this, verifiedRequirementVersion);
+			}
+		}
+		verifiedRequirementVersion.checkLinkable();
+		this.verifiedRequirementVersion = verifiedRequirementVersion;
+
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public Set<ActionTestStep> getVerifyingSteps() {
+		return verifyingSteps;
+	}
+
+	/**
+	 * Checks that all steps belong to this {@linkplain RequirementVersionCoverage#verifyingTestCase} and add them to this {@linkplain RequirementVersionCoverage#verifyingSteps}.
+	 * 
+	 * @param steps
+	 * @throws StepDoesNotBelongToTestCaseException
+	 * 
+	 */
+	public void addAllVerifyingSteps(Collection<ActionTestStep> steps) {
+		checkStepsBelongToTestCase(steps);
+		
+		this.verifyingSteps.addAll(steps);
+		for(ActionTestStep step : steps){
+			step.addRequirementVersionCoverage(this);
+		}
+	}
+
+	/**
+	 * Will check that all steps are found in this.verifyingTestCase.steps.
+	 * The check is with {@link TestCase#hasStep(TestStep)}
+	 * @param steps
+	 * @throws StepDoesNotBelongToTestCaseException if one step doesn't belong to this.verifyingTestCase.
+	 */
+	private void checkStepsBelongToTestCase(Collection<ActionTestStep> steps) {
+		for (ActionTestStep step : steps) {
+			if (!verifyingTestCase.hasStep(step)) {
+				throw new StepDoesNotBelongToTestCaseException(verifyingTestCase.getId(), step.getId());
+			}
+		}
+
+	}
+
+	RequirementVersionCoverage() {
+		super();
+	}
+
+	private RequirementVersionCoverage(TestCase verifyingTestCase) {
+		super();
+		this.verifyingTestCase = verifyingTestCase;
+		verifyingTestCase.addRequirementCoverage(this);
+	}
+
+	
 
 	public RequirementVersionCoverage copyForRequirementVersion(RequirementVersion rvCopy) {
 		RequirementVersionCoverage rvcCopy = new RequirementVersionCoverage(this.verifyingTestCase);

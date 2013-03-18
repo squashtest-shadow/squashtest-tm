@@ -39,15 +39,6 @@ public interface CustomRequirementVersionCoverageDao extends EntityDao<Requireme
 	List<RequirementVersionCoverage> findAllByTestCaseId(long testCaseId, PagingAndSorting pas);
 	
 
-	
-	/**
-	 * Returns a paged and ordered list taken from all {@link RequirementVersionCoverage} directly linked to one of the {@link TestCase}s matching the given ids param.
-	 * @param testCaseIds : the ids of the verifying {@link TestCase}s
-	 * @param pas : the {@link PagingAndSorting} param to organize the result with
-	 * @return : a list of {@link RequirementVersionCoverage} representing a sorted page of all direct coverages for the given test cases
-	 */
-	List<RequirementVersionCoverage> findAllByTestCases(Collection<Long> testCaseIds, PagingAndSorting pas);
-	
 	/**
 	 * Returns a paged and ordered list taken from all DISTINCT {@link RequirementVersion} linked to at least one of the {@link TestCase}s matching the given ids param.
 	 * @param testCaseIds : the ids of the verifying {@link TestCase}s
@@ -55,5 +46,7 @@ public interface CustomRequirementVersionCoverageDao extends EntityDao<Requireme
 	 * @return : a list of {@link RequirementVersion} representing a sorted page of distinct requirements for the given test cases
 	 */
 	List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds, PagingAndSorting pas);
+
+	
 
 }

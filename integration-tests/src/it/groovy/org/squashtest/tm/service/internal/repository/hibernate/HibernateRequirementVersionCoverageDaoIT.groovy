@@ -20,16 +20,25 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
+import java.util.List;
+
 import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
 import org.hibernate.Query
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
 import org.unitils.dbunit.annotation.DataSet
+import static org.squashtest.tm.core.foundation.collection.SortOrder.*;
+import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
@@ -85,7 +94,38 @@ class HibernateRequirementVersionCoverageDaoIT extends DbunitDaoSpecification {
 		then:
 		reqs.collect { it.id } == [20L]
 	}
+	
+	@Unroll
+	@DataSet("HibernateRequirementVersionCoverageDaoIT.should find paged list for test-step.xml")
+	def "should find paged list for test-step"() {
+		PagingAndSorting paging = Mock()
+		paging.firstItemIndex >> start
+		paging.pageSize >> pageSize
+		paging.sortedAttribute >> sortAttr
+		paging.sortOrder >> sortOrder 
+		
+		when:
+		List<RequirementVersionCoverage> list = dao.findAllByTestCaseId(1L,  paging)
 
+		then:
+		list*.id == expected
+		
+		where:
+		start | pageSize | sortAttr                           | sortOrder  | expected 
+		0     | 3        | "RequirementVersion.id"            | ASCENDING  | [1L, 2L, 3L]
+		0     | 3        | "RequirementVersion.name"          | ASCENDING  | [5L, 2L, 4L]
+		0     | 3        | "Project.name"                     | ASCENDING  | [1L, 2L, 3L]
+		0     | 3        | "RequirementVersion.reference"     | ASCENDING  | [3L, 5L, 4L]
+		0     | 3        | "RequirementVersion.versionNumber" | ASCENDING  | [2L, 1L, 3L]
+		0     | 3        | "RequirementVersion.criticality"   | ASCENDING  | [4L, 2L, 3L]
+		0     | 3        | "RequirementVersion.category"      | ASCENDING  | [1L, 5L, 3L]
+//		0     | 3        | "ActionTestStep.id"                | DESCENDING | [1L, 3L, 2L]
+//		0     | 50       | "ActionTestStep.id"                | DESCENDING | [1L, 3L, 2L, 4L, 5L]
+		
+
+		
+	}
+	
 	@DataSet("HibernateRequirementVersionDaoIT.should count requirements verified by list of test cases.xml")
 	def "should count distinct requirements verified by list of test cases"() {
 		when:
@@ -129,5 +169,48 @@ class HibernateRequirementVersionCoverageDaoIT extends DbunitDaoSpecification {
 
 		then:
 		count == 2
+	}
+	
+	@DataSet("HibernateRequirementVersionCoverageDaoIT.should find by.xml")
+	def"should find by version and test-case"(){
+		given : 
+		def verifiedRequirementVersionId = 10L
+		def verifyingTestCaseId = 100L
+		when :
+		def result = dao.byRequirementVersionAndTestCase( verifiedRequirementVersionId, verifyingTestCaseId);
+		then : 
+		result.collect({it.id}).equals([1L])
+	}
+	
+	@DataSet("HibernateRequirementVersionCoverageDaoIT.should find by.xml")
+	def"should find by version and test-cases"(){
+		given : 
+		def verifiedRequirementVersionId = 10L
+		def verifyingTestCasesIds = [100L,101L, 200L]
+		when :
+		def result = dao.byRequirementVersionAndTestCases(verifyingTestCasesIds,verifiedRequirementVersionId);
+		then:
+		result.collect({it.id}).equals([1L, 4L])
+	}
+	
+	@DataSet("HibernateRequirementVersionCoverageDaoIT.should find by.xml")
+	def"should find by versions and test-case"(){
+		given : 
+		def verifiedRequirementVersionsIds =  [10L, 20L]
+		def verifyingTestCaseId = 100L
+		when :
+		def result = dao.byTestCaseAndRequirementVersions(verifiedRequirementVersionsIds, verifyingTestCaseId);
+		then:
+		result.collect({it.id}).equals([1L, 2L])
+	}
+	@DataSet("HibernateRequirementVersionCoverageDaoIT.should find by.xml")
+	def"should find by versions and test-step"(){
+		given : 
+		def verifiedRequirementVersionsIds =  [10L, 20L, 30L]
+		def testStepId = 200L
+		when :
+		def result = dao.byRequirementVersionsAndTestStep(verifiedRequirementVersionsIds,testStepId);
+		then:
+		result.collect({it.id}).equals([2L, 3L])
 	}
 }

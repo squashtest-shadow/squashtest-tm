@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService
@@ -60,7 +61,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService))
 	}
 
-	def "should show manager page"() {
+	def "should show test case manager page"() {
 		given:
 		requirementLibraryFinder.findLinkableRequirementLibraries() >> []
 
@@ -69,6 +70,17 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 
 		then:
 		res == "page/test-cases/show-verified-requirements-manager"
+	}
+	
+	def "should show test step manager page"() {
+		given:
+		requirementLibraryFinder.findLinkableRequirementLibraries() >> []
+
+		when:
+		def res = controller.showTestStepManager(20L, Mock(Model))
+
+		then:
+		res == "page/test-cases/show-step-verified-requirements-manager"
 	}
 
 	def "should populate manager page with test case and requirement libraries model"() {
@@ -94,16 +106,56 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		model['testCase'] == testCase
 		model['linkableLibrariesModel'] != null
 	}
+	
+	def "should populate manager page with test step and requirement libraries model"() {
+		given:
+		TestStep testStep = Mock()
+		testStepService.findById(20L) >> testStep
 
-	def "should add requirements to verified requirements of test case"() {
+		and:
+		RequirementLibrary lib = Mock()
+		lib.getClassSimpleName() >> "RequirementLibrary"
+		Project project = Mock()
+		project.getId() >> 10l
+		lib.project >> project
+		requirementLibraryFinder.findLinkableRequirementLibraries() >> [lib]
+
+		and:
+		def model = new ExtendedModelMap()
+
+		when:
+		def res = controller.showTestStepManager(20L, model)
+
+		then:
+		model['testStep'] == testStep
+		model['linkableLibrariesModel'] != null
+	}
+
+	def "should add requirements to verified requirements to test case"() {
 		when:
 		controller.addVerifiedRequirementsToTestCase([5, 15], 10)
 
 		then:
 		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10) >> []
 	}
+	
+	def "should add requirements to verified requirements of test step"() {
+		when:
+		controller.addVerifiedRequirementsToTestStep([5, 15], 10)
 
-	def "should remove requirements to verified requirements of test case"() {
+		then:
+		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestStep([5, 15], 10) >> []
+	}
+	
+	def "should add requirements to verified requirement of test step"() {
+		when:
+		controller.addVerifiedRequirementsToTestStep([5L], 10L)
+
+		then:
+		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestStep([5L], 10L) >> []
+	}
+
+	def "should remove requirements from verified requirements of test case"() {
 		when:
 		controller.removeVerifiedRequirementVersionsFromTestCase([5, 15], 10)
 
@@ -111,7 +163,13 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		1 * verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestCase([5, 15], 10)
 	}
 
-	
+	def "should remove requirements from verified requirements of test step"() {
+		when:
+		controller.removeVerifiedRequirementVersionsFromTestStep([5, 15], 10)
+
+		then:
+		1 * verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestStep([5, 15], 10)
+	}
 
 	def "should return rapport of requirements which could not be added"() {
 		given:

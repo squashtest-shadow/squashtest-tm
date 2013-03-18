@@ -40,36 +40,27 @@ public class HibernateRequirementVersionCoverageDao extends HibernateEntityDao<R
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<RequirementVersionCoverage> findAllByTestCaseId(long testCaseId, PagingAndSorting pas) {
-		Criteria crit = createFindAllCoverageCriteria(pas);
+		Criteria crit = createFindAllCoverageCriteria();
+		
 
 		crit.add(Restrictions.eq("TestCase.id", Long.valueOf(testCaseId)));
-
+		PagingUtils.addPaging(crit, pas);
+		SortingUtils.addOrder(crit, pas);
+		
+		
 		return crit.list();
 	}
+	
+	
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<RequirementVersionCoverage> findAllByTestCases(Collection<Long> testCaseIds, PagingAndSorting pagingAndSorting) {
-		if (testCaseIds.isEmpty()) {
-			return Collections.emptyList();
-		}
-
-		Criteria crit = createFindAllCoverageCriteria(pagingAndSorting);
-
-		crit.add(Restrictions.in("TestCase.id", testCaseIds));
-
-		return crit.list();
-	}
-
-	private Criteria createFindAllCoverageCriteria(PagingAndSorting pagingAndSorting) {
+	private Criteria createFindAllCoverageCriteria() {
 		Criteria crit = currentSession().createCriteria(RequirementVersionCoverage.class, "RequirementVersionCoverage");
 		crit.createAlias("RequirementVersionCoverage.verifiedRequirementVersion", "RequirementVersion");
 		crit.createAlias("RequirementVersion.requirement", "Requirement", Criteria.LEFT_JOIN);
 		crit.createAlias("RequirementVersionCoverage.verifyingTestCase", "TestCase");
 		crit.createAlias("Requirement.project", "Project", Criteria.LEFT_JOIN);
-
-		PagingUtils.addPaging(crit, pagingAndSorting);
-		SortingUtils.addOrder(crit, pagingAndSorting);
+		
+		
 
 		return crit;
 	}
@@ -79,7 +70,7 @@ public class HibernateRequirementVersionCoverageDao extends HibernateEntityDao<R
 				crit.createAlias("requirementVersionCoverages", "rvc");
 				crit.createAlias("rvc.verifyingTestCase", "TestCase");
 				crit.createAlias("requirement.project", "Project", Criteria.LEFT_JOIN);
-		
+				
 				PagingUtils.addPaging(crit, pagingAndSorting);
 				SortingUtils.addOrder(crit, pagingAndSorting);
 		

@@ -283,9 +283,8 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 		calleesIds.add(testCaseId);
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Fetching Requirements verified by TestCases " + calleesIds);
-		}
+		LOGGER.debug("Fetching Requirements verified by TestCases {}",calleesIds.toString());
+		
 		List<RequirementVersion> pagedVersionVerifiedByCalles = requirementVersionCoverageDao.findDistinctRequirementVersionsByTestCases(calleesIds, pas);
 
 		TestCase mainTestCase = testCaseDao.findById(testCaseId);
@@ -295,9 +294,8 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 		long totalVerified = requirementVersionCoverageDao.numberDistinctVerifiedByTestCases(calleesIds);
 		
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Total count of verified requirements : " + totalVerified);
-		}
+		LOGGER.debug("Total count of verified requirements : {}", totalVerified);
+	
 
 		return new PagingBackedPagedCollectionHolder<List<VerifiedRequirement>>(pas, totalVerified, pagedVerifiedReqs);
 	}
@@ -324,7 +322,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	public PagedCollectionHolder<List<VerifiedRequirement>> findAllDirectlyVerifiedRequirementsByTestStepId(
 			long testStepId, PagingAndSorting paging) {
 		TestStep step = testStepDao.findById(testStepId);
-		return findAllVerifiedRequirementsByTestCaseId(step.getTestCase().getId(), paging);
+		return findAllDirectlyVerifiedRequirementsByTestCaseId(step.getTestCase().getId(), paging);
 	}
 
 	

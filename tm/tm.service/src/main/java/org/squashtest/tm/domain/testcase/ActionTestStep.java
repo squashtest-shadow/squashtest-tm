@@ -44,6 +44,7 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
@@ -145,9 +146,10 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	public Project getProject() {
 		return getTestCase().getProject();
 	}
+	
 	/**
 	 * Simply remove the RequirementVersionCoverage from this.requirementVersionCoverages.
-	 * @param requirementVersionCoverage : the entity to remove from this step's {@link RequirementVersionCoverage}s list.
+	 * @param requirementVersionCoverage : the entity to remove from this step's {@linkplain RequirementVersionCoverage}s list.
 	 */
 	public void removeRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
 		this.requirementVersionCoverages.remove(requirementVersionCoverage);		
@@ -155,13 +157,32 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 
 	/**
 	 * 
-	 * @return an UNMODIFIABLE set of this {@link ActionTestStep}'s {@link RequirementVersionCoverage}s.
+	 * @return an UNMODIFIABLE set of this {@linkplain ActionTestStep}'s {@linkplain RequirementVersionCoverage}s.
 	 */
 	public Set<RequirementVersionCoverage> getRequirementVersionCoverages() {
 		return Collections.unmodifiableSet(this.requirementVersionCoverages);
 	}
 	
+	/**
+	 * will simply add the given {@linkplain RequirementVersionCoverage} to this {@linkplain ActionTestStep#requirementVersionCoverages}
+	 * @param requirementVersionCoverage
+	 */
+	public void addRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
+		this.requirementVersionCoverages.add(requirementVersionCoverage);
+		
+	}
 	
+	/**
+	 * 
+	 * @return UNMODIFIABLE VIEW of verified requirements.
+	 */
+	public Set<RequirementVersion> getVerifiedRequirementVersions() {
+		Set<RequirementVersion> verified = new HashSet<RequirementVersion>();
+		for(RequirementVersionCoverage coverage : requirementVersionCoverages){
+			verified.add(coverage.getVerifiedRequirementVersion());
+		}
+		return Collections.unmodifiableSet(verified);
+	}
 
 	
 }

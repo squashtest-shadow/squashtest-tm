@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service
+package org.squashtest.csp.tm.internal.service.requirement
 
 import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
@@ -31,8 +31,11 @@ import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.resource.Resource
+import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
 import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
@@ -40,6 +43,7 @@ import org.squashtest.tm.service.internal.repository.RequirementLibraryDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerServiceImpl
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
 import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl
@@ -49,6 +53,7 @@ import spock.lang.Specification
 class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	VerifiedRequirementsManagerServiceImpl service = new VerifiedRequirementsManagerServiceImpl()
 	TestCaseDao testCaseDao = Mock()
+	TestStepDao testStepDao = Mock()
 	RequirementLibraryDao requirementLibraryDao = Mock()
 	RequirementVersionDao requirementVersionDao = Mock()
 	LibraryNodeDao<RequirementLibraryNode> nodeDao = Mock()
@@ -62,6 +67,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		CollectionAssertions.declareContainsExactly()
 
 		service.testCaseDao = testCaseDao
+		service.testStepDao = testStepDao
 		service.requirementVersionDao = requirementVersionDao
 		service.requirementLibraryNodeDao = nodeDao
 		service.testCaseImportanceManagerService = testCaseImportanceManagerService
@@ -98,7 +104,48 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		then:
 		testCase.verifiedRequirementVersions.containsExactly([rv5, rv15])
 	}
+	
+	def "should add requirements to test step's verified requirements"() {
+		given:"a testCase having a testStep of id=10L"
+		ActionTestStep testStep = new ActionTestStep()
+		TestCase testCase = new TestCase()
+		use (ReflectionCategory){
+			TestStep.set field:"id", of:testStep, to:10L
+			TestCaseLibraryNode.set field:"id", of:testCase, to:16L
+		}
+		testStepDao.findActionTestStepById(10L)>>testStep
+		testCase.addStep(testStep)
 
+		and:"2 requirement versions of id = 5L and 15L"
+		RequirementVersion rv5 = new RequirementVersion()
+		RequirementVersion rv15 = new RequirementVersion()
+
+
+		use (ReflectionCategory) {
+			Resource.set field: "id", of: rv5, to: 5L
+			Resource.set field: "id", of: rv15, to: 15L
+		}
+
+		requirementVersionDao.findAllByIds([5, 15]) >> [rv5, rv15]
+
+		and:"2 requirements having same ids as their current versions (5L and 15L)"
+		Requirement req5 = new Requirement(rv5)
+		Requirement req15 = new Requirement(rv15)
+		nodeDao.findAllByIds([5, 15]) >> [req5, req15]
+		
+		and:"the test case covers the requirement version 5L"
+		RequirementVersionCoverage coverage = new RequirementVersionCoverage(rv5, testCase)
+		requirementVersionCoverageDao.byRequirementVersionAndTestCase(5, 16L)>>coverage
+		requirementVersionCoverageDao.byRequirementVersionAndTestCase(15, 16L)>>null
+		
+		when:
+		service.addVerifiedRequirementsToTestStep([5, 15], 10)
+
+		then:
+		testStep.verifiedRequirementVersions.containsExactly([rv5, rv15])
+		1*requirementVersionCoverageDao.persist(_);
+	}
+	
 	def "should not add requirements with no verifiable version to test case's verified requirements"() {
 		given:
 		TestCase testCase = new TestCase()
@@ -212,7 +259,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		res.totalNumberOfItems == 5
 	}
 	
-	def "should find directly verified requiremnts in verified list"() {
+	def "should find directly when search all verified requiremnts for test case"() {
 		given: "sorting directives"
 		PagingAndSorting sorting = Mock()
 
@@ -247,7 +294,68 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		verifieds.pagedItems.collect {it.id} == [100L]
 		verifieds.pagedItems.collect { it.directVerification } == [true]
 	}
+	
+	def "should find directly verified requiremnts for test step"() {
+		given: "sorting directives"
+		PagingAndSorting sorting = Mock()
 
+		and: "the looked up test case with 1 verified requirement"
+		TestStep testStep = Mock()
+		testStepDao.findById(11L)>> testStep
+		TestCase testCase = Mock()
+		testCase.id >> 10L
+		testStep.getTestCase()>> testCase
+		testCaseDao.findById(10L) >> testCase
+
+		RequirementVersion directlyVerified = Mock()
+		directlyVerified.id >> 100L
+		
+		RequirementVersionCoverage coverage = Mock()
+		coverage.verifiedRequirementVersion >> directlyVerified
+
+
+		and:
+		requirementVersionCoverageDao.findAllByTestCaseId(10L, sorting)>>[coverage];
+
+
+
+		when:
+		PagedCollectionHolder verifieds = service.findAllDirectlyVerifiedRequirementsByTestStepId(11L, sorting)
+
+		then:
+		verifieds.pagedItems.collect {it.id} == [100L]
+		verifieds.pagedItems.collect { it.directVerification } == [true]
+	}
+
+	def "should find directly verified requiremnts for test case"() {
+		given: "sorting directives"
+		PagingAndSorting sorting = Mock()
+
+		and: "the looked up test case with 1 verified requirement"
+		TestCase testCase = Mock()
+		testCase.id >> 10L		
+		testCaseDao.findById(10L) >> testCase
+
+		RequirementVersion directlyVerified = Mock()
+		directlyVerified.id >> 100L
+		
+		RequirementVersionCoverage coverage = Mock()
+		coverage.verifiedRequirementVersion >> directlyVerified
+
+
+		and:
+		requirementVersionCoverageDao.findAllByTestCaseId(10L, sorting)>>[coverage];
+
+
+
+		when:
+		PagedCollectionHolder verifieds = service.findAllDirectlyVerifiedRequirementsByTestCaseId(10L, sorting)
+
+		then:
+		verifieds.pagedItems.collect {it.id} == [100L]
+		verifieds.pagedItems.collect { it.directVerification } == [true]
+	}
+	
 	def "should find 1st level indirectly verified requiremnts in verified list"() {
 		given: "sorting directives"
 		PagingAndSorting sorting = Mock()

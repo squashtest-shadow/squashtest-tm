@@ -82,7 +82,7 @@ public class VerifiedRequirementsManagerController {
 	 */
 
 	private static final String REQUIREMENTS_IDS = "requirementsIds[]";
-	
+
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
 	@Inject
@@ -96,36 +96,30 @@ public class VerifiedRequirementsManagerController {
 	@Inject
 	private RequirementLibraryFinderService requirementLibraryFinder;
 
-
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/manager", method = RequestMethod.GET)
 	public String showTestCaseManager(@PathVariable long testCaseId, Model model) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		List<RequirementLibrary> linkableLibraries = requirementLibraryFinder
-				.findLinkableRequirementLibraries();
-
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
-
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel();
+		
 		model.addAttribute("testCase", testCase);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
-
+		
 		return "page/test-cases/show-verified-requirements-manager";
 	}
-	
+
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/manager", method = RequestMethod.GET)
 	public String showTestStepManager(@PathVariable long testStepId, Model model) {
 		TestStep testStep = testStepService.findById(testStepId);
-		List<RequirementLibrary> linkableLibraries = requirementLibraryFinder
-				.findLinkableRequirementLibraries();
-
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
-
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel();
+		
 		model.addAttribute("testStep", testStep);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
-
+		
 		return "page/test-cases/show-step-verified-requirements-manager";
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<RequirementLibrary> linkableLibraries) {
+	private List<JsTreeNode> createLinkableLibrariesModel() {
+		List<RequirementLibrary> linkableLibraries = requirementLibraryFinder.findLinkableRequirementLibraries();
 		DriveNodeBuilder builder = driveNodeBuilder.get();
 		List<JsTreeNode> linkableLibrariesModel = new ArrayList<JsTreeNode>();
 
@@ -146,7 +140,7 @@ public class VerifiedRequirementsManagerController {
 		return buildSummary(rejections);
 
 	}
-	
+
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS)
 	public @ResponseBody
 	Map<String, Object> addVerifiedRequirementsToTestStep(@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds,
@@ -157,7 +151,7 @@ public class VerifiedRequirementsManagerController {
 		return buildSummary(rejections);
 
 	}
-	
+
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/{requirementVersionId}", method = RequestMethod.POST)
 	public @ResponseBody
 	Map<String, Object> addVerifiedRequirementToTestStep(@PathVariable long requirementVersionId,
@@ -168,21 +162,22 @@ public class VerifiedRequirementsManagerController {
 		return buildSummary(rejections);
 
 	}
-	
+
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/{oldVersionId}", method = RequestMethod.POST)
 	@ResponseBody
-	public int changeVersion(@PathVariable long testCaseId, @PathVariable long oldVersionId, @RequestParam(VALUE) long newVersionId) {
-		
+	public int changeVersion(@PathVariable long testCaseId, @PathVariable long oldVersionId,
+			@RequestParam(VALUE) long newVersionId) {
+
 		List<Long> oldVersion = new ArrayList<Long>();
 		oldVersion.add(oldVersionId);
 		List<Long> newVersion = new ArrayList<Long>();
 		newVersion.add(newVersionId);
-		
-		int newVersionNumber = verifiedRequirementsManagerService.changeVerifiedRequirementVersionOnTestCase(oldVersionId, newVersionId, testCaseId);
-		
+
+		int newVersionNumber = verifiedRequirementsManagerService.changeVerifiedRequirementVersionOnTestCase(
+				oldVersionId, newVersionId, testCaseId);
+
 		return newVersionNumber;
 	}
-	
 
 	private Map<String, Object> buildSummary(Collection<VerifiedRequirementException> rejections) {
 		return VerifiedRequirementActionSummaryBuilder.buildAddActionSummary(rejections);
@@ -190,88 +185,101 @@ public class VerifiedRequirementsManagerController {
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/{requirementVersionsIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
-	void removeVerifiedRequirementVersionsFromTestCase(
-			 @PathVariable List<Long> requirementVersionsIds, @PathVariable long testCaseId) {
-		verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestCase(requirementVersionsIds, testCaseId);
+	void removeVerifiedRequirementVersionsFromTestCase(@PathVariable List<Long> requirementVersionsIds,
+			@PathVariable long testCaseId) {
+		verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestCase(requirementVersionsIds,
+				testCaseId);
 
 	}
-	
+
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/{requirementVersionsIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
-	void removeVerifiedRequirementVersionsFromTestStep(
-			 @PathVariable List<Long> requirementVersionsIds, @PathVariable long testStepId) {
-		verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestStep(requirementVersionsIds, testStepId);
+	void removeVerifiedRequirementVersionsFromTestStep(@PathVariable List<Long> requirementVersionsIds,
+			@PathVariable long testStepId) {
+		verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestStep(requirementVersionsIds,
+				testStepId);
 
 	}
-	
-	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions", params = {RequestParams.S_ECHO_PARAM, "includeCallSteps"})
-		@ResponseBody
-		public DataTableModel getTestCaseWithCallStepsVerifiedRequirementsTableModel(@PathVariable long testCaseId,
-				final DataTableDrawParameters params, final Locale locale) {
-	
-			PagingAndSorting pas = new DataTableMapperPagingAndSortingAdapter(params, verifiedRequirementVersionsMapper);
-	
-			PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
-					.findAllVerifiedRequirementsByTestCaseId(testCaseId, pas);
-	
-			return new TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper).buildDataModel(holder, params.getsEcho());
-	
-		}
-	
-	private static final class TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper extends TestCaseVerifiedRequirementsDataTableModelHelper{
-		
-		public TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper(Locale locale, InternationalizationHelper internationalizationHelper){
+
+	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions", params = {
+			RequestParams.S_ECHO_PARAM, "includeCallSteps" })
+	@ResponseBody
+	public DataTableModel getTestCaseWithCallStepsVerifiedRequirementsTableModel(@PathVariable long testCaseId,
+			final DataTableDrawParameters params, final Locale locale) {
+
+		PagingAndSorting pas = new DataTableMapperPagingAndSortingAdapter(params, verifiedRequirementVersionsMapper);
+
+		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
+				.findAllVerifiedRequirementsByTestCaseId(testCaseId, pas);
+
+		return new TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper)
+				.buildDataModel(holder, params.getsEcho());
+
+	}
+
+	private static final class TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper extends
+			TestCaseVerifiedRequirementsDataTableModelHelper {
+
+		public TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper(Locale locale,
+				InternationalizationHelper internationalizationHelper) {
 			super(locale, internationalizationHelper);
 		}
 
 		@Override
 		public Map<String, Object> buildItemData(VerifiedRequirement item) {
-			 Map<String, Object> resMap = super.buildItemData(item);
+			Map<String, Object> resMap = super.buildItemData(item);
 			resMap.put("directlyVerified", item.isDirectVerification());
 			return resMap;
-		}		
+		}
 	}
-	
 
-	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions", method=RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
+	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getTestCaseVerifiedRequirementsTableModel(@PathVariable long testCaseId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		PagingAndSorting pagingAndSorting = new DataTableMapperPagingAndSortingAdapter(params, verifiedRequirementVersionsMapper);
+		PagingAndSorting pagingAndSorting = new DataTableMapperPagingAndSortingAdapter(params,
+				verifiedRequirementVersionsMapper);
 
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
 				.findAllDirectlyVerifiedRequirementsByTestCaseId(testCaseId, pagingAndSorting);
 
-		return new TestCaseVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper).buildDataModel(holder, params.getsEcho());
+		return new TestCaseVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper).buildDataModel(
+				holder, params.getsEcho());
 	}
-	
-
 
 	/**
 	 * gets the table model for step's verified requirement versions.
 	 * 
-	 * @param params: the {@link DataTableDrawParameters}
-	 * @param testStepId : the id of the concerned {@link TestStep}
+	 * @param params
+	 *            : the {@link DataTableDrawParameters}
+	 * @param testStepId
+	 *            : the id of the concerned {@link TestStep}
 	 * @return a {@link DataTableModel} for the table of verified {@link RequirementVersion}
 	 */
-	@RequestMapping(value="/test-steps/{testStepId}/verified-requirement-versions", method=RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
+	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
-	public DataTableModel getStepVerifiedRequirementTableModel(DataTableDrawParameters params, @PathVariable long testStepId){
-		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, verifiedRequirementVersionsMapper, SortedAttributeSource.SINGLE_ENTITY);
+	public DataTableModel getTestStepVerifiedRequirementTableModel(DataTableDrawParameters params,
+			@PathVariable long testStepId) {
+		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, verifiedRequirementVersionsMapper);
 		Locale locale = LocaleContextHolder.getLocale();
-		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService.findAllDirectlyVerifiedRequirementsByTestStepId(testStepId, paging);;
-		return new TestStepVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper, testStepId).buildDataModel(holder, params.getsEcho());
+		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
+				.findAllDirectlyVerifiedRequirementsByTestStepId(testStepId, paging);
+		;
+		return new TestStepVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper, testStepId)
+				.buildDataModel(holder, params.getsEcho());
 	}
-	
+
 	private static class VerifiedRequirementsDataTableModelHelper extends DataTableModelHelper<VerifiedRequirement> {
 		private InternationalizationHelper internationalizationHelper;
 		private Locale locale;
-		private VerifiedRequirementsDataTableModelHelper(Locale locale, InternationalizationHelper internationalizationHelper){
+
+		private VerifiedRequirementsDataTableModelHelper(Locale locale,
+				InternationalizationHelper internationalizationHelper) {
 			this.locale = locale;
 			this.internationalizationHelper = internationalizationHelper;
 		}
-		
+
 		@Override
 		public Map<String, Object> buildItemData(VerifiedRequirement item) {
 			Map<String, Object> res = new HashMap<String, Object>();
@@ -281,48 +289,56 @@ public class VerifiedRequirementsManagerController {
 			res.put("project", item.getProject().getName());
 			res.put("reference", item.getReference());
 			res.put("versionNumber", item.getVersionNumber());
-			res.put("criticality", internationalizationHelper.getMessage(item.getCriticality().getI18nKey(), null, locale));
+			res.put("criticality",
+					internationalizationHelper.getMessage(item.getCriticality().getI18nKey(), null, locale));
 			res.put("category", internationalizationHelper.getMessage(item.getCategory().getI18nKey(), null, locale));
-			res.put("status", item.getStatus().toString());			
+			res.put("status", item.getStatus().toString());
 			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;
 		}
 	}
-	
-	private static class TestCaseVerifiedRequirementsDataTableModelHelper extends VerifiedRequirementsDataTableModelHelper{
-		
-		private TestCaseVerifiedRequirementsDataTableModelHelper(Locale locale, InternationalizationHelper internationalizationHelper){
+
+	private static class TestCaseVerifiedRequirementsDataTableModelHelper extends
+			VerifiedRequirementsDataTableModelHelper {
+
+		private TestCaseVerifiedRequirementsDataTableModelHelper(Locale locale,
+				InternationalizationHelper internationalizationHelper) {
 			super(locale, internationalizationHelper);
 		}
-		
+
 		@Override
 		public Map<String, Object> buildItemData(VerifiedRequirement item) {
 			Map<String, Object> res = super.buildItemData(item);
 			res.put("verifyingSteps", getVerifyingSteps(item));
 			return res;
 		}
+
 		private String getVerifyingSteps(VerifiedRequirement item) {
 			String result = "";
 			Set<ActionTestStep> steps = item.getVerifyingSteps();
-			if(!steps.isEmpty()){
-				if(steps.size() == 1){
+			if (!steps.isEmpty()) {
+				if (steps.size() == 1) {
 					ActionTestStep step = steps.iterator().next();
-					result = "<span class='verifyingStep' dataId='"+step.getId()+"'>"+step.getIndex()+1+"</span>";
-				}else{
+					result = "<span class='verifyingStep' dataId='" + step.getId() + "'>" + step.getIndex() + 1
+							+ "</span>";
+				} else {
 					result = "&#42;";
 				}
 			}
 			return result;
 		}
 	}
-	
-	private static final class TestStepVerifiedRequirementsDataTableModelHelper extends VerifiedRequirementsDataTableModelHelper{
+
+	private static final class TestStepVerifiedRequirementsDataTableModelHelper extends
+			VerifiedRequirementsDataTableModelHelper {
 		private long stepId;
-		private TestStepVerifiedRequirementsDataTableModelHelper(Locale locale, InternationalizationHelper internationalizationHelper, long stepId){
+
+		private TestStepVerifiedRequirementsDataTableModelHelper(Locale locale,
+				InternationalizationHelper internationalizationHelper, long stepId) {
 			super(locale, internationalizationHelper);
 			this.stepId = stepId;
 		}
-		
+
 		@Override
 		public Map<String, Object> buildItemData(VerifiedRequirement item) {
 			Map<String, Object> res = super.buildItemData(item);
@@ -331,17 +347,15 @@ public class VerifiedRequirementsManagerController {
 			return res;
 		}
 
-		
 	}
-	
+
 	private DatatableMapper<String> verifiedRequirementVersionsMapper = new NameBasedMapper(7)
-	.mapAttribute(RequirementVersion.class, "id", String.class, "entity-id")
-	.mapAttribute(RequirementVersion.class, "name", String.class, "name")
-	.mapAttribute(Project.class, "name", String.class, "project")
-	.mapAttribute(RequirementVersion.class, "reference", String.class, "reference")
-	.mapAttribute(RequirementVersion.class, "versionNumber", String.class, "versionNumber")
-	.mapAttribute(RequirementVersion.class, "criticality", String.class, "criticality")
-	.mapAttribute(RequirementVersion.class, "category", String.class, "category");
-	
-	
+			.mapAttribute(RequirementVersion.class, "id", String.class, "entity-id")
+			.mapAttribute(RequirementVersion.class, "name", String.class, "name")
+			.mapAttribute(Project.class, "name", String.class, "project")
+			.mapAttribute(RequirementVersion.class, "reference", String.class, "reference")
+			.mapAttribute(RequirementVersion.class, "versionNumber", String.class, "versionNumber")
+			.mapAttribute(RequirementVersion.class, "criticality", String.class, "criticality")
+			.mapAttribute(RequirementVersion.class, "category", String.class, "category");
+
 }
