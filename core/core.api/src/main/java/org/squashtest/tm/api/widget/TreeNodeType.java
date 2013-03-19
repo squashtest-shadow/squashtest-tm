@@ -32,5 +32,6 @@ public enum TreeNodeType {
 	FOLDER,
 	CAMPAIGN,
 	TEST_CASE,
-	REQUIREMENT
+	REQUIREMENT,
+	ITERATION
 }
