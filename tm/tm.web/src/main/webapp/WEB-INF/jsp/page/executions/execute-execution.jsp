@@ -81,6 +81,10 @@
 				<s:param name="stepId" value="${executionStep.id}" />
 			</s:url>
 			
+			<s:url var="executeInfos" value="${ currentStepUrl }{stepIndex}">
+				<s:param name="stepIndex" value="${executionStep.executionStepOrder}" />
+			</s:url>
+			
 
 			<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
 		</head>
@@ -107,7 +111,7 @@
 			
 				function refreshExecStepInfos(){
 					refreshParent();
-					$("#execution-information-fragment").load("${executeThis}/general");
+					$("#execution-information-fragment").load("${executeInfos}/general");
 				}
 			
 				function testComplete() {	
