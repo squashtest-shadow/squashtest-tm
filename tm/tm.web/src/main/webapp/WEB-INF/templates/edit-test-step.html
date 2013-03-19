@@ -214,7 +214,7 @@
                   </div>
                   <div class="display-table-row" th:if="${testStepView.callStep}">
                     <label for="test-step-called-test-case" th:text="#{label.calledTestCase}">Called test case</label>
-                    <a id="test-step-called-test-case" class="display-table-cell" th:href="@{/test-cases/} + ${testStepView.testCase.id}" href="http://localhost:8080/squash/test-cases/1" th:text="${testStepView.callStep.calledTestCase.reference}+'-'+${testStepView.callStep.calledTestCase.name}">that one</a>
+                    <a id="test-step-called-test-case" class="display-table-cell" th:href="@{/test-cases/} + ${testStepView.testCase.id}+'/info'" href="http://localhost:8080/squash/test-cases/1" th:text="${testStepView.callStep.calledTestCase.reference}+'-'+${testStepView.callStep.calledTestCase.name}">that one</a>
                   </div>
                   </div>
                 </div>
