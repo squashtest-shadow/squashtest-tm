@@ -739,5 +739,7 @@ predefined for future evolutions :
  * various icons
  ****************************************/
 .ui-icon-wizard {
-	background: url("../images/icon_wizard.gif") no-repeat;
+	background-image: url("../images/icon_wizard.gif") !important;
+	background-repeat: no-repeat;
+	background-size: 16px 16px;
 }
