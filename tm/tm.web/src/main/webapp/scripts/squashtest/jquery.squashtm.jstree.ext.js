@@ -942,13 +942,22 @@ squashtm.tree = squashtm.tree || {};
 			
 				var url = $(moveObject.o).treeNode().getMoveUrl();
 
-						moveNode(data, url).fail(
-								function(jqXHR) {														
-											try {squashtm.notification.handleJsonResponseError(jqXHR).done(function(){data.inst.refresh();});}
-											catch(e){data.inst.refresh();}
-											});
+				moveNode(data, url).fail(
+					function(jqXHR) {														
+						try {
+							squashtm.notification.handleJsonResponseError(jqXHR)
+							.done(function(){
+								$.jstree.rollback(data.rlbk);
+							});
+						}
+						catch(e){
+							$.jstree.rollback(data.rlbk);
+						}
+				});
 			
 			}
+	
+			
 			var container = this.get_container();
 
 			this.eventHandler = new TreeEventHandler({
@@ -1072,7 +1081,7 @@ squashtm.tree = squashtm.tree || {};
 											.done(function() {
 												doDnDMoveNodes(moveObject, data);
 											}).fail(function(){
-												data.inst.refresh();
+												$.jstree.rollback(data.rlbk);
 											});
 									}else{
 										doDnDMoveNodes(moveObject, data);
@@ -1080,7 +1089,9 @@ squashtm.tree = squashtm.tree || {};
 											
 								} else {
 									$.squash.openMessage('', self._get_settings().workspace_tree.cannotMoveMessage)
-											.done(data.inst.refresh);
+											.done(function(){
+												$.jstree.rollback(data.rlbk);
+											});
 								}
 							}
 						}
