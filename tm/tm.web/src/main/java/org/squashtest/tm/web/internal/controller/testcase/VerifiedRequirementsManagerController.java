@@ -319,7 +319,7 @@ public class VerifiedRequirementsManagerController {
 			if (!steps.isEmpty()) {
 				if (steps.size() == 1) {
 					ActionTestStep step = steps.iterator().next();
-					result = "<span class='verifyingStep' dataId='" + step.getId() + "'>" + step.getIndex() + 1
+					result = "<span class='verifyingStep' dataId='" + step.getId() + "'>" + (step.getIndex() + 1)
 							+ "</span>";
 				} else {
 					result = "&#42;";
