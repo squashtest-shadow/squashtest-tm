@@ -47,4 +47,5 @@ public interface TestCaseFinder extends CustomTestCaseFinder {
 	 */
 	@PostFilter("hasPermission(filterObject , 'READ') or hasRole('ROLE_ADMIN')")
 	List<TestCase> findAllByIds(@NotNull Collection<Long> ids);
+
 }

@@ -26,10 +26,13 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +54,7 @@ import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
@@ -70,6 +74,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestCaseDao testCaseDao;
+	
+	@Inject
+	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
+	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
 
 	@Inject
 	private ActionTestStepDao actionStepDao;
@@ -369,6 +377,16 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			}
 
 		}
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.testcase.CustomTestCaseFinder#findAllByAncestorIds(java.util.List)
+	 */
+	@Override
+	@PostFilter("hasPermission(filterObject , 'READ') or hasRole('ROLE_ADMIN')")
+	public List<TestCase> findAllByAncestorIds(Collection<Long> folderIds) {
+		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIds(folderIds);
+		return new TestCaseNodeWalker().walk(nodes);
 	}
 
 	

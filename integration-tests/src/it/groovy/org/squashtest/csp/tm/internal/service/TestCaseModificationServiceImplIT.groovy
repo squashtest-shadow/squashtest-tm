@@ -77,8 +77,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	}
 
 
-
-
 	def "should add a test step to test case"(){
 		given :
 		ActionTestStep step = new ActionTestStep(action: "action", expectedResult: "result")
@@ -239,7 +237,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def list = service.findStepsByTestCaseId(testCaseId)
 
 
-
 		then :
 		list[1].id == tstep3.id
 		list[2].id == tstep2.id
@@ -259,7 +256,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		service.changeTestStepPosition(testCaseId, tstep3.id, 1)
 
 		def list = service.findStepsByTestCaseId(testCaseId)
-
 
 
 		then :
@@ -345,8 +341,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	}
 
 
-
-
 	def "should initialize a test case with his test steps"(){
 
 		given :
@@ -364,8 +358,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		when :
 
 		def obj = service.findTestCaseWithSteps (tc.id)
-
-
 
 
 		then :
@@ -433,5 +425,21 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		
 		then:
 		res*.getId() == [10L, 30L]
+	}
+
+	@DataSet("TestCaseModificationServiceImplIT.should find test cases.xml")
+	def "should find all test cases by ancestor ids"(){
+		when :
+		def res = service.findAllByAncestorIds(ancestors)
+		
+		then:
+		res*.getId() == expected
+		
+		where: 
+		ancestors | expected 
+		[10L]     | [10L]
+		[50L]     | [30L]
+		[40L]     | [20L, 30L]
+		[20L, 40L]     | [20L, 30L]
 	}
 }

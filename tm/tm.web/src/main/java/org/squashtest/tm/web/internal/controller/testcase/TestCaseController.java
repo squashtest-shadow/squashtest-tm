@@ -21,6 +21,7 @@
 
 package org.squashtest.tm.web.internal.controller.testcase;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -52,15 +53,42 @@ public class TestCaseController {
 
 	/**
 	 * Fetches and returns a list of json test cases from their ids
-	 * @param testCaseIds non null list of test cases ids.
+	 * 
+	 * @param testCaseIds
+	 *            non null list of test cases ids.
 	 * @return
 	 * 
 	 */
-	@RequestMapping(method = RequestMethod.GET, params = "ids[]", headers="Accept=application/json, text/javascript")
+	@RequestMapping(method = RequestMethod.GET, params = "ids[]", headers = "Accept=application/json, text/javascript")
 	public @ResponseBody
 	List<JsonTestCase> getJsonTestCases(@RequestParam("ids[]") List<Long> testCaseIds, Locale locale) {
 		List<TestCase> testCases = finder.findAllByIds(testCaseIds);
 		return builder.get().locale(locale).entities(testCases).toJson();
 	}
 
+	/**
+	 * Fetches and returns a list of json test cases from their containers
+	 * 
+	 * @param foldersIds
+	 *            non null list of folders ids.
+	 * @return
+	 * 
+	 */
+	@RequestMapping(method = RequestMethod.GET, params = "folderIds[]", headers = "Accept=application/json, text/javascript")
+	public @ResponseBody
+	List<JsonTestCase> getJsonTestCasesFromFolders(@RequestParam("folderIds[]") List<Long> folderIds, Locale locale) {
+		List<TestCase> testCases = finder.findAllByAncestorIds(folderIds);
+		return builder.get().locale(locale).entities(testCases).toJson();
+	}
+
+	@RequestMapping(method = RequestMethod.GET, params = { "ids[]", "folderIds[]" }, headers = "Accept=application/json, text/javascript")
+	public @ResponseBody
+	List<JsonTestCase> getJsonTestCases(@RequestParam("ids[]") List<Long> testCaseIds,
+			@RequestParam("folderIds[]") List<Long> folderIds, Locale locale) {
+		List<Long> consolidatedIds = new ArrayList<Long>(testCaseIds.size() + folderIds.size());
+		consolidatedIds.addAll(testCaseIds);
+		consolidatedIds.addAll(folderIds);
+		List<TestCase> testCases = finder.findAllByAncestorIds(consolidatedIds);
+		return builder.get().locale(locale).entities(testCases).toJson();
+	}
 }
