@@ -171,6 +171,18 @@
 			</div>
 		</div>
 		
+		<c:if test="${not empty denormalizedFieldValues }">
+		<span id="denormalized-fields">
+		<comp:toggle-panel id="denormalized-fields-panel" titleKey="title.step.fields" isContextual="true" open="false">
+		<jsp:attribute name="body"> 
+				<div class="display-table">
+					<comp:denormalized-field-values-list denormalizedFieldValues="${ denormalizedFieldValues }" />
+				</div>
+			</jsp:attribute>
+		</comp:toggle-panel>
+		</span>
+		</c:if>		
+		
 		<comp:toggle-panel id="execution-action-panel" titleKey="execute.panel.action.title" isContextual="true" open="true">
 			<jsp:attribute name="body">
 				<div id="execution-action" class="load-links-right-frame">${executionStep.action}</div>
