@@ -171,7 +171,7 @@
 							</label>
 							<div class="display-table-cell" id="project-description">${ adminproject.project.description }</div>
 						</div>
-<%-- 	Waiting for implementation of deactivation	<comp:project-active adminproject="${ adminproject }"/> --%>
+						<%-- 	Waiting for implementation of deactivation	<comp:project-active adminproject="${ adminproject }"/> --%>
 					</div>
 				</jsp:attribute>
 			</comp:toggle-panel>
@@ -201,26 +201,28 @@
 										</c:otherwise>
 									</c:choose>
 								</div>
-									<script> function projectBugTrackerCallBack (value, settings) {
-										squashtm.bugtrackerMenu.updateBugTrackerMenu(false);
-										<c:if test="${ ! adminproject.template }">
-											  if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
-									        	 $("#project-bugtracker-project-name-row").show();
-													refreshBugTrackerProjectName();
-										     }else{
-									        	 $("#project-bugtracker-project-name-row").hide();								        	 
-									         }
-									      </c:if>
-								         }</script>
+								<script>
+								function projectBugTrackerCallBack (value, settings) {
+									squashtm.bugtrackerMenu.updateBugTrackerMenu(false);
+									<c:if test="${ ! adminproject.template }">
+										  if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
+								        	 $("#project-bugtracker-project-name-row").show();
+												refreshBugTrackerProjectName();
+									     }else{
+								        	 $("#project-bugtracker-project-name-row").hide();								        	 
+								         }
+								      </c:if>
+								}
+								</script>
 								<comp:select-jeditable componentId="project-bugtracker"
 										jsonData="${bugtrackersList}" targetUrl="${projectUrl}"
 										submitCallback="projectBugTrackerCallBack" />
 								
 							</div>
 						</div>
-						<c:if test="${ ! adminproject.template }"><div class="display-table-row"
-								id="project-bugtracker-project-name-row"
-								<c:if test="${ !adminproject.project.bugtrackerConnected }">class="not-displayed"</c:if>>
+						<c:if test="${ ! adminproject.template }">
+						<div class="display-table-row"	id="project-bugtracker-project-name-row"
+								<c:if test="${ !adminproject.project.bugtrackerConnected }">style="display:none"</c:if>>
 							<label for="project-bugtracker-project-name"
 									class="display-table-cell">
 								<f:message key="project.bugtracker.project.name.label" />
@@ -234,7 +236,8 @@
 									<c:otherwise>${ adminproject.project.name }</c:otherwise>
 								</c:choose>
 							</div>
-						</div></c:if>
+						</div>
+						</c:if>
 					</div>
 				</jsp:attribute>
 			</comp:toggle-panel>
