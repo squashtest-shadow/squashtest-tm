@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.web.internal.controller;
 
+/**
+ * Constants to be used as request param names.
+ * 
+ */
 public final class RequestParams {
 
 	private RequestParams() {
@@ -27,4 +31,15 @@ public final class RequestParams {
 	}
 
 	public static final String S_ECHO_PARAM = "sEcho";
+
+	/**
+	 * multiple folder ids post param
+	 */
+	public static final String FOLDER_IDS = "folderIds[]";
+	
+	/**
+	 * multiple ids post param
+	 */
+	public static final String IDS = "ids[]";
+
 }

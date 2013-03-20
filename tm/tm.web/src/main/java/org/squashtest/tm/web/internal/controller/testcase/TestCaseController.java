@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
 import org.squashtest.tm.web.internal.model.json.JsonTestCaseBuilder;
 
@@ -45,6 +46,16 @@ import org.squashtest.tm.web.internal.model.json.JsonTestCaseBuilder;
 @RequestMapping("/test-cases")
 @Controller
 public class TestCaseController {
+	/**
+	 * ids post param
+	 */
+	private static final String IDS = RequestParams.IDS;
+
+	/**
+	 * folder ids post param
+	 */
+	private static final String FOLDER_IDS = RequestParams.FOLDER_IDS;
+
 	@Inject
 	private Provider<JsonTestCaseBuilder> builder;
 
@@ -59,9 +70,9 @@ public class TestCaseController {
 	 * @return
 	 * 
 	 */
-	@RequestMapping(method = RequestMethod.GET, params = "ids[]", headers = "Accept=application/json, text/javascript")
+	@RequestMapping(method = RequestMethod.GET, params = IDS, headers = "Accept=application/json, text/javascript")
 	public @ResponseBody
-	List<JsonTestCase> getJsonTestCases(@RequestParam("ids[]") List<Long> testCaseIds, Locale locale) {
+	List<JsonTestCase> getJsonTestCases(@RequestParam(IDS) List<Long> testCaseIds, Locale locale) {
 		List<TestCase> testCases = finder.findAllByIds(testCaseIds);
 		return builder.get().locale(locale).entities(testCases).toJson();
 	}
@@ -74,21 +85,32 @@ public class TestCaseController {
 	 * @return
 	 * 
 	 */
-	@RequestMapping(method = RequestMethod.GET, params = "folderIds[]", headers = "Accept=application/json, text/javascript")
+	@RequestMapping(method = RequestMethod.GET, params = FOLDER_IDS, headers = "Accept=application/json, text/javascript")
 	public @ResponseBody
-	List<JsonTestCase> getJsonTestCasesFromFolders(@RequestParam("folderIds[]") List<Long> folderIds, Locale locale) {
+	List<JsonTestCase> getJsonTestCasesFromFolders(@RequestParam(FOLDER_IDS) List<Long> folderIds, Locale locale) {
+		return buildJsonTestCasesFromAncestorIds(folderIds, locale);
+	}
+
+	private List<JsonTestCase> buildJsonTestCasesFromAncestorIds(List<Long> folderIds, Locale locale) {
 		List<TestCase> testCases = finder.findAllByAncestorIds(folderIds);
 		return builder.get().locale(locale).entities(testCases).toJson();
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = { "ids[]", "folderIds[]" }, headers = "Accept=application/json, text/javascript")
+	/**
+	 * Fetches and returns a list of json test cases from their ids and containers
+	 * 
+	 * @param testCaseIds
+	 * @param folderIds
+	 * @param locale
+	 * @return
+	 */
+	@RequestMapping(method = RequestMethod.GET, params = { IDS, FOLDER_IDS }, headers = "Accept=application/json, text/javascript")
 	public @ResponseBody
-	List<JsonTestCase> getJsonTestCases(@RequestParam("ids[]") List<Long> testCaseIds,
-			@RequestParam("folderIds[]") List<Long> folderIds, Locale locale) {
+	List<JsonTestCase> getJsonTestCases(@RequestParam(IDS) List<Long> testCaseIds,
+			@RequestParam(FOLDER_IDS) List<Long> folderIds, Locale locale) {
 		List<Long> consolidatedIds = new ArrayList<Long>(testCaseIds.size() + folderIds.size());
 		consolidatedIds.addAll(testCaseIds);
 		consolidatedIds.addAll(folderIds);
-		List<TestCase> testCases = finder.findAllByAncestorIds(consolidatedIds);
-		return builder.get().locale(locale).entities(testCases).toJson();
+		return buildJsonTestCasesFromAncestorIds(consolidatedIds, locale);
 	}
 }

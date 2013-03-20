@@ -516,9 +516,9 @@ public class IterationModificationController {
 		return result;
 	}
 
-	@RequestMapping(value = "/test-suites/delete", method = RequestMethod.POST, params = { "ids[]" })
+	@RequestMapping(value = "/test-suites/delete", method = RequestMethod.POST, params = { RequestParams.IDS })
 	public @ResponseBody
-	List<Long> removeTestSuites(@RequestParam("ids[]") List<Long> ids) {
+	List<Long> removeTestSuites(@RequestParam(RequestParams.IDS) List<Long> ids) {
 		List<Long> deletedIds = iterationModService.removeTestSuites(ids);
 		LOGGER.debug("removal of " + deletedIds.size() + " Test Suites");
 		return deletedIds;

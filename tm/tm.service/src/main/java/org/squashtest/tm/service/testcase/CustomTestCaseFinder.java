@@ -26,7 +26,6 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.security.access.prepost.PostFilter;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
