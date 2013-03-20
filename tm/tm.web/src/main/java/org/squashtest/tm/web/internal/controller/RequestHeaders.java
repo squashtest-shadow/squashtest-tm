@@ -18,33 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.tm.web.internal.controller;
 
 /**
- * Constants to be used as request param names.
+ * @author Gregory Fouquet
  * 
  */
-public final class RequestParams {
-
-	private RequestParams() {
+public final class RequestHeaders {
+	private RequestHeaders() {
 		super();
 	}
 
-	public static final String S_ECHO_PARAM = "sEcho";
-
 	/**
-	 * multiple folder ids post param
+	 * clients either accepts application/json or text/javascript content type
 	 */
-	public static final String FOLDER_IDS = "folderIds[]";
-
-	/**
-	 * multiple ids post param
-	 */
-	public static final String IDS = "ids[]";
-
-	/**
-	 * Dry-run some app-state-modifying request
-	 */
-	public static final String DRY_RUN = "dry-run";
-
+	public static final String CONTENT_JSON = "Accept=application/json, text/javascript";
 }

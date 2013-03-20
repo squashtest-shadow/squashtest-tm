@@ -25,6 +25,8 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +39,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.exception.execution.TestPlanTerminatedOrNoStepsException;
 import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
+import org.squashtest.tm.web.internal.controller.RequestHeaders;
 
 /**
  * 
@@ -46,121 +49,136 @@ import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
 @Controller
 @RequestMapping("/test-suites/{testSuiteId}/test-plan")
 public class TestSuiteExecutionRunnerController {
-	
-	//private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteExecutionController.class);
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteExecutionRunnerController.class);
 
 	private static class RequestMappings {
 		public static final String INIT_EXECUTION_RUNNER = "/execution/runner";
-		public static final String TEST_EXECUTION_BEFORE_INIT = "/execution/test-runner";
 		public static final String INIT_NEXT_EXECUTION_RUNNER = "/{testPlanItemId}/next-execution/runner";
-        public static final String DELETE_ALL_EXECUTIONS = "/executions";
+		public static final String DELETE_ALL_EXECUTIONS = "/executions";
 	}
-
-
 
 	public static final String TEST_PLAN_ITEM_URL_PATTERN = "/test-suites/{0,number,####}/test-plan/{1,number,####}";
 	public static final String CURRENT_STEP_URL_PATTERN = "/test-suites/{0,number,####}/test-plan/{1,number,####}/executions/{2,number,####}/steps/index/";
-	
-	
+
 	private static final String OPTIMIZED_RUNNER_MAIN = "page/ieo/ieo-main-page";
 
-	
 	private TestSuiteExecutionProcessingService testSuiteExecutionProcessingService;
-	
 
 	@Inject
 	private ExecutionRunnerControllerHelper helper;
-	
 
 	@ServiceReference
-	public void setTestSuiteExecutionProcessingService(TestSuiteExecutionProcessingService testSuiteExecutionProcessingService) {
+	public void setTestSuiteExecutionProcessingService(
+			TestSuiteExecutionProcessingService testSuiteExecutionProcessingService) {
 		this.testSuiteExecutionProcessingService = testSuiteExecutionProcessingService;
 	}
-
 
 	public TestSuiteExecutionRunnerController() {
 		super();
 	}
-	
 
-	
-	
-	//redirects to something served by ExecutionProcessingController
-	private String getRedirectExecURL(long executionId, boolean optimized, boolean suitemode){
-		return "/execute/"+executionId+"?optimized="+optimized+"&suitemode="+suitemode;
+	// redirects to something served by ExecutionProcessingController
+	private String getRedirectExecURL(long executionId, boolean optimized, boolean suitemode) {
+		return "/execute/" + executionId + "?optimized=" + optimized + "&suitemode=" + suitemode;
 	}
-	
-	
-	@RequestMapping(value = RequestMappings.TEST_EXECUTION_BEFORE_INIT, method = RequestMethod.POST, params = {"mode=start-resume"})
-	public @ResponseBody void testStartResumeExecutionInClassicRunner(@PathVariable long testSuiteId) {
-		try{
+
+	/**
+	 * TODO remplacer le test de l'url par un param "dry-run"
+	 * 
+	 * @param testSuiteId
+	 */
+	@RequestMapping(value = "/execution/test-runner", method = RequestMethod.POST, params = { "mode=start-resume" })
+	public @ResponseBody
+	void testStartResumeExecutionInClassicRunner(@PathVariable long testSuiteId) {
+		try {
 			testSuiteExecutionProcessingService.startResume(testSuiteId);
-		}
-		catch(TestPlanItemNotExecutableException e){
+		} catch (TestPlanItemNotExecutableException e) {
 			throw new TestPlanTerminatedOrNoStepsException();
 		}
 	}
-	
-	
 
-	
-	@RequestMapping(value = RequestMappings.INIT_EXECUTION_RUNNER, params = {"optimized=false", "suitemode=true"})
+	@RequestMapping(value = RequestMappings.INIT_EXECUTION_RUNNER, params = { "optimized=false" })
 	public String startResumeExecutionInClassicRunner(@PathVariable long testSuiteId, Model model) {
-		
+		LOGGER.trace("startResumeExecutionInClassicRunner({})", testSuiteId);
+
 		Execution execution = testSuiteExecutionProcessingService.startResume(testSuiteId);
 
-		return "redirect:"+ getRedirectExecURL(execution.getId(), false, true);
-		
+		return "redirect:" + getRedirectExecURL(execution.getId(), false, true);
+
 	}
-	
-	
-	@RequestMapping(value = RequestMappings.INIT_EXECUTION_RUNNER, params = {"optimized=true", "suitemode=true"})
-	public String startResumeExecutionInClassicRunner(@PathVariable long testSuiteId, Model model, HttpServletRequest context, Locale locale) {
-		
+
+	@RequestMapping(value = RequestMappings.INIT_EXECUTION_RUNNER, params = { "optimized=true" })
+	public String startResumeExecutionInOptimizedRunner(@PathVariable long testSuiteId, Model model,
+			HttpServletRequest context, Locale locale) {
+		LOGGER.trace("startResumeExecutionInOptimizedRunner({})", testSuiteId);
+
 		RunnerState state = helper.initOptimizedTestSuiteContext(testSuiteId, context.getContextPath(), locale);
 		model.addAttribute("config", state);
-		
-		return OPTIMIZED_RUNNER_MAIN;
-		
-		
-	}
-	
-	
 
-	//that method will create if necessary the next execution then redirect a view to its runner
-	@RequestMapping(value = RequestMappings.INIT_NEXT_EXECUTION_RUNNER, params={"optimized", "suitemode"}, headers = "Accept=text/html")
-	public String moveToNextTestCase(@PathVariable("testPlanItemId") long testPlanItemId,
-									 @PathVariable("testSuiteId") long testSuiteId, 
-									 @RequestParam("optimized") boolean optimized,
-									 @RequestParam("suitemode") boolean suitemode){
-		
-		Execution exec = testSuiteExecutionProcessingService.startResumeNextExecution(testSuiteId, testPlanItemId);
-		
-		return "redirect:"+ getRedirectExecURL(exec.getId(), optimized, suitemode);
-		
+		return OPTIMIZED_RUNNER_MAIN;
+
 	}
-		
-	
-	//that method will create if necessary the next execution then return the RunnerState that corresponds to it
-	//note that most of the time it corresponds to an ieo working in test suite mode so we skip 'optimized' and 'suitemode' parameters here
-	@RequestMapping(value = RequestMappings.INIT_NEXT_EXECUTION_RUNNER, params={"optimized", "suitemode"}, headers = "Accept=application/json")
+
+	/**
+	 * That method will create if necessary the next execution then redirect a view to its runner. It matches the
+	 * "next test case" button in classic mode
+	 * 
+	 * \o/ There should be a params = "optimized" in this method's {@link RequestMapping}. We omitted it because
+	 * "params" has more precedence than "headers", which leads to requests meant to be processed by
+	 * {@link #getNextTestCaseRunnerState(long, long, HttpServletRequest, Locale)} being routed to this method instead.
+	 * 
+	 * @param testPlanItemId
+	 * @param testSuiteId
+	 * @param optimized
+	 * @param suitemode
+	 * @return
+	 */
+	@RequestMapping(value = RequestMappings.INIT_NEXT_EXECUTION_RUNNER)
+	public String moveToNextTestCase(@PathVariable("testPlanItemId") long testPlanItemId,
+			@PathVariable("testSuiteId") long testSuiteId, @RequestParam("optimized") boolean optimized,
+			@RequestParam("suitemode") boolean suitemode) {
+		LOGGER.trace("moveToNextTestCase({}, {})", testPlanItemId, testSuiteId);
+
+		Execution exec = testSuiteExecutionProcessingService.startResumeNextExecution(testSuiteId, testPlanItemId);
+
+		return "redirect:" + getRedirectExecURL(exec.getId(), optimized, suitemode);
+
+	}
+
+	/**
+	 * That method will create if necessary the next execution then return the RunnerState that corresponds to it note
+	 * that most of the time it corresponds to an ieo working in test suite mode so we skip 'optimized' and 'suitemode'
+	 * parameters here
+	 * 
+	 * It is called by the optimized runner only
+	 * 
+	 * headers parameter is required otherwise there is an ambiguity with
+	 * {@link #moveToNextTestCase(long, long, boolean, boolean)}
+	 * 
+	 * @param testPlanItemId
+	 * @param testSuiteId
+	 * @param context
+	 * @param locale
+	 * @return
+	 */
+	@RequestMapping(value = RequestMappings.INIT_NEXT_EXECUTION_RUNNER, headers = RequestHeaders.CONTENT_JSON)
 	@ResponseBody
 	public RunnerState getNextTestCaseRunnerState(@PathVariable("testPlanItemId") long testPlanItemId,
-									 @PathVariable("testSuiteId") long testSuiteId, 
-									 HttpServletRequest context,
-									 Locale locale){
-		
-		RunnerState state = helper.createNextOptimizedTestSuiteContext(testSuiteId, testPlanItemId, context.getContextPath(), locale);
-		
-		return state;
-		
-	}	
-	
-	
-    @RequestMapping(value = RequestMappings.DELETE_ALL_EXECUTIONS, method = RequestMethod.DELETE )
-    public @ResponseBody void deleteAllExecutions(@PathVariable long testSuiteId) {
-             testSuiteExecutionProcessingService.deleteAllExecutions(testSuiteId);
-    }
+			@PathVariable("testSuiteId") long testSuiteId, HttpServletRequest context, Locale locale) {
+		LOGGER.trace("getNextTestCaseRunnerState({}, {})", testPlanItemId, testSuiteId);
 
-	
+		RunnerState state = helper.createNextOptimizedTestSuiteContext(testSuiteId, testPlanItemId,
+				context.getContextPath(), locale);
+
+		return state;
+
+	}
+
+	@RequestMapping(value = RequestMappings.DELETE_ALL_EXECUTIONS, method = RequestMethod.DELETE)
+	public @ResponseBody
+	void deleteAllExecutions(@PathVariable long testSuiteId) {
+		testSuiteExecutionProcessingService.deleteAllExecutions(testSuiteId);
+	}
+
 }
