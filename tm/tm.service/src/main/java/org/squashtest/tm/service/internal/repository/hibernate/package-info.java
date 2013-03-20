@@ -89,7 +89,7 @@
 		@NamedQuery(name = "iteration.countStatuses", query = "select tp.executionStatus, count(tp) from Iteration it join it.testPlans tp where it.id = :iterationId group by tp.executionStatus"),
 		@NamedQuery(name = "iteration.findIterationByName", query = "from Iteration i where i.name like :iterationName order by i.name asc"),
 		@NamedQuery(name = "iteration.findTestPlanFiltered", query = "select tp from Iteration it join it.testPlans tp where it.id = :iterationId and index(tp) between :firstIndex and :lastIndex order by index(tp)"),
-		@NamedQuery(name = "iteration.findAllTestSuites", query = "select ts from TestSuite ts join ts.iteration i where i.id = :iterationId order by ts.name asc"),
+		@NamedQuery(name = "iteration.findAllTestSuites", query = "select ts from TestSuite ts fetch all properties join ts.iteration i where i.id = :iterationId order by ts.name asc "),
 		@NamedQuery(name = "iteration.findAllExecutions", query = "select exec from Iteration it join it.testPlans tp join tp.executions exec where it.id = :iterationId"),
 		@NamedQuery(name = "iteration.findAllExecutionsByTestCase", query = "select exec from Iteration it join it.testPlans tp join tp.executions exec where it.id = :iterationId and exec.referencedTestCase.id = :testCaseId"),
 		@NamedQuery(name = "iteration.findAllExecutionsByTestPlan", query = "select exec from Iteration it join it.testPlans tp join tp.executions exec where it.id = :iterationId and tp.id = :testPlanId"),
