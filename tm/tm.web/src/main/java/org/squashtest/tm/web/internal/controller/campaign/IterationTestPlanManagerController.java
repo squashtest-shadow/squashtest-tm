@@ -60,6 +60,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableStatus;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
+import org.squashtest.tm.web.internal.model.json.JsonTestCase;
+import org.squashtest.tm.web.internal.model.json.JsonTestCaseBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
@@ -135,6 +137,21 @@ public class IterationTestPlanManagerController {
 			@PathVariable long iterationId) {
 		iterationTestPlanManagerService.addTestCasesToIteration(testCasesIds,
 				iterationId);
+	}
+	
+	@Inject
+	private Provider<JsonTestCaseBuilder> builder;
+	/**
+	 * Fetches and returns a list of json test cases from an iteration id
+	 * @param iterationId : the id of an {@link Iteration}
+	 * @return the list of {@link JsonTestCase} representing the iteration's planned test-cases
+	 * 
+	 */
+	@RequestMapping(value = "/iterations/{iterationId}/test-cases", method = RequestMethod.GET, headers="Accept=application/json, text/javascript")
+	public @ResponseBody
+	List<JsonTestCase> getJsonTestCases(@PathVariable long iterationId, Locale locale) {
+		List<TestCase> testCases = iterationFinder.findPlannedTestCases(iterationId);
+		return builder.get().locale(locale).entities(testCases).toJson();
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/non-belonging-test-cases", method = RequestMethod.POST, params = TESTPLANS_IDS_REQUEST_PARAM)
