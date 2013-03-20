@@ -36,7 +36,7 @@ import org.squashtest.tm.service.internal.repository.RequirementDao;
 public aspect RequirementCreationEventPublisherAspect extends AbstractRequirementEventPublisher {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementCreationEventPublisherAspect.class);
 	
-	private pointcut executeRequirementPersister(RequirementDao dao, Requirement requirement) : execution(public void org.squashtest.tm.service.internal.repository.EntityDao+.persist(Object)) && target(dao) && args(requirement);
+	private pointcut executeRequirementPersister(RequirementDao dao, Requirement requirement) : execution(public void org.squashtest.tm.service.internal.repository.GenericDao+.persist(Object)) && target(dao) && args(requirement);
 	private pointcut callRequirementVersionPersister(Session session, RequirementVersion requirementVersion) : call(public void org.hibernate.Session+.persist(Object)) && target(session) && args(requirementVersion);
 	
 	after(RequirementDao dao, Requirement requirement) : executeRequirementPersister(dao, requirement) {
