@@ -88,7 +88,7 @@ define(["jquery", "jquery.squash.datatables"], function($){
 			}
 	
 			if (! isFilled("#new-user-confirmpass")){
-				$("span.error-message.confirmpass-error").html(lang.missingConfirmationPassword);
+				$("span.error-message.confirmpass-error").html(lang.missingConfirmPassword);
 				confirmPassOkay=false;
 			}				
 			
