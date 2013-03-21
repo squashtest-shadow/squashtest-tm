@@ -431,8 +431,19 @@
 			ALTER TABLE EXECUTION_STEP MODIFY COMMENT longtext;
 			ALTER TABLE ACTION_TEST_STEP MODIFY ACTION longtext;
 			ALTER TABLE ACTION_TEST_STEP MODIFY EXPECTED_RESULT longtext;		
-		</sql>
+		</sql>	
+	</changeSet>
 	
+	<changeSet id="tm-1.5.0.00-issue-1895" author="mpagnon">
+		<comment>Set all prerequisite that were null to ""</comment>
+		<dropDefaultValue tableName="TEST_CASE" columnName="PREREQUISITE" />
+		<addDefaultValue tableName="TEST_CASE" columnName="PREREQUISITE" defaultValue=""/>
+		<sql>
+			UPDATE TEST_CASE
+			SET PREREQUISITE= ''
+			WHERE PREREQUISITE is null
+		</sql>
+		<addNotNullConstraint tableName="TEST_CASE" columnName="PREREQUISITE" columnDataType="CLOB"/>
 	</changeSet>
 </databaseChangeLog>
  

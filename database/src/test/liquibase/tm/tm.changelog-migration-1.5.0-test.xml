@@ -278,4 +278,13 @@
 	<changeSet id="tm-1.5.0-feat-2003-test-02" author="mpagnon">
 		<dropTable tableName="TEMP_VERIFIED"/>
 	</changeSet>
+	<changeSet id="tm-1.5.0-issue-1895-test-01" author="mpagnon">
+	<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from TEST_CASE
+				where PREREQUISITE is null
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
 </databaseChangeLog>
