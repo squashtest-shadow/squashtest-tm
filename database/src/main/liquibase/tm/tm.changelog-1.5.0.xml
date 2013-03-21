@@ -99,8 +99,7 @@
 			</column>
 			<column name="CFV_ID" type="BIGINT"
 				remarks="the custom field value where the denormalized field is copied from">
-				<constraints nullable="true" foreignKeyName="fk_dfv_cfv_binding"
-					references="CUSTOM_FIELD_VALUE(CFV_ID)" />
+				<constraints nullable="true"/>
 			</column>
 			<column name="CODE" defaultValue="" type="VARCHAR(30)">
 				<constraints nullable="false" />
@@ -125,6 +124,13 @@
 			<column name="VALUE" type="VARCHAR(255)"
 				remarks="the value of that particular custom field value" />
 		</createTable>
+		
+		
+		<addForeignKeyConstraint constraintName="fk_dfv_cfv_binding"
+			onDelete="CASCADE" referencedTableName="CUSTOM_FIELD_VALUE"
+			referencedColumnNames="CFV_ID" baseTableName="DENORMALIZED_FIELD_VALUE"
+			baseColumnNames="CFV_ID"/>
+			
 	</changeSet>
 
 	<changeSet id="tm-1.5.0.00-feat-1850.02" author="mpagnon">
@@ -138,10 +144,10 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-
+			
 		<addForeignKeyConstraint constraintName="fk_dfb_render_loc_dfb"
-			onDelete="CASCADE" referencedTableName="DENORMALIZED_FIELD_VALUE"
-			referencedColumnNames="DFV_ID" baseTableName="DENORMALIZED_FIELD_RENDERING_LOCATION"
+			onDelete="CASCADE" referencedTableName="CUSTOM_FIELD_VALUE"
+			referencedColumnNames="CFV_ID" baseTableName="DENORMALIZED_FIELD_RENDERING_LOCATION"
 			baseColumnNames="DFV_ID" />
 
 	</changeSet>
