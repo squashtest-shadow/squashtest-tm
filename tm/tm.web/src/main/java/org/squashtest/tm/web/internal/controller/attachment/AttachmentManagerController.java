@@ -22,8 +22,10 @@ package org.squashtest.tm.web.internal.controller.attachment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,7 +52,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 @Controller
 @RequestMapping("/attach-list/{attachListId}/attachments")
@@ -60,7 +63,6 @@ public class AttachmentManagerController {
 	
 	private AttachmentManagerService attachmentManagerService;
 	
-	private static final int INT_MAX_FILENAME_LENGTH = 50;
 	private static final String ATTACH_LIST_ID = "attachListId";
 	
 
@@ -68,11 +70,11 @@ public class AttachmentManagerController {
 	private MessageSource messageSource;
 	
 
-	private final DatatableMapper attachmentMapper = new IndexBasedMapper(7)
-														 .mapAttribute(Attachment.class, "id", Long.class, 0)
-														 .mapAttribute(Attachment.class, "name", String.class, 3)
-														 .mapAttribute(Attachment.class, "size", Long.class, 4)
-														 .mapAttribute(Attachment.class, "addedOn", Date.class, 5);
+	private final DatatableMapper attachmentMapper = new NameBasedMapper()
+														 .mapAttribute(Attachment.class, "id", Long.class, "item-id")
+														 .mapAttribute(Attachment.class, "name", String.class, "hyphenated-name")
+														 .mapAttribute(Attachment.class, "size", Long.class, "size")
+														 .mapAttribute(Attachment.class, "addedOn", Date.class, "added-on");
 
 	@ServiceReference
 	public void setAttachmentManagerService(AttachmentManagerService attachmentManagerService) {
@@ -100,44 +102,26 @@ public class AttachmentManagerController {
 		FilteredCollectionHolder<List<Attachment>> attachList = attachmentManagerService.findFilteredAttachmentForList(attachListId, filter);
 
 		
-		return new DataTableModelHelper<Attachment>() {
-			@Override
-			public Object[] buildItemData(Attachment attachment) {
-				return new Object[] { attachment.getId(),
-						getCurrentIndex(), //datatable select handle
-						attachment.getName(), //that one will be hidden
-						hyphenateFilename(attachment.getName()), //that other one will be styled at display
-						attachment.getFormattedSize(locale),
-						localizedDate(attachment.getAddedOn(),locale),
-						""	//datatable remove row
-						};
-			}
-		}.buildDataModel(attachList, filter.getFirstItemIndex()+1, params.getsEcho());
+		DataTableModelHelper helper = new  AttachmentsTableModelHelper(messageSource);
+		return helper.buildDataModel(attachList, filter.getFirstItemIndex()+1, params.getsEcho());
 
 	}
 	
 	
 	/* ******************************* delete *********************************** */
 	
-	@RequestMapping(value="/{attachmentId}", method=RequestMethod.DELETE)
+	@RequestMapping(value="/{attachmentIds}", method=RequestMethod.DELETE)
 	@ResponseBody
-	public void removeAttachment(@PathVariable(ATTACH_LIST_ID) long attachListId, @PathVariable("attachmentId") long attachmentId ){
-		attachmentManagerService.removeAttachmentFromList(attachListId, attachmentId);
-	}
-
-	@RequestMapping(value = "/removed-attachments", params = "attachmentIds[]", method = RequestMethod.POST)
-	@ResponseBody
-	public void deleteListAttachments(@PathVariable long attachListId, @RequestParam("attachmentIds[]") List<Long> attachmentIds) {
-		attachmentManagerService.removeListOfAttachments(attachListId, attachmentIds);
-		LOGGER.trace("AttachmentController : removed a list of attachments");
+	public void removeAttachment(@PathVariable long attachListId, @PathVariable("attachmentIds") List<Long> ids){
+		attachmentManagerService.removeListOfAttachments(attachListId, ids);
 	}
 
 	/* ******************************* modify *********************************** */
 	
 	
-	@RequestMapping(value="/{attachmentId}",method = RequestMethod.POST, params = { "newName" })
+	@RequestMapping(value="/{attachmentId}/name",method = RequestMethod.POST, params = { "name" })
 	@ResponseBody
-	public Object renameAttachment(HttpServletResponse response, @PathVariable long attachmentId, @RequestParam String newName) {
+	public Object renameAttachment(HttpServletResponse response, @PathVariable long attachmentId, @RequestParam("name") String newName) {
 
 		attachmentManagerService.renameAttachment(attachmentId, newName);
 		LOGGER.info("AttachmentController : renaming attachment " + attachmentId + " as " + newName);
@@ -148,20 +132,50 @@ public class AttachmentManagerController {
 	
 	/* ******************************* private stuffs ***************************** */
 
+	
+	private static class AttachmentsTableModelHelper extends DataTableModelHelper<Attachment>{
 
-	private String hyphenateFilename(String longName){
-		String newName = longName;
-		if (longName.length() > INT_MAX_FILENAME_LENGTH){
-			newName = longName.substring(0, (INT_MAX_FILENAME_LENGTH-3))+"...";
+		private MessageSource messageSource;
+		private Locale locale;
+		private static final int INT_MAX_FILENAME_LENGTH = 50;
+		
+		public AttachmentsTableModelHelper(MessageSource messageSource){
+			this.messageSource = messageSource;
+			this.locale = LocaleContextHolder.getLocale();
 		}
-		return newName;
-	}
+		
+		@Override
+		protected Map<Object, Object> buildItemData(Attachment item) {
+			
+			Map<Object, Object> result = new HashMap<Object, Object>();
+			
+			result.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
+			result.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+			result.put("name", item.getName());
+			result.put("hyphenated-name", hyphenateFilename(item.getName()));
+			result.put("size",item.getFormattedSize(locale));
+			result.put("added-on",localizedDate(item.getAddedOn(),locale));
+			result.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
+			
+			return result;
+		}
+		
+		private String localizedDate(Date date, Locale locale){
+			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
 
-	private String localizedDate(Date date, Locale locale){
-		String format = messageSource.getMessage("squashtm.dateformat", null, locale);
+			return new SimpleDateFormat(format).format(date);
 
-		return new SimpleDateFormat(format).format(date);
+		}
+		
+		private String hyphenateFilename(String longName){
+			String newName = longName;
+			if (longName.length() > INT_MAX_FILENAME_LENGTH){
+				newName = longName.substring(0, (INT_MAX_FILENAME_LENGTH-3))+"...";
+			}
+			return newName;
+		}
 
+		
 	}
 	
 	private CollectionSorting createPaging(final DataTableDrawParameters params, final DatatableMapper mapper) {

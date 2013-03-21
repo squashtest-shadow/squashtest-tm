@@ -550,6 +550,25 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 		return ids;
 	}
+	
+	/**
+	 * @returns the data model corresponding to the given id
+	 * 
+	 */
+	
+	function _getDataById(id){
+		var entityIdKey = this.squashSettings.dataKeys.entityId;
+		var found = $.grep( this.fnGetData(), function(entry){
+			return entry[entityIdKey] == id;
+		});
+		if (found.length>0){
+			return found[0];
+		}
+		else{
+			return null;
+		}
+	}
+	
 	function _getSelectedRows(){
 		var rows = this.fnGetNodes();	
 		return $(rows).not(function(index, row) {
@@ -557,6 +576,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		});
 
 	}
+	
+	
+	
 	function _addHLinkToCellText(td, url, isOpenInTab) {
 
 		var link = $('<a></a>');
@@ -1177,6 +1199,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		this.restoreTableSelection = _restoreTableSelection;
 		this.getSelectedIds = _getSelectedIds;
 		this.getSelectedRows = _getSelectedRows;
+		this.getDataById = _getDataById;
 		this.addHLinkToCellText = _addHLinkToCellText;
 		this.selectRows = _selectRows;
 		this.deselectRows = _deselectRows;
@@ -1322,6 +1345,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 				'sClass' : 		function(conf, assignation) { conf.current.sClass += ' '+assignation.value;},
 				'map' : 		function(conf, assignation) { conf.current.mDataProp = assignation.value;},
 				'select' : 		function(conf, assignation) { conf.current.sWidth = '2em'; conf.current.sClass += ' select-handle centered';},
+				'center' : 		function(conf, assignation) { conf.current.sClass +=' centered';},
 				'target' :		function(conf, assignation) { conf.current.aTargets = [assignation.value];},
 				'delete-button':function(conf, assignation) { 
 									var cls = 'delete-'+Math.random().toString().substr(2,3);

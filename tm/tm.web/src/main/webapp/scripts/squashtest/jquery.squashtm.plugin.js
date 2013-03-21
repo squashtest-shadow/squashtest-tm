@@ -147,7 +147,7 @@ var squashtm = squashtm || {};
 	 * settings definition : see squashtm.popup(settings) function
 	 */
 	$.fn.createPopup = function (settings) {
-		var target = $(this);
+		var target = this;
 		target.addClass("popup-dialog");
 
 		var defaults = {
@@ -261,7 +261,7 @@ var squashtm = squashtm || {};
 			});
 		}
 		
-		return self;
+		return this;
 	};
 	
 	/*
