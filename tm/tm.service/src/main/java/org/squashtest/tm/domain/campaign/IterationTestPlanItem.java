@@ -359,9 +359,29 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 	public boolean isTestCaseDeleted() {
 		return getReferencedTestCase() == null;
 	}
+	
+	/**
+	 * Checks id equality in case the comparison fails because in some cases,
+	 * hibernate proxies make the comparison fail.
+	 */
+	private boolean isSameIteration(Iteration thisIteration, Iteration thatIteration){
+		
+		boolean result = false;
 
+		if(thisIteration.equals(thatIteration)){
+			result = true;
+		} else {
+			result = false;
+			if(thisIteration.getId() != null && thatIteration.getId() != null){
+				result = thisIteration.getId().equals(thatIteration.getId());
+			} 
+		}
+		
+		return result;
+	}
+	
 	public void addTestSuite(@NotNull TestSuite suite) {
-		if (!this.iteration.equals(suite.getIteration())) {
+		if (!isSameIteration(this.iteration, suite.getIteration())) {
 			throw new IllegalArgumentException("Item[" + id + "] dont belong to Iteration["
 					+ suite.getIteration().getId() + "], it cannot be bound to TestSuite['" + suite.getName() + "']");
 		}
