@@ -146,8 +146,8 @@
 		</createTable>
 			
 		<addForeignKeyConstraint constraintName="fk_dfb_render_loc_dfb"
-			onDelete="CASCADE" referencedTableName="CUSTOM_FIELD_VALUE"
-			referencedColumnNames="CFV_ID" baseTableName="DENORMALIZED_FIELD_RENDERING_LOCATION"
+			onDelete="CASCADE" referencedTableName="DENORMALIZED_FIELD_VALUE"
+			referencedColumnNames="DFV_ID" baseTableName="DENORMALIZED_FIELD_RENDERING_LOCATION"
 			baseColumnNames="DFV_ID" />
 
 	</changeSet>
