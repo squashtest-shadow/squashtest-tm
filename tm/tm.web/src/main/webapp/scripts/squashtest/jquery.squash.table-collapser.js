@@ -21,19 +21,22 @@
 
 define(["jquery"], function(){
 	
-	function TableCollapserEvent() {
+	function TableCollapserEvent(collapser) {
+		
+		this.collapser = collapser;
 		this.eventHandlers = [];
+		
+		this.addHandler = function (eventHandler) {
+			this.eventHandlers.push(eventHandler);
+		};
+		
+		this.execute = function () {
+			for (var i = 0; i < this.eventHandlers.length; i++) {
+				this.eventHandlers[i](this.collapser);
+			}
+		};
+	
 	}
-
-	TableCollapserEvent.prototype.addHandler = function (eventHandler) {
-		this.eventHandlers.push(eventHandler);
-	};
-
-	TableCollapserEvent.prototype.execute = function (args) {
-		for (var i = 0; i < this.eventHandlers.length; i++) {
-			this.eventHandlers[i](args);
-		}
-	};
 	
 	
 	function makeDefaultCellSelector(columnsP){
@@ -68,19 +71,25 @@ define(["jquery"], function(){
 		this.isOpen = true;
 		var rows = [];
 		this.collapsibleCells = [];
-		this.onClose = new TableCollapserEvent();
-		this.onOpen = new TableCollapserEvent();
+		this.closeHandlers = new TableCollapserEvent(this);
+		this.openHandlers = new TableCollapserEvent(this);
 
-		var setCellsData = $.proxy(function(){
-			var rows = dataTableP.children('tbody').children('tr');
+		
+		// ************** private functions ****************
+		
+		var indexCollapsibleCells = $.proxy(function(){
 			
+			this.collapsibleCells = [];
+			
+			var rows = dataTableP.children('tbody').children('tr');
 			
 			for (var j = 0; j < rows.length; j++) {
 				var cells = cellSelector(rows[j]);
-				this.collapsibleCells.push.apply(this.collapsibleCells, cells);
-			}
-			
-			
+				this.collapsibleCells = this.collapsibleCells.concat(cells);
+			}	
+		}, this);
+		
+		var setCellsData = $.proxy(function(){
 			for (var k = 0; k < this.collapsibleCells.length; k++) {
 				var cell = $(this.collapsibleCells[k]);
 				cell.data('completeHtml', cell.html());
@@ -93,27 +102,26 @@ define(["jquery"], function(){
 			}
 
 		}, this);
+
 		
-		var bindClick = $.proxy(function() {
-			if (this.isOpen) {
-				this.closeAll();
-			} else {
-				this.openAll();
-			}
-		}, this);
+		// ****************** public functions ************
 		
-		this.bindButtonToTable = function (collapseButton) {
-			collapseButton.click(bindClick);
-			
+		this.onOpen = function(handler){
+			this.openHandlers.addHandler(handler);
 		};
 		
+		this.onClose = function(handler){
+			this.closeHandlers.addHandler(handler);
+		}
+		
 		this.closeAll = function () {
+			indexCollapsibleCells();
 			setCellsData();
 			for (var k = 0; k < this.collapsibleCells.length; k++) {
 				var cell = $(this.collapsibleCells[k]);
 				cell.html(cell.data('truncatedHtml'));
 			}
-			this.onClose.execute();
+			this.closeHandlers.execute();
 			this.isOpen = false;
 
 		};
@@ -123,15 +131,19 @@ define(["jquery"], function(){
 				var cell = $(this.collapsibleCells[k]);
 				cell.html(cell.data('completeHtml'));
 			}
-			this.onOpen.execute();
+			this.openHandlers.execute();
 			this.isOpen = true;
 		};
-		
+
 		this.refreshTable = function () {
+			indexCollapsibleCells();
 			if (!this.isOpen) {
 				this.closeAll();
 			}
 		};
+		
+		//init
+		indexCollapsibleCells();
 	}	
 });
 

@@ -191,8 +191,8 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[1], 'mDataProp':'step-index', 'sClass':'select-handle centered '+dragClass, 'sWidth':'2em'},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[2], 'mDataProp':'attach-list-id', 'sClass':'centered has-attachment-cell', 'sWidth':'2em'},
 			  {'bVisible':true,  'bSortable':false, 'aTargets':[3], 'mDataProp':'empty-requirements-holder', 'sClass':'centered requirements-button', 'sWidth':'2em'},
-			  {'bVisible':true,  'bSortable':false, 'aTargets':[4], 'mDataProp':'step-action', 'sClass':'called-tc-cell '+editActionClass},
-			  {'bVisible':true,  'bSortable':false, 'aTargets':[5], 'mDataProp':'step-result', 'sClass': editResultClass},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[4], 'mDataProp':'step-action', 'sClass':'called-tc-cell collapsible '+editActionClass},
+			  {'bVisible':true,  'bSortable':false, 'aTargets':[5], 'mDataProp':'step-result', 'sClass': 'collapsible '+editResultClass},
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[6], 'mDataProp':'nb-attachments'},
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[7], 'mDataProp':'step-type'},
 			  {'bVisible':false, 'bSortable':false, 'aTargets':[8], 'mDataProp':'called-tc-id'},
@@ -552,9 +552,9 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 	
 	
 	// ************************************* table collapser code ****************************
-	
-	function oneCellIsInEditingState(){
-		var collapsibleCells = this.collapsibleCells;
+
+	function isEditing(collapser){
+		var collapsibleCells = collapser.collapsibleCells;
 		for(var k = 0; k < collapsibleCells.length ; k++){
 			if(collapsibleCells[k].editing){
 				return  true;
@@ -563,28 +563,30 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		return false;
 	}
 	
-	function collapseCloseHandle(){
-		var collapsibleCells = $(this.collapsibleCells);
-		collapsibleCells.editable('disable');
-		collapsibleCells.removeClass('editable');
-		collapsibleCells.bind("click", this.openAllAndSetEditing);
-	}
 	
-	function openAllAndSetEditing(eventObject){
-		this.openAll();
-		setTimeout(function() {
+
+	
+	function makeCollapsibleCellsHandlers(collapser ){
+		
+		var openEdit = $.proxy(function (eventObject){
+			this.openAll();
 			$(eventObject.target).click();
-		 }, 500);
+		}, collapser);
+		
+		return {
+			open : function(collapser){
+				var collapsibleCells = $(collapser.collapsibleCells);
+				collapsibleCells.addClass('editable').off("click", openEdit).editable('enable');			
+			},
+			
+			close : function(collapser){
+				var collapsibleCells = $(collapser.collapsibleCells);
+				collapsibleCells.removeClass('editable').on("click", openEdit).editable('disable');			
+			}
+		};
 	}
-	
-	function collapseOpenHandle(){
-		var collapsibleCells = $(this.collapsibleCells);
-		collapsibleCells.editable('enable');
-		collapsibleCells.addClass('editable');
-		collapsibleCells.unbind("click", this.openAllAndSetEditing);
-	}
-	
-	function initCollapser(language, urls){
+
+	function initCollapser(language, urls, isWritable){
 		
 
 		decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomout");
@@ -592,43 +594,61 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		var collapser;
 		
 		var collapseButton = $('#collapse-steps-button');		
+		
 		var table = $('#test-steps-table');
 		
-		//enrich the collapser prototype with more methods
-		
-		TableCollapser.prototype.oneCellIsInEditingState = oneCellIsInEditingState;
-		TableCollapser.prototype.collapseCloseHandle = collapseCloseHandle;
-		TableCollapser.prototype.openAllAndSetEditing = openAllAndSetEditing;
-		TableCollapser.prototype.collapseOpenHandle = collapseOpenHandle;
+
 		
 		//begin
 		
 		var cellSelector = function(row){
-			return $(row).find('td.rich-edit-action').add('td.rich-edit-result', row).get();
+			return $(row).find('td.collapsible').not('called-tc-id').get();
 		}
 		
-		collapser = new TableCollapser(table, cellSelector); 
-		collapser.onClose.addHandler(collapser.collapseCloseHandle);
-		collapser.onOpen.addHandler(collapser.collapseOpenHandle);	
+		collapser = new TableCollapser(table, cellSelector); 		
+		
+		
+		//button handlers 
+		
+		var buttonOpenHandler = $.proxy(function(){
+			this.button('option', 'icons', { primary : 'ui-icon-zoomout'} );
+			this.attr('title', language.btnCollapse);
+			this.button('option', 'label', language.btnCollapse);		
+		}, collapseButton);
+		
+		var buttonCloseHandler = $.proxy(function(){
+			$this.button('option', 'icons', { primary : 'ui-icon-zoomin'} );
+			$this.attr('title', language.btnExpand);
+			$this.button('option', 'label', language.btnExpand);			
+			
+		}, collapseButton);
+		
+		collapser.onOpen(buttonOpenHandler);
+		collapser.onClose(buttonCloseHandler);
+		
+		
+		//writable handlers
+		
+		if (isWritable){
+			var handlers = makeCollapsibleCellsHandlers(collapser);
+			collapser.onOpen(handlers.open);	
+			collapser.onClose(handlers.close);
+		}
 		
 		collapseButton.click(function(){
+			$this = $(this);
 			if(collapser.isOpen){
-				if(collapser.oneCellIsInEditingState()){
+				if(isEditing(collapser)){
 					$.squash.openMessage(language.infoTitle, language.collapseMessage);
 				}else{
 					collapser.closeAll();
-					decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomin");
-					$("#collapse-steps-button").attr('title', language.btnExpand);
-					$("#collapse-steps-button").button({label: language.btnExpand});
 				}
 			}else{
 				collapser.openAll();
-				decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomout");
-				$("#collapse-steps-button").attr('title', language.btnCollapse);
-				$("#collapse-steps-button").button({label:language.btnCollapse});
 			}
 		});
 		
+
 		//end
 		table.data('collapser', collapser);
 		
@@ -641,17 +661,18 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 
 		var language = settings.language;
 		var urls = makeTableUrls(settings);
+		var permissions = settings.permissions;
 		
 		// the js table
 		initTable(settings);
 		
 		// toolbar 
-		if (settings.permissions.isWritable){
+		if (permissions.isWritable){
 			initTableToolbar(language, urls);
 		}
 		
 		// table collapser		
-		initCollapser(language, urls);
+		initCollapser(language, urls, permissions.isWritable);
 		
 	};
 	
