@@ -32,39 +32,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
-<%-- @params : voir page/attachments/attachment-manager.jsp --%>
-
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/attachment-bloc.js"></script>
+<%-- 
+	@params : voir page/attachments/attachment-manager.jsp 
+--%>
 
 
 <%------------------------------------- URLs --------------------------------------------------------%>
-
-<c:set var="rootUrl" value="attach-list/${attachListId}/attachments" />
-
-<s:url var="prefixedRootUrl" value="/{rootUrl}">
-	<s:param name="rootUrl" value="${rootUrl}"></s:param>
+<s:url var="baseURL" value="/attach-list/{attach-list-id}/attachments" >
+	<s:param name="attach-list-id" value="${attachListId}"/>
 </s:url>
 
-<s:url var="uploadAttachmentUrl" value="/{rootUrl}/upload">
-	<s:param name="rootUrl" value="${rootUrl}"></s:param>
-</s:url>
+<c:set var="uploadAttachmentUrl"  value="${baseURL}/upload"/>
+<c:set var="attachmentDetailsUrl" value="${baseURL}/details"/>
 
-<s:url var="attachmentDetailsUrl" value="/{rootUrl}/details">
-	<s:param name="rootUrl" value="${rootUrl}"></s:param>
-</s:url>
-
-<s:url var="attachmentRemoveUrl" value="/{rootUrl}">
-	<s:param name="rootUrl" value="${rootUrl}"></s:param>
-</s:url>
-
-<s:url var="attachmentRemoveListUrl" value="/{rootUrl}/removed-attachments">
-	<s:param name="rootUrl" value="${rootUrl}"></s:param>
-</s:url>
-
-<s:url var="renameAttachmentUrl" value="/{rootUrl}">
-	<s:param name="rootUrl" value="${rootUrl}"></s:param>
-</s:url>
-
+<c:url var="datatableLanguage" value="/datatables/messages" />
 
 
 <%------------------------------------- /URLs --------------------------------------------------------%>
@@ -73,161 +54,119 @@
 
 <script type="text/javascript">
 
-	//init function
-	$(function() {
-		<%-- single verified requirement removal --%>
-		$('#attachment-detail-table .delete-attachment-button').live('click', function() {
-			$("#delete-attachment-dialog").data('opener', this).dialog('open');
-		});
-		
-		<%-- selected verified requirements removal --%>
-		$( '#delete-all-attachment-button' ).click(function() {
-			deleteSelectedAttachments();
-		});
-		
-		<%-- renaming button--%>
-		
-		$("#rename-attachment-button").click(function(){
-			checkAndOpenRenameDialog();
-		});
-	});
 	
 	function refreshAttachments() {
-		var table = $('#attachment-detail-table').dataTable();
-		saveTableSelection(table, getAttachmentsTableRowId);
-		table.fnDraw(false);
+		$('#attachment-detail-table').squashTable().refresh();
 	}
 	
-	function requirementsTableDrawCallback() {
-		decorateDeleteButtons($('.delete-attachment-button', this));
-		restoreTableSelection(this, getAttachmentsTableRowId);
-	}
-	
-	function getAttachmentsTableRowId(rowData) {
-		return rowData[0];	
-	}
-	
-	function attachmentsTableRowCallback(row, data, displayIndex) {
-		addDeleteButtonToRow(row, getAttachmentsTableRowId(data), 'delete-attachment-button');
-		addClickHandlerToSelectHandle(row, $("#attachment-detail-table"));
-		addHLinkToAttachmentName(row, data);
-		return row;
-	}
-	
-	function parseAttachmentId(element) {
-		var elementId = element.id;
-		return elementId.substr(elementId.indexOf(":") + 1);
-	}
-	
-	function addHLinkToAttachmentName(row, data) {
-		var url= '${prefixedRootUrl}/download/' + getAttachmentsTableRowId(data) ;			
-		addHLinkToCellText($( 'td:eq(1)', row ), url);
-	}	
-
-
-	
-	
+	//init function
 	$(function() {
-		//overload the close handler
-		$("#delete-all-attachment-dialog").bind('dialogclose', function() {
-			var answer = $("#delete-all-attachment-dialog").data("answer");
-			if (answer != "yes") {
-				return;
-			}
-
-			var removeids = $("#delete-all-attachment-dialog").data("IDList");
-
-
-			$.ajax({
-				type : 'POST',
-				data : {
-					attachmentIds : removeids
-				},
-				url : "${attachmentRemoveListUrl}",
-				success : refreshAttachments
-
+				
+		require(["jquery", "jqueryui","jquery.squash.datatables", "jquery.squash.confirmdialog"], function($){
+			
+			// ******** the back button ***************
+			
+			$("#back").button().click(function(){
+				//document.location.href="${referer}";
+				history.back();
 			});
-
 			
-
+			
+			//**********   table init ***********
+			
+			var table = $("#attachment-detail-table").squashTable({}, {});
+	
+			
+			// ************* delete dialog init (if any) **************
+			
+			var deleteDialog = $("#delete-attachment-dialog");
+			
+			deleteDialog.confirmDialog();
+			
+			deleteDialog.on('confirmdialogconfirm', function(){
+					
+					var removedIds = table.getSelectedIds().join(',');
+					var url = "${baseURL}"+"/"+removedIds;
+					
+					$.ajax({
+						type : 'DELETE',
+						url : url
+					}).done(function(){
+						deleteDialog.confirmDialog('close');
+						refreshAttachments();		
+					});
+				});
+			
+			//************* rename dialog init (if any) ********
+			
+			var renameDialog = $("#rename-attachment-dialog");
+			
+			renameDialog.confirmDialog();
+			
+			renameDialog.on("confirmdialogconfirm", function(){
+				
+				var id = renameDialog.data("attachmentId");
+				var url = "${baseURL}/"+id+"/name";
+				var newName = $("#rename-attachment-input").val();
+				
+				$.ajax({
+					url : url,
+					type : 'POST',
+					data : { name : newName }
+				})
+				.done(function(){
+					renameDialog.confirmDialog('close');
+					refreshAttachments();
+				});
+			});
+			
+	
+			
+			//************ buttons ***********
+			
+			var deleteButton = $("#delete-attachment-button");			
+			var renameButton = $("#rename-attachment-button");
+			var uploadButton = $("#add-attachment-button");
+			
+			deleteButton.squashButton();
+			renameButton.squashButton();
+			uploadButton.squashButton();
+			
+			deleteButton.click(function() {
+				deleteDialog.confirmDialog('open');
+			});
+	
+			renameButton.click(function(){				
+				var selectedIds = table.getSelectedIds();
+				if (selectedIds.length!=1){
+					<f:message var="renameAttachImpossible" key="message.CanRenameOnlyOneAttachment"/>
+					$.squash.openMessage("<f:message key='popup.title.error' />", "${renameAttachImpossible}");
+					event.stopPropagation();
+					return false;
+				}
+				else{
+					var id = selectedIds[0];
+					var name = table.getDataById(id).name;
+					
+					var index = name.lastIndexOf(".");
+					$("#rename-attachment-input").val(name.substring(0,index));
+					renameDialog.data("attachmentId", id);
+					renameDialog.confirmDialog('open');	
+				}			
+			});			
+			
+			//upload button is special, see the tag included at the very bottom
 		});
-
-		$("#delete-all-attachment-button").click(function() {
-			deleteSelectedAttachments();
-			return false;
-		});
-
+		
 	});
-	
-	function deleteSelectedAttachments(){
 		
-		var datatable = $("#attachment-detail-table").dataTable();
-		
-		var selectedIDs = getIdsOfSelectedTableRows(datatable,getAttachmentsTableRowId);
-		
-		if (selectedIDs.length==0) return false;
-		
-		var removedStepIds = new Array();
-		
-		$("#delete-all-attachment-dialog").data("answer","no");
-		$("#delete-all-attachment-dialog").data("IDList",selectedIDs);
-			
-		$("#delete-all-attachment-dialog").dialog("open");
-	
-}
-	
-	function getAttachmentShortName(name){
-		var index = name.lastIndexOf(".");
-		return name.substring(0,index);
-	}
-	
-	function getAttachmentNameById(zeId){
-		var datatable = $("#attachment-detail-table").dataTable();		
-		var rows = datatable.fnGetNodes();
-		if (rows.length==0) return false;
-		
-		var name;
-		
-		$(rows).each(function(index, row) {
-			var data = datatable.fnGetData(row);
-			if (data[0]==zeId){
-				name=data[2];
-			}
-		});
-		
-		return name;
-	}
-	
-	function checkAndOpenRenameDialog(){
-		var datatable = $("#attachment-detail-table").dataTable();		
-		var selectedIDs = getIdsOfSelectedTableRows(datatable,getAttachmentsTableRowId);		
-		
-		if (selectedIDs.length!=1){
-			<f:message var="renameAttachImpossible" key="message.CanRenameOnlyOneAttachment"/>
-			$.squash.openMessage("<f:message key='popup.title.error' />", "${renameAttachImpossible}");
-		}		
-		else{
-			var zeId = selectedIDs[0];
-			$("#rename-attachment-dialog").data("attachId",zeId);
-			$("#rename-attachment-dialog").dialog("open");
-		}
-	}
-	
 
 </script>
 
 <%------------------------------------- /scripts ------------------------------------------------------%>
 
-<script type="text/javascript">
-	$(function(){
-		$("#back").button().click(function(){
-			//document.location.href="${referer}";
-			history.back();
-		});
-	});
-</script>
 
-<div id="test-case-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+<div id="attachment-manager-header" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	<div style="float: left; height: 100%;">
 	<h2><span><f:message key="label.CurrentAttachments"/>&nbsp;:&nbsp;</span><a id="test-case-name" href="${ testCaseUrl }/info"><c:out
 		value="${ testCase.name }" escapeXml="true" /></a></h2>
@@ -240,147 +179,80 @@
 	
 </div>
 
-<comp:add-attachment-popup url="${uploadAttachmentUrl}" paramName="attachment" openedBy="add-attachment" submitCallback="refreshAttachments" />
 
 
 
 <div class="fragment-body">
 
-<div id="test-case-toolbar" class="toolbar-class ui-corner-all">
-	<div class="toolbar-information-panel"></div>
-	<div class="toolbar-button-panel">
-		<f:message var="uploadAttachment" key="label.UploadAttachment" />
-		<input id="add-attachment" type="button" value="${uploadAttachment}" class="button"/>
-	</div>
-	<div style="clear: both;"></div>
-</div>
-
-<%------------------------ Deletion dialogs ----------------------------------%>
-
-<%--- the openedBy attribute here is irrelevant and is just a dummy --%>
-<pop:popup id="delete-attachment-dialog" titleKey="title.RemoveAttachment" isContextual="true"
-	openedBy="delete-attachment-button">
-	<jsp:attribute name="buttons">
-		<f:message var="label" key="label.Confirm" />
-
-		'${ label }': function() {
-		
-			var bCaller = $.data(this,"opener");
-			var url = "${ attachmentRemoveUrl }/" + parseAttachmentId(bCaller); 
-			<jq:ajaxcall url="url" dataType='json' httpMethod="DELETE" successHandler="refreshAttachments">					
-			</jq:ajaxcall>					
-		},			
-		<pop:cancel-button />
-	</jsp:attribute>
-	<jsp:attribute name="body">
-		<b><f:message key="message.ConfirmRemoveAttachment" /></b>
-		<br />				
-	</jsp:attribute>
-</pop:popup>
-
-
-<%--- the openedBy attribute here is irrelevant and is just a dummy --%>
-<pop:popup id="delete-all-attachment-dialog" titleKey="title.RemoveAttachment" isContextual="true"
-	openedBy="delete-attachment-button">
-	<jsp:attribute name="buttons">
-			<f:message var="label" key="label.Yes" />
-				'${ label }' : function(){
-						$("#delete-all-attachment-dialog").data("answer","yes");
-						$("#delete-all-attachment-dialog").dialog("close");
-				},
-				
-				<pop:cancel-button />
-						
-	</jsp:attribute>
-	<jsp:attribute name="body">
-		<b><f:message key="message.ConfirmRemoveAttachments" /></b>
-		<br />				
-	</jsp:attribute>
-</pop:popup>
-
-
-<%-- 
-we need a hook before opening the dialog, hence we do not bind rename-attachment-button directly here.
-check the init function in the javascript above to find the real binding.
- --%>
-<comp:popup id="rename-attachment-dialog" titleKey="title.RenameAttachment" isContextual="true"
-	openedBy="delete-attachment-button">
-	<jsp:attribute name="buttons">
-	
-		<f:message var="label" key="label.Rename" />
-		'${ label }': function() {
-			var id = $("#rename-attachment-dialog").data("attachId");
-			var url = "${ renameAttachmentUrl }/"+id;
-			<jq:ajaxcall url="url" dataType="json" httpMethod="POST" useData="true" successHandler="refreshAttachments">					
-				<jq:params-bindings newName="#rename-attachment-input" />
-			</jq:ajaxcall>					
-		},			
-		<pop:cancel-button />
-	</jsp:attribute>
-	<jsp:body>
-		<script type="text/javascript">
-	$("#rename-attachment-dialog").bind("dialogopen", function(event, ui) {
-		var id = $("#rename-attachment-dialog").data("attachId");
-		var name = getAttachmentNameById(id);
-		var rename = getAttachmentShortName(name);
-		$("#rename-attachment-input").val(rename);
-
-	});
-	</script>
-		<label><f:message key="dialog.rename.label" /></label>
-		<input type="text" id="rename-attachment-input" size="40"/>
-		<br />
-		<comp:error-message forField="shortName" />	
-
-	</jsp:body>
-</comp:popup>
-<%---------------------------------Attachments table ------------------------------------------------%>
-
-
-<comp:toggle-panel id="attachment-table-panel" titleKey="label.CurrentAttachments" isContextual="true" open="true" >
-	<jsp:attribute name="panelButtons">	
-		<f:message var="renameAttachment" key="label.Rename" />
-		<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="button" />
-		<f:message var="removeAttachment" key="label.Remove" />
-		<input type="button" value="${removeAttachment}" id="delete-all-attachment-button" class="button" />
-	</jsp:attribute>
-	<jsp:attribute name="body">
-		<comp:decorate-ajax-table url="${attachmentDetailsUrl}" tableId="attachment-detail-table" paginate="true">
-			<jsp:attribute name="rowCallback">attachmentsTableRowCallback</jsp:attribute>	
-			<jsp:attribute name="drawCallback">requirementsTableDrawCallback</jsp:attribute>			
-			<jsp:attribute name="columnDefs">
-				<dt:column-definition targets="0" visible="false" />
-				<dt:column-definition targets="1" visible="true" cssClass="select-handle centered" width="2em"/>
-				<dt:column-definition targets="2" visible="false" />
-			    <dt:column-definition targets="3,4,5" visible="true" cssClass="centered" sortable="true"/>
-				<dt:column-definition targets="6" visible="true" width="2em" lastDef="true" cssClass="centered"/>
-			</jsp:attribute>					
-		</comp:decorate-ajax-table>
-		<table id="attachment-detail-table">
-			<thead>
-				<tr>
-					<th>Id</th>
-					<th>#</th>
-					<th>(notdisplayed)</th>	
-					<th><f:message key="label.Name"/></th>	
-					<th><f:message key="label.SizeMb"/></th>
-					<th><f:message key="label.AddedOn"/></th>
-					<th>&nbsp;</th> 
-				</tr>
-			</thead>
-			<tbody>
-				<%-- Will be populated through ajax --%>
-			</tbody>
-		</table>
-		<div id="attachment-row-buttons" class="not-displayed">
-			<a id="delete-attachment-button"	class="delete-attachment-button">
-			<f:message key="label.Remove" />
-		</a>
+	<div id="test-case-toolbar" class="toolbar-class ui-corner-all">
+		<div class="toolbar-information-panel"></div>
+		<div class="toolbar-button-panel">
+			<f:message var="uploadAttachment" key="label.UploadAttachment" />
+			<input id="add-attachment-button" type="button" value="${uploadAttachment}" class="button"/>
 		</div>
-	</jsp:attribute>
-</comp:toggle-panel>
-
+		<div style="clear: both;"></div>
+	</div>
+	
+	<%---------------------------------Attachments table ------------------------------------------------%>
+	
+	
+	<comp:toggle-panel id="attachment-table-panel" titleKey="label.CurrentAttachments" isContextual="true" open="true" >
+		<jsp:attribute name="panelButtons">	
+			<f:message var="renameAttachment" key="label.Rename" />
+			<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="button" />
+			<f:message var="removeAttachment" key="label.Remove" />
+			<input type="button" value="${removeAttachment}" id="delete-attachment-button" class="button" />
+		</jsp:attribute>
+		<jsp:attribute name="body">
+	
+			<table id="attachment-detail-table" data-def="ajaxsource=${attachmentDetailsUrl}, 
+														  language=${datatableLanguage}, hover, pagesize=10">
+				<thead>
+					<tr>
+						<th data-def="map=entity-index, select, narrow, center">#</th>
+						<th data-def="map=hyphenated-name, sortable, center, link=${baseURL}/download/{entity-id}"><f:message key="label.Name"/></th>	
+						<th data-def="map=size, center, sortable"><f:message key="label.SizeMb"/></th>
+						<th data-def="map=added-on, center, sortable"><f:message key="label.AddedOn"/></th>
+						<th data-def="map=empty-delete-holder, delete-button=#delete-attachment-dialog">&nbsp;</th> 
+					</tr>
+				</thead>
+				<tbody>
+					<%-- Will be populated through ajax --%>
+				</tbody>
+			</table>
+			
+		</jsp:attribute>
+	</comp:toggle-panel>
+	
+	
+	<%-------------------------------- dialogs ----------------------------------%>
+	
+	
+	<f:message var="confirmLabel" key="label.Confirm"/>
+	<f:message var="cancelLabel" key="label.Cancel" />
+	<f:message var="deleteDialogTitle" key="title.RemoveAttachment"/>
+	<div id="delete-attachment-dialog" title="${deleteDialogTitle}">
+		<span style="font-weight:bold"><f:message key="message.ConfirmRemoveAttachments" /></span>
+		<div class="popup-dialog-buttonpane">
+			<input type="button" value="${confirmLabel}"/>
+			<input type="button" value="${cancelLabel}"/>
+		</div>
+	</div>
+	
+	<f:message var="renameDialogTitle" key="title.RenameAttachment" />
+	<div id="rename-attachment-dialog" title="${renameDialogTitle}">
+		<label for="rename-attachment-input"><f:message key="dialog.rename.label" /></label>
+		<input type="text" id="rename-attachment-input" size="50"/>
+		<br />
+		<comp:error-message forField="shortName" />
+		<div class="popup-dialog-buttonpane">
+			<input type="button" value="${confirmLabel}"/>
+			<input type="button" value="${cancelLabel}"/>
+		</div>	
+	</div>
+	
+	
+	<comp:add-attachment-popup url="${uploadAttachmentUrl}" paramName="attachment" openedBy="add-attachment-button" submitCallback="refreshAttachments" />
 
 </div>
 
-<comp:decorate-buttons />
