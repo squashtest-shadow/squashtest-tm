@@ -40,8 +40,8 @@
 	
 	<!-- ============================ test case ======================================================== -->
 	
-	<TEST_CASE TCLN_ID="11" VERSION="1"/>
-	<TEST_CASE TCLN_ID="12" VERSION="1"/>
+	<TEST_CASE PREREQUISITE="" TCLN_ID="11" VERSION="1"/>
+	<TEST_CASE PREREQUISITE="" TCLN_ID="12" VERSION="1"/>
 	
 	<TCLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="11" /> <!--  tcfolder 1 contains tc1 -->
 	<TCLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="12" /> <!--  tcfolder 1 contains t2 -->

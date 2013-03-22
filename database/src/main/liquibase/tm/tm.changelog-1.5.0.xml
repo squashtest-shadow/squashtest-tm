@@ -436,14 +436,12 @@
 	
 	<changeSet id="tm-1.5.0.00-issue-1895" author="mpagnon">
 		<comment>Set all prerequisite that were null to ""</comment>
-		<dropDefaultValue tableName="TEST_CASE" columnName="PREREQUISITE" />
 		<sql>
 			UPDATE TEST_CASE
 			SET PREREQUISITE= ''
 			WHERE PREREQUISITE is null
 		</sql>
 		<addNotNullConstraint tableName="TEST_CASE" columnName="PREREQUISITE" columnDataType="CLOB" />
-		<addDefaultValue tableName="TEST_CASE" columnName="PREREQUISITE" defaultValue="" />
 	</changeSet>
 </databaseChangeLog>
  

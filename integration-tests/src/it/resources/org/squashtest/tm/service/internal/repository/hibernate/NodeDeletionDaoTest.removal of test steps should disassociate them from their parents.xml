@@ -74,8 +74,8 @@
 	
 	<!-- ============================ test case ======================================================== -->
 	
-	<TEST_CASE TCLN_ID="11" VERSION="1" />
-	<TEST_CASE TCLN_ID="12" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="11" VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="12" VERSION="1" />
 	
 	<!-- ============================ tcln_relationship ================================================ -->
 	
