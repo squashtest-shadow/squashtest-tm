@@ -57,13 +57,24 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 						};},
 						
 				squashSettings : function(self){
-					return {
-							buttons : [{ tooltip : VRTS.messages.remove,
+					
+					var settings = {};
+					
+					if (VRTS.linkable){
+						settings.buttons = [
+						   { 
+							    tooltip : VRTS.messages.remove,
 								cssClass : "",
 								tdSelector : "td.delete-button",
 								uiIcon : "ui-icon-minus",
-								onClick : this.removeRowRequirementVersion,
-							}]};},
+								onClick : this.removeRowRequirementVersion
+						   }
+						 ]
+					}	
+					
+					return settings;
+							
+				},
 							
 				configureTable : function() {
 					var self = this;					

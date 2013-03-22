@@ -65,7 +65,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil" , "./Verified
 						}
 						var checked = data["verifiedByStep"] == "false" ? false : data["verifiedByStep"];
 						var checkbox = $("<input/>", { 'data-version-id' : id  , 'type':'checkbox', 'name':'verified-by-step-checkbox', 'checked':checked});
-						checkbox.on("click", sendLinkedToStep);
+						if (VRTS.linkable){
+							checkbox.on("click", sendLinkedToStep);
+						}else{
+							checkbox.enable(false);
+						}	
 						$( 'td.link-checkbox', row ).append(checkbox);
 						
 					},

@@ -101,7 +101,7 @@
 					<thead>
 						<tr>
 							<th th:attr="data-def='select, map=entity-index'" >#</th>
-							<th th:attr="data-def='sClass=link-checkbox, map=empty-link-checkbox'">&nbsp;</th>
+							<th th:attr="data-def='sClass=link-checkbox, map=empty-link-checkbox, center'">&nbsp;</th>
 							<th th:attr="data-def='sortable, map=project'" th:text="#{label.project}" >Project</th>
 							<th th:attr="data-def='sortable, map=entity-id'" th:text="#{report.requirementexport.id}">Id</th>
 							<th th:attr="data-def='sortable, map=reference'" th:text="#{requirement.reference.label}">Reference</th>
@@ -109,7 +109,7 @@
 							<th th:attr="data-def='sortable, sClass=versionNumber, map=versionNumber'" th:text="#{requirement-version.version-number.label}">Version#</th>
 							<th th:attr="data-def='sortable, map=criticality'" th:text="#{requirement.criticality.label}">Critical</th>
 							<th th:attr="data-def='sortable, map=category'" th:text="#{requirement.category.label}">Functional</th>
-							<th th:attr="data-def='sClass=delete-button, map=empty-delete-holder'">&nbsp;</th>
+							<th th:attr="data-def='sClass=delete-button, map=empty-delete-holder, center'">&nbsp;</th>
 							<th th:attr="data-def='invisible, map=status'">status(masked)</th>
 							<th th:attr="data-def='invisible, map=verifiedByStep'">verifiedByStep(masked)</th>
 						</tr>
