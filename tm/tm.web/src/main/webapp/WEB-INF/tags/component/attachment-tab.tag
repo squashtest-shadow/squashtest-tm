@@ -57,53 +57,73 @@
 	//init function
 	$(function() {
 				
-		require(["jquery", "jqueryui","jquery.squash.datatables"], function($){
+		require(["jquery", "jqueryui","jquery.squash.datatables", "jquery.squash.confirmdialog"], function($){
 			
 			//**********   table init ***********
+			
 			var table = $("#attachment-detail-table").squashTable({}, {});
-			
-			
-			//************ other init ***********
-			
-			var deleteDialog = $("#delete-attachment-dialog");
-			var deleteButton = $("#delete-attachment-button");
-			
-			var renameDialog = $("#rename-attachment-dialog");
-			var renameButton = $("#rename-attachment-button");
-			
-			
+
 			
 			// ************* delete dialog init (if any) **************
+			
+			var deleteDialog = $("#delete-attachment-dialog");
+			
 			deleteDialog.confirmDialog();
 			
 			deleteDialog.on('confirmdialogconfirm', function(){
+					
+					var removedIds = table.getSelectedIds().join(',');
+					var url = "${baseURL}"+"/"+removedIds;
+					
+					$.ajax({
+						type : 'DELETE',
+						url : url
+					}).done(function(){
+						deleteDialog.confirmDialog('close');
+						refreshAttachments();		
+					});
+				});
+			
+			//************* rename dialog init (if any) ********
+			
+			var renameDialog = $("#rename-attachment-dialog");
+			
+			renameDialog.confirmDialog();
+			
+			renameDialog.on("confirmdialogconfirm", function(){
 				
-				var removedIds = table.getSelectedIds().join(',');
-				var url = "${baseURL}"+"/"+removedIds;
+				var id = renameDialog.data("attachmentId");
+				var url = "${baseURL}/"+id+"/name";
+				var newName = $("#rename-attachment-input").val();
 				
 				$.ajax({
-					type : 'DELETE',
-					url : url
-				}).done(function(){
-					deleteDialog.confirmDialog('close');
-					refreshAttachments();		
+					url : url,
+					type : 'POST',
+					data : { name : newName }
+				})
+				.done(function(){
+					renameDialog.confirmDialog('close');
+					refreshAttachments();
 				});
 			});
 			
+	
 			
+			//************ buttons ***********
 			
-			//************ delete button (if any) ************
+			var deleteButton = $("#delete-attachment-button");			
+			var renameButton = $("#rename-attachment-button");
+			var uploadButton = $("#add-attachment-button");
+			
+			deleteButton.squashButton();
+			renameButton.squashButton();
+			uploadButton.squashButton();
 			
 			deleteButton.click(function() {
 				deleteDialog.confirmDialog('open');
 			});
 
-			
-			//************* rename dialog init (if any) ********
-			
-			renameDialog.confirmDialog();
-			
-			renameDialog.on("confirmdialogopen", function(event){
+			renameButton.click(function(){				
 				var selectedIds = table.getSelectedIds();
 				if (selectedIds.length!=1){
 					<f:message var="renameAttachImpossible" key="message.CanRenameOnlyOneAttachment"/>
@@ -118,31 +138,11 @@
 					var index = name.lastIndexOf(".");
 					$("#rename-attachment-input").val(name.substring(0,index));
 					renameDialog.data("attachmentId", id);
-				}
-			});
-			
-			renameDialog.on("confirmdialogconfirm", function(){
-				
-				var id = renameDialog.data("attachmentId");
-				var url = "${baseURL}/"+id+"/name";
-				var newName = $("#rename-attachment-input").val();
-				
-				$.post({
-					url : url,
-					dataType : 'POST',
-					params : { name : newName }
-				})
-				.done(function(){
-					renameDialog.confirmDialog('close');
-					refreshAttachments();
-				});
-			});
-			
-			
-			// *************** rename dialog button ************
-			renameButton.click(function(){
-				renameDialog.confirmDialog('open');				
+					renameDialog.confirmDialog('open');	
+				}			
 			});			
+			
+			//upload button is special, see the tag included at the very bottom
 		});
 		
 	});
@@ -154,7 +154,7 @@
 <div class="toolbar" >
 <c:if test="${ editable }">
 		<f:message var="uploadAttachment" key="label.UploadAttachment" />
-		<input id="add-attachment" type="button" value="${uploadAttachment}" class="button"/>
+		<input id="add-attachment-button" type="button" value="${uploadAttachment}" class="button"/>
 		<f:message var="renameAttachment" key="label.Rename" />
 		<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="button" />
 		<f:message var="removeAttachment" key="label.Remove" />
@@ -176,8 +176,8 @@
 			<tr>
 				<th data-def="map=entity-index, select, narrow, center">#</th>
 				<th data-def="map=hyphenated-name, sortable, center, link=${baseURL}/download/{entity-id}"><f:message key="label.Name"/></th>	
-				<th data-def="map=size, center"><f:message key="label.SizeMb"/></th>
-				<th data-def="map=added-on, center"><f:message key="label.AddedOn"/></th>
+				<th data-def="map=size, center, sortable"><f:message key="label.SizeMb"/></th>
+				<th data-def="map=added-on, center, sortable"><f:message key="label.AddedOn"/></th>
 				<th data-def="map=empty-delete-holder, ${tableDeleteConf}">&nbsp;</th> 
 			</tr>
 		</thead>
@@ -193,20 +193,31 @@
 <%------------------------------------------------- Dialogs ----------------------------------%>
 <c:if test="${ editable }">
 
+
+<f:message var="confirmLabel" key="label.Confirm"/>
+<f:message var="cancelLabel" key="label.Cancel" />
 <f:message var="deleteDialogTitle" key="title.RemoveAttachment"/>
-<div id="delete-attachment-dialog" title="${deleteDialogTitle}" class="is-contextual">
+<div id="delete-attachment-dialog" title="${deleteDialogTitle}">
 	<span style="font-weight:bold"><f:message key="message.ConfirmRemoveAttachments" /></span>
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${confirmLabel}"/>
+		<input type="button" value="${cancelLabel}"/>
+	</div>
 </div>
 
 <f:message var="renameDialogTitle" key="title.RenameAttachment" />
-<div id="rename-attachment-dialog" title="${renameDialogTitle}" class="is-contextual">
+<div id="rename-attachment-dialog" title="${renameDialogTitle}">
 	<label for="rename-attachment-input"><f:message key="dialog.rename.label" /></label>
 	<input type="text" id="rename-attachment-input" size="50"/>
 	<br />
-	<comp:error-message forField="shortName" />	
+	<comp:error-message forField="shortName" />
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${confirmLabel}"/>
+		<input type="button" value="${cancelLabel}"/>
+	</div>	
 </div>
 
 
-<comp:add-attachment-popup url="${uploadAttachmentUrl}" paramName="attachment" openedBy="add-attachment" submitCallback="refreshAttachments" />
+<comp:add-attachment-popup url="${uploadAttachmentUrl}" paramName="attachment" openedBy="add-attachment-button" submitCallback="refreshAttachments" />
 </c:if>
 <%------------------------------------------------- /Dialogs ----------------------------------%>

@@ -112,6 +112,8 @@
 
 		_create : function() {
 			var self = this;
+			
+			var parent = this.element.eq(0).parent();
 
 			function cancelOnEsc(event) {
 				if (event.keyCode === $.ui.keyCode.ESCAPE) {
@@ -129,6 +131,12 @@
 				"click .ui-dialog-buttonpane button:last": self.cancel,
 				"click .ui-dialog-titlebar-close": self.cancel, 
 				"keydown": cancelOnEsc
+			});
+			
+			// autoremove when parent container is removed
+			parent.on('remove', function(){
+				self.element.confirmDialog('destroy');
+				self.element.remove();
 			});
 		},
 		

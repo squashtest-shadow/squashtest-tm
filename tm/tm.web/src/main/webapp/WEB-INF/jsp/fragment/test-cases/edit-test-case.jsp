@@ -571,6 +571,11 @@
 		</c:if>
 		
 		
+		//************** other *************
+		
+		$("#rename-test-case-button").squashButton();
+		$("#delete-test-case-button").squashButton();
+		
 	});
 
 	

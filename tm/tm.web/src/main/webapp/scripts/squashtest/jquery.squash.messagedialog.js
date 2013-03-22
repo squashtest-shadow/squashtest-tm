@@ -52,6 +52,9 @@
 		},
 
 		_create : function() {
+			
+			var parent = this.element.eq(0).parent();
+			
 			// we need to invoke prototype creation
 			$.ui.dialog.prototype._create.apply(this);
 
@@ -68,6 +71,12 @@
 					});
 
 			self.element.removeClass("not-visible");
+			
+			// autoremove when parent container is removed
+			parent.on('remove', function(){
+				self.element.messageDialog('destroy');
+				self.element.remove();
+			});			
 
 		},
 
