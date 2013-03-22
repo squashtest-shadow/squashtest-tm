@@ -50,6 +50,11 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 	private int requirementId = 10
 
+	def setup() {
+		// we deactivate auditor because it breaks tests when run in batch. Auditor opens a second tx which cannot see the requirement which is not yet committed but to be audited.
+		org.squashtest.tm.domain.event.RequirementCreationEventPublisherAspect.aspectOf().setAuditor(null)
+	}
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should return all the requirements in a hierarchy given some ids.xml")
 	def "should return all the requirements in a hierarchy given some ids"(){
 
@@ -70,7 +75,6 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		def export2 = reqs.findAll{r -> r.name == "req2"}[0];
 		def export3 = reqs.findAll{r -> r.name == "req3"}[0];
 
-
 		export1.name == "1req"
 		export1.folderName == "folder"
 		export1.project == "projet1"
@@ -82,83 +86,83 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		export3.name == "req3"
 		export3.folderName == ""
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should not copy paste obsolete.xml")
 	def "should not copy paste selection containing obsolete"(){
 		given:
 		Long[] sourceIds = [1L]
 		Long destinationId = 2L
-		
+
 		when:
 		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
-		
+
 		then:"exception is thrown"
 		thrown (CopyPasteObsoleteException)
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should move selection containing obsolete.xml")
 	def "should move selection containing obsolete"(){
 		given:
 		Long[] sourceIds = [1L]
 		Long destinationId = 2L
-		
+
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds);
-		
+
 		then:"no exception is thrown"
 		true
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should not move in himself.xml")
 	def "should not move in himself"(){
 		given:
 		Long[] sourceIds = [1L]
 		Long destinationId = 1L
-		
+
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds);
-		
+
 		then:
 		thrown (CannotMoveInHimselfException)
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should not move in himself.xml")
 	def "should not move in his descendent"(){
 		given:
 		Long[] sourceIds = [13L]
 		Long destinationId = 1L
-		
+
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds);
-		
+
 		then:
 		thrown (CannotMoveInHimselfException)
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste folder with requirements.xml")
 	def "should not go infinite loop when copy paste a folder into itself"(){
 		given:
 		Long[] sourceIds = [1L]
 		Long destinationId = 1L
-		
+
 		when:
 		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
-		
+
 		then:"requirement folder is copied"
 		nodes.get(0) instanceof RequirementFolder
 	}
-	
-	
-	
+
+
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste folder with requirements.xml")
 	def "should copy paste folder with requirements"(){
 		given:
 		Long[] sourceIds = [1L]
 		Long destinationId = 2L
-		
+
 		when:
 		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
-		
+
 		then:"requirement folder has 2 requirements"
 		nodes.get(0) instanceof RequirementFolder
 		RequirementFolder folderCopy = (RequirementFolder) nodes.get(0)
@@ -166,16 +170,16 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		folderCopy.content.find {it.name == "requirement10"} != null
 		folderCopy.content.find {it.name == "requirement11"} != null
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should move folder with requirements.xml")
 	def "should move folder with requirements"(){
 		given:
 		Long[] sourceIds = [1L]
 		Long destinationId = 2L
-		 
+
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds)
-		
+
 		then:"requirement folder is moved"
 		RequirementFolder destination = findEntity(RequirementFolder.class, 2L)
 		destination.getContent().collectAll({it.id}).containsAll([1L])
@@ -183,16 +187,16 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		RequirementFolder movedFolder = findEntity(RequirementFolder.class, 1L)
 		movedFolder.getContent().collectAll({it.id}).containsAll([10L, 11L])
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste requirement with non obsolete versions.xml")
 	def "should copy paste requirement with non obsolete versions"(){
 		given:
 		Long[] sourceIds = [10L]
 		Long destinationId = 2L
-		
+
 		when:
 		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
-		
+
 		then:"requirement has 2 versions"
 		nodes.get(0) instanceof Requirement
 		Requirement requirement = (Requirement) nodes.get(0)
@@ -200,28 +204,28 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		requirement.versions.find {it.name == "version100"} != null
 		requirement.versions.find {it.name == "version102"} != null
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste requirement with non obsolete versions.xml")
 	def "should move requirement with non obsolete versions"(){
 		given:
 		Long[] sourceIds = [10L]
 		Long destinationId = 2L
-		
+
 		when: navService.moveNodesToFolder(destinationId, sourceIds)
-		
+
 		then:"no exception is thrown"
 		true
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste requirement versions with cuf.xml")
 	def "should copy paste requirement versions with cufs"(){
 		given:
 		Long[] sourceIds = [10L]
 		Long destinationId = 2L
-		
+
 		when:
 		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
-		
+
 		then:"requirement has 2 versions"
 		nodes.get(0) instanceof Requirement
 		Requirement requirement = (Requirement) nodes.get(0)
@@ -231,16 +235,16 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		findCufValueForEntity(BindableEntity.REQUIREMENT_VERSION, currV.id).get(0).value == "current-cuf"
 		findCufValueForEntity(BindableEntity.REQUIREMENT_VERSION, firstV.id).get(0).value == "first-cuf"
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should move reqs to other project.xml")
 	def "should move req to other project"(){
 		given:
 		Long[] sourceIds = [1L]
 		Long destinationId = 2L
-		
+
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds)
-		
+
 		then:"hierarchy is moved"
 		RequirementFolder destination = findEntity(RequirementFolder.class, 2L)
 		destination.getContent().collectAll({it.id}).containsAll([1L])
@@ -249,9 +253,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		and: "they all know their rightfull project"
 		movedFolder.getProject() == destination.getProject();
 		movedFolder.getContent().each( {it.getProject() == destination.getProject()});
-		
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should move reqs to project with cufs.xml")
 	@ExpectedDataSet("RequirementLibraryNavigationServiceIT.should move reqs to project with cufs-result.xml")
 	def "should move req to other project and update cufs"(){
@@ -264,19 +267,18 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		req.getCurrentVersion().setRequirement(req)
 		Long[] sourceIds = [1L]
 		Long destinationId = 2L
-		
+
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds)
-		
+
 		then: "expected result verified"
-		
 	}
-	
+
 	private List<CustomFieldValue> findCufValueForEntity(BindableEntity entity, long entityId){
 		Query query = session.createQuery("from CustomFieldValue cufV where cufV.boundEntityType = :type and cufV.boundEntityId = :id")
 		query.setParameter("type", entity)
 		query.setParameter("id", entityId)
-		
+
 		return query.list()
 	}
 }

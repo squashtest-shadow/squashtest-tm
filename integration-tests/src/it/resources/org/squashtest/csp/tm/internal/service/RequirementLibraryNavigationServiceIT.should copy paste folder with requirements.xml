@@ -53,5 +53,9 @@
 <requirement_library_node/>
 <requirement/>
 <requirement_folder/>
+<requirement_audit_event/>
+<requirement_creation/>
+<requirement_large_property_change/>
+<requirement_property_change/>
 
 </dataset>
