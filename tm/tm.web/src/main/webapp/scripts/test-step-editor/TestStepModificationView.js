@@ -175,7 +175,7 @@ define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/
 				var date = $(input).datepicker("getDate");
 				return $.datepicker.formatDate($.datepicker.ATOM, date);
 			} else if ($(input).attr("type") === "checkbox") {
-				return $(input).is("checked");
+				return $(input).is(":checked");
 			} else {
 				return $(input).val();
 			}
