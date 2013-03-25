@@ -2,6 +2,10 @@
 //great thanks to http://blog.amps211.com/this-is-me-professing-my-love-for-jquery-and-how-i-got-ckeditor-working-with-jeditable/
 
 ;(function($) {
+	
+	//no multiple includes please
+	if ($.generateId !== undefined) return;
+	
 	$.generateId = function() {
 		//check the id
 		

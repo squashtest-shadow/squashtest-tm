@@ -68,7 +68,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil" , "./Verified
 						if (VRTS.linkable){
 							checkbox.on("click", sendLinkedToStep);
 						}else{
-							checkbox.enable(false);
+							checkbox.prop('disabled', true);
 						}	
 						$( 'td.link-checkbox', row ).append(checkbox);
 						
