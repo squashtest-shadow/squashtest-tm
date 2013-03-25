@@ -93,5 +93,12 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 */
 	List<RequirementVersion> findVersionsForAll(List<Long> requirementIds);
 	
+	/**
+	 * Will find all Requirements ids contained in library (not only root ones)
+	 * @param libraryId
+	 * @return
+	 */
+	List<Long> findAllRequirementsIdsByLibrary(long libraryId);
+	
 	 	
 }

@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.internal.importer.TestCaseImporter;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
@@ -77,6 +78,8 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 	@Inject
+	private CustomFieldValueManagerService customFieldValueManagerService;
+	@Inject
 	@Qualifier("squashtest.tm.service.TestCaseLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy;
 	@Inject
@@ -85,7 +88,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToTestCaseLibraryStrategy")
 	private Provider<PasteStrategy<TestCaseLibrary, TestCaseLibraryNode>> pasteToTestCaseLibraryStrategyProvider;
-	
+
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
 		return deletionHandler;
@@ -149,37 +152,36 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addTestCaseToLibrary(long libraryId, TestCase testCase) {
-		
+
 		TestCaseLibrary library = testCaseLibraryDao.findById(libraryId);
 
 		if (!library.isContentNameAvailable(testCase.getName())) {
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
-		} 
-		else {
+		} else {
 			library.addContent(testCase);
 			testCaseDao.safePersist(testCase);
-			createCustomFieldValues(testCase);
-			
-			//also create the custom field values for the steps if any
-			if (! testCase.getSteps().isEmpty()){
-				createCustomFieldValues(testCase.getActionSteps());
-			}
-			
+			createCustomFieldValuesForTestCase(testCase);
+
 		}
 	}
-	
-	
-	
+
+	private void createCustomFieldValuesForTestCase(TestCase testCase) {
+		createCustomFieldValues(testCase);
+
+		// also create the custom field values for the steps if any
+		if (!testCase.getSteps().isEmpty()) {
+			createCustomFieldValues(testCase.getActionSteps());
+		}
+	}
 
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addTestCaseToLibrary(long libraryId, TestCase testCase,	Map<Long, String> customFieldValues) {
+	public void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, String> customFieldValues) {
 		addTestCaseToLibrary(libraryId, testCase);
-		initCustomFieldValues(testCase, customFieldValues);		
+		initCustomFieldValues(testCase, customFieldValues);
 	}
-	
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
@@ -188,35 +190,48 @@ public class TestCaseLibraryNavigationServiceImpl extends
 
 		if (!folder.isContentNameAvailable(testCase.getName())) {
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
-		} 
-		else {
+		} else {
 			folder.addContent(testCase);
 			testCaseDao.safePersist(testCase);
-			createCustomFieldValues(testCase);
-			
-			//also create the custom field values for the steps if any
-			if (! testCase.getSteps().isEmpty()){
-				createCustomFieldValues(testCase.getActionSteps());
-			}
+			createCustomFieldValuesForTestCase(testCase);
 		}
 	}
-	
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addTestCaseToFolder(long folderId, TestCase testCase,Map<Long, String> customFieldValues) {
+	public void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, String> customFieldValues) {
 		addTestCaseToFolder(folderId, testCase);
 		initCustomFieldValues(testCase, customFieldValues);
 	}
-	
-	
 
+	// CUF : this is a very quick fix for [Issue 2061], TODO : remove the lines that are related to this issue and replace
+	// it with another solution mentioned in the ticket
+	// same for requirement import
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'IMPORT') or hasRole('ROLE_ADMIN')")
 	public ImportSummary importExcelTestCase(InputStream archiveStream, long libraryId, String encoding) {
+		// **************************[Issue 2061]********************
+		// see [] save existing test cases ids
+		List<Long> alreadyExistingTestCases = testCaseDao.findAllTestCasesIdsByLibrary(libraryId);
+		// **************************end [Issue 2061]********************
+		ImportSummary summary = testCaseImporter.importExcelTestCases(archiveStream, libraryId, encoding);
+		
+		// **************************[Issue 2061]********************
+		// flush so that sql query works
+		testCaseDao.flush();
 
-		return testCaseImporter.importExcelTestCases(archiveStream, libraryId, encoding);
+		// deduce newly imported testcases id and retrieve new test cases
+		List<Long> libraryNewTestCasesIds = testCaseDao.findAllTestCasesIdsByLibrary(libraryId);
+		libraryNewTestCasesIds.removeAll(alreadyExistingTestCases);
+		List<TestCase> importedTestCases = testCaseDao.findAllByIds(libraryNewTestCasesIds);
+
+		// create custom fields for new test cases
+		for (TestCase testCase : importedTestCases) {
+			createCustomFieldValuesForTestCase(testCase);
+		}
+		// **************************end [Issue 2061]********************
+		return summary;
 	}
 
 	@Override

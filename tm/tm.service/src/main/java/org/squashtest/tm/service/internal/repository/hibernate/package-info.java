@@ -124,6 +124,7 @@
 		@NamedQuery(name = "testCase.findAllRootContent", query = "select tc.id from TestCaseLibraryNode tc where tc.project.id in (:projectIds)"),
 		@NamedQuery(name = "testCase.findRootContentTestCase", query = "select tcn from TestCaseLibrary tcl join tcl.rootContent tcn where tcn.id in (:paramIds) and tcn in (from TestCase)"),
 		@NamedQuery(name = "testCase.findTestCasesWithParentFolder", query = "select tc, tcf from TestCaseFolder tcf join tcf.content tc where tc.id in (:testCasesIds)"),
+	
 		//the two next ones are to be used together. The second one assumes that the calledIds are actually not called and wont perform checks to make sure of that.
 		//Look for this query in HibernateTestCaseDao for more details.
 		@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", query = "select distinct caller.id, caller.name, called.id, called.name from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id in (:testCaseIds) group by caller, called"),

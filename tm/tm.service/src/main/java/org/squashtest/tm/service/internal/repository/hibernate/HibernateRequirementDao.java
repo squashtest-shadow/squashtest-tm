@@ -30,6 +30,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
@@ -64,6 +66,20 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	}
 	private static final String RES_NAME = "res.name";
 	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from RLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
+	private static final String FIND_ALL_FOR_LIBRARY_QUERY = "select distinct requirment.RLN_ID" +
+			" from REQUIREMENT requirment" +
+			" where requirment.RLN_ID in (" +
+				" select dRequirement.RLN_ID" +
+					" from REQUIREMENT dRequirement" +
+					" JOIN RLN_RELATIONSHIP_CLOSURE closure ON dRequirement.RLN_ID = closure.DESCENDANT_ID"+
+					" JOIN REQUIREMENT_LIBRARY_CONTENT dRoot ON dRoot.CONTENT_ID = closure.ANCESTOR_ID"+
+					" where dRoot.LIBRARY_ID = :libraryId"+
+				" union" +
+				" select rRequirement.RLN_ID" +
+					" from REQUIREMENT rRequirement" +
+					" JOIN REQUIREMENT_LIBRARY_CONTENT rRoot ON rRoot.CONTENT_ID = rRequirement.RLN_ID"+
+					" where rRoot.LIBRARY_ID = :libraryId"+
+				" )";
 
 	/**
 	 * @deprecated not used
@@ -336,6 +352,17 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 			return Collections.emptyList();
 		}
 
+	}
+
+	
+
+	@Override
+	public List<Long> findAllRequirementsIdsByLibrary(long libraryId) {
+		Session session = currentSession();
+		SQLQuery query = session.createSQLQuery(FIND_ALL_FOR_LIBRARY_QUERY);
+		query.setParameter("libraryId", Long.valueOf(libraryId));
+		query.setResultTransformer(new SqLIdResultTransformer());
+		return query.list();
 	}
 
 }

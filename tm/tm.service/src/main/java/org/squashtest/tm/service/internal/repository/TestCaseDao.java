@@ -221,4 +221,11 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 
 	List<ExportTestCaseData> findTestCaseToExportFromNodes(List<Long> nodesIds);
 
+	/**
+	 * Return all test case ids contained by the library of the given id. Not only root ones
+	 * @param libraryId
+	 * @return
+	 */
+	List<Long> findAllTestCasesIdsByLibrary(long libraryId);
+
 }

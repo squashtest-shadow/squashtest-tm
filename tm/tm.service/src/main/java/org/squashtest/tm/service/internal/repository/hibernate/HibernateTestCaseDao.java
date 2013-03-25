@@ -29,10 +29,10 @@ import java.util.ListIterator;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
@@ -74,6 +74,20 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private static final String TEST_CASE_ID_PARAM_NAME = "testCaseId";
 	private static final String PROJECT = "project";
 	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from TCLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
+	private static final String FIND_ALL_FOR_LIBRARY_QUERY = "select distinct testCase.TCLN_ID" +
+			" from TEST_CASE testCase" +
+			" where testCase.TCLN_ID in (" +
+				" select dTestCase.TCLN_ID" +
+					" from TEST_CASE dTestCase" +
+					" JOIN TCLN_RELATIONSHIP_CLOSURE closure ON dTestCase.TCLN_ID = closure.DESCENDANT_ID"+
+					" JOIN TEST_CASE_LIBRARY_CONTENT dRoot ON dRoot.CONTENT_ID = closure.ANCESTOR_ID"+
+					" where dRoot.LIBRARY_ID = :libraryId"+
+				" union" +
+				" select rTestCase.TCLN_ID" +
+					" from TEST_CASE rTestCase" +
+					" JOIN TEST_CASE_LIBRARY_CONTENT rRoot ON rRoot.CONTENT_ID = rTestCase.TCLN_ID"+
+					" where rRoot.LIBRARY_ID = :libraryId"+
+				" )";
 	
 	
 	private static List<DefaultSorting> DEFAULT_VERIFIED_TC_SORTING;
@@ -86,19 +100,6 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	}
 	
 
-	private static final class SetIdParameter implements SetQueryParametersCallback {
-		private final long testCaseId;
-
-		public SetIdParameter(long testCaseId) {
-			super();
-			this.testCaseId = testCaseId;
-		}
-
-		@Override
-		public void setQueryParameters(Query query) {
-			query.setLong(TEST_CASE_ID_PARAM_NAME, testCaseId);
-		}
-	};
 	
 	
 	@Override
@@ -146,7 +147,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	}
 
 	private SetQueryParametersCallback idParameter(final long testCaseId) {
-		return new SetIdParameter(testCaseId);
+		return new SetIdParameter(TEST_CASE_ID_PARAM_NAME, testCaseId);
 	}
 
 	/**
@@ -250,7 +251,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	@Override
 	public long countCallingTestSteps(long testCaseId) {
-		return (Long) executeEntityNamedQuery("testCase.countCallingTestSteps", new SetIdParameter(testCaseId));
+		return (Long) executeEntityNamedQuery("testCase.countCallingTestSteps", new SetIdParameter(TEST_CASE_ID_PARAM_NAME, testCaseId));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -263,13 +264,13 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	@Override
 	public List<Long> findAllTestCasesIdsCalledByTestCase(long testCaseId) {
-		return executeListNamedQuery("testCase.findAllTestCasesIdsCalledByTestCase", new SetIdParameter(testCaseId));
+		return executeListNamedQuery("testCase.findAllTestCasesIdsCalledByTestCase", new SetIdParameter(TEST_CASE_ID_PARAM_NAME, testCaseId));
 	}
 
 	@Override
 	public List<Long> findDistinctTestCasesIdsCalledByTestCase(Long testCaseId) {
 		return executeListNamedQuery("testCase.findDistinctTestCasesIdsCalledByTestCase",
-				new SetIdParameter(testCaseId));
+				new SetIdParameter(TEST_CASE_ID_PARAM_NAME, testCaseId));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -678,6 +679,15 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		}
 	}
 	/* ----------------------------------------------------/EXPORT METHODS----------------------------------------- */
+
+	@Override
+	public List<Long> findAllTestCasesIdsByLibrary(long libraryId) {
+		Session session = currentSession();
+		SQLQuery query = session.createSQLQuery(FIND_ALL_FOR_LIBRARY_QUERY);
+		query.setParameter("libraryId", Long.valueOf(libraryId));
+		query.setResultTransformer(new SqLIdResultTransformer());
+		return query.list();
+	}
 
 	
 	

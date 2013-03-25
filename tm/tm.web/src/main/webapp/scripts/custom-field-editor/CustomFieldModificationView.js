@@ -256,6 +256,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore", "je
 						
 		},
 		makeDefaultSimpleJEditable : function(){
+			var self = this;
 			new SimpleJEditable({
 				language : {
 					richEditPlaceHolder : cfMod.richEditPlaceHolder,
