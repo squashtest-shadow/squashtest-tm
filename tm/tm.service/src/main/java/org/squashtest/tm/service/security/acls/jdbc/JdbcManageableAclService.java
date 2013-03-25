@@ -160,7 +160,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "left outer join CORE_USER cu on arse.PARTY_ID = cu.PARTY_ID "
 			+ "left outer join CORE_TEAM ct on arse.PARTY_ID = ct.PARTY_ID "
 			+ "where oid.IDENTITY = ? and ac.CLASSNAME = ? "
-			+ "and cu.LOGIN like ? or ct.name = ?";
+			+ "and (cu.LOGIN like ? or ct.name like ?)";
 
 	private static final String DELETE_PARTY_RESPONSABILITY_ENTRY = "delete from ACL_RESPONSIBILITY_SCOPE_ENTRY "
 			+ "where PARTY_ID = ?  and OBJECT_IDENTITY_ID = "
