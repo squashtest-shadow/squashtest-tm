@@ -210,7 +210,7 @@
                     <label for="test-step-expectedResult" class="control-label" th:text="#{label.expectedResult}">Expected result</label>
                    <div th:case="${true}"  class="display-table-cell controls"><textarea class=" test-step-attr" name="expectedResult" id="test-step-expectedResult" th:utext="${testStepView.actionStep.expectedResult}">see that</textarea>
                   	 <span  class="help-inline">&nbsp;</span></div>
-                  	<span th:case="${false}" class="display-table-cell" th:utext="${testStepView.actionStep.action}">do this</span>
+                  	<span th:case="${false}" class="display-table-cell" th:utext="${testStepView.actionStep.expectedResult}">do this</span>
                   </div>
                   <div class="display-table-row" th:if="${testStepView.callStep}">
                     <label for="test-step-called-test-case" th:text="#{label.calledTestCase}">Called test case</label>
