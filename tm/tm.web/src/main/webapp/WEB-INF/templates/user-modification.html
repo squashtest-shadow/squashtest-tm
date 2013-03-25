@@ -321,10 +321,10 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr th:each="team : ${teams}">
-											<td th:text="${team['team-id']}">100</td>
-											<td th:text="${team['team-index']}">1</td>
-											<td th:text="${team['team-name']}">bob</td>
+										<tr th:each="team, iterStat : ${user.teams}">
+											<td th:text="*{id}">100</td>
+											<td th:text="${iterStat.count}">1</td>
+											<td th:text="*{name}">bob</td>
 											<td></td>
 										</tr>
 									</tbody>
