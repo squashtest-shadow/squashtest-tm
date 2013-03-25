@@ -286,9 +286,9 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		int total = result.size();
 		
 		int startIndex = sorting.getFirstItemIndex();
-		int nbItems = Math.min(sorting.getPageSize(), total - startIndex);
+		int lastIndex = Math.min(startIndex + sorting.getPageSize(), total );
 		
-		result = result.subList(startIndex, nbItems);
+		result = result.subList(startIndex, lastIndex);
 
 		List<PartyProjectPermissionsBean> newResult = new ArrayList<PartyProjectPermissionsBean>(result.size());
 		
