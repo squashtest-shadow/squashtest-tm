@@ -2,4 +2,3 @@
 Fragment-Host: net.sf.jasperreports.org.squashtest.net.sf.jasperreports
 Bundle-ClassPath: .
 DynamicImport-Package: *
-Include-Resource: src/main/resources
