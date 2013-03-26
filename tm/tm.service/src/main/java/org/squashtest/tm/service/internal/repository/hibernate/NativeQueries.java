@@ -125,8 +125,9 @@ public final class NativeQueries {
 			+ " set itp1.item_test_plan_order = itp1.item_test_plan_order - :offset "
 			+ " where itp1.item_test_plan_id in (:itpIds)";
 
+	
+	public static final String testCase_sql_removeCallingTestSuiteItemTestPlan = "delete from TEST_SUITE_TEST_PLAN_ITEM where tpi_id in (:itpHavingNoExecIds)";
 	public static final String testCase_sql_removeCallingIterationItemTestPlanFromList = "delete from ITEM_TEST_PLAN_LIST  where item_test_plan_id in (:itpHavingNoExecIds)";
-
 	public static final String testCase_sql_removeCallingIterationItemTestPlan = "delete from ITERATION_TEST_PLAN_ITEM  where item_test_plan_id in (:itpHavingNoExecIds) ";
 
 	

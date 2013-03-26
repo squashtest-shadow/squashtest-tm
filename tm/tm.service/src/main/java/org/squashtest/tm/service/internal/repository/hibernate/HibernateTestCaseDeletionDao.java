@@ -222,8 +222,13 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 				query.executeUpdate();
 			}
 
+			
+			executeDeleteSQLQuery(NativeQueries.testCase_sql_removeCallingTestSuiteItemTestPlan,
+					"itpHavingNoExecIds", itpHavingNoExecIds);
+			
 			executeDeleteSQLQuery(NativeQueries.testCase_sql_removeCallingIterationItemTestPlanFromList,
 					"itpHavingNoExecIds", itpHavingNoExecIds);
+			
 			executeDeleteSQLQuery(NativeQueries.testCase_sql_removeCallingIterationItemTestPlan, "itpHavingNoExecIds",
 					itpHavingNoExecIds);
 
