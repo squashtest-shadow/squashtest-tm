@@ -304,7 +304,7 @@
 							<div id="teams-panel" class="toggle-panel-main">
 
 								<table id="teams-table"
-									th:attr="data-def='filter, hover, pre-filled, datakeys-id=team-id ,ajaxsource=' + @{/users/__${user.id}__/teams} + ',language=' + @{/datatables/messages}">
+									th:attr="data-def='filter, hover,datakeys-id=team-id ,ajaxsource=' + @{/users/__${user.id}__/teams} + ',language=' + @{/datatables/messages}">
 									<thead>
 										<tr>
 											<th th:attr="data-def='invisible, map=team-id'">team-id</th>
@@ -321,12 +321,6 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr th:each="team, iterStat : ${user.teams}">
-											<td th:text="*{id}">100</td>
-											<td th:text="${iterStat.count}">1</td>
-											<td th:text="*{name}">bob</td>
-											<td></td>
-										</tr>
 									</tbody>
 								</table>
 							</div>
