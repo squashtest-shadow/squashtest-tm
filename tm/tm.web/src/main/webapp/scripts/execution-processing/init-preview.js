@@ -19,47 +19,44 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "module", "jquery.squash.squashbutton", "jquery.squash.togglepanel", "jquery.squash"], function($, module){
-	
-	function initPreview(){
-		
+define([ "jquery", "module", "jquery.squash.squashbutton", "jquery.squash.togglepanel", "jquery.squash" ], function($,
+		module) {
+
+	function initPreview() {
+
 		var conf = module.config();
 
-		
 		var clickHandlers = {
-			stop : function(){
-				if (conf.optimized){
+			stop : function() {
+				if (conf.optimized) {
 					parent.squashtm.ieomanager.closeWindow();
-				}
-				else{
+				} else {
 					window.close();
 				}
 			},
-			
-			begin : function(event){
-				if (conf.optimized){
+
+			begin : function(event) {
+				if (conf.optimized) {
 					event.preventDefault();
 					parent.squashtm.ieomanager.navigateNext();
 					return false;
+				} else {
+					// nothing special
 				}
-				else{
-					//nothing special
-				}
-			}, 
-			
-			links : function(event){
-				if (conf.optimized){
+			},
+
+			links : function(event) {
+				if (conf.optimized) {
 					event.preventDefault();
-					var url = $(this).attr('href'); 
+					var url = $(this).attr('href');
 					parent.squashtm.ieomanager.fillRightPane(url);
-					return false;	
-				}
-				else{
-					//nothing special
+					return false;
+				} else {
+					// nothing special
 				}
 			}
-		}; 
-		
+		};
+
 		var stopButton = $("#execute-stop-button");
 		var stopIcon = stopButton.data('icon');
 		stopButton.removeAttr('data-icon');
@@ -69,8 +66,6 @@ define(["jquery", "module", "jquery.squash.squashbutton", "jquery.squash.togglep
 				'primary' : stopIcon
 			}
 		}).click(clickHandlers.stop);
-		
-		
 
 		var beginButton = $("#execute-begin-button");
 		var beginIcon = beginButton.data('icon');
@@ -80,30 +75,28 @@ define(["jquery", "module", "jquery.squash.squashbutton", "jquery.squash.togglep
 				'secondary' : beginIcon
 			}
 		}).click(clickHandlers.begin);
-		
-		
+
 		var informationsPanel = $("#execute-informations-panel");
 		var infoTitle = informationsPanel.data('title');
 		informationsPanel.removeAttr('data-title');
 		informationsPanel.togglePanel({
 			title : infoTitle
 		});
-		
+
 		var prerequisitePanel = $("#execute-prerequisite-panel");
 		var prerequisiteTitle = prerequisitePanel.data('title');
 		prerequisitePanel.removeAttr('data-title');
 		prerequisitePanel.togglePanel({
 			title : prerequisiteTitle
-		});		
-		
+		});
+
 		$(".load-links-right-frame a").click(clickHandlers.links);
-		
-		//issue #2069
+
+		// issue #2069
 		$.noBackspaceNavigation();
-		
+
 	}
-	
+
 	return initPreview;
-	
+
 });
-	

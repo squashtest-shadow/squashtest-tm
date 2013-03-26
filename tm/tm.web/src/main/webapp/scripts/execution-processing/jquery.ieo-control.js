@@ -20,72 +20,70 @@
  */
 
 /**
- * That widget is completely passive : it just 
- * provides a GUI, the manager handles the event
- * and tells it what to do next. 
+ * That widget is completely passive : it just provides a GUI, the manager
+ * handles the event and tells it what to do next.
  */
 
-define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
-	
+define([ "jquery", "module", "jquery.cookie", "jqueryui" ], function($, module) {
+
 	$.widget("squash.ieoControl", {
-		
+
 		options : {
-			
+
 		},
-		
-		_create : function(){
-			
-			var self=this;
-			
-			
+
+		_create : function() {
+
+			var self = this;
+
 			var positionLeft = $.cookie("ieo-toolbox-position-left");
 			var positionTop = $.cookie("ieo-toolbox-position-top");
-			
+
 			if ((!!positionLeft) && (!!positionTop)) {
-				this.element.offset({top : positionTop, left: positionLeft});
-			}	
-			
+				this.element.offset({
+					top : positionTop,
+					left : positionLeft
+				});
+			}
+
 			this.element.draggable({
-				stop: function(event, ui){
+				stop : function(event, ui) {
 					var pos = $(this).offset();
 					$.cookie("ieo-toolbox-position-left", pos.left);
 					$.cookie("ieo-toolbox-position-top", pos.top);
-				}				
+				}
 			});
 
-			
 			// ************* slider init *****************
-			
+
 			this._initSlider();
 
-			
-			
 			// ******** buttons init **********
-			
+
 			this.getNextStepButton().button({
-				'text': false,
-				icons: {
+				'text' : false,
+				icons : {
 					primary : 'ui-icon-triangle-1-e'
 				}
 			});
-			
+
 			this.getPreviousStepButton().button({
 				'text' : false,
 				icons : {
 					primary : 'ui-icon-triangle-1-w'
 				}
 			});
-		
+
 			this.getStopButton().button({
-				'text': false, 
+				'text' : false,
 				'icons' : {
 					'primary' : 'ui-icon-power'
-				} 
+				}
 			});
 
 			this.getFailedButton().button({
-				'text': false,
-				'icons' :{
+				'text' : false,
+				'icons' : {
 					'primary' : 'execute-failure'
 				}
 			});
@@ -98,233 +96,223 @@ define(["jquery", "module", "jquery.cookie", "jqueryui"], function($,module){
 			});
 
 			this.getNextTestCaseButton().button({
-				'text': false,
-				icons: {
+				'text' : false,
+				icons : {
 					primary : 'ui-icon-seek-next'
 				}
 			});
-			
-			
-			this.getStatusCombo().change(function(){
+
+			this.getStatusCombo().change(function() {
 				self._updateComboIcon();
 			});
 
-			
 		},
-		
-		
+
 		// **************** setters *****************
 
-		setManager : function(manager){
+		setManager : function(manager) {
 			this.element.manager = manager;
 			this._reset();
 		},
 
-		
-		setStatus : function(status){
+		setStatus : function(status) {
 			var cbox = this.getStatusCombo();
 			cbox.val(status);
 			this._updateComboIcon();
 		},
-		
-		setSuccess : function(){
+
+		setSuccess : function() {
 			this.setStatus("SUCCESS");
 		},
-		
-		setFailure : function(){
+
+		setFailure : function() {
 			this.setStatus('FAILURE');
 		},
-		
-		
-		navigateNext : function(){
+
+		navigateNext : function() {
 			this._refreshUI();
 		},
-		
-		navigatePrevious : function(){
+
+		navigatePrevious : function() {
 			this._refreshUI();
 		},
-		
-		navigateRandom : function(stepIndex){
+
+		navigateRandom : function(stepIndex) {
 			this._refreshUI();
 		},
-		
-		navigateToNewTestCase : function(){
+
+		navigateToNewTestCase : function() {
 			this._reset();
 			this._refreshUI();
 		},
-		
+
 		// ********************** getters ***************************
 
-		getNextStepButton : function(){
+		getNextStepButton : function() {
 			return this.element.find('.execute-next-step');
 		},
-		
-		getPreviousStepButton : function(){
+
+		getPreviousStepButton : function() {
 			return this.element.find('.execute-previous-step');
 		},
-		
-		getStopButton : function(){
+
+		getStopButton : function() {
 			return this.element.find('.stop-execution');
 		},
-		
-		getFailedButton : function(){
+
+		getFailedButton : function() {
 			return this.element.find('.step-failed');
 		},
-		
-		getSuccessButton : function(){
+
+		getSuccessButton : function() {
 			return this.element.find('.step-succeeded');
 		},
-		
-		getNextTestCaseButton : function(){
+
+		getNextTestCaseButton : function() {
 			return this.element.find('.execute-next-test-case');
 		},
-		
-		getStatusCombo : function(){
+
+		getStatusCombo : function() {
 			return this.element.find('.execution-status-combo-class');
 		},
-		
-		getSlider : function(){
+
+		getSlider : function() {
 			return this.element.find('.slider');
 		},
-		
-		_getState : function(){
+
+		_getState : function() {
 			return this.element.manager.getState();
 		},
-		
+
 		// ********************** predicates ************************
-		
-		_canNavigateNextTestCase : function(){
+
+		_canNavigateNextTestCase : function() {
 			var state = this._getState();
-			return ((state.testSuiteMode) &&  (! state.lastTestCase) && (this._isLastStep()));				
-		},
-		
-		_isLastStep : function(){
-			var state = this._getState();
-			return (state.currentStepIndex===state.lastStepIndex);			
-		},
-		
-		_isPrologue : function(){
-			var state = this._getState();
-			return (state.currentStepIndex===state.firstStepIndex);
+			return ((state.testSuiteMode) && (!state.lastTestCase) && (this._isLastStep()));
 		},
 
-		
+		_isLastStep : function() {
+			var state = this._getState();
+			return (state.currentStepIndex === state.lastStepIndex);
+		},
+
+		_isPrologue : function() {
+			var state = this._getState();
+			return (state.currentStepIndex === state.firstStepIndex);
+		},
+
 		// ************************ update methods ********************
-		
-		_initSlider : function(){
+
+		_initSlider : function() {
 			var self = this;
-			
-			var settings = (!!this.element.manager) ? this._getState() : { lastStepIndex : 0, currentStepIndex : 0 };
-			
+
+			var settings = (!!this.element.manager) ? this._getState() : {
+				lastStepIndex : 0,
+				currentStepIndex : 0
+			};
+
 			var slider = this.getSlider();
-			
-			try{
+
+			try {
 				slider.slider('destroy');
-			}catch(ex){
-				//well okay, no big deal.
+			} catch (ex) {
+				// well okay, no big deal.
 			}
-			
+
 			var sliderSettings = {
-				range: "max",
-				min: 0,
-				max: settings.lastStepIndex,
-				value: settings.currentStepIndex,
-				stop: function( event, ui ) {
+				range : "max",
+				min : 0,
+				max : settings.lastStepIndex,
+				value : settings.currentStepIndex,
+				stop : function(event, ui) {
 					self.element.manager.navigateRandom(ui.value);
 				}
 			};
 
 			slider.slider(sliderSettings);
-			
+
 		},
-		
-		_reset : function(){
+
+		_reset : function() {
 			this._initSlider();
 			this._refreshUI();
 		},
-		
-		_updateComboIcon : function(){
+
+		_updateComboIcon : function() {
 			var cbox = this.getStatusCombo();
-			
-			//reset the classes
-			cbox.attr("class","");
-			
+
+			// reset the classes
+			cbox.attr("class", "");
+
 			cbox.addClass("execution-status-combo-class");
-			
-			//find and set the new class
+
+			// find and set the new class
 			var selectedIndex = cbox.get(0).selectedIndex;
 			var selector = "option:eq(" + selectedIndex + ")";
-			
+
 			var className = cbox.find(selector).attr("class");
-			
-			cbox.addClass(className);			
+
+			cbox.addClass(className);
 		},
-		
-		_updateCounter : function(){
+
+		_updateCounter : function() {
 			var label = this.element.find('.step-paging');
 			var state = this._getState();
-			var labelText = state.currentStepIndex+" / "+state.lastStepIndex;
+			var labelText = state.currentStepIndex + " / " + state.lastStepIndex;
 			label.text(labelText);
 		},
-		
-		_updateButtons : function(){
-			
+
+		_updateButtons : function() {
+
 			var btnState = (this._isLastStep()) ? "disable" : "enable";
 			this.getNextStepButton().button(btnState);
-			
+
 			btnState = (this._isPrologue()) ? "disable" : "enable";
 			this.getPreviousStepButton().button(btnState);
 			this.getSuccessButton().button(btnState);
 			this.getFailedButton().button(btnState);
-			
-			if (this._getState().testSuiteMode){
+
+			if (this._getState().testSuiteMode) {
 				this.element.find('.execute-next-test-case-panel').show();
-			}
-			else{
+			} else {
 				this.element.find('.execute-next-test-case-panel').hide();
 			}
 			btnState = (this._canNavigateNextTestCase()) ? "enable" : "disable";
 			this.getNextTestCaseButton().button(btnState);
-			
-			
-			
+
 		},
-		
-		_updateSlider : function(){
+
+		_updateSlider : function() {
 			this.getSlider().slider("option", "value", this._getState().currentStepIndex);
 		},
-		
-		_updateComboEnable : function(){
-			if (this._isPrologue()){
+
+		_updateComboEnable : function() {
+			if (this._isPrologue()) {
 				this.getStatusCombo().prop('disabled', true);
-			}
-			else{
+			} else {
 				this.getStatusCombo().prop('disabled', false);
 			}
 		},
-		
-		_updateComboStatus : function(){
+
+		_updateComboStatus : function() {
 			var state = this._getState();
 			this.getStatusCombo().val(state.currentStepStatus);
 		},
-		
-		_updateCombo : function(){
+
+		_updateCombo : function() {
 			this._updateComboStatus();
 			this._updateComboIcon();
 			this._updateComboEnable();
 		},
-		
-		
-		_refreshUI : function(){
+
+		_refreshUI : function() {
 			this.element.removeClass('not-displayed');
 			this._updateCounter();
 			this._updateButtons();
 			this._updateCombo();
 			this._updateSlider();
 		}
-		
-		
+
 	});
-	
-	
-})
+
+});

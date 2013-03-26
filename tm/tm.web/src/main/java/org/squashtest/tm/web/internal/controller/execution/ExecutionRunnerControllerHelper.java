@@ -33,7 +33,6 @@ import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -45,6 +44,9 @@ import org.squashtest.tm.service.execution.ExecutionProcessingService;
 /**
  * Helper class for Controllers which need to show classic and optimized execution runners.
  * 
+ * WTF Alert ! This class required major editing to fix Issue #2130 without time enough to make it clean afterwards.
+ * Hence uglynesses such as overwriting in controller RunnerState properties set in this class.
+ * 
  * @author Gregory Fouquet
  * 
  */
@@ -53,43 +55,11 @@ public class ExecutionRunnerControllerHelper {
 
 	public static final String TEST_PLAN_ITEM_URL_PATTERN = "/test-suites/{0,number,####}/test-plan/{1,number,####}";
 	public static final String NEXT_EXECUTION_URL = "/test-suites/{0,number,####}/test-plan/{1,number,####}/next-execution/runner";
-	public static final String CURRENT_STEP_URL_PATTERN = "/execute/{0,number,####}/step/";
+	public static final String CURRENT_STEP_URL_PATTERN = "/execute/{0,number,####}/step";
 
 	public static final String COMPLETION_POPUP_TITLE = "popup.title.info";
 	public static final String COMPLETED_SUITE_MESSAGE = "squashtm.action.exception.testsuite.end";
 	public static final String COMPLETED_STEP_MESSAGE = "execute.alert.test.complete";
-
-	private interface FetchStepCommand {
-		ExecutionStep firstFirstRunnable(long executionId);
-
-		ExecutionStep findStepAtIndex(long executionId, int stepIndex);
-	}
-
-	private FetchStepCommand FETCHER = new FetchStepCommand() {
-
-		@Override
-		public ExecutionStep firstFirstRunnable(long executionId) {
-			return executionProcessingService.findRunnableExecutionStep(executionId);
-		}
-
-		@Override
-		public ExecutionStep findStepAtIndex(long executionId, int stepIndex) {
-
-			int stepCount = executionProcessingService.findTotalNumberSteps(executionId);
-
-			if (stepIndex >= stepCount) {
-				return executionProcessingService.findStepAt(executionId, stepCount - 1);
-			}
-
-			ExecutionStep executionStep = executionProcessingService.findStepAt(executionId, stepIndex);
-
-			if (executionStep == null) {
-				executionStep = executionProcessingService.findStepAt(executionId, stepCount - 1);
-			}
-
-			return executionStep;
-		}
-	};
 
 	private ExecutionProcessingService executionProcessingService;
 
@@ -112,32 +82,32 @@ public class ExecutionRunnerControllerHelper {
 	@Inject
 	private DenormalizedFieldValueFinder denormalizedFieldValueFinder;
 
-	// ************************** step model population methods *****************************
+	private ExecutionStep findStepAtIndex(long executionId, int stepIndex) {
+
+		int stepCount = executionProcessingService.findTotalNumberSteps(executionId);
+
+		if (stepIndex >= stepCount) {
+			return executionProcessingService.findStepAt(executionId, stepCount - 1);
+		}
+
+		ExecutionStep executionStep = executionProcessingService.findStepAt(executionId, stepIndex);
+
+		if (executionStep == null) {
+			executionStep = executionProcessingService.findStepAt(executionId, stepCount - 1);
+		}
+
+		return executionStep;
+	}
 
 	public void populateStepAtIndexModel(long executionId, int stepIndex, Model model) {
 
 		Execution execution = executionProcessingService.findExecution(executionId);
-		ExecutionStep executionStep = FETCHER.findStepAtIndex(executionId, stepIndex);
+		ExecutionStep executionStep = findStepAtIndex(executionId, stepIndex);
 
-		_populateExecutionStepModel(execution, executionStep, model);
+		populateExecutionStepModel(execution, executionStep, model);
 	}
 
-	/**
-	 * @deprecated unused
-	 * @param executionId
-	 * @param model
-	 */
-	@Deprecated
-	public void populateFirstRunnableStepIndexModel(long executionId, Model model) {
-
-		Execution execution = executionProcessingService.findExecution(executionId);
-		ExecutionStep executionStep = FETCHER.firstFirstRunnable(executionId);
-
-		_populateExecutionStepModel(execution, executionStep, model);
-
-	}
-
-	private void _populateExecutionStepModel(Execution execution, ExecutionStep executionStep, Model model) {
+	private void populateExecutionStepModel(Execution execution, ExecutionStep executionStep, Model model) {
 
 		int stepOrder = 0;
 		int total = execution.getSteps().size();
@@ -160,129 +130,67 @@ public class ExecutionRunnerControllerHelper {
 		addCurrentStepUrl(execution.getId(), model);
 	}
 
-	public void populateExecutionPreview(final long executionId, Model model) {
-		popuplateExecutionPreview(executionId, false, false, model);
-	}
-
-	public void popuplateExecutionPreview(final long executionId, boolean isOptimized, boolean isTestSuiteMode,
-			Model model) {
-
-		Execution execution = executionProcessingService.findExecution(executionId);
-		int totalSteps = executionProcessingService.findTotalNumberSteps(executionId);
-
-		RunnerState state = createNewRunnerState(isOptimized, isTestSuiteMode);
-		state.setPrologue(true);
-
-		model.addAttribute("execution", execution);
-		model.addAttribute("config", state);
-		model.addAttribute("totalSteps", totalSteps);
-
-	}
-
-	// ********************** display-mode-specific methods ****************************
-
-	public void populateClassicTestSuiteModel(final long executionId, Model model) {
-
-		Execution execution = executionProcessingService.findExecution(executionId);
-		IterationTestPlanItem itpi = execution.getTestPlan();
-		List<TestSuite> ts = itpi.getTestSuites();
-
-		model.addAttribute("optimized", false);
-		model.addAttribute("suitemode", true);
-
-		for (TestSuite suite : ts) {
-			addTestPlanItemUrl(suite.getId(), itpi.getId(), model);
-			addHasNextTestCase(suite.getId(), itpi.getId(), model);
-		}
-		addCurrentStepUrl(executionId, model);
-
+	public void popuplateExecutionPreview(long executionId, boolean isOptimized, Model model) {
+		populateExecutionPreview(executionId, isOptimized, new RunnerState(), model);
 	}
 
 	public void populateClassicSingleModel(Model model) {
 
 		model.addAttribute("optimized", false);
-		model.addAttribute("suitemode", false);
-	}
-
-	public void populateOptimizedTestSuiteModel(long executionId, Model model) {
-
-		Execution execution = executionProcessingService.findExecution(executionId);
-		IterationTestPlanItem itpi = execution.getTestPlan();
-		List<TestSuite> ts = itpi.getTestSuites();
-
-		model.addAttribute("optimized", false);
-		model.addAttribute("suitemode", true);
-
-		for (TestSuite suite : ts) {
-			addTestPlanItemUrl(suite.getId(), itpi.getId(), model);
-			addHasNextTestCase(suite.getId(), itpi.getId(), model);
-		}
-		addCurrentStepUrl(executionId, model);
-
 	}
 
 	public void populateOptimizedSingleModel(Model model) {
 
-		model.addAttribute("optimized", false);
-		model.addAttribute("suitemode", false);
+		model.addAttribute("optimized", true);
 	}
 
 	// ******************* IEO context model stuffing methods *******************************
 
 	public RunnerState initOptimizedSingleContext(long executionId, String contextPath, Locale locale) {
 
-		RunnerState state = createNewRunnerState(true, false);
+		RunnerState state = createRunnerState(true);
 
-		_stuffWithPopupMessages(state, locale);
-		_stuffWithPrologueStatus(executionId, state);
-		_stuffWithEntitiesInfos(executionId, state, contextPath);
-
-		return state;
-	}
-
-	public RunnerState initOptimizedTestSuiteContext(long testSuiteId, String contextPath, Locale locale) {
-
-		Execution execution = testSuiteExecutionProcessingService.startResume(testSuiteId);
-
-		RunnerState state = createNewRunnerState(true, true);
-
-		_stuffWithPopupMessages(state, locale);
-		_stuffWithPrologueStatus(execution.getId(), state);
-		_stuffWithEntitiesInfos(execution.getId(), state, contextPath);
-		_stuffWithSuiteRelatedInfos(execution, state, contextPath);
+		populatePopupMessages(state, locale);
+		populatePrologueStatus(executionId, state);
+		populateEntitiesInfos(executionId, state, contextPath);
 
 		return state;
 	}
 
-	public RunnerState createNextOptimizedTestSuiteContext(long testSuiteId, long testPlanItemId, String contextPath,
+	public RunnerState createOptimizedRunnerState(long testSuiteId, Execution execution, String contextPath,
 			Locale locale) {
+		RunnerState state = createRunnerState(false);
+		state.setTestSuiteId(testSuiteId);
+		state.setTestPlanItemId(execution.getTestPlan().getId());
 
-		Execution execution = testSuiteExecutionProcessingService.startResumeNextExecution(testSuiteId, testPlanItemId);
+		populatePopupMessages(state, locale);
+		populatePrologueStatus(execution.getId(), state);
+		populateEntitiesInfos(execution.getId(), state, contextPath);
 
-		RunnerState state = createNewRunnerState(true, true);
+		IterationTestPlanItem item = execution.getTestPlan();
 
-		_stuffWithPopupMessages(state, locale);
-		_stuffWithPrologueStatus(execution.getId(), state);
-		_stuffWithEntitiesInfos(execution.getId(), state, contextPath);
-		_stuffWithSuiteRelatedInfos(execution, state, contextPath);
+		boolean hasNextTestCase = testSuiteExecutionProcessingService.hasMoreExecutableItems(testSuiteId, item.getId());
+
+		String nextExecutionUrl = contextPath + "/"
+				+ MessageFormat.format(NEXT_EXECUTION_URL, testSuiteId, item.getId());
+
+		state.setLastTestCase(!hasNextTestCase);
+		state.setNextTestCaseUrl(nextExecutionUrl);
 
 		return state;
 	}
 
 	// ******************* IEO runner state factory methods *************************
 
-	public RunnerState createNewRunnerState(boolean isOptimized, boolean isTestSuiteMode) {
-
+	public RunnerState createRunnerState(boolean isOptimized) {
 		RunnerState state = new RunnerState();
-
 		state.setOptimized(isOptimized);
-		state.setTestSuiteMode(isTestSuiteMode);
 
 		return state;
 
 	}
 
-	private void _stuffWithPrologueStatus(long executionId, RunnerState state) {
+	private void populatePrologueStatus(long executionId, RunnerState state) {
 		if (executionProcessingService.wasNeverRun(executionId)) {
 			state.setPrologue(true);
 		} else {
@@ -290,7 +198,7 @@ public class ExecutionRunnerControllerHelper {
 		}
 	}
 
-	private void _stuffWithEntitiesInfos(long executionId, RunnerState state, String contextPath) {
+	private void populateEntitiesInfos(long executionId, RunnerState state, String contextPath) {
 
 		ExecutionStep step = executionProcessingService.findRunnableExecutionStep(executionId);
 		int totalSteps = executionProcessingService.findTotalNumberSteps(executionId);
@@ -312,26 +220,7 @@ public class ExecutionRunnerControllerHelper {
 
 	}
 
-	private void _stuffWithSuiteRelatedInfos(Execution execution, RunnerState state, String contextPath) {
-
-		IterationTestPlanItem item = execution.getTestPlan();
-		List<TestSuite> suiteList = item.getTestSuites();
-
-		for (TestSuite suite : suiteList) {
-
-			boolean hasNextTestCase = testSuiteExecutionProcessingService.hasMoreExecutableItems(suite.getId(),
-					item.getId());
-
-			String nextExecutionUrl = contextPath + "/"
-					+ MessageFormat.format(NEXT_EXECUTION_URL, suite.getId(), item.getId());
-
-			state.setLastTestCase(!hasNextTestCase);
-			state.setNextTestCaseUrl(nextExecutionUrl);
-
-		}
-	}
-
-	private void _stuffWithPopupMessages(RunnerState state, Locale locale) {
+	private void populatePopupMessages(RunnerState state, Locale locale) {
 		String popupTitle = messageSource.getMessage(COMPLETION_POPUP_TITLE, null, locale);
 		String completeTestMessage = messageSource.getMessage(COMPLETED_STEP_MESSAGE, null, locale);
 		String completeSuiteMessage = messageSource.getMessage(COMPLETED_SUITE_MESSAGE, null, locale);
@@ -343,20 +232,29 @@ public class ExecutionRunnerControllerHelper {
 
 	// ************************ private stuff **************************
 
-	private void addTestPlanItemUrl(long testSuiteId, long testPlanItemId, Model model) {
-		String testPlanItemUrl = MessageFormat.format(TEST_PLAN_ITEM_URL_PATTERN, testSuiteId, testPlanItemId);
-		model.addAttribute("testPlanItemUrl", testPlanItemUrl);
-	}
-
-	private void addHasNextTestCase(long testSuiteId, long testPlanItemId, Model model) {
-		boolean hasNextTestCase = testSuiteExecutionProcessingService.hasMoreExecutableItems(testSuiteId,
-				testPlanItemId);
-		model.addAttribute("hasNextTestCase", hasNextTestCase);
-	}
-
+	// XXX BROKEN ! lameass fix : overwrite this prop afterwards. in some cases.
 	private void addCurrentStepUrl(long executionId, Model model) {
 		String currentStepUrl = MessageFormat.format(CURRENT_STEP_URL_PATTERN, executionId);
-		model.addAttribute("currentStepUrl", currentStepUrl);
+		model.addAttribute("currentStepsUrl", currentStepUrl);
+	}
+
+	/**
+	 * @param executionId
+	 * @param optimized
+	 * @param runnerState
+	 * @param model
+	 */
+	public void populateExecutionPreview(long executionId, boolean optimized, RunnerState runnerState, Model model) {
+		Execution execution = executionProcessingService.findExecution(executionId);
+		int totalSteps = executionProcessingService.findTotalNumberSteps(executionId);
+
+		runnerState.setOptimized(optimized);
+		runnerState.setPrologue(true);
+
+		model.addAttribute("execution", execution);
+		model.addAttribute("config", runnerState);
+		model.addAttribute("totalSteps", totalSteps);
+
 	}
 
 }

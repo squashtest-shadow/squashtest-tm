@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2012 Henix, henix.fr
  *
@@ -19,37 +19,23 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "module", "./ieo-manager", "squash.resizer", "./jquery.ieo-control" ], function($, module,
-		OptimizedManager, resizer) {
+package org.squashtest.tm.web.internal.controller.execution;
 
-	return function() {
+/**
+ * @author Gregory Fouquet
+ * 
+ */
+final class ExecutionRunnerViewName {
+	
+	public static final String PROLOGUE_STEP = "execute-execution-preview.html";
+	public static final String OPTIMIZED_RUNNER_STEP = "page/ieo/ieo-execute-execution";
+	public static final String CLASSIC_STEP = "page/executions/execute-execution";
 
-		// init the manager
+	/**
+	 * 
+	 */
+	private ExecutionRunnerViewName() {
+		super();
+	}
 
-		var settings = module.config();
-
-		var manager = new OptimizedManager(settings);
-
-		// set it in the context
-		squashtm = squashtm || {};
-		squashtm.ieomanager = manager;
-
-		// init the control
-		var control = $("#ieo-control").ieoControl();
-
-		// wire them
-		manager.setControl(control);
-
-		// the right panel
-		manager.setRightPane($("#ieo-right-panel"));
-
-		// make the panels resizeable
-
-		resizer.init({
-			leftSelector : "#ieo-left-panel",
-			rightSelector : "#ieo-right-panel"
-		});
-
-	};
-
-});
+}

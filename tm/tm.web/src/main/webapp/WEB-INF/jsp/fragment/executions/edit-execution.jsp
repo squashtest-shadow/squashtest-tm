@@ -414,7 +414,6 @@
 								var url = "http://localhost:8080/squash/execute/"+executionId+"/step/"+executionStepId;
 								var data = {
 									'optimized' : 'false',
-									'suitemode' : 'false'
 								};
 								var winDef = {
 									name : "classicExecutionRunner",

@@ -23,32 +23,28 @@ package org.squashtest.tm.web.internal.controller.execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 public class RunnerState {
-
-	
 	private boolean isLastTestCase;
-	private boolean testSuiteMode;
 	private boolean isOptimized;
 	private boolean isPrologue;
-	
+
 	private String baseStepUrl;
 	private String nextTestCaseUrl;
-	
+
 	private long currentExecutionId;
 	private long currentStepId;
-	
+
 	private int firstStepIndex = 0;
 	private int lastStepIndex;
 	private int currentStepIndex;
-	
+
 	private ExecutionStatus currentStepStatus;
 
 	private String completeTitle;
 	private String completeTestMessage;
 	private String completeSuiteMessage;
-	
-	
-	
-	
+	private Long testSuiteId;
+	private Long testPlanItemId;
+
 	public boolean isLastTestCase() {
 		return isLastTestCase;
 	}
@@ -58,11 +54,7 @@ public class RunnerState {
 	}
 
 	public boolean isTestSuiteMode() {
-		return testSuiteMode;
-	}
-
-	public void setTestSuiteMode(boolean testSuiteMode) {
-		this.testSuiteMode = testSuiteMode;
+		return testSuiteId != null;
 	}
 
 	public boolean isPrologue() {
@@ -169,7 +161,34 @@ public class RunnerState {
 		this.isOptimized = isOptimized;
 	}
 
-	
-	
-	
+	/**
+	 * @param testSuiteId
+	 */
+	public void setTestSuiteId(Long testSuiteId) {
+		this.testSuiteId = testSuiteId;
+
+	}
+
+	/**
+	 * @param testPlanItemId
+	 */
+	public void setTestPlanItemId(Long testPlanItemId) {
+		this.testPlanItemId = testPlanItemId;
+
+	}
+
+	/**
+	 * @return the testPlanItemId
+	 */
+	public Long getTestPlanItemId() {
+		return testPlanItemId;
+	}
+
+	/**
+	 * @return the testSuiteId
+	 */
+	public Long getTestSuiteId() {
+		return testSuiteId;
+	}
+
 }

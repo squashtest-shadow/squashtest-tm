@@ -174,8 +174,7 @@
 		var startResumeClassic = function() {
 			var url = runnerUrl;
 			var data = {
-				'optimized' : 'false',
-				'suitemode' : 'false'
+				'optimized' : 'false'
 			};
 			var winDef = {
 				name : "classicExecutionRunner",

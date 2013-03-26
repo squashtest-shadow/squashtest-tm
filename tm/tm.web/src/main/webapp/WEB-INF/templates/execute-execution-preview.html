@@ -27,8 +27,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	th:with=
 	   "titleWindow = #{title.ExecutionPopupPreview(${execution.executionOrder + 1 }, ${execution.name})},
-		title = #{title.ExecutionPopup(${execution.executionOrder + 1 }, ${execution.name})},
-		beginURL = @{__${currentStepUrl}__0(optimized=${config.optimized} , suitemode= ${config.testSuiteMode})} ">
+		title = #{title.ExecutionPopup(${execution.executionOrder + 1 }, ${execution.name})}">
 
 <head>
 
@@ -73,10 +72,10 @@ documentation :
 <body class="execute-html-body">
 
 	<div id="execute-header">
-		<div style="float:left"><button id="execute-stop-button" th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop</button></div>
-		<div style="float:left; margin-left:25%"><span id="execute-header-numbers-label" th:text="'0 / '+${totalSteps}">0 / 3</span></div>
-		<div style="float:right"><a data-icon="ui-icon-triangle-1-e" id="execute-begin-button" th:text="#{label.Begin}"
-						th:href="${beginURL}" href="#">begin</a></div>
+		<div class="snap-left"><button id="execute-stop-button" th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop</button></div>
+		<div style="margin-left:25%;" class="snap-left"><span id="execute-header-numbers-label" th:text="'0 / '+${totalSteps}">0 / 3</span></div>
+		<div class="snap-right"><a data-icon="ui-icon-triangle-1-e" id="execute-begin-button" th:text="#{label.Begin}"
+						th:href="@{__${currentStepsUrl}__/index//0(optimized=${config.optimized})}" href="#">begin</a></div>
 	</div>
 
 

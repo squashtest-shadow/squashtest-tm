@@ -61,30 +61,34 @@
 
 
 			<%-- cautious : below are used StepIndexes and StepIds. Dont get confused. --%>
-			<s:url var="executeNext" value="${ currentStepUrl }{stepIndex}?optimized=${optimized}&suitemode=${suitemode}">
+			<s:url var="executeNext" value="${ currentStepsUrl }/index/{stepIndex}?optimized=${param.optimized}">
 				<s:param name="stepIndex" value="${executionStep.executionStepOrder+1}" />
 			</s:url>
 			
-			<s:url var="executePrevious" value="${ currentStepUrl }{stepIndex}?optimized=${optimized}&suitemode=${suitemode}">
-				<s:param name="stepIndex" value="${(executionStep.first) ? 'prologue' : executionStep.executionStepOrder-1}" />
-			</s:url>
+            <c:if test="${executionStep.first}">
+              <s:url var="executePrevious" value="${ currentStepsUrl }/prologue?optimized=${param.optimized}" />
+            </c:if>
+            <c:if test="${not executionStep.first}">
+              <s:url var="executePrevious" value="${ currentStepsUrl }/index/{stepIndex}?optimized=${param.optimized}">
+                <s:param name="stepIndex" value="${ executionStep.executionStepOrder - 1 }" />
+              </s:url>
+            </c:if>
 			
-			<s:url var="executeThis" value="${ currentStepUrl }{stepIndex}?optimized=${optimized}&suitemode=${suitemode}">
+			<s:url var="executeThis" value="${ currentStepsUrl }/index/{stepIndex}?optimized=${param.optimized}">
 				<s:param name="stepIndex" value="${executionStep.executionStepOrder}" />
 			</s:url>
 			
-			<s:url var="executeComment" value="${ currentStepUrl }{stepId}">
+			<s:url var="executeComment" value="${ currentStepsUrl }/{stepId}">
 				<s:param name="stepId" value="${executionStep.id}" />
 			</s:url>
 			
-			<s:url var="executeStatus" value="${ currentStepUrl }{stepId}">
+			<s:url var="executeStatus" value="${ currentStepsUrl }/{stepId}">
 				<s:param name="stepId" value="${executionStep.id}" />
 			</s:url>
 			
-			<s:url var="executeInfos" value="${ currentStepUrl }{stepIndex}">
+			<s:url var="executeInfos" value="${ currentStepsUrl }/index/{stepIndex}">
 				<s:param name="stepIndex" value="${executionStep.executionStepOrder}" />
 			</s:url>
-			
 
 			<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
 		</head>
@@ -333,7 +337,7 @@
 							</c:choose>
 						</td>
 						<td class="centered not-displayed" id="execute-next-test-case-panel">
-							<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner?optimized=false&suitemode=true' />" method="post">
+							<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner?optimized=false' />" method="post">
 								<f:message var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
 								<button id="execute-next-test-case" name="classic" class="button" title="${ nextTestCaseTitle }">
 									${ nextTestCaseTitle }

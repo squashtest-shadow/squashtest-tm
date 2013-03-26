@@ -20,12 +20,11 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.exception.execution.EmptyTestSuiteTestPlanException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 
-@Transactional
+
 public interface TestSuiteExecutionProcessingService {
 	/**
 	 * <p>

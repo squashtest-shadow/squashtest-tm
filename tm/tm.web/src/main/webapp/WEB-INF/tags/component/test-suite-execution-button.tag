@@ -41,7 +41,6 @@
 			var url = "${ runnerUrl }";
 			var data = {
 				'optimized' : 'false',
-				'suitemode' : 'true',
 				'mode' : mode
 			};
 			var winDef = {

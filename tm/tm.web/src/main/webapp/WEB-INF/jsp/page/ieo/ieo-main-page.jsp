@@ -35,7 +35,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" >
 
-	<c:set var="executeThis" value="${config.baseStepUrl}/${(config.prologue) ? 'prologue' : config.currentStepIndex -1}?optimized=true&suitemode=${config.testSuiteMode}" />
+<c:if test="${ config.prologue }">
+  <c:set var="executeThis" value="${config.baseStepUrl}/prologue?optimized=true" />
+</c:if>
+<c:if test="${ not config.prologue }">
+  <c:set var="executeThis" value="${config.baseStepUrl}/index/${config.currentStepIndex -1}?optimized=true" />
+</c:if>
 
 
 <head>

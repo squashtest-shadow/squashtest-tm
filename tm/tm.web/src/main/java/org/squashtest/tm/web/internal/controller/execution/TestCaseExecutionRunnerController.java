@@ -40,14 +40,14 @@ import org.squashtest.tm.service.execution.ExecutionProcessingService;
 @Controller
 @RequestMapping("/executions/{executionId}/runner")
 public class TestCaseExecutionRunnerController {
-	
+
 	private static final String OPTIMIZED_RUNNER_MAIN = "page/ieo/ieo-main-page";
 
 	@Inject
 	private ExecutionRunnerControllerHelper helper;
 
 	private ExecutionProcessingService executionProcessingService;
-	
+
 	public TestCaseExecutionRunnerController() {
 		super();
 	}
@@ -56,35 +56,35 @@ public class TestCaseExecutionRunnerController {
 	public void setExecutionProcessingService(ExecutionProcessingService executionProcService) {
 		this.executionProcessingService = executionProcService;
 	}
-	
-	//redirects to something served by ExecutionProcessingController
-	private String getRedirectExecURL(long executionId, boolean optimized, boolean suitemode){
-		return "/execute/"+executionId+"?optimized="+optimized+"&suitemode="+suitemode;
-	}
-	
-	@RequestMapping(params = {"optimized=true", "suitemode=false"})
-	public String startResumeExecutionInOptimizedRunner(@PathVariable long executionId, Model model, HttpServletRequest context, Locale locale) {
-		
-		RunnerState state = helper.initOptimizedSingleContext(executionId, context.getContextPath(), locale);
-		model.addAttribute("config", state);
-		
-		return OPTIMIZED_RUNNER_MAIN;
-		
+
+	// redirects to something served by ExecutionProcessingController
+	private String getRedirectExecURL(long executionId, boolean optimized, boolean suitemode) {
+		return "/execute/" + executionId + "?optimized=" + optimized;
 	}
 
-	@RequestMapping(params = {"optimized=false", "suitemode=false"})
-	public String startResumeExecutionInClassicRunner(@PathVariable long executionId, Model model) {
-		
-		//simple case here : the context is simply the popup. We redirect to the execution processing view controller.
-		return "redirect:" + getRedirectExecURL(executionId, false, false);		
-		
+	@RequestMapping(params = { "optimized=true" })
+	public String startResumeExecutionInOptimizedRunner(@PathVariable long executionId, Model model,
+			HttpServletRequest context, Locale locale) {
+
+		RunnerState state = helper.initOptimizedSingleContext(executionId, context.getContextPath(), locale);
+		model.addAttribute("config", state);
+
+		return OPTIMIZED_RUNNER_MAIN;
+
 	}
-	
+
+	@RequestMapping(params = { "optimized=false" })
+	public String startResumeExecutionInClassicRunner(@PathVariable long executionId, Model model) {
+
+		// simple case here : the context is simply the popup. We redirect to the execution processing view controller.
+		return "redirect:" + getRedirectExecURL(executionId, false, false);
+
+	}
+
 	@RequestMapping(params = "dry-run")
 	@ResponseBody
 	public void dryRunStartResumeExecution(@PathVariable long executionId) {
 		executionProcessingService.findRunnableExecutionStep(executionId);
 	}
-	
-	
+
 }

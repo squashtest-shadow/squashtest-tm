@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -44,6 +45,7 @@ import org.squashtest.tm.service.security.UserContextService;
 
 
 @Service("squashtest.tm.service.ExecutionProcessingService")
+@Transactional
 public class ExecutionProcessingServiceImpl implements ExecutionProcessingService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionProcessingServiceImpl.class);
 
