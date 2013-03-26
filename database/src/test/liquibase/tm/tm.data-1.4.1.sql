@@ -42,3 +42,127 @@ insert into `CUSTOM_FIELD_VALUE` (`CFV_ID`, `BOUND_ENTITY_ID`, `BOUND_ENTITY_TYP
 (18, 177, 'REQUIREMENT_VERSION', 5, 'false'),
 (19, 178, 'REQUIREMENT_VERSION', 5, 'false'),
 (20, 179, 'REQUIREMENT_VERSION', 5, 'false');
+
+
+
+--
+-- CUF binding for test-cases on project 4
+-- 
+
+INSERT INTO `custom_field_binding` (`CFB_ID`, `CF_ID`, `BOUND_ENTITY`, `BOUND_PROJECT_ID`, `POSITION`) VALUES
+(6, 1, 'TEST_CASE', 4, 1);
+
+INSERT INTO `custom_field_value` (`CFV_ID`, `BOUND_ENTITY_ID`, `BOUND_ENTITY_TYPE`, `CFB_ID`, `VALUE`) VALUES
+(21, 189, 'TEST_CASE', 6, 'defaultt1'),
+(22, 190, 'TEST_CASE', 6, 'defaultt1'),
+(23, 199, 'TEST_CASE', 6, 'defaultt1'),
+(24, 200, 'TEST_CASE', 6, 'defaultt1'),
+(25, 202, 'TEST_CASE', 6, 'defaultt1'),
+(26, 203, 'TEST_CASE', 6, 'defaultt1'),
+(27, 207, 'TEST_CASE', 6, 'defaultt1'),
+(28, 208, 'TEST_CASE', 6, 'defaultt1'),
+(29, 209, 'TEST_CASE', 6, 'defaultt1');
+
+
+--
+-- Imported test cases without cuf values
+--
+INSERT INTO `attachment_list` (`ATTACHMENT_LIST_ID`) VALUES
+(779),
+(780),
+(781),
+(782),
+(783),
+(784),
+(785),
+(786),
+(787),
+(788),
+(789),
+(790),
+(791),
+(792),
+(793),
+(794),
+(795);
+
+INSERT INTO `test_case_library_node` (`TCLN_ID`, `DELETED_ON`, `DESCRIPTION`, `NAME`, `CREATED_BY`, `CREATED_ON`, `LAST_MODIFIED_BY`, `LAST_MODIFIED_ON`, `PROJECT_ID`, `ATTACHMENT_LIST_ID`) VALUES
+(215, NULL, NULL, 'JDD-import_testcases', 'admin', '2013-03-26 11:07:52', NULL, NULL, 4, 779),
+(216, NULL, '<p>The Wheel of Time</p>', 'JDD-TC04', 'yoda', '2012-08-26 00:00:00', NULL, NULL, 4, 780),
+(217, NULL, '<p>Lord of the Rings</p>', 'JDD-TC03', 'gandalf', '1965-08-18 00:00:00', NULL, NULL, 4, 784),
+(218, NULL, '<p>The Silmarillion</p>', 'JDD-TC02', 'gandalf', '1985-08-17 00:00:00', NULL, NULL, 4, 788),
+(219, NULL, '<p>LOTR</p>', 'JDD-TC01', 'gandalf', '1985-08-17 00:00:00', NULL, NULL, 4, 792);
+ 
+INSERT INTO `test_case_folder` (`TCLN_ID`) VALUES
+(215);
+
+INSERT INTO `test_case` (`TCLN_ID`, `VERSION`, `EXECUTION_MODE`, `IMPORTANCE`, `IMPORTANCE_AUTO`, `PREREQUISITE`, `REFERENCE`, `TA_TEST`, `TC_NATURE`, `TC_TYPE`, `TC_STATUS`) VALUES
+(216, 1, 'MANUAL', 'MEDIUM', 0, '<ol><li>Being an Aes Sedai or an Asha''man</li></ol>', '', NULL, 'UNDEFINED', 'UNDEFINED', 'WORK_IN_PROGRESS'),
+(217, 1, 'MANUAL', 'LOW', 0, '<ol><li>Knowledge of Middle-Earth</li></ol>', '', NULL, 'UNDEFINED', 'UNDEFINED', 'WORK_IN_PROGRESS'),
+(218, 1, 'MANUAL', 'VERY_HIGH', 0, '<ol><li>Knowledge of Sindarin</li></ol>', '', NULL, 'UNDEFINED', 'UNDEFINED', 'WORK_IN_PROGRESS'),
+(219, 1, 'MANUAL', 'HIGH', 0, '<ol><li>Knowledge of test case creation</li></ol>', '', NULL, 'UNDEFINED', 'UNDEFINED', 'WORK_IN_PROGRESS');
+
+
+INSERT INTO `tcln_relationship` (`ANCESTOR_ID`, `DESCENDANT_ID`) VALUES
+(215, 216),
+(215, 217),
+(215, 218),
+(215, 219);
+
+INSERT INTO `tcln_relationship_closure` (`ANCESTOR_ID`, `DESCENDANT_ID`, `DEPTH`) VALUES
+(215, 215, 0),
+(216, 216, 0),
+(217, 217, 0),
+(218, 218, 0),
+(219, 219, 0),
+(215, 216, 1),
+(215, 217, 1),
+(215, 218, 1),
+(215, 219, 1);
+
+
+
+INSERT INTO `test_step` (`TEST_STEP_ID`) VALUES
+(169),
+(170),
+(171),
+(172),
+(173),
+(174),
+(175),
+(176),
+(177),
+(178),
+(179),
+(180);
+
+
+INSERT INTO `action_test_step` (`TEST_STEP_ID`, `ACTION`, `EXPECTED_RESULT`, `ATTACHMENT_LIST_ID`) VALUES
+(169, '<p>STEP 1</p>', '<p>RS1</p>', 781),
+(170, '<p>STEP 2</p>', '<p>RS2</p>', 782),
+(171, '<p>STEP 3</p>', '<p>RS3</p>', 783),
+(172, '<p>STEP 1</p>', '<p>RS1</p>', 785),
+(173, '<p>STEP 2</p>', '<p>RS2</p>', 786),
+(174, '<p>STEP 3</p>', '<p>RS3</p>', 787),
+(175, '<p>STEP 1</p>', '<p>RS1</p>', 789),
+(176, '<p>STEP 2</p>', '<p>RS2</p>', 790),
+(177, '<p>STEP 3</p>', '<p>RS3</p>', 791),
+(178, '<p>STEP 1</p>', '<p>RS1</p>', 793),
+(179, '<p>STEP 2</p>', '<p>RS2</p>', 794),
+(180, '<p>STEP 3</p>', '<p>RS3</p>', 795);
+
+
+INSERT INTO `test_case_steps` (`TEST_CASE_ID`, `STEP_ID`, `STEP_ORDER`) VALUES
+(216, 169, 0),
+(216, 170, 1),
+(216, 171, 2),
+(217, 172, 0),
+(217, 173, 1),
+(217, 174, 2),
+(218, 175, 0),
+(218, 176, 1),
+(218, 177, 2),
+(219, 178, 0),
+(219, 179, 1),
+(219, 180, 2);
+

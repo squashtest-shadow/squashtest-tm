@@ -279,11 +279,29 @@
 		<dropTable tableName="TEMP_VERIFIED"/>
 	</changeSet>
 	<changeSet id="tm-1.5.0-issue-1895-test-01" author="mpagnon">
-	<preConditions>
+		<preConditions>
 			<sqlCheck expectedResult="0">
 				select count(*)
 				from TEST_CASE
 				where PREREQUISITE is null
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	<changeSet id="tm-1.5.0-issue-2061-test-01" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select  count(*)
+				from TEST_CASE tc
+				join TEST_CASE_LIBRARY_NODE tcln ON tc.TCLN_ID = tcln.TCLN_ID
+				join PROJECT project ON tcln.PROJECT_ID = project.PROJECT_ID
+				join CUSTOM_FIELD_BINDING binding ON binding.BOUND_PROJECT_ID = project.PROJECT_ID
+				join CUSTOM_FIELD cuf ON binding.CF_ID = cuf.CF_ID
+				where not exists (
+					select * from CUSTOM_FIELD_VALUE val 
+					where val.BOUND_ENTITY_ID = tc.TCLN_ID 
+					and val.BOUND_ENTITY_TYPE='TEST_CASE' 
+					and val.CFB_ID = binding.CFB_ID
+				)
 			</sqlCheck>
 		</preConditions>
 	</changeSet>
