@@ -265,32 +265,9 @@ public class RequirementLibraryNavigationServiceImpl extends
 				.findAll();
 	}
 	
-	// CUF : this is a very quick fix for [Issue 2061], TODO : remove the lines that are related to this issue and replace
-	// it with another solution mentioned in the ticket
-	// same for test-case import
 	@Override
 	public ImportSummary importExcel(InputStream stream, long libraryId) {
-		// **************************[Issue 2061]********************
-		// see [] save existing test cases ids
-		List<Long> alreadyExistingRequirements = requirementDao.findAllRequirementsIdsByLibrary(libraryId);
-		// **************************end [Issue 2061]********************
-		ImportSummary summary =requirementImporter.importExcelRequirements(stream, libraryId);
-		// **************************[Issue 2061]********************
-		// flush so that sql query works
-		requirementDao.flush();
-
-		// deduce newly imported Requirements id and retrieve new test cases
-		List<Long> libraryNewRequirementsIds = requirementDao.findAllRequirementsIdsByLibrary(libraryId);
-		libraryNewRequirementsIds.removeAll(alreadyExistingRequirements);
-		List<Requirement> importedRequirements = requirementDao.findAllByIds(libraryNewRequirementsIds);
-
-		// create custom fields for new test cases
-		for (Requirement requirement : importedRequirements) {
-			createCustomFieldValues(requirement.getCurrentVersion());
-			createCustomFieldValues(requirement.getRequirementVersions());			
-		}
-		// **************************end [Issue 2061]********************
-		return summary;
+		return requirementImporter.importExcelRequirements(stream, libraryId);		
 	}
 	
 	@Override
