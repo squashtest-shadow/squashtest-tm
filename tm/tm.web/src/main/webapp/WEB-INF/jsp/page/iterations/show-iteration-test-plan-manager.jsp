@@ -53,10 +53,12 @@
 
 
 	<script type="text/javascript">
-		selection = new Array();
+		selection = [];
 		$(function(){
-			$(function() {
-				squashtm.navbar.highlightOn('campaign-link');
+			require(["common"], function(){
+				require(["app/ws/squashtm.navbar"], function(navbar) {
+  					navbar.highlightOn('campaign-link');
+				});
 			});	
 			
 			$( '#add-items-button' ).click(function() {
