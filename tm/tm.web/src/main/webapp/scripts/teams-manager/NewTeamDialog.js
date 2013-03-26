@@ -35,6 +35,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 			
 			this.$el.find("input:text").val("");
 			textareas.val("");
+			$("span.error-message", $("#add-team-dialog")).text("");
 			textareas.each(decorateArea);
 			
 			this.$el.confirmDialog({
