@@ -38,6 +38,7 @@ function oneShotConfirm(dialogTitle, domMessage, okText, koText, widthParam) {
 		width : widthParam,
 		resizable : false,
 		title : dialogTitle,
+		modal : true,
 		buttons : [ {
 			'text' : okText,
 			'click' : function () {
