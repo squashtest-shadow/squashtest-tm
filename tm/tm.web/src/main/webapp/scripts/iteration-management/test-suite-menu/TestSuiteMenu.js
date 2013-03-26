@@ -211,7 +211,7 @@ function TestSuiteMenu(settings){
 	
 	var getDatatableSelected = $.proxy(function (){
 		var table = $(this.datatableSelector).dataTable( {'bRetrieve' : true});
-		return getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
+		return table.squashTable().getSelectedIds();
 	}, this);
 	
 	var displayAddSuiteError = $.proxy(function (xhr, text){
