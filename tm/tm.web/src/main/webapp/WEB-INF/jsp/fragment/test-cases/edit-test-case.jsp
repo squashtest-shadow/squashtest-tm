@@ -521,14 +521,7 @@
 		$("#contextual-content").on("verifiedrequirementversions.refresh", refreshTCImportance);
 		
 		
-		<c:if test="${hasCUF}">
-		//load the custom fields
-		$.get("${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}")
-		.success(function(data){
-			$("#test-case-description-table").append(data);
-		});
-		</c:if>
-		
+	
 		
 		//init the renaming listener
 		require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "jqueryui"], function($, contentHandlers, Frag, bugtracker){
