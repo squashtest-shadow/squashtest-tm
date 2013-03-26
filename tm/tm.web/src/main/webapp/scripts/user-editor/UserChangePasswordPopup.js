@@ -29,7 +29,7 @@ define(
 					.extend({
 						el : "#password-change-popup",
 						initialize : function() {
-							self = this;
+							var self = this;
 							var params = {
 								selector : "#password-change-popup",
 								title : UMod.message.changePasswordPopupTitle,
