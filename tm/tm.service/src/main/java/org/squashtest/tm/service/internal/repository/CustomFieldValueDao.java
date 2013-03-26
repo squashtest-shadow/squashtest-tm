@@ -26,6 +26,7 @@ import java.util.List;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -159,6 +160,19 @@ public interface CustomFieldValueDao {
 								@QueryParam("origEntityId") Long origEntityId, @QueryParam("copyEntityId") Long copyEntityId);
 	
 	
+	/**
+	 * return the custom field value matchine the given params.
+	 * 
+	 * @param customFieldBindingId : the id of the {@link CustomFieldBinding}
+	 * @param boundEntityId : the id of the {@link BoundEntity}
+	 * @param bindableEntity : the type of the {@link BoundEntity}
+	 * @return
+	 */
+	List<CustomFieldValue> findAllCustomFieldValueOfBindingAndEntity(
+			long customFieldBindingId,
+			long boundEntityId,
+			BindableEntity bindableEntity);
+	
 	
 	public static final class CustomFieldValuesPair{
 		
@@ -201,5 +215,10 @@ public interface CustomFieldValueDao {
 			recipient.setValue(original.getValue());
 		}
 	}
+
+
+
+
+
 	
 }

@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat
 
 import javax.inject.Inject
 
+import org.hibernate.SQLQuery;
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification
 import org.squashtest.tm.domain.testcase.TestCaseFolder
@@ -86,6 +87,51 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			def fuelFuseeContentNames = confContent.findAll{it instanceof TestCaseFolder }*.content.flatten()*.name as Set
 			fuelFuseeContentNames == ["cas limite - fuite de carburant", "remplissage de la soute", "vérification des citernes", "activer robot étage 1", 
 									"activer robot étage 2", "activer robot étage 3", "cas limite - blocage robot", "vérifier l'erreur d'alignement"] as Set
+	}
+	
+	@DataSet("TestCaseImporterIT.setup.cufs.xml")
+	def "should import and add custom-field-values"(){
+		
+		given :
+			InputStream stream = this.getClass().getClassLoader().getResourceAsStream("import/import-cas-test.zip")
+		
+		when :
+			def summary = service.importExcelTestCase(stream, 1l, "Cp858")
+			def stringquery = "select  count(*) "+
+			" from TEST_CASE tc"+
+			" join TEST_CASE_LIBRARY_NODE tcln on tc.TCLN_ID = tcln.TCLN_ID"+
+			" join PROJECT project on tcln.PROJECT_ID = project.PROJECT_ID"+
+			" join CUSTOM_FIELD_BINDING binding on binding.BOUND_PROJECT_ID = project.PROJECT_ID"+
+			" join CUSTOM_FIELD cuf on binding.CF_ID = cuf.CF_ID"+
+			" where not exists ("+
+				" select * "+
+				" from CUSTOM_FIELD_VALUE val"+
+				" where val.BOUND_ENTITY_ID = tc.TCLN_ID"+
+				" and val.BOUND_ENTITY_TYPE = 'TEST_CASE' "+
+				" and val.CFB_ID = binding.CFB_ID"+
+			" )"
+			SQLQuery sqlquery = getSession().createSQLQuery(stringquery);
+			def numberOfTCWithoutValue = sqlquery.uniqueResult();
+		
+		then :		
+		numberOfTCWithoutValue == 0
+	}
+	
+	@DataSet("TestCaseImporterIT.setup.cufs.xml")
+	def "should import and not add more than one custom-field-value per imported test case"(){
+		
+		given :
+			InputStream stream = this.getClass().getClassLoader().getResourceAsStream("import/import-cas-test.zip")
+		
+		when :
+			def summary = service.importExcelTestCase(stream, 1l, "Cp858")
+			
+			def stringquery = "select count(*) from CUSTOM_FIELD_VALUE where BOUND_ENTITY_TYPE = 'TEST_CASE' group by BOUND_ENTITY_ID"
+			SQLQuery sqlquery = getSession().createSQLQuery(stringquery);
+			def numberOfCufValPerTC = sqlquery.list()
+		
+		then :
+		numberOfCufValPerTC.every({it == 1})
 	}
 	
 	

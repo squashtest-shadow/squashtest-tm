@@ -278,7 +278,7 @@
 																				 " and copy.boundEntityType = :entityType "+
 																				 " and copy.binding = orig.binding"
 																			),
-																				  	
+		@NamedQuery(name = "CustomFieldValue.findAllCustomFieldValueOfBindingAndEntity", query="select cv from CustomFieldValue cv join cv.binding binding where binding.id = ? and cv.boundEntityId = ? and cv.boundEntityType = ? "),
 		
 		//BoundEntity
 		@NamedQuery(name = "BoundEntityDao.findAllTestCasesForProject", query="select tc from TestCase tc where tc.project.id = :projectId"),

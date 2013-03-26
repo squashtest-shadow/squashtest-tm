@@ -74,21 +74,11 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private static final String TEST_CASE_ID_PARAM_NAME = "testCaseId";
 	private static final String PROJECT = "project";
 	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from TCLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
-	private static final String FIND_ALL_FOR_LIBRARY_QUERY = "select distinct testCase.TCLN_ID" +
-			" from TEST_CASE testCase" +
-			" where testCase.TCLN_ID in (" +
-				" select dTestCase.TCLN_ID" +
-					" from TEST_CASE dTestCase" +
-					" JOIN TCLN_RELATIONSHIP_CLOSURE closure ON dTestCase.TCLN_ID = closure.DESCENDANT_ID"+
-					" JOIN TEST_CASE_LIBRARY_CONTENT dRoot ON dRoot.CONTENT_ID = closure.ANCESTOR_ID"+
-					" where dRoot.LIBRARY_ID = :libraryId"+
-				" union" +
-				" select rTestCase.TCLN_ID" +
-					" from TEST_CASE rTestCase" +
-					" JOIN TEST_CASE_LIBRARY_CONTENT rRoot ON rRoot.CONTENT_ID = rTestCase.TCLN_ID"+
-					" where rRoot.LIBRARY_ID = :libraryId"+
-				" )";
-	
+	private static final String FIND_ALL_FOR_LIBRARY_QUERY ="select distinct testCase.TCLN_ID" +
+			" from TEST_CASE testCase " +
+			" join TEST_CASE_LIBRARY_NODE tcln on tcln.TCLN_ID = testCase.TCLN_ID" +
+			" join PROJECT project on project.PROJECT_ID = tcln.PROJECT_ID" +
+			" where project.TCL_ID = :libraryId"; 
 	
 	private static List<DefaultSorting> DEFAULT_VERIFIED_TC_SORTING;
 	

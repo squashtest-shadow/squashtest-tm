@@ -172,11 +172,17 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 				.getId(), entity.getBoundEntityType());
 
 		for (CustomFieldBinding binding : bindings) {
+			if(!foundValue(binding, entity)){
 			CustomFieldValue value = binding.createNewValue();
 			value.setBoundEntity(entity);
 			customFieldValueDao.persist(value);
+			}
 		}
 
+	}
+
+	private boolean foundValue(CustomFieldBinding binding, BoundEntity entity) {
+		return !customFieldValueDao.findAllCustomFieldValueOfBindingAndEntity(binding.getId(), entity.getBoundEntityId(), entity.getBoundEntityType()).isEmpty();
 	}
 
 	private void deleteCustomFieldValues(List<CustomFieldValue> values) {

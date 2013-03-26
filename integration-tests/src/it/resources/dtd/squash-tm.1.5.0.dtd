@@ -105,7 +105,92 @@
     TEST_STEP*,
     TEST_SUITE*,
     TM_TA_PROJECTS*,
-    VERIFYING_STEPS*
+    VERIFYING_STEPS*,    
+    acl_class*,
+    acl_group*,
+    acl_group_permission*,
+    acl_object_identity*,
+    acl_responsibility_scope_entry*,
+    action_test_step*,
+    attachment*,
+    attachment_content*,
+    attachment_list*,    
+    auth_user*,
+    automated_execution_extender*,
+    automated_suite*,
+    automated_test*,
+    bugtracker*,
+    bugtracker_binding*,
+    call_test_step*,
+    campaign*,
+    campaign_folder*,
+    campaign_iteration*,
+    campaign_library*,
+    campaign_library_content*,
+    campaign_library_node*,
+    campaign_test_plan_item*,
+    cln_relationship*,
+    cln_relationship_closure*,
+    core_config*,
+    core_group*,
+    core_group_authority*,
+    core_group_member*,
+    core_party*,
+    core_team*,
+    core_team_member*,
+    core_user*,	
+    custom_field*,
+    custom_field_binding*,
+    custom_field_option*,
+    custom_field_rendering_location*,
+    custom_field_value*,
+    databasechangelog*,
+    databasechangeloglock*,
+    denormalized_field_value*,
+    denormalized_field_rendering_location*,
+    execution*,
+    execution_execution_steps*,
+    execution_step*,
+    issue*,
+    issue_list*,    
+    item_test_plan_execution*,
+    test_suite_test_plan_item*,
+    item_test_plan_list*,   
+    iteration*,
+    iteration_test_plan_item*,
+    iteration_test_suite*,
+    project*,
+    project_filter*,
+    project_filter_entry*,
+    requirement*,
+    requirement_audit_event*,
+    requirement_creation*,
+    requirement_folder*,
+    requirement_large_property_change*,
+    requirement_library*,
+    requirement_library_content*,
+    requirement_library_node*,
+    requirement_property_change*,
+    requirement_version*,
+    requirement_version_coverage*,
+    resource*,
+    rln_relationship*,
+    rln_relationship_closure*,
+    simple_resource*,
+    tcln_relationship*,
+    tcln_relationship_closure*,
+    test_automation_project*,
+    test_automation_server*,    
+    test_case*,
+    test_case_folder*,
+    test_case_library*,
+    test_case_library_content*,
+    test_case_library_node*,
+    test_case_steps*,
+    test_step*,
+    test_suite*,
+    tm_ta_projects*,
+    verifying_steps*
     )+>
 
 <!ELEMENT ACL_CLASS EMPTY>
@@ -353,7 +438,7 @@
 <!ELEMENT CUSTOM_FIELD EMPTY>
 <!ATTLIST CUSTOM_FIELD
 	CF_ID CDATA #REQUIRED
-	FIELD_TYPE CDATA #REQUIRED
+	FIELD_TYPE (SSF|CF) #REQUIRED
 	NAME CDATA #REQUIRED
 	OPTIONAL CDATA #IMPLIED
 	CODE CDATA  #REQUIRED
@@ -807,3 +892,90 @@
 	REQUIREMENT_VERSION_COVERAGE_ID CDATA #REQUIRED
 	TEST_STEP_ID CDATA #REQUIRED
 >
+
+
+<!ELEMENT acl_class EMPTY>
+<!ELEMENT acl_group EMPTY>
+<!ELEMENT acl_group_permission EMPTY>
+<!ELEMENT acl_object_identity EMPTY>
+<!ELEMENT acl_responsibility_scope_entry EMPTY>
+<!ELEMENT action_test_step EMPTY>
+<!ELEMENT attachment EMPTY>
+<!ELEMENT attachment_content EMPTY>
+<!ELEMENT attachment_list EMPTY>
+<!ELEMENT auth_user EMPTY>
+<!ELEMENT automated_execution_extender EMPTY>
+<!ELEMENT automated_suite EMPTY>
+<!ELEMENT automated_test EMPTY>
+<!ELEMENT bugtracker EMPTY>
+<!ELEMENT bugtracker_binding EMPTY>
+<!ELEMENT call_test_step EMPTY>
+<!ELEMENT campaign EMPTY>
+<!ELEMENT campaign_folder EMPTY>
+<!ELEMENT campaign_iteration EMPTY>
+<!ELEMENT campaign_library EMPTY>
+<!ELEMENT campaign_library_content EMPTY>
+<!ELEMENT campaign_library_node EMPTY>
+<!ELEMENT campaign_test_plan_item EMPTY>
+<!ELEMENT cln_relationship EMPTY>
+<!ELEMENT cln_relationship_closure EMPTY>
+<!ELEMENT core_config EMPTY>
+<!ELEMENT core_group EMPTY>
+<!ELEMENT core_group_authority EMPTY>
+<!ELEMENT core_group_member EMPTY>
+<!ELEMENT core_party EMPTY>
+<!ELEMENT core_team EMPTY>
+<!ELEMENT core_team_member EMPTY>    
+<!ELEMENT core_user EMPTY>
+<!ELEMENT custom_field EMPTY>
+<!ELEMENT custom_field_binding EMPTY>
+<!ELEMENT custom_field_option EMPTY>
+<!ELEMENT custom_field_rendering_location EMPTY>
+<!ELEMENT custom_field_value EMPTY>
+<!ELEMENT databasechangelog EMPTY>
+<!ELEMENT databasechangeloglock EMPTY>
+<!ELEMENT denormalized_field_value EMPTY>
+<!ELEMENT denormalized_field_rendering_location EMPTY>
+<!ELEMENT execution EMPTY>
+<!ELEMENT execution_execution_steps EMPTY>
+<!ELEMENT execution_step EMPTY>
+<!ELEMENT issue EMPTY>
+<!ELEMENT issue_list EMPTY>
+<!ELEMENT item_test_plan_execution EMPTY>
+<!ELEMENT test_suite_test_plan_item EMPTY>
+<!ELEMENT item_test_plan_list EMPTY>
+<!ELEMENT iteration EMPTY>
+<!ELEMENT iteration_test_plan_item EMPTY>
+<!ELEMENT iteration_test_suite EMPTY>
+<!ELEMENT project EMPTY>
+<!ELEMENT project_filter EMPTY>
+<!ELEMENT project_filter_entry EMPTY>
+<!ELEMENT requirement EMPTY>
+<!ELEMENT requirement_audit_event EMPTY>
+<!ELEMENT requirement_creation EMPTY>
+<!ELEMENT requirement_folder EMPTY>
+<!ELEMENT requirement_large_property_change EMPTY>
+<!ELEMENT requirement_library EMPTY>
+<!ELEMENT requirement_library_content EMPTY>
+<!ELEMENT requirement_library_node EMPTY>
+<!ELEMENT requirement_property_change EMPTY>
+<!ELEMENT requirement_version EMPTY>
+<!ELEMENT requirement_version_coverage EMPTY>
+<!ELEMENT resource EMPTY>
+<!ELEMENT rln_relationship EMPTY>
+<!ELEMENT rln_relationship_closure EMPTY>
+<!ELEMENT simple_resource EMPTY>
+<!ELEMENT tcln_relationship EMPTY>
+<!ELEMENT tcln_relationship_closure EMPTY>
+<!ELEMENT test_automation_project EMPTY>
+<!ELEMENT test_automation_server EMPTY>
+<!ELEMENT test_case EMPTY>	
+<!ELEMENT test_case_folder EMPTY>
+<!ELEMENT test_case_library EMPTY>
+<!ELEMENT test_case_library_content EMPTY>
+<!ELEMENT test_case_library_node EMPTY>
+<!ELEMENT test_case_steps EMPTY>
+<!ELEMENT test_step EMPTY>
+<!ELEMENT test_suite EMPTY>
+<!ELEMENT tm_ta_projects EMPTY>
+<!ELEMENT verifying_steps EMPTY>
