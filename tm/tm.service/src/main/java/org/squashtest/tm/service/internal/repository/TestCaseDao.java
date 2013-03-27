@@ -227,5 +227,12 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	 * @return
 	 */
 	List<Long> findAllTestCasesIdsByLibrary(long libraryId);
+	
+	/**
+	 * Return all test-cases that are linked to an iteration-test-plan-item
+	 * @param nodeIds
+	 * @return
+	 */
+	List<TestCase> findAllLinkedToIteration(List<Long> nodeIds);
 
 }

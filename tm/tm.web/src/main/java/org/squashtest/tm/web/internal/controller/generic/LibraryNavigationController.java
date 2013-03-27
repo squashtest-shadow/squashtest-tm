@@ -189,7 +189,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		
 		for (SuppressionPreviewReport report : reportList){
 			builder.append(report.toString(messageSource, locale));
-			builder.append("<br><br>");
+			builder.append("<br/><br>");
 		}
 		
 		return new Message(builder.toString());

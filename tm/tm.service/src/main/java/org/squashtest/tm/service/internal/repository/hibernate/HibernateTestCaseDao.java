@@ -679,6 +679,11 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return query.list();
 	}
 
+	@Override
+	public List<TestCase> findAllLinkedToIteration(List<Long> nodeIds) {
+		return executeListNamedQuery("testCase.findAllLinkedToIteration", new SetIdsParameter(nodeIds));
+	}
+
 	
 	
 	

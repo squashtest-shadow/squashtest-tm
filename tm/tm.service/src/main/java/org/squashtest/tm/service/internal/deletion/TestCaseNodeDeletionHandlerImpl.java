@@ -35,7 +35,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.service.deletion.AffectedEntitiesPreviewReport;
+import org.squashtest.tm.service.deletion.LinkedToIterationPreviewReport;
 import org.squashtest.tm.service.deletion.NotDeletablePreviewReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
@@ -81,17 +81,15 @@ public class TestCaseNodeDeletionHandlerImpl extends
 		List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
 
 		NotDeletablePreviewReport report = previewLockedNodes(nodeIds);
-		
 		if(report != null){
 			preview.add(report);
 		}
-
-		// TODO
-		// preview.add(previewAffectedNodes(nodeIds));
-
+		LinkedToIterationPreviewReport previewAffectedNodes = previewAffectedNodes(nodeIds);
+		if(previewAffectedNodes != null){
+			preview.add(previewAffectedNodes);
+		}
 		return preview;
 	}
-
 	@Override
 	protected List<Long> detectLockedNodes(final List<Long> nodeIds) {
 
@@ -226,13 +224,6 @@ public class TestCaseNodeDeletionHandlerImpl extends
 		return report;
 	}
 
-	protected AffectedEntitiesPreviewReport previewAffectedNodes(List<Long> nodeIds) {
-		AffectedEntitiesPreviewReport report = new AffectedEntitiesPreviewReport();
-
-		// FIXME
-
-		return report;
-	}
 
 	/**
 	 * See {@link TestCaseDao#findTestCasesHavingCallerDetails(java.util.Collection)} for more information regarding
@@ -290,5 +281,25 @@ public class TestCaseNodeDeletionHandlerImpl extends
 		// job done, let's return the result
 		return graph;
 	}
+	
+	private LinkedToIterationPreviewReport previewAffectedNodes(List<Long> nodeIds) {
+
+		LinkedToIterationPreviewReport report = null;
+
+		List<TestCase> linkedNodes = leafDao.findAllLinkedToIteration(nodeIds);
+		if (!linkedNodes.isEmpty()) {
+
+			report = new LinkedToIterationPreviewReport();
+			
+			for (TestCase node : linkedNodes) {
+				report.addName(node.getName());
+			}
+
+
+		}
+
+		return report;
+	}
+
 
 }

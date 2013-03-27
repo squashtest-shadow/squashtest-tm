@@ -124,7 +124,7 @@
 		@NamedQuery(name = "testCase.findAllRootContent", query = "select tc.id from TestCaseLibraryNode tc where tc.project.id in (:projectIds)"),
 		@NamedQuery(name = "testCase.findRootContentTestCase", query = "select tcn from TestCaseLibrary tcl join tcl.rootContent tcn where tcn.id in (:paramIds) and tcn in (from TestCase)"),
 		@NamedQuery(name = "testCase.findTestCasesWithParentFolder", query = "select tc, tcf from TestCaseFolder tcf join tcf.content tc where tc.id in (:testCasesIds)"),
-	
+		@NamedQuery(name = "testCase.findAllLinkedToIteration", query = "select tc from IterationTestPlanItem item join item.referencedTestCase tc where tc.id in (:testCasesIds)"),
 		//the two next ones are to be used together. The second one assumes that the calledIds are actually not called and wont perform checks to make sure of that.
 		//Look for this query in HibernateTestCaseDao for more details.
 		@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", query = "select distinct caller.id, caller.name, called.id, called.name from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id in (:testCaseIds) group by caller, called"),
@@ -133,6 +133,7 @@
 		@NamedQuery(name = "testCase.countByVerifiedRequirementVersion", query = "select count(tc) from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion vr where vr.id = :verifiedId"),
 		@NamedQuery(name = "testCase.findUnsortedAllByVerifiedRequirementVersion", query = "select tc from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion vr where vr.id = :requirementVersionId"),
 		@NamedQuery(name = "testCase.findAllExecutions", query = "select exec from Execution exec join exec.referencedTestCase tc where tc.id = :testCaseId"),
+		
 		//Campaign
 		@NamedQuery(name = "campaign.findNamesInCampaignStartingWith", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId and i.name like :nameStart"),
 		@NamedQuery(name = "campaign.findAllNamesInCampaign", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId "),
