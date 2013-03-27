@@ -351,7 +351,7 @@
 			<div id="execute-body" class="execute-fragment-body">
 				<c:if test="${not empty denormalizedFieldValues }">
 				<span id="denormalized-fields"><comp:toggle-panel id="denormalized-fields-panel" titleKey="title.step.fields" isContextual="true"
-					open="false">
+					open="true">
 				<jsp:attribute name="body"> 
 						<div class="display-table">
 							<comp:denormalized-field-values-list denormalizedFieldValues="${ denormalizedFieldValues }" />
