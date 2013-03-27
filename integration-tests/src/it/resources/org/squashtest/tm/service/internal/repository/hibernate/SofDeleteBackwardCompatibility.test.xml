@@ -37,12 +37,12 @@
 	
 	<!--  cleanup of parasite data -->
 	
-	<TEST_STEP/>
-	<ACTION_TEST_STEP/>
-	<CALL_TEST_STEP/>	
-	<TEST_CASE_STEPS />
-	<TCLN_RELATIONSHIP />
-	<TEST_CASE_LIBRARY_CONTENT/>
+	<test_step/>
+	<action_test_step/>
+	<call_test_step/>	
+	<test_case_steps />
+	<tcln_relationship />
+	<test_case_library_content/>
 	
 	
 	

@@ -26,7 +26,7 @@
 
  -->
 
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.5.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.5.0.dtd">
 <dataset>
 
 	<!--  ============================ attachment lists (unattached to anything) ===================== -->
@@ -60,8 +60,8 @@
 
 	<!--  =========================== custom fields ==================================================== -->
 	
-	<CUSTOM_FIELD FIELD_TYPE="CF" NAME="field 1" INPUT_TYPE="PLAIN_TEXT" CF_ID="1"/>
-	<CUSTOM_FIELD FIELD_TYPE="CF" NAME="field 2" INPUT_TYPE="PLAIN_TEXT" CF_ID="2"/>	
+	<CUSTOM_FIELD CODE="z" LABEL="z" FIELD_TYPE="CF" NAME="field 1" INPUT_TYPE="PLAIN_TEXT" CF_ID="1"/>
+	<CUSTOM_FIELD CODE="zz" LABEL="zz" FIELD_TYPE="CF" NAME="field 2" INPUT_TYPE="PLAIN_TEXT" CF_ID="2"/>	
 	
 	<!-- =============================== ONE PROJECT ================================================ -->
 	

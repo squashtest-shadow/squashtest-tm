@@ -434,15 +434,6 @@
 		</sql>	
 	</changeSet>
 	
-	<changeSet id="tm-1.5.0.00-issue-1895" author="mpagnon">
-		<comment>Set all prerequisite that were null to ""</comment>
-		<sql>
-			UPDATE TEST_CASE
-			SET PREREQUISITE= ''
-			WHERE PREREQUISITE is null
-		</sql>
-		<addNotNullConstraint tableName="TEST_CASE" columnName="PREREQUISITE" columnDataType="CLOB" />
-	</changeSet>
 	
 	<changeSet id="tm-1.5.0.00-issue-2061.01" author="mpagnon">
 		<comment>Because imported test-cases did not have custom-field-values we need to fix the database.</comment>
@@ -462,6 +453,60 @@
 			)
 		</sql>
 	</changeSet>
-	
+	<changeSet id="tm-1.5.0.00-issue-2146.01" author="mpagnon">
+	<comment> This issue is due to null values in database when @NotNull constraint is present in the bean.
+		This changeSet we will make all java @NotNull be present in database</comment>
+		<comment>--------------------REQUIREMENT_PROPERTY_CHANGE----------------------------</comment>
+		<sql>
+			UPDATE REQUIREMENT_PROPERTY_CHANGE
+			SET PROPERTY_NAME = ''
+			WHERE PROPERTY_NAME is null
+		</sql>
+		<addNotNullConstraint tableName="REQUIREMENT_PROPERTY_CHANGE" columnName="PROPERTY_NAME" columnDataType="java.sql.Types.VARCHAR(100)" />
+		<comment>-------------------REQUIREMENT_LARGE_PROPERTY_CHANGE--------------------</comment>
+		<sql>
+			UPDATE REQUIREMENT_LARGE_PROPERTY_CHANGE
+			SET PROPERTY_NAME = ''
+			WHERE PROPERTY_NAME is null
+		</sql>
+		<addNotNullConstraint tableName="REQUIREMENT_LARGE_PROPERTY_CHANGE" columnName="PROPERTY_NAME" columnDataType="java.sql.Types.VARCHAR(100)" />
+		<comment>----------------------EXECUTION--------------------------</comment>
+		<sql>
+			UPDATE EXECUTION
+			SET REFERENCE = ''
+			WHERE REFERENCE is null
+		</sql>
+		<addNotNullConstraint tableName="EXECUTION" columnName="REFERENCE" columnDataType="java.sql.Types.VARCHAR(50)" />
+		<addDefaultValue columnName="REFERENCE" tableName="EXECUTION" defaultValue=""/>
+		<sql>
+			UPDATE EXECUTION
+			SET PREREQUISITE = ''
+			WHERE PREREQUISITE is null
+		</sql>
+		<addNotNullConstraint tableName="EXECUTION" columnName="PREREQUISITE" columnDataType="CLOB" />
+		<comment>-----------------------REQUIREMENT_VERSION-------------------------</comment>
+		<sql>
+			UPDATE REQUIREMENT_VERSION
+			SET REFERENCE = ''
+			WHERE REFERENCE is null
+		</sql>
+		<addNotNullConstraint tableName="REQUIREMENT_VERSION" columnName="REFERENCE" columnDataType="java.sql.Types.VARCHAR(50)" />
+		<addDefaultValue columnName="REFERENCE" tableName="REQUIREMENT_VERSION" defaultValue=""/>
+		<comment>----------------------TEST_CASES-----------------------</comment>
+		<comment>also fix for [Issue 1895]</comment>
+		<sql>
+			UPDATE TEST_CASE
+			SET PREREQUISITE= ''
+			WHERE PREREQUISITE is null
+		</sql>
+		<addNotNullConstraint tableName="TEST_CASE" columnName="PREREQUISITE" columnDataType="CLOB" />
+		<sql>
+			UPDATE TEST_CASE
+			SET REFERENCE = ''
+			WHERE REFERENCE is null
+		</sql>
+		<addNotNullConstraint tableName="TEST_CASE" columnName="REFERENCE" columnDataType="java.sql.Types.VARCHAR(50)" />
+		<addDefaultValue columnName="REFERENCE" tableName="TEST_CASE" defaultValue=""/>		
+	</changeSet>	
 </databaseChangeLog>
  

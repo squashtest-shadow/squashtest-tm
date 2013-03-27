@@ -27,9 +27,10 @@
 <CORE_PARTY PARTY_ID="12"/>
 	<CORE_USER PARTY_ID="10" LOGIN="batman" LAST_NAME="batman" CREATED_BY="dbu" CREATED_ON="2011-03-19" />
 	<CORE_USER PARTY_ID="12" LOGIN="robin" LAST_NAME="robin" CREATED_BY="dbu" CREATED_ON="2011-03-19" />
-	<CORE_GROUP />
-	<CORE_GROUP_AUTHORITY />
-	<CORE_GROUP_MEMBER />
+	
+	<core_group />
+	<core_group_authority />
+	<core_group_member />
 	
 	<ACL_CLASS ID="1001" CLASSNAME="org.squashtest.tm.domain.project.ProjectTemplate" />
 	<ACL_CLASS ID="1002" CLASSNAME="org.squashtest.tm.domain.project.Project" />
@@ -45,7 +46,7 @@
 	<ACL_GROUP ID="100" QUALIFIED_NAME="driver" />
 	<ACL_GROUP ID="200" QUALIFIED_NAME="owner" />
 	
-	<ACL_GROUP_PERMISSION />
+	
 	
 	<ACL_RESPONSIBILITY_SCOPE_ENTRY OBJECT_IDENTITY_ID="1" PARTY_ID="10" ACL_GROUP_ID="100"/>
 	<ACL_RESPONSIBILITY_SCOPE_ENTRY OBJECT_IDENTITY_ID="2" PARTY_ID="10" ACL_GROUP_ID="100"/>
@@ -74,9 +75,12 @@
 	<BUGTRACKER BUGTRACKER_ID="2" KIND="kind2" URL="http://www.url.com" NAME="name2" IFRAME_FRIENDLY="TRUE" />
 	<BUGTRACKER_BINDING BUGTRACKER_BINDING_ID="11" BUGTRACKER_ID="10" PROJECT_NAME="project_name" PROJECT_ID="1000"/>
 	
-	<CUSTOM_FIELD FIELD_TYPE="CF" NAME="cuf1" INPUT_TYPE="PLAIN_TEXT" CF_ID="1"/>
+	<CUSTOM_FIELD CODE="" LABEL="" FIELD_TYPE="CF" NAME="cuf1" INPUT_TYPE="PLAIN_TEXT" CF_ID="1"/>
 	<CUSTOM_FIELD_BINDING BOUND_ENTITY="TEST_CASE" CFB_ID="1" POSITION="0" BOUND_PROJECT_ID="1000" CF_ID="1"/>
-	<ACL_GROUP/>
-	<ACL_RESPONSIBILITY_SCOPE_ENTRY/>
-	<PROJECT />
+	
+	<acl_group/>
+	<acl_group_permission />
+	<acl_responsibility_scope_entry/>
+	<project />
+	
 </dataset>

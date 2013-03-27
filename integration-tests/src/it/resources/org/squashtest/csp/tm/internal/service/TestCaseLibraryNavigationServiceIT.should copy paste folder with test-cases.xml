@@ -40,7 +40,7 @@
 <TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="1" TCLN_ID="2" CREATED_ON="2012-03-02" CREATED_BY="dbunit" NAME=""/>
 <TEST_CASE_FOLDER TCLN_ID="2"/>
 
-<TEST_CASE_LIBRARY_NODE />
-<TEST_CASE_FOLDER/>
-<TEST_CASE/>
+<test_case_library_node />
+<test_case_folder/>
+<test_case/>
 </dataset>

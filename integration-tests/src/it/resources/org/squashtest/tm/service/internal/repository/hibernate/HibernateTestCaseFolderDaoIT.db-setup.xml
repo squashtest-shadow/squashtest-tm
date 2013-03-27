@@ -70,11 +70,11 @@
 	
 	
 	<!--  cleanup of possible previously data spoiling the database -->
-	<TEST_STEP/>
-	<ACTION_TEST_STEP/>
-	<CALL_TEST_STEP/>
-	<TEST_CASE_STEPS/>
+	<test_step/>
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_steps/>
 	
-	<TEST_CASE_LIBRARY_CONTENT/>
+	<test_case_library_content/>
 	
 </dataset>

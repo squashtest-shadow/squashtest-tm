@@ -146,7 +146,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 			def s = t.steps[1]
 			t.steps.add 0, s
 			t.steps.remove 2
-			println "NOMBERE DE STEPS : " + t.steps.size()
+			println "NOMBRE DE STEPS : " + t.steps.size()
 			println "STEPS : " + t.steps.collect { "action: ${it.action}" }
 		})
 

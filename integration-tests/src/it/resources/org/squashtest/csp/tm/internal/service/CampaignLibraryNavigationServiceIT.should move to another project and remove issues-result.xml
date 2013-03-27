@@ -23,5 +23,5 @@
 -->
 <!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.5.0.dtd">
 <dataset>
-	<ISSUE />
+	<issue />
 </dataset>

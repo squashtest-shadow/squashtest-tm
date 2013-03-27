@@ -66,15 +66,15 @@
   <REQUIREMENT_LIBRARY_CONTENT CONTENT_ID="250" LIBRARY_ID="20"/>
   <REQUIREMENT_LIBRARY_CONTENT CONTENT_ID="1" LIBRARY_ID="20"/>
   
-  <TEST_CASE_LIBRARY_NODE/>
-  <TEST_CASE/>
-  <TEST_CASE_FOLDER/>
-  <TCLN_RELATIONSHIP/>
-  <TEST_CASE_LIBRARY_CONTENT/>
-  <TEST_STEP/>
-  <ACTION_TEST_STEP/>
-  <CALL_TEST_STEP/>
-  <TEST_CASE_STEPS/>
-  <ATTACHMENT_CONTENT/>
-  <ATTACHMENT/>
+  <test_case_library_node/>
+  <test_case/>
+  <test_case_folder/>
+  <tcln_relationship/>
+  <test_case_library_content/>
+  <test_step/>
+  <action_test_step/>
+  <call_test_step/>
+  <test_case_steps/>
+  <attachment_content/>
+  <attachment/>
 </dataset>

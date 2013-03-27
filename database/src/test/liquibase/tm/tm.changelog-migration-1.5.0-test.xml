@@ -105,12 +105,10 @@
 			select VERIFIED_REQ_VERSION_ID, VERIFYING_TEST_CASE_ID from TEST_CASE_VERIFIED_REQUIREMENT_VERSION;
 		</sql>
 	</changeSet>
-	<!-- =================================================================================================================== -->
-	<!-- ___________________________________________________________INCLUDE 
-		CHANGELOG_______________________________________ -->
+	<!-- ========================================INCLUDE CHANGELOG================================================ -->
 	<include file="../../../main/liquibase/tm/tm.changelog-1.5.0.xml"
 		relativeToChangelogFile="true" />
-	<!-- =================================================================================================================== -->
+	<!-- ========================================================================================================= -->
 	<changeSet id="tm-1.5.0.issue-1838-test-01" author="mpagnon">
 		<preConditions>
 			<sqlCheck expectedResult="0">
@@ -287,6 +285,7 @@
 			</sqlCheck>
 		</preConditions>
 	</changeSet>
+	
 	<changeSet id="tm-1.5.0-issue-2061-test-01" author="mpagnon">
 		<preConditions>
 			<sqlCheck expectedResult="0">

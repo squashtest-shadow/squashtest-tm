@@ -139,8 +139,8 @@
 	
 	<!--  cleanup of previously entered data -->
 	
-	<TEST_CASE_FOLDER/>
-	<TCLN_RELATIONSHIP/>
-	<TEST_CASE_LIBRARY_CONTENT/>
+	<test_case_folder/>
+	<tcln_relationship/>
+	<test_case_library_content/>
 
 </dataset>

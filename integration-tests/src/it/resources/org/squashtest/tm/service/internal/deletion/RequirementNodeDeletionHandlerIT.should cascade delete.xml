@@ -25,7 +25,7 @@
 	depends on NodeDeletionDao.general.dbsetup.xml
 
  -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.5.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.5.0.dtd">
 <dataset>
 
 	<!--  ============================ attachment lists (unattached to anything) ===================== -->
@@ -52,8 +52,8 @@
 	
 	<!--  =========================== custom fields ==================================================== -->
 	
-	<CUSTOM_FIELD FIELD_TYPE="CF" NAME="field 1" INPUT_TYPE="PLAIN_TEXT" CF_ID="1"/>
-	<CUSTOM_FIELD FIELD_TYPE="CF" NAME="field 2" INPUT_TYPE="PLAIN_TEXT" CF_ID="2"/>	
+	<CUSTOM_FIELD CODE="ss" LABEL="ss" FIELD_TYPE="CF" NAME="field 1" INPUT_TYPE="PLAIN_TEXT" CF_ID="1"/>
+	<CUSTOM_FIELD CODE="qq" LABEL="qq" FIELD_TYPE="CF" NAME="field 2" INPUT_TYPE="PLAIN_TEXT" CF_ID="2"/>	
 	
 	<!-- =============================== one project ================================================ -->
 		
@@ -127,10 +127,10 @@
 	<REQUIREMENT_CREATION EVENT_ID="121" />
 	
 	<REQUIREMENT_AUDIT_EVENT EVENT_ID="122" REQ_VERSION_ID="121" EVENT_DATE="2012-01-03" AUTHOR="DBU"/>
-	<REQUIREMENT_PROPERTY_CHANGE EVENT_ID="122" />
+	<REQUIREMENT_PROPERTY_CHANGE EVENT_ID="122" PROPERTY_NAME=""/>
 	
 	<REQUIREMENT_AUDIT_EVENT EVENT_ID="123" REQ_VERSION_ID="121" EVENT_DATE="2012-01-04" AUTHOR="DBU"/>
-	<REQUIREMENT_LARGE_PROPERTY_CHANGE EVENT_ID="123" />
+	<REQUIREMENT_LARGE_PROPERTY_CHANGE EVENT_ID="123" PROPERTY_NAME=""/>
 	
 	
 </dataset>

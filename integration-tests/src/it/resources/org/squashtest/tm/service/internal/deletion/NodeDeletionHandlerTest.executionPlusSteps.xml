@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.5.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.5.0.dtd">
 <dataset >
 
 	<!-- ========================= attachment lists ========================= -->
@@ -81,7 +81,7 @@
 	
 	<!--  ================ execution + steps ============================== -->
 		
-	<EXECUTION EXECUTION_ID="500" CREATED_BY="IT" CREATED_ON="2011-08-23" NAME="exec 1" 
+	<EXECUTION PREREQUISITE="" EXECUTION_ID="500" CREATED_BY="IT" CREATED_ON="2011-08-23" NAME="exec 1" 
 			ATTACHMENT_LIST_ID="500" ISSUE_LIST_ID="500"/>
 	
 	<EXECUTION_STEP EXECUTION_STEP_ID="6001" ACTION="step 1" CREATED_BY="IT" CREATED_ON="2011-08-03" 
@@ -100,16 +100,16 @@
 	
 	<!--  cleanup -->
 	
-	<TEST_CASE_LIBRARY_NODE/>
-	<TEST_CASE/>
-	<TEST_CASE_FOLDER/>
-	<TCLN_RELATIONSHIP/>
-	<TEST_CASE_LIBRARY_CONTENT/>
+	<test_case_library_node/>
+	<test_case/>
+	<test_case_folder/>
+	<tcln_relationship/>
+	<test_case_library_content/>
 	
-	<TEST_STEP/>
-	<ACTION_TEST_STEP/>
-	<CALL_TEST_STEP/>
-	<TEST_CASE_STEPS/>
+	<test_step/>
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_steps/>
 	
 	
 </dataset>
