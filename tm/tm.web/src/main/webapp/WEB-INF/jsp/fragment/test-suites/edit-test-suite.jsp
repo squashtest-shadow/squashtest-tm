@@ -431,6 +431,7 @@
 				nonBelongingTestPlansUrl="${nonBelongingTestCasesUrl}"
 				testPlanExecutionsUrl="${testCaseExecutionsUrl}"
 				editable="${ linkable }"
+				executable="${ executable }"
 				testCaseMultipleRemovalPopupId="delete-test-suite-multiple-test-plan-dialog"
 				testCaseSingleRemovalPopupId="delete-test-suite-single-test-plan-dialog"
 				testSuiteExecButtonsId="test-suite-execution-button"

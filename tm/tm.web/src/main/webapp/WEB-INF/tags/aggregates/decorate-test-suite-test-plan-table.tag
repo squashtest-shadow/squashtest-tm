@@ -30,6 +30,7 @@
 <%@ attribute name="testPlanExecutionsUrl" required="true" description="base of the url to get the list of the executions for that test case"%> 
 <%@ attribute name="updateTestPlanUrl" required="true" description="base of the url to update the test case url" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
+<%@ attribute name="executable" type="java.lang.Boolean" description="Right to execute. Default to false." %>
 <%@ attribute name="assignableUsersUrl" required="true" description="URL to manipulate user of the test-plans" %>
 <%@ attribute name="testCaseSingleRemovalPopupId" required="true" description="html id of the single test-case removal popup" %>
 <%@ attribute name="testCaseMultipleRemovalPopupId" required="true" description="html id of the multiple test-case removal popup" %>
@@ -383,7 +384,9 @@ function bindMenuToExecutionShortCut(row, data){
 		</c:if>
 		addHLinkToTestPlanName(row, data);
 		addIconToTestPlanName(row, data);
+		<c:if test="${executable}">
 		addExecuteIconToTestPlan(row, data);
+		</c:if>
 		addStyleToDeletedTestCaseRows(row, data);
 		addTestSuiteTestPlanItemExecModeIcon(row, data);
 		return row;

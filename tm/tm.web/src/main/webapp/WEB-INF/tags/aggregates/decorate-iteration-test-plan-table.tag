@@ -38,6 +38,8 @@
 	description="base of the url to update the test case url"%>
 <%@ attribute name="editable" type="java.lang.Boolean"
 	description="Right to edit content. Default to false."%>
+<%@ attribute name="executable" type="java.lang.Boolean" 
+	description="Permission to run the execution"%>
 <%@ attribute name="assignableUsersUrl" required="true"
 	description="URL to manipulate user of the test-plans"%>
 <%@ attribute name="assignableStatusUrl" required="true"
@@ -263,7 +265,9 @@
 	function testPlanTableRowCallback(row, data, displayIndex) {
 		addHLinkToTestPlanName(row, data);
 		addIconToTestPlanName(row, data);
+		<c:if test="${executable}">
 		addExecuteIconToTestPlan(row, data);
+		</c:if>
 		addStyleToDeletedTestCaseRows(row, data);
 		addIterationTestPlanItemExecModeIcon(row, data);
 		selectCurrentStatus(row,data);
