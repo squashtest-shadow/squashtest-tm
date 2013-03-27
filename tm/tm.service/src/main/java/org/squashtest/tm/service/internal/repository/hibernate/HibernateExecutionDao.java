@@ -205,7 +205,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		crit.createAlias("Iteration.campaign", "Campaign", Criteria.LEFT_JOIN);
 		crit.createAlias("Campaign.project", "Project", Criteria.LEFT_JOIN);
 		crit.createAlias("referencedTestCase", "TestCase", Criteria.LEFT_JOIN);
-		crit.createAlias("testPlan.testSuites", "TestSuites", Criteria.LEFT_JOIN);
+		crit.createAlias("testPlan.testSuites", "TestSuite", Criteria.LEFT_JOIN);
 
 		crit.add(Restrictions.eq("TestCase.id", Long.valueOf(testCaseId)));
 		
