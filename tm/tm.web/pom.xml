@@ -19,7 +19,7 @@
     <spring.version.range>[3,4)</spring.version.range>
     <springdm.version.range>[2,3)</springdm.version.range>
     <thymeleaf.version>2.0.14</thymeleaf.version>
-    <thyleleaf.springsec.version>2.0.0-SNAPSHOT</thyleleaf.springsec.version>
+    <thyleleaf.springsec.version>2.0.0</thyleleaf.springsec.version>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
   </properties>
 
