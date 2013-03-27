@@ -32,6 +32,7 @@
 <%@ attribute name="initialSort" fragment="true" required="false" description="If set, the data will be sorted at first call"%>
 <%@ attribute name="disableHighlightOnMouseOver" fragment="true" required="false" description="If set, the rows will NOT be highlighted on mouse over"%>
 <%@ attribute name="freeSettings" fragment="true" required="false" description="any further configuration you wish to pass as is. Do not prefix with a comma, and do not add a comma at the end : they're already taken care of."%>
+<%@ attribute name="isSquashtable" required="false" type="java.lang.Boolean" description="if set, will invoke it as a squashTable" %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -40,7 +41,8 @@
 
 <script type="text/javascript">
 	$(function() {
-		var dataTable = $( "#${ tableId }" ).dataTable({
+		
+		var settings = {
 			"oLanguage": {
 				"sUrl": "<c:url value='/datatables/messages' />"
 			},
@@ -64,15 +66,24 @@
 			 * This fix seems to work for the implementation of DataTables v 1.7.3 and jQuery 1.5.2.
 			 */
 			"bRetrieve" : true,				
-<c:if test="${ not empty initialSort}">"aaSorting": <jsp:invoke fragment="initialSort"/>,  </c:if>
-<c:if test="${ not empty rowCallback }">"fnRowCallback": <jsp:invoke fragment="rowCallback"/>,</c:if>
-<c:if test="${ not empty drawCallback }">"fnDrawCallback" : <jsp:invoke fragment="drawCallback"/>,</c:if>				
-<c:if test="${ not empty freeSettings}"><jsp:invoke fragment="freeSettings"/>,</c:if>
+			<c:if test="${ not empty initialSort}">"aaSorting": <jsp:invoke fragment="initialSort"/>,  </c:if>
+			<c:if test="${ not empty rowCallback }">"fnRowCallback": <jsp:invoke fragment="rowCallback"/>,</c:if>
+			<c:if test="${ not empty drawCallback }">"fnDrawCallback" : <jsp:invoke fragment="drawCallback"/>,</c:if>				
+			<c:if test="${ not empty freeSettings}"><jsp:invoke fragment="freeSettings"/>,</c:if>
 			"sDom" : 't<"dataTables_footer"lirp>',
 			"aoColumnDefs": [
 				<jsp:invoke fragment="columnDefs" />
 			] 
-		})
+		};
+		
+		<c:choose>
+			<c:when test="${not empty isSquashtable and isSquashtable}">
+				var dataTable = $( "#${ tableId }" ).squashTable(settings, {})
+			</c:when>
+			<c:otherwise>
+				var dataTable = $( "#${ tableId }" ).dataTable(settings)
+			</c:otherwise>
+		</c:choose>
 		.addClass("is-contextual");	
 		<c:if test="${ empty disableHighlightOnMouseOver }">
 			bindHover(dataTable);
@@ -81,3 +92,4 @@
 	
 	
 </script>
+

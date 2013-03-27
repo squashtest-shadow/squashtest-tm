@@ -141,7 +141,7 @@
 				return;
 			}
 			
-			var table = $( '#test-suite-test-plans-table' ).dataTable();
+			var table = $( '#test-suite-test-plans-table' ).squashTable();
 			var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
 			
 			if (answer == "delete") {
@@ -319,9 +319,9 @@ function bindMenuToExecutionShortCut(row, data){
 	<%-- Refresh methods --%>
 	<%--=========================--%>
 	function refreshTestPlans() {
-		var table = $('#test-suite-test-plans-table').dataTable();
+		var table = $('#test-suite-test-plans-table').squashTable();
 		saveTableSelection(table, getTestPlansTableRowId);
-		table.fnDraw(false);
+		table.refresh();
 	}
 	
 	
@@ -330,8 +330,8 @@ function bindMenuToExecutionShortCut(row, data){
 	}
 	
 	function refreshTestPlansWithoutSelection() {
-		var table = $('#test-suite-test-plans-table').dataTable();
-		table.fnDraw(false);
+		var table = $('#test-suite-test-plans-table').squashTable();
+		table.refresh();
 	}
 
 
@@ -478,7 +478,7 @@ function bindMenuToExecutionShortCut(row, data){
 	function toggleExpandIcon(testPlanHyperlink){
 		
 	
-		var table =  $('#test-suite-test-plans-table').dataTable();
+		var table =  $('#test-suite-test-plans-table').squashTable();
 		var donnees = table.fnGetData(testPlanHyperlink.parentNode.parentNode);
 		var image = $(testPlanHyperlink).parent().find("img");
 		var ltr = testPlanHyperlink.parentNode.parentNode;
@@ -532,7 +532,7 @@ function bindMenuToExecutionShortCut(row, data){
 	
 </script>
 
-<comp:decorate-ajax-table url="${ tableModelUrl }" tableId="test-suite-test-plans-table" paginate="true">
+<comp:decorate-ajax-table url="${ tableModelUrl }" tableId="test-suite-test-plans-table" paginate="true" isSquashtable="${true}">
 	<jsp:attribute name="drawCallback">testPlanTableDrawCallback</jsp:attribute>
 	<jsp:attribute name="rowCallback">testPlanTableRowCallback</jsp:attribute>
 	<jsp:attribute name="columnDefs">

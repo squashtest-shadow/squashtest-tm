@@ -42,13 +42,14 @@
 <c:set var="textcolor" value="#555555" />
 
 
-<td colspan="12"><table>
+<td colspan="14">
+	<table>
 		<!-- -----------------------------------------------ROW OF EXECUTION -->
 		<c:forEach items="${ executions }" var="execution" varStatus="status">
 			<tr>
-				<td style="margin-left: 10px; color: ${textcolor}; font-style:italic; text-decoration: underline" colspan="5">
+				<td style="color: ${textcolor}; font-style:italic; text-decoration: underline">
 					<a href="${showExecutionUrl}/${execution.id}">
-						<b>Exec. ${status.index + 1} :</b> ${ execution.name }
+						<span style="font-weight:bold;">Exec. ${status.index + 1} :</span><span> ${ execution.name }</span>
 					</a>
 				</td>
 				<td style="width: 7.5em;color: ${textcolor}; font-style:italic;"><f:message
@@ -61,10 +62,10 @@
 				<td style="width: 12em; color: ${textcolor}">
 				<c:choose>
 					<c:when test="${ execution.lastExecutedBy != null }">
-						<i>${ execution.lastExecutedBy }</i>
+						<span style="font-style:italic;">${ execution.lastExecutedBy }</span>
 					</c:when>
 					<c:otherwise>
-						<i><f:message key="squashtm.nodata" /> </i>
+						<span style="font-style:italic;"><f:message key="squashtm.nodata" /> </span>
 					</c:otherwise>
 				</c:choose>
 				</td>
@@ -93,16 +94,17 @@
 		<!-- ---------------------------------------------ROW NEW EXECUTION -->
 		<c:if test="${ executable }">
 			<tr>
-				<td colspan="12" style="text-align: left;"> <a id="new-exec-${testPlanItem.id}" style="font-size:0.8em;"
-						class="button new-exec" href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
-								key="execution.iteration-test-plan-row.new" /> </a> 
+				<td colspan="12" style="text-align: left;"> 
+					<a id="new-exec-${testPlanItem.id}" style="font-size:0.8em;" class="button new-exec" href="javascript:void(0)" data-new-exec="${newExecutionUrl}">
+						<f:message key="execution.iteration-test-plan-row.new" /> 
+					</a> 
 								
-								<c:if test="${ testPlanItem.project.testAutomationEnabled && testPlanItem.referencedTestCase.automated}"> 
-								<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${testPlanItem.id}"
-						href="javascript:void(0)" data-new-exec="${newExecutionUrl}"><f:message
-								key="execution.iteration-test-plan-row.new.auto" /></a>
-								</c:if>
-								</td>
+					<c:if test="${ testPlanItem.project.testAutomationEnabled && testPlanItem.referencedTestCase.automated}"> 
+							<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${testPlanItem.id}"	href="javascript:void(0)" data-new-exec="${newExecutionUrl}">
+								<f:message	key="execution.iteration-test-plan-row.new.auto" />
+							</a>
+					</c:if>
+				</td>
 			</tr>
 		</c:if>
 		<!-- ---------------------------------------------END ROW NEW EXECUTION -->
