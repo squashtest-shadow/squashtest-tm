@@ -319,7 +319,10 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	public List<TestCase> getPlannedTestCase() {
 		List<TestCase> list = new LinkedList<TestCase>();
 		for (IterationTestPlanItem iterTestPlan : testPlans) {
-			list.add(iterTestPlan.getReferencedTestCase());
+			TestCase testCase = iterTestPlan.getReferencedTestCase();
+			if(testCase != null){
+				list.add(testCase);
+			}
 		}
 		return list;
 	}
