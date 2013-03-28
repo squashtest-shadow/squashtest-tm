@@ -338,6 +338,7 @@ function TestSuiteMenu(settings){
 			};
 			getCheckboxes().prop('checked', false);	//reset the checkboxes
 			this.checkedSuites.reset();				//reset the model
+			$(".suite-manager-menu-input").val(""); //reset the input field
 	}, this);
 	
 	var bindAddButton = $.proxy(function (){
