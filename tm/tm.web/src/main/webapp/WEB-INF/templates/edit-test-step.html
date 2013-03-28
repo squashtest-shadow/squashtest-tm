@@ -149,21 +149,18 @@
 				<a id="test-step-number-header" href="#" th:text="${testStepView.order}+'/'+${testStepView.totalNumberOfSteps}">12/13</a>
               </h2>
             </div>
-            <div class="snap-right"></div>
+            <div class="snap-right">  <a th:text="${writable} ? #{ label.previous.saveWarning } : #{ label.previous } "  href="#" id="previous-test-step-button" >Previous</a>
+                <a th:text="${writable} ? #{ label.next.saveWarning }  : #{ label.next }" href="#" id="next-test-step-button">Next</a></div>
             <div class="unsnap"></div>
           </div>
 
           <div class="fragment-body unstyled">
-            <div id="test-step-toolbar" class="toolbar-class ui-corner-all ">
-              <div class="toolbar-button-panel">
-               <input th:if="(${testStepView.actionStep} or ${hasCUF}) and  ${writable}" type="button" th:value="#{ label.save }" value="Save" id="save-test-step-button" class="button" />&nbsp;&nbsp;&nbsp;
-                <a th:text="${writable} ? #{ label.previous.saveWarning } : #{ label.previous } "  href="#" id="previous-test-step-button" >Previous</a>
-                <a th:text="${writable} ? #{ label.next.saveWarning }  : #{ label.next }" href="#" id="next-test-step-button">Next</a>
-              </div>
-            </div>
-            <br /> <br />
+            
             <div class="toggle-panel ">
-              <span class="not-displayed toogle-panel-buttons"></span>
+            	<span class="not-displayed toggle-panel-buttons"> 
+            	 <input type="button" id="save-test-step-button" th:value="#{ label.save }" value="Save" th:if="(${testStepView.actionStep} or ${hasCUF}) and  ${writable}" ></input>
+            	
+				</span>
               <div id="test-step-info-panel" class="information-panel toggle-panel-main">
                 <div class="display-table" id="test-step-infos-table"  th:style="${testStepView.actionStep}? 'width:100%' : ''">
                  <div class="display-table-row" >

@@ -81,6 +81,18 @@ define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/
 			});
 
 			$.squash.decorateButtons();
+			
+			// ===============toogle buttons=================
+			// this line below is here because toggle panel
+			// buttons cannot be bound with the 'events'
+			// property of Backbone.View.²²
+			// my guess is that the event is bound to the button
+			// before it is moved from it's "span.not-displayed"
+			// to the toggle panel header.
+			// TODO change our way to make toggle panels buttons
+			// =============/toogle buttons===================
+			this.$("#save-test-step-button").on('click',
+					$.proxy(this.saveStep, this));
 
 		},
 
@@ -142,7 +154,7 @@ define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/
 			// "change .test-step-attr" : "updateCKEModelAttr", 
 			// did not work because of _CKE instances (cf method configureCKEs to see how manual binding is done.
 			"change .cuf-value-control" : "updateModelCufAttr",
-			"click #save-test-step-button" : "saveStep",
+			
 		},
 
 		goPrevious : function(event) {

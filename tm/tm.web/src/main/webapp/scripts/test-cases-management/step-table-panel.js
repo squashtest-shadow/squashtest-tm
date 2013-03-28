@@ -152,7 +152,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 	
 	
 	function initTable(settings){
-		
+		var cufColumnPosition = 4;
 		var language = settings.language,
 			urls = makeTableUrls(settings),
 			permissions = settings.permissions;
@@ -161,7 +161,7 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 		var cufTableHandler = cufValuesManager.cufTableSupport;
 		
 		// first we must process the DOM table for cufs
-		cufTableHandler.decorateDOMTable($("#test-steps-table"), settings.basic.cufDefinitions, 2);
+		cufTableHandler.decorateDOMTable($("#test-steps-table"), settings.basic.cufDefinitions, cufColumnPosition);
 			
 		
 		//now let's move to the datatable configuration
@@ -203,8 +203,8 @@ define(["jquery", "squash.table-collapser", "custom-field-values"], function($, 
 			
 		};
 		
-		//decorate the settings with the cuf values support
-		datatableSettings = cufTableHandler.decorateTableSettings(datatableSettings, settings.basic.cufDefinitions, 2, permissions.isWritable);
+		//decorate the settings with the cuf values support		
+		datatableSettings = cufTableHandler.decorateTableSettings(datatableSettings, settings.basic.cufDefinitions, cufColumnPosition, permissions.isWritable);
 		
 		
 		var squashSettings = {
