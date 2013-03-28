@@ -253,6 +253,7 @@ define(
 							addMemberDialog.on('confirmdialogopen', function(){
 								var dialog = addMemberDialog;
 								var input = dialog.find('#add-member-input');
+								input.val("");
 								dialog.activate('wait');
 								$.ajax({
 									url : document.location.href+"/non-members",

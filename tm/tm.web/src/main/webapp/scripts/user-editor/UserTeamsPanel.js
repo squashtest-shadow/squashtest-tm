@@ -152,6 +152,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					addTeamDialog.on('confirmdialogopen', function() {
 						var dialog = addTeamDialog;
 						var input = dialog.find('#add-team-input');
+						input.val("");
 						dialog.activate('wait');
 						dialog.nonAssociatedTeams = [];
 						$.ajax(
