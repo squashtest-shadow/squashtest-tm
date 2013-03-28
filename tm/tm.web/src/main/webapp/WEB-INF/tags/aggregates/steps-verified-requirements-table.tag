@@ -36,10 +36,10 @@
 
 	require([ "common" ], function(common) {
 		require([ "jquery",  "domReady","verified-requirements/TestStepVerifiedRequirementsTable" ], function($, domReady, TestStepVerifiedRequirementsTable) {
-			domReady(function() {
+			//domReady(function() {
 				
 				squashtm.verifiedRequirementsTable = new TestStepVerifiedRequirementsTable();
-			});
+			//});
 		});
 	});
 			if (!squashtm) {
@@ -72,7 +72,7 @@ data-def='hover,  datakeys-id=entity-id ,ajaxsource=${ stepVerifiedRequirementsU
 	<thead>
 		<tr>
 			<th data-def="select, map=entity-index">#</th>
-			<th data-def='sClass=link-checkbox, map=empty-link-checkbox'>&nbsp;</th>
+			<th data-def="sClass=link-checkbox, map=empty-link-checkbox" style="width:32px;">&nbsp;</th>
 			<th data-def="sortable, map=project"><f:message key="label.project" /></th>
 			<th data-def="sortable, map=entity-id"><f:message key="report.requirementexport.id"/></th>
 			<th data-def="sortable, map=reference"><f:message key="requirement.reference.label"/></th>

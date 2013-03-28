@@ -738,3 +738,15 @@ predefined for future evolutions :
 	background-repeat: no-repeat;
 	background-size: 16px 16px;
 }
+
+.ui-icon-link-dark-e-w {
+	background-image: url("../images/link_on.png") !important;
+	background-repeat: no-repeat;
+	background-size: 16px 16px;
+}
+
+.ui-icon-link-clear-e-w {
+	background-image: url("../images/link_off.png") !important;
+	background-repeat: no-repeat;
+	background-size: 16px 16px;
+}
