@@ -97,7 +97,7 @@
       <c:forEach var="project" items="${ projects }" varStatus="status">
       <tr>
         <td class="project-id">${ project.id }</td> 
-        <td class="button-cell select-handle centered">${ status.index }</td>
+        <td class="button-cell select-handle centered">${ status.index + 1}</td>
         <td class="name">${ project.name }</td>
         <c:choose>
         <c:when test="${ pu:isTemplate(project) }">

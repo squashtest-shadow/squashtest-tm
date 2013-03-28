@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms", "jquery.squash.confirmdialog" ],
+		[ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms", "jquery.squash.confirmdialog", "datepicker/require.jquery.squash.datepicker-locales" ],
 		function($, Backbone, Handlebars, SD, Forms) {
 			/*
 			 * Defines the controller for the new custom field panel.
@@ -30,7 +30,7 @@ define(
 						initialize : function() {
 							var self = this;
 							var model = this.model;
-
+							$.datepicker.setDefaults($.datepicker.regional[squashtm.app.locale]);
 							this.defaultValueField = this.$("input:text[name='defaultValue']");
 
 							this.$("input:text.strprop").each(function() {
@@ -69,8 +69,8 @@ define(
 								this.renderOptional(true);
 								break;
 							case "DATE_PICKER":
-								this.renderOptional(true);
-								$("#defaultValue").datepicker();
+								this.renderOptional(true); 
+								$("#defaultValue").datepicker({ dateFormat : squashtm.app.localizedDateFormat });
 								break; 
 							}
 							return this;
