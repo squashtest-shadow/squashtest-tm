@@ -83,7 +83,6 @@ data-def='hover,  datakeys-id=entity-id ,ajaxsource=${ stepVerifiedRequirementsU
 			<th data-def='sClass=delete-button, map=empty-delete-holder'>&nbsp;</th>
 			<th data-def="invisible, map=status">status(masked)</th>
 			<th data-def='invisible, map=verifiedByStep'>verifiedByStep(masked)</th>
-			
 		</tr>
 	</thead>
 	<tbody>

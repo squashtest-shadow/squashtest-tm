@@ -47,7 +47,7 @@
 		});
 		<%-- selected verifying test-case removal --%>
 		$( '#${ batchRemoveButtonId }' ).click(function() {
-			var table = $( '#verifying-test-cases-table' ).dataTable();
+			var table = $( '#verifying-test-cases-table' ).squashTable();
 			var ids = getIdsOfSelectedTableRows(table, getTestCasesTableRowId);
 			
 			if (ids.length > 0) {
@@ -77,7 +77,7 @@
 			 );
 	}
 	function refreshVerifyingTestCases() {
-		var table = $('#verifying-test-cases-table').dataTable();
+		var table = $('#verifying-test-cases-table').squashTable();
 		saveTableSelection(table, getTestCasesTableRowId);
 		table.fnDraw(false);
 	}
@@ -97,7 +97,7 @@
 		<c:if test="${ editable }">
 		addDeleteButtonToRow(row, getTestCasesTableRowId(data), 'delete-verifying-test-case-button');
 		</c:if>
-		addClickHandlerToSelectHandle(row, $("#verifying-test-cases-table"));
+		//addClickHandlerToSelectHandle(row, $("#verifying-test-cases-table"));
 		addHLinkToTestCaseName(row, data);
 		return row;
 	}
@@ -112,7 +112,7 @@
 		addHLinkToCellText($( 'td:eq(3)', row ), url);
 	}	
 </script>
-<comp:decorate-ajax-table url="${ tableModelUrl }" tableId="verifying-test-cases-table" paginate="true">
+<comp:decorate-ajax-table url="${ tableModelUrl }" tableId="verifying-test-cases-table" paginate="true" isSquashtable="true">
 	<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
 	<jsp:attribute name="drawCallback">testCaseTableDrawCallback</jsp:attribute>
 	<jsp:attribute name="rowCallback">testCaseTableRowCallback</jsp:attribute>

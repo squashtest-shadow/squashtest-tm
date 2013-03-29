@@ -58,7 +58,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSo
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 /**
  * Controller for verified requirements management page.
@@ -80,11 +80,17 @@ public class VerifyingTestCaseManagerController {
 	private VerifyingTestCaseManagerService verifyingTestCaseManager;
 	private RequirementVersionManagerService requirementVersionFinder;
 
-	private final DatatableMapper verifyingTcMapper = new IndexBasedMapper(6)
-			.mapAttribute(Project.class, "name", String.class, 2)
-			.mapAttribute(TestCase.class, "reference", String.class, 3)
-			.mapAttribute(TestCase.class, "name", String.class, 4)
-			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 5);
+	/*
+	 * Kind of a hack : we rely on mDataProp sent by squash table. IndexBasedMapper looks up into mataProps unmarchalled
+	 * as a Map<String, String>. The found value is used as a key in a Map<Long, Object>, so it breaks.
+	 * 
+	 * So we use a named-base with column indexes as names.
+	 */
+	private final DatatableMapper verifyingTcMapper = new NameBasedMapper(6)
+			.mapAttribute(Project.class, "name", String.class, "2")
+			.mapAttribute(TestCase.class, "reference", String.class, "3")
+			.mapAttribute(TestCase.class, "name", String.class, "4")
+			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, "5");
 
 	@ServiceReference
 	public void setVerifyingTestCaseManager(VerifyingTestCaseManagerService verifyingTestCaseManagerService) {
