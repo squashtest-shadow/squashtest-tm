@@ -45,7 +45,12 @@
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.report.api</artifactId>
       <version>${project.version}</version>
-    </dependency>  
+    </dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.aspect</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <!--<dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.wizard.api</artifactId>
@@ -75,11 +80,11 @@
       <scope>test</scope>
     </dependency>
 
-		<dependency>
-			<groupId>org.squashtest.tm</groupId>
-			<artifactId>tm.domain</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>tm.domain</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>

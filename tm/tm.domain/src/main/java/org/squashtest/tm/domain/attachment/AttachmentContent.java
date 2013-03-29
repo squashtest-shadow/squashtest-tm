@@ -50,7 +50,7 @@ public class AttachmentContent {
 
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
-	@Type(type = "org.squashtest.tm.service.internal.hibernate.BlobUserType")
+	@Type(type = "org.squashtest.tm.infrastructure.hibernate.BlobUserType")
 	private InputStream streamContent;
 
 	public InputStream getContent() {

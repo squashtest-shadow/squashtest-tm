@@ -43,6 +43,7 @@
       <list>
         <value>org.squashtest.tm.service.internal.repository.hibernate</value>
         <value>org.squashtest.tm.service.internal.hibernate</value>
+        <value>org.squashtest.tm.infrastructure.hibernate</value>
       </list>
     </property>
     <property name="annotatedClasses">
@@ -86,7 +87,6 @@
         <value>org.squashtest.tm.domain.project.Project</value>
         <value>org.squashtest.tm.domain.project.ProjectTemplate</value>
 
-        <value>org.squashtest.tm.domain.projectfilter.ProjectFilter</value>
 
         <value>org.squashtest.tm.domain.attachment.AttachmentList</value>
         <value>org.squashtest.tm.domain.attachment.Attachment</value>
@@ -128,7 +128,7 @@
       </list>
     </property>
     <property name="namingStrategy">
-      <bean class="org.squashtest.tm.service.internal.hibernate.UppercaseUnderscoreNamingStrategy" />
+      <bean class="org.squashtest.tm.infrastructure.hibernate.UppercaseUnderscoreNamingStrategy" />
     </property>
     <property name="entityInterceptor">
       <bean class="org.squashtest.tm.service.internal.hibernate.AuditLogInterceptor" />

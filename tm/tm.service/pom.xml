@@ -81,7 +81,7 @@
 
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
-			<artifactId>tm.aspects</artifactId>
+			<artifactId>core.aspect</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
@@ -271,7 +271,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
-				<version>1.4</version>
+				<version>1.4</version><!--$NO-MVN-MAN-VER$-->
 				<configuration>
 					<showWeaveInfo>${verbose.compiler}</showWeaveInfo>
 					<source>${jdk.version}</source>
@@ -280,7 +280,7 @@
 					<aspectLibraries>
 						<aspectLibrary>
 							<groupId>org.squashtest.tm</groupId>
-							<artifactId>tm.aspects</artifactId>
+							<artifactId>core.aspect</artifactId>
 						</aspectLibrary>
 					</aspectLibraries>
 				</configuration>

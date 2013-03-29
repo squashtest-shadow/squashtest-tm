@@ -36,7 +36,7 @@
 
   <context:component-scan base-package="*" />
 
-  <bean id="requirementCreationEventPublisherAspect" class="org.squashtest.tm.domain.event.RequirementCreationEventPublisherAspect"
+  <bean id="requirementCreationEventPublisherAspect" class="org.squashtest.tm.service.internal.event.RequirementCreationEventPublisherAspect"
     factory-method="aspectOf">
     <property name="auditor" ref="statusBasedRequirementAuditor" />
   </bean>
@@ -46,7 +46,7 @@
   </bean>
 
   <!-- ====== BEAN VALIDATION ====== -->
-  <bean id="javax.validation.ValidatorFactory" class="org.squashtest.tm.service.validation.ValidatorFactoryBean"
+  <bean id="javax.validation.ValidatorFactory" class="org.squashtest.tm.validation.ValidatorFactoryBean"
     factory-method="getInstance" />
 
   <!-- ====== SHARED THREAD POOL TASK EXECUTOR ====== -->
@@ -198,7 +198,7 @@
   </bean>
 
 <!-- Security related service, declared here so that we can test it -->
-  <bean id="permissionFactory" class="org.squashtest.tm.service.security.acls.CustomPermissionFactory" />
+  <bean id="permissionFactory" class="org.squashtest.tm.security.acls.CustomPermissionFactory" />
 
   <bean id="aclAdminAuthority" class="org.springframework.security.core.authority.GrantedAuthorityImpl">
     <constructor-arg value="ROLE_ADMIN" />
@@ -219,7 +219,7 @@
       </bean>
     </constructor-arg>
     <constructor-arg>
-        <bean class="org.squashtest.tm.service.security.acls.Slf4jAuditLogger" />
+        <bean class="org.squashtest.tm.security.acls.Slf4jAuditLogger" />
     </constructor-arg>
     <property name="permissionFactory" ref="permissionFactory" />
     <property name="selectClause">

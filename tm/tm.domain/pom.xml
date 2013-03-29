@@ -5,12 +5,12 @@
 	<parent>
 		<artifactId>squashtest-csp-tm</artifactId>
 		<groupId>org.squashtest.tm</groupId>
-		<version>1.5.0.IT49-SNAPSHOT</version>
+		<version>1.6.0.RC1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>tm.domain</artifactId>
 	<name>${project.groupId}.${project.artifactId}</name>
-	<description>Squash TM services module - Provides Test management related internal services</description>
+	<description>Squash TM domain - the business implemented by Squash</description>
 	<packaging>bundle</packaging>
 
 	<dependencies>
@@ -65,7 +65,7 @@
 
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
-			<artifactId>tm.aspects</artifactId>
+			<artifactId>core.aspect</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
@@ -191,7 +191,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
-				<version>1.4</version>
+				<version>1.4</version><!--$NO-MVN-MAN-VER$-->
 				<configuration>
 					<showWeaveInfo>${verbose.compiler}</showWeaveInfo>
 					<source>${jdk.version}</source>
@@ -200,7 +200,7 @@
 					<aspectLibraries>
 						<aspectLibrary>
 							<groupId>org.squashtest.tm</groupId>
-							<artifactId>tm.aspects</artifactId>
+							<artifactId>core.aspect</artifactId>
 						</aspectLibrary>
 					</aspectLibraries>
 				</configuration>

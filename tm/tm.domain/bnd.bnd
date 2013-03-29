@@ -1,3 +1,5 @@
 -include: pom.xml
 -nouses: true
-Export-Package: !*.internal.*, org.squashtest.*
+Import-Package: org.hibernate.proxy,\
+	javassist.util.proxy,\
+	*

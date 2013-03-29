@@ -52,7 +52,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 	def setup() {
 		// we deactivate auditor because it breaks tests when run in batch. Auditor opens a second tx which cannot see the requirement which is not yet committed but to be audited.
-		org.squashtest.tm.domain.event.RequirementCreationEventPublisherAspect.aspectOf().setAuditor(null)
+		org.squashtest.tm.service.internal.event.RequirementCreationEventPublisherAspect.aspectOf().setAuditor(null)
 	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should return all the requirements in a hierarchy given some ids.xml")

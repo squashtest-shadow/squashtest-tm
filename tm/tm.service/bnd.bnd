@@ -1,6 +1,8 @@
 -include: pom.xml
 -nouses: true
 Import-Package: com.mysql.jdbc;resolution:=optional,\
+	!org.squashtest.tm.service.security.acls,\
+	org.squashtest.tm.domain.resource,\
 	javax.transaction,\
 	javassist.util.proxy,\
 	net.sf.ehcache,\

@@ -140,6 +140,6 @@
 	  -->
 	
 	
-	<beans:bean id="permissionFactory" class="org.squashtest.tm.service.security.acls.CustomPermissionFactory" />
+	<beans:bean id="permissionFactory" class="org.squashtest.tm.security.acls.CustomPermissionFactory" />
 	
 </beans:beans>
