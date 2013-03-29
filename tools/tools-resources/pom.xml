@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>squashtest-csp-tools</artifactId>
 		<groupId>org.squashtest.tm</groupId>
-		<version>1.5.0.RC5</version>
+		<version>1.5.0.RC6-SNAPSHOT</version>
 	</parent>
 	<groupId>org.squashtest.tm</groupId>
 	<artifactId>squashtest-tools-resources</artifactId>
-	<version>1.5.0.RC5</version>
+	<version>1.5.0.RC6-SNAPSHOT</version>
 	<name>Squashtest - Tools - Tools resources bundle</name>
 	<description>Resources needed by Squash's dev / build tools</description>
 	<packaging>jar</packaging>
