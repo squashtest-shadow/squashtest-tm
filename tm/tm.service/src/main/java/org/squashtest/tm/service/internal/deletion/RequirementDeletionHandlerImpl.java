@@ -98,6 +98,7 @@ public class RequirementDeletionHandlerImpl extends
 			
 			List<Long> requirementAttachmentIds = deletionDao.findRequirementAttachmentListIds(ids);
 
+			deletionDao.removeTestStepsCoverageByRequirementVersionIds(allVersionIds);
 			deletionDao.removeFromVerifiedRequirementLists(ids);
 
 			deletionDao.deleteRequirementAuditEvents(ids);

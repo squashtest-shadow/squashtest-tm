@@ -27,5 +27,9 @@ public interface RequirementDeletionDao extends DeletionDao {
 	void removeFromVerifiedRequirementLists(List<Long> requirementIds);
 	void deleteRequirementAuditEvents(List<Long> requirementIds);
 	List<Long> findVersionIds(List<Long> requirementIds);
+	/**
+	 * @param versionsIds
+	 */
+	void removeTestStepsCoverageByRequirementVersionIds(List<Long> versionsIds);
 		
 }

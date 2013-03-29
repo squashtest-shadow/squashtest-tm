@@ -106,6 +106,15 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	}
 
 	@Override
+	public void removeTestStepsCoverageByRequirementVersionIds(List<Long> requirementVersionIds) {
+		if (!requirementVersionIds.isEmpty()) {
+			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVE_TEST_STEP_COVERAGE_BY_REQ_VERSION_IDS, "versionIds",
+					requirementVersionIds);
+		}
+
+	}
+
+	@Override
 	public void deleteRequirementAuditEvents(List<Long> requirementIds) {
 		if (!requirementIds.isEmpty()) {
 			// we borrow the following from RequirementAuditDao
