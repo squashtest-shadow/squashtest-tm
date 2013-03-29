@@ -17,7 +17,20 @@
     <bundle.activator>org.squashtest.csp.core.jetty.start.osgi.Activator</bundle.activator>
   </properties>
 
-
+	<dependencyManagement>
+		<dependencies>
+			<!-- ====== INFRASTRUCTURE DEFINITIONS === -->
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>provision-bom</artifactId>
+			<version>1.0-SNAPSHOT</version>		
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+	
+		<!-- ====== /INFRASTRUCTURE DEFINITIONS === -->		
+		</dependencies>
+	</dependencyManagement>
 
   <dependencies>
     <dependency>

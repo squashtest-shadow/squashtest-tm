@@ -44,6 +44,11 @@
 		<!--======= SQUASHTEST MODULES ======== -->
 		<dependency>
 			<groupId>org.squashtest.tm</groupId>
+			<artifactId>tm.domain</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
 			<artifactId>core.foundation</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -72,6 +77,13 @@
 			<artifactId>org.squashtest.csp.tools.unittest</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>tm.aspects</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<!--======= /SQUASHTEST MODULES ======== -->
 
@@ -265,6 +277,12 @@
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
 					<compatibilityLevel>${jdk.version}</compatibilityLevel>
+					<aspectLibraries>
+						<aspectLibrary>
+							<groupId>org.squashtest.tm</groupId>
+							<artifactId>tm.aspects</artifactId>
+						</aspectLibrary>
+					</aspectLibraries>
 				</configuration>
 			</plugin>
 
@@ -308,7 +326,7 @@
 						<artifactId>maven-resources-plugin</artifactId>
 						<executions>
 							<execution>
-								<!--  copy the generated spring conf files -->
+								<!-- copy the generated spring conf files -->
 								<id>copy-dynamic-dao-springcontext-file</id>
 								<phase>package</phase>
 								<goals>
@@ -317,7 +335,7 @@
 								<configuration>
 									<outputDirectory>${basedir}/META-INF/spring/</outputDirectory>
 									<resources>
-										<resource>										
+										<resource>
 											<directory>${project.build.directory}/generated-resources/META-INF/spring</directory>
 											<includes>
 												<include>**/*.xml</include>

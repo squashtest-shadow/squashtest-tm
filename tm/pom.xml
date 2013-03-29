@@ -14,6 +14,8 @@
 	<description>Umbrella project for the CSP Test Management module</description>
 
 	<modules>
+		<module>tm.aspects</module>
+		<module>tm.domain</module>
 		<module>tm.service</module>
 		<module>tm.web</module>
 	</modules>

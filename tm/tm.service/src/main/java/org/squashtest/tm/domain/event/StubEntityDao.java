@@ -22,7 +22,6 @@ package org.squashtest.tm.domain.event;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.squashtest.tm.service.internal.repository.EntityDao;
 
 /**
@@ -34,7 +33,7 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.EntityDao#findById(long)
 	 */
-	@Override
+	//@Override
 	public ENTITY findById(long id) {
 		return null;
 	}
@@ -42,7 +41,7 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.EntityDao#findAllByIdd(java.util.Collection)
 	 */
-	@Override
+	//@Override
 	public List<ENTITY> findAllByIds(Collection<Long> id) {
 		return null;
 	}
@@ -50,7 +49,7 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.EntityDao#persist(java.lang.Object)
 	 */
-	@Override
+	//@Override
 	public void persist(ENTITY transientEntity) {
 		// NOOP
 
@@ -59,7 +58,7 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.EntityDao#remove(java.lang.Object)
 	 */
-	@Override
+	//@Override
 	public void remove(ENTITY entity) {
 		// NOOP
 	}
@@ -67,7 +66,7 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.EntityDao#flush()
 	 */
-	@Override
+	//@Override
 	public void flush() {
 		// NOOP
 
@@ -76,30 +75,30 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.EntityDao#persist(List)
 	 */
-	@Override
+	//@Override
 	public void persist(List<ENTITY> transientEntities) {
 		// NOOP
 		
 	}
 
-	@Override
+	//@Override
 	public List<ENTITY> findAll() {
 		return null;
 	}
 
-	@Override
+	//@Override
 	public void clearFromCache(ENTITY entity) {
 		// NOOP
 		
 	}
 
-	@Override
+	//@Override
 	public void clearFromCache(Collection<ENTITY> entities) {
 		// NOOP
 		
 	}
 
-	@Override
+	//@Override
 	public void removeAll(List<ENTITY> entities) {
 		// TODO Auto-generated method stub
 		

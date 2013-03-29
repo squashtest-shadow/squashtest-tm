@@ -56,6 +56,7 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.service.user.TeamModificationService;

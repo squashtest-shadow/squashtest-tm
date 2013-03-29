@@ -135,6 +135,18 @@
   </build>
 
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<artifactId>provision-bom</artifactId>
+				<groupId>org.squashtest.tm</groupId>
+				<version>1.0-SNAPSHOT</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
   <dependencies>
 		<!-- ====== SQUASHTEST ====== -->
     <dependency>
@@ -429,7 +441,7 @@
         <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
         <database.dialect>mysql</database.dialect>
         <database.drivername>com.mysql.jdbc.Driver</database.drivername>
-        <database.schemaName>squashtest_it</database.schemaName>
+		    	<database.schemaName>squashtest_it</database.schemaName>
         <database.username>tester</database.username>
         <database.password>_tester</database.password>
         <database.typefactory>org.dbunit.ext.mysql.MySqlDataTypeFactory</database.typefactory>

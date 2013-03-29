@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.tm.domain.event.RequirementPropertyChange;
 import org.squashtest.tm.domain.event.RequirementVersionModification;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.event.RequirementAuditor;
 
 /**
  * Audits Requirement events and persists them according to the Requirement's

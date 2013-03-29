@@ -35,7 +35,7 @@ import org.springframework.security.acls.domain.ObjectIdentityRetrievalStrategyI
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.service.security.annotation.AclConstrainedObject;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 /**
  * Creates {@link ObjectIdentity} objects using the

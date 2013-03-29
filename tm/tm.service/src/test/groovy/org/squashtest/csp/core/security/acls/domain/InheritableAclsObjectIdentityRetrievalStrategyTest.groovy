@@ -24,7 +24,7 @@ import org.hibernate.Query
 import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy
 import org.squashtest.tm.service.security.acls.domain.InheritableAclsObjectIdentityRetrievalStrategy
-import org.squashtest.tm.service.security.annotation.InheritsAcls
+import org.squashtest.tm.security.annotation.InheritsAcls
 
 import spock.lang.Specification
 
