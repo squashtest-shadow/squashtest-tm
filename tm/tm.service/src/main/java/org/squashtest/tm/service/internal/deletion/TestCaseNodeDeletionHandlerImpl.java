@@ -129,6 +129,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 			deletionDao.setExecutionInboundReferencesToNull(ids); 
 			deletionDao.setExecStepInboundReferencesToNull(stepIds);
 
+			deletionDao.removeFromVerifyingTestStepsList(stepIds);
 			deletionDao.removeFromVerifyingTestCaseLists(ids);
 
 			customValueService.deleteAllCustomFieldValues(BindableEntity.TEST_STEP, stepIds);

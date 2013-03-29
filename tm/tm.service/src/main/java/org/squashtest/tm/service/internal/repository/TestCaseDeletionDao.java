@@ -36,4 +36,8 @@ public interface TestCaseDeletionDao extends DeletionDao {
 	void setExecStepInboundReferencesToNull(List<Long> testStepIds);
 	void setExecutionInboundReferencesToNull(List<Long> testCaseIds);
 	void removeFromVerifyingTestCaseLists(List<Long> testCaseIds);
+	/**
+	 * @param testStepIds
+	 */
+	void removeFromVerifyingTestStepsList(List<Long> testStepIds);
 }

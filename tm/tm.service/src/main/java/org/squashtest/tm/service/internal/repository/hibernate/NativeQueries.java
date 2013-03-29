@@ -140,6 +140,8 @@ public final class NativeQueries {
 
 	public static final String testCase_sql_removeVerifyingTestCaseList = "delete from REQUIREMENT_VERSION_COVERAGE where verifying_test_case_id in (:testCaseIds)";
 
+	public static final String testCase_sql_removeVerifyingTestStepList = "delete from VERIFYING_STEPS where TEST_STEP_ID in (:testStepIds)";
+
 	public static final String testCase_sql_removeTestStepFromList = "delete from TEST_CASE_STEPS where step_id in (:testStepIds)";
 
 	public static final String requirement_sql_removeFromVerifiedRequirementLists = " delete from REQUIREMENT_VERSION_COVERAGE "
@@ -147,6 +149,7 @@ public final class NativeQueries {
 			+ " select req_v.res_id from REQUIREMENT_VERSION req_v where req_v.requirement_id in (:requirementIds) "
 			+ ")";
 	
+	public static final String REQUIREMENT_SQL_REMOVE_TEST_STEP_COVERAGE_BY_REQ_VERSION_IDS = "delete from VERIFYING_STEPS where REQUIREMENT_VERSION_COVERAGE_ID in (select REQUIREMENT_VERSION_COVERAGE_ID from REQUIREMENT_VERSION_COVERAGE where VERIFIED_REQ_VERSION_ID in (:versionIds))";
 	
 	/* ********************************************* tree path queries ********************************************************************* */
 	private static final String CLN_FIND_SORTED_PARENTS = " from CAMPAIGN_LIBRARY_NODE cln "+
