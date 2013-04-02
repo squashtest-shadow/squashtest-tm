@@ -373,6 +373,15 @@
       </modules>
     </profile>
 
+    <profile>
+        <!-- Without this profile, mvn versions:... fails to detect "provision" module. This profile has no other use -->
+        <id>provision</id>
+
+        <modules>
+            <module>provision</module>
+        </modules>
+    </profile>
+
 		<!-- This profile aims to perform a build on the developper's machine before 
 			a push. It should not run anything against mysql -->
     <profile>
