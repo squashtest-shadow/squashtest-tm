@@ -1,0 +1,153 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2012 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/************************************
+ * Datatables customization classes *
+ ************************************/
+
+div.dataTables_wrapper div.ui-widget-header{
+	background: url("jquery/ui/images/ui-bg_highlight-soft_75_cccccc_1x100.png") repeat-x scroll 50% 50% #CCCCCC;
+    border: 1px solid #AAAAAA;
+    color: #222222;
+	
+}
+
+div.dataTables_wrapper th.ui-state-default, div.dataTables_wrapper td.drag-handle, td.select-handle {
+	/*background: url("jquery/ui/images/ui-bg_glass_75_e6e6e6_1x400.png") repeat-x scroll 50% 50% #E6E6E6;*/
+	background-image : none;
+	background-color : #E6E6E6;
+    border: 1px solid #D3D3D3;
+    color: #555555;
+    font-weight: normal;
+    outline: medium none;
+}
+
+
+div.dataTables_wrapper a.ui-button-icon-only[role="button"] {
+	width:1.5em;
+	height:1.5em;
+}
+
+div.dataTables_wrapper label.ui-icon {
+	/* hack to get centered an empty label with an icon in a 32px column */
+	margin-left: 8px;
+}
+
+div.dataTables_length label{
+	font-size : 100%;
+	font-style : normal;		
+}
+
+div.dataTables_footer{
+	color : #555555;
+	font-style : normal;
+		
+}
+
+
+div.dataTables_length  {
+	float:left;
+	font-size:0.8em;
+	margin-right:2em;
+}
+
+div.dataTables_info, div.dataTables_processing{
+	display:none;
+	font-size : 0.8em;
+	margin-right:2em;
+	margin-top:0.2em;	
+}
+
+
+
+div.dataTables_paginate{
+	float:right;
+	text-align:right;
+	font-size:10px;
+}
+
+
+.dataTables_paginate span {
+	margin-left:1px;
+	padding-left:1px;
+	margin-right:1px;
+	padding-right:1px;
+	cursor: default;
+	border: 1px solid transparent;
+}
+
+.dataTables_paginate span.paginate_button{
+	border:1px solid transparent;
+        background:none;
+        color  : black;
+        padding :0px !important;
+	cursor:pointer;
+}
+.dataTables_paginate span.paginate_button:HOVER{
+	border:1px solid black;
+	cursor:pointer;
+}
+.dataTables_paginate span.paginate_button .ui-button-text{
+    padding : 0px;
+padding-left : 2px;
+padding-right : 2px;
+}
+/* that one override the css for the <th> sorting icon class. It actually calls the jquery.blue.css icon sheet*/
+div.DataTables_sort_wrapper > span.ui-icon{
+	float:right;	
+	background-image:url("jquery/ui/images/ui-icons_a8a8a8_256x240.png");
+	
+}
+
+td.has-attachment-cell > a, td.bugged-cell > span {
+    display: block;
+    height: 16px;
+    margin: auto;
+    width: 16px;		
+}
+
+a.manage-attachments{
+	background-image: url("../images/attach_2.png");	
+}
+
+a.add-attachments{
+	background-image: url("../images/add.png");			
+}
+
+.hasBugs {
+	background-image: url("../images/bug.png");
+}
+
+div.dataTables_wrapper td a.delete-execution-table-button[role="button"] {
+	height:8px;
+	width:8px;
+	border-radius:3px;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	-khtml-border-radius:3px;	
+}
+
+table.center {
+	text-align: center;
+}
+
+div.dataTables_wrapper th.datatable-filterable.datatable-filtered{
+	font-weight:bold;	
+}

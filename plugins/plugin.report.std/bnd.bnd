@@ -1,0 +1,4 @@
+-include: pom.xml
+-nouses: true
+DynamicImport-Package: *
+Include-Resource: jasperreports=target/classes/jasperreports,{maven-resources}

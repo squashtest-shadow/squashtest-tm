@@ -1,0 +1,118 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:text="#{workspace.report.title}">Espace rapports</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<!-- common head -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
+	<!-- /common head -->
+	<!-- common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squashtm.fg.menu.css" th:href="@{/styles/squashtm.fg.menu.css}" />
+	<!-- /common script import -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.wine.css" th:href="@{/styles/master.wine.css}" />
+	<!-- rich jeditable header -->
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/ckeditor.override.css" th:href="@{/styles/ckeditor.override.css}" />
+    <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+    <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+    /* <![CDATA[ */
+    	var squashtm = {};
+    	squashtm.app = {
+    	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+    		projectFilterConf: {
+				url: /*[[ @{/global-filter/filter} ]]*/ '/global-filter/filter',
+				title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
+				confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
+				cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
+			}, 
+			menuBarConf: {
+	    		boxSelector: "#menu-toggle-filter-ckbox",
+	    		url: /*[[ @{/global-filter/filter-status} ]]*/ '/global-filter/filter-status',
+	    		linkSelector: "#menu-project-filter-link",
+	    		enabledTxt: /*[[ #{workspace.menubar.filter.enabled.label} ]]*/ 'Actif',
+	    		disabledTxt: /*[[ #{workspace.menubar.filter.disabled.label} ]]*/ 'Inactif',
+	    		enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
+	    	}, 
+	    	notificationConf: {
+    			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info', 
+    			errorTitle: /*[[ #{popup.title.error} ]]*/ 'Erreur'
+    		},
+			reportWorkspaceConf: {
+				expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>', 
+				collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<'
+			}
+    	};
+    /* ]]> */
+    </script>
+    <script data-main="../../scripts/report-workspace.js" th:attr="data-main=@{/scripts/report-workspace.js}"
+      src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>      
+</head>
+<body>
+	<div id="navigation" th:include="navbar.frag :: navbar">
+		NAVBAR
+	</div>
+
+	<div id="workspace">
+		<div id="workspace-title">
+			<div class="snap-left">
+				<h2 th:text="#{workspace.report.title}">Espace Rapport</h2>	
+			</div>
+			<div class="snap-right">
+ 				<div class="main-menubar unstyled" th:include="menubar.frag :: menubar">
+ 					MENUBAR
+				</div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">
+          NOTIFICATION
+        </div>
+			</div>
+		</div>
+		<div id="category-pane">
+			<div id="outer-category-frame">
+				<div th:each="cat : ${categories}" th:id="${#ids.seq('category-panel')}" title="Cat 1" th:title="#{${cat.i18nKey}}" class="report-category">
+					<div th:each="rpt : ${reports[__${cat}__]}" th:id="${#ids.seq('report-item')}" 
+						data-href="sample-report/0" th:attr="data-href=@{'/reports/' + ${rpt.namespace} + '/' + ${rpt.index} + '/panel'}"
+						class="report-item">
+						<div class="report-item-icon">
+							<img src="../../../../../../../tm/tm.web/src/main/webapp/images/report_spreadsheet.png" th:src="@{${rpt.type.iconUri}}" alt="type" th:alt="#{${rpt.type.i18nKey}}" />
+						</div> 
+						<div class="report-item-text">
+								<strong class="report-item-name">
+									<span th:text="${rpt.label}">Sample report</span><br/>
+									(<span th:text="#{${rpt.type.i18nKey}}">Report type</span>)
+								</strong>
+							<br/>
+							<span class="report-item-description" th:text="${rpt.description}">Report description</span>
+						</div>
+						<div class="unsnap"></div>
+					</div>
+				</div>
+			</div> 
+ 		</div>
+		<div id="contextual-content" class="no-resizable-contextual-content" th:remove="body">
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>squashtest-csp-tm</artifactId>
+    <groupId>org.squashtest.tm</groupId>
+    <version>1.5.1.SNAPSHOT</version>
+  </parent>
+
+  <artifactId>tm.web</artifactId>
+  <name>${project.groupId}.${project.artifactId}</name>
+  <description>Squash TM webapp - Provides web frontend</description>
+  <packaging>war</packaging>
+
+  <properties>
+    <bundle.contextPath>squash</bundle.contextPath>
+    <logger.urlRewriteFilter>DEBUG</logger.urlRewriteFilter>
+    <project.stage>RELEASE</project.stage> <!--  overridable by activating the profile development -->
+    <spring.version.range>[3,4)</spring.version.range>
+    <springdm.version.range>[2,3)</springdm.version.range>
+    <thymeleaf.version>2.0.14</thymeleaf.version>
+    <thyleleaf.springsec.version>2.0.0</thyleleaf.springsec.version>
+    <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
+  </properties>
+
+  <dependencies>
+	<!-- ====== SQUASHTEST ====== -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>springdm-bundle-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.foundation</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.report.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>  
+    <!--<dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.wizard.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>-->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tm.service</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.bugtracker.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.wizard.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>spock-test-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+		<!-- ====== /SQUASHTEST ====== -->
+		<!-- ====== JEE API ====== -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>com.springsource.javax.servlet</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.el</groupId>
+      <artifactId>com.springsource.javax.el</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>com.springsource.javax.servlet.jsp</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>com.springsource.javax.servlet.jsp.jstl</artifactId>
+    </dependency>
+		<!-- ====== /JEE API ====== -->
+
+		<!-- ====== JSE DI API ====== -->
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>com.springsource.javax.inject</artifactId>
+    </dependency>
+		<!-- ====== /JSE DI API ====== -->
+
+		<!-- ====== LOGGING ====== -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>com.springsource.slf4j.api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>com.springsource.slf4j.log4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>com.springsource.slf4j.org.apache.commons.logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.log4j</groupId>
+      <artifactId>com.springsource.org.apache.log4j</artifactId>
+    </dependency>
+		<!-- ====== /LOGGING ====== -->
+
+		<!-- ====== SPRING DI ====== -->
+		<!-- Required by Spring MVC -->
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.context.support</artifactId>
+    </dependency>
+		<!-- ====== /SPRING DI ====== -->
+
+		<!-- ====== SPRING DM WEB CONTEXT ====== -->
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-web</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+		<!-- ====== /SPRING DM WEB CONTEXT ====== -->
+
+    <!-- ====== SPRING SECURITY ====== -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>org.springframework.security.web</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>org.springframework.security.config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>org.springframework.security.taglibs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>org.springframework.security.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>org.springframework.security.acls</artifactId>
+    </dependency>
+    <!-- ====== /SPRING SECURITY ====== -->
+
+    <!-- ====== FOR AUTH PURPOSES - should be moved afterwards ====== -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.transaction</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- ====== /FOR AUTH PURPOSES - should be moved afterwards ====== -->
+
+		<!-- ====== XML PARSER ====== -->
+		<!-- Required by jstl impl -->
+<!--     <dependency>
+      <groupId>org.apache.xmlcommons</groupId>
+      <artifactId>com.springsource.org.apache.xmlcommons</artifactId>
+      <scope>runtime</scope>
+    </dependency> -->
+		<!-- ====== /XML PARSER ====== -->
+
+		<!-- ====== SPRING MVC ====== -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.web.servlet</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.beans</artifactId>
+    </dependency>
+		<!-- ====== /SPRING MVC ====== -->
+
+		<!-- ====== URL REWRITING ====== -->
+    <dependency>
+      <groupId>org.tuckey</groupId>
+      <artifactId>com.springsource.org.tuckey.web.filters.urlrewrite</artifactId>
+    </dependency>
+		<!-- ====== /URL REWRITING ====== -->
+
+		<!-- ====== VALIDATION ====== -->
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>com.springsource.javax.validation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>com.springsource.org.hibernate.validator</artifactId>
+    </dependency>
+		<!-- ====== /VALIDATION ====== -->
+
+		<!-- ===== ASPECTJ ===== -->
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>com.springsource.org.aspectj.runtime</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>com.springsource.org.aspectj.weaver</artifactId>
+    </dependency>
+		<!-- ===== / ASPECTJ ===== -->
+
+		<!-- ===== JACKSON ===== -->
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>com.springsource.org.codehaus.jackson.mapper</artifactId>
+
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>com.springsource.org.codehaus.jackson</artifactId>
+
+    </dependency>
+    <dependency>
+      <groupId>org.joda</groupId>
+      <artifactId>com.springsource.org.joda.time</artifactId>
+
+    </dependency>
+		<!-- ===== / JACKSON ===== -->
+
+		<!-- ====== FILE UPLOAD ====== -->
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+		<!-- ====== /FILE UPLOAD ====== -->
+    
+    <!-- ====== THYMELEAF ====== -->
+    <dependency>
+      <groupId>org.thymeleaf</groupId>
+      <artifactId>org.squashtest.org.thymeleaf</artifactId>
+      <version>${thymeleaf.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.thymeleaf</groupId>
+      <artifactId>org.squashtest.org.thymeleaf.spring3</artifactId>
+      <version>${thymeleaf.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.thymeleaf.extras</groupId>
+      <artifactId>org.squashtest.org.thymeleaf.extras.springsecurity3</artifactId>
+      <version>${thyleleaf.springsec.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>    
+    <!-- ====== /THYMELEAF ====== -->
+
+		<!-- ====== JASPER REPORTS ====== -->
+		<!-- 
+			We need this to compile the reports. Our OSGi wrapped artifact wont 
+			work and plugin dependency wont be the one picked
+		-->
+    <dependency>
+      <groupId>net.sf.jasperreports</groupId>
+      <artifactId>jasperreports</artifactId>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+ 	
+		<!-- We need this at runtime (OSGi bundle) -->
+    <dependency>
+      <groupId>net.sf.jasperreports</groupId>
+      <artifactId>org.squashtest.net.sf.jasperreports</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+        </exclusion>
+      </exclusions>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.beanshell</groupId>
+      <artifactId>com.springsource.bsh</artifactId>
+      <version>2.0.0.b4</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xerces</groupId>
+      <artifactId>com.springsource.org.apache.xerces</artifactId>
+      <version>2.9.1</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xml</groupId>
+      <artifactId>com.springsource.org.apache.xml.resolver</artifactId>
+      <version>1.2.0</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.htmlparser.jericho</groupId>
+      <artifactId>org.squashtest.net.htmlparser.jericho</artifactId>
+      <version>3.1</version>
+    </dependency>
+    <!-- ====== /JASPER REPORTS ====== -->
+
+    <!-- ====== SPRING INTEGRATION TEST SUPPORT ====== -->
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-unitils</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.test</artifactId>
+    </dependency>
+    <!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+
+    <testResources>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+        <filtering>false</filtering>
+      </testResource>
+    </testResources>
+
+    <testSourceDirectory>src/test/groovy</testSourceDirectory>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+
+			<!-- ====== SPOCK TESTS ====== -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+			<!-- ====== /SPOCK TESTS ====== -->
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <instructions>
+            <_include>bnd.bnd</_include>
+          </instructions>
+          <supportedProjectTypes>
+            <supportedProjectType>jar</supportedProjectType>
+            <supportedProjectType>bundle</supportedProjectType>
+            <supportedProjectType>war</supportedProjectType>
+          </supportedProjectTypes>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jasperreports-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile-reports</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${jasperreports.build.outputDirectory}</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>${jasperreports.build.outputDirectory}</directory>
+              <targetPath>WEB-INF/reports</targetPath>
+            </resource>
+            <resource>
+              <directory>${project.build.outputDirectory}/META-INF</directory>
+              <targetPath>META-INF</targetPath>
+            </resource>
+          </webResources>
+          <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+          <archive>
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+          <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+          <attachClasses>true</attachClasses>
+        </configuration>
+      </plugin>
+    
+      <!-- ====== INTEGRATION TESTS ====== -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <!-- Adds more source directories to the pom -->
+          <execution>
+            <id>add-integration-test-source</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/it/groovy</source>
+              </sources>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>add-integration-test-resource</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>add-test-resource</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>src/it/resources</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>compile-integration-test</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <!-- We can run ITs and skip unit tests with -DskipTests=true -->
+          <skipTests>${skipITs}</skipTests>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>integration-tests</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- ====== /INTEGRATION TESTS ====== -->
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>continuous-integration</id>
+      <activation>
+        <property>
+          <name>env.type</name>
+          <value>ci</value>
+        </property>
+      </activation>
+      <properties>
+        <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
+      </properties>
+    </profile>
+    <profile>
+      <id>integration</id>
+      <activation>
+        <property>
+          <name>env.type</name>
+          <value>int</value>
+        </property>
+      </activation>
+      <properties>
+        <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
+      </properties>
+    </profile>
+    <profile>
+      <id>build</id>
+      <activation>
+        <property>
+          <name>env.type</name>
+          <value>build</value>
+        </property>
+      </activation>
+      <properties>
+        <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
+      </properties>
+    </profile>
+    <profile>
+      <id>development</id>
+      <activation>
+        <property>
+          <name>env.type</name>
+          <value>dev</value>
+        </property>
+      </activation>
+      <properties>
+        <project.stage>DEV</project.stage>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>eclipse</id>
+      <activation>
+        <file>
+          <exists>${basedir}\.project</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-reports-to-web-inf</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+
+                <configuration>
+                  <outputDirectory>${basedir}/WEB-INF/reports</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${jasperreports.build.outputDirectory}</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
