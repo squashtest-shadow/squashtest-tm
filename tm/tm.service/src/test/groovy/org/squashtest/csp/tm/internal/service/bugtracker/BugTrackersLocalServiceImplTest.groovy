@@ -150,6 +150,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		reproject == project
 	}
 
+	/* @Deprecated
 	def "should get priorities"(){
 
 		given :
@@ -163,7 +164,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		then :
 		priorityList == priorities
 	}
-
+	*/
 
 	def "should set the credentials"(){
 
