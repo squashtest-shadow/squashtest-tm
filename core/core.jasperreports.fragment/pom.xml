@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.squashtest.tm</groupId>
+		<artifactId>squashtest-csp-core</artifactId>
+		<version>1.6.0.RC1-SNAPSHOT</version>
+	</parent>
+	<artifactId>core.jasperreports.fragment</artifactId>
+	<name>core.jasperreports.fragment</name>
+	<description>Sets the DynamicImport-Package and some conf for the missing fonts</description>
+	<packaging>bundle</packaging>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<_include>bnd.bnd</_include>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

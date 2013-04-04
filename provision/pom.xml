@@ -1,0 +1,506 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>squashtest-csp</artifactId>
+		<groupId>org.squashtest.tm</groupId>
+		<version>1.6.0.RC1-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.squashtest.tm</groupId>
+	<artifactId>squashtest-csp-provision</artifactId>
+	<packaging>pom</packaging>
+	<name>squashtest-csp-provision</name>
+	<description>OSGi container provisioning - Used by pax:provision and
+		Eclipse</description>
+
+	<properties>
+
+		<assembly.skip>false</assembly.skip>
+
+		<squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
+		<cxf.version>2.3.3</cxf.version>
+
+
+		<!-- database generation. Default H2 database properties -->
+		<database.dialect>org.hibernate.dialect.H2Dialect</database.dialect>
+		<database.driverClassName>org.h2.Driver</database.driverClassName>
+		<database.url>jdbc:h2:${squashtest.rootDir}/dev-database/squashtest</database.url>
+		<database.user>sa</database.user>
+		<database.password>sa</database.password>
+		<database.create.user>sa</database.create.user>
+		<database.create.password>sa</database.create.password>
+
+		<master.changelog>${project.build.directory}/maven-shared-archive-resources/sample/sample-db.changelog.xml</master.changelog>
+
+		<database.nocreate>false</database.nocreate>
+		<database.nopopulate>false</database.nopopulate>
+	</properties>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/liquibase</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+
+		<!-- fetch the database generation module -->
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-remote-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<configuration>
+							<resourceBundles>
+								<resourceBundle>org.squashtest.tm:squashtest-tm-database:${project.version}</resourceBundle>
+							</resourceBundles>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- create the database -->
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<configuration>
+					<skip>${database.nocreate}</skip>
+				</configuration>
+				<executions>
+					<execution>
+						<id>create-database</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>update</goal>
+						</goals>
+						<configuration>
+							<dropFirst>true</dropFirst>
+							<changeLogFile>${master.changelog}</changeLogFile>
+							<driver>${database.driverClassName}</driver>
+							<url>${database.url}</url>
+							<username>${database.create.user}</username>
+							<password>${database.create.password}</password>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- generate the dbdoc -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xml-maven-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<transformationSets>
+						<transformationSet>
+							<dir>${project.basedir}/src/main/liquibase/makedoc/</dir>
+							<excludes>
+								<exclude>*.xsl</exclude>
+							</excludes>
+							<stylesheet>${project.basedir}/src/main/liquibase/makedoc/dbdoc_style.xsl</stylesheet>
+						</transformationSet>
+					</transformationSets>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>net.sf.saxon</groupId>
+						<artifactId>saxon</artifactId>
+						<version>8.7</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<!-- clean datasource properties -->
+			<plugin>
+				<groupId>com.google.code.maven-config-processor-plugin</groupId>
+				<artifactId>maven-config-processor-plugin</artifactId>
+				<version>1.9</version>
+				<executions>
+					<execution>
+						<id>clean-database-changelog</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>process</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<transformations>
+						<transformation>
+							<type>properties</type>
+							<input>${project.basedir}/target/config/services/org.squashtest.csp.core.datasource.jdbc.config.properties</input>
+							<output>config/services/org.squashtest.csp.core.datasource.jdbc.config.properties</output>
+							<config>${project.basedir}/src/tools/changeprop-processing.xml</config>
+						</transformation>
+					</transformations>
+				</configuration>
+			</plugin>
+			<!-- end clean datasource properties -->
+		</plugins>
+	</build>
+
+	<!-- Provisioning is for dev environment only -->
+	<profiles>
+		<profile>
+			<id>development</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>env.type</name>
+					<value>dev</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<configuration>
+							<skipAssembly>${assembly.skip}</skipAssembly>
+						</configuration>
+						<executions>
+							<execution>
+								<id>provision-eclipse-platform</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>src/main/assembly/eclipse-provision.xml</descriptor>
+									</descriptors>
+									<appendAssemblyId>false</appendAssemblyId>
+									<finalName>eclipse-provision</finalName>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-resources-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-config-resources</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<resources>
+										<resource>
+											<directory>${project.basedir}/src/main/config</directory>
+											<filtering>true</filtering>
+										</resource>
+									</resources>
+									<outputDirectory>${project.build.directory}/config</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Populates provision database data -->
+					<plugin>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-maven-plugin</artifactId>
+						<configuration>
+							<skip>${database.nopopulate}</skip>
+						</configuration>
+						<executions>
+							<execution>
+								<id>populate-dev-data</id>
+								<!-- this phase should be after schema generation -->
+								<phase>generate-test-resources</phase>
+								<goals>
+									<goal>update</goal>
+								</goals>
+								<configuration>
+									<changeLogFile>${master.changelog}</changeLogFile>
+									<driver>${database.driverClassName}</driver>
+									<url>${database.url}</url>
+									<username>${database.create.user}</username>
+									<password>${database.create.password}</password>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>continuous-integration</id>
+			<activation>
+				<property>
+					<name>env.type</name>
+					<value>ci</value>
+				</property>
+			</activation>
+		</profile>
+		<profile>
+			<id>mysqlDev</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<property>
+					<name>environment.type</name>
+					<value>mysqlDev</value>
+				</property>
+			</activation>
+			<properties>
+				<database.dialect>org.hibernate.dialect.MySQLDialect</database.dialect>
+				<database.driverClassName>com.mysql.jdbc.Driver</database.driverClassName>
+				<database.url>
+					jdbc:mysql://localhost/squashtest
+				</database.url>
+				<database.user>root</database.user>
+				<database.password></database.password>
+				<!-- for database generation only -->
+				<database.create.user>root</database.create.user>
+				<database.create.password></database.create.password>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>com.mysql.jdbc</groupId>
+					<artifactId>com.springsource.com.mysql.jdbc</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+
+
+
+	<dependencies>
+	
+
+	
+		<!-- ====== SQUASHTEST ====== -->
+		<!-- Squashtest core modules -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>org.squashtest.csp.core.log4j</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.bugtracker.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- the following mantis artifact is a plugin. It could be removed, but 
+			that would also remove it's dependencies from the provisioning. TODO : maybe 
+			promote mantis plugin dependencies to "first class" : 1) put them in the 
+			squash-tm-dependencies pom and 2) put them here and in distro project. -->
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>plugin.bugtracker.mantis</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.report.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>plugin.report.std</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.testautomation.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>plugin.testautomation.jenkins</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- Squashtest tm modules -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tm.web</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tm.web</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tm.service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>database.h2.fragment</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>core.jasperreports.fragment</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<!-- ====== /SQUASHTEST ====== -->
+
+		<!-- ====== CONFIG ADMIN COMPENDIUM SERVICE ====== -->
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.configadmin</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.confman</groupId>
+			<artifactId>pax-confman-propsloader</artifactId>
+		</dependency>
+		<!-- ====== /CONFIG ADMIN COMPENDIUM SERVICE ====== -->
+
+		<!-- ====== JEE API ====== -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>com.springsource.javax.servlet</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>com.springsource.javax.el</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>com.springsource.javax.servlet.jsp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>com.springsource.javax.servlet.jsp.jstl</artifactId>
+		</dependency>
+		<!-- ====== /JEE API ====== -->
+
+		<!-- ====== SPRING DM ====== -->
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-extender</artifactId>
+		</dependency>
+		<!-- ====== /SPRING DM ====== -->
+
+		<!-- ====== SPRING DM WEB EXTENDER ====== -->
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-web</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-web-extender</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- Deploys WARs to Jetty -->
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>jetty.web.extender.fragment.osgi</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- Bootstraps a Jetty instance -->
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>jetty.start.osgi</artifactId>
+		</dependency>
+		<!-- ====== /SPRING DM WEB EXTENDER ====== -->
+
+		<!-- ====== JETTY ====== -->
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>com.springsource.org.mortbay.jetty.server</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>com.springsource.org.mortbay.util</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- ====== /JETTY ====== -->
+
+		<!-- ====== JSP COMPILER ====== -->
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>jasper.osgi</artifactId>
+			<version>6.0.16-SNAPSHOT</version>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- ====== JSP COMPILER ====== -->
+
+		<!-- ====== OSGI API ====== -->
+		<dependency>
+			<groupId>org.eclipse.equinox.http</groupId>
+			<artifactId>servlet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.osgi</groupId>
+			<artifactId>org.eclipse.osgi</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<!-- ====== /OSGI API ====== -->
+
+		<!-- ====== SQUASHTEST ====== -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>springdm-bundle-dependencies</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-dependencies</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+		</dependency>
+		<!-- ====== SQUASHTEST ====== -->
+
+		<!-- ====== DATABASE ====== -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+		<!-- ====== /DATABASE ====== -->
+		
+		
+	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>springframework-milestone</id>
+			<url>http://maven.springframework.org/milestone</url>
+		</repository>
+		<repository>
+			<id>squash</id>
+			<url>http://repo.squashtest.org/maven2/releases</url>
+		</repository>
+	</repositories>
+</project>

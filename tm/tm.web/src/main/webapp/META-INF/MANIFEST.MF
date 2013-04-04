@@ -1,0 +1,70 @@
+Manifest-Version: 1.0
+Bundle-ClassPath: .,WEB-INF/classes
+Tool: Bnd-0.0.357
+Bundle-Name: Squashtest CSP - Test Management module - Web frontend co
+ mponent
+Created-By: 1.6.0_21 (Sun Microsystems Inc.)
+Web-ContextPath: tm
+Bundle-Version: 0.1.0.SNAPSHOT
+Bnd-LastModified: 1295971116009
+Bundle-ManifestVersion: 2
+Bundle-Description: Umbrella project for the CSP Test Management modul
+ e
+Import-Package: javax.servlet.http;version="2.5",javax.servlet.jsp.jst
+ l.core;version="1.2.0",javax.servlet.jsp.jstl.fmt;version="1.2.0",jav
+ ax.servlet.jsp.jstl.tlv;version="1.2.0",javax.validation;version="1.0
+ ",javax.validation.constraints;version="1.0",net.sf.cglib.core;versio
+ n="2.1.3",net.sf.cglib.proxy;version="2.1.3",net.sf.cglib.reflect;ver
+ sion="2.1.3",org.aopalliance.aop;version="1.0.0",org.apache.commons.l
+ ang;version="2.4",org.apache.taglibs.standard.functions;version="1.2.
+ 0",org.apache.taglibs.standard.resources;version="1.2.0",org.apache.t
+ aglibs.standard.tag.common.core;version="1.2.0",org.apache.taglibs.st
+ andard.tag.common.fmt;version="1.2.0",org.apache.taglibs.standard.tag
+ .rt.core;version="1.2.0",org.apache.taglibs.standard.tag.rt.fmt;versi
+ on="1.2.0",org.apache.taglibs.standard.tei;version="1.2.0",org.apache
+ .taglibs.standard.tlv;version="1.2.0",org.aspectj.lang.annotation;ver
+ sion="1.6.5.RELEASE",org.codehaus.jackson;version="1.4",org.codehaus.
+ jackson.map;version="1.4",org.hibernate;version="3.6.0",org.hibernate
+ .engine.jdbc;version="3.6",org.slf4j;version="1.6",org.springframewor
+ k.aop;version="3.0.4.RELEASE",org.springframework.aop.aspectj;version
+ ="3.0.4.RELEASE",org.springframework.aop.aspectj.annotation;version="
+ 3.0.4.RELEASE",org.springframework.aop.aspectj.autoproxy;version="3.0
+ .4.RELEASE",org.springframework.aop.config;version="3.0.4.RELEASE",or
+ g.springframework.aop.framework;version="3.0.4.RELEASE",org.springfra
+ mework.aop.framework.adapter;version="3.0.4.RELEASE",org.springframew
+ ork.aop.framework.autoproxy;version="3.0.4.RELEASE",org.springframewo
+ rk.aop.framework.autoproxy.target;version="3.0.4.RELEASE",org.springf
+ ramework.aop.interceptor;version="3.0.4.RELEASE",org.springframework.
+ aop.scope;version="3.0.4.RELEASE",org.springframework.aop.support;ver
+ sion="3.0.4.RELEASE",org.springframework.aop.support.annotation;versi
+ on="3.0.4.RELEASE",org.springframework.aop.target;version="3.0.4.RELE
+ ASE",org.springframework.aop.target.dynamic;version="3.0.4.RELEASE",o
+ rg.springframework.context.support;version="3.0.4.RELEASE",org.spring
+ framework.http;version="3.0",org.springframework.orm.hibernate3.suppo
+ rt;version="3.0",org.springframework.osgi.extensions.annotation;versi
+ on="2.0.0.M1",org.springframework.osgi.web.context.support;version="2
+ .0.0.M1",org.springframework.stereotype;version="3.0",org.springframe
+ work.transaction;version="3.0.4.RELEASE",org.springframework.validati
+ on;version="3.0",org.springframework.validation.beanvalidation;versio
+ n="3.0.4.RELEASE",org.springframework.web.bind.annotation;version="3.
+ 0",org.springframework.web.context;version="3.0.4.RELEASE",org.spring
+ framework.web.context.request;version="3.0.4.RELEASE",org.springframe
+ work.web.filter;version="3.0.4.RELEASE",org.springframework.web.multi
+ part.commons;version="3.0.4.RELEASE",org.springframework.web.servlet;
+ version="3.0.4.RELEASE",org.springframework.web.servlet.handler;versi
+ on="3.0.4.RELEASE",org.springframework.web.servlet.mvc;version="3.0.4
+ .RELEASE",org.springframework.web.servlet.mvc.annotation;version="3.0
+ .4.RELEASE",org.springframework.web.servlet.tags;version="3.0.4.RELEA
+ SE",org.springframework.web.servlet.tags.form;version="3.0.4.RELEASE"
+ ,org.springframework.web.servlet.view;version="3.0.4.RELEASE",org.spr
+ ingframework.web.servlet.view.json;version="3.0",org.springframework.
+ web.util;version="3.0",org.squashtest.tm.tm.domain;version="0.1",org
+ .squashtest.csp.tm.domain.campaign;version="0.1",org.squashtest.tm.t
+ m.domain.library;version="0.1",org.squashtest.tm.tm.domain.requireme
+ nt;version="0.1",org.squashtest.tm.tm.domain.testcase;version="0.1",
+ org.squashtest.tm.tm.infrastructure.filter;version="0.1",org.squasht
+ est.csp.tm.service;version="0.1",org.tuckey.web.filters.urlrewrite;ve
+ rsion="3.1", org.squashtest.tm.tm.domain.report.executionprogress.dto;version="0.1"
+Bundle-SymbolicName: org.squashtest.tm.tm.web
+Originally-Created-By: 1.6.0_21 (Sun Microsystems Inc.)
+
