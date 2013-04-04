@@ -487,7 +487,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 	function _restoreTableSelection() {
 		var selectedIds = this.attr('selectedIds');
-		if (selectedIds != null) {
+		if ((selectedIds instanceof Array) && (selectedIds.length>0)) {
 			_selectRows.call(this, selectedIds);
 		}
 		this.removeAttr('selectedIds');
@@ -498,44 +498,34 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 		var self = this;
 		$(rows).filter(function() {
-			return self.getODataId(this);
+			var rId = self.getODataId(this);
+			return $.inArray(rId, ids) != -1;
 		}).addClass('ui-state-row-selected');
 
 	}
 
 	// no arguments mean all rows
 	/* private */function _deselectRows(ids) {
-		var rows = this.fnGetNodes();
-
-		var self = this;
-		if (arguments.length == 1) {
-			$(rows).filter(function() {
-				return self.getODataId(this);
-			}).removeClass('ui-state-row-selected');
-		} else {
-			$(rows).removeClass('ui-state-row-selected');
+		var table = this;
+		var rows = this.find('tbody tr');
+		
+		if (arguments.length>0 && ids instanceof Array && ids.length>0){
+			rows = rows.filter(function(){
+				var rId = table.getODataId(this);
+				return $.inArray(rId, ids) != -1;				
+			});
 		}
+
+		rows.removeClass('ui-state-row-selected');
+		
 	}
 
 	/**
 	 * @returns {Array} of ids of selected rows
 	 */
 	function _getSelectedIds() {
-		var rows = this.fnGetNodes();
-		var ids = [];
-
-		var self = this;
-
-		$(rows).each(function(index, row) {
-			if ($(row).hasClass('ui-state-row-selected')) {
-				var id = self.getODataId(row);
-				if ((id != "") && (!isNaN(id))) {
-					ids.push(id);
-				}
-			}
-		});
-
-		return ids;
+		var table = this;
+		return table.getSelectedRows().map(function(){ return table.getODataId(this); }).get();
 	}
 
 	/**
@@ -556,11 +546,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	}
 
 	function _getSelectedRows() {
-		var rows = this.fnGetNodes();
-		return $(rows).not(function(index, row) {
-			return !$(row).hasClass('ui-state-row-selected');
-		});
-
+		return this.find('tbody tr.ui-state-row-selected');
 	}
 
 	function _addHLinkToCellText(td, url, isOpenInTab) {
