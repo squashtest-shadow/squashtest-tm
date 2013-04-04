@@ -73,7 +73,8 @@ requirejs.config({
 		"squash.cssloader" : "squash/squash.cssloader",
 		"squash.translator" : "squash/squash.translator",
 		"squash.resizer" : "squash/squashtm.tree-page-resizer",
-		"squash.table-collapser" : "squashtest/jquery.squash.table-collapser"
+		"squash.table-collapser" : "squashtest/jquery.squash.table-collapser",
+		"jquery.tagit" : "squashtest/jquery/tag-it.js"
 	},
 	shim : {
 		"ckeditor" : {
