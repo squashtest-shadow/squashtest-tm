@@ -169,11 +169,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	}
 
-	@Override
-	public List<Priority> getRemotePriorities(BugTracker bugTracker) {
-		return remoteBugTrackersService.getPriorities(bugTracker);
 
-	}
 
 	@Override
 	public void setCredentials(String username, String password, BugTracker bugTracker) {

@@ -83,17 +83,6 @@ public interface BugTrackersService {
 	URL getViewIssueUrl(String issueId, BugTracker bugTracker);
 
 
-	/**
-	 * will return the list of the priorities one can set a bug to. The values actually returned depends on the
-	 * actual bugtracker at the other end of the line.
-	 * 
-	 * @param bugTracker the concerned BugTracker
-	 * @return the list of Priority.
-	 */
-	List<Priority> getPriorities(BugTracker bugTracker);
-
-
-
 
 	/**
 	 * will return a project, matching by its name

@@ -228,16 +228,7 @@ public interface BugTrackersLocalService {
 	 */
 	BTProject findRemoteProject(String name, BugTracker bugTracker);
 
-	/**
-	 * returns the list of priorities .
-	 * 
-	 * @param bugTracker
-	 *            : the concerned BugTracker
-	 * @return the list of priorities. An empty list is returned if none are found.
-	 * @throws BugTrackerManagerException
-	 *             and subtypes.
-	 */
-	List<Priority> getRemotePriorities(BugTracker bugTracker);
+
 
 	/**
 	 * returns a remote issue using its key

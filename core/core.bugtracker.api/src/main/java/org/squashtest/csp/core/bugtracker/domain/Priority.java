@@ -22,6 +22,7 @@ package org.squashtest.csp.core.bugtracker.domain;
 
 public class Priority implements Identifiable<Priority>{
 	
+	public static final Priority NO_PRIORITY = new Priority(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
 	
 	private String id;
 	private String name;

@@ -93,11 +93,14 @@ public interface BugTrackerConnector {
 	String makeViewIssueUrlSuffix(String issueId);
 
 	/**
-	 * Returns the list of priorities available on the remote bugtracker.
+	 * Returns the list of priorities available on the remote bugtracker. As of Squash TM 1.5.1, this method is 
+	 * deprecated and the application will not call it anymore (it never did anyway). Throwing UnsupportedOperationException 
+	 * or returning whatever is fine.
 	 *
 	 * @return a list of Priority
 	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
 	 */
+	@Deprecated
 	List<Priority> getPriorities() throws BugTrackerRemoteException;
 
 

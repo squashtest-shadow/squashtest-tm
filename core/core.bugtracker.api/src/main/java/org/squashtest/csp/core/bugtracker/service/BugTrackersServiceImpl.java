@@ -96,11 +96,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 	}
 
-	@Override
-	public List<Priority> getPriorities(BugTracker bugTracker) {
-		return connect(bugTracker).getPriorities();
-	}
-
+	
 	@Override
 	public BTProject findProject(String name, BugTracker bugTracker) {
 		return connect(bugTracker).findProject(name);
