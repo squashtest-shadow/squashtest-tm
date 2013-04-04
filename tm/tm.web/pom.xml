@@ -21,6 +21,9 @@
     <thymeleaf.version>2.0.14</thymeleaf.version>
     <thyleleaf.springsec.version>2.0.0</thyleleaf.springsec.version>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
+
+    <!-- Default jacoco dont record any coverage data -->
+    <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
   </properties>
 
   <dependencies>
