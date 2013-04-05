@@ -12,6 +12,11 @@
 	<description>Squash TM services module - Provides Test management related internal services</description>
 	<packaging>bundle</packaging>
 
+	<properties>
+		<dynamicdao.outputdir>${basedir}/META-INF/spring/</dynamicdao.outputdir>	
+	</properties>
+
+
 	<dependencies>
 		<!-- ====== DEPENDENCY POMS ====== -->
 		<dependency>
@@ -295,6 +300,13 @@
 
 	<profiles>
 		<profile>
+			<id>linkMeta</id>
+			<properties>
+				<dynamicdao.outputdir>${project.build.outputDirectory}/META-INF/spring/</dynamicdao.outputdir>	
+			</properties>
+		</profile>
+	
+		<profile>
 			<id>eclipse</id>
 			<activation>
 				<file>
@@ -315,7 +327,7 @@
 									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>${basedir}/META-INF/spring/</outputDirectory>
+									<outputDirectory>${dynamicdao.outputdir}</outputDirectory>
 									<resources>
 										<resource>										
 											<directory>${project.build.directory}/generated-resources/META-INF/spring</directory>
