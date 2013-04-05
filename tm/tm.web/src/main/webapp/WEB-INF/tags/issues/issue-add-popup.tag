@@ -40,6 +40,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <f:message var="addIssueLabel" key="label.Add" />
 
@@ -136,77 +137,16 @@ The reason for that is that the parameters are urls already.
 	$(function(){
 		require(["bugtracker"], function(){
 			 
-			$("#${id}").btIssueDialog({
+			var conf = {					
 				reportUrl : "${bugReport}",
 				searchUrl : "${remoteIssues}",
 				bugTrackerId : "${bugTrackerId}",
-				labels : {
-					emptyAssigneeLabel : "${interfaceDescriptor.emptyAssigneeListLabel}",
-					emptyCategoryLabel : "${interfaceDescriptor.emptyCategoryListLabel}",
-					emptyVersionLabel : "${interfaceDescriptor.emptyVersionListLabel}"
-				},
-				callback : ${successCallback}
-			});	
+				callback : ${successCallback},
+				labels : ${ json:serialize(interfaceDescriptor) }
+			}
+			
+			$("#${id}").btIssueDialog(conf);	
 			
 		});	
 	});
 </script>
-
-<%--
-
-FOR REFERENCE UNTIL DEV IS DONE : this is the content of the <div class="issue-report-fields"/>
-
-
-	<div class="combo-options">
-		<div class="display-table">
-			<div>
-				<div>
-				<label class="priority-label">${interfaceDescriptor.reportPriorityLabel}</label>
-			</div>
-			<div>
-				<select class="priority-select" name="priorityId" style="width:100%;"></select>
-			</div>
-			<div>
-				<label class="category-label">${interfaceDescriptor.reportCategoryLabel}</label>
-			</div>
-			<div>
-				<select class="category-select" name="categoryId" style="width:100%;"></select>
-			</div>	
-		</div>
-				
-			<div>
-				<div>
-				<label class="version-label">${interfaceDescriptor.reportVersionLabel}</label>
-			</div>
-			<div>	
-				<select class="version-select" name="versionId" style="width:100%;"></select>
-			</div>
-			<div>
-				<label class="assignee-label">${interfaceDescriptor.reportAssigneeLabel}</label>
-			</div>
-			<div>	
-				<select class="assignee-select" name="assigneeId" style="width:100%;"></select>
-				
-			</div>
-		</div>
-	</div>
-</div>
-
-<f:message var="summarySize" key="dialog.issue.report.summary.size"/>
-
-<div class="text-options">
-	<div>
-		<label>${interfaceDescriptor.reportSummaryLabel}</label>
-		<input type="text" class="summary-text" name="summary" maxlength="${summarySize}" style="width:100%"/> 
-	</div>
-	<div>
-		<label>${interfaceDescriptor.reportDescriptionLabel}</label>
-		<textarea class="description-text" name="description"></textarea>
-	</div>
-	<div>
-		<label>${interfaceDescriptor.reportCommentLabel}</label>
-		<textarea class="comment-text" name="comment"></textarea>
-	</div>
-</div>
---%>
-

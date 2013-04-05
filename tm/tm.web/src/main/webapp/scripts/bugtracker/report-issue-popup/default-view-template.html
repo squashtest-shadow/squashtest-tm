@@ -26,35 +26,63 @@
 		<div class="display-table">
 			<div>
 				<div>
-					<label class="priority-label">PRIORITY</label>
+					<label class="priority-label">{{labels.reportPriorityLabel}}</label>
 				</div>
 				<div>
-					<select class="priority-select" name="priorityId"
-						style="width: 100%;"></select>
+					<select class="priority-select" name="priorityId" style="width: 100%;" >
+						{{#each project.priorities}}
+						{{#if this.dummy}}
+						<option value="{{this.id}}">--</option>
+						{{else}}
+						<option value="{{this.id}}">{{this.name}}</option>
+						{{/if}}
+						{{/each}}
+					</select>
 				</div>
 				<div>
-					<label class="category-label">CATEGORY</label>
+					<label class="category-label">{{labels.reportCategoryLabel}}</label>
 				</div>
 				<div>
-					<select class="category-select" name="categoryId"
-						style="width: 100%;"></select>
+					<select class="category-select" name="categoryId" style="width: 100%;">
+						{{#each project.categories}}
+						{{#if this.dummy}}
+						<option value="{{this.id}}">{{labels.emptyCategoryListLabel}}</option>
+						{{else}}
+						<option value="{{this.id}}">{{this.name}}</option>
+						{{/if}}
+						{{/each}}						
+					</select>
 				</div>
 			</div>
 
 			<div>
 				<div>
-					<label class="version-label">VERSION</label>
+					<label class="version-label">{{labels.reportVersionLabel}}</label>
 				</div>
 				<div>
-					<select class="version-select" name="versionId"
-						style="width: 100%;"></select>
+					<select class="version-select" name="versionId" style="width: 100%;">
+						{{#each project.versions}}
+						{{#if this.dummy}}
+						<option value="{{this.id}}">{{labels.emptyVersionListLabel}}</option>
+						{{else}}
+						<option value="{{this.id}}">{{this.name}}</option>
+						{{/if}}
+						{{/each}}	
+					</select>
 				</div>
 				<div>
-					<label class="assignee-label">ASSIGNEE</label>
+					<label class="assignee-label">{{labels.reportAssigneeLabel}}</label>
 				</div>
 				<div>
-					<select class="assignee-select" name="assigneeId"
-						style="width: 100%;"></select>
+					<select class="assignee-select" name="assigneeId" style="width: 100%;">
+						{{#each project.users}}
+						{{#if this.dummy}}
+						<option value="{{this.id}}">{{labels.emptyAssigneeListLabel}}</option>
+						{{else}}
+						<option value="{{this.id}}">{{this.name}}</option>
+						{{/if}}
+						{{/each}}						
+					</select>
 
 				</div>
 			</div>
@@ -63,16 +91,16 @@
 
 	<div class="text-options">
 		<div>
-			<label>SUMMARY</label> 
+			<label>{{labels.reportSummaryLabel}}</label> 
 			<input type="text" class="summary-text" name="summary"
 					maxlength="128" style="width: 100%" />
 		</div>
 		<div>
-			<label>DESCRIPTION</label>
+			<label>{{labels.reportDescriptionLabel}}</label>
 			<textarea class="description-text" name="description"></textarea>
 		</div>
 		<div>
-			<label>COMMENT</label>
+			<label>{{labels.reportCommentLabel}}</label>
 			<textarea class="comment-text" name="comment"></textarea>
 		</div>
 	</div>

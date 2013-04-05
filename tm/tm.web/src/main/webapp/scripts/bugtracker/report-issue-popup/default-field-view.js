@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/default-view-template.html!strip","jqueryui"], function($, Backbone, Handlebars, BTEntity, source){
+define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip","jqueryui"], function($, Backbone, Handlebars, BTEntity, source){
 	
 
 	$.fn.btCbox = function(emptyMessage){
@@ -28,7 +28,6 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost
 		
 		this.empty=true;
 		
-	
 		this.flush = function(){
 			this.find("option").remove();
 		}
@@ -42,31 +41,7 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost
 		}
 		
 		this.populate = function(entityArray){
-			
-			this.flush();
-			
-			if ((entityArray.length == 1) && (entityArray[0].dummy)){
-				var option = $("<option/>", { 
-					'value' : entityArray[0].id, 
-					'text' : emptyMessage 
-				});
-				this.append(option);	
-				this.disable();
-				this.empty=true;
-			}
-			else{
-				//this.enable(); only the master control says if it's enabled
-				var  i=0;			
-				for (i=0;i<entityArray.length;i++){
-					var entity = entityArray[i];
-					var option = $("<option/>", { 
-						'value' : entity.id, 
-						'text' : entity.name 
-					});
-					this.append(option);			
-				}
-				this.empty=false;
-			}
+			//noop
 		}
 
 		
@@ -105,13 +80,13 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost
 		
 		remapControls : function(){
 			
-			var options = this.options;
+			var labels = this.options.labels;
 			
 			//the four selects
-			this.prioritySelect = this.$(".priority-select").btCbox(options.labels.emptyPriorityLabel);
+			this.prioritySelect = this.$(".priority-select").btCbox(labels.emptyPriorityListLabel);
 			this.categorySelect = this.$(".category-select").btCbox("impossible - there cannot be no categories");
-			this.versionSelect  = this.$(".version-select").btCbox(options.labels.emptyVersionLabel);
-			this.assigneeSelect = this.$(".assignee-select").btCbox(options.labels.emptyAssigneeLabel);
+			this.versionSelect  = this.$(".version-select").btCbox(labels.emptyVersionListLabel);
+			this.assigneeSelect = this.$(".assignee-select").btCbox(labels.emptyAssigneeListLabel);
 			
 			//the three text area
 			this.summaryText = this.$(".summary-text");
@@ -183,7 +158,14 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost
 		initialize : function(){
 			
 			var template = Handlebars.compile(source);
-			var html = template();			
+			var data = {
+				project : this.model.get('project'),
+				labels : this.options.labels
+			}
+			
+			console.log(data);
+			
+			var html = template(data);			
 			
 			this.$el.html(html);
 			
