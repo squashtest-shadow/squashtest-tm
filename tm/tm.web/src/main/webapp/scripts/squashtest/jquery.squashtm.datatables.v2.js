@@ -546,7 +546,18 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	}
 
 	function _getSelectedRows() {
-		return this.find('tbody tr.ui-state-row-selected');
+		var table = this;
+		//note : we filter on the rows that are actually backed by a model
+		return table.find('tbody tr.ui-state-row-selected').filter(function(){
+			var found = true;
+			try{
+				found = (!! table.fnGetData(this) );
+			}
+			catch(ex){
+				found=false;
+			}
+			return found;
+		});
 	}
 
 	function _addHLinkToCellText(td, url, isOpenInTab) {
