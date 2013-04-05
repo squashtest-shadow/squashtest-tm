@@ -62,9 +62,9 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 public class CampaignLibraryNavigationServiceImpl extends
 		AbstractLibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> implements
 		CampaignLibraryNavigationService {
-	
+
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
-	
+
 	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
 
@@ -89,7 +89,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
-	
+
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
 
@@ -97,11 +97,10 @@ public class CampaignLibraryNavigationServiceImpl extends
 	@Qualifier("squashtest.tm.service.CampaignLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<CampaignLibrary, CampaignLibraryNode> libraryStrategy;
 
-	
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToCampaignFolderStrategy")
 	private Provider<PasteStrategy<CampaignFolder, CampaignLibraryNode>> pasteToCampaignFolderStrategyProvider;
-	
+
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToCampaignLibraryStrategy")
 	private Provider<PasteStrategy<CampaignLibrary, CampaignLibraryNode>> pasteToCampaignLibraryStrategyProvider;
@@ -114,8 +113,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	protected NodeDeletionHandler<CampaignLibraryNode, CampaignFolder> getDeletionHandler() {
 		return deletionHandler;
 	}
-	
-	
+
 	@Override
 	protected PasteStrategy<CampaignFolder, CampaignLibraryNode> getPasteToFolderStrategy() {
 		return pasteToCampaignFolderStrategyProvider.get();
@@ -132,17 +130,18 @@ public class CampaignLibraryNavigationServiceImpl extends
 	public List<Iteration> copyIterationsToCampaign(long campaignId, Long[] iterationsIds) {
 		PasteStrategy<Campaign, Iteration> pasteStrategy = pasteToCampaignStrategyProvider.get();
 		makeCopierStrategy(pasteStrategy);
-		return	pasteStrategy.pasteNodes(campaignId, Arrays.asList(iterationsIds));
+		return pasteStrategy.pasteNodes(campaignId, Arrays.asList(iterationsIds));
 	}
 
 	@Override
-	@PostAuthorize("hasPermission(returnObject,'READ') "+OR_HAS_ROLE_ADMIN)
+	@PostAuthorize("hasPermission(returnObject,'READ') " + OR_HAS_ROLE_ADMIN)
 	public Campaign findCampaign(long reqId) {
 		return campaignDao.findById(reqId);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "+OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
+			+ OR_HAS_ROLE_ADMIN)
 	public int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan) {
 		Campaign campaign = campaignDao.findById(campaignId);
 
@@ -151,17 +150,16 @@ public class CampaignLibraryNavigationServiceImpl extends
 		}
 		return iterationModificationService.addIterationToCampaign(iteration, campaignId, copyTestPlan);
 	}
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "+OR_HAS_ROLE_ADMIN)
-	public int addIterationToCampaign(Iteration iteration, long campaignId,
-			boolean copyTestPlan, Map<Long, String> customFieldValues) {
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
+			+ OR_HAS_ROLE_ADMIN)
+	public int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan,
+			Map<Long, String> customFieldValues) {
 		int iterIndex = addIterationToCampaign(iteration, campaignId, copyTestPlan);
 		initCustomFieldValues(iteration, customFieldValues);
 		return iterIndex;
 	}
-	
-	
 
 	@Override
 	protected final CampaignLibraryDao getLibraryDao() {
@@ -187,13 +185,12 @@ public class CampaignLibraryNavigationServiceImpl extends
 	 * @see org.squashtest.csp.tm.service.CampaignLibraryNavigationService#findIterationsByCampaignId(long)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' , 'READ') "+OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' , 'READ') "
+			+ OR_HAS_ROLE_ADMIN)
 	public List<Iteration> findIterationsByCampaignId(long campaignId) {
 		return iterationModificationService.findIterationsByCampaignId(campaignId);
 	}
-	
-	
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.campaign.CampaignLibrary', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
@@ -209,18 +206,15 @@ public class CampaignLibraryNavigationServiceImpl extends
 		}
 
 	}
-	
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.campaign.CampaignLibrary', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
-	public void addCampaignToCampaignLibrary(long libraryId, Campaign campaign,
-			Map<Long, String> customFieldValues) {
+	public void addCampaignToCampaignLibrary(long libraryId, Campaign campaign, Map<Long, String> customFieldValues) {
 		addCampaignToCampaignLibrary(libraryId, campaign);
 		initCustomFieldValues(campaign, customFieldValues);
-		
+
 	}
-	
 
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.campaign.CampaignFolder', 'CREATE')"
@@ -236,61 +230,58 @@ public class CampaignLibraryNavigationServiceImpl extends
 		}
 
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.campaign.CampaignFolder', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
-	public void addCampaignToCampaignFolder(long folderId, Campaign campaign,
-			Map<Long, String> customFieldValues) {
-		
+	public void addCampaignToCampaignFolder(long folderId, Campaign campaign, Map<Long, String> customFieldValues) {
+
 		addCampaignToCampaignFolder(folderId, campaign);
 		initCustomFieldValues(campaign, customFieldValues);
-		
+
 	}
-	
-	
 
 	@Override
-	@PostAuthorize("hasPermission(returnObject, 'READ') "+OR_HAS_ROLE_ADMIN)
+	@PostAuthorize("hasPermission(returnObject, 'READ') " + OR_HAS_ROLE_ADMIN)
 	public Iteration findIteration(long iterationId) {
 		return iterationDao.findById(iterationId);
 
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') "+OR_HAS_ROLE_ADMIN)
+	@PostFilter("hasPermission(filterObject, 'READ') " + OR_HAS_ROLE_ADMIN)
 	public List<TestSuite> findIterationContent(long iterationId) {
 		return suiteDao.findAllByIterationId(iterationId);
 	}
-	
+
 	@Override
 	public String getPathAsString(long entityId) {
-		//get
+		// get
 		CampaignLibraryNode node = getLibraryNodeDao().findById(entityId);
-		
-		//check
+
+		// check
 		checkPermission(new SecurityCheckableObject(node, "READ"));
-		
-		//proceed
+
+		// proceed
 		List<String> names = getLibraryNodeDao().getParentsName(entityId);
-		
-		return "/"+node.getProject().getName()+"/"+formatPath(names);
-		
+
+		return "/" + node.getProject().getName() + "/" + formatPath(names);
+
 	}
-	
-	private String formatPath(List<String> names){
+
+	private String formatPath(List<String> names) {
 		StringBuilder builder = new StringBuilder();
-		for (String name : names){
+		for (String name : names) {
 			builder.append("/").append(name);
 		}
-		return builder.toString();		
+		return builder.toString();
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') "+OR_HAS_ROLE_ADMIN)
+	@PostFilter("hasPermission(filterObject, 'READ') " + OR_HAS_ROLE_ADMIN)
 	public List<CampaignLibrary> findLinkableCampaignLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
-		
+
 		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : campaignLibraryDao
 				.findAll();
 	}
@@ -314,8 +305,5 @@ public class CampaignLibraryNavigationServiceImpl extends
 	public List<Long> deleteSuites(List<Long> targetIds) {
 		return deletionHandler.deleteSuites(targetIds);
 	}
-
-	
-	
 
 }
