@@ -19,6 +19,7 @@
     <spring.version.range>[3,4)</spring.version.range>
     <springdm.version.range>[2,3)</springdm.version.range>
     <thymeleaf.version>2.0.14</thymeleaf.version>
+    <wro4j.version>1.4.0</wro4j.version>
     <thyleleaf.springsec.version>2.0.0</thyleleaf.springsec.version>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
 
@@ -523,6 +524,26 @@
           </execution>
         </executions>
       </plugin>
+      
+      <plugin>
+    	<groupId>ro.isdc.wro4j</groupId>
+    	<artifactId>wro4j-maven-plugin</artifactId>
+    	<version>${wro4j.version}</version>
+    	<executions>
+      		<execution>
+        		<goals>
+          			<goal>jshint</goal>
+        		</goals>
+      		</execution>
+    	</executions>
+    	<configuration>
+				<targetGroups>squash</targetGroups>
+                <minimize>false</minimize>
+				<options>browser,jquery,eqnull,evil,noarg,smarttabs,laxbreak,laxcomma,sub,loopfunc,curly</options>
+				<failNever>true</failNever>
+    	</configuration>
+  	  </plugin>
+
       <!-- ====== /INTEGRATION TESTS ====== -->
     </plugins>
   </build>
