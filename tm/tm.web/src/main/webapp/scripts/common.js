@@ -20,9 +20,25 @@
  */
 requirejs.config({
 
-	packages : [ "custom-field-editor", "custom-field-binding", "custom-field-values", "execution-processing",
-			"projects-manager", "teams-manager", "project", "contextual-content-handlers", "test-cases-management",
-			"users-manager", "bugtracker", "iteration-management" ],
+	packages : [ 
+         "custom-field-editor", 
+         "custom-field-binding", 
+         "custom-field-values", 
+         "execution-processing",
+         "projects-manager", 
+         "teams-manager", 
+         "project", 
+         "contextual-content-handlers", 
+         "test-cases-management",
+         "users-manager", 
+         //"bugtracker",
+         {
+        	main : 'main',
+        	name : 'bugtracker',
+        	location : 'http://localhost/scripts/scripts/bugtracker'
+         },
+         "iteration-management" 
+	],
 
 	/*
 	 * rules for paths naming: * third party lib: unversionned lib name * non
@@ -39,7 +55,7 @@ requirejs.config({
 		"jqueryui" : "lib/jquery/jquery-ui-1.9.0.custom.min",
 		"datatables" : "datatables/jquery.dataTables.min",
 		"squash.datatables" : "squashtest/jquery.squashtm.datatables",
-		"jquery.squash.datatables" : "squashtest/jquery.squashtm.datatables.v2",
+		"jquery.squash.datatables" : "http://localhost/scripts/scripts/squashtest/jquery.squashtm.datatables.v2",
 		"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 		"underscore" : "lib/underscore/underscore-1.4.4-min",
 		"backbone" : "lib/backbone/backbone-1.0.0-min",

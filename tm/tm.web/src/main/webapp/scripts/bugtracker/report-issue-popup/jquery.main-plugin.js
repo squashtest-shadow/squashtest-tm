@@ -19,92 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "jqueryui"], function($){
-	
-	function BTEntity(argId, argName){
-		this.id = argId;
-		this.name = argName;
-	}
+define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldView){
 
-	
 
-	$.fn.btCbox = function(emptyMessage){
-		
-		var self = this;		
-		
-		this.empty=true;
-		
-	
-		this.flush = function(){
-			this.find("option").remove();
-		}
-		
-		this.disable = function(){
-			this.attr('disabled', 'disabled');
-		}
-		
-		this.enable = function(){
-			this.removeAttr('disabled');
-		}
-		
-		this.populate = function(entityArray){
-			
-			this.flush();
-			
-			if ((entityArray.length == 1) && (entityArray[0].dummy)){
-				var option = $("<option/>", { 
-					'value' : entityArray[0].id, 
-					'text' : emptyMessage 
-				});
-				this.append(option);	
-				this.disable();
-				this.empty=true;
-			}
-			else{
-				//this.enable(); only the master control says if it's enabled
-				var  i=0;			
-				for (i=0;i<entityArray.length;i++){
-					var entity = entityArray[i];
-					var option = $("<option/>", { 
-						'value' : entity.id, 
-						'text' : entity.name 
-					});
-					this.append(option);			
-				}
-				this.empty=false;
-			}
-		}
-
-		
-		this.getSelected = function(){
-			var id = this.val();
-			var name = this.find("option:selected").text();
-			return new BTEntity(id, name);
-		}
-		
-		this.select = function(btEntity){
-			if (
-				this.isEmpty()	||
-				(arguments.length ==0) ||
-				(! btEntity)				
-			){
-				return;
-			}else{
-				this.val(btEntity.id);
-			}
-		}
-		
-		this.isEmpty = function(){
-			return this.empty;
-		};
-
-		
-		return this;
-
-	}
-
-	
-	
 	/*
 	  report-issue-dialog is the javascript object handling the behaviour of the popup that will post 
 	  a new issue or attach an existing issue to the current entity.
@@ -130,8 +47,9 @@ define(["jquery", "jqueryui"], function($){
 
 		var self = this;
 		
-		this.model={};
-		this.template=null;
+		//issue model
+		this.model={};				//current instance  (to be modified)
+		this.mdlTemplate=null;		//template instance (used when the model must be reset)
 	
 		//urls
 		this.reportUrl = settings.reportUrl;
@@ -149,20 +67,6 @@ define(["jquery", "jqueryui"], function($){
 		//the issue id (if any)
 		this.idText = $(".id-text", this);
 		
-	
-		
-		//the four selects
-		this.prioritySelect = $(".priority-select", this.content).btCbox(settings.labels.emptyPriorityLabel);
-		this.categorySelect = $(".category-select", this.content).btCbox("impossible - there cannot be no categories");
-		this.versionSelect  = $(".version-select",  this.content).btCbox(settings.labels.emptyVersionLabel);
-		this.assigneeSelect = $(".assignee-select", this.content).btCbox(settings.labels.emptyAssigneeLabel);
-		
-
-		//the three text area
-		this.summaryText = $(".summary-text", this.content);
-		this.descriptionText = $(".description-text", this.content);
-		this.commentText = $(".comment-text", this.content);
-		
 		//the submit button
 		this.postButton = $('.post-button', this.next());
 		
@@ -175,7 +79,6 @@ define(["jquery", "jqueryui"], function($){
 		this.error.popupError();
 		
 		
-		
 		//a callback when the post is a success
 		this.callback=settings.callback;
 			
@@ -186,7 +89,9 @@ define(["jquery", "jqueryui"], function($){
 			$(this).prev("input[type='radio']").click();
 		});
 		
-
+		
+		//and last but not least, the subview that manages the fields
+		this.fieldsView = null;
 	
 	}
 
@@ -221,6 +126,17 @@ define(["jquery", "jqueryui"], function($){
 				
 		/* ************* public popup state methods **************** */
 
+		var enableControls = $.proxy(function(){
+			if (this.fieldsView !== null){
+				this.fieldsView.enableControls();
+			}
+		}, self);
+		
+		var disableControls = $.proxy(function(){
+			if (this.fieldsView !== null){
+				this.fieldsView.disableControls();
+			}
+		}, self);
 		
 		var isAttachMode = $.proxy(function(){
 			return this.attachRadio.is(':checked');
@@ -241,9 +157,9 @@ define(["jquery", "jqueryui"], function($){
 		var toReportMode = $.proxy(function(){
 			flipToMain();
 			disableIdSearch();
+			resetModel();
 			enableControls();
 			enablePost();
-			resetModel();
 		}, self);
 		
 
@@ -292,62 +208,53 @@ define(["jquery", "jqueryui"], function($){
 			}
 		}, self);
 		
-		var enableControls = $.proxy(function(){
-			with(this){
-				prioritySelect.enable();
-				categorySelect.enable();
-				versionSelect.enable();
-				assigneeSelect.enable();
-				summaryText.removeAttr('disabled');
-				descriptionText.removeAttr('disabled');
-				commentText.removeAttr('disabled');
-			}		
+
+		/* ********************** model and view management ************ */
+			
+		var isDefaultIssueModel = $.proxy(function(){
+			return true;		//TODO : return false when one can use the advanced view
 		}, self);
 		
-		var disableControls = $.proxy(function(){
-			with(this){
-				prioritySelect.disable();
-				categorySelect.disable();
-				versionSelect.disable();
-				assigneeSelect.disable();
-				summaryText.attr('disabled', 'disabled');
-				descriptionText.attr('disabled', 'disabled');
-				commentText.attr('disabled', 'disabled');
-			}
-		}, self);
-
-	
-		/* ********************** model management ************ */
-			
 		var setModel = $.proxy(function(newModel){
 			
-			this.model = newModel;
+			this.model = new Backbone.Model(newModel);
+			this.idText.val(this.model.get('id'));
 			
-			with(this){
-				
-				idText.val(model.id);
-				
-				prioritySelect.populate(model.project.priorities);
-				categorySelect.populate(model.project.categories);
-				versionSelect.populate(model.project.versions);
-				assigneeSelect.populate(model.project.users);
-				
-				prioritySelect.select(model.priority);
-				categorySelect.select(model.category);
-				versionSelect.select(model.version);
-				assigneeSelect.select(model.assignee);
-				
-				summaryText.val(model.summary);
-				descriptionText.val(model.description);
-				commentText.val(model.comment);				
+			if (isDefaultIssueModel){
+				populateDefaultFieldView();
 			}
+			else{
+				populateDynamicFieldView();
+			}
+			
+		}, self);
+		
+		var populateDefaultFieldView = $.proxy(function(){
+
+			if (this.fieldsView==null){
+				this.fieldsView = new DefaultFieldView({
+					el : this.find('.issue-report-fields').get(),
+					model : this.model,
+					labels : settings.labels
+				});
+			}
+			else{
+				this.fieldsView.model = this.model;
+				this.fieldsView.reset();
+			}
+
+
+		}, self);
+		
+		var populateDynamicFieldView = $.proxy(function(){
+			
 		}, self);
 			
 			
 		var resetModel = $.proxy(function(){
-			getBugReportTemplate()
+			getIssueModelTemplate()
 			.done(function(){
-				var copy = $.extend(true, {}, self.template);
+				var copy = $.extend(true, {}, self.mdlTemplate);
 				setModel(copy);	
 			})
 			.fail(bugReportError);
@@ -355,11 +262,11 @@ define(["jquery", "jqueryui"], function($){
 		
 		
 		
-		var getBugReportTemplate = $.proxy(function(){
-			var jobDone = $.Deferred();
-				
+		var getIssueModelTemplate = $.proxy(function(){
 			
-			if (! this.template){
+			var jobDone = $.Deferred();				
+			
+			if (! this.mdlTemplate){
 
 				flipToPleaseWait();		
 				
@@ -369,7 +276,7 @@ define(["jquery", "jqueryui"], function($){
 					dataType : "json"			
 				})
 				.done(function(response){
-					self.template = response;
+					self.mdlTemplate = response;
 					flipToMain();
 					jobDone.resolve();
 				})
@@ -422,51 +329,18 @@ define(["jquery", "jqueryui"], function($){
 			
 		}, self);
 		
-
-		//****************************** input managment ********************* */
-		
-		var flushSheet = $.proxy(function(){
-			this.model={};
-			
-			this.idText.val('');
-			this.summaryText.val('');
-			this.descriptionText.val('');
-			this.commentText.val('');
-			
-			this.prioritySelect.flush();
-			this.categorySelect.flush();
-			this.versionSelect.flush();
-			this.assigneeSelect.flush();
-		}, self);
-		
-				
-		var readAllInputs = $.proxy(function(){
-			with(this){
-				model.id = idText.val();
-				model.priority = prioritySelect.getSelected();
-				model.category = categorySelect.getSelected();
-				model.version = versionSelect.getSelected();
-				model.assignee = assigneeSelect.getSelected();
-				model.summary = summaryText.val();
-				model.description = descriptionText.val();
-				model.comment = commentText.val();			
-			};
-		
-		}, self);
-		
-
 		
 		/* ************* public ************************ */
 		
 		
 		
-		this.submitIssue = function(){
+		this.submitIssue = $.proxy(function(){
 			
 			flipToPleaseWait();
 			
-			readAllInputs();
+			this.fieldsView.readModel();
 			
-			var strModel = JSON.stringify(self.model);
+			var strModel = JSON.stringify(this.model.toJSON());
 			
 			$.ajax({
 				url : self.reportUrl,
@@ -482,27 +356,18 @@ define(["jquery", "jqueryui"], function($){
 				}
 			})
 			.fail(bugReportError);
-		};
+		}, self);
 		
 		/* ************* events ************************ */
 		
 		//the opening of the popup :
 		this.bind("dialogopen", function(){
-			flushSheet();
 			self.reportRadio.click();
 		});
 		
 		//the action bound to click on the first button
 		this.dialog('option').buttons[0].click=this.submitIssue;
 
-		//we must prevent keypress=enter event inside a textarea to bubble out and reach 
-		//the submit button
-		$(".text-options", this.content).keypress(function(evt){
-			if (evt.which == '13'){
-				$.Event(evt).stopPropagation();
-			}
-		});
-		
 		return this;
 
 	}	
