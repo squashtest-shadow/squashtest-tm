@@ -30,9 +30,9 @@
 				</div>
 				<div>
 					<select class="priority-select" name="priorityId" style="width: 100%;" >
-						{{#each project.priorities}}
+						{{#each issue.project.priorities}}
 						{{#if this.dummy}}
-						<option value="{{this.id}}">--</option>
+						<option class='issue-control-empty' value="{{this.id}}">--</option>
 						{{else}}
 						<option value="{{this.id}}">{{this.name}}</option>
 						{{/if}}
@@ -44,9 +44,9 @@
 				</div>
 				<div>
 					<select class="category-select" name="categoryId" style="width: 100%;">
-						{{#each project.categories}}
+						{{#each issue.project.categories}}
 						{{#if this.dummy}}
-						<option value="{{this.id}}">{{labels.emptyCategoryListLabel}}</option>
+						<option class='issue-control-empty' value="{{this.id}}">{{labels.emptyCategoryListLabel}}</option>
 						{{else}}
 						<option value="{{this.id}}">{{this.name}}</option>
 						{{/if}}
@@ -61,9 +61,9 @@
 				</div>
 				<div>
 					<select class="version-select" name="versionId" style="width: 100%;">
-						{{#each project.versions}}
+						{{#each issue.project.versions}}
 						{{#if this.dummy}}
-						<option value="{{this.id}}">{{labels.emptyVersionListLabel}}</option>
+						<option class='issue-control-empty' value="{{this.id}}">{{labels.emptyVersionListLabel}}</option>
 						{{else}}
 						<option value="{{this.id}}">{{this.name}}</option>
 						{{/if}}
@@ -75,9 +75,9 @@
 				</div>
 				<div>
 					<select class="assignee-select" name="assigneeId" style="width: 100%;">
-						{{#each project.users}}
+						{{#each issue.project.users}}
 						{{#if this.dummy}}
-						<option value="{{this.id}}">{{labels.emptyAssigneeListLabel}}</option>
+						<option class='issue-control-empty' value="{{this.id}}">{{labels.emptyAssigneeListLabel}}</option>
 						{{else}}
 						<option value="{{this.id}}">{{this.name}}</option>
 						{{/if}}
@@ -93,15 +93,15 @@
 		<div>
 			<label>{{labels.reportSummaryLabel}}</label> 
 			<input type="text" class="summary-text" name="summary"
-					maxlength="128" style="width: 100%" />
+					maxlength="128" style="width: 100%" value="{{issue.summary}}"/>
 		</div>
 		<div>
 			<label>{{labels.reportDescriptionLabel}}</label>
-			<textarea class="description-text" name="description"></textarea>
+			<textarea class="description-text" name="description">{{issue.description}}</textarea>
 		</div>
 		<div>
 			<label>{{labels.reportCommentLabel}}</label>
-			<textarea class="comment-text" name="comment"></textarea>
+			<textarea class="comment-text" name="comment">{{issue.comment}}</textarea>
 		</div>
 	</div>
 

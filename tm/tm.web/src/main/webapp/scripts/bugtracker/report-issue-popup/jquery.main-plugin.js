@@ -48,8 +48,8 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 		var self = this;
 		
 		//issue model
-		this.model={};				//current instance  (to be modified)
-		this.mdlTemplate=null;		//template instance (used when the model must be reset)
+		this.model = new Backbone.Model();	
+		this.mdlTemplate=null;				
 	
 		//urls
 		this.reportUrl = settings.reportUrl;
@@ -217,7 +217,7 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 		
 		var setModel = $.proxy(function(newModel){
 			
-			this.model = new Backbone.Model(newModel);
+			this.model.set(newModel);
 			this.idText.val(this.model.get('id'));
 			
 			if (isDefaultIssueModel){
@@ -233,7 +233,7 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 
 			if (this.fieldsView==null){
 				this.fieldsView = new DefaultFieldView({
-					el : this.find('.issue-report-fields').get(),
+					el : this.find('.issue-report-fields').get(0),
 					model : this.model,
 					labels : settings.labels
 				});
@@ -367,6 +367,7 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 		
 		//the opening of the popup :
 		this.bind("dialogopen", function(){
+			self.postButton.focus();
 			self.reportRadio.click();
 		});
 		

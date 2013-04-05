@@ -20,58 +20,57 @@
  */
 
 define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip","jqueryui"], function($, Backbone, Handlebars, BTEntity, source){
+
 	
-
-	$.fn.btCbox = function(emptyMessage){
+	var ComboBox = Backbone.View.extend({
 		
-		var self = this;		
+		initialize : function(){
+			this.empty = (this.$el.find('option.issue-control-empty').length!=0);
+			var evtname = 'change:'+this.options.attribute;
+			
+			this.model.on(evtname, this.updatecontrol, this);
+			this.$el.on('change', $.proxy(this.updatemodel, this));
+			
+			if (!!this.empty){
+				this.disable();
+			}
+		},
 		
-		this.empty=true;
+		getSelected : function(){
+			var $el = this.$el;
+			var id = $el.val();
+			var name = $el.find("option:selected").text();
+			return new BTEntity(id,name);
+		},
 		
-		this.flush = function(){
-			this.find("option").remove();
-		}
+		updatemodel : function(){
+			var attribute = this.options.attribute;
+			var selection = this.getSelected();
+			var newValue = {};
+			newValue[attribute] = selection;
+			
+			this.model.set(newValue);
+		},
 		
-		this.disable = function(){
-			this.attr('disabled', 'disabled');
-		}
+		updatecontrol : function(){
+			var attribute = this.options.attribute;
+			var value = this.model.get(attribute);
+			if (! this.empty && !! value){
+				this.$el.val(value.id);
+			}
+		},
 		
-		this.enable = function(){
-			this.removeAttr('disabled');
-		}
+		disable : function(){
+			this.$el.attr('disabled', 'disabled');
+		},
 		
-		this.populate = function(entityArray){
-			//noop
-		}
-
-		
-		this.getSelected = function(){
-			var id = this.val();
-			var name = this.find("option:selected").text();
-			return new BTEntity(id, name);
-		}
-		
-		this.select = function(btEntity){
-			if (
-				this.isEmpty()	||
-				(arguments.length ==0) ||
-				(! btEntity)				
-			){
-				return;
-			}else{
-				this.val(btEntity.id);
+		enable : function(){
+			if (! this.empty){
+				this.$el.removeAttr('disabled');
 			}
 		}
 		
-		this.isEmpty = function(){
-			return this.empty;
-		};
-
-		
-		return this;
-
-	}
-
+	});
 	
 	var DefaultFieldView = Backbone.View.extend({
 		
@@ -83,10 +82,29 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost
 			var labels = this.options.labels;
 			
 			//the four selects
-			this.prioritySelect = this.$(".priority-select").btCbox(labels.emptyPriorityListLabel);
-			this.categorySelect = this.$(".category-select").btCbox("impossible - there cannot be no categories");
-			this.versionSelect  = this.$(".version-select").btCbox(labels.emptyVersionListLabel);
-			this.assigneeSelect = this.$(".assignee-select").btCbox(labels.emptyAssigneeListLabel);
+			this.prioritySelect = new ComboBox({
+				el : this.$(".priority-select").get(0),
+				model : this.model,
+				attribute : 'priority'
+			});
+			
+			this.categorySelect = new ComboBox({
+				el : this.$(".category-select").get(0),
+				model : this.model,
+				attribute : 'category'
+			});
+			
+			this.versionSelect = new ComboBox({
+				el : this.$(".version-select").get(0),
+				model : this.model,
+				attribute : 'version'
+			});
+			
+			this.assigneeSelect = new ComboBox({
+				el : this.$(".assignee-select").get(0),
+				model : this.model,
+				attribute : 'assignee'
+			});
 			
 			//the three text area
 			this.summaryText = this.$(".summary-text");
@@ -115,14 +133,9 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost
 			this.commentText.attr('disabled', 'disabled');		
 		},
 		
-		populateControls : function(){
-			var project = this.model.get('project');
-			this.prioritySelect.populate(project.priorities);
-			this.categorySelect.populate(project.categories);
-			this.versionSelect.populate(project.versions);
-			this.assigneeSelect.populate(project.users);		
-		},
-		
+
+		//we must prevent keypress=enter event inside a textarea to bubble out and reach 
+		//the submit button
 		abortEnter : function(evt){
 			if (evt.which == '13'){
 				$.Event(evt).stopPropagation();
@@ -132,10 +145,6 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost
 		readModel : function(){
 		
 			var data = {
-				'priority' : this.prioritySelect.getSelected(),
-				'category' : this.categorySelect.getSelected(),
-				'version' : this.versionSelect.getSelected(),
-				'assignee' : this.assigneeSelect.getSelected(),
 				'summary' : this.summaryText.val(),
 				'description' : this.descriptionText.val(),
 				'comment' : this.commentText.val()
@@ -159,29 +168,19 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost
 			
 			var template = Handlebars.compile(source);
 			var data = {
-				project : this.model.get('project'),
+				issue : this.model.attributes,
 				labels : this.options.labels
 			}
-			
-			console.log(data);
 			
 			var html = template(data);			
 			
 			this.$el.html(html);
 			
 			this.remapControls();
-			this.populateControls();			
 			this.reset();
 			
 
-			//we must prevent keypress=enter event inside a textarea to bubble out and reach 
-			//the submit button
-			/*this.$(".text-options").keypress(function(evt){
-				if (evt.which == '13'){
-					$.Event(evt).stopPropagation();
-				}
-			});*/
-			
+
 			return this;
 
 		}, 
@@ -189,10 +188,6 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost
 		
 		reset : function(){		
 			var model = this.model;
-			this.prioritySelect.select(model.get('priority'));
-			this.categorySelect.select(model.get('category'));
-			this.versionSelect.select(model.get('version'));
-			this.assigneeSelect.select(model.get('assignee'));
 			
 			this.summaryText.val(model.get('summary'));
 			this.descriptionText.val(model.get('description'));
