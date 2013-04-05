@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["./bug-tracker-panel"], function(btPanel){
+define(["./bug-tracker-panel", "./report-issue-popup/jquery.main-plugin"], function(btPanel){
 	return {
 		btPanel : btPanel
 	};

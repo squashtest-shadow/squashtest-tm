@@ -133,7 +133,7 @@
 				"fnRowCallback" : issueTableRowCallback,
 				"aoColumnDefs": [
 					{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'issue-url'},
-					{'bSortable': true,  'sClass': 'select-handle centered', 'aTargets': [1], 'mDataProp' : 'remote-id'},
+					{'bSortable': true,  'sClass': 'select-handle centered', 'aTargets': [1], 'mDataProp' : 'remote-id', 'sWidth' : '2em'},
 					{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'summary'},
 					{'bSortable': false, 'aTargets': [3], 'sWidth': '2em', 'mDataProp' : 'priority'},
 					{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'status'},

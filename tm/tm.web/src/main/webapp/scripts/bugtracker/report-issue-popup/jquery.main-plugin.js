@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-(function($){
-
+define(["jquery", "jqueryui"], function($){
+	
 	function BTEntity(argId, argName){
 		this.id = argId;
 		this.name = argName;
@@ -505,6 +505,8 @@
 		
 		return this;
 
-	}
-
-})(jQuery);
+	}	
+	
+	//though loaded as a module, it doesn't produce anything. It's a jQuery plugin after all.
+	return null;
+})

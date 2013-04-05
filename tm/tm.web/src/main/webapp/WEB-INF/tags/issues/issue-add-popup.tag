@@ -164,18 +164,24 @@ The reason for that is that the parameters are urls already.
 
 <%-- state manager code of the popup --%>
 <script type="text/javascript">
+	
+
 	$(function(){
-		 $("#${id}").btIssueDialog({
-			reportUrl : "${bugReport}",
-			searchUrl : "${remoteIssues}",
-			bugTrackerId : "${bugTrackerId}",
-			labels : {
-				emptyAssigneeLabel : "${interfaceDescriptor.emptyAssigneeListLabel}",
-				emptyCategoryLabel : "${interfaceDescriptor.emptyCategoryListLabel}",
-				emptyVersionLabel : "${interfaceDescriptor.emptyVersionListLabel}"
-			},
-			callback : ${successCallback}
-		});		
+		require(["bugtracker"], function(){
+			 
+			$("#${id}").btIssueDialog({
+				reportUrl : "${bugReport}",
+				searchUrl : "${remoteIssues}",
+				bugTrackerId : "${bugTrackerId}",
+				labels : {
+					emptyAssigneeLabel : "${interfaceDescriptor.emptyAssigneeListLabel}",
+					emptyCategoryLabel : "${interfaceDescriptor.emptyCategoryListLabel}",
+					emptyVersionLabel : "${interfaceDescriptor.emptyVersionListLabel}"
+				},
+				callback : ${successCallback}
+			});	
+			
+		});	
 	});
 </script>
 
