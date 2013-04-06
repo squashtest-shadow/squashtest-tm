@@ -218,6 +218,7 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 		var setModel = $.proxy(function(newModel){
 			
 			this.model.set(newModel);
+			this.fieldsView.readIn();
 			this.idText.val(this.model.get('id'));
 			
 			if (isDefaultIssueModel){
@@ -238,11 +239,6 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 					labels : settings.labels
 				});
 			}
-			else{
-				this.fieldsView.model = this.model;
-				this.fieldsView.reset();
-			}
-
 
 		}, self);
 		
@@ -343,8 +339,7 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 			
 			flipToPleaseWait();
 			
-			this.fieldsView.readModel();
-			
+			this.fieldsView.readOut();
 			var strModel = JSON.stringify(this.model.toJSON());
 			
 			$.ajax({
