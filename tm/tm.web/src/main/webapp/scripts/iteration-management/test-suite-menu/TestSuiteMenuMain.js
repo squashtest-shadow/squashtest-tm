@@ -19,56 +19,53 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["./TestSuiteManager","./TestSuiteMenu","./TestSuiteModel"],function(TestSuiteManager, TestSuiteMenu, TestSuiteModel){
+define(
+		[ "./TestSuiteManager", "./TestSuiteMenu", "./TestSuiteModel" ],
+		function(TestSuiteManager, TestSuiteMenu, TestSuiteModel) {
 
-/*
- * settings is  an array of objects 
- * 				
- * 	settings =  {	modelSettings : modelSettings,
- *				 	managerSettings: managerSettings,
- *				 	menuSettings : menuSettings,
- *				 	tableListener : tableListener
- *				}
- * 
- *  modelSettings = {	createUrl : test suite creation url,	
- *					 	baseUpdateUrl : base url for updating test suites,
- *					 	getUrl : url of the test suite,
- *					 	removeUrl : test suite deletion url,
- *					 	initData : initData
- *					 }
- *				
- * 	initData = array of { 	id : suite id, 
- * 							name : suite name 
- * 						}
- * 
- * 	managerSettings = 	{	instance : location of the message within the page,
- *							defaultMessage : default message,
- *							deleteConfirmMessage : deletion popup message,
- *							deleteConfirmTitle : deletion popup title
- *						}
- *			
- *		
- *	menuSettings = {	instanceSelector : menu id ,
- *						datatableSelector : datatable id,
- *						isContextual : boolean value indicating whether the menu is contextual or not,
- *						emptySelectionMessageSelector: empty selection message id,
- *						emptySuiteSelectionMessageSelector:  empty suite selection message id,
- *					}
- *
- */
-return function(settings){		
+			/*
+			 * settings is an array of objects
+			 * 
+			 * settings = { modelSettings : modelSettings, managerSettings:
+			 * managerSettings, menuSettings : menuSettings, tableListener :
+			 * tableListener }
+			 * 
+			 * modelSettings = { createUrl : test suite creation url,
+			 * baseUpdateUrl : base url for updating test suites, getUrl : url
+			 * of the test suite, removeUrl : test suite deletion url, initData :
+			 * initData }
+			 * 
+			 * initData = array of { id : suite id, name : suite name }
+			 * 
+			 * managerSettings = { instance : location of the message within the
+			 * page, defaultMessage : default message, deleteConfirmMessage :
+			 * deletion popup message, deleteConfirmTitle : deletion popup title }
+			 * 
+			 * 
+			 * menuSettings = { instanceSelector : menu id , datatableSelector :
+			 * datatable id, isContextual : boolean value indicating whether the
+			 * menu is contextual or not, emptySelectionMessageSelector: empty
+			 * selection message id, emptySuiteSelectionMessageSelector: empty
+			 * suite selection message id, }
+			 * 
+			 */
+			return function(settings) {
 
-			squashtm.testSuiteManagement= {};
+				squashtm.testSuiteManagement = {};
 
-			squashtm.testSuiteManagement.testSuiteModel = new TestSuiteModel(settings.modelSettings);
-			
-			settings.managerSettings.model = squashtm.testSuiteManagement.testSuiteModel;
-			squashtm.testSuiteManagement.testSuiteManager = new TestSuiteManager(settings.managerSettings);
-			
-			settings.menuSettings.model = squashtm.testSuiteManagement.testSuiteModel;
-			squashtm.testSuiteManagement.testSuiteMenu = new TestSuiteMenu(settings.menuSettings);
-			
-			squashtm.testSuiteManagement.testSuiteModel.addListener(settings.tableListener);
+				squashtm.testSuiteManagement.testSuiteModel = new TestSuiteModel(
+						settings.modelSettings);
 
-		};
-});
+				settings.managerSettings.model = squashtm.testSuiteManagement.testSuiteModel;
+				squashtm.testSuiteManagement.testSuiteManager = new TestSuiteManager(
+						settings.managerSettings);
+
+				settings.menuSettings.model = squashtm.testSuiteManagement.testSuiteModel;
+				squashtm.testSuiteManagement.testSuiteMenu = new TestSuiteMenu(
+						settings.menuSettings);
+
+				squashtm.testSuiteManagement.testSuiteModel
+						.addListener(settings.tableListener);
+
+			};
+		});

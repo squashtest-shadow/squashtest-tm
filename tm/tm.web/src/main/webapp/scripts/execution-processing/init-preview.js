@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "module", "jquery.squash.squashbutton", "jquery.squash.togglepanel", "jquery.squash" ], function($,
-		module) {
+define([ "jquery", "module", "jquery.squash.squashbutton",
+		"jquery.squash.togglepanel", "jquery.squash" ], function($, module) {
 
 	function initPreview() {
 

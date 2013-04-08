@@ -19,14 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["./user-permission-table", "./workspace-wizard-tab"], function(fnInitPermissionTable, fnInitWizardTab){
+define([ "./user-permission-table", "./workspace-wizard-tab" ], function(
+		fnInitPermissionTable, fnInitWizardTab) {
 
-	
 	return {
 		initUserPermissions : fnInitPermissionTable,
 		initWizardsTab : fnInitWizardTab
 	}
-	
-	
+
 });
- 

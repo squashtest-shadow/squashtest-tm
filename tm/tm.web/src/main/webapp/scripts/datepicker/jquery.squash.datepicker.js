@@ -19,22 +19,22 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /* *********************************************
-	
-	manager for the datepicker.tag - B. Siri
-	
-	require jQuery and jQuery ui.
-	
-	Note : the calling pages must define :
-	
-		<style>
-		.date-hidden {display:none};
-	  </style>
-	  
-	  
-	 This simple control is behaving just the same 
-	 than the jquery datepicker, except that we're
-	 managing a label for display and text input
-	 for edit instead of using the later for both.
+
+ manager for the datepicker.tag - B. Siri
+
+ require jQuery and jQuery ui.
+
+ Note : the calling pages must define :
+
+ <style>
+ .date-hidden {display:none};
+ </style>
+
+
+ This simple control is behaving just the same 
+ than the jquery datepicker, except that we're
+ managing a label for display and text input
+ for edit instead of using the later for both.
 
  ************************************************/
 
@@ -89,9 +89,9 @@ function dp_initialize() {
 	var me = this;
 
 	$(this.controls.datepick).datepicker("option", "onClose", function() {
-		//the following check happens to prevent a weird recursion
-		if (! $(this).hasClass("date-hidden")){
-			me.inputAndExitEditMode();			
+		// the following check happens to prevent a weird recursion
+		if (!$(this).hasClass("date-hidden")) {
+			me.inputAndExitEditMode();
 		}
 	});
 
@@ -205,8 +205,8 @@ function dp_setDate(iDate) {
 
 /**
  * 
- * params here is the same, plus a callback in case of success
- *  - callback : pointer to a function with no arguments;
+ * params here is the same, plus a callback in case of success - callback :
+ * pointer to a function with no arguments;
  * 
  */
 
@@ -229,13 +229,14 @@ function dp_postDate() {
 	}
 
 	var me = this;
-	
-	//post if an url is provided, else call a javascript function that will handle that.
-	if (typeof url!= "undefined"){
+
+	// post if an url is provided, else call a javascript function that will
+	// handle that.
+	if (typeof url != "undefined") {
 
 		$.ajax({
 			type : 'POST',
-	
+
 			// data : { paramName : millisec },
 			data : paramName + "=" + strMillisec,
 			success : function(strDate) {
@@ -244,13 +245,12 @@ function dp_postDate() {
 			error : function() {
 				me.postDateFailed();
 			},
-	
+
 			dataType : "text",
 			url : url
 		});
-	}	
-	else if (typeof updateFunction != "undefined"){
-		updateFunction(paramName,strMillisec);
+	} else if (typeof updateFunction != "undefined") {
+		updateFunction(paramName, strMillisec);
 		me.postDateSuccess(strMillisec, callback);
 	}
 
@@ -269,7 +269,8 @@ function dp_postDateSuccess(strDate, callback) {
 
 	this.enterDisplayMode();
 
-	if (callback!=undefined) callback();
+	if (callback != undefined)
+		callback();
 }
 
 function dp_postDateFailed(/* add params later if needed */) {

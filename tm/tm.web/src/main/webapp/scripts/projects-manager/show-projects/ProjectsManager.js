@@ -19,9 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "./ProjectsTable", "./NewProjectDialog",  "./NewProjectFromTemplateDialog",
-				"jqueryui" ],
-		function($, Backbone, ProjectsTable, NewProjectDialog, NewProjectFromTemplateDialog) {
+		[ "jquery", "backbone", "./ProjectsTable", "./NewProjectDialog",
+				"./NewProjectFromTemplateDialog", "jqueryui" ],
+		function($, Backbone, ProjectsTable, NewProjectDialog,
+				NewProjectFromTemplateDialog) {
 			var View = Backbone.View
 					.extend({
 						el : ".fragment-body",
@@ -67,15 +68,17 @@ define(
 						showNewProjectFromTemplateDialog : function() {
 							var self = this;
 							var messages = squashtm.app.projectsManager.messages;
-							if(!self.projectsTable.hasTemplate()){
-								$.squash.openMessage(messages.info, messages.noProjectTemplateMessage);
+							if (!self.projectsTable.hasTemplate()) {
+								$.squash.openMessage(messages.info,
+										messages.noProjectTemplateMessage);
 								return;
 							}
 
 							function discard() {
 								self.newProjectFromTemplateDialog
 										.off("newprojectFromTemplate.cancel newprojectFromTemplate.confirm");
-								self.newProjectFromTemplateDialog.undelegateEvents();
+								self.newProjectFromTemplateDialog
+										.undelegateEvents();
 								self.newProjectFromTemplateDialog = null;
 							}
 
@@ -84,22 +87,24 @@ define(
 								self.projectsTable.refresh();
 							}
 
-							self.newProjectFromTemplateDialog = new NewProjectFromTemplateDialog({
-								model : {
-									name : "",
-									description : "",
-									label : "",
-									templateId : "",
-									copyPermissions : true,
-									copyCUF : true,
-									copyBugtrackerBinding : true,
-									copyAutomatedProjects : true,
-								}
-							});
+							self.newProjectFromTemplateDialog = new NewProjectFromTemplateDialog(
+									{
+										model : {
+											name : "",
+											description : "",
+											label : "",
+											templateId : "",
+											copyPermissions : true,
+											copyCUF : true,
+											copyBugtrackerBinding : true,
+											copyAutomatedProjects : true,
+										}
+									});
 
-							self.newProjectFromTemplateDialog.on("newprojectFromTemplate.cancel",
-									discard);
-							self.newProjectFromTemplateDialog.on("newprojectFromTemplate.confirm",
+							self.newProjectFromTemplateDialog.on(
+									"newprojectFromTemplate.cancel", discard);
+							self.newProjectFromTemplateDialog.on(
+									"newprojectFromTemplate.confirm",
 									discardAndRefresh);
 						}
 					});

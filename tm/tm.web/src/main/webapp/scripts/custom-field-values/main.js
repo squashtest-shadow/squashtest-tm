@@ -19,16 +19,17 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["./creation-popup-handler", "./table-handler"], function(CreationPopupCUFHandler, tableHandler){
-	
+define([ "./creation-popup-handler", "./table-handler" ], function(
+		CreationPopupCUFHandler, tableHandler) {
+
 	return {
-		
-		newCreationPopupCUFHandler : function(settings){
+
+		newCreationPopupCUFHandler : function(settings) {
 			return new CreationPopupCUFHandler(settings);
 		},
-		
+
 		cufTableSupport : tableHandler
-		
+
 	}
-	
+
 });

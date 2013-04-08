@@ -19,10 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "domReady", "./ProjectToolbar"], function($, domReady, ProjectToolbar) {
+define([ "jquery", "domReady", "./ProjectToolbar" ], function($, domReady,
+		ProjectToolbar) {
 	domReady(function() {
 		new ProjectToolbar();
 	});
-	
+
 	return {};
 });

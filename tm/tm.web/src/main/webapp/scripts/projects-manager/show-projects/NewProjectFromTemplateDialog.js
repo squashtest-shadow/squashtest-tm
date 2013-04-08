@@ -18,126 +18,144 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms", "jquery.squash.confirmdialog" ], 
-		function($, Backbone, Handlebars, SD, Forms) {
+define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF",
+		"app/lnf/Forms", "jquery.squash.confirmdialog" ], function($, Backbone,
+		Handlebars, SD, Forms) {
 	var View = Backbone.View.extend({
-		el: "#add-project-from-template-dialog",
-		
-		initialize: function() {
+		el : "#add-project-from-template-dialog",
+
+		initialize : function() {
 			var textareas = this.$el.find("textarea");
-			
+
 			this.initializeTemplatesList();
-			
+
 			function decorateArea() {
-				$(this).ckeditor(function() {}, { 
-					customConfig : squashtm.app.contextRoot + "/styles/ckeditor/ckeditor-config.js", 
-					language: squashtm.app.ckeditorLanguage 
-				});
+				$(this).ckeditor(
+						function() {
+						},
+						{
+							customConfig : squashtm.app.contextRoot
+									+ "/styles/ckeditor/ckeditor-config.js",
+							language : squashtm.app.ckeditorLanguage
+						});
 			}
-			
+
 			this.$el.find("input:text").val("");
 			this.$el.find("input:checkbox").prop("checked", true);
 			textareas.val("");
 			textareas.each(decorateArea);
-			
+
 			this.$el.confirmDialog({
-				autoOpen: true
+				autoOpen : true
 			});
-		}, 
-		
-		initializeTemplatesList: function() {
+		},
+
+		initializeTemplatesList : function() {
 			var self = this;
 			$.ajax({
-				url: squashtm.app.contextRoot + "/project-templates",
-				data: { dropdownList: "" }, 
+				url : squashtm.app.contextRoot + "/project-templates",
+				data : {
+					dropdownList : ""
+				},
 				success : function(data) {
 					self.renderTemplatesList(data);
 				}
 			});
-		}, 
-		
-		renderTemplatesList: function(data) {
-			var source   = this.$el.find("#templates-list-tpl").html();
-			var template = Handlebars.compile(source);
-			this.$el.find("#add-project-from-template-template").html(template({items: data}));
-		},
-		
-		events: {
-			"confirmdialogcancel": "cancel",
-			"confirmdialogvalidate": "validate",
-			"confirmdialogconfirm": "confirm" 
 		},
 
-		cancel: function(event) {
+		renderTemplatesList : function(data) {
+			var source = this.$el.find("#templates-list-tpl").html();
+			var template = Handlebars.compile(source);
+			this.$el.find("#add-project-from-template-template").html(
+					template({
+						items : data
+					}));
+		},
+
+		events : {
+			"confirmdialogcancel" : "cancel",
+			"confirmdialogvalidate" : "validate",
+			"confirmdialogconfirm" : "confirm"
+		},
+
+		cancel : function(event) {
 			this.cleanup();
 			this.trigger("newprojectFromTemplate.cancel");
 		},
-		
-		confirm: function(event) {
+
+		confirm : function(event) {
 			this.cleanup();
 			this.trigger("newprojectFromTemplate.confirm");
-		}, 
-		
-		validate: function(event) {
-			var res = true, 
-				self = this;
-			
+		},
+
+		validate : function(event) {
+			var res = true, self = this;
+
 			this.populateModel();
-			
+
 			Forms.form(this.$el).clearState();
-			
-			$.ajax({ 
-				type: 'post',
-				url:  squashtm.app.contextRoot + "/projects/new",
-				dataType: 'json',
-				// note : we cannot use promise api with async param. see http://bugs.jquery.com/ticket/11013#comment:40
-				async: false, 
-				data: self.model,
-				error: function(jqXHR, textStatus, errorThrown) {
+
+			$.ajax({
+				type : 'post',
+				url : squashtm.app.contextRoot + "/projects/new",
+				dataType : 'json',
+				// note : we cannot use promise api with async param. see
+				// http://bugs.jquery.com/ticket/11013#comment:40
+				async : false,
+				data : self.model,
+				error : function(jqXHR, textStatus, errorThrown) {
 					res = false;
 					event.preventDefault();
 				}
 			});
-			
+
 			return res;
 		},
-		
-		cleanup: function() {
+
+		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			Forms.form(this.$el).clearState();
 			this.$el.confirmDialog("destroy");
 			this.cleanupTextareas();
-		}, 
+		},
 
-		cleanupTextareas: function() {
+		cleanupTextareas : function() {
 			this.$el.find("textarea").each(function() {
 				var area = $(this);
-				
-				try{
+
+				try {
 					area.ckeditorGet().destroy();
-					
-				} catch(damnyouie) {
+
+				} catch (damnyouie) {
 					var areaName = area.attr('id');
-				// destroying the instance will make it crash. So we remove it and hope the memory leak wont be too high.
-					CKEDITOR.remove(areaName); 
+					// destroying the instance will make it crash. So we remove
+					// it and hope the memory leak wont be too high.
+					CKEDITOR.remove(areaName);
 				}
 			});
 		},
-		
-		populateModel: function() {
-			var model = this.model,
-				$el = this.$el;
-			
+
+		populateModel : function() {
+			var model = this.model, $el = this.$el;
+
 			model.name = $el.find("#add-project-from-template-name").val();
-			model.description = $el.find("#add-project-from-template-description").val();
+			model.description = $el.find(
+					"#add-project-from-template-description").val();
 			model.label = $el.find("#add-project-from-template-label").val();
-			model.templateId = $el.find("#add-project-from-template-template select").val();
-			model.copyPermissions = $el.find("input:checkbox[name='copyPermissions']").prop("checked");
-			model.copyCUF = $el.find("input:checkbox[name='copyCUF']").prop("checked");
-			model.copyBugtrackerBinding = $el.find("input:checkbox[name='copyBugtrackerBinding']").prop("checked");
-			model.copyAutomatedProjects = $el.find("input:checkbox[name='copyAutomatedProjects']").prop("checked");
+			model.templateId = $el.find(
+					"#add-project-from-template-template select").val();
+			model.copyPermissions = $el.find(
+					"input:checkbox[name='copyPermissions']").prop("checked");
+			model.copyCUF = $el.find("input:checkbox[name='copyCUF']").prop(
+					"checked");
+			model.copyBugtrackerBinding = $el.find(
+					"input:checkbox[name='copyBugtrackerBinding']").prop(
+					"checked");
+			model.copyAutomatedProjects = $el.find(
+					"input:checkbox[name='copyAutomatedProjects']").prop(
+					"checked");
 		}
-		
+
 	});
 
 	return View;

@@ -19,95 +19,81 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
 /**
- * How to : 
+ * How to :
  * 
- * the method 'get' accepts a simple javascript object, which values are either string or other simple javascript objects.
- * See it as a composite map of which the leaves are strings.
+ * the method 'get' accepts a simple javascript object, which values are either
+ * string or other simple javascript objects. See it as a composite map of which
+ * the leaves are strings.
  * 
- *  Those strings are keys for i18n properties. 
- *  
- *  The function returns the resolved object, of which the keys has been replaced by the corresponding value.
- *  
- *  Note : does not support parameterized messages for the moment.
- *  
+ * Those strings are keys for i18n properties.
+ * 
+ * The function returns the resolved object, of which the keys has been replaced
+ * by the corresponding value.
+ * 
+ * Note : does not support parameterized messages for the moment.
+ * 
  * Example :
- * 
- *  {
- *  	title : 'widget.title',
- *  	browse : {
- *  		back : 'widget.back',
- *  		forth : 'widget.forth'
- *  	},
- *  	buttons : {
- *  		cancel : 'label.Cancel',
- *  		confirm : 'label.Confirm'
- *  	} 
- *  	
+ *  { title : 'widget.title', browse : { back : 'widget.back', forth :
+ * 'widget.forth' }, buttons : { cancel : 'label.Cancel', confirm :
+ * 'label.Confirm' }
  *  }
- *  
- *  
- *  //TODO : implement a cache.
+ * 
+ * 
+ * //TODO : implement a cache.
  * 
  */
-define(["jquery"], function($){
-	
-	
-	var serviceURL = squashtm.app.contextRoot+"/localization/filler";
-	
+define([ "jquery" ], function($) {
 
-	function getAsObject(object){
+	var serviceURL = squashtm.app.contextRoot + "/localization/filler";
+
+	function getAsObject(object) {
 		var result;
 		$.ajax({
 			url : serviceURL,
 			headers : {
-				'Content-Type' : 'application/json'					
+				'Content-Type' : 'application/json'
 			},
 			dataType : 'json',
 			type : 'POST',
 			data : JSON.stringify(object),
 			async : false
-		})
-		.success(function(json){
-			result= json;
-		});			
-		
+		}).success(function(json) {
+			result = json;
+		});
+
 		return result;
 	}
-	
-	
-	function getAsString(string){
+
+	function getAsString(string) {
 		var result;
 		$.ajax({
 			url : serviceURL,
 			headers : {
-				'Content-Type' : 'application/json'					
+				'Content-Type' : 'application/json'
 			},
 			dataType : 'json',
 			type : 'POST',
-			data : JSON.stringify({ query : string }),
+			data : JSON.stringify({
+				query : string
+			}),
 			async : false
-		})
-		.success(function(json){
-			result= json.query;
-		});			
-		
+		}).success(function(json) {
+			result = json.query;
+		});
+
 		return result;
 	}
-	
+
 	return {
-		get : function(argument){
-			
-			if (typeof argument === "string"){
+		get : function(argument) {
+
+			if (typeof argument === "string") {
 				return getAsString(argument);
-			}
-			else{
-				return getAsObject(argument);		
+			} else {
+				return getAsObject(argument);
 			}
 		}
 	};
-
 
 });
