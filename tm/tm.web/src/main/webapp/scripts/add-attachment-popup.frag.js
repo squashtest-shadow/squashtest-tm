@@ -62,7 +62,7 @@ require(
 
 						function setupAndBeginUpload() {
 							$.post(AAPS.uploadAttachmentUrl, function(data) {
-								beginUpload(data)
+								beginUpload(data);
 							});
 						}
 
@@ -313,7 +313,7 @@ require(
 											"formInstance");
 									formInstance.clear();
 								}
-							}
+							};
 
 							AAPS.uploadPopup = squashtm.popup.create(params);
 
@@ -329,7 +329,7 @@ require(
 									}
 								} ],
 								closeOnSuccess : false
-							}
+							};
 
 							AAPS.uploadWaitPopup = squashtm.popup
 									.create(uploadWaitParams);
@@ -350,7 +350,7 @@ require(
 									exitUpload();
 								}
 
-							}
+							};
 
 							AAPS.uploadSummaryPopup = squashtm.popup
 									.create(uploadSummaryParams);

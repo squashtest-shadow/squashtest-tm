@@ -310,7 +310,7 @@ define(
 																						json,
 																						function(
 																								user) {
-																							return user.login
+																							return user.login;
 																						});
 																		input
 																				.autocomplete(

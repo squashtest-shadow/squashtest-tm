@@ -160,7 +160,7 @@ define(
 					$.post(dropUrl, dropData, function() {
 						refresh();
 					});
-				}
+				};
 			}
 
 			// ************************************ table initialization
@@ -334,7 +334,7 @@ define(
 									if (data["has-requirements"]) {
 										return "/squash/images/Icon_Tree_Requirement.png";
 									}
-									return "/squash/images/Icon_Tree_Requirement_off.png"
+									return "/squash/images/Icon_Tree_Requirement_off.png";
 								},
 								condition : function(row, data) {
 									return data["step-type"] == "action";
@@ -395,7 +395,7 @@ define(
 				if (permissions.isAttachable) {
 					squashSettings.attachments = {
 						url : urls.attachments
-					}
+					};
 				}
 
 				$("#test-steps-table").squashTable(datatableSettings,
@@ -709,7 +709,7 @@ define(
 				var cellSelector = function(row) {
 					return $(row).find('td.collapsible').not('called-tc-id')
 							.get();
-				}
+				};
 
 				collapser = new TableCollapser(table, cellSelector);
 
@@ -789,4 +789,4 @@ define(
 				init : init
 			};
 
-		})
+		});

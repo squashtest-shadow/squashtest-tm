@@ -31,6 +31,6 @@ define([ "./NameAndReferenceHandler", "./SimpleNameHandler" ], function(
 			return new SimpleHandler();
 		}
 
-	}
+	};
 
 });

@@ -82,7 +82,7 @@ define(
 
 						$input = $("input[name='" + inputName
 								+ "'], input[id='" + inputName
-								+ "'],  textarea[name='" + inputName + "']"),
+								+ "'],  textarea[name='" + inputName + "']");
 						input = Forms.input($input);
 
 				input.setState("error", fieldValidationError.errorMessage);

@@ -163,7 +163,7 @@ define(
 						el : this.$(".comment-text").get(0),
 						model : this.model,
 						attribute : 'comment'
-					}) ]
+					}) ];
 				},
 
 				enableControls : function() {
@@ -219,7 +219,7 @@ define(
 					var data = {
 						issue : this.model.attributes,
 						labels : this.options.labels
-					}
+					};
 
 					var html = template(data);
 

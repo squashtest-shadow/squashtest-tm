@@ -79,6 +79,6 @@ define([ "jquery", "jqueryui" ], function($) {
 		convertStrDate : convertStrDate,
 		staticRendering : staticRendering,
 		appendCheckbox : appendCheckbox
-	}
+	};
 
 });

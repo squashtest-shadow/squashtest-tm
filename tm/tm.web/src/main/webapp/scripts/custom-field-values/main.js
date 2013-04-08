@@ -30,6 +30,6 @@ define([ "./creation-popup-handler", "./table-handler" ], function(
 
 		cufTableSupport : tableHandler
 
-	}
+	};
 
 });

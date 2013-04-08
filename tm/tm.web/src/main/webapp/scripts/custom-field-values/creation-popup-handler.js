@@ -47,7 +47,7 @@ define(
 						dateFormat : format
 					}, $.datepicker.regional[locale])
 
-				}
+				};
 
 				input.editable(noPostFn, conf);
 
@@ -151,7 +151,7 @@ define(
 							} else {
 								input.val(defValue);
 							}
-						})
+						});
 					}
 				};
 
@@ -182,7 +182,7 @@ define(
 						});
 					}
 					return result;
-				}
+				};
 
 			}
 			;

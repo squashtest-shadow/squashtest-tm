@@ -74,7 +74,7 @@ define(
 										var actualLocations = $.map(
 												data.renderingLocations,
 												function(elt) {
-													return elt.enumName
+													return elt.enumName;
 												}); // from the server
 
 										var result = {}, i = 0, max = renderingLocations.length;
@@ -118,7 +118,7 @@ define(
 							url : settings.editUrl + "/" + id
 									+ "/renderingLocations/" + locationName,
 							type : (checked) ? 'PUT' : 'DELETE'
-						})
+						});
 					};
 
 					cells
@@ -138,7 +138,7 @@ define(
 																									// (-3)
 
 								var checkbx = $('<input type="checkbox" />');
-								checkbx.data('location-name', locationName),
+								checkbx.data('location-name', locationName);
 										checkbx.prop('checked', (table
 												.fnGetData(this) == "true"));
 								checkbx.click(clickHandler);

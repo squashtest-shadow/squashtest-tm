@@ -83,7 +83,7 @@ define([ "jquery", "jqueryui" ], function($) {
 			}).success(function(json) {
 				this.data = json;
 			});
-		}
+		};
 
 		var notifyListeners = $.proxy(function(evt) {
 			for ( var i = 0; i < this.listeners.length; i++) {
@@ -103,17 +103,17 @@ define([ "jquery", "jqueryui" ], function($) {
 			// in any case we refetch the data. Perhaps we will refine this
 			// later.
 			this.getModel();
-		}
+		};
 
 		/* ************** public interface (master) *************** */
 
 		this.addListener = function(listener) {
 			this.listeners.push(listener);
-		}
+		};
 
 		this.getData = function() {
 			return this.data;
-		}
+		};
 
 		this.postNew = function(name) {
 
@@ -132,8 +132,8 @@ define([ "jquery", "jqueryui" ], function($) {
 				};
 				notifyListeners(evt);
 				notifyContextualContent(evt);
-			})
-		}
+			});
+		};
 
 		this.postRename = function(toSend) {
 
@@ -156,8 +156,8 @@ define([ "jquery", "jqueryui" ], function($) {
 				};
 				notifyListeners(evt);
 				notifyContextualContent(evt);
-			})
-		}
+			});
+		};
 
 		this.postRemove = function(toSend) {
 
@@ -175,8 +175,8 @@ define([ "jquery", "jqueryui" ], function($) {
 				};
 				notifyListeners(evt);
 				notifyContextualContent(evt);
-			})
-		}
+			});
+		};
 
 		this.postBind = function(toSend) {
 			var url = this.baseUpdateUrl + "/test-cases";
@@ -193,7 +193,7 @@ define([ "jquery", "jqueryui" ], function($) {
 				notifyListeners(evt);
 				notifyContextualContent(evt);
 			});
-		}
+		};
 
 		this.getModel = function() {
 			_getModel().success(function() {
@@ -201,7 +201,7 @@ define([ "jquery", "jqueryui" ], function($) {
 					evt_name : "refresh"
 				});
 			});
-		}
+		};
 
 		// register to the contextual content manager if exists
 

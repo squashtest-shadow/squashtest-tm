@@ -39,6 +39,6 @@ define([ "jquery", "jqueryui" ], function($) {
 			});
 		}
 
-	}
+	};
 
 });

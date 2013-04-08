@@ -88,7 +88,7 @@ define(
 
 				var rowHoverOut = function() {
 					$(this).removeClass('ui-state-highlight');
-				}
+				};
 
 				var reset = function() {
 					table.find("tbody").empty();

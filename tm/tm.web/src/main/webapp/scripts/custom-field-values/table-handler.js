@@ -105,7 +105,7 @@ define(
 				return function(value) {
 
 					var row = $(this).parents('tr').get(0);
-					var cufId = table.fnGetData(row).customFields[cufCode].id
+					var cufId = table.fnGetData(row).customFields[cufCode].id;
 
 					var url = squashtm.app.contextRoot
 							+ "/custom-fields/values/" + cufId;
@@ -117,7 +117,7 @@ define(
 							value : value
 						}
 					});
-				}
+				};
 			}
 
 			function createCufValuesDrawCallback(cufDefinitions, editable) {
@@ -156,7 +156,7 @@ define(
 
 					}
 
-				}
+				};
 			}
 
 			// ******************************************** datasource model
@@ -247,7 +247,7 @@ define(
 
 					decoratedFnServerData.call(this, sSource, aoData,
 							decoratedCallback, oSettings);
-				}
+				};
 			}
 
 			// ************************ main decorator
@@ -286,7 +286,7 @@ define(
 				tableSettings.fnDrawCallback = function() {
 					oldDrawCallback.apply(this, arguments);
 					addendumCallback.call(this);
-				}
+				};
 
 				return tableSettings;
 			}
@@ -323,6 +323,6 @@ define(
 			return {
 				decorateTableSettings : decorateTableSettings,
 				decorateDOMTable : decorateDOMTable
-			}
+			};
 
 		});

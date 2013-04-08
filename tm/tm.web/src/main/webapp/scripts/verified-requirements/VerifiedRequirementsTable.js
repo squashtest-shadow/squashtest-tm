@@ -79,7 +79,7 @@ define(
 									tdSelector : "td.delete-button",
 									uiIcon : "ui-icon-minus",
 									onClick : this.removeRowRequirementVersion
-								} ]
+								} ];
 							}
 
 							return settings;

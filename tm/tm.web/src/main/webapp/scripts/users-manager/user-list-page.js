@@ -95,7 +95,7 @@ define([ "jquery", "jquery.squash.datatables" ], function($) {
 
 			return ((newPassOkay) && (confirmPassOkay) && (samePassesOkay));
 
-		}
+		};
 	}
 
 	function readForm() {
@@ -106,7 +106,7 @@ define([ "jquery", "jquery.squash.datatables" ], function($) {
 			email : $("#add-user-email").val(),
 			groupId : $("#add-user-group").val(),
 			password : $("#add-user-password").val()
-		}
+		};
 	}
 
 	function buildAddUserConfirm(settings, validatePassword) {
@@ -120,7 +120,7 @@ define([ "jquery", "jquery.squash.datatables" ], function($) {
 				dataType : 'json',
 				data : readForm()
 			}).success(refreshUsers);
-		}
+		};
 	}
 
 	function initButtons(settings) {

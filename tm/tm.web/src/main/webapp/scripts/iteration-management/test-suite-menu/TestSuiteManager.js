@@ -53,7 +53,7 @@ define(
 					} else {
 						return oldVal.call(this);
 					}
-				}
+				};
 
 				/* ************** public *********** */
 
@@ -72,11 +72,11 @@ define(
 
 				this.setText = function(text) {
 					this.input.val(text);
-				}
+				};
 
 				this.setDefaultText = function() {
 					this.input.val(this.defaultMessage);
-				}
+				};
 
 				/* ************* private ******** */
 
@@ -215,7 +215,7 @@ define(
 								return elt.getAttribute('data-suite-id');
 							});
 					return ids;
-				}
+				};
 
 				this.selectItems = function(selected) {
 					getAllItems()
@@ -230,7 +230,7 @@ define(
 											}
 										}
 									});
-				}
+				};
 
 				this.getSelected = function() {
 					return getAllItems().filter('.suite-selected');
@@ -267,7 +267,7 @@ define(
 
 						this.manager.updatePopupState();
 					}
-				}
+				};
 
 				this.panel
 						.delegate(
@@ -316,7 +316,7 @@ define(
 						break;
 					}
 
-				}
+				};
 
 				/* ******************** actions ************************* */
 
@@ -380,11 +380,11 @@ define(
 					this.view.deselectAllItems();
 					this.create.control.reset();
 					this.updatePopupState();
-				}
+				};
 
 				// actual init code
 				this.instance = settings.instance;
-				this.model = settings.model
+				this.model = settings.model;
 				this.ctrlPressed = false;
 
 				this.create = {};
@@ -402,7 +402,7 @@ define(
 					onfocus : function() {
 						this.input.val('');
 					}
-				}
+				};
 
 				var renameControlSettings = {
 					manager : this,
@@ -412,7 +412,7 @@ define(
 					action : postRenameSuite,
 					onfocus : function() {
 					}
-				}
+				};
 
 				/*
 				 * the remove control settings is special in the sense that it
@@ -428,13 +428,13 @@ define(
 					action : postRemoveSuites,
 					onfocus : function() {
 					}
-				}
+				};
 
 				var viewSettings = {
 					manager : this,
 					model : settings.model,
 					panel : $(".display-suites-section", this.instance)
-				}
+				};
 
 				this.create.control = new TestSuiteManagerControl(
 						createControlSettings);

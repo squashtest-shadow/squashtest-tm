@@ -28,7 +28,7 @@ define(
 			function buildPostFunction(idOrURLOrPostfunction, postProcess) {
 
 				var postProcessFn = postProcess || function(value) {
-					return value
+					return value;
 				};
 
 				var postFunction;
@@ -44,7 +44,7 @@ define(
 							},
 							type : 'POST'
 						});
-					}
+					};
 				} else if (typeof idOrURLOrPostfunction === undefined) {
 					postFunction = function(value) {
 						var id = $(this).data('value-id');
@@ -57,7 +57,7 @@ define(
 							},
 							type : 'POST'
 						});
-					}
+					};
 				} else {
 					// assumed to be an integer
 					postFunction = function(value) {
@@ -71,7 +71,7 @@ define(
 							},
 							type : 'POST'
 						});
-					}
+					};
 				}
 				;
 
@@ -79,7 +79,7 @@ define(
 					var data = postProcessFn(value, settings);
 					postFunction.call(this, data);
 					return value;
-				}
+				};
 
 			}
 
@@ -88,7 +88,7 @@ define(
 					width : '100%',
 					submit : squashtm.message.confirm,
 					cancel : squashtm.message.cancel
-				}
+				};
 
 			}
 
@@ -108,7 +108,7 @@ define(
 				var postProcess = function(value, settings) {
 					return utils.convertStrDate(format, $.datepicker.ATOM,
 							value);
-				}
+				};
 
 				var postFunction = buildPostFunction(idOrURLOrPostfunction,
 						postProcess);

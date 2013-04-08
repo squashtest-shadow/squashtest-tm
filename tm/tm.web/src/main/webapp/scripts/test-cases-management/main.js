@@ -27,5 +27,5 @@ define([ "jquery", "./step-table-panel" ], function($, stepTablePanel) {
 
 	return {
 		initStepTablePanel : initStepTablePanel
-	}
+	};
 });

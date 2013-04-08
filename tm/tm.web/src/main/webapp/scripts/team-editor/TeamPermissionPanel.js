@@ -100,7 +100,7 @@ define(
 													}
 
 												});
-							}
+							};
 						},
 						configureTable : function() {
 							$("#permission-table").squashTable({

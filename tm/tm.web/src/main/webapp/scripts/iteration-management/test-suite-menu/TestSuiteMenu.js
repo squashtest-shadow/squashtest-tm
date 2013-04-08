@@ -41,7 +41,7 @@ define(
 						this.checkedIds.splice(index, 1);
 					}
 					;
-				}
+				};
 			}
 
 			function TestSuiteMenuControl() {
@@ -78,7 +78,7 @@ define(
 
 				this.getControlHtml = function() {
 					return this.control.html();
-				}
+				};
 
 				makeControl();
 
@@ -176,15 +176,15 @@ define(
 					} else {
 						return elt.firstChild.getAttribute('data-suite-id');
 					}
-				}
+				};
 
 				var getSpanDomId = function(elt) {
 					return elt.getAttribute('value');
-				}
+				};
 
 				var getItemId = function(jqElt) {
 					return $('span', jqElt).data('suite-id');
-				}
+				};
 
 				var initializeContent = $.proxy(function() {
 					// generate new content
@@ -337,7 +337,7 @@ define(
 					container.delegate('input:checkbox', 'change',
 							function(evt) {
 								evt.stopImmediatePropagation();
-								var checkbx = $(evt.currentTarget)
+								var checkbx = $(evt.currentTarget);
 								if (checkbx.is(":checked")) {
 									self.checkedSuites.add(checkbx
 											.data('suite-id'));
