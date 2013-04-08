@@ -19,17 +19,20 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "custom-field-editor/CustomFieldModificationView","app/ws/squashtm.workspace", "domReady" ], function($,CustomFieldModificationView, WS, domReady) {
+	require([ "jquery", "custom-field-editor/CustomFieldModificationView",
+			"app/ws/squashtm.workspace", "domReady" ], function($,
+			CustomFieldModificationView, WS, domReady) {
 		var goBack = function() {
-			document.location.href = squashtm.app.contextRoot + "/administration/custom-fields";
+			document.location.href = squashtm.app.contextRoot
+					+ "/administration/custom-fields";
 		};
-		
+
 		domReady(function() {
 			WS.init("");
 			var view = new CustomFieldModificationView();
 			$("#back").button().on("click", goBack);
 			view.on("customfield.delete", goBack);
 		});
-		
+
 	});
 });

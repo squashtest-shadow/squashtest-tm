@@ -19,11 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
-	require([ "jquery", "app/ws/squashtm.workspace", "app/report/squashtm.reportworkspace", "domReady" ], 
-		function($, WS, ReportWorkspace, domReady) {
-    	domReady(function() {
-    		WS.init("report");
-    		ReportWorkspace.init(squashtm.app.reportWorkspaceConf);
-    	});	
+	require([ "jquery", "app/ws/squashtm.workspace",
+			"app/report/squashtm.reportworkspace", "domReady" ], function($,
+			WS, ReportWorkspace, domReady) {
+		domReady(function() {
+			WS.init("report");
+			ReportWorkspace.init(squashtm.app.reportWorkspaceConf);
+		});
 	});
 });

@@ -20,10 +20,23 @@
  */
 requirejs.config({
 
-	packages : [ "custom-field-editor", "custom-field-binding", "custom-field-values", "execution-processing",
-			"projects-manager", "teams-manager", "project", "contextual-content-handlers", "test-cases-management",
-			"users-manager", "bugtracker", "iteration-management" ],
-
+			packages : [
+					"custom-field-editor",
+					"custom-field-binding",
+					"custom-field-values",
+					"execution-processing",
+					"projects-manager",
+					"teams-manager",
+					"project",
+					"contextual-content-handlers",
+					"test-cases-management",
+					"users-manager",
+					// "bugtracker",
+					{
+						main : 'main',
+						name : 'bugtracker',
+						location : 'http://localhost/scripts/scripts/bugtracker'
+					}, "iteration-management" ],
 	/*
 	 * rules for paths naming: * third party lib: unversionned lib name * non
 	 * AMD squash lib: replace "squashtm" by "squash" in js file name and remove

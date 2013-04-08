@@ -37,10 +37,10 @@ require([ "common" ], function(common) {
 		}
 
 		domReady(function() {
-			if(!ABS){
+			if (!ABS) {
 				return;
 			}
-			
+
 			var panelSettings = {
 				initiallyOpen : ABS.attachmentBlocOpened,
 				title : ABS.attachmentBlocTitle,
@@ -50,8 +50,9 @@ require([ "common" ], function(common) {
 				document.location.href = ABS.attachmentManagerUrl;
 			});
 			reloadAttachments();
-			
-			$(squashtm.app.addAttachmentPopupSettings).on("exitUpload", reloadAttachments);
+
+			$(squashtm.app.addAttachmentPopupSettings).on("exitUpload",
+					reloadAttachments);
 		});
 
 	});

@@ -19,5 +19,6 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jeditable", "jquery", "jqueryui", "jeditable.ckeditor", "jeditable.datepicker", "jstree" ]);
+	require([ "jeditable", "jquery", "jqueryui", "jeditable.ckeditor",
+			"jeditable.datepicker", "jstree" ]);
 });

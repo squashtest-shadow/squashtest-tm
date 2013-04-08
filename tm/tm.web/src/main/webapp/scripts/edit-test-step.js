@@ -20,18 +20,18 @@
  */
 require([ "common" ], function(common) {
 	require([ "jquery", "test-step-editor/TestStepModificationView",
-			"app/ws/squashtm.workspace","domReady", "attachment-bloc.frag"], function($,
-			TestStepModificationView, WS, domReady) {
-		var closeWindow = function() {
-			window.close();
-		};
+			"app/ws/squashtm.workspace", "domReady", "attachment-bloc.frag" ],
+			function($, TestStepModificationView, WS, domReady) {
+				var closeWindow = function() {
+					window.close();
+				};
 
-		domReady(function() {
-			WS.init("");
-			 new TestStepModificationView();
-			$("#close").button().on("click", closeWindow);
-			
-		});
+				domReady(function() {
+					WS.init("");
+					new TestStepModificationView();
+					$("#close").button().on("click", closeWindow);
 
-	});
+				});
+
+			});
 });
