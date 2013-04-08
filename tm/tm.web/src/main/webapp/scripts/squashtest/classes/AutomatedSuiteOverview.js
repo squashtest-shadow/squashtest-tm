@@ -18,20 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-function AutomatedSuiteOverviewDialog(settings){
-	
-	//------------------------public -----------------------------
+function AutomatedSuiteOverviewDialog(settings) {
+
+	// ------------------------public -----------------------------
 	this.open = openDialog;
 	this.popup = $("#execute-auto-dialog");
-		
-	//------------------------initialize---------------------------------
+
+	// ------------------------initialize---------------------------------
 	var self = this;
 	initialize();
 	var automatedSuiteBaseUrl = settings.automatedSuiteBaseUrl;
 	var executionRowTemplate = $("#execution-info-template .display-table-row");
 	var executionAutoInfos = $("#executions-auto-infos");
-	
-	function initialize(){
+
+	function initialize() {
 		self.popup.bind("dialogclose", function(event, ui) {
 			clearInterval(autoUpdate);
 			executionAutoInfos.empty();
@@ -41,88 +41,91 @@ function AutomatedSuiteOverviewDialog(settings){
 			refreshStatistics();
 		});
 	}
-		
-	//---------------------------private -----------------------------------------
-		
-		var autoUpdate ; 
-		var suiteId ; 
-		
-		function openDialog(suiteView) {
-			suiteId = suiteView.suiteId;
-			//update progress bar values
-			updateProgress(suiteView);
-			//fill execution-info content
-			fillContent(suiteView);
-			
-			self.popup.dialog('open');
-			
-			if (suiteView.percentage < 100) {
-				autoUpdate = setInterval(function() {
-					refreshContent();
-				}, 5000);
-			}
+
+	// ---------------------------private
+	// -----------------------------------------
+
+	var autoUpdate;
+	var suiteId;
+
+	function openDialog(suiteView) {
+		suiteId = suiteView.suiteId;
+		// update progress bar values
+		updateProgress(suiteView);
+		// fill execution-info content
+		fillContent(suiteView);
+
+		self.popup.dialog('open');
+
+		if (suiteView.percentage < 100) {
+			autoUpdate = setInterval(function() {
+				refreshContent();
+			}, 5000);
 		}
-		
-		function updateProgress(suiteView) {
-			var executions = suiteView.executions;
-			var progress = suiteView.percentage;
-			var executionTerminated = progress / 100 * executions.length
-			$("#execution-auto-progress-bar").progressbar("value", progress);
-			$("#execution-auto-progress-amount").text(
-					executionTerminated + "/" + executions.length);
+	}
+
+	function updateProgress(suiteView) {
+		var executions = suiteView.executions;
+		var progress = suiteView.percentage;
+		var executionTerminated = progress / 100 * executions.length
+		$("#execution-auto-progress-bar").progressbar("value", progress);
+		$("#execution-auto-progress-amount").text(
+				executionTerminated + "/" + executions.length);
+	}
+
+	function fillContent(suiteView) {
+
+		var executions = suiteView.executions;
+
+		var template = executionRowTemplate.clone()
+		for (i = 0; i < executions.length; i++) {
+			var execution = executions[i];
+			var executionHtml = template.clone();
+
+			// NAME
+			executionHtml.attr('id', "execution-info-" + execution.id);
+			executionHtml.find(".executionName").html(execution.name);
+			// STATUS
+			var executionStatus = executionHtml.find(".executionStatus");
+			var statusHtml = squashtm.statusFactory.getHtmlFor(
+					execution.localizedStatus, execution.status);
+			executionStatus.html(statusHtml);
+
+			executionAutoInfos.append(executionHtml);
+
 		}
-		
-		
-		
-		function fillContent(suiteView){
-				
-			var executions = suiteView.executions;
-			
-			var template = executionRowTemplate.clone()
-			for (i = 0; i < executions.length; i++) {
-				var execution = executions[i];
-				var executionHtml = template.clone();
-				
-				//NAME
-				executionHtml.attr('id', "execution-info-" + execution.id);
-				executionHtml.find(".executionName").html(execution.name);
-				//STATUS
-				var executionStatus = executionHtml.find(".executionStatus");
-				var statusHtml = squashtm.statusFactory.getHtmlFor(execution.localizedStatus, execution.status);
-				executionStatus.html(statusHtml);
-				
-				
-				executionAutoInfos.append(executionHtml);
-				
-			}
-		}
-		
-		function refreshContent() {
+	}
+
+	function refreshContent() {
 		$.ajax({
 			type : 'GET',
-			url : automatedSuiteBaseUrl+"/" + suiteId + "/executions",
+			url : automatedSuiteBaseUrl + "/" + suiteId + "/executions",
 			dataType : "json"
-		}).done(
-				function(suiteView) {
-					//find executions in json
-					var executions = suiteView.executions;
-					for (i = 0; i < executions.length; i++) {
-						//FIND EXEC
-						var execution = executions[i];
-						var executionHtml = $("#execution-info-" + execution.id);
-						
-						//CHANGE STATUS
-						var executionStatus = executionHtml.find(".executionStatus");
-						var statusHtml = squashtm.statusFactory.getHtmlFor( execution.localizedStatus, execution.status);
-						executionStatus.html(statusHtml);
-						
+		})
+				.done(
+						function(suiteView) {
+							// find executions in json
+							var executions = suiteView.executions;
+							for (i = 0; i < executions.length; i++) {
+								// FIND EXEC
+								var execution = executions[i];
+								var executionHtml = $("#execution-info-"
+										+ execution.id);
 
-					}
-					updateProgress(suiteView)
-					if (suiteView.percentage == 100) {
-						clearInterval(autoUpdate);
-					}
-				});
+								// CHANGE STATUS
+								var executionStatus = executionHtml
+										.find(".executionStatus");
+								var statusHtml = squashtm.statusFactory
+										.getHtmlFor(execution.localizedStatus,
+												execution.status);
+								executionStatus.html(statusHtml);
+
+							}
+							updateProgress(suiteView)
+							if (suiteView.percentage == 100) {
+								clearInterval(autoUpdate);
+							}
+						});
 	}
-		
+
 }

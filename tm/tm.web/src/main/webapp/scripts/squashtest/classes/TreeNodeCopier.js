@@ -80,7 +80,8 @@ function TreeNodeCopier(initObj) {
 
 		var nodes = this.tree.get_selected();
 
-		var consistentKind = (nodes.areNodes() || nodes.areResources() || nodes.areViews());
+		var consistentKind = (nodes.areNodes() || nodes.areResources() || nodes
+				.areViews());
 
 		return (consistentKind);
 
@@ -99,7 +100,9 @@ function TreeNodeCopier(initObj) {
 
 		var nodesData = nodes.toData();
 		var libIds = [];
-		nodes.getLibrary().each(function(){libIds.push($(this).attr("id"));});
+		nodes.getLibrary().each(function() {
+			libIds.push($(this).attr("id"));
+		});
 		store(nodesData, libIds);
 	};
 
@@ -157,7 +160,7 @@ function TreeNodeCopier(initObj) {
 			break;
 		default:
 			"azeporiapzeorj"; // should not happen if this.mayPaste() did its
-								// job.
+			// job.
 		}
 
 		// here we mimick the move_object used by tree.moveNode, defined in
@@ -190,34 +193,36 @@ function TreeNodeCopier(initObj) {
 			denyPaste(flag);
 			return;
 		}
-		
+
 		var data = retrieve();
-		var target = tree.get_selected();		
-		//warn user if not same libraries
-		var targetLib = target.getLibrary().getDomId() ;
+		var target = tree.get_selected();
+		// warn user if not same libraries
+		var targetLib = target.getLibrary().getDomId();
 		var destLibs = data.libraries;
 		var sameLib = true;
-		for(var i=0; i< destLibs.length;i++){
-			if(targetLib != destLibs[i]){
+		for ( var i = 0; i < destLibs.length; i++) {
+			if (targetLib != destLibs[i]) {
 				sameLib = false;
 				break;
 			}
 		}
-		if(!sameLib){
-			oneShotConfirm('Info', tree._get_settings().workspace_tree.warnCopyToDifferentLibrary, squashtm.message.confirm,
-				squashtm.message.cancel)
-				.done(function() {
-					doPasteNodesFromCookies.call(self, tree, target, data);
-				}).fail(function(){
-					data.inst.refresh();
-				});
-		}else{
+		if (!sameLib) {
+			oneShotConfirm(
+					'Info',
+					tree._get_settings().workspace_tree.warnCopyToDifferentLibrary,
+					squashtm.message.confirm, squashtm.message.cancel).done(
+					function() {
+						doPasteNodesFromCookies.call(self, tree, target, data);
+					}).fail(function() {
+				data.inst.refresh();
+			});
+		} else {
 			doPasteNodesFromCookies.call(self, tree, target, data);
 		}
-		
+
 	};
-	
-	var doPasteNodesFromCookies = function(tree, target, data){
+
+	var doPasteNodesFromCookies = function(tree, target, data) {
 		var nodes = tree.findNodes(data.nodes);
 
 		target.open();

@@ -46,7 +46,8 @@
 				var wkspce = treeNode.getWorkspace();
 				var dmtpe = treeNode.getDomType();
 				var id = treeNode.getResId();
-				return this.getBrowserUrl() + '/' + dmtpe + "s/" + id + "/content";
+				return this.getBrowserUrl() + '/' + dmtpe + "s/" + id
+						+ "/content";
 			};
 		}
 	};
@@ -160,13 +161,18 @@
 		};
 		/**
 		 * Checks if a given workspace wizard is enabled for this node.
-		 * @param wizard an object with an id property which will be used to perfprm the check
+		 * 
+		 * @param wizard
+		 *            an object with an id property which will be used to
+		 *            perfprm the check
 		 */
 		this.isWorkspaceWizardEnabled = function(wizard) {
 			// enabled wizards list is flattened into comma-separated string
 			var enabledWizardsAttr = this.getLibrary().attr("wizards");
-			var enabledWizards = (enabledWizardsAttr === undefined) ? [] : enabledWizardsAttr.split(",");
-			return enabledWizards && ($.inArray(wizard.id, enabledWizards) > -1);
+			var enabledWizards = (enabledWizardsAttr === undefined) ? []
+					: enabledWizardsAttr.split(",");
+			return enabledWizards
+					&& ($.inArray(wizard.id, enabledWizards) > -1);
 		};
 
 		this.getName = function() {
@@ -280,7 +286,8 @@
 
 		this.appendNode = function(data) {
 			var defer = $.Deferred();
-			var res = this.tree.create_node(this, 'last', data, defer.resolve, true);
+			var res = this.tree.create_node(this, 'last', data, defer.resolve,
+					true);
 			var newNode = res.treeNode();
 			return [ newNode, defer.promise() ];
 		};
@@ -320,8 +327,10 @@
 		};
 
 		this.acceptsAsContent = function(nodes) {
-			return ((this.is(':library') && nodes.areNodes()) || (this.is(':folder') && nodes.areNodes()) ||
-					(this.is(':file') && nodes.areResources()) || (this.is(':resource') && nodes.areViews()));
+			return ((this.is(':library') && nodes.areNodes())
+					|| (this.is(':folder') && nodes.areNodes())
+					|| (this.is(':file') && nodes.areResources()) || (this
+					.is(':resource') && nodes.areViews()));
 		};
 
 		// ************* methods for multiple matched elements ************
@@ -448,7 +457,8 @@
 		// *************** urls
 
 		this.getResourceUrl = function() {
-			return this.getBaseUrl() + this.getResType() + "/" + this.getResId();
+			return this.getBaseUrl() + this.getResType() + "/"
+					+ this.getResId();
 		};
 
 		this.getBaseUrl = function() {

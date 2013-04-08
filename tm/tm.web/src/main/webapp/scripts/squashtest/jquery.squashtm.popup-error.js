@@ -19,51 +19,51 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-(function ($) {
-	
+(function($) {
 
 	$.widget("squash.popupError", {
-						
-		_create: function(){
+
+		_create : function() {
 			var jqElt = this.element;
-		
+
 			jqElt.wrap('<div class="error-overlay error-hidden-state" />');
 			jqElt.addClass('error-style');
 
-			jqElt.each(function(){
-				var jE=$(this);
+			jqElt.each(function() {
+				var jE = $(this);
 				var html = jE.html();
-				jE.html('<div class="error-inner">'+html+'</div>');
-				
+				jE.html('<div class="error-inner">' + html + '</div>');
+
 				var parentPop = jE.parents(".ui-dialog.ui-widget");
-				if (parentPop.length==1){
+				if (parentPop.length == 1) {
 					jE.parent().prependTo(parentPop.get(0));
 				}
-				
+
 			});
-			
-			var self=this;
-			jqElt.click(function(){self.hide();});
-			
-			
+
+			var self = this;
+			jqElt.click(function() {
+				self.hide();
+			});
+
 			return this;
 
 		},
-		
-		show : function(){
+
+		show : function() {
 			this.element.parent().removeClass('error-hidden-state');
-			this.element.parents('.ui-dialog.ui-widget').find('input:focus').blur();
+			this.element.parents('.ui-dialog.ui-widget').find('input:focus')
+					.blur();
 		},
-		
-		hide : function(){
+
+		hide : function() {
 			this.element.parent().addClass('error-hidden-state');
 		},
-	
-		hangTo : function(newParent){
+
+		hangTo : function(newParent) {
 			this.element.parent().prependTo(newParent);
 		}
-			
+
 	});
-	
-	
+
 }(jQuery));

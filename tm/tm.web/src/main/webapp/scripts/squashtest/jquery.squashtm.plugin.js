@@ -25,51 +25,51 @@
 
 var squashtm = squashtm || {};
 
-(function ($) {
+(function($) {
 	// custom selectors, eg $(tree).find(":folder") will select all the nodes
 	// corresponding to folders.
 
 	$.extend($.expr[':'], {
-		library : function (a) {
+		library : function(a) {
 			return $(a).is("[rel='drive']");
 		},
-		folder : function (a) {
+		folder : function(a) {
 			return $(a).is("[rel='folder']");
 		},
-		file : function (a) {
+		file : function(a) {
 			return $(a).is("[rel='file']");
 		},
-		campaign : function (a) {
+		campaign : function(a) {
 			return $(a).is("[rel='file'][restype='campaigns']");
 		},
-		node : function (a) {
+		node : function(a) {
 			return $(a).is("[rel='folder']") || $(a).is("[rel='file']");
 		},
-		resource : function (a) {
+		resource : function(a) {
 			return $(a).is("[rel='resource']");
 		},
-		iteration : function (a) {
+		iteration : function(a) {
 			return $(a).is("[rel='resource']");
 		},
-		view : function (a) {
+		view : function(a) {
 			return $(a).is("[rel='view']");
 		},
-		editable : function (a) {
+		editable : function(a) {
 			return $(a).attr('smallEdit') === 'true';
 		},
-		creatable : function(a){
+		creatable : function(a) {
 			return $(a).attr('creatable') === 'true';
 		},
-		deletable : function(a){
+		deletable : function(a) {
 			return $(a).attr('deletable') === 'true';
 		}
 	});
 
 	// convenient function to gather data of a jQuery object.
-	$.fn.collect = function (fnArg) {
+	$.fn.collect = function(fnArg) {
 		var res = [];
 		if (this.length > 0) {
-			this.each(function (index, elt) {
+			this.each(function(index, elt) {
 				res.push(fnArg(elt));
 			});
 		}
@@ -77,8 +77,8 @@ var squashtm = squashtm || {};
 
 	};
 
-	$.fn.contains = function (domElt) {
-		var vThis = this.collect(function (e) {
+	$.fn.contains = function(domElt) {
+		var vThis = this.collect(function(e) {
 			return e;
 		});
 
@@ -92,61 +92,66 @@ var squashtm = squashtm || {};
 
 	};
 
-	/* thanks to http://stackoverflow.com/questions/2360655/jquery-event-handlers-always-execute-in-order-they-were-bound-any-way-around-t for fixing me*/
+	/*
+	 * thanks to
+	 * http://stackoverflow.com/questions/2360655/jquery-event-handlers-always-execute-in-order-they-were-bound-any-way-around-t
+	 * for fixing me
+	 */
 	$.fn.bindFirst = function(name, selector, data, fn) {
-	     
-	    this.on(name, selector, data, fn);
 
-	    this.each(function() {
-	        var handlers = $._data(this, 'events')[name.split('.')[0]];
-	        var handler = handlers.pop();
-	        handlers.splice(0, 0, handler);
-	    });
+		this.on(name, selector, data, fn);
+
+		this.each(function() {
+			var handlers = $._data(this, 'events')[name.split('.')[0]];
+			var handler = handlers.pop();
+			handlers.splice(0, 0, handler);
+		});
 	};
 
-
 	/* defines functions in the jQuery namespace */
-	$.extend({
-		/**
-		 * Opens a "popup" window containing the result of a POST. Plain
-		 * window.open() can only GET
-		 * 
-		 * @param url
-		 *            the url to POST
-		 * @param data
-		 *            the post data as a javascript object
-		 * @param windowDef
-		 *            definition of the window to open : { name: "name
-		 *            of window", features: "features string as per
-		 *            window.open" }
-		 * @return reference to the new window
-		 */
-		open : function (url, data, windowDef) {
-			var postData = '';
-	
-			for (attr in data) {
-				postData += '<input type=\"hidden\" name=\"' + attr
-						+ '\" value=\"' + data[attr] + '\" />';
-			}
-	
-			var form = '<form id=\"postForm\" style=\"display:none;\" action=\"'
-					+ url
-					+ '\" method=\"post\">'
-					+ '<input type=\"submit\" name=\"postFormSubmit\" value=\"\" />'
-					+ postData + '</form>';
-	
-			var win = window.open("about:blank", windowDef.name, windowDef.features);
-			win.document.write(form);
-			win.document.forms['postForm'].submit();
-	
-			return win;
-		}
-	});
+	$
+			.extend({
+				/**
+				 * Opens a "popup" window containing the result of a POST. Plain
+				 * window.open() can only GET
+				 * 
+				 * @param url
+				 *            the url to POST
+				 * @param data
+				 *            the post data as a javascript object
+				 * @param windowDef
+				 *            definition of the window to open : { name: "name
+				 *            of window", features: "features string as per
+				 *            window.open" }
+				 * @return reference to the new window
+				 */
+				open : function(url, data, windowDef) {
+					var postData = '';
+
+					for (attr in data) {
+						postData += '<input type=\"hidden\" name=\"' + attr
+								+ '\" value=\"' + data[attr] + '\" />';
+					}
+
+					var form = '<form id=\"postForm\" style=\"display:none;\" action=\"'
+							+ url
+							+ '\" method=\"post\">'
+							+ '<input type=\"submit\" name=\"postFormSubmit\" value=\"\" />'
+							+ postData + '</form>';
+
+					var win = window.open("about:blank", windowDef.name,
+							windowDef.features);
+					win.document.write(form);
+					win.document.forms['postForm'].submit();
+
+					return win;
+				}
+			});
 	/**
-	 * Creates a preconfigured popup dialog from the selector.
-	 * settings definition : see squashtm.popup(settings) function
+	 * Creates a preconfigured popup dialog from the selector. settings
+	 * definition : see squashtm.popup(settings) function
 	 */
-	$.fn.createPopup = function (settings) {
+	$.fn.createPopup = function(settings) {
 		var target = this;
 		target.addClass("popup-dialog");
 
@@ -169,9 +174,9 @@ var squashtm = squashtm || {};
 		var userClose = defaults.close;
 		var userCreate = defaults.create;
 
-		defaults.open = function () {
-//			// cleanup
-//			squashtm.popup.cleanup.call(target); 
+		defaults.open = function() {
+			// // cleanup
+			// squashtm.popup.cleanup.call(target);
 			// forcible styling of the buttons
 			var buttons = target.eq(0).next().find('button');
 			buttons.filter(':last').addClass('ui-state-active');
@@ -181,7 +186,7 @@ var squashtm = squashtm || {};
 				userOpen.call(this);
 		};
 
-		defaults.close = function () {
+		defaults.close = function() {
 			// cleanup
 			squashtm.popup.cleanup.call(target);
 			// usercode
@@ -189,32 +194,37 @@ var squashtm = squashtm || {};
 				userClose.call(this);
 		};
 
-		defaults.create = function () {
+		defaults.create = function() {
 			if (defaults.usesRichEdit) {
-				target.find('textarea')
-					.each(function () {
-						var jqT = $(this);
-						if (settings.isContextual) {
-							jqT.addClass('is-contextual');
-						}
-						jqT.ckeditor(function () {},	
-						{
-							// in this context
-							// 'this' is the
-							// defaults
-							// object
-							// the following
-							// properties will
-							// appear
-							// once we merged with
-							// the user-provided
-							// settings
-							customConfig : settings.ckeditor.styleUrl
-								|| "/styles/ckeditor/ckeditor-config.js",
-							language : settings.ckeditor.lang
-								|| "en"
-						});
-					});
+				target
+						.find('textarea')
+						.each(
+								function() {
+									var jqT = $(this);
+									if (settings.isContextual) {
+										jqT.addClass('is-contextual');
+									}
+									jqT
+											.ckeditor(
+													function() {
+													},
+													{
+														// in this context
+														// 'this' is the
+														// defaults
+														// object
+														// the following
+														// properties will
+														// appear
+														// once we merged with
+														// the user-provided
+														// settings
+														customConfig : settings.ckeditor.styleUrl
+																|| "/styles/ckeditor/ckeditor-config.js",
+														language : settings.ckeditor.lang
+																|| "en"
+													});
+								});
 				if (userCreate != undefined)
 					userCreate.call(this);
 			}
@@ -223,15 +233,14 @@ var squashtm = squashtm || {};
 		// popup invokation
 		target.dialog(defaults);
 
-		if (defaults.closeOnSuccess === undefined
-				|| defaults.closeOnSuccess) {
-			target.ajaxSuccess(function () {
+		if (defaults.closeOnSuccess === undefined || defaults.closeOnSuccess) {
+			target.ajaxSuccess(function() {
 				if (target.dialog('isOpen') === true)
 					target.dialog('close');
 			});
 		}
 
-		target.keypress(function (event) {
+		target.keypress(function(event) {
 			if (event.which == '13') {
 				var buttonPane = target.eq(0).next();
 				buttonPane.find('button').filter(':first').click();
@@ -239,7 +248,7 @@ var squashtm = squashtm || {};
 		});
 
 		if (defaults.openedBy) {
-			$(defaults.openedBy).click(function () {
+			$(defaults.openedBy).click(function() {
 				target.dialog('open');
 				return false;
 			});
@@ -248,11 +257,11 @@ var squashtm = squashtm || {};
 		if (defaults.isContextual) {
 			target.addClass('is-contextual');
 		}
-		
-		//hook on remove : remove the instances of CKEditor
-		if (defaults.usesRichEdit){
-			target.on('remove', function(){
-				target.find('textarea').each(function(){
+
+		// hook on remove : remove the instances of CKEditor
+		if (defaults.usesRichEdit) {
+			target.on('remove', function() {
+				target.find('textarea').each(function() {
 					var ckInstance = CKEDITOR.instances[this.id];
 					if (ckInstance) {
 						ckInstance.destroy(true);
@@ -260,10 +269,10 @@ var squashtm = squashtm || {};
 				});
 			});
 		}
-		
+
 		return this;
 	};
-	
+
 	/*
 	 * Squash TM domain name : variable $.fn.squashtm
 	 * 
@@ -271,70 +280,71 @@ var squashtm = squashtm || {};
 	/**
 	 * squashtm.popup(settings) : creates a popup dialog from the given settings
 	 * 
-	 * popup settings : 
-	 * - all normal $.ui.dialog valid options 
-	 * - selector : jquery selector of the dom element we are targetting (mandatory) 
-	 * - openedBy : selector for a clickable element that will open the popup (optional) 
-	 * - title : the title of the popup (mandatory) 
-	 * - isContextual : boolean telling if the said popup should be added the special class
-	 * 'is-contextual', that will mark him as a removable popup when the context changes, 
-	 * - closeOnSuccess : boolean telling if the popup should be closed if an ajax request succeeds (optional) 
-	 * - ckeditor : { 
-	 * 	- lang : the desired language for the ckeditor (optional) 
-	 * 	- styleUrl : the url for the ckeditor style. 
-	 * } 
-	 * - buttons : the button definition (mandatory)
+	 * popup settings : - all normal $.ui.dialog valid options - selector :
+	 * jquery selector of the dom element we are targetting (mandatory) -
+	 * openedBy : selector for a clickable element that will open the popup
+	 * (optional) - title : the title of the popup (mandatory) - isContextual :
+	 * boolean telling if the said popup should be added the special class
+	 * 'is-contextual', that will mark him as a removable popup when the context
+	 * changes, - closeOnSuccess : boolean telling if the popup should be closed
+	 * if an ajax request succeeds (optional) - ckeditor : { - lang : the
+	 * desired language for the ckeditor (optional) - styleUrl : the url for the
+	 * ckeditor style. } - buttons : the button definition (mandatory)
 	 * 
 	 * 
 	 */
 	squashtm.popup = {
 		// begin popup.create
-		create : function (settings) {
+		create : function(settings) {
 			var target = $(settings.selector);
 			target.createPopup(settings);
 		}, // end popup.create
 		// begin popup.cleanup
-		cleanup : function () {
+		cleanup : function() {
 			// clear all error-message even ones that are not in this popup
 			// because others might have been filled with error handle.
 			$('.error-message').text('');
-			//clear inputs
+			// clear inputs
 			this.find('input:text').val('');
 			this.find('textarea').val('');
 		}
 	// end popup.cleanup
 	};
-	
-	
+
 	/*
-	 * inhibits navigation to previous page when pressing backspace, as requested in issue https://ci.squashtest.org/mantis/view.php?id=2069
+	 * inhibits navigation to previous page when pressing backspace, as
+	 * requested in issue https://ci.squashtest.org/mantis/view.php?id=2069
 	 * 
-	 * Solution credited to erikkallen, at http://stackoverflow.com/questions/1495219/how-can-i-prevent-the-backspace-key-from-navigating-back
+	 * Solution credited to erikkallen, at
+	 * http://stackoverflow.com/questions/1495219/how-can-i-prevent-the-backspace-key-from-navigating-back
 	 * 
 	 * Kudos my good sir.
 	 * 
 	 */
-	
+
 	$.extend({
-		noBackspaceNavigation : function (){
-			$(document).bind('keydown', function (event) {	
-			    var doPrevent = false;
-			    if (event.keyCode === 8) {
-			        var d = event.srcElement || event.target;
-			        if ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD')) 
-			             || d.tagName.toUpperCase() === 'TEXTAREA') {
-			            doPrevent = d.readOnly || d.disabled;
-			        }
-			        else {
-			            doPrevent = true;
-			        }
-			    }
-	
-			    if (doPrevent) {
-			        event.preventDefault();
-			    }
-			});				
+		noBackspaceNavigation : function() {
+			$(document).bind(
+					'keydown',
+					function(event) {
+						var doPrevent = false;
+						if (event.keyCode === 8) {
+							var d = event.srcElement || event.target;
+							if ((d.tagName.toUpperCase() === 'INPUT' && (d.type
+									.toUpperCase() === 'TEXT' || d.type
+									.toUpperCase() === 'PASSWORD'))
+									|| d.tagName.toUpperCase() === 'TEXTAREA') {
+								doPrevent = d.readOnly || d.disabled;
+							} else {
+								doPrevent = true;
+							}
+						}
+
+						if (doPrevent) {
+							event.preventDefault();
+						}
+					});
 		}
 	});
-	
+
 })(jQuery);

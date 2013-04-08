@@ -18,12 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-(function ($) {
+(function($) {
 
 	// Adding maxlength attribute for text
 	// thanks to
 	// http://blogpad-online.blogspot.com/2010/10/jeditable-maxlength_12.html
-	$.editable.types.text.element = function (settings, original) {
+	$.editable.types.text.element = function(settings, original) {
 		var input = $('<input />');
 		if (settings.width != 'none') {
 			input.width(settings.width);
@@ -57,18 +57,18 @@
 
 	$.widget('ui.richEditable', {
 
-		_bindLinks : function () {
+		_bindLinks : function() {
 			this.bindLinks.call(this.element);
 		},
 
-		bindLinks : function () {
+		bindLinks : function() {
 			var elts = $('a', this);
 
 			elts.unbind('click');
-			elts.click(function (event) {
-				if(this.onclick){
+			elts.click(function(event) {
+				if (this.onclick) {
 					this.onclick();
-				}else{
+				} else {
 					document.location.href = this.href;
 				}
 				event.stopPropagation();
@@ -80,15 +80,15 @@
 			type : 'ckeditor',
 			rows : 10,
 			cols : 80,
-			onblur : function () {
+			onblur : function() {
 			},
-			callback : function (result, settings) {
+			callback : function(result, settings) {
 				// 'this' in this context is the div itself
 				$.ui.richEditable.prototype.bindLinks.call(this);
 			}
 		},
 
-		_init : function () {
+		_init : function() {
 			var self = this;
 			var element = this.element;
 			element.editable(this.options.url, this.options);
@@ -102,7 +102,7 @@
 			// todo : make the reset thing available for all input types.
 			var domElement = element.get(0);
 			var oldReset = domElement.reset;
-			domElement.reset = function () {
+			domElement.reset = function() {
 				oldReset.call(this);
 				self._bindLinks();
 			}

@@ -26,7 +26,7 @@ function KeyEventListener() {
 
 	var self = this;
 
-	$(document).keydown(function (evt) {
+	$(document).keydown(function(evt) {
 		switch (evt.which) {
 		case 13:
 			self.enter = true;
@@ -40,7 +40,7 @@ function KeyEventListener() {
 		}
 	});
 
-	$(document).keyup(function (evt) {
+	$(document).keyup(function(evt) {
 		switch (evt.which) {
 		case 13:
 			self.enter = false;

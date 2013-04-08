@@ -34,7 +34,7 @@ var squashtm = squashtm || {};
  * @author bsiri.
  * 
  */
-(function ($) {
+(function($) {
 	$.fn.dataTableExt.oPagination.iFullNumbersShowPages = 1;
 
 	$.fn.dataTableExt.oPagination.squash = {
@@ -45,9 +45,9 @@ var squashtm = squashtm || {};
 		 * which contains this pagination control function:fnCallbackDraw - draw
 		 * function which must be called on update
 		 */
-		"fnInit" : function (oSettings, nPaging, fnCallbackDraw) {
+		"fnInit" : function(oSettings, nPaging, fnCallbackDraw) {
 
-			var initButton = function (object, cssClass) {
+			var initButton = function(object, cssClass) {
 				object.button({
 					text : false,
 					icons : {
@@ -80,49 +80,49 @@ var squashtm = squashtm || {};
 			nPrevious.text("◀");
 			nNext.text("▶");
 			nLast.text("▶▶");
-			
+
 			$(nPaging).find('.paginate_button').button({
 				disabled : false,
 				text : true
 			});
 
 			nFirst.click(
-					function () {
+					function() {
 						oSettings.oApi._fnPageChange(oSettings, "first");
 						fnCallbackDraw(oSettings);
 						nPageTxt.text(parseInt(oSettings._iDisplayEnd
 								/ oSettings._iDisplayLength, 10) + 1);
-					}).bind('selectstart', function () {
+					}).bind('selectstart', function() {
 				return false;
 			});
 
 			nPrevious.click(
-					function () {
+					function() {
 						oSettings.oApi._fnPageChange(oSettings, "previous");
 						fnCallbackDraw(oSettings);
 						nPageTxt.text(parseInt(oSettings._iDisplayEnd
 								/ oSettings._iDisplayLength, 10) + 1);
-					}).bind('selectstart', function () {
+					}).bind('selectstart', function() {
 				return false;
 			});
 
 			nNext.click(
-					function () {
+					function() {
 						oSettings.oApi._fnPageChange(oSettings, "next");
 						fnCallbackDraw(oSettings);
 						nPageTxt.text(parseInt(oSettings._iDisplayEnd
 								/ oSettings._iDisplayLength, 10) + 1);
-					}).bind('selectstart', function () {
+					}).bind('selectstart', function() {
 				return false;
 			});
 
 			nLast.click(
-					function () {
+					function() {
 						oSettings.oApi._fnPageChange(oSettings, "last");
 						fnCallbackDraw(oSettings);
 						nPageTxt.text(parseInt(oSettings._iDisplayEnd
 								/ oSettings._iDisplayLength, 10) + 1);
-					}).bind('selectstart', function () {
+					}).bind('selectstart', function() {
 				return false;
 			});
 
@@ -134,7 +134,7 @@ var squashtm = squashtm || {};
 		 * settings object function:fnCallbackDraw - draw function which must be
 		 * called on update
 		 */
-		"fnUpdate" : function (oSettings, fnCallbackDraw) {
+		"fnUpdate" : function(oSettings, fnCallbackDraw) {
 			if (!oSettings.aanFeatures.p) {
 				return;
 			}
@@ -163,22 +163,23 @@ var squashtm = squashtm || {};
 		}
 	};
 
-	// defines datatable defaults settings and puts them in the squash namespace.
+	// defines datatable defaults settings and puts them in the squash
+	// namespace.
 	var datatableDefaults = {
-			"bJQueryUI" : true,
-			"bAutoWidth" : false,
-			"bFilter" : false,
-			"bPaginate" : true,
-			"sPaginationType" : "squash",
-			"iDisplayLength" : 50,
-			"bProcessing" : true,
-			"bServerSide" : true,
-			"bRetrieve" : true,
-			"sDom" : 't<"dataTables_footer"lirp>'
-		};
+		"bJQueryUI" : true,
+		"bAutoWidth" : false,
+		"bFilter" : false,
+		"bPaginate" : true,
+		"sPaginationType" : "squash",
+		"iDisplayLength" : 50,
+		"bProcessing" : true,
+		"bServerSide" : true,
+		"bRetrieve" : true,
+		"sDom" : 't<"dataTables_footer"lirp>'
+	};
 
 	squashtm.datatable = squashtm.datatable || {};
-	squashtm.datatable.defaults = datatableDefaults;	
+	squashtm.datatable.defaults = datatableDefaults;
 })(jQuery);
 
 /**
@@ -193,18 +194,18 @@ var squashtm = squashtm || {};
  */
 
 function addDeleteButtonToRow(row, entityId, buttonTemplateId) {
-	$(row).find('td:last').append($('#' + buttonTemplateId).clone()).find('a').attr(
-			'id', buttonTemplateId + ':' + entityId);
+	$(row).find('td:last').append($('#' + buttonTemplateId).clone()).find('a')
+			.attr('id', buttonTemplateId + ':' + entityId);
 }
 
 /**
  * Registers event handlers to enable rangle selection in tables.
  */
 function enableTableRangeSelection() {
-	$(document).keydown(function (evt) {
+	$(document).keydown(function(evt) {
 		handleCtrlDown(evt);
 		handleShiftDown(evt);
-	}).keyup(function (evt) {
+	}).keyup(function(evt) {
 		handleCtrlUp(evt);
 		handleShiftUp(evt);
 	});
@@ -215,7 +216,8 @@ function enableTableRangeSelection() {
  * 
  * @param event
  */
-/* private */function handleCtrlDown(event) {
+/* private */
+function handleCtrlDown(event) {
 	if (event.which == 17) { // ctrl
 		$(window).data('ctrlPressed', true);
 	}
@@ -225,7 +227,8 @@ function enableTableRangeSelection() {
  * 
  * @param event
  */
-/* private */function handleCtrlUp(event) {
+/* private */
+function handleCtrlUp(event) {
 	if (event.which == 17) { // ctrl
 		$(window).data('ctrlPressed', false);
 	}
@@ -236,7 +239,8 @@ function enableTableRangeSelection() {
  * 
  * @param event
  */
-/* private */function handleShiftDown(event) {
+/* private */
+function handleShiftDown(event) {
 	// shift pressed : the last selected row will be the base of the ranged
 	// selection
 	if (event.which == 16) {
@@ -253,7 +257,8 @@ function enableTableRangeSelection() {
  * 
  * @param event
  */
-/* private */function handleShiftUp(event) {
+/* private */
+function handleShiftUp(event) {
 	if (event.which == 16) { // shift
 		$(window).data('shiftPressed', false);
 	}
@@ -303,9 +308,9 @@ function getOffsetFromDomTable(domTable, fnGetRowIndex) {
 function enableTableDragAndDrop(tableId, fnGetRowIndex, dropHandler) {
 	$('#' + tableId).tableDnD({
 		dragHandle : "drag-handle",
-		onDragStart : function (table, rows) { // remember that we are using
-												// our modified dnd : rows is a
-												// jQuery object
+		onDragStart : function(table, rows) { // remember that we are using
+			// our modified dnd : rows is a
+			// jQuery object
 
 			rows.find('.drag-handle').addClass('ui-state-active');
 
@@ -317,8 +322,8 @@ function enableTableDragAndDrop(tableId, fnGetRowIndex, dropHandler) {
 
 		},
 
-		onDrop : function (table, rows) { // again, that is now a jQuery
-											// object
+		onDrop : function(table, rows) { // again, that is now a jQuery
+			// object
 
 			var newInd = rows.get(0).rowIndex - 1;
 			var oldInd = $(table).data("previousRank");
@@ -332,9 +337,9 @@ function enableTableDragAndDrop(tableId, fnGetRowIndex, dropHandler) {
 }
 
 function bindHover(dataTable) {
-	$('tbody tr', dataTable).live('mouseleave', function () {
+	$('tbody tr', dataTable).live('mouseleave', function() {
 		$(this).removeClass('ui-state-highlight');
-	}).live('mouseenter', function () {
+	}).live('mouseenter', function() {
 		if (!$(this).hasClass('ui-state-row-selected')) {
 			$(this).addClass('ui-state-highlight');
 		}
@@ -356,7 +361,7 @@ function decorateDeleteButtons(buttons) {
 }
 
 function addClickHandlerToSelectHandle(nRow, table) {
-	$(nRow).find('.select-handle').click(function () {
+	$(nRow).find('.select-handle').click(function() {
 		var row = this.parentNode;
 
 		var ctrl = $(window).data('ctrlPressed');
@@ -395,7 +400,8 @@ function clearRangeSelection() {
 	}
 }
 
-/* private */function toggleRowAndDropSelectedRange(row) {
+/* private */
+function toggleRowAndDropSelectedRange(row) {
 	$(row).toggleClass('ui-state-row-selected').removeClass(
 			'ui-state-highlight');
 	$(row).parent().find('.ui-state-row-selected').not(row).removeClass(
@@ -403,12 +409,14 @@ function clearRangeSelection() {
 
 }
 
-/* private */function toggleRowAndKeepSelectedRange(row) {
+/* private */
+function toggleRowAndKeepSelectedRange(row) {
 	$(row).toggleClass('ui-state-row-selected').removeClass(
 			'ui-state-highlight');
 }
 
-/* private */function growSelectedRangeToRow(row, table) {
+/* private */
+function growSelectedRangeToRow(row, table) {
 	var rows = $("tbody tr", table);
 	var range = computeSelectionRange(row, table);
 
@@ -427,7 +435,8 @@ function clearRangeSelection() {
  * @param table
  * @returns
  */
-/* private */function computeSelectionRange(row, table) {
+/* private */
+function computeSelectionRange(row, table) {
 	var baseRow = table.data("lastSelectedRow");
 	var baseIndex = baseRow ? baseRow.rowIndex : 1;
 	var currentIndex = row.rowIndex;
@@ -442,7 +451,8 @@ function clearRangeSelection() {
 	return [ rangeMin - 1, rangeMax - 1 ];
 }
 
-/* private */function memorizeLastSelectedRow(row, table) {
+/* private */
+function memorizeLastSelectedRow(row, table) {
 	if ($(row).hasClass('ui-state-row-selected')) {
 		$(table).data("lastSelectedRow", row);
 	}
@@ -469,7 +479,7 @@ function getIdsOfSelectedTableRows(dataTable, getRowIdCallback) {
 	var rows = dataTable.fnGetNodes();
 	var ids = new Array();
 
-	$(rows).each(function (index, row) {
+	$(rows).each(function(index, row) {
 		if ($(row).hasClass('ui-state-row-selected')) {
 			var data = dataTable.fnGetData(row);
 			var id = getRowIdCallback(data)
@@ -486,7 +496,7 @@ function findRowStatus(dataTable, rowId, getRowId, getRowStatus) {
 	var rows = dataTable.fnGetNodes();
 	var status = "";
 
-	$(rows).each(function (index, row) {
+	$(rows).each(function(index, row) {
 		var data = dataTable.fnGetData(row);
 		var id = getRowId(data)
 		if (id == rowId) {
@@ -501,7 +511,7 @@ function getObsoleteStatusesOfSelectedTableRows(dataTable, getRowStatus) {
 	var rows = dataTable.fnGetNodes();
 	var obsoleteStatuses = new Array();
 
-	$(rows).each(function (index, row) {
+	$(rows).each(function(index, row) {
 		if ($(row).hasClass('ui-state-row-selected')) {
 			var data = dataTable.fnGetData(row);
 			var status = getRowStatus(data)
@@ -536,10 +546,11 @@ function restoreTableSelection(dataTable, getRowIdCallback) {
 	dataTable.removeAttr('selectedIds');
 }
 
-/* private */function selectTableRowsOfIds(dataTable, ids, getRowIdCallback) {
+/* private */
+function selectTableRowsOfIds(dataTable, ids, getRowIdCallback) {
 	var rows = dataTable.fnGetNodes();
 
-	$(rows).each(function (index, row) {
+	$(rows).each(function(index, row) {
 		var data = dataTable.fnGetData(row);
 		var rowId = getRowIdCallback(data);
 		if (ids.indexOf(rowId) >= 0) {
@@ -555,7 +566,7 @@ function addHLinkToCellText(td, url, isOpenInTab) {
 		link.attr('target', '_blank');
 	}
 
-	$(td).contents().filter(function () {
+	$(td).contents().filter(function() {
 		// IE doesn't define the constant Node so we'll use constant value
 		// instead of Node.TEXT_NODE
 		return this.nodeType == 3;

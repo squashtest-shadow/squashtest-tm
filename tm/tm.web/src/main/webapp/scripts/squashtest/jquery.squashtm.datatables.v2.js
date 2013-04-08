@@ -487,7 +487,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 	function _restoreTableSelection() {
 		var selectedIds = this.attr('selectedIds');
-		if ((selectedIds instanceof Array) && (selectedIds.length>0)) {
+		if ((selectedIds instanceof Array) && (selectedIds.length > 0)) {
 			_selectRows.call(this, selectedIds);
 		}
 		this.removeAttr('selectedIds');
@@ -508,11 +508,11 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	/* private */function _deselectRows(ids) {
 		var table = this;
 		var rows = this.find('tbody tr');
-		
-		if (arguments.length>0 && ids instanceof Array && ids.length>0){
-			rows = rows.filter(function(){
+
+		if (arguments.length > 0 && ids instanceof Array && ids.length > 0) {
+			rows = rows.filter(function() {
 				var rId = table.getODataId(this);
-				return $.inArray(rId, ids) != -1;				
+				return $.inArray(rId, ids) != -1;
 			});
 		}
 

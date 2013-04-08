@@ -118,8 +118,8 @@ function handleNotFoundImages(defaultImageUrl) {
 
 	// reloading the image to re-get the error event if needed. If you find it
 	// ugly, well, you're right !
-	$(imgs).each(function () {
-		$(this).load().error(function () {
+	$(imgs).each(function() {
+		$(this).load().error(function() {
 			this.src = defaultImageUrl;
 		});
 	});

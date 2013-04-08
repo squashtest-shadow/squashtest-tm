@@ -25,50 +25,36 @@
  * If the div used to generate the dialog contains up to 2 <input type="button" />
  * elements, they are used as the ok and cancel buttons labels.
  * 
- * Usage example : 
+ * Usage example :
  * 
  * <div id="confirm-dialog" class="not-displayed popup-dialog" title="title">
- *   <strong>message</strong> 
- *   <input:ok /> 
- *   <input:cancel /> 
- * </div> 
+ * <strong>message</strong> <input:ok /> <input:cancel /> </div>
  * 
  * <div id="confirm-dialog" class="not-displayed popup-dialog" title="title">
- *   <strong>message</strong>
- *   <input type="button" value="not a confirm button" />
- *   <div class="popup-dialog-buttonpane">
- *     <input:ok /> 
- *     <input:cancel /> 
- *   </div> 
- * </div> 
- *
- * <script>
- * $(function(){ 
- *   var confirmHandler = function() { actionAfterConfirm(); };
+ * <strong>message</strong> <input type="button" value="not a confirm button" />
+ * <div class="popup-dialog-buttonpane"> <input:ok /> <input:cancel /> </div>
+ * </div>
  * 
- *   var dialog = $( "#confirm-dialog" ); 
- *   dialog.confirmDialog(
- *     {confirm:confirmHandler}
- *   );
+ * <script> $(function(){ var confirmHandler = function() {
+ * actionAfterConfirm(); };
  * 
- *   $('#button').click(function(){ 
- *     dialog.confirmDialog( "open" ); 
- *     return false;
- *   }); 
- * }); 
- * </script>
+ * var dialog = $( "#confirm-dialog" ); dialog.confirmDialog(
+ * {confirm:confirmHandler} );
  * 
- * The dialog triggers a confirmdialogconfirm when confirm button is clicked
- * The dialog triggers a confirmdialogcancel when cancel button is clicked
+ * $('#button').click(function(){ dialog.confirmDialog( "open" ); return false;
+ * }); }); </script>
+ * 
+ * The dialog triggers a confirmdialogconfirm when confirm button is clicked The
+ * dialog triggers a confirmdialogcancel when cancel button is clicked
  * 
  * @author Gregory Fouquet
  */
 (function($) {
-	if(($.squash !== undefined) && ($.squash.confirmDialog !== undefined)) {
+	if (($.squash !== undefined) && ($.squash.confirmDialog !== undefined)) {
 		// plugin already loaded
 		return;
 	}
-	
+
 	var closeDialogHandler = function() {
 	};
 
@@ -87,32 +73,32 @@
 				click : closeDialogHandler
 			} ]
 		},
-		
-		confirm: function(event) {
+
+		confirm : function(event) {
 			if (false === this._trigger("validate", event)) {
 				return;
 			}
-			
+
 			if (!this.close()) {
 				return;
 			}
-			
+
 			this._trigger("confirm");
 			return this;
 		},
-		
-		cancel: function(event) {
+
+		cancel : function(event) {
 			if (!this.close()) {
 				return;
 			}
-			
+
 			this._trigger("cancel");
 			return this;
 		},
 
 		_create : function() {
 			var self = this;
-			
+
 			var parent = this.element.eq(0).parent();
 
 			function cancelOnEsc(event) {
@@ -121,30 +107,31 @@
 					event.preventDefault();
 				}
 			}
-			
+
 			// creates the widget
 			self._super();
 
 			// declares custom events
 			self._on({
-				"click .ui-dialog-buttonpane button:first": self.confirm,
-				"click .ui-dialog-buttonpane button:last": self.cancel,
-				"click .ui-dialog-titlebar-close": self.cancel, 
-				"keydown": cancelOnEsc
+				"click .ui-dialog-buttonpane button:first" : self.confirm,
+				"click .ui-dialog-buttonpane button:last" : self.cancel,
+				"click .ui-dialog-titlebar-close" : self.cancel,
+				"keydown" : cancelOnEsc
 			});
-			
+
 			// autoremove when parent container is removed
-			parent.on('remove', function(){
+			parent.on('remove', function() {
 				self.element.confirmDialog('destroy');
 				self.element.remove();
 			});
 		},
-		
+
 		_createButtons : function(buttons) {
 			var self = this;
 
 			function buttonsParent() {
-				var popup = $(self.element), buttonsPane = popup.find(".popup-dialog-buttonpane");
+				var popup = $(self.element), buttonsPane = popup
+						.find(".popup-dialog-buttonpane");
 				return buttonsPane.val() ? buttonsPane : popup;
 			}
 
@@ -169,8 +156,8 @@
 			// _setOption method from the base widget
 			$.Widget.prototype._setOption.apply(this, arguments);
 		},
-		
-		_destroy: function() {
+
+		_destroy : function() {
 			this._off($(".ui-dialog-buttonpane button"), "click");
 			this._off($(".ui-dialog-titlebar-close"), "click");
 			this._super();

@@ -19,54 +19,51 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery"], function(){
-	
+define([ "jquery" ], function() {
+
 	function TableCollapserEvent(collapser) {
-		
+
 		this.collapser = collapser;
 		this.eventHandlers = [];
-		
-		this.addHandler = function (eventHandler) {
+
+		this.addHandler = function(eventHandler) {
 			this.eventHandlers.push(eventHandler);
 		};
-		
-		this.execute = function () {
-			for (var i = 0; i < this.eventHandlers.length; i++) {
+
+		this.execute = function() {
+			for ( var i = 0; i < this.eventHandlers.length; i++) {
 				this.eventHandlers[i](this.collapser);
 			}
 		};
-	
+
 	}
-	
-	
-	function makeDefaultCellSelector(columnsP){
-		return function(row){
+
+	function makeDefaultCellSelector(columnsP) {
+		return function(row) {
 			var columns = columnsP;
 			var length = columns.length;
 			var result = [];
 			var tds = $(row).children('td');
-			for (var i=0;i<length;i++){
+			for ( var i = 0; i < length; i++) {
 				result.push(tds[columns[i]]);
 			}
 			return result;
 		}
 	}
 
-
 	return function(dataTableP, columnsP) {
-		
+
 		var self = this;
-		
+
 		var dataTable = dataTableP;
-		
+
 		var cellSelector;
-		if ($.isFunction(columnsP)){
+		if ($.isFunction(columnsP)) {
 			cellSelector = columnsP;
-		}
-		else{
+		} else {
 			cellSelector = makeDefaultCellSelector(columnsP);
 		}
-		
+
 		var columns = columnsP;
 		this.isOpen = true;
 		var rows = [];
@@ -74,23 +71,22 @@ define(["jquery"], function(){
 		this.closeHandlers = new TableCollapserEvent(this);
 		this.openHandlers = new TableCollapserEvent(this);
 
-		
 		// ************** private functions ****************
-		
-		var indexCollapsibleCells = $.proxy(function(){
-			
+
+		var indexCollapsibleCells = $.proxy(function() {
+
 			this.collapsibleCells = [];
-			
+
 			var rows = dataTableP.children('tbody').children('tr');
-			
-			for (var j = 0; j < rows.length; j++) {
+
+			for ( var j = 0; j < rows.length; j++) {
 				var cells = cellSelector(rows[j]);
 				this.collapsibleCells = this.collapsibleCells.concat(cells);
-			}	
+			}
 		}, this);
-		
-		var setCellsData = $.proxy(function(){
-			for (var k = 0; k < this.collapsibleCells.length; k++) {
+
+		var setCellsData = $.proxy(function() {
+			for ( var k = 0; k < this.collapsibleCells.length; k++) {
 				var cell = $(this.collapsibleCells[k]);
 				cell.data('completeHtml', cell.html());
 				var truncated = cell.text();
@@ -103,21 +99,20 @@ define(["jquery"], function(){
 
 		}, this);
 
-		
 		// ****************** public functions ************
-		
-		this.onOpen = function(handler){
+
+		this.onOpen = function(handler) {
 			this.openHandlers.addHandler(handler);
 		};
-		
-		this.onClose = function(handler){
+
+		this.onClose = function(handler) {
 			this.closeHandlers.addHandler(handler);
 		}
-		
-		this.closeAll = function () {
+
+		this.closeAll = function() {
 			indexCollapsibleCells();
 			setCellsData();
-			for (var k = 0; k < this.collapsibleCells.length; k++) {
+			for ( var k = 0; k < this.collapsibleCells.length; k++) {
 				var cell = $(this.collapsibleCells[k]);
 				cell.html(cell.data('truncatedHtml'));
 			}
@@ -126,8 +121,8 @@ define(["jquery"], function(){
 
 		};
 
-		this.openAll = function () {
-			for (var k = 0; k < this.collapsibleCells.length; k++) {
+		this.openAll = function() {
+			for ( var k = 0; k < this.collapsibleCells.length; k++) {
 				var cell = $(this.collapsibleCells[k]);
 				cell.html(cell.data('completeHtml'));
 			}
@@ -135,16 +130,14 @@ define(["jquery"], function(){
 			this.isOpen = true;
 		};
 
-		this.refreshTable = function () {
+		this.refreshTable = function() {
 			indexCollapsibleCells();
 			if (!this.isOpen) {
 				this.closeAll();
 			}
 		};
-		
-		//init
+
+		// init
 		indexCollapsibleCells();
-	}	
+	}
 });
-
-

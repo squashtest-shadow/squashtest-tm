@@ -38,7 +38,7 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
 			cancel : language.cancelLabel,
 			onblur : function() {
 			},// this disable the onBlur handler, which would close the
-				// jeditable
+			// jeditable
 			// when clicking in the rich editor (since it considers the click as
 			// out of the editing zone)
 			indicator : '<img src="' + squashtm.app.contextRoot

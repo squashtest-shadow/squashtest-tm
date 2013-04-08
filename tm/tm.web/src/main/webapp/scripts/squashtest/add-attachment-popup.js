@@ -38,14 +38,14 @@
  * @author bsiri
  */
 
-(function ($) {
+(function($) {
 
 	/*
 	 * Here is an object wrapper for the JQuery version of an Item
 	 * 
 	 */
 
-	$.fn.uploadItem = function (jqContainer) {
+	$.fn.uploadItem = function(jqContainer) {
 
 		// init
 		this.getFile = getFile;
@@ -64,7 +64,7 @@
 		var myself = this;
 
 		var myfile = this.getFile();
-		myfile.change(function () {
+		myfile.change(function() {
 			inputFileOnChange(myself);
 		});
 
@@ -72,7 +72,7 @@
 
 		$(mybutton).squashButton();
 
-		mybutton.click(function () {
+		mybutton.click(function() {
 			myself.container.removeItem(myself);
 		});
 
@@ -108,7 +108,7 @@
 	 * 
 	 */
 
-	$.fn.uploadPopup = function (jqItemTemplate) {
+	$.fn.uploadPopup = function(jqItemTemplate) {
 
 		// init
 		if (jqItemTemplate != 'undefined') {
