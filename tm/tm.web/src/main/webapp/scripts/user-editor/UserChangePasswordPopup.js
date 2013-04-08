@@ -38,7 +38,9 @@ define(
 								closeOnSuccess : false,
 								buttons : [ {
 									'text' : UMod.message.confirmLabel,
-									'click' : function(){self.submitPassword.call(self);},
+									'click' : function() {
+										self.submitPassword.call(self);
+									},
 								} ],
 								width : 420,
 							};
@@ -66,7 +68,9 @@ define(
 									"oldPassword" : oldPassword,
 									"newPassword" : newPassword
 								},
-								success : function(){self.userPasswordSuccess.call(self);}
+								success : function() {
+									self.userPasswordSuccess.call(self);
+								}
 							});
 
 						},

@@ -19,15 +19,13 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+define([ "jquery", "./step-table-panel" ], function($, stepTablePanel) {
 
-define(["jquery", "./step-table-panel"], function($, stepTablePanel){
-	
-	var initStepTablePanel = function(settings){
+	var initStepTablePanel = function(settings) {
 		stepTablePanel.init(settings);
 	};
-	
+
 	return {
 		initStepTablePanel : initStepTablePanel
 	}
 });
-

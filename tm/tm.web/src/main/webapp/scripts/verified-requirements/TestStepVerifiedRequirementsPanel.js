@@ -18,56 +18,61 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TestStepVerifiedRequirementsTable",
-		"jquery.squash", "jqueryui", "jquery.squash.togglepanel",
-		"jquery.squash.datatables", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ],
-		function($, Backbone, _, StringUtil, TestStepVerifiedRequirementsTable) {
-			var VRBS = squashtm.app.verifiedRequirementsBlocSettings;
-			var VerifiedRequirementsPanel = Backbone.View.extend({
-				
-				el : "#verified-requirements-bloc-frag",
-				
-				initialize : function() {
-					VRBS = squashtm.app.verifiedRequirementsBlocSettings;
-					this.makeTogglePanel();
-					this.table = new TestStepVerifiedRequirementsTable();
-					this.configureButtons.call(this);
-				},
-				
-				events : {},
-				
-				makeTogglePanel : function() {
-					var infoSettings = {
-						initiallyOpen : VRBS.oppened,
-						title : VRBS.title,
-					};
-					this.$("#verified-requirements-panel").togglePanel(infoSettings);
-				},
-				
-				configureButtons : function() {
-					var self = this;
-					// ===============toogle buttons=================
-					// this line below is here because toggle panel
-					// buttons cannot be bound with the 'events'
-					// property of Backbone.View.
-					// my guess is that the event is bound to the button
-					// before it is moved from it's "span.not-displayed"
-					// to the toggle panel header.
-					// TODO change our way to make toggle panels buttons
-					// =============/toogle buttons===================
-					this.$("#remove-verified-requirements-button").on('click',
-							function(){self.table.removeSelectedRequirements();});
-					this.$("#remove-verified-requirements-from-step-button").on('click',
-							function(){self.table.detachSelectedRequirements();});
-					this.$("#add-verified-requirements-button").on('click',
-							self.goToRequirementManager);
-				},
-				
-				goToRequirementManager : function() {
-					document.location.href = VRBS.stepUrl + "/manager";
-				},
-				
-			});
-			return VerifiedRequirementsPanel;
-		});
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
+		"./TestStepVerifiedRequirementsTable", "jquery.squash", "jqueryui",
+		"jquery.squash.togglepanel", "jquery.squash.datatables",
+		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
+		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil,
+		TestStepVerifiedRequirementsTable) {
+	var VRBS = squashtm.app.verifiedRequirementsBlocSettings;
+	var VerifiedRequirementsPanel = Backbone.View.extend({
+
+		el : "#verified-requirements-bloc-frag",
+
+		initialize : function() {
+			VRBS = squashtm.app.verifiedRequirementsBlocSettings;
+			this.makeTogglePanel();
+			this.table = new TestStepVerifiedRequirementsTable();
+			this.configureButtons.call(this);
+		},
+
+		events : {},
+
+		makeTogglePanel : function() {
+			var infoSettings = {
+				initiallyOpen : VRBS.oppened,
+				title : VRBS.title,
+			};
+			this.$("#verified-requirements-panel").togglePanel(infoSettings);
+		},
+
+		configureButtons : function() {
+			var self = this;
+			// ===============toogle buttons=================
+			// this line below is here because toggle panel
+			// buttons cannot be bound with the 'events'
+			// property of Backbone.View.
+			// my guess is that the event is bound to the button
+			// before it is moved from it's "span.not-displayed"
+			// to the toggle panel header.
+			// TODO change our way to make toggle panels buttons
+			// =============/toogle buttons===================
+			this.$("#remove-verified-requirements-button").on('click',
+					function() {
+						self.table.removeSelectedRequirements();
+					});
+			this.$("#remove-verified-requirements-from-step-button").on(
+					'click', function() {
+						self.table.detachSelectedRequirements();
+					});
+			this.$("#add-verified-requirements-button").on('click',
+					self.goToRequirementManager);
+		},
+
+		goToRequirementManager : function() {
+			document.location.href = VRBS.stepUrl + "/manager";
+		},
+
+	});
+	return VerifiedRequirementsPanel;
+});

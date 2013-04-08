@@ -19,13 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "domReady", "./TeamsManager"], function($, domReady, TeamsManager) {
+define([ "jquery", "domReady", "./TeamsManager" ], function($, domReady,
+		TeamsManager) {
 	domReady(function() {
-		
+
 		$("#new-team-button").button();
-		
+
 		new TeamsManager();
 	});
-	
+
 	return {};
 });
