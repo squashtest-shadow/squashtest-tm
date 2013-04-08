@@ -924,24 +924,24 @@ jQuery.fn.getTotalHeight = function() {
 function getScrollTop() {
 	return self.pageYOffset || document.documentElement.scrollTop
 			|| document.body.scrollTop;
-};
+}
 
 function getScrollLeft() {
 	return self.pageXOffset || document.documentElement.scrollLeft
 			|| document.body.scrollLeft;
-};
+}
 
 function getWindowHeight() {
 	var de = document.documentElement;
 	return self.innerHeight || (de && de.clientHeight)
 			|| document.body.clientHeight;
-};
+}
 
 function getWindowWidth() {
 	var de = document.documentElement;
 	return self.innerWidth || (de && de.clientWidth)
 			|| document.body.clientWidth;
-};
+}
 
 /*
  * Utilities to test whether an element will fit in the viewport Parameters: el =
@@ -954,13 +954,13 @@ function fitHorizontal(el, leftOffset) {
 	var leftVal = parseInt(leftOffset) || $(el).offset().left;
 	return (leftVal + $(el).width() <= getWindowWidth() + getScrollLeft() && leftVal
 			- getScrollLeft() >= 0);
-};
+}
 
 function fitVertical(el, topOffset) {
 	var topVal = parseInt(topOffset) || $(el).offset().top;
 	return (topVal + $(el).height() <= getWindowHeight() + getScrollTop() && topVal
 			- getScrollTop() >= 0);
-};
+}
 
 /*-------------------------------------------------------------------- 
  * javascript method: "pxToEm"
@@ -974,9 +974,9 @@ function fitVertical(el, topOffset) {
  *
  * Description: Extends the native Number and String objects with pxToEm method. pxToEm converts a pixel value to ems depending on inherited font size.  
  * Article: http://www.filamentgroup.com/lab/retaining_scalable_interfaces_with_pixel_to_em_conversion/
- * Demo: http://www.filamentgroup.com/examples/pxToEm/	 	
+ * Demo: http://www.filamentgroup.com/examples/pxToEm/
  *							
- * Options:  	 								
+ * Options:
  scope: string or jQuery selector for font-size scoping
  reverse: Boolean, true reverses the conversion to em-px
  * Dependencies: jQuery library						  

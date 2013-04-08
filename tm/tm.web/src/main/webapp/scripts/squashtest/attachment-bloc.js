@@ -29,7 +29,7 @@
  * needed if you want to (inaccurately) support web browsers which can't word-break 
  * 
  * @params : 
- * 	maxWidth : the width the text should not exceed
+ *  maxWidth : the width the text should not exceed
  *  domElement : the element containing the text, as a DOM entity
  *  
  * @returns : the replacement text of for the given element, that should be "appended" to its content (do not use "set text") 

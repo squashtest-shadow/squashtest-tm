@@ -27,7 +27,7 @@
  *
  *
  * Settings :
- * 	tree : the real tree instance (not the jQuery object).
+ *  tree : the real tree instance (not the jQuery object).
  */
 function TreeEventHandler(settings) {
 

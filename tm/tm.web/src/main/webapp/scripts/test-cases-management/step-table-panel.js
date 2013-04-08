@@ -26,37 +26,37 @@
  * {
  * 
  * 
- * 	 basic : {
- * 		testCaseId : the id of the test case,
- * 		projectId : the id of the project this test case belongs to
- * 		rootContext : the root url
- * 		testCaseUrl : the baseTestCaseUrl
- * 	 },
+ *  basic : {
+ *      testCaseId : the id of the test case,
+ *      projectId : the id of the project this test case belongs to
+ *      rootContext : the root url
+ *      testCaseUrl : the baseTestCaseUrl
+ *  },
  * 
  * 
- * 	permissions : {
- * 		isWritable : says whether the table content or structure can be modified by the user
- * 		isAttachable : says if you can attach attachments to the steps 
- * 	},
+ *  permissions : {
+ *      isWritable : says whether the table content or structure can be modified by the user
+ *      isAttachable : says if you can attach attachments to the steps 
+ *  },
  * 
- * 	language : {
- * 		errorTitle : the title of the error popup
- * 		noStepSelected : the message when no steps where selected although some were needed
- * 		oklabel : the ok label for any confirmation popup
- * 		cancellabel : the cancellabel for any confirmation popup
- * 		deleteConfirm : the message for confirmation of deletion of the popup
- * 		deleteTitle : the tooltip for the delete popup buttons
- *   	infoTitle : the title for the popup that says close your widgets in edit mode
- *   	popupMessage : the content of that popup
- *   	btnExpand : the label of the expand button
- *   	btnCollapse : the label of the collapse button  
+ *  language : {
+ *      errorTitle : the title of the error popup
+ *      noStepSelected : the message when no steps where selected although some were needed
+ *      oklabel : the ok label for any confirmation popup
+ *      cancellabel : the cancellabel for any confirmation popup
+ *      deleteConfirm : the message for confirmation of deletion of the popup
+ *      deleteTitle : the tooltip for the delete popup buttons
+ *      infoTitle : the title for the popup that says close your widgets in edit mode
+ *      popupMessage : the content of that popup
+ *      btnExpand : the label of the expand button
+ *      btnCollapse : the label of the collapse button  
  *      addStepTitle : title for the add step popup
  *      addStep : label for the add step button
  *      addAnotherStep :  label for the add another step button
  *      ckeLang : the language for ckEditor
  *      placeholder : the placeholder title
  *      submit : the submit button value
- * 	}
+ *  }
  * 
  * }
  * 

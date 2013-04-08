@@ -24,7 +24,7 @@
  * The file upload popup works like a repeater. It will append or remove lists of Items.
  * 
  * An Item is the following : 
- * 	- a file browser,
+ *  - a file browser,
  *  - a button that will remove it when clicked.
  * 
  * The popup will always propose an empty Item for new inputs. When an item is not empty anymore, a new 

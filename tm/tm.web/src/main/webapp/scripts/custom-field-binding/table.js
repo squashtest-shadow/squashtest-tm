@@ -21,18 +21,18 @@
 
 /*
  * settings (see the doc for jquery datatable for details about the native settings):
- * 	{
- * 		selector : the selector for the table,
- * 		languageUrl : the url where to fetch the localization conf object,
- * 		getUrl : the ajaxSource (native),
- * 		deleteUrl : the url where to send DELETE request,
- * 		moveUrl : the url where to notify that rows have been reordered
- * 		editUrl : the url where to put or delete that a location has changed 
- * 		deferLoading : the iDeferLoading (native),
- * 		oklabel : text for the ok button,
- * 		cancellabel : text for the cancel button,
- * 		renderingLocations : an array of RenderingLocation. These are the ones supported by the BindableEntity this table is treating.  
- * }
+ *  {
+ *      selector : the selector for the table,
+ *      languageUrl : the url where to fetch the localization conf object,
+ *      getUrl : the ajaxSource (native),
+ *      deleteUrl : the url where to send DELETE request,
+ *      moveUrl : the url where to notify that rows have been reordered
+ *      editUrl : the url where to put or delete that a location has changed 
+ *      deferLoading : the iDeferLoading (native),
+ *      oklabel : text for the ok button,
+ *      cancellabel : text for the cancel button,
+ *      renderingLocations : an array of RenderingLocation. These are the ones supported by the BindableEntity this table is treating.  
+ *  }
  */
 
 define(

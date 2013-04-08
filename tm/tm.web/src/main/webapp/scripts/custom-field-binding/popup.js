@@ -21,17 +21,17 @@
 
 /*
  *conf : 
- *	{
- *		projectId : the projectId,
- *		bindableEntity : the bindable entity type,
- *		getURL : the URL from where the available custom fields are fetched,
- *		postURL : the URL where to send the data
- *		selector : the selector for the popup,
- * 		title : title of that popup,
- * 		oklabel : localized label for 'ok',
- * 		cancellabel : localized label for 'cancel',
- * 		
- * 	}
+ *  {
+ *      projectId : the projectId,
+ *      bindableEntity : the bindable entity type,
+ *      getURL : the URL from where the available custom fields are fetched,
+ *      postURL : the URL where to send the data
+ *      selector : the selector for the popup,
+ *      title : title of that popup,
+ *      oklabel : localized label for 'ok',
+ *      cancellabel : localized label for 'cancel',
+ *      
+ *  }
  * 
  * 
  */
