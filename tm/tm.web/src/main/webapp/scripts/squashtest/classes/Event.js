@@ -33,7 +33,7 @@ function EventPaste(destination) {
 	this.base("paste");
 	this.evt_destination = destination;
 }
-EventPaste.prototype = new SquashEvent;
+EventPaste.prototype = new SquashEvent();
 
 // 'duplicate' event, inheriting paste
 function EventDuplicate(destination, duplicate, source) {
@@ -42,7 +42,7 @@ function EventDuplicate(destination, duplicate, source) {
 	this.evt_duplicate = duplicate;
 	this.evt_source = source;
 }
-EventDuplicate.prototype = new EventPaste;
+EventDuplicate.prototype = new EventPaste();
 
 // 'rename' event, inheriting base event
 function EventRename(target, newName) {
@@ -52,7 +52,7 @@ function EventRename(target, newName) {
 	this.evt_newname = newName;
 }
 
-EventRename.prototype = new SquashEvent;
+EventRename.prototype = new SquashEvent();
 
 // 'update reference', inheriting base event
 function EventUpdateReference(target, newReference) {
@@ -62,4 +62,4 @@ function EventUpdateReference(target, newReference) {
 	this.evt_newref = newReference;
 }
 
-EventUpdateReference.prototype = new SquashEvent;
+EventUpdateReference.prototype = new SquashEvent();

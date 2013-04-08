@@ -223,7 +223,7 @@ function Menu(caller, options) {
 			}
 			
 			return false;
-			break;
+			
 
 		case 38: // up arrow
 			if ($(event.target).is('.' + options.linkHover)) {
@@ -237,7 +237,7 @@ function Menu(caller, options) {
 				container.find('a:eq(0)').trigger('mouseover');
 			}
 			return false;
-			break;
+			
 
 		case 39: // right arrow
 			if ($(event.target).is('.fg-menu-indicator')) {
@@ -254,7 +254,7 @@ function Menu(caller, options) {
 			}
 			
 			return false;
-			break;
+			
 
 		case 40: // down arrow
 			if ($(event.target).is('.' + options.linkHover)) {
@@ -268,7 +268,7 @@ function Menu(caller, options) {
 				container.find('a:eq(0)').trigger('mouseover');
 			}
 			return false;
-			break;
+			
 
 		case 27: // escape
 			killAllMenus();
@@ -905,7 +905,7 @@ Menu.prototype.setPosition = function(widget, caller, options) {
 
 function sortBigToSmall(a, b) {
 	return b - a;
-};
+}
 
 jQuery.fn.getTotalWidth = function() {
 	return $(this).width() + parseInt($(this).css('paddingRight'))

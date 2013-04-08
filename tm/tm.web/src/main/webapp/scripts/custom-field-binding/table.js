@@ -183,7 +183,7 @@ define(
 								+ renderingLocations[i],
 						'sWidth' : '15em',
 						'sClass' : 'centered custom-field-location'
-					}
+					};
 					aoColumnDefs.push(columnDef);
 				}
 
