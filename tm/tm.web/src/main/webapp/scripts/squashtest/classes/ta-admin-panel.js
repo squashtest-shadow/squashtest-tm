@@ -193,7 +193,7 @@ function TestAutomationAddProjectPopup(settings) {
 			var item = newItem(json[i]);
 			items = items.add(item);
 		}
-		;
+		
 
 		items.filter("div:odd").addClass("odd");
 		items.filter("div:even").addClass("even");
@@ -273,7 +273,7 @@ function TestAutomationAddProjectPopup(settings) {
 			var formItem = $.extend({}, projectNames[i], serverData);
 			formData.push(formItem);
 		}
-		;
+		
 
 		$.ajax({
 			url : bindProjectsURL,

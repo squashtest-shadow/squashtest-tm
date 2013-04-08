@@ -76,17 +76,17 @@
 						break;
 
 					}
-					;
+					
 
 					return css;
 				}
-				;
+				
 
 				function makeHtml(cssClass, text) {
 					return '<span class="common-status-label ' + cssClass
 							+ '">' + text + '</span>';
 				}
-				;
+			
 
 			};
 

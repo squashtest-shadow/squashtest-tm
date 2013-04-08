@@ -39,7 +39,7 @@ define([ 'jquery' ], function($) {
 			if (reference.length > 0) {
 				reference += " - ";
 			}
-			;
+			
 
 			$(this.nameDisplay).text(reference + name);
 		};
@@ -65,14 +65,14 @@ define([ 'jquery' ], function($) {
 				if (this.isMe(evt.evt_target)) {
 					this._rename(evt.evt_newname);
 				}
-				;
+				
 				break;
 
 			case "update-reference":
 				if (this.isMe(evt.evt_target)) {
 					this._updateReference(evt.evt_newref);
 				}
-				;
+				
 				break;
 			default:
 				break;

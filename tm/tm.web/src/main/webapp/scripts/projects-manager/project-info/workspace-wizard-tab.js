@@ -160,7 +160,7 @@ define(
 				enabledCollection.panelView = panelView;
 
 			}
-			;
+			
 
 			return initWizardTabView;
 		});

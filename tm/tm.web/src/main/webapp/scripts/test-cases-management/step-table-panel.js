@@ -390,7 +390,7 @@ define(
 					$.extend(squashSettings, moreSettings);
 
 				}
-				;
+				
 
 				if (permissions.isAttachable) {
 					squashSettings.attachments = {
@@ -656,7 +656,7 @@ define(
 				initAddTestStepDialog(language, urls);
 
 			}
-			;
+			
 
 			// ************************************* table collapser code
 			// ****************************
@@ -783,7 +783,7 @@ define(
 				initCollapser(language, urls, permissions.isWritable);
 
 			}
-			;
+			
 
 			return {
 				init : init

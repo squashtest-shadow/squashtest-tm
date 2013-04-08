@@ -42,7 +42,7 @@ define([ 'jquery' ], function($) {
 				if (this.isMe(evt.evt_target)) {
 					this._rename(evt.evt_newname);
 				}
-				;
+				
 				break;
 			default:
 				break;

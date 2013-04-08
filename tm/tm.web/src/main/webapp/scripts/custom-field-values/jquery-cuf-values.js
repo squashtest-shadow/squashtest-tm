@@ -73,7 +73,7 @@ define(
 						});
 					};
 				}
-				;
+				
 
 				return function(value, settings) {
 					var data = postProcessFn(value, settings);

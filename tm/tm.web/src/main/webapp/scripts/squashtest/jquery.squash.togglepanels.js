@@ -129,7 +129,7 @@
 									'ui-effects-wrapper')) {
 								return;
 							}
-							;
+							
 
 							var panelHead = this.panelHead;
 

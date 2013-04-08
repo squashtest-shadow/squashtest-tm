@@ -185,7 +185,7 @@ define(
 				};
 
 			}
-			;
+			
 
 			return CUFValuesCreator;
 

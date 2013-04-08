@@ -54,21 +54,21 @@ $.fn.fgmenu = function(options) {
 		if (!m.menuOpen) {
 			m.showLoading();
 		}
-		;
+		
 	}).click(function() {
 		if (m.menuOpen == false) {
 			m.showMenu();
 		} else {
 			m.kill();
 		}
-		;
+		
 		return false;
 	});
 };
 
 function MenuEvent() {
 	this.eventHandlers = [];
-};
+}
 
 MenuEvent.prototype.addHandler = function(eventHandler) {
 	this.eventHandlers.push(eventHandler);
@@ -144,7 +144,7 @@ function Menu(caller, options) {
 			if (allUIMenus[i].menuOpen) {
 				allUIMenus[i].kill();
 			}
-			;
+			
 		});
 	};
 
@@ -156,19 +156,19 @@ function Menu(caller, options) {
 		if (options.flyOutOnState) {
 			container.find('li a').removeClass(options.flyOutOnState);
 		}
-		;
+		
 		if (options.callerOnState) {
 			caller.removeClass(options.callerOnState);
 		}
-		;
+		
 		if (container.is('.fg-menu-ipod')) {
 			menu.resetDrilldownMenu();
 		}
-		;
+		
 		if (container.is('.fg-menu-flyout')) {
 			menu.resetFlyoutMenu();
 		}
-		;
+		
 		container.parent().hide();
 		menu.menuOpen = false;
 		$(document).unbind('click', killAllMenus);
@@ -201,27 +201,27 @@ function Menu(caller, options) {
 				if ($('.' + options.flyOutOnState).size() > 0) {
 					$('.' + options.flyOutOnState).trigger('mouseover');
 				}
-				;
+				
 			}
-			;
+			
 
 			if (menuType == 'ipod') {
 				$(event.target).trigger('mouseout');
 				if ($('.fg-menu-footer').find('a').size() > 0) {
 					$('.fg-menu-footer').find('a').trigger('click');
 				}
-				;
+				
 				if ($('.fg-menu-header').find('a').size() > 0) {
 					$('.fg-menu-current-crumb').prev().find('a').trigger(
 							'click');
 				}
-				;
+				
 				if ($('.fg-menu-current').prev().is('.fg-menu-indicator')) {
 					$('.fg-menu-current').prev().trigger('mouseover');
 				}
-				;
+				
 			}
-			;
+			
 			return false;
 			break;
 
@@ -232,7 +232,7 @@ function Menu(caller, options) {
 					$(event.target).trigger('mouseout');
 					prevLink.trigger('mouseover');
 				}
-				;
+				
 			} else {
 				container.find('a:eq(0)').trigger('mouseover');
 			}
@@ -250,9 +250,9 @@ function Menu(caller, options) {
 								'mouseover');
 					}, options.crossSpeed);
 				}
-				;
+				
 			}
-			;
+			
 			return false;
 			break;
 
@@ -263,7 +263,7 @@ function Menu(caller, options) {
 					$(event.target).trigger('mouseout');
 					nextLink.trigger('mouseover');
 				}
-				;
+				
 			} else {
 				container.find('a:eq(0)').trigger('mouseover');
 			}
@@ -283,10 +283,10 @@ function Menu(caller, options) {
 									'mouseover');
 						}, options.crossSpeed);
 			}
-			;
+			
 			break;
 		}
-		;
+		
 	};
 
 	this.showMenu = function() {
@@ -295,7 +295,7 @@ function Menu(caller, options) {
 		if (!menu.menuExists) {
 			menu.create();
 		}
-		;
+		
 		caller.addClass('fg-menu-open').addClass(options.callerOnState);
 		container.parent().show().click(function() {
 			menu.kill();
@@ -352,7 +352,7 @@ function Menu(caller, options) {
 				return false;
 			});
 		}
-		;
+		
 
 		if (options.linkHover) {
 			var allLinks = container.find('.fg-menu li a');
@@ -367,7 +367,7 @@ function Menu(caller, options) {
 						.removeAttr('id');
 			});
 		}
-		;
+		
 
 		if (options.linkHoverSecondary) {
 			container.find('.fg-menu li').hover(
@@ -383,7 +383,7 @@ function Menu(caller, options) {
 						$(this).removeClass(options.linkHoverSecondary);
 					});
 		}
-		;
+		
 
 		menu.setPosition(container, caller, options);
 		menu.menuExists = true;
@@ -395,7 +395,7 @@ function Menu(caller, options) {
 		$('#menuSelection').text($(item).text());
 		location.href = $(item).attr('href');
 	};
-};
+}
 
 Menu.prototype.flyout = function(container, options) {
 	var menu = this;
@@ -429,7 +429,7 @@ Menu.prototype.flyout = function(container, options) {
 									bottom : 0
 								});
 							}
-							;
+							
 							if (!fitHorizontal(subList,
 									$(this).offset().left + 100)) {
 								subList.css({
@@ -438,7 +438,7 @@ Menu.prototype.flyout = function(container, options) {
 									'z-index' : 999
 								});
 							}
-							;
+							
 							showTimer = setTimeout(function() {
 								subList.addClass('ui-widget-content').show(
 										options.showSpeed).attr(
@@ -504,14 +504,14 @@ Menu.prototype.drilldown = function(container, options) {
 	} else {
 		breadcrumb.addClass('fg-menu-header').prependTo(container);
 	}
-	;
+	
 	breadcrumb.append(crumbDefaultHeader);
 
 	var checkMenuHeight = function(el) {
 		if (el.height() > options.maxHeight) {
 			el.addClass('fg-menu-scroll');
 		}
-		;
+		
 		el.css({
 			height : options.maxHeight
 		});
@@ -619,7 +619,7 @@ Menu.prototype.drilldown = function(container, options) {
 														b.remove();
 														footer.hide();
 													}
-													;
+													
 												};
 
 												// initialize "back" link
@@ -740,7 +740,7 @@ Menu.prototype.drilldown = function(container, options) {
 																					.nextAll()
 																					.remove();
 																		}
-																		;
+																		
 																		return false;
 																	});
 													newCrumb
@@ -750,7 +750,7 @@ Menu.prototype.drilldown = function(container, options) {
 																			+ options.nextCrumbLink
 																			+ '"></span>');
 												}
-												;
+												
 												return false;
 											});
 						}
@@ -762,7 +762,7 @@ Menu.prototype.drilldown = function(container, options) {
 								return false;
 							});
 						}
-						;
+						
 					});
 };
 
@@ -813,7 +813,7 @@ Menu.prototype.setPosition = function(widget, caller, options) {
 		xVal = dims.refW;
 		break;
 	}
-	;
+	
 
 	// get Y pos
 	switch (options.positionOpts.posY) {
@@ -827,7 +827,7 @@ Menu.prototype.setPosition = function(widget, caller, options) {
 		yVal = dims.refH;
 		break;
 	}
-	;
+	
 
 	// add the offsets (zero by default)
 	xVal += options.positionOpts.offsetX;
@@ -857,7 +857,7 @@ Menu.prototype.setPosition = function(widget, caller, options) {
 			});
 		}
 	}
-	;
+	
 
 	// and horizontally
 	if (options.positionOpts.directionH == 'left') {
@@ -883,7 +883,7 @@ Menu.prototype.setPosition = function(widget, caller, options) {
 			});
 		}
 	}
-	;
+	
 
 	// if specified, clone the referring element and position it so that it
 	// appears on top of the menu
@@ -898,7 +898,7 @@ Menu.prototype.setPosition = function(widget, caller, options) {
 			height : referrer.height()
 		}).insertAfter(el);
 	}
-	;
+	
 };
 
 /* Utilities to sort and find viewport dimensions */
@@ -1024,7 +1024,7 @@ Number.prototype.pxToEm = String.prototype.pxToEm = function(settings) {
 	} else {
 		scopeVal = parseFloat(jQuery(settings.scope).css("font-size"));
 	}
-	;
+	
 
 	var result = (settings.reverse == true) ? (pxVal * scopeVal).toFixed(2)
 			+ 'px' : (pxVal / scopeVal).toFixed(2) + 'em';

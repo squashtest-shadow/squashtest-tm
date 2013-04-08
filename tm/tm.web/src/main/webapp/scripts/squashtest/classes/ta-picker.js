@@ -67,7 +67,7 @@ function TestAutomationPicker(settings) {
 		if (node.length < 1) {
 			throw "no-selection";
 		}
-		;
+		
 
 		var nodePath = node.getPath();
 		// let's strip the 'library' part
@@ -225,7 +225,7 @@ function TestAutomationPicker(settings) {
 		if (self.initAjax) {
 			self.initAjax.abort();
 		}
-		;
+		
 	});
 
 }

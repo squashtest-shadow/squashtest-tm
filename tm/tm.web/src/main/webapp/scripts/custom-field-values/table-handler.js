@@ -51,7 +51,7 @@ define(
 					columns.push(newColumn);
 
 				}
-				;
+				
 
 				return columns;
 

@@ -40,7 +40,7 @@ define(
 					if (index) {
 						this.checkedIds.splice(index, 1);
 					}
-					;
+					
 				};
 			}
 
@@ -406,7 +406,7 @@ define(
 								$(settings.emptySelectionMessageSelector)
 										.openMessage();
 							}
-							;
+							
 							getCheckboxes().prop('checked', false); // reset the
 																	// checkboxes
 							this.checkedSuites.reset(); // reset the model

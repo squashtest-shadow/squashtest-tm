@@ -31,7 +31,7 @@ define(
 				}
 				descriptionCell.html(text);
 			}
-			;
+			
 			var View = Backbone.View
 					.extend({
 						el : "#teams-table",
