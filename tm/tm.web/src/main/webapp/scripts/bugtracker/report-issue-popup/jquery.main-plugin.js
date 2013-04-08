@@ -217,35 +217,36 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 		
 		var setModel = $.proxy(function(newModel){
 			
-			this.model.set(newModel);
+			this.model.set(newModel);			
+			createViewForModel();
+			
+			this.idText.val(this.model.get('id'));			
 			this.fieldsView.readIn();
-			this.idText.val(this.model.get('id'));
-			
-			if (isDefaultIssueModel){
-				populateDefaultFieldView();
-			}
-			else{
-				populateDynamicFieldView();
-			}
 			
 		}, self);
 		
-		var populateDefaultFieldView = $.proxy(function(){
-
+		
+		var createViewForModel = $.proxy(function(){
 			if (this.fieldsView==null){
-				this.fieldsView = new DefaultFieldView({
-					el : this.find('.issue-report-fields').get(0),
-					model : this.model,
-					labels : settings.labels
-				});
+				var view;
+				
+				if (isDefaultIssueModel){
+					view = new DefaultFieldView({
+						el : this.find('.issue-report-fields').get(0),
+						model : this.model,
+						labels : settings.labels
+					});
+				}
+				else{
+					//TODO
+					view = null;
+				}			
+				
+				this.fieldsView = view;
 			}
-
 		}, self);
 		
-		var populateDynamicFieldView = $.proxy(function(){
-			
-		}, self);
-			
+
 			
 		var resetModel = $.proxy(function(){
 			getIssueModelTemplate()
@@ -265,7 +266,7 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 			if (! this.mdlTemplate){
 
 				flipToPleaseWait();		
-		/*
+				
 				$.ajax({
 					url : self.reportUrl,
 					type : "GET",
@@ -277,12 +278,7 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 					jobDone.resolve();
 				})
 				.fail(jobDone.reject)
-				.then(flipToMain);*/
-				
-				var jon = '{"id":null,"priority":null,"comment":null,"version":null,"status":null,"description":"plop","category":null,"project":{"name":"my_project","id":"1","priorities":[{"name":"feature","id":"10","dummy":false},{"name":"trivial","id":"20","dummy":false},{"name":"text","id":"30","dummy":false},{"name":"tweak","id":"40","dummy":false},{"name":"minor","id":"50","dummy":false},{"name":"major","id":"60","dummy":false},{"name":"crash","id":"70","dummy":false},{"name":"block","id":"80","dummy":false}],"categories":[{"name":"Database","id":"0","dummy":false},{"name":"General","id":"1","dummy":false},{"name":"Inclassable","id":"2","dummy":false},{"name":"Interface","id":"3","dummy":false},{"name":"Server","id":"4","dummy":false}],"versions":[{"name":"2.0","id":"3","dummy":false},{"name":"1.2","id":"2","dummy":false},{"name":"1.0","id":"1","dummy":false}],"users":[{"name":"tintin","permissions":[{"name":"viewer","id":"10","dummy":false},{"name":"reporter","id":"25","dummy":false}],"id":"2","dummy":false},{"name":"admin","permissions":[{"name":"viewer","id":"10","dummy":false},{"name":"reporter","id":"25","dummy":false},{"name":"updater","id":"40","dummy":false},{"name":"developer","id":"55","dummy":false},{"name":"manager","id":"70","dummy":false},{"name":"administrator","id":"90","dummy":false}],"id":"1","dummy":false}],"dummy":false},"summary":null,"bugtracker":null,"createdOn":null,"reporter":null,"assignee":null}'
-				self.mdlTemplate = JSON.parse(jon);
-				flipToMain();
-				jobDone.resolve();
+				.then(flipToMain);
 			
 			}
 			else{
@@ -332,9 +328,7 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 		
 		
 		/* ************* public ************************ */
-		
-		
-		
+
 		this.submitIssue = $.proxy(function(){
 			
 			flipToPleaseWait();

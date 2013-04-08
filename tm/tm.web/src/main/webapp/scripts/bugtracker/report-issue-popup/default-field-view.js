@@ -25,8 +25,6 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost
 		
 		initialize : function(){
 			var evtname = 'change:'+this.options.attribute;
-			this.model.on(evtname, this.updatecontrol, this);
-			this.$el.on('change', $.proxy(this.updatemodel, this));
 		},
 		
 		updatemodel : function(){
