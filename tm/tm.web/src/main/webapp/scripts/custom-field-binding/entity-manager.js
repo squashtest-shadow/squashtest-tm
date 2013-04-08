@@ -19,41 +19,39 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+define([ "require", "./panel", "./table", "./popup" ], function(require, Panel,
+		Table, Popup) {
 
-
-define (["require","./panel", "./table", "./popup"],function(require, Panel, Table, Popup){
-	
-
-	function getPanelConf(settings){
-		return { 
-			'selector' : settings.mainSelector+" .cuf-binding-panel",
-			'initiallyOpen' : true, 
+	function getPanelConf(settings) {
+		return {
+			'selector' : settings.mainSelector + " .cuf-binding-panel",
+			'initiallyOpen' : true,
 			'title' : settings.panelTitle
 		};
 	}
-	
-	function getTableGetURL(settings){
+
+	function getTableGetURL(settings) {
 		var url = settings.baseURL;
-		url = url+"?projectId="+settings.projectId;
-		url = url+"&bindableEntity="+settings.entityType;
+		url = url + "?projectId=" + settings.projectId;
+		url = url + "&bindableEntity=" + settings.entityType;
 		return url;
 	}
-	
-	function getTableDeleteURL(settings){
+
+	function getTableDeleteURL(settings) {
 		return settings.baseURL;
 	}
-	
-	function getTableMoveURL(settings){
+
+	function getTableMoveURL(settings) {
 		return settings.baseURL;
 	}
-	
-	function getTableEditURL(settings){
+
+	function getTableEditURL(settings) {
 		return settings.baseURL;
 	}
-	
-	function getTableConf(settings){
+
+	function getTableConf(settings) {
 		return {
-			selector : settings.mainSelector+" .cuf-binding-table",
+			selector : settings.mainSelector + " .cuf-binding-table",
 			languageUrl : settings.tableLanguageUrl,
 			getUrl : getTableGetURL(settings),
 			deleteUrl : getTableDeleteURL(settings),
@@ -67,49 +65,46 @@ define (["require","./panel", "./table", "./popup"],function(require, Panel, Tab
 			renderingLocations : settings.tableRenderingLocations
 		};
 	}
-	
-	function getPopupGetURL(settings){
-		var url = settings.baseURL+"/available";
-		url = url+"?projectId="+settings.projectId;
-		url = url+"&bindableEntity="+settings.entityType;
+
+	function getPopupGetURL(settings) {
+		var url = settings.baseURL + "/available";
+		url = url + "?projectId=" + settings.projectId;
+		url = url + "&bindableEntity=" + settings.entityType;
 		return url;
 	}
-	
-	function getPopupPostURL(settings){
-		return settings.baseURL+"/new-batch";
+
+	function getPopupPostURL(settings) {
+		return settings.baseURL + "/new-batch";
 	}
-	
-	
-	function getPopupConf(settings){
+
+	function getPopupConf(settings) {
 		return {
 			projectId : settings.projectId,
-			bindableEntity : settings.entityType, 
+			bindableEntity : settings.entityType,
 			getURL : getPopupGetURL(settings),
 			postURL : getPopupPostURL(settings),
-			selector : settings.mainSelector+" .cuf-binding-popup",
+			selector : settings.mainSelector + " .cuf-binding-popup",
 			title : settings.popupTitle,
 			oklabel : settings.oklabel,
 			cancellabel : settings.cancellabel
-		};		
+		};
 	}
-	
-	return function(settings){
-		var self=this;
-		
-		
-		
+
+	return function(settings) {
+		var self = this;
+
 		var panelConf = getPanelConf(settings);
 		this.panel = new Panel(panelConf);
-		
+
 		var tableConf = getTableConf(settings);
 		this.table = new Table(tableConf);
-		
+
 		var popupConf = getPopupConf(settings);
 		this.popup = new Popup(popupConf);
-		
+
 		this.panel.getButton().setPopup(this.popup);
 		this.popup.addPostSuccessListener({
-			update : function(){
+			update : function() {
 				self.table.refresh();
 			}
 		});

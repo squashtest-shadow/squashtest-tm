@@ -19,62 +19,66 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery'], function($){
+define([ 'jquery' ], function($) {
 
-	return function(){
-	
+	return function() {
+
 		this.identity = undefined;
-			
+
 		this.nameDisplay = undefined;
-		
+
 		this.nameHidden = undefined;
-		
+
 		this.referenceHidden = undefined;
-		
-		this._updateDisplay = function(){
-			
+
+		this._updateDisplay = function() {
+
 			var name = $(this.nameHidden).text();
-			var reference = $.trim( $(this.referenceHidden).text());
-			
-			if (reference.length>0){
-				reference+=" - ";
-			};
-			
-			$(this.nameDisplay).text(reference+name);
+			var reference = $.trim($(this.referenceHidden).text());
+
+			if (reference.length > 0) {
+				reference += " - ";
+			}
+			;
+
+			$(this.nameDisplay).text(reference + name);
 		};
-		
-		this._rename = function(newName){
-			$(this.nameHidden).text(newName);	
+
+		this._rename = function(newName) {
+			$(this.nameHidden).text(newName);
 			this._updateDisplay();
 		};
-		
-		this._updateReference = function(newRef){
+
+		this._updateReference = function(newRef) {
 			$(this.referenceHidden).text(newRef);
 			this._updateDisplay();
 		};
 
-		
-		this.isMe = function(target){
-			return (this.identity.obj_id == target.obj_id) && 
-			 	   (this.identity.obj_restype == target.obj_restype);
+		this.isMe = function(target) {
+			return (this.identity.obj_id == target.obj_id)
+					&& (this.identity.obj_restype == target.obj_restype);
 		};
-		
-		this.update = function(evt){
-			switch(evt.evt_name){
-			case "rename" : if (this.isMe(evt.evt_target)){				
-								this._rename(evt.evt_newname);
-							};
-							break;
-			
-			case "update-reference" : if (this.isMe(evt.evt_target)){
-								this._updateReference(evt.evt_newref);
-							};
-							break;
-			default : break;
-			}			
+
+		this.update = function(evt) {
+			switch (evt.evt_name) {
+			case "rename":
+				if (this.isMe(evt.evt_target)) {
+					this._rename(evt.evt_newname);
+				}
+				;
+				break;
+
+			case "update-reference":
+				if (this.isMe(evt.evt_target)) {
+					this._updateReference(evt.evt_newref);
+				}
+				;
+				break;
+			default:
+				break;
+			}
 		};
-		
-		
+
 	};
-	
+
 })
