@@ -63,7 +63,7 @@ define(
 						makeTogglePanel : function() {
 							var infoSettings = {
 								initiallyOpen : true,
-								title : UMod.message.permissionsPanelTitle,
+								title : UMod.message.permissionsPanelTitle
 							};
 							this.$("#project-permission-panel").togglePanel(
 									infoSettings);
@@ -247,7 +247,7 @@ define(
 							};
 
 							this.addPermissionDialog = addPermissionDialog;
-						},
+						}
 					});
 			return UserPermissionsPanel;
 		});

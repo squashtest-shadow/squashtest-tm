@@ -62,7 +62,7 @@ define(
 						makeTogglePanel : function() {
 							var infoSettings = {
 								initiallyOpen : true,
-								title : teamMod.message.permissionsPanelTitle,
+								title : teamMod.message.permissionsPanelTitle
 							};
 							this.$("#project-permission-panel").togglePanel(
 									infoSettings);
@@ -245,7 +245,7 @@ define(
 							};
 
 							this.addPermissionDialog = addPermissionDialog;
-						},
+						}
 					});
 			return TeamPermissionPanel;
 		});

@@ -64,7 +64,7 @@ define(
 								// has Dom configuration
 								"aaSorting" : [ [ 4, 'asc' ] ],
 								"fnRowCallback" : this.requirementsTableRowCallback,
-								"fnDrawCallback" : this.requirementsTableDrawCallback,
+								"fnDrawCallback" : this.requirementsTableDrawCallback
 							};
 						},
 
@@ -162,7 +162,7 @@ define(
 							}
 							$.ajax({
 								url : VRTS.url + '/' + ids.join(','),
-								type : 'delete',
+								type : 'delete'
 							}).done(self.refresh);
 
 						},
@@ -232,7 +232,7 @@ define(
 											// --%>
 										loadurl : urlGET,
 										onsubmit : function() {
-										}, // - do nothing for now
+										} // - do nothing for now
 									});
 
 						},
@@ -245,7 +245,7 @@ define(
 							this.table.fnDraw(false);
 							$("#" + VRTS.containerId).trigger(
 									"verifiedrequirementversions.refresh");
-						},
+						}
 
 					});
 			return VerifiedRequirementsTable;

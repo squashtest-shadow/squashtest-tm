@@ -387,7 +387,7 @@ define(
 							}, {
 								type : 'datepicker',
 								tooltip : cfMod.richEditPlaceHolder,
-								datepicker : dateSettings,
+								datepicker : dateSettings
 							});
 
 						},

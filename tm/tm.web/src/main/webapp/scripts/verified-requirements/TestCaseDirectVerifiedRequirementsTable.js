@@ -34,7 +34,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 
 				},
 
-				events : {},
+				events : {}
 
 			});
 	return TestCaseDirectVerifiedRequirementsTable;

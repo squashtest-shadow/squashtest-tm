@@ -40,9 +40,9 @@ define(
 									'text' : UMod.message.confirmLabel,
 									'click' : function() {
 										self.submitPassword.call(self);
-									},
+									}
 								} ],
-								width : 420,
+								width : 420
 							};
 
 							squashtm.popup.create(params);
@@ -154,7 +154,7 @@ define(
 							$("#newPassword").val('');
 							$("#user-account-confirmpass").val('');
 
-						},
+						}
 					});
 			return UserChangePasswordPopup;
 		});

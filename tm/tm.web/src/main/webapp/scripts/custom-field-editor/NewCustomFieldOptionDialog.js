@@ -61,7 +61,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 				// note : we cannot use promise api with async param. see
 				// http://bugs.jquery.com/ticket/11013#comment:40
 				async : false,
-				dataType : 'json',
+				dataType : 'json'
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				res = false;
 				event.preventDefault();
@@ -80,7 +80,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			var $el = this.$el;
 			this.model.label = $el.find("#new-cuf-option-label").val();
 			this.model.code = $el.find("#new-cuf-option-code").val();
-		},
+		}
 
 	});
 

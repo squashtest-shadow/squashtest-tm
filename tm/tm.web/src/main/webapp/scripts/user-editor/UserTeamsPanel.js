@@ -36,7 +36,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				makeTogglePanel : function() {
 					var infoSettings = {
 						initiallyOpen : true,
-						title : UMod.message.teamsPanelTitle,
+						title : UMod.message.teamsPanelTitle
 					};
 					this.$("#teams-panel").togglePanel(infoSettings);
 				},
@@ -187,7 +187,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					};
 
 					this.addTeamDialog = addTeamDialog;
-				},
+				}
 			});
 			return UserTeamsPanel;
 		});

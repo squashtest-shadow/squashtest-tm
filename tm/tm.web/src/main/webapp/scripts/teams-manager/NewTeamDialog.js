@@ -114,7 +114,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF",
 
 			model.name = $el.find("#add-team-name").val();
 			model.description = $el.find("#add-team-description").val();
-		},
+		}
 	});
 
 	return View;

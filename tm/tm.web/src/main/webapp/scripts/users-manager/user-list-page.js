@@ -118,7 +118,7 @@ define([ "jquery", "jquery.squash.datatables" ], function($) {
 				url : url,
 				type : 'POST',
 				dataType : 'json',
-				data : readForm(),
+				data : readForm()
 			}).success(refreshUsers);
 		}
 	}

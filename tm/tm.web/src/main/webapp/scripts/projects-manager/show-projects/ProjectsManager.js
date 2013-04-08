@@ -33,7 +33,7 @@ define(
 
 						events : {
 							"click #new-project-button" : "showNewProjectDialog",
-							"click #new-project-from-template-button" : "showNewProjectFromTemplateDialog",
+							"click #new-project-from-template-button" : "showNewProjectFromTemplateDialog"
 						},
 
 						showNewProjectDialog : function(event) {
@@ -97,7 +97,7 @@ define(
 											copyPermissions : true,
 											copyCUF : true,
 											copyBugtrackerBinding : true,
-											copyAutomatedProjects : true,
+											copyAutomatedProjects : true
 										}
 									});
 

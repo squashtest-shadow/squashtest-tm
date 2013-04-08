@@ -309,7 +309,7 @@ define(
 						list : [ {
 							targetClass : 'called-tc-cell',
 							url : urls.callTC
-						}, ]
+						} ]
 					},
 
 					buttons : [

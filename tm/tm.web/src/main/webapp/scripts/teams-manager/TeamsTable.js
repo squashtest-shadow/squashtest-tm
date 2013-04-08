@@ -116,7 +116,7 @@ define(
 									},
 									fail : function() {
 									}
-								},
+								}
 
 							};
 
@@ -129,7 +129,7 @@ define(
 						},
 						refresh : function() {
 							this.$el.squashTable().fnDraw(false);
-						},
+						}
 					});
 
 			return View;

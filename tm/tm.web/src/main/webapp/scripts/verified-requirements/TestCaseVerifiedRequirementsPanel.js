@@ -41,7 +41,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		makeTogglePanel : function() {
 			var infoSettings = {
 				initiallyOpen : VRBS.oppened,
-				title : VRBS.title,
+				title : VRBS.title
 			};
 			this.$("#verified-requirements-panel").togglePanel(infoSettings);
 		},
@@ -67,7 +67,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 
 		goToRequirementManager : function() {
 			document.location.href = VRBS.url + "/manager";
-		},
+		}
 
 	});
 	return VerifiedRequirementsPanel;

@@ -25,7 +25,7 @@ define(
 				"jquery.squash.togglepanel", "jquery.ckeditor", "jeditable",
 				"ckeditor", "jeditable.ckeditor", "jquery.squash.jeditable",
 				"jquery.squash.squashbutton",
-				"datepicker/require.jquery.squash.datepicker-locales", ],
+				"datepicker/require.jquery.squash.datepicker-locales" ],
 		function($, Backbone, TestStepInfoModel, VerifiedRequirementsPanel,
 				Forms) {
 			var editTCS = squashtm.app.editTCS;
@@ -75,7 +75,7 @@ define(
 								disabled : editTCS.nextId == -1,
 								text : false,
 								icons : {
-									primary : "ui-icon-triangle-1-e",
+									primary : "ui-icon-triangle-1-e"
 								}
 							});
 
@@ -83,7 +83,7 @@ define(
 								disabled : editTCS.previousId == -1,
 								text : false,
 								icons : {
-									primary : "ui-icon-triangle-1-w",
+									primary : "ui-icon-triangle-1-w"
 								}
 							});
 
@@ -163,7 +163,7 @@ define(
 							// "change .test-step-attr" : "updateCKEModelAttr",
 							// did not work because of _CKE instances (cf method
 							// configureCKEs to see how manual binding is done.
-							"change .cuf-value-control" : "updateModelCufAttr",
+							"change .cuf-value-control" : "updateModelCufAttr"
 
 						},
 

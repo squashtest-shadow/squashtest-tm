@@ -25,7 +25,7 @@ define(
 				PLAIN_TEXT : "",
 				CHECKBOX : "false",
 				DROPDOWN_LIST : "",
-				DATE_PICKER : "",
+				DATE_PICKER : ""
 			};
 
 			function isBlank(val) {

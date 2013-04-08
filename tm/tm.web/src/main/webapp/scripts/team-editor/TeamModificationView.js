@@ -23,7 +23,7 @@ define(
 				"./TeamPermissionPanel", "jquery.squash", "jqueryui",
 				"jquery.squash.togglepanel", "jquery.squash.datatables",
 				"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-				"jquery.squash.confirmdialog", , "jquery.squash.jeditable" ],
+				"jquery.squash.confirmdialog", "jquery.squash.jeditable" ],
 		function($, Backbone, _, StringUtil, TeamPermissionPanel) {
 			var teamMod = squashtm.app.teamMod;
 			var TeamModificationView = Backbone.View
@@ -46,7 +46,7 @@ define(
 						},
 
 						events : {
-							"click #delete-team-button" : "confirmTeamDeletion",
+							"click #delete-team-button" : "confirmTeamDeletion"
 						},
 
 						confirmTeamDeletion : function(event) {
@@ -345,7 +345,7 @@ define(
 						closePopup : function() {
 							$(this).data("answer", "cancel");
 							$(this).dialog('close');
-						},
+						}
 
 					});
 

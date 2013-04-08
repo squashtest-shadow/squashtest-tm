@@ -29,7 +29,7 @@ define([ "jquery", "backbone", "./TeamsTable", "./NewTeamDialog", "jqueryui" ],
 						},
 
 						events : {
-							"click #new-team-button" : "showNewTeamDialog",
+							"click #new-team-button" : "showNewTeamDialog"
 						},
 
 						showNewTeamDialog : function(event) {
@@ -57,7 +57,7 @@ define([ "jquery", "backbone", "./TeamsTable", "./NewTeamDialog", "jqueryui" ],
 							self.newTeamDialog.on("newteam.cancel", discard);
 							self.newTeamDialog.on("newteam.confirm",
 									discardAndRefresh);
-						},
+						}
 
 					});
 

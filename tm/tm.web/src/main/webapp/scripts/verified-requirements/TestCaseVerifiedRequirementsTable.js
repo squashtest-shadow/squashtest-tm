@@ -51,7 +51,7 @@ define(
 									},
 									tdSelector : "td.delete-button",
 									uiIcon : "ui-icon-minus",
-									onClick : self.removeRowRequirementVersion,
+									onClick : self.removeRowRequirementVersion
 								} ]
 							};
 						},

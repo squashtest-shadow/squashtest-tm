@@ -41,7 +41,7 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone,
 			}
 
 			return errors;
-		},
+		}
 	});
 
 	return TestStepInfoModel;

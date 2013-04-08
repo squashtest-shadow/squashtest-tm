@@ -43,7 +43,7 @@ require([ "common" ], function(common) {
 
 			var panelSettings = {
 				initiallyOpen : ABS.attachmentBlocOpened,
-				title : ABS.attachmentBlocTitle,
+				title : ABS.attachmentBlocTitle
 			};
 			$("#attachment-panel").togglePanel(panelSettings);
 			$("#manage-attachment-bloc-button").click(function() {

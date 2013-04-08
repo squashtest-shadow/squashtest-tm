@@ -23,7 +23,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable",
 		"./UserPermissionsPanel", "./UserTeamsPanel", "jquery.squash",
 		"jqueryui", "jquery.squash.togglepanel", "jquery.squash.datatables",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-		"jquery.squash.confirmdialog", , "jquery.squash.jeditable" ], function(
+		"jquery.squash.confirmdialog", "jquery.squash.jeditable" ], function(
 		$, Backbone, _, SimpleJEditable, StringUtil, UserChangePasswordPopup,
 		UserPermissionsPanel, UserTeamsPanel) {
 	var UMod = squashtm.app.UMod;
@@ -41,7 +41,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable",
 
 		events : {
 			"click #delete-user-button" : "deleteUser",
-			"change #user-group" : "changeUserGroup",
+			"change #user-group" : "changeUserGroup"
 		},
 
 		changeUserGroup : function(event) {
@@ -60,7 +60,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable",
 				type : 'delete',
 				url : UMod.user.url.admin,
 				data : {},
-				dataType : 'json',
+				dataType : 'json'
 
 			}).done(function() {
 				self.trigger("user.delete");
@@ -75,7 +75,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable",
 		configureTogglePanels : function() {
 			var infoSettings = {
 				initiallyOpen : true,
-				title : UMod.message.userInfoPanelTitle,
+				title : UMod.message.userInfoPanelTitle
 			};
 			this.$("#user-info-panel").togglePanel(infoSettings);
 		},
@@ -98,7 +98,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable",
 				componentId : imputId,
 				jeditableSettings : {}
 			});
-		},
+		}
 
 	});
 	return UserModificationView;

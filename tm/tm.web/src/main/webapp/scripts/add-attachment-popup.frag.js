@@ -298,13 +298,13 @@ require(
 									'text' : AAPS.uploadLabel,
 									'click' : function() {
 										setupAndBeginUpload();
-									},
+									}
 								}, {
 									'text' : AAPS.cancelLabel,
 									'click' : function() {
 										$(this).data("answer", "cancel");
 										$(this).dialog('close');
-									},
+									}
 								} ],
 								width : 435,
 								open : function() {
@@ -312,7 +312,7 @@ require(
 											"#attachment-upload-dialog").data(
 											"formInstance");
 									formInstance.clear();
-								},
+								}
 							}
 
 							AAPS.uploadPopup = squashtm.popup.create(params);
@@ -326,9 +326,9 @@ require(
 									'click' : function() {
 										$(this).dialog('close');
 										window.location.reload();
-									},
+									}
 								} ],
-								closeOnSuccess : false,
+								closeOnSuccess : false
 							}
 
 							AAPS.uploadWaitPopup = squashtm.popup
@@ -342,13 +342,13 @@ require(
 									'text' : AAPS.okLabel,
 									'click' : function() {
 										$(this).dialog('close');
-									},
+									}
 								} ],
 								closeOnSuccess : false,
 
 								close : function() {
 									exitUpload();
-								},
+								}
 
 							}
 
