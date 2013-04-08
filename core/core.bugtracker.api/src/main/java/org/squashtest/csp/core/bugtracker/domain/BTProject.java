@@ -24,9 +24,19 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.squashtest.tm.bugtracker.commondomain.CommonProject;
+import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
-public class BTProject implements Identifiable<BTProject>, CommonProject{
+
+/**
+ * 
+ * a BTProject has lists of Priority, Version, assignable User and Category. Those lists must never be empty : if 
+ * such list would be empty because their counterpart on the remote server do not exist, please use the dummy 
+ * specified for each of those classes, eg {@link Version#NO_VERSION} for empty version list.
+ * 
+ * @author bsiri
+ *
+ */
+public class BTProject implements Identifiable<BTProject>, RemoteProject{
 	
 	private String id;
 	private String name;

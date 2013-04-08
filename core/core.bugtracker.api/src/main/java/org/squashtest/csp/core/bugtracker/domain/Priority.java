@@ -20,9 +20,9 @@
  */
 package org.squashtest.csp.core.bugtracker.domain;
 
-import org.squashtest.tm.bugtracker.commondomain.CommonPriority;
+import org.squashtest.tm.bugtracker.definition.RemotePriority;
 
-public class Priority implements Identifiable<Priority>, CommonPriority{
+public class Priority implements Identifiable<Priority>, RemotePriority{
 	
 	public static final Priority NO_PRIORITY = new Priority(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
 	

@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.squashtest.tm.bugtracker.commondomain.CommonUser;
+import org.squashtest.tm.bugtracker.definition.RemoteUser;
 
 
 /**
@@ -32,7 +32,7 @@ import org.squashtest.tm.bugtracker.commondomain.CommonUser;
  *
  */
 
-public class User implements Identifiable<User>, CommonUser{
+public class User implements Identifiable<User>, RemoteUser{
 
 	public static final User NO_USER = new User(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
 

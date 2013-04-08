@@ -22,7 +22,7 @@ package org.squashtest.csp.core.bugtracker.domain;
 
 import java.util.Date;
 
-import org.squashtest.tm.bugtracker.commondomain.CommonIssue;
+import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 
 /**
  * Bug-tracker-agnostic representation of an issue / ticket
@@ -31,7 +31,7 @@ import org.squashtest.tm.bugtracker.commondomain.CommonIssue;
  *
  */
 
-public class BTIssue implements CommonIssue {
+public class BTIssue implements RemoteIssue {
 	
 	private String id;
 	

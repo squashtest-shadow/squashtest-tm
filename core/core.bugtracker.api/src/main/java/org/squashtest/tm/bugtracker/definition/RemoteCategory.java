@@ -18,19 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.bugtracker.commondomain;
+package org.squashtest.tm.bugtracker.definition;
 
-public interface CommonIssue {
+public interface RemoteCategory {
 
 	String getId();
 	
-	String getSummary();
-	
-	CommonProject getProject();
-	
-	CommonStatus getStatus();
-	
-	CommonUser getAssignee();
-	
-	CommonPriority getPriority();
+	String getName();
 }

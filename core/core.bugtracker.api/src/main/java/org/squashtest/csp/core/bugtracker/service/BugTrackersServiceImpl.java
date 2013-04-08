@@ -27,12 +27,12 @@ import java.util.Set;
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
-import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.definition.RemoteIssue;
+import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
 /**
  * Basic impementation of {@link BugTrackersService}
@@ -98,12 +98,12 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 	
 	@Override
-	public BTProject findProject(String name, BugTracker bugTracker) {
+	public RemoteProject findProject(String name, BugTracker bugTracker) {
 		return connect(bugTracker).findProject(name);
 	}
 
 	@Override
-	public BTProject findProjectById(String projectId, BugTracker bugTracker) {
+	public RemoteProject findProjectById(String projectId, BugTracker bugTracker) {
 		return connect(bugTracker).findProject(projectId);
 	}
 
@@ -120,18 +120,18 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	}
 
 	@Override
-	public BTIssue getIssue(String key, BugTracker bugTracker) {
+	public RemoteIssue getIssue(String key, BugTracker bugTracker) {
 		return connect(bugTracker).findIssue(key);
 	}
 
 	@Override
-	public List<BTIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker) {
+	public List<RemoteIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker) {
 
-		List<BTIssue> issues = connect(bugTracker).findIssues(issueKeyList);
+		List<RemoteIssue> issues = connect(bugTracker).findIssues(issueKeyList);
 
 		String bugtrackerName = bugTracker.getName();
 
-		for (BTIssue issue : issues) {
+		for (RemoteIssue issue : issues) {
 			issue.setBugtracker(bugtrackerName);
 		}
 

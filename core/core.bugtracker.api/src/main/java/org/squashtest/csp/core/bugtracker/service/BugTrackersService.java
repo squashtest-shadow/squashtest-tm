@@ -27,10 +27,10 @@ import java.util.Set;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
-import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.definition.RemoteIssue;
+import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
 
 /**
@@ -92,7 +92,7 @@ public interface BugTrackersService {
 	 * @return the project if found, shipped with all known versions, categories and users.
 	 * @throws various subclasses of BugTrackerManagerException
 	 */
-	BTProject findProject(String name, BugTracker bugTracker);
+	RemoteProject findProject(String name, BugTracker bugTracker);
 
 
 	/**
@@ -103,7 +103,7 @@ public interface BugTrackersService {
 	 * @return the project if found, shipped with all known versions, categories and users.
 	 * @throws various subclasses of BugTrackerManagerException
 	 */
-	BTProject findProjectById(String id, BugTracker bugTracker);
+	RemoteProject findProjectById(String id, BugTracker bugTracker);
 
 	/**
 	 * will send an issue to the bugtracker.
@@ -113,7 +113,7 @@ public interface BugTrackersService {
 	 * @return the newly created issue
 	 *
 	 */
-	BTIssue createIssue(BTIssue issue, BugTracker bugTracker);
+	RemoteIssue createIssue(BTIssue issue, BugTracker bugTracker);
 
 	
 	
@@ -125,7 +125,7 @@ public interface BugTrackersService {
 	 * @return the issue
 	 * @throws BugTrackerNotFoundException
 	 */
-	BTIssue getIssue(String key, BugTracker bugTracker);
+	RemoteIssue getIssue(String key, BugTracker bugTracker);
 	
 
 	/***
@@ -136,7 +136,7 @@ public interface BugTrackersService {
 	 * @param bugTracker the concerned BugTracker
 	 * @return the corresponding BTIssue List
 	 */
-	List<BTIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker);
+	List<RemoteIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker);
 
 	Set<String> getProviderKinds();
 
