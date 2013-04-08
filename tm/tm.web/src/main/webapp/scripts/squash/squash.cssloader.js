@@ -33,5 +33,5 @@ define(function(require) {
 			var url = require.toUrl(path);
 			this.cssFromUrl(url);
 		}
-	}
+	};
 });

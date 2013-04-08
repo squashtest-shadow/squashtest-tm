@@ -20,7 +20,7 @@
  */
 
 (function() {
-	squashtm = squashtm || {}
+	squashtm = squashtm || {};
 
 	squashtm.StatusFactory = squashtm.StatusFactory
 			|| function(conf) {

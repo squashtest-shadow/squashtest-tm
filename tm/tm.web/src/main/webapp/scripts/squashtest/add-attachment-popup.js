@@ -58,7 +58,7 @@
 
 		return this;
 
-	}
+	};
 
 	function item_initialize() {
 		var myself = this;
@@ -121,7 +121,7 @@
 		this.appendItem = appendItem;
 
 		return this;
-	}
+	};
 
 	// returns the last item of the list of files to upload
 	function findLastItem() {

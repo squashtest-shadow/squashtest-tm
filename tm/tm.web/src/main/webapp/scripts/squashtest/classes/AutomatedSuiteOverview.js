@@ -67,7 +67,7 @@ function AutomatedSuiteOverviewDialog(settings) {
 	function updateProgress(suiteView) {
 		var executions = suiteView.executions;
 		var progress = suiteView.percentage;
-		var executionTerminated = progress / 100 * executions.length
+		var executionTerminated = progress / 100 * executions.length;
 		$("#execution-auto-progress-bar").progressbar("value", progress);
 		$("#execution-auto-progress-amount").text(
 				executionTerminated + "/" + executions.length);
@@ -77,7 +77,7 @@ function AutomatedSuiteOverviewDialog(settings) {
 
 		var executions = suiteView.executions;
 
-		var template = executionRowTemplate.clone()
+		var template = executionRowTemplate.clone();
 		for (i = 0; i < executions.length; i++) {
 			var execution = executions[i];
 			var executionHtml = template.clone();
@@ -121,7 +121,7 @@ function AutomatedSuiteOverviewDialog(settings) {
 								executionStatus.html(statusHtml);
 
 							}
-							updateProgress(suiteView)
+							updateProgress(suiteView);
 							if (suiteView.percentage == 100) {
 								clearInterval(autoUpdate);
 							}

@@ -48,7 +48,7 @@ function TreeNodeCopier(initObj) {
 		var data = {
 			libraries : librariesIds,
 			nodes : nodesData
-		}
+		};
 
 		var jsonData = JSON.stringify(data);
 
@@ -70,7 +70,7 @@ function TreeNodeCopier(initObj) {
 			displayError(initObj.nothingToPaste);
 			break;
 		}
-	}
+	};
 
 	// ****************** public methods **********************
 
@@ -85,7 +85,7 @@ function TreeNodeCopier(initObj) {
 
 		return (consistentKind);
 
-	}
+	};
 
 	this.copyNodesToCookie = function() {
 
@@ -174,7 +174,7 @@ function TreeNodeCopier(initObj) {
 			},
 			newParent : target,
 			url : nodes.getCopyUrl()
-		}
+		};
 
 		// another special delivery for iterations (also should be refractored)
 		if (target.is(':campaign')) {
@@ -233,6 +233,6 @@ function TreeNodeCopier(initObj) {
 		squashtm.tree.copyNode(pasteData, pasteData.url).fail(function(json) {
 			tree.refresh();
 		});
-	}
+	};
 
 }

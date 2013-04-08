@@ -255,7 +255,7 @@ function TestAutomationAddProjectPopup(settings) {
 		return selected.map(function(i, box) {
 			return {
 				projectName : $(box).data('project-name')
-			}
+			};
 		});
 	};
 

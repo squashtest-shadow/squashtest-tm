@@ -195,7 +195,7 @@ jQuery.tableDnD = {
 			if (this.tableDnDConfig) {
 				jQuery.tableDnD.makeDraggable(this);
 			}
-		})
+		});
 	},
 
 	/**
@@ -434,7 +434,7 @@ jQuery.tableDnD = {
 		return result;
 	}
 
-}
+};
 
 jQuery.fn.extend({
 	tableDnD : jQuery.tableDnD.build,
@@ -497,11 +497,11 @@ jQuery.tableDnD.adaptDragObject = function(allRows) {
 			this.append(jqElts);
 		}
 
-	}
+	};
 
 	allRows.parentNode = delegateParentNode;
 	return allRows;
-}
+};
 
 jQuery.tableDnD.makeDraggable = function(table) {
 
@@ -567,7 +567,7 @@ jQuery.tableDnD.makeDraggable = function(table) {
 			}
 		});
 	}
-}
+};
 
 var tableDnDoldMouseUp = jQuery.tableDnD.mouseup;
 
@@ -577,4 +577,4 @@ jQuery.tableDnD.mouseup = function(event) {
 		document.body.style.cursor = "default";
 	}
 	tableDnDoldMouseUp.call(this, event);
-}
+};

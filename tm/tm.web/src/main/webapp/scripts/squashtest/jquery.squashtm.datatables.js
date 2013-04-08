@@ -54,7 +54,7 @@ var squashtm = squashtm || {};
 						primary : cssClass
 					}
 				});
-			}
+			};
 
 			var nFirst = $('<span />', {
 				'class' : 'paginate_button first'
@@ -482,7 +482,7 @@ function getIdsOfSelectedTableRows(dataTable, getRowIdCallback) {
 	$(rows).each(function(index, row) {
 		if ($(row).hasClass('ui-state-row-selected')) {
 			var data = dataTable.fnGetData(row);
-			var id = getRowIdCallback(data)
+			var id = getRowIdCallback(data);
 			if ((id != "") && (!isNaN(id))) {
 				ids.push(id);
 			}
@@ -498,7 +498,7 @@ function findRowStatus(dataTable, rowId, getRowId, getRowStatus) {
 
 	$(rows).each(function(index, row) {
 		var data = dataTable.fnGetData(row);
-		var id = getRowId(data)
+		var id = getRowId(data);
 		if (id == rowId) {
 			status = getRowStatus(data);
 		}
@@ -514,7 +514,7 @@ function getObsoleteStatusesOfSelectedTableRows(dataTable, getRowStatus) {
 	$(rows).each(function(index, row) {
 		if ($(row).hasClass('ui-state-row-selected')) {
 			var data = dataTable.fnGetData(row);
-			var status = getRowStatus(data)
+			var status = getRowStatus(data);
 			if (status == "OBSOLETE") {
 				obsoleteStatuses.push(status);
 			}

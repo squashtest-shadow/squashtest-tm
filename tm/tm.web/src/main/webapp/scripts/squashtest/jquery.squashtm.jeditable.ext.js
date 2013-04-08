@@ -37,7 +37,7 @@
 		input.attr('autocomplete', 'off');
 		$(this).append(input);
 		return (input);
-	}
+	};
 
 	/**
 	 * custom rich jeditable for the type 'ckeditor'. The plugin
@@ -105,7 +105,7 @@
 			domElement.reset = function() {
 				oldReset.call(this);
 				self._bindLinks();
-			}
+			};
 		}
 
 	});

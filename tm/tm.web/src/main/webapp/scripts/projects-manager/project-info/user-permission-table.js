@@ -89,7 +89,7 @@ define(
 					$(this).find('td.permissions-cell').each(function() {
 						decorateCombo($(this));
 					});
-				}
+				};
 			}
 
 			// ************ init table *********************
@@ -181,7 +181,7 @@ define(
 						} ]
 					}
 
-				}
+				};
 
 				$("#user-permissions-table").squashTable(datatableSettings,
 						squashSettings);

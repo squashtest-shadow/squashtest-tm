@@ -77,7 +77,7 @@ function TestAutomationPicker(settings) {
 			name : nodeName,
 			projectId : node.getLibrary().getDomId()
 		};
-	}
+	};
 
 	// ************ model *****************************
 

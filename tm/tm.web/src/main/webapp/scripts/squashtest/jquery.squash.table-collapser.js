@@ -48,7 +48,7 @@ define([ "jquery" ], function() {
 				result.push(tds[columns[i]]);
 			}
 			return result;
-		}
+		};
 	}
 
 	return function(dataTableP, columnsP) {
@@ -107,7 +107,7 @@ define([ "jquery" ], function() {
 
 		this.onClose = function(handler) {
 			this.closeHandlers.addHandler(handler);
-		}
+		};
 
 		this.closeAll = function() {
 			indexCollapsibleCells();
@@ -139,5 +139,5 @@ define([ "jquery" ], function() {
 
 		// init
 		indexCollapsibleCells();
-	}
+	};
 });

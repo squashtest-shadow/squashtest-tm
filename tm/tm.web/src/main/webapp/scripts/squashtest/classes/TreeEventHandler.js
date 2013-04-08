@@ -49,7 +49,7 @@ function TreeEventHandler(settings) {
 			this.tree.refresh_selected();
 			break;
 		}
-	}
+	};
 
 }
 

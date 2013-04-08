@@ -93,7 +93,7 @@ function Menu(caller, options) {
 
 	this.getContainer = function() {
 		return container;
-	}
+	};
 
 	var options = jQuery.extend({
 		content : null,
@@ -293,7 +293,7 @@ function Menu(caller, options) {
 		killAllMenus();
 		menu.onShow.execute();
 		if (!menu.menuExists) {
-			menu.create()
+			menu.create();
 		}
 		;
 		caller.addClass('fg-menu-open').addClass(options.callerOnState);
@@ -509,7 +509,7 @@ Menu.prototype.drilldown = function(container, options) {
 
 	var checkMenuHeight = function(el) {
 		if (el.height() > options.maxHeight) {
-			el.addClass('fg-menu-scroll')
+			el.addClass('fg-menu-scroll');
 		}
 		;
 		el.css({

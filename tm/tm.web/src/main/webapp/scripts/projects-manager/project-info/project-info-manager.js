@@ -25,6 +25,6 @@ define([ "./user-permission-table", "./workspace-wizard-tab" ], function(
 	return {
 		initUserPermissions : fnInitPermissionTable,
 		initWizardsTab : fnInitWizardTab
-	}
+	};
 
 });
