@@ -269,8 +269,9 @@ function dp_postDateSuccess(strDate, callback) {
 
 	this.enterDisplayMode();
 
-	if (callback != undefined)
+	if (callback != undefined){
 		callback();
+	}
 }
 
 function dp_postDateFailed(/* add params later if needed */) {

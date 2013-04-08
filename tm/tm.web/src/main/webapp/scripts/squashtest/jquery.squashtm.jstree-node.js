@@ -320,8 +320,9 @@
 
 		this.match = function(matchObject) {
 			for ( var ppt in matchObject) {
-				if (!(this.attr(ppt) == matchObject[ppt]))
+				if (!(this.attr(ppt) == matchObject[ppt])){
 					return false;
+				}
 			}
 			return true;
 		};
@@ -367,10 +368,12 @@
 
 			var attributes;
 
-			if (arguments.length === 0)
+			if (arguments.length === 0) {
 				attributes = [ "restype", "resid" ];
-			else
+			}
+			else {
 				attributes = arguments[0];
+			}
 
 			return this.collect(function(elt) {
 				var res = {};
@@ -388,8 +391,9 @@
 		// returns true if they all have the same or false if they differ.
 		this.allMatch = function(matchObject) {
 
-			if (this.length === 0)
+			if (this.length === 0){
 				return false;
+			}
 
 			var shrinkingSet = this;
 
@@ -435,8 +439,9 @@
 			var types = this.all('getDomType');
 
 			for ( var i = 0; i < types.length; i++) {
-				if (!(types[i] == "file" || types[i] == "folder"))
+				if (!(types[i] == "file" || types[i] == "folder")){
 					return false;
+				}
 			}
 
 			return true;

@@ -54,9 +54,10 @@ define(
 
 						submitPassword : function() {
 							self = this;
-							if (!self.validatePassword.call(self))
+							if (!self.validatePassword.call(self)){
 								return;
-
+							}
+							
 							var oldPassword = $("#oldPassword").val();
 							var newPassword = $("#newPassword").val();
 

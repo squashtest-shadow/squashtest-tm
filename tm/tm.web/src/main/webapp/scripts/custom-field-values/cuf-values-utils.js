@@ -34,9 +34,10 @@ define([ "jquery", "jqueryui" ], function($) {
 	function staticRendering(elts, cufDefinition) {
 
 		var elements = (elts instanceof jQuery) ? elts.get() : elts;
-		if (elements.length === 0)
+		if (elements.length === 0){
 			return;
-
+		}
+		
 		// name of the property that gets/sets the text depending on the browser
 		var txtppt = (elements[0].textContent !== undefined) ? "textContent"
 				: "innerText";

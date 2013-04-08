@@ -112,26 +112,30 @@ function TreeNodeCopier(initObj) {
 	this.mayPaste = function() {
 
 		var data = retrieve();
-		if (data == null)
+		if (data == null){
 			return "buffer-empty";
-
+		}
+		
 		var nodes = this.tree.findNodes(data.nodes);
-		if (nodes.length == 0)
+		if (nodes.length == 0){
 			return "buffer-empty";
-
+		}
+		
 		var target = this.tree.get_selected();
 
 		var isUnique = (target.length == 1);
 		var isCreatable = target.isCreatable();
 
-		if (!(isUnique && (isCreatable)))
+		if (!(isUnique && (isCreatable))){
 			return 'not-unique-editable';
+		}
 
 		var validTarget = target.acceptsAsContent(nodes);
 
-		if (!validTarget)
+		if (!validTarget){
 			return 'target-type-invalid';
-
+		}
+		
 		return 'OK';
 	};
 

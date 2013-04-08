@@ -544,8 +544,9 @@ squashtm.tree = squashtm.tree || {};
 								if (node.is(':library') || node.is(':folder')
 										|| node.attr('restype') == "campaigns"
 										|| node.attr('restype') == "iterations") {
-									if (event.ctrlKey)
+									if (event.ctrlKey) {
 										return true;
+									}
 									event.stopImmediatePropagation();
 
 									tree.data.squash.clicktimer = setTimeout(
@@ -663,12 +664,15 @@ squashtm.tree = squashtm.tree || {};
 								// selection is not editable if no node is
 								// selected or one node
 								// of the selection is not editable
-								if (noEdit)
+								if (noEdit) {
 									return "noEdit";
-								else if (selectedNodes.length === 0)
+								}
+								else if (selectedNodes.length === 0) {
 									return "noNodeSelected";
-								else
+								}
+								else {
 									return "OK";
+								}
 							},
 
 							selectionIsCreatable : function(selectedNodes) {
@@ -680,12 +684,15 @@ squashtm.tree = squashtm.tree || {};
 								// selection is not editable if no node is
 								// selected or one node
 								// of the selection is not editable
-								if (noEdit)
+								if (noEdit) {
 									return "noCreate";
-								else if (selectedNodes.length === 0)
+								}
+								else if (selectedNodes.length === 0) {
 									return "noNodeSelected";
-								else
+								}
+								else {
 									return "OK";
+								}
 							},
 
 							selectionIsDeletableAttr : function(selectedNodes) {
@@ -696,22 +703,27 @@ squashtm.tree = squashtm.tree || {};
 								// selection is not editable if no node is
 								// selected or one node of the selection is not
 								// editable
-								if (noDelete)
+								if (noDelete) {
 									return "noDelete";
-								else if (selectedNodes.length === 0)
+								}
+								else if (selectedNodes.length === 0) {
 									return "noNodeSelected";
-								else
+								}
+								else {
 									return "OK";
+								}
 							},
 
 							selectionIsOneEditableNode : function(selectedNodes) {
 								// true if only one node is selected and is
 								// editable
 								if (!selectedNodes.not(":editable").length > 0
-										&& selectedNodes.length === 1)
+										&& selectedNodes.length === 1) {
 									return "OK";
-								else
+								}
+								else {
 									return "notOneEditable";
+								}
 							},
 
 							selectionIsOneCreatableNode : function(
@@ -719,10 +731,12 @@ squashtm.tree = squashtm.tree || {};
 								// true if only one node is selected and is
 								// creatable
 								if (!selectedNodes.not(":creatable").length > 0
-										&& selectedNodes.length === 1)
+										&& selectedNodes.length === 1) {
 									return "OK";
-								else
+								}
+								else {
 									return "notOneCreatable";
+								}
 							},
 
 							selectionIsDeletable : function(selectedNodes) {
@@ -730,25 +744,31 @@ squashtm.tree = squashtm.tree || {};
 								// libraries
 								var isDelete = this
 										.selectionIsDeletableAttr(selectedNodes);
-								if (isDelete != "OK")
+								if (isDelete != "OK") {
 									return isDelete;
-								else if (selectedNodes.is(":library"))
+								}
+								else if (selectedNodes.is(":library")) {
 									return "nodeleteLibrary";
-								else
+								}
+								else {
 									return "OK";
+								}
 							},
 
 							selectionIsCopyable : function(selectedNodes) {
 								// all nodes except libraries are copyable
 								// if iterations are selected with other nodes
 								// type the selection is not copyable
-								if (selectedNodes.is(":library"))
+								if (selectedNodes.is(":library")) {
 									return "noCopyLibrary";
+								}
 								else if (selectedNodes.is(":iteration")
-										&& selectedNodes.is(":node"))
+										&& selectedNodes.is(":node")) {
 									return "noCopyIteration+Other";
-								else
+								}
+								else {
 									return "OK";
+								}
 							},
 
 							selectionIsCreateFolderAllowed : function(
@@ -756,15 +776,17 @@ squashtm.tree = squashtm.tree || {};
 								// need only one node selected
 								var isOneCreate = this
 										.selectionIsOneCreatableNode(selectedNodes);
-								if (isOneCreate != "OK")
+								if (isOneCreate != "OK"){
 									return isOneCreate;
+								}
 								// only libraries and folders are allowed for
 								// creation of folder and files
 								else if (selectedNodes.attr('rel') == "drive"
 										|| selectedNodes.attr('rel') == "folder") {
 									return "OK";
-								} else
+								} else {
 									return "createFolderNotHere";
+								}
 							},
 
 							selectionIsCreateFileAllowed : function(
@@ -785,8 +807,9 @@ squashtm.tree = squashtm.tree || {};
 											|| nodeAttr == "file") {
 
 										return "OK";
-									} else
+									} else {
 										return "createFileNotHere";
+									}
 								}
 							},
 
@@ -795,28 +818,34 @@ squashtm.tree = squashtm.tree || {};
 								// need only one node selected
 								var isOneCreate = this
 										.selectionIsOneCreatableNode(selectedNodes);
-								if (isOneCreate != "OK")
+								if (isOneCreate != "OK"){
 									return isOneCreate;
+								}
 								// creation of resource is allowed only for
 								// files
 								else if (selectedNodes.attr('rel') == "file"
-										|| selectedNodes.attr('rel') == "resource")
+										|| selectedNodes.attr('rel') == "resource"){
 									return "OK";
-								else
+								}
+								else{
 									return "createResNotHere";
+								}
 							},
 
 							selectionIsRenamable : function(selectedNodes) {
 								// need only one node selected
 								var isOneEdit = this
 										.selectionIsOneEditableNode(selectedNodes);
-								if (isOneEdit != "OK")
+								if (isOneEdit != "OK"){
 									return isOneEdit;
-								else if (selectedNodes.attr('rel') == "drive")
+								}
+								else if (selectedNodes.attr('rel') == "drive"){
 									return "noRenameLib";
+								}
 								// rename allowed for nodes other than libraries
-								else
+								else{
 									return "OK";
+								}
 							},
 
 							selectionIsPasteAllowed : function(selectedNodes) {
@@ -888,10 +917,12 @@ squashtm.tree = squashtm.tree || {};
 							allowedOperations : function() {
 								var selectedNodes = this.get_selected();
 								var operations = "";
-								if (this.get_container().data("importable"))
+								if (this.get_container().data("importable")){
 									operations += "import-excel import-links-excel";
-								if (selectedNodes.length === 0)
+								}
+								if (selectedNodes.length === 0){
 									return operations;
+								}
 								operations += "export ";
 								if (this.selectionIsCopyable(selectedNodes) == "OK") {
 									operations += "copy ";
@@ -1097,9 +1128,10 @@ squashtm.tree = squashtm.tree || {};
 							// when the import mecanism will be dependent on the
 							// selected node this two lines won't be necessary
 							// anymore
-							if ($(".jstree").data("importable"))
+							if ($(".jstree").data("importable")){
 								updateTreebuttons("import-excel import-links-excel");
-
+							}
+							
 							var self = this;
 
 							container

@@ -182,16 +182,18 @@ var squashtm = squashtm || {};
 			buttons.filter(':last').addClass('ui-state-active');
 			buttons.filter(':first').removeClass('ui-state-active');
 			// user code
-			if (userOpen != undefined)
+			if (userOpen != undefined){
 				userOpen.call(this);
+			}
 		};
 
 		defaults.close = function() {
 			// cleanup
 			squashtm.popup.cleanup.call(target);
 			// usercode
-			if (userClose != undefined)
+			if (userClose != undefined){
 				userClose.call(this);
+			}
 		};
 
 		defaults.create = function() {
@@ -225,8 +227,9 @@ var squashtm = squashtm || {};
 																|| "en"
 													});
 								});
-				if (userCreate != undefined)
+				if (userCreate != undefined){
 					userCreate.call(this);
+				}
 			}
 		};
 
@@ -235,8 +238,9 @@ var squashtm = squashtm || {};
 
 		if (defaults.closeOnSuccess === undefined || defaults.closeOnSuccess) {
 			target.ajaxSuccess(function() {
-				if (target.dialog('isOpen') === true)
+				if (target.dialog('isOpen') === true){
 					target.dialog('close');
+				}
 			});
 		}
 

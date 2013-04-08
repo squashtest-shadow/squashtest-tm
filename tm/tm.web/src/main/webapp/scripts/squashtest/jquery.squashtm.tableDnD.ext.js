@@ -412,8 +412,9 @@ jQuery.tableDnD = {
 		var tableId = table.id;
 		var rows = table.rows;
 		for ( var i = 0; i < rows.length; i++) {
-			if (result.length > 0)
+			if (result.length > 0){
 				result += "&";
+			}
 			var rowId = rows[i].id;
 			if (rowId && rowId && table.tableDnDConfig
 					&& table.tableDnDConfig.serializeRegexp) {

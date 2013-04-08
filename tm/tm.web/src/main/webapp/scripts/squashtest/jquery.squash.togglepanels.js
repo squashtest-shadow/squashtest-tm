@@ -81,9 +81,10 @@
 							titlepanel.append(snapleft).append(snapright);
 							panelHead.append(titlepanel);
 
-							if (wCreate)
+							if (wCreate){
 								this.element.wrap(wrapper);
-
+							}
+							
 							widget.panelHead = panelHead;
 							panelHead.insertBefore(this.element);
 

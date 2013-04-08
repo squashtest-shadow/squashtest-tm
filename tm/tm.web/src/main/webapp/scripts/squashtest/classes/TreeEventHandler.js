@@ -88,8 +88,9 @@ function updateEventRename(event, tree) {
 		resid : event.evt_target.obj_id
 	});
 
-	if (target.length === 0)
+	if (target.length === 0){
 		return;
+	}
 
 	target.setName(event.evt_newname);
 
@@ -101,8 +102,9 @@ function updateEventUpdateReference(event, tree) {
 		resid : event.evt_target.obj_id
 	});
 
-	if (target.length === 0)
+	if (target.length === 0){
 		return;
+	}
 
 	target.setReference(event.evt_newref);
 }

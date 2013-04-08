@@ -83,9 +83,10 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				removeTeams : function(event) {
 					var table = $("#teams-table").squashTable();
 					var ids = table.getSelectedIds();
-					if (ids.length === 0)
+					if (ids.length === 0){
 						return;
-
+					}
+					
 					$.ajax({
 						url : UMod.user.url.simple + "teams/" + ids.join(','),
 						type : 'delete'

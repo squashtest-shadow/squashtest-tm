@@ -113,9 +113,10 @@ function hyphenateAttachement() {
 function handleNotFoundImages(defaultImageUrl) {
 	var imgs = $("#attachment-container img");
 
-	if (imgs.length == 0)
+	if (imgs.length == 0){
 		return;
-
+	}
+	
 	// reloading the image to re-get the error event if needed. If you find it
 	// ugly, well, you're right !
 	$(imgs).each(function() {

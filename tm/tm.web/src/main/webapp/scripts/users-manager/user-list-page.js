@@ -111,8 +111,9 @@ define([ "jquery", "jquery.squash.datatables" ], function($) {
 
 	function buildAddUserConfirm(settings, validatePassword) {
 		return function() {
-			if (!validatePassword())
+			if (!validatePassword()){
 				return;
+			}
 			var url = settings.urls.baseUrl + "/add";
 			$.ajax({
 				url : url,

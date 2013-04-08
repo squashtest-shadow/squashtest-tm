@@ -84,9 +84,10 @@ define(
 						removeMembers : function(event) {
 							var table = $("#members-table").squashTable();
 							var ids = table.getSelectedIds();
-							if (ids.length === 0)
+							if (ids.length === 0){
 								return;
-
+							}
+							
 							$.ajax(
 									{
 										url : document.location.href

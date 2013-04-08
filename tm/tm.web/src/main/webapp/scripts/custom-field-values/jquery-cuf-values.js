@@ -118,8 +118,9 @@ define(
 			}
 
 			function initAsList(elts, cufDefinitions, idOrURLOrPostfunction) {
-				if (elts.length === 0)
+				if (elts.length === 0){
 					return;
+				}
 
 				var prepareSelectData = function(options, selected) {
 
@@ -168,9 +169,10 @@ define(
 
 			function initAsCheckbox(elts, cufDefinition, idOrURLOrPostfunction) {
 
-				if (elts.length === 0)
+				if (elts.length === 0){
 					return;
-
+				}
+				
 				var postFunction = buildPostFunction(idOrURLOrPostfunction);
 
 				var clickFn = function() {

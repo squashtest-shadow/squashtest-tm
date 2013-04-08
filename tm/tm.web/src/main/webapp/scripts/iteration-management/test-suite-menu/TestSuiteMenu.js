@@ -476,8 +476,9 @@ define(
 				this.model = settings.model;
 				this.datatableSelector = settings.datatableSelector;
 
-				if (settings.isContextual !== undefined)
+				if (settings.isContextual !== undefined){
 					this.isContextual = settings.isContextual;
+				}
 				this.checkedSuites = new TestSuiteMenuCheckedSuites();
 				this.instance = $(settings.instanceSelector);
 				this.control = new TestSuiteMenuControl();
