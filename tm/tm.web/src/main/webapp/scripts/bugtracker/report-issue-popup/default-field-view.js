@@ -19,13 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip","jqueryui"], function($, Backbone, Handlebars, BTEntity, source){
+define(["jquery", "backbone", "handlebars", "./BTEntity", "text!./default-view-template.html!strip","jqueryui"], function($, Backbone, Handlebars, BTEntity, source){
 
 	var DefaultFieldControl = Backbone.View.extend({
-		
-		initialize : function(){
-			var evtname = 'change:'+this.options.attribute;
-		},
 		
 		updatemodel : function(){
 			var attribute = this.options.attribute;
@@ -62,8 +58,6 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost
 	var ComboBox = DefaultFieldControl.extend({
 		
 		initialize : function(){
-			DefaultFieldControl.prototype.initialize.apply(this, arguments);
-			
 			this.empty = (this.$el.find('option.issue-control-empty').length!=0);
 			if (!!this.empty){
 				this.disable();
@@ -86,10 +80,6 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!http://localhost
 		set : function(newv){
 			var id = (newv==null && newv==undefined) ? this.$('option:first').val() : newv.id;
 			this.$el.val(id);
-		},
-		
-		disable : function(){
-			this.$el.attr('disabled', 'disabled');
 		},
 		
 		enable : function(){
