@@ -20,7 +20,9 @@
  */
 package org.squashtest.csp.core.bugtracker.domain;
 
-public class Status implements Identifiable<Status> {
+import org.squashtest.tm.bugtracker.commondomain.CommonStatus;
+
+public class Status implements Identifiable<Status>, CommonStatus {
 	
 
 	public static final Status NO_STATUS = new Status(Identifiable.DUMMY_ID,Identifiable.DUMMY_NAME);

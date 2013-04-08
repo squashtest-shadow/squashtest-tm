@@ -18,62 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.domain;
+package org.squashtest.tm.bugtracker.commondomain;
 
-import org.squashtest.tm.bugtracker.commondomain.CommonPriority;
+public interface CommonPriority {
 
-public class Priority implements Identifiable<Priority>, CommonPriority{
+	String getId();
 	
-	public static final Priority NO_PRIORITY = new Priority(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
-	
-	private String id;
-	private String name;
-
-	public Priority(){
-		
-	}
-	
-	public Priority(String id, String name) {
-		super();
-		this.id = id;
-		this.name = name;
-	}
-
-	@Override
-	public String getId(){
-		return id;
-	}
-	
-	@Override
-	public String getName(){
-		return name;
-	}
-	
-	
-	
-	/**
-	 * is hopefully never a dummy
-	 * 
-	 */
-	@Override
-	public boolean isDummy(){
-		return false;
-	}
-	
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	/** exists for the purpose of being javabean compliant */
-	public void setDummy(Boolean dummy){
-		
-	}
+	String getName();
 }
-
-

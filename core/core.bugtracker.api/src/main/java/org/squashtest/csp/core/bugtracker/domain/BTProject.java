@@ -24,7 +24,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BTProject implements Identifiable<BTProject>{
+import org.squashtest.tm.bugtracker.commondomain.CommonProject;
+
+public class BTProject implements Identifiable<BTProject>, CommonProject{
 	
 	private String id;
 	private String name;

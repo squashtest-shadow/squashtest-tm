@@ -24,13 +24,15 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.squashtest.tm.bugtracker.commondomain.CommonUser;
+
 
 /**
  * @author bsiri
  *
  */
 
-public class User implements Identifiable<User>{
+public class User implements Identifiable<User>, CommonUser{
 
 	public static final User NO_USER = new User(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
 
