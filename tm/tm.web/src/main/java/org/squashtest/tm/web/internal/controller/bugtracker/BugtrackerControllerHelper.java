@@ -243,11 +243,14 @@ public final class BugtrackerControllerHelper {
 		@Override
 		public Object[] buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
 			return new Object[] {
-					bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(),
-							ownership.getOwner().getBugTracker()).toExternalForm(), ownership.getIssue().getId(),
-					ownership.getIssue().getSummary(), ownership.getIssue().getPriority().getName(),
-					ownership.getIssue().getStatus().getName(), ownership.getIssue().getAssignee().getName(),
-					nameBuilder.buildName(ownership.getOwner()) };
+					bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(),ownership.getOwner().getBugTracker()).toExternalForm(),
+					ownership.getIssue().getId(),
+					ownership.getIssue().getSummary(), 
+					ownership.getIssue().getPriority().getName(),
+					ownership.getIssue().getStatus().getName(), 
+					ownership.getIssue().getAssignee().getName(),
+					nameBuilder.buildName(ownership.getOwner()) 
+			};
 		}
 	}
 
@@ -281,10 +284,15 @@ public final class BugtrackerControllerHelper {
 		public Object[] buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
 			BTIssue issue = ownership.getIssue();
 			return new Object[] {
-					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
-							.toExternalForm(), issue.getId(), issue.getSummary(), issue.getPriority().getName(),
-					issue.getStatus().getName(), issue.getAssignee().getName(),
-					nameBuilder.buildName(ownership.getOwner()), ownership.getExecution().getId() };
+					bugTrackersLocalService.getIssueUrl(issue.getId(), 
+							ownership.getOwner().getBugTracker()).toExternalForm(), 
+							issue.getId(), 
+							issue.getSummary(), 
+							issue.getPriority().getName(),
+							issue.getStatus().getName(), 
+							issue.getAssignee().getName(),
+							nameBuilder.buildName(ownership.getOwner()), ownership.getExecution().getId() 
+				};
 		}
 	}
 
