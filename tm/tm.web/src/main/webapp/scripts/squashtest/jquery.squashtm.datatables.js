@@ -287,7 +287,7 @@ function getOffsetFromDomTable(domTable, fnGetRowIndex) {
 
 	var position = fnGetRowIndex(firstData);
 
-	return parseInt(position) - 1;
+	return parseInt(position,10) - 1;
 
 }
 
@@ -477,7 +477,7 @@ function saveTableSelection(dataTable, getRowIdCallback) {
  */
 function getIdsOfSelectedTableRows(dataTable, getRowIdCallback) {
 	var rows = dataTable.fnGetNodes();
-	var ids = new Array();
+	var ids = [];
 
 	$(rows).each(function(index, row) {
 		if ($(row).hasClass('ui-state-row-selected')) {
@@ -509,7 +509,7 @@ function findRowStatus(dataTable, rowId, getRowId, getRowStatus) {
 
 function getObsoleteStatusesOfSelectedTableRows(dataTable, getRowStatus) {
 	var rows = dataTable.fnGetNodes();
-	var obsoleteStatuses = new Array();
+	var obsoleteStatuses = [];
 
 	$(rows).each(function(index, row) {
 		if ($(row).hasClass('ui-state-row-selected')) {
@@ -526,7 +526,7 @@ function getObsoleteStatusesOfSelectedTableRows(dataTable, getRowStatus) {
 
 function getIdsOfSelectedAssociationTableRows(dataTable, getRowIdCallback) {
 	var rows = dataTable.fnGetNodes();
-	var ids = new Array();
+	var ids = [];
 
 	for ( var i = 0; i < rows.length; i++) {
 		var row = rows[i];
@@ -585,7 +585,7 @@ function addHLinkToCellText(td, url, isOpenInTab) {
  */
 function addAttachmentButtonToRow(row, entityId, buttonTemplateId) {
 	var cell = $('td.has-attachment-cell', row);
-	var attCount = parseInt(cell.text());
+	var attCount = parseInt(cell.text(),10);
 
 	if (attCount > 0) {
 		cell.html($('#' + buttonTemplateId).clone()).find('a').attr('id',

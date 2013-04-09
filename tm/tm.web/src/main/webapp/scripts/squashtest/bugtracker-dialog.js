@@ -57,7 +57,7 @@ function extractSelectData(jqSelect) {
 
 function handleEmptyList(jsList, emptyListLabel) {
 	if (!!jsList[0].empty) {
-		var stubArray = new Array();
+		var stubArray = [];
 		var stub = new btEntity(jsList[0].id, emptyListLabel);
 		stubArray.push(stub);
 		return stubArray;

@@ -266,7 +266,7 @@ function TestAutomationAddProjectPopup(settings) {
 		var serverData = getServerData();
 		var projectNames = getProjectNames();
 
-		var formData = new Array();
+		var formData = [];
 		var i = 0;
 
 		for (i = 0; i < projectNames.length; i++) {

@@ -117,7 +117,7 @@ function dpa_initialize() {
 	var newDate;
 
 	if (this.params.initialDate.length > 0) {
-		newDate = parseInt(this.params.initialDate);
+		newDate = parseInt(this.params.initialDate,10);
 	} else {
 		newDate = -1;
 	}
@@ -335,7 +335,7 @@ function dpa_postDate() {
 function dpa_postDateSuccess(strDate, callback) {
 	var newDate;
 	if (strDate.length > 0) {
-		newDate = parseInt(strDate);
+		newDate = parseInt(strDate,10);
 	} else {
 		newDate = -1;
 	}
@@ -404,7 +404,7 @@ function dpa_refreshAutoDate(newDateToPut) {
 		var newDate;
 
 		if (newDateToPut != null) {
-			newDate = parseInt(newDateToPut);
+			newDate = parseInt(newDateToPut,10);
 		} else {
 			newDate = -1;
 		}

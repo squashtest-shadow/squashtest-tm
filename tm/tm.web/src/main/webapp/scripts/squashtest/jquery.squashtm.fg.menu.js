@@ -908,17 +908,17 @@ function sortBigToSmall(a, b) {
 }
 
 jQuery.fn.getTotalWidth = function() {
-	return $(this).width() + parseInt($(this).css('paddingRight'))
-			+ parseInt($(this).css('paddingLeft'))
-			+ parseInt($(this).css('borderRightWidth'))
-			+ parseInt($(this).css('borderLeftWidth'));
+	return $(this).width() + parseInt($(this).css('paddingRight'),10)
+			+ parseInt($(this).css('paddingLeft'),10)
+			+ parseInt($(this).css('borderRightWidth'),10)
+			+ parseInt($(this).css('borderLeftWidth'),10);
 };
 
 jQuery.fn.getTotalHeight = function() {
-	return $(this).height() + parseInt($(this).css('paddingTop'))
-			+ parseInt($(this).css('paddingBottom'))
-			+ parseInt($(this).css('borderTopWidth'))
-			+ parseInt($(this).css('borderBottomWidth'));
+	return $(this).height() + parseInt($(this).css('paddingTop'),10)
+			+ parseInt($(this).css('paddingBottom'),10)
+			+ parseInt($(this).css('borderTopWidth'),10)
+			+ parseInt($(this).css('borderBottomWidth'),10);
 };
 
 function getScrollTop() {
@@ -951,13 +951,13 @@ function getWindowWidth() {
  */
 
 function fitHorizontal(el, leftOffset) {
-	var leftVal = parseInt(leftOffset) || $(el).offset().left;
+	var leftVal = parseInt(leftOffset,10) || $(el).offset().left;
 	return (leftVal + $(el).width() <= getWindowWidth() + getScrollLeft() && leftVal
 			- getScrollLeft() >= 0);
 }
 
 function fitVertical(el, topOffset) {
-	var topVal = parseInt(topOffset) || $(el).offset().top;
+	var topVal = parseInt(topOffset,10) || $(el).offset().top;
 	return (topVal + $(el).height() <= getWindowHeight() + getScrollTop() && topVal
 			- getScrollTop() >= 0);
 }
