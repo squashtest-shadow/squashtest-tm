@@ -48,12 +48,14 @@ import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.definition.RemoteIssue;
+import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.IdentifiedUtil;
-import org.squashtest.tm.domain.bugtracker.BTIssueDecorator;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
+import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -210,7 +212,7 @@ public class BugtrackerController {
 	DataTableModel getExecStepKnownIssuesData(@PathVariable("stepId") Long stepId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> filteredCollection;
+		FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
 		CollectionSorting sorter = new IssueCollectionSorting(params);
 		try {
 
@@ -238,7 +240,7 @@ public class BugtrackerController {
 
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue")
 	@ResponseBody
-	public BTIssue getExecStepReportStub(@PathVariable Long stepId, Locale locale, HttpServletRequest request) {
+	public RemoteIssue getExecStepReportStub(@PathVariable Long stepId, Locale locale, HttpServletRequest request) {
 
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
 
@@ -281,7 +283,6 @@ public class BugtrackerController {
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}", method = RequestMethod.GET)
 	public ModelAndView getExecIssuePanel(@PathVariable Long execId, Locale locale,
 			@RequestParam(value = STYLE, required = false, defaultValue = TOGGLE) String panelStyle) {
-
 		Execution bugged = executionFinder.findById(execId);
 		return makeIssuePanel(bugged, EXECUTION_TYPE, locale, panelStyle, bugged.getProject());
 
@@ -295,7 +296,7 @@ public class BugtrackerController {
 	DataTableModel getExecKnownIssuesData(@PathVariable("execId") Long execId, final DataTableDrawParameters params,
 			final Locale locale) {
 
-		FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> filteredCollection;
+		FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
 
 		CollectionSorting sorter = new IssueCollectionSorting(params);
 		try {
@@ -323,7 +324,7 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue")
 	@ResponseBody
-	public BTIssue getExecReportStub(@PathVariable Long execId, Locale locale, HttpServletRequest request) {
+	public RemoteIssue getExecReportStub(@PathVariable Long execId, Locale locale, HttpServletRequest request) {
 		Execution execution = executionFinder.findById(execId);
 		String executionUrl = BugtrackerControllerHelper.buildExecutionUrl(request, execution);
 		return makeReportIssueModel(execution, locale, executionUrl);
@@ -377,7 +378,7 @@ public class BugtrackerController {
 	DataTableModel getTestCaseKnownIssuesData(@PathVariable("tcId") Long tcId, final DataTableDrawParameters params,
 			final Locale locale) {
 
-		FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> filteredCollection;
+		FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
 		CollectionSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForTestCase(tcId, sorter);
@@ -423,7 +424,7 @@ public class BugtrackerController {
 	DataTableModel getIterationKnownIssuesData(@PathVariable("iterId") Long iterId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> filteredCollection;
+		FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
 		CollectionSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForIteration(iterId, sorter);
@@ -469,7 +470,7 @@ public class BugtrackerController {
 	DataTableModel getCampaignKnownIssuesData(@PathVariable("campId") Long campId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> filteredCollection;
+		FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
 		CollectionSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForCampaigns(campId, sorter);
@@ -514,7 +515,7 @@ public class BugtrackerController {
 	DataTableModel getTestSuiteKnownIssuesData(@PathVariable("testSuiteId") Long testSuiteId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> filteredCollection;
+		FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
 		CollectionSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForTestSuite(testSuiteId, sorter);
@@ -534,7 +535,7 @@ public class BugtrackerController {
 
 	@RequestMapping(value = "/find-issue/{remoteKey}", method = RequestMethod.GET, params = { BUGTRACKER_ID })
 	@ResponseBody
-	public BTIssue findIssue(@PathVariable("remoteKey") String remoteKey, @RequestParam(BUGTRACKER_ID) long bugTrackerId) {
+	public RemoteIssue findIssue(@PathVariable("remoteKey") String remoteKey, @RequestParam(BUGTRACKER_ID) long bugTrackerId) {
 		BugTracker bugTracker = bugTrackerFinderService.findById(bugTrackerId);
 		return bugTrackersLocalService.getIssue(remoteKey, bugTracker);
 	}
@@ -573,8 +574,8 @@ public class BugtrackerController {
 	}
 
 	// FIXME : check first if a bugtracker is defined and if the credentials are set
-	private Map<String, String> processIssue(BTIssue issue, IssueDetector entity) {
-		final BTIssue postedIssue = bugTrackersLocalService.createIssue(entity, issue);
+	private Map<String, String> processIssue(RemoteIssue issue, IssueDetector entity) {
+		final RemoteIssue postedIssue = bugTrackersLocalService.createIssue(entity, issue);
 		final URL issueUrl = bugTrackersLocalService.getIssueUrl(postedIssue.getId(), entity.getBugTracker());
 
 		Map<String, String> result = new HashMap<String, String>();
@@ -584,7 +585,7 @@ public class BugtrackerController {
 		return result;
 	}
 
-	private Map<String, String> attachIssue(final BTIssue issue, IssueDetector entity) {
+	private Map<String, String> attachIssue(final RemoteIssue issue, IssueDetector entity) {
 
 		bugTrackersLocalService.attachIssue(entity, issue.getId());
 		final URL issueUrl = bugTrackersLocalService.getIssueUrl(issue.getId(), entity.getBugTracker());
@@ -604,13 +605,13 @@ public class BugtrackerController {
 
 	/* ********* generates a json model for an issue ******* */
 
-	private BTIssue makeReportIssueModel(Execution exec, Locale locale, String executionUrl) {
+	private RemoteIssue makeReportIssueModel(Execution exec, Locale locale, String executionUrl) {
 		String defaultDescription = BugtrackerControllerHelper.getDefaultDescription(exec, locale, messageSource,
 				executionUrl);
 		return makeReportIssueModel(exec, defaultDescription);
 	}
 
-	private BTIssue makeReportIssueModel(ExecutionStep step, Locale locale, String executionUrl) {
+	private RemoteIssue makeReportIssueModel(ExecutionStep step, Locale locale, String executionUrl) {
 		String defaultDescription = BugtrackerControllerHelper.getDefaultDescription(step, locale, messageSource,
 				executionUrl);
 		String defaultAdditionalInformations = BugtrackerControllerHelper.getDefaultAdditionalInformations(step,
@@ -618,20 +619,22 @@ public class BugtrackerController {
 		return makeReportIssueModel(step, defaultDescription, defaultAdditionalInformations, locale);
 	}
 
-	private BTIssue makeReportIssueModel(ExecutionStep step, String defaultDescription,
+	
+	//TODO TODO : use instead a new method in the BT interface : get report issue template (or something along those lines)
+	private RemoteIssue makeReportIssueModel(ExecutionStep step, String defaultDescription,
 			String defaultAdditionalInformations, Locale locale) {
-		BTIssue emptyIssue = makeReportIssueModel(step, defaultDescription);
+		RemoteIssue emptyIssue = makeReportIssueModel(step, defaultDescription);
 		String comment = BugtrackerControllerHelper.getDefaultAdditionalInformations(step, locale, messageSource);
 		emptyIssue.setComment(comment);
 		return emptyIssue;
 	}
 
-	private BTIssue makeReportIssueModel(IssueDetector entity, String defaultDescription) {
+	private RemoteIssue makeReportIssueModel(IssueDetector entity, String defaultDescription) {
 		String projectName = entity.getProject().getBugtrackerBinding().getProjectName();
-		final BTProject project = bugTrackersLocalService.findRemoteProject(projectName, entity.getBugTracker());
+		final RemoteProject project = bugTrackersLocalService.findRemoteProject(projectName, entity.getBugTracker());
 
 		BTIssue emptyIssue = new BTIssue();
-		emptyIssue.setProject(project);
+		emptyIssue.setProject((BTProject)project);
 		emptyIssue.setDescription(defaultDescription);
 
 		return emptyIssue;
@@ -709,12 +712,12 @@ public class BugtrackerController {
 
 	}
 
-	private FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> makeEmptyIssueDecoratorCollectionHolder(
+	private FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> makeEmptyIssueDecoratorCollectionHolder(
 			String entityName, Long entityId, Exception cause) {
 		LOGGER.trace("BugTrackerController : fetching known issues for  " + entityName + " " + entityId
 				+ " failed, exception : ", cause);
-		List<IssueOwnership<BTIssueDecorator>> emptyList = new LinkedList<IssueOwnership<BTIssueDecorator>>();
-		return new FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>>(0, emptyList);
+		List<IssueOwnership<RemoteIssueDecorator>> emptyList = new LinkedList<IssueOwnership<RemoteIssueDecorator>>();
+		return new FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(0, emptyList);
 	}
 
 }

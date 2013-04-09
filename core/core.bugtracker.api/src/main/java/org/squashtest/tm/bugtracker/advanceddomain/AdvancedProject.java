@@ -18,61 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.domain;
+package org.squashtest.tm.bugtracker.advanceddomain;
 
-import org.squashtest.tm.bugtracker.definition.RemoteCategory;
+import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
+public class AdvancedProject implements RemoteProject {
 
-public class Category implements Identifiable<Category>, RemoteCategory{
-
-	public static final Category NO_CATEGORY = new Category(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
-
-	
-	private String id;
-	private String name;
-
-	
-	public Category(){
-		
-	}
-	
-	
-	public Category(String id, String name) {
-		super();
-		this.id = id;
-		this.name = name;
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public String getId(){
-		return id;
-	}
-	
-	@Override
-	public String getName(){
-		return name;
-	}
-
-	
-	
-	@Override
-	public boolean isDummy(){
-		return this.id.equals(NO_CATEGORY.id);
-	}
-
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	/** exists for the purpose of being javabean compliant */
-	public void setDummy(Boolean dummy){
-		
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

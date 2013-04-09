@@ -26,6 +26,14 @@ public interface RemoteIssue {
 	
 	String getSummary();
 	
+	String getDescription();
+	
+	void setDescription(String description);
+	
+	String getComment();
+	
+	void setComment(String comment);
+	
 	RemoteProject getProject();
 	
 	RemoteStatus getStatus();
@@ -33,6 +41,10 @@ public interface RemoteIssue {
 	RemoteUser getAssignee();
 	
 	RemotePriority getPriority();
+	
+	RemoteCategory getCategory();
+	
+	RemoteVersion getVersion();
 	
 	void setBugtracker(String btName);
 	

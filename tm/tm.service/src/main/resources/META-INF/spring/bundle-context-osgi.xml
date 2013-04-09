@@ -294,5 +294,9 @@
     <osgi:listener ref="squashtest.core.bugtracker.BugTrackerConnectorFactory"
              bind-method="registerProvider" unbind-method="unregisterProvider" />
   </osgi:list>
+   <osgi:list id="bugtracker.advancedplugins.registry" interface="org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnectorProvider" cardinality="0..N">
+    <osgi:listener ref="squashtest.core.bugtracker.BugTrackerConnectorFactory"
+             bind-method="registerAdvancedProvider" unbind-method="unregisterAdvancedProvider" />
+  </osgi:list> 
 
 </beans>

@@ -29,7 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.MessageSource;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
-import org.squashtest.tm.domain.bugtracker.BTIssueDecorator;
+import org.squashtest.tm.bugtracker.definition.RemoteIssue;
+import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -228,7 +229,7 @@ public final class BugtrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class IterationIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssueDecorator>> {
+	static final class IterationIssuesTableModel extends DataTableModelHelper<IssueOwnership<RemoteIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new IterationModelOwnershipNamebuilder();
 		private BugTrackersLocalService bugTrackersLocalService;
@@ -241,7 +242,7 @@ public final class BugtrackerControllerHelper {
 		}
 
 		@Override
-		public Object[] buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
+		public Object[] buildItemData(IssueOwnership<RemoteIssueDecorator> ownership) {
 			return new Object[] {
 					bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(),ownership.getOwner().getBugTracker()).toExternalForm(),
 					ownership.getIssue().getId(),
@@ -268,7 +269,7 @@ public final class BugtrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class TestCaseIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssueDecorator>> {
+	static final class TestCaseIssuesTableModel extends DataTableModelHelper<IssueOwnership<RemoteIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new TestCaseModelOwnershipNamebuilder();
 		private BugTrackersLocalService bugTrackersLocalService;
@@ -281,8 +282,8 @@ public final class BugtrackerControllerHelper {
 		}
 
 		@Override
-		public Object[] buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
-			BTIssue issue = ownership.getIssue();
+		public Object[] buildItemData(IssueOwnership<RemoteIssueDecorator> ownership) {
+			RemoteIssue issue = ownership.getIssue();
 			return new Object[] {
 					bugTrackersLocalService.getIssueUrl(issue.getId(), 
 							ownership.getOwner().getBugTracker()).toExternalForm(), 
@@ -310,7 +311,7 @@ public final class BugtrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class ExecutionIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssueDecorator>> {
+	static final class ExecutionIssuesTableModel extends DataTableModelHelper<IssueOwnership<RemoteIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new ExecutionModelOwnershipNamebuilder();
 		private BugTrackersLocalService bugTrackersLocalService;
@@ -323,9 +324,9 @@ public final class BugtrackerControllerHelper {
 		}
 
 		@Override
-		public Map<String, Object> buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
+		public Map<String, Object> buildItemData(IssueOwnership<RemoteIssueDecorator> ownership) {
 
-			BTIssueDecorator issue = ownership.getIssue();
+			RemoteIssueDecorator issue = ownership.getIssue();
 
 			Map<String, Object> result = new HashMap<String, Object>(9);
 
@@ -356,7 +357,7 @@ public final class BugtrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class StepIssuesTableModel extends DataTableModelHelper<IssueOwnership<BTIssueDecorator>> {
+	static final class StepIssuesTableModel extends DataTableModelHelper<IssueOwnership<RemoteIssueDecorator>> {
 		private BugTrackersLocalService bugTrackersLocalService;
 
 		StepIssuesTableModel(BugTrackersLocalService bugTrackerLocalService) {
@@ -364,9 +365,9 @@ public final class BugtrackerControllerHelper {
 		}
 
 		@Override
-		public Map<String, Object> buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
+		public Map<String, Object> buildItemData(IssueOwnership<RemoteIssueDecorator> ownership) {
 
-			BTIssueDecorator issue = ownership.getIssue();
+			RemoteIssueDecorator issue = ownership.getIssue();
 			Map<String, Object> result = new HashMap<String, Object>();
 
 			result.put("issue-url",

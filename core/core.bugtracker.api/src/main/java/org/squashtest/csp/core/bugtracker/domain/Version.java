@@ -20,8 +20,10 @@
  */
 package org.squashtest.csp.core.bugtracker.domain;
 
+import org.squashtest.tm.bugtracker.definition.RemoteVersion;
 
-public class Version implements Identifiable<Version>{
+
+public class Version implements Identifiable<Version>, RemoteVersion{
 	
 
 	public static final Version NO_VERSION = new Version(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);

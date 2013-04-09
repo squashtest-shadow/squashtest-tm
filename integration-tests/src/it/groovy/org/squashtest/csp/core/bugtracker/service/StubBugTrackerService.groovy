@@ -26,6 +26,7 @@ import org.squashtest.csp.core.bugtracker.domain.BTProject
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.csp.core.bugtracker.domain.Priority
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor
+import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 
 
 class StubBugTrackerService implements BugTrackersService {
@@ -92,6 +93,12 @@ class StubBugTrackerService implements BugTrackersService {
 
 	@Override
 	public Set<String> getProviderKinds() {
+		return null;
+	}
+
+	@Override
+	public RemoteIssue createIssue(RemoteIssue arg0, BugTracker arg1) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 	

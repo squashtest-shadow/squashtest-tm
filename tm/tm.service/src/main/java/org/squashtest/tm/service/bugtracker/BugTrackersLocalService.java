@@ -25,17 +25,15 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerManagerException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
-import org.squashtest.csp.core.bugtracker.domain.BTIssue;
-import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
-import org.squashtest.tm.domain.bugtracker.BTIssueDecorator;
+import org.squashtest.tm.bugtracker.definition.RemoteIssue;
+import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
+import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
@@ -56,7 +54,7 @@ public interface BugTrackersLocalService {
 	 *            : the issue to add
 	 * @return the BTIssue corresponding to the bug remotely created
 	 */
-	BTIssue createIssue(IssueDetector entity, BTIssue issue);
+	RemoteIssue createIssue(IssueDetector entity, RemoteIssue issue);
 
 	/**
 	 * 
@@ -93,7 +91,7 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnerShipsForExecutionStep(Long stepId,
+	FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnerShipsForExecutionStep(Long stepId,
 			CollectionSorting sorter);
 
 	/**
@@ -110,7 +108,7 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipsforExecution(Long execId,
+	FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsforExecution(Long execId,
 			CollectionSorting sorter);
 
 	/**
@@ -127,7 +125,7 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipForIteration(Long iterId,
+	FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForIteration(Long iterId,
 			CollectionSorting sorter);
 
 	/**
@@ -144,7 +142,7 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipsForCampaigns(Long campId,
+	FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaigns(Long campId,
 			CollectionSorting sorter);
 
 	/**
@@ -161,7 +159,7 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(Long testSuiteId,
+	FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(Long testSuiteId,
 			CollectionSorting sorter);
 
 	/**
@@ -178,7 +176,7 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipForTestCase(Long tcId,
+	FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForTestCase(Long tcId,
 			CollectionSorting sorter);
 
 	/* ****************** BugTracker - side methods ******************** */
@@ -226,7 +224,7 @@ public interface BugTrackersLocalService {
 	 * @throw BugTrackerManagerException and subtypes.
 	 * 
 	 */
-	BTProject findRemoteProject(String name, BugTracker bugTracker);
+	RemoteProject findRemoteProject(String name, BugTracker bugTracker);
 
 
 
@@ -238,7 +236,7 @@ public interface BugTrackersLocalService {
 	 *            : the concerned BugTracker
 	 * @return a remote issue
 	 */
-	BTIssue getIssue(String issueKey, BugTracker bugTracker);
+	RemoteIssue getIssue(String issueKey, BugTracker bugTracker);
 
 	/***
 	 * returns a list of BTIssu corresponding to the given string keys
@@ -249,7 +247,7 @@ public interface BugTrackersLocalService {
 	 *            : the concerned BugTracker
 	 * @return a BTIssue list
 	 */
-	List<BTIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker);
+	List<? extends RemoteIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker);
 
 	/**
 	 * Will attach an existing issue to the issue detector

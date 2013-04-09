@@ -18,61 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.domain;
+package org.squashtest.csp.core.bugtracker.spi;
 
-import org.squashtest.tm.bugtracker.definition.RemoteCategory;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 
+/**
+ * Interface for providers of AdvancedBugTrackerConnector instance. A provider will create instances of connectors suitable a
+ * determined kind of bug tracker. The bug tracker kind should uniquely identify the connector plugin.
+ *
+ * @author bsiri
+ *
+ */
+public interface AdvancedBugTrackerConnectorProvider {
+	/**
+	 *
+	 * @return The kind of bug tracker this provider creates connectors for.
+	 */
+	String getBugTrackerKind();
 
-public class Category implements Identifiable<Category>, RemoteCategory{
+	/**
+	 *
+	 * @return A readable representation of the bug tracker kind.
+	 */
+	String getLabel();
 
-	public static final Category NO_CATEGORY = new Category(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
-
-	
-	private String id;
-	private String name;
-
-	
-	public Category(){
-		
-	}
-	
-	
-	public Category(String id, String name) {
-		super();
-		this.id = id;
-		this.name = name;
-	}
-
-	@Override
-	public String getId(){
-		return id;
-	}
-	
-	@Override
-	public String getName(){
-		return name;
-	}
-
-	
-	
-	@Override
-	public boolean isDummy(){
-		return this.id.equals(NO_CATEGORY.id);
-	}
-
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	/** exists for the purpose of being javabean compliant */
-	public void setDummy(Boolean dummy){
-		
-	}
+	/**
+	 * Creates a connector for the given bug tracker.
+	 *
+	 * @param bugTracker
+	 *            the bug tracker to connect to. should not be <code>null</code>
+	 * @return
+	 */
+	AdvancedBugTrackerConnector createConnector(BugTracker bugTracker);
 
 }

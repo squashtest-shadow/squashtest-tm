@@ -20,6 +20,7 @@
  */
 package org.squashtest.csp.core.bugtracker.core;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,6 +29,11 @@ import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.core.bugtracker.service.AdvancedBugtrackerConnectorAdapter;
+import org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector;
+import org.squashtest.csp.core.bugtracker.service.SimpleBugtrackerConnectorAdapter;
+import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnector;
+import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnectorProvider;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
 
@@ -45,44 +51,69 @@ public class BugTrackerConnectorFactory {
 	/**
 	 * Registered providers mapped by connector kind.
 	 */
-	private Map<String, BugTrackerConnectorProvider> providerByKind = new ConcurrentHashMap<String, BugTrackerConnectorProvider>(
-			5);
+	private Map<String, BugTrackerConnectorProvider> providerByKind = new ConcurrentHashMap<String, BugTrackerConnectorProvider>(2);
+	private Map<String, AdvancedBugTrackerConnectorProvider> advProviderByKind = new ConcurrentHashMap<String, AdvancedBugTrackerConnectorProvider>(2);
 
+	
 	public void setProviderByKind(Map<String, BugTrackerConnectorProvider> providerByKind) {
 		this.providerByKind = providerByKind;
 	}
 	
-	public Set<String> getProviderKinds(){
-		return providerByKind.keySet();
+	public void setAdvProvidersByKind(Map<String, AdvancedBugTrackerConnectorProvider> advProviderByKind){
+		this.advProviderByKind = advProviderByKind;
 	}
 	
-	public BugTrackerConnector createConnector(BugTracker bugTracker) {
-		String kind = bugTracker.getKind();
-
-		LOGGER.debug("Creating Connector for bug tracker of kind {}", kind);
-		BugTrackerConnectorProvider connector = getProviderForKind(kind);
-
-		return connector.createConnector(bugTracker);
+	public Set<String> getProviderKinds(){
+		Set<String> result = new HashSet<String>();
+		result.addAll(providerByKind.keySet());
+		result.addAll(advProviderByKind.keySet());
+		return result;
 	}
-
-	/**
-	 * Returns the connector provider for the given kind.
-	 *
-	 * @param kind
-	 * @return
-	 * @throws UnknownConnectorKindException
-	 *             if there is no registered connector provider for the given kind.
-	 */
-	private BugTrackerConnectorProvider getProviderForKind(String kind) throws UnknownConnectorKindException {
-		BugTrackerConnectorProvider connector;
-
-		connector = providerByKind.get(kind);
-
-		if (connector == null) {
+	
+	
+	public InternalBugtrackerConnector createConnector(BugTracker bugTracker) {
+		
+		String kind = bugTracker.getKind();
+		InternalBugtrackerConnector  connector;
+		
+		LOGGER.debug("Creating Connector for bug tracker of kind {}", kind);
+		
+		if (isSimpleConnector(kind)){
+			connector = createAndWrapSimpleConnector(bugTracker);
+		}
+		else if (isAdvancedConnector(kind)){
+			connector = createAndWrapAdvancedConnector(bugTracker);
+		}
+		else{
 			throw new UnknownConnectorKindException(kind);
 		}
+		
 		return connector;
 	}
+
+	
+	private boolean isSimpleConnector(String kind){
+		return providerByKind.containsKey(kind);
+	}
+	
+	
+	private boolean isAdvancedConnector(String kind){
+		return advProviderByKind.containsKey(kind);
+	}
+	
+	private InternalBugtrackerConnector createAndWrapSimpleConnector(BugTracker bugTracker){
+		BugTrackerConnectorProvider provider = providerByKind.get(bugTracker.getKind());
+		BugTrackerConnector connector = provider.createConnector(bugTracker);
+		return new SimpleBugtrackerConnectorAdapter(connector);
+	}
+	
+	private InternalBugtrackerConnector createAndWrapAdvancedConnector(BugTracker bugTracker){
+		AdvancedBugTrackerConnectorProvider provider = advProviderByKind.get(bugTracker.getKind());
+		AdvancedBugTrackerConnector connector = provider.createConnector(bugTracker);
+		return new AdvancedBugtrackerConnectorAdapter(connector);		
+	}
+	
+
 
 	/**
 	 * Registers a new kind of connector provider, making it instantiable by this factory.
@@ -117,5 +148,40 @@ public class BugTrackerConnectorFactory {
 		LOGGER.info("Unregistering Connector provider for bug trackers of kind '{}'", kind);
 
 		providerByKind.remove(kind);
+	}
+	
+	/**
+	 * Registers a new kind of connector provider, making it instantiable by this factory.
+	 *
+	 * @param provider
+	 */
+	public void registerAdvancedProvider(AdvancedBugTrackerConnectorProvider provider, Map serviceProperties) {
+		String kind = provider.getBugTrackerKind();
+
+		if (kind == null) {
+			throw new NullArgumentException("provider.bugTrackerKind");
+		}
+
+		LOGGER.info("Registering Connector provider for bug trackers of kind '{}'", kind);
+
+		advProviderByKind.put(kind, provider);
+	}
+
+	/**
+	 * Unregisters a kind of provider, making it no longer instanciable by this factory.
+	 *
+	 * @param provider
+	 */
+	public void unregisterAdvancedProvider(AdvancedBugTrackerConnectorProvider provider, Map serviceProperties) {
+		
+		if (provider == null){
+			return;
+		}
+		
+		String kind = provider.getBugTrackerKind();
+
+		LOGGER.info("Unregistering Connector provider for bug trackers of kind '{}'", kind);
+
+		advProviderByKind.remove(kind);
 	}
 }

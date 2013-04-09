@@ -29,34 +29,40 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
+import org.squashtest.csp.core.bugtracker.domain.Category;
+import org.squashtest.csp.core.bugtracker.domain.Priority;
+import org.squashtest.csp.core.bugtracker.domain.User;
 import org.squashtest.csp.core.bugtracker.domain.Version;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
-import org.squashtest.tm.bugtracker.definition.RemoteCategory;
-import org.squashtest.tm.bugtracker.definition.RemoteIssue;
-import org.squashtest.tm.bugtracker.definition.RemotePriority;
-import org.squashtest.tm.bugtracker.definition.RemoteProject;
-import org.squashtest.tm.bugtracker.definition.RemoteUser;
-import org.squashtest.tm.bugtracker.definition.RemoteVersion;
 
 
 /**
  * <p>Connector to a bug tracker.</p>
  * 
  * <p>
- * 	This interface describes what services are expected from a BugTrackerConnector. A BugTrackerConnector is supposed to 
- * manipulate interfaces from package org.squashtest.tm.bugtracker.definition. However, actual implementations should be picked from
- * one of those two domains : 
- * <ul>
- * 		<li>simple domain : org.squashtest.csp.core.bugtracker.domain. This package provides simple entities for simple connectors. This is also the 
- * 							legacy entities for older bugtracker plugins</li>
- * 		<li>extended domain : org.squashtest.tm.bugtracker.advanceddomain. This package provides a second set of entities for more complex models.</li>
- * </ul>
- * 
- * Make your choice between those two implementations and Squash will handle your code accordingly.
- * 
+ * 	This is a simple version of the BugTracker API, that uses a simple domain. See org.squashtest.csp.core.bugtracker.domain to see what domain
+ * it is. This domain fixes the layout and properties of an issue, project etc. Using these entities, Squash will know how to treat and display them. 
  * </p>
-
- * @author Gregory Fouquet, bsiri
+ * 
+ * <p>
+ * <strong>Item lists : </strong> An issue has several characteristics (priority, version etc) that can be picked 
+ * from a list. The content of those lists may vary from bugtracker to bugtracker and from project A to another 
+ * project B. Among those listable item the BugTrackerConnecter focus on four of them :
+ * <ul>
+ * 	<li> {@link Priority} </li>
+ *  <li>(assignable) {@link User} </li>
+ *  <li> {@link Version} </li>
+ *  <li> {@link Category} </li>
+ * </ul> 
+ * 
+ * In some cases those lists may be empty (no assignable users for instance). 
+ * For such cases, an implementation of {@link BugTrackerConnector} should never return the empty list : 
+ * the returned list should contain a specific singleton. See {@link User#NO_USER} or 
+ * {@link Version#NO_VERSION} for instance.
+ *  
+ * </p>
+ *
+ * @author Gregory Fouquet
  *
  */
 public interface BugTrackerConnector {
@@ -100,18 +106,29 @@ public interface BugTrackerConnector {
 	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
 	 */
 	@Deprecated
-	List<RemotePriority> getPriorities() throws BugTrackerRemoteException;
+	List<Priority> getPriorities() throws BugTrackerRemoteException;
 
 
 	/**
 	 * Returns a BTProject, identified by its name. The remote project name must perfectly match the argument.
+	 * If found, the following attributes of the BTProject must be populated :
+	 * <ul>
+	 * <li>id</li>
+	 * <li>name</li>
+	 * <li>version list</li>
+	 * <li>assignable users list (those that the requesting user can legally address)</li>
+	 * <li>categories list</li>
+	 * <li>priorities list</li>
+	 * </ul>
 	 * 
+	 * Note that the lists here must follow the rules stated in the top level documentation of this interface.
+	 *
 	 * @param projectName the name of the project.
-	 * @return a project properly configured, see the specifics of the implementation of the domain you choosed.
+	 * @return a project properly configured
 	 * @throws ProjectNotFoundException if the project could not be found
 	 * @throws BugTrackerRemoteException when something goes wrong with the remote call
 	 */
-	RemoteProject findProject(String projectName) throws ProjectNotFoundException, BugTrackerRemoteException;
+	BTProject findProject(String projectName) throws ProjectNotFoundException, BugTrackerRemoteException;
 
 
 	/**
@@ -122,30 +139,43 @@ public interface BugTrackerConnector {
 	 * @throws ProjectNotFoundException if the project could not be found
 	 * @throws BugTrackerRemoteException when something goes wrong with the remote call
 	 */
-	RemoteProject findProjectById(String projectId) throws ProjectNotFoundException, BugTrackerRemoteException;
+	BTProject findProjectById(String projectId) throws ProjectNotFoundException, BugTrackerRemoteException;
 
 
 	/**
 	 * Will return the list of the available versions of the given project (given its name). 
 	 *  
 	 * @param projectName is the name of the project
-	 * @return the list of the versions
+	 * @return the list of the versions if any, or a list only containing {@link Version#NO_VERSION} when
+	 * none were found.
 	 * @throws ProjectNotFoundException if the project doesn't exist
 	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
 	 */
-	List<RemoteVersion> findVersions(String projectName) throws ProjectNotFoundException, BugTrackerRemoteException;
+	List<Version> findVersions(String projectName) throws ProjectNotFoundException, BugTrackerRemoteException;
 
 
 	/**
 	 * Will return the list of the available versions of the given project (given its id). 
 	 *  
 	 * @param projectId is the id of the project
-	 * @return the list of the versions
+	 * @return the list of the versions if any, or a list only containing {@link Version#NO_VERSION} when
+	 * none were found.
 	 * @throws ProjectNotFoundException if the project doesn't exist
 	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
 	 */
-	List<RemoteVersion> findVersionsById(String projectId) throws ProjectNotFoundException, BugTrackerRemoteException;
+	List<Version> findVersionsById(String projectId) throws ProjectNotFoundException, BugTrackerRemoteException;
 
+	
+	/**
+	 * Will return the list of the available versions of the given project (given the project itself). 
+	 *  
+	 * @param project being the project
+	 * @return the list of the versions if any, or a list only containing {@link Version#NO_VERSION} when
+	 * none were found.
+	 * @throws ProjectNotFoundException if the project doesn't exist
+	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
+	 */
+	List<Version> findVersions(BTProject project) throws ProjectNotFoundException, BugTrackerRemoteException;
 
 
 	/**
@@ -153,11 +183,12 @@ public interface BugTrackerConnector {
 	 * The users must be returned with their Permissions if they have some. 
 	 *  
 	 * @param projectName is the name of the project
-	 * @return the list of the assignable users
+	 * @return the list of the versions if any, or a list only containing {@link User#NO_USER} when
+	 * none were found.
 	 * @throws ProjectNotFoundException if the project doesn't exist
 	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
 	 */
-	List<RemoteUser> findUsers(String projectName) throws ProjectNotFoundException, BugTrackerRemoteException;
+	List<User> findUsers(String projectName) throws ProjectNotFoundException, BugTrackerRemoteException;
 
 
 	/**
@@ -165,22 +196,39 @@ public interface BugTrackerConnector {
 	 * The users must be returned with their Permissions if they have some.  
 	 *  
 	 * @param projectID is the name of the project
-	 * @return the list of assignable users
+	 * @return the list of the versions if any, or a list only containing {@link User#NO_USER} when
+	 * none were found.
 	 * @throws ProjectNotFoundException if the project doesn't exist
 	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
 	 */
-	List<RemoteUser> findUsersById(String projectID) throws ProjectNotFoundException, BugTrackerRemoteException;
-
-
+	List<User> findUsersById(String projectID) throws ProjectNotFoundException, BugTrackerRemoteException;
 
 
 	/**
+	 * Will return the list of the assignable users for the given project and current user (given the project itself). 
+	 * The users must be returned with their Permissions if they have some.  
+	 *  
+	 * @param project being the project.
+	 * @return the list of the versions if any, or a list only containing {@link User#NO_USER} when
+	 * none were found.
+	 * @throws ProjectNotFoundException if the project doesn't exist
+	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
+	 */
+	List<User> findUsers(BTProject project) throws ProjectNotFoundException, BugTrackerRemoteException;
+
+
+	/**
+	 * Will create an issue on the remote bugtracker. The detached issue, supplied as an argument, 
+	 * have no ID/key yet. Its {@link Priority}, {@link Version}, assignee ( {@link User} ) and {@link Category}
+	 * will be set, possibly to {@link Version#NO_VERSION}, {@link User#NO_USER}, or {@link Category#NO_CATEGORY}.
+	 * The summary, description or comment might be null or empty. 
+	 *
 	 * @param issue a squash Issue
 	 * @return the corresponding new remote Issue, of which the ID must be set.
 	 * @throws BugTrackerRemoteException when something goes wrong with the remote call, including validation exception.
 	 *
 	 */
-	<X extends RemoteIssue> X createIssue(X issue) throws BugTrackerRemoteException;
+	BTIssue createIssue(BTIssue issue) throws BugTrackerRemoteException;
 
 
 	/**
@@ -188,12 +236,13 @@ public interface BugTrackerConnector {
 	 * Will return the list of the available categories for the given project (given the project itself). 
 	 *  
 	 * @param projectName is the name of the project
-	 * @return the list of the categories
+	 * @return the list of the versions if any, or a list only containing {@link Category#NO_CATEGORY} when
+	 * none were found.
 	 * @throws ProjectNotFoundException if the project doesn't exist
 	 * @throws BugTrackerRemoteException when something goes wrong with the remote call.
 	 *
 	 */
-	<X extends RemoteProject> List<RemoteCategory> findCategories(X project) throws ProjectNotFoundException, BugTrackerRemoteException;
+	List<Category> findCategories(BTProject project) throws ProjectNotFoundException, BugTrackerRemoteException;
 
 
 
@@ -216,18 +265,20 @@ public interface BugTrackerConnector {
 	 * @throws BugTrackerNotFoundException when the issue wasn't found
 	 * 
 	 */
-	RemoteIssue findIssue(String key);
+	BTIssue findIssue(String key);
 	
 	
 	/***
-	 * Returns a list of RemoteIssue, identified by their key. The resulting list doesn't have to be sorted according to the 
-	 * input list. 
+	 * Returns a list of BTIssue, identified by their key. The resulting list doesn't have to be sorted according to the 
+	 * input list. Returned issues must use {@link Version#NO_VERSION} and alike when the version etc aren't
+	 * set, instead of null. Unlike {@link #findIssue(String)}, their associated BTProject only needs their 'id' and 'name' 
+	 * attributes, and can let their other attribute to unspecified values.
 	 *
 	 * @param issueKeyList
 	 *            the given squash issue list (List<String>)
 	 * @return the corresponding BTIssue list
 	 */
-	List<RemoteIssue> findIssues(List<String> issueKeyList);
+	List<BTIssue> findIssues(List<String> issueKeyList);
 
 
 }

@@ -113,7 +113,7 @@ public interface BugTrackersService {
 	 * @return the newly created issue
 	 *
 	 */
-	RemoteIssue createIssue(BTIssue issue, BugTracker bugTracker);
+	RemoteIssue createIssue(RemoteIssue issue, BugTracker bugTracker);
 
 	
 	
@@ -129,7 +129,7 @@ public interface BugTrackersService {
 	
 
 	/***
-	 * This method returns a BTIssue list corresponding to the given Squash Issue List
+	 * This method returns a list of issues corresponding to the given Squash Issue List
 	 *
 	 * @param issueKeyList
 	 *            the Squash issue key List (List<String>)

@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
-import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
@@ -53,7 +52,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 	@Override
 	public BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugTracker) {
-			BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
+			InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
 			return connector.getInterfaceDescriptor();
 	}
 	
@@ -63,7 +62,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 		URL baseUrl = bugTracker.getURL();
 		try {
 			if (baseUrl != null) {
-				BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
+				InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
 				String suffix = connector.makeViewIssueUrlSuffix(issueId);
 				url = new URL(baseUrl.toString() + suffix);
 			} else {
@@ -85,7 +84,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	public void setCredentials(String username, String password, BugTracker bugTracker) {
 
 		AuthenticationCredentials credentials = new AuthenticationCredentials(username, password);
-		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
+		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
 
 		// setcredentials to null first. If the operation succeed then we'll set them in the context.
 		getBugTrackerContext().setCredentials(bugTracker, null);
@@ -107,16 +106,15 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 		return connect(bugTracker).findProject(projectId);
 	}
 
-	private BugTrackerConnector connect(BugTracker bugTracker) {
-		BugTrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
+	private InternalBugtrackerConnector connect(BugTracker bugTracker) {
+		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
 		connector.authenticate(getBugTrackerContext().getCredentials(bugTracker));
 		return connector;
 	}
 
 	@Override
-	public BTIssue createIssue(BTIssue issue, BugTracker bugTracker) {
+	public RemoteIssue createIssue(RemoteIssue issue, BugTracker bugTracker) {
 		return connect(bugTracker).createIssue(issue);
-
 	}
 
 	@Override
