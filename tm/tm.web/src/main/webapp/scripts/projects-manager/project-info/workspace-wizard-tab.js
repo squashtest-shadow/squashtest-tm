@@ -51,9 +51,9 @@ define(
 							tbody.empty();
 
 							var rows = $();
-							for ( var i = 0; i < availableLength; i++) {
+							for ( var j = 0; j < availableLength; j++) {
 
-								var item = available[i];
+								var item = available[j];
 								var newRow = $('<tr class="cursor-arrow"/>');
 
 								newRow.append($('<td class="not-displayed">'

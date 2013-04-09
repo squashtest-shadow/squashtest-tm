@@ -65,11 +65,11 @@
 				var  i=0;			
 				for (i=0;i<entityArray.length;i++){
 					var entity = entityArray[i];
-					var option = $("<option/>", { 
+					var localoption = $("<option/>", { 
 						'value' : entity.id, 
 						'text' : entity.name 
 					});
-					this.append(option);			
+					this.append(localoption);			
 				}
 				this.empty=false;
 			}

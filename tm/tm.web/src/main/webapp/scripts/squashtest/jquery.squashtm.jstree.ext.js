@@ -493,7 +493,7 @@ squashtm.tree = squashtm.tree || {};
 	 * @param tree
 	 * @param previouslySelected
 	 */
-	function unselectOtherProjectsSelections(liNode, tree, previouslySelected) {
+	function unselectOtherProjectsSelections(liNode, tree, ppreviouslySelected) {
 		var previouslySelected = tree.get_selected();
 		if (previouslySelected.length > 0) {
 			var libraryOfSelectedNode;

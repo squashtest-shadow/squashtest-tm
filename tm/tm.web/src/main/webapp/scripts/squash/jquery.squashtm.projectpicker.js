@@ -114,11 +114,11 @@
 	function itemToDataMapper() {
 		var item = $(this), jqCbx = item.find(".project-checkbox"), cbx = jqCbx
 				.get()[0];
-		name = item.find(".project-name").text();
+		var $name = item.find(".project-name").text();
 
 		return {
 			id : cbx.value,
-			name : name,
+			name : $name,
 			selected : cbx.checked
 		};
 	}

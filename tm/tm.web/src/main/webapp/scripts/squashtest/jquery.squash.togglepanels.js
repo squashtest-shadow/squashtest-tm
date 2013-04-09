@@ -59,14 +59,15 @@
 							// content into it won't be necessary. This will
 							// prevent
 							// the double javascript execution bug, see #1291
+							var wCreate;
 							var wrapper = this.element
 									.parent('div.toggle-panel');
 							if (wrapper.length > 0) {
 								wrapper
 										.addClass("ui-accordion ui-widget ui-helper-reset ui-accordion-icons");
-								var wCreate = false;
+								wCreate = false;
 							} else {
-								var wrapper = $(
+								wrapper = $(
 										'<div/>',
 										{
 											'class' : "toggle-panel ui-accordion ui-widget ui-helper-reset ui-accordion-icons"

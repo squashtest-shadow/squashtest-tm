@@ -37,15 +37,10 @@ define([ 'jquery' ], function($) {
 		};
 
 		this.update = function(evt) {
-			switch (evt.evt_name) {
-			case "rename":
+			if (evt.evt_name == "rename") {
 				if (this.isMe(evt.evt_target)) {
 					this._rename(evt.evt_newname);
 				}
-				
-				break;
-			default:
-				break;
 			}
 		};
 

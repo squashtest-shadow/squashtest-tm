@@ -30,14 +30,14 @@ require([ "jquery", "jqueryui" ], function($) {
 
 	/* French initialisation for the jQuery UI date picker plugin. */
 	/*
-	 * Written by Keith Wood (kbwood{at}iinet.com.au) and St�phane Nahmani
+	 * Written by Keith Wood (kbwood{at}iinet.com.au) and Stéphane Nahmani
 	 * (sholby@sholby.net).
 	 */
 
 	$.datepicker.regional['fr'] = {
 		closeText : 'Fermer',
-		prevText : '\u003cPr\u00e9c',
-		nextText : 'Suiv\u003e',
+		prevText : '<Pr\u00e9c',
+		nextText : 'Suiv>',
 		currentText : 'Courant',
 		monthNames : [ 'Janvier', 'F\u00e9vrier', 'Mars', 'Avril', 'Mai',
 				'Juin', 'Juillet', 'Ao\u00fbt', 'Septembre', 'Octobre',

@@ -80,15 +80,15 @@ MenuEvent.prototype.execute = function(args) {
 	}
 };
 
-function Menu(caller, options) {
+function Menu(pcaller, poptions) {
 	var menu = this;
-	var caller = $(caller);
+	var caller = $(pcaller);
 	var container = $('<div class="fg-menu-container ui-widget ui-widget-content ui-corner-all">'
-			+ options.content + '</div>');
+			+ poptions.content + '</div>');
 
 	this.menuOpen = false;
 	this.menuExists = false;
-	this.content = options.content;
+	this.content = poptions.content;
 	this.onShow = new MenuEvent();
 
 	this.getContainer = function() {
@@ -137,7 +137,7 @@ function Menu(caller, options) {
 												// next level
 		topLinkText : 'All',
 		nextCrumbLink : 'ui-icon-carat-1-e'
-	}, options);
+	}, poptions);
 
 	var killAllMenus = function() {
 		$.each(allUIMenus, function(i) {
@@ -779,7 +779,7 @@ Menu.prototype.drilldown = function(container, options) {
  * (visual effect to make it look like it overlaps the object)
  */
 
-Menu.prototype.setPosition = function(widget, caller, options) {
+Menu.prototype.setPosition = function(widget, caller, poptions) {
 	var el = widget;
 	var referrer = caller;
 	var dims = {
@@ -788,7 +788,7 @@ Menu.prototype.setPosition = function(widget, caller, options) {
 		refW : referrer.getTotalWidth(),
 		refH : referrer.getTotalHeight()
 	};
-	var options = options;
+	var options = poptions;
 	var xVal, yVal;
 
 	var helper = $('<div class="positionHelper"></div>');

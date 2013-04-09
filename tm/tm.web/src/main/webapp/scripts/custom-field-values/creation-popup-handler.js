@@ -95,7 +95,7 @@ define(
 								// because it wouldn't work otherwise, we must
 								// strip the result of the license header
 								var fixed = $.trim(html.replace(
-										/\<\!--[\s\S]*--\>/, ''));
+										/<\!--[\s\S]*--\>/, ''));
 								table.append(fixed);
 								self.init(table);
 

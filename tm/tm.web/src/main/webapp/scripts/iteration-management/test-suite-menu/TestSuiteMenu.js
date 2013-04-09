@@ -298,7 +298,7 @@ define(
 						initializeContent();
 						redrawIfNeeded(wasOpen);
 					} else if (evt.evt_name == "add") {
-						var wasOpen = this.menu.menuOpen;
+						wasOpen = this.menu.menuOpen;
 						addSuiteToMenuContent(evt);
 						// redrawIfNeeded(wasOpen);
 					}

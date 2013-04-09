@@ -72,7 +72,7 @@
 						break;
 
 					default:
-						status = "";
+						css = "";
 						break;
 
 					}

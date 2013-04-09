@@ -367,7 +367,7 @@ define(
 					});
 
 					jqDoc.keyup(function(evt) {
-						if (evt.which = 17) {
+						if (evt.which != 17) {
 							self.ctrlPressed = false;
 						}
 					});

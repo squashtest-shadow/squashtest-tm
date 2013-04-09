@@ -127,16 +127,16 @@ function dpa_initialize() {
 	this.initState();
 
 	// initialize the checkbox events
-	var me = this;
+	var $me = this;
 	this.controls.checkbx.change(function() {
 		var isAuto = $(this).is(':checked');
 		if (isAuto) {
-			me.setAutoMode();
-			me.postState();
+			$me.setAutoMode();
+			$me.postState();
 		} else {
-			me.setManualMode();
-			me.enterEditMode();
-			me.postState();
+			$me.setManualMode();
+			$me.enterEditMode();
+			$me.postState();
 		}
 	});
 
