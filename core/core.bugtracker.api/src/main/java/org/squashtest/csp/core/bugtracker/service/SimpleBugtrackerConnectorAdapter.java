@@ -104,7 +104,7 @@ public class SimpleBugtrackerConnectorAdapter implements
 
 	@Override
 	public List<RemoteIssue> findIssues(List<String> issueKeyList) {
-		return findIssues(issueKeyList);
+		return (List)connector.findIssues(issueKeyList);
 	}
 
 }

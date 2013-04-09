@@ -25,6 +25,7 @@ import org.junit.Ignore;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.core.UnknownConnectorKindException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.core.bugtracker.service.SimpleBugtrackerConnectorAdapter;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
 
@@ -50,7 +51,7 @@ class BugTrackerConnectorFactoryTest extends Specification {
 		def res = factory.createConnector(bt)
 
 		then:
-		res == connector
+		res instanceof SimpleBugtrackerConnectorAdapter
 	}
 
 
