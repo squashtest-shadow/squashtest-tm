@@ -135,7 +135,7 @@
 		// check if the item argument is actually different from the last one
 		var lastItem = this.findLastItem();
 
-		if ((isFileBrowserEmpty(lastItem) == true)
+		if ((isFileBrowserEmpty(lastItem))
 				&& (!attachementAreSame(jqAttachItem, lastItem))) {
 			jqAttachItem.remove();
 		}
@@ -157,7 +157,7 @@
 	function isFileBrowserEmpty(jqItem) {
 		var content = jqItem.find("input [type='file']").val();
 
-		if ((content == "") || (typeof (content) == 'undefined')) {
+		if ((!content) || (typeof (content) == 'undefined')) {
 			return true;
 		} else {
 			return false;

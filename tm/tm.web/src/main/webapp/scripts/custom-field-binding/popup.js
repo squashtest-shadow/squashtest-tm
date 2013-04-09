@@ -103,7 +103,7 @@ define(
 						for (i = 0; i < json.length; i++) {
 							var data = json[i];
 							var newLine = lineTemplate.clone(true);
-							var rowCss = ((i % 2) == 0) ? "even" : "odd";
+							var rowCss = (!!(i % 2)) ? "odd" : "even";
 							newLine.addClass(rowCss);
 							var tds = newLine.find("td");
 

@@ -76,8 +76,8 @@ define(
 							DefaultFieldControl.prototype.initialize.apply(
 									this, arguments);
 
-							this.empty = (this.$el
-									.find('option.issue-control-empty').length != 0);
+							this.empty = (!!this.$el
+									.find('option.issue-control-empty').length);
 							if (!!this.empty) {
 								this.disable();
 							}
@@ -98,7 +98,7 @@ define(
 						},
 
 						set : function(newv) {
-							var id = (newv == null && newv == undefined) ? this
+							var id = (newv == null && !newv) ? this
 									.$('option:first').val() : newv.id;
 							this.$el.val(id);
 						},

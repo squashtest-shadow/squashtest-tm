@@ -90,14 +90,14 @@ function simpleHyphenation(maxLength, text) {
 function openAttachmentIfNotEmpty() {
 	var imgs = $("#attachment-container img");
 
-	if (imgs.length != 0) {
+	if (!!imgs.length) {
 		$("#attachment-panel").togglePanel("openContent");
 	}
 }
 
 function hyphenateAttachement() {
 	var attachmentsCaption = $(".div-attachments-item  a");
-	if (attachmentsCaption.length != 0) {
+	if (!!attachmentsCaption.length) {
 		var i = 0;
 		var itemWidth = $(".div-attachments-item:first").width();
 		for (i = 0; i < attachmentsCaption.length; i++) {
@@ -113,7 +113,7 @@ function hyphenateAttachement() {
 function handleNotFoundImages(defaultImageUrl) {
 	var imgs = $("#attachment-container img");
 
-	if (imgs.length == 0){
+	if (!imgs.length){
 		return;
 	}
 	

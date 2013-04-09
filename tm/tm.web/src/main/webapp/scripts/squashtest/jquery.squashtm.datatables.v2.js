@@ -298,7 +298,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	function _getODataId(arg) {
 		var key = this.squashSettings.dataKeys.entityId;
 		var id = this.fnGetData(arg)[key];
-		if ((id != "") && (!isNaN(id))) {
+		if ((!!id) && (!isNaN(id))) {
 			return id;
 		} else {
 			return null;

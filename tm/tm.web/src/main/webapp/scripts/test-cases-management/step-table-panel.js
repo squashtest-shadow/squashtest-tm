@@ -419,7 +419,7 @@ define(
 
 			function addTestStepSuccess() {
 				var dialog = $("#add-test-step-dialog");
-				if (dialog.dialog("isOpen") == true) {
+				if (dialog.dialog("isOpen")) {
 					dialog.dialog('close');
 				}
 				refresh();
@@ -533,7 +533,7 @@ define(
 						'click',
 						function() {
 							var stepIds = table.getSelectedIds();
-							if (stepIds.length == 0) {
+							if (!stepIds.length) {
 								$.squash.openMessage(language.errorTitle,
 										language.noStepSelected);
 							} else {
@@ -550,7 +550,7 @@ define(
 					var stepIds = cookieIds.split(",");
 
 					try {
-						if (stepIds.length == 0) {
+						if (!stepIds.length) {
 							throw language.noStepSelected;
 						}
 
@@ -596,7 +596,7 @@ define(
 											.squashTable();
 									var ids = table.getSelectedIds();
 
-									if (ids.length == 0) {
+									if (!ids.length) {
 										$.squash.openMessage(
 												language.errorTitle,
 												language.noStepSelected);

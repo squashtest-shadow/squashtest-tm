@@ -85,7 +85,7 @@
 		this.select = function(btEntity){
 			if (
 				this.isEmpty()	||
-				(arguments.length ==0) ||
+				(! arguments.length) ||
 				(! btEntity)				
 			){
 				return;

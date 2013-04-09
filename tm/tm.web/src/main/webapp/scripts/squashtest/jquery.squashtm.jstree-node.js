@@ -92,7 +92,7 @@
 		var tree = $.jstree._reference(this);
 		var noLi = (!this.is('li')) && (!this.is('a') && (!this.is('ins')));
 
-		if ((lt == 0) || (tree == null) || (noLi)) {
+		if ((lt == 0) || (!tree) || (noLi)) {
 			throw "this node is not a valid tree node";
 		}
 
@@ -265,7 +265,7 @@
 			// it's not
 			// hence the return thing below
 			var isOpen = this.tree.is_open(this);
-			return (isOpen != true) ? false : true;
+			return (!isOpen) ? false : true;
 		};
 
 		this.open = function() {

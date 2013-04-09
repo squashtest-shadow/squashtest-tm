@@ -182,7 +182,7 @@ var squashtm = squashtm || {};
 			buttons.filter(':last').addClass('ui-state-active');
 			buttons.filter(':first').removeClass('ui-state-active');
 			// user code
-			if (userOpen != undefined){
+			if (!!userOpen){
 				userOpen.call(this);
 			}
 		};
@@ -191,7 +191,7 @@ var squashtm = squashtm || {};
 			// cleanup
 			squashtm.popup.cleanup.call(target);
 			// usercode
-			if (userClose != undefined){
+			if (!!userClose){
 				userClose.call(this);
 			}
 		};
@@ -227,7 +227,7 @@ var squashtm = squashtm || {};
 																|| "en"
 													});
 								});
-				if (userCreate != undefined){
+				if (!!userCreate){
 					userCreate.call(this);
 				}
 			}

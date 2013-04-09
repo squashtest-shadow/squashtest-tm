@@ -269,7 +269,7 @@ function dp_postDateSuccess(strDate, callback) {
 
 	this.enterDisplayMode();
 
-	if (callback != undefined){
+	if (!!callback){
 		callback();
 	}
 }

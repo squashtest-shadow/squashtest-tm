@@ -27,7 +27,7 @@ function TreeNodeCopier(initObj) {
 	// ***************** private methods *********************
 
 	var displayError = function() {
-		if (arguments.length == 0) {
+		if (!arguments.length) {
 			squashtm.notification.showInfo(this.errMessage);
 		} else {
 			squashtm.notification.showInfo(arguments[0]);
@@ -117,7 +117,7 @@ function TreeNodeCopier(initObj) {
 		}
 		
 		var nodes = this.tree.findNodes(data.nodes);
-		if (nodes.length == 0){
+		if (!nodes.length){
 			return "buffer-empty";
 		}
 		

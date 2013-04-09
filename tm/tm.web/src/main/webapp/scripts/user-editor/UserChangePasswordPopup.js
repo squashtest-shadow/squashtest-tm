@@ -110,8 +110,8 @@ define(
 								confirmPassOkay = false;
 							}
 
-							if ((newPassOkay == true)
-									&& (confirmPassOkay == true)) {
+							if ((newPassOkay)
+									&& (confirmPassOkay)) {
 								var pass = $("#newPassword").val();
 								var confirm = $("#user-account-confirmpass")
 										.val();
@@ -130,7 +130,7 @@ define(
 
 						isFilled : function(selector) {
 							var value = $(selector).val();
-							if (value.length == 0) {
+							if (!value.length) {
 								return false;
 							} else {
 								return true;

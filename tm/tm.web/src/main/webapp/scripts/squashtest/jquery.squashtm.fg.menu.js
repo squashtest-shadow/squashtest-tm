@@ -56,7 +56,7 @@ $.fn.fgmenu = function(options) {
 		}
 		
 	}).click(function() {
-		if (m.menuOpen == false) {
+		if (!m.menuOpen) {
 			m.showMenu();
 		} else {
 			m.kill();
@@ -183,11 +183,11 @@ function Menu(caller, options) {
 
 	var keydownHandler = function(event) {
 		var e;
-		if (event.which != "") {
+		if (!!event.which) {
 			e = event.which;
-		} else if (event.charCode != "") {
+		} else if (!!event.charCode) {
 			e = event.charCode;
-		} else if (event.keyCode != "") {
+		} else if (!!event.keyCode) {
 			e = event.keyCode;
 		}
 
@@ -624,7 +624,7 @@ Menu.prototype.drilldown = function(container, options) {
 
 												// initialize "back" link
 												if (options.backLink) {
-													if (footer.find('a').size() == 0) {
+													if (!footer.find('a').size()) {
 														footer.show();
 														$(
 																'<a href="#"><span class="ui-icon ui-icon-triangle-1-w"></span> <span>Back</span></a>')
@@ -995,7 +995,7 @@ Number.prototype.pxToEm = String.prototype.pxToEm = function(settings) {
 		reverse : false
 	}, settings);
 
-	var pxVal = (this == '') ? 0 : parseFloat(this);
+	var pxVal = (!this) ? 0 : parseFloat(this);
 	var scopeVal;
 	var getWindowWidth = function() {
 		var de = document.documentElement;
@@ -1026,7 +1026,7 @@ Number.prototype.pxToEm = String.prototype.pxToEm = function(settings) {
 	}
 	
 
-	var result = (settings.reverse == true) ? (pxVal * scopeVal).toFixed(2)
+	var result = (!!settings.reverse) ? (pxVal * scopeVal).toFixed(2)
 			+ 'px' : (pxVal / scopeVal).toFixed(2) + 'em';
 	return result;
 };

@@ -74,8 +74,7 @@ define(
 
 			function showBootstrapErrorMessage(fieldValidationError) {
 				var inputName = fieldValidationError.fieldName;
-				if (fieldValidationError.objectName != null
-						&& fieldValidationError.objectName != "") {
+				if (!!fieldValidationError.objectName) {
 					inputName = fieldValidationError.objectName + "-"
 							+ inputName;
 				}

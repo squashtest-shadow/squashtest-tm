@@ -26,7 +26,7 @@ define([ "jquery", "jqueryui" ], function($) {
 			var tab = $("div.fragment-tabs");
 
 			var btDiv = $("#bugtracker-section-div");
-			if (btDiv.length == 0) {
+			if (!btDiv.length) {
 				btDiv = $('<div id="bugtracker-section-div"/>');
 				btDiv.appendTo(tab);
 			}

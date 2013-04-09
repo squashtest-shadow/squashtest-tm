@@ -266,7 +266,7 @@ squashtm.tree = squashtm.tree || {};
 		// ********** actual code. ******************
 
 		var isOpen = targetNode.isOpen();
-		if (isOpen != true) {
+		if (!isOpen) {
 			return targetNode.open() // first call will make the node load if
 			// necessary.
 			.then(createNode);

@@ -201,7 +201,7 @@ require(
 							var i = 0;
 							var allSuccess = true;
 							for (i = 0; i < summaries.length; i++) {
-								if (summaries[i].iStatus != 0) {
+								if (!!summaries[i].iStatus) {
 									allSuccess = false;
 									break;
 								}

@@ -361,7 +361,7 @@ define(
 													function(evt) {
 														evt
 																.stopImmediatePropagation();
-														if (getDatatableSelected().length == 0) {
+														if (!getDatatableSelected().length) {
 															$(
 																	settings.emptySelectionMessageSelector)
 																	.openMessage();
@@ -401,7 +401,7 @@ define(
 
 				var showMenuHandler = $.proxy(
 						function() {
-							if (getDatatableSelected().length == 0) {
+							if (!getDatatableSelected().length) {
 								this.menu.kill();
 								$(settings.emptySelectionMessageSelector)
 										.openMessage();

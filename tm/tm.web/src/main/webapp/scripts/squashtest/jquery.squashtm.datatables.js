@@ -483,7 +483,7 @@ function getIdsOfSelectedTableRows(dataTable, getRowIdCallback) {
 		if ($(row).hasClass('ui-state-row-selected')) {
 			var data = dataTable.fnGetData(row);
 			var id = getRowIdCallback(data);
-			if ((id != "") && (!isNaN(id))) {
+			if ((!!id) && (!isNaN(id))) {
 				ids.push(id);
 			}
 		}

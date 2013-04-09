@@ -239,7 +239,7 @@ jQuery.tableDnD = {
 		var left = 0;
 		var top = 0;
 		/** Safari fix -- thanks to Luis Chato for this! */
-		if (e.offsetHeight == 0) {
+		if (!e.offsetHeight) {
 			/**
 			 * Safari 2 doesn't correctly grab the offsetTop of a table row this
 			 * is detailed here:
@@ -343,7 +343,7 @@ jQuery.tableDnD = {
 			var row = rows[i];
 			var rowY = this.getPosition(row).y;
 			var rowHeight = parseInt(row.offsetHeight) / 2;
-			if (row.offsetHeight == 0) {
+			if (!row.offsetHeight) {
 				rowY = this.getPosition(row.firstChild).y;
 				rowHeight = parseInt(row.firstChild.offsetHeight) / 2;
 			}

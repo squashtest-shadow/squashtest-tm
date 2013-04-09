@@ -116,7 +116,7 @@ define(
 						evt.stopImmediatePropagation();
 						var disabledStatus = self.button.squashButton("option",
 								"disabled");
-						if (disabledStatus == false) {
+						if (!disabledStatus) {
 							self.button.click();
 						}
 					}
@@ -124,7 +124,7 @@ define(
 
 				var updateBtn = function() {
 					var button = self.button;
-					if (self.input.val().length == 0
+					if (!self.input.val().length
 							|| self.input.val() == self.manager.create.control.defaultMessage) {
 						button.squashButton('disable');
 					} else {
