@@ -291,10 +291,11 @@ define(
 
 				this.update = function(evt) {
 					// the only event ignored is "bind"
+					var wasOpen;
 					if ((evt === undefined) || (evt.evt_name == "rename")
 							|| (evt.evt_name == "remove")
 							|| (evt.evt_name == "refresh")) {
-						var wasOpen = this.menu.menuOpen;
+						wasOpen = this.menu.menuOpen;
 						initializeContent();
 						redrawIfNeeded(wasOpen);
 					} else if (evt.evt_name == "add") {

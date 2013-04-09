@@ -279,41 +279,41 @@
 		
 		
 		var enableIdSearch = $.proxy(function(){
-			with(this){
-				idText.removeAttr('disabled');
-				enableSearch();
-			}
+		
+				this.idText.removeAttr('disabled');
+				this.enableSearch();
+			
 		}, self);
 		
 		var disableIdSearch = $.proxy(function(){
-			with(this){
-				idText.attr('disabled', 'disabled');
-				disableSearch();
-			}
+		
+				this.idText.attr('disabled', 'disabled');
+				this.disableSearch();
+			
 		}, self);
 		
 		var enableControls = $.proxy(function(){
-			with(this){
-				prioritySelect.enable();
-				categorySelect.enable();
-				versionSelect.enable();
-				assigneeSelect.enable();
-				summaryText.removeAttr('disabled');
-				descriptionText.removeAttr('disabled');
-				commentText.removeAttr('disabled');
-			}		
+			
+			this.prioritySelect.enable();
+			this.categorySelect.enable();
+			this.versionSelect.enable();
+			this.assigneeSelect.enable();
+			this.summaryText.removeAttr('disabled');
+			this.descriptionText.removeAttr('disabled');
+			this.commentText.removeAttr('disabled');
+					
 		}, self);
 		
 		var disableControls = $.proxy(function(){
-			with(this){
-				prioritySelect.disable();
-				categorySelect.disable();
-				versionSelect.disable();
-				assigneeSelect.disable();
-				summaryText.attr('disabled', 'disabled');
-				descriptionText.attr('disabled', 'disabled');
-				commentText.attr('disabled', 'disabled');
-			}
+			
+			this.prioritySelect.disable();
+			this.categorySelect.disable();
+			this.versionSelect.disable();
+			this.assigneeSelect.disable();
+			this.summaryText.attr('disabled', 'disabled');
+			this.descriptionText.attr('disabled', 'disabled');
+			this.commentText.attr('disabled', 'disabled');
+			
 		}, self);
 
 	
@@ -322,25 +322,23 @@
 		var setModel = $.proxy(function(newModel){
 			
 			this.model = newModel;
+
+				this.idText.val(this.model.id);
+				
+				this.prioritySelect.populate(this.model.project.priorities);
+				this.categorySelect.populate(this.model.project.categories);
+				this.versionSelect.populate(this.model.project.versions);
+				this.assigneeSelect.populate(this.model.project.users);
+				
+				this.prioritySelect.select(this.model.priority);
+				this.categorySelect.select(this.model.category);
+				this.versionSelect.select(this.model.version);
+				this.assigneeSelect.select(this.model.assignee);
+				
+				this.summaryText.val(this.model.summary);
+				this.descriptionText.val(this.model.description);
+				this.commentText.val(this.model.comment);				
 			
-			with(this){
-				
-				idText.val(model.id);
-				
-				prioritySelect.populate(model.project.priorities);
-				categorySelect.populate(model.project.categories);
-				versionSelect.populate(model.project.versions);
-				assigneeSelect.populate(model.project.users);
-				
-				prioritySelect.select(model.priority);
-				categorySelect.select(model.category);
-				versionSelect.select(model.version);
-				assigneeSelect.select(model.assignee);
-				
-				summaryText.val(model.summary);
-				descriptionText.val(model.description);
-				commentText.val(model.comment);				
-			}
 		}, self);
 			
 			
@@ -441,16 +439,14 @@
 		
 				
 		var readAllInputs = $.proxy(function(){
-			with(this){
-				model.id = idText.val();
-				model.priority = prioritySelect.getSelected();
-				model.category = categorySelect.getSelected();
-				model.version = versionSelect.getSelected();
-				model.assignee = assigneeSelect.getSelected();
-				model.summary = summaryText.val();
-				model.description = descriptionText.val();
-				model.comment = commentText.val();			
-			};
+			this.model.id = this.idText.val();
+			this.model.priority = this.prioritySelect.getSelected();
+			this.model.category = this.categorySelect.getSelected();
+			this.model.version = this.versionSelect.getSelected();
+			this.model.assignee = this.assigneeSelect.getSelected();
+			this.model.summary = this.summaryText.val();
+			this.model.description = this.descriptionText.val();
+			this.model.comment = this.commentText.val();			
 		
 		}, self);
 		
@@ -505,6 +501,6 @@
 		
 		return this;
 
-	}
+	};
 
 })(jQuery);
