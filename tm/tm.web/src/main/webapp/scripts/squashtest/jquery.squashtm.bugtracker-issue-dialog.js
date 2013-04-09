@@ -281,14 +281,14 @@
 		var enableIdSearch = $.proxy(function(){
 		
 				this.idText.removeAttr('disabled');
-				this.enableSearch();
+				enableSearch();
 			
 		}, self);
 		
 		var disableIdSearch = $.proxy(function(){
 		
 				this.idText.attr('disabled', 'disabled');
-				this.disableSearch();
+				disableSearch();
 			
 		}, self);
 		
