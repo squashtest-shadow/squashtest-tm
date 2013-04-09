@@ -128,7 +128,7 @@ var squashtm = squashtm || {};
 				open : function(url, data, windowDef) {
 					var postData = '';
 
-					for (attr in data) {
+					for (var attr in data) {
 						postData += '<input type=\"hidden\" name=\"' + attr
 								+ '\" value=\"' + data[attr] + '\" />';
 					}

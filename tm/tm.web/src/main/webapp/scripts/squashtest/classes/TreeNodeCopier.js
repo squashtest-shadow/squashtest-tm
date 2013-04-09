@@ -163,7 +163,7 @@ function TreeNodeCopier(initObj) {
 			destinationType = "iteration";
 			break;
 		default:
-			"azeporiapzeorj"; // should not happen if this.mayPaste() did its
+			destinationType = "azeporiapzeorj"; // should not happen if this.mayPaste() did its
 			// job.
 		}
 

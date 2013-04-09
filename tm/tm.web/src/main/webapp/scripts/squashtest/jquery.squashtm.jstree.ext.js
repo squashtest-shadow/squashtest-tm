@@ -717,7 +717,7 @@ squashtm.tree = squashtm.tree || {};
 							selectionIsOneEditableNode : function(selectedNodes) {
 								// true if only one node is selected and is
 								// editable
-								if (!selectedNodes.not(":editable").length > 0
+								if (selectedNodes.not(":editable").length < 1
 										&& selectedNodes.length === 1) {
 									return "OK";
 								}
@@ -730,7 +730,7 @@ squashtm.tree = squashtm.tree || {};
 									selectedNodes) {
 								// true if only one node is selected and is
 								// creatable
-								if (!selectedNodes.not(":creatable").length > 0
+								if (selectedNodes.not(":creatable").length < 1
 										&& selectedNodes.length === 1) {
 									return "OK";
 								}
@@ -927,7 +927,7 @@ squashtm.tree = squashtm.tree || {};
 								if (this.selectionIsCopyable(selectedNodes) == "OK") {
 									operations += "copy ";
 								}
-								if (!this.selectionIsEditable(selectedNodes) == "OK") {
+								if (this.selectionIsEditable(selectedNodes) != "OK") {
 									return operations;
 
 								} else {

@@ -92,7 +92,7 @@
 		var tree = $.jstree._reference(this);
 		var noLi = (!this.is('li')) && (!this.is('a') && (!this.is('ins')));
 
-		if ((lt == 0) || (!tree) || (noLi)) {
+		if ((!lt) || (!tree) || (noLi)) {
 			throw "this node is not a valid tree node";
 		}
 
@@ -320,7 +320,7 @@
 
 		this.match = function(matchObject) {
 			for ( var ppt in matchObject) {
-				if (!(this.attr(ppt) == matchObject[ppt])){
+				if ((this.attr(ppt) != matchObject[ppt])){
 					return false;
 				}
 			}

@@ -89,7 +89,7 @@
 		jqNewItem.addClass(cssClass);
 
 		var jqChkBx = jqNewItem.find(".project-checkbox");
-		jqChkBx.attr('id', 'project-checkbox-' + parseInt(projectItemData[0]));
+		jqChkBx.attr('id', 'project-checkbox-' + parseInt(projectItemData[0],10));
 		jqChkBx.attr("value", projectItemData[0]);
 
 		var jqName = jqNewItem.find(".project-name");
