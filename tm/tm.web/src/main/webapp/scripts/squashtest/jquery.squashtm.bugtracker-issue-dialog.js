@@ -37,15 +37,15 @@
 	
 		this.flush = function(){
 			this.find("option").remove();
-		}
+		};
 		
 		this.disable = function(){
 			this.attr('disabled', 'disabled');
-		}
+		};
 		
 		this.enable = function(){
 			this.removeAttr('disabled');
-		}
+		};
 		
 		this.populate = function(entityArray){
 			
@@ -73,14 +73,14 @@
 				}
 				this.empty=false;
 			}
-		}
+		};
 
 		
 		this.getSelected = function(){
 			var id = this.val();
 			var name = this.find("option:selected").text();
 			return new BTEntity(id, name);
-		}
+		};
 		
 		this.select = function(btEntity){
 			if (
@@ -92,7 +92,7 @@
 			}else{
 				this.val(btEntity.id);
 			}
-		}
+		};
 		
 		this.isEmpty = function(){
 			return this.empty;
@@ -101,7 +101,7 @@
 		
 		return this;
 
-	}
+	};
 
 	
 	

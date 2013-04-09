@@ -319,8 +319,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	 * @returns
 	 */
 	function _enableTableDragAndDrop() {
-		if (!this.squashSettings.enableDnD)
+		if (!this.squashSettings.enableDnD){
 			return;
+		}
 		var self = this;
 		this.tableDnD({
 			dragHandle : "drag-handle",
@@ -643,15 +644,15 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		var editableConf = this.squashSettings.richEditables;
 		var self = this;
 
-		if (!editableConf)
+		if (!editableConf){
 			return;
-
+		}
 		var baseconf = editableConf.conf;
 		var targets = editableConf.targets;
 
-		if (!targets)
+		if (!targets){
 			return;
-
+		}
 		for ( var css in targets) {
 
 			var cells = $('td.' + css, this);
@@ -671,9 +672,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 		var statusConf = this.squashSettings.executionStatus;
 
-		if (!statusConf)
+		if (!statusConf){
 			return;
-
+		}
 		var factory = new squashtm.StatusFactory(statusConf);
 
 		var cells = $('td.has-status', this);
@@ -688,8 +689,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	function _bindButtons() {
 		var buttons = this.squashSettings.buttons;
 		var self = this;
-		if (!buttons)
+		if (!buttons){
 			return;
+		}
 		$(buttons).each(function(i, button) {
 			self.delegate(button.tdSelector + " > .tableButton", "click", function() {
 				button.onClick(self, this);
@@ -700,8 +702,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	function _configureButtons() {
 		var self = this;
 		var buttons = this.squashSettings.buttons;
-		if (!buttons)
+		if (!buttons){
 			return;
+		}
 		$(buttons)
 				.each(
 						function(i, button) {
@@ -741,9 +744,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 	function _configureDeleteButtons() {
 		var deleteConf = this.squashSettings.deleteButtons;
-		if (!deleteConf)
+		if (!deleteConf){
 			return;
-
+		}
 		var template = '<a href="javascript:void(0)">' + deleteConf.tooltip + '</a>';
 
 		var cells = $('td.delete-button', this);
@@ -761,8 +764,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		var conf = this.squashSettings.deleteButtons;
 		var popconf = this.squashSettings.confirmPopup;
 
-		if (!conf)
+		if (!conf){
 			return;
+		}
 		var self = this;
 
 		this.delegate('td.delete-button > a', 'click', function() {
@@ -790,11 +794,12 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 								dataType : self.squashSettings.deleteButtons.dataType || "text"
 							});
 
-							if (conf.success)
+							if (conf.success){
 								request.done(conf.success);
-							if (conf.fail)
+							}
+							if (conf.fail){
 								request.fail(conf.fail);
-
+							}
 						}).fail(function() {
 					jqRow.removeClass('ui-state-row-selected');
 				});
@@ -1174,8 +1179,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		var userPreDrawCallback = datatableEffective["fnPreDrawCallback"];
 
 		var customPreDrawCallback = function(oSettings) {
-			if (userPreDrawCallback)
+			if (userPreDrawCallback){
 				userPreDrawCallback.call(this, oSettings);
+			}
 			_saveTableSelection.call(this);
 		};
 
@@ -1185,9 +1191,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		var userDrawCallback = datatableEffective["fnDrawCallback"];
 
 		var customDrawCallback = function(oSettings) {
-			if (userDrawCallback)
+			if (userDrawCallback){
 				userDrawCallback.call(this, oSettings);
-
+			}
 			this.attachButtonsCallback();
 			this.buggedPicsCallback();
 			this.configureRichEditables();
@@ -1335,8 +1341,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		rewriteSentData : function(datatableSettings) {
 			var oldfnServerParams = datatableSettings.fnServerParams;
 			datatableSettings.fnServerParams = function(aoData) {
-				if (oldfnServerParams !== undefined)
+				if (oldfnServerParams !== undefined){
 					oldfnServerParams.call(this, aoData);
+				}
 				_fnRewriteData(aoData);
 			};
 		}
