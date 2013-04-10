@@ -34,7 +34,7 @@
 <setting id="org.eclipse.wst.jsdt.core.formatter.insert_space_after_comma_in_parameterized_type_reference" value="insert"/>
 <setting id="org.eclipse.wst.jsdt.core.formatter.insert_space_before_semicolon_in_for" value="do not insert"/>
 <setting id="org.eclipse.wst.jsdt.core.formatter.insert_space_before_closing_paren_in_synchronized" value="do not insert"/>
-<setting id="org.eclipse.wst.jsdt.core.formatter.tabulation.size" value="2"/>
+<setting id="org.eclipse.wst.jsdt.core.formatter.tabulation.size" value="4"/>
 <setting id="org.eclipse.wst.jsdt.core.formatter.format_guardian_clause_on_one_line" value="false"/>
 <setting id="org.eclipse.wst.jsdt.core.formatter.insert_space_after_opening_bracket_in_array_allocation_expression" value="do not insert"/>
 <setting id="org.eclipse.wst.jsdt.core.formatter.insert_space_after_closing_brace_in_block" value="insert"/>
