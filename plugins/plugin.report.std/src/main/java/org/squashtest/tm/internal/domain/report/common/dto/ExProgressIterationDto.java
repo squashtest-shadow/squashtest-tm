@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.internal.domain.report.common.dto;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -50,9 +52,16 @@ public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 		for (TestSuite testSuite : iteration.getTestSuites()) {
 			ExProgressTestSuiteDto testSuiteDto = new ExProgressTestSuiteDto(testSuite);
 			testSuites.add(testSuiteDto);
+			Collections.sort(testSuites, new testSuiteComparator());
 		}
 	}
 
+	private static class testSuiteComparator implements Comparator<ExProgressTestSuiteDto>{
+	    @Override
+		public int compare(ExProgressTestSuiteDto suite1, ExProgressTestSuiteDto suite2) {
+	        return suite1.getName().compareTo(suite2.getName());
+	    }
+	}
 	public List<ExProgressTestPlanDto> getTestPlans() {
 		return testPlans;
 	}
