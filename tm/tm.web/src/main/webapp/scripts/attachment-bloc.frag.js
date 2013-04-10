@@ -19,20 +19,17 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "domReady", "squashtest/attachment-bloc",
-			"jquery.squash", "jqueryui", "jquery.squash.togglepanel",
-			"add-attachment-popup.frag" ], function($, domReady) {
+	require([ "jquery", "domReady", "squashtest/attachment-bloc", "jquery.squash", "jqueryui",
+			"jquery.squash.togglepanel", "add-attachment-popup.frag" ], function($, domReady) {
 
 		var ABS = squashtm.app.attachmentBlocSettings;
 
 		function reloadAttachments() {
-			$("#attachment-container").load(ABS.attachmentsList,
-					reloadAttachmentCallback);
+			$("#attachment-container").load(ABS.attachmentsList, reloadAttachmentCallback);
 		}
 
 		function reloadAttachmentCallback() {
-			handleNotFoundImages(squashtm.app.contextRoot
-					+ "images/file_blank.png");
+			handleNotFoundImages(squashtm.app.contextRoot + "images/file_blank.png");
 			openAttachmentIfNotEmpty();
 		}
 
@@ -51,8 +48,7 @@ require([ "common" ], function(common) {
 			});
 			reloadAttachments();
 
-			$(squashtm.app.addAttachmentPopupSettings).on("exitUpload",
-					reloadAttachments);
+			$(squashtm.app.addAttachmentPopupSettings).on("exitUpload", reloadAttachments);
 		});
 
 	});

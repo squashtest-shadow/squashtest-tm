@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>squashtest-csp-tm</artifactId>
@@ -524,25 +525,6 @@
           </execution>
         </executions>
       </plugin>
-      
-      <plugin>
-    	<groupId>ro.isdc.wro4j</groupId>
-    	<artifactId>wro4j-maven-plugin</artifactId>
-    	<version>${wro4j.version}</version>
-    	<executions>
-      		<execution>
-        		<goals>
-          			<goal>jshint</goal>
-        		</goals>
-      		</execution>
-    	</executions>
-    	<configuration>
-				<targetGroups>squash</targetGroups>
-                <minimize>false</minimize>
-				<options>browser,jquery,eqnull,evil,noarg,smarttabs,laxbreak,laxcomma,sub,loopfunc,curly</options>
-				<failNever>true</failNever>
-    	</configuration>
-  	  </plugin>
 
       <!-- ====== /INTEGRATION TESTS ====== -->
     </plugins>
@@ -557,10 +539,35 @@
           <value>ci</value>
         </property>
       </activation>
+
       <properties>
         <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
       </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>ro.isdc.wro4j</groupId>
+            <artifactId>wro4j-maven-plugin</artifactId>
+            <version>${wro4j.version}</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>jshint</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <targetGroups>squash</targetGroups>
+              <minimize>false</minimize>
+              <options>browser,jquery,eqnull,evil,noarg,smarttabs,laxbreak,laxcomma,sub,loopfunc,curly</options>
+              <failNever>false</failNever>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
+
     <profile>
       <id>integration</id>
       <activation>
@@ -573,6 +580,7 @@
         <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
       </properties>
     </profile>
+
     <profile>
       <id>build</id>
       <activation>
@@ -585,6 +593,7 @@
         <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
       </properties>
     </profile>
+
     <profile>
       <id>development</id>
       <activation>
