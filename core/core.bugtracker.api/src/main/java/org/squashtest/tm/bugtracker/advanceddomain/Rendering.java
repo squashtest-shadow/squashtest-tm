@@ -20,56 +20,37 @@
  */
 package org.squashtest.tm.bugtracker.advanceddomain;
 
-import java.util.Collection;
 
-import org.apache.commons.collections.MultiMap;
-import org.apache.commons.collections.map.MultiValueMap;
-import org.squashtest.tm.bugtracker.definition.RemoteProject;
+public class Rendering {
 
-public class AdvancedProject implements RemoteProject {
+	private String[] operations = new String[0];
 	
-	private String id;
-	private String name;
+	private String inputType;
 	
-	private MultiMap schemes = new MultiValueMap();
-	
-	public void setId(String id){
-		this.id = id;
-	}
-	
-	public void setName(String name){
-		this.name = name;
+	private boolean required=false;
+
+	public String[] getOperations() {
+		return operations;
 	}
 
-	@Override
-	public String getId() {
-		return id;
+	public void setOperations(String[] operations) {
+		this.operations = operations;
 	}
 
-	@Override
-	public String getName() {
-		return name;
+	public String getInputType() {
+		return inputType;
 	}
 
-	
-	/**
-	 * think of it as a Map<String, Collection<Field>>
-	 */
-	public MultiMap getSchemes() {
-		return schemes;
+	public void setInputType(String inputType) {
+		this.inputType = inputType;
 	}
 
-	
-	/**
-	 * think of it as a Map<String, Collection<Field>>
-	 */
-	public void setSchemes(MultiMap schemes) {
-		this.schemes = schemes;
+	public boolean isRequired() {
+		return required;
+	}
+
+	public void setRequired(boolean required) {
+		this.required = required;
 	}
 	
-
-	public Collection<Field> getFieldScheme(String schemeName){
-		return (Collection<Field>)schemes.get(schemeName);
-	}
-
 }

@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.bugtracker.advanceddomain;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.squashtest.tm.bugtracker.definition.RemoteCategory;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemotePriority;
@@ -29,88 +32,106 @@ import org.squashtest.tm.bugtracker.definition.RemoteVersion;
 
 public class AdvancedIssue implements RemoteIssue {
 	
+	
+	
+	
+	//maps a fieldId to a FieldValue
+	private Map<String, FieldValue> fieldValues = new HashMap<String, FieldValue>();
+	
+	private AdvancedProject project ;
+	
+	private String key;
+	
+	private String btName;
+	
+	public void setId(String key){
+		this.key = key;
+	}
+	
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return key;
 	}
 
 	@Override
 	public String getSummary() {
-		// TODO Auto-generated method stub
-		return null;
+		return findFieldValueName("summary");
 	}
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return findFieldValueName("description");
 	}
 
 	@Override
 	public void setDescription(String description) {
-		// TODO Auto-generated method stub
-
+		setFieldValueName("description", description);
 	}
 
 	@Override
 	public String getComment() {
-		// TODO Auto-generated method stub
-		return null;
+		return findFieldValueName("comment");
 	}
-
+	
 	@Override
 	public void setComment(String comment) {
-		// TODO Auto-generated method stub
-
+		setFieldValueName("comment", comment);	
 	}
-
+	
 	@Override
 	public AdvancedProject getProject() {
-		// TODO Auto-generated method stub
-		return null;
+		return project;
 	}
 
 	@Override
 	public RemoteStatus getStatus() {
-		// TODO Auto-generated method stub
-		return null;
+		return fieldValues.get("status");
 	}
 
 	@Override
 	public RemoteUser getAssignee() {
-		// TODO Auto-generated method stub
-		return null;
+		return fieldValues.get("assignee");
 	}
 
 	@Override
 	public RemotePriority getPriority() {
-		// TODO Auto-generated method stub
-		return null;
+		return fieldValues.get("priority");
 	}
 
 	@Override
 	public RemoteCategory getCategory() {
-		// TODO Auto-generated method stub
-		return null;
+		return fieldValues.get("category");
 	}
 
 	@Override
 	public RemoteVersion getVersion() {
-		// TODO Auto-generated method stub
-		return null;
+		return fieldValues.get("version");
 	}
 
 	@Override
 	public void setBugtracker(String btName) {
-		// TODO Auto-generated method stub
-
+		this.btName = btName;
 	}
 
 	@Override
 	public String getBugtracker() {
-		// TODO Auto-generated method stub
-		return null;
+		return btName;
+	}
+	
+	
+	
+	
+	// ********************* private stuffs ***************************
+
+	private String findFieldValueName(String fieldId){
+		FieldValue value = fieldValues.get("fieldId");
+		return (value!=null) ? value.getName() : "";			
 	}
 
+	private void setFieldValueName(String fieldId, String newName){
+		FieldValue value = fieldValues.get(fieldId);
+		if (value!=null){
+			value.setScalar(newName);
+		}
+	}
 }

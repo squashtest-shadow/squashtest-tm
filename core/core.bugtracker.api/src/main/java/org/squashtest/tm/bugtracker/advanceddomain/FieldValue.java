@@ -1,0 +1,96 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2012 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.tm.bugtracker.advanceddomain;
+
+import org.squashtest.tm.bugtracker.definition.RemoteCategory;
+import org.squashtest.tm.bugtracker.definition.RemotePriority;
+import org.squashtest.tm.bugtracker.definition.RemoteStatus;
+import org.squashtest.tm.bugtracker.definition.RemoteUser;
+import org.squashtest.tm.bugtracker.definition.RemoteVersion;
+
+
+/**
+ * A FieldValue represents, well, a value. This class is kind of stuff-what-you-can-in-there because the following may happen :
+ * 
+ * <ul>
+ * 	<li>the value may be a simple scalar (eg, a string),</li>
+ * 	<li>the value may be an collection of scalar (eg, a collection of string)</li>
+ * 	<li>the value may be identified (eg, a version)</li>
+ * 	<li>and well, the value may be collection of identified or unidentified scalar of values</li> 
+ * 	<li>...</li>
+ * </ul>
+ * 
+ * <p>
+ * 	you get the idea. This class flattens the fact that the content can have or not have an idea, and can be a simple type of aggregated type.
+ * It is so because json serializers will handle it more easily, since the mechanics doesn't rely on the class of the data (there is only one class) but solely on its content.  
+ * </p>
+ * 
+ * @author bsiri
+ *
+ */
+public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory, RemoteUser, RemoteStatus{
+
+	private String id;
+	private String scalar;
+	private FieldValue[] composite = new FieldValue[0];
+	
+	
+	public String getId() {
+		return id;
+	}
+	
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getScalar() {
+		return scalar;
+	}
+
+	public void setScalar(String scalar) {
+		this.scalar = scalar;
+	}
+
+	public FieldValue[] getComposite() {
+		return composite;
+	}
+
+	public void setComposite(FieldValue[] composite) {
+		this.composite = composite;
+	}
+
+	@Override
+	public String getName() {
+		if (scalar!=null){
+			return scalar+", ";
+		}
+		else{
+			StringBuilder builder = new StringBuilder();
+			for (int i=0;i<composite.length;i++){
+				builder.append(composite[i].getName()+", ");
+			}
+			return builder.toString();
+		}
+	}
+	
+	
+	
+}
