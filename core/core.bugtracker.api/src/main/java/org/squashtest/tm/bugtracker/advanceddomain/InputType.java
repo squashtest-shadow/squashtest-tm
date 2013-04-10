@@ -31,7 +31,7 @@ package org.squashtest.tm.bugtracker.advanceddomain;
  *  	<ul>
  * 			<li>If a remote widget cannot be coerced to a Squash widget, it must use {@link #UNKNOWN} as name, and specify the original name anyway.</li>
  * 			<li>One or several widgets may set the flag {@link #isFieldSchemeSelector()}. If set, when their value change a new field scheme 
- * 				will be selected using {@link AdvancedProject#getFieldScheme(String)}, using "id:name" as argument, where id and name of the produced field value.
+ * 				will be selected using {@link AdvancedProject#getFieldScheme(String)}, using "id:scalar" as argument, where id and scalar of the produced field value.
  * 				They also behave like a normal field. 
  * 			</li>
  *  	</ul>
@@ -48,7 +48,7 @@ public class InputType {
 	public static final String TEXT_FIELD 		= "TEXT_FIELD";	
 	public static final String TEXT_AREA 		= "TEXT_AREA";
 	public static final String TEXT_AUTOCOMPLETE= "TEXT_AUTOCOMPLETE";
-	public static final String DATE_PICKER		= "DATE_PICJER";
+	public static final String DATE_PICKER		= "DATE_PICKER";
 	public static final String TAG_LIST			= "TAG_LIST";
 	public static final String DROPDOWN_LIST	= "DROPDOWN_LIST";
 	public static final String CHECKBOX			= "CHECKBOX";

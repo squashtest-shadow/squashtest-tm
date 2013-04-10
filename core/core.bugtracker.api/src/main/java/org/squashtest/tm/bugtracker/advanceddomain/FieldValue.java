@@ -53,6 +53,16 @@ public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory
 	private FieldValue[] composite = new FieldValue[0];
 	
 	
+	public FieldValue(){
+		super();
+	}
+	
+	public FieldValue(String id, String scalar){
+		super();
+		this.id=id;
+		this.scalar = scalar;
+	}
+	
 	public String getId() {
 		return id;
 	}

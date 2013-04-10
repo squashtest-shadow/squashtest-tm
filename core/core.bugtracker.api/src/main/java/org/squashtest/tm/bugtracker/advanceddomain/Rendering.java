@@ -25,9 +25,10 @@ public class Rendering {
 
 	private String[] operations = new String[0];
 	
-	private String inputType;
+	private InputType inputType;
 	
 	private boolean required=false;
+	
 
 	public String[] getOperations() {
 		return operations;
@@ -37,11 +38,12 @@ public class Rendering {
 		this.operations = operations;
 	}
 
-	public String getInputType() {
+
+	public InputType getInputType() {
 		return inputType;
 	}
 
-	public void setInputType(String inputType) {
+	public void setInputType(InputType inputType) {
 		this.inputType = inputType;
 	}
 
