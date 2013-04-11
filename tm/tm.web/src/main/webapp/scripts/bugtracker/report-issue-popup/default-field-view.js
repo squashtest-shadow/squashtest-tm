@@ -19,7 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "backbone", "handlebars", "./BTEntity", "text!./default-view-template.html!strip","jqueryui"], function($, Backbone, Handlebars, BTEntity, source){
+//define(["jquery", "backbone", "handlebars", "./BTEntity", "text!./default-view-template.html!strip","jqueryui"], function($, Backbone, Handlebars, BTEntity, source){
+define(["jquery", "backbone", "handlebars", "./BTEntity", "jqueryui"], function($, Backbone, Handlebars, BTEntity, source){
 
 	var DefaultFieldControl = Backbone.View.extend({
 		
@@ -58,7 +59,7 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!./default-view-t
 	var ComboBox = DefaultFieldControl.extend({
 		
 		initialize : function(){
-			this.empty = (this.$el.find('option.issue-control-empty').length!=0);
+			this.empty = (this.$el.find('option.issue-control-empty').length!==0);
 			if (!!this.empty){
 				this.disable();
 			}
@@ -78,7 +79,7 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!./default-view-t
 		},
 		
 		set : function(newv){
-			var id = (newv==null && newv==undefined) ? this.$('option:first').val() : newv.id;
+			var id = (newv===null && newv===undefined) ? this.$('option:first').val() : newv.id;
 			this.$el.val(id);
 		},
 		
@@ -98,7 +99,7 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!./default-view-t
 		
 		remapControls : function(){
 			
-			var labels = this.options.labels;
+			//var labels = this.options.labels;	//TODO : use them some day ?
 			
 			this.controls = [
 				new ComboBox({
@@ -142,7 +143,7 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!./default-view-t
 					model : this.model, 
 					attribute : 'comment'
 				})
-			]
+			];
 		},
 		
 		enableControls : function(){			
@@ -199,7 +200,7 @@ define(["jquery", "backbone", "handlebars", "./BTEntity", "text!./default-view-t
 			var data = {
 				issue : this.model.attributes,
 				labels : this.options.labels
-			}
+			};
 			
 			var html = template(data);			
 			
