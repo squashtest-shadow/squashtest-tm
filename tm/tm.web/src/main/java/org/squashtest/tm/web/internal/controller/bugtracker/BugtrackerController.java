@@ -620,7 +620,7 @@ public class BugtrackerController {
 	}
 
 	
-	//TODO TODO : use instead a new method in the BT interface : get report issue template (or something along those lines)
+	
 	private RemoteIssue makeReportIssueModel(ExecutionStep step, String defaultDescription,
 			String defaultAdditionalInformations, Locale locale) {
 		RemoteIssue emptyIssue = makeReportIssueModel(step, defaultDescription);
@@ -629,12 +629,12 @@ public class BugtrackerController {
 		return emptyIssue;
 	}
 
+
 	private RemoteIssue makeReportIssueModel(IssueDetector entity, String defaultDescription) {
 		String projectName = entity.getProject().getBugtrackerBinding().getProjectName();
-		final RemoteProject project = bugTrackersLocalService.findRemoteProject(projectName, entity.getBugTracker());
+		
+		RemoteIssue emptyIssue = bugTrackersLocalService.createReportIssueTemplate(projectName, entity.getBugTracker());
 
-		BTIssue emptyIssue = new BTIssue();
-		emptyIssue.setProject((BTProject)project);
 		emptyIssue.setDescription(defaultDescription);
 
 		return emptyIssue;

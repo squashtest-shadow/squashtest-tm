@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
-import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
@@ -137,6 +136,17 @@ public interface BugTrackersService {
 	 * @return the corresponding BTIssue List
 	 */
 	List<RemoteIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker);
+	
+	
+	/**
+	 * Must return ready-to-fill issue, ie with empty fields and its project configured with as many metadata as possible related to issue creation.
+	 * 
+	 * @param projectName
+	 * @param BugTracker bugTracker
+	 * @return
+	 */
+	RemoteIssue createReportIssueTemplate(String projectName, BugTracker bugTracker);
+	
 
 	Set<String> getProviderKinds();
 

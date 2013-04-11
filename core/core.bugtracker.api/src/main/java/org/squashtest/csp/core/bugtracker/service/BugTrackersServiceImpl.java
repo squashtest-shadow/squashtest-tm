@@ -20,7 +20,6 @@
  */
 package org.squashtest.csp.core.bugtracker.service;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +27,6 @@ import java.util.Set;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
-import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
@@ -58,22 +56,8 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	
 	@Override
 	public URL getViewIssueUrl(String issueId, BugTracker bugTracker) {
-		URL url = null;
-		URL baseUrl = bugTracker.getURL();
-		try {
-			if (baseUrl != null) {
-				InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-				String suffix = connector.makeViewIssueUrlSuffix(issueId);
-				url = new URL(baseUrl.toString() + suffix);
-			} else {
-				url = null;
-			}
-		} catch (MalformedURLException mue) {
-			// XXX should throw an exception
-			url = null;
-		}
-
-		return url;
+		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
+		return connector.makeViewIssueUrl(bugTracker, issueId);
 	}
 
 	private BugTrackerContext getBugTrackerContext() {// TODO BugTrackersContext
@@ -116,6 +100,12 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	public RemoteIssue createIssue(RemoteIssue issue, BugTracker bugTracker) {
 		return connect(bugTracker).createIssue(issue);
 	}
+	
+	@Override
+	public RemoteIssue createReportIssueTemplate(String projectName, BugTracker bugTracker) {
+		return connect(bugTracker).createReportIssueTemplate(projectName);
+	}
+	
 
 	@Override
 	public RemoteIssue getIssue(String key, BugTracker bugTracker) {

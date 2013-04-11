@@ -20,11 +20,13 @@
  */
 package org.squashtest.csp.core.bugtracker.service;
 
+import java.net.URL;
 import java.util.List;
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
@@ -32,23 +34,93 @@ import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
 public interface InternalBugtrackerConnector {
 	
+	/**
+	 * Must set the credentials in the connector context for remote authentication challenges 
+	 * 
+	 * @param credentials
+	 */
 	void authenticate(AuthenticationCredentials credentials);
 	
+	/**
+	 * Must set the credentials as in {@link #authenticate(AuthenticationCredentials)} and immediately test them 
+	 * against the endpoint to check their validity 
+	 * 
+	 * @param credentials
+	 * @throws BugTrackerNoCredentialsException for null arguments
+	 * @throws BugTrackerRemoteException for else.
+	 */
 	void checkCredentials(AuthenticationCredentials credentials) throws BugTrackerNoCredentialsException, 
 	BugTrackerRemoteException;
 	
-	String makeViewIssueUrlSuffix(String issueId);
+
+	/**
+	 * Must return the URL where one can browse the issue.
+	 * 
+	 * @param issueId
+	 * @param bugTracker
+	 * @return
+	 */
+	URL makeViewIssueUrl(BugTracker bugTracker, String issueId) ;
 	
+	
+	/**
+	 * Must return a project, given its name, with metadata such as which versions or categories are defined in there. 
+	 * 
+	 * @param projectName
+	 * @return
+	 * @throws ProjectNotFoundException
+	 * @throws BugTrackerRemoteException
+	 */
 	RemoteProject findProject(String projectName) throws ProjectNotFoundException, BugTrackerRemoteException;
 	
+	
+	/**
+	 * @see #findProject(String), except that one uses the Id.
+	 * @param projectId
+	 * @return
+	 * @throws ProjectNotFoundException
+	 * @throws BugTrackerRemoteException
+	 */
 	RemoteProject findProjectById(String projectId) throws ProjectNotFoundException, BugTrackerRemoteException;
 	
+	/**
+	 * Must create an issue on the remote bugtracker, then return the 'persisted' version of it (ie, having its id)
+	 * 
+	 * @param issue
+	 * @return
+	 * @throws BugTrackerRemoteException
+	 */
 	RemoteIssue createIssue(RemoteIssue issue) throws BugTrackerRemoteException;
 	
+	/**
+	 * Must return ready-to-fill issue, ie with empty fields and its project configured with as many metadata as possible related to issue creation.
+	 * 
+	 * @param projectName
+	 * @return
+	 */
+	RemoteIssue createReportIssueTemplate(String projectName);
+	
+	/**
+	 * Returns an {@link BugTrackerInterfaceDescriptor}
+	 * 
+	 * @return
+	 */
 	BugTrackerInterfaceDescriptor getInterfaceDescriptor();
 	
+	/**
+	 * Retrieve a remote issue
+	 * 
+	 * @param key
+	 * @return
+	 */
 	RemoteIssue findIssue(String key);
 	
+	/**
+	 * Retrieve many remote issues
+	 * 
+	 * @param issueKeyList
+	 * @return
+	 */
 	List<RemoteIssue> findIssues(List<String> issueKeyList);
 	
 }

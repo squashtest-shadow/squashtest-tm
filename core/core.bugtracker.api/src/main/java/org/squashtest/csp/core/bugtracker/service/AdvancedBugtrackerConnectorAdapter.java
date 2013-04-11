@@ -20,12 +20,14 @@
  */
 package org.squashtest.csp.core.bugtracker.service;
 
+import java.net.URL;
 import java.util.List;
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
@@ -66,10 +68,6 @@ public class AdvancedBugtrackerConnectorAdapter implements
 		connector.checkCredentials(credentials);
 	}
 
-	@Override
-	public String makeViewIssueUrlSuffix(String issueId) {
-		return connector.makeViewIssueUrlSuffix(issueId);
-	}
 
 	@Override
 	public RemoteProject findProject(String projectName)
@@ -103,4 +101,15 @@ public class AdvancedBugtrackerConnectorAdapter implements
 	public List<RemoteIssue> findIssues(List<String> issueKeyList) {
 		return (List)connector.findIssues(issueKeyList);
 	}
+	
+	@Override
+	public URL makeViewIssueUrl(BugTracker bugTracker, String issueId) {
+		return connector.makeViewIssueUrl(issueId);
+	}
+	
+	@Override
+	public RemoteIssue createReportIssueTemplate(String projectName) {
+		return connector.createReportIssueTemplate(projectName);
+	}
+	
 }

@@ -168,6 +168,11 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	}
 
+	@Override
+	public RemoteIssue createReportIssueTemplate(String projectName, BugTracker bugTracker) {
+		return remoteBugTrackersService.createReportIssueTemplate(projectName, bugTracker);
+	}
+	
 
 
 	@Override

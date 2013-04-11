@@ -226,7 +226,14 @@ public interface BugTrackersLocalService {
 	 */
 	RemoteProject findRemoteProject(String name, BugTracker bugTracker);
 
-
+	/**
+	 * Must return ready-to-fill issue, ie with empty fields and its project configured with as many metadata as possible related to issue creation.
+	 * 
+	 * @param projectName
+	 * @param BugTracker bugTracker
+	 * @return
+	 */
+	RemoteIssue createReportIssueTemplate(String projectName, BugTracker bugTracker);
 
 	/**
 	 * returns a remote issue using its key

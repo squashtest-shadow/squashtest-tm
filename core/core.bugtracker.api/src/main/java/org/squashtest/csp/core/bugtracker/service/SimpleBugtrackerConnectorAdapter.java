@@ -20,12 +20,16 @@
  */
 package org.squashtest.csp.core.bugtracker.service;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
+import org.squashtest.csp.core.bugtracker.domain.BTProject;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
@@ -70,11 +74,6 @@ public class SimpleBugtrackerConnectorAdapter implements
 	}
 
 	@Override
-	public String makeViewIssueUrlSuffix(String issueId) {
-		return connector.makeViewIssueUrlSuffix(issueId);
-	}
-
-	@Override
 	public RemoteProject findProject(String projectName)
 			throws ProjectNotFoundException, BugTrackerRemoteException {
 		return connector.findProject(projectName);
@@ -105,6 +104,35 @@ public class SimpleBugtrackerConnectorAdapter implements
 	@Override
 	public List<RemoteIssue> findIssues(List<String> issueKeyList) {
 		return (List)connector.findIssues(issueKeyList);
+	}
+	
+	@Override
+	public RemoteIssue createReportIssueTemplate(String projectName) {
+		RemoteProject project = connector.findProject(projectName);
+
+		BTIssue emptyIssue = new BTIssue();
+		emptyIssue.setProject((BTProject)project);
+		
+		return emptyIssue;
+	}
+	
+	@Override
+	public URL makeViewIssueUrl(BugTracker bugTracker, String issueId) {
+		URL url = null;
+		URL baseUrl = bugTracker.getURL();
+		try {
+			if (baseUrl != null) {
+				String suffix = connector.makeViewIssueUrlSuffix(issueId);
+				url = new URL(baseUrl.toString() + suffix);
+			} else {
+				url = null;
+			}
+		} catch (MalformedURLException mue) {
+			// XXX should throw an exception
+			url = null;
+		}
+
+		return url;
 	}
 
 }
