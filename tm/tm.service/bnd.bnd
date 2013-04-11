@@ -21,4 +21,7 @@ Import-Package: com.mysql.jdbc;resolution:=optional,\
 	org.springframework.aop.framework,\
 	org.springframework.core.task,\
 	org.springframework.scheduling,\
+	net.sf.cglib.core;version='[2.1.3,3.0)',\
+	net.sf.cglib.proxy;version='[2.1.3,3.0)',\
+	net.sf.cglib.reflect;version='[2.1.3,3.0)',\
 	*

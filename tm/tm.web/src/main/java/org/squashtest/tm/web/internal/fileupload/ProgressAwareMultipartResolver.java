@@ -74,7 +74,7 @@ public class ProgressAwareMultipartResolver extends CommonsMultipartResolver {
 	@SuppressWarnings("unchecked")
 	private MultipartHttpServletRequest createMultipartHttpServletRequest(HttpServletRequest request, String encoding,
 			FileUpload fileUpload) throws FileUploadException {
-		
+
 		List<FileItem> fileItems = ((ServletFileUpload) fileUpload).parseRequest(request); // NOSONAR
 		MultipartParsingResult parsingResult = parseFileItems(fileItems, encoding);
 
