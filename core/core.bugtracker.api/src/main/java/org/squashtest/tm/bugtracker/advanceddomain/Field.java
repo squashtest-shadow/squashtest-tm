@@ -30,7 +30,14 @@ public class Field {
 	
 	private Rendering rendering;
 
+	public Field(){
+		super();
+	}
 	
+	public Field(String id, String label){
+		this.id = id;
+		this.label = label;
+	}
 	
 	public String getId() {
 		return id;

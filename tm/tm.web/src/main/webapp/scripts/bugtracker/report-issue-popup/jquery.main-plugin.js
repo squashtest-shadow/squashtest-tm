@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldView){
+define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], function($, DefaultFieldView, AdvancedFieldView){
 
 
 	/*
@@ -101,8 +101,6 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 		
 		init.call(this, settings);
 			
-		var state = {};
-			
 		/* ************** some events ****************** */
 		
 		this.attachRadio.click(function(){
@@ -136,14 +134,6 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 			if (this.fieldsView !== null){
 				this.fieldsView.disableControls();
 			}
-		}, self);
-		
-		var isAttachMode = $.proxy(function(){
-			return this.attachRadio.is(':checked');
-		}, self);
-		
-		var isReportMode = $.proxy(function(){
-			return this.reportMode.is(':checked');
 		}, self);
 		
 		
@@ -212,7 +202,7 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 		/* ********************** model and view management ************ */
 			
 		var isDefaultIssueModel = $.proxy(function(){
-			return true;		//TODO : return false when one can use the advanced view
+			return (this.model.get('project').schemes===undefined)
 		}, self);
 		
 		var setModel = $.proxy(function(newModel){
@@ -230,7 +220,7 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 			if (this.fieldsView==null){
 				var view;
 				
-				if (isDefaultIssueModel){
+				if (isDefaultIssueModel()){
 					view = new DefaultFieldView({
 						el : this.find('.issue-report-fields').get(0),
 						model : this.model,
@@ -238,8 +228,11 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 					});
 				}
 				else{
-					//TODO
-					view = null;
+					view = new AdvancedFieldView({
+						el : this.find('.issue-report-fields').get(0),
+						model : this.model,
+						labels : settings.labels
+					});
 				}			
 				
 				this.fieldsView = view;
@@ -365,8 +358,8 @@ define(["jquery", "./default-field-view", "jqueryui"], function($, DefaultFieldV
 
 		return this;
 
-	}	
+	};	
 	
 	//though loaded as a module, it doesn't produce anything. It's a jQuery plugin after all.
 	return null;
-})
+});

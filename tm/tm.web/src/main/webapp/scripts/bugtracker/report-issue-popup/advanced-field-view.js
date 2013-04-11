@@ -20,7 +20,7 @@
  */
 
 
-define(["jquery", "backbone", "../widgets/widget-registry", "text!./advanced-view-template.html!strip", "jqueryui"], function($, Backbone, widgetRegistry, source){
+define(["jquery", "backbone", "../widgets/widget-registry", "text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip", "jqueryui"], function($, Backbone, widgetRegistry, source){
 	
 	function FieldValue(id, value){
 		this.id = id;
@@ -38,17 +38,81 @@ define(["jquery", "backbone", "../widgets/widget-registry", "text!./advanced-vie
 	
 	var AdvancedFieldView = Backbone.View.extend({
 		
+		// properties set when init :
+		
+		currentScheme : undefined,
+		fieldTemplate : undefined,
+		
+		events : {
+			"click input.optional-fields-toggle" : "toggleOptionalFields",
+			"change .scheme-selector" : "changeScheme"
+		},
+		
 		initialize : function(){
-			var template = Handlebars.compile(source);
+					
+			var $el = this.$el;
 			
+			//first, post process the source html and split into two templates
+			var allHtml = $(source);
+			
+			var frameHtml = allHtml.filter(function(){return this.id==='containers-template'}).html();
+			var frameTpl = Handlebars.compile(frameHtml);						
+			
+			var fieldHtml = allHtml.filter(function(){return this.id==='fields-templates'}).html();
+			this.fieldTpl = Handlebars.compile(fieldHtml);	//that one is saved for later on
+			
+			
+			//generate the main template (the 'frame')
 			var data = {
 				labels : this.options.labels
-			};
+			};			
+			var html = frameTpl(data);			
+			$el.html(html);
+					
+						
+			//prepare a default scheme.
+			var project = this.model.get('project');
+			//the following is weird but correct
+			for (var schemeName in project.schemes){
+				this.currentScheme = schemeName;
+				break;
+			}
 			
-			var html = template(data);
+			//render
+			this.render();
+		},
+		
+		
+		render : function(){
+
+			//get the fields that must be displayed
+			var schemes = this.model.get('project').schemes;			
+			var fields = schemes[this.currentScheme];
 			
-			this.$el.html(html);
+			this.renderFieldPanel(fields.slice(0), true);
+			this.renderFieldPanel(fields.slice(0), false);
 			
+		},
+		
+		renderFieldPanel : function(fields, required){
+			var panelclass = (required) ? "required-fields" : "optional-fields";
+			$.grep(fields, function(field){return field.rendering.required === required})
+			
+			var html = this.fieldTpl(fields);
+			this.$el.find('div.'+panelclass+' div.issue-panel-container').html(html);
+			
+		},
+		
+		changeScheme : function(evt){
+
+		},
+		
+		toggleOptionalFields : function(){
+			this.$el.find('div.optional-fields div.issue-panel-container').toggleClass('not-displayed');
+			var btn = this.$el.find('input.optional-fields-toggle');
+			var txt = btn.val();
+			(txt==="+") ? btn.val('-') : btn.val('-');
+
 		},
 		
 		readIn : function(){
@@ -67,6 +131,8 @@ define(["jquery", "backbone", "../widgets/widget-registry", "text!./advanced-vie
 			
 		}
 	});
+	
+	return AdvancedFieldView;
 
 
 });

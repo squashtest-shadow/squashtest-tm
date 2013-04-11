@@ -30,6 +30,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,12 @@ import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.advanceddomain.AdvancedIssue;
+import org.squashtest.tm.bugtracker.advanceddomain.AdvancedProject;
+import org.squashtest.tm.bugtracker.advanceddomain.Field;
+import org.squashtest.tm.bugtracker.advanceddomain.FieldValue;
+import org.squashtest.tm.bugtracker.advanceddomain.InputType;
+import org.squashtest.tm.bugtracker.advanceddomain.Rendering;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.domain.Identified;
@@ -631,13 +639,15 @@ public class BugtrackerController {
 
 
 	private RemoteIssue makeReportIssueModel(IssueDetector entity, String defaultDescription) {
-		String projectName = entity.getProject().getBugtrackerBinding().getProjectName();
+		/*String projectName = entity.getProject().getBugtrackerBinding().getProjectName();
 		
 		RemoteIssue emptyIssue = bugTrackersLocalService.createReportIssueTemplate(projectName, entity.getBugTracker());
 
 		emptyIssue.setDescription(defaultDescription);
 
-		return emptyIssue;
+		return emptyIssue;*/
+		
+		return createDummyAdvancedIssue();
 	}
 
 	/*
@@ -719,5 +729,61 @@ public class BugtrackerController {
 		List<IssueOwnership<RemoteIssueDecorator>> emptyList = new LinkedList<IssueOwnership<RemoteIssueDecorator>>();
 		return new FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(0, emptyList);
 	}
+	
+	
+	// ******************* DEV CODE REMOVE AFTER USAGE *************************
+	
+	private RemoteIssue createDummyAdvancedIssue(){
+		
+		//let's create Fields
+		Field issueType = new Field("issueType", "type d'anomalie");
+		Field summary = new Field("summary", "résumé");		
+		Field description = new Field("description", "descriptif");
+		Field duedate = new Field("duedate", "date de remise");
+		
+		
+		issueType.setPossibleValues(new FieldValue[]{new FieldValue("1", "Bogue"), new FieldValue("2", "nouvelle fonctionnalité")});
+		
+		//Their rendering
+		InputType issueIType = new InputType("dropdown_list", "issueType");
+		issueIType.setFieldSchemeSelector(true);
+		Rendering issueRender = new Rendering(new String[]{"set"},issueIType,  true);
+		issueType.setRendering(issueRender);
+		
+		Rendering summaryRender = new Rendering(new String[]{"set"}, new InputType("text_field", "summary"), true);
+		summary.setRendering(summaryRender);
+		
+		Rendering descriptionRendering = new Rendering(new String[]{"set"}, new InputType("text_area", "description"), false);
+		description.setRendering(descriptionRendering);
+		
+		Rendering duedateRender = new Rendering(new String[]{"set"}, new InputType("date_picker", "duedate"), true);
+		duedate.setRendering(duedateRender);
+		
+		
+		//field scheme
+		MultiMap map = new MultiValueMap();
+		map.put("issueType:1", issueType);
+		map.put("issueType:1", summary);
+		map.put("issueType:1", duedate);
+
+		map.put("issueType:2", issueType);
+		map.put("issueType:2", summary);
+		map.put("issueType:2", description);
+		map.put("issueType:2", duedate);
+		
+		//the rest
+		AdvancedIssue advIssue = new AdvancedIssue();
+		
+		AdvancedProject project = new AdvancedProject();
+		project.setId("MOCK");
+		project.setName("project mock");
+		project.setSchemes(map);
+		
+		advIssue.setProject(project);
+		
+		return advIssue;
+		
+	}
+	
 
 }

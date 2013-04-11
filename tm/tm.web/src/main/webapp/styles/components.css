@@ -295,6 +295,10 @@ div.issue-report-dialog div.issue-report-break{
 	min-height: 2em;
 }
 
+div.issue-panel-container{
+	margin-top : 0.2em;	
+}
+
 /*******************************
 	test suites management
 ********************************/

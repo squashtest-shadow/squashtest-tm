@@ -22,18 +22,33 @@
 -->
 <html>
 <body>
-	<div class="required-fields-panel ui-corner-all blue-borders">
-		<h3>{{labels.requiredFields}}</h3>
-		<div class="required-fields-container">
-		
-		
+
+	<div id="containers-template">
+	
+		<div class="issue-panel required-fields ui-corner-all std-padding blue-borders">
+			<h4 class="issue-panel-title">{{labels.requiredFields}}</h4>
+			<div  class="issue-panel-container display-table full-width">
+			
+			
+			</div>
 		</div>
-	</div>
-	<div class="optional-fields-panel ui-corner-all blue-borders">
-		<h3>{{labels.optionalFields}}</h3> <input class="button" type="button" value="+"/>
-		<div class="optional-fields-container not-displayed">
 		
+		<div class="issue-panel optional-fields ui-corner-all std-padding blue-borders">
+			<h4 class="issue-panel-title" style="display : inline-block">{{labels.optionalFields}}</h4> <input class="button optional-fields-toggle" type="button" value="+"/>
+			<div class="issue-panel-container not-displayed display-table full-width">
+				
+			</div>
 		</div>
+		
 	</div>
+	
+	<div id="fields-templates">
+		{{#each this}}
+		<div class="issue-field display-table-row full-width" data-fieldid="{{id}}">
+			<label class="issue-field-label display-table-cell">{{label}}</label><span class="issue-field-control-holder display-table-cell"></span>
+		</div>
+		{{/each}}
+	</div>
+	
 </body>
 </html>

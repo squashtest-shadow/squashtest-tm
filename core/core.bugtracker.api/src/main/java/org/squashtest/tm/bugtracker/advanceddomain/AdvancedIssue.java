@@ -136,6 +136,10 @@ public class AdvancedIssue implements RemoteIssue {
 	
 	// ********************* private stuffs ***************************
 
+	public void setProject(AdvancedProject project) {
+		this.project = project;
+	}
+
 	private String findFieldValueName(String fieldId){
 		FieldValue value = fieldValues.get("fieldId");
 		return (value!=null) ? value.getName() : "";			

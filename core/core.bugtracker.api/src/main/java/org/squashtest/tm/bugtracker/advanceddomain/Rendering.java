@@ -30,6 +30,17 @@ public class Rendering {
 	private boolean required=false;
 	
 
+	public Rendering(){
+		super();
+	}
+
+	public Rendering(String[] operations, InputType inputType, boolean required) {
+		super();
+		this.operations = operations;
+		this.inputType = inputType;
+		this.required = required;
+	}
+
 	public String[] getOperations() {
 		return operations;
 	}
