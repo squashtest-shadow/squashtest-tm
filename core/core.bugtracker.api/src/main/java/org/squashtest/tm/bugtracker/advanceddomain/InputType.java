@@ -43,18 +43,18 @@ package org.squashtest.tm.bugtracker.advanceddomain;
  */
 public class InputType {
 	
-	public static final String UNKNOWN			= "UNKNOWN";
+	public static final String UNKNOWN			= "unknown";
 	
-	public static final String TEXT_FIELD 		= "TEXT_FIELD";	
-	public static final String TEXT_AREA 		= "TEXT_AREA";
-	public static final String TEXT_AUTOCOMPLETE= "TEXT_AUTOCOMPLETE";
-	public static final String DATE_PICKER		= "DATE_PICKER";
-	public static final String TAG_LIST			= "TAG_LIST";
-	public static final String DROPDOWN_LIST	= "DROPDOWN_LIST";
-	public static final String CHECKBOX			= "CHECKBOX";
-	public static final String CHECKBOX_LIST	= "CHECKBOX_LIST";
-	public static final String RADIO_BUTTON		= "RADIO_BUTTON";
-	public static final String FILE_UPLOAD		= "FILE_UPLOAD";
+	public static final String TEXT_FIELD 		= "text_field";	
+	public static final String TEXT_AREA 		= "text_area";
+	public static final String TEXT_AUTOCOMPLETE= "text_autocomplete";
+	public static final String DATE_PICKER		= "date_picker";
+	public static final String TAG_LIST			= "tag_list";
+	public static final String DROPDOWN_LIST	= "dropdown_list";
+	public static final String CHECKBOX			= "checkbox";
+	public static final String CHECKBOX_LIST	= "checkbox_list";
+	public static final String RADIO_BUTTON		= "radio_button";
+	public static final String FILE_UPLOAD		= "file_upload";
 	
 	public static final String EXCLUDED_CHARACTERS = "[^\\w-_.0-9]";
 	
