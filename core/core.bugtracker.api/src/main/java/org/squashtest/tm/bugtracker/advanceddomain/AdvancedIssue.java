@@ -118,8 +118,21 @@ public class AdvancedIssue implements RemoteIssue {
 		return btName;
 	}
 	
+	public void setFieldValue(String fieldName, FieldValue fieldValue){
+		fieldValues.put(fieldName, fieldValue);
+	}
 	
+	public FieldValue getFieldValue(String fieldName){
+		return fieldValues.get(fieldName);
+	}
 	
+	public void setFieldValues(Map<String, FieldValue> fieldValues){
+		this.fieldValues = fieldValues;
+	}
+	
+	public Map<String, FieldValue> getFieldValues(){
+		return fieldValues;
+	}
 	
 	// ********************* private stuffs ***************************
 
