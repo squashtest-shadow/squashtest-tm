@@ -32,9 +32,6 @@ import org.squashtest.tm.bugtracker.definition.RemoteVersion;
 
 public class AdvancedIssue implements RemoteIssue {
 	
-	
-	
-	
 	//maps a fieldId to a FieldValue
 	private Map<String, FieldValue> fieldValues = new HashMap<String, FieldValue>();
 	
@@ -43,6 +40,9 @@ public class AdvancedIssue implements RemoteIssue {
 	private String key;
 	
 	private String btName;
+	
+	//the name of the fields scheme currently used, see AdvancedProject#schemes
+	private String currentScheme;
 	
 	public void setId(String key){
 		this.key = key;
@@ -134,11 +134,22 @@ public class AdvancedIssue implements RemoteIssue {
 		return fieldValues;
 	}
 	
-	// ********************* private stuffs ***************************
+	public String getCurrentScheme() {
+		return currentScheme;
+	}
+
+	public void setCurrentScheme(String currentScheme) {
+		this.currentScheme = currentScheme;
+	}
 
 	public void setProject(AdvancedProject project) {
 		this.project = project;
 	}
+
+	
+	
+	// ********************* private stuffs ***************************
+
 
 	private String findFieldValueName(String fieldId){
 		FieldValue value = fieldValues.get("fieldId");
