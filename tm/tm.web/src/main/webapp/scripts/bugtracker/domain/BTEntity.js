@@ -18,50 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
-/*
- * This is roughly a delegate module loader 
- */
-define(function(require){
-
-	
-	return {
-		
-		cache : {},
-		
-		loadWidget : function(widgetName, success, fallback){
-			
-			if (this.cache[widgetName]===undefined){
-				
-				var self = this;
-				
-				require(["./"+widgetName], function(widg){
-					
-					$.widget('squashbt.'+widgetName, widg);
-					$.squashbt[widgetName].createDom = widg.createDom;
-					self.cache[widgetName]=true;
-					success();
-					
-				}, function(err){
-					if (console && console.log){
-						console.log(err);
-					}
-					self.cache[widgetName]=false;	
-					fallback();
-				});
-				
-			}
-			
-			else if (this.cache[widgetName]){
-				success();
-			}
-			else{
-				fallback();
-			}
-			
-		},
-		
-		defaultWidget : "text_field"
-	};	
-});
+define(function(){
+	return function(argId, argName){
+		this.id = argId;
+		this.name = argName;
+	}	
+})

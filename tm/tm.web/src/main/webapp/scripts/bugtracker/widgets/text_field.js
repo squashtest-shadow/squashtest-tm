@@ -20,48 +20,44 @@
  */
 
 
-/*
- * This is roughly a delegate module loader 
- */
-define(function(require){
+define(["jquery"], function($){
 
-	
 	return {
 		
-		cache : {},
-		
-		loadWidget : function(widgetName, success, fallback){
-			
-			if (this.cache[widgetName]===undefined){
-				
-				var self = this;
-				
-				require(["./"+widgetName], function(widg){
-					
-					$.widget('squashbt.'+widgetName, widg);
-					$.squashbt[widgetName].createDom = widg.createDom;
-					self.cache[widgetName]=true;
-					success();
-					
-				}, function(err){
-					if (console && console.log){
-						console.log(err);
-					}
-					self.cache[widgetName]=false;	
-					fallback();
-				});
+		options : {
+			rendering : {
+				inputType : {
+					name : "text_field"
+				}
 				
 			}
-			
-			else if (this.cache[widgetName]){
-				success();
-			}
-			else{
-				fallback();
-			}
-			
 		},
 		
-		defaultWidget : "text_field"
-	};	
-});
+		_create : function(){
+			var field = this.options;
+			var $this = this.element.eq(0);
+			if (field.rendering.operations.length===0){
+				$this.prop('disabled', true);
+			}
+		},
+		
+		fieldvalue : function(fieldvalue){
+			if (fieldvalue===null || fieldvalue === undefined){
+				var text = this.element.eq(0).val();
+				return new FieldValue(text, text);
+			}
+			else{
+				this.element.eq(0).val(fieldvalue.scalar);
+			}
+		}, 
+
+		createDom : function(field){
+			return $('<input />', {
+				'type' : 'text',
+				'data-btwidget' : 'text_field',
+				'data-fieldid' : field.id
+			});
+		}
+	}
+
+})

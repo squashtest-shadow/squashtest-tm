@@ -19,10 +19,20 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 define(function(){
-	return function(argId, argName){
-		this.id = argId;
-		this.name = argName;
-	}
+	return function (id, value){
+		this.id = id;
+		this.scalar = null;
+		this.composite = [];
+		
+		if (value instanceof Array){
+			this.composite = value;
+		}
+		else{
+			this.scalar = value;
+		}
+	}	
 })
+	
+
+	

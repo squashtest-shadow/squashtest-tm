@@ -21,65 +21,166 @@
 
 
 define(["jquery", "backbone", "../widgets/widget-registry", "text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip", "jqueryui"], function($, Backbone, widgetRegistry, source){
+
+
+	// *************** utilities ****************************
 	
-	function FieldValue(id, value){
-		this.id = id;
-		this.scalar = null;
-		this.composite = [];
-		
-		if (value instanceof Array){
-			this.composite = value;
-		}
-		else{
-			this.scalar = value;
+	function WidgetNotFound(name,original){
+		this.name=name;
+		this.original=original;
+		this.toString = function(){
+			return "widget { name : '"+this.name+"', original : '"+this.original+"' not found.";
+		} 
+	}
+	
+	var logger = {
+		log : function(message){
+			if (console && console.log){
+				console.log(message);
+			}
 		}
 	}
 	
+	// ***************** widget helper **********************
+	
+	/*
+	 * Note : part of this job is made asynchronously so the code might seem convoluted
+	 * 
+	 */
+	var WidgetFactory = {
+		
+		registry : widgetRegistry,
+
+		findFieldById : function(fields, id){
+			for (var i=0, len = fields.length ; i<len ; i++){
+				if (fields[i].id === id){
+					return fields[i];
+				}
+			}
+			return null;	//should never happen, right ?
+		},
+		
+		/*
+		 * The widget must first be loaded. But there are chances that the widget can't be found because there is counterpart in Squash to the widget 
+		 * defined on the remote bugtracker.
+		 * 
+		 * Therefore fallback policy is : 
+		 * - load and execute the expected widget (inputType.name).
+		 * - if fails, load and execute the widget under the name the remote bugtracker knows it (inputType.original)
+		 * - if it fails again : 
+		 * 	 	-if the field is required, try with the default widget
+		 *  	-else discard the field entirely.
+		 */
+		createWidget : function(domelt, field){
+
+			var self = this;
+			var inputType = field.rendering.inputType;
+
+			
+			//the case where all runs fine
+			var allFine =  function(){
+				self.appendWidget(domelt, field, inputType.name);
+			};
+			
+			//fallback to inputType.original
+			var fallback = function(){
+				logger.log("field (id : '"+field.id+"') : widget "+inputType.name+" not found, fallback to "+inputType.original);
+				self.appendWidget(domelt, field, inputType.original);
+			}
+			
+			//worst case scenario
+			var allFailed = function(){
+				if (field.rendering.required){
+					logger.log("field (id : '"+field.id+"') is required, proceeding with default widget");
+					widgetRegistry.loadWidget(widgetRegistry.defaultWidget, function(){
+						self.appendWidget(domelt, field, widgetRegistry.defaultWidget);
+					});
+				}
+				else{
+					logger.log("field (id : '"+field.id+"') is optional, item removed and skipped");
+					$(domelt).remove();
+				}				
+			}
+			
+			//now let's run it
+			widgetRegistry.loadWidget(inputType.name, allFine, function(){
+				widgetRegistry.loadWidget(inputType.original, fallback, allFailed);
+			});
+
+		},
+		
+		appendWidget : function(fieldItem, field, widgetName){
+			
+			//create the element
+			var domelt = $.squashbt[widgetName].createDom(field);
+			
+			//if it's a scheme selector, append a special class to it
+			if (field.rendering.inputType.fieldSchemeSelector){
+				domelt.addClass('scheme-selector');
+			}
+			
+			//append that element to the dom
+			var enclosingSpan = fieldItem.getElementsByTagName('span')[0];
+			domelt.appendTo(enclosingSpan);
+			
+			//domelt is a jquery object, let's invoke the widget directly on him
+			domelt[widgetName](field);
+		},
+			
+		processPanel : function(panel, fields){
+			
+			var items = panel.find('div.issue-field');
+			var self=this;
+			
+			items.each(function(){
+				var item = this;
+				var id = item.getAttribute('data-fieldid');
+				var field = self.findFieldById(fields, id);
+
+				self.createWidget(item,field);
+				
+			});
+		}
+			
+			
+	}
+	
+	
+	
+	// ***************** main view ********************************
 	
 	var AdvancedFieldView = Backbone.View.extend({
 		
 		// properties set when init :
-		
-		currentScheme : undefined,
-		fieldTemplate : undefined,
+		fieldTpl : undefined,
+		frameTpl : undefined,
 		
 		events : {
 			"click input.optional-fields-toggle" : "toggleOptionalFields",
 			"change .scheme-selector" : "changeScheme"
 		},
 		
+
 		initialize : function(){
 					
 			var $el = this.$el;
 			
 			//first, post process the source html and split into two templates
-			var allHtml = $(source);
-			
-			var frameHtml = allHtml.filter(function(){return this.id==='containers-template'}).html();
-			var frameTpl = Handlebars.compile(frameHtml);						
-			
-			var fieldHtml = allHtml.filter(function(){return this.id==='fields-templates'}).html();
-			this.fieldTpl = Handlebars.compile(fieldHtml);	//that one is saved for later on
-			
-			
+			this._initTemplates();
+						
 			//generate the main template (the 'frame')
 			var data = {
 				labels : this.options.labels
 			};			
-			var html = frameTpl(data);			
-			$el.html(html);
-					
+			var html = this.frameTpl(data);			
+			$el.html(html);					
 						
-			//prepare a default scheme.
-			var project = this.model.get('project');
-			//the following is weird but correct
-			for (var schemeName in project.schemes){
-				this.currentScheme = schemeName;
-				break;
-			}
-			
-			//render
+			//prepare a default scheme.	
+			this._setDefaultScheme();
+
+			//now we can render
 			this.render();
+			
 		},
 		
 		
@@ -87,22 +188,14 @@ define(["jquery", "backbone", "../widgets/widget-registry", "text!http://localho
 
 			//get the fields that must be displayed
 			var schemes = this.model.get('project').schemes;			
-			var fields = schemes[this.currentScheme];
+			var fields = schemes[this.model.get('currentScheme')];
 			
-			this.renderFieldPanel(fields.slice(0), true);
-			this.renderFieldPanel(fields.slice(0), false);
-			
-		},
-		
-		renderFieldPanel : function(fields, required){
-			var panelclass = (required) ? "required-fields" : "optional-fields";
-			$.grep(fields, function(field){return field.rendering.required === required})
-			
-			var html = this.fieldTpl(fields);
-			this.$el.find('div.'+panelclass+' div.issue-panel-container').html(html);
+			this.renderFieldPanel(fields, true);
+			this.renderFieldPanel(fields, false);
 			
 		},
 		
+
 		changeScheme : function(evt){
 
 		},
@@ -112,7 +205,6 @@ define(["jquery", "backbone", "../widgets/widget-registry", "text!http://localho
 			var btn = this.$el.find('input.optional-fields-toggle');
 			var txt = btn.val();
 			(txt==="+") ? btn.val('-') : btn.val('-');
-
 		},
 		
 		readIn : function(){
@@ -129,7 +221,51 @@ define(["jquery", "backbone", "../widgets/widget-registry", "text!http://localho
 		
 		disableControls : function(){
 			
+		},
+		
+		
+		//********************** the bowels ********************
+		
+		_initTemplates : function(){
+			var allHtml = $(source);
+			
+			var frameHtml = allHtml.filter(function(){return this.id==='containers-template'}).html();
+			this.frameTpl = Handlebars.compile(frameHtml);						
+			
+			var fieldHtml = allHtml.filter(function(){return this.id==='fields-templates'}).html();
+			this.fieldTpl = Handlebars.compile(fieldHtml);	//that one is saved for later on			
+		},
+		
+		_setDefaultScheme : function(){
+			var scheme = this.model.get('currentScheme'); 
+			var project = this.model.get('project');
+			if (scheme === null || scheme === undefined){
+				//the following is weird but correct
+				for (var schemeName in project.schemes){
+					this.model.set('currentScheme', schemeName, {silent : true});
+					break;
+				}
+			}						
+		},
+		
+		renderFieldPanel : function(allFields, required){
+			
+			//some decisions to make
+			var panelclass = (required) ? "required-fields" : "optional-fields";
+			var fields = $.grep(allFields, function(field){return field.rendering.required === required})
+			
+			//generate the main content of the panel
+			var panel = this.$el.find('div.'+panelclass+' div.issue-panel-container');
+			
+			var html = this.fieldTpl(fields);			
+			panel.html(html);
+			
+			//generate the widgets
+			WidgetFactory.processPanel(panel, fields);
+			
 		}
+		
+		
 	});
 	
 	return AdvancedFieldView;
