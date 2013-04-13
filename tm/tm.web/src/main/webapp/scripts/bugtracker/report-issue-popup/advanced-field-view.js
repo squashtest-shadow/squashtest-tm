@@ -167,7 +167,8 @@ define(["jquery",
 		
 		events : {
 			"click input.optional-fields-toggle" : "toggleOptionalFields",
-			"change .scheme-selector" : "changeScheme"
+			"change .scheme-selector" : "changeScheme",
+			"keypress" : "abortEnter"
 		},
 		
 
@@ -247,8 +248,12 @@ define(["jquery",
 			
 			for (var fieldId in fieldValues){
 				var value 	= fieldValues[fieldId];
-				var widget = allControls.filter('[data-fieldid="'+fieldId+'"]').data('widget');
-				widget.fieldvalue(value);
+				var control = allControls.filter('[data-fieldid="'+fieldId+'"]');
+				
+				if (control.length>0){
+					control.data('widget').fieldvalue(value);
+				}
+				
 			}
 			
 			
@@ -331,6 +336,14 @@ define(["jquery",
 		
 		_flushPanels : function(){
 			$("div.issue-panel-container").empty();
+		},
+		
+		//we must prevent keypress=enter event inside a textarea to bubble out and reach 
+		//the submit button
+		abortEnter : function(evt){
+			if (evt.which == '13'){
+				$.Event(evt).stopPropagation();
+			}			
 		}
 		
 		
