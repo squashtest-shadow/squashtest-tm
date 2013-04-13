@@ -20,7 +20,13 @@
  */
 
 
-define(["jquery", "backbone", "../widgets/widget-registry", "text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip", "jqueryui"], function($, Backbone, widgetRegistry, source){
+define(["jquery", 
+        "backbone", 
+        "../widgets/widget-registry", 
+        "../domain/FieldValue", 
+        "text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip", 
+        "jqueryui"], 
+		function($, Backbone, widgetRegistry, FieldValue, source){
 
 
 	// *************** utilities ****************************
@@ -29,7 +35,7 @@ define(["jquery", "backbone", "../widgets/widget-registry", "text!http://localho
 		this.name=name;
 		this.original=original;
 		this.toString = function(){
-			return "widget { name : '"+this.name+"', original : '"+this.original+"' not found.";
+			return "widget { name : '"+this.name+"', original : '"+this.original+"'} not found.";
 		} 
 	}
 	
@@ -175,8 +181,6 @@ define(["jquery", "backbone", "../widgets/widget-registry", "text!http://localho
 			var html = this.frameTpl(data);			
 			$el.html(html);					
 						
-			//prepare a default scheme.	
-			this._setDefaultScheme();
 
 			//now we can render
 			this.render();
@@ -186,6 +190,12 @@ define(["jquery", "backbone", "../widgets/widget-registry", "text!http://localho
 		
 		render : function(){
 
+			//flush the panels
+			this._flushPanels();
+			
+			//prepare a default scheme if none is set already	
+			this._setDefaultScheme();
+			
 			//get the fields that must be displayed
 			var schemes = this.model.get('project').schemes;			
 			var fields = schemes[this.model.get('currentScheme')];
@@ -193,21 +203,48 @@ define(["jquery", "backbone", "../widgets/widget-registry", "text!http://localho
 			this.renderFieldPanel(fields, true);
 			this.renderFieldPanel(fields, false);
 			
+			//rebinds the view
+			this.delegateEvents();
+			
 		},
 		
 
 		changeScheme : function(evt){
-
+			var $target = $(evt.target);
+			var fieldid = $target.data('fieldid');
+			var wName = $target.data('btwidget');
+			var value = $target[wName]('fieldvalue');
+			
+			var selector = ""+fieldid+":"+value.id;
+			this.model.set('currentScheme', selector);
+			
+			this.render();
+			
 		},
 		
 		toggleOptionalFields : function(){
 			this.$el.find('div.optional-fields div.issue-panel-container').toggleClass('not-displayed');
 			var btn = this.$el.find('input.optional-fields-toggle');
 			var txt = btn.val();
-			(txt==="+") ? btn.val('-') : btn.val('-');
+			(txt==="+") ? btn.val('-') : btn.val('+');
 		},
 		
 		readIn : function(){
+			
+			//first, create the fields
+			this.render();
+			
+			//now we can fill them
+			var fieldValues = this.model.get('fieldValues');
+			var allControls = this._getAllControls();
+			
+			for (var fieldId in fieldValues){
+				var value 	= fieldValues[fieldId];
+				var control = allControls.filter('[data-fieldid="'+fieldId+'"]');
+				var widgetName = control.data('btwidget');
+				control[widgetName]('fieldvalue',value);
+			}
+			
 			
 		},
 		
@@ -216,15 +253,30 @@ define(["jquery", "backbone", "../widgets/widget-registry", "text!http://localho
 		},
 		
 		enableControls : function(){
-			
+			var allControls = this._getAllControls();
+			allControls.each(function(){
+				var $this = $(this);
+				var wName = $this.data('btwidget');
+				$this[wName]('enable');
+			});
 		},
 		
 		disableControls : function(){
+			var allControls = this._getAllControls();
+			allControls.each(function(){
+				var $this = $(this);
+				var wName = $this.data('btwidget');
+				$this[wName]('disable');
+			});
 			
 		},
 		
 		
 		//********************** the bowels ********************
+		
+		_getAllControls : function(){
+			return this.$el.find("span.issue-field-control-holder").children();
+		},
 		
 		_initTemplates : function(){
 			var allHtml = $(source);
@@ -263,6 +315,10 @@ define(["jquery", "backbone", "../widgets/widget-registry", "text!http://localho
 			//generate the widgets
 			WidgetFactory.processPanel(panel, fields);
 			
+		},
+		
+		_flushPanels : function(){
+			$("div.issue-panel-container").empty();
 		}
 		
 		

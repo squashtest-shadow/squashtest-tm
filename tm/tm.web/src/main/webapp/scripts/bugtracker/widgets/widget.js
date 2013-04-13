@@ -22,15 +22,14 @@
 /*
  * This is not an actual widget, it's a documentation on what a widget should be.
  * 
- * A Widget is a jQuery widget, see below for the methods that should be accessible. The domain of that widget must be 'squashbt'.
- * See the various documentation on creating widget for details.
+ * A Widget is a jQuery widget, that is not registered yet : the calling registry needs to register it in its own context. That is why you should not 
+ * register your widget yourself (eg, with $.widget('my.widget', <widget def>) : you must return that <widget def>. See the various documentation on creating widget for details.
+ * 
+ * As for any jQuery widget you can override methods and define your own, as long as you implements the API described below. 
  * 
  * The constructor of the widget will be invoked using an argument of type 'field', see below. The widget is editable only if 
  * field.rendering.operations[] is not empty. This array might contain "set", "add", "remove", that you may use if you like to. see method 
  * fieldvalue(fieldvalue) below.    
- * 
- * The widget must also define a method 'createDom', that is not part of the widget itself, but rather an attribute of the widget constructor.
- * see below.
  * 
  * 
  * --------------
@@ -42,7 +41,7 @@
  
 define(["jquery", "jqueryui"], function($){
 	
-	$.widget("squashbt.somewidget", {
+	return {
 		
 		options : {
 			//defaults value for the field
@@ -62,22 +61,31 @@ define(["jquery", "jqueryui"], function($){
 		
 		_create : function(){
 			//whatever you need
+			//you should find the arguments in this.options
+		},
+		
+		disable : function(){
+			//if doesn't exist, you need to declare and implement it
+		},
+		
+		enable : function(){
+			//same remark here
 		},
 		
 		fieldvalue : function(fieldvalue){
 			//if fieldvalue is null or undefined, acts as a getter. Else, it's a setter.
+		},
+		
+		createDom : function(field){
+			/*
+			 * create the dom element that best fits this field. This dom element is returned as a jquery object.
+			 * The following attributes MUST be set : 
+			 * - data-btwidget : the name of this widget
+			 * - data-fieldid : the id of this field, ie field.id
+			 */
 		}
 		
 		
-	});
-	
-	$.squashbt.somewidget.createDom = function(field){
-		/*
-		 * create the dom element that best fits this field. This dom element is returned as a jquery object.
-		 * The following attributes MUST be set : 
-		 * - data-btwidget : the name of this widget
-		 * - data-fieldid : the id of this field, ie field.id
-		 */
 	}
 	
 });

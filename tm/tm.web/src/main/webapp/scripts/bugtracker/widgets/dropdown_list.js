@@ -27,7 +27,7 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 		options : {
 			rendering : {
 				inputType : {
-					name : "text_field"
+					name : "dropdown_list"
 				}
 				
 			}
@@ -42,11 +42,11 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 		
 		fieldvalue : function(fieldvalue){
 			if (fieldvalue===null || fieldvalue === undefined){
-				var text = this.element.eq(0).val();
-				return new FieldValue(text, text);
+				var opt = this.element.find('option:selected');
+				return new FieldValue(opt.val(), opt.text());
 			}
 			else{
-				this.element.val(fieldvalue.scalar);
+				this.element.val(fieldvalue.id);
 			}
 		}, 
 		
@@ -61,11 +61,23 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 		},
 
 		createDom : function(field){
-			return $('<input />', {
-				'type' : 'text',
-				'data-btwidget' : 'text_field',
+			var select = $('<select />', {
+				'data-btwidget' : 'dropdown_list',
 				'data-fieldid' : field.id
 			});
+			
+			var options = field.possibleValues;
+			var opt;
+			for (var i=0, len = options.length; i<len;i++){
+				opt = $('<option>', {
+					'text' : options[i].scalar,
+					'value' : options[i].id
+				});
+				
+				select.append(opt);
+			}
+			
+			return select;
 		}
 	}
 
