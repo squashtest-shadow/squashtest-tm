@@ -63,7 +63,7 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 		createDom : function(field){
 			return $('<input />', {
 				'type' : 'text',
-				'data-btwidget' : 'text_field',
+				'data-widgetname' : 'text_field',
 				'data-fieldid' : field.id
 			});
 		}

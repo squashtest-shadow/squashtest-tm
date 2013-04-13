@@ -80,7 +80,7 @@ define(["jquery", "jqueryui"], function($){
 			/*
 			 * create the dom element that best fits this field. This dom element is returned as a jquery object.
 			 * The following attributes MUST be set : 
-			 * - data-btwidget : the name of this widget
+			 * - data-widgetname : the name of this widget
 			 * - data-fieldid : the id of this field, ie field.id
 			 */
 		}

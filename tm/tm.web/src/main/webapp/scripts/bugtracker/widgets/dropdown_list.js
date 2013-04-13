@@ -62,7 +62,7 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 
 		createDom : function(field){
 			var select = $('<select />', {
-				'data-btwidget' : 'dropdown_list',
+				'data-widgetname' : 'dropdown_list',
 				'data-fieldid' : field.id
 			});
 			

@@ -129,8 +129,12 @@ define(["jquery",
 			var enclosingSpan = fieldItem.getElementsByTagName('span')[0];
 			domelt.appendTo(enclosingSpan);
 			
-			//domelt is a jquery object, let's invoke the widget directly on him
+			//create the widget
 			domelt[widgetName](field);
+			
+			//map the widget in domelt.data as 'widget' for easier reference
+			var instance = domelt.data(widgetName);
+			domelt.data('widget', instance);
 		},
 			
 		processPanel : function(panel, fields){
@@ -210,15 +214,18 @@ define(["jquery",
 		
 
 		changeScheme : function(evt){
-			var $target = $(evt.target);
-			var fieldid = $target.data('fieldid');
-			var wName = $target.data('btwidget');
-			var value = $target[wName]('fieldvalue');
+			
+			//set the new currentScheme
+			var widget = $(evt.target).data('widget');
+			var fieldid = $(evt.target).data('fieldid');
+			var value = widget.fieldvalue();
 			
 			var selector = ""+fieldid+":"+value.id;
 			this.model.set('currentScheme', selector);
 			
-			this.render();
+			//checkout then checkin again to update the view
+			this.readOut();
+			this.readIn();
 			
 		},
 		
@@ -240,33 +247,38 @@ define(["jquery",
 			
 			for (var fieldId in fieldValues){
 				var value 	= fieldValues[fieldId];
-				var control = allControls.filter('[data-fieldid="'+fieldId+'"]');
-				var widgetName = control.data('btwidget');
-				control[widgetName]('fieldvalue',value);
+				var widget = allControls.filter('[data-fieldid="'+fieldId+'"]').data('widget');
+				widget.fieldvalue(value);
 			}
 			
 			
 		},
 		
 		readOut : function(){
+			var newValues = {};
+			var controls = this._getAllControls();
+			controls.each(function(){
+				var $this = $(this);
+				var fieldid = $this.data('fieldid');
+				var value = $this.data('widget').fieldvalue();
+				
+				newValues[fieldid] = value;
+			});
 			
+			this.model.set('fieldValues', newValues);
 		},
 		
 		enableControls : function(){
 			var allControls = this._getAllControls();
 			allControls.each(function(){
-				var $this = $(this);
-				var wName = $this.data('btwidget');
-				$this[wName]('enable');
+				$(this).data('widget').enable();
 			});
 		},
 		
 		disableControls : function(){
 			var allControls = this._getAllControls();
 			allControls.each(function(){
-				var $this = $(this);
-				var wName = $this.data('btwidget');
-				$this[wName]('disable');
+				$(this).data('widget').disable();
 			});
 			
 		},
