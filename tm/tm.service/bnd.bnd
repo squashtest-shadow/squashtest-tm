@@ -4,7 +4,10 @@ Import-Package: com.mysql.jdbc;resolution:=optional,\
 	!org.squashtest.tm.service.security.acls,\
 	org.squashtest.tm.domain.resource,\
 	javax.transaction,\
-	javassist.util.proxy,\
+	javassist.util.proxy, \
+	org.springframework.asm, \
+	org.springframework.transaction.annotation,\
+	net.sf.cglib.core,\
 	net.sf.ehcache,\
 	net.sf.ehcache.bootstrap,\
 	net.sf.ehcache.constructs.blocking,\
@@ -21,7 +24,4 @@ Import-Package: com.mysql.jdbc;resolution:=optional,\
 	org.springframework.aop.framework,\
 	org.springframework.core.task,\
 	org.springframework.scheduling,\
-	net.sf.cglib.core;version='[2.1.3,3.0)',\
-	net.sf.cglib.proxy;version='[2.1.3,3.0)',\
-	net.sf.cglib.reflect;version='[2.1.3,3.0)',\
 	*

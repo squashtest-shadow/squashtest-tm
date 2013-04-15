@@ -38,8 +38,6 @@ import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequ
 
 public class ProgressAwareMultipartResolver extends CommonsMultipartResolver {
 
-
-
 	@Override
 	public MultipartHttpServletRequest resolveMultipart(HttpServletRequest request) throws MultipartException {
 		String encoding = determineEncoding(request);
@@ -53,12 +51,10 @@ public class ProgressAwareMultipartResolver extends CommonsMultipartResolver {
 			/* create the wrapper for the request */
 			MultipartHttpServletRequest multiRequest = createMultipartHttpServletRequest(request, encoding, fileUpload);
 
-
 			/* register the listener in the session */
 			String ticket = UploadProgressListenerUtils.getUploadTicket(request);
 			HttpSession session = request.getSession();
 			UploadProgressListenerUtils.registerListener(session, ticket, newListener);
-
 
 			return multiRequest;
 
@@ -70,7 +66,6 @@ public class ProgressAwareMultipartResolver extends CommonsMultipartResolver {
 		}
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	private MultipartHttpServletRequest createMultipartHttpServletRequest(HttpServletRequest request, String encoding,
 			FileUpload fileUpload) throws FileUploadException {
@@ -78,13 +73,8 @@ public class ProgressAwareMultipartResolver extends CommonsMultipartResolver {
 		List<FileItem> fileItems = ((ServletFileUpload) fileUpload).parseRequest(request); // NOSONAR
 		MultipartParsingResult parsingResult = parseFileItems(fileItems, encoding);
 
-		return new DefaultMultipartHttpServletRequest(request, 
-				parsingResult.getMultipartFiles(),
-				parsingResult.getMultipartParameters());
+		return new DefaultMultipartHttpServletRequest(request, parsingResult.getMultipartFiles(),
+				parsingResult.getMultipartParameters(), parsingResult.getMultipartParameterContentTypes());
 	}
-
-
-
-
 
 }
