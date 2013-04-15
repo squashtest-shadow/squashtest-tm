@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.bugtracker.advanceddomain;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * <p>An input type defines basically what widget should be used when rendered in a UI. It maps a name that Squash will understand to the "original" name of 
@@ -38,6 +41,16 @@ package org.squashtest.tm.bugtracker.advanceddomain;
  *  </p>
  * 
  * 
+ * <p>
+ *   an InputType also accepts metadata that will be transmitted to the client, as a map. As of today, supported metadata are : 
+ *   
+ *   <ul>
+ *   	<li>'date-format' : the format string for this input if a date is involved (mainly for DATE_PICKER and DATE_TIME). Example : 'date-format' : 'yyyy-mm-dd'</li>
+ *   
+ *   </ul>
+ * 
+ * </p>
+ * 
  * @author bsiri
  *
  */
@@ -49,6 +62,7 @@ public class InputType {
 	public static final String TEXT_AREA 		= "text_area";
 	public static final String TEXT_AUTOCOMPLETE= "text_autocomplete";
 	public static final String DATE_PICKER		= "date_picker";
+	public static final String DATE_TIME		= "date_time";
 	public static final String TAG_LIST			= "tag_list";
 	public static final String DROPDOWN_LIST	= "dropdown_list";
 	public static final String CHECKBOX			= "checkbox";
@@ -59,6 +73,11 @@ public class InputType {
 	public static final String EXCLUDED_CHARACTERS = "[^\\w-_.0-9]";
 	
 	
+	//********************* common metadata keys ******************
+	
+	public static final String DATE_FORMAT 		= "date-format";
+	
+	
 	// ***** attributes ******
 	
 	private String name = UNKNOWN;
@@ -66,6 +85,9 @@ public class InputType {
 	private String original = UNKNOWN;
 	
 	private boolean fieldSchemeSelector = false;
+	
+
+	private Map<String, String> meta = new HashMap<String, String>();
 	
 
 	public InputType(){
@@ -101,7 +123,17 @@ public class InputType {
 	public void setFieldSchemeSelector(boolean fieldSchemeSelector) {
 		this.fieldSchemeSelector = fieldSchemeSelector;
 	}
+
+	public Map<String, String> getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Map<String, String> meta) {
+		this.meta = meta;
+	}
 	
-	
+	public void addMeta(String key, String value){
+		this.meta.put(key, value);
+	}
 	
 }
