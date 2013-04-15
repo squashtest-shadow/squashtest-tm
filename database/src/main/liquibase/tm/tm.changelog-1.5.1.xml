@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<!-- DO NOT FORGET TO UPDATE VERSION IN CORE_CONFIG ! -->
+	<changeSet id="tm-1.5.1" author="mpagnon">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="squashtest.tm.database.version" />
+			<column name="VALUE" value="1.5.1" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.issue-2261-01" author="mpagnon">
+		<preConditions onError="CONTINUE" onFail="CONTINUE"
+			onSqlOutput="TEST">
+			<not>
+				<sqlCheck expectedResult="0">
+					select count(*) from TEST_SUITE_TEST_PLAN_ITEM where TEST_PLAN_ORDER is
+					null;
+				</sqlCheck>
+			</not>
+		</preConditions>
+		<comment> This issue is due to null values in test_suite_test_plan_item.test_plan_order after migration to 1.5.0 </comment>
+		<comment>First we create help table that will help us match the iteration test plan orders with the test-suite's test plan items.</comment>
+		<createTable tableName="TEMP_DISCONTINUOUS_SUITE_ITEM">
+			<column name="ITEM_ID" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="SUITE_ID" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="TP_ORDER" type="INT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<sql>
+			insert into TEMP_DISCONTINUOUS_SUITE_ITEM (SUITE_ID, ITEM_ID,
+			TP_ORDER)
+			select tstpitem.SUITE_ID, tstpitem.TPI_ID,
+			itplist.ITEM_TEST_PLAN_ORDER
+			from TEST_SUITE_TEST_PLAN_ITEM tstpitem,
+			ITERATION_TEST_PLAN_ITEM itpitem, ITEM_TEST_PLAN_LIST itplist
+			where
+			tstpitem.TPI_ID = itpitem.ITEM_TEST_PLAN_ID
+			and
+			itpitem.ITEM_TEST_PLAN_ID = itplist.ITEM_TEST_PLAN_ID
+			;
+		</sql>
+		<createTable tableName="TEMP_CONTINUOUS_SUITE_ITEM">
+			<column name="ITEM_ID" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="SUITE_ID" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="TP_ORDER" type="INT">
+				<constraints nullable="false" />
+			</column>
+			<column name="DUMMY" type="BIGINT">
+				<constraints nullable="true" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.issue-2261-02" author="mpagnon">
+		<preConditions onError="CONTINUE" onFail="CONTINUE"
+			onSqlOutput="TEST">
+			<and>
+				<dbms type="h2" />
+				<not>
+					<sqlCheck expectedResult="0">
+						select count(*) from TEST_SUITE_TEST_PLAN_ITEM where TEST_PLAN_ORDER is
+						null;
+					</sqlCheck>
+				</not>
+			</and>
+		</preConditions>
+		<comment> Code for h2 database to find continuous orders for test suite test plan. </comment>
+		<comment>Then we compute continuous orders for test-suite test plan items</comment>
+		<sql>
+			set @rn=-1;
+			set @prevsuite=0;
+			insert into TEMP_CONTINUOUS_SUITE_ITEM ( TP_ORDER, SUITE_ID, ITEM_ID,
+			DUMMY)
+			select casewhen(@prevsuite = SUITE_ID, set(@rn, @rn+1),
+			set(@rn, 0)), SUITE_ID, ITEM_ID, set(@prevsuite, SUITE_ID)
+			from
+			TEMP_DISCONTINUOUS_SUITE_ITEM tdsi
+			order by SUITE_ID, TP_ORDER;
+		</sql>
+	</changeSet>
+
+	<changeSet id="tm-1.5.0.issue-2261-03" author="mpagnon">
+		<preConditions onError="CONTINUE" onFail="CONTINUE"
+			onSqlOutput="TEST">
+			<and>
+				<dbms type="mysql" />
+				<not>
+					<sqlCheck expectedResult="0">
+						select count(*) from TEST_SUITE_TEST_PLAN_ITEM where TEST_PLAN_ORDER is
+						null;
+					</sqlCheck>
+				</not>
+			</and>
+		</preConditions>
+		<comment>Code for mysql database to find continuous orders for test suite test plan.</comment>
+		<comment>Then we compute continuous orders for test-suite test plan items</comment>
+		<sql>
+			insert into TEMP_CONTINUOUS_SUITE_ITEM ( TP_ORDER, SUITE_ID, ITEM_ID,
+			DUMMY)
+			select if(@prevsuite=SUITE_ID, @rownum:=@rownum+1, @rownum:=0)
+			TP_ORDER, SUITE_ID, ITEM_ID, (@prevsuite:=SUITE_ID)
+			from
+			TEMP_DISCONTINUOUS_SUITE_ITEM tdsi, (SELECT @rownum:=0) r, (SELECT
+			@prevsuite:=0) s
+			order by SUITE_ID, TP_ORDER;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.5.0.issue-2261-04" author="mpagnon">
+	<preConditions onError="CONTINUE" onFail="CONTINUE"
+			onSqlOutput="TEST">
+			<not>
+				<sqlCheck expectedResult="0">
+					select count(*) from TEST_SUITE_TEST_PLAN_ITEM where TEST_PLAN_ORDER is
+					null;
+				</sqlCheck>
+			</not>
+		</preConditions>
+		<comment>And finally we set the right orders in the concerned table without forgetting to delete the help tables.</comment>
+		<update tableName="TEST_SUITE_TEST_PLAN_ITEM">
+			<column name="TEST_PLAN_ORDER"
+				valueComputed="(select TEMP_CONTINUOUS_SUITE_ITEM.TP_ORDER
+				from  TEMP_CONTINUOUS_SUITE_ITEM
+				where TEMP_CONTINUOUS_SUITE_ITEM.SUITE_ID = TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID
+				and TEST_SUITE_TEST_PLAN_ITEM.TPI_ID = TEMP_CONTINUOUS_SUITE_ITEM.ITEM_ID)" />
+		</update>
+		<dropTable tableName="TEMP_DISCONTINUOUS_SUITE_ITEM" />
+		<dropTable tableName="TEMP_CONTINUOUS_SUITE_ITEM" />
+		<addNotNullConstraint tableName="TEST_SUITE_TEST_PLAN_ITEM"
+			columnName="TEST_PLAN_ORDER" columnDataType="INT" />
+	</changeSet>
+</databaseChangeLog>
+ 
