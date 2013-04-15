@@ -20,14 +20,20 @@
  */
 
 
-define(["jquery", "../domain/FieldValue"], function($, FieldValue){
+define(["jquery", "../domain/FieldValue", "jqueryui"], function($, FieldValue){
 
+	function convertStrDate(fromFormat, toFormat, strFromValue){
+		var date = $.datepicker.parseDate(fromFormat, strFromValue);
+		return $.datepicker.formatDate(toFormat, date);		
+	}
+	
 	return {
 		
 		options : {
 			rendering : {
 				inputType : {
-					name : "text_field"
+					name : "text_field",
+					meta : { 'date-format' : "yyyy-mm-dd"}
 				}
 				
 			}
@@ -35,18 +41,31 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 		
 		_create : function(){
 			var field = this.options;
+			
+			//TODO : handle proper configuration
+			this.element.datepicker({
+				dateFormat : "dd/mm/yy"
+			});
+			
 			if (field.rendering.operations.length===0){
 				this.element.prop('disabled', true);
-			}
+			};
 		},
 		
 		fieldvalue : function(fieldvalue){
 			if (fieldvalue===null || fieldvalue === undefined){
-				var text = this.element.eq(0).val();
-				return new FieldValue(text, text);
+				var date = this.element.datepicker('getDate');
+				var toFormat = this.options.rendering.inputType.meta['date-format'];
+				var strDate = $.datepicker.formatDate(toFormat, date);
+				return new FieldValue("", strDate);
 			}
 			else{
-				this.element.val(fieldvalue.scalar);
+				var fromFormat = this.options.rendering.inputType.meta['date-format'];
+				var strDate = fieldvalue.scalar;
+				if (!!strDate){
+					var date = $.datepicker.parseDate(fromFormat, strDate)
+					this.element.datepicker('setDate', date);
+				}
 			}
 		}, 
 		
@@ -61,8 +80,9 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 		},
 
 		createDom : function(field){
-			return $('<textarea/>', {
-				'data-widgetname' : 'text_area',
+			return $('<input/>', {
+				'type' : 'text',
+				'data-widgetname' : 'date_picker',
 				'data-fieldid' : field.id
 			});
 		}

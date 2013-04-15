@@ -169,11 +169,15 @@ td.narrow{
 }
 
 .blue-borders{
-	border : 1px solid 80B2FF;	
+	border : 1px solid #80B2FF;	
 }
 
 .std-padding{
 	padding : 0.1em 1em;
+}
+
+.std-margin-top {
+	margin-top : 1em;	
 }
 
 /* ---------------------------------------------------------*/

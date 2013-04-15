@@ -90,20 +90,20 @@ define(["jquery",
 			
 			//fallback to inputType.original
 			var fallback = function(){
-				logger.log("field (id : '"+field.id+"') : widget "+inputType.name+" not found, fallback to "+inputType.original);
+				logger.log("bugtracker ui : field (id : '"+field.id+"') : widget "+inputType.name+" not found, fallback to "+inputType.original);
 				self.appendWidget(domelt, field, inputType.original);
 			}
 			
 			//worst case scenario
 			var allFailed = function(){
 				if (field.rendering.required){
-					logger.log("field (id : '"+field.id+"') is required, proceeding with default widget");
+					logger.log("bugtracker ui : field (id : '"+field.id+"') is required, proceeding with default widget");
 					widgetRegistry.loadWidget(widgetRegistry.defaultWidget, function(){
 						self.appendWidget(domelt, field, widgetRegistry.defaultWidget);
 					});
 				}
 				else{
-					logger.log("field (id : '"+field.id+"') is optional, item removed and skipped");
+					logger.log("bugtracker ui : field (id : '"+field.id+"') is optional, item removed and skipped");
 					$(domelt).remove();
 				}				
 			}
