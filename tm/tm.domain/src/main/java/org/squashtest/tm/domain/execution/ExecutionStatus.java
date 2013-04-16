@@ -375,9 +375,6 @@ public enum ExecutionStatus implements Internationalizable {
 
 	
 	/**
-	 * 
-	 * 
-	 * 
 	 * will deduce the new status of an execution based on the former execution status and former step status. "this" is
 	 * here the new step status. In some case the deduction is impossible and a further computation will be necessary.
 	 * 
@@ -460,7 +457,7 @@ public enum ExecutionStatus implements Internationalizable {
 		else if (report.getFailure() > 0) {
 			newStatus = ExecutionStatus.FAILURE;
 		} 
-		else if (report.areAllSuccess()) {
+		else if (report.areAllSuccessOrUntestable()) {
 			newStatus = ExecutionStatus.SUCCESS;
 		} 
 		else if (report.hasSuccess() || report.hasWarning()) {

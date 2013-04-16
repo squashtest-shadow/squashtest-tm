@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.domain.execution;
 
-/* a good old bean used as a dto */
+/** 
+ * Bean to hold the occurrence of execution steps status from a list of execution steps.
+ *
+ */
 public class ExecutionStatusReport {
 
 	private int untestable=0;
@@ -31,7 +34,10 @@ public class ExecutionStatusReport {
 	private int ready=0;
 	private int warning=0;
 	private int error=0;
-
+	
+	private int getTotal(){
+		return untestable + bloqued + failure + success + running + ready + warning + error;
+	}
 	public int getUntestable() {
 		return untestable;
 	}
@@ -98,25 +104,14 @@ public class ExecutionStatusReport {
 	}
 
 	public boolean areAllUntestable(){
-		if (
-		    (! hasAggregatedSuccess())	&&
-			(! hasAggregatedBlocked())  && 
-			(! hasFailure()) 			&&
-			(! hasRunning())			&&
-			(! hasReady())
-		){
+		if (untestable == getTotal()){
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean areAllSuccess() {
-		if (
-			(! hasAggregatedBlocked())  && 
-			(! hasFailure()) 			&&	
-		    (! hasRunning())			&&
-		    (! hasReady())
-		  ){
+		if (countAggregatedSuccess() == getTotal()){
 			return true;
 		}
 		return false;
@@ -161,7 +156,9 @@ public class ExecutionStatusReport {
 	public boolean hasAggregatedSuccess(){
 		return (hasSuccess() || hasWarning());
 	}
-
+	private int countAggregatedSuccess(){
+		return success + warning;
+	}
 	public ExecutionStatusReport() {
 
 	}
@@ -187,6 +184,13 @@ public class ExecutionStatusReport {
 		this.ready = ready;
 		this.warning = warning;
 		this.error = error;
+	}
+	
+	public boolean areAllSuccessOrUntestable() {
+		if(countAggregatedSuccess() + untestable == getTotal()){
+			return true;
+		}
+		return false;
 	}
 
 }
