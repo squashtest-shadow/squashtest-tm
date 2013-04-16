@@ -20,7 +20,7 @@
  */
 
 
-define(["jquery", "../domain/FieldValue", "jqueryui"], function($, FieldValue){
+define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/require.jquery.squash.datepicker-locales", "jqueryui"], function($, FieldValue, translator, regionale){
 
 	function convertStrDate(fromFormat, toFormat, strFromValue){
 		var date = $.datepicker.parseDate(fromFormat, strFromValue);
@@ -32,22 +32,32 @@ define(["jquery", "../domain/FieldValue", "jqueryui"], function($, FieldValue){
 		options : {
 			rendering : {
 				inputType : {
-					name : "text_field",
-					meta : { 'date-format' : "yyyy-mm-dd"}
+					name : "date_picker",
+					meta : { 'date-format' : "yyyy-mm-dd" }
 				}
 				
 			}
 		},
 		
 		_create : function(){
-			var field = this.options;
+			
+			//parameterize the locale
+			var localemeta = {
+				format : 'squashtm.dateformatShort.js',
+				locale : 'squashtm.locale'
+			}
+			
+			var message = translator.get(localemeta);
+			this.options.message = message;
+			
+			var language = regionale[message.locale] || regionale;
+			
+			var pickerconf = $.extend(true, {}, language, {dateFormat : message.format});
 			
 			//TODO : handle proper configuration
-			this.element.datepicker({
-				dateFormat : "dd/mm/yy"
-			});
+			this.element.datepicker(pickerconf);
 			
-			if (field.rendering.operations.length===0){
+			if (this.options.rendering.operations.length===0){
 				this.element.prop('disabled', true);
 			};
 		},

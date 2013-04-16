@@ -26,12 +26,12 @@
  * created because of issue #1535
  */
 
-require(["jquery","jqueryui"], function($){
+define(["jquery","jqueryui"], function($){
 	
 	
 	/* French initialisation for the jQuery UI date picker plugin. */
-	/* Written by Keith Wood (kbwood{at}iinet.com.au) and Stéphane Nahmani (sholby@sholby.net). */	
-	
+	/* Written by Keith Wood (kbwood{at}iinet.com.au) and Stï¿½phane Nahmani (sholby@sholby.net). */	
+		
 	$.datepicker.regional['fr'] = {
 		closeText: 'Fermer',
 		prevText: '\u003cPr\u00e9c',
@@ -51,5 +51,7 @@ require(["jquery","jqueryui"], function($){
 		showMonthAfterYear: false,
 		yearSuffix: ''
 	};
+	
+	return $.datepicker.regional;
 	
 });

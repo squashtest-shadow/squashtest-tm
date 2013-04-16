@@ -88,7 +88,7 @@ requirejs
 				"jquery.cookie" : "jquery/jquery.cookie",
 				"squash.bugtrackerMenu" : "squashtest/classes/BugTrackerMenu",
 				"squash.cssloader" : "squash/squash.cssloader",
-				"squash.translator" : "squash/squash.translator",
+				"squash.translator" : "http://localhost/scripts/scripts/squash/squash.translator",
 				"squash.resizer" : "squash/squashtm.tree-page-resizer",
 				"squash.table-collapser" : "squashtest/jquery.squash.table-collapser",
 				"jquery.tagit" : "squashtest/jquery/tag-it.js"
