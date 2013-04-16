@@ -183,9 +183,6 @@ define(["jquery",
 			var data = {
 				labels : this.options.labels
 			};			
-			var html = this.frameTpl(data);			
-			$el.html(html);					
-						
 
 			//now we can render
 			this.render();
@@ -205,8 +202,15 @@ define(["jquery",
 			var schemes = this.model.get('project').schemes;			
 			var fields = schemes[this.model.get('currentScheme')];
 			
-			this.renderFieldPanel(fields, true);
-			this.renderFieldPanel(fields, false);
+			//generate the frame
+			var html = this.frameTpl(fields);			
+			this.$el.html(html);		
+			
+			//generate the main content of the panel
+			var panel = this.$el.find('div.issue-panel-container');
+			
+			//generate the widgets
+			WidgetFactory.processPanel(panel, fields);
 			
 			//rebinds the view
 			this.delegateEvents();
@@ -296,13 +300,7 @@ define(["jquery",
 		},
 		
 		_initTemplates : function(){
-			var allHtml = $(source);
-			
-			var frameHtml = allHtml.filter(function(){return this.id==='containers-template'}).html();
-			this.frameTpl = Handlebars.compile(frameHtml);						
-			
-			var fieldHtml = allHtml.filter(function(){return this.id==='fields-templates'}).html();
-			this.fieldTpl = Handlebars.compile(fieldHtml);	//that one is saved for later on			
+			this.frameTpl = Handlebars.compile(source);
 		},
 		
 		_setDefaultScheme : function(){
@@ -318,19 +316,7 @@ define(["jquery",
 		},
 		
 		renderFieldPanel : function(allFields, required){
-			
-			//some decisions to make
-			var panelclass = (required) ? "required-fields" : "optional-fields";
-			var fields = $.grep(allFields, function(field){return field.rendering.required === required})
-			
-			//generate the main content of the panel
-			var panel = this.$el.find('div.'+panelclass+' div.issue-panel-container');
-			
-			var html = this.fieldTpl(fields);			
-			panel.html(html);
-			
-			//generate the widgets
-			WidgetFactory.processPanel(panel, fields);
+
 			
 		},
 		

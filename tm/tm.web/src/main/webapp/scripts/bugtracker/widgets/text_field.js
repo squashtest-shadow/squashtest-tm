@@ -61,11 +61,15 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 		},
 
 		createDom : function(field){
-			return $('<input />', {
+			var input = $('<input />', {
 				'type' : 'text',
 				'data-widgetname' : 'text_field',
 				'data-fieldid' : field.id
 			});
+			
+			input.attr('size', 60);
+			
+			return input;
 		}
 	}
 

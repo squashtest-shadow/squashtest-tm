@@ -63,7 +63,9 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 		createDom : function(field){
 			return $('<textarea/>', {
 				'data-widgetname' : 'text_area',
-				'data-fieldid' : field.id
+				'data-fieldid' : field.id,
+				'rows' : 10,
+				'cols' : 60
 			});
 		}
 	}

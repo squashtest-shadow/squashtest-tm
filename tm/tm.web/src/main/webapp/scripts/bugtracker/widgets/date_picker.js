@@ -90,11 +90,15 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 		},
 
 		createDom : function(field){
-			return $('<input/>', {
+			var input = $('<input/>', {
 				'type' : 'text',
 				'data-widgetname' : 'date_picker',
 				'data-fieldid' : field.id
 			});
+			
+			input.attr('size', 60);
+			
+			return input;
 		}
 	}
 
