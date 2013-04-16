@@ -122,6 +122,7 @@ core/core.jasperreport.fragment/META-INF/*
 ^tm/tm\.web/styles$
 ^core/core\.wizard\.api/META-INF$
 core/core.jasperreports.fragment/META-INF/*
+core/core.aspect/META-INF/*
 syntax: glob
 integration-tests/log/IT.log
 integration-tests/src/it/resources/log4j.properties

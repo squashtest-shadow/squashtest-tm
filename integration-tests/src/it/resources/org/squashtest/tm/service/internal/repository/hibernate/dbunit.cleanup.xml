@@ -21,69 +21,70 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.5.0.dtd">
 <dataset>
 
-<ATTACHMENT_LIST/>
-<ATTACHMENT_CONTENT/>
-<ATTACHMENT/>
+<attachment_list/>
+<attachment_content/>
+<attachment/>
 
 
-<TEST_CASE_LIBRARY/>
-<CAMPAIGN_LIBRARY/>
-<REQUIREMENT_LIBRARY/>
+<test_case_library/>
+<campaign_library/>
+<requirement_library/>
 
-<PROJECT/>
-<PROJECT_FILTER/>
-<PROJECT_FILTER_ENTRY/>
+<project/>
+<project_filter/>
+<project_filter_entry/>
 
-<TEST_CASE_LIBRARY_NODE/>
-<TEST_CASE/>
-<TEST_CASE_FOLDER/>
-<TCLN_RELATIONSHIP/>
-<TEST_CASE_LIBRARY_CONTENT/>
+<test_case_library_node/>
+<test_case/>
+<test_case_folder/>
+<tcln_relationship/>
+<test_case_library_content/>
 
-<TEST_STEP/>
-<ACTION_TEST_STEP/>
-<CALL_TEST_STEP/>
-<TEST_CASE_STEPS/>
-
-
-<REQUIREMENT_LIBRARY_NODE/>
-<REQUIREMENT_FOLDER/>
-<REQUIREMENT/>
-
-<RLN_RELATIONSHIP/>
-<REQUIREMENT_LIBRARY_CONTENT/>
+<test_step/>
+<action_test_step/>
+<call_test_step/>
+<test_case_steps/>
 
 
-<TEST_CASE_REQUIREMENT_LINK/>
+<requirement_library_node/>
+<requirement_folder/>
+<requirement/>
+
+<rln_relationship/>
+<requirement_library_content/>
 
 
-<ISSUE_LIST/>
-<ISSUE/>
-
-<CAMPAIGN_LIBRARY_NODE/>
-<CAMPAIGN/>
-<CAMPAIGN_FOLDER/>
-
-<CLN_RELATIONSHIP/>
-<CAMPAIGN_LIBRARY_CONTENT/>
+<requirement_version_coverage/>
 
 
-<ITERATION/>
-<CAMPAIGN_ITERATION/>
+<issue_list/>
+<issue/>
 
-<ITERATION_TEST_PLAN_ITEM/>
-<ITEM_TEST_PLAN_LIST/>
+<campaign_library_node/>
+<campaign/>
+<campaign_folder/>
+
+<cln_relationship/>
+<campaign_library_content/>
 
 
-<EXECUTION/>
-<ITEM_TEST_PLAN_EXECUTION />
+<iteration/>
+<campaign_iteration/>
+
+<iteration_test_plan_item/>
+<item_test_plan_list/>
 
 
-<EXECUTION_STEP/>
+<execution/>
+<item_test_plan_execution />
 
-<EXECUTION_EXECUTION_STEPS/>
+
+<execution_step/>
+
+<execution_execution_steps/>
 
 
 </dataset>
