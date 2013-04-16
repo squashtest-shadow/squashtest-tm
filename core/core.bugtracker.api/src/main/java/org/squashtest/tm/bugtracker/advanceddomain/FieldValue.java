@@ -43,14 +43,28 @@ import org.squashtest.tm.bugtracker.definition.RemoteVersion;
  * It is so because json serializers will handle it more easily, since the mechanics doesn't rely on the class of the data (there is only one class) but solely on its content.  
  * </p>
  * 
+ * <p>
+ * 	fields are : 
+ * <ul>
+ * 	<li>id : if the fieldvalue is identified by something, let it be the id</li>
+ * 	<li>typename : a metadata which states what type of data it is. Content is free, can be used by widget extensions deployed in Squash, or otherwise may help to convert a FieldValue to a desired specific domain entity</li>
+ * 	<li>scalar : if the fieldvalue is a simpletype, let scalar be its value</li>
+ * 	<li>composite : if there are multiple value for a value, let composite be this value</li>
+ *  </li>random : for anything that doesn't fit in the above. Can be used by widget extensions deployed in Squash.</li>
+ * </ul>
+ * 
+ * </p>
+ * 
  * @author bsiri
  *
  */
 public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory, RemoteUser, RemoteStatus{
 
 	private String id;
+	private String typename;
 	private String scalar;
 	private FieldValue[] composite = new FieldValue[0];
+	private Object random;
 	
 	
 	public FieldValue(){
@@ -61,6 +75,13 @@ public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory
 		super();
 		this.id=id;
 		this.scalar = scalar;
+	}
+	
+	public FieldValue(String id, String typeName, String scalar){
+		super();
+		this.id = id;
+		this.scalar = scalar;
+		this.typename = typeName;
 	}
 	
 	public String getId() {
@@ -86,6 +107,15 @@ public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory
 	public void setComposite(FieldValue[] composite) {
 		this.composite = composite;
 	}
+	
+
+	public String getTypename() {
+		return typename;
+	}
+
+	public void setTypename(String typename) {
+		this.typename = typename;
+	}
 
 	@Override
 	public String getName() {
@@ -99,6 +129,14 @@ public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory
 			}
 			return builder.toString();
 		}
+	}
+
+	public Object getRandom() {
+		return random;
+	}
+
+	public void setRandom(Object random) {
+		this.random = random;
 	}
 	
 	
