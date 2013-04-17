@@ -23,11 +23,10 @@
 define(["jquery", 
         "backbone", 
         "../widgets/widget-registry", 
-        "../domain/FieldValue", 
-        "text!./advanced-view-template.html!strip",
-        //"text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip",
+        //"text!./advanced-view-template.html!strip",
+        "text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip",
         "jqueryui"], 
-		function($, Backbone, widgetRegistry, FieldValue, source){
+		function($, Backbone, widgetRegistry, source){
 
 
 	// *************** utilities ****************************
@@ -201,7 +200,21 @@ define(["jquery",
 			
 			//get the fields that must be displayed
 			var schemes = this.model.get('project').schemes;			
-			var fields = schemes[this.model.get('currentScheme')];
+			var allFields = schemes[this.model.get('currentScheme')].slice(0);
+			
+			//make sure the required fields are displayed first. Note : native javascript array .sort() would fail to preserve the order of two elements equally ranked so I'm doing it manually
+			var requiredFields = $.grep(allFields, function(field){ return field.rendering.required;});
+			var optionalFields = $.grep(allFields, function(field){ return ! field.rendering.required;});
+			var fields = requiredFields.concat(optionalFields);
+			
+			fields.sort(function(fielda, fieldb){
+				
+				var requiredA = fielda.rendering.required ? 1 : 0;
+				var requiredB = fieldb.rendering.required ? 1 : 0;
+				
+				return requiredB - requiredA;
+			
+			});
 			
 			//generate the frame
 			var html = this.frameTpl(fields);			

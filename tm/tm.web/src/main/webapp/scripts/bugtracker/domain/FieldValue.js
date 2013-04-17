@@ -35,7 +35,7 @@ define(function(){
 			this.scalar = value;
 		}
 		
-		this.getName(){
+		this.getName = function(){
 			if (this.scalar!=null){
 				return this.scalar+", ";
 			}

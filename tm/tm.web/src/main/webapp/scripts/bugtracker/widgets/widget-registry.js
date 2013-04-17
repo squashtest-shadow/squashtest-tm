@@ -32,10 +32,11 @@ define(function(require){
 		
 		loadWidget : function(widgetName, success, fallback){
 			
+
 			if (this.cache[widgetName]===undefined){
 				
 				var self = this;
-				
+							
 				require(["./"+widgetName], function(widg){
 					
 					$.widget('squashbt.'+widgetName, widg);
