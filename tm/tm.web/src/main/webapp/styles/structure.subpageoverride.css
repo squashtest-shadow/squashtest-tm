@@ -95,15 +95,15 @@
 }
 
 .sub-page-content .wizard-navigation-pane {
-	position: fixed;
-	bottom: 10%;
-	right: 5%
+	 bottom: 10px;
+    position: absolute;
+    right: 15px;
 }
 
 .sub-page-content .wizard-alert-pane {
-	position: fixed;
-	bottom: 15%;
-	right: 5%
+	 bottom: 25px;
+    position: absolute;
+    right: 15px;
 }
 
 .sub-page-header, .sub-page-list-panel, .sub-page-selection-panel {
