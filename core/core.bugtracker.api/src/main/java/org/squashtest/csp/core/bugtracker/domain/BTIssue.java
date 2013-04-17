@@ -190,6 +190,7 @@ public class BTIssue implements RemoteIssue {
 		
 	}
 
+	@Override
 	public boolean hasBlankId(){
 		return (
 			(id==null) ||

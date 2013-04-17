@@ -43,7 +43,9 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 		fieldvalue : function(fieldvalue){
 			if (fieldvalue===null || fieldvalue === undefined){
 				var text = this.element.eq(0).val();
-				return new FieldValue(text, text);
+				var typename = this.options.rendering.inputType.dataType;
+				
+				return new FieldValue(text, typename, text);
 			}
 			else{
 				this.element.val(fieldvalue.scalar);

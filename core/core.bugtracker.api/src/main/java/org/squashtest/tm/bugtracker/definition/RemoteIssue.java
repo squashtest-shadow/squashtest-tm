@@ -50,4 +50,6 @@ public interface RemoteIssue {
 	
 	String getBugtracker();
 	
+	boolean hasBlankId();
+	
 }

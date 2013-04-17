@@ -30,8 +30,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.MultiMap;
-import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,17 +45,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
-import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.AdvancedIssue;
-import org.squashtest.tm.bugtracker.advanceddomain.AdvancedProject;
-import org.squashtest.tm.bugtracker.advanceddomain.Field;
-import org.squashtest.tm.bugtracker.advanceddomain.FieldValue;
-import org.squashtest.tm.bugtracker.advanceddomain.InputType;
-import org.squashtest.tm.bugtracker.advanceddomain.Rendering;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
-import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
@@ -258,7 +249,7 @@ public class BugtrackerController {
 	}
 
 	/**
-	 * gets the data of a new issue to be reported
+	 * posts a new issue (simple model)
 	 * 
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue", method = RequestMethod.POST)
@@ -274,7 +265,27 @@ public class BugtrackerController {
 			return attachIssue(jsonIssue, entity);
 		}
 	}
+	
+	/**
+	 * posts a new issue (advanced model)
+	 * 
+	 * 
+	 */
+	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-advanced-issue", method = RequestMethod.POST)
+	@ResponseBody
+	public Object postExecStepAdvancedIssueReport(@PathVariable("stepId") Long stepId, @RequestBody AdvancedIssue jsonIssue) {
+		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + stepId);
 
+		IssueDetector entity = executionFinder.findExecutionStepById(stepId);
+
+		if (jsonIssue.hasBlankId()) {
+			return processIssue(jsonIssue, entity);
+		} else {
+			return attachIssue(jsonIssue, entity);
+		}
+	}
+	
+	
 	/* **************************************************************************************************************
 	 * *
 	 * Execution level section * *
@@ -339,12 +350,30 @@ public class BugtrackerController {
 	}
 
 	/**
-	 * gets the data of a new issue to be reported
+	 * posts a new issue (simple model)
 	 * 
 	 */
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue", method = RequestMethod.POST)
 	@ResponseBody
 	public Object postExecIssueReport(@PathVariable("execId") Long execId, @RequestBody BTIssue jsonIssue) {
+		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + execId);
+
+		Execution entity = executionFinder.findById(execId);
+
+		if (jsonIssue.hasBlankId()) {
+			return processIssue(jsonIssue, entity);
+		} else {
+			return attachIssue(jsonIssue, entity);
+		}
+	}
+	
+	/**
+	 * posts a new issue (advanced model)
+	 * 
+	 */
+	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-advanced-issue", method = RequestMethod.POST)
+	@ResponseBody
+	public Object postExecAdvancedIssueReport(@PathVariable("execId") Long execId, @RequestBody AdvancedIssue jsonIssue) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + execId);
 
 		Execution entity = executionFinder.findById(execId);
@@ -728,61 +757,6 @@ public class BugtrackerController {
 				+ " failed, exception : ", cause);
 		List<IssueOwnership<RemoteIssueDecorator>> emptyList = new LinkedList<IssueOwnership<RemoteIssueDecorator>>();
 		return new FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(0, emptyList);
-	}
-	
-	
-	// ******************* DEV CODE REMOVE AFTER USAGE *************************
-	
-	private RemoteIssue createDummyAdvancedIssue(){
-		
-		//let's create Fields
-		Field issueType = new Field("issueType", "type d'anomalie");
-		Field summary = new Field("summary", "résumé");		
-		Field description = new Field("description", "descriptif");
-		Field duedate = new Field("duedate", "date de remise");
-		
-		
-		issueType.setPossibleValues(new FieldValue[]{new FieldValue("1", "Bogue"), new FieldValue("2", "nouvelle fonctionnalité")});
-		
-		//Their rendering
-		InputType issueIType = new InputType("dropdown_list", "issueType");
-		issueIType.setFieldSchemeSelector(true);
-		Rendering issueRender = new Rendering(new String[]{"set"},issueIType,  true);
-		issueType.setRendering(issueRender);
-		
-		Rendering summaryRender = new Rendering(new String[]{"set"}, new InputType("text_field", "summary"), true);
-		summary.setRendering(summaryRender);
-		
-		Rendering descriptionRendering = new Rendering(new String[]{"set"}, new InputType("text_area", "description"), false);
-		description.setRendering(descriptionRendering);
-		
-		Rendering duedateRender = new Rendering(new String[]{"set"}, new InputType("date_picker", "duedate"), true);
-		duedate.setRendering(duedateRender);
-		
-		
-		//field scheme
-		MultiMap map = new MultiValueMap();
-		map.put("issueType:1", issueType);
-		map.put("issueType:1", summary);
-		map.put("issueType:1", duedate);
-
-		map.put("issueType:2", issueType);
-		map.put("issueType:2", summary);
-		map.put("issueType:2", description);
-		map.put("issueType:2", duedate);
-		
-		//the rest
-		AdvancedIssue advIssue = new AdvancedIssue();
-		
-		AdvancedProject project = new AdvancedProject();
-		project.setId("MOCK");
-		project.setName("project mock");
-		project.setSchemes(map);
-		
-		advIssue.setProject(project);
-		
-		return advIssue;
-		
 	}
 	
 

@@ -43,7 +43,9 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 		fieldvalue : function(fieldvalue){
 			if (fieldvalue===null || fieldvalue === undefined){
 				var opt = this.element.find('option:selected');
-				return new FieldValue(opt.val(), opt.text());
+				var typename = this.options.rendering.inputType.dataType;
+				
+				return new FieldValue(opt.val(), typename, opt.text());
 			}
 			else{
 				this.element.val(fieldvalue.id);

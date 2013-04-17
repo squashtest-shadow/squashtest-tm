@@ -37,7 +37,7 @@ public class AdvancedIssue implements RemoteIssue {
 	
 	private AdvancedProject project ;
 	
-	private String key;
+	private String id;
 	
 	private String btName;
 	
@@ -45,13 +45,23 @@ public class AdvancedIssue implements RemoteIssue {
 	private String currentScheme;
 	
 	public void setId(String key){
-		this.key = key;
+		this.id = key;
 	}
 	
 	@Override
 	public String getId() {
-		return key;
+		return id;
 	}
+	
+	@Override
+	public boolean hasBlankId(){
+		return (
+			(id==null) ||
+			(id.length()==0) ||
+			(id.matches("^\\s*$"))
+		);
+	}
+	
 
 	@Override
 	public String getSummary() {

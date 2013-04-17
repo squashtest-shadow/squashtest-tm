@@ -20,10 +20,13 @@
  */
 
 define(function(){
-	return function (id, value){
+	
+	return function (id, typename, value){
 		this.id = id;
 		this.scalar = null;
 		this.composite = [];
+		this.random = {};
+		this.typename = null;
 		
 		if (value instanceof Array){
 			this.composite = value;
@@ -31,6 +34,20 @@ define(function(){
 		else{
 			this.scalar = value;
 		}
+		
+		this.getName(){
+			if (this.scalar!=null){
+				return this.scalar+", ";
+			}
+			else{
+				var res="";
+				for (var i=0;i<composite.length;i++){
+					res+= this.composite[i].getName() + ", ";
+				}
+				return builder.toString();
+			}			
+		}
+
 	}	
 })
 	

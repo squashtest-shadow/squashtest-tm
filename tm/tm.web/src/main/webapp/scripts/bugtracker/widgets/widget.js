@@ -39,7 +39,7 @@
  * - fieldvalue : see ../domain/FieldValue, or also org.squashtest.tm.bugtracker.advanceddomain.FieldValue
  */
  
-define(["jquery", "jqueryui"], function($){
+define(["jquery"], function($){
 	
 	return {
 		

@@ -24,7 +24,8 @@ define(["jquery",
         "backbone", 
         "../widgets/widget-registry", 
         "../domain/FieldValue", 
-        "text!./advanced-view-template.html!strip", 
+        "text!./advanced-view-template.html!strip",
+        //"text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip",
         "jqueryui"], 
 		function($, Backbone, widgetRegistry, FieldValue, source){
 
@@ -225,7 +226,7 @@ define(["jquery",
 			var fieldid = $(evt.target).data('fieldid');
 			var value = widget.fieldvalue();
 			
-			var selector = ""+fieldid+":"+value.id;
+			var selector = ""+fieldid+":"+value.scalar;
 			this.model.set('currentScheme', selector);
 			
 			//checkout then checkin again to update the view
@@ -315,10 +316,6 @@ define(["jquery",
 			}						
 		},
 		
-		renderFieldPanel : function(allFields, required){
-
-			
-		},
 		
 		_flushPanels : function(){
 			$("div.issue-panel-container").empty();

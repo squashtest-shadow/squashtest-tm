@@ -64,10 +64,13 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 		
 		fieldvalue : function(fieldvalue){
 			if (fieldvalue===null || fieldvalue === undefined){
+				
 				var date = this.element.datepicker('getDate');
 				var toFormat = this.options.rendering.inputType.meta['date-format'];
 				var strDate = $.datepicker.formatDate(toFormat, date);
-				return new FieldValue("", strDate);
+				var typename = this.options.rendering.inputType.dataType;
+				
+				return new FieldValue("", typename, strDate);
 			}
 			else{
 				var fromFormat = this.options.rendering.inputType.meta['date-format'];
