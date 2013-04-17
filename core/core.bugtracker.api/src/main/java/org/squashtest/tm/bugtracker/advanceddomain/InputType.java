@@ -84,6 +84,8 @@ public class InputType {
 	
 	private String original = UNKNOWN;
 	
+	private String dataType;
+			
 	private boolean fieldSchemeSelector = false;
 	
 
@@ -134,6 +136,14 @@ public class InputType {
 	
 	public void addMeta(String key, String value){
 		this.meta.put(key, value);
+	}
+
+	public String getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(String inputType) {
+		this.dataType = inputType;
 	}
 	
 }
