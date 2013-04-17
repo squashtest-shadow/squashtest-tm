@@ -258,7 +258,7 @@
 							</span>
 							<div id="project-permission-panel" class="toggle-panel-main">
 								<table id="permission-table"
-									th:attr="data-def='filter, hover, pre-filled, datakeys-id=project-id ,ajaxsource='+@{/administration/users/__${user.id}__/permissions}+',language='+@{/datatables/messages}">
+									th:attr="data-def='filter, hover,  datakeys-id=project-id ,ajaxsource='+@{/administration/users/__${user.id}__/permissions}+',language='+@{/datatables/messages}">
 									<thead>
 										<tr>
 											<th th:attr="data-def='invisible, map=project-id'">user-id</th>
@@ -266,28 +266,16 @@
 											<th th:attr="data-def='select, map=project-index'">#</th>
 
 											<th th:attr="data-def='sortable, map=project-name, filter, link='+@{/administration/projects/{project-id}/info}"
-												th:text="#{projects.label}">user</th>
+												th:text="#{projects.label}">project</th>
 											<th th:attr="data-def='sortable, map=empty-permission-list-holder'"
-												th:text="#{project.permission.table.profile.label}">user</th>
+												th:text="#{project.permission.table.profile.label}">permission</th>
 											<th
 												th:attr="data-def='delete-button=#remove-permission-dialog, map=empty-delete-holder'">
 											</th>
 										</tr>
 									</thead>
 									<tbody>
-										<tr th:each="permission : ${permissions}">
-											<td th:text="${permission['project-id']}">100</td>
-											<td th:text="${permission['project-index']}">100</td>
-											<td th:text="${permission['project-name']}">1</td>
-											<td><select class="permission-list" th:id="'permission-list-'+${permission['project-id']}">
-													<option th:each="plist : ${permission['permission-list']}"
-														th:id="${plist.qualifiedName}" th:value="${plist.id}"
-														th:selected="${ plist.simpleName == permission['permission-simplename'] } ? 'selected'"
-														th:text="#{'user.project-rights.'+${plist.simpleName}+'.label'}">Admin
-													</option>
-											</select></td>
-											<td></td>
-										</tr>
+									<!-- TODO make this prefilled but beware for [Issue 2281] -->
 									</tbody>
 								</table>
 							</div>
