@@ -32,12 +32,7 @@ requirejs
 					"contextual-content-handlers",
 					"test-cases-management",
 					"users-manager",
-					// "bugtracker",
-					{
-						main : 'main',
-						name : 'bugtracker',
-						location : 'http://localhost/scripts/scripts/bugtracker'
-					}, 
+					"bugtracker", 
 					"iteration-management" ],
 
 			/*
@@ -56,7 +51,7 @@ requirejs
 				"jqueryui" : "lib/jquery/jquery-ui-1.9.0.custom.min",
 				"datatables" : "datatables/jquery.dataTables.min",
 				"squash.datatables" : "squashtest/jquery.squashtm.datatables",
-				"jquery.squash.datatables" : "http://localhost/scripts/scripts/squashtest/jquery.squashtm.datatables.v2",
+				"jquery.squash.datatables" : "squashtest/jquery.squashtm.datatables.v2",
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 				"underscore" : "lib/underscore/underscore-1.4.4-min",
 				"backbone" : "lib/backbone/backbone-1.0.0-min",
@@ -88,7 +83,7 @@ requirejs
 				"jquery.cookie" : "jquery/jquery.cookie",
 				"squash.bugtrackerMenu" : "squashtest/classes/BugTrackerMenu",
 				"squash.cssloader" : "squash/squash.cssloader",
-				"squash.translator" : "http://localhost/scripts/scripts/squash/squash.translator",
+				"squash.translator" : "squash/squash.translator",
 				"squash.resizer" : "squash/squashtm.tree-page-resizer",
 				"squash.table-collapser" : "squashtest/jquery.squash.table-collapser",
 				"jquery.tagit" : "squashtest/jquery/tag-it.js"

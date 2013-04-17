@@ -24,7 +24,7 @@ define(["jquery",
         "backbone", 
         "../widgets/widget-registry", 
         "../domain/FieldValue", 
-        "text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip", 
+        "text!./advanced-view-template.html!strip", 
         "jqueryui"], 
 		function($, Backbone, widgetRegistry, FieldValue, source){
 

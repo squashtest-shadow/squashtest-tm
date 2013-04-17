@@ -639,15 +639,15 @@ public class BugtrackerController {
 
 
 	private RemoteIssue makeReportIssueModel(IssueDetector entity, String defaultDescription) {
-		/*String projectName = entity.getProject().getBugtrackerBinding().getProjectName();
+		String projectName = entity.getProject().getBugtrackerBinding().getProjectName();
 		
 		RemoteIssue emptyIssue = bugTrackersLocalService.createReportIssueTemplate(projectName, entity.getBugTracker());
 
 		emptyIssue.setDescription(defaultDescription);
 
-		return emptyIssue;*/
+		return emptyIssue;
 		
-		return createDummyAdvancedIssue();
+		//return createDummyAdvancedIssue();
 	}
 
 	/*
