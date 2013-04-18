@@ -19,15 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "jqueryui", "jquery.tagit"], function($){
-	
-	var btTagitCss = {
-		'display' : 'inline-block',
-		'width' : '98%',
-		'line-height' : '1em',
-		'border-color' : 'lightgray'
-	};
-	
+/**
+ * That widget is awkward because it delegates almost all of its behavior to $.squashTagit. Separating the btwidget and the squashTagit widget is 
+ * a good way to prevent undesirable clashes with the type definition
+ * 
+ */
+
+define(["jquery", "jqueryui", "http://localhost/scripts/scripts/squashtest/jquery.squash.tagit.js"], function($){
+
 	return {
 		
 		options : {
@@ -51,29 +50,32 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 			var tags = this._createTags();
 			
 			var config = {
-					
-				autocomplete : {
-					source : tags
-				},
-				
-				showAutocompleteOnFocus : true,
-				readOnly : (this.options.rendering.operations.length===0),
 				singleFieldNode : this.element
 			}
 			
-			delegate.tagit(config);
+			if (tags.length>0){
+				$.extend(config, {
+					availableTags : tags,
+					showAutocompleteOnFocus : true,
+					constrained : true,
+					'essspectacularrr !' : true
+				});
+			}
 			
-			//now fix the css, the default isn't suitable enough
-			//todo : move the css to a css file
-			delegate.css(btTagitCss);
-			delegate.removeClass('ui-corner-all');
+			delegate.squashTagit(config);
 	
-			//this._super();
+			if (! this.canEdit()){
+				this.disable();
+			}
 			
 		},		
 		
+		canEdit : function(){
+			return (this.options.rendering.operations.length!==0);
+		},
+		
 		_getDelegate : function(){
-			return this.element.children('ul.bt-delegate');
+			return this.element.next('ul.bt-delegate');
 		},
 		
 		_createDelegate : function(){
@@ -97,7 +99,16 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 		
 		fieldvalue : function(fieldvalue){
 			
-			//todo
+			var delegate = this._getDelegate();
+			
+			if (fieldvalue===null || fieldvalue === undefined){
+				var selected = delegate.squashTagit('assignedTags');
+				
+			}
+			else{
+				
+			}
+			
 		},
 		
 		/*
@@ -106,18 +117,11 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 		 * 
 		 */
 		disable : function(){
-			//disable the tags
-			var tagli = this._getDelegate().tagit('tagInput');
-			tagli.removeClass('tagit-choice-editable');
-			tagli.find('a').remove();
-			tagli.addClass('tagit-choice-read-only');
-			
-			//disable the text input
-			
+			this._getDelegate().squashTagit('disable');
 		},
 		
 		enable : function(){
-			
+			this._getDelegate().squashTagit('enable');
 		},
 		
 		createDom : function(field){
@@ -128,7 +132,6 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 				'id' : "bttaglist-"+field.id,
 				'class' : 'not-displayed'
 			});
-			
 			
 			return elt;
 		}

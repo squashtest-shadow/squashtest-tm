@@ -119,7 +119,7 @@ define(["jquery",
 					domelt.addClass('scheme-selector');
 				}
 				
-				domelt.addClass('full-width');
+				domelt.addClass('full-width issue-field-control');
 				
 				//append that element to the dom
 				var enclosingSpan = fieldItem.getElementsByTagName('span')[0];
@@ -309,7 +309,7 @@ define(["jquery",
 		//********************** the bowels ********************
 		
 		_getAllControls : function(){
-			return this.$el.find("span.issue-field-control-holder").children(':first');
+			return this.$el.find(".issue-field-control");
 		},
 		
 		_initTemplates : function(){

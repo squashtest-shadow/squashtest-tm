@@ -91,7 +91,8 @@ requirejs
 				"squash.translator" : "squash/squash.translator",
 				"squash.resizer" : "squash/squashtm.tree-page-resizer",
 				"squash.table-collapser" : "squashtest/jquery.squash.table-collapser",
-				"jquery.tagit" : "jquery/tag-it"		//use the minified version
+				"jquery.tagit" : "jquery/tag-it.min",
+				"jquery.squash.tagit" : "http://localhost/scripts/scripts/squashtest/jquery.squash.tagit"
 			},
 			shim : {
 				"ckeditor" : {

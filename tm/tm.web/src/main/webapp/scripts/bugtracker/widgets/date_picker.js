@@ -41,7 +41,7 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 		
 		_create : function(){
 			
-			this.super();
+			this._super();
 			
 			//parameterize the locale
 			var localemeta = {
