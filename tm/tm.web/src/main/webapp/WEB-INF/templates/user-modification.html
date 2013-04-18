@@ -55,11 +55,10 @@
 				okLabel : /*[[ #{label.Ok}]]*/"ok",
 				cancelLabel : /*[[ #{label.Cancel} ]]*/'Cancel',
 				teamsPanelTitle : /*[[ #{label.teams} ]]*/"teams",
-				changePasswordPopupTitle : /*[[ #{user.account.password.label} ]]*/"change password",
+				resetPasswordPopupTitle : /*[[ #{user.account.password.reset.label} ]]*/"reset password",
 				confirmLabel : /*[[ #{label.Confirm} ]]*/'Confirmer',
 				addPermissionPopupTitle : /*[[#{title.AddPermission}]]*/"add permission",
 				addLabel : /*[[#{label.Add}]]*/"add",
-				oldPassError : /*[[ #{user.account.oldpass.error} ]]*/"old Pass Error",
 				newPassError : /*[[ #{user.account.newpass.error} ]]*/"new Pass Error",
 				confirmPassError : /*[[ #{user.account.confirmpass.error} ]]*/"confirm pass error",
 				samePassError : /*[[ #{user.account.newpass.differ.error} ]]*/"same pass error",
@@ -324,14 +323,8 @@
 
 
 
-	<div id="password-change-popup" class="not-displayed popup-dialog">
+	<div id="password-reset-popup" class="not-displayed popup-dialog">
 		<div id="user-account-password-panel">
-
-			<div>
-				<label th:text="#{user.account.oldpass.label}">old passwd</label> <input
-					type="password" id="oldPassword" /> <span
-					class="error-message oldPassword-error"></span>
-			</div>
 
 			<div>
 				<label th:text="#{user.account.newpass.label}">new passwd</label> <input
