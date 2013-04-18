@@ -19,12 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable",
-		"app/util/StringUtil", "./UserChangePasswordPopup",
+		"app/util/StringUtil", "./UserResetPasswordPopup",
 		"./UserPermissionsPanel", "./UserTeamsPanel", "jquery.squash",
 		"jqueryui", "jquery.squash.togglepanel", "jquery.squash.datatables",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog", "jquery.squash.jeditable" ], function(
-		$, Backbone, _, SimpleJEditable, StringUtil, UserChangePasswordPopup,
+		$, Backbone, _, SimpleJEditable, StringUtil, UserResetPasswordPopup,
 		UserPermissionsPanel, UserTeamsPanel) {
 	var UMod = squashtm.app.UMod;
 	var UserModificationView = Backbone.View.extend({
@@ -33,7 +33,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable",
 
 			this.configureTogglePanels();
 			this.configureEditables();
-			new UserChangePasswordPopup();
+			new UserResetPasswordPopup();
 			new UserPermissionsPanel();
 			new UserTeamsPanel();
 			this.configureButtons();
