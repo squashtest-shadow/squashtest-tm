@@ -23,49 +23,99 @@
 /*
  * This is roughly a delegate module loader 
  */
-define(["require", "./widget"],function(require, baseWidget){
+define(["require", 
+        "./widget", 
+        "./date_picker", 
+        "./dropdown_list", 
+        "./tag_list", 
+        "./text_area",
+        "./text_field"],
+        function(require, baseWidget, date_picker, dropdown_list, tag_list, text_area, text_field){
 
-	
-	$.widget('squashbt.basewidget', baseWidget);
-	
-	
-	return {
+	var registry = {
 		
 		cache : {},
 		
-		loadWidget : function(widgetName, success, fallback){
-			
 
+		smartlog : function(widgetName, error){
+			
+			if ( (! console) ||  ( ! console.log)) return;
+
+			var baseMessage = "bugtracker widget registry : error while processing widget '"+widgetName+"' : ";
+			if (!!error.stack){
+				console.log(baseMessage + error.stack);				
+			}
+			else if (!!error.message){
+				console.log(baseMessage+error.message);
+			}
+			
+			else{
+				console.log(baseMessage+error);				
+			}
+			
+		},
+		
+		handleErrors : function(failedWidgetName, error, handler){
+			this.smartlog(failedWidgetName, error);
+			this.cache[failedWidgetName]=false;	
+			handler();
+		},
+		
+		loadWidget : function(widgetName, success, fallback){
+
+			var self = this;
+			
 			if (this.cache[widgetName]===undefined){
 				
-				var self = this;
 							
 				require(["./"+widgetName], function(widg){
-					
-					$.widget('squashbt.'+widgetName, $.squashbt.basewidget ,widg);
-					$.squashbt[widgetName].createDom = widg.createDom;
-					self.cache[widgetName]=true;
-					success();
-					
-				}, function(err){
-					if (console && console.log){
-						console.log(err);
+					try{
+						self.registerWidget(widg, widgetName);
+						success();
+					}catch(error){
+						self.handleErrors(widgetName, error, fallback);
 					}
-					self.cache[widgetName]=false;	
-					fallback();
+					
+				}, function(error){
+					self.handleErrors(widgetName, error, fallback);
 				});
 				
 			}
 			
 			else if (this.cache[widgetName]){
-				success();
+				try{
+					success();
+				}catch(error){
+					self.handleErrors(widgetName, error, fallback);
+				}
 			}
 			else{
-				fallback();
+				fallback();	//supposed not to fail when invoked here, or in any case we don't need no special error managment
 			}
 			
 		},
 		
+		registerWidget : function(widgetDef, widgetName){
+			$.widget('squashbt.'+widgetName, $.squashbt.basewidget ,widgetDef);
+			$.squashbt[widgetName].createDom = widgetDef.createDom;
+			this.cache[widgetName]=true;		
+		},
+		
 		defaultWidget : "text_field"
 	};	
+	
+
+	
+	$.widget('squashbt.basewidget', baseWidget);
+	$.squashbt.basewidget.createDom = baseWidget.createDom;
+	
+	
+	registry.registerWidget(text_field , "text_field");
+	registry.registerWidget(date_picker , "date_picker");
+	registry.registerWidget(dropdown_list , "dropdown_list");
+	registry.registerWidget(tag_list , "tag_list");
+	registry.registerWidget(text_area , "text_area");
+	
+
+	return registry;
 });

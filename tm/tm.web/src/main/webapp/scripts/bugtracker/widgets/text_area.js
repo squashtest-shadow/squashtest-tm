@@ -27,7 +27,7 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 		options : {
 			rendering : {
 				inputType : {
-					name : "text_field"
+					name : "text_area"
 				}
 				
 			}

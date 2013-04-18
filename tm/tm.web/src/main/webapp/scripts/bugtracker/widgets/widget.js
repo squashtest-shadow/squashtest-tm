@@ -65,9 +65,13 @@ define(["jquery"], function($){
 		_create : function(){
 			//whatever you need. You will find the arguments in this.options
 			var field = this.options;
-			if (field.rendering.operations.length===0){
-				this.element.prop('disabled', true);
+			if (! this.canEdit()){
+				this.disable();
 			}
+		},
+		
+		canEdit : function(){
+			return (this.options.rendering.operations.length!==0);
 		},
 		
 		disable : function(){
@@ -77,7 +81,7 @@ define(["jquery"], function($){
 		
 		enable : function(){
 			//same remark here
-			if (this.options.rendering.operations.length!=0){
+			if (this.canEdit()){
 				this.element.prop('disabled', false);
 			}
 		},

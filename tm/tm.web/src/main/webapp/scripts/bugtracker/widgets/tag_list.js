@@ -45,7 +45,7 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 		},
 		
 		_create : function(){
-			
+					
 			var delegate = this._createDelegate();
 			
 			var tags = this._createTags();
@@ -57,26 +57,28 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 				},
 				
 				showAutocompleteOnFocus : true,
-				allowDuplicates : false,
 				readOnly : (this.options.rendering.operations.length===0),
-				singleField : true
+				singleFieldNode : this.element
 			}
 			
 			delegate.tagit(config);
 			
 			//now fix the css, the default isn't suitable enough
-			delegate.next().css(btTagitCss);
+			//todo : move the css to a css file
+			delegate.css(btTagitCss);
+			delegate.removeClass('ui-corner-all');
+	
+			//this._super();
 			
 		},		
 		
 		_getDelegate : function(){
-			return this.element.children('input.bt-delegate');
+			return this.element.children('ul.bt-delegate');
 		},
 		
 		_createDelegate : function(){
-			var elt = $("<input/>",{'type' : 'text', 'class' : 'bt-delegate'});
-			this.element.append(elt);
-			
+			var elt = $("<ul/>",{ 'class' : 'bt-delegate' });
+			this.element.after(elt);			
 			return elt;
 		},
 		
@@ -98,22 +100,33 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 			//todo
 		},
 		
+		/*
+		 * 
+		 * enable() and disable() are scrapped from the source : see createTag() from tagit.js
+		 * 
+		 */
 		disable : function(){
-			//if doesn't exist, you need to declare and implement it
-			this._getDelegate().tagit('option', 'disabled', true);
+			//disable the tags
+			var tagli = this._getDelegate().tagit('tagInput');
+			tagli.removeClass('tagit-choice-editable');
+			tagli.find('a').remove();
+			tagli.addClass('tagit-choice-read-only');
+			
+			//disable the text input
+			
 		},
 		
 		enable : function(){
-			//same remark here
-			if (this.options.rendering.operations.length!=0){
-				this._getDelegate().tagit('option', 'disabled', false);
-			}
+			
 		},
 		
 		createDom : function(field){
-			var elt = $('<div/>',{
+			var elt = $('<input/>',{
 				'data-widgetname' : 'tag_list',
-				'data-fieldid' : field.id
+				'data-fieldid' : field.id,
+				'type' : 'text',
+				'id' : "bttaglist-"+field.id,
+				'class' : 'not-displayed'
 			});
 			
 			

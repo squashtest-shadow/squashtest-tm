@@ -30,15 +30,8 @@ define(["jquery",
 
 
 	// *************** utilities ****************************
-	
-	function WidgetNotFound(name,original){
-		this.name=name;
-		this.original=original;
-		this.toString = function(){
-			return "widget { name : '"+this.name+"', original : '"+this.original+"'} not found.";
-		} 
-	}
-	
+
+
 	var logger = {
 		log : function(message){
 			if (console && console.log){
@@ -120,23 +113,29 @@ define(["jquery",
 			//create the element
 			var domelt = $.squashbt[widgetName].createDom(field);
 			
-			//if it's a scheme selector, append a special class to it
-			if (field.rendering.inputType.fieldSchemeSelector){
-				domelt.addClass('scheme-selector');
+			try{
+				//if it's a scheme selector, append a special class to it
+				if (field.rendering.inputType.fieldSchemeSelector){
+					domelt.addClass('scheme-selector');
+				}
+				
+				domelt.addClass('full-width');
+				
+				//append that element to the dom
+				var enclosingSpan = fieldItem.getElementsByTagName('span')[0];
+				domelt.appendTo(enclosingSpan);
+				
+				//create the widget
+				domelt[widgetName](field);
+				
+				//map the widget in domelt.data as 'widget' for easier reference
+				var instance = domelt.data(widgetName);
+				domelt.data('widget', instance);
+				
+			}catch(problem){
+				domelt.remove();
+				throw problem;
 			}
-			
-			domelt.addClass('full-width');
-			
-			//append that element to the dom
-			var enclosingSpan = fieldItem.getElementsByTagName('span')[0];
-			domelt.appendTo(enclosingSpan);
-			
-			//create the widget
-			domelt[widgetName](field);
-			
-			//map the widget in domelt.data as 'widget' for easier reference
-			var instance = domelt.data(widgetName);
-			domelt.data('widget', instance);
 		},
 			
 		processPanel : function(panel, fields){
@@ -186,8 +185,6 @@ define(["jquery",
 				labels : this.options.labels
 			};			
 
-			//now we can render
-			this.render();
 			
 		},
 		
@@ -312,7 +309,7 @@ define(["jquery",
 		//********************** the bowels ********************
 		
 		_getAllControls : function(){
-			return this.$el.find("span.issue-field-control-holder").children();
+			return this.$el.find("span.issue-field-control-holder").children(':first');
 		},
 		
 		_initTemplates : function(){
