@@ -25,7 +25,7 @@
  * 
  */
 
-define(["jquery", "jqueryui", "http://localhost/scripts/scripts/squashtest/jquery.squash.tagit.js"], function($){
+define(["jquery", "../domain/FieldValue", "jqueryui", "http://localhost/scripts/scripts/squashtest/jquery.squash.tagit.js"], function($, FieldValue){
 
 	return {
 		
@@ -102,20 +102,52 @@ define(["jquery", "jqueryui", "http://localhost/scripts/scripts/squashtest/jquer
 			var delegate = this._getDelegate();
 			
 			if (fieldvalue===null || fieldvalue === undefined){
-				var selected = delegate.squashTagit('assignedTags');
 				
+				var field = this.options;
+				var typename = field.rendering.inputType.dataType;
+	
+				var selected = delegate.squashTagit('assignedTags');
+				var allValues = [];
+				
+				for (var i=0;i<selected.length;i++){					
+					var label = selected[i];					
+					var value = this.findValueByLabel(label);					
+					if (value===null){
+						//value not found, let's create a new one
+						value = new FieldValue(label, typename, label);
+					}					
+					allValues.push(value);
+				}
+
+				return new FieldValue(field.id, "composite", allValues);
 			}
 			else{
-				
+				delegate.squashTagit('removeAll');
+				var values = fieldvalue.composite;
+				for (var i=0;i<values.length;i++){
+					delegate.squashTagit('createTag', values[i].scalar);
+				}				
 			}
 			
 		},
 		
-		/*
-		 * 
-		 * enable() and disable() are scrapped from the source : see createTag() from tagit.js
-		 * 
-		 */
+		//search the label among the possible values, returns null if value was not found
+		findValueByLabel : function(label){
+			
+			var values = $.grep(this.options.possibleValues, function(item){
+				return (item.scalar === label);
+			});
+			
+			if (values.length>0){
+				return values[0];
+			}
+			else{
+				return null;
+			}		
+			
+		},
+		
+
 		disable : function(){
 			this._getDelegate().squashTagit('disable');
 		},

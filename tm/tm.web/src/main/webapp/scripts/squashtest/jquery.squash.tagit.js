@@ -100,7 +100,7 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 			tagli.find('a').remove();
 			
 			//disable the text input
-			this.tagInput().prop('disabled', true);
+			this.tagInput.prop('disabled', true);
 			
 			//change the style :
 			tagli.addClass('ui-state-disabled');
@@ -128,15 +128,15 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 	         tagli.append(removeTag);
 			
 			//enable the input
-			this.tagInput().prop('disabled', false);
+			this.tagInput.prop('disabled', false);
 			
 			//re-enable the tag style
 			tagli.removeClass('ui-state-disabled');		
 			
 		},
 		
-		tagInput : function(){
-			return this.element.find('input[type="text"]');
+		getTagInput : function(){
+			return this.tagInput;
 			
 		},
 		
@@ -189,7 +189,7 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 			var self = this;
 			
 			tag.css({
-				'z-index' : '100000',
+				'z-index' : '5000',
 				'position' : 'absolute'
 			});		
 			

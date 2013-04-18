@@ -192,3 +192,28 @@ p {
 	hyphens: auto;
 	hyphenate: auto;
 }
+
+
+/* ---------------------------------------------------------*/
+/* ---------------->>> custom widgets <<<------------------*/
+/* ---------------------------------------------------------*/
+
+
+
+
+ul.squash-tagit li.ui-widget-content{
+	background-image: none;
+	color: #000000;
+	border-color: #707070;
+	background-color: #D8D8D8; 	
+}
+		
+ul.squash-tagit li.invalid{
+	background-color : red;
+	color : white;
+}
+
+
+div.ui-effects-explode{
+	z-index : 50000;
+}
