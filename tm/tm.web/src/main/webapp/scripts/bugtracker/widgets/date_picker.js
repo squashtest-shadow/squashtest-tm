@@ -41,6 +41,8 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 		
 		_create : function(){
 			
+			this.super();
+			
 			//parameterize the locale
 			var localemeta = {
 				format : 'squashtm.dateformatShort.js',
@@ -54,12 +56,8 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 			
 			var pickerconf = $.extend(true, {}, language, {dateFormat : message.format});
 			
-			//TODO : handle proper configuration
 			this.element.datepicker(pickerconf);
-			
-			if (this.options.rendering.operations.length===0){
-				this.element.prop('disabled', true);
-			};
+
 		},
 		
 		fieldvalue : function(fieldvalue){
@@ -82,16 +80,6 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 			}
 		}, 
 		
-		disable : function(){
-			this.element.prop('disabled', true);
-		},
-		
-		enable : function(){
-			if (this.options.rendering.operations.length!=0){
-				this.element.prop('disabled', false);
-			}
-		},
-
 		createDom : function(field){
 			var input = $('<input/>', {
 				'type' : 'text',
@@ -99,7 +87,6 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 				'data-fieldid' : field.id
 			});
 			
-			input.attr('size', 60);
 			
 			return input;
 		}

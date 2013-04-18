@@ -33,12 +33,6 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 			}
 		},
 		
-		_create : function(){
-			var field = this.options;
-			if (field.rendering.operations.length===0){
-				this.element.prop('disabled', true);
-			}
-		},
 		
 		fieldvalue : function(fieldvalue){
 			if (fieldvalue===null || fieldvalue === undefined){
@@ -51,23 +45,12 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 				this.element.val(fieldvalue.scalar);
 			}
 		}, 
-		
-		disable : function(){
-			this.element.prop('disabled', true);
-		},
-		
-		enable : function(){
-			if (this.options.rendering.operations.length!=0){
-				this.element.prop('disabled', false);
-			}
-		},
 
 		createDom : function(field){
 			return $('<textarea/>', {
 				'data-widgetname' : 'text_area',
 				'data-fieldid' : field.id,
-				'rows' : 10,
-				'cols' : 60
+				'rows' : 5 
 			});
 		}
 	}

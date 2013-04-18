@@ -20,7 +20,9 @@
  */
 
 /*
- * This is not an actual widget, it's a documentation on what a widget should be.
+ * 1/ This is the base widget, of which all other widget will inherit. 
+ * 
+ * 2/ It's also a documentation on what a widget should be.
  * 
  * A Widget is a jQuery widget, that is not registered yet : the calling registry needs to register it in its own context. That is why you should not 
  * register your widget yourself (eg, with $.widget('my.widget', <widget def>) : you must return that <widget def>. See the various documentation on creating widget for details.
@@ -53,6 +55,7 @@ define(["jquery"], function($){
 				inputType : {
 					name : "unknown",
 					original : "unknown",
+					dataType : null,
 					fieldSchemeSelector : false
 				},
 				required : false
@@ -60,16 +63,23 @@ define(["jquery"], function($){
 		},
 		
 		_create : function(){
-			//whatever you need
-			//you should find the arguments in this.options
+			//whatever you need. You will find the arguments in this.options
+			var field = this.options;
+			if (field.rendering.operations.length===0){
+				this.element.prop('disabled', true);
+			}
 		},
 		
 		disable : function(){
 			//if doesn't exist, you need to declare and implement it
+			this.element.prop('disabled', true);
 		},
 		
 		enable : function(){
 			//same remark here
+			if (this.options.rendering.operations.length!=0){
+				this.element.prop('disabled', false);
+			}
 		},
 		
 		fieldvalue : function(fieldvalue){
@@ -83,6 +93,7 @@ define(["jquery"], function($){
 			 * - data-widgetname : the name of this widget
 			 * - data-fieldid : the id of this field, ie field.id
 			 */
+
 		}
 		
 		

@@ -125,6 +125,8 @@ define(["jquery",
 				domelt.addClass('scheme-selector');
 			}
 			
+			domelt.addClass('full-width');
+			
 			//append that element to the dom
 			var enclosingSpan = fieldItem.getElementsByTagName('span')[0];
 			domelt.appendTo(enclosingSpan);

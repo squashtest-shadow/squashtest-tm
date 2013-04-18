@@ -111,7 +111,7 @@ public class InputType {
 	}
 
 	public String getOriginal() {
-		return original.replace("[^\\w-_.0-9]", "_");
+		return original.replaceAll("[^\\w-_.0-9]", "_");
 	}
 
 	public void setOriginal(String original) {

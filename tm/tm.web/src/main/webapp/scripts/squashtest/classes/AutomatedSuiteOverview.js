@@ -78,8 +78,8 @@ function AutomatedSuiteOverviewDialog(settings){
 				
 			var executions = suiteView.executions;
 			
-			var template = executionRowTemplate.clone()
-			for (i = 0; i < executions.length; i++) {
+			var template = executionRowTemplate.clone();
+			for (var i = 0; i < executions.length; i++) {
 				var execution = executions[i];
 				var executionHtml = template.clone();
 				

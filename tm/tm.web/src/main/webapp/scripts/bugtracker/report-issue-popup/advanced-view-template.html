@@ -23,12 +23,29 @@
 <html>
 <body>
 
+	<style type="text/css" >
+		div.issue-panel-container{
+			margin-top : 0.2em;	
+			width : 98%;
+		}
+		
+		label.issue-field-label{
+			width : 25%;	
+			vertical-align:middle;
+		}
+		
+		span.issue-field-control-holder{
+			width : 74%;
+		}
+	</style>
+
 	<div id="containers-template">
 	
-		<div class="issue-panel std-padding issue-panel-container display-table full-width">
+		<div class="issue-panel std-padding issue-panel-container display-table">
 			{{#each this}}
-			<div class="issue-field display-table-row full-width" data-fieldid="{{id}}">
-				<label style="vertical-align:middle;" class="issue-field-label display-table-cell">{{label}} {{#if rendering.required}} (*) {{/if}}</label><span class="issue-field-control-holder display-table-cell"></span>
+			<div class="issue-field full-width" data-fieldid="{{id}}">
+				<label class="issue-field-label">{{label}} {{#if rendering.required}} (*) {{/if}}</label>
+				<span class="issue-field-control-holder"></span>
 			</div>
 			{{/each}}	
 		</div>

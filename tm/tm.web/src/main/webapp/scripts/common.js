@@ -91,7 +91,7 @@ requirejs
 				"squash.translator" : "squash/squash.translator",
 				"squash.resizer" : "squash/squashtm.tree-page-resizer",
 				"squash.table-collapser" : "squashtest/jquery.squash.table-collapser",
-				"jquery.tagit" : "squashtest/jquery/tag-it.js"
+				"jquery.tagit" : "jquery/tag-it"		//use the minified version
 			},
 			shim : {
 				"ckeditor" : {
@@ -221,6 +221,10 @@ requirejs
 				"backbone" : {
 					deps : [ "underscore", "jquery" ],
 					exports : "Backbone"
+				},
+				"jquery.tagit" : {
+					deps : ["jquery", "jqueryui"],
+					exports : "tagit"
 				}
 			}
 		});

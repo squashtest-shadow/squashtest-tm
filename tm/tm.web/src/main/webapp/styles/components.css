@@ -295,9 +295,22 @@ div.issue-report-dialog div.issue-report-break{
 	min-height: 2em;
 }
 
+/*
 div.issue-panel-container{
 	margin-top : 0.2em;	
+	width : 98%;
 }
+
+div.
+
+label.issue-field-label{
+	width : 35%;	
+}
+
+span.issue-field-control-holder{
+	width : 64%;
+}*/
+
 
 /*******************************
 	test suites management

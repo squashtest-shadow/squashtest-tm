@@ -50,6 +50,10 @@ public class RemoteIssueDecorator implements RemoteIssue {
 		return this.issue.getId();
 	}
 	
+	public boolean hasBlankId(){
+		return this.issue.hasBlankId();
+	}
+	
 
 	public RemoteCategory getCategory() {
 		return this.issue.getCategory();

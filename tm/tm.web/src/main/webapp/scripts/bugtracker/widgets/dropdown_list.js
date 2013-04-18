@@ -33,13 +33,6 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 			}
 		},
 		
-		_create : function(){
-			var field = this.options;
-			if (field.rendering.operations.length===0){
-				this.element.prop('disabled', true);
-			}
-		},
-		
 		fieldvalue : function(fieldvalue){
 			if (fieldvalue===null || fieldvalue === undefined){
 				var opt = this.element.find('option:selected');
@@ -52,16 +45,6 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 			}
 		}, 
 		
-		disable : function(){
-			this.element.prop('disabled', true);
-		},
-		
-		enable : function(){
-			if (this.options.rendering.operations.length!=0){
-				this.element.prop('disabled', false);
-			}
-		},
-
 		createDom : function(field){
 			var select = $('<select />', {
 				'data-widgetname' : 'dropdown_list',

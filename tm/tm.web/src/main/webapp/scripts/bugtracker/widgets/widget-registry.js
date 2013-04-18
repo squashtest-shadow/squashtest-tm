@@ -23,8 +23,11 @@
 /*
  * This is roughly a delegate module loader 
  */
-define(function(require){
+define(["require", "./widget"],function(require, baseWidget){
 
+	
+	$.widget('squashbt.basewidget', baseWidget);
+	
 	
 	return {
 		
@@ -39,7 +42,7 @@ define(function(require){
 							
 				require(["./"+widgetName], function(widg){
 					
-					$.widget('squashbt.'+widgetName, widg);
+					$.widget('squashbt.'+widgetName, $.squashbt.basewidget ,widg);
 					$.squashbt[widgetName].createDom = widg.createDom;
 					self.cache[widgetName]=true;
 					success();
