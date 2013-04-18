@@ -460,7 +460,7 @@ public enum ExecutionStatus implements Internationalizable {
 		else if (report.getFailure() > 0) {
 			newStatus = ExecutionStatus.FAILURE;
 		} 
-		else if (report.areAllSuccess()) {
+		else if (report.areAllSuccessOrUntestable()) {
 			newStatus = ExecutionStatus.SUCCESS;
 		} 
 		else if (report.hasSuccess() || report.hasWarning()) {
