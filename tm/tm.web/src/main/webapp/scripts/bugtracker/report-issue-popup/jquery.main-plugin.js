@@ -41,12 +41,18 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 		
 		- callback : any callback function. Can accept one argument : the json status of the operation.
 
+		******************
+
+		Implementation defailt about 'reportUrl' : 
+		 - for the regular bugtracker model, this url will be used for both GET and POST
+		 - for the advanced bugtracker model, the url where you GET (/new-issue) is slightly 
+		 	different from the one where to post (/new-advanced-issue). This discrepancy is 
+		 	handled by the code via method getSubmitIssueUrl. 
+
 	*/
 	
 	function init(settings){
 
-		var self = this;
-		
 		//issue model
 		this.model = new Backbone.Model();	
 		this.mdlTemplate=null;				
@@ -202,7 +208,16 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 		/* ********************** model and view management ************ */
 			
 		var isDefaultIssueModel = $.proxy(function(){
-			return (this.model.get('project').schemes===undefined)
+			return ( this.model.get('project').schemes===undefined && this.model.toJSON.fieldValues === undefined );
+		}, self);
+		
+		var getSubmitIssueUrl = $.proxy(function(){
+			if (isDefaultIssueModel()){
+				return this.reportUrl;
+			}
+			else{
+				return this.reportUrl.replace(/new-issue/, "new-advanced-issue");
+			}
 		}, self);
 		
 		var setModel = $.proxy(function(newModel){
@@ -329,8 +344,10 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 			this.fieldsView.readOut();
 			var strModel = JSON.stringify(this.model.toJSON());
 			
+			var url = getSubmitIssueUrl();
+			
 			$.ajax({
-				url : self.reportUrl,
+				url : url,
 				type : 'POST',
 				data : strModel,
 				contentType: 'application/json',
@@ -343,6 +360,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 				}
 			})
 			.fail(bugReportError);
+			
 		}, self);
 		
 		/* ************* events ************************ */

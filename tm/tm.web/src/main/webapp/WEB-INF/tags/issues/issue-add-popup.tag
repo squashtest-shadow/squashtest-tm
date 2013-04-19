@@ -144,9 +144,6 @@ The reason for that is that the parameters are urls already.
 				labels : ${ json:serialize(interfaceDescriptor) }
 			};
 			
-			//TODO : label.RequiredFields and OptionalFields
-			conf.labels.requiredFields = '<f:message key="label.RequiredFields" />';
-			conf.labels.optionalFields = '<f:message key="label.OptionalFields" />';
 			
 			$("#${id}").btIssueDialog(conf);	
 			
