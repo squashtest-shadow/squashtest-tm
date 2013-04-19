@@ -92,7 +92,8 @@ requirejs
 				"squash.resizer" : "squash/squashtm.tree-page-resizer",
 				"squash.table-collapser" : "squashtest/jquery.squash.table-collapser",
 				"jquery.tagit" : "jquery/tag-it.min",
-				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit"
+				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit",
+				"jquery.squash.add-attachment-popup" : "squashtest/add-attachment-popup"
 			},
 			shim : {
 				"ckeditor" : {
@@ -226,6 +227,10 @@ requirejs
 				"jquery.tagit" : {
 					deps : ["jquery", "jqueryui"],
 					exports : "tagit"
+				},
+				"jquery.squash.add-attachment-popup" : {
+					deps : ["jquery"],
+					exports : "squash.add-attachment-popup"
 				}
 			}
 		});

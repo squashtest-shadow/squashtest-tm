@@ -174,9 +174,7 @@ define(["jquery",
 		
 
 		initialize : function(){
-					
-			var $el = this.$el;
-			
+
 			//first, post process the source html and split into two templates
 			this._initTemplates();
 						
