@@ -30,6 +30,14 @@ import org.squashtest.tm.bugtracker.definition.RemoteStatus;
 import org.squashtest.tm.bugtracker.definition.RemoteUser;
 import org.squashtest.tm.bugtracker.definition.RemoteVersion;
 
+
+/*
+ * Note : the setters below exists for convenience (and Jackson) but MUST NOT override data that have been put the normal way (fieldValues.put(...,...)).
+ * That's why each of them checks if the corresponding field is empty before proceeding.
+ * 
+ * @author bsiri
+ *
+ */
 public class AdvancedIssue implements RemoteIssue {
 	
 	//maps a fieldId to a FieldValue
@@ -67,6 +75,12 @@ public class AdvancedIssue implements RemoteIssue {
 	public String getSummary() {
 		return findFieldValueName("summary");
 	}
+	
+	public void setSummary(String summary){
+		if (isFieldNotSet("summary")){
+			addGenericFieldValue("summary", summary);
+		}
+	}
 
 	@Override
 	public String getDescription() {
@@ -75,7 +89,9 @@ public class AdvancedIssue implements RemoteIssue {
 
 	@Override
 	public void setDescription(String description) {
-		setFieldValueName("description", description);
+		if (isFieldNotSet("description")){
+			addGenericFieldValue("description", description);
+		}
 	}
 
 	@Override
@@ -85,18 +101,26 @@ public class AdvancedIssue implements RemoteIssue {
 	
 	@Override
 	public void setComment(String comment) {
-		setFieldValueName("comment", comment);	
+		if (isFieldNotSet("comment")){
+			addGenericFieldValue("comment", comment);
+		}
 	}
 	
 	@Override
 	public AdvancedProject getProject() {
 		return project;
 	}
+	
 
+	public void setProject(AdvancedProject project) {
+		this.project = project;
+	}
+	
 	@Override
 	public RemoteStatus getStatus() {
 		return fieldValues.get("status");
 	}
+
 
 	@Override
 	public RemoteUser getAssignee() {
@@ -152,24 +176,19 @@ public class AdvancedIssue implements RemoteIssue {
 		this.currentScheme = currentScheme;
 	}
 
-	public void setProject(AdvancedProject project) {
-		this.project = project;
-	}
-
-	
-	
 	// ********************* private stuffs ***************************
 
-
+	private boolean isFieldNotSet(String name){
+		return (fieldValues.get(name) == null);
+	}
+	
 	private String findFieldValueName(String fieldId){
 		FieldValue value = fieldValues.get("fieldId");
 		return (value!=null) ? value.getName() : "";			
 	}
 
-	private void setFieldValueName(String fieldId, String newName){
-		FieldValue value = fieldValues.get(fieldId);
-		if (value!=null){
-			value.setScalar(newName);
-		}
+	private void addGenericFieldValue(String fieldName, String value){
+		FieldValue newValue = new FieldValue(fieldName, fieldName, value);
+		fieldValues.put(fieldName, newValue);
 	}
 }

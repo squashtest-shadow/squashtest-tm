@@ -26,7 +26,7 @@ define(function(){
 		this.scalar = null;
 		this.composite = [];
 		this.random = {};
-		this.typename = null;
+		this.typename = typename;
 		
 		if (value instanceof Array){
 			this.composite = value;

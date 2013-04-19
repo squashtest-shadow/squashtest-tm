@@ -39,7 +39,7 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 				var text = this.element.eq(0).val();
 				var typename = this.options.rendering.inputType.dataType;
 				
-				return new FieldValue(text, typename, text);
+				return new FieldValue("--", typename, text);
 			}
 			else{
 				this.element.val(fieldvalue.scalar);

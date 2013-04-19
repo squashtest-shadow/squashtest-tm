@@ -32,12 +32,12 @@ requirejs
 					"contextual-content-handlers",
 					"test-cases-management",
 					"users-manager",
-					//"bugtracker",
-					{
+					"bugtracker",
+					/*{
 						main : 'main',
 						name : 'bugtracker',
 						location : 'http://localhost/scripts/scripts/bugtracker'
-					},
+					},*/
 					"iteration-management" ],
 
 			/*
@@ -92,7 +92,7 @@ requirejs
 				"squash.resizer" : "squash/squashtm.tree-page-resizer",
 				"squash.table-collapser" : "squashtest/jquery.squash.table-collapser",
 				"jquery.tagit" : "jquery/tag-it.min",
-				"jquery.squash.tagit" : "http://localhost/scripts/scripts/squashtest/jquery.squash.tagit"
+				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit"
 			},
 			shim : {
 				"ckeditor" : {

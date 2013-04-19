@@ -22,6 +22,7 @@ package test
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
+import org.squashtest.tm.bugtracker.advanceddomain.AdvancedIssue;
 
 import spock.lang.Specification;
 
@@ -71,4 +72,6 @@ class ObjectMapperTest extends Specification {
 			res.version.id == "10000"
 			res.summary=="damnit"
 	}
+	
+
 }

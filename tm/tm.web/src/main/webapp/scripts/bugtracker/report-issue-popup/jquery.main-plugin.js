@@ -21,6 +21,41 @@
 
 define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], function($, DefaultFieldView, AdvancedFieldView){
 
+	
+
+	function SimpleIssuePostHelper(){
+		
+		this.getSubmitIssueUrl = function(url){
+			return url;
+		};
+		
+		this.preprocessIssue = function(issue){
+			return issue;
+		}
+	}
+	
+	
+	function AdvancedIssuePostHelper(){
+		this.getSubmitIssueUrl = function(url){
+			return url.replace(/new-issue/, "new-advanced-issue");
+		}
+		
+		//this remove the properties that Jackson shouldn't bother with - thus preventing crashes
+		//everything it needs is in the fieldValues
+		this.preprocessIssue = function(issue){
+			delete issue["priority"];
+			delete issue["comment"];
+			delete issue["version"];
+			delete issue["status"];
+			delete issue["description"];
+			delete issue["category"];
+			delete issue["summary"];
+			delete issue["assignee"];
+			
+			return issue;
+		}
+	}
+	
 
 	/*
 	  report-issue-dialog is the javascript object handling the behaviour of the popup that will post 
@@ -43,7 +78,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 
 		******************
 
-		Implementation defailt about 'reportUrl' : 
+		Implementation detail about 'reportUrl' : 
 		 - for the regular bugtracker model, this url will be used for both GET and POST
 		 - for the advanced bugtracker model, the url where you GET (/new-issue) is slightly 
 		 	different from the one where to post (/new-advanced-issue). This discrepancy is 
@@ -96,8 +131,9 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 		});
 		
 		
-		//and last but not least, the subview that manages the fields
+		//and last but not least, the subview that manages the fields, and the post helper
 		this.fieldsView = null;
+		this.postHelper = null;
 	
 	}
 
@@ -210,15 +246,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 		var isDefaultIssueModel = $.proxy(function(){
 			return ( this.model.get('project').schemes===undefined && this.model.toJSON.fieldValues === undefined );
 		}, self);
-		
-		var getSubmitIssueUrl = $.proxy(function(){
-			if (isDefaultIssueModel()){
-				return this.reportUrl;
-			}
-			else{
-				return this.reportUrl.replace(/new-issue/, "new-advanced-issue");
-			}
-		}, self);
+
 		
 		var setModel = $.proxy(function(newModel){
 			
@@ -234,6 +262,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 		var createViewForModel = $.proxy(function(){
 			if (this.fieldsView==null){
 				var view;
+				var postHelper;
 				
 				if (isDefaultIssueModel()){
 					view = new DefaultFieldView({
@@ -241,6 +270,8 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 						model : this.model,
 						labels : settings.labels
 					});
+					
+					postHelper = new SimpleIssuePostHelper();
 				}
 				else{
 					view = new AdvancedFieldView({
@@ -248,9 +279,12 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 						model : this.model,
 						labels : settings.labels
 					});
+					
+					postHelper = new AdvancedIssuePostHelper();
 				}			
 				
 				this.fieldsView = view;
+				this.postHelper = postHelper;
 			}
 		}, self);
 		
@@ -341,10 +375,14 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 			
 			flipToPleaseWait();
 			
-			this.fieldsView.readOut();
-			var strModel = JSON.stringify(this.model.toJSON());
+			this.fieldsView.readOut();	
+			//var strModel = JSON.stringify(this.model.toJSON());
 			
-			var url = getSubmitIssueUrl();
+			var model = this.model.toJSON();
+			model = this.postHelper.preprocessIssue(model);
+			var strModel = JSON.stringify(model);
+			
+			var url = this.postHelper.getSubmitIssueUrl(this.reportUrl);
 			
 			$.ajax({
 				url : url,

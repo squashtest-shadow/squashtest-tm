@@ -114,7 +114,7 @@ define(["jquery", "../domain/FieldValue", "jqueryui", "http://localhost/scripts/
 					var value = this.findValueByLabel(label);					
 					if (value===null){
 						//value not found, let's create a new one
-						value = new FieldValue(label, typename, label);
+						value = new FieldValue("--", typename, label);
 					}					
 					allValues.push(value);
 				}

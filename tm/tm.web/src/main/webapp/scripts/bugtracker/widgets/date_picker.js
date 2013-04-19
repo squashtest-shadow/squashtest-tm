@@ -68,7 +68,7 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 				var strDate = $.datepicker.formatDate(toFormat, date);
 				var typename = this.options.rendering.inputType.dataType;
 				
-				return new FieldValue("", typename, strDate);
+				return new FieldValue("--", typename, strDate);
 			}
 			else{
 				var fromFormat = this.options.rendering.inputType.meta['date-format'];

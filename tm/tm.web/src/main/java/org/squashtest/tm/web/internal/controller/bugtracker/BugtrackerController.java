@@ -271,7 +271,7 @@ public class BugtrackerController {
 	 * 
 	 * 
 	 */
-	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue", method = RequestMethod.POST, params={"model=advanced"})
+	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-advanced-issue", method = RequestMethod.POST)
 	@ResponseBody
 	public Object postExecStepAdvancedIssueReport(@PathVariable("stepId") Long stepId, @RequestBody AdvancedIssue jsonIssue) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + stepId);

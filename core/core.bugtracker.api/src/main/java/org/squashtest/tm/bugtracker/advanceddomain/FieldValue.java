@@ -130,6 +130,10 @@ public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory
 			return builder.toString();
 		}
 	}
+	
+	public void setName(String name){
+		//nothing. This exists just because Jackson would complain otherwise
+	}
 
 	public Object getRandom() {
 		return random;

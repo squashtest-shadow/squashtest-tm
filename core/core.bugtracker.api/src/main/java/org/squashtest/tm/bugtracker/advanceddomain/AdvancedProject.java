@@ -31,7 +31,7 @@ public class AdvancedProject implements RemoteProject {
 	private String id;
 	private String name;
 	
-	private MultiMap schemes = new MultiValueMap();
+	private MultiValueMap schemes = new MultiValueMap();
 	
 	public void setId(String id){
 		this.id = id;
@@ -63,7 +63,7 @@ public class AdvancedProject implements RemoteProject {
 	/**
 	 * think of it as a Map<String, Collection<Field>>
 	 */
-	public void setSchemes(MultiMap schemes) {
+	public void setSchemes(MultiValueMap schemes) {
 		this.schemes = schemes;
 	}
 	

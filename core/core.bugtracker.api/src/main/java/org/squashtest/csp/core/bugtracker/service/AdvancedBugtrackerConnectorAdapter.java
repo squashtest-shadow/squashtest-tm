@@ -26,11 +26,11 @@ import java.util.List;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
-import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.advanceddomain.AdvancedIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
@@ -84,7 +84,7 @@ public class AdvancedBugtrackerConnectorAdapter implements
 	@Override
 	public RemoteIssue createIssue(RemoteIssue issue)
 			throws BugTrackerRemoteException {
-		return connector.createIssue((BTIssue)issue);
+		return connector.createIssue((AdvancedIssue)issue);
 	}
 
 	@Override
