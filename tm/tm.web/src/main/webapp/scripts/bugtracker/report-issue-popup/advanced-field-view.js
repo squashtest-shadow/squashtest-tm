@@ -23,8 +23,8 @@
 define(["jquery", 
         "backbone", 
         "../widgets/widget-registry", 
-        "text!./advanced-view-template.html!strip",
-        //"text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip",
+        //"text!./advanced-view-template.html!strip",
+        "text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip",
         "jqueryui"], 
 		function($, Backbone, widgetRegistry, source){
 
@@ -165,6 +165,7 @@ define(["jquery",
 		// properties set when init :
 		fieldTpl : undefined,
 		frameTpl : undefined,
+		fileUploads : [],
 		
 		events : {
 			"click input.optional-fields-toggle" : "toggleOptionalFields",
@@ -270,22 +271,37 @@ define(["jquery",
 				}
 				
 			}
-			
-			
 		},
 		
+		//we ignore the file uploads, they'll be stored to be processed elsewhere.
+		//note about uploading files ajax style : read http://www.ajaxf1.com/tutorial/ajax-file-upload-tutorial.html
 		readOut : function(){
+			
+			var allFileUploads = [];
+			
 			var newValues = {};
 			var controls = this._getAllControls();
+			
 			controls.each(function(){
+				
 				var $this = $(this);
+				
 				var fieldid = $this.data('fieldid');
 				var value = $this.data('widget').fieldvalue();
 				
+				//has any file upload ?
+				var uploads = $this.find('input[type="file"]');
+				if (uploads.lengt>0){
+					allFileUploads.push(uploads).get();
+				}
+				
 				newValues[fieldid] = value;
+				
 			});
 			
 			this.model.set('fieldValues', newValues);
+			
+			this.fileUploads = allFileUploads;
 		},
 		
 		enableControls : function(){
@@ -303,6 +319,13 @@ define(["jquery",
 			
 		},
 		
+		//returns only the items that were set
+		getFileUploads : function(){
+			return $.grep(this.fileUploads, function(item){
+				var content =  $(item).val();
+				return ! (content == "" || typeof (content) == 'undefined' ); 
+			});
+		},
 		
 		//********************** the bowels ********************
 		

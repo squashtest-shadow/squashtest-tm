@@ -32,12 +32,12 @@ requirejs
 					"contextual-content-handlers",
 					"test-cases-management",
 					"users-manager",
-					"bugtracker",
-					/*{
+					//"bugtracker",
+					{
 						main : 'main',
 						name : 'bugtracker',
 						location : 'http://localhost/scripts/scripts/bugtracker'
-					},*/
+					},
 					"iteration-management" ],
 
 			/*
@@ -229,7 +229,7 @@ requirejs
 					exports : "tagit"
 				},
 				"jquery.squash.add-attachment-popup" : {
-					deps : ["jquery"],
+					deps : ["jquery", "jquery.generateId"],
 					exports : "squash.add-attachment-popup"
 				}
 			}
