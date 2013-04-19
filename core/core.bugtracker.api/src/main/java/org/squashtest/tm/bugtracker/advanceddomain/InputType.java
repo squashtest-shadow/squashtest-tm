@@ -64,6 +64,7 @@ public class InputType {
 	public static final String DATE_PICKER		= "date_picker";
 	public static final String DATE_TIME		= "date_time";
 	public static final String TAG_LIST			= "tag_list";
+	public static final String FREE_TAG_LIST	= "free_tag_list";
 	public static final String DROPDOWN_LIST	= "dropdown_list";
 	public static final String CHECKBOX			= "checkbox";
 	public static final String CHECKBOX_LIST	= "checkbox_list";
