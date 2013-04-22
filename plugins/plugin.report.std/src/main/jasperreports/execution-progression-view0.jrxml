@@ -60,7 +60,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="56" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isItalic="true"/>
+									<font size="10" isItalic="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.project.label}]]></textFieldExpression>
 							</textField>
@@ -71,7 +71,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="66" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isItalic="true"/>
+									<font size="10" isItalic="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.campaign.label}]]></textFieldExpression>
 							</textField>
@@ -82,7 +82,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="56" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isItalic="true"/>
+									<font size="10" isItalic="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.schedstart.label}]]></textFieldExpression>
 							</textField>
@@ -93,7 +93,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="56" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isItalic="true"/>
+									<font size="10" isItalic="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.schedend.label}]]></textFieldExpression>
 							</textField>
@@ -104,7 +104,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="56" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isItalic="true"/>
+									<font size="10" isItalic="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.actstart.label}]]></textFieldExpression>
 							</textField>
@@ -115,7 +115,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="56" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isItalic="true"/>
+									<font size="10" isItalic="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.actend.label}]]></textFieldExpression>
 							</textField>
@@ -126,7 +126,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="56" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isItalic="true"/>
+									<font size="10" isItalic="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.iterationname.label}]]></textFieldExpression>
 							</textField>
@@ -137,7 +137,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="56" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isItalic="true"/>
+									<font size="10" isItalic="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.schedstart.label}]]></textFieldExpression>
 							</textField>
@@ -148,7 +148,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="56" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isItalic="true"/>
+									<font size="10" isItalic="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.schedend.label}]]></textFieldExpression>
 							</textField>
@@ -159,7 +159,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="56" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isItalic="true"/>
+									<font size="10" isItalic="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.actstart.label}]]></textFieldExpression>
 							</textField>
@@ -170,7 +170,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="56" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isItalic="true"/>
+									<font size="10" isItalic="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.actend.label}]]></textFieldExpression>
 							</textField>
@@ -181,7 +181,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="56" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isItalic="true"/>
+									<font size="10" isItalic="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.testcase.label}]]></textFieldExpression>
 							</textField>
@@ -192,7 +192,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="56" height="29"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10" isItalic="true"/>
+									<font size="10" isItalic="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.status.label}]]></textFieldExpression>
 							</textField>
