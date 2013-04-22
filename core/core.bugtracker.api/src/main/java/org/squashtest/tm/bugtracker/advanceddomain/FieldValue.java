@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.bugtracker.advanceddomain;
 
+import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.bugtracker.definition.RemoteCategory;
 import org.squashtest.tm.bugtracker.definition.RemotePriority;
 import org.squashtest.tm.bugtracker.definition.RemoteStatus;
@@ -148,6 +149,12 @@ public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory
 		this.random = random;
 	}
 	
+	public boolean hasScalarValue(){
+		return ! StringUtils.isBlank(scalar);
+	}
 	
+	public boolean hasCompositeValue(){
+		return (composite.length != 0);
+	}
 	
 }

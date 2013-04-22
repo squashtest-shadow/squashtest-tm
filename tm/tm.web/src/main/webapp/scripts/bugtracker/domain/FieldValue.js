@@ -23,9 +23,9 @@ define(function(){
 	
 	return function (id, typename, value){
 		this.id = id;
-		this.scalar = null;
+		this.scalar = "";
 		this.composite = [];
-		this.random = {};
+		this.random = null;
 		this.typename = typename;
 		
 		if (value instanceof Array){
