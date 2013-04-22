@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>squashtest-csp</artifactId>
-  <version>1.5.0.S1-SNAPSHOT</version>
+  <version>1.5.0.S1</version>
   <packaging>pom</packaging>
 
   <name>squashtest-csp</name>
