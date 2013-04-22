@@ -168,6 +168,10 @@ td.narrow{
 	width : 2em;	
 }
 
+td.double-narrow{
+	width : 4em;	
+}
+
 .blue-borders{
 	border : 1px solid #80B2FF;	
 }

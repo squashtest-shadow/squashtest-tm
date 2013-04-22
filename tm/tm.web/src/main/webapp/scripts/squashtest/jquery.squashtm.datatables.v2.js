@@ -1297,6 +1297,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 				'narrow' : function(conf, assignation) {
 					conf.current.sWidth = '2em';
 				},
+				'double-narrow' : function(conf, assignation) {
+					conf.current.sWidth = '4em';
+				},
 				'filter' : function(conf, assignation) {
 					conf.current.sClass += ' datatable-filterable';
 				},

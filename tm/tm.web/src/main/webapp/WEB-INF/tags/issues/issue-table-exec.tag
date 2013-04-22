@@ -54,129 +54,57 @@
 		$('#issue-table').squashTable().refresh();
 	}
 
-	function getIssueTableRowUrl(rowData){
-		return rowData[0];
-	}
-
-	function getIssueTableRowId(rowData) {
-		return rowData[1];
-	}
-	
-	function getIssueTableRowAssignee(rowData){
-		return rowData[6];
-	}
-
-	function getIssueTableRowIssueId(rowData) {
-		return rowData[8];
-	}
-	
 	function issueTableRowCallback(row, data, displayIndex) {
-		addHLinkToIdRow(row,data);
 		checkEmptyValues(row, data);
-		addIdAttributeToIdRow(row,data);
 		return row;
-	}
-	
-	
-	function addHLinkToIdRow(row, data){
-		var td = $(row).find("td:eq(0)");
-		var url = getIssueTableRowUrl(data);
-		addHLinkToCellText(td, url, true);
-	}
-	
-	function addIdAttributeToIdRow(row,data){
-		var td = $(row).find("td:eq(0)");
-		var issueid = getIssueTableRowIssueId(data);
-		td.attr('issueid',issueid);
-	}
-	
-	function rowDataToTestCaseId(rowData){
-		return rowData['tc-id'];
 	}
 	
 	<%-- we check the assignee only (for now) --%>
 	function checkEmptyValues(row, data){
-		var correctAssignee = handleEmptyValue(data, getIssueTableRowAssignee, "${interfaceDescriptor.tableNoAssigneeLabel}");
+		var assignee = data['assignee'];
+		var correctAssignee = (assignee!=="") ? assignee : "${interfaceDescriptor.tableNoAssigneeLabel}"; 
 		var td=$(row).find("td:eq(6)");
 		$(td).html(correctAssignee);
 	}
-	
-	<%-- that method will take care of empty values if need be --%>
-	function handleEmptyValue(data, fnGetData, strDefaultMessage){
-		var value = fnGetData(data);
-		if (value==""){
-			return strDefaultMessage;
-		}
-		else{
-			return value;
-		}
-	} 
-
 	
 	/* ************************** datatable settings ********************* */
 
 
 	$(function() {
 		
-		var tableSettings = {
-				"oLanguage": {
-					"sUrl": "<c:url value='/datatables/messages' />",
-					"oPaginate":{
-						"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
-						"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
-						"sNext":     '<f:message key="generics.datatable.paginate.next" />',
-						"sLast":     '<f:message key="generics.datatable.paginate.last" />'
-					}
-				},
-				"sAjaxSource" : "${dataUrl}", 
-				"aaSorting" : [[1,'desc']],
-				"fnRowCallback" : issueTableRowCallback,
-				"aoColumnDefs": [
-					{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'issue-url'},
-					{'bSortable': true,  'sClass': 'select-handle centered', 'aTargets': [1], 'mDataProp' : 'remote-id', 'sWidth' : '2em'},
-					{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'summary'},
-					{'bSortable': false, 'aTargets': [3], 'sWidth': '2em', 'mDataProp' : 'priority'},
-					{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'status'},
-					{'bSortable': false, 'aTargets': [5], 'mDataProp' : 'assignee'},
-					{'bSortable': false, 'aTargets': [6], 'mDataProp' : 'owner'},
-					{'bSortable': false, 'sWidth': '2em', 'aTargets': [7], 'sClass' : 'centered delete-button', 'mDataProp' : 'empty-placeholder'},
-					{'bSortable': false, 'bVisible': false, 'aTargets': [8], 'mDataProp' : 'local-id'}
-				]
+		var tableSettings = { 
+				"aaSorting" : [[0,'desc']],
+				"fnRowCallback" : issueTableRowCallback
 			};		
 		
 			var squashSettings = {
+				enableDnD : false,
+				deleteButtons : {
+					url : '${bugTrackerUrl}issues/{local-id}',
+					popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
+					tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
+					success : function(data) {
+						refreshTestPlan();
+					}
+				}
+			};
 
-			};
-	
-			
-			squashSettings.enableDnD = false;
-	
-			squashSettings.deleteButtons = {
-				url : '${bugTrackerUrl}issues/{local-id}',
-				popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
-				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
-				success : function(data) {
-					refreshTestPlan();
-				}					
-			};
-			
-			
 			$("#issue-table").squashTable(tableSettings, squashSettings);
 	});
 	
 </script>
 	
-<table id="issue-table">
-	<thead>
+<c:url value='/datatables/messages' var="tableLangUrl" />
+<table id="issue-table" data-def="language=${tableLangUrl}, hover, ajaxsource=${dataUrl}">
+	<thead >
 		<tr>
-			<th>URL(not displayed)</th>
-			<th style="cursor:pointer">${interfaceDescriptor.tableIssueIDHeader}</th>
-			<th>${interfaceDescriptor.tableSummaryHeader}</th>
-			<th>${interfaceDescriptor.tablePriorityHeader}</th>
-			<th>${interfaceDescriptor.tableStatusHeader}</th>
-			<th>${interfaceDescriptor.tableAssigneeHeader}</th>
-			<th>${interfaceDescriptor.tableReportedInHeader}</th>
-			<th></th>
+			<th data-def="map=remote-id, link={issue-url}, double-narrow, center, select">${interfaceDescriptor.tableIssueIDHeader}</th>
+			<th data-def="map=summary">${interfaceDescriptor.tableSummaryHeader}</th>
+			<th data-def="map=priority">${interfaceDescriptor.tablePriorityHeader}</th>
+			<th data-def="map=status">${interfaceDescriptor.tableStatusHeader}</th>
+			<th data-def="map=assignee">${interfaceDescriptor.tableAssigneeHeader}</th>
+			<th data-def="map=owner">${interfaceDescriptor.tableReportedInHeader}</th>
+			<th data-def="map=empty-placeholder, narrow, center, sClass=delete-button"></th>
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>

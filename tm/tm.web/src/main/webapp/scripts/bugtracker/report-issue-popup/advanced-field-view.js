@@ -291,8 +291,8 @@ define(["jquery",
 				
 				//has any file upload ?
 				var uploads = $this.find('input[type="file"]');
-				if (uploads.lengt>0){
-					allFileUploads.push(uploads).get();
+				if (uploads.length>0){
+					allFileUploads = allFileUploads.concat(uploads.get());
 				}
 				
 				newValues[fieldid] = value;

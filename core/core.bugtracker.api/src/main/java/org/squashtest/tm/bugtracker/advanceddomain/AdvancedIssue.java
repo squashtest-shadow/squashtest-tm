@@ -183,7 +183,7 @@ public class AdvancedIssue implements RemoteIssue {
 	}
 	
 	private String findFieldValueName(String fieldId){
-		FieldValue value = fieldValues.get("fieldId");
+		FieldValue value = fieldValues.get(fieldId);
 		return (value!=null) ? value.getName() : "";			
 	}
 

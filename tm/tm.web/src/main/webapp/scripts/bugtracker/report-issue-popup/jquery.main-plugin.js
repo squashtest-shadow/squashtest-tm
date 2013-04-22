@@ -19,30 +19,42 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], function($, DefaultFieldView, AdvancedFieldView){
+define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload", "jqueryui"], function($, DefaultFieldView, AdvancedFieldView, fileUploadUtils){
 
 	
 
-	function SimpleIssuePostHelper(){
+	function SimpleIssuePostHelper(controller){
 		
-		this.getSubmitIssueUrl = function(url){
-			return url;
-		};
+		this.controller = controller
 		
-		this.preprocessIssue = function(issue){
-			return issue;
+		this.postIssue = function(issueModel, url){
+			
+			var strModel = JSON.stringify(issueModel);		
+
+			return $.ajax({
+				url : url,
+				type : 'POST',
+				data : strModel,
+				contentType: 'application/json',
+				dataType : 'json'
+			});		
 		}
+		
 	}
 	
 	
-	function AdvancedIssuePostHelper(){
-		this.getSubmitIssueUrl = function(url){
+	function AdvancedIssuePostHelper(controller){
+		
+		this.controller = controller;
+		
+		this.transformUrl = function(url){
 			return url.replace(/new-issue/, "new-advanced-issue");
 		}
 		
 		//this remove the properties that Jackson shouldn't bother with - thus preventing crashes
 		//everything it needs is in the fieldValues
 		this.preprocessIssue = function(issue){
+			
 			delete issue["priority"];
 			delete issue["comment"];
 			delete issue["version"];
@@ -54,7 +66,51 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 			
 			return issue;
 		}
+		
+		
+		//an issue is first posted, then its attachments. An error 
+		//on posting the attachments should not make the whole thing fail.
+		this.postIssue = function(issueModel, url){
+			
+			var helper = this;
+			var effectiveUrl = this.transformUrl(url);
+			
+			var effectiveModel = this.preprocessIssue(issueModel);			
+			var strModel = JSON.stringify(issueModel);		
+
+			var xhr = $.ajax({
+				url : effectiveUrl,
+				type : 'POST',
+				data : strModel,
+				contentType: 'application/json',
+				dataType : 'json'
+			});			
+			
+			xhr.done(function(json){
+				try{
+					helper.postAttachments(json);
+				}
+				catch(wtf){
+					if (console && console.log){
+						console.log(wtf);
+					}
+				}
+			});
+			
+			
+			return xhr;
+		}
+		
+		
+		this.postAttachments = function(json){
+			var files = this.controller.fieldsView.getFileUploads();
+			if (files.length>0){
+				fileUploadUtils.upload(files);
+			}
+		}
+		
 	}
+
 	
 
 	/*
@@ -271,7 +327,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 						labels : settings.labels
 					});
 					
-					postHelper = new SimpleIssuePostHelper();
+					postHelper = new SimpleIssuePostHelper(self);
 				}
 				else{
 					view = new AdvancedFieldView({
@@ -280,7 +336,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 						labels : settings.labels
 					});
 					
-					postHelper = new AdvancedIssuePostHelper();
+					postHelper = new AdvancedIssuePostHelper(self);
 				}			
 				
 				this.fieldsView = view;
@@ -376,22 +432,11 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "jqueryui"], 
 			flipToPleaseWait();
 			
 			this.fieldsView.readOut();	
-			//var strModel = JSON.stringify(this.model.toJSON());
-			
 			var model = this.model.toJSON();
-			model = this.postHelper.preprocessIssue(model);
-			var strModel = JSON.stringify(model);
 			
-			var url = this.postHelper.getSubmitIssueUrl(this.reportUrl);
+			var xhr = this.postHelper.postIssue(model, this.reportUrl);
 			
-			$.ajax({
-				url : url,
-				type : 'POST',
-				data : strModel,
-				contentType: 'application/json',
-				dataType : 'json'
-			})
-			.done(function(){
+			xhr.done(function(){
 				self.dialog('close');
 				if (self.callback){
 					self.callback.apply(self, arguments);

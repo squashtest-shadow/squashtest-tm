@@ -19,41 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(function(){
+define(["jquery"], function($){
 	
-	return function (id, typename, value){
-		this.id = id;
-		this.scalar = null;
-		this.composite = [];
-		this.random = {};
-		this.typename = typename;
-		
-		if (value instanceof Array){
-			this.composite = value;
+	return {
+		upload : function(aFiles){
+			
 		}
-		else{
-			this.scalar = value;
-		}
-				
-		this._getName = function(){
-			if (this.scalar!=null){
-				return this.scalar+", ";
-			}
-			else{
-				var res="";
-				for (var i=0;i<composite.length;i++){
-					res+= this.composite[i].getName() + ", ";
-				}
-				return builder.toString();
-			}			
-		}
-		
-		this.getName = function(){
-			return this._getName().replace(/,\s*$/, '');
-		}
-
-	}	
-})
+	}
 	
-
-	
+});
