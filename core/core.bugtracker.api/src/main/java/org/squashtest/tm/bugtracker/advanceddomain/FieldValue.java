@@ -117,18 +117,23 @@ public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory
 		this.typename = typename;
 	}
 
-	@Override
-	public String getName() {
+	
+	private String _getName(){
 		if (scalar!=null){
 			return scalar+", ";
 		}
 		else{
 			StringBuilder builder = new StringBuilder();
 			for (int i=0;i<composite.length;i++){
-				builder.append(composite[i].getName()+", ");
+				builder.append(composite[i]._getName()+", ");
 			}
 			return builder.toString();
-		}
+		}		
+	}
+		
+	@Override
+	public String getName() {
+		return _getName().replaceFirst(",\\s*$", "");
 	}
 	
 	public void setName(String name){
