@@ -231,7 +231,7 @@ that page won't be editable if
 		<%-- TODO put at end of page, maybe componentize --%>
 		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="50" />
 	</c:if>
-
+<%--------------------------- General Informations section ------------------------------------%>
 	<comp:toggle-panel id="requirement-information-panel" classes="information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
 		<jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">
@@ -243,10 +243,7 @@ that page won't be editable if
 					<label for="requirement-id">ID</label>
 					<div class="display-table-cell" id="requirement-id">${ requirement.id }</div>
 				</div>
-				<div class="display-table-row">
-					<label for="requirement-description" class="display-table-cell"><f:message key="label.Description" /></label>
-					<div class="display-table-cell" id="requirement-description">${ requirement.description }</div>
-				</div>
+				
 				<div class="display-table-row">
 					<label class="display-table-cell"  for="requirement-reference"><f:message key="requirement.reference.label" /></label>
 					<div class="display-table-cell"  id="requirement-reference">${ requirement.reference }</div>
@@ -299,7 +296,12 @@ that page won't be editable if
 			</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
-
+	<%--------------------------- Description section------------------------------------%>
+	<comp:toggle-panel id="requirement-description-panel" classes="description-panel" titleKey="label.Description" isContextual="true" open="true" >
+		<jsp:attribute name="body">	
+					<div id="requirement-description">${ requirement.description }</div>
+		</jsp:attribute>
+	</comp:toggle-panel>
 
 	<%--------------------------- verifying TestCase section ------------------------------------%>
 	<script type="text/javascript">
