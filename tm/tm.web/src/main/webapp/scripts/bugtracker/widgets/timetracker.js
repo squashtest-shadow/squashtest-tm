@@ -37,10 +37,6 @@ define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], 
 			this.element.bind('focusout', function(){
 				self.validate();
 			});
-			
-			
-			//var errorMessage = translator.get("dialog.attachment.add.button.remove.label");	
-			//var compiledTemplate = Handlebars.compile($(".validation-message"), this.element.parent().parent());
 		},
 		
 		fieldvalue : function(fieldvalue) {
@@ -87,14 +83,17 @@ define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], 
 			var messages = [];
 			var result = this.evaluateField();
 			if(!result){
-				messages[0] = "validation.error.illformedTimetrackingExpression"
+				messages[0] = translator.get("validation.error.illformedTimetrackingExpression");
 			}
 			
 			$(".issue-field-message-holder", this.element.parent().parent()).text("");
 			for(var i=0; i<messages.length; i++){
-				$(".issue-field-message-holder", this.element.parent().parent()).append(messages[i]);
+				$(".issue-field-message-holder", this.element.parent().parent()).append(messages[i]);	
 			}
-			
+			if(!!messages.length){
+				$(".issue-field-message-holder", this.element.parent().parent()).show();
+			}
+
 			return messages;
 		},
 		

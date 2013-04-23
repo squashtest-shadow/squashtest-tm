@@ -58,11 +58,11 @@
 			{{#each this}}
 			<div class="issue-field full-width" data-fieldid="{{id}}">
 				<label class="issue-field-label">{{label}} {{#if rendering.required}} (*) {{/if}}</label>
-				<span class="issue-field-control-holder"></span>
-				<span class="issue-field-message-holder">
-					<script class="validation-message" type="text/x-handlebars-template">
-					</script>
+				<div>
+				<span class="issue-field-control-holder"></span><br/>
+				<span class="issue-field-message-holder error-message" style="display: none;">
 				</span>
+				</div>
 			</div>
 			{{/each}}	
 			
