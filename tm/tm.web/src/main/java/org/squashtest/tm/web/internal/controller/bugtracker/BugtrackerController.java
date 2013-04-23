@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.bugtracker;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.NullArgumentException;
@@ -36,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +53,7 @@ import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.AdvancedIssue;
+import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.IdentifiedUtil;
@@ -76,6 +82,7 @@ import org.squashtest.tm.web.internal.controller.bugtracker.BugtrackerController
 import org.squashtest.tm.web.internal.controller.bugtracker.BugtrackerControllerHelper.IterationIssuesTableModel;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugtrackerControllerHelper.StepIssuesTableModel;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugtrackerControllerHelper.TestCaseIssuesTableModel;
+import org.squashtest.tm.web.internal.model.customeditor.AttachmentPropertyEditorSupport;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
@@ -151,6 +158,12 @@ public class BugtrackerController {
 	public void setBugTrackerFinderService(BugTrackerFinderService bugTrackerFinderService) {
 		this.bugTrackerFinderService = bugTrackerFinderService;
 	}
+	
+	@InitBinder
+	public void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws ServletException {
+		binder.registerCustomEditor(org.squashtest.tm.domain.attachment.Attachment.class, new AttachmentPropertyEditorSupport());
+	}
+	
 
 	/* **************************************************************************************************************
 	 * *
@@ -639,6 +652,35 @@ public class BugtrackerController {
 	void detachIssue(@PathVariable("issueId") Long issueId) {
 		bugTrackersLocalService.detachIssue(issueId);
 	}
+	
+	
+	
+	@RequestMapping(value = "/{btName}/remote-issues/{remoteIssueId}/attachments", method = RequestMethod.POST)
+	public @ResponseBody void forwardAttachmentsToIssue(
+						@PathVariable("btName") String btName,
+						@PathVariable("remoteIssueId") String remoteIssueId, 
+						@RequestParam("attachment[]") List<org.squashtest.tm.domain.attachment.Attachment> attachments){
+		
+		List<Attachment> issueAttachments = new ArrayList<Attachment>(attachments.size());
+		for (org.squashtest.tm.domain.attachment.Attachment attach : attachments){
+			Attachment newAttachment = new Attachment(attach.getShortName(), attach.getSize(), attach.getContent().getContent());
+			issueAttachments.add(newAttachment);
+		}
+		
+		bugTrackersLocalService.forwardAttachments(remoteIssueId, btName, issueAttachments);
+		
+		//now ensure that the input streams are closed
+		for (Attachment attachment : issueAttachments){
+			try{
+				attachment.getStreamContent().close();
+			}
+			catch(IOException ex){
+				LOGGER.warn("issue attachments : could not close stream for "+attachment.getName()+", this is non fatal anyway");
+			}
+		}
+		
+	}
+	
 
 	/* ********* generates a json model for an issue ******* */
 
@@ -676,7 +718,6 @@ public class BugtrackerController {
 
 		return emptyIssue;
 		
-		//return createDummyAdvancedIssue();
 	}
 
 	/*

@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import org.squashtest.csp.core.bugtracker.core.BugTrackerManagerException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
@@ -33,6 +34,7 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
@@ -133,6 +135,16 @@ public class SimpleBugtrackerConnectorAdapter implements
 		}
 
 		return url;
+	}
+	
+	@Override
+	public void forwardAttachments(String remoteIssueKey, List<Attachment> attachments) {
+		//NOOP : the old interface simply cannot do that. It cannot possibly be invoked anyway. Normally.
+		throw new BugTrackerManagerException("Technical error : impossible to post attachments for issue '"+remoteIssueKey+"' . This issue "+
+											 "is managed by a simple connector that cannot handle such operation. As such yhis is likely a "+
+											 "a programming error : file uploads should never have been available in the GUI in the first place. "+
+											 "Please submit " +
+											 "your attachments using the bugtracker itself.");
 	}
 
 }

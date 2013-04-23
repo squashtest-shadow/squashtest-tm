@@ -29,6 +29,7 @@ import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.tm.bugtracker.advanceddomain.AdvancedIssue;
 import org.squashtest.tm.bugtracker.advanceddomain.AdvancedProject;
+import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 
 
@@ -131,5 +132,14 @@ public interface AdvancedBugTrackerConnector{
 	 * @return
 	 */
 	List<AdvancedIssue> findIssues(List<String> issueKeyList);
+	
+	
+	/**
+	 * Post the given attachments to the issue identified by remoteIssueKey
+	 * 
+	 * @param remoteIssueKey
+	 * @param attachments
+	 */
+	void forwardAttachments(String remoteIssueKey, List<Attachment> attachments);
 	
 }

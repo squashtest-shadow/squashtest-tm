@@ -28,6 +28,7 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
@@ -146,6 +147,17 @@ public interface BugTrackersService {
 	 * @return
 	 */
 	RemoteIssue createReportIssueTemplate(String projectName, BugTracker bugTracker);
+	
+	
+	/**
+	 * Given a remote issue key, will ask the bugtracker to attach the attachments to that issue.
+	 * Note that the specified bugtracker will be used for that purpose. 
+	 * 
+	 * @param remoteIssueKey
+	 * @param bugtracker
+	 * @param attachments
+	 */
+	void forwardAttachments(String remoteIssueKey, BugTracker bugtracker, List<Attachment> attachments);
 	
 
 	Set<String> getProviderKinds();

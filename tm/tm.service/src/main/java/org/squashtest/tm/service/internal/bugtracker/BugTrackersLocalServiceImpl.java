@@ -37,6 +37,7 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.domain.IdentifiedUtil;
@@ -184,6 +185,14 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	public URL getIssueUrl(String btIssueId, BugTracker bugTracker) {
 		return remoteBugTrackersService.getViewIssueUrl(btIssueId, bugTracker);
 	}
+	
+	
+	@Override
+	public void forwardAttachments(String remoteIssueKey, String bugtrackerName, List<Attachment> attachments){
+		BugTracker bugtracker = bugTrackerDao.findByName(bugtrackerName);		//NOTE : this may crash is multiple bugtracker have the same name. One could cross check with the remoteissuekey if one day shit happened.
+		remoteBugTrackersService.forwardAttachments(remoteIssueKey, bugtracker, attachments);
+	}
+	
 
 	@Override
 	@PreAuthorize("hasPermission(#bugged, 'EXECUTE') or hasRole('ROLE_ADMIN')")
@@ -220,6 +229,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		Issue issue = issueDao.findById(id);
 		issueDao.remove(issue);
 	}
+	
 
 	/* ------------------------ExecutionStep--------------------------------------- */
 	@Override

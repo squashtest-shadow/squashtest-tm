@@ -23,11 +23,13 @@ package org.squashtest.csp.core.bugtracker.service;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
+import javax.swing.plaf.ButtonUI;
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
@@ -98,18 +100,24 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 	@Override
 	public RemoteIssue createIssue(RemoteIssue issue, BugTracker bugTracker) {
-		return connect(bugTracker).createIssue(issue);
+		RemoteIssue newissue = connect(bugTracker).createIssue(issue);
+		newissue.setBugtracker(bugTracker.getName());
+		return newissue;
 	}
 	
 	@Override
 	public RemoteIssue createReportIssueTemplate(String projectName, BugTracker bugTracker) {
-		return connect(bugTracker).createReportIssueTemplate(projectName);
+		RemoteIssue issue = connect(bugTracker).createReportIssueTemplate(projectName);
+		issue.setBugtracker(bugTracker.getName());
+		return issue;
 	}
 	
 
 	@Override
 	public RemoteIssue getIssue(String key, BugTracker bugTracker) {
-		return connect(bugTracker).findIssue(key);
+		RemoteIssue issue = connect(bugTracker).findIssue(key);
+		issue.setBugtracker(bugTracker.getName());
+		return issue;
 	}
 
 	@Override
@@ -125,6 +133,12 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 		return issues;
 	}
+	
+	@Override
+	public void forwardAttachments(String remoteIssueKey, BugTracker bugtracker, List<Attachment> attachments) {
+		connect(bugtracker).forwardAttachments(remoteIssueKey, attachments);
+	}
+	
 
 	@Override
 	public Set<String> getProviderKinds() {

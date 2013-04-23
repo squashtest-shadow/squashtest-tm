@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
@@ -283,5 +284,17 @@ public interface BugTrackersLocalService {
 	 * 			: the id of the issue in Squash TM
 	 */
 	void detachIssue(Long id);
+	
+
+	/**
+	 * Given a remote issue key, will ask the bugtracker to attach the attachments to that issue.
+	 * In order to prevent possible conflicts (multiple issue may have the same id if defined on different bugtrackers)
+	 * the bugtracker name is required too. 
+	 * 
+	 * @param remoteIssueKey
+	 * @Param bugtrackerName
+	 * @param attachments
+	 */
+	void forwardAttachments(String remoteIssueKey, String bugtrackerName, List<Attachment> attachments);
 
 }

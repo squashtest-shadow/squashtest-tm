@@ -29,6 +29,7 @@ import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
@@ -122,5 +123,16 @@ public interface InternalBugtrackerConnector {
 	 * @return
 	 */
 	List<RemoteIssue> findIssues(List<String> issueKeyList);
+	
+	
+	/**
+	 * Given a remote issue key, will ask the bugtracker to attach the attachments to that issue.
+	 * 
+	 * @param remoteIssueKey
+	 * @param attachments
+	 */
+	void forwardAttachments(String remoteIssueKey, List<Attachment> attachments);
+	
+
 	
 }

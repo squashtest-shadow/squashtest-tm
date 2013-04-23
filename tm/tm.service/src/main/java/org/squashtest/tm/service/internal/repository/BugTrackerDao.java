@@ -55,4 +55,12 @@ public interface BugTrackerDao extends EntityDao<BugTracker> {
 	 * @return the list of distinct BugTrackers concerned by the given projects;
 	 */
 	List<BugTracker> findDistinctBugTrackersForProjects(List<Long> projectIds);
+	
+	/**
+	 * Given its name, returns a bugtracker
+	 * 
+	 * @param bugtrackerName
+	 * @return
+	 */
+	BugTracker findByName(String bugtrackerName);
 }

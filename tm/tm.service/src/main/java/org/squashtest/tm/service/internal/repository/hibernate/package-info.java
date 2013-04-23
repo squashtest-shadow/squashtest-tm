@@ -197,6 +197,8 @@
 		@NamedQuery(name = "bugtracker.count", query = "select count(bte) from BugTracker bte"),
 		@NamedQuery(name = "bugtracker.findBugTrackerByName", query = "from BugTracker where name = :name "),
 		@NamedQuery(name = "bugtracker.findDistinctBugTrackersForProjects", query = "select distinct bt from Project p join p.bugtrackerBinding btB join btB.bugtracker bt where p.id in (:projects)"),
+		@NamedQuery(name = "bugtracker.findByName", query = "from BugTracker where name = :btName"),
+		
 
 		//UsersGroup
 		@NamedQuery(name = "usersGroup.findAllGroups", query = "from UsersGroup fetch all properties order by qualifiedName"),

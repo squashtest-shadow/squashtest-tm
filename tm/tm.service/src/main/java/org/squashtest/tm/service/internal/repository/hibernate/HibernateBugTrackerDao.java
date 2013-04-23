@@ -28,6 +28,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.exception.BugTrackerNameAlreadyExistsException;
@@ -108,6 +109,15 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 		}else{
 			return Collections.emptyList();
 		}
+	}
+	
+	
+	@Override
+	public BugTracker findByName(String bugtrackerName) {
+		Query query = currentSession().getNamedQuery("bugtracker.findByName");
+		query.setParameter("btName",  bugtrackerName, StringType.INSTANCE);
+		return (BugTracker)query.uniqueResult();
+		
 	}
 	
 	private static final class SetProjectsParametersCallback implements SetQueryParametersCallback {
