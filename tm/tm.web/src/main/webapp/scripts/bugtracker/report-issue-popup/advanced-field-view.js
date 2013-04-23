@@ -281,6 +281,8 @@ define(["jquery",
 			
 			var newValues = {};
 			var controls = this._getAllControls();
+			this.model.unset('isInvalid');
+			var self = this;
 			
 			controls.each(function(){
 				
@@ -288,6 +290,9 @@ define(["jquery",
 				
 				var fieldid = $this.data('fieldid');
 				var validation = $this.data('widget').validate();
+				if(!!validation.length){
+					self.model.set('isInvalid', true);
+				}
 				var value = $this.data('widget').fieldvalue();
 				
 				//has any file upload ?

@@ -430,7 +430,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		this.submitIssue = $.proxy(function(){
 			
 			this.fieldsView.readOut();	
-			if(this.model.get("isValid")){
+			if(!this.model.get("isInvalid")){
 	
 				flipToPleaseWait();
 				
