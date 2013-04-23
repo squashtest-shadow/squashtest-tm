@@ -23,8 +23,8 @@
 define(["jquery", "./SimpleFileUploader"], function($, simpleFileUploader){
 	
 	return {
-		upload : function(fileArray){
-			return simpleFileUploader.upload(fileArray);
+		uploadFilesOnly : function(form, url){
+			return simpleFileUploader.uploadFilesOnly(form, url);
 		}
 	}
 });

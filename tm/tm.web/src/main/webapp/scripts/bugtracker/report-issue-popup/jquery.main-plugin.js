@@ -102,10 +102,19 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		}
 		
 		
-		this.postAttachments = function(json){
-			var files = this.controller.fieldsView.getFileUploads();
-			if (files.length>0){
-				fileUploadUtils.upload(files);
+		this.postAttachments = function(json, btName){
+			
+			var forms = this.controller.fieldsView.getFileUploadForms();
+			
+			if (forms.length>0){
+				
+				var btName = this.controller.model.get('bugtracker');
+				var url = squashtm.app.contextRoot+'/bugtracker/'+btName+'/remote-issues/'+json.issueId+'/attachments';
+				
+				for (var i=0;i<forms.length;i++){
+					var form = $(forms[i]);
+					fileUploadUtils.uploadFilesOnly(form, url);
+				}
 			}
 		}
 		

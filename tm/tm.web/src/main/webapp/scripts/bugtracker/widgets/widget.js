@@ -90,6 +90,11 @@ define(["jquery"], function($){
 			//if fieldvalue is null or undefined, acts as a getter. Else, it's a setter.
 		},
 		
+		//if you have fileuploads, have them all in the <form/> object that will be returned by this function
+		getForm : function(){
+			return null;
+		},
+		
 		createDom : function(field){
 			/*
 			 * create the dom element that best fits this field. This dom element is returned as a jquery object.

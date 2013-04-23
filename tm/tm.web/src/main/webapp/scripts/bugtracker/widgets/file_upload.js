@@ -38,8 +38,15 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "handlebars"], fu
 			}
 		},
 		
+		_generateId : function(){
+			return "_fileupload-"+Math.random().toString().substr(2,3);
+		},
+		
+		
 		_create : function(){
+
 			var delegate = this._createDelegate();
+			
 			var itemTemplate = this.element.find('div.attachment-templates div.attachment-item');
 			
 			//this is NOT a jquery widget, fetching and caching the instance of the object created that way is important because 
@@ -50,11 +57,11 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "handlebars"], fu
 		},
 		
 		_getDelegate : function(){
-			return this.element.find('div.bt-delegate');
+			return this.element.find('form.bt-delegate');
 		},
 		
-		_createDelegate : function(){
-			var elt = $('<div class="bt-delegate"></div>');
+		_createDelegate : function(frameId){						
+			var elt = $('<form class="bt-delegate"/>');
 			this.element.append(elt);
 			return elt;
 		},
@@ -62,6 +69,10 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "handlebars"], fu
 		fieldvalue : function(fieldvalue){
 			//weeeeell, very special case here.
 		}, 
+		
+		getForm : function(){
+			return this._getDelegate();
+		},		
 
 		createDom : function(field){
 			

@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "backbone", "handlebars", "../domain/BTEntity", "text!./default-view-template.html!strip","jqueryui"], function($, Backbone, Handlebars, BTEntity,  source){
-//define(["jquery", "backbone", "handlebars", "../domain/BTEntity", "jqueryui"], function($, Backbone, Handlebars, BTEntity, source){
+//define(["jquery", "backbone", "handlebars", "../domain/BTEntity", "text!./default-view-template.html!strip","jqueryui"], function($, Backbone, Handlebars, BTEntity,  source){
+define(["jquery", "backbone", "handlebars", "../domain/BTEntity", "jqueryui"], function($, Backbone, Handlebars, BTEntity, source){
 
 
 	

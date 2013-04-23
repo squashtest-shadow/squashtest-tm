@@ -24,8 +24,8 @@ define(["jquery",
         "backbone", 
         "squash.translator",
         "../widgets/widget-registry", 
-        "text!./advanced-view-template.html!strip",
-        //"text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip",
+        //"text!./advanced-view-template.html!strip",
+        "text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip",
         "jqueryui"], 
 		function($, Backbone, translator, widgetRegistry, source){
 
@@ -166,7 +166,7 @@ define(["jquery",
 		// properties set when init :
 		fieldTpl : undefined,
 		frameTpl : undefined,
-		fileUploads : [],
+		fileUploadForms : [],
 		
 		events : {
 			"click input.optional-fields-toggle" : "toggleOptionalFields",
@@ -274,11 +274,10 @@ define(["jquery",
 			}
 		},
 		
-		//we ignore the file uploads, they'll be stored to be processed elsewhere.
-		//note about uploading files ajax style : read http://www.ajaxf1.com/tutorial/ajax-file-upload-tutorial.html
+		//the file uploads will be handled separately. If a control contains inputs of type 'file', the control 
 		readOut : function(){
 			
-			var allFileUploads = [];
+			var allFileUploadForms = [];
 			
 			var newValues = {};
 			var controls = this._getAllControls();
@@ -304,10 +303,10 @@ define(["jquery",
 				}
 				var value = $this.data('widget').fieldvalue();
 				
-				//has any file upload ?
-				var uploads = $this.find('input[type="file"]');
-				if (uploads.length>0){
-					allFileUploads = allFileUploads.concat(uploads.get());
+				//has any file upload ? If so we accepts they will be processed only if the control is a <form/>
+				var form = $this.data('widget').getForm();
+				if (form!==null && form !== undefined){
+					allFileUploadForms.push(form);
 				}
 				
 				newValues[fieldid] = value;
@@ -316,7 +315,7 @@ define(["jquery",
 			
 			this.model.set('fieldValues', newValues);
 			
-			this.fileUploads = allFileUploads;
+			this.fileUploadForms = allFileUploadForms;
 		},
 		
 		enableControls : function(){
@@ -335,11 +334,8 @@ define(["jquery",
 		},
 		
 		//returns only the items that were set
-		getFileUploads : function(){
-			return $.grep(this.fileUploads, function(item){
-				var content =  $(item).val();
-				return ! (content == "" || typeof (content) == 'undefined' ); 
-			});
+		getFileUploadForms : function(){
+			return this.fileUploadForms;
 		},
 		
 		//********************** the bowels ********************
