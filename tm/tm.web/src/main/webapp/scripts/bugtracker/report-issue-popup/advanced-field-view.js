@@ -287,6 +287,7 @@ define(["jquery",
 				var $this = $(this);
 				
 				var fieldid = $this.data('fieldid');
+				var validation = $this.data('widget').validate();
 				var value = $this.data('widget').fieldvalue();
 				
 				//has any file upload ?

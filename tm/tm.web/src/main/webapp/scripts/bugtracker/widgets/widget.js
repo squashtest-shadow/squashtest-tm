@@ -98,6 +98,19 @@ define(["jquery"], function($){
 			 * - data-fieldid : the id of this field, ie field.id
 			 */
 
+		},
+		
+		validate : function(){
+			
+			var messages = [];
+			
+			if(this.options.rendering.required){
+				if(this.fieldvalue()){
+					messages[0] = "validation.error.fieldCannotBeEmpty";
+				}
+			}
+			
+			return messages;
 		}
 		
 		

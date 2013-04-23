@@ -70,6 +70,7 @@ public class InputType {
 	public static final String CHECKBOX_LIST	= "checkbox_list";
 	public static final String RADIO_BUTTON		= "radio_button";
 	public static final String FILE_UPLOAD		= "file_upload";
+	public static final String TIMETRACKER      = "timetracker";
 	
 	public static final String EXCLUDED_CHARACTERS = "[^\\w-_.0-9]";
 	
