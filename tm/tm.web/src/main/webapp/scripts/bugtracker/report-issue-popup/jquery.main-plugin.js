@@ -429,20 +429,23 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 
 		this.submitIssue = $.proxy(function(){
 			
-			flipToPleaseWait();
-			
 			this.fieldsView.readOut();	
-			var model = this.model.toJSON();
-			
+			if(this.model.get("isValid")){
+	
+				flipToPleaseWait();
+				
+				var model = this.model.toJSON();
+				
 			var xhr = this.postHelper.postIssue(model, this.reportUrl);
-			
+				
 			xhr.done(function(){
-				self.dialog('close');
-				if (self.callback){
-					self.callback.apply(self, arguments);
-				}
-			})
-			.fail(bugReportError);
+					self.dialog('close');
+					if (self.callback){
+						self.callback.apply(self, arguments);
+					}
+				})
+				.fail(bugReportError);
+			}
 			
 		}, self);
 		

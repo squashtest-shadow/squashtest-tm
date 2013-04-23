@@ -105,9 +105,14 @@ define(["jquery"], function($){
 			var messages = [];
 			
 			if(this.options.rendering.required){
-				if(this.fieldvalue()){
+				if(!this.fieldvalue().scalar && !this.fieldvalue().composite.length){
 					messages[0] = "validation.error.fieldCannotBeEmpty";
 				}
+			}
+			
+			$(".issue-field-message-holder", this.element.parent().parent()).text("");
+			for(var i=0; i<messages.length; i++){
+				$(".issue-field-message-holder", this.element.parent().parent()).append(messages[i]);
 			}
 			
 			return messages;

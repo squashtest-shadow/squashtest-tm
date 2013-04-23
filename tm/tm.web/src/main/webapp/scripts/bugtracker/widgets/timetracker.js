@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "../domain/FieldValue" ], function($, FieldValue) {
+define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], function($, FieldValue, translator, Handlerbars) {
 
 	return {
 
@@ -37,6 +37,10 @@ define([ "jquery", "../domain/FieldValue" ], function($, FieldValue) {
 			this.element.bind('focusout', function(){
 				self.validate();
 			});
+			
+			
+			//var errorMessage = translator.get("dialog.attachment.add.button.remove.label");	
+			//var compiledTemplate = Handlebars.compile($(".validation-message"), this.element.parent().parent());
 		},
 		
 		fieldvalue : function(fieldvalue) {
@@ -50,6 +54,7 @@ define([ "jquery", "../domain/FieldValue" ], function($, FieldValue) {
 			}
 		},
 		createDom : function(field) {
+			
 			var input = $('<input />', {
 				'type' : 'text',
 				'data-widgetname' : 'timetracker',
@@ -66,7 +71,7 @@ define([ "jquery", "../domain/FieldValue" ], function($, FieldValue) {
 		evaluateToMinutes : function(){
 
 			var result = this.evaluateField();
-			var totalMinutes = 0;
+			var totalMinutes = "";
 			
 			if(!!result){
 				var totalDays = result.days + (result.weeks*5);
@@ -79,11 +84,17 @@ define([ "jquery", "../domain/FieldValue" ], function($, FieldValue) {
 		
 		validate : function(){
 		
-			var messages = []
+			var messages = [];
 			var result = this.evaluateField();
 			if(!result){
 				messages[0] = "validation.error.illformedTimetrackingExpression"
 			}
+			
+			$(".issue-field-message-holder", this.element.parent().parent()).text("");
+			for(var i=0; i<messages.length; i++){
+				$(".issue-field-message-holder", this.element.parent().parent()).append(messages[i]);
+			}
+			
 			return messages;
 		},
 		
