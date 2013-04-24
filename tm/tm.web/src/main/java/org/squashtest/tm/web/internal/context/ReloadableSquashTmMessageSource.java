@@ -73,7 +73,7 @@ public class ReloadableSquashTmMessageSource extends ReloadableResourceBundleMes
 	 * @see org.springframework.context.support.ReloadableResourceBundleMessageSource#setBasenames(java.lang.String[])
 	 */
 	@Override
-	public void setBasenames(String[] basenames) {
+	public void setBasenames(String... basenames) {
 		this.basenames = basenames;
 		super.setBasenames(basenames);
 	}
