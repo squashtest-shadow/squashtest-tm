@@ -34,6 +34,7 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
@@ -146,5 +147,14 @@ public class SimpleBugtrackerConnectorAdapter implements
 											 "Please submit " +
 											 "your attachments using the bugtracker itself.");
 	}
+	
+	@Override
+	public Object executeDelegateCommand(DelegateCommand command) {
+		//NOOP : the old interface simply cannot do that. It cannot possibly be invoked anyway. Normally.
+		throw new BugTrackerManagerException("Technical error : impossible to execute a delegate command. This issue "+
+											 "is managed by a simple connector that cannot handle such operation. As such yhis is likely a "+
+											 "a programming error : file uploads should never have been available in the GUI in the first place");
+	}
+
 
 }

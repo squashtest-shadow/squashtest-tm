@@ -23,12 +23,12 @@ package org.squashtest.csp.core.bugtracker.service;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
-import javax.swing.plaf.ButtonUI;
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
@@ -143,8 +143,15 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	@Override
 	public Set<String> getProviderKinds() {
 		return bugTrackerConnectorFactory.getProviderKinds();
-
 	}
+	
+	
+	@Override
+	public Object forwardDelegateCommand(DelegateCommand command,
+			BugTracker bugtracker) {
+		return connect(bugtracker).executeDelegateCommand(command);
+	}
+	
 
 	/**
 	 * @param contextHolder the contextHolder to set

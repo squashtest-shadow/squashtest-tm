@@ -31,6 +31,7 @@ import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.AdvancedIssue;
+import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
@@ -116,6 +117,11 @@ public class AdvancedBugtrackerConnectorAdapter implements
 	@Override
 	public void forwardAttachments(String remoteIssueKey, List<Attachment> attachments) {
 		connector.forwardAttachments(remoteIssueKey, attachments);
+	}
+	
+	@Override
+	public Object executeDelegateCommand(DelegateCommand command) {
+		return connector.executeDelegateCommand(command);
 	}
 	
 }

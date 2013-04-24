@@ -37,6 +37,7 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
@@ -191,6 +192,12 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	public void forwardAttachments(String remoteIssueKey, String bugtrackerName, List<Attachment> attachments){
 		BugTracker bugtracker = bugTrackerDao.findByName(bugtrackerName);		//NOTE : this may crash is multiple bugtracker have the same name. One could cross check with the remoteissuekey if one day shit happened.
 		remoteBugTrackersService.forwardAttachments(remoteIssueKey, bugtracker, attachments);
+	}
+	
+	@Override
+	public Object forwardDelegateCommand(DelegateCommand command, String bugtrackerName) {
+		BugTracker bugtracker = bugTrackerDao.findByName(bugtrackerName);
+		return remoteBugTrackersService.forwardDelegateCommand(command, bugtracker);
 	}
 	
 

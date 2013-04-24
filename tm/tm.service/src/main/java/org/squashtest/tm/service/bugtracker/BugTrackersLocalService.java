@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
@@ -296,5 +297,14 @@ public interface BugTrackersLocalService {
 	 * @param attachments
 	 */
 	void forwardAttachments(String remoteIssueKey, String bugtrackerName, List<Attachment> attachments);
+	
+	
+	/**
+	 * forwards a {@link DelegateCommand} to a connector
+	 * 
+	 * @param command
+	 * @return
+	 */
+	Object forwardDelegateCommand(DelegateCommand command, String bugtrackerName);
 
 }

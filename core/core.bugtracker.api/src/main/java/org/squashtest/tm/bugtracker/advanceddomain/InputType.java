@@ -25,8 +25,12 @@ import java.util.Map;
 
 
 /**
- * <p>An input type defines basically what widget should be used when rendered in a UI. It maps a name that Squash will understand to the "original" name of 
- * the remote bugtracker widget. A widget represents a {@link Field} and produces a {@link FieldValue}. The original field name must contain only printable characters, 
+ * <p>An input type defines basically what widget should be used when rendered in a UI. Squash proposes several native widgets, but is open to extension 
+ * (ask on the forum on that topic if you're interested). An InputType maps the original name of a widget proposed on the remote bugtracker to the name 
+ * of a native Squash Widget. It is the role of the bugtracker connector to define such mapping and provide InputType for each fields that needs rendering on
+ * the Squash UI.</p>
+ * 
+ * <p>A widget represents a {@link Field} and produces a {@link FieldValue}. The original field name must contain only printable characters, 
  * digits, dots, underscrot and dash, any non supported character will be replaced by '_'.
  * See the static fields for the list of known fields.</p>
  * 
@@ -42,11 +46,15 @@ import java.util.Map;
  * 
  * 
  * <p>
- *   an InputType also accepts metadata that will be transmitted to the client, as a map. As of today, supported metadata are : 
+ *   an InputType also accepts metadata that will be transmitted to the Squash UI, as a map. As of today, supported metadata are : 
  *   
  *   <ul>
  *   	<li>'date-format' : the format string for this input if a date is involved (mainly for DATE_PICKER and DATE_TIME). Example : 'date-format' : 'yyyy-mm-dd'</li>
- *   
+ *   	<li>'onchange' : if set, when the widget on the Squash UI changes its value, it will emit a {@link DelegateCommand} to the bugtracker connector. Not all widgets 
+ *   supports this, as of 1.5.1 and until further notice only text_field can do so. 
+ *   		Native squash widgets will emit a DelegateCommand, using the value you supplied for 'onchange' as command name and its {@link FieldValue#getName()} as argument. Customized 
+ *   widgets shipped with an extension can of course specify something else, it will be up to your connector to know how to interpret them. 
+ *   	</li>
  *   </ul>
  * 
  * </p>
@@ -78,6 +86,7 @@ public class InputType {
 	//********************* common metadata keys ******************
 	
 	public static final String DATE_FORMAT 		= "date-format";
+	public static final String ONCHANGE = "onchange";
 	
 	
 	// ***** attributes ******

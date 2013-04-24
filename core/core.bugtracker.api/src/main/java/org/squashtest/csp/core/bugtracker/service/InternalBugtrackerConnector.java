@@ -29,6 +29,7 @@ import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
@@ -134,5 +135,13 @@ public interface InternalBugtrackerConnector {
 	void forwardAttachments(String remoteIssueKey, List<Attachment> attachments);
 	
 
+	/**
+	 * Executes a delegate command and may return a result. The resulting object must be string-serializable, as it will be jsonified and brought to the 
+	 * Squash UI.
+	 * 
+	 * @param command
+	 * @return
+	 */
+	Object executeDelegateCommand(DelegateCommand command); 
 	
 }

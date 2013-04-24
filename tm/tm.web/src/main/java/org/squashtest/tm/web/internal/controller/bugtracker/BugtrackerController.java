@@ -53,6 +53,7 @@ import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.AdvancedIssue;
+import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.domain.Identified;
@@ -679,6 +680,11 @@ public class BugtrackerController {
 			}
 		}
 		
+	}
+	
+	@RequestMapping(value = "{btName}/command", method = RequestMethod.POST)
+	public @ResponseBody Object forwardDelegateCommand(@PathVariable("btName") String bugtrackerName, DelegateCommand command){
+		return bugTrackersLocalService.forwardDelegateCommand(command, bugtrackerName);
 	}
 	
 
