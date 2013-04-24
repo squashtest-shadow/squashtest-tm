@@ -43,7 +43,7 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 		def result = BugtrackerControllerHelper.buildExecutionUrl(request, execution)
 		
 		then : 
-		result == "http://serverName:8080/contextPath/executions/65/info"
+		result == "http://serverName:8080/contextPath/executions/65"
 		
 	}
 	
