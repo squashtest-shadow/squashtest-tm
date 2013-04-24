@@ -41,7 +41,7 @@
  * - fieldvalue : see ../domain/FieldValue, or also org.squashtest.tm.bugtracker.advanceddomain.FieldValue
  */
  
-define(["jquery"], function($){
+define(["jquery", "../domain/DelegateCommand"], function($, DelegateCommand){
 	
 	return {
 		
@@ -59,7 +59,9 @@ define(["jquery"], function($){
 					fieldSchemeSelector : false
 				},
 				required : false
-			}
+			},
+			_delegateurl : ""//used internally, you are not supposed to care about that one. But if you really want to know, WidgetFactory in advanced-field-view.js sets it 
+							//when the widget instance is created.
 		},
 		
 		_create : function(){
@@ -103,6 +105,47 @@ define(["jquery"], function($){
 			 * - data-fieldid : the id of this field, ie field.id
 			 */
 
+		},
+		
+		
+		/*
+		 * Will ask Squash server to forward a DelegateCommand to the bugtracker connector, then invoke the callback with the result if success 
+		 * or with the xhr object if error.
+		 * 
+		 */
+		sendDelegateCommand : function(command, callback){
+
+			var url =this.options._delegateurl;
+			
+			if (url.length==0){
+				if (console && console.log){
+					console.log('bugtracker widget : no url for delegate command was supplied, request is aborted');
+				}
+				if (!!callback){
+					callback(null);
+				}
+			}
+			
+			
+			$.ajax({
+				url : url,
+				dataType : 'json', 
+				contentType : 'application/json',
+				data : JSON.stringify(command),
+				type : 'POST'
+			}).success(function(json){
+				if (!!callback){
+					callback(json);
+				}
+			}).error(function(xhr, err){
+				if (console && console.log){
+					console.log('command '+command.command+' : error : '+err);
+				}
+				if (!!callback){
+					callback(xhr);
+				}
+			})
+			
 		},
 		
 		validate : function(){

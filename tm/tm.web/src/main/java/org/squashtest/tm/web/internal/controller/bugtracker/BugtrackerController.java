@@ -683,7 +683,7 @@ public class BugtrackerController {
 	}
 	
 	@RequestMapping(value = "{btName}/command", method = RequestMethod.POST)
-	public @ResponseBody Object forwardDelegateCommand(@PathVariable("btName") String bugtrackerName, DelegateCommand command){
+	public @ResponseBody Object forwardDelegateCommand(@PathVariable("btName") String bugtrackerName, @RequestBody DelegateCommand command){
 		return bugTrackersLocalService.forwardDelegateCommand(command, bugtrackerName);
 	}
 	

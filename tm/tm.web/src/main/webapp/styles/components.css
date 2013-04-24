@@ -295,21 +295,31 @@ div.issue-report-dialog div.issue-report-break{
 	min-height: 2em;
 }
 
-/*
 div.issue-panel-container{
 	margin-top : 0.2em;	
 	width : 98%;
 }
 
-div.
-
 label.issue-field-label{
-	width : 35%;	
+	width : 25%;	
+	vertical-align:middle;
 }
 
 span.issue-field-control-holder{
-	width : 64%;
-}*/
+	width : 74%;
+}
+
+span.issue-field-control-holder{
+	line-height : 1em;
+}
+
+
+span.issue-field-control-holder ul.squash-tagit{
+	display : inline-block;
+	width : 98%;
+	border-color : lightgray;	
+}
+
 
 
 /*******************************

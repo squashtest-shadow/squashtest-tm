@@ -23,9 +23,9 @@
 define(["jquery", 
         "backbone", 
         "squash.translator",
-        "../widgets/widget-registry", 
-        "text!./advanced-view-template.html!strip",
-        //"text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip",
+        "../widgets/widget-registry",
+        //"text!./advanced-view-template.html!strip",
+        "text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip",
         "jqueryui"], 
 		function($, Backbone, translator, widgetRegistry, source){
 
@@ -50,6 +50,8 @@ define(["jquery",
 	var WidgetFactory = {
 		
 		registry : widgetRegistry,
+		
+		delegateurl : null,	//needs to be set on view init
 
 		findFieldById : function(fields, id){
 			for (var i=0, len = fields.length ; i<len ; i++){
@@ -112,7 +114,9 @@ define(["jquery",
 		appendWidget : function(fieldItem, field, widgetName){
 			
 			//create the element
-			var domelt = $.squashbt[widgetName].createDom(field);
+			var fieldCopy = $.extend(true, {}, field, {_delegateurl : this.delegateurl});
+			
+			var domelt = $.squashbt[widgetName].createDom(fieldCopy);
 			
 			try{
 				//if it's a scheme selector, append a special class to it
@@ -127,7 +131,7 @@ define(["jquery",
 				domelt.appendTo(enclosingSpan);
 				
 				//create the widget
-				domelt[widgetName](field);
+				domelt[widgetName](fieldCopy);
 				
 				//map the widget in domelt.data as 'widget' for easier reference
 				var instance = domelt.data(widgetName);
@@ -184,7 +188,6 @@ define(["jquery",
 			var data = {
 				labels : this.options.labels
 			};			
-
 			
 		},
 		
@@ -223,6 +226,8 @@ define(["jquery",
 			var panel = this.$el.find('div.issue-panel-container');
 			
 			//generate the widgets
+			var btname = this.model.get('bugtracker');
+			WidgetFactory.delegateurl = squashtm.app.contextRoot+"/"+btname+"/command";
 			WidgetFactory.processPanel(panel, fields);
 			
 			//rebinds the view
