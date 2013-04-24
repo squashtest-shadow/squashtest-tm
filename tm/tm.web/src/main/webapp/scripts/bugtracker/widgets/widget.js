@@ -41,7 +41,7 @@
  * - fieldvalue : see ../domain/FieldValue, or also org.squashtest.tm.bugtracker.advanceddomain.FieldValue
  */
  
-define(["jquery", "squash.translator"], function($, translator){
+define(["jquery"], function($){
 	
 	return {
 		
@@ -106,17 +106,8 @@ define(["jquery", "squash.translator"], function($, translator){
 			
 			if(this.options.rendering.required){
 				if(!this.fieldvalue().scalar && !this.fieldvalue().composite.length){
-					messages[0] = translator.get("validation.error.fieldCannotBeEmpty");
+					messages[0] = "validation.error.fieldCannotBeEmpty";
 				}
-			}
-			
-			$(".issue-field-message-holder", this.element.parent().parent()).text("");
-			for(var i=0; i<messages.length; i++){
-				$(".issue-field-message-holder", this.element.parent().parent()).append(messages[i]);
-			}
-			
-			if(!!messages.length){
-				$(".issue-field-message-holder", this.element.parent().parent()).show();
 			}
 			
 			return messages;

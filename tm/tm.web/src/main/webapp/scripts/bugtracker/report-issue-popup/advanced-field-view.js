@@ -22,11 +22,12 @@
 
 define(["jquery", 
         "backbone", 
+        "squash.translator",
         "../widgets/widget-registry", 
         "text!./advanced-view-template.html!strip",
         //"text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip",
         "jqueryui"], 
-		function($, Backbone, widgetRegistry, source){
+		function($, Backbone, translator, widgetRegistry, source){
 
 
 	// *************** utilities ****************************
@@ -289,9 +290,17 @@ define(["jquery",
 				var $this = $(this);
 				
 				var fieldid = $this.data('fieldid');
+				$(".issue-field-message-holder", $this.parent().parent()).text("");
 				var validation = $this.data('widget').validate();
 				if(!!validation.length){
+					
+					for(var i=0; i<validation.length; i++){
+						$(".issue-field-message-holder", $this.parent().parent()).append(translator.get(validation[i])+"<br/>");
+					}
+					$(".issue-field-message-holder", $this.parent().parent()).show();
+
 					self.model.set('isInvalid', true);
+					
 				}
 				var value = $this.data('widget').fieldvalue();
 				

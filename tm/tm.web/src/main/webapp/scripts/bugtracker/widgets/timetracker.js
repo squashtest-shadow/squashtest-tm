@@ -35,28 +35,50 @@ define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], 
 		_create : function(){
 			var self = this;
 			this.element.bind('focusout', function(){
-				self.validate();
+				self.autovalidate();
 			});
 		},
 		
 		fieldvalue : function(fieldvalue) {
 			if (fieldvalue === null || fieldvalue === undefined) {
-				var text = this.evaluateToMinutes(this.element.eq(0).val());
+				
+				var field = this.options;
+				var original = this.evaluateToMinutes($($("input", this.element.eq(0))[0]).val());
+				var remaining = this.evaluateToMinutes($($("input", this.element.eq(0))[1]).val());
 				var typename = this.options.rendering.inputType.dataType;
 
-				return new FieldValue("--", typename, text);
+				var allValues = [];
+				
+				var originalValue = new FieldValue("originalEstimate", "string", original);
+				var remainingValue = new FieldValue("remainingEstimate", "string", remaining);
+				
+				allValues.push(originalValue);
+				allValues.push(remainingValue);
+				 
+				return new FieldValue(field.id, "composite", allValues);
+				
 			} else {
 				this.element.val(fieldvalue.scalar);
 			}
 		},
 		createDom : function(field) {
 			
-			var input = $('<input />', {
+			var div = $('<span/>', {
 				'type' : 'text',
 				'data-widgetname' : 'timetracker',
-				'data-fieldid' : field.id 
+				'data-fieldid' : field.id,
+				'class' : 'full-width issue-field-control'
 			});
-			return input;
+			
+			var input1 = $('<input />');
+			
+			var input2 = $('<input />');
+			
+			div.append(input1);
+			div.append("<br/>");
+			div.append(input2);
+			
+			return div;
 		},
 
 		isDigit : function(character) {
@@ -64,15 +86,15 @@ define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], 
 			return digits.indexOf(character) != -1;
 		},
 
-		evaluateToMinutes : function(){
+		evaluateToMinutes : function(expression){
 
-			var result = this.evaluateField();
+			var result = this.evaluateField(expression);
 			var totalMinutes = "";
 			
 			if(!!result){
-				var totalDays = result.days + (result.weeks*5);
-				var totalHours = result.hours + (totalDays*8);
-				var totalMinutes = result.minutes + (totalHours*60);
+				var totalDays = parseInt(result.days,10) + (parseInt(result.weeks,10)*5);
+				var totalHours = parseInt(result.hours,10) + (totalDays*8);
+				var totalMinutes = parseInt(result.minutes,10) + (totalHours*60);
 			}
 			
 			return totalMinutes;
@@ -81,27 +103,34 @@ define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], 
 		validate : function(){
 		
 			var messages = [];
-			var result = this.evaluateField();
-			if(!result){
-				messages[0] = translator.get("validation.error.illformedTimetrackingExpression");
-			}
 			
-			$(".issue-field-message-holder", this.element.parent().parent()).text("");
-			for(var i=0; i<messages.length; i++){
-				$(".issue-field-message-holder", this.element.parent().parent()).append(messages[i]);	
-			}
-			if(!!messages.length){
-				$(".issue-field-message-holder", this.element.parent().parent()).show();
+			var result1 = this.evaluateField($($("input", this.element.eq(0))[0]).val());
+			var result2 = this.evaluateField($($("input", this.element.eq(0))[1]).val());
+			
+			if(!result1 || !result2){
+				messages[0] = "validation.error.illformedTimetrackingExpression";
 			}
 
 			return messages;
 		},
 		
-		evaluateField : function() {
+		autovalidate : function(){
+			
+			var messages = this.validate();
+			
+			$(".issue-field-message-holder", this.element.parent().parent()).text("");
+			for(var i=0; i<messages.length; i++){
+				$(".issue-field-message-holder", this.element.parent().parent()).append(translator.get(messages[i]));	
+			}
+			if(!!messages.length){
+				$(".issue-field-message-holder", this.element.parent().parent()).show();
+			}
+		},
+		
+		evaluateField : function(expression) {
 
 			// get the string and split it into charachters
-			var text = this.element.eq(0).val();
-			var array = text.split("");
+			var array = expression.split("");
 			var index = 0;
 
 			// current number
