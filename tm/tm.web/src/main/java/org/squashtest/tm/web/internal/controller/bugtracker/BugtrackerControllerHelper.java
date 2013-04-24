@@ -172,7 +172,6 @@ public final class BugtrackerControllerHelper {
 		requestUrl.append(request.getContextPath());
 		requestUrl.append("/executions/");
 		requestUrl.append(execution.getId());
-		requestUrl.append("/info");
 		return requestUrl.toString();
 	}
 

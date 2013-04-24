@@ -663,7 +663,7 @@ public class BugtrackerController {
 		
 		List<Attachment> issueAttachments = new ArrayList<Attachment>(attachments.size());
 		for (org.squashtest.tm.domain.attachment.Attachment attach : attachments){
-			Attachment newAttachment = new Attachment(attach.getShortName(), attach.getSize(), attach.getContent().getContent());
+			Attachment newAttachment = new Attachment(attach.getName(), attach.getSize(), attach.getContent().getContent());
 			issueAttachments.add(newAttachment);
 		}
 		

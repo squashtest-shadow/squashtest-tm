@@ -115,6 +115,9 @@ define(["jquery"], function($){
 				}
 			}
 			
+			else{
+				$(".issue-field-message-holder", this.element.parent().parent()).hide();
+			}
 			return messages;
 		}
 		

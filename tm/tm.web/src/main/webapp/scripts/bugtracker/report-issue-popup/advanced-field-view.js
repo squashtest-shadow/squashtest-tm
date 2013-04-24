@@ -24,8 +24,8 @@ define(["jquery",
         "backbone", 
         "squash.translator",
         "../widgets/widget-registry", 
-        //"text!./advanced-view-template.html!strip",
-        "text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip",
+        "text!./advanced-view-template.html!strip",
+        //"text!http://localhost:8080/squash/scripts/bugtracker/report-issue-popup/template.html!strip",
         "jqueryui"], 
 		function($, Backbone, translator, widgetRegistry, source){
 

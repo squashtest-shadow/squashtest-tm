@@ -77,6 +77,8 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 			
 			var effectiveModel = this.preprocessIssue(issueModel);			
 			var strModel = JSON.stringify(issueModel);		
+			
+			var defer = $.Deferred();
 
 			var xhr = $.ajax({
 				url : effectiveUrl,
@@ -84,9 +86,8 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 				data : strModel,
 				contentType: 'application/json',
 				dataType : 'json'
-			});			
-			
-			xhr.done(function(json){
+			}).success(function(json){
+
 				try{
 					helper.postAttachments(json);
 				}
@@ -95,10 +96,13 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 						console.log(wtf);
 					}
 				}
+				defer.resolve(json);	//always succeeds
+			}).error(function(){
+				defer.reject.apply(this, arguments);
 			});
 			
 			
-			return xhr;
+			return defer;
 		}
 		
 		

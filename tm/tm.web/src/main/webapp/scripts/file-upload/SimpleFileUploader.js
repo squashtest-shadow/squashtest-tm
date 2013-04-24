@@ -58,16 +58,18 @@ define(["jquery", "jform"], function($){
 		//sets the name of the remaining inputs
 		form.find('input').attr('name', 'attachment[]');
 		
-		form.ajaxSubmit({
-			url : url,
-			iframe : true,
-			type : 'POST'
-		});
+		//don't post if there is nothing to send
+		if (form.find('input').length>0){
+			form.ajaxSubmit({
+				url : url,
+				iframe : true,
+				type : 'POST'
+			});
+		}
 		
 		//now reattach the detached inputs
 		form.append(notToBePosted);
 
-		iframe.remove();
 	}
 
 	return {
