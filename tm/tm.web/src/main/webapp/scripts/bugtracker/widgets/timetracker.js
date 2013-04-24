@@ -70,12 +70,19 @@ define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], 
 				'class' : 'full-width issue-field-control'
 			});
 			
+			var label1 = $('<label/>', {'class' : 'issue-field-label'});
 			var input1 = $('<input />');
 			
+			var label2 = $('<label/>', {'class' : 'issue-field-label'});
 			var input2 = $('<input />');
 			
+			label1.text(translator.get("widget.timetracker.original-estimate"));
+			label2.text(translator.get("widget.timetracker.remaining-estimate"));
+			
+			div.append(label1);
 			div.append(input1);
 			div.append("<br/>");
+			div.append(label2);
 			div.append(input2);
 			
 			return div;
