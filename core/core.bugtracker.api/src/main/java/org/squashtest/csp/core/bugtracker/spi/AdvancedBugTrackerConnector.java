@@ -31,6 +31,7 @@ import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.tm.bugtracker.advanceddomain.AdvancedIssue;
 import org.squashtest.tm.bugtracker.advanceddomain.AdvancedProject;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
+import org.squashtest.tm.bugtracker.advanceddomain.FieldValue;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 
@@ -149,7 +150,7 @@ public interface AdvancedBugTrackerConnector{
 	 * <p>Executes a delegate command and may return a result. The resulting object must be string-serializable, as it will be jsonified and brought to the 
 	 * Squash UI.</p>
 	 * 
-	 * <p>Note : the return type is free but Collection&lt;FieldValue&gt; is preferred when applicable</p> 
+	 * <p>Note : the return type is free but {@link FieldValue} is preferred when applicable</p> 
 	 * 
 	 * @param command
 	 * @return

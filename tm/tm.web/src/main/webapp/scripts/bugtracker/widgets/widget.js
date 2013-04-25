@@ -56,7 +56,8 @@ define(["jquery", "../domain/DelegateCommand"], function($, DelegateCommand){
 					name : "unknown",
 					original : "unknown",
 					dataType : null,
-					fieldSchemeSelector : false
+					fieldSchemeSelector : false,
+					meta : {}
 				},
 				required : false
 			},
@@ -110,10 +111,10 @@ define(["jquery", "../domain/DelegateCommand"], function($, DelegateCommand){
 		
 		/*
 		 * Will ask Squash server to forward a DelegateCommand to the bugtracker connector, then invoke the callback with the result if success 
-		 * or with the xhr object if error.
+		 * or error with the xhr if error
 		 * 
 		 */
-		sendDelegateCommand : function(command, callback){
+		sendDelegateCommand : function(command, callback, fnError){
 
 			var url =this.options._delegateurl;
 			
@@ -121,8 +122,8 @@ define(["jquery", "../domain/DelegateCommand"], function($, DelegateCommand){
 				if (console && console.log){
 					console.log('bugtracker widget : no url for delegate command was supplied, request is aborted');
 				}
-				if (!!callback){
-					callback(null);
+				if (!!fnError){
+					fnError(null);
 				}
 			}
 			
@@ -141,8 +142,8 @@ define(["jquery", "../domain/DelegateCommand"], function($, DelegateCommand){
 				if (console && console.log){
 					console.log('command '+command.command+' : error : '+err);
 				}
-				if (!!callback){
-					callback(xhr);
+				if (!!fnError){
+					fnError(xhr);
 				}
 			})
 			

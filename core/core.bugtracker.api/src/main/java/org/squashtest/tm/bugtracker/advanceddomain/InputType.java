@@ -53,7 +53,8 @@ import java.util.Map;
  *   	<li>'onchange' : if set, when the widget on the Squash UI changes its value, it will emit a {@link DelegateCommand} to the bugtracker connector. Not all widgets 
  *   supports this, as of 1.5.1 and until further notice only text_field can do so. 
  *   		Native squash widgets will emit a DelegateCommand, using the value you supplied for 'onchange' as command name and its {@link FieldValue#getName()} as argument. Customized 
- *   widgets shipped with an extension can of course specify something else, it will be up to your connector to know how to interpret them. 
+ *   widgets shipped with an extension can of course specify something else, it will be up to your connector to know how to interpret them.
+ *   		This mechanism is used for instance by the text_fields for autocompletion. 
  *   	</li>
  *   </ul>
  * 
@@ -68,7 +69,6 @@ public class InputType {
 	
 	public static final String TEXT_FIELD 		= "text_field";	
 	public static final String TEXT_AREA 		= "text_area";
-	public static final String TEXT_AUTOCOMPLETE= "text_autocomplete";
 	public static final String DATE_PICKER		= "date_picker";
 	public static final String DATE_TIME		= "date_time";
 	public static final String TAG_LIST			= "tag_list";
@@ -86,7 +86,7 @@ public class InputType {
 	//********************* common metadata keys ******************
 	
 	public static final String DATE_FORMAT 		= "date-format";
-	public static final String ONCHANGE = "onchange";
+	public static final String ONCHANGE 		= "onchange";
 	
 	
 	// ***** attributes ******

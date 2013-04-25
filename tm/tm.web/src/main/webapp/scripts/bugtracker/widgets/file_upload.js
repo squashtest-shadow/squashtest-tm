@@ -84,7 +84,7 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "handlebars"], fu
 			var mainElt = $('<div/>', {
 				'data-widgetname' : 'file_upload',
 				'data-fieldid' : field.id,
-				'style' : 'border : 1px solid lightgray'
+				'style' : 'border : 1px solid lightgray; display : inline-block'
 			});
 			
 			var templateElt = $(processedTemplate);

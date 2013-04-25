@@ -20,16 +20,57 @@
  */
 
 
-define(["jquery", "../domain/FieldValue"], function($, FieldValue){
+define(["jquery", "../domain/FieldValue", "jqueryui"], function($, FieldValue){
 
+	//expects 'this' to be the widget instance
+	function configureAutocomplete(){
+		
+		var command = this.options.rendering.inputType.meta.onchange;
+		
+		if (!!command){
+			
+			var self=this;
+			
+			var autoconf = {
+				source : function(search, callback){
+					var values = self.sendDelegateCommand( {command : command, argument : search.term}
+								, function(res){
+									proposal = new FieldValue(res);	//sort of "cast as" FieldValue
+									callback(proposal.getName().split(/,\s*/));
+								}, function(xhr){
+									//nothing, we don't want the widget to fail
+								}
+					);				
+				}
+			}
+			
+			this.element.autocomplete(autoconf);
+			
+			var toto=1;
+		}
+		
+	}
+	
 	return {
 		
 		options : {
 			rendering : {
 				inputType : {
-					name : "text_field"
+					name : "text_field",
+					meta : {}
 				}
 				
+			}
+		},
+		
+		_create : function(){
+			
+			this._super();
+			
+			var meta = this.options.rendering.inputType.meta;
+			
+			if (!!meta.onchange){
+				configureAutocomplete.call(this);
 			}
 		},
 		
@@ -44,6 +85,8 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 				this.element.val(fieldvalue.scalar);
 			}
 		}, 
+		
+		
 		createDom : function(field){
 			var input = $('<input />', {
 				'type' : 'text',

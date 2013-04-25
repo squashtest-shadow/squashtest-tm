@@ -21,31 +21,77 @@
 
 define(function(){
 	
-	return function (id, typename, value){
-		this.id = id;
+
+	function toArrayOfFieldValue(array){
+		var res = [];
+		for (var i=0;i<array.length;i++){
+			var item = array[i];
+			var converted = (item instanceof FieldValue) ? item : new FieldValue(item);
+			res.push(converted);
+		}
+		return res;		
+	}
+	
+	
+	/*
+	 * This constructor accepts either 1 or 3 arguments. The 3 arguments are documented as below, 
+	 * the 1 argument constructor expects a basic javascript object. 
+	 */
+	
+	function FieldValue(objectOrId, typename, value){
+		this.id = "";
 		this.scalar = "";
 		this.composite = [];
 		this.random = null;
-		this.typename = typename;
+		this.typename = "";
 		
-		if (value instanceof Array){
-			this.composite = value;
+		//1 argument constructor
+		if (arguments.length==1){
+			var o = objectOrId;
+			if (!!o.id){
+				this.id = o.id;
+			}
+			if (!!o.scalar){
+				this.scalar = o.scalar;
+			}
+			if (!!o.composite){
+				this.composite = toArrayOfFieldValue(o.composite);
+			}
+			if (!!o.random){
+				this.random = o.random;
+			}
+			if (!!o.typename){
+				this.typename = o.typename;
+			}
 		}
+		
+		//3 arguments constructor
 		else{
-			this.scalar = value;
-		}
-				
-		this._getName = function(){
-			if (this.scalar!=null){
-				return this.scalar+", ";
+			this.id = objectOrId;
+			this.typename = typename;
+			if (value instanceof Array){
+				this.composite = toArrayOfFieldValue(value);
 			}
 			else{
+				this.scalar = value;
+			}			
+		}
+		
+
+		// *********** the methods now ***********
+				
+		this._getName = function(){
+			
+			if (this.composite.length>0){
 				var res="";
-				for (var i=0;i<composite.length;i++){
+				for (var i=0;i<this.composite.length;i++){
 					res+= this.composite[i].getName() + ", ";
 				}
-				return builder.toString();
-			}			
+				return res;				
+			}
+			else{			
+				return this.scalar+", ";
+			}		
 		}
 		
 		this.getName = function(){
@@ -53,6 +99,9 @@ define(function(){
 		}
 
 	}	
+	
+	
+	return FieldValue;
 })
 	
 

@@ -300,6 +300,10 @@ div.issue-panel-container{
 	width : 98%;
 }
 
+div.issue-field{
+	line-height : 3;	
+}
+
 label.issue-field-label{
 	width : 25%;	
 	vertical-align:middle;
