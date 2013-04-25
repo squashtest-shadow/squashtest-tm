@@ -79,6 +79,8 @@ public class InputType {
 	public static final String RADIO_BUTTON		= "radio_button";
 	public static final String FILE_UPLOAD		= "file_upload";
 	public static final String TIMETRACKER      = "timetracker";
+	public static final String CASCADING_SELECT = "cascading_select";
+	public static final String MULTI_SELECT     = "multi_select";
 	
 	public static final String EXCLUDED_CHARACTERS = "[^\\w-_.0-9]";
 	
