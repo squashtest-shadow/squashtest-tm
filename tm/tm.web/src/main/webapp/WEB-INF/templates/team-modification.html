@@ -207,7 +207,7 @@
 							</span>
 							<div id="project-permission-panel" class="toggle-panel-main">
 								<table id="permission-table"
-									th:attr="data-def='filter, hover, pre-filled, datakeys-id=project-id ,ajaxsource='+@{/administration/teams/__${team.id}__/permissions}+',language='+@{/datatables/messages}">
+									th:attr="data-def='filter, hover, datakeys-id=project-id ,ajaxsource='+@{/administration/teams/__${team.id}__/permissions}+',language='+@{/datatables/messages}">
 									<thead>
 										<tr>
 											<th th:attr="data-def='invisible, map=project-id'">user-id</th>
@@ -226,21 +226,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr th:each="permission : ${permissions}">
-											<td th:text="${permission['project-id']}">100</td>
-											<td th:text="${permission['project-index']}">100</td>
-											<td th:text="${permission['project-name']}">1</td>
-											<td>
-												<select id="permission-list" >
-													<option th:each="plist : ${permission['permission-list']}"
-														th:id="${plist.qualifiedName}"
-														th:value="${plist.id}" th:selected="${ plist.simpleName == permission['permission-simplename'] } ? 'selected'"
-														th:text="#{'user.project-rights.'+${plist.simpleName}+'.label'}">Admin
-													</option>
-												</select>
-											</td>
-											<td></td> 
-										</tr>
+										<!-- TODO make this prefilled but beware for [Issue 2281] -->
 									</tbody>
 								</table>
 							</div>
