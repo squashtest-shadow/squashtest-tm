@@ -25,7 +25,7 @@
  * 
  */
 
-define(["jquery", "../domain/FieldValue", "jqueryui", "http://localhost/scripts/scripts/squashtest/jquery.squash.tagit.js"], function($, FieldValue){
+define(["jquery", "../domain/FieldValue", "jqueryui", "jquery.squash.tagit"], function($, FieldValue){
 
 	return {
 		
