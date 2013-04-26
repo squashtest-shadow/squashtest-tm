@@ -2,7 +2,7 @@
 <!--
 
         This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2012 Henix, henix.fr
+        Copyright (C) 2010 - 2013 Henix, henix.fr
 
         See the NOTICE file distributed with this work for additional
         information regarding copyright ownership.
@@ -158,7 +158,7 @@
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
 								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font size="10"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$P{project_name_l3}]]></textFieldExpression>
 							</textField>
@@ -169,7 +169,7 @@
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
 								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="66" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font size="10"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$P{campaign_name_l3}]]></textFieldExpression>
 							</textField>
@@ -180,7 +180,7 @@
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
 								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_schedstart_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_schedstart_l3})]]></textFieldExpression>
 							</textField>
@@ -191,7 +191,7 @@
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
 								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_schedend_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_schedend_l3})]]></textFieldExpression>
 							</textField>
@@ -202,7 +202,7 @@
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
 								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_actstart_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_actstart_l3})]]></textFieldExpression>
 							</textField>
@@ -213,7 +213,7 @@
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
 								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_actend_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_actend_l3})]]></textFieldExpression>
 							</textField>
@@ -224,7 +224,7 @@
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
 								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font size="10"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$P{iteration_name_l3}]]></textFieldExpression>
 							</textField>
@@ -235,7 +235,7 @@
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
 								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_schedstart_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_schedstart_l3})]]></textFieldExpression>
 							</textField>
@@ -246,7 +246,7 @@
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
 								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_schedend_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_schedend_l3})]]></textFieldExpression>
 							</textField>
@@ -257,7 +257,7 @@
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
 								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_actstart_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_actstart_l3})]]></textFieldExpression>
 							</textField>
@@ -268,7 +268,7 @@
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
 								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{iteration_actend_l3}==null) ?  $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{iteration_actend_l3})]]></textFieldExpression>
 							</textField>
@@ -279,7 +279,7 @@
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
 								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font size="10"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($F{testCaseName}  == null ) ? $R{report.executionprogression.main.testcase.deleted.label}  : $F{testCaseName}]]></textFieldExpression>
 							</textField>
@@ -290,7 +290,7 @@
 							<textField isStretchWithOverflow="true" evaluationTime="Auto">
 								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="56" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="10"/>
+									<font size="10"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($F{executionStatus}.toString() == "READY") ? $R{report.executionprogression.main.ready.label} :
 ($F{executionStatus}.toString() == "RUNNING") ? $R{report.executionprogression.main.running.label} :

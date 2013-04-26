@@ -1,6 +1,6 @@
 /*
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2012 Henix, henix.fr
+ *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
@@ -18,7 +18,6 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 define(["jquery", "backbone", "handlebars", "../domain/BTEntity", "text!./default-view-template.html!strip","jqueryui"], function($, Backbone, Handlebars, BTEntity,  source){
 //define(["jquery", "backbone", "handlebars", "../domain/BTEntity", "jqueryui"], function($, Backbone, Handlebars, BTEntity, source){
 

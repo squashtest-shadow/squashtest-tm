@@ -1,6 +1,6 @@
 /*
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2012 Henix, henix.fr
+ *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
@@ -20,12 +20,12 @@
  */
 define(
 		[ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/util/StringUtil", 
-		  "./UserChangePasswordPopup","./UserPermissionsPanel", "./UserTeamsPanel",
+		  "./UserResetPasswordPopup","./UserPermissionsPanel", "./UserTeamsPanel",
 				"jquery.squash", "jqueryui", "jquery.squash.togglepanel",
 				"jquery.squash.datatables", "jquery.squash.oneshotdialog",
 				"jquery.squash.messagedialog", "jquery.squash.confirmdialog",
 				, "jquery.squash.jeditable"],
-		function($, Backbone, _, SimpleJEditable, StringUtil, UserChangePasswordPopup, UserPermissionsPanel, UserTeamsPanel ) {
+		function($, Backbone, _, SimpleJEditable, StringUtil, UserResetPasswordPopup, UserPermissionsPanel, UserTeamsPanel ) {
 			var UMod = squashtm.app.UMod;
 			var UserModificationView = Backbone.View
 					.extend({
@@ -34,7 +34,7 @@ define(
 
 							this.configureTogglePanels();
 							this.configureEditables();
-							new UserChangePasswordPopup();
+							new UserResetPasswordPopup();
 							new UserPermissionsPanel();
 							new UserTeamsPanel();
 							this.configureButtons();

@@ -2,7 +2,7 @@
 <!--
 
         This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2012 Henix, henix.fr
+        Copyright (C) 2010 - 2013 Henix, henix.fr
 
         See the NOTICE file distributed with this work for additional
         information regarding copyright ownership.
@@ -465,18 +465,51 @@
 				from TEST_CASE tc
 				join TEST_CASE_LIBRARY_NODE tcln on tcln.tcln_id = tc.tcln_id;
 				
-			
-			update EXECUTION exe
-				set
-					tc_description = (select TC_DESCRIPTION from EXECUTION_TEST_CASE_DATA etcd where etcd.TCLN_ID = exe.TCLN_ID),
-					reference = (select REFERENCE from EXECUTION_TEST_CASE_DATA etcd where etcd.TCLN_ID = exe.TCLN_ID),
-					importance = (select IMPORTANCE from EXECUTION_TEST_CASE_DATA etcd where etcd.TCLN_ID = exe.TCLN_ID),
-					tc_nature = (select TC_NATURE from EXECUTION_TEST_CASE_DATA etcd where etcd.TCLN_ID = exe.TCLN_ID),
-					tc_type = (select TC_TYPE from EXECUTION_TEST_CASE_DATA etcd where etcd.TCLN_ID = exe.TCLN_ID),
-					tc_status = (select TC_STATUS from EXECUTION_TEST_CASE_DATA etcd where etcd.TCLN_ID = exe.TCLN_ID)
 			</sql>
-				
 		</changeSet>
+		<changeSet id="tm-1.4.0.feat-1596.01-a" author="mpagnon">
+		<preConditions onError="CONTINUE" onFail="CONTINUE"
+			onSqlOutput="TEST">
+			<dbms type="h2" />
+		</preConditions>
+		<sql>
+			update EXECUTION exe
+			set
+			tc_description = (select TC_DESCRIPTION from EXECUTION_TEST_CASE_DATA etcd where
+			etcd.TCLN_ID = exe.TCLN_ID),
+			reference = (select REFERENCE from EXECUTION_TEST_CASE_DATA etcd where
+			etcd.TCLN_ID = exe.TCLN_ID),
+			importance = (select IMPORTANCE from EXECUTION_TEST_CASE_DATA etcd where
+			etcd.TCLN_ID = exe.TCLN_ID),
+			tc_nature = (select TC_NATURE from EXECUTION_TEST_CASE_DATA etcd where
+			etcd.TCLN_ID = exe.TCLN_ID),
+			tc_type = (select TC_TYPE from EXECUTION_TEST_CASE_DATA etcd where
+			etcd.TCLN_ID = exe.TCLN_ID),
+			tc_status = (select TC_STATUS from EXECUTION_TEST_CASE_DATA etcd where
+			etcd.TCLN_ID = exe.TCLN_ID)
+		</sql>
+
+	</changeSet>
+
+	<changeSet id="tm-1.4.0.feat-1596.01-b" author="mpagnon">
+		<preConditions onError="CONTINUE" onFail="CONTINUE"
+			onSqlOutput="TEST">
+			<dbms type="mysql" />
+		</preConditions>
+		<comment>this grammar is not supported by h2 and is more efficient</comment>
+		<sql>
+			UPDATE EXECUTION exe
+			JOIN EXECUTION_TEST_CASE_DATA etcd ON etcd.TCLN_ID = exe.TCLN_ID
+			SET
+			exe.TC_DESCRIPTION=etcd.tc_description,
+			exe.REFERENCE=etcd.reference,
+			exe.IMPORTANCE=etcd.importance,
+			exe.TC_NATURE=etcd.tc_nature,
+			exe.TC_TYPE=etcd.tc_type,
+			exe.TC_STATUS=etcd.tc_status;
+		</sql>
+
+	</changeSet>
   
   <changeSet id="tm-1.4.0.feat-1110.01" author="gfouquet">
     <comment>Adds a type discriminator column on PROJECT</comment>

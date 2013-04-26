@@ -1,8 +1,7 @@
-
 <%--
 
         This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2012 Henix, henix.fr
+        Copyright (C) 2010 - 2013 Henix, henix.fr
 
         See the NOTICE file distributed with this work for additional
         information regarding copyright ownership.

@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>squashtest-csp</artifactId>
-  <version>1.6.0.BT-SNAPSHOT</version>
+  <version>1.5.1.SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>squashtest-csp</name>
@@ -248,7 +248,7 @@
 							<validHeader>tools/tools-resources/src/main/resources/supported-licenses/jquery-header.txt</validHeader> -->
           </validHeaders>
           <properties>
-            <license.yearSpan>${project.inceptionYear} - 2012</license.yearSpan>
+            <license.yearSpan>${project.inceptionYear} - 2013</license.yearSpan>
             <license.copyrightOwner>${project.organization.Name}</license.copyrightOwner>
           </properties>
           <excludes>

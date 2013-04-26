@@ -2,7 +2,7 @@
 <!--
 
         This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2012 Henix, henix.fr
+        Copyright (C) 2010 - 2013 Henix, henix.fr
 
         See the NOTICE file distributed with this work for additional
         information regarding copyright ownership.
@@ -323,7 +323,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="113" height="20"/>
 								<textElement verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA["Cpg : "+$P{campaign_name}]]></textFieldExpression>
 							</textField>
@@ -335,7 +335,7 @@
 							<textField pattern="">
 								<reportElement x="0" y="0" width="65" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_schedstart}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_schedstart})]]></textFieldExpression>
 							</textField>
@@ -347,7 +347,7 @@
 							<textField pattern="">
 								<reportElement x="0" y="0" width="65" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_schedend}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_schedend})]]></textFieldExpression>
 							</textField>
@@ -359,7 +359,7 @@
 							<textField pattern="" isBlankWhenNull="true">
 								<reportElement x="0" y="0" width="65" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_actstart}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_actstart})]]></textFieldExpression>
 							</textField>
@@ -371,7 +371,7 @@
 							<textField pattern="">
 								<reportElement x="0" y="0" width="65" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_actend}==null) ? $R{report.executionprogression.date.nodata} : new java.text.SimpleDateFormat($R{report.executionprogression.date.format}).format($P{campaign_actend})]]></textFieldExpression>
 							</textField>
@@ -383,14 +383,14 @@
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusReady}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
 								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
-									<font fontName="Arial" size="7"/>
+									<font size="7"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_fPercentageStatusReady}]]></textFieldExpression>
 							</textField>
@@ -402,14 +402,14 @@
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusRunning}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
 								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
-									<font fontName="Arial" size="7"/>
+									<font size="7"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_fPercentageStatusRunning}]]></textFieldExpression>
 							</textField>
@@ -421,14 +421,14 @@
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusUntestable}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
 								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
-									<font fontName="Arial" size="7"/>
+									<font size="7"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_fPercentageStatusUntestable}]]></textFieldExpression>
 							</textField>
@@ -440,14 +440,14 @@
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusBloqued}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
 								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
-									<font fontName="Arial" size="7"/>
+									<font size="7"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_fPercentageStatusBloqued}]]></textFieldExpression>
 							</textField>
@@ -459,14 +459,14 @@
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20" forecolor="#FB3333"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusFailure}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
 								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
-									<font fontName="Arial" size="7"/>
+									<font size="7"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_fPercentageStatusFailure}]]></textFieldExpression>
 							</textField>
@@ -478,14 +478,14 @@
 							<textField>
 								<reportElement x="0" y="0" width="20" height="20" forecolor="#009900"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9"/>
+									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusSuccess}]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
 								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
-									<font fontName="Arial" size="7"/>
+									<font size="7"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_fPercentageStatusSuccess}]]></textFieldExpression>
 							</textField>
@@ -497,7 +497,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="50" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_total}]]></textFieldExpression>
 							</textField>
@@ -509,7 +509,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="63" height="20"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial" size="9" isBold="true"/>
+									<font size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[($P{campaign_status}.toString()=="CAMPAIGN_RUNNING") ? $R{report.executionprogression.campaignstatus.CAMPAIGN_RUNNING} : $R{report.executionprogression.campaignstatus.CAMPAIGN_OVER}]]></textFieldExpression>
 							</textField>

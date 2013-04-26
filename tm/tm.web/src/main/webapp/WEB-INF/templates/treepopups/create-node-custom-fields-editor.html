@@ -1,7 +1,7 @@
 <!--
 
         This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2012 Henix, henix.fr
+        Copyright (C) 2010 - 2013 Henix, henix.fr
 
         See the NOTICE file distributed with this work for additional
         information regarding copyright ownership.
@@ -28,7 +28,7 @@
 
  -->
 </div>
-
+<table th:remove="tag">
 <tr th:each="binding : ${bindings.?[customField.optional==false]}" th:with="customField=${binding.customField}" class="create-node-custom-field-row">										 
 	<td><label th:text="${customField.label}">quantité de café</label></td>
 	<td th:switch="${customField.inputType.name()}" >
@@ -41,3 +41,4 @@
 		<span class="error-message "  th:classappend="'customFields-'+${customField.id}+'-error'" ></span>		
 	</td>
 </tr>
+</table>

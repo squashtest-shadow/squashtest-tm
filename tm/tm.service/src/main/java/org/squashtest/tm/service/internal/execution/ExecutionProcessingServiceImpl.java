@@ -1,6 +1,6 @@
 /**
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2012 Henix, henix.fr
+ *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
@@ -163,10 +163,10 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 		ExecutionStatus formerExecutionStatus = execution.getExecutionStatus();
 		ExecutionStatus newStepStatus = executionStep.getExecutionStatus();
 
-		// let's see if we can autocompute that thing
+		// let's see if we can autocompute with only 3 these statuses
 		ExecutionStatus newExecutionStatus = newStepStatus.deduceNewStatus(formerExecutionStatus, formerStepStatus);
-
-		if (newExecutionStatus == null) {
+		
+		if (newExecutionStatus == null) { //means we couldn't autocompute with only 3 statuses
 			ExecutionStatusReport report = executionDao.getStatusReport(execution.getId());
 			newExecutionStatus = ExecutionStatus.computeNewStatus(report);
 		}

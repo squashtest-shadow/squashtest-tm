@@ -1,6 +1,6 @@
 #
 #     This file is part of the Squashtest platform.
-#     Copyright (C) 2010 - 2012 Henix, henix.fr
+#     Copyright (C) 2010 - 2013 Henix, henix.fr
 #
 #     See the NOTICE file distributed with this work for additional
 #     information regarding copyright ownership.
@@ -24,6 +24,7 @@
 # If this build fails, then the repository is not in a state suitable for a push.
 
 #!/bin/bash
+
 
 REPO_DIR=`pwd | sed  "s/\(.*\)\/\(.*\)$/\2/"`
 #  REPO_DIR=${PWD##*/} should also work

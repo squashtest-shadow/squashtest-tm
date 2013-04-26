@@ -1,6 +1,6 @@
 /**
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2012 Henix, henix.fr
+ *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
@@ -95,15 +95,15 @@
 }
 
 .sub-page-content .wizard-navigation-pane {
-	position: fixed;
-	bottom: 10%;
-	right: 5%
+	 bottom: 10px;
+    position: absolute;
+    right: 15px;
 }
 
 .sub-page-content .wizard-alert-pane {
-	position: fixed;
-	bottom: 15%;
-	right: 5%
+	 bottom: 25px;
+    position: absolute;
+    right: 15px;
 }
 
 .sub-page-header, .sub-page-list-panel, .sub-page-selection-panel {

@@ -4,7 +4,7 @@
   <parent>
     <artifactId>squashtest-csp-tm</artifactId>
     <groupId>org.squashtest.tm</groupId>
-    <version>1.6.0.BT-SNAPSHOT</version>
+    <version>1.5.1.SNAPSHOT</version>
   </parent>
 
   <artifactId>tm.web</artifactId>
@@ -18,7 +18,7 @@
     <project.stage>RELEASE</project.stage> <!--  overridable by activating the profile development -->
     <spring.version.range>[3,4)</spring.version.range>
     <springdm.version.range>[2,3)</springdm.version.range>
-    <thymeleaf.version>2.0.14</thymeleaf.version>
+    <thymeleaf.version>2.0.14.B-SNAPSHOT</thymeleaf.version>
     <thyleleaf.springsec.version>2.0.0</thyleleaf.springsec.version>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
 
@@ -296,7 +296,12 @@
           <artifactId>slf4j-api</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>    
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.nekohtml</groupId>
+      <artifactId>org.squashtest.net.sourceforge.nekohtml</artifactId>
+      <version>1.9.18-SNAPSHOT</version>
+    </dependency>
     <!-- ====== /THYMELEAF ====== -->
 
 		<!-- ====== JASPER REPORTS ====== -->

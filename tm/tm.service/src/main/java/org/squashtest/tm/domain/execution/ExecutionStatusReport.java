@@ -1,6 +1,6 @@
 /**
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2012 Henix, henix.fr
+ *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
@@ -20,17 +20,24 @@
  */
 package org.squashtest.tm.domain.execution;
 
-/* a good old bean used as a dto */
+/**
+ * Bean to hold the occurrence of execution steps status from a list of execution steps.
+ * 
+ */
 public class ExecutionStatusReport {
 
-	private int untestable=0;
-	private int bloqued=0;
-	private int failure=0;
-	private int success=0;
-	private int running=0;
-	private int ready=0;
-	private int warning=0;
-	private int error=0;
+	private int untestable = 0;
+	private int bloqued = 0;
+	private int failure = 0;
+	private int success = 0;
+	private int running = 0;
+	private int ready = 0;
+	private int warning = 0;
+	private int error = 0;
+
+	private int getTotal() {
+		return untestable + bloqued + failure + success + running + ready + warning + error;
+	}
 
 	public int getUntestable() {
 		return untestable;
@@ -39,7 +46,7 @@ public class ExecutionStatusReport {
 	public void setUntestable(int untestable) {
 		this.untestable = untestable;
 	}
-	
+
 	public int getBloqued() {
 		return bloqued;
 	}
@@ -79,7 +86,6 @@ public class ExecutionStatusReport {
 	public void setReady(int ready) {
 		this.ready = ready;
 	}
-	
 
 	public int getWarning() {
 		return warning;
@@ -97,73 +103,73 @@ public class ExecutionStatusReport {
 		this.error = error;
 	}
 
-	public boolean areAllUntestable(){
-		if (
-		    (! hasAggregatedSuccess())	&&
-			(! hasAggregatedBlocked())  && 
-			(! hasFailure()) 			&&
-			(! hasRunning())			&&
-			(! hasReady())
-		){
+	public boolean areAllUntestable() {
+		if (untestable == getTotal()) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public boolean areAllSuccess() {
-		if (
-			(! hasAggregatedBlocked())  && 
-			(! hasFailure()) 			&&	
-		    (! hasRunning())			&&
-		    (! hasReady())
-		  ){
+		if (countAggregatedSuccess() == getTotal()) {
 			return true;
 		}
 		return false;
 	}
-	
-	public boolean hasUntestable(){
+
+	public boolean hasUntestable() {
 		return untestable > 0;
 	}
-	
-	public boolean hasBlocked(){
+
+	public boolean hasBlocked() {
 		return bloqued > 0;
 	}
-	
-	public boolean hasError(){
+
+	public boolean hasError() {
 		return error > 0;
 	}
-	
-	public boolean hasFailure(){
+
+	public boolean hasFailure() {
 		return failure > 0;
 	}
-	
-	public boolean hasRunning(){
+
+	public boolean hasRunning() {
 		return running > 0;
 	}
-	
-	public boolean hasReady(){
+
+	public boolean hasReady() {
 		return ready > 0;
 	}
-	
-	public boolean hasSuccess(){
-		return success > 0 ;
+
+	public boolean hasSuccess() {
+		return success > 0;
 	}
-	
-	public boolean hasWarning(){
+
+	public boolean hasWarning() {
 		return warning > 0;
 	}
-	
-	public boolean hasAggregatedBlocked(){
+
+	public boolean hasAggregatedBlocked() {
 		return (hasBlocked() || hasError());
 	}
-	
-	public boolean hasAggregatedSuccess(){
+
+	public boolean hasAggregatedSuccess() {
 		return (hasSuccess() || hasWarning());
 	}
 
 	public ExecutionStatusReport() {
 
+	}
+
+	private int countAggregatedSuccess() {
+		return success + warning;
+	}
+
+	public boolean areAllSuccessOrUntestable() {
+		if (countAggregatedSuccess() + untestable == getTotal()) {
+			return true;
+		}
+		return false;
 	}
 
 	public ExecutionStatusReport(int untestable, int bloqued, int failure, int success, int running, int ready) {
@@ -176,8 +182,8 @@ public class ExecutionStatusReport {
 		this.ready = ready;
 	}
 
-	public ExecutionStatusReport(int untestable, int bloqued, int failure, int success,
-			int running, int ready, int warning, int error) {
+	public ExecutionStatusReport(int untestable, int bloqued, int failure, int success, int running, int ready,
+			int warning, int error) {
 		super();
 		this.untestable = untestable;
 		this.bloqued = bloqued;
