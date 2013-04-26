@@ -18,7 +18,7 @@
     <project.stage>RELEASE</project.stage> <!--  overridable by activating the profile development -->
     <spring.version.range>[3,4)</spring.version.range>
     <springdm.version.range>[2,3)</springdm.version.range>
-    <thymeleaf.version>2.0.14.B-SNAPSHOT</thymeleaf.version>
+    <thymeleaf.version>2.0.14.B</thymeleaf.version>
     <thyleleaf.springsec.version>2.0.0</thyleleaf.springsec.version>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
 
@@ -300,7 +300,7 @@
     <dependency>
       <groupId>net.sourceforge.nekohtml</groupId>
       <artifactId>org.squashtest.net.sourceforge.nekohtml</artifactId>
-      <version>1.9.18-SNAPSHOT</version>
+      <version>1.9.18</version>
     </dependency>
     <!-- ====== /THYMELEAF ====== -->
 
