@@ -21,11 +21,15 @@
 package org.squashtest.csp.core.bugtracker.service
 
 
+import java.util.List;
+
 import org.squashtest.csp.core.bugtracker.domain.BTIssue
 import org.squashtest.csp.core.bugtracker.domain.BTProject
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.csp.core.bugtracker.domain.Priority
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor
+import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
+import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 
 
@@ -98,6 +102,27 @@ class StubBugTrackerService implements BugTrackersService {
 
 	@Override
 	public RemoteIssue createIssue(RemoteIssue arg0, BugTracker arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RemoteIssue createReportIssueTemplate(String projectName,
+			BugTracker bugTracker) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void forwardAttachments(String remoteIssueKey,
+			BugTracker bugtracker, List<Attachment> attachments) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Object forwardDelegateCommand(DelegateCommand command,
+			BugTracker bugtracker) {
 		// TODO Auto-generated method stub
 		return null;
 	}
