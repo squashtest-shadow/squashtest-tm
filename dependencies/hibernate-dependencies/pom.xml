@@ -27,16 +27,22 @@
       <groupId>org.hibernate</groupId>
       <artifactId>org.squashtest.org.hibernate.commons.annotations</artifactId>
     </dependency>
-<!-- 		<dependency>
+		
+ 		
+<!-- Waiting for 3.18.0 because of bugs in 3.17 
+https://issues.jboss.org/browse/JASSIST-189 and
+ https://issues.jboss.org/browse/JASSIST-162 -->
+ 
+ 		<dependency>
 			<groupId>org.jboss.javassist</groupId>
 			<artifactId>com.springsource.javassist</artifactId>
-		</dependency>
- -->
-    <dependency>
-      <groupId>org.javassist</groupId>
-      <artifactId>javassist</artifactId>
-      <version>3.17.1-GA</version>
-    </dependency>
+ 		</dependency>
+ 		
+<!--     <dependency> -->
+<!--       <groupId>org.javassist</groupId> -->
+<!--       <artifactId>javassist</artifactId> -->
+<!--       <version>3.18.0.GA</version> -->
+<!--     </dependency> -->
 
     <dependency>
       <groupId>commons-collections</groupId>
