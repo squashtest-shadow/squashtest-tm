@@ -198,7 +198,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 <!-- REQUIREMENT COVERAGE -->
 	<bean name="requirementCoverage" class="org.squashtest.tm.api.report.BasicReport">
-		<property name="category" value="EXECUTION_PHASE" />
+		<property name="category" value="PREPARATION_PHASE" />
 		<property name="type" value="PROGRESS_FOLLOWUP" />
 		<property name="labelKey" value="report.report.requirementcoveragebytests.name" />
 		<property name="descriptionKey" value="report.report.requirementcoveragebytests.description" />
