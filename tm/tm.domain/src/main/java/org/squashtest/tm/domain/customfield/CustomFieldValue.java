@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.domain.customfield;
 
+import java.text.ParseException;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -30,6 +33,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.tools.ant.util.DateUtils;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.exception.customfield.BindableEntityMismatchException;
 import org.squashtest.tm.exception.customfield.MandatoryCufException;
@@ -138,5 +142,17 @@ public class CustomFieldValue implements Identified {
 	
 	public boolean representsSameCustomField(CustomFieldValue otherValue){
 		return otherValue.getCustomField().getId().equals(getCustomField().getId());
+	}
+	
+	public Date getValueAsDate(){
+		if(getCustomField() != null && getCustomField().getInputType() == InputType.DATE_PICKER){
+			try {
+				return DateUtils.parseIso8601Date(value);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+		
 	}
 }

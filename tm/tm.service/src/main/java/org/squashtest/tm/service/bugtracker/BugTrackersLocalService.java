@@ -25,12 +25,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerManagerException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.domain.bugtracker.BTIssueDecorator;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
@@ -180,7 +178,19 @@ public interface BugTrackersLocalService {
 	 */
 	FilteredCollectionHolder<List<IssueOwnership<BTIssueDecorator>>> findSortedIssueOwnershipForTestCase(Long tcId,
 			CollectionSorting sorter);
-
+	 /**
+	 * Given a TestCase, returns a list of linked BTIssue (not Issue).<br>
+	 * <br>
+	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
+	 * the informations together).
+	 * 
+	 * @param testCase
+	 *            id for which we need to get the issues,
+	 * 
+	 * @return a  non-null but possibly empty list of IssueOwnership, 
+	 **/
+	List<IssueOwnership<BTIssueDecorator>> findIssueOwnershipForTestCase(long testCaseId);
+	
 	/* ****************** BugTracker - side methods ******************** */
 
 	/**
@@ -278,5 +288,6 @@ public interface BugTrackersLocalService {
 	 * 			: the id of the issue in Squash TM
 	 */
 	void detachIssue(Long id);
+
 
 }

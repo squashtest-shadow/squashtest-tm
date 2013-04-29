@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.testcase;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -33,8 +34,10 @@ import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,10 +50,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
+import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.bugtracker.BTIssueDecorator;
+import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
+import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -67,12 +75,16 @@ import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.execution.ExecutionFinder;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
+import org.squashtest.tm.service.requirement.VerifiedRequirement;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.bugtracker.BugtrackerControllerHelper;
 import org.squashtest.tm.web.internal.controller.testcase.ActionStepFormModel.ActionStepFormModelValidator;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
@@ -80,7 +92,6 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.combo.OptionTag;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperCollectionSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
@@ -99,13 +110,13 @@ public class TestCaseModificationController {
 	private static final String TEST_CASE_ = "test case ";
 	private static final String COPIED_STEP_ID_PARAM = "copiedStepId[]";
 
-		private final DatatableMapper referencingTestCaseMapper = new IndexBasedMapper(6)
+	private final DatatableMapper<Integer> referencingTestCaseMapper = new IndexBasedMapper(6)
 			.mapAttribute(Project.class, "name", String.class, 2)
 			.mapAttribute(TestCase.class, "reference", String.class, 3)
 			.mapAttribute(TestCase.class, "name", String.class, 4)
 			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 5);
 
-	private final DatatableMapper execsTableMapper = new IndexBasedMapper(11)
+	private final DatatableMapper<Integer> execsTableMapper = new IndexBasedMapper(11)
 			.mapAttribute(Project.class, "name", String.class, 1).mapAttribute(Campaign.class, "name", String.class, 2)
 			.mapAttribute(Iteration.class, "name", String.class, 3)
 			.mapAttribute(Execution.class, "name", String.class, 4)
@@ -118,7 +129,10 @@ public class TestCaseModificationController {
 	private TestCaseModificationService testCaseModificationService;
 
 	private ExecutionFinder executionFinder;
-
+	@Inject
+	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
+	@Inject
+	private MessageSource messageSource;
 	@Inject
 	private CallStepManagerService callStepManager;
 
@@ -153,6 +167,16 @@ public class TestCaseModificationController {
 	@ServiceReference
 	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
 		this.testCaseModificationService = testCaseModificationService;
+	}
+
+	private BugTrackersLocalService bugTrackersLocalService;
+
+	@ServiceReference
+	public void setBugTrackersLocalService(BugTrackersLocalService bugTrackersLocalService) {
+		if (bugTrackersLocalService == null) {
+			throw new IllegalArgumentException("BugTrackerController : no service provided");
+		}
+		this.bugTrackersLocalService = bugTrackersLocalService;
 	}
 
 	@InitBinder("add-test-step")
@@ -545,7 +569,6 @@ public class TestCaseModificationController {
 		return testCase;
 	}
 
-
 	@RequestMapping(value = "/calling-test-case-table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getCallingTestCaseTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
@@ -553,10 +576,10 @@ public class TestCaseModificationController {
 
 		LOGGER.trace("TestCaseModificationController: getCallingTestCaseTableModel called ");
 
-		CollectionSorting filter = createPaging(params, referencingTestCaseMapper);
+		PagingAndSorting paging = createPaging(params, referencingTestCaseMapper);
 
 		FilteredCollectionHolder<List<TestCase>> holder = testCaseModificationService.findCallingTestCases(testCaseId,
-				filter);
+				paging);
 
 		return new DataTableModelHelper<TestCase>() {
 			@Override
@@ -565,12 +588,12 @@ public class TestCaseModificationController {
 						item.getReference(), item.getName(),
 						internationalizationHelper.internationalize(item.getExecutionMode(), locale) };
 			}
-		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+		}.buildDataModel(holder, paging.getFirstItemIndex() + 1, params.getsEcho());
 
 	}
 
-	private CollectionSorting createPaging(final DataTableDrawParameters params, final DatatableMapper dtMapper) {
-		return new DataTableMapperCollectionSortingAdapter(params, dtMapper);
+	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper<?> dtMapper) {
+		return new DataTableMapperPagingAndSortingAdapter(params, dtMapper);
 	}
 
 	private Paging createPaging(final DataTableDrawParameters params) {
@@ -622,4 +645,126 @@ public class TestCaseModificationController {
 		return new DataTableMapperPagingAndSortingAdapter(params, execsTableMapper);
 	}
 
+	/**
+	 * Return view for Printable test case
+	 * 
+	 * @param testCaseId
+	 * @return
+	 */
+	@RequestMapping(value = "/print", method = RequestMethod.GET)
+	public ModelAndView print(@PathVariable long testCaseId, Locale locale) {
+		LOGGER.debug("get printable test case");
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		if (testCase == null) {
+			throw new UnknownEntityException(testCaseId, TestCase.class);
+		}
+		ModelAndView mav = new ModelAndView("print-test-case.html");
+		mav.addObject("testCase", testCase);
+
+		// ============================BUGTRACKER
+		if (testCase.getProject().isBugtrackerConnected()) {
+			Project project = testCase.getProject();
+			BugTrackerStatus status = bugTrackersLocalService.checkBugTrackerStatus(project.getId());
+			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(project
+					.findBugTracker());
+			descriptor.setLocale(locale);
+
+			mav.addObject("interfaceDescriptor", descriptor);
+			mav.addObject("bugTrackerStatus", status);
+
+			List<DecoratedIssueOwnership> decoratedIssues = Collections.emptyList();
+			if (status.equals(BugTrackerStatus.BUGTRACKER_READY)) {
+				try {
+					List<IssueOwnership<BTIssueDecorator>> issuesOwnerShipList = Collections.emptyList();
+					issuesOwnerShipList = bugTrackersLocalService.findIssueOwnershipForTestCase(testCaseId);
+					decoratedIssues = new ArrayList<TestCaseModificationController.DecoratedIssueOwnership>(
+							issuesOwnerShipList.size());
+					for (IssueOwnership<BTIssueDecorator> ownerShip : issuesOwnerShipList) {
+						decoratedIssues.add(new DecoratedIssueOwnership(ownerShip, locale));
+					}
+
+				}
+				// no credentials exception are okay, the rest is to be treated as usual
+				catch (BugTrackerNoCredentialsException noCrdsException) {
+				} catch (NullArgumentException npException) {
+				}
+			}
+			mav.addObject("issuesOwnerShipList", decoratedIssues);
+
+		}
+
+		mav.addObject("testCase", testCase);
+
+		// =================CUFS
+		List<CustomFieldValue> customFieldValues = cufHelperService.newHelper(testCase).getCustomFieldValues();
+		mav.addObject("testCaseCufValues", customFieldValues);
+
+		// ================= EXECUTIONS
+		Paging paging = new Paging() {
+
+			@Override
+			public boolean shouldDisplayAll() {
+				return true;
+			}
+
+			@Override
+			public int getPageSize() {
+				return 0;
+			}
+
+			@Override
+			public int getFirstItemIndex() {
+				return 0;
+			}
+		};
+		List<Execution> executions = executionFinder.findAllByTestCaseIdOrderByRunDate(testCaseId, paging);
+		mav.addObject("execs", executions);
+
+		// =================STEPS
+		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));
+
+		// the custom fields definitions
+		Helper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps)
+				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
+
+		List<CustomFieldModel> cufDefinitions = helper.getCustomFieldConfiguration();
+		List<CustomFieldValue> stepCufValues = helper.getCustomFieldValues();
+
+		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
+		builder.usingCustomFields(stepCufValues, cufDefinitions.size());
+		List<Map<?, ?>> stepsData = builder.buildAllData(steps);
+		mav.addObject("stepsData", stepsData);
+		mav.addObject("cufDefinitions", cufDefinitions);
+
+		// =====================CALLING TC
+		List<TestCase> callingTCs = testCaseModificationService.findAllCallingTestCases(testCaseId);
+		mav.addObject("callingTCs", callingTCs);
+
+		// ========================VERIFIED REQUIREMENTS
+		List<VerifiedRequirement> verifReq = verifiedRequirementsManagerService
+				.findAllVerifiedRequirementsByTestCaseId(testCaseId);
+		mav.addObject("verifiedRequirements", verifReq);
+
+		return mav;
+	}
+
+	public class DecoratedIssueOwnership {
+		private IssueOwnership<BTIssueDecorator> ownership;
+		private String ownerDesc;
+
+		public DecoratedIssueOwnership(IssueOwnership<BTIssueDecorator> ownership, Locale locale) {
+			this.ownership = ownership;
+			this.ownerDesc = BugtrackerControllerHelper.findOwnerDescForTestCase(ownership.getOwner(), messageSource,
+					locale);
+		}
+
+		public String getOwnerDesc() {
+			return ownerDesc;
+		}
+
+		public IssueOwnership<BTIssueDecorator> getOwnership() {
+			return ownership;
+		}
+
+	}
 }

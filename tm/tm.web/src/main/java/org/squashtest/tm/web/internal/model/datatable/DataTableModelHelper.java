@@ -20,13 +20,19 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.tools.ant.util.DateUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
 public abstract class DataTableModelHelper<X> {
@@ -167,9 +173,21 @@ public abstract class DataTableModelHelper<X> {
 			super();
 		}
 		
+		public Date getValueAsDate(){
+				try {
+					return new SimpleDateFormat(CustomField.DATE_PATTERN).parse(value);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			
+			return null;
+			
+		}
+		
 		public ShortCUFValueModel(CustomFieldValue value) {
 			this.id = value.getId();
 			this.value = value.getValue();
+		
 		}
 		
 	}

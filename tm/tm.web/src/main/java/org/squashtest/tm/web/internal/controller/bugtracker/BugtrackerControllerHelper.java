@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.set.CompositeSet.SetMutator;
 import org.springframework.context.MessageSource;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.tm.domain.bugtracker.BTIssueDecorator;
@@ -281,10 +282,14 @@ public final class BugtrackerControllerHelper {
 		public Object[] buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
 			BTIssue issue = ownership.getIssue();
 			return new Object[] {
-					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
-							.toExternalForm(), issue.getId(), issue.getSummary(), issue.getPriority().getName(),
-					issue.getStatus().getName(), issue.getAssignee().getName(),
-					nameBuilder.buildName(ownership.getOwner()), ownership.getExecution().getId() };
+					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker()).toExternalForm()
+					, issue.getId()
+					, issue.getSummary()
+					, issue.getPriority().getName()
+					, issue.getStatus().getName()
+					, issue.getAssignee().getName()
+					, nameBuilder.buildName(ownership.getOwner())
+					, ownership.getExecution().getId() };
 		}
 	}
 
@@ -496,6 +501,13 @@ public final class BugtrackerControllerHelper {
 			return buildExecName(executionStep.getExecution());
 		}
 
+	}
+	
+	public static final String findOwnerDescForTestCase(IssueDetector bugged, MessageSource messageSource, Locale locale){
+		TestCaseModelOwnershipNamebuilder nameBuilder = new TestCaseModelOwnershipNamebuilder();
+		nameBuilder.setMessageSource(messageSource);
+		nameBuilder.setLocale(locale);
+		return nameBuilder.buildName(bugged);
 	}
 
 	private static String findTestSuiteNameList(Execution execution) {

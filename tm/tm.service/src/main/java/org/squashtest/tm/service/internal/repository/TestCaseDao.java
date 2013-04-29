@@ -35,46 +35,49 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 
 public interface TestCaseDao extends EntityDao<TestCase> {
 
 	/**
-	 * That method exists because hibernate doesn't quite respect the 
-	 * cascade persist for a set of test case and steps 
+	 * That method exists because hibernate doesn't quite respect the cascade persist for a set of test case and steps
 	 * 
 	 * @param testCase
 	 */
 	void persistTestCaseAndSteps(TestCase testCase);
-	
+
 	/**
-	 * if the transient test case has steps, will invoke {@link #persistTestCaseAndSteps(TestCase)}
-	 * else, will just save it.
+	 * if the transient test case has steps, will invoke {@link #persistTestCaseAndSteps(TestCase)} else, will just save
+	 * it.
 	 * 
 	 */
 	public void safePersist(TestCase testCase);
-	
+
 	TestCase findAndInit(Long testCaseId);
 
 	List<ActionTestStep> getTestCaseSteps(Long testCaseId);
 
 	List<TestCase> findAllByIdListOrderedByName(final List<Long> testCaseIds);
-	
+
 	/**
-	 * Will find all names of folderes content starting with the input string.
-	 * Will not return sub-folder's content names.
+	 * Will find all names of folderes content starting with the input string. Will not return sub-folder's content
+	 * names.
 	 * 
-	 * @param folderId the id of a {@link TestCaseFolder}
-	 * @param nameStart the search param
+	 * @param folderId
+	 *            the id of a {@link TestCaseFolder}
+	 * @param nameStart
+	 *            the search param
 	 * @return
 	 */
 	List<String> findNamesInFolderStartingWith(long folderId, String nameStart);
+
 	/**
-	 * Will find all names of library root content starting with the input string.
-	 * Will not return library folders and sub-folder's content names.
+	 * Will find all names of library root content starting with the input string. Will not return library folders and
+	 * sub-folder's content names.
 	 * 
-	 * @param libraryId the id of a {@link TestCaseLibrary}
-	 * @param nameStart the search param
+	 * @param libraryId
+	 *            the id of a {@link TestCaseLibrary}
+	 * @param nameStart
+	 *            the search param
 	 * @return
 	 */
 	List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart);
@@ -154,7 +157,7 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	List<Long> findAllTestCasesIdsCalledByTestCases(List<Long> testCasesIds);
 
 	/**
-	 * returns the ids of all the test cases having at least one call test step referencing the given test case.
+	 * returns the test cases having at least one call test step referencing the given test case.
 	 * 
 	 * @param testCaseId
 	 *            the id of the test case.
@@ -162,7 +165,16 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	 *            the sorting attributes and the like.
 	 * @return the list of test cases having at least one call step calling the input test case.
 	 */
-	List<TestCase> findAllCallingTestCases(long testCaseId, CollectionSorting sorting);
+	List<TestCase> findAllCallingTestCases(long testCaseId, PagingAndSorting sorting);
+
+	/**
+	 * return all test cases having at least one call test step referencing the given test case.
+	 * 
+	 * @param calleeId
+	 *            the id of the called test case
+	 * @return the test cases calling the test case matching the given id param.
+	 */
+	List<TestCase> findAllCallingTestCases(long calleeId);
 
 	/***
 	 * Returns the test cases associated with at least a requirement that meets the criteria
@@ -207,29 +219,32 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	 * @return
 	 */
 	List<TestCase> findUnsortedAllByVerifiedRequirementVersion(long requirementId);
-	
+
 	List<TestCaseLibraryNode> findBySearchCriteria(TestCaseSearchCriteria criteria);
-	
+
 	/**
 	 * Returns all the execution associated to this test-case
+	 * 
 	 * @param tcId
 	 * @return
 	 */
 	List<Execution> findAllExecutionByTestCase(Long tcId);
-	
+
 	List<ExportTestCaseData> findTestCaseToExportFromProject(List<Long> projectIds);
 
 	List<ExportTestCaseData> findTestCaseToExportFromNodes(List<Long> nodesIds);
 
 	/**
 	 * Return all test case ids contained by the library of the given id. Not only root ones
+	 * 
 	 * @param libraryId
 	 * @return
 	 */
 	List<Long> findAllTestCasesIdsByLibrary(long libraryId);
-	
+
 	/**
 	 * Return all test-cases that are linked to an iteration-test-plan-item
+	 * 
 	 * @param nodeIds
 	 * @return
 	 */

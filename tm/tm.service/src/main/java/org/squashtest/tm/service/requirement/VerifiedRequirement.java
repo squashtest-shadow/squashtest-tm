@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.requirement;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -39,25 +40,28 @@ import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
  *
  */
 public class VerifiedRequirement {
-	private final RequirementVersionCoverage requirementVersionCoverage;
 	/**
 	 * In the context of a given test case, the test case directly verifies this requirement (ie not through a test case
 	 * call).
 	 */
 	private final boolean directVerification;
-
+	private final Set<ActionTestStep> verifyingSteps;
+	private final RequirementVersion verifiedRequirementVersion;
 	public VerifiedRequirement(@NotNull RequirementVersionCoverage requirementVersionCoverage, boolean directVerification) {
 		super();
-		this.requirementVersionCoverage = requirementVersionCoverage;
+		this.verifyingSteps = requirementVersionCoverage.getVerifyingSteps();
+		this.verifiedRequirementVersion = requirementVersionCoverage.getVerifiedRequirementVersion();
 		this.directVerification = directVerification;
+	
 	}
 	public VerifiedRequirement(@NotNull RequirementVersion version, boolean directlyVerified) {
 		super();
-		this.requirementVersionCoverage = new RequirementVersionCoverage(version);
+		this.verifyingSteps = new HashSet<ActionTestStep>(0);
+		this.verifiedRequirementVersion  = version;
 		this.directVerification = directlyVerified;
 	}
 	private RequirementVersion getVerifiedRequirementVersion(){
-		return this.requirementVersionCoverage.getVerifiedRequirementVersion();
+		return this.verifiedRequirementVersion;
 	}
 	public Project getProject() {
 		return getVerifiedRequirementVersion().getRequirement().getProject();
@@ -97,10 +101,15 @@ public class VerifiedRequirement {
 		return getVerifiedRequirementVersion().getId();
 	}
 	public Set<ActionTestStep> getVerifyingSteps(){
-		return requirementVersionCoverage.getVerifyingSteps();
+		return verifyingSteps;
 	}
 	public boolean hasStepAsVerifying(long stepId) {
-		return requirementVersionCoverage.hasStepAsVerifying(stepId);
+		for (ActionTestStep step : this.verifyingSteps) {
+			if (step.getId().equals(stepId)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	

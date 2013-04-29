@@ -219,6 +219,7 @@
 		<input type="button" value="<f:message key='test-case.button.remove.label' />"
 				id="delete-test-case-button" class="button" />
 	</c:if>
+		<input type="button" value="<f:message key='label.print'/>" id="print-test-case-button" class="button"/>
 	</div>
 	<div style="clear: both;"></div>
 	<c:if test="${ moreThanReadOnly }">
@@ -568,7 +569,9 @@
 		
 		$("#rename-test-case-button").squashButton();
 		$("#delete-test-case-button").squashButton();
-		
+		$("#print-test-case-button").squashButton();
+
+		$("#print-test-case-button").click(function(){window.open("${testCaseUrl}/print", "_blank");});
 	});
 
 	

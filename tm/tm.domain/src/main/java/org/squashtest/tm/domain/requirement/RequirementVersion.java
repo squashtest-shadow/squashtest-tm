@@ -62,7 +62,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 public class RequirementVersion extends Resource implements BoundEntity{
 	
 	@NotNull
-	@OneToMany(cascade = { CascadeType.REMOVE,CascadeType.REFRESH, CascadeType.MERGE })
+	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE })
 	@JoinColumn(name="VERIFIED_REQ_VERSION_ID")
 	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<RequirementVersionCoverage>();
 

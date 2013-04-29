@@ -1,0 +1,89 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2013 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+.tab {
+	margin: 1%;
+}
+
+.panel {
+	border: 1px solid black;
+	border-radius: 10px 10px 10px 10px;
+	margin: 1%;
+}
+.indirectVerivication {
+    color: #555555;
+    font-style: italic;
+}
+
+table,td,tr,th {
+	border: 1px solid grey;
+	border-collapse: collapse;
+	margin: 1%;
+}
+
+th {
+	background: none repeat scroll 0 0 #EEEEEE;
+	border: 1.5px solid grey;
+	min-width: 2em;
+}
+
+th.small {
+	width: 2em;
+}
+
+table {
+	    background: none repeat scroll 0 0 transparent;
+    font-size: 100%;
+    margin: auto;
+    width: 96%;
+}
+
+h4 {
+	border-bottom: 1px solid;
+	border-radius: 10px 10px 0 0;
+	background: none repeat scroll 0 0 #DDDDDD;
+	margin: auto;
+	padding: 0.5%;
+	vertical-align: middle;
+}
+
+h3 {
+	background: none repeat scroll 0 0 #ACDD4A;
+    border-bottom: 3px solid;
+    margin: auto auto 20px;
+    padding: 0.5%;
+}
+
+h2 {
+	
+}
+
+p {
+	margin: 0.5%;
+}
+
+.header {
+	background: none repeat scroll 0 0 #6EAC2C;
+	border-bottom: 4px solid;
+}
+
+html,body {
+	background: none;
+}

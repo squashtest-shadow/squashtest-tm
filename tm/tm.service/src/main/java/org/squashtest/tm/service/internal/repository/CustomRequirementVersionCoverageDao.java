@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
@@ -47,6 +48,12 @@ public interface CustomRequirementVersionCoverageDao extends EntityDao<Requireme
 	 */
 	List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds, PagingAndSorting pas);
 
-	
+	/**
+	 * Returns a list of all DISTINCT {@link RequirementVersion} linked to at least one of the {@link TestCase}s matching the given ids param.
+	 * @param testCaseIds : the ids of the verifying {@link TestCase}s
+	 * @return : a list of {@link RequirementVersion} representing all distinct requirements for the given test cases
+	 */
+	@Transactional(readOnly=true)
+	List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds);
 
 }
