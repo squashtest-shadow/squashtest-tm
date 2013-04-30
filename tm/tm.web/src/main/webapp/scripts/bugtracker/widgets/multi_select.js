@@ -34,24 +34,43 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 		
 		fieldvalue : function(fieldvalue){
 			if (fieldvalue===null || fieldvalue === undefined){
-				var text = this.element.eq(0).val();
+				var selected = this.element.find('option:selected');
 				var typename = this.options.rendering.inputType.dataType;
 				
-				return new FieldValue("--", typename, text);
+				var values = [];
+				selected.each(function(){
+					var $this = $(this);
+					var v = new FieldValue($this.val(), typename, $this.text());
+					values.push(v);
+				});
+				
+				return new FieldValue(this.options.id, typename, values);
 			}
 			else{
-				this.element.val(fieldvalue.scalar);
+				var ids = $.map(fieldvalue.composite, function(e){return e.id});
+				this.element.val(ids);
 			}
 		}, 
+		
+		
 		createDom : function(field){
-			var input = $('<input />', {
-				'type' : 'text',
+			var input = $('<select />', {
 				'data-widgetname' : 'multi_select',
-				'data-fieldid' : field.id
+				'data-fieldid' : field.id,
+				'multiple' : 'multiple'
 			});
-
 			
-			
+			var options = field.possibleValues;
+			var opt;
+			for (var i=0, len = options.length; i<len;i++){
+				opt = $('<option>', {
+					'text' : options[i].scalar,
+					'value' : options[i].id
+				});
+				
+				input.append(opt);
+			}
+						
 			return input;
 		}
 	}
