@@ -170,9 +170,9 @@ define(["jquery",
 		fieldTpl : undefined,
 		frameTpl : undefined,
 		fileUploadForms : [],
+		_savedForm : {},
 		
 		events : {
-			"click input.optional-fields-toggle" : "toggleOptionalFields",
 			"change .scheme-selector" : "changeScheme",
 			"keypress" : "abortEnter"
 		},
@@ -245,37 +245,21 @@ define(["jquery",
 			var selector = ""+fieldid+":"+value.scalar;
 			this.model.set('currentScheme', selector);
 			
-			//checkout then checkin again to update the view
-			this.readOut();
-			this.readIn();
+			//refresh the view
+			this._saveForm();
+			this.render();
+			this._restoreForm();
 			
 		},
-		
-		toggleOptionalFields : function(){
-			this.$el.find('div.optional-fields div.issue-panel-container').toggleClass('not-displayed');
-			var btn = this.$el.find('input.optional-fields-toggle');
-			var txt = btn.val();
-			(txt==="+") ? btn.val('-') : btn.val('+');
-		},
-		
+
 		readIn : function(){
 			
 			//first, create the fields
 			this.render();
 			
 			//now we can fill them
-			var fieldValues = this.model.get('fieldValues');
-			var allControls = this._getAllControls();
-			
-			for (var fieldId in fieldValues){
-				var value 	= fieldValues[fieldId];
-				var control = allControls.filter('[data-fieldid="'+fieldId+'"]');
-				
-				if (control.length>0){
-					control.data('widget').fieldvalue(value);
-				}
-				
-			}
+			this._formValues = this.model.get('fieldValues');
+			this._restoreForm();
 		},
 		
 		//the file uploads will be handled separately. If a control contains inputs of type 'file', the control 
@@ -320,6 +304,46 @@ define(["jquery",
 			this.model.set('fieldValues', newValues);
 			
 			this.fileUploadForms = allFileUploadForms;
+		},
+		
+		
+		/*
+		 * _saveForm and _restorForm are light versions of readOut and readIn
+		 * 
+		 */
+		_saveForm : function(){
+			
+			var newValues = {};
+			var controls = this._getAllControls();
+			var self = this;
+			
+			controls.each(function(){
+				
+				var $this = $(this);
+				
+				var fieldid = $this.data('fieldid');
+				var value = $this.data('widget').fieldvalue();				
+
+				newValues[fieldid] = value;
+				
+			});
+
+			$.extend(true, this._formValues, newValues);
+		},
+		
+		_restoreForm : function(){
+			var fieldValues = this._formValues;
+			
+			var allControls = this._getAllControls();
+			
+			for (var fieldId in fieldValues){
+				var value 	= fieldValues[fieldId];
+				var control = allControls.filter('[data-fieldid="'+fieldId+'"]');
+				
+				if (control.length>0){
+					control.data('widget').fieldvalue(value);
+				}
+			}			
 		},
 		
 		enableControls : function(){

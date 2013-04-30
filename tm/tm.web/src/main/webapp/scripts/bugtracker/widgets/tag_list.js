@@ -120,11 +120,17 @@ define(["jquery", "../domain/FieldValue", "jqueryui", "jquery.squash.tagit"], fu
 				return new FieldValue(field.id, "composite", allValues);
 			}
 			else{
+				
+				delegate.squashTagit("option", "showAutocompleteOnFocus", false);
+				
 				delegate.squashTagit('removeAll');
 				var values = fieldvalue.composite;
 				for (var i=0;i<values.length;i++){
 					delegate.squashTagit('createTag', values[i].scalar);
-				}				
+				}		
+				
+				delegate.squashTagit("option", "showAutocompleteOnFocus", true);
+
 			}
 			
 		},
