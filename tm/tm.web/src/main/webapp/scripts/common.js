@@ -67,6 +67,7 @@ requirejs
 				"jform" : "jquery/jquery.form",
 				"jquery.generateId" : "jquery/jquery.generateId",
 				"jquery.hotkeys" : "jquery/jquery.hotkeys-0.8",
+				"jquery.timepicker" : "jquery/jquery-ui-timepicker-addon",
 				"jquery.squash" : "squashtest/jquery.squashtm.plugin",
 				"jquery.squash.fragmenttabs" : "squash/squashtm.fragmenttabs",
 				"jquery.squash.togglepanel" : "squashtest/jquery.squash.togglepanels",

@@ -56,8 +56,7 @@ define(["jquery", "../domain/FieldValue", "jqueryui", "jquery.squash.tagit"], fu
 				$.extend(config, {
 					availableTags : tags,
 					showAutocompleteOnFocus : true,
-					constrained : true,
-					'essspectacularrr !' : true
+					constrained : true
 				});
 			}
 			
