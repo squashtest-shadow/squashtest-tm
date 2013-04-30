@@ -31,7 +31,7 @@ import java.util.Map;
  * the Squash UI.</p>
  * 
  * <p>A widget represents a {@link Field} and produces a {@link FieldValue}. The original field name must contain only printable characters, 
- * digits, dots, underscrot and dash, any non supported character will be replaced by '_'.
+ * digits, dots, underscore and dash, any non supported character will be replaced by '_'.
  * See the static fields for the list of known fields.</p>
  * 
  *  <p>special fields : 
@@ -55,6 +55,9 @@ import java.util.Map;
  *   		Native squash widgets will emit a DelegateCommand, using the value you supplied for 'onchange' as command name and its {@link FieldValue#getName()} as argument. Customized 
  *   widgets shipped with an extension can of course specify something else, it will be up to your connector to know how to interpret them.
  *   		This mechanism is used for instance by the text_fields for autocompletion. 
+ *   	</li>
+ *   	<li>
+ *   		'max-length' : if set (to a positive numeric value), will cap the size of the input to that specified value. For now only plaijn TEXT_FIELD supports it.
  *   	</li>
  *   </ul>
  * 
@@ -89,6 +92,7 @@ public class InputType {
 	
 	public static final String DATE_FORMAT 		= "date-format";
 	public static final String ONCHANGE 		= "onchange";
+	public static final String MAX_LENGTH		= "max-length";
 	
 	
 	// ***** attributes ******
@@ -123,8 +127,12 @@ public class InputType {
 		this.name = name;
 	}
 
+	/**
+	 * returns the original name, escaped using {@link #formatName(String)}
+	 * @return
+	 */
 	public String getOriginal() {
-		return original.replaceAll("[^\\w-_.0-9]", "_");
+		return InputType.formatName(original);
 	}
 
 	public void setOriginal(String original) {
@@ -157,6 +165,18 @@ public class InputType {
 
 	public void setDataType(String inputType) {
 		this.dataType = inputType;
+	}
+	
+	
+	/**
+	 * Escapes illegal characters and make that string comply to the rules specified 
+	 * at the documentation at the class level.
+	 * 
+	 * @param original
+	 * @return
+	 */
+	public static String formatName(String original){
+		return original.replaceAll("[^\\w-_.0-9]", "_");
 	}
 	
 }

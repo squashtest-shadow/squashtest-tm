@@ -68,6 +68,10 @@ define(["jquery", "../domain/FieldValue", "jqueryui"], function($, FieldValue){
 			
 			var meta = this.options.rendering.inputType.meta;
 			
+			if (!!meta['max-length']){
+				this.element.attr('maxlength', meta['max-length']);
+			}
+			
 			if (!!meta.onchange){
 				configureAutocomplete.call(this);
 			}
