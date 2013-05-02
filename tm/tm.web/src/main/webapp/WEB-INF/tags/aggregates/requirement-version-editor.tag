@@ -133,10 +133,7 @@
 					<label for="requirement-version-id">ID</label>
 					<div id="requirement-version-id">${ requirementVersion.requirement.id }</div>
 				</div>
-				<div>
-					<label for="requirement-description"><f:message key="label.Description" /></label>
-					<div id="requirement-description">${ requirementVersion.description }</div>
-				</div>
+				
 				<div>
 					<label for="requirement-reference"><f:message key="requirement.reference.label" /></label>
 					<div id="requirement-reference">${ requirementVersion.reference }</div>
@@ -195,8 +192,12 @@
 			</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
-	
 
+	<comp:toggle-panel id="requirement-description-panel" classes="description-panel" titleKey="label.Description" isContextual="true" open="true" >
+		<jsp:attribute name="body">	
+					<div id="requirement-description">${ requirementVersion.description }</div>
+		</jsp:attribute>
+	</comp:toggle-panel>
 	<%--------------- verifying TestCase section ------------------------------------%>
 	<comp:toggle-panel id="verifying-requirement-panel" titleKey="requirement.verifying_test-case.panel.title" open="true">
 		<jsp:attribute name="panelButtons">
