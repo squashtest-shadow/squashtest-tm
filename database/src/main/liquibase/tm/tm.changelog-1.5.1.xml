@@ -35,134 +35,162 @@
 		</update>
 	</changeSet>
 
-	<changeSet id="tm-1.5.0.issue-2261-01" author="mpagnon">
-		<preConditions onError="CONTINUE" onFail="CONTINUE"
-			onSqlOutput="TEST">
-			<not>
-				<sqlCheck expectedResult="0">
-					select count(*) from TEST_SUITE_TEST_PLAN_ITEM where TEST_PLAN_ORDER is
-					null;
-				</sqlCheck>
-			</not>
+	<changeSet id="tm-1.5.0.issue-2261-01" author="mpagnon,bsiri">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+			<dbms type="mysql"/>	
 		</preConditions>
 		<comment> This issue is due to null values in test_suite_test_plan_item.test_plan_order after migration to 1.5.0 </comment>
 		<comment>First we create help table that will help us match the iteration test plan orders with the test-suite's test plan items.</comment>
-		<createTable tableName="TEMP_DISCONTINUOUS_SUITE_ITEM">
-			<column name="ITEM_ID" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="SUITE_ID" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="TP_ORDER" type="INT">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
+		
 		<sql>
-			insert into TEMP_DISCONTINUOUS_SUITE_ITEM (SUITE_ID, ITEM_ID,
-			TP_ORDER)
-			select tstpitem.SUITE_ID, tstpitem.TPI_ID,
-			itplist.ITEM_TEST_PLAN_ORDER
-			from TEST_SUITE_TEST_PLAN_ITEM tstpitem,
-			ITERATION_TEST_PLAN_ITEM itpitem, ITEM_TEST_PLAN_LIST itplist
-			where
-			tstpitem.TPI_ID = itpitem.ITEM_TEST_PLAN_ID
-			and
-			itpitem.ITEM_TEST_PLAN_ID = itplist.ITEM_TEST_PLAN_ID
-			;
-		</sql>
-		<createTable tableName="TEMP_CONTINUOUS_SUITE_ITEM">
-			<column name="ITEM_ID" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="SUITE_ID" type="BIGINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="TP_ORDER" type="INT">
-				<constraints nullable="false" />
-			</column>
-			<column name="DUMMY" type="BIGINT">
-				<constraints nullable="true" />
-			</column>
-		</createTable>
-	</changeSet>
 
-	<changeSet id="tm-1.5.0.issue-2261-02" author="mpagnon">
-		<preConditions onError="CONTINUE" onFail="CONTINUE"
-			onSqlOutput="TEST">
-			<and>
-				<dbms type="h2" />
-				<not>
-					<sqlCheck expectedResult="0">
-						select count(*) from TEST_SUITE_TEST_PLAN_ITEM where TEST_PLAN_ORDER is
-						null;
-					</sqlCheck>
-				</not>
-			</and>
+			-- ------------------------------------------------------------------------------
+			-- create the temporary tables
+			-- ------------------------------------------------------------------------------
+			
+			create table TEMP_DISCONTINUOUS_SUITE_ITEM(ITEM_ID BIGINT NOT NULL, SUITE_ID BIGINT NOT NULL);						
+			create table TEMP_CONTINUOUS_SUITE_ITEM(ITEM_ID BIGINT NOT NULL, SUITE_ID BIGINT NOT NULL, TP_ORDER INT NOT NULL, DUMMY BIGINT NOT NULL);
+			
+			-- ------------------------------------------------------------------------------
+			-- gather the data that need migration
+			-- ------------------------------------------------------------------------------
+						
+			
+			insert into TEMP_DISCONTINUOUS_SUITE_ITEM (SUITE_ID, ITEM_ID) 
+			select tstpitem.SUITE_ID, tstpitem.TPI_ID 
+			from TEST_SUITE_TEST_PLAN_ITEM tstpitem 
+			where
+				tstpitem.SUITE_ID in ( 
+					select distinct tstpi2.suite_id 
+					from TEST_SUITE_TEST_PLAN_ITEM tstpi2
+					where tstpi2.TEST_PLAN_ORDER is null
+				);
+				
+
+			-- ------------------------------------------------------------------------------
+			-- Code for mysql database to find continuous orders for test suite test plan.
+			-- Then we compute continuous orders for test-suite test plan items
+			-- ------------------------------------------------------------------------------
+			
+			insert into TEMP_CONTINUOUS_SUITE_ITEM ( TP_ORDER, SUITE_ID, ITEM_ID, DUMMY)
+			select if(@prevsuite=SUITE_ID, 
+					  @rownum:=@rownum+1, 
+				      @rownum:=0)
+			TP_ORDER, SUITE_ID, ITEM_ID, (@prevsuite:=SUITE_ID)
+			from
+			TEMP_DISCONTINUOUS_SUITE_ITEM tdsi, (SELECT @rownum:=0) r, (SELECT @prevsuite:=0) s
+			order by SUITE_ID, TP_ORDER;			
+		
+			-- ------------------------------------------------------------------------------
+			-- And finally we set the right orders in the concerned table without forgetting to delete the help tables.
+			-- ------------------------------------------------------------------------------
+			
+			update TEST_SUITE_TEST_PLAN_ITEM
+			set TEST_PLAN_ORDER = 
+				(select TEMP_CONTINUOUS_SUITE_ITEM.TP_ORDER
+				from  TEMP_CONTINUOUS_SUITE_ITEM
+				where TEMP_CONTINUOUS_SUITE_ITEM.SUITE_ID = TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID
+				and TEST_SUITE_TEST_PLAN_ITEM.TPI_ID = TEMP_CONTINUOUS_SUITE_ITEM.ITEM_ID)
+			where 
+				SUITE_ID in (
+					select distinct tcsi2.SUITE_ID from TEMP_CONTINUOUS_SUITE_ITEM tcsi2
+				);
+			
+			-- ------------------------------------------------------------------------------
+			-- drop the temp tables
+			-- ------------------------------------------------------------------------------
+			
+			drop table TEMP_DISCONTINUOUS_SUITE_ITEM;
+			drop table TEMP_CONTINUOUS_SUITE_ITEM;
+			
+			-- ------------------------------------------------------------------------------
+			-- enforce the security on that column
+			-- ------------------------------------------------------------------------------
+			
+			alter table TEST_SUITE_TEST_PLAN_ITEM modify TEST_PLAN_ORDER INT NOT NULL;
+
+	
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="tm-1.5.0.issue-2261-02" author="mpagnon,bsiri">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+			<dbms type="h2"/>	
 		</preConditions>
-		<comment> Code for h2 database to find continuous orders for test suite test plan. </comment>
-		<comment>Then we compute continuous orders for test-suite test plan items</comment>
+		<comment> This issue is due to null values in test_suite_test_plan_item.test_plan_order after migration to 1.5.0 </comment>
+		<comment>First we create help table that will help us match the iteration test plan orders with the test-suite's test plan items.</comment>
+		
 		<sql>
+
+			-- ------------------------------------------------------------------------------
+			-- create the temporary tables
+			-- ------------------------------------------------------------------------------
+			
+			create table TEMP_DISCONTINUOUS_SUITE_ITEM(ITEM_ID BIGINT NOT NULL, SUITE_ID BIGINT NOT NULL);						
+			create table TEMP_CONTINUOUS_SUITE_ITEM(ITEM_ID BIGINT NOT NULL, SUITE_ID BIGINT NOT NULL, TP_ORDER INT NOT NULL, DUMMY BIGINT NOT NULL);
+			
+			-- ------------------------------------------------------------------------------
+			-- gather the data that need migration
+			-- ------------------------------------------------------------------------------
+						
+			
+			insert into TEMP_DISCONTINUOUS_SUITE_ITEM (SUITE_ID, ITEM_ID) 
+			select tstpitem.SUITE_ID, tstpitem.TPI_ID 
+			from TEST_SUITE_TEST_PLAN_ITEM tstpitem 
+			where
+				tstpitem.SUITE_ID in ( 
+					select distinct tstpi2.suite_id 
+					from TEST_SUITE_TEST_PLAN_ITEM tstpi2
+					where tstpi2.TEST_PLAN_ORDER is null
+				);
+				
+
+			-- ------------------------------------------------------------------------------
+			-- Code for h2 database to find continuous orders for test suite test plan.
+			-- Then we compute continuous orders for test-suite test plan items
+			-- ------------------------------------------------------------------------------
+			
 			set @rn=-1;
 			set @prevsuite=0;
 			insert into TEMP_CONTINUOUS_SUITE_ITEM ( TP_ORDER, SUITE_ID, ITEM_ID,
 			DUMMY)
 			select casewhen(@prevsuite = SUITE_ID, set(@rn, @rn+1),
-			set(@rn, 0)), SUITE_ID, ITEM_ID, set(@prevsuite, SUITE_ID)
+			set(@rn, 0)) TP_ORDER, SUITE_ID, ITEM_ID, set(@prevsuite, SUITE_ID)
 			from
 			TEMP_DISCONTINUOUS_SUITE_ITEM tdsi
-			order by SUITE_ID, TP_ORDER;
-		</sql>
-	</changeSet>
-
-	<changeSet id="tm-1.5.0.issue-2261-03" author="mpagnon">
-		<preConditions onError="CONTINUE" onFail="CONTINUE"
-			onSqlOutput="TEST">
-			<and>
-				<dbms type="mysql" />
-				<not>
-					<sqlCheck expectedResult="0">
-						select count(*) from TEST_SUITE_TEST_PLAN_ITEM where TEST_PLAN_ORDER is
-						null;
-					</sqlCheck>
-				</not>
-			</and>
-		</preConditions>
-		<comment>Code for mysql database to find continuous orders for test suite test plan.</comment>
-		<comment>Then we compute continuous orders for test-suite test plan items</comment>
-		<sql>
-			insert into TEMP_CONTINUOUS_SUITE_ITEM ( TP_ORDER, SUITE_ID, ITEM_ID,
-			DUMMY)
-			select if(@prevsuite=SUITE_ID, @rownum:=@rownum+1, @rownum:=0)
-			TP_ORDER, SUITE_ID, ITEM_ID, (@prevsuite:=SUITE_ID)
-			from
-			TEMP_DISCONTINUOUS_SUITE_ITEM tdsi, (SELECT @rownum:=0) r, (SELECT
-			@prevsuite:=0) s
-			order by SUITE_ID, TP_ORDER;
-		</sql>
-	</changeSet>
-	<changeSet id="tm-1.5.0.issue-2261-04" author="mpagnon">
-	<preConditions onError="CONTINUE" onFail="CONTINUE"
-			onSqlOutput="TEST">
-			<not>
-				<sqlCheck expectedResult="0">
-					select count(*) from TEST_SUITE_TEST_PLAN_ITEM where TEST_PLAN_ORDER is
-					null;
-				</sqlCheck>
-			</not>
-		</preConditions>
-		<comment>And finally we set the right orders in the concerned table without forgetting to delete the help tables.</comment>
-		<update tableName="TEST_SUITE_TEST_PLAN_ITEM">
-			<column name="TEST_PLAN_ORDER"
-				valueComputed="(select TEMP_CONTINUOUS_SUITE_ITEM.TP_ORDER
+			order by SUITE_ID, TP_ORDER;		
+		
+			-- ------------------------------------------------------------------------------
+			-- And finally we set the right orders in the concerned table without forgetting to delete the help tables.
+			-- ------------------------------------------------------------------------------
+			
+			update TEST_SUITE_TEST_PLAN_ITEM
+			set TEST_PLAN_ORDER = 
+				(select TEMP_CONTINUOUS_SUITE_ITEM.TP_ORDER
 				from  TEMP_CONTINUOUS_SUITE_ITEM
 				where TEMP_CONTINUOUS_SUITE_ITEM.SUITE_ID = TEST_SUITE_TEST_PLAN_ITEM.SUITE_ID
-				and TEST_SUITE_TEST_PLAN_ITEM.TPI_ID = TEMP_CONTINUOUS_SUITE_ITEM.ITEM_ID)" />
-		</update>
-		<dropTable tableName="TEMP_DISCONTINUOUS_SUITE_ITEM" />
-		<dropTable tableName="TEMP_CONTINUOUS_SUITE_ITEM" />
-		<addNotNullConstraint tableName="TEST_SUITE_TEST_PLAN_ITEM"
-			columnName="TEST_PLAN_ORDER" columnDataType="INT" />
-	</changeSet>
+				and TEST_SUITE_TEST_PLAN_ITEM.TPI_ID = TEMP_CONTINUOUS_SUITE_ITEM.ITEM_ID)
+			where 
+				SUITE_ID in (
+					select distinct tcsi2.SUITE_ID from TEMP_CONTINUOUS_SUITE_ITEM tcsi2
+				);
+			
+			-- ------------------------------------------------------------------------------
+			-- drop the temp tables
+			-- ------------------------------------------------------------------------------
+			
+			drop table TEMP_DISCONTINUOUS_SUITE_ITEM;
+			drop table TEMP_CONTINUOUS_SUITE_ITEM;
+			
+			-- ------------------------------------------------------------------------------
+			-- enforce the security on that column
+			-- ------------------------------------------------------------------------------
+			
+			alter table TEST_SUITE_TEST_PLAN_ITEM alter TEST_PLAN_ORDER INT NOT NULL;
+
+	
+		</sql>
+	</changeSet>	
 </databaseChangeLog>
  
