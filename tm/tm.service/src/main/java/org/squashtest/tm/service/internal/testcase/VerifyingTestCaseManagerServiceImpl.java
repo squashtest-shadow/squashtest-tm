@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
@@ -108,24 +109,24 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
 		return doAddVerifyingTestCasesToRequirementVersion(testCases, requirementVersion);
 	}
-	
+
 	private Collection<VerifiedRequirementException> doAddVerifyingTestCasesToRequirementVersion(
 			List<TestCase> testCases, RequirementVersion requirementVersion) {
-		
+
 		List<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>(testCases.size());
-		
+
 		Iterator<TestCase> iterator = testCases.iterator();
-		while(iterator.hasNext()){
-		TestCase testCase = iterator.next();
+		while (iterator.hasNext()) {
+			TestCase testCase = iterator.next();
 			try {
 				RequirementVersionCoverage coverage = new RequirementVersionCoverage(requirementVersion, testCase);
 				requirementVersionCoverageDao.persist(coverage);
-				
+
 			} catch (RequirementAlreadyVerifiedException ex) {
 				rejections.add(ex);
 				iterator.remove();
 			}
-			
+
 		}
 		testCaseImportanceManagerService.changeImportanceIfRelationsAddedToReq(testCases, requirementVersion);
 
@@ -139,8 +140,9 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		List<TestCase> testCases = testCaseDao.findAllByIds(testCasesIds);
 
 		if (!testCases.isEmpty()) {
-			List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao.byRequirementVersionAndTestCases(testCasesIds, requirementVersionId);
-			for(RequirementVersionCoverage coverage : coverages){
+			List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao
+					.byRequirementVersionAndTestCases(testCasesIds, requirementVersionId);
+			for (RequirementVersionCoverage coverage : coverages) {
 				coverage.checkCanRemoveTestCaseFromRequirementVersion();
 				requirementVersionCoverageDao.delete(coverage);
 			}
@@ -152,7 +154,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	@Override
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK') or hasRole('ROLE_ADMIN')")
 	public void removeVerifyingTestCaseFromRequirementVersion(long testCaseId, long requirementVersionId) {
-		RequirementVersionCoverage coverage = requirementVersionCoverageDao.byRequirementVersionAndTestCase(requirementVersionId, testCaseId);
+		RequirementVersionCoverage coverage = requirementVersionCoverageDao.byRequirementVersionAndTestCase(
+				requirementVersionId, testCaseId);
 		coverage.checkCanRemoveTestCaseFromRequirementVersion();
 		requirementVersionCoverageDao.delete(coverage);
 		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(Arrays.asList(testCaseId),
@@ -170,6 +173,35 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		return new PagingBackedPagedCollectionHolder<List<TestCase>>(pagingAndSorting, verifiersCount, verifiers);
 	}
 
-	
+	@Override
+	public List<TestCase> findAllByRequirementVersion(long requirementVersionId) {
+		PagingAndSorting pas = new PagingAndSorting(){
+
+			@Override
+			public int getFirstItemIndex() {
+				return 0;
+			}
+
+			@Override
+			public int getPageSize() {
+				return 0;
+			}
+
+			@Override
+			public boolean shouldDisplayAll() {
+				return true;
+			}
+
+			@Override
+			public String getSortedAttribute() {return "Project.name";
+			}
+
+			@Override
+			public SortOrder getSortOrder() {return SortOrder.ASCENDING;
+			}
+			
+		};
+		return findAllByRequirementVersion(requirementVersionId, pas).getPagedItems();
+	}
 
 }

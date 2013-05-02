@@ -36,24 +36,18 @@ import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionDao;
 
 /**
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 @Repository("CustomRequirementVersionDao")
 public class HibernateRequirementVersionDao implements CustomRequirementVersionDao {
 	@Inject
 	private SessionFactory sessionFactory;
 
-	
-	
-
-	
 	private Session currentSession() {
 		return sessionFactory.getCurrentSession();
 	}
-
-
 
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.CustomRequirementVersionDao#findAllByRequirement(long,
@@ -65,8 +59,9 @@ public class HibernateRequirementVersionDao implements CustomRequirementVersionD
 		Criteria crit = currentSession().createCriteria(RequirementVersion.class, "RequirementVersion");
 		crit.createAlias("requirement", "Requirement");
 		crit.add(Restrictions.eq("Requirement.id", Long.valueOf(requirementId)));
-
-		PagingUtils.addPaging(crit, pas);
+		if (!pas.shouldDisplayAll()) {
+			PagingUtils.addPaging(crit, pas);
+		}
 		SortingUtils.addOrder(crit, pas);
 
 		return crit.list();

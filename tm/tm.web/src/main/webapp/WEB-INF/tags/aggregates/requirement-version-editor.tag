@@ -93,7 +93,8 @@
 
 	<c:if test="${ smallEditable }">
 		<div class="toolbar-button-panel">
-			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/> 
+			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/>
+			<input type="button" value="<f:message key='label.print'/>" id="print-requirement-version-button" class="button"/>
 		</div>	
 	</c:if>
 
@@ -199,7 +200,7 @@
 		</jsp:attribute>
 	</comp:toggle-panel>
 	<%--------------- verifying TestCase section ------------------------------------%>
-	<comp:toggle-panel id="verifying-requirement-panel" titleKey="requirement.verifying_test-case.panel.title" open="true">
+	<comp:toggle-panel id="verifying-test-case-panel" titleKey="requirement.verifying_test-case.panel.title" open="true">
 		<jsp:attribute name="panelButtons">
 			<c:if test="${ linkable }">
 				<f:message var="associateLabel" key="requirement.verifying_test-case.manage.button.label"/>
@@ -403,6 +404,7 @@
 				nameHandler.referenceHidden = "#requirement-raw-reference";
 				
 				squashtm.contextualContent.addListener(nameHandler);
+				$("#print-requirement-version-button").click(function(){window.open("${requirementUrl}/print", "_blank");});
 				
 			});
 		});

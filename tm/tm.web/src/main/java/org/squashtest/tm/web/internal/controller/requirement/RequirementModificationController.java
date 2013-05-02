@@ -89,7 +89,7 @@ public class RequirementModificationController {
 	@Inject
 	private RequirementVersionManagerService versionFinder;
 
-	private final DatatableMapper versionMapper = new IndexBasedMapper(7)
+	private final DatatableMapper<Integer> versionMapper = new IndexBasedMapper(7)
 														.mapAttribute(RequirementVersion.class, "versionNumber", int.class, 1)
 														.mapAttribute(RequirementVersion.class, "reference", String.class, 2)
 														.mapAttribute(RequirementVersion.class, "name", String.class, 3)

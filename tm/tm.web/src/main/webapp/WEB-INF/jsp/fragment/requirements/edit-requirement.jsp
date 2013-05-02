@@ -204,7 +204,8 @@ that page won't be editable if
 		</c:if>	
 		<c:if test="${ creatable }">
 			<input type="button" value='<f:message key="requirement.button.new-version.label" />' id="new-version-button" class="button"/>		
-		</c:if>		
+		</c:if>
+		<input type="button" value="<f:message key='label.print'/>" id="print-requirement-version-button" class="button"/>
 	</div>	
 
 	<div style="clear:both;"></div>	
@@ -459,6 +460,8 @@ that page won't be editable if
 				nameHandler.referenceHidden = "#requirement-raw-reference";
 				
 				squashtm.contextualContent.addListener(nameHandler);
+
+				$("#print-requirement-version-button").click(function(){window.open("${currentVersionUrl}/print", "_blank");});
 				
 			});
 		});

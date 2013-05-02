@@ -57,5 +57,13 @@ public interface CustomRequirementVersionManagerService {
 	@Transactional(readOnly = true)
 	PagedCollectionHolder<List<RequirementVersion>> findAllByRequirement(long requirementId,
 			@NotNull PagingAndSorting pas);
+	
+	/**
+	 * Fetches all versions for the given requirement
+	 * @param id
+	 * @return
+	 */
+	@Transactional(readOnly=true)
+	List<RequirementVersion> findAllByRequirement(long requirementId);	
 
 }

@@ -48,12 +48,16 @@ th.small {
 	width: 2em;
 }
 
+tr.selected {
+    border: 2px solid grey;
+}
 table {
 	    background: none repeat scroll 0 0 transparent;
     font-size: 100%;
     margin: auto;
     width: 96%;
 }
+
 
 h4 {
 	border-bottom: 1px solid;
@@ -65,25 +69,34 @@ h4 {
 }
 
 h3 {
-	background: none repeat scroll 0 0 #ACDD4A;
     border-bottom: 3px solid;
     margin: auto auto 20px;
     padding: 0.5%;
 }
-
-h2 {
-	
+.green h3{
+        background: none repeat scroll 0 0 #ACDD4A;
 }
+.blue h3 {
+	background: none repeat scroll 0 0 #77D5F7;
+}
+
 
 p {
 	margin: 0.5%;
 }
 
 .header {
-	background: none repeat scroll 0 0 #6EAC2C;
 	border-bottom: 4px solid;
 }
 
+.green.header {
+	background: none repeat scroll 0 0 #6EAC2C;
+}
+
+.blue.header {
+	
+	background:none repeat scroll 0 0 #0078AE;
+}
 html,body {
 	background: none;
 }

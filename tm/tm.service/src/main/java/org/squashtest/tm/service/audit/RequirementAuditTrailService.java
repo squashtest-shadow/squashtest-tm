@@ -40,4 +40,7 @@ public interface RequirementAuditTrailService {
 	
 	PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId, Paging paging);
 
+	PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId);
+
+
 }

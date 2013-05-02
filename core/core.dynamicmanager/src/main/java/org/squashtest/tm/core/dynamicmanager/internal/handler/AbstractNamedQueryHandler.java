@@ -79,8 +79,10 @@ abstract class AbstractNamedQueryHandler<ENTITY> implements DynamicComponentInvo
 	private void processPaging(Query query, Object[] args) {
 		if (pagedQuery(args)) {
 			Paging paging = (Paging) lastArg(args);
-			query.setFirstResult(paging.getFirstItemIndex());
-			query.setMaxResults(paging.getPageSize());
+			if(!paging.shouldDisplayAll()){
+				query.setFirstResult(paging.getFirstItemIndex());
+				query.setMaxResults(paging.getPageSize());
+			}
 		}
 	}
 

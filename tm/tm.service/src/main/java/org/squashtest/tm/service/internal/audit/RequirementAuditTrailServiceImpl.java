@@ -42,21 +42,47 @@ import org.squashtest.tm.service.internal.repository.RequirementAuditEventDao;
 public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailService {
 	@Inject
 	private RequirementAuditEventDao auditEventDao;
-	
-	@Inject private SessionFactory sessionFactory;
+
+	@Inject
+	private SessionFactory sessionFactory;
 
 	/**
 	 * @see org.squashtest.tm.service.audit.RequirementAuditTrailService#findAllByRequirementVersionIdOrderedByDate(long,
 	 *      org.squashtest.tm.core.foundation.collection.Paging)
 	 */
 	@Override
-	public PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId,
-			Paging paging) {
-		
-		List<RequirementAuditEvent> pagedEvents = auditEventDao.findAllByRequirementVersionIdOrderedByDate(requirementVersionId, paging);
+	public PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(
+			long requirementVersionId, Paging paging) {
+
+		List<RequirementAuditEvent> pagedEvents = auditEventDao.findAllByRequirementVersionIdOrderedByDate(
+				requirementVersionId, paging);
 		long nbOfEvents = auditEventDao.countByRequirementVersionId(requirementVersionId);
-		
+
 		return new PagingBackedPagedCollectionHolder<List<RequirementAuditEvent>>(paging, nbOfEvents, pagedEvents);
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.audit.RequirementAuditTrailService#findAllByRequirementVersionsIdOrderedByDate(long)
+	 */
+	public PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId) {
+		Paging paging = new Paging() {
+			
+			@Override
+			public boolean shouldDisplayAll() {
+				return true;
+			}
+			
+			@Override
+			public int getPageSize() {
+				return 0;
+			}
+			
+			@Override
+			public int getFirstItemIndex() {
+				return 0;
+			}
+		};
+		return findAllByRequirementVersionIdOrderedByDate(requirementVersionId, paging);
 	}
 
 	/**
@@ -64,7 +90,9 @@ public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailSe
 	 */
 	@Override
 	public RequirementLargePropertyChange findLargePropertyChangeById(long eventId) {
-		return (RequirementLargePropertyChange) sessionFactory.getCurrentSession().load(RequirementLargePropertyChange.class, eventId);
+		return (RequirementLargePropertyChange) sessionFactory.getCurrentSession().load(
+				RequirementLargePropertyChange.class, eventId);
 	}
 
+	
 }

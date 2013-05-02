@@ -56,6 +56,7 @@ public interface RequirementVersionManagerService extends CustomRequirementVersi
 	void changeName(long requirementVersionId, String newName);
 	
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
-	void changeCategory(long requirementVersionId, RequirementCategory category);	
+	void changeCategory(long requirementVersionId, RequirementCategory category);
+
 
 }

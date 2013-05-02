@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
@@ -70,5 +71,36 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		long versionsCount = requirementVersionDao.countByRequirement(requirementId);
 
 		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(pas, versionsCount, versions);
+	}
+	
+	 @Override
+	 @PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ') or hasRole('ROLE_ADMIN')")		
+	public List<RequirementVersion> findAllByRequirement(long requirementId) {
+		 PagingAndSorting pas = new PagingAndSorting() {
+			
+			@Override
+			public String getSortedAttribute() {
+				return "versionNumber";
+			}
+			
+			@Override
+			public SortOrder getSortOrder() {return SortOrder.DESCENDING;
+			}
+			
+			@Override
+			public boolean shouldDisplayAll() {return true;
+			}
+			
+			@Override
+			public int getPageSize() {
+				return 0;
+			}
+			
+			@Override
+			public int getFirstItemIndex() {
+				return 0;
+			}
+		};
+		return findAllByRequirement(requirementId, pas).getPagedItems();
 	}
 }
