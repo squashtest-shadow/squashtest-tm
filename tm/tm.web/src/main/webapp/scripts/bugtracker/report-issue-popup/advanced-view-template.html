@@ -29,9 +29,9 @@
 			{{#each this}}
 			<div class="issue-field full-width" data-fieldid="{{id}}">
 				<label class="issue-field-label">{{label}} {{#if rendering.required}} (*) {{/if}}</label>
-				<div>
-				<span class="issue-field-control-holder"></span><br/>
-				<span class="issue-field-message-holder error-message" style="display: none;">
+				<div  class="issue-field-control-wrapper">
+					<span class="issue-field-control-holder"></span>
+					<span class="issue-field-message-holder error-message" style="display: none;">
 				</span>
 				</div>
 			</div>

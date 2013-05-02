@@ -309,12 +309,17 @@ label.issue-field-label{
 	vertical-align:middle;
 }
 
-span.issue-field-control-holder{
-	width : 74%;
+div.issue-field-control-wrapper{
+	vertical-align : middle;	
 }
 
 span.issue-field-control-holder{
+	width : 74%;
 	line-height : 1em;
+}
+
+span.issue-field-message-holder{
+	display : block;	/* that way it'll be displayed on a new line */
 }
 
 
