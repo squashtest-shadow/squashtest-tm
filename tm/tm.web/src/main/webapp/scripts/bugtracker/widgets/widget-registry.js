@@ -32,8 +32,9 @@ define(["require",
         "./text_field",
         "./timetracker",
         "./free_tag_list",
-        "./file_upload"],
-        function(require, baseWidget, date_picker, date_time, dropdown_list, tag_list, text_area, text_field, timetracker, free_tag_list, file_upload){
+        "./file_upload",
+        "./checkbox"],
+        function(require, baseWidget, date_picker, date_time, dropdown_list, tag_list, text_area, text_field, timetracker, free_tag_list, file_upload, checkbox){
 
 	var registry = {
 		
@@ -122,7 +123,7 @@ define(["require",
 	registry.registerWidget(free_tag_list , "free_tag_list");
 	registry.registerWidget(text_area , "text_area");
 	registry.registerWidget(file_upload , "file_upload");
-	
+	registry.registerWidget(checkbox , "checkbox");
 
 	return registry;
 });
