@@ -76,7 +76,7 @@
 
 <div id="attachment-upload-dialog" class="popup-dialog" > 			
 <!--  		 templates for cloning  -->
- 		<div id="add-attachments-templates" style="display:none;">
+ 		<div id="add-attachments-templates" class="not-displayed">
 	 		<div class="attachment-item">
 		 		<input type="file" name="attachment[]" size="40" />
 		 		<input type="button" th:value="#{dialog.attachment.add.button.remove.label}" value="remove" />
@@ -89,7 +89,7 @@
  				 				 			
  			</form>
  		</div> 	
- 		<div id="dump" style="display:none;"></div>
+ 		<div id="dump" class="not-displayed"></div>
  </div>
  
  
@@ -98,8 +98,8 @@
  
 
  <div id="attachment-progress-dialog" class="popup-dialog"  >
- 		<div style="text-align:center;">
- 			<h4 id="attachment-progress-message" style="text-align:center;"></h4>
+ 		<div>
+ 			<h4 id="attachment-progress-message"></h4>
  			<div id="attachment-progressbar"></div>
  			<span id="attachment-progress-percentage"></span>
  		</div>

@@ -660,6 +660,13 @@ span.span-green {
 }
 
 /********************* 
+ * ATTACHMENT DIALOG
+ *********************/
+#attachment-progress-dialog > div, #attachment-progress-message {
+	text-align: center;
+}
+
+/********************* 
  * NOTIFICATION PANEL
  *********************/
 .notification-pane {

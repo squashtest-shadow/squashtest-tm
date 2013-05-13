@@ -77,6 +77,9 @@
 	right : 5px;
 }
 
+.sub-page-content .fragment-header {
+	width : 99.5%;
+}
 
 .sub-page-content .fragment-body{
 	width : 99.5%;		
@@ -137,6 +140,11 @@
 	margin-bottom : 0.1em;
 	margin-top : 0.1em;
 	margin-right : 1.5em;
+}
+
+.sub-page-fragment-title {
+	float: left; 
+	height: 3em;
 }
 
 .sub-page-selection-panel #contextual-content {
