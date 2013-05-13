@@ -190,7 +190,7 @@ public class CampaignExportCSVModel {
 		int itpIndex = -1;
 		
 		Iteration iteration = new Iteration();	//has an empty test plan
-		IterationTestPlanItem itp;	//null means "no more"
+		IterationTestPlanItem itp;				//null means "no more"
 		
 		
 		public DataIterator(){
