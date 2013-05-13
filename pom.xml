@@ -9,12 +9,12 @@
     <version>1.3</version>
   </parent>
 
-  <artifactId>squashtest-csp</artifactId>
+  <artifactId>squash-tm</artifactId>
   <version>1.6.0.RC1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>squashtest-csp</name>
-  <description>SquashTest Central Services Platform - root project</description>
+  <name>squash-tm</name>
+  <description>Squash Test Manager - Test repository management application</description>
   <inceptionYear>2010</inceptionYear>
   <organization>
     <name>Henix, henix.fr</name>
