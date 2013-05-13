@@ -92,7 +92,7 @@
 		<div id="category-pane">
 			<div id="outer-category-frame">
 				<div th:each="cat : ${categories}" th:id="${#ids.seq('category-panel')}" title="Cat 1" th:title="#{${cat.i18nKey}}" class="report-category">
-					<div th:each="rpt : ${reports[__${cat}__]}" th:id="${#ids.seq('report-item')}" 
+					<div th:each="rpt : ${reports.get(cat)}" th:id="${#ids.seq('report-item')}" 
 						data-href="sample-report/0" th:attr="data-href=@{'/reports/' + ${rpt.namespace} + '/' + ${rpt.index} + '/panel'}"
 						class="report-item">
 						<div class="report-item-icon">
