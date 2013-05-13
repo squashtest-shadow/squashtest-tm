@@ -27,7 +27,7 @@
 <layout:info-page-layout titleKey="workspace.test-case.title" highlightedWorkspace="test-case" isSubPaged="true">
 
 	<jsp:attribute name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.purple.css" />
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">

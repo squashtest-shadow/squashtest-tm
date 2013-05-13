@@ -68,8 +68,6 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 <jq:jquery-header />
 <ck:ckeditor-header />
 
-<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squashtm.fg.menu.css" />
-
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.popup-error.js" ></script>
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.oneshotdialog.js"></script>

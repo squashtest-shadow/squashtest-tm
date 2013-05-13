@@ -23,6 +23,7 @@
     <wro4j.version>1.4.0</wro4j.version>
     <thyleleaf.springsec.version>2.0.0</thyleleaf.springsec.version>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
+    <wro4j.css.outputDirectory>${project.build.directory}/processed-css/</wro4j.css.outputDirectory>
 
     <!-- Default jacoco dont record any coverage data -->
     <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
@@ -187,15 +188,6 @@
       <scope>compile</scope>
     </dependency>
     <!-- ====== /FOR AUTH PURPOSES - should be moved afterwards ====== -->
-
-		<!-- ====== XML PARSER ====== -->
-		<!-- Required by jstl impl -->
-<!--     <dependency>
-      <groupId>org.apache.xmlcommons</groupId>
-      <artifactId>com.springsource.org.apache.xmlcommons</artifactId>
-      <scope>runtime</scope>
-    </dependency> -->
-		<!-- ====== /XML PARSER ====== -->
 
 		<!-- ====== SPRING MVC ====== -->
     <dependency>
@@ -461,6 +453,10 @@
               <targetPath>WEB-INF/reports</targetPath>
             </resource>
             <resource>
+              <directory>${wro4j.css.outputDirectory}</directory>
+              <targetPath>styles</targetPath>
+            </resource>
+            <resource>
               <directory>${project.build.outputDirectory}/META-INF</directory>
               <targetPath>META-INF</targetPath>
             </resource>
@@ -473,7 +469,37 @@
           <attachClasses>true</attachClasses>
         </configuration>
       </plugin>
-    
+
+      <plugin>
+        <groupId>ro.isdc.wro4j</groupId>
+        <artifactId>wro4j-maven-plugin</artifactId>
+        <version>${wro4j.version}</version>
+
+        <executions>
+          <execution>
+            <id>wro</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <targetGroups>squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue</targetGroups>
+              <minimize>true</minimize>
+              <cssDestinationFolder>${wro4j.css.outputDirectory}</cssDestinationFolder>
+              <!-- We use YUI css processor. standard minifier does not correctly process unicode characters -->
+              <wroManagerFactory>ro.isdc.wro.extensions.manager.standalone.YUIStandaloneManagerFactory</wroManagerFactory>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>ro.isdc.wro4j</groupId>
+            <artifactId>wro4j-extensions</artifactId>
+            <version>${wro4j.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
       <!-- ====== INTEGRATION TESTS ====== -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -568,19 +594,32 @@
             <groupId>ro.isdc.wro4j</groupId>
             <artifactId>wro4j-maven-plugin</artifactId>
             <version>${wro4j.version}</version>
+
             <executions>
               <execution>
+                <id>jshint</id>
                 <goals>
                   <goal>jshint</goal>
                 </goals>
+                <configuration>
+                  <targetGroups>squash-js</targetGroups>
+                  <minimize>false</minimize>
+                  <options>browser,jquery,eqnull,evil,noarg,smarttabs,laxbreak,laxcomma,sub,loopfunc,curly</options>
+                  <failNever>false</failNever>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>csslint</id>
+                <goals>
+                  <goal>csslint</goal>
+                </goals>
+                <configuration>
+                  <targetGroups>csslint</targetGroups>
+                  <failNever>true</failNever>
+                </configuration>
               </execution>
             </executions>
-            <configuration>
-              <targetGroups>squash</targetGroups>
-              <minimize>false</minimize>
-              <options>browser,jquery,eqnull,evil,noarg,smarttabs,laxbreak,laxcomma,sub,loopfunc,curly</options>
-              <failNever>false</failNever>
-            </configuration>
           </plugin>
         </plugins>
       </build>
@@ -650,6 +689,23 @@
                   <resources>
                     <resource>
                       <directory>${jasperreports.build.outputDirectory}</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>copy-processed-css</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+
+                <configuration>
+                  <outputDirectory>${basedir}/styles</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${wro4j.css.outputDirectory}</directory>
                     </resource>
                   </resources>
                 </configuration>

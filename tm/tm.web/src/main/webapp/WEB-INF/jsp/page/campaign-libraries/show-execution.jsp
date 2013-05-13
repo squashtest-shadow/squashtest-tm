@@ -26,7 +26,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <layout:info-page-layout titleKey="workspace.campaign.title" highlightedWorkspace="campaign">
 	<jsp:attribute  name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.purple.css" />
 	</jsp:attribute>
 	<jsp:attribute name="titlePane">
 		<h2><f:message key="workspace.campaign.title" /></h2>	

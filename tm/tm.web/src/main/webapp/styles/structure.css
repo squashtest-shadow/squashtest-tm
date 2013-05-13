@@ -42,7 +42,7 @@ label {
 }
 
 label:after {
-	content: "\00a0: ";
+	content: "\0000a0: ";
 }
 
 label.afterDisabled:after, input + label:after {

@@ -685,8 +685,6 @@ span.span-green {
 /*****************************************
  * custom field binding (administration)
  ****************************************/
-
-
 .cuf-binding-popup tbody td{
 	cursor : pointer;
 }

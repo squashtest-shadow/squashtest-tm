@@ -62,7 +62,7 @@
 	<s:param name="ieo" value="true"/>
 </s:url>
 
-	<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />	
+	<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.purple.css" />	
 </head>
 
 <s:url var="btEntityUrl" value="/bugtracker/execution-step/{id}" >

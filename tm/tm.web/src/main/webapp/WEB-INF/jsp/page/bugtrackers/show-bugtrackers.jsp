@@ -34,7 +34,7 @@
 
 <layout:info-page-layout titleKey="squashtm.bugtrackers.title" isSubPaged="true">
 	<jsp:attribute  name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.grey.css" />
 		
 	</jsp:attribute>
 	

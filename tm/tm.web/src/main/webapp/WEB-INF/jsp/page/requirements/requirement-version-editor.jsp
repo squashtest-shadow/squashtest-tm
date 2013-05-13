@@ -29,7 +29,7 @@
 
 <layout:info-page-layout titleKey="squashtm.library.requirement.title" highlightedWorkspace="requirement" isSubPaged="true">
 	<jsp:attribute  name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.blue.css" />
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">

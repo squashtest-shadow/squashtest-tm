@@ -21,7 +21,6 @@
 
 --%>
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
-<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/ckeditor.override.css" />
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.jeditable.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.generateId.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.jeditable.ckeditor.js"></script>
