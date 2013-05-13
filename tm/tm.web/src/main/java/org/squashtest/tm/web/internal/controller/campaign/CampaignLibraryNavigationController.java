@@ -46,7 +46,12 @@ import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -59,7 +64,10 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.TestSuiteNodeBuilder;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.web.internal.service.CustomFieldHelperService;
+import org.squashtest.tm.web.internal.service.CustomFieldHelperService.Helper;
 
 /**
  * Controller which processes requests related to navigation in a {@link CampaignLibrary}.
@@ -84,6 +92,14 @@ public class CampaignLibraryNavigationController extends LibraryNavigationContro
 	private Provider<TestSuiteNodeBuilder> suiteNodeBuilder;
 
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
+	
+	@Inject
+	private CampaignFinder campaignFinder;
+
+	@Inject
+	private Provider<CampaignExportCSVModel> campaignExportCSVModelProvider;
+
+	
 
 	@ServiceReference
 	public void setCampaignLibraryNavigationService(CampaignLibraryNavigationService campaignLibraryNavigationService) {
@@ -340,6 +356,20 @@ public class CampaignLibraryNavigationController extends LibraryNavigationContro
 		
 	}
 	
+	
+	@RequestMapping(value="/files/{campaignId}/export")
+	public @ResponseBody void exportCampaign(@PathVariable("campaignId") long campaignId){
+		
+		Campaign campaign = campaignFinder.findById(campaignId);
+		
+		CampaignExportCSVModel model = campaignExportCSVModelProvider.get();
+		
+		model.setCampaign(campaign);
+		model.init();
+		
+	}
+	
+	
 	private List<JsTreeNode> copyNodes(Long[] itemIds, long destinationId, String destinationType, int nextNumberInDestination){		
 		if (destinationType.equals("campaign")) {
 			List<Iteration> iterationsList;
@@ -354,5 +384,7 @@ public class CampaignLibraryNavigationController extends LibraryNavigationContro
 		}
 	}
 
+
+	
 
 }
