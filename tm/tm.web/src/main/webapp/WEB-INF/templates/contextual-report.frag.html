@@ -157,22 +157,20 @@
 						<div th:case="'RADIO_BUTTONS_GROUP'">
 							<label th:text="*{label}">Radio buttons group</label>
 							<ul>
-								<li th:each="opt : *{options}">
-									<input name="rpt-radio-crit" type="radio" th:value="${opt.value}" data-grouped="true" th:text="${opt.label}"
-										th:name="${opt.name}" th:checked="${opt.defaultSelected}" th:id="${opt.givesAccessTo} + '-binder'">
-										Option
-									</input>
+								<li th:each="opt : *{options}" th:with="radioId = ${opt.givesAccessTo} + '-binder'">
+									<input id="radioId" name="rpt-radio-crit" type="radio" th:value="${opt.value}" data-grouped="true"
+										th:id="${radioId}" th:name="${opt.name}" th:checked="${opt.defaultSelected}" />
+									<label for="radioId" th:for="${radioId}" th:text="${opt.label}">Option</label>
 								</li>
 							</ul>
 						</div>
 						<div th:case="'CHECKBOXES_GROUP'">
 							<label th:text="*{label}">Checkboxes group</label>
 							<ul>
-								<li th:each="opt : *{options}">
-									<input name="rpt-cbxes-crit" type="checkbox" th:value="${opt.value}" data-grouped="true" th:text="${opt.label}"
-										th:name="${opt.name}" th:checked="${opt.defaultSelected}">
-										Checkbox
-									</input>
+								<li th:each="opt : *{options}" th:with="checkboxId = ${opt.givesAccessTo} + '-binder'">
+									<input id="checkboxId" name="rpt-cbxes-crit" type="checkbox" th:value="${opt.value}" data-grouped="true"
+										th:id="${checkboxId}" th:name="${opt.name}" th:checked="${opt.defaultSelected}" />
+                                    <label for="checkboxId" th:for="${checkboxId}" th:text="${opt.label}">Checkbox</label>
 								</li>
 							</ul>
 						</div>
