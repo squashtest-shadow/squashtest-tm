@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>squashtest-csp</artifactId>
+    <artifactId>squash-tm</artifactId>
     <groupId>org.squashtest.tm</groupId>
     <version>1.6.0.RC1-SNAPSHOT</version>
   </parent>
@@ -14,7 +14,6 @@
   <description>OSGi container provisioning - Used by Eclipse</description>
 
   <properties>
-
     <assembly.skip>false</assembly.skip>
 
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
