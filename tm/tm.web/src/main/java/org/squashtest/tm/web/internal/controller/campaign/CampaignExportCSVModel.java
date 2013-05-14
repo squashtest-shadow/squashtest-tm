@@ -189,7 +189,7 @@ public class CampaignExportCSVModel {
 		int iterIndex = -1;
 		int itpIndex = -1;
 		
-		Iteration iteration = new Iteration();	//has an empty test plan
+		Iteration iteration = new Iteration();	//initialized to dummy value for for bootstrap purposes
 		IterationTestPlanItem itp;				//null means "no more"
 		
 		
@@ -197,7 +197,7 @@ public class CampaignExportCSVModel {
 			
 			super();
 
-			_next();
+			_moveNext();
 
 		}
 		
@@ -230,7 +230,7 @@ public class CampaignExportCSVModel {
 		
 		// ****************** iterator mechanics here ****************
 
-		private void _next(){
+		private void _moveNext(){
 			
 			boolean moveITPSuccess = _moveToNextTestCase();
 			
@@ -239,10 +239,10 @@ public class CampaignExportCSVModel {
 				boolean moveIterSuccess = _moveToNextIteration();
 				
 				if (moveIterSuccess){
-					_next();
+					_moveNext();
 				}
 				else{
-					itp = null;
+					itp = null;		//terminal state
 				}
 				
 			}

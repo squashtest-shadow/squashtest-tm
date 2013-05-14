@@ -56,11 +56,12 @@ class CampaignExportCSVModelTest extends Specification {
 			model.campaign = campaign	
 	
 			
-		and : "configure the iterator status"
+		and : "initial iterator state : iteration2, itp2"
 			
 			def iterator = model.dataIterator()	
 			iterator.iterIndex = 1
 			iterator.itpIndex = 1
+			iterator.iteration = data["iter2"]
 			
 		when :
 			
@@ -74,8 +75,168 @@ class CampaignExportCSVModelTest extends Specification {
 		
 	}
 	
+	def "DataIterator should skip next item test plan and move to the one after it because the test case was deleted"(){
+		
+		given :
+			def data = createCampaign()
+			def campaign = data["campaign"]
+			model.campaign = campaign
+			
+		and : "initial iterator state : iteration 4 itp 2"
+			def iterator = model.dataIterator()
+			iterator.iterIndex = 3
+			iterator.itpIndex = 1
+			iterator.iteration = data["iter4"]
+		
+		when :
+			def res = iterator._moveToNextTestCase()
+		
+		then :
+			res == true
+			iterator.itpIndex == 3
+			iterator.itp == data["item44"]
+	}
 	
 	
+	def "DataIterator should tell that there are no more itp to check in this iteration"(){
+		
+		given :
+			def data = createCampaign()
+			def campaign = data["campaign"]
+			model.campaign = campaign
+			
+		and : "initial iterator state : iteration 2 itp 3"
+			def iterator = model.dataIterator()
+			iterator.iterIndex = 1
+			iterator.itpIndex = 2
+			iterator.iteration = data["iter2"]
+			
+		when :
+			def res = iterator._moveToNextTestCase()
+			
+		then :
+			res == false
+			iterator.itp == null
+	}
+	
+	
+	def "DataIterator should move to next iteration"(){
+		
+		given :
+			def data = createCampaign()
+			def campaign = data["campaign"]
+			model.campaign = campaign
+			
+		and : "initial iterator state : iteration 2"
+			def iterator = model.dataIterator()
+			iterator.iterIndex = 1
+			iterator.itpIndex = 2
+			iterator.iteration = data["iter2"]
+		
+		
+		when :
+			def res = iterator._moveToNextIteration()
+		
+		then :
+			res == true
+			iterator.iteration == data["iter3"]
+			iterator.iterIndex == 2
+			iterator.itpIndex == -1
+	}
+	
+	
+	def "DataIterator should say that there are no more iteration"(){
+		
+		given :
+			def data = createCampaign()
+			def campaign = data["campaign"]
+			model.campaign = campaign
+			
+		and : "initial iterator state : iteration 4"
+			def iterator = model.dataIterator()
+			iterator.iterIndex = 3
+			iterator.itpIndex = 3
+			iterator.iteration = data["iter4"]
+		
+		when :
+			def res = iterator._moveToNextIteration()
+			
+		then :
+			res == false
+		
+	}
+	
+	
+	def "DataIterator should skip the first iteration because it's empty"(){
+		
+		
+		given :
+			def data = createCampaign()
+			def campaign = data["campaign"]
+			model.campaign = campaign
+			
+		and : "initial iterator state : iteration 0 (dummy)"
+			def iterator = model.dataIterator()
+			iterator.iterIndex = -1
+			iterator.itpIndex = -1
+		
+		when :
+			iterator._moveNext()
+		
+		then :
+			iterator.iteration == data["iter2"]
+			
+	}
+	
+	
+	def "DataIterator should skip iteration 3 because all referenced test cases were deleted"(){
+		
+		given :
+			def data = createCampaign()
+			def campaign = data["campaign"]
+			model.campaign = campaign
+			
+		and : "initial iterator state : iteration 2"
+			def iterator = model.dataIterator()
+			iterator.iterIndex = 1
+			iterator.itpIndex = 2
+			iterator.iteration = data["iter2"]
+			
+		when :
+			iterator._moveNext()
+			
+		then :
+			iterator.iteration == data["iter4"]
+		
+	}
+	
+	
+	def "DataIterator should enumerate all the itp correctly (ie skipping empty test plan or deleted tc)"(){
+		
+		given :
+			def data = createCampaign()
+			def campaign = data["campaign"]
+			model.campaign = campaign
+			
+		and : "we don't tweak initial iterator state "
+			def iterator = model.dataIterator()
+			
+		when :
+		
+			def itps = []
+			while (iterator.hasNext()) {
+				itps << iterator.itp
+				iterator._moveNext()
+			}
+		
+		then :
+			def expected = [];
+			["item21","item22","item23","item42","item44"].each{ expected << data[it] }
+		
+	
+			itps == expected
+		
+	}
 	
 	def createCampaign(){
 		
@@ -86,6 +247,8 @@ class CampaignExportCSVModelTest extends Specification {
 		TestCase tc2 = new TestCase(name:"tc2");
 		TestCase tc3 = new TestCase(name:"tc3");
 		TestCase tc4 = new TestCase(name:"tc4");
+		TestCase tc5 = new TestCase(name:"tc5");
+		TestCase tc6 = new TestCase(name:"tc6");
 		
 			
 		//the iterations
@@ -102,16 +265,25 @@ class CampaignExportCSVModelTest extends Specification {
 		IterationTestPlanItem item22 = new IterationTestPlanItem(tc2)
 		IterationTestPlanItem item23 = new IterationTestPlanItem(tc3)
 		
-		IterationTestPlanItem item41 = new IterationTestPlanItem() // the test case of that one was deleted
+		IterationTestPlanItem item31 = new IterationTestPlanItem(tc6)
+		
+		IterationTestPlanItem item41 = new IterationTestPlanItem(tc5) 
 		IterationTestPlanItem item42 = new IterationTestPlanItem(tc2)
-		IterationTestPlanItem item43 = new IterationTestPlanItem() //deleted too
+		IterationTestPlanItem item43 = new IterationTestPlanItem(tc6) 
 		IterationTestPlanItem item44 = new IterationTestPlanItem(tc4)
 			
+
 		
-		//populate the iterations. Iterations 1 and 3 have no test cases.
+		//populate the iterations. Iterations 1 has no test cases.
 		
 		[item21, item22, item23].each { iter2.addTestPlan it }
+		[item31].each{ iter3.addTestPlan it }
 		[item41, item42, item43, item44].each { iter4.addTestPlan it}
+		
+		//now let's assume that test case 5 and 6 where deleted
+		item41.referencedTestCase = null
+		item43.referencedTestCase = null
+		item31.referencedTestCase = null
 			
 		//the campaign
 		
@@ -133,6 +305,7 @@ class CampaignExportCSVModelTest extends Specification {
 				"item21": item21,
 				"item22": item22,
 				"item23": item23,
+				"item31": item31,
 				"item41": item41,
 				"item42": item42,
 				"item43": item43,
