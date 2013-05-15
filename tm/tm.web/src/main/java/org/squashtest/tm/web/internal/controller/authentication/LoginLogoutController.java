@@ -36,14 +36,13 @@ public class LoginLogoutController {
 	private final static String LOGIN_MESSAGE = "LOGIN_MESSAGE";
 
 	@Inject
-	@Value("${authentication.application.welcomePage}")
+	@Value("${authentication.application.welcomePage:/home-workspace}")
 	private String homeUrl;
 
 	@ServiceReference
-	public void setConfigurationService (ConfigurationService confService){
+	public void setConfigurationService(ConfigurationService confService) {
 		this.configService = confService;
 	}
-
 
 	@RequestMapping("/login")
 	public String login(Model model) {

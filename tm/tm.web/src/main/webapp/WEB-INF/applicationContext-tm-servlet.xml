@@ -35,8 +35,6 @@
 
 	<!-- ============================== multipart files handling =============================================== -->
 
-  <context:property-placeholder ignore-unresolvable="true" properties-ref="squashtest.tm.uploadfilter.config" />
-
   <bean id="multipartResolver" class="org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher">
 
     <property name="defaultResolver" ref="defaultMultipartResolver" />

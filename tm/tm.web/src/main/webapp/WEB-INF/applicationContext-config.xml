@@ -21,13 +21,23 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
+  <!-- When adding a new properties "file" from OSGi, reference it below  -->
+  <!-- Note : one can add a default value to the placeholders using this syntax : ${property.key:defaultValue} -->
+  <bean id="squash.tm.config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    <property name="propertiesArray">
+      <array>
+        <ref bean="squash.tm.auth.config" />
+        <ref bean="squash.tm.uploadfilter.config" />
+      </array>
+    </property>
+  </bean>
 
-	<context:property-placeholder ignore-unresolvable="true" properties-ref="squashtest.core.auth.config" />
+  <!-- This placeholder configurer resolves all props from the above bean -->
+  <context:property-placeholder properties-ref="squash.tm.config" />
 </beans>
