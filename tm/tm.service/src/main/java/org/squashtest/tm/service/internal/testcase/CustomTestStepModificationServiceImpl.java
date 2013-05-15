@@ -106,7 +106,7 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 			PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(step, "WRITE"));
 			for (Entry<Long, String> cufValue : cufValues.entrySet()) {
 				try {
-					cufValueService.update(cufValue.getKey(), cufValue.getValue());
+					cufValueService.changeValue(cufValue.getKey(), cufValue.getValue());
 				} catch (DomainException e) {
 					LOGGER.error(e.getMessage());
 					exceptions.add(e);

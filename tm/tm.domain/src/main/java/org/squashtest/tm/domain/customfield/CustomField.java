@@ -42,28 +42,30 @@ import org.apache.tools.ant.util.DateUtils;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
 
 /**
  * @author Gregory Fouquet
  */
 
-@NamedQueries({
-	@NamedQuery(name="CustomField.findAllOrderedByName", query="from CustomField cf order by cf.name"),
-	@NamedQuery(name="CustomField.countCustomFields", query="select count(*) from CustomField"),
-	@NamedQuery(name="CustomField.findByCode", query="from CustomField where code = ?")
-})
+@NamedQueries({ @NamedQuery(name = "CustomField.findAllOrderedByName", query = "from CustomField cf order by cf.name"),
+		@NamedQuery(name = "CustomField.countCustomFields", query = "select count(*) from CustomField"),
+		@NamedQuery(name = "CustomField.findByCode", query = "from CustomField where code = ?") })
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("CF")
 @HasDefaultAsRequired
 public class CustomField {
-	public static final String CODE_REGEXP="^[A-Za-z0-9_]*$";
-	public static final int MIN_CODE_SIZE= 1;
-	public static final int MAX_CODE_SIZE=30;
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomField.class);
+
+	public static final String CODE_REGEXP = "^[A-Za-z0-9_]*$";
+	public static final int MIN_CODE_SIZE = 1;
+	public static final int MAX_CODE_SIZE = 30;
 	public static final String DATE_PATTERN = DateUtils.ISO8601_DATE_PATTERN;
-	
+
 	@Id
 	@GeneratedValue
 	@Column(name = "CF_ID")
@@ -88,10 +90,10 @@ public class CustomField {
 	protected InputType inputType = InputType.PLAIN_TEXT;
 
 	@NotBlank
-	@Size(min=MIN_CODE_SIZE, max= MAX_CODE_SIZE)
-	@Pattern(regexp=CODE_REGEXP)
+	@Size(min = MIN_CODE_SIZE, max = MAX_CODE_SIZE)
+	@Pattern(regexp = CODE_REGEXP)
 	protected String code = "";
-	
+
 	/**
 	 * For ORM purposes.
 	 */
@@ -121,7 +123,7 @@ public class CustomField {
 	}
 
 	public boolean isOptional() {
-		if(inputType.equals(InputType.CHECKBOX)){
+		if (inputType.equals(InputType.CHECKBOX)) {
 			return false;
 		}
 		return optional;
@@ -134,29 +136,30 @@ public class CustomField {
 	public String getDefaultValue() {
 		return defaultValue;
 	}
-	
-	public Date getDefaultValueAsDate(){
-		if(this.inputType == InputType.DATE_PICKER){
+
+	public Date getDefaultValueAsDate() {
+		// TODO copypasta, slap this into utility class
+		if (this.inputType == InputType.DATE_PICKER) {
 			try {
 				return DateUtils.parseIso8601Date(defaultValue);
 			} catch (ParseException e) {
-				e.printStackTrace();
+				LOGGER.warn(e.getMessage(), e);
 			}
 		}
 		return null;
-		
+
 	}
-	
+
 	public void setDefaultValue(String defaultValue) {
 		String dValue = defaultValue;
-		if(this.inputType == InputType.DATE_PICKER){
-			try{
+		if (this.inputType == InputType.DATE_PICKER) {
+			try {
 				DateUtils.parseIso8601Date(defaultValue);
-			}catch (ParseException e) {
+			} catch (ParseException e) {
 				dValue = "";
 			}
 		}
-		
+
 		this.defaultValue = dValue;
 	}
 
@@ -167,7 +170,7 @@ public class CustomField {
 	public InputType getInputType() {
 		return inputType;
 	}
-		
+
 	public String getCode() {
 		return code;
 	}
@@ -176,7 +179,7 @@ public class CustomField {
 		this.code = code;
 	}
 
-	public void accept(CustomFieldVisitor visitor){
+	public void accept(CustomFieldVisitor visitor) {
 		visitor.visit(this);
 	}
 }

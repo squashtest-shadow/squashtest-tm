@@ -51,8 +51,6 @@ public class CampaignExportCSVModel {
 
 	private List<CustomFieldModel> iterCUFModel;
 
-	private List<CustomFieldModel> tcCUFModel;
-
 	private int nbColumns;
 
 	public CampaignExportCSVModel() {
@@ -90,7 +88,7 @@ public class CampaignExportCSVModel {
 
 		// cufs for the test cases
 		Helper<TestCase> tcHelper = cufHelperService.newHelper(allTestCases);
-		tcCUFModel = tcHelper.getCustomFieldConfiguration();
+		List<CustomFieldModel> tcCUFModel = tcHelper.getCustomFieldConfiguration();
 
 		nbColumns = 25 + campCUFModel.size() + iterCUFModel.size() + tcCUFModel.size();
 
@@ -175,16 +173,15 @@ public class CampaignExportCSVModel {
 
 	private class DataIterator implements Iterator<Row> {
 
-		int iterIndex = -1;
-		int itpIndex = -1;
+		private int iterIndex = -1;
+		private int itpIndex = -1;
 
-		Iteration iteration = new Iteration(); // initialized to dummy value for for bootstrap purposes
-		IterationTestPlanItem itp; // null means "no more"
+		private Iteration iteration = new Iteration(); // initialized to dummy value for for bootstrap purposes
+		private IterationTestPlanItem itp; // null means "no more"
 
 		public DataIterator() {
 
 			super();
-
 			moveNext();
 
 		}
@@ -281,7 +278,7 @@ public class CampaignExportCSVModel {
 	}
 
 	public static class Cell {
-		String value;
+		private  String value;
 
 		public Cell(String value) {
 			this.value = value;
@@ -293,7 +290,7 @@ public class CampaignExportCSVModel {
 	}
 
 	public static class Row {
-		List<Cell> cells;
+		private List<Cell> cells;
 
 		public Row(List<Cell> cells) {
 			this.cells = cells;

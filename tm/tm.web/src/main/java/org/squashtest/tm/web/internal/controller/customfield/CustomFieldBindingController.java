@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
+import org.squashtest.tm.web.internal.controller.RequestHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldBindingModel;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
@@ -50,169 +51,160 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 
-
 @Controller
 @RequestMapping("/custom-fields-binding")
 public class CustomFieldBindingController {
 
+	/**
+	 * 
+	 */
+	private static final String PROJECT_ID = "projectId";
+
 	private CustomFieldBindingModificationService service;
 
-	
 	@Inject
 	private CustomFieldJsonConverter converter;
-	
-	
+
 	@ServiceReference
-	public void setCustomFieldBindingModificationService(CustomFieldBindingModificationService service){
-		this.service=service;
+	public void setCustomFieldBindingModificationService(CustomFieldBindingModificationService service) {
+		this.service = service;
 	}
 
-
-	
-	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "!bindableEntity"}, headers="Accept=application/json")
+	@RequestMapping(method = RequestMethod.GET, params = { PROJECT_ID, "!bindableEntity" }, headers = RequestHeaders.CONTENT_JSON)
 	@ResponseBody
-	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam("projectId") Long projectId){
-		
+	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam(PROJECT_ID) Long projectId) {
+
 		List<CustomFieldBinding> bindings = service.findCustomFieldsForGenericProject(projectId);
-		
+
 		return bindingToJson(bindings);
-		
+
 	}
-	
-	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity", "!sEcho"}, headers="Accept=application/json")
+
+	@RequestMapping(method = RequestMethod.GET, params = { PROJECT_ID, "bindableEntity", "!sEcho" }, headers = RequestHeaders.CONTENT_JSON)
 	@ResponseBody
-	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam("projectId") Long projectId, @RequestParam("bindableEntity") BindableEntity bindableEntity){
-		
+	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam(PROJECT_ID) Long projectId,
+			@RequestParam("bindableEntity") BindableEntity bindableEntity) {
+
 		List<CustomFieldBinding> bindings = service.findCustomFieldsForProjectAndEntity(projectId, bindableEntity);
-		
+
 		return bindingToJson(bindings);
-		
+
 	}
-	
-	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity", "!sEcho", "optional=false"}, headers="Accept=text/html")
-	public String findRequiredAtCreationTime(@RequestParam("projectId") Long projectId, @RequestParam("bindableEntity") BindableEntity bindableEntity, Model model){
-		
+
+	@RequestMapping(method = RequestMethod.GET, params = { PROJECT_ID, "bindableEntity", "!sEcho", "optional=false" }, headers = "Accept=text/html")
+	public String findRequiredAtCreationTime(@RequestParam(PROJECT_ID) Long projectId,
+			@RequestParam("bindableEntity") BindableEntity bindableEntity, Model model) {
+
 		List<CustomFieldBinding> bindings = service.findCustomFieldsForProjectAndEntity(projectId, bindableEntity);
 		model.addAttribute("bindings", bindings);
-		
+
 		return "treepopups/create-node-custom-fields-editor.html";
-		
+
 	}
-	
-	@RequestMapping(method= RequestMethod.GET, params = {"projectId", "bindableEntity", RequestParams.S_ECHO_PARAM})
+
+	@RequestMapping(method = RequestMethod.GET, params = { PROJECT_ID, "bindableEntity", RequestParams.S_ECHO_PARAM })
 	@ResponseBody
-	public DataTableModel findAllCustomFieldsTableForProject
-			(@RequestParam("projectId") Long projectId, 
-			 @RequestParam("bindableEntity") BindableEntity bindableEntity, 
-			 DataTableDrawParameters params,
-			 Locale locale){
-		
-		
+	public DataTableModel findAllCustomFieldsTableForProject(@RequestParam(PROJECT_ID) Long projectId,
+			@RequestParam("bindableEntity") BindableEntity bindableEntity, DataTableDrawParameters params, Locale locale) {
+
 		DataTablePaging paging = new DataTablePaging(params);
-		
-		PagedCollectionHolder<List<CustomFieldBinding>> bindings = service.findCustomFieldsForProjectAndEntity(projectId, bindableEntity, paging);
+
+		PagedCollectionHolder<List<CustomFieldBinding>> bindings = service.findCustomFieldsForProjectAndEntity(
+				projectId, bindableEntity, paging);
 
 		CUFBindingDataTableModelHelper helper = new CUFBindingDataTableModelHelper(converter);
 		return helper.buildDataModel(bindings, params.getsEcho());
-		
+
 	}
-	
-	@RequestMapping(value="/{bindingIds}", method=RequestMethod.DELETE)
+
+	@RequestMapping(value = "/{bindingIds}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void unbindCustomField(@PathVariable("bindingIds") List<Long> bindingIds){
+	public void unbindCustomField(@PathVariable("bindingIds") List<Long> bindingIds) {
 		service.removeCustomFieldBindings(bindingIds);
 	}
 
-	@RequestMapping(value="/available", method = RequestMethod.GET, params = {"projectId", "bindableEntity"}, headers="Accept=application/json")
+	@RequestMapping(value = "/available", method = RequestMethod.GET, params = { PROJECT_ID, "bindableEntity" }, headers = RequestHeaders.CONTENT_JSON)
 	@ResponseBody
-	public List<CustomFieldModel> findAllAvailableCustomFieldsForProjectAndEntity
-													(@RequestParam("projectId") Long projectId, 
-													@RequestParam("bindableEntity") BindableEntity bindableEntity ){
-		
+	public List<CustomFieldModel> findAllAvailableCustomFieldsForProjectAndEntity(
+			@RequestParam(PROJECT_ID) Long projectId, @RequestParam("bindableEntity") BindableEntity bindableEntity) {
+
 		List<CustomField> fields = service.findAvailableCustomFields(projectId, bindableEntity);
-		return fieldToJson(fields);	
-		
+		return fieldToJson(fields);
+
 	}
-	
-	@RequestMapping(value="/{bindingIds}/position", method=RequestMethod.POST, params={"newPosition"})
+
+	@RequestMapping(value = "/{bindingIds}/position", method = RequestMethod.POST, params = { "newPosition" })
 	@ResponseBody
-	public void reorderBindings(@PathVariable("bindingIds") List<Long> bindingIds, @RequestParam("newPosition") int newIndex ){
+	public void reorderBindings(@PathVariable("bindingIds") List<Long> bindingIds,
+			@RequestParam("newPosition") int newIndex) {
 		service.moveCustomFieldbindings(bindingIds, newIndex);
 	}
-	
-	
-	@RequestMapping(value="/new-batch", method = RequestMethod.POST)
+
+	@RequestMapping(value = "/new-batch", method = RequestMethod.POST)
 	@ResponseBody
-	public void createNewBinding(@RequestBody CustomFieldBindingModel[] bindingModels){
+	public void createNewBinding(@RequestBody CustomFieldBindingModel[] bindingModels) {
 		// TODO not atomic, push down a level
-		for (CustomFieldBindingModel model : bindingModels){
-			
+		for (CustomFieldBindingModel model : bindingModels) {
+
 			CustomFieldBinding newBinding = new CustomFieldBinding();
 			long projectId = model.getProjectId();
 			long fieldId = model.getCustomField().getId();
 			BindableEntity entity = model.getBoundEntity().toDomain();
-			
+
 			service.addNewCustomFieldBinding(projectId, entity, fieldId, newBinding);
-			
+
 		}
 	}
-	
-	 @RequestMapping(value="/{bindingId}/renderingLocations/{location}", method=RequestMethod.PUT)
-	 @ResponseBody
-	 public void addRenderingLocation(@PathVariable Long bindingId, @PathVariable RenderingLocation location){
-		 service.addRenderingLocation(bindingId, location);
-	 }
-	 
-	 @RequestMapping(value="/{bindingId}/renderingLocations/{location}", method=RequestMethod.DELETE)
-	 @ResponseBody
-	 public void removeRenderingLocation(@PathVariable Long bindingId, @PathVariable RenderingLocation location){
-		 service.removeRenderingLocation(bindingId, location);
-	 }
-	 
-	  
-	
-	
+
+	@RequestMapping(value = "/{bindingId}/renderingLocations/{location}", method = RequestMethod.PUT)
+	@ResponseBody
+	public void addRenderingLocation(@PathVariable Long bindingId, @PathVariable RenderingLocation location) {
+		service.addRenderingLocation(bindingId, location);
+	}
+
+	@RequestMapping(value = "/{bindingId}/renderingLocations/{location}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void removeRenderingLocation(@PathVariable Long bindingId, @PathVariable RenderingLocation location) {
+		service.removeRenderingLocation(bindingId, location);
+	}
+
 	// ********************** private stuffs *********************
-	
-	private List<CustomFieldBindingModel> bindingToJson(List<CustomFieldBinding> bindings){
+
+	private List<CustomFieldBindingModel> bindingToJson(List<CustomFieldBinding> bindings) {
 		List<CustomFieldBindingModel> result = new LinkedList<CustomFieldBindingModel>();
-		
-		for (CustomFieldBinding binding : bindings){
+
+		for (CustomFieldBinding binding : bindings) {
 			CustomFieldBindingModel model = converter.toJson(binding);
 			result.add(model);
 		}
-		
+
 		return result;
 	}
-	
 
-	private List<CustomFieldModel> fieldToJson(List<CustomField> fields){
+	private List<CustomFieldModel> fieldToJson(List<CustomField> fields) {
 		List<CustomFieldModel> result = new LinkedList<CustomFieldModel>();
-		
-		for (CustomField field : fields){
+
+		for (CustomField field : fields) {
 			CustomFieldModel model = converter.toJson(field);
 			result.add(model);
 		}
-		
-		return result;		
+
+		return result;
 	}
-	
+
 	// ************************* inner classes ****************************
-	
-	
-	
+
 	private static class CUFBindingDataTableModelHelper extends DataTableModelHelper<CustomFieldBinding> {
 		private CustomFieldJsonConverter converter;
 
 		private CUFBindingDataTableModelHelper(CustomFieldJsonConverter converter) {
-			this.converter=converter;
+			this.converter = converter;
 		}
-		
+
 		@Override
 		public Object buildItemData(CustomFieldBinding item) {
 			return converter.toJson(item);
 		}
 	}
 
-	
 }

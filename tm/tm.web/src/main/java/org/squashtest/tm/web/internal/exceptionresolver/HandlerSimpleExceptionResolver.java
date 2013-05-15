@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.exceptionresolver;
 
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -65,7 +66,7 @@ public class HandlerSimpleExceptionResolver extends AbstractHandlerExceptionReso
 		SimpleException simpleEx = (SimpleException) ex; // NOSONAR Type was checked earlier
 		response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 		String message = simpleEx.getMessage();
-		
+
 		if (clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
 			return formatJsonResponse(message);
 		}
@@ -87,9 +88,8 @@ public class HandlerSimpleExceptionResolver extends AbstractHandlerExceptionReso
 		return new ModelAndView(new MappingJacksonJsonView(), "error", message);
 	}
 
-
 	private boolean exceptionIsHandled(Exception ex) {
-		//return ex instanceof ActionException;
+		// return ex instanceof ActionException;
 		return SimpleException.class.isAssignableFrom(ex.getClass());
 	}
 
@@ -110,8 +110,8 @@ public class HandlerSimpleExceptionResolver extends AbstractHandlerExceptionReso
 
 		@Override
 		protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
-				HttpServletResponse response) throws Exception {
-			String encoding = response.getCharacterEncoding(); 
+				HttpServletResponse response) throws IOException {
+			String encoding = response.getCharacterEncoding();
 			for (Object obj : model.values()) {
 				response.getOutputStream().write(obj.toString().getBytes(encoding));
 				response.getOutputStream().print('\n');

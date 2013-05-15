@@ -21,28 +21,27 @@
 package org.squashtest.tm.domain.library.structures;
 
 /**
- * classes extending that one should preferably be comparable only on a subset of their attributes. More formally, 
+ * classes extending that one should preferably be comparable only on a subset of their attributes. More formally,
  * 
- * a.equals(b) regardless of the result of (a.hashCode() == b.hashCode()) 
+ * a.equals(b) regardless of the result of (a.hashCode() == b.hashCode())
  * 
  * @author bsiri
- *
- * @param <KEY_TYPE> the type of the key used for comparison.
+ * 
+ * @param <KEY_TYPE>
+ *            the type of the key used for comparison.
  */
 public abstract class NodeData<KEY_TYPE> {
-	
+
 	private final KEY_TYPE key;
-	
-	public NodeData(KEY_TYPE key){
-		this.key=key;
+
+	public NodeData(KEY_TYPE key) {
+		this.key = key;
 	}
 
-	public final KEY_TYPE getKey(){
+	public final KEY_TYPE getKey() {
 		return key;
 	}
-	
-	
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -51,33 +50,41 @@ public abstract class NodeData<KEY_TYPE> {
 		return result;
 	}
 
-
-	
-
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		NodeData<?> other = (NodeData<?>) obj;
 		if (key == null) {
-			if (other.key != null)
+			if (other.key != null) {
 				return false;
-		} else if (!key.equals(other.key))
+			}
+		} else if (!key.equals(other.key)) {
 			return false;
+		}
 		return true;
 	}
 
-	public final boolean equals(NodeData<KEY_TYPE> otherData){
-		if (otherData == null) {return false;}
-		if ((getKey()==null) && (otherData.getKey()!=null)) {return false;}
-		if ((getKey()==null) && (otherData.getKey())==null) {return true;}
+	public final boolean equals(NodeData<KEY_TYPE> otherData) {
+		if (otherData == null) {
+			return false;
+		}
+		if ((getKey() == null) && (otherData.getKey() != null)) {
+			return false;
+		}
+		if ((getKey() == null) && (otherData.getKey()) == null) {
+			return true;
+		}
 		return getKey().equals(otherData.getKey());
 	}
-	
+
 	public abstract void updateWith(NodeData<KEY_TYPE> newData);
 
 }

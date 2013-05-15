@@ -50,11 +50,11 @@ import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
+
 @NamedQueries(value = {
-@NamedQuery(name = "DenormalizedFieldValue.deleteAllForEntity",  query = "delete DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType"),
-@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntity", query="from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType order by dfv.position"),
-@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntityAndRenderingLocation", query="select dfv from DenormalizedFieldValue dfv join dfv.renderingLocations rl where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType and rl = :renderingLocation order by dfv.position")
-})
+		@NamedQuery(name = "DenormalizedFieldValue.deleteAllForEntity", query = "delete DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType"),
+		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntity", query = "from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType order by dfv.position"),
+		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntityAndRenderingLocation", query = "select dfv from DenormalizedFieldValue dfv join dfv.renderingLocations rl where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType and rl = :renderingLocation order by dfv.position") })
 @Entity
 public class DenormalizedFieldValue {
 
@@ -151,8 +151,9 @@ public class DenormalizedFieldValue {
 	}
 
 	/**
-	 * Will create a DenormalizedFieldValue with the value param. The position will be valorized with the given param. No rendering location is added.
-	 *  
+	 * Will create a DenormalizedFieldValue with the value param. The position will be valorized with the given param.
+	 * No rendering location is added.
+	 * 
 	 * @param customFieldValue
 	 * @param newBindingPosition
 	 * @param denormalizedFieldHolderId
@@ -207,19 +208,20 @@ public class DenormalizedFieldValue {
 	public String getValue() {
 		return value;
 	}
-	
+
 	/**
-	 * Return the value as a Date or <code>null</code> if the input type is not Date-picker and if the parsing can't be done.
+	 * Return the value as a Date or <code>null</code> if the input type is not Date-picker and if the parsing can't be
+	 * done.
+	 * 
 	 * @return a {@link Date} or <code>null</code> in case of ParseException and wrong input-type
 	 */
 	public Date getValueAsDate() {
 		Date toReturn = null;
-		if(this.inputType == InputType.DATE_PICKER){ 
+		if (this.inputType == InputType.DATE_PICKER) {
 			try {
 				toReturn = DateUtils.parseIso8601Date(value);
 			} catch (ParseException e) {
-				LOGGER.error(e.getMessage());
-				e.printStackTrace();
+				LOGGER.warn(e.getMessage(), e);
 			}
 		}
 		return toReturn;
@@ -232,7 +234,5 @@ public class DenormalizedFieldValue {
 	public void setRenderingLocations(Set<RenderingLocation> renderingLocations) {
 		this.renderingLocations = renderingLocations;
 	}
-	
-	
 
 }

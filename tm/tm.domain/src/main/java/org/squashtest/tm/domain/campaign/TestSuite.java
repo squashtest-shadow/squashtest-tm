@@ -58,7 +58,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @Auditable
 @Entity
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
-public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
+public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity {
 
 	public TestSuite() {
 		super();
@@ -85,8 +85,8 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	private final AttachmentList attachmentList = new AttachmentList();
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@OrderColumn(name="TEST_PLAN_ORDER")
-	@JoinTable(name = "TEST_SUITE_TEST_PLAN_ITEM", inverseJoinColumns = @JoinColumn(name = "TPI_ID", referencedColumnName="ITEM_TEST_PLAN_ID"), joinColumns = @JoinColumn(name = "SUITE_ID", referencedColumnName="ID"))
+	@OrderColumn(name = "TEST_PLAN_ORDER")
+	@JoinTable(name = "TEST_SUITE_TEST_PLAN_ITEM", inverseJoinColumns = @JoinColumn(name = "TPI_ID", referencedColumnName = "ITEM_TEST_PLAN_ID"), joinColumns = @JoinColumn(name = "SUITE_ID", referencedColumnName = "ID"))
 	private List<IterationTestPlanItem> testPlan = new LinkedList<IterationTestPlanItem>();
 
 	@Override
@@ -94,10 +94,12 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 		return id;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -136,7 +138,6 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 		return attachmentList;
 	}
 
-	
 	private boolean boundToThisSuite(IterationTestPlanItem item) {
 		List<TestSuite> suites = item.getTestSuites();
 
@@ -150,30 +151,31 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	 * @return
 	 */
 	private boolean hasSame(List<TestSuite> suites) {
-	
+
 		boolean result = false;
-		
-		for(TestSuite suite : suites){
-		
+
+		for (TestSuite suite : suites) {
+
 			if (this.id == null) {
-				if(this.equals(suite)){
+				if (this.equals(suite)) {
 					result = true;
 				}
 			} else {
-				// id not null -> persistent entity -> we cant use equals() because "that" might be a proxy so equals() would
+				// id not null -> persistent entity -> we cant use equals() because "that" might be a proxy so equals()
+				// would
 				// return false
-				if(this.id.equals(suite.getId())){
+				if (this.id.equals(suite.getId())) {
 					result = true;
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
 	public IterationTestPlanItem getFirstTestPlanItem() {
 		for (IterationTestPlanItem item : this.getTestPlan()) {
-				return item;
+			return item;
 		}
 
 		throw new EmptyTestSuiteTestPlanException(this);
@@ -186,7 +188,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	 */
 	public void bindTestPlanItems(List<IterationTestPlanItem> items) {
 		for (IterationTestPlanItem item : items) {
-			if(!boundToThisSuite(item)){
+			if (!boundToThisSuite(item)) {
 				this.testPlan.add(item);
 				item.addTestSuite(this);
 			}
@@ -194,15 +196,15 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	}
 
 	public void bindTestPlanItem(IterationTestPlanItem item) {
-		if(!boundToThisSuite(item)){
+		if (!boundToThisSuite(item)) {
 			this.testPlan.add(item);
 			item.getTestSuites().add(this);
 		}
 	}
-	
+
 	public void unBindTestPlan(List<IterationTestPlanItem> items) {
 		for (IterationTestPlanItem item : items) {
-			if(boundToThisSuite(item)){
+			if (boundToThisSuite(item)) {
 				this.testPlan.remove(item);
 				item.getTestSuites().remove(this);
 			}
@@ -210,12 +212,12 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	}
 
 	public void unBindTestPlan(IterationTestPlanItem item) {
-		if(boundToThisSuite(item)){
+		if (boundToThisSuite(item)) {
 			this.testPlan.remove(item);
 			item.getTestSuites().remove(this);
 		}
 	}
-	
+
 	/**
 	 * Binds the test plan items to this test suite using their id to retrieve them from the iteration.
 	 * 
@@ -225,7 +227,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 		for (Long itemId : itemIds) {
 			for (IterationTestPlanItem item : iteration.getTestPlans()) {
 				if (item.getId().equals(itemId) && !boundToThisSuite(item)) {
-					//item.getTestSuites().add(this);
+					// item.getTestSuites().add(this);
 					this.testPlan.add(item);
 					item.addTestSuite(this);
 				}
@@ -241,7 +243,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	 */
 	public void reorderTestPlan(int newIndex, List<IterationTestPlanItem> movedItems) {
 
-		if(!testPlan.isEmpty()) {
+		if (!testPlan.isEmpty()) {
 			testPlan.removeAll(movedItems);
 			testPlan.addAll(newIndex, movedItems);
 		}
@@ -307,13 +309,16 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 				testCase = item.getReferencedTestCase();
 			}
 
-			if (boundToThisSuite(item) && item.isExecutableThroughTestSuite()
-					&& (testCase != null && testCase.getSteps() != null && testCase.getSteps().size() > 0)) {
+			if (boundToThisSuite(item) && item.isExecutableThroughTestSuite() && testCaseHasSteps(testCase)) {
 				return itemId == item.getId();
 			}
 		}
 
 		return false;
+	}
+
+	private boolean testCaseHasSteps(TestCase testCase) {
+		return testCase != null && testCase.getSteps() != null && testCase.getSteps().size() > 0;
 	}
 
 	/**
@@ -380,12 +385,12 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 	}
 
 	// ***************** (detached) custom field section *************
-	
+
 	@Override
 	public Long getBoundEntityId() {
 		return getId();
 	}
-	
+
 	@Override
 	public BindableEntity getBoundEntityType() {
 		return BindableEntity.TEST_SUITE;
@@ -393,9 +398,9 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity{
 
 	@Override
 	public Project getProject() {
-		if(iteration != null){
-		return iteration.getProject();
-		}else{
+		if (iteration != null) {
+			return iteration.getProject();
+		} else {
 			return null;
 		}
 	}

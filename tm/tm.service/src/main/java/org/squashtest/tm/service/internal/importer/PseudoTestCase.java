@@ -35,7 +35,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 /**
  * Factored out from {@link ExcelTestCaseParserImpl}
  * @author Benoit Siri
- * @author Gregory
+ * @author Gregory Fouquet
  *
  */
 /* package-private */class PseudoTestCase {
