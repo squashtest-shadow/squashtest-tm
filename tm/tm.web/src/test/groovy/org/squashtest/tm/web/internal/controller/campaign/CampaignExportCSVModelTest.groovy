@@ -65,7 +65,7 @@ class CampaignExportCSVModelTest extends Specification {
 			
 		when :
 			
-			def res = iterator._moveToNextTestCase()
+			def res = iterator.moveToNextTestCase()
 		
 		then :
 			res == true
@@ -89,7 +89,7 @@ class CampaignExportCSVModelTest extends Specification {
 			iterator.iteration = data["iter4"]
 		
 		when :
-			def res = iterator._moveToNextTestCase()
+			def res = iterator.moveToNextTestCase()
 		
 		then :
 			res == true
@@ -112,7 +112,7 @@ class CampaignExportCSVModelTest extends Specification {
 			iterator.iteration = data["iter2"]
 			
 		when :
-			def res = iterator._moveToNextTestCase()
+			def res = iterator.moveToNextTestCase()
 			
 		then :
 			res == false
@@ -135,7 +135,7 @@ class CampaignExportCSVModelTest extends Specification {
 		
 		
 		when :
-			def res = iterator._moveToNextIteration()
+			def res = iterator.moveToNextIteration()
 		
 		then :
 			res == true
@@ -159,7 +159,7 @@ class CampaignExportCSVModelTest extends Specification {
 			iterator.iteration = data["iter4"]
 		
 		when :
-			def res = iterator._moveToNextIteration()
+			def res = iterator.moveToNextIteration()
 			
 		then :
 			res == false
@@ -181,7 +181,7 @@ class CampaignExportCSVModelTest extends Specification {
 			iterator.itpIndex = -1
 		
 		when :
-			iterator._moveNext()
+			iterator.moveNext()
 		
 		then :
 			iterator.iteration == data["iter2"]
@@ -203,7 +203,7 @@ class CampaignExportCSVModelTest extends Specification {
 			iterator.iteration = data["iter2"]
 			
 		when :
-			iterator._moveNext()
+			iterator.moveNext()
 			
 		then :
 			iterator.iteration == data["iter4"]
@@ -226,7 +226,7 @@ class CampaignExportCSVModelTest extends Specification {
 			def itps = []
 			while (iterator.hasNext()) {
 				itps << iterator.itp
-				iterator._moveNext()
+				iterator.moveNext()
 			}
 		
 		then :

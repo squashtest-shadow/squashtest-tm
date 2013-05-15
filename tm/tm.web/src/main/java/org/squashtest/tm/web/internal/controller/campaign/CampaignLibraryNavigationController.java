@@ -46,11 +46,7 @@ import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.RenderingLocation;
-import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -64,21 +60,19 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.TestSuiteNodeBuilder;
-import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.service.CustomFieldHelperService;
-import org.squashtest.tm.web.internal.service.CustomFieldHelperService.Helper;
 
 /**
  * Controller which processes requests related to navigation in a {@link CampaignLibrary}.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 @Controller
 @RequestMapping(value = "/campaign-browser")
-public class CampaignLibraryNavigationController extends LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
-	
+public class CampaignLibraryNavigationController extends
+		LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationController.class);
 	private static final String NODE_IDS = "nodeIds[]";
 
@@ -92,14 +86,12 @@ public class CampaignLibraryNavigationController extends LibraryNavigationContro
 	private Provider<TestSuiteNodeBuilder> suiteNodeBuilder;
 
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
-	
+
 	@Inject
 	private CampaignFinder campaignFinder;
 
 	@Inject
 	private Provider<CampaignExportCSVModel> campaignExportCSVModelProvider;
-
-	
 
 	@ServiceReference
 	public void setCampaignLibraryNavigationService(CampaignLibraryNavigationService campaignLibraryNavigationService) {
@@ -112,57 +104,49 @@ public class CampaignLibraryNavigationController extends LibraryNavigationContro
 	public void setIterationModificationService(IterationModificationService iterationModificationService) {
 		this.iterationModificationService = iterationModificationService;
 	}
-	
-	
 
 	@InitBinder("add-campaign")
-	public void addCampaignBinder(WebDataBinder binder){
+	public void addCampaignBinder(WebDataBinder binder) {
 		CampaignFormModelValidator validator = new CampaignFormModelValidator();
 		validator.setMessageSource(getMessageSource());
 		binder.setValidator(validator);
 	}
-	
-	
+
 	@InitBinder("add-iteration")
-	public void addIterationBinder(WebDataBinder binder){
+	public void addIterationBinder(WebDataBinder binder) {
 		IterationFormModelValidator validator = new IterationFormModelValidator();
 		validator.setMessageSource(getMessageSource());
 		binder.setValidator(validator);
-	}	
-	
+	}
 
-	
 	@RequestMapping(value = "/drives/{libraryId}/content/new-campaign", method = RequestMethod.POST)
 	public @ResponseBody
-	JsTreeNode addNewCampaignToLibraryRootContent(@PathVariable Long libraryId, @Valid @ModelAttribute("add-campaign") CampaignFormModel campaignForm) {
+	JsTreeNode addNewCampaignToLibraryRootContent(@PathVariable Long libraryId,
+			@Valid @ModelAttribute("add-campaign") CampaignFormModel campaignForm) {
 
 		Campaign newCampaign = campaignForm.getCampaign();
 		Map<Long, String> customFieldValues = campaignForm.getCustomFields();
-		
+
 		campaignLibraryNavigationService.addCampaignToCampaignLibrary(libraryId, newCampaign, customFieldValues);
 
 		return createTreeNodeFromLibraryNode(newCampaign);
 
 	}
 
-
 	@RequestMapping(value = "/folders/{folderId}/content/new-campaign", method = RequestMethod.POST)
 	public @ResponseBody
-	JsTreeNode addNewCampaignToFolderContent(@PathVariable long folderId, @Valid @ModelAttribute("add-campaign") CampaignFormModel campaignForm) {
+	JsTreeNode addNewCampaignToFolderContent(@PathVariable long folderId,
+			@Valid @ModelAttribute("add-campaign") CampaignFormModel campaignForm) {
 
 		Campaign newCampaign = campaignForm.getCampaign();
 		Map<Long, String> customFieldValues = campaignForm.getCustomFields();
-		
-		campaignLibraryNavigationService.addCampaignToCampaignFolder(folderId,newCampaign, customFieldValues);
 
+		campaignLibraryNavigationService.addCampaignToCampaignFolder(folderId, newCampaign, customFieldValues);
 
 		return createTreeNodeFromLibraryNode(newCampaign);
 
 	}
-	
-	
-	
-	
+
 	@Override
 	protected LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> getLibraryNavigationService() {
 		return campaignLibraryNavigationService;
@@ -179,23 +163,24 @@ public class CampaignLibraryNavigationController extends LibraryNavigationContro
 	}
 
 	@RequestMapping(value = "/files/{campaignId}/content/new-iteration", method = RequestMethod.POST)
-	public @ResponseBody JsTreeNode addNewIterationToCampaign(@PathVariable long campaignId, @Valid @ModelAttribute("add-iteration") IterationFormModel iterationForm) {
-		
+	public @ResponseBody
+	JsTreeNode addNewIterationToCampaign(@PathVariable long campaignId,
+			@Valid @ModelAttribute("add-iteration") IterationFormModel iterationForm) {
+
 		Iteration newIteration = iterationForm.getIteration();
 		Map<Long, String> customFieldValues = iterationForm.getCustomFields();
-		boolean copyTestPlan = iterationForm.isCopyTestPlan();		
-		
-		int newIterationIndex = campaignLibraryNavigationService.addIterationToCampaign(newIteration, campaignId, copyTestPlan, customFieldValues);		
-		
+		boolean copyTestPlan = iterationForm.isCopyTestPlan();
+
+		int newIterationIndex = campaignLibraryNavigationService.addIterationToCampaign(newIteration, campaignId,
+				copyTestPlan, customFieldValues);
+
 		return createIterationTreeNode(newIteration, newIterationIndex);
 	}
 
-	
-	
 	private JsTreeNode createIterationTreeNode(Iteration iteration, int iterationIndex) {
 		return iterationNodeBuilder.get().setModel(iteration).setIterationIndex(iterationIndex).build();
 	}
-	
+
 	private JsTreeNode createTestSuiteTreeNode(TestSuite testSuite) {
 		return suiteNodeBuilder.get().setModel(testSuite).build();
 	}
@@ -206,16 +191,15 @@ public class CampaignLibraryNavigationController extends LibraryNavigationContro
 		List<Iteration> iterations = campaignLibraryNavigationService.findIterationsByCampaignId(campaignId);
 		return createCampaignIterationsModel(iterations);
 	}
-	
-	
+
 	@RequestMapping(value = "/resources/{resourceId}/content", method = RequestMethod.GET)
 	public @ResponseBody
-	List<JsTreeNode> getIterationTestSuitesTreeModel(@PathVariable("resourceId") long iterationId){
-		
+	List<JsTreeNode> getIterationTestSuitesTreeModel(@PathVariable("resourceId") long iterationId) {
+
 		List<TestSuite> testSuites = campaignLibraryNavigationService.findIterationContent(iterationId);
-		
+
 		return createIterationTestSuitesModel(testSuites);
-	
+
 	}
 
 	private @ResponseBody
@@ -229,40 +213,33 @@ public class CampaignLibraryNavigationController extends LibraryNavigationContro
 
 		return res;
 	}
-	
-	
-	
-	private List<JsTreeNode> createIterationTestSuitesModel(List<TestSuite> suites){
+
+	private List<JsTreeNode> createIterationTestSuitesModel(List<TestSuite> suites) {
 		TestSuiteNodeBuilder nodeBuilder = suiteNodeBuilder.get();
 		JsTreeNodeListBuilder<TestSuite> listBuilder = new JsTreeNodeListBuilder<TestSuite>(nodeBuilder);
-		
+
 		return listBuilder.setModel(suites).build();
 
 	}
-	
-	
-	
 
 	private @ResponseBody
-	List<JsTreeNode> createCopiedIterationsModel(
-			List<Iteration> newIterations, int nextIterationNumber) {
+	List<JsTreeNode> createCopiedIterationsModel(List<Iteration> newIterations, int nextIterationNumber) {
 		int iterationIndex = nextIterationNumber;
 		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
-		
+
 		for (Iteration iteration : newIterations) {
 			res.add(createIterationTreeNode(iteration, iterationIndex));
-			iterationIndex ++;
+			iterationIndex++;
 		}
 
 		return res;
 	}
-	
+
 	private @ResponseBody
-	List<JsTreeNode> createCopiedTestSuitesModel(
-			List<TestSuite> newTestSuites) {
-		
+	List<JsTreeNode> createCopiedTestSuitesModel(List<TestSuite> newTestSuites) {
+
 		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
-		
+
 		for (TestSuite testSuite : newTestSuites) {
 			res.add(createTestSuiteTreeNode(testSuite));
 		}
@@ -270,8 +247,9 @@ public class CampaignLibraryNavigationController extends LibraryNavigationContro
 		return res;
 	}
 
-	@RequestMapping(value="/drives", method=RequestMethod.GET, params = { "linkables" })
-	public @ResponseBody List<JsTreeNode> getLinkablesRootModel(){
+	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = { "linkables" })
+	public @ResponseBody
+	List<JsTreeNode> getLinkablesRootModel() {
 		List<CampaignLibrary> linkableLibraries = campaignLibraryNavigationService.findLinkableCampaignLibraries();
 		return createLinkableLibrariesModel(linkableLibraries);
 	}
@@ -281,96 +259,99 @@ public class CampaignLibraryNavigationController extends LibraryNavigationContro
 				driveNodeBuilder.get());
 
 		return listBuilder.setModel(linkableLibraries).build();
-	}	
+	}
 
-	@RequestMapping(value="/delete-iterations/simulate", method = RequestMethod.POST, params = {NODE_IDS})
-	public @ResponseBody Message simulateIterationDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale){
-		
+	@RequestMapping(value = "/delete-iterations/simulate", method = RequestMethod.POST, params = { NODE_IDS })
+	public @ResponseBody
+	Message simulateIterationDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale) {
 
 		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateIterationDeletion(nodeIds);
-		
+
 		StringBuilder builder = new StringBuilder();
 
-		for (SuppressionPreviewReport report : reportList){
+		for (SuppressionPreviewReport report : reportList) {
 			builder.append(report.toString(getMessageSource(), locale));
 			builder.append("<br/>");
 		}
 
-		return new Message(builder.toString());	
+		return new Message(builder.toString());
 	}
-	
+
 	public static class Message {
-		private String message ;
-		public Message (String message){
+		private String message;
+
+		public Message(String message) {
 			this.message = message;
 		}
-		public String getMessage(){
+
+		public String getMessage() {
 			return this.message;
 		}
 	}
-	
-	@RequestMapping(value="/delete-iterations/confirm", method=RequestMethod.DELETE, params= {NODE_IDS})
-	public @ResponseBody List<Long> confirmIterationsDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds){
-		
-		return campaignLibraryNavigationService.deleteIterations(nodeIds);	
+
+	@RequestMapping(value = "/delete-iterations/confirm", method = RequestMethod.DELETE, params = { NODE_IDS })
+	public @ResponseBody
+	List<Long> confirmIterationsDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds) {
+
+		return campaignLibraryNavigationService.deleteIterations(nodeIds);
 	}
-	
-	@RequestMapping(value="/delete-test-suites/simulate", method = RequestMethod.POST, params = {NODE_IDS})
-	public @ResponseBody String simulateSuiteDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale){
+
+	@RequestMapping(value = "/delete-test-suites/simulate", method = RequestMethod.POST, params = { NODE_IDS })
+	public @ResponseBody
+	String simulateSuiteDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale) {
 		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateSuiteDeletion(nodeIds);
-		
+
 		StringBuilder builder = new StringBuilder();
-		
-		for (SuppressionPreviewReport report : reportList){
+
+		for (SuppressionPreviewReport report : reportList) {
 			builder.append(report.toString(getMessageSource(), locale));
 			builder.append("<br/>");
 		}
-		
+
 		return builder.toString();
-		
+
 	}
-	
-	
-	@RequestMapping(value="/delete-test-suites/confirm", method=RequestMethod.DELETE, params= {NODE_IDS})
-	public @ResponseBody List<Long> confirmSuitesDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds){
-		
-		return campaignLibraryNavigationService.deleteSuites(nodeIds);	
-	}	
-	
-	
-	@RequestMapping(value="/copy-iterations", method= RequestMethod.POST)
-	public @ResponseBody List<JsTreeNode> copyIterations(@RequestParam("object-ids[]") Long[] iterationsIds, 
-							  @RequestParam("destination-id") long campaignId, 
-							  @RequestParam("destination-type") String destType,
-							  @RequestParam("next-iteration-number") int nextIterationNumber){
+
+	@RequestMapping(value = "/delete-test-suites/confirm", method = RequestMethod.DELETE, params = { NODE_IDS })
+	public @ResponseBody
+	List<Long> confirmSuitesDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds) {
+
+		return campaignLibraryNavigationService.deleteSuites(nodeIds);
+	}
+
+	@RequestMapping(value = "/copy-iterations", method = RequestMethod.POST)
+	public @ResponseBody
+	List<JsTreeNode> copyIterations(@RequestParam("object-ids[]") Long[] iterationsIds,
+			@RequestParam("destination-id") long campaignId, @RequestParam("destination-type") String destType,
+			@RequestParam("next-iteration-number") int nextIterationNumber) {
 
 		return copyNodes(iterationsIds, campaignId, destType, nextIterationNumber);
 	}
-	
-	@RequestMapping(value="/copy-test-suites", method= RequestMethod.POST)
-	public @ResponseBody List<JsTreeNode> copyTestSuites(@RequestParam("object-ids[]") Long[] testSuiteIds, 
-							  @RequestParam("destination-id") long iterationId, 
-							  @RequestParam("destination-type") String destType){
-		
+
+	@RequestMapping(value = "/copy-test-suites", method = RequestMethod.POST)
+	public @ResponseBody
+	List<JsTreeNode> copyTestSuites(@RequestParam("object-ids[]") Long[] testSuiteIds,
+			@RequestParam("destination-id") long iterationId, @RequestParam("destination-type") String destType) {
+
 		return copyNodes(testSuiteIds, iterationId, destType, 0);
-		
+
 	}
-	
-	
-	@RequestMapping(value="/files/{campaignId}/export")
-	public @ResponseBody void exportCampaign(@PathVariable("campaignId") long campaignId){
-		
+
+	@RequestMapping(value = "/files/{campaignId}/export")
+	public @ResponseBody
+	void exportCampaign(@PathVariable("campaignId") long campaignId) {
+
 		Campaign campaign = campaignFinder.findById(campaignId);
-		
+
 		CampaignExportCSVModel model = campaignExportCSVModelProvider.get();
-		
+
 		model.setCampaign(campaign);
 		model.init();
-		
+
 	}
-	
-	
-	private List<JsTreeNode> copyNodes(Long[] itemIds, long destinationId, String destinationType, int nextNumberInDestination){		
+
+	private List<JsTreeNode> copyNodes(Long[] itemIds, long destinationId, String destinationType,
+			int nextNumberInDestination) {
 		if (destinationType.equals("campaign")) {
 			List<Iteration> iterationsList;
 			iterationsList = campaignLibraryNavigationService.copyIterationsToCampaign(destinationId, itemIds);
@@ -383,8 +364,5 @@ public class CampaignLibraryNavigationController extends LibraryNavigationContro
 			throw new IllegalArgumentException("copy nodes : cannot paste item to : " + destinationType);
 		}
 	}
-
-
-	
 
 }
