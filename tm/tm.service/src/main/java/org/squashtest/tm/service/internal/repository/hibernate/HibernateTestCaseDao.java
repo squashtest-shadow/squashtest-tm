@@ -455,8 +455,9 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		crit.createAlias("project", "Project", Criteria.LEFT_JOIN);
 
 		List<Sorting> effectiveSortings = createEffectiveSorting(sorting);
-
-		PagingUtils.addPaging(crit, sorting);
+		if(!sorting.shouldDisplayAll()){	
+			PagingUtils.addPaging(crit, sorting);
+		}
 		SortingUtils.addOrders(crit, effectiveSortings);
 
 		return crit;

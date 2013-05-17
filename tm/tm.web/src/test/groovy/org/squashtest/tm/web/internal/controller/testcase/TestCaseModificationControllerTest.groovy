@@ -195,6 +195,7 @@ class TestCaseModificationControllerTest extends Specification {
 				"customFields":[:],
 				"nb-attachments":1,
 				"empty-requirements-holder":null,
+				"nb-requirements":0,
 				"step-index":1, 
 				"step-type":"action",
 				"attach-list-id":5L,
@@ -210,6 +211,7 @@ class TestCaseModificationControllerTest extends Specification {
 				"customFields":[:],
 				"nb-attachments":1,
 				"empty-requirements-holder":null,
+				"nb-requirements":0,
 				"step-index":2,
 				"step-type":"action",
 				"attach-list-id":5L,
@@ -269,7 +271,7 @@ class TestCaseModificationControllerTest extends Specification {
 		filter.firstItemIndex == 5
 		filter.pageSize == 10
 		filter.sortedAttribute == "name"
-		filter.sortingOrder == "asc"
+		filter.sortOrder.code == "asc"
 	}
 
 	def "should return general info fragment"() {
