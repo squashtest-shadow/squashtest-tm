@@ -20,17 +20,18 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
+import java.lang.reflect.InvocationHandler
+import java.lang.reflect.Method
+import java.lang.reflect.Proxy
 
 import javax.inject.Inject
 
-import org.codehaus.groovy.runtime.InvokerHelper;
-import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
 import org.squashtest.tm.core.foundation.collection.Paging
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.requirement.RequirementCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria
@@ -39,10 +40,8 @@ import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.testcase.TestCaseType
-import org.squashtest.tm.service.foundation.collection.CollectionSorting
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.unitils.dbunit.annotation.DataSet
-import java.lang.reflect.Proxy;
 
 import spock.unitils.UnitilsSupport
 
@@ -143,7 +142,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
 	def " (*) should find the UNIQUES calling test cases sorted by test case name"(){
 		given :
-		CollectionSorting sorting = new CollectionSorting() {
+		PagingAndSorting sorting = new PagingAndSorting() {
 
 			@Override
 			public int getFirstItemIndex() {
@@ -156,8 +155,8 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			}
 
 			@Override
-			public String getSortingOrder() {
-				return "asc";
+			public SortOrder getSortOrder() {
+				return SortOrder.ASCENDING;
 			}
 
 
