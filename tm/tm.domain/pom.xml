@@ -96,35 +96,6 @@
 			<artifactId>com.springsource.org.aspectj.runtime</artifactId>
 		</dependency>
 
-
-		<!-- <dependency> <groupId>${project.groupId}</groupId> <artifactId>springdm-bundle-dependencies</artifactId> 
-			<version>${project.version}</version> <type>pom</type> </dependency> <dependency> 
-			<groupId>${project.groupId}</groupId> <artifactId>org.squashtest.csp.tools.unittest</artifactId> 
-			<version>${project.version}</version> <scope>test</scope> </dependency> <dependency> 
-			<groupId>org.squashtest.tm</groupId> <artifactId>core.dynamicmanager</artifactId> 
-			<version>${project.version}</version> </dependency> <dependency> <groupId>commons-lang</groupId> 
-			<artifactId>commons-lang</artifactId> <scope>compile</scope> </dependency> 
-			<dependency> <groupId>commons-collections</groupId> <artifactId>commons-collections</artifactId> 
-			<scope>compile</scope> </dependency> <dependency> <groupId>org.apache.commons</groupId> 
-			<artifactId>commons-compress</artifactId> <scope>compile</scope> </dependency> 
-			<dependency> <groupId>javax.transaction</groupId> <artifactId>com.springsource.javax.transaction</artifactId> 
-			</dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>org.springframework.transaction</artifactId> 
-			<scope>compile</scope> </dependency> <dependency> <groupId>org.springframework</groupId> 
-			<artifactId>org.springframework.aop</artifactId> <scope>compile</scope> </dependency> 
-			<dependency> <groupId>org.aopalliance</groupId> <artifactId>com.springsource.org.aopalliance</artifactId> 
-			</dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>org.springframework.jdbc</artifactId> 
-			</dependency> <dependency> <groupId>commons-dbcp</groupId> <artifactId>commons-dbcp</artifactId> 
-			</dependency> <dependency> <groupId>com.h2database</groupId> <artifactId>h2</artifactId> 
-			</dependency> <dependency> <groupId>org.springframework.security</groupId> 
-			<artifactId>org.springframework.security.core</artifactId> </dependency> 
-			<dependency> <groupId>org.springframework.security</groupId> <artifactId>org.springframework.security.config</artifactId> 
-			</dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>org.springframework.context.support</artifactId> 
-			<scope>compile</scope> </dependency> <dependency> <groupId>net.sourceforge.ehcache</groupId> 
-			<artifactId>com.springsource.net.sf.ehcache</artifactId> <version>1.6.2</version> 
-			</dependency> <dependency> <groupId>org.apache.poi</groupId> <artifactId>org.squashtest.org.apache.poi</artifactId> 
-			</dependency> <dependency> <groupId>org.apache.log4j</groupId> <artifactId>com.springsource.org.apache.log4j</artifactId> 
-			<scope>compile</scope> </dependency> -->
-
 	</dependencies>
 
 	<build>
