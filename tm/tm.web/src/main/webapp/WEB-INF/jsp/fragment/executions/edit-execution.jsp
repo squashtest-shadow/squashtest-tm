@@ -309,7 +309,7 @@
 	<%--------------------------- Deletion confirmation popup -------------------------------------%>
 
 
-	<comp:popup id="delete-execution-confirm"
+	<pop:popup id="delete-execution-confirm"
 		titleKey="dialog.delete-execution.title" isContextual="true"
 		openedBy="delete-execution-button">
 		<jsp:attribute name="buttons">
@@ -323,12 +323,12 @@
 		},			
 		<pop:cancel-button />
 	</jsp:attribute>
-		<jsp:body>
+		<jsp:attribute name="body">
 		<b><f:message key="dialog.delete-execution.message" />
 			</b>
 		<br />				
-	</jsp:body>
-	</comp:popup>
+	</jsp:attribute>
+	</pop:popup>
 
 	<%--------------------------- /Deletion confirmation popup -------------------------------------%>
 

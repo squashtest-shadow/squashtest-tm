@@ -94,7 +94,7 @@
 	
 	</div><%-- /div.fragment-body.fragment-tabs --%>
 	<%-- ------------------------------ Add User Dialog ------------------------------------------------ --%>
-		<comp:popup id="add-user-dialog" titleKey="title.AddUser" isContextual="true"
+		<pop:popup id="add-user-dialog" titleKey="title.AddUser" isContextual="true"
 			openedBy="add-user-button" width="400">
 			<jsp:attribute name="buttons">
 			
@@ -105,7 +105,7 @@
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
-			<jsp:body>
+			<jsp:attribute name="body">
 				<table id="add-user-table">
 					<tr> <td>
 						<label style="font-weight: bold;" for="add-user-login"><f:message key="label.Login" /></label>
@@ -183,8 +183,8 @@
 					<td><comp:error-message forField="confirmpass" /></td>
 					 </tr>
 				</table>
-			</jsp:body>
-		</comp:popup>
+			</jsp:attribute>
+		</pop:popup>
 	
 	
 	

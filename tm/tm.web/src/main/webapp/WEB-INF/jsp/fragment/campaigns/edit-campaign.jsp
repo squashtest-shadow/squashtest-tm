@@ -108,7 +108,7 @@
 
 	<div style="clear: both;"></div>
 	<c:if test="${smallEditable}">
-		<comp:popup id="rename-campaign-dialog"
+		<pop:popup id="rename-campaign-dialog"
 			titleKey="dialog.rename-campaign.title" isContextual="true"
 			openedBy="rename-campaign-button">
 			<jsp:attribute name="buttons">
@@ -123,7 +123,7 @@
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
-			<jsp:body>
+			<jsp:attribute name="body">
 				<script type="text/javascript">
 					$("#rename-campaign-dialog").bind("dialogopen",
 							function(event, ui) {
@@ -139,8 +139,8 @@
 				<br />
 				<comp:error-message forField="name" />	
 		
-			</jsp:body>
-		</comp:popup>
+			</jsp:attribute>
+		</pop:popup>
 	</c:if>
 </div>
 
@@ -394,7 +394,7 @@
 <%--------------------------- Assign User popup -------------------------------------%>
 
 
-<comp:popup id="batch-assign-test-case"
+<pop:popup id="batch-assign-test-case"
 	titleKey="label.AssignUser" isContextual="true"
 	openedBy="assign-test-case-button" closeOnSuccess="false">
 	<jsp:attribute name="buttons">
@@ -415,7 +415,7 @@
 			},			
 			<pop:cancel-button />
 		</jsp:attribute>
-	<jsp:body>
+	<jsp:attribute name="body">
 			<f:message var="emptyMessage"
 			key="message.EmptyTableSelection" />
 			<script type="text/javascript">
@@ -443,8 +443,8 @@
 		</span>
 			<select class="batch-select"></select>
 			
-		</jsp:body>
-</comp:popup>
+		</jsp:attribute>
+</pop:popup>
 
 
 

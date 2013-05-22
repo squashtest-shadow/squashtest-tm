@@ -268,7 +268,7 @@
 
 	<div style="clear: both;"></div>
 	<c:if test="${ smallEditable }">
-		<comp:popup id="rename-test-suite-dialog"
+		<pop:popup id="rename-test-suite-dialog"
 			titleKey="dialog.testsuites.rename.title" isContextual="true"
 			openedBy="rename-test-suite-button">
 			<jsp:attribute name="buttons">
@@ -283,7 +283,7 @@
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
-			<jsp:body>
+			<jsp:attribute name="body">
 				<script type="text/javascript">
 				$( "#rename-test-suite-dialog" ).bind( "dialogopen", function(event, ui) {
 					var name = $.trim($('#test-suite-name').text());
@@ -297,8 +297,8 @@
 				<br />
 				<comp:error-message forField="name" />	
 		
-			</jsp:body>
-		</comp:popup>
+			</jsp:attribute>
+		</pop:popup>
 	</c:if>
 </div>
 
@@ -542,7 +542,7 @@
 	</c:if>
 
 	<%--------------------------- Assign User popup -------------------------------------%>
-	<comp:popup id="batch-assign-test-case"
+	<pop:popup id="batch-assign-test-case"
 		titleKey="label.AssignUser" isContextual="true"
 		openedBy="assign-test-case-button" closeOnSuccess="false">
 
@@ -564,7 +564,7 @@
 			},
 			<pop:cancel-button />
 		</jsp:attribute>
-		<jsp:body>
+		<jsp:attribute name="body">
 			<f:message var="confirmMessage"
 				key="message.AssignTestCaseToUser" />
 			<script type="text/javascript">
@@ -588,8 +588,8 @@
 			</script>
 			<div id="comboBox-div">
 			</div>
-		</jsp:body>
-	</comp:popup>
+		</jsp:attribute>
+	</pop:popup>
 </div>
 <script type="text/javascript">
 	$(function(){

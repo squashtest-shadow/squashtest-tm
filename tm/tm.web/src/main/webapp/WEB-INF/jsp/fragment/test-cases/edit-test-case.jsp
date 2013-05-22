@@ -167,7 +167,7 @@
 
 <%---------------------------- Rename test case popup ------------------------------%>
 <c:if test="${ smallEditable }">
-	<comp:popup id="rename-test-case-dialog"
+	<pop:popup id="rename-test-case-dialog"
 		titleKey="dialog.rename-test-case.title" isContextual="true"
 		openedBy="rename-test-case-button">
 		
@@ -189,7 +189,7 @@
 			
 		</jsp:attribute>
 		
-		<jsp:body>
+		<jsp:attribute name="body">
 				<label>
 					<f:message key="dialog.rename.label" />
 				</label>
@@ -197,9 +197,9 @@
 					   maxlength="255"	size="50" />
 				<br />
 				<comp:error-message forField="name" />
-		</jsp:body>
+		</jsp:attribute>
 
-	</comp:popup>
+	</pop:popup>
 </c:if>
 
 <%---------------------------- Test Case Informations ------------------------------%>

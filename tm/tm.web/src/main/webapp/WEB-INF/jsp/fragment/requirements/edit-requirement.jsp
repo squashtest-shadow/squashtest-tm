@@ -344,7 +344,7 @@ that page won't be editable if
 <%-- -----------------------------------POPUPS ----------------------------------------------%>
 <%--------------------------- Rename popup -------------------------------------%>
 <c:if test="${ smallEditable }">
-		<comp:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
+		<pop:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
 			isContextual="true" openedBy="rename-requirement-button">
 			<jsp:attribute name="buttons">
 				<f:message var="label" key="dialog.rename-requirement.title" />
@@ -356,7 +356,7 @@ that page won't be editable if
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
-			<jsp:body>
+			<jsp:attribute name="body">
 				<script type="text/javascript">
 				$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
 					var name = $.trim($('#requirement-raw-name').text());
@@ -367,8 +367,8 @@ that page won't be editable if
 				<label><f:message key="dialog.rename.label" /></label>
 				<input type="text" id="rename-requirement-input" maxlength="255" size="50" /><br/>
 				<comp:error-message forField="name"/>
-			</jsp:body>
-		</comp:popup>
+			</jsp:attribute>
+		</pop:popup>
 	</c:if>
 <%--------------------------- New version popup -------------------------------------%>
 	<c:if test="${ creatable }">

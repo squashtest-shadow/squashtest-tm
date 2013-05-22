@@ -171,7 +171,7 @@ function renameBugtrackerSuccess(data) {
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
 
-	<comp:popup id="rename-bugtracker-dialog"
+	<pop:popup id="rename-bugtracker-dialog"
 		titleKey="dialog.rename-bugtracker.title" isContextual="true"
 		openedBy="rename-bugtracker-button">
 		<jsp:attribute name="buttons">
@@ -185,7 +185,7 @@ function renameBugtrackerSuccess(data) {
 			},			
 			<pop:cancel-button />
 		</jsp:attribute>
-		<jsp:body>
+		<jsp:attribute name="body">
 			<script type="text/javascript">
 				$("#rename-bugtracker-dialog").bind("dialogopen", function(event, ui) {
 					var name = $.trim($('#bugtracker-name-header').text());
@@ -197,6 +197,6 @@ function renameBugtrackerSuccess(data) {
 			<input type="text" id="rename-bugtracker-input" maxlength="255" size="50" />
 			<br />
 			<comp:error-message forField="name" />
-		</jsp:body>
-	</comp:popup>
+		</jsp:attribute>
+	</pop:popup>
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->

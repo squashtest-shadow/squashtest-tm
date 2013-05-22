@@ -139,7 +139,7 @@
 				</table>
 
 
-<comp:popup id="add-bugtracker-dialog" titleKey="dialog.new-bugtracker.title" openedBy="new-bugtracker-button">
+<pop:popup id="add-bugtracker-dialog" titleKey="dialog.new-bugtracker.title" openedBy="new-bugtracker-button">
 	<jsp:attribute name="buttons">
 		<f:message var="label1" key="label.Add" />
 			'${ label1 }': function() {
@@ -161,7 +161,7 @@
 				},							
 		<pop:cancel-button />
 	</jsp:attribute>
-			<jsp:body>
+			<jsp:attribute name="body">
 				<table>
 					<tr>
 						<td><label for="add-bugtracker-name"><f:message
@@ -193,8 +193,8 @@
 						<comp:error-message forField="iframeFriendly" /></td>
 					</tr>
 				</table>
-			</jsp:body>
-</comp:popup>
+			</jsp:attribute>
+</pop:popup>
 
 </div>
 </jsp:attribute>

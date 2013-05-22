@@ -258,7 +258,7 @@
 		</jsp:attribute>					
 	</pop:popup>
 		<%------------------- rename ---------------------%>
-		<comp:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
+		<pop:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
 			isContextual="true" openedBy="rename-requirement-button">
 			<jsp:attribute name="buttons">
 				<f:message var="label" key="dialog.rename-requirement.title" />
@@ -270,12 +270,12 @@
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
-			<jsp:body>
+			<jsp:attribute name="body">
 				<label><f:message key="dialog.rename.label" /></label>
 				<input type="text" id="rename-requirement-input" maxlength="255" /><br/>
 				<comp:error-message forField="name"/>
-			</jsp:body>
-		</comp:popup>
+			</jsp:attribute>
+		</pop:popup>
 	</c:if>
 <!------------------------------------------/ POPUPS ------------------------------------------------------>
 <!------------------------------------------ SCRIPTS ------------------------------------------------------>

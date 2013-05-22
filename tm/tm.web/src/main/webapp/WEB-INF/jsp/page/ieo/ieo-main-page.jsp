@@ -100,7 +100,7 @@
 	
 	
 	<%-- Popup to enter the url we want the right panel to be filled with --%>
-	<comp:popup id="open-address-dialog" openedBy="open-address-dialog-button" titleKey="execution.IEO.address.bar.label">
+	<pop:popup id="open-address-dialog" openedBy="open-address-dialog-button" titleKey="execution.IEO.address.bar.label">
 		<jsp:attribute name="buttons">
 				<f:message var="label" key="execution.IEO.address.go.to.button" />
 				'${ label }': function() {
@@ -109,11 +109,11 @@
 				$('#open-address-dialog').dialog('close');
 				},			
 			</jsp:attribute>
-			<jsp:body>
+			<jsp:attribute name="body">
 				<label><f:message key="execution.execute.IEO.address.label" /></label>
 				<input id="address-input" type="text" size="50" /><br/>
-			</jsp:body>
-	</comp:popup>	
+			</jsp:attribute>
+	</pop:popup>	
 
 	
 	<script type="text/javascript">
