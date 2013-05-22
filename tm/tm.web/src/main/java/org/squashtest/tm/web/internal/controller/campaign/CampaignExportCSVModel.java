@@ -20,21 +20,27 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.service.CustomFieldHelperService;
 import org.squashtest.tm.web.internal.service.CustomFieldHelperService.Helper;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Component
 @Scope("prototype")
@@ -42,14 +48,22 @@ public class CampaignExportCSVModel {
 
 	@Inject
 	private CustomFieldHelperService cufHelperService;
+	
+	@Inject
+	private BugTrackersLocalService bugTrackerService;
+	
 
 	private char separator = ';';
 
 	private Campaign campaign;
 
 	private List<CustomFieldModel> campCUFModel;
-
 	private List<CustomFieldModel> iterCUFModel;
+	private List<CustomFieldModel> tcCUFModel;
+	
+	private List<CustomFieldValue> campCUFValues;
+	private MultiValueMap iterCUFValues; 						//<Long, Collection<CustomFieldValue>>
+	private MultiValueMap tcCUFValues;							//same here
 
 	private int nbColumns;
 
@@ -75,22 +89,31 @@ public class CampaignExportCSVModel {
 	}
 
 	private void initCustomFields() {
+		
 		List<Iteration> iterations = campaign.getIterations();
 		List<TestCase> allTestCases = aggregateTestCases(iterations);
 
+		
 		// cufs for the campaign
 		Helper<Campaign> campHelper = cufHelperService.newHelper(campaign);
 		campCUFModel = campHelper.getCustomFieldConfiguration();
+		campCUFValues = campHelper.getCustomFieldValues();
 
 		// cufs for the iterations
 		Helper<Iteration> iterHelper = cufHelperService.newHelper(iterations).includeAllCustomFields();
 		iterCUFModel = iterHelper.getCustomFieldConfiguration();
+		List<CustomFieldValue> iterValues = iterHelper.getCustomFieldValues();
 
 		// cufs for the test cases
 		Helper<TestCase> tcHelper = cufHelperService.newHelper(allTestCases);
-		List<CustomFieldModel> tcCUFModel = tcHelper.getCustomFieldConfiguration();
+		tcCUFModel = tcHelper.getCustomFieldConfiguration();
+		List<CustomFieldValue> tcValues = tcHelper.getCustomFieldValues();
 
 		nbColumns = 25 + campCUFModel.size() + iterCUFModel.size() + tcCUFModel.size();
+		
+		
+		//index the custom field values with a map for faster reference later
+		createCustomFieldValuesIndex(iterValues, tcValues);
 
 	}
 
@@ -110,6 +133,19 @@ public class CampaignExportCSVModel {
 			}
 		}
 	}
+	
+	private void createCustomFieldValuesIndex(List<CustomFieldValue> iterValues, List<CustomFieldValue> tcValues){
+		
+		for (CustomFieldValue value : iterValues){
+			iterCUFValues.put(value.getBoundEntityId(), value);
+		}
+		
+		for (CustomFieldValue value : tcValues){
+			tcCUFValues.put(value.getBoundEntityId(), value);
+		}
+	}
+	
+	
 
 	public Row getHeader() {
 
@@ -168,6 +204,27 @@ public class CampaignExportCSVModel {
 	public Iterator<Row> dataIterator() {
 		return new DataIterator();
 	}
+	
+	
+	// ******************************** data formatting ***************************
+	
+	//returns the correct value if found, or "--" if not found
+	private String getValue(Collection<CustomFieldValue> values, CustomFieldModel model){
+		
+		for (CustomFieldValue value : values){
+			if (value.getBinding().getCustomField().getCode().equals(model.getCode())){
+				return value.getValue();
+			}
+		}
+		
+		return "--";
+	}
+	
+	
+	
+	private int getNbIssues(TestCase testCase){
+		return bugTrackerService.findIssueOwnershipForTestCase(testCase.getId()).size();
+	}
 
 	// ********************************** nested classes ********************************************
 
@@ -176,8 +233,11 @@ public class CampaignExportCSVModel {
 		private int iterIndex = -1;
 		private int itpIndex = -1;
 
-		private Iteration iteration = new Iteration(); // initialized to dummy value for for bootstrap purposes
-		private IterationTestPlanItem itp; // null means "no more"
+		private Iteration iteration = new Iteration(); 	// initialized to dummy value for for bootstrap purposes
+		private IterationTestPlanItem itp; 				// null means "no more"
+		
+		
+		private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
 		public DataIterator() {
 
@@ -193,20 +253,87 @@ public class CampaignExportCSVModel {
 
 		}
 
-		// TODO
+		// See getHeader() for reference
 		@Override
 		public Row next() {
-
+			
 			List<Cell> dataCells = new ArrayList<Cell>(nbColumns);
+			
+			// the campaign
+			populateCampaignRowData(dataCells);
+			
+			//the iteration
+			populateIterationRowData(dataCells);
+			
+			//the test case
+			populateTestCaseRowData(dataCells);			
 
 			return new Row(dataCells);
 
+		}
+
+		private void populateTestCaseRowData(List<Cell> dataCells) {
+			
+			TestCase testCase = itp.getReferencedTestCase();
+			
+			dataCells.add(new Cell(testCase.getName()));
+			dataCells.add(new Cell(testCase.getProject().getName()));
+			dataCells.add(new Cell(testCase.getImportance().toString()));
+			dataCells.add(new Cell(itp.getTestSuiteNames()));
+			dataCells.add(new Cell(Integer.toString(itp.getExecutions().size())));
+			dataCells.add(new Cell(Integer.toString(testCase.getRequirementVersionCoverages().size())));
+			dataCells.add(new Cell(Integer.toString(getNbIssues(testCase))));
+			dataCells.add(new Cell(testCase.getStatus().toString()));
+			dataCells.add(new Cell(itp.getUser().getLogin()));
+			dataCells.add(new Cell(dateFormat.format(itp.getLastExecutedOn())));
+			dataCells.add(new Cell(HTMLCleanupUtils.htmlToText(testCase.getDescription())));
+			dataCells.add(new Cell(testCase.getReference()));
+			dataCells.add(new Cell(testCase.getNature().toString()));
+			dataCells.add(new Cell(testCase.getType().toString()));
+			dataCells.add(new Cell(testCase.getStatus().toString()));
+			dataCells.add(new Cell(HTMLCleanupUtils.htmlToText(testCase.getPrerequisite())));
+			
+			Collection<CustomFieldValue> tcValues = (Collection<CustomFieldValue>) tcCUFValues.get(testCase.getId());
+			for (CustomFieldModel model : tcCUFModel){
+				String strValue = getValue(tcValues, model);
+				dataCells.add(new Cell(strValue));
+			}
+		}
+		
+
+		private void populateIterationRowData(List<Cell> dataCells) {
+			dataCells.add(new Cell("#"+(iterIndex+1)+" "+iteration.getName()));
+			dataCells.add(new Cell(dateFormat.format(iteration.getScheduledStartDate())));
+			dataCells.add(new Cell(dateFormat.format(iteration.getScheduledEndDate())));
+			dataCells.add(new Cell(dateFormat.format(iteration.getActualStartDate())));
+			dataCells.add(new Cell(dateFormat.format(iteration.getActualEndDate())));
+			
+			Collection<CustomFieldValue> iValues = (Collection<CustomFieldValue>) iterCUFValues.get(iteration.getId());
+			for (CustomFieldModel model : iterCUFModel){
+				String strValue = getValue(iValues, model);
+				dataCells.add(new Cell(strValue));
+			}
+		}
+
+		private void populateCampaignRowData(List<Cell> dataCells) {
+			dataCells.add(new Cell(dateFormat.format(campaign.getScheduledStartDate())));
+			dataCells.add(new Cell(dateFormat.format(campaign.getScheduledEndDate())));
+			dataCells.add(new Cell(dateFormat.format(campaign.getActualStartDate())));
+			dataCells.add(new Cell(dateFormat.format(campaign.getActualEndDate())));
+			
+			List<CustomFieldValue> cValues = campCUFValues;
+			//ensure that the CUF values are processed in the correct order
+			for (CustomFieldModel model : campCUFModel){
+				String strValue = getValue(cValues, model);
+				dataCells.add(new Cell(strValue));
+			}
 		}
 
 		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
+	
 
 		// ****************** iterator mechanics here ****************
 
@@ -296,5 +423,7 @@ public class CampaignExportCSVModel {
 			this.cells = cells;
 		}
 	}
+	
+	
 
 }
