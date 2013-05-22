@@ -91,7 +91,7 @@ public class CampaignExportCSVModel {
 	private void initCustomFields() {
 		
 		List<Iteration> iterations = campaign.getIterations();
-		List<TestCase> allTestCases = aggregateTestCases(iterations);
+		List<TestCase> allTestCases = collectAllTestCases(iterations);
 
 		
 		// cufs for the campaign
@@ -117,7 +117,7 @@ public class CampaignExportCSVModel {
 
 	}
 
-	private List<TestCase> aggregateTestCases(List<Iteration> iterations) {
+	private List<TestCase> collectAllTestCases(List<Iteration> iterations) {
 		// aggregate the test cases in one collection
 		List<TestCase> allTestCases = new ArrayList<TestCase>();
 		for (Iteration iteration : iterations) {
@@ -135,6 +135,9 @@ public class CampaignExportCSVModel {
 	}
 	
 	private void createCustomFieldValuesIndex(List<CustomFieldValue> iterValues, List<CustomFieldValue> tcValues){
+		
+		iterCUFValues = new MultiValueMap();
+		tcCUFValues = new MultiValueMap();
 		
 		for (CustomFieldValue value : iterValues){
 			iterCUFValues.put(value.getBoundEntityId(), value);
@@ -272,6 +275,8 @@ public class CampaignExportCSVModel {
 
 		}
 
+		
+		
 		private void populateTestCaseRowData(List<Cell> dataCells) {
 			
 			TestCase testCase = itp.getReferencedTestCase();

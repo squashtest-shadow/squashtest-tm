@@ -23,7 +23,10 @@ package org.squashtest.tm.web.internal.controller.campaign
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.web.internal.service.CustomFieldHelperService;
 
 import spock.lang.Specification
@@ -34,14 +37,114 @@ class CampaignExportCSVModelTest extends Specification {
 	
 	CampaignExportCSVModel model 
 	
+	BugTrackersLocalService bugTrackerService
+	
 	
 	def setup(){
+		
 		cufHelperService = Mock()
 		
 		model = new CampaignExportCSVModel()
 		model.cufHelperService = cufHelperService
+		model.bugTrackerService = bugTrackerService
+		
+	}
+	
+	
+	
+	def "should collect all the test cases of a bunch of iterations"(){
+		
+		given :		
+		
+			def iterations = []
+			
+			3.times{ itindex ->
+				
+				def iteration = new Iteration(name : "iteration ${itindex}")
+				
+				4.times { tcindex -> 
+					def tc = new TestCase(name : "test case ${itindex} - ${tcindex}")
+					iteration.addTestPlan(new IterationTestPlanItem(tc))
+				}
+				
+				iterations << iteration
+				
+			}  
+			
+			//now let's "delete" some test cases
+			
+			iterations[0].testPlans[1].referencedTestCase = null	// that'd be test case 0 - 1
+			iterations[1].testPlans[2].referencedTestCase = null	// that'd be test case 1 - 2
+			iterations[2].testPlans[3].referencedTestCase = null	// that'd be test case 2 - 3
+		
+		
+		when :
+		
+			def collected = model.collectAllTestCases(iterations)
+			
+		then :
+			collected.collect{ it.name } as List == [
+				"test case 0 - 0",	
+				"test case 0 - 2",
+				"test case 0 - 3",
+				"test case 1 - 0",
+				"test case 1 - 1",
+				"test case 1 - 3",
+				"test case 2 - 0",
+				"test case 2 - 1",
+				"test case 2 - 2",
+				
+			] as List
+	}
+	
+	
+	def "should index the custom field values"(){
+		
+		given :
+			CustomFieldValue iterCUFValue11 = Mock()
+			iterCUFValue11.getBoundEntityId() >> new Long(1l)
+			
+			CustomFieldValue iterCUFValue12 = Mock()
+			iterCUFValue12.getBoundEntityId() >> new Long(1l)
+			
+			CustomFieldValue iterCUFValue21 = Mock()
+			iterCUFValue21.getBoundEntityId() >> new Long(2l)
+			
+			CustomFieldValue iterCUFValue22 = Mock()
+			iterCUFValue22.getBoundEntityId() >> new Long(2l)
+		
+			def iterValues = [iterCUFValue11, iterCUFValue22, iterCUFValue12, iterCUFValue21]
+			
+		and : 
+			
+			CustomFieldValue tcCUFValue11 = Mock()
+			tcCUFValue11.getBoundEntityId() >> new Long(10l)
+			
+			CustomFieldValue tcCUFValue12 = Mock()
+			tcCUFValue12.getBoundEntityId() >> new Long(10l)
+			
+			CustomFieldValue tcCUFValue21 = Mock()
+			tcCUFValue21.getBoundEntityId() >> new Long(20l)
+			
+			CustomFieldValue tcCUFValue22 = Mock()
+			tcCUFValue22.getBoundEntityId() >> new Long(20l)
+			
+			def tcValues = [tcCUFValue11, tcCUFValue21, tcCUFValue22, tcCUFValue12]
+	
+			
+		when :
+			model.createCustomFieldValuesIndex(iterValues, tcValues)
+			
+		then :
+				
+			model.iterCUFValues[1l] as Set == [iterCUFValue11, iterCUFValue12] as Set
+			model.iterCUFValues[2l] as Set == [iterCUFValue21, iterCUFValue22] as Set
+			model.tcCUFValues[10l] as Set == [tcCUFValue11, tcCUFValue12] as Set
+			model.tcCUFValues[20l] as Set == [tcCUFValue21, tcCUFValue22] as Set
+		
 
 	}
+	
 	
 	
 	// ********************** tests on DataIterator ************************
@@ -237,10 +340,19 @@ class CampaignExportCSVModelTest extends Specification {
 			itps == expected
 		
 	}
+
+	
+	
+	// ******************* stub methods **********************
+		
+	def populateRequirementCoverage = { tc, howmany -> 
+		howmany.times { tc.addRequirementCoverage(new RequirementVersionCoverage()) }
+	}
+	
+	
 	
 	def createCampaign(){
 		
-
 		//the test cases
 		
 		TestCase tc1 = new TestCase(name:"tc1");
@@ -249,6 +361,7 @@ class CampaignExportCSVModelTest extends Specification {
 		TestCase tc4 = new TestCase(name:"tc4");
 		TestCase tc5 = new TestCase(name:"tc5");
 		TestCase tc6 = new TestCase(name:"tc6");
+		
 		
 			
 		//the iterations
