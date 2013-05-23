@@ -83,6 +83,7 @@ requirejs.config({
 		"squash.translator" : "squash/squash.translator",
 		"squash.resizer" : "squash/squashtm.tree-page-resizer",
 		"squash.table-collapser" : "squashtest/jquery.squash.table-collapser",
+		"squash.session-pinger" : "squashtest/jquery.squash.session-pinger",
 		"jquery.tagit" : "squashtest/jquery/tag-it.js"
 	},
 	shim : {

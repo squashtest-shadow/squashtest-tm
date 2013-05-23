@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,36 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "app/ws/squashtm.navbar", "app/ws/squashtm.projectfilter",
-		"app/ws/squashtm.menubar", "app/ws/squashtm.notification",
-		"squash.bugtrackerMenu", "squash.session-pinger"], function($, NavBar, ProjectFilter, MenuBar,
-		WTF, BTM, SSP) {
-	function init(highlightedWorkspace) {
-		/* navigation tag */
-		NavBar.initHighlighted(highlightedWorkspace);
-		squashtm.bugtrackerMenu = new BTM({
-			workspaceUrl : squashtm.app.contextRoot
-					+ "/bugtracker/workspace-button"
-		});
-		squashtm.bugtrackerMenu
-				.updateBugTrackerMenu(highlightedWorkspace == "bugtracker");
+package org.squashtest.tm.web.internal.controller.generic;
 
-		ProjectFilter.init(squashtm.app.projectFilterConf);
-		MenuBar.init(squashtm.app.menuBarConf);
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-		/* wtf */
-		WTF.init(squashtm.app.notificationConf);
+@Controller
+public class SessionPingController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ObjectAccessController.class);
 
-		/* Try to prevent FOUCs */
-		$(".unstyled").fadeIn("fast", function() {
-			$(this).removeClass("unstyled");
-		});
-		
-		/*session ping*/
-		new SSP();
+	@RequestMapping(value = "/ping", method = RequestMethod.GET)
+	@ResponseBody
+	public void pingSession() {
+		LOGGER.warn("Ping session");
+		//DO Nothing
 	}
 
-	return {
-		init : init
-	};
-});
+}
