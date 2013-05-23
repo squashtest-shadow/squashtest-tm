@@ -95,7 +95,7 @@
 	</div><%-- /div.fragment-body.fragment-tabs --%>
 	<%-- ------------------------------ Add User Dialog ------------------------------------------------ --%>
 		<pop:popup id="add-user-dialog" titleKey="title.AddUser" isContextual="true"
-			openedBy="add-user-button" width="400">
+			openedBy="add-user-button">
 			<jsp:attribute name="buttons">
 			
 				<f:message var="label" key="label.Add" />
@@ -104,6 +104,9 @@
 					handler.call(this);	
 				},			
 				<pop:cancel-button />
+			</jsp:attribute>
+			<jsp:attribute name="additionalSetup">
+				width : 400
 			</jsp:attribute>
 			<jsp:attribute name="body">
 				<table id="add-user-table">
