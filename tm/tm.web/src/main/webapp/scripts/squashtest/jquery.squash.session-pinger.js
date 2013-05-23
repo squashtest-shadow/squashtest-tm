@@ -21,7 +21,7 @@
 define([ "jquery", "jquery.ckeditor" ], function($) {
 	
 	function documentHasCkeditorInstancesVisibles() {
-		for (ckeInstance in CKEDITOR.instances) {
+		for (var ckeInstance in CKEDITOR.instances) {
 			if (CKEDITOR.instances[ckeInstance].container.isVisible()) {
 				return true;
 			}
