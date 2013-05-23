@@ -19,6 +19,15 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "jquery.ckeditor" ], function($) {
+	
+	function documentHasCkeditorInstancesVisibles() {
+		for (ckeInstance in CKEDITOR.instances) {
+			if (CKEDITOR.instances[ckeInstance].container.isVisible()) {
+				return true;
+			}
+		}
+	}
+	
 	//This object will check the document state regularly to see if an editor is opened.
 	//If so, will send a ping to keep the session opened.
 	return function() {
@@ -40,7 +49,7 @@ define([ "jquery", "jquery.ckeditor" ], function($) {
 			//console.log("Ping");
 			$.ajax({
 				url : squashtm.app.contextRoot + "/ping",
-				method : "GET",
+				method : "GET"
 			});
 		}
 		
@@ -79,11 +88,5 @@ define([ "jquery", "jquery.ckeditor" ], function($) {
 		}		
 	};
 
-	function documentHasCkeditorInstancesVisibles() {
-		for (instance in CKEDITOR.instances) {
-			if (CKEDITOR.instances[instance].container.isVisible()) {
-				return true;
-			}
-		}
-	}
+	
 });
