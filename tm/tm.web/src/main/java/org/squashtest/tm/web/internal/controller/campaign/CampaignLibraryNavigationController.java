@@ -20,13 +20,20 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -52,6 +59,7 @@ import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.library.LibraryNavigationService;
+import org.squashtest.tm.web.internal.controller.campaign.CampaignExportCSVModel.Row;
 import org.squashtest.tm.web.internal.controller.campaign.CampaignFormModel.CampaignFormModelValidator;
 import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel.IterationFormModelValidator;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
@@ -339,14 +347,51 @@ public class CampaignLibraryNavigationController extends
 
 	@RequestMapping(value = "/files/{campaignId}/export")
 	public @ResponseBody
-	void exportCampaign(@PathVariable("campaignId") long campaignId) {
-
-		Campaign campaign = campaignFinder.findById(campaignId);
-
-		CampaignExportCSVModel model = campaignExportCSVModelProvider.get();
-
-		model.setCampaign(campaign);
-		model.init();
+	void exportCampaign(@PathVariable("campaignId") long campaignId, HttpServletResponse response) {
+		
+		BufferedWriter writer = null;
+		
+		try{
+			//build the model
+			Campaign campaign = campaignFinder.findById(campaignId);
+		
+			CampaignExportCSVModel model = campaignExportCSVModelProvider.get();
+		
+			model.setCampaign(campaign);
+			model.init();
+			
+			//prepare the response
+			writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
+		
+			response.setContentType("application/octet-stream");
+			response.setHeader("Content-Disposition","attachment; filename=" + campaign.getName().replace(" ", "_")+".csv");
+			
+			//print
+			Row header = model.getHeader();
+			writer.write(header.toString()+"\n");
+			
+			Iterator<Row> iterator = model.dataIterator();
+			while (iterator.hasNext()){
+				Row datarow = iterator.next();
+				writer.write(datarow.toString()+"\n");
+			}
+			
+			//closes stream in the finally clause
+		}
+		catch(IOException ex){
+			LOGGER.error(ex.getMessage());
+			throw new RuntimeException(ex);
+		}
+		finally{
+			if (writer != null){
+				try{
+					writer.close();
+				}
+				catch(IOException ex){
+					LOGGER.warn(ex.getMessage());
+				}
+			}
+		}
 
 	}
 
