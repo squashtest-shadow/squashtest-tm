@@ -270,6 +270,10 @@
       <value>org.squashtest.tm.service.customfield.CustomFieldValueManagerService</value>
     </osgi:interfaces>
   </osgi:service>
+  
+  <osgi:service ref="squashtest.tm.service.CustomFieldHelperService" interface="org.squashtest.tm.service.customfield.CustomFieldHelperService" />
+  
+  
 
 	<osgi:service ref="squashtest.tm.service.DenormalizedFieldValueFinder"
 		interface="org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder" />

@@ -35,7 +35,9 @@ import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestStep
+import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
+import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
@@ -44,7 +46,6 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper
-import org.squashtest.tm.web.internal.service.CustomFieldHelperService;
 
 import spock.lang.Specification
 
@@ -176,7 +177,7 @@ class TestCaseModificationControllerTest extends Specification {
 		params.setsEcho("echo");
 
 		and:
-		CustomFieldHelperService.Helper cufhelper = Mock() 
+		CustomFieldHelper cufhelper = Mock() 
 		cufhelper.getCustomFieldValues() >> []
 		cufhelper.restrictToCommonFields() >> cufhelper
 		cufhelper.setRenderingLocations(_) >> cufhelper

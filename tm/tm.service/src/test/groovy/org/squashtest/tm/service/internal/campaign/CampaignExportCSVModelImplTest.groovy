@@ -18,24 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.campaign
+package org.squashtest.tm.service.internal.campaign
 
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
-import org.squashtest.tm.web.internal.service.CustomFieldHelperService;
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.customfield.CustomFieldValue
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.service.bugtracker.BugTrackersLocalService
+import org.squashtest.tm.service.customfield.CustomFieldHelperService
 
 import spock.lang.Specification
 
-class CampaignExportCSVModelTest extends Specification {
+class CampaignExportCSVModelImplTest extends Specification {
 
 	CustomFieldHelperService cufHelperService
 	
-	CampaignExportCSVModel model 
+	CampaignExportCSVModelImpl model 
 	
 	BugTrackersLocalService bugTrackerService
 	
@@ -44,7 +44,7 @@ class CampaignExportCSVModelTest extends Specification {
 		
 		cufHelperService = Mock()
 		
-		model = new CampaignExportCSVModel()
+		model = new CampaignExportCSVModelImpl()
 		model.cufHelperService = cufHelperService
 		model.bugTrackerService = bugTrackerService
 		

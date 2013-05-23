@@ -56,6 +56,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
+import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
@@ -63,7 +64,6 @@ import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEven
 import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.service.CustomFieldHelperService;
 
 /**
  * Controller which receives requirement version management related requests.

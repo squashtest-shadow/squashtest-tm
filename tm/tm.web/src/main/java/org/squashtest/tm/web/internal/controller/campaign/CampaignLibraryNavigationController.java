@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.campaign;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,7 +31,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -49,6 +47,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
+import org.squashtest.tm.domain.campaign.CampaignExportCSVModel.Row;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
@@ -59,7 +59,6 @@ import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.library.LibraryNavigationService;
-import org.squashtest.tm.web.internal.controller.campaign.CampaignExportCSVModel.Row;
 import org.squashtest.tm.web.internal.controller.campaign.CampaignFormModel.CampaignFormModelValidator;
 import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel.IterationFormModelValidator;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
@@ -69,6 +68,7 @@ import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.TestSuiteNodeBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * Controller which processes requests related to navigation in a {@link CampaignLibrary}.
@@ -98,8 +98,7 @@ public class CampaignLibraryNavigationController extends
 	@Inject
 	private CampaignFinder campaignFinder;
 
-	@Inject
-	private Provider<CampaignExportCSVModel> campaignExportCSVModelProvider;
+
 
 	@ServiceReference
 	public void setCampaignLibraryNavigationService(CampaignLibraryNavigationService campaignLibraryNavigationService) {
@@ -352,13 +351,8 @@ public class CampaignLibraryNavigationController extends
 		BufferedWriter writer = null;
 		
 		try{
-			//build the model
 			Campaign campaign = campaignFinder.findById(campaignId);
-		
-			CampaignExportCSVModel model = campaignExportCSVModelProvider.get();
-		
-			model.setCampaign(campaign);
-			model.init();
+			CampaignExportCSVModel model = campaignLibraryNavigationService.exportCampaignToCSV(campaignId); 
 			
 			//prepare the response
 			writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
@@ -373,7 +367,8 @@ public class CampaignLibraryNavigationController extends
 			Iterator<Row> iterator = model.dataIterator();
 			while (iterator.hasNext()){
 				Row datarow = iterator.next();
-				writer.write(datarow.toString()+"\n");
+				String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", " ").replaceAll("\\r", " ");
+				writer.write(cleanRowValue+"\n");
 			}
 			
 			//closes stream in the finally clause

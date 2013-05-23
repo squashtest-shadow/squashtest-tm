@@ -298,6 +298,9 @@
 			<value>org.squashtest.tm.service.customfield.CustomFieldValueManagerService</value>
 		</osgi:interfaces>
 	</osgi:reference>
+	
+	<osgi:reference id="squashtest.tm.service.CustomFieldHelperService" bean-name="squashtest.tm.service.CustomFieldHelperService"
+					cardinality="1..1" interface="org.squashtest.tm.service.customfield.CustomFieldHelperService" />
 
 	<osgi:reference id="squashtest.tm.service.DenormalizedFieldValueFinder"
 		bean-name="squashtest.tm.service.DenormalizedFieldValueFinder"

@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.testcase;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.hibernate.id.uuid.Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -62,6 +64,7 @@ import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.execution.Execution;
@@ -77,6 +80,8 @@ import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
+import org.squashtest.tm.service.customfield.CustomFieldHelper;
+import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
@@ -90,6 +95,7 @@ import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.combo.OptionTag;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -99,8 +105,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
-import org.squashtest.tm.web.internal.service.CustomFieldHelperService;
-import org.squashtest.tm.web.internal.service.CustomFieldHelperService.Helper;
 
 @Controller
 @RequestMapping("/test-cases/{testCaseId}")
@@ -152,6 +156,9 @@ public class TestCaseModificationController {
 
 	@Inject
 	private CustomFieldHelperService cufHelperService;
+	
+	@Inject
+	private CustomFieldJsonConverter converter;
 
 	// ****** /custom field services ******************
 
@@ -276,10 +283,10 @@ public class TestCaseModificationController {
 		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));
 
 		// the custom fields definitions
-		Helper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps)
+		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps)
 				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
 
-		List<CustomFieldModel> cufDefinitions = helper.getCustomFieldConfiguration();
+		List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
 		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
 
 		// process the data
@@ -310,8 +317,9 @@ public class TestCaseModificationController {
 				testCaseId, filter);
 
 		// cufs
-		Helper<ActionTestStep> helper = cufHelperService.newStepsHelper(holder.getFilteredCollection())
+		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(holder.getFilteredCollection())
 				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
+		
 		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
 
 		// generate the model
@@ -724,10 +732,10 @@ public class TestCaseModificationController {
 		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));
 
 		// the custom fields definitions
-		Helper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps)
+		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps)
 				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
 
-		List<CustomFieldModel> cufDefinitions = helper.getCustomFieldConfiguration();
+		List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
 		List<CustomFieldValue> stepCufValues = helper.getCustomFieldValues();
 
 		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
@@ -766,5 +774,14 @@ public class TestCaseModificationController {
 			return ownership;
 		}
 
+	}
+	
+	
+	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields){
+		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(customFields.size());
+		for (CustomField field : customFields){
+			models.add(converter.toJson(field));
+		}
+		return models;
 	}
 }

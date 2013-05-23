@@ -34,6 +34,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
@@ -108,6 +109,9 @@ public class CampaignLibraryNavigationServiceImpl extends
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToCampaignStrategy")
 	private Provider<PasteStrategy<Campaign, Iteration>> pasteToCampaignStrategyProvider;
+	
+	@Inject
+	private Provider<CampaignExportCSVModelImpl> campaignExportCSVModelProvider;
 
 	@Override
 	protected NodeDeletionHandler<CampaignLibraryNode, CampaignFolder> getDeletionHandler() {
@@ -305,5 +309,23 @@ public class CampaignLibraryNavigationServiceImpl extends
 	public List<Long> deleteSuites(List<Long> targetIds) {
 		return deletionHandler.deleteSuites(targetIds);
 	}
+
+	
+	@Override
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ')"
+			+ OR_HAS_ROLE_ADMIN)
+	public CampaignExportCSVModel exportCampaignToCSV(Long campaignId) {
+		
+		Campaign campaign = campaignDao.findById(campaignId);
+		
+		CampaignExportCSVModelImpl model = campaignExportCSVModelProvider.get();
+	
+		model.setCampaign(campaign);
+		model.init();		
+		
+		return model;
+	}
+	
+	
 
 }
