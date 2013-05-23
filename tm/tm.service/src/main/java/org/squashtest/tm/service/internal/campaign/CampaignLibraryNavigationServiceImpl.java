@@ -109,9 +109,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToCampaignStrategy")
 	private Provider<PasteStrategy<Campaign, Iteration>> pasteToCampaignStrategyProvider;
-	
-	@Inject
-	private Provider<CampaignExportCSVModelImpl> campaignExportCSVModelProvider;
+
 
 	@Override
 	protected NodeDeletionHandler<CampaignLibraryNode, CampaignFolder> getDeletionHandler() {
@@ -310,22 +308,6 @@ public class CampaignLibraryNavigationServiceImpl extends
 		return deletionHandler.deleteSuites(targetIds);
 	}
 
-	
-	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ')"
-			+ OR_HAS_ROLE_ADMIN)
-	public CampaignExportCSVModel exportCampaignToCSV(Long campaignId) {
-		
-		Campaign campaign = campaignDao.findById(campaignId);
-		
-		CampaignExportCSVModelImpl model = campaignExportCSVModelProvider.get();
-	
-		model.setCampaign(campaign);
-		model.init();		
-		
-		return model;
-	}
-	
-	
+
 
 }

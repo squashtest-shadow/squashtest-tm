@@ -344,51 +344,7 @@ public class CampaignLibraryNavigationController extends
 
 	}
 
-	@RequestMapping(value = "/files/{campaignId}/export")
-	public @ResponseBody
-	void exportCampaign(@PathVariable("campaignId") long campaignId, HttpServletResponse response) {
-		
-		BufferedWriter writer = null;
-		
-		try{
-			Campaign campaign = campaignFinder.findById(campaignId);
-			CampaignExportCSVModel model = campaignLibraryNavigationService.exportCampaignToCSV(campaignId); 
-			
-			//prepare the response
-			writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
-		
-			response.setContentType("application/octet-stream");
-			response.setHeader("Content-Disposition","attachment; filename=" + campaign.getName().replace(" ", "_")+".csv");
-			
-			//print
-			Row header = model.getHeader();
-			writer.write(header.toString()+"\n");
-			
-			Iterator<Row> iterator = model.dataIterator();
-			while (iterator.hasNext()){
-				Row datarow = iterator.next();
-				String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", " ").replaceAll("\\r", " ");
-				writer.write(cleanRowValue+"\n");
-			}
-			
-			//closes stream in the finally clause
-		}
-		catch(IOException ex){
-			LOGGER.error(ex.getMessage());
-			throw new RuntimeException(ex);
-		}
-		finally{
-			if (writer != null){
-				try{
-					writer.close();
-				}
-				catch(IOException ex){
-					LOGGER.warn(ex.getMessage());
-				}
-			}
-		}
 
-	}
 
 	private List<JsTreeNode> copyNodes(Long[] itemIds, long destinationId, String destinationType,
 			int nextNumberInDestination) {
