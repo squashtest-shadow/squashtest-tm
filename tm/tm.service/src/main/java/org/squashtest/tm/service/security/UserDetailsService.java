@@ -30,7 +30,7 @@ import org.springframework.security.core.GrantedAuthority;
  * @author Gregory Fouquet
  *
  */
-public interface UserDetailsService extends org.springframework.security.core.userdetails.UserDetailsService {
+public interface UserDetailsService extends org.springframework.security.core.userdetails.UserDetailsService { // NOSONAR cant find a better name
 	/**
 	 * Loads authorities as the {@link #loadUserByUsername(String)} method would, but it does not check the
 	 * authentication table beforehand.
@@ -38,6 +38,6 @@ public interface UserDetailsService extends org.springframework.security.core.us
 	 * @param username
 	 * @return
 	 */
-	public List<GrantedAuthority> loadAuthoritiesByUsername(@NotNull String username);
+	List<GrantedAuthority> loadAuthoritiesByUsername(@NotNull String username);
 
 }

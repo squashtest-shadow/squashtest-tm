@@ -79,7 +79,7 @@ public class AuthenticationProviderContext {
 	 * initialization and checks.
 	 */
 	@PostConstruct
-	private void initializeContext() {
+	public void initializeContext() {
 		checkConfiguration();
 	}
 
