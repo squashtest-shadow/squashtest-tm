@@ -64,10 +64,6 @@ define([ "jquery", "jquery.ckeditor" ], function($) {
 				doForEachCheck();
 			}, checkTime);
 		}
-
-		function stopCheck() {
-			clearInterval(checkInterval);
-		}
 		
 		// at each check we ping if needed and if state changed, adapt frequency of checks.
 		function doForEachCheck(){
