@@ -30,7 +30,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 
-public class MyAccessDeniedHandler extends AccessDeniedHandlerImpl {
+public class SquashAccessDeniedHandler extends AccessDeniedHandlerImpl {
 	
 	private String errorPage;
 

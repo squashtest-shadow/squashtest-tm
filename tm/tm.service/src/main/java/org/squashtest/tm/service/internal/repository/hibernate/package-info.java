@@ -201,6 +201,7 @@
 
 		//UsersGroup
 		@NamedQuery(name = "usersGroup.findAllGroups", query = "from UsersGroup fetch all properties order by qualifiedName"),
+		@NamedQuery(name = "usersGroup.findByQualifiedName", query = "from UsersGroup where qualifiedName = :qualifiedName"),
 
 		//User
 		@NamedQuery(name = "user.findAllUsers", query = "from User fetch all properties order by login"),

@@ -24,6 +24,7 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.validation.Valid;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
@@ -35,10 +36,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.web.internal.security.authentication.AuthenticationProviderContext;
 
 
 @Controller
@@ -48,6 +51,9 @@ public class UserAccountController {
 	private UserAccountService userService;
 	
 	private ProjectsPermissionFinder permissionFinder;
+	
+	@Inject
+	private AuthenticationProviderContext authenticationProviderContext;
 
 	@ServiceReference
 	public void setProjectsPermissionFinderService(ProjectsPermissionFinder permissionFinder) {
@@ -83,4 +89,9 @@ public class UserAccountController {
 		return HtmlUtils.htmlEscape(email);
 	}
 	
+	
+	@ModelAttribute("authenticationProvider")
+	AuthenticationProviderFeatures getAuthenticationProviderModelAttribute() {
+		return authenticationProviderContext.getCurrentProviderFeatures();
+	}
 }

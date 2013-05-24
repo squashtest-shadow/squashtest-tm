@@ -33,16 +33,14 @@
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 
 
-<f:message var="userAccountPasswordLabel" key='user.account.password.label'/>
+<f:message var="userAccountPasswordLabel" key="label.password" />
 <c:url var="userAccountUrl" value="/user-account/update" />
 
 <layout:info-page-layout titleKey="dialog.settings.account.title" highlightedWorkspace="home">
 	<jsp:attribute name="head">	
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.grey.css" />
-		
-
-	
 	</jsp:attribute>
+  
 	<jsp:attribute name="titlePane">
 		<h2><f:message key="dialog.settings.account.title" /></h2>	
 	</jsp:attribute>
@@ -96,9 +94,19 @@
 						<label ><f:message key="label.Group"/></label>
 						<div class="display-table-cell"><span><f:message key="user.account.group.${user.group.qualifiedName}.label" /></span></div>
 					</div>
+        <c:if test="${ authenticationProvider.managedPassword }">
+        <div class="display-table-row">
+          <label for="managed-pwd"><f:message key="label.password"/></label>
+          <div class="display-table-cell">
+            <span id="managed-pwd"><f:message key="message.managedPassword" /></span>
+          </div>
+        </div>
+        </c:if>
 				</div>
 				<br/>
+        <c:if test="${ not authenticationProvider.managedPassword }">
 				<input type="button" id="change-password-button" value="${ userAccountPasswordLabel }" class="button" />									
+        </c:if>
 			</jsp:attribute>
 		</comp:toggle-panel>	
 		<comp:toggle-panel id="project-permission-panel" titleKey="user.project-rights.title.label" isContextual="true" open="true">
@@ -120,7 +128,9 @@
 		</comp:toggle-panel>		
 		
 	</div>
+    <c:if test="${ not authenticationProvider.managedPassword }">
 	<comp:user-account-password-popup openerId="change-password-button" url="${userAccountUrl}" successCallback="changePasswordCallback"/>
+    </c:if>
 	</jsp:attribute>
 </layout:info-page-layout>
 

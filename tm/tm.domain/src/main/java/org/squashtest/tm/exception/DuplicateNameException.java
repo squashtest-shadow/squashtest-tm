@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.exception;
 
-import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
-
 /**
  * /!\ This exception is used both for renaming clashes and new entity name clash. 
  * You should favor the use of {@link NameAlreadyInUseException} for new entities 

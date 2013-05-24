@@ -23,6 +23,8 @@ package org.squashtest.csp.tm.internal.service.users
 import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.domain.users.Team
 import org.squashtest.tm.domain.users.User
+import org.squashtest.tm.domain.users.UsersGroup;
+import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.service.configuration.ConfigurationService
 import org.squashtest.tm.service.internal.repository.AdministrationDao
 import org.squashtest.tm.service.internal.repository.ProjectDao
@@ -85,4 +87,38 @@ class AdministrationServiceImplTest extends Specification {
 		then : 
 			1*user.removeTeams([2L])
 	}
+	
+	def "should create stub user from principal"() {
+		given:
+		User persisted
+		
+		and:
+		UsersGroup defaultGroup = Mock()
+		groupDao.findByQualifiedName("squashtest.tm.group.User") >> defaultGroup
+		
+		when:
+		User res = service.createUserFromLogin("chris.jericho")
+
+		then:
+		res.login == "chris.jericho"
+		res.lastName == "chris.jericho"
+		res.firstName == ""
+		res.active
+		res.group == defaultGroup
+		// we check something was persisted and we capture it
+		1 * userDao.persist({ persisted = it })
+		res == persisted
+	}
+
+		def "should fail to create existing user"() {
+		given:
+		userDao.findUserByLogin("chris.jericho") >> Mock(User)
+		
+		when:
+		service.createUserFromLogin("chris.jericho")
+
+		then:
+		thrown LoginAlreadyExistsException
+	}
+
 }

@@ -83,7 +83,7 @@
   </bean>
 
 <!--  vient de core.web -->
-  <bean id="squashtest.core.security.JdbcUserDetailsManager" class="org.springframework.security.provisioning.JdbcUserDetailsManager">
+  <bean id="squashtest.core.security.JdbcUserDetailsManager" class="org.squashtest.tm.service.internal.security.SquashUserDetailsManager">
 
     <property name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource" />
 

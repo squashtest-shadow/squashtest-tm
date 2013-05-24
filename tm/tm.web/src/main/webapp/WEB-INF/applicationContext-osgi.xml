@@ -347,7 +347,11 @@
 		to talk together. -->
 	<osgi:reference id="squashtest.core.security.JdbcUserDetailsManager"
 		bean-name="squashtest.core.security.JdbcUserDetailsManager"
-		interface="org.springframework.security.provisioning.UserDetailsManager"
-		availability="optional" />
+		availability="optional">
+      <osgi:interfaces>
+        <value>org.springframework.security.provisioning.UserDetailsManager</value>
+        <value>org.squashtest.tm.service.security.UserDetailsService</value>
+      </osgi:interfaces>
+    </osgi:reference>
 
 </beans>

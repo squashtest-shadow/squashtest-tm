@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.UnauthorizedPasswordChange;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.WrongPasswordException;
+import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.security.UserAuthenticationService;
 import org.squashtest.tm.service.security.UserContextService;
@@ -40,25 +41,15 @@ import org.squashtest.tm.service.user.UserAccountService;
 @Transactional
 public class UserAccountServiceImpl implements UserAccountService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserAccountServiceImpl.class);
-	
+
 	@Inject
 	private UserDao userDao;
 
 	@Inject
 	private UserContextService userContextService;
-	
+
 	@Inject
 	private UserAuthenticationService authService;
-
-
-	public void setUserContextService(UserContextService userContextService) {
-		this.userContextService = userContextService;
-	}
-
-
-	public void setUserAuthenticationService(UserAuthenticationService authService) {
-		this.authService = authService;
-	}
 
 	@Override
 	public void modifyUserFirstName(long userId, String newName) {
@@ -84,17 +75,17 @@ public class UserAccountServiceImpl implements UserAccountService {
 	public void modifyUserLogin(long userId, String newLogin) {
 		// fetch
 		User user = userDao.findById(userId);
-		if(!newLogin.equals(user.getLogin())){
-			LOGGER.debug("change login for user "+user.getLogin()+" to "+newLogin);			
+		if (!newLogin.equals(user.getLogin())) {
+			LOGGER.debug("change login for user " + user.getLogin() + " to " + newLogin);
 			// check
 			checkPermissions(user);
 			// proceed
 			userDao.checkLoginAvailability(newLogin);
 			authService.changeUserlogin(newLogin, user.getLogin());
 			user.setLogin(newLogin);
-		}else{
+		} else {
 			LOGGER.trace("no change of user login because old and new are the same");
-			
+
 		}
 	}
 
@@ -109,7 +100,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	}
 
 	@Override
-	public void deactivateUser(long userId){
+	public void deactivateUser(long userId) {
 		// fetch
 		User user = userDao.findById(userId);
 		// check
@@ -117,9 +108,9 @@ public class UserAccountServiceImpl implements UserAccountService {
 		// proceed
 		user.setActive(false);
 	}
-	
+
 	@Override
-	public void activateUser(long userId){
+	public void activateUser(long userId) {
 		// fetch
 		User user = userDao.findById(userId);
 		// check
@@ -127,10 +118,11 @@ public class UserAccountServiceImpl implements UserAccountService {
 		// proceed
 		user.setActive(true);
 	}
-	
+
 	/* ************ surprise : no security check is needed for the methods below ********** */
 
 	@Override
+	@Transactional(readOnly = true)
 	public User findCurrentUser() {
 		String username = userContextService.getUsername();
 		return userDao.findUserByLogin(username);
@@ -166,4 +158,5 @@ public class UserAccountServiceImpl implements UserAccountService {
 			throw new AccessDeniedException("Access is denied");
 		}
 	}
+
 }

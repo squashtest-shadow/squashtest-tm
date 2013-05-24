@@ -18,30 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository.hibernate;
+package org.squashtest.tm.service.security;
 
 import java.util.List;
 
-import org.springframework.stereotype.Repository;
-import org.squashtest.tm.domain.users.UsersGroup;
-import org.squashtest.tm.service.internal.repository.UsersGroupDao;
+import javax.validation.constraints.NotNull;
 
-@Repository
-public class HibernateUsersGroupDao extends HibernateEntityDao<UsersGroup> implements UsersGroupDao{
+import org.springframework.security.core.GrantedAuthority;
 
-
-	@Override 
-	public List<UsersGroup> findAllGroupsOrderedByQualifiedName() {
-		return executeListNamedQuery("usersGroup.findAllGroups");
-	}
-
+/**
+ * @author Gregory Fouquet
+ *
+ */
+public interface UserDetailsService extends org.springframework.security.core.userdetails.UserDetailsService {
 	/**
-	 * @see org.squashtest.tm.service.internal.repository.UsersGroupDao#findByQualifiedName(java.lang.String)
+	 * Loads authorities as the {@link #loadUserByUsername(String)} method would, but it does not check the
+	 * authentication table beforehand.
+	 * 
+	 * @param username
+	 * @return
 	 */
-	@Override
-	public UsersGroup findByQualifiedName(String qualifiedName) {
-		// TODO Auto-generated method stub
-		return executeEntityNamedQuery("usersGroup.findByQualifiedName", "qualifiedName", qualifiedName);
-	}
+	public List<GrantedAuthority> loadAuthoritiesByUsername(@NotNull String username);
 
 }

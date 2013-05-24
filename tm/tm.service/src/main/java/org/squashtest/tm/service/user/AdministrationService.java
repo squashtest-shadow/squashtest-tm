@@ -22,6 +22,8 @@ package org.squashtest.tm.service.user;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -30,6 +32,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
+import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
@@ -86,6 +89,8 @@ public interface AdministrationService {
 	/* ** now its admin only //TODO change this comment by doc on methods ** */
 
 	User findUserById(long userId);
+
+	User findByLogin(@NotNull String login);
 
 	List<User> findAllUsersOrderedByLogin();
 
@@ -161,4 +166,15 @@ public interface AdministrationService {
 	 * @return the list of all non associated {@link Team}s
 	 */
 	List<Team> findAllNonAssociatedTeams(long userId);
+
+	/**
+	 * Creates a stub {@link User} using the given login and returns it.
+	 * 
+	 * This should throw an exception when the user already exists.
+	 * 
+	 * @return the new User
+	 * @throws LoginAlreadyExistsException
+	 *             when user already exists
+	 */
+	User createUserFromLogin(@NotNull String login);
 }

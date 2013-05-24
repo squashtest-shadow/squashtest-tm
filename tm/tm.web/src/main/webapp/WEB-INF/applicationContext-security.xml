@@ -99,8 +99,7 @@
     <beans:property name="loginFormUrl" value="/login.jsp" />
   </beans:bean>
 
-
-  <beans:bean id="accessDeniedHandler" class="org.squashtest.tm.web.internal.security.authentication.MyAccessDeniedHandler">
+  <beans:bean id="accessDeniedHandler" class="org.squashtest.tm.web.internal.security.authentication.SquashAccessDeniedHandler">
     <beans:property name="errorPage" value="/squash/accessDenied" />
   </beans:bean>
 
@@ -125,13 +124,13 @@
 
   <beans:bean id="htmlSanitizationFilter" class="org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter" />
 
-
   <beans:bean id="authenticationProvider.internal" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
     <beans:property name="userDetailsService" ref="squashtest.core.security.JdbcUserDetailsManager" />
 
     <beans:property name="passwordEncoder">
       <beans:bean class="org.springframework.security.authentication.encoding.ShaPasswordEncoder" />
     </beans:property>
+    
   </beans:bean>
 
   <authentication-manager alias="squashtest.core.security.AuthenticationManager">

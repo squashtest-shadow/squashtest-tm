@@ -18,15 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.security.repository.jdbc;
+package org.squashtest.tm.web.internal.annotation;
 
-import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import org.springframework.stereotype.Component;
 
 /**
- * Dao for proprietary, database-backed authentication. Requires the database provided by Squash "auth" module.
- *
+ * This interface is equivalent to @Component but it's meant to identify beans which should be instanciated by
+ * applicationContext-*.xml, while @Component beans are instanciated bu Spring mvc *-servlet.xml.
+ * 
+ * Be careful : you cannot inject any bean from *-servlet.xml (including @Component et al.) into an
+ * @ApplicationComponent. *-servlet.xml is a child context of applicationContext-*.xml, so the latter has no knowledge
+ * of the former's beans.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-public class SquahtestDatabaseAuthenticationDao extends JdbcDaoImpl {
+@Target({ ElementType.TYPE })
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Component
+public @interface ApplicationComponent {
+	String value() default "";
 }

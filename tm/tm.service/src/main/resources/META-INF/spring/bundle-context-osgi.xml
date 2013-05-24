@@ -291,7 +291,12 @@
   <!-- Bugtracker config -->
   <osgix:cm-properties id="squashtest.tm.bugtracker.config" persistent-id="org.squashtest.csp.tm.bugtracker.config" />
 
-  <osgi:service ref="squashtest.core.security.JdbcUserDetailsManager" interface="org.springframework.security.provisioning.UserDetailsManager" />
+  <osgi:service ref="squashtest.core.security.JdbcUserDetailsManager">
+    <osgi:interfaces>
+      <value>org.springframework.security.provisioning.UserDetailsManager</value>
+      <value>org.squashtest.tm.service.security.UserDetailsService</value>
+    </osgi:interfaces>
+  </osgi:service>
 
 <!-- Bugtracker co,nnectors registry -->
   <osgi:list id="bugtracker.plugins.registry" interface="org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider" cardinality="0..N">

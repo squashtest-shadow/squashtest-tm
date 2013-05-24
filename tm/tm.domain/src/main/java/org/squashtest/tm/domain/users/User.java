@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.domain.users;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -32,6 +32,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.audit.Auditable;
 
@@ -42,17 +43,21 @@ import org.squashtest.tm.domain.audit.Auditable;
 public class User extends Party {
 
 	private final static String TYPE = "USER";
-	
+
 	@Transient
-	public static final Long NO_USER_ID = 0l;
+	public static final Long NO_USER_ID = 0L;
+
+	@NotNull
+	private String firstName = "";
 
 	@NotBlank
-	private String firstName;
-	@NotBlank
 	private String lastName;
+
 	@NotBlank
 	private String login;
-	private String email;
+
+	@NotNull
+	private String email = "";
 
 	private Boolean active = true;
 
@@ -110,35 +115,62 @@ public class User extends Party {
 
 	public void addTeam(Team team) {
 		this.teams.add(team);
-		
+
 	}
 
-	public void removeTeams(List<Long> teamIds) {
-		Iterator<Team> iterator  = teams.iterator();
-		while(iterator.hasNext()){
+	public void removeTeams(Collection<Long> teamIds) {
+		Iterator<Team> iterator = teams.iterator();
+
+		while (iterator.hasNext()) {
 			Team team = iterator.next();
-			if(teamIds.contains(team.getId())){
+			if (teamIds.contains(team.getId())) {
 				team.removeMember(this);
 				iterator.remove();
 			}
 		}
-		
-		
+
 	}
-	
+
 	@Override
-	public String getName(){
-		return this.firstName+" "+this.lastName+" ("+this.login+")";
+	public String getName() {
+		return appendFullName(new StringBuilder()).append(" (").append(this.login).append(")").toString();
 	}
-	
-	public String getType(){
+
+	/**
+	 * appends the user's full name ("John Doe") to the given builder and returns it for method chaining purposes
+	 * 
+	 * @param builder
+	 * @return the builder
+	 */
+	private StringBuilder appendFullName(StringBuilder builder) {
+		if (StringUtils.isNotBlank(firstName)) {
+			builder.append(firstName).append(' ');
+		}
+
+		builder.append(lastName);
+
+		return builder;
+	}
+
+	public String getType() {
 		return TYPE;
 	}
-	
-	
+
 	@Override
 	void accept(PartyVisitor visitor) {
 		visitor.visit(this);
 	}
-	
+
+	/**
+	 * Factory method which creates a user from a login. last name is populated with login.
+	 * 
+	 * @param login
+	 */
+	public static User createFromLogin(@NotNull String login) {
+		User user = new User();
+		user.lastName = login;
+		user.login = login;
+
+		return user;
+	}
 }

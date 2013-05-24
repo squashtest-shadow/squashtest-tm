@@ -18,30 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository.hibernate;
+package org.squashtest.tm.api.security.authentication;
 
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-import org.squashtest.tm.domain.users.UsersGroup;
-import org.squashtest.tm.service.internal.repository.UsersGroupDao;
-
-@Repository
-public class HibernateUsersGroupDao extends HibernateEntityDao<UsersGroup> implements UsersGroupDao{
-
-
-	@Override 
-	public List<UsersGroup> findAllGroupsOrderedByQualifiedName() {
-		return executeListNamedQuery("usersGroup.findAllGroups");
-	}
+/**
+ * @author Gregory
+ * 
+ */
+public interface AuthenticationProviderFeatures {
+	/**
+	 * Should return true when the authentication provider manages itself the passwords ie. passwords re not modifiable
+	 * from Squash.
+	 * 
+	 * @return
+	 */
+	boolean isManagedPassword();
 
 	/**
-	 * @see org.squashtest.tm.service.internal.repository.UsersGroupDao#findByQualifiedName(java.lang.String)
+	 * Should return the provider name, ie the one that is configured using the "authentication.provider" property.
+	 * 
+	 * @return
 	 */
-	@Override
-	public UsersGroup findByQualifiedName(String qualifiedName) {
-		// TODO Auto-generated method stub
-		return executeEntityNamedQuery("usersGroup.findByQualifiedName", "qualifiedName", qualifiedName);
-	}
+	String getProviderName();
 
+	/**
+	 * Indicates whether Squash TM should create a (business) User when authentication is successful but no matching
+	 * User can be found.
+	 * 
+	 * @return
+	 */
+	boolean shouldCreateMissingUser();
 }
