@@ -42,7 +42,7 @@
 <c:set var="textcolor" value="#555555" />
 
 <td colspan="13">
-	<table class="executions-table">
+	<table class="executions-table" id="item-test-plan-${testPlanItem.id}">
 		<c:forEach items="${ executions }" var="execution" varStatus="status">
 			<tr>
 				<td colspan="5"
@@ -114,76 +114,3 @@
 		</c:if>
 	</table>
 </td>
-<c:if test="${ executable }">
-<script>
-	$(function() {
-		bindDeleteButtonsToFunctions();
-		decorateDeleteButtons($(".delete-execution-table-button"));
-		$('a.button.new-auto-exec').button();
-		$('a.button.new-exec').button();
-	});
-
-	function bindDeleteButtonsToFunctions() {
-		var execOffset = "delete-execution-table-button-";
-		$(".delete-execution-table-button")
-				.click(
-						function() {
-							//console.log("delete execution #"+idExec);
-							var execId = $(this).attr("id");
-							var idExec = execId.substring(execOffset.length);
-							var execRow = $(this).closest("tr");
-							var testPlanHyperlink = $(this).closest("tr")
-									.closest("tr").prev().find(
-											"a.test-case-name-hlink");
-
-							confirmeDeleteExecution(idExec, testPlanHyperlink,
-									execRow);
-						});
-
-	}
-	function confirmeDeleteExecution(idExec, testPlanHyperlink, execRow) {
-		oneShotConfirm("<f:message key='dialog.delete-execution.title'/>",
-				"<f:message key='dialog.delete-execution.message'/>",
-				"<f:message key='label.Confirm'/>",
-				"<f:message key='label.Cancel'/>").done(
-				function() {
-					doDeleteExecution(idExec, testPlanHyperlink, execRow);
-				});
-	}
-	function doDeleteExecution(idExec, testPlanHyperlink, execRow) {
-		deleteExecutionOfSpecifiedId(idExec).done(function(data) {
-			refreshTable(testPlanHyperlink, execRow, data)
-		});
-	}
-	function deleteExecutionOfSpecifiedId(idExec) {
-		return $.ajax({
-			'url' : "${showExecutionUrl}/" + idExec,
-			type : 'DELETE',
-			data : [],
-			dataType : "json"
-		});
-	}
-	function refreshTable(testPlanHyperlink, execRow, data) {
-		// 1/ refresh execution table
-		//
-		// 		$(testPlanHyperlink).click();
-		// 		$(testPlanHyperlink).click();
-		//
-		//OR  
-		//
-		// 2 / just remove the execution row 
-		// I choose this solution because it is easier to delete severas executions in a row without waiting for the execution table to reload.
-		// the drawback is that the number of the executions is not updated. 
-		//console.log("execRow = " + execRow);
-		//$(execRow).detach();
-		//or 
-		refreshTestPlans();
-		
-		refreshIterationInfos();
-		refreshStatistics();
-		actualStart.refreshAutoDate(data.newStartDate);
-		actualEnd.refreshAutoDate(data.newEndDate);
-
-	}
-</script>
-</c:if>
