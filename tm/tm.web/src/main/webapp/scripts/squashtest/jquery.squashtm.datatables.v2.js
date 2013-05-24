@@ -245,6 +245,8 @@
  * cssClass : "classa", 
  * 
  * condition : function(row, data){return data["isThat"];}; 
+ * 
+ * disabled : true or function(row, data){return data["isThat"];}; 
  *
  * tdSelector : "td.run-step-button", 
  * 
@@ -272,6 +274,9 @@
  *               added to the row. if this property is not set the button will 
  *               be added everywhere 
  *               
+ * .disabled : a boolean or a function that return the boolean saying if the 
+ *             button needs to be disabled or not.
+ * 
  * .tdSelector : the css selector to use to retrieve the cells where
  *               to put the button 
  *               
@@ -744,10 +749,14 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 									function(i, cell) {
 										var row = $(cell).parent("tr")[0];
 										var data = self.fnGetData(row);
+										var disabled = '';
+										if(button.disabled && ((typeof button.disabled == "function" && button.disabled(row, data)) || button.disabled === true)){
+											disabled = 'disabled="disabled"';
+										}
 										if (button.condition && button.condition(row, data) || !button.condition) {
 											if (button.image && typeof button.image == "function") {
 												template = '<input class="tableButton" title="' + button.tooltip +
-														'" type="image" src="' + button.image(row, data) + '">';
+														'" type="image" src="' + button.image(row, data) + '" '+disabled+' >';
 											}
 											$(cell).html(template);
 											if (button.uiIcon) {

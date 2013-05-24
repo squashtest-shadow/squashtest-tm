@@ -912,6 +912,10 @@ div#user-account-password-panel>div>* {
 /* ------------------------------------------ */
 /* -------------->>> MISC <<<---------------- */
 /* ------------------------------------------ */
+input[disabled]{
+	opacity:0.5;
+}
+
 .ellipsis{
     margin: 0.5em;
     overflow: hidden;
