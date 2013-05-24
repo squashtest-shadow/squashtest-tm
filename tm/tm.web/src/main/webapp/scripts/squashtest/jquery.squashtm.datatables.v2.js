@@ -1279,6 +1279,13 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 				},
 				'pagesize' : function(conf, assignation) {
 					conf.table.iDisplayLength = assignation.value;
+				},
+				'pre-sort' : function(conf, assignation) {
+					//value must be an expression as follow : <columnindex>[-<asc|desc>]. If unspecified or invalid, the default sorting order will be 'asc'.
+					var sorting = /(\d+)(-(asc|desc))?/.exec(assignation.value);
+					var colIndex = sorting[1];
+					var order = (sorting[3]!==undefined) ? sorting[3] : 'asc';
+					conf.table.aaSorting = [[colIndex, order]];
 				}
 			},
 			columns : {
@@ -1290,6 +1297,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 				},
 				'narrow' : function(conf, assignation) {
 					conf.current.sWidth = '2em';
+				},
+				'sWidth' : function(conf, assignation){
+					conf.current.sWidth = assignation.value;
 				},
 				'filter' : function(conf, assignation) {
 					conf.current.sClass += ' datatable-filterable';
