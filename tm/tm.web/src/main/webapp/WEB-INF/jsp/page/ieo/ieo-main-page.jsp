@@ -27,6 +27,7 @@
 <%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
@@ -69,8 +70,8 @@
 	
 	
 	<%-- structure of the toolbox --%>
-	<div id="ieo-control" class="ui-state-active not-displayed">
-		<table >
+	<div id="ieo-control" class="ui-state-active not-displayed">		
+		<table >		
 			<tr>
 				<td class="left-aligned"><button class="stop-execution"><f:message key="execute.header.button.stop.title" /></button></td>
 				<td class="right-aligned">

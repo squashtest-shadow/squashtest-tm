@@ -52,7 +52,7 @@
 	<layout:common-head />		
 	<layout:_common-script-import highlightedWorkspace=""/>		
 
-	<comp:rich-jeditable-header />	
+	<comp:rich-jeditable-header />
 	
 
 <%-- cautious : below are used StepIndexes and StepIds. Dont get confused. --%>
@@ -141,24 +141,25 @@
 			if (${ (not empty testPlanItemUrl) and hasPreviousTestCase and (not hasPreviousStep) }) $('#new-test-case-label').removeClass('not-displayed');
 		});
 	</script> 
-	<div id="execute-header">
-		<!--  table layout ftw. -->	
-		<table>
+	<div id="execute-header" >
+			<table style="width: 100%; table-layout: fixed; white-space: nowrap;">
 			<tr>
-				<td class="left-aligned"><button id="execute-stop-button" ><f:message key="execute.header.button.stop.title" /></button></td>
-				<td style="padding-left: 20px;" class="left-aligned">
+				<td style="width:50px;" class="left-aligned"><button id="execute-stop-button" ><f:message key="execute.header.button.stop.title" /></button></td>
+				<td style="padding-left: 20px; width: 120px" class="centered">
 					<button id="execute-previous-button"><f:message key="execute.header.button.previous.title" /></button>
-					<span id="execute-header-numbers-label">${executionStep.executionStepOrder +1} / ${totalSteps}</span>	
+					<span id="execute-header-numbers-label">${executionStep.executionStepOrder +1} / ${totalSteps}</span>
 					<button id="execute-next-button"><f:message key="execute.header.button.next.title" /></button>
 				</td>
-				<td class="centered not-displayed" id="execute-next-test-case-panel">
+				<td style="width:50px" class="centered not-displayed" id="execute-next-test-case-panel">
 					<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
 					<button id="execute-next-test-case" name="optimized" class="button" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
 				</td>
+				<td><h3 id="ieo-execution-title" class="ellipsis" >${ executionStep.execution.name }</h3></td>
 			</tr>
-		</table> 	
+			</table>
 	</div>
 	<div id="execute-body" class="execute-fragment-body">
+	
 		<div id="new-test-case-label" class="centered not-displayed">
 			<font color=red><f:message
 					key="execute.test.suite.next.test.case.label" />

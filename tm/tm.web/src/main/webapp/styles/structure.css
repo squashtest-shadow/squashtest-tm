@@ -912,6 +912,13 @@ div#user-account-password-panel>div>* {
 /* ------------------------------------------ */
 /* -------------->>> MISC <<<---------------- */
 /* ------------------------------------------ */
+.ellipsis{
+    margin: 0.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+	}
+	
 table#test-steps-table > tbody > tr > td > a {
     color: inherit;
     text-decoration: underline;
