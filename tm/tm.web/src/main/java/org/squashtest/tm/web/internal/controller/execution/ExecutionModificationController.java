@@ -174,7 +174,8 @@ public class ExecutionModificationController {
 			baseColumns.add(new AoColumnDef(true, false, "", null, "last-exec-on"));
 			baseColumns.add(new AoColumnDef(true, false, "", null, "last-exec-by"));
 			baseColumns.add(new AoColumnDef(true, false, "smallfonts rich-editable-comment", null, "comment"));
-			baseColumns.add(new AoColumnDef(true, false, "centered bugged-cell", smallWidth, "bugged"));
+			baseColumns.add(new AoColumnDef(false, false, "bug-list", null, "bug-list"));
+			baseColumns.add(new AoColumnDef(true, false, "centered bug-button", smallWidth, "bug-button"));
 			baseColumns.add(new AoColumnDef(false, false, "", null, "nb-attachments"));
 			baseColumns.add(new AoColumnDef(true, false, "centered has-attachment-cell", smallWidth, "attach-list-id"));
 			baseColumns.add(new AoColumnDef(true, false, "centered run-step-button", smallWidth, "run-step-button"));
@@ -232,8 +233,9 @@ public class ExecutionModificationController {
 			res.put("expected", item.getExpectedResult());
 			res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale, messageSource));
 			res.put("last-exec-by", item.getLastExecutedBy());
-			res.put("comment", item.getComment());
-			res.put("bugged", createBugList(item));
+			res.put("comment", item.getComment());		
+			res.put("bug-list", createBugList(item));
+			res.put("bug-button", "");
 			res.put(DataTableModelHelper.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
 			res.put(DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
 			res.put("run-step-button", "");
@@ -431,7 +433,7 @@ public class ExecutionModificationController {
 
 	private static String formatDate(Date date, Locale locale, MessageSource messageSource) {
 		try {
-			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
+			String format = messageSource.getMessage("squashtm.dateformast", null, locale);
 			return new SimpleDateFormat(format).format(date);
 		} catch (Exception anyException) {
 			return formatNoData(locale, messageSource);

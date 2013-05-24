@@ -32,12 +32,12 @@
  */
 
 /**
- * ======================Intoduction===================================
+ * ======================Introduction===================================
  * 
  * 
  * keys used for data lookup -------------------------
  * 
- * That table uses mPropData for its columns. More explictly, it uses json data
+ * That table uses mPropData for its columns. More explicitly, it uses json data
  * as a map. Specifically, the defaults keys used here are : - 'entity-id' : the
  * entity id - 'entity-index' : the position of the entity when the list is
  * sorted
@@ -46,15 +46,15 @@
  * 'dataKeys' : { ... dataKeys : { entityId : default is 'entity-id' ,
  * entityIndex : default is 'entity-index' } }
  * 
- * In some cases more keys might be required for the modules decscribed below,
+ * In some cases more keys might be required for the modules described below,
  * refer to the documentation if need be.
  * 
  * 
- * placeholders : --------------
+ * Place-holders : --------------
  * 
  * When configuring a module sometimes you will see that a given string supports
- * placeholders. It means that anything between curly braces '{something}' are
- * placeholders that will be replaced by the corresponding value from
+ * place-holders. It means that anything between curly braces '{something}' are
+ * place-holders that will be replaced by the corresponding value from
  * aoData["something"]. That's where the data keys above are useful.
  * 
  * 
@@ -88,8 +88,8 @@
  * 'datatableSettings'. Any regular datatable configuration is supported.
  * 
  * It uses defaults values yet the following parameters are still REQUIRED : -
- * "oLanguage" (internationalization), - "sAjaxSource" (chargement ajax), -
- * "aoColumnDefs" (les colonnes)
+ * "oLanguage" (internationalization), - "sAjaxSource" (ajax loading), -
+ * "aoColumnDefs" (the columns)
  * 
  * 
  * ============= object datasource and DOM data ================================
@@ -200,8 +200,8 @@
  * 'success' running : internationalized version of status 'running' ready :
  * internationalized version of status 'ready'
  * 
- * ============== Delete row button
- * ============================================== internationalized version of
+ * ============== Delete row button ======================================== 
+ * internationalized version of
  * status 'blocked' failure : internationalized version of status 'failure'
  * success : internationalized version of status 'success' running :
  * internationalized version of status 'running' ready : internationalized
@@ -220,8 +220,7 @@
  * NEW : delegate : jquery selector of another popup, that will be used instead
  * of the generated one.
  * 
- * ============== Add hyperlink to a
- * cell==========================================
+ * ============== Add hyperlink to a cell =====================================
  * 
  * Member name : 'bindLinks'
  * 
@@ -234,27 +233,57 @@
  * -targetClass : alternate to the above, uses css class to find its target
  * -isOpenInTab : boolean to set the target of the url to "_blank" or not.
  * 
- * ============== Add Buttons to a
- * cell==========================================
+ * ============== Add Buttons to a cell =======================================
  * 
  * -buttons : if the property 'buttons' is set, then buttons will be added for
- * each case described in the buttons table. example : buttons = [ { tooltip :
- * "tooltip", cssClass : "classa", condition : function(row, data){return
- * data["isThat"];}; tdSelector : "td.run-step-button", image :
- * "/squash/images/execute.png", // or function(row, data){return
- * "/squash/images/execute.png";}, onClick : function(table, cell){
- * doThatWithTableAndCell(table, cell);} }, { tooltip : "tooltip", cssClass :
- * "classa", tdSelector : "td.run-step-button", onClick : function(table, cell){
- * doThatWithTableAndCell(table, cell);} } ]; the buttons items properties are :
- * .tooltip : the button's tooltip .cssClass : some css class added to the input
- * button .condition : a function returning a boolean that says if the button is
- * added to the row. if this property is not set the button will be added
- * everywhere .tdSelector : the css selector to use to retreive the cells where
- * to put the button .image : if the button is to be an input of type"image" set
- * this property to the wanted image's src can be also a function that returns
- * the src image. .uiIcon : if the button is to be a jqueryUi icon, set this
- * property to the wanted icon name .onClick : a function that will be called
- * with the parametters table and clicked td
+ * each case described in the buttons table. example : 
+ *  
+ * buttons = [ 
+ * 
+ * { tooltip : "tooltip",
+ * 
+ * cssClass : "classa", 
+ * 
+ * condition : function(row, data){return data["isThat"];}; 
+ *
+ * tdSelector : "td.run-step-button", 
+ * 
+ * image : "/squash/images/execute.png", 
+ *          or function(row, data){return "/squash/images/execute.png";},
+ *          
+ * onClick : function(table, cell){doThatWithTableAndCell(table, cell);} 
+ * }, 
+ * 
+ * { tooltip : "tooltip", 
+ * cssClass : "classa", 
+ * tdSelector : "td.run-step-button", 
+ * onClick : function(table, cell){
+ * doThatWithTableAndCell(table, cell);} 
+ * }];
+ * 
+ * 
+ * the buttons items properties are :
+ * 
+ * .tooltip : the button's tooltip 
+ * 
+ * .cssClass : some css class added to the input button
+ * 
+ * .condition : a function returning a boolean that says if the button is
+ *               added to the row. if this property is not set the button will 
+ *               be added everywhere 
+ *               
+ * .tdSelector : the css selector to use to retrieve the cells where
+ *               to put the button 
+ *               
+ * .image : if the button is to be an input of type"image" set
+ *          this property to the wanted image's src can be also a function 
+ *          that returns the src image. 
+ *          
+ * .uiIcon : if the button is to be a jqueryUi icon, set this
+ *           property to the wanted icon name 
+ *           
+ * .onClick : a function that will be called with the parameters table 
+ *            and clicked td
  * 
  * 
  */
@@ -626,23 +655,6 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			var link = '<a href="' + url + '" class="' + linkClass + '"></a>';
 
 			$(cell).html(link);
-		});
-	}
-
-	function _buggedPicsCallback() {
-		var buggedConf = this.squashSettings.bugged;
-
-		var self = this;
-		var cells = $('td.' + buggedConf.cssMatcher, this);
-
-		$(cells).each(function(i, cell) {
-
-			var data = self.fnGetData(cell);
-			var buggedClass = (data.length > 0) ? "hasBugs" : "noBugs";
-
-			var pics = '<span class="' + buggedClass + '"> </span>';
-
-			$(cell).html(pics);
 		});
 	}
 
@@ -1089,10 +1101,6 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			aoDataNbAttach : "nb-attachments",
 			aoDataListId : "attach-list-id"
 		},
-		bugged : {
-			cssMatcher : "bugged-cell",
-			aoDataNbBugs : "bugged"
-		},
 		confirmPopup : {
 			oklabel : "ok",
 			cancellabel : "cancel"
@@ -1149,7 +1157,6 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		this.configureLinks = _configureLinks;
 
 		this.attachButtonsCallback = _attachButtonsCallback;
-		this.buggedPicsCallback = _buggedPicsCallback;
 		this.configureRichEditables = _configureRichEditables;
 		this.configureExecutionStatus = _configureExecutionStatus;
 		this.configureDeleteButtons = _configureDeleteButtons;
@@ -1205,7 +1212,6 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 				userDrawCallback.call(this, oSettings);
 			}
 			this.attachButtonsCallback();
-			this.buggedPicsCallback();
 			this.configureRichEditables();
 			this.configureExecutionStatus();
 			_configureButtons.call(this);

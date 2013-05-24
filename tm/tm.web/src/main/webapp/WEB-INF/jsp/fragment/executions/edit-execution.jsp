@@ -259,6 +259,7 @@
 					<th><f:message
 								key="executions.steps.table.column-header.comment.label" />
 						</th>
+					<th>bug list (masked)</th>
 					<th><f:message
 								key="executions.steps.table.column-header.bugged.label" />
 						</th>
@@ -276,12 +277,6 @@
 		<br />
 	</jsp:attribute>
 	</comp:toggle-panel>
-
-
-
-
-
-	
 
 	<%-------------------------------------- Comment --------------------------------------------------%>
 
@@ -331,10 +326,6 @@
 	</pop:popup>
 
 	<%--------------------------- /Deletion confirmation popup -------------------------------------%>
-
-
-
-
 	<f:message var="statusUntestable" key="execution.execution-status.UNTESTABLE" />
 	<f:message var="statusBlocked" key="execution.execution-status.BLOCKED" />
 	<f:message var="statusFailure" key="execution.execution-status.FAILURE" />
@@ -402,7 +393,7 @@
 			
 			</c:if>
 			squashSettings.buttons = [
-					{ tooltip : "tooltip",
+					{ tooltip : "<f:message key='label.run'/>",
 						cssClass : "",
 						tdSelector : "td.run-step-button",
 						image : "/squash/images/execute.png",
@@ -420,6 +411,22 @@
 									features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
 								};
 								$.open(url, data, winDef);
+						}
+					},
+					{ tooltip : "<f:message key='issue.button.opendialog.label' />",
+						cssClass : "",
+						tdSelector : "td.bug-button",
+						image : function(row, data){
+							if(data["bug-list"].length>0){
+								return "/squash/images/bug.png";
+								}else{return "/squash/images/add.png"}},
+						onClick : function(table, cell){							
+							var row = cell.parentNode.parentNode; // hopefully, that's the
+							// 'tr' one
+							var executionStepId = table.getODataId(row);
+							//TODO OPEN POPUP
+							console.log("ouverture de la popup de création d'anomalies");
+								
 						}
 					}
 				];
