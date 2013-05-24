@@ -58,7 +58,13 @@ define([ "jquery", "jquery.squash.datatables" ], function($) {
 
 	}
 
-	function buildPasswordValidation(language) {
+	function buildPasswordValidation(settings) {
+		if (settings.managedPassword === true) {
+			// password is managed by provider, we don't perform any password check
+			return function() { return true; };
+		}
+		
+		var language = settings.language;
 		return function() {
 			var lang = language;
 
@@ -97,15 +103,22 @@ define([ "jquery", "jquery.squash.datatables" ], function($) {
 		};
 	}
 
-	function readForm() {
-		return {
+	function readForm(settings) {
+		var form = {
 			login : $("#add-user-login").val(),
 			firstName : $("#add-user-firstName").val(),
 			lastName : $("#add-user-lastName").val(),
 			email : $("#add-user-email").val(),
-			groupId : $("#add-user-group").val(),
-			password : $("#add-user-password").val()
+			groupId : $("#add-user-group").val()
 		};
+		
+		if (settings.managedPassword) {
+			form.noPassword = true; 
+		} else {
+			form.password = $("#add-user-password").val();
+		}
+		
+		return form;
 	}
 
 	function buildAddUserConfirm(settings, validatePassword) {
@@ -113,12 +126,12 @@ define([ "jquery", "jquery.squash.datatables" ], function($) {
 			if (!validatePassword()){
 				return;
 			}
-			var url = settings.urls.baseUrl + "/add";
+			var url = settings.urls.baseUrl + "/new";
 			$.ajax({
 				url : url,
 				type : 'POST',
 				dataType : 'json',
-				data : readForm()
+				data : readForm(settings)
 			}).success(refreshUsers);
 		};
 	}
@@ -247,7 +260,7 @@ define([ "jquery", "jquery.squash.datatables" ], function($) {
 	}
 
 	function initDialog(settings) {
-		var passValidation = buildPasswordValidation(settings.language);
+		var passValidation = buildPasswordValidation(settings);
 		var addUserConfirm = buildAddUserConfirm(settings, passValidation);
 		$("#add-user-dialog").data('confirm-handler', addUserConfirm);
 	}

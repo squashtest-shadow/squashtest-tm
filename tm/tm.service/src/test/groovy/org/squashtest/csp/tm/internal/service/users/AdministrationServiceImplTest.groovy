@@ -38,19 +38,19 @@ import org.squashtest.tm.service.user.UserAccountService
 import spock.lang.Specification
 
 class AdministrationServiceImplTest extends Specification {
-	
+
 	AdministrationServiceImpl service = new AdministrationServiceImpl()
-	
+
 	UserAccountService userAccountService = Mock()
 	ProjectDao projectDao = Mock()
 	UserDao userDao = Mock()
-	UsersGroupDao groupDao = Mock()	
+	UsersGroupDao groupDao = Mock()
 	AdministrationDao adminDao = Mock()
-	ConfigurationService configurationService = Mock()	
-	TeamDao teamDao = Mock()	
+	ConfigurationService configurationService = Mock()
+	TeamDao teamDao = Mock()
 	AdministratorAuthenticationService adminAuthentService = Mock()
-	
-	
+
+
 	def setup(){
 		service.userAccountService = userAccountService
 		service.projectDao = projectDao
@@ -63,39 +63,39 @@ class AdministrationServiceImplTest extends Specification {
 	}
 
 	def "should associate user to team"(){
-		given : 
-			User user = Mock()
-			Team team = Mock()
-			def teams = [team]
-			userDao.findById(1L)>>user
-			teamDao.findAllByIds([2L])>> teams
-			
-		when : 
-			service.associateToTeams(1L, [2L])
-		then : 
-			1* user.addTeam(team)
-			1* team.addMember(user)
+		given :
+		User user = Mock()
+		Team team = Mock()
+		def teams = [team]
+		userDao.findById(1L)>>user
+		teamDao.findAllByIds([2L])>> teams
+
+		when :
+		service.associateToTeams(1L, [2L])
+		then :
+		1* user.addTeam(team)
+		1* team.addMember(user)
 	}
-	
+
 	def "should deassociate team from user"(){
-		given : 
-			User user = Mock()
-			def teamIds = [2L]
-			userDao.findById(1L) >> user
-		when : 
-			service.deassociateTeams(1L, [2L])
-		then : 
-			1*user.removeTeams([2L])
+		given :
+		User user = Mock()
+		def teamIds = [2L]
+		userDao.findById(1L) >> user
+		when :
+		service.deassociateTeams(1L, [2L])
+		then :
+		1*user.removeTeams([2L])
 	}
-	
+
 	def "should create stub user from principal"() {
 		given:
 		User persisted
-		
+
 		and:
 		UsersGroup defaultGroup = Mock()
 		groupDao.findByQualifiedName("squashtest.tm.group.User") >> defaultGroup
-		
+
 		when:
 		User res = service.createUserFromLogin("chris.jericho")
 
@@ -110,10 +110,10 @@ class AdministrationServiceImplTest extends Specification {
 		res == persisted
 	}
 
-		def "should fail to create existing user"() {
+	def "should fail to create existing user from principal"() {
 		given:
 		userDao.findUserByLogin("chris.jericho") >> Mock(User)
-		
+
 		when:
 		service.createUserFromLogin("chris.jericho")
 
@@ -121,4 +121,39 @@ class AdministrationServiceImplTest extends Specification {
 		thrown LoginAlreadyExistsException
 	}
 
+	def "should create user"() {
+		given:
+		User newUser = Mock()
+		newUser.login >> "chris.jericho"
+		newUser.active >> true
+
+		and:
+		UsersGroup defaultGroup = Mock()
+		groupDao.findById(10L) >> defaultGroup
+
+		when:
+		service.addUser(newUser, 10L, "y2j")
+
+		then:
+		1 * userDao.persist(newUser)
+		1 * newUser.setGroup(defaultGroup)
+		1 * adminAuthentService.createNewUserPassword("chris.jericho", "y2j", true, true, true, true, _)
+	}
+	def "should create user without credentials"() {
+		given:
+		User newUser = Mock()
+		newUser.login >> "chris.jericho"
+
+		and:
+		UsersGroup defaultGroup = Mock()
+		groupDao.findById(10L) >> defaultGroup
+
+		when:
+		service.createUserWithoutCredentials(newUser, 10L)
+
+		then:
+		1 * userDao.persist(newUser)
+		1 * newUser.setGroup(defaultGroup)
+		0 * adminAuthentService.createNewUserPassword(_, _, _, _, _, _, _)
+	}
 }

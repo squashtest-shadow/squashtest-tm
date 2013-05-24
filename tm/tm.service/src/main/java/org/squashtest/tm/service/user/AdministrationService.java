@@ -177,4 +177,13 @@ public interface AdministrationService {
 	 *             when user already exists
 	 */
 	User createUserFromLogin(@NotNull String login);
+
+	/**
+	 * Creates a user without credentials. This should be used when authentication is managed by an external provider
+	 * only.
+	 * 
+	 * @param user
+	 * @param groupId
+	 */
+	void createUserWithoutCredentials(User user, long groupId);
 }

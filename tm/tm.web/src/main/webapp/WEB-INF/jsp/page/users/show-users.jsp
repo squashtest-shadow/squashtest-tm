@@ -106,12 +106,12 @@
 				<pop:cancel-button />
 			</jsp:attribute>
 			<jsp:attribute name="additionalSetup">
-				width : 400
+				width : 600
 			</jsp:attribute>
 			<jsp:attribute name="body">
 				<table id="add-user-table">
 					<tr> <td>
-						<label style="font-weight: bold;" for="add-user-login"><f:message key="label.Login" /></label>
+						<label  for="add-user-login"><f:message key="label.Login" /></label>
 						</td>
 						<td>
 						<input type="text" id="add-user-login" size="30"/></td>
@@ -120,7 +120,7 @@
 						<td> <comp:error-message forField="user-login" /> </td>
 						 </tr>
 					<tr> <td>
-						<label style="font-weight: bold;" for="add-user-firstName"><f:message key="label.FirstName" /></label>
+						<label  for="add-user-firstName"><f:message key="label.FirstName" /></label>
 						</td>
 						<td>
 						<input type="text" id="add-user-firstName" size="30"/></td> 
@@ -129,7 +129,7 @@
 						<td><comp:error-message forField="user-firstName" /></td>
 						</tr> 
 					<tr> <td>
-						<label style="font-weight: bold;" for="add-user-lastName"><f:message key="label.LastName" /></label>
+						<label  for="add-user-lastName"><f:message key="label.LastName" /></label>
 						</td>
 						<td>
 						<input type="text" id="add-user-lastName" size="30"/>
@@ -139,7 +139,7 @@
 					<td><comp:error-message forField="user-lastName" /></td>
 					 </tr>
 					<tr> <td>
-						<label style="font-weight: bold;" for="add-user-email"><f:message key="label.Email" /></label>
+						<label  for="add-user-email"><f:message key="label.Email" /></label>
 						</td>
 						<td>
 						<input type="email" id="add-user-email" size="30"/>
@@ -149,7 +149,7 @@
 					<td><comp:error-message forField="user-email" /></td>
 					 </tr>
 					<tr> <td>
-						<label style="font-weight: bold;" for="add-user-group"><f:message key="label.Group" /></label>
+						<label  for="add-user-group"><f:message key="label.Group" /></label>
 						</td>
 						<td>
 						<select id="add-user-group">
@@ -165,31 +165,39 @@
 							</c:forEach>
 						</select>
 					</td> </tr>
-					<tr> <td>
-						<label  style="font-weight: bold;" for="add-user-password"><f:message key="user.account.newpass.label"/></label>
-						</td>
-						<td>
-						<input type="password" id="add-user-password" size="30"/>
-					</td>
-					</tr>
-					<tr>
-					<td><comp:error-message forField="password" /></td>
-					 </tr>	
-					<tr> <td>
-						<label style="font-weight: bold;" for="new-user-confirmpass"><f:message key="user.account.confirmpass.label"/></label>				
-						</td>
-						<td>
-						<input type="password" id="new-user-confirmpass" size="30"/>
-					</td>
-					</tr>
-						<tr>
-					<td><comp:error-message forField="confirmpass" /></td>
-					 </tr>
+          <c:if test="${ not authenticationProvider.managedPassword }">
+          <tr>
+            <td>
+              <label for="add-user-password"><f:message key="user.account.newpass.label" /></label>
+            </td>
+            <td>
+              <input type="password" id="add-user-password" size="30" />
+            </td>
+          </tr>
+          <tr>
+            <td><comp:error-message forField="password" /></td>
+          </tr>	
+          <tr>
+            <td>
+              <label for="new-user-confirmpass"><f:message key="user.account.confirmpass.label"/></label>				
+            </td>
+            <td>
+              <input type="password" id="new-user-confirmpass" size="30"/>
+            </td>
+          </tr>
+          <tr>
+            <td><comp:error-message forField="confirmpass" /></td>
+          </tr>
+          </c:if>
+          <c:if test="${ authenticationProvider.managedPassword }">
+          <tr>
+            <td><label><f:message key="label.password" /></label></td>
+            <td><span><f:message key="message.managedPassword" /></span></td>
+          </tr>
+          </c:if>
 				</table>
 			</jsp:attribute>
 		</pop:popup>
-	
-	
 	
 	<f:message var="missingNewPassword" key="user.account.newpass.error"/>
 	<f:message var="missingConfirmPassword" key="user.account.confirmpass.error"/>
@@ -200,7 +208,6 @@
 	<f:message var="cancel" key="label.Cancel"/>
 		
 	<script type="text/javascript">
-	
 		$(function(){
 			require(['users-manager'], function(userAdmin){
 				var settings = {
@@ -220,7 +227,8 @@
 						deleteTooltip : "${deleteTooltip}",
 						ok : "${ok}",
 						cancel :"${cancel}"
-					}
+					},
+					managedPassword: ${ authenticationProvider.managedPassword }
 				}
 				
 				userAdmin.initUserListPage(settings);

@@ -32,6 +32,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -142,10 +143,30 @@ public class UserAdministrationController extends PartyControllerSupport {
 		return new UserDataTableModelBuilder(locale).buildDataModel(holder, sorting.getFirstItemIndex() + 1, sEcho);
 	}
 
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "password")
 	public @ResponseBody
-	void addNewUser(@ModelAttribute("add-user") @Valid UserForm userForm) {
-		adminService.addUser(userForm.getUser(), userForm.getGroupId(), userForm.getPassword());
+	void addUser(@ModelAttribute("add-user") @Valid UserForm userForm) {
+		if (!currentProviderFeatures().isManagedPassword()) {
+			adminService.addUser(userForm.getUser(), userForm.getGroupId(), userForm.getPassword());
+			
+		} else {
+			// If this happens, it's either a bug or a forged request
+			LOGGER.warn("Received a password while password are managed by auth provider. This is either a bug or a forged request. User form : {}", ToStringBuilder.reflectionToString(userForm));
+			throw new IllegalArgumentException("Received a password while password are managed by auth provider. This is either a bug or a forged request.");
+		}
+	}
+
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "noPassword")
+	public @ResponseBody
+	void addUserWithoutCredentials(@ModelAttribute("add-user") @Valid UserForm userForm) {
+		if (currentProviderFeatures().isManagedPassword()) {
+			adminService.createUserWithoutCredentials(userForm.getUser(), userForm.getGroupId());
+			
+		} else {
+			// If this happens, it's either a bug or a forged request
+			LOGGER.warn("Received no password while password are managed by Squash. This is either a bug or a forged request. User form : {}", ToStringBuilder.reflectionToString(userForm));
+			throw new IllegalArgumentException("Received no password while password are managed by Squash. This is either a bug or a forged request.");
+		}
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -321,6 +342,10 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 	@ModelAttribute("authenticationProvider")
 	public AuthenticationProviderFeatures getAuthenticationProviderModelAttribute() {
+		return currentProviderFeatures();
+	}
+
+	private AuthenticationProviderFeatures currentProviderFeatures() {
 		return authenticationProviderContext.getCurrentProviderFeatures();
 	}
 

@@ -53,7 +53,6 @@ Import-Package: javax.servlet.jsp.jstl.core;version=${jstl.version},\
 	org.springframework.security.authentication.dao,\
 	org.springframework.security.authentication.encoding,\
 	org.springframework.security.core.userdetails.memory,\
-	org.springframework.security.ldap.search,\
 	org.springframework.security.provisioning,\
 	org.springframework.security.taglibs.authz,\
 	org.springframework.security.web,\

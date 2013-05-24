@@ -163,17 +163,11 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void addUser(User aUser, long groupId, String password) {
-		// FIXME : also check the auth part when time has come
-
-		userDao.checkLoginAvailability(aUser.getLogin());
-
-		UsersGroup group = groupDao.findById(groupId);
-
-		aUser.setGroup(group);
-		adminAuthentService.createNewUserPassword(aUser.getLogin(), password, aUser.getActive(), true, true, true,
+	public void addUser(User user, long groupId, String password) {
+		// FIXME : check the auth login is available when time has come
+		createUserWithoutCredentials(user, groupId);
+		adminAuthentService.createNewUserPassword(user.getLogin(), password, user.getActive(), true, true, true,
 				new ArrayList<GrantedAuthority>());
-		userDao.persist(aUser);
 	}
 
 	/**
@@ -330,5 +324,19 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 		userDao.persist(user);
 		return user;
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.user.AdministrationService#createUserWithoutCredentials(org.squashtest.tm.domain.users.User,
+	 *      long)
+	 */
+	@Override
+	public void createUserWithoutCredentials(User user, long groupId) {
+		userDao.checkLoginAvailability(user.getLogin());
+
+		UsersGroup group = groupDao.findById(groupId);
+
+		user.setGroup(group);
+		userDao.persist(user);
 	}
 }
