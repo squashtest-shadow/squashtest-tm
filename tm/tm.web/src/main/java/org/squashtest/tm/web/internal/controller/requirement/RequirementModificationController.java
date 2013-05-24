@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.requirement;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;

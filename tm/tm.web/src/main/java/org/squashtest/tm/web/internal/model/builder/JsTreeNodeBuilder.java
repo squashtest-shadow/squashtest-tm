@@ -20,7 +20,11 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import static org.squashtest.tm.api.security.acls.Permission.*;
+import static org.squashtest.tm.api.security.acls.Permission.CREATE;
+import static org.squashtest.tm.api.security.acls.Permission.DELETE;
+import static org.squashtest.tm.api.security.acls.Permission.EXECUTE;
+import static org.squashtest.tm.api.security.acls.Permission.SMALL_EDIT;
+import static org.squashtest.tm.api.security.acls.Permission.WRITE;
 
 import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.service.security.PermissionEvaluationService;

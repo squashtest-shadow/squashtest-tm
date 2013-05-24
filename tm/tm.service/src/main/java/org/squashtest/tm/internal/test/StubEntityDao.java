@@ -22,6 +22,7 @@ package org.squashtest.tm.internal.test;
 
 import java.util.Collection;
 import java.util.List;
+
 import org.squashtest.tm.service.internal.repository.EntityDao;
 
 /**
