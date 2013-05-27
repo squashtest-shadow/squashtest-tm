@@ -139,6 +139,8 @@
       </value>
     </property>
     
+    <property name="userExistsSql" value="select LOGIN from AUTH_USER where LOGIN = ?" />
+    
     <!--  
       A successful login attempt requires the user to have at least one authority set (and also a valid login/pass).
       

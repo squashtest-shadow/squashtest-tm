@@ -34,16 +34,14 @@ import org.squashtest.tm.service.security.AdministratorAuthenticationService;
 
 public class AdministratorAuthenticationServiceImpl implements AdministratorAuthenticationService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdministratorAuthenticationServiceImpl.class);
-	
+
 	private UserDetailsManager userManager;
 	private PasswordEncoder encoder;
 	private Object salt = null;
 
-
 	public void setUserDetailsManager(UserDetailsManager userManager) {
 		this.userManager = userManager;
 	}
-	
 
 	public void setPasswordEncoder(PasswordEncoder encoder) {
 		this.encoder = encoder;
@@ -82,33 +80,38 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	@Override
 	public void resetUserPassword(String login, String plainTextPassword) {
 		UserDetails user2 = userManager.loadUserByUsername(login);
-				String encodedPassword = encoder.encodePassword(plainTextPassword, salt);
-		UserDetails user = new User(login, encodedPassword, user2.isEnabled(), true, true,
-				true, Collections.<GrantedAuthority>emptyList());
-		LOGGER.debug("reset password for user "+login);
+		String encodedPassword = encoder.encodePassword(plainTextPassword, salt);
+		UserDetails user = new User(login, encodedPassword, user2.isEnabled(), true, true, true,
+				Collections.<GrantedAuthority> emptyList());
+		LOGGER.debug("reset password for user {}", login);
 		userManager.updateUser(user);
-		
 
 	}
-	
+
 	@Override
 	public void changeUserlogin(String newLogin, String oldLogin) {
 		UserDetails oldUser = userManager.loadUserByUsername(oldLogin);
-		UserDetails newUser = new User( newLogin,  oldUser.getPassword(), oldUser.isEnabled(), oldUser.isAccountNonExpired(),
-	           oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), oldUser.getAuthorities());
-		LOGGER.debug("change login for user "+oldLogin+" to "+newLogin);
+		UserDetails newUser = new User(newLogin, oldUser.getPassword(), oldUser.isEnabled(),
+				oldUser.isAccountNonExpired(), oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(),
+				oldUser.getAuthorities());
+		LOGGER.debug("change login for user {} to {}", oldLogin, newLogin);
 		userManager.deleteUser(oldLogin);
 		userManager.createUser(newUser);
 	}
 
 	@Override
-	public void deactivateAccount(String login){
-		UserDetails oldUser = userManager.loadUserByUsername(login);
-		userManager.deleteUser(login);
-		UserDetails newUser = new User(login, oldUser.getPassword(), false, oldUser.isAccountNonExpired(),
-				oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), oldUser.getAuthorities());
-		LOGGER.debug("deactivate account for user "+login);
-		userManager.createUser(newUser);		
+	public void deactivateAccount(String login) {
+		if (userManager.userExists(login)) {
+			UserDetails oldUser = userManager.loadUserByUsername(login);
+			userManager.deleteUser(login);
+			UserDetails newUser = new User(login, oldUser.getPassword(), false, oldUser.isAccountNonExpired(),
+					oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), oldUser.getAuthorities());
+			LOGGER.debug("Deactivate account for user {}", login);
+			userManager.createUser(newUser);
+			
+		} else {
+			LOGGER.trace("User {} has no authentidation data, it can't be deactivated", login);
+		}
 	}
 
 }
