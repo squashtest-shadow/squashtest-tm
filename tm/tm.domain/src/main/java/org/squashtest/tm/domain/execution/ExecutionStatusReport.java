@@ -163,9 +163,6 @@ public class ExecutionStatusReport {
 
 	}
 
-	private int countAggregatedSuccess() {
-		return success + warning;
-	}
 
 	public boolean areAllSuccessOrUntestable() {
 		if (countAggregatedSuccess() + untestable == getTotal()) {
@@ -197,11 +194,4 @@ public class ExecutionStatusReport {
 		this.error = error;
 	}
 	
-	public boolean areAllSuccessOrUntestable() {
-		if(countAggregatedSuccess() + untestable == getTotal()){
-			return true;
-		}
-		return false;
-	}
-
 }

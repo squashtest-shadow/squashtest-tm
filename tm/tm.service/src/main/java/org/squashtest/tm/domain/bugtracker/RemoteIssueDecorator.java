@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.bugtracker;
 
-import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteCategory;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemotePriority;
