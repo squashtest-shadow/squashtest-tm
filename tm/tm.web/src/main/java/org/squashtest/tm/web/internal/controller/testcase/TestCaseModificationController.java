@@ -58,7 +58,7 @@ import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.bugtracker.BTIssueDecorator;
+import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.campaign.Campaign;
@@ -683,11 +683,11 @@ public class TestCaseModificationController {
 			List<DecoratedIssueOwnership> decoratedIssues = Collections.emptyList();
 			if (status.equals(BugTrackerStatus.BUGTRACKER_READY)) {
 				try {
-					List<IssueOwnership<BTIssueDecorator>> issuesOwnerShipList = Collections.emptyList();
+					List<IssueOwnership<RemoteIssueDecorator>> issuesOwnerShipList = Collections.emptyList();
 					issuesOwnerShipList = bugTrackersLocalService.findIssueOwnershipForTestCase(testCaseId);
 					decoratedIssues = new ArrayList<TestCaseModificationController.DecoratedIssueOwnership>(
 							issuesOwnerShipList.size());
-					for (IssueOwnership<BTIssueDecorator> ownerShip : issuesOwnerShipList) {
+					for (IssueOwnership<RemoteIssueDecorator> ownerShip : issuesOwnerShipList) {
 						decoratedIssues.add(new DecoratedIssueOwnership(ownerShip, locale));
 					}
 
@@ -757,10 +757,10 @@ public class TestCaseModificationController {
 	}
 
 	public class DecoratedIssueOwnership {
-		private IssueOwnership<BTIssueDecorator> ownership;
+		private IssueOwnership<RemoteIssueDecorator> ownership;
 		private String ownerDesc;
 
-		public DecoratedIssueOwnership(IssueOwnership<BTIssueDecorator> ownership, Locale locale) {
+		public DecoratedIssueOwnership(IssueOwnership<RemoteIssueDecorator> ownership, Locale locale) {
 			this.ownership = ownership;
 			this.ownerDesc = BugtrackerControllerHelper.findOwnerDescForTestCase(ownership.getOwner(), messageSource,
 					locale);
@@ -770,7 +770,7 @@ public class TestCaseModificationController {
 			return ownerDesc;
 		}
 
-		public IssueOwnership<BTIssueDecorator> getOwnership() {
+		public IssueOwnership<RemoteIssueDecorator> getOwnership() {
 			return ownership;
 		}
 

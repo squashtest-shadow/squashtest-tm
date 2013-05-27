@@ -32,7 +32,7 @@ import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
-import org.squashtest.tm.domain.bugtracker.BTIssueDecorator;
+import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
@@ -192,7 +192,7 @@ public interface BugTrackersLocalService {
 	 * 
 	 * @return a  non-null but possibly empty list of IssueOwnership, 
 	 **/
-	List<IssueOwnership<BTIssueDecorator>> findIssueOwnershipForTestCase(long testCaseId);
+	List<IssueOwnership<RemoteIssueDecorator>> findIssueOwnershipForTestCase(long testCaseId);
 	
 	/* ****************** BugTracker - side methods ******************** */
 

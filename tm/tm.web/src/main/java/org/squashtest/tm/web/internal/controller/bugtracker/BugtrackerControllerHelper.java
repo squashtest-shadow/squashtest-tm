@@ -28,11 +28,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.MessageSource;
-import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
-import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
+import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
@@ -241,11 +240,11 @@ public final class BugtrackerControllerHelper {
 		}
 
 		@Override
-		public Map<String, String> buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
+		public Map<String, String> buildItemData(IssueOwnership<RemoteIssueDecorator> ownership) {
 			
 			Map<String, String> result = new HashMap<String, String>(7);
 			
-			BTIssue issue = ownership.getIssue();
+			RemoteIssue issue = ownership.getIssue();
 			String strUrl = bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(), ownership.getOwner().getBugTracker()).toExternalForm();
 			String ownerName = nameBuilder.buildName(ownership.getOwner());
 			String ownerPath = nameBuilder.buildURLPath(ownership.getOwner());
@@ -304,7 +303,6 @@ public final class BugtrackerControllerHelper {
 					, ownership.getExecution().getId() };
 				};
 		}
-	}
 
 	/**
 	 * <p>
