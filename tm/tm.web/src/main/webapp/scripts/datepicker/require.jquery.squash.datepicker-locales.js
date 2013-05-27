@@ -25,41 +25,36 @@
  * created because of issue #1535
  */
 
-require([ "jquery", "jqueryui" ], function($) {
-
-	/* French initialisation for the jQuery UI date picker plugin. */
-	/*
-	 * Written by Keith Wood (kbwood{at}iinet.com.au) and Stéphane Nahmani
-	 * (sholby@sholby.net).
-	 */
-
-	$.datepicker.regional['fr'] = {
-		closeText : 'Fermer',
-		prevText : '<Pr\u00e9c',
-		nextText : 'Suiv>',
-		currentText : 'Courant',
-		monthNames : [ 'Janvier', 'F\u00e9vrier', 'Mars', 'Avril', 'Mai',
-				'Juin', 'Juillet', 'Ao\u00fbt', 'Septembre', 'Octobre',
-				'Novembre', 'D\u00e9cembre' ],
-timeText: 'Temps',
-		hourText: 'Heures',
-		minuteText: 'Minutes',
-				
-		secondText: 'Secondes',
-		monthNamesShort : [ 'Jan', 'F\u00e9v', 'Mar', 'Avr', 'Mai', 'Jun',
-				'Jul', 'Ao\u00fb', 'Sep', 'Oct', 'Nov', 'D\u00e9c' ],
-		dayNames : [ 'Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi',
-				'Vendredi', 'Samedi' ],
-		dayNamesShort : [ 'Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam' ],
-		dayNamesMin : [ 'Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa' ],
-		weekHeader : 'Sm',
-		dateFormat : 'dd/mm/yy',
-		firstDay : 1,
-		isRTL : false,
-		showMonthAfterYear : false,
-		yearSuffix : ''
-	};
-	
-	return $.datepicker.regional;
-
+define(["jquery","jqueryui"], function($){
+        
+        
+        /* French initialisation for the jQuery UI date picker plugin. */
+        /* Written by Keith Wood (kbwood{at}iinet.com.au) and St�phane Nahmani (sholby@sholby.net). */  
+                
+        $.datepicker.regional['fr'] = {
+                closeText: 'Fermer',
+                prevText: '\u003cPr\u00e9c',
+                nextText: 'Suiv\u003e',
+                currentText: 'Courant',
+                timeText: 'Temps',
+                hourText: 'Heures',
+                minuteText: 'Minutes',
+                secondText: 'Secondes',
+                monthNames: ['Janvier','F\u00e9vrier','Mars','Avril','Mai','Juin',
+                'Juillet','Ao\u00fbt','Septembre','Octobre','Novembre','D\u00e9cembre'],
+                monthNamesShort: ['Jan','F\u00e9v','Mar','Avr','Mai','Jun',
+                'Jul','Ao\u00fb','Sep','Oct','Nov','D\u00e9c'],
+                dayNames: ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
+                dayNamesShort: ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],
+                dayNamesMin: ['Di','Lu','Ma','Me','Je','Ve','Sa'],
+                weekHeader: 'Sm',
+                dateFormat: 'dd/mm/yy',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ''
+        };
+        
+        return $.datepicker.regional;
+        
 });
