@@ -80,7 +80,7 @@ define(["jquery", "backbone", "handlebars", "../domain/BTEntity", "text!./defaul
 		},
 		
 		set : function(newv){
-			var id = (newv===null && newv===undefined) ? this.$('option:first').val() : newv.id;
+			var id = (newv===null || newv===undefined) ? this.$('option:first').val() : newv.id;
 			this.$el.val(id);
 		},
 		

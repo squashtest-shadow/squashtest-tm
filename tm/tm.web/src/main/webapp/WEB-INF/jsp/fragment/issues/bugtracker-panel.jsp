@@ -189,7 +189,7 @@
 <%-- basic routine : if credentials are checked, proceed to bug report. If not, first hook into 
 	set credential routine
 	--%>
-	function checkAndReportIssue() {
+	function checkAndReportIssue(bugtrackerReportSettings) {
 
 		//first step : check
 		$.ajax({
@@ -197,24 +197,24 @@
 			type : "GET",
 			data : {"projectId": ${project.id} },
 			dataType : "json",
-			success : handleBugTrackerStatus
+			success : function(jsonCheck) {handleBugTrackerStatus(jsonCheck, bugtrackerReportSettings);}
 		});
 	}
 
-	function handleBugTrackerStatus(jsonCheck) {
+	function handleBugTrackerStatus(jsonCheck, bugtrackerReportSettings) {
 		if (jsonCheck.status == "bt_undefined") {
 <%-- the bugtracker is undefined. Why the hell should we log in ?--%>
 	return false;
 		}
 
 		if (jsonCheck.status == "needs_credentials") {
-			invokeCredentialPopup(loginSuccessOpenReport, abortReport);
+			invokeCredentialPopup(function() {loginSuccessOpenReport(bugtrackerReportSettings);}, abortReport);
 
 			return false;
 		}
 
 		if (jsonCheck.status == "ready") {
-			invokeBugReportPopup();
+			invokeBugReportPopup(bugtrackerReportSettings);
 			return false;
 		}
 
@@ -229,14 +229,14 @@
 		refreshIssueTable();
 	}
 
-	function loginSuccessOpenReport() {
+	function loginSuccessOpenReport(bugtrackerReportSettings) {
 		enableIssueTable();
 		refreshIssueTable();
-		invokeBugReportPopup();
+		 invokeBugReportPopup(bugtrackerReportSettings);
 	}
 
-	function invokeBugReportPopup() {
-		$("#issue-report-dialog").dialog("open");
+	function invokeBugReportPopup(bugtrackerReportSettings) {
+		squashtm.bugReportPopup.open( bugtrackerReportSettings );
 	}
 </script>
 
@@ -330,8 +330,7 @@
 <%-------------------------------- add issue popup code -----------------------------------%>
 <c:if test="${editable}">
 	<is:issue-add-popup id="issue-report-dialog"
-		interfaceDescriptor="${interfaceDescriptor}" entityUrl="${entityUrl}"
-		successCallback="issueReportSuccess" bugTrackerId="${bugTracker.id}"/>
+		interfaceDescriptor="${interfaceDescriptor}"  bugTrackerId="${bugTracker.id}"/>
 </c:if>
 <%-------------------------------- /add issue popup code -----------------------------------%>
 
@@ -354,7 +353,7 @@ check that in the next <script></script> tags
 		<c:if test="${editable}">
 		$("#issue-report-dialog-openbutton").squashButton().click(function() {
 			$(this).removeClass("ui-state-focus ui-state-hover");
-			checkAndReportIssue();
+			checkAndReportIssue( {reportUrl:"${entityUrl}/new-issue", callback:issueReportSuccess} );
 		});
 		</c:if>
 

@@ -418,15 +418,19 @@
 						tdSelector : "td.bug-button",
 						image : function(row, data){
 							if(data["bug-list"].length>0){
-								return "/squash/images/bug.png";
-								}else{return "/squash/images/add.png"}},
+								return squashtm.app.contextRoot+"/images/bug.png";
+								}else{return squashtm.app.contextRoot+"/images/add.png"}},
 						onClick : function(table, cell){							
 							var row = cell.parentNode.parentNode; // hopefully, that's the
 							// 'tr' one
 							var executionStepId = table.getODataId(row);
-							//TODO OPEN POPUP
-							console.log("ouverture de la popup de création d'anomalies");
-								
+							checkAndReportIssue( {
+								reportUrl:squashtm.app.contextRoot+"/bugtracker/execution-step/"+executionStepId+"/new-issue", 
+								callback:function(json){
+									$(cell).attr("src",squashtm.app.contextRoot+"/images/bug.png");
+									issueReportSuccess(json);}
+							} );
+							
 						}
 					}
 				];
@@ -446,7 +450,7 @@
 		 		$("#execution-execution-steps-table").squashTable().refresh();	
 		 		$("#general-informations-panel").load("${executionInfoUrl}");
 		 	}, window);
-			
+
 		});
 	});
 	</script>

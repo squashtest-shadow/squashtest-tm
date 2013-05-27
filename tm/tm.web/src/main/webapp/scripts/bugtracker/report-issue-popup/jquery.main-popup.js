@@ -159,7 +159,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		this.mdlTemplate=null;				
 	
 		//urls
-		this.reportUrl = settings.reportUrl;
+//		this.reportUrl = settings.reportUrl;
 		this.searchUrl = settings.searchUrl;
 		this.bugTrackerId = settings.bugTrackerId;
 		
@@ -187,7 +187,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		
 		
 		//a callback when the post is a success
-		this.callback=settings.callback;
+//		this.callback=settings.callback;
 			
 			
 		//bind the spans standing for label for the radio buttons
@@ -366,11 +366,8 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		var getIssueModelTemplate = $.proxy(function(){
 			
 			var jobDone = $.Deferred();				
-			
 			if (! this.mdlTemplate){
-
 				flipToPleaseWait();		
-				
 				$.ajax({
 					url : self.reportUrl,
 					type : "GET",
@@ -383,10 +380,9 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 				})
 				.fail(jobDone.reject)
 				.then(flipToMain);
-			
 			}
-			else{
-				jobDone.resolve();
+					else{
+						jobDone.resolve();
 			}
 			
 			return jobDone.promise();
@@ -457,10 +453,18 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		
 		/* ************* events ************************ */
 		
-		//the opening of the popup :
-		this.bind("dialogopen", function(){
+		
+		this.open = function(settings){
+			this.reportUrl = settings.reportUrl;
+			this.callback=settings.callback;
 			self.postButton.focus();
 			self.reportRadio.click();
+			this.dialog("open");
+		}
+		
+		//the opening of the popup :
+		this.bind("dialogclose", function(){
+			self.mdlTemplate=null;
 		});
 		
 		//the action bound to click on the first button

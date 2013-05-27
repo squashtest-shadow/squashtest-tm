@@ -125,7 +125,8 @@ public class ExecutionModificationController {
 		List<AoColumnDef> columnDefs;
 		List<String> firstStepDfvCode = extractCodes(firstStepDfv);
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", execution);
-		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDefs(firstStepDfvCode, editable);
+		boolean isBugtrackerConnected = execution.getProject().isBugtrackerConnected();
+		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDefs(firstStepDfvCode, editable, isBugtrackerConnected);
 		return columnDefs;
 	}
 
@@ -166,19 +167,19 @@ public class ExecutionModificationController {
 		static {
 			String smallWidth = "2em";
 			// columns.add(new AoColumnDef(bVisible, bSortable, sClass, sWidth, aTargets, mDataProp))
-			baseColumns.add(new AoColumnDef(false, false, "", smallWidth, "entity-id"));
-			baseColumns.add(new AoColumnDef(true, false, "select-handle centered", smallWidth, "entity-index"));
-			baseColumns.add(new AoColumnDef(true, false, "", null, "action"));
-			baseColumns.add(new AoColumnDef(true, false, "", null, "expected"));
-			baseColumns.add(new AoColumnDef(true, false, "has-status", null, "status"));
-			baseColumns.add(new AoColumnDef(true, false, "", null, "last-exec-on"));
-			baseColumns.add(new AoColumnDef(true, false, "", null, "last-exec-by"));
-			baseColumns.add(new AoColumnDef(true, false, "smallfonts rich-editable-comment", null, "comment"));
-			baseColumns.add(new AoColumnDef(false, false, "bug-list", null, "bug-list"));
-			baseColumns.add(new AoColumnDef(true, false, "centered bug-button", smallWidth, "bug-button"));
-			baseColumns.add(new AoColumnDef(false, false, "", null, "nb-attachments"));
-			baseColumns.add(new AoColumnDef(true, false, "centered has-attachment-cell", smallWidth, "attach-list-id"));
-			baseColumns.add(new AoColumnDef(true, false, "centered run-step-button", smallWidth, "run-step-button"));
+			baseColumns.add(new AoColumnDef(false, false, "", smallWidth, "entity-id"));//0
+			baseColumns.add(new AoColumnDef(true, false, "select-handle centered", smallWidth, "entity-index"));//1
+			baseColumns.add(new AoColumnDef(true, false, "", null, "action"));//2
+			baseColumns.add(new AoColumnDef(true, false, "", null, "expected"));//3
+			baseColumns.add(new AoColumnDef(true, false, "has-status", null, "status"));//4
+			baseColumns.add(new AoColumnDef(true, false, "", null, "last-exec-on"));//5
+			baseColumns.add(new AoColumnDef(true, false, "", null, "last-exec-by"));//6
+			baseColumns.add(new AoColumnDef(true, false, "smallfonts rich-editable-comment", null, "comment"));//7
+			baseColumns.add(new AoColumnDef(false, false, "bug-list", null, "bug-list"));//8
+			baseColumns.add(new AoColumnDef(true, false, "centered bug-button", smallWidth, "bug-button"));//9
+			baseColumns.add(new AoColumnDef(false, false, "", null, "nb-attachments"));//10
+			baseColumns.add(new AoColumnDef(true, false, "centered has-attachment-cell", smallWidth, "attach-list-id"));//11
+			baseColumns.add(new AoColumnDef(true, false, "centered run-step-button", smallWidth, "run-step-button"));//12
 		}
 		private List<AoColumnDef> columns = new ArrayList<AoColumnDef>();
 
@@ -186,8 +187,9 @@ public class ExecutionModificationController {
 			columns.addAll(baseColumns);
 		}
 
-		private List<AoColumnDef> getAoColumnDefs(List<String> dfvCodes, boolean editable) {
+		private List<AoColumnDef> getAoColumnDefs(List<String> dfvCodes, boolean editable, boolean isBugtrackerConnected) {
 			columns.get(columns.size() - 2).setbVisible(editable);
+			columns.get(columns.size() - 4).setbVisible(editable && isBugtrackerConnected);
 			if (!dfvCodes.isEmpty()) {
 				List<AoColumnDef> dfvColumns = new ArrayList<AoColumnDef>(dfvCodes.size());
 				for (String dfvCode : dfvCodes) {
@@ -233,7 +235,7 @@ public class ExecutionModificationController {
 			res.put("expected", item.getExpectedResult());
 			res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale, messageSource));
 			res.put("last-exec-by", item.getLastExecutedBy());
-			res.put("comment", item.getComment());		
+			res.put("comment", item.getComment());
 			res.put("bug-list", createBugList(item));
 			res.put("bug-button", "");
 			res.put(DataTableModelHelper.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());

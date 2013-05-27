@@ -25,13 +25,9 @@
 
 <%@ attribute name="id" required="true"
 	description="the desired name for that popup"%>
-<%@ attribute name="entityUrl" required="true"
-	description="the url of the entity (bugtracker-wise)"%>
 <%@ attribute name="interfaceDescriptor" type="java.lang.Object"
 	required="true"
 	description="an object holding the labels for the interface"%>
-<%@ attribute name="successCallback" required="false"
-	description="if set, that callback will be called on successfull completion. It must accept as a parameter a json object having an attribute named 'url'."%>
 <%@ attribute name="bugTrackerId" required="true"
 	description="id of the entity's project bug-tracker"%>
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
@@ -44,11 +40,7 @@
 
 <f:message var="addIssueLabel" key="label.Add" />
 
-<%-- 
-The following urls aren't defined with a <c:url> but regular <c:set>. 
-The reason for that is that the parameters are urls already.
---%>
-<c:set var="bugReport" value="${entityUrl}/new-issue" />
+
 <c:url var="remoteIssues" value="/bugtracker/find-issue/" />
 
 
@@ -137,15 +129,13 @@ The reason for that is that the parameters are urls already.
 		require(["bugtracker"], function(){
 			 
 			var conf = {					
-				reportUrl : "${bugReport}",
 				searchUrl : "${remoteIssues}",
 				bugTrackerId : "${bugTrackerId}",
-				callback : ${successCallback},
 				labels : ${ json:serialize(interfaceDescriptor) }
 			};
 			
 			
-			$("#${id}").btIssueDialog(conf);	
+			squashtm.bugReportPopup = $("#${id}").btIssueDialog(conf);	
 			
 		});	
 	});
