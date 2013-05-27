@@ -102,7 +102,7 @@ public enum ExecutionStatus implements Internationalizable {
 	UNTESTABLE() {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
-			return ExecutionStatus.UNTESTABLE;
+			return needsComputation;
 		}
 		
 		@Override
@@ -310,13 +310,13 @@ public enum ExecutionStatus implements Internationalizable {
 		terms.add(SUCCESS);
 		terms.add(WARNING);
 		terms.add(ERROR);
-		terms.add(UNTESTABLE);
 		
 		TERMINAL_STATUSES = Collections.unmodifiableSet(terms);	
 		
 		Set<ExecutionStatus> nonTerms = new HashSet<ExecutionStatus>();
 		nonTerms.add(RUNNING);
 		nonTerms.add(READY);
+		terms.add(UNTESTABLE);
 		
 		NON_TERMINAL_STATUSES = Collections.unmodifiableSet(nonTerms);
 		
@@ -513,6 +513,11 @@ public enum ExecutionStatus implements Internationalizable {
 		// responsible for the former exec status (eg, the only one blocked).
 		// we then now the new exec status must then be recomputed.
 		else if (couldHaveSetExecStatusAlone(formerExecutionStatus, formerStepStatus)) {
+			isMandatory = true;
+		}
+		
+		//UNTESTABLE is a neutral status, the new execution status depends on every others status but not this one.
+		else if (this == UNTESTABLE){
 			isMandatory = true;
 		}
 
