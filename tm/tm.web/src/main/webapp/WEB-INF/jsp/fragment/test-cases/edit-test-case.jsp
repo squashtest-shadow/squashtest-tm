@@ -167,7 +167,7 @@
 
 <%---------------------------- Rename test case popup ------------------------------%>
 <c:if test="${ smallEditable }">
-	<comp:popup id="rename-test-case-dialog"
+	<pop:popup id="rename-test-case-dialog"
 		titleKey="dialog.rename-test-case.title" isContextual="true"
 		openedBy="rename-test-case-button">
 		
@@ -189,7 +189,7 @@
 			
 		</jsp:attribute>
 		
-		<jsp:body>
+		<jsp:attribute name="body">
 				<label>
 					<f:message key="dialog.rename.label" />
 				</label>
@@ -197,9 +197,9 @@
 					   maxlength="255"	size="50" />
 				<br />
 				<comp:error-message forField="name" />
-		</jsp:body>
+		</jsp:attribute>
 
-	</comp:popup>
+	</pop:popup>
 </c:if>
 
 <%---------------------------- Test Case Informations ------------------------------%>
@@ -219,6 +219,7 @@
 		<input type="button" value="<f:message key='test-case.button.remove.label' />"
 				id="delete-test-case-button" class="button" />
 	</c:if>
+		<input type="button" value="<f:message key='label.print'/>" id="print-test-case-button" class="button"/>
 	</div>
 	<div style="clear: both;"></div>
 	<c:if test="${ moreThanReadOnly }">
@@ -568,7 +569,9 @@
 		
 		$("#rename-test-case-button").squashButton();
 		$("#delete-test-case-button").squashButton();
-		
+		$("#print-test-case-button").squashButton();
+
+		$("#print-test-case-button").click(function(){window.open("${testCaseUrl}/print", "_blank");});
 	});
 
 	

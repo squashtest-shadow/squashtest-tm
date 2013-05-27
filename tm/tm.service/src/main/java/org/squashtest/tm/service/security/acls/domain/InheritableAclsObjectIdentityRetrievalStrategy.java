@@ -35,7 +35,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.service.security.annotation.InheritsAcls;
+import org.squashtest.tm.security.annotation.InheritsAcls;
 
 /**
  * This {@link ObjectIdentityRetrievalStrategy} checks if an entity should inherit ACLs from another entity. If so, the

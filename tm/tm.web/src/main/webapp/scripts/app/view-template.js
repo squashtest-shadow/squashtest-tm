@@ -21,21 +21,21 @@
 /**
  * This is a template for a backbone module
  */
-define([ "jquery", "backbone", "handlebars" ], function($, Backbone, Handlebars) {
-	var View = Backbone.View.extend({
-		el: "",
-		initialize: function() {
-			this.render();
-		}, 
-		render: function() {
-			var source   = $("").html();
-			var template = Handlebars.compile(source);
-			this.$("").html(template(this.model.toJSON()));
-			return this;
-		},
-		events: {
-		}
-	});
-	
-	return View;
-});
+define([ "jquery", "backbone", "handlebars" ],
+		function($, Backbone, Handlebars) {
+			var View = Backbone.View.extend({
+				el : "",
+				initialize : function() {
+					this.render();
+				},
+				render : function() {
+					var source = $("").html();
+					var template = Handlebars.compile(source);
+					this.$("").html(template(this.model.toJSON()));
+					return this;
+				},
+				events : {}
+			});
+
+			return View;
+		});

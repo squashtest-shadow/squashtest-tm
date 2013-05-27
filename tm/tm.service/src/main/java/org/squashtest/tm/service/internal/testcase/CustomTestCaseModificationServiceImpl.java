@@ -36,6 +36,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -48,7 +49,6 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
@@ -287,7 +287,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		@Override
 		public void visit(CallTestStep visited) {
 			// NOPE
-
 		}
 
 	}
@@ -299,13 +298,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 	}
 
-	
-
-	
 
 	@Override
 	@Transactional(readOnly = true)
-	public FilteredCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, CollectionSorting sorting) {
+	public FilteredCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, PagingAndSorting sorting) {
 
 		List<TestCase> callers = testCaseDao.findAllCallingTestCases(testCaseId, sorting);
 		Long countCallers = testCaseDao.countCallingTestSteps(testCaseId);
@@ -386,6 +382,15 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public List<TestCase> findAllByAncestorIds(Collection<Long> folderIds) {
 		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIds(folderIds);
 		return new TestCaseNodeWalker().walk(nodes);
+	}
+	
+	/**
+	 * @see org.squashtest.tm.service.testcase.CustomTestCaseFinder#findAllCallingTestCases(long)
+	 */
+	@Override
+	@PostFilter("hasPermission(filterObject , 'READ') or hasRole('ROLE_ADMIN')")
+	public List<TestCase> findAllCallingTestCases(long calleeId) {
+		return testCaseDao.findAllCallingTestCases(calleeId);
 	}
 
 	

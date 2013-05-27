@@ -104,7 +104,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	public List<CustomFieldValue> findAllCustomFieldValues(Collection<? extends BoundEntity> boundEntities) {
 
 		// first, because the entities might be of different kind we must segregate them.
-		Map<BindableEntity, List<Long>> compositeIds = _breakEntitiesIntoCompositeIds(boundEntities);
+		Map<BindableEntity, List<Long>> compositeIds = breakEntitiesIntoCompositeIds(boundEntities);
 
 		// second, one can now call the db and consolidate the result.
 		List<CustomFieldValue> result = new ArrayList<CustomFieldValue>();
@@ -125,7 +125,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			Collection<CustomField> restrictedToThoseCustomfields) {
 
 		// first, because the entities might be of different kind we must segregate them.
-		Map<BindableEntity, List<Long>> compositeIds = _breakEntitiesIntoCompositeIds(boundEntities);
+		Map<BindableEntity, List<Long>> compositeIds = breakEntitiesIntoCompositeIds(boundEntities);
 
 		// second, one can now call the db and consolidate the result.
 		List<CustomFieldValue> result = new ArrayList<CustomFieldValue>();
@@ -172,17 +172,18 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 				.getId(), entity.getBoundEntityType());
 
 		for (CustomFieldBinding binding : bindings) {
-			if(!foundValue(binding, entity)){
-			CustomFieldValue value = binding.createNewValue();
-			value.setBoundEntity(entity);
-			customFieldValueDao.persist(value);
+			if (!foundValue(binding, entity)) {
+				CustomFieldValue value = binding.createNewValue();
+				value.setBoundEntity(entity);
+				customFieldValueDao.persist(value);
 			}
 		}
 
 	}
 
 	private boolean foundValue(CustomFieldBinding binding, BoundEntity entity) {
-		return !customFieldValueDao.findAllCustomFieldValueOfBindingAndEntity(binding.getId(), entity.getBoundEntityId(), entity.getBoundEntityType()).isEmpty();
+		return !customFieldValueDao.findAllCustomFieldValueOfBindingAndEntity(binding.getId(),
+				entity.getBoundEntityId(), entity.getBoundEntityType()).isEmpty();
 	}
 
 	private void deleteCustomFieldValues(List<CustomFieldValue> values) {
@@ -226,7 +227,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	}
 
 	@Override
-	public void update(Long customFieldValueId, String newValue) {
+	public void changeValue(long customFieldValueId, String newValue) {
 
 		CustomFieldValue changedValue = customFieldValueDao.findById(customFieldValueId);
 
@@ -277,13 +278,14 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	// *********************** private convenience methods ********************
 
-	private Map<BindableEntity, List<Long>> _breakEntitiesIntoCompositeIds(
+	private Map<BindableEntity, List<Long>> breakEntitiesIntoCompositeIds(
 			Collection<? extends BoundEntity> boundEntities) {
 
-		Map<BindableEntity, List<Long>> segregatedEntities = new HashMap<BindableEntity, List<Long>>(3); // 3 is just a
-																											// guess
+		Map<BindableEntity, List<Long>> segregatedEntities = new HashMap<BindableEntity, List<Long>>();
+
 		for (BoundEntity entity : boundEntities) {
 			List<Long> idList = segregatedEntities.get(entity.getBoundEntityType());
+
 			if (idList == null) {
 				idList = new ArrayList<Long>();
 				segregatedEntities.put(entity.getBoundEntityType(), idList);

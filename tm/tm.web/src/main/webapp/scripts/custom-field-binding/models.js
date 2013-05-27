@@ -18,16 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 /*
  * As our needs goes, anything related to modeling CustomFieldBindingModel, CustomFieldModel and such 
  * should go there. 
  */
 
-define(function(){
-	
+define(function() {
+
 	return {
-		newBinding : function(projectId, fieldId, entityName ){
+		newBinding : function(projectId, fieldId, entityName) {
 			return {
 				projectId : projectId,
 				customField : {
@@ -36,7 +35,7 @@ define(function(){
 				boundEntity : {
 					enumName : entityName
 				}
-			};			
+			};
 		}
 	};
 });

@@ -72,13 +72,13 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 
 	private static final class AttributeRegister<KEY> {
 		
-		String attributeName; 
+		private String attributeName; 
 		
-		Class<?> ownerType;
+		private Class<?> ownerType;
 		
-		Class<?> attributeType; 
+		private Class<?> attributeType; 
 		
-		KEY attributeKey;
+		private KEY attributeKey;
 
 		AttributeRegister(Class<?> ownerType, String attributeName, 
 				Class<?> attributeType, KEY attributeKey) {

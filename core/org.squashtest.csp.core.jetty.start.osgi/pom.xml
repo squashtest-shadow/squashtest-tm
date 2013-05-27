@@ -4,7 +4,7 @@
   <parent>
     <artifactId>squashtest-csp-core</artifactId>
     <groupId>org.squashtest.tm</groupId>
-    <version>1.5.2.BUILD-SNAPSHOT</version>
+    <version>1.6.0.RC1-SNAPSHOT</version>
   </parent>
   <artifactId>org.squashtest.csp.core.jetty.start.osgi</artifactId>
   <name>org.squashtest.csp.core.jetty.start.osgi</name>
@@ -17,7 +17,20 @@
     <bundle.activator>org.squashtest.csp.core.jetty.start.osgi.Activator</bundle.activator>
   </properties>
 
-
+	<dependencyManagement>
+		<dependencies>
+			<!-- ====== INFRASTRUCTURE DEFINITIONS === -->
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>provision-bom</artifactId>
+			<version>1.0-SNAPSHOT</version>		
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+	
+		<!-- ====== /INFRASTRUCTURE DEFINITIONS === -->		
+		</dependencies>
+	</dependencyManagement>
 
   <dependencies>
     <dependency>

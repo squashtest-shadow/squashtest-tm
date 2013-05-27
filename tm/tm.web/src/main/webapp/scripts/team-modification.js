@@ -19,17 +19,20 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "team-editor/TeamModificationView","app/ws/squashtm.workspace", "domReady" ], function($,TeamModificationView, WS, domReady) {
+	require([ "jquery", "team-editor/TeamModificationView",
+			"app/ws/squashtm.workspace", "domReady" ], function($,
+			TeamModificationView, WS, domReady) {
 		var goBack = function() {
-			document.location.href = squashtm.app.contextRoot + "/administration/users/list";
+			document.location.href = squashtm.app.contextRoot
+					+ "/administration/users/list";
 		};
-		
+
 		domReady(function() {
 			WS.init("");
 			var view = new TeamModificationView();
 			$("#back").button().on("click", goBack);
 			view.on("team.delete", goBack);
 		});
-		
+
 	});
 });

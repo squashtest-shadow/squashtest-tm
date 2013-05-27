@@ -21,21 +21,24 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:context="http://www.springframework.org/schema/context"
-  xmlns:mvc="http://www.springframework.org/schema/mvc" 
-  xmlns:aop="http://www.springframework.org/schema/aop"
-  xmlns:p="http://www.springframework.org/schema/p"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-                      http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
-                      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 
 	<!-- Scans the classpath of this application for @Components to deploy as 
 		beans -->
-  <context:component-scan base-package="*" />
-  <context:property-placeholder ignore-unresolvable="true" properties-ref="squashtest.core.auth.config" />	
+  <context:component-scan base-package="*" >
+    <context:exclude-filter type="annotation" expression="org.springframework.context.annotation.Configuration" />
+    <context:exclude-filter type="annotation" expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
+  </context:component-scan>
+
+  <!-- placeholder configurer does not seem to be inherited from parent, we need it here too -->
+  <context:property-placeholder properties-ref="squash.tm.config" />
 		
 	<!-- Configures the @Controller programming model -->
   <mvc:annotation-driven validator="validator" />
@@ -118,7 +121,7 @@
     </bean>
 
     <bean class="org.squashtest.tm.web.internal.interceptor.SecurityExpressionResolverExposerInterceptor" />
-    
+
     <mvc:interceptor>
       <mvc:mapping path="/test-cases/*" />
       <mvc:mapping path="/test-cases/*/info" />

@@ -21,83 +21,83 @@
 /**
  * Controller for tabs in entity tragment (test case, requirement...)
  * 
- * requires : 
- * - jquery
- * - jqueryui
- * - jquery cookie plugin
+ * requires : - jquery - jqueryui - jquery cookie plugin
  */
 var squashtm = squashtm || {};
 
-squashtm.fragmenttabs = (function ($, window) {
+squashtm.fragmenttabs = (function($, window) {
 	function calculateTopTableWrap() {
-		var tableWrap = $(' div.fragment-tabs > div.table-tab > div.table-tab-wrap ').not(':hidden');
-		
+		var tableWrap = $(
+				' div.fragment-tabs > div.table-tab > div.table-tab-wrap ')
+				.not(':hidden');
+
 		if (tableWrap) {
 			var tablePrev = tableWrap.prevAll().not(':hidden');
-			
+
 			if (tablePrev) {
 				var topPos = 0;
-				
-				for (var k = 0; k < tablePrev.length; k++) {
+
+				for ( var k = 0; k < tablePrev.length; k++) {
 					topPos += $(tablePrev[k]).outerHeight();
 				}
 				tableWrap.css('top', topPos);
 			}
 		}
 	}
-	
+
 	function calculateTopPositionsOfTabs() {
-		var selectors = [ '.fragment-tabs', '.fragment-tabs .ui-tabs-panel'];
-		
-		for (var i = 0; i < selectors.length; i++) {
+		var selectors = [ '.fragment-tabs', '.fragment-tabs .ui-tabs-panel' ];
+
+		for ( var i = 0; i < selectors.length; i++) {
 			var selectedElements = $(selectors[i]);
 
-			for (var j = 0; j < selectedElements.length; j++) {
+			for ( var j = 0; j < selectedElements.length; j++) {
 				var element = $(selectedElements[j]);
-				var previous = element.prevAll().not(':hidden').not('.ui-tabs-panel');
+				var previous = element.prevAll().not(':hidden').not(
+						'.ui-tabs-panel');
 				var topPos = 0;
-				
-				for (var k = 0; k < previous.length; k++) {
+
+				for ( var k = 0; k < previous.length; k++) {
 					topPos += $(previous[k]).outerHeight();
 				}
 				element.css('top', topPos);
 			}
 		}
-		calculateTopTableWrap();		
+		calculateTopTableWrap();
 	}
-	
-	return  {
-		init: function () {
-			window.onresize = function () {
+
+	return {
+		init : function() {
+			window.onresize = function() {
 				setTimeout(calculateTopPositionsOfTabs, 200);
 			};
 			calculateTopPositionsOfTabs();
-			
+
 			var args = {
-				cookie: {
-					// store cookie for a day, without, it would be a session cookie
-					expires: 1
+				cookie : {
+					// store cookie for a day, without, it would be a session
+					// cookie
+					expires : 1
 				},
 				show : calculateTopTableWrap
 			};
-			
-			if (arguments.length>0){
-				args = $.extend(args,arguments[0]);
+
+			if (arguments.length > 0) {
+				args = $.extend(args, arguments[0]);
 			}
-			
+
 			$('.fragment-tabs').tabs(args);
 		},
 		confHelper : {
-			fnCacheRequests : function (event, ui){
-		
+			fnCacheRequests : function(event, ui) {
+
 				var contentCache = $(this).data('content-cache') || [];
 				var targetUrl = ui.ajaxSettings.url;
-				
-				if ($.inArray(targetUrl, contentCache) !== -1){
+
+				if ($.inArray(targetUrl, contentCache) !== -1) {
 					event.preventDefault();
 					return false;
-				}
-				else{
+				} else {
 					contentCache.push(targetUrl);
 					$(this).data('content-cache', contentCache);
 				}

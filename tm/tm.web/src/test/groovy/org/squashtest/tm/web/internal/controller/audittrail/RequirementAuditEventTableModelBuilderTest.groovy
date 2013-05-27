@@ -97,7 +97,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 			[
 				"31/12/2011 23h55",
 				"peter parker",
-				"Modification de reference : 'amazing' -&gt; 'astonishing'",
+				"Modification de reference : &#39;amazing&#39; -&gt; &#39;astonishing&#39;",
 				"simple-prop",
 				"10"
 			]
@@ -189,7 +189,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 			[
 				"31/12/2011 23h55",
 				"peter parker",
-				"Modification du status : 'Obsol&egrave;te' -&gt; 'Approuv&eacute;'",
+				"Modification du status : &#39;Obsol&egrave;te&#39; -&gt; &#39;Approuv&eacute;&#39;",
 				"simple-prop",
 				"10"
 			]

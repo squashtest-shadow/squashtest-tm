@@ -18,17 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["./NameAndReferenceHandler", "./SimpleNameHandler"],function(NameRefHandler, SimpleHandler){
-	
+define([ "./NameAndReferenceHandler", "./SimpleNameHandler" ], function(
+		NameRefHandler, SimpleHandler) {
+
 	return {
-		getNameAndReferenceHandler : function(){
+		getNameAndReferenceHandler : function() {
 			return new NameRefHandler();
 		},
-		
-		getSimpleNameHandler : function(){
+
+		getSimpleNameHandler : function() {
 			return new SimpleHandler();
 		}
-		
-	}
-	
+
+	};
+
 });

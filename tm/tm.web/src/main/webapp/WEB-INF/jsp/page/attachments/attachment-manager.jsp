@@ -49,7 +49,7 @@
 
 <layout:info-page-layout titleKey="squashtm.attachments.manager.title" highlightedWorkspace="${workspace}">
 	<jsp:attribute name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.${workspaceColor}.css" />
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.${workspaceColor}.css" />
 	</jsp:attribute>
 	<jsp:attribute name="titlePane">
 		<h2><f:message key="squashtm.attachments.manager.title" /></h2>	

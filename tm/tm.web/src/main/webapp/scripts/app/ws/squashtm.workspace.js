@@ -19,22 +19,32 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "app/ws/squashtm.navbar", "app/ws/squashtm.projectfilter",
-		"app/ws/squashtm.menubar", "app/ws/squashtm.notification" , "squash.bugtrackerMenu"], function(
-		$, NavBar, ProjectFilter, MenuBar, WTF, BTM) {
+		"app/ws/squashtm.menubar", "app/ws/squashtm.notification",
+		"squash.bugtrackerMenu", "squash.session-pinger"], function($, NavBar, ProjectFilter, MenuBar,
+		WTF, BTM, SSP) {
 	function init(highlightedWorkspace) {
-			/* navigation tag */
-			NavBar.initHighlighted(highlightedWorkspace);
-			squashtm.bugtrackerMenu = new BTM({workspaceUrl : squashtm.app.contextRoot + "/bugtracker/workspace-button"});
-			squashtm.bugtrackerMenu.updateBugTrackerMenu(highlightedWorkspace ==  "bugtracker");
-			
-			ProjectFilter.init(squashtm.app.projectFilterConf);
-			MenuBar.init(squashtm.app.menuBarConf);
+		/* navigation tag */
+		NavBar.initHighlighted(highlightedWorkspace);
+		squashtm.bugtrackerMenu = new BTM({
+			workspaceUrl : squashtm.app.contextRoot
+					+ "/bugtracker/workspace-button"
+		});
+		squashtm.bugtrackerMenu
+				.updateBugTrackerMenu(highlightedWorkspace == "bugtracker");
 
-			/* wtf */
-			WTF.init(squashtm.app.notificationConf);
+		ProjectFilter.init(squashtm.app.projectFilterConf);
+		MenuBar.init(squashtm.app.menuBarConf);
 
-			/* Try to prevent FOUCs */
-			$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
+		/* wtf */
+		WTF.init(squashtm.app.notificationConf);
+
+		/* Try to prevent FOUCs */
+		$(".unstyled").fadeIn("fast", function() {
+			$(this).removeClass("unstyled");
+		});
+		
+		/*session ping*/
+		new SSP();
 	}
 
 	return {

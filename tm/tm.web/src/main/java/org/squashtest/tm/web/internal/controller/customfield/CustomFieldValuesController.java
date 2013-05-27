@@ -39,85 +39,90 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.controller.RequestHeaders;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueConfigurationBean;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
-
 
 @Controller
 @RequestMapping("/custom-fields/values")
 public class CustomFieldValuesController {
 
+	/**
+	 * 
+	 */
+	private static final String BOUND_ENTITY_TYPE = "boundEntityType";
+
+	/**
+	 * 
+	 */
+	private static final String BOUND_ENTITY_ID = "boundEntityId";
+
 	private CustomFieldValueManagerService managerService;
-	
+
 	private PermissionEvaluationService permissionService;
 
 	@Inject
 	private CustomFieldJsonConverter converter;
-	
+
 	@Inject
 	private MessageSource messageSource;
-	
+
 	@ServiceReference
 	public void setManagerService(CustomFieldValueManagerService managerService) {
 		this.managerService = managerService;
 	}
-	
+
 	@ServiceReference
 	public void setPermissionService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
 	}
 
-
-
-
-	@RequestMapping(method=RequestMethod.GET, params = {"boundEntityId","boundEntityType"} , headers="Accept=application/json")
+	@RequestMapping(method = RequestMethod.GET, params = { BOUND_ENTITY_ID, BOUND_ENTITY_TYPE }, headers = RequestHeaders.CONTENT_JSON)
 	@ResponseBody
-	public List<CustomFieldValueModel> getCustomFieldValuesForEntity(@RequestParam("boundEntityId") Long id, @RequestParam("boundEntityType") BindableEntity entityType){
-		
+	public List<CustomFieldValueModel> getCustomFieldValuesForEntity(@RequestParam(BOUND_ENTITY_ID) Long id,
+			@RequestParam(BOUND_ENTITY_TYPE) BindableEntity entityType) {
+
 		List<CustomFieldValue> values = managerService.findAllCustomFieldValues(id, entityType);
-		
+
 		return valuesToJson(values);
-		
-		
+
 	}
-	
-	
-	@RequestMapping(method=RequestMethod.GET, params = {"boundEntityId", "boundEntityType"})
-	public ModelAndView getCustomFieldValuesPanel(@RequestParam("boundEntityId") Long id, @RequestParam("boundEntityType") BindableEntity entityType, Locale locale){
-		
+
+	@RequestMapping(method = RequestMethod.GET, params = { BOUND_ENTITY_ID, BOUND_ENTITY_TYPE })
+	public ModelAndView getCustomFieldValuesPanel(@RequestParam(BOUND_ENTITY_ID) Long id,
+			@RequestParam(BOUND_ENTITY_TYPE) BindableEntity entityType, Locale locale) {
+
 		List<CustomFieldValue> values = managerService.findAllCustomFieldValues(id, entityType);
-		
-		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "SMALL_EDIT", id, entityType.getReferencedClass().getName());
-		
+
+		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "SMALL_EDIT", id, entityType
+				.getReferencedClass().getName());
+
 		CustomFieldValueConfigurationBean conf = new CustomFieldValueConfigurationBean(values);
-		
+
 		ModelAndView mav = new ModelAndView("custom-field-values-panel.html");
 		mav.addObject("editable", editable);
 		mav.addObject("configuration", conf);
-		
+
 		return mav;
-		
+
 	}
-	
-	@RequestMapping(value="/{id}", method=RequestMethod.POST, params="value")
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.POST, params = "value")
 	@ResponseBody
-	public void updateCustomValue(@PathVariable("id") Long valueId, @RequestParam("value") String value){
-		managerService.update(valueId, value);
+	public void updateCustomValue(@PathVariable long id, @RequestParam("value") String value) {
+		managerService.changeValue(id, value);
 	}
-	
-	
-	private List<CustomFieldValueModel> valuesToJson(List<CustomFieldValue> values){
+
+	private List<CustomFieldValueModel> valuesToJson(List<CustomFieldValue> values) {
 		List<CustomFieldValueModel> models = new LinkedList<CustomFieldValueModel>();
-		
-		for (CustomFieldValue value : values){
+
+		for (CustomFieldValue value : values) {
 			CustomFieldValueModel model = converter.toJson(value);
 			models.add(model);
 		}
-		
+
 		return models;
 	}
-	
-	
-	
+
 }

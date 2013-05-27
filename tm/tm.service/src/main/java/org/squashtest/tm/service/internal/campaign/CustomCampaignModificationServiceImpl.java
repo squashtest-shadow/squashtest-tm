@@ -24,11 +24,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
@@ -45,6 +47,10 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 
 	@Inject
 	private CampaignDao campaignDao;
+	
+	
+	@Inject
+	private Provider<CampaignExportCSVModelImpl> campaignExportCSVModelProvider;
 
 	@Inject
 	@Named("squashtest.tm.service.internal.CampaignManagementService")
@@ -73,4 +79,23 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	public TestPlanStatistics findCampaignStatistics(long campaignId) {
 		return campaignDao.findCampaignStatistics(campaignId);
 	}
+	
+
+	@Override
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') or hasRole('ROLE_ADMIN')")	
+	public CampaignExportCSVModel exportCampaignToCSV(Long campaignId) {
+		
+		Campaign campaign = campaignDao.findById(campaignId);
+		
+		CampaignExportCSVModelImpl model = campaignExportCSVModelProvider.get();
+	
+		model.setCampaign(campaign);
+		model.init();		
+		
+		return model;
+	}
+	
+	
+	
+	
 }

@@ -25,7 +25,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <layout:workspace-page-layout resourceName="requirement">
 	<jsp:attribute name="head">
-	<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
+	<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.blue.css" />
 	<script type="text/javascript">
 		var squashtm = squashtm || {};
 		squashtm.app = squashtm.app || {};

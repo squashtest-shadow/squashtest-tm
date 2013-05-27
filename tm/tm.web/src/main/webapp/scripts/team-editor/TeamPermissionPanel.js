@@ -35,64 +35,77 @@ define(
 							this.configureButtons();
 						},
 						events : {
-							"change .permission-list": "changePermission"
+							"change .permission-list" : "changePermission"
 						},
-						
-						changePermission :function(event) {
-							
+
+						changePermission : function(event) {
+
 							var self = event.target;
-							var permission_id = $("option:selected",self).attr('id');
-							var project_id = $(self).attr('id').replace("permission-list-","");
-							
+							var permission_id = $("option:selected", self)
+									.attr('id');
+							var project_id = $(self).attr('id').replace(
+									"permission-list-", "");
+
 							$.ajax({
 								type : 'POST',
 								url : teamMod.permission.url.add,
 								data : {
-								project : project_id,
-								permission : permission_id
+									project : project_id,
+									permission : permission_id
 								},
 								dataType : "json",
 								success : function() {
-								
+
 								}
-								});
+							});
 						},
 						makeTogglePanel : function() {
 							var infoSettings = {
 								initiallyOpen : true,
-								title : teamMod.message.permissionsPanelTitle,
+								title : teamMod.message.permissionsPanelTitle
 							};
 							this.$("#project-permission-panel").togglePanel(
 									infoSettings);
 						},
 						decorateRow : function(self) {
-							return function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-								$.ajax({
-									url : teamMod.permission.url.popup,
-									dataType : 'json'
-								}).success(function(json) {
-									var permission = aData["permission-simplename"];
-									var cell = $(nRow.children[2]);
-									cell.html("<select class='permission-list' id='permission-list-"+aData["project-id"]+"'></select>");
-									var selected = "";
-									for(var i=0; i<json.permissionList.length;i++){
-										var text = json.permissionList[i].displayName;
-										var value = json.permissionList[i].id;
-										var option = new Option(text, value);
-										option.id = json.permissionList[i].qualifiedName;
-										$("select",cell).append(option);
-										if(json.permissionList[i].simpleName === permission){
-											$("select",cell).val(json.permissionList[i].id);
-										}
-									}
-									
-								});
-							}
+							return function(nRow, aData, iDisplayIndex,
+									iDisplayIndexFull) {
+								$
+										.ajax({
+											url : teamMod.permission.url.popup,
+											dataType : 'json'
+										})
+										.success(
+												function(json) {
+													var permission = aData["permission-simplename"];
+													var cell = $(nRow.children[2]);
+													cell
+															.html("<select class='permission-list' id='permission-list-"
+																	+ aData["project-id"]
+																	+ "'></select>");
+													var selected = "";
+													for ( var i = 0; i < json.permissionList.length; i++) {
+														var text = json.permissionList[i].displayName;
+														var value = json.permissionList[i].id;
+														var option = new Option(
+																text, value);
+														option.id = json.permissionList[i].qualifiedName;
+														$("select", cell)
+																.append(option);
+														if (json.permissionList[i].simpleName === permission) {
+															$("select", cell)
+																	.val(
+																			json.permissionList[i].id);
+														}
+													}
+
+												});
+							};
 						},
 						configureTable : function() {
 							$("#permission-table").squashTable({
 								"fnRowCallback" : this.decorateRow(this)
-							}, {}); 
+							}, {});
 						},
 						configurePopups : function() {
 							this.configureAddPermissionDialog();
@@ -103,16 +116,17 @@ define(
 									$.proxy(this.openAddPermission, this));
 						},
 						confirmRemovePermission : function(event) {
-							var hasPermission = ($("#permission-table").squashTable()
-									.getSelectedIds().length > 0);
+							var hasPermission = ($("#permission-table")
+									.squashTable().getSelectedIds().length > 0);
 							if (hasPermission) {
-								this.confirmRemovePermissionDialog.confirmDialog("open");
+								this.confirmRemovePermissionDialog
+										.confirmDialog("open");
 							}
 						},
 						openAddPermission : function() {
 							this.addPermissionDialog.confirmDialog('open');
 						},
-						
+
 						removePermissions : function(event) {
 							var table = $("#permission-table").squashTable();
 							var ids = table.getSelectedIds();
@@ -120,8 +134,9 @@ define(
 								url : teamMod.permission.url.remove,
 								type : 'post',
 								data : {
-									project : ids[0]}
-							}).done(function(){
+									project : ids[0]
+								}
+							}).done(function() {
 								$("#permission-table").squashTable().refresh();
 							});
 
@@ -129,71 +144,99 @@ define(
 
 						addPermission : function(event) {
 							var dialog = this.addPermissionDialog;
-							var name = dialog.find('#add-permission-input').val();
+							var name = dialog.find('#add-permission-input')
+									.val();
 						},
 
 						configureRemovePermissionDialog : function() {
-							this.confirmRemovePermissionDialog = $("#remove-permission-dialog")
+							this.confirmRemovePermissionDialog = $(
+									"#remove-permission-dialog")
 									.confirmDialog();
-							this.confirmRemovePermissionDialog.on("confirmdialogconfirm", $
-									.proxy(this.removePermissions, this));
+							this.confirmRemovePermissionDialog.on(
+									"confirmdialogconfirm", $.proxy(
+											this.removePermissions, this));
 						},
 
 						configureAddPermissionDialog : function() {
-							var addPermissionDialog = $("#add-permission-dialog").confirmDialog();
+							var addPermissionDialog = $(
+									"#add-permission-dialog").confirmDialog();
 							var table = $("#permission-table").squashTable();
-							addPermissionDialog.on("confirmdialogvalidate", function() {
-								$.ajax({
-									type : 'POST',
-									url : teamMod.permission.url.add,
-									data : {
-									project : $(
-									"#project-input").val(),
-									permission : $(
-									"#permission-input").val()
-									},
-									dataType : "json",
-									success : function() {
-										$("#permission-table").squashTable().refresh();
-										
-										}
+							addPermissionDialog.on("confirmdialogvalidate",
+									function() {
+										$.ajax({
+											type : 'POST',
+											url : teamMod.permission.url.add,
+											data : {
+												project : $("#project-input")
+														.val(),
+												permission : $(
+														"#permission-input")
+														.val()
+											},
+											dataType : "json",
+											success : function() {
+												$("#permission-table")
+														.squashTable()
+														.refresh();
+
+											}
+										});
 									});
-							});
 
-							addPermissionDialog.on("confirmdialogconfirm", $.proxy(
-									this.addPermission, this));
+							addPermissionDialog.on("confirmdialogconfirm", $
+									.proxy(this.addPermission, this));
 
-							addPermissionDialog.find('#add-permission-input').autocomplete();
+							addPermissionDialog.find('#add-permission-input')
+									.autocomplete();
 
-							addPermissionDialog.on('confirmdialogopen', function() {
-								var dialog = addPermissionDialog;
-								var input = dialog.find('#add-permission-input');
-								dialog.activate('wait');
-								
-								$.ajax(
-										{
-											url : teamMod.permission.url.popup,
-											dataType : 'json'
-										}).success(function(json) {
-									if (json.myprojectList.length === 0) {
-										dialog.activate('no-more-projects');
-									} else {
-										$("#project-input").html("");
-										for(var i=0; i<json.myprojectList.length;i++){
-											var text = json.myprojectList[i].name;
-											var value = json.myprojectList[i].id;
-											$("#project-input").append(new Option(text, value));
-										}
-										dialog.activate('main');
-									}
+							addPermissionDialog
+									.on(
+											'confirmdialogopen',
+											function() {
+												var dialog = addPermissionDialog;
+												var input = dialog
+														.find('#add-permission-input');
+												dialog.activate('wait');
 
-								});
-							});
+												$
+														.ajax(
+																{
+																	url : teamMod.permission.url.popup,
+																	dataType : 'json'
+																})
+														.success(
+																function(json) {
+																	if (json.myprojectList.length === 0) {
+																		dialog
+																				.activate('no-more-projects');
+																	} else {
+																		$(
+																				"#project-input")
+																				.html(
+																						"");
+																		for ( var i = 0; i < json.myprojectList.length; i++) {
+																			var text = json.myprojectList[i].name;
+																			var value = json.myprojectList[i].id;
+																			$(
+																					"#project-input")
+																					.append(
+																							new Option(
+																									text,
+																									value));
+																		}
+																		dialog
+																				.activate('main');
+																	}
+
+																});
+											});
 
 							addPermissionDialog.activate = function(arg) {
 								var cls = '.' + arg;
-								this.find('div').not('.popup-dialog-buttonpane')
-										.filter(cls).show().end().not(cls).hide();
+								this.find('div')
+										.not('.popup-dialog-buttonpane')
+										.filter(cls).show().end().not(cls)
+										.hide();
 								if (arg !== 'main') {
 									this.next().find('button:first').hide();
 								} else {
@@ -202,7 +245,7 @@ define(
 							};
 
 							this.addPermissionDialog = addPermissionDialog;
-						},						
+						}
 					});
 			return TeamPermissionPanel;
 		});

@@ -173,7 +173,7 @@
 
 	<div style="clear: both;"></div>
 	<c:if test="${ smallEditable }">
-		<comp:popup id="rename-iteration-dialog"
+		<pop:popup id="rename-iteration-dialog"
 			titleKey="dialog.rename-iteration.title" isContextual="true"
 			openedBy="rename-iteration-button">
 			<jsp:attribute name="buttons">
@@ -188,7 +188,7 @@
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
-			<jsp:body>
+			<jsp:attribute name="body">
 				<script type="text/javascript">
 					$("#rename-iteration-dialog").bind("dialogopen",
 							function(event, ui) {
@@ -203,8 +203,8 @@
 				<br />
 				<comp:error-message forField="name" />	
 		
-			</jsp:body>
-		</comp:popup>
+			</jsp:attribute>
+		</pop:popup>
 	</c:if>
 </div>
 
@@ -483,7 +483,7 @@
 
 	<%--------------------------- Assign User popup -------------------------------------%>
 	<c:if test="${writable}">
-		<comp:popup id="batch-assign-test-case"
+		<pop:popup id="batch-assign-test-case"
 			titleKey="label.AssignUser" isContextual="true"
 			openedBy="assign-test-case-button" closeOnSuccess="false">
 
@@ -505,7 +505,7 @@
 			},			
 			<pop:cancel-button />
 		</jsp:attribute>
-			<jsp:body>
+			<jsp:attribute name="body">
 			<script type="text/javascript">
 				$("#batch-assign-test-case").bind("dialogopen",function(event, ui) {
 					
@@ -535,8 +535,8 @@
 				</span>
 			<select class="batch-select">
 			</select>
-		</jsp:body>
-		</comp:popup>
+		</jsp:attribute>
+		</pop:popup>
 	</c:if>
 </div>
 <%------------------------------------------automated suite overview --------------------------------------------%>

@@ -27,6 +27,7 @@
 <%@ taglib tagdir="/WEB-INF/tags/jquery" prefix="jq" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
@@ -48,7 +49,7 @@
 	
 	<layout:common-head />		
 	<layout:_common-script-import highlightedWorkspace=""/>
-	<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.purple.css" />
+	<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.purple.css" />
 
 	<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/common.js"></script>
 		
@@ -69,8 +70,8 @@
 	
 	
 	<%-- structure of the toolbox --%>
-	<div id="ieo-control" class="ui-state-active not-displayed">
-		<table >
+	<div id="ieo-control" class="ui-state-active not-displayed">		
+		<table >		
 			<tr>
 				<td class="left-aligned"><button class="stop-execution"><f:message key="execute.header.button.stop.title" /></button></td>
 				<td class="right-aligned">
@@ -100,7 +101,7 @@
 	
 	
 	<%-- Popup to enter the url we want the right panel to be filled with --%>
-	<comp:popup id="open-address-dialog" openedBy="open-address-dialog-button" titleKey="execution.IEO.address.bar.label">
+	<pop:popup id="open-address-dialog" openedBy="open-address-dialog-button" titleKey="execution.IEO.address.bar.label">
 		<jsp:attribute name="buttons">
 				<f:message var="label" key="execution.IEO.address.go.to.button" />
 				'${ label }': function() {
@@ -109,11 +110,11 @@
 				$('#open-address-dialog').dialog('close');
 				},			
 			</jsp:attribute>
-			<jsp:body>
+			<jsp:attribute name="body">
 				<label><f:message key="execution.execute.IEO.address.label" /></label>
 				<input id="address-input" type="text" size="50" /><br/>
-			</jsp:body>
-	</comp:popup>	
+			</jsp:attribute>
+	</pop:popup>	
 
 	
 	<script type="text/javascript">

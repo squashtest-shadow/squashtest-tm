@@ -18,10 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(
-		[ "jquery", "backbone", "./TeamsTable", "./NewTeamDialog",  
-				"jqueryui" ],
-		function($, Backbone, TeamsTable, NewTeamDialog ) {
+define([ "jquery", "backbone", "./TeamsTable", "./NewTeamDialog", "jqueryui" ],
+		function($, Backbone, TeamsTable, NewTeamDialog) {
 			var View = Backbone.View
 					.extend({
 						el : "#team-table-pane",
@@ -31,7 +29,7 @@ define(
 						},
 
 						events : {
-							"click #new-team-button" : "showNewTeamDialog",
+							"click #new-team-button" : "showNewTeamDialog"
 						},
 
 						showNewTeamDialog : function(event) {
@@ -56,13 +54,11 @@ define(
 								}
 							});
 
-							self.newTeamDialog.on("newteam.cancel",
-									discard);
+							self.newTeamDialog.on("newteam.cancel", discard);
 							self.newTeamDialog.on("newteam.confirm",
 									discardAndRefresh);
-						},
+						}
 
-						
 					});
 
 			return View;

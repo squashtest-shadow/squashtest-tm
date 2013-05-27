@@ -18,37 +18,38 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "module", "./ieo-manager", "squash.resizer", "./jquery.ieo-control" ], function($, module,
-		OptimizedManager, resizer) {
+define([ "jquery", "module", "./ieo-manager", "squash.resizer",
+		"./jquery.ieo-control" ],
+		function($, module, OptimizedManager, resizer) {
 
-	return function() {
+			return function() {
 
-		// init the manager
+				// init the manager
 
-		var settings = module.config();
+				var settings = module.config();
 
-		var manager = new OptimizedManager(settings);
+				var manager = new OptimizedManager(settings);
 
-		// set it in the context
-		squashtm = squashtm || {};
-		squashtm.ieomanager = manager;
+				// set it in the context
+				squashtm = squashtm || {};
+				squashtm.ieomanager = manager;
 
-		// init the control
-		var control = $("#ieo-control").ieoControl();
+				// init the control
+				var control = $("#ieo-control").ieoControl();
 
-		// wire them
-		manager.setControl(control);
+				// wire them
+				manager.setControl(control);
 
-		// the right panel
-		manager.setRightPane($("#ieo-right-panel"));
+				// the right panel
+				manager.setRightPane($("#ieo-right-panel"));
 
-		// make the panels resizeable
+				// make the panels resizeable
 
-		resizer.init({
-			leftSelector : "#ieo-left-panel",
-			rightSelector : "#ieo-right-panel"
+				resizer.init({
+					leftSelector : "#ieo-left-panel",
+					rightSelector : "#ieo-right-panel"
+				});
+
+			};
+
 		});
-
-	};
-
-});

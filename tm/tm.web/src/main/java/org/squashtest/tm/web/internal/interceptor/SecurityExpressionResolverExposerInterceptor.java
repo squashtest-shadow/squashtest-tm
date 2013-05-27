@@ -49,6 +49,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  */
 public class SecurityExpressionResolverExposerInterceptor extends HandlerInterceptorAdapter {
 	private static final FilterChain DUMMY_CHAIN = new FilterChain() {
+		@Override
 		public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
 			throw new UnsupportedOperationException();
 		}
@@ -62,7 +63,7 @@ public class SecurityExpressionResolverExposerInterceptor extends HandlerInterce
 	 */
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-			ModelAndView modelAndView) throws Exception {
+			ModelAndView modelAndView) {
 		if (modelAndView != null && modelAndView.hasView()
 				&& !StringUtils.startsWith(modelAndView.getViewName(), "redirect:")) {
 			FilterInvocation filterInvocation = new FilterInvocation(request, response, DUMMY_CHAIN);

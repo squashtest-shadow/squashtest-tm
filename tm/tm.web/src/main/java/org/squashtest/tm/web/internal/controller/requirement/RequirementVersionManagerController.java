@@ -42,23 +42,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.Level;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.service.audit.RequirementAuditTrailService;
+import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
+import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
+import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
 import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
 /**
  * Controller which receives requirement version management related requests.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 @Controller
 @RequestMapping("/requirement-versions/{requirementVersionId}")
@@ -75,10 +86,17 @@ public class RequirementVersionManagerController {
 	private Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider;
 	@Inject
 	private MessageSource messageSource;
+	private VerifyingTestCaseManagerService verifyingTestCaseManager;
 
+	@ServiceReference
+	public void setVerifyingTestCaseManager(VerifyingTestCaseManagerService verifyingTestCaseManagerService) {
+		this.verifyingTestCaseManager = verifyingTestCaseManagerService;
+	}
+
+	@Inject
+	private CustomFieldHelperService cufHelperService;
 	private RequirementVersionManagerService requirementVersionManager;
-	
-	
+
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
 
@@ -110,6 +128,7 @@ public class RequirementVersionManagerController {
 		requirementVersionManager.changeCriticality(requirementVersionId, criticality);
 		return internationalize(criticality, locale);
 	}
+
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-category", VALUE })
 	@ResponseBody
 	public String changeCategory(@PathVariable long requirementVersionId,
@@ -124,7 +143,7 @@ public class RequirementVersionManagerController {
 	public String changeStatus(@PathVariable long requirementVersionId, @RequestParam(VALUE) String value, Locale locale) {
 		RequirementStatus status = RequirementStatus.valueOf(value);
 		requirementVersionManager.changeStatus(requirementVersionId, status);
-		return internationalize(status, locale);	
+		return internationalize(status, locale);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", VALUE })
@@ -143,7 +162,7 @@ public class RequirementVersionManagerController {
 		return levelFormatterProvider.get().useLocale(locale).formatLabel(level);
 	}
 
-	@RequestMapping(value="/editor-fragment", method = RequestMethod.GET)
+	@RequestMapping(value = "/editor-fragment", method = RequestMethod.GET)
 	public String getRequirementEditor(@PathVariable long requirementVersionId, Model model, Locale locale) {
 		populateRequirementEditorModel(requirementVersionId, model, locale);
 		return "fragment/requirements/requirement-version-editor";
@@ -152,7 +171,7 @@ public class RequirementVersionManagerController {
 	private void populateRequirementEditorModel(long requirementVersionId, Model model, Locale locale) {
 		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
 		boolean hasCUF = cufValueService.hasCustomFields(requirementVersion);
-		
+
 		model.addAttribute("requirementVersion", requirementVersion);
 
 		String criticalities = buildMarshalledCriticalities(locale);
@@ -185,25 +204,26 @@ public class RequirementVersionManagerController {
 	private String buildMarshalledCriticalities(Locale locale) {
 		return criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
+
 	private String buildMarshalledCategories(Locale locale) {
 		return categoryComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
+
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody
 	Object rename(@PathVariable long requirementVersionId, @RequestParam("newName") String newName) {
 		requirementVersionManager.changeName(requirementVersionId, newName);
 		return new Object();
 	}
-	
+
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public String showRequirementVersionEditor(@PathVariable long requirementVersionId, Model model, Locale locale) {
 		populateRequirementEditorModel(requirementVersionId, model, locale);
 		return "page/requirements/requirement-version-editor";
 	}
-	
+
 	/**
-	 * Returns a map of all requirement version's siblings, including itself.
-	 * The map will be filled with strings:<br>
+	 * Returns a map of all requirement version's siblings, including itself. The map will be filled with strings:<br>
 	 * -the key being the id of the version <br>
 	 * -and the value being "versionNumber (versionStatus)"<br>
 	 * <br>
@@ -211,10 +231,11 @@ public class RequirementVersionManagerController {
 	 * Last map entry is key= "selected", value = id of concerned requirement.
 	 * 
 	 * @param locale
-	 * @param requirementVersionId : the id of the concerned requirement version.
-	 * @return a {@link Map} with key = "id" and value ="versionNumber (versionStatus)",
-	 * <br> obsolete versions excluded,
-	 * <br> last entry is key="selected", value= id of concerned requirement.
+	 * @param requirementVersionId
+	 *            : the id of the concerned requirement version.
+	 * @return a {@link Map} with key = "id" and value ="versionNumber (versionStatus)", <br>
+	 *         obsolete versions excluded, <br>
+	 *         last entry is key="selected", value= id of concerned requirement.
 	 */
 	@RequestMapping(value = "/version-numbers", method = RequestMethod.GET)
 	@ResponseBody
@@ -249,7 +270,7 @@ public class RequirementVersionManagerController {
 
 		return versionsNumbersById;
 	}
-	
+
 	/**
 	 * Comparator for RequieredVersions
 	 * 
@@ -263,5 +284,43 @@ public class RequirementVersionManagerController {
 			return (rV1.getVersionNumber() > rV2.getVersionNumber() ? -1 : (rV1.getVersionNumber() == rV2
 					.getVersionNumber() ? 0 : 1));
 		}
+	}
+	private RequirementAuditTrailService auditTrailService;
+
+	/**
+	 * @param auditTrailService
+	 *            the auditTrailService to set
+	 */
+	@ServiceReference
+	public void setAuditTrailService(RequirementAuditTrailService auditTrailService) {
+		this.auditTrailService = auditTrailService;
+	}
+	@RequestMapping(value = "/print", method = RequestMethod.GET)
+	public ModelAndView printRequirementVersion(@PathVariable long requirementVersionId, Locale locale) {
+		ModelAndView mav = new ModelAndView("print-requirement-version.html");
+		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);
+		if (version == null) {
+			throw new UnknownEntityException(requirementVersionId, RequirementVersion.class);
+		}
+		mav.addObject("requirementVersion", version);
+		// =================CUFS
+		List<CustomFieldValue> customFieldValues = cufHelperService.newHelper(version).getCustomFieldValues();
+		mav.addObject("requirementVersionCufValues", customFieldValues);
+		// ==================TEST CASES
+		List<TestCase> verifyingTC = verifyingTestCaseManager.findAllByRequirementVersion(requirementVersionId);
+		mav.addObject("verifyingTestCases", verifyingTC);
+		// =================VERSIONS
+		List<RequirementVersion> versions = requirementVersionManager.findAllByRequirement(version.getRequirement()
+				.getId());
+		mav.addObject("siblingVersions", versions);
+		//=================AUDIT TRAIL
+		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService.findAllByRequirementVersionIdOrderedByDate(requirementVersionId);
+ 
+		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale,
+				messageSource);
+
+		DataTableModel auditTrailModel = builder.buildDataModel(auditTrail, "1");
+		mav.addObject("auditTrailDatas", auditTrailModel.getAaData());
+		return mav;
 	}
 }

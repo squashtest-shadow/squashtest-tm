@@ -40,7 +40,7 @@
 							treeBaseUrl="${treeBaseUrl}" linkable="test-case" isSubPaged="true">
 							
 	<jsp:attribute name="head">
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.blue.css" />
 
 		<aggr:decorate-verifying-test-cases-table tableModelUrl="${ verifyingTestCasesTableUrl }" batchRemoveButtonId="remove-items-button" 
 			verifyingTestCasesUrl="${ verifyingTestCasesUrl }" nonVerifyingTestCasesUrl="${ nonVerifyingTestCasesUrl }" />

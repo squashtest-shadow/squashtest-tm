@@ -1,0 +1,5 @@
+-include: pom.xml
+-nouses: true
+Import-Package: org.hibernate.proxy,\
+	javassist.util.proxy,\
+	*

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <!--
 
         This file is part of the Squashtest platform.
@@ -21,32 +21,32 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.5.0.dtd">
 <dataset>
 
-	<attachment_list attachment_list_id="1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1"/>
 	
-	<project project_id="1" name="project A" created_by="dbu" created_on="2012-10-26"  attachment_list_id="1"/>
-	<project project_id="2" name="project B" created_by="dbu" created_on="2012-10-26"  attachment_list_id="1"/>
+	<PROJECT PROJECT_ID="1" NAME="project A" CREATED_BY="dbu" CREATED_ON="2012-10-26"  ATTACHMENT_LIST_ID="1"/>
+	<PROJECT PROJECT_ID="2" NAME="project B" CREATED_BY="dbu" CREATED_ON="2012-10-26"  ATTACHMENT_LIST_ID="1"/>
 
-	<custom_field cf_id="1" field_type="CF" name="bob" label="bob label" optional="1" default_value="default bob" input_type="PLAIN_TEXT"/>
-	<custom_field cf_id="2" field_type="CF" name="robert" label="robert label" optional="1" default_value="default robert" input_type="PLAIN_TEXT"/>
-	<custom_field cf_id="3" field_type="CF" name="mike" label="mike label" optional="1" default_value="default mike" input_type="PLAIN_TEXT"/>
-	<custom_field cf_id="4" field_type="CF" name="harry" label="harry label" optional="1" default_value="default harry" input_type="PLAIN_TEXT"/>
+	<CUSTOM_FIELD CF_ID="1" FIELD_TYPE="CF" CODE="1" NAME="bob" LABEL="bob label" OPTIONAL="1" DEFAULT_VALUE="default bob" INPUT_TYPE="PLAIN_TEXT"/>
+	<CUSTOM_FIELD CF_ID="2" FIELD_TYPE="CF" CODE="2" NAME="robert" LABEL="robert label" OPTIONAL="1" DEFAULT_VALUE="default robert" INPUT_TYPE="PLAIN_TEXT"/>
+	<CUSTOM_FIELD CF_ID="3" FIELD_TYPE="CF" CODE="3" NAME="mike" LABEL="mike label" OPTIONAL="1" DEFAULT_VALUE="default mike" INPUT_TYPE="PLAIN_TEXT"/>
+	<CUSTOM_FIELD CF_ID="4" FIELD_TYPE="CF" CODE="4" NAME="harry" LABEL="harry label" OPTIONAL="1" DEFAULT_VALUE="default harry" INPUT_TYPE="PLAIN_TEXT"/>
 
 	<!--  binding for project A and TEST_CASE -->
-	<custom_field_binding cfb_id="131" bound_project_id="1" cf_id="3" bound_entity="TEST_CASE" position="1"/>
-	<custom_field_binding cfb_id="111" bound_project_id="1" cf_id="1" bound_entity="TEST_CASE" position="2"/>
-	<custom_field_binding cfb_id="121" bound_project_id="1" cf_id="2" bound_entity="TEST_CASE" position="5"/>
+	<CUSTOM_FIELD_BINDING CFB_ID="131" BOUND_PROJECT_ID="1" CF_ID="3" BOUND_ENTITY="TEST_CASE" POSITION="1"/>
+	<CUSTOM_FIELD_BINDING CFB_ID="111" BOUND_PROJECT_ID="1" CF_ID="1" BOUND_ENTITY="TEST_CASE" POSITION="2"/>
+	<CUSTOM_FIELD_BINDING CFB_ID="121" BOUND_PROJECT_ID="1" CF_ID="2" BOUND_ENTITY="TEST_CASE" POSITION="5"/>
 	
 	<!--  binding for project B and CAMPAIGN -->	
-	<custom_field_binding cfb_id="241" bound_project_id="2" cf_id="4" bound_entity="CAMPAIGN" position="1"/>
-	<custom_field_binding cfb_id="221" bound_project_id="2" cf_id="2" bound_entity="CAMPAIGN" position="8"/>
-	<custom_field_binding cfb_id="211" bound_project_id="2" cf_id="1" bound_entity="CAMPAIGN" position="3"/>
+	<CUSTOM_FIELD_BINDING CFB_ID="241" BOUND_PROJECT_ID="2" CF_ID="4" BOUND_ENTITY="CAMPAIGN" POSITION="1"/>
+	<CUSTOM_FIELD_BINDING CFB_ID="221" BOUND_PROJECT_ID="2" CF_ID="2" BOUND_ENTITY="CAMPAIGN" POSITION="8"/>
+	<CUSTOM_FIELD_BINDING CFB_ID="211" BOUND_PROJECT_ID="2" CF_ID="1" BOUND_ENTITY="CAMPAIGN" POSITION="3"/>
 
 	<!--  binding for project A and ITERATION -->
-	<custom_field_binding cfb_id="132" bound_project_id="1" cf_id="3" bound_entity="ITERATION" position="2"/>
-	<custom_field_binding cfb_id="112" bound_project_id="1" cf_id="1" bound_entity="ITERATION" position="0"/><!-- position 0 is usually impossible but oh well -->
-	<custom_field_binding cfb_id="122" bound_project_id="1" cf_id="2" bound_entity="ITERATION" position="10"/>
+	<CUSTOM_FIELD_BINDING CFB_ID="132" BOUND_PROJECT_ID="1" CF_ID="3" BOUND_ENTITY="ITERATION" POSITION="2"/>
+	<CUSTOM_FIELD_BINDING CFB_ID="112" BOUND_PROJECT_ID="1" CF_ID="1" BOUND_ENTITY="ITERATION" POSITION="0"/><!-- POSITION 0 IS USUALLY IMPOSSIBLE BUT OH WELL -->
+	<CUSTOM_FIELD_BINDING CFB_ID="122" BOUND_PROJECT_ID="1" CF_ID="2" BOUND_ENTITY="ITERATION" POSITION="10"/>
 
 </dataset>

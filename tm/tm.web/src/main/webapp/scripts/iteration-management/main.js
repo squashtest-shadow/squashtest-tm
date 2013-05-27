@@ -18,8 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["./test-suite-menu/TestSuiteMenuMain"],function(TestSuiteMenuMain){
-	
-	
-	return {initTestSuiteMenu : TestSuiteMenuMain};
+define([ "./test-suite-menu/TestSuiteMenuMain" ], function(TestSuiteMenuMain) {
+
+	return {
+		initTestSuiteMenu : TestSuiteMenuMain
+	};
 });

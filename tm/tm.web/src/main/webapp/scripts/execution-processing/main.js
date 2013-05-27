@@ -18,11 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["./init-preview", "./init-ieo"], function(fnInitPreview, fnInitIeo){
+define([ "./init-preview", "./init-ieo" ], function(fnInitPreview, fnInitIeo) {
 
 	return {
-		initPreview : fnInitPreview	,
+		initPreview : fnInitPreview,
 		initIEO : fnInitIeo
 	};
-	
+
 });

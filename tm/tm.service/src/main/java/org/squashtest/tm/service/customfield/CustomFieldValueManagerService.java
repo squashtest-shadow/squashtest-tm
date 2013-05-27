@@ -31,6 +31,6 @@ public interface CustomFieldValueManagerService extends CustomFieldValueFinderSe
 	 * @param customFieldValueId
 	 * @param newValue
 	 */
-	void update(Long customFieldValueId, String newValue);
+	void changeValue(long customFieldValueId, String newValue);
 
 }

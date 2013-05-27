@@ -25,16 +25,9 @@
 <head>
 	<title th:text="#{workspace.report.title}">Espace rapports</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<!-- common head -->
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" />
 	<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
-	<!-- /common head -->
-	<!-- common script import -->
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squashtm.fg.menu.css" />
-	<!-- /common script import -->
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.orange.css" />
-	<!-- rich jeditable header -->
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/ckeditor.override.css" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.wine.css" />
 
     <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
 	<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
@@ -157,20 +150,20 @@
 						<div th:case="'RADIO_BUTTONS_GROUP'">
 							<label th:text="*{label}">Radio buttons group</label>
 							<ul>
-								<li th:each="opt : *{options}">
-									<input name="rpt-radio-crit" type="radio" th:value="${opt.value}" data-grouped="true" th:text="${opt.label}"
-										th:name="${opt.name}" th:checked="${opt.defaultSelected}" th:id="${opt.givesAccessTo} + '-binder'">
-									</input>
+								<li th:each="opt : *{options}" th:with="radioId = ${opt.givesAccessTo} + '-binder'">
+									<input id="radioId" name="rpt-radio-crit" type="radio" th:value="${opt.value}" data-grouped="true"
+										th:id="${radioId}" th:name="${opt.name}" th:checked="${opt.defaultSelected}" />
+									<label for="radioId" th:for="${radioId}" th:text="${opt.label}">Option</label>
 								</li>
 							</ul>
 						</div>
 						<div th:case="'CHECKBOXES_GROUP'">
 							<label th:text="*{label}">Checkboxes group</label>
 							<ul>
-								<li th:each="opt : *{options}">
-									<input name="rpt-cbxes-crit" type="checkbox" th:value="${opt.value}" data-grouped="true" th:text="${opt.label}"
-										th:name="${opt.name}" th:checked="${opt.defaultSelected}">
-									</input>
+								<li th:each="opt : *{options}" th:with="checkboxId = ${opt.givesAccessTo} + '-binder'">
+									<input id="checkboxId" name="rpt-cbxes-crit" type="checkbox" th:value="${opt.value}" data-grouped="true"
+										th:id="${checkboxId}" th:name="${opt.name}" th:checked="${opt.defaultSelected}" />
+                                    <label for="checkboxId" th:for="${checkboxId}" th:text="${opt.label}">Checkbox</label>
 								</li>
 							</ul>
 						</div>

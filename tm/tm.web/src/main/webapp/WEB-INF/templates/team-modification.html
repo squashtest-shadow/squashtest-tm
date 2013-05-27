@@ -96,22 +96,15 @@
 	src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
 	
 </script>
-<!-- common head -->
 <link rel="stylesheet" type="text/css" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css"
-	th:href="@{/styles/master.css}" />
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
+	th:href="@{/styles/squash.core.css}" />
 <link rel="shortcut icon" type="image/x-icon" media="all"
 	href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
 	th:href="@{/images/favicon.ico}" />
-<!-- /common head -->
-<!-- common script import -->
 <link rel="stylesheet" type="text/css" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squashtm.fg.menu.css"
-	th:href="@{/styles/squashtm.fg.menu.css}" />
-<!-- /common script import -->
-<link rel="stylesheet" type="text/css" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.grey.css"
-	th:href="@{/styles/master.grey.css}" />
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.grey.css"
+	th:href="@{/styles/squash.grey.css}" />
 <link rel="stylesheet" type="text/css" media="all"
 	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css"
 	th:href="@{/styles/structure.override.css}" />
@@ -119,10 +112,6 @@
 <link rel="stylesheet" type="text/css" media="all"
 	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
 	th:href="@{/styles/structure.subpageoverride.css}" />
-<!-- rich jeditable header -->
-<!--   <link rel="stylesheet" type="text/css" media="all" -->
-<!--     href="../../../../../../../tm/tm.web/src/main/webapp/styles/ckeditor.override.css" -->
-<!--     th:href="@{/styles/ckeditor.override.css}" /> -->
 </head>
 <body>
 	<div id="navigation" th:include="navbar.frag :: navbar">NAVBAR</div>
@@ -162,7 +151,7 @@
 				<div id="information-content">
 					<div id="team-name-div"
 						class="ui-widget-header ui-corner-all ui-state-default fragment-header">
-						<div style="float: left; height: 3em">
+						<div class="sub-page-fragment-title">
 							<h2>
 								<label for="team-name-header" th:text="#{label.team}">Team</label>
 								<a id="team-name-header" href="#" th:text="${team.name}">Testeur</a>

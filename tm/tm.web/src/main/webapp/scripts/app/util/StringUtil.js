@@ -23,13 +23,13 @@ define([ "jquery" ], function($) {
 		// IE8 does not not compute the regex "^\s*$" properly, hence the "trim"
 		return (!val) || $.trim(val) === "";
 	}
-	
+
 	function isEmpty(val) {
 		return (!val) || val === "";
 	}
 
 	return {
-		isBlank: isBlank, 
-		isEmpty: isEmpty
+		isBlank : isBlank,
+		isEmpty : isEmpty
 	};
 });

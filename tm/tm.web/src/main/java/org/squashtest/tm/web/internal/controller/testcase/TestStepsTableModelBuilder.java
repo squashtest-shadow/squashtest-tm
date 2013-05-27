@@ -88,7 +88,8 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 		item.put("empty-requirements-holder", null);
 		item.put("empty-browse-holder", null);
 		item.put("empty-delete-holder", null);
-		item.put("has-requirements", !visited.getRequirementVersionCoverages().isEmpty());		
+		item.put("has-requirements", !visited.getRequirementVersionCoverages().isEmpty());
+		item.put("nb-requirements", visited.getRequirementVersionCoverages().size());
 		decorateWithCustomFields(item);
 		
 		lastBuiltItem = item;
@@ -116,6 +117,7 @@ class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implemen
 		item.put("empty-browse-holder", null);
 		item.put("empty-delete-holder", null);
 		item.put("has-requirements", false);
+		item.put("nb-requirements", null);
 		decorateWithCustomFields(item);
 		
 		lastBuiltItem = item;

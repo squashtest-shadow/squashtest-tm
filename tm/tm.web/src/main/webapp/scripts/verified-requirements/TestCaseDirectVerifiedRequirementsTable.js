@@ -18,25 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil" , "./VerifiedRequirementsTable" ,
-		"jquery.squash", "jqueryui", "jquery.squash.togglepanel",
-		"jquery.squash.datatables", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ],
-		function($, Backbone, _, StringUtil, VerifiedRequirementsTable) {
-			var VRTS = squashtm.app.verifiedRequirementsTableSettings;
-				var TestCaseDirectVerifiedRequirementsTable = VerifiedRequirementsTable.extend({
-					
-					initialize : function(options) {
-						this.constructor.__super__.initialize.apply(this, [options]);							
-						
-					},
-					
-					events : {},
-					
-					
-					
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
+		"./VerifiedRequirementsTable", "jquery.squash", "jqueryui",
+		"jquery.squash.togglepanel", "jquery.squash.datatables",
+		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
+		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil,
+		VerifiedRequirementsTable) {
+	var VRTS = squashtm.app.verifiedRequirementsTableSettings;
+	var TestCaseDirectVerifiedRequirementsTable = VerifiedRequirementsTable
+			.extend({
 
-					
-				});
-				return TestCaseDirectVerifiedRequirementsTable;
+				initialize : function(options) {
+					this.constructor.__super__.initialize.apply(this,
+							[ options ]);
+
+				},
+
+				events : {}
+
 			});
+	return TestCaseDirectVerifiedRequirementsTable;
+});

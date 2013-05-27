@@ -73,7 +73,10 @@ public class ReportViewServletContextInitializer implements ServletContextAware 
 	}
 
 	public synchronized void registerViews(ReportPlugin plugin, Map<?, ?> properties) {
-		apply(RegistrationAction.BIND_CONTEXT, plugin, properties);
+		// sometimes, plugin is null
+		if (plugin != null) {
+			apply(RegistrationAction.BIND_CONTEXT, plugin, properties);
+		}
 	}
 
 	private void apply(RegistrationAction action, ReportPlugin plugin, Map<?, ?> properties) {

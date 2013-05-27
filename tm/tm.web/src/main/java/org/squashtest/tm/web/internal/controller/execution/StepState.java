@@ -20,31 +20,30 @@
  */
 package org.squashtest.tm.web.internal.controller.execution;
 
-import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 
 public class StepState {
 
 	private long currentStepId;
 	private String currentStepStatus;
-	
+
 	public long getCurrentStepId() {
 		return currentStepId;
 	}
-	
+
 	public void setCurrentStepId(long currentStepId) {
 		this.currentStepId = currentStepId;
 	}
-	
+
 	public String getCurrentStepStatus() {
 		return currentStepStatus;
 	}
-	
+
 	public void setCurrentStepStatus(String currentStepStatus) {
 		this.currentStepStatus = currentStepStatus;
 	}
-	
-	public StepState(){
+
+	public StepState() {
 		super();
 	}
 
@@ -53,16 +52,10 @@ public class StepState {
 		this.currentStepId = currentStepId;
 		this.currentStepStatus = currentStepStatus;
 	}
-	
-	public StepState(long currentStepId, ExecutionStatus currentStepState) {
-		super();
-		this.currentStepId = currentStepId;
-		this.currentStepStatus = currentStepStatus.toString();
-	}
-	
-	public StepState(ExecutionStep step){
+
+	public StepState(ExecutionStep step) {
 		this.currentStepId = step.getId();
-		this.currentStepStatus = step.getExecutionStatus().toString();
+		this.currentStepStatus = step.getExecutionStatus().name();
 	}
-	
+
 }

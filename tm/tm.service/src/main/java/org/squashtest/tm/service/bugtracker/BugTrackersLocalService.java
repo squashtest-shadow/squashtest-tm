@@ -180,7 +180,19 @@ public interface BugTrackersLocalService {
 	 */
 	FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForTestCase(Long tcId,
 			CollectionSorting sorter);
-
+	 /**
+	 * Given a TestCase, returns a list of linked BTIssue (not Issue).<br>
+	 * <br>
+	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
+	 * the informations together).
+	 * 
+	 * @param testCase
+	 *            id for which we need to get the issues,
+	 * 
+	 * @return a  non-null but possibly empty list of IssueOwnership, 
+	 **/
+	List<IssueOwnership<BTIssueDecorator>> findIssueOwnershipForTestCase(long testCaseId);
+	
 	/* ****************** BugTracker - side methods ******************** */
 
 	/**
@@ -285,7 +297,7 @@ public interface BugTrackersLocalService {
 	 * 			: the id of the issue in Squash TM
 	 */
 	void detachIssue(Long id);
-	
+
 
 	/**
 	 * Given a remote issue key, will ask the bugtracker to attach the attachments to that issue.

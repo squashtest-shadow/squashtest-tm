@@ -21,6 +21,7 @@
 /**
  * This is a template for a backbone module
  */
-define([ "jquery", "backbone", "handlebars" ], function($, Backbone, Handlebars) {
-	return {};
-});
+define([ "jquery", "backbone", "handlebars" ],
+		function($, Backbone, Handlebars) {
+			return {};
+		});

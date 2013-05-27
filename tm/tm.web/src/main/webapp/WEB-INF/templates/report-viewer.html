@@ -26,16 +26,9 @@
 	<title th:text="#{squashtm.library.requirement.title}">Report viewer</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<!-- common head -->
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" th:href="@{/styles/squash.core.css}" />
 	<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
-	<!-- /common head -->
-	<!-- common script import -->
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squashtm.fg.menu.css" th:href="@{/styles/squashtm.fg.menu.css}" />
-	<!-- /common script import -->
-	<!-- rich jeditable header -->
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/ckeditor.override.css" th:href="@{/styles/ckeditor.override.css}" />
-	<!-- /rich jeditable header -->
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.wine.css" th:href="@{/styles/master.wine.css}" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.wine.css" th:href="@{/styles/squash.wine.css}" />
 	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/tabbed-pane.blue.css" th:href="@{/styles/tabbed-pane.blue.css}" />
 	<!-- subpage -->
 	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css" th:href="@{/styles/structure.override.css}" />
@@ -87,18 +80,8 @@
 				<h2 th:text="#{squashtm.library.requirement.title}">Report viewer</h2>	
 			</div>
 			<div class="snap-right">
- 				<div class="main-menubar" th:include="menubar.frag :: menubar">
- 					MENUBAR
-				</div>
-				<div style="display:inline-block;">
-					<div id="ajax-processing-indicator" class="ui-corner-all snap-right" style="display:inline-block">
-						<img src="../../../../../../../tm/tm.web/src/main/webapp/images/ajax-loader.gif" width="19px" height="19px" alt="processing" th:alt="#{squashtm.processing}" th:src="@{/images/ajax-loader.gif}" /> 
-						<span th:text="#{squashtm.processing}">Processing...</span>
-					</div>
-					<div id="generic-error-notification-area" class="ui-state-error ui-corner-all snap-right not-displayed">
-						<span class="ui-icon ui-icon-alert icon"></span><span th:text="#{error.generic.label}">WTF ?</span> &nbsp;(<a href="javascript:void(0)" id="show-generic-error-details" th:text="#{error.generic.button.details.label}">Details</a>)
-					</div>
- 				</div>
+ 				<div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
+				<div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
 			</div>
 		</div>
 		<div id="information-content" th:include="contextual-report.frag :: report">

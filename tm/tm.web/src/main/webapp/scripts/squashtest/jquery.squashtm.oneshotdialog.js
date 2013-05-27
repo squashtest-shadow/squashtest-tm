@@ -26,7 +26,7 @@ function oneShotConfirm(dialogTitle, domMessage, okText, koText, widthParam) {
 	$(document).append(oneShotPopup);
 
 	oneShotPopup.append(domMessage);
-	oneShotPopup.keypress(function () {
+	oneShotPopup.keypress(function() {
 		if (evt.which == '13') {
 			$('button', oneShotPopup).trigger('click');
 		}
@@ -41,7 +41,7 @@ function oneShotConfirm(dialogTitle, domMessage, okText, koText, widthParam) {
 		modal : true,
 		buttons : [ {
 			'text' : okText,
-			'click' : function () {
+			'click' : function() {
 				var jqDialog = $(this);
 				jqDialog.dialog('close');
 				jqDialog.dialog('destroy');
@@ -50,7 +50,7 @@ function oneShotConfirm(dialogTitle, domMessage, okText, koText, widthParam) {
 			}
 		}, {
 			'text' : koText,
-			'click' : function () {
+			'click' : function() {
 				var jqDialog = $(this);
 				jqDialog.dialog('close');
 				jqDialog.dialog('destroy');

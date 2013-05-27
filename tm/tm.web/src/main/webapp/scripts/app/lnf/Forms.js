@@ -21,66 +21,68 @@
 /**
  * This module handles form messages.
  */
-define([ "jquery" ], function($) {
-	function clearState(help, controlGroup) {
-		return function() {
-			help.hide().addClass("not-displayed").html("&nbsp;");
+define(
+		[ "jquery" ],
+		function($) {
+			function clearState(help, controlGroup) {
+				return function() {
+					help.hide().addClass("not-displayed").html("&nbsp;");
 
-			controlGroup.removeClass("error").removeClass("warning");
+					controlGroup.removeClass("error").removeClass("warning");
 
-			return this;
-		};
-	}
-
-	/**
-	 * input has 2 methods : 
-	 * clearState
-	 * setState(cssClass, messageKey)
-	 */
-	function input($dom) {
-		var $input = $dom, 
-			$controlGroup = $input.closest(".control-group"), 
-			$help = $input.parent(".controls").find(".help-inline");
-
-		/**
-		 * Shows the message read from squashtm.app.messages using the given css class
-		 */
-		var setState = function (state, messageKey) {
-			var message = messageKey;
-			if(squashtm.app.messages != null){
-				 message = squashtm.app.messages[messageKey] || messageKey;
+					return this;
+				};
 			}
-			
-			$controlGroup.removeClass("error").removeClass("warning").addClass(state);
-			
-			$help.html(message).hide().fadeIn("slow", function() {
-				$(this).removeClass("not-displayed");
-			});
 
-			return this;
-		};
+			/**
+			 * input has 2 methods : clearState setState(cssClass, messageKey)
+			 */
+			function input($dom) {
+				var $input = $dom, $controlGroup = $input
+						.closest(".control-group"), $help = $input.parent(
+						".controls").find(".help-inline");
 
-		return {
-			$el: $input,
-			clearState: clearState($help, $controlGroup),
-			setState: setState, 
-			hasHelp: $help.length !== 0
-		};
-	}
+				/**
+				 * Shows the message read from squashtm.app.messages using the
+				 * given css class
+				 */
+				var setState = function(state, messageKey) {
+					var message = messageKey;
+					if (squashtm.app.messages != null) {
+						message = squashtm.app.messages[messageKey]
+								|| messageKey;
+					}
 
-	function form($dom) {
-		var $form = $dom, 
-			$controlGroup = $form.find(".control-group"), 
-			$help = $form.find(".help-inline");
+					$controlGroup.removeClass("error").removeClass("warning")
+							.addClass(state);
 
-		return {
-			clearState : clearState($help, $controlGroup),
-			input : input
-		};
-	}
+					$help.html(message).hide().fadeIn("slow", function() {
+						$(this).removeClass("not-displayed");
+					});
 
-	return {
-		form : form, 
-		input: input
-	};
-});
+					return this;
+				};
+
+				return {
+					$el : $input,
+					clearState : clearState($help, $controlGroup),
+					setState : setState,
+					hasHelp : $help.length !== 0
+				};
+			}
+
+			function form($dom) {
+				var $form = $dom, $controlGroup = $form.find(".control-group"), $help = $form
+						.find(".help-inline");
+
+				return {
+					clearState : clearState($help, $controlGroup),
+					input : input
+				};
+			}
+
+			return {
+				form : form,
+				input : input
+			};
+		});

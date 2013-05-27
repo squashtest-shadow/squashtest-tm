@@ -25,12 +25,13 @@ import java.util.List;
 import org.squashtest.tm.domain.users.UsersGroup;
 
 public interface UsersGroupDao extends EntityDao<UsersGroup> {
-	
+
 	/**
 	 * 
 	 * @return all UsersGroups with no restriction, ordered by {@linkplain UsersGroup#getQualifiedName()}
 	 */
 	List<UsersGroup> findAllGroupsOrderedByQualifiedName();
-	
-}
 
+	UsersGroup findByQualifiedName(String qualifiedName);
+
+}

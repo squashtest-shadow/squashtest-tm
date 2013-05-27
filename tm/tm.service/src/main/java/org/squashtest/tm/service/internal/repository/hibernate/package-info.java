@@ -134,6 +134,7 @@
 		@NamedQuery(name = "testCase.findUnsortedAllByVerifiedRequirementVersion", query = "select tc from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion vr where vr.id = :requirementVersionId"),
 		@NamedQuery(name = "testCase.findAllExecutions", query = "select exec from Execution exec join exec.referencedTestCase tc where tc.id = :testCaseId"),
 		
+		
 		//Campaign
 		@NamedQuery(name = "campaign.findNamesInCampaignStartingWith", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId and i.name like :nameStart"),
 		@NamedQuery(name = "campaign.findAllNamesInCampaign", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId "),
@@ -202,6 +203,7 @@
 
 		//UsersGroup
 		@NamedQuery(name = "usersGroup.findAllGroups", query = "from UsersGroup fetch all properties order by qualifiedName"),
+		@NamedQuery(name = "usersGroup.findByQualifiedName", query = "from UsersGroup where qualifiedName = :qualifiedName"),
 
 		//User
 		@NamedQuery(name = "user.findAllUsers", query = "from User fetch all properties order by login"),

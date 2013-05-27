@@ -19,8 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Must specify one of the following : 
- * ================================
+ * Must specify one of the following : ================================
  * settings.jeditableSettings.jsonData = string representing the json formated
  * data displayed in the select. Either jsonData or jsonUrl must be defined.
  * 
@@ -45,11 +44,11 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
 			cancel : language.cancelLabel,
 			onblur : function() {
 			},// this disable the onBlur handler, which would close the
-				// jeditable
+			// jeditable
 			// when clicking in the rich editor (since it considers the click as
 			// out of the editing zone)
 			indicator : '<img src="' + squashtm.app.contextRoot
-					+ 'scripts/jquery/indicator.gif" alt="processing..." />',
+					+ 'scripts/jquery/indicator.gif" alt="processing..." />'
 		};
 
 		var effectiveSettings = $.extend(true, {}, settings.jeditableSettings,

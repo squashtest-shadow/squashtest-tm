@@ -61,7 +61,7 @@
 
 <layout:info-page-layout titleKey="workspace.project.info.title" isSubPaged="true">
 	<jsp:attribute name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.grey.css" />	
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.grey.css" />	
 	</jsp:attribute>
 
 	<jsp:attribute name="titlePane">
@@ -303,7 +303,7 @@
 		
 			<%----------------------------------- add User Popup-----------------------------------------------%>
 		<f:message var="noUserSelectedError" key="error.permissions.noUserSelected" />
-		<comp:popup id="add-permission-dialog"
+		<pop:popup id="add-permission-dialog"
 				titleKey="title.AddPermission" isContextual="true"
 				openedBy="add-permission-button">
 			<jsp:attribute name="buttons">
@@ -328,18 +328,18 @@
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
-			<jsp:body>
+			<jsp:attribute name="body">
 				<div id="permission-popup">
 				</div>
-			</jsp:body>
-		</comp:popup>
+			</jsp:attribute>
+		</pop:popup>
 		<%----------------------------------- /add User Popup-----------------------------------------------%>
 	</jsp:attribute>
 </layout:info-page-layout>
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
-	<comp:popup id="rename-project-dialog"
+	<pop:popup id="rename-project-dialog"
 		titleKey="dialog.rename-project.title" isContextual="true"
 		openedBy="rename-project-button">
 		<jsp:attribute name="buttons">
@@ -354,14 +354,14 @@
 		},			
 		<pop:cancel-button />
 		</jsp:attribute>
-		<jsp:body>
+		<jsp:attribute name="body">
 		<label><f:message key="dialog.rename.label" />
 		</label>
 		<input type="text" id="rename-project-input" maxlength="255" size="50" />
 		<br />
 		<comp:error-message forField="name" />
-	</jsp:body>
-	</comp:popup>
+	</jsp:attribute>
+	</pop:popup>
 </sec:authorize>
 
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->

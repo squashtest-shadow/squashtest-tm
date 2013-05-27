@@ -58,6 +58,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 @RequestMapping("/attach-list/{attachListId}/attachments")
 public class AttachmentManagerController {
 	
+	private static final String NAME = "name";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentManagerController.class);
 	
@@ -72,7 +73,7 @@ public class AttachmentManagerController {
 
 	private final DatatableMapper attachmentMapper = new NameBasedMapper()
 														 .mapAttribute(Attachment.class, "id", Long.class, "item-id")
-														 .mapAttribute(Attachment.class, "name", String.class, "hyphenated-name")
+														 .mapAttribute(Attachment.class, NAME, String.class, "hyphenated-name")
 														 .mapAttribute(Attachment.class, "size", Long.class, "size")
 														 .mapAttribute(Attachment.class, "addedOn", Date.class, "added-on");
 
@@ -119,9 +120,9 @@ public class AttachmentManagerController {
 	/* ******************************* modify *********************************** */
 	
 	
-	@RequestMapping(value="/{attachmentId}/name",method = RequestMethod.POST, params = { "name" })
+	@RequestMapping(value="/{attachmentId}/name",method = RequestMethod.POST, params = { NAME })
 	@ResponseBody
-	public Object renameAttachment(HttpServletResponse response, @PathVariable long attachmentId, @RequestParam("name") String newName) {
+	public Object renameAttachment(HttpServletResponse response, @PathVariable long attachmentId, @RequestParam(NAME) String newName) {
 
 		attachmentManagerService.renameAttachment(attachmentId, newName);
 		LOGGER.info("AttachmentController : renaming attachment " + attachmentId + " as " + newName);
@@ -151,7 +152,7 @@ public class AttachmentManagerController {
 			
 			result.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
 			result.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			result.put("name", item.getName());
+			result.put(NAME, item.getName());
 			result.put("hyphenated-name", hyphenateFilename(item.getName()));
 			result.put("size",item.getFormattedSize(locale));
 			result.put("added-on",localizedDate(item.getAddedOn(),locale));

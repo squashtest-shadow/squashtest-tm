@@ -102,33 +102,16 @@
 	src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
 	
 </script>
-<!-- common head -->
-<link rel="stylesheet" type="text/css" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css"
-	th:href="@{/styles/master.css}" />
-<link rel="shortcut icon" type="image/x-icon" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
-	th:href="@{/images/favicon.ico}" />
-<!-- /common head -->
-<!-- common script import -->
-<link rel="stylesheet" type="text/css" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squashtm.fg.menu.css"
-	th:href="@{/styles/squashtm.fg.menu.css}" />
-<!-- /common script import -->
-<link rel="stylesheet" type="text/css" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.grey.css"
-	th:href="@{/styles/master.grey.css}" />
-<link rel="stylesheet" type="text/css" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css"
-	th:href="@{/styles/structure.override.css}" />
-
-<link rel="stylesheet" type="text/css" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
-	th:href="@{/styles/structure.subpageoverride.css}" />
-<!-- rich jeditable header -->
-<!--   <link rel="stylesheet" type="text/css" media="all" -->
-<!--     href="../../../../../../../tm/tm.web/src/main/webapp/styles/ckeditor.override.css" -->
-<!--     th:href="@{/styles/ckeditor.override.css}" /> -->
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../target/processed-css/squash.core.css"
+  th:href="@{/styles/squash.core.css}" />
+<link rel="shortcut icon" type="image/x-icon" media="all" href="../../images/favicon.ico"
+  th:href="@{/images/favicon.ico}" />
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../target/processed-css/squash.grey.css"
+  th:href="@{/styles/squash.grey.css}" />
+<link rel="stylesheet" type="text/css" media="all" href="../../styles/structure.override.css"
+  th:href="@{/styles/structure.override.css}" />
+<link rel="stylesheet" type="text/css" media="all" href="../../styles/structure.subpageoverride.css"
+  th:href="@{/styles/structure.subpageoverride.css}" />
 </head>
 <body>
 	<div id="navigation" th:include="navbar.frag :: navbar">NAVBAR</div>
@@ -168,7 +151,7 @@
 				<div id="information-content">
 					<div id="user-login-div"
 						class="ui-widget-header ui-corner-all ui-state-default fragment-header">
-						<div style="float: left; height: 3em">
+						<div class="sub-page-fragment-title">
 							<h2>
 								<label for="user-login-header" th:text="#{user.header.title}">User</label>
 								<a id="team-name-header" href="#" th:text="${user.login}">Machin</a>
@@ -193,61 +176,54 @@
 						</div>
 						<br /> <br />
 						<!-- ============================================User Infos ======================================= -->
-						<div class="toggle-panel ">
-							<span class="not-displayed toogle-panel-buttons"></span>
-							<div id="user-info-panel"
-								class="information-panel toggle-panel-main">
-								<div class="display-table" id="user-infos-table">
-									<div class="display-table-row">
-										<label for="user-login" th:text="#{label.Login}">Login</label>
-										<div id="user-login" class="display-table-cell"
-											th:text="${user.login}">Machin</div>
-									</div>
-									<div class="display-table-row">
-										<label for="reset-password-button"
-											th:text="#{user.info.password.label}">Password</label>
-										<div class="display-table-cell">
-											<a href="javascript:void(0)" id="reset-password-button"
-												th:text="#{user.button.reset.password}">Reset</a>
-										</div>
-									</div>
-									<div class="display-table-row">
-										<label for="user-first-name" th:text="#{label.FirstName}">First
-											name</label>
-										<div id="user-first-name" class="display-table-cell"
-											th:text="${ user.firstName }">Machinou</div>
-									</div>
-									<div class="display-table-row">
-										<label for="user-last-name" th:text="#{label.LastName}">Last
-											Name</label>
-										<div id="user-last-name" class="display-table-cell"
-											th:text="${ user.lastName }">Bidule</div>
-									</div>
-									<div class="display-table-row">
-										<label for="user-email" th:text="#{label.Email}">Email</label>
-										<div id="user-email" class="display-table-cell"
-											th:text="${ user.email }"></div>
-									</div>
-									<div class="display-table-row">
-										<label for="user-group" th:text="#{label.UserGroup}">User
-											Group</label>
-										<div class="display-table-cell">
-											<select id="user-group">
-												<option th:each="group : ${ usersGroupList }"
-													th:id="${group.qualifiedName}"
-													id="squashtest.authz.group.core.Admin" value="1"
-													th:value="${group.id}"
-													th:selected="${ group.simpleName == user.group.simpleName } ? 'selected'"
-													th:text="#{'user.account.group.'+${group.qualifiedName}+'.label'}">Admin
-												</option>
-											</select>
-										</div>
-									</div>
-								</div>
+            <div class="toggle-panel">
+              <span class="not-displayed toogle-panel-buttons"></span>
+              <div id="user-info-panel" class="information-panel toggle-panel-main">
+                <div class="display-table" id="user-infos-table">
+                  <div class="display-table-row">
+                    <label for="user-login" th:text="#{label.Login}">Login</label>
+                    <div id="user-login" class="display-table-cell" th:text="${user.login}">Machin</div>
+                  </div>
+                  <div class="display-table-row" th:unless="${authenticationProvider.managedPassword}">
+                    <label for="reset-password-button" th:text="#{label.password}">Password</label>
+                    <div class="display-table-cell">
+                      <a href="javascript:void(0)" id="reset-password-button" th:text="#{user.button.reset.password}">Reset</a>
+                    </div>
+                  </div>
+                  <div class="display-table-row" th:if="${authenticationProvider.managedPassword}">
+                    <label for="password-info" th:text="#{label.password}">Password</label>
+                    <div class="display-table-cell">
+                      <span id="password-info" th:text="#{message.managedPassword}">Managed by auth provider</span>
+                    </div>
+                  </div>
+                  <div class="display-table-row">
+                    <label for="user-first-name" th:text="#{label.FirstName}">First name</label>
+                    <div id="user-first-name" class="display-table-cell" th:text="${ user.firstName }">Machinou</div>
+                  </div>
+                  <div class="display-table-row">
+                    <label for="user-last-name" th:text="#{label.LastName}">Last Name</label>
+                    <div id="user-last-name" class="display-table-cell" th:text="${ user.lastName }">Bidule</div>
+                  </div>
+                  <div class="display-table-row">
+                    <label for="user-email" th:text="#{label.Email}">Email</label>
+                    <div id="user-email" class="display-table-cell" th:text="${ user.email }"></div>
+                  </div>
+                  <div class="display-table-row">
+                    <label for="user-group" th:text="#{label.UserGroup}">User Group</label>
+                    <div class="display-table-cell">
+                      <select id="user-group">
+                        <option th:each="group : ${ usersGroupList }" th:id="${group.qualifiedName}"
+                          id="squashtest.authz.group.core.Admin" value="1" th:value="${group.id}"
+                          th:selected="${ group.simpleName == user.group.simpleName } ? 'selected'"
+                          th:text="#{'user.account.group.'+${group.qualifiedName}+'.label'}">Admin</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
 
-							</div>
-						</div>
-						<!-- ============================================/User Infos ======================================= -->
+              </div>
+            </div>
+            <!-- ============================================/User Infos ======================================= -->
 						<!-- ============================================ Permissions ======================================= -->
 
 						<div id="permissions" class="toggle-panel">
@@ -323,7 +299,7 @@
 
 
 
-	<div id="password-reset-popup" class="not-displayed popup-dialog">
+	<div id="password-reset-popup" class="not-displayed popup-dialog" th:unless="${authenticationProvider.managedPassword}">
 		<div id="user-account-password-panel">
 
 			<div>

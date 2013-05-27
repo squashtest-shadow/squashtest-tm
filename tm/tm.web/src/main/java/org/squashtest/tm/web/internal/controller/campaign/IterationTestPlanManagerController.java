@@ -140,7 +140,7 @@ public class IterationTestPlanManagerController {
 	}
 	
 	@Inject
-	private Provider<JsonTestCaseBuilder> builder;
+	private Provider<JsonTestCaseBuilder> jsonTestCaseBuilder;
 	/**
 	 * Fetches and returns a list of json test cases from an iteration id
 	 * @param iterationId : the id of an {@link Iteration}
@@ -151,7 +151,7 @@ public class IterationTestPlanManagerController {
 	public @ResponseBody
 	List<JsonTestCase> getJsonTestCases(@PathVariable long iterationId, Locale locale) {
 		List<TestCase> testCases = iterationFinder.findPlannedTestCases(iterationId);
-		return builder.get().locale(locale).entities(testCases).toJson();
+		return jsonTestCaseBuilder.get().locale(locale).entities(testCases).toJson();
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/non-belonging-test-cases", method = RequestMethod.POST, params = TESTPLANS_IDS_REQUEST_PARAM)

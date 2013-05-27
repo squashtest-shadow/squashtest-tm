@@ -22,9 +22,6 @@
  * Datatables customization classes *
  ************************************/
 
-@import url("datatables.css");
-
- 
 tr.even {
 	background-color: #F3F7EA;
 }

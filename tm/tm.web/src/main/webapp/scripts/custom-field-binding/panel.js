@@ -18,30 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+define([ "jquery", "jquery.squash.togglepanel" ], function($) {
 
-define(["jquery", "jquery.squash.togglepanel"], function($){
+	return function(settings) {
 
-	return function(settings){
-	
 		var instance = $(settings.selector);
 		var button = instance.prev().find('input');
-		
-		instance.togglePanel(settings);	
 
-		
+		instance.togglePanel(settings);
+
 		// *********** decorate the attributes ******
-		
-		button.setPopup = function(popup){
-			button.click(function(){
+
+		button.setPopup = function(popup) {
+			button.click(function() {
 				popup.dialog("open");
 			});
 		};
-		
-		instance.getButton = function(){
+
+		instance.getButton = function() {
 			return button;
 		};
-		
-		
+
 		return instance;
 	};
 

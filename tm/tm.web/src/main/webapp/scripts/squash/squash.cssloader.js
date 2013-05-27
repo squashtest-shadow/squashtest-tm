@@ -18,20 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+define(function(require) {
 
-define(function(require){
-	
 	return {
-		cssFromUrl : function (url) {
-		    var link = document.createElement("link");
-		    link.type = "text/css";
-		    link.rel = "stylesheet";
-		    link.href = url;
-		    document.getElementsByTagName("head")[0].appendChild(link);
+		cssFromUrl : function(url) {
+			var link = document.createElement("link");
+			link.type = "text/css";
+			link.rel = "stylesheet";
+			link.href = url;
+			document.getElementsByTagName("head")[0].appendChild(link);
 		},
-		cssFromPath : function(path){
+		cssFromPath : function(path) {
 			var url = require.toUrl(path);
 			this.cssFromUrl(url);
 		}
-	}
+	};
 });

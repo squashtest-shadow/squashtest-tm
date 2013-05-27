@@ -24,9 +24,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<!-- common head -->
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.css" th:href="@{/styles/master.css}" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" th:href="@{/styles/squash.core.css}" />
 	<!-- /common head -->
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/master.blue.css" th:href="@{/styles/master.blue.css}" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" th:href="@{/styles/squash.blue.css}" />
 </head>
 <body>
 <div th:remove="all">
@@ -76,7 +76,7 @@
 
 <div id="attachment-upload-dialog" class="popup-dialog" > 			
 <!--  		 templates for cloning  -->
- 		<div id="add-attachments-templates" style="display:none;">
+ 		<div id="add-attachments-templates" class="not-displayed">
 	 		<div class="attachment-item">
 		 		<input type="file" name="attachment[]" size="40" />
 		 		<input type="button" th:value="#{dialog.attachment.add.button.remove.label}" value="remove" />
@@ -89,7 +89,7 @@
  				 				 			
  			</form>
  		</div> 	
- 		<div id="dump" style="display:none;"></div>
+ 		<div id="dump" class="not-displayed"></div>
  </div>
  
  
@@ -98,8 +98,8 @@
  
 
  <div id="attachment-progress-dialog" class="popup-dialog"  >
- 		<div style="text-align:center;">
- 			<h4 id="attachment-progress-message" style="text-align:center;"></h4>
+ 		<div>
+ 			<h4 id="attachment-progress-message"></h4>
  			<div id="attachment-progressbar"></div>
  			<span id="attachment-progress-percentage"></span>
  		</div>

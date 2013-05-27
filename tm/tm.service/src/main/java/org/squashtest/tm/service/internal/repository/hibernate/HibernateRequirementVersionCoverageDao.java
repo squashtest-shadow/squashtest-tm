@@ -28,6 +28,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
@@ -35,23 +36,20 @@ import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionCoverageDao;
 
 @Repository("CustomRequirementVersionCoverageDao")
-public class HibernateRequirementVersionCoverageDao extends HibernateEntityDao<RequirementVersionCoverage> implements CustomRequirementVersionCoverageDao {
+public class HibernateRequirementVersionCoverageDao extends HibernateEntityDao<RequirementVersionCoverage> implements
+		CustomRequirementVersionCoverageDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<RequirementVersionCoverage> findAllByTestCaseId(long testCaseId, PagingAndSorting pas) {
 		Criteria crit = createFindAllCoverageCriteria();
-		
 
 		crit.add(Restrictions.eq("TestCase.id", Long.valueOf(testCaseId)));
 		PagingUtils.addPaging(crit, pas);
 		SortingUtils.addOrder(crit, pas);
-		
-		
+
 		return crit.list();
 	}
-	
-	
 
 	private Criteria createFindAllCoverageCriteria() {
 		Criteria crit = currentSession().createCriteria(RequirementVersionCoverage.class, "RequirementVersionCoverage");
@@ -59,24 +57,23 @@ public class HibernateRequirementVersionCoverageDao extends HibernateEntityDao<R
 		crit.createAlias("RequirementVersion.requirement", "Requirement", Criteria.LEFT_JOIN);
 		crit.createAlias("RequirementVersionCoverage.verifyingTestCase", "TestCase");
 		crit.createAlias("Requirement.project", "Project", Criteria.LEFT_JOIN);
-		
-		
 
 		return crit;
 	}
+
 	private Criteria createFindAllVerifiedCriteria(PagingAndSorting pagingAndSorting) {
-				Criteria crit = currentSession().createCriteria(RequirementVersion.class, "RequirementVersion");
-				crit.createAlias("requirement", "Requirement", Criteria.LEFT_JOIN);
-				crit.createAlias("requirementVersionCoverages", "rvc");
-				crit.createAlias("rvc.verifyingTestCase", "TestCase");
-				crit.createAlias("requirement.project", "Project", Criteria.LEFT_JOIN);
-				
-				PagingUtils.addPaging(crit, pagingAndSorting);
-				SortingUtils.addOrder(crit, pagingAndSorting);
-		
-				return crit;
-			}
-		
+		Criteria crit = currentSession().createCriteria(RequirementVersion.class, "RequirementVersion");
+		crit.createAlias("requirement", "Requirement", Criteria.LEFT_JOIN);
+		crit.createAlias("requirementVersionCoverages", "rvc");
+		crit.createAlias("rvc.verifyingTestCase", "TestCase");
+		crit.createAlias("requirement.project", "Project", Criteria.LEFT_JOIN);
+
+		PagingUtils.addPaging(crit, pagingAndSorting);
+		SortingUtils.addOrder(crit, pagingAndSorting);
+
+		return crit;
+	}
+
 	@Override
 	public List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds,
 			PagingAndSorting pagingAndSorting) {
@@ -89,5 +86,37 @@ public class HibernateRequirementVersionCoverageDao extends HibernateEntityDao<R
 		crit.add(Restrictions.in("TestCase.id", testCaseIds)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		return crit.list();
+	}
+
+	@Override
+	public List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds) {
+		PagingAndSorting pas = new PagingAndSorting() {
+
+			@Override
+			public String getSortedAttribute() {
+				return "RequirementVersion.name";
+			}
+
+			@Override
+			public SortOrder getSortOrder() {
+				return SortOrder.ASCENDING;
+			}
+
+			@Override
+			public boolean shouldDisplayAll() {
+				return true;
+			}
+
+			@Override
+			public int getPageSize() {
+				return 0;
+			}
+
+			@Override
+			public int getFirstItemIndex() {
+				return 0;
+			}
+		};
+		return findDistinctRequirementVersionsByTestCases(testCaseIds, pas);
 	}
 }

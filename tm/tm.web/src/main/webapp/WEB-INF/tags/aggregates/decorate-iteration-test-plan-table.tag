@@ -73,6 +73,11 @@
 <f:message var="statusError" key="execution.execution-status.ERROR" />
 <f:message var="statusWarning" key="execution.execution-status.WARNING" />
 
+
+<%--
+	TODO : that could use some refactoring too.
+ --%>
+
 <script type="text/javascript">
 	
 	var testPlansUrl = "${testPlansUrl}";
@@ -275,11 +280,15 @@
 	}
 	
 	function testPlanDrawCallback(){
+		
+		var table = $("#test-plans-table").squashTable();
+	
 		<c:if test="${ editable }">
 		addLoginListToTestPlan();
-		addStatusListToTestPlan();
-		
+		addStatusListToTestPlan();		
 		</c:if>		
+		
+		bindToggleExpandIcon(table);
 	}
 	
 	function selectCurrentStatus(row,data) {
@@ -461,21 +470,25 @@
 		var ltr = testPlanHyperlink.parentNode.parentNode;
 
 		if (!$(testPlanHyperlink).hasClass("opened")) {
+			
 			/* the row is closed - open it */
 			var nTr = table.fnOpen(ltr, "      ", "");
 			var url1 = "${testPlanExecutionsUrl}" + data['entity-id'];
 			var jqnTr = $(nTr);
 			
-			jqnTr.load(url1);
-			if ($(this).parent().parent().hasClass("odd")) {
-				jqnTr.addClass("odd");
-			} else {
-				jqnTr.addClass("even");
-			}
-			jqnTr.attr("style", "vertical-align:top;");
+			var rowClass = ($(this).parent().parent().hasClass("odd")) ? "odd" : "even";
+			jqnTr.addClass(rowClass);
 
-			image.attr("src",
-							"${pageContext.servletContext.contextPath}/images/arrow_down.gif");
+			jqnTr.attr("style", "vertical-align:top;");
+			image.attr("src", "${pageContext.servletContext.contextPath}/images/arrow_down.gif");
+			
+
+			jqnTr.load(url1, function(){				
+				<c:if test="${ executable }">
+				//apply the post processing on the content
+				expandedRowCallback(jqnTr);
+				</c:if>
+			});
 
 		} else {
 			/* This row is already open - close it */
@@ -485,6 +498,84 @@
 		};
 		$(testPlanHyperlink).toggleClass("opened");
 	}
+	
+	function bindToggleExpandIcon(table){
+		$('tbody td a.test-case-name-hlink', table).bind('click', function() {
+			toggleExpandIcon(this);
+			return false; //return false to prevent navigation in page (# appears at the end of the URL)
+		});		
+	}
+	
+	
+	/* ***************************** expanded line post processing *************** */
+
+<c:if test="${ executable }">
+	
+	function expandedRowCallback(jqnTr) {
+		initDeleteButtonsToFunctions(jqnTr);
+		initNewExecButtons(jqnTr);
+	};
+	
+	
+	
+	function initNewExecButtons(jqnTr){		
+		var newExecButton = $('a.new-exec', jqnTr);
+		newExecButton.button().on('click', newExecutionClickHandler);
+		var newExecAutoButton = $('a.new-auto-exec', jqnTr);
+		newExecAutoButton.button().on('click', newAutoExecutionClickHandler);		
+	}
+	
+
+	function initDeleteButtonsToFunctions(jqnTr) {
+		
+		decorateDeleteButtons($(".delete-execution-table-button", jqnTr));
+		
+		var execOffset = "delete-execution-table-button-";
+		
+		$(".delete-execution-table-button", jqnTr)
+		.click(function() {
+			//console.log("delete execution #"+idExec);
+			var execId = $(this).attr("id");
+			var idExec = execId.substring(execOffset.length);
+			var execRow = $(this).closest("tr");
+			var testPlanHyperlink = $(this).closest("tr")
+										   .closest("tr")
+										   .prev()
+										   .find("a.test-case-name-hlink");
+
+			confirmeDeleteExecution(idExec, testPlanHyperlink, execRow);
+		});
+
+	}
+
+	function confirmeDeleteExecution(idExec, testPlanHyperlink, execRow) {
+		oneShotConfirm("<f:message key='dialog.delete-execution.title'/>",
+				"<f:message key='dialog.delete-execution.message'/>",
+				"<f:message key='label.Confirm'/>",
+				"<f:message key='label.Cancel'/>").done(
+				function() {
+					$.ajax({
+						'url' : "${showExecutionUrl}/" + idExec,
+						type : 'DELETE',
+						data : [],
+						dataType : "json"
+					}).done(function(data){
+						refreshTable(testPlanHyperlink, execRow, data);
+					});
+				});
+	}
+
+	
+	function refreshTable(testPlanHyperlink, execRow, data) {
+		refreshTestPlans();		
+		refreshIterationInfos();
+		refreshStatistics();
+		actualStart.refreshAutoDate(data.newStartDate);
+		actualEnd.refreshAutoDate(data.newEndDate);
+
+	}
+	
+</c:if>
 
 	$(function() {
 		
@@ -518,26 +609,7 @@
 					}
 
 				});
-	
-		<%-- bind the new execution creation button to their event --%>
-		var newExecButtons = $('a.new-exec');
-		newExecButtons.die('click');
-		newExecButtons.live('click', newExecutionClickHandler);
-		var newExecAutoButtons = $('a.new-auto-exec');
-		newExecAutoButtons.die('click');
-		newExecAutoButtons.live('click', newAutoExecutionClickHandler);
 
-		/* could be optimized if we bind that in the datatableDrawCallback.	*/
-		$('#test-plans-table tbody td a.test-case-name-hlink').die('click');
-		<%-- binding the handler managing the collapse/expand test case icon--%>
-		
-		$('#test-plans-table tbody td a.test-case-name-hlink').live('click', function() {
-				toggleExpandIcon(this);
-				return false; //return false to prevent navigation in page (# appears at the end of the URL)
-		});
-
-		
-		
 		/* ************************** datatable settings ********************* */
 		
 		var tableSettings = {

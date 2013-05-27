@@ -241,16 +241,26 @@ public final class BugtrackerControllerHelper {
 		}
 
 		@Override
-		public Object[] buildItemData(IssueOwnership<RemoteIssueDecorator> ownership) {
-			return new Object[] {
-					bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(),ownership.getOwner().getBugTracker()).toExternalForm(),
-					ownership.getIssue().getId(),
-					ownership.getIssue().getSummary(), 
-					ownership.getIssue().getPriority().getName(),
-					ownership.getIssue().getStatus().getName(), 
-					ownership.getIssue().getAssignee().getName(),
-					nameBuilder.buildName(ownership.getOwner()) 
-			};
+		public Map<String, String> buildItemData(IssueOwnership<BTIssueDecorator> ownership) {
+			
+			Map<String, String> result = new HashMap<String, String>(7);
+			
+			BTIssue issue = ownership.getIssue();
+			String strUrl = bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(), ownership.getOwner().getBugTracker()).toExternalForm();
+			String ownerName = nameBuilder.buildName(ownership.getOwner());
+			String ownerPath = nameBuilder.buildURLPath(ownership.getOwner());
+			
+			result.put("issue-url", strUrl);
+			result.put("issue-id", issue.getId());
+			result.put("issue-summary", issue.getSummary());
+			result.put("issue-priority", issue.getPriority().getName());
+			result.put("issue-status", issue.getStatus().getName());
+			result.put("issue-assignee", issue.getAssignee().getName());
+			result.put("issue-owner", ownerName);
+			result.put("issue-owner-url", ownerPath);
+			
+			return result;
+			
 		}
 	}
 
@@ -284,14 +294,14 @@ public final class BugtrackerControllerHelper {
 		public Object[] buildItemData(IssueOwnership<RemoteIssueDecorator> ownership) {
 			RemoteIssue issue = ownership.getIssue();
 			return new Object[] {
-					bugTrackersLocalService.getIssueUrl(issue.getId(), 
-							ownership.getOwner().getBugTracker()).toExternalForm(), 
-							issue.getId(), 
-							issue.getSummary(), 
-							issue.getPriority().getName(),
-							issue.getStatus().getName(), 
-							issue.getAssignee().getName(),
-							nameBuilder.buildName(ownership.getOwner()), ownership.getExecution().getId() 
+					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker()).toExternalForm()
+					, issue.getId()
+					, issue.getSummary()
+					, issue.getPriority().getName()
+					, issue.getStatus().getName()
+					, issue.getAssignee().getName()
+					, nameBuilder.buildName(ownership.getOwner())
+					, ownership.getExecution().getId() };
 				};
 		}
 	}
@@ -394,6 +404,14 @@ public final class BugtrackerControllerHelper {
 		void setLocale(Locale locale);
 
 		String buildName(IssueDetector bugged);
+		
+		/**
+		 * Returns the path of the issue detector. You'll have to find the protocol, address and application context by yourself.
+		 * 
+		 * @param bugged
+		 * @return
+		 */
+		String buildURLPath(IssueDetector bugged);
 	}
 
 	/**
@@ -402,6 +420,9 @@ public final class BugtrackerControllerHelper {
 	 * 
 	 */
 	private abstract static class IssueOwnershipAbstractNameBuilder implements IssueOwnershipNameBuilder {
+		
+		// TODO : use a visitor instead of instanceof
+		
 		protected Locale locale;
 		protected MessageSource messageSource;
 
@@ -429,10 +450,19 @@ public final class BugtrackerControllerHelper {
 
 			return name;
 		}
+		
+		@Override
+		public String buildURLPath(IssueDetector bugged) {
+			
+			Execution exec = (bugged instanceof ExecutionStep) ? ((ExecutionStep)bugged).getExecution() : (Execution)bugged;
+			
+			return "/executions/"+exec.getId();
+		}
 
 		abstract String buildStepName(ExecutionStep executionStep);
 
 		abstract String buildExecName(Execution execution);
+		
 
 	}
 
@@ -504,6 +534,13 @@ public final class BugtrackerControllerHelper {
 			return buildExecName(executionStep.getExecution());
 		}
 
+	}
+	
+	public static final String findOwnerDescForTestCase(IssueDetector bugged, MessageSource messageSource, Locale locale){
+		TestCaseModelOwnershipNamebuilder nameBuilder = new TestCaseModelOwnershipNamebuilder();
+		nameBuilder.setMessageSource(messageSource);
+		nameBuilder.setLocale(locale);
+		return nameBuilder.buildName(bugged);
 	}
 
 	private static String findTestSuiteNameList(Execution execution) {

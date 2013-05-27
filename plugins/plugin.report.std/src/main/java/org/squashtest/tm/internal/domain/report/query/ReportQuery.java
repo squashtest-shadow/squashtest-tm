@@ -95,7 +95,7 @@ public interface ReportQuery {
 	 * 
 	 * @param service
 	 */
-	void SetDataFilteringService(DataFilteringService service);
+	void setDataFilteringService(DataFilteringService service);
 	
 	/**
 	 * This method will set a criterion. Using a null value will nullify the use of that criterion.

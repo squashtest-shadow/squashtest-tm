@@ -29,6 +29,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -36,6 +38,7 @@ import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 
 public class CustomFieldValueConfigurationBean {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValueConfigurationBean.class);
 
 	private List<ConfigurationBean> configurationBeans = new LinkedList<ConfigurationBean>();
 
@@ -139,8 +142,8 @@ public class CustomFieldValueConfigurationBean {
 
 		public void setFieldLabel(String label) {
 			this.label = label;
-		}		
-		
+		}
+
 		public boolean isOptional() {
 			return optional;
 		}
@@ -213,12 +216,13 @@ public class CustomFieldValueConfigurationBean {
 		public String getType() {
 			return INPUT_TYPE;
 		}
-		
+
 		public Date getValueAsDate() {
+			// TODO utility class ?
 			try {
 				return new SimpleDateFormat(CustomField.DATE_PATTERN).parse(value);
 			} catch (ParseException e) {
-				e.printStackTrace();
+				LOGGER.warn(e.getMessage(), e);
 				return null;
 			}
 		}

@@ -40,7 +40,6 @@ requirejs
 					},*/
 					"file-upload",
 					"iteration-management" ],
-
 			/*
 			 * rules for paths naming: * third party lib: unversionned lib name *
 			 * non AMD squash lib: replace "squashtm" by "squash" in js file
@@ -93,7 +92,9 @@ requirejs
 				"squash.translator" : "squash/squash.translator",
 				"squash.resizer" : "squash/squashtm.tree-page-resizer",
 				"squash.table-collapser" : "squashtest/jquery.squash.table-collapser",
-				"jquery.tagit" : "jquery/tag-it.min",
+		"squash.session-pinger" : "squashtest/jquery.squash.session-pinger",
+"jquery.tagit" : "jquery/tag-it.min",
+		
 				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit",
 				"jquery.squash.add-attachment-popup" : "squashtest/add-attachment-popup"
 			},

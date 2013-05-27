@@ -124,6 +124,11 @@ core/core.jasperreport.fragment/META-INF/*
 core/core.jasperreports.fragment/META-INF/*
 tm/tm.domain/META-INF/*
 core/core.aspect/META-INF/*
+^config/
+tm/config/META-INF/*
+^provision/config$
+\.orig$
+\.rej$
 syntax: glob
 integration-tests/log/IT.log
 integration-tests/src/it/resources/log4j.properties
@@ -141,3 +146,7 @@ syntax: regexp
 ^tm/tm\.service/META-INF/.*$
 ^plugins/plugin\.workspacewizard\.test/target$
 ^plugins/plugin\.workspacewizard\.test/META-INF$
+^tm/tm\.aspects/target$
+^tm/tm\.aspects/META-INF$
+^tm/tm\.domain/target$
+^tm/tm\.domain/META-INF/.*$

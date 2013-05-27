@@ -20,113 +20,119 @@
  */
 var squashtm = squashtm || {};
 /**
- * Controller for the report workspace page (report-workspace.html) Depends on : - jquery - jquery.squash.buttons.js
+ * Controller for the report workspace page (report-workspace.html) Depends on : -
+ * jquery - jquery.squash.buttons.js
  */
-define([ "jquery", "jquery.squash.squashbutton", "jquery.squash.togglepanel" ], function ($) {
-	var settings = {
-		expandSidebarLabel: ">>",
-		collapseSidebarLabel: "<<"
-	};
-	
-	function setEditReportNormalState() {
-		$("#contextual-content").removeClass("expanded");
-	}
-	
-	function setEditReportExpandState() {
-		$("#contextual-content").addClass("expanded");
-	}
-	
-	function toggleEditReportState() {
-		$("#contextual-content").toggleClass("expanded");
-	}
-	
-	function findId(name) {
-		var idIndex = name.lastIndexOf("-") + 1;
-		return name.substring(idIndex);		
-	}
+define([ "jquery", "jquery.squash.squashbutton", "jquery.squash.togglepanel" ],
+		function($) {
+			var settings = {
+				expandSidebarLabel : ">>",
+				collapseSidebarLabel : "<<"
+			};
 
-	function cleanContextual() {
-		var contextualList = $(".is-contextual");
-
-		if (contextualList.length === 0) {
-			return;
-		}
-
-		contextualList.each(function () {
-			var jqThis = $(this);
-			if (jqThis.hasClass("ui-dialog-content")){
-				jqThis.dialog("destroy").remove();
+			function setEditReportNormalState() {
+				$("#contextual-content").removeClass("expanded");
 			}
+
+			function setEditReportExpandState() {
+				$("#contextual-content").addClass("expanded");
+			}
+
+			function toggleEditReportState() {
+				$("#contextual-content").toggleClass("expanded");
+			}
+
+			function findId(name) {
+				var idIndex = name.lastIndexOf("-") + 1;
+				return name.substring(idIndex);
+			}
+
+			function cleanContextual() {
+				var contextualList = $(".is-contextual");
+
+				if (contextualList.length === 0) {
+					return;
+				}
+
+				contextualList.each(function() {
+					var jqThis = $(this);
+					if (jqThis.hasClass("ui-dialog-content")) {
+						jqThis.dialog("destroy").remove();
+					}
+				});
+			}
+
+			function loadContextualReport(reportItem) {
+				cleanContextual();
+				$("#contextual-content").html('');
+
+				var reportUrl = $(reportItem).data('href');
+
+				$("#contextual-content").load(reportUrl);
+			}
+
+			function setCategoryFrameNormalState() {
+				$("#outer-category-frame").removeClass("expanded");
+				$("#toggle-expand-category-frame-button").attr("value",
+						settings.collapseSidebarLabel);
+			}
+
+			function setCategoryFrameExpandState() {
+				$("#outer-category-frame").addClass("expanded");
+				$("#toggle-expand-category-frame-button").attr("value",
+						settings.expandSidebarLabel);
+			}
+
+			function toggleCategoryFrameState() {
+				if ($("#outer-category-frame").hasClass("expanded")) {
+					setCategoryFrameNormalState();
+				} else {
+					setCategoryFrameExpandState();
+				}
+			}
+
+			function toggleReportWorkspaceState() {
+				toggleCategoryFrameState();
+				toggleEditReportState();
+			}
+
+			/**
+			 * initializes the workspace.
+			 * 
+			 * @returns
+			 */
+			function init(options) {
+				var defaults = settings;
+				settings = $.extend(defaults, options);
+
+				$(".report-category").togglePanel({});
+
+				$("#outer-category-frame .report-item").click(function() {
+					loadContextualReport(this);
+				});
+
+				$("#contextual-content").delegate(
+						"#toggle-expand-category-frame-button", "click",
+						toggleReportWorkspaceState);
+
+				/* decorate buttons */
+				$.squash.decorateButtons();
+			}
+
+			squashtm.reportWorkspace = {
+				setReportWorkspaceNormalState : function() {
+					setCategoryFrameNormalState();
+					setEditReportNormalState();
+				},
+
+				setReportWorkspaceExpandState : function() {
+					setCategoryFrameExpandState();
+					setEditReportExpandState();
+				},
+
+				loadContextualReport : loadContextualReport,
+				init : init
+			};
+
+			return squashtm.reportWorkspace;
 		});
-	}
-	
-	function loadContextualReport(reportItem) {
-		cleanContextual();
-		$("#contextual-content").html('');
-		
-		var reportUrl = $(reportItem).data('href');
-		
-		$("#contextual-content").load(reportUrl);
-	}
-
-	function setCategoryFrameNormalState() {
-		$("#outer-category-frame").removeClass("expanded");
-		$("#toggle-expand-category-frame-button").attr("value", settings.collapseSidebarLabel);
-	}
-
-	function setCategoryFrameExpandState() {
-		$("#outer-category-frame").addClass("expanded");
-		$("#toggle-expand-category-frame-button").attr("value", settings.expandSidebarLabel);
-	}
-	
-	function toggleCategoryFrameState() {
-		if ($("#outer-category-frame").hasClass("expanded")) {
-			setCategoryFrameNormalState();
-		} else {
-			setCategoryFrameExpandState();
-		}
-	}
-	
-	function toggleReportWorkspaceState() {
-		toggleCategoryFrameState();
-		toggleEditReportState();							
-	}
-	
-	/**
-	 * initializes the workspace.
-	 * 
-	 * @returns
-	 */
-	function init(options) {
-		var defaults = settings;
-		settings = $.extend(defaults, options);
-		
-		$(".report-category").togglePanel({});
-
-		$("#outer-category-frame .report-item").click(function () {
-			loadContextualReport(this);
-		});
-
-		$("#contextual-content").delegate("#toggle-expand-category-frame-button", "click", toggleReportWorkspaceState);
-
-		/* decorate buttons */
-		$.squash.decorateButtons();
-	}
-
-	squashtm.reportWorkspace = {
-		setReportWorkspaceNormalState : function () {
-			setCategoryFrameNormalState();
-			setEditReportNormalState();
-		},
-		
-		setReportWorkspaceExpandState : function () {
-			setCategoryFrameExpandState();
-			setEditReportExpandState();
-		},
-		
-		loadContextualReport : loadContextualReport,
-		init : init
-	};
-	
-	return squashtm.reportWorkspace;
-});

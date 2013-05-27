@@ -93,7 +93,8 @@
 
 	<c:if test="${ smallEditable }">
 		<div class="toolbar-button-panel">
-			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/> 
+			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/>
+			<input type="button" value="<f:message key='label.print'/>" id="print-requirement-version-button" class="button"/>
 		</div>	
 	</c:if>
 
@@ -133,10 +134,7 @@
 					<label for="requirement-version-id">ID</label>
 					<div id="requirement-version-id">${ requirementVersion.requirement.id }</div>
 				</div>
-				<div>
-					<label for="requirement-description"><f:message key="label.Description" /></label>
-					<div id="requirement-description">${ requirementVersion.description }</div>
-				</div>
+				
 				<div>
 					<label for="requirement-reference"><f:message key="requirement.reference.label" /></label>
 					<div id="requirement-reference">${ requirementVersion.reference }</div>
@@ -195,10 +193,14 @@
 			</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
-	
 
+	<comp:toggle-panel id="requirement-description-panel" classes="description-panel" titleKey="label.Description" isContextual="true" open="true" >
+		<jsp:attribute name="body">	
+					<div id="requirement-description">${ requirementVersion.description }</div>
+		</jsp:attribute>
+	</comp:toggle-panel>
 	<%--------------- verifying TestCase section ------------------------------------%>
-	<comp:toggle-panel id="verifying-requirement-panel" titleKey="requirement.verifying_test-case.panel.title" open="true">
+	<comp:toggle-panel id="verifying-test-case-panel" titleKey="requirement.verifying_test-case.panel.title" open="true">
 		<jsp:attribute name="panelButtons">
 			<c:if test="${ linkable }">
 				<f:message var="associateLabel" key="requirement.verifying_test-case.manage.button.label"/>
@@ -256,7 +258,7 @@
 		</jsp:attribute>					
 	</pop:popup>
 		<%------------------- rename ---------------------%>
-		<comp:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
+		<pop:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
 			isContextual="true" openedBy="rename-requirement-button">
 			<jsp:attribute name="buttons">
 				<f:message var="label" key="dialog.rename-requirement.title" />
@@ -268,12 +270,12 @@
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
-			<jsp:body>
+			<jsp:attribute name="body">
 				<label><f:message key="dialog.rename.label" /></label>
 				<input type="text" id="rename-requirement-input" maxlength="255" /><br/>
 				<comp:error-message forField="name"/>
-			</jsp:body>
-		</comp:popup>
+			</jsp:attribute>
+		</pop:popup>
 	</c:if>
 <!------------------------------------------/ POPUPS ------------------------------------------------------>
 <!------------------------------------------ SCRIPTS ------------------------------------------------------>
@@ -402,6 +404,7 @@
 				nameHandler.referenceHidden = "#requirement-raw-reference";
 				
 				squashtm.contextualContent.addListener(nameHandler);
+				$("#print-requirement-version-button").click(function(){window.open("${requirementUrl}/print", "_blank");});
 				
 			});
 		});

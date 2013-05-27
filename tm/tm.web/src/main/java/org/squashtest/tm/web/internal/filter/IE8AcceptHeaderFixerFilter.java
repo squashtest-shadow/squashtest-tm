@@ -50,13 +50,13 @@ import javax.servlet.http.HttpServletRequestWrapper;
 public class IE8AcceptHeaderFixerFilter implements Filter {
 	private static final String ACCEPT = "Accept";
 	private static final String TEXT_HTML = "text/html";
-	
+
 	private static class FixedIE8AcceptWrapper extends HttpServletRequestWrapper {
 		/**
 		 * 
 		 */
 		@SuppressWarnings("rawtypes")
-		private Vector acceptHeaders;
+		private Vector acceptHeaders; // NOSONAR We *do* need a vector, which is Enumerable
 		private String acceptHeader;
 
 		/**
@@ -80,9 +80,9 @@ public class IE8AcceptHeaderFixerFilter implements Filter {
 		 */
 		private String readAcceptHeaderFromCache() {
 			if (acceptHeader == null) {
-				acceptHeader = super.getHeader(ACCEPT) + ", " + TEXT_HTML; 
+				acceptHeader = super.getHeader(ACCEPT) + ", " + TEXT_HTML;
 			}
-			
+
 			return acceptHeader;
 		}
 
@@ -100,10 +100,10 @@ public class IE8AcceptHeaderFixerFilter implements Filter {
 		 * @return
 		 */
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		private Vector readAcceptHeadersFromCache() {
+		private Vector readAcceptHeadersFromCache() { // NOSONAR We *do* need a vector, which is Enumerable
 			if (acceptHeaders == null) {
 				Enumeration source = super.getHeaders(ACCEPT);
-				acceptHeaders = new Vector();
+				acceptHeaders = new Vector(); // NOSONAR We *do* need a vector, which is Enumerable
 
 				while (source.hasMoreElements()) {
 					acceptHeaders.add(source.nextElement());
@@ -137,15 +137,15 @@ public class IE8AcceptHeaderFixerFilter implements Filter {
 			ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletRequest chainedRequest;
-		
+
 		String accept = httpRequest.getHeader(ACCEPT);
-		
+
 		if (accept.contains(TEXT_HTML) || acceptsJson(accept) || notFromIE8(accept)) {
 			chainedRequest = (HttpServletRequest) request;
 		} else {
 			chainedRequest = new FixedIE8AcceptWrapper(httpRequest);
 		}
-		
+
 		chain.doFilter(chainedRequest, response);
 	}
 

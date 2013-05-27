@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>squash-tm-plugins</artifactId>
 		<groupId>org.squashtest.tm</groupId>
-		<version>1.5.2.BUILD-SNAPSHOT</version>
+		<version>1.6.0.RC1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>plugin.testautomation.jenkins</artifactId>
@@ -32,6 +32,11 @@
 			<version>${project.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>tm.domain</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!-- ================= /Squash TM dependencies ========================== -->
 
 		<!--  ================= Apache dependencies ============================== -->

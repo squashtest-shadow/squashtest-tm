@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -119,7 +118,6 @@ public interface VerifiedRequirementsManagerService {
 	 * @param pas: the {@link PagingAndSorting} to organize the result with
 	 * @return a {@link PagedCollectionHolder} of {@link VerifiedRequirement} containing directly verified requirements for the test case of the given id.
 	 */
-	@Transactional(readOnly = true)
 	PagedCollectionHolder<List<VerifiedRequirement>> findAllDirectlyVerifiedRequirementsByTestCaseId(long testCaseId,
 			PagingAndSorting pas);
 
@@ -131,7 +129,12 @@ public interface VerifiedRequirementsManagerService {
 	 */
 	PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
 			PagingAndSorting pas);
-	
+	/**	
+	 * Returns all {@link VerifiedRequirement} for the TestCase matching the given id. VerifiedRequirements verified by the {@link CallTestStep}s of the TestCase will be included.
+	 * @param testCaseId : the id of the concerned {@link TestCase}
+	 * @return a List of {@link VerifiedRequirement} containing directly and non directly (call steps) verified requirements for the test case of the given id.
+	 */
+	List<VerifiedRequirement> findAllVerifiedRequirementsByTestCaseId(long testCaseId);
 	/**
 	 * Will find all {@link RequirementVersion} verified by the test case containing the step of the given id.
 	 * The result will be paged according to the given {@link PagingAndSorting} param.
@@ -142,6 +145,7 @@ public interface VerifiedRequirementsManagerService {
 	 */
 	PagedCollectionHolder<List<VerifiedRequirement>> findAllDirectlyVerifiedRequirementsByTestStepId(long testStepId,
 			PagingAndSorting paging);
+
 
 
 	

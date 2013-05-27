@@ -25,7 +25,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
 	xsi:schemaLocation="
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0-m1.xsd
 		http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium-2.0-m1.xsd">
 
@@ -298,6 +298,9 @@
 			<value>org.squashtest.tm.service.customfield.CustomFieldValueManagerService</value>
 		</osgi:interfaces>
 	</osgi:reference>
+	
+	<osgi:reference id="squashtest.tm.service.CustomFieldHelperService" bean-name="squashtest.tm.service.CustomFieldHelperService"
+					cardinality="1..1" interface="org.squashtest.tm.service.customfield.CustomFieldHelperService" />
 
 	<osgi:reference id="squashtest.tm.service.DenormalizedFieldValueFinder"
 		bean-name="squashtest.tm.service.DenormalizedFieldValueFinder"
@@ -324,12 +327,12 @@
 			bind-method="registerWizard" unbind-method="unregisterWizard" />
 	</osgi:list>
 
-	<osgix:cm-properties id="squashtest.core.auth.config"
+	<osgix:cm-properties id="squash.tm.auth.config"
 		persistent-id="org.squashtest.csp.core.auth.config" />
 
 	<!-- the following is an heresy imposed by multi security contexts across 
 		OSGI bundles. -->
-	<osgix:cm-properties id="squashtest.tm.uploadfilter.config"
+	<osgix:cm-properties id="squash.tm.uploadfilter.config"
 		persistent-id="org.squashtest.csp.tm.web.uploadfilter.config" />
 
 	<!-- pretty much the same problem here. To be specific, that thing should 
@@ -344,7 +347,11 @@
 		to talk together. -->
 	<osgi:reference id="squashtest.core.security.JdbcUserDetailsManager"
 		bean-name="squashtest.core.security.JdbcUserDetailsManager"
-		interface="org.springframework.security.provisioning.UserDetailsManager"
-		availability="optional" />
+		availability="optional">
+      <osgi:interfaces>
+        <value>org.springframework.security.provisioning.UserDetailsManager</value>
+        <value>org.squashtest.tm.service.security.UserDetailsService</value>
+      </osgi:interfaces>
+    </osgi:reference>
 
 </beans>

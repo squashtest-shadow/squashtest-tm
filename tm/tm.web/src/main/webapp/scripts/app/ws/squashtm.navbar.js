@@ -25,16 +25,20 @@ define([ "jquery" ], function($) {
 
 	function navLinkOn(linkName) {
 		var thisLink = $('#' + linkName);
-			var imgName = $(thisLink).find('img').attr("src");
-			if(imgName){imgName = imgName.replace("_off", "_on");
-			$(thisLink).find('img').attr("src", imgName);}
+		var imgName = $(thisLink).find('img').attr("src");
+		if (imgName) {
+			imgName = imgName.replace("_off", "_on");
+			$(thisLink).find('img').attr("src", imgName);
+		}
 	}
 
 	function navLinkOff(linkName) {
 		var thisLink = $('#' + linkName);
-			var imgName = $(thisLink).find('img').attr("src");
-			if(imgName){imgName = imgName.replace("_on", "_off");
-			$(thisLink).find('img').attr("src", imgName);}
+		var imgName = $(thisLink).find('img').attr("src");
+		if (imgName) {
+			imgName = imgName.replace("_on", "_off");
+			$(thisLink).find('img').attr("src", imgName);
+		}
 	}
 
 	function initHighlighted(linkName) {

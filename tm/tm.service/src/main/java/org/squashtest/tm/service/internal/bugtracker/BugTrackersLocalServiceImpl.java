@@ -368,6 +368,44 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		// create filtredCollection of IssueOwnership<BTIssue>
 		return createOwnershipsCollection(sorter, executions, executionSteps);
 	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ') or hasRole('ROLE_ADMIN')")
+	public List<IssueOwnership<BTIssueDecorator>> findIssueOwnershipForTestCase(long tcId) {
+
+		// Find all concerned IssueDetector
+		List<Execution> executions = testCaseDao.findAllExecutionByTestCase(tcId);
+		List<ExecutionStep> executionSteps = collectExecutionStepsFromExecution(executions);
+
+		// create filtredCollection of IssueOwnership<BTIssue>
+		CollectionSorting sorter = new CollectionSorting() {
+			
+			@Override
+			public boolean shouldDisplayAll() {return true;}
+			
+			@Override
+			public int getPageSize() {
+				return 0;
+			}
+			
+			@Override
+			public int getFirstItemIndex() {
+				return 0;
+			}
+			
+			@Override
+			public String getSortingOrder() {
+				return "asc";
+			}
+			
+			@Override
+			public String getSortedAttribute() {
+				return "Issue.id";
+			}
+		};
+		
+		return createOwnershipsCollection(sorter, executions, executionSteps).getFilteredCollection();
+	}
 
 	private List<ExecutionStep> collectExecutionStepsFromExecution(List<Execution> executions) {
 		List<ExecutionStep> executionSteps = new ArrayList<ExecutionStep>();

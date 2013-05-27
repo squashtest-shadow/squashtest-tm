@@ -36,7 +36,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				makeTogglePanel : function() {
 					var infoSettings = {
 						initiallyOpen : true,
-						title : UMod.message.teamsPanelTitle,
+						title : UMod.message.teamsPanelTitle
 					};
 					this.$("#teams-panel").togglePanel(infoSettings);
 				},
@@ -83,9 +83,10 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				removeTeams : function(event) {
 					var table = $("#teams-table").squashTable();
 					var ids = table.getSelectedIds();
-					if (ids.length === 0)
+					if (ids.length === 0){
 						return;
-
+					}
+					
 					$.ajax({
 						url : UMod.user.url.simple + "teams/" + ids.join(','),
 						type : 'delete'
@@ -187,7 +188,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					};
 
 					this.addTeamDialog = addTeamDialog;
-				},
+				}
 			});
 			return UserTeamsPanel;
 		});

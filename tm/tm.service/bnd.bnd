@@ -1,8 +1,14 @@
 -include: pom.xml
 -nouses: true
 Import-Package: com.mysql.jdbc;resolution:=optional,\
+	!org.squashtest.tm.service.security.acls,\
+	org.squashtest.tm.aspect.validation,\
+	org.squashtest.tm.domain.resource,\
 	javax.transaction,\
-	javassist.util.proxy,\
+	javassist.util.proxy, \
+	org.springframework.asm, \
+	org.springframework.transaction.annotation,\
+	net.sf.cglib.core,\
 	net.sf.ehcache,\
 	net.sf.ehcache.bootstrap,\
 	net.sf.ehcache.constructs.blocking,\

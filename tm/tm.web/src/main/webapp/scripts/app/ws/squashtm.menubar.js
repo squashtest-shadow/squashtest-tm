@@ -29,8 +29,9 @@
  */
 
 /**
- * The parameters of that function will be passed as they are to more specific init functions, see code below. Dont
- * forget to add your own parameters in that list, please do not overload the existing one.
+ * The parameters of that function will be passed as they are to more specific
+ * init functions, see code below. Dont forget to add your own parameters in
+ * that list, please do not overload the existing one.
  * 
  */
 var squashtm = squashtm || {};
@@ -39,7 +40,7 @@ define([ "jquery" ], function($) {
 	function enableProjectFilter(url, bEnabled) {
 		$.post(url, {
 			isEnabled : bEnabled
-		}, function () {
+		}, function() {
 			window.location.reload();
 		});
 	}
@@ -55,21 +56,23 @@ define([ "jquery" ], function($) {
 	}
 
 	/**
-	 * parameter object : - boxSelector : the jquery selector we'll use to find the checkbox back - url : the url we
-	 * need to get/post to - linkSelector : the jquery selector we'll use to find the link to the configuration popup -
-	 * enabledTxt : the caption the said link should display if the filter is enabled - disabledTxt : the caption the
-	 * said link should display if the filter is disabled - enabledCallbacks : an array containing callbacks to execute
-	 * when the filter is enabled
+	 * parameter object : - boxSelector : the jquery selector we'll use to find
+	 * the checkbox back - url : the url we need to get/post to - linkSelector :
+	 * the jquery selector we'll use to find the link to the configuration popup -
+	 * enabledTxt : the caption the said link should display if the filter is
+	 * enabled - disabledTxt : the caption the said link should display if the
+	 * filter is disabled - enabledCallbacks : an array containing callbacks to
+	 * execute when the filter is enabled
 	 */
 
 	function initToggleFilterMenu(params) {
 		var jqCkbox = $(params.boxSelector);
 
-		jqCkbox.click(function () {
+		jqCkbox.click(function() {
 			toggleProjectFilter.call(this, params.url);
 		});
 
-		$.get(params.url, function (json) {
+		$.get(params.url, function(json) {
 			if (json.enabled) {
 				jqCkbox.prop('checked', true);
 
@@ -77,8 +80,9 @@ define([ "jquery" ], function($) {
 				link.text(params.enabledTxt);
 				link.addClass("filter-enabled");
 
-				if ((params.enabledCallbacks !== undefined) && (params.enabledCallbacks.length > 0)) {
-					for (var i = 0; i < params.enabledCallbacks.length; i++) {
+				if ((params.enabledCallbacks !== undefined)
+						&& (params.enabledCallbacks.length > 0)) {
+					for ( var i = 0; i < params.enabledCallbacks.length; i++) {
 						var callback = params.enabledCallbacks[i];
 						callback();
 					}
@@ -94,10 +98,10 @@ define([ "jquery" ], function($) {
 	function initMainMenuBar(objFilter) {
 		initToggleFilterMenu(objFilter);
 	}
-	
-	squashtm.menubar =  {
+
+	squashtm.menubar = {
 		init : initMainMenuBar
 	};
-	
+
 	return squashtm.menubar;
 });

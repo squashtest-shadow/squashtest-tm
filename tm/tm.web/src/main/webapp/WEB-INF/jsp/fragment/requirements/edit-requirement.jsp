@@ -204,7 +204,8 @@ that page won't be editable if
 		</c:if>	
 		<c:if test="${ creatable }">
 			<input type="button" value='<f:message key="requirement.button.new-version.label" />' id="new-version-button" class="button"/>		
-		</c:if>		
+		</c:if>
+		<input type="button" value="<f:message key='label.print'/>" id="print-requirement-version-button" class="button"/>
 	</div>	
 
 	<div style="clear:both;"></div>	
@@ -231,7 +232,7 @@ that page won't be editable if
 		<%-- TODO put at end of page, maybe componentize --%>
 		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="50" />
 	</c:if>
-
+<%--------------------------- General Informations section ------------------------------------%>
 	<comp:toggle-panel id="requirement-information-panel" classes="information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
 		<jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">
@@ -243,10 +244,7 @@ that page won't be editable if
 					<label for="requirement-id">ID</label>
 					<div class="display-table-cell" id="requirement-id">${ requirement.id }</div>
 				</div>
-				<div class="display-table-row">
-					<label for="requirement-description" class="display-table-cell"><f:message key="label.Description" /></label>
-					<div class="display-table-cell" id="requirement-description">${ requirement.description }</div>
-				</div>
+				
 				<div class="display-table-row">
 					<label class="display-table-cell"  for="requirement-reference"><f:message key="requirement.reference.label" /></label>
 					<div class="display-table-cell"  id="requirement-reference">${ requirement.reference }</div>
@@ -299,7 +297,12 @@ that page won't be editable if
 			</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
-
+	<%--------------------------- Description section------------------------------------%>
+	<comp:toggle-panel id="requirement-description-panel" classes="description-panel" titleKey="label.Description" isContextual="true" open="true" >
+		<jsp:attribute name="body">	
+					<div id="requirement-description">${ requirement.description }</div>
+		</jsp:attribute>
+	</comp:toggle-panel>
 
 	<%--------------------------- verifying TestCase section ------------------------------------%>
 	<script type="text/javascript">
@@ -341,7 +344,7 @@ that page won't be editable if
 <%-- -----------------------------------POPUPS ----------------------------------------------%>
 <%--------------------------- Rename popup -------------------------------------%>
 <c:if test="${ smallEditable }">
-		<comp:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
+		<pop:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
 			isContextual="true" openedBy="rename-requirement-button">
 			<jsp:attribute name="buttons">
 				<f:message var="label" key="dialog.rename-requirement.title" />
@@ -353,7 +356,7 @@ that page won't be editable if
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
-			<jsp:body>
+			<jsp:attribute name="body">
 				<script type="text/javascript">
 				$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
 					var name = $.trim($('#requirement-raw-name').text());
@@ -364,8 +367,8 @@ that page won't be editable if
 				<label><f:message key="dialog.rename.label" /></label>
 				<input type="text" id="rename-requirement-input" maxlength="255" size="50" /><br/>
 				<comp:error-message forField="name"/>
-			</jsp:body>
-		</comp:popup>
+			</jsp:attribute>
+		</pop:popup>
 	</c:if>
 <%--------------------------- New version popup -------------------------------------%>
 	<c:if test="${ creatable }">
@@ -457,6 +460,8 @@ that page won't be editable if
 				nameHandler.referenceHidden = "#requirement-raw-reference";
 				
 				squashtm.contextualContent.addListener(nameHandler);
+
+				$("#print-requirement-version-button").click(function(){window.open("${currentVersionUrl}/print", "_blank");});
 				
 			});
 		});

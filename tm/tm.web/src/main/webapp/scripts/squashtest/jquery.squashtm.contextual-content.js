@@ -18,30 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-(function ($) {
+(function($) {
 
-	$.fn.contextualContent = function (settings) {
+	$.fn.contextualContent = function(settings) {
 
 		this.listeners = [];
 		this.currentUrl = "";
 		this.currentXhr = {
 			readyState : 4,
-			abort : function () {
+			abort : function() {
 			}
 		}; // we initialize it with a mock.
 		this.onCleanContent = null;
 
-		
 		/* **************** super private ************* */
-		
-		var _cleanPopups = function(){
-			$(".ui-dialog-content.is-contextual").dialog("destroy").remove();			
+
+		var _cleanPopups = function() {
+			$(".ui-dialog-content.is-contextual").dialog("destroy").remove();
 		};
-		
-		
+
 		/* ******************* private **************** */
 
-		var cleanContent = $.proxy(function () {			
+		var cleanContent = $.proxy(function() {
 			_cleanPopups();
 			this.empty();
 			this.listeners = [];
@@ -51,7 +49,7 @@
 			}
 		}, this);
 
-		var abortIfRunning = $.proxy(function () {
+		var abortIfRunning = $.proxy(function() {
 			if (this.currentXhr.readyState != 4) {
 				this.currentXhr.abort();
 			}
@@ -59,8 +57,8 @@
 
 		/* ******************* public **************** */
 
-		this.fire = function (origin, event) {
-			for (var i in this.listeners) {
+		this.fire = function(origin, event) {
+			for ( var i in this.listeners) {
 				var listener = this.listeners[i];
 				if (listener !== origin) {
 					listener.update(event);
@@ -68,11 +66,11 @@
 			}
 		};
 
-		this.addListener = function (listener) {
+		this.addListener = function(listener) {
 			this.listeners.push(listener);
 		};
 
-		this.loadWith = function (url) {
+		this.loadWith = function(url) {
 
 			var defer = $.Deferred();
 			var self = this;
@@ -86,7 +84,7 @@
 					url : url,
 					type : 'GET',
 					dataType : 'html'
-				}).success(function (data) {
+				}).success(function(data) {
 					cleanContent();
 					self.currentUrl = url;
 					self.html(data);
@@ -97,7 +95,7 @@
 
 		};
 
-		this.unload = function () {
+		this.unload = function() {
 			cleanContent();
 			this.currentUrl = "";
 			abortIfRunning();

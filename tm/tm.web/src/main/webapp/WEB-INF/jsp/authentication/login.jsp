@@ -72,7 +72,7 @@
             });
           });
         </script>
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/master.blue.css" />
+		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.blue.css" />
 	</head>
 	<body class="nav-up-layout">
 		<div id="nav-bar" class="ui-helper-clearfix">

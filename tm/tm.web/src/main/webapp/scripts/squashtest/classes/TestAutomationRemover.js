@@ -19,35 +19,37 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
-	settings : 
-		- selector : an appropriate selector for the popup.
-		- testAutomationURL : the url where to GET - POST things.
-		- baseURL : the base url of the app.
-		- successCallback : a callback if the test association succeeds. Will be given 1 argument, the path of the associated automated test.
-		- messages : 
-			- noTestSelected : message that must be displayed when nothing is selected
-*/
-function TestAutomationRemover(settings){
+ settings : 
+ - selector : an appropriate selector for the popup.
+ - testAutomationURL : the url where to GET - POST things.
+ - baseURL : the base url of the app.
+ - successCallback : a callback if the test association succeeds. Will be given 1 argument, the path of the associated automated test.
+ - messages : 
+ - noTestSelected : message that must be displayed when nothing is selected
+ */
+function TestAutomationRemover(settings) {
 
 	var link = $(settings.linkSelector);
 	var automatedTestRemovalUrl = settings.automatedTestRemovalUrl;
 	var successCallback = settings.successCallback;
 	var confirmDialog = $(settings.confirmPopupSelector);
-	confirmDialog.confirmDialog({confirm : sendRemovalRequest});
+	confirmDialog.confirmDialog({
+		confirm : sendRemovalRequest
+	});
 
-	link.click(function(){
-		confirmDialog.confirmDialog( "open" );
+	link.click(function() {
+		confirmDialog.confirmDialog("open");
 		return false;
 	});
-	
-	
-	function sendRemovalRequest(){
+
+	function sendRemovalRequest() {
 		return $.ajax({
 			url : automatedTestRemovalUrl,
 			type : 'DELETE',
 			dataType : 'json'
-		})
-		.done(function(){successCallback(); confirmDialog.confirmDialog("close");});
+		}).done(function() {
+			successCallback();
+			confirmDialog.confirmDialog("close");
+		});
 	}
 }
-

@@ -8,6 +8,7 @@ CKEDITOR.editorConfig = function( config ){
 		['JustifyLeft','JustifyCenter','JustifyRight'],  
 		['TextColor'],['Font'],['FontSize'],
 		['Scayt'],
+		['Table'],
 		];  
 	config.height = '10em';
 	config.resize_minHeight = 	175;

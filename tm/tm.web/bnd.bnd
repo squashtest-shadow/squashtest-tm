@@ -11,9 +11,9 @@ Import-Package: javax.servlet.jsp.jstl.core;version=${jstl.version},\
 	javax.sql,\
 	javax.validation,\
 	javax.validation.constraints,\
-	net.sf.cglib.core;version=${cglib.version},\
-	net.sf.cglib.proxy;version=${cglib.version},\
-	net.sf.cglib.reflect;version=${cglib.version},\
+	org.springframework.transaction.annotation,\
+	net.sf.cglib.core,\
+	net.sf.cglib.reflect,\
 	org.aopalliance.aop;version=${aopalliance.version},\
 	org.apache.taglibs.standard.functions;version=${jstl.version},\
 	org.apache.taglibs.standard.resources;version=${jstl.version},\
@@ -40,6 +40,7 @@ Import-Package: javax.servlet.jsp.jstl.core;version=${jstl.version},\
 	org.springframework.aop.support.annotation;version="${spring.version.range}",\
 	org.springframework.aop.target;version="${spring.version.range}",\
 	org.springframework.aop.target.dynamic;version="${spring.version.range}",\
+	org.springframework.beans.factory.config;version="${spring.version.range}",\
 	org.springframework.beans.factory.xml;version="${spring.version.range}",\
 	org.springframework.context.config;version="${spring.version.range}",\
 	org.springframework.context.support;version="${spring.version.range}",\
@@ -47,14 +48,16 @@ Import-Package: javax.servlet.jsp.jstl.core;version=${jstl.version},\
 	org.springframework.osgi.web.context.support;version="${springdm.version.range}",\
 	org.springframework.web.context;version="${spring.version.range}",\
 	org.springframework.orm.hibernate3.support,\
+	org.springframework.security.access,\
+	org.springframework.security.acls.model,\
+	org.springframework.security.authentication.dao,\
+	org.springframework.security.authentication.encoding,\
 	org.springframework.security.core.userdetails.memory,\
+	org.springframework.security.provisioning,\
+	org.springframework.security.taglibs.authz,\
 	org.springframework.security.web,\
 	org.springframework.security.web.authentication,\
 	org.springframework.security.web.access,\
-	org.springframework.security.access,\
-	org.springframework.security.provisioning,\
-	org.springframework.security.taglibs.authz,\
-	org.springframework.security.acls.model,\
 	org.springframework.web.context.request;version="${spring.version.range}",\
 	org.springframework.web.filter;version="${spring.version.range}",\
 	org.springframework.web.multipart.commons;version="${spring.version.range}",\
@@ -72,7 +75,7 @@ Import-Package: javax.servlet.jsp.jstl.core;version=${jstl.version},\
 	org.springframework.scheduling.concurrent;version="${spring.version.range}",\
 	org.springframework.core.task;version="${spring.version.range}",\
 	org.squashtest.csp.core.bugtracker.web,\
-	org.squashtest.tm.service.security.acls,\
+	org.squashtest.tm.security.acls,\
 	org.tuckey.web.filters.urlrewrite,\
 	org.hibernate;version=3.6,\
 	org.hibernate.engine.jdbc,\

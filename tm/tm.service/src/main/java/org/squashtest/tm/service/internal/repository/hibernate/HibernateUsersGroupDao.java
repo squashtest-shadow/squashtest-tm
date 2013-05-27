@@ -35,4 +35,13 @@ public class HibernateUsersGroupDao extends HibernateEntityDao<UsersGroup> imple
 		return executeListNamedQuery("usersGroup.findAllGroups");
 	}
 
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.UsersGroupDao#findByQualifiedName(java.lang.String)
+	 */
+	@Override
+	public UsersGroup findByQualifiedName(String qualifiedName) {
+		// TODO Auto-generated method stub
+		return executeEntityNamedQuery("usersGroup.findByQualifiedName", "qualifiedName", qualifiedName);
+	}
+
 }

@@ -54,6 +54,7 @@ import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
@@ -66,7 +67,6 @@ import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
-import org.squashtest.tm.service.security.acls.PermissionGroup;
 
 /**
  * @author Gregory Fouquet

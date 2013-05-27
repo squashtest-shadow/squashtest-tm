@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,6 +39,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
+import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
@@ -70,27 +72,25 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Inject
 	private UsersGroupDao groupDao;
-	
+
 	@Inject
 	private AdministrationDao adminDao;
 
 	@Inject
 	private ConfigurationService configurationService;
-	
+
 	@Inject
 	private TeamDao teamDao;
-	
+
 	@Inject
 	private AdministratorAuthenticationService adminAuthentService;
 
 	private final static String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE";
 	private final static String LOGIN_MESSAGE_KEY = "LOGIN_MESSAGE";
 
-
 	public void setAdministratorAuthenticationService(AdministratorAuthenticationService adminService) {
 		this.adminAuthentService = adminService;
 	}
-
 
 	public void setConfigurationService(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
@@ -118,9 +118,9 @@ public class AdministrationServiceImpl implements AdministrationService {
 		userAccountService.modifyUserEmail(userId, newEmail);
 	}
 
-
 	/* ********************** proper admin section ******************* */
 	private static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
+
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public User findUserById(long userId) {
@@ -130,15 +130,15 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public List<User> findAllUsersOrderedByLogin() {
-		return  userDao.findAllUsersOrderedByLogin();
+		return userDao.findAllUsersOrderedByLogin();
 	}
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public List<User> findAllActiveUsersOrderedByLogin() {
-		return  userDao.findAllActiveUsersOrderedByLogin();
+		return userDao.findAllActiveUsersOrderedByLogin();
 	}
-	
+
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public FilteredCollectionHolder<List<User>> findAllUsersFiltered(CollectionSorting filter) {
@@ -146,7 +146,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 		long count = userDao.findAll().size();
 		return new FilteredCollectionHolder<List<User>>(count, list);
 	}
-	
+
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public FilteredCollectionHolder<List<User>> findAllActiveUsersFiltered(PagingAndSorting sorter, Filtering filter) {
@@ -163,19 +163,12 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void addUser(User aUser, long groupId, String password) {
-		// FIXME : also check the auth part when time has come
-		
-		userDao.checkLoginAvailability(aUser.getLogin());
-		
-		UsersGroup group = groupDao.findById(groupId);
-
-		aUser.setGroup(group);
-		adminAuthentService.createNewUserPassword(aUser.getLogin(), password, aUser.getActive(), true, true, true,
+	public void addUser(User user, long groupId, String password) {
+		// FIXME : check the auth login is available when time has come
+		createUserWithoutCredentials(user, groupId);
+		adminAuthentService.createNewUserPassword(user.getLogin(), password, user.getActive(), true, true, true,
 				new ArrayList<GrantedAuthority>());
-		userDao.persist(aUser);
 	}
-
 
 	/**
 	 * @see AdministrationService#modifyUserActiveParam(long, boolean)
@@ -204,13 +197,13 @@ public class AdministrationServiceImpl implements AdministrationService {
 		User user = userDao.findById(userId);
 		adminAuthentService.deactivateAccount(user.getLogin());
 	}
-	
+
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void activateUser(long userId) {
 		userAccountService.activateUser(userId);
 	}
-	
+
 	@Override
 	public List<Project> findAllProjects() {
 		return projectDao.findAll();
@@ -244,8 +237,6 @@ public class AdministrationServiceImpl implements AdministrationService {
 		return configurationService.findConfiguration(LOGIN_MESSAGE_KEY);
 	}
 
-	
-	
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void resetUserPassword(long userId, String newPassword) {
@@ -255,12 +246,11 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	/**
 	 * @see AdministrationService#findAdministrationStatistics()
-	 */	
+	 */
 	@Override
 	public AdministrationStatistics findAdministrationStatistics() {
 		return adminDao.findAdministrationStatistics();
 	}
-
 
 	/**
 	 * @see AdministrationService#deassociateTeams(long, List)
@@ -271,7 +261,6 @@ public class AdministrationServiceImpl implements AdministrationService {
 		User user = userDao.findById(userId);
 		user.removeTeams(teamIds);
 	}
-
 
 	/**
 	 * @see AdministrationService#associateToTeams(long, List)
@@ -285,7 +274,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 			team.addMember(user);
 			user.addTeam(team);
 		}
-		
+
 	}
 
 	/**
@@ -298,9 +287,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 		List<Team> associatedTeams = teamDao.findSortedAssociatedTeams(userId, paging, filtering);
 		long associatedTeamsTotal = teamDao.countAssociatedTeams(userId);
 		return new PagingBackedPagedCollectionHolder<List<Team>>(paging, associatedTeamsTotal, associatedTeams);
-		
-	}
 
+	}
 
 	/**
 	 * @see AdministrationService#findAllNonAssociatedTeams(long)
@@ -309,5 +297,46 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public List<Team> findAllNonAssociatedTeams(long userId) {
 		return teamDao.findAllNonAssociatedTeams(userId);
+	}
+
+	/**
+	 * This is not secured on purpose.
+	 * 
+	 * @see org.squashtest.tm.service.user.AdministrationService#findByLogin(java.lang.String)
+	 */
+	@Override
+	public User findByLogin(String login) {
+		return userDao.findUserByLogin(login);
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.user.AdministrationService#createUserFromLogin(java.lang.String)
+	 */
+	@Override
+	public User createUserFromLogin(@NotNull String login) throws LoginAlreadyExistsException {
+		if (findByLogin(login) != null) {
+			throw new LoginAlreadyExistsException("User " + login + " cannot be created because it already exists");
+		}
+
+		User user = User.createFromLogin(login);
+		UsersGroup defaultGroup = groupDao.findByQualifiedName("squashtest.tm.group.User");
+		user.setGroup(defaultGroup);
+
+		userDao.persist(user);
+		return user;
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.user.AdministrationService#createUserWithoutCredentials(org.squashtest.tm.domain.users.User,
+	 *      long)
+	 */
+	@Override
+	public void createUserWithoutCredentials(User user, long groupId) {
+		userDao.checkLoginAvailability(user.getLogin());
+
+		UsersGroup group = groupDao.findById(groupId);
+
+		user.setGroup(group);
+		userDao.persist(user);
 	}
 }

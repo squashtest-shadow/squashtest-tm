@@ -22,32 +22,35 @@ package org.squashtest.tm.service.user;
 
 import org.squashtest.tm.domain.users.User;
 
-
-
-
 //TODO : same methods but with no parameters (UserContextService will give us the user)
 public interface UserAccountService {
 
 	/* ** services using an ID : the calling user is not the modified user ** */
-	
+
 	void modifyUserFirstName(long userId, String newName);
-	
+
 	void modifyUserLastName(long userId, String newName);
-	
+
 	void modifyUserLogin(long userId, String newLogin);
-	
+
 	void modifyUserEmail(long userId, String newEmail);
-	
+
 	void deactivateUser(long userId);
 
 	void activateUser(long userId);
-	
-	/* ** services using no ID : the modified user is the calling user ** */
 
+	/* ** services using no ID : the modified user is the calling user ** */
+	/**
+	 * Fetches the {@link User} which matches the current authenticated username / principal.
+	 * 
+	 * If one is authenticated (through a third party authentication provider) but no {@link User} is defined, this
+	 * method returns <code>null</code>.
+	 * 
+	 * @return the current {@link User} or <code>null</code>
+	 */
 	User findCurrentUser();
-	
+
 	void setCurrentUserEmail(String newEmail);
-	
+
 	void setCurrentUserPassword(String oldPasswd, String newPasswd);
-	
 }

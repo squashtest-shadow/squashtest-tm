@@ -29,7 +29,7 @@
  * needed if you want to (inaccurately) support web browsers which can't word-break 
  * 
  * @params : 
- * 	maxWidth : the width the text should not exceed
+ *  maxWidth : the width the text should not exceed
  *  domElement : the element containing the text, as a DOM entity
  *  
  * @returns : the replacement text of for the given element, that should be "appended" to its content (do not use "set text") 
@@ -90,14 +90,14 @@ function simpleHyphenation(maxLength, text) {
 function openAttachmentIfNotEmpty() {
 	var imgs = $("#attachment-container img");
 
-	if (imgs.length != 0) {
+	if (!!imgs.length) {
 		$("#attachment-panel").togglePanel("openContent");
 	}
 }
 
 function hyphenateAttachement() {
 	var attachmentsCaption = $(".div-attachments-item  a");
-	if (attachmentsCaption.length != 0) {
+	if (!!attachmentsCaption.length) {
 		var i = 0;
 		var itemWidth = $(".div-attachments-item:first").width();
 		for (i = 0; i < attachmentsCaption.length; i++) {
@@ -113,13 +113,14 @@ function hyphenateAttachement() {
 function handleNotFoundImages(defaultImageUrl) {
 	var imgs = $("#attachment-container img");
 
-	if (imgs.length == 0)
+	if (!imgs.length){
 		return;
-
+	}
+	
 	// reloading the image to re-get the error event if needed. If you find it
 	// ugly, well, you're right !
-	$(imgs).each(function () {
-		$(this).load().error(function () {
+	$(imgs).each(function() {
+		$(this).load().error(function() {
 			this.src = defaultImageUrl;
 		});
 	});

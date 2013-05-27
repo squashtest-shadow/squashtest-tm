@@ -216,8 +216,10 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			Query query = currentSession().createQuery(queryString);
 			query.setParameterList("executionsIds", executionsIds);
 			query.setParameterList("executionStepsIds", executionStepsIds);
-			query.setFirstResult(sorter.getFirstItemIndex());
-			query.setMaxResults(sorter.getPageSize());
+			if(!sorter.shouldDisplayAll()){
+				query.setFirstResult(sorter.getFirstItemIndex());
+				query.setMaxResults(sorter.getPageSize());
+			}
 			result = query.list();
 
 		}

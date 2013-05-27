@@ -22,16 +22,19 @@
  * 
  * 
  * <p>
- * A FeedbackMultipartPopup is an object complementary to the regular jQuery.dialog. Its purpose is to enrich the
- * submission of multipart form data, which can be long to upload, and of which the user might appreciate to be informed
- * of the progression.
+ * A FeedbackMultipartPopup is an object complementary to the regular
+ * jQuery.dialog. Its purpose is to enrich the submission of multipart form
+ * data, which can be long to upload, and of which the user might appreciate to
+ * be informed of the progression.
  * </p>
  * 
  * <p>
  * popup layout definition :
  * 
- * the bulk of the popup consists of several divs : parametrization, confirm and summary. Each of them will be
- * identified as such if they use the corresponding css classes : 'parametrization', 'confirm' and 'summary' classes.
+ * the bulk of the popup consists of several divs : parametrization, confirm and
+ * summary. Each of them will be identified as such if they use the
+ * corresponding css classes : 'parametrization', 'confirm' and 'summary'
+ * classes.
  * </p>
  * 
  * <p>
@@ -39,8 +42,9 @@
  * 
  * <ul>
  * <li>popup : the jQuery object representing the dialog (not the widget)</li>
- * <li>errorHandler : a javascript function accepting a javascript object (the json response). Must return null if no
- * error were parsed, or the mssage to display if an error occured.</li>
+ * <li>errorHandler : a javascript function accepting a javascript object (the
+ * json response). Must return null if no error were parsed, or the mssage to
+ * display if an error occured.</li>
  * <li> parametrization : an object defined as follow :
  * <ul>
  * <li>submitUrl : the url where to submit.</li>
@@ -50,8 +54,9 @@
  * </li>
  * <li>summary : an object defined as follow :
  * <ul>
- * <li>builder : a javascript function accepting a javascript object (the json response of the form sumbission) to help
- * with the construction of the summary before it is displayed;</li>
+ * <li>builder : a javascript function accepting a javascript object (the json
+ * response of the form sumbission) to help with the construction of the summary
+ * before it is displayed;</li>
  * </ul>
  * </li>
  * 
@@ -78,16 +83,16 @@ function FeedbackMultipartPopup(settings) {
 	/* *****************private methods *************************** */
 
 	var self = this;
-	var getButtonPane = $.proxy(function () {
+	var getButtonPane = $.proxy(function() {
 		return this.popup.eq(0).next().find(".ui-dialog-buttonset");
 	}, self);
 
-	var getButtons = $.proxy(function (className) {
+	var getButtons = $.proxy(function(className) {
 		var buttons = getButtonPane().find("button." + className);
 		return buttons;
 	}, self);
 
-	var showButtons = $.proxy(function (className) {
+	var showButtons = $.proxy(function(className) {
 		var allButtons = getButtonPane().find("button");
 		var selectedButtons = allButtons.filter("." + className);
 
@@ -96,18 +101,18 @@ function FeedbackMultipartPopup(settings) {
 
 	}, self);
 
-	var findMainPanel = $.proxy(function (name) {
+	var findMainPanel = $.proxy(function(name) {
 		return this[name].panel;
 	}, self);
 
-	var showPanel = $.proxy(function (name) {
-		$.each(this.allPanels, function (i, v) {
+	var showPanel = $.proxy(function(name) {
+		$.each(this.allPanels, function(i, v) {
 			v.hide();
 		});
 		findMainPanel(name).show();
 	}, self);
 
-	var displayError = $.proxy(function (message) {
+	var displayError = $.proxy(function(message) {
 		var erPanel = findMainPanel(FeedbackMultipartPopup.ERROR);
 		var spMessage = $("<span/>", {
 			"text" : message
@@ -118,7 +123,7 @@ function FeedbackMultipartPopup(settings) {
 
 	/* ********************** public methods ************************* */
 
-	this.reset = function () {
+	this.reset = function() {
 
 		var paramPanel = this.parametrization.panel;
 		paramPanel.find('input').val('');
@@ -126,22 +131,23 @@ function FeedbackMultipartPopup(settings) {
 		this.setState(FeedbackMultipartPopup.PARAMETRIZATION);
 	};
 
-	this.setState = function (stateName) {
+	this.setState = function(stateName) {
 		showPanel(stateName);
 		showButtons(stateName);
 		this.state = stateName;
 	};
 
-	this.validate = function () {
+	this.validate = function() {
 
-		var fileUploads = $("." + FeedbackMultipartPopup.PARAMETRIZATION + " input[type='file']", this.popup);
+		var fileUploads = $("." + FeedbackMultipartPopup.PARAMETRIZATION
+				+ " input[type='file']", this.popup);
 
 		var self = this;
 		var validated = false;
-		fileUploads.each(function (i, v) {
+		fileUploads.each(function(i, v) {
 			var fileName = v.value;
 
-			$.each(self.parametrization.extensions, function (i, v) {
+			$.each(self.parametrization.extensions, function(i, v) {
 				if (fileName.match("." + v + "$")) {
 					validated = true;
 				}
@@ -158,24 +164,25 @@ function FeedbackMultipartPopup(settings) {
 
 	};
 
-	this.submit = function () {
+	this.submit = function() {
 		// todo and please use Deferred.done() to set the ticket and perform the
 		// following
 		this.setState(FeedbackMultipartPopup.PROGRESSION);
 		this.doSubmit();
 	};
 
-	this.doSubmit = function () {
+	this.doSubmit = function() {
 		var localSelf = this;
 		var form = $("form", this.parametrization.panel);
 		form.ajaxSubmit({
-			url : this.parametrization.submitUrl + "?upload-ticket=" + this.ticket,
+			url : this.parametrization.submitUrl + "?upload-ticket="
+					+ this.ticket,
 			dataType : "text/html",
-			success : function () {
+			success : function() {
 			},
-			error : function () {
+			error : function() {
 			},
-			complete : function (jqXHR) {
+			complete : function(jqXHR) {
 				localSelf.xhr = jqXHR;
 				localSelf.displaySummary();
 			},
@@ -183,10 +190,10 @@ function FeedbackMultipartPopup(settings) {
 		});
 	};
 
-	this.displaySummary = function () {
+	this.displaySummary = function() {
 		var json = $.parseJSON($(this.xhr.responseText).text());
 		var errorMessage = this.errorHandler(json);
-		
+
 		if (errorMessage === null) {
 			this.summary.builder(json);
 			this.setState(FeedbackMultipartPopup.SUMMARY);
@@ -194,11 +201,10 @@ function FeedbackMultipartPopup(settings) {
 			displayError(errorMessage);
 			this.setState(FeedbackMultipartPopup.ERROR);
 		}
-		
-		
+
 	};
 
-	this.cancel = function () {
+	this.cancel = function() {
 		if (this.state == "progression") {
 			this.cancelPoll();
 			// we must also kill the submit itself, alas killing other pending
@@ -207,8 +213,9 @@ function FeedbackMultipartPopup(settings) {
 				window.stop();
 			} else {
 				/*
-				 * IE-specific instruction document.execCommand("Stop"); wont prevent the file to be fully uploaded
-				 * because it doesn't kill the socket, so we'll be even more blunt
+				 * IE-specific instruction document.execCommand("Stop"); wont
+				 * prevent the file to be fully uploaded because it doesn't kill
+				 * the socket, so we'll be even more blunt
 				 */
 				document.location.reload();
 			}
@@ -216,19 +223,19 @@ function FeedbackMultipartPopup(settings) {
 		this.popup.dialog("close");
 	};
 
-	this.cancelPoll = function () {
+	this.cancelPoll = function() {
 		// todo
 	};
 
-	this.startPoll = function () {
+	this.startPoll = function() {
 		// todo
 	};
 
-	/*******************************************************************************************************************
+	/***************************************************************************
 	 * CONSTRUCTION
-	 ******************************************************************************************************************/
+	 **************************************************************************/
 
-	var buildErrorPanel = $.proxy(function () {
+	var buildErrorPanel = $.proxy(function() {
 		var localSelf = this;
 
 		this.error = {};
@@ -241,7 +248,7 @@ function FeedbackMultipartPopup(settings) {
 		getButtonPane().prepend(errorButton);
 		errorButton.button({
 			'label' : 'Ok'
-		}).click(function () {
+		}).click(function() {
 			localSelf.setState(FeedbackMultipartPopup.PARAMETRIZATION);
 		});
 
@@ -249,7 +256,7 @@ function FeedbackMultipartPopup(settings) {
 		this.allPanels.push(this.error.panel);
 	}, self);
 
-	var buildDumpPanel = $.proxy(function () {
+	var buildDumpPanel = $.proxy(function() {
 		this.dump = {};
 		this.dump.panel = $("<div/>", {
 			'id' : 'excel-dump',
@@ -267,9 +274,11 @@ function FeedbackMultipartPopup(settings) {
 	this.confirm = {};
 	this.progression = {};
 
-	this.parametrization.panel = $("." + FeedbackMultipartPopup.PARAMETRIZATION, this.popup);
+	this.parametrization.panel = $(
+			"." + FeedbackMultipartPopup.PARAMETRIZATION, this.popup);
 	this.confirm.panel = $("." + FeedbackMultipartPopup.CONFIRM, this.popup);
-	this.progression.panel = $("." + FeedbackMultipartPopup.PROGRESSION, this.popup);
+	this.progression.panel = $("." + FeedbackMultipartPopup.PROGRESSION,
+			this.popup);
 	this.summary.panel = $("." + FeedbackMultipartPopup.SUMMARY, this.popup);
 
 	this.allPanels.push(this.parametrization.panel);

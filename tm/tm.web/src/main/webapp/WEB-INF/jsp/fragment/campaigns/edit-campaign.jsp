@@ -108,7 +108,7 @@
 
 	<div style="clear: both;"></div>
 	<c:if test="${smallEditable}">
-		<comp:popup id="rename-campaign-dialog"
+		<pop:popup id="rename-campaign-dialog"
 			titleKey="dialog.rename-campaign.title" isContextual="true"
 			openedBy="rename-campaign-button">
 			<jsp:attribute name="buttons">
@@ -123,7 +123,7 @@
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
-			<jsp:body>
+			<jsp:attribute name="body">
 				<script type="text/javascript">
 					$("#rename-campaign-dialog").bind("dialogopen",
 							function(event, ui) {
@@ -139,8 +139,8 @@
 				<br />
 				<comp:error-message forField="name" />	
 		
-			</jsp:body>
-		</comp:popup>
+			</jsp:attribute>
+		</pop:popup>
 	</c:if>
 </div>
 
@@ -151,11 +151,18 @@
 		<comp:general-information-panel auditableEntity="${campaign}" />
 	</div>
 	<div class="toolbar-button-panel">
+	
+		
 		<c:if test="${ smallEditable }">
 			<input type="button"
 				value='<f:message key="label.Rename" />'
 				id="rename-campaign-button" />
 		</c:if>
+		
+		<%-- the click handler bound to this button is so trivial it should actually have been a hyperlink, but I couldn't bother
+		fixing the lnf issues so I left it as a button --%>
+		<input type="button" value="<f:message key="label.Export" />" id="export-campaign-button"/>
+		
 		<c:if test="${ deletable }">
 			<input type="button"
 				value='<f:message key="label.Remove" />'
@@ -394,7 +401,7 @@
 <%--------------------------- Assign User popup -------------------------------------%>
 
 
-<comp:popup id="batch-assign-test-case"
+<pop:popup id="batch-assign-test-case"
 	titleKey="label.AssignUser" isContextual="true"
 	openedBy="assign-test-case-button" closeOnSuccess="false">
 	<jsp:attribute name="buttons">
@@ -415,7 +422,7 @@
 			},			
 			<pop:cancel-button />
 		</jsp:attribute>
-	<jsp:body>
+	<jsp:attribute name="body">
 			<f:message var="emptyMessage"
 			key="message.EmptyTableSelection" />
 			<script type="text/javascript">
@@ -443,8 +450,8 @@
 		</span>
 			<select class="batch-select"></select>
 			
-		</jsp:body>
-</comp:popup>
+		</jsp:attribute>
+</pop:popup>
 
 
 
@@ -460,6 +467,7 @@
 				
 				$('#delete-campaign-button').button();
 				$('#rename-campaign-button').button();
+				$('#export-campaign-button').button();
 				
 				
 				var nameHandler = contentHandlers.getSimpleNameHandler();
@@ -468,10 +476,16 @@
 				nameHandler.nameDisplay = "#campaign-name";
 				
 				squashtm.contextualContent.addListener(nameHandler);				
+		
+				
+				// ******** export ************
+				
+				$("#export-campaign-button").click(function(){
+					document.location.href="${campaignUrl}?export=csv";
+				});
 				
 				
-				
-				//****** tabs configuration *******
+				//****** tabs configuration ***********
 				
 				var fragConf = {
 					beforeLoad : Frag.confHelper.fnCacheRequests	

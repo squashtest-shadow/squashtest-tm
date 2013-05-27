@@ -24,7 +24,7 @@
  * The file upload popup works like a repeater. It will append or remove lists of Items.
  * 
  * An Item is the following : 
- * 	- a file browser,
+ *  - a file browser,
  *  - a button that will remove it when clicked.
  * 
  * The popup will always propose an empty Item for new inputs. When an item is not empty anymore, a new 
@@ -38,14 +38,14 @@
  * @author bsiri
  */
 
-(function ($) {
+(function($) {
 
 	/*
 	 * Here is an object wrapper for the JQuery version of an Item
 	 * 
 	 */
 
-	$.fn.uploadItem = function (jqContainer) {
+	$.fn.uploadItem = function(jqContainer) {
 
 		// init
 		this.getFile = getFile;
@@ -58,13 +58,13 @@
 
 		return this;
 
-	}
+	};
 
 	function item_initialize() {
 		var myself = this;
 
 		var myfile = this.getFile();
-		myfile.change(function () {
+		myfile.change(function() {
 			inputFileOnChange(myself);
 		});
 
@@ -72,7 +72,7 @@
 
 		$(mybutton).squashButton();
 
-		mybutton.click(function () {
+		mybutton.click(function() {
 			myself.container.removeItem(myself);
 		});
 
@@ -108,7 +108,7 @@
 	 * 
 	 */
 
-	$.fn.uploadPopup = function (jqItemTemplate) {
+	$.fn.uploadPopup = function(jqItemTemplate) {
 
 		// init
 		if (jqItemTemplate != 'undefined') {
@@ -121,7 +121,7 @@
 		this.appendItem = appendItem;
 
 		return this;
-	}
+	};
 
 	// returns the last item of the list of files to upload
 	function findLastItem() {
@@ -135,7 +135,7 @@
 		// check if the item argument is actually different from the last one
 		var lastItem = this.findLastItem();
 
-		if ((isFileBrowserEmpty(lastItem) == true)
+		if ((isFileBrowserEmpty(lastItem))
 				&& (!attachementAreSame(jqAttachItem, lastItem))) {
 			jqAttachItem.remove();
 		}
@@ -157,7 +157,7 @@
 	function isFileBrowserEmpty(jqItem) {
 		var content = jqItem.find("input [type='file']").val();
 
-		if ((content == "") || (typeof (content) == 'undefined')) {
+		if ((!content) || (typeof (content) == 'undefined')) {
 			return true;
 		} else {
 			return false;

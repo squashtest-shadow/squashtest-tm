@@ -22,7 +22,9 @@ package org.squashtest.tm.service.campaign;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
@@ -43,5 +45,18 @@ public interface CustomCampaignModificationService {
 	 * @return the computed {@link TestPlanStatistics} out of each test-plan-item of each campaign's iteration
 	 */
 	TestPlanStatistics findCampaignStatistics(long campaignId);
+	
+	
+	
+
+	
+	/**
+	 * given a campaign Id, returns a model. It's made of rows and cell, and have a row header, check the relevant methods.
+	 * 
+	 * @param campaignId
+	 * @return
+	 */
+	CampaignExportCSVModel exportCampaignToCSV(Long campaignId);
+	
 
 }

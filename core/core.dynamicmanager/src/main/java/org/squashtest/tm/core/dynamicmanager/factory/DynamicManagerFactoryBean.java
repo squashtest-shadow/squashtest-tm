@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.DynamicComponentInvocationHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.EntityFinderNamedQueryHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.EntityModifierHandler;

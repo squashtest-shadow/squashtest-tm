@@ -97,8 +97,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToRequirementLibraryStrategy")
 	private Provider<PasteStrategy<RequirementLibrary, RequirementLibraryNode>> pasteToRequirementLibraryStrategyProvider;
-	
-	
+
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
 		return deletionHandler;
@@ -124,7 +123,6 @@ public class RequirementLibraryNavigationServiceImpl extends
 	protected final LibraryNodeDao<RequirementLibraryNode> getLibraryNodeDao() {
 		return requirementLibraryNodeDao;
 	}
-
 
 	@Override
 	protected PasteStrategy<RequirementFolder, RequirementLibraryNode> getPasteToFolderStrategy() {
@@ -174,15 +172,11 @@ public class RequirementLibraryNavigationServiceImpl extends
 		library.addContent(newReq);
 		requirementDao.persist(newReq);
 		createCustomFieldValues(newReq.getCurrentVersion());
-		
+
 		initCustomFieldValues(newReq.getCurrentVersion(), newVersion.getCustomFields());
-		
 
 		return newReq;
 	}
-	
-	
-	
 
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.requirement.RequirementLibrary' , 'CREATE') "
@@ -220,7 +214,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 		folder.addContent(newReq);
 		requirementDao.persist(newReq);
 		createCustomFieldValues(newReq.getCurrentVersion());
-		
+
 		initCustomFieldValues(newReq.getCurrentVersion(), firstVersion.getCustomFields());
 
 		return newReq;
@@ -264,12 +258,12 @@ public class RequirementLibraryNavigationServiceImpl extends
 		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : requirementLibraryDao
 				.findAll();
 	}
-	
+
 	@Override
 	public ImportSummary importExcel(InputStream stream, long libraryId) {
-		return requirementImporter.importExcelRequirements(stream, libraryId);		
+		return requirementImporter.importExcelRequirements(stream, libraryId);
 	}
-	
+
 	@Override
 	public ImportRequirementTestCaseLinksSummary importLinksExcel(InputStream stream) {
 		return requirementTestCaseLinksImporter.importLinksExcel(stream);
@@ -281,7 +275,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 			return super.copyNodesToFolder(destinationId, sourceNodesIds);
 		} catch (IllegalRequirementModificationException e) {
 			LOGGER.warn(e.getMessage());
-			throw new CopyPasteObsoleteException(e.getMessage());
+			throw new CopyPasteObsoleteException(e.getMessage(), e);
 		}
 	}
 
@@ -291,7 +285,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 			return super.copyNodesToLibrary(destinationId, targetId);
 		} catch (IllegalRequirementModificationException e) {
 			LOGGER.warn(e.getMessage());
-			throw new CopyPasteObsoleteException(e.getMessage());
+			throw new CopyPasteObsoleteException(e.getMessage(), e);
 		}
 	}
 

@@ -180,7 +180,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	//TODO merge code with IterationModificationService.addAutomatedExecution
 	private Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 		
-		Execution execution = item.createAutomatedExecution(testCaseCyclicCallChecker);
+		Execution execution = item.createAutomatedExecution();
 		
 		executionDao.persist(execution);
 		item.addExecution(execution);

@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "domReady", "jquery", "app/ws/squashtm.navbar" ], function(domReady, $, NavBar) {
+define([ "domReady", "jquery", "app/ws/squashtm.navbar" ], function(domReady,
+		$, NavBar) {
 	var BugTrackerMenu = function(settings) {
 		var workspaceUrl = settings.workspaceUrl;
 		this.updateBugTrackerMenu = function(highlighted) {

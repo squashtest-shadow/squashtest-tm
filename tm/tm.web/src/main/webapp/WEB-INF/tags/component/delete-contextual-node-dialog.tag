@@ -130,7 +130,7 @@ function confirmDeletion(){
 
 
 
-<comp:popup id="delete-contextual-node-dialog_${openedBy}"  titleKey="${titleKey}" closeOnSuccess="false" openedBy="${openedBy}" isContextual="true">
+<pop:popup id="delete-contextual-node-dialog_${openedBy}"  titleKey="${titleKey}" closeOnSuccess="false" openedBy="${openedBy}" isContextual="true">
 	<jsp:attribute name="buttons">
 	
 		<f:message var="label" key="tree.button.delete-node.label" />
@@ -139,9 +139,9 @@ function confirmDeletion(){
 		<pop:cancel-button />
 	</jsp:attribute>
 	
-	<jsp:body>
+	<jsp:attribute name="body">
 		
 		<span id="delete-contextual-node-dialog-label"></span>
 		<br />				
-	</jsp:body>
-</comp:popup>
+	</jsp:attribute>
+</pop:popup>

@@ -46,7 +46,8 @@
 				var wkspce = treeNode.getWorkspace();
 				var dmtpe = treeNode.getDomType();
 				var id = treeNode.getResId();
-				return this.getBrowserUrl() + '/' + dmtpe + "s/" + id + "/content";
+				return this.getBrowserUrl() + '/' + dmtpe + "s/" + id
+						+ "/content";
 			};
 		}
 	};
@@ -91,7 +92,7 @@
 		var tree = $.jstree._reference(this);
 		var noLi = (!this.is('li')) && (!this.is('a') && (!this.is('ins')));
 
-		if ((lt == 0) || (tree == null) || (noLi)) {
+		if ((!lt) || (!tree) || (noLi)) {
 			throw "this node is not a valid tree node";
 		}
 
@@ -160,13 +161,18 @@
 		};
 		/**
 		 * Checks if a given workspace wizard is enabled for this node.
-		 * @param wizard an object with an id property which will be used to perfprm the check
+		 * 
+		 * @param wizard
+		 *            an object with an id property which will be used to
+		 *            perfprm the check
 		 */
 		this.isWorkspaceWizardEnabled = function(wizard) {
 			// enabled wizards list is flattened into comma-separated string
 			var enabledWizardsAttr = this.getLibrary().attr("wizards");
-			var enabledWizards = (enabledWizardsAttr === undefined) ? [] : enabledWizardsAttr.split(",");
-			return enabledWizards && ($.inArray(wizard.id, enabledWizards) > -1);
+			var enabledWizards = (enabledWizardsAttr === undefined) ? []
+					: enabledWizardsAttr.split(",");
+			return enabledWizards
+					&& ($.inArray(wizard.id, enabledWizards) > -1);
 		};
 
 		this.getName = function() {
@@ -259,7 +265,7 @@
 			// it's not
 			// hence the return thing below
 			var isOpen = this.tree.is_open(this);
-			return (isOpen != true) ? false : true;
+			return (!isOpen) ? false : true;
 		};
 
 		this.open = function() {
@@ -280,7 +286,8 @@
 
 		this.appendNode = function(data) {
 			var defer = $.Deferred();
-			var res = this.tree.create_node(this, 'last', data, defer.resolve, true);
+			var res = this.tree.create_node(this, 'last', data, defer.resolve,
+					true);
 			var newNode = res.treeNode();
 			return [ newNode, defer.promise() ];
 		};
@@ -313,15 +320,18 @@
 
 		this.match = function(matchObject) {
 			for ( var ppt in matchObject) {
-				if (!(this.attr(ppt) == matchObject[ppt]))
+				if ((this.attr(ppt) != matchObject[ppt])){
 					return false;
+				}
 			}
 			return true;
 		};
 
 		this.acceptsAsContent = function(nodes) {
-			return ((this.is(':library') && nodes.areNodes()) || (this.is(':folder') && nodes.areNodes()) ||
-					(this.is(':file') && nodes.areResources()) || (this.is(':resource') && nodes.areViews()));
+			return ((this.is(':library') && nodes.areNodes())
+					|| (this.is(':folder') && nodes.areNodes())
+					|| (this.is(':file') && nodes.areResources()) || (this
+					.is(':resource') && nodes.areViews()));
 		};
 
 		// ************* methods for multiple matched elements ************
@@ -358,10 +368,12 @@
 
 			var attributes;
 
-			if (arguments.length === 0)
+			if (arguments.length === 0) {
 				attributes = [ "restype", "resid" ];
-			else
+			}
+			else {
 				attributes = arguments[0];
+			}
 
 			return this.collect(function(elt) {
 				var res = {};
@@ -379,8 +391,9 @@
 		// returns true if they all have the same or false if they differ.
 		this.allMatch = function(matchObject) {
 
-			if (this.length === 0)
+			if (this.length === 0){
 				return false;
+			}
 
 			var shrinkingSet = this;
 
@@ -426,8 +439,9 @@
 			var types = this.all('getDomType');
 
 			for ( var i = 0; i < types.length; i++) {
-				if (!(types[i] == "file" || types[i] == "folder"))
+				if (!(types[i] == "file" || types[i] == "folder")){
 					return false;
+				}
 			}
 
 			return true;
@@ -448,7 +462,8 @@
 		// *************** urls
 
 		this.getResourceUrl = function() {
-			return this.getBaseUrl() + this.getResType() + "/" + this.getResId();
+			return this.getBaseUrl() + this.getResType() + "/"
+					+ this.getResId();
 		};
 
 		this.getBaseUrl = function() {

@@ -18,70 +18,68 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+define([ "jquery", "./entity-manager" ], function(jquery, EntityManager) {
 
-define(["jquery", "./entity-manager"], function(jquery, EntityManager){
+	function makeTCConf(conf) {
+		return $.extend({}, conf.general, conf.tcSettings);
+	}
 
-	function makeTCConf(conf){		
-		return $.extend({},conf.general, conf.tcSettings);
+	function makeTStepConf(conf) {
+		return $.extend({}, conf.general, conf.tstepSettings);
 	}
-	
-	function makeTStepConf(conf){		
-		return $.extend({},conf.general, conf.tstepSettings);
+
+	function makeReqConf(conf) {
+		return $.extend({}, conf.general, conf.reqSettings);
 	}
-	
-	function makeReqConf(conf){
-		return $.extend({},conf.general, conf.reqSettings);
+
+	function makeCampConf(conf) {
+		return $.extend({}, conf.general, conf.campSettings);
 	}
-	
-	function makeCampConf(conf){
-		return $.extend({},conf.general, conf.campSettings);
+
+	function makeIterConf(conf) {
+		return $.extend({}, conf.general, conf.iterSettings);
 	}
-	
-	function makeIterConf(conf){
-		return $.extend({},conf.general, conf.iterSettings);
-	}
-	
-	function makeTSConf(conf){
-		return $.extend({},conf.general, conf.tsSettings);
+
+	function makeTSConf(conf) {
+		return $.extend({}, conf.general, conf.tsSettings);
 	}
 
 	var manager = {
-		
-		setConfig : function(conf){
+
+		setConfig : function(conf) {
 			this.config = conf;
 			return this;
 		},
-		
-		init : function(){
-		
-			//test case
+
+		init : function() {
+
+			// test case
 			var tcConf = makeTCConf(this.config);
 			new EntityManager(tcConf);
-			
-			//test step
+
+			// test step
 			var tstepConf = makeTStepConf(this.config);
 			new EntityManager(tstepConf);
-			
-			//requirement
+
+			// requirement
 			var reqConf = makeReqConf(this.config);
 			new EntityManager(reqConf);
-			
-			//campaign
+
+			// campaign
 			var campConf = makeCampConf(this.config);
 			new EntityManager(campConf);
-			
-			//iterartion
+
+			// iterartion
 			var iterConf = makeIterConf(this.config);
 			new EntityManager(iterConf);
-			
-			//test suite
+
+			// test suite
 			var tsConf = makeTSConf(this.config);
 			new EntityManager(tsConf);
-			
+
 		}
 	};
-	
+
 	return manager;
-	
+
 });
-	

@@ -43,7 +43,7 @@ public class ReportServiceImpl implements ReportService {
 	@Override
 	public List<?> executeQuery(ReportQuery query) {
 		try {
-			query.SetDataFilteringService(filterService);
+			query.setDataFilteringService(filterService);
 			return reportQueryDao.executeQuery(query);
 		}catch(UnsupportedFlavorException ufe){
 			throw new RuntimeException(ufe);

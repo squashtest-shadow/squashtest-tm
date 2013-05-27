@@ -169,20 +169,6 @@
 	});
 
 
-	<%--=========================--%>
-	<%-- new execution Buttons --%>
-	<%--=========================--%>
-	$(function() {	
-		<%-- bind the new execution creation button to their event --%>
-		var newExecButtons = $('a.new-exec');
-		newExecButtons.die('click');
-		newExecButtons.live('click', newExecutionClickHandler);
-		var newExecAutoButtons = $('a.new-auto-exec');
-		newExecAutoButtons.die('click');
-		newExecAutoButtons.live('click', newAutoExecutionClickHandler);
-	});
-	
-	
 	function newExecutionClickHandler(){
 		var url = $(this).attr('data-new-exec');
 		
@@ -339,12 +325,17 @@ function bindMenuToExecutionShortCut(row, data){
 	<%-- Table methods  --%>
 	<%--=========================--%>
 	function testPlanTableDrawCallback() {
+		
+		var table = $("#test-plans-table").squashTable();
+		
 		<c:if test="${ editable }">
 		enableTableDragAndDrop('test-suite-test-plans-table', getTestPlanTableRowIndex, testPlanDropHandler);
 		decorateDeleteButtons($('.delete-test-suite-test-plan-button', this));
 		</c:if>
 		restoreTableSelection(this, getTestPlansTableRowId);
 		convertExecutionStatus(this);
+		
+		bindToggleExpandIcon(table);
 	}
 
 	function getTestPlansTableRowId(rowData) {
@@ -476,6 +467,13 @@ function bindMenuToExecutionShortCut(row, data){
 		});		
 	}
 	
+	function bindToggleExpandIcon(table){
+		$('tbody td a.test-case-name-hlink', table).bind('click', function() {
+			toggleExpandIcon(this);
+			return false; //return false to prevent navigation in page (# appears at the end of the URL)
+		});		
+	}
+	
 
 	function toggleExpandIcon(testPlanHyperlink){
 		
@@ -489,19 +487,22 @@ function bindMenuToExecutionShortCut(row, data){
 		{
 			/* the row is closed - open it */
 			var nTr = table.fnOpen(ltr, "      ", "");
-			var url1="${testPlanExecutionsUrl}" + donnees[0];
+			var url1 = "${testPlanExecutionsUrl}" + donnees[0];
+			var jqnTr = $(nTr);
 			
+			var rowClass = ($(this).parent().parent().hasClass("odd")) ? "odd" : "even";
+			jqnTr.addClass(rowClass);
+
+			jqnTr.attr("style", "vertical-align:top;");
+			image.attr("src", "${pageContext.servletContext.contextPath}/images/arrow_down.gif");
 			
-			$(nTr).load(url1);
-			if ($(this).parent().parent().hasClass("odd")){
-				$(nTr).addClass("odd");
-			}
-			else {
-				$(nTr).addClass("even");
-			}
-			$(nTr).attr("style","vertical-align:top;");
-			
-			image.attr("src","${pageContext.servletContext.contextPath}/images/arrow_down.gif");
+
+			jqnTr.load(url1, function(){				
+				<c:if test="${ executable }">
+				//apply the post processing on the content
+				expandedRowCallback(jqnTr);
+				</c:if>
+			});
 			
 		}
 		else
@@ -514,23 +515,75 @@ function bindMenuToExecutionShortCut(row, data){
 	}
 	
 	
-	$(function(){	
+	
+	/* ***************************** expanded line post processing *************** */
 
-		/*
-			could be optimized if we bind that in the datatableDrawCallback.		
-		*/
-		
-		$('#test-suite-test-plans-table tbody td a.test-case-name-hlink').die('click');
-		
-		<%-- binding the handler managing the collapse/expand test case icon--%>
-		$('#test-suite-test-plans-table tbody td a.test-case-name-hlink').live('click', function () {
-			toggleExpandIcon(this);
-			return false; //return false to prevent navigation in page (# appears at the end of the URL)
-		} );
-		
+<c:if test="${ executable }">
 	
-	});
+	function expandedRowCallback(jqnTr) {
+		initDeleteButtonsToFunctions(jqnTr);
+		initNewExecButtons(jqnTr);
+	};
 	
+	
+	
+	function initNewExecButtons(jqnTr){		
+		var newExecButton = $('a.new-exec', jqnTr);
+		newExecButton.button().on('click', newExecutionClickHandler);
+		var newExecAutoButton = $('a.new-auto-exec', jqnTr);
+		newExecAutoButton.button().on('click', newAutoExecutionClickHandler);		
+	}
+	
+
+	function initDeleteButtonsToFunctions(jqnTr) {
+		
+		decorateDeleteButtons($(".delete-execution-table-button", jqnTr));
+		
+		var execOffset = "delete-execution-table-button-";
+		
+		$(".delete-execution-table-button", jqnTr)
+		.click(function() {
+			//console.log("delete execution #"+idExec);
+			var execId = $(this).attr("id");
+			var idExec = execId.substring(execOffset.length);
+			var execRow = $(this).closest("tr");
+			var testPlanHyperlink = $(this).closest("tr")
+										   .closest("tr")
+										   .prev()
+										   .find("a.test-case-name-hlink");
+
+			confirmeDeleteExecution(idExec, testPlanHyperlink, execRow);
+		});
+
+	}
+
+	function confirmeDeleteExecution(idExec, testPlanHyperlink, execRow) {
+		oneShotConfirm("<f:message key='dialog.delete-execution.title'/>",
+				"<f:message key='dialog.delete-execution.message'/>",
+				"<f:message key='label.Confirm'/>",
+				"<f:message key='label.Cancel'/>").done(
+				function() {
+					$.ajax({
+						'url' : "${showExecutionUrl}/" + idExec,
+						type : 'DELETE',
+						data : [],
+						dataType : "json"
+					}).done(function(data){
+						refreshTable(testPlanHyperlink, execRow, data);
+					});
+				});
+	}
+
+	
+	function refreshTable(testPlanHyperlink, execRow, data) {
+		refreshTestPlans();		
+		refreshTestSuiteInfos();
+		refreshStatistics();
+		refreshExecButtons();
+
+	}
+	
+</c:if>
 	
 </script>
 

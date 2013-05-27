@@ -63,7 +63,7 @@
 		<div id="user-account-password-panel">
 			
 			<div >
-				<label><f:message key="user.account.oldpass.label"/></label>					
+				<label><f:message key="user.account.oldpass.label"/></label>
 				<input type="password" id="oldPassword"/>
 				<comp:error-message forField="oldPassword" />
 			</div>
@@ -75,7 +75,7 @@
 			</div>
 			
 			<div>
-				<label ><f:message key="user.account.confirmpass.label"/></label>				
+				<label ><f:message key="user.account.confirmpass.label"/></label>
 				<input type="password" id="user-account-confirmpass"/>
 				<comp:error-message forField="user-account-confirmpass" />
 			</div>			

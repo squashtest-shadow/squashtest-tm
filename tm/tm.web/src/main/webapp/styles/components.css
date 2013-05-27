@@ -696,6 +696,13 @@ span.span-green {
 }
 
 /********************* 
+ * ATTACHMENT DIALOG
+ *********************/
+#attachment-progress-dialog > div, #attachment-progress-message {
+	text-align: center;
+}
+
+/********************* 
  * NOTIFICATION PANEL
  *********************/
 .notification-pane {
@@ -714,8 +721,6 @@ span.span-green {
 /*****************************************
  * custom field binding (administration)
  ****************************************/
-
-
 .cuf-binding-popup tbody td{
 	cursor : pointer;
 }

@@ -300,6 +300,24 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		return new PagingBackedPagedCollectionHolder<List<VerifiedRequirement>>(pas, totalVerified, pagedVerifiedReqs);
 	}
 	
+	@Override
+	public List<VerifiedRequirement> findAllVerifiedRequirementsByTestCaseId(long testCaseId) {
+		LOGGER.debug("Looking for verified requirements of TestCase[id:{}]", testCaseId);
+
+		Set<Long> calleesIds = callTreeFinder.getTestCaseCallTree(testCaseId);
+
+		calleesIds.add(testCaseId);
+
+		LOGGER.debug("Fetching Requirements verified by TestCases {}",calleesIds.toString());
+		
+		List<RequirementVersion> pagedVersionVerifiedByCalles = requirementVersionCoverageDao.findDistinctRequirementVersionsByTestCases(calleesIds);
+
+		TestCase mainTestCase = testCaseDao.findById(testCaseId);
+
+		return  buildVerifiedRequirementList(
+				mainTestCase, pagedVersionVerifiedByCalles);
+	}
+	
 	
 	private List<VerifiedRequirement> buildVerifiedRequirementList(
 			final TestCase main , List<RequirementVersion> pagedVersionVerifiedByCalles) {

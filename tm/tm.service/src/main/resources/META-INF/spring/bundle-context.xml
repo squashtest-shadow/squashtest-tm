@@ -21,22 +21,25 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
-  xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
-  xmlns:security="http://www.springframework.org/schema/security"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-  	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-  	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
-	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:util="http://www.springframework.org/schema/util" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+  	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+  	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
   <context:annotation-config />
 
-  <context:component-scan base-package="*" />
+  <context:component-scan base-package="*">
+    <context:exclude-filter type="annotation" expression="org.springframework.context.annotation.Configuration"/>
+  </context:component-scan>
 
-  <bean id="requirementCreationEventPublisherAspect" class="org.squashtest.tm.domain.event.RequirementCreationEventPublisherAspect"
+  <bean id="requirementCreationEventPublisherAspect" class="org.squashtest.tm.service.internal.event.RequirementCreationEventPublisherAspect"
     factory-method="aspectOf">
     <property name="auditor" ref="statusBasedRequirementAuditor" />
   </bean>
@@ -46,7 +49,7 @@
   </bean>
 
   <!-- ====== BEAN VALIDATION ====== -->
-  <bean id="javax.validation.ValidatorFactory" class="org.squashtest.tm.service.validation.ValidatorFactoryBean"
+  <bean id="javax.validation.ValidatorFactory" class="org.squashtest.tm.validation.ValidatorFactoryBean"
     factory-method="getInstance" />
 
   <!-- ====== SHARED THREAD POOL TASK EXECUTOR ====== -->
@@ -198,7 +201,7 @@
   </bean>
 
 <!-- Security related service, declared here so that we can test it -->
-  <bean id="permissionFactory" class="org.squashtest.tm.service.security.acls.CustomPermissionFactory" />
+  <bean id="permissionFactory" class="org.squashtest.tm.security.acls.CustomPermissionFactory" />
 
   <bean id="aclAdminAuthority" class="org.springframework.security.core.authority.GrantedAuthorityImpl">
     <constructor-arg value="ROLE_ADMIN" />
@@ -219,7 +222,7 @@
       </bean>
     </constructor-arg>
     <constructor-arg>
-        <bean class="org.squashtest.tm.service.security.acls.Slf4jAuditLogger" />
+        <bean class="org.squashtest.tm.security.acls.Slf4jAuditLogger" />
     </constructor-arg>
     <property name="permissionFactory" ref="permissionFactory" />
     <property name="selectClause">

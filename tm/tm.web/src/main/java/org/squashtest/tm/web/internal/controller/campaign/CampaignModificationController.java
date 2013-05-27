@@ -22,8 +22,12 @@ package org.squashtest.tm.web.internal.controller.campaign;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -43,8 +47,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
+import org.squashtest.tm.domain.campaign.CampaignExportCSVModel.Row;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
@@ -64,6 +70,7 @@ import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 import org.squashtest.tm.web.internal.util.DateUtils;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Controller
 @RequestMapping("/campaigns/{campaignId}")
@@ -303,6 +310,53 @@ public class CampaignModificationController {
 		return toreturn;
 
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, params="export=csv")
+	public @ResponseBody
+	void exportCampaign(@PathVariable("campaignId") long campaignId, HttpServletResponse response) {
+		
+		BufferedWriter writer = null;
+		
+		try{
+			Campaign campaign = campaignModService.findById(campaignId);
+			CampaignExportCSVModel model = campaignModService.exportCampaignToCSV(campaignId); 
+			
+			//prepare the response
+			writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
+		
+			response.setContentType("application/octet-stream");
+			response.setHeader("Content-Disposition","attachment; filename=" + campaign.getName().replace(" ", "_")+".csv");
+			
+			//print
+			Row header = model.getHeader();
+			writer.write(header.toString()+"\n");
+			
+			Iterator<Row> iterator = model.dataIterator();
+			while (iterator.hasNext()){
+				Row datarow = iterator.next();
+				String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", " ").replaceAll("\\r", " ");
+				writer.write(cleanRowValue+"\n");
+			}
+			
+			//closes stream in the finally clause
+		}
+		catch(IOException ex){
+			LOGGER.error(ex.getMessage());
+			throw new RuntimeException(ex);
+		}
+		finally{
+			if (writer != null){
+				try{
+					writer.close();
+				}
+				catch(IOException ex){
+					LOGGER.warn(ex.getMessage());
+				}
+			}
+		}
+
+	}
+	
 
 	// ****************************** Test Plan **********************************
 

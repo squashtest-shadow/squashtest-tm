@@ -63,13 +63,14 @@ squashtm.tree = squashtm.tree || {};
 			overridenM = $("div#jstree-marker");
 		}
 
-		var o = [ "before", "inside", "after" ], r = false, rtl = this._get_settings().core.rtl, pos;
+		var o = [ "before", "inside", "after" ], r = false, rtl = this
+				._get_settings().core.rtl, pos;
 
 		if (this.data.dnd.w < this.data.core.li_height / 3) {
 			o = [ "before", "inside", "after" ];
 		} else if (this.data.dnd.w <= this.data.core.li_height * 2 / 3) {
-			o = this.data.dnd.w < this.data.core.li_height / 2 ? [ "inside", "before", "after" ] : [ "inside", "after",
-					"before" ];
+			o = this.data.dnd.w < this.data.core.li_height / 2 ? [ "inside",
+					"before", "after" ] : [ "inside", "after", "before" ];
 		} else {
 			o = [ "after", "inside", "before" ];
 		}
@@ -91,7 +92,8 @@ squashtm.tree = squashtm.tree || {};
 			r = "inside";
 		}
 
-		pos = rtl ? (this.data.dnd.off.right - 18) : (this.data.dnd.off.left + 10);
+		pos = rtl ? (this.data.dnd.off.right - 18)
+				: (this.data.dnd.off.left + 10);
 
 		switch (r) {
 		case "before":
@@ -101,16 +103,22 @@ squashtm.tree = squashtm.tree || {};
 			}).show();
 			break;
 		case "after":
-			overridenM.css({
-				"left" : pos + "px",
-				"top" : (this.data.dnd.off.top + this.data.core.li_height - 7) + "px"
-			}).show();
+			overridenM.css(
+					{
+						"left" : pos + "px",
+						"top" : (this.data.dnd.off.top
+								+ this.data.core.li_height - 7)
+								+ "px"
+					}).show();
 			break;
 		case "inside":
-			overridenM.css({
-				"left" : pos + (rtl ? -4 : 4) + "px",
-				"top" : (this.data.dnd.off.top + this.data.core.li_height / 2 - 5) + "px"
-			}).show();
+			overridenM.css(
+					{
+						"left" : pos + (rtl ? -4 : 4) + "px",
+						"top" : (this.data.dnd.off.top
+								+ this.data.core.li_height / 2 - 5)
+								+ "px"
+					}).show();
 			break;
 		default:
 			overridenM.hide();
@@ -210,8 +218,9 @@ squashtm.tree = squashtm.tree || {};
 		var origNode = this.get_selected();
 		var targetNode;
 
-		if ((origNode.is(':library')) || (origNode.is(':folder')) ||
-				((origNode.is(':campaign')) && (contentDiscriminator == "new-iteration"))) {
+		if ((origNode.is(':library'))
+				|| (origNode.is(':folder'))
+				|| ((origNode.is(':campaign')) && (contentDiscriminator == "new-iteration"))) {
 			targetNode = origNode;
 		} else {
 			targetNode = origNode.getParent();
@@ -257,7 +266,7 @@ squashtm.tree = squashtm.tree || {};
 		// ********** actual code. ******************
 
 		var isOpen = targetNode.isOpen();
-		if (isOpen != true) {
+		if (!isOpen) {
 			return targetNode.open() // first call will make the node load if
 			// necessary.
 			.then(createNode);
@@ -290,8 +299,6 @@ squashtm.tree = squashtm.tree || {};
 			var jqSrc = $(src).treeNode();
 			var jqDest = $(dest).treeNode();
 			var jqObject = $(object).treeNode();
-			
-			
 
 			// check if the node is draggable first
 			if (jqObject.is(':library')) {
@@ -302,19 +309,19 @@ squashtm.tree = squashtm.tree || {};
 			if (!jqDest.acceptsAsContent(jqObject) || !jqDest.isCreatable()) {
 				return false;
 			}
-			
-			//do not allow move if src is not deletable
-			if(!jqSrc.isDeletable() && !squashtm.keyEventListener.ctrl){
+
+			// do not allow move if src is not deletable
+			if (!jqSrc.isDeletable() && !squashtm.keyEventListener.ctrl) {
 				return false;
 			}
 
 			// allow iteration or test suite copy only
-			if ((jqObject.is(':resource') || (jqObject.is(':view'))) && !squashtm.keyEventListener.ctrl) {
+			if ((jqObject.is(':resource') || (jqObject.is(':view')))
+					&& !squashtm.keyEventListener.ctrl) {
 				return false;
 			}
-			
-			m.differentLibraries = moveFromDifferentLibraries(m);
 
+			m.differentLibraries = moveFromDifferentLibraries(m);
 
 		} catch (invalid_node) {
 			return false;
@@ -340,9 +347,10 @@ squashtm.tree = squashtm.tree || {};
 
 		// here are the names of all destination children, and the names of the
 		// moved objects
-		destNames = dest.children("ul").children("li").not(object).collect(function(elt) {
-			return $(elt).attr('name');
-		});
+		destNames = dest.children("ul").children("li").not(object).collect(
+				function(elt) {
+					return $(elt).attr('name');
+				});
 		movedNames = object.collect(function(elt) {
 			return $(elt).attr('name');
 		});
@@ -356,26 +364,26 @@ squashtm.tree = squashtm.tree || {};
 		}
 		return okay;
 	}
-	
+
 	/**
 	 * This method checks if the move will be inter-project or not.
 	 */
-	 function moveFromDifferentLibraries(data){
+	function moveFromDifferentLibraries(data) {
 		var dest = data.np;
 		var object = data.o;
-		var movedFromLibs = object.collect(function(elt){
+		var movedFromLibs = object.collect(function(elt) {
 			return $(elt).treeNode().getLibrary().attr("id");
 		});
-		if(movedFromLibs.lenght > 0){
-		return true;
+		if (movedFromLibs.lenght > 0) {
+			return true;
 		}
 		var destLibrary = $(dest).treeNode().getLibrary().attr("id");
-		if(movedFromLibs[0] != destLibrary){
-		return true;
+		if (movedFromLibs[0] != destLibrary) {
+			return true;
 		}
 		return false;
-	 }
-	 
+	}
+
 	/*
 	 * ***************************** node copy section
 	 * ****************************************
@@ -418,7 +426,7 @@ squashtm.tree = squashtm.tree || {};
 		return squashtm.treemenu.treeNodeCopier.preparePasteData(nodes, target);
 
 	}
-	
+
 	/*
 	 * will erase fake copies in the tree, send the copied node data to the
 	 * server, and insert the returned nodes.
@@ -473,36 +481,36 @@ squashtm.tree = squashtm.tree || {};
 				$(descendants).each(function(index, element) {
 					tree.deselect_node(element);
 				});
-			}			
+			}
 		}
 	}
-	
-	
+
 	/**
-	 * unused
-	 * Unselects the nodes of the given tree which are not descendants of the same
-	 * project as the given liNode.
+	 * unused Unselects the nodes of the given tree which are not descendants of
+	 * the same project as the given liNode.
 	 * 
 	 * @param liNode
 	 * @param tree
 	 * @param previouslySelected
 	 */
-	function unselectOtherProjectsSelections(liNode, tree, previouslySelected) {
+	function unselectOtherProjectsSelections(liNode, tree, ppreviouslySelected) {
 		var previouslySelected = tree.get_selected();
 		if (previouslySelected.length > 0) {
-		var libraryOfSelectedNode;
-		if ($(liNode).is('[rel|="drive"]')) {
-			libraryOfSelectedNode = $(liNode)[0];
-		} else {
-			libraryOfSelectedNode = $(liNode).parents('[rel|="drive"]')[0];
-		}
-		var libraryOfSelectedNodeDescendants = $(libraryOfSelectedNode).find('li');
-		libraryOfSelectedNodeDescendants.push(libraryOfSelectedNode);
+			var libraryOfSelectedNode;
+			if ($(liNode).is('[rel|="drive"]')) {
+				libraryOfSelectedNode = $(liNode)[0];
+			} else {
+				libraryOfSelectedNode = $(liNode).parents('[rel|="drive"]')[0];
+			}
+			var libraryOfSelectedNodeDescendants = $(libraryOfSelectedNode)
+					.find('li');
+			libraryOfSelectedNodeDescendants.push(libraryOfSelectedNode);
 
-		var nodesToUnselect = previouslySelected.not(libraryOfSelectedNodeDescendants);
-		$(nodesToUnselect).each(function(index, element) {
-			tree.deselect_node(element);
-		});
+			var nodesToUnselect = previouslySelected
+					.not(libraryOfSelectedNodeDescendants);
+			$(nodesToUnselect).each(function(index, element) {
+				tree.deselect_node(element);
+			});
 		}
 
 	}
@@ -517,598 +525,760 @@ squashtm.tree = squashtm.tree || {};
 	/*
 	 * squash tree plugin
 	 */
-	$.jstree.plugin("squash", {
-		__init : function() {
-
-			/**
-			 * here we want to delay the event for folders, libraries and
-			 * campaign (waiting for a possible dblclick), while letting the
-			 * event through for the other kind of nodes.
-			 */
-			function handleNodeClick(tree, event) {
-				var target = $(event.target).treeNode();
-				var node = target.parent();
-
-				if (node.is(':library') || node.is(':folder') || node.attr('restype') == "campaigns" ||
-						node.attr('restype') == "iterations") {
-					if (event.ctrlKey)
-						return true;
-					event.stopImmediatePropagation();
-
-					tree.data.squash.clicktimer = setTimeout(function() {
-						target.trigger('click.jstree');
-					}, tree.data.squash.timeout);
-				}
-			}
-
-			/**
-			 * here we handle dblclicks. basically we don't want the event to be
-			 * processed twice, except for containers that will toggle their
-			 * open-close status.
-			 */
-			function handleNodeDblClick(tree, event) {
-				var target = $(event.target);
-				var node = target.parent();
-
-				event.stopImmediatePropagation();
-				clearTimeout(tree.data.squash.clicktimer);
-				tree.toggle_node(node);
-			}
-
-			var tree = this;
-			var s = this._get_settings().squash;
-			tree.data.squash.timeout = s.timeout;
-			tree.data.squash.isie = false;
-			tree.data.squash.rootUrl = (this._get_settings().squash.rootUrl === undefined) ? ''
-					: this._get_settings().squash.rootUrl;
-			var container = this.get_container();
-
-			/*
-			 * we need our handlers to be bound first note that we are bound to
-			 * 'click' and not 'click.jstree'. That detail matters in the
-			 * handler just below.
-			 */
-
-			/*
-			 * note about click events and browsers specificities : - ff, chrome :
-			 * 2 clicks fire 2 click and 1 dblclick event. both event objects
-			 * have a property .detail - ie 8 : fire click and dblclick
-			 * alternately.
-			 * 
-			 * considering the discrepencies between those behavior the node
-			 * click handling will branch wrt event.detail. FF and Chrome will
-			 * simply use a clickhandler, while ie 8 will use both a click and a
-			 * dblclick handler.
-			 * 
-			 */
-
-			container.bindFirst('click', 'a', function(event, data) {
-				if (event.detail && event.detail > 1) {
-					event.stopImmediatePropagation(); // cancel
-					// the multiple click event for ff and chrome
-				} else {
-					handleNodeClick(tree, event);
-				}
-				return false; // return false to prevent
-				// navigation in page (# appears at the end of the URL)
-			});
-
-			container.bindFirst('dblclick', 'a', function(event, data) {
-				handleNodeDblClick(tree, event);
-				return false; // return false to prevent
-				// navigation in page (# appears at the end of the URL)
-			});
-
-			/*
-			 * CSS style now. that section is copied/pasted from the original
-			 * themeroller plugin, kudos mate.
-			 * 
-			 */
-			container.addClass("ui-widget-content").delegate("a", "mouseenter.jstree", function() {
-				$(this).addClass(s.item_h);
-
-			}).delegate("a", "mouseleave.jstree", function() {
-				$(this).removeClass(s.item_h);
-
-			}).bind("select_node.jstree", $.proxy(function(e, data) {
-				data.rslt.obj.children("a").addClass(s.item_a);
-				return true;
-
-			}, this)).bind(
-					"deselect_node.jstree deselect_all.jstree",
-					$.proxy(function(e, data) {
-						this.get_container().find("." + s.item_a).removeClass(s.item_a).end().find(".jstree-clicked")
-								.addClass(s.item_a);
-						return true;
-					}, this));
-		},
-		_fn : {
-
-			selectionIsEditable : function(selectedNodes) {
-
-				// that variable will be set to true if at least
-				// one selected
-				// node is not editable.
-				var noEdit = (selectedNodes.not(":editable").length > 0);
-				// selection is not editable if no node is
-				// selected or one node
-				// of the selection is not editable
-				if (noEdit)
-					return "noEdit";
-				else if (selectedNodes.length === 0)
-					return "noNodeSelected";
-				else
-					return "OK";
-			},
-
-			selectionIsCreatable : function(selectedNodes) {
-
-				// that variable will be set to true if at least
-				// one selected
-				// node is not editable.
-				var noEdit = (selectedNodes.not(":creatable").length > 0);
-				// selection is not editable if no node is
-				// selected or one node
-				// of the selection is not editable
-				if (noEdit)
-					return "noCreate";
-				else if (selectedNodes.length === 0)
-					return "noNodeSelected";
-				else
-					return "OK";
-			},
-
-			selectionIsDeletableAttr : function(selectedNodes) {
-
-				// that variable will be set to true if at least
-				// one selected node is not editable.
-				var noDelete = (selectedNodes.not(":deletable").length > 0);
-				// selection is not editable if no node is
-				// selected or one node of the selection is not editable
-				if (noDelete)
-					return "noDelete";
-				else if (selectedNodes.length === 0)
-					return "noNodeSelected";
-				else
-					return "OK";
-			},
-
-			selectionIsOneEditableNode : function(selectedNodes) {
-				// true if only one node is selected and is editable
-				if (!selectedNodes.not(":editable").length > 0 && selectedNodes.length === 1)
-					return "OK";
-				else
-					return "notOneEditable";
-			},
-
-			selectionIsOneCreatableNode : function(selectedNodes) {
-				// true if only one node is selected and is
-				// creatable
-				if (!selectedNodes.not(":creatable").length > 0 && selectedNodes.length === 1)
-					return "OK";
-				else
-					return "notOneCreatable";
-			},
-
-			selectionIsDeletable : function(selectedNodes) {
-				// all nodes are deletables excepted project libraries
-				var isDelete = this.selectionIsDeletableAttr(selectedNodes);
-				if (isDelete != "OK")
-					return isDelete;
-				else if (selectedNodes.is(":library"))
-					return "nodeleteLibrary";
-				else
-					return "OK";
-			},
-
-			selectionIsCopyable : function(selectedNodes) {
-				// all nodes except libraries are copyable
-				// if iterations are selected with other nodes
-				// type the selection is not copyable
-				if (selectedNodes.is(":library"))
-					return "noCopyLibrary";
-				else if (selectedNodes.is(":iteration") && selectedNodes.is(":node"))
-					return "noCopyIteration+Other";
-				else
-					return "OK";
-			},
-
-			selectionIsCreateFolderAllowed : function(selectedNodes) {
-				// need only one node selected
-				var isOneCreate = this.selectionIsOneCreatableNode(selectedNodes);
-				if (isOneCreate != "OK")
-					return isOneCreate;
-				// only libraries and folders are allowed for
-				// creation of folder and files
-				else if (selectedNodes.attr('rel') == "drive" || selectedNodes.attr('rel') == "folder") {
-					return "OK";
-				} else
-					return "createFolderNotHere";
-			},
-
-			selectionIsCreateFileAllowed : function(selectedNodes) {
-				// need only one node selected
-				var isOneCreate = this.selectionIsOneCreatableNode(selectedNodes);
-				if (isOneCreate != "OK") {
-					return isOneCreate;
-
-				} else {
-					// only libraries and folders are allowed
-					// for creation of
-					// folder and files
-					var nodeAttr = selectedNodes.attr('rel');
-					if (nodeAttr == "drive" || nodeAttr == "folder" || nodeAttr == "file") {
-
-						return "OK";
-					} else
-						return "createFileNotHere";
-				}
-			},
-
-			selectionIsCreateResourceAllowed : function(selectedNodes) {
-				// need only one node selected
-				var isOneCreate = this.selectionIsOneCreatableNode(selectedNodes);
-				if (isOneCreate != "OK")
-					return isOneCreate;
-				// creation of resource is allowed only for
-				// files
-				else if (selectedNodes.attr('rel') == "file" || selectedNodes.attr('rel') == "resource")
-					return "OK";
-				else
-					return "createResNotHere";
-			},
-
-			selectionIsRenamable : function(selectedNodes) {
-				// need only one node selected
-				var isOneEdit = this.selectionIsOneEditableNode(selectedNodes);
-				if (isOneEdit != "OK")
-					return isOneEdit;
-				else if (selectedNodes.attr('rel') == "drive")
-					return "noRenameLib";
-				// rename allowed for nodes other than libraries
-				else
-					return "OK";
-			},
-
-			selectionIsPasteAllowed : function(selectedNodes) {
-				return squashtm.treemenu.treeNodeCopier.mayPaste();
-			},
-
-			// accepts an object, or an array of object. the
-			// attributes of the
-			// object(s) will be
-			// tested against the dom attributes of the nodes
-			// and returns those
-			// that match all the
-			// attributes of at least one of the objects.
-			findNodes : function(descriptor) {
-				var matchers;
-
-				if (descriptor instanceof Array) {
-					matchers = descriptor;
-				} else {
-					matchers = [ descriptor ];
-				}
-
-				var nodes = $();
-
-				for ( var index = 0; index < matchers.length; index++) {
-					var subList;
-					var selector = "";
-					for ( var ppt in matchers[index]) {
-						selector += "[" + ppt + "='" + matchers[index][ppt] + "']";
-					}
-					subList = this.get_container().find('li' + selector);
-					nodes = nodes.add(subList);
-				}
-
-				try {
-					return nodes.treeNode();
-				} catch (invalide_node) {
-					return $();
-				}
-			},
-
-			get_selected : function() {
-				var selected = this.__call_old();
-				if (selected.length > 0) {
-					return selected.treeNode();
-				} else {
-					return selected;
-				}
-			},
-
-			get_selected_ids : function(restype) {
-				var self = this;
-				var nodes = self.get_selected();
-
-				var filtered = $(nodes).filter(function() {
-					return $(this).attr('restype') == restype;
-				});
-
-				var ids = $.map(filtered, function(item) {
-					return $(item).attr('resid');
-				});
-
-				return ids;
-			},
-
-			allowedOperations : function() {
-				var selectedNodes = this.get_selected();
-				var operations = "";
-				if (this.get_container().data("importable"))
-					operations += "import-excel import-links-excel";
-				if (selectedNodes.length === 0)
-					return operations;
-				operations += "export ";
-				if (this.selectionIsCopyable(selectedNodes) == "OK") {
-						operations += "copy ";
-					}
-				if (!this.selectionIsEditable(selectedNodes) == "OK") {
-					return operations;
-
-				} else {
-					if (this.selectionIsDeletable(selectedNodes) == "OK") {
-						operations += "delete ";
-					}			
-
-					if (this.selectionIsOneEditableNode(selectedNodes) == "OK") {
-						if (this.selectionIsCreateFolderAllowed(selectedNodes) == "OK") {
-							operations += "create-folder ";
-						}
-
-						if (this.selectionIsCreateFileAllowed(selectedNodes) == "OK") {
-							operations += "create-file ";
-						}
-
-						if (this.selectionIsCreateResourceAllowed(selectedNodes) == "OK") {
-							operations += "create-resource ";
-						}
-
-						if (this.selectionIsRenamable(selectedNodes) == "OK") {
-							operations += "rename ";
-						}
-
-						if (this.selectionIsPasteAllowed(selectedNodes) == "OK") {
-							operations += "paste ";
-
-						}
-					}
-				}
-				return operations;
-			}
-
-		},
-
-		defaults : {
-			"item_h" : "ui-state-active",
-			"item_a" : "ui-state-default",
-			"timeout" : 500
-		}
-	});
-
-	$.jstree.plugin('workspace_tree', {
-		defaults : {
-
-		},
-
-		__init : function() {
-			/*
-			 * 
-			 * @param data : the move_node object @param url : the url to post
-			 * to.
-			 */
-			function moveNode(data, url) {
-				var isRoot = function(node) {
-					return node.is(":library") ? 1 : 0;
-				};
-
-				var tree = data.inst;
-				var nodeData = data.args[0];
-				var newParent = nodeData.np;
-
-				// first check if we don't need to perform an operation
-				if (nodeData.o.length === 0) {
-					return;
-				}
-
-				// we also reject iterations.
-				var firstNode = nodeData.o[0];
-				if ($(firstNode).is(":iteration")) {
-					return;
-				}
-
-				var dataSent = {
-					"object-ids" : $(nodeData.o).treeNode().all('getResId'),
-					"destination-id" : nodeData.np.attr('resid'),
-					"destination-type" : isRoot(nodeData.np) ? "library" : "folder"
-				};
-
-				tree.open_node(newParent);
-
-				return $.ajax({
-					type : 'POST',
-					url : url,
-					data : dataSent,
-					dataType : 'json'
-				});
-			}
-
-			/**
-			* DnD move
-			* Method is called after every check id done to allow the operation.
-			*/
-			function doDnDMoveNodes(moveObject, data){
-			
-				var url = $(moveObject.o).treeNode().getMoveUrl();
-
-				moveNode(data, url).fail(
-					function(jqXHR) {														
-						try {
-							squashtm.notification.handleJsonResponseError(jqXHR)
-							.done(function(){
-								$.jstree.rollback(data.rlbk);
-							});
-						}
-						catch(e){
-							$.jstree.rollback(data.rlbk);
-						}
-				});
-			
-			}
-	
-			
-			var container = this.get_container();
-
-			this.eventHandler = new TreeEventHandler({
-				tree : this
-			});
-			
-			/**
-			* DnD copy node method.
-			* This method is called after all check is done to allow the operation.
-			*/
-			function doDnDCopyNodes(moveObject, data) {
-				// we need to destroy
-				// the copies first,
-				// since we'll
-				// use our owns.
-				destroyJTreeCopies(moveObject, data.inst);
-
-				// now let's post.
-				// Again, as annoying as
-				// it is, the
-				// url depends on th
-				// nature of the nodes.
-				var jqObjects = $(moveObject.o);
-				var url = jqObjects.treeNode().getCopyUrl();
-				var newData = moveObjectToCopyData(data);
-
-				copyNode(newData, url).fail(function() {
-					data.inst.refresh();
-				}).done(function() {
-					// Begin [Feat 1299] this is to make the
-					// following cases work :
-					// case 1 : one is
-					// viewing a campaign and copy-paste one of
-					// it's iterations with Ctrl + drag and drop
-					// => the statistics of the still displayed
-					// campaign have changed = > we need to
-					// refresh them
-					// case 2 : one is viewing an
-					// iteration and copy-paste one of it's
-					// test-suite with Ctrl + drag and drop =>
-					// the statistics of the still displayed
-					// iteration have changed => we need to
-					// refresh them
-					if (typeof (refreshStatistics) == "function") {
-						refreshStatistics();
-					}
-					// End [Feat 1299]
-				});
-			}
-
-			// with the import option an action can be done in
-			// the tree even with no selected node.
-			// when the import mecanism will be dependent on the
-			// selected node this two lines won't be necessary
-			// anymore
-			if ($(".jstree").data("importable"))
-				updateTreebuttons("import-excel import-links-excel");
-
-			var self = this;
-
-			container.bind("select_node.jstree", function(event, data) {
-
-				unselectDescendants(data.rslt.obj, self);
-				operations = data.inst.allowedOperations();
-				updateTreebuttons(operations);
-
-				var resourceUrl = $(data.rslt.obj).treeNode().getResourceUrl();
-
-				var selected = data.inst.get_selected();
-
-				if (selected.length == 1) {
-					squashtm.contextualContent.loadWith(resourceUrl).done(function() {
-						squashtm.contextualContent.addListener(self.eventHandler);
-					});
-				} else {
-					squashtm.contextualContent.unload();
-				}
-
-				return true;
-			}).bind("deselect_node.jstree", function(event, data) {
-				operations = data.inst.allowedOperations();
-				updateTreebuttons(operations);
-				return true;
-			})
-			/*
-			 * the following should have been as a handler of before.jstree on
-			 * call move_node. however many considerations lead to postprocess
-			 * mode_node like now, rather than preprocess it. At least that
-			 * event is triggered only once.
-			 */
-			.bind(
-					"move_node.jstree",
-					function(event, data) {
-						var moveObject = data.args[0];
-
-						if (moveObject !== null && moveObject !== undefined && moveObject.cr !== undefined) {
-							if (squashtm.keyEventListener.ctrl) {
-							
-								
-									if(data.rslt.differentLibraries) {
-									 //warn user if move is inter-project
-										oneShotConfirm('Info', self._get_settings().workspace_tree.warnCopyToDifferentLibrary, squashtm.message.confirm,
-											squashtm.message.cancel)
-											.done(function() {
-												doDnDCopyNodes(moveObject, data);
-											}).fail(function(){
-												data.inst.refresh();
-											});
-									}else{
-									doDnDCopyNodes(moveObject, data);
-								}
-							} else {
-								// check if we can move
-								// the object
-								if (checkMoveIsAuthorized(data)) {
-									
-									//warn user if move is inter-project
-									if(data.rslt.differentLibraries) {
-									oneShotConfirm('Info', self._get_settings().workspace_tree.warnMoveToDifferentLibrary, squashtm.message.confirm,
-											squashtm.message.cancel)
-											.done(function() {
-												doDnDMoveNodes(moveObject, data);
-											}).fail(function(){
-												$.jstree.rollback(data.rlbk);
-											});
-									}else{
-										doDnDMoveNodes(moveObject, data);
+	$.jstree
+			.plugin(
+					"squash",
+					{
+						__init : function() {
+
+							/**
+							 * here we want to delay the event for folders,
+							 * libraries and campaign (waiting for a possible
+							 * dblclick), while letting the event through for
+							 * the other kind of nodes.
+							 */
+							function handleNodeClick(tree, event) {
+								var target = $(event.target).treeNode();
+								var node = target.parent();
+
+								if (node.is(':library') || node.is(':folder')
+										|| node.attr('restype') == "campaigns"
+										|| node.attr('restype') == "iterations") {
+									if (event.ctrlKey) {
+										return true;
 									}
-											
-								} else {
-									$.squash.openMessage('', self._get_settings().workspace_tree.cannotMoveMessage)
-											.done(function(){
-												$.jstree.rollback(data.rlbk);
-											});
+									event.stopImmediatePropagation();
+
+									tree.data.squash.clicktimer = setTimeout(
+											function() {
+												target.trigger('click.jstree');
+											}, tree.data.squash.timeout);
 								}
 							}
+
+							/**
+							 * here we handle dblclicks. basically we don't want
+							 * the event to be processed twice, except for
+							 * containers that will toggle their open-close
+							 * status.
+							 */
+							function handleNodeDblClick(tree, event) {
+								var target = $(event.target);
+								var node = target.parent();
+
+								event.stopImmediatePropagation();
+								clearTimeout(tree.data.squash.clicktimer);
+								tree.toggle_node(node);
+							}
+
+							var tree = this;
+							var s = this._get_settings().squash;
+							tree.data.squash.timeout = s.timeout;
+							tree.data.squash.isie = false;
+							tree.data.squash.rootUrl = (this._get_settings().squash.rootUrl === undefined) ? ''
+									: this._get_settings().squash.rootUrl;
+							var container = this.get_container();
+
+							/*
+							 * we need our handlers to be bound first note that
+							 * we are bound to 'click' and not 'click.jstree'.
+							 * That detail matters in the handler just below.
+							 */
+
+							/*
+							 * note about click events and browsers
+							 * specificities : - ff, chrome : 2 clicks fire 2
+							 * click and 1 dblclick event. both event objects
+							 * have a property .detail - ie 8 : fire click and
+							 * dblclick alternately.
+							 * 
+							 * considering the discrepencies between those
+							 * behavior the node click handling will branch wrt
+							 * event.detail. FF and Chrome will simply use a
+							 * clickhandler, while ie 8 will use both a click
+							 * and a dblclick handler.
+							 * 
+							 */
+
+							container.bindFirst('click', 'a', function(event,
+									data) {
+								if (event.detail && event.detail > 1) {
+									event.stopImmediatePropagation(); // cancel
+									// the multiple click event for ff and
+									// chrome
+								} else {
+									handleNodeClick(tree, event);
+								}
+								return false; // return false to prevent
+								// navigation in page (# appears at the end of
+								// the URL)
+							});
+
+							container.bindFirst('dblclick', 'a', function(
+									event, data) {
+								handleNodeDblClick(tree, event);
+								return false; // return false to prevent
+								// navigation in page (# appears at the end of
+								// the URL)
+							});
+
+							/*
+							 * CSS style now. that section is copied/pasted from
+							 * the original themeroller plugin, kudos mate.
+							 * 
+							 */
+							container.addClass("ui-widget-content").delegate(
+									"a", "mouseenter.jstree", function() {
+										$(this).addClass(s.item_h);
+
+									}).delegate("a", "mouseleave.jstree",
+									function() {
+										$(this).removeClass(s.item_h);
+
+									}).bind(
+									"select_node.jstree",
+									$.proxy(function(e, data) {
+										data.rslt.obj.children("a").addClass(
+												s.item_a);
+										return true;
+
+									}, this)).bind(
+									"deselect_node.jstree deselect_all.jstree",
+									$.proxy(function(e, data) {
+										this.get_container().find(
+												"." + s.item_a).removeClass(
+												s.item_a).end().find(
+												".jstree-clicked").addClass(
+												s.item_a);
+										return true;
+									}, this));
+						},
+						_fn : {
+
+							selectionIsEditable : function(selectedNodes) {
+
+								// that variable will be set to true if at least
+								// one selected
+								// node is not editable.
+								var noEdit = (selectedNodes.not(":editable").length > 0);
+								// selection is not editable if no node is
+								// selected or one node
+								// of the selection is not editable
+								if (noEdit) {
+									return "noEdit";
+								}
+								else if (selectedNodes.length === 0) {
+									return "noNodeSelected";
+								}
+								else {
+									return "OK";
+								}
+							},
+
+							selectionIsCreatable : function(selectedNodes) {
+
+								// that variable will be set to true if at least
+								// one selected
+								// node is not editable.
+								var noEdit = (selectedNodes.not(":creatable").length > 0);
+								// selection is not editable if no node is
+								// selected or one node
+								// of the selection is not editable
+								if (noEdit) {
+									return "noCreate";
+								}
+								else if (selectedNodes.length === 0) {
+									return "noNodeSelected";
+								}
+								else {
+									return "OK";
+								}
+							},
+
+							selectionIsDeletableAttr : function(selectedNodes) {
+
+								// that variable will be set to true if at least
+								// one selected node is not editable.
+								var noDelete = (selectedNodes.not(":deletable").length > 0);
+								// selection is not editable if no node is
+								// selected or one node of the selection is not
+								// editable
+								if (noDelete) {
+									return "noDelete";
+								}
+								else if (selectedNodes.length === 0) {
+									return "noNodeSelected";
+								}
+								else {
+									return "OK";
+								}
+							},
+
+							selectionIsOneEditableNode : function(selectedNodes) {
+								// true if only one node is selected and is
+								// editable
+								if (selectedNodes.not(":editable").length < 1
+										&& selectedNodes.length === 1) {
+									return "OK";
+								}
+								else {
+									return "notOneEditable";
+								}
+							},
+
+							selectionIsOneCreatableNode : function(
+									selectedNodes) {
+								// true if only one node is selected and is
+								// creatable
+								if (selectedNodes.not(":creatable").length < 1
+										&& selectedNodes.length === 1) {
+									return "OK";
+								}
+								else {
+									return "notOneCreatable";
+								}
+							},
+
+							selectionIsDeletable : function(selectedNodes) {
+								// all nodes are deletables excepted project
+								// libraries
+								var isDelete = this
+										.selectionIsDeletableAttr(selectedNodes);
+								if (isDelete != "OK") {
+									return isDelete;
+								}
+								else if (selectedNodes.is(":library")) {
+									return "nodeleteLibrary";
+								}
+								else {
+									return "OK";
+								}
+							},
+
+							selectionIsCopyable : function(selectedNodes) {
+								// all nodes except libraries are copyable
+								// if iterations are selected with other nodes
+								// type the selection is not copyable
+								if (selectedNodes.is(":library")) {
+									return "noCopyLibrary";
+								}
+								else if (selectedNodes.is(":iteration")
+										&& selectedNodes.is(":node")) {
+									return "noCopyIteration+Other";
+								}
+								else {
+									return "OK";
+								}
+							},
+
+							selectionIsCreateFolderAllowed : function(
+									selectedNodes) {
+								// need only one node selected
+								var isOneCreate = this
+										.selectionIsOneCreatableNode(selectedNodes);
+								if (isOneCreate != "OK"){
+									return isOneCreate;
+								}
+								// only libraries and folders are allowed for
+								// creation of folder and files
+								else if (selectedNodes.attr('rel') == "drive"
+										|| selectedNodes.attr('rel') == "folder") {
+									return "OK";
+								} else {
+									return "createFolderNotHere";
+								}
+							},
+
+							selectionIsCreateFileAllowed : function(
+									selectedNodes) {
+								// need only one node selected
+								var isOneCreate = this
+										.selectionIsOneCreatableNode(selectedNodes);
+								if (isOneCreate != "OK") {
+									return isOneCreate;
+
+								} else {
+									// only libraries and folders are allowed
+									// for creation of
+									// folder and files
+									var nodeAttr = selectedNodes.attr('rel');
+									if (nodeAttr == "drive"
+											|| nodeAttr == "folder"
+											|| nodeAttr == "file") {
+
+										return "OK";
+									} else {
+										return "createFileNotHere";
+									}
+								}
+							},
+
+							selectionIsCreateResourceAllowed : function(
+									selectedNodes) {
+								// need only one node selected
+								var isOneCreate = this
+										.selectionIsOneCreatableNode(selectedNodes);
+								if (isOneCreate != "OK"){
+									return isOneCreate;
+								}
+								// creation of resource is allowed only for
+								// files
+								else if (selectedNodes.attr('rel') == "file"
+										|| selectedNodes.attr('rel') == "resource"){
+									return "OK";
+								}
+								else{
+									return "createResNotHere";
+								}
+							},
+
+							selectionIsRenamable : function(selectedNodes) {
+								// need only one node selected
+								var isOneEdit = this
+										.selectionIsOneEditableNode(selectedNodes);
+								if (isOneEdit != "OK"){
+									return isOneEdit;
+								}
+								else if (selectedNodes.attr('rel') == "drive"){
+									return "noRenameLib";
+								}
+								// rename allowed for nodes other than libraries
+								else{
+									return "OK";
+								}
+							},
+
+							selectionIsPasteAllowed : function(selectedNodes) {
+								return squashtm.treemenu.treeNodeCopier
+										.mayPaste();
+							},
+
+							// accepts an object, or an array of object. the
+							// attributes of the
+							// object(s) will be
+							// tested against the dom attributes of the nodes
+							// and returns those
+							// that match all the
+							// attributes of at least one of the objects.
+							findNodes : function(descriptor) {
+								var matchers;
+
+								if (descriptor instanceof Array) {
+									matchers = descriptor;
+								} else {
+									matchers = [ descriptor ];
+								}
+
+								var nodes = $();
+
+								for ( var index = 0; index < matchers.length; index++) {
+									var subList;
+									var selector = "";
+									for ( var ppt in matchers[index]) {
+										selector += "[" + ppt + "='"
+												+ matchers[index][ppt] + "']";
+									}
+									subList = this.get_container().find(
+											'li' + selector);
+									nodes = nodes.add(subList);
+								}
+
+								try {
+									return nodes.treeNode();
+								} catch (invalide_node) {
+									return $();
+								}
+							},
+
+							get_selected : function() {
+								var selected = this.__call_old();
+								if (selected.length > 0) {
+									return selected.treeNode();
+								} else {
+									return selected;
+								}
+							},
+
+							get_selected_ids : function(restype) {
+								var self = this;
+								var nodes = self.get_selected();
+
+								var filtered = $(nodes).filter(function() {
+									return $(this).attr('restype') == restype;
+								});
+
+								var ids = $.map(filtered, function(item) {
+									return $(item).attr('resid');
+								});
+
+								return ids;
+							},
+
+							allowedOperations : function() {
+								var selectedNodes = this.get_selected();
+								var operations = "";
+								if (this.get_container().data("importable")){
+									operations += "import-excel import-links-excel";
+								}
+								if (selectedNodes.length === 0){
+									return operations;
+								}
+								operations += "export ";
+								if (this.selectionIsCopyable(selectedNodes) == "OK") {
+									operations += "copy ";
+								}
+								if (this.selectionIsEditable(selectedNodes) != "OK") {
+									return operations;
+
+								} else {
+									if (this
+											.selectionIsDeletable(selectedNodes) == "OK") {
+										operations += "delete ";
+									}
+
+									if (this
+											.selectionIsOneEditableNode(selectedNodes) == "OK") {
+										if (this
+												.selectionIsCreateFolderAllowed(selectedNodes) == "OK") {
+											operations += "create-folder ";
+										}
+
+										if (this
+												.selectionIsCreateFileAllowed(selectedNodes) == "OK") {
+											operations += "create-file ";
+										}
+
+										if (this
+												.selectionIsCreateResourceAllowed(selectedNodes) == "OK") {
+											operations += "create-resource ";
+										}
+
+										if (this
+												.selectionIsRenamable(selectedNodes) == "OK") {
+											operations += "rename ";
+										}
+
+										if (this
+												.selectionIsPasteAllowed(selectedNodes) == "OK") {
+											operations += "paste ";
+
+										}
+									}
+								}
+								return operations;
+							}
+
+						},
+
+						defaults : {
+							"item_h" : "ui-state-active",
+							"item_a" : "ui-state-default",
+							"timeout" : 500
 						}
 					});
-		},
 
-		_fn : {
-			postNewNode : postNewNode, // see below
+	$.jstree
+			.plugin(
+					'workspace_tree',
+					{
+						defaults : {
 
-			refresh_selected : function() {
-				var self = this;
-				var selected = this.get_selected();
-				selected.all('refresh');
-			}
-		}
+						},
 
-	});
+						__init : function() {
+							/*
+							 * 
+							 * @param data : the move_node object @param url :
+							 * the url to post to.
+							 */
+							function moveNode(data, url) {
+								var isRoot = function(node) {
+									return node.is(":library") ? 1 : 0;
+								};
+
+								var tree = data.inst;
+								var nodeData = data.args[0];
+								var newParent = nodeData.np;
+
+								// first check if we don't need to perform an
+								// operation
+								if (nodeData.o.length === 0) {
+									return;
+								}
+
+								// we also reject iterations.
+								var firstNode = nodeData.o[0];
+								if ($(firstNode).is(":iteration")) {
+									return;
+								}
+
+								var dataSent = {
+									"object-ids" : $(nodeData.o).treeNode()
+											.all('getResId'),
+									"destination-id" : nodeData.np
+											.attr('resid'),
+									"destination-type" : isRoot(nodeData.np) ? "library"
+											: "folder"
+								};
+
+								tree.open_node(newParent);
+
+								return $.ajax({
+									type : 'POST',
+									url : url,
+									data : dataSent,
+									dataType : 'json'
+								});
+							}
+
+							/**
+							 * DnD move Method is called after every check id
+							 * done to allow the operation.
+							 */
+							function doDnDMoveNodes(moveObject, data) {
+
+								var url = $(moveObject.o).treeNode()
+										.getMoveUrl();
+
+								moveNode(data, url)
+										.fail(
+												function(jqXHR) {
+													try {
+														squashtm.notification
+																.handleJsonResponseError(
+																		jqXHR)
+																.done(
+																		function() {
+																			$.jstree
+																					.rollback(data.rlbk);
+																		});
+													} catch (e) {
+														$.jstree
+																.rollback(data.rlbk);
+													}
+												});
+
+							}
+
+							var container = this.get_container();
+
+							this.eventHandler = new TreeEventHandler({
+								tree : this
+							});
+
+							/**
+							 * DnD copy node method. This method is called after
+							 * all check is done to allow the operation.
+							 */
+							function doDnDCopyNodes(moveObject, data) {
+								// we need to destroy
+								// the copies first,
+								// since we'll
+								// use our owns.
+								destroyJTreeCopies(moveObject, data.inst);
+
+								// now let's post.
+								// Again, as annoying as
+								// it is, the
+								// url depends on th
+								// nature of the nodes.
+								var jqObjects = $(moveObject.o);
+								var url = jqObjects.treeNode().getCopyUrl();
+								var newData = moveObjectToCopyData(data);
+
+								copyNode(newData, url)
+										.fail(function() {
+											data.inst.refresh();
+										})
+										.done(
+												function() {
+													// Begin [Feat 1299] this is
+													// to make the
+													// following cases work :
+													// case 1 : one is
+													// viewing a campaign and
+													// copy-paste one of
+													// it's iterations with Ctrl
+													// + drag and drop
+													// => the statistics of the
+													// still displayed
+													// campaign have changed = >
+													// we need to
+													// refresh them
+													// case 2 : one is viewing
+													// an
+													// iteration and copy-paste
+													// one of it's
+													// test-suite with Ctrl +
+													// drag and drop =>
+													// the statistics of the
+													// still displayed
+													// iteration have changed =>
+													// we need to
+													// refresh them
+													if (typeof (refreshStatistics) == "function") {
+														refreshStatistics();
+													}
+													// End [Feat 1299]
+												});
+							}
+
+							// with the import option an action can be done in
+							// the tree even with no selected node.
+							// when the import mecanism will be dependent on the
+							// selected node this two lines won't be necessary
+							// anymore
+							if ($(".jstree").data("importable")){
+								updateTreebuttons("import-excel import-links-excel");
+							}
+							
+							var self = this;
+
+							container
+									.bind(
+											"select_node.jstree",
+											function(event, data) {
+
+												unselectDescendants(
+														data.rslt.obj, self);
+												operations = data.inst
+														.allowedOperations();
+												updateTreebuttons(operations);
+
+												var resourceUrl = $(
+														data.rslt.obj)
+														.treeNode()
+														.getResourceUrl();
+
+												var selected = data.inst
+														.get_selected();
+
+												if (selected.length == 1) {
+													squashtm.contextualContent
+															.loadWith(
+																	resourceUrl)
+															.done(
+																	function() {
+																		squashtm.contextualContent
+																				.addListener(self.eventHandler);
+																	});
+												} else {
+													squashtm.contextualContent
+															.unload();
+												}
+
+												return true;
+											})
+									.bind(
+											"deselect_node.jstree",
+											function(event, data) {
+												operations = data.inst
+														.allowedOperations();
+												updateTreebuttons(operations);
+												return true;
+											})
+									/*
+									 * the following should have been as a
+									 * handler of before.jstree on call
+									 * move_node. however many considerations
+									 * lead to postprocess mode_node like now,
+									 * rather than preprocess it. At least that
+									 * event is triggered only once.
+									 */
+									.bind(
+											"move_node.jstree",
+											function(event, data) {
+												var moveObject = data.args[0];
+
+												if (moveObject !== null
+														&& moveObject !== undefined
+														&& moveObject.cr !== undefined) {
+													if (squashtm.keyEventListener.ctrl) {
+
+														if (data.rslt.differentLibraries) {
+															// warn user if move
+															// is inter-project
+															oneShotConfirm(
+																	'Info',
+																	self
+																			._get_settings().workspace_tree.warnCopyToDifferentLibrary,
+																	squashtm.message.confirm,
+																	squashtm.message.cancel)
+																	.done(
+																			function() {
+																				doDnDCopyNodes(
+																						moveObject,
+																						data);
+																			})
+																	.fail(
+																			function() {
+																				data.inst
+																						.refresh();
+																			});
+														} else {
+															doDnDCopyNodes(
+																	moveObject,
+																	data);
+														}
+													} else {
+														// check if we can move
+														// the object
+														if (checkMoveIsAuthorized(data)) {
+
+															// warn user if move
+															// is inter-project
+															if (data.rslt.differentLibraries) {
+																oneShotConfirm(
+																		'Info',
+																		self
+																				._get_settings().workspace_tree.warnMoveToDifferentLibrary,
+																		squashtm.message.confirm,
+																		squashtm.message.cancel)
+																		.done(
+																				function() {
+																					doDnDMoveNodes(
+																							moveObject,
+																							data);
+																				})
+																		.fail(
+																				function() {
+																					$.jstree
+																							.rollback(data.rlbk);
+																				});
+															} else {
+																doDnDMoveNodes(
+																		moveObject,
+																		data);
+															}
+
+														} else {
+															$.squash
+																	.openMessage(
+																			'',
+																			self
+																					._get_settings().workspace_tree.cannotMoveMessage)
+																	.done(
+																			function() {
+																				$.jstree
+																						.rollback(data.rlbk);
+																			});
+														}
+													}
+												}
+											});
+						},
+
+						_fn : {
+							postNewNode : postNewNode, // see below
+
+							refresh_selected : function() {
+								var self = this;
+								var selected = this.get_selected();
+								selected.all('refresh');
+							}
+						}
+
+					});
 
 	/*
 	 * specialization for tree-pickers. will maintain the order in which nodes

@@ -19,38 +19,35 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "domReady", "squashtest/attachment-bloc",
-			"jquery.squash", "jqueryui", "jquery.squash.togglepanel",
-			"add-attachment-popup.frag" ], function($, domReady) {
+	require([ "jquery", "domReady", "squashtest/attachment-bloc", "jquery.squash", "jqueryui",
+			"jquery.squash.togglepanel", "add-attachment-popup.frag" ], function($, domReady) {
 
 		var ABS = squashtm.app.attachmentBlocSettings;
 
 		function reloadAttachments() {
-			$("#attachment-container").load(ABS.attachmentsList,
-					reloadAttachmentCallback);
+			$("#attachment-container").load(ABS.attachmentsList, reloadAttachmentCallback);
 		}
 
 		function reloadAttachmentCallback() {
-			handleNotFoundImages(squashtm.app.contextRoot
-					+ "images/file_blank.png");
+			handleNotFoundImages(squashtm.app.contextRoot + "images/file_blank.png");
 			openAttachmentIfNotEmpty();
 		}
 
 		domReady(function() {
-			if(!ABS){
+			if (!ABS) {
 				return;
 			}
-			
+
 			var panelSettings = {
 				initiallyOpen : ABS.attachmentBlocOpened,
-				title : ABS.attachmentBlocTitle,
+				title : ABS.attachmentBlocTitle
 			};
 			$("#attachment-panel").togglePanel(panelSettings);
 			$("#manage-attachment-bloc-button").click(function() {
 				document.location.href = ABS.attachmentManagerUrl;
 			});
 			reloadAttachments();
-			
+
 			$(squashtm.app.addAttachmentPopupSettings).on("exitUpload", reloadAttachments);
 		});
 

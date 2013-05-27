@@ -18,133 +18,119 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(
-		[ "jquery", "backbone", "underscore", "app/util/StringUtil",
-				"jquery.squash", "jqueryui", "jquery.squash.togglepanel",
-				"jquery.squash.datatables", "jquery.squash.oneshotdialog",
-				"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ],
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squash", "jqueryui",
+		"jquery.squash.togglepanel", "jquery.squash.datatables", "jquery.squash.oneshotdialog",
+		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], 
 		function($, Backbone, _, StringUtil) {
-			var UMod = squashtm.app.UMod;
-			var UserResetPasswordPopup = Backbone.View
-					.extend({
-						el : "#password-reset-popup",
-						initialize : function() {
-							var self = this;
-							var params = {
-								selector : "#password-reset-popup",
-								title : UMod.message.resetPasswordPopupTitle,
-								openedBy : "#reset-password-button",
-								isContextual : true,
-								closeOnSuccess : false,
-								buttons : [ {
-									'text' : UMod.message.confirmLabel,
-									'click' : function() {
-										self.submitPassword.call(self);
-									}
-								} ],
-								width : 420
-							};
+	var UMod = squashtm.app.UMod;
+	var UserResetPasswordPopup = Backbone.View.extend({
+		el : "#password-reset-popup",
+		initialize : function() {
+			var self = this;
+			var params = {
+				selector : "#password-reset-popup",
+				title : UMod.message.resetPasswordPopupTitle,
+				openedBy : "#reset-password-button",
+				isContextual : true,
+				closeOnSuccess : false,
+				buttons : [ {
+					'text' : UMod.message.confirmLabel,
+					'click' : function() {
+						self.submitPassword.call(self);
+					}
+				} ],
+				width : 420
+			};
 
-							squashtm.popup.create(params);
-							$("#password-reset-popup").bind("dialogclose",
-									self.cleanUp);
+			squashtm.popup.create(params);
+			$("#password-reset-popup").bind("dialogclose", self.cleanUp);
 
-						},
-						events : {},
+		},
+		events : {},
 
-						submitPassword : function() {
-							self = this;
-							if (!self.validatePassword.call(self)){
-								return;
-							}
-							
-							var newPassword = $("#newPassword").val();
+		submitPassword : function() {
+			self = this;
+			if (!self.validatePassword.call(self)) {
+				return;
+			}
 
-							$.ajax({
-								url : UMod.user.url.admin,
-								type : "POST",
-								dataType : "json",
-								data : {
-									"newPassword" : newPassword
-								},
-								success : function() {
-									self.userPasswordSuccess.call(self);
-								}
-							});
+			var newPassword = $("#newPassword").val();
 
-						},
+			$.ajax({
+				url : UMod.user.url.admin,
+				type : "POST",
+				dataType : "json",
+				data : {
+					"newPassword" : newPassword
+				},
+				success : function() {
+					self.userPasswordSuccess.call(self);
+				}
+			});
 
-						// <%-- we validate the passwords only. Note that
-						// validation also occurs server side. --%>
-						validatePassword : function() {
-							var self = this;
-							// first, clear error messages
-							$("#user-account-password-panel span.error-message")
-									.html('');
+		},
 
-							// has the user attempted to change his password ?
+		// <%-- we validate the passwords only. Note that
+		// validation also occurs server side. --%>
+		validatePassword : function() {
+			var self = this;
+			// first, clear error messages
+			$("#user-account-password-panel span.error-message").html('');
 
-							var newPassOkay = true;
-							var confirmPassOkay = true;
-							var samePassesOkay = true;
+			// has the user attempted to change his password ?
 
-							if (!self.isFilled("#newPassword")) {
-								$("span.error-message.newPassword-error").html(
-										UMod.message.newPassError);
-								newPassOkay = false;
-							}
+			var newPassOkay = true;
+			var confirmPassOkay = true;
+			var samePassesOkay = true;
 
-							if (!self.isFilled("#user-account-confirmpass")) {
-								$(
-										"span.error-message.user-account-confirmpass-error")
-										.html(UMod.message.confirmPassError);
-								confirmPassOkay = false;
-							}
+			if (!self.isFilled("#newPassword")) {
+				$("span.error-message.newPassword-error").html(UMod.message.newPassError);
+				newPassOkay = false;
+			}
 
-							if ((newPassOkay)
-									&& (confirmPassOkay)) {
-								var pass = $("#newPassword").val();
-								var confirm = $("#user-account-confirmpass")
-										.val();
+			if (!self.isFilled("#user-account-confirmpass")) {
+				$("span.error-message.user-account-confirmpass-error").html(UMod.message.confirmPassError);
+				confirmPassOkay = false;
+			}
 
-								if (pass != confirm) {
-									$("span.error-message.newPassword-error")
-											.html(UMod.message.samePassError);
-									samePassesOkay = false;
-								}
-							}
+			if ((newPassOkay) && (confirmPassOkay)) {
+				var pass = $("#newPassword").val();
+				var confirm = $("#user-account-confirmpass").val();
 
-							return ( (newPassOkay)	&& (confirmPassOkay) && (samePassesOkay));
+				if (pass != confirm) {
+					$("span.error-message.newPassword-error").html(UMod.message.samePassError);
+					samePassesOkay = false;
+				}
+			}
 
-						},
+			return ((newPassOkay) && (confirmPassOkay) && (samePassesOkay));
 
-						isFilled : function(selector) {
-							var value = $(selector).val();
-							if (!value.length) {
-								return false;
-							} else {
-								return true;
-							}
+		},
 
-						},
-						
-						hasPasswdChanged : function(){
-							return (
-								   (isFilled("#newPassword"))
-								|| (isFilled("#user-account-confirmpass"))
-							);
-						},
-						userPasswordSuccess : function() {
-							$(this.el).dialog('close');
-							squashtm.notification
-									.showInfo(UMod.message.passSuccess);
-						},
+		isFilled : function(selector) {
+			var value = $(selector).val();
+			if (!value.length) {
+				return false;
+			} else {
+				return true;
+			}
 
-						cleanUp : function() {
-							$("#newPassword").val('');
-							$("#user-account-confirmpass").val('');
+		},
 
-						}
-					});
-			return UserResetPasswordPopup;
-		});
+		hasPasswdChanged : function() {
+			return ((isFilled("#newPassword")) || (isFilled("#user-account-confirmpass")));
+		},
+		
+		userPasswordSuccess : function() {
+			$(this.el).dialog('close');
+			squashtm.notification.showInfo(UMod.message.passSuccess);
+		},
+
+		cleanUp : function() {
+			$("#newPassword").val('');
+			$("#user-account-confirmpass").val('');
+		}
+		
+	});
+	return UserResetPasswordPopup;
+});

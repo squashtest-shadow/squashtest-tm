@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
@@ -32,6 +33,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.tm.service.internal.campaign.CampaignExportCSVModelImpl;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 
 public interface CampaignLibraryNavigationService extends
@@ -153,5 +155,7 @@ public interface CampaignLibraryNavigationService extends
 	 * @return
 	 */
 	List<Long> deleteSuites(List<Long> suiteIds);
+	
+	
 
 }

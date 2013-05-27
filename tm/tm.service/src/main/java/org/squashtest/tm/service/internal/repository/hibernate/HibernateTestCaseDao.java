@@ -54,7 +54,6 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
@@ -74,38 +73,34 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private static final String TEST_CASE_ID_PARAM_NAME = "testCaseId";
 	private static final String PROJECT = "project";
 	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from TCLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
-	private static final String FIND_ALL_FOR_LIBRARY_QUERY ="select distinct testCase.TCLN_ID" +
-			" from TEST_CASE testCase " +
-			" join TEST_CASE_LIBRARY_NODE tcln on tcln.TCLN_ID = testCase.TCLN_ID" +
-			" join PROJECT project on project.PROJECT_ID = tcln.PROJECT_ID" +
-			" where project.TCL_ID = :libraryId"; 
-	
+	private static final String FIND_ALL_FOR_LIBRARY_QUERY = "select distinct testCase.TCLN_ID"
+			+ " from TEST_CASE testCase " + " join TEST_CASE_LIBRARY_NODE tcln on tcln.TCLN_ID = testCase.TCLN_ID"
+			+ " join PROJECT project on project.PROJECT_ID = tcln.PROJECT_ID" + " where project.TCL_ID = :libraryId";
+	private static final String FIND_ALL_CALLING_TEST_CASE_MAIN_HQL = "select TestCase from TestCase as TestCase left join TestCase.project as Project "
+			+ " join TestCase.steps as Steps where Steps.calledTestCase.id = :testCaseId group by TestCase ";
+
 	private static List<DefaultSorting> DEFAULT_VERIFIED_TC_SORTING;
-	
+
 	static {
 		DEFAULT_VERIFIED_TC_SORTING = new LinkedList<DefaultSorting>();
 		DEFAULT_VERIFIED_TC_SORTING.add(new DefaultSorting("TestCase.reference"));
 		DEFAULT_VERIFIED_TC_SORTING.add(new DefaultSorting("TestCase.name"));
 		ListUtils.unmodifiableList(DEFAULT_VERIFIED_TC_SORTING);
 	}
-	
 
-	
-	
 	@Override
-	public void safePersist(TestCase testCase){
-		
-		if (testCase.getSteps().isEmpty()){
+	public void safePersist(TestCase testCase) {
+
+		if (testCase.getSteps().isEmpty()) {
 			super.persist(testCase);
-		}
-		else{
+		} else {
 			persistTestCaseAndSteps(testCase);
 		}
 	}
-	
+
 	@Override
 	public void persistTestCaseAndSteps(TestCase testCase) {
-		for (TestStep step : testCase.getSteps()){
+		for (TestStep step : testCase.getSteps()) {
 			super.persistEntity(step);
 		}
 		super.persistEntity(testCase);
@@ -241,7 +236,8 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	@Override
 	public long countCallingTestSteps(long testCaseId) {
-		return (Long) executeEntityNamedQuery("testCase.countCallingTestSteps", new SetIdParameter(TEST_CASE_ID_PARAM_NAME, testCaseId));
+		return (Long) executeEntityNamedQuery("testCase.countCallingTestSteps", new SetIdParameter(
+				TEST_CASE_ID_PARAM_NAME, testCaseId));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -254,13 +250,14 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	@Override
 	public List<Long> findAllTestCasesIdsCalledByTestCase(long testCaseId) {
-		return executeListNamedQuery("testCase.findAllTestCasesIdsCalledByTestCase", new SetIdParameter(TEST_CASE_ID_PARAM_NAME, testCaseId));
+		return executeListNamedQuery("testCase.findAllTestCasesIdsCalledByTestCase", new SetIdParameter(
+				TEST_CASE_ID_PARAM_NAME, testCaseId));
 	}
 
 	@Override
 	public List<Long> findDistinctTestCasesIdsCalledByTestCase(Long testCaseId) {
-		return executeListNamedQuery("testCase.findDistinctTestCasesIdsCalledByTestCase",
-				new SetIdParameter(TEST_CASE_ID_PARAM_NAME, testCaseId));
+		return executeListNamedQuery("testCase.findDistinctTestCasesIdsCalledByTestCase", new SetIdParameter(
+				TEST_CASE_ID_PARAM_NAME, testCaseId));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -273,18 +270,17 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<TestCase> findAllCallingTestCases(final long testCaseId, final CollectionSorting sorting) {
+	public List<TestCase> findAllCallingTestCases(final long testCaseId, final PagingAndSorting sorting) {
 
-		String hql = "select TestCase from TestCase as TestCase left join TestCase.project as Project "
-				+ " join TestCase.steps as Steps where Steps.calledTestCase.id = :testCaseId group by TestCase ";
+		
 
 		String orderBy = "";
 
 		if (sorting != null) {
-			orderBy = " order by " + sorting.getSortedAttribute() + ' ' + sorting.getSortingOrder();
+			orderBy = " order by " + sorting.getSortedAttribute() + ' ' + sorting.getSortOrder().getCode();
 		}
 
-		Query query = currentSession().createQuery(hql + orderBy);
+		Query query = currentSession().createQuery(FIND_ALL_CALLING_TEST_CASE_MAIN_HQL + orderBy);
 		query.setParameter("testCaseId", testCaseId);
 
 		if (sorting != null) {
@@ -293,6 +289,14 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		}
 		return query.list();
 
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TestCase> findAllCallingTestCases(long calleeId) {
+		Query query = currentSession().createQuery(FIND_ALL_CALLING_TEST_CASE_MAIN_HQL);
+		query.setParameter("testCaseId", calleeId);
+		return query.list();
 	}
 
 	@Override
@@ -384,7 +388,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	private DetachedCriteria createFindAllByRequirementCriteria(RequirementSearchCriteria criteria) {
 		DetachedCriteria crit = DetachedCriteria.forClass(TestCase.class);
-		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);	
+		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		crit.createAlias("requirementVersionCoverages", "rvc");
 		DetachedCriteria reqCrit = crit.createCriteria("rvc.verifiedRequirementVersion");
 
@@ -435,50 +439,50 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	/*
 	 * Issue #1629
 	 * 
-	 * Observed problem : test cases sorted by references are indeed sorted by reference, but no more by name.
-	 * Actual problem : We always want them to be sorted by reference and name, even when we want primarily sort them by project or execution type or else.
-	 * Solution : The resultset will be sorted on all the attributes (ascending), and the Sorting specified by the user will have an higher priority.
+	 * Observed problem : test cases sorted by references are indeed sorted by reference, but no more by name. Actual
+	 * problem : We always want them to be sorted by reference and name, even when we want primarily sort them by
+	 * project or execution type or else. Solution : The resultset will be sorted on all the attributes (ascending), and
+	 * the Sorting specified by the user will have an higher priority.
 	 * 
 	 * See #createEffectiveSorting(Sorting sorting), just below
 	 */
 	private Criteria createFindAllVerifyingCriteria(PagingAndSorting sorting) {
-		
+
 		Criteria crit = currentSession().createCriteria(TestCase.class, "TestCase");
 		crit.createAlias("requirementVersionCoverages", "rvc");
 		crit.createAlias("rvc.verifiedRequirementVersion", "RequirementVersion");
 		crit.createAlias("RequirementVersion.requirement", "Requirement", Criteria.LEFT_JOIN);
 		crit.createAlias("project", "Project", Criteria.LEFT_JOIN);
-		
-		List<Sorting> effectiveSortings = createEffectiveSorting(sorting);
 
-		PagingUtils.addPaging(crit, sorting);
+		List<Sorting> effectiveSortings = createEffectiveSorting(sorting);
+		if(!sorting.shouldDisplayAll()){	
+			PagingUtils.addPaging(crit, sorting);
+		}
 		SortingUtils.addOrders(crit, effectiveSortings);
-		
-		
+
 		return crit;
 	}
-	
-	private List<Sorting> createEffectiveSorting(Sorting userSorting){
-		
+
+	private List<Sorting> createEffectiveSorting(Sorting userSorting) {
+
 		LinkedList<Sorting> sortings = new LinkedList<Sorting>(DEFAULT_VERIFIED_TC_SORTING);
-		
-		//from that list we filter out the redundant element, considering the argument.		
-		//note that the sorting order is irrelevant here.
+
+		// from that list we filter out the redundant element, considering the argument.
+		// note that the sorting order is irrelevant here.
 		ListIterator<Sorting> iterator = sortings.listIterator();
-		while (iterator.hasNext()){
+		while (iterator.hasNext()) {
 			Sorting defaultSorting = iterator.next();
-			if (defaultSorting.getSortedAttribute().equals(userSorting.getSortedAttribute())){
+			if (defaultSorting.getSortedAttribute().equals(userSorting.getSortedAttribute())) {
 				iterator.remove();
 				break;
 			}
 		}
-		
-		//now we can set the Sorting specified by the user in first position
+
+		// now we can set the Sorting specified by the user in first position
 		sortings.addFirst(userSorting);
 
 		return sortings;
 	}
-	
 
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.TestCaseDao#countByVerifiedRequirementVersion(long)
@@ -514,20 +518,19 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestCaseLibraryNode> findBySearchCriteria(TestCaseSearchCriteria criteria) {
-		
+
 		Criteria hCriteria;
 
-		if (criteria.includeFoldersInResult()){
+		if (criteria.includeFoldersInResult()) {
 			hCriteria = currentSession().createCriteria(TestCaseLibraryNode.class);
-		}
-		else{
+		} else {
 			hCriteria = currentSession().createCriteria(TestCase.class);
 		}
-		
+
 		if (criteria.usesNameFilter()) {
 			hCriteria.add(Restrictions.ilike("name", criteria.getNameFilter(), MatchMode.ANYWHERE));
 		}
-		
+
 		if (criteria.usesImportanceFilter()) {
 			hCriteria.add(Restrictions.in("importance", criteria.getImportanceFilterSet()));
 		}
@@ -539,12 +542,11 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		if (criteria.usesTypeFilter()) {
 			hCriteria.add(Restrictions.in("type", criteria.getTypeFilterSet()));
 		}
-		
+
 		if (criteria.usesStatusFilter()) {
 			hCriteria.add(Restrictions.in("status", criteria.getStatusFilterSet()));
 		}
-		
-		
+
 		if (criteria.isGroupByProject()) {
 			hCriteria.addOrder(Order.asc(PROJECT));
 		}
@@ -555,8 +557,6 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	}
 
-
-
 	@Override
 	public List<Execution> findAllExecutionByTestCase(Long tcId) {
 		SetQueryParametersCallback callback = idParameter(tcId);
@@ -564,7 +564,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	}
 
 	/* ----------------------------------------------------EXPORT METHODS----------------------------------------- */
-	//TODO try to avoid duplicate code with requirementExport
+	// TODO try to avoid duplicate code with requirementExport
 	@Override
 	public List<ExportTestCaseData> findTestCaseToExportFromProject(List<Long> projectIds) {
 		if (!projectIds.isEmpty()) {
@@ -668,6 +668,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			return Collections.emptyList();
 		}
 	}
+
 	/* ----------------------------------------------------/EXPORT METHODS----------------------------------------- */
 
 	@Override
@@ -684,7 +685,4 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return executeListNamedQuery("testCase.findAllLinkedToIteration", new SetIdsParameter(nodeIds));
 	}
 
-	
-	
-	
 }

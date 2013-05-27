@@ -1,6 +1,6 @@
 /*
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2012 Henix, henix.fr
+ *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
@@ -19,8 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
-	require([ "workspace/WorkspaceTreePanelView", "squash/squashtm.tree-page-resizer" ],
-		function(WorkspaceTreePanelView, resizer) {
+	require([ "workspace/WorkspaceTreePanelView",
+			"squash/squashtm.tree-page-resizer" ], function(
+			WorkspaceTreePanelView, resizer) {
 		var conf = {
 			leftSelector : "#tree-panel-left",
 			rightSelector : "#contextual-content"

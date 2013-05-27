@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>squash-tm-plugins</artifactId>
 		<groupId>org.squashtest.tm</groupId>
-		<version>1.5.2.BUILD-SNAPSHOT</version>
+		<version>1.6.0.RC1-SNAPSHOT</version>
 	</parent>
 	<artifactId>plugin.report.std</artifactId>
 	<description>Standard (default) reports for Squash TM</description>
@@ -59,6 +60,11 @@
 			<artifactId>tm.service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>tm.domain</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!--======= /SQUASHTEST MODULES ======== -->
 
 		<dependency>
@@ -66,7 +72,7 @@
 			<artifactId>org.springframework.beans</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<!-- For legacy report -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -77,7 +83,7 @@
 			<groupId>javax.inject</groupId>
 			<artifactId>com.springsource.javax.inject</artifactId>
 		</dependency>
-		
+
 		<!-- Required to compile reports -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
@@ -93,12 +99,9 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
-<!-- 			<resource>
-				<directory>target/jasperreports-generated</directory>
-				<targetPath>target/jasperreports</targetPath>
-				<filtering>false</filtering>
-			</resource>
- -->
+			<!-- <resource> <directory>target/jasperreports-generated</directory> 
+				<targetPath>target/jasperreports</targetPath> <filtering>false</filtering> 
+				</resource> -->
 		</resources>
 
 		<testResources>

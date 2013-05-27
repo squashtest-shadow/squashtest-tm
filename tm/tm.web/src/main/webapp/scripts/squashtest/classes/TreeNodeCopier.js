@@ -27,7 +27,7 @@ function TreeNodeCopier(initObj) {
 	// ***************** private methods *********************
 
 	var displayError = function() {
-		if (arguments.length == 0) {
+		if (!arguments.length) {
 			squashtm.notification.showInfo(this.errMessage);
 		} else {
 			squashtm.notification.showInfo(arguments[0]);
@@ -48,7 +48,7 @@ function TreeNodeCopier(initObj) {
 		var data = {
 			libraries : librariesIds,
 			nodes : nodesData
-		}
+		};
 
 		var jsonData = JSON.stringify(data);
 
@@ -70,7 +70,7 @@ function TreeNodeCopier(initObj) {
 			displayError(initObj.nothingToPaste);
 			break;
 		}
-	}
+	};
 
 	// ****************** public methods **********************
 
@@ -80,11 +80,12 @@ function TreeNodeCopier(initObj) {
 
 		var nodes = this.tree.get_selected();
 
-		var consistentKind = (nodes.areNodes() || nodes.areResources() || nodes.areViews());
+		var consistentKind = (nodes.areNodes() || nodes.areResources() || nodes
+				.areViews());
 
 		return (consistentKind);
 
-	}
+	};
 
 	this.copyNodesToCookie = function() {
 
@@ -99,7 +100,9 @@ function TreeNodeCopier(initObj) {
 
 		var nodesData = nodes.toData();
 		var libIds = [];
-		nodes.getLibrary().each(function(){libIds.push($(this).attr("id"));});
+		nodes.getLibrary().each(function() {
+			libIds.push($(this).attr("id"));
+		});
 		store(nodesData, libIds);
 	};
 
@@ -109,26 +112,30 @@ function TreeNodeCopier(initObj) {
 	this.mayPaste = function() {
 
 		var data = retrieve();
-		if (data == null)
+		if (data == null){
 			return "buffer-empty";
-
+		}
+		
 		var nodes = this.tree.findNodes(data.nodes);
-		if (nodes.length == 0)
+		if (!nodes.length){
 			return "buffer-empty";
-
+		}
+		
 		var target = this.tree.get_selected();
 
 		var isUnique = (target.length == 1);
 		var isCreatable = target.isCreatable();
 
-		if (!(isUnique && (isCreatable)))
+		if (!(isUnique && (isCreatable))){
 			return 'not-unique-editable';
+		}
 
 		var validTarget = target.acceptsAsContent(nodes);
 
-		if (!validTarget)
+		if (!validTarget){
 			return 'target-type-invalid';
-
+		}
+		
 		return 'OK';
 	};
 
@@ -156,8 +163,8 @@ function TreeNodeCopier(initObj) {
 			destinationType = "iteration";
 			break;
 		default:
-			"azeporiapzeorj"; // should not happen if this.mayPaste() did its
-								// job.
+			destinationType = "azeporiapzeorj"; // should not happen if this.mayPaste() did its
+			// job.
 		}
 
 		// here we mimick the move_object used by tree.moveNode, defined in
@@ -171,7 +178,7 @@ function TreeNodeCopier(initObj) {
 			},
 			newParent : target,
 			url : nodes.getCopyUrl()
-		}
+		};
 
 		// another special delivery for iterations (also should be refractored)
 		if (target.is(':campaign')) {
@@ -190,34 +197,36 @@ function TreeNodeCopier(initObj) {
 			denyPaste(flag);
 			return;
 		}
-		
+
 		var data = retrieve();
-		var target = tree.get_selected();		
-		//warn user if not same libraries
-		var targetLib = target.getLibrary().getDomId() ;
+		var target = tree.get_selected();
+		// warn user if not same libraries
+		var targetLib = target.getLibrary().getDomId();
 		var destLibs = data.libraries;
 		var sameLib = true;
-		for(var i=0; i< destLibs.length;i++){
-			if(targetLib != destLibs[i]){
+		for ( var i = 0; i < destLibs.length; i++) {
+			if (targetLib != destLibs[i]) {
 				sameLib = false;
 				break;
 			}
 		}
-		if(!sameLib){
-			oneShotConfirm('Info', tree._get_settings().workspace_tree.warnCopyToDifferentLibrary, squashtm.message.confirm,
-				squashtm.message.cancel)
-				.done(function() {
-					doPasteNodesFromCookies.call(self, tree, target, data);
-				}).fail(function(){
-					data.inst.refresh();
-				});
-		}else{
+		if (!sameLib) {
+			oneShotConfirm(
+					'Info',
+					tree._get_settings().workspace_tree.warnCopyToDifferentLibrary,
+					squashtm.message.confirm, squashtm.message.cancel).done(
+					function() {
+						doPasteNodesFromCookies.call(self, tree, target, data);
+					}).fail(function() {
+				data.inst.refresh();
+			});
+		} else {
 			doPasteNodesFromCookies.call(self, tree, target, data);
 		}
-		
+
 	};
-	
-	var doPasteNodesFromCookies = function(tree, target, data){
+
+	var doPasteNodesFromCookies = function(tree, target, data) {
 		var nodes = tree.findNodes(data.nodes);
 
 		target.open();
@@ -228,6 +237,6 @@ function TreeNodeCopier(initObj) {
 		squashtm.tree.copyNode(pasteData, pasteData.url).fail(function(json) {
 			tree.refresh();
 		});
-	}
+	};
 
 }

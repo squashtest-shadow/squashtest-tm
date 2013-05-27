@@ -20,11 +20,10 @@
  */
 define(
 		[ "jquery", "backbone", "underscore", "app/util/StringUtil",
-		  "./TeamPermissionPanel",
-				"jquery.squash", "jqueryui", "jquery.squash.togglepanel",
-				"jquery.squash.datatables", "jquery.squash.oneshotdialog",
-				"jquery.squash.messagedialog", "jquery.squash.confirmdialog",
-				, "jquery.squash.jeditable" ],
+				"./TeamPermissionPanel", "jquery.squash", "jqueryui",
+				"jquery.squash.togglepanel", "jquery.squash.datatables",
+				"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
+				"jquery.squash.confirmdialog", "jquery.squash.jeditable" ],
 		function($, Backbone, _, StringUtil, TeamPermissionPanel) {
 			var teamMod = squashtm.app.teamMod;
 			var TeamModificationView = Backbone.View
@@ -34,7 +33,7 @@ define(
 
 							this.configureTogglePanels();
 							this.configureEditables();
-							
+
 							this.configureRenamePopup();
 							this.configureDeletionDialog();
 							this.configureRemoveMemberDialog();
@@ -42,32 +41,34 @@ define(
 							this.configureAddMemberDialog();
 							this.configureMembersTable();
 							new TeamPermissionPanel();
-							this.configureButtons();							
+							this.configureButtons();
 
 						},
 
 						events : {
-							"click #delete-team-button" : "confirmTeamDeletion",
+							"click #delete-team-button" : "confirmTeamDeletion"
 						},
 
-						confirmTeamDeletion : function(event) {							
+						confirmTeamDeletion : function(event) {
 							this.confirmDeletionDialog.confirmDialog("open");
 						},
-						
-						confirmRemoveMember : function(event){
-							var hasMember = ($("#members-table").squashTable().getSelectedIds().length>0);
-							if (hasMember){
-								this.confirmRemoveMemberDialog.confirmDialog("open");
-							}
-							else{
-								this.noMemberSelectedDialog.messageDialog('open');
+
+						confirmRemoveMember : function(event) {
+							var hasMember = ($("#members-table").squashTable()
+									.getSelectedIds().length > 0);
+							if (hasMember) {
+								this.confirmRemoveMemberDialog
+										.confirmDialog("open");
+							} else {
+								this.noMemberSelectedDialog
+										.messageDialog('open');
 							}
 						},
-						
-						openAddMember : function(){
+
+						openAddMember : function() {
 							this.addMemberDialog.confirmDialog('open');
 						},
-						
+
 						deleteTeam : function(event) {
 							var self = this;
 
@@ -79,33 +80,40 @@ define(
 							});
 
 						},
-						
-						removeMembers : function(event){
+
+						removeMembers : function(event) {
 							var table = $("#members-table").squashTable();
 							var ids = table.getSelectedIds();
-							if (ids.length === 0) return;
+							if (ids.length === 0){
+								return;
+							}
 							
-							$.ajax({
-								url : document.location.href+"/members/"+ids.join(','),
-								type : 'delete'
-							}).done($.proxy(table.refresh, table));
-							
+							$.ajax(
+									{
+										url : document.location.href
+												+ "/members/" + ids.join(','),
+										type : 'delete'
+									}).done($.proxy(table.refresh, table));
+
 						},
-						
-						addMember : function(event){
+
+						addMember : function(event) {
 							var dialog = this.addMemberDialog;
 							var login = dialog.find('#add-member-input').val();
-							
-							$.ajax({
-								url : document.location.href+"/members/"+login,
-								type : 'PUT'
-							}).success(function(){
+
+							$.ajax(
+									{
+										url : document.location.href
+												+ "/members/" + login,
+										type : 'PUT'
+									}).success(function() {
 								dialog.confirmDialog('close');
 								$("#members-table").squashTable().refresh();
 							});
 						},
 
-						replacePlaceHolderByValue : function(index, message, replaceValue) {
+						replacePlaceHolderByValue : function(index, message,
+								replaceValue) {
 							var pattern = /\{[\d,\w,\s]*\}/;
 							var match = pattern.exec(message);
 							var pHolder = match[index];
@@ -114,7 +122,7 @@ define(
 
 						configureButtons : function() {
 							$.squash.decorateButtons();
-							//===============toogle buttons=================
+							// ===============toogle buttons=================
 							// this line below is here because toggle panel
 							// buttons cannot be bound with the 'events'
 							// property of Backbone.View.
@@ -122,11 +130,13 @@ define(
 							// before it is moved from it's "span.not-displayed"
 							// to the toggle panel header.
 							// TODO change our way to make toggle panels buttons
-							//=============/toogle buttons===================
-							
-							this.$("#remove-members-button").on('click',$.proxy(this.confirmRemoveMember,this));
-							this.$("#add-member-button").on('click',$.proxy(this.openAddMember, this));						
-						
+							// =============/toogle buttons===================
+
+							this.$("#remove-members-button").on('click',
+									$.proxy(this.confirmRemoveMember, this));
+							this.$("#add-member-button").on('click',
+									$.proxy(this.openAddMember, this));
+
 						},
 
 						configureTogglePanels : function() {
@@ -136,13 +146,13 @@ define(
 							};
 							this.$("#team-description-panel").togglePanel(
 									descSettings);
-				
-							/*var permissionSettings = {
-									initiallyOpen : true,
-									title : teamMod.permissionPanelLabel
-								};
-							this.$("#project-permission-panel").togglePanel(permissionSettings);*/
-								
+
+							/*
+							 * var permissionSettings = { initiallyOpen : true,
+							 * title : teamMod.permissionPanelLabel };
+							 * this.$("#project-permission-panel").togglePanel(permissionSettings);
+							 */
+
 							var usersSettings = {
 								initiallyOpen : true,
 								title : teamMod.membersPanelLabel
@@ -171,11 +181,15 @@ define(
 							$('#team-description').richEditable(settings)
 									.addClass("editable");
 						},
-						
-						configureMembersTable : function(){
-							$("#members-table").squashTable({},{});		//let's try pure DOM conf		
+
+						configureMembersTable : function() {
+							$("#members-table").squashTable({}, {}); // let's
+																		// try
+																		// pure
+																		// DOM
+																		// conf
 						},
-						
+
 						renameTeam : function() {
 							var newNameVal = $("#rename-team-input").val();
 							$.ajax({
@@ -208,92 +222,133 @@ define(
 									'click' : this.closePopup
 								} ]
 							};
-							
+
 							squashtm.popup.create(params);
-							
-							$("#rename-team-popup").bind("dialogopen",function(event, ui) {
-								var name = $.trim($('#team-name-header').text());								
-								$("#rename-team-input").val($.trim(name));
-							});
+
+							$("#rename-team-popup").bind(
+									"dialogopen",
+									function(event, ui) {
+										var name = $
+												.trim($('#team-name-header')
+														.text());
+										$("#rename-team-input").val(
+												$.trim(name));
+									});
 
 						},
-						
-						configureDeletionDialog : function(){							
-							this.confirmDeletionDialog = this.$("#delete-warning-pane").confirmDialog();
-							this.confirmDeletionDialog.on("confirmdialogconfirm", $.proxy(this.deleteTeam, this));
+
+						configureDeletionDialog : function() {
+							this.confirmDeletionDialog = this.$(
+									"#delete-warning-pane").confirmDialog();
+							this.confirmDeletionDialog.on(
+									"confirmdialogconfirm", $.proxy(
+											this.deleteTeam, this));
 						},
-						
-						configureRemoveMemberDialog : function(){							
-							this.confirmRemoveMemberDialog = this.$("#remove-members-dialog").confirmDialog();
-							this.confirmRemoveMemberDialog.on("confirmdialogconfirm", $.proxy(this.removeMembers, this));													
+
+						configureRemoveMemberDialog : function() {
+							this.confirmRemoveMemberDialog = this.$(
+									"#remove-members-dialog").confirmDialog();
+							this.confirmRemoveMemberDialog.on(
+									"confirmdialogconfirm", $.proxy(
+											this.removeMembers, this));
 						},
-						
-						configureNoMemberSelectedDialog : function(){
-							this.noMemberSelectedDialog = this.$("#no-selected-users").messageDialog();														
+
+						configureNoMemberSelectedDialog : function() {
+							this.noMemberSelectedDialog = this.$(
+									"#no-selected-users").messageDialog();
 						},
-						
-						configureAddMemberDialog : function(){
-							var addMemberDialog = this.$("#add-member-dialog").confirmDialog();
-							
-							addMemberDialog.on("confirmdialogvalidate", function(){
-								var login = addMemberDialog.find('#add-member-input').val();
-								if (login===null || login===undefined || login.length === 0){
-									dialog.activate('no-selected-users');
-									return false;
-								}
-								else{
-									return true;
-								}
-							});
-							
-							addMemberDialog.on("confirmdialogconfirm", $.proxy(this.addMember, this));	
-							
-							addMemberDialog.find('#add-member-input').autocomplete();
-							
-							addMemberDialog.on('confirmdialogopen', function(){
-								var dialog = addMemberDialog;
-								var input = dialog.find('#add-member-input');
-								input.val("");
-								dialog.activate('wait');
-								$.ajax({
-									url : document.location.href+"/non-members",
-									dataType : 'json'
-								}).success(function(json){
-									if (json.length>0){
-										var source = _.map(json, function(user){return user.login});
-										input.autocomplete("option", "source", source);
-										dialog.activate('main');
-									}
-									else{
-										dialog.activate('no-more-users');
-									}
-								});								
-							});
-							
-							addMemberDialog.activate = function(arg){
-								var cls = '.'+arg;
-								this.find('div').not('.popup-dialog-buttonpane')
-									.filter(cls).show().end()
-									.not(cls).hide();
-								if (arg!=='main'){
+
+						configureAddMemberDialog : function() {
+							var addMemberDialog = this.$("#add-member-dialog")
+									.confirmDialog();
+
+							addMemberDialog
+									.on(
+											"confirmdialogvalidate",
+											function() {
+												var login = addMemberDialog
+														.find(
+																'#add-member-input')
+														.val();
+												if (login === null
+														|| login === undefined
+														|| login.length === 0) {
+													dialog
+															.activate('no-selected-users');
+													return false;
+												} else {
+													return true;
+												}
+											});
+
+							addMemberDialog.on("confirmdialogconfirm", $.proxy(
+									this.addMember, this));
+
+							addMemberDialog.find('#add-member-input')
+									.autocomplete();
+
+							addMemberDialog
+									.on(
+											'confirmdialogopen',
+											function() {
+												var dialog = addMemberDialog;
+												var input = dialog
+														.find('#add-member-input');
+												input.val("");
+												dialog.activate('wait');
+												$
+														.ajax(
+																{
+																	url : document.location.href
+																			+ "/non-members",
+																	dataType : 'json'
+																})
+														.success(
+																function(json) {
+																	if (json.length > 0) {
+																		var source = _
+																				.map(
+																						json,
+																						function(
+																								user) {
+																							return user.login;
+																						});
+																		input
+																				.autocomplete(
+																						"option",
+																						"source",
+																						source);
+																		dialog
+																				.activate('main');
+																	} else {
+																		dialog
+																				.activate('no-more-users');
+																	}
+																});
+											});
+
+							addMemberDialog.activate = function(arg) {
+								var cls = '.' + arg;
+								this.find('div')
+										.not('.popup-dialog-buttonpane')
+										.filter(cls).show().end().not(cls)
+										.hide();
+								if (arg !== 'main') {
 									this.next().find('button:first').hide();
-								}
-								else{
+								} else {
 									this.next().find('button:first').show();
 								}
 							};
-							
 
-							
 							this.addMemberDialog = addMemberDialog;
 						},
 
 						closePopup : function() {
 							$(this).data("answer", "cancel");
 							$(this).dialog('close');
-						},
+						}
 
 					});
-			
+
 			return TeamModificationView;
 		});

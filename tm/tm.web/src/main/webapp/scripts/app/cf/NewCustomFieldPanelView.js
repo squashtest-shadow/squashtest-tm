@@ -19,7 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms", "jquery.squash.confirmdialog", "datepicker/require.jquery.squash.datepicker-locales" ],
+		[ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF",
+				"app/lnf/Forms", "jquery.squash.confirmdialog",
+				"datepicker/require.jquery.squash.datepicker-locales" ],
 		function($, Backbone, Handlebars, SD, Forms) {
 			/*
 			 * Defines the controller for the new custom field panel.
@@ -30,15 +32,19 @@ define(
 						initialize : function() {
 							var self = this;
 							var model = this.model;
-							$.datepicker.setDefaults($.datepicker.regional[squashtm.app.locale]);
-							this.defaultValueField = this.$("input:text[name='defaultValue']");
+							$.datepicker
+									.setDefaults($.datepicker.regional[squashtm.app.locale]);
+							this.defaultValueField = this
+									.$("input:text[name='defaultValue']");
 
 							this.$("input:text.strprop").each(function() {
 								var self = this;
 								self.value = model.get(self.name);
 							});
-							this.$("input:checkbox[name='optional']").get()[0].checked = model.get("optional");
-							this.$("select[name='inputType']").val(model.get("inputType"));
+							this.$("input:checkbox[name='optional']").get()[0].checked = model
+									.get("optional");
+							this.$("select[name='inputType']").val(
+									model.get("inputType"));
 
 							this.$("input:button").button();
 
@@ -54,9 +60,11 @@ define(
 
 						render : function() {
 							var inputType = this.model.get("inputType");
-							var source = $("#" + inputType + "-default-tpl").html();
+							var source = $("#" + inputType + "-default-tpl")
+									.html();
 							var template = Handlebars.compile(source);
-							this.$("#default-value-pane").html(template(this.model.toJSON()));
+							this.$("#default-value-pane").html(
+									template(this.model.toJSON()));
 							switch (inputType) {
 							case "DROPDOWN_LIST":
 								this.renderOptionsTable();
@@ -69,9 +77,13 @@ define(
 								this.renderOptional(true);
 								break;
 							case "DATE_PICKER":
-								this.renderOptional(true); 
-								$("#defaultValue").datepicker({ dateFormat : squashtm.app.localizedDateFormat });
-								break; 
+								this.renderOptional(true);
+								$("#defaultValue")
+										.datepicker(
+												{
+													dateFormat : squashtm.app.localizedDateFormat
+												});
+								break;
 							}
 							return this;
 						},
@@ -99,7 +111,8 @@ define(
 						changeDateProp : function(event) {
 							var textbox = event.target;
 							var date = $(textbox).datepicker("getDate");
-							var dateToString = $.datepicker.formatDate($.datepicker.ATOM, date);
+							var dateToString = $.datepicker.formatDate(
+									$.datepicker.ATOM, date);
 							this.model.set(textbox.name, dateToString);
 						},
 						changeOptProp : function(event) {
@@ -132,13 +145,19 @@ define(
 						},
 
 						validate : function(event) {
-							var res = true, validationErrors = this.model.validateAll();
+							var res = true, validationErrors = this.model
+									.validateAll();
 
 							Forms.form(this.$el).clearState();
 
 							if (validationErrors !== null) {
 								for ( var key in validationErrors) {
-									Forms.input(this.$("input[name='" + key + "']")).setState("error", validationErrors[key]);
+									Forms
+											.input(
+													this.$("input[name='" + key
+															+ "']")).setState(
+													"error",
+													validationErrors[key]);
 								}
 
 								return false;
@@ -206,16 +225,20 @@ define(
 						},
 
 						addOption : function() {
-							var optionLabelInput = Forms.input(this.$("input[name='new-option-label']"));
+							var optionLabelInput = Forms.input(this
+									.$("input[name='new-option-label']"));
 							var optionLabel = optionLabelInput.$el.val();
 
-							var optionCodeInput = Forms.input(this.$("input[name='new-option-code']"));
+							var optionCodeInput = Forms.input(this
+									.$("input[name='new-option-code']"));
 							var optionCode = optionCodeInput.$el.val();
 
 							try {
-								this.model.addOption([ optionLabel, optionCode ]);
+								this.model
+										.addOption([ optionLabel, optionCode ]);
 
-								this.optionsTable.dataTable().fnAddData([ optionLabel, optionCode, false, "" ]);
+								this.optionsTable.dataTable().fnAddData(
+										[ optionLabel, optionCode, false, "" ]);
 
 								optionCodeInput.clearState();
 								optionCodeInput.$el.val("");
@@ -225,10 +248,14 @@ define(
 							} catch (ex) {
 								if (ex.name === "ValidationException") {
 									if (ex.validationErrors.optionLabel) {
-										optionLabelInput.setState("error", ex.validationErrors.optionLabel);
+										optionLabelInput
+												.setState(
+														"error",
+														ex.validationErrors.optionLabel);
 									}
 									if (ex.validationErrors.optionCode) {
-										optionCodeInput.setState("error", ex.validationErrors.optionCode);
+										optionCodeInput.setState("error",
+												ex.validationErrors.optionCode);
 									}
 								}
 							}
@@ -238,8 +265,8 @@ define(
 						removeOption : function(event) {
 							// target of click event is a <span> inside of
 							// <button>, so we use currentTarget
-							var button = event.currentTarget, $button = $(button), option = $button.data("value"), row = $button
-									.parents("tr")[0];
+							var button = event.currentTarget, $button = $(button), option = $button
+									.data("value"), row = $button.parents("tr")[0];
 
 							this.model.removeOption(option);
 							this.optionsTable.dataTable().fnDeleteRow(row);
@@ -249,28 +276,36 @@ define(
 						changeDefaultOption : function(event) {
 							var checkbox = event.currentTarget, option = checkbox.value, defaultValue = checkbox.checked ? option
 									: "", uncheckSelector = ".is-default>input:checkbox"
-									+ (checkbox.checked ? "[value!='" + option + "']" : ""), optionsInput = Forms.input(this
-									.$("input[name='options']"));
+									+ (checkbox.checked ? "[value!='" + option
+											+ "']" : ""), optionsInput = Forms
+									.input(this.$("input[name='options']"));
 
 							optionsInput.clearState();
 
-							if (this.model.get("optional") === false && checkbox.checked === false) {
+							if (this.model.get("optional") === false
+									&& checkbox.checked === false) {
 								event.preventDefault();
-								optionsInput.setState("warning", "message.defaultOptionMandatory");
+								optionsInput.setState("warning",
+										"message.defaultOptionMandatory");
 								return;
 							}
 
 							this.model.set("defaultValue", defaultValue);
-							this.optionsTable.find(uncheckSelector).attr("checked", false);
+							this.optionsTable.find(uncheckSelector).attr(
+									"checked", false);
 
 						},
 
 						/**
-						 * returns the function which should be used as a callback.
+						 * returns the function which should be used as a
+						 * callback.
 						 */
 						decorateOptionRow : function(self) {
-							return function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-								var row = $(nRow), defaultCell = row.find(".is-default"), removeCell = row.find(".remove-row"), option = aData[0], checked = option === self.model
+							return function(nRow, aData, iDisplayIndex,
+									iDisplayIndexFull) {
+								var row = $(nRow), defaultCell = row
+										.find(".is-default"), removeCell = row
+										.find(".remove-row"), option = aData[0], checked = option === self.model
 										.get("defaultValue"), tplData = {
 									option : option,
 									checked : checked
