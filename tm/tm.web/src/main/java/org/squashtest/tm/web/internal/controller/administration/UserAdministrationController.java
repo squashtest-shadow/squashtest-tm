@@ -35,7 +35,6 @@ import javax.validation.Valid;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,6 +59,7 @@ import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.users.PartyControllerSupport;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -81,8 +81,8 @@ public class UserAdministrationController extends PartyControllerSupport {
 	private AdministrationService adminService;
 
 	@Inject
-	private MessageSource messageSource;
-	
+	private InternationalizationHelper messageSource;
+
 	@Inject
 	private AuthenticationProviderContext authenticationProviderContext;
 
@@ -148,11 +148,14 @@ public class UserAdministrationController extends PartyControllerSupport {
 	void addUser(@ModelAttribute("add-user") @Valid UserForm userForm) {
 		if (!currentProviderFeatures().isManagedPassword()) {
 			adminService.addUser(userForm.getUser(), userForm.getGroupId(), userForm.getPassword());
-			
+
 		} else {
 			// If this happens, it's either a bug or a forged request
-			LOGGER.warn("Received a password while password are managed by auth provider. This is either a bug or a forged request. User form : {}", ToStringBuilder.reflectionToString(userForm));
-			throw new IllegalArgumentException("Received a password while password are managed by auth provider. This is either a bug or a forged request.");
+			LOGGER.warn(
+					"Received a password while password are managed by auth provider. This is either a bug or a forged request. User form : {}",
+					ToStringBuilder.reflectionToString(userForm));
+			throw new IllegalArgumentException(
+					"Received a password while password are managed by auth provider. This is either a bug or a forged request.");
 		}
 	}
 
@@ -161,11 +164,14 @@ public class UserAdministrationController extends PartyControllerSupport {
 	void addUserWithoutCredentials(@ModelAttribute("add-user") @Valid UserForm userForm) {
 		if (currentProviderFeatures().isManagedPassword()) {
 			adminService.createUserWithoutCredentials(userForm.getUser(), userForm.getGroupId());
-			
+
 		} else {
 			// If this happens, it's either a bug or a forged request
-			LOGGER.warn("Received no password while password are managed by Squash. This is either a bug or a forged request. User form : {}", ToStringBuilder.reflectionToString(userForm));
-			throw new IllegalArgumentException("Received no password while password are managed by Squash. This is either a bug or a forged request.");
+			LOGGER.warn(
+					"Received no password while password are managed by Squash. This is either a bug or a forged request. User form : {}",
+					ToStringBuilder.reflectionToString(userForm));
+			throw new IllegalArgumentException(
+					"Received no password while password are managed by Squash. This is either a bug or a forged request.");
 		}
 	}
 
@@ -283,17 +289,12 @@ public class UserAdministrationController extends PartyControllerSupport {
 	}
 
 	private String formatDate(Date date, Locale locale) {
-		try {
-			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
-			return new SimpleDateFormat(format).format(date);
-		} catch (Exception anyException) {
-			return formatNoData(locale);
-		}
+		return messageSource.localizeDate(date, locale);
 
 	}
 
 	private String formatNoData(Locale locale) {
-		return messageSource.getMessage("squashtm.nodata", null, locale);
+		return messageSource.noData(locale);
 	}
 
 	/**
@@ -315,8 +316,8 @@ public class UserAdministrationController extends PartyControllerSupport {
 		@Override
 		public Map<?, ?> buildItemData(User item) {
 			AuditableMixin newP = (AuditableMixin) item;
-			String group = messageSource.getMessage("user.account.group." + item.getGroup().getQualifiedName()
-					+ ".label", null, locale);
+			String group = messageSource.internationalize("user.account.group." + item.getGroup().getQualifiedName()
+					+ ".label", locale);
 			if (group == null) {
 				group = item.getGroup().getSimpleName();
 			}

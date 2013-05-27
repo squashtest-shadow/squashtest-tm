@@ -154,6 +154,15 @@ public class InternationalizationHelper implements MessageSource {
 	public String internationalizeYesNo(boolean yesOrNo, Locale locale) {
 		return internationalize("squashtm.yesno." + yesOrNo, locale);
 	}
+	
+	/**
+	 * 
+	 * @param locale
+	 * @return the i18n'd "nodata" message
+	 */
+	public String noData(Locale locale) {
+		return internationalize("squashtm.nodata", locale);
+	}
 
 	
 }
