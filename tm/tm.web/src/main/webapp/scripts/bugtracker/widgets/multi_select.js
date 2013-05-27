@@ -47,7 +47,7 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 				return new FieldValue(this.options.id, typename, values);
 			}
 			else{
-				var ids = $.map(fieldvalue.composite, function(e){return e.id});
+				var ids = $.map(fieldvalue.composite, function(e){return e.id;});
 				this.element.val(ids);
 			}
 		}, 
@@ -73,6 +73,6 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 						
 			return input;
 		}
-	}
+	};
 
-})
+});

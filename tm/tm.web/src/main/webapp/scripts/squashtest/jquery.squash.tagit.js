@@ -32,8 +32,8 @@
  * 
  *  1/ init options :
  *  
- *  - constrained : boolean. If true, the user will be forced to choose a value that belongs to 
- *  						 the availabletags (or other sources). Other inputs will be removed.
+ *  - constrained : boolean. If true, the user will be forced to choose a value that belongs to
+ *	the availabletags (or other sources). Other inputs will be removed.
  *  - 'essspectacularrr !' : boolean. If true, a failed constrained check will be, well, spectacular.
  * 
  *  2/ methods : 
@@ -80,7 +80,7 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 				if (passedCheck && !!formerCallbacks){
 					formerCallbacks.call(self, event, ui);
 				}
-			}			
+			};		
 			
 			this.options.afterTagAdded = newCallback;
 		},

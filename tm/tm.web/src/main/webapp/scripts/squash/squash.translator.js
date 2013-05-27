@@ -35,17 +35,16 @@
  * Example :
  * 
  *  {
- *  	title : 'widget.title',
- *  	browse : {
- *  		back : 'widget.back',
- *  		forth : 'widget.forth'
- *  	},
- *  	buttons : {
- *  		cancel : 'label.Cancel',
- *  		confirm : 'label.Confirm'
- *  	} 
- *  	
- *  }
+ *		title : 'widget.title',
+ *		browse : {
+ *			back : 'widget.back',
+ *			forth : 'widget.forth'
+ *		},
+ *		buttons : {
+ *			cancel : 'label.Cancel',
+ *			confirm : 'label.Confirm'
+ *		} 
+ *	}
  *  
  *  
  *  //TODO : implement a cache.
@@ -57,7 +56,7 @@ define(["jquery", "underscore"], function($,_){
 	var serviceURL = squashtm.app.contextRoot+"/localization/filler";
 	
 	//initialization
-	squashtm == squashtm || {};
+	squashtm = squashtm || {};
 	squashtm.message = squashtm.message || {};
 	squashtm.message.cache = squashtm.message.cache || {};
 
@@ -125,7 +124,7 @@ define(["jquery", "underscore"], function($,_){
 				}
 				
 				if (! _.isEmpty(_subremains)){
-					remains[ppt] = _subremains
+					remains[ppt] = _subremains;
 				}
 			}
 		}

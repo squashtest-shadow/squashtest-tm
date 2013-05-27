@@ -23,8 +23,8 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "handlebars"], fu
 	
 	//TODO : move this to an external template and load it via "text!" loader
 	var itemTemplate = '<div class="attachment-templates" style="display:none;">'+
-					   		'<div class="attachment-item"> <input type="file" size="40"/> <input type="button" value="{{removeLabel}}"></div>'+
-					   	'</div>';
+							'<div class="attachment-item"> <input type="file" size="40"/> <input type="button" value="{{removeLabel}}"></div>'+
+						'</div>';
 	
 	return {
 		
@@ -92,5 +92,5 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "handlebars"], fu
 			
 			return mainElt;
 		}
-	}
+	};
 });

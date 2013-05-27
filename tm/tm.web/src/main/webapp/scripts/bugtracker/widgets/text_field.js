@@ -41,7 +41,7 @@ define(["jquery", "../domain/FieldValue", "jqueryui"], function($, FieldValue){
 								}
 					);				
 				}
-			}
+			};
 			
 			this.element.autocomplete(autoconf);
 			
@@ -101,6 +101,6 @@ define(["jquery", "../domain/FieldValue", "jqueryui"], function($, FieldValue){
 			
 			return input;
 		}
-	}
+	};
 
-})
+});

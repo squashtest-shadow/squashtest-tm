@@ -28,7 +28,7 @@ define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], 
 					name : "timetracker"
 				}
 
-			},
+			}
 		},
 		
 		_create : function(){
@@ -100,7 +100,7 @@ define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], 
 			if(!!result){
 				var totalDays = parseInt(result.days,10) + (parseInt(result.weeks,10)*5);
 				var totalHours = parseInt(result.hours,10) + (totalDays*8);
-				var totalMinutes = parseInt(result.minutes,10) + (totalHours*60);
+				totalMinutes = parseInt(result.minutes,10) + (totalHours*60);
 			}
 			
 			return totalMinutes;
@@ -233,7 +233,7 @@ define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], 
 				isIllformed = true;
 			}
 			
-			var result = new Object();
+			var result = {};
 			result.weeks = weeks;
 			result.days = days;
 			result.hours = hours;
@@ -245,6 +245,6 @@ define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], 
 			
 			return result;
 		}
-	}
+	};
 
-})
+});

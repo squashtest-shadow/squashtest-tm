@@ -63,6 +63,6 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 			
 			return select;
 		}
-	}
+	};
 
-})
+});

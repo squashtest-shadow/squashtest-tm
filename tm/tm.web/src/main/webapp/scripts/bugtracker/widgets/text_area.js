@@ -52,6 +52,6 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 				'rows' : 5 
 			});
 		}
-	}
+	};
 
-})
+});

@@ -43,7 +43,9 @@ define(["require",
 
 		smartlog : function(widgetName, error){
 			
-			if ( (! console) ||  ( ! console.log)) return;
+			if ( (! console) ||  ( ! console.log)){
+				return;
+			}
 
 			var baseMessage = "bugtracker widget registry : error while processing widget '"+widgetName+"' : ";
 			if (!!error.stack){

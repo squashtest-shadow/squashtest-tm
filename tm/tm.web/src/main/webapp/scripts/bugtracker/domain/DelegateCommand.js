@@ -22,5 +22,5 @@ define(function(){
 	return function(commandName, argument){
 		this.command = commandName;
 		this.argument = argument;
-	}	
-})
+	};	
+});

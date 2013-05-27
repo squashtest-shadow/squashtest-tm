@@ -54,6 +54,6 @@ define(["jquery", "../domain/FieldValue"], function($, FieldValue){
 			
 			return input;
 		}
-	}
+	};
 
-})
+});

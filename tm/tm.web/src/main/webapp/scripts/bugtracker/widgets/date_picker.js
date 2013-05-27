@@ -46,7 +46,7 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 			var localemeta = {
 				format : 'squashtm.dateformatShort.js',
 				locale : 'squashtm.locale'
-			}
+			};
 			
 			var message = translator.get(localemeta);
 			this.options.message = message;
@@ -60,20 +60,21 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 		},
 		
 		fieldvalue : function(fieldvalue){
+			var date,strDate;
 			if (fieldvalue===null || fieldvalue === undefined){
 				
-				var date = this.element.datepicker('getDate');
+				date = this.element.datepicker('getDate');
 				var toFormat = this.options.rendering.inputType.meta['date-format'];
-				var strDate = $.datepicker.formatDate(toFormat, date);
+				strDate = $.datepicker.formatDate(toFormat, date);
 				var typename = this.options.rendering.inputType.dataType;
 				
 				return new FieldValue("--", typename, strDate);
 			}
 			else{
 				var fromFormat = this.options.rendering.inputType.meta['date-format'];
-				var strDate = fieldvalue.scalar;
+				strDate = fieldvalue.scalar;
 				if (!!strDate){
-					var date = $.datepicker.parseDate(fromFormat, strDate)
+					date = $.datepicker.parseDate(fromFormat, strDate);
 					this.element.datepicker('setDate', date);
 				}
 			}
@@ -89,6 +90,6 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 			
 			return input;
 		}
-	}
+	};
 
-})
+});

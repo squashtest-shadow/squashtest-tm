@@ -38,7 +38,7 @@ define(["jquery",
 				console.log(message);
 			}
 		}
-	}
+	};
 	
 	// ***************** widget helper **********************
 	
@@ -69,8 +69,8 @@ define(["jquery",
 		 * - load and execute the expected widget (inputType.name).
 		 * - if fails, load and execute the widget under the name the remote bugtracker knows it (inputType.original)
 		 * - if it fails again : 
-		 * 	 	-if the field is required, try with the default widget
-		 *  	-else discard the field entirely.
+		 *		-if the field is required, try with the default widget
+		 *		-else discard the field entirely.
 		 */
 		createWidget : function(domelt, field){
 
@@ -87,7 +87,7 @@ define(["jquery",
 			var fallback = function(){
 				logger.log("bugtracker ui : field (id : '"+field.id+"') : widget "+inputType.name+" not found, fallback to "+inputType.original);
 				self.appendWidget(domelt, field, inputType.original);
-			}
+			};
 			
 			//worst case scenario
 			var allFailed = function(){
@@ -101,7 +101,7 @@ define(["jquery",
 					logger.log("bugtracker ui : field (id : '"+field.id+"') is optional, item removed and skipped");
 					$(domelt).remove();
 				}				
-			}
+			};
 			
 			//now let's run it
 			widgetRegistry.loadWidget(inputType.name, allFine, function(){
@@ -158,7 +158,7 @@ define(["jquery",
 		}
 			
 			
-	}
+	};
 	
 	
 	
@@ -337,8 +337,8 @@ define(["jquery",
 			var allControls = this._getAllControls();
 			
 			for (var fieldId in fieldValues){
-				var value 	= fieldValues[fieldId];
-				var control = allControls.filter('[data-fieldid="'+fieldId+'"]');
+				var value	= fieldValues[fieldId];
+				var control	= allControls.filter('[data-fieldid="'+fieldId+'"]');
 				
 				if (control.length>0){
 					control.data('widget').fieldvalue(value);

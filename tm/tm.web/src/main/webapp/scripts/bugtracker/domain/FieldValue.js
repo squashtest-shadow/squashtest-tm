@@ -91,17 +91,17 @@ define(function(){
 			else{			
 				return this.scalar+", ";
 			}		
-		}
+		};
 		
 		this.getName = function(){
 			return this._getName().replace(/,\s*$/, '');
-		}
+		};
 
 	}	
 	
 	
 	return FieldValue;
-})
+});
 	
 
 	

@@ -22,5 +22,5 @@ define(function(){
 	return function(argId, argName){
 		this.id = argId;
 		this.name = argName;
-	}	
-})
+	};	
+});

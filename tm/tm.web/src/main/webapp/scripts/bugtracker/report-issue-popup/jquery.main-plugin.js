@@ -24,7 +24,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 
 	function SimpleIssuePostHelper(controller){
 		
-		this.controller = controller
+		this.controller = controller;
 		
 		this.postIssue = function(issueModel, url){
 			
@@ -37,7 +37,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 				contentType: 'application/json',
 				dataType : 'json'
 			});		
-		}
+		};
 		
 	}
 	
@@ -48,7 +48,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		
 		this.transformUrl = function(url){
 			return url.replace(/new-issue/, "new-advanced-issue");
-		}
+		};
 		
 		//this remove the properties that Jackson shouldn't bother with - thus preventing crashes
 		//everything it needs is in the fieldValues
@@ -64,7 +64,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 			delete issue["assignee"];
 			
 			return issue;
-		}
+		};
 		
 		
 		//an issue is first posted, then its attachments. An error 
@@ -75,11 +75,11 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 			var effectiveUrl = this.transformUrl(url);
 			
 			var effectiveModel = this.preprocessIssue(issueModel);			
-			var strModel = JSON.stringify(issueModel);		
+			var strModel = JSON.stringify(effectiveModel);		
 			
 			var defer = $.Deferred();
 
-			var xhr = $.ajax({
+			$.ajax({
 				url : effectiveUrl,
 				type : 'POST',
 				data : strModel,
@@ -102,10 +102,10 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 			
 			
 			return defer;
-		}
+		};
 		
 		
-		this.postAttachments = function(json, btName){
+		this.postAttachments = function(json){
 			
 			var forms = this.controller.fieldsView.getFileUploadForms();
 			
@@ -119,7 +119,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 					fileUploadUtils.uploadFilesOnly(form, url);
 				}
 			}
-		}
+		};
 		
 	}
 
@@ -148,11 +148,9 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 
 		Implementation detail about 'reportUrl' : 
 		 - for the regular bugtracker model, this url will be used for both GET and POST
-		 - for the advanced bugtracker model, the url where you GET (/new-issue) is slightly 
-		 	different from the one where to post (/new-advanced-issue). This discrepancy is 
-		 	handled by the code via method getSubmitIssueUrl. 
-
-	*/
+		 - for the advanced bugtracker model, the url where you GET (/new-issue) is slightly
+			different from the one where to post (/new-advanced-issue). This discrepancy is	handled by the code via method getSubmitIssueUrl.
+	 */
 	
 	function init(settings){
 
@@ -295,17 +293,13 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		
 		
 		var enableIdSearch = $.proxy(function(){
-			with(this){
-				idText.removeAttr('disabled');
-				enableSearch();
-			}
+			this.idText.removeAttr('disabled');
+			enableSearch();
 		}, self);
 		
 		var disableIdSearch = $.proxy(function(){
-			with(this){
-				idText.attr('disabled', 'disabled');
-				disableSearch();
-			}
+			this.idText.attr('disabled', 'disabled');
+			disableSearch();
 		}, self);
 		
 

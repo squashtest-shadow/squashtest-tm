@@ -50,7 +50,7 @@ define(["jquery", "../domain/FieldValue", "jqueryui", "jquery.squash.tagit"], fu
 			
 			var config = {
 				singleFieldNode : this.element
-			}
+			};
 			
 			delegate.squashTagit(config);
 	
@@ -88,7 +88,7 @@ define(["jquery", "../domain/FieldValue", "jqueryui", "jquery.squash.tagit"], fu
 		},
 		
 		fieldvalue : function(fieldvalue){
-			
+			var i;
 			var delegate = this._getDelegate();
 			
 			if (fieldvalue===null || fieldvalue === undefined){
@@ -99,7 +99,7 @@ define(["jquery", "../domain/FieldValue", "jqueryui", "jquery.squash.tagit"], fu
 				var selected = delegate.squashTagit('assignedTags');
 				var allValues = [];
 				
-				for (var i=0;i<selected.length;i++){					
+				for (i=0;i<selected.length;i++){					
 					var label = selected[i];					
 					var value = this.findValueByLabel(label);					
 					if (value===null){
@@ -114,7 +114,7 @@ define(["jquery", "../domain/FieldValue", "jqueryui", "jquery.squash.tagit"], fu
 			else{
 				delegate.squashTagit('removeAll');
 				var values = fieldvalue.composite;
-				for (var i=0;i<values.length;i++){
+				for (i=0;i<values.length;i++){
 					delegate.squashTagit('createTag', values[i].scalar);
 				}				
 			}
@@ -159,6 +159,6 @@ define(["jquery", "../domain/FieldValue", "jqueryui", "jquery.squash.tagit"], fu
 		}
 		
 		
-	}
+	};
 	
 });
