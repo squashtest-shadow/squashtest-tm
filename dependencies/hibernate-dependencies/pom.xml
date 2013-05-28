@@ -22,10 +22,6 @@
       <artifactId>org.squashtest.org.hibernate.core</artifactId>
       <version>${hibernate.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>org.squashtest.org.hibernate.commons.annotations</artifactId>
-    </dependency>
 		
  		
 <!-- Waiting for 3.18.0 because of bugs in 3.17 
