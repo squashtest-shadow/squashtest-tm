@@ -36,8 +36,7 @@
 <div id="test-steps-tabs-panel" 
 	 class="table-tab" 
 	 th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'WRITE')} , 
-										 isAttachable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'ATTACH')},
-										 initialRows = ${(stepsData.size() > 10) ? 10 : stepsData.size()}">
+			  isAttachable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'ATTACH')}">
 	
 	<!-- ==================== toolbar definition =================== -->
 	<div class="toolbar">
@@ -150,7 +149,7 @@
 							testCaseId : /*[[${testCase.id}]]*/1,
 							projectId : /*[[${testCase.project.id}]]*/1,
 							rootContext : /*[[@{/}]]*/"/squash",
-							initialRows : /*[[${initialRows}]]*/0,
+							totalRows : /*[[${#lists.size(testCase.steps)}]]*/57,
 							tableData : /*[[${stepsData}]]*/[],
 							cufDefinitions : /*[[${cufDefinitions}]]*/[],
 					},	

@@ -197,7 +197,8 @@ define(
 					sAjaxSource : urls.tableAjaxUrl,
 					fnDrawCallback : stepsTableDrawCallback,
 					fnCreatedRow : stepsTableCreatedRowCallback,
-					iDeferLoading : settings.basic.initialRows,
+			iDeferLoading : settings.basic.totalRows,
+			iDisplayLength : 10,
 					aoColumnDefs : [
 							{
 								'bVisible' : false,
