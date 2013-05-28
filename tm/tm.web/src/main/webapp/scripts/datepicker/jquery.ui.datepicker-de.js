@@ -18,43 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * Got only french for now. Locale en remains the default locale until someone manually sets the default locale to 
- * one of the locales defined below.
- * 
- * created because of issue #1535
- */
 
-define(["jquery","jqueryui"], function($){
-	
-	
-	/* French initialisation for the jQuery UI date picker plugin. */
-	/* Written by Keith Wood (kbwood{at}iinet.com.au) and St�phane Nahmani (sholby@sholby.net). */	
-		
-	$.datepicker.regional['fr'] = {
-		closeText: 'Fermer',
-		prevText: '\u003cPr\u00e9c',
-		nextText: 'Suiv\u003e',
-		currentText: 'Courant',
-		timeText: 'Temps',
-		hourText: 'Heures',
-		minuteText: 'Minutes',
-		secondText: 'Secondes',
-		monthNames: ['Janvier','F\u00e9vrier','Mars','Avril','Mai','Juin',
-		'Juillet','Ao\u00fbt','Septembre','Octobre','Novembre','D\u00e9cembre'],
-		monthNamesShort: ['Jan','F\u00e9v','Mar','Avr','Mai','Jun',
-		'Jul','Ao\u00fb','Sep','Oct','Nov','D\u00e9c'],
-		dayNames: ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
-		dayNamesShort: ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],
-		dayNamesMin: ['Di','Lu','Ma','Me','Je','Ve','Sa'],
-		weekHeader: 'Sm',
-		dateFormat: 'dd/mm/yy',
-		firstDay: 1,
-		isRTL: false,
-		showMonthAfterYear: false,
-		yearSuffix: ''
-	};
-	
+jQuery(function($){
 	$.datepicker.regional['de'] = {
 		closeText: 'schlie\u00dfen',
 		prevText: '\u003czur\u00fcck',
@@ -76,8 +41,6 @@ define(["jquery","jqueryui"], function($){
 		firstDay: 1,
 		isRTL: false,
 		showMonthAfterYear: false,
-		yearSuffix: ''
-	};
-
-	return $.datepicker.regional;	
+		yearSuffix: ''};
+	$.datepicker.setDefaults($.datepicker.regional['de']);
 });
