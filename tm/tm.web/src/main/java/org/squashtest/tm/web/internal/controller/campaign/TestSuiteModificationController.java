@@ -71,6 +71,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 @Controller
 @RequestMapping("/test-suites/{id}")
@@ -123,15 +124,16 @@ public class TestSuiteModificationController {
 	@Inject
 	private InternationalizationHelper messageSource;
 
-	private final DatatableMapper testPlanMapper = new IndexBasedMapper(12)
-														.mapAttribute(Project.class, NAME, String.class, 2).mapAttribute(TestCase.class, NAME, String.class, 4)
-														.mapAttribute(TestCase.class, "reference", String.class, 4)
-														.mapAttribute(TestCase.class, NAME, String.class, 5)
-														.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, 6)			
-														.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 7)
-														.mapAttribute(IterationTestPlanItem.class, "executionStatus", ExecutionStatus.class, 8)
-														.mapAttribute(IterationTestPlanItem.class, "lastExecutedBy", String.class, 9)
-														.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, 10);
+	
+	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
+														.mapAttribute(Project.class, NAME, String.class, "project-name")
+														.mapAttribute(TestCase.class, NAME, String.class, "tc-name")
+														.mapAttribute(TestCase.class, "reference", String.class, "reference")
+														.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, "importance")			
+														.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, "type")
+														.mapAttribute(IterationTestPlanItem.class, "executionStatus", ExecutionStatus.class, "status")
+														.mapAttribute(IterationTestPlanItem.class, "lastExecutedBy", String.class, "last-exec-by")
+														.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, "last-exec-on");
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
@@ -311,7 +313,7 @@ public class TestSuiteModificationController {
 		}
 
 		@Override
-		public Object[] buildItemData(IterationTestPlanItem item) {
+		public Map<String, Object> buildItemData(IterationTestPlanItem item) {
 
 			String projectName;
 			String testCaseName;
@@ -332,11 +334,25 @@ public class TestSuiteModificationController {
 				importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
 			}
 
-			return new Object[] { item.getId(), getCurrentIndex(), projectName, automationMode, reference,
-					testCaseName, importance, testCaseExecutionMode,
-					messageSource.internationalize(item.getExecutionStatus(), locale),
-					formatString(item.getLastExecutedBy(), locale, messageSource),
-					messageSource.localizeDate(item.getLastExecutedOn(), locale), item.isTestCaseDeleted(), " ", " " };
+			Map<String, Object> rowMap = new HashMap<String, Object>(14);
+			
+			rowMap.put("entity-id", item.getId());
+			rowMap.put("entity-index", getCurrentIndex());
+			rowMap.put("project-name", projectName);
+			rowMap.put("exec-mode", automationMode);
+			rowMap.put("reference", reference);
+			rowMap.put("tc-name", testCaseName);
+			rowMap.put("importance", importance);
+			rowMap.put("type", testCaseExecutionMode);
+			rowMap.put("status", messageSource.internationalize(item.getExecutionStatus(), locale));
+			rowMap.put("last-exec-by", formatString(item.getLastExecutedBy(), locale, messageSource));
+			rowMap.put("last-exec-on", messageSource.localizeDate(item.getLastExecutedOn(), locale));
+			rowMap.put("is-tc-deleted", item.isTestCaseDeleted());
+			rowMap.put("empty-execute-holder", null);
+			rowMap.put("empty-delete-holder", null);
+			
+			return rowMap;
+
 		}
 	}
 

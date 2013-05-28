@@ -55,41 +55,13 @@
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-<s:url var="baseIterationUrl" value="/iterations/{iterationId}">
-	<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
+
 
 <s:url var="testSuiteStatisticsUrl"
 	value="/test-suites/{testSuiteId}/statistics">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-<s:url var="testSuiteExecButtonsUrl"
-	value="/test-suites/{testSuiteId}/exec-button">
-	<s:param name="testSuiteId" value="${testSuite.id}" />
-</s:url>
-
-<s:url var="testSuiteTestPlanUrl"
-	value="/test-suites/{testSuiteId}/test-plan/table">
-	<s:param name="testSuiteId" value="${testSuite.id}" />
-</s:url>
-
-<s:url var="removeTestCaseUrl"
-	value="/test-suites/{testSuiteId}/{iterationId}/test-plan/remove">
-	<s:param name="testSuiteId" value="${testSuite.id}" />
-	<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
-
-<s:url var="updateTestCaseUrl"
-	value="/test-suites/{testSuiteId}/test-case/">
-	<s:param name="testSuiteId" value="${testSuite.id}" />
-</s:url>
-
-<s:url var="assignableUsersUrl"
-	value="/test-suites/{testSuiteId}/{iterationId}/assignable-user">
-	<s:param name="testSuiteId" value="${testSuite.id}" />
-	<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
 
 <s:url var="batchAssignableUsersUrl"
 	value="/test-suites/{testSuiteId}/{iterationId}/batch-assignable-user">
@@ -109,11 +81,6 @@
 	<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
 
-<s:url var="nonBelongingTestCasesUrl"
-	value="/test-suites/{testSuiteId}/{iterationId}/non-belonging-test-cases/remove">
-	<s:param name="testSuiteId" value="${testSuite.id}" />
-	<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
 
 <s:url var="testCaseExecutionsUrl"
 	value="/test-suites/{testSuiteId}/{iterationId}/test-case-executions/">
@@ -121,8 +88,6 @@
 	<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
 
-<c:url var="testCaseDetailsBaseUrl"
-	value="/test-case-libraries/1/test-cases" />
 
 <s:url var="confirmDeletionUrl"
 	value="/iterations/{iterationId}/test-suites/delete">
@@ -421,21 +386,10 @@
 		<div class="table-tab-wrap">
 
 			<aggr:decorate-test-suite-test-plan-table
-				tableModelUrl="${testSuiteTestPlanUrl}"
-				testPlanDetailsBaseUrl="${testCaseDetailsBaseUrl}"
-				removeTestPlansUrl="${removeTestCaseUrl}"
-				batchRemoveButtonId="remove-test-suite-test-case-button"
-				updateTestPlanUrl="${updateTestCaseUrl}"
-				assignableUsersUrl="${assignableUsersUrl}"
-				baseIterationUrl="${baseIterationUrl}"
-				nonBelongingTestPlansUrl="${nonBelongingTestCasesUrl}"
-				testPlanExecutionsUrl="${testCaseExecutionsUrl}"
 				editable="${ linkable }"
 				executable="${ executable }"
-				testCaseMultipleRemovalPopupId="delete-test-suite-multiple-test-plan-dialog"
-				testCaseSingleRemovalPopupId="delete-test-suite-single-test-plan-dialog"
-				testSuiteExecButtonsId="test-suite-execution-button"
-				testSuiteExecButtonsUrl="${ testSuiteExecButtonsUrl }" />
+				testSuite="${testSuite}"
+			/>
 			<aggr:test-suite-test-plan-table />
 		</div>
 
@@ -467,8 +421,8 @@
 					key="message.EmptyTableSelection" />			
 		<script type="text/javascript">
 				$("#delete-test-suite-multiple-test-plan-dialog").bind( "dialogopen", function(event, ui){
-					var table = $( '#test-suite-test-plans-table' ).dataTable();
-					var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
+					var table = $( '#test-suite-test-plans-table' ).squashTable();
+					var ids = table.getSelectedIds();
 	
 					if (ids.length == 0) {
 						$.squash.openMessage("<f:message key='popup.title.error' />", "${emptyMessage}");
@@ -551,8 +505,8 @@
 			<f:message var="label" key="label.Assign" />
 			'${ label }': function() {
 				var url = "${assignTestCasesUrl}";
-				var table = $( '#test-suite-test-plans-table' ).dataTable();
-				var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
+				var table = $( '#test-suite-test-plans-table' ).squashTable();
+				var ids = table.getSelectedIds();
 		
 				var user = $(".comboLogin").val();
 			
@@ -569,8 +523,8 @@
 				key="message.AssignTestCaseToUser" />
 			<script type="text/javascript">
 				$("#batch-assign-test-case").bind( "dialogopen", function(event, ui){
-					var table = $( '#test-suite-test-plans-table' ).dataTable();
-					var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
+					var table = $( '#test-suite-test-plans-table' ).squashTable();
+					var ids = table.getSelectedIds();
 
 					if (ids.length > 0) {
 						var comboBox = $.get("${batchAssignableUsersUrl}", false, function(){
@@ -660,7 +614,7 @@
 		    	
 			 	squashtm.execution = squashtm.execution || {};
 			 	squashtm.execution.refresh = $.proxy(function(){
-			 		refreshTestPlansWithoutSelection();
+			 		$("#test-suite-test-plans-table").squashTable().refresh();
 			 		$('#general-informations-panel').load('${testSuiteInfoUrl}');	
 			 	}, window);
 			});

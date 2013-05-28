@@ -21,21 +21,11 @@
 
 --%>
 <%@ tag body-content="empty" description="jqueryfies a campaign test case table" %>
-<%@ attribute name="tableModelUrl" required="true" description="URL to GET the model of the table" %>
-<%@ attribute name="removeTestPlansUrl" required="true" description="URL to delete the selected test-case from the test-plan" %>
-<%@ attribute name="nonBelongingTestPlansUrl" required="true" description="URL to manipulate the non belonging test cases" %>
-<%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
-<%@ attribute name="testPlanDetailsBaseUrl" required="true" description="base of the URL to get test case details" %>
-<%@ attribute name="testPlanExecutionsUrl" required="true" description="base of the url to get the list of the executions for that test case"%> 
-<%@ attribute name="updateTestPlanUrl" required="true" description="base of the url to update the test case url" %>
+
+<%@ attribute name="testSuite" required="true" type="java.lang.Object"  description="the base iteration url" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
 <%@ attribute name="executable" type="java.lang.Boolean" description="Right to execute. Default to false." %>
-<%@ attribute name="assignableUsersUrl" required="true" description="URL to manipulate user of the test-plans" %>
-<%@ attribute name="testCaseSingleRemovalPopupId" required="true" description="html id of the single test-case removal popup" %>
-<%@ attribute name="testCaseMultipleRemovalPopupId" required="true" description="html id of the multiple test-case removal popup" %>
-<%@ attribute name="testSuiteExecButtonsId" required="true" description="html id of the test suite execution buttons panel" %>
-<%@ attribute name="testSuiteExecButtonsUrl" required="true" description="URL to refresh the labels on the execution buttons" %>
-<%@ attribute name="baseIterationUrl" required="true" description="the base iteration url" %>
+
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
@@ -44,6 +34,55 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
+
+<%-- =============== URLs and other variables ======================== --%>
+
+<c:set var="batchRemoveButtonId" value="remove-test-suite-test-case-button" />
+<c:set var="testCaseSingleRemovalPopupId" value="delete-test-suite-single-test-plan-dialog" />
+<c:set var="testCaseMultipleRemovalPopupId" value="delete-test-suite-multiple-test-plan-dialog" />
+<c:set var="testSuiteExecButtonsId" value="test-suite-execution-button" />
+
+
+<s:url var="tableModelUrl"	value="/test-suites/{testSuiteId}/test-plan/table">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+</s:url>
+
+<s:url var="removeTestPlansUrl" value="/test-suites/{testSuiteId}/{iterationId}/test-plan">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
+<s:url var ="showExecutionUrl" value="/executions"/>
+
+<s:url var="testPlanExecutionsUrl" value="/test-suites/{testSuiteId}/{iterationId}/test-case-executions/">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
+
+<s:url var="updateTestPlanUrl"	value="/test-suites/{testSuiteId}/{iterationId}/test-plan/">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
+<s:url var="assignableUsersUrl" value="/test-suites/{testSuiteId}/{iterationId}/assignable-user">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
+
+<s:url var="testSuiteExecButtonsUrl" value="/test-suites/{testSuiteId}/exec-button">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+</s:url>
+
+<s:url var="baseIterationUrl" value="/iterations/{iterationId}">
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
+<%-- =============== /URLs and other variables ======================== --%>
+
+
+<%-- ================== regionale and al. ============== --%>
 
 <f:message var="statusUntestable" key="execution.execution-status.UNTESTABLE" />
 <f:message var="statusBlocked" key="execution.execution-status.BLOCKED" />
@@ -54,10 +93,11 @@
 <f:message var="statusError" key="execution.execution-status.ERROR" />
 <f:message var="statusWarning" key="execution.execution-status.WARNING" />
 
-<s:url var ="showExecutionUrl" value="/executions"/>
-
 <f:message var="cannotCreateExecutionException" key="squashtm.action.exception.cannotcreateexecution.label" />
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
+
+
+<%-- ================== /regionale and al. ============== --%>
 
 <script type="text/javascript">
 	var removeTestPlansUrl = "${removeTestPlansUrl}";
@@ -75,99 +115,6 @@
 		});
 	};
 	
-	
-	$(function() {
-		<%--=========================--%>
-		<%-- single test-plan removal --%>
-		<%--=========================--%>
-		$('#test-suite-test-plans-table .delete-test-suite-test-plan-button').die('click');
-		
-		//single deletion buttons
-		$('#test-suite-test-plans-table .delete-test-suite-test-plan-button').live('click', function() {
-			$("#${ testCaseSingleRemovalPopupId }").data('opener', this).dialog('open');
-			return false;
-		});
-		
-		$("#${ testCaseSingleRemovalPopupId }").bind('dialogclose', function() {
-			var answer = $("#${ testCaseSingleRemovalPopupId }").data("answer");
-			if ( (answer != "delete") && (answer != "detach") ) {
-				return;
-			}
-			var bCaller = $.data(this,"opener");
-			
-			if (answer == "delete") {
-				$.ajax({
-					type : 'delete',
-					url : removeTestPlansUrl+'/delete/' + parseTestPlanId(bCaller),
-					dataType : 'text',
-					success : function (data){
-						refreshTestPlans();
-						checkForbiddenDeletion(data);
-						refreshStatistics();
-						refreshExecButtons();
-					}
-				});
-			}
-			
-			if (answer == "detach") {
-				$.ajax({
-					type : 'delete',
-					url : removeTestPlansUrl+'/detach/' + parseTestPlanId(bCaller),
-					dataType : 'text',
-					success : function (data){
-						refreshTestPlans();
-						checkForbiddenDeletion(data);
-						refreshStatistics();
-						refreshExecButtons();
-					}
-				});
-			}
-		});
-		
-		//This function checks the response and inform the user if a deletion was impossible
-		function checkForbiddenDeletion(data){
-			if(data=="true"){
-				squashtm.notification.showInfo('${ unauthorizedDeletion }');
-			}
-		}
-		
-		<%--=========================--%>
-		<%-- multiple test-plan removal --%>
-		<%--=========================--%>
-		//multiple deletion
-		$("#${ testCaseMultipleRemovalPopupId }").bind('dialogclose', function() {
-			var answer = $("#${ testCaseMultipleRemovalPopupId }").data("answer");
-			if ( (answer != "delete") && (answer != "detach") ) {
-				return;
-			}
-			
-			var table = $( '#test-suite-test-plans-table' ).squashTable();
-			var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
-			
-			if (answer == "delete") {
-				if (ids.length > 0) {
-					$.post(nonBelongingTestPlansUrl+'/delete', { testPlanIds: ids }, function(data){
-						refreshTestPlans();
-						checkForbiddenDeletion(data);
-						refreshStatistics();
-						refreshExecButtons();
-						});
-				}
-			}
-			if (answer == "detach") {
-				if (ids.length > 0) {
-					$.post(nonBelongingTestPlansUrl+'/detach', { testPlanIds: ids }, function(data){
-						refreshTestPlans();
-						checkForbiddenDeletion(data);
-						refreshStatistics();
-						refreshExecButtons();
-						});
-				}
-			}
-		
-		});
-	});
-
 
 	function newExecutionClickHandler(){
 		var url = $(this).attr('data-new-exec');
@@ -180,29 +127,29 @@
 	}
 	
 	function newAutoExecutionClickHandler() {
-				var url = $(this).attr('data-new-exec');
-				$.ajax({
-							type : 'POST',
-							url : url,
-							data : {"mode":"auto"},
-							dataType : "json"
-						})
-						.done(function(suiteView) {
-							refreshTestPlans();
-							if(suiteView.executions.length == 0){
-								$.squash
-								.openMessage("<f:message key='popup.title.Info' />",
-										"<f:message	key='dialog.execution.auto.overview.error.none'/>");
-							}else{
-								squashtm.automatedSuiteOverviewDialog.open(suiteView);
-							}
-						});
-				return false; //return false to prevent navigation in page (# appears at the end of the URL)
+		var url = $(this).attr('data-new-exec');
+		$.ajax({
+			type : 'POST',
+			url : url,
+			data : {"mode":"auto"},
+			dataType : "json"
+		})
+		.done(function(suiteView) {
+			refreshTestPlans();
+			if(suiteView.executions.length == 0){
+				$.squash
+				.openMessage("<f:message key='popup.title.Info' />",
+						"<f:message	key='dialog.execution.auto.overview.error.none'/>");
+			}else{
+				squashtm.automatedSuiteOverviewDialog.open(suiteView);
+			}
+		});
+		return false; //return false to prevent navigation in page (# appears at the end of the URL)
 	}
 	
-function bindMenuToExecutionShortCut(row, data){
+	function bindMenuToExecutionShortCut(row, data){
 		
-		var tpId = data[0];
+		var tpId = data["entity-id"];
 		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
 
 
@@ -218,21 +165,21 @@ function bindMenuToExecutionShortCut(row, data){
 		//if the testcase is automated		
 		} else {
 			$(".shortcut-exec",row).click(function(){
-			$.ajax({
-				type : 'POST',
-				url : url,
-				data : {"mode":"auto"},
-				dataType : "json"
-			}).done(function(suiteView){
-				refreshTestPlans();
-				if(suiteView.executions.length == 0){
-					$.squash
-					.openMessage("<f:message key='popup.title.Info' />",
-							"<f:message	key='dialog.execution.auto.overview.error.none'/>");
-				}else{
-					squashtm.automatedSuiteOverviewDialog.open(suiteView);
-				}
-			});
+				$.ajax({
+					type : 'POST',
+					url : url,
+					data : {"mode":"auto"},
+					dataType : "json"
+				}).done(function(suiteView){
+					refreshTestPlans();
+					if(suiteView.executions.length == 0){
+						$.squash
+						.openMessage("<f:message key='popup.title.Info' />",
+								"<f:message	key='dialog.execution.auto.overview.error.none'/>");
+					}else{
+						squashtm.automatedSuiteOverviewDialog.open(suiteView);
+					}
+				});
 			});
 		} 
 	}
@@ -287,19 +234,7 @@ function bindMenuToExecutionShortCut(row, data){
 			dryRunStart().done(startResumeOptimized);
 		});
 	}
-	
-	<%--=========================--%>
-	<%-- Drag and Drop --%>
-	<%--=========================--%>
-	//for drag and drop test case feature
-	//row : selected row
-	//dropPosition : the new position
-	function testPlanDropHandler(rows, dropPosition) {
-		var itemIds = $(rows).collect(function(elt){return elt.id.split(':')[1];});
-		$.post('${ updateTestPlanUrl }/move', { newIndex : dropPosition, itemIds : itemIds }, function() {
-			refreshTestPlans();
-		});		
-	}
+
 
 	<%--=========================--%>
 	<%-- Refresh methods --%>
@@ -587,19 +522,134 @@ function bindMenuToExecutionShortCut(row, data){
 	
 </script>
 
-<comp:decorate-ajax-table url="${ tableModelUrl }" tableId="test-suite-test-plans-table" paginate="true" isSquashtable="${true}">
-	<jsp:attribute name="drawCallback">testPlanTableDrawCallback</jsp:attribute>
-	<jsp:attribute name="rowCallback">testPlanTableRowCallback</jsp:attribute>
-	<jsp:attribute name="columnDefs">
-		<dt:column-definition targets="0" visible="false" />
-		<dt:column-definition targets="1" sortable="false" cssClass="centered ui-state-default drag-handle select-handle" />
-		<dt:column-definition targets="2" sortable="false" />
-		<dt:column-definition targets="3" sortable="false" cssClass="exec-mode" width="2em" />
-		<dt:column-definition targets="4, 5, 6, 7" sortable="false" />
-		<dt:column-definition targets="8" sortable="false" cssClass="has-status"/>
-		<dt:column-definition targets="9, 10" sortable="false" width="12em"/>
-		<dt:column-definition targets="11" sortable="false" visible="false" />
-		<dt:column-definition targets="12" sortable="false" width="2em" cssClass="centered"/>
-		<dt:column-definition targets="13" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
-	</jsp:attribute>
-</comp:decorate-ajax-table>
+<script type="text/javascript">
+
+$(function() {
+	
+	/* ************************** various event handlers ******************* */
+	
+	//This function checks the response and inform the user if a deletion was impossible
+	function checkForbiddenDeletion(data){
+		if(data=="true"){
+			squashtm.notification.showInfo('${ unauthorizedDeletion }');
+		}
+	}
+	
+	
+	var refreshAll = function(){
+		refreshTestPlans();
+		refreshStatistics();
+		refreshExecButtons();		
+	}
+	
+
+	var postItemRemoval(removalType){
+		var selectedIds = $("#test-suite-test-plans-table").squashTable().getSelectedIds().join(',');
+		var url = "${removeTestPlansUrl}/"+selectedIds+"/"+removalType;
+		
+		$.ajax({
+			type : 'POST',
+			url : url,
+			dataType : 'text'
+		}).success(function(data){
+			checkForbiddenDeletion(data);
+			refreshAll();
+		});
+	} 
+	
+	
+	<%--=========================--%>
+	<%-- single test-plan removal --%>
+	<%--=========================--%>
+	
+	$("#${ testCaseSingleRemovalPopupId }").bind('dialogclose', function() {
+			var answer = $("#${ testCaseSingleRemovalPopupId }").data("answer");
+			if ( (answer != "delete") && (answer != "detach") ) {
+				return; //should throw an exception instead. Should not happen anyway.
+			}
+			
+			postItemRemoval(answer);
+			
+		});
+	
+	<%--=========================--%>
+	<%-- multiple test-plan removal --%>
+	<%--=========================--%>
+	//multiple deletion
+	$("#${ testCaseMultipleRemovalPopupId }").bind('dialogclose', function() {
+			var answer = $("#${ testCaseMultipleRemovalPopupId }").data("answer");
+			if ( (answer != "delete") && (answer != "detach") ) {
+				return;
+			}
+
+			postItemRemoval(answer);
+		
+		});
+
+	/* ************************** datatable settings ********************* */
+	
+	var tableSettings = {
+			"oLanguage": {
+				"sUrl": "<c:url value='/datatables/messages' />"
+			},
+			"sAjaxSource" : "${tableModelUrl}", 
+			"fnRowCallback" : testPlanTableRowCallback,
+			"fnDrawCallback" : testPlanTableDrawCallback,
+			"aoColumnDefs": [
+				{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
+				{'bSortable': false, 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
+				{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'project-name'},
+				{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'exec-mode', 'sWidth': '2em', 'sClass' : "exec-mode"},
+				{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'reference'},
+				{'bSortable': false, 'aTargets': [5], 'mDataProp' : 'tc-name'},
+				{'bSortable': false, 'aTargets': [6], 'mDataProp' : 'importance'},
+				{'bSortable': false, 'sWidth': '10%', 'aTargets': [7], 'mDataProp' : 'type'},
+				{'bSortable': false, 'sWidth': '10%', 'sClass': 'has-status status-combo', 'aTargets': [8], 'mDataProp' : 'status'},
+				{'bSortable': false, 'sWidth': '10%', 'sClass': 'assignable-combo', 'aTargets': [9], 'mDataProp' : 'last-exec-by'},
+				{'bSortable': false, 'sWidth': '10%', 'aTargets': [10], 'mDataProp' : 'last-exec-on'},
+				{'bSortable': false, 'bVisible': false, 'aTargets': [11], 'mDataProp' : 'is-tc-deleted'},
+				{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered execute-button', 'aTargets': [12], 'mDataProp' : 'empty-execute-holder'}, 
+				{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [13], 'mDataProp' : 'empty-delete-holder'} 
+				]
+		};		
+	
+		var squashSettings = {
+				
+			enableHover : true,
+			executionStatus : {
+				untestable : "${statusUntestable}",
+				blocked : "${statusBlocked}",
+				failure : "${statusFailure}",
+				success : "${statusSuccess}",
+				running : "${statusRunning}",
+				ready : "${statusReady}",
+				error : "${statusError}",
+				warning : "${statusWarning}",
+			},
+			confirmPopup : {
+				oklabel : '<f:message key="label.Yes" />',
+				cancellabel : '<f:message key="label.Cancel" />'
+			}
+			
+		};
+		
+		<c:if test="${editable}">
+		squashSettings.enableDnD = true;
+
+			
+		squashSettings.functions = {
+			dropHandler : function(dropData){
+				var itemIds = dropData.itemIds;
+				var newIndex = dropData.newIndex;
+				var url = "${updateTestPlanUrl}/"+itemIds.join(',')+"/position/"+newIndex;
+				$.post(url,function(){
+					$("#test-suite-test-plans-table").squashTable().refresh();
+				});
+			}
+		};
+		</c:if>
+				
+		$("#test-suite-test-plans-table").squashTable(tableSettings, squashSettings);
+});
+
+</script>

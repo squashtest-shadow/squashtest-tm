@@ -197,9 +197,9 @@ public class TestSuiteTestPlanManagerController {
 	}
 
 
-	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-case/move", method = RequestMethod.POST, params = { "newIndex", "itemIds[]" })
+	@RequestMapping(value = "/test-suites/{id}/test-plan/{itemIds}/position/{newIndex}", method = RequestMethod.POST)
 	@ResponseBody
-	public void changeTestPlanIndex(@PathVariable("id") long testSuiteId, @RequestParam int newIndex, @RequestParam("itemIds[]") List<Long> itemIds){
+	public void changeTestPlanIndex(@PathVariable("id") long testSuiteId, @RequestParam("newIndex") int newIndex, @RequestParam("itemIds") List<Long> itemIds){
 		service.changeTestPlanPosition(testSuiteId, newIndex, itemIds);
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("test-suite " + testSuiteId+ ": moving "+itemIds.size()+" test plan items  to " + newIndex);
@@ -214,24 +214,22 @@ public class TestSuiteTestPlanManagerController {
 		testSuiteTestPlanManagerService.addTestCasesToIterationAndTestSuite(testCasesIds, id);
 	}
 
-	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-plan/remove/delete/{testPlanId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-plan/{testPlanIds}/delete", method = RequestMethod.POST)
 	public @ResponseBody
-	String removeTestCaseFromTestSuiteAndIteration(@PathVariable("testPlanId") long testPlanId, @PathVariable long id) {
+	String removeTestCaseFromTestSuiteAndIteration(@PathVariable("testPlanIds") List<Long> testPlanIds, @PathVariable long id) {
 		// check if a test plan was already executed and therefore not removed from the iteration
-		List<Long> testPlanIds = new ArrayList<Long>();
-		testPlanIds.add(testPlanId);
 		Boolean response = testSuiteTestPlanManagerService.detachTestPlanFromTestSuiteAndRemoveFromIteration(testPlanIds, id);
 		return response.toString();
 	}
 
-	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-plan/remove/detach/{testPlanId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-plan/{testPlanIds}/detach", method = RequestMethod.POST)
 	public @ResponseBody
-	String detachTestCaseFromTestSuite(@PathVariable("testPlanId") long testPlanId, @PathVariable long id) {
-		List<Long> testPlanIds = new ArrayList<Long>();
-		testPlanIds.add(testPlanId);
+	String detachTestCaseFromTestSuite(@PathVariable("testPlanIds") List<Long> testPlanIds, @PathVariable long id) {
 		testSuiteTestPlanManagerService.detachTestPlanFromTestSuite(testPlanIds, id);
 		return FALSE;
 	}
+	
+	/* ******************* Legacy (might be called somewhere else) ***************** */
 	
 	@RequestMapping(value = "/test-suites/{id}/{iterationId}/non-belonging-test-cases/remove/delete", method = RequestMethod.POST, params = TESTPLANS_IDS_REQUEST_PARAM)
 	public @ResponseBody
@@ -247,8 +245,11 @@ public class TestSuiteTestPlanManagerController {
 	String detachTestCasesFromTestSuite(@RequestParam(TESTPLANS_IDS_REQUEST_PARAM) List<Long> testPlansIds,
 			@PathVariable long id) {
 		testSuiteTestPlanManagerService.detachTestPlanFromTestSuite(testPlansIds, id);
-		return FALSE;
+		return FALSE;	//WTF. Anyway I've no time for this right now.
 	}
+	
+	/* ****************** /Legacy (might be called somewhere else) *************** */
+	
 	
 	@RequestMapping(value = "/test-suites/{id}/{iterationId}/test-cases/table", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody

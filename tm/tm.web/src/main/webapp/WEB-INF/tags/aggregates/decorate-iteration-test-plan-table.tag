@@ -370,7 +370,7 @@
 			var jqTd = $(this);
 			var row = this.parentNode;
 			
-			var status = $("td.status-combo span").html()
+			var status = $("td.status-combo span").html();
 			
 			//sets the change url
 			var tpId = squashTable.getODataId(row);
