@@ -119,12 +119,14 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return tc;
 	}
 
+	// dynamic
 	@Override
 	public TestCase findByIdWithInitializedSteps(long testCaseId) {
 		return executeEntityNamedQuery("testCase.findByIdWithInitializedSteps", idParameter(testCaseId));
 
 	}
 
+	// dynamic
 	@Override
 	public List<ActionTestStep> getTestCaseSteps(final Long testCaseId) {
 		return executeListNamedQuery("testCase.findAllTestSteps", idParameter(testCaseId));
@@ -133,16 +135,6 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	private SetQueryParametersCallback idParameter(final long testCaseId) {
 		return new SetIdParameter(TEST_CASE_ID_PARAM_NAME, testCaseId);
-	}
-
-	/**
-	 * @deprecated not used
-	 */
-	@Deprecated
-	@Override
-	public List<TestCase> findAllByIdListOrderedByName(final List<Long> testCasesIds) {
-		SetQueryParametersCallback setParams = new SetIdsParameter(testCasesIds);
-		return executeListNamedQuery("testCase.findAllByIdListOrderedByName", setParams);
 	}
 
 	private static final class SetIdsParameter implements SetQueryParametersCallback {

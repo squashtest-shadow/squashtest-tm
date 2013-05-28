@@ -56,8 +56,6 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 
 	List<ActionTestStep> getTestCaseSteps(Long testCaseId);
 
-	List<TestCase> findAllByIdListOrderedByName(final List<Long> testCaseIds);
-
 	/**
 	 * Will find all names of folderes content starting with the input string. Will not return sub-folder's content
 	 * names.
