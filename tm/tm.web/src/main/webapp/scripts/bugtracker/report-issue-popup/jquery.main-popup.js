@@ -460,7 +460,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 			self.postButton.focus();
 			self.reportRadio.click();
 			this.dialog("open");
-		}
+		};
 		
 		//the opening of the popup :
 		this.bind("dialogclose", function(){
