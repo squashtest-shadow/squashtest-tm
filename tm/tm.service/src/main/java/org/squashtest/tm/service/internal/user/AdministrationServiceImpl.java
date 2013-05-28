@@ -42,7 +42,6 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.service.configuration.ConfigurationService;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.repository.AdministrationDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
@@ -146,14 +145,6 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public FilteredCollectionHolder<List<User>> findAllUsersFiltered(CollectionSorting filter) {
-		List<User> list = userDao.findAllUsersFiltered(filter);
-		long count = userDao.findAll().size();
-		return new FilteredCollectionHolder<List<User>>(count, list);
-	}
-
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	public FilteredCollectionHolder<List<User>> findAllActiveUsersFiltered(PagingAndSorting sorter, Filtering filter) {
 		List<User> list = userDao.findAllActiveUsers(sorter, filter);
 		long count = userDao.findAll().size();
@@ -173,18 +164,6 @@ public class AdministrationServiceImpl implements AdministrationService {
 		createUserWithoutCredentials(user, groupId);
 		adminAuthentService.createNewUserPassword(user.getLogin(), password, user.getActive(), true, true, true,
 				new ArrayList<GrantedAuthority>());
-	}
-
-	/**
-	 * @see AdministrationService#modifyUserActiveParam(long, boolean)
-	 */
-	@Deprecated
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void modifyUserActiveParam(long userId, boolean active) {
-		// TODO : in CORE_USER or AUTH_USER ?
-		User user = userDao.findById(userId);
-		user.setActive(active);
 	}
 
 	@Override

@@ -33,7 +33,6 @@ import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
 /**
@@ -96,21 +95,11 @@ public interface AdministrationService {
 
 	List<User> findAllActiveUsersOrderedByLogin();
 
-	FilteredCollectionHolder<List<User>> findAllUsersFiltered(CollectionSorting filter);
-
 	FilteredCollectionHolder<List<User>> findAllActiveUsersFiltered(PagingAndSorting sorter, Filtering filter);
 
 	List<UsersGroup> findAllUsersGroupOrderedByQualifiedName();
 
 	void addUser(User aUser, long groupId, String password);
-
-	/**
-	 * @deprecated unused
-	 * @param userId
-	 * @param active
-	 */
-	@Deprecated
-	void modifyUserActiveParam(long userId, boolean active);
 
 	void setUserGroupAuthority(long userId, long groupId);
 
