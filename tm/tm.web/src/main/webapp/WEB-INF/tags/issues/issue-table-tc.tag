@@ -83,7 +83,7 @@
 	function addHLinkToExecInfo(row, data){
 		var td = $(row).find("td:eq(5)");
 		var execLabel = td.find(".issueExecLink");
-		var url = "${executionUrl}"+getIssueTableRowExecId(data)+"/info";
+		var url = "${executionUrl}"+getIssueTableRowExecId(data);
 		addHLinkToCellText(execLabel, url, true);
 	}
 

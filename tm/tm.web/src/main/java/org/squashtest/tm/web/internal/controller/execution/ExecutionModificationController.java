@@ -337,31 +337,6 @@ public class ExecutionModificationController {
 		return messageSource.getMessage(status.getI18nKey(), null, locale);
 	}
 
-	// will return the iteration in a full page
-	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public ModelAndView showIterationInfo(@PathVariable long executionId) {
-
-		Execution execution = executionModService.findAndInitExecution(executionId);
-		int rank = executionModService.findExecutionRank(executionId);
-
-		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-execution");
-
-		LOGGER.trace("ExecutionModService : getting info execution " + executionId + ", rank " + rank);
-
-		if (execution != null) {
-			mav.addObject("execution", execution);
-			mav.addObject("executionRank", Integer.valueOf(rank + 1));
-		} else {
-			// TODO SHOULD THROW AN EXCEPTION INSTEAD
-			execution = new Execution();
-			execution.setName("Not found");
-			execution.setDescription("This iteration either do not exists, or was removed");
-			mav.addObject("execution", new Execution());
-			mav.addObject("executionRank", -1);
-		}
-		return mav;
-	}
-
 	@RequestMapping(method = RequestMethod.POST, params = { "id=execution-description", VALUE })
 	@ResponseBody
 	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long executionId) {
