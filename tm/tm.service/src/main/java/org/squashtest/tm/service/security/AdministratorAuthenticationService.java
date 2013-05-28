@@ -23,6 +23,7 @@ package org.squashtest.tm.service.security;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * 
@@ -34,16 +35,23 @@ import org.springframework.security.core.GrantedAuthority;
  * safe for the modification of a password (only the user may access it).
  * 
  * @author bsiri
- *  
+ * 
  */
 public interface AdministratorAuthenticationService extends UserAuthenticationService {
 
 	void createNewUserPassword(String login, String plainTextPassword, boolean enabled, boolean accountNonExpired,
 			boolean credentialsNonExpired, boolean accountNonLocked, Collection<GrantedAuthority> autorities);
-
 	
+	void createUser(UserDetails userDetails);
+
 	void resetUserPassword(String login, String plainTextPassword);
 
-	
 	void deactivateAccount(String login);
+
+	/**
+	 * 
+	 * @param login
+	 * @return true if there is authentication data for the given login.
+	 */
+	boolean userExists(String login);
 }

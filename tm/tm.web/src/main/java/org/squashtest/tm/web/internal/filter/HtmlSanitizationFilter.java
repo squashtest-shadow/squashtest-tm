@@ -48,92 +48,89 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
  */
 public class HtmlSanitizationFilter implements Filter {
 
-
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		// nothing special
-		
+
 	}
 
 	@Override
 	public void destroy() {
 		// nothing special
-		
+
 	}
-	
-	
+
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException {
-		
-		if (HttpServletRequest.class.isAssignableFrom(request.getClass())){
-			chain.doFilter(new HtmlSafeRequestWrapper((HttpServletRequest)request), response);
-		}else{
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+			ServletException {
+
+		if (HttpServletRequest.class.isAssignableFrom(request.getClass())) {
+			chain.doFilter(new HtmlSafeRequestWrapper((HttpServletRequest) request), response);
+		} else {
 			chain.doFilter(request, response);
 		}
-		
-		
+
 	}
-	
-	static 	protected String[] escapeValue(String[] orig){
-		if (orig== null){ return null;}
-		
+
+	static protected String[] escapeValue(String[] orig) {
+		if (orig == null) {
+			return null;
+		}
+
 		String[] aString = new String[orig.length];
-					
-		int i=0;
-		for (String string : orig){
+
+		int i = 0;
+		for (String string : orig) {
 			aString[i++] = HTMLCleanupUtils.stripJavascript(string);
 		}
-		
-		return aString;			
+
+		return aString;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private class HtmlSafeRequestWrapper extends HttpServletRequestWrapper{
-				
+	private class HtmlSafeRequestWrapper extends HttpServletRequestWrapper {
+
 		private HttpServletRequest request;
-		
+
 		HtmlSafeRequestWrapper(HttpServletRequest request) {
 			super(request);
-			this.request=request;
+			this.request = request;
 		}
-		
+
 		@Override
 		public String getParameter(String name) {
 			String value = request.getParameter(name);
-			if (value==null){ return null;}
-			String[] cleaned = escapeValue(new String[] {value});
-			return (cleaned !=null) ? cleaned[0] : null;
+			if (value == null) {
+				return null;
+			}
+			String[] cleaned = escapeValue(new String[] { value });
+			return (cleaned != null) ? cleaned[0] : null;
 		}
-		
+
 		@Override
 		public String[] getParameterValues(String name) {
 			String[] values = request.getParameterValues(name);
 			return escapeValue(values);
 		}
-		
+
 		@Override
 		public Map<?, ?> getParameterMap() {
 			return new HtmlSafeParameterMapWrapper(request.getParameterMap());
 		}
-		
-		
-	}
-	
-	private class HtmlSafeParameterMapWrapper implements Map<String, String[]>{
-		
-		private final Map<String, String[]> wrappedMap;
-		
-		public HtmlSafeParameterMapWrapper(Map<String, String[]> wrappedMap) {
-			this.wrappedMap=wrappedMap;
-		}
-		
-		
 
+	}
+
+	private class HtmlSafeParameterMapWrapper implements Map<String, String[]> {
+
+		private final Map<String, String[]> wrappedMap;
+
+		public HtmlSafeParameterMapWrapper(Map<String, String[]> wrappedMap) {
+			this.wrappedMap = wrappedMap;
+		}
 
 		@Override
 		public void clear() {
-			wrappedMap.clear();			
+			wrappedMap.clear();
 		}
 
 		@Override
@@ -150,7 +147,6 @@ public class HtmlSanitizationFilter implements Filter {
 		public Set<java.util.Map.Entry<String, String[]>> entrySet() {
 			return wrappedMap.entrySet();
 		}
-
 
 		@Override
 		public String[] get(Object key) {
@@ -170,7 +166,7 @@ public class HtmlSanitizationFilter implements Filter {
 		@Override
 		public String[] put(String key, String[] value) {
 			return wrappedMap.put(key, value);
-			
+
 		}
 
 		@Override
@@ -180,7 +176,7 @@ public class HtmlSanitizationFilter implements Filter {
 
 		@Override
 		public String[] remove(Object key) {
-			return escapeValue(wrappedMap.remove(key));			
+			return escapeValue(wrappedMap.remove(key));
 		}
 
 		@Override
@@ -192,17 +188,14 @@ public class HtmlSanitizationFilter implements Filter {
 		public Collection<String[]> values() {
 			Collection<String[]> values = wrappedMap.values();
 			Collection<String[]> clean = new ArrayList<String[]>();
-			for (String[] origString : values){
+			for (String[] origString : values) {
 				clean.add(escapeValue(origString));
 			}
-			
+
 			return clean;
-			
+
 		}
 
-
-		
 	}
-
 
 }

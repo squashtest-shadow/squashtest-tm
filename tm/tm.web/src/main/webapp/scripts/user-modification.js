@@ -19,12 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "user-editor/UserModificationView",
-			"app/ws/squashtm.workspace", "domReady" ], function($,
+	require([ "jquery", "user-editor/UserModificationView", "app/ws/squashtm.workspace", "domReady" ], function($,
 			UserModificationView, WS, domReady) {
 		var goBack = function() {
-			document.location.href = squashtm.app.contextRoot
-					+ "/administration/users/list";
+			document.location.href = squashtm.app.contextRoot + "/administration/users/list";
 		};
 
 		domReady(function() {
@@ -32,6 +30,7 @@ require([ "common" ], function(common) {
 			var view = new UserModificationView();
 			$("#back").button().on("click", goBack);
 			view.on("user.delete", goBack);
+			
 		});
 
 	});

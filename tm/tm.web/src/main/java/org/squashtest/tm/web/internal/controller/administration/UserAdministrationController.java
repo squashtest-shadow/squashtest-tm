@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.administration;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -192,7 +191,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 	 * @param userId
 	 */
 	@RequestMapping(value = USER_URL + "/info", method = RequestMethod.GET)
-	public String getUserInfos(@PathVariable Long userId, Model model) {
+	public String getUserInfos(@PathVariable long userId, Model model) {
 		User user = adminService.findUserById(userId);
 		List<UsersGroup> usersGroupList = adminService.findAllUsersGroupOrderedByQualifiedName();
 
@@ -244,11 +243,21 @@ public class UserAdministrationController extends PartyControllerSupport {
 		return HtmlUtils.htmlEscape(email);
 	}
 
-	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "newPassword" })
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = "password")
 	@ResponseBody
 	public void resetPassword(@ModelAttribute @Valid PasswordResetForm form, @PathVariable long userId) {
 		LOGGER.trace("Reset password for user #" + userId);
-		adminService.resetUserPassword(userId, form.getNewPassword());
+		adminService.resetUserPassword(userId, form.getPassword());
+	}
+
+	@RequestMapping(value = USER_URL + "/authentication", method = RequestMethod.PUT, params = "password")
+	@ResponseBody
+	public void createAuthentication(@ModelAttribute @Valid PasswordResetForm form, @PathVariable long userId) {
+		LOGGER.trace("Create authentication for user #" + userId);
+		if (!currentProviderFeatures().isManagedPassword()) {
+			adminService.createAuthentication(userId, form.getPassword());
+		}
+		// when password are managed, we should not create internal authentications.
 	}
 
 	// *********************************************************************************

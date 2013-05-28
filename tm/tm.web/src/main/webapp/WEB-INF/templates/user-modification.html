@@ -41,6 +41,7 @@
 					simple : /*[[ @{'/users/'+${user.id}+'/'} ]]*/"/users/1/",
 					changeGroup : /*[[ @{'/administration/users/'+${user.id}+'/change-group'} ]]*/"/administration/users/1/change-group",
 				},
+				hasAuthentication : /*[[ ${ user.hasAuthentication } ]]*/ true
 			},
 			users : {
 				url : /*[[ @{/administration/users/} ]]*/"/administration/users/",
@@ -97,9 +98,8 @@
 		},
 	};
 </script>
-<script data-main="../../scripts/user-modification.js"
-	th:attr="data-main=@{/scripts/user-modification.js}"
-	src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
+<script data-main="../../scripts/user-modification.js" th:attr="data-main=@{/scripts/user-modification.js}"
+  src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
 	
 </script>
 <link rel="stylesheet" type="text/css" media="all" href="../../../../../target/processed-css/squash.core.css"
@@ -187,7 +187,8 @@
                   <div class="display-table-row" th:unless="${authenticationProvider.managedPassword}">
                     <label for="reset-password-button" th:text="#{label.password}">Password</label>
                     <div class="display-table-cell">
-                      <a href="javascript:void(0)" id="reset-password-button" th:text="#{user.button.reset.password}">Reset</a>
+                      <a href="javascript:void(0)" id="reset-password-button" th:text="#{user.button.reset.password}" th:class="${ !user.hasAuthentication } ? 'not-displayed'">Reset</a>
+                      <a href="javascript:void(0)" id="create-auth-button" th:text="#{label.createPassword}" th:class="${ user.hasAuthentication } ? 'not-displayed'">Create authentication</a>
                     </div>
                   </div>
                   <div class="display-table-row" th:if="${authenticationProvider.managedPassword}">
@@ -297,26 +298,28 @@
 	</div>
 	<!--    ====================================POPUPS======================================================  -->
 
-
-
-	<div id="password-reset-popup" class="not-displayed popup-dialog" th:unless="${authenticationProvider.managedPassword}">
+  <div id="pass-pop-pane" class="not-displayed"></div>
+  <div id="auth-pop-pane" class="not-displayed"></div>
+  <script id="password-reset-popup-tpl" type="text/x-handlebars-template" th:inline="text">
+	<div id="{{popupId}}" class="not-displayed popup-dialog" th:unless="${authenticationProvider.managedPassword}">
 		<div id="user-account-password-panel">
 
 			<div>
 				<label th:text="#{user.account.newpass.label}">new passwd</label> <input
-					type="password" id="newPassword" /> <span
-					class="error-message newPassword-error"></span>
+					type="password" class="password" /> <span
+					class="error-message password-error"></span>
 			</div>
 
 			<div>
 				<label th:text="#{user.account.confirmpass.label}">confirm
-					passwd</label> <input type="password" id="user-account-confirmpass" /> <span
+					passwd</label> <input type="password" class="user-account-confirmpass" /> <span
 					class="error-message user-account-confirmpass-error"></span>
 			</div>
 
 		</div>
 		<span class="error-message user-account-changepass-status-error"></span>
 	</div>
+  </script>
 
 	<div id="remove-teams-dialog" class="popup-dialog not-displayed"
 		th:title="#{title.unsubscribeToTeams}">

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -32,7 +33,8 @@ public class PasswordResetForm {
 	
 
 	@Size(min = 6, max = 256)
-	private String newPassword;
+	@NotNull
+	private String password;
 
 	public PasswordResetForm() {
 		super();
@@ -43,14 +45,14 @@ public class PasswordResetForm {
 	 * @param newPassword
 	 *            the newPassword to set
 	 */
-	public void setNewPassword(String newPassword) {
-		this.newPassword = newPassword;
+	public void setPassword(String newPassword) {
+		this.password = newPassword;
 	}
 
 	/**
 	 * @return the newPassword
 	 */
-	public String getNewPassword() {
-		return newPassword;
+	public String getPassword() {
+		return password;
 	}
 }

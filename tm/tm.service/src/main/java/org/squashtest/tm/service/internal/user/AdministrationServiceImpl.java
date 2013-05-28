@@ -28,6 +28,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.Filtering;
@@ -48,8 +49,10 @@ import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.repository.UsersGroupDao;
+import org.squashtest.tm.service.internal.security.UserBuilder;
 import org.squashtest.tm.service.security.AdministratorAuthenticationService;
 import org.squashtest.tm.service.user.AdministrationService;
+import org.squashtest.tm.service.user.AuthenticatedUser;
 import org.squashtest.tm.service.user.UserAccountService;
 
 /**
@@ -123,8 +126,10 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public User findUserById(long userId) {
-		return userDao.findById(userId);
+	public AuthenticatedUser findUserById(long userId) {
+		User user = userDao.findById(userId);
+		boolean hasAuth = adminAuthentService.userExists(user.getLogin());
+		return new AuthenticatedUser(user, hasAuth);
 	}
 
 	@Override
@@ -338,5 +343,23 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 		user.setGroup(group);
 		userDao.persist(user);
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.user.AdministrationService#createAuthentication(long, java.lang.String)
+	 */
+	@Override
+	public void createAuthentication(long userId, String password) throws LoginAlreadyExistsException {
+		User user = userDao.findById(userId);
+
+		if (!adminAuthentService.userExists(user.getLogin())) {
+			UserDetails auth = UserBuilder.forUser(user.getLogin()).password(password).active(user.getActive()).build();
+			adminAuthentService.createUser(auth);
+
+		} else {
+			throw new LoginAlreadyExistsException("Authentication data for user '" + user.getLogin()
+					+ "' already exists");
+		}
+
 	}
 }

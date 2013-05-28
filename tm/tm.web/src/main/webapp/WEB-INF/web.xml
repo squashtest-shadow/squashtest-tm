@@ -143,6 +143,18 @@
     <dispatcher>FORWARD</dispatcher>
   </filter-mapping>
   <!-- ====== /FIXES IE8 ACCEPT HEADER ====== -->  
+  
+  <filter>
+    <filter-name>httpPutFormContentFilter</filter-name>
+    <filter-class>org.springframework.web.filter.HttpPutFormContentFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>httpPutFormContentFilter</filter-name>
+    <servlet-name>squash-tm</servlet-name>
+    <dispatcher>FORWARD</dispatcher>
+  </filter-mapping>
+  
 
 	<!-- ====== SPRING BOOTSTRAPPER ====== -->
 	<context-param>

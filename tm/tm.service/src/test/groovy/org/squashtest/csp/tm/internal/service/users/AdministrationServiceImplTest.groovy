@@ -139,6 +139,7 @@ class AdministrationServiceImplTest extends Specification {
 		1 * newUser.setGroup(defaultGroup)
 		1 * adminAuthentService.createNewUserPassword("chris.jericho", "y2j", true, true, true, true, _)
 	}
+	
 	def "should create user without credentials"() {
 		given:
 		User newUser = Mock()
@@ -155,5 +156,47 @@ class AdministrationServiceImplTest extends Specification {
 		1 * userDao.persist(newUser)
 		1 * newUser.setGroup(defaultGroup)
 		0 * adminAuthentService.createNewUserPassword(_, _, _, _, _, _, _)
+	}
+	
+	def "should create authentication data"() {
+		given:
+		User user = Mock()
+		user.login >> "chris.jericho"
+		user.active >> true
+
+		and:
+		userDao.findById(10L) >> user
+		
+		and:
+		adminAuthentService.userExists("chris.jericho") >> false
+
+		when:
+		service.createAuthentication(10L, "y2j")
+
+		then:
+		1 * adminAuthentService.createUser({
+			it.password == "y2j"
+		})
+
+	}
+
+	def "should not create authentication data for existing user"() {
+		given:
+		User user = Mock()
+		user.login >> "chris.jericho"
+		user.active >> true
+
+		and:
+		userDao.findById(10L) >> user
+		
+		and:
+		adminAuthentService.userExists("chris.jericho") >> true
+
+		when:
+		service.createAuthentication(10L, "y2j")
+
+		then:
+		thrown LoginAlreadyExistsException
+
 	}
 }

@@ -88,7 +88,7 @@ public interface AdministrationService {
 
 	/* ** now its admin only //TODO change this comment by doc on methods ** */
 
-	User findUserById(long userId);
+	AuthenticatedUser findUserById(long userId);
 
 	User findByLogin(@NotNull String login);
 
@@ -186,4 +186,14 @@ public interface AdministrationService {
 	 * @param groupId
 	 */
 	void createUserWithoutCredentials(User user, long groupId);
+
+	/**
+	 * Creates authentication data for given user.
+	 * 
+	 * @param userId
+	 * @param newPassword
+	 * @throws LoginAlreadyExistsException
+	 *             when authentication data already exixts
+	 */
+	void createAuthentication(long userId, String newPassword) throws LoginAlreadyExistsException;
 }

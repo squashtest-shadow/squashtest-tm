@@ -58,10 +58,15 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	}
 
 	@Override
-	public void setUserPassword(String userLogin, String plainOldPassword, String plainNewPassword) {
+	public void changeAuthenticatedUserPassword(String plainOldPassword, String plainNewPassword) {
 
-		String encNewPasswd = encoder.encodePassword(plainNewPassword, salt);
+		String encNewPasswd = encode(plainNewPassword);
 		userManager.changePassword(plainOldPassword, encNewPasswd);
+	}
+
+	private String encode(String plainNewPassword) {
+		String encNewPasswd = encoder.encodePassword(plainNewPassword, salt);
+		return encNewPasswd;
 	}
 
 	@Override
@@ -69,7 +74,7 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 			boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
 			Collection<GrantedAuthority> autorities) {
 
-		String encodedPassword = encoder.encodePassword(plainTextPassword, salt);
+		String encodedPassword = encode(plainTextPassword);
 
 		UserDetails user = new User(login, encodedPassword, enabled, accountNonExpired, credentialsNonExpired,
 				accountNonLocked, autorities);
@@ -80,7 +85,7 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	@Override
 	public void resetUserPassword(String login, String plainTextPassword) {
 		UserDetails user2 = userManager.loadUserByUsername(login);
-		String encodedPassword = encoder.encodePassword(plainTextPassword, salt);
+		String encodedPassword = encode(plainTextPassword);
 		UserDetails user = new User(login, encodedPassword, user2.isEnabled(), true, true, true,
 				Collections.<GrantedAuthority> emptyList());
 		LOGGER.debug("reset password for user {}", login);
@@ -108,10 +113,29 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 					oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), oldUser.getAuthorities());
 			LOGGER.debug("Deactivate account for user {}", login);
 			userManager.createUser(newUser);
-			
+
 		} else {
 			LOGGER.trace("User {} has no authentidation data, it can't be deactivated", login);
 		}
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.security.AdministratorAuthenticationService#userExists(java.lang.String)
+	 */
+	@Override
+	public boolean userExists(String login) {
+		return userManager.userExists(login);
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.security.AdministratorAuthenticationService#createUser(org.springframework.security.core.userdetails.UserDetails)
+	 */
+	@Override
+	public void createUser(UserDetails plaintextPasswordUser) {
+		String encodedPassword = encode(plaintextPasswordUser.getPassword());
+
+		UserDetails user = UserBuilder.duplicate(plaintextPasswordUser).password(encodedPassword).build();
+		userManager.createUser(user);
 	}
 
 }

@@ -25,7 +25,7 @@ public interface UserAuthenticationService {
 
 	boolean canModifyUser();
 
-	void setUserPassword(String userLogin, String plainOldPassword, String plainNewPassword);
+	void changeAuthenticatedUserPassword(String plainOldPassword, String plainNewPassword);
 	
 	void changeUserlogin(String newLogin, String oldLogin);
 

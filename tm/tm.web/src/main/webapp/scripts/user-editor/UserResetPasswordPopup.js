@@ -18,19 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squash", "jqueryui",
+define([ "jquery", "backbone", "handlebars", "app/util/StringUtil", "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "jquery.squash.datatables", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], 
-		function($, Backbone, _, StringUtil) {
+		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, StringUtil) {
 	var UMod = squashtm.app.UMod;
 	var UserResetPasswordPopup = Backbone.View.extend({
-		el : "#password-reset-popup",
 		initialize : function() {
 			var self = this;
+
 			var params = {
-				selector : "#password-reset-popup",
+				selector : "#" + self.options.popupId,
 				title : UMod.message.resetPasswordPopupTitle,
-				openedBy : "#reset-password-button",
+				openedBy : "#" + self.options.openerId,
 				isContextual : true,
 				closeOnSuccess : false,
 				buttons : [ {
@@ -42,10 +41,23 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 				width : 420
 			};
 
+			this.render();
 			squashtm.popup.create(params);
-			$("#password-reset-popup").bind("dialogclose", self.cleanUp);
+			this.$dialog = $("#" + self.options.popupId); // dialog is removed from its original place afterwards
+			this.$dialog.bind("dialogclose", self.dialogCleanUp);
 
 		},
+
+		render : function() {
+			var source = $("#password-reset-popup-tpl").html();
+			var template = Handlebars.compile(source);
+			this.$el.html(template({
+				popupId : this.options.popupId
+			}));
+
+			return this;
+		},
+
 		events : {},
 
 		submitPassword : function() {
@@ -54,14 +66,14 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 				return;
 			}
 
-			var newPassword = $("#newPassword").val();
+			var newPassword = this.$dialog.find(".password").val();
 
 			$.ajax({
-				url : UMod.user.url.admin,
-				type : "POST",
+				url : self.options.url,
+				type : self.options.type,
 				dataType : "json",
 				data : {
-					"newPassword" : newPassword
+					"password" : newPassword
 				},
 				success : function() {
 					self.userPasswordSuccess.call(self);
@@ -73,9 +85,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 		// <%-- we validate the passwords only. Note that
 		// validation also occurs server side. --%>
 		validatePassword : function() {
-			var self = this;
 			// first, clear error messages
-			$("#user-account-password-panel span.error-message").html('');
+			this.$dialog.find(".user-account-password-panel span.error-message").html('');
 
 			// has the user attempted to change his password ?
 
@@ -83,22 +94,22 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 			var confirmPassOkay = true;
 			var samePassesOkay = true;
 
-			if (!self.isFilled("#newPassword")) {
-				$("span.error-message.newPassword-error").html(UMod.message.newPassError);
+			if (!this.isFilled(".password")) {
+				this.$dialog.find("span.error-message.password-error").html(UMod.message.newPassError);
 				newPassOkay = false;
 			}
 
-			if (!self.isFilled("#user-account-confirmpass")) {
-				$("span.error-message.user-account-confirmpass-error").html(UMod.message.confirmPassError);
+			if (!this.isFilled(".user-account-confirmpass")) {
+				this.$dialog.find("span.error-message.user-account-confirmpass-error").html(UMod.message.confirmPassError);
 				confirmPassOkay = false;
 			}
 
 			if ((newPassOkay) && (confirmPassOkay)) {
-				var pass = $("#newPassword").val();
-				var confirm = $("#user-account-confirmpass").val();
+				var pass = this.$dialog.find(".password").val();
+				var confirm = this.$dialog.find(".user-account-confirmpass").val();
 
 				if (pass != confirm) {
-					$("span.error-message.newPassword-error").html(UMod.message.samePassError);
+					this.$dialog.find("span.error-message.password-error").html(UMod.message.samePassError);
 					samePassesOkay = false;
 				}
 			}
@@ -108,7 +119,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 		},
 
 		isFilled : function(selector) {
-			var value = $(selector).val();
+			var value = this.$dialog.find(selector).val();
 			if (!value.length) {
 				return false;
 			} else {
@@ -118,19 +129,24 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 		},
 
 		hasPasswdChanged : function() {
-			return ((isFilled("#newPassword")) || (isFilled("#user-account-confirmpass")));
-		},
-		
-		userPasswordSuccess : function() {
-			$(this.el).dialog('close');
-			squashtm.notification.showInfo(UMod.message.passSuccess);
+			return ((isFilled(".password")) || (isFilled(".user-account-confirmpass")));
 		},
 
-		cleanUp : function() {
-			$("#newPassword").val('');
-			$("#user-account-confirmpass").val('');
+		userPasswordSuccess : function() {
+			this.$dialog.dialog('close');
+			squashtm.notification.showInfo(UMod.message.passSuccess);
+			this.model.set("hasAuthentication", true);
+		},
+
+		/**
+		 * context of this method should be the dialog
+		 */
+		dialogCleanUp : function() {
+			var $this = $(this);
+			$this.find(".password").val('');
+			$this.find(".user-account-confirmpass").val('');
 		}
-		
+
 	});
 	return UserResetPasswordPopup;
 });

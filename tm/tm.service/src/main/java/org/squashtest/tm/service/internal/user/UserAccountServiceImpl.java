@@ -141,7 +141,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 					"The authentication service do not allow users to change their passwords using Squash");
 		}
 		try {
-			authService.setUserPassword(userContextService.getUsername(), oldPass, newPass);
+			authService.changeAuthenticatedUserPassword(oldPass, newPass);
 		} catch (BadCredentialsException bce) {
 			throw new WrongPasswordException("wrong password");
 		}
