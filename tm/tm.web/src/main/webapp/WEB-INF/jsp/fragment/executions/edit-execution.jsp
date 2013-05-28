@@ -52,6 +52,7 @@
 
 <c:url var="executionUrl" value="/executions/${execution.id}" />
 
+<c:url var="baseExecuteUrl" value="/execute"/>
 
 <s:url var="executionInfoUrl" value="/executions/{execId}/general">
 	<s:param name="execId" value="${execution.id}" />
@@ -411,7 +412,7 @@
 							var row = cell.parentNode.parentNode; // hopefully, that's the
 							// 'tr' one
 							var executionStepId = table.getODataId(row);
-								var url = "http://localhost:8080/squash/execute/"+executionId+"/step/"+executionStepId;
+								var url = "${baseExecuteUrl}/"+executionId+"/step/"+executionStepId;
 								var data = {
 									'optimized' : 'false',
 								};
