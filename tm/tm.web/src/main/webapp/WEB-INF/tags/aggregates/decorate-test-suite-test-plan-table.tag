@@ -378,7 +378,7 @@ function bindMenuToExecutionShortCut(row, data){
 		addIdtoTestPlanRow(row, data);
 		<c:if test="${ editable }">
 		addDeleteButtonToRow(row, getTestPlansTableRowId(data), 'delete-test-suite-test-plan-button');
-		addClickHandlerToSelectHandle(row, $("#test-suite-test-plans-table"));
+		//addClickHandlerToSelectHandle(row, $("#test-suite-test-plans-table")); //now automatically handled by squashTable() constructor
 		addLoginListToTestPlan(row, data);
 		</c:if>
 		addHLinkToTestPlanName(row, data);

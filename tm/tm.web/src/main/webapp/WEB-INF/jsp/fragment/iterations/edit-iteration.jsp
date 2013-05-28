@@ -422,8 +422,8 @@
 		$("#delete-multiple-test-plan-dialog").bind(
 				"dialogopen",
 				function(event, ui) {
-					var table = $('#test-plans-table').dataTable();
-					var ids = getIdsOfSelectedTableRows(table,	getTestPlansTableRowId);
+					var table = $('#test-plans-table').squashTable();
+					var ids = table.getSelectedIds();
 
 					if (ids.length == 0) {
 						$.squash.openMessage(
@@ -492,8 +492,8 @@
 			<f:message var="label" key="label.Assign" />
 			'${ label }': function() {
 				var url = "${assignTestCasesUrl}";
-				var table = $( '#test-plans-table' ).dataTable();
-				var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
+				var table = $( '#test-plans-table' ).squashTable();
+				var ids = table.getSelectedIds();
 		
 				var user = $(".batch-select", this).val();
 			
@@ -509,8 +509,8 @@
 			<script type="text/javascript">
 				$("#batch-assign-test-case").bind("dialogopen",function(event, ui) {
 					
-					var table = $('#test-plans-table').dataTable();
-					var ids = getIdsOfSelectedTableRows(table,	getTestPlansTableRowId);
+					var table = $('#test-plans-table').squashTable();
+					var ids = table.getSelectedIds();
 
 					if (ids.length > 0) {
 						var pop = this;

@@ -266,18 +266,31 @@ function enableTableRangeSelection() {
  * we need to fetch the rank of the first tr of the table as an offset to which
  * we'll add the position of lines we are moving around.
  * 
- * @param domTable
- *            the dom table
+ * @param tableId
+ *            the id of the table
  * 
  * @returns the real index of the first row.
  * 
  */
-function getOffsetFromDomTable(domTable, fnGetRowIndex) {
 
-	var dataTable = $(domTable).dataTable({
-		"bRetrieve" : true
-	});
+/*
+ * bug #2308 forced me to the crappy codebelow. The version 1.6 will get a proper fix instead. 
+ * 
+ */
+function getOffsetFromDomTable(tableId, fnGetRowIndex) {
 
+	var dataTable;
+	
+	if ($.fn.squashTable && $.fn.squashTable.instances[tableId]){
+		dataTable = $(tableId).squashTable();
+	}
+	else{
+		//regular table
+		dataTable = $(tableId).dataTable({
+			"bRetrieve" : true
+		});
+	}
+	
 	var firstData = dataTable.fnGetData(0);
 
 	var position = fnGetRowIndex(firstData);
@@ -309,7 +322,7 @@ function enableTableDragAndDrop(tableId, fnGetRowIndex, dropHandler) {
 
 			rows.find('.drag-handle').addClass('ui-state-active');
 
-			var offset = getOffsetFromDomTable(table, fnGetRowIndex);
+			var offset = getOffsetFromDomTable("#"+tableId, fnGetRowIndex);
 
 			var index = rows.get(0).rowIndex - 1;
 			$(table).data("previousRank", index);

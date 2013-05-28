@@ -467,7 +467,7 @@
 					key="message.EmptyTableSelection" />			
 		<script type="text/javascript">
 				$("#delete-test-suite-multiple-test-plan-dialog").bind( "dialogopen", function(event, ui){
-					var table = $( '#test-suite-test-plans-table' ).dataTable();
+					var table = $( '#test-suite-test-plans-table' ).squashTable();
 					var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
 	
 					if (ids.length == 0) {
@@ -551,7 +551,7 @@
 			<f:message var="label" key="label.Assign" />
 			'${ label }': function() {
 				var url = "${assignTestCasesUrl}";
-				var table = $( '#test-suite-test-plans-table' ).dataTable();
+				var table = $( '#test-suite-test-plans-table' ).squashTable();
 				var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
 		
 				var user = $(".comboLogin").val();
@@ -569,7 +569,7 @@
 				key="message.AssignTestCaseToUser" />
 			<script type="text/javascript">
 				$("#batch-assign-test-case").bind( "dialogopen", function(event, ui){
-					var table = $( '#test-suite-test-plans-table' ).dataTable();
+					var table = $( '#test-suite-test-plans-table' ).squashTable();
 					var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
 
 					if (ids.length > 0) {
