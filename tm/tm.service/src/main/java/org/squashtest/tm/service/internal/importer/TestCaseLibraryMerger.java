@@ -158,8 +158,8 @@ class TestCaseLibraryMerger {
 	/* ******************************** private classes ************************************ */
 	
 	private static class FolderPair {
-		TestCaseFolder dest;
-		TestCaseFolder src;
+		private TestCaseFolder dest;
+		private TestCaseFolder src;
 		
 		public FolderPair(TestCaseFolder dest, TestCaseFolder src){
 			this.dest=dest;

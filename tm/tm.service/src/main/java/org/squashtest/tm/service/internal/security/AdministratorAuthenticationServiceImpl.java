@@ -65,8 +65,7 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	}
 
 	private String encode(String plainNewPassword) {
-		String encNewPasswd = encoder.encodePassword(plainNewPassword, salt);
-		return encNewPasswd;
+		return encoder.encodePassword(plainNewPassword, salt);
 	}
 
 	@Override

@@ -36,7 +36,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  * @author Gregory Fouquet
  * 
  */
-public class UserBuilder {
+public final class UserBuilder {
 	private String login;
 	private String password;
 	private boolean enabled;
