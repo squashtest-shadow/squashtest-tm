@@ -98,6 +98,13 @@
 </s:url>
 
 
+
+<s:url var="testSuiteExecButtonsUrl" value="/test-suites/{testSuiteId}/exec-button">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+</s:url>
+
+
+
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
 
 
@@ -219,6 +226,22 @@
 	function deleteTestSuiteFailure(xhr){
 		oneShotDialog("<f:message key='popup.title.error' />", xhr.statusText);
 	}
+	
+
+	function refreshExecButtons(){
+		$('#test-suite-execution-button').load('${ testSuiteExecButtonsUrl }');
+	}
+
+
+	function refreshTestSuiteView(){
+		var table = $('#test-suite-test-plans-table').squashTable();		
+		table.refresh();	
+		
+		refreshExecButtons();			
+		refreshStatistics();	
+		refreshTestSuiteInfos();			
+	}
+	
 </script>
 
 <div
@@ -390,7 +413,6 @@
 				executable="${ executable }"
 				testSuite="${testSuite}"
 			/>
-			<aggr:test-suite-test-plan-table />
 		</div>
 
 
@@ -511,7 +533,7 @@
 				var user = $(".comboLogin").val();
 			
 				$.post(url, { testPlanIds: ids, userId: user}, function(){
-					refreshTestPlansWithoutSelection();
+					table.refresh();
 					$("#batch-assign-test-case").dialog('close');
 				});
 				
@@ -586,6 +608,8 @@
 </c:if>
  <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script>
+
+
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){	
 			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker"], function($, contentHandlers, Frag, bugtracker){

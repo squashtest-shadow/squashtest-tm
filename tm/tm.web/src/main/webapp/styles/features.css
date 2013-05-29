@@ -159,6 +159,10 @@ tr.nodrop td.drag-handle {
 	cursor : default;	
 }
 
+.cursor-pointer{
+	cursor : pointer;
+}
+
 span.little-text {
 	font-size: 8px;
 }
@@ -181,6 +185,18 @@ td.double-narrow{
 
 .std-margin-top {
 	margin-top : 1em;	
+}
+
+.small-right-arrow{
+	background-image:url(../images/arrow_right.gif);
+}
+
+.small-down-arrow{
+	background-image:url(../images/arrow_down.gif);
+}
+
+.execute-arrow{
+	background : url(../images/execute.png) no-repeat center center;
 }
 
 /* ---------------------------------------------------------*/

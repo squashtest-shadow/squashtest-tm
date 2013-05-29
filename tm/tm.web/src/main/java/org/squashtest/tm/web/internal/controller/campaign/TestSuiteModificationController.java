@@ -298,16 +298,16 @@ public class TestSuiteModificationController {
 
 		PagedCollectionHolder<List<IterationTestPlanItem>> holder = service.findTestSuiteTestPlan(id, paging);
 
-		return new IterationTestPlanItemDataTableModelHelper(messageSource, locale).buildDataModel(holder,
+		return new TestSuiteTestPlanItemDataTableModelHelper(messageSource, locale).buildDataModel(holder,
 				params.getsEcho());
 
 	}
 
-	private static class IterationTestPlanItemDataTableModelHelper extends DataTableModelHelper<IterationTestPlanItem> {
+	private static class TestSuiteTestPlanItemDataTableModelHelper extends DataTableModelHelper<IterationTestPlanItem> {
 		private InternationalizationHelper messageSource;
 		private Locale locale;
 
-		private IterationTestPlanItemDataTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
+		private TestSuiteTestPlanItemDataTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
 			this.messageSource = messageSource;
 			this.locale = locale;
 		}

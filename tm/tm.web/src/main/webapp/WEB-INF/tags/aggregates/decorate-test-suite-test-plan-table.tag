@@ -37,10 +37,8 @@
 
 <%-- =============== URLs and other variables ======================== --%>
 
-<c:set var="batchRemoveButtonId" value="remove-test-suite-test-case-button" />
 <c:set var="testCaseSingleRemovalPopupId" value="delete-test-suite-single-test-plan-dialog" />
 <c:set var="testCaseMultipleRemovalPopupId" value="delete-test-suite-multiple-test-plan-dialog" />
-<c:set var="testSuiteExecButtonsId" value="test-suite-execution-button" />
 
 
 <s:url var="tableModelUrl"	value="/test-suites/{testSuiteId}/test-plan/table">
@@ -70,14 +68,11 @@
 	<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
 
-
-<s:url var="testSuiteExecButtonsUrl" value="/test-suites/{testSuiteId}/exec-button">
-	<s:param name="testSuiteId" value="${testSuite.id}" />
-</s:url>
-
 <s:url var="baseIterationUrl" value="/iterations/{iterationId}">
 	<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
+
+<c:url var="tableLanguageUrl" value='/datatables/messages' />
 
 <%-- =============== /URLs and other variables ======================== --%>
 
@@ -99,10 +94,62 @@
 
 <%-- ================== /regionale and al. ============== --%>
 
+
+
+<table id="test-suite-test-plans-table" data-def="ajaxsource=${tableModelUrl}, language=${tableLanguageUrl}, hover, pagesize=10" >
+	<thead>
+		<tr>
+			<th data-def="map=entity-index, sClass=drag-handle ui-state-default, select, center, narrow">#</th>
+			<th data-def="map=project-name"><f:message key="label.project" /></th>
+			<th data-def="map=exec-mode, narrow, sClass=exec-mode">&nbsp;</th><%-- exec mode icon --%>		
+			<th data-def="map=reference"><f:message key="requirement.reference.label"/></th>	
+			<th data-def="map=tc-name, link=javascript:void(0), sClass=test-case-name-hlink"><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
+			<th data-def="map=importance"><f:message key="iteration.executions.table.column-header.importance.label" /></th>
+			<th data-def="map=type, sWidth=10%"><f:message key="label.Mode" /></th>
+			<th data-def="map=status, sWidth=10%, sClass=has-status status-combo"><f:message key="iteration.executions.table.column-header.status.label" /></th>
+			<th data-def="map=last-exec-by, sClass=executed-by"><f:message key="iteration.executions.table.column-header.user.label" /></th>
+			<th data-def="map=last-exec-on"><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>
+			<th data-def="map=empty-execute-holder, center, narrow, sClass=execute-button">&nbsp;</th>		
+			<th data-def="map=empty-delete-holder, center, narrow, sClass=delete-button, delete-button=#${testCaseSingleRemovalPopupId}">&nbsp;</th>			
+		</tr>
+	</thead>
+	<tbody><%-- Will be populated through ajax --%></tbody>
+</table>
+
+<div id="test-suite-test-plan-table-templates" style="display:none">
+	
+	<div class="shortcut-exec execute-arrow cursor-pointer" style="height : 20px; width : 20px;"></div>
+	<div class="disabled-shortcut-exec execute-arrow cursor-pointer" style="height : 20px; width : 20px; opacity : 0.35"></div>
+	
+	<div id="shortcut-exec-man-template">
+		<ul>
+			<li><a data-tpid="{placeholder-tpid}" class="run-menu-item run-popup" href="javascript:void(0)"><f:message key="test-suite.execution.classic.label"/></a></li>
+			<li><a data-tpid="{placeholder-tpid}" class="run-menu-item run-oer" href="javascript:void(0)"><f:message key="test-suite.execution.optimized.label"/></a></li>
+		</ul>
+	</div>
+	
+</div>
+		
+
+
 <script type="text/javascript">
-	var removeTestPlansUrl = "${removeTestPlansUrl}";
-	var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
+
+
+$(function() {
+	
+	/* **************************************************************
+		Library code.
+		
+		Should be moved to an external js when we have time for the plumbing
+	
+		Note : refreshTestSuiteView is defined in an outer context
+	**************************************************************** */
+	
+	// ************************** start execution management *****************
+	
+	
 	var runnerUrl = ""; //URL used to run an execution. will be created dynamically
+	
 	
 	var dryRunStart = function() {
 		return $.ajax({
@@ -135,7 +182,7 @@
 			dataType : "json"
 		})
 		.done(function(suiteView) {
-			refreshTestPlans();
+			$("#test-suite-test-plans-table").squashTable().refresh();
 			if(suiteView.executions.length == 0){
 				$.squash
 				.openMessage("<f:message key='popup.title.Info' />",
@@ -146,142 +193,146 @@
 		});
 		return false; //return false to prevent navigation in page (# appears at the end of the URL)
 	}
+
 	
-	function bindMenuToExecutionShortCut(row, data){
+	
+	function runInPopup(){
+		var url = runnerUrl;
+		var data = {
+			'optimized' : 'false'
+		};
+		var winDef = {
+			name : "classicExecutionRunner",
+			features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
+		};
+		$.open(url, data, winDef);		
+	}
+	
+	function runInOER (){
 		
-		var tpId = data["entity-id"];
+		var url = runnerUrl;
+		$('body form#start-optimized-form').remove();
+		$('body').append('<form id="start-optimized-form" action="'+runnerUrl+'?optimized=true&suitemode=false" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="true" name="optimized" id="start-optimized-button" /><input type="button" value="false" name="suitemode"  /></form>');
+		
+		$('#start-optimized-button').trigger('click');
+	};
+		
+	function startManualExecution(tpId, executionUI){
+		
 		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
 
+		var callback = (executionUI === "popup") ? runInPopup : runInOER;
 
-		//if the testcase is manual
-		if(data[3] === 'M'){
+		$.ajax({
+			type : 'POST',
+			url : url,
+			data : {"mode":"manual"},
+			dataType : "json"
+		}).done(function(id){
+			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
+			dryRunStart().done(callback);
+		});
+	}
+	
+	function execMenuManualClickHandler(){
+		var jqThis = $(this);
+		var id = jqThis.data('tpid');
+		var ui = (jqThis.is('.run-popup') )? "popup" : "oer";
 		
-			$(".shortcut-exec",row).fgmenu({
-				content : $("#shortcut-exec-man",row).html(),
+		startManualExecution(id,ui);
+	}
+	
+	function execMenuAutoClickHandler(){
+		
+		var row = $(this).parents('tr');
+		
+		var table = $("#test-suite-test-plans-table").squashTable();
+		var data = table.fnGetData(row);
+		var tpId = data['entity-id'];
+		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
+		
+		$.ajax({
+			type : 'POST',
+			url : url,
+			data : {"mode":"auto"},
+			dataType : "json"
+		}).done(function(suiteView){
+			 $("#test-suite-test-plans-table").squashTable().refresh();
+			if(suiteView.executions.length == 0){
+				$.squash.openMessage("<f:message key='popup.title.Info' />", "<f:message	key='dialog.execution.auto.overview.error.none'/>");
+			}else{
+				squashtm.automatedSuiteOverviewDialog.open(suiteView);
+			}
+		});
+	}
+	
+	/* ************************** table rendering and binding ************** */
+	
+	
+	function testPlanTableDrawCallback() {
+		var table = $("#test-suite-test-plans-table").squashTable();
+		bindToggleExpandIcon(table);
+	}	
+
+	function testPlanTableRowCallback(row, data, displayIndex) {
+		<c:if test="${ editable }">
+		addLoginListToTestPlan(row, data);
+		</c:if>
+		<c:if test="${executable}">
+		addExecuteIconToTestPlan(row, data);
+		</c:if>
+		addTestSuiteTestPlanItemExecModeIcon(row, data);
+		applyOtherStyles(row, data);
+		return row;
+	}
+
+	
+
+	function bindMenuToExecutionShortCut(row, data){
+		
+		var strtpid = data['entity-id']+"";	//cast as string
+		
+		//if the testcase is manual
+		if(data['exec-mode'] === 'M'){
+			
+			var menu = $(".shortcut-exec",row);
+		
+			menu.fgmenu({
+				content : $("#shortcut-exec-man-template").html().replace(/{placeholder-tpid}/g, strtpid),
 				showSpeed : 0,
 				width : 130
 			});
+			
+			//the click handler below is a simple hack for css
+			menu.click(function(){
+				menu.removeClass('ui-state-active');
+			});
+			
+
+			//bind the items. In the very strange fgmenu way.
+			var instance = allUIMenus[allUIMenus.length - 1];
+			instance.chooseItem = function(item){
+				instance.kill();
+				execMenuManualClickHandler.call(item);
+			}
+			
 	
 		//if the testcase is automated		
 		} else {
-			$(".shortcut-exec",row).click(function(){
-				$.ajax({
-					type : 'POST',
-					url : url,
-					data : {"mode":"auto"},
-					dataType : "json"
-				}).done(function(suiteView){
-					refreshTestPlans();
-					if(suiteView.executions.length == 0){
-						$.squash
-						.openMessage("<f:message key='popup.title.Info' />",
-								"<f:message	key='dialog.execution.auto.overview.error.none'/>");
-					}else{
-						squashtm.automatedSuiteOverviewDialog.open(suiteView);
-					}
-				});
-			});
+			$(".shortcut-exec",row).click(execMenuAutoClickHandler);
 		} 
 	}
 	
-	function launchClassicExe(tpId){
+	function applyOtherStyles(row, data){
+		//the arrow before the test case name
+		$('td.test-case-name-hlink', row).prepend('<span class="small-arrow small-right-arrow" width="7px" height="7px"/>');
 		
-		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
-	
-		var startResumeClassic = function() {
-			var url = runnerUrl;
-			var data = {
-				'optimized' : 'false'
-			};
-			var winDef = {
-				name : "classicExecutionRunner",
-				features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
-			};
-			$.open(url, data, winDef);
-		};
-
-		$.ajax({
-			type : 'POST',
-			url : url,
-			data : {"mode":"manual"},
-			dataType : "json"
-		}).done(function(id){
-			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
-			dryRunStart().done(startResumeClassic);
-		});
-	}
-	
-	function launchOptimizedExe(tpId){
-		
-		var url = "${baseIterationUrl}/test-plan/"+tpId+"/executions/new";
-
-		var startResumeOptimized = function() {
-			
-			var url = runnerUrl;
-			$('body form#start-optimized-form').remove();
-			$('body').append('<form id="start-optimized-form" action="'+runnerUrl+'?optimized=true&suitemode=false" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="true" name="optimized" id="start-optimized-button" /><input type="button" value="false" name="suitemode"  /></form>');
-			
-			$('#start-optimized-button').trigger('click');
-		};
-		
-		$.ajax({
-			type : 'POST',
-			url : url,
-			data : {"mode":"manual"},
-			dataType : "json"
-		}).done(function(id){
-			runnerUrl = "${showExecutionUrl}/"+id+"/runner";
-			dryRunStart().done(startResumeOptimized);
-		});
+		//deleted test cases 
+		if (data["is-tc-deleted"]){
+			$(row).addClass("test-case-deleted");
+		}
 	}
 
-
-	<%--=========================--%>
-	<%-- Refresh methods --%>
-	<%--=========================--%>
-	function refreshTestPlans() {
-		var table = $('#test-suite-test-plans-table').squashTable();
-		saveTableSelection(table, getTestPlansTableRowId);
-		table.refresh();
-	}
-	
-	
-	function refreshExecButtons(){
-		$('#${ testSuiteExecButtonsId }').load('${ testSuiteExecButtonsUrl }');
-	}
-	
-	function refreshTestPlansWithoutSelection() {
-		var table = $('#test-suite-test-plans-table').squashTable();
-		table.refresh();
-	}
-
-
-	<%--=========================--%>
-	<%-- Table methods  --%>
-	<%--=========================--%>
-	function testPlanTableDrawCallback() {
-		
-		var table = $("#test-plans-table").squashTable();
-		
-		<c:if test="${ editable }">
-		enableTableDragAndDrop('test-suite-test-plans-table', getTestPlanTableRowIndex, testPlanDropHandler);
-		decorateDeleteButtons($('.delete-test-suite-test-plan-button', this));
-		</c:if>
-		restoreTableSelection(this, getTestPlansTableRowId);
-		convertExecutionStatus(this);
-		
-		bindToggleExpandIcon(table);
-	}
-
-	function getTestPlansTableRowId(rowData) {
-		return rowData[0];	
-	}
-	function getTestPlanTableRowIndex(rowData){
-		return rowData[1];
-	}
-	function isTestCaseDeleted(data){
-		return (data[11]=="true");
-	}
 	
 	function addTestSuiteTestPlanItemExecModeIcon(row, data) {
 		var automationToolTips = {
@@ -300,136 +351,58 @@
 			.attr("title", automationToolTips[mode]);
 	}			
 
-	function testPlanTableRowCallback(row, data, displayIndex) {
-		addIdtoTestPlanRow(row, data);
-		<c:if test="${ editable }">
-		addDeleteButtonToRow(row, getTestPlansTableRowId(data), 'delete-test-suite-test-plan-button');
-		addClickHandlerToSelectHandle(row, $("#test-suite-test-plans-table"));
-		addLoginListToTestPlan(row, data);
-		</c:if>
-		addHLinkToTestPlanName(row, data);
-		addIconToTestPlanName(row, data);
-		<c:if test="${executable}">
-		addExecuteIconToTestPlan(row, data);
-		</c:if>
-		addStyleToDeletedTestCaseRows(row, data);
-		addTestSuiteTestPlanItemExecModeIcon(row, data);
-		return row;
-	}
-	
-	function addIdtoTestPlanRow(nRow, aData){
-		$(nRow).attr("id", "test-plan:" + getTestPlansTableRowId(aData));
-	}
 
-	function parseTestPlanIds(elements) {
-		var ids = new Array();
-		for(var i=0; i<elements.length; i++) {
-			ids.push(parseTestPlanId(elements[i]));
-		}
-		return ids;
-	}
-	
-	function parseTestPlanId(element) {
-		var elementId = element.id;
-		return elementId.substr(elementId.indexOf(":") + 1);
-	}
-	
-	function addHLinkToTestPlanName(row, data) {
-		var url= 'javascript:void(0)';			
-		addHLinkToCellText($( 'td:eq(4)', row ), url);
-		$('td:eq(4) a', row).addClass('test-case-name-hlink');
-	}
-	
-	function addIconToTestPlanName(row, data){
-		$('td:eq(4)', row).prepend('<img src="${pageContext.servletContext.contextPath}/images/arrow_right.gif"/>');	
-	}	
 
 	function addExecuteIconToTestPlan(row, data) {
 		
-		var tpId = data[0];
+		var tpId = data["entity-id"];
+		var td=$('td.execute-button', row);
 		
-		if(!isTestCaseDeleted(data)){
-			$('td:eq(10)', row)
-				.prepend('<input type="image" class="shortcut-exec" src="${pageContext.servletContext.contextPath}/images/execute.png"/><div id="shortcut-exec-man" style="display: none"><ul><li><a id="option1-'+tpId+'" href="#" onclick="launchClassicExe('+tpId+')"><f:message key="test-suite.execution.classic.label"/></a></li><li><a id="option2-'+tpId+'" href="#" onclick="launchOptimizedExe('+tpId+')"><f:message key="test-suite.execution.optimized.label"/></a></li></ul></div>');
-		} else {
-			$('td:eq(10)', row).prepend('<input type="image" class="disabled-shortcut-exec" src="${pageContext.servletContext.contextPath}/images/execute.png"/>');
-			//TODO explain why this is done here and not in css file
-			$('.disabled-shortcut-exec', row).css('opacity', 0.35);
-		}
+		var iconSelector = (data['is-tc-deleted']===false) ? ".shortcut-exec" : ".disabled-shortcut-exec";
+		
+		var icon = $("#test-suite-test-plan-table-templates "+iconSelector).clone()
+		td.prepend(icon);		
 
 		bindMenuToExecutionShortCut(row, data);
 	}
 
 	function addLoginListToTestPlan(row, data){
-		if (! isTestCaseDeleted(data)){
-			var id = getTestPlansTableRowId(data);
-			$('td:eq(8)', row).load("${assignableUsersUrl}" + "?testPlanId="+ id +"");
+		if (! data['is-tc-deleted']){
+			var id =data['entity-id'];
+			$('td.executed-by', row).load("${assignableUsersUrl}" + "?testPlanId="+ id +"");
 		}
 	}
 
-	
-	function addStyleToDeletedTestCaseRows(row, data){
-		if (isTestCaseDeleted(data)){
-			$(row).addClass("test-case-deleted");
-		}		
-	}
-	
-	
-	
-	function convertExecutionStatus(dataTable){
-		var factory = new squashtm.StatusFactory({
-			untestable : "${statusUntestable}",
-			blocked : "${statusBlocked}",
-			failure : "${statusFailure}",
-			success : "${statusSuccess}",
-			running : "${statusRunning}",
-			ready : "${statusReady}",
-			error : "${statusError}",
-			warning : "${statusWarning}"
-		});
-		
-		var rows=dataTable.fnGetNodes();
-		if (rows.length==0) return;
-		
-		$(rows).each(function(){
-			var col=$("td:eq(7)", this);
-			var oldContent=col.html();
-			
-			var newContent = factory.getHtmlFor(oldContent);	
-			
-			col.html(newContent);
-			
-		});		
-	}
-	
 	function bindToggleExpandIcon(table){
-		$('tbody td a.test-case-name-hlink', table).bind('click', function() {
+		$('tbody td.test-case-name-hlink a', table).bind('click', function() {
 			toggleExpandIcon(this);
 			return false; //return false to prevent navigation in page (# appears at the end of the URL)
 		});		
 	}
+
 	
+	/* ***************************** expanded line post processing *************** */
 
 	function toggleExpandIcon(testPlanHyperlink){
-		
-	
 		var table =  $('#test-suite-test-plans-table').squashTable();
-		var donnees = table.fnGetData(testPlanHyperlink.parentNode.parentNode);
-		var image = $(testPlanHyperlink).parent().find("img");
-		var ltr = testPlanHyperlink.parentNode.parentNode;
+		var jqHplk = $(testPlanHyperlink);
+		var ltr = jqHplk.parents('tr');
 		
-		if (!$(testPlanHyperlink).hasClass("opened"))
+		var data = table.fnGetData(ltr);
+		var image = jqHplk.parent().find("span.small-arrow");
+		
+		if (! jqHplk.hasClass("opened"))
 		{
 			/* the row is closed - open it */
 			var nTr = table.fnOpen(ltr, "      ", "");
-			var url1 = "${testPlanExecutionsUrl}" + donnees[0];
+			var url1 = "${testPlanExecutionsUrl}" + data["entity-id"];
 			var jqnTr = $(nTr);
 			
-			var rowClass = ($(this).parent().parent().hasClass("odd")) ? "odd" : "even";
+			var rowClass = (ltr.hasClass("odd")) ? "odd" : "even";
 			jqnTr.addClass(rowClass);
 
 			jqnTr.attr("style", "vertical-align:top;");
-			image.attr("src", "${pageContext.servletContext.contextPath}/images/arrow_down.gif");
+			image.removeClass('small-right-arrow').addClass('small-down-arrow');
 			
 
 			jqnTr.load(url1, function(){				
@@ -444,14 +417,12 @@
 		{
 			/* This row is already open - close it */
 			table.fnClose( ltr );
-			image.attr("src","${pageContext.servletContext.contextPath}/images/arrow_right.gif");
+			image.removeClass('small-down-arrow').addClass('small-right-arrow');
 		};
-		$(testPlanHyperlink).toggleClass("opened");		
+		jqHplk.toggleClass("opened");		
 	}
 	
 	
-	
-	/* ***************************** expanded line post processing *************** */
 
 <c:if test="${ executable }">
 	
@@ -481,18 +452,13 @@
 			//console.log("delete execution #"+idExec);
 			var execId = $(this).attr("id");
 			var idExec = execId.substring(execOffset.length);
-			var execRow = $(this).closest("tr");
-			var testPlanHyperlink = $(this).closest("tr")
-										   .closest("tr")
-										   .prev()
-										   .find("a.test-case-name-hlink");
 
-			confirmeDeleteExecution(idExec, testPlanHyperlink, execRow);
+			confirmeDeleteExecution(idExec,  execRow);
 		});
 
 	}
 
-	function confirmeDeleteExecution(idExec, testPlanHyperlink, execRow) {
+	function confirmeDeleteExecution(idExec) {
 		oneShotConfirm("<f:message key='dialog.delete-execution.title'/>",
 				"<f:message key='dialog.delete-execution.message'/>",
 				"<f:message key='label.Confirm'/>",
@@ -503,28 +469,14 @@
 						type : 'DELETE',
 						data : [],
 						dataType : "json"
-					}).done(function(data){
-						refreshTable(testPlanHyperlink, execRow, data);
-					});
+					}).done(refreshTestSuiteView);
 				});
 	}
 
-	
-	function refreshTable(testPlanHyperlink, execRow, data) {
-		refreshTestPlans();		
-		refreshTestSuiteInfos();
-		refreshStatistics();
-		refreshExecButtons();
-
-	}
-	
 </c:if>
 	
-</script>
-
-<script type="text/javascript">
-
-$(function() {
+	
+	
 	
 	/* ************************** various event handlers ******************* */
 	
@@ -534,16 +486,9 @@ $(function() {
 			squashtm.notification.showInfo('${ unauthorizedDeletion }');
 		}
 	}
-	
-	
-	var refreshAll = function(){
-		refreshTestPlans();
-		refreshStatistics();
-		refreshExecButtons();		
-	}
-	
 
-	var postItemRemoval(removalType){
+
+	function postItemRemoval(removalType){
 		var selectedIds = $("#test-suite-test-plans-table").squashTable().getSelectedIds().join(',');
 		var url = "${removeTestPlansUrl}/"+selectedIds+"/"+removalType;
 		
@@ -553,14 +498,11 @@ $(function() {
 			dataType : 'text'
 		}).success(function(data){
 			checkForbiddenDeletion(data);
-			refreshAll();
+			refreshTestSuiteView();
 		});
 	} 
 	
-	
-	<%--=========================--%>
-	<%-- single test-plan removal --%>
-	<%--=========================--%>
+	// *********************** deletion popups ***********************
 	
 	$("#${ testCaseSingleRemovalPopupId }").bind('dialogclose', function() {
 			var answer = $("#${ testCaseSingleRemovalPopupId }").data("answer");
@@ -572,9 +514,6 @@ $(function() {
 			
 		});
 	
-	<%--=========================--%>
-	<%-- multiple test-plan removal --%>
-	<%--=========================--%>
 	//multiple deletion
 	$("#${ testCaseMultipleRemovalPopupId }").bind('dialogclose', function() {
 			var answer = $("#${ testCaseMultipleRemovalPopupId }").data("answer");
@@ -589,28 +528,8 @@ $(function() {
 	/* ************************** datatable settings ********************* */
 	
 	var tableSettings = {
-			"oLanguage": {
-				"sUrl": "<c:url value='/datatables/messages' />"
-			},
-			"sAjaxSource" : "${tableModelUrl}", 
 			"fnRowCallback" : testPlanTableRowCallback,
-			"fnDrawCallback" : testPlanTableDrawCallback,
-			"aoColumnDefs": [
-				{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
-				{'bSortable': false, 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
-				{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'project-name'},
-				{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'exec-mode', 'sWidth': '2em', 'sClass' : "exec-mode"},
-				{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'reference'},
-				{'bSortable': false, 'aTargets': [5], 'mDataProp' : 'tc-name'},
-				{'bSortable': false, 'aTargets': [6], 'mDataProp' : 'importance'},
-				{'bSortable': false, 'sWidth': '10%', 'aTargets': [7], 'mDataProp' : 'type'},
-				{'bSortable': false, 'sWidth': '10%', 'sClass': 'has-status status-combo', 'aTargets': [8], 'mDataProp' : 'status'},
-				{'bSortable': false, 'sWidth': '10%', 'sClass': 'assignable-combo', 'aTargets': [9], 'mDataProp' : 'last-exec-by'},
-				{'bSortable': false, 'sWidth': '10%', 'aTargets': [10], 'mDataProp' : 'last-exec-on'},
-				{'bSortable': false, 'bVisible': false, 'aTargets': [11], 'mDataProp' : 'is-tc-deleted'},
-				{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered execute-button', 'aTargets': [12], 'mDataProp' : 'empty-execute-holder'}, 
-				{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [13], 'mDataProp' : 'empty-delete-holder'} 
-				]
+			"fnDrawCallback" : testPlanTableDrawCallback
 		};		
 	
 		var squashSettings = {
@@ -635,7 +554,6 @@ $(function() {
 		
 		<c:if test="${editable}">
 		squashSettings.enableDnD = true;
-
 			
 		squashSettings.functions = {
 			dropHandler : function(dropData){
