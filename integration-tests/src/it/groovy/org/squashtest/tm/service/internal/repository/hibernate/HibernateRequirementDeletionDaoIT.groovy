@@ -87,7 +87,7 @@ class HibernateRequirementDeletionDaoIT extends DbunitDaoSpecification {
 		
 		//then find all
 		def resReqVers = versionDao.findAllByIds([10L, 11L, 12L, 13L, 14L, 15L, 20L, 21L, 22L, 23L, 24L, 25L, 30L, 40L])
-		def resReq = requirementDao.findAllByIdListOrderedByName([10L, 20L, 30L, 40L])
+		def resReq = requirementDao.findAllByIds([10L, 20L, 30L, 40L])
 		
 		String sql_select_resource = "select res_id from resource where res_id in (10, 11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, 30, 40)";
 		Query query_select_resource = getSession().createSQLQuery(sql_select_resource);

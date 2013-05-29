@@ -31,25 +31,6 @@ import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 public interface RequirementDao extends EntityDao<Requirement> {
-	/**
-	 * returns all the requirements matching the given ids, ordered by name
-	 * 
-	 * @param requirementsIds
-	 * @return
-	 * @deprecated not used
-	 */
-	@Deprecated
-	List<Requirement> findAllByIdListOrderedByName(List<Long> requirementsIds);
-
-	/**
-	 * return all the test case directly verifying the requirement <br>
-	 * 
-	 * @param requirementId
-	 * @return list of directly associated test-cases
-	 */
-	List<String> findNamesInFolderStartingWith(long folderId, String nameStart);
-	
-	List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart);
 
 	@SuppressWarnings("rawtypes")
 	List<RequirementLibraryNode> findAllBySearchCriteria(RequirementSearchCriteria criteria);

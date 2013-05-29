@@ -66,37 +66,15 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	}
 	private static final String RES_NAME = "res.name";
 	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from RLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
-	private static final String FIND_ALL_FOR_LIBRARY_QUERY = "select distinct requirment.RLN_ID" +
-			" from REQUIREMENT requirment" +
-			" where requirment.RLN_ID in (" +
-				" select dRequirement.RLN_ID" +
-					" from REQUIREMENT dRequirement" +
-					" JOIN RLN_RELATIONSHIP_CLOSURE closure ON dRequirement.RLN_ID = closure.DESCENDANT_ID"+
-					" JOIN REQUIREMENT_LIBRARY_CONTENT dRoot ON dRoot.CONTENT_ID = closure.ANCESTOR_ID"+
-					" where dRoot.LIBRARY_ID = :libraryId"+
-				" union" +
-				" select rRequirement.RLN_ID" +
-					" from REQUIREMENT rRequirement" +
-					" JOIN REQUIREMENT_LIBRARY_CONTENT rRoot ON rRoot.CONTENT_ID = rRequirement.RLN_ID"+
-					" where rRoot.LIBRARY_ID = :libraryId"+
-				" )";
-
-	/**
-	 * @deprecated not used
-	 */
-	@Deprecated
-	@Override
-	public List<Requirement> findAllByIdListOrderedByName(final List<Long> requirementsIds) {
-		if (!requirementsIds.isEmpty()) {
-			SetQueryParametersCallback setParams = new SetRequirementsIdsParameterCallback(requirementsIds);
-			return executeListNamedQuery("requirement.findAllByIdListOrderedByName", setParams);
-
-		} else {
-			return Collections.emptyList();
-
-		}
-
-	}
+	private static final String FIND_ALL_FOR_LIBRARY_QUERY = "select distinct requirment.RLN_ID"
+			+ " from REQUIREMENT requirment" + " where requirment.RLN_ID in (" + " select dRequirement.RLN_ID"
+			+ " from REQUIREMENT dRequirement"
+			+ " JOIN RLN_RELATIONSHIP_CLOSURE closure ON dRequirement.RLN_ID = closure.DESCENDANT_ID"
+			+ " JOIN REQUIREMENT_LIBRARY_CONTENT dRoot ON dRoot.CONTENT_ID = closure.ANCESTOR_ID"
+			+ " where dRoot.LIBRARY_ID = :libraryId" + " union" + " select rRequirement.RLN_ID"
+			+ " from REQUIREMENT rRequirement"
+			+ " JOIN REQUIREMENT_LIBRARY_CONTENT rRoot ON rRoot.CONTENT_ID = rRequirement.RLN_ID"
+			+ " where rRoot.LIBRARY_ID = :libraryId" + " )";
 
 	private static final class SetRequirementsIdsParameterCallback implements SetQueryParametersCallback {
 		private List<Long> requirementsIds;
@@ -109,18 +87,6 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		public void setQueryParameters(Query query) {
 			query.setParameterList("requirementsIds", requirementsIds);
 		}
-	}
-
-	@Override
-	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart) {
-		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(folderId, nameStart);
-		return executeListNamedQuery("requirement.findNamesInFolderStartingWith", newCallBack1);
-	}
-
-	@Override
-	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart) {
-		SetQueryParametersCallback callBack = new ContainerIdNameStartParameterCallback(libraryId, nameStart);
-		return executeListNamedQuery("requirement.findNamesInLibraryStartingWith", callBack);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -188,7 +154,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria searchCriteria) {
 		List<RequirementLibraryNode> resultList = findAllBySearchCriteria(searchCriteria);
@@ -201,6 +167,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		});
 		return resultList;
 	}
+
 	/* ----------------------------------------------------EXPORT METHODS----------------------------------------- */
 
 	@Override
@@ -248,10 +215,10 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	private List<Long> findRequirementIdsInIdsList(final List<Long> requirementIds) {
 		if (!requirementIds.isEmpty()) {
-			
+
 			List<Requirement> resultList = findAllByIds(requirementIds);
-			return  IdentifiedUtil.extractIds(resultList);
-			
+			return IdentifiedUtil.extractIds(resultList);
+
 		} else {
 			return Collections.emptyList();
 		}
@@ -305,6 +272,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		}
 		return folderContent;
 	}
+
 	/* ----------------------------------------------------/EXPORT METHODS----------------------------------------- */
 
 	@SuppressWarnings("unchecked")
@@ -353,8 +321,6 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		}
 
 	}
-
-	
 
 	@Override
 	public List<Long> findAllRequirementsIdsByLibrary(long libraryId) {
