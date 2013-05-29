@@ -116,7 +116,7 @@
 
   <bean id="squashtest.tm.service.internal.TestCaseManagementService" class="org.squashtest.tm.service.internal.library.GenericNodeManagementService"
     parent="parent.GenericNodeManagementService">
-    <property name="nodeDao" ref="hibernateTestCaseDao" />
+    <property name="nodeDao" ref="testCaseDao" />
     <property name="folderDao" ref="hibernateTestCaseFolderDao" />
     <property name="libraryDao" ref="hibernateTestCaseLibraryDao" />
   </bean>

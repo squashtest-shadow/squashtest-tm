@@ -126,7 +126,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 	public void checkNoCyclicCall(TestCase testCase) throws CyclicStepCallException {
 		long rootTestCaseId = testCase.getId();
 
-		List<Long> firstCalledTestCasesIds = testCaseDao.findDistinctTestCasesIdsCalledByTestCase(rootTestCaseId);
+		List<Long> firstCalledTestCasesIds = testCaseDao.findAllDistinctTestCasesIdsCalledByTestCase(rootTestCaseId);
 		// 1> find first called test cases and check they are not the parent one
 		if (firstCalledTestCasesIds.contains(rootTestCaseId)) {
 			throw new CyclicStepCallException();

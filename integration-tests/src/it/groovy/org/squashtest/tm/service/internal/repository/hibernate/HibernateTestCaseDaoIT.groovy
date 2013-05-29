@@ -112,15 +112,6 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		calleds == []
 	}
 
-	@DataSet("HibernateTestCaseDaoIT.should find ids of test cases called by a test case.xml")
-	def "should find ids of test cases called by a test case"() {
-		when:
-		def callees = testCaseDao.findAllTestCasesIdsCalledByTestCase(110L)
-
-		then:
-		callees == [10L]
-	}
-
 	@DataSet("HibernateTestCaseDaoIT.should find ids of test cases called by several test cases.xml")
 	def "should find ids of test cases called by several test cases"() {
 		when:
@@ -506,33 +497,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		result.size() == 3
 		result.each {it.name == "testCase1-execution"}
 	}
-	
-	@DataSet("HibernateTestCaseDaoIT.should find on name.xml")
-	def "should find names in folder starting with"(){
-		when:
-		def folderId = 1L
-		def nameStart = "nameStart"
-		def result = testCaseDao.findNamesInFolderStartingWith(folderId, nameStart)
 		
-		then:
-		result.size() == 2
-		result.any {((String) it) == "nameStart-deux" }
-		result.any {((String) it) == "nameStart-quatre" }
-	}
-	
-	@DataSet("HibernateTestCaseDaoIT.should find on name.xml")
-	def "should find names in library starting with"(){
-		when:
-		def libraryId = 1L
-		def nameStart = "nameStart"
-		def result = testCaseDao.findNamesInLibraryStartingWith(libraryId, nameStart)
-		
-		then:
-		result.size() == 2
-		result.any {((String) it) == "nameStart-cinq" }
-		result.any {((String) it) == "nameStart-six" }
-	}
-	
 	@DataSet("HibernateTestCaseDaoIT.should find on name.xml")
 	def "should find all by name containing "(){
 		when:

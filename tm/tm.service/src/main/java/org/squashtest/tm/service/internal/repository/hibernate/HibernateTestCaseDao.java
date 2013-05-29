@@ -47,7 +47,6 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
@@ -56,7 +55,7 @@ import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.repository.CustomTestCaseDao;
 
 /**
  * DAO for org.squashtest.tm.domain.testcase.TestCase
@@ -65,8 +64,8 @@ import org.squashtest.tm.service.internal.repository.TestCaseDao;
  * 
  */
 
-@Repository
-public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implements TestCaseDao {
+@Repository("CustomTestCaseDao")
+public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implements CustomTestCaseDao {
 	/**
 	 * "Standard" name for a query parameter representing a test case id.
 	 */
@@ -119,20 +118,6 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return tc;
 	}
 
-	// dynamic
-	@Override
-	public TestCase findByIdWithInitializedSteps(long testCaseId) {
-		return executeEntityNamedQuery("testCase.findByIdWithInitializedSteps", idParameter(testCaseId));
-
-	}
-
-	// dynamic
-	@Override
-	public List<ActionTestStep> getTestCaseSteps(final Long testCaseId) {
-		return executeListNamedQuery("testCase.findAllTestSteps", idParameter(testCaseId));
-
-	}
-
 	private SetQueryParametersCallback idParameter(final long testCaseId) {
 		return new SetIdParameter(TEST_CASE_ID_PARAM_NAME, testCaseId);
 	}
@@ -149,54 +134,41 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			query.setParameterList("testCasesIds", testCasesIds);
 		}
 	}
-
-	@Override
-	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart) {
-		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(folderId, nameStart);
-		return executeListNamedQuery("testCase.findNamesInFolderStartingWith", newCallBack1);
-	}
-
-	@Override
-	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart) {
-		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(libraryId, nameStart);
-		return executeListNamedQuery("testCase.findNamesInLibraryStartingWith", newCallBack1);
-	}
-
-	/*
-	 * we can't use the Criteria API because we need to get the ordered list and we can't access the join table to sort
-	 * them (again).
-	 */
-
-	@Override
-	public List<TestStep> findAllStepsByIdFiltered(final long testCaseId, final Paging filter) {
-		final int firstIndex = filter.getFirstItemIndex();
-		final int lastIndex = filter.getFirstItemIndex() + filter.getPageSize() - 1;
-
-		SetQueryParametersCallback callback = new SetIdsIndexesParameters(testCaseId, firstIndex, lastIndex);
-
-		return executeListNamedQuery("testCase.findAllStepsByIdFiltered", callback);
-	}
-
-	private static final class SetIdsIndexesParameters implements SetQueryParametersCallback {
-		private int firstIndex;
-		private long testCaseId;
-		private int lastIndex;
-
-		private SetIdsIndexesParameters(long testCaseId, int firstIndex, int lastIndex) {
-			this.testCaseId = testCaseId;
-			this.firstIndex = firstIndex;
-			this.lastIndex = lastIndex;
-		}
-
+	
 		@Override
-		public void setQueryParameters(Query query) {
-
-			query.setParameter("testCaseId", testCaseId);
-			query.setParameter("firstIndex", firstIndex);
-			query.setParameter("lastIndex", lastIndex);
-
+		public List<TestStep> findAllStepsByIdFiltered(final long testCaseId, final Paging filter) {
+			/*
+			 * we can't use the Criteria API because we need to get the ordered list and we can't access the join table to sort
+			 * them (again).
+			 */
+			final int firstIndex = filter.getFirstItemIndex();
+			final int lastIndex = filter.getFirstItemIndex() + filter.getPageSize() - 1;
+	
+			SetQueryParametersCallback callback = new SetIdsIndexesParameters(testCaseId, firstIndex, lastIndex);
+	
+			return executeListNamedQuery("testCase.findAllStepsByIdFiltered", callback);
 		}
-	}
+	
+		private static final class SetIdsIndexesParameters implements SetQueryParametersCallback {
+			private int firstIndex;
+			private long testCaseId;
+			private int lastIndex;
+	
+			private SetIdsIndexesParameters(long testCaseId, int firstIndex, int lastIndex) {
+				this.testCaseId = testCaseId;
+				this.firstIndex = firstIndex;
+				this.lastIndex = lastIndex;
+			}
+	
+			@Override
+			public void setQueryParameters(Query query) {
+	
+				query.setParameter("testCaseId", testCaseId);
+				query.setParameter("firstIndex", firstIndex);
+				query.setParameter("lastIndex", lastIndex);
+	
+			}
+		}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -219,17 +191,12 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return result;
 	}
 
+	// dynamic
 	@Override
 	public TestCase findTestCaseByTestStepId(final long testStepId) {
 		Query query = currentSession().getNamedQuery("testStep.findParentNode");
 		query.setParameter("childId", testStepId);
 		return (TestCase) query.uniqueResult();
-	}
-
-	@Override
-	public long countCallingTestSteps(long testCaseId) {
-		return (Long) executeEntityNamedQuery("testCase.countCallingTestSteps", new SetIdParameter(
-				TEST_CASE_ID_PARAM_NAME, testCaseId));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -238,18 +205,6 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		Query query = currentSession().getNamedQuery("testCase.findTestCasesHavingCaller");
 		query.setParameterList("testCasesIds", testCasesIds);
 		return query.list();
-	}
-
-	@Override
-	public List<Long> findAllTestCasesIdsCalledByTestCase(long testCaseId) {
-		return executeListNamedQuery("testCase.findAllTestCasesIdsCalledByTestCase", new SetIdParameter(
-				TEST_CASE_ID_PARAM_NAME, testCaseId));
-	}
-
-	@Override
-	public List<Long> findDistinctTestCasesIdsCalledByTestCase(Long testCaseId) {
-		return executeListNamedQuery("testCase.findDistinctTestCasesIdsCalledByTestCase", new SetIdParameter(
-				TEST_CASE_ID_PARAM_NAME, testCaseId));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -263,9 +218,6 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<TestCase> findAllCallingTestCases(final long testCaseId, final PagingAndSorting sorting) {
-
-		
-
 		String orderBy = "";
 
 		if (sorting != null) {
@@ -663,6 +615,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	/* ----------------------------------------------------/EXPORT METHODS----------------------------------------- */
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findAllTestCasesIdsByLibrary(long libraryId) {
 		Session session = currentSession();

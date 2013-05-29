@@ -51,7 +51,7 @@ public class TestCaseCallTreeFinder {
 	public Set<Long> getTestCaseCallTree(Long rootTcId) {
 
 		Set<Long> calleesIds = new HashSet<Long>();
-		List<Long> prevCalleesIds = testCaseDao.findDistinctTestCasesIdsCalledByTestCase(rootTcId);
+		List<Long> prevCalleesIds = testCaseDao.findAllDistinctTestCasesIdsCalledByTestCase(rootTcId);
 
 		LOGGER.trace("TestCase #{} directly calls {}", rootTcId, prevCalleesIds);
 

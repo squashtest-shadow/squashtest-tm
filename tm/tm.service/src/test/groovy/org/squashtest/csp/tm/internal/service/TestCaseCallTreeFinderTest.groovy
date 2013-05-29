@@ -39,7 +39,7 @@ class TestCaseCallTreeFinderTest extends Specification {
 		def secondLevel = [4l, 5l]
 		def thirdLevel = []
 
-		testCaseDao.findDistinctTestCasesIdsCalledByTestCase (1L) >>  firstLevel
+		testCaseDao.findAllDistinctTestCasesIdsCalledByTestCase (1L) >>  firstLevel
 		testCaseDao.findAllTestCasesIdsCalledByTestCases(firstLevel ) >>  secondLevel
 		testCaseDao.findAllTestCasesIdsCalledByTestCases(secondLevel) >>  thirdLevel
 
