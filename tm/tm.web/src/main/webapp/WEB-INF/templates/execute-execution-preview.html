@@ -84,9 +84,10 @@ documentation :
 		<div id="execute-title-div"  class="ui-widget-header ui-state-default ui-corner-all fragment-header">
 			<h2 th:text="${title}" >Exec #3 : test interface</h2> 
 		</div>
-
-		<div id="execute-informations-panel" class="toggle-panel-main display-table is-contextual load-links-right-frame" data-title="Informations" th:attr="data-title=#{generics.information.title}">
 			
+		<div id="execute-informations-panel" class="toggle-panel-main is-contextual load-links-right-frame" data-title="Informations" th:attr="data-title=#{generics.information.title}">
+			
+			<div class="display-table">
 			<div class="display-table-row">
 			
 				<label class="display-table-cell" th:text="#{label.Description}">description</label>
@@ -144,6 +145,7 @@ documentation :
 				<div id="testcase-status" class="display-table-cell" th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">
 					0 - a specifier 
 				</div>
+			</div>
 			</div>
 		</div>
 
