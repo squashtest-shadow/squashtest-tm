@@ -108,7 +108,7 @@
 				};
 
 				var postFunction = function(value, settings) {
-					if (!settings.optional && value === "") {
+					if (!settings.optional && $.trim(value) === "") {
 						$.squash.openMessage(errorTitle, fieldMandatoryMessage);
 						return this.revert;
 					}
