@@ -323,10 +323,7 @@ $(function() {
 		} 
 	}
 	
-	function applyOtherStyles(row, data){
-		//the arrow before the test case name
-		$('td.test-case-name-hlink', row).prepend('<span class="small-arrow small-right-arrow" width="7px" height="7px"/>');
-		
+	function applyOtherStyles(row, data){		
 		//deleted test cases 
 		if (data["is-tc-deleted"]){
 			$(row).addClass("test-case-deleted");
@@ -374,10 +371,12 @@ $(function() {
 	}
 
 	function bindToggleExpandIcon(table){
-		$('tbody td.test-case-name-hlink a', table).bind('click', function() {
-			toggleExpandIcon(this);
-			return false; //return false to prevent navigation in page (# appears at the end of the URL)
-		});		
+		$("td.test-case-name-hlink")
+			.prepend('<div style="display:inline-block" class="small-arrow small-right-arrow" />')
+			.on('click', 'a', function() {
+				toggleExpandIcon(this);
+				return false; //return false to prevent navigation in page (# appears at the end of the URL)
+			});		
 	}
 
 	
@@ -386,10 +385,10 @@ $(function() {
 	function toggleExpandIcon(testPlanHyperlink){
 		var table =  $('#test-suite-test-plans-table').squashTable();
 		var jqHplk = $(testPlanHyperlink);
-		var ltr = jqHplk.parents('tr');
+		var ltr = jqHplk.parents('tr').get(0);
+		var image = jqHplk.prev();
 		
 		var data = table.fnGetData(ltr);
-		var image = jqHplk.parent().find("span.small-arrow");
 		
 		if (! jqHplk.hasClass("opened"))
 		{
@@ -398,7 +397,7 @@ $(function() {
 			var url1 = "${testPlanExecutionsUrl}" + data["entity-id"];
 			var jqnTr = $(nTr);
 			
-			var rowClass = (ltr.hasClass("odd")) ? "odd" : "even";
+			var rowClass = ($(ltr).hasClass("odd")) ? "odd" : "even";
 			jqnTr.addClass(rowClass);
 
 			jqnTr.attr("style", "vertical-align:top;");
@@ -453,7 +452,7 @@ $(function() {
 			var execId = $(this).attr("id");
 			var idExec = execId.substring(execOffset.length);
 
-			confirmeDeleteExecution(idExec,  execRow);
+			confirmeDeleteExecution(idExec);
 		});
 
 	}

@@ -187,6 +187,15 @@ td.double-narrow{
 	margin-top : 1em;	
 }
 
+
+
+.small-arrow{
+	width : 14px;
+	height : 7px;
+	background-repeat : no-repeat;
+	background-position : center center;
+}
+
 .small-right-arrow{
 	background-image:url(../images/arrow_right.gif);
 }
