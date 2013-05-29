@@ -108,23 +108,33 @@ import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 @Controller
 @RequestMapping("/test-cases/{testCaseId}")
 public class TestCaseModificationController {
+	/**
+	 * 
+	 */
+	private static final String TEST_CASE = "testCase";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);
+
+	/**
+	 * 
+	 */
+	private static final String NAME = "name";
 
 	private static final String TEST_CASE_ = "test case ";
 	private static final String COPIED_STEP_ID_PARAM = "copiedStepId[]";
 
 	private final DatatableMapper<Integer> referencingTestCaseMapper = new IndexBasedMapper(6)
-			.mapAttribute(Project.class, "name", String.class, 2)
+			.mapAttribute(Project.class, NAME, String.class, 2)
 			.mapAttribute(TestCase.class, "reference", String.class, 3)
-			.mapAttribute(TestCase.class, "name", String.class, 4)
+			.mapAttribute(TestCase.class, NAME, String.class, 4)
 			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 5);
 
 	private final DatatableMapper<Integer> execsTableMapper = new IndexBasedMapper(11)
-			.mapAttribute(Project.class, "name", String.class, 1).mapAttribute(Campaign.class, "name", String.class, 2)
-			.mapAttribute(Iteration.class, "name", String.class, 3)
-			.mapAttribute(Execution.class, "name", String.class, 4)
+			.mapAttribute(Project.class, NAME, String.class, 1).mapAttribute(Campaign.class, NAME, String.class, 2)
+			.mapAttribute(Iteration.class, NAME, String.class, 3)
+			.mapAttribute(Execution.class, NAME, String.class, 4)
 			.mapAttribute(Execution.class, "executionMode", TestCaseExecutionMode.class, 5)
-			.mapAttribute(TestSuite.class, "name", String.class, 6)
+			.mapAttribute(TestSuite.class, NAME, String.class, 6)
 			.mapAttribute(Execution.class, "executionStatus", ExecutionStatus.class, 8)
 			.mapAttribute(Execution.class, "lastExecutedBy", String.class, 9)
 			.mapAttribute(Execution.class, "lastExecutedOn", Date.class, 10);
@@ -241,7 +251,7 @@ public class TestCaseModificationController {
 			ot.setValue(executionMode.toString());
 			executionModes.add(ot);
 		}
-		mav.addObject("testCase", testCase);
+		mav.addObject(TEST_CASE, testCase);
 		mav.addObject("executionModes", executionModes);
 		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(testCase, locale));
 		mav.addObject("testCaseImportanceLabel", formatImportance(testCase.getImportance(), locale));
@@ -294,7 +304,7 @@ public class TestCaseModificationController {
 		List<Map<?, ?>> stepsData = builder.buildAllData(steps);
 
 		// populate the model
-		model.addAttribute("testCase", testCase);
+		model.addAttribute(TEST_CASE, testCase);
 		model.addAttribute("stepsData", stepsData);
 		model.addAttribute("cufDefinitions", cufDefinitions);
 
@@ -666,7 +676,7 @@ public class TestCaseModificationController {
 			throw new UnknownEntityException(testCaseId, TestCase.class);
 		}
 		ModelAndView mav = new ModelAndView("print-test-case.html");
-		mav.addObject("testCase", testCase);
+		mav.addObject(TEST_CASE, testCase);
 
 		// ============================BUGTRACKER
 		if (testCase.getProject().isBugtrackerConnected()) {
@@ -700,7 +710,7 @@ public class TestCaseModificationController {
 
 		}
 
-		mav.addObject("testCase", testCase);
+		mav.addObject(TEST_CASE, testCase);
 
 		// =================CUFS
 		List<CustomFieldValue> customFieldValues = cufHelperService.newHelper(testCase).getCustomFieldValues();

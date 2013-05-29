@@ -45,6 +45,10 @@ import org.squashtest.tm.service.execution.ExecutionProcessingService;
 public class ExecutionProcessingController {
 
 	/**
+	 * 
+	 */
+	private static final String OPTIMIZED = "optimized";
+	/**
 	 * Accept HTML header
 	 */
 	private static final String ACCEPT_HTML_HEADER = "Accept=text/html";
@@ -81,9 +85,9 @@ public class ExecutionProcessingController {
 
 	// ************************** getters for the main execution fragments **************************************
 
-	@RequestMapping(method = RequestMethod.GET, params = "optimized")
+	@RequestMapping(method = RequestMethod.GET, params = OPTIMIZED)
 	public String executeFirstRunnableStep(@PathVariable("executionId") long executionId,
-			@RequestParam("optimized") boolean optimized, Model model) {
+			@RequestParam(OPTIMIZED) boolean optimized, Model model) {
 
 		if (executionProcService.wasNeverRun(executionId)) {
 			return "redirect:" + getRedirectToPrologue(executionId, optimized);
@@ -94,9 +98,9 @@ public class ExecutionProcessingController {
 
 	}
 
-	@RequestMapping(value = "/step/prologue", method = RequestMethod.GET, params = "optimized")
+	@RequestMapping(value = "/step/prologue", method = RequestMethod.GET, params = OPTIMIZED)
 	public String getExecutionPrologue(@PathVariable("executionId") long executionId,
-			@RequestParam("optimized") boolean optimized, Model model) {
+			@RequestParam(OPTIMIZED) boolean optimized, Model model) {
 
 		addCurrentStepUrl(executionId, model);
 		helper.popuplateExecutionPreview(executionId, optimized, model);
@@ -127,7 +131,7 @@ public class ExecutionProcessingController {
 
 	}
 
-	@RequestMapping(value = STEP_URL, method = RequestMethod.GET, params = "optimized", headers = "Accept=application/json")
+	@RequestMapping(value = STEP_URL, method = RequestMethod.GET, params = OPTIMIZED, headers = "Accept=application/json")
 	@ResponseBody
 	public StepState getStepState(@PathVariable Long executionId, @PathVariable Integer stepIndex) {
 

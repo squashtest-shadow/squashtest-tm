@@ -49,7 +49,7 @@ public class TestPlanStatistics {
 	private int progression;
 	private TestPlanStatus status;
 	private int nbDone ;
-	Map<String, Integer> statisticValues;
+	private Map<String, Integer> statisticValues;
 	
 
 	public int getNbTestCases() {

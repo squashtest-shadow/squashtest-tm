@@ -52,7 +52,7 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 * it.
 	 * 
 	 */
-	public void safePersist(TestCase testCase);
+	void safePersist(TestCase testCase);
 
 	TestCase findAndInit(Long testCaseId);
 

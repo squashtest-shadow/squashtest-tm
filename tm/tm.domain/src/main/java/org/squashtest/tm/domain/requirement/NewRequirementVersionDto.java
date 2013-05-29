@@ -127,6 +127,15 @@ public class NewRequirementVersionDto {
 	
 	public static class NewRequirementVersionDaoValidator implements Validator{
 
+		/**
+		 * 
+		 */
+		private static final String MESSAGE_LENGTH_MAX = "message.lengthMax";
+		/**
+		 * 
+		 */
+		private static final String MESSAGE_NOT_BLANK = "message.notBlank";
+		
 		private MessageSource messageSource;
 		
 		public void setMessageSource(MessageSource messageSource) {
@@ -142,30 +151,30 @@ public class NewRequirementVersionDto {
 		@Override
 		public void validate(Object target, Errors errors) {
 			Locale locale = LocaleContextHolder.getLocale();
-			String notBlank = messageSource.getMessage("message.notBlank", null, locale);
-			String lengthMax = messageSource.getMessage("message.lengthMax", new Object[]{"50"}, locale);
+			String notBlank = messageSource.getMessage(MESSAGE_NOT_BLANK, null, locale);
+			String lengthMax = messageSource.getMessage(MESSAGE_LENGTH_MAX, new Object[]{"50"}, locale);
 			
 			NewRequirementVersionDto model = (NewRequirementVersionDto) target;
 			
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "message.notBlank", notBlank);
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", MESSAGE_NOT_BLANK, notBlank);
 			
 			if (model.criticality==null){
-				errors.rejectValue("criticality", "message.notBlank", notBlank);
+				errors.rejectValue("criticality", MESSAGE_NOT_BLANK, notBlank);
 			}
 			
 			if (model.category==null){
-				errors.rejectValue("category", "message.notBlank", notBlank);
+				errors.rejectValue("category", MESSAGE_NOT_BLANK, notBlank);
 			}
 			
 			if (model.reference.length()>50){
-				errors.rejectValue("reference", "message.lengthMax", lengthMax);
+				errors.rejectValue("reference", MESSAGE_LENGTH_MAX, lengthMax);
 			}
 			
 			
 			for (Entry<Long, String> entry : model.getCustomFields().entrySet()){
 				String value = entry.getValue();
 				if (value.trim().isEmpty()){
-					errors.rejectValue("customFields["+entry.getKey()+"]", "message.notBlank", notBlank);
+					errors.rejectValue("customFields["+entry.getKey()+"]", MESSAGE_NOT_BLANK, notBlank);
 				}
 			}
 		}
