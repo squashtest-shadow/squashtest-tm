@@ -295,6 +295,7 @@
 		
 		var status = getCurrentStatus(data);
 		$("#statuses option:contains('"+status+"')").attr("selected","selected");
+		$(".status-list",row).parent().addClass("exec-status-"+$(".status-list",row).val());
 	}
 	
 	
@@ -355,11 +356,16 @@
 		}
 			
 		template.change(function(){
+			
+			var self = $(this);
 			$.ajax({
 				type : 'POST',
 				url : this.getAttribute('data-assign-url'),
 				data : "statusName=" + this.value,
 				dataType : 'json'
+			}).done(function(data){
+				self.parent().removeClass();
+				self.parent().addClass("has-status status-combo exec-status-"+self.val());
 			});
 		});
 			
@@ -371,7 +377,7 @@
 			var row = this.parentNode;
 			
 			var status = $("td.status-combo span").html();
-			
+				
 			//sets the change url
 			var tpId = squashTable.getODataId(row);
 			var dataUrl = "${baseIterationURL}/test-case/"+tpId+"/assign-status";
@@ -381,6 +387,7 @@
 			//append the content
 			jqTd.empty().append(cloneSelect);
 			$(".status-list option:contains('"+status+"')", row).attr("selected","selected");
+			$(".status-list",row).parent().addClass("exec-status-"+$(".status-list",row).val());
 		});	
 	}
 	
