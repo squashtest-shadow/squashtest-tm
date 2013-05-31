@@ -18,32 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.hibernate.mapping.testcase
+package org.squashtest.csp.tm.domain.testcase;
 
-import javax.inject.Inject
+import org.hibernate.dialect.function.TrimFunctionTemplate.Specification;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.TestCase;
 
-import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
-import org.squashtest.tm.domain.testcase.CallTestStep
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestStep
-
-class CallTestStepMappingIT extends HibernateMappingSpecification {
-
-	def "shoud persist and retrieve a test step"() {
+public class DatasetParamValueTest extends Specification {
+	
+	def "when creating a new value, dataset contains the new value"() {
 		given:
-		TestCase callee = new TestCase(name: "callee")
-		persistFixture callee
-
+		TestCase testCase = new TestCase()
+		Dataset dataset = new Dataset("dataset", testCase)
+		Parameter parameter = new Parameter("parameter", testCase)
+		
+		
+	
 		when:
-		CallTestStep ts = new CallTestStep(calledTestCase: callee)
-		doInTransaction({ it.persist(ts) })
-
-		def obj = doInTransaction({ it.get(TestStep, ts.id) })
-
+		DatasetParamValue value = new DatasetParamValue(parameter, dataset, "paramValue");
+		
 		then:
-		obj.calledTestCase.id == callee.id
-
-		cleanup:
-		deleteFixture ts, callee
+		dataset.parameterValues.contains value
 	}
 }

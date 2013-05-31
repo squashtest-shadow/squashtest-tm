@@ -18,32 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.hibernate.mapping.testcase
+package org.squashtest.csp.tm.domain.testcase
 
-import javax.inject.Inject
-
-import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
-import org.squashtest.tm.domain.testcase.CallTestStep
+import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestStep
 
-class CallTestStepMappingIT extends HibernateMappingSpecification {
+import spock.lang.Specification;
 
-	def "shoud persist and retrieve a test step"() {
-		given:
-		TestCase callee = new TestCase(name: "callee")
-		persistFixture callee
+class DatasetTest  extends Specification {
+	
+TestCase testCase = new TestCase();
+Dataset dataset = new Dataset("Dataset", testCase)
 
-		when:
-		CallTestStep ts = new CallTestStep(calledTestCase: callee)
-		doInTransaction({ it.persist(ts) })
 
-		def obj = doInTransaction({ it.get(TestStep, ts.id) })
+def "should not add a null paramValue"() {
+	when:
+	dataset.addParameterValue(null)
 
-		then:
-		obj.calledTestCase.id == callee.id
+	then:
+	thrown(NullArgumentException)
+}
 
-		cleanup:
-		deleteFixture ts, callee
-	}
+def "when creating a new dataset, tc contains the new dataset"() {
+	given:
+	TestCase tc = new TestCase()
+
+	when:
+	Dataset dataset = new Dataset("dataset", tc)
+
+	then:
+	tc.datasets.contains dataset
+}
 }

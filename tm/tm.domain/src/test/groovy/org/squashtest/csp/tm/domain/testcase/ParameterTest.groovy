@@ -18,32 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.hibernate.mapping.testcase
+package org.squashtest.csp.tm.domain.testcase
 
-import javax.inject.Inject
-
-import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
-import org.squashtest.tm.domain.testcase.CallTestStep
+import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestStep
 
-class CallTestStepMappingIT extends HibernateMappingSpecification {
+import spock.lang.Specification;
 
-	def "shoud persist and retrieve a test step"() {
-		given:
-		TestCase callee = new TestCase(name: "callee")
-		persistFixture callee
+class ParameterTest  extends Specification {
 
+	TestCase testCase = new TestCase();
+	Parameter parameter = new Parameter("Parame", testCase)
+
+
+	def "should not set description to null"() {
 		when:
-		CallTestStep ts = new CallTestStep(calledTestCase: callee)
-		doInTransaction({ it.persist(ts) })
-
-		def obj = doInTransaction({ it.get(TestStep, ts.id) })
+		parameter.setDescription(null)
 
 		then:
-		obj.calledTestCase.id == callee.id
-
-		cleanup:
-		deleteFixture ts, callee
+		thrown(NullArgumentException)
+	}
+	
+	def "when creating a new parameter, tc contains the new parameter"() {
+		given:
+		TestCase tc = new TestCase()
+	
+		when:
+		Parameter parameter = new Parameter("param", tc)
+	
+		then:
+		tc.parameters.contains parameter
 	}
 }

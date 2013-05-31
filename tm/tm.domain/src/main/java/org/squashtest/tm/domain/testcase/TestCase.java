@@ -83,7 +83,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	private TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
-	
+
 	@NotNull
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "STEP_ORDER")
@@ -91,21 +91,31 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private final List<TestStep> steps = new ArrayList<TestStep>();
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.REMOVE,CascadeType.REFRESH, CascadeType.MERGE })
-	@JoinColumn(name="VERIFYING_TEST_CASE_ID")
-	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<RequirementVersionCoverage>(0);
-	
+	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE })
+	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
+	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>(0);
+
+	@NotNull
+	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "TEST_CASE_ID")
+	private Set<Parameter> parameters = new HashSet<Parameter>(0);
+
+	@NotNull
+	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "TEST_CASE_ID")
+	private Set<Dataset> datasets = new HashSet<Dataset>(0);
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	private TestCaseImportance importance = LOW;
-	
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_NATURE")
 	private TestCaseNature nature = TestCaseNature.UNDEFINED;
-	
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
@@ -117,8 +127,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Basic(optional = false)
 	@Column(name = "TC_STATUS")
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
-	
-	
+
 	/**
 	 * Should the importance be automatically computed.
 	 */
@@ -151,18 +160,16 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public String getReference() {
 		return reference;
 	}
-	
-	
+
 	/**
 	 * @return {reference} - {name} if reference is not empty, or {name} if it is
 	 * 
 	 */
-	public String getFullName(){
-		if (StringUtils.isBlank(reference)){
+	public String getFullName() {
+		if (StringUtils.isBlank(reference)) {
 			return getName();
-		}
-		else{
-			return getReference()+" - "+getName();
+		} else {
+			return getReference() + " - " + getName();
 		}
 	}
 
@@ -190,10 +197,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public List<TestStep> getSteps() {
 		return steps;
 	}
-	
-	
-	//TODO : best would be to have a smarter subclass of List that would override #add(...) methods for this purpose
-	private void notifyStepBelongsToMe(TestStep step){
+
+	// TODO : best would be to have a smarter subclass of List that would override #add(...) methods for this purpose
+	private void notifyStepBelongsToMe(TestStep step) {
 		step.setTestCase(this);
 	}
 
@@ -231,18 +237,17 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		}
 	}
 
-	
 	@Override
 	public void accept(TestCaseLibraryNodeVisitor visitor) {
 		visitor.visit(this);
 
 	}
 
-
 	/**
 	 * Will create a copy from this instance. <br>
 	 * Will copy all properties, steps, automated scripts.<br>
 	 * ! Will not copy {@link RequirementVersionCoverage}s !
+	 * 
 	 * @return a copy of this {@link TestCase}
 	 */
 	@Override
@@ -251,13 +256,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		copy.setSimplePropertiesUsing(this);
 		copy.addCopiesOfSteps(this);
 		copy.addCopiesOfAttachments(this);
-		
+
 		copy.notifyAssociatedWithProject(this.getProject());
-		if(this.automatedTest != null){
-			try{
-			copy.setAutomatedTest(this.automatedTest);
-			}catch(UnallowedTestAssociationException e){
-				LOGGER.error("data inconsistancy : this test case (#{}) has a script even if it's project isn't test automation enabled", this.getId());
+		if (this.automatedTest != null) {
+			try {
+				copy.setAutomatedTest(this.automatedTest);
+			} catch (UnallowedTestAssociationException e) {
+				LOGGER.error(
+						"data inconsistancy : this test case (#{}) has a script even if it's project isn't test automation enabled",
+						this.getId());
 			}
 		}
 		return copy;
@@ -276,8 +283,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		}
 	}
 
-	
-
 	private void setSimplePropertiesUsing(TestCase source) {
 		this.setName(source.getName());
 		this.setDescription(source.getDescription());
@@ -291,8 +296,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	/**
-	 * Will compare id of test-case steps with given id and return the index of the matching step.
-	 * Otherwise throw an exception.
+	 * Will compare id of test-case steps with given id and return the index of the matching step. Otherwise throw an
+	 * exception.
 	 * 
 	 * @param stepId
 	 * @return the step index (starting at 0)
@@ -356,6 +361,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public void setStatus(@NotNull TestCaseStatus status) {
 		this.status = status;
 	}
+
 	/**
 	 * @param prerequisite
 	 *            the prerequisite to set
@@ -383,7 +389,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		// }
 	}
 
-	
 	// *************** test automation section ******************
 
 	public AutomatedTest getAutomatedTest() {
@@ -397,7 +402,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 			throw new UnallowedTestAssociationException();
 		}
 	}
-	
+
 	public void removeAutomatedScript() {
 		this.automatedTest = null;
 	}
@@ -405,14 +410,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public boolean isAutomated() {
 		return (automatedTest != null && getProject().isTestAutomationEnabled());
 	}
-	
+
 	// ***************** (detached) custom field section *************
-	
+
 	@Override
 	public Long getBoundEntityId() {
 		return getId();
 	}
-	
+
 	@Override
 	public BindableEntity getBoundEntityType() {
 		return BindableEntity.TEST_CASE;
@@ -422,7 +427,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public void accept(NodeVisitor visitor) {
 		visitor.visit(this);
 	}
-	
+
 	/**
 	 * 
 	 * @return the list of {@link ActionTestStep} or empty list
@@ -430,90 +435,95 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public List<ActionTestStep> getActionSteps() {
 		List<ActionTestStep> result = new ArrayList<ActionTestStep>();
 		ActionStepRetreiver retriever = new ActionStepRetreiver(result);
-		for(TestStep step : this.getSteps()){
+		for (TestStep step : this.getSteps()) {
 			step.accept(retriever);
 		}
 		return retriever.getResult();
-		
+
 	}
-	private final class ActionStepRetreiver implements TestStepVisitor{
-		
+
+	private final class ActionStepRetreiver implements TestStepVisitor {
+
 		private List<ActionTestStep> result;
-		
-		private List<ActionTestStep> getResult(){
+
+		private List<ActionTestStep> getResult() {
 			return result;
 		}
 
-		private ActionStepRetreiver(List<ActionTestStep> result){
-			this.result = result;			
+		private ActionStepRetreiver(List<ActionTestStep> result) {
+			this.result = result;
 		}
+
 		@Override
 		public void visit(ActionTestStep visited) {
 			result.add(visited);
-			
+
 		}
 
 		@Override
 		public void visit(CallTestStep visited) {
-			//noop
+			// noop
 		}
-		
+
 	}
-	
-	//=====================Requirement verifying section====================
-	
-		
+
+	// =====================Requirement verifying section====================
+
 	/**
 	 * 
 	 * @return UNMODIFIABLE VIEW of verified requirements.
 	 */
 	public Set<RequirementVersion> getVerifiedRequirementVersions() {
 		Set<RequirementVersion> verified = new HashSet<RequirementVersion>();
-		for(RequirementVersionCoverage coverage : requirementVersionCoverages){
+		for (RequirementVersionCoverage coverage : requirementVersionCoverages) {
 			verified.add(coverage.getVerifiedRequirementVersion());
 		}
 		return Collections.unmodifiableSet(verified);
 	}
 
-
 	/**
 	 * 
 	 * Checks if the given version is already verified, avoiding to look at the given requirementVersionCoverage.
 	 * 
-	 * @param requirementVersionCoverage 
+	 * @param requirementVersionCoverage
 	 * @param version
 	 * @throws RequirementAlreadyVerifiedException
 	 */
-	public void checkRequirementNotVerified(RequirementVersionCoverage requirementVersionCoverage, RequirementVersion version) throws RequirementAlreadyVerifiedException {
+	public void checkRequirementNotVerified(RequirementVersionCoverage requirementVersionCoverage,
+			RequirementVersion version) throws RequirementAlreadyVerifiedException {
 		Requirement req = version.getRequirement();
 		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
-			if(coverage != requirementVersionCoverage){
+			if (coverage != requirementVersionCoverage) {
 				RequirementVersion verified = coverage.getVerifiedRequirementVersion();
-			if (verified != null && req.equals(verified.getRequirement())) {
-				throw new RequirementAlreadyVerifiedException(version, this);
-			}
+				if (verified != null && req.equals(verified.getRequirement())) {
+					throw new RequirementAlreadyVerifiedException(version, this);
+				}
 			}
 		}
 
 	}
-	
+
 	/**
 	 * Set the verifying test case as this, and add the coverage the the this.requirementVersionCoverage
+	 * 
 	 * @param requirementVersionCoverage
 	 */
 	public void addRequirementCoverage(RequirementVersionCoverage requirementVersionCoverage) {
-		this.requirementVersionCoverages.add(requirementVersionCoverage);		
+		this.requirementVersionCoverages.add(requirementVersionCoverage);
 	}
-	
+
 	/**
-	 * Copy this.requirementVersionCoverages . All {@link RequirementVersionCoverage} having for verifying test case the copy param.
-	 * @param copy : the {@link TestCase} that will verify the copied coverages
+	 * Copy this.requirementVersionCoverages . All {@link RequirementVersionCoverage} having for verifying test case the
+	 * copy param.
+	 * 
+	 * @param copy
+	 *            : the {@link TestCase} that will verify the copied coverages
 	 * @return : the copied {@link RequirementVersionCoverage}s
 	 */
 	public List<RequirementVersionCoverage> createRequirementVersionCoveragesForCopy(TestCase copy) {
 		List<RequirementVersionCoverage> createdCoverages = new ArrayList<RequirementVersionCoverage>();
 		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
-			createdCoverages.add( coverage.copyForTestCase(copy));
+			createdCoverages.add(coverage.copyForTestCase(copy));
 		}
 		return createdCoverages;
 	}
@@ -521,26 +531,29 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	/**
 	 * Returns true if a step of the same id is found in this.steps.
 	 * 
-	 * @param step : the step to check 
+	 * @param step
+	 *            : the step to check
 	 * @return true if this {@link TestCase} has the given step.
 	 */
 	public boolean hasStep(TestStep step) {
-		for(TestStep step2 : steps){
-			if(step2.getId().equals(step.getId())){
+		for (TestStep step2 : steps) {
+			if (step2.getId().equals(step.getId())) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Simply remove the RequirementVersionCoverage from this.requirementVersionCoverages.
-	* @param requirementVersionCoverage : the entity to remove from this test case's {@link RequirementVersionCoverage}s list.
-	*/
+	 * 
+	 * @param requirementVersionCoverage
+	 *            : the entity to remove from this test case's {@link RequirementVersionCoverage}s list.
+	 */
 	public void removeRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
-			this.requirementVersionCoverages.remove(requirementVersionCoverage);
-			
-		}
+		this.requirementVersionCoverages.remove(requirementVersionCoverage);
+
+	}
 
 	/***
 	 * 
@@ -555,8 +568,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 * @return true if this {@link TestCase} verifies the {@link RequirementVersion}
 	 */
 	public boolean verifies(RequirementVersion rVersion) {
-		for(RequirementVersionCoverage coverage : this.requirementVersionCoverages){
-			if(coverage.getVerifiedRequirementVersion().getId().equals(rVersion.getId())){
+		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
+			if (coverage.getVerifiedRequirementVersion().getId().equals(rVersion.getId())) {
 				return true;
 			}
 		}
@@ -565,6 +578,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	/**
 	 * checks if the given version is already verified.
+	 * 
 	 * @param version
 	 * @throws RequirementAlreadyVerifiedException
 	 */
@@ -573,11 +587,26 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		for (RequirementVersion verified : this.getVerifiedRequirementVersions()) {
 			if (verified != null && req.equals(verified.getRequirement())) {
 				throw new RequirementAlreadyVerifiedException(version, this);
-			}			
+			}
 		}
 
 	}
-		
-	
+
+	// =====================Parameter Section====================
+	public Set<Parameter> getParameters() {
+		return Collections.unmodifiableSet(this.parameters);
+	}
+
+	public void addParameter(@NotNull Parameter parameter) {
+		this.parameters.add(parameter);
+	}
+
+	public Set<Dataset> getDatasets() {
+		return Collections.unmodifiableSet(this.datasets);
+	}
+
+	public void addDataset(@NotNull Dataset dataset) {
+		this.datasets.add(dataset);
+	}
 
 }

@@ -69,6 +69,22 @@ class TestCaseTest extends Specification {
 		then:
 		thrown(NullArgumentException)
 	}
+	
+	def "should not add a null dataset"() {
+		when:
+		testCase.addDataset(null)
+
+		then:
+		thrown(NullArgumentException)
+	}
+	
+	def "should not add a null parameter"() {
+		when:
+		testCase.addParameter(null)
+
+		then:
+		thrown(NullArgumentException)
+	}
 
 	def "should move step from given index to a greater index"() {
 		given:

@@ -20,30 +20,29 @@
  */
 package org.squashtest.csp.tm.hibernate.mapping.testcase
 
-import javax.inject.Inject
 
+import org.hibernate.JDBCException
+import org.hibernate.SessionFactory
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
-import org.squashtest.tm.domain.testcase.CallTestStep
+import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestStep
 
-class CallTestStepMappingIT extends HibernateMappingSpecification {
+class DatasetMappingIT extends HibernateMappingSpecification {
 
-	def "shoud persist and retrieve a test step"() {
+	def "should not persist a nameless dataset"(){
+
 		given:
-		TestCase callee = new TestCase(name: "callee")
-		persistFixture callee
-
+		TestCase tc = new TestCase(name: "description")
+		Dataset ds = new Dataset(testCase:tc)
 		when:
-		CallTestStep ts = new CallTestStep(calledTestCase: callee)
-		doInTransaction({ it.persist(ts) })
-
-		def obj = doInTransaction({ it.get(TestStep, ts.id) })
+		doInTransaction({ session ->
+			session.persist(tc)
+			session.persist(ds)
+		})
 
 		then:
-		obj.calledTestCase.id == callee.id
-
-		cleanup:
-		deleteFixture ts, callee
+		thrown(JDBCException)
 	}
+
 }
