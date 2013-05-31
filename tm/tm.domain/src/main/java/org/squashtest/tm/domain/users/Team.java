@@ -58,7 +58,6 @@ public class Team extends Party{
 	@Size(min = 0, max = 50)
 	private String name;
 	
-	@Size(min = 0, max = 255)
 	private String description;
 	
 	@ManyToMany

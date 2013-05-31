@@ -34,6 +34,42 @@
 		</update>
 	</changeSet>
 
+	<changeSet id="tm-1.6.0.issue-2334-01" author="flaurens">
+		<comment>Change type of column description in table core_team</comment>
+		
+		<!-- create temporary table -->
+		<createTable tableName="CORE_TEAM_TEMP">
+			<column name="ID" type="BIGINT" defaultValue="NULL"></column>
+			<column name="DESCRIPTION" type="CLOB" defaultValue="NULL"></column>
+		</createTable>
+
+		<sql>
+			insert into CORE_TEAM_TEMP (ID, DESCRIPTION)
+			select PARTY_ID, DESCRIPTION from CORE_TEAM
+		</sql>
+		
+		<!-- change column type -->
+		<dropColumn tableName="CORE_TEAM" columnName="DESCRIPTION"/>
+		<addColumn tableName="CORE_TEAM">
+			<column name="DESCRIPTION" type="CLOB" defaultValue="NULL"/>
+		</addColumn>
+	
+		<!-- insert data -->
+		<sql>
+			update CORE_TEAM ct
+            set DESCRIPTION = (select ctt.DESCRIPTION
+                               from CORE_TEAM_TEMP ctt
+                               where ctt.ID = ct.PARTY_ID)
+		</sql>
+		
+		
+    	<!-- drop temporary table -->
+		<dropTable tableName="CORE_TEAM_TEMP"/>
+		
+	</changeSet>
+
+
+
 	<changeSet id="tm-1.6.0.feat-1101-01" author="mpagnon">
 		<comment>Add table to handle test cases PARAMETERS</comment>
 		<createTable tableName="PARAMETER">
@@ -114,5 +150,7 @@
 			</column>
 		</addColumn>
 	</changeSet>
+
+
 </databaseChangeLog>
  
