@@ -307,7 +307,8 @@
 						<!--other -->
             <exclude>**/new_report.rptdesign</exclude>
 						<!-- generated xml (dev) -->
-            <exclude>**/tm.service/META-INF/**</exclude>
+            <exclude>**/tm.service/META-INF/**</exclude>            
+            <exclude>**/config/META-INF/**</exclude>
           </excludes>
           <mapping>
             <tag>DYNASCRIPT_STYLE</tag>
