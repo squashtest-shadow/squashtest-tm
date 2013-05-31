@@ -26,13 +26,24 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
+   <include file="tm.data-1.6.0.xml" relativeToChangelogFile="true" />
 
 	<!-- ========================================INCLUDE CHANGELOG================================================ -->
 	<include file="../../../main/liquibase/tm/tm.changelog-1.6.0.xml"
 		relativeToChangelogFile="true" />
 	<!-- ========================================================================================================= -->
 	
-	<changeSet id="tm-1.6.0.feat-1101-test-01" author="mpagnon">
+	<changeSet id="tm-1.6.0.issue-2334-test-01" author="flaurens">
+		<preConditions>
+			<sqlCheck expectedResult="this is team1">
+			select DESCRIPTION
+			from CORE_TEAM
+			where PARTY_ID = 10
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+        <changeSet id="tm-1.6.0.feat-1101-test-01" author="mpagnon">
 		<preConditions>
 			<tableExists tableName="PARAMETER"/>
 			<columnExists tableName="PARAMETER" columnName="PARAM_ID"/>
