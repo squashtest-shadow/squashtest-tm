@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.event;
 
 import org.hibernate.SessionFactory
-import org.hibernate.classic.Session
+import org.hibernate.Session
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.event.RequirementAuditEvent
 import org.squashtest.tm.domain.event.RequirementCreation

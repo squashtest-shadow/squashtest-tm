@@ -32,7 +32,7 @@ class InheritableAclsObjectIdentityRetrievalStrategyTest extends Specification {
 	InheritableAclsObjectIdentityRetrievalStrategy strategy = new InheritableAclsObjectIdentityRetrievalStrategy()
 	ObjectIdentityRetrievalStrategy delegate = Mock()
 	org.hibernate.SessionFactory sessionFactory = Mock()
-	org.hibernate.classic.Session session = Mock()
+	org.hibernate.Session session = Mock()
 	Query query = Mock()
 
 	def setup() {

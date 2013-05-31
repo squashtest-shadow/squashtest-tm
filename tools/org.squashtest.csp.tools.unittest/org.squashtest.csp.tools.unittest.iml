@@ -11,7 +11,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.codehaus.groovy:groovy-all:1.7.10" level="project" />
-    <orderEntry type="library" name="Maven: org.hibernate:org.squashtest.org.hibernate.core:3.6.10.Final.B" level="project" />
+    <orderEntry type="library" name="Maven: org.hibernate:org.hibernate.core:4.2.1.Final" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.util:com.springsource.org.jboss.util:2.2.13.GA" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.logging:com.springsource.org.jboss.logging:2.0.5.GA" level="project" />
     <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2.1" level="project" />

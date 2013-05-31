@@ -19,11 +19,11 @@
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>org.squashtest.org.hibernate.core</artifactId>
+      <artifactId>hibernate-osgi</artifactId>
       <version>${hibernate.version}</version>
     </dependency>
 		
- 		
+            
 <!-- Waiting for 3.18.0 because of bugs in 3.17 
 https://issues.jboss.org/browse/JASSIST-189 and
  https://issues.jboss.org/browse/JASSIST-162 -->
@@ -38,7 +38,10 @@ https://issues.jboss.org/browse/JASSIST-189 and
 <!--       <artifactId>javassist</artifactId> -->
 <!--       <version>3.18.0.GA</version> -->
 <!--     </dependency> -->
-
+<dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.core</artifactId>
+      </dependency>
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
@@ -47,16 +50,42 @@ https://issues.jboss.org/browse/JASSIST-189 and
       <groupId>javax.xml.stream</groupId>
       <artifactId>com.springsource.javax.xml.stream</artifactId>
     </dependency>
-   <!--  <dependency>
+    <dependency>
       <groupId>org.antlr</groupId>
       <artifactId>com.springsource.antlr</artifactId>
-    </dependency> -->
+    </dependency>
+	<dependency>
+		<groupId>org.hibernate.common</groupId>
+		<artifactId>com.springsource.org.hibernate.annotations.common</artifactId>
+		<version>4.1.0.Final</version>
+	</dependency>
+	<dependency>
+		<groupId>com.fasterxml</groupId>
+		<artifactId>com.springsource.com.fasterxml.classmate</artifactId>
+		<version>0.5.4</version>
+	</dependency>
+	<dependency>
+		<groupId>org.jboss</groupId>
+		<artifactId>com.springsource.org.jboss.jandex</artifactId>
+		<version>1.0.3.Final</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.ant</groupId>
+		<artifactId>com.springsource.org.apache.tools.ant</artifactId>
+		<version>1.8.1</version>
+	</dependency>
 		<!-- ====== /HIBERNATE ====== -->
 
 		<!-- ====== SPRING INTEGRATION ====== -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.orm</artifactId>
+    </dependency>
+    
+     <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>com.springsource.javax.validation</artifactId>
+      <version>1.0.0.GA</version>
     </dependency>
 		<!-- ====== /SPRING INTEGRATION ====== -->
   </dependencies>

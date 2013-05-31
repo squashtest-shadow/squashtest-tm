@@ -106,7 +106,7 @@
   <mvc:resources location="/styles/" mapping="/styles/**" />
 
   <mvc:interceptors>
-    <bean class="org.springframework.orm.hibernate3.support.OpenSessionInViewInterceptor">
+    <bean class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
       <property name="sessionFactory" ref="squashtest.tm.persistence.hibernate.SessionFactory" />
     </bean>
 

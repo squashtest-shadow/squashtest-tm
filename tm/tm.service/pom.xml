@@ -37,8 +37,8 @@
       <artifactId>hibernate-dependencies</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
-    </dependency>
-    <dependency>
+    </dependency>	
+     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>org.squashtest.csp.tools.unittest</artifactId>
       <version>${project.version}</version>

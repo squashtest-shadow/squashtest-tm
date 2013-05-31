@@ -20,7 +20,7 @@
 		<!-- ====== /GROOVY ====== -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>org.squashtest.org.hibernate.core</artifactId>
+			<artifactId>hibernate-osgi</artifactId>
 			<version>${hibernate.version}</version>
 			<scope>compile</scope>
 			<optional>true</optional>

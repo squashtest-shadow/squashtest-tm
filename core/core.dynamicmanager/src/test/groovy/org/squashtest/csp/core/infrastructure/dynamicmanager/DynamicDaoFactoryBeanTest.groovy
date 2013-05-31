@@ -22,7 +22,7 @@ package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
 import org.hibernate.Query
 import org.hibernate.SessionFactory
-import org.hibernate.classic.Session
+import org.hibernate.Session
 import org.springframework.beans.factory.BeanFactory
 import org.squashtest.csp.core.infrastructure.dynamicdao.CustomDummyDao;
 import org.squashtest.csp.core.infrastructure.dynamicdao.DummyDao;

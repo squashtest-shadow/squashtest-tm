@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.security.acls.domain;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.classic.Session;
+import org.hibernate.Session;
 import org.ietf.jgss.Oid;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;

@@ -24,6 +24,8 @@ package org.squashtest.csp.core.jetty.start.osgi;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Properties;
 
 import org.mortbay.component.LifeCycle;
@@ -193,7 +195,7 @@ public class Activator implements BundleActivator {
 	}
 
 	private ServiceRegistration publishServerAsAService(Server server) {
-		Properties props = new Properties();
+		Dictionary<String, Object> props = new Hashtable<String, Object>();
 		// put some extra properties to easily identify the service
 		props.put(Constants.SERVICE_VENDOR, "Spring Dynamic Modules");
 		props.put(Constants.SERVICE_DESCRIPTION, "Jetty " + Server.getVersion());

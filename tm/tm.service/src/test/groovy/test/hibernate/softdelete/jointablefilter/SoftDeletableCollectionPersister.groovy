@@ -22,11 +22,12 @@ package test.hibernate.softdelete.jointablefilter
 
 
 import org.hibernate.cache.CacheException;
+import org.hibernate.cache.spi.access.CollectionRegionAccessStrategy;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.mapping.Collection;
 import org.hibernate.sql.Delete;
 import org.hibernate.sql.Update;
-import org.hibernate.util.ArrayHelper;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
@@ -35,11 +36,6 @@ import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
-import org.hibernate.cache.access.CollectionRegionAccessStrategy;
-import org.hibernate.cache.entry.CacheEntryStructure;
-import org.hibernate.collection.PersistentCollection;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.engine.SessionImplementor;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.persister.collection.BasicCollectionPersister;

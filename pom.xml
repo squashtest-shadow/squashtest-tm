@@ -53,6 +53,7 @@
     </org.osgi.framework.system.packages.extra>
 
     <verbose.compiler>false</verbose.compiler>
+    <hibernate.version>4.2.1.Final</hibernate.version>
     <groovy.version>2.0.6</groovy.version>
   </properties>
 
@@ -308,7 +309,7 @@
             <exclude>**/new_report.rptdesign</exclude>
 						<!-- generated xml (dev) -->
             <exclude>**/tm.service/META-INF/**</exclude>            
-            <exclude>**/config/META-INF/**</exclude>
+             <exclude>**/config/META-INF/**</exclude>
           </excludes>
           <mapping>
             <tag>DYNASCRIPT_STYLE</tag>

@@ -35,7 +35,7 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
-import org.hibernate.classic.Session;
+import org.hibernate.Session;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.execution.ExecutionStatus;

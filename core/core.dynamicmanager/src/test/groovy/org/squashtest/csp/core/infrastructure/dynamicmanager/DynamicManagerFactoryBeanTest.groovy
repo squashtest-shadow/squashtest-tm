@@ -23,7 +23,7 @@ package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
 import org.hibernate.Query
 import org.hibernate.SessionFactory
-import org.hibernate.classic.Session
+import org.hibernate.Session
 import org.springframework.beans.factory.BeanFactory
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodException
@@ -33,6 +33,7 @@ import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean
 import spock.lang.Specification
 
 class DynamicManagerFactoryBeanTest extends Specification{
+	
 	DynamicManagerFactoryBean factory = new DynamicManagerFactoryBean()
 	SessionFactory sessionFactory = Mock()
 	Session currentSession = Mock()

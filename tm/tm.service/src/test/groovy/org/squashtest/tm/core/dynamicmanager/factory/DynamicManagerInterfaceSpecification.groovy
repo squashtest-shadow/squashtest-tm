@@ -21,7 +21,7 @@
 package org.squashtest.tm.core.dynamicmanager.factory
 
 import org.hibernate.SessionFactory
-import org.hibernate.classic.Session
+import org.hibernate.Session
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean
 
 import spock.lang.Specification

@@ -23,7 +23,7 @@ package org.squashtest.tm.service.requirement;
 import static org.junit.Assert.*
 
 import org.hibernate.SessionFactory
-import org.hibernate.classic.Session
+import org.hibernate.Session
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
