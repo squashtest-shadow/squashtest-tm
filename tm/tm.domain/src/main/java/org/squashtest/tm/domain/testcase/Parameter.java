@@ -28,6 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -36,13 +37,18 @@ import org.squashtest.tm.domain.Identified;
 @Entity
 public class Parameter implements Identified{
 	
+	public static final String CODE_REGEXP = "^[A-Za-z0-9_-]*$";
+	public static final int MIN_CODE_SIZE = 1;
+	public static final int MAX_CODE_SIZE = 255;
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "PARAM_ID")
 	private Long id;
 	
 	@NotBlank
-	@Size(min = 0, max = 255)
+	@Pattern(regexp = CODE_REGEXP)
+	@Size(min = MIN_CODE_SIZE, max = MAX_CODE_SIZE)
 	private String name;
 	
 	@Lob
