@@ -18,18 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "./step-table-panel", "./parameters/ParametersTab"], function($, stepTablePanel, ParametersTab) {
 
-	var initStepTablePanel = function(settings) {
-		stepTablePanel.init(settings);
-	};	
-	
-	var initParametersPanel = function(settings) {
-		new ParametersTab({settings : settings});
-	};
-
-	return {
-		initStepTablePanel : initStepTablePanel,
-		initParametersPanel: initParametersPanel
-	};
-});
+define([ "jquery", "backbone", "./ParametersPanel",	"jquery.squash.confirmdialog" ],
+		function($, Backbone, ParametersPanel) {
+			var ParametersTab = Backbone.View.extend({
+				el : "#parameters-tabs-panel",
+				
+				initialize : function() {
+				this.settings = this.options.settings;
+					this.parametersPanel = new ParametersPanel({settings : this.settings, parentTab : this});
+				},
+				events : {},
+			});
+			return ParametersTab;
+		});

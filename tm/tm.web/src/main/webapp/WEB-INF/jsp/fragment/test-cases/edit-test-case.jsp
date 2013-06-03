@@ -96,6 +96,7 @@
 
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
 <c:url var="stepTabUrl" value="/test-cases/${testCase.id}/steps/panel" />
+<c:url var="parametersTabUrl" value="/test-cases/${testCase.id}/parameters/panel" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- 
@@ -242,6 +243,9 @@
 		</li>
 		<li>
 			<a href="${stepTabUrl}"><f:message key="tabs.label.steps" /></a>
+		</li>
+		<li>
+			<a href="${parametersTabUrl}"><f:message key="label.parameters" /></a>
 		</li>
 		<li>
 			<a href="#tabs-3"><f:message key="label.Attachments" />

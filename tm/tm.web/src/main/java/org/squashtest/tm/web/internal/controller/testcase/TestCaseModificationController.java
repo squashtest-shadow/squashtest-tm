@@ -53,8 +53,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
-import org.squashtest.tm.core.foundation.collection.DefaultPaging;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
@@ -617,49 +615,6 @@ public class TestCaseModificationController {
 	}
 
 	/* ********************************** localization stuffs ****************************** */
-	/**
-	 * Returns the
-	 * 
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping(value = "/executions", method = RequestMethod.GET, params = "tab")
-	public String getExecutionsTab(@PathVariable long testCaseId, Model model) {
-		Paging paging = DefaultPaging.FIRST_PAGE;
-
-		List<Execution> executions = executionFinder.findAllByTestCaseIdOrderByRunDate(testCaseId, paging);
-
-		model.addAttribute("executionsPageSize", paging.getPageSize());
-		model.addAttribute("testCaseId", testCaseId);
-		model.addAttribute("execs", executions);
-
-		return "test-case-executions-tab.html";
-	}
-
-	/**
-	 * @param executionFinder
-	 *            the executionFinder to set
-	 */
-	@ServiceReference
-	public void setExecutionFinder(ExecutionFinder executionFinder) {
-		this.executionFinder = executionFinder;
-	}
-
-	@RequestMapping(value = "/executions", params = RequestParams.S_ECHO_PARAM)
-	@ResponseBody
-	public DataTableModel getExecutionsTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
-			Locale locale) {
-		PagingAndSorting pas = createPagingAndSorting(params);
-
-		PagedCollectionHolder<List<Execution>> executions = executionFinder.findAllByTestCaseId(testCaseId, pas);
-
-		return new ExecutionsTableModelBuilder(locale, internationalizationHelper).buildDataModel(executions,
-				params.getsEcho());
-	}
-
-	private PagingAndSorting createPagingAndSorting(DataTableDrawParameters params) {
-		return new DataTableMapperPagingAndSortingAdapter(params, execsTableMapper);
-	}
 
 	/**
 	 * Return view for Printable test case
@@ -800,4 +755,7 @@ public class TestCaseModificationController {
 		}
 		return models;
 	}
+	
+
+	
 }

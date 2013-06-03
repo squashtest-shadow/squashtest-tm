@@ -599,6 +599,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	public void addParameter(@NotNull Parameter parameter) {
 		this.parameters.add(parameter);
+		
 	}
 
 	public Set<Dataset> getDatasets() {
