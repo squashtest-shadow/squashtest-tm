@@ -285,6 +285,7 @@ public class RequirementVersionManagerController {
 					.getVersionNumber() ? 0 : 1));
 		}
 	}
+
 	private RequirementAuditTrailService auditTrailService;
 
 	/**
@@ -295,7 +296,8 @@ public class RequirementVersionManagerController {
 	public void setAuditTrailService(RequirementAuditTrailService auditTrailService) {
 		this.auditTrailService = auditTrailService;
 	}
-	@RequestMapping(value = "/print", method = RequestMethod.GET)
+
+	@RequestMapping(method = RequestMethod.GET, params = "format=printable")
 	public ModelAndView printRequirementVersion(@PathVariable long requirementVersionId, Locale locale) {
 		ModelAndView mav = new ModelAndView("print-requirement-version.html");
 		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);
@@ -313,9 +315,10 @@ public class RequirementVersionManagerController {
 		List<RequirementVersion> versions = requirementVersionManager.findAllByRequirement(version.getRequirement()
 				.getId());
 		mav.addObject("siblingVersions", versions);
-		//=================AUDIT TRAIL
-		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService.findAllByRequirementVersionIdOrderedByDate(requirementVersionId);
- 
+		// =================AUDIT TRAIL
+		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService
+				.findAllByRequirementVersionIdOrderedByDate(requirementVersionId);
+
 		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale,
 				messageSource);
 

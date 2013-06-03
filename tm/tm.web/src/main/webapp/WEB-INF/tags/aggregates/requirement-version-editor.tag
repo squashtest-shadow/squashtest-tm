@@ -404,7 +404,9 @@
 				nameHandler.referenceHidden = "#requirement-raw-reference";
 				
 				squashtm.contextualContent.addListener(nameHandler);
-				$("#print-requirement-version-button").click(function(){window.open("${requirementUrl}/print", "_blank");});
+				$("#print-requirement-version-button").click(function(){
+					window.open("${requirementUrl}?format=printable", "_blank");
+				});
 				
 			});
 		});

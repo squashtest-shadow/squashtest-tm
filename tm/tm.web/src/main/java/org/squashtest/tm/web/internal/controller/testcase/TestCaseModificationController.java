@@ -57,9 +57,9 @@ import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
+import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -668,8 +668,8 @@ public class TestCaseModificationController {
 	 * @param testCaseId
 	 * @return
 	 */
-	@RequestMapping(value = "/print", method = RequestMethod.GET)
-	public ModelAndView print(@PathVariable long testCaseId, Locale locale) {
+	@RequestMapping(method = RequestMethod.GET, params="format=printable")
+	public ModelAndView showPrintableTestCase(@PathVariable long testCaseId, Locale locale) {
 		LOGGER.debug("get printable test case");
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		if (testCase == null) {

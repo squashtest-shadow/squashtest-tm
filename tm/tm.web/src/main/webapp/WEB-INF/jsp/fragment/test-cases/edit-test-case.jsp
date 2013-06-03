@@ -571,7 +571,9 @@
 		$("#delete-test-case-button").squashButton();
 		$("#print-test-case-button").squashButton();
 
-		$("#print-test-case-button").click(function(){window.open("${testCaseUrl}/print", "_blank");});
+		$("#print-test-case-button").click(function(){
+			window.open("${testCaseUrl}?format=printable", "_blank");
+		});
 	});
 
 	

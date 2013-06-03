@@ -461,7 +461,9 @@ that page won't be editable if
 				
 				squashtm.contextualContent.addListener(nameHandler);
 
-				$("#print-requirement-version-button").click(function(){window.open("${currentVersionUrl}/print", "_blank");});
+				$("#print-requirement-version-button").click(function(){
+					window.open("${currentVersionUrl}?format=printable", "_blank");
+				});
 				
 			});
 		});
