@@ -25,7 +25,7 @@ import org.hibernate.JDBCException
 import org.hibernate.SessionFactory
 import org.squashtest.csp.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
-import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.TestCase
 
 class DatasetMappingIT extends HibernateMappingSpecification {
