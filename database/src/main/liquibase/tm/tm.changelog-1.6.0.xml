@@ -51,7 +51,7 @@
 				<constraints nullable="false" foreignKeyName="fk_parameter_test_case"
 					references="TEST_CASE(TCLN_ID)" />
 			</column>
-			<column name="DESCRIPTION" type="CLOB" defaultValue=""
+			<column name="DESCRIPTION" type="CLOB"
 				remarks="the description of the parameter">
 				<constraints nullable="false" />
 			</column>
