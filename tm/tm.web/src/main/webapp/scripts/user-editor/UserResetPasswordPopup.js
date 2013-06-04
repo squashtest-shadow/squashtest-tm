@@ -53,7 +53,7 @@ define(
 						events : {},
 
 						submitPassword : function() {
-							self = this;
+							var self = this;
 							if (!self.validatePassword.call(self)){
 								return;
 							}
