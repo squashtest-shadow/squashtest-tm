@@ -61,7 +61,7 @@ define([ "jquery", "backbone", "handlebars", "app/util/StringUtil", "jquery.squa
 		events : {},
 
 		submitPassword : function() {
-			self = this;
+			var self = this;
 			if (!self.validatePassword.call(self)) {
 				return;
 			}
