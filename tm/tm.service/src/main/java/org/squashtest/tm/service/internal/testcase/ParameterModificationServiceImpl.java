@@ -20,17 +20,30 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.TestStepReader;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
+import org.squashtest.tm.service.internal.repository.TestStepDao;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
 
-public class ParameterModificationServiceImpl implements  ParameterModificationService{
+public class ParameterModificationServiceImpl implements ParameterModificationService {
 
 	@Inject
-	ParameterDao parameterDao;
+	private ParameterDao parameterDao;
+	
+	@Inject
+	private TestStepDao testStepDao;
 	
 	@Override
 	public List<Parameter> getAllforTestCase(long testCaseId) {
@@ -72,8 +85,66 @@ public class ParameterModificationServiceImpl implements  ParameterModificationS
 	
 	@Override
 	public List<Parameter> checkForParamsInStep(long stepId) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Parameter> parameters = new ArrayList<Parameter>();
+		TestStep step = testStepDao.findById(stepId);
+		TestStepContentReader reader = new TestStepContentReader();
+		String content = step.accept(reader);
+		for(String name : this.parseStepContent(content)){
+			parameters.add(findOrCreateParameter(name, step.getTestCase()));
+		}
+		return parameters;
+	}
+	
+	private List<String> parseStepContent(String content){
+		
+		List<String> paramNames = new ArrayList<String>();
+		String paramPattern = "(.*?)*$\\{(.*?)\\}.*?";
+		
+        Pattern pattern = Pattern.compile(paramPattern);
+        Matcher matcher = pattern.matcher(content);
+        
+        while(matcher.find()){ 
+        	paramNames.add(matcher.group(2)); 
+        } 
+        return paramNames;
+	}
+	
+	private Parameter findOrCreateParameter(String name, TestCase testCase){
+		Parameter parameter = this.parameterDao.findParameterByNameAndTestCase(name, testCase.getId());
+		if(parameter == null){
+			parameter = this.createMissingParameter(name, testCase);
+		}
+		return parameter;
+	}
+	
+	private Parameter createMissingParameter(String name, TestCase testCase){
+		Parameter parameter = new Parameter();
+		parameter.setName(name);
+		parameter.setDescription("");
+		parameter.setTestCase(testCase);
+		this.persist(parameter);
+		return parameter;
 	}
 
+	private final class TestStepContentReader implements TestStepReader {
+
+		private TestStepContentReader() {
+
+		}
+
+		@Override
+		public String visit(ActionTestStep visited) {
+			return visited.getAction()+" "+visited.getExpectedResult();
+		}
+
+		@Override
+		public String visit(CallTestStep visited) {
+			StringBuilder builder = new StringBuilder();
+			for(TestStep step : visited.getCalledTestCase().getSteps()){
+				builder.append(" "+step.accept(this)+" ");
+			}
+			return builder.toString();
+		}
+
+	}
 }

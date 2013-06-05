@@ -18,13 +18,22 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testcase;
+package org.squashtest.tm.service.testcase;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.testcase.Parameter;
 
+@Transactional(readOnly = true)
+@DynamicManager(name="squashtest.tm.service.ParameterFinder", entity = Parameter.class)
 public interface ParameterFinder {
 	
+	/**
+	 * 
+	 * @param testCaseId
+	 * @return returns a list of parameters ordered by test case and name
+	 */
 	public List<Parameter> getAllforTestCase(long testCaseId);
 }

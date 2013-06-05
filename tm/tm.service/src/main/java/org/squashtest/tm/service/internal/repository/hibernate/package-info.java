@@ -150,7 +150,8 @@
 		@NamedQuery(name = "testStep.findPositionOfStep", query = "select index(tsteps) from TestCase tc join tc.steps tsteps where tsteps.id = :stepId"),
 		
 		//TestParameters
-		@NamedQuery(name = "parameter.findAllByTestCase", query = "select parameter from Parameter join parameter.testCase testCase where testCase.id in (select distinct called.id from TestCase caller join caller.steps step join step.calledTestCase called where caller.id in (:testCaseId) and step.class = CallTestStep) or testCase.id = :testCaseId order by parameter.testCase.name,  parameter.name"),
+		@NamedQuery(name = "parameter.findAllByTestCase", query = "select parameter from Parameter join parameter.testCase testCase where testCase.id in (select distinct called.id from TestCase caller join caller.steps step join step.calledTestCase called where caller.id in (:testCaseId) and step.class = CallTestStep) or testCase.id = :testCaseId order by parameter.testCase.name,  parameter.name "),
+		@NamedQuery(name = "parameter.findParameterByNameAndTestCase", query = "select parameter from Parameter join parameter.testCase testCase where parameter.name= :name and testCase.id in (select distinct called.id from TestCase caller join caller.steps step join step.calledTestCase called where caller.id in (:testCaseId) and step.class = CallTestStep) or testCase.id = :testCaseId "),
 		
 		//CampaignTestPlanItem
 

@@ -114,6 +114,11 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	}
 
 	@Override
+	public String accept(TestStepReader reader) {
+		return reader.visit(this);
+	}
+	
+	@Override
 	public AttachmentList getAttachmentList() {
 		return attachmentList;
 	}

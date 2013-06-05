@@ -18,28 +18,55 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.testcase;
 
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.TestCase;
 
-@DynamicDao(entity = Parameter.class, hasCustomImplementation = false)
-public interface ParameterDao {
-	
-	void persist(Parameter newValue);
-	
-	void delete(Parameter value);
-	
-	void deleteAll(@QueryParam("ids") List<Long> ids);
-	
-	Parameter findById(Long id);
-	
-	List<Parameter> findAllByTestCase(@QueryParam("testCaseId") Long testcaseId);
+@Transactional
+@DynamicManager(name="squashtest.tm.service.ParameterModificationService", entity = Parameter.class)
+public interface ParameterModificationService extends ParameterFinder{
 
-	Parameter findParameterByNameAndTestCase(@QueryParam("name") String name, @QueryParam("testCaseId") Long testcaseId);
+	/**
+	 * 
+	 * @param parameter
+	 */
+	void persist(Parameter parameter);
+	
+	/**
+	 * 
+	 * @param parameterId
+	 * @param name
+	 */
+	void changeName(long parameterId, String name);
+	
+	/**
+	 * 
+	 * @param parameterId
+	 * @param description
+	 */
+	void changeDescription(long parameterId, String description);
+
+	/**
+	 * 
+	 * @param parameter
+	 */
+	void remove(Parameter parameter);
+
+	/**
+	 * 
+	 * @param stepId
+	 * @return
+	 */
+	List<Parameter> checkForParamsInStep(long stepId);
+
+	/**
+	 * 
+	 * @param parameterId
+	 */
+	void removeById(long parameterId);
 }

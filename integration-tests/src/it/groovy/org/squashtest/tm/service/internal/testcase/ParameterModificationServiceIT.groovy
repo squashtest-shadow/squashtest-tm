@@ -22,16 +22,16 @@ package org.squashtest.tm.service.internal.testcase
 
 import javax.inject.Inject
 
-import org.hibernate.SessionFactory;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
+import org.hibernate.SessionFactory
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 
-import org.squashtest.tm.service.internal.testcase.ParameterModificationService;
-import org.squashtest.tm.service.internal.repository.ParameterDao;
-import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
+import org.squashtest.tm.service.internal.repository.ParameterDao
+import org.squashtest.tm.domain.testcase.Parameter
 
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
@@ -52,6 +52,15 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 		when :
 			List<Parameter> params = service.getAllforTestCase(112L);
 		then : 
+			params.size() == 0;
+	}
+	
+	def "should return the parameter list for a given test case with call step"(){
+		
+		
+		when :
+			List<Parameter> params = service.getAllforTestCase(113L);
+		then :
 			params.size() == 0;
 	}
 }

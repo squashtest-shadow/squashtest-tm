@@ -18,17 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testcase;
+package org.squashtest.tm.domain.testcase;
 
-import org.squashtest.tm.domain.testcase.Dataset;
+public interface TestStepReader {
 
-interface DatasetModificationService {
+	String visit(ActionTestStep visited);
 
-	void persist(Dataset dataset);
-	
-	void remove(long datasetId);
-	
-	void changeName(long datasetId, String name);
-	
-	void changeParamValue(long datasetId, long paramId, String value);
+	String visit(CallTestStep visited);
 }

@@ -18,29 +18,46 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testcase;
+package org.squashtest.tm.service.testcase;
 
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
+import org.squashtest.tm.domain.testcase.Dataset;
 
-import org.squashtest.tm.domain.testcase.Parameter;
-
-interface ParameterModificationService extends ParameterFinder{
+@Transactional
+@DynamicManager(name="squashtest.tm.service.DatasetModificationService", entity = Dataset.class)
+public interface DatasetModificationService {
 
 	/**
 	 * 
-	 * @param testCaseId
-	 * @return returns a list of parameters ordered by test case and name
+	 * @param dataset
 	 */
-
-	void persist(Parameter parameter);
+	void persist(Dataset dataset);
 	
-	void changeName(long parameterId, String name);
+	/**
+	 * 
+	 * @param dataset
+	 */
+	void remove(Dataset dataset);
 	
-	void changeDescription(long parameterId, String description);
-
-	void remove(Parameter parameter);
-
-	List<Parameter> checkForParamsInStep(long stepId);
-
-	void removeById(long parameterId);
+	/**
+	 * 
+	 * @param datasetId
+	 */
+	void removeById(long datasetId);
+	
+	/**
+	 * 
+	 * @param datasetId
+	 * @param name
+	 */
+	void changeName(long datasetId, String name);
+	
+	/**
+	 * 
+	 * @param datasetId
+	 * @param paramId
+	 * @param value
+	 */
+	void changeParamValue(long datasetId, long paramId, String value);
 }

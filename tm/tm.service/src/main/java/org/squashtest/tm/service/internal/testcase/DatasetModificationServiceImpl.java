@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
+import org.squashtest.tm.service.testcase.DatasetModificationService;
 
 
 public class DatasetModificationServiceImpl implements DatasetModificationService {
@@ -44,12 +45,18 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	}
 
 	@Override
-	public void remove(long datasetId) {
+	public void remove(Dataset dataset) {
+		this.datasetDao.delete(dataset);
+	}
+
+
+	@Override
+	public void removeById(long datasetId) {
 	
 		Dataset dataset = this.datasetDao.findById(datasetId);
 		this.datasetDao.delete(dataset);
 	}
-
+	
 	@Override
 	public void changeName(long datasetId, String newName) {
 		
