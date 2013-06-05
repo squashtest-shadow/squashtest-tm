@@ -43,7 +43,7 @@ public class DatasetModificationServiceImplTest extends Specification {
 		datasetDao.findById(1L) >> dataset
 			
 		when :
-		service.remove(1L)
+		service.removeById(1L);
 		
 		then:
 		1* datasetDao.delete(dataset)
