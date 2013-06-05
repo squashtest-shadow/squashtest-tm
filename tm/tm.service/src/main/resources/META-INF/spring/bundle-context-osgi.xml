@@ -249,6 +249,13 @@
 
   <osgi:service ref="squashtest.tm.service.testautomation.AutomatedExecutionManagerService" interface="org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService" />
 
+  <osgi:service ref="squashtest.tm.service.ParameterModificationService">
+   	<osgi:interfaces>
+      <value>org.squashtest.tm.service.testcase.ParameterFinder</value>
+      <value>org.squashtest.tm.service.testcase.ParameterModificationService</value>
+    </osgi:interfaces>
+  </osgi:service>
+	
   <!-- CUF binding service -->
   <osgi:service ref="squashtest.tm.service.CustomFieldBindingService">
     <osgi:interfaces>

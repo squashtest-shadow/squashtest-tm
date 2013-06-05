@@ -27,7 +27,6 @@ import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.testcase.Parameter;
 
 @Transactional(readOnly = true)
-@DynamicManager(name="squashtest.tm.service.ParameterFinder", entity = Parameter.class)
 public interface ParameterFinder {
 	
 	/**

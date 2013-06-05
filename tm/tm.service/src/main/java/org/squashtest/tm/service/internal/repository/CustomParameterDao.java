@@ -22,22 +22,9 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
-import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.TestCase;
 
-@DynamicDao(entity = Parameter.class)
-public interface ParameterDao extends CustomParameterDao {
+public interface CustomParameterDao {
 	
-	void persist(Parameter newValue);
-	
-	void delete(Parameter value);
-	
-	void deleteAll(@QueryParam("ids") List<Long> ids);
-	
-	Parameter findById(Long id);
-
-	Parameter findParameterByNameAndTestCase(@QueryParam("name") String name, @QueryParam("testCaseId") Long testcaseId);
+	public List<Parameter> findAllByTestCase(Long testcaseId);
 }

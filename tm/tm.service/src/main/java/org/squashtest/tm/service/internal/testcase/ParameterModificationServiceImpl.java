@@ -27,6 +27,8 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -37,13 +39,19 @@ import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 
-public class ParameterModificationServiceImpl extends ParameterFinderImpl implements ParameterModificationService {
+@Service("squashtest.tm.service.ParameterModificationService")
+public class ParameterModificationServiceImpl implements ParameterModificationService {
 
 	@Inject
 	private ParameterDao parameterDao;
 	
 	@Inject
 	private TestStepDao testStepDao;
+
+	@Override
+	public List<Parameter> getAllforTestCase(long testCaseId) {
+		return parameterDao.findAllByTestCase(testCaseId);
+	}
 	
 	@Override
 	public void persist(Parameter parameter) {

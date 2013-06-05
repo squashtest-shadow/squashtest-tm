@@ -18,26 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import javax.inject.Inject;
+
+import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
-import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.internal.repository.CustomParameterDao;
 
-@DynamicDao(entity = Parameter.class)
-public interface ParameterDao extends CustomParameterDao {
-	
-	void persist(Parameter newValue);
-	
-	void delete(Parameter value);
-	
-	void deleteAll(@QueryParam("ids") List<Long> ids);
-	
-	Parameter findById(Long id);
+@Repository("CustomParameterDao")
+public class HibernateParameterDao implements CustomParameterDao {
 
-	Parameter findParameterByNameAndTestCase(@QueryParam("name") String name, @QueryParam("testCaseId") Long testcaseId);
+	@Inject
+	private SessionFactory sessionFactory;
+	
+
+	public List<Parameter> findAllByTestCase(Long testcaseId) {
+		
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("Parameter.findAllByTestCase");
+		query.setParameter("testCaseId", testcaseId);
+		return (List<Parameter>) query.list();
+	}
 }

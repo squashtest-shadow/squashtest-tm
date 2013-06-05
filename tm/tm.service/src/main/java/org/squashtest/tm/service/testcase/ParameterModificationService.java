@@ -24,11 +24,9 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
-import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.Parameter;
 
 @Transactional
-@DynamicManager(name="squashtest.tm.service.ParameterModificationService", entity = Parameter.class)
 public interface ParameterModificationService extends ParameterFinder{
 
 	/**

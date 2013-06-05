@@ -27,27 +27,28 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 
-import org.squashtest.tm.service.testcase.ParameterModificationService;
+import org.squashtest.tm.service.testcase.ParameterFinder
+import org.squashtest.tm.service.testcase.ParameterModificationService
 import org.squashtest.tm.service.internal.repository.ParameterDao
 import org.squashtest.tm.domain.testcase.Parameter
+import org.squashtest.tm.service.internal.repository.RequirementAuditEventDao
 
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
-@DataSet("DatasetModificationServiceIT.xml")
 class ParameterModificationServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	ParameterModificationService service;
 	
 	@Inject
-	ParameterDao parameterDao;
+	ParameterFinder finder;
 	
 	@Inject
-	SessionFactory sessionFactory;
+	ParameterDao parameterDao;
 
-	/*
+	@DataSet("DatasetModificationServiceIT.xml")
 	def "should return the parameter list for a given test case"(){
 
 		when :
@@ -56,6 +57,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 			params.size() == 0;
 	}
 	
+	@DataSet("DatasetModificationServiceIT.xml")
 	def "should return the parameter list for a given test case with call step"(){
 		
 		
@@ -63,5 +65,5 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 			List<Parameter> params = service.getAllforTestCase(113L);
 		then :
 			params.size() == 0;
-	}*/
+	}
 }
