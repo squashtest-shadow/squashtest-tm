@@ -18,37 +18,47 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.testcase;
+package org.squashtest.tm.web.internal.controller.testcase.steps;
 
-import java.util.Map;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.TestStepVisitor;
 
-public class TestStepUpdateFormModel {
+/**
+ * Builds a DataTable model for TestSteps table.
+ *
+ * @author Gregory Fouquet
+ *
+ */
+class TestStepViewBuilder implements TestStepVisitor {
+	private TestStepView testStepView;
 
-	private String action;
-	private String expectedResult;
-	private Map<Long, String> cufValues;
-
-	public String getAction() {
-		return action;
+	public TestStepViewBuilder() {
 	}
 
-	public void setAction(String action) {
-		this.action = action;
+	
+	public TestStepView buildTestStepView(TestStep item) {
+		item.accept(this);
+		return testStepView;
 	}
 
-	public String getExpectedResult() {
-		return expectedResult;
+	/**
+	 * Creates a model row from the visited item and stores it as {@link #lastBuiltItem}
+	 */
+	@Override
+	public void visit(ActionTestStep visited) {
+		testStepView = new TestStepView(visited);
+
 	}
 
-	public void setExpectedResult(String expectedResult) {
-		this.expectedResult = expectedResult;
+	@Override
+	public void visit(CallTestStep visited) {
+		testStepView = new TestStepView(visited);
+
 	}
 
-	public Map<Long, String> getCufValues() {
-		return cufValues;
-	}
+		
+	
 
-	public void setCufValues(Map<Long, String> cufValues) {
-		this.cufValues = cufValues;
-	}
 }

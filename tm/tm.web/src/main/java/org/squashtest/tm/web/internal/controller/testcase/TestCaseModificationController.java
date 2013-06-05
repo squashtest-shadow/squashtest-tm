@@ -25,7 +25,6 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -33,7 +32,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
@@ -41,10 +39,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -58,14 +52,10 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -83,11 +73,10 @@ import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
-import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
-import org.squashtest.tm.web.internal.controller.testcase.ActionStepFormModel.ActionStepFormModelValidator;
+import org.squashtest.tm.web.internal.controller.testcase.steps.TestStepsTableModelBuilder;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -98,7 +87,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
@@ -119,7 +107,6 @@ public class TestCaseModificationController {
 	private static final String NAME = "name";
 
 	private static final String TEST_CASE_ = "test case ";
-	private static final String COPIED_STEP_ID_PARAM = "copiedStepId[]";
 
 	private final DatatableMapper<Integer> referencingTestCaseMapper = new IndexBasedMapper(6)
 			.mapAttribute(Project.class, NAME, String.class, 2)
@@ -127,24 +114,17 @@ public class TestCaseModificationController {
 			.mapAttribute(TestCase.class, NAME, String.class, 4)
 			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 5);
 
-	private final DatatableMapper<Integer> execsTableMapper = new IndexBasedMapper(11)
-			.mapAttribute(Project.class, NAME, String.class, 1).mapAttribute(Campaign.class, NAME, String.class, 2)
-			.mapAttribute(Iteration.class, NAME, String.class, 3).mapAttribute(Execution.class, NAME, String.class, 4)
-			.mapAttribute(Execution.class, "executionMode", TestCaseExecutionMode.class, 5)
-			.mapAttribute(TestSuite.class, NAME, String.class, 6)
-			.mapAttribute(Execution.class, "executionStatus", ExecutionStatus.class, 8)
-			.mapAttribute(Execution.class, "lastExecutedBy", String.class, 9)
-			.mapAttribute(Execution.class, "lastExecutedOn", Date.class, 10);
+	
 
 	private TestCaseModificationService testCaseModificationService;
 
 	private ExecutionFinder executionFinder;
+	
 	@Inject
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
+	
 	@Inject
 	private MessageSource messageSource;
-	@Inject
-	private CallStepManagerService callStepManager;
 
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
@@ -192,12 +172,6 @@ public class TestCaseModificationController {
 		this.bugTrackersLocalService = bugTrackersLocalService;
 	}
 
-	@InitBinder("add-test-step")
-	public void addTestCaseBinder(WebDataBinder binder) {
-		ActionStepFormModelValidator validator = new ActionStepFormModelValidator();
-		validator.setMessageSource(internationalizationHelper);
-		binder.setValidator(validator);
-	}
 
 	/**
 	 * Returns the fragment html view of test case
@@ -281,142 +255,16 @@ public class TestCaseModificationController {
 		return internationalizationHelper.internationalize(mode, locale);
 	}
 
-	@RequestMapping(value = "/steps/panel")
-	public String getTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model, Locale locale) {
+	
 
-		// the main entities
-		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));
+	
 
-		// the custom fields definitions
-		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps)
-				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
+	
 
-		List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
-		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
+	
+	
 
-		// process the data
-		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
-		builder.usingCustomFields(cufValues, cufDefinitions.size());
-		List<Map<?, ?>> stepsData = builder.buildAllData(steps);
-
-		// populate the model
-		model.addAttribute(TEST_CASE, testCase);
-		model.addAttribute("stepsData", stepsData);
-		model.addAttribute("cufDefinitions", cufDefinitions);
-
-		// return
-		return "test-cases-tabs/test-steps-tab.html";
-
-	}
-
-	@RequestMapping(value = "/steps-table", params = RequestParams.S_ECHO_PARAM)
-	@ResponseBody
-	public DataTableModel getStepsTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
-			Locale locale) {
-
-		LOGGER.trace("TestCaseModificationController: getStepsTableModel called ");
-
-		Paging filter = createPaging(params);
-
-		FilteredCollectionHolder<List<TestStep>> holder = testCaseModificationService.findStepsByTestCaseIdFiltered(
-				testCaseId, filter);
-
-		// cufs
-		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(holder.getFilteredCollection())
-				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
-
-		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
-
-		// generate the model
-		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
-		builder.usingCustomFields(cufValues);
-		return builder.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
-
-	}
-
-	@RequestMapping(value = "/steps/add", method = RequestMethod.POST, params = { "action", "expectedResult" })
-	@ResponseBody
-	public void addActionTestStep(@Valid @ModelAttribute("add-test-step") ActionStepFormModel stepModel,
-			@PathVariable long testCaseId) {
-
-		ActionTestStep step = stepModel.getActionTestStep();
-
-		Map<Long, String> customFieldValues = stepModel.getCustomFields();
-
-		testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues);
-
-		LOGGER.trace(TEST_CASE_ + testCaseId + ": step added, action : " + step.getAction() + ", expected result : "
-				+ step.getExpectedResult());
-	}
-
-	@RequestMapping(value = "/steps/paste", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })
-	@ResponseBody
-	public void pasteStep(@RequestParam(COPIED_STEP_ID_PARAM) String[] copiedStepId,
-			@RequestParam(value = "indexToCopy", required = true) Long positionId, @PathVariable long testCaseId) {
-
-		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepId);
-
-		for (int i = copiedStepId.length - 1; i >= 0; i--) {
-			String id = copiedStepId[i];
-			testCaseModificationService.pasteCopiedTestStep(testCaseId, positionId, Long.parseLong(id));
-		}
-		LOGGER.trace("test case copied some Steps");
-	}
-
-	@RequestMapping(value = "/steps/paste-last-index", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })
-	@ResponseBody
-	public void pasteStepLastIndex(@RequestParam(COPIED_STEP_ID_PARAM) String[] copiedStepId,
-			@PathVariable long testCaseId) {
-
-		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepId);
-
-		for (int i = 0; i < copiedStepId.length; i++) {
-			String id = copiedStepId[i];
-			testCaseModificationService.pasteCopiedTestStepToLastIndex(testCaseId, Long.parseLong(id));
-		}
-		LOGGER.trace("test case copied some Steps");
-	}
-
-	@RequestMapping(value = "/steps/{stepId}", method = RequestMethod.POST, params = "newIndex")
-	@ResponseBody
-	public void changeStepIndex(@PathVariable long stepId, @RequestParam int newIndex, @PathVariable long testCaseId) {
-
-		testCaseModificationService.changeTestStepPosition(testCaseId, stepId, newIndex);
-		LOGGER.trace(TEST_CASE_ + testCaseId + ": step " + stepId + " moved to " + newIndex);
-
-	}
-
-	@RequestMapping(value = "/steps/move", method = RequestMethod.POST, params = { "newIndex", "itemIds[]" })
-	@ResponseBody
-	public void changeStepsIndex(@RequestParam("itemIds[]") List<Long> itemIds, @RequestParam("newIndex") int newIndex,
-			@PathVariable long testCaseId) {
-
-		testCaseModificationService.changeTestStepsPosition(testCaseId, newIndex, itemIds);
-
-	}
-
-	@RequestMapping(value = "/steps/{stepIds}", method = RequestMethod.DELETE)
-	@ResponseBody
-	public void deleteSteps(@PathVariable("stepIds") List<Long> stepIds, @PathVariable long testCaseId) {
-		testCaseModificationService.removeListOfSteps(testCaseId, stepIds);
-	}
-
-	@RequestMapping(value = "/steps/{stepId}/action", method = RequestMethod.POST, params = { "id", VALUE })
-	@ResponseBody
-	public String changeStepAction(@PathVariable long stepId, @RequestParam(VALUE) String newAction) {
-		testCaseModificationService.updateTestStepAction(stepId, newAction);
-		LOGGER.trace("TestCaseModificationController : updated action for step {}", stepId);
-		return newAction;
-	}
-
-	@RequestMapping(value = "/steps/{stepId}/result", method = RequestMethod.POST, params = { "id", VALUE })
-	@ResponseBody
-	public String changeStepDescription(@PathVariable long stepId, @RequestParam(VALUE) String newResult) {
-		testCaseModificationService.updateTestStepExpectedResult(stepId, newResult);
-		LOGGER.trace("TestCaseModificationController : updated action for step {}", stepId);
-		return newResult;
-	}
+	
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-description", VALUE })
 	@ResponseBody
@@ -608,10 +456,6 @@ public class TestCaseModificationController {
 
 	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper<?> dtMapper) {
 		return new DataTableMapperPagingAndSortingAdapter(params, dtMapper);
-	}
-
-	private Paging createPaging(final DataTableDrawParameters params) {
-		return new DataTablePaging(params);
 	}
 
 	/* ********************************** localization stuffs ****************************** */

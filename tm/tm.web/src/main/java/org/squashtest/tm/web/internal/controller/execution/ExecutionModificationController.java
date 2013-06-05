@@ -63,6 +63,7 @@ import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelper;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -162,11 +163,11 @@ public class ExecutionModificationController {
 
 	}
 
-	private static final class ExecutionStepTableColumnDefHelper {
+	private static final class ExecutionStepTableColumnDefHelper extends DataTableColumnDefHelper{
 		private static final List<AoColumnDef> baseColumns = new ArrayList<AoColumnDef>(5);
 		static {
 			String smallWidth = "2em";
-			// columns.add(new AoColumnDef(bVisible, bSortable, sClass, sWidth, aTargets, mDataProp))
+			// columns.add(new AoColumnDef(bVisible, bSortable, sClass, sWidth,  mDataProp))
 			baseColumns.add(new AoColumnDef(false, false, "", smallWidth, "entity-id"));//0
 			baseColumns.add(new AoColumnDef(true, false, "select-handle centered", smallWidth, "entity-index"));//1
 			baseColumns.add(new AoColumnDef(true, false, "", null, "action"));//2
@@ -202,14 +203,7 @@ public class ExecutionModificationController {
 			return columns;
 		}
 
-		private void addATargets(List<AoColumnDef> columns2) {
-			for (int i = 0; i < columns2.size(); i++) {
-				int[] aTarget = new int[1];
-				aTarget[0] = i;
-				columns2.get(i).setaTargets(aTarget);
-			}
-
-		}
+		
 	}
 
 	private static class ExecutionStepDataTableModelHelper extends DataTableModelHelper<ExecutionStep> {

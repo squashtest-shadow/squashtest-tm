@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -36,12 +37,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelper;
+import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -58,6 +66,9 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 public class TestCaseParametersController {
 	@Inject
 	private TestCaseFinder testCaseFinder;
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
+
 
 	/**
 	 * 
@@ -70,11 +81,17 @@ public class TestCaseParametersController {
 		
 		// the main entities
 		TestCase testCase = testCaseFinder.findById(testCaseId);
-		
+		//TODO
+		List<Long> paramIds = IdentifiedUtil.extractIds(testCase.getParameters());
+		Set<Parameter> directAndCalledParameters = testCase.getParameters();
+		// end TODO
+		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testCase);
+		List<AoColumnDef> columnDefs = new DatasetsTableColumnDefHelper().getAoColumnDefs(paramIds,editable);
 
 		// populate the model
 		model.addAttribute(TEST_CASE, testCase);
-
+		model.addAttribute("datasetsAoColumnDefs", JsonHelper.serialize(columnDefs));
+		model.addAttribute("directAndCalledParameters", directAndCalledParameters);
 		// return
 		return "test-cases-tabs/parameters-tab.html";
 
@@ -85,10 +102,10 @@ public class TestCaseParametersController {
 	public DataTableModel getParametersTable(@PathVariable long testCaseId,
 			final DataTableDrawParameters params, final Locale locale) {
 		final TestCase testCase = testCaseFinder.findById(testCaseId);
-		PagingAndSorting pagingAndSorting = new DataTableMapperPagingAndSortingAdapter(params,
+		Sorting sorting = new DataTableMapperPagingAndSortingAdapter(params,
 				parametersTableMapper);
 		//TODO REMOVE
-		new Parameter("name", testCase);
+		new Parameter("name", testCase); 
 		new Parameter("name2", testCase);
 		//TODO CHANGE WITH METHOD THAT GETs Sorted Params
 		PagedCollectionHolder<List<Parameter>> holder = new PagedCollectionHolder<List<Parameter>>() {
@@ -113,36 +130,6 @@ public class TestCaseParametersController {
 				holder, params.getsEcho());
 	}
 	
-	private static class ParametersDataTableModelHelper extends DataTableModelHelper<Parameter> {
-
-		private ParametersDataTableModelHelper() {
-			super();
-		}
-
-		@Override
-		public Map<String, Object> buildItemData(Parameter item) {
-			Map<String, Object> res = new HashMap<String, Object>();
-			TestCase testCase = item.getTestCase();
-			Project project = testCase.getProject();
-			String testCaseName = testCase.getReference()+'-'+testCase.getName()+" ("+project.getName()+')';
-			//TODO
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, 5L);
-			//res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put(DataTableModelHelper.NAME_KEY, item.getName());
-			res.put("description", item.getDescription());
-			res.put("test-case-name", testCaseName);
-			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
-			return res;
-		}
-		
-		
-	}
-	
-	private DatatableMapper<String> parametersTableMapper = new NameBasedMapper(3)
-	.mapAttribute(Parameter.class, "id", String.class, DataTableModelHelper.DEFAULT_ENTITY_ID_KEY)
-	.mapAttribute(Parameter.class, "name", String.class, DataTableModelHelper.NAME_KEY)
-	.mapAttribute(TestCase.class, "name", String.class, "test-case-name");
 	
 	/**
 	 * Will add a new parameter to the test case
@@ -157,4 +144,45 @@ public class TestCaseParametersController {
 		parameter.setTestCase(testCase);
 		testCase.addParameter(parameter);
 	}
+
+	
+	
+	
+	
+	private DatatableMapper<String> parametersTableMapper = new NameBasedMapper(3)
+	.mapAttribute(Parameter.class, "id", String.class, DataTableModelHelper.DEFAULT_ENTITY_ID_KEY)
+	.mapAttribute(Parameter.class, "name", String.class, DataTableModelHelper.NAME_KEY)
+	.mapAttribute(TestCase.class, "name", String.class, "test-case-name");
+	
+	private static class ParametersDataTableModelHelper extends DataTableModelHelper<Parameter> {
+
+		private ParametersDataTableModelHelper() {
+			super();
+		}
+
+		@Override
+		public Map<String, Object> buildItemData(Parameter item) {
+			Map<String, Object> res = new HashMap<String, Object>();
+			TestCase testCase = item.getTestCase();
+			Project project = testCase.getProject();
+			String testCaseName = testCase.getName()+" ("+project.getName()+')';
+			if(testCase.getReference().length()>0){
+				testCaseName = testCase.getReference()+'-'+testCaseName;
+			}
+			
+			//TODO
+			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, 5L);
+			//res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
+			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+			res.put(DataTableModelHelper.NAME_KEY, item.getName());
+			res.put("description", item.getDescription());
+			res.put("test-case-name", testCaseName);
+			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
+			return res;
+		}
+		
+		
+	}
+	
+
 }

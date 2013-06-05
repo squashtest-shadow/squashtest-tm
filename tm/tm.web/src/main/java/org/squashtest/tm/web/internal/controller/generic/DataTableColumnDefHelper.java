@@ -18,47 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.testcase;
+package org.squashtest.tm.web.internal.controller.generic;
 
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.domain.testcase.TestStepVisitor;
+import java.util.List;
 
-/**
- * Builds a DataTable model for TestSteps table.
- *
- * @author Gregory Fouquet
- *
- */
-class TestStepViewBuilder implements TestStepVisitor {
-	private TestStepView testStepView;
+import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 
-	public TestStepViewBuilder() {
-	}
-
-	
-	public TestStepView buildTestStepView(TestStep item) {
-		item.accept(this);
-		return testStepView;
-	}
-
-	/**
-	 * Creates a model row from the visited item and stores it as {@link #lastBuiltItem}
-	 */
-	@Override
-	public void visit(ActionTestStep visited) {
-		testStepView = new TestStepView(visited);
+public class DataTableColumnDefHelper {
+	protected void addATargets(List<AoColumnDef> columns2) {
+		for (int i = 0; i < columns2.size(); i++) {
+			int[] aTarget = new int[1];
+			aTarget[0] = i;
+			columns2.get(i).setaTargets(aTarget);
+		}
 
 	}
-
-	@Override
-	public void visit(CallTestStep visited) {
-		testStepView = new TestStepView(visited);
-
-	}
-
-		
-	
-
 }

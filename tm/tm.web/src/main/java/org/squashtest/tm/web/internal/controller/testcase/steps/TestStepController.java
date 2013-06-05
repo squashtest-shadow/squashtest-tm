@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.testcase;
+package org.squashtest.tm.web.internal.controller.testcase.steps;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
+import org.squashtest.tm.web.internal.controller.testcase.requirement.RequirementVerifierView;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueConfigurationBean;
 
 @Controller

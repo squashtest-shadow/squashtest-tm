@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public final class IdentifiedUtil {
@@ -28,7 +29,7 @@ public final class IdentifiedUtil {
 	 
  }
  
- public static final List<Long> extractIds(List<? extends Identified> identifieds){
+ public static final <T extends Collection<? extends Identified>> List<Long> extractIds(T identifieds){
 	 List<Long> ids = new ArrayList<Long>(identifieds.size());
 	 for(Identified identified : identifieds) {
 		 ids.add(identified.getId());

@@ -21,9 +21,9 @@
 define(
 		[ "jquery", "backbone", "app/lnf/Forms", "jquery.squash.confirmdialog" ],
 		function($, Backbone, Forms) {
-			var NewParameterDialog = Backbone.View
+			var NewDatasetDialog = Backbone.View
 					.extend({
-						el : "#add-parameter-dialog",
+						el : "#add-dataset-dialog",
 						
 						initialize : function() {
 							this.settings = this.options.settings;
@@ -31,10 +31,7 @@ define(
 							
 							// called on self methods
 							
-							//initialize popup
-							var textareas = this.$el.find("textarea");
-							textareas.val("");
-							textareas.each(self.decorateArea);
+							//initialize popup							
 							this.$el.find("input:text").val("");
 							$("span.error-message", $(self.el)).text("");
 
@@ -49,25 +46,14 @@ define(
 							"confirmdialogconfirm" : "confirm"
 						},
 						
-						decorateArea : function(){
-							$(this).ckeditor(
-									function() {
-									},
-									{
-										customConfig : squashtm.app.contextRoot
-												+ "/styles/ckeditor/ckeditor-config.js",
-										language : squashtm.app.ckeditorLanguage
-									});
-						},
-						
 						cancel : function(event) {
 							this.cleanup();
-							this.trigger("newParameter.cancel");
+							this.trigger("newDataset.cancel");
 						},
 
 						confirm : function(event) {
 							this.cleanup();
-							this.trigger("newParameter.confirm");
+							this.trigger("newDataset.confirm");
 						},
 
 						validate : function(event) {
@@ -77,7 +63,7 @@ define(
 
 							$.ajax({
 								type : 'post',
-								url : self.settings.basic.testCaseUrl + "/parameters/new",
+								url : self.settings.basic.testCaseUrl + "/datasets/new",
 								dataType : 'json',
 								// note : we cannot use promise api with async param. see
 								// http://bugs.jquery.com/ticket/11013#comment:40
@@ -96,29 +82,13 @@ define(
 							this.$el.addClass("not-displayed");
 							Forms.form(this.$el).clearState();
 							this.$el.confirmDialog("destroy");
-							this.cleanupTextareas();
 						},
 
-						cleanupTextareas : function() {
-							this.$el.find("textarea").each(function() {
-								var area = $(this);
-
-								try {
-									area.ckeditorGet().destroy();
-
-								} catch (damnyou) {
-									var areaName = area.attr('id');
-									// destroying the instance will make it crash. So we remove
-									// it and hope the memory leak wont be too high.
-									CKEDITOR.remove(areaName);
-								}
-							});
-						},
+						
 
 						populateModel : function() {
 							var model = this.model, $el = this.$el;
-							model.name = $el.find("#add-parameter-name").val();
-							model.description = $el.find("#add-parameter-description").val();
+							model.name = $el.find("#add-dataset-name").val();
 						}			
 
 					});

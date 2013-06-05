@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.testcase.CallTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.domain.testcase.TestStep
+import org.squashtest.tm.web.internal.controller.testcase.steps.TestStepsTableModelBuilder;
 
 import spock.lang.Specification
 

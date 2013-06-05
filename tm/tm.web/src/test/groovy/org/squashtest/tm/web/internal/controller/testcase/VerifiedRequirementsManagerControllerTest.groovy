@@ -37,6 +37,7 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.service.testcase.TestStepModificationService
+import org.squashtest.tm.web.internal.controller.testcase.requirement.VerifiedRequirementsManagerController;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;

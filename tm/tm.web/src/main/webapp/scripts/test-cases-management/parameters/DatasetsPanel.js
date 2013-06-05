@@ -19,21 +19,21 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "backbone", "./ParametersTable", "./NewParameterDialog",
+define([ "jquery", "backbone", "./DatasetsTable", "./NewDatasetDialog",
 		"jquery.squash.confirmdialog", "jquery.squash.togglepanel" ],
-		function($, Backbone, ParametersTable, NewParameterDialog) {
+		function($, Backbone, DatasetsTable, NewDatasetDialog) {
 			var teamMod = squashtm.app.teamMod;
-			var ParametersPanel = Backbone.View.extend({
+			var DatasetsPanel = Backbone.View.extend({
 				
-				el : "#parameters-panel-container",
+				el : "#datasets-panel-container",
 				
 				initialize : function() {
 				this.settings = this.options.settings;
 					this.language = this.settings.language;
 					this.makeTogglePanel();
-					this.table = new ParametersTable({settings : this.settings, parentTab : this.options.parentTab});
-					this.showNewParameterDialog = $.proxy(
-									this._showNewParameterDialog, this);
+					this.table = new DatasetsTable({settings : this.settings, parentTab : this.options.parentTab});
+					this.showNewDialog = $.proxy(
+									this._showNewDialog, this);
 					this.configureButtons();
 				},
 				
@@ -45,9 +45,9 @@ define([ "jquery", "backbone", "./ParametersTable", "./NewParameterDialog",
 					var self = this;
 					var panelSettings = {
 							initiallyOpen : true,
-							title : self.language.parametersPanelTitle,
+							title : self.language.datasetsPanelTitle,
 						};
-					this.$("#parameters-panel").togglePanel(panelSettings);
+					this.$("#datasets-panel").togglePanel(panelSettings);
 				},
 				
 				configureButtons : function() {
@@ -61,16 +61,17 @@ define([ "jquery", "backbone", "./ParametersTable", "./NewParameterDialog",
 					// to the toggle panel header.
 					// TODO change our way to make toggle panels buttons
 					// =============/toogle buttons===================
-					this.$("#add-parameter-button").on('click',	self.showNewParameterDialog);
+					this.$("#add-dataset-button").on('click',
+							self.showNewDialog);
 				},
 				
-				_showNewParameterDialog : function(event) {
+				_showNewDialog : function(event) {
 					var self = this;
 
 					function discard() {
-						self.newParameterDialog.off("newParameter.cancel newParameter.confirm");
-						self.newParameterDialog.undelegateEvents();
-						self.newParameterDialog = null;
+						self.newDatasetDialog.off("newDataset.cancel newDataset.confirm");
+						self.newDatasetDialog.undelegateEvents();
+						self.newDatasetDialog = null;
 					}
 
 					function discardAndRefresh() {
@@ -78,10 +79,10 @@ define([ "jquery", "backbone", "./ParametersTable", "./NewParameterDialog",
 						self.table.refresh();
 					}
 
-					self.newParameterDialog = new NewParameterDialog({settings : self.settings, model : {name:"", description:""}});
-					self.newParameterDialog.on("newParameter.cancel", discard);
-					self.newParameterDialog.on("newParameter.confirm", discardAndRefresh);
+					self.newDatasetDialog = new NewDatasetDialog({settings : self.settings, model : {name:""}});
+					self.newDatasetDialog.on("newDataset.cancel", discard);
+					self.newDatasetDialog.on("newDataset.confirm", discardAndRefresh);
 				}
 			});
-			return ParametersPanel;
+			return DatasetsPanel;
 });

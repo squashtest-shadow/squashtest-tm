@@ -18,28 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.testcase;
+package org.squashtest.tm.web.internal.controller.testcase.steps;
 
+import java.util.Map;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
+public class TestStepUpdateFormModel {
 
-/**
- * Controller for the management screen of Requirements linked to a given TestCase
- * 
- * @author Gregory Fouquet
- * 
- */
-@Controller
-@RequestMapping("/test-cases/{testCaseId}/linked-requirements-manager")
-public class LinkedRequirementsManagerController {
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView showManager(@PathVariable long testCaseId) {
-		ModelAndView mav = new ModelAndView("page/test-cases/show-linked-requirements-manager");
-		mav.addObject("testCaseId", testCaseId);
-		return mav;
+	private String action;
+	private String expectedResult;
+	private Map<Long, String> cufValues;
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public String getExpectedResult() {
+		return expectedResult;
+	}
+
+	public void setExpectedResult(String expectedResult) {
+		this.expectedResult = expectedResult;
+	}
+
+	public Map<Long, String> getCufValues() {
+		return cufValues;
+	}
+
+	public void setCufValues(Map<Long, String> cufValues) {
+		this.cufValues = cufValues;
 	}
 }

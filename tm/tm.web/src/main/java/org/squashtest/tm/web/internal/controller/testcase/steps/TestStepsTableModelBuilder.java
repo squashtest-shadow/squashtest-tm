@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.testcase;
+package org.squashtest.tm.web.internal.controller.testcase.steps;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +40,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
  * @author Gregory Fouquet
  *
  */
-class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implements TestStepVisitor {
+public class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implements TestStepVisitor {
 	
 	private final MessageSource messageSource;
 	private final Locale locale;

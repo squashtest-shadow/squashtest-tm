@@ -94,7 +94,7 @@ define(
 					indicatorUrl : ctxUrl + "/scripts/jquery/indicator.gif",
 					callStepManagerUrl : tcUrl + "/call",
 					tableLanguageUrl : ctxUrl + "/datatables/messages",
-					tableAjaxUrl : tcUrl + "/steps-table"
+					tableAjaxUrl : tcUrl + "/steps"
 				};
 			}
 
