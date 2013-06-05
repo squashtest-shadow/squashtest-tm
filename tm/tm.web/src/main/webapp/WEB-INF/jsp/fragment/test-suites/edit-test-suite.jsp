@@ -639,7 +639,10 @@
 			 	squashtm.execution = squashtm.execution || {};
 			 	squashtm.execution.refresh = $.proxy(function(){
 			 		$("#test-suite-test-plans-table").squashTable().refresh();
-			 		$('#general-informations-panel').load('${testSuiteInfoUrl}');	
+			 		// refreshTestSuiteInfo
+			 		$('#general-informations-panel').load('${testSuiteInfoUrl}');
+			 		// refreshExecButtons()
+					$('#test-suite-execution-button').load('${ testSuiteExecButtonsUrl }');
 			 	}, window);
 			});
 		});
