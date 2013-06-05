@@ -37,7 +37,7 @@ import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 
-public class ParameterModificationServiceImpl implements ParameterModificationService {
+public class ParameterModificationServiceImpl extends ParameterFinderImpl implements ParameterModificationService {
 
 	@Inject
 	private ParameterDao parameterDao;
@@ -45,11 +45,6 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	@Inject
 	private TestStepDao testStepDao;
 	
-	@Override
-	public List<Parameter> getAllforTestCase(long testCaseId) {
-		return parameterDao.findAllByTestCase(testCaseId);
-	}
-
 	@Override
 	public void persist(Parameter parameter) {
 		this.parameterDao.persist(parameter);

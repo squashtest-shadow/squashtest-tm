@@ -47,6 +47,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 	@Inject
 	SessionFactory sessionFactory;
 
+	/*
 	def "should return the parameter list for a given test case"(){
 
 		when :
@@ -62,5 +63,5 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 			List<Parameter> params = service.getAllforTestCase(113L);
 		then :
 			params.size() == 0;
-	}
+	}*/
 }
