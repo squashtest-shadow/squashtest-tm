@@ -58,9 +58,8 @@
 </s:url>
 
 
-<s:url var="updateTestPlanUrl"	value="/test-suites/{testSuiteId}/{iterationId}/test-plan/">
+<s:url var="updateTestPlanUrl"	value="/test-suites/{testSuiteId}/test-plan">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
-	<s:param name="iterationId" value="${testSuite.iteration.id}" />
 </s:url>
 
 <s:url var="assignableUsersUrl" value="/test-suites/{testSuiteId}/{iterationId}/assignable-user">

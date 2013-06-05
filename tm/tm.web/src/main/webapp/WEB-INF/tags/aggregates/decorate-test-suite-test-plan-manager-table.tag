@@ -20,13 +20,10 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty" description="jqueryfies a campaign test case table" %>
-<%@ attribute name="tableModelUrl" required="true" description="URL to GET the model of the table" %>
-<%@ attribute name="testPlansUrl" required="true" description="URL to manipulate (delete) the test-plans" %>
-<%@ attribute name="nonBelongingTestPlansUrl" required="true" description="URL to manipulate the non belonging test cases" %>
-<%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
-<%@ attribute name="testPlanDetailsBaseUrl" required="true" description="base of the URL to get test case details" %> 
-<%@ attribute name="updateTestPlanUrl" required="true" description="base of the url to update the test case url" %>
+<%@ tag body-content="empty" description="jqueryfies a test suite test plan table" %>
+
+<%@ attribute name="testSuite" required="true" type="java.lang.Object"  description="the base iteration url" %>
+
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
@@ -35,8 +32,32 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input" %>
 
+<%-- ==============  variables, urls etc =================== --%>
+
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
 <f:message var="cyclicStepCallException" key="squashtm.action.exception.cyclicstepcallexception.label" />
+
+
+<s:url var="tableModelUrl"	value="/test-suites/{testSuiteId}/{iterationId}/test-cases/table">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
+<c:url var="testPlanDetailsBaseUrl" value="/test-cases" />
+
+<c:set var="batchRemoveButtonId" value="remove-items-button"/>
+
+<s:url var="removeTestPlansUrl" value="/test-suites/{testSuiteId}/{iterationId}/test-plan">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+</s:url>
+
+<s:url var="updateTestPlanUrl"	value="/test-suites/{testSuiteId}/test-plan">
+	<s:param name="testSuiteId" value="${testSuite.id}" />
+</s:url>
+
+
+<%-- ==============  variables, urls etc =================== --%>
 
 <script type="text/javascript">
 	
@@ -48,14 +69,20 @@
 		
 	$(function() {
 		
+		
+		function refreshAfterDeletion(data){
+			refreshTestPlans();
+			checkForbiddenDeletion(data);		
+		}
+		
 		$( '#${ batchRemoveButtonId }' ).click(function() {
 				var table = $( '#test-plan-table' ).dataTable();
 				var ids = getIdsOfSelectedTableRows(table);
 				
 				if (ids.length > 0) {
-					$.post('${ nonBelongingTestPlansUrl }/remove/detach', { testPlanIds: ids }, function(data){
-						refreshTestPlans();
-						checkForbiddenDeletion(data);
+					var url = "${removeTestPlansUrl}/"+ids.join(',')+"/detach";
+					$.post(url, function(data){
+						refreshAfterDeletion(data);
 					});
 				}
 				
@@ -65,14 +92,10 @@
 	
 		<%-- single test-case removal --%>
 		$('#test-plan-table .delete-test-case-button').live('click', function() {
-			$.ajax({
-				type : 'delete',
-				url : '${ testPlansUrl }/remove/detach/' + parseTestPlanId(this),
-				dataType : 'text',
-				success : function(data){
-					refreshTestPlans();
-					checkForbiddenDeletion(data);
-				}
+			var id = parseTestPlanId(this)
+			var url = "${removeTestPlansUrl}/"+id+"/detach";
+			$.post(url, function(data){
+				refreshAfterDeletion(data);
 			});
 			return false; //return false to prevent navigation in page (# appears at the end of the URL)
 		});
@@ -90,8 +113,10 @@
 	//row : selected row
 	//dropPosition : the new position
 	function testPlanDropHandler(row, dropPosition) {
+		var itemIds = parseTestPlanIds(row);
+		var url = "${updateTestPlanUrl}/"+itemIds.join(',')+"/position/"+dropPosition;
 		//first compose the url to update the order, then send a request attribute newIndex and call the refresh function
-		$.post('${ updateTestPlanUrl }'+'/move', { itemIds: parseTestPlanIds(row), newIndex : dropPosition }, function(){
+		$.post(url, function(){
 			refreshTestPlans();
 		}) ;
 	}

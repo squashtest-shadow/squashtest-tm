@@ -188,9 +188,7 @@
 			<c:if test="${ not useIterationTable }">
 			<c:url var="testSuiteUrl" value="/test-suites/${ testSuite.id }" />
 			<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testSuiteUrl }" isContextual="false"/>
-				<aggr:decorate-test-suite-test-plan-manager-table tableModelUrl="${testPlansTableUrl}" testPlanDetailsBaseUrl="${testPlanDetailsBaseUrl}" 
-					testPlansUrl="${removeTestPlanUrl}" batchRemoveButtonId="remove-items-button"
-					updateTestPlanUrl="${updateTestPlanUrl}" nonBelongingTestPlansUrl="${nonBelongingTestPlansUrl}" />
+				<aggr:decorate-test-suite-test-plan-manager-table testSuite="${testSuite}" />
 				<aggr:test-suite-test-plan-manager-table/>
 			</c:if>
 			</div>
