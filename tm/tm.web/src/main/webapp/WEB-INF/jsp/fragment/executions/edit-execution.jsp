@@ -129,7 +129,7 @@
 		</h2>
 	</div>
 
-	<div style="float: right;">
+	<div class="snap-right">
 		<f:message var="back" key="label.Back" />
 		<input id="back" type="button" value="${ back }" class="button" />
 	</div>
