@@ -662,6 +662,8 @@
 			 	squashtm.execution.refresh = $.proxy(function(){
 			 		refreshTestPlansWithoutSelection();
 			 		$('#general-informations-panel').load('${testSuiteInfoUrl}');	
+			 		// refreshExecButtons()
+					$('#test-suite-execution-button').load('${ testSuiteExecButtonsUrl }');
 			 	}, window);
 			});
 		});
