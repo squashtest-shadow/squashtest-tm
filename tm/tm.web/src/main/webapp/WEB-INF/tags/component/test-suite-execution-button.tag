@@ -118,6 +118,8 @@
 									startResumeOptimized);
 						}
 					}
+					
+					startmenu.kill();
 				};
 			});
 		</script>
@@ -174,7 +176,10 @@
 						restartMode.val('optimized');
 						restartDialog.confirmDialog('open');
 					}
+
+					startmenu.kill();
 				};
+				
 				function confirmRestartHandler (jqXHR) {
 					//I shouldn't have to do this, I know, they made me .. :( 
 					// seriously : don't know why but the ajax.done() method above is called even when the check fails (observed with FF 10)
