@@ -27,5 +27,7 @@ import org.squashtest.tm.domain.testcase.Dataset;
 
 public interface CustomDatasetDao {
 
-	List<Dataset> findAllDatasetByTestCase(@QueryParam("testCaseId") Long testCaseId);
+	List<Dataset> findAllDatasetsByTestCase(@QueryParam("testCaseId") Long testCaseId);
+	
+	List<Dataset> findAllDatasetsByTestCases(@QueryParam("testCaseIds") List<Long> testCaseIds);
 }

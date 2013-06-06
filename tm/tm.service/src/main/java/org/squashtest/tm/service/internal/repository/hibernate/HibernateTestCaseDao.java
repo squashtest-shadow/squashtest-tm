@@ -215,6 +215,14 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findAllTestCasesIdsCallingTestCases(List<Long> testCasesIds) {
+		Query query = currentSession().getNamedQuery("testCase.findAllTestCasesIdsCallingTestCases");
+		query.setParameterList("testCasesIds", testCasesIds);
+		return query.list();
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<TestCase> findAllCallingTestCases(final long testCaseId, final PagingAndSorting sorting) {

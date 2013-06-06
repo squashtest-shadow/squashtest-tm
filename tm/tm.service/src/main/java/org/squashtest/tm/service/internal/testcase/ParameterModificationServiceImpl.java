@@ -30,10 +30,13 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepReader;
+import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
@@ -46,6 +49,9 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	
 	@Inject
 	private TestStepDao testStepDao;
+
+	@Inject
+	private DatasetDao datasetDao;
 	
 	@Inject
 	private TestCaseCallTreeFinder callTreeFinder;
@@ -102,9 +108,19 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	}
 	
 	private List<Long> getCallStepTree(Long testCaseId){
-	List<Long> testCaseIds = new ArrayList<Long>();
+		List<Long> testCaseIds = new ArrayList<Long>();
 		
 		for(Long id : this.callTreeFinder.getTestCaseCallTree(testCaseId)){
+			testCaseIds.add(id);
+		}
+		testCaseIds.add(testCaseId);
+		return testCaseIds;	
+	}
+	
+	private List<Long> getCallers(Long testCaseId){
+		List<Long> testCaseIds = new ArrayList<Long>();
+		
+		for(Long id : this.callTreeFinder.getTestCaseCallers(testCaseId)){
 			testCaseIds.add(id);
 		}
 		testCaseIds.add(testCaseId);
@@ -140,6 +156,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		parameter.setDescription("");
 		parameter.setTestCase(testCase);
 		this.persist(parameter);
+		updateDatasetsForParameterCreation(parameter, testCase.getId());
 		return parameter;
 	}
 
@@ -163,5 +180,36 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 			return builder.toString();
 		}
 
+	}
+
+	@Override
+	public boolean isUsed(long parameterId, long testCaseId) {
+		Parameter parameter = this.parameterDao.findById(parameterId);
+		return isUsed(parameter.getName(), testCaseId);
+	}
+
+	@Override
+	public boolean isUsed(String parameterName, long testCaseId) {
+		Parameter parameter = this.parameterDao.findParameterByNameAndTestCase(parameterName, testCaseId);
+		return parameter != null;
+	}
+	
+	
+	private void updateDatasetsForParameterCreation(Parameter parameter, long testCaseId){
+		
+		//get all test cases who call this test case
+		List<Long> testCaseIds = this.getCallers(testCaseId);
+		
+		//get all datasets for local test case or test case who call this test case
+		List<Dataset> datasets = datasetDao.findAllDatasetsByTestCases(testCaseIds);
+		
+		//add parameter entry to these datasets
+		for(Dataset dataset : datasets){
+			DatasetParamValue datasetParamValue = new DatasetParamValue();
+			datasetParamValue.setParameter(parameter);
+			datasetParamValue.setParamValue("");
+			dataset.addParameterValue(datasetParamValue);
+			this.datasetDao.persist(dataset);
+		}
 	}
 }

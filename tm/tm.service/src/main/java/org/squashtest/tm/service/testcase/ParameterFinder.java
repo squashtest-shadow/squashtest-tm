@@ -34,5 +34,9 @@ public interface ParameterFinder {
 	 * @param testCaseId
 	 * @return returns a list of parameters ordered by test case and name
 	 */
-	public List<Parameter> getAllforTestCase(long testCaseId);
+	List<Parameter> getAllforTestCase(long testCaseId);
+	
+	boolean isUsed(long parameterId, long testCaseId);
+	
+	boolean isUsed(String parameterName, long testCaseId);
 }

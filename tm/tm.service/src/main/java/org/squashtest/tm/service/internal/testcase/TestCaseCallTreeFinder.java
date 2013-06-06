@@ -67,7 +67,27 @@ public class TestCaseCallTreeFinder {
 		}
 
 		return calleesIds;
+	}
+	
+	public Set<Long> getTestCaseCallers(Long rootTcId) {
+		
+		Set<Long> callerIds = new HashSet<Long>();
+		List<Long> prevCallerIds = testCaseDao.findAllDistinctTestCasesIdsCallingTestCase(rootTcId);
+	
+		LOGGER.trace("TestCase #{} directly calls {}", prevCallerIds, rootTcId);
 
+		prevCallerIds.remove(rootTcId);// added to prevent infinite cycle in case of inconsistent data
+
+		while (!prevCallerIds.isEmpty()) {
+			// FIXME a tester avant correction : boucle infinie quand il y a un cycle dans les appels de cas de test
+			callerIds.addAll(prevCallerIds);
+			prevCallerIds = testCaseDao.findAllTestCasesIdsCallingTestCases(prevCallerIds);
+
+			LOGGER.trace("TestCase #{} indirectly calls {}", prevCallerIds, rootTcId);
+			prevCallerIds.remove(rootTcId);// added to prevent infinite cycle in case of inconsistent data
+		}
+
+		return callerIds;
 	}
 
 }

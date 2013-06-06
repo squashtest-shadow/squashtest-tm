@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,6 +31,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -58,6 +63,9 @@ public class Parameter implements Identified{
 	@ManyToOne
 	@JoinColumn(name = "TEST_CASE_ID", referencedColumnName = "TCLN_ID")
 	private TestCase testCase;
+	
+	@OneToMany(mappedBy="parameter", cascade={CascadeType.REMOVE})
+	private List<DatasetParamValue> datasetParamValues = new ArrayList<DatasetParamValue>();
 	
 	public Parameter(){
 		super();

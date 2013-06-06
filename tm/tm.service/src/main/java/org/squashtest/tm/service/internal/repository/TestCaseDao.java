@@ -40,4 +40,5 @@ public interface TestCaseDao extends CustomTestCaseDao {
 
 	List<Long> findAllDistinctTestCasesIdsCalledByTestCase(long testCaseId);
 
+	List<Long> findAllDistinctTestCasesIdsCallingTestCase(long testCaseId);
 }

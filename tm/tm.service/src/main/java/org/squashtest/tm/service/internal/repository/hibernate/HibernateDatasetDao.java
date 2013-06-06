@@ -37,11 +37,18 @@ public class HibernateDatasetDao implements CustomDatasetDao {
 	private SessionFactory sessionFactory;
 	
 	@Override
-	public List<Dataset> findAllDatasetByTestCase(Long testCaseId) {
+	public List<Dataset> findAllDatasetsByTestCase(Long testCaseId) {
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("Dataset.findAllDatasetByTestCase");
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("Dataset.findAllDatasetsByTestCase");
 		query.setParameter("testCaseId", testCaseId);
 		return (List<Dataset>) query.list();
 	}
 
+	@Override
+	public List<Dataset> findAllDatasetsByTestCases(List<Long> testCaseIds) {
+
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("Dataset.findAllDatasetsByTestCases");
+		query.setParameter("testCaseIds", testCaseIds);
+		return (List<Dataset>) query.list();
+	}
 }

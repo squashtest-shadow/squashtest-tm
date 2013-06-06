@@ -108,6 +108,9 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 */
 	List<Long> findAllTestCasesIdsCalledByTestCases(List<Long> testCasesIds);
 
+	List<Long> findAllTestCasesIdsCallingTestCases(List<Long> testCasesIds);
+
+	
 	/**
 	 * returns the test cases having at least one call test step referencing the given test case.
 	 * 

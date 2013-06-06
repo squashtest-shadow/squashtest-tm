@@ -76,7 +76,8 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepVisitor, Identified, HasExecutionStatus, DenormalizedFieldHolder {
 	
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
-	
+	private static final String PARAM_PATTERN = "(.*?)(\\Q${\\E(.*?)\\Q}\\E)(.*?)";
+	private static final String NO_PARAM = "&lt;no_param&gt;";
 	static {
 		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
 		set.add(ExecutionStatus.UNTESTABLE);
@@ -292,8 +293,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		
 		if(result != null){
 			
-			String paramPattern = "(.*?)(\\Q${\\E(.*?)\\Q}\\E)(.*?)";	
-		    Pattern pattern = Pattern.compile(paramPattern);
+		    Pattern pattern = Pattern.compile(PARAM_PATTERN);
 		    Matcher matcher = pattern.matcher(result);
 		        
 		    while(matcher.find()){ 
@@ -301,7 +301,10 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		    	String paramName = matcher.group(3);
 		    	if(dataset.containsKey(paramName) && dataset.get(paramName).length() > 0){
 		    		result = result.replace(paramChain, this.dataset.get(paramName));
+		    	} else if(dataset.get(paramName).length() == 0) {
+		    		result = result.replace(paramChain, NO_PARAM);
 		    	}
+		    	
 		    } 
 		}
 	    return result;

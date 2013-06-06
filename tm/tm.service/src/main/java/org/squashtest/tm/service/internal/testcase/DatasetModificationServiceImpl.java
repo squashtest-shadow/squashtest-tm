@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.testcase;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -28,6 +29,7 @@ import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
+import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 
@@ -40,12 +42,21 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	@Inject
 	private ParameterDao parameterDao;
 	
+	@Inject 
+	private DatasetParamValueDao datasetParamValueDao;
+	
 	@Override
 	public void persist(Dataset dataset) {
-		
 		datasetDao.persist(dataset);
+		persistParamValues(dataset.getParameterValues());
 	}
 
+	private void persistParamValues(Set<DatasetParamValue> paramValues){
+		for(DatasetParamValue paramValue : paramValues){
+			datasetParamValueDao.persist(paramValue);
+		}
+	}
+	
 	@Override
 	public void remove(Dataset dataset) {
 		this.datasetDao.delete(dataset);
@@ -80,6 +91,6 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	}
 	
 	public List<Dataset> getAllDatasetByTestCase(long testCaseId){
-		return this.datasetDao.findAllDatasetByTestCase(testCaseId);
+		return this.datasetDao.findAllDatasetsByTestCase(testCaseId);
 	}
 }
