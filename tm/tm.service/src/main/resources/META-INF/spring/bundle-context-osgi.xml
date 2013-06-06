@@ -127,7 +127,16 @@
       <value>org.squashtest.tm.service.testcase.TestStepModificationService</value>
     </osgi:interfaces>
   </osgi:service>
-
+  
+  <osgi:service ref="squashtest.tm.service.ParameterModificationService">
+    <osgi:interfaces>
+      <value>org.squashtest.tm.service.testcase.ParameterModificationService</value>
+      <value>org.squashtest.tm.service.testcase.ParameterFinder</value>
+    </osgi:interfaces>
+  </osgi:service>
+  
+  <osgi:service ref="squashtest.tm.service.DatasetModificationService" interface="org.squashtest.tm.service.testcase.DatasetModificationService"/>
+  
   <osgi:service ref="squashtest.tm.service.TestCaseLibraryNavigationService">
     <osgi:interfaces>
       <value>org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService</value>

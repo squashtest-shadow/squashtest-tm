@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "backbone", "./ParametersTable", "./NewParameterDialog",
+define([ "jquery", "backbone", "./ParametersTable.js", "./NewParameterDialog.js",
 		"jquery.squash.confirmdialog", "jquery.squash.togglepanel" ],
 		function($, Backbone, ParametersTable, NewParameterDialog) {
 			var teamMod = squashtm.app.teamMod;

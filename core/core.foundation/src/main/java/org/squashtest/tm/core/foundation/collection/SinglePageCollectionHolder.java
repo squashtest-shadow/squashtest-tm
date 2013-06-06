@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,18 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.core.foundation.collection;
 
-define([ "jquery", "backbone", "./ParametersPanel.js",	"./DatasetsPanel.js", "jquery.squash.confirmdialog" ],
-		function($, Backbone, ParametersPanel, DatasetsPanel) {
-			var ParametersTab = Backbone.View.extend({
-				el : "#parameters-tabs-panel",
-				
-				initialize : function() {
-				this.settings = this.options.settings;
-					this.parametersPanel = new ParametersPanel({settings : this.settings, parentTab : this});
-					this.datasetsPanel = new DatasetsPanel({settings : this.settings, parentTab : this});
-				},
-				events : {},
-			});
-			return ParametersTab;
-		});
+import java.util.Collection;
+
+public class SinglePageCollectionHolder <COLLECTION extends  Collection<?>> implements PagedCollectionHolder<COLLECTION>{
+	
+	private COLLECTION collection;
+
+	public SinglePageCollectionHolder(COLLECTION collection){
+		this.collection = collection;
+	}
+
+	@Override
+	public long getFirstItemIndex() {
+		return 0;
+	}
+
+	@Override
+	public long getTotalNumberOfItems() {
+		return this.collection.size();
+	}
+
+	@Override
+	public COLLECTION getPagedItems() {
+		return this.collection;
+	}
+
+}

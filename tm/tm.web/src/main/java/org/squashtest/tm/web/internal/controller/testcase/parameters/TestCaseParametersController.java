@@ -20,14 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,17 +38,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelper;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -58,6 +59,8 @@ import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 /**
+ * Controller to handle requests for parameters of a given test case.
+ * 
  * @author mpagnon
  * 
  */
@@ -67,26 +70,45 @@ public class TestCaseParametersController {
 	@Inject
 	private TestCaseFinder testCaseFinder;
 	@Inject
-	private PermissionEvaluationService permissionEvaluationService;
+	private ParameterModificationService parameterModificationService;
 
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
 
 	/**
 	 * 
 	 */
 	private static final String TEST_CASE = "testCase";
-
 	
-	@RequestMapping(value = "/panel")
-	public String getParameters(@PathVariable("testCaseId") long testCaseId, Model model) {
-		
+	/**
+	 * Will find all parameters concerned by the test case (directly and through call step) and return them as a list of {@link SimpleParameter} ordered by name.
+	 * 
+	 * @param testCaseId : the id of the concerned test case
+	 * @return the list of all parameters ordered by name as {@link SimpleParameter}s
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	@ResponseBody
+	public List<SimpleParameter> getParameters(@PathVariable("testCaseId") long testCaseId){
+		List<Parameter> parameters =  parameterModificationService.getAllforTestCase(testCaseId);
+		return SimpleParameter.convertToSimpleParameters(parameters);
+	}
+	
+	/**
+	 * Will return the test case's parameter tab on the test case view.
+	 * 
+	 * @param testCaseId
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/panel", method = RequestMethod.GET)
+	public String getParametersPanel(@PathVariable("testCaseId") long testCaseId, Model model) {
+
 		// the main entities
 		TestCase testCase = testCaseFinder.findById(testCaseId);
-		//TODO
-		List<Long> paramIds = IdentifiedUtil.extractIds(testCase.getParameters());
-		Set<Parameter> directAndCalledParameters = testCase.getParameters();
-		// end TODO
+		List<Parameter> directAndCalledParameters = parameterModificationService.getAllforTestCase(testCaseId);
+		List<Long> paramIds = IdentifiedUtil.extractIds(directAndCalledParameters);
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testCase);
-		List<AoColumnDef> columnDefs = new DatasetsTableColumnDefHelper().getAoColumnDefs(paramIds,editable);
+		List<AoColumnDef> columnDefs = new DatasetsTableColumnDefHelper().getAoColumnDefs(paramIds, editable);
 
 		// populate the model
 		model.addAttribute(TEST_CASE, testCase);
@@ -97,63 +119,124 @@ public class TestCaseParametersController {
 
 	}
 	
+	/**
+	 * Will return the data model for the DataTable of parameters in the parameter tab of the test case view.
+	 * 
+	 * @param testCaseId : the id of the viewed test case
+	 * @param params : the DataTable parameters
+	 * @param locale : the browser's locale
+	 * @return the parmeters tab view.
+	 */
 	@RequestMapping(method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
-	public DataTableModel getParametersTable(@PathVariable long testCaseId,
-			final DataTableDrawParameters params, final Locale locale) {
-		final TestCase testCase = testCaseFinder.findById(testCaseId);
-		Sorting sorting = new DataTableMapperPagingAndSortingAdapter(params,
-				parametersTableMapper);
-		//TODO REMOVE
-		new Parameter("name", testCase); 
-		new Parameter("name2", testCase);
-		//TODO CHANGE WITH METHOD THAT GETs Sorted Params
-		PagedCollectionHolder<List<Parameter>> holder = new PagedCollectionHolder<List<Parameter>>() {
-			
-			@Override
-			public long getTotalNumberOfItems() {
-				return testCase.getParameters().size();
-			}
-			
-			@Override
-			public List<Parameter> getPagedItems() {
-				return new ArrayList<Parameter>(testCase.getParameters());
-			}
-			
-			@Override
-			public long getFirstItemIndex() {
-				return 0;
-			}
-		};
+	public DataTableModel getParametersTable(@PathVariable long testCaseId, final DataTableDrawParameters params,
+			final Locale locale) {
+		List<Parameter> parameters = parameterModificationService.getAllforTestCase(testCaseId);
+		sortParams(params, parameters);
+		PagedCollectionHolder<List<Parameter>> holder = new SinglePageCollectionHolder<List<Parameter>>(parameters);
 
-		return new ParametersDataTableModelHelper().buildDataModel(
-				holder, params.getsEcho());
+		return new ParametersDataTableModelHelper().buildDataModel(holder, params.getsEcho());
 	}
 	
+	/**
+	 * will sort the given list of parameters according to the given params.
+	 * If params are not defined , will order by parameter name ascending.
+	 * 
+	 * @param params : the {@link DataTableDrawParameters}
+	 * @param parameters : a list of {@link Parameter}
+	 */
+	private void sortParams(final DataTableDrawParameters params, List<Parameter> parameters) {
+		Sorting sorting = new DataTableMapperPagingAndSortingAdapter(params, parametersTableMapper);
+		String sortedAttribute = sorting.getSortedAttribute();
+		SortOrder sortOrder = sorting.getSortOrder();
+		
+			if (sortedAttribute!=null && sortedAttribute.equals("Parameter.name")) {
+		
+				Collections.sort(parameters, new ParameterNameComparator(sortOrder));
+			} else if (sortedAttribute!=null && sortedAttribute.equals("TestCase.name")) {
+				Collections.sort(parameters, new ParameterTestCaseNameComparator(sortOrder));
+			}else{
+				Collections.sort(parameters, new ParameterNameComparator(SortOrder.ASCENDING));
+			}
+		
+	}
 	
+	/**
+	 * Will compare {@link Parameter} on their name in the given {@link SortOrder}
+	 * 
+	 * @author mpagnon
+	 *
+	 */
+	private class ParameterNameComparator implements Comparator<Parameter> {
+
+		private SortOrder sortOrder;
+
+		private ParameterNameComparator(SortOrder sortOrder) {
+			this.sortOrder = sortOrder;
+		}
+
+		@Override
+		public int compare(Parameter o1, Parameter o2) {
+			int ascResult = o1.getName().compareTo(o2.getName());
+			if (sortOrder.equals(SortOrder.ASCENDING)) {
+				return ascResult;
+			} else {
+				return -ascResult;
+			}
+		}
+
+	}
+	
+	/**
+	 * Will compare {@link Parameter} on their test case name in the given {@link SortOrder}.
+	 * The compared test case name is the one displayed in the parameter table on the test case view.
+	 * @see {@link ParametersDataTableModelHelper#buildTestCaseName(Parameter)}
+	 * 
+	 * @author mpagnon
+	 *
+	 */
+	private class ParameterTestCaseNameComparator implements Comparator<Parameter> {
+
+		private SortOrder sortOrder;
+
+		private ParameterTestCaseNameComparator(SortOrder sortOrder) {
+			this.sortOrder = sortOrder;
+		}
+
+		@Override
+		public int compare(Parameter o1, Parameter o2) {
+			int ascResult = ParametersDataTableModelHelper.buildTestCaseName(o1).compareTo(
+					ParametersDataTableModelHelper.buildTestCaseName(o2));
+			if (sortOrder.equals(SortOrder.ASCENDING)) {
+				return ascResult;
+			} else {
+				return -ascResult;
+			}
+		}
+
+	}
+
 	/**
 	 * Will add a new parameter to the test case
 	 * 
-	 * @param testCaseId : the id of the test case that will hold the new parameter
-	 * @param parameter : the parameter to add with it's set name and description
+	 * @param testCaseId
+	 *            : the id of the test case that will hold the new parameter
+	 * @param parameter
+	 *            : the parameter to add with it's set name and description
 	 */
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
-	public void newParameter(@PathVariable long testCaseId, @ModelAttribute("add-parameter") Parameter parameter) {
+	public void newParameter(@PathVariable long testCaseId,@Valid @ModelAttribute("add-parameter") Parameter parameter) {
 		TestCase testCase = testCaseFinder.findById(testCaseId);
 		parameter.setTestCase(testCase);
 		testCase.addParameter(parameter);
+		parameterModificationService.persist(parameter);
 	}
 
-	
-	
-	
-	
-	private DatatableMapper<String> parametersTableMapper = new NameBasedMapper(3)
-	.mapAttribute(Parameter.class, "id", String.class, DataTableModelHelper.DEFAULT_ENTITY_ID_KEY)
-	.mapAttribute(Parameter.class, "name", String.class, DataTableModelHelper.NAME_KEY)
-	.mapAttribute(TestCase.class, "name", String.class, "test-case-name");
-	
+	private DatatableMapper<String> parametersTableMapper = new NameBasedMapper(3).mapAttribute(Parameter.class,
+			"name", String.class, DataTableModelHelper.NAME_KEY).mapAttribute(TestCase.class, "name", String.class,
+			"test-case-name");
+
 	private static class ParametersDataTableModelHelper extends DataTableModelHelper<Parameter> {
 
 		private ParametersDataTableModelHelper() {
@@ -163,16 +246,8 @@ public class TestCaseParametersController {
 		@Override
 		public Map<String, Object> buildItemData(Parameter item) {
 			Map<String, Object> res = new HashMap<String, Object>();
-			TestCase testCase = item.getTestCase();
-			Project project = testCase.getProject();
-			String testCaseName = testCase.getName()+" ("+project.getName()+')';
-			if(testCase.getReference().length()>0){
-				testCaseName = testCase.getReference()+'-'+testCaseName;
-			}
-			
-			//TODO
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, 5L);
-			//res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
+			String testCaseName = buildTestCaseName(item);
+			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put(DataTableModelHelper.NAME_KEY, item.getName());
 			res.put("description", item.getDescription());
@@ -180,9 +255,22 @@ public class TestCaseParametersController {
 			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			return res;
 		}
-		
-		
+		/**
+		 * Will build the test case name for display in the table.
+		 * The name will be : tReference-tcName (tcProjectName)
+		 * @param item
+		 * @return
+		 */
+		private static String buildTestCaseName(Parameter item) {
+			TestCase testCase = item.getTestCase();
+			Project project = testCase.getProject();
+			String testCaseName = testCase.getName() + " (" + project.getName() + ')';
+			if (testCase.getReference().length() > 0) {
+				testCaseName = testCase.getReference() + '-' + testCaseName;
+			}
+			return testCaseName;
+		}
+
 	}
-	
 
 }

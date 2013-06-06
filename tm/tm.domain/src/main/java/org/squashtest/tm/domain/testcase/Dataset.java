@@ -32,6 +32,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -39,6 +41,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 
 @Entity
+@Table(uniqueConstraints={@UniqueConstraint(columnNames={"NAME","TEST_CASE_ID"})})
 public class Dataset implements Identified {
 
 	@Id
@@ -50,7 +53,7 @@ public class Dataset implements Identified {
 	@Size(min = 0, max = 255)
 	private String name;
 
-	@NotNull
+	
 	@ManyToOne
 	@JoinColumn(name = "TEST_CASE_ID", referencedColumnName = "TCLN_ID")
 	private TestCase testCase;
@@ -63,7 +66,7 @@ public class Dataset implements Identified {
 	public Dataset() {
 	}
 
-	public Dataset(String name, TestCase testCase) {
+	public Dataset(String name, @NotNull TestCase testCase) {
 		super();
 		this.name = name;
 		this.testCase = testCase;
@@ -82,7 +85,7 @@ public class Dataset implements Identified {
 		return testCase;
 	}
 
-	public void setTestCase(TestCase testCase) {
+	public void setTestCase(@NotNull TestCase testCase) {
 		this.testCase = testCase;
 	}
 

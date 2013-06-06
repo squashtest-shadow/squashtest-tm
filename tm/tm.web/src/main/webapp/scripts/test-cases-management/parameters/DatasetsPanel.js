@@ -19,10 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "backbone", "./DatasetsTable", "./NewDatasetDialog",
+define([ "jquery", "backbone", "./DatasetsTable.js", "./NewDatasetDialog.js",
 		"jquery.squash.confirmdialog", "jquery.squash.togglepanel" ],
 		function($, Backbone, DatasetsTable, NewDatasetDialog) {
-			var teamMod = squashtm.app.teamMod;
 			var DatasetsPanel = Backbone.View.extend({
 				
 				el : "#datasets-panel-container",
@@ -61,8 +60,7 @@ define([ "jquery", "backbone", "./DatasetsTable", "./NewDatasetDialog",
 					// to the toggle panel header.
 					// TODO change our way to make toggle panels buttons
 					// =============/toogle buttons===================
-					this.$("#add-dataset-button").on('click',
-							self.showNewDialog);
+					this.$("#add-dataset-button").on('click', self.showNewDialog);
 				},
 				
 				_showNewDialog : function(event) {

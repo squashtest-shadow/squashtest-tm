@@ -133,7 +133,7 @@
 							<th>#</th>
 							<th th:text="#{label.dataset}">Dataset</th>
 							<th th:each="param : ${directAndCalledParameters}"
-								th:text="${param.testCase.id == testCase.id}? ${param.testCase.name}:${param.testCase.name}+'_'+#{label.testCases.short}+${param.testCase.id}">param1</th>
+								th:text="${param.testCase.id == testCase.id}? ${param.name}:${param.name}+'_'+#{label.testCases.short}+${param.testCase.id}">param1</th>
 							<th></th>
 						</tr>
 					</thead>

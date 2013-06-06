@@ -33,7 +33,7 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 
 /**
- * Builds a {@link JsTreeNode} from a {@link TestCaseLibraryNode}. Can be reused in the same thread.
+ * Builds a {@link JsTreeNode} from a TestCaseLibraryNode. Can be reused in the same thread.
  *
  * @author Gregory Fouquet
  *

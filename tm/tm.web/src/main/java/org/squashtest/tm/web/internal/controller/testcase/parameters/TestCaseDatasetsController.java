@@ -21,28 +21,33 @@
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelper;
-import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -59,36 +64,47 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 public class TestCaseDatasetsController {
 	@Inject
 	private TestCaseFinder testCaseFinder;
-
+	@Inject 
+	private DatasetModificationService datasetModificationService;
 	@RequestMapping(method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getDatasetsTable(@PathVariable long testCaseId, final DataTableDrawParameters params,
 			final Locale locale) {
+		List<Dataset> datasetsList = getSortedDatasets(testCaseId, params);
+		PagedCollectionHolder<List<Dataset>> holder = new SinglePageCollectionHolder<List<Dataset>>(datasetsList);
+		return new DatasetsDataTableModelHelper().buildDataModel(holder, params.getsEcho());
+	}
+
+	private List<Dataset> getSortedDatasets(long testCaseId, final DataTableDrawParameters params) {
 		final TestCase testCase = testCaseFinder.findById(testCaseId);
 		Sorting sorting = new DataTableMapperPagingAndSortingAdapter(params, datasetsTableMapper);
-		// TODO REMOVE
-		new Dataset("name", testCase);
-		new Dataset("name2", testCase);
-		// TODO CHANGE WITH METHOD THAT GETs Sorted Params
-		PagedCollectionHolder<List<Dataset>> holder = new PagedCollectionHolder<List<Dataset>>() {
+		Set<Dataset> datasets = testCase.getDatasets();
+		List<Dataset> datasetsList = new ArrayList<Dataset>(datasets);
+		if (sorting.getSortedAttribute() != null && sorting.getSortedAttribute().equals("Parameter.name")) {
+			Collections.sort(datasetsList, new DatasetNameComparator(sorting.getSortOrder()));
+		}else{
+			Collections.sort(datasetsList, new DatasetNameComparator(SortOrder.ASCENDING));
+		}
+		return datasetsList;
+	}
 
-			@Override
-			public long getTotalNumberOfItems() {
-				return testCase.getParameters().size();
+	private class DatasetNameComparator implements Comparator<Dataset> {
+
+		private SortOrder sortOrder;
+
+		private DatasetNameComparator(SortOrder sortOrder) {
+			this.sortOrder = sortOrder;
+		}
+
+		@Override
+		public int compare(Dataset o1, Dataset o2) {
+			int ascResult = o1.getName().compareTo(o2.getName());
+			if(this.sortOrder.equals(SortOrder.ASCENDING)){
+				return ascResult;
+			}else{
+				return - ascResult;
 			}
-
-			@Override
-			public List<Dataset> getPagedItems() {
-				return new ArrayList<Dataset>(testCase.getDatasets());
-			}
-
-			@Override
-			public long getFirstItemIndex() {
-				return 0;
-			}
-		};
-
-		return new DatasetsDataTableModelHelper().buildDataModel(holder, params.getsEcho());
+		}
 	}
 
 	private DatatableMapper<String> datasetsTableMapper = new NameBasedMapper(3).mapAttribute(Dataset.class, "id",
@@ -104,9 +120,7 @@ public class TestCaseDatasetsController {
 		@Override
 		public Map<String, Object> buildItemData(Dataset item) {
 			Map<String, Object> res = new HashMap<String, Object>();
-			// TODO
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, 5L);
-			// res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
+			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put(DataTableModelHelper.NAME_KEY, item.getName());
 			for (DatasetParamValue parameterValue : item.getParameterValues()) {
@@ -117,6 +131,21 @@ public class TestCaseDatasetsController {
 		}
 
 	}
-
 	
+	/**
+	 * Will add a new dataset to the test case
+	 * 
+	 * @param testCaseId
+	 *            : the id of the test case that will hold the new dataset
+	 * @param dataset
+	 *            : the dataset to add with it's set name
+	 */
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	@ResponseBody
+	public void newDataset(@PathVariable long testCaseId,@Valid @ModelAttribute("add-dataset") Dataset dataset) {
+		TestCase testCase = testCaseFinder.findById(testCaseId);
+		dataset.setTestCase(testCase);
+		testCase.addDataset(dataset);
+		datasetModificationService.persist(dataset);
+	}
 }

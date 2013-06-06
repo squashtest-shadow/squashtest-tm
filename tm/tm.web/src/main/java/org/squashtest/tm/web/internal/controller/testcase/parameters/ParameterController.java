@@ -22,6 +22,8 @@ package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,8 +31,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
 
 /**
+ * Controller to handle requests on parameters regardless of their test case
+ * 
  * @author mpagnon
  * 
  */
@@ -39,6 +44,9 @@ import org.squashtest.tm.domain.testcase.Parameter;
 public class ParameterController {
 
 	private static final String PARAMETER_ID_URL = "/{parameterId}";
+	
+	@Inject
+	private ParameterModificationService parameterModificationService;
 
 	/**
 	 * returns whether the {@link Parameter} is used in a ActionTestStep of it's TestCase
@@ -60,7 +68,7 @@ public class ParameterController {
 	@RequestMapping(value = PARAMETER_ID_URL, method = RequestMethod.DELETE)
 	@ResponseBody
 	public void deleteParameter(@PathVariable long parameterId) {
-		// TODO
+		parameterModificationService.removeById(parameterId);
 	}
 	
 	/**
@@ -73,7 +81,7 @@ public class ParameterController {
 	@RequestMapping(value= PARAMETER_ID_URL+"/name", method = RequestMethod.POST, params = {VALUE})
 	@ResponseBody
 	public String changeName(@PathVariable long parameterId, @RequestParam(VALUE) String value){
-		//TODO
+		parameterModificationService.changeName(parameterId, value);
 		 return value;
 	}
 	
@@ -87,7 +95,7 @@ public class ParameterController {
 	@RequestMapping(value= PARAMETER_ID_URL+"/description", method = RequestMethod.POST, params = {VALUE})
 	@ResponseBody
 	public String changeDescription(@PathVariable long parameterId, @RequestParam(VALUE) String value){
-		//TODO
+		parameterModificationService.changeDescription(parameterId, value);
 		return value;
 	}
 }

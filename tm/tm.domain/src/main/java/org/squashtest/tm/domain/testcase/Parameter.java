@@ -59,7 +59,7 @@ public class Parameter implements Identified{
 	@Lob
 	private String description="";
 	
-	@NotNull
+	
 	@ManyToOne
 	@JoinColumn(name = "TEST_CASE_ID", referencedColumnName = "TCLN_ID")
 	private TestCase testCase;
@@ -71,7 +71,7 @@ public class Parameter implements Identified{
 		super();
 	}
 	
-	public Parameter(String name, TestCase testCase) {
+	public Parameter(String name,@NotNull TestCase testCase) {
 		super();
 		this.name = name;
 		this.testCase = testCase;
@@ -93,7 +93,7 @@ public class Parameter implements Identified{
 	public TestCase getTestCase() {
 		return testCase;
 	}
-	public void setTestCase(TestCase testCase) {
+	public void setTestCase(@NotNull TestCase testCase) {
 		this.testCase = testCase;
 	}
 	public Long getId() {

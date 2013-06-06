@@ -30,9 +30,10 @@ define(
 						initialize : function() {
 						this.settings = this.options.settings;
 							this.removeRowDataset = $.proxy(
-									this.removeRowDataset, this);											
+									this._removeRowDataset, this);											
 							this.confirmRemoveDataset = $.proxy(
 									this._confirmRemoveDataset, this);
+							this.removeDataset = $.proxy(this._removeDataset, this);
 							
 							this.refresh = $.proxy(this._refresh, this);
 							this.configureTable.call(this);
@@ -95,11 +96,11 @@ define(
 							var self = this;
 							var paramId = self.table.getODataId(row);
 							self.toDeleteId = paramId;
-							self.confirmRemoveParameterDialog.confirmDialog("open");
+							self.confirmRemoveDatasetDialog.confirmDialog("open");
 						},
 						
 
-						removeDataset : function() {
+						_removeDataset : function() {
 							var self = this;
 							var id = this.toDeleteId;					
 							$.ajax({
@@ -124,7 +125,7 @@ define(
 							
 						},
 
-						refresh : function() {
+						_refresh : function() {
 							this.table.fnDraw(false);
 							this.options.parentTab.trigger("datasets.table.refresh");
 						}

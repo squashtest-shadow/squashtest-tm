@@ -24,20 +24,26 @@ define(
 			var NewDatasetDialog = Backbone.View
 					.extend({
 						el : "#add-dataset-dialog",
-						
+						paramInputIdPrefix : "add-dataset-paramValue-",
+						paramRowClass : "parameterRow",
 						initialize : function() {
 							this.settings = this.options.settings;
 							var self = this;
+							this.getAndAddParamterInputs = $.proxy(this._getAndAddParamterInputs, this);
+							this.addParamterInputs = $.proxy(this._addParamterInputs, this);
+							this.removeParameterInputs = $.proxy(this._removeParameterInputs, this);
+						
+							//add parameter value inputs
+							this.getAndAddParamterInputs();
 							
-							// called on self methods
-							
-							//initialize popup							
+							//initialize popup
 							this.$el.find("input:text").val("");
 							$("span.error-message", $(self.el)).text("");
 
 							this.$el.confirmDialog({
 								autoOpen : true
 							});
+							
 						},
 						
 						events : {
@@ -45,6 +51,7 @@ define(
 							"confirmdialogvalidate" : "validate",
 							"confirmdialogconfirm" : "confirm"
 						},
+						
 						
 						cancel : function(event) {
 							this.cleanup();
@@ -77,10 +84,58 @@ define(
 
 							return res;
 						},
-
+						
+						
+						_getAndAddParamterInputs : function(){
+							var self = this;
+							
+							 
+							 $.ajax({
+								url: self.settings.basic.testCaseUrl +"/parameters",
+								type: "get"
+							 }).done(self.addParamterInputs);
+							 
+						 
+						},
+						
+						_addParamterInputs : function(json){
+							var self = this;
+							var content = this.$("table.form-horizontal > tbody");
+							
+							var newTemplate = function(param){
+								var row = $("<tr/>", {'class':'control-group '+self.paramRowClass});
+								//label
+								var labelCell = $("<td/>");
+								var label = $("<label/>", {'class':'control-label', 'for':self.paramInputIdPrefix+param.id});
+								label.text(param.name);
+								labelCell.append(label);
+								row.append(labelCell);
+								//input
+								var inputCell = $("<td/>",{'class':'controls'});
+								var input =  $("<input/>", {
+											'type' : 'text',
+											'class' : 'paramValue',
+											'id': self.paramInputIdPrefix + param.id
+										});			
+								inputCell.append(input);
+								row.append(inputCell);
+								content.append(row);
+							};								
+							for(var i=0; i< json.length; i++){
+							 var row = newTemplate(json[i]);
+							}
+							
+						},
+						
+						_removeParameterInputs : function(){
+							var selector = "tr."+this.paramRowClass;
+							this.$(selector).remove();
+						},
 						cleanup : function() {
 							this.$el.addClass("not-displayed");
+							this.model = {name :""};
 							Forms.form(this.$el).clearState();
+							this.removeParameterInputs();
 							this.$el.confirmDialog("destroy");
 						},
 
