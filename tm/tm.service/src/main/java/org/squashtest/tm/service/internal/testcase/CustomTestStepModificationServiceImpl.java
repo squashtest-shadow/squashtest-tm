@@ -46,6 +46,7 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.CustomTestStepModificationService;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
 
 /**
  * Implementations for (non dynamically generated) testStep modification services.
@@ -63,7 +64,8 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 	private TestStepDao testStepDao;
 	@Inject
 	private CustomFieldValueManagerService cufValueService;
-
+	@Inject
+	private ParameterModificationService parameterModificationService;
 	/**
 	 * @see CustomTestStepModificationService#updateTestStep(Long, String, String, Map)
 	 */
@@ -71,6 +73,7 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 	public void updateTestStep(Long testStepId, String action, String expectedResult, Map<Long, String> cufValues) {
 		List<DomainException> exceptions = new ArrayList<DomainException>();
 		TestStep step = testStepDao.findById(testStepId);
+		parameterModificationService.checkForParamsInStep(testStepId);
 		updateCufValues(step, cufValues, exceptions);
 		updateNonCustomFields(action, expectedResult, exceptions, step);
 		if (!exceptions.isEmpty()) {

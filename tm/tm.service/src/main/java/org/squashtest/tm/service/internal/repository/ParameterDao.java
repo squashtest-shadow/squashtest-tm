@@ -24,9 +24,8 @@ import java.util.List;
 
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
-import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.TestCase;
+
 
 @DynamicDao(entity = Parameter.class)
 public interface ParameterDao extends CustomParameterDao {

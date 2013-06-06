@@ -59,6 +59,7 @@ import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
 /**
@@ -103,6 +104,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestCaseCallTreeFinder callTreeFinder;
+	
+	@Inject
+	private ParameterModificationService parameterModificationService;
+	
 	/* *************** TestCase section ***************************** */
 
 	@Override
@@ -132,7 +137,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		// will throw a nasty NullPointerException if the parent test case can't
 		// be found
 		parentTestCase.addStep(newTestStep);
-
+		parameterModificationService.checkForParamsInStep(newTestStep.getId());
 		customFieldValuesService.createAllCustomFieldValues(newTestStep);
 		return newTestStep;
 	}
