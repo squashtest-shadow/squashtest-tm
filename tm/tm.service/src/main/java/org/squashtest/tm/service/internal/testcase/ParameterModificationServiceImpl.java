@@ -47,10 +47,21 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	
 	@Inject
 	private TestStepDao testStepDao;
-
+	
+	@Inject
+	private TestCaseCallTreeFinder callTreeFinder;
+	
 	@Override
 	public List<Parameter> getAllforTestCase(long testCaseId) {
-		return parameterDao.findAllByTestCase(testCaseId);
+		
+		List<Long> testCaseIds = new ArrayList<Long>();
+		
+		for(Long id : this.callTreeFinder.getTestCaseCallTree(testCaseId)){
+			testCaseIds.add(id);
+		}
+		testCaseIds.add(testCaseId);
+		
+		return parameterDao.findAllByTestCases(testCaseIds);
 	}
 	
 	@Override
