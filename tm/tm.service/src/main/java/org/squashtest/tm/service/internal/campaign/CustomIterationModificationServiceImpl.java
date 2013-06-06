@@ -28,6 +28,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
@@ -49,6 +50,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -341,11 +343,11 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 
 		testCaseCyclicCallChecker.checkNoCyclicCall(item.getReferencedTestCase());
-		
-		//if passes, let's move to the next step
-		
+
+		// if passes, let's move to the next step
+
 		Execution execution = item.createExecution();
-		
+
 		// if we don't persist before we add, add will trigger an update of item.testPlan which fail because execution
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
 		executionDao.persist(execution);
@@ -362,9 +364,10 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		for (ExecutionStep step : execution.getSteps()) {
 			TestStep sourceStep = step.getReferencedTestStep();
 			if (stepIsFromSameProjectAsTC(sourceTC, (ActionTestStep) sourceStep)) {
-				denormalizedFieldValueService.createAllDenormalizedFieldValues((ActionTestStep)sourceStep, step);
+				denormalizedFieldValueService.createAllDenormalizedFieldValues((ActionTestStep) sourceStep, step);
 			} else {
-				denormalizedFieldValueService.createAllDenormalizedFieldValues((ActionTestStep)sourceStep, step, sourceTC.getProject());
+				denormalizedFieldValueService.createAllDenormalizedFieldValues((ActionTestStep) sourceStep, step,
+						sourceTC.getProject());
 			}
 		}
 
@@ -434,11 +437,10 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	private boolean hasToBeReturned(IterationTestPlanItem testPlanItem, String userLogin) {
-
 		boolean hasToBeReturned = false;
+		User testPlanUser = testPlanItem.getUser();
 
-		if (testPlanItem.getUser() != null && (testPlanItem.getUser().getLogin() == userLogin)) {
-
+		if (testPlanUser != null && StringUtils.equals(testPlanUser.getLogin(), userLogin)) {
 			hasToBeReturned = true;
 		}
 

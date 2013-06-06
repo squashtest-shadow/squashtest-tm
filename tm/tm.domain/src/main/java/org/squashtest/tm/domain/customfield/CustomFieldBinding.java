@@ -175,8 +175,8 @@ public class CustomFieldBinding {
 		
 		private void moveCarelessly(List<Long> ids, int newIndex){
 			
-			Set<Long> _targetIds = new HashSet<Long>(ids);
-			LinkedList<CustomFieldBinding> _removed = new LinkedList<CustomFieldBinding>();
+			Set<Long> targetIds = new HashSet<Long>(ids);
+			LinkedList<CustomFieldBinding> removed = new LinkedList<CustomFieldBinding>();
 			
 			ListIterator<CustomFieldBinding> iterator = this.listIterator();
 			
@@ -187,16 +187,16 @@ public class CustomFieldBinding {
 				
 				//if the id matches, the current binding moves from the current list to the list of removed binding
 				//then remove the id from the target id set
-				if (_targetIds.contains(id)){
-					_removed.add(binding);
+				if (targetIds.contains(id)){
+					removed.add(binding);
 					iterator.remove();
-					_targetIds.remove(id);
+					targetIds.remove(id);
 				}
 				
 			}
 			
 			//now we reinsert the removed entities to their new position
-			this.addAll(newIndex, _removed);
+			this.addAll(newIndex, removed);
 		}
 		
 		private void reindex(){

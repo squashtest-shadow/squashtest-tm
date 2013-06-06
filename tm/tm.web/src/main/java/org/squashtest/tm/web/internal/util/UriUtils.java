@@ -28,7 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UriUtils {
+public final class UriUtils {
+	private UriUtils() {
+		super();
+	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UriUtils.class);
 	

@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -35,6 +36,7 @@ import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
@@ -50,7 +52,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 
 	@Inject
 	private TestSuiteDao testSuiteDao;
-	
+
 	@Inject
 	private AutomatedSuiteDao autoSuiteDao;
 
@@ -59,18 +61,17 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 
 	@Inject
 	private ExecutionDao executionDao;
-	
+
 	@Inject
 	private ProjectsPermissionFinder projectsPermissionFinder;
 
 	@Inject
 	private UserAccountService userService;
-	
-	
-	public void setUserAccountService(UserAccountService service){
-		this.userService=service;
+
+	public void setUserAccountService(UserAccountService service) {
+		this.userService = service;
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void rename(long suiteId, String newName) throws DuplicateNameException {
@@ -87,11 +88,11 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 		TestSuite suite = testSuiteDao.findById(suiteId);
 		suite.bindTestPlanItemsById(itemTestPlanIds);
 	}
-	
+
 	@Override()
-	public void bindTestPlanToMultipleSuites(List<Long> suiteIds, List<Long> itemTestPlanIds){
-		
-		for(Long id : suiteIds){
+	public void bindTestPlanToMultipleSuites(List<Long> suiteIds, List<Long> itemTestPlanIds) {
+
+		for (Long id : suiteIds) {
 			bindTestPlan(id, itemTestPlanIds);
 		}
 	}
@@ -104,13 +105,13 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	}
 
 	@Override()
-	public void bindTestPlanToMultipleSuitesObj(List<TestSuite> testSuites, List<IterationTestPlanItem> itemTestPlans){
-		
-		for(TestSuite suite : testSuites){
+	public void bindTestPlanToMultipleSuitesObj(List<TestSuite> testSuites, List<IterationTestPlanItem> itemTestPlans) {
+
+		for (TestSuite suite : testSuites) {
 			bindTestPlanObj(suite, itemTestPlans);
 		}
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#testSuite, 'LINK') or hasRole('ROLE_ADMIN')")
 	public void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
@@ -132,9 +133,9 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 
 		Long projectId = testSuiteDao.findById(suiteId).getProject().getId();
 		String userLogin = userService.findCurrentUser().getLogin();
-				
+
 		List<IterationTestPlanItem> filteredTestPlan = this.filterTestSuiteByUser(testPlan, userLogin, projectId);
-		
+
 		long count = testSuiteDao.countTestPlanItems(suiteId);
 
 		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>>(paging, count, filteredTestPlan);
@@ -157,47 +158,48 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 		suite.reorderTestPlan(newIndex, items);
 	}
 
-	@Override	
+	@Override
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public AutomatedSuite createAutomatedSuite(long suiteId) {
-				
+
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
 		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
-		
+
 		List<IterationTestPlanItem> items = testSuite.getTestPlan();
-		
-		for (IterationTestPlanItem item : items){
-			if (item.isAutomated()){
+
+		for (IterationTestPlanItem item : items) {
+			if (item.isAutomated()) {
 				Execution exec = addAutomatedExecution(item);
 				newSuite.addExtender(exec.getAutomatedExecutionExtender());
 			}
 		}
-		
+
 		return newSuite;
 	}
-	
-	//TODO merge code with IterationModificationService.addAutomatedExecution
+
+	// TODO merge code with IterationModificationService.addAutomatedExecution
 	private Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
-		
+
 		Execution execution = item.createAutomatedExecution();
-		
+
 		executionDao.persist(execution);
 		item.addExecution(execution);
-		
+
 		return execution;
-		
+
 	}
 
-	public List<IterationTestPlanItem> filterTestSuiteByUser(List<IterationTestPlanItem> testPlanItems, String userLogin, Long projectId) {
+	public List<IterationTestPlanItem> filterTestSuiteByUser(List<IterationTestPlanItem> testPlanItems,
+			String userLogin, Long projectId) {
 
 		List<IterationTestPlanItem> testPlanItemsToReturn = new ArrayList<IterationTestPlanItem>();
-		
-		if(projectsPermissionFinder.isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")){
-			
-			for(IterationTestPlanItem testPlanItem: testPlanItems){
-					
-				if(hasToBeReturned(testPlanItem,userLogin)){
+
+		if (projectsPermissionFinder.isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")) {
+
+			for (IterationTestPlanItem testPlanItem : testPlanItems) {
+
+				if (hasToBeReturned(testPlanItem, userLogin)) {
 					testPlanItemsToReturn.add(testPlanItem);
 				}
 			}
@@ -208,15 +210,17 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 		return testPlanItemsToReturn;
 	}
 
-	private boolean hasToBeReturned(IterationTestPlanItem testPlanItem, String userLogin){
-		
+	// TODO this is copypasta from CustomIterationModificationServiceImpl
+	private boolean hasToBeReturned(IterationTestPlanItem testPlanItem, String userLogin) {
+
 		boolean hasToBeReturned = false;
 		
-		if(testPlanItem.getUser() != null && (testPlanItem.getUser().getLogin()==userLogin)){
-		
+		User testPlanUser = testPlanItem.getUser(); 
+
+		if (testPlanUser != null && StringUtils.equals(testPlanUser.getLogin(), userLogin)) {
 			hasToBeReturned = true;
 		}
-		
+
 		return hasToBeReturned;
-	}	
+	}
 }

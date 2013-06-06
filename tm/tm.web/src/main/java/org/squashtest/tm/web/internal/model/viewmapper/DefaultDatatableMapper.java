@@ -26,76 +26,65 @@ import java.util.Map;
 public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 
 	private Map<KEY, AttributeRegister<KEY>> attributesMap;
-	
-	public DefaultDatatableMapper(){
+
+	public DefaultDatatableMapper() {
 		super();
 		attributesMap = new HashMap<KEY, AttributeRegister<KEY>>();
 	}
-	
-	public DefaultDatatableMapper(int initialCapacity){
+
+	public DefaultDatatableMapper(int initialCapacity) {
 		super();
 		attributesMap = new HashMap<KEY, AttributeRegister<KEY>>(initialCapacity);
 	}
 
 	@Override
 	public DatatableMapper<KEY> mapAttribute(Class<?> ownerType, String attributeName, Class<?> attributeType, KEY key) {
-		AttributeRegister<KEY> register = new AttributeRegister<KEY>(ownerType, attributeName, attributeType, key);
+		AttributeRegister<KEY> register = new AttributeRegister<KEY>(ownerType, attributeName);
 		attributesMap.put(key, register);
 		return this;
 	}
-	
-	
+
 	@Override
 	public String attrAt(KEY key) {
 		AttributeRegister<KEY> reg = attributesMap.get(key);
-		if (reg!=null){
+		if (reg != null) {
 			return reg.getAttributeName();
-		}
-		else{
+		} else {
 			return null;
 		}
 	}
 
 	@Override
-	public String pathAt(KEY key) {		
+	public String pathAt(KEY key) {
 		AttributeRegister<KEY> reg = attributesMap.get(key);
-		if (reg!=null){
+		if (reg != null) {
 			return reg.getAttributePath();
-		}
-		else{
+		} else {
 			return null;
 		}
 	}
 
-	
 	/* ******************** utilities ************************** */
 
 	private static final class AttributeRegister<KEY> {
-		
-		private String attributeName; 
-		
-		private Class<?> ownerType;
-		
-		private Class<?> attributeType; 
-		
-		private KEY attributeKey;
 
-		AttributeRegister(Class<?> ownerType, String attributeName, 
-				Class<?> attributeType, KEY attributeKey) {
+		private String attributeName;
+
+		private Class<?> ownerType;
+
+		public AttributeRegister(Class<?> ownerType, String attributeName) {
 			super();
 			this.attributeName = attributeName;
 			this.ownerType = ownerType;
-			this.attributeType = attributeType;
-			this.attributeKey = attributeKey;
 		}
 
 		public String getAttributeName() {
 			return attributeName;
 		}
 
-		public String getAttributePath(){
-			return ownerType.getSimpleName()+"."+attributeName;
+		public String getAttributePath() {
+			return ownerType.getSimpleName() + "." + attributeName;
 		}
 	}
-		
+
 }

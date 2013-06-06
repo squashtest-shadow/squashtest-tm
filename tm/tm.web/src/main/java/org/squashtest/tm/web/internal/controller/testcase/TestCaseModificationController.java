@@ -131,8 +131,7 @@ public class TestCaseModificationController {
 
 	private final DatatableMapper<Integer> execsTableMapper = new IndexBasedMapper(11)
 			.mapAttribute(Project.class, NAME, String.class, 1).mapAttribute(Campaign.class, NAME, String.class, 2)
-			.mapAttribute(Iteration.class, NAME, String.class, 3)
-			.mapAttribute(Execution.class, NAME, String.class, 4)
+			.mapAttribute(Iteration.class, NAME, String.class, 3).mapAttribute(Execution.class, NAME, String.class, 4)
 			.mapAttribute(Execution.class, "executionMode", TestCaseExecutionMode.class, 5)
 			.mapAttribute(TestSuite.class, NAME, String.class, 6)
 			.mapAttribute(Execution.class, "executionStatus", ExecutionStatus.class, 8)
@@ -165,7 +164,7 @@ public class TestCaseModificationController {
 
 	@Inject
 	private CustomFieldHelperService cufHelperService;
-	
+
 	@Inject
 	private CustomFieldJsonConverter converter;
 
@@ -328,7 +327,7 @@ public class TestCaseModificationController {
 		// cufs
 		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(holder.getFilteredCollection())
 				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
-		
+
 		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
 
 		// generate the model
@@ -668,7 +667,7 @@ public class TestCaseModificationController {
 	 * @param testCaseId
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.GET, params="format=printable")
+	@RequestMapping(method = RequestMethod.GET, params = "format=printable")
 	public ModelAndView showPrintableTestCase(@PathVariable long testCaseId, Locale locale) {
 		LOGGER.debug("get printable test case");
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
@@ -717,23 +716,7 @@ public class TestCaseModificationController {
 		mav.addObject("testCaseCufValues", customFieldValues);
 
 		// ================= EXECUTIONS
-		Paging paging = new Paging() {
-
-			@Override
-			public boolean shouldDisplayAll() {
-				return true;
-			}
-
-			@Override
-			public int getPageSize() {
-				return 0;
-			}
-
-			@Override
-			public int getFirstItemIndex() {
-				return 0;
-			}
-		};
+		Paging paging = createSinglePagePaging();
 		List<Execution> executions = executionFinder.findAllByTestCaseIdOrderByRunDate(testCaseId, paging);
 		mav.addObject("execs", executions);
 
@@ -765,6 +748,31 @@ public class TestCaseModificationController {
 		return mav;
 	}
 
+	/**
+	 * Creates a paging which shows all entries on a single page.
+	 * 
+	 * @return
+	 */
+	private Paging createSinglePagePaging() {
+		return new Paging() {
+
+			@Override
+			public boolean shouldDisplayAll() {
+				return true;
+			}
+
+			@Override
+			public int getPageSize() {
+				return 0;
+			}
+
+			@Override
+			public int getFirstItemIndex() {
+				return 0;
+			}
+		};
+	}
+
 	public class DecoratedIssueOwnership {
 		private IssueOwnership<RemoteIssueDecorator> ownership;
 		private String ownerDesc;
@@ -784,11 +792,10 @@ public class TestCaseModificationController {
 		}
 
 	}
-	
-	
-	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields){
+
+	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {
 		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(customFields.size());
-		for (CustomField field : customFields){
+		for (CustomField field : customFields) {
 			models.add(converter.toJson(field));
 		}
 		return models;
