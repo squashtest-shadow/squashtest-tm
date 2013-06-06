@@ -152,12 +152,6 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		return model;
 	}
 
-	
-	@ExceptionHandler(BindException.class)
-	public @ResponseBody
-	Serializable handleValidationException(BindException ex) {
-		return ex;
-	}
 
 	/**
 	 * Returns the logical name of the page which shows the library
