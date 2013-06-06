@@ -26,10 +26,12 @@ import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.library.GenericNodeManagementService
+import org.squashtest.tm.service.internal.repository.ParameterDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.testcase.CustomTestCaseModificationServiceImpl
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler
+import org.squashtest.tm.service.testcase.ParameterModificationService;
 
 import spock.lang.Specification
 
@@ -37,10 +39,12 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	CustomTestCaseModificationServiceImpl service = new CustomTestCaseModificationServiceImpl()
 	TestCaseDao testCaseDao = Mock()
 	TestStepDao testStepDao = Mock()
+	ParameterDao parameterDao = Mock()
 	GenericNodeManagementService testCaseManagementService = Mock()
 	TestCaseNodeDeletionHandler deletionHandler = Mock()
 	PrivateCustomFieldValueService cufValuesService = Mock()
-
+	ParameterModificationService parameterModificationService = Mock()
+	
 	def setup() {
 		CollectionAssertions.declareContainsExactlyIds()
 		CollectionAssertions.declareContainsExactly()
@@ -50,15 +54,16 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.testCaseManagementService = testCaseManagementService
 		service.deletionHandler = deletionHandler
 		service.customFieldValuesService = cufValuesService
+		service.parameterModificationService = parameterModificationService
 	}
 
 	def "should find test case and add a step"() {
 		given:
-		def testCase = new TestCase()
+		def testCase = new MockTC(3L, "tc1")
 		testCaseDao.findById(10) >> testCase
 
 		and:
-		def step = new ActionTestStep()
+		def step = new MockActionStep(4L) 
 
 		when:
 		service.addActionTestStep(10, step)
@@ -141,5 +146,36 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.removeAutomation(11L)
 		
 		then : 1 * testCase.removeAutomatedScript()
+	}
+	
+	class MockTC extends TestCase{
+		Long overId;
+		MockTC(Long id){
+			overId = id;
+			name="don't care"
+		}
+		MockTC(Long id, String name){
+			this(id);
+			this.name=name;
+		}
+		public Long getId(){
+			return overId;
+		}
+		public void setId(Long newId){
+			overId=newId;
+		}
+	}
+	
+	class MockActionStep extends ActionTestStep{
+		Long overId;
+		MockActionStep(Long id){
+			overId = id;
+		}
+		public Long getId(){
+			return overId;
+		}
+		public void setId(Long newId){
+			overId=newId;
+		}
 	}
 }

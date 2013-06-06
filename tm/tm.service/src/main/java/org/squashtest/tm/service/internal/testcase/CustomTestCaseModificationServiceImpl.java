@@ -137,8 +137,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		// will throw a nasty NullPointerException if the parent test case can't
 		// be found
 		parentTestCase.addStep(newTestStep);
-		parameterModificationService.checkForParamsInStep(newTestStep.getId());
 		customFieldValuesService.createAllCustomFieldValues(newTestStep);
+		parameterModificationService.checkForParamsInStep(newTestStep.getId());
 		return newTestStep;
 	}
 
