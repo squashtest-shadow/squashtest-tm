@@ -64,7 +64,6 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	@JoinTable(name = "VERIFYING_STEPS", joinColumns = @JoinColumn(name = "TEST_STEP_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "REQUIREMENT_VERSION_COVERAGE_ID", updatable = false, insertable = false))
 	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<RequirementVersionCoverage>(0);
 
-	
 	public ActionTestStep() {
 		super();
 	}
@@ -124,9 +123,9 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	}
 
 	@Override
-	public List<ExecutionStep> createExecutionSteps() {
+	public List<ExecutionStep> createExecutionSteps(Dataset dataset) {
 		List<ExecutionStep> returnList = new ArrayList<ExecutionStep>(1);
-		ExecutionStep exec = new ExecutionStep(this);		
+		ExecutionStep exec = new ExecutionStep(this, dataset);		
 		returnList.add(exec);
 		return returnList;
 	}

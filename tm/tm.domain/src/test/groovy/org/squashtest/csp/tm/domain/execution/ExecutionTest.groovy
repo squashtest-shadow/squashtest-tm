@@ -42,9 +42,9 @@ class ExecutionTest extends Specification {
 		ActionTestStep ts3 = new ActionTestStep(action:"action3",expectedResult:"result3")
 
 		when :
-		ExecutionStep exs1 = new ExecutionStep(ts1)
-		ExecutionStep exs2 = new ExecutionStep(ts2)
-		ExecutionStep exs3 = new ExecutionStep(ts3)
+		ExecutionStep exs1 = new ExecutionStep(ts1, null)
+		ExecutionStep exs2 = new ExecutionStep(ts2, null)
+		ExecutionStep exs3 = new ExecutionStep(ts3, null)
 
 		execution.addStep(exs1)
 		execution.addStep(exs2)

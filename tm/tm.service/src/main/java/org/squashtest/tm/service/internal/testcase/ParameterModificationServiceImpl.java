@@ -114,13 +114,14 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	private List<String> parseStepContent(String content){
 		
 		List<String> paramNames = new ArrayList<String>();
-		String paramPattern = "(.*?)*$\\{(.*?)\\}.*?";
+		String paramPattern = "(.*?)(\\Q${\\E(.*?)\\Q}\\E)(.*?)";
+		
 		
         Pattern pattern = Pattern.compile(paramPattern);
         Matcher matcher = pattern.matcher(content);
         
         while(matcher.find()){ 
-        	paramNames.add(matcher.group(2)); 
+        	paramNames.add(matcher.group(3)); 
         } 
         return paramNames;
 	}

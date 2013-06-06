@@ -69,6 +69,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -206,11 +207,15 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	 * @param testPlanItem
 	 */
 	public Execution(TestCase testCase) {
-		setReferencedTestCase(testCase);
-		populateSteps();
-		populateAttachments();
+		this(testCase, new Dataset());
 	}
 
+	public Execution(TestCase testCase, Dataset dataset) {
+		setReferencedTestCase(testCase);
+		populateSteps(dataset);
+		populateAttachments();
+	}
+	
 	private void populateAttachments() {
 		for (Attachment tcAttach : referencedTestCase.getAllAttachments()) {
 			Attachment clone = tcAttach.hardCopy();
@@ -218,9 +223,9 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		}
 	}
 
-	private void populateSteps() {
+	private void populateSteps(Dataset dataset) {
 		for (TestStep step : referencedTestCase.getSteps()) {
-			List<ExecutionStep> execList = step.createExecutionSteps();
+			List<ExecutionStep> execList = step.createExecutionSteps(dataset);
 			for (ExecutionStep executionStep : execList) {
 				addStep(executionStep);
 			}

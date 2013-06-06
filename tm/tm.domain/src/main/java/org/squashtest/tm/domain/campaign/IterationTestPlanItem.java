@@ -239,8 +239,14 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 	public Execution createExecution()	throws TestPlanItemNotExecutableException {
 		
 		checkExecutable();
-
-		Execution newExecution = new Execution(referencedTestCase);
+		Execution newExecution = null;
+		
+		if(this.referencedDataset != null){
+			newExecution = new Execution(referencedTestCase, referencedDataset);
+		} else {
+			newExecution = new Execution(referencedTestCase);
+		}
+		
 
 		return newExecution;
 	}

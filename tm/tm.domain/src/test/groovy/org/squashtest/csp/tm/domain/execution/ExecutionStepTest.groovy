@@ -33,7 +33,7 @@ class ExecutionStepTest extends Specification {
 		Attachment attach1 = new Attachment("name")
 		actionStep.attachmentList.addAttachment(attach1)
 		when:
-		ExecutionStep execStep = new ExecutionStep(actionStep)
+		ExecutionStep execStep = new ExecutionStep(actionStep, null)
 
 		then:
 		execStep.action == actionStep.action

@@ -106,6 +106,6 @@ public abstract class TestStep {
 	
 	public abstract String accept(TestStepReader reader);
 	
-	public abstract List<ExecutionStep> createExecutionSteps();
+	public abstract List<ExecutionStep> createExecutionSteps(Dataset dataset);
 	
 }

@@ -20,12 +20,17 @@
  */
 package org.squashtest.tm.domain.execution;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -59,6 +64,8 @@ import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
@@ -126,6 +133,8 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	@JoinColumn(name = "ISSUE_LIST_ID")
 	private IssueList issueList = new IssueList();
 
+	private Map<String, String> dataset = new HashMap<String,String>();
+	
 	/**
 	 * Hibernate needs this.
 	 */
@@ -133,15 +142,30 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		super();
 	}
 
-	public ExecutionStep(ActionTestStep testStep) {
+	public ExecutionStep(ActionTestStep testStep){
+		this(testStep, null);
+	}
+	
+	public ExecutionStep(ActionTestStep testStep, Dataset dataset) {
 		testStep.accept(this);
 		referencedTestStep = testStep;
+		fillParameterMap(dataset); 
 		for (Attachment actionStepAttach : testStep.getAllAttachments()) {
 			Attachment clone = actionStepAttach.hardCopy();
 			attachmentList.addAttachment(clone);
 		}
 	}
-
+	
+	private void fillParameterMap(Dataset dataset){
+		if(dataset != null){
+			for(DatasetParamValue param : dataset.getParameterValues()){
+				String key = param.getParameter().getName();
+				String value = param.getParamValue();
+				this.dataset.put(key, value);
+			}
+		}
+	}
+	
 	public TestStep getReferencedTestStep() {
 		return referencedTestStep;
 	}
@@ -254,10 +278,33 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	
 	@Override
 	public void visit(ActionTestStep visited) {
-		action = visited.getAction();
-		expectedResult = visited.getExpectedResult();
+		String originalAction = visited.getAction();
+		String originalExpectedResult = visited.getExpectedResult();
+		action = valueParams(originalAction);
+		expectedResult = valueParams(originalExpectedResult);
 	}
 
+	private String valueParams(String content){
+		
+		String result = content;
+		
+		if(result != null){
+			
+			String paramPattern = "(.*?)(\\Q${\\E(.*?)\\Q}\\E)(.*?)";	
+		    Pattern pattern = Pattern.compile(paramPattern);
+		    Matcher matcher = pattern.matcher(result);
+		        
+		    while(matcher.find()){ 
+		    	String paramChain = matcher.group(2);
+		    	String paramName = matcher.group(3);
+		    	if(dataset.containsKey(paramName) && dataset.get(paramName).length() > 0){
+		    		result = result.replace(paramChain, this.dataset.get(paramName));
+		    	}
+		    } 
+		}
+	    return result;
+	}
+	
 	@Override
 	public void visit(CallTestStep visited) {
 		// FIXME naive implementation so that app don't break
