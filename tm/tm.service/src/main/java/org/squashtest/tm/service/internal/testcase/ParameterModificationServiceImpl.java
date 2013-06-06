@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -53,14 +52,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	
 	@Override
 	public List<Parameter> getAllforTestCase(long testCaseId) {
-		
-		List<Long> testCaseIds = new ArrayList<Long>();
-		
-		for(Long id : this.callTreeFinder.getTestCaseCallTree(testCaseId)){
-			testCaseIds.add(id);
-		}
-		testCaseIds.add(testCaseId);
-		
+		List<Long> testCaseIds = this.getCallStepTree(testCaseId);
 		return parameterDao.findAllByTestCases(testCaseIds);
 	}
 	
@@ -107,6 +99,16 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 			parameters.add(findOrCreateParameter(name, step.getTestCase()));
 		}
 		return parameters;
+	}
+	
+	private List<Long> getCallStepTree(Long testCaseId){
+	List<Long> testCaseIds = new ArrayList<Long>();
+		
+		for(Long id : this.callTreeFinder.getTestCaseCallTree(testCaseId)){
+			testCaseIds.add(id);
+		}
+		testCaseIds.add(testCaseId);
+		return testCaseIds;	
 	}
 	
 	private List<String> parseStepContent(String content){

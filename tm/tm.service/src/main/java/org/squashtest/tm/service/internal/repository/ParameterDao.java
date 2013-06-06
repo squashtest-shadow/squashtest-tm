@@ -41,5 +41,7 @@ public interface ParameterDao extends CustomParameterDao {
 
 	List<Parameter> findAllByTestCases(@QueryParam("testCaseIds") List<Long> testcaseIds);
 	
+	List<Parameter> findAllByNameAndTestCases(@QueryParam("name") String name, @QueryParam("testCaseIds") List<Long> testcaseIds);
+
 	Parameter findParameterByNameAndTestCase(@QueryParam("name") String name, @QueryParam("testCaseId") Long testcaseId);
 }

@@ -152,7 +152,8 @@
 		//TestParameters
 		@NamedQuery(name = "Parameter.findAllByTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) order by parameter.testCase.name,  parameter.name "),
 		@NamedQuery(name = "Parameter.findAllByTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (select distinct called.id from TestCase caller join caller.steps step join step.calledTestCase called where caller.id = :testCaseId and step.class = CallTestStep) or testCase.id = :testCaseId order by parameter.testCase.name,  parameter.name "),
-		@NamedQuery(name = "Parameter.findParameterByNameAndTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where parameter.name= :name and testCase.id in (select distinct called.id from TestCase caller join caller.steps step join step.calledTestCase called where caller.id = :testCaseId and step.class = CallTestStep) or testCase.id = :testCaseId "),
+		@NamedQuery(name = "Parameter.findParameterByNameAndTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId and parameter.name = :name "),
+		@NamedQuery(name = "Parameter.findAllByNameAndTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) and parameter.name = :name "),
 		
 		//CampaignTestPlanItem
 
