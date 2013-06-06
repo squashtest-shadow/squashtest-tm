@@ -18,22 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
+import javax.inject.Inject;
+
+import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.service.internal.repository.CustomDatasetDao;
 
-@DynamicDao(entity = Dataset.class)
-public interface DatasetDao extends CustomDatasetDao{
+@Repository("CustomDatasetDao")
+public class HibernateDatasetDao implements CustomDatasetDao {
 
-	void persist(Dataset newValue);
+	@Inject
+	private SessionFactory sessionFactory;
 	
-	void delete(Dataset value);
-	
-	void deleteAll(@QueryParam("ids") List<Long> ids);
-	
-	Dataset findById(Long id);
+	@Override
+	public List<Dataset> findAllDatasetByTestCase(Long testCaseId) {
+
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("Dataset.findAllDatasetByTestCase");
+		query.setParameter("testCaseId", testCaseId);
+		return (List<Dataset>) query.list();
+	}
+
 }

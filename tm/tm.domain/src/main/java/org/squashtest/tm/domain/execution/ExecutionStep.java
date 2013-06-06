@@ -47,6 +47,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Formula;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -133,6 +134,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	@JoinColumn(name = "ISSUE_LIST_ID")
 	private IssueList issueList = new IssueList();
 
+	@Transient
 	private Map<String, String> dataset = new HashMap<String,String>();
 	
 	/**

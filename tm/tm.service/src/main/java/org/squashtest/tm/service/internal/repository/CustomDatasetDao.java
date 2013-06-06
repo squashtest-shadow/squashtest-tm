@@ -22,18 +22,10 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.testcase.Dataset;
 
-@DynamicDao(entity = Dataset.class)
-public interface DatasetDao extends CustomDatasetDao{
+public interface CustomDatasetDao {
 
-	void persist(Dataset newValue);
-	
-	void delete(Dataset value);
-	
-	void deleteAll(@QueryParam("ids") List<Long> ids);
-	
-	Dataset findById(Long id);
+	List<Dataset> findAllDatasetByTestCase(@QueryParam("testCaseId") Long testCaseId);
 }
