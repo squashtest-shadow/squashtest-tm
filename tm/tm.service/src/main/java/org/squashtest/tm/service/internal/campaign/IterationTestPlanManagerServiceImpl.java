@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
@@ -48,6 +49,7 @@ import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
+import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.ItemTestPlanDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
@@ -56,6 +58,7 @@ import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
+import org.squashtest.tm.service.testcase.DatasetModificationService;
 
 @Service("squashtest.tm.service.IterationTestPlanManagerService")
 @Transactional 
@@ -75,6 +78,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Inject
 	private UserDao userDao;
+	
+	@Inject
+	private DatasetDao datasetDao;
 
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
@@ -135,13 +141,25 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		List<IterationTestPlanItem> testPlan = new LinkedList<IterationTestPlanItem>();
 
 		for (TestCase testCase : testCases) {
-			IterationTestPlanItem itp = new IterationTestPlanItem(testCase);
-			testPlan.add(itp);
+			 addTestCaseToTestPlan(testCase, testPlan);
 		}
 		addTestPlanToIteration(testPlan, iteration.getId());
 		return testPlan;
 	}
 
+	private void addTestCaseToTestPlan(TestCase testCase, List<IterationTestPlanItem> testPlan){
+		List<Dataset> datasets = datasetDao.findAllDatasetByTestCase(testCase.getId());
+		if(datasets != null && datasets.size() != 0){
+			for(Dataset dataset : datasets){
+				IterationTestPlanItem itp = new IterationTestPlanItem(testCase, dataset);
+				testPlan.add(itp);
+			}
+		} else {
+			IterationTestPlanItem itp = new IterationTestPlanItem(testCase);
+			testPlan.add(itp);
+		}		
+	}
+	
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
 			+ "or hasRole('ROLE_ADMIN')")

@@ -53,6 +53,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.users.User;
@@ -97,6 +98,10 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 	@JoinColumn(name = "TCLN_ID", referencedColumnName = "TCLN_ID")
 	private TestCase referencedTestCase;
 
+	@ManyToOne
+	@JoinColumn(name = "DATASET_ID", referencedColumnName = "DATASET_ID")
+	private Dataset referencedDataset;
+	
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "EXECUTION_ORDER")
 	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"), inverseJoinColumns = @JoinColumn(name = "EXECUTION_ID"))
@@ -119,9 +124,16 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 
 	public IterationTestPlanItem(TestCase testCase) {
 		referencedTestCase = testCase;
+		referencedDataset = null;
 		label = testCase.getName();
 	}
 
+	public IterationTestPlanItem(TestCase testCase, Dataset dataset) {
+		referencedTestCase = testCase;
+		referencedDataset = dataset;
+		label = testCase.getName();
+	}
+	
 	@Override
 	public ExecutionStatus getExecutionStatus() {
 		return executionStatus;

@@ -155,6 +155,9 @@
 		@NamedQuery(name = "Parameter.findParameterByNameAndTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId and parameter.name = :name "),
 		@NamedQuery(name = "Parameter.findAllByNameAndTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) and parameter.name = :name "),
 		
+		//Datasets
+		@NamedQuery(name = "Dataset.findAllDatasetByTestCase", query = "select dataset from Dataset as dataset join dataset.testCase testCase where testCase.id = :testCaseId "),
+		
 		//CampaignTestPlanItem
 
 		//Execution
@@ -315,6 +318,10 @@
 })
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.List;
+
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
+import org.squashtest.tm.domain.testcase.Dataset;
 

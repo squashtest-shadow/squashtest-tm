@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -76,5 +78,8 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 		datasetParamValue.setParamValue(value);
 		dataset.addParameterValue(datasetParamValue);
 	}
-
+	
+	public List<Dataset> getAllDatasetByTestCase(long testCaseId){
+		return this.datasetDao.findAllDatasetByTestCase(testCaseId);
+	}
 }

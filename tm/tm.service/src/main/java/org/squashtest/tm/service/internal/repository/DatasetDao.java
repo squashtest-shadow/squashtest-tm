@@ -36,4 +36,6 @@ public interface DatasetDao {
 	void deleteAll(@QueryParam("ids") List<Long> ids);
 	
 	Dataset findById(Long id);
+
+	List<Dataset> findAllDatasetByTestCase(@QueryParam("testCaseId") long testCaseId);
 }
