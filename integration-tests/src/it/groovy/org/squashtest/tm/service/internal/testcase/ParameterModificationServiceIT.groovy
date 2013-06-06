@@ -48,22 +48,22 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 	@Inject
 	ParameterDao parameterDao;
 
-	@DataSet("DatasetModificationServiceIT.xml")
+	@DataSet("ParameterModificationServiceIT.xml")
 	def "should return the parameter list for a given test case"(){
 
 		when :
-			List<Parameter> params = service.getAllforTestCase(112L);
+			List<Parameter> params = service.getAllforTestCase(100L);
 		then : 
-			params.size() == 0;
+			params.size() == 1;
 	}
 	
-	@DataSet("DatasetModificationServiceIT.xml")
+	@DataSet("ParameterModificationServiceIT.xml")
 	def "should return the parameter list for a given test case with call step"(){
 		
 		
 		when :
-			List<Parameter> params = service.getAllforTestCase(113L);
+			List<Parameter> params = service.getAllforTestCase(101L);
 		then :
-			params.size() == 0;
+			params.size() == 3;
 	}
 }
