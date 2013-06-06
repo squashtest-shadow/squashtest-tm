@@ -649,12 +649,15 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	}
 
 	private List<IterationTestPlanItem> getTestPlanWithoutDeletedTestCases() {
-		List<IterationTestPlanItem> testPlanResult = getTestPlans();
-		Iterator<IterationTestPlanItem> iterator = testPlanResult.iterator();
+				
+		List<IterationTestPlanItem> testPlanResult = new LinkedList<IterationTestPlanItem>();
+		
+		Iterator<IterationTestPlanItem> iterator = getTestPlans().iterator();
+		
 		while (iterator.hasNext()) {
 			IterationTestPlanItem itpi = iterator.next();
-			if (itpi.isTestCaseDeleted()) {
-				testPlanResult.remove(itpi);
+			if (! itpi.isTestCaseDeleted()) {
+				testPlanResult.add(itpi);
 			}
 		}
 		return testPlanResult;
