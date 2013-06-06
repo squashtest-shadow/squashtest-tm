@@ -237,7 +237,7 @@ public class TestCaseLibraryNavigationController extends
 			HttpServletResponse response, Locale locale) {
 
 		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService
-				.findTestCasesToExportFromProject(libraryIds);
+				.findTestCasesToExportFromLibrary(libraryIds);
 		escapePrerequisiteAndSteps(dataSource);
 		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, format);
 

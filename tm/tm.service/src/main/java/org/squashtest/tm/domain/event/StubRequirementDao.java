@@ -92,7 +92,7 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	 * @see org.squashtest.tm.service.internal.repository.RequirementDao#findRequirementToExportFromProject(java.util.List)
 	 */
 	@Override
-	public List<ExportRequirementData> findRequirementToExportFromProject(List<Long> folderIds) {
+	public List<ExportRequirementData> findRequirementToExportFromLibrary(List<Long> folderIds) {
 		return null;
 	}
 

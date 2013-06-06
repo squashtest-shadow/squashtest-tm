@@ -245,8 +245,8 @@ public class TestCaseLibraryNavigationServiceImpl extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ExportTestCaseData> findTestCasesToExportFromProject(List<Long> ids) {
-		List<ExportTestCaseData> testCases = testCaseDao.findTestCaseToExportFromProject(ids);
+	public List<ExportTestCaseData> findTestCasesToExportFromLibrary(List<Long> ids) {
+		List<ExportTestCaseData> testCases = testCaseDao.findTestCaseToExportFromLibrary(ids);
 		return (List<ExportTestCaseData>) setFullFolderPath(testCases);
 	}
 

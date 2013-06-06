@@ -59,7 +59,7 @@ public interface RequirementDao extends EntityDao<Requirement> {
 
 	List<ExportRequirementData> findRequirementToExportFromNodes(List<Long> folderIds);
 
-	List<ExportRequirementData> findRequirementToExportFromProject(List<Long> projectIds);
+	List<ExportRequirementData> findRequirementToExportFromLibrary(List<Long> projectIds);
 
 	/**
 	 * Returns collection of distinct requirements criticalities verified by any of the given verifiers.

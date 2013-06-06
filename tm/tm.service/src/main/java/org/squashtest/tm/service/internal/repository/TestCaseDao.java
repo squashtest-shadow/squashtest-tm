@@ -217,7 +217,7 @@ public interface TestCaseDao extends EntityDao<TestCase> {
 	 */
 	List<Execution> findAllExecutionByTestCase(Long tcId);
 	
-	List<ExportTestCaseData> findTestCaseToExportFromProject(List<Long> projectIds);
+	List<ExportTestCaseData> findTestCaseToExportFromLibrary(List<Long> projectIds);
 
 	List<ExportTestCaseData> findTestCaseToExportFromNodes(List<Long> nodesIds);
 

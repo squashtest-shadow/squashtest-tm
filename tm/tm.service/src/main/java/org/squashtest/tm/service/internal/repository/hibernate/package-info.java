@@ -73,7 +73,7 @@
 		@NamedQuery(name = "requirement.findRequirementByName", query = "from RequirementLibraryNode r where r.resource.name like :requirementName order by r.resource.name asc"),
 		@NamedQuery(name = "requirement.findRequirementWithParentFolder", query = "select r, rf from RequirementFolder rf join rf.content r where r.id in (:requirementsIds)"),
 		@NamedQuery(name = "requirement.findRootContentRequirement", query = "select r from RequirementLibrary rl join rl.rootContent r where r.id in (:paramIds) and r in (from Requirement)"),
-		@NamedQuery(name = "requirement.findAllRootContent", query = "select r.id from RequirementLibraryNode r where r.project.id in (:projectIds)"),
+		@NamedQuery(name = "requirement.findAllRootContent", query = "select r.id from RequirementLibraryNode r where r.project.requirementLibrary.id in (:libraryIds)"),
 		@NamedQuery(name = "requirement.findVersions", query = "select rv from RequirementVersion rv where rv.requirement.id = :requirementId"),
 		@NamedQuery(name = "requirement.findVersionsForAll", query = "select rv from RequirementVersion rv join rv.requirement r where r.id in (:requirementIds)"),
 
@@ -121,7 +121,7 @@
 		@NamedQuery(name = "testCase.findAllTestCasesIdsCalledByTestCase", query = "select called.id from TestCase caller join caller.steps step join step.calledTestCase called where caller.id = :testCaseId and step.class = CallTestStep"),
 		@NamedQuery(name = "testCase.findDistinctTestCasesIdsCalledByTestCase", query = "select distinct called.id from TestCase caller join caller.steps step join step.calledTestCase called where caller.id = :testCaseId and step.class = CallTestStep"),
 		@NamedQuery(name = "testCase.findAllTestCasesIdsCalledByTestCases", query = "select distinct called.id from TestCase caller join caller.steps step join step.calledTestCase called where caller.id in (:testCasesIds) and step.class = CallTestStep"),
-		@NamedQuery(name = "testCase.findAllRootContent", query = "select tc.id from TestCaseLibraryNode tc where tc.project.id in (:projectIds)"),
+		@NamedQuery(name = "testCase.findAllRootContent", query = "select tc.id from TestCaseLibraryNode tc where tc.project.testCaseLibrary.id in (:libraryIds)"),
 		@NamedQuery(name = "testCase.findRootContentTestCase", query = "select tcn from TestCaseLibrary tcl join tcl.rootContent tcn where tcn.id in (:paramIds) and tcn in (from TestCase)"),
 		@NamedQuery(name = "testCase.findTestCasesWithParentFolder", query = "select tc, tcf from TestCaseFolder tcf join tcf.content tc where tc.id in (:testCasesIds)"),
 		@NamedQuery(name = "testCase.findAllLinkedToIteration", query = "select tc from IterationTestPlanItem item join item.referencedTestCase tc where tc.id in (:testCasesIds)"),
