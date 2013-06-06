@@ -119,7 +119,7 @@ public interface TestCaseLibraryNavigationService extends
 	 *            ids of {@linkplain Project}
 	 * @return a list of {@linkplain ExportTestCaseData}
 	 */
-	List<ExportTestCaseData> findTestCasesToExportFromProject(List<Long> ids);
+	List<ExportTestCaseData> findTestCasesToExportFromLibrary(List<Long> ids);
 
 	/**
 	 * Will find all test cases of the given ids and contained in folders of the given ids, and return their

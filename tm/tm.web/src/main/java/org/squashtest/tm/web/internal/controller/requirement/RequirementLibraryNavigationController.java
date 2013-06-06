@@ -186,7 +186,7 @@ public class RequirementLibraryNavigationController extends
 			HttpServletResponse response, Locale locale, @RequestParam("format") String format) {
 
 		List<ExportRequirementData> dataSource = requirementLibraryNavigationService
-				.findRequirementsToExportFromProject(libraryIds);
+				.findRequirementsToExportFromLibrary(libraryIds);
 		
 		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, format);
 

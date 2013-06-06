@@ -51,7 +51,7 @@ public interface RequirementLibraryNavigationService extends
 	 * @param libraryIds ids of {@linkplain Project}
 	 * @return a list of {@linkplain ExportRequirementData}
 	 */
-	List<ExportRequirementData> findRequirementsToExportFromProject(@NotNull List<Long> libraryIds);
+	List<ExportRequirementData> findRequirementsToExportFromLibrary(@NotNull List<Long> libraryIds);
 	/**
 	 * Will find all requirements of the given ids and contained in folders of the given ids, and return their information as a list of {@linkplain ExportRequirementData}
 	 * @param nodesIds ids of {@linkplain RequirementLibraryNode}

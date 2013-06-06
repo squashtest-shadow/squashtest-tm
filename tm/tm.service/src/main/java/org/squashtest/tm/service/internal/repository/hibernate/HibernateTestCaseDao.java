@@ -509,10 +509,11 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	/* ----------------------------------------------------EXPORT METHODS----------------------------------------- */
 	// TODO try to avoid duplicate code with requirementExport
+	// XXX actually it helps Ctrl-F'ing for multiple occurences of the same bug because they use the exact same pieces of code :P Just kidding of course.
 	@Override
-	public List<ExportTestCaseData> findTestCaseToExportFromProject(List<Long> projectIds) {
+	public List<ExportTestCaseData> findTestCaseToExportFromLibrary(List<Long> projectIds) {
 		if (!projectIds.isEmpty()) {
-			SetQueryParametersCallback newCallBack1 = new SetProjectIdsParameterCallback(projectIds);
+			SetLibraryIdsCallback newCallBack1 = new SetLibraryIdsCallback(projectIds);
 			List<Long> result = executeListNamedQuery("testCase.findAllRootContent", newCallBack1);
 
 			return findTestCaseToExportFromNodes(result);

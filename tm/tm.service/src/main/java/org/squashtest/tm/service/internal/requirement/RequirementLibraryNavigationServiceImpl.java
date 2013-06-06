@@ -239,9 +239,9 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ExportRequirementData> findRequirementsToExportFromProject(List<Long> libraryIds) {
+	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
 		return (List<ExportRequirementData>) setFullFolderPath(requirementDao
-				.findRequirementToExportFromProject(libraryIds));
+				.findRequirementToExportFromLibrary(libraryIds));
 	}
 
 	@SuppressWarnings("unchecked")

@@ -253,10 +253,10 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	}
 
 	@Override
-	public List<ExportRequirementData> findRequirementToExportFromProject(final List<Long> libraryIds) {
+	public List<ExportRequirementData> findRequirementToExportFromLibrary(final List<Long> libraryIds) {
 
 		if (!libraryIds.isEmpty()) {
-			SetQueryParametersCallback newCallBack1 = new SetProjectIdsParameterCallback(libraryIds);
+			SetLibraryIdsCallback newCallBack1 = new SetLibraryIdsCallback(libraryIds);
 			List<Long> result = executeListNamedQuery("requirement.findAllRootContent", newCallBack1);
 
 			return findRequirementToExportFromNodes(result);
@@ -330,5 +330,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		query.setResultTransformer(new SqLIdResultTransformer());
 		return query.list();
 	}
+	
+	
 
 }
