@@ -65,6 +65,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	@Override
 	public void persist(Parameter parameter) {
 		this.parameterDao.persist(parameter);
+		updateDatasetsForParameterCreation(parameter, parameter.getTestCase().getId());
 	}
 
 	@Override
@@ -208,6 +209,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 			DatasetParamValue datasetParamValue = new DatasetParamValue();
 			datasetParamValue.setParameter(parameter);
 			datasetParamValue.setParamValue("");
+			datasetParamValue.setDataset(dataset);
 			dataset.addParameterValue(datasetParamValue);
 		}
 	}

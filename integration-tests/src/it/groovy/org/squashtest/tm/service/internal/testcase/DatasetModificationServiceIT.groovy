@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue
+import org.squashtest.tm.domain.testcase.Parameter
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
@@ -77,6 +78,19 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 		then : 
 			TestCase testcase = testCaseDao.findById(100L);
 			testcase.datasets.size() == 2;
+			testcase.parameters.size() == 1;
+			
+			Dataset[] result = testcase.getDatasets().toArray(new Dataset[testcase.datasets.size()]);
+			
+			//result[0].name == "newDataset";
+			result[0].parameterValues.size() == 1;
+			(result[0].parameterValues.toArray(new DatasetParamValue[1]))[0].parameter.name == "param101";
+			(result[0].parameterValues.toArray(new DatasetParamValue[1]))[0].paramValue == "";
+			
+			//result[1].name == "dataset1";
+			result[1].parameterValues.size() == 1;
+			(result[1].parameterValues.toArray(new DatasetParamValue[1]))[0].parameter.name == "param101";
+			(result[1].parameterValues.toArray(new DatasetParamValue[1]))[0].paramValue == "";
 	}
 	
 	/*@DataSet("DatasetModificationServiceIT.xml")
@@ -99,15 +113,64 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 	}
 	
 	@DataSet("DatasetModificationServiceIT.xml")
-	def "should change the param value of a dataset or create a new param value"(){
+	def "should change the param value of a dataset"(){
 		
 		when :
+			Dataset dataset = datasetDao.findById(100L);
+			dataset.parameterValues.iterator().hasNext() == false;
 			datasetService.changeParamValue(100L, 10100L, "newValue");
 		then :
-			Dataset dataset = datasetDao.findById(100L);
-			DatasetParamValue value = dataset.parameterValues.iterator().next();
+			Dataset dataset2 = datasetDao.findById(100L);
+			dataset2.parameterValues.size() == 1;
+			DatasetParamValue value = dataset2.parameterValues.iterator().next();
 			value.parameter.id == 10100L;
 			value.paramValue == "newValue";		
 	}
 
+	@DataSet("DatasetModificationServiceIT.xml")
+	def "should create the param value for a dataset"(){
+		
+		when :
+			Dataset dataset = datasetDao.findById(100L);
+			datasetService.changeParamValue(100L, 10100L, "newValue1");
+			dataset.parameterValues.iterator().hasNext() == true;
+			datasetService.changeParamValue(100L, 10100L, "newValue2");
+			
+		then :
+			Dataset dataset2 = datasetDao.findById(100L);
+			dataset2.parameterValues.size() == 1;
+			DatasetParamValue value = dataset2.parameterValues.iterator().next();
+			value.parameter.id == 10100L;
+			value.paramValue == "newValue2";
+	}
+	
+	@DataSet("DatasetModificationServiceIT.xml")
+	def "should add a param value in all datasets when a param is added to the test case"(){
+		
+		when :
+			Dataset dataset = new Dataset();
+			dataset.name = "newDataset";
+			dataset.testCase = testCaseDao.findById(100L);
+			dataset.parameterValues = new HashSet<DatasetParamValue>();
+			datasetService.persist(dataset);
+			Parameter param = new Parameter();
+			param.name = "paramAjoute"
+			param.description = ""
+			param.testCase = testCaseDao.findById(100L);
+			paramService.persist(param);
+			
+		then : 
+			TestCase testcase = testCaseDao.findById(100L);
+			testcase.datasets.size() == 2;
+			testcase.parameters.size() == 2;
+		
+			Dataset[] result = testcase.getDatasets().toArray(new Dataset[testcase.datasets.size()]);
+		
+			//result[0].name == "newDataset";
+			result[0].parameterValues.size() == 2;
+			
+		
+			//result[1].name == "dataset1";
+			result[1].parameterValues.size() == 2;
+	}
 }

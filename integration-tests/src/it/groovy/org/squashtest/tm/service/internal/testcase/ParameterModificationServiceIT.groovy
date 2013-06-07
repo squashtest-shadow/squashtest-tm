@@ -27,10 +27,15 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 
+import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterFinder
 import org.squashtest.tm.service.testcase.ParameterModificationService
 import org.squashtest.tm.service.internal.repository.ParameterDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.domain.testcase.DatasetParamValue
 import org.squashtest.tm.domain.testcase.Parameter
+import org.squashtest.tm.domain.testcase.Dataset
+import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.repository.RequirementAuditEventDao
 
 import spock.unitils.UnitilsSupport
@@ -43,7 +48,13 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 	ParameterModificationService service;
 	
 	@Inject
+	DatasetModificationService datasetService;
+	
+	@Inject
 	ParameterFinder finder;
+	
+	@Inject
+	TestCaseDao testCaseDao;
 	
 	@Inject
 	ParameterDao parameterDao;
@@ -112,5 +123,28 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 			boolean result = service.isUsed("parameter", 100L);
 		then :
 			result == true;
+	}
+	
+	@DataSet("ParameterModificationServiceIT.xml")
+	def "should update datasets when a parameter is created"(){
+		when :
+			Parameter parameter = new Parameter();
+			parameter.name = "parameter2";
+			parameter.testCase = testCaseDao.findById(100L);
+			Dataset dataset = new Dataset();
+			dataset.name = "dataset2";
+			dataset.testCase = testCaseDao.findById(100L);
+			datasetService.persist(dataset);
+			service.persist(parameter);
+		then : 
+			TestCase testcase = testCaseDao.findById(100L);
+			for(Dataset data : testcase.getDatasets()){
+				data.parameterValues.size() == 1;
+				for(DatasetParamValue param : data.parameterValues){
+					param.parameter.name = ""
+					param.paramValue = ""
+				}
+			}
+	
 	}
 }
