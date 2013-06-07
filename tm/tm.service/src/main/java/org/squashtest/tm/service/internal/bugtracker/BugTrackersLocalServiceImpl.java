@@ -387,9 +387,6 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ') or hasRole('ROLE_ADMIN')")
 	public List<IssueOwnership<RemoteIssueDecorator>> findIssueOwnershipForTestCase(long tcId) {
 
-		// Find all concerned IssueDetector
-		List<Execution> executions = testCaseDao.findAllExecutionByTestCase(tcId);
-		List<ExecutionStep> executionSteps = collectExecutionStepsFromExecution(executions);
 
 		// create filtredCollection of IssueOwnership<BTIssue>
 		PagingAndSorting sorter = new PagingAndSorting() {
@@ -418,8 +415,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 				return "Issue.id";
 			}
 		};
-
-		return createOwnershipsCollection(sorter, executions, executionSteps).getPagedItems();
+		
+		return findSortedIssueOwnershipForTestCase(tcId, sorter).getPagedItems();
 	}
 
 	private List<ExecutionStep> collectExecutionStepsFromExecution(List<Execution> executions) {
