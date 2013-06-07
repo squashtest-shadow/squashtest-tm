@@ -88,7 +88,7 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.bugtracker.BTControllerHelper;
+import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
 import org.squashtest.tm.web.internal.controller.testcase.ActionStepFormModel.ActionStepFormModelValidator;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
@@ -779,7 +779,7 @@ public class TestCaseModificationController {
 
 		public DecoratedIssueOwnership(IssueOwnership<RemoteIssueDecorator> ownership, Locale locale) {
 			this.ownership = ownership;
-			this.ownerDesc = BTControllerHelper.findOwnerDescForTestCase(ownership.getOwner(), messageSource,
+			this.ownerDesc = BugTrackerControllerHelper.findOwnerDescForTestCase(ownership.getOwner(), messageSource,
 					locale);
 		}
 

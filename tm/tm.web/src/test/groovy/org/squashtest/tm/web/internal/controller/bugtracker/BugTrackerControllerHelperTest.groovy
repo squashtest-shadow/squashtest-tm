@@ -40,7 +40,7 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 		execution.getId()>> 65
 		
 		when: 
-		def result = BTControllerHelper.buildExecutionUrl(request, execution)
+		def result = BugTrackerControllerHelper.buildExecutionUrl(request, execution)
 		
 		then : 
 		result == "http://serverName:8080/contextPath/executions/65"
@@ -62,7 +62,7 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 		def executionUrl = "url"
 		
 		when:
-		def result = BTControllerHelper.getDefaultDescription(execution, locale, messageSource, executionUrl)
+		def result = BugTrackerControllerHelper.getDefaultDescription(execution, locale, messageSource, executionUrl)
 		
 		then:
 		result == "# Test Case: [Reference] test case name\n# Execution: url\n\n# Issue description :\n"
@@ -90,7 +90,7 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 		def executionUrl = "url"
 		
 		when:
-		def result = BTControllerHelper.getDefaultDescription (step, locale, messageSource, executionUrl)
+		def result = BugTrackerControllerHelper.getDefaultDescription (step, locale, messageSource, executionUrl)
 		
 		then:
 		result == "# Test Case: [Reference] test case name\n# Execution: url\n# Concerned Step: 1/5\n\n# Issue description :\n"
@@ -114,7 +114,7 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 		messageSource.getMessage("issue.default.additionalInformation.step", null, locale) >> "Step"
 		
 		when:
-		def result = BTControllerHelper.getDefaultAdditionalInformations (buggedStep, locale, messageSource)
+		def result = BugTrackerControllerHelper.getDefaultAdditionalInformations (buggedStep, locale, messageSource)
 		
 		then:
 		result == "=============================================\n"+
