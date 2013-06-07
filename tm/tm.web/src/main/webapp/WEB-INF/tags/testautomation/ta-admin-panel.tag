@@ -290,7 +290,7 @@
 				popupmessage : '<f:message key="dialog.unbind-ta-project.message" />',
 				tooltip : '<f:message key="dialog.unbind-ta-project.tooltip" />',
 				success : function(){
-					$("#ta-projects-table").squashTable().fnDraw();
+					$("#ta-projects-table").squashTable().refresh();
 				}
 			}
 		}

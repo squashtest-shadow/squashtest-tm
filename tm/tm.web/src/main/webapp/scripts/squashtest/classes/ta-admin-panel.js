@@ -46,7 +46,8 @@ function TestAutomationProjectManager(settings){
 	
 	
 	projectsBlock.getTable = function(){
-		return projectsBlock.find(".ta-projects-table").squashTable();
+		//return projectsBlock.find(".ta-projects-table").squashTable();	//doesn't work anymore because this selector is not the same than the one userd to create the squashTable instance
+		return $("#ta-projects-table").squashTable();
 	};
 	
 	serverBlock.getURL = function(){
