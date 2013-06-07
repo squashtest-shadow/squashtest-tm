@@ -35,11 +35,9 @@ public interface GenericProjectManagerService extends CustomGenericProjectManage
 	
 	/*
 	 * Issue 2341 : the test for manager permissions on project failed because 'GenericProject' is not a valid ACL_CLASS.classname in the database.
-	 * So I had to split it and explicitly refer to the actual implementations 'Project' and 'ProjectTemplate'.   
+	 * So I had to split it and explicitly refer to the actual implementation 'Project'. A project manager cannot manage project templates anyway.
 	 */
-	public static final String ADMIN_OR_PROJECT_MANAGER = "hasPermission(#arg0, 'org.squashtest.tm.domain.project.Project', 'MANAGEMENT') " +
-														  "or hasPermission(#arg0, 'org.squashtest.tm.domain.project.ProjectTemplate', 'MANAGEMENT') " +
-														  "or hasRole('ROLE_ADMIN')";
+	public static final String ADMIN_OR_PROJECT_MANAGER = "hasRole('ROLE_ADMIN') or hasPermission(#arg0, 'org.squashtest.tm.domain.project.Project', 'MANAGEMENT') ";
 
 	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
 	void changeDescription(long projectId, String newDescription);

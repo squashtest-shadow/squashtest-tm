@@ -29,6 +29,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +59,7 @@ import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
@@ -81,6 +83,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	
 	@Inject
 	private GenericProjectDao genericProjectDao;
+	@Inject
+	private ProjectDao projectDao;	
 	@Inject
 	private BugTrackerBindingDao bugTrackerBindingDao;
 	@Inject
@@ -106,6 +110,9 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 
+	
+	// ************************* finding projects wrt user role ****************************
+	
 	/**
 	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#findSortedProjects(org.squashtest.tm.core.foundation.collection.PagingAndSorting)
 	 */
@@ -113,6 +120,16 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Transactional(readOnly = true)
 	@PreAuthorize(IS_ADMIN_OR_MANAGER)
 	public PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
+		if (permissionEvaluationService.hasRole("ROLE_ADMIN")){
+			return findAllSortedProjects(pagingAndSorting, filter);
+		}
+		else{
+			return findSortedActualProjects(pagingAndSorting, filter);
+		}
+	}
+	
+	
+	private PagedCollectionHolder<List<GenericProject>> findAllSortedProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
 		List<GenericProject> projects;
 		
 		if (filter.isDefined()){
@@ -125,7 +142,25 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		long count = genericProjectDao.countGenericProjects();
 		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(pagingAndSorting, count, projects);
 	}
+	
+	private PagedCollectionHolder<List<GenericProject>> findSortedActualProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
+		List<? extends GenericProject> projects;
+		
+		if (filter.isDefined()){
+			projects =projectDao.findProjectsFiltered(pagingAndSorting, "%"+filter.getFilter()+"%");
+		}
+		else{
+			projects = projectDao.findAll(pagingAndSorting);
+		}
+		
+		long count = projectDao.countProjects();
+		List<GenericProject> genProjects = (List<GenericProject>)projects;
+		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(pagingAndSorting, count, genProjects);
+	}
 
+	// ************************* finding projects wrt user role ****************************	
+	
+	
 	@Override
 	@PreAuthorize(IS_ADMIN)
 	public void persist(GenericProject project) {
