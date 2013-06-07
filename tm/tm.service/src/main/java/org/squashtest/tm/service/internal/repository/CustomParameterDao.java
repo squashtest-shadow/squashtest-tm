@@ -22,9 +22,16 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.testcase.Parameter;
 
 public interface CustomParameterDao {
 	
-	public List<Parameter> findAllByTestCase(Long testcaseId);
+	List<Parameter> findAllByTestCase(Long testcaseId);
+
+	List<Parameter> findAllByTestCases(List<Long> testcaseIds);
+	
+	List<Parameter> findAllByNameAndTestCases(String name, List<Long> testcaseIds);
+
+	Parameter findParameterByNameAndTestCase(String name, Long testcaseId);
 }

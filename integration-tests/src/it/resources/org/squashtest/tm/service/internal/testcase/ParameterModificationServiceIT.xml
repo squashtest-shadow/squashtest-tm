@@ -41,7 +41,7 @@
 		
 	<!-- ... action steps -->
 	
-	<ACTION_TEST_STEP TEST_STEP_ID="101" ACTION="the first action test step"/>
+	<ACTION_TEST_STEP TEST_STEP_ID="101" ACTION="the first action ${parameter} test step"/>
 	<ACTION_TEST_STEP TEST_STEP_ID="102" ACTION="the second action test step"/>
 	<ACTION_TEST_STEP TEST_STEP_ID="103" ACTION="the third action test step"/>
 	<ACTION_TEST_STEP TEST_STEP_ID="104" ACTION="the fourth action test step"/>	

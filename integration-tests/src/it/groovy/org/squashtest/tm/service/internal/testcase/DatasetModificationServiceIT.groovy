@@ -25,6 +25,15 @@ import javax.inject.Inject
 import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.DatasetParamValue
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.service.internal.repository.ParameterDao;
+import org.squashtest.tm.service.internal.repository.DatasetDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.testcase.ParameterFinder;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
+import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.unitils.dbunit.annotation.DataSet;
 
 import spock.unitils.UnitilsSupport;
@@ -35,4 +44,71 @@ import spock.unitils.UnitilsSupport;
 class DatasetModificationServiceIT extends DbunitServiceSpecification {
 
 	
+	
+	@Inject
+	ParameterModificationService paramService;
+	
+	@Inject
+	DatasetModificationService datasetService;
+	
+	@Inject
+	ParameterFinder finder;
+	
+	@Inject
+	ParameterDao parameterDao;
+
+	@Inject
+	TestCaseDao testCaseDao;
+	
+	
+	@Inject 
+	DatasetDao datasetDao;
+
+	
+	@DataSet("DatasetModificationServiceIT.xml")
+	def "should persist a dataset"(){
+		
+		when : 
+			Dataset dataset = new Dataset();
+			dataset.name = "newDataset";
+			dataset.testCase = testCaseDao.findById(100L);
+			dataset.parameterValues = new HashSet<DatasetParamValue>();
+			datasetService.persist(dataset);
+			
+		then : 
+			TestCase testcase = testCaseDao.findById(100L);
+			testcase.datasets.size() == 2;
+	}
+	
+	/*@DataSet("DatasetModificationServiceIT.xml")
+	def "should remove a dataset"(){
+		
+		when : 
+			datasetService.removeById(100L);
+		then :
+			datasetDao.findById(100L) == null;
+	}*/
+	
+	@DataSet("DatasetModificationServiceIT.xml")
+	def "should change the name of a dataset"(){
+		
+		when :
+			datasetService.changeName(100L,"newName")
+		then :
+			Dataset dataset = datasetDao.findById(100L)
+			dataset.name == "newName";
+	}
+	
+	@DataSet("DatasetModificationServiceIT.xml")
+	def "should change the param value of a dataset or create a new param value"(){
+		
+		when :
+			datasetService.changeParamValue(100L, 10100L, "newValue");
+		then :
+			Dataset dataset = datasetDao.findById(100L);
+			DatasetParamValue value = dataset.parameterValues.iterator().next();
+			value.parameter.id == 10100L;
+			value.paramValue == "newValue";		
+	}
+
 }

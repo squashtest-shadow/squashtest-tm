@@ -25,7 +25,6 @@ import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.testcase.Dataset;
 
 @Transactional
-@DynamicManager(name="squashtest.tm.service.DatasetModificationService", entity = Dataset.class)
 public interface DatasetModificationService {
 
 	/**

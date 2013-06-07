@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -34,7 +35,7 @@ import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 
-
+@Service("squashtest.tm.service.DatasetModificationService")
 public class DatasetModificationServiceImpl implements DatasetModificationService {
 
 	@Inject
@@ -100,21 +101,21 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 		return this.datasetDao.findAllDatasetsByTestCase(testCaseId);
 	}
 	
-	private boolean hasParameter(Dataset dataset, Parameter parameter){
+	private DatasetParamValue findDatasetParamValue(Dataset dataset, Parameter parameter){
 		
-		boolean result = false;
+		DatasetParamValue result = null;
 		Set<DatasetParamValue> datasetParamValues = dataset.getParameterValues();
 		for(DatasetParamValue datasetParamValue : datasetParamValues){
 			if(datasetParamValue.getParameter().equals(parameter)){
-				result = true;
+				result = datasetParamValue;
 			}
 		}
 		return result;
 	}
 	
 	private DatasetParamValue findOrAddParameter(Dataset dataset, Parameter parameter){
-		DatasetParamValue datasetParamValue = null;
-		if(!hasParameter(dataset, parameter)){
+		DatasetParamValue datasetParamValue = findDatasetParamValue(dataset, parameter);
+		if(datasetParamValue == null){
 			datasetParamValue = new DatasetParamValue();
 			datasetParamValue.setParameter(parameter);
 			datasetParamValue.setParamValue("");

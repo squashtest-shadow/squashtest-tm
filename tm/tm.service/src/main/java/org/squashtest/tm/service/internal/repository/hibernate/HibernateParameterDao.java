@@ -41,8 +41,37 @@ public class HibernateParameterDao implements CustomParameterDao {
 
 	public List<Parameter> findAllByTestCase(Long testcaseId) {
 		
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("Parameter.findAllByTestCase");
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findAllByTestCase");
 		query.setParameter("testCaseId", testcaseId);
 		return (List<Parameter>) query.list();
+	}
+
+
+	@Override
+	public List<Parameter> findAllByTestCases(List<Long> testcaseIds) {
+
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findAllByTestCases");
+		query.setParameterList("testCaseIds", testcaseIds);
+		return (List<Parameter>) query.list();
+	}
+
+
+	@Override
+	public List<Parameter> findAllByNameAndTestCases(String name, List<Long> testcaseIds){
+
+			Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findAllByNameAndTestCases");
+			query.setParameter("name", name);
+			query.setParameterList("testCaseIds", testcaseIds);
+			return (List<Parameter>) query.list();
+	}
+
+
+	@Override
+	public Parameter findParameterByNameAndTestCase(String name, Long testcaseId){
+			
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findParameterByNameAndTestCase");
+		query.setParameter("name", name);
+		query.setParameter("testCaseId", testcaseId);
+		return (Parameter) query.uniqueResult();
 	}
 }

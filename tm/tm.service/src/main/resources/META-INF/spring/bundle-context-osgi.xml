@@ -255,7 +255,13 @@
       <value>org.squashtest.tm.service.testcase.ParameterModificationService</value>
     </osgi:interfaces>
   </osgi:service>
-	
+
+ <osgi:service ref="squashtest.tm.service.DatasetModificationService">
+   	<osgi:interfaces>
+      <value>org.squashtest.tm.service.testcase.DatasetModificationService</value>
+    </osgi:interfaces>
+  </osgi:service>
+  	
   <!-- CUF binding service -->
   <osgi:service ref="squashtest.tm.service.CustomFieldBindingService">
     <osgi:interfaces>

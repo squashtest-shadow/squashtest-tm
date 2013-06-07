@@ -66,4 +66,51 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 		then :
 			params.size() == 3;
 	}
+	
+	@DataSet("ParameterModificationServiceIT.xml")
+	def "should change parameter name"(){
+		
+		when :
+			service.changeName(10100L, "newName");
+		then :
+			parameterDao.findById(10100L).name == "newName";
+	}
+	
+	@DataSet("ParameterModificationServiceIT.xml")
+	def "should change parameter description"(){
+		
+		when :
+			service.changeDescription(10100L, "newDescription");
+		then :
+			parameterDao.findById(10100L).description == "newDescription";
+	}
+	
+	/*@DataSet("ParameterModificationServiceIT.xml")
+	def "should remove parameter"(){
+		
+		when :
+			Parameter param = parameterDao.findById(10100L);
+			service.remove(param);
+		then :
+			parameterDao.findById(10100L) == null;
+	}*/
+	
+	@DataSet("ParameterModificationServiceIT.xml")
+	def "should find parameter in step"(){
+		
+		when :
+			List<Parameter> params = service.checkForParamsInStep(101L);
+		then :
+			params.size() == 1;
+			params.get(0).name == "parameter";
+	}
+	
+	@DataSet("ParameterModificationServiceIT.xml")
+	def "should find whether a parameter is used in a test case"(){
+		when :
+			service.checkForParamsInStep(101L);
+			boolean result = service.isUsed("parameter", 100L);
+		then :
+			result == true;
+	}
 }

@@ -152,14 +152,14 @@
 		@NamedQuery(name = "testStep.findPositionOfStep", query = "select index(tsteps) from TestCase tc join tc.steps tsteps where tsteps.id = :stepId"),
 		
 		//TestParameters
-		@NamedQuery(name = "Parameter.findAllByTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) order by parameter.testCase.name,  parameter.name "),
-		@NamedQuery(name = "Parameter.findAllByTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (select distinct called.id from TestCase caller join caller.steps step join step.calledTestCase called where caller.id = :testCaseId and step.class = CallTestStep) or testCase.id = :testCaseId order by parameter.testCase.name,  parameter.name "),
-		@NamedQuery(name = "Parameter.findParameterByNameAndTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId and parameter.name = :name "),
-		@NamedQuery(name = "Parameter.findAllByNameAndTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) and parameter.name = :name "),
+		@NamedQuery(name = "parameter.findAllByTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) order by testCase.name,  parameter.name "),
+		@NamedQuery(name = "parameter.findAllByTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId order by testCase.name,  parameter.name "),
+		@NamedQuery(name = "parameter.findParameterByNameAndTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId and parameter.name = :name "),
+		@NamedQuery(name = "parameter.findAllByNameAndTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) and parameter.name = :name "),
 		
 		//Datasets
-		@NamedQuery(name = "Dataset.findAllDatasetsByTestCase", query = "select dataset from Dataset as dataset join dataset.testCase testCase where testCase.id = :testCaseId order by dataset.name "),
-		@NamedQuery(name = "Dataset.findAllDatasetsByTestCases", query = "select dataset from Dataset as dataset join dataset.testCase testCase where testCase.id in (:testCaseIds) order by dataset.name "),
+		@NamedQuery(name = "dataset.findAllDatasetsByTestCase", query = "select dataset from Dataset as dataset join dataset.testCase testCase where testCase.id = :testCaseId order by dataset.name "),
+		@NamedQuery(name = "dataset.findAllDatasetsByTestCases", query = "select dataset from Dataset as dataset join dataset.testCase testCase where testCase.id in (:testCaseIds) order by dataset.name "),
 				
 		//CampaignTestPlanItem
 
