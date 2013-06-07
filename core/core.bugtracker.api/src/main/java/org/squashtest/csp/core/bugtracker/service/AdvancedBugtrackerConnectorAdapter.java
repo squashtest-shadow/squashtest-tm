@@ -21,6 +21,7 @@
 package org.squashtest.csp.core.bugtracker.service;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
@@ -35,19 +36,17 @@ import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
+import org.squashtest.tm.core.foundation.lang.CollectionUtils;
 
-public class AdvancedBugtrackerConnectorAdapter implements
-		InternalBugtrackerConnector {
+public class AdvancedBugtrackerConnectorAdapter implements InternalBugtrackerConnector {
 
 	private AdvancedBugTrackerConnector connector;
-	
-	
+
 	public AdvancedBugtrackerConnectorAdapter() {
 		super();
 	}
 
-	public AdvancedBugtrackerConnectorAdapter(
-			AdvancedBugTrackerConnector connector) {
+	public AdvancedBugtrackerConnectorAdapter(AdvancedBugTrackerConnector connector) {
 		super();
 		this.connector = connector;
 	}
@@ -59,34 +58,31 @@ public class AdvancedBugtrackerConnectorAdapter implements
 	public void setConnector(AdvancedBugTrackerConnector connector) {
 		this.connector = connector;
 	}
+
 	@Override
 	public void authenticate(AuthenticationCredentials credentials) {
 		connector.authenticate(credentials);
 	}
 
 	@Override
-	public void checkCredentials(AuthenticationCredentials credentials)
-			throws BugTrackerNoCredentialsException, BugTrackerRemoteException {
+	public void checkCredentials(AuthenticationCredentials credentials) throws BugTrackerNoCredentialsException,
+			BugTrackerRemoteException {
 		connector.checkCredentials(credentials);
 	}
 
-
 	@Override
-	public RemoteProject findProject(String projectName)
-			throws ProjectNotFoundException, BugTrackerRemoteException {
+	public RemoteProject findProject(String projectName) throws ProjectNotFoundException, BugTrackerRemoteException {
 		return connector.findProject(projectName);
 	}
 
 	@Override
-	public RemoteProject findProjectById(String projectId)
-			throws ProjectNotFoundException, BugTrackerRemoteException {
+	public RemoteProject findProjectById(String projectId) throws ProjectNotFoundException, BugTrackerRemoteException {
 		return connector.findProject(projectId);
 	}
 
 	@Override
-	public RemoteIssue createIssue(RemoteIssue issue)
-			throws BugTrackerRemoteException {
-		return connector.createIssue((AdvancedIssue)issue);
+	public RemoteIssue createIssue(RemoteIssue issue) throws BugTrackerRemoteException {
+		return connector.createIssue((AdvancedIssue) issue);
 	}
 
 	@Override
@@ -99,29 +95,34 @@ public class AdvancedBugtrackerConnectorAdapter implements
 		return connector.findIssue(key);
 	}
 
+	/**
+	 * 
+	 * @see org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector#findIssues(java.util.Collection)
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public List<RemoteIssue> findIssues(List<String> issueKeyList) {
-		return (List)connector.findIssues(issueKeyList);
+	public List<RemoteIssue> findIssues(Collection<String> issueKeys) {
+		return (List) connector.findIssues(CollectionUtils.coerceToList(issueKeys));
 	}
-	
+
 	@Override
 	public URL makeViewIssueUrl(BugTracker bugTracker, String issueId) {
 		return connector.makeViewIssueUrl(issueId);
 	}
-	
+
 	@Override
 	public RemoteIssue createReportIssueTemplate(String projectName) {
 		return connector.createReportIssueTemplate(projectName);
 	}
-	
+
 	@Override
 	public void forwardAttachments(String remoteIssueKey, List<Attachment> attachments) {
 		connector.forwardAttachments(remoteIssueKey, attachments);
 	}
-	
+
 	@Override
 	public Object executeDelegateCommand(DelegateCommand command) {
 		return connector.executeDelegateCommand(command);
 	}
-	
+
 }

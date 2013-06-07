@@ -22,6 +22,7 @@ package org.squashtest.csp.core.bugtracker.service;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerManagerException;
@@ -38,6 +39,7 @@ import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
+import org.squashtest.tm.core.foundation.lang.CollectionUtils;
 
 
 /**
@@ -103,12 +105,25 @@ public class SimpleBugtrackerConnectorAdapter implements
 	public RemoteIssue findIssue(String key) {
 		return connector.findIssue(key);
 	}
-
+/**
+ * 
+ * @see org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector#findIssues(java.util.Collection)
+ */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public List<RemoteIssue> findIssues(List<String> issueKeyList) {
-		return (List)connector.findIssues(issueKeyList);
+	public List<RemoteIssue> findIssues(Collection<String> issueKeys) {
+		return (List) connector.findIssues(coerceToList(issueKeys));
 	}
 	
+	/**
+ * @param issueKeys
+ * @return
+ */
+private List<String> coerceToList(Collection<String> issueKeys) {
+	
+	return CollectionUtils.coerceToList(issueKeys);
+}
+
 	@Override
 	public RemoteIssue createReportIssueTemplate(String projectName) {
 		RemoteProject project = connector.findProject(projectName);

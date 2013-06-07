@@ -150,22 +150,6 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		reproject == project
 	}
 
-	/* @Deprecated
-	def "should get priorities"(){
-
-		given :
-		BugTracker bugTracker = Mock()
-		List<Priority> priorities = Mock()
-		remoteService.getPriorities(bugTracker) >> priorities
-
-		when :
-		def priorityList = service.getRemotePriorities(bugTracker)
-
-		then :
-		priorityList == priorities
-	}
-	*/
-
 	def "should set the credentials"(){
 
 		given :

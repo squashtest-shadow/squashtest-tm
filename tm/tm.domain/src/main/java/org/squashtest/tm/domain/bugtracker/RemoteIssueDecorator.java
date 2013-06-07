@@ -30,19 +30,16 @@ import org.squashtest.tm.bugtracker.definition.RemoteVersion;
 
 public class RemoteIssueDecorator implements RemoteIssue {
 
-	protected RemoteIssue issue;
-	private long issueId;
+	protected final RemoteIssue issue;
+	private final long issueId;
 	
-	public RemoteIssueDecorator(RemoteIssue issue) {
-		this.issue = issue;
+	public RemoteIssueDecorator(RemoteIssue remoteIssue, long issueId) {
+		this.issue = remoteIssue;
+		this.issueId = issueId;
 	}
 
 	public long getIssueId() {
 		return issueId;
-	}
-	
-	public void setIssueId(long issueId) {
-		this.issueId = issueId;
 	}
 	
 	public String getId(){
