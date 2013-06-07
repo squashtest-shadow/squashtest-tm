@@ -29,15 +29,17 @@ import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueList;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
+import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
+import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IssueDao;
 
 @Repository
@@ -114,7 +116,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Object[]> findSortedIssuesFromIssuesLists(final Collection<Long> issueListIds,
-			final CollectionSorting sorter, Long bugtrackerId) {
+			final PagingAndSorting sorter, Long bugtrackerId) {
 		if (issueListIds.isEmpty()) {
 			return Collections.emptyList();
 		}
@@ -129,17 +131,10 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 								.add(Projections.property("Issue.id"), "localId"))
 				.add(Restrictions.in("IssueList.id", issueListIds))
 				.add(Restrictions.eq("Issue.bugtracker.id", bugtrackerId));
+		
+		SortingUtils.addOrder(crit, sorter);
+		PagingUtils.addPaging(crit, sorter);
 
-		String sortBy = sorter.getSortedAttribute();
-		String sortDirection = sorter.getSortingOrder();
-
-		if (sortDirection.equals("asc")) {
-			crit = crit.addOrder(Order.asc(sortBy));
-		} else {
-			crit = crit.addOrder(Order.desc(sortBy));
-		}
-
-		crit = crit.setFirstResult(sorter.getFirstItemIndex()).setMaxResults(sorter.getPageSize());
 		return crit.list();
 
 	}
@@ -198,21 +193,21 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Object[]> findSortedIssuesFromExecutionAndExecutionSteps(List<Long> executionsIds,
-			List<Long> executionStepsIds, CollectionSorting sorter) {
+			List<Long> executionStepsIds, PagingAndSorting sorter) {
 		if (!executionsIds.isEmpty() && !executionStepsIds.isEmpty()) {
 
 			String queryString = "select issueList.id, Issue.remoteIssueId, Issue.bugtracker.id "
 					+ "from IssueList issueList join issueList.issues Issue "
 					+ WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_AND_EXEC_STEP;
 
-			queryString += "order by " + sorter.getSortedAttribute() + " " + sorter.getSortingOrder();
+			queryString += "order by " + sorter.getSortedAttribute() + " " + sorter.getSortOrder().getCode();
 
 			Query query = currentSession().createQuery(queryString);
 			query.setParameterList("executionsIds", executionsIds);
 			query.setParameterList("executionStepsIds", executionStepsIds);
+
 			if (!sorter.shouldDisplayAll()) {
-				query.setFirstResult(sorter.getFirstItemIndex());
-				query.setMaxResults(sorter.getPageSize());
+				PagingUtils.addPaging(query, sorter);
 			}
 
 			return query.list();

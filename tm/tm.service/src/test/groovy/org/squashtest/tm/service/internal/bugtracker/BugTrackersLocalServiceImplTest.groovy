@@ -21,24 +21,17 @@
 
 package org.squashtest.tm.service.internal.bugtracker
 
-import org.apache.commons.collections.MultiMap;
-import org.springframework.security.core.authority.mapping.MappableAttributesRetriever;
-import org.springframework.ui.context.support.ResourceBundleThemeSource;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.service.BugTrackersService;
-import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
-import org.squashtest.tm.bugtracker.definition.RemoteIssue;
-import org.squashtest.tm.domain.bugtracker.IssueOwnership;
-import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
-import org.squashtest.tm.service.internal.repository.CampaignDao;
-import org.squashtest.tm.service.internal.repository.IssueDao;
-import org.squashtest.tm.service.internal.repository.IterationDao;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.apache.commons.collections.MultiMap
+import org.squashtest.csp.core.bugtracker.domain.BugTracker
+import org.squashtest.csp.core.bugtracker.service.BugTrackersService
+import org.squashtest.tm.bugtracker.definition.RemoteIssue
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder
+import org.squashtest.tm.service.internal.repository.IssueDao
+import org.squashtest.tm.service.internal.repository.IterationDao
 
 import spock.lang.Specification
 
@@ -90,8 +83,8 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		issueDao.countIssuesfromIssueList(_,_) >> 10
 
 		when:
-		FilteredCollectionHolder holder = service.createOwnershipsCollection(Mock(CollectionSorting), [ex1, ex2], bugtracker)
-		def res = holder.filteredCollection
+		PagedCollectionHolder holder = service.createOwnershipsCollection(Mock(PagingAndSorting), [ex1, ex2], bugtracker)
+		def res = holder.pagedItems
 
 		then:
 		res*.execution.containsAll([ex1, ex2])
@@ -134,8 +127,8 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		issueDao.countIssuesfromIssueList(_,_) >> 10
 
 		when:
-		FilteredCollectionHolder holder = service.createOwnershipsCollection(Mock(CollectionSorting), [ex1, ex2], bugtracker)
-		def res = holder.filteredCollection
+		PagedCollectionHolder holder = service.createOwnershipsCollection(Mock(PagingAndSorting), [ex1, ex2], bugtracker)
+		def res = holder.pagedItems
 
 		then:
 		res[0].execution == ex1

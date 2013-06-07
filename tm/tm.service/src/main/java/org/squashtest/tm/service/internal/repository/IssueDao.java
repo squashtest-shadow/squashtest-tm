@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
@@ -67,7 +68,7 @@ public interface IssueDao extends EntityDao<Issue> {
 	 * 
 	 * @return  non-null but possibly empty list of <code>Object[]</code> which have the following structure <b>[IssueList.id, Issue.remoteIssueId, Issue.id]</b>
 	 **/
-	List<Object[]> findSortedIssuesFromIssuesLists(Collection<Long> issueListId, CollectionSorting sorter,
+	List<Object[]> findSortedIssuesFromIssuesLists(Collection<Long> issueListId, PagingAndSorting sorter,
 			Long bugTrackerId);
 	
 	/**
@@ -80,7 +81,7 @@ public interface IssueDao extends EntityDao<Issue> {
 	 * @return non-null but possibly empty list of <code>Object[]</code> which have the following structure <b>[IssueList.id, Issue.remoteIssueId , Issue.bugtracker.id]</b>
 	 */
 	List<Object[]> findSortedIssuesFromExecutionAndExecutionSteps(List<Long> executionIds,
-			List<Long> executionStepsIds, CollectionSorting sorter);
+			List<Long> executionStepsIds, PagingAndSorting sorter);
 
 	/**
 	 * Will count all Issues from the given executions and execution-steps <b>concerned by the active bug-tracker</b> for each

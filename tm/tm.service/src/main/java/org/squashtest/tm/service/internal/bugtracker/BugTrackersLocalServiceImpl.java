@@ -45,6 +45,10 @@ import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.Issue;
@@ -60,8 +64,6 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.exception.IssueAlreadyBoundException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
@@ -243,8 +245,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	/* ------------------------ExecutionStep--------------------------------------- */
 	@Override
 	@PreAuthorize("hasPermission(#stepId, 'org.squashtest.tm.domain.execution.ExecutionStep', 'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnerShipsForExecutionStep(
-			Long stepId, CollectionSorting sorter) {
+	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnerShipsForExecutionStep(
+			Long stepId, PagingAndSorting sorter) {
 		// find the ExecutionStep's IssueList id
 		ExecutionStep executionStep = executionStepDao.findById(stepId);
 		BugTracker bugTracker = executionStep.getBugTracker();
@@ -267,7 +269,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		List<IssueOwnership<RemoteIssueDecorator>> ownerships = bindBTIssuesToExecutionStep(btIssueDecorators,
 				executionStep);
 		Integer totalIssues = issueDao.countIssuesfromIssueList(issueListId, bugTracker.getId());
-		return new FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(totalIssues, ownerships);
+		return new PagingBackedPagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(sorter, totalIssues,
+				ownerships);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -300,8 +303,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	/* ------------------------Execution--------------------------------------- */
 	@Override
 	@PreAuthorize("hasPermission(#execId, 'org.squashtest.tm.domain.execution.Execution', 'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsforExecution(
-			Long execId, CollectionSorting sorter) {
+	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsforExecution(
+			Long execId, PagingAndSorting sorter) {
 		// find bug-tracker
 		Execution execution = executionDao.findById(execId);
 		BugTracker bugTracker = execution.getBugTracker();
@@ -317,8 +320,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Override
 	@PreAuthorize("hasPermission(#iterId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForIteration(
-			Long iterId, CollectionSorting sorter) {
+	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForIteration(
+			Long iterId, PagingAndSorting sorter) {
 		// find bug-tracker
 		Iteration iteration = iterationDao.findById(iterId);
 		BugTracker bugTracker = iteration.getProject().findBugTracker();
@@ -334,8 +337,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	/* ------------------------Campaign--------------------------------------- */
 	@Override
 	@PreAuthorize("hasPermission(#campId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaigns(
-			Long campId, CollectionSorting sorter) {
+	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaigns(
+			Long campId, PagingAndSorting sorter) {
 		// find bug-tracker
 		Campaign campaign = campaignDao.findById(campId);
 		BugTracker bugTracker = campaign.getProject().findBugTracker();
@@ -351,8 +354,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	/* ------------------------TestSuite--------------------------------------- */
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(
-			Long testSuiteId, CollectionSorting sorter) {
+	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(
+			Long testSuiteId, PagingAndSorting sorter) {
 		// find bug-tracker
 		TestSuite testSuite = testSuiteDao.findById(testSuiteId);
 		BugTracker bugTracker = testSuite.getIteration().getProject().findBugTracker();
@@ -369,8 +372,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Override
 	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ') or hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForTestCase(
-			Long tcId, CollectionSorting sorter) {
+	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForTestCase(
+			Long tcId, PagingAndSorting sorter) {
 
 		// Find all concerned IssueDetector
 		List<Execution> executions = testCaseDao.findAllExecutionByTestCase(tcId);
@@ -389,8 +392,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		List<ExecutionStep> executionSteps = collectExecutionStepsFromExecution(executions);
 
 		// create filtredCollection of IssueOwnership<BTIssue>
-		CollectionSorting sorter = new CollectionSorting() {
-
+		PagingAndSorting sorter = new PagingAndSorting() {
 			@Override
 			public boolean shouldDisplayAll() {
 				return true;
@@ -407,8 +409,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			}
 
 			@Override
-			public String getSortingOrder() {
-				return "asc";
+			public SortOrder getSortOrder() {
+				return SortOrder.ASCENDING;
 			}
 
 			@Override
@@ -417,7 +419,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			}
 		};
 
-		return createOwnershipsCollection(sorter, executions, executionSteps).getFilteredCollection();
+		return createOwnershipsCollection(sorter, executions, executionSteps).getPagedItems();
 	}
 
 	private List<ExecutionStep> collectExecutionStepsFromExecution(List<Execution> executions) {
@@ -446,8 +448,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	 * @param bugTracker
 	 * @return the filtered collection holder of IssuesOwnerships
 	 */
-	private FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> createOwnershipsCollection(
-			CollectionSorting sorter, List<IssueDetector> issueDetectors, BugTracker bugTracker) {
+	private PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> createOwnershipsCollection(
+			PagingAndSorting sorter, List<IssueDetector> issueDetectors, BugTracker bugTracker) {
 		// Collect all IssueList.id out of the IssueDetector list, but keep the information about the
 		// IssueDetector/IssueList association
 		Map<Long, IssueDetector> issueDetectorByListId = createIssueDetectorByIssueListId(issueDetectors);
@@ -473,7 +475,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 				sortedIssueListIdsAndIssueRemoteIds, issueDetectorByListId);
 
 		Integer totalIssues = issueDao.countIssuesfromIssueList(issueListIds, bugTracker.getId());
-		return new FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(totalIssues, ownerships);
+		return new PagingBackedPagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(sorter, totalIssues,
+				ownerships);
 	}
 
 	/**
@@ -494,7 +497,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	/**
 	 * This method is not the same as the
-	 * {@linkplain BugTrackersLocalServiceImpl#createOwnershipsCollection(CollectionSorting, List, BugTracker)} ,in the
+	 * {@linkplain BugTrackersLocalServiceImpl#createOwnershipsCollection(PagingAndSorting, List, BugTracker)} ,in the
 	 * way that the restriction on the bug-tracker is done directly through each Execution of Execution-Step. The
 	 * issue's bug-tracker id must be the same as the issue's owner's project's bug-tracker id. <br>
 	 * With this request there is no need to check the project-bug-tracker connection before the request, and for a
@@ -505,8 +508,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	 * @param issueDetectors
 	 * @return
 	 */
-	private FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> createOwnershipsCollection(
-			CollectionSorting sorter, List<Execution> executions, List<ExecutionStep> executionSteps) {
+	private PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> createOwnershipsCollection(
+			PagingAndSorting sorter, List<Execution> executions, List<ExecutionStep> executionSteps) {
 		// Keep the information about the
 		// IssueDetector/IssueList association
 		Map<Long, IssueDetector> issueDetectorByListId = createIssueDetectorByIssueListId(executions);
@@ -535,7 +538,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 				sortedIssueListIdsAndIssueRemoteIds, issueDetectorByListId);
 
 		Integer totalIssues = issueDao.countIssuesfromExecutionAndExecutionSteps(executionIds, executionStepsIds);
-		return new FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(totalIssues, ownerships);
+		return new PagingBackedPagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(sorter, totalIssues,
+				ownerships);
 
 	}
 

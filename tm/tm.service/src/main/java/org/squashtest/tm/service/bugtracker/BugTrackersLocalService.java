@@ -32,14 +32,13 @@ import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
-import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
 @Transactional
 public interface BugTrackersLocalService {
@@ -94,8 +93,8 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnerShipsForExecutionStep(Long stepId,
-			CollectionSorting sorter);
+	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnerShipsForExecutionStep(Long stepId,
+			PagingAndSorting sorter);
 
 	/**
 	 * Given an Execution, returns a list of linked BTIssue (not Issue).<br>
@@ -111,8 +110,8 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsforExecution(Long execId,
-			CollectionSorting sorter);
+	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsforExecution(Long execId,
+			PagingAndSorting sorter);
 
 	/**
 	 * Given an Iteration, returns a list of linked BTIssue (not Issue).<br>
@@ -128,8 +127,8 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForIteration(Long iterId,
-			CollectionSorting sorter);
+	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForIteration(Long iterId,
+			PagingAndSorting sorter);
 
 	/**
 	 * Given an Campaign, returns a list of linked BTIssue (not Issue)<br>
@@ -145,8 +144,8 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaigns(Long campId,
-			CollectionSorting sorter);
+	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaigns(Long campId,
+			PagingAndSorting sorter);
 
 	/**
 	 * Given a TestSuite, returns a list of linked BTIssue (not Issue).<br>
@@ -162,8 +161,8 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(Long testSuiteId,
-			CollectionSorting sorter);
+	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(Long testSuiteId,
+			PagingAndSorting sorter);
 
 	/**
 	 * Given a TestCase, returns a list of linked BTIssue (not Issue).<br>
@@ -179,8 +178,8 @@ public interface BugTrackersLocalService {
 	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the CollectionSorting.
 	 */
-	FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForTestCase(Long tcId,
-			CollectionSorting sorter);
+	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForTestCase(Long tcId,
+			PagingAndSorting sorter);
 	 /**
 	 * Given a TestCase, returns a list of linked BTIssue (not Issue).<br>
 	 * <br>

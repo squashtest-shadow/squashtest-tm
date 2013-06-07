@@ -56,6 +56,10 @@ import org.squashtest.tm.bugtracker.advanceddomain.AdvancedIssue;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
 import org.squashtest.tm.bugtracker.definition.Attachment;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
@@ -225,8 +229,8 @@ public class BugTrackerController {
 	DataTableModel getExecStepKnownIssuesData(@PathVariable("stepId") Long stepId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
-		CollectionSorting sorter = new IssueCollectionSorting(params);
+		PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
+		PagingAndSorting sorter = new IssueCollectionSorting(params);
 		try {
 
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnerShipsForExecutionStep(stepId, sorter);
@@ -234,13 +238,14 @@ public class BugTrackerController {
 
 		// no credentials exception are okay, the rest is to be treated as usual
 		catch (BugTrackerNoCredentialsException noCrdsException) {
-			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(EXECUTION_STEP_TYPE, stepId, noCrdsException);
+			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(EXECUTION_STEP_TYPE, stepId, noCrdsException,
+					sorter);
 		} catch (NullArgumentException npException) {
-			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(EXECUTION_STEP_TYPE, stepId, npException);
+			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(EXECUTION_STEP_TYPE, stepId, npException,
+					sorter);
 		}
 
-		return new StepIssuesTableModel(bugTrackersLocalService).buildDataModel(filteredCollection,
-				sorter.getFirstItemIndex() + 1, params.getsEcho());
+		return new StepIssuesTableModel(bugTrackersLocalService).buildDataModel(filteredCollection, params.getsEcho());
 
 	}
 
@@ -329,9 +334,9 @@ public class BugTrackerController {
 	DataTableModel getExecKnownIssuesData(@PathVariable("execId") Long execId, final DataTableDrawParameters params,
 			final Locale locale) {
 
-		FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
+		PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
 
-		CollectionSorting sorter = new IssueCollectionSorting(params);
+		PagingAndSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsforExecution(execId, sorter);
 
@@ -339,13 +344,14 @@ public class BugTrackerController {
 
 		// no credentials exception are okay, the rest is to be treated as usual
 		catch (BugTrackerNoCredentialsException noCrdsException) {
-			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(EXECUTION_TYPE, execId, noCrdsException);
+			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(EXECUTION_TYPE, execId, noCrdsException,
+					sorter);
 		} catch (NullArgumentException npException) {
-			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(EXECUTION_TYPE, execId, npException);
+			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(EXECUTION_TYPE, execId, npException, sorter);
 		}
 
 		return new ExecutionIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
-				filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
+				filteredCollection, params.getsEcho());
 
 	}
 
@@ -429,19 +435,19 @@ public class BugTrackerController {
 	DataTableModel getTestCaseKnownIssuesData(@PathVariable("tcId") Long tcId, final DataTableDrawParameters params,
 			final Locale locale) {
 
-		FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
-		CollectionSorting sorter = new IssueCollectionSorting(params);
+		PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
+		PagingAndSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForTestCase(tcId, sorter);
 		}
 		// no credentials exception are okay, the rest is to be treated as usual
 		catch (BugTrackerNoCredentialsException noCrdsException) {
-			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(TEST_CASE_TYPE, tcId, noCrdsException);
+			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(TEST_CASE_TYPE, tcId, noCrdsException, sorter);
 		} catch (NullArgumentException npException) {
-			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(TEST_CASE_TYPE, tcId, npException);
+			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(TEST_CASE_TYPE, tcId, npException, sorter);
 		}
 		return new TestCaseIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
-				filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
+				filteredCollection, params.getsEcho());
 
 	}
 
@@ -475,21 +481,22 @@ public class BugTrackerController {
 	DataTableModel getIterationKnownIssuesData(@PathVariable("iterId") Long iterId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
-		CollectionSorting sorter = new IssueCollectionSorting(params);
+		PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
+		PagingAndSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForIteration(iterId, sorter);
 			// no credentials exception are okay, the rest is to be treated as usual
-			
+
 		} catch (BugTrackerNoCredentialsException noCrdsException) {
-			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(ITERATION_TYPE, iterId, noCrdsException);
-			
+			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(ITERATION_TYPE, iterId, noCrdsException,
+					sorter);
+
 		} catch (NullArgumentException npException) {
-			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(ITERATION_TYPE, iterId, npException);
-			
+			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(ITERATION_TYPE, iterId, npException, sorter);
+
 		}
 		return new IterationIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
-				filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
+				filteredCollection, params.getsEcho());
 
 	}
 
@@ -523,19 +530,18 @@ public class BugTrackerController {
 	DataTableModel getCampaignKnownIssuesData(@PathVariable("campId") Long campId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
-		CollectionSorting sorter = new IssueCollectionSorting(params);
+		PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
+		PagingAndSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForCampaigns(campId, sorter);
-		}
-		// no credentials exception are okay, the rest is to be treated as usual
-		catch (BugTrackerNoCredentialsException noCrdsException) {
-			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(CAMPAIGN_TYPE, campId, noCrdsException);
+			// no credentials exception are okay, the rest is to be treated as usual
+		} catch (BugTrackerNoCredentialsException noCrdsException) {
+			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(CAMPAIGN_TYPE, campId, noCrdsException, sorter);
 		} catch (NullArgumentException npException) {
-			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(CAMPAIGN_TYPE, campId, npException);
+			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(CAMPAIGN_TYPE, campId, npException, sorter);
 		}
 		return new IterationIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
-				filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
+				filteredCollection, params.getsEcho());
 	}
 
 	/* **************************************************************************************************************
@@ -568,19 +574,21 @@ public class BugTrackerController {
 	DataTableModel getTestSuiteKnownIssuesData(@PathVariable("testSuiteId") Long testSuiteId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
-		CollectionSorting sorter = new IssueCollectionSorting(params);
+		PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
+		PagingAndSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForTestSuite(testSuiteId, sorter);
 		}
 		// no credentials exception are okay, the rest is to be treated as usual
 		catch (BugTrackerNoCredentialsException noCrdsException) {
-			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(TEST_SUITE_TYPE, testSuiteId, noCrdsException);
+			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(TEST_SUITE_TYPE, testSuiteId, noCrdsException,
+					sorter);
 		} catch (NullArgumentException npException) {
-			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(TEST_SUITE_TYPE, testSuiteId, npException);
+			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(TEST_SUITE_TYPE, testSuiteId, npException,
+					sorter);
 		}
 		return new IterationIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
-				filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
+				filteredCollection, params.getsEcho());
 
 	}
 
@@ -762,7 +770,7 @@ public class BugTrackerController {
 		return bugTrackersLocalService.checkBugTrackerStatus(projectId);
 	}
 
-	private static final class IssueCollectionSorting implements CollectionSorting {
+	private static final class IssueCollectionSorting implements CollectionSorting, PagingAndSorting {
 
 		private DataTableDrawParameters params;
 
@@ -795,14 +803,22 @@ public class BugTrackerController {
 			return (getPageSize() < 0);
 		}
 
+		/**
+		 * @see org.squashtest.tm.core.foundation.collection.Sorting#getSortOrder()
+		 */
+		@Override
+		public SortOrder getSortOrder() {
+			return SortOrder.coerceFromCode(params.getsSortDir_0());
+		}
+
 	}
 
-	private FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> makeEmptyIssueDecoratorCollectionHolder(
-			String entityName, Long entityId, Exception cause) {
+	private PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> makeEmptyIssueDecoratorCollectionHolder(
+			String entityName, Long entityId, Exception cause, PagingAndSorting paging) {
 		LOGGER.trace("BugTrackerController : fetching known issues for  " + entityName + " " + entityId
 				+ " failed, exception : ", cause);
 		List<IssueOwnership<RemoteIssueDecorator>> emptyList = new LinkedList<IssueOwnership<RemoteIssueDecorator>>();
-		return new FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(0, emptyList);
+		return new PagingBackedPagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(paging, 0, emptyList);
 	}
 
 }
