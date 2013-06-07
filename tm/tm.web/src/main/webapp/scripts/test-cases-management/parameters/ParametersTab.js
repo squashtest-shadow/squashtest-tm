@@ -19,13 +19,16 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "backbone", "./ParametersPanel.js",	"./DatasetsPanel.js", "jquery.squash.confirmdialog" ],
+define([ "jquery", "backbone", "./ParametersPanel",	"./DatasetsPanel", "jquery.squash.confirmdialog" ],
 		function($, Backbone, ParametersPanel, DatasetsPanel) {
 			var ParametersTab = Backbone.View.extend({
+			
 				el : "#parameters-tabs-panel",
 				
 				initialize : function() {
-				this.settings = this.options.settings;
+					var self = this;
+					this.settings = this.options.settings;
+						
 					this.parametersPanel = new ParametersPanel({settings : this.settings, parentTab : this});
 					this.datasetsPanel = new DatasetsPanel({settings : this.settings, parentTab : this});
 				},

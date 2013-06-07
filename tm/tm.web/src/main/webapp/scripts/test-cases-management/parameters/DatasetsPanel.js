@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "backbone", "./DatasetsTable.js", "./NewDatasetDialog.js",
+define([ "jquery", "backbone", "./DatasetsTable", "./NewDatasetDialog", 
 		"jquery.squash.confirmdialog", "jquery.squash.togglepanel" ],
 		function($, Backbone, DatasetsTable, NewDatasetDialog) {
 			var DatasetsPanel = Backbone.View.extend({
@@ -77,7 +77,7 @@ define([ "jquery", "backbone", "./DatasetsTable.js", "./NewDatasetDialog.js",
 						self.table.refresh();
 					}
 
-					self.newDatasetDialog = new NewDatasetDialog({settings : self.settings, model : {name:""}});
+					self.newDatasetDialog = new NewDatasetDialog({settings : self.settings});
 					self.newDatasetDialog.on("newDataset.cancel", discard);
 					self.newDatasetDialog.on("newDataset.confirm", discardAndRefresh);
 				}

@@ -19,16 +19,18 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "app/lnf/Forms", "jquery.squash.confirmdialog" ],
-		function($, Backbone, Forms) {
+		[ "jquery", "backbone", "app/lnf/Forms","./NewDatasetModel", "jquery.squash.confirmdialog" ],
+		function($, Backbone, Forms, NewDatasetModel) {
 			var NewDatasetDialog = Backbone.View
 					.extend({
 						el : "#add-dataset-dialog",
-						paramInputIdPrefix : "add-dataset-paramValue-",
+						paramInputIdPrefix : "add-dataset-paramValue",
 						paramRowClass : "parameterRow",
+						inputClass : "paramValue",
 						initialize : function() {
 							this.settings = this.options.settings;
 							var self = this;
+							
 							this.getAndAddParamterInputs = $.proxy(this._getAndAddParamterInputs, this);
 							this.addParamterInputs = $.proxy(this._addParamterInputs, this);
 							this.removeParameterInputs = $.proxy(this._removeParameterInputs, this);
@@ -47,11 +49,25 @@ define(
 						},
 						
 						events : {
+							"blur input:text.strprop" : "changeStrProp",
+							"blur input:text.paramValue" : "changeParamProp",
 							"confirmdialogcancel" : "cancel",
 							"confirmdialogvalidate" : "validate",
 							"confirmdialogconfirm" : "confirm"
 						},
 						
+						changeStrProp : function(event) {
+							var textbox = event.target;
+							this.model.set(textbox.name, textbox.value);
+						},
+						
+						changeParamProp : function(event){
+						var self = this;
+							var textbox = event.target;
+							var nameLength = textbox.name.lenght;
+							var id = parseInt(textbox.name.substring(self.inputClass.length, nameLength));
+							this.model.paramValueChanged(id , textbox.value);
+						},
 						
 						cancel : function(event) {
 							this.cleanup();
@@ -63,33 +79,37 @@ define(
 							this.trigger("newDataset.confirm");
 						},
 
+						
 						validate : function(event) {
-							var res = true, self = this;
-							this.populateModel();
+							var res = true, validationErrors = this.model
+									.validateAll();
+
 							Forms.form(this.$el).clearState();
 
-							$.ajax({
-								type : 'post',
-								url : self.settings.basic.testCaseUrl + "/datasets/new",
-								dataType : 'json',
-								// note : we cannot use promise api with async param. see
-								// http://bugs.jquery.com/ticket/11013#comment:40
+							if (validationErrors !== null) {
+								for ( var key in validationErrors) {
+									Forms
+											.input(
+													this.$("input[name='" + key
+															+ "']")).setState(
+													"error",
+													validationErrors[key]);
+								}
+
+								return false;
+							}
+
+							this.model.save(null, {
 								async : false,
-								data : self.model,
-								error : function(jqXHR, textStatus, errorThrown) {
+								error : function() {
 									res = false;
 									event.preventDefault();
 								}
 							});
-
-							return res;
 						},
 						
-						
 						_getAndAddParamterInputs : function(){
-							var self = this;
-							
-							 
+							var self = this;							 
 							 $.ajax({
 								url: self.settings.basic.testCaseUrl +"/parameters",
 								type: "get"
@@ -101,7 +121,14 @@ define(
 						_addParamterInputs : function(json){
 							var self = this;
 							var content = this.$("table.form-horizontal > tbody");
+							//CREATE MODEL
+							var paramValues = new Array();
+							for(var i=0; i< json.length; i++){
+								paramValues.push([ json[i].id, ""]);
+							}
+							this.model = new NewDatasetModel({name:"", paramValues : paramValues},{url:self.settings.basic.testCaseDatasetsUrl+"/new"});
 							
+							//CREATE INPUTS
 							var newTemplate = function(param){
 								var row = $("<tr/>", {'class':'control-group '+self.paramRowClass});
 								//label
@@ -114,9 +141,12 @@ define(
 								var inputCell = $("<td/>",{'class':'controls'});
 								var input =  $("<input/>", {
 											'type' : 'text',
-											'class' : 'paramValue',
-											'id': self.paramInputIdPrefix + param.id
-										});			
+											'class' : self.inputClass,
+											'id': self.paramInputIdPrefix + param.id,
+											'name' : self.inputClass + param.id,
+											'maxlength':255
+										});
+								input.attr("size", 50);										
 								inputCell.append(input);
 								row.append(inputCell);
 								content.append(row);
@@ -141,10 +171,7 @@ define(
 
 						
 
-						populateModel : function() {
-							var model = this.model, $el = this.$el;
-							model.name = $el.find("#add-dataset-name").val();
-						}			
+								
 
 					});
 			return NewDatasetDialog;

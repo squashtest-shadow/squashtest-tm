@@ -33,8 +33,8 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -46,6 +46,7 @@ import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
+import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -66,6 +67,8 @@ public class TestCaseDatasetsController {
 	private TestCaseFinder testCaseFinder;
 	@Inject 
 	private DatasetModificationService datasetModificationService;
+	@Inject
+	private ParameterFinder parameterFinder;
 	@RequestMapping(method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getDatasetsTable(@PathVariable long testCaseId, final DataTableDrawParameters params,
@@ -142,10 +145,8 @@ public class TestCaseDatasetsController {
 	 */
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
-	public void newDataset(@PathVariable long testCaseId,@Valid @ModelAttribute("add-dataset") Dataset dataset) {
+	public void newDataset(@PathVariable long testCaseId,@Valid @RequestBody  NewDataset dataset) {
 		TestCase testCase = testCaseFinder.findById(testCaseId);
-		dataset.setTestCase(testCase);
-		testCase.addDataset(dataset);
-		datasetModificationService.persist(dataset);
+		datasetModificationService.persist(dataset.createTransientEntity(testCase, parameterFinder));
 	}
 }
