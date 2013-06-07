@@ -51,7 +51,7 @@ define(
 								"sAjaxSource": self.settings.basic.testCaseDatasetsUrl, 
 								"bPaginate": false,
 								"aaSorting" : [ [ 3, 'asc' ] ],
-								"aoColumnDefs": JSON.parse( self.settings.datasetsAoColumnDefs),
+								"aoColumnDefs": JSON.parse( self.settings.datasetsAoColumnDefs)
 							};
 						},
 
