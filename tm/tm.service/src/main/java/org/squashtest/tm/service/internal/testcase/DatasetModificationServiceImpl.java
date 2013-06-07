@@ -32,6 +32,7 @@ import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
 
 
 public class DatasetModificationServiceImpl implements DatasetModificationService {
@@ -44,11 +45,16 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	
 	@Inject 
 	private DatasetParamValueDao datasetParamValueDao;
+
+	@Inject 
+	private ParameterModificationService parameterModificationService;
+	
 	
 	@Override
 	public void persist(Dataset dataset) {
 		datasetDao.persist(dataset);
 		persistParamValues(dataset.getParameterValues());
+		updateDatasetParameters(dataset);
 	}
 
 	private void persistParamValues(Set<DatasetParamValue> paramValues){
@@ -83,14 +89,44 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 		
 		Dataset dataset = this.datasetDao.findById(datasetId);
 		Parameter parameter = this.parameterDao.findById(paramId);
-		DatasetParamValue datasetParamValue = new DatasetParamValue();
+		DatasetParamValue datasetParamValue = findOrAddParameter(dataset, parameter);
 		datasetParamValue.setDataset(dataset);
 		datasetParamValue.setParameter(parameter);
 		datasetParamValue.setParamValue(value);
-		dataset.addParameterValue(datasetParamValue);
+		updateDatasetParameters(dataset);
 	}
 	
 	public List<Dataset> getAllDatasetByTestCase(long testCaseId){
 		return this.datasetDao.findAllDatasetsByTestCase(testCaseId);
+	}
+	
+	private boolean hasParameter(Dataset dataset, Parameter parameter){
+		
+		boolean result = false;
+		Set<DatasetParamValue> datasetParamValues = dataset.getParameterValues();
+		for(DatasetParamValue datasetParamValue : datasetParamValues){
+			if(datasetParamValue.getParameter().equals(parameter)){
+				result = true;
+			}
+		}
+		return result;
+	}
+	
+	private DatasetParamValue findOrAddParameter(Dataset dataset, Parameter parameter){
+		DatasetParamValue datasetParamValue = null;
+		if(!hasParameter(dataset, parameter)){
+			datasetParamValue = new DatasetParamValue();
+			datasetParamValue.setParameter(parameter);
+			datasetParamValue.setParamValue("");
+			dataset.addParameterValue(datasetParamValue);
+		}
+		return datasetParamValue;
+	}
+	private void updateDatasetParameters(Dataset dataset){
+		Long testCaseId = dataset.getTestCase().getId();
+		List<Parameter> parameters = parameterModificationService.getAllforTestCase(testCaseId);
+		for(Parameter parameter : parameters){
+			findOrAddParameter(dataset, parameter);
+		}
 	}
 }
