@@ -96,15 +96,17 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 			parameterDao.findById(10100L).description == "newDescription";
 	}
 	
-	/*@DataSet("ParameterModificationServiceIT.xml")
+	@DataSet("ParameterModificationServiceIT.xml")
 	def "should remove parameter"(){
 		
 		when :
+		 	TestCase testCase = testCaseDao.findById(100L);
 			Parameter param = parameterDao.findById(10100L);
-			service.remove(param);
+			parameterDao.remove(param);
 		then :
-			parameterDao.findById(10100L) == null;
-	}*/
+			session.flush();
+			testCase.getParameters().size() == 0;
+	}
 	
 	@DataSet("ParameterModificationServiceIT.xml")
 	def "should find parameter in step"(){

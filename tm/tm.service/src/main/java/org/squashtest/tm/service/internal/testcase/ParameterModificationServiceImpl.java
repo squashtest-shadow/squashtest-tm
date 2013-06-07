@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepReader;
+import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
@@ -56,6 +57,8 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	@Inject
 	private TestCaseCallTreeFinder callTreeFinder;
 	
+	private static final String PARAM_PATTERN = "(.*?)(\\Q${\\E(.*?)\\Q}\\E)(.*?)";
+	
 	@Override
 	public List<Parameter> getAllforTestCase(long testCaseId) {
 		List<Long> testCaseIds = this.getCallStepTree(testCaseId);
@@ -72,10 +75,21 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	public void changeName(long parameterId, String newName) {
 
 		Parameter parameter = this.parameterDao.findById(parameterId);
+		String oldName = parameter.getName();
 		parameter.setName(newName);
-		
+		updateParamNameInSteps(parameter, oldName, newName);
 	}
 
+	private void updateParamNameInSteps(Parameter parameter, String oldName, String newName){
+		
+		for(TestStep step : parameter.getTestCase().getSteps()){
+			TestStepContentUpdater updater = new TestStepContentUpdater(oldName, newName, PARAM_PATTERN);
+			if(step != null){
+				step.accept(updater);
+			}
+		}
+	}
+	
 	@Override
 	public void changeDescription(long parameterId, String newDescription) {
 
@@ -86,14 +100,14 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	@Override
 	public void remove(Parameter parameter) {
 		
-		this.parameterDao.delete(parameter);
+		this.parameterDao.remove(parameter);
 	}
 
 	@Override
 	public void removeById(long parameterId) {
 		
 		Parameter parameter = this.parameterDao.findById(parameterId);
-		this.parameterDao.delete(parameter);
+		this.parameterDao.remove(parameter);
 	}
 	
 	@Override
@@ -131,7 +145,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	private List<String> parseStepContent(String content){
 		
 		List<String> paramNames = new ArrayList<String>();
-		String paramPattern = "(.*?)(\\Q${\\E(.*?)\\Q}\\E)(.*?)";
+		String paramPattern = PARAM_PATTERN;
 		
 		
         Pattern pattern = Pattern.compile(paramPattern);
@@ -161,6 +175,49 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		return parameter;
 	}
 
+	private final class TestStepContentUpdater implements TestStepVisitor {
+
+		String oldParamName; 
+		String newParamName;
+		String paramPattern; 
+		
+		public TestStepContentUpdater(String oldParamName, String newParamName, String paramPattern) {
+			this.oldParamName = oldParamName;
+			this.newParamName = newParamName;
+			this.paramPattern = paramPattern;
+		}
+		
+		private String replace(String content){
+			
+			String result = content;
+			if(result != null && result.length() > 0){
+				Pattern pattern = Pattern.compile(paramPattern);
+				Matcher matcher = pattern.matcher(result);
+				
+				while(matcher.find()){ 
+					String paramName = matcher.group(3);
+					if(paramName.equals(oldParamName)){
+						result = result.replace(oldParamName, newParamName);
+					}
+				} 
+			}
+			return result;
+		}
+	   
+		@Override
+		public void visit(ActionTestStep visited) {
+			visited.setAction(replace(visited.getAction()));
+			visited.setExpectedResult(replace(visited.getExpectedResult()));
+		}
+
+		@Override
+		public void visit(CallTestStep visited) {
+		
+		}
+		
+	}
+	
+	
 	private final class TestStepContentReader implements TestStepReader {
 
 		private TestStepContentReader() {
@@ -212,6 +269,11 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 			datasetParamValue.setDataset(dataset);
 			dataset.addParameterValue(datasetParamValue);
 		}
+	}
+
+	@Override
+	public Parameter getById(long testCaseId) {
+		return parameterDao.findById(testCaseId);
 	}
 
 	@Override

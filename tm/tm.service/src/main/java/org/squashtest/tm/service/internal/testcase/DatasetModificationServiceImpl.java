@@ -58,10 +58,17 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 		datasetDao.persist(dataset);
 	}
 
+
+	private void deleteParamValues(Set<DatasetParamValue> paramValues){
+		for(DatasetParamValue paramValue : paramValues){
+			datasetParamValueDao.remove(paramValue);
+		}
+	}
 	
 	@Override
 	public void remove(Dataset dataset) {
-		this.datasetDao.delete(dataset);
+		deleteParamValues(dataset.getParameterValues());
+		this.datasetDao.remove(dataset);
 	}
 
 
@@ -69,7 +76,7 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	public void removeById(long datasetId) {
 	
 		Dataset dataset = this.datasetDao.findById(datasetId);
-		this.datasetDao.delete(dataset);
+		this.datasetDao.remove(dataset);
 	}
 	
 	@Override

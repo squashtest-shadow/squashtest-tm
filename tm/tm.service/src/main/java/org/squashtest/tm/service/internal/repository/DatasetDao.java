@@ -31,9 +31,7 @@ public interface DatasetDao extends CustomDatasetDao{
 
 	void persist(Dataset newValue);
 	
-	void delete(Dataset value);
-	
-	void deleteAll(@QueryParam("ids") List<Long> ids);
-	
+	void remove(Dataset value);
+
 	Dataset findById(Long id);
 }

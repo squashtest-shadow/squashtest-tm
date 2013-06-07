@@ -41,7 +41,6 @@ import spock.unitils.UnitilsSupport;
 
 @UnitilsSupport
 @Transactional
-@DataSet("DatasetModificationServiceIT.xml")
 class DatasetModificationServiceIT extends DbunitServiceSpecification {
 
 	
@@ -96,10 +95,13 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 	/*@DataSet("DatasetModificationServiceIT.xml")
 	def "should remove a dataset"(){
 		
-		when : 
-			datasetService.removeById(100L);
+		when :
+			TestCase testCase = testCaseDao.findById(100L);
+			Dataset dataset = datasetDao.findById(100L);
+			datasetService.remove(dataset);
 		then :
-			datasetDao.findById(100L) == null;
+			session.flush();
+			testCase.getDatasets().size() == 0;
 	}*/
 	
 	@DataSet("DatasetModificationServiceIT.xml")
