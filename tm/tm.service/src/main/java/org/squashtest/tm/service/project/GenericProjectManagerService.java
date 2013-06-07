@@ -32,7 +32,14 @@ import org.squashtest.tm.domain.project.GenericProject;
 @Transactional
 @DynamicManager(name="squashtest.tm.service.GenericProjectManagerService", entity = GenericProject.class)
 public interface GenericProjectManagerService extends CustomGenericProjectManager, GenericProjectFinder {
-	public static final String ADMIN_OR_PROJECT_MANAGER = "hasPermission(#arg0, 'org.squashtest.tm.domain.project.GenericProject', 'MANAGEMENT') or hasRole('ROLE_ADMIN')";
+	
+	/*
+	 * Issue 2341 : the test for manager permissions on project failed because 'GenericProject' is not a valid ACL_CLASS.classname in the database.
+	 * So I had to split it and explicitly refer to the actual implementations 'Project' and 'ProjectTemplate'.   
+	 */
+	public static final String ADMIN_OR_PROJECT_MANAGER = "hasPermission(#arg0, 'org.squashtest.tm.domain.project.Project', 'MANAGEMENT') " +
+														  "or hasPermission(#arg0, 'org.squashtest.tm.domain.project.ProjectTemplate', 'MANAGEMENT') " +
+														  "or hasRole('ROLE_ADMIN')";
 
 	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
 	void changeDescription(long projectId, String newDescription);
