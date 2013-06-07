@@ -42,8 +42,8 @@ import org.squashtest.tm.web.internal.controller.campaign.TestSuiteHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
-public final class BugtrackerControllerHelper {
-	private BugtrackerControllerHelper() {
+public final class BTControllerHelper {
+	private BTControllerHelper() {
 
 	}
 

@@ -47,8 +47,8 @@ import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
 @Controller
 @RequestMapping("/bugtracker/{bugtrackerId}")
-public class BugtrackerModificationController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(BugtrackerModificationController.class);
+public class BTModificationController {
+	private static final Logger LOGGER = LoggerFactory.getLogger(BTModificationController.class);
 
 	@Inject
 	private BugTrackerModificationService bugtrackerModificationService;

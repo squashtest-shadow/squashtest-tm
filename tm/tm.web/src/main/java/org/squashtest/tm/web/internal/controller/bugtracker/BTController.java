@@ -79,19 +79,19 @@ import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
-import org.squashtest.tm.web.internal.controller.bugtracker.BugtrackerControllerHelper.ExecutionIssuesTableModel;
-import org.squashtest.tm.web.internal.controller.bugtracker.BugtrackerControllerHelper.IterationIssuesTableModel;
-import org.squashtest.tm.web.internal.controller.bugtracker.BugtrackerControllerHelper.StepIssuesTableModel;
-import org.squashtest.tm.web.internal.controller.bugtracker.BugtrackerControllerHelper.TestCaseIssuesTableModel;
+import org.squashtest.tm.web.internal.controller.bugtracker.BTControllerHelper.ExecutionIssuesTableModel;
+import org.squashtest.tm.web.internal.controller.bugtracker.BTControllerHelper.IterationIssuesTableModel;
+import org.squashtest.tm.web.internal.controller.bugtracker.BTControllerHelper.StepIssuesTableModel;
+import org.squashtest.tm.web.internal.controller.bugtracker.BTControllerHelper.TestCaseIssuesTableModel;
 import org.squashtest.tm.web.internal.model.customeditor.AttachmentPropertyEditorSupport;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
 @Controller
 @RequestMapping("/bugtracker")
-public class BugtrackerController {
+public class BTController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(BugtrackerController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BTController.class);
 
 	private BugTrackersLocalService bugTrackersLocalService;
 	private CampaignFinder campaignFinder;
@@ -257,7 +257,7 @@ public class BugtrackerController {
 
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
 
-		String executionUrl = BugtrackerControllerHelper.buildExecutionUrl(request, step.getExecution());
+		String executionUrl = BTControllerHelper.buildExecutionUrl(request, step.getExecution());
 
 		return makeReportIssueModel(step, locale, executionUrl);
 	}
@@ -359,7 +359,7 @@ public class BugtrackerController {
 	@ResponseBody
 	public RemoteIssue getExecReportStub(@PathVariable Long execId, Locale locale, HttpServletRequest request) {
 		Execution execution = executionFinder.findById(execId);
-		String executionUrl = BugtrackerControllerHelper.buildExecutionUrl(request, execution);
+		String executionUrl = BTControllerHelper.buildExecutionUrl(request, execution);
 		return makeReportIssueModel(execution, locale, executionUrl);
 	}
 
@@ -693,15 +693,15 @@ public class BugtrackerController {
 	/* ********* generates a json model for an issue ******* */
 
 	private RemoteIssue makeReportIssueModel(Execution exec, Locale locale, String executionUrl) {
-		String defaultDescription = BugtrackerControllerHelper.getDefaultDescription(exec, locale, messageSource,
+		String defaultDescription = BTControllerHelper.getDefaultDescription(exec, locale, messageSource,
 				executionUrl);
 		return makeReportIssueModel(exec, defaultDescription);
 	}
 
 	private RemoteIssue makeReportIssueModel(ExecutionStep step, Locale locale, String executionUrl) {
-		String defaultDescription = BugtrackerControllerHelper.getDefaultDescription(step, locale, messageSource,
+		String defaultDescription = BTControllerHelper.getDefaultDescription(step, locale, messageSource,
 				executionUrl);
-		String defaultAdditionalInformations = BugtrackerControllerHelper.getDefaultAdditionalInformations(step,
+		String defaultAdditionalInformations = BTControllerHelper.getDefaultAdditionalInformations(step,
 				locale, messageSource);
 		return makeReportIssueModel(step, defaultDescription, defaultAdditionalInformations, locale);
 	}
@@ -709,7 +709,7 @@ public class BugtrackerController {
 	private RemoteIssue makeReportIssueModel(ExecutionStep step, String defaultDescription,
 			String defaultAdditionalInformations, Locale locale) {
 		RemoteIssue emptyIssue = makeReportIssueModel(step, defaultDescription);
-		String comment = BugtrackerControllerHelper.getDefaultAdditionalInformations(step, locale, messageSource);
+		String comment = BTControllerHelper.getDefaultAdditionalInformations(step, locale, messageSource);
 		emptyIssue.setComment(comment);
 		return emptyIssue;
 	}
