@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.tm.domain.bugtracker.Issue;
@@ -48,10 +49,10 @@ public interface IssueDao extends EntityDao<Issue> {
 	 *            the id of the bug-tracker we are filtering on
 	 * @return how many issues they hold.
 	 */
-	Integer countIssuesfromIssueList(List<Long> issueListIds, Long bugTrackerId);
+	Integer countIssuesfromIssueList(Collection<Long> issueListIds, Long bugTrackerId);
 	
 	/**
-	 * Will find all issues belonging to the issue-lists of the given ids, and, return a list of <code>Object[]</code> that have the following structure :  [IssueList.id, Issue.remoteIssueId]
+	 * Will find all issues belonging to the issue-lists of the given ids, and, return a list of <code>Object[]</code> that have the following structure :  [IssueList.id, Issue.remoteIssueId, Issue.id]
 	 * <br><br>The issues are also filtered over the bug-tracker parameter: only issues linked to the bug-tracker of the given id are retained.
 	 * 
 	 * 
@@ -64,9 +65,9 @@ public interface IssueDao extends EntityDao<Issue> {
 	 * @param bugtrackerId 
 	 * 			 the id of the bug-tracker we want the issues to be connected-to
 	 * 
-	 * @return  non-null but possibly empty list of <code>Object[]</code> which have the following structure <b>[IssueList.id, Issue.remoteIssueId]</b>
+	 * @return  non-null but possibly empty list of <code>Object[]</code> which have the following structure <b>[IssueList.id, Issue.remoteIssueId, Issue.id]</b>
 	 **/
-	List<Object[]> findSortedIssuesFromIssuesLists(List<Long> issueListId, CollectionSorting sorter,
+	List<Object[]> findSortedIssuesFromIssuesLists(Collection<Long> issueListId, CollectionSorting sorter,
 			Long bugTrackerId);
 	
 	/**
@@ -100,7 +101,7 @@ public interface IssueDao extends EntityDao<Issue> {
 
 	/**
 	 * Will find all issues declared in the test suite of the given id.
-	 * @param id : the id of the concerned {@linkplain TestSuite}
+	 * @param id : the id of the concerned TestSuite
 	 * @return the list of the suite's {@link Issue}s
 	 */
 	List<Issue> findAllForTestSuite(Long id);

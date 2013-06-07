@@ -91,7 +91,7 @@ class StubBugTrackerService implements BugTrackersService {
 	}
 
 	@Override
-	public List<BTIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker) {
+	public List<BTIssue> getIssues(Collection<String> issueKeyList, BugTracker bugTracker) {
 		return null;
 	}
 

@@ -21,6 +21,7 @@
 package org.squashtest.csp.core.bugtracker.service;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -121,7 +122,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	}
 
 	@Override
-	public List<RemoteIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker) {
+	public List<RemoteIssue> getIssues(Collection<String> issueKeyList, BugTracker bugTracker) {
 
 		List<RemoteIssue> issues = connect(bugTracker).findIssues(issueKeyList);
 

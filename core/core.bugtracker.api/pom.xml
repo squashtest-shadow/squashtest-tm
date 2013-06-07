@@ -19,6 +19,12 @@
 		<!-- ====== DEPENDENCY POMS ====== -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+      <artifactId>core.foundation</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>${project.groupId}</groupId>
 			<artifactId>springdm-bundle-dependencies</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>

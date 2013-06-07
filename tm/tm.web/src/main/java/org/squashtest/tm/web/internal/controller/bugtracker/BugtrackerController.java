@@ -159,12 +159,12 @@ public class BugtrackerController {
 	public void setBugTrackerFinderService(BugTrackerFinderService bugTrackerFinderService) {
 		this.bugTrackerFinderService = bugTrackerFinderService;
 	}
-	
+
 	@InitBinder
 	public void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws ServletException {
-		binder.registerCustomEditor(org.squashtest.tm.domain.attachment.Attachment.class, new AttachmentPropertyEditorSupport());
+		binder.registerCustomEditor(org.squashtest.tm.domain.attachment.Attachment.class,
+				new AttachmentPropertyEditorSupport());
 	}
-	
 
 	/* **************************************************************************************************************
 	 * *
@@ -279,7 +279,7 @@ public class BugtrackerController {
 			return attachIssue(jsonIssue, entity);
 		}
 	}
-	
+
 	/**
 	 * posts a new issue (advanced model)
 	 * 
@@ -287,7 +287,8 @@ public class BugtrackerController {
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-advanced-issue", method = RequestMethod.POST)
 	@ResponseBody
-	public Object postExecStepAdvancedIssueReport(@PathVariable("stepId") Long stepId, @RequestBody AdvancedIssue jsonIssue) {
+	public Object postExecStepAdvancedIssueReport(@PathVariable("stepId") Long stepId,
+			@RequestBody AdvancedIssue jsonIssue) {
 		LOGGER.trace("BugTrackerController: posting a new issue for execution-step " + stepId);
 
 		IssueDetector entity = executionFinder.findExecutionStepById(stepId);
@@ -298,8 +299,7 @@ public class BugtrackerController {
 			return attachIssue(jsonIssue, entity);
 		}
 	}
-	
-	
+
 	/* **************************************************************************************************************
 	 * *
 	 * Execution level section * *
@@ -380,7 +380,7 @@ public class BugtrackerController {
 			return attachIssue(jsonIssue, entity);
 		}
 	}
-	
+
 	/**
 	 * posts a new issue (advanced model)
 	 * 
@@ -479,12 +479,14 @@ public class BugtrackerController {
 		CollectionSorting sorter = new IssueCollectionSorting(params);
 		try {
 			filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForIteration(iterId, sorter);
-		}
-		// no credentials exception are okay, the rest is to be treated as usual
-		catch (BugTrackerNoCredentialsException noCrdsException) {
+			// no credentials exception are okay, the rest is to be treated as usual
+			
+		} catch (BugTrackerNoCredentialsException noCrdsException) {
 			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(ITERATION_TYPE, iterId, noCrdsException);
+			
 		} catch (NullArgumentException npException) {
 			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(ITERATION_TYPE, iterId, npException);
+			
 		}
 		return new IterationIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
 				filteredCollection, sorter.getFirstItemIndex() + 1, params.getsEcho());
@@ -586,7 +588,8 @@ public class BugtrackerController {
 
 	@RequestMapping(value = "/find-issue/{remoteKey}", method = RequestMethod.GET, params = { BUGTRACKER_ID })
 	@ResponseBody
-	public RemoteIssue findIssue(@PathVariable("remoteKey") String remoteKey, @RequestParam(BUGTRACKER_ID) long bugTrackerId) {
+	public RemoteIssue findIssue(@PathVariable("remoteKey") String remoteKey,
+			@RequestParam(BUGTRACKER_ID) long bugTrackerId) {
 		BugTracker bugTracker = bugTrackerFinderService.findById(bugTrackerId);
 		return bugTrackersLocalService.getIssue(remoteKey, bugTracker);
 	}
@@ -653,40 +656,39 @@ public class BugtrackerController {
 	void detachIssue(@PathVariable("issueId") Long issueId) {
 		bugTrackersLocalService.detachIssue(issueId);
 	}
-	
-	
-	
+
 	@RequestMapping(value = "/{btName}/remote-issues/{remoteIssueId}/attachments", method = RequestMethod.POST)
-	public @ResponseBody void forwardAttachmentsToIssue(
-						@PathVariable("btName") String btName,
-						@PathVariable("remoteIssueId") String remoteIssueId, 
-						@RequestParam("attachment[]") List<org.squashtest.tm.domain.attachment.Attachment> attachments){
-		
+	public @ResponseBody
+	void forwardAttachmentsToIssue(@PathVariable("btName") String btName,
+			@PathVariable("remoteIssueId") String remoteIssueId,
+			@RequestParam("attachment[]") List<org.squashtest.tm.domain.attachment.Attachment> attachments) {
+
 		List<Attachment> issueAttachments = new ArrayList<Attachment>(attachments.size());
-		for (org.squashtest.tm.domain.attachment.Attachment attach : attachments){
-			Attachment newAttachment = new Attachment(attach.getName(), attach.getSize(), attach.getContent().getContent());
+		for (org.squashtest.tm.domain.attachment.Attachment attach : attachments) {
+			Attachment newAttachment = new Attachment(attach.getName(), attach.getSize(), attach.getContent()
+					.getContent());
 			issueAttachments.add(newAttachment);
 		}
-		
+
 		bugTrackersLocalService.forwardAttachments(remoteIssueId, btName, issueAttachments);
-		
-		//now ensure that the input streams are closed
-		for (Attachment attachment : issueAttachments){
-			try{
+
+		// now ensure that the input streams are closed
+		for (Attachment attachment : issueAttachments) {
+			try {
 				attachment.getStreamContent().close();
-			}
-			catch(IOException ex){
-				LOGGER.warn("issue attachments : could not close stream for "+attachment.getName()+", this is non fatal anyway");
+			} catch (IOException ex) {
+				LOGGER.warn("issue attachments : could not close stream for " + attachment.getName()
+						+ ", this is non fatal anyway");
 			}
 		}
-		
+
 	}
-	
+
 	@RequestMapping(value = "{btName}/command", method = RequestMethod.POST)
-	public @ResponseBody Object forwardDelegateCommand(@PathVariable("btName") String bugtrackerName, @RequestBody DelegateCommand command){
+	public @ResponseBody
+	Object forwardDelegateCommand(@PathVariable("btName") String bugtrackerName, @RequestBody DelegateCommand command) {
 		return bugTrackersLocalService.forwardDelegateCommand(command, bugtrackerName);
 	}
-	
 
 	/* ********* generates a json model for an issue ******* */
 
@@ -704,8 +706,6 @@ public class BugtrackerController {
 		return makeReportIssueModel(step, defaultDescription, defaultAdditionalInformations, locale);
 	}
 
-	
-	
 	private RemoteIssue makeReportIssueModel(ExecutionStep step, String defaultDescription,
 			String defaultAdditionalInformations, Locale locale) {
 		RemoteIssue emptyIssue = makeReportIssueModel(step, defaultDescription);
@@ -714,16 +714,15 @@ public class BugtrackerController {
 		return emptyIssue;
 	}
 
-
 	private RemoteIssue makeReportIssueModel(IssueDetector entity, String defaultDescription) {
 		String projectName = entity.getProject().getBugtrackerBinding().getProjectName();
-		
+
 		RemoteIssue emptyIssue = bugTrackersLocalService.createReportIssueTemplate(projectName, entity.getBugTracker());
 
 		emptyIssue.setDescription(defaultDescription);
 
 		return emptyIssue;
-		
+
 	}
 
 	/*
@@ -805,6 +804,5 @@ public class BugtrackerController {
 		List<IssueOwnership<RemoteIssueDecorator>> emptyList = new LinkedList<IssueOwnership<RemoteIssueDecorator>>();
 		return new FilteredCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(0, emptyList);
 	}
-	
 
 }

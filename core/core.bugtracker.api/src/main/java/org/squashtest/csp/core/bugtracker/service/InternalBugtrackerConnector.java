@@ -21,6 +21,7 @@
 package org.squashtest.csp.core.bugtracker.service;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
@@ -120,10 +121,10 @@ public interface InternalBugtrackerConnector {
 	/**
 	 * Retrieve many remote issues
 	 * 
-	 * @param issueKeyList
+	 * @param issueKeys
 	 * @return
 	 */
-	List<RemoteIssue> findIssues(List<String> issueKeyList);
+	List<RemoteIssue> findIssues(Collection<String> issueKeys);
 	
 	
 	/**
