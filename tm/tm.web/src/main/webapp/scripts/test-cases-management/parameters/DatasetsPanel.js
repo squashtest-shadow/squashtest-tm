@@ -44,7 +44,7 @@ define([ "jquery", "backbone", "./DatasetsTable", "./NewDatasetDialog",
 					var self = this;
 					var panelSettings = {
 							initiallyOpen : true,
-							title : self.language.datasetsPanelTitle,
+							title : self.language.datasetsPanelTitle
 						};
 					this.$("#datasets-panel").togglePanel(panelSettings);
 				},

@@ -65,7 +65,7 @@ define(
 						var self = this;
 							var textbox = event.target;
 							var nameLength = textbox.name.lenght;
-							var id = parseInt(textbox.name.substring(self.inputClass.length, nameLength));
+							var id = parseInt(textbox.name.substring(self.inputClass.length, nameLength), 10);
 							this.model.paramValueChanged(id , textbox.value);
 						},
 						
@@ -122,7 +122,7 @@ define(
 							var self = this;
 							var content = this.$("table.form-horizontal > tbody");
 							//CREATE MODEL
-							var paramValues = new Array();
+							var paramValues = [];
 							for(var i=0; i< json.length; i++){
 								paramValues.push([ json[i].id, ""]);
 							}
@@ -151,8 +151,8 @@ define(
 								row.append(inputCell);
 								content.append(row);
 							};								
-							for(var i=0; i< json.length; i++){
-							 var row = newTemplate(json[i]);
+							for(var j=0; j< json.length; j++){
+							 var row = newTemplate(json[j]);
 							}
 							
 						},
@@ -167,7 +167,7 @@ define(
 							Forms.form(this.$el).clearState();
 							this.removeParameterInputs();
 							this.$el.confirmDialog("destroy");
-						},
+						}
 
 						
 
