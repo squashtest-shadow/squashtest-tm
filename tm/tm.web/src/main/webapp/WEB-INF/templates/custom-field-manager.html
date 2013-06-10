@@ -229,38 +229,45 @@
         </div>
 
         <script id="PLAIN_TEXT-default-tpl" type="text/x-handlebars-template" th:inline="text">
-       	 <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+		<!-- <![CDATA[ -->
+       	 <label class="control-label" for="defaultValue">[[#{label.defaultValue}]]</label>
 					<div class="controls">
         		<input name="defaultValue" class="strprop" value="" size="50" maxlength="255" type="text" />		
 						<span class="help-inline">&nbsp;</span>
 					</div>
+		 <!-- ]]> -->
       	</script>
 
         <script id="CHECKBOX-default-tpl" type="text/x-handlebars-template" th:inline="text">
-  	      <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+  	     <!-- <![CDATA[ -->
+       	 <label class="control-label" for="defaultValue">[[#{label.defaultValue}]]</label>
 					<div class="controls">
         		<select name="defaultValue" class="optprop">
-	          	<option value="false" th:text="#{label.False}">False</option>
-  		        <option value="true" th:text="#{label.True}">True</option>
+	          	<option value="false">[[#{label.False}]]</option>
+  		        <option value="true">[[#{label.True}]]</option>
       		  </select>
 						<span class="help-inline">&nbsp;</span>
 					</div>
+		 <!-- ]]> -->
       </script>
+      
+       
 
         <script id="DROPDOWN_LIST-default-tpl" type="text/x-handlebars-template" th:inline="text">
-        	<h3 th:text="#{title.optionsDefinition}">Options definition</h3>
+		<!-- <![CDATA[ -->
+        	<h3 >[[#{title.optionsDefinition}]]</h3>
 					<div class="control-group">
-         		<label class="control-label" for="new-option-label" th:text="#{label.newOption}">New option</label>
+         		<label class="control-label" for="new-option-label">[[#{label.newOption}]]</label>
 						<div class="controls">
 							<input name="new-option-label" type="text" value="" />
 							<span class="not-displayed help-inline">&nbsp;</span>
 						</div>
-						<label class="control-label" for="new-option-code" th:text="#{label.code}">Code</label>
+						<label class="control-label" for="new-option-code">[[#{label.code}]]</label>
 						<div class="controls">
 							<input name="new-option-code" type="text" value="" />
 							<span class="not-displayed help-inline">&nbsp;</span>
 						</div>
-						<input class="add-option" type="button" th:value="#{label.addOption}" value="Add an option" />
+						<input class="add-option" type="button" value="[[#{label.addOption}]]" />
 					</div>
 					<span th:remove="all">
 						<!-- class="dataTables_wrapper" : ugly hack to get the desired style. usually, because of table footer, this div is inserted by dataTables. here we have no footer. -->
@@ -269,9 +276,9 @@
 		        <table id="options-table">
 							<thead>
     	      	  <tr>
-      	  	      	<th th:text="#{label.option}">Option</th>
-					<th th:text="#{label.code}">Code</th>
-				  	<th style="width: 2em;" th:text="#{label.default}">Default</th>
+      	  	      	<th>[[#{label.option}]]</th>
+					<th>[[#{label.code}]]</th>
+				  	<th style="width: 2em;">[[#{label.default}]]</th>
 				  	<th style="width: 1.5em;">&nbsp;</th>
 	      	      </tr>
   	  	      </thead>
@@ -286,19 +293,24 @@
 							<span class="not-displayed help-inline">&nbsp;</span>
 						</div>
 					</div>
+		<!-- ]]> -->
       	</script>
       	
  		<script id="DATE_PICKER-default-tpl" type="text/x-handlebars-template" th:inline="text">
-       	<label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+		<!-- <![CDATA[ -->
+       	<label class="control-label" for="defaultValue" >[[#{label.defaultValue}]]</label>
 		<div class="controls">
 			<input name="defaultValue" id="defaultValue" class="date-hidden dateprop" value="" size="10" maxlength="10" type="text" />		
 			<span id="defaultValue-label" style="color:#4297d7;font-weight: bold "></span>
 			<span class="help-inline">&nbsp;</span>		
 		</div>
+		<!-- ]]> -->
       	</script>
       	
         <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
-				<a href="javascript:void(0)" data-value="{{option}}" th:text="#{label.Remove}">Remove</a>
+		<!-- <![CDATA[ -->
+				<a href="javascript:void(0)" data-value="{{option}}" >[[#{label.Remove}]]</a>
+		<!-- ]]> -->
 			</script>
 
         <script id="default-cell-tpl" type="text/x-handlebars-template" th:inline="text">
