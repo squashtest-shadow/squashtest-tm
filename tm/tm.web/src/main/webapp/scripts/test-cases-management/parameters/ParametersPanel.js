@@ -45,7 +45,7 @@ define([ "jquery", "backbone", "./ParametersTable", "./NewParameterDialog",
 					var self = this;
 					var panelSettings = {
 							initiallyOpen : true,
-							title : self.language.parametersPanelTitle,
+							title : self.language.parametersPanelTitle
 						};
 					this.$("#parameters-panel").togglePanel(panelSettings);
 				},
