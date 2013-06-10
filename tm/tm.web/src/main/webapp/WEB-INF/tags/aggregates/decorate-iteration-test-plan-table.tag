@@ -634,7 +634,7 @@
 					{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'reference'},
 					{'bSortable': false, 'aTargets': [5], 'mDataProp' : 'tc-name'},
 					{'bSortable': false, 'aTargets': [6], 'mDataProp' : 'importance'},
-					{'bSortable': false, 'sWidth': '10%', 'aTargets': [7], 'mDataProp' : 'type'},
+					{'bSortable': false, 'sWidth': '10%', 'aTargets': [7], 'mDataProp' : 'dataset'},
 					{'bSortable': false, 'sWidth': '10%', 'aTargets': [8], 'mDataProp' : 'suite'},
 					{'bSortable': false, 'sWidth': '10%', 'sClass': 'has-status status-combo', 'aTargets': [9], 'mDataProp' : 'status'},
 					{'bSortable': false, 'sWidth': '10%', 'sClass': 'assignable-combo', 'aTargets': [10], 'mDataProp' : 'last-exec-by'},

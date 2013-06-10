@@ -43,6 +43,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -102,8 +103,8 @@ public class IterationTestPlanManagerController {
 			.mapAttribute(TestCase.class, "name", String.class, 4)
 			.mapAttribute(TestCase.class, "importance",
 					TestCaseImportance.class, 5)
-			.mapAttribute(TestCase.class, "executionMode",
-					TestCaseExecutionMode.class, 6)
+			.mapAttribute(Dataset.class, "name",
+					String.class, 6)
 			.mapAttribute(IterationTestPlanItem.class, "executionStatus",
 					ExecutionStatus.class, 7)
 			.mapAttribute(TestSuite.class, "name", String.class, 8)
@@ -274,8 +275,8 @@ public class IterationTestPlanManagerController {
 				String projectName;
 				String testCaseReference;
 				String testCaseName;
-				String testCaseExecutionMode;
 				String importance;
+				String datasetName;
 				String testCaseId;
 
 				String testSuiteNameList = "";
@@ -285,7 +286,6 @@ public class IterationTestPlanManagerController {
 					testCaseReference = formatNoData(locale);
 					testCaseName = formatDeleted(locale);
 					importance = formatNoData(locale);
-					testCaseExecutionMode = formatNoData(locale);
 					testCaseId = "";
 				} else {
 					projectName = item.getReferencedTestCase().getProject()
@@ -295,17 +295,23 @@ public class IterationTestPlanManagerController {
 					testCaseName = item.getReferencedTestCase().getName();
 					importance = formatImportance(item.getReferencedTestCase()
 							.getImportance(), locale);
-					testCaseExecutionMode = formatExecutionMode(item
-							.getReferencedTestCase().getExecutionMode(), locale);
 					testCaseId = item.getReferencedTestCase().getId()
 							.toString();
 				}
 
+
+				if(item.getReferencedDataset() == null){
+					datasetName = formatNoData(locale);
+				} else {
+					datasetName = item.getReferencedDataset().getName();
+				}
+
+				
 				testSuiteNameList = testSuiteNameList(item, locale);
 
 				return new Object[] { item.getId(), getCurrentIndex(),
 						projectName, testCaseReference, testCaseName,
-						importance, testCaseExecutionMode, testSuiteNameList,
+						importance, datasetName, testSuiteNameList,
 						testCaseId, item.isTestCaseDeleted(), " "
 
 				};

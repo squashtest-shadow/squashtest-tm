@@ -53,6 +53,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -126,7 +127,7 @@ public class IterationModificationController {
 														.mapAttribute(TestCase.class, "reference", String.class, 4)
 														.mapAttribute(TestCase.class, NAME, String.class, 5)
 														.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, 6)
-														.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 7)
+														.mapAttribute(Dataset.class, "name", String.class, 7)
 														.mapAttribute(IterationTestPlanItem.class, "executionStatus", ExecutionStatus.class, 8)
 														.mapAttribute(TestSuite.class, NAME, String.class, 9)
 														.mapAttribute(IterationTestPlanItem.class, "lastExecutedBy", String.class, 10)
@@ -446,9 +447,10 @@ public class IterationModificationController {
 			String testCaseName;
 			String importance;
 			String reference;
+			String datasetName;
 			final String latestExecutionMode = messageSource.internationalize(item.getExecutionMode(), locale);
 			final String automationMode = item.isAutomated() ? "A" : "M";
-
+			
 			String testSuiteNameList = "";
 			Long assignedId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
 
@@ -462,6 +464,12 @@ public class IterationModificationController {
 				testCaseName = item.getReferencedTestCase().getName();
 				reference = item.getReferencedTestCase().getReference();
 				importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
+			}
+
+			if(item.getReferencedDataset() == null){
+				datasetName = formatNoData(locale, messageSource);
+			} else {
+				datasetName = item.getReferencedDataset().getName();
 			}
 
 			if (item.getTestSuites().isEmpty()) {
@@ -486,6 +494,7 @@ public class IterationModificationController {
 			res.put(DataTableModelHelper.DEFAULT_EMPTY_EXECUTE_HOLDER_KEY, " ");
 			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			res.put("exec-mode", automationMode);
+			res.put("dataset", datasetName);
 
 			return res;
 		}

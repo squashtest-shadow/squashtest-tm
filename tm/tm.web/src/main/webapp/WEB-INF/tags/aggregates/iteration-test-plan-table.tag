@@ -32,7 +32,7 @@
 			<th><f:message key="requirement.reference.label"/></th>
 			<th><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.importance.label" /></th>
-			<th><f:message key="label.Mode" /></th>
+			<th><f:message key="label.Dataset" /></th>
 			<th><f:message key="iteration.executions.table.column-header.suite.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.status.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.user.label" /></th>

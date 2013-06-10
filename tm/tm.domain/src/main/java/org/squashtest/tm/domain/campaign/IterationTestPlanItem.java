@@ -101,7 +101,7 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 	@ManyToOne
 	@JoinColumn(name = "DATASET_ID", referencedColumnName = "DATASET_ID")
 	private Dataset referencedDataset;
-	
+
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "EXECUTION_ORDER")
 	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"), inverseJoinColumns = @JoinColumn(name = "EXECUTION_ID"))
@@ -466,4 +466,11 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 		return latest == null ? TestCaseExecutionMode.UNDEFINED : latest.getExecutionMode();
 	}
 
+	public Dataset getReferencedDataset() {
+		return referencedDataset;
+	}
+
+	public void setReferencedDataset(Dataset referencedDataset) {
+		this.referencedDataset = referencedDataset;
+	}
 }
