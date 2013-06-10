@@ -275,9 +275,4 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	public Parameter getById(long testCaseId) {
 		return parameterDao.findById(testCaseId);
 	}
-
-	@Override
-	public Parameter getById(long id) {
-		return parameterDao.findById(id);
-	}
 }

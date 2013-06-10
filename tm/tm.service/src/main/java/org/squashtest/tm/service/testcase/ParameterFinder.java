@@ -40,6 +40,4 @@ public interface ParameterFinder {
 	boolean isUsed(long parameterId, long testCaseId);
 	
 	boolean isUsed(String parameterName, long testCaseId);
-
-	Parameter getById(long id);
 }
