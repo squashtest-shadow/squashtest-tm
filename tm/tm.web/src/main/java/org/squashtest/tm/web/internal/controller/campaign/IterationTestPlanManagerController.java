@@ -346,10 +346,6 @@ public class IterationTestPlanManagerController {
 		return messageSource.getMessage("squashtm.itemdeleted", null, locale);
 	}
 
-	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
-		return messageSource.getMessage(mode.getI18nKey(), null, locale);
-	}
-
 	private String formatImportance(TestCaseImportance importance, Locale locale) {
 		return messageSource.getMessage(importance.getI18nKey(), null, locale);
 	}

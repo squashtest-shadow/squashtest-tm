@@ -175,11 +175,11 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		return parameter;
 	}
 
-	private final class TestStepContentUpdater implements TestStepVisitor {
+	private static final class TestStepContentUpdater implements TestStepVisitor {
 
-		String oldParamName; 
-		String newParamName;
-		String paramPattern; 
+		private String oldParamName; 
+		private String newParamName;
+		private String paramPattern; 
 		
 		public TestStepContentUpdater(String oldParamName, String newParamName, String paramPattern) {
 			this.oldParamName = oldParamName;
@@ -214,7 +214,6 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		public void visit(CallTestStep visited) {
 		
 		}
-		
 	}
 	
 	
