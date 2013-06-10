@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.project;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -52,68 +51,75 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 	@Inject
 	private UserContextService userContextService;
 
+	/***
+	 * This method checks whether this user uses a project filter. If so, it returns it. If not, it returns a default - empty- one.
+	 * 
+	 * @return what I just said
+	 */
 	@Override
 	public ProjectFilter findProjectFilterByUserLogin() {
-		return findOrCreateProjectFilter();
+		ProjectFilter filter = _findPersistentProjectFilter();
+		if (filter != null) {
+			return filter;
+		}
+		else{
+			return _createDefaultProjectFilter();
+		}
 	}
 
 	@Override
 	public void saveOrUpdateProjectFilter(List<Long> projectIdList, boolean isActive) {
-		// get the filter or create one
-		ProjectFilter projectFilter = findOrCreateProjectFilter();
-		// set the values
-		// convert the project id list in project list
-		projectFilter.setProjects(convertLongListToProjectList(projectIdList));
+
+		ProjectFilter projectFilter = _findOrCreateProjectFilter();
+
+		projectFilter.setProjects(projectDao.findAllByIds(projectIdList));
 		projectFilter.setActivated(isActive);
-		projectFilterDao.persistProjectFilter(projectFilter);
 	}
 
 	@Override
 	public void updateProjectFilterStatus(boolean status) {
-		findProjectFilterByUserLogin().setActivated(status);
+		_findOrCreateProjectFilter().setActivated(status);
 	}
 
-	/***
-	 * This method checks if a filter already exists, returns it or create a new one
-	 * 
-	 * @return the current user filter or create a new one
-	 */
-	private ProjectFilter findOrCreateProjectFilter() {
-		String userLogin = userContextService.getUsername();
-		ProjectFilter toReturn = projectFilterDao.findProjectFilterByUserLogin(userLogin);
-		if (toReturn == null) {
-			toReturn = new ProjectFilter();
-			toReturn.setProjects(getAllProjects());
-			toReturn.setUserLogin(userLogin);
-			toReturn.setActivated(false);
-			projectFilterDao.persistProjectFilter(toReturn);
-		}
-		return toReturn;
-	}
 
-	/***
-	 * The method convert the project id list into project lists
-	 * 
-	 * @param givenList
-	 *            the project id list (List<Long>)
-	 * @return the corresponding project list (List<Project>)
-	 */
-	private List<Project> convertLongListToProjectList(List<Long> givenList) {
-		List<Project> projectList = new ArrayList<Project>();
-		for (Long projectId : givenList) {
-			Project searchedProject = projectDao.findById(projectId);
-			if (searchedProject != null) {
-				projectList.add(projectDao.findById(projectId));
-			}
-		}
-		return projectList;
-	}
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	@Transactional(readOnly = true)
 	public List<Project> getAllProjects() {
 		return projectManager.findAllOrderedByName();
+	}
+	
+	
+	// ****************************** private stuffs *******************************
+	
+	private ProjectFilter _findPersistentProjectFilter(){
+		String userLogin = userContextService.getUsername();
+		ProjectFilter toReturn = projectFilterDao.findProjectFilterByUserLogin(userLogin);
+		return toReturn;
+	}
+	
+	private ProjectFilter _createDefaultProjectFilter(){
+		ProjectFilter toReturn = new ProjectFilter();
+		
+		String userLogin = userContextService.getUsername();
+		toReturn.setProjects(getAllProjects());
+		toReturn.setUserLogin(userLogin);
+		toReturn.setActivated(false);		
+		
+		return toReturn;
+	}
+	
+	private ProjectFilter _findOrCreateProjectFilter(){
+		
+		ProjectFilter filter = _findPersistentProjectFilter();
+		
+		if (filter == null) {
+			filter = _createDefaultProjectFilter();
+			projectFilterDao.persistProjectFilter(filter);
+		}
+		
+		return filter; 
 	}
 
 }
