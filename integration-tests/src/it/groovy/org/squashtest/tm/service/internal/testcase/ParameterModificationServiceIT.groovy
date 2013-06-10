@@ -138,13 +138,15 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 			dataset.testCase = testCaseDao.findById(100L);
 			datasetService.persist(dataset);
 			service.persist(parameter);
-		then : 
 			TestCase testcase = testCaseDao.findById(100L);
+			testcase.addDataset(dataset);
+		then : 
+			testcase.getDatasets().size() == 1;
 			for(Dataset data : testcase.getDatasets()){
 				data.parameterValues.size() == 1;
 				for(DatasetParamValue param : data.parameterValues){
-					param.parameter.name = ""
-					param.paramValue = ""
+					param.parameter.name == "parameter2"
+					param.paramValue == ""
 				}
 			}
 	

@@ -52,8 +52,15 @@
 					</a>
 				</td>
 				<td style="width: 10%;">
-					<span style="color: ${textcolor}; font-style:italic;">
-						<f:message key="${ execution.executionMode.i18nKey }" />
+					<span style="color: ${textcolor}">
+					<c:choose>
+						<c:when test="${  execution.testPlan != null &&  execution.testPlan.referencedDataset != null }">
+							<i>${execution.testPlan.referencedDataset.name}</i>
+						</c:when>
+						<c:otherwise>
+							<i><f:message key="squashtm.nodata" /> </i>
+						</c:otherwise>
+					</c:choose>
 					</span>
 				</td>
 				<td style="width: 10%;"></td>

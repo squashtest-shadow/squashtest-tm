@@ -44,7 +44,7 @@ public class DatasetParamValue implements Identified {
 	private Parameter parameter;
 
 	@NotNull
-	@ManyToOne
+	@ManyToOne(cascade = { CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST })
 	@JoinColumn(name = "DATASET_ID", referencedColumnName = "DATASET_ID")
 	private Dataset dataset;
 

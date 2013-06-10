@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepReader;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
+import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
@@ -53,6 +54,9 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 
 	@Inject
 	private DatasetDao datasetDao;
+
+	@Inject
+	private DatasetParamValueDao datasetParamValueDao;
 	
 	@Inject
 	private TestCaseCallTreeFinder callTreeFinder;
@@ -267,6 +271,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 			datasetParamValue.setParamValue("");
 			datasetParamValue.setDataset(dataset);
 			dataset.addParameterValue(datasetParamValue);
+			datasetParamValueDao.persist(datasetParamValue);
 		}
 	}
 
