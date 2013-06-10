@@ -322,15 +322,12 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	private List<VerifiedRequirement> buildVerifiedRequirementList(
 			final TestCase main , List<RequirementVersion> pagedVersionVerifiedByCalles) {
 
+
 		List<VerifiedRequirement> toReturn = new ArrayList<VerifiedRequirement>(pagedVersionVerifiedByCalles.size());
-		for(RequirementVersionCoverage directRvc : main.getRequirementVersionCoverages()){
-			toReturn.add(new VerifiedRequirement(directRvc, true));
-		}
 		
-		for (RequirementVersion calledVersion : pagedVersionVerifiedByCalles) {
-			if(!main.verifies(calledVersion)){
-					toReturn.add(new VerifiedRequirement(calledVersion, false));
-			}
+		for (RequirementVersion rVersion : pagedVersionVerifiedByCalles){
+			boolean isDirect = main.verifies(rVersion);
+			toReturn.add(new VerifiedRequirement(rVersion, isDirect));
 		}
 
 		return toReturn;
