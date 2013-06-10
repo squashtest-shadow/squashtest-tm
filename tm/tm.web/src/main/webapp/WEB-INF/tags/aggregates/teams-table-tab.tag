@@ -58,9 +58,8 @@
           </label>
         </td>
     		<td class="controls">
-          <input id="add-team-name" name="add-team-name" type="text" size="50" maxlength="255" />
-    		  <span class="help-inline">&nbsp;</span>
-    		  <comp:error-message forField="name"/>
+          <input id="add-team-name" name="add-team-name" type="text" size="50" maxlength="255" style="display:block;"/>	<%-- inlined style as quickfix for issue #2206 --%>
+    	  <comp:error-message forField="name"/>
         </td>
     	</tr>
        	<tr class="control-group">
