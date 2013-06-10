@@ -55,6 +55,7 @@
     <verbose.compiler>false</verbose.compiler>
     <hibernate.version>4.2.2.Final</hibernate.version>
     <groovy.version>2.0.6</groovy.version>
+    <provisionBom.version>1.3-SNAPSHOT</provisionBom.version>
   </properties>
 
   <dependencyManagement>
@@ -63,13 +64,13 @@
       <dependency>
         <groupId>org.squashtest.tm</groupId>
         <artifactId>provision-bom</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>${provisionBom.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <!-- ====== /INFRASTRUCTURE DEFINITIONS === -->
 
-      <!-- if not overriden here maven is doing shite -->
+      <!-- if not overriden here maven don't pick up the right version -->
       <dependency>
         <groupId>net.sourceforge.cglib</groupId>
         <artifactId>com.springsource.net.sf.cglib</artifactId>

@@ -76,12 +76,12 @@
 				
 	    <dependency>
 	      <groupId>org.codehaus.jackson</groupId>
-	      <artifactId>com.springsource.org.codehaus.jackson.mapper</artifactId>	
+	      <artifactId>jackson-mapper-asl</artifactId>	
 	    </dependency>
 	    
 	    <dependency>
 	      <groupId>org.codehaus.jackson</groupId>
-	      <artifactId>com.springsource.org.codehaus.jackson</artifactId>	
+	      <artifactId>jackson-core-asl</artifactId>	
 	    </dependency>
 
 		<!--  ================ /Jackson dependencies ============================= -->

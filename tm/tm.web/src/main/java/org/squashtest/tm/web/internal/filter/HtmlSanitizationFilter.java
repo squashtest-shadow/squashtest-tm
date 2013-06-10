@@ -114,7 +114,7 @@ public class HtmlSanitizationFilter implements Filter {
 		}
 
 		@Override
-		public Map<?, ?> getParameterMap() {
+		public Map<String, String[]> getParameterMap() {
 			return new HtmlSafeParameterMapWrapper(request.getParameterMap());
 		}
 

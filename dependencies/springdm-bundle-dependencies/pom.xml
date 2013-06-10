@@ -93,7 +93,7 @@
 		<!-- ====== LOGGING REQUIRED BY DM ====== -->
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>com.springsource.slf4j.org.apache.commons.logging</artifactId>
+      <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
 		<!-- ====== /LOGGING REQUIRED BY DM ====== -->
 

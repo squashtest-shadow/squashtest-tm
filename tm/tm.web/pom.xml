@@ -16,7 +16,7 @@
   <properties>
     <bundle.contextPath>squash</bundle.contextPath>
     <logger.urlRewriteFilter>DEBUG</logger.urlRewriteFilter>
-    <project.stage>RELEASE</project.stage> <!--  overridable by activating the profile development -->
+    <project.stage>RELEASE</project.stage> <!-- overridable by activating the profile development -->
     <spring.version.range>[3,4)</spring.version.range>
     <springdm.version.range>[2,3)</springdm.version.range>
     <thymeleaf.version>2.0.14.B</thymeleaf.version>
@@ -31,7 +31,7 @@
   </properties>
 
   <dependencies>
-	<!-- ====== SQUASHTEST ====== -->
+    <!-- ====== SQUASHTEST ====== -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>springdm-bundle-dependencies</artifactId>
@@ -92,69 +92,69 @@
       <scope>test</scope>
     </dependency>
 
-		<!-- ====== /SQUASHTEST ====== -->
-		<!-- ====== JEE API ====== -->
+    <!-- ====== /SQUASHTEST ====== -->
+    <!-- ====== JEE API ====== -->
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>com.springsource.javax.servlet</artifactId>
+      <groupId>org.eclipse.jetty.orbit</groupId>
+      <artifactId>javax.servlet</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.el</groupId>
-      <artifactId>com.springsource.javax.el</artifactId>
+      <groupId>org.eclipse.jetty.orbit</groupId>
+      <artifactId>javax.el</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>com.springsource.javax.servlet.jsp</artifactId>
+      <groupId>org.eclipse.jetty.orbit</groupId>
+      <artifactId>javax.servlet.jsp</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>com.springsource.javax.servlet.jsp.jstl</artifactId>
+      <groupId>org.eclipse.jetty.orbit</groupId>
+      <artifactId>javax.servlet.jsp.jstl</artifactId>
     </dependency>
-		<!-- ====== /JEE API ====== -->
+    <!-- ====== /JEE API ====== -->
 
-		<!-- ====== JSE DI API ====== -->
+    <!-- ====== JSE DI API ====== -->
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>com.springsource.javax.inject</artifactId>
     </dependency>
-		<!-- ====== /JSE DI API ====== -->
+    <!-- ====== /JSE DI API ====== -->
 
-		<!-- ====== LOGGING ====== -->
+    <!-- ====== LOGGING ====== -->
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>com.springsource.slf4j.api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>com.springsource.slf4j.log4j</artifactId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>com.springsource.slf4j.org.apache.commons.logging</artifactId>
+      <artifactId>slf4j-log4j12</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.log4j</groupId>
-      <artifactId>com.springsource.org.apache.log4j</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
-		<!-- ====== /LOGGING ====== -->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    <!-- ====== /LOGGING ====== -->
 
-		<!-- ====== SPRING DI ====== -->
-		<!-- Required by Spring MVC -->
+    <!-- ====== SPRING DI ====== -->
+    <!-- Required by Spring MVC -->
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.context.support</artifactId>
     </dependency>
-		<!-- ====== /SPRING DI ====== -->
+    <!-- ====== /SPRING DI ====== -->
 
-		<!-- ====== SPRING DM WEB CONTEXT ====== -->
+    <!-- ====== SPRING DM WEB CONTEXT ====== -->
     <dependency>
       <groupId>org.springframework.osgi</groupId>
       <artifactId>spring-osgi-web</artifactId>
       <version>${springdm.version}</version>
       <scope>runtime</scope>
     </dependency>
-		<!-- ====== /SPRING DM WEB CONTEXT ====== -->
+    <!-- ====== /SPRING DM WEB CONTEXT ====== -->
 
     <!-- ====== SPRING SECURITY ====== -->
     <dependency>
@@ -192,7 +192,7 @@
     </dependency>
     <!-- ====== /FOR AUTH PURPOSES - should be moved afterwards ====== -->
 
-		<!-- ====== SPRING MVC ====== -->
+    <!-- ====== SPRING MVC ====== -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.web</artifactId>
@@ -205,16 +205,16 @@
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.beans</artifactId>
     </dependency>
-		<!-- ====== /SPRING MVC ====== -->
+    <!-- ====== /SPRING MVC ====== -->
 
-		<!-- ====== URL REWRITING ====== -->
+    <!-- ====== URL REWRITING ====== -->
     <dependency>
       <groupId>org.tuckey</groupId>
       <artifactId>com.springsource.org.tuckey.web.filters.urlrewrite</artifactId>
     </dependency>
-		<!-- ====== /URL REWRITING ====== -->
+    <!-- ====== /URL REWRITING ====== -->
 
-		<!-- ====== VALIDATION ====== -->
+    <!-- ====== VALIDATION ====== -->
     <dependency>
       <groupId>javax.validation</groupId>
       <artifactId>com.springsource.javax.validation</artifactId>
@@ -223,9 +223,9 @@
       <groupId>org.hibernate</groupId>
       <artifactId>com.springsource.org.hibernate.validator</artifactId>
     </dependency>
-		<!-- ====== /VALIDATION ====== -->
+    <!-- ====== /VALIDATION ====== -->
 
-		<!-- ===== ASPECTJ ===== -->
+    <!-- ===== ASPECTJ ===== -->
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>com.springsource.org.aspectj.runtime</artifactId>
@@ -234,17 +234,17 @@
       <groupId>org.aspectj</groupId>
       <artifactId>com.springsource.org.aspectj.weaver</artifactId>
     </dependency>
-		<!-- ===== / ASPECTJ ===== -->
+    <!-- ===== / ASPECTJ ===== -->
 
-		<!-- ===== JACKSON ===== -->
+    <!-- ===== JACKSON ===== -->
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
-      <artifactId>com.springsource.org.codehaus.jackson.mapper</artifactId>
+      <artifactId>jackson-mapper-asl</artifactId>
 
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
-      <artifactId>com.springsource.org.codehaus.jackson</artifactId>
+      <artifactId>jackson-core-asl</artifactId>
 
     </dependency>
     <dependency>
@@ -252,9 +252,9 @@
       <artifactId>com.springsource.org.joda.time</artifactId>
 
     </dependency>
-		<!-- ===== / JACKSON ===== -->
+    <!-- ===== / JACKSON ===== -->
 
-		<!-- ====== FILE UPLOAD ====== -->
+    <!-- ====== FILE UPLOAD ====== -->
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
@@ -263,8 +263,8 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
-		<!-- ====== /FILE UPLOAD ====== -->
-    
+    <!-- ====== /FILE UPLOAD ====== -->
+
     <!-- ====== THYMELEAF ====== -->
     <dependency>
       <groupId>org.thymeleaf</groupId>
@@ -302,23 +302,20 @@
     <dependency>
       <groupId>net.sourceforge.nekohtml</groupId>
       <artifactId>org.squashtest.net.sourceforge.nekohtml</artifactId>
-      <version>1.9.18</version>
+      <version>1.9.18.B-SNAPSHOT</version>
     </dependency>
     <!-- ====== /THYMELEAF ====== -->
 
-		<!-- ====== JASPER REPORTS ====== -->
-		<!-- 
-			We need this to compile the reports. Our OSGi wrapped artifact wont 
-			work and plugin dependency wont be the one picked
-		-->
+    <!-- ====== JASPER REPORTS ====== -->
+    <!-- We need this to compile the reports. Our OSGi wrapped artifact wont work and plugin dependency wont be the one picked -->
     <dependency>
       <groupId>net.sf.jasperreports</groupId>
       <artifactId>jasperreports</artifactId>
       <scope>provided</scope>
       <optional>true</optional>
     </dependency>
- 	
-		<!-- We need this at runtime (OSGi bundle) -->
+
+    <!-- We need this at runtime (OSGi bundle) -->
     <dependency>
       <groupId>net.sf.jasperreports</groupId>
       <artifactId>org.squashtest.net.sf.jasperreports</artifactId>
@@ -336,12 +333,12 @@
       <version>2.0.0.b4</version>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.xerces</groupId>
-      <artifactId>com.springsource.org.apache.xerces</artifactId>
-      <version>2.9.1</version>
+<!--     <dependency>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.xerces</artifactId>
+      <version>2.9.1_5</version>
       <scope>runtime</scope>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.apache.xml</groupId>
       <artifactId>com.springsource.org.apache.xml.resolver</artifactId>
@@ -369,7 +366,22 @@
       <artifactId>org.springframework.test</artifactId>
     </dependency>
     <!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
-
+<!--  REMOVE -->
+   <!--    <dependency>
+      <groupId>org.eclipse.jetty.osgi</groupId>
+      <artifactId>jetty-osgi-boot</artifactId>
+      <version> 8.1.12.v20130726</version>
+    </dependency>
+      <dependency>
+      <groupId>org.eclipse.jetty.osgi</groupId>
+      <artifactId>jetty-osgi-boot-jsp</artifactId>
+      <version> 8.1.12.v20130726</version>
+    </dependency> -->
+<!-- <dependency>
+            <groupId>org.eclipse.jetty.orbit</groupId>
+            <artifactId>javax.annotation</artifactId>
+            <version>1.1.0.v201108011116</version>
+</dependency>   -->
   </dependencies>
   <build>
     <resources>
@@ -393,12 +405,12 @@
         <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
 
-			<!-- ====== SPOCK TESTS ====== -->
+      <!-- ====== SPOCK TESTS ====== -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
-			<!-- ====== /SPOCK TESTS ====== -->
+      <!-- ====== /SPOCK TESTS ====== -->
 
       <plugin>
         <groupId>org.apache.felix</groupId>
