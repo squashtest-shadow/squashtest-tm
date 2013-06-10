@@ -21,6 +21,8 @@
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
 import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 
@@ -38,9 +40,8 @@ public class NewDataset extends Dataset {
 	public Dataset createTransientEntity(TestCase testCase, ParameterFinder parameterFinder) {
 		Dataset dataset =  new Dataset(getName(), testCase);
 		for(Object[] paramValue : paramValues) {
-			//TODO
-//			Parameter parameter = parameterFinder.getById((Integer) paramValue[0]);
-//			new DatasetParamValue(parameter, dataset, (String) paramValue[1]);
+			Parameter parameter = parameterFinder.getById((Integer) paramValue[0]);
+			new DatasetParamValue(parameter, dataset, (String) paramValue[1]);
 		}
 		return dataset;
 	}

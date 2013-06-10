@@ -52,17 +52,12 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	
 	
 	@Override
-	public void persist(Dataset dataset) {
-		datasetDao.persist(dataset);
-		persistParamValues(dataset.getParameterValues());
+	public void persist(Dataset dataset) {	
+
 		updateDatasetParameters(dataset);
+		datasetDao.persist(dataset);
 	}
 
-	private void persistParamValues(Set<DatasetParamValue> paramValues){
-		for(DatasetParamValue paramValue : paramValues){
-			datasetParamValueDao.persist(paramValue);
-		}
-	}
 	
 	@Override
 	public void remove(Dataset dataset) {
@@ -116,10 +111,7 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	private DatasetParamValue findOrAddParameter(Dataset dataset, Parameter parameter){
 		DatasetParamValue datasetParamValue = findDatasetParamValue(dataset, parameter);
 		if(datasetParamValue == null){
-			datasetParamValue = new DatasetParamValue();
-			datasetParamValue.setParameter(parameter);
-			datasetParamValue.setParamValue("");
-			dataset.addParameterValue(datasetParamValue);
+			datasetParamValue = new DatasetParamValue(parameter, dataset);
 		}
 		return datasetParamValue;
 	}

@@ -209,7 +209,11 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 			datasetParamValue.setParameter(parameter);
 			datasetParamValue.setParamValue("");
 			dataset.addParameterValue(datasetParamValue);
-			this.datasetDao.persist(dataset);
 		}
+	}
+
+	@Override
+	public Parameter getById(long id) {
+		return parameterDao.findById(id);
 	}
 }

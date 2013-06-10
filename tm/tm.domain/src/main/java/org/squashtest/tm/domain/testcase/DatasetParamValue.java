@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -51,13 +52,16 @@ public class DatasetParamValue implements Identified {
 	private String paramValue = "";
 
 	public DatasetParamValue() {
-	}
-
-	public DatasetParamValue(Parameter parameter, Dataset dataset, String paramValue) {
 		super();
+	}
+	public DatasetParamValue(Parameter parameter, Dataset dataset){
+		this();
 		this.parameter = parameter;
 		this.dataset = dataset;
 		this.dataset.addParameterValue(this);
+	}
+	public DatasetParamValue(Parameter parameter, Dataset dataset, String paramValue) {
+		this(parameter, dataset);
 		this.paramValue = paramValue;
 	}
 

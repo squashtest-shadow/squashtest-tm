@@ -72,7 +72,6 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 			Dataset dataset = new Dataset();
 			dataset.name = "newDataset";
 			dataset.testCase = testCaseDao.findById(100L);
-			dataset.parameterValues = new HashSet<DatasetParamValue>();
 			datasetService.persist(dataset);
 			
 		then : 
