@@ -154,6 +154,7 @@ public class TestCaseTestStepsController {
 	@InitBinder("add-test-step")
 	public void addTestCaseBinder(WebDataBinder binder) {
 		ActionStepFormModelValidator validator = new ActionStepFormModelValidator();
+		validator.setMessageSource(internationalizationHelper);
 		binder.setValidator(validator);
 	}
 	
