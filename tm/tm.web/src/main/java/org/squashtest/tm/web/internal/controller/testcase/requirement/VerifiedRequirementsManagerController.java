@@ -94,7 +94,7 @@ public class VerifiedRequirementsManagerController {
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 	@Inject
 	private RequirementLibraryFinderService requirementLibraryFinder;
-
+	private static final String NAME = "name";
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/manager", method = RequestMethod.GET)
 	public String showTestCaseManager(@PathVariable long testCaseId, Model model) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
@@ -284,7 +284,7 @@ public class VerifiedRequirementsManagerController {
 			Map<String, Object> res = new HashMap<String, Object>();
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put("name", item.getName());
+			res.put(DataTableModelHelper.NAME_KEY, item.getName());
 			res.put("project", item.getProject().getName());
 			res.put("reference", item.getReference());
 			res.put("versionNumber", item.getVersionNumber());
@@ -349,9 +349,9 @@ public class VerifiedRequirementsManagerController {
 	}
 
 	private DatatableMapper<String> verifiedRequirementVersionsMapper = new NameBasedMapper(7)
-			.mapAttribute(RequirementVersion.class, "id", String.class, "entity-id")
-			.mapAttribute(RequirementVersion.class, "name", String.class, "name")
-			.mapAttribute(Project.class, "name", String.class, "project")
+			.mapAttribute(RequirementVersion.class, "id", String.class, DataTableModelHelper.DEFAULT_ENTITY_ID_KEY)
+			.mapAttribute(RequirementVersion.class, NAME, String.class, DataTableModelHelper.NAME_KEY)
+			.mapAttribute(Project.class, NAME, String.class, "project")
 			.mapAttribute(RequirementVersion.class, "reference", String.class, "reference")
 			.mapAttribute(RequirementVersion.class, "versionNumber", String.class, "versionNumber")
 			.mapAttribute(RequirementVersion.class, "criticality", String.class, "criticality")

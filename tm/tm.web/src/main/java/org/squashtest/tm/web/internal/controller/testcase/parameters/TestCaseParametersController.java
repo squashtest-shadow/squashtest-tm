@@ -167,7 +167,7 @@ public class TestCaseParametersController {
 	 * @author mpagnon
 	 *
 	 */
-	private class ParameterNameComparator implements Comparator<Parameter> {
+	private static final class ParameterNameComparator implements Comparator<Parameter> {
 
 		private SortOrder sortOrder;
 
@@ -195,7 +195,7 @@ public class TestCaseParametersController {
 	 * @author mpagnon
 	 *
 	 */
-	private class ParameterTestCaseNameComparator implements Comparator<Parameter> {
+	private static final class ParameterTestCaseNameComparator implements Comparator<Parameter> {
 
 		private SortOrder sortOrder;
 
@@ -237,7 +237,7 @@ public class TestCaseParametersController {
 			"name", String.class, DataTableModelHelper.NAME_KEY).mapAttribute(TestCase.class, "name", String.class,
 			"test-case-name");
 
-	private static class ParametersDataTableModelHelper extends DataTableModelHelper<Parameter> {
+	private final static class ParametersDataTableModelHelper extends DataTableModelHelper<Parameter> {
 
 		private ParametersDataTableModelHelper() {
 			super();

@@ -91,7 +91,7 @@ public class TestCaseDatasetsController {
 		return datasetsList;
 	}
 
-	private class DatasetNameComparator implements Comparator<Dataset> {
+	private static final class DatasetNameComparator implements Comparator<Dataset> {
 
 		private SortOrder sortOrder;
 
@@ -114,7 +114,7 @@ public class TestCaseDatasetsController {
 			String.class, DataTableModelHelper.DEFAULT_ENTITY_ID_KEY).mapAttribute(Dataset.class, "name", String.class,
 			DataTableModelHelper.NAME_KEY);
 
-	private static class DatasetsDataTableModelHelper extends DataTableModelHelper<Dataset> {
+	private final static class DatasetsDataTableModelHelper extends DataTableModelHelper<Dataset> {
 
 		private DatasetsDataTableModelHelper() {
 			super();
