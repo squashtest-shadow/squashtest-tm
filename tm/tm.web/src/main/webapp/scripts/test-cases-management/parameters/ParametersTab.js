@@ -32,7 +32,7 @@ define([ "jquery", "backbone", "./ParametersPanel",	"./DatasetsPanel", "jquery.s
 					this.parametersPanel = new ParametersPanel({settings : this.settings, parentTab : this});
 					this.datasetsPanel = new DatasetsPanel({settings : this.settings, parentTab : this});
 				},
-				events : {},
+				events : {}
 			});
 			return ParametersTab;
 		});
