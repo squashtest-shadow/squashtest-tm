@@ -41,11 +41,9 @@ define(
 							/* IE8 requires low tech code */
 							var validationErrorList = json.fieldValidationErrors;
 							if (validationErrorList.length > 0) {
-								var counter = 0;
-								for (counter = 0; counter < validationErrorList.length; counter++) {
+								for (var counter = 0; counter < validationErrorList.length; counter++) {
 									var fve = validationErrorList[counter];
-									if (!showLegacyErrorMessage(fve)
-											&& !showBootstrapErrorMessage(fve)) {
+									if (!showBootstrapErrorMessage(fve) && !showLegacyErrorMessage(fve)) {
 										throw 'exception';
 									}
 								}

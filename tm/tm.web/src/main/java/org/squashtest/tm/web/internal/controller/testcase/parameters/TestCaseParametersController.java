@@ -28,6 +28,9 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.hibernate.exception.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,6 +46,7 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.exception.DomainException;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
@@ -74,7 +78,7 @@ public class TestCaseParametersController {
 	private PermissionEvaluationService permissionEvaluationService;
 	@Inject
 	private MessageSource messageSource;
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseParametersController.class);
 	/**
 	 * 
 	 */
@@ -242,7 +246,12 @@ public class TestCaseParametersController {
 		TestCase testCase = testCaseFinder.findById(testCaseId);
 		parameter.setTestCase(testCase);
 		testCase.addParameter(parameter);
+		try{
 		parameterModificationService.persist(parameter);
+		}catch (DomainException e) {
+			e.setObjectName("add-parameter");
+			throw e;
+		}
 	}
 
 	private DatatableMapper<String> parametersTableMapper = new NameBasedMapper(3).mapAttribute(Parameter.class,

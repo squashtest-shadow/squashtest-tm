@@ -34,8 +34,8 @@ import javax.validation.Valid;
 
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -48,6 +48,7 @@ import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.exception.DomainException;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
@@ -224,8 +225,13 @@ public class TestCaseDatasetsController {
 	 */
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
-	public void newDataset(@PathVariable long testCaseId, @Valid @RequestBody NewDataset dataset) {
+	public void newDataset(@PathVariable long testCaseId, @Valid @ModelAttribute("add-dataset") NewDataset dataset) {
 		TestCase testCase = testCaseFinder.findById(testCaseId);
-		datasetModificationService.persist(dataset.createTransientEntity(testCase, parameterFinder));
+		try{
+			datasetModificationService.persist(dataset.createTransientEntity(testCase, parameterFinder));
+			}catch (DomainException e) {
+				e.setObjectName("add-dataset");
+				throw e;
+			}
 	}
 }
