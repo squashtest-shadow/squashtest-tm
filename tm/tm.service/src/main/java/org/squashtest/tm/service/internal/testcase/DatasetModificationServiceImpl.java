@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
@@ -53,21 +54,18 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	
 	@Override
 	public void persist(Dataset dataset) {	
-
-		updateDatasetParameters(dataset);
-		datasetDao.persist(dataset);
-	}
-
-
-	private void deleteParamValues(Set<DatasetParamValue> paramValues){
-		for(DatasetParamValue paramValue : paramValues){
-			datasetParamValueDao.remove(paramValue);
+		Dataset sameName = datasetDao.findDatasetByTestCaseAndByName(dataset.getTestCase().getId(), dataset.getName());
+		if(sameName != null){
+			throw new DuplicateNameException(dataset.getName(), dataset.getName());
+		} else {
+			updateDatasetParameters(dataset);
+			datasetDao.persist(dataset);
 		}
 	}
 	
+	
 	@Override
 	public void remove(Dataset dataset) {
-		//deleteParamValues(dataset.getParameterValues());
 		this.datasetDao.remove(dataset);
 	}
 
@@ -83,10 +81,14 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	public void changeName(long datasetId, String newName) {
 		
 		Dataset dataset = this.datasetDao.findById(datasetId);
-		dataset.setName(newName);
-
+		Dataset sameName = datasetDao.findDatasetByTestCaseAndByName(dataset.getTestCase().getId(), dataset.getName());
+		if(sameName != null && sameName.getId() != dataset.getId()){
+			throw new DuplicateNameException(dataset.getName(), newName);
+		} else {
+			dataset.setName(newName);
+		}
 	}
-
+	
 	@Override
 	public void changeParamValue(long datasetParamValueId, String value) {
 		DatasetParamValue paramValue = this.datasetParamValueDao.findById(datasetParamValueId);

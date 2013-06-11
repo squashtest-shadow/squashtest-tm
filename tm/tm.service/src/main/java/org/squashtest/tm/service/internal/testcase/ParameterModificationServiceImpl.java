@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepReader;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
+import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
@@ -71,17 +72,28 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	
 	@Override
 	public void persist(Parameter parameter) {
-		this.parameterDao.persist(parameter);
-		updateDatasetsForParameterCreation(parameter, parameter.getTestCase().getId());
+
+		Parameter sameName = this.parameterDao.findParameterByNameAndTestCase(parameter.getName(), parameter.getTestCase().getId());
+		if(sameName != null){
+			throw new DuplicateNameException(sameName.getName(), parameter.getName());
+		} else {
+			this.parameterDao.persist(parameter);
+			updateDatasetsForParameterCreation(parameter, parameter.getTestCase().getId());
+		}
 	}
 
 	@Override
 	public void changeName(long parameterId, String newName) {
 
 		Parameter parameter = this.parameterDao.findById(parameterId);
+		Parameter sameName = this.parameterDao.findParameterByNameAndTestCase(newName, parameter.getTestCase().getId());
 		String oldName = parameter.getName();
-		parameter.setName(newName);
-		updateParamNameInSteps(parameter, oldName, newName);
+		if(sameName != null && sameName.getId() != parameter.getId()){
+			throw new DuplicateNameException(oldName, newName);
+		} else {
+			parameter.setName(newName);
+			updateParamNameInSteps(parameter, oldName, newName);
+		}
 	}
 
 	private void updateParamNameInSteps(Parameter parameter, String oldName, String newName){

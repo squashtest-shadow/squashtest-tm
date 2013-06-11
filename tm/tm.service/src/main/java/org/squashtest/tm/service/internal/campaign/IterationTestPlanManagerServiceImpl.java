@@ -58,7 +58,6 @@ import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
-import org.squashtest.tm.service.testcase.DatasetModificationService;
 
 @Service("squashtest.tm.service.IterationTestPlanManagerService")
 @Transactional 

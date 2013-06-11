@@ -105,6 +105,8 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 		then :
 			session.flush();
 			testCase.getDatasets().size() == 0;
+			! found ("DATASET", "DATASET_ID",100L)
+			! found ("DATASET_PARAM_VALUE", "DATASET_PARAM_VALUE_ID",100L)
 	}
 	
 	@DataSet("DatasetModificationServiceIT.xml")

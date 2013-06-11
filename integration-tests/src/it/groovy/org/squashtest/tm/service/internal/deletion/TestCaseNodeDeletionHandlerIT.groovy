@@ -29,6 +29,9 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestStep
+import org.squashtest.tm.domain.testcase.Dataset
+import org.squashtest.tm.domain.testcase.Parameter
+import org.squashtest.tm.domain.testcase.DatasetParamValue
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
@@ -76,6 +79,9 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 		! found(TestStep.class, 111l)
 		! found(TestStep.class, 112l)
 		! found(CallTestStep.class, 112l)
+		! found(Dataset.class, 112l)
+		! found(Parameter.class, 112l)
+		! found(DatasetParamValue.class, 112l)
 		found (TestCase.class, 12l)
 		
 		allDeleted("CustomFieldValue", [11l, 12L])

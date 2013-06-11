@@ -22,12 +22,13 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.testcase.Dataset;
 
 public interface CustomDatasetDao {
 
-	List<Dataset> findAllDatasetsByTestCase(@QueryParam("testCaseId") Long testCaseId);
+	List<Dataset> findAllDatasetsByTestCase(Long testCaseId);
 	
-	List<Dataset> findAllDatasetsByTestCases(@QueryParam("testCaseIds") List<Long> testCaseIds);
+	List<Dataset> findAllDatasetsByTestCases(List<Long> testCaseIds);
+
+	Dataset findDatasetByTestCaseAndByName(Long testCaseId, String name);
 }

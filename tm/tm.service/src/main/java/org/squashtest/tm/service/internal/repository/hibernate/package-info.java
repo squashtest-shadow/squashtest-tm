@@ -160,7 +160,8 @@
 		//Datasets
 		@NamedQuery(name = "dataset.findAllDatasetsByTestCase", query = "select dataset from Dataset as dataset join dataset.testCase testCase where testCase.id = :testCaseId order by dataset.name "),
 		@NamedQuery(name = "dataset.findAllDatasetsByTestCases", query = "select dataset from Dataset as dataset join dataset.testCase testCase where testCase.id in (:testCaseIds) order by dataset.name "),
-				
+		@NamedQuery(name = "dataset.findAllDatasetsByTestCaseAndByName", query = "select dataset from Dataset as dataset join dataset.testCase testCase where testCase.id = :testCaseId and dataset.name = :name order by dataset.name "),
+		
 		//CampaignTestPlanItem
 
 		//Execution
@@ -322,10 +323,6 @@
 })
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
-import org.squashtest.tm.domain.testcase.Dataset;
 
