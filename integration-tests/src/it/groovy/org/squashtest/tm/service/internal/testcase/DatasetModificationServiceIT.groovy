@@ -95,7 +95,7 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 			(result[1].parameterValues.toArray(new DatasetParamValue[1]))[0].paramValue == "";
 	}
 	
-	/*@DataSet("DatasetModificationServiceIT.xml")
+	@DataSet("DatasetModificationServiceIT.xml")
 	def "should remove a dataset"(){
 		
 		when :
@@ -105,7 +105,7 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 		then :
 			session.flush();
 			testCase.getDatasets().size() == 0;
-	}*/
+	}
 	
 	@DataSet("DatasetModificationServiceIT.xml")
 	def "should change the name of a dataset"(){

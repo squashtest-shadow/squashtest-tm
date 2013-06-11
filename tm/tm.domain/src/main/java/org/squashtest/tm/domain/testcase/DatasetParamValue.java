@@ -42,7 +42,6 @@ public class DatasetParamValue implements Identified {
 	@JoinColumn(name = "PARAM_ID", referencedColumnName = "PARAM_ID")
 	private Parameter parameter;
 
-	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "DATASET_ID", referencedColumnName = "DATASET_ID")
 	private Dataset dataset;

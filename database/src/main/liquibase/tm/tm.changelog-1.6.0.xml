@@ -124,7 +124,7 @@
 			</column>
 			<column name="DATASET_ID" type="BIGINT"
 				remarks="the dataset holding the value for the parameter">
-				<constraints nullable="false" foreignKeyName="fk_dataset_param_value_dataset"
+				<constraints nullable="true" foreignKeyName="fk_dataset_param_value_dataset"
 					references="DATASET(DATASET_ID)" />
 			</column>
 			<column name="PARAM_ID" type="BIGINT"
