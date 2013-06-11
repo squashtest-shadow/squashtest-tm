@@ -1089,8 +1089,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			aoDataNbBugs : "bugged"
 		},
 		confirmPopup : {
-			oklabel : "ok",
-			cancellabel : "cancel"
+			oklabel : squashtm.message.confirm || "ok",
+			cancellabel : squashtm.message.cancel || "cancel"
 		}
 	};
 
