@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.testcase.Parameter
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
+import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
@@ -64,6 +65,8 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 	@Inject 
 	DatasetDao datasetDao;
 
+	@Inject
+	DatasetParamValueDao paramValueDao;
 	
 	@DataSet("DatasetModificationServiceIT.xml")
 	def "should persist a dataset"(){
@@ -118,32 +121,11 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 	def "should change the param value of a dataset"(){
 		
 		when :
-			Dataset dataset = datasetDao.findById(100L);
-			dataset.parameterValues.iterator().hasNext() == false;
-			datasetService.changeParamValue(100L, 10100L, "newValue");
+			DatasetParamValue paramValue = paramValueDao.findById(100L);
+			paramValue.paramValue == "";	
+			datasetService.changeParamValue(100L, "newValue");
 		then :
-			Dataset dataset2 = datasetDao.findById(100L);
-			dataset2.parameterValues.size() == 1;
-			DatasetParamValue value = dataset2.parameterValues.iterator().next();
-			value.parameter.id == 10100L;
-			value.paramValue == "newValue";		
-	}
-
-	@DataSet("DatasetModificationServiceIT.xml")
-	def "should create the param value for a dataset"(){
-		
-		when :
-			Dataset dataset = datasetDao.findById(100L);
-			datasetService.changeParamValue(100L, 10100L, "newValue1");
-			dataset.parameterValues.iterator().hasNext() == true;
-			datasetService.changeParamValue(100L, 10100L, "newValue2");
-			
-		then :
-			Dataset dataset2 = datasetDao.findById(100L);
-			dataset2.parameterValues.size() == 1;
-			DatasetParamValue value = dataset2.parameterValues.iterator().next();
-			value.parameter.id == 10100L;
-			value.paramValue == "newValue2";
+			paramValue.paramValue == "newValue";		
 	}
 	
 	@DataSet("DatasetModificationServiceIT.xml")

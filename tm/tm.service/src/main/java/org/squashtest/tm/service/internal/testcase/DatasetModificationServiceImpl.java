@@ -67,7 +67,7 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	
 	@Override
 	public void remove(Dataset dataset) {
-		deleteParamValues(dataset.getParameterValues());
+		//deleteParamValues(dataset.getParameterValues());
 		this.datasetDao.remove(dataset);
 	}
 
@@ -88,15 +88,9 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	}
 
 	@Override
-	public void changeParamValue(long datasetId, long paramId, String value) {
-		
-		Dataset dataset = this.datasetDao.findById(datasetId);
-		Parameter parameter = this.parameterDao.findById(paramId);
-		DatasetParamValue datasetParamValue = findOrAddParameter(dataset, parameter);
-		datasetParamValue.setDataset(dataset);
-		datasetParamValue.setParameter(parameter);
-		datasetParamValue.setParamValue(value);
-		updateDatasetParameters(dataset);
+	public void changeParamValue(long datasetParamValueId, String value) {
+		DatasetParamValue paramValue = this.datasetParamValueDao.findById(datasetParamValueId);
+		paramValue.setParamValue(value);
 	}
 	
 	public List<Dataset> getAllDatasetByTestCase(long testCaseId){

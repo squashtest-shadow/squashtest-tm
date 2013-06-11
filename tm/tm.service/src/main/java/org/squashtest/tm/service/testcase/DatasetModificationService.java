@@ -57,5 +57,5 @@ public interface DatasetModificationService {
 	 * @param paramId
 	 * @param value
 	 */
-	void changeParamValue(long datasetId, long paramId, String value);
+	void changeParamValue(long datasetParamValueId, String value);
 }
