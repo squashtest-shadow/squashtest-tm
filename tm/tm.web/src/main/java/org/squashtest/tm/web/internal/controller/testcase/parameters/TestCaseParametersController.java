@@ -92,9 +92,9 @@ public class TestCaseParametersController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
-	public List<SimpleParameter> getParameters(@PathVariable("testCaseId") long testCaseId) {
+	public List<SimpleParameter> getParameters(@PathVariable("testCaseId") long testCaseId, Locale locale) {
 		List<Parameter> parameters = parameterModificationService.getAllforTestCase(testCaseId);
-		return SimpleParameter.convertToSimpleParameters(parameters);
+		return SimpleParameter.convertToSimpleParameters(parameters,testCaseId, messageSource, locale );
 	}
 
 	/**

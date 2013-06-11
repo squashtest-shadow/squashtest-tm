@@ -22,7 +22,9 @@ package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.testcase.Parameter;
 
 /**
@@ -72,12 +74,18 @@ public class SimpleParameter {
 	/**
 	 * Converts the given list of {@link Parameter} into a list of {@link SimpleParameter}
 	 * @param parameters : the list of Parameter to convert
+	 * @param ownerId2 
+	 * @param messageSource2 
+	 * @param locale2 
 	 * @return a list of SimpleParameter representing the given list of Parameter
 	 */
-	public static List<SimpleParameter> convertToSimpleParameters(List<Parameter> parameters){
+	public static List<SimpleParameter> convertToSimpleParameters(List<Parameter> parameters, Long ownerId2, MessageSource messageSource2, Locale locale2){
 		List<SimpleParameter> result = new ArrayList<SimpleParameter>(parameters.size());
 		for(Parameter param : parameters){
+			String newName = ParametersDataTableModelHelper.buildParameterName(param, ownerId2, messageSource2, locale2);
+			
 			SimpleParameter simpleParameter = new SimpleParameter(param);
+			simpleParameter.setName(newName);
 			result.add(simpleParameter);			
 		}
 		return result;
