@@ -66,7 +66,8 @@ define(
 										cssClass : "",
 										tdSelector : "td.delete-button",
 										uiIcon : "ui-icon-minus",
-										onClick : this.removeRowParameter
+										onClick : this.removeRowParameter,
+										condition : function(row, data){return data["directly-associated"];}
 									} ],
 									
 									richEditables : {

@@ -121,7 +121,7 @@ public class IterationModificationController {
 	@Inject
 	private InternationalizationHelper messageSource;
 
-	private final DatatableMapper testPlanMapper = new IndexBasedMapper(13)
+	private final DatatableMapper<Integer> testPlanMapper = new IndexBasedMapper(13)
 														.mapAttribute(Project.class, NAME, String.class, 3)
 														.mapAttribute(TestCase.class, "reference", String.class, 4)
 														.mapAttribute(TestCase.class, NAME, String.class, 5)
@@ -398,7 +398,7 @@ public class IterationModificationController {
 
 		//TODO
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
-		// get the iteraction to check access rights
+		// get the iteration to check access rights
 		Iteration iter = iterationModService.findById(iterationId);
 		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", iter);
 		IterationTestPlanItem testPlanItem = testPlanFinder.findTestPlanItem(iterationId, testPlanId);

@@ -33,12 +33,14 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
@@ -114,7 +116,7 @@ public class TestCaseDatasetsController {
 	@ResponseBody
 	public List<AoColumnDef> getDatasetsTableColumnDefs(@PathVariable long testCaseId, final Locale locale) {
 		TestCase testCase = testCaseFinder.findById(testCaseId);
-		List<Parameter> directAndCalledParameters = parameterFinder.getAllforTestCase(testCaseId);
+		List<Parameter> directAndCalledParameters = getSortedDirectAndCalledParameters(testCaseId);
 		List<Long> paramIds = IdentifiedUtil.extractIds(directAndCalledParameters);
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testCase);
 		return new DatasetsTableColumnDefHelper().getAoColumnDefs(paramIds, editable);
@@ -132,9 +134,15 @@ public class TestCaseDatasetsController {
 	@RequestMapping(value = "/table/param-headers", method = RequestMethod.GET)
 	@ResponseBody
 	public List<String> getDatasetsTableParametersHeaders(@PathVariable long testCaseId, final Locale locale) {
-		List<Parameter> directAndCalledParameters = parameterFinder.getAllforTestCase(testCaseId);
+		List<Parameter> directAndCalledParameters = getSortedDirectAndCalledParameters(testCaseId);
 		return findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
 
+	}
+
+	private List<Parameter> getSortedDirectAndCalledParameters(long testCaseId) {
+		List<Parameter> directAndCalledParameters = parameterFinder.getAllforTestCase(testCaseId);
+		Collections.sort(directAndCalledParameters, new TestCaseParametersController.ParameterNameComparator(SortOrder.ASCENDING));
+		return directAndCalledParameters;
 	}
 
 	public static List<String> findDatasetParamHeaders(long testCaseId, final Locale locale,
@@ -224,8 +232,9 @@ public class TestCaseDatasetsController {
 	 *            : the dataset to add with it's set name
 	 */
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
-	public void newDataset(@PathVariable long testCaseId, @Valid @ModelAttribute("add-dataset") NewDataset dataset) {
+	public void newDataset(@PathVariable long testCaseId, @Valid @RequestBody NewDataset dataset) {
 		TestCase testCase = testCaseFinder.findById(testCaseId);
 		try{
 			datasetModificationService.persist(dataset.createTransientEntity(testCase, parameterFinder));

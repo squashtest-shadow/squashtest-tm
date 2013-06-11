@@ -94,7 +94,7 @@ public class CampaignModificationController {
 	 * the one in the association interface) they should be addressed by two distinct DataTableMappers, especially
 	 * because their configuration and content are different !
 	 */
-	private final DatatableMapper testPlanMapper = new IndexBasedMapper(8)
+	private final DatatableMapper<Integer> testPlanMapper = new IndexBasedMapper(8)
 														.mapAttribute(Project.class, "name", String.class, 2)
 														.mapAttribute(Project.class, "name", String.class, 3)
 														.mapAttribute(TestCase.class, "name", String.class, 4)

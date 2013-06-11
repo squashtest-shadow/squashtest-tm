@@ -57,6 +57,7 @@ public final class ParametersDataTableModelHelper extends DataTableModelHelper<P
 		res.put(DataTableModelHelper.NAME_KEY, ParametersDataTableModelHelper.buildParameterName(item, ownerId, messageSource, locale));
 		res.put("description", item.getDescription());
 		res.put("test-case-name", testCaseName);
+		res.put("directly-associated", Long.valueOf(ownerId).equals(item.getTestCase().getId()));
 		res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 		return res;
 	}

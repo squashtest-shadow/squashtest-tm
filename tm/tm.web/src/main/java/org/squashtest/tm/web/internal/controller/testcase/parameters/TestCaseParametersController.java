@@ -28,10 +28,8 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
-import org.hibernate.exception.ConstraintViolationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -39,6 +37,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
@@ -78,7 +77,6 @@ public class TestCaseParametersController {
 	private PermissionEvaluationService permissionEvaluationService;
 	@Inject
 	private MessageSource messageSource;
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseParametersController.class);
 	/**
 	 * 
 	 */
@@ -182,11 +180,11 @@ public class TestCaseParametersController {
 	 * @author mpagnon
 	 * 
 	 */
-	private static final class ParameterNameComparator implements Comparator<Parameter> {
+	public static final class ParameterNameComparator implements Comparator<Parameter> {
 
 		private SortOrder sortOrder;
 
-		private ParameterNameComparator(SortOrder sortOrder) {
+		public  ParameterNameComparator(SortOrder sortOrder) {
 			this.sortOrder = sortOrder;
 		}
 
@@ -241,6 +239,7 @@ public class TestCaseParametersController {
 	 *            : the parameter to add with it's set name and description
 	 */
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public void newParameter(@PathVariable long testCaseId, @Valid @ModelAttribute("add-parameter") Parameter parameter) {
 		TestCase testCase = testCaseFinder.findById(testCaseId);

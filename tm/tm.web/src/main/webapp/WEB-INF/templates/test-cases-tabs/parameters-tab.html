@@ -87,6 +87,8 @@
 								th:text="#{label.Description}">Description</th>
 							<th th:attr="data-def='sortable, map=test-case-name'"
 								th:text="#{test-case.name.label}">Cas de Test</th>
+							<th th:attr="data-def='invisible, map=directly-associated'">
+								directly-associated</th>
 							<th
 								th:attr="data-def='sWidth=2em, map=empty-delete-holder, sClass=delete-button'"></th>
 						</tr>
@@ -227,12 +229,21 @@
 		<!-- ==================== initialisation ==================== -->
 
 		<script type="text/javascript" th:inline="javascript">
+		var squashtm = squashtm || {};
+	  	squashtm.app = squashtm.app || {} ;
+	  	squashtm.app.messages = squashtm.app.messages || {};
+	  	squashtm.app.messages["message.notBlank"] = /*[[ #{message.notBlank} ]]*/ "Value should not be blank";
+	  	
 			/*<![CDATA[*/
 			require(
 					[ "domReady", "test-cases-management" ],
 					function(domReady, testCaseManagement) {
-						domReady(function() {
-
+						
+					  	
+						domReady(function() {		
+							
+							
+						  	
 							var settings = {
 								basic : {
 									testCaseUrl : /*[[@{/test-cases/__${testCase.id}__}]]*/"/squash/test-cases/1",
