@@ -404,7 +404,7 @@ public class ExecutionModificationController {
 
 	private static String formatDate(Date date, Locale locale, MessageSource messageSource) {
 		try {
-			String format = messageSource.getMessage("squashtm.dateformast", null, locale);
+			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
 			return new SimpleDateFormat(format).format(date);
 		} catch (Exception anyException) {
 			return formatNoData(locale, messageSource);
