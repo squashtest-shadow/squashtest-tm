@@ -45,6 +45,9 @@
 
 <c:url var="datatableLanguage" value="/datatables/messages" />
 
+<f:message var="errorTitle" key="popup.title.error" />
+<f:message var="nothingSelected" key="message.EmptyTableSelection"/>
+
 <%------------------------------------- /URLs --------------------------------------------------------%>
 <%------------------------------------- scripts ------------------------------------------------------%>
 <script type="text/javascript">
@@ -56,6 +59,7 @@
 	
 	//init function
 	$(function() {
+	
 				
 		require(["jquery", "jqueryui","jquery.squash.datatables", "jquery.squash.confirmdialog"], function($){
 			
@@ -120,7 +124,12 @@
 			uploadButton.squashButton();
 			
 			deleteButton.click(function() {
-				deleteDialog.confirmDialog('open');
+				if  (table.getSelectedRows().size() > 0){
+					deleteDialog.confirmDialog('open');
+				}
+				else{
+					$.squash.openMessage("${errorTitle}", "${nothingSelected}");
+				}
 			});
 
 			renameButton.click(function(){				
