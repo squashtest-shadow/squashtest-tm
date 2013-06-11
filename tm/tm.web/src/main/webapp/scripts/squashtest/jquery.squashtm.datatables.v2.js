@@ -979,7 +979,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	// *****************************
 
 	// ******** configurator
-
+	
+	//TODO use StringUtils.parseSequence (copied there because used in DatasetsTable) mpagnon
 	function _parseAssignation(atom) {
 		var members = atom.split(/\s*=\s*/);
 		return {

@@ -105,7 +105,7 @@ define(
 						_parametersTableRowCallback : function(row, data,
 								displayIndex) {
 							if(this.settings.permissions.isWritable){
-							this._addSimpleJEditableToName(row, data);
+							this.addSimpleJEditableToName(row, data);
 							}
 							
 							return row;
@@ -175,11 +175,10 @@ define(
 
 						// =====================================================
 
-						_addSimpleJEditableToName : function(row, data) {
+						addSimpleJEditableToName : function(row, data) {
 							var self = this;
 							var urlPOST = self.settings.basic.parametersUrl + '/' + data["entity-id"]+"/name";
 							var component = $('td.parameter-name', row);
-							// component.attr("id", data["entity-id"]);
 							new SimpleJEditable({
 								language : {
 									richEditPlaceHolder : self.settings.language.placeholder,

@@ -206,7 +206,7 @@ public class TestCaseDatasetsController {
 			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put(DataTableModelHelper.NAME_KEY, item.getName());
 			for (DatasetParamValue parameterValue : item.getParameterValues()) {
-				res.put("parameter-" + parameterValue.getParameter().getId(), parameterValue.getParamValue());
+				res.put("parameter-" + parameterValue.getParameter().getId(), "id="+parameterValue.getId()+", value="+parameterValue.getParamValue());
 			}
 			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			return res;

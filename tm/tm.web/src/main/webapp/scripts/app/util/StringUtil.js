@@ -27,9 +27,40 @@ define([ "jquery" ], function($) {
 	function isEmpty(val) {
 		return (!val) || val === "";
 	}
+	
+	function parseAssignation(atom) {
+		var members = atom.split(/\s*=\s*/);
+		return {
+			name : members[0],
+			value : (members.length > 1) ? members[1] : 'true'
+		};
+	}
+	function parseSequence(seq) {
+		var result = [];
+		var statements = seq.split(/\s*,\s*/);
+		var i = 0, length = statements.length;
+
+		for (i = 0; i < length; i++) {
+			var stmt = statements[i];
+			var parser = (stmt.indexOf(',') !== -1) ? parseSequence : parseAssignation;
+			result.push(parser(stmt));
+		}
+
+		return result;
+	}
+	
+	function getParsedSequenceAttribute(parsedSequence, key){
+		for(var k=0; k<parsedSequence.length; k++){
+			if(parsedSequence[k].name == key){
+				return parsedSequence[k].value;
+			}
+		}
+	}
 
 	return {
 		isBlank : isBlank,
-		isEmpty : isEmpty
+		isEmpty : isEmpty,
+		parseSequence : parseSequence,
+		getParsedSequenceAttribute :getParsedSequenceAttribute
 	};
 });

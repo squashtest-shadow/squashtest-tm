@@ -20,15 +20,15 @@
  */
 
 define(
-		[ "jquery", "backbone","jeditable.simpleJEditable", "jquery.squash.confirmdialog",
-				"jquery.squash.messagedialog", "jquery.squash.datatables" ],
-				function($, Backbone, SimpleJEditable) {
+		[ "jquery", "backbone","jeditable.simpleJEditable", "app/util/StringUtil" , "jquery.squash.confirmdialog",
+				"jquery.squash.messagedialog", "jquery.squash.datatables" ],function($, Backbone, SimpleJEditable, StringUtil) {
 					var DatasetsTable = Backbone.View.extend({
 						
 						el : "#datasets-table",
 						
 						initialize : function() {
 							this.settings = this.options.settings;
+							
 							// functions called on this
 							this.removeRowDataset = $.proxy(
 									this._removeRowDataset, this);											
@@ -38,11 +38,16 @@ define(
 							this.refresh = $.proxy(this._refresh, this);
 							this.reDraw = $.proxy(this._reDraw, this);
 							this.updateTableDom = $.proxy(this._updateTableDom, this);
+							this.datasetsTableRowCallback = $.proxy(
+									this._datasetsTableRowCallback, this);
+							this.createSimpleJEditable = $.proxy(this._createSimpleJEditable, this);
+							
 							//init actions
 							this.initDataTableSettings(this);
 							this.initSquashSettings(this);
 							this.configureTable.call(this);
 							this.configureRemoveDatasetDialog.call(this);
+							
 							//bound event
 							this.options.parentTab.on("newParameter", this.reDraw);
 							this.options.parentTab.on("removeParameter", this.reDraw);
@@ -59,7 +64,8 @@ define(
 								"sAjaxSource": self.settings.basic.testCaseDatasetsUrl, 
 								"bPaginate": false,
 								"aaSorting" : [ [ 3, 'asc' ] ],
-								"aoColumnDefs": JSON.parse( self.settings.datasetsAoColumnDefs)
+								"aoColumnDefs": JSON.parse( self.settings.datasetsAoColumnDefs),
+								"fnRowCallback" : self.datasetsTableRowCallback
 							};
 						},
 
@@ -89,8 +95,64 @@ define(
 									self.squashSettings);
 							this.table = $(this.el).squashTable();
 						},
-
-					
+						
+						//call datasetsTableRowCallback instead
+						_datasetsTableRowCallback : function(row, data,
+								displayIndex) {
+							if(this.settings.permissions.isWritable){
+							this.addSimpleJEditableToName(row, data);
+							this.addSimpleJEditableToParamValues(row, data);
+							}
+							
+							return row;
+						},
+						
+						addSimpleJEditableToName : function(row, data) {
+							var self = this;
+							var urlPost = self.settings.basic.datasetsUrl + '/' + data["entity-id"]+"/name";
+							var component = $('td.dataset-name', row);
+							self.createSimpleJEditable(urlPost, component);
+						},
+						
+						addSimpleJEditableToParamValues : function(row, data) {
+							var self = this;
+							var urlPostStart = self.settings.basic.parameterValuesUrl+ "/" ;
+							var components = $('td.parameter', row);
+							$.each( components, function(index, value){
+							
+								//PARSE CELL'S TEXT INFORMATIONS
+								//each parameter value cell's text must be structured as follow "id=<id>,value=<value>" (see DatasetsDataTableModelHelper)
+								//first we extract the cell's text infos
+								var cellText = $(value).text();
+								var textAttrs = StringUtil.parseSequence(cellText);
+								//then we fix the cell's text to show only it's value
+								var valueText = StringUtil.getParsedSequenceAttribute(textAttrs, "value");
+								$(value).text(valueText);
+								//and we build the url used for the SimpleJEditable
+								var cellId = StringUtil.getParsedSequenceAttribute(textAttrs, "id");
+								var urlPost = urlPostStart +cellId+"/param-value";
+								
+								//CREATE JEDITABLE
+								self.createSimpleJEditable(urlPost, $(value));
+							
+							});
+						},
+						
+						//call createSimpleJEditable instead
+						_createSimpleJEditable : function(url, component){
+						var self = this;
+						new SimpleJEditable({
+									language : {
+										richEditPlaceHolder : self.settings.language.placeholder,
+										okLabel : self.settings.language.submit,
+										cancelLabel : self.settings.language.cancellabel
+									},
+									targetUrl : url,
+									component : component,
+									jeditableSettings : {}
+								});
+						},
+						
 						//call removeRowDataset instead//
 						_removeRowDataset : function(table, cell) {
 							var row = cell.parentNode.parentNode;
@@ -106,7 +168,7 @@ define(
 							self.confirmRemoveDatasetDialog.confirmDialog("open");
 						},
 						
-
+						//call removeDataset instead
 						_removeDataset : function() {
 							var self = this;
 							var id = this.toDeleteId;					
@@ -131,12 +193,14 @@ define(
 									}, this));
 							
 						},
-
+						
+						//call refresh instead
 						_refresh : function() {
 							this.table.fnDraw(false);
 							this.options.parentTab.trigger("datasets.table.refresh");
 						},
 						
+						//call reDraw instead
 						_reDraw : function(){
 							var self = this;
 							self.table.fnDestroy();
@@ -155,16 +219,14 @@ define(
 								 .done(self.updateTableDom)
 								 .then(function(){
 								 // redraw table
-									//self.table.squashTable("destroy");
 									self.configureTable.call(self);
-									self.table.fnDraw();
-									//self.refresh();
 								 });
 							});
 							
 							
 						},
 						
+						//call updateTableDom instead
 						_updateTableDom : function(paramHeaders){
 							this.$("tbody tr").remove();
 							this.$("thead th.parameter").remove();
