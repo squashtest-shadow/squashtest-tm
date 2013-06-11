@@ -1112,8 +1112,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			aoDataListId : "attach-list-id"
 		},
 		confirmPopup : {
-			oklabel : "ok",
-			cancellabel : "cancel"
+			oklabel : squashtm.message.confirm || "ok",
+			cancellabel : squashtm.message.cancel || "cancel"
 		}
 	};
 
