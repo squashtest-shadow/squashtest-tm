@@ -60,8 +60,7 @@ public class Dataset implements Identified {
 	private TestCase testCase;
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.ALL })
-	@JoinColumn(name = "DATASET_ID")
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="dataset")
 	private Set<DatasetParamValue> parameterValues = new HashSet<DatasetParamValue>(0);
 
 	public Dataset() {

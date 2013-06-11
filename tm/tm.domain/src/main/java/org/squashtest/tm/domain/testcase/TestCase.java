@@ -40,6 +40,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
@@ -96,13 +97,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>(0);
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinColumn(name = "TEST_CASE_ID")
+	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE }, mappedBy="testCase")
+	@OrderBy("name")
 	private Set<Parameter> parameters = new HashSet<Parameter>(0);
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinColumn(name = "TEST_CASE_ID")
+	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE }, mappedBy="testCase")
+	@OrderBy("name")
 	private Set<Dataset> datasets = new HashSet<Dataset>(0);
 
 	@NotNull
