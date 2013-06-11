@@ -149,9 +149,9 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	}
 	
 	public ExecutionStep(ActionTestStep testStep, Dataset dataset) {
+		fillParameterMap(dataset); 
 		testStep.accept(this);
 		referencedTestStep = testStep;
-		fillParameterMap(dataset); 
 		for (Attachment actionStepAttach : testStep.getAllAttachments()) {
 			Attachment clone = actionStepAttach.hardCopy();
 			attachmentList.addAttachment(clone);
@@ -300,7 +300,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		    	String paramName = matcher.group(3);
 		    	if(dataset.containsKey(paramName) && dataset.get(paramName).length() > 0){
 		    		result = result.replace(paramChain, this.dataset.get(paramName));
-		    	} else if(dataset.get(paramName).length() == 0) {
+		    	} else if(!dataset.containsKey(paramName) || dataset.get(paramName).length() == 0) {
 		    		result = result.replace(paramChain, NO_PARAM);
 		    	}
 		    	
