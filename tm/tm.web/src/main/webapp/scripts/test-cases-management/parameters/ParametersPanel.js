@@ -74,6 +74,7 @@ define([ "jquery", "backbone", "./ParametersTable", "./NewParameterDialog",
 					}
 
 					function discardAndRefresh() {
+						self.options.parentTab.trigger("newParameter");
 						discard();
 						self.table.refresh();
 					}

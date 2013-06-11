@@ -28,16 +28,24 @@ define(
 						el : "#datasets-table",
 						
 						initialize : function() {
-						this.settings = this.options.settings;
+							this.settings = this.options.settings;
+							// functions called on this
 							this.removeRowDataset = $.proxy(
 									this._removeRowDataset, this);											
 							this.confirmRemoveDataset = $.proxy(
 									this._confirmRemoveDataset, this);
-							this.removeDataset = $.proxy(this._removeDataset, this);
-							
+							this.removeDataset = $.proxy(this._removeDataset, this);							
 							this.refresh = $.proxy(this._refresh, this);
+							this.reDraw = $.proxy(this._reDraw, this);
+							this.updateTableDom = $.proxy(this._updateTableDom, this);
+							//init actions
+							this.initDataTableSettings(this);
+							this.initSquashSettings(this);
 							this.configureTable.call(this);
 							this.configureRemoveDatasetDialog.call(this);
+							//bound event
+							this.options.parentTab.on("newParameter", this.reDraw);
+							this.options.parentTab.on("removeParameter", this.reDraw);
 						},
 						
 						events : {
@@ -45,8 +53,8 @@ define(
 						},
 						
 						
-						dataTableSettings : function(self) {
-							return {
+						initDataTableSettings : function(self) {
+							self.dataTableSettings = {
 								"oLanguage": {sUrl:self.settings.basic.dataTableLanguageUrl},	
 								"sAjaxSource": self.settings.basic.testCaseDatasetsUrl, 
 								"bPaginate": false,
@@ -55,12 +63,12 @@ define(
 							};
 						},
 
-						squashSettings : function(self) {
+						initSquashSettings : function(self) {
 
-							var squashSettings = {};
+							self.squashSettings = {};
 
 							if (self.settings.permissions.isWritable) {
-								squashSettings = {
+								self.squashSettings = {
 									buttons : [ {
 										tooltip : self.settings.language.remove,
 										cssClass : "",
@@ -71,15 +79,14 @@ define(
 								};
 							}
 
-							return squashSettings;
 
 						},
 
 						configureTable : function() {
 							var self = this;
 							$(this.el).squashTable(
-									self.dataTableSettings(self),
-									self.squashSettings(self));
+									self.dataTableSettings,
+									self.squashSettings);
 							this.table = $(this.el).squashTable();
 						},
 
@@ -128,6 +135,47 @@ define(
 						_refresh : function() {
 							this.table.fnDraw(false);
 							this.options.parentTab.trigger("datasets.table.refresh");
+						},
+						
+						_reDraw : function(){
+							var self = this;
+							self.table.fnDestroy();
+							//load aoColumnDefs
+							$.ajax({
+								url: self.settings.basic.testCaseDatasetsUrl+"/table/aoColumnDef",
+								type: 'get'
+							}).done(function(json){
+								self.dataTableSettings["aoColumnDefs"] = json;
+								self.dataTableSettings["bDestroy"] = true;
+								//modify table dom
+								$.ajax({
+									url: self.settings.basic.testCaseDatasetsUrl +"/table/param-headers",
+									type: "get"
+								 })
+								 .done(self.updateTableDom)
+								 .then(function(){
+								 // redraw table
+									//self.table.squashTable("destroy");
+									self.configureTable.call(self);
+									self.table.fnDraw();
+									//self.refresh();
+								 });
+							});
+							
+							
+						},
+						
+						_updateTableDom : function(paramHeaders){
+							this.$("tbody tr").remove();
+							this.$("thead th.parameter").remove();
+							
+							var thAfter =this.$("thead tr th.dataset-name "); 
+							for(var i=0; i< paramHeaders.length; i++){
+								var th = $("<th/>" , {"class" : "parameter"});
+								th.text(paramHeaders[i]);
+								thAfter.after(th);
+								thAfter = th;
+							}
 						}
 					});
 						

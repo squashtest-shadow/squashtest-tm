@@ -147,7 +147,10 @@ define(
 							$.ajax({
 								url : self.settings.basic.parametersUrl + '/' + id,
 								type : 'delete'
-							}).done(self.refresh);
+							}).done(function(){
+							self.refresh();
+							self.options.parentTab.trigger("removeParameter");
+							});
 						},
 
 						_configureRemoveParametersDialogs : function() {

@@ -29,7 +29,9 @@ public final class RequestParams {
 	private RequestParams() {
 		super();
 	}
-
+	/**
+	 * request DataTable datas
+	 */
 	public static final String S_ECHO_PARAM = "sEcho";
 
 	/**
@@ -46,5 +48,7 @@ public final class RequestParams {
 	 * Dry-run some app-state-modifying request
 	 */
 	public static final String DRY_RUN = "dry-run";
+	
+	
 
 }

@@ -23,10 +23,16 @@ package org.squashtest.tm.web.internal.controller.testcase.parameters;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelper;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 
+/**
+ * Help create aoColumnDefs for DataTable jQuery plugin for {@link Dataset} table
+ * @author mpagnon
+ *
+ */
 public final class DatasetsTableColumnDefHelper extends DataTableColumnDefHelper {
 	private static final List<AoColumnDef> baseColumns = new ArrayList<AoColumnDef>(4);
 	static {
@@ -35,7 +41,7 @@ public final class DatasetsTableColumnDefHelper extends DataTableColumnDefHelper
 		baseColumns.add(new AoColumnDef(false, false, "", null, DataTableModelHelper.DEFAULT_ENTITY_ID_KEY));// 0
 		baseColumns.add(new AoColumnDef(true, false, "select-handle centered", smallWidth,
 				DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY));// 1
-		baseColumns.add(new AoColumnDef(true, false, "dataset-name", null, DataTableModelHelper.NAME_KEY));// 2
+		baseColumns.add(new AoColumnDef(true, true, "dataset-name", null, DataTableModelHelper.NAME_KEY));// 2
 		baseColumns.add(new AoColumnDef(true, false, "delete-button", smallWidth,
 				DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY));// 3
 	}
@@ -44,7 +50,13 @@ public final class DatasetsTableColumnDefHelper extends DataTableColumnDefHelper
 	public DatasetsTableColumnDefHelper() {
 		columns.addAll(baseColumns);
 	}
-
+	
+	/**
+	 * Return the list of {@link AoColumnDef} that will be given to a jQuery DataTable as the aoColumnDef property.
+	 * @param parameterIds : the ids of parameters all datasets have.
+	 * @param editable : whether the test-case is writable or not
+	 * @return
+	 */
 	public List<AoColumnDef> getAoColumnDefs(List<Long> parameterIds, boolean editable) {
 		columns.get(columns.size() - 1).setbVisible(editable);
 		if (!parameterIds.isEmpty()) {

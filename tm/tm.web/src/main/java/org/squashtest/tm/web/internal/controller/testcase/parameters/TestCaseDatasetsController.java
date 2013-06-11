@@ -32,6 +32,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,13 +43,17 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -57,6 +62,8 @@ import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 /**
+ * Controller to handle requests for datasets of a given test case.
+ * 
  * @author mpagnon
  * 
  */
@@ -65,17 +72,77 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 public class TestCaseDatasetsController {
 	@Inject
 	private TestCaseFinder testCaseFinder;
-	@Inject 
+	@Inject
 	private DatasetModificationService datasetModificationService;
 	@Inject
 	private ParameterFinder parameterFinder;
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
+	@Inject
+	private MessageSource messageSource;
+
+	/**
+	 * Return the datas to fill the datasets table in the test case view
+	 * 
+	 * @param testCaseId
+	 *            : the id of the viewed test case
+	 * @param params
+	 *            : DataTable draw parameters
+	 * @param locale
+	 *            : the browser's locale
+	 * @return
+	 */
 	@RequestMapping(method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
-	public DataTableModel getDatasetsTable(@PathVariable long testCaseId, final DataTableDrawParameters params,
+	public DataTableModel getDatasetsTableDatas(@PathVariable long testCaseId, final DataTableDrawParameters params,
 			final Locale locale) {
 		List<Dataset> datasetsList = getSortedDatasets(testCaseId, params);
 		PagedCollectionHolder<List<Dataset>> holder = new SinglePageCollectionHolder<List<Dataset>>(datasetsList);
 		return new DatasetsDataTableModelHelper().buildDataModel(holder, params.getsEcho());
+	}
+
+	/**
+	 * @see DatasetsTableColumnDefHelper#getAoColumnDefs(List, boolean);
+	 * @param testCaseId
+	 *            : the id of the viewed test case
+	 * @param locale
+	 *            : the browser's locale
+	 * @return
+	 */
+	@RequestMapping(value = "/table/aoColumnDef", method = RequestMethod.GET)
+	@ResponseBody
+	public List<AoColumnDef> getDatasetsTableColumnDefs(@PathVariable long testCaseId, final Locale locale) {
+		TestCase testCase = testCaseFinder.findById(testCaseId);
+		List<Parameter> directAndCalledParameters = parameterFinder.getAllforTestCase(testCaseId);
+		List<Long> paramIds = IdentifiedUtil.extractIds(directAndCalledParameters);
+		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testCase);
+		return new DatasetsTableColumnDefHelper().getAoColumnDefs(paramIds, editable);
+
+	}
+
+	/**
+	 * Return the list of parameters headers for the dataset table in the test case view.
+	 * 
+	 * @param testCaseId
+	 *            : the viewed test case
+	 * @param locale
+	 * @return
+	 */
+	@RequestMapping(value = "/table/param-headers", method = RequestMethod.GET)
+	@ResponseBody
+	public List<String> getDatasetsTableParametersHeaders(@PathVariable long testCaseId, final Locale locale) {
+		List<Parameter> directAndCalledParameters = parameterFinder.getAllforTestCase(testCaseId);
+		return findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
+
+	}
+
+	public static List<String> findDatasetParamHeaders(long testCaseId, final Locale locale,
+			List<Parameter> directAndCalledParameters, MessageSource messageSource) {
+		List<String> result = new ArrayList<String>(directAndCalledParameters.size());
+		for(Parameter param : directAndCalledParameters){
+			result.add(ParametersDataTableModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
+		}
+		return result;
 	}
 
 	private List<Dataset> getSortedDatasets(long testCaseId, final DataTableDrawParameters params) {
@@ -85,12 +152,18 @@ public class TestCaseDatasetsController {
 		List<Dataset> datasetsList = new ArrayList<Dataset>(datasets);
 		if (sorting.getSortedAttribute() != null && sorting.getSortedAttribute().equals("Parameter.name")) {
 			Collections.sort(datasetsList, new DatasetNameComparator(sorting.getSortOrder()));
-		}else{
+		} else {
 			Collections.sort(datasetsList, new DatasetNameComparator(SortOrder.ASCENDING));
 		}
 		return datasetsList;
 	}
 
+	/**
+	 * Will compare {@link Dataset} on their name in the given {@link SortOrder}
+	 * 
+	 * @author mpagnon
+	 * 
+	 */
 	private static final class DatasetNameComparator implements Comparator<Dataset> {
 
 		private SortOrder sortOrder;
@@ -102,10 +175,10 @@ public class TestCaseDatasetsController {
 		@Override
 		public int compare(Dataset o1, Dataset o2) {
 			int ascResult = o1.getName().compareTo(o2.getName());
-			if(this.sortOrder.equals(SortOrder.ASCENDING)){
+			if (this.sortOrder.equals(SortOrder.ASCENDING)) {
 				return ascResult;
-			}else{
-				return - ascResult;
+			} else {
+				return -ascResult;
 			}
 		}
 	}
@@ -114,6 +187,12 @@ public class TestCaseDatasetsController {
 			String.class, DataTableModelHelper.DEFAULT_ENTITY_ID_KEY).mapAttribute(Dataset.class, "name", String.class,
 			DataTableModelHelper.NAME_KEY);
 
+	/**
+	 * Helps create the datas (for the jQuery DataTable) for the datasets table in the test case view.
+	 * 
+	 * @author mpagnon
+	 * 
+	 */
 	private final static class DatasetsDataTableModelHelper extends DataTableModelHelper<Dataset> {
 
 		private DatasetsDataTableModelHelper() {
@@ -134,7 +213,7 @@ public class TestCaseDatasetsController {
 		}
 
 	}
-	
+
 	/**
 	 * Will add a new dataset to the test case
 	 * 
@@ -145,7 +224,7 @@ public class TestCaseDatasetsController {
 	 */
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
-	public void newDataset(@PathVariable long testCaseId,@Valid @RequestBody  NewDataset dataset) {
+	public void newDataset(@PathVariable long testCaseId, @Valid @RequestBody NewDataset dataset) {
 		TestCase testCase = testCaseFinder.findById(testCaseId);
 		datasetModificationService.persist(dataset.createTransientEntity(testCase, parameterFinder));
 	}
