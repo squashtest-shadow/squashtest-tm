@@ -187,7 +187,6 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		parameter.setDescription("");
 		parameter.setTestCase(testCase);
 		this.persist(parameter);
-		updateDatasetsForParameterCreation(parameter, testCase.getId());
 		return parameter;
 	}
 
@@ -283,7 +282,6 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 			datasetParamValue.setParamValue("");
 			datasetParamValue.setDataset(dataset);
 			dataset.addParameterValue(datasetParamValue);
-			datasetParamValueDao.persist(datasetParamValue);
 		}
 	}
 

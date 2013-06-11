@@ -149,6 +149,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep);
 		initCustomFieldValues((ActionTestStep) step, customFieldValues);
+		parameterModificationService.checkForParamsInStep(step.getId());
 		return step;
 	}
 
@@ -157,6 +158,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public void updateTestStepAction(long testStepId, String newAction) {
 		ActionTestStep testStep = actionStepDao.findById(testStepId);
 		testStep.setAction(newAction);
+		parameterModificationService.checkForParamsInStep(testStepId);
 	}
 
 	@Override
@@ -164,6 +166,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public void updateTestStepExpectedResult(long testStepId, String newExpectedResult) {
 		ActionTestStep testStep = actionStepDao.findById(testStepId);
 		testStep.setExpectedResult(newExpectedResult);
+		parameterModificationService.checkForParamsInStep(testStepId);
 	}
 
 	@Override
