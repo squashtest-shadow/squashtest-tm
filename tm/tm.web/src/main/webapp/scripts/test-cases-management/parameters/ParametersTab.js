@@ -28,7 +28,7 @@ define([ "jquery", "backbone", "./ParametersPanel",	"./DatasetsPanel", "jquery.s
 				initialize : function() {
 					var self = this;
 					this.settings = this.options.settings;
-					$("div.fragment-tabs").tabs("option" , {cache: false, ajaxOptions : {cache:false}});
+//					$("div.fragment-tabs").tabs("option" , {cache: false, ajaxOptions : {cache:false}});
 					this.parametersPanel = new ParametersPanel({settings : this.settings, parentTab : this});
 					this.datasetsPanel = new DatasetsPanel({settings : this.settings, parentTab : this});
 				},

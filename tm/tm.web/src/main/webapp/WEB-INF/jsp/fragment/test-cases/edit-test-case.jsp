@@ -555,6 +555,8 @@
 				label : "${tabIssueLabel}"
 			});
 			</c:if>
+
+			
 			
 		});
 		
@@ -577,6 +579,16 @@
 
 		$("#print-test-case-button").click(function(){
 			window.open("${testCaseUrl}?format=printable", "_blank");
+		});
+
+
+		$("div.fragment-tabs").on("tabsshow", function( event, ui ) {
+			if(ui.index == 2){
+				if($("#ui-tabs-2")){
+					$("#ui-tabs-2").load("/squash/test-cases/238/parameters/panel");
+				}
+			}
+			
 		});
 	});
 
