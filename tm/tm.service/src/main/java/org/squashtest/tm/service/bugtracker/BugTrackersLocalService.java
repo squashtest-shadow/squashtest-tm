@@ -225,7 +225,7 @@ public interface BugTrackersLocalService {
 	 * @throws BugTrackerRemoteException
 	 *             if the credentials are wrong
 	 */
-	void setCredentials(String username, String password, BugTracker bugTracker);
+	void setCredentials(String username, String password, BugTracker bugTracker) throws BugTrackerRemoteException;
 
 	/**
 	 * returns an instance of the remote project.

@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 

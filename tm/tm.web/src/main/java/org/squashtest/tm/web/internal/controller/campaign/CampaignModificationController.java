@@ -79,7 +79,7 @@ public class CampaignModificationController {
 
 	private CampaignModificationService campaignModService;
 	private IterationModificationService iterationModService;
-	
+
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
 
@@ -95,11 +95,10 @@ public class CampaignModificationController {
 	 * because their configuration and content are different !
 	 */
 	private final DatatableMapper<Integer> testPlanMapper = new IndexBasedMapper(8)
-														.mapAttribute(Project.class, "name", String.class, 2)
-														.mapAttribute(Project.class, "name", String.class, 3)
-														.mapAttribute(TestCase.class, "name", String.class, 4)
-														.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, 6)
-														.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 7);
+			.mapAttribute(Project.class, "name", String.class, 2).mapAttribute(Project.class, "name", String.class, 3)
+			.mapAttribute(TestCase.class, "name", String.class, 4)
+			.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, 6)
+			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 7);
 
 	@ServiceReference
 	public void setIterationModificationService(IterationModificationService iterationModificationService) {
@@ -111,8 +110,6 @@ public class CampaignModificationController {
 		campaignModService = service;
 	}
 
-
-	
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long campaignId) {
 
@@ -120,10 +117,10 @@ public class CampaignModificationController {
 
 		ModelAndView mav = new ModelAndView("fragment/generics/statistics-fragment");
 		mav.addObject("statisticsEntity", campaignStatistics);
-		
+
 		return mav;
 	}
-	
+
 	// will return the Campaign in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public ModelAndView showCampaignInfo(@PathVariable long campaignId) {
@@ -138,20 +135,20 @@ public class CampaignModificationController {
 		mav.addObject("hasCUF", hasCUF);
 		return mav;
 	}
-	
+
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showCampaign(@PathVariable long campaignId) {
 		Campaign campaign = campaignModService.findById(campaignId);
 		boolean hasCUF = cufValueService.hasCustomFields(campaign);
-		
+
 		TestPlanStatistics statistics = campaignModService.findCampaignStatistics(campaignId);
-		
+
 		ModelAndView mav = new ModelAndView("fragment/campaigns/edit-campaign");
 		mav.addObject("campaign", campaign);
 		mav.addObject("statistics", statistics);
 		mav.addObject("hasCUF", hasCUF);
-		
+
 		return mav;
 	}
 
@@ -310,53 +307,51 @@ public class CampaignModificationController {
 		return toreturn;
 
 	}
-	
-	@RequestMapping(method = RequestMethod.GET, params="export=csv")
+
+	@RequestMapping(method = RequestMethod.GET, params = "export=csv")
 	public @ResponseBody
 	void exportCampaign(@PathVariable("campaignId") long campaignId, HttpServletResponse response) {
-		
+
 		BufferedWriter writer = null;
-		
-		try{
+
+		try {
 			Campaign campaign = campaignModService.findById(campaignId);
-			CampaignExportCSVModel model = campaignModService.exportCampaignToCSV(campaignId); 
-			
-			//prepare the response
+			CampaignExportCSVModel model = campaignModService.exportCampaignToCSV(campaignId);
+
+			// prepare the response
 			writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
-		
+
 			response.setContentType("application/octet-stream");
-			response.setHeader("Content-Disposition","attachment; filename=" + campaign.getName().replace(" ", "_")+".csv");
-			
-			//print
+			response.setHeader("Content-Disposition", "attachment; filename=" + campaign.getName().replace(" ", "_")
+					+ ".csv");
+
+			// print
 			Row header = model.getHeader();
-			writer.write(header.toString()+"\n");
-			
+			writer.write(header.toString() + "\n");
+
 			Iterator<Row> iterator = model.dataIterator();
-			while (iterator.hasNext()){
+			while (iterator.hasNext()) {
 				Row datarow = iterator.next();
-				String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", " ").replaceAll("\\r", " ");
-				writer.write(cleanRowValue+"\n");
+				String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", " ")
+						.replaceAll("\\r", " ");
+				writer.write(cleanRowValue + "\n");
 			}
-			
-			//closes stream in the finally clause
-		}
-		catch(IOException ex){
+
+			// closes stream in the finally clause
+		} catch (IOException ex) {
 			LOGGER.error(ex.getMessage());
 			throw new RuntimeException(ex);
-		}
-		finally{
-			if (writer != null){
-				try{
+		} finally {
+			if (writer != null) {
+				try {
 					writer.close();
-				}
-				catch(IOException ex){
+				} catch (IOException ex) {
 					LOGGER.warn(ex.getMessage());
 				}
 			}
 		}
 
 	}
-	
 
 	// ****************************** Test Plan **********************************
 
@@ -369,7 +364,8 @@ public class CampaignModificationController {
 		FilteredCollectionHolder<List<CampaignTestPlanItem>> holder = campaignModService.findTestPlanByCampaignId(
 				campaignId, filter);
 
-		return new TestCaseTableModelHelper(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+		return new TestCaseTableModelHelper(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1,
+				params.getsEcho());
 	}
 
 	@RequestMapping(value = "/test-plan/manager/table", params = RequestParams.S_ECHO_PARAM)
@@ -381,7 +377,8 @@ public class CampaignModificationController {
 		FilteredCollectionHolder<List<CampaignTestPlanItem>> holder = campaignModService.findTestPlanByCampaignId(
 				campaignId, filter);
 
-		return new TestPlanManagerTableHelper(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+		return new TestPlanManagerTableHelper(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1,
+				params.getsEcho());
 	}
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DatatableMapper mapper) {
@@ -401,23 +398,22 @@ public class CampaignModificationController {
 	private String formatImportance(TestCaseImportance importance, Locale locale) {
 		return messageSource.getMessage(importance.getI18nKey(), null, locale);
 	}
-	
-	
-	private final class TestCaseTableModelHelper extends DataTableModelHelper<CampaignTestPlanItem>{
-		
+
+	private final class TestCaseTableModelHelper extends DataTableModelHelper<CampaignTestPlanItem> {
+
 		private Locale locale;
-		
-		private TestCaseTableModelHelper(Locale locale){
+
+		private TestCaseTableModelHelper(Locale locale) {
 			this.locale = locale;
 		}
-		
+
 		public Map<String, Object> buildItemData(CampaignTestPlanItem item) {
-			
+
 			Map<String, Object> result = new HashMap<String, Object>();
-			
+
 			TestCase testCase = item.getReferencedTestCase();
-			String user = (item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale); 
-			Long assigneeId = (item.getUser()!=null) ? item.getUser().getId() : User.NO_USER_ID;
+			String user = (item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale);
+			Long assigneeId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
 
 			result.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
 			result.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
@@ -427,39 +423,31 @@ public class CampaignModificationController {
 			result.put("assigned-user", user);
 			result.put("assigned-to", assigneeId);
 			result.put("importance", formatImportance(testCase.getImportance(), locale));
-			result.put("exec-mode",formatExecutionMode(testCase.getExecutionMode(), locale));
+			result.put("exec-mode", formatExecutionMode(testCase.getExecutionMode(), locale));
 			result.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			result.put("tc-id", testCase.getId());
-			
+
 			return result;
-			
+
 		}
-				
+
 	}
-	
-	
-	private final class TestPlanManagerTableHelper extends DataTableModelHelper<CampaignTestPlanItem>{
+
+	private final class TestPlanManagerTableHelper extends DataTableModelHelper<CampaignTestPlanItem> {
 		private Locale locale;
-		
-		private TestPlanManagerTableHelper(Locale locale){
+
+		private TestPlanManagerTableHelper(Locale locale) {
 			this.locale = locale;
 		}
-		
+
 		@Override
 		public Object[] buildItemData(CampaignTestPlanItem item) {
 			TestCase testCase = item.getReferencedTestCase();
-			return new Object[] { 
-					item.getId(), 
-					getCurrentIndex(), 
-					testCase.getProject().getName(),
-					testCase.getReference(), 
-					testCase.getName(), 
-					formatImportance(testCase.getImportance(), locale),
-					formatExecutionMode(testCase.getExecutionMode(), locale), 
-					"", 
-					testCase.getId() };
+			return new Object[] { item.getId(), getCurrentIndex(), testCase.getProject().getName(),
+					testCase.getReference(), testCase.getName(), formatImportance(testCase.getImportance(), locale),
+					formatExecutionMode(testCase.getExecutionMode(), locale), "", testCase.getId() };
 		}
-		
+
 	}
-	
+
 }

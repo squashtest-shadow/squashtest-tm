@@ -32,22 +32,27 @@ import org.squashtest.tm.domain.testcase.TestCaseType;
 @Transactional
 @DynamicManager(name="squashtest.tm.service.TestCaseModificationService", entity = TestCase.class)
 public interface TestCaseModificationService extends CustomTestCaseModificationService, TestCaseFinder {
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	/**
+	 * 
+	 */
+	public static final String TEST_CASE_IS_SMALL_EDITABLE = "hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')";
+
+	@PreAuthorize(TEST_CASE_IS_SMALL_EDITABLE)
 	void changeDescription(long testCaseId, String newDescription);
 	
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(TEST_CASE_IS_SMALL_EDITABLE)
 	void changeReference(long testCaseId, String reference);
 	
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(TEST_CASE_IS_SMALL_EDITABLE)
 	void changeImportance(long testCaseId, TestCaseImportance importance);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(TEST_CASE_IS_SMALL_EDITABLE)
 	void changeNature(long testCaseId, TestCaseNature nature);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(TEST_CASE_IS_SMALL_EDITABLE)
 	void changeType(long testCaseId, TestCaseType type);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(TEST_CASE_IS_SMALL_EDITABLE)
 	void changeStatus(long testCaseId, TestCaseStatus status);
 	
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")

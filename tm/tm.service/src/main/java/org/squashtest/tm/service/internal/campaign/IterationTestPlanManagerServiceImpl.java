@@ -46,14 +46,13 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
@@ -64,6 +63,11 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 @Service("squashtest.tm.service.IterationTestPlanManagerService")
 @Transactional
 public class IterationTestPlanManagerServiceImpl implements IterationTestPlanManagerService {
+
+	/**
+	 * 
+	 */
+	private static final String OR_HAS_ROLE_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
@@ -118,7 +122,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ROLE_ADMIN)
 	public void addTestCasesToIteration(final List<Long> objectsIds, long iterationId) {
 
 		Iteration iteration = iterationDao.findById(iterationId);
@@ -127,7 +131,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iteration, 'LINK') " + "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#iteration, 'LINK') " + OR_HAS_ROLE_ROLE_ADMIN)
 	public List<IterationTestPlanItem> addTestPlanItemsToIteration(final List<Long> testNodesIds, Iteration iteration) {
 
 		// nodes are returned unsorted
@@ -163,7 +167,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ROLE_ADMIN)
 	public void addTestPlanToIteration(List<IterationTestPlanItem> testPlan, long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		for (IterationTestPlanItem itp : testPlan) {
@@ -174,7 +178,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ROLE_ADMIN)
 	public boolean removeTestPlansFromIteration(List<Long> testPlanIds, long iterationId) {
 		boolean unauthorizedDeletion = false;
 		Iteration it = iterationDao.findById(iterationId);
@@ -185,7 +189,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iteration, 'LINK') " + "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#iteration, 'LINK') " + OR_HAS_ROLE_ROLE_ADMIN)
 	public boolean removeTestPlansFromIterationObj(List<Long> testPlanIds, Iteration iteration) {
 		boolean unauthorizedDeletion = false;
 
@@ -206,7 +210,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'LINK') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ROLE_ADMIN)
 	public boolean removeTestPlanFromIteration(long testPlanItemId) {
 		boolean unauthorizedDeletion = false;
 		IterationTestPlanItem item = iterationTestPlanDao.findById(testPlanItemId);
@@ -226,7 +230,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ROLE_ADMIN)
 	public List<TestCase> findPlannedTestCases(Long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		return iteration.getPlannedTestCase();
@@ -256,7 +260,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ROLE_ADMIN)
 	public FilteredCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, CollectionSorting filter) {
 		List<IterationTestPlanItem> testPlan = iterationDao.findTestPlan(iterationId, filter);
 		long count = iterationDao.countTestPlans(iterationId);

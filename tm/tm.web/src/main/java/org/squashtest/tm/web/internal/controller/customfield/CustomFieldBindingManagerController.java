@@ -41,7 +41,7 @@ public class CustomFieldBindingManagerController {
 	private CustomFieldBindingFinderService service;
 	
 	//private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldBindingManagerController.class);
-	private static int DEFAULT_PAGE_SIZE = 10;
+	private static final int DEFAULT_PAGE_SIZE = 10;
 	
 	@ServiceReference
 	public void setCustomFieldBindingFinderService(CustomFieldBindingFinderService service){
