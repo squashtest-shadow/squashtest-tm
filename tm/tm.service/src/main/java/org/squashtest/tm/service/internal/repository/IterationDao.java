@@ -22,12 +22,12 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 
 public interface IterationDao extends EntityDao<Iteration> {
 
@@ -50,21 +50,30 @@ public interface IterationDao extends EntityDao<Iteration> {
 
 	Iteration findAndInit(long iterationId);
 
-	List<IterationTestPlanItem> findTestPlanFiltered(long iterationId, CollectionSorting filter);
+	/**
+	 * Returns the paged test plan of the given iteration
+	 * 
+	 * @param iterationId
+	 * @param sorting
+	 * @return
+	 */
+	List<IterationTestPlanItem> findTestPlan(long iterationId, Paging sorting);
 
 	long countTestPlans(Long iterationId);
-	
+
 	List<TestSuite> findAllTestSuites(long iterationId);
 
 	void persistIterationAndTestPlan(Iteration iteration);
 
 	List<Execution> findAllExecutionByIterationId(long iterationId);
+
 	/**
 	 * 
-	 * @param iterationId the id of the concerned {@link Iteration}
+	 * @param iterationId
+	 *            the id of the concerned {@link Iteration}
 	 * @return the {@link TestPlanStatistics} computed out of each iteration's test-plan-items
 	 */
 	TestPlanStatistics getIterationStatistics(long iterationId);
-	
+
 	long countRunningOrDoneExecutions(long iterationId);
 }

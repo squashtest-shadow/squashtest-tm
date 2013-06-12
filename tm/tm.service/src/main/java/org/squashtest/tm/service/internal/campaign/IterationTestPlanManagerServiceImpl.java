@@ -258,7 +258,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public FilteredCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, CollectionSorting filter) {
-		List<IterationTestPlanItem> testPlan = iterationDao.findTestPlanFiltered(iterationId, filter);
+		List<IterationTestPlanItem> testPlan = iterationDao.findTestPlan(iterationId, filter);
 		long count = iterationDao.countTestPlans(iterationId);
 		return new FilteredCollectionHolder<List<IterationTestPlanItem>>(count, testPlan);
 	}

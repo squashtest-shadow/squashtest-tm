@@ -26,8 +26,9 @@ import java.util.Collection;
  * Result of a filtered collection query.
  * 
  * @author Gregory Fouquet
- * 
+ * @deprecated use PagedCollectionHolder instead
  */
+@Deprecated
 public class FilteredCollectionHolder<COLLECTION extends Collection<?>> {
 	private final long unfilteredResultCount;
 	private final COLLECTION filteredCollection;

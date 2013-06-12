@@ -45,6 +45,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
@@ -70,6 +72,7 @@ import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionVie
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -143,11 +146,6 @@ public class IterationModificationController {
 		mav.addObject("statistics", statistics);
 		mav.addObject("hasCUF", hasCUF);
 		return mav;
-	}
-
-	private List<IterationTestPlanItem> getFilteredIterationTestPlan(long iterationId) {
-
-		return iterationModService.filterIterationForCurrentUser(iterationId);
 	}
 
 	// will return the iteration in a full page
@@ -418,16 +416,15 @@ public class IterationModificationController {
 
 	@RequestMapping(value = "/test-plan", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
-	DataTableModel getTestPlanModel(@PathVariable Long iterationId, final DataTableDrawParameters params,
+	DataTableModel getTestPlanModel(@PathVariable long iterationId, final DataTableDrawParameters params,
 			final Locale locale) {
 
-		CollectionSorting filter = createCollectionSorting(params, testPlanMapper);
-
-		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = new FilteredCollectionHolder<List<IterationTestPlanItem>>(
-				getFilteredIterationTestPlan(iterationId).size(), getFilteredIterationTestPlan(iterationId));
+		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, testPlanMapper);
+		PagedCollectionHolder<List<IterationTestPlanItem>> holder = iterationModService.findAssignedTestPlan(
+				iterationId, paging);
 
 		return new IterationTestPlanItemDataTableModelHelper(messageSource, locale).buildDataModel(holder,
-				filter.getFirstItemIndex() + 1, params.getsEcho());
+				params.getsEcho());
 
 	}
 
@@ -559,14 +556,6 @@ public class IterationModificationController {
 		LOGGER.debug("Iteration #" + iterationId + " : execute all test plan auto");
 
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
-	}
-
-	/* ************** /execute auto *********************************** */
-
-	/* ************** private stuffs are below ********************** */
-
-	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DatatableMapper mapper) {
-		return new DataTableCollectionSorting(params, mapper);
 	}
 
 	/* ***************** data formatter *************************** */

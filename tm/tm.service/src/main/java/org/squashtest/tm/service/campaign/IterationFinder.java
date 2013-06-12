@@ -22,6 +22,8 @@ package org.squashtest.tm.service.campaign;
 
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
@@ -47,7 +49,8 @@ public interface IterationFinder {
 	 * with a test plan containing only the items that are assigned to that user or
 	 * have been executed by that user.
 	 * @param iterationId
-	 * @return
+	 * @return the test plan of given iteration filtered by the current user
 	 */
-	List<IterationTestPlanItem> filterIterationForCurrentUser(long iterationId);
+	PagedCollectionHolder<List<IterationTestPlanItem>> findAssignedTestPlan(long iterationId, Paging sorting);
+	
 }

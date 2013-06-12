@@ -28,7 +28,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
@@ -38,6 +37,9 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -61,8 +63,8 @@ import org.squashtest.tm.service.internal.library.TreeNodeCopier;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -178,10 +180,11 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		iteration.setName(newName);
 	}
-/**
- * 
- * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#addExecution(long)
- */
+
+	/**
+	 * 
+	 * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#addExecution(long)
+	 */
 	@Override
 	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
 	public Execution addExecution(long testPlanItemId) {
@@ -189,10 +192,11 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		return addExecution(item);
 	}
-/**
- * 
- * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#addAutomatedExecution(long)
- */
+
+	/**
+	 * 
+	 * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#addAutomatedExecution(long)
+	 */
 	@Override
 	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
 	public Execution addAutomatedExecution(long testPlanItemId) {
@@ -412,42 +416,38 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return iterationDao.getIterationStatistics(iterationId);
 	}
 
+	/**
+	 * 
+	 * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#findAssignedTestPlan(long, Paging)
+	 */
 	@Override
-	public List<IterationTestPlanItem> filterIterationForCurrentUser(long iterationId) {
-
+	public PagedCollectionHolder<List<IterationTestPlanItem>> findAssignedTestPlan(long iterationId, Paging sorting) {
 		String userLogin = getCurrentUserLogin();
-		List<IterationTestPlanItem> testPlanItemsToReturn = new ArrayList<IterationTestPlanItem>();
+		List<IterationTestPlanItem> authorizedTestPlan = new ArrayList<IterationTestPlanItem>();
 
 		Iteration iteration = iterationDao.findById(iterationId);
-
-		List<IterationTestPlanItem> testPlanItems = iteration.getTestPlans();
-
 		Long projectId = iteration.getProject().getId();
 
+		List<IterationTestPlanItem> testPlan = iterationDao.findTestPlan(iterationId, sorting);
+		long testPlanSize = iterationDao.countTestPlans(iterationId);
+
 		if (projectsPermissionFinder.isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")) {
-
-			for (IterationTestPlanItem testPlanItem : testPlanItems) {
-
-				if (hasToBeReturned(testPlanItem, userLogin)) {
-					testPlanItemsToReturn.add(testPlanItem);
+			for (IterationTestPlanItem item : testPlan) {
+				if (isAssignedToUser(item, userLogin)) {
+					authorizedTestPlan.add(item);
 				}
 			}
 		} else {
-			testPlanItemsToReturn.addAll(testPlanItems);
+			authorizedTestPlan = testPlan;
 		}
 
-		return testPlanItemsToReturn;
+		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>>(sorting, testPlanSize,
+				authorizedTestPlan);
 	}
 
-	private boolean hasToBeReturned(IterationTestPlanItem testPlanItem, String userLogin) {
-		boolean hasToBeReturned = false;
+	private boolean isAssignedToUser(IterationTestPlanItem testPlanItem, String userLogin) {
 		User testPlanUser = testPlanItem.getUser();
-
-		if (testPlanUser != null && StringUtils.equals(testPlanUser.getLogin(), userLogin)) {
-			hasToBeReturned = true;
-		}
-
-		return hasToBeReturned;
+		return testPlanUser != null && testPlanUser.loginIs(userLogin);
 	}
 
 	private String getCurrentUserLogin() {

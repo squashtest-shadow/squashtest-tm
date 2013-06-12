@@ -31,6 +31,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -38,7 +39,6 @@ import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 
 @Repository
@@ -111,48 +111,46 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	@Override
 	public List<Execution> findOrderedExecutionsByIterationId(long iterationId) {
-		return executeListNamedQuery("iteration.findAllExecutions", new SetIdParameter("iterationId",
-				iterationId));
+		return executeListNamedQuery("iteration.findAllExecutions", new SetIdParameter("iterationId", iterationId));
 	}
 
 	@Override
 	public List<Execution> findOrderedExecutionsByIterationAndTestCase(final long iterationId, final long testCaseId) {
 		return executeListNamedQuery("iteration.findAllExecutionsByTestCase", new SetQueryParametersCallback() {
-			
+
 			@Override
 			public void setQueryParameters(Query query) {
 				query.setParameter("iterationId", iterationId, LongType.INSTANCE);
 				query.setParameter("testCaseId", testCaseId, LongType.INSTANCE);
-				
+
 			}
 		});
-		
+
 	}
 
 	@Override
 	public List<Execution> findOrderedExecutionsByIterationAndTestPlan(final long iterationId, final long testPlanId) {
 		return executeListNamedQuery("iteration.findAllExecutionsByTestPlan", new SetQueryParametersCallback() {
-			
+
 			@Override
 			public void setQueryParameters(Query query) {
 				query.setParameter("iterationId", iterationId, LongType.INSTANCE);
 				query.setParameter("testPlanId", testPlanId, LongType.INSTANCE);
-				
+
 			}
 		});
 	}
 
 	@Override
-	public List<IterationTestPlanItem> findTestPlanFiltered(final long iterationId, CollectionSorting filter) {
+	public List<IterationTestPlanItem> findTestPlan(final long iterationId, Paging sorting) {
 
-		final int firstIndex = filter.getFirstItemIndex();
-		final int lastIndex = filter.getFirstItemIndex() + filter.getPageSize() - 1;
+		final int firstIndex = sorting.getFirstItemIndex();
+		final int lastIndex = sorting.getFirstItemIndex() + sorting.getPageSize() - 1;
 
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
 
 			@Override
 			public void setQueryParameters(Query query) {
-
 				query.setParameter("iterationId", iterationId);
 				query.setParameter("firstIndex", firstIndex);
 				query.setParameter("lastIndex", lastIndex);
@@ -201,7 +199,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	@Override
 	public TestPlanStatistics getIterationStatistics(long iterationId) {
-	
+
 		Map<String, Integer> statusMap = new HashMap<String, Integer>();
 
 		fillStatusMapWithQueryResult(iterationId, statusMap);
@@ -209,22 +207,21 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		return new TestPlanStatistics(statusMap);
 	}
 
-	
 	private void fillStatusMapWithQueryResult(final long iterationId, Map<String, Integer> statusMap) {
-		//Add Total number of TestCases
-		Integer nbTestPlans = ((Long)countTestPlans(iterationId)).intValue();
+		// Add Total number of TestCases
+		Integer nbTestPlans = ((Long) countTestPlans(iterationId)).intValue();
 		statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
-		
-		//Add number of testCase for each ExecutionStatus
+
+		// Add number of testCase for each ExecutionStatus
 		SetQueryParametersCallback newCallBack = idParameter(iterationId);
 		List<Object[]> result = executeListNamedQuery("iteration.countStatuses", newCallBack);
 		for (Object[] objTab : result) {
 			statusMap.put(((ExecutionStatus) objTab[0]).name(), ((Long) objTab[1]).intValue());
 		}
 	}
-	
+
 	@Override
-	public long countRunningOrDoneExecutions(long iterationId){
+	public long countRunningOrDoneExecutions(long iterationId) {
 		return (Long) executeEntityNamedQuery("iteration.countRunningOrDoneExecutions", idParameter(iterationId));
 	}
 }

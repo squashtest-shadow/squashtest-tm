@@ -31,10 +31,11 @@ import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 
 /**
  * Iteration modification services which cannot be dynamically generated.
+ * 
  * @author Gregory Fouquet
  * 
  */
-public interface CustomIterationModificationService extends IterationFinder{
+public interface CustomIterationModificationService extends IterationFinder {
 
 	/**
 	 * Adds an iteration to the list of iterations of a campaign.
@@ -50,7 +51,7 @@ public interface CustomIterationModificationService extends IterationFinder{
 	void rename(long iterationId, String newName);
 
 	Execution addExecution(long testPlanItemId);
-	
+
 	Execution addAutomatedExecution(long testPlanItemId);
 
 	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
@@ -101,7 +102,7 @@ public interface CustomIterationModificationService extends IterationFinder{
 	 * @return the copy of the test suite
 	 */
 	TestSuite copyPasteTestSuiteToIteration(long testSuiteId, long iterationId);
-	
+
 	/**
 	 * <p>
 	 * will create a copy of the test suites and their test plan , then associate them to the given iteration<br>
@@ -115,21 +116,21 @@ public interface CustomIterationModificationService extends IterationFinder{
 	 * @return the list containing all the copies of the test suites
 	 */
 	List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, long iterationId);
-	
-	
+
 	/**
-	 * Create an automated execution for every automated item test plan in the given iteration, group them in an 
+	 * Create an automated execution for every automated item test plan in the given iteration, group them in an
 	 * automated suite and tells the connector to process them.
 	 * 
 	 * @return an {@link AutomatedSuite}
 	 */
 	AutomatedSuite createAutomatedSuite(long iterationId);
-	
+
 	/**
-	 * Create an automated execution for each of the test plan in arguments, group them in an automated suite and 
-	 * tells the connectors to process them .
+	 * Create an automated execution for each of the test plan in arguments, group them in an automated suite and tells
+	 * the connectors to process them .
 	 * 
-	 * @param iterationId the id of the iteration that holds them all, and against which will be tested the user credentials 
+	 * @param iterationId
+	 *            the id of the iteration that holds them all, and against which will be tested the user credentials
 	 * @param testPlanIds
 	 * @return an {@link AutomatedSuite}
 	 */

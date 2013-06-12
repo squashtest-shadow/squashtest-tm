@@ -22,9 +22,16 @@ package org.squashtest.tm.web.internal.model.datatable;
 
 import javax.validation.constraints.NotNull;
 
+
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 
+/**
+ * 
+ * @deprecated use DataTableMapperPagingAndSortingAdapter instead
+ *
+ */
+@Deprecated
 public class DataTableCollectionSorting extends DataTablePaging implements CollectionSorting {
 
 	private final DataTableDrawParameters params;

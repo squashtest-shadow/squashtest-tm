@@ -54,6 +54,6 @@ public interface IterationModificationService extends CustomIterationModificatio
 
 	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
 	void changeActualEndAuto(long iterationId, boolean isAuto);
-	
+
 
 }

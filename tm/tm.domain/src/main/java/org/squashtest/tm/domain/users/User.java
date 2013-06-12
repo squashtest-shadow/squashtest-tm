@@ -173,4 +173,14 @@ public class User extends Party {
 
 		return user;
 	}
+
+	/**
+	 * Tells if this user matches the given login.
+	 * 
+	 * @param candidate
+	 * @return
+	 */
+	public boolean loginIs(String candidate) {
+		return StringUtils.equals(login, candidate);
+	}
 }
