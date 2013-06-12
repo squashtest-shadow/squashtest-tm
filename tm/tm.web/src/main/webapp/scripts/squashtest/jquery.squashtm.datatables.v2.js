@@ -1074,6 +1074,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 	var datatableDefaults = $.extend(true, {}, squashtm.datatable.defaults);
 
+	
 	var squashDefaults = {
 		dataKeys : {
 			entityId : 'entity-id',
@@ -1089,10 +1090,19 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			aoDataNbBugs : "bugged"
 		},
 		confirmPopup : {
-			oklabel : squashtm.message.confirm || "ok",
-			cancellabel : squashtm.message.cancel || "cancel"
+			oklabel : "ok",
+			cancellabel : "cancel"
 		}
 	};
+	
+	//let's figure out if i18n messages are available
+	try{
+		squashDefaults.confirmPopup.oklabel = squashtm.message.confirm;
+		squashDefaults.confirmPopup.cancellabel = squashtm.message.cancel;
+	}
+	catch(wasUndefined){
+		//well, no big deal
+	}
 
 	/*
 	 * temporary hack here : due to multiple inclusions of that file, the
