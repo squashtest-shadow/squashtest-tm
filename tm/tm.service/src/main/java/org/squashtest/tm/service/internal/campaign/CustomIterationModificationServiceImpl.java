@@ -61,7 +61,7 @@ import org.squashtest.tm.service.internal.library.TreeNodeCopier;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
-import org.squashtest.tm.service.internal.repository.ItemTestPlanDao;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
@@ -78,6 +78,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomIterationModificationServiceImpl.class);
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 	private static final String PERMISSION_EXECUTE_ITERATION = "hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'EXECUTE') ";
+	private static final String PERMISSION_EXECUTE_ITEM = "hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'EXECUTE') ";
 	@Inject
 	private CampaignDao campaignDao;
 	@Inject
@@ -85,7 +86,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Inject
 	private TestSuiteDao suiteDao;
 	@Inject
-	private ItemTestPlanDao testPlanDao;
+	private IterationTestPlanDao testPlanDao;
 	@Inject
 	private AutomatedSuiteDao autoSuiteDao;
 	@Inject
@@ -177,23 +178,25 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		iteration.setName(newName);
 	}
-
+/**
+ * 
+ * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#addExecution(long)
+ */
 	@Override
-	@PreAuthorize(PERMISSION_EXECUTE_ITERATION + OR_HAS_ROLE_ADMIN)
-	public Execution addExecution(long iterationId, long testPlanId) {
-
-		Iteration iteration = iterationDao.findAndInit(iterationId);
-		IterationTestPlanItem item = iteration.getTestPlan(testPlanId);
+	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
+	public Execution addExecution(long testPlanItemId) {
+		IterationTestPlanItem item = testPlanDao.findTestPlanItem(testPlanItemId);
 
 		return addExecution(item);
 	}
-
+/**
+ * 
+ * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#addAutomatedExecution(long)
+ */
 	@Override
-	@PreAuthorize(PERMISSION_EXECUTE_ITERATION + OR_HAS_ROLE_ADMIN)
-	public Execution addAutomatedExecution(long iterationId, long testPlanId) {
-
-		Iteration iteration = iterationDao.findAndInit(iterationId);
-		IterationTestPlanItem item = iteration.getTestPlan(testPlanId);
+	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
+	public Execution addAutomatedExecution(long testPlanItemId) {
+		IterationTestPlanItem item = testPlanDao.findTestPlanItem(testPlanItemId);
 
 		return addAutomatedExecution(item);
 	}

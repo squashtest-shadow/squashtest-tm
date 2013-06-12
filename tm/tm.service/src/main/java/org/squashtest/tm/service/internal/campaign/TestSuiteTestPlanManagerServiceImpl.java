@@ -36,7 +36,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
-import org.squashtest.tm.service.internal.repository.ItemTestPlanDao;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 
 @Service("squashtest.tm.service.TestSuiteTestPlanManagerService")
@@ -53,7 +53,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	private TestSuiteDao testSuiteDao;
 
 	@Inject
-	private ItemTestPlanDao itemTestPlanDao;
+	private IterationTestPlanDao itemTestPlanDao;
 	
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 

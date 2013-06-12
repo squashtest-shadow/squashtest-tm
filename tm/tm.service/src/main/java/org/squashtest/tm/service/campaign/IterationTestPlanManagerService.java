@@ -81,7 +81,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @param iterationId
 	 * @return true if the test plan was already executed and therefore not deleted
 	 */
-	boolean removeTestPlanFromIteration(Long testPlanId, long iterationId);
+	boolean removeTestPlanFromIteration(long testPlanItemId);
 
 	/**
 	 * Update item test plan lastExecuted data (by and on) (for the moment they're constants)
@@ -104,11 +104,10 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	
 	/**
 	 * Assign User with Execute Access to a TestPlan item.
-	 * 
 	 * @param testCaseId
 	 * @param campaignId
 	 */
-	void assignUserToTestPlanItem(Long testPlanId, long iterationId, Long userId);
+	void assignUserToTestPlanItem(long testPlanItemId, long userId);
 
 	/**
 	 * Assign User with Execute Access to a multiple TestPlan items.
@@ -116,7 +115,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @param testPlanIds
 	 * @param campaignId
 	 */
-	void assignUserToTestPlanItems(List<Long> testPlanIds, long iterationId, Long userId);
+	void assignUserToTestPlanItems(List<Long> testPlanIds, long userId);
 
 	/**
 	 * <p>
@@ -137,10 +136,9 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	/**
 	 * Assigns an execution status to a test plan item Overrides the current execution status
 	 * 
-	 * @param testPlanId
-	 * @param iterationId
+	 * @param iterationTestPlanItemId
 	 * @param statusName
 	 */
-	void assignExecutionStatusToTestPlanItem(Long testPlanId, long iterationId, String statusName);
+	void assignExecutionStatusToTestPlanItem(long iterationTestPlanItemId, String statusName);
 
 }

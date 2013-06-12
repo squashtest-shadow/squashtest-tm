@@ -26,16 +26,19 @@ import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 
 public class DataTableCollectionSorting extends DataTablePaging implements CollectionSorting {
-	
+
 	private final DataTableDrawParameters params;
+	@SuppressWarnings("rawtypes")
 	private final DatatableMapper mapper;
 
-	public DataTableCollectionSorting(@NotNull DataTableDrawParameters params, @NotNull DatatableMapper mapper){
+	@SuppressWarnings("rawtypes")
+	public DataTableCollectionSorting(@NotNull DataTableDrawParameters params, @NotNull DatatableMapper mapper) {
 		super(params);
 		this.params = params;
-		this.mapper=mapper;
+		this.mapper = mapper;
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getSortedAttribute() {
 		return mapper.pathAt(params.getsSortedAttribute_0());
@@ -45,6 +48,5 @@ public class DataTableCollectionSorting extends DataTablePaging implements Colle
 	public String getSortingOrder() {
 		return params.getsSortDir_0();
 	}
-	
 
 }

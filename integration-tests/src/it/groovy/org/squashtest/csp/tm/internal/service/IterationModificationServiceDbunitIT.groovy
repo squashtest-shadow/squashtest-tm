@@ -115,7 +115,7 @@ class IterationModificationServiceDbunitIT extends DbunitServiceSpecification {
 	def "should create an automated execution"(){
 
 		when :
-		Execution exec = iterService.addAutomatedExecution(1l, 1l)
+		Execution exec = iterService.addAutomatedExecution(1l)
 
 		then :
 		def extender = exec.automatedExecutionExtender
@@ -128,7 +128,7 @@ class IterationModificationServiceDbunitIT extends DbunitServiceSpecification {
 	def "should create an execution and copy the custom fields"(){
 
 		when :
-		Execution exec = iterService.addExecution(1l, 1l)
+		Execution exec = iterService.addExecution(1l)
 
 		then : "5 denormalized fields are created"
 		Query query1 = getSession().createQuery("from DenormalizedFieldValue dfv")
@@ -158,7 +158,7 @@ class IterationModificationServiceDbunitIT extends DbunitServiceSpecification {
 	def "should create an execution with call steps and copy the custom fields"(){
 
 		when :
-		Execution exec = iterService.addExecution(2l, 2l)
+		Execution exec = iterService.addExecution(2l)
 
 		then :
 		Query query = getSession().createQuery("from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :id and dfv.denormalizedFieldHolderType = :type order by dfv.position")
@@ -177,7 +177,7 @@ class IterationModificationServiceDbunitIT extends DbunitServiceSpecification {
 	def "should copy cuf for call step with reference locations of non call steps"(){
 
 		when :
-		Execution exec = iterService.addExecution(2l, 2l)
+		Execution exec = iterService.addExecution(2l)
 
 		then : "call step has 3 denormalized fields"
 		Query query = getSession().createQuery("from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :id and dfv.denormalizedFieldHolderType = :type order by dfv.position")

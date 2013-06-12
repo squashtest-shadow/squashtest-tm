@@ -21,7 +21,7 @@
 package org.squashtest.tm.api.security.authentication;
 
 /**
- * @author Gregory
+ * @author Gregory Fouquet
  * 
  */
 public interface AuthenticationProviderFeatures {

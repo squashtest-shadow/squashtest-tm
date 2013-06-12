@@ -92,8 +92,7 @@ public class IterationTestPlanManagerController {
 	}
 
 	@ServiceReference
-	public void setCampaignTestPlanManagerService(
-			IterationTestPlanManagerService iterationTestPlanManagerService) {
+	public void setCampaignTestPlanManagerService(IterationTestPlanManagerService iterationTestPlanManagerService) {
 		this.iterationTestPlanManagerService = iterationTestPlanManagerService;
 	}
 
@@ -108,22 +107,18 @@ public class IterationTestPlanManagerController {
 			.mapAttribute(IterationTestPlanItem.class, "executionStatus",
 					ExecutionStatus.class, 7)
 			.mapAttribute(TestSuite.class, "name", String.class, 8)
-			.mapAttribute(IterationTestPlanItem.class, "lastExecutedBy",
-					String.class, 9)
-			.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn",
-					Date.class, 10);
+			.mapAttribute(IterationTestPlanItem.class, "lastExecutedBy", String.class, 9)
+			.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, 10);
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long iterationId) {
 
 		Iteration iteration = iterationFinder.findById(iterationId);
-		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService
-				.findLinkableTestCaseLibraries();
+		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
 
-		ModelAndView mav = new ModelAndView(
-				"page/iterations/show-iteration-test-plan-manager");
+		ModelAndView mav = new ModelAndView("page/iterations/show-iteration-test-plan-manager");
 		mav.addObject("iteration", iteration);
 		mav.addObject("baseURL", "/iterations/" + iterationId);
 		mav.addObject("useIterationTable", true);
@@ -133,22 +128,23 @@ public class IterationTestPlanManagerController {
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-cases", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
 	public @ResponseBody
-	void addTestCasesToIteration(
-			@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
+	void addTestCasesToIteration(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
 			@PathVariable long iterationId) {
-		iterationTestPlanManagerService.addTestCasesToIteration(testCasesIds,
-				iterationId);
+		iterationTestPlanManagerService.addTestCasesToIteration(testCasesIds, iterationId);
 	}
-	
+
 	@Inject
 	private Provider<JsonTestCaseBuilder> jsonTestCaseBuilder;
+
 	/**
 	 * Fetches and returns a list of json test cases from an iteration id
-	 * @param iterationId : the id of an {@link Iteration}
+	 * 
+	 * @param iterationId
+	 *            : the id of an {@link Iteration}
 	 * @return the list of {@link JsonTestCase} representing the iteration's planned test-cases
 	 * 
 	 */
-	@RequestMapping(value = "/iterations/{iterationId}/test-cases", method = RequestMethod.GET, headers="Accept=application/json, text/javascript")
+	@RequestMapping(value = "/iterations/{iterationId}/test-cases", method = RequestMethod.GET, headers = "Accept=application/json, text/javascript")
 	public @ResponseBody
 	List<JsonTestCase> getJsonTestCases(@PathVariable long iterationId, Locale locale) {
 		List<TestCase> testCases = iterationFinder.findPlannedTestCases(iterationId);
@@ -157,29 +153,23 @@ public class IterationTestPlanManagerController {
 
 	@RequestMapping(value = "/iterations/{iterationId}/non-belonging-test-cases", method = RequestMethod.POST, params = TESTPLANS_IDS_REQUEST_PARAM)
 	public @ResponseBody
-	String removeTestCasesFromCampaign(
-			@RequestParam(TESTPLANS_IDS_REQUEST_PARAM) List<Long> testPlansIds,
+	String removeTestCasesFromCampaign(@RequestParam(TESTPLANS_IDS_REQUEST_PARAM) List<Long> testPlansIds,
 			@PathVariable long iterationId) {
 		// check if at least one test plan was already executed and therefore
 		// not removed
-		Boolean response = iterationTestPlanManagerService
-				.removeTestPlansFromIteration(testPlansIds, iterationId);
+		Boolean response = iterationTestPlanManagerService.removeTestPlansFromIteration(testPlansIds, iterationId);
 		return response.toString();
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.DELETE)
 	public @ResponseBody
-	String removeTestCaseFromIteration(
-			@PathVariable("testPlanId") long testPlanId,
-			@PathVariable long iterationId) {
+	String removeTestCaseFromIteration(@PathVariable("testPlanId") long testPlanId, @PathVariable long iterationId) {
 		// check if a test plan was already executed and therefore not removed
-		Boolean response = iterationTestPlanManagerService
-				.removeTestPlanFromIteration(testPlanId, iterationId);
+		Boolean response = iterationTestPlanManagerService.removeTestPlanFromIteration(testPlanId);
 		return response.toString();
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(
-			List<TestCaseLibrary> linkableLibraries) {
+	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {
 		DriveNodeBuilder builder = driveNodeBuilder.get();
 		List<JsTreeNode> linkableLibrariesModel = new ArrayList<JsTreeNode>();
 
@@ -192,34 +182,29 @@ public class IterationTestPlanManagerController {
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-case/{testPlanId}/assign-user", method = RequestMethod.POST)
 	public @ResponseBody
-	void assignUserToCampaignTestPlanItem(@PathVariable long testPlanId,
-			@PathVariable long iterationId, @RequestParam long userId) {
-		iterationTestPlanManagerService.assignUserToTestPlanItem(testPlanId,
-				iterationId, userId);
+	void assignUserToCampaignTestPlanItem(@PathVariable long testPlanId, @PathVariable long iterationId,
+			@RequestParam long userId) {
+		iterationTestPlanManagerService.assignUserToTestPlanItem(testPlanId, userId);
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/batch-assign-user", method = RequestMethod.POST)
 	public @ResponseBody
-	void assignUserToCampaignTestPlanItems(
-			@RequestParam(TESTPLANS_IDS_REQUEST_PARAM) List<Long> testPlanIds,
+	void assignUserToCampaignTestPlanItems(@RequestParam(TESTPLANS_IDS_REQUEST_PARAM) List<Long> testPlanIds,
 			@PathVariable long iterationId, @RequestParam long userId) {
-		iterationTestPlanManagerService.assignUserToTestPlanItems(testPlanIds,
-				iterationId, userId);
+		iterationTestPlanManagerService.assignUserToTestPlanItems(testPlanIds, userId);
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/assignable-users", method = RequestMethod.GET)
 	public @ResponseBody
-	List<TestPlanAssignableUser> getAssignUserForIterationTestPlanItem(
-			@PathVariable long iterationId, final Locale locale) {
+	List<TestPlanAssignableUser> getAssignUserForIterationTestPlanItem(@PathVariable long iterationId,
+			final Locale locale) {
 
-		List<User> usersList = iterationTestPlanManagerService
-				.findAssignableUserForTestPlan(iterationId);
+		List<User> usersList = iterationTestPlanManagerService.findAssignableUserForTestPlan(iterationId);
 
 		String unassignedLabel = formatUnassigned(locale);
 		List<TestPlanAssignableUser> jsonUsers = new LinkedList<TestPlanAssignableUser>();
 
-		jsonUsers.add(new TestPlanAssignableUser(User.NO_USER_ID.toString(),
-				unassignedLabel));
+		jsonUsers.add(new TestPlanAssignableUser(User.NO_USER_ID.toString(), unassignedLabel));
 
 		for (User user : usersList) {
 			jsonUsers.add(new TestPlanAssignableUser(user));
@@ -231,19 +216,16 @@ public class IterationTestPlanManagerController {
 
 	@RequestMapping(value = "/iterations/{iterationId}/assignable-statuses", method = RequestMethod.GET)
 	public @ResponseBody
-	List<TestPlanAssignableStatus> getAssignStatusForIterationTestPlanItem(
-			@PathVariable long iterationId, final Locale locale) {
+	List<TestPlanAssignableStatus> getAssignStatusForIterationTestPlanItem(@PathVariable long iterationId,
+			final Locale locale) {
 
-		List<ExecutionStatus> statusList = iterationTestPlanManagerService
-				.getExecutionStatusList();
+		List<ExecutionStatus> statusList = iterationTestPlanManagerService.getExecutionStatusList();
 
 		List<TestPlanAssignableStatus> jsonStatuses = new LinkedList<TestPlanAssignableStatus>();
 
 		for (ExecutionStatus status : statusList) {
-			jsonStatuses
-					.add(new TestPlanAssignableStatus(status.name(),
-							messageSource.getMessage(status.getI18nKey(), null,
-									locale)));
+			jsonStatuses.add(new TestPlanAssignableStatus(status.name(), messageSource.getMessage(status.getI18nKey(),
+					null, locale)));
 		}
 
 		return jsonStatuses;
@@ -251,22 +233,20 @@ public class IterationTestPlanManagerController {
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-case/{testPlanId}/assign-status", method = RequestMethod.POST)
 	public @ResponseBody
-	void assignUserToCampaignTestPlanItem(@PathVariable long testPlanId,
-			@PathVariable long iterationId, @RequestParam String statusName) {
-		iterationTestPlanManagerService.assignExecutionStatusToTestPlanItem(
-				testPlanId, iterationId, statusName);
+	void assignUserToCampaignTestPlanItem(@PathVariable long testPlanId, @PathVariable long iterationId,
+			@RequestParam String statusName) {
+		iterationTestPlanManagerService.assignExecutionStatusToTestPlanItem(testPlanId, statusName);
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-cases/table", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
-	DataTableModel getIterationTableModel(@PathVariable Long iterationId,
-			final DataTableDrawParameters params, final Locale locale) {
+	DataTableModel getIterationTableModel(@PathVariable Long iterationId, final DataTableDrawParameters params,
+			final Locale locale) {
 
-		CollectionSorting filter = createCollectionSorting(params,
-				testPlanMapper);
+		CollectionSorting filter = createCollectionSorting(params, testPlanMapper);
 
-		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = iterationTestPlanManagerService
-				.findTestPlan(iterationId, filter);
+		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = iterationTestPlanManagerService.findTestPlan(
+				iterationId, filter);
 
 		return new DataTableModelHelper<IterationTestPlanItem>() {
 			@Override
@@ -318,9 +298,7 @@ public class IterationTestPlanManagerController {
 
 			}
 
-		}.buildDataModel(holder, filter.getFirstItemIndex() + 1,
-				params.getsEcho());
-
+		}.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
 	}
 
 	private String testSuiteNameList(IterationTestPlanItem item, Locale locale) {
@@ -354,8 +332,7 @@ public class IterationTestPlanManagerController {
 		return messageSource.getMessage("squashtm.none.f", null, locale);
 	}
 
-	private CollectionSorting createCollectionSorting(
-			final DataTableDrawParameters params, DatatableMapper mapper) {
+	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DatatableMapper mapper) {
 		return new DataTableCollectionSorting(params, mapper);
 	}
 

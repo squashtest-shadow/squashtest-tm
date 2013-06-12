@@ -73,7 +73,8 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Auditable
 @Entity
 @SoftDeletable
-public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified, BoundEntity{
+public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified,
+		BoundEntity {
 
 	private static final String ITERATION_ID = "ITERATION_ID";
 
@@ -232,6 +233,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		}
 
 	}
+
 	@Override
 	public Long getId() {
 		return id;
@@ -244,24 +246,6 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 			scheduledPeriod = new ScheduledTimePeriod();
 		}
 		return scheduledPeriod;
-	}
-
-	private TestSuite getTestSuite(Long testSuiteId) {
-		for (TestSuite testSuite : testSuites) {
-			if (testSuite.getId().equals(testSuiteId)) {
-				return testSuite;
-			}
-		}
-		throw new UnknownEntityException(testSuiteId, TestSuite.class);
-	}
-
-	public IterationTestPlanItem getTestPlan(Long testPlanId) {
-		for (IterationTestPlanItem iterTestPlan : testPlans) {
-			if (iterTestPlan.getId().equals(testPlanId)) {
-				return iterTestPlan;
-			}
-		}
-		throw new UnknownEntityException(testPlanId, IterationTestPlanItem.class);
 	}
 
 	/**
@@ -305,7 +289,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		if (this.getScheduledEndDate() != null) {
 			clone.setScheduledEndDate((Date) this.getScheduledEndDate().clone());
 		}
-	
+
 	}
 
 	/*
@@ -320,7 +304,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		List<TestCase> list = new LinkedList<TestCase>();
 		for (IterationTestPlanItem iterTestPlan : testPlans) {
 			TestCase testCase = iterTestPlan.getReferencedTestCase();
-			if(testCase != null){
+			if (testCase != null) {
 				list.add(testCase);
 			}
 		}
@@ -328,24 +312,15 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	}
 
 	public void removeTestSuite(@NotNull TestSuite testSuite) {
-		TestSuite localTestSuite = getTestSuite(testSuite.getId());
-
-		if (localTestSuite != null) {
-			testSuites.remove(testSuite);
-		}
-
+		testSuites.remove(testSuite);
 	}
 
-	public void removeTestPlan(@NotNull IterationTestPlanItem testPlan) {
-		IterationTestPlanItem localTestPlan = getTestPlan(testPlan.getId());
+	public void removeItemFromTestPlan(@NotNull IterationTestPlanItem testPlanItem) {
+		testPlans.remove(testPlanItem);
 
-		if (localTestPlan != null) {
-			testPlans.remove(testPlan);
-			for(TestSuite testSuite : this.testSuites){
-				testSuite.getTestPlan().remove(testPlan);
-			}
+		for (TestSuite testSuite : this.testSuites) {
+			testSuite.getTestPlan().remove(testPlanItem);
 		}
-
 	}
 
 	// TODO have a addToTestPlan(TestCase) method instead / also
@@ -449,7 +424,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 
 		return -1;
 	}
-	
+
 	/*
 	 * ********************************* TEST SUITE *********************************************
 	 */
@@ -492,9 +467,9 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 
 	@Override
 	public Project getProject() {
-		if(campaign!=null){
-		return campaign.getProject();
-		}else{
+		if (campaign != null) {
+			return campaign.getProject();
+		} else {
 			return null;
 		}
 	}
@@ -631,32 +606,32 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	public Map<TestSuite, List<Integer>> createTestSuitesPastableCopy() {
 		Map<TestSuite, List<Integer>> resultMap = new HashMap<TestSuite, List<Integer>>();
 		List<IterationTestPlanItem> testPlanWithoutDeletedTestCases = getTestPlanWithoutDeletedTestCases();
-		
+
 		for (TestSuite testSuite : getTestSuites()) {
 			List<IterationTestPlanItem> testSuiteTestPlan = testSuite.getTestPlan();
 			TestSuite testSuiteCopy = testSuite.createCopy();
 			List<Integer> testPlanIndex = new ArrayList<Integer>();
-			
+
 			for (IterationTestPlanItem iterationTestPlanItem : testSuiteTestPlan) {
 				int testPlanItemIndex = testPlanWithoutDeletedTestCases.indexOf(iterationTestPlanItem);
 				testPlanIndex.add(testPlanItemIndex);
 			}
-			
+
 			resultMap.put(testSuiteCopy, testPlanIndex);
 		}
-		
+
 		return resultMap;
 	}
 
 	private List<IterationTestPlanItem> getTestPlanWithoutDeletedTestCases() {
-				
+
 		List<IterationTestPlanItem> testPlanResult = new LinkedList<IterationTestPlanItem>();
-		
+
 		Iterator<IterationTestPlanItem> iterator = getTestPlans().iterator();
-		
+
 		while (iterator.hasNext()) {
 			IterationTestPlanItem itpi = iterator.next();
-			if (! itpi.isTestCaseDeleted()) {
+			if (!itpi.isTestCaseDeleted()) {
 				testPlanResult.add(itpi);
 			}
 		}
@@ -692,14 +667,14 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		}
 
 	}
-	
+
 	// ***************** (detached) custom field section *************
-	
+
 	@Override
 	public Long getBoundEntityId() {
 		return getId();
 	}
-	
+
 	@Override
 	public BindableEntity getBoundEntityType() {
 		return BindableEntity.ITERATION;
@@ -709,17 +684,17 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	public void accept(NodeVisitor visitor) {
 		visitor.visit(this);
 	}
-	
+
 	@Override
 	public void accept(NodeContainerVisitor visitor) {
 		visitor.visit(this);
-		
+
 	}
 
 	@Override
 	public void addContent(@NotNull TestSuite testSuite) throws DuplicateNameException, NullArgumentException {
 		this.addTestSuite((TestSuite) testSuite);
-		
+
 	}
 
 	@Override
@@ -727,31 +702,33 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		return checkSuiteNameAvailable(name);
 	}
 
+	/**
+	 * 
+	 * @see org.squashtest.tm.domain.library.NodeContainer#getContent()
+	 */
 	@Override
-	public Set getContent() {
+	public Set<TestSuite> getContent() {
 		return getTestSuites();
 	}
-	
+
 	@Override
-	public boolean hasContent(){
+	public boolean hasContent() {
 		return !getContent().isEmpty();
 	}
 
 	@Override
 	public void removeContent(TestSuite contentToRemove) throws NullArgumentException {
 		removeTestSuite(contentToRemove);
-		
+
 	}
 
 	@Override
 	public List<String> getContentNames() {
 		List<String> testSuitesNames = new ArrayList<String>(testSuites.size());
-		for(TestSuite suite : testSuites){
+		for (TestSuite suite : testSuites) {
 			testSuitesNames.add(suite.getName());
 		}
 		return testSuitesNames;
 	}
-
-	
 
 }

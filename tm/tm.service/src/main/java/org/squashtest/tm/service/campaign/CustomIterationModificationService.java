@@ -45,19 +45,15 @@ public interface CustomIterationModificationService extends IterationFinder{
 	 */
 	int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan);
 
-	
-
 	String delete(long iterationId);
 
 	void rename(long iterationId, String newName);
 
-	Execution addExecution(long iterationId, long testPlanId);
+	Execution addExecution(long testPlanItemId);
 	
-	Execution addAutomatedExecution(long iterationId, long testPlanId);
+	Execution addAutomatedExecution(long testPlanItemId);
 
 	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
-
-	
 
 	/**
 	 * that method should investigate the consequences of the deletion request, and return a report about what will

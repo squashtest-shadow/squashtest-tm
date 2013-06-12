@@ -38,7 +38,7 @@ import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueSer
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
 import org.squashtest.tm.service.internal.repository.CampaignDao
 import org.squashtest.tm.service.internal.repository.ExecutionDao
-import org.squashtest.tm.service.internal.repository.ItemTestPlanDao
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker
@@ -48,7 +48,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 	CustomIterationModificationServiceImpl service = new CustomIterationModificationServiceImpl()
 	ExecutionDao execDao = Mock()
 
-	ItemTestPlanDao testPlanDao = Mock()
+	IterationTestPlanDao testPlanDao = Mock()
 	CampaignDao campaignDao= Mock()
 	IterationDao iterationDao= Mock()
 	TestCaseDao testCaseDao= Mock()
@@ -134,20 +134,19 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		testCase.getType() >> TestCaseType.UNDEFINED
 		testCase.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
 		
-		IterationTestPlanItem testPlan = new IterationTestPlanItem(id:1, iteration : iteration)
+		IterationTestPlanItem testPlan = new IterationTestPlanItem(id:1L, iteration : iteration)
 		testPlan.setReferencedTestCase(testCase)
 
 		iteration.addTestPlan testPlan
 
 		and :
-		iterationDao.findAndInit(1) >> iteration
-		iterationDao.findById(1) >> iteration
+		testPlanDao.findTestPlanItem(1L) >> testPlan
 		testCaseDao.findById(1) >> testCase
 		testCaseDao.findAndInit(1) >> testCase
 
 		when :
-		service.addExecution(1,1)
-		service.addExecution(1,1)
+		service.addExecution(1L)
+		service.addExecution(1L)
 
 		then :
 		iteration.getExecutions().size()==2
@@ -175,6 +174,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		iteration.addTestPlan(itp3)
 		iterationDao.findById(_) >> iteration
 		testPlanDao.findAllByIds(_)>> [itp3]
+		
 		when:
 		service.changeTestPlanPosition(5, 0, [600])
 

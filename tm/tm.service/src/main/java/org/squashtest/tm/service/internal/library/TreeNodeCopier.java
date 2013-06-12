@@ -59,7 +59,7 @@ import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
 import org.squashtest.tm.service.internal.repository.EntityDao;
 import org.squashtest.tm.service.internal.repository.FolderDao;
-import org.squashtest.tm.service.internal.repository.ItemTestPlanDao;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
@@ -91,7 +91,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	@Inject
 	private TestSuiteDao testSuiteDao;
 	@Inject
-	private ItemTestPlanDao iterationTestPlanItemDao;
+	private IterationTestPlanDao iterationTestPlanItemDao;
 	@Inject
 	private IterationTestPlanManager iterationTestPlanManager;
 	@Inject

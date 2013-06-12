@@ -28,7 +28,7 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.service.internal.campaign.IterationTestPlanManagerServiceImpl;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
-import org.squashtest.tm.service.internal.repository.ItemTestPlanDao
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
 
@@ -40,14 +40,14 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 
 	LibraryNodeDao<TestCaseLibraryNode> nodeDao = Mock()
 	IterationDao iterDao = Mock()
-	ItemTestPlanDao itemDao = Mock()
+	IterationTestPlanDao itemDao = Mock()
 	DatasetDao datasetDao = Mock()
 	
 
 	def setup(){
 		service.testCaseLibraryNodeDao = nodeDao;
 		service.iterationDao = iterDao;
-		service.itemTestPlanDao = itemDao;
+		service.iterationTestPlanDao = itemDao;
 		service.datasetDao = datasetDao;
 	}
 

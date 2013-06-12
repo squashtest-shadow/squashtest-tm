@@ -40,7 +40,7 @@ import org.squashtest.tm.service.internal.execution.ExecutionProcessingServiceIm
 import org.squashtest.tm.service.internal.repository.CampaignDao
 import org.squashtest.tm.service.internal.repository.ExecutionDao
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao
-import org.squashtest.tm.service.internal.repository.ItemTestPlanDao
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker
@@ -57,11 +57,11 @@ public class ExecutionModificationServiceTest extends Specification {
 	ExecutionDao execDao = Mock()
 	ExecutionStepDao execStepDao = Mock()
 
-	ItemTestPlanDao testPlanDao = Mock()
+	IterationTestPlanDao testPlanDao = Mock()
 	CampaignDao campaignDao = Mock()
 	IterationDao iterationDao = Mock()
 	TestCaseDao testCaseDao = Mock()
-
+	
 	TestCaseCyclicCallChecker checker = Mock()
 	PrivateDenormalizedFieldValueService denormalizedFieldValueService = Mock()
 	
@@ -116,16 +116,17 @@ public class ExecutionModificationServiceTest extends Specification {
 		ts5.setTestCase(testCase)
 		
 		Iteration iteration = new Iteration()
-		IterationTestPlanItem testPlan = new IterationTestPlanItem(id:1, iteration : iteration)
-		testPlan.setReferencedTestCase testCase
-		iteration.addTestPlan(testPlan)
+		IterationTestPlanItem testPlanItem = new IterationTestPlanItem(id:1L, iteration : iteration)
+		testPlanItem.setReferencedTestCase testCase
+		iteration.addTestPlan(testPlanItem)
 
-
-		iterationDao.findAndInit(1) >> iteration
+		testPlanDao.findTestPlanItem(1L) >> testPlanItem
+		
+		
 		iterationDao.findOrderedExecutionsByIterationId(1) >> iteration.getExecutions()
 
 		when :
-		iterService.addExecution(1, 1)
+		iterService.addExecution(1L)
 
 		List<Execution> execs = iteration.getExecutions()
 

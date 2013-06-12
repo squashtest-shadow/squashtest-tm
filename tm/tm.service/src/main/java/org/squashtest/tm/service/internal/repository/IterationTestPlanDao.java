@@ -22,6 +22,12 @@ package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 
-public interface ItemTestPlanDao extends EntityDao<IterationTestPlanItem>{
+public interface IterationTestPlanDao extends EntityDao<IterationTestPlanItem>{
+
+	/**
+	 * @param itemTestPlanId
+	 * @return
+	 */
+	IterationTestPlanItem findTestPlanItem(long itemTestPlanId);
 
 }

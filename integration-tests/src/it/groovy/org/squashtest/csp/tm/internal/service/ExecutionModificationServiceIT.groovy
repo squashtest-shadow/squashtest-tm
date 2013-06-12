@@ -132,7 +132,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	def "should create a new execution for the test case in the iteration"(){
 		given :
 
-		iterService.addExecution(iterationId, testPlanId)
+		iterService.addExecution(testPlanId)
 
 		when :
 		def execList = iterService.findAllExecutions(iterationId);
@@ -161,9 +161,9 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def tp2 = tpManagerService.findTestPlanItemByTestCaseId(iterationId, tc2.id);
 		def tp3 = tpManagerService.findTestPlanItemByTestCaseId(iterationId, tc3.id);
 
-		iterService.addExecution(iterationId, tp1.id)
-		iterService.addExecution(iterationId, tp2.id)
-		iterService.addExecution(iterationId, tp3.id)
+		iterService.addExecution(tp1.id)
+		iterService.addExecution(tp2.id)
+		iterService.addExecution(tp3.id)
 
 
 		when :
@@ -183,7 +183,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 //	def "should iterate over the 5 steps of the referenced test case"(){
 //
 //		given :
-//		iterService.addExecution(iterationId, testPlanId)
+//		iterService.addExecution(testPlanId)
 //		def execList = iterService.findAllExecutions(iterationId)
 //		def execution = execList.get(execList.size()-1)
 //
@@ -206,7 +206,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	def "should raise an out of bound exception"(){
 
 		given :
-		iterService.addExecution(iterationId, testPlanId);
+		iterService.addExecution(testPlanId);
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 		when :
@@ -219,7 +219,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	def "should update execution dscription"(){
 
 		given :
-		iterService.addExecution(iterationId, testPlanId)
+		iterService.addExecution(testPlanId)
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -236,7 +236,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	def "should update execution step comment"(){
 
 		given :
-		iterService.addExecution(iterationId, testPlanId)
+		iterService.addExecution(testPlanId)
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 		when :
@@ -252,7 +252,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 	def "should get me the first and third step"(){
 		given :
-		iterService.addExecution(iterationId, testPlanId);
+		iterService.addExecution(testPlanId);
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -271,7 +271,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 	def "should return the current step of the execution"(){
 		given :
-		iterService.addExecution(iterationId, testPlanId);
+		iterService.addExecution(testPlanId);
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -294,9 +294,9 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 		given :
 
-		iterService.addExecution(iterationId, testPlanId);
-		iterService.addExecution(iterationId, testPlanId);
-		iterService.addExecution(iterationId, testPlanId);
+		iterService.addExecution(testPlanId);
+		iterService.addExecution(testPlanId);
+		iterService.addExecution(testPlanId);
 
 		List<Execution> execList = iterService.findExecutionsByTestPlan(iterationId,testPlanId);
 
@@ -313,7 +313,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 	def "should bring an execution report"(){
 		given :
-		iterService.addExecution(iterationId, testPlanId);
+		iterService.addExecution(testPlanId);
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 		when :
@@ -326,7 +326,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 	def "should set an execution status for an execution to UNTESTABLE"(){
 		given :
-		iterService.addExecution(iterationId, testPlanId);
+		iterService.addExecution(testPlanId);
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -344,7 +344,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	
 	def "should set an execution status for an execution to BLOCKED"(){
 		given :
-		iterService.addExecution(iterationId, testPlanId);
+		iterService.addExecution(testPlanId);
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -362,7 +362,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 	def "should set an execution status for an execution to FAILURE"(){
 		given :
-		iterService.addExecution(iterationId, testPlanId);
+		iterService.addExecution(testPlanId);
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -380,7 +380,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 	def "should set an execution status for an execution to SUCCESS"(){
 		given :
-		iterService.addExecution(iterationId, testPlanId);
+		iterService.addExecution(testPlanId);
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -398,7 +398,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 	def "should set an execution status for an execution to RUNNING"(){
 		given :
-		iterService.addExecution(iterationId, testPlanId);
+		iterService.addExecution(testPlanId);
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -416,7 +416,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 	def "should set an execution status for an execution to READY"(){
 		given :
-		iterService.addExecution(iterationId, testPlanId);
+		iterService.addExecution(testPlanId);
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -436,7 +436,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	def "should update executionStep status and accordingly update the status of its parent execution to BLOCKED"(){
 
 		given :
-		iterService.addExecution(iterationId, testPlanId)
+		iterService.addExecution(testPlanId)
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -460,7 +460,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	def "should update executionStep status and accordingly update the status of its parent execution to FAILURE"(){
 
 		given :
-		iterService.addExecution(iterationId, testPlanId)
+		iterService.addExecution(testPlanId)
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -484,7 +484,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	def "should update executionStep status and accordingly update the status of its parent execution to SUCCESS"(){
 
 		given :
-		iterService.addExecution(iterationId, testPlanId)
+		iterService.addExecution(testPlanId)
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -509,7 +509,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	def "should update executionStep status and accordingly update the status of its parent execution to RUNNING"(){
 
 		given :
-		iterService.addExecution(iterationId, testPlanId)
+		iterService.addExecution(testPlanId)
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -533,7 +533,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 	def "should update executionStep status and accordingly update the status of its parent execution to READY"(){
 
 		given :
-		iterService.addExecution(iterationId, testPlanId)
+		iterService.addExecution(testPlanId)
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -561,7 +561,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 //
 //		given :
 //
-//		iterService.addExecution(iterationId, testPlanId)
+//		iterService.addExecution(testPlanId)
 //		def execList = iterService.findAllExecutions(iterationId)
 //		def execution = execList.get(execList.size()-1)
 //
@@ -590,7 +590,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 //
 //		given :
 //
-//		iterService.addExecution(iterationId, testPlanId)
+//		iterService.addExecution(testPlanId)
 //		def execList = iterService.findAllExecutions(iterationId)
 //		def execution = execList.get(execList.size()-1)
 //
@@ -617,7 +617,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 		given :
 
-		iterService.addExecution(iterationId, testPlanId)
+		iterService.addExecution(testPlanId)
 		def execList = iterService.findAllExecutions(iterationId)
 		def execution = execList.get(execList.size()-1)
 
@@ -648,7 +648,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 //
 //		given :
 //
-//		iterService.addExecution(iterationId, testPlanId)
+//		iterService.addExecution(testPlanId)
 //		def execList = iterService.findAllExecutions(iterationId)
 //		def execution = execList.get(execList.size()-1)
 //
@@ -677,7 +677,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 //	def "after step update, execution status should swap from BLOCKED to SUCCESS"(){
 //		given :
 //
-//		iterService.addExecution(iterationId, testPlanId)
+//		iterService.addExecution(testPlanId)
 //		def execList = iterService.findAllExecutions(iterationId)
 //		def execution = execList.get(execList.size()-1)
 //
@@ -708,7 +708,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 //	def "after step update, execution status should swap from SUCCESS to RUNNING"(){
 //		given :
 //
-//		iterService.addExecution(iterationId, testPlanId)
+//		iterService.addExecution(testPlanId)
 //		def execList = iterService.findAllExecutions(iterationId)
 //		def execution = execList.get(execList.size()-1)
 //
@@ -739,7 +739,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 //	def "after step update, execution status should swap from SUCCESS to READY"(){
 //		given :
 //
-//		iterService.addExecution(iterationId, testPlanId)
+//		iterService.addExecution(testPlanId)
 //		def execList = iterService.findAllExecutions(iterationId)
 //		def execution = execList.get(execList.size()-1)
 //
@@ -769,7 +769,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 //	def "after step update, execution status should swap from FAILURE to SUCCESS"(){
 //		given :
 //
-//		iterService.addExecution(iterationId, testPlanId)
+//		iterService.addExecution(testPlanId)
 //		def execList = iterService.findAllExecutions(iterationId)
 //		def execution = execList.get(execList.size()-1)
 //
@@ -816,9 +816,9 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		tpManagerService.addTestCasesToIteration([tc1.id], iterationId)
 		def tp = tpManagerService.findTestPlanItemByTestCaseId(iterationId, tc1.id);
 
-		iterService.addExecution(iterationId, tp.id)
-		iterService.addExecution(iterationId, tp.id)
-		iterService.addExecution(iterationId, tp.id)
+		iterService.addExecution(tp.id)
+		iterService.addExecution(tp.id)
+		iterService.addExecution(tp.id)
 
 		when :
 

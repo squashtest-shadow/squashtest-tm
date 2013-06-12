@@ -21,12 +21,21 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.service.internal.repository.ItemTestPlanDao;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 
 @Repository
 public class HibernateItemTestPlanDao extends HibernateEntityDao<IterationTestPlanItem>
-		implements ItemTestPlanDao {
+		implements IterationTestPlanDao {
+
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.IterationTestPlanDao#findTestPlanItem(long)
+	 */
+	@Override
+	public IterationTestPlanItem findTestPlanItem(long itemTestPlanId) {
+		return (IterationTestPlanItem) currentSession().load(IterationTestPlanItem.class, itemTestPlanId);
+	}
 
 
 }

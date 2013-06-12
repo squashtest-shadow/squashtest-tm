@@ -128,40 +128,6 @@ class IterationModificationServiceIT extends HibernateServiceSpecification {
 		testPlanId = tp.getId();
 	}
 
-// TEST BREAKS BECAUSE DERIVED PROP NOT COMPUTED
-	
-//	def "should retrieve the list of executions associated to the second test case "(){
-//
-//		given :
-//		TestCase tc1 = new TestCase(name:"tc1");
-//		TestCase tc2 = new TestCase(name:"tc2");
-//
-//		tcNavService.addTestCaseToLibrary(libtcId, tc1)
-//		tcNavService.addTestCaseToLibrary(libtcId, tc2)
-//
-//		and :
-//
-//		tpManagerService.addTestCasesToIteration([tc1.id, tc2.id], iterationId);
-//
-//		def tp1 = tpManagerService.findTestPlanItemByTestCaseId(iterationId, tc1.id)
-//		def tp2 = tpManagerService.findTestPlanItemByTestCaseId(iterationId, tc2.id)
-//
-//
-//		when :
-//		iterService.addExecution(iterationId, tp1.id)
-//		iterService.addExecution(iterationId, tp2.id)
-//
-//		iterService.addExecution(iterationId, tp1.id)
-//		iterService.addExecution(iterationId, tp2.id)
-//
-//		List<Execution> listExec = iterService.findExecutionsByTestPlan (iterationId, tp2.id)
-//
-//		then :
-//		listExec.size()==2
-//		listExec.collect {it.name} == ["tc2", "tc2"]
-//		listExec.collect { it.executionOrder } == [0, 1]
-//	}
-
 	def "should not remove Test plan from iteration"(){
 		given :
 		TestCase tc1 = new TestCase(name:"tc1");
@@ -169,14 +135,14 @@ class IterationModificationServiceIT extends HibernateServiceSpecification {
 		tpManagerService.addTestCasesToIteration([tc1.id], iterationId);
 
 		def tp1 = tpManagerService.findTestPlanItemByTestCaseId(iterationId, tc1.id)
-		iterService.addExecution(iterationId, tp1.id)
-		iterService.addExecution(iterationId, tp1.id)
+		iterService.addExecution(tp1.id)
+		iterService.addExecution(tp1.id)
 
 		tp1.getExecutions().isEmpty() >> false
 
 		when :
 		List<Execution> listExec = iterService.findExecutionsByTestPlan (iterationId, tp1.id)
-		tpManagerService.removeTestPlanFromIteration(tp1.id, iterationId)
+		tpManagerService.removeTestPlanFromIteration(tp1.id)
 
 		then :
 		listExec.size()==2
@@ -201,8 +167,8 @@ class IterationModificationServiceIT extends HibernateServiceSpecification {
 
 
 		when :
-		iterService.addExecution(iterationId, tp1.id)
-		iterService.addExecution(iterationId, tp2.id)
+		iterService.addExecution(tp1.id)
+		iterService.addExecution(tp2.id)
 
 		List<TestCase> list = iterService.findPlannedTestCases(iterationId);
 
@@ -229,9 +195,9 @@ class IterationModificationServiceIT extends HibernateServiceSpecification {
 
 
 		when :
-		iterService.addExecution(iterationId, tp1.id)
-		iterService.addExecution(iterationId, tp1.id)
-		iterService.addExecution(iterationId, tp1.id)
+		iterService.addExecution(tp1.id)
+		iterService.addExecution(tp1.id)
+		iterService.addExecution(tp1.id)
 
 		List<Execution> execList = iterService.findExecutionsByTestPlan(iterationId, tp1.id);
 		int listSize = execList.size();

@@ -46,12 +46,13 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
-import org.squashtest.tm.service.internal.repository.ItemTestPlanDao;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
@@ -61,7 +62,7 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 
 @Service("squashtest.tm.service.IterationTestPlanManagerService")
-@Transactional 
+@Transactional
 public class IterationTestPlanManagerServiceImpl implements IterationTestPlanManagerService {
 
 	@Inject
@@ -71,14 +72,14 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	private IterationDao iterationDao;
 
 	@Inject
-	private ItemTestPlanDao itemTestPlanDao;
+	private IterationTestPlanDao iterationTestPlanDao;
 
 	@Inject
 	private ObjectAclService aclService;
 
 	@Inject
 	private UserDao userDao;
-	
+
 	@Inject
 	private DatasetDao datasetDao;
 
@@ -141,32 +142,32 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		List<IterationTestPlanItem> testPlan = new LinkedList<IterationTestPlanItem>();
 
 		for (TestCase testCase : testCases) {
-			 addTestCaseToTestPlan(testCase, testPlan);
+			addTestCaseToTestPlan(testCase, testPlan);
 		}
 		addTestPlanToIteration(testPlan, iteration.getId());
 		return testPlan;
 	}
 
-	private void addTestCaseToTestPlan(TestCase testCase, List<IterationTestPlanItem> testPlan){
+	private void addTestCaseToTestPlan(TestCase testCase, List<IterationTestPlanItem> testPlan) {
 		List<Dataset> datasets = datasetDao.findAllDatasetsByTestCase(testCase.getId());
-		if(datasets != null && datasets.size() != 0){
-			for(Dataset dataset : datasets){
+		if (datasets != null && datasets.size() != 0) {
+			for (Dataset dataset : datasets) {
 				IterationTestPlanItem itp = new IterationTestPlanItem(testCase, dataset);
 				testPlan.add(itp);
 			}
 		} else {
 			IterationTestPlanItem itp = new IterationTestPlanItem(testCase);
 			testPlan.add(itp);
-		}		
+		}
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addTestPlanToIteration(List<IterationTestPlanItem> testPlan, long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		for (IterationTestPlanItem itp : testPlan) {
-			itemTestPlanDao.persist(itp);
+			iterationTestPlanDao.persist(itp);
 			iteration.addTestPlan(itp);
 		}
 	}
@@ -188,12 +189,13 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public boolean removeTestPlansFromIterationObj(List<Long> testPlanIds, Iteration iteration) {
 		boolean unauthorizedDeletion = false;
 
-		for (Long id : testPlanIds) {
-			IterationTestPlanItem itp = iteration.getTestPlan(id);
+		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIds(testPlanIds);
+
+		for (IterationTestPlanItem item : items) {
 			// We do not allow deletion if there are execution
-			if (itp.getExecutions().isEmpty()) {
-				iteration.removeTestPlan(itp);
-				itemTestPlanDao.remove(itp);
+			if (item.getExecutions().isEmpty()) {
+				iteration.removeItemFromTestPlan(item);
+				iterationTestPlanDao.remove(item);
 			} else {
 				unauthorizedDeletion = true;
 			}
@@ -203,17 +205,17 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
+	@PreAuthorize("hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'LINK') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public boolean removeTestPlanFromIteration(Long testPlanId, long iterationId) {
+	public boolean removeTestPlanFromIteration(long testPlanItemId) {
 		boolean unauthorizedDeletion = false;
-		Iteration it = iterationDao.findById(iterationId);
+		IterationTestPlanItem item = iterationTestPlanDao.findById(testPlanItemId);
+		Iteration it = item.getIteration();
 
-		IterationTestPlanItem itp = it.getTestPlan(testPlanId);
 		// We do not allow deletion if there are execution
-		if (itp.getExecutions().isEmpty()) {
-			it.removeTestPlan(itp);
-			itemTestPlanDao.remove(itp);
+		if (item.getExecutions().isEmpty()) {
+			it.removeItemFromTestPlan(item);
+			iterationTestPlanDao.remove(item);
 		} else {
 			unauthorizedDeletion = true;
 		}
@@ -278,29 +280,36 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	}
 
+	/**
+	 * 
+	 * @see org.squashtest.tm.service.campaign.IterationTestPlanManagerService#assignUserToTestPlanItem(long, long)
+	 */
 	// FIXME : security execute
 	@Override
-	public void assignUserToTestPlanItem(Long testPlanId, long iterationId, Long userId) {
-		Iteration iteration = iterationDao.findById(iterationId);
+	public void assignUserToTestPlanItem(long testPlanItemId, long userId) {
 		User user = (userId == 0) ? null : userDao.findById(userId);
 
-		IterationTestPlanItem itp = iteration.getTestPlan(testPlanId);
+		IterationTestPlanItem itp = iterationTestPlanDao.findTestPlanItem(testPlanItemId);
 		if (!itp.isTestCaseDeleted()) {
 			itp.setUser(user);
 		}
 	}
 
+	/**
+	 * 
+	 * @see org.squashtest.tm.service.campaign.IterationTestPlanManagerService#assignUserToTestPlanItems(java.util.List,
+	 *      long)
+	 */
 	// FIXME : security execute
 	@Override
-	public void assignUserToTestPlanItems(List<Long> testPlanIds, long iterationId, Long userId) {
-		Iteration iteration = iterationDao.findById(iterationId);
+	public void assignUserToTestPlanItems(List<Long> testPlanIds, long userId) {
+		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIds(testPlanIds);
 
 		User user = (userId == 0) ? null : userDao.findById(userId);
 
-		for (Long testPlan : testPlanIds) {
-			IterationTestPlanItem itp = iteration.getTestPlan(testPlan);
-			if (!itp.isTestCaseDeleted()) {
-				itp.setUser(user);
+		for (IterationTestPlanItem item : items) {
+			if (!item.isTestCaseDeleted()) {
+				item.setUser(user);
 			}
 		}
 	}
@@ -325,9 +334,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	// FIXME : security
 	@Override
-	public IterationTestPlanItem findTestPlanItem(Long iterationId, Long itemTestPlanId) {
-		Iteration iteration = iterationDao.findById(iterationId);
-		return iteration.getTestPlan(itemTestPlanId);
+	public IterationTestPlanItem findTestPlanItem(long itemTestPlanId) {
+		return iterationTestPlanDao.findTestPlanItem(itemTestPlanId);
 	}
 
 	@Override
@@ -339,9 +347,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	@Override
-	public void assignExecutionStatusToTestPlanItem(Long testPlanId, long iterationId, String statusName) {
+	public void assignExecutionStatusToTestPlanItem(long iterationTestPlanItemId, String statusName) {
 
-		IterationTestPlanItem testPlanItem = findTestPlanItem(iterationId, testPlanId);
+		IterationTestPlanItem testPlanItem = findTestPlanItem(iterationTestPlanItemId);
 		testPlanItem.setExecutionStatus(ExecutionStatus.valueOf(statusName));
 	}
 }

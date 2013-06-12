@@ -86,7 +86,7 @@ class ExecutionModificationServiceDbunitIT extends DbunitServiceSpecification {
 		def lastExecutedOn3 = tp.lastExecutedOn
 
 		//you add an execution, the values are still null
-		iterService.addExecution(iterationId, testPlanId)
+		iterService.addExecution(testPlanId)
 		tp = exec3.getTestPlan()
 		def lastExecutedBy4 = tp.lastExecutedBy
 		def lastExecutedOn4 = tp.lastExecutedOn

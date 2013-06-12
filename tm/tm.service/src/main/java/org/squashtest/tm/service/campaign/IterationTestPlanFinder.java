@@ -37,7 +37,7 @@ public interface IterationTestPlanFinder {
 	
 	FilteredCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, CollectionSorting filter);
 	
-	IterationTestPlanItem findTestPlanItem(Long iterationId, Long itemTestPlanId);
+	IterationTestPlanItem findTestPlanItem(long itemTestPlanId);
 	
 	/**
 	 * Returns a collection of {@link TestCaseLibrary}, the test cases of which may be added to the campaign
@@ -61,5 +61,6 @@ public interface IterationTestPlanFinder {
 	 */
 	@Deprecated
 	IterationTestPlanItem findTestPlanItemByTestCaseId(long iterationId, long testCaseId);
+
 
 }

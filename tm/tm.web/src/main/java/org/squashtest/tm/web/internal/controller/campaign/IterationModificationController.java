@@ -85,7 +85,7 @@ public class IterationModificationController {
 	private static final String NAME = "name";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(IterationModificationController.class);
-	
+
 	private static final String ITERATION_KEY = "iteration";
 	private static final String ITERATION_ID_KEY = "iterationId";
 	private static final String PLANNING_URL = "/planning";
@@ -97,10 +97,9 @@ public class IterationModificationController {
 
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
-	
+
 	private IterationTestPlanFinder testPlanFinder;
-	
-	
+
 	private TestAutomationFinderService testAutomationService;
 
 	@ServiceReference
@@ -134,11 +133,11 @@ public class IterationModificationController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showIteration(@PathVariable long iterationId) {
-		
+
 		Iteration iteration = iterationModService.findById(iterationId);
 		TestPlanStatistics statistics = iterationModService.getIterationStatistics(iterationId);
 		boolean hasCUF = cufValueService.hasCustomFields(iteration);
-		
+
 		ModelAndView mav = new ModelAndView("fragment/iterations/edit-iteration");
 		mav.addObject(ITERATION_KEY, iteration);
 		mav.addObject("statistics", statistics);
@@ -146,8 +145,7 @@ public class IterationModificationController {
 		return mav;
 	}
 
-	
-	private List<IterationTestPlanItem> getFilteredIterationTestPlan(long iterationId){
+	private List<IterationTestPlanItem> getFilteredIterationTestPlan(long iterationId) {
 
 		return iterationModService.filterIterationForCurrentUser(iterationId);
 	}
@@ -155,7 +153,6 @@ public class IterationModificationController {
 	// will return the iteration in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public ModelAndView showIterationInfo(@PathVariable long iterationId) {
-
 
 		Iteration iteration = iterationModService.findById(iterationId);
 
@@ -177,7 +174,7 @@ public class IterationModificationController {
 		}
 		return mav;
 	}
-	
+
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long iterationId) {
 
@@ -185,9 +182,10 @@ public class IterationModificationController {
 
 		ModelAndView mav = new ModelAndView("fragment/generics/statistics-fragment");
 		mav.addObject("statisticsEntity", iterationStatistics);
-		
+
 		return mav;
 	}
+
 	@RequestMapping(method = RequestMethod.POST, params = { "id=iteration-description", VALUE })
 	@ResponseBody
 	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long iterationId) {
@@ -211,7 +209,8 @@ public class IterationModificationController {
 
 	@RequestMapping(value = "/duplicateTestSuite/{testSuiteId}", method = RequestMethod.POST)
 	public @ResponseBody
-	Long duplicateTestSuite(@PathVariable(ITERATION_ID_KEY) Long iterationId, @PathVariable("testSuiteId") Long testSuiteId) {
+	Long duplicateTestSuite(@PathVariable(ITERATION_ID_KEY) Long iterationId,
+			@PathVariable("testSuiteId") Long testSuiteId) {
 		TestSuite duplicate = iterationModService.copyPasteTestSuiteToIteration(testSuiteId, iterationId);
 		return duplicate.getId();
 	}
@@ -369,11 +368,11 @@ public class IterationModificationController {
 	}
 
 	// returns the ID of the newly created execution
-	@RequestMapping(value = "/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST, params = { "mode=manual" })
+	@RequestMapping(value = "/test-plan/{testPlanItemId}/executions/new", method = RequestMethod.POST, params = { "mode=manual" })
 	public @ResponseBody
-	String addManualExecution(@PathVariable("testPlanId") long testPlanId, @PathVariable(ITERATION_ID_KEY) long iterationId) {
-		iterationModService.addExecution(iterationId, testPlanId);
-		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
+	String addManualExecution(@PathVariable long testPlanItemId, @PathVariable long iterationId) {
+		iterationModService.addExecution(testPlanItemId);
+		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanItemId);
 
 		return executionList.get(executionList.size() - 1).getId().toString();
 
@@ -381,27 +380,30 @@ public class IterationModificationController {
 
 	@RequestMapping(value = "/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST, params = { "mode=auto" })
 	public @ResponseBody
-	AutomatedSuiteOverview addAutoExecution(@PathVariable("testPlanId") long testPlanId, @PathVariable(ITERATION_ID_KEY) long iterationId, Locale locale) {
+	AutomatedSuiteOverview addAutoExecution(@PathVariable("testPlanId") long testPlanId,
+			@PathVariable(ITERATION_ID_KEY) long iterationId, Locale locale) {
 		Collection<Long> testPlanIds = new ArrayList<Long>(1);
 		testPlanIds.add(testPlanId);
 
 		AutomatedSuite suite = iterationModService.createAutomatedSuite(iterationId, testPlanIds);
-		
+
 		testAutomationService.startAutomatedSuite(suite);
 
-		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource) ;
+		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 
 	}
-	
-	@RequestMapping(value = "/test-case-executions/{testPlanId}", method = RequestMethod.GET)
-	public ModelAndView getExecutionsForTestPlan(@PathVariable long iterationId, @PathVariable long testPlanId) {
 
-		//TODO
-		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
-		// get the iteration to check access rights
+	@RequestMapping(value = "/test-case-executions/{iterationTestPlanItemId}", method = RequestMethod.GET)
+	public ModelAndView getExecutionsForTestPlan(@PathVariable long iterationId,
+			@PathVariable long iterationTestPlanItemId) {
+
+		// TODO
+		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId,
+				iterationTestPlanItemId);
+		// get the iteraction to check access rights
 		Iteration iter = iterationModService.findById(iterationId);
 		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", iter);
-		IterationTestPlanItem testPlanItem = testPlanFinder.findTestPlanItem(iterationId, testPlanId);
+		IterationTestPlanItem testPlanItem = testPlanFinder.findTestPlanItem(iterationTestPlanItemId);
 		ModelAndView mav = new ModelAndView("fragment/iterations/iteration-test-plan-row");
 
 		mav.addObject("editableIteration", editable);
@@ -421,22 +423,24 @@ public class IterationModificationController {
 
 		CollectionSorting filter = createCollectionSorting(params, testPlanMapper);
 
-		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = 
-				new FilteredCollectionHolder<List<IterationTestPlanItem>>(getFilteredIterationTestPlan(iterationId).size(),getFilteredIterationTestPlan(iterationId));
-		
-		return new IterationTestPlanItemDataTableModelHelper(messageSource, locale).buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
-		
+		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = new FilteredCollectionHolder<List<IterationTestPlanItem>>(
+				getFilteredIterationTestPlan(iterationId).size(), getFilteredIterationTestPlan(iterationId));
+
+		return new IterationTestPlanItemDataTableModelHelper(messageSource, locale).buildDataModel(holder,
+				filter.getFirstItemIndex() + 1, params.getsEcho());
+
 	}
-	
+
 	private static class IterationTestPlanItemDataTableModelHelper extends DataTableModelHelper<IterationTestPlanItem> {
-		
+
 		private InternationalizationHelper messageSource;
 		private Locale locale;
-		
-		private IterationTestPlanItemDataTableModelHelper(InternationalizationHelper messageSource, Locale locale){
+
+		private IterationTestPlanItemDataTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
 			this.messageSource = messageSource;
 			this.locale = locale;
 		}
+
 		@Override
 		public Map<String, Object> buildItemData(IterationTestPlanItem item) {
 
@@ -449,7 +453,7 @@ public class IterationModificationController {
 			String datasetName;
 			final String latestExecutionMode = messageSource.internationalize(item.getExecutionMode(), locale);
 			final String automationMode = item.isAutomated() ? "A" : "M";
-			
+
 			String testSuiteNameList = "";
 			Long assignedId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
 
@@ -457,7 +461,7 @@ public class IterationModificationController {
 				projectName = formatNoData(locale, messageSource);
 				testCaseName = formatDeleted(locale, messageSource);
 				importance = formatNoData(locale, messageSource);
-				reference = formatNoData(locale, messageSource); 
+				reference = formatNoData(locale, messageSource);
 			} else {
 				projectName = item.getReferencedTestCase().getProject().getName();
 				testCaseName = item.getReferencedTestCase().getName();
@@ -535,24 +539,26 @@ public class IterationModificationController {
 	/* ************** execute auto *********************************** */
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds[]" })
-	public @ResponseBody 
-	AutomatedSuiteOverview  executeSelectionAuto(@PathVariable long iterationId, @RequestParam("testPlanItemsIds[]") List<Long> ids , Locale locale){
-		AutomatedSuite suite = iterationModService.createAutomatedSuite(iterationId, ids); 
+	public @ResponseBody
+	AutomatedSuiteOverview executeSelectionAuto(@PathVariable long iterationId,
+			@RequestParam("testPlanItemsIds[]") List<Long> ids, Locale locale) {
+		AutomatedSuite suite = iterationModService.createAutomatedSuite(iterationId, ids);
 		testAutomationService.startAutomatedSuite(suite);
-		
+
 		LOGGER.debug("Iteration #" + iterationId + " : execute selected test plans");
-		
-		return 	AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
+
+		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "!testPlanItemsIds[]" })
-	public @ResponseBody AutomatedSuiteOverview executeAllAuto(@PathVariable long iterationId, Locale locale ){
+	public @ResponseBody
+	AutomatedSuiteOverview executeAllAuto(@PathVariable long iterationId, Locale locale) {
 		AutomatedSuite suite = iterationModService.createAutomatedSuite(iterationId);
 		testAutomationService.startAutomatedSuite(suite);
-		
+
 		LOGGER.debug("Iteration #" + iterationId + " : execute all test plan auto");
-		
-		return 	AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
+
+		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
 
 	/* ************** /execute auto *********************************** */

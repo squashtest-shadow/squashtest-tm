@@ -92,10 +92,9 @@ public class TestSuiteModificationController {
 	private PermissionEvaluationService permissionService;
 
 	private TestAutomationFinderService testAutomationService;
-	
+
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
-	
 
 	private static final String TEST_SUITE = "testSuite";
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
@@ -119,20 +118,19 @@ public class TestSuiteModificationController {
 	public void setIterationModificationService(IterationModificationService iterationModService) {
 		this.iterationModService = iterationModService;
 	}
-	
+
 	@Inject
 	private InternationalizationHelper messageSource;
 
-	
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
-														.mapAttribute(Project.class, NAME, String.class, "project-name")
-														.mapAttribute(TestCase.class, NAME, String.class, "tc-name")
-														.mapAttribute(TestCase.class, "reference", String.class, "reference")
-														.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, "importance")			
-														.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, "type")
-														.mapAttribute(IterationTestPlanItem.class, "executionStatus", ExecutionStatus.class, "status")
-														.mapAttribute(IterationTestPlanItem.class, "lastExecutedBy", String.class, "last-exec-by")
-														.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, "last-exec-on");
+			.mapAttribute(Project.class, NAME, String.class, "project-name")
+			.mapAttribute(TestCase.class, NAME, String.class, "tc-name")
+			.mapAttribute(TestCase.class, "reference", String.class, "reference")
+			.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, "importance")
+			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, "type")
+			.mapAttribute(IterationTestPlanItem.class, "executionStatus", ExecutionStatus.class, "status")
+			.mapAttribute(IterationTestPlanItem.class, "lastExecutedBy", String.class, "last-exec-by")
+			.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, "last-exec-on");
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
@@ -194,7 +192,7 @@ public class TestSuiteModificationController {
 
 		ModelAndView mav = new ModelAndView("fragment/generics/statistics-fragment");
 		mav.addObject("statisticsEntity", testSuiteStats);
-		
+
 		return mav;
 	}
 
@@ -242,8 +240,6 @@ public class TestSuiteModificationController {
 		return result;
 	}
 
-	
-
 	/***
 	 * Method called when you drag a test case and change its position in the selected iteration
 	 * 
@@ -266,15 +262,16 @@ public class TestSuiteModificationController {
 					+ newIndex);
 		}
 	}
-	
-	@RequestMapping(value = "{iterationId}/test-case-executions/{testPlanId}", method = RequestMethod.GET)
+
+	@RequestMapping(value = "{iterationId}/test-case-executions/{iterationTestPlanItemId}", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable long id, @PathVariable long iterationId,
-			@PathVariable long testPlanId) {
+			@PathVariable long iterationTestPlanItemId) {
 		TestSuite testSuite = service.findById(id);
-		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanId);
+		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId,
+				iterationTestPlanItemId);
 		// get the iteraction to check access rights
 		Iteration iter = iterationModService.findById(iterationId);
-		IterationTestPlanItem iterationTestPlanItem = iterationTestPlanFinder.findTestPlanItem(iterationId, testPlanId);
+		IterationTestPlanItem iterationTestPlanItem = iterationTestPlanFinder.findTestPlanItem(iterationTestPlanItemId);
 		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", iter);
 
 		ModelAndView mav = new ModelAndView("fragment/test-suites/test-suite-test-plan-row");
@@ -288,7 +285,7 @@ public class TestSuiteModificationController {
 		return mav;
 
 	}
-	
+
 	@RequestMapping(value = "/test-plan/table", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getTestPlanModel(@PathVariable long id, final DataTableDrawParameters params, final Locale locale) {
@@ -334,7 +331,7 @@ public class TestSuiteModificationController {
 			}
 
 			Map<String, Object> rowMap = new HashMap<String, Object>(14);
-			
+
 			rowMap.put("entity-id", item.getId());
 			rowMap.put("entity-index", getCurrentIndex());
 			rowMap.put("project-name", projectName);
@@ -349,7 +346,7 @@ public class TestSuiteModificationController {
 			rowMap.put("is-tc-deleted", item.isTestCaseDeleted());
 			rowMap.put("empty-execute-holder", null);
 			rowMap.put("empty-delete-holder", null);
-			
+
 			return rowMap;
 
 		}

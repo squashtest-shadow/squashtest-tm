@@ -20,32 +20,30 @@
  */
 package org.squashtest.csp.core.bugtracker.domain;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.squashtest.tm.bugtracker.definition.RemoteUser;
 
-
 /**
  * @author bsiri
- *
+ * 
  */
 
-public class User implements Identifiable<User>, RemoteUser{
+public class User implements Identifiable<User>, RemoteUser {
 
 	public static final User NO_USER = new User(Identifiable.DUMMY_ID, Identifiable.DUMMY_NAME);
 
 	private String id;
 	private String name;
-	
-	private List<Permission> permissions = new LinkedList<Permission>();
 
-	
-	public User(){
-		
+	private List<Permission> permissions = new ArrayList<Permission>();
+
+	public User() {
+		super();
 	}
-	
+
 	public User(String id, String name) {
 		super();
 		this.id = id;
@@ -53,75 +51,74 @@ public class User implements Identifiable<User>, RemoteUser{
 	}
 
 	@Override
-	public String getId(){
+	public String getId() {
 		return id;
 	}
 
 	@Override
-	public String getName(){
+	public String getName() {
 		return name;
 	}
 
-
-	public void setPermissions(List<Permission> permissions){
-		this.permissions=permissions;
+	/**
+	 * @deprecated not used. to be removed
+	 * @param permissions
+	 */
+	@Deprecated
+	public void setPermissions(List<Permission> permissions) {
+		this.permissions = permissions;
 	}
 
-	public List<Permission> getPermissions(){
+	public List<Permission> getPermissions() {
 		return permissions;
 	}
 
-	public void addUser(Permission permission){
+	public void addUser(Permission permission) {
 		this.permissions.add(permission);
 	}
 
-	public void addPermission(Permission permission){
+	public void addPermission(Permission permission) {
 		permissions.add(permission);
 	}
 
-	public void addAllPermissions(Collection<Permission> permissions){
+	public void addAllPermissions(Collection<Permission> permissions) {
 		this.permissions.addAll(permissions);
 	}
 
-	public Permission findPermissionByName(String permissionName){
-		for (Permission permission: permissions){
-			if (permission.getName().equals(permissionName)){
+	public Permission findPermissionByName(String permissionName) {
+		for (Permission permission : permissions) {
+			if (permission.getName().equals(permissionName)) {
 				return permission;
 			}
 		}
 		return null;
 	}
 
-	public Permission findPermissionById(String userId){
-		for (Permission permission : permissions){
-			if (permission.getId().equals(userId)){
+	public Permission findPermissionById(String userId) {
+		for (Permission permission : permissions) {
+			if (permission.getId().equals(userId)) {
 				return permission;
 			}
 		}
 		return null;
 	}
-	
-	
+
 	@Override
-	public boolean isDummy(){
+	public boolean isDummy() {
 		return this.id.equals(NO_USER.id);
 	}
-	
 
 	public void setId(String id) {
 		this.id = id;
 	}
 
-
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/** exists for the purpose of being javabean compliant */
-	public void setDummy(Boolean dummy){
-		
+	public void setDummy(Boolean dummy) {
+
 	}
-	
-	
 
 }
