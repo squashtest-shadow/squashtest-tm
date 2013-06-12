@@ -22,12 +22,15 @@ package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.service.testcase.DatasetModificationService;
 
 
 /**
@@ -41,6 +44,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class DatasetParamValueController {
 	private static final String DATASTE_PARAM_VALUE_ID_URL = "/{datasetParamValueId}";
 	
+	@Inject
+	private DatasetModificationService datasetModificationService;
+	
 	/**
 	 * Will change the paramValue of the  DatasetParamValue of the given id with the given value
 	 * 
@@ -51,8 +57,8 @@ public class DatasetParamValueController {
 	@RequestMapping(value= DATASTE_PARAM_VALUE_ID_URL+"/param-value", method = RequestMethod.POST, params = {VALUE})
 	@ResponseBody
 	public String changeParamValue(@PathVariable long datasetParamValueId, @RequestParam(VALUE) String value){
-		//TODO
-		 return value;
+		this.datasetModificationService.changeParamValue(datasetParamValueId, value);
+		return value;
 	}
 	
 }
