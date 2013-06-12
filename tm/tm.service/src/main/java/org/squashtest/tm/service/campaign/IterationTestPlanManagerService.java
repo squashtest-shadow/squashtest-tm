@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 /**
@@ -90,9 +91,17 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @param executionDate
 	 *            : the execution date
 	 */
+	@Deprecated
 	void updateTestCaseLastExecutedByAndOn(IterationTestPlanItem givenTestPlan, Date lastExecutedOn,
 			String lastExecutedBy);
 
+	/**
+	 * Will update the item test plan execution metadata using the last execution data.
+	 * 
+	 * @param execution
+	 */
+	void updateExecutionMetadata(IterationTestPlanItem item);
+	
 	/**
 	 * Assign User with Execute Access to a TestPlan item.
 	 * 

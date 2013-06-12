@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 
 
@@ -91,5 +92,25 @@ public interface ExecutionProcessingService {
 	int findExecutionStepRank(Long executionStepId);
 
 	int findTotalNumberSteps(Long executionId);
+	
+	
+	/***
+	 * Asks an execution to update it's metadata (lastExecutionOn, lastExecutedBy)
+	 * according to regular execution business rules. 
+	 * 
+	 * @param execution
+	 *            the execution to update
+	 */
+	void updateExecutionMetadata(Execution execution);
+	
+	/***
+	 * Asks an execution to update it's metadata (lastExecutionOn, lastExecutedBy)
+	 * according to automated execution business rules. The said execution is the 
+	 * one referenced by the given extender.
+	 * 
+	 * @param execution
+	 *            the execution to update
+	 */
+	void updateExecutionMetadata(AutomatedExecutionExtender extender);
 
 }

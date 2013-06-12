@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.repository.testautomation.AutomatedExecutionExtenderDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService;
@@ -49,6 +50,9 @@ public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionM
 	
 	@Inject
 	private PermissionEvaluationService permissionService;
+	
+	@Inject
+	private ExecutionProcessingService execProcService;
 	
 
 	public void setPermissionEvaluationService(PermissionEvaluationService permissionService){
@@ -78,6 +82,7 @@ public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionM
 		for (AutomatedExecutionExtender exec : execs){
 			permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", exec);
 			exec.setExecutionStatus(newStatus);
+			execProcService.updateExecutionMetadata(exec);
 		}
 
 	}
@@ -120,6 +125,7 @@ public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionM
 	private void changeState(AutomatedExecutionExtender exec, TestExecutionStatus stateChange) {
 		exec.setResultSummary(stateChange.getStatusMessage());
 		exec.setExecutionStatus(coerce(stateChange.getStatus()));
+		execProcService.updateExecutionMetadata(exec);
 		
 	}
 	/**

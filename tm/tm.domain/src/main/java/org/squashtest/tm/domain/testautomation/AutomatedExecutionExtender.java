@@ -36,6 +36,7 @@ import javax.persistence.OneToOne;
 
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 import org.squashtest.tm.security.annotation.InheritsAcls;
 
 /**
@@ -47,7 +48,6 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
  * 
  */
 @Entity
-@InheritsAcls(constrainedClass=Execution.class, propertyName="automatedExecutionExtender")
 public class AutomatedExecutionExtender {
 
 	private static final Set<ExecutionStatus> AUTOMATED_EXEC_STATUS;
@@ -97,6 +97,7 @@ public class AutomatedExecutionExtender {
 		return id;
 	}
 
+	@AclConstrainedObject
 	public Execution getExecution() {
 		return execution;
 	}

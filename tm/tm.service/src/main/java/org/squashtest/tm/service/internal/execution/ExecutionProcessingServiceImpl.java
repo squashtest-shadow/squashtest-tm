@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -34,8 +35,10 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.exception.execution.ExecutionHasNoRunnableStepException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
+import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
@@ -172,8 +175,10 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 		}
 
 		execution.setExecutionStatus(newExecutionStatus);
+		
+		
 		// update execution and item test plan data
-		updateExecutionAndItemTestPlanExecutionData(execution);
+		updateExecutionMetadata(execution);
 	}
 
 	/***
@@ -195,43 +200,43 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 		}
 	}
 
-	/***
-	 * Update the execution lastExecutionBy and On values depending on the status<br>
-	 * Update the Item Test Plan if it's the last execution
-	 *
-	 * @param givenExecution
-	 *            the execution to update
-	 */
-	private void updateExecutionAndItemTestPlanExecutionData(Execution givenExecution) {
-		// Default last executed by and on values
+
+	@PreAuthorize("hasPermission(#execution, 'EXECUTE') or hasRole('ROLE_ADMIN')")
+	@Override
+	public void updateExecutionMetadata(Execution execution) {
+		
 		String lastExecutedBy = null;
 		Date lastExecutedOn = null;
-		if (givenExecution.getExecutionStatus().compareTo(ExecutionStatus.READY) != 0) {
-			// The status is not READY
-			// executed by and on values are not null
+		
+		if (execution.getExecutionStatus().compareTo(ExecutionStatus.READY) != 0) {
 			// Get the date and user of the most recent step which status is not at READY
-			ExecutionStep mostRecentStep = getMostRecentExecutionStep(givenExecution);
+			ExecutionStep mostRecentStep = getMostRecentExecutionStep(execution);
 			lastExecutedBy = mostRecentStep.getLastExecutedBy();
 			lastExecutedOn = mostRecentStep.getLastExecutedOn();
 		}
-		// We update the execution data
-		if (LOGGER.isDebugEnabled()){
-			LOGGER.debug("Set {} values to {} and {} " ,new Object[]{givenExecution.getName(), lastExecutedBy, lastExecutedOn });
-		}
-		givenExecution.setLastExecutedBy(lastExecutedBy);
-		givenExecution.setLastExecutedOn(lastExecutedOn);
 
-		// Check if we have to update item test plan too
-		// get the test case (ItemTestPlan)
-		IterationTestPlanItem testPlan = givenExecution.getTestPlan();
-		// Then get the execution list
-		List<Execution> executionList = testPlan.getExecutions();
-		// check the execution status
-		if (executionList.get(executionList.size() - 1).getId().equals(givenExecution.getId())) {
-			// last execution, we update the item test plan
-			LOGGER.debug("**************** last execution - initiate update ");
-			testPlanService.updateTestCaseLastExecutedByAndOn(testPlan, lastExecutedOn, lastExecutedBy);
-		}
+		execution.setLastExecutedBy(lastExecutedBy);
+		execution.setLastExecutedOn(lastExecutedOn);
+		
+
+		// forward to the test plan
+		IterationTestPlanItem testPlan = execution.getTestPlan();	
+		testPlanService.updateExecutionMetadata(testPlan);
+
+	}
+	
+	@PreAuthorize("hasPermission(#extender, 'EXECUTE') or hasRole('ROLE_ADMIN') or hasRole('ROLE_TA_API_CLIENT')")
+	@Override
+	public void updateExecutionMetadata(AutomatedExecutionExtender extender){
+		
+		Execution execution = extender.getExecution();
+		
+		execution.setLastExecutedOn(new Date());
+		execution.setLastExecutedBy(userContextService.getUsername());
+		
+		// forward to the test plan
+		IterationTestPlanItem testPlan = execution.getTestPlan();	
+		testPlanService.updateExecutionMetadata(testPlan);
 	}
 
 	/***

@@ -38,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -231,12 +232,24 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	// FIXME : security
 	@Override
+	@Deprecated
 	public void updateTestCaseLastExecutedByAndOn(IterationTestPlanItem givenTestPlan, Date lastExecutedOn,
 			String lastExecutedBy) {
 		givenTestPlan.setLastExecutedBy(lastExecutedBy);
 		givenTestPlan.setLastExecutedOn(lastExecutedOn);
 		givenTestPlan.setUser(userDao.findUserByLogin(lastExecutedBy));
 
+	}
+	
+	@Override	
+	// FIXME : security. Note that the user should either have the right to execute executions, has role admin, or has role ta_server
+	public void updateExecutionMetadata(IterationTestPlanItem item) {
+		Execution execution = item.getLatestExecution();
+		if (execution != null){
+			item.setLastExecutedBy(execution.getLastExecutedBy());
+			item.setLastExecutedOn(execution.getLastExecutedOn());
+			item.setUser(userDao.findUserByLogin(execution.getLastExecutedBy()));
+		}
 	}
 
 	@Override
