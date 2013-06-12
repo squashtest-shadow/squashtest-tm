@@ -35,6 +35,7 @@ import org.squashtest.tm.exception.CyclicStepCallException;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
+import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
@@ -54,6 +55,9 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
 
+	@Inject
+	private DatasetModificationService datasetModificationService;
+	
 	@Override
 	@PreAuthorize("(hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') "
 			+ "and hasPermission(#calledTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')) "
@@ -80,8 +84,10 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 		parentTestCase.addStep(newStep);
 
+		datasetModificationService.updateDatasetParameters(parentTestCaseId);
 		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 	}
+
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')"

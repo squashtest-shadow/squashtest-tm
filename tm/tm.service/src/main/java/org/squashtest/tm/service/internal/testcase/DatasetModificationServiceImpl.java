@@ -26,13 +26,16 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 
@@ -50,8 +53,10 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 
 	@Inject 
 	private ParameterModificationService parameterModificationService;
-	
-	
+		
+	@Inject
+	private TestCaseDao testCaseDao;
+
 	@Override
 	public void persist(Dataset dataset) {	
 		Dataset sameName = datasetDao.findDatasetByTestCaseAndByName(dataset.getTestCase().getId(), dataset.getName());
@@ -118,11 +123,20 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 		}
 		return datasetParamValue;
 	}
+	
 	private void updateDatasetParameters(Dataset dataset){
 		Long testCaseId = dataset.getTestCase().getId();
 		List<Parameter> parameters = parameterModificationService.getAllforTestCase(testCaseId);
 		for(Parameter parameter : parameters){
 			findOrAddParameter(dataset, parameter);
+		}
+	}
+
+	@Override
+	public void updateDatasetParameters(long testCaseId) {
+		TestCase testCase = this.testCaseDao.findById(testCaseId);
+		for(Dataset dataset : testCase.getDatasets()){
+			this.updateDatasetParameters(dataset);
 		}
 	}
 }

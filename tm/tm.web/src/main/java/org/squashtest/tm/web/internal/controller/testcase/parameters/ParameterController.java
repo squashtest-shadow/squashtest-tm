@@ -57,8 +57,7 @@ public class ParameterController {
 	@RequestMapping(value = PARAMETER_ID_URL + "/used", method = RequestMethod.GET)
 	@ResponseBody
 	public boolean isUsedParameter(@PathVariable long parameterId) {
-		// TODO
-		return false;
+		return parameterModificationService.isUsed(parameterId);
 	}
 
 	/**

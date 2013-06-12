@@ -22,6 +22,7 @@ package org.squashtest.tm.service.testcase;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.TestCase;
 
 @Transactional
 public interface DatasetModificationService {
@@ -58,4 +59,6 @@ public interface DatasetModificationService {
 	 * @param value
 	 */
 	void changeParamValue(long datasetParamValueId, String value);
+
+	void updateDatasetParameters(long testCaseId);
 }

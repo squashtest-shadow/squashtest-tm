@@ -266,6 +266,11 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		return parameter != null;
 	}
 	
+	@Override
+	public boolean isUsed(long parameterId) {
+		Parameter parameter = this.parameterDao.findById(parameterId);
+		return isUsed(parameter.getName(), parameter.getTestCase().getId());
+	}
 	
 	private void updateDatasetsForParameterCreation(Parameter parameter, long testCaseId){
 		
@@ -289,4 +294,6 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	public Parameter getById(long testCaseId) {
 		return parameterDao.findById(testCaseId);
 	}
+
+
 }

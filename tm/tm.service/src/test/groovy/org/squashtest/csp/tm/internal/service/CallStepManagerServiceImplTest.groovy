@@ -31,6 +31,7 @@ import org.squashtest.tm.service.internal.testcase.CallStepManagerServiceImpl;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
+import org.squashtest.tm.service.testcase.DatasetModificationService;
 
 import spock.lang.Specification
 
@@ -43,12 +44,14 @@ class CallStepManagerServiceImplTest extends Specification {
 	ProjectFilterModificationService filterService = Mock();
 	TestCaseImportanceManagerServiceImpl testCaseImportanceManagerServiceImpl = Mock();
 	TestCaseCallTreeFinder callTreeFinder = Mock()
+	DatasetModificationService datasetModificationService = Mock()
 
 	def setup(){
 		service.testCaseDao = testCaseDao;
 		service.testStepDao = testStepDao;
 		service.testCaseImportanceManagerService = testCaseImportanceManagerServiceImpl
 		service.callTreeFinder = callTreeFinder
+		service.datasetModificationService = datasetModificationService
 		
 	}
 

@@ -36,6 +36,8 @@ public interface ParameterFinder {
 	List<Parameter> getAllforTestCase(long testCaseId);
 	
 	Parameter getById(long testCaseId);
+
+	boolean isUsed(long parameterId);
 	
 	boolean isUsed(long parameterId, long testCaseId);
 	
