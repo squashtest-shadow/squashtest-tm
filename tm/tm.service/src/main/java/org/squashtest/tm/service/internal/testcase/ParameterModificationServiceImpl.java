@@ -118,6 +118,14 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		
 		this.parameterDao.remove(parameter);
 	}
+	
+	@Override
+	public void removeAllByTestCaseIds(List<Long> testCaseIds) {
+		//note : hibernate bulk delete don't care of cascade delete so we have to remove the values by ourselves
+		this.parameterDao.removeAllValuesByTestCaseIds(testCaseIds);
+		this.parameterDao.removeAllByTestCaseIds(testCaseIds);
+	}
+	
 
 	@Override
 	public void removeById(long parameterId) {

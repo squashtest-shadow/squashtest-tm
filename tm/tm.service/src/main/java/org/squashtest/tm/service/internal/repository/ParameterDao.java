@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.List;
+
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.testcase.Parameter;
 
 
@@ -30,6 +33,10 @@ public interface ParameterDao extends CustomParameterDao {
 	void persist(Parameter newValue);
 	
 	void remove(Parameter value);
+	
+	void removeAllByTestCaseIds(@QueryParam("testCaseIds") List<Long> removeAllByTestCaseIds);
+	
+	void removeAllValuesByTestCaseIds(@QueryParam("testCaseIds") List<Long> testCaseIds);
 
 	Parameter findById(Long id);
 }

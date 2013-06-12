@@ -55,6 +55,9 @@ public interface ParameterModificationService extends ParameterFinder{
 	 */
 	void remove(Parameter parameter);
 
+	
+	void removeAllByTestCaseIds(List<Long> testCaseIds);
+	
 	/**
 	 * 
 	 * @param stepId

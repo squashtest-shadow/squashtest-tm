@@ -45,6 +45,8 @@ import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler;
+import org.squashtest.tm.service.testcase.DatasetModificationService;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
 @Component("squashtest.tm.service.deletion.TestCaseNodeDeletionHandler")
@@ -62,6 +64,12 @@ public class TestCaseNodeDeletionHandlerImpl extends
 	private TestCaseDeletionDao deletionDao;
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
+	
+	@Inject
+	private DatasetModificationService datasetService;
+	
+	@Inject
+	private ParameterModificationService parameterService;
 	
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
@@ -136,6 +144,9 @@ public class TestCaseNodeDeletionHandlerImpl extends
 			deletionDao.removeAllSteps(stepIds);
 			
 			customValueService.deleteAllCustomFieldValues(BindableEntity.TEST_CASE, ids);
+			
+			datasetService.removeAllByTestCaseIds(ids);
+			parameterService.removeAllByTestCaseIds(ids);
 			
 			deletionDao.removeEntities(ids);
 

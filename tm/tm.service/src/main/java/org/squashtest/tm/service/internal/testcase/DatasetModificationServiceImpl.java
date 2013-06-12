@@ -83,6 +83,13 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	}
 	
 	@Override
+	public void removeAllByTestCaseIds(List<Long> testCaseIds) {
+		//note : hibernate bulk delete don't care of cascade delete so we have to remove the values by ourselves
+		this.datasetDao.removeAllValuesByTestCaseIds(testCaseIds);
+		this.datasetDao.removeAllByTestCaseIds(testCaseIds);
+	}
+	
+	@Override
 	public void changeName(long datasetId, String newName) {
 		
 		Dataset dataset = this.datasetDao.findById(datasetId);
