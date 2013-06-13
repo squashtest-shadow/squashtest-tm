@@ -199,13 +199,12 @@
 				<br />
 				<comp:error-message forField="name" />
 		</jsp:attribute>
-
 	</pop:popup>
 </c:if>
 
 <%---------------------------- Test Case Informations ------------------------------%>
 
-<div id="test-case-toolbar" classes="toolbar-class ui-corner-all">
+<div id="test-case-toolbar" class="toolbar-class ui-corner-all">
 	
 	<div class="toolbar-information-panel">
 		<comp:general-information-panel auditableEntity="${ testCase }"	entityUrl="${ testCaseUrl }" />
@@ -245,7 +244,7 @@
 			<a href="${stepTabUrl}"><f:message key="tabs.label.steps" /></a>
 		</li>
 		<li>
-			<a href="${parametersTabUrl}"><f:message key="label.parameters" /></a>
+			<a href="#tabs-2"><f:message key="label.parameters" /></a>
 		</li>
 		<li>
 			<a href="#tabs-3"><f:message key="label.Attachments" />
@@ -423,15 +422,14 @@
 	</div>
 	
 	<%-- ------------------------- /Description Panel ------------------------- --%>
-
-	<%------------------------------ Attachments bloc ---------------------------------------------%>
-	
+	<%------------------------------ Parameters ---------------------------------------------%>
+	<div id="tabs-2"></div>
+	<%------------------------------ /Parameters ---------------------------------------------%>
+	<%------------------------------ Attachments  ---------------------------------------------%>	
 	<comp:attachment-tab tabId="tabs-3" 
 						 entity="${ testCase }"
 						 editable="${ attachable }" />
-
-
-	<%------------------------------ /Attachments bloc ---------------------------------------------%>
+	<%------------------------------ /Attachments  ---------------------------------------------%>
 
 
 </div>
@@ -584,8 +582,8 @@
 
 		$("div.fragment-tabs").on("tabsshow", function( event, ui ) {
 			if(ui.index == 2){
-				if($("#ui-tabs-2")){
-					$("#ui-tabs-2").load("/squash/test-cases/238/parameters/panel");
+				if($("#tabs-2")){
+					$("#tabs-2").load("${testCaseUrl}/parameters/panel");
 				}
 			}
 			

@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -47,6 +49,17 @@ public final class ParametersDataTableModelHelper extends DataTableModelHelper<P
 		this.messageSource = messageSource;
 		this.locale = locale;
 	}
+	
+	public List<Map<?,?>> buildAllData(List<Parameter> source){
+		List<Map<?,?>> result = new ArrayList<Map<?,?>>(source.size());
+		for (Parameter item : source){
+			incrementIndex();
+			Map<?,?> itemData = (Map<?, ?>) buildItemData(item);
+			result.add(itemData);
+		}
+		return result;
+	}
+	
 
 	@Override
 	public Map<String, Object> buildItemData(Parameter item) {

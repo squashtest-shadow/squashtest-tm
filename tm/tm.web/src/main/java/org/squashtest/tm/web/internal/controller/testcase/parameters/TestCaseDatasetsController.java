@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -56,6 +57,7 @@ import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseParametersController.ParameterNameComparator;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -144,16 +146,44 @@ public class TestCaseDatasetsController {
 		Collections.sort(directAndCalledParameters, new TestCaseParametersController.ParameterNameComparator(SortOrder.ASCENDING));
 		return directAndCalledParameters;
 	}
-
+	
+	/**
+	 * Returns the list of column headers names for parameters in the Datasets table orderd by parameter name.
+	 * 
+	 * 
+	 * @param testCaseId : the concerned test case id
+	 * @param locale : the browser's locale
+	 * @param directAndCalledParameters : the list of parameters directly associated or associated through call steps
+	 * @param messageSource : the message source to internationalize suffix 
+	 * @return
+	 */
 	public static List<String> findDatasetParamHeaders(long testCaseId, final Locale locale,
-			List<Parameter> directAndCalledParameters, MessageSource messageSource) {
+		List<Parameter> directAndCalledParameters, MessageSource messageSource) {
+		Collections.sort(directAndCalledParameters, new ParameterNameComparator(SortOrder.ASCENDING));
 		List<String> result = new ArrayList<String>(directAndCalledParameters.size());
 		for(Parameter param : directAndCalledParameters){
 			result.add(ParametersDataTableModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
 		}
 		return result;
 	}
-
+	
+	/**
+	 * Returns the list of column headers names for parameters in the Datasets table mapped with the parameter id.
+	 * @param testCaseId : the concerned test case id
+	 * @param locale : the browser's locale
+	 * @param directAndCalledParameters : the list of parameters directly associated or associated through call steps
+	 * @param messageSource : the message source to internationalize suffix 
+	 * @return
+	 */
+	public static Map<String, String> findDatasetParamHeadersByParamId(long testCaseId, final Locale locale,
+			List<Parameter> directAndCalledParameters, MessageSource messageSource) {
+	
+		Map<String, String> result = new HashMap<String, String>(directAndCalledParameters.size());
+			for(Parameter param : directAndCalledParameters){
+				result.put(param.getId().toString(), ParametersDataTableModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
+			}
+			return result;
+		}
 	private List<Dataset> getSortedDatasets(long testCaseId, final DataTableDrawParameters params) {
 		final TestCase testCase = testCaseFinder.findById(testCaseId);
 		Sorting sorting = new DataTableMapperPagingAndSortingAdapter(params, datasetsTableMapper);
@@ -202,9 +232,9 @@ public class TestCaseDatasetsController {
 	 * @author mpagnon
 	 * 
 	 */
-	private final static class DatasetsDataTableModelHelper extends DataTableModelHelper<Dataset> {
+	public final static class DatasetsDataTableModelHelper extends DataTableModelHelper<Dataset> {
 
-		private DatasetsDataTableModelHelper() {
+		public DatasetsDataTableModelHelper() {
 			super();
 		}
 
@@ -221,6 +251,16 @@ public class TestCaseDatasetsController {
 			return res;
 		}
 
+		public List<Map<?,?>> buildAllData(Collection<Dataset> source){
+			List<Map<?,?>> result = new ArrayList<Map<?,?>>(source.size());
+			for (Dataset item : source){
+				incrementIndex();
+				Map<?,?> itemData = (Map<?, ?>) buildItemData(item);
+				result.add(itemData);
+			}
+			return result;
+		}
+		
 	}
 
 	/**

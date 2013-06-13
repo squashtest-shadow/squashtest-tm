@@ -142,7 +142,8 @@ public class TestCaseParametersController {
 			final Locale locale) {
 
 		List<Parameter> parameters = parameterModificationService.getAllforTestCase(testCaseId);
-		sortParams(params, parameters);
+		Sorting sorting = new DataTableMapperPagingAndSortingAdapter(params, parametersTableMapper);
+		sortParams(sorting, parameters);
 		PagedCollectionHolder<List<Parameter>> holder = new SinglePageCollectionHolder<List<Parameter>>(parameters);
 
 		return new ParametersDataTableModelHelper(testCaseId, messageSource, locale).buildDataModel(holder,
@@ -158,8 +159,7 @@ public class TestCaseParametersController {
 	 * @param parameters
 	 *            : a list of {@link Parameter}
 	 */
-	private void sortParams(final DataTableDrawParameters params, List<Parameter> parameters) {
-		Sorting sorting = new DataTableMapperPagingAndSortingAdapter(params, parametersTableMapper);
+	private void sortParams(Sorting sorting, List<Parameter> parameters) {		
 		String sortedAttribute = sorting.getSortedAttribute();
 		SortOrder sortOrder = sorting.getSortOrder();
 

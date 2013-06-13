@@ -25,9 +25,11 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -49,6 +51,8 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
@@ -58,6 +62,9 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -73,9 +80,13 @@ import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
+import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
+import org.squashtest.tm.web.internal.controller.testcase.parameters.ParametersDataTableModelHelper;
+import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseDatasetsController;
+import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseParametersController.ParameterNameComparator;
 import org.squashtest.tm.web.internal.controller.testcase.steps.TestStepsTableModelBuilder;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
@@ -117,8 +128,20 @@ public class TestCaseModificationController {
 	
 
 	private TestCaseModificationService testCaseModificationService;
-
+	
+	
 	private ExecutionFinder executionFinder;
+	/**
+	* @param executionFinder
+	*            the executionFinder to set
+	*/
+	@ServiceReference
+	public void setExecutionFinder(ExecutionFinder executionFinder) {
+			this.executionFinder = executionFinder;
+	}
+
+	@Inject
+	private ParameterFinder parameterFinder;
 	
 	@Inject
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
@@ -534,7 +557,22 @@ public class TestCaseModificationController {
 		List<Map<?, ?>> stepsData = builder.buildAllData(steps);
 		mav.addObject("stepsData", stepsData);
 		mav.addObject("cufDefinitions", cufDefinitions);
-
+		
+		// ================PARAMETERS
+		List<Parameter> parameters = parameterFinder.getAllforTestCase(testCaseId);
+		Collections.sort(parameters, new ParameterNameComparator(SortOrder.ASCENDING));
+		
+		ParametersDataTableModelHelper paramHelper =  new ParametersDataTableModelHelper(testCaseId, messageSource, locale);
+		List<Map<?, ?>> parameterDatas = paramHelper.buildAllData(parameters);
+		mav.addObject("paramDatas", parameterDatas);
+		
+		// ================DATASETS
+		Map<String, String> paramHeadersByParamId = TestCaseDatasetsController.findDatasetParamHeadersByParamId(testCaseId, locale, parameters, messageSource);
+		List<Object[]> datasetsparamValuesById = getParamValuesById(testCase.getDatasets());
+		mav.addObject("paramIds", IdentifiedUtil.extractIds(parameters));
+		mav.addObject("paramHeadersById", paramHeadersByParamId);
+		mav.addObject("datasetsparamValuesById", datasetsparamValuesById);
+		
 		// =====================CALLING TC
 		List<TestCase> callingTCs = testCaseModificationService.findAllCallingTestCases(testCaseId);
 		mav.addObject("callingTCs", callingTCs);
@@ -546,6 +584,34 @@ public class TestCaseModificationController {
 
 		return mav;
 	}
+
+	/**
+	 * Return a list of dataset's organized infos as an object with : <br>
+	 * object[0] = dataset's name
+	 * object[1] = the dataset's paramValues as a map, mapping the paramValue.parameter.id to the paramValue.value
+	 * 
+	 * @param datasets
+	 * @return a list of Object[] with each object representing a dataset's information
+	 */
+	private List<Object[]> getParamValuesById(Set<Dataset> datasets) {
+		List<Object []> result = new ArrayList<Object[]>(datasets.size());
+				
+		for(Dataset dataset : datasets){
+			Set<DatasetParamValue> datasetParamValues = dataset.getParameterValues();
+			Map<String, String> datasetParamValuesById = new HashMap<String, String>(datasetParamValues.size());
+			
+			for(DatasetParamValue datasetParamValue : datasetParamValues){
+				datasetParamValuesById.put(datasetParamValue.getParameter().getId().toString(), datasetParamValue.getParamValue());
+			}
+			String datasetName = dataset.getName();
+			Object[] datasetView = new Object[2];
+			datasetView[0] = datasetName;
+			datasetView[1] = datasetParamValuesById;
+			result.add(datasetView);
+		}
+		return result;
+	}
+
 
 	/**
 	 * Creates a paging which shows all entries on a single page.

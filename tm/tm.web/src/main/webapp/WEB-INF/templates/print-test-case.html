@@ -44,9 +44,9 @@
   th:attr="data-main=@{/scripts/print.js}" src="../../scripts/require.js"
   th:src="@{/scripts/require-min.js}"></script>
 </head>
-<body>
+<body >
 	<!--=============================================TITLE================================================== -->
-	<div id="test-case-name-div" class="header">
+	<div id="test-case-name-div" class="header green">
 
 		<div style="float: left; height: 100%;">
 			<h2
@@ -69,11 +69,10 @@
 	</div>
 
 
-	<div class="body">
+	<div class="body green">
 
 
 		<!-- ===========================================DESCRIPTION ===================================================-->
-
 
 		<div id="description-tab" class="tab">
 			<h3 th:text="#{label.Description}">Description</h3>
@@ -230,7 +229,57 @@
 				</tbody>
 			</table>
 		</div>
-
+		<!-- ===========================================PARAMETERS ===================================================-->
+		<div id="parameters-tab" class="tab">
+			<h3 th:text="#{label.parameters}">Parameters</h3>
+			
+			<table id="parameters-table">
+					<thead>
+						<tr>
+							
+							<th class="small">#</th>
+							<th th:text="#{label.Name}">Name</th>
+							<th th:text="#{label.Description}">Description</th>
+							<th th:text="#{test-case.name.label}">Cas de Test</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="paramData , iterStat : ${paramDatas}" th:object="${paramData}">
+							<td th:text="${iterStat.count}">1</td>
+							<td th:text="*{[name]}">param_1</td>
+							<td th:text="*{[description]}">description</td>
+							<td th:text="*{['test-case-name']}">test case 1 (project 1)</td>
+						</tr>
+					</tbody>
+			</table>
+		
+		</div>
+			<!-- ===========================================PARAMETERS ===================================================-->
+		
+		<div id="datasets-tab" class="tab">
+			<h3 th:text="#{label.datasets}">Datasets</h3>
+			
+			<table id="datasets-table">
+					<thead>
+						<tr>							
+							<th class="small">#</th>
+							<th th:text="#{label.Name}">Name</th>
+							<th th:each="paramId : ${paramIds}"
+								th:text="${paramHeadersById['__${paramId}__']}">param1</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="dataset , iterStat : ${datasetsparamValuesById}" >
+							<td th:text="${iterStat.count}">1</td>
+							<td th:text="${dataset[0]}">dataset</td>
+							<td th:each="paramId : ${paramIds}"
+								th:text="${dataset[1]['__${paramId}__']}">param1</td>
+						</tr>
+					</tbody>
+			</table>
+		
+		</div>
+		
 		<!-- ===========================================REQUIREMENTS ===================================================-->
 
 		<div id="verified-requirement-tab" class="tab">
