@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.TestCase;
 
 @Transactional
 public interface DatasetModificationService {

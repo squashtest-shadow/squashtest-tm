@@ -247,7 +247,7 @@
 						<tr th:each="paramData , iterStat : ${paramDatas}" th:object="${paramData}">
 							<td th:text="${iterStat.count}">1</td>
 							<td th:text="*{[name]}">param_1</td>
-							<td th:text="*{[description]}">description</td>
+							<td th:utext="*{[description]}">description</td>
 							<td th:text="*{['test-case-name']}">test case 1 (project 1)</td>
 						</tr>
 					</tbody>

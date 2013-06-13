@@ -48,6 +48,7 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
@@ -218,11 +219,14 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	@Override
 	public void visit(TestCase source) {
 		TestCase copyTestCase = source.createCopy();
+		Map<Parameter, Parameter> copyByOriginalParam = copyTestCase.addCopiesOfParameters(source);
 		persistTestCase(copyTestCase);
-		copyCustomFields(source, copyTestCase);
+		copyTestCase.addCopiesOfDatasets(source, copyByOriginalParam);
+		copyCustomFields(source, copyTestCase);		
 		copyRequirementVersionCoverage(source, copyTestCase);
 	}
 	
+
 	@Override
 	public void visit(CampaignFolder campaignFolder) {
 		visit(campaignFolder, campaignFolderDao);

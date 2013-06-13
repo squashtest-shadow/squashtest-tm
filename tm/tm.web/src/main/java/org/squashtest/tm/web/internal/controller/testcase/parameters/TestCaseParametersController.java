@@ -242,11 +242,9 @@ public class TestCaseParametersController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public void newParameter(@PathVariable long testCaseId, @Valid @ModelAttribute("add-parameter") Parameter parameter) {
-		TestCase testCase = testCaseFinder.findById(testCaseId);
-		parameter.setTestCase(testCase);
-		testCase.addParameter(parameter);
+		
 		try{
-		parameterModificationService.persist(parameter);
+		parameterModificationService.persist(parameter, testCaseId);
 		}catch (DomainException e) {
 			e.setObjectName("add-parameter");
 			throw e;

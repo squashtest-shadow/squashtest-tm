@@ -23,7 +23,6 @@ package org.squashtest.tm.service.testcase;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.testcase.Parameter;
 
 @Transactional
@@ -32,8 +31,9 @@ public interface ParameterModificationService extends ParameterFinder{
 	/**
 	 * 
 	 * @param parameter
+	 * @param testCaseId
 	 */
-	void persist(Parameter parameter);
+	void persist(Parameter parameter, long testCaseId);
 	
 	/**
 	 * 

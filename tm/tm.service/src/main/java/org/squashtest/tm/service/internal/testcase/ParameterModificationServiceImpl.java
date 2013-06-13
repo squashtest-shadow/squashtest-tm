@@ -41,6 +41,7 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 
@@ -52,6 +53,9 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 
 	@Inject
 	private TestStepDao testStepDao;
+	
+	@Inject
+	private TestCaseDao testCaseDao;
 
 	@Inject
 	private DatasetDao datasetDao;
@@ -71,29 +75,31 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	}
 
 	@Override
-	public void persist(Parameter parameter) {
-
-		Parameter sameName = this.parameterDao.findParameterByNameAndTestCase(parameter.getName(), parameter
-				.getTestCase().getId());
+	public void persist(Parameter parameter, long testCaseId) {
+		
+		Parameter sameName = this.parameterDao.findParameterByNameAndTestCase(parameter.getName(), testCaseId);
 		if (sameName != null) {
 			throw new DuplicateNameException(sameName.getName(), parameter.getName());
 		} else {
-			this.parameterDao.persist(parameter);
+			TestCase testCase = testCaseDao.findById(testCaseId);
+			parameter.setTestCase(testCase);
+			testCase.addParameter(parameter);
 			updateDatasetsForParameterCreation(parameter, parameter.getTestCase().getId());
 		}
 	}
 
 	@Override
 	public void changeName(long parameterId, String newName) {
-
 		Parameter parameter = this.parameterDao.findById(parameterId);
-		Parameter sameName = this.parameterDao.findParameterByNameAndTestCase(newName, parameter.getTestCase().getId());
 		String oldName = parameter.getName();
-		if (sameName != null && sameName.getId() != parameter.getId()) {
-			throw new DuplicateNameException(oldName, newName);
-		} else {
-			parameter.setName(newName);
-			updateParamNameInSteps(parameter, oldName, newName);
+		if(!oldName.equals(newName)){
+			Parameter sameName = this.parameterDao.findParameterByNameAndTestCase(newName, parameter.getTestCase().getId());
+			if (sameName != null) {
+				throw new DuplicateNameException(oldName, newName);
+			} else {
+				parameter.setName(newName);
+				updateParamNameInSteps(parameter, oldName, newName);
+			}
 		}
 	}
 

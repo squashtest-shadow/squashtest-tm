@@ -154,6 +154,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		nextLayer = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void processFirstLayer(CONTAINER container, List<Long> list) {
 		for (Long id : list) {
 			NODE srcNode = nodeDao.findById(id);

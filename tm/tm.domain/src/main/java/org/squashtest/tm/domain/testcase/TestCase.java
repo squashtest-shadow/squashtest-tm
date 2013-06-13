@@ -25,8 +25,10 @@ import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -97,12 +99,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>(0);
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="testCase")
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
 	private Set<Parameter> parameters = new HashSet<Parameter>(0);
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="testCase")
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
 	private Set<Dataset> datasets = new HashSet<Dataset>(0);
 
@@ -257,7 +259,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		copy.setSimplePropertiesUsing(this);
 		copy.addCopiesOfSteps(this);
 		copy.addCopiesOfAttachments(this);
-
 		copy.notifyAssociatedWithProject(this.getProject());
 		if (this.automatedTest != null) {
 			try {
@@ -269,6 +270,44 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 			}
 		}
 		return copy;
+	}
+
+	public Map<Parameter, Parameter> addCopiesOfParameters(TestCase source) {
+		// create copy of parameters and remember the association original/copy
+		Map<Parameter, Parameter> copyByOriginalParam = new HashMap<Parameter, Parameter>(source.getParameters().size());
+		for (Parameter parameter : source.getParameters()) {
+			Parameter paramCopy = new Parameter(parameter.getName(), this);
+			copyByOriginalParam.put(parameter, paramCopy);
+		}
+		
+		return copyByOriginalParam;
+	}
+
+	public void addCopiesOfDatasets(TestCase source, Map<Parameter, Parameter> copyByOriginalParam) {
+		for (Dataset dataset : source.getDatasets()) {
+			Dataset datasetCopy = new Dataset(dataset.getName(), this);
+			//create copy of datasetParamValues and link the copies to the rightful parameters 
+			for (DatasetParamValue datasetParamValue : dataset.getParameterValues()) {
+				Parameter datasetParamValueCopyParam = getParameterToLinkedTheCopiedDatasetParamValueTo(source, copyByOriginalParam, datasetParamValue);
+				String datasetParamValueCopyParamValue = datasetParamValue.getParamValue();
+				new DatasetParamValue(datasetParamValueCopyParam, datasetCopy, datasetParamValueCopyParamValue);
+			}
+		}
+	}
+
+	private Parameter getParameterToLinkedTheCopiedDatasetParamValueTo(TestCase source, Map<Parameter, Parameter> copyByOriginalParam,
+			DatasetParamValue datasetParamValue) {
+		Parameter datasetParamValueCopyParam;
+		if (datasetParamValue.getParameter().getTestCase().getId().equals(source.getId())) {
+			// if the parameter associated to the datasetParamValue is from this test case we need to link the
+			// copied paramValue to the copy of the parameter
+			datasetParamValueCopyParam = copyByOriginalParam.get(datasetParamValue.getParameter());
+		} else {
+			// if the parameter associated to the datasetParamValue belongs to a called test-case we link the
+			// copied paramValue to the same parameter it's source is.
+			datasetParamValueCopyParam = datasetParamValue.getParameter();
+		}
+		return datasetParamValueCopyParam;
 	}
 
 	private void addCopiesOfAttachments(TestCase source) {
@@ -600,7 +639,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	public void addParameter(@NotNull Parameter parameter) {
 		this.parameters.add(parameter);
-		
+
 	}
 
 	public Set<Dataset> getDatasets() {
@@ -612,8 +651,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	public Parameter findParameterByName(String name) {
-		for(Parameter parameter : this.parameters){
-			if(parameter.getName().equals(name)){
+		for (Parameter parameter : this.parameters) {
+			if (parameter.getName().equals(name)) {
 				return parameter;
 			}
 		}
