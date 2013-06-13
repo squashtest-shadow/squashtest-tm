@@ -38,7 +38,8 @@ public class NewDataset extends Dataset {
 	}
 
 	public Dataset createTransientEntity(TestCase testCase, ParameterFinder parameterFinder) {
-		Dataset dataset =  new Dataset(getName(), testCase);
+		Dataset dataset =  new Dataset();
+		dataset.setName(getName());
 		for(Object[] paramValue : paramValues) {
 			Parameter parameter = parameterFinder.getById((Integer) paramValue[0]);
 			new DatasetParamValue(parameter, dataset, (String) paramValue[1]);

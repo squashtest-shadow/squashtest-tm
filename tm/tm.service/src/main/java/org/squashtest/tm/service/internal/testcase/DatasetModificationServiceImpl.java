@@ -26,7 +26,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -58,13 +57,15 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	private TestCaseDao testCaseDao;
 
 	@Override
-	public void persist(Dataset dataset) {	
-		Dataset sameName = datasetDao.findDatasetByTestCaseAndByName(dataset.getTestCase().getId(), dataset.getName());
-		if(sameName != null){
+	public void persist(Dataset dataset, long testCaseId) {	
+		Dataset sameName = datasetDao.findDatasetByTestCaseAndByName(testCaseId, dataset.getName());
+		if(sameName != null ){
 			throw new DuplicateNameException(dataset.getName(), dataset.getName());
 		} else {
+			TestCase testCase = testCaseDao.findById(testCaseId);
+			dataset.setTestCase(testCase);
+			testCase.addDataset(dataset);
 			updateDatasetParameters(dataset);
-			datasetDao.persist(dataset);
 		}
 	}
 	

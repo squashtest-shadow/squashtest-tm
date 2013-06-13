@@ -277,7 +277,7 @@ public class TestCaseDatasetsController {
 	public void newDataset(@PathVariable long testCaseId, @Valid @RequestBody NewDataset dataset) {
 		TestCase testCase = testCaseFinder.findById(testCaseId);
 		try{
-			datasetModificationService.persist(dataset.createTransientEntity(testCase, parameterFinder));
+			datasetModificationService.persist(dataset.createTransientEntity(testCase, parameterFinder), testCaseId);
 			}catch (DomainException e) {
 				e.setObjectName("add-dataset");
 				throw e;

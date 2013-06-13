@@ -46,16 +46,16 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	ParameterModificationService service;
-	
+
 	@Inject
 	DatasetModificationService datasetService;
-	
+
 	@Inject
 	ParameterFinder finder;
-	
+
 	@Inject
 	TestCaseDao testCaseDao;
-	
+
 	@Inject
 	ParameterDao parameterDao;
 
@@ -63,92 +63,89 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 	def "should return the parameter list for a given test case"(){
 
 		when :
-			List<Parameter> params = service.getAllforTestCase(100L);
-		then : 
-			params.size() == 1;
+		List<Parameter> params = service.getAllforTestCase(100L);
+		then :
+		params.size() == 1;
 	}
-	
+
 	@DataSet("ParameterModificationServiceIT.xml")
 	def "should return the parameter list for a given test case with call step"(){
-		
-		
+
+
 		when :
-			List<Parameter> params = service.getAllforTestCase(101L);
+		List<Parameter> params = service.getAllforTestCase(101L);
 		then :
-			params.size() == 3;
+		params.size() == 3;
 	}
-	
+
 	@DataSet("ParameterModificationServiceIT.xml")
 	def "should change parameter name"(){
-		
+
 		when :
-			service.changeName(10100L, "newName");
+		service.changeName(10100L, "newName");
 		then :
-			parameterDao.findById(10100L).name == "newName";
+		parameterDao.findById(10100L).name == "newName";
 	}
-	
+
 	@DataSet("ParameterModificationServiceIT.xml")
 	def "should change parameter description"(){
-		
+
 		when :
-			service.changeDescription(10100L, "newDescription");
+		service.changeDescription(10100L, "newDescription");
 		then :
-			parameterDao.findById(10100L).description == "newDescription";
+		parameterDao.findById(10100L).description == "newDescription";
 	}
-	
+
 	@DataSet("ParameterModificationServiceIT.xml")
 	def "should remove parameter"(){
-		
+
 		when :
-		 	TestCase testCase = testCaseDao.findById(100L);
-			Parameter param = parameterDao.findById(10100L);
-			parameterDao.remove(param);
+		TestCase testCase = testCaseDao.findById(100L);
+		Parameter param = parameterDao.findById(10100L);
+		parameterDao.remove(param);
 		then :
-			session.flush();
-			testCase.getParameters().size() == 0;
+		session.flush();
+		testCase.getParameters().size() == 0;
 	}
-	
+
 	@DataSet("ParameterModificationServiceIT.xml")
 	def "should find parameter in step"(){
-		
+
 		when :
-			List<Parameter> params = service.checkForParamsInStep(101L);
+		List<Parameter> params = service.checkForParamsInStep(101L);
 		then :
-			params.size() == 1;
-			params.get(0).name == "parameter";
+		params.size() == 1;
+		params.get(0).name == "parameter";
 	}
-	
+
 	@DataSet("ParameterModificationServiceIT.xml")
 	def "should find whether a parameter is used in a test case"(){
 		when :
-			service.checkForParamsInStep(101L);
-			boolean result = service.isUsed("parameter", 100L);
+		service.checkForParamsInStep(101L);
+		boolean result = service.isUsed("parameter", 100L);
 		then :
-			result == true;
+		result == true;
 	}
-	
+
 	@DataSet("ParameterModificationServiceIT.xml")
 	def "should update datasets when a parameter is created"(){
+		given :"a test case with a datataset"
+		Dataset dataset = new Dataset(name:"dataset2")
+		datasetService.persist(dataset, 100L)
+		and : "a new parameter"
+		Parameter parameter = new Parameter()
+		parameter.name = "parameter2"
 		when :
-			Parameter parameter = new Parameter();
-			parameter.name = "parameter2";
-			parameter.testCase = testCaseDao.findById(100L);
-			Dataset dataset = new Dataset();
-			dataset.name = "dataset2";
-			dataset.testCase = testCaseDao.findById(100L);
-			datasetService.persist(dataset);
-			service.persist(parameter);
-			TestCase testcase = testCaseDao.findById(100L);
-			testcase.addDataset(dataset);
-		then : 
-			testcase.getDatasets().size() == 1;
-			for(Dataset data : testcase.getDatasets()){
-				data.parameterValues.size() == 1;
-				for(DatasetParamValue param : data.parameterValues){
-					param.parameter.name == "parameter2"
-					param.paramValue == ""
-				}
+		service.persist(parameter, 100L)
+		then :
+		TestCase testCase = testCaseDao.findById(100L)
+		testCase.getDatasets().size() == 1;
+		for(Dataset data : testCase.getDatasets()){
+			data.parameterValues.size() == 1;
+			for(DatasetParamValue param : data.parameterValues){
+				param.parameter.name == "parameter2"
+				param.paramValue == ""
 			}
-	
+		}
 	}
 }

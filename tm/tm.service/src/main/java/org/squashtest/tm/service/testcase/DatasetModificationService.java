@@ -31,8 +31,9 @@ public interface DatasetModificationService {
 	/**
 	 * 
 	 * @param dataset
+	 * @param testCaseId
 	 */
-	void persist(Dataset dataset);
+	void persist(Dataset dataset, long testCaseId);
 	
 	/**
 	 * 

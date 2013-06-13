@@ -74,8 +74,7 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 		when : 
 			Dataset dataset = new Dataset();
 			dataset.name = "newDataset";
-			dataset.testCase = testCaseDao.findById(100L);
-			datasetService.persist(dataset);
+			datasetService.persist(dataset, 100L);
 			
 		then : 
 			TestCase testcase = testCaseDao.findById(100L);
@@ -132,18 +131,19 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 	
 	@DataSet("DatasetModificationServiceIT.xml")
 	def "should add a param value in all datasets when a param is added to the test case"(){
+		given :"a test case with a dataset" 
+		Dataset dataset = new Dataset();
+		dataset.name = "newDataset";
+		dataset.parameterValues = new HashSet<DatasetParamValue>();
+		datasetService.persist(dataset, 100L);
 		
-		when :
-			Dataset dataset = new Dataset();
-			dataset.name = "newDataset";
-			dataset.testCase = testCaseDao.findById(100L);
-			dataset.parameterValues = new HashSet<DatasetParamValue>();
-			datasetService.persist(dataset);
-			Parameter param = new Parameter();
-			param.name = "paramAjoute"
-			param.description = ""
-			param.testCase = testCaseDao.findById(100L);
-			paramService.persist(param);
+		and :"a new param"
+		Parameter param = new Parameter();
+		param.name = "paramAjoute"
+		param.description = ""
+		
+		when :			
+			paramService.persist(param ,100L );
 			
 		then : 
 			TestCase testcase = testCaseDao.findById(100L);
