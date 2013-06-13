@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.SheetCorruptedException;
 import org.squashtest.tm.service.internal.archive.ArchiveReader;
 import org.squashtest.tm.service.internal.archive.Entry;
+import org.squashtest.tm.service.internal.testcase.ParameterModificationServiceImpl;
 
 /**
  * Must read an archive and make test cases from the files it includes.
@@ -127,7 +128,7 @@ class HierarchyCreator{
 			
 			//create the test case
 			TestCase testCase = parser.parseFile(entry.getStream(), summary);
-			
+			ParameterModificationServiceImpl.createParamsForTestCaseSteps(testCase);
 			//check whether the extension is correct 
 			if (hasValidExtension(entry)) {
 				testCase.setName(stripExtension(entry.getShortName()));

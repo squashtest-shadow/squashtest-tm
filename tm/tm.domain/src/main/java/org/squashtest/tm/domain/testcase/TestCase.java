@@ -97,12 +97,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>(0);
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE }, mappedBy="testCase")
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="testCase")
 	@OrderBy("name")
 	private Set<Parameter> parameters = new HashSet<Parameter>(0);
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE }, mappedBy="testCase")
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="testCase")
 	@OrderBy("name")
 	private Set<Dataset> datasets = new HashSet<Dataset>(0);
 
@@ -609,6 +609,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	public void addDataset(@NotNull Dataset dataset) {
 		this.datasets.add(dataset);
+	}
+
+	public Parameter findParameterByName(String name) {
+		for(Parameter parameter : this.parameters){
+			if(parameter.getName().equals(name)){
+				return parameter;
+			}
+		}
+		return null;
 	}
 
 }

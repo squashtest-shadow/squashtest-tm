@@ -49,7 +49,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 
 	@Inject
 	private ParameterDao parameterDao;
-	
+
 	@Inject
 	private TestStepDao testStepDao;
 
@@ -58,23 +58,24 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 
 	@Inject
 	private DatasetParamValueDao datasetParamValueDao;
-	
+
 	@Inject
 	private TestCaseCallTreeFinder callTreeFinder;
-	
+
 	private static final String PARAM_PATTERN = "(.*?)(\\Q${\\E(.*?)\\Q}\\E)(.*?)";
-	
+
 	@Override
 	public List<Parameter> getAllforTestCase(long testCaseId) {
 		List<Long> testCaseIds = this.getCallStepTree(testCaseId);
 		return parameterDao.findAllByTestCases(testCaseIds);
 	}
-	
+
 	@Override
 	public void persist(Parameter parameter) {
 
-		Parameter sameName = this.parameterDao.findParameterByNameAndTestCase(parameter.getName(), parameter.getTestCase().getId());
-		if(sameName != null){
+		Parameter sameName = this.parameterDao.findParameterByNameAndTestCase(parameter.getName(), parameter
+				.getTestCase().getId());
+		if (sameName != null) {
 			throw new DuplicateNameException(sameName.getName(), parameter.getName());
 		} else {
 			this.parameterDao.persist(parameter);
@@ -88,7 +89,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		Parameter parameter = this.parameterDao.findById(parameterId);
 		Parameter sameName = this.parameterDao.findParameterByNameAndTestCase(newName, parameter.getTestCase().getId());
 		String oldName = parameter.getName();
-		if(sameName != null && sameName.getId() != parameter.getId()){
+		if (sameName != null && sameName.getId() != parameter.getId()) {
 			throw new DuplicateNameException(oldName, newName);
 		} else {
 			parameter.setName(newName);
@@ -96,16 +97,16 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		}
 	}
 
-	private void updateParamNameInSteps(Parameter parameter, String oldName, String newName){
-		
-		for(TestStep step : parameter.getTestCase().getSteps()){
+	private void updateParamNameInSteps(Parameter parameter, String oldName, String newName) {
+
+		for (TestStep step : parameter.getTestCase().getSteps()) {
 			TestStepContentUpdater updater = new TestStepContentUpdater(oldName, newName, PARAM_PATTERN);
-			if(step != null){
+			if (step != null) {
 				step.accept(updater);
 			}
 		}
 	}
-	
+
 	@Override
 	public void changeDescription(long parameterId, String newDescription) {
 
@@ -115,7 +116,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 
 	@Override
 	public void remove(Parameter parameter) {
-		
+
 		this.parameterDao.remove(parameter);
 	}
 	
@@ -129,104 +130,107 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 
 	@Override
 	public void removeById(long parameterId) {
-		
+
 		Parameter parameter = this.parameterDao.findById(parameterId);
 		this.parameterDao.remove(parameter);
 	}
-	
+
 	@Override
 	public List<Parameter> checkForParamsInStep(long stepId) {
-		List<Parameter> parameters = new ArrayList<Parameter>();
 		TestStep step = testStepDao.findById(stepId);
+		return createParamsForStep(step);
+	}
+
+	/**
+	 * Will go through step's content if action step, see if the parameter pattern is found, and, if so, will create all
+	 * corresponding parameters in the test case. Will not create homonymes parameters in the test case.
+	 * 
+	 * @param step
+	 * @return
+	 */
+	private static List<Parameter> createParamsForStep(TestStep step) {
+		List<Parameter> parameters = new ArrayList<Parameter>();
 		TestStepContentReader reader = new TestStepContentReader();
 		String content = step.accept(reader);
-		for(String name : this.parseStepContent(content)){
-			parameters.add(findOrCreateParameter(name, step.getTestCase()));
+		for (String name : parseStepContent(content)) {
+			if(name.matches(Parameter.CODE_REGEXP)){
+				parameters.add(findOrCreateParameter(name, step.getTestCase()));
+			}
 		}
 		return parameters;
 	}
-	
-	private List<Long> getCallStepTree(Long testCaseId){
+
+	private List<Long> getCallStepTree(Long testCaseId) {
 		List<Long> testCaseIds = new ArrayList<Long>();
-		
-		for(Long id : this.callTreeFinder.getTestCaseCallTree(testCaseId)){
+
+		for (Long id : this.callTreeFinder.getTestCaseCallTree(testCaseId)) {
 			testCaseIds.add(id);
 		}
 		testCaseIds.add(testCaseId);
-		return testCaseIds;	
+		return testCaseIds;
 	}
-	
-	private List<Long> getCallers(Long testCaseId){
+
+	private List<Long> getCallers(Long testCaseId) {
 		List<Long> testCaseIds = new ArrayList<Long>();
-		
-		for(Long id : this.callTreeFinder.getTestCaseCallers(testCaseId)){
+
+		for (Long id : this.callTreeFinder.getTestCaseCallers(testCaseId)) {
 			testCaseIds.add(id);
 		}
 		testCaseIds.add(testCaseId);
-		return testCaseIds;	
+		return testCaseIds;
 	}
-	
-	private List<String> parseStepContent(String content){
-		
+
+	private static List<String> parseStepContent(String content) {
+
 		List<String> paramNames = new ArrayList<String>();
 		String paramPattern = PARAM_PATTERN;
-		
-		
-        Pattern pattern = Pattern.compile(paramPattern);
-        Matcher matcher = pattern.matcher(content);
-        
-        while(matcher.find()){ 
-        	paramNames.add(matcher.group(3)); 
-        } 
-        return paramNames;
-	}
-	
-	private Parameter findOrCreateParameter(String name, TestCase testCase){
-		Parameter parameter = this.parameterDao.findParameterByNameAndTestCase(name, testCase.getId());
-		if(parameter == null){
-			parameter = this.createMissingParameter(name, testCase);
+
+		Pattern pattern = Pattern.compile(paramPattern);
+		Matcher matcher = pattern.matcher(content);
+
+		while (matcher.find()) {
+			paramNames.add(matcher.group(3));
 		}
-		return parameter;
+		return paramNames;
 	}
-	
-	private Parameter createMissingParameter(String name, TestCase testCase){
-		Parameter parameter = new Parameter();
-		parameter.setName(name);
-		parameter.setDescription("");
-		parameter.setTestCase(testCase);
-		this.persist(parameter);
+
+	private static Parameter findOrCreateParameter(String name, TestCase testCase) {
+		Parameter parameter = testCase.findParameterByName(name);
+		if (parameter == null) {
+			parameter = new Parameter(name, testCase);
+		}
 		return parameter;
 	}
 
 	private static final class TestStepContentUpdater implements TestStepVisitor {
 
-		private String oldParamName; 
+		private String oldParamName;
 		private String newParamName;
-		private String paramPattern; 
-		
+		private String paramPattern;
+
 		public TestStepContentUpdater(String oldParamName, String newParamName, String paramPattern) {
 			this.oldParamName = oldParamName;
 			this.newParamName = newParamName;
 			this.paramPattern = paramPattern;
 		}
-		
-		private String replace(String content){
-			
+
+		private String replace(String content) {
+
 			String result = content;
-			if(result != null && result.length() > 0){
+			if (result != null && result.length() > 0) {
 				Pattern pattern = Pattern.compile(paramPattern);
 				Matcher matcher = pattern.matcher(result);
-				
-				while(matcher.find()){ 
+
+				while (matcher.find()) {
 					String paramName = matcher.group(3);
-					if(paramName.equals(oldParamName)){
+					if (paramName.equals(oldParamName)) {
 						result = result.replace(oldParamName, newParamName);
 					}
-				} 
+				}
 			}
 			return result;
 		}
-	   
+
 		@Override
 		public void visit(ActionTestStep visited) {
 			visited.setAction(replace(visited.getAction()));
@@ -235,12 +239,11 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 
 		@Override
 		public void visit(CallTestStep visited) {
-		
+
 		}
 	}
-	
-	
-	private final class TestStepContentReader implements TestStepReader {
+
+	private static final class TestStepContentReader implements TestStepReader {
 
 		private TestStepContentReader() {
 
@@ -248,14 +251,14 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 
 		@Override
 		public String visit(ActionTestStep visited) {
-			return visited.getAction()+" "+visited.getExpectedResult();
+			return visited.getAction() + " " + visited.getExpectedResult();
 		}
 
 		@Override
 		public String visit(CallTestStep visited) {
 			StringBuilder builder = new StringBuilder();
-			for(TestStep step : visited.getCalledTestCase().getSteps()){
-				builder.append(" "+step.accept(this)+" ");
+			for (TestStep step : visited.getCalledTestCase().getSteps()) {
+				builder.append(" " + step.accept(this) + " ");
 			}
 			return builder.toString();
 		}
@@ -273,23 +276,23 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		Parameter parameter = this.parameterDao.findParameterByNameAndTestCase(parameterName, testCaseId);
 		return parameter != null;
 	}
-	
+
 	@Override
 	public boolean isUsed(long parameterId) {
 		Parameter parameter = this.parameterDao.findById(parameterId);
 		return isUsed(parameter.getName(), parameter.getTestCase().getId());
 	}
-	
-	private void updateDatasetsForParameterCreation(Parameter parameter, long testCaseId){
-		
-		//get all test cases who call this test case
+
+	private void updateDatasetsForParameterCreation(Parameter parameter, long testCaseId) {
+
+		// get all test cases who call this test case
 		List<Long> testCaseIds = this.getCallers(testCaseId);
-		
-		//get all datasets for local test case or test case who call this test case
+
+		// get all datasets for local test case or test case who call this test case
 		List<Dataset> datasets = datasetDao.findAllDatasetsByTestCases(testCaseIds);
-		
-		//add parameter entry to these datasets
-		for(Dataset dataset : datasets){
+
+		// add parameter entry to these datasets
+		for (Dataset dataset : datasets) {
 			DatasetParamValue datasetParamValue = new DatasetParamValue();
 			datasetParamValue.setParameter(parameter);
 			datasetParamValue.setParamValue("");
@@ -302,6 +305,17 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	public Parameter getById(long testCaseId) {
 		return parameterDao.findById(testCaseId);
 	}
-
+	
+	/**
+	 * 
+	 * @param testCase
+	 */
+	public static void createParamsForTestCaseSteps(TestCase testCase) {
+		for(TestStep step : testCase.getActionSteps()){
+			createParamsForStep(step);
+		}
+		
+		
+	}
 
 }
