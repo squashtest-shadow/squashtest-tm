@@ -1,4 +1,3 @@
-#!/bin/sh
 #
 #     This file is part of the Squashtest platform.
 #     Copyright (C) 2010 - 2013 Henix, henix.fr
@@ -21,4 +20,4 @@
 #
 
 mvn -N versions:update-child-modules
-hg commit -m"Upgraded versions after release"
+hg commit -m"Upgraded versions after release" -u jenkins
