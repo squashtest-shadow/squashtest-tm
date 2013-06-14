@@ -98,10 +98,10 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		and: "it has copies of datasets-param-values"
 		dataset1copy.parameterValues.size() == 2
 		dataset1copy.parameterValues.collect {it.parameter}.containsAll([param1copy, param2copy]);
-		dataset1copy.parameterValues.each {it.paramValue}.equals("value");
+		dataset1copy.parameterValues.collect {it.paramValue}.containsAll(["val", "val"]);
 		dataset2copy.parameterValues.size() == 2
 		dataset2copy.parameterValues.collect {it.parameter}.containsAll([param1copy, param2copy]);
-		dataset2copy.parameterValues.each {it.paramValue}.equals("value");
+		dataset2copy.parameterValues.collect {it.paramValue}.containsAll(["val", "val"]);
 	}
 	
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy tc with datasetParamValues of called step.xml")
@@ -119,7 +119,7 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		and: "it has copies of datset and parameters"
 		Dataset dataset1copy = testCaseCopy.datasets.find{it.name == "dataset_1"}
 		testCaseCopy.parameters.size() == 1
-		Parameter param1copy = testCaseCopy.datasets.find{it.name == "parameter_1"}
+		Parameter param1copy = testCaseCopy.parameters.find{it.name == "parameter_1"}
 		and: "it has copies of datasetParamValues even for called param"			
 		Parameter calledParam = session.get(Parameter.class, 2L);
 		dataset1copy.parameterValues.size() == 2
