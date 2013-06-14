@@ -28,6 +28,8 @@ import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -63,6 +65,66 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		folderCopy.content.size() == 2
 		folderCopy.content.find {it.name == "test-case10"} != null
 		folderCopy.content.find {it.name == "test-case11"} != null		
+	}
+	
+	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste tc with parameters and datasets.xml")
+	def "should copy paste tc with parameters and datasets"(){
+		given:"a test case with parameters and dataset"
+		Long[] sourceIds = [11L]
+		Long destinationId = 2L
+		
+		when:"this test case is copied into another folder"
+		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
+		
+		then:"the test case is copied"
+		nodes.get(0) instanceof TestCase
+		TestCase testCaseCopy = (TestCase) nodes.get(0)
+		and : "it has copies of parameters"
+		testCaseCopy.parameters.size() == 2		
+		Parameter param1copy = testCaseCopy.parameters.find{it.name == "parameter_1"}
+		param1copy!= null
+		param1copy.id != 1L		
+		Parameter param2copy = testCaseCopy.parameters.find{it.name == "parameter_2"}
+		param2copy != null
+		param2copy.id != 2L
+		and: "it has copies of datasets"
+		testCaseCopy.datasets.size() == 2
+		Dataset dataset1copy = testCaseCopy.datasets.find{it.name == "dataset_1"}
+		dataset1copy  != null;
+		dataset1copy.id != 1L
+		Dataset dataset2copy = testCaseCopy.datasets.find{it.name == "dataset_2"}
+		dataset2copy != null
+		dataset2copy.id != 2L
+		and: "it has copies of datasets-param-values"
+		dataset1copy.parameterValues.size() == 2
+		dataset1copy.parameterValues.collect {it.parameter}.containsAll([param1copy, param2copy]);
+		dataset1copy.parameterValues.each {it.paramValue}.equals("value");
+		dataset2copy.parameterValues.size() == 2
+		dataset2copy.parameterValues.collect {it.parameter}.containsAll([param1copy, param2copy]);
+		dataset2copy.parameterValues.each {it.paramValue}.equals("value");
+	}
+	
+	@DataSet("TestCaseLibraryNavigationServiceIT.should copy tc with datasetParamValues of called step.xml")
+	def "should copy tc with datasetParamValues of called step"(){
+		given:"a test case with parameters and dataset"		
+		Long[] sourceIds = [11L]
+		Long destinationId = 2L
+		
+		when:"this test case is copied into another folder"
+		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)	
+			
+		then:"the test case is copied"
+		nodes.get(0) instanceof TestCase
+		TestCase testCaseCopy = (TestCase) nodes.get(0)		
+		and: "it has copies of datset and parameters"
+		Dataset dataset1copy = testCaseCopy.datasets.find{it.name == "dataset_1"}
+		testCaseCopy.parameters.size() == 1
+		Parameter param1copy = testCaseCopy.datasets.find{it.name == "parameter_1"}
+		and: "it has copies of datasetParamValues even for called param"			
+		Parameter calledParam = session.get(Parameter.class, 2L);
+		dataset1copy.parameterValues.size() == 2
+		dataset1copy.parameterValues.collect {it.parameter}.containsAll([param1copy, calledParam]);
+		
 	}
 	
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy to other project.xml")

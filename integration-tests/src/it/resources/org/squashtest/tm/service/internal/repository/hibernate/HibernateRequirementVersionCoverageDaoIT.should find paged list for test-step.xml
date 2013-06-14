@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.5.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.6.0.dtd">
 <!-- 
 ReqCoverage.id | TestCase.id |TestSteps.ids |ReqVersion.id |ReqVersion.ref | ReqVersion.name |ReqVersion.crit |ReqVersion.cat    |ReqVersion.number | Req Project.name 
 1              | 1           | 11           | 1            | zero          | UN              | UNDEFINED      | BUSINESS         | 2                | A
