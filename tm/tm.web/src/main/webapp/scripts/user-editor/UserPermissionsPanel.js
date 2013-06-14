@@ -87,8 +87,8 @@ define(
 													for ( var i = 0; i < json.permissionList.length; i++) {
 														var text = json.permissionList[i].displayName;
 														var value = json.permissionList[i].id;
-														var option = new Option(
-																text, value);
+														var option = new Option(text, value);
+														$(option).html(text); //for ie8
 														option.id = json.permissionList[i].qualifiedName;
 														$("select", cell)
 																.append(option);
