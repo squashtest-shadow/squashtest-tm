@@ -38,7 +38,6 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.exception.execution.ExecutionHasNoRunnableStepException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
-import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;

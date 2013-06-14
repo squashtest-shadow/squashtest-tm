@@ -26,7 +26,6 @@ import java.util.List;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 
 public interface IssueDao extends EntityDao<Issue> {
 
