@@ -219,12 +219,10 @@ define(
 																		for ( var i = 0; i < json.myprojectList.length; i++) {
 																			var text = json.myprojectList[i].name;
 																			var value = json.myprojectList[i].id;
-																			$(
-																					"#project-input")
-																					.append(
-																							new Option(
-																									text,
-																									value));
+																			var option = new Option(text, value);
+																			$(option).html(text); //for ie8
+																			$("#project-input")
+																					.append(option);
 																		}
 																		dialog
 																				.activate('main');
