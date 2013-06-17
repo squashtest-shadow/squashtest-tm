@@ -153,7 +153,7 @@
 	<changeSet id="tm-1.6.0.issue-2203-01" author="flaurens">
 		<comment>remove inactive users from all teams</comment>
 		<sql>
-			delete CORE_TEAM_MEMBER ctm
+			delete from CORE_TEAM_MEMBER ctm
 			where ctm.USER_ID in (select cu.PARTY_ID 
 			                      from CORE_USER cu
 			                      where cu.ACTIVE = 0)
@@ -162,7 +162,7 @@
 	<changeSet id="tm-1.6.0.issue-2203-02" author="flaurens">
 		<comment>remove core rights of inactive users</comment>
 		<sql>
-			delete CORE_GROUP_MEMBER cgm
+			delete from CORE_GROUP_MEMBER cgm
 			where cgm.PARTY_ID in (select cu.PARTY_ID 
 			                      from CORE_USER cu
 			                      where cu.ACTIVE = 0)
@@ -171,7 +171,7 @@
 	<changeSet id="tm-1.6.0.issue-2203-03" author="flaurens">
 		<comment>remove acl rights of inactive users</comment>
 		<sql>
-			delete ACL_RESPONSIBILITY_SCOPE_ENTRY arse
+			delete from ACL_RESPONSIBILITY_SCOPE_ENTRY arse
 			where arse.PARTY_ID in (select cu.PARTY_ID 
 			                        from CORE_USER cu
 			                        where cu.ACTIVE = 0)
