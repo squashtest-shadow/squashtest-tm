@@ -197,6 +197,7 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		Criteria crit = currentSession().createCriteria(Team.class, "Team")
 										.add(Restrictions.eq("Team.id", teamId))
 										.createCriteria("Team.members", "User")
+										.add(Restrictions.eq("User.active", true))
 										.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 		
 		/* add ordering */

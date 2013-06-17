@@ -222,10 +222,12 @@
 		@NamedQuery(name = "user.findAllActiveUsers", query = "from User fetch all properties where active = true order by login"),
 		@NamedQuery(name = "user.findUsersByLoginList", query = "from User fetch all properties where login in (:userIds)"),
 		@NamedQuery(name = "user.findUserByLogin", query = "from User fetch all properties where login = :userLogin"),
-		@NamedQuery(name = "user.findAllNonTeamMembers", query = "select u from User u, Team t where u not member of t.members and t.id = :teamId "),
+		@NamedQuery(name = "user.findAllNonTeamMembers", query = "select u from User u, Team t where u not member of t.members and u.active = true and t.id = :teamId "),
 		@NamedQuery(name = "user.countAllTeamMembers",   query = "select members.size from Team where id = :teamId"),
 		
-
+		//Party
+		@NamedQuery(name = "party.findAllActiveByIds", query = "select party from Party party where party.id in (select user.id from User user where user.active = true) or party.id in (select team.id from Team team)"),
+		
 		//RequirementAuditEvent
 		//XXX RequirementVersion
 		@NamedQuery(name = "RequirementAuditEvent.findAllByRequirementVersionIdOrderedByDate", query = "select rae from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ? order by rae.date desc"),

@@ -148,6 +148,8 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		return newResult;
 	}
 	
+	
+	
 	@Override
 	public PagedCollectionHolder<List<ProjectPermission>> findProjectPermissionByParty(long partyId, PagingAndSorting sorting, Filtering filtering){
 		
@@ -210,6 +212,11 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
 		aclService.removeAllResponsibilities(partyId, clibraryRef);
 	}
+	
+	@Override 
+	public void removeProjectPermissionForAllProjects(long partyId){
+		 aclService.removeAllResponsibilitiesForParty(partyId);
+	}
 
 	@Override
 	public List<PartyProjectPermissionsBean> findPartyPermissionsBeanByProject(long projectId) {
@@ -236,7 +243,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		if (idList == null || idList.isEmpty()) {
 			return null;
 		}
-		return partyDao.findAllByIds(idList);
+		return partyDao.findAllActiveByIds(idList);
 	}
 	
 	/**
@@ -357,6 +364,4 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		
 		return isInGroup;
 	}
-
-	
 }

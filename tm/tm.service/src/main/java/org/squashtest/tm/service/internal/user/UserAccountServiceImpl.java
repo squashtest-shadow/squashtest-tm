@@ -32,8 +32,10 @@ import org.squashtest.tm.domain.UnauthorizedPasswordChange;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.WrongPasswordException;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.UserAuthenticationService;
 import org.squashtest.tm.service.security.UserContextService;
+import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
 @Service("squashtest.tm.service.UserAccountService")
@@ -50,6 +52,12 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Inject
 	private UserAuthenticationService authService;
 
+	@Inject 
+	private TeamModificationService teamModificationService;
+	
+	@Inject 
+	private ProjectsPermissionManagementService projectsPermissionManagementService;
+	
 	@Override
 	public void modifyUserFirstName(long userId, String newName) {
 		// fetch
@@ -105,6 +113,8 @@ public class UserAccountServiceImpl implements UserAccountService {
 		// check
 		checkPermissions(user);
 		// proceed
+		teamModificationService.removeMemberFromAllTeams(userId);
+		projectsPermissionManagementService.removeProjectPermissionForAllProjects(userId);
 		user.setActive(false);
 	}
 
@@ -114,6 +124,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 		User user = userDao.findById(userId);
 		// check
 		checkPermissions(user);
+
 		// proceed
 		user.setActive(true);
 	}

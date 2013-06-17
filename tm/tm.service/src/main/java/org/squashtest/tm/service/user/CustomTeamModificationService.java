@@ -80,8 +80,7 @@ public interface CustomTeamModificationService extends CustomTeamFinderService{
 	void removeMember(long teamId, long memberId);
 	
 	void removeMembers(long teamId, List<Long> memberIds);
-	
-	
-	
-	
+
+	void removeMemberFromAllTeams(long memberId);
+
 }

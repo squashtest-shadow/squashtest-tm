@@ -20,8 +20,10 @@
  */
 package org.squashtest.tm.service.internal.user;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -130,4 +132,14 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		return new PagingBackedPagedCollectionHolder<List<User>>(sorting, allMates, teamMates);
 	}
 
+	@Override
+	public void removeMemberFromAllTeams(long memberId){
+		User user = userDao.findById(memberId);
+		List<Long> teamIds = new ArrayList<Long>();
+		Set<Team> teams = user.getTeams();
+		for(Team team : teams){
+			teamIds.add(team.getId());
+		}
+		user.removeTeams(teamIds);
+	}
 }

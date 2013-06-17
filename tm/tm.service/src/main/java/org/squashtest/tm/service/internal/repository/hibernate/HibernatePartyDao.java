@@ -18,16 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.users.Party;
-import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.internal.repository.PartyDao;
 
+@Repository
+public class HibernatePartyDao extends HibernateEntityDao<Party> implements PartyDao{
 
-public interface PartyDao extends EntityDao<Party> {
+	@Override
+	public List<Party> findAllActiveByIds(List<Long> idList) {
+		return executeListNamedQuery("party.findAllActiveByIds");
+	}
 
-	List<Party> findAllActiveByIds(List<Long> idList);
 }

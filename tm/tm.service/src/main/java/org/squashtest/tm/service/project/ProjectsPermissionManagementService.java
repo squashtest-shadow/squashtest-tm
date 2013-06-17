@@ -64,4 +64,6 @@ public interface ProjectsPermissionManagementService extends ProjectsPermissionF
 	 */
 	void removeAllPermissionsFromObject(Class<?> clazz, long id);
 
+	void removeProjectPermissionForAllProjects(long partyId);
+
 }
