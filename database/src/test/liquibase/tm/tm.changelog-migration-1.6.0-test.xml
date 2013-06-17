@@ -82,4 +82,28 @@
 		</preConditions>
 		<comment>check link between test plan item and dataset</comment>
 	</changeSet>
+	<changeSet id="tm-1.6.0.issue-2203-test-01" author="flaurens">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+			select count(*) from CORE_TEAM_MEMBER
+			</sqlCheck>
+		</preConditions>
+		<comment>check removal of inactive users from teams</comment>
+	</changeSet>
+	<changeSet id="tm-1.6.0.issue-2203-test-02" author="flaurens">
+		<preConditions>
+			<sqlCheck expectedResult="1">
+			select count(*) from CORE_GROUP_MEMBER
+			</sqlCheck>
+		</preConditions>
+		<comment>check removal of core rights for inactive users</comment>
+	</changeSet>
+		<changeSet id="tm-1.6.0.issue-2203-test-03" author="flaurens">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+			select count(*) from ACL_RESPONSIBILITY_SCOPE_ENTRY
+			</sqlCheck>
+		</preConditions>
+		<comment>check removal of acl rights for inactive users</comment>
+	</changeSet>
 </databaseChangeLog>
