@@ -456,7 +456,7 @@
 
 	function addHLinkToCallingTestCasesName(row, data) {
 		var url= '${ pageContext.servletContext.contextPath }/test-cases/' + data[0] + '/info';			
-		addHLinkToCellText($( 'td:eq(2)', row ), url);
+		addHLinkToCellText($( 'td:eq(3)', row ), url);
 	}	
 	
 	function callingTestCasesTableRowCallback(row, data, displayIndex) {
