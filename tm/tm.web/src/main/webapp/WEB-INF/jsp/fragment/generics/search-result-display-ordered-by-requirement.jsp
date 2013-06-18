@@ -47,7 +47,6 @@
 	<tbody>
 		<c:forEach var="object" items="${resultList}" varStatus="index" >
 			<c:set var="currentProject" value="${object.project.name}"></c:set>
-			
 			<c:if test="${currentProject != oldProject}">
 				<tr> 
 					<td> ${object.id}</td>
@@ -61,7 +60,7 @@
 						
 					</td>
 					<td>
-						
+						${object.project.name}
 					</td>
 				</tr>
 				<c:set var="oldProject" value="${currentProject}"></c:set>
@@ -83,7 +82,7 @@
 									${object.project.name }-${object.criticality}
 								</td>
 								<td>
-									${object.project.name }-${object.project.name }
+									${object.project.name }-${object.name }
 								</td>
 						</tr>
 					
