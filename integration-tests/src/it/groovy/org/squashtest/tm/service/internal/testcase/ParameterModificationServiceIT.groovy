@@ -32,6 +32,7 @@ import org.squashtest.tm.service.testcase.ParameterFinder
 import org.squashtest.tm.service.testcase.ParameterModificationService
 import org.squashtest.tm.service.internal.repository.ParameterDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.DatasetParamValue
 import org.squashtest.tm.domain.testcase.Parameter
 import org.squashtest.tm.domain.testcase.Dataset
@@ -82,11 +83,24 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 	def "should change parameter name"(){
 
 		when :
-		service.changeName(10100L, "newName");
+		service.changeName(10100L, "newName")
 		then :
-		parameterDao.findById(10100L).name == "newName";
+		parameterDao.findById(10100L).name == "newName"
 	}
 
+	@DataSet("ParameterModificationServiceIT.should change parameter name.xml")
+	def "should change parameter name and update step"(){
+		given : "a test step with one parameter that ocurs once in it's steps"
+		long parameterId = 1L
+		String newParamName = "newName"
+		when : 
+		service.changeName(parameterId,newParamName)
+		then : 
+		ActionTestStep editedStep = session.get(ActionTestStep.class, 1L)
+		String newStep = "do this \${newName}"
+		editedStep.action.equals(newStep)
+	}
+	
 	@DataSet("ParameterModificationServiceIT.xml")
 	def "should change parameter description"(){
 

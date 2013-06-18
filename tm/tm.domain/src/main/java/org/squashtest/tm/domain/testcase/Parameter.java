@@ -32,7 +32,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -46,9 +45,14 @@ import org.squashtest.tm.domain.Identified;
 @Table(uniqueConstraints={@UniqueConstraint(columnNames={"NAME","TEST_CASE_ID"})})
 public class Parameter implements Identified{
 	
-	public static final String CODE_REGEXP = "^[A-Za-z0-9_-]*$";
+	private static final String PARAM_REGEXP = "[A-Za-z0-9_-]+";
+	public static final String NAME_REGEXP = "^"+PARAM_REGEXP+"$";
 	public static final int MIN_CODE_SIZE = 1;
 	public static final int MAX_CODE_SIZE = 255;
+
+	public static final String USAGE_PREFIX = "${";
+	public static final String USAGE_SUFFIX = "}";
+	public static final String USAGE_PATTERN = "\\Q"+USAGE_PREFIX+"\\E("+PARAM_REGEXP+")\\Q"+USAGE_SUFFIX+"\\E";
 	
 	@Id
 	@GeneratedValue
@@ -56,7 +60,7 @@ public class Parameter implements Identified{
 	private Long id;
 	
 	@NotBlank
-	@Pattern(regexp = CODE_REGEXP)
+	@Pattern(regexp = NAME_REGEXP)
 	@Size(min = MIN_CODE_SIZE, max = MAX_CODE_SIZE)
 	private String name;
 	

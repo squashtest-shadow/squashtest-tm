@@ -120,5 +120,16 @@ public class HibernateTestStepDao extends HibernateEntityDao<TestStep> implement
 		return (ActionTestStep) currentSession().get(ActionTestStep.class , testStepId);
 	}
 
+	/**
+	 * @see HibernateTestStepDao#stringIsFoundInStepsOfTestCase(String, long)
+	 */
+	@Override
+	public boolean stringIsFoundInStepsOfTestCase(String stringToFind, long testCaseId) {
+		Query query = currentSession().getNamedQuery("testStep.stringIsFoundInStepsOfTestCase");
+		query.setParameter("testCaseId", testCaseId);
+		query.setParameter("stringToFind", "%"+stringToFind+"%");
+		return (Long) query.uniqueResult() > 0;
+	}
+
 	
 }

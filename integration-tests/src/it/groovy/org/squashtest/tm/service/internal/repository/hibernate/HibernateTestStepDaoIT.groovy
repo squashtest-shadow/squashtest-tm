@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.unitils.dbunit.annotation.DataSet
 
+import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
@@ -44,6 +45,32 @@ class HibernateTestStepDaoIT extends DbunitDaoSpecification {
 		then :
 			st.testCase.id == 10l
 	}
+	
+
+	
+	@DataSet("HibernateTestStepDaoIT.should find string in tc steps.xml")
+	@Unroll("should find string in tc steps for test case nb #testCaseId")
+	def "should find string in tc steps for test case "() {
+		
+		given : "a string to find and different test cases with steps in dataset"
+		String stringToFind = "string to find"
+		
+		when :
+			boolean result = stepDao.stringIsFoundInStepsOfTestCase(stringToFind, testCaseId);
+			
+		then :
+			result == resultForTestCase
+			
+		where : 
+			testCaseId | resultForTestCase
+			10L        | true
+			20L        | true 
+			30L        | false
+			40L        | true
+			50L        | false
+		
+	}
+	
 	
 	@DataSet("HibernateTestCaseDaoIT.should find filtered steps by test case id.xml")
 	def "should find the index of a step"(){

@@ -66,8 +66,6 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	@Inject
 	private TestCaseCallTreeFinder callTreeFinder;
 
-	private static final String PARAM_PATTERN = "(.*?)(\\Q${\\E(.*?)\\Q}\\E)(.*?)";
-
 	@Override
 	public List<Parameter> getAllforTestCase(long testCaseId) {
 		List<Long> testCaseIds = this.getCallStepTree(testCaseId);
@@ -106,7 +104,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	private void updateParamNameInSteps(Parameter parameter, String oldName, String newName) {
 
 		for (TestStep step : parameter.getTestCase().getSteps()) {
-			TestStepContentUpdater updater = new TestStepContentUpdater(oldName, newName, PARAM_PATTERN);
+			TestStepContentUpdater updater = new TestStepContentUpdater(oldName, newName, Parameter.USAGE_PATTERN);
 			if (step != null) {
 				step.accept(updater);
 			}
@@ -159,7 +157,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		TestStepContentReader reader = new TestStepContentReader();
 		String content = step.accept(reader);
 		for (String name : parseStepContent(content)) {
-			if(name.matches(Parameter.CODE_REGEXP)){
+			if(name.matches(Parameter.NAME_REGEXP)){
 				parameters.add(findOrCreateParameter(name, step.getTestCase()));
 			}
 		}
@@ -189,13 +187,13 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	private static List<String> parseStepContent(String content) {
 
 		List<String> paramNames = new ArrayList<String>();
-		String paramPattern = PARAM_PATTERN;
+		String paramPattern = Parameter.USAGE_PATTERN;
 
 		Pattern pattern = Pattern.compile(paramPattern);
 		Matcher matcher = pattern.matcher(content);
 
 		while (matcher.find()) {
-			paramNames.add(matcher.group(3));
+			paramNames.add(matcher.group(1));
 		}
 		return paramNames;
 	}
@@ -228,7 +226,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 				Matcher matcher = pattern.matcher(result);
 
 				while (matcher.find()) {
-					String paramName = matcher.group(3);
+					String paramName = matcher.group(1);
 					if (paramName.equals(oldParamName)) {
 						result = result.replace(oldParamName, newParamName);
 					}
@@ -276,11 +274,15 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		Parameter parameter = this.parameterDao.findById(parameterId);
 		return isUsed(parameter.getName(), testCaseId);
 	}
-
+ 
 	@Override
 	public boolean isUsed(String parameterName, long testCaseId) {
-		Parameter parameter = this.parameterDao.findParameterByNameAndTestCase(parameterName, testCaseId);
-		return parameter != null;
+		return  testStepDao.stringIsFoundInStepsOfTestCase(getParamStringAsUsedInStep(parameterName), testCaseId);
+		
+	}
+	
+	private String getParamStringAsUsedInStep(String paramName){
+		return Parameter.USAGE_PREFIX+paramName+Parameter.USAGE_SUFFIX;
 	}
 
 	@Override
