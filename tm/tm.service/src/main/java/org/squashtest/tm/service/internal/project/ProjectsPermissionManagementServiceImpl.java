@@ -255,23 +255,11 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		copyAssignedUsersFromTemplate(newProject, templateId);
 	}
 
-	private List<UserProjectPermissionsBean> findUserPermissionsBeanByProjectTemplate(long projectId) {
-		return findUserPermissionBeanByProjectOfGivenType(projectId, ProjectTemplate.class);
+	private List<PartyProjectPermissionsBean> findPartyPermissionsBeanByProjectTemplate(long projectId) {
+		return findPartyPermissionBeanByProjectOfGivenType(projectId, ProjectTemplate.class);
 	}
 
 	//clearly suboptimal, on the other hand this method is seldomely invoked
-	private List<UserProjectPermissionsBean> findUserPermissionBeanByProjectOfGivenType(long projectId, Class<?> projectType) {
-		List<UserProjectPermissionsBean> newResult = new ArrayList<UserProjectPermissionsBean>();
-
-		List<Object[]> result = aclService.retrievePartyAndAclGroupNameFromIdentityAndClass(projectId, projectType);
-		for (Object[] objects : result) {
-			User user = userDao.findById((Long) objects[0]);
-			newResult.add(new UserProjectPermissionsBean(user, (PermissionGroup) objects[1]));
-		}
-		return newResult;
-
-	}
-	
 	private List<PartyProjectPermissionsBean> findPartyPermissionBeanByProjectOfGivenType(long projectId, Class<?> projectType) {
 		List<PartyProjectPermissionsBean> newResult = new ArrayList<PartyProjectPermissionsBean>();
 
@@ -314,12 +302,12 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	 */
 	@Override
 	public void copyAssignedUsersFromTemplate(Project project, long templateId) {
-		List<UserProjectPermissionsBean> templateUserPermissions = findUserPermissionsBeanByProjectTemplate(templateId);
+		List<PartyProjectPermissionsBean> templatePartyPermissions = findPartyPermissionsBeanByProjectTemplate(templateId);
 
-		for (UserProjectPermissionsBean userPermission : templateUserPermissions) {
-			long userId = userPermission.getUser().getId();
+		for (PartyProjectPermissionsBean partyPermission : templatePartyPermissions) {
+			long userId = partyPermission.getParty().getId();
 			long projectId = project.getId();
-			String permissionName = userPermission.getPermissionGroup().getQualifiedName();
+			String permissionName = partyPermission.getPermissionGroup().getQualifiedName();
 			addNewPermissionToProject(userId, projectId, permissionName);
 		}
 	}
