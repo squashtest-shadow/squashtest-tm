@@ -32,10 +32,10 @@ import org.squashtest.tm.domain.library.ExportData;
  *
  */
 public class ExportTestCaseData extends ExportData implements TestStepVisitor{
-	private String prerequisite;
+	private String prerequisite = "";
 	private TestCaseImportance weight;
-	private String reference;
-	private TestCaseNature nature;
+	private String reference = "";
+	private TestCaseNature nature ;
 	private TestCaseType type;
 	private TestCaseStatus status;
 	private String firstAction = "";
@@ -51,7 +51,12 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	}
 
 	public void setPrerequisite(String prerequisite) {
-		this.prerequisite = prerequisite;
+		doSetPrerequisite(prerequisite);
+	}
+	private void doSetPrerequisite(String prerequisite){
+		if(prerequisite != null) {
+			this.prerequisite = prerequisite;
+		}
 	}
 
 	public TestCaseImportance getWeight() {
@@ -69,9 +74,15 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	public String getReference() {
 		return reference;
 	}
-
+	
 	public void setReference(String reference) {
-		this.reference = reference;
+		doSetReference(reference);
+	}
+	
+	private void doSetReference(String reference){
+		if(reference != null){
+			this.reference = reference;
+		}
 	}
 
 	public TestCaseNature getNature() {
@@ -103,17 +114,25 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	}
 
 	public void setFirstAction(String firstAction) {
-		this.firstAction = firstAction;
+		doSetFirstAction(firstAction);
 	}
-
+	public void doSetFirstAction(String firstAction){
+		if(firstAction != null){
+			this.firstAction = firstAction;
+		}
+	}
 	public String getFirstExpectedResult() {
 		return firstExpectedResult;
 	}
 
 	public void setFirstExpectedResult(String firstExpectedResult) {
-		this.firstExpectedResult = firstExpectedResult;
+		doSetFirstExpectedResult(firstExpectedResult);
 	}
-
+	private void doSetFirstExpectedResult(String firstExpectedResult){
+		if(firstExpectedResult != null){
+			this.firstExpectedResult = firstExpectedResult;
+		}
+	}
 	public List<ExportTestStepData> getSteps() {
 		return steps;
 	}
@@ -124,9 +143,9 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 
 	public ExportTestCaseData(TestCase testCase, TestCaseFolder folder) {
 		super(testCase, folder);
-		this.reference = testCase.getReference();
-		this.prerequisite = testCase.getPrerequisite();
-		this.weight = testCase.getImportance();
+		doSetReference(testCase.getReference());
+		doSetPrerequisite(testCase.getPrerequisite());
+		this.weight = testCase.getImportance() ;
 		this.nature = testCase.getNature();
 		this.type = testCase.getType();
 		this.status = testCase.getStatus();
@@ -155,8 +174,8 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	private void formatFirstStepsInfos(List<TestStep> testSteps) {
 		ExportTestStepData firstStep = buildExportTestStepData(testSteps.get(0));
 		firstStep.setTestCase(this);
-		this.firstAction = firstStep.getAction();
-		this.firstExpectedResult = firstStep.getExpectedResult();
+		doSetFirstAction(firstStep.getAction());
+		doSetFirstExpectedResult(firstStep.getExpectedResult());
 	}
 	
 	public ExportTestStepData buildExportTestStepData(TestStep item) {

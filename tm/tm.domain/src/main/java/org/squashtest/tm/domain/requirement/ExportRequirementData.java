@@ -33,7 +33,7 @@ public class ExportRequirementData extends ExportData {
 	private RequirementCategory category;
 	private Integer currentVersion;
 	private RequirementStatus status;
-	private String reference;
+	private String reference = "";
 
 	public ExportRequirementData() {
 		super();
@@ -76,12 +76,18 @@ public class ExportRequirementData extends ExportData {
 	}
 
 	public void setReference(String reference) {
-		this.reference = reference;
+		doSetReference(reference);
+	}
+	
+	private void doSetReference(String reference){
+		if(reference != null){
+			this.reference = reference;
+		}
 	}
 
 	public ExportRequirementData(Requirement requirement, RequirementFolder folder) {
 		super(requirement, folder);
-		this.reference = requirement.getReference();
+		doSetReference(requirement.getReference());
 		this.criticality = requirement.getCriticality();
 		this.category = requirement.getCategory();
 		this.currentVersion = requirement.getCurrentVersion().getVersionNumber();

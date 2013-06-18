@@ -30,7 +30,12 @@ public class ExportTestStepData {
 	}
 
 	public void setAction(String action) {
-		this.action = action;
+		doSetAction(action);
+	}
+	private void doSetAction(String action){
+		if(action != null){
+			this.action = action;
+		}
 	}
 
 	public String getExpectedResult() {
@@ -40,15 +45,16 @@ public class ExportTestStepData {
 	public void setExpectedResult(String expectedResult) {
 		this.expectedResult = expectedResult;
 	}
+	private void doSetExpectedResult(String expectedResult){
+		if(expectedResult != null){
+			this.expectedResult = expectedResult;
+		}
+	}
 
 	public ExportTestStepData(String action, String expectedResult) {
 		super();
-		if (action != null) {
-			this.action = action;
-		}
-		if (expectedResult != null) {
-			this.expectedResult = expectedResult;
-		}
+		doSetAction(action);
+		doSetExpectedResult(expectedResult);
 	}
 
 	public ExportTestCaseData getTestCase() {

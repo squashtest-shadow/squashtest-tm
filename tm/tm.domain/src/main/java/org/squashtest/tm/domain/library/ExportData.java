@@ -70,11 +70,16 @@ public abstract class ExportData {
 	public String getDescription() {
 		return description;
 	}
-
+	
 	public void setDescription(String description) {
-		this.description = description;
+		doSetDescription(description);
 	}
-
+	
+	private void doSetDescription(String description){
+		if(description != null){
+			this.description = description;
+		}
+	}
 	public String getFolderName() {
 		return folderName;
 	}
@@ -111,7 +116,7 @@ public abstract class ExportData {
 	public ExportData(LibraryNode node, Folder folder) {
 		this.id = node.getId();
 		this.name = node.getName();
-		this.description = node.getDescription();
+		doSetDescription(node.getDescription()); 
 		this.project = node.getProject().getName();
 		AuditableMixin audit = ((AuditableMixin) node);	
 		this.createdOn = audit.getCreatedOn();
