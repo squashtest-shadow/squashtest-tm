@@ -188,15 +188,15 @@
 <!-- 	============================END CUSTOM FIELDS===============================  -->
                   <div class="display-table-row control-group" th:if="${testStepView.actionStep}" th:switch="${writable}" >
                     <label for="test-step-action" class="control-label" th:text="#{label.action}">Action</label>
-                   <div th:case="${true}"  class="display-table-cell controls"><textarea class="test-step-attr" name="action" id="test-step-action" th:utext="${testStepView.actionStep.action} ">do this</textarea>
+                   <div th:case="${true}"  class="display-table-cell controls"><textarea class="test-step-attr" name="action" id="test-step-action" sq:unsafe-html="${testStepView.actionStep.action} ">do this</textarea>
                  	  <span  class="help-inline">&nbsp;</span></div>
-                 	<span th:case="${false}" class="display-table-cell" th:utext="${testStepView.actionStep.action}">do this</span>
+                 	<span th:case="${false}" class="display-table-cell" sq:unsafe-html="${testStepView.actionStep.action}">do this</span>
                   </div>
                   <div class="display-table-row control-group" th:if="${testStepView.actionStep}" th:switch="${writable}">
                     <label for="test-step-expectedResult" class="control-label" th:text="#{label.expectedResult}">Expected result</label>
-                   <div th:case="${true}"  class="display-table-cell controls"><textarea class=" test-step-attr" name="expectedResult" id="test-step-expectedResult" th:utext="${testStepView.actionStep.expectedResult}">see that</textarea>
+                   <div th:case="${true}"  class="display-table-cell controls"><textarea class=" test-step-attr" name="expectedResult" id="test-step-expectedResult" sq:unsafe-html="${testStepView.actionStep.expectedResult}">see that</textarea>
                   	 <span  class="help-inline">&nbsp;</span></div>
-                  	<span th:case="${false}" class="display-table-cell" th:utext="${testStepView.actionStep.expectedResult}">do this</span>
+                  	<span th:case="${false}" class="display-table-cell" sq:unsafe-html="${testStepView.actionStep.expectedResult}">do this</span>
                   </div>
                   <div class="display-table-row" th:if="${testStepView.callStep}">
                     <label for="test-step-called-test-case" th:text="#{label.calledTestCase}">Called test case</label>

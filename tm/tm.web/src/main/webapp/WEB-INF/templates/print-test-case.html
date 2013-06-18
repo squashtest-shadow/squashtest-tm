@@ -88,7 +88,7 @@
 					<label for="test-case-description" class="display-table-cell"
 						th:text="#{label.Description}">Description</label>
 					<div class="display-table-cell" id="test-case-description"
-						th:utext="${testCase.description}">lorem ipsum description</div>
+						sq:unsafe-html="${testCase.description}">lorem ipsum description</div>
 				</div>
 
 				<div class="display-table-row">
@@ -212,7 +212,7 @@
 							th:text="*{['step-action']}">Cas de Test : Machin truc
 							chouette</td>
 						<td th:if="*{['step-type'] == 'action'}"
-							th:utext="*{['step-action']}">Lorem ipsum dolor sit amet,
+							sq:unsafe-html="*{['step-action']}">Lorem ipsum dolor sit amet,
 							consectetur adipiscing elit. Nullam felis ante, accumsan quis
 							tincidunt vel, iacu lis in purus. Pellentesque habitant morbi
 							tristique senectus et netus et malesuada fames ac turpis egestas.
@@ -220,7 +220,7 @@
 							ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
 							enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
 							vulputate at id purus. Proin dapibus commodo velit sit amet</td>
-						<td th:utext="*{['step-type'] == 'call'  ?  '' : ['step-result']}">
+						<td sq:unsafe-html="*{['step-type'] == 'call'  ?  '' : ['step-result']}">
 							Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
 							ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
 							enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
@@ -247,7 +247,7 @@
 						<tr th:each="paramData , iterStat : ${paramDatas}" th:object="${paramData}">
 							<td th:text="${iterStat.count}">1</td>
 							<td th:text="*{[name]}">param_1</td>
-							<td th:utext="*{[description]}">description</td>
+							<td sq:unsafe-html="*{[description]}">description</td>
 							<td th:text="*{['test-case-name']}">test case 1 (project 1)</td>
 						</tr>
 					</tbody>
@@ -454,7 +454,7 @@
 						<td th:text="*{issue.priority.name}">high</td>
 						<td th:text="*{issue.status.name}">ouverte</td>
 						<td th:text="*{issue.assignee.name}">charles paul</td>
-						<td th:utext="${issueOwner.ownerDesc}">Iteration 3</td>
+						<td sq:unsafe-html="${issueOwner.ownerDesc}">Iteration 3</td>
 					</tr>
 				</tbody>
 			</table>

@@ -145,7 +145,7 @@
 		<!-- ===========================================DESCRIPTION ===================================================-->
 		<div id="description-tab" class="tab">
 			<h3 th:text="#{label.Description}">Description</h3>
-			<div th:utext="${requirementVersion.description}">consectetur
+			<div sq:unsafe-html="${requirementVersion.description}">consectetur
 				adipiscing elit. Nullam felis ante, accumsan quis tincidunt vel,
 				iacu lis in purus. Pellentesque habitant morbi tristique senectus et
 				netus et malesuada fames ac turpis egestas. Morbi at nisl et est
