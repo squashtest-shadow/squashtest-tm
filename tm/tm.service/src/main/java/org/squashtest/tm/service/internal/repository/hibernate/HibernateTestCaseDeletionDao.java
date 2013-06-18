@@ -119,20 +119,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		if (!testCaseIds.isEmpty()) {
 
 			// first we must reorder the campaign_item_test_plans
-			Query query1 = getSession().createSQLQuery(
-					NativeQueries.testCase_sql_getCallingCampaignItemTestPlanOrderOffset);
-			query1.setParameterList("testCaseIds1", testCaseIds, LongType.INSTANCE);
-			query1.setParameterList("testCaseIds2", testCaseIds, LongType.INSTANCE);
-			List<Object[]> pairIdOffset = query1.list();
-
-			Map<Integer, List<Long>> mapOffsets = buildMapOfOffsetAndIds(pairIdOffset);
-
-			for (Entry<Integer, List<Long>> offsetEntry : mapOffsets.entrySet()) {
-				Query query = getSession().createSQLQuery(NativeQueries.testCase_sql_updateCallingCampaignItemTestPlan);
-				query.setParameter("offset", offsetEntry.getKey(), IntegerType.INSTANCE);
-				query.setParameterList("ctpiIds", offsetEntry.getValue(), LongType.INSTANCE);
-				query.executeUpdate();
-			}
+			reorderTestPlan(NativeQueries.testCase_sql_getCallingCampaignItemTestPlanOrderOffset, NativeQueries.testCase_sql_updateCallingCampaignItemTestPlan, testCaseIds);
 
 			// now we can delete the items
 			executeDeleteSQLQuery(NativeQueries.testCase_sql_removeCallingCampaignItemTestPlan, TEST_CASES_IDS,
@@ -142,26 +129,6 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 
 	}
 
-	private Map<Integer, List<Long>> buildMapOfOffsetAndIds(List<Object[]> list) {
-		Map<Integer, List<Long>> result = new HashMap<Integer, List<Long>>();
-
-		for (Object[] pair : list) {
-			Integer offset = ((BigInteger) pair[1]).intValue();
-
-			// we skip if the offset is 0
-			if (offset == 0){
-				continue;}
-
-			if (!result.containsKey(offset)) {
-				result.put(offset, new LinkedList<Long>());
-			}
-
-			result.get(offset).add(((BigInteger) pair[0]).longValue());
-		}
-
-		return result;
-
-	}
 
 	/*
 	 * same comment than for HibernateTestCaseDeletionDao#removeCallingCampaignItemTestPlan
@@ -206,34 +173,71 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	private void removeCallingIterationItemTestPlanHavingNoExecutions(List<Long> itpHavingNoExecIds) {
 		if (!itpHavingNoExecIds.isEmpty()) {
 
-			Query query0 = getSession().createSQLQuery(
-					NativeQueries.testCase_sql_getCallingIterationItemTestPlanOrderOffset);
-			query0.setParameterList("itpHavingNoExecIds1", itpHavingNoExecIds);
-			query0.setParameterList("itpHavingNoExecIds2", itpHavingNoExecIds);
-			List<Object[]> pairIdOffset = query0.list();
+			//reorder the test plans for iterations
+			reorderTestPlan(NativeQueries.testCase_sql_getCallingIterationItemTestPlanOrderOffset, 
+							NativeQueries.testCase_sql_updateCallingIterationItemTestPlanOrder, 
+							itpHavingNoExecIds);
 
-			Map<Integer, List<Long>> mapOffsets = buildMapOfOffsetAndIds(pairIdOffset);
-
-			for (Entry<Integer, List<Long>> offsetEntry : mapOffsets.entrySet()) {
-				Query query = getSession().createSQLQuery(
-						NativeQueries.testCase_sql_updateCallingIterationItemTestPlanOrder);
-				query.setParameter("offset", offsetEntry.getKey(), IntegerType.INSTANCE);
-				query.setParameterList("itpIds", offsetEntry.getValue(), LongType.INSTANCE);
-				query.executeUpdate();
-			}
-
+			//reorder the test plans for test suites
+			reorderTestPlan(NativeQueries.testCase_sql_getCallingTestSuiteItemTestPlanOrderOffset, 
+					NativeQueries.testCase_sql_updateCallingTestSuiteItemTestPlanOrder, 
+					itpHavingNoExecIds);			
 			
+			//remove the elements from their collection
 			executeDeleteSQLQuery(NativeQueries.testCase_sql_removeCallingTestSuiteItemTestPlan,
 					"itpHavingNoExecIds", itpHavingNoExecIds);
 			
 			executeDeleteSQLQuery(NativeQueries.testCase_sql_removeCallingIterationItemTestPlanFromList,
 					"itpHavingNoExecIds", itpHavingNoExecIds);
 			
+			
+			//remove the elements themselves
 			executeDeleteSQLQuery(NativeQueries.testCase_sql_removeCallingIterationItemTestPlan, "itpHavingNoExecIds",
 					itpHavingNoExecIds);
 
 		}
 	}
+
+	private void reorderTestPlan(String selectOffsetQuery, String updateOrderQuery, List<Long> removedItems) {
+		
+		Query query0 = getSession().createSQLQuery(selectOffsetQuery);
+		query0.setParameterList("removedItemIds1", removedItems);
+		query0.setParameterList("removedItemIds2", removedItems);
+		List<Object[]> pairIdOffset = query0.list();
+
+		Map<Integer, List<Long>> mapOffsets = buildMapOfOffsetAndIds(pairIdOffset);
+
+		for (Entry<Integer, List<Long>> offsetEntry : mapOffsets.entrySet()) {
+			Query query = getSession().createSQLQuery(updateOrderQuery);
+			query.setParameter("offset", offsetEntry.getKey(), IntegerType.INSTANCE);
+			query.setParameterList("reorderedItemIds", offsetEntry.getValue(), LongType.INSTANCE);
+			query.executeUpdate();
+		}
+		
+	}
+	
+
+	private Map<Integer, List<Long>> buildMapOfOffsetAndIds(List<Object[]> list) {
+		Map<Integer, List<Long>> result = new HashMap<Integer, List<Long>>();
+
+		for (Object[] pair : list) {
+			Integer offset = ((BigInteger) pair[1]).intValue();
+
+			// we skip if the offset is 0
+			if (offset == 0){
+				continue;}
+
+			if (!result.containsKey(offset)) {
+				result.put(offset, new LinkedList<Long>());
+			}
+
+			result.get(offset).add(((BigInteger) pair[0]).longValue());
+		}
+
+		return result;
+
+	}
+	
 
 	@Override
 	public void setExecStepInboundReferencesToNull(List<Long> testStepIds) {

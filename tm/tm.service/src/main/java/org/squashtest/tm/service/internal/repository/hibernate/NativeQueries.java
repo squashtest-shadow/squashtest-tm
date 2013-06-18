@@ -87,18 +87,18 @@ public final class NativeQueries {
 			+ " from CAMPAIGN_TEST_PLAN_ITEM as ctpi1, "
 			+ " CAMPAIGN_TEST_PLAN_ITEM as ctpi2 "
 			+ " where ctpi1.campaign_id = ctpi2.campaign_id "
-			+ " and ctpi2.test_case_id in (:testCaseIds1) "
+			+ " and ctpi2.test_case_id in (:removedItemIds1) "
 			+ " and ctpi1.test_plan_order > ctpi2.test_plan_order "
-			+ " and ctpi1.test_case_id not in (:testCaseIds2) "
+			+ " and ctpi1.test_case_id not in (:removedItemIds2) "
 			+ " group by ctpi1.ctpi_id";
 
 	public static final String testCase_sql_updateCallingCampaignItemTestPlan = "update CAMPAIGN_TEST_PLAN_ITEM as ctpi1 "
-			+ " set ctpi1.test_plan_order = ctpi1.test_plan_order - :offset" + " where ctpi1.ctpi_id in (:ctpiIds)";
+			+ " set ctpi1.test_plan_order = ctpi1.test_plan_order - :offset" + " where ctpi1.ctpi_id in (:reorderedItemIds)";
 
 	public static final String testCase_sql_removeCallingCampaignItemTestPlan = "delete from CAMPAIGN_TEST_PLAN_ITEM where test_case_id in (:testCaseIds)";
 
 	/*
-	 * ********************************************* consequences of test case deletion on item test plans
+	 * ********************************************* consequences of test case deletion on item test plans and test suites
 	 * ******************************************************
 	 */
 
@@ -113,18 +113,34 @@ public final class NativeQueries {
 	public static final String testCase_sql_setNullCallingIterationItemTestPlanHavingExecutions = " update ITERATION_TEST_PLAN_ITEM itp set itp.tcln_id = NULL "
 			+ " where itp.item_test_plan_id in (:itpHavingExecIds) ";
 
+	
+	
+	// ********** reordering test plan for iterations
 	public static final String testCase_sql_getCallingIterationItemTestPlanOrderOffset = " select itp1.item_test_plan_id, count(itp1.item_test_plan_id) "
 			+ " from ITEM_TEST_PLAN_LIST as itp1, "
 			+ " ITEM_TEST_PLAN_LIST as itp2 "
 			+ " where itp1.iteration_id = itp2.iteration_id "
 			+ " and itp1.item_test_plan_order > itp2.item_test_plan_order "
-			+ " and itp2.item_test_plan_id in (:itpHavingNoExecIds1) "
-			+ " and itp1.item_test_plan_id not in (:itpHavingNoExecIds2) " + " group by itp1.item_test_plan_id";
+			+ " and itp2.item_test_plan_id in (:removedItemIds1) "
+			+ " and itp1.item_test_plan_id not in (:removedItemIds2) " + " group by itp1.item_test_plan_id";
 
 	public static final String testCase_sql_updateCallingIterationItemTestPlanOrder = " update ITEM_TEST_PLAN_LIST as itp1 "
 			+ " set itp1.item_test_plan_order = itp1.item_test_plan_order - :offset "
-			+ " where itp1.item_test_plan_id in (:itpIds)";
+			+ " where itp1.item_test_plan_id in (:reorderedItemIds)";
 
+	
+	// ************ reordering test plan for test suites 
+	public static final String testCase_sql_getCallingTestSuiteItemTestPlanOrderOffset = " select itp1.tpi_id, count(itp1.tpi_id) "
+			+ " from TEST_SUITE_TEST_PLAN_ITEM as itp1, "
+			+ " TEST_SUITE_TEST_PLAN_ITEM as itp2 "
+			+ " where itp1.suite_id = itp2.suite_id "
+			+ " and itp1.test_plan_order > itp2.test_plan_order "
+			+ " and itp2.tpi_id in (:removedItemIds1) "
+			+ " and itp1.tpi_id not in (:removedItemIds2) " + " group by itp1.tpi_id";
+
+	public static final String testCase_sql_updateCallingTestSuiteItemTestPlanOrder = " update TEST_SUITE_TEST_PLAN_ITEM as itp1 "
+			+ " set itp1.test_plan_order = itp1.test_plan_order - :offset "
+			+ " where itp1.tpi_id in (:reorderedItemIds)";
 	
 	public static final String testCase_sql_removeCallingTestSuiteItemTestPlan = "delete from TEST_SUITE_TEST_PLAN_ITEM where tpi_id in (:itpHavingNoExecIds)";
 	public static final String testCase_sql_removeCallingIterationItemTestPlanFromList = "delete from ITEM_TEST_PLAN_LIST  where item_test_plan_id in (:itpHavingNoExecIds)";
