@@ -18,11 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TestStepVerifiedRequirementsTable",
-		"jquery.squash", "jqueryui", "jquery.squash.togglepanel",
-		"jquery.squash.datatables", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ],
-		function($, Backbone, _, StringUtil, TestStepVerifiedRequirementsTable) {
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
+		"./TestStepVerifiedRequirementsTable", "jquery.squash", "jqueryui",
+		"jquery.squash.togglepanel", "jquery.squash.datatables",
+		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
+		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil,
+		TestStepVerifiedRequirementsTable) {
 			var VRBS = squashtm.app.verifiedRequirementsBlocSettings;
 			var VerifiedRequirementsPanel = Backbone.View.extend({
 				
