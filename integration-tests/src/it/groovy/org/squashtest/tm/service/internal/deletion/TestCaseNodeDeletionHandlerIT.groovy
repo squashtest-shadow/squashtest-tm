@@ -170,5 +170,19 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 		allDeleted("TestStep", [112L])
 		
 	}
+	
+	@DataSet("NodeDeletionHandlerTest.should delete testSuites.xml")
+	def "should delete a test case and reorder the (non executed) test plans that includes it"(){
+
+		when :
+			deletionHandler.deleteNodes([100L])
+			session.flush();
+		
+			def tsMaxOrder = session.createSQLQuery("select max(test_plan_order) from TEST_SUITE_TEST_PLAN_ITEM where suite_id = 1").uniqueResult()
+			def itMaxOrder = session.createSQLQuery("select max(item_test_plan_order) from ITEM_TEST_PLAN_LIST where iteration_id=11").uniqueResult()
+		then :
+			tsMaxOrder == 0	//only one element, max index 0
+			itMaxOrder == 0 //only one element too because this test case was included twice
+	}
 
 }
