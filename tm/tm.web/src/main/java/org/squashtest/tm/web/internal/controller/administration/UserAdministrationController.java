@@ -49,13 +49,17 @@ import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatu
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.project.ProjectPermission;
+import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.user.AdministrationService;
+import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.users.PartyControllerSupport;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -77,7 +81,13 @@ public class UserAdministrationController extends PartyControllerSupport {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserAdministrationController.class);
 	private static final String USER_URL = "/{userId}";
 
+	private final PagingAndSorting TEAMS_DEFAULT_PAGING = new DefaultPagingAndSorting("name");
+	private final Filtering TEAMS_DEFAULT_FILTERING = DefaultFiltering.NO_FILTERING;
+
 	private AdministrationService adminService;
+
+	@Inject
+	private TeamFinderService teamFinderService;
 
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -121,6 +131,10 @@ public class UserAdministrationController extends PartyControllerSupport {
 		mav.addObject("usersGroupList", list);
 		mav.addObject("userList", model.getAaData());
 
+		PagedCollectionHolder<List<Team>> teams = teamFinderService.findAllFiltered(TEAMS_DEFAULT_PAGING,
+				TEAMS_DEFAULT_FILTERING);
+		mav.addObject("pagedTeams", teams);
+		mav.addObject("teamsPageSize", TEAMS_DEFAULT_PAGING.getPageSize());
 		return mav;
 	}
 

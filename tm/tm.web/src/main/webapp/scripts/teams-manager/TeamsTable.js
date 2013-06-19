@@ -127,6 +127,7 @@ define(
 							extractDefinitionText(row, data);
 							return row;
 						},
+						
 						refresh : function() {
 							this.$el.squashTable().fnDraw(false);
 						}

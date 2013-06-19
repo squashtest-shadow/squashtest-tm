@@ -22,16 +22,18 @@
 --%>
 <%@ tag body-content="empty" description="inserts the content of the team tab" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <div id="team-table-pane" class="table-tab" >
 <div class="toolbar">
 <button id="new-team-button"><f:message key="label.addTeam"/></button>
 </div>
 <div class="table-tab-wrap">
-<table id="teams-table">
+<table id="teams-table" data-def="deferloading=${ pagedTeams.totalNumberOfItems }, pagesize=${ teamsPageSize }">
 	<thead>
 		<tr>
-			<th>Id(masked)</th>
+			<th class="not-displayed">Id(masked)</th>
 			<th>#</th>
 			<th class="datatable-filterable"><f:message key="label.Name" /></th>
 			<th><f:message key="label.Description"/></th>
@@ -44,6 +46,20 @@
 		</tr>
 	</thead>
 	<tbody>
+    <c:forEach var="team" varStatus="teamStat" items="${ pagedTeams.pagedItems }">
+    <tr>
+      <td class="not-displayed">${ team.id }</td>
+      <td >${ teamStat.index + 1 }</td>
+      <td>${ team.name }</td>
+      <td>${ team.description }</td>
+      <td>${ fn:length(team.members) }</td>
+      <td><comp:date value="${ team.createdOn }" /></td>
+      <td>${ team.createdBy }</td>
+      <td><comp:date value="${ team.lastModifiedOn }" /></td>
+      <td>${ team.lastModifiedBy }</td>
+      <td>&nbsp;</td>
+    </tr>
+    </c:forEach>
 		<%-- Will be populated through ajax --%>
 	</tbody>
 </table>
@@ -80,7 +96,6 @@
   </div>
 <script id="team-table-init" type="text/javascript">
 //<![CDATA[
-           
 	squashtm.app.teamsManager = {
 		table : {
 			deleteButtons : {
