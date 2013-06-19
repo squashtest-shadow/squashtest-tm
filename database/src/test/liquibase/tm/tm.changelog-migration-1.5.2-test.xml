@@ -28,21 +28,6 @@
  
  	<include file="tm.data-1.5.2.xml" relativeToChangelogFile="true" />
  	
- 	<!--  let's test the test data -->
- 	<changeSet id="tm-data-1.5.2-test" author="bsiri">
- 		<preConditions>
- 			<sqlCheck expectedResult="3" >
- 			<![CDATA[
-				select count(*) from (				
-					select tstpi.suite_id
-					from TEST_SUITE_TEST_PLAN_ITEM tstpi
-					group by tstpi.suite_id
-					having count(tstpi.suite_id) <= max(tstpi.test_plan_order) 						
-				) AS TMPTMP
-			]]>	
- 			</sqlCheck>
- 		</preConditions>
- 	</changeSet>
 
 	<!-- ========================================INCLUDE CHANGELOG================================================ -->
 	<include file="../../../main/liquibase/tm/tm.changelog-1.5.2.xml"

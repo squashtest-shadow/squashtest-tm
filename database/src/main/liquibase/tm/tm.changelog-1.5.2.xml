@@ -59,12 +59,6 @@
 			insert into TEMP_DISCONTINUOUS_SUITE_ITEM (SUITE_ID, ITEM_ID) 
 			select tstpitem.suite_id, tstpitem.tpi_id 
 			from TEST_SUITE_TEST_PLAN_ITEM tstpitem
-			where tstpitem.suite_id in (
-				select tstpi.suite_id
-				from TEST_SUITE_TEST_PLAN_ITEM tstpi
-				group by tstpi.suite_id
-				having count(tstpi.suite_id) <= max(tstpi.test_plan_order) 			
-			)
 			order by tstpitem.suite_id,  tstpitem.test_plan_order;
 			
 			-- ------------------------------------------------------------------------------
@@ -129,12 +123,6 @@
 			insert into TEMP_DISCONTINUOUS_SUITE_ITEM (SUITE_ID, ITEM_ID) 
 			select tstpitem.suite_id, tstpitem.tpi_id 
 			from TEST_SUITE_TEST_PLAN_ITEM tstpitem
-			where tstpitem.suite_id in (
-				select tstpi.suite_id
-				from TEST_SUITE_TEST_PLAN_ITEM tstpi
-				group by tstpi.suite_id
-				having count(tstpi.suite_id) <= max(tstpi.test_plan_order) 			
-			)
 			order by tstpitem.suite_id,  tstpitem.test_plan_order;
 				
 
