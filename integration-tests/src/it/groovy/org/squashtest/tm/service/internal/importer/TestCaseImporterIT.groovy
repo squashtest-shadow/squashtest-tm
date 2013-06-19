@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 import org.hibernate.SQLQuery;
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseNature

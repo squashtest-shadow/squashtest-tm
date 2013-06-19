@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.deletion
 import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.testcase.TestCase

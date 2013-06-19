@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.CampaignLibrary

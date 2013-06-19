@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
 

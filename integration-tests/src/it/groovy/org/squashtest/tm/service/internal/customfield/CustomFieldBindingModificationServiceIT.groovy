@@ -47,7 +47,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
+import org.squashtest.tm.service.DbunitServiceSpecification;
 import org.unitils.dbunit.annotation.DataSet
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;

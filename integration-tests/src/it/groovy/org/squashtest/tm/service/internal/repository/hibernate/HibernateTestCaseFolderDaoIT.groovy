@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
-import org.squashtest.csp.tm.internal.service.DbunitServiceSpecification;
+import org.squashtest.tm.service.DbunitServiceSpecification;
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport;
