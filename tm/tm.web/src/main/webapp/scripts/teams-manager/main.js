@@ -24,8 +24,9 @@ define([ "jquery", "domReady", "./TeamsManager" ], function($, domReady,
 
 		$("#new-team-button").button();
 
-		new TeamsManager();
 	});
 
+	new TeamsManager();
+	
 	return {};
 });
