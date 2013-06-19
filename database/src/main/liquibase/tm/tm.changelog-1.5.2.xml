@@ -135,7 +135,7 @@
 				group by tstpi.suite_id
 				having count(tstpi.suite_id) <= max(tstpi.test_plan_order) 			
 			)
-			order by tstpitem.test_plan_order;
+			order by tstpitem.suite_id,  tstpitem.test_plan_order;
 				
 
 			-- ------------------------------------------------------------------------------
