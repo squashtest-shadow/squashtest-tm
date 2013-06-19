@@ -1054,10 +1054,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	}
 
 	function _bodyDefs($table, conf) {
-		var len = $table.find('tbody tr').length;
-		if (len > 0) {
-			conf.table.iDeferLoading = len;
-		}
+		// nothing yet
 	}
 
 	function _fromDOM($table) {
@@ -1294,6 +1291,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			table : {
 				'ajaxsource' : function(conf, assignation) {
 					conf.table.sAjaxSource = assignation.value;
+				},
+				'deferloading' : function(conf, assignation) {
+					conf.table.iDeferLoading = assignation.value;
 				},
 				'pre-filled' : function(conf, assignation) {
 					conf.table.iDeferLoading = 0;
