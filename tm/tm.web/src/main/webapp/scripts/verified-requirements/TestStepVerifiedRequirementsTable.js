@@ -40,14 +40,13 @@ define(
 									this._confirmDetachRequirements, this);
 							this.configureDetachRequirementDialog.call(this);
 
-							var checkboxTemplate = '{{#if checked}}<input type="checkbox" id="{{id}}" data-version-id="{{id}}" name="verified-by-step-checkbox" checked="checked" class="not-displayed" />'
-									+ '{{else}}<input type="checkbox" id="{{id}}" data-version-id="{{id}}" name="verified-by-step-checkbox" class="not-displayed" />{{/if}}'
-									+ '<label for="{{id}}" class="{{cssClass}} ui-icon afterDisabled"></label>';
-							this.checkbox = Handlebars
-									.compile(checkboxTemplate);
+							this.linkTemplate = Handlebars
+									.compile('<label class="{{cssClass}} ui-icon afterDisabled req-link-label"></label>');
 						},
 
-						events : {},
+						events : {
+							'click .req-link-label' : '_changeLinkState',							
+						},
 
 						_requirementsTableRowCallback : function(row, data,
 								displayIndex) {
@@ -61,50 +60,44 @@ define(
 						},
 
 						addLinkCheckboxToRow : function(row, data, displayIndex) {
-							var id = data["entity-id"];
+							
+							var checked = (data['verifiedByStep'] == "true" || data["verifiedByStep"] == true);	//that's so because the information could be either a boolean or its string representation
+							var cssClass = (checked) ? "ui-icon-link-dark-e-w" : "ui-icon-link-clear-e-w";
+							
+							var elt = this.linkTemplate({
+								cssClass : cssClass
+							});
+							
+							
+							$('td.link-checkbox', row).append(elt);
+
+						},
+						
+						_changeLinkState : function(evt){
+							var target = $(evt.currentTarget);
+							var row = target.parents('tr:first').get(0);
+							var data = this.table.fnGetData(row);
+							
+							var state = (data['verifiedByStep'] == "true" || data['verifiedByStep'] == true);
+							var newState = !state;
+							var id = data['entity-id'];
 							var ajaxUrl = VRTS.stepUrl + '/' + id;
-							var sendLinkedToStep = function(event) {
-								var checkbox = event.target;
-								var linked = $(checkbox).is(":checked");
-								var ajaxType = 'delete';
-								if (linked) {
-									ajaxType = 'post';
-								}
-								$.ajax({
-									url : ajaxUrl,
-									type : ajaxType
-								}).fail(function() {
-									checkbox.checked = !checkbox.checked;
-								});
-							};
-							var checked = data["verifiedByStep"] == "false" ? false
-									: data["verifiedByStep"];
-							var linkIconClass = function(checked) {
-								return checked ? "ui-icon-link-dark-e-w"
-										: "ui-icon-link-clear-e-w";
-							};
-							var $checkbox = $(this.checkbox({
-								id : "verified-by-step-" + id,
-								checked : checked,
-								cssClass : linkIconClass(checked)
-							}));
-
-							var onChangeCheckbox = function() {
-								var $this = $(this);
-								var $label = $this.parent().find(
-										"label[for='" + this.id + "']");
-								$label.toggleClass("ui-icon-link-dark-e-w")
-										.toggleClass("ui-icon-link-clear-e-w");
-							};
-
-							if (VRTS.linkable) {
-								$checkbox.on("change", sendLinkedToStep).on(
-										"change", onChangeCheckbox);
-							} else {
-								$checkbox.prop('disabled', true);
+							
+							var ajaxType = 'delete';
+							if (newState) {
+								ajaxType = 'post';
 							}
-
-							$('td.link-checkbox', row).append($checkbox);
+							$.ajax({
+								url : ajaxUrl,
+								type : ajaxType
+							})
+							.success(function(){
+								data['verifiedStep'] = newState;	//should use a setter to be clean
+								target.toggleClass('ui-icon-link-dark-e-w').toggleClass('ui-icon-link-clear-e-w');
+							})
+							.fail(function() {
+								//nothing, let the normal handler kick in
+							});
 						},
 
 						_detachSelectedRequirements : function() {

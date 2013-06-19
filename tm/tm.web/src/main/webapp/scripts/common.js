@@ -33,11 +33,6 @@ requirejs
 					"test-cases-management",
 					"users-manager",
 					"bugtracker",
-					/*{
-						main : 'main',
-						name : 'bugtracker',
-						location : 'http://localhost/scripts/scripts/bugtracker'
-					},*/
 					"file-upload",
 					"iteration-management" ],
 			/*
