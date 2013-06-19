@@ -22,11 +22,10 @@ package org.squashtest.tm.core.foundation.collection;
 
 import org.springframework.util.StringUtils;
 
-public class DefaultFiltering implements Filtering{
-	
+public class DefaultFiltering implements Filtering {
+
 	public static final DefaultFiltering NO_FILTERING = new DefaultFiltering("", null);
-	
-	
+
 	private String filteredAttribute;
 	private String filter;
 
@@ -34,13 +33,11 @@ public class DefaultFiltering implements Filtering{
 		super();
 	}
 
-
 	public DefaultFiltering(String filteredAttribute, String filter) {
 		super();
 		this.filteredAttribute = filteredAttribute;
 		this.filter = filter;
 	}
-	
 
 	@Override
 	public boolean isDefined() {
@@ -65,6 +62,4 @@ public class DefaultFiltering implements Filtering{
 		this.filter = filter;
 	}
 
-	
-	
 }

@@ -20,28 +20,26 @@
  */
 package org.squashtest.tm.core.foundation.collection;
 
-public class DefaultPagingAndSorting implements PagingAndSorting{
+public class DefaultPagingAndSorting implements PagingAndSorting {
 
 	private String sortedAttribute;
 	private Integer pageSize = 10;
 	private Integer firstIndex = 0;
 	private SortOrder order = SortOrder.ASCENDING;
-	
-	public DefaultPagingAndSorting(){
+
+	public DefaultPagingAndSorting() {
 		super();
 	}
-	
-	
+
 	public DefaultPagingAndSorting(String sortedAttribute) {
 		super();
 		this.sortedAttribute = sortedAttribute;
 	}
-	
+
 	public DefaultPagingAndSorting(Integer pageSize) {
 		super();
 		this.pageSize = pageSize;
 	}
-
 
 	public DefaultPagingAndSorting(String sortedAttribute, Integer pageSize) {
 		super();
@@ -53,11 +51,10 @@ public class DefaultPagingAndSorting implements PagingAndSorting{
 		this.sortedAttribute = sortedAttribute;
 	}
 
-
-	public void setFirstItemIndex(int index){
+	public void setFirstItemIndex(int index) {
 		this.firstIndex = index;
 	}
-	
+
 	@Override
 	public int getFirstItemIndex() {
 		return firstIndex;
@@ -78,10 +75,10 @@ public class DefaultPagingAndSorting implements PagingAndSorting{
 		return sortedAttribute;
 	}
 
-	public void setSortOrder(SortOrder order){
+	public void setSortOrder(SortOrder order) {
 		this.order = order;
 	}
-	
+
 	@Override
 	public SortOrder getSortOrder() {
 		return order;
