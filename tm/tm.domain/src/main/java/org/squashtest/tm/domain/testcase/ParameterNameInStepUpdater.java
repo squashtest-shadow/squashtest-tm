@@ -18,25 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.domain.testcase;
 
-import java.util.List;
+public class ParameterNameInStepUpdater implements TestStepVisitor {
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
-import org.squashtest.tm.domain.testcase.Parameter;
+	private String oldParamName;
+	private String newParamName;
 
+	public ParameterNameInStepUpdater(String oldParamName, String newParamName) {
+		this.oldParamName = oldParamName;
+		this.newParamName = newParamName;
+	}
 
-@DynamicDao(entity = Parameter.class)
-public interface ParameterDao extends CustomParameterDao {
-	
-	void persist(Parameter parameter);
-	
-	void remove(Parameter parameter);
-	
-	void removeAllByTestCaseIds(@QueryParam("testCaseIds") List<Long> removeAllByTestCaseIds);
-	
-	void removeAllValuesByTestCaseIds(@QueryParam("testCaseIds") List<Long> testCaseIds);
+	private String replace(String content) {
+		return content.replace(Parameter.getParamStringAsUsedInStep(oldParamName),
+				Parameter.getParamStringAsUsedInStep(newParamName));
+	}
 
-	Parameter findById(Long id);
+	@Override
+	public void visit(ActionTestStep visited) {
+		if (visited.getAction() != null) {
+			visited.setAction(replace(visited.getAction()));
+		}
+		if (visited.getExpectedResult() != null) {
+			visited.setExpectedResult(replace(visited.getExpectedResult()));
+		}
+	}
+
+	@Override
+	public void visit(CallTestStep visited) {
+
+	}
+
 }

@@ -20,14 +20,16 @@
  */
 package org.squashtest.tm.service.internal.importer;
 
+import java.util.Set;
+
 import org.squashtest.tm.domain.library.structures.StringPathMap;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.SheetCorruptedException;
 import org.squashtest.tm.service.internal.archive.ArchiveReader;
 import org.squashtest.tm.service.internal.archive.Entry;
-import org.squashtest.tm.service.internal.testcase.ParameterModificationServiceImpl;
 
 /**
  * Must read an archive and make test cases from the files it includes.
@@ -38,7 +40,6 @@ import org.squashtest.tm.service.internal.testcase.ParameterModificationServiceI
  *
  */
 class HierarchyCreator{
-	
 	
 	private ArchiveReader reader;
 	private ExcelTestCaseParser parser;
@@ -104,8 +105,7 @@ class HierarchyCreator{
 			return isFound;
 			
 		}else{
-			TestCaseFolder parent = findOrCreateFolder(entry.getParent());
-			
+			TestCaseFolder parent = findOrCreateFolder(entry.getParent());			
 			TestCaseFolder newFolder = new TestCaseFolder();
 			newFolder.setName(entry.getShortName());
 			parent.addContent(newFolder);
@@ -124,11 +124,14 @@ class HierarchyCreator{
 	 */
 	private void createTestCase(Entry entry){
 		try{			
-			summary.incrTotal();
-			
+			summary.incrTotal();			
 			//create the test case
 			TestCase testCase = parser.parseFile(entry.getStream(), summary);
-			ParameterModificationServiceImpl.createParamsForTestCaseSteps(testCase);
+			//add all parameters for used parameters in the step.
+			Set<String> parameterNames = testCase.findUsedParamsNamesInSteps();
+			for(String parameterName : parameterNames){
+				new Parameter(parameterName, testCase);
+			}
 			//check whether the extension is correct 
 			if (hasValidExtension(entry)) {
 				testCase.setName(stripExtension(entry.getShortName()));

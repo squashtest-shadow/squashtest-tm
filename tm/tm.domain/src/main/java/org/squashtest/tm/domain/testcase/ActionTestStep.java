@@ -111,11 +111,6 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 		visitor.visit(this);
 
 	}
-
-	@Override
-	public String accept(TestStepReader reader) {
-		return reader.visit(this);
-	}
 	
 	@Override
 	public AttachmentList getAttachmentList() {
@@ -186,6 +181,17 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 			verified.add(coverage.getVerifiedRequirementVersion());
 		}
 		return Collections.unmodifiableSet(verified);
+	}
+
+	public Set<String> findUsedParametersNames() {
+		Set<String> result = new HashSet<String>();
+		if(this.action != null){
+			result.addAll(Parameter.findUsedParameterNamesInString(this.action));
+		}
+		if(this.expectedResult != null){
+			result.addAll(Parameter.findUsedParameterNamesInString(this.expectedResult));
+		}
+		return result;
 	}
 
 	

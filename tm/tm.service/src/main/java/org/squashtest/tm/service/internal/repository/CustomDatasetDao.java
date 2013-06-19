@@ -23,12 +23,35 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.List;
 
 import org.squashtest.tm.domain.testcase.Dataset;
-
+/**
+ * 
+ * @author flaurens, mpagnon
+ *
+ */
 public interface CustomDatasetDao {
-
+	
+	/**
+	 * Will return all datasets for the given test case.
+	 * @param testCaseId
+	 * 
+	 * @return the list of all test cases's datasets.
+	 */
 	List<Dataset> findAllDatasetsByTestCase(Long testCaseId);
 	
+	/**
+	 * Will return all datasets found for the given test cases ids.
+	 * 
+	 * @param testCaseIds : the concerned test cases ids.
+	 * @return the list of all given test cases's datasets
+	 */
 	List<Dataset> findAllDatasetsByTestCases(List<Long> testCaseIds);
-
+	
+	/**
+	 * Will return the dataset matching the given name and belonging to the test case matchine the given id.
+	 * 
+	 * @param testCaseId : the id of the concerned test case
+	 * @param name : the name of the dataset to find
+	 * @return the test case's dataset matching the given id or <code>null</code>
+	 */
 	Dataset findDatasetByTestCaseAndByName(Long testCaseId, String name);
 }

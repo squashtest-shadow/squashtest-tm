@@ -138,7 +138,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		// be found
 		parentTestCase.addStep(newTestStep);
 		customFieldValuesService.createAllCustomFieldValues(newTestStep);
-		parameterModificationService.checkForParamsInStep(newTestStep.getId());
+		parameterModificationService.createParamsForStep(newTestStep.getId());
 		return newTestStep;
 	}
 
@@ -149,7 +149,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep);
 		initCustomFieldValues((ActionTestStep) step, customFieldValues);
-		parameterModificationService.checkForParamsInStep(step.getId());
+		parameterModificationService.createParamsForStep(step.getId());
 		return step;
 	}
 
@@ -158,7 +158,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public void updateTestStepAction(long testStepId, String newAction) {
 		ActionTestStep testStep = actionStepDao.findById(testStepId);
 		testStep.setAction(newAction);
-		parameterModificationService.checkForParamsInStep(testStepId);
+		parameterModificationService.createParamsForStep(testStepId);
 	}
 
 	@Override
@@ -166,7 +166,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public void updateTestStepExpectedResult(long testStepId, String newExpectedResult) {
 		ActionTestStep testStep = actionStepDao.findById(testStepId);
 		testStep.setExpectedResult(newExpectedResult);
-		parameterModificationService.checkForParamsInStep(testStepId);
+		parameterModificationService.createParamsForStep(testStepId);
 	}
 
 	@Override
@@ -262,7 +262,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestStep copyStep = original.createCopy();
 		testStepDao.persist(copyStep);
 		copyStep.accept(new TestStepCustomFieldCopier(original));
-
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		if (position != null) {
 			try {
@@ -276,6 +275,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		if (!testCase.getSteps().contains(original)) {
 			updateImportanceIfCallStep(testCase, copyStep);
+			parameterModificationService.createParamsForStep(copyStep);
 		}
 	}
 

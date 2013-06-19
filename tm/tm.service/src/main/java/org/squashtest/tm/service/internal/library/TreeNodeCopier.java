@@ -219,9 +219,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	@Override
 	public void visit(TestCase source) {
 		TestCase copyTestCase = source.createCopy();
-		Map<Parameter, Parameter> copyByOriginalParam = copyTestCase.addCopiesOfParameters(source);
-		persistTestCase(copyTestCase);
-		copyTestCase.addCopiesOfDatasets(source, copyByOriginalParam);
+		persistTestCase(copyTestCase);		
 		copyCustomFields(source, copyTestCase);		
 		copyRequirementVersionCoverage(source, copyTestCase);
 	}

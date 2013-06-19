@@ -31,6 +31,7 @@ import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.internal.archive.ArchiveReader;
 import org.squashtest.tm.service.internal.archive.ArchiveReaderFactory;
 import org.squashtest.tm.service.internal.archive.ArchiveReaderFactoryImpl;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
 
@@ -42,7 +43,6 @@ public class TestCaseImporter {
 
 	@Inject
 	private TestCaseLibraryNavigationService service;
-	
 	
 	private ArchiveReaderFactory factory = new ArchiveReaderFactoryImpl();
 	

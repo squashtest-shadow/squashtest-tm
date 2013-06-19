@@ -143,7 +143,7 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 		param.description = ""
 		
 		when :			
-			paramService.persist(param ,100L );
+			paramService.addNewParameterToTestCase(param ,100L );
 			
 		then : 
 			TestCase testcase = testCaseDao.findById(100L);

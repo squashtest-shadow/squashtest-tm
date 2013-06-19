@@ -73,7 +73,7 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 	public void updateTestStep(Long testStepId, String action, String expectedResult, Map<Long, String> cufValues) {
 		List<DomainException> exceptions = new ArrayList<DomainException>();
 		TestStep step = testStepDao.findById(testStepId);
-		parameterModificationService.checkForParamsInStep(testStepId);
+		parameterModificationService.createParamsForStep(testStepId);
 		updateCufValues(step, cufValues, exceptions);
 		updateNonCustomFields(action, expectedResult, exceptions, step);
 		if (!exceptions.isEmpty()) {

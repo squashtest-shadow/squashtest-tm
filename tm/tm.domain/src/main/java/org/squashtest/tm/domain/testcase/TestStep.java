@@ -104,8 +104,6 @@ public abstract class TestStep {
 
 	public abstract void accept(TestStepVisitor visitor);
 	
-	public abstract String accept(TestStepReader reader);
-	
 	public abstract List<ExecutionStep> createExecutionSteps(Dataset dataset);
 	
 }

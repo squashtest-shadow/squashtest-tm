@@ -84,7 +84,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 	def setup(){
 
-		/** make the iteration environnement **/	
+		/** make the iteration environement **/	
 		genericProjectManager.persist(createProject())
 		
 		def libList= campaignLibCrud.findAllLibraries()

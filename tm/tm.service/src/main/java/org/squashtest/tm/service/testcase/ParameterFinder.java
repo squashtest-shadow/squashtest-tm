@@ -25,21 +25,34 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.Parameter;
 
+/**
+ * 
+ * @author flaurens, mpagnon
+ *
+ */
 @Transactional(readOnly = true)
 public interface ParameterFinder {
 	
 	/**
+	 * Will find all parameters for the test case along with all parameters found for the call steps.
 	 * 
 	 * @param testCaseId
 	 * @return returns a list of parameters ordered by test case and name
 	 */
-	List<Parameter> getAllforTestCase(long testCaseId);
+	List<Parameter> findAllforTestCase(long testCaseId);
 	
-	Parameter getById(long testCaseId);
-
+	/**
+	 * Simply find the parameter matching the given id
+	 * @param parameterId : the id of the {@link Parameter} to find
+	 * @return the {@link Parameter} matching the id or <code>null</code>
+	 */
+	Parameter findById(long parameterId);
+	
+	/**
+	 * Returns true if the parameter is used in one of it's test case action steps
+	 * 
+	 * @param parameterId : the id of the concerned parameter
+	 * @return <code>true</code> if the parameter is used in one of it's test case action step.
+	 */
 	boolean isUsed(long parameterId);
-	
-	boolean isUsed(long parameterId, long testCaseId);
-	
-	boolean isUsed(String parameterName, long testCaseId);
 }

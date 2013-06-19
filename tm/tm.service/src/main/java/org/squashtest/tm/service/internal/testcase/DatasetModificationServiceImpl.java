@@ -134,7 +134,7 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	
 	private void updateDatasetParameters(Dataset dataset){
 		Long testCaseId = dataset.getTestCase().getId();
-		List<Parameter> parameters = parameterModificationService.getAllforTestCase(testCaseId);
+		List<Parameter> parameters = parameterModificationService.findAllforTestCase(testCaseId);
 		for(Parameter parameter : parameters){
 			findOrAddParameter(dataset, parameter);
 		}

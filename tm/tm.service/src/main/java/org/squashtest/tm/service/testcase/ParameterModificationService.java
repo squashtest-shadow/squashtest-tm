@@ -24,6 +24,8 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
 
 @Transactional
 public interface ParameterModificationService extends ParameterFinder{
@@ -33,7 +35,7 @@ public interface ParameterModificationService extends ParameterFinder{
 	 * @param parameter
 	 * @param testCaseId
 	 */
-	void persist(Parameter parameter, long testCaseId);
+	void addNewParameterToTestCase(Parameter parameter, long testCaseId);
 	
 	/**
 	 * 
@@ -54,20 +56,37 @@ public interface ParameterModificationService extends ParameterFinder{
 	 * @param parameter
 	 */
 	void remove(Parameter parameter);
-
-	
+	/**
+	 * 
+	 * @param testCaseIds
+	 */
 	void removeAllByTestCaseIds(List<Long> testCaseIds);
 	
 	/**
+	 *  Will create all parameters used in the step if they don't already exist.
+	 * And will update all Datasets and calling test cases datasets in consequence.
 	 * 
-	 * @param stepId
-	 * @return
+	 * @param stepId : the id of the concerned step
 	 */
-	List<Parameter> checkForParamsInStep(long stepId);
-
+	void createParamsForStep(long stepId);
+	
+	/**
+	 * Will create all parameters used in the step if they don't already exist.
+	 * And will update all Datasets and calling test cases datasets in consequence.
+	 * 
+	 * @param step : the concerned step
+	 */
+	void createParamsForStep(TestStep step);
 	/**
 	 * 
 	 * @param parameterId
 	 */
 	void removeById(long parameterId);
+	
+	/**
+	 * Will go through the test case's steps and create the missing parameter.
+	 * If the test case has datasets, will create the new datasetParamValues.
+	 * @param testCase : the concerned test case
+	 */
+	void createParamsForTestCaseSteps(TestCase testCase);
 }

@@ -93,7 +93,7 @@ public class TestCaseParametersController {
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	public List<SimpleParameter> getParameters(@PathVariable("testCaseId") long testCaseId, Locale locale) {
-		List<Parameter> parameters = parameterModificationService.getAllforTestCase(testCaseId);
+		List<Parameter> parameters = parameterModificationService.findAllforTestCase(testCaseId);
 		return SimpleParameter.convertToSimpleParameters(parameters,testCaseId, messageSource, locale );
 	}
 
@@ -110,7 +110,7 @@ public class TestCaseParametersController {
 
 		// the main entities
 		TestCase testCase = testCaseFinder.findById(testCaseId);
-		List<Parameter> directAndCalledParameters = parameterModificationService.getAllforTestCase(testCaseId);
+		List<Parameter> directAndCalledParameters = parameterModificationService.findAllforTestCase(testCaseId);
 		List<Long> paramIds = IdentifiedUtil.extractIds(directAndCalledParameters);
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testCase);
 		List<AoColumnDef> columnDefs = new DatasetsTableColumnDefHelper().getAoColumnDefs(paramIds, editable);
@@ -141,7 +141,7 @@ public class TestCaseParametersController {
 	public DataTableModel getParametersTable(@PathVariable long testCaseId, final DataTableDrawParameters params,
 			final Locale locale) {
 
-		List<Parameter> parameters = parameterModificationService.getAllforTestCase(testCaseId);
+		List<Parameter> parameters = parameterModificationService.findAllforTestCase(testCaseId);
 		Sorting sorting = new DataTableMapperPagingAndSortingAdapter(params, parametersTableMapper);
 		sortParams(sorting, parameters);
 		PagedCollectionHolder<List<Parameter>> holder = new SinglePageCollectionHolder<List<Parameter>>(parameters);
@@ -244,7 +244,7 @@ public class TestCaseParametersController {
 	public void newParameter(@PathVariable long testCaseId, @Valid @ModelAttribute("add-parameter") Parameter parameter) {
 		
 		try{
-		parameterModificationService.persist(parameter, testCaseId);
+		parameterModificationService.addNewParameterToTestCase(parameter, testCaseId);
 		}catch (DomainException e) {
 			e.setObjectName("add-parameter");
 			throw e;

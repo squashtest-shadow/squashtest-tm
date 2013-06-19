@@ -50,10 +50,6 @@ public class CallTestStep extends TestStep {
 
 	}
 
-	@Override
-	public String accept(TestStepReader reader) {
-		return reader.visit(this);
-	}
 	
 	public void setCalledTestCase(TestCase calledTestCase) {
 		this.calledTestCase = calledTestCase;

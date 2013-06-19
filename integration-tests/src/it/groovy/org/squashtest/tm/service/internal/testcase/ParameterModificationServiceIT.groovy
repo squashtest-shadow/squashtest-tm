@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.repository.RequirementAuditEventDao
 
+import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
@@ -64,7 +65,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 	def "should return the parameter list for a given test case"(){
 
 		when :
-		List<Parameter> params = service.getAllforTestCase(100L);
+		List<Parameter> params = service.findAllforTestCase(100L);
 		then :
 		params.size() == 1;
 	}
@@ -74,7 +75,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 
 
 		when :
-		List<Parameter> params = service.getAllforTestCase(101L);
+		List<Parameter> params = service.findAllforTestCase(101L);
 		then :
 		params.size() == 3;
 	}
@@ -124,21 +125,29 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 
 	@DataSet("ParameterModificationServiceIT.xml")
 	def "should find parameter in step"(){
-
 		when :
-		List<Parameter> params = service.checkForParamsInStep(101L);
+		service.createParamsForStep(101L);
 		then :
-		params.size() == 1;
-		params.get(0).name == "parameter";
+		TestCase testCase = session.get(TestCase.class, 100L)
+		testCase.parameters.collect {it.name}.contains("parameter");
+	
 	}
-
-	@DataSet("ParameterModificationServiceIT.xml")
+	
+	@Unroll
+	@DataSet("ParameterModificationServiceIT.should find if parameter is used.xml")
 	def "should find whether a parameter is used in a test case"(){
+		given : 
+		long parameterId = paramId;
 		when :
-		service.checkForParamsInStep(101L);
-		boolean result = service.isUsed("parameter", 100L);
+		boolean result = service.isUsed(parameterId);
 		then :
-		result == true;
+		result == paramResult;
+		where:
+		paramId | paramResult
+		1L	    | true
+		2L      | false
+		3L      |false
+		
 	}
 
 	@DataSet("ParameterModificationServiceIT.xml")
@@ -150,7 +159,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 		Parameter parameter = new Parameter()
 		parameter.name = "parameter2"
 		when :
-		service.persist(parameter, 100L)
+		service.addNewParameterToTestCase(parameter, 100L)
 		then :
 		TestCase testCase = testCaseDao.findById(100L)
 		testCase.getDatasets().size() == 1;

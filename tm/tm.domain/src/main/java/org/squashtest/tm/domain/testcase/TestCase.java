@@ -61,6 +61,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 
 /**
@@ -248,7 +249,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	/**
 	 * Will create a copy from this instance. <br>
-	 * Will copy all properties, steps, automated scripts.<br>
+	 * Will copy all properties, steps, automated scripts, parameters, datasets.<br>
 	 * ! Will not copy {@link RequirementVersionCoverage}s !
 	 * 
 	 * @return a copy of this {@link TestCase}
@@ -259,6 +260,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		copy.setSimplePropertiesUsing(this);
 		copy.addCopiesOfSteps(this);
 		copy.addCopiesOfAttachments(this);
+		copy.addCopiesOfParametersAndDatasets(this);
 		copy.notifyAssociatedWithProject(this.getProject());
 		if (this.automatedTest != null) {
 			try {
@@ -272,31 +274,37 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return copy;
 	}
 
-	public Map<Parameter, Parameter> addCopiesOfParameters(TestCase source) {
+	/**
+	 * will add to this parameters, datasets and dataParamValues copied from the given source.
+	 * 
+	 * @param source
+	 *            : the source test case to copy the params, datasets and dataparamvalues from.
+	 */
+	private void addCopiesOfParametersAndDatasets(TestCase source) {
 		// create copy of parameters and remember the association original/copy
 		Map<Parameter, Parameter> copyByOriginalParam = new HashMap<Parameter, Parameter>(source.getParameters().size());
 		for (Parameter parameter : source.getParameters()) {
 			Parameter paramCopy = new Parameter(parameter.getName(), this);
 			copyByOriginalParam.put(parameter, paramCopy);
 		}
-		
-		return copyByOriginalParam;
+		addCopiesOfDatasets(source, copyByOriginalParam);
 	}
 
-	public void addCopiesOfDatasets(TestCase source, Map<Parameter, Parameter> copyByOriginalParam) {
+	private void addCopiesOfDatasets(TestCase source, Map<Parameter, Parameter> copyByOriginalParam) {
 		for (Dataset dataset : source.getDatasets()) {
 			Dataset datasetCopy = new Dataset(dataset.getName(), this);
-			//create copy of datasetParamValues and link the copies to the rightful parameters 
+			// create copy of datasetParamValues and link the copies to the rightful parameters
 			for (DatasetParamValue datasetParamValue : dataset.getParameterValues()) {
-				Parameter datasetParamValueCopyParam = getParameterToLinkedTheCopiedDatasetParamValueTo(source, copyByOriginalParam, datasetParamValue);
+				Parameter datasetParamValueCopyParam = getParameterToLinkedTheCopiedDatasetParamValueTo(source,
+						copyByOriginalParam, datasetParamValue);
 				String datasetParamValueCopyParamValue = datasetParamValue.getParamValue();
 				new DatasetParamValue(datasetParamValueCopyParam, datasetCopy, datasetParamValueCopyParamValue);
 			}
 		}
 	}
 
-	private Parameter getParameterToLinkedTheCopiedDatasetParamValueTo(TestCase source, Map<Parameter, Parameter> copyByOriginalParam,
-			DatasetParamValue datasetParamValue) {
+	private Parameter getParameterToLinkedTheCopiedDatasetParamValueTo(TestCase source,
+			Map<Parameter, Parameter> copyByOriginalParam, DatasetParamValue datasetParamValue) {
 		Parameter datasetParamValueCopyParam;
 		if (datasetParamValue.getParameter().getTestCase().getId().equals(source.getId())) {
 			// if the parameter associated to the datasetParamValue is from this test case we need to link the
@@ -637,7 +645,20 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return Collections.unmodifiableSet(this.parameters);
 	}
 
-	public void addParameter(@NotNull Parameter parameter) {
+	/**
+	 * If the given parameter doesn't already exists in this.parameters, and, if the given parameter's name is not found
+	 * in this.parmeters : will add the given parameter to this.parameters.
+	 * 
+	 * @throws NameAlreadyInUseException
+	 * @param parameter
+	 */
+	protected void addParameter(@NotNull Parameter parameter) {
+		Parameter homonyme = findParameterByName(parameter.getName());
+		if (homonyme != null) {
+			if (!homonyme.equals(parameter)) {
+				throw new NameAlreadyInUseException(Parameter.class.getSimpleName(), parameter.getName());
+			}
+		}
 		this.parameters.add(parameter);
 
 	}
@@ -650,6 +671,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.datasets.add(dataset);
 	}
 
+	/**
+	 * Will go through this.parameters and return the Parameter matching the given name
+	 * 
+	 * @param name
+	 *            : the name of the parameter to return
+	 * @return the parameter matching the given name or <code>null</code>
+	 */
 	public Parameter findParameterByName(String name) {
 		for (Parameter parameter : this.parameters) {
 			if (parameter.getName().equals(name)) {
@@ -657,6 +685,19 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Will find the names of all parameters used in this test case's steps.
+	 * 
+	 * @return a Set of Sting empty or containing all used parameter names in this steps.
+	 */
+	public Set<String> findUsedParamsNamesInSteps() {
+		Set<String> result = new HashSet<String>();
+		for (ActionTestStep step : this.getActionSteps()) {
+			result.addAll(step.findUsedParametersNames());
+		}
+		return result;
 	}
 
 }

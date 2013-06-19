@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,7 +39,7 @@ public class DatasetParamValue implements Identified {
 	private Long id;
 
 	@NotNull
-	@ManyToOne
+	@ManyToOne(cascade={CascadeType.PERSIST})
 	@JoinColumn(name = "PARAM_ID", referencedColumnName = "PARAM_ID")
 	private Parameter parameter;
 

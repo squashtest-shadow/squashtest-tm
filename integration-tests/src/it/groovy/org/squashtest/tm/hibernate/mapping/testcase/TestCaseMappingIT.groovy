@@ -30,6 +30,9 @@ import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
 import org.squashtest.tm.domain.testcase.TestCaseImportance
@@ -274,6 +277,27 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 			notThrown Exception
 		
 	}
+	
+	def "should persist test case with parameters, dataset and datasetParamValues"(){
+		
+				given: "a test case"
+				TestCase tc = new TestCase(name : "name", description: "description")
+				and : "a parameter"
+				Parameter param = new Parameter("param", tc)
+				and :"a dataset"
+				Dataset dataset = new Dataset("dataset", tc)
+				and : "a dataset param value"
+				new DatasetParamValue(param, dataset, "value");
+				
+				when:
+				doInTransaction({ session ->
+					session.persist(tc)
+				})
+		
+				then:
+				notThrown Exception
+			}
+		
 
 //	def "should persist a test case verifying an existing requirement version"() {
 //		given:

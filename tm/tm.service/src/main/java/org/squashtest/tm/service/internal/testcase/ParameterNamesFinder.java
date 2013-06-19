@@ -18,25 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.internal.testcase;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
-import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.TestStepVisitor;
 
-
-@DynamicDao(entity = Parameter.class)
-public interface ParameterDao extends CustomParameterDao {
+public class ParameterNamesFinder implements TestStepVisitor{
 	
-	void persist(Parameter parameter);
+	private Set<String> result = new HashSet<String>();
 	
-	void remove(Parameter parameter);
-	
-	void removeAllByTestCaseIds(@QueryParam("testCaseIds") List<Long> removeAllByTestCaseIds);
-	
-	void removeAllValuesByTestCaseIds(@QueryParam("testCaseIds") List<Long> testCaseIds);
+	public Set<String> findParametersNamesInActionAndExpectedResult(TestStep step){
+		step.accept(this);
+		return result;
+	}
 
-	Parameter findById(Long id);
+	@Override
+	public void visit(ActionTestStep visited) {
+		this.result.addAll(visited.findUsedParametersNames());
+	}
+
+	@Override
+	public void visit(CallTestStep visited) {
+		//nope
+	}
+	
+	
 }
