@@ -67,7 +67,7 @@ select option,select {
 	display: none;
 }
 
-.not-visible, .unstyled {
+.not-visible, .unstyled, .unstyled-table {
 	visibility: hidden;
 }
 

@@ -1151,6 +1151,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		 * else we will initialize a new instance.
 		 */
 
+		var self = this;
+		
 		// first we parse the dom, looking for informations in the dom
 		var domConf = $.fn.squashTable.configurator.fromDOM(this);
 
@@ -1241,6 +1243,19 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		};
 
 		datatableEffective["fnDrawCallback"] = customDrawCallback;
+
+		// init complete callback
+		var userInitCompleteCallback = datatableEffective["fnInitCompleteCallback"];
+
+		var customInitCompleteCallback = function(oSettings) {
+			if (userInitCompleteCallback){
+				userInitCompleteCallback.call(this, oSettings);
+			}
+			// sets the table visible if it was hidden
+			self.removeClass("unstyled-table");
+		};
+
+		datatableEffective["fnInitComplete"] = customInitCompleteCallback;
 
 		/* ********************* rewrite the data ***************** */
 
