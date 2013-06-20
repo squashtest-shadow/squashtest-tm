@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.testcase
 
 import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
@@ -117,9 +118,14 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		TestCase testCase = new TestCase()
 		ActionTestStep step1 = new ActionTestStep("a","a")
 		ActionTestStep step2 = new ActionTestStep("b", "b")
+		
+		and : 
+		Project p = Mock()
+		testCase.notifyAssociatedWithProject p 
 
 		and:
-		testCase.addStep(step1)
+		testCase.addStep step1
+		testCase.addStep step2
 		testCaseDao.findById(0) >> testCase
 		testStepDao.findById(0) >> step1
 		testStepDao.findById(1) >> step2

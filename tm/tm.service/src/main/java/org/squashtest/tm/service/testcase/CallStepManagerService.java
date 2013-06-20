@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.testcase;
 
+import java.util.List;
+
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.CyclicStepCallException;
 
@@ -42,5 +44,14 @@ public interface CallStepManagerService {
 	 * @param testCaseId
 	 * @param copiedStepId
 	 */
+	@Deprecated
 	void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, String[] pastedStepsIds);	
+	
+	/**
+	 * same as {@link #checkForCyclicStepCallBeforePaste(long, String[])} with a more comfortable signature
+	 * 
+	 * @param destinationTestCaseId
+	 * @param pastedStepsIds
+	 */
+	void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, List<Long> pastedStepsIds);	
 }

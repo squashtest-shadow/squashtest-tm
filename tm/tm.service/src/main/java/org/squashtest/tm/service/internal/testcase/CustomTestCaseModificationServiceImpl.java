@@ -39,6 +39,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -107,6 +108,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	
 	@Inject
 	private ParameterModificationService parameterModificationService;
+	
 	
 	/* *************** TestCase section ***************************** */
 
@@ -261,7 +263,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestStep original = testStepDao.findById(copiedTestStepId);
 		TestStep copyStep = original.createCopy();
 		testStepDao.persist(copyStep);
-		copyStep.accept(new TestStepCustomFieldCopier(original));
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		if (position != null) {
 			try {
@@ -277,6 +278,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			updateImportanceIfCallStep(testCase, copyStep);
 			parameterModificationService.createParamsForStep(copyStep);
 		}
+
+		copyStep.accept(new TestStepCustomFieldCopier(original));
+		
 	}
 
 	private final class TestStepCustomFieldCopier implements TestStepVisitor {
@@ -289,7 +293,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		@Override
 		public void visit(ActionTestStep visited) {
 			customFieldValuesService.copyCustomFieldValues((ActionTestStep) original, visited);
-
+			Project origProject = original.getTestCase().getProject();
+			Project newProject = visited.getTestCase().getProject();
+			
+			if (! origProject.equals(newProject)){
+				customFieldValuesService.migrateCustomFieldValues(visited);
+			}
 		}
 
 		@Override

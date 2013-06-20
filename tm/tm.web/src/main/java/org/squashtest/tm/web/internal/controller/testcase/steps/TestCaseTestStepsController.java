@@ -175,14 +175,14 @@ public class TestCaseTestStepsController {
 
 	@RequestMapping(value = "/paste", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })
 	@ResponseBody
-	public void pasteStep(@RequestParam(COPIED_STEP_ID_PARAM) String[] copiedStepId,
+	public void pasteStep(@RequestParam(COPIED_STEP_ID_PARAM) List<Long> copiedStepIds,
 			@RequestParam(value = "indexToCopy", required = true) Long positionId, @PathVariable long testCaseId) {
 
-		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepId);
+		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepIds);
 
-		for (int i = copiedStepId.length - 1; i >= 0; i--) {
-			String id = copiedStepId[i];
-			testCaseModificationService.pasteCopiedTestStep(testCaseId, positionId, Long.parseLong(id));
+		for (int i = copiedStepIds.size() - 1; i >= 0; i--) {
+			Long id = copiedStepIds.get(i);
+			testCaseModificationService.pasteCopiedTestStep(testCaseId, positionId, id);
 		}
 		LOGGER.trace("test case copied some Steps");
 	}

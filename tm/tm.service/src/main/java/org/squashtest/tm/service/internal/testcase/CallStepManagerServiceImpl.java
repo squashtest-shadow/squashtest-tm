@@ -95,15 +95,25 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 	public TestCase findTestCase(long testCaseId) {
 		return testCaseDao.findById(testCaseId);
 	}
-
+	
+	
 	@Override
 	@PreAuthorize("hasPermission(#destinationTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
 	public void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, String[] pastedStepId) {
-		List<Long> firstCalledTestCasesIds = findFirstCalledTestCasesIds(pastedStepId);
+		List<Long> idsAsList = parseLong(pastedStepId);
+		checkForCyclicStepCallBeforePaste(destinationTestCaseId, idsAsList);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#destinationTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
+	public void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, List<Long> pastedStepId) {
+		List<Long> firstCalledTestCasesIds = testCaseDao.findCalledTestCaseOfCallSteps(pastedStepId);
+		
 		// 1> check that first called test cases are not the destination one.
 		if (firstCalledTestCasesIds.contains(destinationTestCaseId)) {
 			throw new CyclicStepCallException();
 		}
+		
 		// 2> check that each first called test case doesn't have the destination one in it's callTree
 		for (Long testCaseId : firstCalledTestCasesIds) {
 			Set<Long> callTree = callTreeFinder.getTestCaseCallTree(testCaseId);
@@ -113,11 +123,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 		}
 
 	}
-
-	private List<Long> findFirstCalledTestCasesIds(String[] copiedStepId) {
-		List<Long> copiedStepIds = parseLong(copiedStepId);
-		return testCaseDao.findCalledTestCaseOfCallSteps(copiedStepIds);
-	}
+	
 
 	private List<Long> parseLong(String[] stringArray) {
 		List<Long> longList = new ArrayList<Long>();
