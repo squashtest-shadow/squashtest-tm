@@ -25,6 +25,7 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,8 +36,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -324,8 +323,10 @@ public class CampaignModificationController {
 			writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
 
 			response.setContentType("application/octet-stream");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+			
 			response.setHeader("Content-Disposition", "attachment; filename=" + campaign.getName().replace(" ", "_")
-					+ new DateTime().toString("YYYYMMddHHmmss")+ ".csv");
+					+ sdf.format(new Date())+ ".csv");
 
 			// print
 			Row header = model.getHeader();
