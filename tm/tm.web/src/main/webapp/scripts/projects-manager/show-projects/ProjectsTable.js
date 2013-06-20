@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables",
-		"jqueryui" ], function($, Backbone, SQDT) {
+define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", "jqueryui" ], function($, Backbone,
+		SQDT) {
 	function addHoverHandler(dataTable) {
 		$('tbody tr', dataTable).hover(function() {
 			$(this).addClass('ui-state-highlight');
@@ -33,15 +33,13 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables",
 	}
 
 	function addHLinkToProjectName(row, data) {
-		var url = squashtm.app.contextRoot + "/administration/projects/"
-				+ getProjectTableRowId(data) + "/info";
+		var url = squashtm.app.contextRoot + "/administration/projects/" + getProjectTableRowId(data) + "/info";
 		SQDT.addHLinkToCellText($(row).find("td.name"), url);
 	}
 
 	function addTemplateIcon(row, data) {
 		var type = data["raw-type"];
-		$(row).find(".type").addClass("type-" + type).attr("title",
-				squashtm.app.projectsManager.tooltips[type]);
+		$(row).find(".type").addClass("type-" + type).attr("title", squashtm.app.projectsManager.tooltips[type]);
 	}
 
 	var View = Backbone.View.extend({

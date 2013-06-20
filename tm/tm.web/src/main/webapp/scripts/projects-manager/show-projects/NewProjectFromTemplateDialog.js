@@ -18,9 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF",
-		"app/lnf/Forms", "jquery.squash.confirmdialog" ], function($, Backbone,
-		Handlebars, SD, Forms) {
+define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms",
+		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, SD, Forms) {
 	var View = Backbone.View.extend({
 		el : "#add-project-from-template-dialog",
 
@@ -30,14 +29,11 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF",
 			this.initializeTemplatesList();
 
 			function decorateArea() {
-				$(this).ckeditor(
-						function() {
-						},
-						{
-							customConfig : squashtm.app.contextRoot
-									+ "/styles/ckeditor/ckeditor-config.js",
-							language : squashtm.app.ckeditorLanguage
-						});
+				$(this).ckeditor(function() {
+				}, {
+					customConfig : squashtm.app.contextRoot + "/styles/ckeditor/ckeditor-config.js",
+					language : squashtm.app.ckeditorLanguage
+				});
 			}
 
 			this.$el.find("input:text").val("");
@@ -66,10 +62,9 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF",
 		renderTemplatesList : function(data) {
 			var source = this.$el.find("#templates-list-tpl").html();
 			var template = Handlebars.compile(source);
-			this.$el.find("#add-project-from-template-template").html(
-					template({
-						items : data
-					}));
+			this.$el.find("#add-project-from-template-template").html(template({
+				items : data
+			}));
 		},
 
 		events : {
@@ -139,21 +134,13 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF",
 			var model = this.model, $el = this.$el;
 
 			model.name = $el.find("#add-project-from-template-name").val();
-			model.description = $el.find(
-					"#add-project-from-template-description").val();
+			model.description = $el.find("#add-project-from-template-description").val();
 			model.label = $el.find("#add-project-from-template-label").val();
-			model.templateId = $el.find(
-					"#add-project-from-template-template select").val();
-			model.copyPermissions = $el.find(
-					"input:checkbox[name='copyPermissions']").prop("checked");
-			model.copyCUF = $el.find("input:checkbox[name='copyCUF']").prop(
-					"checked");
-			model.copyBugtrackerBinding = $el.find(
-					"input:checkbox[name='copyBugtrackerBinding']").prop(
-					"checked");
-			model.copyAutomatedProjects = $el.find(
-					"input:checkbox[name='copyAutomatedProjects']").prop(
-					"checked");
+			model.templateId = $el.find("#add-project-from-template-template select").val();
+			model.copyPermissions = $el.find("input:checkbox[name='copyPermissions']").prop("checked");
+			model.copyCUF = $el.find("input:checkbox[name='copyCUF']").prop("checked");
+			model.copyBugtrackerBinding = $el.find("input:checkbox[name='copyBugtrackerBinding']").prop("checked");
+			model.copyAutomatedProjects = $el.find("input:checkbox[name='copyAutomatedProjects']").prop("checked");
 		}
 
 	});

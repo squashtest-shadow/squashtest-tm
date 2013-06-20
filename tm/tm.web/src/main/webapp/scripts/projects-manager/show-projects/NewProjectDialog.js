@@ -18,9 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF",
-		"app/lnf/Forms", "jquery.squash.confirmdialog" ], function($, Backbone,
-		Handlebars, SD, Forms) {
+define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms",
+		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, SD, Forms) {
 	var View = Backbone.View.extend({
 		el : "#add-project-dialog",
 
@@ -28,14 +27,11 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF",
 			var textareas = this.$el.find("textarea");
 
 			function decorateArea() {
-				$(this).ckeditor(
-						function() {
-						},
-						{
-							customConfig : squashtm.app.contextRoot
-									+ "/styles/ckeditor/ckeditor-config.js",
-							language : squashtm.app.ckeditorLanguage
-						});
+				$(this).ckeditor(function() {
+				}, {
+					customConfig : squashtm.app.contextRoot + "/styles/ckeditor/ckeditor-config.js",
+					language : squashtm.app.ckeditorLanguage
+				});
 			}
 
 			this.$el.find("input:text").val("");
@@ -115,13 +111,11 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF",
 			model.name = $el.find("#add-project-name").val();
 			model.description = $el.find("#add-project-description").val();
 			model.label = $el.find("#add-project-label").val();
-			model.isTemplate = $el.find("input:checkbox[name='isTemplate']")
-					.prop("checked");
+			model.isTemplate = $el.find("input:checkbox[name='isTemplate']").prop("checked");
 		},
 
 		newProjectUrl : function() {
-			var template = this.$el.find("input:checkbox[name='isTemplate']")
-					.prop("checked");
+			var template = this.$el.find("input:checkbox[name='isTemplate']").prop("checked");
 
 			// return squashtm.app.contextRoot + (template ? "/templates" :
 			// "/projects") + "/new";
