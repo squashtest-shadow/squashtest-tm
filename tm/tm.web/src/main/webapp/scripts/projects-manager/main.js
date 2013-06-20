@@ -30,8 +30,9 @@ define([ "jquery", "domReady", "./show-projects/ProjectsManager",
 			$("#new-project-button").button();
 			$("#new-project-from-template-button").button();
 
-			new ProjectsManager();
 		});
+
+		new ProjectsManager();
 	}
 
 	return {
