@@ -30,8 +30,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.lang.NullArgumentException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -343,7 +345,9 @@ public class CampaignExportCSVModelImpl implements CampaignExportCSVModel {
 		}
 		
 		private int getNbIssues(TestCase testCase){
-			return bugTrackerService.findIssueOwnershipForTestCase(testCase.getId()).size();
+			
+			return bugTrackerService.findNumberOfIssueForTestCase(testCase.getId());
+
 		}
 		
 		private String formatDate(Date date){	

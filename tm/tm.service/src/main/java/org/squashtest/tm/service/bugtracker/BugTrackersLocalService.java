@@ -319,4 +319,6 @@ public interface BugTrackersLocalService {
 	 */
 	Object forwardDelegateCommand(DelegateCommand command, String bugtrackerName);
 
+	int findNumberOfIssueForTestCase(Long id);
+
 }

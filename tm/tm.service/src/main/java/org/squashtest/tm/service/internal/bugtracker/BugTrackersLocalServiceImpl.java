@@ -650,4 +650,22 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return remoteBugTrackersService.getProviderKinds();
 	}
 
+	@Override
+	public int findNumberOfIssueForTestCase(Long tcId) {
+
+		// Find all concerned IssueDetector
+		List<Execution> executions = testCaseDao.findAllExecutionByTestCase(tcId);
+		List<ExecutionStep> executionSteps = collectExecutionStepsFromExecution(executions);
+	
+		Map<Long, IssueDetector> issueDetectorByListId = createIssueDetectorByIssueListId(executions);
+		Map<Long, IssueDetector> executionStepByListId = createIssueDetectorByIssueListId(executionSteps);
+		issueDetectorByListId.putAll(executionStepByListId);
+
+		// Extract ids out of Executions and ExecutionSteps
+		List<Long> executionIds = IdentifiedUtil.extractIds(executions);
+		List<Long> executionStepIds = IdentifiedUtil.extractIds(executionSteps);
+
+		return issueDao.countIssuesfromExecutionAndExecutionSteps(executionIds, executionStepIds);
+	}
+
 }
