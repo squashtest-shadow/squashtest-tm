@@ -35,6 +35,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -323,7 +325,7 @@ public class CampaignModificationController {
 
 			response.setContentType("application/octet-stream");
 			response.setHeader("Content-Disposition", "attachment; filename=" + campaign.getName().replace(" ", "_")
-					+ ".csv");
+					+ new DateTime().toString("YYYYMMddHHmmss")+ ".csv");
 
 			// print
 			Row header = model.getHeader();

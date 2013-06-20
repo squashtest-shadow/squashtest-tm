@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
@@ -188,14 +189,14 @@ public class CampaignExportCSVModelImpl implements CampaignExportCSVModel {
 		headerCells.add(new CellImpl("#_EXECUTIONS"));
 		headerCells.add(new CellImpl("#_REQUIREMENTS"));
 		headerCells.add(new CellImpl("#_ISSUES"));
-		headerCells.add(new CellImpl("TC_STATUS"));
+		headerCells.add(new CellImpl("EXEC_STATUS"));
 		headerCells.add(new CellImpl("USER"));
 		headerCells.add(new CellImpl("EXECUTION_DATE"));
 		headerCells.add(new CellImpl("DESCRIPTION"));
 		headerCells.add(new CellImpl("REF"));
 		headerCells.add(new CellImpl("NATURE"));
 		headerCells.add(new CellImpl("TYPE"));
-		headerCells.add(new CellImpl("STATUS"));
+		headerCells.add(new CellImpl("TC_STATUS"));
 		headerCells.add(new CellImpl("PREREQUISITE"));
 
 		// test case custom fields
@@ -270,11 +271,11 @@ public class CampaignExportCSVModelImpl implements CampaignExportCSVModel {
 			dataCells.add(new CellImpl(testCase.getName()));
 			dataCells.add(new CellImpl(testCase.getProject().getName()));
 			dataCells.add(new CellImpl(testCase.getImportance().toString()));
-			dataCells.add(new CellImpl(itp.getTestSuiteNames()));
+			dataCells.add(new CellImpl(itp.getTestSuiteNames().replace("<", "&lt;").replace(">", "&gt;")));
 			dataCells.add(new CellImpl(Integer.toString(itp.getExecutions().size())));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
 			dataCells.add(new CellImpl(Integer.toString(getNbIssues(testCase))));
-			dataCells.add(new CellImpl(testCase.getStatus().toString()));
+			dataCells.add(new CellImpl(itp.getExecutionStatus().toString()));
 			dataCells.add(new CellImpl(formatUser(itp.getUser())));
 			dataCells.add(new CellImpl(formatDate(itp.getLastExecutedOn())));
 			dataCells.add(new CellImpl(formatLongText(testCase.getDescription())));
@@ -355,7 +356,7 @@ public class CampaignExportCSVModelImpl implements CampaignExportCSVModel {
 			// TODO something mor euseful ? 
 			return (text == null) ? "--" : text;
 		}
-		
+
 		private String formatUser(User user){
 			return (user == null) ? "--" : user.getLogin();
 			
