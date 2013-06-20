@@ -64,8 +64,8 @@
  */
 
 define(
-		[ "jquery", "squash.table-collapser", "custom-field-values" ],
-		function($, TableCollapser, cufValuesManager) {
+		[ "jquery", "squash.table-collapser", "custom-field-values", "squash.translator" ],
+		function($, TableCollapser, cufValuesManager, translator) {
 
 			// ************************* configuration functions
 			// ************************************
@@ -94,7 +94,8 @@ define(
 					indicatorUrl : ctxUrl + "/scripts/jquery/indicator.gif",
 					callStepManagerUrl : tcUrl + "/call",
 					tableLanguageUrl : ctxUrl + "/datatables/messages",
-					tableAjaxUrl : tcUrl + "/steps"
+					tableAjaxUrl : tcUrl + "/steps",
+					projectId : conf.basic.projectId	//yes, that's no url. Uh.
 				};
 			}
 
@@ -529,25 +530,39 @@ define(
 				decorateStepTableButton("#copy-step", "ui-icon-clipboard");
 				decorateStepTableButton("#paste-step", "ui-icon-copy");
 
-				$("#copy-step").bind(
-						'click',
-						function() {
-							var stepIds = table.getSelectedIds();
-							if (!stepIds.length) {
-								$.squash.openMessage(language.errorTitle,
-										language.noStepSelected);
-							} else {
-								$.cookie('squash-test-step-ids', stepIds
-										.toString(), {
-									path : '/'
-								});
-							}
+				$("#copy-step").bind('click', function() {
+					var stepIds = table.getSelectedIds();
+					if (!stepIds.length) {
+						$.squash.openMessage(language.errorTitle,
+								language.noStepSelected);
+					} else {
+						var oPath = {path : '/'};
+						$.cookie('squash-test-step-ids', stepIds.toString(), oPath);
+						$.cookie('squash-test-step-project', urls.projectId, oPath);
+					}
 
-						});
+				});
+
 
 				$("#paste-step").bind('click', function() {
+					
 					var cookieIds = $.cookie('squash-test-step-ids');
-					var stepIds = cookieIds.split(",");
+					var cookieProject = $.cookie('squash-test-step-project');
+					var currentProject = urls.projectId;
+					
+					if (parseInt(cookieProject) !== currentProject){
+						oneShotConfirm(language.infoTitle, language.warnCopy, language.confirmlabel, language.cancellabel)
+						.then(function(){
+							performPaste(cookieIds);	//see definition below
+						});
+					}
+					else{
+						performPaste(cookieIds);		//see definition below
+					};
+				});
+				
+				function performPaste(rawIds){
+					var stepIds = rawIds.split(",");
 
 					try {
 						if (!stepIds.length) {
@@ -579,8 +594,8 @@ define(
 						$("#paste-step").removeClass('ui-state-focus');
 					} catch (damn) {
 						$.squash.openMessage(language.errorTitle, damn);
-					}
-				});
+					}					
+				};
 			}
 
 			function initDeleteAllStepsButtons(language, urls) {
@@ -588,40 +603,31 @@ define(
 				decorateStepTableButton("#delete-all-steps-button",
 						"ui-icon-minusthick");
 
-				$("#delete-all-steps-button")
-						.bind(
-								'click',
-								function() {
-									var table = $("#test-steps-table")
-											.squashTable();
-									var ids = table.getSelectedIds();
+				$("#delete-all-steps-button").bind('click',	function() {
+					
+					var table = $("#test-steps-table").squashTable();
+					var ids = table.getSelectedIds();
 
-									if (!ids.length) {
-										$.squash.openMessage(
-												language.errorTitle,
-												language.noStepSelected);
-									} else {
-										oneShotConfirm(language.deleteTitle,
-												language.deleteMultipleConfirm,
-												language.oklabel,
-												language.cancellabel)
-												.done(
-														function() {
-															$
-																	.ajax(
-																			{
-																				url : urls.multiDelete
-																						+ "/"
-																						+ ids
-																								.join(','),
-																				type : 'DELETE',
-																				dataType : "json"
-																			})
-																	.success(
-																			refresh);
-														});
-									}
-								});
+					if (!ids.length) {
+						$.squash.openMessage(language.errorTitle,
+											 language.noStepSelected);
+					} 
+					else {
+						var promise = oneShotConfirm(language.deleteTitle,
+								language.deleteMultipleConfirm,
+								language.oklabel,
+								language.cancellabel);
+						
+						promise.done(function() {
+							$.ajax({
+								url : urls.multiDelete+ "/"+ ids.join(','),
+								type : 'DELETE',
+								dataType : "json"
+							})
+							.success(refresh);
+						});
+					}
+				});
 			}
 
 			function initCallStepButton(urls) {
