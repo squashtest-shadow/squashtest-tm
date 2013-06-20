@@ -18,48 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "./TeamsTable", "./NewTeamDialog", "jqueryui" ],
-		function($, Backbone, TeamsTable, NewTeamDialog) {
-			var View = Backbone.View
-					.extend({
-						el : "#team-table-pane",
+define([ "jquery", "backbone", "./TeamsTable", "./NewTeamDialog", "jqueryui" ], function($, Backbone, TeamsTable,
+		NewTeamDialog) {
+	var View = Backbone.View.extend({
+		el : "#team-table-pane",
 
-						initialize : function() {
-							this.teamsTable = new TeamsTable();
-						},
+		initialize : function() {
+			this.teamsTable = new TeamsTable();
 
-						events : {
-							"click #new-team-button" : "showNewTeamDialog"
-						},
+			this.newTeamDialog = new NewTeamDialog({
+				model : {
+					name : "",
+					description : ""
+				}
+			});
 
-						showNewTeamDialog : function(event) {
-							var self = this;
+			this.listenTo(this.newTeamDialog, "newteam.confirm", $.proxy(this.teamsTable.refresh, this.teamsTable));			
+		},
 
-							function discard() {
-								self.newTeamDialog
-										.off("newteam.cancel newteam.confirm");
-								self.newTeamDialog.undelegateEvents();
-								self.newTeamDialog = null;
-							}
+		events : {
+			"click #new-team-button" : "showNewTeamDialog"
+		},
 
-							function discardAndRefresh() {
-								discard();
-								self.teamsTable.refresh();
-							}
+		showNewTeamDialog : function(event) {
+			this.newTeamDialog.show();
+		}
 
-							self.newTeamDialog = new NewTeamDialog({
-								model : {
-									name : "",
-									description : ""
-								}
-							});
+	});
 
-							self.newTeamDialog.on("newteam.cancel", discard);
-							self.newTeamDialog.on("newteam.confirm",
-									discardAndRefresh);
-						}
-
-					});
-
-			return View;
-		});
+	return View;
+});
