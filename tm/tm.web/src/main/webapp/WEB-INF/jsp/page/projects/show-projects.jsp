@@ -50,7 +50,6 @@
 		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">
-		
 		<script type="text/javascript">
 		squashtm.app.projectsManager = { 
 				deferLoading: ${ fn:length(projects) }, 
@@ -77,7 +76,7 @@
   <input id="new-project-from-template-button" class="snap-right" type="button" value="<f:message key='label.createFromATemplate'/>"/>
   </sec:authorize>
   <div style="clear:both"></div>
-  <table id="projects-table">
+  <table id="projects-table" class="unstyled-table">
   	<thead>
   		<tr>
   			<th>Id(not shown)</th> 
