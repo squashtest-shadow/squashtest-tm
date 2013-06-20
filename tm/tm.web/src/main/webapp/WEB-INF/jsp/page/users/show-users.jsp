@@ -207,37 +207,49 @@
 	<f:message var="ok" key="label.Confirm"/>
 	<f:message var="cancel" key="label.Cancel"/>
 		
-	<script type="text/javascript">
-		$(function(){
-			require(['users-manager'], function(userAdmin){
-				var settings = {
-					data : {
-						tableData : ${json:serialize(userList)}
-					},
-					urls : {
-						rootContext : "${rootContext}",
-						backUrl : "${backUrl}",
-						baseUrl : "${baseUrl}"
-					},
-					language : {
-						missingNewPassword : "${missingNewPassword}",
-						missingConfirmPassword : "${missingConfirmPassword}",
-						differentConfirmation : "${differentConfirmation}",
-						deleteMessage :"${deleteMessage}",
-						deleteTooltip : "${deleteTooltip}",
-						ok : "${ok}",
-						cancel :"${cancel}"
-					},
-					managedPassword: ${ authenticationProvider.managedPassword }
-				}
-				
-				userAdmin.initUserListPage(settings);
-			});
-		});
-		
-	</script>	
 	<comp:decorate-buttons />
-	</jsp:attribute>
 
+	<script type="text/javascript">
+	//<![CDATA[
+		squashtm.app.teamsManager = {
+			table : {
+				deleteButtons : {
+					popupmessage : "<f:message key='message.confirmDeleteTeam' />",
+					tooltip : "<f:message key='label.deleteTeam' />"
+				}
+			}
+		}
+		require([ "common" ], function() {
+    		require(["users-manager", "domReady"], function(userAdmin, domReady){
+    			var settings = {
+    				data : {
+    					tableData : ${json:serialize(userList)}
+    				},
+    				urls : {
+    					rootContext : "${rootContext}",
+    					backUrl : "${backUrl}",
+    					baseUrl : "${baseUrl}"
+    				},
+    				language : {
+    					missingNewPassword : "${missingNewPassword}",
+    					missingConfirmPassword : "${missingConfirmPassword}",
+    					differentConfirmation : "${differentConfirmation}",
+    					deleteMessage :"${deleteMessage}",
+    					deleteTooltip : "${deleteTooltip}",
+    					ok : "${ok}",
+    					cancel :"${cancel}"
+    				},
+    				managedPassword: ${ authenticationProvider.managedPassword }
+    			}
+    			
+  				domReady(function() {
+    				userAdmin.initUserListPage(settings);
+  				});
+    		});
+			require([ "teams-manager" ]);
+		});
+	//]]>
+	</script>	
+	</jsp:attribute>
 </layout:info-page-layout>
 <comp:fragment-tabs/>
