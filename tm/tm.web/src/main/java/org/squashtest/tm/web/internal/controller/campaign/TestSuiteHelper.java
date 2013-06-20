@@ -45,10 +45,10 @@ public final class TestSuiteHelper {
 		if (!suites.isEmpty()) {
 			int i = 0;
 			while (i < suites.size() - 1) {
-				testSuiteNames.append(suites.get(i).getName()).append(", ");
+				testSuiteNames.append(suites.get(i).getName().replace("<", "&lt;").replace(">", "&gt;")).append(", ");
 				i++;
 			}
-			testSuiteNames.append(suites.get(i).getName());
+			testSuiteNames.append(suites.get(i).getName().replace("<", "&lt;").replace(">", "&gt;"));
 		}
 
 		return ellipseString(testSuiteNames, maxLength);
