@@ -63,7 +63,7 @@
 				<a id="add-user-button" href="#" class="add-user-button"><f:message key="user.add.label" /></a>
 			</div>
 					<div class="table-tab-wrap">
-			<table id="users-list-table">
+			<table id="users-list-table"  class="unstyled-table">
 				<thead>
 					<tr>
 						<th class="user-id">Id</th>
@@ -220,7 +220,7 @@
 			}
 		}
 		require([ "common" ], function() {
-    		require(["users-manager", "domReady"], function(userAdmin, domReady){
+    		require(["users-manager", "jquery"], function(userAdmin, $){
     			var settings = {
     				data : {
     					tableData : ${json:serialize(userList)}
@@ -242,7 +242,7 @@
     				managedPassword: ${ authenticationProvider.managedPassword }
     			}
     			
-  				domReady(function() {
+  				$(function() {
     				userAdmin.initUserListPage(settings);
   				});
     		});

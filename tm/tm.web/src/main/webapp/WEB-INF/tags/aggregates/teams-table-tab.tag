@@ -30,7 +30,7 @@
     <button id="new-team-button"><f:message key="label.addTeam"/></button>
   </div>
   <div class="table-tab-wrap">
-    <table id="teams-table" data-def="deferloading=${ pagedTeams.totalNumberOfItems }, pagesize=${ teamsPageSize }">
+    <table id="teams-table" data-def="deferloading=${ pagedTeams.totalNumberOfItems }, pagesize=${ teamsPageSize }"  class="unstyled-table">
     	<thead>
     		<tr>
     			<th class="not-displayed">Id(masked)</th>
