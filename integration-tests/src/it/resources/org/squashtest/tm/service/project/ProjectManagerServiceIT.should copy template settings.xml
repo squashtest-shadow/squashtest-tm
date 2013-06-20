@@ -82,5 +82,5 @@
 	<acl_group_permission />
 	<acl_responsibility_scope_entry/>
 	<project />
-	
+	<test_case_library_node/>
 </dataset>

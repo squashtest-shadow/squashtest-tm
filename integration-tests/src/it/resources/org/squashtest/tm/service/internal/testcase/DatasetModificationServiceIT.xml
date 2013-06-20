@@ -86,6 +86,19 @@
 	<TEST_CASE_STEPS TEST_CASE_ID="102" STEP_ID="103" STEP_ORDER="0"/>	
 	<TEST_CASE_STEPS TEST_CASE_ID="102" STEP_ID="106" STEP_ORDER="1"/>
 	<TEST_CASE_STEPS TEST_CASE_ID="103" STEP_ID="104" STEP_ORDER="0"/>	
-	<TEST_CASE_STEPS TEST_CASE_ID="103" STEP_ID="107" STEP_ORDER="1"/>		
+	<TEST_CASE_STEPS TEST_CASE_ID="103" STEP_ID="107" STEP_ORDER="1"/>	
 	
+	<ITERATION_TEST_PLAN_ITEM ITEM_TEST_PLAN_ID="1" CREATED_ON="2013-06-21" CREATED_BY="mp" DATASET_ID="100"/>
+	
+	<attachment_list/>
+	<test_case_library_node/>
+	<test_case/>
+	<tcln_relationship_closure/>
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_steps/>
+	<parameter/>
+	<Dataset/>
+	<dataset_param_value/>
+	<iteration_test_plan_item/>
 </dataset>

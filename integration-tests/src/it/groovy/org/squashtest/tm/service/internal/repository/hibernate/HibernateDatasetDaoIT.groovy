@@ -18,28 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.internal.repository.hibernate
 
-import java.util.List;
+import javax.inject.Inject
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.service.internal.repository.DatasetDao
+import org.unitils.dbunit.annotation.DataSet
+import org.unitils.dbunit.annotation.ExpectedDataSet;
 
-@DynamicDao(entity = Dataset.class)
-public interface DatasetDao extends CustomDatasetDao{
+import spock.unitils.UnitilsSupport
 
-	void persist(Dataset newValue);
+@UnitilsSupport
+class HibernateDatasetDaoIT extends DbunitDaoSpecification {
 	
-	Dataset findById(Long id);
-	
-	void removeAllByTestCaseIds(@QueryParam("testCaseIds") List<Long> testCaseIds);
-	
-	void removeAllValuesByTestCaseIds(@QueryParam("testCaseIds") List<Long> testCaseIds);
-	/**
-	 * Simply remove the given dataset
-	 * 
-	 * @param dataset : the dataset to remove
-	 */
-	void remove(Dataset dataset);
+	@Inject DatasetDao datasetDao;
+
+
+	@DataSet("HibernateDatasetDaoIT.should remove dataset.xml")
+	@ExpectedDataSet("HibernateDatasetDaoIT.should remove dataset-result.xml")
+	def "should remove used dataset"(){
+		given : "a dataset "
+		Dataset dataset = session.get(Dataset.class, 1L)
+		when : 		
+		datasetDao.remove(dataset)
+		session.flush()
+		then : "expected dataset is verified"
+		notThrown(Exception.class)
+		
+	}
 }

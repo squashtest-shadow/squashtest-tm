@@ -54,4 +54,11 @@ public interface CustomDatasetDao {
 	 * @return the test case's dataset matching the given id or <code>null</code>
 	 */
 	Dataset findDatasetByTestCaseAndByName(Long testCaseId, String name);
+	
+	
+	/**
+	 * TODO
+	 * @param datasetId
+	 */
+	void removeDatasetFromIterationTestPlanItems(Long datasetId);
 }

@@ -58,7 +58,7 @@
     CUSTOM_FIELD_BINDING*,
     CUSTOM_FIELD_OPTION*,
     CUSTOM_FIELD_RENDERING_LOCATION*,
-    CUSTOM_FIELD_VALUE*,
+    CUSTOM_FIELD_VALUE*,   
     DATABASECHANGELOG*,
     DATABASECHANGELOGLOCK*,
     DATASET*,
@@ -108,95 +108,95 @@
     TEST_STEP*,
     TEST_SUITE*,
     TM_TA_PROJECTS*,
-    VERIFYING_STEPS*,    
-    acl_class*,
-    acl_group*,
-    acl_group_permission*,
-    acl_object_identity*,
-    acl_responsibility_scope_entry*,
-    action_test_step*,
-    attachment*,
-    attachment_content*,
-    attachment_list*,    
-    auth_user*,
-    automated_execution_extender*,
-    automated_suite*,
-    automated_test*,
-    bugtracker*,
-    bugtracker_binding*,
-    call_test_step*,
-    campaign*,
-    campaign_folder*,
-    campaign_iteration*,
-    campaign_library*,
-    campaign_library_content*,
-    campaign_library_node*,
-    campaign_test_plan_item*,
-    cln_relationship*,
-    cln_relationship_closure*,
-    core_config*,
-    core_group*,
-    core_group_authority*,
-    core_group_member*,
-    core_party*,
-    core_team*,
-    core_team_member*,
-    core_user*,	
-    custom_field*,
-    custom_field_binding*,
-    custom_field_option*,
-    custom_field_rendering_location*,
-    custom_field_value*,
-    databasechangelog*,
-    databasechangeloglock*,
-    dataset*,
-    dataset_param_value*,
-    denormalized_field_value*,
-    denormalized_field_rendering_location*,
-    execution*,
-    execution_execution_steps*,
-    execution_step*,
-    issue*,
-    issue_list*,    
-    item_test_plan_execution*,
-    test_suite_test_plan_item*,
-    item_test_plan_list*,   
-    iteration*,
-    iteration_test_plan_item*,
-    iteration_test_suite*,
-    parameter*,
-    project*,
-    project_filter*,
-    project_filter_entry*,
-    requirement*,
-    requirement_audit_event*,
-    requirement_creation*,
-    requirement_folder*,
-    requirement_large_property_change*,
-    requirement_library*,
-    requirement_library_content*,
-    requirement_library_node*,
-    requirement_property_change*,
-    requirement_version*,
-    requirement_version_coverage*,
-    resource*,
-    rln_relationship*,
-    rln_relationship_closure*,
-    simple_resource*,
-    tcln_relationship*,
-    tcln_relationship_closure*,
-    test_automation_project*,
-    test_automation_server*,    
-    test_case*,
-    test_case_folder*,
-    test_case_library*,
-    test_case_library_content*,
-    test_case_library_node*,
-    test_case_steps*,
-    test_step*,
-    test_suite*,
-    tm_ta_projects*,
-    verifying_steps*
+    VERIFYING_STEPS*,   
+    acl_class?,
+    acl_group?,
+    acl_group_permission?,
+    acl_object_identity?,
+    acl_responsibility_scope_entry?,
+    action_test_step?,
+    attachment?,
+    attachment_content?,
+    attachment_list?,    
+    auth_user?,
+    automated_execution_extender?,
+    automated_suite?,
+    automated_test?,
+    bugtracker?,
+    bugtracker_binding?,
+    call_test_step?,
+    campaign?,
+    campaign_folder?,
+    campaign_iteration?,
+    campaign_library?,
+    campaign_library_content?,
+    campaign_library_node?,
+    campaign_test_plan_item?,
+    cln_relationship?,
+    cln_relationship_closure?,
+    core_config?,
+    core_group?,
+    core_group_authority?,
+    core_group_member?,
+    core_party?,
+    core_team?,
+    core_team_member?,
+    core_user?,	
+    custom_field?,
+    custom_field_binding?,
+    custom_field_option?,
+    custom_field_rendering_location?,
+    custom_field_value?,
+    databasechangelog?,
+    databasechangeloglock?,
+    Dataset?,
+    dataset_param_value?,
+    denormalized_field_value?,
+    denormalized_field_rendering_location?,
+    execution?,
+    execution_execution_steps?,
+    execution_step?,
+    issue?,
+    issue_list?,    
+    item_test_plan_execution?,
+    test_suite_test_plan_item?,
+    item_test_plan_list?,   
+    iteration?,
+    iteration_test_plan_item?,
+    iteration_test_suite?,
+    parameter?,
+    project?,
+    project_filter?,
+    project_filter_entry?,
+    requirement?,
+    requirement_audit_event?,
+    requirement_creation?,
+    requirement_folder?,
+    requirement_large_property_change?,
+    requirement_library?,
+    requirement_library_content?,
+    requirement_library_node?,
+    requirement_property_change?,
+    requirement_version?,
+    requirement_version_coverage?,
+    resource?,
+    rln_relationship?,
+    rln_relationship_closure?,
+    simple_resource?,
+    tcln_relationship?,
+    tcln_relationship_closure?,
+    test_automation_project?,
+    test_automation_server?,    
+    test_case?,
+    test_case_folder?,
+    test_case_library?,
+    test_case_library_content?,
+    test_case_library_node?,
+    test_case_steps?,
+    test_step?,
+    test_suite?,
+    tm_ta_projects?,
+    verifying_steps?
     )+>
 
 <!ELEMENT ACL_CLASS EMPTY>
@@ -486,6 +486,20 @@
 	VALUE CDATA #IMPLIED
 >
 
+<!ELEMENT DATASET EMPTY>
+<!ATTLIST DATASET
+    DATASET_ID CDATA #IMPLIED
+	TEST_CASE_ID CDATA #IMPLIED
+	NAME CDATA #IMPLIED
+>
+
+<!ELEMENT DATASET_PARAM_VALUE EMPTY>
+<!ATTLIST DATASET_PARAM_VALUE
+    DATASET_PARAM_VALUE_ID CDATA #IMPLIED
+    DATASET_ID CDATA #IMPLIED
+    PARAM_ID CDATA #IMPLIED
+    PARAM_VALUE CDATA #IMPLIED
+>
 
 <!ELEMENT DATABASECHANGELOG EMPTY>
 <!ATTLIST DATABASECHANGELOG
@@ -643,6 +657,7 @@
     LAST_MODIFIED_BY CDATA #IMPLIED
     LAST_MODIFIED_ON CDATA #IMPLIED
     USER_ID CDATA #IMPLIED
+    DATASET_ID CDATA #IMPLIED
 >
 
 <!ELEMENT ITERATION_TEST_SUITE EMPTY>
@@ -651,20 +666,6 @@
     TEST_SUITE_ID CDATA #IMPLIED
 >
 
-<!ELEMENT DATASET EMPTY>
-<!ATTLIST DATASET
-    DATASET_ID CDATA #IMPLIED
-	TEST_CASE_ID CDATA #IMPLIED
-	NAME CDATA #IMPLIED
->
-
-<!ELEMENT DATASET_PARAM_VALUE EMPTY>
-<!ATTLIST DATASET_PARAM_VALUE
-    DATASET_PARAM_VALUE_ID CDATA #IMPLIED
-    DATASET_ID CDATA #IMPLIED
-    PARAM_ID CDATA #IMPLIED
-    PARAM_VALUE CDATA #IMPLIED
->
 <!ELEMENT PROJECT EMPTY>
 <!ATTLIST PROJECT
     PROJECT_ID CDATA #IMPLIED
@@ -972,6 +973,7 @@
 <!ELEMENT custom_field_value EMPTY>
 <!ELEMENT databasechangelog EMPTY>
 <!ELEMENT databasechangeloglock EMPTY>
+<!ELEMENT Dataset EMPTY>
 <!ELEMENT dataset_param_value EMPTY>
 <!ELEMENT denormalized_field_value EMPTY>
 <!ELEMENT denormalized_field_rendering_location EMPTY>

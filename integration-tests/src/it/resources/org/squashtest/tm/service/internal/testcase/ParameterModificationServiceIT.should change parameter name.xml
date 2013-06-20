@@ -33,11 +33,14 @@
 
 <PARAMETER DESCRIPTION="" TEST_CASE_ID="1" PARAM_ID="1" NAME="oldName" />
 
+
 <attachment_list/>
 <test_case_library_node/>
 <test_case/>
-<test_step/>
 <action_test_step/>
 <test_case_steps/>
 <parameter/>
+<Dataset/>
+<dataset_param_value/>
+
 </dataset>

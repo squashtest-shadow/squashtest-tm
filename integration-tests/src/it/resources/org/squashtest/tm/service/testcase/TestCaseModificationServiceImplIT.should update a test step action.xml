@@ -26,5 +26,9 @@
 <ATTACHMENT_LIST ATTACHMENT_LIST_ID="1"/>
 <TEST_STEP TEST_STEP_ID="2" />
 <ACTION_TEST_STEP TEST_STEP_ID="2" ACTION="blabla" ATTACHMENT_LIST_ID="1"/>
-
+<call_test_step/>
+<test_case_steps/>
+<parameter/>
+<Dataset/>
+<dataset_param_value/>
 </dataset>

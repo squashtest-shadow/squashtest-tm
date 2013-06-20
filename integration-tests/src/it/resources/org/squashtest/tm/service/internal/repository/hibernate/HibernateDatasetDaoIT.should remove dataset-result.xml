@@ -21,70 +21,25 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.6.0.dtd">
-<dataset>
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.6.0.result.dtd">
+<dataset >
 
-<attachment_list/>
-<attachment_content/>
-<attachment/>
-
-
-<test_case_library/>
-<campaign_library/>
-<requirement_library/>
-
-<project/>
-<project_filter/>
-<project_filter_entry/>
-
-<test_case_library_node/>
-<test_case/>
-<test_case_folder/>
-<tcln_relationship/>
-<test_case_library_content/>
-
-<test_step/>
-<action_test_step/>
-<call_test_step/>
-<test_case_steps/>
-
-
-<requirement_library_node/>
-<requirement_folder/>
-<requirement/>
-
-<rln_relationship/>
-<requirement_library_content/>
-
-
-<requirement_version_coverage/>
-
-
-<issue_list/>
-<issue/>
-
-<campaign_library_node/>
-<campaign/>
-<campaign_folder/>
-
-<cln_relationship/>
-<campaign_library_content/>
-
-
-<iteration/>
-<campaign_iteration/>
-
-<iteration_test_plan_item/>
-<item_test_plan_list/>
-
-
-<execution/>
-<item_test_plan_execution />
-
-
-<execution_step/>
-
-<execution_execution_steps/>
-
-
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1"/>
+	<TEST_CASE_LIBRARY_NODE ATTACHMENT_LIST_ID="1" TCLN_ID="1" CREATED_ON="2013-06-20" CREATED_BY="mp" NAME="tc"/>
+	<TEST_CASE TCLN_ID="1" PREREQUISITE="" VERSION="1"/>
+	
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="1" PARAM_ID="1" NAME="p1"/>
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="1" PARAM_ID="2" NAME="p2"/>
+	
+	
+	<DATASET TEST_CASE_ID="1" DATASET_ID="2" NAME="dataset2"/>
+	
+	
+	<DATASET_PARAM_VALUE PARAM_ID="1" PARAM_VALUE="val" DATASET_ID="2" DATASET_PARAM_VALUE_ID="3"/>
+	<DATASET_PARAM_VALUE PARAM_ID="2" PARAM_VALUE="val" DATASET_ID="2" DATASET_PARAM_VALUE_ID="4"/>
+	
+	<Dataset/>
+	<dataset_param_value/>
+	
+	
 </dataset>

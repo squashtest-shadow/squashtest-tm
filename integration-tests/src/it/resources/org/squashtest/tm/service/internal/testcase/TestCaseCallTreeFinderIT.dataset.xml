@@ -139,8 +139,19 @@
 	
 	<!--  cleanup of previously entered data -->
 	
+	<attachment_list/>
+	<test_case_library_node/>
 	<test_case_folder/>
+	<test_case/>
 	<tcln_relationship/>
-	<test_case_library_content/>
+	<test_case_library_content/>	
+	<test_step/>
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_steps/>
+	
+	<parameter/>
+	<Dataset/>
+	<dataset_param_value/>
 
 </dataset>

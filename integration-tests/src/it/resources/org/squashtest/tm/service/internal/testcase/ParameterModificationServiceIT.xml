@@ -64,4 +64,20 @@
 	<TEST_CASE_STEPS TEST_CASE_ID="103" STEP_ID="104" STEP_ORDER="0"/>	
 	<TEST_CASE_STEPS TEST_CASE_ID="103" STEP_ID="107" STEP_ORDER="1"/>		
 	
+
+	
+	<test_case_library/>
+	<test_case_library_node/>
+	<test_case_folder/>
+	<test_case/>
+	<tcln_relationship/>
+	<tcln_relationship_closure/>
+	<test_case_library_content/>
+	<call_test_step/>
+	<action_test_step/>
+	<test_case_steps/>
+	<parameter/>
+	<Dataset/>
+	<dataset_param_value/>
+	
 </dataset>

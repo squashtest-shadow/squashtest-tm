@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,11 +32,12 @@ import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.service.internal.repository.CustomDatasetDao;
 
 @Repository("CustomDatasetDao")
-public class HibernateDatasetDao implements CustomDatasetDao {
+public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements CustomDatasetDao {
 
 	@Inject
 	private SessionFactory sessionFactory;
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Dataset> findAllDatasetsByTestCase(Long testCaseId) {
 
@@ -44,20 +46,31 @@ public class HibernateDatasetDao implements CustomDatasetDao {
 		return (List<Dataset>) query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Dataset> findAllDatasetsByTestCases(List<Long> testCaseIds) {
-
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.findAllDatasetsByTestCases");
-		query.setParameterList("testCaseIds", testCaseIds);
-		return (List<Dataset>) query.list();
+		if (!testCaseIds.isEmpty()) {
+			Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.findAllDatasetsByTestCases");
+			query.setParameterList("testCaseIds", testCaseIds);
+			return (List<Dataset>) query.list();
+		} else {
+			return Collections.emptyList();
+		}
 	}
 
 	@Override
 	public Dataset findDatasetByTestCaseAndByName(Long testCaseId, String name) {
-	
+
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.findAllDatasetsByTestCaseAndByName");
 		query.setParameter("testCaseId", testCaseId);
 		query.setParameter("name", name);
 		return (Dataset) query.uniqueResult();
+	}
+
+	@Override
+	public void removeDatasetFromIterationTestPlanItems(Long datasetId) {
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.removeDatasetFromItsIterationTestPlanItems");
+		query.setParameter("datasetId", datasetId);
+		query.executeUpdate();
 	}
 }
