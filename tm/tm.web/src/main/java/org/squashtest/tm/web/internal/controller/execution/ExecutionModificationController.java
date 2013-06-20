@@ -108,7 +108,7 @@ public class ExecutionModificationController {
 			columnDefs = findColumnDefForSteps(execution, firstStepDfv);
 			firstStepDfvsLabels = extractLabels(firstStepDfv);
 		} else {
-			columnDefs = Collections.emptyList();
+			columnDefs = findColumnDefForSteps(execution, null);
 			firstStepDfvsLabels = Collections.emptyList();
 		}
 
@@ -124,7 +124,10 @@ public class ExecutionModificationController {
 
 	private List<AoColumnDef> findColumnDefForSteps(Execution execution, List<DenormalizedFieldValue> firstStepDfv) {
 		List<AoColumnDef> columnDefs;
-		List<String> firstStepDfvCode = extractCodes(firstStepDfv);
+		List<String> firstStepDfvCode = new ArrayList<String>();
+		if(firstStepDfv != null){
+			firstStepDfvCode = extractCodes(firstStepDfv);
+		}
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", execution);
 		boolean isBugtrackerConnected = execution.getProject().isBugtrackerConnected();
 		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDefs(firstStepDfvCode, editable, isBugtrackerConnected);
