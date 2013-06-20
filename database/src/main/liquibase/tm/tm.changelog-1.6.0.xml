@@ -177,5 +177,26 @@
 			                   where cu.ACTIVE = 0)
 		</sql>
 	</changeSet>
+	
+	<changeSet id="tm-1.6.0.issue-2474-01" author="bsiri">
+		<comment>fixes the action test steps having no custom fields when copied from one project to another. Works for both mysql and h2.</comment>
+		<sql>
+			insert into CUSTOM_FIELD_VALUE(bound_entity_id, bound_entity_type, cfb_id, value)
+			select ats.test_step_id, 'TEST_STEP',  cfb.cfb_id, cf.default_value
+			from ACTION_TEST_STEP ats
+			inner join TEST_CASE_STEPS tcs on ats.test_step_id = tcs.step_id
+			inner join TEST_CASE_LIBRARY_NODE tcln on tcs.test_case_id = tcln.tcln_id
+			inner join CUSTOM_FIELD_BINDING cfb on tcln.project_id = cfb.bound_project_id
+			inner join CUSTOM_FIELD cf on cfb.cf_id = cf.cf_id
+			where cfb.bound_entity = 'TEST_STEP'
+			and ats.test_step_id not in (
+				select cfv2.bound_entity_id
+				from CUSTOM_FIELD_VALUE cfv2
+				inner join CUSTOM_FIELD_BINDING cfb2 on cfv2.cfb_id = cfb2.cfb_id
+				where cfb2.bound_entity = 'TEST_STEP'
+				and cfb2.bound_project_id = cfb.bound_project_id
+			);		
+		</sql>	
+	</changeSet>
 </databaseChangeLog>
  
