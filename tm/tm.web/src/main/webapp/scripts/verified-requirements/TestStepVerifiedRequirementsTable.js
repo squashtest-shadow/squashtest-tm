@@ -45,7 +45,7 @@ define(
 						},
 
 						events : {
-							'click .req-link-label' : '_changeLinkState',							
+							'click .req-link-label' : '_changeLinkState'							
 						},
 
 						_requirementsTableRowCallback : function(row, data,
@@ -61,7 +61,7 @@ define(
 
 						addLinkCheckboxToRow : function(row, data, displayIndex) {
 							
-							var checked = (data['verifiedByStep'] == "true" || data["verifiedByStep"] == true);	//that's so because the information could be either a boolean or its string representation
+							var checked = (data['verifiedByStep'] === "true" || data["verifiedByStep"] === true);	//that's so because the information could be either a boolean or its string representation
 							var cssClass = (checked) ? "ui-icon-link-dark-e-w" : "ui-icon-link-clear-e-w";
 							
 							var elt = this.linkTemplate({
@@ -78,7 +78,7 @@ define(
 							var row = target.parents('tr:first').get(0);
 							var data = this.table.fnGetData(row);
 							
-							var state = (data['verifiedByStep'] == "true" || data['verifiedByStep'] == true);
+							var state = (data['verifiedByStep'] === "true" || data['verifiedByStep'] === true);
 							var newState = !state;
 							var id = data['entity-id'];
 							var ajaxUrl = VRTS.stepUrl + '/' + id;
