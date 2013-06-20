@@ -18,36 +18,48 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil", "./VerifiedRequirementsTable", "jquery.squash",
-		"jqueryui", "jquery.squash.togglepanel", "jquery.squash.datatables", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($, Backbone, _, Handlebars, StringUtil,
-		VerifiedRequirementsTable) {
-	var VRTS = squashtm.app.verifiedRequirementsTableSettings;
-	var TestStepVerifiedRequirementsTable = VerifiedRequirementsTable.extend({
-		initialize : function(options) {
-			this.constructor.__super__.initialize.apply(this, [ options ]);
-			this.detachSelectedRequirements = $.proxy(this._detachSelectedRequirements, this);
-			this.detachRequirements = $.proxy(this._detachRequirements, this);
-			this.confirmDetachRequirements = $.proxy(this._confirmDetachRequirements, this);
-			this.configureDetachRequirementDialog.call(this);
-			
-			this.linkTemplate = Handlebars
+define(
+		[ "jquery", "backbone", "underscore", "handlebars",
+				"app/util/StringUtil", "./VerifiedRequirementsTable",
+				"jquery.squash", "jqueryui", "jquery.squash.togglepanel",
+				"jquery.squash.datatables", "jquery.squash.oneshotdialog",
+				"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ],
+		function($, Backbone, _, Handlebars, StringUtil,
+				VerifiedRequirementsTable) {
+			var VRTS = squashtm.app.verifiedRequirementsTableSettings;
+			var TestStepVerifiedRequirementsTable = VerifiedRequirementsTable
+					.extend({
+						initialize : function(options) {
+							this.constructor.__super__.initialize.apply(this,
+									[ options ]);
+							this.detachSelectedRequirements = $.proxy(
+									this._detachSelectedRequirements, this);
+							this.detachRequirements = $.proxy(
+									this._detachRequirements, this);
+							this.confirmDetachRequirements = $.proxy(
+									this._confirmDetachRequirements, this);
+							this.configureDetachRequirementDialog.call(this);
+
+							this.linkTemplate = Handlebars
 									.compile('<label class="{{cssClass}} ui-icon afterDisabled req-link-label"></label>');
-		},
+						},
 
 						events : {
 							'click .req-link-label' : '_changeLinkState',							
 						},
 
-		_requirementsTableRowCallback : function(row, data, displayIndex) {
-			if (VRTS.linkable && data["status"] != "OBSOLETE") {
-				this.addSelectEditableToVersionNumber(row, data);
-			}
-			this.addLinkCheckboxToRow(row, data);
-			return row;
-		},
+						_requirementsTableRowCallback : function(row, data,
+								displayIndex) {
+							if (VRTS.linkable && data["status"] != "OBSOLETE") {
+								this
+										.addSelectEditableToVersionNumber(row,
+												data);
+							}
+							this.addLinkCheckboxToRow(row, data);
+							return row;
+						},
 
-		addLinkCheckboxToRow : function(row, data, displayIndex) {
+						addLinkCheckboxToRow : function(row, data, displayIndex) {
 							
 							var checked = (data['verifiedByStep'] == "true" || data["verifiedByStep"] == true);	//that's so because the information could be either a boolean or its string representation
 							var cssClass = (checked) ? "ui-icon-link-dark-e-w" : "ui-icon-link-clear-e-w";
@@ -69,15 +81,15 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 							var state = (data['verifiedByStep'] == "true" || data['verifiedByStep'] == true);
 							var newState = !state;
 							var id = data['entity-id'];
-			var ajaxUrl = VRTS.stepUrl + '/' + id;
+							var ajaxUrl = VRTS.stepUrl + '/' + id;
 							
 							var ajaxType = 'delete';
 							if (newState) {
-									ajaxType = 'post';
-								}
-								$.ajax({
-									url : ajaxUrl,
-									type : ajaxType
+								ajaxType = 'post';
+							}
+							$.ajax({
+								url : ajaxUrl,
+								type : ajaxType
 							})
 							.success(function(){
 								data['verifiedStep'] = newState;	//should use a setter to be clean
@@ -86,51 +98,57 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 							.fail(function() {
 								//nothing, let the normal handler kick in
 							});
-		},
-		
-		_detachSelectedRequirements : function() {
-			var rows = this.table.getSelectedRows();
-			this.confirmDetachRequirements(rows);
-		},
+						},
 
-		_confirmDetachRequirements : function(rows) {
-			var self = this;
-			this.toDetachIds = [];
-			var rvIds = $(rows).collect(function(row) {
-				return self.table.getODataId(row);
-			});
-			var hasRequirement = (rvIds.length > 0);
-			if (hasRequirement) {
-				this.toDetachIds = rvIds;
-				this.confirmDetachRequirementDialog.confirmDialog("open");
-			} else {
-				this.noRequirementSelectedDialog.messageDialog('open');
-			}
-		},
+						_detachSelectedRequirements : function() {
+							var rows = this.table.getSelectedRows();
+							this.confirmDetachRequirements(rows);
+						},
 
-		_detachRequirements : function() {
-			var self = this;
-			var ids = this.toDetachIds;
-			if (ids.length === 0) {
-				return;
-			}
-			$.ajax({
-				url : VRTS.stepUrl + '/' + ids.join(','),
-				type : 'delete'
-			}).done(self.refresh);
+						_confirmDetachRequirements : function(rows) {
+							var self = this;
+							this.toDetachIds = [];
+							var rvIds = $(rows).collect(function(row) {
+								return self.table.getODataId(row);
+							});
+							var hasRequirement = (rvIds.length > 0);
+							if (hasRequirement) {
+								this.toDetachIds = rvIds;
+								this.confirmDetachRequirementDialog
+										.confirmDialog("open");
+							} else {
+								this.noRequirementSelectedDialog
+										.messageDialog('open');
+							}
+						},
 
-		},
-		
-		configureDetachRequirementDialog : function() {
-			this.confirmDetachRequirementDialog = $("#remove-verified-requirement-version-from-step-dialog")
-					.confirmDialog();
-			this.confirmDetachRequirementDialog.width("600px");
-			this.confirmDetachRequirementDialog.on("confirmdialogconfirm", $.proxy(this.detachRequirements, this));
-			this.confirmDetachRequirementDialog.on("close", $.proxy(function() {
-				this.toDetachIds = [];
-			}, this));
-		}
+						_detachRequirements : function() {
+							var self = this;
+							var ids = this.toDetachIds;
+							if (ids.length === 0) {
+								return;
+							}
+							$.ajax({
+								url : VRTS.stepUrl + '/' + ids.join(','),
+								type : 'delete'
+							}).done(self.refresh);
 
-	});
-	return TestStepVerifiedRequirementsTable;
-});
+						},
+
+						configureDetachRequirementDialog : function() {
+							this.confirmDetachRequirementDialog = $(
+									"#remove-verified-requirement-version-from-step-dialog")
+									.confirmDialog();
+							this.confirmDetachRequirementDialog.width("600px");
+							this.confirmDetachRequirementDialog.on(
+									"confirmdialogconfirm", $.proxy(
+											this.detachRequirements, this));
+							this.confirmDetachRequirementDialog.on("close", $
+									.proxy(function() {
+										this.toDetachIds = [];
+									}, this));
+						}
+
+					});
+			return TestStepVerifiedRequirementsTable;
+		});
