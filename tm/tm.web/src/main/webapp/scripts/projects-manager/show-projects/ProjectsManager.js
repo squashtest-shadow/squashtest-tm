@@ -25,28 +25,14 @@ define([ "jquery", "backbone", "./ProjectsTable", "./NewProjectDialog", "./NewPr
 
 				initialize : function() {
 					this.projectsTable = new ProjectsTable();
-				},
+					this.templates = new Backbone.Collection([], {
+						url : squashtm.app.contextRoot + "/project-templates?dropdownList",
+						comparator : function(template) {
+							return template.get("name");
+						}
+					});
 
-				events : {
-					"click #new-project-button" : "showNewProjectDialog",
-					"click #new-project-from-template-button" : "showNewProjectFromTemplateDialog"
-				},
-
-				showNewProjectDialog : function(event) {
-					var self = this;
-
-					function discard() {
-						self.newProjectDialog.off("newproject.cancel newproject.confirm");
-						self.newProjectDialog.undelegateEvents();
-						self.newProjectDialog = null;
-					}
-
-					function discardAndRefresh() {
-						discard();
-						self.projectsTable.refresh();
-					}
-
-					self.newProjectDialog = new NewProjectDialog({
+					this.newProjectDialog = new NewProjectDialog({
 						model : {
 							name : "",
 							description : "",
@@ -54,30 +40,7 @@ define([ "jquery", "backbone", "./ProjectsTable", "./NewProjectDialog", "./NewPr
 						}
 					});
 
-					self.newProjectDialog.on("newproject.cancel", discard);
-					self.newProjectDialog.on("newproject.confirm", discardAndRefresh);
-				},
-
-				showNewProjectFromTemplateDialog : function() {
-					var self = this;
-					var messages = squashtm.app.projectsManager.messages;
-					if (!self.projectsTable.hasTemplate()) {
-						$.squash.openMessage(messages.info, messages.noProjectTemplateMessage);
-						return;
-					}
-
-					function discard() {
-						self.newProjectFromTemplateDialog.off("newprojectFromTemplate.cancel newprojectFromTemplate.confirm");
-						self.newProjectFromTemplateDialog.undelegateEvents();
-						self.newProjectFromTemplateDialog = null;
-					}
-
-					function discardAndRefresh() {
-						discard();
-						self.projectsTable.refresh();
-					}
-
-					self.newProjectFromTemplateDialog = new NewProjectFromTemplateDialog({
+					this.newProjectFromTemplateDialog = new NewProjectFromTemplateDialog({
 						model : {
 							name : "",
 							description : "",
@@ -87,11 +50,27 @@ define([ "jquery", "backbone", "./ProjectsTable", "./NewProjectDialog", "./NewPr
 							copyCUF : true,
 							copyBugtrackerBinding : true,
 							copyAutomatedProjects : true
-						}
+						},
+						collection : this.templates
 					});
 
-					self.newProjectFromTemplateDialog.on("newprojectFromTemplate.cancel", discard);
-					self.newProjectFromTemplateDialog.on("newprojectFromTemplate.confirm", discardAndRefresh);
+					this.listenTo(this.newProjectDialog, "newproject.confirm", $.proxy(this.projectsTable.refresh,
+							this.projectsTable));
+					this.listenTo(this.newProjectFromTemplateDialog, "newprojectFromTemplate.confirm", $.proxy(
+							this.projectsTable.refresh, this.projectsTable));
+				},
+
+				events : {
+					"click #new-project-button" : "showNewProjectDialog",
+					"click #new-project-from-template-button" : "showNewProjectFromTemplateDialog"
+				},
+
+				showNewProjectDialog : function(event) {
+					this.newProjectDialog.show();
+				},
+
+				showNewProjectFromTemplateDialog : function() {
+					this.newProjectFromTemplateDialog.show();
 				}
 			});
 

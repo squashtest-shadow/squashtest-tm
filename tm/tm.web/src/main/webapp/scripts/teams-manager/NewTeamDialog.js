@@ -29,7 +29,6 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 			this.$errorMessages = this.$el.find("span.error-message");
 
 			this._resetForm();
-
 		},
 
 		events : {

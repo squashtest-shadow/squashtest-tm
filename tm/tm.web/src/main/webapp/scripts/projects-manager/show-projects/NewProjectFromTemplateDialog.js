@@ -24,42 +24,15 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 		el : "#add-project-from-template-dialog",
 
 		initialize : function() {
-			var textareas = this.$el.find("textarea");
+			this.$checkboxes = this.$el.find("input:checkbox");
+			this.$textAreas = this.$el.find("textarea");
+			this.$textFields = this.$el.find("input:text");
+			this.$errorMessages = this.$el.find("span.error-message");
 
-			this.initializeTemplatesList();
-
-			function decorateArea() {
-				$(this).ckeditor(function() {
-				}, {
-					customConfig : squashtm.app.contextRoot + "/styles/ckeditor/ckeditor-config.js",
-					language : squashtm.app.ckeditorLanguage
-				});
-			}
-
-			this.$el.find("input:text").val("");
-			this.$el.find("input:checkbox").prop("checked", true);
-			textareas.val("");
-			textareas.each(decorateArea);
-
-			this.$el.confirmDialog({
-				autoOpen : true
-			});
+			this._resetForm();
 		},
 
-		initializeTemplatesList : function() {
-			var self = this;
-			$.ajax({
-				url : squashtm.app.contextRoot + "/project-templates",
-				data : {
-					dropdownList : ""
-				},
-				success : function(data) {
-					self.renderTemplatesList(data);
-				}
-			});
-		},
-
-		renderTemplatesList : function(data) {
+		_renderTemplatesList : function(data) {
 			var source = this.$el.find("#templates-list-tpl").html();
 			var template = Handlebars.compile(source);
 			this.$el.find("#add-project-from-template-template").html(template({
@@ -109,25 +82,61 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app
 
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
-			Forms.form(this.$el).clearState();
-			this.$el.confirmDialog("destroy");
-			this.cleanupTextareas();
+			this._resetForm();
+			this.$el.confirmDialog("close");
 		},
 
-		cleanupTextareas : function() {
-			this.$el.find("textarea").each(function() {
-				var area = $(this);
+		_resetForm : function() {
+			this.$checkboxes.prop("checked", true);
+			this.$textFields.val("");
+			this.$textAreas.val("");
+			this.$errorMessages.text("");
+			Forms.form(this.$el).clearState();
+		},
 
-				try {
-					area.ckeditorGet().destroy();
-
-				} catch (damnyouie) {
-					var areaName = area.attr('id');
-					// destroying the instance will make it crash. So we remove
-					// it and hope the memory leak wont be too high.
-					CKEDITOR.remove(areaName);
+		show : function() {
+			var self = this;
+			
+			this.collection.fetch({
+				success : function(collection, response, options) {
+					if (collection.size() === 0) {
+						self._notifyNoTemplates();
+					} else {
+						self._showDialog();
+					}
 				}
-			});
+			});			
+		},
+		
+		_notifyNoTemplates: function() {
+			var messages = squashtm.app.projectsManager.messages;
+			$.squash.openMessage(messages.info, messages.noProjectTemplateMessage);			
+		}, 
+		
+		_showDialog: function() {
+			if (!this.dialogInitialized) {
+				this._initializeDialog();
+			}
+
+			this._renderTemplatesList(this.collection.toJSON());
+			
+			this.$el.confirmDialog("open");
+		},
+
+		_initializeDialog : function() {
+			this.$el.confirmDialog();
+
+			function decorateArea() {
+				$(this).ckeditor(function() {
+				}, {
+					customConfig : squashtm.app.contextRoot + "/styles/ckeditor/ckeditor-config.js",
+					language : squashtm.app.ckeditorLanguage
+				});
+			}
+
+			this.$textAreas.each(decorateArea);
+
+			this.dialogInitialized = true;
 		},
 
 		populateModel : function() {
