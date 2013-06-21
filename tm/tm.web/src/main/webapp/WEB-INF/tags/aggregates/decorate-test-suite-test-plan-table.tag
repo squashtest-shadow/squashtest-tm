@@ -62,6 +62,10 @@
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
+<s:url var="assignableStatusUrl" value="/iterations/{iterId}/assignable-statuses">
+	<s:param name="iterId" value="${testSuite.iteration.id}" />
+</s:url>
+
 <s:url var="assignableUsersUrl" value="/test-suites/{testSuiteId}/{iterationId}/assignable-user">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 	<s:param name="iterationId" value="${testSuite.iteration.id}" />
@@ -271,11 +275,15 @@ $(function() {
 	function testPlanTableDrawCallback() {
 		var table = $("#test-suite-test-plans-table").squashTable();
 		bindToggleExpandIcon(table);
+		<c:if test="${ editable }">
+		addStatusListToTestPlan(table);	
+		</c:if>
 	}	
 
 	function testPlanTableRowCallback(row, data, displayIndex) {
 		<c:if test="${ editable }">
 		addLoginListToTestPlan(row, data);
+		selectCurrentStatus(row,data);
 		</c:if>
 		<c:if test="${executable}">
 		addExecuteIconToTestPlan(row, data);
@@ -368,7 +376,76 @@ $(function() {
 			$('td.executed-by', row).load("${assignableUsersUrl}" + "?testPlanId="+ id +"");
 		}
 	}
-
+	
+	function addStatusListToTestPlan(table){
+		$.get("${assignableStatusUrl}", "json")
+		.success(function(json){
+			table.data('status-list', json);
+			table.$('td.status-combo').statusCombo(table);
+		});
+	}
+	
+	$.fn.statusCombo = function(table){
+		
+		if (this.length==0) return;
+		var squashTable=$("#test-suite-test-plan-table-templates").squashTable();
+		var assignableList = table.data('status-list');
+		if (! assignableList) return;
+		
+		//create the template
+		var template=$('<select class="status-list"/>');
+		for (var i=0;i<assignableList.length;i++){
+			var opt = '<option class="exec-status-'+assignableList[i].name+'" value="'+assignableList[i].name+'">'+assignableList[i].internationalizedName+'</option>';
+			template.append(opt);
+		}
+			
+		template.change(function(){
+			
+			var self = $(this);
+			$.ajax({
+				type : 'POST',
+				url : this.getAttribute('data-assign-url'),
+				data : "statusName=" + this.value,
+				dataType : 'json'
+			}).done(function(data){
+				self.parent().removeClass();
+				self.parent().addClass("has-status status-combo exec-status-"+self.val());
+			});
+		});
+			
+		this.each(function(){
+			
+			var cloneSelect = template.clone(true);
+			
+			var jqTd = $(this);
+			var row = this.parentNode;
+			
+			var status = $("td.status-combo span").html();
+				
+			//sets the change url
+			var tpId = table.getODataId(row);
+			var dataUrl = "${baseIterationUrl}/test-case/"+tpId+"/assign-status";
+			
+			cloneSelect.attr('data-assign-url', dataUrl);
+					
+			//append the content
+			jqTd.empty().append(cloneSelect);
+			$(".status-list option:contains('"+status+"')", row).attr("selected","selected");
+			$(".status-list",row).parent().addClass("exec-status-"+$(".status-list",row).val());
+		});	
+	}
+	
+	function getCurrentStatus(data) {
+		return data['status'];
+	}
+	
+	function selectCurrentStatus(row,data) {
+		
+		var status = getCurrentStatus(data);
+		$("#statuses option:contains('"+status+"')").attr("selected","selected");
+		$(".status-list",row).parent().addClass("exec-status-"+$(".status-list",row).val());
+	}
+	
 	function bindToggleExpandIcon(table){
 		$("td.test-case-name-hlink")
 			.prepend('<div style="display:inline-block" class="small-arrow small-right-arrow" />')
@@ -563,6 +640,9 @@ $(function() {
 				});
 			}
 		};
+		
+
+
 		</c:if>
 				
 		$("#test-suite-test-plans-table").squashTable(tableSettings, squashSettings);

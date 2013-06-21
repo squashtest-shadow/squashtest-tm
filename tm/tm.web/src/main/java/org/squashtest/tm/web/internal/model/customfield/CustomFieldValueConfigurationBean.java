@@ -218,12 +218,18 @@ public class CustomFieldValueConfigurationBean {
 		}
 
 		public Date getValueAsDate() {
-			// TODO utility class ?
+			
+			Date date = null;
+			
+			if(value == null || "".equals(value)){
+				return date;
+			}
+				
 			try {
 				return new SimpleDateFormat(CustomField.DATE_PATTERN).parse(value);
 			} catch (ParseException e) {
 				LOGGER.warn(e.getMessage(), e);
-				return null;
+				return date;
 			}
 		}
 

@@ -70,8 +70,8 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		then:
 		result.size() <= 2
 		result == [
-			[100L, "11", 1L],
-			[1000L, "22", 1L]
+			[100L, "11", 1L, 1L],
+			[1000L, "22", 2L, 1L]
 		]
 	}
 
@@ -111,9 +111,9 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		then:
 		result.size() <= 7
 		result == [
-			[1000L, "22", 1L],
-			[1011L, "33", 1L],
-			[2010L, "66", 1L]
+			[1000L, "22", 2L, 1L],
+			[1011L, "33", 3L, 1L],
+			[2010L, "66", 6L, 1L]
 		]
 	}
 
