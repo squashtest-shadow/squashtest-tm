@@ -550,7 +550,7 @@ define(
 					var cookieProject = $.cookie('squash-test-step-project');
 					var currentProject = urls.projectId;
 					
-					if (parseInt(cookieProject) !== currentProject){
+					if (parseInt(cookieProject, 10) !== currentProject){
 						oneShotConfirm(language.infoTitle, language.warnCopy, language.confirmlabel, language.cancellabel)
 						.then(function(){
 							performPaste(cookieIds);	//see definition below
@@ -558,7 +558,7 @@ define(
 					}
 					else{
 						performPaste(cookieIds);		//see definition below
-					};
+					}
 				});
 				
 				function performPaste(rawIds){
@@ -595,7 +595,7 @@ define(
 					} catch (damn) {
 						$.squash.openMessage(language.errorTitle, damn);
 					}					
-				};
+				}
 			}
 
 			function initDeleteAllStepsButtons(language, urls) {
