@@ -35,17 +35,28 @@
 	<!-- ========================================================================================================= -->
 
 	<changeSet id="tm-1.5.2.issue-2454-test" author="bsiri">
-		<preConditions>
-			<sqlCheck expectedResult="0">
-			<![CDATA[
-				select count(*) from (				
-					select tstpi.suite_id
-					from TEST_SUITE_TEST_PLAN_ITEM tstpi
-					group by tstpi.suite_id
-					having count(tstpi.suite_id) <= max(tstpi.test_plan_order) 						
-				) AS TMPTMP
-			]]>	
-			</sqlCheck>
-		</preConditions>
+        <preConditions>
+                <sqlCheck expectedResult="17">
+                        select count(suite_id) from TEST_SUITE_TEST_PLAN_ITEM
+                        where 
+                                (tpi_id=2 and suite_id=1 and test_plan_order=0) or
+                                (tpi_id=4 and suite_id=1 and test_plan_order=1) or
+                                (tpi_id=8 and suite_id=1 and test_plan_order=2) or
+                                (tpi_id=9 and suite_id=1 and test_plan_order=3) or
+                                (tpi_id=11 and suite_id=1 and test_plan_order=4) or
+                                (tpi_id=3 and suite_id=2 and test_plan_order=0) or
+                                (tpi_id=5 and suite_id=2 and test_plan_order=1) or
+                                (tpi_id=6 and suite_id=2 and test_plan_order=2) or
+                                (tpi_id=7 and suite_id=2 and test_plan_order=3) or
+                                (tpi_id=10 and suite_id=2 and test_plan_order=4) or
+                                (tpi_id=22 and suite_id=3 and test_plan_order=0) or
+                                (tpi_id=24 and suite_id=3 and test_plan_order=1) or
+                                (tpi_id=28 and suite_id=3 and test_plan_order=2) or
+                                (tpi_id=39 and suite_id=4 and test_plan_order=0) or
+                                (tpi_id=13 and suite_id=5 and test_plan_order=0) or
+                                (tpi_id=14 and suite_id=5 and test_plan_order=1) or
+                                (tpi_id=20 and suite_id=5 and test_plan_order=2);
+                </sqlCheck>
+        </preConditions>
 </changeSet>
 </databaseChangeLog>
