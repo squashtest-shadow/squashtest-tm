@@ -196,7 +196,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			List<Long> executionStepsIds, PagingAndSorting sorter) {
 		if (!executionsIds.isEmpty() && !executionStepsIds.isEmpty()) {
 
-			String queryString = "select issueList.id, Issue.remoteIssueId, Issue.bugtracker.id "
+			String queryString = "select issueList.id, Issue.remoteIssueId, Issue.id, Issue.bugtracker.id "
 					+ "from IssueList issueList join issueList.issues Issue "
 					+ WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_AND_EXEC_STEP;
 

@@ -571,7 +571,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		Map<Long, List<String>> organizedRemoteIds = new HashMap<Long, List<String>>(
 				sortedIssueListIdsAndIssueRemoteIds.size());
 		for (Object[] object : sortedIssueListIdsAndIssueRemoteIds) {
-			Long bugtrackerId = (Long) object[2];
+			Long bugtrackerId = (Long) object[3];
 			List<String> remoteIds = organizedRemoteIds.get(bugtrackerId);
 			if (remoteIds != null) {
 				remoteIds.add((String) object[1]);
