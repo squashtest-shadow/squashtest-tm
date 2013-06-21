@@ -19,186 +19,165 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(
-		[ "jquery", "backbone","jeditable.simpleJEditable", "jquery.squash.confirmdialog",
-				"jquery.squash.messagedialog", "jquery.squash.datatables" ],
-				function($, Backbone, SimpleJEditable) {
-					var ParametersTable = Backbone.View.extend({
-						
-						el : "#parameters-table",
-						
-						initialize : function() {
-						this.settings = this.options.settings;
-							this.removeRowParameter = $.proxy(
-									this._removeRowParameter, this);					
-							this.parametersTableRowCallback = $.proxy(
-									this._parametersTableRowCallback, this);				
-							this.confirmRemoveParameter = $.proxy(
-									this._confirmRemoveParameter, this);
-							
-							this.refresh = $.proxy(this._refresh, this);
-							this._configureTable.call(this);
-							this._configureRemoveParametersDialogs.call(this);
-						},
-						
-						events : {
-							
-						},
-						
-						
-						_dataTableSettings : function(self) {
-							return {
-								// has Dom configuration
-								 "bPaginate": false,
-								"aaSorting" : [ [ 3, 'asc' ] ],
-								"fnRowCallback" : self.parametersTableRowCallback
-							};
-						},
+define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confirmdialog",
+		"jquery.squash.messagedialog", "jquery.squash.datatables" ], function($, Backbone, SimpleJEditable) {
+	var ParametersTable = Backbone.View.extend({
 
-						_squashSettings : function(self) {
+		el : "#parameters-table",
 
-							var squashSettings = {};
+		initialize : function() {
+			this.settings = this.options.settings;
+			this.removeRowParameter = $.proxy(this._removeRowParameter, this);
+			this.parametersTableRowCallback = $.proxy(this._parametersTableRowCallback, this);
+			this.confirmRemoveParameter = $.proxy(this._confirmRemoveParameter, this);
 
-							if (self.settings.permissions.isWritable) {
-								squashSettings = {
-									buttons : [ {
-										tooltip : self.settings.language.remove,
-										cssClass : "",
-										tdSelector : "td.delete-button",
-										uiIcon : "ui-icon-minus",
-										onClick : this.removeRowParameter,
-										condition : function(row, data){return data["directly-associated"];}
-									} ],
-									
-									richEditables : {
-										conf : {
-											ckeditor : {
-												customConfig : self.settings.basic.ckeConfigUrl	,
-												language : self.settings.language.ckeLang
-											},
-											placeholder : self.settings.language.placeholder,
-											submit : self.settings.language.submit,
-											cancel : self.settings.language.cancellabel,
-											indicator : self.settings.basic.indicatorUrl
-										},
+			this.refresh = $.proxy(this._refresh, this);
+			this._configureTable.call(this);
+			this._configureRemoveParametersDialogs.call(this);
+		},
 
-										targets : {
-											'parameter-description' : self.settings.basic.parametersUrl + '/{entity-id}/description'
-										}
-									}
-								};
-							}
+		events : {
 
-							return squashSettings;
+		},
 
-						},
+		_dataTableSettings : function(self) {
+			return {
+				// has Dom configuration
+				"bPaginate" : false,
+				"aaSorting" : [ [ 3, 'asc' ] ],
+				"fnRowCallback" : self.parametersTableRowCallback
+			};
+		},
 
-						_configureTable : function() {
-							var self = this;
-							$(this.el).squashTable(
-									self._dataTableSettings(self),
-									self._squashSettings(self));
-							this.table = $(this.el).squashTable();
-						},
+		_squashSettings : function(self) {
 
-					
+			var squashSettings = {};
 
-						_parametersTableRowCallback : function(row, data,
-								displayIndex) {
-							if(this.settings.permissions.isWritable){
-							this.addSimpleJEditableToName(row, data);
-							}
-							
-							return row;
-						},
-
-						_removeRowParameter : function(table, cell) {
-							var row = cell.parentNode.parentNode;
-							this.confirmRemoveParameter(row);
-						},
-
-						
-
-						_confirmRemoveParameter: function(row) {
-							var self = this;
-							var paramId = self.table.getODataId(row);
-											
-							self._isUsed.call(self, paramId).done(
-									function(isUsed){
-										if(isUsed){
-												self.cannotRemoveUsedParamDialog.openMessage();
-										}else{
-											self.toDeleteId = paramId;
-											self.confirmRemoveParameterDialog.confirmDialog("open");
-										}
-									});
-						},
-						
-						_isUsed : function(paramId){
-							var self = this;
-							return $.ajax({
-								url: self.settings.basic.parametersUrl + "/" + paramId + "/used",
-								type: "get"
-							});
-						},
-
-						_removeParameter : function() {
-							var self = this;
-							var id = this.toDeleteId;					
-							$.ajax({
-								url : self.settings.basic.parametersUrl + '/' + id,
-								type : 'delete'
-							}).done(function(){
-							self.refresh();
-							self.options.parentTab.trigger("removeParameter");
-							});
-						},
-
-						_configureRemoveParametersDialogs : function() {
-							var self = this;
-							this.confirmRemoveParameterDialog = $(
-									"#remove-parameter-confirm-dialog")
-									.confirmDialog();
-							
-							this.confirmRemoveParameterDialog.on(
-									"confirmdialogconfirm", $.proxy(
-											self._removeParameter, self));
-							this.confirmRemoveParameterDialog.on("close", $
-									.proxy(function() {
-										this.toDeleteId = null;
-									}, this));
-							
-
-							this.cannotRemoveUsedParamDialog = $(
-									"#remove-parameter-used-dialog")
-									.messageDialog();
-						},
-
-						// =====================================================
-
-						addSimpleJEditableToName : function(row, data) {
-							var self = this;
-							var urlPOST = self.settings.basic.parametersUrl + '/' + data["entity-id"]+"/name";
-							var component = $('td.parameter-name', row);
-							new SimpleJEditable({
-								language : {
-									richEditPlaceHolder : self.settings.language.placeholder,
-									okLabel : self.settings.language.submit,
-									cancelLabel : self.settings.language.cancellabel
-								},
-								targetUrl : urlPOST,
-								component : component,
-								jeditableSettings : {}
-							});
-						},
-						
-
-						_refresh : function() {
-							this.table.fnDraw(false);
-							this.options.parentTab.trigger("parameters.table.refresh");
+			if (self.settings.permissions.isWritable) {
+				squashSettings = {
+					buttons : [ {
+						tooltip : self.settings.language.remove,
+						cssClass : "",
+						tdSelector : "td.delete-button",
+						uiIcon : "ui-icon-minus",
+						onClick : this.removeRowParameter,
+						condition : function(row, data) {
+							return data["directly-associated"];
 						}
-					});
-						
-					return ParametersTable;
+					} ],
 
-		});
+					richEditables : {
+						conf : {
+							ckeditor : {
+								customConfig : self.settings.basic.ckeConfigUrl,
+								language : self.settings.language.ckeLang
+							},
+							placeholder : self.settings.language.placeholder,
+							submit : self.settings.language.submit,
+							cancel : self.settings.language.cancellabel,
+							indicator : self.settings.basic.indicatorUrl
+						},
+
+						targets : {
+							'parameter-description' : self.settings.basic.parametersUrl + '/{entity-id}/description'
+						}
+					}
+				};
+			}
+
+			return squashSettings;
+
+		},
+
+		_configureTable : function() {
+			var self = this;
+			$(this.el).squashTable(self._dataTableSettings(self), self._squashSettings(self));
+			this.table = $(this.el).squashTable();
+		},
+
+		_parametersTableRowCallback : function(row, data, displayIndex) {
+			if (this.settings.permissions.isWritable) {
+				this.addSimpleJEditableToName(row, data);
+			}
+
+			return row;
+		},
+
+		_removeRowParameter : function(table, cell) {
+			var row = cell.parentNode.parentNode;
+			this.confirmRemoveParameter(row);
+		},
+
+		_confirmRemoveParameter : function(row) {
+			var self = this;
+			var paramId = self.table.getODataId(row);
+
+			self._isUsed.call(self, paramId).done(function(isUsed) {
+				if (isUsed) {
+					self.cannotRemoveUsedParamDialog.openMessage();
+				} else {
+					self.toDeleteId = paramId;
+					self.confirmRemoveParameterDialog.confirmDialog("open");
+				}
+			});
+		},
+
+		_isUsed : function(paramId) {
+			var self = this;
+			return $.ajax({
+				url : self.settings.basic.parametersUrl + "/" + paramId + "/used",
+				type : "get"
+			});
+		},
+
+		_removeParameter : function() {
+			var self = this;
+			var id = this.toDeleteId;
+			$.ajax({
+				url : self.settings.basic.parametersUrl + '/' + id,
+				type : 'delete'
+			}).done(function() {
+				self.refresh();
+				self.options.parentTab.trigger("removeParameter");
+			});
+		},
+
+		_configureRemoveParametersDialogs : function() {
+			var self = this;
+			this.confirmRemoveParameterDialog = $("#remove-parameter-confirm-dialog").confirmDialog();
+
+			this.confirmRemoveParameterDialog.on("confirmdialogconfirm", $.proxy(self._removeParameter, self));
+			this.confirmRemoveParameterDialog.on("close", $.proxy(function() {
+				this.toDeleteId = null;
+			}, this));
+
+			this.cannotRemoveUsedParamDialog = $("#remove-parameter-used-dialog").messageDialog();
+		},
+
+		// =====================================================
+
+		addSimpleJEditableToName : function(row, data) {
+			var self = this;
+			var urlPOST = self.settings.basic.parametersUrl + '/' + data["entity-id"] + "/name";
+			var component = $('td.parameter-name', row);
+			new SimpleJEditable({
+				language : {
+					richEditPlaceHolder : self.settings.language.placeholder,
+					okLabel : self.settings.language.submit,
+					cancelLabel : self.settings.language.cancellabel
+				},
+				targetUrl : urlPOST,
+				component : component,
+				jeditableSettings : {}
+			});
+		},
+
+		_refresh : function() {
+			this.table.fnDraw(false);
+			this.options.parentTab.trigger("parameters.table.refresh");
+		}
+	});
+
+	return ParametersTable;
+
+});

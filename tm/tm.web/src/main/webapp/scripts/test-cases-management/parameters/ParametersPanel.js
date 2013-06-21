@@ -19,70 +19,77 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "backbone", "./ParametersTable", "./NewParameterDialog",
-		"jquery.squash.confirmdialog", "jquery.squash.togglepanel" ],
-		function($, Backbone, ParametersTable, NewParameterDialog) {
-			var teamMod = squashtm.app.teamMod;
-			var ParametersPanel = Backbone.View.extend({
-				
-				el : "#parameters-panel-container",
-				
-				initialize : function() {
-				this.settings = this.options.settings;
-					this.language = this.settings.language;
-					this.makeTogglePanel();
-					this.table = new ParametersTable({settings : this.settings, parentTab : this.options.parentTab});
-					this.showNewParameterDialog = $.proxy(
-									this._showNewParameterDialog, this);
-					this.configureButtons();
-				},
-				
-				events : {
-					
-				},
-				
-				makeTogglePanel : function(){
-					var self = this;
-					var panelSettings = {
-							initiallyOpen : true,
-							title : self.language.parametersPanelTitle
-						};
-					this.$("#parameters-panel").togglePanel(panelSettings);
-				},
-				
-				configureButtons : function() {
-					var self = this;
-					// ===============toogle buttons=================
-					// this line below is here because toggle panel
-					// buttons cannot be bound with the 'events'
-					// property of Backbone.View.
-					// my guess is that the event is bound to the button
-					// before it is moved from it's "span.not-displayed"
-					// to the toggle panel header.
-					// TODO change our way to make toggle panels buttons
-					// =============/toogle buttons===================
-					this.$("#add-parameter-button").on('click',	self.showNewParameterDialog);
-				},
-				
-				_showNewParameterDialog : function(event) {
-					var self = this;
+define([ "jquery", "backbone", "./ParametersTable", "./NewParameterDialog", "jquery.squash.confirmdialog",
+		"jquery.squash.togglepanel" ], function($, Backbone, ParametersTable, NewParameterDialog) {
+	var teamMod = squashtm.app.teamMod;
+	var ParametersPanel = Backbone.View.extend({
 
-					function discard() {
-						self.newParameterDialog.off("newParameter.cancel newParameter.confirm");
-						self.newParameterDialog.undelegateEvents();
-						self.newParameterDialog = null;
-					}
+		el : "#parameters-panel-container",
 
-					function discardAndRefresh() {
-						self.options.parentTab.trigger("newParameter");
-						discard();
-						self.table.refresh();
-					}
+		initialize : function() {
+			this.settings = this.options.settings;
+			this.language = this.settings.language;
+			this.makeTogglePanel();
+			this.table = new ParametersTable({
+				settings : this.settings,
+				parentTab : this.options.parentTab
+			});
+			this.showNewParameterDialog = $.proxy(this._showNewParameterDialog, this);
+			this.configureButtons();
+		},
 
-					self.newParameterDialog = new NewParameterDialog({settings : self.settings, model : {name:"", description:""}});
-					self.newParameterDialog.on("newParameter.cancel", discard);
-					self.newParameterDialog.on("newParameter.confirm", discardAndRefresh);
+		events : {
+
+		},
+
+		makeTogglePanel : function() {
+			var self = this;
+			var panelSettings = {
+				initiallyOpen : true,
+				title : self.language.parametersPanelTitle
+			};
+			this.$("#parameters-panel").togglePanel(panelSettings);
+		},
+
+		configureButtons : function() {
+			var self = this;
+			// ===============toogle buttons=================
+			// this line below is here because toggle panel
+			// buttons cannot be bound with the 'events'
+			// property of Backbone.View.
+			// my guess is that the event is bound to the button
+			// before it is moved from it's "span.not-displayed"
+			// to the toggle panel header.
+			// TODO change our way to make toggle panels buttons
+			// =============/toogle buttons===================
+			this.$("#add-parameter-button").on('click', self.showNewParameterDialog);
+		},
+
+		_showNewParameterDialog : function(event) {
+			var self = this;
+
+			function discard() {
+				self.newParameterDialog.off("newParameter.cancel newParameter.confirm");
+				self.newParameterDialog.undelegateEvents();
+				self.newParameterDialog = null;
+			}
+
+			function discardAndRefresh() {
+				self.options.parentTab.trigger("newParameter");
+				discard();
+				self.table.refresh();
+			}
+
+			self.newParameterDialog = new NewParameterDialog({
+				settings : self.settings,
+				model : {
+					name : "",
+					description : ""
 				}
 			});
-			return ParametersPanel;
+			self.newParameterDialog.on("newParameter.cancel", discard);
+			self.newParameterDialog.on("newParameter.confirm", discardAndRefresh);
+		}
+	});
+	return ParametersPanel;
 });

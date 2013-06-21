@@ -18,109 +18,103 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(
-		[ "jquery", "backbone", "app/lnf/Forms", "jquery.squash.confirmdialog" ],
-		function($, Backbone, Forms) {
-			var NewParameterDialog = Backbone.View
-					.extend({
-						el : "#add-parameter-dialog",
-						
-						initialize : function() {
-							this.settings = this.options.settings;
-							var self = this;
-							
-							// called on self methods
-							
-							//initialize popup
-							var textareas = this.$el.find("textarea");
-							textareas.val("");
-							textareas.each(self.decorateArea);
-							this.$el.find("input:text").val("");
-							$("span.error-message", $(self.el)).text("");
+define([ "jquery", "backbone", "app/lnf/Forms", "jquery.squash.confirmdialog" ], function($, Backbone, Forms) {
+	var NewParameterDialog = Backbone.View.extend({
+		el : "#add-parameter-dialog",
 
-							this.$el.confirmDialog({
-								autoOpen : true
-							});
-						},
-						
-						events : {
-							"confirmdialogcancel" : "cancel",
-							"confirmdialogvalidate" : "validate",
-							"confirmdialogconfirm" : "confirm"
-						},
-						
-						decorateArea : function(){
-							$(this).ckeditor(
-									function() {
-									},
-									{
-										customConfig : squashtm.app.contextRoot
-												+ "/styles/ckeditor/ckeditor-config.js",
-										language : squashtm.app.ckeditorLanguage
-									});
-						},
-						
-						cancel : function(event) {
-							this.cleanup();
-							this.trigger("newParameter.cancel");
-						},
+		initialize : function() {
+			this.settings = this.options.settings;
+			var self = this;
 
-						confirm : function(event) {
-							this.cleanup();
-							this.trigger("newParameter.confirm");
-						},
+			// called on self methods
 
-						validate : function(event) {
-							var res = true, self = this;
-							this.populateModel();
-							Forms.form(this.$el).clearState();
+			// initialize popup
+			var textareas = this.$el.find("textarea");
+			textareas.val("");
+			textareas.each(self.decorateArea);
+			this.$el.find("input:text").val("");
+			$("span.error-message", $(self.el)).text("");
 
-							$.ajax({
-								type : 'post',
-								url : self.settings.basic.testCaseUrl + "/parameters/new",
-								dataType : 'json',
-								// note : we cannot use promise api with async param. see
-								// http://bugs.jquery.com/ticket/11013#comment:40
-								async : false,
-								data : self.model,
-								error : function(jqXHR, textStatus, errorThrown) {
-									res = false;
-									event.preventDefault();
-								}
-							});
+			this.$el.confirmDialog({
+				autoOpen : true
+			});
+		},
 
-							return res;
-						},
+		events : {
+			"confirmdialogcancel" : "cancel",
+			"confirmdialogvalidate" : "validate",
+			"confirmdialogconfirm" : "confirm"
+		},
 
-						cleanup : function() {
-							this.$el.addClass("not-displayed");
-							Forms.form(this.$el).clearState();
-							this.$el.confirmDialog("destroy");
-							this.cleanupTextareas();
-						},
+		decorateArea : function() {
+			$(this).ckeditor(function() {
+			}, {
+				customConfig : squashtm.app.contextRoot + "/styles/ckeditor/ckeditor-config.js",
+				language : squashtm.app.ckeditorLanguage
+			});
+		},
 
-						cleanupTextareas : function() {
-							this.$el.find("textarea").each(function() {
-								var area = $(this);
+		cancel : function(event) {
+			this.cleanup();
+			this.trigger("newParameter.cancel");
+		},
 
-								try {
-									area.ckeditorGet().destroy();
+		confirm : function(event) {
+			this.cleanup();
+			this.trigger("newParameter.confirm");
+		},
 
-								} catch (damnyou) {
-									var areaName = area.attr('id');
-									// destroying the instance will make it crash. So we remove
-									// it and hope the memory leak wont be too high.
-									CKEDITOR.remove(areaName);
-								}
-							});
-						},
+		validate : function(event) {
+			var res = true, self = this;
+			this.populateModel();
+			Forms.form(this.$el).clearState();
 
-						populateModel : function() {
-							var model = this.model, $el = this.$el;
-							model.name = $el.find("#add-parameter-name").val();
-							model.description = $el.find("#add-parameter-description").val();
-						}			
+			$.ajax({
+				type : 'post',
+				url : self.settings.basic.testCaseUrl + "/parameters/new",
+				dataType : 'json',
+				// note : we cannot use promise api with async param. see
+				// http://bugs.jquery.com/ticket/11013#comment:40
+				async : false,
+				data : self.model,
+				error : function(jqXHR, textStatus, errorThrown) {
+					res = false;
+					event.preventDefault();
+				}
+			});
 
-					});
-			return NewParameterDialog;
-		});
+			return res;
+		},
+
+		cleanup : function() {
+			this.$el.addClass("not-displayed");
+			Forms.form(this.$el).clearState();
+			this.$el.confirmDialog("destroy");
+			this.cleanupTextareas();
+		},
+
+		cleanupTextareas : function() {
+			this.$el.find("textarea").each(function() {
+				var area = $(this);
+
+				try {
+					area.ckeditorGet().destroy();
+
+				} catch (damnyou) {
+					var areaName = area.attr('id');
+					// destroying the instance will make it crash. So we remove
+					// it and hope the memory leak wont be too high.
+					CKEDITOR.remove(areaName);
+				}
+			});
+		},
+
+		populateModel : function() {
+			var model = this.model, $el = this.$el;
+			model.name = $el.find("#add-parameter-name").val();
+			model.description = $el.find("#add-parameter-description").val();
+		}
+
+	});
+	return NewParameterDialog;
+});
