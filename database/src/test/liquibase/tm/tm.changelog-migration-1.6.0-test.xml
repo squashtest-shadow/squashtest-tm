@@ -122,6 +122,47 @@
 		]]>	
 		</sqlCheck>
 	</preConditions>
-</changeSet>
+	</changeSet>
+
+	<!-- =====================================================================================
+		let's check again that multiple inclusions of the fix for 2454 won't break the data.
+		It could happen if Squash was updated to 1.5.2 first.	
+	======================================================================================= -->
+	
+	<changeSet id="tm-1.6.0.issue-2454-doublexec-test.01" author="bsiri">
+		<comment>applying data</comment>
+		<sqlFile path="tm.data-1.6.0-2.sql" relativeToChangelogFile="true" endDelimiter=";"/>	
+	</changeSet>
+	
+	<!--  now apply the patch again -->
+	<include file="./tm.changeset-migration-1.6.0-2454-doubleexec.xml"
+		relativeToChangelogFile="true" />
+		
+	<!--  finally make sure that we haven't f***ed up our data -->
+	<changeSet id="tm-1.6.0.issue-2454-testagain" author="bsiri">
+	<preConditions>
+		<sqlCheck expectedResult="17">
+			select count(suite_id) from TEST_SUITE_TEST_PLAN_ITEM
+			where 
+				(tpi_id=2 and suite_id=1 and test_plan_order=0) or
+				(tpi_id=4 and suite_id=1 and test_plan_order=1) or
+				(tpi_id=8 and suite_id=1 and test_plan_order=2) or
+				(tpi_id=9 and suite_id=1 and test_plan_order=3) or
+				(tpi_id=11 and suite_id=1 and test_plan_order=4) or
+				(tpi_id=3 and suite_id=2 and test_plan_order=0) or
+				(tpi_id=5 and suite_id=2 and test_plan_order=1) or
+				(tpi_id=6 and suite_id=2 and test_plan_order=2) or
+				(tpi_id=7 and suite_id=2 and test_plan_order=3) or
+				(tpi_id=10 and suite_id=2 and test_plan_order=4) or
+				(tpi_id=22 and suite_id=3 and test_plan_order=0) or
+				(tpi_id=24 and suite_id=3 and test_plan_order=1) or
+				(tpi_id=28 and suite_id=3 and test_plan_order=2) or
+				(tpi_id=39 and suite_id=4 and test_plan_order=0) or
+				(tpi_id=13 and suite_id=5 and test_plan_order=0) or
+				(tpi_id=14 and suite_id=5 and test_plan_order=1) or
+				(tpi_id=20 and suite_id=5 and test_plan_order=2);
+		</sqlCheck>
+	</preConditions>
+	</changeSet>	
 	
 </databaseChangeLog>
