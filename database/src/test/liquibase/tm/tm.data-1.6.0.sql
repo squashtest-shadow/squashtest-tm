@@ -25,4 +25,20 @@ INSERT INTO `CORE_GROUP_MEMBER` (`PARTY_ID`, `GROUP_ID`) VALUES
 
 INSERT INTO `ACL_RESPONSIBILITY_SCOPE_ENTRY` (`ID`, `PARTY_ID`, `ACL_GROUP_ID`, `OBJECT_IDENTITY_ID`) VALUES
 (60,20,2,14),
-(61,21,2,14);
+(61,21,2,15);
+
+
+-- 
+-- test for issue 2474
+-- add one custom field bindings for test steps in project 3. 
+-- the custom field values are not created : the changeset 'tm-1.6.0.issue-2474-01' is supposed to create them
+-- the only exception is test step 8 for which it will be created. We will also check that it was not created a second time.
+--
+
+insert into CUSTOM_FIELD_BINDING (cf_id, bound_entity, bound_project_id, position) values 
+(1, 'TEST_STEP', 3, 1);
+
+
+insert into CUSTOM_FIELD_VALUE (bound_entity_id, bound_entity_type, cfb_id, value)
+select 8, 'TEST_STEP', max(cfb_id), 'success !'
+from CUSTOM_FIELD_BINDING;

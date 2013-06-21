@@ -109,6 +109,11 @@
 		<comment>check removal of acl rights for inactive users</comment>
 	</changeSet>
 	
+	
+	<!-- =====================================================================================
+		test the fix for 2454 a first time.
+	======================================================================================= -->
+	
 	<changeSet id="tm-1.6.0.issue-2454-test" author="bsiri">
 	<preConditions>
 		<sqlCheck expectedResult="17">
@@ -176,4 +181,17 @@
 	</preConditions>
 	</changeSet>	
 	
+	<!-- =====================================================================================
+		test the fix for 2474 a first time.
+	======================================================================================= -->	
+	
+	<changeSet id="tm-1.6.0.issue-2474-test" author="bsiri">
+	<preConditions>
+		<sqlCheck expectedResult="11">
+			select count(cfv_id) from CUSTOM_FIELD_VALUE
+			where bound_entity_type = 'TEST_STEP'
+			and bound_entity_id in (11, 10, 8, 7, 6, 50, 49, 48, 39, 34, 4);
+		</sqlCheck>
+	</preConditions>
+	</changeSet>		
 </databaseChangeLog>
