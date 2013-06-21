@@ -27,6 +27,8 @@
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
    <include file="tm.data-1.6.0.xml" relativeToChangelogFile="true" />
+   
+   <include file="tm.data-1.6.0-2.xml" relativeToChangelogFile="true" />
 
 	<!-- ========================================INCLUDE CHANGELOG================================================ -->
 	<include file="../../../main/liquibase/tm/tm.changelog-1.6.0.xml"
@@ -106,4 +108,20 @@
 		</preConditions>
 		<comment>check removal of acl rights for inactive users</comment>
 	</changeSet>
+	
+	<changeSet id="tm-1.6.0.issue-2454-test" author="bsiri">
+	<preConditions>
+		<sqlCheck expectedResult="0">
+		<![CDATA[
+			select count(*) from (				
+				select tstpi.suite_id
+				from TEST_SUITE_TEST_PLAN_ITEM tstpi
+				group by tstpi.suite_id
+				having count(tstpi.suite_id) <= max(tstpi.test_plan_order) 						
+			) AS TMPTMP
+		]]>	
+		</sqlCheck>
+	</preConditions>
+</changeSet>
+	
 </databaseChangeLog>
