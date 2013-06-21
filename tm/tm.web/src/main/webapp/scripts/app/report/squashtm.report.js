@@ -324,7 +324,8 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui",
 				$.open(url, {
 					data : data
 				}, {
-					name : '_blank'
+					name : '_blank',
+					features : 'resizable=yes, scrollbars=yes'
 				});
 			}
 
