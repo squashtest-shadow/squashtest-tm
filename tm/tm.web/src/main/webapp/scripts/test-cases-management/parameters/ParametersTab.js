@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "backbone", "./ParametersPanel", "./DatasetsPanel", "jquery.squash.confirmdialog" ], function($,
-		Backbone, ParametersPanel, DatasetsPanel) {
+define([ "jquery", "backbone", "underscore", "./ParametersPanel", "./DatasetsPanel", "jquery.squash.confirmdialog" ], function($,
+		Backbone, _, ParametersPanel, DatasetsPanel) {
 	var ParametersTab = Backbone.View.extend({
 
 		el : "#parameters-tabs-panel",
@@ -36,6 +36,16 @@ define([ "jquery", "backbone", "./ParametersPanel", "./DatasetsPanel", "jquery.s
 			this.datasetsPanel = new DatasetsPanel({
 				settings : this.settings,
 				parentTab : this
+			});
+
+			this.listenTo(this.parametersPanel, "parameter.created parameter.removed", this.datasetsPanel.refresh);
+
+			// content is refreshed where this tab becomes visible. should be in a parent view if it existed
+			$("div.fragment-tabs").on("tabsshow", function(event, ui) {
+				if (ui.index === self.settings.parameters.tabIndex) {
+					self.parametersPanel.refresh();
+					self.datasetsPanel.refresh();
+				}
 			});
 		},
 		events : {}

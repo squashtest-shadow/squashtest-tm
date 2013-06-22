@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "backbone", "./ParametersTable", "./NewParameterDialog", "jquery.squash.confirmdialog",
-		"jquery.squash.togglepanel" ], function($, Backbone, ParametersTable, NewParameterDialog) {
+define([ "jquery", "backbone", "underscore", "./ParametersTable", "./NewParameterDialog", "jquery.squash.confirmdialog",
+		"jquery.squash.togglepanel" ], function($, Backbone, _, ParametersTable, NewParameterDialog) {
 	var teamMod = squashtm.app.teamMod;
 	var ParametersPanel = Backbone.View.extend({
 
@@ -29,13 +29,26 @@ define([ "jquery", "backbone", "./ParametersTable", "./NewParameterDialog", "jqu
 		initialize : function() {
 			this.settings = this.options.settings;
 			this.language = this.settings.language;
+			
+			_.bindAll(this, "showNewParameterDialog", "_onNewParameterConfirmed", "_onParameterRemoved", "refresh");
+
 			this.makeTogglePanel();
 			this.table = new ParametersTable({
-				settings : this.settings,
-				parentTab : this.options.parentTab
+				settings : this.settings
 			});
-			this.showNewParameterDialog = $.proxy(this._showNewParameterDialog, this);
+
+			this.newParameterDialog = new NewParameterDialog({
+				settings : this.settings,
+				model : {
+					name : "",
+					description : ""
+				}
+			});
+			
+
 			this.configureButtons();
+			this.listenTo(this.newParameterDialog, "newparameterdialog.confirm", this._onNewParameterConfirmed);
+			this.listenTo(this.table, "parameterstable.removed", this._onParameterRemoved);
 		},
 
 		events : {
@@ -52,7 +65,6 @@ define([ "jquery", "backbone", "./ParametersTable", "./NewParameterDialog", "jqu
 		},
 
 		configureButtons : function() {
-			var self = this;
 			// ===============toogle buttons=================
 			// this line below is here because toggle panel
 			// buttons cannot be bound with the 'events'
@@ -62,33 +74,31 @@ define([ "jquery", "backbone", "./ParametersTable", "./NewParameterDialog", "jqu
 			// to the toggle panel header.
 			// TODO change our way to make toggle panels buttons
 			// =============/toogle buttons===================
-			this.$("#add-parameter-button").on('click', self.showNewParameterDialog);
+			this.$("#add-parameter-button").on('click', this.showNewParameterDialog);
 		},
 
-		_showNewParameterDialog : function(event) {
-			var self = this;
+		showNewParameterDialog : function(event) {
+			this.newParameterDialog.show();
+		},
 
-			function discard() {
-				self.newParameterDialog.off("newParameter.cancel newParameter.confirm");
-				self.newParameterDialog.undelegateEvents();
-				self.newParameterDialog = null;
-			}
-
-			function discardAndRefresh() {
-				self.options.parentTab.trigger("newParameter");
-				discard();
-				self.table.refresh();
-			}
-
-			self.newParameterDialog = new NewParameterDialog({
-				settings : self.settings,
-				model : {
-					name : "",
-					description : ""
-				}
-			});
-			self.newParameterDialog.on("newParameter.cancel", discard);
-			self.newParameterDialog.on("newParameter.confirm", discardAndRefresh);
+		/**
+		 * handles new parameter confirmed events. refreshes table and triggers an event.
+		 */
+		_onNewParameterConfirmed : function() {
+			this.table.refresh();
+			this.trigger("parameter.created");
+		}, 
+		
+		/**
+		 * handles parameter removed events. triggers an event.
+		 */
+		_onParameterRemoved : function() {
+			this.table.refresh();
+			this.trigger("parameter.removed");
+		}, 
+		
+		refresh: function() {
+			this.table.refresh();
 		}
 	});
 	return ParametersPanel;

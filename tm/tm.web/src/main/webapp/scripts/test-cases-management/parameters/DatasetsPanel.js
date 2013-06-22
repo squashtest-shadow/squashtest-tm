@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "backbone", "./DatasetsTable", "./NewDatasetDialog", 
+define([ "jquery", "backbone", "underscore", "./DatasetsTable", "./NewDatasetDialog", 
 		"jquery.squash.confirmdialog", "jquery.squash.togglepanel" ],
-		function($, Backbone, DatasetsTable, NewDatasetDialog) {
+		function($, Backbone, _, DatasetsTable, NewDatasetDialog) {
 			var DatasetsPanel = Backbone.View.extend({
 				
 				el : "#datasets-panel-container",
@@ -29,10 +29,11 @@ define([ "jquery", "backbone", "./DatasetsTable", "./NewDatasetDialog",
 				initialize : function() {
 				this.settings = this.options.settings;
 					this.language = this.settings.language;
+					
+					_.bindAll(this, "showNewDialog", "refresh");
+					
 					this.makeTogglePanel();
 					this.table = new DatasetsTable({settings : this.settings, parentTab : this.options.parentTab});
-					this.showNewDialog = $.proxy(
-									this._showNewDialog, this);
 					this.configureButtons();
 				},
 				
@@ -63,7 +64,7 @@ define([ "jquery", "backbone", "./DatasetsTable", "./NewDatasetDialog",
 					this.$("#add-dataset-button").on('click', self.showNewDialog);
 				},
 				
-				_showNewDialog : function(event) {
+				showNewDialog : function(event) {
 					var self = this;
 
 					function discard() {
@@ -80,6 +81,10 @@ define([ "jquery", "backbone", "./DatasetsTable", "./NewDatasetDialog",
 					self.newDatasetDialog = new NewDatasetDialog({settings : self.settings});
 					self.newDatasetDialog.on("newDataset.cancel", discard);
 					self.newDatasetDialog.on("newDataset.confirm", discardAndRefresh);
+				}, 
+				
+				refresh: function() {
+					this.table.reDraw();
 				}
 			});
 			return DatasetsPanel;

@@ -72,7 +72,7 @@
 				th:title="${addButtonTitle}" title="add" type="button" value="+"
 				class="button" /></span>
 			<div id="parameters-panel" class="toggle-panel-main">
-			<table id="parameters-table"
+			<table id="parameters-table" class="unstyled-table"
 					th:attr="data-def='hover, datakeys-id=entity-id ,ajaxsource='+@{/test-cases/__${testCase.id}__/parameters}+',language='+@{/datatables/messages}">
 					<thead>
 						<tr>
@@ -127,8 +127,7 @@
 				th:title="${addButtonTitle}" title="add" type="button" value="+"
 				class="button" /></span>
 			<div id="datasets-panel" class="toggle-panel-main">
-				<table id="datasets-table">
-
+				<table id="datasets-table" class="unstyled-table">
 					<thead>
 						<tr>
 							<th>id (masked)</th>
@@ -229,21 +228,15 @@
 		<!-- ==================== initialisation ==================== -->
 
 		<script type="text/javascript" th:inline="javascript">
+			/*<![CDATA[*/
 		var squashtm = squashtm || {};
 	  	squashtm.app = squashtm.app || {} ;
 	  	squashtm.app.messages = squashtm.app.messages || {};
 	  	squashtm.app.messages["message.notBlank"] = /*[[ #{message.notBlank} ]]*/ "Value should not be blank";
 	  	
-			/*<![CDATA[*/
 			require(
 					[ "domReady", "test-cases-management" ],
 					function(domReady, testCaseManagement) {
-						
-					  	
-						domReady(function() {		
-							
-							
-						  	
 							var settings = {
 								basic : {
 									testCaseUrl : /*[[@{/test-cases/__${testCase.id}__}]]*/"/squash/test-cases/1",
@@ -271,15 +264,17 @@
 								},
 								
 								datasetsAoColumnDefs : /*[[${datasetsAoColumnDefs}]]*/ {},
-							
 								
-
 								permissions : {
 									isWritable : /*[[${isWritable}]]*/true
+								}, 
+								
+								parameters: {
+									tabIndex: 2
 								}
-
 							};
-
+							
+						domReady(function() {		
 							testCaseManagement.initParametersPanel(settings);
 						})
 					});

@@ -34,6 +34,7 @@ function TreeEventHandler(settings) {
 
 	this.update = function(event) {
 		// todo : make something smarter
+		// ^^^ yeah that would be nice
 		switch (event.evt_name) {
 		case "paste":
 			updateEventPaste(event, this.tree);
@@ -44,6 +45,8 @@ function TreeEventHandler(settings) {
 		case "update-reference":
 			updateEventUpdateReference(event, this.tree);
 			break;
+		case "contextualcontent.clear": 
+			break; // bail out, default induces bugs
 		default:
 			this.tree.refresh_selected();
 			break;

@@ -138,7 +138,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 				type : 'delete'
 			}).done(function() {
 				self.refresh();
-				self.options.parentTab.trigger("removeParameter");
+				self.trigger("parameterstable.removed");
 			});
 		},
 
@@ -174,7 +174,6 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 
 		_refresh : function() {
 			this.table.fnDraw(false);
-			this.options.parentTab.trigger("parameters.table.refresh");
 		}
 	});
 

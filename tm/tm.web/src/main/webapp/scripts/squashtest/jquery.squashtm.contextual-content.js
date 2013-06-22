@@ -40,6 +40,7 @@
 		/* ******************* private **************** */
 
 		var cleanContent = $.proxy(function() {
+			this.fire(null, {evt_name: "contextualcontent.clear"});
 			_cleanPopups();
 			this.empty();
 			this.listeners = [];
@@ -70,8 +71,7 @@
 			this.listeners.push(listener);
 		};
 
-		this.loadWith = function(url) {
-
+		this.loadWith = function(url) {			
 			var defer = $.Deferred();
 			var self = this;
 

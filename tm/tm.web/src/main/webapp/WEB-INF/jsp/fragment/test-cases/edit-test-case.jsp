@@ -244,7 +244,7 @@
 			<a href="${stepTabUrl}"><f:message key="tabs.label.steps" /></a>
 		</li>
 		<li>
-			<a href="#tabs-2"><f:message key="label.parameters" /></a>
+			<a href="${testCaseUrl}/parameters/panel"><f:message key="label.parameters" /></a>
 		</li>
 		<li>
 			<a href="#tabs-3"><f:message key="label.Attachments" />
@@ -422,9 +422,6 @@
 	</div>
 	
 	<%-- ------------------------- /Description Panel ------------------------- --%>
-	<%------------------------------ Parameters ---------------------------------------------%>
-	<div id="tabs-2"></div>
-	<%------------------------------ /Parameters ---------------------------------------------%>
 	<%------------------------------ Attachments  ---------------------------------------------%>	
 	<comp:attachment-tab tabId="tabs-3" 
 						 entity="${ testCase }"
@@ -553,8 +550,6 @@
 				label : "${tabIssueLabel}"
 			});
 			</c:if>
-
-			
 			
 		});
 		
@@ -577,16 +572,6 @@
 
 		$("#print-test-case-button").click(function(){
 			window.open("${testCaseUrl}?format=printable", "_blank");
-		});
-
-
-		$("div.fragment-tabs").on("tabsshow", function( event, ui ) {
-			if(ui.index == 2){
-				if($("#tabs-2")){
-					$("#tabs-2").load("${testCaseUrl}/parameters/panel");
-				}
-			}
-			
 		});
 	});
 
