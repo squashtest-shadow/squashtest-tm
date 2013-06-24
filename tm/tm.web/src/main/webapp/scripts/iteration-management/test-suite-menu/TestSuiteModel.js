@@ -99,7 +99,12 @@ define([ "jquery", "jqueryui" ], function($) {
 		/* ************** public interface (slave) **************** */
 
 		this.update = function(event) {
-			// in any case we refetch the data. Perhaps we will refine this
+			//the event 'contextualcontent.clear' means that the page will be flushed (and so will be this object)
+			if (event.evt_name && event.evt_name == "contextualcontent.clear"){
+				return;
+			}
+			
+			// in any other case we refetch the data. Perhaps we will refine this
 			// later.
 			this.getModel();
 		};
