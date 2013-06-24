@@ -167,9 +167,8 @@
 						}
 						//jeditable inputs
 						else if (conf.type === 'datepicker') {
-							var effective = $
-									.extend({}, datePickBaseConf, conf);
-							widget.editable(datePickerPostFunction, effective)
+							var effective = $.extend({}, datePickBaseConf, conf);
+							widget.editable(datePickerPostFunction, effective);
 						} 
 						else {
 							var effective = $.extend({}, baseConf, conf);

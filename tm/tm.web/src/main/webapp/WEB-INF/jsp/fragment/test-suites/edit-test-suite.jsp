@@ -35,7 +35,7 @@
 
 <f:message var="squashlocale" key="squashtm.locale" />
 
-<comp:rich-jeditable-header />
+
 <comp:datepicker-manager locale="${squashlocale}" />
 
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
