@@ -86,10 +86,10 @@
 
 
 	<!-- ==================== table definition =================== -->
-	<table id="test-steps-table">
+	<table id="test-steps-table" claass="unstyled-table">
 		<thead>
 			<tr>
-				<th>id (masked)</th>
+				<th class="not-displayed">id (masked)</th>
 				<th>#</th>
 				<th th:text="#{table.column-header.has-attachment.label}">0</th>				
 				<th th:text="#{label.requirement.short}"> </th> <!-- requirements -->
@@ -103,6 +103,7 @@
 			</tr>
 		</thead>
 		<tbody>
+      <!-- eager-loaded through data property of table -->
 		</tbody>
 	</table>
 

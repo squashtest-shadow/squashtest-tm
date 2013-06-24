@@ -125,27 +125,25 @@ public class TestCaseModificationController {
 			.mapAttribute(TestCase.class, NAME, String.class, 4)
 			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 5);
 
-	
-
 	private TestCaseModificationService testCaseModificationService;
-	
-	
+
 	private ExecutionFinder executionFinder;
+
 	/**
-	* @param executionFinder
-	*            the executionFinder to set
-	*/
+	 * @param executionFinder
+	 *            the executionFinder to set
+	 */
 	@ServiceReference
 	public void setExecutionFinder(ExecutionFinder executionFinder) {
-			this.executionFinder = executionFinder;
+		this.executionFinder = executionFinder;
 	}
 
 	@Inject
 	private ParameterFinder parameterFinder;
-	
+
 	@Inject
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
-	
+
 	@Inject
 	private MessageSource messageSource;
 
@@ -194,7 +192,6 @@ public class TestCaseModificationController {
 		}
 		this.bugTrackersLocalService = bugTrackersLocalService;
 	}
-
 
 	/**
 	 * Returns the fragment html view of test case
@@ -277,17 +274,6 @@ public class TestCaseModificationController {
 	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
 		return internationalizationHelper.internationalize(mode, locale);
 	}
-
-	
-
-	
-
-	
-
-	
-	
-
-	
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-description", VALUE })
 	@ResponseBody
@@ -543,10 +529,12 @@ public class TestCaseModificationController {
 		mav.addObject("execs", executions);
 
 		// =================STEPS
+		// FIXME loads all steps colletion, fetch paged sublist instead
+		// FIXME souldn't we load all the steps BTW ?
 		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));
 
 		// the custom fields definitions
-		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps)
+		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps, testCase.getProject())
 				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
 
 		List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
@@ -557,22 +545,24 @@ public class TestCaseModificationController {
 		List<Map<?, ?>> stepsData = builder.buildAllData(steps);
 		mav.addObject("stepsData", stepsData);
 		mav.addObject("cufDefinitions", cufDefinitions);
-		
+
 		// ================PARAMETERS
 		List<Parameter> parameters = parameterFinder.findAllforTestCase(testCaseId);
 		Collections.sort(parameters, new ParameterNameComparator(SortOrder.ASCENDING));
-		
-		ParametersDataTableModelHelper paramHelper =  new ParametersDataTableModelHelper(testCaseId, messageSource, locale);
+
+		ParametersDataTableModelHelper paramHelper = new ParametersDataTableModelHelper(testCaseId, messageSource,
+				locale);
 		List<Map<?, ?>> parameterDatas = paramHelper.buildAllData(parameters);
 		mav.addObject("paramDatas", parameterDatas);
-		
+
 		// ================DATASETS
-		Map<String, String> paramHeadersByParamId = TestCaseDatasetsController.findDatasetParamHeadersByParamId(testCaseId, locale, parameters, messageSource);
+		Map<String, String> paramHeadersByParamId = TestCaseDatasetsController.findDatasetParamHeadersByParamId(
+				testCaseId, locale, parameters, messageSource);
 		List<Object[]> datasetsparamValuesById = getParamValuesById(testCase.getDatasets());
 		mav.addObject("paramIds", IdentifiedUtil.extractIds(parameters));
 		mav.addObject("paramHeadersById", paramHeadersByParamId);
 		mav.addObject("datasetsparamValuesById", datasetsparamValuesById);
-		
+
 		// =====================CALLING TC
 		List<TestCase> callingTCs = testCaseModificationService.findAllCallingTestCases(testCaseId);
 		mav.addObject("callingTCs", callingTCs);
@@ -587,21 +577,22 @@ public class TestCaseModificationController {
 
 	/**
 	 * Return a list of dataset's organized infos as an object with : <br>
-	 * object[0] = dataset's name
-	 * object[1] = the dataset's paramValues as a map, mapping the paramValue.parameter.id to the paramValue.value
+	 * object[0] = dataset's name object[1] = the dataset's paramValues as a map, mapping the paramValue.parameter.id to
+	 * the paramValue.value
 	 * 
 	 * @param datasets
 	 * @return a list of Object[] with each object representing a dataset's information
 	 */
 	private List<Object[]> getParamValuesById(Set<Dataset> datasets) {
-		List<Object []> result = new ArrayList<Object[]>(datasets.size());
-				
-		for(Dataset dataset : datasets){
+		List<Object[]> result = new ArrayList<Object[]>(datasets.size());
+
+		for (Dataset dataset : datasets) {
 			Set<DatasetParamValue> datasetParamValues = dataset.getParameterValues();
 			Map<String, String> datasetParamValuesById = new HashMap<String, String>(datasetParamValues.size());
-			
-			for(DatasetParamValue datasetParamValue : datasetParamValues){
-				datasetParamValuesById.put(datasetParamValue.getParameter().getId().toString(), datasetParamValue.getParamValue());
+
+			for (DatasetParamValue datasetParamValue : datasetParamValues) {
+				datasetParamValuesById.put(datasetParamValue.getParameter().getId().toString(),
+						datasetParamValue.getParamValue());
 			}
 			String datasetName = dataset.getName();
 			Object[] datasetView = new Object[2];
@@ -611,7 +602,6 @@ public class TestCaseModificationController {
 		}
 		return result;
 	}
-
 
 	/**
 	 * Creates a paging which shows all entries on a single page.
@@ -665,7 +655,5 @@ public class TestCaseModificationController {
 		}
 		return models;
 	}
-	
 
-	
 }

@@ -91,7 +91,11 @@ class TestCaseTestStepsControllerTest extends Specification {
 		and:
 		FilteredCollectionHolder<List<ActionTestStep>> holder = new FilteredCollectionHolder<List<ActionTestStep>>(2, [step1, step2])
 		testCaseModificationService.findStepsByTestCaseIdFiltered(10, _) >> holder
-
+		
+		and:
+		TestCase tc = Mock()
+		tc.project >> Mock(Project)
+		testCaseModificationService.findById(_) >> tc
 
 		and:
 		DataTableDrawParameters params = new DataTableDrawParameters();
@@ -105,7 +109,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 		cufhelper.restrictToCommonFields() >> cufhelper
 		cufhelper.setRenderingLocations(_) >> cufhelper
 		
-		cufHelperService.newStepsHelper(_) >> cufhelper
+		cufHelperService.newStepsHelper(_, _) >> cufhelper
 
 		when:
 		def res = controller.getStepsTableModel(10, params, Locale.FRENCH)

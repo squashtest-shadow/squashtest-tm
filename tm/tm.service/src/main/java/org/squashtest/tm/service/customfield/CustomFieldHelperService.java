@@ -23,11 +23,11 @@ package org.squashtest.tm.service.customfield;
 import java.util.List;
 
 import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 
 public interface CustomFieldHelperService {
-
 
 	boolean hasCustomFields(BoundEntity entity);
 
@@ -35,6 +35,13 @@ public interface CustomFieldHelperService {
 
 	<X extends BoundEntity> CustomFieldHelper<X> newHelper(List<X> entities);
 
-	CustomFieldHelper<ActionTestStep> newStepsHelper(List<TestStep> steps);
+	/**
+	 * Creates a {@link CustomFieldHelper} for the given test steps contained in the given project.
+	 * 
+	 * @param steps
+	 * @param project
+	 * @return
+	 */
+	CustomFieldHelper<ActionTestStep> newStepsHelper(List<TestStep> steps, Project project);
 
 }

@@ -18,30 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
 
-import java.util.ArrayList;
-import java.util.List;
+package org.squashtest.tm.service.internal.customfield
 
-public final class ActionStepCollector implements TestStepVisitor {
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.TestStepVisitor;
 
-	private List<ActionTestStep> actionSteps = new ArrayList<ActionTestStep>();
+import spock.lang.Specification
 
-	public List<ActionTestStep> collect(List<TestStep> steps) {
-		for (TestStep step : steps) {
-			step.accept(this);
-		}
-		return actionSteps;
+/**
+ * @author Gregory
+ *
+ */
+class CustomFieldHelperServiceImplTest extends Specification {
+	CustomFieldHelperServiceImpl service = new CustomFieldHelperServiceImpl();
+
+	def "should  create a no values helper"() {
+		when:
+		def helper = service.newStepsHelper([], Mock(Project))
+
+		then:
+		helper.class == NoValuesCustomFieldHelper
 	}
+	def "should  create a 'values' helper"() {
+		given:
+		ActionTestStep step = new ActionTestStep()
 
-	@Override
-	public void visit(ActionTestStep visited) {
-		actionSteps.add(visited);
+		when:
+		def helper = service.newStepsHelper([step], Mock(Project))
+
+		then:
+		helper.class == CustomFieldHelperImpl
 	}
-
-	@Override
-	public void visit(CallTestStep visited) {
-
-	}
-
 }

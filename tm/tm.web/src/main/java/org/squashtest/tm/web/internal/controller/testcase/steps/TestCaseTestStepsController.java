@@ -48,6 +48,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -102,10 +103,11 @@ public class TestCaseTestStepsController {
 
 		// the main entities
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		// FIXME loads all steps, should perform a paged query !
 		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));
 
 		// the custom fields definitions
-		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps)
+		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps, testCase.getProject())
 				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
 
 		List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
@@ -137,10 +139,12 @@ public class TestCaseTestStepsController {
 
 		FilteredCollectionHolder<List<TestStep>> holder = testCaseModificationService.findStepsByTestCaseIdFiltered(
 				testCaseId, filter);
-
+		Project project = testCaseModificationService.findById(testCaseId).getProject();
 		// cufs
-		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(holder.getFilteredCollection())
-				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
+		CustomFieldHelper<ActionTestStep> helper = cufHelperService
+				.newStepsHelper(holder.getFilteredCollection(), project)
+				.setRenderingLocations(RenderingLocation.STEP_TABLE)
+				.restrictToCommonFields();
 
 		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
 
@@ -157,7 +161,7 @@ public class TestCaseTestStepsController {
 		validator.setMessageSource(internationalizationHelper);
 		binder.setValidator(validator);
 	}
-	
+
 	@RequestMapping(value = "/add", method = RequestMethod.POST, params = { "action", "expectedResult" })
 	@ResponseBody
 	public void addActionTestStep(@Valid @ModelAttribute("add-test-step") ActionStepFormModel stepModel,

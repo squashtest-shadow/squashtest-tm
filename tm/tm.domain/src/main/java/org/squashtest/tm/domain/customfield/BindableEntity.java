@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.customfield;
 
+import javax.validation.constraints.NotNull;
+
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -32,85 +34,84 @@ import org.squashtest.tm.domain.testcase.TestCase;
  * Enumerates the entities which can be bounded to custom fields.
  * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public enum BindableEntity implements Internationalizable {
-	
-	TEST_CASE(){
+
+	TEST_CASE() {
 		@Override
 		public Class<?> getReferencedClass() {
 			return TestCase.class;
 		};
-		
-		@Override
-		public RenderingLocation[] getValidRenderingLocations() {
-			return new RenderingLocation[0];
-		}
-		
-	},
-	
-	TEST_STEP(){
-		
-		@Override
-		public Class<?> getReferencedClass() {
-			return ActionTestStep.class;
-		};
-		
-		@Override
-		public RenderingLocation[] getValidRenderingLocations() {
-			return new RenderingLocation[]{RenderingLocation.STEP_TABLE};
-		}
-	},
-	
-	CAMPAIGN(){
-		@Override
-		public Class<?> getReferencedClass() {
-			return Campaign.class;
-		} ;
-		
+
 		@Override
 		public RenderingLocation[] getValidRenderingLocations() {
 			return new RenderingLocation[0];
 		}
 
 	},
-	ITERATION(){
+
+	TEST_STEP() {
+
+		@Override
+		public Class<?> getReferencedClass() {
+			return ActionTestStep.class;
+		};
+
+		@Override
+		public RenderingLocation[] getValidRenderingLocations() {
+			return new RenderingLocation[] { RenderingLocation.STEP_TABLE };
+		}
+	},
+
+	CAMPAIGN() {
+		@Override
+		public Class<?> getReferencedClass() {
+			return Campaign.class;
+		};
+
+		@Override
+		public RenderingLocation[] getValidRenderingLocations() {
+			return new RenderingLocation[0];
+		}
+
+	},
+	ITERATION() {
 		@Override
 		public Class<?> getReferencedClass() {
 			return Iteration.class;
 		};
-		
+
 		@Override
 		public RenderingLocation[] getValidRenderingLocations() {
 			return new RenderingLocation[0];
 		}
 	},
-	TEST_SUITE(){
+	TEST_SUITE() {
 		@Override
 		public Class<?> getReferencedClass() {
 			return TestSuite.class;
 		};
-		
-		
+
 		@Override
 		public RenderingLocation[] getValidRenderingLocations() {
 			return new RenderingLocation[0];
 		}
-		
+
 	},
-	REQUIREMENT_VERSION(){
+	REQUIREMENT_VERSION() {
 		@Override
 		public Class<?> getReferencedClass() {
 			return RequirementVersion.class;
 		};
-		
+
 		@Override
 		public RenderingLocation[] getValidRenderingLocations() {
 			return new RenderingLocation[0];
 		}
-		
+
 	};
-	
+
 	private static final String I18N_NAMESPACE = "label.customField.bindableEntity.";
 
 	/**
@@ -120,8 +121,18 @@ public enum BindableEntity implements Internationalizable {
 	public String getI18nKey() {
 		return I18N_NAMESPACE + name();
 	}
-	
+
 	public abstract Class<?> getReferencedClass();
-	
+
 	public abstract RenderingLocation[] getValidRenderingLocations();
+
+	public static BindableEntity coerceToBindableEntity(@NotNull Class<?> entityType) {
+		for (BindableEntity be : values()) {
+			if (be.getReferencedClass().isAssignableFrom(entityType)) {
+				return be;
+			}
+		}
+
+		throw new IllegalArgumentException("Type cannot be coerced to a BindableEntity : " + entityType.getName());
+	}
 }
