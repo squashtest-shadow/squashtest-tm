@@ -334,5 +334,16 @@
 			);		
 		</sql>	
 	</changeSet>
+	
+	<changeSet id="tm-1.6.0.issue-2485-01" author="flaurens">
+		<comment>replaces fk-constraint which wrongly cascades the deletion of denormalized field values</comment>
+		<dropForeignKeyConstraint baseTableName="DENORMALIZED_FIELD_VALUE" constraintName="fk_dfv_cfv_binding"/> 
+	
+		<addForeignKeyConstraint constraintName="fk_dfv_cfv_binding"
+			onDelete="SET NULL" referencedTableName="CUSTOM_FIELD_VALUE"
+			referencedColumnNames="CFV_ID" baseTableName="DENORMALIZED_FIELD_VALUE"
+			baseColumnNames="CFV_ID"/>
+	</changeSet>
+
 </databaseChangeLog>
  
