@@ -53,8 +53,12 @@
 				* UNDEFINED : never happens, since the controller is not supposed to return the view in the first place,
 				* NEEDS_CREDENTIALS : a label will prompt the user for login,
 				* READY : nothing special, the component is fully functional.
+		- useParentContextPopup : if false, will create a popup as usual. If true, will use instead a popup accessible in the parent context 
+								(that's how the ieo-execute-execution.jsp works)
  --%>
-<%-- ----------------------------------- Authorization ----------------------------------------------%>
+ 
+<%-- ------------------- variables ----------------- --%>
+
 <c:set var="editable" value="${ false }" />
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE"
 	domainObject="${ entity }">
@@ -65,6 +69,14 @@
 	test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'||entityType == 'test-case'}">
 	<c:set var="editable" value="${false}" />
 </c:if>
+
+<c:if test="${empty useParentContextPopup}"><c:set var="useParentContextPopup" value="${false}" /></c:if>
+
+
+<%-- ------------------- /variables ----------------- --%>
+
+
+<%-- ------------------- urls ----------------- --%>
 
 <s:url var="bugTrackerUrl" value="/bugtracker/" />
 <s:url var="bugTrackerStatusUrl" value="/bugtracker/status"/>
@@ -79,6 +91,8 @@
 	<s:param name="entityType" value="${entityType}" />
 	<s:param name="id" value="${entity.id}" />
 </s:url>
+
+<%-- ------------------- /urls ----------------- --%>
 
 
 <%-------------- a bug created successfully will be shown here -----------------------------%>
@@ -236,9 +250,17 @@
 	}
 
 	function invokeBugReportPopup(bugtrackerReportSettings) {
-		squashtm.bugReportPopup.open( bugtrackerReportSettings );
+		<c:choose>
+		<c:when test="${useParentContextPopup}">
+			parent.squashtm.bugReportPopup.open( bugtrackerReportSettings );
+		</c:when>
+		<c:otherwise>
+			squashtm.bugReportPopup.open( bugtrackerReportSettings );
+		</c:otherwise>
+		</c:choose>			
 	}
 </script>
+
 
 
 
@@ -328,7 +350,7 @@
 
 
 <%-------------------------------- add issue popup code -----------------------------------%>
-<c:if test="${editable}">
+<c:if test="${editable and not useParentContextPopup}">
 	<is:issue-add-popup id="issue-report-dialog"
 		interfaceDescriptor="${interfaceDescriptor}"  bugTrackerId="${bugTracker.id}"/>
 </c:if>

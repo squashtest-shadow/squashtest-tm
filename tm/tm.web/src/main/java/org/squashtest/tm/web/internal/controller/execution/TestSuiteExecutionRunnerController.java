@@ -39,10 +39,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.exception.execution.TestPlanTerminatedOrNoStepsException;
+import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
+import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.web.internal.controller.RequestHeaders;
 
@@ -81,6 +88,9 @@ public class TestSuiteExecutionRunnerController {
 
 	@Inject
 	private ExecutionProcessingService executionRunner;
+	
+	@Inject
+	private TestSuiteFinder suiteFinder;
 
 	@Inject
 	private ExecutionRunnerControllerHelper helper;
@@ -90,6 +100,13 @@ public class TestSuiteExecutionRunnerController {
 
 	@Inject
 	private ServletContext servletContext;
+	
+	@Inject
+	private BugTrackersLocalService bugTrackersLocalService;
+	
+	@Inject
+	private BugTrackerFinderService bugTrackerFinderService;	
+	
 
 	public TestSuiteExecutionRunnerController() {
 		super();
@@ -133,7 +150,18 @@ public class TestSuiteExecutionRunnerController {
 		RunnerState state = helper.createOptimizedRunnerState(testSuiteId, execution, contextPath(), locale);
 		state.setBaseStepUrl(stepsAbsoluteUrl(testSuiteId, execution));
 		model.addAttribute("config", state);
-
+		
+		try{
+			Project project = suiteFinder.findById(testSuiteId).getProject();	
+			BugTracker bugtracker = project.findBugTracker();
+			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(bugtracker);
+			model.addAttribute("interfaceDescriptor", descriptor);
+			model.addAttribute("bugTracker", bugtracker);
+		}
+		catch(NoBugTrackerBindingException ex){
+			//well, no bugtracker then. It's fine.
+		}
+		
 		return OPTIMIZED_RUNNER_MAIN;
 
 	}

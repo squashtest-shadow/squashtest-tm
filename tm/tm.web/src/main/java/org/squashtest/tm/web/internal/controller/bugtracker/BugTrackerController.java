@@ -116,6 +116,7 @@ public class BugTrackerController {
 
 	private static final String STYLE = "style";
 	private static final String TOGGLE = "toggle";
+	private static final String DELEGATE_POPUP = "useParentContextPopup";
 
 	@Inject
 	private MessageSource messageSource;
@@ -205,19 +206,26 @@ public class BugTrackerController {
 	 */
 
 	/**
+	 * <p>
 	 * returns the panel displaying the current bugs of that execution step and the stub for the report form. Remember
 	 * that the report bug dialog will be populated later.
-	 * 
+	 * </p>
+	 * <p>
+	 * Note : accepts as optional parameter : 
+	 * <ul><li>useParentContextPopup : will tell the panel to use a delegate report issue popup (that's how the OER works)  
+	 * </p>
 	 * @param stepId
 	 * @return
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}", method = RequestMethod.GET)
 	public ModelAndView getExecStepIssuePanel(@PathVariable Long stepId, Locale locale,
-			@RequestParam(value = STYLE, required = false, defaultValue = TOGGLE) String panelStyle) {
+			@RequestParam(value = STYLE, required = false, defaultValue = TOGGLE) String panelStyle,
+			@RequestParam(value = "useDelegatePopup", required = false, defaultValue = "false") Boolean useParentPopup) {
 
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
-		return makeIssuePanel(step, EXECUTION_STEP_TYPE, locale, panelStyle, step.getProject());
-
+		ModelAndView mav = makeIssuePanel(step, EXECUTION_STEP_TYPE, locale, panelStyle, step.getProject());
+		mav.addObject("useParentContextPopup", useParentPopup);
+		return mav;
 	}
 
 	/**

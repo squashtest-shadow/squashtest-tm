@@ -31,6 +31,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.exception.NoBugTrackerBindingException;
+import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 
 /**
@@ -47,6 +53,13 @@ public class TestCaseExecutionRunnerController {
 	private ExecutionRunnerControllerHelper helper;
 
 	private ExecutionProcessingService executionProcessingService;
+	
+	@Inject
+	private BugTrackersLocalService bugTrackersLocalService;
+	
+	@Inject
+	private BugTrackerFinderService bugTrackerFinderService;
+	
 
 	public TestCaseExecutionRunnerController() {
 		super();
@@ -68,6 +81,18 @@ public class TestCaseExecutionRunnerController {
 
 		RunnerState state = helper.initOptimizedSingleContext(executionId, context.getContextPath(), locale);
 		model.addAttribute("config", state);
+		
+		try{
+			Project project = executionProcessingService.findExecution(executionId).getProject();			
+			BugTracker bugtracker = project.findBugTracker();
+			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(bugtracker);
+			model.addAttribute("interfaceDescriptor", descriptor);
+			model.addAttribute("bugTracker", bugtracker);
+		}
+		catch(NoBugTrackerBindingException ex){
+			//well, no bugtracker then. It's fine.
+		}
+		
 
 		return OPTIMIZED_RUNNER_MAIN;
 
