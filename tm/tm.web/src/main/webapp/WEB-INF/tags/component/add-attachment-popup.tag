@@ -108,7 +108,7 @@
 	function attachmentSubmit(ticket){
 		$("#add-attachment-form").ajaxSubmit({
 			url : "${url}?upload-ticket="+ticket,
-			dataType : "text",
+			dataType : "text/html",
 			success : function(){},
 			error : function(){},
 			complete : function(jqXHR){attachmentSubmitComplete(ticket, jqXHR);},
@@ -122,19 +122,13 @@
 	}
 	
 	
-	function unwrapJson(strText){
-		var open = strText.indexOf("{");
-		var close = strText.indexOf("}");
-		
-		return strText.substring(open, close+1);
-		
-	}
+	
 
 	<%-- see #attachmentSubmit for details regarding error handling --%>
 	function attachmentSubmitComplete(ticket, jqXHR){
 
 		$("#attachment-progress-dialog").dialog("close");
-		
+		console.log("complete");
 		<%-- 
 		because some browsers find it clever to wrap the raw response inside html tags (no, it's not IE for once) 
 		we need to 'unwrap' our nested json response.
@@ -142,12 +136,10 @@
 		in our case, if the json response has an attribute maxSize, then we got an error.
 		 --%>
 		
-		var text = jqXHR.responseText;		
-		var refined = unwrapJson(text);
-		var json = $.parseJSON(refined);
-		
+		var text = $(jqXHR.responseText).text();
+		var json = $.parseJSON(text);
 		if (json.maxSize === undefined){
-			openUploadSummary(ticket);			
+			openUploadSummary(ticket);
 		}else{
 			var maxSize = json.maxSize;		
 			var message = "${uploadErrorMessage} (" + formatToMegabyte(maxSize) + " ${megaByteLabel})";

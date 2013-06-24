@@ -119,8 +119,7 @@ public class AttachmentController {
 
 	// uploads the file themselves and build the upload summary on the fly
 	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, params = "upload-ticket")
-	public @ResponseBody
-	String uploadAttachment(HttpServletRequest servletRequest,
+	public ModelAndView uploadAttachment(HttpServletRequest servletRequest,
 			@RequestParam("attachment[]") List<Attachment> attachments, @PathVariable long attachListId, Locale locale)
 			throws IOException {
 
@@ -155,8 +154,7 @@ public class AttachmentController {
 
 		// store the summary then return
 		UploadProgressListenerUtils.registerUploadSummary(servletRequest, summary);
-
-		return "{ \"status\" : \"ok\"}"; 
+		return  new ModelAndView("fragment/import/attachment-success");
 	}
 
 	// by design the last file uploaded is empty and has no name. We'll strip that from the summary.
