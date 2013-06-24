@@ -131,39 +131,50 @@
 			
 			<div class="import-links-excel-dialog-note">
 				<br/>
-				<span><f:message key="dialog.import.summary.notes.label"/><br>
-				<f:message key="dialog.import-links.summary.notes.lines"/>
-				</span>
-				<ul  contenteditable="true" style="height:100px ; overflow : auto" >
-					<li class="import-links-excel-dialog-req-not-found">
-						<span><f:message key="dialog.import.summary.notes.req-not-found.label"/></span>
-						<span class="req-not-found-import"></span>
-					</li>
-					<li class="import-links-excel-dialog-tc-not-found">
-						<span><f:message key="dialog.import.summary.notes.tc-not-found.label"/></span>
-						<span class="tc-not-found-import"></span>
-					</li>
-					<li class="import-links-excel-dialog-version-not-found">
-						<span><f:message key="dialog.import.summary.notes.version-not-found.label"/></span>
-						<span class="version-not-found-import"></span>
-					</li>
-					<li class="import-links-excel-dialog-link-already-exist">
-						<span><f:message key="dialog.import.summary.notes.link-already-exist.label"/></span>
-						<span class="link-already-exist-import"></span>
-					</li>
-					<li class="import-links-excel-dialog-obsolete">
-						<span><f:message key="dialog.import.summary.notes.obsolete.label"/></span>
-						<span class="obsolete-import"></span>
-					</li>
-					<li class="import-links-excel-dialog-req-access-denied">
-						<span><f:message key="dialog.import.summary.notes.req-access-denied.label"/></span>
-						<span class="req-access-denied-import"></span>
-					</li>
-					<li class="import-links-excel-dialog-tc-access-denied">
-						<span><f:message key="dialog.import.summary.notes.tc-access-denied.label"/></span>
-						<span class="link-already-exist-import"></span>
-					</li>
-				</ul>
+				<div class="import-links-excel-dialog-normal-errors not-displayed">
+					<span><f:message key="dialog.import.summary.notes.label"/><br>
+					<f:message key="dialog.import-links.summary.notes.lines"/>
+					</span>
+					<ul  contenteditable="true" style="height:100px ; overflow : auto" >
+						<li class="import-links-excel-dialog-req-not-found">
+							<span><f:message key="dialog.import.summary.notes.req-not-found.label"/></span>
+							<span class="req-not-found-import"></span>
+						</li>
+						<li class="import-links-excel-dialog-tc-not-found">
+							<span><f:message key="dialog.import.summary.notes.tc-not-found.label"/></span>
+							<span class="tc-not-found-import"></span>
+						</li>
+						<li class="import-links-excel-dialog-version-not-found">
+							<span><f:message key="dialog.import.summary.notes.version-not-found.label"/></span>
+							<span class="version-not-found-import"></span>
+						</li>
+						<li class="import-links-excel-dialog-link-already-exist">
+							<span><f:message key="dialog.import.summary.notes.link-already-exist.label"/></span>
+							<span class="link-already-exist-import"></span>
+						</li>
+						<li class="import-links-excel-dialog-obsolete">
+							<span><f:message key="dialog.import.summary.notes.obsolete.label"/></span>
+							<span class="obsolete-import"></span>
+						</li>
+						<li class="import-links-excel-dialog-req-access-denied">
+							<span><f:message key="dialog.import.summary.notes.req-access-denied.label"/></span>
+							<span class="req-access-denied-import"></span>
+						</li>
+						<li class="import-links-excel-dialog-tc-access-denied">
+							<span><f:message key="dialog.import.summary.notes.tc-access-denied.label"/></span>
+							<span class="link-already-exist-import"></span>
+						</li>
+					</ul>
+				</div>
+				<div class="import-links-excel-dialog-critical-errors not-displayed">
+					<span><f:message key="dialog.import.summary.errors.label"/><br></span>
+					<ul  contenteditable="true" style="height:100px ; overflow : auto" >
+						<li class="import-links-excel-dialog-missing-headers">
+							<span><f:message key="dialog.import.summary.notes.missing-headers.label"/></span>
+							<span class="file-missing-headers"></span>
+						</li>					
+					</ul>
+				</div>
 			</div>
 		</div>
 		
@@ -178,6 +189,70 @@
 
 	var importLinksExcelFeedbackPopup = null;
 	
+	function showImportNormalErrors(panel, response){
+		
+		$(".import-links-excel-dialog-note", panel).show();
+		$(".import-links-excel-dialog-critical-errors", panel).hide();
+		$(".import-links-excel-dialog-normal-errors", panel).show();
+			
+		var obsoleteDialog = $(".import-links-excel-dialog-obsolete", panel);
+		if ($.trim(response.obsolete) != "") { 
+			$(".obsolete-import", panel).text(response.obsolete);
+			obsoleteDialog.show(); 
+			} else { obsoleteDialog.hide(); }
+		
+		var reqAccessDeniedDialog = $(".import-links-excel-dialog-req-access-denied", panel);
+		if ($.trim(response.requirementAccessRejected) != "") { 
+			$(".req-access-denied-import", panel).text(response.requirementAccessRejected);
+			reqAccessDeniedDialog.show(); 
+			} else { reqAccessDeniedDialog.hide(); }
+		
+		var requirementNotFoundDialog = $(".import-links-excel-dialog-req-not-found", panel);
+		if ($.trim(response.requirementNotFound) != "") { 
+			$(".req-not-found-import", panel).text(response.requirementNotFound);
+			requirementNotFoundDialog.show(); 
+			} else { requirementNotFoundDialog.hide(); }
+		
+		var testCaseAccessRejectedDialog = $(".import-links-excel-dialog-tc-access-denied", panel);
+		if ($.trim(response.testCaseAccessRejected) != "") { 
+			$(".tc-access-denied-import", panel).text(response.testCaseAccessRejected);
+			testCaseAccessRejectedDialog.show(); 
+			} else { testCaseAccessRejectedDialog.hide(); }
+		
+		var testCaseNotFoundDialog = $(".import-links-excel-dialog-tc-not-found", panel);
+		if ($.trim(response.testCaseNotFound) != "") { 
+			$(".tc-not-found-import", panel).text(response.testCaseNotFound);
+			testCaseNotFoundDialog.show(); 
+			} else { testCaseNotFoundDialog.hide(); }
+		
+		var versionNotFoundDialog = $(".import-links-excel-dialog-version-not-found", panel);
+		if ($.trim(response.versionNotFound) != "") { 
+			$(".version-not-found-import", panel).text(response.versionNotFound);
+			versionNotFoundDialog.show(); 
+			} else { versionNotFoundDialog.hide(); }
+		
+		var linkAlreadyExistDialog = $(".import-links-excel-dialog-link-already-exist", panel);
+		if ($.trim(response.linkAlreadyExist) != "") { 
+			$(".link-already-exist-import", panel).text(response.linkAlreadyExist);
+			linkAlreadyExistDialog.show(); 
+			} else { linkAlreadyExistDialog.hide(); }
+		
+	}
+	
+	function showImportCriticalErrors(panel, response){
+		$(".import-links-excel-dialog-note", panel).show();
+		$(".import-links-excel-dialog-critical-errors", panel).show();
+		$(".import-links-excel-dialog-normal-errors", panel).hide();
+		
+		var missingHeadersDialog = $(".import-links-excel-dialog-missing-headers", panel);
+		if ($.trim(response.missingColumnHeaders) != "") { 
+			$(".file-missing-headers", panel).text(response.missingColumnHeaders);
+			missingHeadersDialog.show(); 
+		} 
+		else { 
+			missingHeadersDialog.hide(); 
+		}		
+	}
 	
 	function importLinksSummaryBuilder(response){
 			
@@ -189,61 +264,25 @@
 		var failSpan = $(".failures-import", panel).text(response.failures);
 		if (response.failures==0){ failSpan.removeClass("span-red"); }else{	failSpan.addClass("span-red"); }
 		
-		// notes
-		if (response.failures==0){
+		// display the errors if any
+		if (! response.criticalErrors && response.failures==0){
 			$(".import-links-excel-dialog-note", panel).hide();
-		}else{
-			$(".import-links-excel-dialog-note", panel).show();
-			
-			var obsoleteDialog = $(".import-links-excel-dialog-obsolete", panel);
-			if ($.trim(response.obsolete) != "") { 
-				$(".obsolete-import", panel).text(response.obsolete);
-				obsoleteDialog.show(); 
-				} else { obsoleteDialog.hide(); }
-			
-			var reqAccessDeniedDialog = $(".import-links-excel-dialog-req-access-denied", panel);
-			if ($.trim(response.requirementAccessRejected) != "") { 
-				$(".req-access-denied-import", panel).text(response.requirementAccessRejected);
-				reqAccessDeniedDialog.show(); 
-				} else { reqAccessDeniedDialog.hide(); }
-			
-			var requirementNotFoundDialog = $(".import-links-excel-dialog-req-not-found", panel);
-			if ($.trim(response.requirementNotFound) != "") { 
-				$(".req-not-found-import", panel).text(response.requirementNotFound);
-				requirementNotFoundDialog.show(); 
-				} else { requirementNotFoundDialog.hide(); }
-			
-			var testCaseAccessRejectedDialog = $(".import-links-excel-dialog-tc-access-denied", panel);
-			if ($.trim(response.testCaseAccessRejected) != "") { 
-				$(".tc-access-denied-import", panel).text(response.testCaseAccessRejected);
-				testCaseAccessRejectedDialog.show(); 
-				} else { testCaseAccessRejectedDialog.hide(); }
-			
-			var testCaseNotFoundDialog = $(".import-links-excel-dialog-tc-not-found", panel);
-			if ($.trim(response.testCaseNotFound) != "") { 
-				$(".tc-not-found-import", panel).text(response.testCaseNotFound);
-				testCaseNotFoundDialog.show(); 
-				} else { testCaseNotFoundDialog.hide(); }
-			
-			var versionNotFoundDialog = $(".import-links-excel-dialog-version-not-found", panel);
-			if ($.trim(response.versionNotFound) != "") { 
-				$(".version-not-found-import", panel).text(response.versionNotFound);
-				versionNotFoundDialog.show(); 
-				} else { versionNotFoundDialog.hide(); }
-			
-			var linkAlreadyExistDialog = $(".import-links-excel-dialog-link-already-exist", panel);
-			if ($.trim(response.linkAlreadyExist) != "") { 
-				$(".link-already-exist-import", panel).text(response.linkAlreadyExist);
-				linkAlreadyExistDialog.show(); 
-				} else { linkAlreadyExistDialog.hide(); }
-			
-			if(eval("typeof " + "refreshVerifyingTestCases"+ " == 'function'")){
-				refreshVerifyingTestCases();
-			}else{
-				if(eval("typeof " + "refreshVerifiedRequirements"+ " == 'function'")){
-					refreshVerifiedRequirements();
-				}
-			}
+		}
+		else if (response.criticalErrors){
+			showImportCriticalErrors(panel, response);
+		}
+		else{
+			showImportNormalErrors(panel, response);			
+		}
+		
+		
+		//refresh the view
+		if (typeof refreshVerifyingTestCases === 'function'){
+			refreshVerifyingTestCases();
+		}
+		
+		if (typeof refreshVerifiedRequirements === 'function'){
+			refreshVerifiedRequirements();
 		}
 		
 	}

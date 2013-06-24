@@ -77,4 +77,18 @@ public interface ImportRequirementTestCaseLinksSummary {
 	 * @return row numbers where the test case was already linked to a version of the same Requirement
 	 */
 	Set<Integer> getLinkAlreadyExist();
+	
+	/**
+	 * if the format of the file is bad, this method will let the client know.
+	 * 
+	 * @return
+	 */
+	Set<String> getMissingColumnHeaders();
+	
+	/**
+	 * Tells whether the operation failed completely because of something really bad.
+	 * 
+	 */
+	boolean isCriticalErrors();
+	
 }

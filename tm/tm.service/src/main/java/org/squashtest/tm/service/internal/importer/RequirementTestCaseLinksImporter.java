@@ -83,15 +83,22 @@ public class RequirementTestCaseLinksImporter {
 		Sheet sheet = workbook.getSheetAt(0);
 		//process column headers
 		Map<String, Integer> columnsMapping = ExcelRowReaderUtils.mapColumns(sheet);
-		parser.checkColumnsMapping(columnsMapping);
-		// change ids into Squash Entities and fill the summary
-		Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCase = new HashMap<TestCase, List<RequirementVersion>>();
-		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
-			Row row = sheet.getRow(r);
-			parser.parseRow( row, summary, columnsMapping, requirementVersionsByTestCase);
+		try{
+			parser.checkColumnsMapping(columnsMapping, summary);
+			// change ids into Squash Entities and fill the summary
+			Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCase = new HashMap<TestCase, List<RequirementVersion>>();
+			for (int r = 1; r <= sheet.getLastRowNum(); r++) {
+				Row row = sheet.getRow(r);
+				parser.parseRow( row, summary, columnsMapping, requirementVersionsByTestCase);
+			}
+			//persist links
+			verifiedRequirementsManagerService.addVerifyingRequirementVersionsToTestCase(requirementVersionsByTestCase);
 		}
-		//persist links
-		verifiedRequirementsManagerService.addVerifyingRequirementVersionsToTestCase(requirementVersionsByTestCase);
+		catch(ColumnHeaderNotFoundException ex){
+			//abort the import. The summary already contains the relevant informations. We just need to log the exception here.
+			summary.setFailures(sheet.getPhysicalNumberOfRows() -1);	//euristic estimation of the number of imported relationships
+			LOGGER.info("import failed due to bad format : ", ex);
+		}
 	}
 
 

@@ -36,6 +36,10 @@ public class ImportRequirementTestCaseLinksSummaryImpl implements ImportRequirem
 	private Set<Integer> versionNotFound = new HashSet<Integer>();
 	private Set<Integer> obsoletes = new HashSet<Integer>();
 	private Set<Integer> linkAlreadyExist = new HashSet<Integer>();
+	private Set<String>  missingColumnHeaders = new HashSet<String>();
+	
+	
+	
 	public ImportRequirementTestCaseLinksSummaryImpl(){
 		
 	}
@@ -74,6 +78,10 @@ public class ImportRequirementTestCaseLinksSummaryImpl implements ImportRequirem
 	
 	public void addLinkAlreadyExist(int number){
 		this.linkAlreadyExist.add(number);
+	}
+	
+	public void addMissingColumnHeader(String headerName){
+		this.missingColumnHeaders.add(headerName);
 	}
 	
 	@Override
@@ -140,6 +148,7 @@ public class ImportRequirementTestCaseLinksSummaryImpl implements ImportRequirem
 		this.testCaseNotFound.addAll(summary.getTestCaseNotFound());
 		this.versionNotFound.addAll(summary.getVersionNotFound());
 		this.linkAlreadyExist.addAll(summary.getLinkAlreadyExist());
+		this.missingColumnHeaders.addAll(summary.getMissingColumnHeaders());
 	}
 
 	@Override
@@ -147,7 +156,16 @@ public class ImportRequirementTestCaseLinksSummaryImpl implements ImportRequirem
 		return this.linkAlreadyExist;
 	}
 
+	@Override
+	public Set<String> getMissingColumnHeaders() {
+		return this.missingColumnHeaders;
+	}
 	
+	@Override
+	//jsp + javabean conventions wouldn't accept 'hasCriticalErrors'
+	public boolean isCriticalErrors(){
+		return missingColumnHeaders.size()>0;
+	}
 	
 
 }

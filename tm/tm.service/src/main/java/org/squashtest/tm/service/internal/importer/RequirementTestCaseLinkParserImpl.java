@@ -265,12 +265,21 @@ public class RequirementTestCaseLinkParserImpl implements RequirementTestCaseLin
 	}
 
 	@Override
-	public void checkColumnsMapping(Map<String, Integer> columnsMapping) {
+	public void checkColumnsMapping(Map<String, Integer> columnsMapping, ImportRequirementTestCaseLinksSummaryImpl summary) {
+		
+		boolean badFormat = false;
+		
 		if (columnsMapping.get(ID_REQUIREMENT_TAG) == null) {
-			throw new ColumnHeaderNotFoundException("The mandatory column '" + ID_REQUIREMENT_TAG + "' is not found");
+			badFormat = true;
+			summary.addMissingColumnHeader(ID_REQUIREMENT_TAG);
 		}
 		if (columnsMapping.get(ID_TEST_CASE_TAG) == null) {
-			throw new ColumnHeaderNotFoundException("The mandatory column '" + ID_TEST_CASE_TAG + "' is not found");
+			badFormat = true;
+			summary.addMissingColumnHeader(ID_TEST_CASE_TAG);
+		}
+		
+		if (badFormat){
+			throw new ColumnHeaderNotFoundException("The mandatory columns '" + ID_REQUIREMENT_TAG + "' or '"+ID_TEST_CASE_TAG+"' were not found");
 		}
 
 	}
