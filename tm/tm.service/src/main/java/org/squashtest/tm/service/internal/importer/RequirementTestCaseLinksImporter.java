@@ -86,7 +86,7 @@ public class RequirementTestCaseLinksImporter {
 		parser.checkColumnsMapping(columnsMapping);
 		// change ids into Squash Entities and fill the summary
 		Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCase = new HashMap<TestCase, List<RequirementVersion>>();
-		for (int r = 1; r < sheet.getLastRowNum(); r++) {
+		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
 			Row row = sheet.getRow(r);
 			parser.parseRow( row, summary, columnsMapping, requirementVersionsByTestCase);
 		}
