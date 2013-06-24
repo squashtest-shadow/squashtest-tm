@@ -71,7 +71,12 @@ define(
 				}, this);
 
 				var refreshParent = $.proxy(function() {
-					window.opener.location.href = window.opener.location.href;
+					try{
+						window.opener.squashtm.execution.refresh();	//should be defined in the calling context.
+					}
+					catch(anyex){
+						window.opener.location.href = window.opener.location.href;
+					}
 					if (window.opener.progressWindow) {
 						window.opener.progressWindow.close();
 					}
