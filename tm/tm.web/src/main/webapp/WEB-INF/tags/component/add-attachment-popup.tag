@@ -128,7 +128,6 @@
 	function attachmentSubmitComplete(ticket, jqXHR){
 
 		$("#attachment-progress-dialog").dialog("close");
-		console.log("complete");
 		<%-- 
 		because some browsers find it clever to wrap the raw response inside html tags (no, it's not IE for once) 
 		we need to 'unwrap' our nested json response.

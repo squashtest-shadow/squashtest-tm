@@ -90,7 +90,7 @@ require([ "common" ], function(common) {
 		function attachmentSubmit(ticket) {
 			$("#add-attachment-form").ajaxSubmit({
 				url : AAPS.uploadAttachmentUrl + "?upload-ticket=" + ticket,
-				dataType : "text",
+				dataType : "text/html",
 				success : function() {
 				},
 				error : function() {
@@ -107,13 +107,6 @@ require([ "common" ], function(common) {
 			return mb.toFixed(3);
 		}
 
-		function unwrapJson(strText) {
-			var open = strText.indexOf("{");
-			var close = strText.indexOf("}");
-
-			return strText.substring(open, close + 1);
-
-		}
 
 		// see #attachmentSubmit for details regarding error
 		// handling
@@ -129,9 +122,8 @@ require([ "common" ], function(common) {
 			// in our case, if the json response has an
 			// attribute maxSize, then we got an error.
 
-			var text = jqXHR.responseText;
-			var refined = unwrapJson(text);
-			var json = $.parseJSON(refined);
+			var text = $(jqXHR.responseText).text();
+			var json = $.parseJSON(text);
 
 			if (json.maxSize === undefined) {
 				openUploadSummary(ticket);
