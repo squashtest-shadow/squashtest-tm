@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service.customField
+package org.squashtest.tm.service.customField
 
 import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.domain.customfield.BindableEntity

@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service.event;
+package org.squashtest.tm.service.event;
 
 import org.hibernate.SessionFactory
 import org.hibernate.classic.Session

@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tm.internal.service.deletion
+package org.squashtest.tm.service.deletion
 
 import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.service.internal.deletion.LockedFileInferenceGraph
