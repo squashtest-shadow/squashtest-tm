@@ -232,7 +232,7 @@
 					th:each="atdata, iterStat: ${auditTrailDatas}" th:object="${atdata}">
 					<td th:text="*{[0]}">20/10/2013</td>
 					<td th:text="*{[1]}">admin</td>
-					<td th:text="*{[2]}">Creation</td>					
+					<td sq:unsafe-html="*{[2]}">Creation</td>					
 				</tr>
 			</tbody>
 		</table>
