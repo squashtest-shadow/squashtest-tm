@@ -160,10 +160,11 @@ public class Parameter implements Identified {
 	}
 
 	private void updateParamNameInSteps(String newName) {
-		if (this.getTestCase() != null)
+		if (this.getTestCase() != null) {
 			for (TestStep step : this.getTestCase().getSteps()) {
 				step.accept(new ParameterNameInStepUpdater(this.name, newName));
 			}
+		}
 	}
 
 	/**

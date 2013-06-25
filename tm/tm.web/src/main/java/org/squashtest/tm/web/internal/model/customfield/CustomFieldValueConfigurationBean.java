@@ -218,19 +218,19 @@ public class CustomFieldValueConfigurationBean {
 		}
 
 		public Date getValueAsDate() {
-			
-			Date date = null;
-			
-			if(value == null || "".equals(value)){
-				return date;
+			if (value == null || "".equals(value)) {
+				return null;
 			}
-				
+
+			Date date = null;
+
 			try {
-				return new SimpleDateFormat(CustomField.DATE_PATTERN).parse(value);
+				date = new SimpleDateFormat(CustomField.DATE_PATTERN).parse(value);
 			} catch (ParseException e) {
 				LOGGER.warn(e.getMessage(), e);
-				return date;
 			}
+
+			return date;
 		}
 
 	}

@@ -58,19 +58,19 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 	 */
 	@Override
 	public ProjectFilter findProjectFilterByUserLogin() {
-		ProjectFilter filter = _findPersistentProjectFilter();
+		ProjectFilter filter = findPersistentProjectFilter();
 		if (filter != null) {
 			return filter;
 		}
 		else{
-			return _createDefaultProjectFilter();
+			return createDefaultProjectFilter();
 		}
 	}
 
 	@Override
 	public void saveOrUpdateProjectFilter(List<Long> projectIdList, boolean isActive) {
 
-		ProjectFilter projectFilter = _findOrCreateProjectFilter();
+		ProjectFilter projectFilter = findOrCreateProjectFilter();
 
 		projectFilter.setProjects(projectDao.findAllByIds(projectIdList));
 		projectFilter.setActivated(isActive);
@@ -78,7 +78,7 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 
 	@Override
 	public void updateProjectFilterStatus(boolean status) {
-		_findOrCreateProjectFilter().setActivated(status);
+		findOrCreateProjectFilter().setActivated(status);
 	}
 
 
@@ -93,13 +93,13 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 	
 	// ****************************** private stuffs *******************************
 	
-	private ProjectFilter _findPersistentProjectFilter(){
+	private ProjectFilter findPersistentProjectFilter(){
 		String userLogin = userContextService.getUsername();
 		ProjectFilter toReturn = projectFilterDao.findProjectFilterByUserLogin(userLogin);
 		return toReturn;
 	}
 	
-	private ProjectFilter _createDefaultProjectFilter(){
+	private ProjectFilter createDefaultProjectFilter(){
 		ProjectFilter toReturn = new ProjectFilter();
 		
 		String userLogin = userContextService.getUsername();
@@ -110,12 +110,12 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 		return toReturn;
 	}
 	
-	private ProjectFilter _findOrCreateProjectFilter(){
+	private ProjectFilter findOrCreateProjectFilter(){
 		
-		ProjectFilter filter = _findPersistentProjectFilter();
+		ProjectFilter filter = findPersistentProjectFilter();
 		
 		if (filter == null) {
-			filter = _createDefaultProjectFilter();
+			filter = createDefaultProjectFilter();
 			projectFilterDao.persistProjectFilter(filter);
 		}
 		

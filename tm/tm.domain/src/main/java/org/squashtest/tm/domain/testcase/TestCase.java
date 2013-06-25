@@ -654,10 +654,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 */
 	protected void addParameter(@NotNull Parameter parameter) {
 		Parameter homonyme = findParameterByName(parameter.getName());
-		if (homonyme != null) {
-			if (!homonyme.equals(parameter)) {
+		if (homonyme != null && !homonyme.equals(parameter)) {
 				throw new NameAlreadyInUseException(Parameter.class.getSimpleName(), parameter.getName());
-			}
 		}
 		this.parameters.add(parameter);
 

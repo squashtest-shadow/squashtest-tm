@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -203,7 +204,8 @@ public class TestCaseDatasetsController {
 	 * @author mpagnon
 	 * 
 	 */
-	private static final class DatasetNameComparator implements Comparator<Dataset> {
+	@SuppressWarnings("serial")
+	private static final class DatasetNameComparator implements Comparator<Dataset>, Serializable {
 
 		private SortOrder sortOrder;
 

@@ -50,7 +50,6 @@ import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.project.ProjectPermission;
@@ -81,8 +80,8 @@ public class UserAdministrationController extends PartyControllerSupport {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserAdministrationController.class);
 	private static final String USER_URL = "/{userId}";
 
-	private final PagingAndSorting TEAMS_DEFAULT_PAGING = new DefaultPagingAndSorting("name");
-	private final Filtering TEAMS_DEFAULT_FILTERING = DefaultFiltering.NO_FILTERING;
+	private static final PagingAndSorting TEAMS_DEFAULT_PAGING = new DefaultPagingAndSorting("name");
+	private static final Filtering TEAMS_DEFAULT_FILTERING = DefaultFiltering.NO_FILTERING;
 
 	private AdministrationService adminService;
 

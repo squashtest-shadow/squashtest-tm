@@ -21,6 +21,7 @@
 
 package org.squashtest.tm.service.internal.customfield;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -169,7 +170,9 @@ public abstract class AbstractCustomFieldHelper<X extends BoundEntity> implement
 
 	}
 
-	protected static final class BindingSorter implements Comparator<CustomFieldBinding> {
+	@SuppressWarnings("serial")
+	protected static final class BindingSorter implements Comparator<CustomFieldBinding>, Serializable {
+		
 		@Override
 		public int compare(CustomFieldBinding o1, CustomFieldBinding o2) {
 			return o1.getPosition() - o2.getPosition();

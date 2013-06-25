@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -180,7 +181,8 @@ public class TestCaseParametersController {
 	 * @author mpagnon
 	 * 
 	 */
-	public static final class ParameterNameComparator implements Comparator<Parameter> {
+	@SuppressWarnings("serial")
+	public static final class ParameterNameComparator implements Comparator<Parameter>, Serializable {
 
 		private SortOrder sortOrder;
 
@@ -209,7 +211,8 @@ public class TestCaseParametersController {
 	 * @author mpagnon
 	 * 
 	 */
-	private static final class ParameterTestCaseNameComparator implements Comparator<Parameter> {
+	@SuppressWarnings("serial")
+	private static final class ParameterTestCaseNameComparator implements Comparator<Parameter>, Serializable {
 
 		private SortOrder sortOrder;
 
