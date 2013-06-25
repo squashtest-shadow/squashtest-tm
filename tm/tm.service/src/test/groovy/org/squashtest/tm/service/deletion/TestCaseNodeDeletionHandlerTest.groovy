@@ -143,8 +143,8 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 			def report = handler.previewLockedNodes([21l, 22l, 23l, 24l, 25l]);
 		
 		then :
-			report.nodeNames == ["21", "22", "23", "24"]
-			report.why == ["11", "12", "1"]
+			report.nodeNames == ["21", "22", "23", "24"] as Set
+			report.why == ["11", "12", "1"] as Set
 		
 		
 	}
@@ -163,8 +163,8 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 			def report = handler.previewLockedNodes([11l, 12l]);
 		
 		then :
-			report.nodeNames == ["11", "12"]
-			report.why == ["1"]
+			report.nodeNames == ["11", "12"] as Set
+			report.why == ["1"] as Set
 		
 		
 	}

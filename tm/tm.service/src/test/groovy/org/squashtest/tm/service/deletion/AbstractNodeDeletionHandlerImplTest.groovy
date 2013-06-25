@@ -207,9 +207,9 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 			preview.size == 1
 			String nondeletablemessage = preview[0].toString(source, null) 
 			
-			nondeletablemessage == "cannot be deleted : 31, 32\n\nreason : because it's a test\n"
-			
-		
+			nondeletablemessage.contains("31");
+			nondeletablemessage.contains("32");
+			nondeletablemessage.contains("\n\nreason : because it's a test\n");
 	}
 	
 
