@@ -361,6 +361,16 @@ public class RequirementVersion extends Resource implements BoundEntity{
 		this.requirementVersionCoverages.add(coverage);
 	}
 	
+	
+	public RequirementVersionCoverage getRequirementVersionCoverageOrNullFor(TestCase testCase){
+		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages){
+			if (coverage.getVerifyingTestCase().equals(testCase)){
+				return coverage;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Simply remove the RequirementVersionCoverage from this.requirementVersionCoverages.
 	 * @param requirementVersionCoverage : the entity to remove from this requirement version's {@link RequirementVersionCoverage}s list.

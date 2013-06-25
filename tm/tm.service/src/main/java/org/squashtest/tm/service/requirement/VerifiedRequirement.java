@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
+import org.squashtest.tm.domain.testcase.TestCase;
 
 /**
  * Partial view of a {@link RequirementVersionCoverage} verified by some test case.
@@ -45,30 +46,33 @@ public class VerifiedRequirement {
 	 * call).
 	 */
 	private final boolean directVerification;
-	private final Set<ActionTestStep> verifyingSteps;
+	private final Set<ActionTestStep> verifyingSteps = new HashSet<ActionTestStep>(0);		//to set an actual content, see #withVerifyingStepsFrom(TestCase)
 	private final RequirementVersion verifiedRequirementVersion;
+	
 	public VerifiedRequirement(@NotNull RequirementVersionCoverage requirementVersionCoverage, boolean directVerification) {
 		super();
-		this.verifyingSteps = requirementVersionCoverage.getVerifyingSteps();
 		this.verifiedRequirementVersion = requirementVersionCoverage.getVerifiedRequirementVersion();
 		this.directVerification = directVerification;
 	
 	}
 	public VerifiedRequirement(@NotNull RequirementVersion version, boolean directlyVerified) {
 		super();
-		this.verifyingSteps = new HashSet<ActionTestStep>(0);
 		this.verifiedRequirementVersion  = version;
 		this.directVerification = directlyVerified;
 	}
+	
 	private RequirementVersion getVerifiedRequirementVersion(){
 		return this.verifiedRequirementVersion;
 	}
+	
 	public Project getProject() {
 		return getVerifiedRequirementVersion().getRequirement().getProject();
 	}
+	
 	public RequirementStatus getStatus(){
 		return getVerifiedRequirementVersion().getStatus();
 	}
+	
 	public String getName() {
 		return getVerifiedRequirementVersion().getName();
 	}
@@ -110,6 +114,17 @@ public class VerifiedRequirement {
 			}
 		}
 		return false;
+	}
+	
+	public VerifiedRequirement withVerifyingStepsFrom(TestCase testCase){
+		
+		RequirementVersionCoverage coverage = this.verifiedRequirementVersion.getRequirementVersionCoverageOrNullFor(testCase);
+		
+		if (coverage != null){
+			this.verifyingSteps.addAll(coverage.getVerifyingSteps());
+		}
+		
+		return this;
 	}
 	
 	

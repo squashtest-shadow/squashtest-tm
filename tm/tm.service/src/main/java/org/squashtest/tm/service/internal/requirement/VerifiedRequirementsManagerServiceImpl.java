@@ -178,7 +178,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	private List<VerifiedRequirement> convertInDirectlyVerified(List<RequirementVersionCoverage> reqVersionCoverages) {
 		List<VerifiedRequirement> result = new ArrayList<VerifiedRequirement>(reqVersionCoverages.size());
 		for(RequirementVersionCoverage rvc : reqVersionCoverages){
-			VerifiedRequirement convertionResult = new VerifiedRequirement(rvc, true);
+			VerifiedRequirement convertionResult = new VerifiedRequirement(rvc, true).withVerifyingStepsFrom(rvc.getVerifyingTestCase());
 			result.add(convertionResult);
 		}
 		return result;
@@ -327,7 +327,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		
 		for (RequirementVersion rVersion : pagedVersionVerifiedByCalles){
 			boolean isDirect = main.verifies(rVersion);
-			toReturn.add(new VerifiedRequirement(rVersion, isDirect));
+			toReturn.add(new VerifiedRequirement(rVersion, isDirect).withVerifyingStepsFrom(main));
 		}
 
 		return toReturn;

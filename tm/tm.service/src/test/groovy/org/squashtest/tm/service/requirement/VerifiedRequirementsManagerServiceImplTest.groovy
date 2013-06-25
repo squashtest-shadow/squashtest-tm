@@ -230,12 +230,29 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		filter.getFirstItemIndex() >> 0
 		filter.getPageSize() >> 2
 
+		and :
+			RequirementVersionCoverage rvc1 = Mock(RequirementVersionCoverage)
+			RequirementVersionCoverage rvc2 = Mock(RequirementVersionCoverage)
+			TestCase tc = Mock(TestCase)
+			rvc1.getVerifyingTestCase() >> tc
+			rvc2.getVerifyingTestCase() >> tc
+			rvc1.getVerifyingSteps() >> [] 
+			rvc2.getVerifyingSteps() >> []
+		
+		and :
+		
+			RequirementVersion rc1 = Mock(RequirementVersion)
+			RequirementVersion rc2 = Mock(RequirementVersion)
+			
+			rvc1.getVerifiedRequirementVersion() >> rc1
+			rvc2.getVerifiedRequirementVersion() >> rc2
+			
+			rc1.getRequirementVersionCoverageOrNullFor(tc) >> rvc1
+			rc2.getRequirementVersionCoverageOrNullFor(tc) >> rvc2
+		
 		and:
-		requirementVersionCoverageDao.findAllByTestCaseId(10, filter) >> [
-			Mock(RequirementVersionCoverage),
-			Mock(RequirementVersionCoverage)
-		]
-
+			requirementVersionCoverageDao.findAllByTestCaseId(10, filter) >> [rvc1, rvc2]
+		
 		when:
 		def res = service.findAllDirectlyVerifiedRequirementsByTestCaseId(10, filter)
 
@@ -248,7 +265,30 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		PagingAndSorting filter = Mock()
 		filter.getFirstItemIndex() >> 0
 		filter.getPageSize() >> 2
-		requirementVersionCoverageDao.findAllByTestCaseId(10, filter)>> [Mock(RequirementVersionCoverage),Mock(RequirementVersionCoverage)]
+
+		and :
+		
+		RequirementVersionCoverage rvc1 = Mock(RequirementVersionCoverage)
+		RequirementVersionCoverage rvc2 = Mock(RequirementVersionCoverage)
+		TestCase tc = Mock(TestCase)
+		rvc1.getVerifyingTestCase() >> tc
+		rvc2.getVerifyingTestCase() >> tc
+		rvc1.getVerifyingSteps() >> []
+		rvc2.getVerifyingSteps() >> []
+		
+		and :
+		
+		RequirementVersion rc1 = Mock(RequirementVersion)
+		RequirementVersion rc2 = Mock(RequirementVersion)
+		
+		rvc1.getVerifiedRequirementVersion() >> rc1
+		rvc2.getVerifiedRequirementVersion() >> rc2
+		
+		rc1.getRequirementVersionCoverageOrNullFor(tc) >> rvc1
+		rc2.getRequirementVersionCoverageOrNullFor(tc) >> rvc2
+	
+		
+		requirementVersionCoverageDao.findAllByTestCaseId(10, filter)>> [rvc1, rvc2]
 		and:
 		requirementVersionCoverageDao.numberByTestCase(10) >> 5
 
