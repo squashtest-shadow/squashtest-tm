@@ -22,9 +22,7 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.domain.users.Party;
-import org.squashtest.tm.domain.users.User;
 
 
 public interface PartyDao extends EntityDao<Party> {
