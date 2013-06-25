@@ -99,14 +99,17 @@ public class ExecutionModificationController {
 		int rank = executionModService.findExecutionRank(executionId);
 		LOGGER.trace("ExecutionModService : getting execution {}, rank {}", executionId, rank);
 		List<DenormalizedFieldValue> values = denormalizedFieldValueFinder.findAllForEntity(execution);
+		
 		// step properties
 		List<AoColumnDef> columnDefs;
 		List<String> firstStepDfvsLabels;
+		
 		if (!execution.getSteps().isEmpty()) {
 			List<DenormalizedFieldValue> firstStepDfv = denormalizedFieldValueFinder
 					.findAllForEntityAndRenderingLocation(execution.getSteps().get(0), RenderingLocation.STEP_TABLE);
 			columnDefs = findColumnDefForSteps(execution, firstStepDfv);
 			firstStepDfvsLabels = extractLabels(firstStepDfv);
+			
 		} else {
 			columnDefs = findColumnDefForSteps(execution, null);
 			firstStepDfvsLabels = Collections.emptyList();
@@ -118,6 +121,7 @@ public class ExecutionModificationController {
 		mav.addObject("denormalizedFieldValues", values);
 		mav.addObject("stepsAoColumnDefs", JsonHelper.serialize(columnDefs));
 		mav.addObject("stepsDfvsLabels", firstStepDfvsLabels);
+		
 		return mav;
 
 	}
@@ -125,12 +129,13 @@ public class ExecutionModificationController {
 	private List<AoColumnDef> findColumnDefForSteps(Execution execution, List<DenormalizedFieldValue> firstStepDfv) {
 		List<AoColumnDef> columnDefs;
 		List<String> firstStepDfvCode = new ArrayList<String>();
-		if(firstStepDfv != null){
+		if (firstStepDfv != null) {
 			firstStepDfvCode = extractCodes(firstStepDfv);
 		}
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", execution);
 		boolean isBugtrackerConnected = execution.getProject().isBugtrackerConnected();
-		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDefs(firstStepDfvCode, editable, isBugtrackerConnected);
+		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDefs(firstStepDfvCode, editable,
+				isBugtrackerConnected);
 		return columnDefs;
 	}
 
@@ -166,24 +171,24 @@ public class ExecutionModificationController {
 
 	}
 
-	private static final class ExecutionStepTableColumnDefHelper extends DataTableColumnDefHelper{
+	private static final class ExecutionStepTableColumnDefHelper extends DataTableColumnDefHelper {
 		private static final List<AoColumnDef> baseColumns = new ArrayList<AoColumnDef>(5);
 		static {
 			String smallWidth = "2em";
-			// columns.add(new AoColumnDef(bVisible, bSortable, sClass, sWidth,  mDataProp))
-			baseColumns.add(new AoColumnDef(false, false, "", smallWidth, "entity-id"));//0
-			baseColumns.add(new AoColumnDef(true, false, "select-handle centered", smallWidth, "entity-index"));//1
-			baseColumns.add(new AoColumnDef(true, false, "", null, "action"));//2
-			baseColumns.add(new AoColumnDef(true, false, "", null, "expected"));//3
-			baseColumns.add(new AoColumnDef(true, false, "has-status", null, "status"));//4
-			baseColumns.add(new AoColumnDef(true, false, "", null, "last-exec-on"));//5
-			baseColumns.add(new AoColumnDef(true, false, "", null, "last-exec-by"));//6
-			baseColumns.add(new AoColumnDef(true, false, "smallfonts rich-editable-comment", null, "comment"));//7
-			baseColumns.add(new AoColumnDef(false, false, "bug-list", null, "bug-list"));//8
-			baseColumns.add(new AoColumnDef(true, false, "centered bug-button", smallWidth, "bug-button"));//9
-			baseColumns.add(new AoColumnDef(false, false, "", null, "nb-attachments"));//10
-			baseColumns.add(new AoColumnDef(true, false, "centered has-attachment-cell", smallWidth, "attach-list-id"));//11
-			baseColumns.add(new AoColumnDef(true, false, "centered run-step-button", smallWidth, "run-step-button"));//12
+			// columns.add(new AoColumnDef(bVisible, bSortable, sClass, sWidth, mDataProp))
+			baseColumns.add(new AoColumnDef(false, false, "", smallWidth, "entity-id"));// 0
+			baseColumns.add(new AoColumnDef(true, false, "select-handle centered", smallWidth, "entity-index"));// 1
+			baseColumns.add(new AoColumnDef(true, false, "", null, "action"));// 2
+			baseColumns.add(new AoColumnDef(true, false, "", null, "expected"));// 3
+			baseColumns.add(new AoColumnDef(true, false, "has-status", null, "status"));// 4
+			baseColumns.add(new AoColumnDef(true, false, "", null, "last-exec-on"));// 5
+			baseColumns.add(new AoColumnDef(true, false, "", null, "last-exec-by"));// 6
+			baseColumns.add(new AoColumnDef(true, false, "smallfonts rich-editable-comment", null, "comment"));// 7
+			baseColumns.add(new AoColumnDef(false, false, "bug-list", null, "bug-list"));// 8
+			baseColumns.add(new AoColumnDef(true, false, "centered bug-button", smallWidth, "bug-button"));// 9
+			baseColumns.add(new AoColumnDef(false, false, "", null, "nb-attachments"));// 10
+			baseColumns.add(new AoColumnDef(true, false, "centered has-attachment-cell", smallWidth, "attach-list-id"));// 11
+			baseColumns.add(new AoColumnDef(true, false, "centered run-step-button", smallWidth, "run-step-button"));// 12
 		}
 		private List<AoColumnDef> columns = new ArrayList<AoColumnDef>();
 
@@ -206,7 +211,6 @@ public class ExecutionModificationController {
 			return columns;
 		}
 
-		
 	}
 
 	private static class ExecutionStepDataTableModelHelper extends DataTableModelHelper<ExecutionStep> {
@@ -247,7 +251,7 @@ public class ExecutionModificationController {
 			for (DenormalizedFieldValue stepDfv : stepDfvs) {
 				String dfvValue = stepDfv.getValue();
 				Date date = stepDfv.getValueAsDate();
-				if (date != null) {					
+				if (date != null) {
 					String dateFormat = messageSource.getMessage("squashtm.dateformatShort", null, locale);
 					dfvValue = new SimpleDateFormat(dateFormat).format(date);
 				}
@@ -359,8 +363,6 @@ public class ExecutionModificationController {
 
 		return mav;
 	}
-
-	
 
 	@RequestMapping(method = RequestMethod.DELETE)
 	public @ResponseBody
