@@ -21,8 +21,11 @@
 package org.squashtest.tm.service.deletion;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.springframework.context.MessageSource;
 
@@ -34,7 +37,7 @@ public class LinkedToIterationPreviewReport implements SuppressionPreviewReport 
 	private static final String NODE_NAME_MESSAGE_KEY = "message.deletionWarning.testCase.nodeNames.single";
 	private static final String WHY_MESSAGE_KEY = "message.deletionWarning.testCase.why.linkedToIteration";
 	private static final String WHY_SINGLE_MESSAGE_KEY = "message.deletionWarning.testCase.why.linkedToIteration.single";
-	private final List<String> nodeNames = new ArrayList<String>();
+	private final Set<String> nodeNames = new HashSet<String>();
 	@Override
 	public String toString(MessageSource source, Locale locale) {
 		StringBuilder builder = new StringBuilder();
@@ -50,7 +53,7 @@ public class LinkedToIterationPreviewReport implements SuppressionPreviewReport 
 				secondMessageKey = WHY_SINGLE_MESSAGE_KEY;
 			}
 			builder.append(source.getMessage(firstMessageKey, null, locale));
-			builder.append(listToString(nodeNames));
+			builder.append(setToString(nodeNames));
 			builder.append("<br/>");
 			
 			builder.append(source.getMessage(secondMessageKey, null, locale));		
@@ -68,19 +71,19 @@ public class LinkedToIterationPreviewReport implements SuppressionPreviewReport 
 	
 	
 	
-	private String listToString(List<String> list){
+	private String setToString(Set<String> set){
 		StringBuilder builder = new StringBuilder();
+		Iterator<String> iterator = set.iterator();
 		
-		builder.append(list.get(0));
-		
-		for (int i=1;i<list.size();i++){
-			builder.append(", "+list.get(i));
+		if(iterator.hasNext()){
+			builder.append(iterator.next());
 		}
 		
+		while(iterator.hasNext()){
+			builder.append(", "+iterator.next());
+		}
+
 		return builder.toString();
 		
 	}
-	
-	
-	
 }

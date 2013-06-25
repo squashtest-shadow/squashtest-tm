@@ -21,8 +21,13 @@
 package org.squashtest.tm.service.deletion;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+
+
 
 import org.springframework.context.MessageSource;
 
@@ -34,8 +39,8 @@ public class NotDeletablePreviewReport implements SuppressionPreviewReport {
 	private static final String WHY_MESSAGE_KEY = "squashtm.deletion.preview.notdeletable.why";
 	
 	
-	private final List<String> nodeNames = new ArrayList<String>();
-	private final List<String> why = new ArrayList<String>();
+	private final Set<String> nodeNames = new HashSet<String>();
+	private final Set<String> why = new HashSet<String>();
 	
 	@Override
 	public String toString(MessageSource source, Locale locale) {
@@ -45,12 +50,12 @@ public class NotDeletablePreviewReport implements SuppressionPreviewReport {
 		
 			builder.append(source.getMessage(NODES_NAMES_MESSAGE_KEY, null, locale));
 			builder.append(" : ");
-			builder.append(listToString(nodeNames));
+			builder.append(setToString(nodeNames));
 			builder.append("\n\n");
 			
 			builder.append(source.getMessage(WHY_MESSAGE_KEY, null, locale));
 			builder.append(" : ");
-			builder.append(listToString(why));
+			builder.append(setToString(why));
 			builder.append("\n");
 			
 		}
@@ -61,21 +66,25 @@ public class NotDeletablePreviewReport implements SuppressionPreviewReport {
 	
 	public void addName(String name){
 		nodeNames.add(name);
+	
 	}
 	
 	public void addWhy(String why){
 		this.why.add(why);
 	}
 	
-	private String listToString(List<String> list){
+	private String setToString(Set<String> set){
 		StringBuilder builder = new StringBuilder();
+		Iterator<String> iterator = set.iterator();
 		
-		builder.append(list.get(0));
-		
-		for (int i=1;i<list.size();i++){
-			builder.append(", "+list.get(i));
+		if(iterator.hasNext()){
+			builder.append(iterator.next());
 		}
 		
+		while(iterator.hasNext()){
+			builder.append(", "+iterator.next());
+		}
+
 		return builder.toString();
 		
 	}
