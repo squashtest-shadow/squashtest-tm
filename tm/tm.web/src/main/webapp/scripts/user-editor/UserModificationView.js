@@ -34,6 +34,8 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 			this.model = new Backbone.Model({
 				hasAuthentication : UMod.user.hasAuthentication
 			});
+			
+			this.confirmDeleteUserDialog = $("#delete-user-dialog").confirmDialog();
 
 			if (this.model.get("hasAuthentication")) {
 				this.resetPasswordPopup = this.createResetPasswordPopup();
@@ -55,10 +57,12 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 			this.configureButtons();
 
 			this.listenTo(this.model, "change:hasAuthentication", this.onChangeHasAuthentication);
+			//apparently listenTo on the confirmDeleteUser has problems so we're using regular jquery.
+			this.confirmDeleteUserDialog.on('confirmdialogconfirm', $.proxy(this.deleteUser, this));
 		},
 
 		events : {
-			"click #delete-user-button" : "deleteUser",
+			"click #delete-user-button" : "confirmDeleteUser",
 			"change #user-group" : "changeUserGroup"
 		},
 
@@ -70,6 +74,10 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 				data : "groupId=" + $(event.target).val(),
 				dataType : 'json'
 			});
+		},
+		
+		confirmDeleteUser : function(evt){
+			this.confirmDeleteUserDialog.confirmDialog('open');			
 		},
 
 		deleteUser : function(event) {

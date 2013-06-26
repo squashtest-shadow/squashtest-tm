@@ -365,6 +365,15 @@
 				value="cancel" th:value="#{label.Cancel}" />
 		</div>
 	</div>
+	
+	<div id="delete-user-dialog" class="popup-dialog not-displayed" th:title="#{tooltips.delete-user}">
+		<div th:text="#{dialog.delete-user.message}"></div>
+		<div class="popup-dialog-buttonpane">
+			<input class="confirm" type="button" value="confirm"
+				th:value="#{label.Confirm}" /> <input class="cancel" type="button"
+				value="cancel" th:value="#{label.Cancel}" />
+		</div>	
+	</div>
 
 	<div id="add-permission-dialog" class="not-displayed popup-dialog"
 		title="AddPermission" th:title="#{title.AddPermission}">
