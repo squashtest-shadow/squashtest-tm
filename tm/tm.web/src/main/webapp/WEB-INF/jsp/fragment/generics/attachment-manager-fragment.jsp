@@ -133,7 +133,16 @@
 			uploadButton.squashButton();
 			
 			deleteButton.click(function() {
-				deleteDialog.confirmDialog('open');
+				var selectedIds = table.getSelectedIds();
+				if (selectedIds.length===0){
+					<f:message var="noItemSelected" key="message.EmptyTableSelection"/>
+					$.squash.openMessage("<f:message key='popup.title.error' />", "${noItemSelected}");
+					event.stopPropagation();
+					return false;
+				}
+				else{
+					deleteDialog.confirmDialog('open');
+				}
 			});
 	
 			renameButton.click(function(){				
