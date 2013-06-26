@@ -46,107 +46,50 @@
 		- Summary
 
  --%>
-
-
-
-
-<script type="text/javascript">
-	
-	function refreshTestPlan() {
-		$('#issue-table').squashTable().refresh();
-	}
-
-	function getIssueTableRowUrl(rowData){
-		return rowData[0];
-	}
-
-	function getIssueTableRowId(rowData) {
-		return rowData[1];
-	}
-
-	function getIssueTableRowIssueId(rowData) {
-		return rowData[5];
-	}
-	
-	function issueTableRowCallback(row, data, displayIndex) {
-		addHLinkToIdRow(row,data);
-		addIdAttributeToIdRow(row,data);
-		return row;
-	}
-	
-	
-	function addHLinkToIdRow(row, data){
-		var td = $(row).find("td:eq(0)");
-		var url = getIssueTableRowUrl(data);
-		addHLinkToCellText(td, url, true);
-	}
-	
-	function addIdAttributeToIdRow(row,data){
-		var td = $(row).find("td:eq(0)");
-		var issueid = getIssueTableRowIssueId(data);
-		td.attr('issueid',issueid);
-	}
-
-	/* ************************** datatable settings ********************* */
-
-	$(function() {
-			
-			var tableSettings = {
-					"oLanguage": {
-						"sUrl": "<c:url value='/datatables/messages' />",
-						"oPaginate":{
-							"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
-							"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
-							"sNext":     '<f:message key="generics.datatable.paginate.next" />',
-							"sLast":     '<f:message key="generics.datatable.paginate.last" />'
-						}
-					},
-					"sAjaxSource" : "${dataUrl}", 
-					"aaSorting" : [[1,'desc']],
-					"fnRowCallback" : issueTableRowCallback,
-					"aoColumnDefs": [
-						{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'issue-url'},
-						{'bSortable': true,  'sClass': 'select-handle centered', 'aTargets': [1], 'mDataProp' : 'remote-id'},
-						{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'summary'},
-						{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'priority'},
-						{'bSortable': false, 'sWidth': '2em', 'aTargets': [4], 'sClass' : 'centered delete-button', 'mDataProp' : 'empty-placeholder'},
-						{'bSortable': false, 'bVisible': false, 'aTargets': [5], 'mDataProp' : 'local-id'}
-					]
-				};		
-			
-				var squashSettings = {
-	
-				};
-				
-				squashSettings.enableDnD = false;
-		
-				squashSettings.deleteButtons = {
-					url : '${bugTrackerUrl}issues/{local-id}',
-					popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
-					tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
-					success : function(data) {
-						refreshTestPlan();
-					}					
-				};
-				
-				$("#issue-table").squashTable(tableSettings, squashSettings);
-		});
-	
-</script>
-
-
-<table id="issue-table">
+ 
+<c:url var="tLanguageUrl" value="/datatables/messages"/>
+<table id="issue-table" data-def="ajaxsource=${dataUrl}, language=${tLanguageUrl}, pre-sort=1">
 	<thead>
 		<tr>
-			<th>URL(not displayed)</th>
-			<th style="cursor:pointer">${interfaceDescriptor.tableIssueIDHeader}</th>
-			<th>${interfaceDescriptor.tableSummaryHeader}</th>
-			<th>${interfaceDescriptor.tablePriorityHeader}</th>
-			<th></th>
+			<th style="cursor:pointer" data-def="link={issue-url}, select, map=remote-id, sortable, narrow">${interfaceDescriptor.tableIssueIDHeader}</th>
+			<th data-def="map=summary">${interfaceDescriptor.tableSummaryHeader}</th>
+			<th data-def="map=priority">${interfaceDescriptor.tablePriorityHeader}</th>
+			<th data-def="narrow, map=empty-placeholder, sClass=centered delete-button"></th>
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
 </table>
 
 
+<script type="text/javascript">
 
+	$(function() {
+		
+		function issueTableRowCallback(row, data, displayIndex) {
+			var td = $(row).find("td:eq(0)");
+			var issueid = data['entity-id'];
+			td.attr('issueid',issueid);
+			return row;
+		}
+		
+
+		var tableSettings = {
+			"fnRowCallback" : issueTableRowCallback,
+		};		
+		
+		var squashSettings = {
+			deleteButtons : {
+				url : '${bugTrackerUrl}issues/{local-id}',
+				popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
+				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
+				success : function(data) {
+					$('#issue-table').squashTable().refresh();
+				}
+			}					
+		};
+		
+		
+		$("#issue-table").squashTable(tableSettings, squashSettings);
+	});
+	
+</script>
