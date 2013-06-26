@@ -735,6 +735,10 @@ div#contextual-content>div:first-child,.fragment-fixed {
 	padding-left: 15px;
 }
 
+.fragment-header{
+	overflow : hidden;
+}
+
 div#contextual-content>div:first-child h2,.fragment-header h2 {
 	margin: 0.3em;
 }
