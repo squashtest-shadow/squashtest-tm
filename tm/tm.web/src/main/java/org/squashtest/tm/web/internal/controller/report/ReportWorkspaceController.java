@@ -36,8 +36,8 @@ public class ReportWorkspaceController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showReportWorkspace(Model model) {
-		model.addAttribute("categories", reportsRegistry.getCategories());
-		model.addAttribute("reports", reportsRegistry.getReportsByCategory());
+		model.addAttribute("categories", reportsRegistry.getSortedCategories());
+		model.addAttribute("reports", reportsRegistry.getSortedReportsByCategory());
 
 		return "report-workspace.html";
 	}
