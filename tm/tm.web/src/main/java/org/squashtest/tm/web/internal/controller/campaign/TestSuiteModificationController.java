@@ -99,8 +99,6 @@ public class TestSuiteModificationController {
 	private PermissionEvaluationService permissionService;
 
 	@Inject
-	private TestAutomationFinderService testAutomationService;
-
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
 	
@@ -287,12 +285,9 @@ public class TestSuiteModificationController {
 	public @ResponseBody
 	AutomatedSuiteOverview executeSelectionAuto(@PathVariable long id,
 			@RequestParam("testPlanItemsIds[]") List<Long> ids, Locale locale) {
+		
 
-		TestSuite suite = service.findById(id);
-		long iterationId = suite.getIteration().getId();
-
-		AutomatedSuite autoSuite = iterationModService.createAutomatedSuite(iterationId, ids);
-		testAutomationService.startAutomatedSuite(autoSuite);
+		AutomatedSuite autoSuite = service.createAndStartAutomatedSuite(id, ids);
 
 		LOGGER.debug("Test-Suite #" + id + " : execute selected test plans");
 
@@ -303,8 +298,7 @@ public class TestSuiteModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "!testPlanItemsIds[]" })
 	public @ResponseBody
 	AutomatedSuiteOverview executeAllAuto(@PathVariable long id, Locale locale) {
-		AutomatedSuite suite = service.createAutomatedSuite(id);
-		testAutomationService.startAutomatedSuite(suite);
+		AutomatedSuite suite = service.createAndStartAutomatedSuite(id);
 
 		LOGGER.debug("Test-Suite #" + id + " : execute all test plan auto");
 

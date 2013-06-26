@@ -101,7 +101,12 @@ public interface InsecureTestAutomationManagementService extends TestAutomationF
 	 */
 	void fetchAllResultURL(TestAutomationProject project, AutomatedSuite suite);
 	
-
+	/**
+	 * Will start a test suite, by dispatching the tests to the corresponding connectors.
+	 * 
+	 * @param suite
+	 */
+	void startAutomatedSuite(AutomatedSuite suite);
 	
 
 }

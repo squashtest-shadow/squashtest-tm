@@ -91,7 +91,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 
 	/**
 	 * <p>
-	 * will create a copy of the test suite and it's test plan , then associate it to the given iteration<br>
+	 * Will create a copy of the test suite and it's test plan , then associate it to the given iteration<br>
 	 * will rename test suite if there is name conflict at destination
 	 * </p>
 	 * 
@@ -123,7 +123,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * 
 	 * @return an {@link AutomatedSuite}
 	 */
-	AutomatedSuite createAutomatedSuite(long iterationId);
+	AutomatedSuite createAndStartAutomatedSuite(long iterationId);
 
 	/**
 	 * Create an automated execution for each of the test plan in arguments, group them in an automated suite and tells
@@ -134,6 +134,6 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * @param testPlanIds
 	 * @return an {@link AutomatedSuite}
 	 */
-	AutomatedSuite createAutomatedSuite(long iterationId, Collection<Long> testPlanIds);
+	AutomatedSuite createAndStartAutomatedSuite(long iterationId, Collection<Long> testPlanIds);
 
 }

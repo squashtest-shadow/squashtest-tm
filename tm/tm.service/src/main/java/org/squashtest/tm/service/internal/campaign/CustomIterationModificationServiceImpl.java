@@ -37,6 +37,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
@@ -67,6 +68,7 @@ import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
@@ -115,6 +117,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private ObjectFactory<TreeNodeCopier> treeNodeCopierFactory;
 	@Inject
 	private IterationTestPlanManagerService iterationTestPlanManager;
+	@Inject 
+	private InsecureTestAutomationManagementService testAutomationService;
 	
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
@@ -225,41 +229,19 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Override
 	@PreAuthorize(PERMISSION_EXECUTE_ITERATION + OR_HAS_ROLE_ADMIN)
-	public AutomatedSuite createAutomatedSuite(long iterationId) {
-
-		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
-
+	public AutomatedSuite createAndStartAutomatedSuite(long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
-
-		for (IterationTestPlanItem item : iteration.getTestPlans()) {
-			if (item.isAutomated()) {
-				Execution exec = addAutomatedExecution(item);
-				newSuite.addExtender(exec.getAutomatedExecutionExtender());
-			}
-		}
-
-		return newSuite;
+		List<IterationTestPlanItem> items =  iteration.getTestPlans();
+		return createAndStartAutomatedSuite(items);
 	}
 
 	@Override
 	@PreAuthorize(PERMISSION_EXECUTE_ITERATION + OR_HAS_ROLE_ADMIN)
-	public AutomatedSuite createAutomatedSuite(long iterationId, Collection<Long> testPlanIds) {
-
-		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
-
-		List<IterationTestPlanItem> items = testPlanDao.findAllByIds(testPlanIds);
-
-		for (IterationTestPlanItem item : items) {
-			if (item.isAutomated()) {
-				Execution exec = addAutomatedExecution(item);
-				newSuite.addExtender(exec.getAutomatedExecutionExtender());
-			}
-
-		}
-
-		return newSuite;
-
+	public AutomatedSuite createAndStartAutomatedSuite(long iterationId, Collection<Long> testPlanIds) {
+		return createAndStartAutomatedSuiteByITPIsIds(testPlanIds);
 	}
+
+	
 
 	/**
 	 * @see CustomIterationModificationService#changeTestPlanPosition(long, int, List)
@@ -402,6 +384,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return sourceStep.getProject().getId().equals(sourceTC.getProject().getId());
 	}
 
+	
+	@Override
 	public Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 
 		Execution execution = item.createAutomatedExecution();
@@ -470,5 +454,30 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	private String getCurrentUserLogin() {
 		return userService.findCurrentUser().getLogin();
+	}
+
+	@Override
+	public AutomatedSuite createAndStartAutomatedSuite(List<IterationTestPlanItem> testPlanItems) {
+		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
+
+		for (IterationTestPlanItem item : testPlanItems) {
+			if (item.isAutomated()) {
+				Execution exec = addAutomatedExecution(item);
+				newSuite.addExtender(exec.getAutomatedExecutionExtender());
+			}
+		}
+		
+		//See [Issue 1531]
+		//We need to make sure that the AutomatedSuite has an id before we launch the execution.
+		//Otherwise there is a risk that, if TA is too quick to complete execution, it will try to find and update the suite that doesn't have an id yet.
+		TransactionSynchronizationManager.registerSynchronization(new AutomatedRunTransactionHandler(newSuite, testAutomationService));
+		
+		return newSuite;
+	}
+	
+	@Override
+	public AutomatedSuite createAndStartAutomatedSuiteByITPIsIds(Collection<Long> testPlanIds){
+		List<IterationTestPlanItem> items = testPlanDao.findAllByIds(testPlanIds);
+		return createAndStartAutomatedSuite(items);
 	}
 }

@@ -40,18 +40,29 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
+import org.squashtest.tm.service.campaign.IterationModificationService;
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 import org.squashtest.tm.service.user.UserAccountService;
 
 @Service("CustomTestSuiteModificationService")
 public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteModificationService {
-
+	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
+	private static final String HAS_WRITE_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'WRITE') ";
+	private static final String HAS_LINK_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') ";
+	private static final String HAS_LINK_PERMISSION_OBJECT = "hasPermission(#testSuite, 'LINK') ";
+	private static final String HAS_EXECUTE_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') ";
+	private static final String HAS_READ_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite','READ') ";
 	@Inject
 	private TestSuiteDao testSuiteDao;
+
+	@Inject
+	private IterationModificationService iterationService;
 
 	@Inject
 	private AutomatedSuiteDao autoSuiteDao;
@@ -68,19 +79,25 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	@Inject
 	private UserAccountService userService;
 
+	@Inject
+	private InsecureTestAutomationManagementService testAutomationService;
+	
+	@Inject
+	private IterationTestPlanManager iterationTestPlanManager;
+
 	public void setUserAccountService(UserAccountService service) {
 		this.userService = service;
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_WRITE_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public void rename(long suiteId, String newName) throws DuplicateNameException {
 		TestSuite suite = testSuiteDao.findById(suiteId);
 		suite.rename(newName);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public void bindTestPlan(long suiteId, List<Long> itemTestPlanIds) {
 		// that implementation relies on how the TestSuite will do the job (regarding the checks on whether the itps
 		// belong to the
@@ -98,7 +115,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testSuite, 'LINK') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_LINK_PERMISSION_OBJECT + OR_HAS_ROLE_ADMIN)
 	public void bindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
 		// the test plans have already been associated to the Iteration
 		testSuite.bindTestPlanItems(itemTestPlans);
@@ -113,20 +130,20 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testSuite, 'LINK') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_LINK_PERMISSION_OBJECT + OR_HAS_ROLE_ADMIN)
 	public void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
 		// the test plans have already been associated to the Iteration
 		testSuite.unBindTestPlan(itemTestPlans);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite','READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_READ_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public TestSuite findById(long suiteId) {
 		return testSuiteDao.findById(suiteId);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite','READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_READ_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IterationTestPlanItem>> findTestSuiteTestPlan(long suiteId, Paging paging) {
 
 		List<IterationTestPlanItem> testPlan = testSuiteDao.findAllTestPlanItemsPaged(suiteId, paging);
@@ -142,53 +159,40 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite','READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_READ_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public TestPlanStatistics findTestSuiteStatistics(long suiteId) {
 		return testSuiteDao.getTestSuiteStatistics(suiteId);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite','LINK') or hasRole('ROLE_ADMIN')")
-	public void changeTestPlanPosition(Long testSuiteId, int newIndex, List<Long> itemIds) {
+	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
+	public void changeTestPlanPosition(long suiteId, int newIndex, List<Long> itemIds) {
 
-		TestSuite suite = testSuiteDao.findById(testSuiteId);
+		TestSuite suite = testSuiteDao.findById(suiteId);
 
-		List<IterationTestPlanItem> items = testSuiteDao.findTestPlanPartition(testSuiteId, itemIds);
+		List<IterationTestPlanItem> items = testSuiteDao.findTestPlanPartition(suiteId, itemIds);
 
 		suite.reorderTestPlan(newIndex, items);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') "
-			+ "or hasRole('ROLE_ADMIN')")
-	public AutomatedSuite createAutomatedSuite(long suiteId) {
+	@PreAuthorize(HAS_EXECUTE_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
+	public AutomatedSuite createAndStartAutomatedSuite(long suiteId) {
 
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
-		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
-
+		
 		List<IterationTestPlanItem> items = testSuite.getTestPlan();
 
-		for (IterationTestPlanItem item : items) {
-			if (item.isAutomated()) {
-				Execution exec = addAutomatedExecution(item);
-				newSuite.addExtender(exec.getAutomatedExecutionExtender());
-			}
-		}
-
-		return newSuite;
+		return iterationTestPlanManager.createAndStartAutomatedSuite(items);
 	}
 
-	// TODO merge code with IterationModificationService.addAutomatedExecution
-	private Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
-
-		Execution execution = item.createAutomatedExecution();
-
-		executionDao.persist(execution);
-		item.addExecution(execution);
-
-		return execution;
-
+	@Override
+	@PreAuthorize(HAS_EXECUTE_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
+	public AutomatedSuite createAndStartAutomatedSuite(long suiteId, List<Long> testPlanIds) {
+		return iterationTestPlanManager.createAndStartAutomatedSuiteByITPIsIds(testPlanIds);
 	}
+
+	
 
 	public List<IterationTestPlanItem> filterTestSuiteByUser(List<IterationTestPlanItem> testPlanItems,
 			String userLogin, Long projectId) {
@@ -214,8 +218,8 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	private boolean hasToBeReturned(IterationTestPlanItem testPlanItem, String userLogin) {
 
 		boolean hasToBeReturned = false;
-		
-		User testPlanUser = testPlanItem.getUser(); 
+
+		User testPlanUser = testPlanItem.getUser();
 
 		if (testPlanUser != null && StringUtils.equals(testPlanUser.getLogin(), userLogin)) {
 			hasToBeReturned = true;

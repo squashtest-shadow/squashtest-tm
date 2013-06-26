@@ -122,7 +122,7 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	
 	
 	
-	void changeTestPlanPosition(Long testSuiteId, int newIndex, List<Long>itemIds);
+	void changeTestPlanPosition(long testSuiteId, int newIndex, List<Long>itemIds);
 	
 
 	/**
@@ -131,7 +131,19 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	 * 
 	 * @return an {@link AutomatedSuite}
 	 */
-	AutomatedSuite createAutomatedSuite(long id);
+	AutomatedSuite createAndStartAutomatedSuite(long id);
+	
+	
+	/**
+	 * Create an automated execution for each of the test plan in arguments, group them in an automated suite and tells
+	 * the connectors to process them .
+	 * 
+	 * @param testSuiteId
+	 *            the id of the testSuite that holds them all, and against which will be tested the user credentials
+	 * @param testPlanIds
+	 * @return an {@link AutomatedSuite}
+	 */
+	AutomatedSuite createAndStartAutomatedSuite(long testSuiteId, List<Long> ids);
 	
 
 	

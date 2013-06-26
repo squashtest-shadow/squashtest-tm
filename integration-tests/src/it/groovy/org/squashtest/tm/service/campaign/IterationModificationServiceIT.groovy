@@ -22,7 +22,8 @@ package org.squashtest.tm.service.campaign
 
 import javax.inject.Inject
 
-import org.springframework.transaction.annotation.Transactional;
+import org.apache.poi.hssf.record.formula.functions.T
+import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
@@ -33,13 +34,8 @@ import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.exception.DuplicateNameException
-import org.squashtest.tm.service.HibernateServiceSpecification;
+import org.squashtest.tm.service.HibernateServiceSpecification
 import org.squashtest.tm.service.attachment.AttachmentManagerService
-import org.squashtest.tm.service.campaign.CampaignLibrariesCrudService
-import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
-import org.squashtest.tm.service.campaign.CampaignModificationService
-import org.squashtest.tm.service.campaign.IterationModificationService
-import org.squashtest.tm.service.campaign.IterationTestPlanManagerService
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService

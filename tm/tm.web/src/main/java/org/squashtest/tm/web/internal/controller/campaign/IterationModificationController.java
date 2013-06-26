@@ -62,7 +62,6 @@ import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.service.testautomation.TestAutomationFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
@@ -102,11 +101,9 @@ public class IterationModificationController {
 	private IterationTestPlanFinder testPlanFinder;
 
 	@Inject
-	private TestAutomationFinderService testAutomationService;
-
+	
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
-
 	@Inject
 	private InternationalizationHelper messageSource;
 
@@ -360,9 +357,7 @@ public class IterationModificationController {
 		Collection<Long> testPlanIds = new ArrayList<Long>(1);
 		testPlanIds.add(testPlanId);
 
-		AutomatedSuite suite = iterationModService.createAutomatedSuite(iterationId, testPlanIds);
-
-		testAutomationService.startAutomatedSuite(suite);
+		AutomatedSuite suite = iterationModService.createAndStartAutomatedSuite(iterationId, testPlanIds);
 
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 
@@ -446,8 +441,8 @@ public class IterationModificationController {
 	public @ResponseBody
 	AutomatedSuiteOverview executeSelectionAuto(@PathVariable long iterationId,
 			@RequestParam("testPlanItemsIds[]") List<Long> ids, Locale locale) {
-		AutomatedSuite suite = iterationModService.createAutomatedSuite(iterationId, ids);
-		testAutomationService.startAutomatedSuite(suite);
+		AutomatedSuite suite = iterationModService.createAndStartAutomatedSuite(iterationId, ids);
+		
 
 		LOGGER.debug("Iteration #" + iterationId + " : execute selected test plans");
 
@@ -457,8 +452,7 @@ public class IterationModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "!testPlanItemsIds[]" })
 	public @ResponseBody
 	AutomatedSuiteOverview executeAllAuto(@PathVariable long iterationId, Locale locale) {
-		AutomatedSuite suite = iterationModService.createAutomatedSuite(iterationId);
-		testAutomationService.startAutomatedSuite(suite);
+		AutomatedSuite suite = iterationModService.createAndStartAutomatedSuite(iterationId);
 
 		LOGGER.debug("Iteration #" + iterationId + " : execute all test plan auto");
 
