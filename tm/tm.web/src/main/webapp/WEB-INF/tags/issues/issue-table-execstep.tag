@@ -51,7 +51,7 @@
 <table id="issue-table" data-def="ajaxsource=${dataUrl}, language=${tLanguageUrl}, pre-sort=1">
 	<thead>
 		<tr>
-			<th style="cursor:pointer" data-def="link={issue-url}, select, map=remote-id, sortable, narrow">${interfaceDescriptor.tableIssueIDHeader}</th>
+			<th style="cursor:pointer" data-def="link={issue-url}, select, map=remote-id, sortable, narrow, sClass=id-header">${interfaceDescriptor.tableIssueIDHeader}</th>
 			<th data-def="map=summary">${interfaceDescriptor.tableSummaryHeader}</th>
 			<th data-def="map=priority">${interfaceDescriptor.tablePriorityHeader}</th>
 			<th data-def="narrow, map=empty-placeholder, sClass=centered delete-button"></th>
@@ -62,34 +62,18 @@
 
 
 <script type="text/javascript">
-
-	$(function() {
-		
-		function issueTableRowCallback(row, data, displayIndex) {
-			var td = $(row).find("td:eq(0)");
-			var issueid = data['entity-id'];
-			td.attr('issueid',issueid);
-			return row;
-		}
-		
-
-		var tableSettings = {
-			"fnRowCallback" : issueTableRowCallback,
-		};		
-		
-		var squashSettings = {
-			deleteButtons : {
-				url : '${bugTrackerUrl}issues/{local-id}',
-				popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
-				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
-				success : function(data) {
-					$('#issue-table').squashTable().refresh();
+	$(function(){
+		require(["issue-tables"], function(it){
+			it.initTestStepIssueTable({
+				target : '#issue-table',
+				urls : {
+					bugtracker : "${bugTrackerUrl}",					
+				},
+				language : {
+					removeMessage : '<f:message key="dialog.remove-testcase-association.message" />',
+					removeTooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />'
 				}
-			}					
-		};
-		
-		
-		$("#issue-table").squashTable(tableSettings, squashSettings);
+			});
+		});
 	});
-	
 </script>

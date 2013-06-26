@@ -80,7 +80,7 @@
 			var squashSettings = {
 				enableDnD : false,
 				deleteButtons : {
-					url : '${bugTrackerUrl}issues/{local-id}',
+					url : '${bugTrackerUrl}/issues/{local-id}',
 					popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
 					tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
 					success : function(data) {

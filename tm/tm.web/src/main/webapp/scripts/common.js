@@ -22,19 +22,21 @@ requirejs
 		.config({
 
 			packages : [
-					"custom-field-editor",
-					"custom-field-binding",
-					"custom-field-values",
-					"execution-processing",
-					"projects-manager",
-					"teams-manager",
-					"project",
-					"contextual-content-handlers",
-					"test-cases-management",
-					"users-manager",
-					"bugtracker",
-					"file-upload",
-					"iteration-management" ],
+				"custom-field-editor",
+				"custom-field-binding",
+				"custom-field-values",
+				"execution-processing",
+				"projects-manager",
+				"teams-manager",
+				"project",
+				"contextual-content-handlers",
+				"test-cases-management",
+				"users-manager",
+				"bugtracker",
+				"file-upload",
+				"iteration-management",
+				"issue-tables"
+			],
 			/*
 			 * rules for paths naming: * third party lib: unversionned lib name *
 			 * non AMD squash lib: replace "squashtm" by "squash" in js file

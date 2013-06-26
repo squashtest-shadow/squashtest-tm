@@ -78,7 +78,7 @@
 
 <%-- ------------------- urls ----------------- --%>
 
-<s:url var="bugTrackerUrl" value="/bugtracker/" />
+<s:url var="bugTrackerServiceUrl" value="/bugtracker" />
 <s:url var="bugTrackerStatusUrl" value="/bugtracker/status"/>
 <s:url var="entityUrl" value="/bugtracker/{entityType}/{id}">
 	<s:param name="entityType" value="${entityType}" />
@@ -328,11 +328,11 @@
 		<div id="issue-panel-known-issue-table-div"${knownIssuesTableInitCss}>
 			<c:choose>
 				<c:when test="${entityType == 'execution-step'}">
-					<is:issue-table-execstep dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerUrl}" entityId="${entity.id}"
+					<is:issue-table-execstep dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerServiceUrl}" entityId="${entity.id}"
 						interfaceDescriptor="${interfaceDescriptor}" freeSettings="${ freeSettings }" />
 				</c:when>
 				<c:when test="${entityType == 'execution'}">
-					<is:issue-table-exec dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerUrl}" entityId="${entity.id}"
+					<is:issue-table-exec dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerServiceUrl}" entityId="${entity.id}"
 						interfaceDescriptor="${interfaceDescriptor}"  freeSettings="${ freeSettings }" />			
 				</c:when>
 				
