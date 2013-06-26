@@ -127,6 +127,10 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public AuthenticatedUser findUserById(long userId) {
 		User user = userDao.findById(userId);
+		//filtering out deactivated users
+		if(user.getActive() == false){
+			user = null;
+		}
 		boolean hasAuth = adminAuthentService.userExists(user.getLogin());
 		return new AuthenticatedUser(user, hasAuth);
 	}
