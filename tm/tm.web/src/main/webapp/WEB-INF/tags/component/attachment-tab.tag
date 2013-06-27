@@ -180,7 +180,7 @@
 <div class="table-tab-wrap" >
 	
 	<table id="attachment-detail-table" data-def="ajaxsource=${attachmentDetailsUrl}, 
-												  language=${datatableLanguage}, hover, pagesize=10">
+												  language=${datatableLanguage}, hover, pagesize=10, pre-sort=2">
 		<thead>
 			<tr>
 				<th data-def="map=entity-index, select, narrow, center">#</th>

@@ -104,22 +104,17 @@ public class HibernateAttachmentDao extends HibernateEntityDao<Attachment>
 		.createAlias("attachments", "Attachment")
 		.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 
-		try{
-			/* add ordering */
-			String sortedAttribute = filter.getSortedAttribute();
-			String order = filter.getSortingOrder();
+		
+		/* add ordering */
+		String sortedAttribute = filter.getSortedAttribute();
+		String order = filter.getSortingOrder();
 
-			if (order.equals("asc")){
-				crit.addOrder(Order.asc(sortedAttribute));
-			}
-			else{
-				crit.addOrder(Order.desc(sortedAttribute));
-			}
+		if (order.equals("asc")){
+			crit.addOrder(Order.asc(sortedAttribute));
 		}
-		catch(IllegalArgumentException ex){
-			//no sorting then
+		else{
+			crit.addOrder(Order.desc(sortedAttribute));
 		}
-
 
 		/* result range */
 		crit.setFirstResult(filter.getFirstItemIndex());

@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.model.viewmapper;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 
@@ -50,7 +51,7 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 		if (reg != null) {
 			return reg.getAttributeName();
 		} else {
-			throw new IllegalArgumentException("key '"+key+"' is not mapped");
+			throw new NoSuchElementException("key '"+key+"' is not mapped");
 		}
 	}
 
@@ -60,7 +61,7 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 		if (reg != null) {
 			return reg.getAttributePath();
 		} else {
-			throw new IllegalArgumentException("key '"+key+"' is not mapped");
+			throw new NoSuchElementException("key '"+key+"' is not mapped");
 		}
 	}
 

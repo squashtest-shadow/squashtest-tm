@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.model.viewmapper;
 
+import java.util.NoSuchElementException;
+
 
 
 
@@ -33,9 +35,9 @@ public interface DatatableMapper<KEY> {
 	 * 
 	 * @param key
 	 * @return
-	 * @throws IllegalArgumentException if no result was found for the given key
+	 * @throws NoSuchElementException if no result was found for the given key
 	 */
-	String attrAt(KEY key) throws IllegalArgumentException;	
+	String attrAt(KEY key) throws NoSuchElementException;	
 	
 	
 	/**
@@ -45,9 +47,9 @@ public interface DatatableMapper<KEY> {
 	 * 
 	 * @param key
 	 * @return
-	 * @throws IllegalArgumentException if no result was found for the given key
+	 * @throws NoSuchElementException if no result was found for the given key
 	 */
-	String pathAt(KEY key) throws IllegalArgumentException;
+	String pathAt(KEY key) throws NoSuchElementException;
 	
 	
 	/**
