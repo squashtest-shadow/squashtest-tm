@@ -364,7 +364,7 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	
 	public RequirementVersionCoverage getRequirementVersionCoverageOrNullFor(TestCase testCase){
 		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages){
-			if (coverage.getVerifyingTestCase().equals(testCase)){
+			if (coverage.getVerifyingTestCase().getId().equals(testCase.getId())){
 				return coverage;
 			}
 		}

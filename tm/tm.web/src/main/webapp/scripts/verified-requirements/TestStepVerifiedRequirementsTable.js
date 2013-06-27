@@ -92,7 +92,7 @@ define(
 								type : ajaxType
 							})
 							.success(function(){
-								data['verifiedStep'] = newState;	//should use a setter to be clean
+								data['verifiedByStep'] = newState;	//should use a setter to be clean
 								target.toggleClass('ui-icon-link-dark-e-w').toggleClass('ui-icon-link-clear-e-w');
 							})
 							.fail(function() {

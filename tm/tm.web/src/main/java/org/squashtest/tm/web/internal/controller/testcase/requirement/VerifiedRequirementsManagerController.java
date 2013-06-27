@@ -265,7 +265,8 @@ public class VerifiedRequirementsManagerController {
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
 				.findAllDirectlyVerifiedRequirementsByTestStepId(testStepId, paging);
 		;
-		return new TestStepVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper, testStepId)
+		TestCase testCase = testCaseModificationService.findTestCaseFromStep(testStepId);
+		return new TestStepVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper, testStepId, testCase)
 				.buildDataModel(holder, params.getsEcho());
 	}
 
@@ -331,16 +332,19 @@ public class VerifiedRequirementsManagerController {
 	private static final class TestStepVerifiedRequirementsDataTableModelHelper extends
 			VerifiedRequirementsDataTableModelHelper {
 		private long stepId;
-
+		private TestCase testCase;
+		
 		private TestStepVerifiedRequirementsDataTableModelHelper(Locale locale,
-				InternationalizationHelper internationalizationHelper, long stepId) {
+				InternationalizationHelper internationalizationHelper, long stepId, TestCase testCase) {
 			super(locale, internationalizationHelper);
 			this.stepId = stepId;
+			this.testCase = testCase;
 		}
 
 		@Override
 		public Map<String, Object> buildItemData(VerifiedRequirement item) {
 			Map<String, Object> res = super.buildItemData(item);
+			item.withVerifyingStepsFrom(testCase);
 			res.put("verifiedByStep", item.hasStepAsVerifying(stepId));
 			res.put("empty-link-checkbox", "");
 			return res;

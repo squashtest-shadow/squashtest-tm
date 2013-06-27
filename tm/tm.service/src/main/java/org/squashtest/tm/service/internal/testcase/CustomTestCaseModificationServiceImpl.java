@@ -410,6 +410,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		return testCaseDao.findAllCallingTestCases(calleeId);
 	}
 
+	@Override
+	public TestCase findTestCaseFromStep(long testStepId) {
+		return testCaseDao.findTestCaseByTestStepId(testStepId);
+	}
+
 	
 
 }

@@ -72,4 +72,6 @@ public interface CustomTestCaseFinder {
 	 * @return all calling test cases
 	 */
 	List<TestCase> findAllCallingTestCases(long calleeId);
+	
+	TestCase findTestCaseFromStep(long testStepId);
 }
