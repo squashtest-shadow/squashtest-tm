@@ -33,7 +33,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -63,6 +63,7 @@ import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
 import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
 /**
@@ -85,7 +86,7 @@ public class RequirementVersionManagerController {
 	@Inject
 	private Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider;
 	@Inject
-	private MessageSource messageSource;
+	private InternationalizationHelper i18nHelper;
 	
 	@Inject
 	private VerifyingTestCaseManagerService verifyingTestCaseManager;
@@ -162,16 +163,25 @@ public class RequirementVersionManagerController {
 	}
 
 	private void populateRequirementEditorModel(long requirementVersionId, Model model, Locale locale) {
+		
 		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
+		String criticalities = buildMarshalledCriticalities(locale);
 		boolean hasCUF = cufValueService.hasCustomFields(requirementVersion);
+		String categories = buildMarshalledCategories(locale);		
+		DataTableModel verifyingTCModel = getVerifyingTCModel(requirementVersion);
 
 		model.addAttribute("requirementVersion", requirementVersion);
-
-		String criticalities = buildMarshalledCriticalities(locale);
 		model.addAttribute("jsonCriticalities", criticalities);
-		String categories = buildMarshalledCategories(locale);
 		model.addAttribute("jsonCategories", categories);
 		model.addAttribute("hasCUF", hasCUF);
+		model.addAttribute("verifyingTestCaseModel", verifyingTCModel);
+	}
+	
+	private DataTableModel getVerifyingTCModel(RequirementVersion version){
+		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
+				version.getId(), new DefaultPagingAndSorting("Project.name"));
+		
+		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, "0");		
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/next-status")
@@ -255,7 +265,7 @@ public class RequirementVersionManagerController {
 
 		for (RequirementVersion version : cloneRequirementVersions) {
 			if (version.getStatus() != RequirementStatus.OBSOLETE) {
-				status = messageSource.getMessage("requirement.status." + version.getStatus().name(), null, locale);
+				status = i18nHelper.getMessage("requirement.status." + version.getStatus().name(), null, locale);
 				versionsNumbersById.put("" + version.getId(), "" + version.getVersionNumber() + " (" + status + ")");
 			}
 		}
@@ -312,8 +322,7 @@ public class RequirementVersionManagerController {
 		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService
 				.findAllByRequirementVersionIdOrderedByDate(requirementVersionId);
 
-		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale,
-				messageSource);
+		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale,	i18nHelper);
 
 		DataTableModel auditTrailModel = builder.buildDataModel(auditTrail, "1");
 		mav.addObject("auditTrailDatas", auditTrailModel.getAaData());

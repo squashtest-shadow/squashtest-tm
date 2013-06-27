@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
@@ -53,7 +54,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 public class RequirementAuditTrailController {
 	private RequirementAuditTrailService auditTrailService;
 	@Inject
-	private MessageSource messageSource;
+	private InternationalizationHelper i18nHelper;
 
 	/**
 	 * @param auditTrailService
@@ -73,7 +74,7 @@ public class RequirementAuditTrailController {
 						new DataTablePaging(drawParams));
 
 		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale,
-				messageSource);
+				i18nHelper);
 
 		return builder.buildDataModel(auditTrail, drawParams.getsEcho());
 	}

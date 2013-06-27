@@ -21,4 +21,5 @@
 
 --%>
 <%@ taglib prefix="gr" tagdir="/WEB-INF/tags/aggregates" %>
-<gr:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ jsonCriticalities }" jsonCategories="${ jsonCategories }"/>
+<gr:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ jsonCriticalities }" 
+							   jsonCategories="${ jsonCategories }" verifyingTestCaseModel="${verifyingTestCasesModel}"/>

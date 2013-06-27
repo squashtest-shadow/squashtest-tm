@@ -24,6 +24,10 @@
 <%@ attribute name="requirementVersion" required="true" type="java.lang.Object" rtexprvalue="true" %>
 <%@ attribute name="jsonCriticalities" required="true" rtexprvalue="true" %>
 <%@ attribute name="jsonCategories" required="true" rtexprvalue="true" %>
+<%@ attribute name="verifyingTestCaseModel" required="true" rtexprvalue="true" type="java.lang.Object"%>
+
+
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
@@ -38,12 +42,9 @@
 
 <s:url var="requirementUrl" value="/requirement-versions/${ requirementVersion.id }" />
 <s:url var="pageUrl" value="/requirement-versions/" />
-<s:url var="getVerifyingTestCaseUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases/table" />
+
 
 <s:url var="verifyingTCManagerUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases/manager" /> 
-
-<c:url var="verifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases" />
-<c:url var="nonVerifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/non-verifying-test-cases" />
 
 <s:url var="getStatusComboContent" value="/requirement-versions/${ requirementVersion.id }/next-status" />
 
@@ -212,10 +213,8 @@
 		</jsp:attribute>
 
 		<jsp:attribute name="body">
-			<aggr:decorate-verifying-test-cases-table nonVerifyingTestCasesUrl="${ nonVerifyingTestCasesUrl }" tableModelUrl="${ getVerifyingTestCaseUrl }" 
-				verifyingTestCasesUrl="${ verifyingTestCasesUrl }" batchRemoveButtonId="remove-verifying-test-case-button"
-				editable="${ linkable }" />
-			<aggr:verifying-test-cases-table />
+			<aggr:decorate-verifying-test-cases-table batchRemoveButtonId="remove-verifying-test-case-button"
+				editable="${ linkable }"  model="${verifyingTestCaseModel}" requirementVersion="${requirementVersion}"/>
 		</jsp:attribute>
 	</comp:toggle-panel>
 	

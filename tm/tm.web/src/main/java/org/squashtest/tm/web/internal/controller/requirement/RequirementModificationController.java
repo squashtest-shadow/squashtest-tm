@@ -32,7 +32,6 @@ import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,8 +39,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -90,6 +87,7 @@ public class RequirementModificationController {
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
 	
+	@Inject
 	private RequirementModificationService requirementModService;
 	
 	@Inject
@@ -110,10 +108,6 @@ public class RequirementModificationController {
 														.mapAttribute(RequirementVersion.class, "criticality", RequirementCriticality.class, 5)
 														.mapAttribute(RequirementVersion.class, "category", RequirementCategory.class, 6);
 
-	@ServiceReference
-	public void setRequirementModificationService(RequirementModificationService service) {
-		requirementModService = service;
-	}
 
 
 
@@ -139,7 +133,7 @@ public class RequirementModificationController {
 		String criticalities = buildMarshalledCriticalities(locale);
 		String categories = buildMarshalledCategories(locale);
 		boolean hasCUF = cufValueService.hasCustomFields(requirement.getCurrentVersion());
-		DataTableModel verifyingTCModel = getVerifyingTCModel(requirement);
+		DataTableModel verifyingTCModel = getVerifyingTCModel(requirement.getCurrentVersion());
 		
 		model.addAttribute("requirement", requirement);
 		model.addAttribute("criticalityList", criticalities);
@@ -157,12 +151,14 @@ public class RequirementModificationController {
 		return categoryComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
-	private DataTableModel getVerifyingTCModel(Requirement requirement){
+	private DataTableModel getVerifyingTCModel(RequirementVersion version){
 		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
-				requirement.getCurrentVersion().getId(), new DefaultPagingAndSorting("Project.name"));
+				version.getId(), new DefaultPagingAndSorting("Project.name"));
 		
 		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, "0");		
 	}
+	
+	
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-description", VALUE })
 	public @ResponseBody
@@ -290,6 +286,7 @@ public class RequirementModificationController {
 		model.addAttribute("selectedVersion", req.getCurrentVersion());
 		model.addAttribute("jsonCriticalities", buildMarshalledCriticalities(locale));
 		model.addAttribute("jsonCategories", buildMarshalledCategories(locale));
+		model.addAttribute("verifyingTestCaseModel", getVerifyingTCModel(req.getCurrentVersion()));
 		return "page/requirements/versions-manager";
 	}
 

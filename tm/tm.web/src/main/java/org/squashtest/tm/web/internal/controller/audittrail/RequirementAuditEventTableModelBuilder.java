@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.tm.domain.event.RequirementPropertyChange;
 import org.squashtest.tm.domain.event.RequirementVersionModification;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 
 /**
@@ -55,7 +56,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 	/**
 	 * The source for localized label messages.
 	 */
-	private final MessageSource messageSource;
+	private final InternationalizationHelper i18nHelper;
 
 	/**
 	 * Data for the item currently build.
@@ -65,9 +66,9 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 	/**
 	 * @param locale
 	 */
-	public RequirementAuditEventTableModelBuilder(@NotNull Locale locale, @NotNull MessageSource messageSource) {
+	public RequirementAuditEventTableModelBuilder(@NotNull Locale locale, @NotNull InternationalizationHelper messageSource) {
 		super();
-		this.messageSource = messageSource;
+		this.i18nHelper = messageSource;
 		this.locale = locale;
 	}
 
@@ -86,7 +87,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 	 */
 	@Override
 	public void visit(RequirementCreation event) {
-		String message = messageSource.getMessage("label.Creation", null, locale);
+		String message = i18nHelper.getMessage("label.Creation", null, locale);
 		populateCurrentItemData(message, "creation", event);
 
 	}
@@ -98,7 +99,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 	public void visit(RequirementPropertyChange event) {
 		Object[] args = buildMessageArgs(event);
 
-		String message = messageSource.getMessage(buildPropertyChangeMessageKey(event), args, locale);
+		String message = i18nHelper.getMessage(buildPropertyChangeMessageKey(event), args, locale);
 		populateCurrentItemData(message, "simple-prop", event);
 	}
 
@@ -138,7 +139,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 	@SuppressWarnings("rawtypes")
 	private String retrieveEnumI18ndLabel(Class enumType, String stringValue) {
 		Internationalizable enumValue = Enum.valueOf(enumType, stringValue);
-		return messageSource.getMessage(enumValue.getI18nKey(), null, locale);
+		return i18nHelper.getMessage(enumValue.getI18nKey(), null, locale);
 	}
 
 	/**
@@ -146,7 +147,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 	 */
 	@Override
 	public void visit(RequirementLargePropertyChange event) {
-		String message = messageSource.getMessage(buildPropertyChangeMessageKey(event), null, locale);
+		String message = i18nHelper.getMessage(buildPropertyChangeMessageKey(event), null, locale);
 		populateCurrentItemData(message, "fat-prop", event);
 
 	}
