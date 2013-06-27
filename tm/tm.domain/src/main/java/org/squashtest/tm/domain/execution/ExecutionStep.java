@@ -76,7 +76,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 	private static final String PARAM_PATTERN = "(.*?)(\\Q${\\E(.*?)\\Q}\\E)(.*?)";
-	private static final String NO_PARAM = "&lt;no_param&gt;";
+	private static final String NO_PARAM = "&lt;no_value&gt;";
 	static {
 		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
 		set.add(ExecutionStatus.UNTESTABLE);
