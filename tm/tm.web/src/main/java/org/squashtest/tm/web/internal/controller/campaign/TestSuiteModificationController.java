@@ -314,7 +314,6 @@ public class TestSuiteModificationController {
 			String projectName;
 			String testCaseName;
 			String reference;
-			final String testCaseExecutionMode = messageSource.internationalize(item.getExecutionMode(), locale);
 			String importance;
 			final String automationMode = item.isAutomated() ? "A" : "M";
 
@@ -330,6 +329,14 @@ public class TestSuiteModificationController {
 				importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
 			}
 
+			// ugly copypasta from IterationThingieBuilder
+			String datasetName;
+			if (item.getReferencedDataset() == null) {
+				datasetName = formatNoData(locale, messageSource);
+			} else {
+				datasetName = item.getReferencedDataset().getName();
+			}
+
 			Map<String, Object> rowMap = new HashMap<String, Object>(14);
 
 			rowMap.put("entity-id", item.getId());
@@ -339,13 +346,13 @@ public class TestSuiteModificationController {
 			rowMap.put("reference", reference);
 			rowMap.put("tc-name", testCaseName);
 			rowMap.put("importance", importance);
-			rowMap.put("type", testCaseExecutionMode);
 			rowMap.put("status", messageSource.internationalize(item.getExecutionStatus(), locale));
 			rowMap.put("last-exec-by", formatString(item.getLastExecutedBy(), locale, messageSource));
 			rowMap.put("last-exec-on", messageSource.localizeDate(item.getLastExecutedOn(), locale));
 			rowMap.put("is-tc-deleted", item.isTestCaseDeleted());
 			rowMap.put("empty-execute-holder", null);
 			rowMap.put("empty-delete-holder", null);
+			rowMap.put("dataset", datasetName);
 
 			return rowMap;
 

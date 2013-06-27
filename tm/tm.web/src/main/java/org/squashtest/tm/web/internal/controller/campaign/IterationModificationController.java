@@ -445,7 +445,6 @@ public class IterationModificationController {
 			String importance;
 			String reference;
 			String datasetName;
-			final String latestExecutionMode = messageSource.internationalize(item.getExecutionMode(), locale);
 			final String automationMode = item.isAutomated() ? "A" : "M";
 
 			String testSuiteNameList = "";
@@ -481,7 +480,6 @@ public class IterationModificationController {
 			res.put("reference", reference);
 			res.put("tc-name", testCaseName);
 			res.put("importance", importance);
-			res.put("type", latestExecutionMode);
 			res.put("suite", testSuiteNameList);
 			res.put("status", messageSource.internationalize(item.getExecutionStatus(), locale));
 			res.put("last-exec-by", formatString(item.getLastExecutedBy(), locale, messageSource));

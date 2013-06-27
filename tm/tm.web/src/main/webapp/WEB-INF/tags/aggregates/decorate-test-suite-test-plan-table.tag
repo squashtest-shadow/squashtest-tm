@@ -108,7 +108,7 @@
 			<th data-def="map=reference"><f:message key="requirement.reference.label"/></th>	
 			<th data-def="map=tc-name, link=javascript:void(0), sClass=test-case-name-hlink"><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
 			<th data-def="map=importance"><f:message key="iteration.executions.table.column-header.importance.label" /></th>
-			<th data-def="map=type, sWidth=10%"><f:message key="label.Mode" /></th>
+      <th data-def="map=dataset"><f:message key="label.Dataset" /></th>
 			<th data-def="map=status, sWidth=10%, sClass=has-status status-combo"><f:message key="iteration.executions.table.column-header.status.label" /></th>
 			<th data-def="map=last-exec-by, sClass=executed-by"><f:message key="iteration.executions.table.column-header.user.label" /></th>
 			<th data-def="map=last-exec-on"><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>
