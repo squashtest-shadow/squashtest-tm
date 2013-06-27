@@ -152,7 +152,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		return testPlan;
 	}
 
-	private void addTestCaseToTestPlan(TestCase testCase, List<IterationTestPlanItem> testPlan) {
+	@Override
+	public void addTestCaseToTestPlan(TestCase testCase, List<IterationTestPlanItem> testPlan) {
 		List<Dataset> datasets = datasetDao.findAllDatasetsByTestCase(testCase.getId());
 		if (datasets != null && datasets.size() != 0) {
 			for (Dataset dataset : datasets) {

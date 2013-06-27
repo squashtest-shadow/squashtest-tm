@@ -55,6 +55,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
@@ -112,7 +113,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private UserAccountService userService;
 	@Inject
 	private ObjectFactory<TreeNodeCopier> treeNodeCopierFactory;
-
+	@Inject
+	private IterationTestPlanManagerService iterationTestPlanManagerService;
+	
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
@@ -125,16 +128,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		if (copyTestPlan) {
 			for (CampaignTestPlanItem campaignItem : campaignTestPlan) {
-				IterationTestPlanItem iterationItem = new IterationTestPlanItem(campaignItem.getReferencedTestCase());
-				iterationItem.setUser(campaignItem.getUser());
-				iteration.addTestPlan(iterationItem);
+				iterationTestPlanManagerService.addTestCaseToTestPlan(campaignItem.getReferencedTestCase(), iteration.getTestPlans());
 			}
-		} else {
-			for (CampaignTestPlanItem campaignItem : campaignTestPlan) {
-				IterationTestPlanItem iterationItem = new IterationTestPlanItem(campaignItem.getReferencedTestCase());
-				iterationItem.setUser(campaignItem.getUser());
-			}
-		}
+		} 
 		iterationDao.persistIterationAndTestPlan(iteration);
 		campaign.addIteration(iteration);
 		customFieldValueService.createAllCustomFieldValues(iteration);

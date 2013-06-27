@@ -26,6 +26,7 @@ import java.util.List;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.testcase.TestCase;
 
 /**
  * Service that aims at managing the test cases of a campaign (i.e. its test plan)
@@ -140,4 +141,5 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 */
 	void assignExecutionStatusToTestPlanItem(long iterationTestPlanItemId, String statusName);
 
+	void addTestCaseToTestPlan(TestCase testCase, List<IterationTestPlanItem> testPlan);
 }
