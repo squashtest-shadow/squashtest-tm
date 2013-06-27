@@ -25,14 +25,14 @@
 <table id="test-plan-table">
 	<thead>
 		<tr>
-			<th>test plan Id</th>
+			<th class="not displayed">test plan Id</th>
 			<th>&nbsp;</th>
 			<th><f:message key="label.project" /></th>
 			<th><f:message key="requirement.reference.label"/></th>
 			<th><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.importance.label" /></th>
-			<th><f:message key="label.Mode" /></th>
-			<th>test case id</th>
+			<th><f:message key="label.Dataset" /></th>
+			<th class="not-displayed">test case id</th>
 			<th>is deleted</th>
 			<th>&nbsp;</th>				
 		</tr>

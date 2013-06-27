@@ -154,7 +154,7 @@ public class InternationalizationHelper implements MessageSource {
 	public String internationalizeYesNo(boolean yesOrNo, Locale locale) {
 		return internationalize("squashtm.yesno." + yesOrNo, locale);
 	}
-	
+
 	/**
 	 * 
 	 * @param locale
@@ -164,5 +164,24 @@ public class InternationalizationHelper implements MessageSource {
 		return internationalize("squashtm.nodata", locale);
 	}
 
-	
+	/**
+	 * 
+	 * @param locale
+	 * @return the i18n'd "deleted" message
+	 */
+	public String itemDeleted(Locale locale) {
+		return internationalize("squashtm.itemdeleted", locale);
+	}
+
+	/**
+	 * Returns the message or "no data" when message is null.
+	 * 
+	 * @param message
+	 *            the motentially null message
+	 * @param locale
+	 * @return either the given message or the "no data" message.
+	 */
+	public String messageOrNoData(String message, Locale locale) {
+		return message != null ? message : noData(locale);
+	}
 }

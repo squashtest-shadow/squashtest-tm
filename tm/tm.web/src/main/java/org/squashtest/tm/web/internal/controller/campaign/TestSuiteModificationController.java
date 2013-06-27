@@ -318,10 +318,10 @@ public class TestSuiteModificationController {
 			final String automationMode = item.isAutomated() ? "A" : "M";
 
 			if (item.isTestCaseDeleted()) {
-				projectName = formatNoData(locale, messageSource);
-				testCaseName = formatDeleted(locale, messageSource);
-				importance = formatNoData(locale, messageSource);
-				reference = formatNoData(locale, messageSource);
+				projectName = formatNoData(locale);
+				testCaseName = formatDeleted(locale);
+				importance = formatNoData(locale);
+				reference = formatNoData(locale);
 			} else {
 				projectName = item.getReferencedTestCase().getProject().getName();
 				testCaseName = item.getReferencedTestCase().getName();
@@ -332,7 +332,7 @@ public class TestSuiteModificationController {
 			// ugly copypasta from IterationThingieBuilder
 			String datasetName;
 			if (item.getReferencedDataset() == null) {
-				datasetName = formatNoData(locale, messageSource);
+				datasetName = formatNoData(locale);
 			} else {
 				datasetName = item.getReferencedDataset().getName();
 			}
@@ -347,7 +347,7 @@ public class TestSuiteModificationController {
 			rowMap.put("tc-name", testCaseName);
 			rowMap.put("importance", importance);
 			rowMap.put("status", messageSource.internationalize(item.getExecutionStatus(), locale));
-			rowMap.put("last-exec-by", formatString(item.getLastExecutedBy(), locale, messageSource));
+			rowMap.put("last-exec-by", formatString(item.getLastExecutedBy(), locale));
 			rowMap.put("last-exec-on", messageSource.localizeDate(item.getLastExecutedOn(), locale));
 			rowMap.put("is-tc-deleted", item.isTestCaseDeleted());
 			rowMap.put("empty-execute-holder", null);
@@ -356,6 +356,18 @@ public class TestSuiteModificationController {
 
 			return rowMap;
 
+		}
+
+		private String formatString(String arg, Locale locale) {
+			return messageSource.messageOrNoData(arg, locale);
+		}
+
+		private String formatNoData(Locale locale) {
+			return messageSource.noData(locale);
+		}
+
+		private String formatDeleted(Locale locale) {
+			return messageSource.itemDeleted(locale);
 		}
 	}
 
@@ -394,19 +406,4 @@ public class TestSuiteModificationController {
 
 	/* ***************** data formatter *************************** */
 
-	private static String formatString(String arg, Locale locale, InternationalizationHelper messageSource) {
-		if (arg == null) {
-			return formatNoData(locale, messageSource);
-		} else {
-			return arg;
-		}
-	}
-
-	private static String formatNoData(Locale locale, InternationalizationHelper messageSource) {
-		return messageSource.internationalize("squashtm.nodata", locale);
-	}
-
-	private static String formatDeleted(Locale locale, InternationalizationHelper messageSource) {
-		return messageSource.internationalize("squashtm.itemdeleted", locale);
-	}
 }

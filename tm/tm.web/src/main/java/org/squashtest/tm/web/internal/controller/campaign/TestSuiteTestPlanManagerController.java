@@ -32,7 +32,6 @@ import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,6 +57,7 @@ import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -97,7 +97,7 @@ public class TestSuiteTestPlanManagerController {
 			.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, 9);
 
 	@Inject
-	private MessageSource messageSource;
+	private InternationalizationHelper messageSource;
 	@Inject
 	private Provider<DriveNodeBuilder> driveNodeBuilder;
 
@@ -161,8 +161,9 @@ public class TestSuiteTestPlanManagerController {
 	}
 
 	@RequestMapping(value = "/test-suites/{id}/{iterationId}/assignable-user", method = RequestMethod.GET)
-	public ModelAndView getAssignUserForIterationTestPlanItem(@RequestParam("testPlanId") long iterationTestPlanItemIdId,
-			@PathVariable long id, @PathVariable long iterationId, final Locale locale) {
+	public ModelAndView getAssignUserForIterationTestPlanItem(
+			@RequestParam("testPlanId") long iterationTestPlanItemIdId, @PathVariable long id,
+			@PathVariable long iterationId, final Locale locale) {
 		List<Long> ids = new ArrayList<Long>();
 		ids.add(iterationTestPlanItemIdId);
 		List<User> usersList = iterationTestPlanManagerService.findAssignableUserForTestPlan(iterationId);
@@ -173,8 +174,8 @@ public class TestSuiteTestPlanManagerController {
 		mav.addObject("usersList", usersList);
 		mav.addObject("selectIdentitier", "usersList" + iterationTestPlanItemIdId);
 		mav.addObject("selectClass", "userLogin");
-		mav.addObject("dataAssignUrl", "/test-suites/" + id + "/" + iterationId + "/test-case/" + iterationTestPlanItemIdId
-				+ "/assign-user");
+		mav.addObject("dataAssignUrl", "/test-suites/" + id + "/" + iterationId + "/test-case/"
+				+ iterationTestPlanItemIdId + "/assign-user");
 
 		if (itp.getUser() != null) {
 			mav.addObject("testCaseAssignedLogin", itp.getUser().getLogin());
@@ -258,12 +259,13 @@ public class TestSuiteTestPlanManagerController {
 		return result;
 	}
 
-	private static class IterationTestPlanItemDataTableModelHelper extends DataTableModelHelper<IterationTestPlanItem> {
+	private static final class IterationTestPlanItemDataTableModelHelper extends
+			DataTableModelHelper<IterationTestPlanItem> {
 
-		private MessageSource messageSource;
+		private InternationalizationHelper messageSource;
 		private Locale locale;
 
-		private IterationTestPlanItemDataTableModelHelper(MessageSource messageSource, Locale locale) {
+		private IterationTestPlanItemDataTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
 			this.messageSource = messageSource;
 			this.locale = locale;
 		}
@@ -273,48 +275,47 @@ public class TestSuiteTestPlanManagerController {
 
 			String projectName;
 			String testCaseName;
-			String testCaseExecutionMode;
 			String importance;
 			String testCaseId;
 			String reference;
 
+			// ugly copypasta from IterationThingieBuilder
+			String datasetName;
+			if (item.getReferencedDataset() == null) {
+				datasetName = formatNoData(locale);
+			} else {
+				datasetName = item.getReferencedDataset().getName();
+			}
+
 			if (item.isTestCaseDeleted()) {
-				projectName = formatNoData(locale, messageSource);
-				testCaseName = formatDeleted(locale, messageSource);
-				importance = formatNoData(locale, messageSource);
-				reference = formatNoData(locale, messageSource);
-				testCaseExecutionMode = formatNoData(locale, messageSource);
+				projectName = formatNoData(locale);
+				testCaseName = formatDeleted(locale);
+				importance = formatNoData(locale);
+				reference = formatNoData(locale);
 				testCaseId = "";
 			} else {
 				projectName = item.getReferencedTestCase().getProject().getName();
 				testCaseName = item.getReferencedTestCase().getName();
 				reference = item.getReferencedTestCase().getReference();
-				importance = formatImportance(item.getReferencedTestCase().getImportance(), locale, messageSource);
-				testCaseExecutionMode = formatExecutionMode(item.getReferencedTestCase().getExecutionMode(), locale,
-						messageSource);
+				importance = formatImportance(item.getReferencedTestCase().getImportance(), locale);
 				testCaseId = item.getReferencedTestCase().getId().toString();
 			}
 
 			return new Object[] { item.getId(), getCurrentIndex(), projectName, reference, testCaseName, importance,
-					testCaseExecutionMode, testCaseId, item.isTestCaseDeleted(), " " };
+					datasetName, testCaseId, item.isTestCaseDeleted(), " " };
+		}
+
+		private String formatNoData(Locale locale) {
+			return this.messageSource.noData(locale);
+		}
+
+		private String formatDeleted(Locale locale) {
+			return this.messageSource.itemDeleted(locale);
+		}
+
+		private String formatImportance(TestCaseImportance importance, Locale locale) {
+			return this.messageSource.internationalize(importance, locale);
 		}
 	}
 
-	/* ***************** data formatter *************************** */
-
-	private static String formatNoData(Locale locale, MessageSource messageSource) {
-		return messageSource.getMessage("squashtm.nodata", null, locale);
-	}
-
-	private static String formatDeleted(Locale locale, MessageSource messageSource) {
-		return messageSource.getMessage("squashtm.itemdeleted", null, locale);
-	}
-
-	private static String formatImportance(TestCaseImportance importance, Locale locale, MessageSource messageSource) {
-		return messageSource.getMessage(importance.getI18nKey(), null, locale);
-	}
-
-	private static String formatExecutionMode(TestCaseExecutionMode mode, Locale locale, MessageSource messageSource) {
-		return messageSource.getMessage(mode.getI18nKey(), null, locale);
-	}
 }
