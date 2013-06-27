@@ -324,9 +324,9 @@ public class CampaignModificationController {
 
 			response.setContentType("application/octet-stream");
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-			
+
 			response.setHeader("Content-Disposition", "attachment; filename=" + campaign.getName().replace(" ", "_")
-					+ sdf.format(new Date())+ ".csv");
+					+ sdf.format(new Date()) + ".csv");
 
 			// print
 			Row header = model.getHeader();

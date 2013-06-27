@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -76,7 +77,7 @@ class IterationTest extends Specification {
 		then: "scheduled and auto infos are copied"
 		copy.getScheduledStartDate().equals(expectedStart)
 		copy.getScheduledEndDate() == null
-		copy.isActualStartAuto() == copySource.isActualStartAuto()		
+		copy.isActualStartAuto() == copySource.isActualStartAuto()
 		copy.isActualEndAuto() == copySource.isActualEndAuto()
 		and:"acual dates are not copied [Issue 1250]"
 		copy.getActualStartDate() == null
@@ -528,5 +529,24 @@ class IterationTest extends Specification {
 		iteration.addTestSuite(suite)
 		then :
 		thrown DuplicateNameException
+	}
+
+	def "ALWAYS PASSING should return only once each planned test cases"() {
+		given:
+		Iteration i = new Iteration()
+
+		and:
+		TestCase tc = Mock()
+
+		and: "two test plan items referencing the same test case"
+		[1, 2].each {
+			IterationTestPlanItem item = Mock()
+			item.referencedTestCase >> tc
+			i.addTestPlan(item)
+		}
+
+		expect:
+		true // not sure about business rules, need confirmation first.
+		//i.plannedTestCase == [tc]
 	}
 }

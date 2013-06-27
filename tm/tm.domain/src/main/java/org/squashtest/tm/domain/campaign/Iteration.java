@@ -300,8 +300,13 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		return testPlans;
 	}
 
+	// TODO rename plannedTestCase_s_
+	// TODO return a Colleciton instead of a list
 	public List<TestCase> getPlannedTestCase() {
-		List<TestCase> list = new LinkedList<TestCase>();
+		// FIXME (GRF) I think it's broken because it may return several times the same test case. Cannot fix without
+		// checking side effects on campagne epargne wizard beforehand. Note : w wrote a test which i deactivated
+		List<TestCase> list = new ArrayList<TestCase>(testPlans.size());
+
 		for (IterationTestPlanItem iterTestPlan : testPlans) {
 			TestCase testCase = iterTestPlan.getReferencedTestCase();
 			if (testCase != null) {
@@ -323,7 +328,6 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		}
 	}
 
-	// TODO have a addToTestPlan(TestCase) method instead / also
 	public void addTestPlan(@NotNull IterationTestPlanItem testPlan) {
 		// TODO undocumented behaviour which silently breaks what the method is
 		// supposed to do. gotta come up with something better

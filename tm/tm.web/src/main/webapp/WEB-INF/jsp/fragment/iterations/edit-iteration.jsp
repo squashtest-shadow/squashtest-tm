@@ -78,7 +78,7 @@
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
 <c:url var="testCaseDetailsBaseUrl"
-	value="/test-case-libraries/1/test-cases" />
+	value="/test-case-libraries/1/test-cases" /><%-- FIXME this url looks wrong but not used where it's passed --%>
 
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
 

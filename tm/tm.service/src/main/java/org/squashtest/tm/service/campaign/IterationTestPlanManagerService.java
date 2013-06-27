@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.campaign;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.users.User;
 
 /**
  * Service that aims at managing the test cases of a campaign (i.e. its test plan)
@@ -101,9 +103,10 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @param execution
 	 */
 	void updateExecutionMetadata(IterationTestPlanItem item);
-	
+
 	/**
 	 * Assign User with Execute Access to a TestPlan item.
+	 * 
 	 * @param testCaseId
 	 * @param campaignId
 	 */
@@ -141,5 +144,20 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 */
 	void assignExecutionStatusToTestPlanItem(long iterationTestPlanItemId, String statusName);
 
-	void addTestCaseToTestPlan(TestCase testCase, List<IterationTestPlanItem> testPlan);
+	/**
+	 * Creates a fragment of test plan, containing either :
+	 * <ul>
+	 * <li>a unique item when the test case is not parameterized</li>
+	 * <li>one item per dataset when the test case is parameterized</li>
+	 * </ul>
+	 * 
+	 * <strong>Note :</strong> The returned test plan fragment is in a transient state.
+	 * 
+	 * Also assigns each item to the given user.
+	 * 
+	 * @param referenced
+	 * @param assignee
+	 * @return
+	 */
+	Collection<IterationTestPlanItem> createTestPlanFragment(TestCase testCase, User assignee);
 }

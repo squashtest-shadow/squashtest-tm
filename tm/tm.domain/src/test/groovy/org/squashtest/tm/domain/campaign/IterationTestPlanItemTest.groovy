@@ -24,12 +24,14 @@ import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.exception.CyclicStepCallException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 
 import spock.lang.Specification
+import spock.lang.Unroll;
 
 public class IterationTestPlanItemTest extends Specification {
 	IterationTestPlanItem copySource = new IterationTestPlanItem(iteration : Mock(Iteration), executionStatus: ExecutionStatus.FAILURE, label: "copy source")
@@ -113,62 +115,24 @@ public class IterationTestPlanItemTest extends Specification {
 		thrown(TestPlanItemNotExecutableException)
 	}
 
-	/*
-	 * obsolete since 1.5.0
-	 * 
-	def "should not add an execution if test case contains cyclic call"() {
-		given:
-		IterationTestPlanItem item = new IterationTestPlanItem(Mock(TestCase))
-
-		and:
-		TestCaseCyclicCallChecker checker = Mock()
-		checker.checkNoCyclicCall(_) >> { throw new CyclicStepCallException() }
-
-		when:
-		item.createExecution(checker)
-
-		then:
-		thrown(CyclicStepCallException)
-	}
-
-	def "should add an execution"() {
-		given:
-		TestCase testCase = new TestCase()
-		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
-
-		and:
-		TestCaseCyclicCallChecker checker = Mock()
-
-		when:
-		def res = item.createExecution(checker)
-		item.addExecution(res)
-
-		then:
-		item.executions[0] == res
-		res.referencedTestCase == item.referencedTestCase
-		res.testPlan == item
-	}
-	*/
-	
-	
 	def "item without test case should not be executable through suite"() {
-		given: 
+		given:
 		IterationTestPlanItem item = new IterationTestPlanItem()
-		
+
 		expect:
 		!item.isExecutableThroughTestSuite()
 	}
-	
+
 	def "item without running execution should not be executable through suite"() {
 		given:
 		TestCase testCase = Mock()
 		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
-		
-		and: 
+
+		and:
 		Execution exec = Mock()
 		exec.executionStatus >> ExecutionStatus.FAILURE
 		item.executions << exec
-		
+
 		expect:
 		!item.isExecutableThroughTestSuite()
 	}
@@ -177,14 +141,39 @@ public class IterationTestPlanItemTest extends Specification {
 		given:
 		TestCase testCase = Mock()
 		IterationTestPlanItem item = new IterationTestPlanItem(testCase)
-		
+
 		and:
 		Execution exec = Mock()
 		exec.executionStatus >> ExecutionStatus.RUNNING
 		item.executions << exec
-		
+
 		expect:
 		!item.isExecutableThroughTestSuite()
 	}
 
+	@Unroll
+	def "should create items for given test case and datasets #datasets"() {
+		given:
+		TestCase testCase = Mock()
+
+		when:
+		Collection<IterationTestPlanItem> testPlan = IterationTestPlanItem.createTestPlanItems(testCase, datasets);
+		def expectedSize = datasets ? datasets.size() : 1
+
+		then:
+		testPlan.size() == expectedSize
+		testPlan*.referencedTestCase.inject(true) { res, it -> res && it == testCase } // all refd tesst cases should be testCase
+		testPlan*.referencedDataset.containsAll(datasets ? datasets : [])
+
+		where:
+		datasets << [
+			null,
+			[],
+			[Mock(Dataset)],
+			[
+				Mock(Dataset),
+				Mock(Dataset)
+			]
+		]
+	}
 }

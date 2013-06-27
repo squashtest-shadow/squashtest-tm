@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.campaign;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -152,17 +153,14 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		return testPlan;
 	}
 
-	@Override
-	public void addTestCaseToTestPlan(TestCase testCase, List<IterationTestPlanItem> testPlan) {
+	private void addTestCaseToTestPlan(TestCase testCase, List<IterationTestPlanItem> testPlan) {
 		List<Dataset> datasets = datasetDao.findAllDatasetsByTestCase(testCase.getId());
-		if (datasets != null && datasets.size() != 0) {
-			for (Dataset dataset : datasets) {
-				IterationTestPlanItem itp = new IterationTestPlanItem(testCase, dataset);
-				testPlan.add(itp);
-			}
+
+		if (datasets != null && !datasets.isEmpty()) {
+			testPlan.addAll(IterationTestPlanItem.createTestPlanItems(testCase, datasets));
 		} else {
-			IterationTestPlanItem itp = new IterationTestPlanItem(testCase);
-			testPlan.add(itp);
+			// TODO somewhat useless, above "if" branch could handle both cases
+			testPlan.add(IterationTestPlanItem.createUnparameterizedTestPlanItem(testCase));
 		}
 	}
 
@@ -247,12 +245,13 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		givenTestPlan.setUser(userDao.findUserByLogin(lastExecutedBy));
 
 	}
-	
-	@Override	
-	// FIXME : security. Note that the user should either have the right to execute executions, has role admin, or has role ta_server
+
+	@Override
+	// FIXME : security. Note that the user should either have the right to execute executions, has role admin, or has
+	// role ta_server
 	public void updateExecutionMetadata(IterationTestPlanItem item) {
 		Execution execution = item.getLatestExecution();
-		if (execution != null){
+		if (execution != null) {
 			item.setLastExecutedBy(execution.getLastExecutedBy());
 			item.setLastExecutedOn(execution.getLastExecutedOn());
 			item.setUser(userDao.findUserByLogin(execution.getLastExecutedBy()));
@@ -356,5 +355,39 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 		IterationTestPlanItem testPlanItem = findTestPlanItem(iterationTestPlanItemId);
 		testPlanItem.setExecutionStatus(ExecutionStatus.valueOf(statusName));
+	}
+
+	/**
+	 * Creates a fragment of test plan, containing either :
+	 * <ul>
+	 * <li>a unique item when the test case is not parameterized</li>
+	 * <li>one item per dataset when the test case is parameterized</li>
+	 * </ul>
+	 * 
+	 * <strong>Note :</strong> The returned test plan fragment is in a transient state.
+	 * 
+	 * @param referenced
+	 * @param assignee
+	 * @return
+	 */
+	private Collection<IterationTestPlanItem> createTestPlanFragment(TestCase testCase) {
+		List<IterationTestPlanItem> fragment = new ArrayList<IterationTestPlanItem>();
+		addTestCaseToTestPlan(testCase, fragment);
+		return fragment;
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.campaign.IterationTestPlanManagerService#createTestPlanFragment(org.squashtest.tm.domain.testcase.TestCase,
+	 *      org.squashtest.tm.domain.users.User)
+	 */
+	@Override
+	public Collection<IterationTestPlanItem> createTestPlanFragment(TestCase testCase, User assignee) {
+		Collection<IterationTestPlanItem> fragment = createTestPlanFragment(testCase);
+
+		for (IterationTestPlanItem item : fragment) {
+			item.setUser(assignee);
+		}
+
+		return fragment;
 	}
 }

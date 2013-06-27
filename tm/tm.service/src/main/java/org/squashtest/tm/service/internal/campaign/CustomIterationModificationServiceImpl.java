@@ -114,7 +114,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Inject
 	private ObjectFactory<TreeNodeCopier> treeNodeCopierFactory;
 	@Inject
-	private IterationTestPlanManagerService iterationTestPlanManagerService;
+	private IterationTestPlanManagerService iterationTestPlanManager;
 	
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
@@ -127,14 +127,36 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		List<CampaignTestPlanItem> campaignTestPlan = campaign.getTestPlan();
 
 		if (copyTestPlan) {
-			for (CampaignTestPlanItem campaignItem : campaignTestPlan) {
-				iterationTestPlanManagerService.addTestCaseToTestPlan(campaignItem.getReferencedTestCase(), iteration.getTestPlans());
-			}
+			populateTestPlan(iteration, campaignTestPlan);
 		} 
 		iterationDao.persistIterationAndTestPlan(iteration);
 		campaign.addIteration(iteration);
 		customFieldValueService.createAllCustomFieldValues(iteration);
 		return campaign.getIterations().size() - 1;
+	}
+
+	/**
+	 * populates an iteration's test plan from a campaign's test plan.
+	 * 
+	 * @param iteration
+	 * @param campaignTestPlan
+	 */
+	private void populateTestPlan(Iteration iteration, List<CampaignTestPlanItem> campaignTestPlan) {
+		for (CampaignTestPlanItem campaignItem : campaignTestPlan) {
+			TestCase referenced = campaignItem.getReferencedTestCase();
+			User assignee = campaignItem.getUser();
+
+			Collection<IterationTestPlanItem> testPlanFragment = iterationTestPlanManager.createTestPlanFragment(
+					referenced, assignee);
+
+			appendFragmentToTestPlan(iteration, testPlanFragment);
+		}
+	}
+
+	private void appendFragmentToTestPlan(Iteration iteration, Collection<IterationTestPlanItem> testPlanFragment) {
+		for (IterationTestPlanItem item : testPlanFragment) {
+			iteration.addTestPlan(item);
+		}
 	}
 
 	@Override

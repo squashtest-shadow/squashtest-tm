@@ -20,19 +20,23 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import org.apache.poi.hssf.record.formula.functions.T
+
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.tm.service.internal.campaign.IterationTestPlanManagerServiceImpl;
-import org.squashtest.tm.service.internal.repository.DatasetDao;
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
+import org.squashtest.tm.domain.users.User
+import org.squashtest.tm.service.internal.repository.DatasetDao
 import org.squashtest.tm.service.internal.repository.IterationDao
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
 
 import spock.lang.Specification
+import spock.lang.Unroll
 
 public class IterationTestPlanManagerServiceImplTest extends Specification {
 
@@ -42,7 +46,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 	IterationDao iterDao = Mock()
 	IterationTestPlanDao itemDao = Mock()
 	DatasetDao datasetDao = Mock()
-	
+
 
 	def setup(){
 		service.testCaseLibraryNodeDao = nodeDao;
@@ -52,74 +56,84 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 	}
 
 
-	def "should reccursively add a list of test cases to an iteration"() {
+	def "should reccursively add a list of test cases to an iteration" () {
 		given: "a campaign"
 		Iteration iteration = new Iteration()
 		iterDao.findById(10) >> iteration
-		use(ReflectionCategory){
-			Iteration.set field:"id", of:iteration, to:10L
+		use(ReflectionCategory) {
+			Iteration.set field: "id", of: iteration, to: 10L
 		}
 
 		and : "a bunch of folders and testcases"
-		def folder1 = new MockTCF(1L, "f1")
-		def folder2 = new MockTCF(2L, "f2")
-		def tc1 = new MockTC(3L, "tc1")
-		def tc2 = new MockTC(4L, "tc2")
-		def tc3 = new MockTC(5L, "tc3")
+		def folder1 = MockTCF(1L, "f1")
+		def folder2 = MockTCF(2L, "f2")
+		def tc1 = MockTC(3L, "tc1")
+		def tc2 = MockTC(4L, "tc2")
+		def tc3 = MockTC(5L, "tc3")
 
 		folder1.addContent(tc1)
 		folder1.addContent(folder2)
 		folder2.addContent(tc2)
 
-		nodeDao.findAllByIds([1L, 5L]) >> [
-			tc3,
-			folder1] //note that we reversed the order here to test the sorting
+		nodeDao.findAllByIds([1L, 5L]) >> [tc3, folder1] //note that we reversed the order here to test the sorting
+
 		when: "the test cases are added to the campaign"
 		service.addTestCasesToIteration([1L, 5L], 10)
 
 		then :
-		def collected = iteration.getTestPlans().collect{it.referencedTestCase} ;
+		def collected = iteration.getTestPlans().collect({it .referencedTestCase})
 		/*we'll test here that :
 		 the content of collected states that tc3 is positioned last,
 		 collected contains tc1 and tc2 in an undefined order in first position (since the content of a folder is a Set)
 		 */
-		collected[0..1] == [tc1, tc2]|| [tc2, tc1]
-		collected[2] == tc3
+		collected[0..1] == [tc1, tc2] || [tc2, tc1]
+		collected[ 2] == tc3
 	}
 
-	class MockTC extends TestCase{
-		Long overId;
-		MockTC(Long id){
-			overId = id;
-			name="don't care"
-		}
-		MockTC(Long id, String name){
-			this(id);
-			this.name=name;
-		}
-		public Long getId(){
-			return overId;
-		}
-		public void setId(Long newId){
-			overId=newId;
-		}
-	}
+	@Unroll
+	def "should create test plan fragment using datasets #datasets" () {
+		given:
+		TestCase testCase = Mock()
+		User user = Mock()
 
-	class MockTCF extends TestCaseFolder{
-		Long overId;
-		MockTCF(Long id){
-			overId = id;
-			name="don't care"
+		and:
+		datasetDao.findAllDatasetsByTestCase(_) >> datasets
+
+		and:
+		def expectedFragSize = Math.max(datasets.size(), 1) // on empty dataset there should be one item
+
+		when:
+		Collection<IterationTestPlanItem> frag = service.createTestPlanFragment(testCase, user)
+
+		then:
+		frag.size() == expectedFragSize
+		frag*.referencedTestCase.inject(true) { res, it -> res && it == testCase } // reduces collection to true when all items equal testCase
+		frag*.user.inject(true) { res, it -> res && it ==  user } // reduces to true when all assignees equal user
+		frag*.referencedDataset.containsAll(datasets)
+
+		where:
+		datasets << [
+			[],
+			[Mock(Dataset)],
+			[
+				Mock(Dataset),
+				Mock(Dataset)]
+		]
+	}
+	
+	def MockTC(def id, def name) {
+		TestCase tc = new TestCase(name: name)
+		use (ReflectionCategory) {
+			TestCaseLibraryNode.set field: "id", of: tc, to: id
 		}
-		MockTCF(Long id, String name){
-			this(id);
-			this.name=name;
+		return tc
+	}
+	def MockTCF(def id, def name) {
+		TestCaseFolder f = new TestCaseFolder(name: name)
+		use (ReflectionCategory) {
+			TestCaseLibraryNode.set field: "id", of: f, to: id
 		}
-		public Long getId(){
-			return overId;
-		}
-		public void setId(Long newId){
-			overId=newId;
-		}
+		return f
 	}
 }
+

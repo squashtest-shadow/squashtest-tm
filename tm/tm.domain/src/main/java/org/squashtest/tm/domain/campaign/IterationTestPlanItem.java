@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.campaign;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -46,6 +47,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.execution.Execution;
@@ -64,7 +66,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @Entity
 @Auditable
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testPlans")
-public class IterationTestPlanItem implements HasExecutionStatus , Identified{
+public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 
@@ -111,29 +113,29 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID", insertable = false, updatable = false))
 	private Iteration iteration;
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy="testPlan")
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "testPlan")
 	private List<TestSuite> testSuites = new ArrayList<TestSuite>();
 
 	public IterationTestPlanItem() {
 		super();
 	}
 
-	public Iteration getIteration() {
-		return iteration;
-	}
-
-	public IterationTestPlanItem(TestCase testCase) {
+	private IterationTestPlanItem(TestCase testCase) {
 		referencedTestCase = testCase;
 		referencedDataset = null;
 		label = testCase.getName();
 	}
 
-	public IterationTestPlanItem(TestCase testCase, Dataset dataset) {
+	private IterationTestPlanItem(TestCase testCase, Dataset dataset) {
 		referencedTestCase = testCase;
 		referencedDataset = dataset;
 		label = testCase.getName();
 	}
-	
+
+	public Iteration getIteration() {
+		return iteration;
+	}
+
 	@Override
 	public ExecutionStatus getExecutionStatus() {
 		return executionStatus;
@@ -232,27 +234,28 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 	 * Creates an execution of this item and returns it.
 	 * 
 	 * <h3>WARNING</h3>
-	 * <p>Will not check cyclic calls between the referenced test cases anymore (eg A calls B calls C calls A). You have been warned</p>
+	 * <p>
+	 * Will not check cyclic calls between the referenced test cases anymore (eg A calls B calls C calls A). You have
+	 * been warned
+	 * </p>
 	 * 
 	 * @return the new execution
 	 */
-	public Execution createExecution()	throws TestPlanItemNotExecutableException {
-		
+	public Execution createExecution() throws TestPlanItemNotExecutableException {
+
 		checkExecutable();
 		Execution newExecution = null;
-		
-		if(this.referencedDataset != null){
+
+		if (this.referencedDataset != null) {
 			newExecution = new Execution(referencedTestCase, referencedDataset);
 		} else {
 			newExecution = new Execution(referencedTestCase);
 		}
-		
 
 		return newExecution;
 	}
 
-	public Execution createAutomatedExecution()
-			throws TestPlanItemNotExecutableException {
+	public Execution createAutomatedExecution() throws TestPlanItemNotExecutableException {
 
 		if (!isAutomated()) {
 			throw new NotAutomatedException();
@@ -378,27 +381,27 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 	public boolean isTestCaseDeleted() {
 		return getReferencedTestCase() == null;
 	}
-	
+
 	/**
-	 * Checks id equality in case the comparison fails because in some cases,
-	 * hibernate proxies make the comparison fail.
+	 * Checks id equality in case the comparison fails because in some cases, hibernate proxies make the comparison
+	 * fail.
 	 */
-	private boolean isSameIteration(Iteration thisIteration, Iteration thatIteration){
-		
+	private boolean isSameIteration(Iteration thisIteration, Iteration thatIteration) {
+
 		boolean result = false;
 
-		if(thisIteration.equals(thatIteration)){
+		if (thisIteration.equals(thatIteration)) {
 			result = true;
 		} else {
 			result = false;
-			if(thisIteration.getId() != null && thatIteration.getId() != null){
+			if (thisIteration.getId() != null && thatIteration.getId() != null) {
 				result = thisIteration.getId().equals(thatIteration.getId());
-			} 
+			}
 		}
-		
+
 		return result;
 	}
-	
+
 	public void addTestSuite(@NotNull TestSuite suite) {
 		if (!isSameIteration(this.iteration, suite.getIteration())) {
 			throw new IllegalArgumentException("Item[" + id + "] dont belong to Iteration["
@@ -411,8 +414,8 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 	public void removeTestSuite(TestSuite suite) {
 		long suiteId = suite.getId();
 		List<TestSuite> toRemove = new ArrayList<TestSuite>();
-		for(TestSuite testSuite : this.testSuites){
-			if(testSuite.getId() == suiteId){
+		for (TestSuite testSuite : this.testSuites) {
+			if (testSuite.getId() == suiteId) {
 				toRemove.add(testSuite);
 				suite.unBindTestPlan(this);
 			}
@@ -425,25 +428,24 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 	}
 
 	public String getTestSuiteNames() {
-		
+
 		StringBuilder builder = new StringBuilder();
-		
-		for(TestSuite suite : testSuites){
-			builder.append(suite.getName() +", ");
+
+		for (TestSuite suite : testSuites) {
+			builder.append(suite.getName() + ", ");
 		}
 		String nameList = builder.toString();
-		if(nameList.length() > 0){
+		if (nameList.length() > 0) {
 			nameList = nameList.trim().substring(0, nameList.lastIndexOf(","));
 		}
 
 		return nameList;
 	}
-	
+
 	public void setTestSuites(List<TestSuite> testSuites) {
 		this.testSuites = testSuites;
 	}
 
-	
 	/* package */void setIteration(Iteration iteration) {
 		this.iteration = iteration;
 
@@ -459,10 +461,10 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 		}
 		return null;
 	}
-	
+
 	public TestCaseExecutionMode getExecutionMode() {
 		Execution latest = getLatestExecution();
-		
+
 		return latest == null ? TestCaseExecutionMode.UNDEFINED : latest.getExecutionMode();
 	}
 
@@ -472,5 +474,38 @@ public class IterationTestPlanItem implements HasExecutionStatus , Identified{
 
 	public void setReferencedDataset(Dataset referencedDataset) {
 		this.referencedDataset = referencedDataset;
+	}
+
+	/**
+	 * Creates a collection of test plan items for the given test case and datasets. If datasets is an empty collection,
+	 * will create an "unparameterized" item. Otherwise, this will create 1 item per dataset.
+	 * 
+	 * @param testCase
+	 * @param datasets
+	 *            collection of datasets, can be empty or null.
+	 * @return a collection containing at least 1 item.
+	 */
+	public static Collection<IterationTestPlanItem> createTestPlanItems(TestCase testCase, Collection<Dataset> datasets) {
+		List<IterationTestPlanItem> res = new ArrayList<IterationTestPlanItem>();
+
+		if (CollectionUtils.isEmpty(datasets)) {
+			res.add(new IterationTestPlanItem(testCase));
+		} else {
+			for (Dataset dataset : datasets) {
+				res.add(new IterationTestPlanItem(testCase, dataset));
+			}
+		}
+		return res;
+
+	}
+
+	/**
+	 * Creates a test plan item for the given test case. the test plan item won't be parameterized (ie no dataset).
+	 * 
+	 * @param testCase
+	 * @return
+	 */
+	public static IterationTestPlanItem createUnparameterizedTestPlanItem(TestCase testCase) {
+		return new IterationTestPlanItem(testCase);
 	}
 }
