@@ -210,7 +210,7 @@
 								        	 $("#project-bugtracker-project-name-row").show();
 												refreshBugTrackerProjectName();
 									     }else{
-								        	 $("#project-bugtracker-project-name-row").hide();								        	 
+								        	 $("#project-bugtracker-project-name-row").hide();	
 								         }
 								      </c:if>
 								}
@@ -385,6 +385,7 @@
 			type: 'GET',
 			 url: "${projectUrl}/bugtracker/projectName",
 		}).done(function(data){
+			$( "#project-bugtracker-project-name")[0].reset();
 			$( "#project-bugtracker-project-name").text(data);
 		});
 		
