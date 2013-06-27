@@ -98,22 +98,26 @@ public class HibernateAttachmentDao extends HibernateEntityDao<Attachment>
 
 		Session session = currentSession();
 
-		String sortedAttribute = filter.getSortedAttribute();
-		String order = filter.getSortingOrder();
 
 		Criteria crit = session.createCriteria(AttachmentList.class,"AttachmentList")
 		.add(Restrictions.eq("id",attachmentListId))
 		.createAlias("attachments", "Attachment")
 		.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 
-		/* add ordering */
-		if (sortedAttribute!=null){
+		try{
+			/* add ordering */
+			String sortedAttribute = filter.getSortedAttribute();
+			String order = filter.getSortingOrder();
+
 			if (order.equals("asc")){
 				crit.addOrder(Order.asc(sortedAttribute));
 			}
 			else{
 				crit.addOrder(Order.desc(sortedAttribute));
 			}
+		}
+		catch(IllegalArgumentException ex){
+			//no sorting then
 		}
 
 

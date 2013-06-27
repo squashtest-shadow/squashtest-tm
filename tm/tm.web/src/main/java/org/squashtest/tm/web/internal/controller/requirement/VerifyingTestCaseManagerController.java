@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.Project;
@@ -100,15 +101,18 @@ public class VerifyingTestCaseManagerController {
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/manager", method = RequestMethod.GET)
 	public String showManager(@PathVariable long requirementVersionId, Model model) {
+		
 		RequirementVersion requirementVersion = requirementVersionFinder.findById(requirementVersionId);
 		List<TestCaseLibrary> linkableLibraries = verifyingTestCaseManager.findLinkableTestCaseLibraries();
-
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
-		model.addAttribute("requirement", requirementVersion.getRequirement()); // this is done because of
-																				// RequirementViewInterceptor
+		DataTableModel verifyingTCModel = buildVerifyingTestCaseModel(requirementVersionId, new DefaultPagingAndSorting("Project.name"), "");
+
+		
+		model.addAttribute("requirement", requirementVersion.getRequirement()); // this is done because of RequirementViewInterceptor
 		model.addAttribute("requirementVersion", requirementVersion);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
-
+		model.addAttribute("verifyingTestCaseModel", verifyingTCModel);
+		
 		return "page/requirements/show-verifying-testcase-manager";
 	}
 
@@ -117,10 +121,9 @@ public class VerifyingTestCaseManagerController {
 		return new JsTreeNodeListBuilder<TestCaseLibrary>(builder).setModel(linkableLibraries).build();
 	}
 
-	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
+	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/{testCaseIds}", method = RequestMethod.POST)
 	public @ResponseBody
-	Map<String, Object> addVerifyingTestCasesToRequirement(
-			@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds, @PathVariable long requirementVersionId) {
+	Map<String, Object> addVerifyingTestCasesToRequirement(@PathVariable("testCaseIds") List<Long> testCasesIds, @PathVariable long requirementVersionId) {
 
 		Collection<VerifiedRequirementException> rejections = 
 				verifyingTestCaseManager.addVerifyingTestCasesToRequirementVersion(testCasesIds, requirementVersionId);
@@ -139,18 +142,23 @@ public class VerifyingTestCaseManagerController {
 		verifyingTestCaseManager.removeVerifyingTestCasesFromRequirementVersion(testCaseIds, requirementVersionId);
 	}
 
+	
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/table", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getVerifiedTestCasesTableModel(@PathVariable long requirementVersionId,
-			DataTableDrawParameters params, Locale locale) {
+			DataTableDrawParameters params) {
 		
 		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, verifyingTcMapper);
 
-		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
-				requirementVersionId, filter);
-		
-		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, params.getsEcho());
+		return buildVerifyingTestCaseModel(requirementVersionId, filter, params.getsEcho());
 
+	}
+	
+	private DataTableModel buildVerifyingTestCaseModel(long requirementVersionId, PagingAndSorting pas, String sEcho){
+		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
+				requirementVersionId, pas);
+		
+		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, sEcho);	
 	}
 
 	

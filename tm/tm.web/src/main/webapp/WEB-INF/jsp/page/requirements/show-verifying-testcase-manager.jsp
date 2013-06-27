@@ -28,12 +28,11 @@
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+
 <c:url var="treeBaseUrl" value="/test-case-browser"/>
 <c:url var="backUrl" value="/requirement-workspace/" />
 <c:url var="requirementUrl" value="/requirements/${ requirement.id }" />
-<c:url var="verifyingTestCasesTableUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases/table" />
 <c:url var="verifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases" />
-<c:url var="nonVerifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/non-verifying-test-cases" />
 
 <layout:tree-picker-layout  workspaceTitleKey="workspace.requirement.title" 
 							highlightedWorkspace="requirement"
@@ -41,36 +40,59 @@
 							
 	<jsp:attribute name="head">
 		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.blue.css" />
-
-		<aggr:decorate-verifying-test-cases-table tableModelUrl="${ verifyingTestCasesTableUrl }" batchRemoveButtonId="remove-items-button" 
-			verifyingTestCasesUrl="${ verifyingTestCasesUrl }" nonVerifyingTestCasesUrl="${ nonVerifyingTestCasesUrl }" />
+	</jsp:attribute>
+	
+	<jsp:attribute name="tree">
+		<tree:linkables-tree workspaceType="test-case"  id="linkable-test-cases-tree" rootModel="${ linkableLibrariesModel }" />
+	</jsp:attribute>
+	
+	<jsp:attribute name="tableTitlePane">		
+			<div class="snap-left" style="height:100%;">			
+				<h2>
+					<f:message var="title" key="requirement.verifying_test-case.panel.title"/>
+					<span>${title}</span>
+				</h2>
+			</div>	
+			<div style="clear:both;"></div>
+	</jsp:attribute>
+	<jsp:attribute name="tablePane">
+		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" isContextual="false"/>
 		
-		<script type="text/javascript">
-			<%-- tree population callbacks --%>
-			
-			function getTestCasesIds(){
-				var tab =  [];
-				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
-				var tree = $( '#linkable-test-cases-tree' );
-				if (selected == 0){
-					tab = tree.jstree('get_selected')
-						  .not(':library')
-						  .collect(function(elt){return $(elt).attr('resid');});
-				}
-				if (selected == 1){
-					var table = $( '#search-result-datatable' ).dataTable();
-					tab = getIdsOfSelectedAssociationTableRows(table, getTestCasesTableRowId);
-				}
-				return tab;
-			}
-			
-			$(function() {
-				$( "#add-summary-dialog" ).messageDialog();
+		<aggr:decorate-verifying-test-cases-table editable="true" model="${verifyingTestCaseModel}" requirementVersion="${requirementVersion}" batchRemoveButtonId="none"/>
 				
-				<%-- verifying test-case addition --%>
-				$("#back").button().click(function() {
-					document.location.href="${backUrl}";
-				});
+		<div id="add-summary-dialog" class="not-displayed" title="<f:message key='requirement-version.verifying-test-case.add-summary-dialog.title' />">
+			<ul><li>summary message here</li></ul>
+		</div>
+	</jsp:attribute>
+
+	<jsp:attribute name="subPageTitle">
+		<h2>${requirementVersion.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
+	</jsp:attribute>
+	
+	<jsp:attribute name="subPageButtons">
+		<f:message var="backButtonLabel" key="label.Back" />
+		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
+	</jsp:attribute>	
+	
+	
+	<jsp:attribute name="foot">
+
+		<script type="text/javascript">
+
+			$(function() {
+			
+				//the case 'get ids from the research tab' is disabled here, waiting for refactoring. 
+				function getTestCasesIds(){
+					var ids =  [];
+					var nodes = $( '#linkable-test-cases-tree' ).jstree('get_selected').not(':library').treeNode();
+					if (nodes.length>0){
+						ids = nodes.all('getResId');
+					}
+				
+					return $.map(ids, function(id){ return parseInt(id);});
+				}
+				
+				$( "#add-summary-dialog" ).messageDialog();
 
 				var summaryMessages = {
 					alreadyVerifiedRejections: "<f:message key='requirement-version.verifying-test-case.already-verified-rejection' />",
@@ -96,55 +118,41 @@
 					}					
 				};
 				
-				var addHandler = function(data) {
-					showAddSummary(data);
-					refreshVerifyingTestCases();
-				};
-				
 				$( '#add-items-button' ).click(function() {
-					var tree = $( '#linkable-test-cases-tree' );
-					var ids = [];
 					
-					ids = getTestCasesIds();
+					var tree = $('#linkable-test-cases-tree');
+					var table = $("#verifying-test-cases-table").squashTable();
+					var ids = getTestCasesIds();
 					
 					if (ids.length > 0) {
-						$.post('${ verifyingTestCasesUrl }', { testCasesIds: ids}, addHandler);
+						$.ajax({
+							url : '${ verifyingTestCasesUrl }/'+ids.join(','),
+							type : 'POST', 
+							dataType :'json'
+						})
+						.success(function(data){
+							showAddSummary(data);
+							table.refresh();							
+						});
 					}
+					
 					tree.jstree('deselect_all');
 				});
+				
+				$("#remove-items-button").click(function(){
+					var table = $("#verifying-test-cases-table").squashTable();
+					var ids = table.getSelectedIds();
+					$.ajax({
+						url : '${verifyingTestCasesUrl}/'+ids.join(','),
+						type : 'DELETE',
+						dataType : 'json'
+					}).success(function(){
+						table.refresh();
+					});
+				});
 			});
-		</script>
+		</script>	
 	</jsp:attribute>
-	
-	<jsp:attribute name="tree">
-		<tree:linkables-tree workspaceType="test-case"  id="linkable-test-cases-tree" rootModel="${ linkableLibrariesModel }" />
-	</jsp:attribute>
-	
-	<jsp:attribute name="tableTitlePane">		
-			<div class="snap-left" style="height:100%;">			
-				<h2>
-					<f:message var="title" key="requirement.verifying_test-case.panel.title"/>
-					<span>${title}</span>
-				</h2>
-			</div>	
-			<div style="clear:both;"></div>
-	</jsp:attribute>
-	<jsp:attribute name="tablePane">
-		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" isContextual="false"/>
-		<aggr:verifying-test-cases-table />
-		<div id="add-summary-dialog" class="not-displayed" title="<f:message key='requirement-version.verifying-test-case.add-summary-dialog.title' />">
-			<ul><li>summary message here</li></ul>
-		</div>
-	</jsp:attribute>
-
-	<jsp:attribute name="subPageTitle">
-		<h2>${requirementVersion.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
-	</jsp:attribute>
-	
-	<jsp:attribute name="subPageButtons">
-		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
-	</jsp:attribute>	
 	
 </layout:tree-picker-layout>
 
