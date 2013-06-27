@@ -118,6 +118,13 @@
 		</osgi:interfaces>
 	</osgi:reference>
 	
+	<osgi:reference id="squashtest.tm.service.VerifyingTestCaseManagerService" bean-name="squashtest.tm.service.VerifyingTestCaseManagerService" 
+	interface="org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService"	cardinality="1..1" />
+	
+	<osgi:reference id="squashtest.tm.service.RequirementVersionManagerService" bean-name="squashtest.tm.service.RequirementVersionManagerService" 
+	interface="org.squashtest.tm.service.requirement.RequirementVersionManagerService"	cardinality="1..1"/>
+	
+	
 	<osgi:reference id="squashtest.tm.service.ParameterModificationService"
 		bean-name="squashtest.tm.service.ParameterModificationService"
 		availability="mandatory">

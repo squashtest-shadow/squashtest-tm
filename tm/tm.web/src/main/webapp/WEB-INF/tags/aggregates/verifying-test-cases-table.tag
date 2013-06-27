@@ -22,20 +22,5 @@
 --%>
 <%@ tag body-content="empty" description="inserts the html table of verifying test cases" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<table id="verifying-test-cases-table">
-	<thead>
-		<tr>
-			<th>Id</th>
-			<th>#</th>
-			<th><f:message key="label.project" /></th>
-			<th><f:message key="test-case.reference.label" /></th>
-			<th><f:message key="test-case.name.label" /></th>
-			<th><f:message key="verifying-test-cases.table.column-header.type.label"/></th>
-			<th>&nbsp;</th>				
-		</tr>
-	</thead>
-	<tbody><%-- Will be populated through ajax --%></tbody>
-</table>
-	<div id="verifying-test-case-row-buttons" class="not-displayed">
-	<a id="delete-verifying-test-case-button" href="javascript:void(0)" class="delete-verifying-test-case-button"><f:message key="test-case.verified_requirement_item.remove.button.label" /></a>
-</div> 
+
+<h2>DEPRECATED</h2>

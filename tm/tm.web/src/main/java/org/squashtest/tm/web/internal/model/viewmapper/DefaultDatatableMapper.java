@@ -50,7 +50,7 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 		if (reg != null) {
 			return reg.getAttributeName();
 		} else {
-			return null;
+			throw new IllegalArgumentException("key '"+key+"' is not mapped");
 		}
 	}
 
@@ -60,7 +60,7 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 		if (reg != null) {
 			return reg.getAttributePath();
 		} else {
-			return null;
+			throw new IllegalArgumentException("key '"+key+"' is not mapped");
 		}
 	}
 

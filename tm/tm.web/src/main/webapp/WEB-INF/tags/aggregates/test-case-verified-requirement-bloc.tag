@@ -33,7 +33,7 @@
 <%@ attribute name="linkable" required="true" description=" boolean that says if the concerned test case is viewed by a user who has LINK rights on this entity" %>
 
 <s:url var="root" value="/" />
-<script type="text/javascript" th:inline="javascript">
+<script type="text/javascript">
 			if (!squashtm) {
 				var squashtm = {};
 			}

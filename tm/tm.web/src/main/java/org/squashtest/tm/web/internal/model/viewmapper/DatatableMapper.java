@@ -33,8 +33,9 @@ public interface DatatableMapper<KEY> {
 	 * 
 	 * @param key
 	 * @return
+	 * @throws IllegalArgumentException if no result was found for the given key
 	 */
-	String attrAt(KEY key);	
+	String attrAt(KEY key) throws IllegalArgumentException;	
 	
 	
 	/**
@@ -44,8 +45,9 @@ public interface DatatableMapper<KEY> {
 	 * 
 	 * @param key
 	 * @return
+	 * @throws IllegalArgumentException if no result was found for the given key
 	 */
-	String pathAt(KEY key);
+	String pathAt(KEY key) throws IllegalArgumentException;
 	
 	
 	/**

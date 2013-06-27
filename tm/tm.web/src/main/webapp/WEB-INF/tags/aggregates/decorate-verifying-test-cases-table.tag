@@ -20,106 +20,102 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+
 <%@ tag body-content="empty" description="jqueryfies a verified reqs table" %>
-<%@ attribute name="tableModelUrl" required="true" description="URL to GET the model of the table" %>
-<%@ attribute name="verifyingTestCasesUrl" required="true" description="URL to manipulate the verifying test-cases" %>
-<%@ attribute name="nonVerifyingTestCasesUrl" required="true" description="URL to manipulate the non verifying test cases" %>
 <%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
+<%@ attribute name="requirementVersion" type="java.lang.Object" required="true" description="The RequirementVersion instance for which we render the verifying testcases" %>
+<%@ attribute name="model" type="java.lang.Object" required="true" description="the initial rows of the table"%>
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
+<%-- ======================== VARIABLES & URLS ============================ --%>
+
+
+<s:url var="tableModelUrl" value="/requirement-versions/${requirementVersion.id}/verifying-test-cases/table" />
+<c:url var="verifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases" />
+<c:url var="tableLanguageUrl" value="/datatables/messages"/>
+<c:url var="testCaseUrl" value="/test-cases"/>
+
 <f:message var="emptyMessage" key="message.EmptyTableSelection" />
+<f:message var="labelConfirm" key="label.Confirm"/>
+<f:message var="labelCancel"  key="label.Cancel"/>
+<f:message var="removeAssoc"  key="dialog.remove-testcase-requirement-association.message" />
+<f:message var="titleError"   key="popup.title.error" />
+
+<c:set var="tblRemoveBtnClause" value=""/>
+<c:if test="${editable}" >
+<c:set var="tblRemoveBtnClause" value=", delete-button=#remove-verifying-test-case-dialog" />
+</c:if>
+
+<%-- ======================== /VARIABLES & URLS ============================ --%>
+
+				
+<table id="verifying-test-cases-table" class="unstyled-table" data-def="ajaxsource=${tableModelUrl}, deferloading=${model.iTotalRecords}, 
+												 language=${tableLanguageUrl}, datakeys-id=tc-id, hover, pre-sort=2,
+												 pagesize=${fn:length(model.aaData)} ">
+	<thead>
+		<tr>
+			<th data-def="map=tc-index, select">#</th>
+			<th data-def="map=project-name, sortable"><f:message key="label.project" /></th>
+			<th data-def="map=tc-reference, sortable"><f:message key="test-case.reference.label" /></th>
+			<th data-def="map=tc-name, sortable, link=${testCaseUrl}/{tc-id}/infos"><f:message key="test-case.name.label" /></th>
+			<th data-def="map=tc-type, sortable"><f:message key="verifying-test-cases.table.column-header.type.label"/></th>
+			<th data-def="map=empty-delete-holder ${tblRemoveBtnClause}">&nbsp;</th>				
+		</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
+
+
+
+<div id="remove-verifying-test-case-dialog" class="popup-dialog not-displayed" title="${labelConfirm}">
+	<div><c:out value="${removeAssoc}"/></div>
+	<div class="popup-dialog-buttonpane">
+		<input class="confirm" type="button" value="${labelConfirm}" />
+		 <input class="cancel" type="button" value="${labelCancel}" />
+	</div>
+</div>
+
+				
 				
 <script type="text/javascript">
 	$(function() {
-		<%-- single verifying test-case removal --%>
-		$('#verifying-test-cases-table .delete-verifying-test-case-button').die('click');
-		$('#verifying-test-cases-table .delete-verifying-test-case-button').live('click', function() {
-			var savedThis = this;
-			oneShotConfirm("<f:message key='label.Confirm' />", 
-					"<f:message key='dialog.remove-testcase-requirement-association.message' />",
-					"<f:message key='label.Confirm'/>",
-					"<f:message key='label.Cancel'/>", '600px').done(	function(){deleteRequirementLink(savedThis);});
+		require(["jquery.squash.datatables"], function(){
+			var table =$("#verifying-test-cases-table").squashTable({
+				'aaData' : ${json:serialize(model.aaData)}
+			}, {});
 			
-		});
-		<%-- selected verifying test-case removal --%>
-		$( '#${ batchRemoveButtonId }' ).click(function() {
-			var table = $( '#verifying-test-cases-table' ).squashTable();
-			var ids = getIdsOfSelectedTableRows(table, getTestCasesTableRowId);
+			<c:if test="${editable}">
+			var removeDialog = $("#remove-verifying-test-case-dialog").confirmDialog();
 			
-			if (ids.length > 0) {
-				oneShotConfirm("<f:message key='label.Confirm' />", 
-						"<f:message key='dialog.remove-testcase-requirement-associations.message' />",
-						"<f:message key='label.Confirm'/>",
-						"<f:message key='label.Cancel'/>", '600px').done(function(){deleteRequirementsLinks(ids);	});
-			}else{
-				$.squash.openMessage("<f:message key='popup.title.error' />","${emptyMessage}");
+			$( '#${batchRemoveButtonId}' ).click(function() {
+				var table = $( '#verifying-test-cases-table' ).squashTable();
+				var ids = table.getSelectedIds();
 				
-			}
+				if (ids.length > 0) {
+					removeDialog.confirmDialog('open');
+				}else{
+					$.squash.openMessage("${titleError}","${emptyMessage}");
+				}
+			});
+			
+			removeDialog.on('confirmdialogconfirm', function(){
+				var ids = table.getSelectedIds();
+				$.ajax({
+					url : "${verifyingTestCasesUrl}/"+ids.join(','),
+					type : 'DELETE',
+					dataType : 'json'
+				}).success(function(){
+					table.refresh();
+				})
+			});
+			</c:if>			
 		});
 	});
-	function deleteRequirementLink(savedThis){
-		$.ajax({
-			type : 'delete',
-			url : '${ verifyingTestCasesUrl }/' + parseTestCaseId(savedThis),
-			dataType : 'json',
-			success : refreshVerifyingTestCases
-			});
-	}
-	function deleteRequirementsLinks(ids){
-		$.post(
-				'${ nonVerifyingTestCasesUrl }',
-				{ testCasesIds: ids },
-				refreshVerifyingTestCases
-			 );
-	}
-	function refreshVerifyingTestCases() {
-		var table = $('#verifying-test-cases-table').squashTable();
-		saveTableSelection(table, getTestCasesTableRowId);
-		table.fnDraw(false);
-	}
-
-	function testCaseTableDrawCallback() {
-		<c:if test="${ editable }">
-		decorateDeleteButtons($('.delete-verifying-test-case-button', this));
-		</c:if>
-		restoreTableSelection(this, getTestCasesTableRowId);
-	}
-
-	function getTestCasesTableRowId(rowData) {
-		return rowData[0];	
-	}
-
-	function testCaseTableRowCallback(row, data, displayIndex) {
-		<c:if test="${ editable }">
-		addDeleteButtonToRow(row, getTestCasesTableRowId(data), 'delete-verifying-test-case-button');
-		</c:if>
-		//addClickHandlerToSelectHandle(row, $("#verifying-test-cases-table"));
-		addHLinkToTestCaseName(row, data);
-		return row;
-	}
-
-	function parseTestCaseId(element) {
-		var elementId = element.id;
-		return elementId.substr(elementId.indexOf(":") + 1);
-	}
-	
-	function addHLinkToTestCaseName(row, data) {
-		var url= "<c:url value='/test-cases/' />" + getTestCasesTableRowId(data) + '/info';			
-		addHLinkToCellText($( 'td:eq(3)', row ), url);
-	}	
 </script>
-<comp:decorate-ajax-table url="${ tableModelUrl }" tableId="verifying-test-cases-table" paginate="true" isSquashtable="true">
-	<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
-	<jsp:attribute name="drawCallback">testCaseTableDrawCallback</jsp:attribute>
-	<jsp:attribute name="rowCallback">testCaseTableRowCallback</jsp:attribute>
-	<jsp:attribute name="columnDefs">
-		<dt:column-definition targets="0" visible="false" />
-		<dt:column-definition targets="1" sortable="false" cssClass="select-handle centered" width="2em"/>
-		<dt:column-definition targets="2, 3, 4, 5" sortable="true" />
-		<dt:column-definition targets="6" sortable="false" width="2em" lastDef="true" cssClass="centered"/>
-	</jsp:attribute>
-</comp:decorate-ajax-table>

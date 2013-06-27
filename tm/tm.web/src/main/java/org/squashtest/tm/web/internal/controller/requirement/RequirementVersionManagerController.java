@@ -86,15 +86,16 @@ public class RequirementVersionManagerController {
 	private Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider;
 	@Inject
 	private MessageSource messageSource;
+	
+	@Inject
 	private VerifyingTestCaseManagerService verifyingTestCaseManager;
 
-	@ServiceReference
-	public void setVerifyingTestCaseManager(VerifyingTestCaseManagerService verifyingTestCaseManagerService) {
-		this.verifyingTestCaseManager = verifyingTestCaseManagerService;
-	}
+
 
 	@Inject
 	private CustomFieldHelperService cufHelperService;
+	
+	@Inject
 	private RequirementVersionManagerService requirementVersionManager;
 
 	@Inject
@@ -104,14 +105,6 @@ public class RequirementVersionManagerController {
 		super();
 	}
 
-	/**
-	 * @param requirementVersionManagerService
-	 *            the requirementVersionManagerService to set
-	 */
-	@ServiceReference
-	public void setRequirementVersionManager(RequirementVersionManagerService requirementVersionManagerService) {
-		this.requirementVersionManager = requirementVersionManagerService;
-	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-description", VALUE })
 	public @ResponseBody

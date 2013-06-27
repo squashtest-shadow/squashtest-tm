@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.requirement;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -51,6 +52,7 @@ import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.VerifiedRequirementActionSummaryBuilder;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -75,9 +77,12 @@ public class VerifyingTestCaseManagerController {
 	private Provider<DriveNodeBuilder> driveNodeBuilder;
 
 	@Inject
-	private MessageSource messageSource;
+	private InternationalizationHelper i18nHelper;
 
+	@Inject
 	private VerifyingTestCaseManagerService verifyingTestCaseManager;
+	
+	@Inject
 	private RequirementVersionManagerService requirementVersionFinder;
 
 	/*
@@ -86,21 +91,12 @@ public class VerifyingTestCaseManagerController {
 	 * 
 	 * So we use a named-base with column indexes as names.
 	 */
-	private final DatatableMapper verifyingTcMapper = new NameBasedMapper(6)
-			.mapAttribute(Project.class, "name", String.class, "2")
-			.mapAttribute(TestCase.class, "reference", String.class, "3")
-			.mapAttribute(TestCase.class, "name", String.class, "4")
-			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, "5");
+	private final DatatableMapper<String> verifyingTcMapper = new NameBasedMapper(6)
+			.mapAttribute(Project.class, "name", String.class, "project-name")
+			.mapAttribute(TestCase.class, "reference", String.class, "tc-reference")
+			.mapAttribute(TestCase.class, "name", String.class, "tc-name")
+			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, "tc-type");
 
-	@ServiceReference
-	public void setVerifyingTestCaseManager(VerifyingTestCaseManagerService verifyingTestCaseManagerService) {
-		this.verifyingTestCaseManager = verifyingTestCaseManagerService;
-	}
-
-	@ServiceReference
-	public void setRequirementVersionFinder(RequirementVersionManagerService requirementVersionManagerService) {
-		this.requirementVersionFinder = requirementVersionManagerService;
-	}
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/manager", method = RequestMethod.GET)
 	public String showManager(@PathVariable long requirementVersionId, Model model) {
@@ -126,8 +122,8 @@ public class VerifyingTestCaseManagerController {
 	Map<String, Object> addVerifyingTestCasesToRequirement(
 			@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds, @PathVariable long requirementVersionId) {
 
-		Collection<VerifiedRequirementException> rejections = verifyingTestCaseManager
-				.addVerifyingTestCasesToRequirementVersion(testCasesIds, requirementVersionId);
+		Collection<VerifiedRequirementException> rejections = 
+				verifyingTestCaseManager.addVerifyingTestCasesToRequirementVersion(testCasesIds, requirementVersionId);
 
 		return buildSummary(rejections);
 	}
@@ -136,57 +132,28 @@ public class VerifyingTestCaseManagerController {
 		return VerifiedRequirementActionSummaryBuilder.buildAddActionSummary(rejections);
 	}
 
-	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/non-verifying-test-cases", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
+	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/{testCaseIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
-	void removeVerifyingTestCasesFromRequirement(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
-			@PathVariable long requirementVersionId) {
-		verifyingTestCaseManager.removeVerifyingTestCasesFromRequirementVersion(testCasesIds, requirementVersionId);
-	}
-
-	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/{testCaseId}", method = RequestMethod.DELETE)
-	public @ResponseBody
-	void removeVerifyingTestCaseFromRequirement(@PathVariable long testCaseId, @PathVariable long requirementVersionId) {
-		verifyingTestCaseManager.removeVerifyingTestCaseFromRequirementVersion(testCaseId, requirementVersionId);
+	void removeVerifyingTestCaseFromRequirement(@PathVariable("requirementVersionId") long requirementVersionId, 
+												@PathVariable("testCaseIds") List<Long> testCaseIds ) {
+		verifyingTestCaseManager.removeVerifyingTestCasesFromRequirementVersion(testCaseIds, requirementVersionId);
 	}
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/table", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getVerifiedTestCasesTableModel(@PathVariable long requirementVersionId,
 			DataTableDrawParameters params, Locale locale) {
+		
 		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, verifyingTcMapper);
-
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("ReqModController : filterin " + params.getsSortDir_0() + " for "
-					+ verifyingTcMapper.pathAt(params.getiSortCol_0()));
-		}
 
 		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
 				requirementVersionId, filter);
+		
+		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, params.getsEcho());
 
-		return buildVerifyingTestCasesTableModel(holder, params.getsEcho(), locale);
 	}
 
-	private DataTableModel buildVerifyingTestCasesTableModel(PagedCollectionHolder<List<TestCase>> holder,
-			String sEcho, Locale locale) {
-		DataTableModel model = new DataTableModel(sEcho);
-		String type = "";
-		List<TestCase> testCases = holder.getPagedItems();
+	
 
-		for (int i = 0; i < testCases.size(); i++) {
-			TestCase tc = testCases.get(i);
-
-			type = formatExecutionMode(tc.getExecutionMode(), locale);
-
-			model.addRow(new Object[] { tc.getId(), holder.getFirstItemIndex() + i + 1, tc.getProject().getName(),
-					tc.getReference(), tc.getName(), type, "" });
-		}
-
-		model.displayRowsFromTotalOf(holder.getTotalNumberOfItems());
-		return model;
-	}
-
-	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
-		return messageSource.getMessage(mode.getI18nKey(), null, locale);
-	}
 
 }

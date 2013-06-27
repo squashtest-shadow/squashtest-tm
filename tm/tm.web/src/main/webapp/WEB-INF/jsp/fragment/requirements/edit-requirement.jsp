@@ -37,10 +37,7 @@
 <s:url var="requirementUrl" value="/requirements/{reqId}">
 	<s:param name="reqId" value="${requirement.id}" />
 </s:url>
-<s:url var="getVerifyingTestCaseUrl" value="/requirement-versions/${requirement.currentVersion.id}/verifying-test-cases/table" />
 <s:url var="verifyingTCManagerUrl" value="/requirement-versions/${ requirement.currentVersion.id }/verifying-test-cases/manager" /> 
-<c:url var="verifyingTestCasesUrl" value="/requirement-versions/${ requirement.currentVersion.id }/verifying-test-cases" />
-<c:url var="nonVerifyingTestCasesUrl" value="/requirement-versions/${ requirement.currentVersion.id }/non-verifying-test-cases" />
 <c:url var="workspaceUrl" value="/requirement-workspace/#" />
 <s:url var="simulateDeletionUrl" value="/requirement-browser/delete-nodes/simulate" />
 <s:url var="confirmDeletionUrl" value="/requirement-browser/delete-nodes/confirm" />
@@ -326,10 +323,9 @@ that page won't be editable if
 		</jsp:attribute>
 
 		<jsp:attribute name="body">
-			<aggr:decorate-verifying-test-cases-table nonVerifyingTestCasesUrl="${ nonVerifyingTestCasesUrl }" tableModelUrl="${ getVerifyingTestCaseUrl }" 
-				verifyingTestCasesUrl="${ verifyingTestCasesUrl }" batchRemoveButtonId="remove-verifying-test-case-button"
-				editable="${ linkable }" />
-			<aggr:verifying-test-cases-table />
+			<aggr:decorate-verifying-test-cases-table 
+			batchRemoveButtonId="remove-verifying-test-case-button" requirementVersion="${requirement.currentVersion}" 
+				editable="${ linkable }" model="${verifyingTestCasesModel}"/>
 		</jsp:attribute>
 	</comp:toggle-panel>
 	<aggr:requirement-version-audit-trail requirementVersion="${ requirement.currentVersion }" />
@@ -339,6 +335,7 @@ that page won't be editable if
 <comp:attachment-tab tabId="tabs-2" entity="${ requirement }" editable="${ attachable }" />
 <%-- ----------------------------------- /ATTACHMENT TAB  ----------------------------------------------%>	
 <%-- -------------------------------------------------------- /TABS  ----------------------------------------------%>	
+</div>
 <%-- ----------------------------------------------------------- /CONTENT ----------------------------------------------%>
 	
 <%-- -----------------------------------POPUPS ----------------------------------------------%>

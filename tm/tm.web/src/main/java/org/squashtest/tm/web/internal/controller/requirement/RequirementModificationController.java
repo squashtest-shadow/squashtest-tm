@@ -41,7 +41,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.Level;
@@ -50,12 +52,15 @@ import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.requirement.RequirementModificationService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
+import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -84,10 +89,19 @@ public class RequirementModificationController {
 	
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
+	
 	private RequirementModificationService requirementModService;
+	
 	@Inject
 	private RequirementVersionManagerService versionFinder;
-
+	
+	@Inject
+	private VerifyingTestCaseManagerService verifyingTestCaseManager;
+	
+	@Inject
+	private InternationalizationHelper i18nHelper;
+	
+	
 	private final DatatableMapper<Integer> versionMapper = new IndexBasedMapper(7)
 														.mapAttribute(RequirementVersion.class, "versionNumber", int.class, 1)
 														.mapAttribute(RequirementVersion.class, "reference", String.class, 2)
@@ -105,22 +119,34 @@ public class RequirementModificationController {
 
 	// will return the Requirement in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public ModelAndView showRequirementInfo(@PathVariable long requirementId, Locale locale) {
+	public String showRequirementInfo(Model model, @PathVariable("requirementId") long requirementId, Locale locale) {
+		populateRequirementModel(model, requirementId, locale);
+		return "page/requirement-libraries/show-requirement";
+		
+	}	
 
+	// will return the fragment only
+	@RequestMapping(method = RequestMethod.GET)
+	public String showRequirement(Model model, @PathVariable("requirementId") long requirementId, Locale locale) {
+		populateRequirementModel(model, requirementId, locale);
+		return "fragment/requirements/edit-requirement";
+	}
+	
+	
+	private void populateRequirementModel(Model model, long requirementId, Locale locale){
+		
 		Requirement requirement = requirementModService.findById(requirementId);
-		boolean hasCUF = cufValueService.hasCustomFields(requirement.getCurrentVersion());
-
-		ModelAndView mav = new ModelAndView("page/requirement-libraries/show-requirement");
-
-		mav.addObject("requirement", requirement);
-
 		String criticalities = buildMarshalledCriticalities(locale);
-		mav.addObject("criticalityList", criticalities);
 		String categories = buildMarshalledCategories(locale);
-		mav.addObject("categoryList", categories);
-		mav.addObject("hasCUF", hasCUF);
-
-		return mav;
+		boolean hasCUF = cufValueService.hasCustomFields(requirement.getCurrentVersion());
+		DataTableModel verifyingTCModel = getVerifyingTCModel(requirement);
+		
+		model.addAttribute("requirement", requirement);
+		model.addAttribute("criticalityList", criticalities);
+		model.addAttribute("categoryList", categories);
+		model.addAttribute("hasCUF", hasCUF);
+		model.addAttribute("verifyingTestCasesModel", verifyingTCModel);
+		
 	}
 
 	private String buildMarshalledCriticalities(Locale locale) {
@@ -131,22 +157,11 @@ public class RequirementModificationController {
 		return categoryComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
-	// will return the fragment only
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView showRequirement(@PathVariable long requirementId, Locale locale) {
-		Requirement requirement = requirementModService.findById(requirementId);
-		boolean hasCUF = cufValueService.hasCustomFields(requirement.getCurrentVersion());
-
-		ModelAndView mav = new ModelAndView("fragment/requirements/edit-requirement");
-		mav.addObject("requirement", requirement);
-
-		// build criticality list
-		String criticalities = buildMarshalledCriticalities(locale);
-		mav.addObject("criticalityList", criticalities);
-		String categories = buildMarshalledCategories(locale);
-		mav.addObject("categoryList", categories);
-		mav.addObject("hasCUF", hasCUF);
-		return mav;
+	private DataTableModel getVerifyingTCModel(Requirement requirement){
+		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
+				requirement.getCurrentVersion().getId(), new DefaultPagingAndSorting("Project.name"));
+		
+		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, "0");		
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-description", VALUE })
