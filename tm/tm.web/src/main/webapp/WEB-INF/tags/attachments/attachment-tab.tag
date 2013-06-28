@@ -25,6 +25,8 @@
 <%@ attribute name="entity" type="java.lang.Object"  description="the entity to which we bind those attachments" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="List of attachments is editable. Defaults to false." %>
 <%@ attribute name="tabId" description="id of the concerned tab" required="true" %>
+<%@ attribute name="tableModel" type="java.lang.Object" description="datatable model for preloaded attachments. Optional." required="false" %>
+
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -47,7 +49,7 @@
 	</div>
 	
 	<div class="table-tab-wrap" >
-		<at:attachment-table entity="${entity}" editable="${editable}"/>
+		<at:attachment-table entity="${entity}" editable="${editable}" model="${tableModel}"/>
 	</div>
 
 </div>

@@ -63,6 +63,7 @@ import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelper;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -84,6 +85,9 @@ public class ExecutionModificationController {
 
 	@Inject
 	private DenormalizedFieldValueFinder denormalizedFieldValueFinder;
+	
+	@Inject
+	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
 
 	@Inject
 	private MessageSource messageSource;
@@ -118,6 +122,7 @@ public class ExecutionModificationController {
 		mav.addObject("denormalizedFieldValues", values);
 		mav.addObject("stepsAoColumnDefs", JsonHelper.serialize(columnDefs));
 		mav.addObject("stepsDfvsLabels", firstStepDfvsLabels);
+		mav.addObject("attachmentSet", attachmentHelper.findAttachments(execution));
 		
 		return mav;
 

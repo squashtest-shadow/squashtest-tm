@@ -73,6 +73,7 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.service.attachment.AttachmentFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
@@ -84,6 +85,7 @@ import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.ParametersDataTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseDatasetsController;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseParametersController.ParameterNameComparator;
@@ -174,6 +176,10 @@ public class TestCaseModificationController {
 
 	@Inject
 	private BugTrackersLocalService bugTrackersLocalService;
+	
+	@Inject
+	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
+	
 
 
 	/**
@@ -235,6 +241,7 @@ public class TestCaseModificationController {
 		mav.addObject("testCaseTypeLabel", formatType(testCase.getType(), locale));
 		mav.addObject("testCaseStatusComboJson", buildStatusComboData(testCase, locale));
 		mav.addObject("testCaseStatusLabel", formatStatus(testCase.getStatus(), locale));
+		mav.addObject("attachmentsModel", attachmentHelper.findPagedAttachments(testCase));
 		mav.addObject("hasCUF", hasCUF);
 	}
 

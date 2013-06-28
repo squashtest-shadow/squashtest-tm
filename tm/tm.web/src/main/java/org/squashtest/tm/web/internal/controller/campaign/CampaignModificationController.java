@@ -39,8 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -63,6 +63,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -76,19 +77,26 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 @Controller
 @RequestMapping("/campaigns/{campaignId}")
 public class CampaignModificationController {
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignModificationController.class);
-
-	private CampaignModificationService campaignModService;
-	private IterationModificationService iterationModService;
-
-	@Inject
-	private CustomFieldValueFinderService cufValueService;
 
 	private static final String PLANNING_URL = "/planning";
 	private static final String NEW_DATE_ = ", new date : ";
 
 	@Inject
+	private CampaignModificationService campaignModService;
+	
+	@Inject
+	private IterationModificationService iterationModService;
+
+	@Inject
+	private CustomFieldValueFinderService cufValueService;
+
+	@Inject
 	private MessageSource messageSource;
+	
+	@Inject
+	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
 
 	/*
 	 * //TODO since this controller may return two different models of different datatables (the one in the campaign and
@@ -96,20 +104,13 @@ public class CampaignModificationController {
 	 * because their configuration and content are different !
 	 */
 	private final DatatableMapper<Integer> testPlanMapper = new IndexBasedMapper(8)
-			.mapAttribute(Project.class, "name", String.class, 2).mapAttribute(Project.class, "name", String.class, 3)
+			.mapAttribute(Project.class, "name", String.class, 2)
+			.mapAttribute(Project.class, "name", String.class, 3)
 			.mapAttribute(TestCase.class, "name", String.class, 4)
 			.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, 6)
 			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 7);
 
-	@ServiceReference
-	public void setIterationModificationService(IterationModificationService iterationModificationService) {
-		this.iterationModService = iterationModificationService;
-	}
 
-	@ServiceReference
-	public void setCampaignModificationService(CampaignModificationService service) {
-		campaignModService = service;
-	}
 
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long campaignId) {
@@ -124,33 +125,31 @@ public class CampaignModificationController {
 
 	// will return the Campaign in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public ModelAndView showCampaignInfo(@PathVariable long campaignId) {
-
-		Campaign campaign = campaignModService.findById(campaignId);
-		TestPlanStatistics statistics = campaignModService.findCampaignStatistics(campaignId);
-		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-campaign");
-		boolean hasCUF = cufValueService.hasCustomFields(campaign);
-
-		mav.addObject("campaign", campaign);
-		mav.addObject("statistics", statistics);
-		mav.addObject("hasCUF", hasCUF);
-		return mav;
+	public String showCampaignInfo(@PathVariable long campaignId, Model model) {
+		populateCampaignModel(campaignId, model);
+		return "page/campaign-libraries/show-campaign";
 	}
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView showCampaign(@PathVariable long campaignId) {
+	public String showCampaign(@PathVariable long campaignId, Model model) {
+		populateCampaignModel(campaignId, model);
+		return "fragment/campaigns/edit-campaign";
+	}
+	
+	private Model populateCampaignModel(long campaignId, Model model){
+		
 		Campaign campaign = campaignModService.findById(campaignId);
-		boolean hasCUF = cufValueService.hasCustomFields(campaign);
-
 		TestPlanStatistics statistics = campaignModService.findCampaignStatistics(campaignId);
+		boolean hasCUF = cufValueService.hasCustomFields(campaign);
+		DataTableModel attachments = attachmentHelper.findPagedAttachments(campaign);
 
-		ModelAndView mav = new ModelAndView("fragment/campaigns/edit-campaign");
-		mav.addObject("campaign", campaign);
-		mav.addObject("statistics", statistics);
-		mav.addObject("hasCUF", hasCUF);
-
-		return mav;
+		model.addAttribute("campaign", campaign);
+		model.addAttribute("statistics", statistics);
+		model.addAttribute("hasCUF", hasCUF);		
+		model.addAttribute("attachmentsModel", attachments);
+		
+		return model;
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=campaign-description", VALUE })

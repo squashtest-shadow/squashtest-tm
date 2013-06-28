@@ -40,10 +40,12 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
+import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper
 
@@ -73,6 +75,7 @@ class TestCaseModificationControllerTest extends Specification {
 
 	LevelLabelFormatterWithoutOrder levelLabelFormatterWithoutOrder = Mock()
 	Provider<LevelLabelFormatterWithoutOrder> levelLabelFormatterWithoutOrderProvider = Mock()
+	ServiceAwareAttachmentTableModelHelper attachmHelper = Mock()
 	
 	CustomFieldHelperService cufHelperService = Mock()
 	
@@ -101,6 +104,8 @@ class TestCaseModificationControllerTest extends Specification {
 		controller.levelLabelFormatterWithoutOrderProvider = levelLabelFormatterWithoutOrderProvider
 		
 		controller.cufHelperService = cufHelperService
+		
+		controller.attachmentHelper = attachmHelper;
 	}
 
 	def setupImportanceComboBuilder() {
@@ -143,6 +148,9 @@ class TestCaseModificationControllerTest extends Specification {
 		levelLabelFormatterWithoutOrderProvider.get() >> levelLabelFormatterWithoutOrder
 	}
 
+	def setupAttachmentHelper(){
+		attachmHelper.findPagedAttachments(_) >> Mock(DataTableModel)
+	}
 	
 
 	def "should return test case page fragment"() {

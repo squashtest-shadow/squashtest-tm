@@ -25,12 +25,15 @@
 <%@ attribute name="entity" type="java.lang.Object"  description="the entity to which we bind those attachments. Either this, or 'attachListId', is required."%>
 <%@ attribute name="attachListId" type="java.lang.Long" description="the id of the attachment list. Either this, or 'entity', is required." %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="List of attachments is editable. Defaults to false." required="true"%>
+<%@ attribute name="model" type="java.lang.Object" description="datatable model for preloaded attachments. Optional." required="false" %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <%------------------------------------- URLs --------------------------------------------------------%>
 <c:choose>
@@ -56,31 +59,38 @@
 <%---------------------------------Attachments table ------------------------------------------------%>
 
 
-<%-- datatable conf --%>
-<c:set var="tableDeleteConf" value=""/>
-<c:if  test="${editable}"> <c:set var="tableDeleteConf" value=", delete-button=#delete-attachment-dialog"/></c:if>
+<%-- ==========================  datatable conf =================================================== --%>
+<c:set var="btnDeleteClause" value=""/>
+<c:set var="prefilledClause" value=""/>
+
+<c:if  test="${editable}"> <c:set var="btnDeleteClause" value=", delete-button=#delete-attachment-dialog"/></c:if>
+<c:if test="${not empty model}"><c:set var="prefilledClause" value=", pagesize=${fn:length(model.aaData)}, deferloading=${model.iTotalRecords}"/></c:if>
+
+
+<%-- ==========================  datatable conf =================================================== --%>
 	
-<table id="attachment-detail-table" class="" data-def="ajaxsource=${attachmentDetailsUrl}, 
-											  language=${datatableLanguage}, hover, pagesize=10, pre-sort=2">
+<table id="attachment-detail-table" class="" data-def="ajaxsource=${attachmentDetailsUrl}, language=${datatableLanguage}, 
+													   hover, pre-sort=2 
+													   ${prefilledClause}" >
 	<thead>
 		<tr>
 			<th data-def="map=entity-index, select, narrow, center">#</th>
 			<th data-def="map=hyphenated-name, sortable, center, link=${baseURL}/download/{entity-id}"><f:message key="label.Name"/></th>	
 			<th data-def="map=size, center, sortable"><f:message key="label.SizeMb"/></th>
 			<th data-def="map=added-on, center, sortable"><f:message key="label.AddedOn"/></th>
-			<th data-def="map=empty-delete-holder ${tableDeleteConf}">&nbsp;</th> 
+			<th data-def="map=empty-delete-holder ${btnDeleteClause}">&nbsp;</th> 
 		</tr>
 	</thead>
 	<tbody>
-		<%-- Will be populated through ajax --%>
+		<%-- Will be populated through ajax (if no ${model} is present) --%>
 	</tbody>
 </table>
+
 <%--------------------------------- /Attachments table ------------------------------------------------%>
 
 			
 <%------------------------------------------------- Dialogs ----------------------------------%>
 <c:if test="${ editable }">
-
 
 <f:message var="confirmLabel" key="label.Confirm"/>
 <f:message var="cancelLabel" key="label.Cancel" />
@@ -105,25 +115,31 @@
 	</div>	
 </div>
 
+<at:add-attachment-popup url="${uploadAttachmentUrl}" paramName="attachment" openedBy="add-attachment-button" successCallback="refreshAttachments" />
 
-<at:add-attachment-popup url="${uploadAttachmentUrl}" paramName="attachment" openedBy="add-attachment-button" />
 </c:if>
 <%------------------------------------------------- /Dialogs ----------------------------------%>
 <%------------------------------------- scripts ------------------------------------------------------%>
 <script type="text/javascript">
+	function refreshAttachments() {
+		$('#attachment-detail-table').squashTable().refresh();
+	}
+
 
 	//init function
 	$(function() {
 				
 		require(["jquery", "jqueryui","jquery.squash.datatables", "jquery.squash.confirmdialog"], function($){
 
-			function refreshAttachments() {
-				$('#attachment-detail-table').squashTable().refresh();
-			}
-			
+
 			//**********   table init ***********
 			
-			var table = $("#attachment-detail-table").squashTable({}, {});
+			var dtSettings = {
+				 <c:if test="${not empty model}">
+				'aaData' : ${json:serialize(model.aaData)}
+				 </c:if>
+			}
+			var table = $("#attachment-detail-table").squashTable(dtSettings, {});
 
 			
 			// ************* delete dialog init (if any) **************

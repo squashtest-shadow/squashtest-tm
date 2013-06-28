@@ -1131,3 +1131,91 @@ div.admin-message-page-content{
     width: 95%;
 }
 /* ---------------------------------------------------------*/
+
+/* ----------------  attachments file images  --------------*/
+
+.attachment-file{
+	background-image:url("../images/file_blank.png");
+	width : 48px;
+	height : 48px;
+	display : inline-block;
+}
+
+.attachment-file.file-avi{
+	background-image:url("../images/file_avi.png");
+}
+
+.attachment-file.file-bmp{
+	background-image:url("../images/file_bmp.png");
+}
+
+.attachment-file.file-doc{
+	background-image:url("../images/file_doc.png");
+}
+
+.attachment-file.file-edit{
+	background-image:url("../images/file_edit.png");
+}
+
+.attachment-file.file-gif{
+	background-image:url("../images/file_gif.png");
+}
+
+.attachment-file.file-html{
+	background-image:url("../images/file_html.png");
+}
+
+.attachment-file.file-jpg{
+	background-image:url("../images/file_jpg.png");
+}
+
+.attachment-file.file-mp3{
+	background-image:url("../images/file_mp3.png");
+}
+
+.attachment-file.file-png{
+	background-image:url("../images/file_png.png");
+}
+
+.attachment-file.file-ppt{
+	background-image:url("../images/file_ppt.png");
+}
+
+.attachment-file.file-rar{
+	background-image:url("../images/file_rar.png");
+}
+
+
+.attachment-file.file-rtf{
+	background-image:url("../images/file_rtf.png");
+}
+
+.attachment-file.file-tif{
+	background-image:url("../images/file_tif.png");
+}
+
+
+.attachment-file.file-txt{
+	background-image:url("../images/file_txt.png");
+}
+
+
+.attachment-file.file-xls{
+	background-image:url("../images/file_xls.png");
+}
+
+.attachment-file.file-xlsx{
+	background-image:url("../images/file_xls.png");
+}
+
+.attachment-file.file-xml{
+	background-image:url("../images/file_xml.png");
+}
+
+.attachment-file.file-zip{
+	background-image:url("../images/file_zip.png");
+}
+
+
+
+/* ---------------- /attachments file images  --------------*/

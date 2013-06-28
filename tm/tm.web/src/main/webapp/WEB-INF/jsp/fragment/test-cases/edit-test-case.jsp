@@ -424,9 +424,7 @@
 	
 	<%-- ------------------------- /Description Panel ------------------------- --%>
 	<%------------------------------ Attachments  ---------------------------------------------%>	
-	<at:attachment-tab tabId="tabs-3" 
-						 entity="${ testCase }"
-						 editable="${ attachable }" />
+	<at:attachment-tab tabId="tabs-3"  entity="${ testCase }"  editable="${ attachable }" tableModel="${attachmentsModel}"/>
 	<%------------------------------ /Attachments  ---------------------------------------------%>
 
 
@@ -435,7 +433,6 @@
 <%--------------------------- Deletion confirmation popup -------------------------------------%>
 
 <c:if test="${ deletable }">
-
 
 	<comp:delete-contextual-node-dialog
 		simulationUrl="${simulateDeletionUrl}"

@@ -23,7 +23,8 @@
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 
 <%@ attribute name="workspaceName" description="name of the workspace we are working in" %>
-<%@ attribute name="entity" type="java.lang.Object"  description="the entity to which we bind those attachments" %>
+<%@ attribute name="attachListId" type="java.lang.Object"  description="the entity to which we bind those attachments" %>
+<%@ attribute name="attachmentSet" type="java.util.Set" description="Set of attachments" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="List of attachments is editable. Defaults to false." %>
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -34,16 +35,11 @@
 
 
 
-<s:url var="attachmentsList" value="/attach-list/{listId}/attachments/display">
-	<s:param name="listId" value="${entity.attachmentList.id}"></s:param>
-</s:url>
+<s:url var="attachmentsListUrl" value="/attach-list/${attachListId}/attachments/display"/>
 
-<s:url var="uploadAttachmentUrl" value="/attach-list/{listId}/attachments/upload">
-	<s:param name="listId" value="${entity.attachmentList.id}"></s:param>
-</s:url>
+<s:url var="uploadAttachmentUrl" value="/attach-list/${attachListId}/attachments/upload"/>
 
-<s:url var="attachmentManagerUrl" value="/attach-list/{listId}/attachments/manager">
-	<s:param name="listId" value="${entity.attachmentList.id}"></s:param>
+<s:url var="attachmentManagerUrl" value="/attach-list/${attachListId}/attachments/manager">
 	<s:param name="workspace" value="${workspaceName}" ></s:param>
 </s:url>
 
@@ -52,20 +48,13 @@
 
 	<script type="text/javascript">
 		function reloadAttachments(){
-			$("#attachment-container").load("${attachmentsList}", reloadAttachmentCallback);
-		}
-		
-		function reloadAttachmentCallback(){
-			handleNotFoundImages("${ pageContext.servletContext.contextPath }/images/file_blank.png");
-			openAttachmentIfNotEmpty();
+			$("#attachment-container").load("${attachmentsListUrl}", openAttachmentIfNotEmpty);
 		}
 		
 		$(function(){
 			$("#manage-attachment-bloc-button").click(function(){
 				document.location.href = "${attachmentManagerUrl}";
 			});
-			
-			reloadAttachments();
 		});
 	</script>
 
@@ -80,11 +69,13 @@
 	</jsp:attribute>	
 	
 	<jsp:attribute name="body">
-		<div id="attachment-container" class="div-attachments"></div>
+		<div id="attachment-container" class="div-attachments">
+			<at:attachment-display attachListId="${attachListId}" attachmentSet="${attachmentSet}" />
+		</div>
 	</jsp:attribute>
 </comp:toggle-panel>
 
 <c:if test="${ editable }">
 	<at:add-attachment-popup paramName="attachment" url="${uploadAttachmentUrl}"  
-				openedBy="upload-attachment-button"	submitCallback="reloadAttachments"/>
+				openedBy="upload-attachment-button" successCallback="reloadAttachments" />
 </c:if>

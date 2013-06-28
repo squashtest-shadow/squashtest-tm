@@ -64,7 +64,7 @@
 			<input type="button" value="${removeAttachment}" id="delete-attachment-button" class="button" />
 		</jsp:attribute>
 		<jsp:attribute name="body">
-			<at:attachment-table editable="${true}" attachListId="${attachListId}"/>					
+			<at:attachment-table editable="${true}" attachListId="${attachListId}" model="${attachmentsModel}"/>					
 		</jsp:attribute>
 	</comp:toggle-panel>
 

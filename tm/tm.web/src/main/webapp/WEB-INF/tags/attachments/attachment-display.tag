@@ -25,16 +25,29 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="stru" uri="http://org.squashtest.tm/taglib/string-utils" %>
-<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+
+
+<%@ attribute name="attachmentSet" type="java.util.Set" description="Set of attachments" %>
+<%@ attribute name="attachListId" type="java.lang.Long" description="id of the attachment list" %>
+
 
 <?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+
+<%@ tag language="java"  pageEncoding="utf-8"%>
 <%--
 	@params 
 	
 	attachmentSet : set of attachments
-	attachListId : id of the attachment list
-
 
  --%>
-<at:attachment-display attachListId="${attachListId}" attachmentSet="${attachmentSet}" />
+<c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
+
+<s:url var="dlUrl" value="/attach-list/${attachListId}/attachments/download"/>
+
+<c:forEach var="attachment" items="${attachmentSet}">
+	<div class="div-attachments-item" style="text-align:center;" >
+		<div class="attachment-file file-${fn:toLowerCase(attachment.type)}"></div>
+		<span><a  href="${dlUrl}/${attachment.id}" target="_blank" class="breakwords" >${stru:truncateAndEllipse(attachment.name, 45)}</a></span> 
+	</div>
+</c:forEach>
+

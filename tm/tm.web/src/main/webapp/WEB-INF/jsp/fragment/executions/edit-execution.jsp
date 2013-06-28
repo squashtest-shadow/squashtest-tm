@@ -294,7 +294,8 @@
 
 	<%------------------------------ Attachments bloc ---------------------------------------------%>
 
-	<at:attachment-bloc entity="${execution}" workspaceName="campaign" editable="${ editable }" />
+	<at:attachment-bloc  workspaceName="campaign" editable="${ editable }" 
+						 attachListId="${execution.attachmentList.id}" attachmentSet="${attachmentSet}" />
 
 
 	<%------------------------------ bugs section -------------------------------%>

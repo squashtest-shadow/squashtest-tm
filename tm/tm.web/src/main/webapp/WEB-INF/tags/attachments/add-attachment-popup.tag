@@ -25,6 +25,7 @@
 <%@ attribute name="url" required="true" description="url to upload to"%>
 <%@ attribute name="paramName" required="true" description="how the post parameter should be named with."%>
 <%@ attribute name="openedBy" required="true" description="button opening the popup"%>
+<%@ attribute name="successCallback" required="true" description="when an upload completed successfuly"%>
 
 
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
@@ -228,7 +229,9 @@
 
 	
 	function exitUpload(){
-		$('#attachment-detail-table').squashTable().refresh();	
+		<c:if test="${not empty successCallback}">
+		${successCallback}();
+		</c:if>
 	}
 
 

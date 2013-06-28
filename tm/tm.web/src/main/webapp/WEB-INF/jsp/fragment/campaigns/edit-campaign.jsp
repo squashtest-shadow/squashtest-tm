@@ -380,7 +380,7 @@
 
 	<%------------------------------ Attachments bloc ---------------------------------------------%>
 
-	<at:attachment-tab tabId="tabs-3" entity="${ campaign }" editable="${ attachable }" />
+	<at:attachment-tab tabId="tabs-3" entity="${ campaign }" editable="${ attachable }" tableModel="${attachmentsModel}"/>
 	
 
 </div>
