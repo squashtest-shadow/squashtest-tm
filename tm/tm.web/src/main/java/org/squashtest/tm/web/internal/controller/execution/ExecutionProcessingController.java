@@ -64,12 +64,10 @@ public class ExecutionProcessingController {
 	@Inject
 	private ExecutionRunnerControllerHelper helper;
 
+	@Inject
 	private ExecutionProcessingService executionProcService;
 
-	@ServiceReference
-	public void setExecutionProcService(ExecutionProcessingService executionProcService) {
-		this.executionProcService = executionProcService;
-	}
+
 
 	private void addCurrentStepUrl(long executionId, Model model) {
 		model.addAttribute("currentStepsUrl", "/execute/" + executionId + "/step");

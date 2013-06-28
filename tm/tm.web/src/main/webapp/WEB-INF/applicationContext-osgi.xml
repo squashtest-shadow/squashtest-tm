@@ -327,6 +327,15 @@
 		</osgi:interfaces>
 	</osgi:reference>
 	
+	<osgi:reference id="squashtest.tm.service.ExecutionModificationService"
+		bean-name="squashtest.tm.service.ExecutionModificationService"
+		cardinality="1..1"
+		<osgi:interfaces>
+			<value>org.squashtest.tm.service.execution.ExecutionModificationService</value>
+			<value>org.squashtest.tm.service.execution.ExecutionFinder</value>
+		</osgi:interfaces>
+	</osgi:reference>	
+	
 	<osgi:reference id="squashtest.tm.service.CustomFieldHelperService" bean-name="squashtest.tm.service.CustomFieldHelperService"
 					cardinality="1..1" interface="org.squashtest.tm.service.customfield.CustomFieldHelperService" />
 
@@ -340,6 +349,7 @@
 		availability="mandatory" />
     
     <osgi:reference id="squashtest.tm.service.TestSuiteExecutionProcessingService" bean-name="squashtest.tm.service.TestSuiteExecutionProcessingService" interface="org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService" />
+    
     <osgi:reference id="squashtest.tm.service.ExecutionProcessingService" bean-name="squashtest.tm.service.ExecutionProcessingService" interface="org.squashtest.tm.service.execution.ExecutionProcessingService" />
 
 	<osgi:list id="squash.tm.report.ReportPlugins" interface="org.squashtest.tm.api.report.ReportPlugin"

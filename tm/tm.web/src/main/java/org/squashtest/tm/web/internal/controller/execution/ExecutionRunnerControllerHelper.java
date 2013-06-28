@@ -61,20 +61,13 @@ public class ExecutionRunnerControllerHelper {
 	public static final String COMPLETED_SUITE_MESSAGE = "squashtm.action.exception.testsuite.end";
 	public static final String COMPLETED_STEP_MESSAGE = "execute.alert.test.complete";
 
+	@Inject
 	private ExecutionProcessingService executionProcessingService;
 
+	@Inject
 	private TestSuiteExecutionProcessingService testSuiteExecutionProcessingService;
 
-	@ServiceReference
-	public void setExecutionProcessingService(ExecutionProcessingService executionProcService) {
-		this.executionProcessingService = executionProcService;
-	}
 
-	@ServiceReference
-	public void setTestSuiteExecutionProcessingService(
-			TestSuiteExecutionProcessingService testSuiteExecutionProcessingService) {
-		this.testSuiteExecutionProcessingService = testSuiteExecutionProcessingService;
-	}
 
 	@Inject
 	private MessageSource messageSource;

@@ -52,6 +52,7 @@ public class TestCaseExecutionRunnerController {
 	@Inject
 	private ExecutionRunnerControllerHelper helper;
 
+	@Inject
 	private ExecutionProcessingService executionProcessingService;
 	
 	@Inject
@@ -65,10 +66,6 @@ public class TestCaseExecutionRunnerController {
 		super();
 	}
 
-	@ServiceReference
-	public void setExecutionProcessingService(ExecutionProcessingService executionProcService) {
-		this.executionProcessingService = executionProcService;
-	}
 
 	// redirects to something served by ExecutionProcessingController
 	private String getRedirectExecURL(long executionId, boolean optimized, boolean suitemode) {

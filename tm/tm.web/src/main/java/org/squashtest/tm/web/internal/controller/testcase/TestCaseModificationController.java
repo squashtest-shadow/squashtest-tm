@@ -125,18 +125,12 @@ public class TestCaseModificationController {
 			.mapAttribute(TestCase.class, NAME, String.class, 4)
 			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 5);
 
+	
+	@Inject
 	private TestCaseModificationService testCaseModificationService;
 
+	@Inject
 	private ExecutionFinder executionFinder;
-
-	/**
-	 * @param executionFinder
-	 *            the executionFinder to set
-	 */
-	@ServiceReference
-	public void setExecutionFinder(ExecutionFinder executionFinder) {
-		this.executionFinder = executionFinder;
-	}
 
 	@Inject
 	private ParameterFinder parameterFinder;
@@ -178,20 +172,9 @@ public class TestCaseModificationController {
 	@Inject
 	private Provider<LevelLabelFormatterWithoutOrder> levelLabelFormatterWithoutOrderProvider;
 
-	@ServiceReference
-	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
-		this.testCaseModificationService = testCaseModificationService;
-	}
-
+	@Inject
 	private BugTrackersLocalService bugTrackersLocalService;
 
-	@ServiceReference
-	public void setBugTrackersLocalService(BugTrackersLocalService bugTrackersLocalService) {
-		if (bugTrackersLocalService == null) {
-			throw new IllegalArgumentException("BugTrackerController : no service provided");
-		}
-		this.bugTrackersLocalService = bugTrackersLocalService;
-	}
 
 	/**
 	 * Returns the fragment html view of test case

@@ -41,7 +41,6 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,7 +76,9 @@ public class ExecutionModificationController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionModificationController.class);
 
+	@Inject
 	private ExecutionModificationService executionModService;
+	
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
@@ -87,10 +88,6 @@ public class ExecutionModificationController {
 	@Inject
 	private MessageSource messageSource;
 
-	@ServiceReference
-	public void setIterationModificationService(ExecutionModificationService iterationModificationService) {
-		this.executionModService = iterationModificationService;
-	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getExecution(@PathVariable long executionId) {
