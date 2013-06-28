@@ -21,24 +21,17 @@
 package org.squashtest.tm.web.internal.controller.requirement;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -71,8 +64,6 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
  */
 @Controller
 public class VerifyingTestCaseManagerController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(VerifyingTestCaseManagerController.class);
-	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 
 	@Inject
 	private Provider<DriveNodeBuilder> driveNodeBuilder;
@@ -154,7 +145,7 @@ public class VerifyingTestCaseManagerController {
 
 	}
 	
-	private DataTableModel buildVerifyingTestCaseModel(long requirementVersionId, PagingAndSorting pas, String sEcho){
+	protected DataTableModel buildVerifyingTestCaseModel(long requirementVersionId, PagingAndSorting pas, String sEcho){
 		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
 				requirementVersionId, pas);
 		

@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.event.RequirementPropertyChange
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.web.internal.helper.LabelFormatter
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel
 
 import spock.lang.Specification
@@ -38,10 +39,10 @@ import spock.lang.Specification
  *
  */
 class RequirementAuditEventTableModelBuilderTest extends Specification {
-	MessageSource messageSource = Mock()
+	InternationalizationHelper i18nHelper = Mock()
 	Locale locale = Locale.JAPANESE
 	LabelFormatter statusFormatter = Mock()
-	RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale, messageSource)
+	RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale, i18nHelper)
 
 	def "should build item for RequirementCreation event"() {
 		given:
@@ -53,7 +54,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 		PagedCollectionHolder paged = pagedCollection(event)
 
 		and:
-		messageSource.getMessage(_,null,locale) >> "Création"
+		i18nHelper.getMessage(_,null,locale) >> "Création"
 
 		when:
 		DataTableModel model = builder.buildDataModel(paged, "wooo")
@@ -87,7 +88,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 		PagedCollectionHolder paged = pagedCollection(event)
 
 		and:
-		messageSource.getMessage(_,["amazing", "astonishing"],locale) >> "Modification de reference : 'amazing' -> 'astonishing'"
+		i18nHelper.getMessage(_,["amazing", "astonishing"],locale) >> "Modification de reference : 'amazing' -> 'astonishing'"
 
 		when:
 		DataTableModel model = builder.buildDataModel(paged, "wooo")
@@ -122,7 +123,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 
 
 		and:
-		messageSource.getMessage(_,null,locale) >> "Modification de la description"
+		i18nHelper.getMessage(_,null,locale) >> "Modification de la description"
 
 		when:
 		DataTableModel model = builder.buildDataModel(paged, "wooo")
@@ -177,9 +178,9 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 		paged.totalNumberOfItems >> 10
 
 		and:
-		messageSource.getMessage(RequirementStatus.OBSOLETE.i18nKey, null, locale) >> "Obs"
-		messageSource.getMessage(RequirementStatus.APPROVED.i18nKey, null, locale) >> "App"
-		messageSource.getMessage(_, ["Obs", "App"], locale) >> "Modification du status : 'Obsolète' -> 'Approuvé'"
+		i18nHelper.getMessage(RequirementStatus.OBSOLETE.i18nKey, null, locale) >> "Obs"
+		i18nHelper.getMessage(RequirementStatus.APPROVED.i18nKey, null, locale) >> "App"
+		i18nHelper.getMessage(_, ["Obs", "App"], locale) >> "Modification du status : 'Obsolète' -> 'Approuvé'"
 
 		when:
 		DataTableModel model = builder.buildDataModel(paged, "wooo")

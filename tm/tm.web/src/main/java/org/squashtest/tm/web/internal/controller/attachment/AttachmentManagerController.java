@@ -42,12 +42,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -96,12 +99,12 @@ public class AttachmentManagerController {
 	@RequestMapping(value="/details", method=RequestMethod.GET)
 	public @ResponseBody DataTableModel displayAttachmentDetails(@PathVariable(ATTACH_LIST_ID) long attachListId, final DataTableDrawParameters params,
 			final Locale locale){
-		CollectionSorting filter = createPaging(params, attachmentMapper);
-		FilteredCollectionHolder<List<Attachment>> attachList = attachmentManagerService.findFilteredAttachmentForList(attachListId, filter);
+		PagingAndSorting filter = createPaging(params, attachmentMapper);
+		PagedCollectionHolder<List<Attachment>> attachList = attachmentManagerService.findPagedAttachments(attachListId, filter);
 
 		
 		DataTableModelHelper helper = new  AttachmentsTableModelHelper(messageSource);
-		return helper.buildDataModel(attachList, filter.getFirstItemIndex()+1, params.getsEcho());
+		return helper.buildDataModel(attachList, params.getsEcho());
 
 	}
 	
@@ -176,8 +179,8 @@ public class AttachmentManagerController {
 		
 	}
 	
-	private CollectionSorting createPaging(final DataTableDrawParameters params, final DatatableMapper mapper) {
-		return new DataTableCollectionSorting(params, mapper);
+	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper mapper) {
+		return new DataTableMapperPagingAndSortingAdapter(params, mapper);
 	}
 
 

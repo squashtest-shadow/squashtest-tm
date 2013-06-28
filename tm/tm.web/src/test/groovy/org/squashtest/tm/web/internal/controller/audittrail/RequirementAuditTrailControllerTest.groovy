@@ -25,6 +25,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.domain.event.RequirementCreation
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange
 import org.squashtest.tm.service.audit.RequirementAuditTrailService
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel
 
@@ -37,11 +38,11 @@ import spock.lang.Specification
 class RequirementAuditTrailControllerTest extends Specification {
 	RequirementAuditTrailController controller = new RequirementAuditTrailController()
 	RequirementAuditTrailService requirementAuditTrailService = Mock()
-	MessageSource messageSource = Mock()
+	InternationalizationHelper i18nHelper = Mock()
 
 	def setup() {
 		controller.auditTrailService = requirementAuditTrailService
-		controller.messageSource = messageSource
+		controller.i18nHelper = i18nHelper
 	}
 
 	def "should return an audit event table model for the requested requirement"() {

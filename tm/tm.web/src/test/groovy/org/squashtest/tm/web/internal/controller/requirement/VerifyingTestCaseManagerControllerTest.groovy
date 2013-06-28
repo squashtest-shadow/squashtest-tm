@@ -24,28 +24,30 @@ import static org.junit.Assert.*
 
 import javax.inject.Provider
 
-import org.springframework.context.MessageSource
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
+import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
+import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 
 import spock.lang.Specification
 
 class VerifyingTestCaseManagerControllerTest extends Specification {
 	VerifyingTestCaseManagerController controller = new VerifyingTestCaseManagerController()
-	MessageSource messageSource = Mock()
+	InternationalizationHelper i18nHelper = Mock()
 	Provider<DriveNodeBuilder> driveNodeBuilder = driveNodeBuilderProvider()
 	VerifyingTestCaseManagerService verifyingTestCaseManager = Mock()
 	RequirementVersionManagerService requirementVersionManager = Mock()
 
 	def setup() {
-		controller.messageSource = messageSource
+		controller.i18nHelper = i18nHelper
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.verifyingTestCaseManager = verifyingTestCaseManager
 		controller.requirementVersionFinder = requirementVersionManager
@@ -61,7 +63,8 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 	def "should init model to show manager"() {
 		given:
 		Model model = new ExtendedModelMap()
-
+		mockVerifyingTestCaseService()
+		
 		and:
 		RequirementVersion requirementVersion = Mock()
 		requirementVersionManager.findById(10L) >> requirementVersion
@@ -81,6 +84,7 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 		given:
 		requirementVersionManager.findById(10L) >> Mock(RequirementVersion)
 		verifyingTestCaseManager.findLinkableTestCaseLibraries() >> []
+		mockVerifyingTestCaseService()
 
 		when:
 		def view = controller.showManager(10L, Mock(Model))
@@ -96,11 +100,27 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 		RequirementVersion req = Mock()
 		RequirementAlreadyVerifiedException ex = new RequirementAlreadyVerifiedException(req, tc)
 		verifyingTestCaseManager.addVerifyingTestCasesToRequirementVersion([1, 2], 10) >> [ex]
+		mockVerifyingTestCaseService()
 
 		when:
 		def res = controller.addVerifyingTestCasesToRequirement([1, 2], 10)
 
 		then:
 		res.alreadyVerifiedRejections
+	}
+	
+	def mockVerifyingTestCaseService(){
+		
+		/*Requirement r = Mock()
+		RequirementVersion v = Mock()
+		r.getCurrentVersion() >> v
+		v.getId() >> 0*/
+		
+		PagedCollectionHolder<?> ch = Mock()
+		ch.getFirstItemIndex() >> 0
+		ch.getPagedItems() >> []
+		
+		verifyingTestCaseManager.findAllByRequirementVersion(_,_)>> ch
+		
 	}
 }
