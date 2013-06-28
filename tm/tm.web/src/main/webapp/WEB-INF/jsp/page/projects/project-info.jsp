@@ -31,6 +31,7 @@
 <%@ taglib prefix="ta" tagdir="/WEB-INF/tags/testautomation"%>
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 
 <%@ taglib prefix="sec"
 	uri="http://www.springframework.org/security/tags"%>
@@ -292,7 +293,7 @@
 			<%----------------------------- /TEST AUTOMATION PROJECT -------------------------------------------%>					
 			<%----------------------------- ATTACHMENT -------------------------------------------%>
 			
-			<comp:attachment-bloc editable="${ true }" entity="${ adminproject.project }" workspaceName=""/>
+			<at:attachment-bloc editable="${ true }" entity="${ adminproject.project }" workspaceName=""/>
 			<%----------------------------- /ATTACHMENT -------------------------------------------%>
 			
 			</div> <%-- /div#main-informations --%>		

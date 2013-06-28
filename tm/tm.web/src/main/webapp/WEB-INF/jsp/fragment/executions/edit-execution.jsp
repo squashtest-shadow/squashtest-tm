@@ -32,6 +32,7 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 
 
 
@@ -293,7 +294,7 @@
 
 	<%------------------------------ Attachments bloc ---------------------------------------------%>
 
-	<comp:attachment-bloc entity="${execution}" workspaceName="campaign" editable="${ editable }" />
+	<at:attachment-bloc entity="${execution}" workspaceName="campaign" editable="${ editable }" />
 
 
 	<%------------------------------ bugs section -------------------------------%>

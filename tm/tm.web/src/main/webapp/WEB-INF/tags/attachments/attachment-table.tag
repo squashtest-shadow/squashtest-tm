@@ -22,23 +22,26 @@
 --%>
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 
-<%@ attribute name="entity" type="java.lang.Object"  description="the entity to which we bind those attachments" %>
-<%@ attribute name="editable" type="java.lang.Boolean" description="List of attachments is editable. Defaults to false." %>
-<%@ attribute name="tabId" description="id of the concerned tab" required="true" %>
+<%@ attribute name="entity" type="java.lang.Object"  description="the entity to which we bind those attachments. Either this, or 'attachListId', is required."%>
+<%@ attribute name="attachListId" type="java.lang.Long" description="the id of the attachment list. Either this, or 'entity', is required." %>
+<%@ attribute name="editable" type="java.lang.Boolean" description="List of attachments is editable. Defaults to false." required="true"%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
-<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments" %>
 
 <%------------------------------------- URLs --------------------------------------------------------%>
-<s:url var="baseURL" value="/attach-list/{attach-list-id}/attachments" >
-	<s:param name="attach-list-id" value="${entity.attachmentList.id}"/>
-</s:url>
+<c:choose>
+<c:when test="${not empty entity }">
+	<s:url var="baseURL" value="/attach-list/${entity.attachmentList.id}/attachments" />
+</c:when>
+<c:when test="${not empty attachListId }">
+	<s:url var="baseURL" value="/attach-list/${attachListId}/attachments" />
+</c:when>
+</c:choose>
+
 
 <c:set var="uploadAttachmentUrl"  value="${baseURL}/upload"/>
 <c:set var="attachmentDetailsUrl" value="${baseURL}/details"/>
@@ -49,19 +52,74 @@
 <f:message var="nothingSelected" key="message.EmptyTableSelection"/>
 
 <%------------------------------------- /URLs --------------------------------------------------------%>
+
+<%---------------------------------Attachments table ------------------------------------------------%>
+
+
+<%-- datatable conf --%>
+<c:set var="tableDeleteConf" value=""/>
+<c:if  test="${editable}"> <c:set var="tableDeleteConf" value=", delete-button=#delete-attachment-dialog"/></c:if>
+	
+<table id="attachment-detail-table" class="" data-def="ajaxsource=${attachmentDetailsUrl}, 
+											  language=${datatableLanguage}, hover, pagesize=10, pre-sort=2">
+	<thead>
+		<tr>
+			<th data-def="map=entity-index, select, narrow, center">#</th>
+			<th data-def="map=hyphenated-name, sortable, center, link=${baseURL}/download/{entity-id}"><f:message key="label.Name"/></th>	
+			<th data-def="map=size, center, sortable"><f:message key="label.SizeMb"/></th>
+			<th data-def="map=added-on, center, sortable"><f:message key="label.AddedOn"/></th>
+			<th data-def="map=empty-delete-holder ${tableDeleteConf}">&nbsp;</th> 
+		</tr>
+	</thead>
+	<tbody>
+		<%-- Will be populated through ajax --%>
+	</tbody>
+</table>
+<%--------------------------------- /Attachments table ------------------------------------------------%>
+
+			
+<%------------------------------------------------- Dialogs ----------------------------------%>
+<c:if test="${ editable }">
+
+
+<f:message var="confirmLabel" key="label.Confirm"/>
+<f:message var="cancelLabel" key="label.Cancel" />
+<f:message var="deleteDialogTitle" key="title.RemoveAttachment"/>
+<div id="delete-attachment-dialog" title="${deleteDialogTitle}">
+	<span style="font-weight:bold"><f:message key="message.ConfirmRemoveAttachments" /></span>
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${confirmLabel}"/>
+		<input type="button" value="${cancelLabel}"/>
+	</div>
+</div>
+
+<f:message var="renameDialogTitle" key="title.RenameAttachment" />
+<div id="rename-attachment-dialog" title="${renameDialogTitle}">
+	<label for="rename-attachment-input"><f:message key="dialog.rename.label" /></label>
+	<input type="text" id="rename-attachment-input" size="50"/>
+	<br />
+	<comp:error-message forField="shortName" />
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${confirmLabel}"/>
+		<input type="button" value="${cancelLabel}"/>
+	</div>	
+</div>
+
+
+<at:add-attachment-popup url="${uploadAttachmentUrl}" paramName="attachment" openedBy="add-attachment-button" />
+</c:if>
+<%------------------------------------------------- /Dialogs ----------------------------------%>
 <%------------------------------------- scripts ------------------------------------------------------%>
 <script type="text/javascript">
 
-
-	function refreshAttachments() {
-		$('#attachment-detail-table').squashTable().refresh();
-	}
-	
 	//init function
 	$(function() {
-	
 				
 		require(["jquery", "jqueryui","jquery.squash.datatables", "jquery.squash.confirmdialog"], function($){
+
+			function refreshAttachments() {
+				$('#attachment-detail-table').squashTable().refresh();
+			}
 			
 			//**********   table init ***********
 			
@@ -151,82 +209,10 @@
 				}			
 			});			
 			
-			//upload button is special, see the tag included at the very bottom
+			//upload button is special and defined in comp:add-attachment-popup
 		});
 		
 	});
 	
 </script>
 <%------------------------------------- /scripts ------------------------------------------------------%>
-<div id="${tabId}" class="table-tab">
-
-<div class="toolbar" >
-<c:if test="${ editable }">
-		<f:message var="uploadAttachment" key="label.UploadAttachment" />
-		<input id="add-attachment-button" type="button" value="${uploadAttachment}" class="button"/>
-		<f:message var="renameAttachment" key="label.Rename" />
-		<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="button" />
-		<f:message var="removeAttachment" key="label.Remove" />
-		<input type="button" value="${removeAttachment}" id="delete-attachment-button" class="button" />
-</c:if>
-</div>
-<%---------------------------------Attachments table ------------------------------------------------%>
-
-
-<%-- datatable conf --%>
-<c:set var="tableDeleteConf" value=""/>
-<c:if  test="${editable}"> <c:set var="tableDeleteConf" value="delete-button=#delete-attachment-dialog"/></c:if>
-
-<div class="table-tab-wrap" >
-	
-	<table id="attachment-detail-table" data-def="ajaxsource=${attachmentDetailsUrl}, 
-												  language=${datatableLanguage}, hover, pagesize=10, pre-sort=2">
-		<thead>
-			<tr>
-				<th data-def="map=entity-index, select, narrow, center">#</th>
-				<th data-def="map=hyphenated-name, sortable, center, link=${baseURL}/download/{entity-id}"><f:message key="label.Name"/></th>	
-				<th data-def="map=size, center, sortable"><f:message key="label.SizeMb"/></th>
-				<th data-def="map=added-on, center, sortable"><f:message key="label.AddedOn"/></th>
-				<th data-def="map=empty-delete-holder, ${tableDeleteConf}">&nbsp;</th> 
-			</tr>
-		</thead>
-		<tbody>
-			<%-- Will be populated through ajax --%>
-		</tbody>
-	</table>
-</div>
-<%--------------------------------- /Attachments table ------------------------------------------------%>
-
-</div>
-			
-<%------------------------------------------------- Dialogs ----------------------------------%>
-<c:if test="${ editable }">
-
-
-<f:message var="confirmLabel" key="label.Confirm"/>
-<f:message var="cancelLabel" key="label.Cancel" />
-<f:message var="deleteDialogTitle" key="title.RemoveAttachment"/>
-<div id="delete-attachment-dialog" title="${deleteDialogTitle}">
-	<span style="font-weight:bold"><f:message key="message.ConfirmRemoveAttachments" /></span>
-	<div class="popup-dialog-buttonpane">
-		<input type="button" value="${confirmLabel}"/>
-		<input type="button" value="${cancelLabel}"/>
-	</div>
-</div>
-
-<f:message var="renameDialogTitle" key="title.RenameAttachment" />
-<div id="rename-attachment-dialog" title="${renameDialogTitle}">
-	<label for="rename-attachment-input"><f:message key="dialog.rename.label" /></label>
-	<input type="text" id="rename-attachment-input" size="50"/>
-	<br />
-	<comp:error-message forField="shortName" />
-	<div class="popup-dialog-buttonpane">
-		<input type="button" value="${confirmLabel}"/>
-		<input type="button" value="${cancelLabel}"/>
-	</div>	
-</div>
-
-
-<comp:add-attachment-popup url="${uploadAttachmentUrl}" paramName="attachment" openedBy="add-attachment-button" submitCallback="refreshAttachments" />
-</c:if>
-<%------------------------------------------------- /Dialogs ----------------------------------%>

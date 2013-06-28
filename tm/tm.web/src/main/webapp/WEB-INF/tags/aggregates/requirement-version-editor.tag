@@ -39,6 +39,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input" %>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 
 <s:url var="requirementUrl" value="/requirement-versions/${ requirementVersion.id }" />
 <s:url var="pageUrl" value="/requirement-versions/" />
@@ -223,7 +224,7 @@
 </div>
 <%-- --------------------------------------------- /tab1 Information----------------------------------------------%>
 <%-- --------------------------------------------- tab2 Attachments ----------------------------------------------%>
-	<comp:attachment-tab tabId="tabs-2" entity="${ requirementVersion }" editable="${ attachable }" />
+	<at:attachment-tab tabId="tabs-2" entity="${ requirementVersion }" editable="${ attachable }" />
 <%-- --------------------------------------------- /tab2 Attachments ----------------------------------------------%>
 	
 </div>

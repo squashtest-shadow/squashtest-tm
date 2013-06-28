@@ -20,53 +20,36 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+<%@ tag language="java" pageEncoding="ISO-8859-1"%>
+
+<%@ attribute name="entity" type="java.lang.Object"  description="the entity to which we bind those attachments" %>
+<%@ attribute name="editable" type="java.lang.Boolean" description="List of attachments is editable. Defaults to false." %>
+<%@ attribute name="tabId" description="id of the concerned tab" required="true" %>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments" %>
 
-<?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%-- ------------------------------------- DOM -------------------------------------------------- --%>
 
+<div id="${tabId}" class="table-tab">
 
-<div id="attachment-manager-header" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
-	<div style="float: left; height: 100%;">
-	<h2><span><f:message key="label.CurrentAttachments"/>&nbsp;:&nbsp;</span></h2>
-	</div>	
-	<div style="float: right;">
-		<f:message var="back" key="label.Back" /> 
-		<input id="back" type="button" value="${ back }" class="button" onClick="history.back();"/>
-	</div>
-	<div style="clear: both;"></div>
-	
-</div>
-
-
-<div class="fragment-body">
-
-	<div id="test-case-toolbar" class="toolbar-class ui-corner-all">
-		<div class="toolbar-information-panel"></div>
-		<div class="toolbar-button-panel">
+	<div class="toolbar" >
+	<c:if test="${ editable }">
 			<f:message var="uploadAttachment" key="label.UploadAttachment" />
 			<input id="add-attachment-button" type="button" value="${uploadAttachment}" class="button"/>
-		</div>
-		<div style="clear: both;"></div>
-	</div>
-	
-	<%---------------------------------Attachments table ------------------------------------------------%>
-	
-	
-	<comp:toggle-panel id="attachment-table-panel" titleKey="label.CurrentAttachments" isContextual="true" open="true" >
-		<jsp:attribute name="panelButtons">	
 			<f:message var="renameAttachment" key="label.Rename" />
 			<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="button" />
 			<f:message var="removeAttachment" key="label.Remove" />
 			<input type="button" value="${removeAttachment}" id="delete-attachment-button" class="button" />
-		</jsp:attribute>
-		<jsp:attribute name="body">
-			<at:attachment-table editable="${true}" attachListId="${attachListId}"/>					
-		</jsp:attribute>
-	</comp:toggle-panel>
+	</c:if>
+	</div>
+	
+	<div class="table-tab-wrap" >
+		<at:attachment-table entity="${entity}" editable="${editable}"/>
+	</div>
 
 </div>
 
+<%-- ------------------------------------- /DOM ------------------------------------------------- --%>

@@ -26,6 +26,8 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="su" uri="http://org.squashtest.tm/taglib/string-utils" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
@@ -78,6 +80,6 @@
 			<div id="folder-description">${ folder.description }</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
-	<comp:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" entity="${ folder }"/>
+	<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" entity="${ folder }"/>
 </div>
 

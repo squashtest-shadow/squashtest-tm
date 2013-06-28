@@ -30,6 +30,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 
 
 
@@ -84,6 +85,6 @@
 </comp:toggle-panel>
 
 <c:if test="${ editable }">
-	<comp:add-attachment-popup paramName="attachment" url="${uploadAttachmentUrl}"  
+	<at:add-attachment-popup paramName="attachment" url="${uploadAttachmentUrl}"  
 				openedBy="upload-attachment-button"	submitCallback="reloadAttachments"/>
 </c:if>

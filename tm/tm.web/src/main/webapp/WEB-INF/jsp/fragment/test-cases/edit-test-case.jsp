@@ -33,6 +33,7 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="ta" tagdir="/WEB-INF/tags/testautomation"%>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 
 
 <?xml version="1.0" encoding="utf-8" ?>
@@ -423,7 +424,7 @@
 	
 	<%-- ------------------------- /Description Panel ------------------------- --%>
 	<%------------------------------ Attachments  ---------------------------------------------%>	
-	<comp:attachment-tab tabId="tabs-3" 
+	<at:attachment-tab tabId="tabs-3" 
 						 entity="${ testCase }"
 						 editable="${ attachable }" />
 	<%------------------------------ /Attachments  ---------------------------------------------%>

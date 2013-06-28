@@ -22,7 +22,6 @@
 --%>
 <%@ tag description="Popup allowing to upload files some files" body-content="empty" %>
 	
-<%@ attribute name="submitCallback" description="provides a callback for actions after submission"%>
 <%@ attribute name="url" required="true" description="url to upload to"%>
 <%@ attribute name="paramName" required="true" description="how the post parameter should be named with."%>
 <%@ attribute name="openedBy" required="true" description="button opening the popup"%>
@@ -148,11 +147,7 @@
 			exitUpload();
 		}
 		
-		
 	}
-
-
-	
 </script>
 
 
@@ -233,9 +228,7 @@
 
 	
 	function exitUpload(){
-		<c:if test="${not empty submitCallback}">
-		${submitCallback}();
-		</c:if>		
+		$('#attachment-detail-table').squashTable().refresh();	
 	}
 
 

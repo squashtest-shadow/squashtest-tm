@@ -32,6 +32,7 @@
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 
 <f:message var="squashlocale" key="squashtm.locale" />
 
@@ -463,9 +464,7 @@
 
 	<%------------------------------ Attachments bloc ------------------------------------------- --%>
 	
-	<comp:attachment-tab tabId="tabs-3" entity="${ iteration }"	editable="${ attachable }" />
-
-
+	<at:attachment-tab tabId="tabs-3" entity="${ iteration }"	editable="${ attachable }" />
 
 
 	<%-- ---------------------deletion popup------------------------------ --%>

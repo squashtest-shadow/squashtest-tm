@@ -32,6 +32,7 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 
 <f:message var="squashlocale" key="squashtm.locale" />
 
@@ -379,7 +380,7 @@
 
 	<%------------------------------ Attachments bloc ---------------------------------------------%>
 
-	<comp:attachment-tab tabId="tabs-3" entity="${ campaign }"	editable="${ attachable }" />
+	<at:attachment-tab tabId="tabs-3" entity="${ campaign }" editable="${ attachable }" />
 	
 
 </div>

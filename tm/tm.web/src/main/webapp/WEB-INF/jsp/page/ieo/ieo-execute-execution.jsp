@@ -30,6 +30,7 @@
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" /> 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
@@ -214,7 +215,7 @@
 		
 				
 		<%------------------------------ Attachments bloc ---------------------------------------------%> 
-		<comp:attachment-bloc entity="${executionStep}" workspaceName="campaign" editable="${ editable }" />
+		<at:attachment-bloc entity="${executionStep}" workspaceName="campaign" editable="${ editable }" />
 		
 		<%------------------------------ /attachement ------------------------------%>
 		

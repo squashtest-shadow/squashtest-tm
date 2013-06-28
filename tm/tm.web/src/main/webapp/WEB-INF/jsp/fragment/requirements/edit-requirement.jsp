@@ -32,6 +32,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input" %>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <s:url var="requirementUrl" value="/requirements/{reqId}">
@@ -332,7 +333,7 @@ that page won't be editable if
 </div>
 <%-- ----------------------------------- /INFO TAB  ----------------------------------------------%>	
 <%-- ----------------------------------- ATTACHMENT TAB  ----------------------------------------------%>
-<comp:attachment-tab tabId="tabs-2" entity="${ requirement }" editable="${ attachable }" />
+<at:attachment-tab tabId="tabs-2" entity="${ requirement }" editable="${ attachable }" />
 <%-- ----------------------------------- /ATTACHMENT TAB  ----------------------------------------------%>	
 <%-- -------------------------------------------------------- /TABS  ----------------------------------------------%>	
 </div>

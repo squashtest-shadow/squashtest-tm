@@ -32,6 +32,7 @@
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
+<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 
 <f:message var="squashlocale" key="squashtm.locale" />
 
@@ -487,7 +488,7 @@
 	</div>
 
 	<%------------------------------ Attachments bloc ------------------------------------------- --%>
-	<comp:attachment-tab tabId="tabs-3" entity="${ testSuite }"
+	<at:attachment-tab tabId="tabs-3" entity="${ testSuite }"
 		editable="${ executable }" />
 	<%-- ---------------------deletion popup------------------------------ --%>
 	<c:if test="${ deletable }">
