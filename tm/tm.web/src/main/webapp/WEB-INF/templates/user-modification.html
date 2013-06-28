@@ -375,6 +375,19 @@
 		</div>	
 	</div>
 
+	<div id="delete-warning-pane" class="not-displayed popup-dialog"
+		title="Delete" th:title="#{label.Remove}">
+		<div class="alert">
+			<span th:text="#{message.user.remove}">Do you wanna remove
+				user ?</span>
+		</div>
+		<div class="popup-dialog-buttonpane">
+			<input class="confirm" type="button" value="Proceed"
+				th:value="#{label.Confirm}" /> <input class="cancel" type="button"
+				value="Cancel" th:value="#{label.Cancel}" />
+		</div>
+	</div>
+
 	<div id="add-permission-dialog" class="not-displayed popup-dialog"
 		title="AddPermission" th:title="#{title.AddPermission}">
 		<div class="main">

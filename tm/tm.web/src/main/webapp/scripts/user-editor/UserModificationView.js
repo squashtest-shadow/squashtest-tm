@@ -30,7 +30,8 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 
 			this.configureTogglePanels();
 			this.configureEditables();
-
+			this.configureDeletionDialog();
+			
 			this.model = new Backbone.Model({
 				hasAuthentication : UMod.user.hasAuthentication
 			});
@@ -62,10 +63,14 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 		},
 
 		events : {
-			"click #delete-user-button" : "confirmDeleteUser",
+			"click #delete-user-button" : "confirmUserDeletion",
 			"change #user-group" : "changeUserGroup"
 		},
 
+		confirmUserDeletion : function(event) {
+			this.confirmDeletionDialog.confirmDialog("open");
+		},
+		
 		changeUserGroup : function(event) {
 			var url = UMod.user.url.changeGroup;
 			$.ajax({
@@ -113,6 +118,11 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 			this.makeSimpleJEditable("user-email");
 		},
 
+		configureDeletionDialog : function() {
+			this.confirmDeletionDialog = $("#delete-warning-pane").confirmDialog();
+			this.confirmDeletionDialog.on("confirmdialogconfirm", $.proxy(this.deleteUser, this));
+		},
+		
 		makeSimpleJEditable : function(imputId) {
 			new SimpleJEditable({
 				language : {
