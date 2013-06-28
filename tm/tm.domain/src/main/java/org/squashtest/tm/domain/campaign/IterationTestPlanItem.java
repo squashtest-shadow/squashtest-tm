@@ -337,6 +337,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		copy.setLabel(this.label);
 		copy.setReferencedTestCase(this.referencedTestCase);
 		copy.setUser(this.user);
+		copy.referencedDataset = this.referencedDataset;
 
 		return copy;
 	}

@@ -104,6 +104,18 @@ public class IterationTestPlanItemTest extends Specification {
 		source.executions == [exec]
 	}
 
+	def "copy should preserve parameterization data"() {
+		given:
+		Dataset dataset = Mock(Dataset)
+		copySource.referencedDataset = dataset 
+
+		when:
+		IterationTestPlanItem copy = copySource.createCopy()
+
+		then:
+		copy.referencedDataset == dataset
+	}
+
 	def "should not add an execution if not executable"() {
 		given:
 		IterationTestPlanItem item = new IterationTestPlanItem()
