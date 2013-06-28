@@ -62,6 +62,7 @@ public class AttachmentManagerController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentManagerController.class);
 	
+	@Inject
 	private AttachmentManagerService attachmentManagerService;
 	
 	private static final String ATTACH_LIST_ID = "attachListId";
@@ -77,10 +78,6 @@ public class AttachmentManagerController {
 														 .mapAttribute(Attachment.class, "size", Long.class, "size")
 														 .mapAttribute(Attachment.class, "addedOn", Date.class, "added-on");
 
-	@ServiceReference
-	public void setAttachmentManagerService(AttachmentManagerService attachmentManagerService) {
-		this.attachmentManagerService = attachmentManagerService;
-	}
 
 	
 	/* ********************** data display *********************************** */

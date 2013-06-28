@@ -203,7 +203,12 @@
     </osgi:interfaces>
   </osgi:service>
 
-  <osgi:service ref="squashtest.tm.service.AttachmentManagerService" interface="org.squashtest.tm.service.attachment.AttachmentManagerService" />
+  <osgi:service ref="squashtest.tm.service.AttachmentManagerService">
+  	<osgi:interfaces>
+  		<value>org.squashtest.tm.service.attachment.AttachmentManagerService</value>
+  		<value>org.squashtest.tm.service.attachment.AttachmentFinderService</value>
+  	</osgi:interfaces>
+  </osgi:service> 
 
   <osgi:service ref="squashtest.tm.service.TestCasesWorkspaceService" interface="org.squashtest.tm.service.library.WorkspaceService" />
 

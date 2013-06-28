@@ -118,6 +118,15 @@
 		</osgi:interfaces>
 	</osgi:reference>
 	
+	<osgi:reference id="squashtest.tm.service.AttachmentManagerService"
+		bean-name="squashtest.tm.service.AttachmentManagerService"
+		cardinality="1..1">
+		<osgi:interfaces>
+			<value>org.squashtest.tm.service.attachment.AttachmentManagerService</value>
+			<value>org.squashtest.tm.service.attachment.AttachmentFinderService</value>
+		</osgi:interfaces>
+	</osgi:reference>
+	
 	<osgi:reference id="squashtest.tm.service.VerifyingTestCaseManagerService" bean-name="squashtest.tm.service.VerifyingTestCaseManagerService" 
 	interface="org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService"	cardinality="1..1" />
 	

@@ -18,22 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.attachment;
 
 import java.util.List;
 import java.util.Set;
 
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.attachment.AttachmentHolder;
 
-public interface AttachmentDao extends EntityDao<Attachment>{
+public interface AttachmentFinderService {
+
+
+	PagedCollectionHolder<List<Attachment>> findPagedAttachments(long attachmentListId, PagingAndSorting pas);
 	
-	Attachment findAttachmentWithContent(Long attachmentId);
+	PagedCollectionHolder<List<Attachment>> findPagedAttachments(AttachmentHolder attached, PagingAndSorting pas);
 	
-	Set<Attachment> findAllAttachments(Long attachmentListId);
+	Attachment findAttachment(Long attachmentId);
 	
-	//cannot override the final remove(long) method, so I add here a new one
-	void removeAttachment(Long attachmentId);
+	Set<Attachment> findAttachments(Long attachmentListId);
 	
-	List<Attachment> findAllAttachmentsFiltered(Long attachmentListId, 	PagingAndSorting pas);
+	String findAttachmentShortName(Long attachmentId);
+	
 }

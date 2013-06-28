@@ -22,21 +22,14 @@ package org.squashtest.tm.service.attachment;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.attachment.Attachment;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
 @Transactional
-public interface AttachmentManagerService {
+public interface AttachmentManagerService extends AttachmentFinderService{
 	//returns the ID of the newly created Attachment
 	Long addAttachment(Long attachmentListId, Attachment attachment);
-	
-	Attachment findAttachment(Long attachmentId);
-	
-	Set<Attachment> findAttachments(Long attachmentListId);
 	
 	void setAttachmentContent(InputStream stream, Long attachmentId);
 	
@@ -46,11 +39,6 @@ public interface AttachmentManagerService {
 	
 	void removeListOfAttachments(Long attachmentListId, List<Long> attachmentIds);
 	
-	String findAttachmentShortName(Long attachmentId);
-	
 	void renameAttachment(Long attachmentId, String newName);
 	
-	FilteredCollectionHolder<List<Attachment>> findFilteredAttachmentForList(long attachmentListId, CollectionSorting filter);
-
-
 }

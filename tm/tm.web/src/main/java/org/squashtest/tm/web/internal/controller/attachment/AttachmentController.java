@@ -65,12 +65,9 @@ public class AttachmentController {
 	private static final String UPLOAD_URL = "/upload";
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentController.class);
 
+	@Inject
 	private AttachmentManagerService attachmentManagerService;
 
-	@ServiceReference
-	public void setAttachmentManagerService(AttachmentManagerService attachmentManagerService) {
-		this.attachmentManagerService = attachmentManagerService;
-	}
 
 	@Inject
 	private MessageSource messageSource;

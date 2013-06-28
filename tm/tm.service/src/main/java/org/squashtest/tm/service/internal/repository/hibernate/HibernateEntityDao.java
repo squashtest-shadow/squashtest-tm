@@ -24,8 +24,10 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -182,5 +184,19 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 		}
 		return collected;
 	}
+	
+	protected List<ENTITY_TYPE> collectFromMapList(Criteria crit){
+		return collectFromMapList(crit.list(), entityType.getSimpleName());
+	}
+	
+	protected Set<ENTITY_TYPE> collectFromMapListToSet(Criteria crit){
+		List<Map<String, ?>> res = crit.list();
+		Set<ENTITY_TYPE> set = new HashSet<ENTITY_TYPE>(res.size());
+		for (Map<String, ?> e : res){
+			set.add((ENTITY_TYPE)e.get(entityType.getSimpleName()));
+		}
+		return set;
+	}
+	
 	
 }

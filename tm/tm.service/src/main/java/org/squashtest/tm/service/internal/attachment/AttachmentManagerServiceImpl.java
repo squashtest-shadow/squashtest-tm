@@ -30,8 +30,12 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
+import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
@@ -160,11 +164,17 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	@Override
-	public FilteredCollectionHolder<List<Attachment>> findFilteredAttachmentForList(long attachmentListId,
-			CollectionSorting filter) {
-		List<Attachment> atts = attachmentDao.findAllAttachmentsFiltered(attachmentListId, filter);
+	public PagedCollectionHolder<List<Attachment>> findPagedAttachments(long attachmentListId,
+			PagingAndSorting pas) {
+		List<Attachment> atts = attachmentDao.findAllAttachmentsFiltered(attachmentListId, pas);
 		long count = attachmentDao.findAllAttachments(attachmentListId).size();
-		return new FilteredCollectionHolder<List<Attachment>>(count, atts);
+		return new PagingBackedPagedCollectionHolder<List<Attachment>>(pas, count, atts);
+	}
+	
+	@Override
+	public PagedCollectionHolder<List<Attachment>> findPagedAttachments(
+			AttachmentHolder attached, PagingAndSorting pas) {
+		return findPagedAttachments(attached.getAttachmentList().getId(), pas);
 	}
 
 }
