@@ -344,6 +344,15 @@
 			referencedColumnNames="CFV_ID" baseTableName="DENORMALIZED_FIELD_VALUE"
 			baseColumnNames="CFV_ID"/>
 	</changeSet>
+	
+	<changeSet id="tm-1.6.0.issue-2536-01" author="flaurens">
+		<comment>giving testrunners reading rights on projects</comment>
+		<insert tableName="ACL_GROUP_PERMISSION">
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestRunner')" />
+			<column name="PERMISSION_MASK" value="1" />
+ 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.project.Project')" />
+		</insert>
+	</changeSet>
 
 </databaseChangeLog>
  
