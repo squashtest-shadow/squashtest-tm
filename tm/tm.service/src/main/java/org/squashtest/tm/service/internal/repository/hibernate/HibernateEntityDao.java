@@ -189,14 +189,19 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 		return collectFromMapList(crit.list(), entityType.getSimpleName());
 	}
 	
-	protected Set<ENTITY_TYPE> collectFromMapListToSet(Criteria crit){
+	protected Set<ENTITY_TYPE> collectFromMapListToSet(Criteria crit, String alias){
 		List<Map<String, ?>> res = crit.list();
 		Set<ENTITY_TYPE> set = new HashSet<ENTITY_TYPE>(res.size());
 		for (Map<String, ?> e : res){
-			set.add((ENTITY_TYPE)e.get(entityType.getSimpleName()));
+			set.add((ENTITY_TYPE)e.get(alias));
 		}
 		return set;
 	}
+	
+	protected Set<ENTITY_TYPE> collectFromMapListToSet(Criteria crit){
+		return collectFromMapListToSet(crit, entityType.getSimpleName());
+	}
+	
 	
 	
 }

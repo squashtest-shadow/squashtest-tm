@@ -52,7 +52,7 @@ public class HibernateAttachmentDao extends HibernateEntityDao<Attachment>
 		
 		Criteria crit = currentSession().createCriteria(AttachmentList.class)
 										.add(Restrictions.eq("id", attachmentListId))
-										.createAlias("attachments", "attach")
+										.createAlias("attachments", "Attachment")
 										.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 
 		return collectFromMapListToSet(crit);
