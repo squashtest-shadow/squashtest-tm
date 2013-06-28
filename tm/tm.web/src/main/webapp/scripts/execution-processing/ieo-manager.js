@@ -245,13 +245,21 @@ define(
 							.ieoControl("getNextTestCaseButton");
 					var statusCombo = control.ieoControl("getStatusCombo");
 
-					nextButton.click(self.navigateNext);
+					nextButton.click(function() {
+						self.navigateNext();
+					});
 
-					prevButton.click(self.navigatePrevious);
+					prevButton.click(function() {
+						self.navigatePrevious();
+					});
 
-					mvTCButton.click(self.navigateNextTestCase);
-
-					stopButton.click(self.closeWindow);
+					mvTCButton.click(function() {
+						self.navigateNextTestCase();
+					});
+	
+					stopButton.click(function() {
+						self.closeWindow();
+					});
 
 					statusCombo.change(function() {
 						var cbox = this;
