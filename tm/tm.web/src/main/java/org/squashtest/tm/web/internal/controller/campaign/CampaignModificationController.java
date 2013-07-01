@@ -22,9 +22,8 @@ package org.squashtest.tm.web.internal.controller.campaign;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -310,47 +309,29 @@ public class CampaignModificationController {
 
 	@RequestMapping(method = RequestMethod.GET, params = "export=csv")
 	public @ResponseBody
-	void exportCampaign(@PathVariable("campaignId") long campaignId, HttpServletResponse response) {
+	void exportCampaign(@PathVariable("campaignId") long campaignId, HttpServletResponse response) throws IOException {
 
-		BufferedWriter writer = null;
+		Campaign campaign = campaignModService.findById(campaignId);
+		CampaignExportCSVModel model = campaignModService.exportCampaignToCSV(campaignId);
 
-		try {
-			Campaign campaign = campaignModService.findById(campaignId);
-			CampaignExportCSVModel model = campaignModService.exportCampaignToCSV(campaignId);
+		// prepare the response
+		response.setContentType("application/octet-stream");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
-			// prepare the response
-			writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
+		response.setHeader("Content-Disposition",
+				"attachment; filename=" + campaign.getName().replace(" ", "_") + sdf.format(new Date()) + ".csv");
 
-			response.setContentType("application/octet-stream");
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		// print
+		PrintWriter writer = response.getWriter();
+		Row header = model.getHeader();
+		writer.write(header.toString() + "\n");
 
-			response.setHeader("Content-Disposition", "attachment; filename=" + campaign.getName().replace(" ", "_")
-					+ sdf.format(new Date()) + ".csv");
-
-			// print
-			Row header = model.getHeader();
-			writer.write(header.toString() + "\n");
-
-			Iterator<Row> iterator = model.dataIterator();
-			while (iterator.hasNext()) {
-				Row datarow = iterator.next();
-				String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", " ")
-						.replaceAll("\\r", " ");
-				writer.write(cleanRowValue + "\n");
-			}
-
-			// closes stream in the finally clause
-		} catch (IOException ex) {
-			LOGGER.error(ex.getMessage());
-			throw new RuntimeException(ex);
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException ex) {
-					LOGGER.warn(ex.getMessage());
-				}
-			}
+		Iterator<Row> iterator = model.dataIterator();
+		while (iterator.hasNext()) {
+			Row datarow = iterator.next();
+			String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", " ")
+					.replaceAll("\\r", " ");
+			writer.write(cleanRowValue + "\n");
 		}
 
 	}
