@@ -33,7 +33,6 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <%------------------------------------- URLs --------------------------------------------------------%>
 <c:choose>
@@ -64,7 +63,7 @@
 <c:set var="prefilledClause" value=""/>
 
 <c:if  test="${editable}"> <c:set var="btnDeleteClause" value=", delete-button=#delete-attachment-dialog"/></c:if>
-<c:if test="${not empty model}"><c:set var="prefilledClause" value=", pagesize=${fn:length(model.aaData)}, deferloading=${model.iTotalRecords}"/></c:if>
+<c:if test="${not empty model}"><c:set var="prefilledClause" value=", pagesize=10, deferloading=${model.iTotalRecords}"/></c:if>
 
 
 <%-- ==========================  datatable conf =================================================== --%>

@@ -31,7 +31,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <%-- ======================== VARIABLES & URLS ============================ --%>
 
@@ -57,7 +56,7 @@
 				
 <table id="verifying-test-cases-table" class="unstyled-table" data-def="ajaxsource=${tableModelUrl}, deferloading=${model.iTotalRecords}, 
 												 language=${tableLanguageUrl}, datakeys-id=tc-id, hover, pre-sort=2,
-												 pagesize=${fn:length(model.aaData)} ">
+												 pagesize=10 ">
 	<thead>
 		<tr>
 			<th data-def="map=tc-index, select">#</th>
