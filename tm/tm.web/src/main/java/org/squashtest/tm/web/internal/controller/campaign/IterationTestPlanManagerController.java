@@ -29,7 +29,6 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +52,7 @@ import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -79,7 +79,7 @@ public class IterationTestPlanManagerController {
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
 
 	@Inject
-	private MessageSource messageSource;
+	private InternationalizationHelper messageSource;
 	@Inject
 	private Provider<DriveNodeBuilder> driveNodeBuilder;
 
@@ -99,12 +99,9 @@ public class IterationTestPlanManagerController {
 			.mapAttribute(Project.class, "name", String.class, 2)
 			.mapAttribute(TestCase.class, "reference", String.class, 3)
 			.mapAttribute(TestCase.class, "name", String.class, 4)
-			.mapAttribute(TestCase.class, "importance",
-					TestCaseImportance.class, 5)
-			.mapAttribute(Dataset.class, "name",
-					String.class, 6)
-			.mapAttribute(IterationTestPlanItem.class, "executionStatus",
-					ExecutionStatus.class, 7)
+			.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, 5)
+			.mapAttribute(Dataset.class, "name", String.class, 6)
+			.mapAttribute(IterationTestPlanItem.class, "executionStatus", ExecutionStatus.class, 7)
 			.mapAttribute(TestSuite.class, "name", String.class, 8)
 			.mapAttribute(IterationTestPlanItem.class, "lastExecutedBy", String.class, 9)
 			.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, 10);
@@ -223,8 +220,8 @@ public class IterationTestPlanManagerController {
 		List<TestPlanAssignableStatus> jsonStatuses = new LinkedList<TestPlanAssignableStatus>();
 
 		for (ExecutionStatus status : statusList) {
-			jsonStatuses.add(new TestPlanAssignableStatus(status.name(), messageSource.getMessage(status.getI18nKey(),
-					null, locale)));
+			jsonStatuses
+					.add(new TestPlanAssignableStatus(status.name(), messageSource.internationalize(status, locale)));
 		}
 
 		return jsonStatuses;
@@ -267,31 +264,23 @@ public class IterationTestPlanManagerController {
 					importance = formatNoData(locale);
 					testCaseId = "";
 				} else {
-					projectName = item.getReferencedTestCase().getProject()
-							.getName();
-					testCaseReference = item.getReferencedTestCase()
-							.getReference();
+					projectName = item.getReferencedTestCase().getProject().getName();
+					testCaseReference = item.getReferencedTestCase().getReference();
 					testCaseName = item.getReferencedTestCase().getName();
-					importance = formatImportance(item.getReferencedTestCase()
-							.getImportance(), locale);
-					testCaseId = item.getReferencedTestCase().getId()
-							.toString();
+					importance = formatImportance(item.getReferencedTestCase().getImportance(), locale);
+					testCaseId = item.getReferencedTestCase().getId().toString();
 				}
 
-
-				if(item.getReferencedDataset() == null){
+				if (item.getReferencedDataset() == null) {
 					datasetName = formatNoData(locale);
 				} else {
 					datasetName = item.getReferencedDataset().getName();
 				}
 
-				
 				testSuiteNameList = testSuiteNameList(item, locale);
 
-				return new Object[] { item.getId(), getCurrentIndex(),
-						projectName, testCaseReference, testCaseName,
-						importance, datasetName, testSuiteNameList,
-						testCaseId, item.isTestCaseDeleted(), " "
+				return new Object[] { item.getId(), getCurrentIndex(), projectName, testCaseReference, testCaseName,
+						importance, datasetName, testSuiteNameList, testCaseId, item.isTestCaseDeleted(), " "
 
 				};
 
@@ -308,27 +297,27 @@ public class IterationTestPlanManagerController {
 		} else {
 			testSuiteNameList = TestSuiteHelper.buildEllipsedSuiteNameList(item.getTestSuites(), 20);
 		}
-		return  testSuiteNameList;
+		return testSuiteNameList;
 	}
 
 	private String formatUnassigned(Locale locale) {
-		return messageSource.getMessage("label.Unassigned", null, locale);
+		return messageSource.internationalize("label.Unassigned", locale);
 	}
 
 	private String formatNoData(Locale locale) {
-		return messageSource.getMessage("squashtm.nodata", null, locale);
+		return messageSource.noData(locale);
 	}
 
 	private String formatDeleted(Locale locale) {
-		return messageSource.getMessage("squashtm.itemdeleted", null, locale);
+		return messageSource.itemDeleted(locale);
 	}
 
 	private String formatImportance(TestCaseImportance importance, Locale locale) {
-		return messageSource.getMessage(importance.getI18nKey(), null, locale);
+		return messageSource.internationalize(importance, locale);
 	}
 
 	private String formatNone(Locale locale) {
-		return messageSource.getMessage("squashtm.none.f", null, locale);
+		return messageSource.internationalize("squashtm.none.f", locale);
 	}
 
 	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DatatableMapper mapper) {

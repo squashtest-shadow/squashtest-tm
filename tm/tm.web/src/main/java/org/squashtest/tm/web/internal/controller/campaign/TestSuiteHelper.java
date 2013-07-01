@@ -25,7 +25,7 @@ import java.util.List;
 import org.squashtest.tm.domain.campaign.TestSuite;
 
 /**
- * @author Gregory Fouquet
+ * 
  * 
  */
 public final class TestSuiteHelper {
@@ -40,7 +40,7 @@ public final class TestSuiteHelper {
 		if (suites.isEmpty()) {
 			return "";
 		}
-		
+
 		StringBuilder testSuiteNames = new StringBuilder();
 		if (!suites.isEmpty()) {
 			int i = 0;
@@ -57,7 +57,7 @@ public final class TestSuiteHelper {
 	private static String ellipseString(StringBuilder builder, int maxLength) {
 		String res;
 		if (builder.length() > maxLength) {
-			res = builder.substring(0, maxLength - 4) + "..."; 
+			res = builder.substring(0, maxLength - 4) + "...";
 			// rem : extracted from other class, not sure why max-4 instead of max-3
 		} else {
 			res = builder.toString();

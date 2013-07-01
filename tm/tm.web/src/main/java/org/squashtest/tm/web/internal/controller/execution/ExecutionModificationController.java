@@ -27,7 +27,6 @@ package org.squashtest.tm.web.internal.controller.execution;
  */
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -66,6 +65,7 @@ import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelpe
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
@@ -90,7 +90,7 @@ public class ExecutionModificationController {
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
 
 	@Inject
-	private MessageSource messageSource;
+	private InternationalizationHelper messageSource;
 
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -100,17 +100,17 @@ public class ExecutionModificationController {
 		int rank = executionModService.findExecutionRank(executionId);
 		LOGGER.trace("ExecutionModService : getting execution {}, rank {}", executionId, rank);
 		List<DenormalizedFieldValue> values = denormalizedFieldValueFinder.findAllForEntity(execution);
-		
+
 		// step properties
 		List<AoColumnDef> columnDefs;
 		List<String> firstStepDfvsLabels;
-		
+
 		if (!execution.getSteps().isEmpty()) {
 			List<DenormalizedFieldValue> firstStepDfv = denormalizedFieldValueFinder
 					.findAllForEntityAndRenderingLocation(execution.getSteps().get(0), RenderingLocation.STEP_TABLE);
 			columnDefs = findColumnDefForSteps(execution, firstStepDfv);
 			firstStepDfvsLabels = extractLabels(firstStepDfv);
-			
+
 		} else {
 			columnDefs = findColumnDefForSteps(execution, null);
 			firstStepDfvsLabels = Collections.emptyList();
@@ -217,10 +217,10 @@ public class ExecutionModificationController {
 
 	private static class ExecutionStepDataTableModelHelper extends DataTableModelHelper<ExecutionStep> {
 		private Locale locale;
-		private MessageSource messageSource;
+		private InternationalizationHelper messageSource;
 		private DenormalizedFieldValueFinder dfvFinder;
 
-		private ExecutionStepDataTableModelHelper(Locale locale, MessageSource messageSource,
+		private ExecutionStepDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
 				DenormalizedFieldValueFinder dfvFinder) {
 			this.locale = locale;
 			this.messageSource = messageSource;
@@ -236,7 +236,7 @@ public class ExecutionModificationController {
 			addDenormalizedFieldValues(item, res);
 			res.put("action", item.getAction());
 			res.put("expected", item.getExpectedResult());
-			res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale, messageSource));
+			res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
 			res.put("last-exec-by", item.getLastExecutedBy());
 			res.put("comment", item.getComment());
 			res.put("bug-list", createBugList(item));
@@ -254,17 +254,20 @@ public class ExecutionModificationController {
 				String dfvValue = stepDfv.getValue();
 				Date date = stepDfv.getValueAsDate();
 				if (date != null) {
-					String dateFormat = messageSource.getMessage("squashtm.dateformatShort", null, locale);
-					dfvValue = new SimpleDateFormat(dateFormat).format(date);
+					messageSource.localizeShortDate(date, locale);
 				}
 				res.put("dfv-" + stepDfv.getCode(), dfvValue);
 			}
 		}
 
+		private String formatDate(Date date, Locale locale) {
+			return messageSource.localizeDate(date, locale);
+		}
+
 	}
 
 	private static final class ManualExecutionStepDataTableModelHelper extends ExecutionStepDataTableModelHelper {
-		private ManualExecutionStepDataTableModelHelper(Locale locale, MessageSource messageSource,
+		private ManualExecutionStepDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
 				DenormalizedFieldValueFinder dfvFinder) {
 			super(locale, messageSource, dfvFinder);
 		}
@@ -296,7 +299,7 @@ public class ExecutionModificationController {
 	}
 
 	private static final class AutomatedExecutionStepDataTableModelHelper extends ExecutionStepDataTableModelHelper {
-		private AutomatedExecutionStepDataTableModelHelper(Locale locale, MessageSource messageSource,
+		private AutomatedExecutionStepDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
 				DenormalizedFieldValueFinder dfvFinder) {
 			super(locale, messageSource, dfvFinder);
 		}
@@ -407,20 +410,6 @@ public class ExecutionModificationController {
 		public Long getNewEndDate() {
 			return this.newEndDate;
 		}
-	}
-
-	private static String formatDate(Date date, Locale locale, MessageSource messageSource) {
-		try {
-			String format = messageSource.getMessage("squashtm.dateformat", null, locale);
-			return new SimpleDateFormat(format).format(date);
-		} catch (Exception anyException) {
-			return formatNoData(locale, messageSource);
-		}
-
-	}
-
-	private static String formatNoData(Locale locale, MessageSource messageSource) {
-		return messageSource.getMessage("squashtm.nodata", null, locale);
 	}
 
 }

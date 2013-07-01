@@ -37,7 +37,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,6 +61,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -92,7 +92,7 @@ public class CampaignModificationController {
 	private CustomFieldValueFinderService cufValueService;
 
 	@Inject
-	private MessageSource messageSource;
+	private InternationalizationHelper messageSource;
 	
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
@@ -371,15 +371,15 @@ public class CampaignModificationController {
 	/* ************************************** formatting code ****************************** */
 
 	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
-		return messageSource.getMessage(mode.getI18nKey(), null, locale);
+		return messageSource.internationalize(mode, locale);
 	}
 
 	private String formatNoData(Locale locale) {
-		return messageSource.getMessage("squashtm.nodata", null, locale);
+		return messageSource.noData(locale);
 	}
 
 	private String formatImportance(TestCaseImportance importance, Locale locale) {
-		return messageSource.getMessage(importance.getI18nKey(), null, locale);
+		return messageSource.internationalize(importance, locale);
 	}
 
 	private final class TestCaseTableModelHelper extends DataTableModelHelper<CampaignTestPlanItem> {

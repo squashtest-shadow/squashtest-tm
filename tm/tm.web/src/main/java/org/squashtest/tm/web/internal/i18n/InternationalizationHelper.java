@@ -98,17 +98,27 @@ public class InternationalizationHelper implements MessageSource {
 
 	private String localizeDate(Date date, Locale locale, String formatKey) {
 		if (date == null) {
-			return messageSource.getMessage("squashtm.nodata", null, locale);
+			return noData(locale);
 		}
 		String format = messageSource.getMessage(formatKey, null, locale);
 		// TODO formatter could be cached ?
 		return new SimpleDateFormat(format).format(date);
 	}
 
+	/**
+	 * 
+	 * @see org.springframework.context.MessageSource#getMessage(java.lang.String, java.lang.Object[], java.lang.String,
+	 *      java.util.Locale)
+	 */
 	public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
 		return messageSource.getMessage(code, args, defaultMessage, locale);
 	}
 
+	/**
+	 * 
+	 * @see org.springframework.context.MessageSource#getMessage(java.lang.String, java.lang.Object[], java.util.Locale)
+	 * @deprecated if args array is empry or null, condider {@link #internationalize(String, Locale)}
+	 */
 	public String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException {
 		return messageSource.getMessage(code, args, locale);
 	}
