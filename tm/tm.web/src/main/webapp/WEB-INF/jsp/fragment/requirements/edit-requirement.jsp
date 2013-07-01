@@ -329,7 +329,9 @@ that page won't be editable if
 				editable="${ linkable }" model="${verifyingTestCasesModel}"/>
 		</jsp:attribute>
 	</comp:toggle-panel>
+	
 	<aggr:requirement-version-audit-trail requirementVersion="${ requirement.currentVersion }" />
+	
 </div>
 <%-- ----------------------------------- /INFO TAB  ----------------------------------------------%>	
 <%-- ----------------------------------- ATTACHMENT TAB  ----------------------------------------------%>

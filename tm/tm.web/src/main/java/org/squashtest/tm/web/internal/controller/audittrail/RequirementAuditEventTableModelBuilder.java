@@ -21,7 +21,9 @@
 package org.squashtest.tm.web.internal.controller.audittrail;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
@@ -60,7 +62,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 	/**
 	 * Data for the item currently build.
 	 */
-	private Object[] currentItemData;
+	private Map<String, String> currentItemData;
 
 	/**
 	 * @param locale
@@ -75,7 +77,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 	 * @see org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder#buildItemData(java.lang.Object)
 	 */
 	@Override
-	protected Object[] buildItemData(RequirementAuditEvent item) {
+	protected Map<String, String> buildItemData(RequirementAuditEvent item) {
 		item.accept(this);
 
 		return currentItemData;
@@ -153,10 +155,20 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 	}
 
 	private void populateCurrentItemData(String message, String eventType, RequirementAuditEvent event) {
+		
 		String formattedDate = DateFormatUtils.format(event.getDate(), "dd/MM/yyyy HH'h'mm");
 		String escapedAuthor = HtmlUtils.htmlEscape(event.getAuthor());
 		String escapedMessage = HtmlUtils.htmlEscape(message);
+		
+		Map<String, String> row = new HashMap<String, String>(5);
+		
+		row.put("event-date", formattedDate);
+		row.put("event-author", escapedAuthor);
+		row.put("event-message", escapedMessage);
+		row.put("event-type", eventType);
+		row.put("event-id", String.valueOf(event.getId()));
+		
+		currentItemData = row;
 
-		currentItemData = new Object[] { formattedDate, escapedAuthor, escapedMessage, eventType, String.valueOf(event.getId()) };
 	}
 }

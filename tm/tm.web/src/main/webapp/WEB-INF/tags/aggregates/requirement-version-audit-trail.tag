@@ -26,91 +26,33 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="cmp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
-<%-- AUDIT TRAIL --%>
-<script type="text/javascript">
-	function getAuditTrailTableRowId(rowData) {
-		return rowData[4];	
-	}
 
-	function auditTrailTableRowCallback(row, data, displayIndex) {
-		if (data[3] == 'fat-prop') {
-			var eventId = getAuditTrailTableRowId(data);
-			
-			var proto = $( '#show-audit-event-details-template' ).clone();
-			proto.removeClass('not-displayed')
-				.find( 'a' )
-					.attr( 'id', 'show-audit-event-detail:' + eventId )
-					.click(function() {
-						showPropChangeEventDetails(eventId);
-					});
-			
-			$( ':nth-child(3)', row ).append( proto ); //nth-child is 1-based !
-		}
+<c:url var="changesBaseUrl" value="/audit-trail/requirement-versions/fat-prop-change-events" />
+<c:url var="modelUrl" value="/audit-trail/requirement-versions/${ requirementVersion.id }/events-table" />
+<c:url var="tableLangUrl" value="/datatables/messages" />
 
-		return row;
-	}
-	
-	function showPropChangeEventDetails(eventId) {
-		var urlRoot = "${ pageContext.servletContext.contextPath }/audit-trail/requirement-versions/fat-prop-change-events/";
-		
-		$.getJSON( urlRoot + eventId, function(data, textStatus, xhr) {
-			var dialog = $( "#audit-event-details-dialog" );
-			$( "#audit-event-old-value", dialog ).html(data.oldValue);
-			$( "#audit-event-new-value", dialog ).html(data.newValue);
-			dialog.messageDialog("open");
-		});
-	}
-</script>
-<c:url var="requirementAuditTrailTableModelUrl" value="/audit-trail/requirement-versions/${ requirementVersion.id }/events-table" />
+
 <cmp:toggle-panel id="requirement-audit-trail-panel" titleKey="title.EditHistory" open="false">
-	<jsp:attribute name="body">
-		<cmp:decorate-ajax-table url="${ requirementAuditTrailTableModelUrl }" tableId="requirement-audit-trail-table" paginate="true" displayLength="10">
-			<jsp:attribute name="rowCallback">auditTrailTableRowCallback</jsp:attribute>
-			<jsp:attribute name="columnDefs">
-				<dt:column-definition targets="0,1,2" visible="true" />
-				<dt:column-definition targets="3" visible="false" />
-				<dt:column-definition targets="4" visible="false" lastDef="true" />
-			</jsp:attribute>
-		</cmp:decorate-ajax-table>
+	<jsp:attribute name="body">		
 		<div>
-			<table id="requirement-audit-trail-table">
+			<table id="requirement-audit-trail-table" data-def="ajaxsource=${modelUrl}, language=${tableLangUrl}, 
+																datakeys-id=event-id, hover, pagesize=10" >
 				<thead>
 					<tr>
-						<th><f:message key="label.Date" /></th>
-						<th><f:message key="label.User" /></th>
-						<th><f:message key="label.Event" /></th>
-						<th>&nbsp;</th>
-						<th>&nbsp;</th>
+						<th data-def="map=event-date"><f:message key="label.Date" /></th>
+						<th data-def="map=event-author"><f:message key="label.User" /></th>
+						<th data-def="map=event-message, sClass=event-message-cell"><f:message key="label.Event" /></th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr class="hidden">
-						<td>date</td>
-						<td>author</td>
-						<td>message</td>
-						<td>event type</td>
-						<td>event id</td>
-					</tr>
 				</tbody>
 			</table>
 		</div> 
 	</jsp:attribute>
 </cmp:toggle-panel>
 
-<span id="show-audit-event-details-template" class="not-displayed">&nbsp;<a id="show-audit-event-details" href="javascript:void(0)"><f:message key="message.property-change.show-details.label" /></a></span>
+<span id="show-audit-event-details-template" class="not-displayed">&nbsp;<span style="text-decoration:underline;cursor:pointer" id="show-audit-event-details"><f:message key="message.property-change.show-details.label" /></span></span>
 
-<script type="text/javascript">
-	$(function() {
-		$( "#requirement-audit-trail-table" ).ajaxSuccess(function(event, xrh, settings) {
-			if (settings.type == 'POST' 
-					&& !(settings.data && settings.data.match(/requirement-status/g))
-					&& !settings.url.match(/versions\/new$/g)) {
-				<%-- We refresh tble on POSTs which do not uptate requirement status or create a new version (these ones already refresh the whole page) --%>
-				$( this ).dataTable().fnDraw(false);
-			}
-		});
-	});
-</script>
 <%-- /AUDIT TRAIL --%>
 
 <%-- AUDIT EVENT DETAILS --%>	
@@ -125,12 +67,63 @@
 			<label for="audit-event-new-value"><f:message key="message.property-change.new-value.label" /></label>
 			<span id="audit-event-new-value">new value</span>
 		</div>
-		<input:ok />
 	</div>
 </div>
+
+
+
 <script type="text/javascript">
 	$(function() {
+		
+		// ************************** library ***********************************
+		
+		function auditTrailTableRowCallback(row, data, displayIndex) {
+			if (data['event-type'] == 'fat-prop') {
+				
+				var eventId = data['event-id'];
+				var proto = $( '#show-audit-event-details-template' ).clone();
+				var url = "${changesBaseUrl}"+"/"+eventId;
+				
+				proto.removeClass('not-displayed')
+					 .find( 'span' )
+					 .data('url', url)
+					 .attr( 'id', 'show-audit-event-detail:' + eventId )
+					 .click(function(){
+						 showPropChangeEventDetails(this);
+					 });
+				
+				$( 'td.event-message-cell', row ).append( proto ); 
+			}
+
+			return row;
+		}
+		
+		function showPropChangeEventDetails(link) {
+			
+			$.getJSON( $(link).data('url'), function(data, textStatus, xhr) {
+				var dialog = $( "#audit-event-details-dialog" );
+				$( "#audit-event-old-value", dialog ).html(data.oldValue);
+				$( "#audit-event-new-value", dialog ).html(data.newValue);
+				dialog.messageDialog("open");
+			});
+		}
+		
+		// ********************* init ******************
+		
+		var table=$( "#requirement-audit-trail-table" ).squashTable({
+			fnRowCallback : auditTrailTableRowCallback
+		}, {});
+
 		$( "#audit-event-details-dialog" ).messageDialog();
+		
+		$( "#requirement-audit-trail-table" ).ajaxSuccess(function(event, xrh, settings) {
+			if (settings.type == 'POST' 
+					&& !(settings.data && settings.data.match(/requirement-status/g))
+					&& !settings.url.match(/versions\/new$/g)) {
+				<%-- We refresh tble on POSTs which do not uptate requirement status or create a new version (these ones already refresh the whole page) --%>
+				table.refresh();
+			}
+		});
 	});
+
 </script>
-<%-- /AUDIT EVENT DETAILS --%>	
