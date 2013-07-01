@@ -99,7 +99,6 @@ public class TestSuiteModificationController {
 	private PermissionEvaluationService permissionService;
 
 	@Inject
-	@Inject
 	private CustomFieldValueFinderService cufValueService;
 	
 	@Inject
