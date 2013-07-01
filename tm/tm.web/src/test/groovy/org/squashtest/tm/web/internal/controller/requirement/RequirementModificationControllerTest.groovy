@@ -38,10 +38,12 @@ import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.requirement.RequirementModificationService
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter
 import org.squashtest.tm.web.internal.helper.LabelFormatter
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
 import spock.lang.Specification
 
@@ -58,6 +60,7 @@ class RequirementModificationControllerTest extends Specification {
 	Provider levelFormatterProvider = levelFormatterProvider()	
 	Provider internationalFormatterProvider = internationalFormatterProvider()
 	VerifyingTestCaseManagerService verifTCService = Mock()
+	ServiceAwareAttachmentTableModelHelper attachmentsHelper = Mock()
 
 	def setup() {
 		controller.requirementModService = requirementModificationService
@@ -68,6 +71,7 @@ class RequirementModificationControllerTest extends Specification {
 		controller.internationalizableFormatterProvider = internationalFormatterProvider
 		controller.cufValueService = Mock(CustomFieldValueFinderService)
 		controller.verifyingTestCaseManager = verifTCService
+		controller.attachmentsHelper = attachmentsHelper
 	}
 
 	def criticalityBuilderProvider() {
@@ -112,7 +116,7 @@ class RequirementModificationControllerTest extends Specification {
 		return provider	
 	}
 
-		def "should return requirement page fragment"() {
+	def "should return requirement page fragment"() {
 		given:
 		Requirement req = mockRequirementAmongOtherThings()
 		req.getCriticality() >> RequirementCriticality.UNDEFINED
@@ -121,6 +125,7 @@ class RequirementModificationControllerTest extends Specification {
 		long reqId=15
 		requirementModificationService.findById(15) >> req
 		Model model = Mock()
+		attachmentsHelper.findPagedAttachments(_) >> Mock(DataTableModel)
 
 		when:
 		String res = controller.showRequirement(model, reqId, null)
