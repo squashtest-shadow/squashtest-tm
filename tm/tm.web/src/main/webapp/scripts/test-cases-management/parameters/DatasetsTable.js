@@ -57,7 +57,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 				},
 				"sAjaxSource" : self.settings.basic.testCaseDatasetsUrl,
 				"bPaginate" : false,
-				"aaSorting" : [ [ 3, 'asc' ] ],
+				"aaSorting" : [ [ 2, 'asc' ] ],
 				"aoColumnDefs" : JSON.parse(self.settings.datasetsAoColumnDefs),
 				"fnRowCallback" : self.datasetsTableRowCallback
 			};

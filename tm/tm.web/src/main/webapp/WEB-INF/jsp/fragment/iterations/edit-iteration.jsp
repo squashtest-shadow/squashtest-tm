@@ -464,7 +464,7 @@
 
 	<%------------------------------ Attachments bloc ------------------------------------------- --%>
 	
-	<at:attachment-tab tabId="tabs-3" entity="${ iteration }"	editable="${ attachable }" />
+	<at:attachment-tab tabId="tabs-3" entity="${ iteration }"	editable="${ attachable }"  tableModel="${attachmentsModel}"/>
 
 
 	<%-- ---------------------deletion popup------------------------------ --%>

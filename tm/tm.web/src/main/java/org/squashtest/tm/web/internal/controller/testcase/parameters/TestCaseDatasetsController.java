@@ -86,6 +86,12 @@ public class TestCaseDatasetsController {
 	private PermissionEvaluationService permissionEvaluationService;
 	@Inject
 	private MessageSource messageSource;
+	
+
+	private DatatableMapper<String> datasetsTableMapper = new NameBasedMapper(3)
+															.mapAttribute(Dataset.class, "id",	String.class, DataTableModelHelper.DEFAULT_ENTITY_ID_KEY)
+															.mapAttribute(Dataset.class, "name", String.class,DataTableModelHelper.NAME_KEY);
+
 
 	/**
 	 * Return the datas to fill the datasets table in the test case view
@@ -223,10 +229,6 @@ public class TestCaseDatasetsController {
 			}
 		}
 	}
-
-	private DatatableMapper<String> datasetsTableMapper = new NameBasedMapper(3).mapAttribute(Dataset.class, "id",
-			String.class, DataTableModelHelper.DEFAULT_ENTITY_ID_KEY).mapAttribute(Dataset.class, "name", String.class,
-			DataTableModelHelper.NAME_KEY);
 
 	/**
 	 * Helps create the datas (for the jQuery DataTable) for the datasets table in the test case view.

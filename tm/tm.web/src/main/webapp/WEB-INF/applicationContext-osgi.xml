@@ -191,6 +191,15 @@
 			<value>org.squashtest.tm.service.campaign.IterationFinder</value>
 		</osgi:interfaces>
 	</osgi:reference>
+	
+	<osgi:reference id="squashtest.tm.service.IterationTestPlanManagerService"
+		bean-name="squashtest.tm.service.IterationTestPlanManagerService"
+		cardinality="1..1">
+		<osgi:interfaces>
+			<value>org.squashtest.tm.service.campaign.IterationTestPlanManagerService</value>
+			<value>org.squashtest.tm.service.campaign.IterationTestPlanFinder</value>
+		</osgi:interfaces>
+	</osgi:reference>	
 
 	<osgi:reference
 		id="squashtest.tm.service.CampaignLibraryNavigationService" bean-name="squashtest.tm.service.CampaignLibraryNavigationService"

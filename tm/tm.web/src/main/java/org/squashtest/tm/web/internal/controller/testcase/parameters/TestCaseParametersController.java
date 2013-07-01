@@ -78,6 +78,13 @@ public class TestCaseParametersController {
 	private PermissionEvaluationService permissionEvaluationService;
 	@Inject
 	private MessageSource messageSource;
+	
+	
+
+	private DatatableMapper<String> parametersTableMapper = new NameBasedMapper(3)
+																.mapAttribute(Parameter.class,"name", String.class, DataTableModelHelper.NAME_KEY)
+																.mapAttribute(TestCase.class, "name", String.class,	"test-case-name");
+	
 	/**
 	 * 
 	 */
@@ -254,8 +261,5 @@ public class TestCaseParametersController {
 		}
 	}
 
-	private DatatableMapper<String> parametersTableMapper = new NameBasedMapper(3).mapAttribute(Parameter.class,
-			"name", String.class, DataTableModelHelper.NAME_KEY).mapAttribute(TestCase.class, "name", String.class,
-			"test-case-name");
 
 }

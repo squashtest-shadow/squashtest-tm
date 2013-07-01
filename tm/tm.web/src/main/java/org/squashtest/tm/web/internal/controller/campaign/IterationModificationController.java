@@ -36,8 +36,8 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,7 +58,6 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
@@ -67,11 +66,11 @@ import org.squashtest.tm.service.testautomation.TestAutomationFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.jquery.TestSuiteModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
@@ -90,6 +89,7 @@ public class IterationModificationController {
 	private static final String ITERATION_ID_KEY = "iterationId";
 	private static final String PLANNING_URL = "/planning";
 
+	@Inject
 	private IterationModificationService iterationModService;
 
 	@Inject
@@ -98,24 +98,14 @@ public class IterationModificationController {
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
 
+	@Inject
 	private IterationTestPlanFinder testPlanFinder;
 
+	@Inject
 	private TestAutomationFinderService testAutomationService;
 
-	@ServiceReference
-	public void setIterationModificationService(IterationModificationService iterationModificationService) {
-		this.iterationModService = iterationModificationService;
-	}
-
-	@ServiceReference
-	public void setIterationTestPlanFinder(IterationTestPlanFinder iterationTestPlanFinder) {
-		this.testPlanFinder = iterationTestPlanFinder;
-	}
-	
-	@ServiceReference
-	public void setTestAutomationFinderService (TestAutomationFinderService testAutomationService){
-		this.testAutomationService = testAutomationService;
-	}
+	@Inject
+	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
 
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -132,42 +122,32 @@ public class IterationModificationController {
 														.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, 12);
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView showIteration(@PathVariable long iterationId) {
-
-		Iteration iteration = iterationModService.findById(iterationId);
-		TestPlanStatistics statistics = iterationModService.getIterationStatistics(iterationId);
-		boolean hasCUF = cufValueService.hasCustomFields(iteration);
-
-		ModelAndView mav = new ModelAndView("fragment/iterations/edit-iteration");
-		mav.addObject(ITERATION_KEY, iteration);
-		mav.addObject("statistics", statistics);
-		mav.addObject("hasCUF", hasCUF);
-		return mav;
+	public String showIteration(Model model, @PathVariable long iterationId) {
+		
+		populateIterationModel(model, iterationId);
+		return "fragment/iterations/edit-iteration";
 	}
 
 	// will return the iteration in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public ModelAndView showIterationInfo(@PathVariable long iterationId) {
+	public String showIterationInfo(Model model, @PathVariable long iterationId) {
 
+		populateIterationModel(model, iterationId);
+		return "page/campaign-libraries/show-iteration";
+	}
+	
+	private void populateIterationModel(Model model, long iterationId){
+		
 		Iteration iteration = iterationModService.findById(iterationId);
-
-		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-iteration");
-
-		if (iteration != null) {
-			boolean hasCUF = cufValueService.hasCustomFields(iteration);
-			mav.addObject(ITERATION_KEY, iteration);
-			TestPlanStatistics statistics = iterationModService.getIterationStatistics(iterationId);
-			mav.addObject("statistics", statistics);
-			mav.addObject("hasCUF", hasCUF);
-		} else {
-			iteration = new Iteration();
-			iteration.setName("Not found");
-			iteration.setDescription("This iteration either do not exists, or was removed");
-			mav.addObject(ITERATION_KEY, new Iteration());
-			mav.addObject("statistics", null);
-			mav.addObject("hasCUF", false);
-		}
-		return mav;
+		TestPlanStatistics statistics = iterationModService.getIterationStatistics(iterationId);
+		boolean hasCUF = cufValueService.hasCustomFields(iteration);
+		DataTableModel attachmentsModel = attachmentHelper.findPagedAttachments(iteration);
+		
+		model.addAttribute(ITERATION_KEY, iteration);
+		model.addAttribute("statistics", statistics);
+		model.addAttribute("hasCUF", hasCUF);		
+		model.addAttribute("attachmentsModel", attachmentsModel);		
+		
 	}
 
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
@@ -420,80 +400,12 @@ public class IterationModificationController {
 		PagedCollectionHolder<List<IterationTestPlanItem>> holder = iterationModService.findAssignedTestPlan(
 				iterationId, paging);
 
-		return new IterationTestPlanItemDataTableModelHelper(messageSource, locale).buildDataModel(holder,
+		return new IterationViewTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder,
 				params.getsEcho());
 
 	}
 
-	private static class IterationTestPlanItemDataTableModelHelper extends DataTableModelHelper<IterationTestPlanItem> {
-
-		private InternationalizationHelper messageSource;
-		private Locale locale;
-
-		private IterationTestPlanItemDataTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
-			this.messageSource = messageSource;
-			this.locale = locale;
-		}
-
-		@Override
-		public Map<String, Object> buildItemData(IterationTestPlanItem item) {
-
-			Map<String, Object> res = new HashMap<String, Object>();
-
-			String projectName;
-			String testCaseName;
-			String importance;
-			String reference;
-			String datasetName;
-			final String automationMode = item.isAutomated() ? "A" : "M";
-
-			String testSuiteNameList = "";
-			Long assignedId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
-
-			if (item.isTestCaseDeleted()) {
-				projectName = formatNoData(locale, messageSource);
-				testCaseName = formatDeleted(locale, messageSource);
-				importance = formatNoData(locale, messageSource);
-				reference = formatNoData(locale, messageSource);
-			} else {
-				projectName = item.getReferencedTestCase().getProject().getName();
-				testCaseName = item.getReferencedTestCase().getName();
-				reference = item.getReferencedTestCase().getReference();
-				importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
-			}
-
-			if(item.getReferencedDataset() == null){
-				datasetName = formatNoData(locale, messageSource);
-			} else {
-				datasetName = item.getReferencedDataset().getName();
-			}
-
-			if (item.getTestSuites().isEmpty()) {
-				testSuiteNameList = formatNone(locale, messageSource);
-			} else {
-				testSuiteNameList = TestSuiteHelper.buildEllipsedSuiteNameList(item.getTestSuites(), 20);
-			}
-
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put("project-name", projectName);
-			res.put("reference", reference);
-			res.put("tc-name", testCaseName);
-			res.put("importance", importance);
-			res.put("suite", testSuiteNameList);
-			res.put("status", messageSource.internationalize(item.getExecutionStatus(), locale));
-			res.put("last-exec-by", formatString(item.getLastExecutedBy(), locale, messageSource));
-			res.put("assigned-to", assignedId);
-			res.put("last-exec-on", messageSource.localizeDate(item.getLastExecutedOn(), locale));
-			res.put("is-tc-deleted", item.isTestCaseDeleted());
-			res.put(DataTableModelHelper.DEFAULT_EMPTY_EXECUTE_HOLDER_KEY, " ");
-			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
-			res.put("exec-mode", automationMode);
-			res.put("dataset", datasetName);
-
-			return res;
-		}
-	}
+	
 
 	/* ********************** test suites **************************** */
 
@@ -553,22 +465,5 @@ public class IterationModificationController {
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
 
-	/* ***************** data formatter *************************** */
-
-	private static String formatString(String arg, Locale locale, InternationalizationHelper messageSource) {
-		return arg == null ? formatNoData(locale, messageSource) : arg;
-	}
-
-	private static String formatNoData(Locale locale, InternationalizationHelper messageSource) {
-		return messageSource.internationalize("squashtm.nodata", locale);
-	}
-
-	private static String formatDeleted(Locale locale, InternationalizationHelper messageSource) {
-		return messageSource.internationalize("squashtm.itemdeleted", locale);
-	}
-
-	private static String formatNone(Locale locale, InternationalizationHelper messageSource) {
-		return messageSource.internationalize("squashtm.none.f", locale);
-	}
 
 }
