@@ -20,33 +20,40 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
 @Controller
 @RequestMapping("/requirement-libraries/{libraryId}")
 public class RequirementLibraryModificationController {
+	
+	@Inject
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
 
-	@ServiceReference
-	public void setTestCaseLibraryNavigationService(RequirementLibraryNavigationService requirementLibraryNavigationService) {
-		this.requirementLibraryNavigationService = requirementLibraryNavigationService;
-	}
-	
+	@Inject
+	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showRequirementLibrary(@PathVariable long libraryId) {
 		
 		RequirementLibrary lib = requirementLibraryNavigationService.findLibrary(libraryId);
 		
 		ModelAndView mav = new ModelAndView("fragment/library/show-libraries-details");
+		Set<Attachment> attachments = attachmentsHelper.findAttachments(lib);
 		
 		mav.addObject("library", lib);
+		mav.addObject("attachments", attachments);
 		
 		return mav;
 	}

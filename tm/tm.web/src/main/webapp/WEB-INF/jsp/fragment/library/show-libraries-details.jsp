@@ -53,7 +53,7 @@
 		<div id="library-description" >${ library.project.description }</div>
 	</jsp:attribute>
 </comp:toggle-panel> 
-<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" entity="${ library }"/>
+<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ library.attachmentList.id}" attachmentSet="${attachments}"/>
 
 <comp:decorate-buttons />
 </div>

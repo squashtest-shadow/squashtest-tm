@@ -286,14 +286,12 @@
 			<ta:ta-admin-panel  
 				project="${adminproject.project}" 
 				taServer="${taServer}" 
-				boundProjects="${boundTAProjects}"
-								
-			/>
+				boundProjects="${boundTAProjects}"/>
 			
 			<%----------------------------- /TEST AUTOMATION PROJECT -------------------------------------------%>					
 			<%----------------------------- ATTACHMENT -------------------------------------------%>
 			
-			<at:attachment-bloc editable="${ true }" entity="${ adminproject.project }" workspaceName=""/>
+			<at:attachment-bloc editable="${ true }"  workspaceName="" attachListId="${adminproject.project.attachmentList.id}" attachmentSet="${attachments}"/>
 			<%----------------------------- /ATTACHMENT -------------------------------------------%>
 			
 			</div> <%-- /div#main-informations --%>		

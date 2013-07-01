@@ -20,24 +20,28 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
 @Controller
 @RequestMapping("/campaign-libraries/{libraryId}")
 public class CampaignLibraryModificationController {
+	@Inject
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
 
-	@ServiceReference
-	public void setTestCaseLibraryNavigationService(CampaignLibraryNavigationService campaignLibraryNavigationService) {
-		this.campaignLibraryNavigationService = campaignLibraryNavigationService;
-	}
+	@Inject
+	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showCampaignLibrary(@PathVariable long libraryId) {
@@ -45,8 +49,11 @@ public class CampaignLibraryModificationController {
 		CampaignLibrary lib = campaignLibraryNavigationService.findLibrary(libraryId);
 		
 		ModelAndView mav = new ModelAndView("fragment/library/show-libraries-details");
+		Set<Attachment> attachments = attachmentsHelper.findAttachments(lib);
 		
 		mav.addObject("library", lib);
+		mav.addObject("attachments", attachments);		
+		
 		
 		return mav;
 	}

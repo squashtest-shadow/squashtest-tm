@@ -20,24 +20,29 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
 @Controller
 @RequestMapping("/test-case-libraries/{libraryId}")
 public class TestCaseLibraryModificationController {
+	
+	@Inject
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
 
-	@ServiceReference
-	public void setTestCaseLibraryNavigationService(TestCaseLibraryNavigationService testCaseLibraryNavigationService) {
-		this.testCaseLibraryNavigationService = testCaseLibraryNavigationService;
-	}
+	@Inject
+	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showTestCaseLibrary(@PathVariable long libraryId) {
@@ -45,8 +50,10 @@ public class TestCaseLibraryModificationController {
 		TestCaseLibrary lib = testCaseLibraryNavigationService.findLibrary(libraryId);
 		
 		ModelAndView mav = new ModelAndView("fragment/library/show-libraries-details");
+		Set<Attachment> attachments = attachmentsHelper.findAttachments(lib);
 		
 		mav.addObject("library", lib);
+		mav.addObject("attachments", attachments);
 		
 		return mav;
 	}

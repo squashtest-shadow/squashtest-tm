@@ -50,6 +50,7 @@ import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectFinder;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.project.WorkspaceWizardModel;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -70,6 +71,10 @@ public class ProjectAdministrationController {
 
 	@Inject
 	private WorkspaceWizardManager wizardManager;
+	
+	@Inject
+	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
+	
 
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
@@ -122,6 +127,7 @@ public class ProjectAdministrationController {
 		mav.addObject("bugtrackersListEmpty", comboDataMap.size() == 1);
 		mav.addObject("userPermissions", partyPermissions);
 		mav.addObject("availablePermissions", availablePermissions);
+		mav.addObject("attachments", attachmentsHelper.findAttachments(adminProject.getProject()));
 
 		return mav;
 	}

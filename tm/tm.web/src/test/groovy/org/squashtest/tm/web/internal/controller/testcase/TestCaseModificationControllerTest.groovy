@@ -106,6 +106,16 @@ class TestCaseModificationControllerTest extends Specification {
 		controller.cufHelperService = cufHelperService
 		
 		controller.attachmentHelper = attachmHelper;
+		
+		mockCallingTestCaseService()
+	}
+	
+	def mockCallingTestCaseService(){
+		PagedCollectionHolder holder = Mock()
+		holder.getFirstItemIndex() >> 0
+		holder.getPagedItems() >> []
+		holder.getTotalNumberOfItems() >> 0
+		testCaseModificationService.findCallingTestCases(_,_) >> holder
 	}
 
 	def setupImportanceComboBuilder() {
@@ -156,6 +166,7 @@ class TestCaseModificationControllerTest extends Specification {
 	def "should return test case page fragment"() {
 		given:
 		TestCase tc = Mock()
+		tc.getId() >> 15l
 		List<ActionTestStep> steps = new ArrayList<ActionTestStep>();
 		tc.getSteps() >> steps
 		long tcId=15
@@ -209,6 +220,7 @@ class TestCaseModificationControllerTest extends Specification {
 	def "when showing a test case, should put importance data in the model"() {
 		given:
 		TestCase testCase = Mock()
+		testCase.getId() >> 10l
 		testCase.importance >> TestCaseImportance.HIGH
 		testCaseModificationService.findTestCaseWithSteps(10) >> testCase
 		
@@ -227,6 +239,7 @@ class TestCaseModificationControllerTest extends Specification {
 	def "when showing a test case, should put test case importance label in the model"() {
 		given:
 		TestCase testCase = Mock()
+		testCase.getId() >> 10l
 		testCase.importance >> TestCaseImportance.HIGH
 		testCaseModificationService.findTestCaseWithSteps(10) >> testCase
 		

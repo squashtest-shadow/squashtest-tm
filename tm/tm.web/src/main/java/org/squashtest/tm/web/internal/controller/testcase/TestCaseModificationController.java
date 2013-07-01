@@ -39,7 +39,6 @@ import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,6 +48,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -74,7 +74,6 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.UnknownEntityException;
-import org.squashtest.tm.service.attachment.AttachmentFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
@@ -99,10 +98,9 @@ import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 @Controller
 @RequestMapping("/test-cases/{testCaseId}")
@@ -121,11 +119,11 @@ public class TestCaseModificationController {
 
 	private static final String TEST_CASE_ = "test case ";
 
-	private final DatatableMapper<Integer> referencingTestCaseMapper = new IndexBasedMapper(6)
-			.mapAttribute(Project.class, NAME, String.class, 2)
-			.mapAttribute(TestCase.class, "reference", String.class, 3)
-			.mapAttribute(TestCase.class, NAME, String.class, 4)
-			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 5);
+	private final DatatableMapper<String> referencingTestCaseMapper = new NameBasedMapper(6)
+			.mapAttribute(Project.class, NAME, String.class, "project-name")
+			.mapAttribute(TestCase.class, "reference", String.class, "tc-reference")
+			.mapAttribute(TestCase.class, NAME, String.class, "tc-name")
+			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, "tc-mode");
 
 	
 	@Inject
@@ -242,6 +240,7 @@ public class TestCaseModificationController {
 		mav.addObject("testCaseStatusComboJson", buildStatusComboData(testCase, locale));
 		mav.addObject("testCaseStatusLabel", formatStatus(testCase.getStatus(), locale));
 		mav.addObject("attachmentsModel", attachmentHelper.findPagedAttachments(testCase));
+		mav.addObject("callingTestCasesModel", _getCallingTestCaseTableModel(testCase.getId(), new DefaultPagingAndSorting("TestCase.name"), ""));
 		mav.addObject("hasCUF", hasCUF);
 	}
 
@@ -409,9 +408,7 @@ public class TestCaseModificationController {
 
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 
-		if (testCase == null) {
-			testCase = createNotFoundTestCase();
-		}
+		
 		mav.addObject("auditableEntity", testCase);
 		// context-absolute url of this entity
 		mav.addObject("entityContextUrl", "/test-cases/" + testCaseId);
@@ -419,18 +416,9 @@ public class TestCaseModificationController {
 		return mav;
 	}
 
-	// FIXME : a not found test case is an exception, now that we have a decent Exception manager we should remove that
-	// workaround.
-	@Deprecated
-	private TestCase createNotFoundTestCase() {
-		TestCase testCase;
-		testCase = new TestCase();
-		testCase.setName("NotFound");
-		testCase.setDescription("This requirement either do not exists, or was removed");
-		return testCase;
-	}
 
-	@RequestMapping(value = "/calling-test-case-table", params = RequestParams.S_ECHO_PARAM)
+
+	@RequestMapping(value = "/calling-test-cases/table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getCallingTestCaseTableModel(@PathVariable long testCaseId, DataTableDrawParameters params,
 			final Locale locale) {
@@ -439,18 +427,16 @@ public class TestCaseModificationController {
 
 		PagingAndSorting paging = createPaging(params, referencingTestCaseMapper);
 
+		return _getCallingTestCaseTableModel(testCaseId, paging, params.getsEcho());
+
+	}
+	
+	private DataTableModel _getCallingTestCaseTableModel(long testCaseId, PagingAndSorting paging, String sEcho){
+		
 		PagedCollectionHolder<List<TestCase>> holder = testCaseModificationService.findCallingTestCases(testCaseId,
 				paging);
 
-		return new DataTableModelBuilder<TestCase>() {
-			@Override
-			public Object[] buildItemData(TestCase item) {
-				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(),
-						item.getReference(), item.getName(),
-						internationalizationHelper.internationalize(item.getExecutionMode(), locale) };
-			}
-		}.buildDataModel(holder, params.getsEcho());
-
+		return new CallingTestCasesTableModelBuilder(internationalizationHelper).buildDataModel(holder, sEcho);		
 	}
 
 	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper<?> dtMapper) {

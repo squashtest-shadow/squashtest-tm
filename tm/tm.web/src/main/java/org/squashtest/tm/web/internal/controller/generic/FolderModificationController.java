@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.generic;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,6 +36,10 @@ import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.service.library.FolderModificationService;
 
 public abstract class FolderModificationController<FOLDER extends Folder<?>> {
+	
+	@Inject
+	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
 		FOLDER folder = getFolderModificationService().findFolder(folderId);
@@ -43,6 +48,7 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 		mav.addObject("folder", folder);
 		mav.addObject("updateUrl", getUpdateUrl(request.getPathInfo()));
 		mav.addObject("workspaceName", getWorkspaceName());
+		mav.addObject("attachments", attachmentsHelper.findAttachments(folder));
 		return mav;
 	}
 

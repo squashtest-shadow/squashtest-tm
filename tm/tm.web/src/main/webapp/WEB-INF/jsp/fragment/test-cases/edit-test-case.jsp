@@ -34,6 +34,7 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="ta" tagdir="/WEB-INF/tags/testautomation"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+<%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components"%>
 
 
 <?xml version="1.0" encoding="utf-8" ?>
@@ -68,8 +69,7 @@
 <c:url var="nonVerifiedRequirementsUrl"
 	value="/test-cases/${ testCase.id }/non-verified-requirement-versions" />
 
-<s:url var="callingtestCasesTableUrl"
-	value="/test-cases/${testCase.id}/calling-test-case-table" />
+
 <c:url var="workspaceUrl" value="/test-case-workspace/#" />
 <s:url var="simulateDeletionUrl"
 	value="/test-case-browser/delete-nodes/simulate" />
@@ -392,39 +392,16 @@
 
 		<%--------------------------- calling test case section ------------------------------------%>
 
+		<tc:calling-test-cases-panel testCase="${testCase}" model="${callingTestCasesModel}"/>
 
-		<comp:toggle-panel id="calling-test-case-panel"
-						   titleKey="test-case.calling-test-cases.panel.title"
-						   isContextual="true" 
-						   open="true">
-
-
-			<jsp:attribute name="body">
-				<table id="calling-test-case-table">
-					<thead>
-						<tr>
-							<th>Id(masked)</th>
-							<th>#</th>
-							<th><f:message key="label.project" /></th>
-							<th><f:message key="test-case.reference.label" /></th>
-							<th><f:message key="label.Name" /></th>
-							<th><f:message key="test-case.calling-test-cases.table.execmode.label" /></th>				
-						</tr>
-					</thead>
-					<tbody>
-						<%-- loaded via ajax --%>
-					</tbody>		
-				</table>	
-			</jsp:attribute>
-
-
-		</comp:toggle-panel>
 
 	</div>
 	
 	<%-- ------------------------- /Description Panel ------------------------- --%>
 	<%------------------------------ Attachments  ---------------------------------------------%>	
+	
 	<at:attachment-tab tabId="tabs-3"  entity="${ testCase }"  editable="${ attachable }" tableModel="${attachmentsModel}"/>
+	
 	<%------------------------------ /Attachments  ---------------------------------------------%>
 
 
@@ -446,20 +423,10 @@
 <%-- ----------------------------------------- Remaining of the javascript initialization ----------------------------- --%>
 	
 
- <f:message key="tabs.label.issues" var="tabIssueLabel"/>
+<f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script type="text/javascript">
 
-	function addHLinkToCallingTestCasesName(row, data) {
-		var url= '${ pageContext.servletContext.contextPath }/test-cases/' + data[0] + '/info';			
-		addHLinkToCellText($( 'td:eq(3)', row ), url);
-	}	
-	
-	function callingTestCasesTableRowCallback(row, data, displayIndex) {
-		addClickHandlerToSelectHandle(row, $("#calling-test-case-table"));
-		addHLinkToCallingTestCasesName(row, data);
-		return row;
-	}
-	
+
 	
 	function refreshTCImportance(){
 		$.ajax({
@@ -575,21 +542,6 @@
 
 	
 </script>
-
-
-<comp:decorate-ajax-table url="${ callingtestCasesTableUrl }"
-			tableId="calling-test-case-table" paginate="true">		
-	<jsp:attribute name="initialSort">[[4,'asc']]</jsp:attribute>
-	<jsp:attribute name="rowCallback">callingTestCasesTableRowCallback</jsp:attribute>
-	<jsp:attribute name="columnDefs">
-		<dt:column-definition targets="0" visible="false"  sortable="false" />
-		<dt:column-definition targets="1" sortable="false" cssClass="centered select-handle" width="2em" />
-		<dt:column-definition targets="2" sortable="true" />
-		<dt:column-definition targets="3" sortable="true" width="15em" />
-		<dt:column-definition targets="4" sortable="true" />
-		<dt:column-definition targets="5" sortable="true" visible="true" lastDef="true" />
-	</jsp:attribute>
-</comp:decorate-ajax-table>		
 
 		
 <%-- Test Automation code --%>
