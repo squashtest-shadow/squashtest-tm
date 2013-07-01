@@ -60,14 +60,13 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 		DataTableModel model = builder.buildDataModel(paged, "wooo")
 
 		then:
-		model.getAaData() == [
-			[
-				"31/12/2011 23h55",
-				"chris jericho",
-				"Cr&eacute;ation",
-				"creation",
-				"10"
-			]
+		model.getAaData() == [			
+				["event-date" : "31/12/2011 23h55",
+				"event-author" : "chris jericho",
+				"event-message" : "Cr&eacute;ation",
+				"event-type" : "creation",
+				"event-id" : "10"]
+			
 		]
 	}
 
@@ -95,13 +94,11 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 
 		then:
 		model.getAaData() == [
-			[
-				"31/12/2011 23h55",
-				"peter parker",
-				"Modification de reference : &#39;amazing&#39; -&gt; &#39;astonishing&#39;",
-				"simple-prop",
-				"10"
-			]
+				["event-date" : "31/12/2011 23h55",
+				"event-author" : "peter parker",
+				"event-message" : "Modification de reference : &#39;amazing&#39; -&gt; &#39;astonishing&#39;",
+				"event-type" : "simple-prop",
+				"event-id" : "10"]
 		]
 	}
 
@@ -130,13 +127,11 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 
 		then:
 		model.getAaData() == [
-			[
-				"31/12/2011 23h55",
-				"peter parker",
-				"Modification de la description",
-				"fat-prop",
-				"10"
-			]
+				["event-date" : "31/12/2011 23h55",
+				"event-author" : "peter parker",
+				"event-message" : "Modification de la description",
+				"event-type" : "fat-prop",
+				"event-id" : "10"]
 		]
 	}
 
@@ -186,14 +181,15 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 		DataTableModel model = builder.buildDataModel(paged, "wooo")
 
 		then:
+		
 		model.getAaData() == [
-			[
-				"31/12/2011 23h55",
-				"peter parker",
-				"Modification du status : &#39;Obsol&egrave;te&#39; -&gt; &#39;Approuv&eacute;&#39;",
-				"simple-prop",
-				"10"
-			]
+				["event-date" : "31/12/2011 23h55",
+				"event-author" : "peter parker",
+				"event-message" : "Modification du status : &#39;Obsol&egrave;te&#39; -&gt; &#39;Approuv&eacute;&#39;",
+				"event-type" : "simple-prop",
+				"event-id" : "10"]
 		]
 	}
+	
+	
 }

@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.requirement.RequirementCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.requirement.RequirementModificationService
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
@@ -61,6 +62,7 @@ class RequirementModificationControllerTest extends Specification {
 	Provider internationalFormatterProvider = internationalFormatterProvider()
 	VerifyingTestCaseManagerService verifTCService = Mock()
 	ServiceAwareAttachmentTableModelHelper attachmentsHelper = Mock()
+	RequirementAuditTrailService auditTrailService = Mock()
 
 	def setup() {
 		controller.requirementModService = requirementModificationService
@@ -72,6 +74,17 @@ class RequirementModificationControllerTest extends Specification {
 		controller.cufValueService = Mock(CustomFieldValueFinderService)
 		controller.verifyingTestCaseManager = verifTCService
 		controller.attachmentsHelper = attachmentsHelper
+		controller.auditTrailService = auditTrailService;
+		
+		mockAuditTrailService()
+	}
+	
+	def mockAuditTrailService(){
+		PagedCollectionHolder holder = Mock()
+		holder.getFirstItemIndex() >> 0
+		holder.getPagedItems() >> []
+		holder.getTotalNumberOfItems() >> 0
+		auditTrailService.findAllByRequirementVersionIdOrderedByDate(_,_)>> holder
 	}
 
 	def criticalityBuilderProvider() {
