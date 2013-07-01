@@ -68,7 +68,8 @@ import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 
 @Controller
@@ -215,7 +216,7 @@ public class ExecutionModificationController {
 
 	}
 
-	private static class ExecutionStepDataTableModelHelper extends DataTableModelHelper<ExecutionStep> {
+	private static class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionStep> {
 		private Locale locale;
 		private InternationalizationHelper messageSource;
 		private DenormalizedFieldValueFinder dfvFinder;
@@ -231,8 +232,8 @@ public class ExecutionModificationController {
 		@Override
 		public Map<String, Object> buildItemData(ExecutionStep item) {
 			Map<String, Object> res = new HashMap<String, Object>();
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder() + 1);
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder() + 1);
 			addDenormalizedFieldValues(item, res);
 			res.put("action", item.getAction());
 			res.put("expected", item.getExpectedResult());
@@ -241,8 +242,8 @@ public class ExecutionModificationController {
 			res.put("comment", item.getComment());
 			res.put("bug-list", createBugList(item));
 			res.put("bug-button", "");
-			res.put(DataTableModelHelper.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
-			res.put(DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
+			res.put(DataTableModelConstants.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
+			res.put(DataTableModelConstants.DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
 			res.put("run-step-button", "");
 			return res;
 		}

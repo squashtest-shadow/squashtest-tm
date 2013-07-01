@@ -27,9 +27,9 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
-public class BugtrackerDataTableModelHelper extends DataTableModelHelper<BugTracker>{
+public class BugtrackerDataTableModelHelper extends DataTableModelBuilder<BugTracker>{
 
 
 	private InternationalizationHelper messageSource;

@@ -54,7 +54,8 @@ import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
 /**
@@ -343,7 +344,7 @@ public class CustomFieldController {
 	 * Will help to create the {@link DataTableModel} to fill the data-table of custom field's options
 	 * 
 	 */
-	private class CustomFieldOptionsDataTableModelHelper extends DataTableModelHelper<CustomFieldOption> {
+	private class CustomFieldOptionsDataTableModelHelper extends DataTableModelBuilder<CustomFieldOption> {
 
 		private CustomField customField;
 
@@ -359,12 +360,12 @@ public class CustomFieldController {
 			if (customField.getDefaultValue().equals(item.getLabel())) {
 				checked = " checked='checked' ";
 			}
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put("opt-label", item.getLabel());
 			res.put("opt-code", item.getCode());
 			res.put("opt-default", "<input type='checkbox' name='default' value='" + item.getLabel() + "'" + checked
 					+ "/>");
-			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
+			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;
 		}
 	}

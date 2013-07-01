@@ -27,9 +27,10 @@ import java.util.Map;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
-class IterationViewTestPlanTableModelHelper extends DataTableModelHelper<IterationTestPlanItem> {
+class IterationViewTestPlanTableModelHelper extends DataTableModelBuilder<IterationTestPlanItem> {
 
 	private InternationalizationHelper messageSource;
 	private Locale locale;
@@ -55,10 +56,10 @@ class IterationViewTestPlanTableModelHelper extends DataTableModelHelper<Iterati
 		Long assignedId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
 
 		if (item.isTestCaseDeleted()) {
-			projectName = formatNoData(locale, messageSource);
-			testCaseName = formatDeleted(locale, messageSource);
-			importance = formatNoData(locale, messageSource);
-			reference = formatNoData(locale, messageSource);
+			projectName = formatNoData(locale);
+			testCaseName = formatDeleted(locale);
+			importance = formatNoData(locale);
+			reference = formatNoData(locale);
 		} else {
 			projectName = item.getReferencedTestCase().getProject().getName();
 			testCaseName = item.getReferencedTestCase().getName();
@@ -66,54 +67,53 @@ class IterationViewTestPlanTableModelHelper extends DataTableModelHelper<Iterati
 			importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
 		}
 
-		if(item.getReferencedDataset() == null){
-			datasetName = formatNoData(locale, messageSource);
+		if (item.getReferencedDataset() == null) {
+			datasetName = formatNoData(locale);
 		} else {
 			datasetName = item.getReferencedDataset().getName();
 		}
 
 		if (item.getTestSuites().isEmpty()) {
-			testSuiteNameList = formatNone(locale, messageSource);
+			testSuiteNameList = formatNone(locale);
 		} else {
 			testSuiteNameList = TestSuiteHelper.buildEllipsedSuiteNameList(item.getTestSuites(), 20);
 		}
 
-		res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-		res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
+		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 		res.put("project-name", projectName);
 		res.put("reference", reference);
 		res.put("tc-name", testCaseName);
 		res.put("importance", importance);
 		res.put("suite", testSuiteNameList);
 		res.put("status", messageSource.internationalize(item.getExecutionStatus(), locale));
-		res.put("last-exec-by", formatString(item.getLastExecutedBy(), locale, messageSource));
+		res.put("last-exec-by", formatString(item.getLastExecutedBy(), locale));
 		res.put("assigned-to", assignedId);
 		res.put("last-exec-on", messageSource.localizeDate(item.getLastExecutedOn(), locale));
 		res.put("is-tc-deleted", item.isTestCaseDeleted());
-		res.put(DataTableModelHelper.DEFAULT_EMPTY_EXECUTE_HOLDER_KEY, " ");
-		res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
+		res.put(DataTableModelConstants.DEFAULT_EMPTY_EXECUTE_HOLDER_KEY, " ");
+		res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 		res.put("exec-mode", automationMode);
 		res.put("dataset", datasetName);
 
 		return res;
 	}
-	
 
 	/* ***************** data formatter *************************** */
 
-	private String formatString(String arg, Locale locale, InternationalizationHelper messageSource) {
-		return arg == null ? formatNoData(locale, messageSource) : arg;
+	private String formatString(String arg, Locale locale) {
+		return messageSource.messageOrNoData(arg, locale);
 	}
 
-	private String formatNoData(Locale locale, InternationalizationHelper messageSource) {
-		return messageSource.internationalize("squashtm.nodata", locale);
+	private String formatNoData(Locale locale) {
+		return messageSource.noData(locale);
 	}
 
-	private String formatDeleted(Locale locale, InternationalizationHelper messageSource) {
-		return messageSource.internationalize("squashtm.itemdeleted", locale);
+	private String formatDeleted(Locale locale) {
+		return messageSource.itemDeleted(locale);
 	}
 
-	private String formatNone(Locale locale, InternationalizationHelper messageSource) {
+	private String formatNone(Locale locale) {
 		return messageSource.internationalize("squashtm.none.f", locale);
 	}
 }

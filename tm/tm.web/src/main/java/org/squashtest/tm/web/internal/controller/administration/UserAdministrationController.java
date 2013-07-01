@@ -67,7 +67,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -322,7 +322,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 	/**
 	 * Builds datatable model for users table
 	 */
-	private final class UserDataTableModelBuilder extends DataTableModelHelper<User> {
+	private final class UserDataTableModelBuilder extends DataTableModelBuilder<User> {
 		/**
 		 * 
 		 */

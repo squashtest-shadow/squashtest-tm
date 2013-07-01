@@ -26,9 +26,9 @@ import java.util.Map;
 
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
-class TestSuiteViewTestPlanTableModelHelper extends DataTableModelHelper<IterationTestPlanItem> {
+class TestSuiteViewTestPlanTableModelHelper extends DataTableModelBuilder<IterationTestPlanItem> {
 	private InternationalizationHelper messageSource;
 	private Locale locale;
 

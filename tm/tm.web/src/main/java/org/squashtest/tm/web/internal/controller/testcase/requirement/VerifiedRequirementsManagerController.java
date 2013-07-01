@@ -63,7 +63,8 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -270,7 +271,7 @@ public class VerifiedRequirementsManagerController {
 				.buildDataModel(holder, params.getsEcho());
 	}
 
-	private static class VerifiedRequirementsDataTableModelHelper extends DataTableModelHelper<VerifiedRequirement> {
+	private static class VerifiedRequirementsDataTableModelHelper extends DataTableModelBuilder<VerifiedRequirement> {
 		private InternationalizationHelper internationalizationHelper;
 		private Locale locale;
 
@@ -283,9 +284,9 @@ public class VerifiedRequirementsManagerController {
 		@Override
 		public Map<String, Object> buildItemData(VerifiedRequirement item) {
 			Map<String, Object> res = new HashMap<String, Object>();
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put(DataTableModelHelper.NAME_KEY, item.getName());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getName());
 			res.put("project", item.getProject().getName());
 			res.put("reference", item.getReference());
 			res.put("versionNumber", item.getVersionNumber());
@@ -293,7 +294,7 @@ public class VerifiedRequirementsManagerController {
 					internationalizationHelper.getMessage(item.getCriticality().getI18nKey(), null, locale));
 			res.put("category", internationalizationHelper.getMessage(item.getCategory().getI18nKey(), null, locale));
 			res.put("status", item.getStatus().toString());
-			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
+			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;
 		}
 	}
@@ -353,8 +354,8 @@ public class VerifiedRequirementsManagerController {
 	}
 
 	private DatatableMapper<String> verifiedRequirementVersionsMapper = new NameBasedMapper(7)
-			.mapAttribute(RequirementVersion.class, "id", String.class, DataTableModelHelper.DEFAULT_ENTITY_ID_KEY)
-			.mapAttribute(RequirementVersion.class, NAME, String.class, DataTableModelHelper.NAME_KEY)
+			.mapAttribute(RequirementVersion.class, "id", String.class, DataTableModelConstants.DEFAULT_ENTITY_ID_KEY)
+			.mapAttribute(RequirementVersion.class, NAME, String.class, DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY)
 			.mapAttribute(Project.class, NAME, String.class, "project")
 			.mapAttribute(RequirementVersion.class, "reference", String.class, "reference")
 			.mapAttribute(RequirementVersion.class, "versionNumber", String.class, "versionNumber")

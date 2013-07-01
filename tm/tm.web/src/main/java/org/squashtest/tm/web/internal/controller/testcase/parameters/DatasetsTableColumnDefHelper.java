@@ -26,7 +26,7 @@ import java.util.List;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelper;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
 /**
  * Help create aoColumnDefs for DataTable jQuery plugin for {@link Dataset} table
@@ -38,12 +38,12 @@ public final class DatasetsTableColumnDefHelper extends DataTableColumnDefHelper
 	static {
 		String smallWidth = "2em";
 		// columns.add(new AoColumnDef(bVisible, bSortable, sClass, sWidth, mDataProp))
-		baseColumns.add(new AoColumnDef(false, false, "", null, DataTableModelHelper.DEFAULT_ENTITY_ID_KEY));// 0
+		baseColumns.add(new AoColumnDef(false, false, "", null, DataTableModelConstants.DEFAULT_ENTITY_ID_KEY));// 0
 		baseColumns.add(new AoColumnDef(true, false, "select-handle centered", smallWidth,
-				DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY));// 1
-		baseColumns.add(new AoColumnDef(true, true, "dataset-name", null, DataTableModelHelper.NAME_KEY));// 2
+				DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY));// 1
+		baseColumns.add(new AoColumnDef(true, true, "dataset-name", null, DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY));// 2
 		baseColumns.add(new AoColumnDef(true, false, "delete-button", smallWidth,
-				DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY));// 3
+				DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY));// 3
 	}
 	private List<AoColumnDef> columns = new ArrayList<AoColumnDef>();
 

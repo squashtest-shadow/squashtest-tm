@@ -46,7 +46,8 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -59,27 +60,27 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 @Controller
 @RequestMapping("/administration/custom-fields")
 public class CustomFieldAdministrationController {
-	
+
 	private static final String NAME = "name";
 	private static final String LABEL = "label";
 	private static final String INPUT_TYPE = "inputType";
 	private static final String CUSTOM_FIELDS = "customFields";
 
 	private CustomFieldManagerService customFieldManagerService;
-	
+
 	@Inject
 	private InternationalizationHelper messageSource;
-	
+
 	@ServiceReference
-	public void setCustomFieldManagerService(CustomFieldManagerService customFieldManagerService){
+	public void setCustomFieldManagerService(CustomFieldManagerService customFieldManagerService) {
 		this.customFieldManagerService = customFieldManagerService;
 	}
-	
+
 	@ModelAttribute("inputTypes")
 	public InputType[] populateInputTypes() {
 		return InputType.values();
 	}
-	
+
 	@ModelAttribute("customFieldsPageSize")
 	public long populateCustomFieldsPageSize() {
 		return DefaultPaging.FIRST_PAGE.getPageSize();
@@ -93,48 +94,49 @@ public class CustomFieldAdministrationController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showManager(Model model) {
-		
+
 		List<CustomField> customFields = customFieldManagerService.findAllOrderedByName();
 		model.addAttribute(CUSTOM_FIELDS, customFields);
 
 		return "custom-field-manager.html";
 	}
-	
-	
+
 	/**
-	 * A Mapping for custom fields table sortable columns : maps the table column index to an entity property.
-	 * NB: column index is of all table's columns (displayed or not)
+	 * A Mapping for custom fields table sortable columns : maps the table column index to an entity property. NB:
+	 * column index is of all table's columns (displayed or not)
 	 */
 	private final DatatableMapper customFieldTableMapper = new NameBasedMapper(3)
-																.mapAttribute(CustomField.class, NAME, String.class, NAME)
-																.mapAttribute(CustomField.class, LABEL, String.class, LABEL)
-																.mapAttribute(CustomField.class, INPUT_TYPE, String.class, "input-type");
-	
+			.mapAttribute(CustomField.class, NAME, String.class, NAME)
+			.mapAttribute(CustomField.class, LABEL, String.class, LABEL)
+			.mapAttribute(CustomField.class, INPUT_TYPE, String.class, "input-type");
+
 	/**
 	 * Return the DataTableModel to display the table of all custom fields.
 	 * 
-	 * @param params the {@link DataTableDrawParameters} for the custom field table
-	 * @param locale the browser selected locale
+	 * @param params
+	 *            the {@link DataTableDrawParameters} for the custom field table
+	 * @param locale
+	 *            the browser selected locale
 	 * @return the {@link DataTableModel} with organized {@link CustomField} infos.
 	 */
 	@RequestMapping(method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getCustomFieldsTableModel(final DataTableDrawParameters params, final Locale locale) {
-		PagingAndSorting filter =  new DataTableMapperPagingAndSortingAdapter(params, customFieldTableMapper); 
+		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, customFieldTableMapper);
 
 		PagedCollectionHolder<List<CustomField>> holder = customFieldManagerService.findSortedCustomFields(filter);
 
 		return new CustomFieldDataTableModelHelper(locale).buildDataModel(holder, params.getsEcho());
 	}
-	
+
 	/**
 	 * Will help to create the {@link DataTableModel} to fill the data-table of custom fields
-	 *
+	 * 
 	 */
-	private class CustomFieldDataTableModelHelper extends DataTableModelHelper<CustomField>{
+	private class CustomFieldDataTableModelHelper extends DataTableModelBuilder<CustomField> {
 		private Locale locale;
-		
-		private CustomFieldDataTableModelHelper(Locale locale){
+
+		private CustomFieldDataTableModelHelper(Locale locale) {
 			this.locale = locale;
 		}
 
@@ -143,21 +145,20 @@ public class CustomFieldAdministrationController {
 
 			Map<String, Object> res = new HashMap<String, Object>();
 
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put(NAME, item.getName());
 			res.put(LABEL, item.getLabel());
 			res.put("raw-input-type", item.getInputType().name());
 			res.put("input-type", messageSource.internationalize(item.getInputType().getI18nKey(), locale));
-			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
+			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteCustomField( @PathVariable long customFieldId) {
+	public void deleteCustomField(@PathVariable long customFieldId) {
 		customFieldManagerService.deleteCustomField(customFieldId);
 	}
 }

@@ -38,7 +38,7 @@ import org.squashtest.tm.domain.event.RequirementPropertyChange;
 import org.squashtest.tm.domain.event.RequirementVersionModification;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
 /**
  * Builder for datatable model showing {@link RequirementAuditEvent} objects. Not threadsafe, should be discarded after
@@ -47,7 +47,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
  * @author Gregory Fouquet
  * 
  */
-public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper<RequirementAuditEvent> implements
+public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilder<RequirementAuditEvent> implements
 		RequirementAuditEventVisitor {
 	/**
 	 * The locale to use to format the labels.
@@ -73,7 +73,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelHelper
 	}
 
 	/**
-	 * @see org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper#buildItemData(java.lang.Object)
+	 * @see org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder#buildItemData(java.lang.Object)
 	 */
 	@Override
 	protected Object[] buildItemData(RequirementAuditEvent item) {

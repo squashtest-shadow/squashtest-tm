@@ -20,63 +20,67 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
 /**
  * Builds a DataTable model for TestSteps table.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-public class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> implements TestStepVisitor {
-	
+public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> implements TestStepVisitor {
+	/**
+	 * 
+	 */
+	private static final int DEFAULT_MAP_CAPACITY = 16;
+
+	private Map<Long, Map<String, CustomFieldValueTableModel>> customFieldValuesById;
+
 	private final MessageSource messageSource;
 	private final Locale locale;
 	private Map<?, ?> lastBuiltItem;
-	
 
 	public TestStepsTableModelBuilder(MessageSource messageSource, Locale locale) {
 		this.messageSource = messageSource;
 		this.locale = locale;
 	}
 
-	public List<Map<?,?>> buildAllData(List<TestStep> source){
-		List<Map<?,?>> result = new ArrayList<Map<?,?>>(source.size());
-		for (TestStep step : source){
-			incrementIndex();
-			Map<?,?> itemData = buildItemData(step);
-			result.add(itemData);
-		}
-		return result;
-	}
-	
+	/**
+	 * 
+	 * @see org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder#buildItemData(java.lang.Object)
+	 */
 	@Override
-	public Map<?, ?> buildItemData(TestStep item) {
+	protected Map<?, ?> buildItemData(TestStep item) {
 		item.accept(this);
 		return lastBuiltItem;
 	}
-	
 
 	/**
 	 * Creates a model row from the visited item and stores it as {@link #lastBuiltItem}
 	 */
 	@Override
 	public void visit(ActionTestStep visited) {
-		
+
 		Map<Object, Object> item = new HashMap<Object, Object>(11);
-		
+
 		item.put("step-id", visited.getId());
 		item.put("step-index", getCurrentIndex());
 		item.put("attach-list-id", visited.getAttachmentList().getId());
@@ -90,8 +94,9 @@ public class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> i
 		item.put("empty-delete-holder", null);
 		item.put("has-requirements", !visited.getRequirementVersionCoverages().isEmpty());
 		item.put("nb-requirements", visited.getRequirementVersionCoverages().size());
-		decorateWithCustomFields(item);
-		
+
+		appendCustomFields(item);
+
 		lastBuiltItem = item;
 
 	}
@@ -100,11 +105,11 @@ public class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> i
 	public void visit(CallTestStep visited) {
 		TestCase called = visited.getCalledTestCase();
 
-		String action = messageSource.getMessage("test-case.call-step.action.template",	new Object[] { called.getName() }, locale);
-						   
+		String action = messageSource.getMessage("test-case.call-step.action.template",
+				new Object[] { called.getName() }, locale);
 
 		Map<Object, Object> item = new HashMap<Object, Object>(11);
-		
+
 		item.put("step-id", visited.getId());
 		item.put("step-index", getCurrentIndex());
 		item.put("attach-list-id", null);
@@ -118,19 +123,95 @@ public class TestStepsTableModelBuilder extends DataTableModelHelper<TestStep> i
 		item.put("empty-delete-holder", null);
 		item.put("has-requirements", false);
 		item.put("nb-requirements", null);
-		decorateWithCustomFields(item);
-		
+
+		appendCustomFields(item);
+
 		lastBuiltItem = item;
 
 	}
-	
 
-	protected void decorateWithCustomFields(Map<Object, Object> item){
+	private void appendCustomFields(Map<Object, Object> item) {
+		Map<String, CustomFieldValueTableModel> cufValues = getCustomFieldsFor((Long) item.get("step-id"));
+		item.put("customFields", cufValues);
 
-		Map<String, ShortCUFValueModel> cufValues = getCustomFieldsFor((Long)item.get("step-id"));
-		item.put("customFields", cufValues);		
-		
 	}
-	
+
+	public void usingCustomFields(Collection<CustomFieldValue> cufValues, int nbFieldsPerEntity) {
+		customFieldValuesById = new HashMap<Long, Map<String, CustomFieldValueTableModel>>();
+
+		for (CustomFieldValue value : cufValues) {
+			Long entityId = value.getBoundEntityId();
+			Map<String, CustomFieldValueTableModel> values = customFieldValuesById.get(entityId);
+
+			if (values == null) {
+				values = new HashMap<String, CustomFieldValueTableModel>(nbFieldsPerEntity);
+				customFieldValuesById.put(entityId, values);
+			}
+
+			values.put(value.getCustomField().getCode(), new CustomFieldValueTableModel(value));
+
+		}
+	}
+
+	protected static class CustomFieldValueTableModel {
+		private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValueTableModel.class);
+
+		private String value;
+		private Long id;
+
+		public String getValue() {
+			return value;
+		}
+
+		public void setValue(String value) {
+			this.value = value;
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
+		}
+
+		public CustomFieldValueTableModel() {
+			super();
+		}
+
+		public Date getValueAsDate() {
+			try {
+				return new SimpleDateFormat(CustomField.DATE_PATTERN).parse(value);
+			} catch (ParseException e) {
+				LOGGER.debug("Unable to parse date {} of custom field #{}", value, id);
+			}
+
+			return null;
+		}
+
+		private CustomFieldValueTableModel(CustomFieldValue value) {
+			this.id = value.getId();
+			this.value = value.getValue();
+		}
+
+	}
+
+	private Map<String, CustomFieldValueTableModel> getCustomFieldsFor(Long id) {
+		if (customFieldValuesById == null) {
+			return new HashMap<String, CustomFieldValueTableModel>();
+		}
+
+		Map<String, CustomFieldValueTableModel> values = customFieldValuesById.get(id);
+
+		if (values == null) {
+			values = new HashMap<String, CustomFieldValueTableModel>();
+		}
+		return values;
+
+	}
+
+	public void usingCustomFields(Collection<CustomFieldValue> cufValues) {
+		usingCustomFields(cufValues, DEFAULT_MAP_CAPACITY);
+	}
 
 }

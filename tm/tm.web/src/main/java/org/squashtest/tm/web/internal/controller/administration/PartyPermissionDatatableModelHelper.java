@@ -20,9 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -30,9 +28,9 @@ import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
-public class PartyPermissionDatatableModelHelper extends DataTableModelHelper<PartyProjectPermissionsBean>{
+public class PartyPermissionDatatableModelHelper extends DataTableModelBuilder<PartyProjectPermissionsBean> {
 
 	private InternationalizationHelper messageSource;
 	private Locale locale;
@@ -41,36 +39,23 @@ public class PartyPermissionDatatableModelHelper extends DataTableModelHelper<Pa
 		this.locale = locale;
 		this.messageSource = messageSource;
 	}
-	
-	public List<Map<?,?>> buildAllData(List<PartyProjectPermissionsBean> source){
-		List<Map<?,?>> result = new ArrayList<Map<?,?>>(source.size());
-		for (PartyProjectPermissionsBean item : source){
-			incrementIndex();
-			Map<?,?> itemData = buildItemData(item);
-			result.add(itemData);
-		}
-		return result;
-	}
-	
-	
+
 	@Override
-	protected Map<?,?> buildItemData(PartyProjectPermissionsBean item) {
-		
+	protected Map<?, ?> buildItemData(PartyProjectPermissionsBean item) {
+
 		Map<Object, Object> result = new HashMap<Object, Object>();
 		Party party = item.getParty();
 		PermissionGroup group = item.getPermissionGroup();
-		
+
 		result.put("party-id", party.getId());
 		result.put("party-name", party.getName());
 		result.put("party-index", getCurrentIndex());
 		result.put("permission-group", group);
-		result.put("party-type", messageSource.internationalize("label."+party.getType().toLowerCase(), locale));
+		result.put("party-type", messageSource.internationalize("label." + party.getType().toLowerCase(), locale));
 		result.put("empty-delete-holder", null);
-		
+
 		return result;
-		
+
 	}
 
-
-	
 }

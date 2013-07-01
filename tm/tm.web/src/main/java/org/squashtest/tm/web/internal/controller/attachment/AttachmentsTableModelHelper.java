@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.attachment;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -29,9 +28,10 @@ import java.util.Map;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
-public class AttachmentsTableModelHelper extends DataTableModelHelper<Attachment>{
+public class AttachmentsTableModelHelper extends DataTableModelBuilder<Attachment>{
 
 	private InternationalizationHelper i18nHelper;
 	private Locale locale;
@@ -47,21 +47,19 @@ public class AttachmentsTableModelHelper extends DataTableModelHelper<Attachment
 		
 		Map<Object, Object> result = new HashMap<Object, Object>();
 		
-		result.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-		result.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-		result.put(AttachmentManagerController.NAME, item.getName());
+		result.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
+		result.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+		result.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getName());
 		result.put("hyphenated-name", hyphenateFilename(item.getName()));
 		result.put("size",item.getFormattedSize(locale));
 		result.put("added-on",localizedDate(item.getAddedOn(),locale));
-		result.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
+		result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		
 		return result;
 	}
 	
 	private String localizedDate(Date date, Locale locale){
-		String format = i18nHelper.getMessage("squashtm.dateformat", null, locale);
-
-		return new SimpleDateFormat(format).format(date);
+		return i18nHelper.localizeDate(date, locale);
 
 	}
 	

@@ -45,7 +45,8 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -54,7 +55,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 @RequestMapping("/attach-list/{attachListId}/attachments")
 public class AttachmentManagerController {
 	
-	static final String NAME = "name";
+	private static final String NAME = "name";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentManagerController.class);
 	
@@ -72,20 +73,20 @@ public class AttachmentManagerController {
 	
 
 	private final DatatableMapper attachmentMapper = new NameBasedMapper()
-														 .mapAttribute(Attachment.class, "id", Long.class, "item-id")
-														 .mapAttribute(Attachment.class, NAME, String.class, "hyphenated-name")
-														 .mapAttribute(Attachment.class, "size", Long.class, "size")
-														 .mapAttribute(Attachment.class, "addedOn", Date.class, "added-on");
-
+			.mapAttribute(Attachment.class, "id", Long.class, "item-id")
+			.mapAttribute(Attachment.class, NAME, String.class, "hyphenated-name")
+			.mapAttribute(Attachment.class, "size", Long.class, "size")
+			.mapAttribute(Attachment.class, "addedOn", Date.class, "added-on");
 
 	
 	/* ********************** data display *********************************** */
-	
-	@RequestMapping(value="/manager", method=RequestMethod.GET)
-	public ModelAndView showAttachmentManager(@PathVariable(ATTACH_LIST_ID) long attachListId, @RequestParam("workspace") String workspace){
+
+	@RequestMapping(value = "/manager", method = RequestMethod.GET)
+	public ModelAndView showAttachmentManager(@PathVariable(ATTACH_LIST_ID) long attachListId,
+			@RequestParam("workspace") String workspace) {
 
 		ModelAndView mav = new ModelAndView("page/attachments/attachment-manager");
-		mav.addObject("workspace",workspace);
+		mav.addObject("workspace", workspace);
 		mav.addObject(ATTACH_LIST_ID, attachListId);
 		mav.addObject("attachmentsModel", attachmentModelHelper.findPagedAttachments(attachListId));
 
@@ -93,9 +94,10 @@ public class AttachmentManagerController {
 
 	}
 
-	@RequestMapping(value="/details", method=RequestMethod.GET)
-	public @ResponseBody DataTableModel displayAttachmentDetails(@PathVariable(ATTACH_LIST_ID) long attachListId, final DataTableDrawParameters params,
-			final Locale locale){
+	@RequestMapping(value = "/details", method = RequestMethod.GET)
+	public @ResponseBody
+	DataTableModel displayAttachmentDetails(@PathVariable(ATTACH_LIST_ID) long attachListId,
+			final DataTableDrawParameters params, final Locale locale) {
 		PagingAndSorting pas = createPaging(params, attachmentMapper);
 		
 		return attachmentModelHelper.findPagedAttachments(attachListId, pas, params.getsEcho());
@@ -104,10 +106,10 @@ public class AttachmentManagerController {
 	
 	
 	/* ******************************* delete *********************************** */
-	
-	@RequestMapping(value="/{attachmentIds}", method=RequestMethod.DELETE)
+
+	@RequestMapping(value = "/{attachmentIds}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void removeAttachment(@PathVariable long attachListId, @PathVariable("attachmentIds") List<Long> ids){
+	public void removeAttachment(@PathVariable long attachListId, @PathVariable("attachmentIds") List<Long> ids) {
 		attachmentManagerService.removeListOfAttachments(attachListId, ids);
 	}
 

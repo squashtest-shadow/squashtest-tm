@@ -40,7 +40,7 @@ import org.squashtest.tm.service.testcase.TestStepModificationService
 import org.squashtest.tm.web.internal.controller.testcase.requirement.VerifiedRequirementsManagerController;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
 import spock.lang.Specification
 
@@ -72,7 +72,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		then:
 		res == "page/test-cases/show-verified-requirements-manager"
 	}
-	
+
 	def "should show test step manager page"() {
 		given:
 		requirementLibraryFinder.findLinkableRequirementLibraries() >> []
@@ -107,7 +107,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		model['testCase'] == testCase
 		model['linkableLibrariesModel'] != null
 	}
-	
+
 	def "should populate manager page with test step and requirement libraries model"() {
 		given:
 		TestStep testStep = Mock()
@@ -139,7 +139,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		then:
 		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10) >> []
 	}
-	
+
 	def "should add requirements to verified requirements of test step"() {
 		when:
 		controller.addVerifiedRequirementsToTestStep([5, 15], 10)
@@ -147,7 +147,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		then:
 		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestStep([5, 15], 10) >> []
 	}
-	
+
 	def "should add requirements to verified requirement of test step"() {
 		when:
 		controller.addVerifiedRequirementsToTestStep([5L], 10L)
@@ -184,7 +184,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		then:
 		res.noVerifiableVersionRejections
 	}
-	
+
 	def "should build table model for verified requirements"() {
 		given:
 		DataTableDrawParameters request = new DataTableDrawParameters(sEcho: "echo", iDisplayStart: 0, iDisplayLength: 100)
@@ -201,57 +201,5 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		res.sEcho == "echo"
 		res.iTotalDisplayRecords == 0
 		res.iTotalRecords == 0
-	}
-
-	//TODO move : i think this should belong to a DataTableModelHelperTest 
-	def "should build verified requirements model from 1 row of 5"() {
-		given:
-		Requirement req = Mock()
-		req.name >> "foo"
-		req.id >> 15
-
-		Project project = Mock()
-		req.project >> project
-		project.name >> "bar"
-
-		and:
-		FilteredCollectionHolder<List<Requirement>> holder = Mock()
-		holder.filteredCollection >> [req]
-		holder.unfilteredResultCount >> 5
-
-
-
-		when:
-
-		//well, groovy
-
-		def helper = [
-			buildItemData: { item ->
-				[
-					item.getId(),
-					1,
-					item.getProject().getName(),
-					item.getName(),
-					"" ] as Object[];
-			}
-
-		] as DataTableModelHelper<Requirement>;
-
-
-		def res = helper.buildDataModel(holder, 1,"echo");
-
-		then:
-		res.sEcho == "echo"
-		res.iTotalDisplayRecords == 5
-		res.iTotalRecords == 5
-		res.aaData == [
-			[
-				15,
-				1,
-				"bar",
-				"foo",
-				""
-			]
-		]
 	}
 }

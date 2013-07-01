@@ -28,9 +28,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
-class VerifyingTestCasesTableModelHelper extends DataTableModelHelper<TestCase> {
+class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase> {
 	
 	InternationalizationHelper helper;
 	Locale locale = LocaleContextHolder.getLocale();

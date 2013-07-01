@@ -62,7 +62,7 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
@@ -259,8 +259,7 @@ public class TestSuiteTestPlanManagerController {
 		return result;
 	}
 
-	private static final class IterationTestPlanItemDataTableModelHelper extends
-			DataTableModelHelper<IterationTestPlanItem> {
+	private static class IterationTestPlanItemDataTableModelHelper extends DataTableModelBuilder<IterationTestPlanItem> {
 
 		private InternationalizationHelper messageSource;
 		private Locale locale;

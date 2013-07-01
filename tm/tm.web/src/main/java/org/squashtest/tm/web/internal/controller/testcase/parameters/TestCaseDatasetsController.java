@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -63,7 +62,8 @@ import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -86,12 +86,10 @@ public class TestCaseDatasetsController {
 	private PermissionEvaluationService permissionEvaluationService;
 	@Inject
 	private MessageSource messageSource;
-	
 
-	private DatatableMapper<String> datasetsTableMapper = new NameBasedMapper(3)
-															.mapAttribute(Dataset.class, "id",	String.class, DataTableModelHelper.DEFAULT_ENTITY_ID_KEY)
-															.mapAttribute(Dataset.class, "name", String.class,DataTableModelHelper.NAME_KEY);
-
+	private DatatableMapper<String> datasetsTableMapper = new NameBasedMapper(3).mapAttribute(Dataset.class, "id",
+			String.class, DataTableModelConstants.DEFAULT_ENTITY_ID_KEY).mapAttribute(Dataset.class, "name",
+			String.class, DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY);
 
 	/**
 	 * Return the datas to fill the datasets table in the test case view
@@ -150,47 +148,59 @@ public class TestCaseDatasetsController {
 
 	private List<Parameter> getSortedDirectAndCalledParameters(long testCaseId) {
 		List<Parameter> directAndCalledParameters = parameterFinder.findAllforTestCase(testCaseId);
-		Collections.sort(directAndCalledParameters, new TestCaseParametersController.ParameterNameComparator(SortOrder.ASCENDING));
+		Collections.sort(directAndCalledParameters, new TestCaseParametersController.ParameterNameComparator(
+				SortOrder.ASCENDING));
 		return directAndCalledParameters;
 	}
-	
+
 	/**
 	 * Returns the list of column headers names for parameters in the Datasets table orderd by parameter name.
 	 * 
 	 * 
-	 * @param testCaseId : the concerned test case id
-	 * @param locale : the browser's locale
-	 * @param directAndCalledParameters : the list of parameters directly associated or associated through call steps
-	 * @param messageSource : the message source to internationalize suffix 
+	 * @param testCaseId
+	 *            : the concerned test case id
+	 * @param locale
+	 *            : the browser's locale
+	 * @param directAndCalledParameters
+	 *            : the list of parameters directly associated or associated through call steps
+	 * @param messageSource
+	 *            : the message source to internationalize suffix
 	 * @return
 	 */
 	public static List<String> findDatasetParamHeaders(long testCaseId, final Locale locale,
-		List<Parameter> directAndCalledParameters, MessageSource messageSource) {
+			List<Parameter> directAndCalledParameters, MessageSource messageSource) {
 		Collections.sort(directAndCalledParameters, new ParameterNameComparator(SortOrder.ASCENDING));
 		List<String> result = new ArrayList<String>(directAndCalledParameters.size());
-		for(Parameter param : directAndCalledParameters){
+		for (Parameter param : directAndCalledParameters) {
 			result.add(ParametersDataTableModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns the list of column headers names for parameters in the Datasets table mapped with the parameter id.
-	 * @param testCaseId : the concerned test case id
-	 * @param locale : the browser's locale
-	 * @param directAndCalledParameters : the list of parameters directly associated or associated through call steps
-	 * @param messageSource : the message source to internationalize suffix 
+	 * 
+	 * @param testCaseId
+	 *            : the concerned test case id
+	 * @param locale
+	 *            : the browser's locale
+	 * @param directAndCalledParameters
+	 *            : the list of parameters directly associated or associated through call steps
+	 * @param messageSource
+	 *            : the message source to internationalize suffix
 	 * @return
 	 */
 	public static Map<String, String> findDatasetParamHeadersByParamId(long testCaseId, final Locale locale,
 			List<Parameter> directAndCalledParameters, MessageSource messageSource) {
-	
+
 		Map<String, String> result = new HashMap<String, String>(directAndCalledParameters.size());
-			for(Parameter param : directAndCalledParameters){
-				result.put(param.getId().toString(), ParametersDataTableModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
-			}
-			return result;
+		for (Parameter param : directAndCalledParameters) {
+			result.put(param.getId().toString(),
+					ParametersDataTableModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
 		}
+		return result;
+	}
+
 	private List<Dataset> getSortedDatasets(long testCaseId, final DataTableDrawParameters params) {
 		final TestCase testCase = testCaseFinder.findById(testCaseId);
 		Sorting sorting = new DataTableMapperPagingAndSortingAdapter(params, datasetsTableMapper);
@@ -236,7 +246,7 @@ public class TestCaseDatasetsController {
 	 * @author mpagnon
 	 * 
 	 */
-	public final static class DatasetsDataTableModelHelper extends DataTableModelHelper<Dataset> {
+	public final static class DatasetsDataTableModelHelper extends DataTableModelBuilder<Dataset> {
 
 		public DatasetsDataTableModelHelper() {
 			super();
@@ -245,26 +255,16 @@ public class TestCaseDatasetsController {
 		@Override
 		public Map<String, Object> buildItemData(Dataset item) {
 			Map<String, Object> res = new HashMap<String, Object>();
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put(DataTableModelHelper.NAME_KEY, item.getName());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getName());
 			for (DatasetParamValue parameterValue : item.getParameterValues()) {
-				res.put("parameter-" + parameterValue.getParameter().getId(), "id="+parameterValue.getId()+", value="+parameterValue.getParamValue());
+				res.put("parameter-" + parameterValue.getParameter().getId(), "id=" + parameterValue.getId()
+						+ ", value=" + parameterValue.getParamValue());
 			}
-			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
+			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			return res;
 		}
-
-		public List<Map<?,?>> buildAllData(Collection<Dataset> source){
-			List<Map<?,?>> result = new ArrayList<Map<?,?>>(source.size());
-			for (Dataset item : source){
-				incrementIndex();
-				Map<?,?> itemData = (Map<?, ?>) buildItemData(item);
-				result.add(itemData);
-			}
-			return result;
-		}
-		
 	}
 
 	/**
@@ -280,11 +280,11 @@ public class TestCaseDatasetsController {
 	@ResponseBody
 	public void newDataset(@PathVariable long testCaseId, @Valid @RequestBody NewDataset dataset) {
 		TestCase testCase = testCaseFinder.findById(testCaseId);
-		try{
+		try {
 			datasetModificationService.persist(dataset.createTransientEntity(testCase, parameterFinder), testCaseId);
-			}catch (DomainException e) {
-				e.setObjectName("add-dataset");
-				throw e;
-			}
+		} catch (DomainException e) {
+			e.setObjectName("add-dataset");
+			throw e;
+		}
 	}
 }

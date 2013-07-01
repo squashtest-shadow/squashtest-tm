@@ -99,7 +99,7 @@ import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
@@ -442,7 +442,7 @@ public class TestCaseModificationController {
 		FilteredCollectionHolder<List<TestCase>> holder = testCaseModificationService.findCallingTestCases(testCaseId,
 				paging);
 
-		return new DataTableModelHelper<TestCase>() {
+		return new DataTableModelBuilder<TestCase>() {
 			@Override
 			public Object[] buildItemData(TestCase item) {
 				return new Object[] { item.getId(), getCurrentIndex(), item.getProject().getName(),
@@ -467,6 +467,7 @@ public class TestCaseModificationController {
 	 */
 	@RequestMapping(method = RequestMethod.GET, params = "format=printable")
 	public ModelAndView showPrintableTestCase(@PathVariable long testCaseId, Locale locale) {
+		// TODO smells like copy-pasta
 		LOGGER.debug("get printable test case");
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		if (testCase == null) {
@@ -532,7 +533,7 @@ public class TestCaseModificationController {
 
 		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
 		builder.usingCustomFields(stepCufValues, cufDefinitions.size());
-		List<Map<?, ?>> stepsData = builder.buildAllData(steps);
+		Collection<Object> stepsData = builder.buildRawModel(steps);
 		mav.addObject("stepsData", stepsData);
 		mav.addObject("cufDefinitions", cufDefinitions);
 
@@ -542,7 +543,7 @@ public class TestCaseModificationController {
 
 		ParametersDataTableModelHelper paramHelper = new ParametersDataTableModelHelper(testCaseId, messageSource,
 				locale);
-		List<Map<?, ?>> parameterDatas = paramHelper.buildAllData(parameters);
+		Collection<Object> parameterDatas = paramHelper.buildRawModel(parameters);
 		mav.addObject("paramDatas", parameterDatas);
 
 		// ================DATASETS

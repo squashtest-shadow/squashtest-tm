@@ -116,7 +116,7 @@ public class TestCaseTestStepsController {
 		// process the data
 		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
 		builder.usingCustomFields(cufValues, cufDefinitions.size());
-		List<Map<?, ?>> stepsData = builder.buildAllData(steps);
+		Collection<Object> stepsData = builder.buildRawModel(steps);
 
 		// populate the model
 		model.addAttribute(TEST_CASE, testCase);

@@ -62,7 +62,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
@@ -308,7 +308,7 @@ public class RequirementModificationController {
 				params.getsEcho());
 	}
 
-	private static final class RequirementVersionDataTableModel extends DataTableModelHelper<RequirementVersion> {
+	private static final class RequirementVersionDataTableModel extends DataTableModelBuilder<RequirementVersion> {
 		private Locale locale;
 		private Provider<LevelLabelFormatter> levelFormatterProvider;
 		private Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider;

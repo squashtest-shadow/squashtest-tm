@@ -66,7 +66,8 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
@@ -382,7 +383,7 @@ public class CampaignModificationController {
 		return messageSource.internationalize(importance, locale);
 	}
 
-	private final class TestCaseTableModelHelper extends DataTableModelHelper<CampaignTestPlanItem> {
+	private final class TestCaseTableModelHelper extends DataTableModelBuilder<CampaignTestPlanItem> {
 
 		private Locale locale;
 
@@ -398,8 +399,8 @@ public class CampaignModificationController {
 			String user = (item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale);
 			Long assigneeId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
 
-			result.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-			result.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+			result.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
+			result.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			result.put("project-name", testCase.getProject().getName());
 			result.put("reference", testCase.getReference());
 			result.put("tc-name", testCase.getName());
@@ -407,7 +408,7 @@ public class CampaignModificationController {
 			result.put("assigned-to", assigneeId);
 			result.put("importance", formatImportance(testCase.getImportance(), locale));
 			result.put("exec-mode", formatExecutionMode(testCase.getExecutionMode(), locale));
-			result.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
+			result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			result.put("tc-id", testCase.getId());
 
 			return result;
@@ -416,7 +417,7 @@ public class CampaignModificationController {
 
 	}
 
-	private final class TestPlanManagerTableHelper extends DataTableModelHelper<CampaignTestPlanItem> {
+	private final class TestPlanManagerTableHelper extends DataTableModelBuilder<CampaignTestPlanItem> {
 		private Locale locale;
 
 		private TestPlanManagerTableHelper(Locale locale) {

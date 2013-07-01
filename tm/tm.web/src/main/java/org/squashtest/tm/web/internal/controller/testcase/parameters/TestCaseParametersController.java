@@ -56,7 +56,7 @@ import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -82,7 +82,7 @@ public class TestCaseParametersController {
 	
 
 	private DatatableMapper<String> parametersTableMapper = new NameBasedMapper(3)
-																.mapAttribute(Parameter.class,"name", String.class, DataTableModelHelper.NAME_KEY)
+																.mapAttribute(Parameter.class,"name", String.class, DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY)
 																.mapAttribute(TestCase.class, "name", String.class,	"test-case-name");
 	
 	/**

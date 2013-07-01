@@ -41,7 +41,7 @@ import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.web.internal.controller.project.ProjectModel;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
 /**
  * Superclass of team and user controllers (code factorization)
@@ -106,7 +106,7 @@ public abstract class PartyControllerSupport {
 		return new PermissionTableModelHelper(locale, messageSource, permissionList).buildDataModel(holder, secho);
 	}
 
-	protected static final class PermissionTableModelHelper extends DataTableModelHelper<ProjectPermission> {
+	protected static final class PermissionTableModelHelper extends DataTableModelBuilder<ProjectPermission> {
 
 		private List<PermissionGroup> permissionList;
 		private MessageSource messageSource;

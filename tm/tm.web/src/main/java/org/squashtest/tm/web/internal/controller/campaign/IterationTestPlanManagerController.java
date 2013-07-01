@@ -57,7 +57,7 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableStatus;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
@@ -244,7 +244,7 @@ public class IterationTestPlanManagerController {
 		FilteredCollectionHolder<List<IterationTestPlanItem>> holder = iterationTestPlanManagerService.findTestPlan(
 				iterationId, filter);
 
-		return new DataTableModelHelper<IterationTestPlanItem>() {
+		return new DataTableModelBuilder<IterationTestPlanItem>() {
 			@Override
 			public Object[] buildItemData(IterationTestPlanItem item) {
 

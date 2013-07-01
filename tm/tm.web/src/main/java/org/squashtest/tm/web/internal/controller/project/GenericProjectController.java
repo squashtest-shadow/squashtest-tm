@@ -77,7 +77,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.testautomation.TestAutomationProjectRegistrationForm;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
@@ -392,24 +393,24 @@ public class GenericProjectController {
 
 	// ********************** private classes ***************************
 
-	private final class TestAutomationTableModel extends DataTableModelHelper<TestAutomationProject> {
+	private final class TestAutomationTableModel extends DataTableModelBuilder<TestAutomationProject> {
 
 		@Override
 		protected Map<String, ?> buildItemData(TestAutomationProject item) {
 			Map<String, Object> res = new HashMap<String, Object>();
 
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_ID_KEY, item.getId());
-			res.put(DataTableModelHelper.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() + 1);
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() + 1);
 			res.put("name", item.getName());
 			res.put("server-url", item.getServer().getBaseURL());
 			res.put("server-kind", item.getServer().getKind());
-			res.put(DataTableModelHelper.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
+			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 
 			return res;
 		}
 	}
 
-	private static final class ProjectDataTableModelHelper extends DataTableModelHelper<GenericProject> {
+	private static final class ProjectDataTableModelHelper extends DataTableModelBuilder<GenericProject> {
 		private InternationalizationHelper messageSource;
 		private Locale locale;
 

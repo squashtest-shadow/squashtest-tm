@@ -48,7 +48,7 @@ import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 
 @Controller
@@ -194,7 +194,7 @@ public class CustomFieldBindingController {
 
 	// ************************* inner classes ****************************
 
-	private static class CUFBindingDataTableModelHelper extends DataTableModelHelper<CustomFieldBinding> {
+	private static class CUFBindingDataTableModelHelper extends DataTableModelBuilder<CustomFieldBinding> {
 		private CustomFieldJsonConverter converter;
 
 		private CUFBindingDataTableModelHelper(CustomFieldJsonConverter converter) {

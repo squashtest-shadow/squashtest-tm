@@ -32,7 +32,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.web.internal.controller.campaign.TestSuiteHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
 /**
  * Builder of {@link DataTableModel} for the table of a test case's executions.
@@ -41,7 +41,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
  * 
  */
 /* package-private */class ExecutionsTableModelBuilder extends
-		DataTableModelHelper<Execution> {
+		DataTableModelBuilder<Execution> {
 	/**
 	 * The locale to use to format the labels.
 	 */

@@ -138,21 +138,18 @@
 						th:text="#{label.none}">None</div>
 				</div>
 
-				<div th:each="cufValue : ${testCaseCufValues}"
-					th:object="${cufValue}" class="display-table-row">
-					<label class="display-table-cell" th:text="*{customField.label}"
-						th:for="'cuf-' + *{customField.id}">cuf1</label>
-					<div class="display-table-cell" th:id="'cuf-' + *{customField.id}">
-						<span th:switch="*{customField.inputType.name()}" th:remove="tag">
-							<span th:remove="tag" th:case="'DATE_PICKER'"
-							th:text="*{valueAsDate == null ? #messages.msg('squashtm.nodata') : #dates.format(valueAsDate ,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</span>
-							<span th:remove="tag" th:case="'CHECKBOX'"
-							th:text="#{label.__*{value}__}">true</span> <span th:remove="tag"
-							th:case="*" th:text="*{value}">value</span>
-						</span>
-					</div>
-				</div>
-			</div>
+        <div th:each="cufValue : ${testCaseCufValues}" th:object="${cufValue}" class="display-table-row">
+          <label class="display-table-cell" th:text="*{customField.label}" th:for="'cuf-' + *{customField.id}">cuf1</label>
+          <div class="display-table-cell" th:id="'cuf-' + *{customField.id}">
+            <span th:switch="*{customField.inputType.name()}" th:remove="tag">
+              <span th:remove="tag" th:case="'DATE_PICKER'"
+                th:text="*{valueAsDate == null ? #messages.msg('squashtm.nodata') : #dates.format(valueAsDate ,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</span>
+                <span th:remove="tag" th:case="'CHECKBOX'" th:text="#{label.__*{value}__}">true</span>
+              <span th:remove="tag" th:case="*" th:text="*{value}">value</span>
+            </span>
+          </div>
+        </div>
+      </div>
 
 		</div>
 
@@ -197,18 +194,15 @@
 						<td
 							th:text="*{['step-type'] == 'call' ?  '' : ['nb-requirements']}">0</td>
 
-						<td th:each="cufModel : ${cufDefinitions}"
-							th:object="${step['customFields']['__${cufModel['code']}__']}">
-							<span th:if="${step['step-type'] == 'action'}"
-							th:switch="${cufModel.inputType.enumName}" th:remove="tag">
-								<span th:remove="tag" th:case="'DATE_PICKER'"
-								th:text="*{valueAsDate == null ? #messages.msg('squashtm.nodata') : #dates.format(valueAsDate ,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</span>
-								<span th:remove="tag" th:case="'CHECKBOX'"
-								th:text="#{label.__*{value}__}">true</span> <span
-								th:remove="tag" th:case="*" th:text="*{value}">value</span>
-						</span>
-						</td>
-						<td th:if="*{['step-type'] == 'call'}"
+            <td th:each="cufModel : ${cufDefinitions}" th:object="${step['customFields']['__${cufModel['code']}__']}">
+              <span th:if="${step['step-type'] == 'action'}" th:switch="${cufModel.inputType.enumName}" th:remove="tag">
+                <span th:remove="tag" th:case="'DATE_PICKER'"
+                  th:text="*{valueAsDate == null ? #messages.msg('squashtm.nodata') : #dates.format(valueAsDate ,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</span>
+                <span th:remove="tag" th:case="'CHECKBOX'" th:text="#{label.__*{value}__}">true</span> <span
+                  th:remove="tag" th:case="*" th:text="*{value}">value</span>
+            </span>
+            </td>
+            <td th:if="*{['step-type'] == 'call'}"
 							th:text="*{['step-action']}">Cas de Test : Machin truc
 							chouette</td>
 						<td th:if="*{['step-type'] == 'action'}"

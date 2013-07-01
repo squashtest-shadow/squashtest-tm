@@ -39,7 +39,7 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.web.internal.controller.campaign.TestSuiteHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 public final class BugTrackerControllerHelper {
@@ -227,7 +227,7 @@ public final class BugTrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class IterationIssuesTableModel extends DataTableModelHelper<IssueOwnership<RemoteIssueDecorator>> {
+	static final class IterationIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new IterationModelOwnershipNamebuilder();
 		private BugTrackersLocalService bugTrackersLocalService;
@@ -277,7 +277,7 @@ public final class BugTrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class TestCaseIssuesTableModel extends DataTableModelHelper<IssueOwnership<RemoteIssueDecorator>> {
+	static final class TestCaseIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new TestCaseModelOwnershipNamebuilder();
 		private BugTrackersLocalService bugTrackersLocalService;
@@ -318,7 +318,7 @@ public final class BugTrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class ExecutionIssuesTableModel extends DataTableModelHelper<IssueOwnership<RemoteIssueDecorator>> {
+	static final class ExecutionIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new ExecutionModelOwnershipNamebuilder();
 		private BugTrackersLocalService bugTrackersLocalService;
@@ -364,7 +364,7 @@ public final class BugTrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class StepIssuesTableModel extends DataTableModelHelper<IssueOwnership<RemoteIssueDecorator>> {
+	static final class StepIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
 		private BugTrackersLocalService bugTrackersLocalService;
 
 		StepIssuesTableModel(BugTrackersLocalService bugTrackerLocalService) {
