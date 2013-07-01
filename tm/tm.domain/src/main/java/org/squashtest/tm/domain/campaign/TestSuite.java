@@ -41,6 +41,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -58,7 +59,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @Auditable
 @Entity
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
-public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity {
+public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, AttachmentHolder {
 
 	public TestSuite() {
 		super();
@@ -134,6 +135,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity {
 		return iteration;
 	}
 
+	@Override
 	public AttachmentList getAttachmentList() {
 		return attachmentList;
 	}

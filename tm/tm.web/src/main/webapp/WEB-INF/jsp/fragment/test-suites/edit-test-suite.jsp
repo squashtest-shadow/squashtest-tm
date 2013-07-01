@@ -488,8 +488,10 @@
 	</div>
 
 	<%------------------------------ Attachments bloc ------------------------------------------- --%>
-	<at:attachment-tab tabId="tabs-3" entity="${ testSuite }"
-		editable="${ executable }" />
+	
+	<at:attachment-tab tabId="tabs-3" entity="${ testSuite }"	editable="${ executable }" tableModel="${attachmentsModel}"/>
+	
+	
 	<%-- ---------------------deletion popup------------------------------ --%>
 	<c:if test="${ deletable }">
 		<script>

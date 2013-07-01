@@ -224,7 +224,7 @@
 </div>
 <%-- --------------------------------------------- /tab1 Information----------------------------------------------%>
 <%-- --------------------------------------------- tab2 Attachments ----------------------------------------------%>
-	<at:attachment-tab tabId="tabs-2" entity="${ requirementVersion }" editable="${ attachable }" />
+	<at:attachment-tab tabId="tabs-2" entity="${ requirementVersion }" editable="${ attachable }" tableModel="${attachmentsModel}" />
 <%-- --------------------------------------------- /tab2 Attachments ----------------------------------------------%>
 	
 </div>

@@ -333,7 +333,7 @@ that page won't be editable if
 </div>
 <%-- ----------------------------------- /INFO TAB  ----------------------------------------------%>	
 <%-- ----------------------------------- ATTACHMENT TAB  ----------------------------------------------%>
-<at:attachment-tab tabId="tabs-2" entity="${ requirement }" editable="${ attachable }" />
+<at:attachment-tab tabId="tabs-2" entity="${ requirement }" editable="${ attachable }" tableModel="${attachmentsModel}"/>
 <%-- ----------------------------------- /ATTACHMENT TAB  ----------------------------------------------%>	
 <%-- -------------------------------------------------------- /TABS  ----------------------------------------------%>	
 </div>

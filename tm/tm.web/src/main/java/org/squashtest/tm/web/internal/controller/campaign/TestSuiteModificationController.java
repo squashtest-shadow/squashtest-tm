@@ -33,8 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -63,11 +63,11 @@ import org.squashtest.tm.service.testautomation.TestAutomationFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelHelper;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -75,53 +75,42 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 @Controller
 @RequestMapping("/test-suites/{id}")
 public class TestSuiteModificationController {
+	
+
+	private static final String TEST_SUITE = "testSuite";
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 
 	private static final String NAME = "name";
 
+	@Inject
 	private TestSuiteModificationService service;
 
 	// TODO : move to TestSuiteModificationService everything handled here bu the other services. In order to remove
 	// those
 	// extra services.
 
+	@Inject
 	private IterationModificationService iterationModService;
 
+	@Inject
 	private IterationTestPlanFinder iterationTestPlanFinder;
 
 	@Inject
 	private PermissionEvaluationService permissionService;
 
+	@Inject
 	private TestAutomationFinderService testAutomationService;
 
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
-
-	private static final String TEST_SUITE = "testSuite";
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
-
-	@ServiceReference
-	public void setTestAutomationFinderService(TestAutomationFinderService testAutomationService) {
-		this.testAutomationService = testAutomationService;
-	}
-
-	@ServiceReference
-	public void setIterationTestPlanFinder(IterationTestPlanFinder iterationTestPlanFinder) {
-		this.iterationTestPlanFinder = iterationTestPlanFinder;
-	}
-
-	@ServiceReference
-	public void setTestSuiteModificationService(TestSuiteModificationService service) {
-		this.service = service;
-	}
-
-	@ServiceReference
-	public void setIterationModificationService(IterationModificationService iterationModService) {
-		this.iterationModService = iterationModService;
-	}
+	
+	@Inject
+	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
 
 	@Inject
 	private InternationalizationHelper messageSource;
 
+	
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
 			.mapAttribute(Project.class, NAME, String.class, "project-name")
 			.mapAttribute(TestCase.class, NAME, String.class, "tc-name")
@@ -134,43 +123,34 @@ public class TestSuiteModificationController {
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView showTestSuite(@PathVariable long id) {
-		TestSuite testSuite = service.findById(id);
-		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(id);
-		boolean hasCUF = cufValueService.hasCustomFields(testSuite);
+	public String showTestSuite(Model model, @PathVariable long id) {
 
-		ModelAndView mav = new ModelAndView("fragment/test-suites/edit-test-suite");
-		mav.addObject(TEST_SUITE, testSuite);
-		mav.addObject("statistics", testSuiteStats);
-		mav.addObject("hasCUF", hasCUF);
-		return mav;
+		populateTestSuiteModel(model, id);
+		return "fragment/test-suites/edit-test-suite";
 	}
 
 	// will return the iteration in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public ModelAndView showTestSuiteInfo(@PathVariable long id) {
+	public String showTestSuiteInfo(Model model, @PathVariable long id) {
 
-		TestSuite testSuite = service.findById(id);
-
-		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(id);
-
-		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-test-suite");
-
-		if (testSuite != null) {
-			boolean hasCUF = cufValueService.hasCustomFields(testSuite);
-			mav.addObject(TEST_SUITE, testSuite);
-			mav.addObject("statistics", testSuiteStats);
-			mav.addObject("hasCUF", hasCUF);
-		} else {
-			testSuite = new TestSuite();
-			testSuite.setName("Not found");
-			testSuite.setDescription("This test suite either do not exists, or was removed");
-			mav.addObject(TEST_SUITE, testSuite);
-			mav.addObject("hasCUF", false);
-
-		}
-		return mav;
+		populateTestSuiteModel(model, id);
+		return "page/campaign-libraries/show-test-suite";
 	}
+	
+	private void populateTestSuiteModel(Model model, long testSuiteId){
+		
+		TestSuite testSuite = service.findById(testSuiteId);
+		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(testSuiteId);
+		boolean hasCUF = cufValueService.hasCustomFields(testSuite);
+		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(testSuite);
+		
+		model.addAttribute(TEST_SUITE, testSuite);
+		model.addAttribute("statistics", testSuiteStats);
+		model.addAttribute("hasCUF", hasCUF);
+		model.addAttribute("attachmentsModel", attachmentsModel);
+		
+	}
+
 
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
 	public ModelAndView refreshGeneralInfos(@PathVariable long id) {
@@ -294,82 +274,12 @@ public class TestSuiteModificationController {
 
 		PagedCollectionHolder<List<IterationTestPlanItem>> holder = service.findTestSuiteTestPlan(id, paging);
 
-		return new TestSuiteTestPlanItemDataTableModelHelper(messageSource, locale).buildDataModel(holder,
+		return new TestSuiteViewTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder,
 				params.getsEcho());
 
 	}
 
-	private static class TestSuiteTestPlanItemDataTableModelHelper extends DataTableModelHelper<IterationTestPlanItem> {
-		private InternationalizationHelper messageSource;
-		private Locale locale;
-
-		private TestSuiteTestPlanItemDataTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
-			this.messageSource = messageSource;
-			this.locale = locale;
-		}
-
-		@Override
-		public Map<String, Object> buildItemData(IterationTestPlanItem item) {
-
-			String projectName;
-			String testCaseName;
-			String reference;
-			String importance;
-			final String automationMode = item.isAutomated() ? "A" : "M";
-
-			if (item.isTestCaseDeleted()) {
-				projectName = formatNoData(locale);
-				testCaseName = formatDeleted(locale);
-				importance = formatNoData(locale);
-				reference = formatNoData(locale);
-			} else {
-				projectName = item.getReferencedTestCase().getProject().getName();
-				testCaseName = item.getReferencedTestCase().getName();
-				reference = item.getReferencedTestCase().getReference();
-				importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
-			}
-
-			// ugly copypasta from IterationThingieBuilder
-			String datasetName;
-			if (item.getReferencedDataset() == null) {
-				datasetName = formatNoData(locale);
-			} else {
-				datasetName = item.getReferencedDataset().getName();
-			}
-
-			Map<String, Object> rowMap = new HashMap<String, Object>(14);
-
-			rowMap.put("entity-id", item.getId());
-			rowMap.put("entity-index", getCurrentIndex());
-			rowMap.put("project-name", projectName);
-			rowMap.put("exec-mode", automationMode);
-			rowMap.put("reference", reference);
-			rowMap.put("tc-name", testCaseName);
-			rowMap.put("importance", importance);
-			rowMap.put("status", messageSource.internationalize(item.getExecutionStatus(), locale));
-			rowMap.put("last-exec-by", formatString(item.getLastExecutedBy(), locale));
-			rowMap.put("last-exec-on", messageSource.localizeDate(item.getLastExecutedOn(), locale));
-			rowMap.put("is-tc-deleted", item.isTestCaseDeleted());
-			rowMap.put("empty-execute-holder", null);
-			rowMap.put("empty-delete-holder", null);
-			rowMap.put("dataset", datasetName);
-
-			return rowMap;
-
-		}
-
-		private String formatString(String arg, Locale locale) {
-			return messageSource.messageOrNoData(arg, locale);
-		}
-
-		private String formatNoData(Locale locale) {
-			return messageSource.noData(locale);
-		}
-
-		private String formatDeleted(Locale locale) {
-			return messageSource.itemDeleted(locale);
-		}
-	}
+	
 
 	/* ************** execute auto *********************************** */
 
@@ -403,7 +313,5 @@ public class TestSuiteModificationController {
 	}
 
 	/* ************** /execute auto *********************************** */
-
-	/* ***************** data formatter *************************** */
 
 }

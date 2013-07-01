@@ -61,6 +61,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -91,7 +92,8 @@ public class RequirementVersionManagerController {
 	@Inject
 	private VerifyingTestCaseManagerService verifyingTestCaseManager;
 
-
+	@Inject
+	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
 
 	@Inject
 	private CustomFieldHelperService cufHelperService;
@@ -169,12 +171,14 @@ public class RequirementVersionManagerController {
 		boolean hasCUF = cufValueService.hasCustomFields(requirementVersion);
 		String categories = buildMarshalledCategories(locale);		
 		DataTableModel verifyingTCModel = getVerifyingTCModel(requirementVersion);
+		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(requirementVersion);
 
 		model.addAttribute("requirementVersion", requirementVersion);
 		model.addAttribute("jsonCriticalities", criticalities);
 		model.addAttribute("jsonCategories", categories);
 		model.addAttribute("hasCUF", hasCUF);
 		model.addAttribute("verifyingTestCaseModel", verifyingTCModel);
+		model.addAttribute("attachmentsModel", attachmentsModel);
 	}
 	
 	private DataTableModel getVerifyingTCModel(RequirementVersion version){

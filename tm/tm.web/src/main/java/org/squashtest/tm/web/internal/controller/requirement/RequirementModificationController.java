@@ -55,6 +55,7 @@ import org.squashtest.tm.service.requirement.RequirementModificationService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -99,6 +100,9 @@ public class RequirementModificationController {
 	@Inject
 	private InternationalizationHelper i18nHelper;
 	
+	@Inject
+	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
+	
 	
 	private final DatatableMapper<Integer> versionMapper = new IndexBasedMapper(7)
 														.mapAttribute(RequirementVersion.class, "versionNumber", int.class, 1)
@@ -134,12 +138,14 @@ public class RequirementModificationController {
 		String categories = buildMarshalledCategories(locale);
 		boolean hasCUF = cufValueService.hasCustomFields(requirement.getCurrentVersion());
 		DataTableModel verifyingTCModel = getVerifyingTCModel(requirement.getCurrentVersion());
+		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(requirement);
 		
 		model.addAttribute("requirement", requirement);
 		model.addAttribute("criticalityList", criticalities);
 		model.addAttribute("categoryList", categories);
 		model.addAttribute("hasCUF", hasCUF);
 		model.addAttribute("verifyingTestCasesModel", verifyingTCModel);
+		model.addAttribute("attachmentsModel", attachmentsModel);
 		
 	}
 
