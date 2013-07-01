@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -54,7 +55,6 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -137,12 +137,12 @@ public class TestCaseTestStepsController {
 
 		Paging filter = new DataTablePaging(params);
 
-		FilteredCollectionHolder<List<TestStep>> holder = testCaseModificationService.findStepsByTestCaseIdFiltered(
+		PagedCollectionHolder<List<TestStep>> holder = testCaseModificationService.findStepsByTestCaseIdFiltered(
 				testCaseId, filter);
 		Project project = testCaseModificationService.findById(testCaseId).getProject();
 		// cufs
 		CustomFieldHelper<ActionTestStep> helper = cufHelperService
-				.newStepsHelper(holder.getFilteredCollection(), project)
+				.newStepsHelper(holder.getPagedItems(), project)
 				.setRenderingLocations(RenderingLocation.STEP_TABLE)
 				.restrictToCommonFields();
 
@@ -151,7 +151,7 @@ public class TestCaseTestStepsController {
 		// generate the model
 		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
 		builder.usingCustomFields(cufValues);
-		return builder.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+		return builder.buildDataModel(holder, params.getsEcho());
 
 	}
 

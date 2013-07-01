@@ -49,6 +49,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
@@ -78,7 +79,6 @@ import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.execution.ExecutionFinder;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
@@ -439,7 +439,7 @@ public class TestCaseModificationController {
 
 		PagingAndSorting paging = createPaging(params, referencingTestCaseMapper);
 
-		FilteredCollectionHolder<List<TestCase>> holder = testCaseModificationService.findCallingTestCases(testCaseId,
+		PagedCollectionHolder<List<TestCase>> holder = testCaseModificationService.findCallingTestCases(testCaseId,
 				paging);
 
 		return new DataTableModelBuilder<TestCase>() {
@@ -449,7 +449,7 @@ public class TestCaseModificationController {
 						item.getReference(), item.getName(),
 						internationalizationHelper.internationalize(item.getExecutionMode(), locale) };
 			}
-		}.buildDataModel(holder, paging.getFirstItemIndex() + 1, params.getsEcho());
+		}.buildDataModel(holder, params.getsEcho());
 
 	}
 

@@ -26,7 +26,6 @@ import java.util.Locale;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.springframework.context.MessageSource;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
@@ -87,7 +86,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 	 */
 	@Override
 	public void visit(RequirementCreation event) {
-		String message = i18nHelper.getMessage("label.Creation", null, locale);
+		String message = i18nHelper.internationalize("label.Creation", locale);
 		populateCurrentItemData(message, "creation", event);
 
 	}
@@ -99,6 +98,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 	public void visit(RequirementPropertyChange event) {
 		Object[] args = buildMessageArgs(event);
 
+		@SuppressWarnings("deprecation")
 		String message = i18nHelper.getMessage(buildPropertyChangeMessageKey(event), args, locale);
 		populateCurrentItemData(message, "simple-prop", event);
 	}
@@ -136,10 +136,10 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 		return new Object[] { oldValueLabel, newValueLabel };
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private String retrieveEnumI18ndLabel(Class enumType, String stringValue) {
 		Internationalizable enumValue = Enum.valueOf(enumType, stringValue);
-		return i18nHelper.getMessage(enumValue.getI18nKey(), null, locale);
+		return i18nHelper.internationalize(enumValue, locale);
 	}
 
 	/**
@@ -147,7 +147,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 	 */
 	@Override
 	public void visit(RequirementLargePropertyChange event) {
-		String message = i18nHelper.getMessage(buildPropertyChangeMessageKey(event), null, locale);
+		String message = i18nHelper.internationalize(buildPropertyChangeMessageKey(event), locale);
 		populateCurrentItemData(message, "fat-prop", event);
 
 	}

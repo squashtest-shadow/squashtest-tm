@@ -54,7 +54,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 		PagedCollectionHolder paged = pagedCollection(event)
 
 		and:
-		i18nHelper.getMessage(_,null,locale) >> "Création"
+		i18nHelper.internationalize(_,locale) >> "Création"
 
 		when:
 		DataTableModel model = builder.buildDataModel(paged, "wooo")
@@ -123,7 +123,7 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 
 
 		and:
-		i18nHelper.getMessage(_,null,locale) >> "Modification de la description"
+		i18nHelper.internationalize(_,locale) >> "Modification de la description"
 
 		when:
 		DataTableModel model = builder.buildDataModel(paged, "wooo")
@@ -178,8 +178,8 @@ class RequirementAuditEventTableModelBuilderTest extends Specification {
 		paged.totalNumberOfItems >> 10
 
 		and:
-		i18nHelper.getMessage(RequirementStatus.OBSOLETE.i18nKey, null, locale) >> "Obs"
-		i18nHelper.getMessage(RequirementStatus.APPROVED.i18nKey, null, locale) >> "App"
+		i18nHelper.internationalize(RequirementStatus.OBSOLETE, locale) >> "Obs"
+		i18nHelper.internationalize(RequirementStatus.APPROVED, locale) >> "App"
 		i18nHelper.getMessage(_, ["Obs", "App"], locale) >> "Modification du status : 'Obsolète' -> 'Approuvé'"
 
 		when:

@@ -59,7 +59,7 @@ class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase>
 	
 
 	private String formatExecutionMode(TestCaseExecutionMode mode) {
-		return helper.getMessage(mode.getI18nKey(), null, locale);
+		return helper.internationalize(mode, locale);
 	}
 	
 

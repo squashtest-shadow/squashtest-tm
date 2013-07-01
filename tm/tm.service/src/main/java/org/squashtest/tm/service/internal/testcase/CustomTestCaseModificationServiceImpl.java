@@ -35,8 +35,10 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.project.Project;
@@ -50,7 +52,6 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
@@ -75,7 +76,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestCaseDao testCaseDao;
-	
+
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
 	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
@@ -93,7 +94,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Named("squashtest.tm.service.internal.TestCaseManagementService")
 	private NodeManagementService<TestCase, TestCaseLibraryNode, TestCaseFolder> testCaseManagementService;
 
-
 	@Inject
 	private TestCaseNodeDeletionHandler deletionHandler;
 
@@ -105,11 +105,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestCaseCallTreeFinder callTreeFinder;
-	
+
 	@Inject
 	private ParameterModificationService parameterModificationService;
-	
-	
+
 	/* *************** TestCase section ***************************** */
 
 	@Override
@@ -237,10 +236,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
 	@Transactional(readOnly = true)
-	public FilteredCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId, Paging filter) {
-		List<TestStep> list = testCaseDao.findAllStepsByIdFiltered(testCaseId, filter);
+	public PagedCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId, Paging paging) {
+		List<TestStep> list = testCaseDao.findAllStepsByIdFiltered(testCaseId, paging);
 		long count = findStepsByTestCaseId(testCaseId).size();
-		return new FilteredCollectionHolder<List<TestStep>>(count, list);
+		return new PagingBackedPagedCollectionHolder<List<TestStep>>(paging, count, list);
 	}
 
 	@Override
@@ -280,7 +279,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 
 		copyStep.accept(new TestStepCustomFieldCopier(original));
-		
+
 	}
 
 	private final class TestStepCustomFieldCopier implements TestStepVisitor {
@@ -295,8 +294,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			customFieldValuesService.copyCustomFieldValues((ActionTestStep) original, visited);
 			Project origProject = original.getTestCase().getProject();
 			Project newProject = visited.getTestCase().getProject();
-			
-			if (! origProject.equals(newProject)){
+
+			if (!origProject.equals(newProject)) {
 				customFieldValuesService.migrateCustomFieldValues(visited);
 			}
 		}
@@ -315,14 +314,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 	}
 
-
 	@Override
 	@Transactional(readOnly = true)
-	public FilteredCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, PagingAndSorting sorting) {
+	public PagedCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, PagingAndSorting sorting) {
 
 		List<TestCase> callers = testCaseDao.findAllCallingTestCases(testCaseId, sorting);
 		Long countCallers = testCaseDao.countCallingTestSteps(testCaseId);
-		return new FilteredCollectionHolder<List<TestCase>>(countCallers, callers);
+		return new PagingBackedPagedCollectionHolder<List<TestCase>>(sorting, countCallers, callers);
 
 	}
 
@@ -400,7 +398,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIds(folderIds);
 		return new TestCaseNodeWalker().walk(nodes);
 	}
-	
+
 	/**
 	 * @see org.squashtest.tm.service.testcase.CustomTestCaseFinder#findAllCallingTestCases(long)
 	 */
@@ -414,7 +412,5 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public TestCase findTestCaseFromStep(long testStepId) {
 		return testCaseDao.findTestCaseByTestStepId(testStepId);
 	}
-
-	
 
 }

@@ -25,11 +25,11 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
 /**
  * @author Gregory
@@ -41,7 +41,7 @@ public interface CustomTestCaseFinder {
 
 	List<TestStep> findStepsByTestCaseId(long testCaseId);
 
-	FilteredCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId, Paging filter);
+	PagedCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId, Paging filter);
 
 	/**
 	 * That method returns the list of test cases having at least one CallTestStep directly calling the test case
@@ -55,7 +55,7 @@ public interface CustomTestCaseFinder {
 	 * @return a non null but possibly empty FilteredCollectionHolder wrapping the list of first-level calling test
 	 *         cases.
 	 */
-	FilteredCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, PagingAndSorting sorting);
+	PagedCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, PagingAndSorting sorting);
 	
 	/**
 	 * Fetches all the test cases which have at least one ancestor from the given list. If ancestorID is a folder id,

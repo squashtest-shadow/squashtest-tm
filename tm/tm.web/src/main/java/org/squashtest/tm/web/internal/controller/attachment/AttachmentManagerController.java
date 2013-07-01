@@ -72,6 +72,7 @@ public class AttachmentManagerController {
 	private MessageSource messageSource;
 	
 
+	@SuppressWarnings("rawtypes")
 	private final DatatableMapper attachmentMapper = new NameBasedMapper()
 			.mapAttribute(Attachment.class, "id", Long.class, "item-id")
 			.mapAttribute(Attachment.class, NAME, String.class, "hyphenated-name")

@@ -20,33 +20,22 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
-import java.util.List
-
-import javax.inject.Provider
 import javax.servlet.http.HttpServletRequest
 
-import org.springframework.web.servlet.ModelAndView
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
+import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestStep
-import org.squashtest.tm.service.customfield.CustomFieldHelper;
-import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
-import org.squashtest.tm.service.customfield.CustomFieldHelperService;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder
-import org.squashtest.tm.service.testcase.TestCaseModificationService;
-import org.squashtest.tm.web.internal.controller.testcase.steps.TestCaseTestStepsController;
-import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
-import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder
+import org.squashtest.tm.service.customfield.CustomFieldHelper
+import org.squashtest.tm.service.customfield.CustomFieldHelperService
+import org.squashtest.tm.service.testcase.TestCaseModificationService
+import org.squashtest.tm.web.internal.controller.testcase.steps.TestCaseTestStepsController
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder
-import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper
 
 import spock.lang.Specification
 
@@ -89,7 +78,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 
 
 		and:
-		FilteredCollectionHolder<List<ActionTestStep>> holder = new FilteredCollectionHolder<List<ActionTestStep>>(2, [step1, step2])
+		PagedCollectionHolder<List<ActionTestStep>> holder = new SinglePageCollectionHolder<List<ActionTestStep>>([step1, step2])
 		testCaseModificationService.findStepsByTestCaseIdFiltered(10, _) >> holder
 		
 		and:
