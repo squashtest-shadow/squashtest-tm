@@ -98,10 +98,7 @@ public class IterationModificationController {
 	private CustomFieldValueFinderService cufValueService;
 
 	@Inject
-	private IterationTestPlanFinder testPlanFinder;
-
-	@Inject
-	
+	private IterationTestPlanFinder testPlanFinder;	
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
 	@Inject
