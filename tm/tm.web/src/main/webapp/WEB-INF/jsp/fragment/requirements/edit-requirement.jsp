@@ -330,7 +330,7 @@ that page won't be editable if
 		</jsp:attribute>
 	</comp:toggle-panel>
 	
-	<aggr:requirement-version-audit-trail requirementVersion="${ requirement.currentVersion }" />
+	<aggr:requirement-version-audit-trail requirementVersion="${ requirement.currentVersion }" tableModel="${auditTrailModel}"/>
 	
 </div>
 <%-- ----------------------------------- /INFO TAB  ----------------------------------------------%>	

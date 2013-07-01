@@ -33,6 +33,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -163,6 +164,13 @@ public class RequirementVersionManagerController {
 		populateRequirementEditorModel(requirementVersionId, model, locale);
 		return "fragment/requirements/requirement-version-editor";
 	}
+	
+
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	public String showRequirementVersionEditor(@PathVariable long requirementVersionId, Model model, Locale locale) {
+		populateRequirementEditorModel(requirementVersionId, model, locale);
+		return "page/requirements/requirement-version-editor";
+	}
 
 	private void populateRequirementEditorModel(long requirementVersionId, Model model, Locale locale) {
 		
@@ -172,6 +180,7 @@ public class RequirementVersionManagerController {
 		String categories = buildMarshalledCategories(locale);		
 		DataTableModel verifyingTCModel = getVerifyingTCModel(requirementVersion);
 		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(requirementVersion);
+		DataTableModel auditTrailModel = getEventsTableModel(requirementVersion);
 
 		model.addAttribute("requirementVersion", requirementVersion);
 		model.addAttribute("jsonCriticalities", criticalities);
@@ -179,6 +188,7 @@ public class RequirementVersionManagerController {
 		model.addAttribute("hasCUF", hasCUF);
 		model.addAttribute("verifyingTestCaseModel", verifyingTCModel);
 		model.addAttribute("attachmentsModel", attachmentsModel);
+		model.addAttribute("auditTrailModel", auditTrailModel);
 	}
 	
 	private DataTableModel getVerifyingTCModel(RequirementVersion version){
@@ -223,11 +233,18 @@ public class RequirementVersionManagerController {
 		return new Object();
 	}
 
-	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public String showRequirementVersionEditor(@PathVariable long requirementVersionId, Model model, Locale locale) {
-		populateRequirementEditorModel(requirementVersionId, model, locale);
-		return "page/requirements/requirement-version-editor";
+	
+	private DataTableModel getEventsTableModel(RequirementVersion requirementVersion){
+		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService
+				.findAllByRequirementVersionIdOrderedByDate(requirementVersion.getId(), new DefaultPagingAndSorting());
+
+		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(LocaleContextHolder.getLocale(), i18nHelper);
+
+		return builder.buildDataModel(auditTrail, "");
+			
 	}
+	
+	
 
 	/**
 	 * Returns a map of all requirement version's siblings, including itself. The map will be filled with strings:<br>

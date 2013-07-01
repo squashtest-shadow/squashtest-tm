@@ -220,7 +220,7 @@
 	</comp:toggle-panel>
 	
 	<%--------------- Audit Trail ------------------------------------%>
-	<aggr:requirement-version-audit-trail requirementVersion="${ requirementVersion }" />
+	<aggr:requirement-version-audit-trail requirementVersion="${ requirementVersion }" tableModel="${auditTrailModel}" />
 </div>
 <%-- --------------------------------------------- /tab1 Information----------------------------------------------%>
 <%-- --------------------------------------------- tab2 Attachments ----------------------------------------------%>

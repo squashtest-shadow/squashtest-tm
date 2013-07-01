@@ -21,22 +21,29 @@
 
 --%>
 <%@ tag body-content="empty" %>
+
 <%@ attribute name="requirementVersion" required="true" type="java.lang.Object" rtexprvalue="true" %>
+<%@ attribute name="tableModel" required="false" type="java.lang.Object" rtexprvalue="true" 
+			  description="the initial data to be displayed in the table. Will be loaded through ajax if left blank."%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="cmp" tagdir="/WEB-INF/tags/component" %>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <c:url var="changesBaseUrl" value="/audit-trail/requirement-versions/fat-prop-change-events" />
 <c:url var="modelUrl" value="/audit-trail/requirement-versions/${ requirementVersion.id }/events-table" />
 <c:url var="tableLangUrl" value="/datatables/messages" />
+
+<c:set var="deferloadingClause" value=""/>
+<c:if test="${not empty tableModel}"><c:set var="deferloadingClause" value=", deferloading=${tableModel.iTotalRecords}"/></c:if>
 
 
 <cmp:toggle-panel id="requirement-audit-trail-panel" titleKey="title.EditHistory" open="false">
 	<jsp:attribute name="body">		
 		<div>
 			<table id="requirement-audit-trail-table" data-def="ajaxsource=${modelUrl}, language=${tableLangUrl}, 
-																datakeys-id=event-id, hover, pagesize=10" >
+																datakeys-id=event-id, hover, pagesize=10 ${deferloadingClause}" >
 				<thead>
 					<tr>
 						<th data-def="map=event-date"><f:message key="label.Date" /></th>
@@ -110,9 +117,14 @@
 		
 		// ********************* init ******************
 		
-		var table=$( "#requirement-audit-trail-table" ).squashTable({
+		var conf = {
 			fnRowCallback : auditTrailTableRowCallback
-		}, {});
+			<c:if test="${not empty tableModel}">
+			, aaData : ${json:serialize(tableModel.aaData)}
+			</c:if>
+		}
+		
+		var table=$( "#requirement-audit-trail-table" ).squashTable(conf, {});
 
 		$( "#audit-event-details-dialog" ).messageDialog();
 		

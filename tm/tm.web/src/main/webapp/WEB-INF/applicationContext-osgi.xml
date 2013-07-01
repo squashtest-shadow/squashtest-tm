@@ -361,6 +361,10 @@
     
     <osgi:reference id="squashtest.tm.service.ExecutionProcessingService" bean-name="squashtest.tm.service.ExecutionProcessingService" interface="org.squashtest.tm.service.execution.ExecutionProcessingService" />
 
+
+	<osgi:reference  id="squashtest.tm.service.audit.RequirementAuditTrailService"  bean-name="squashtest.tm.service.audit.RequirementAuditTrailService" interface="org.squashtest.tm.service.audit.RequirementAuditTrailService" />
+
+
 	<osgi:list id="squash.tm.report.ReportPlugins" interface="org.squashtest.tm.api.report.ReportPlugin"
 		cardinality="0..N">
 		<osgi:listener ref="squash.tm.report.ReportsRegistry"

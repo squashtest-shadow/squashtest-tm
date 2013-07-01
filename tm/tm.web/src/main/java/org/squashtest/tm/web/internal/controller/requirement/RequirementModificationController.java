@@ -32,6 +32,7 @@ import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,17 +45,20 @@ import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.Level;
+import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.requirement.RequirementModificationService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
@@ -78,6 +82,7 @@ public class RequirementModificationController {
 
 	@Inject
 	private Provider<RequirementCategoryComboDataBuilder> categoryComboBuilderProvider;
+	
 	@Inject
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
 	@Inject
@@ -102,6 +107,9 @@ public class RequirementModificationController {
 	
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
+	
+	@Inject
+	private RequirementAuditTrailService auditTrailService;
 	
 	
 	private final DatatableMapper<Integer> versionMapper = new IndexBasedMapper(7)
@@ -139,6 +147,7 @@ public class RequirementModificationController {
 		boolean hasCUF = cufValueService.hasCustomFields(requirement.getCurrentVersion());
 		DataTableModel verifyingTCModel = getVerifyingTCModel(requirement.getCurrentVersion());
 		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(requirement);
+		DataTableModel auditTrailModel = getEventsTableModel(requirement);
 		
 		model.addAttribute("requirement", requirement);
 		model.addAttribute("criticalityList", criticalities);
@@ -146,6 +155,7 @@ public class RequirementModificationController {
 		model.addAttribute("hasCUF", hasCUF);
 		model.addAttribute("verifyingTestCasesModel", verifyingTCModel);
 		model.addAttribute("attachmentsModel", attachmentsModel);
+		model.addAttribute("auditTrailModel", auditTrailModel);
 		
 	}
 
@@ -238,6 +248,17 @@ public class RequirementModificationController {
 	}
 	
 	
+	private DataTableModel getEventsTableModel(Requirement requirement){
+		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService
+				.findAllByRequirementVersionIdOrderedByDate(requirement.getCurrentVersion().getId(), new DefaultPagingAndSorting());
+
+		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(LocaleContextHolder.getLocale(), i18nHelper);
+
+		return builder.buildDataModel(auditTrail, "");
+			
+	}
+	
+	
 	/**
 	 * The change status combobox is filtered and only proposes the status to which it is legal to switch to. That
 	 * method will generate a map for that purpose. Pretty much like
@@ -293,6 +314,8 @@ public class RequirementModificationController {
 		model.addAttribute("jsonCriticalities", buildMarshalledCriticalities(locale));
 		model.addAttribute("jsonCategories", buildMarshalledCategories(locale));
 		model.addAttribute("verifyingTestCaseModel", getVerifyingTCModel(req.getCurrentVersion()));
+		model.addAttribute("auditTrailModel", getEventsTableModel(req));
+		
 		return "page/requirements/versions-manager";
 	}
 

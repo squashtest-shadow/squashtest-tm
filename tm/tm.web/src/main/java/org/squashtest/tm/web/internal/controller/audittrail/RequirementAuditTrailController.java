@@ -51,18 +51,12 @@ import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 @Controller
 @RequestMapping("/audit-trail/requirement-versions")
 public class RequirementAuditTrailController {
+	@Inject
 	private RequirementAuditTrailService auditTrailService;
+	
 	@Inject
 	private InternationalizationHelper i18nHelper;
 
-	/**
-	 * @param auditTrailService
-	 *            the auditTrailService to set
-	 */
-	@ServiceReference
-	public void setAuditTrailService(RequirementAuditTrailService auditTrailService) {
-		this.auditTrailService = auditTrailService;
-	}
 
 	@RequestMapping(value = "{requirementVersionId}/events-table", params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
