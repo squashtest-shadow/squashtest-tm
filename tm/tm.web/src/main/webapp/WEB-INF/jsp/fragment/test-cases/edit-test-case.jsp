@@ -40,15 +40,9 @@
 
 <%------------------------------------- URLs ----------------------------------------------%>
 
-<c:url var="workspaceUrl" 					value="/test-case-workspace/#" />
 
 <c:url var="testCaseUrl" 					value="/test-cases/${testCase.id}"/>
-<c:url var="verifiedRequirementsUrl" 		value="/test-cases/${testCase.id }/verified-requirement-versions"/>
-<c:url var="verifiedRequirementsTableUrl"	value="/test-cases/${testCase.id}/verified-requirement-versions?includeCallSteps=true" />
-<c:url var="btEntityUrl" 					value="/bugtracker/test-case/${testCase.id}"/>
-<c:url var="getImportance" 					value="/test-cases/${testCase.id}/importance"/>
 <c:url var="executionsTabUrl"				value="/test-cases/${testCase.id}/executions?tab="/>
-<c:url var="customFieldsValuesURL" 			value="/custom-fields/values" />
 <c:url var="stepTabUrl"						value="/test-cases/${testCase.id}/steps/panel" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
@@ -126,11 +120,11 @@
 		</li>
 	</ul>
 	
-	
-	<%-- ------------------------- Description Panel ------------------------- --%>
-	
+
 	<div id="tabs-1">
-		
+			
+		<%-- ------------------------- Description Panel ------------------------- --%>
+	
 		<tc:test-case-description 	testCase="${testCase}" 
 									testCaseNatureComboJson="${testCaseNatureComboJson}"
 									testCaseImportanceLabel="${testCaseImportanceLabel}"
@@ -143,24 +137,12 @@
 
 		<%----------------------------------- Prerequisites -----------------------------------------------%>
 
-		<c:if test="${ writable }">
-		<comp:rich-jeditable targetUrl="${ testCaseUrl }" componentId="test-case-prerequisite" />
-		</c:if>
-
-		<comp:toggle-panel id="test-case-prerequisite-panel" titleKey="generics.prerequisite.title" 
-						   isContextual="true" open="${ not empty testCase.prerequisite }">
-			<jsp:attribute name="body">
-				<div id="test-case-prerequisite-table" class="display-table">
-					<div class="display-table-row">
-						<div class="display-table-cell" id="test-case-prerequisite">${ testCase.prerequisite }</div>
-					</div>
-				</div>
-			</jsp:attribute>
-		</comp:toggle-panel>
+		<tc:test-case-prerequisites testCase="${testCase}" writable="${writable}" />
 
 
 		<%--------------------------- Verified Requirements section ------------------------------------%>
-		<tc:test-case-verified-requirement-bloc linkable="${ linkable }" verifiedRequirementsTableUrl="${ verifiedRequirementsTableUrl }" verifiedRequirementsUrl="${verifiedRequirementsUrl }" containerId="contextual-content"/>
+		
+		<tc:test-case-verified-requirement-bloc linkable="${ linkable }" testCase="${testCase}"  containerId="contextual-content"/>
 
 
 		<%--------------------------- calling test case section ------------------------------------%>
@@ -180,124 +162,13 @@
 
 </div>
 
-<%-- ----------------------------------------- Remaining of the javascript initialization ----------------------------- --%>
-	
 
-<f:message key="tabs.label.issues" var="tabIssueLabel"/>
-<script type="text/javascript">
+<%-- ===================================== INIT =============================== --%>
 
-	function refreshTCImportance(){
-		$.ajax({
-			type : 'GET',
-			data : {},
-			dataType : "text",
-			url : '${getImportance}'			
-		})
-		.success(function(importance){
-			$("#test-case-importance").html(importance);	
-		})
-		.error(function(){
-			$.squash.openMessage("<f:message key='popup.title.error' />", "fail to refresh importance");
-		});
-	}
-	
-		
-	function deleteTestCaseSuccess() {
-		<c:choose>
-			<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-			<c:when test="${param['isInfoPage']}" >		
-				document.location.href="${workspaceUrl}" ;
-			</c:when>
-			<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
-			<c:otherwise>
-				location.reload(true);
-			</c:otherwise>
-		</c:choose>		
-	}
-	
+<tc:test-case-main-js testCase="${testCase}" isInfoPage="${param.isInfoPage}" />
 
+<%-- ===================================== /INIT =============================== --%>
 
-	function renameTestCaseSuccess(data){
-		var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
-		var evt = new EventRename(identity, data.newName);
-		squashtm.contextualContent.fire(null, evt);		
-	};	
-	
-	function updateReferenceInTitle(newRef){
-		var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
-		var evt = new EventUpdateReference(identity, newRef);
-		squashtm.contextualContent.fire(null, evt);		
-	};
-
-	
-	$(function(){
-		
-		//init the rename popup
-		$( "#rename-test-case-dialog" ).bind( "dialogopen", function(event, ui) {
-			var name = $.trim($('#test-case-raw-name').text());
-			$("#rename-test-case-input").val(name);
-			
-		});
-		
-		$("#contextual-content").on("verifiedrequirementversions.refresh", refreshTCImportance);
-		
-		
-	
-		
-		//init the renaming listener
-		require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "jqueryui"], function($, contentHandlers, Frag, bugtracker){
-			
-			var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
-			
-			var nameHandler = contentHandlers.getNameAndReferenceHandler();
-			
-			nameHandler.identity = identity;
-			nameHandler.nameDisplay = "#test-case-name";
-			nameHandler.nameHidden = "#test-case-raw-name";
-			nameHandler.referenceHidden = "#test-case-raw-reference";
-			
-			squashtm.contextualContent.addListener(nameHandler);
-			
-			//****** tabs configuration *******
-			
-			var fragConf = {
-				beforeLoad : Frag.confHelper.fnCacheRequests	
-			};
-			Frag.init(fragConf);
-			
-			<c:if test="${testCase.project.bugtrackerConnected }">
-			bugtracker.btPanel.load({
-				url : "${btEntityUrl}",
-				label : "${tabIssueLabel}"
-			});
-			</c:if>
-			
-		});
-		
-		//**** cuf sections ************
-		
-		<c:if test="${hasCUF}">
-		//load the custom fields
-		$.get("${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}")
-		.success(function(data){
-			$("#test-case-description-table").append(data);
-		});
-		</c:if>
-		
-		
-		//************** other *************
-		
-		$("#rename-test-case-button").squashButton();
-		$("#delete-test-case-button").squashButton();
-		$("#print-test-case-button").squashButton();
-
-		$("#print-test-case-button").click(function(){
-			window.open("${testCaseUrl}?format=printable", "_blank");
-		});
-	});
-
-	
-</script>
 
 <%-- ===================================== popups =============================== --%>
 
@@ -305,13 +176,15 @@
 
 <%-- ===================================== /popups =============================== --%>
 		
-<%-- Test Automation code --%>
+<%-- ===================================== Test Automation code  =============================== --%>
+
 <c:if test="${testCase.project.testAutomationEnabled}">
 	<tc:testcase-script-elt-code testCase="${testCase}"
 								 canModify="${writable}" 
 								 testCaseUrl="${testCaseUrl}" />
 </c:if>
-<%-- /Test Automation code  --%>
+
+<%-- ===================================== /Test Automation code  ===============================  --%>
 
 
 

@@ -24,35 +24,24 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
+<%@ attribute name="writable"  required="true" type="java.lang.Boolean"  description="if the user has write permission on this test case" %>
 
 <c:url var="testCaseUrl" 					value="/test-cases/${testCase.id}"/>
 
+<c:if test="${ writable }">
+<comp:rich-jeditable targetUrl="${ testCaseUrl }" componentId="test-case-prerequisite" />
+</c:if>
 
-
-<div id="test-case-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
-
-	<div style="float: left; height: 100%;">
-		<h2>
-			<span>
-				<f:message key="test-case.header.title" />&nbsp;:&nbsp;
-			</span>
-			
-			<a id="test-case-name" href="${ testCaseUrl }/info">
-				<c:out value="${testCase.fullName}" escapeXml="true" /> 
-			</a>
-			
-			<%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
-			<span id="test-case-raw-reference" style="display: none">
-				<c:out value="${ testCase.reference }" escapeXml="true" /> 
-			</span> 
-			
-			<span id="test-case-raw-name" style="display: none">
-				<c:out value="${ testCase.name }" escapeXml="true" /> 
-			</span>
-		</h2>
-	</div>
-
-	<div style="clear: both;"></div>
-</div>
+<comp:toggle-panel id="test-case-prerequisite-panel" titleKey="generics.prerequisite.title" 
+				   isContextual="true" open="${ not empty testCase.prerequisite }">
+	<jsp:attribute name="body">
+		<div id="test-case-prerequisite-table" class="display-table">
+			<div class="display-table-row">
+				<div class="display-table-cell" id="test-case-prerequisite">${ testCase.prerequisite }</div>
+			</div>
+		</div>
+	</jsp:attribute>
+</comp:toggle-panel>

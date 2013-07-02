@@ -28,14 +28,16 @@
 <%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components"%>
 
 
-<%@ attribute name="verifiedRequirementsUrl" required="true"
-	description="URL to manipulate the verified requirements" %>
 <%@ attribute name="containerId" required="true" description="if of dom container that will hold the table events" %>
-<%@ attribute name="verifiedRequirementsTableUrl" required="true"
-	description="URL for the verified requirements table" %>
-<%@ attribute name="linkable" required="true" description=" boolean that says if the concerned test case is viewed by a user who has LINK rights on this entity" %>
+<%@ attribute name="linkable" 	 required="true" description=" boolean that says if the concerned test case is viewed by a user who has LINK rights on this entity" %>
+<%@ attribute name="testCase" 	 required="true" description="the test case" type="java.lang.Object"%>
+
+
 
 <s:url var="root" value="/" />
+<c:url var="verifiedRequirementsTableUrl"	value="/test-cases/${testCase.id}/verified-requirement-versions?includeCallSteps=true" />
+<c:url var="verifiedRequirementsUrl" 		value="/test-cases/${testCase.id }/verified-requirement-versions"/>
+
 <script type="text/javascript">
 			if (!squashtm) {
 				var squashtm = {};
