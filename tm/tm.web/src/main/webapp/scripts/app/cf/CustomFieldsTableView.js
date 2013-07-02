@@ -54,7 +54,7 @@ define(
 												"bRetrieve" : true,
 												"sDom" : 't<"dataTables_footer"lirp>',
 												"iDeferLoading" : 0,
-												"aaSorting" : [ [ 0, "asc" ] ],
+												"aaSorting" : [ [ 2, "asc" ] ],
 												"fnRowCallback" : function() {
 												},
 												"aoColumnDefs" : [
