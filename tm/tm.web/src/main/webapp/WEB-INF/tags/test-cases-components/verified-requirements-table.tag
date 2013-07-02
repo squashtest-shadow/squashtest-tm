@@ -24,16 +24,20 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ attribute name="verifiedRequirementsUrl" required="true"
-	description="URL to manipulate the verified requirements" %>
+
+
+<%@ attribute name="verifiedRequirementsUrl" required="true" description="URL to manipulate the verified requirements" %>
 <%@ attribute name="containerId" required="true" description="if of dom container that will hold the table events" %>
-<%@ attribute name="verifiedRequirementsTableUrl" required="true"
-	description="URL for the verified requirements table" %>
+<%@ attribute name="verifiedRequirementsTableUrl" required="true" description="URL for the verified requirements table" %>
 <%@ attribute name="linkable" required="true" description=" boolean that says if the concerned test case is viewed by a user who has LINK rights on this entity" %>
 <%@ attribute name="includeIndirectlyVerified" required="true" description="boolean that says if the table must include indirectly verified requirements" %>
+
+
 <s:url var="tableLanguageUrl" value="/datatables/messages" />
 <s:url var="requirementVersionsUrl" value="/requirement-versions"/>
 <s:url var="root" value="/" />
+
+
 <%-- Attention ! si vous refactorez cette page vous pouvez utiliser la version thymeleaf de la table des test-steps : templates/verified-requirements-bloc.frag.html --%>
 	
 	<c:choose>

@@ -22,14 +22,8 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
-<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="ta" tagdir="/WEB-INF/tags/testautomation"%>
@@ -42,62 +36,20 @@
 	pageEncoding="utf-8"%>
 
 <%-- used for copy/paste of steps --%>
-<script type="text/javascript"
-	src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.cookie.js"></script>
+<script type="text/javascript"	src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.cookie.js"></script>
 
 <%------------------------------------- URLs ----------------------------------------------%>
-<c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
-<s:url var="testCaseUrl" value="/test-cases/{tcId}">
-	<s:param name="tcId" value="${testCase.id}" />
-</s:url>
-<s:url var="testCaseInfoUrl" value="/test-cases/{tcId}/general">
-	<s:param name="tcId" value="${testCase.id}" />
-</s:url>
-<c:url var="verifiedRequirementsUrl" value="/test-cases/${testCase.id }/verified-requirement-versions"/>
-<c:url var="verifiedRequirementsTableUrl"
-	value="/test-cases/${testCase.id}/verified-requirement-versions?includeCallSteps=true" />
-<s:url var="updateStepUrl" value="/test-cases/{tcId}/steps/">
-	<s:param name="tcId" value="${testCase.id}" />
-</s:url>
-<s:url var="btEntityUrl" value="/bugtracker/test-case/{id}">
-	<s:param name="id" value="${testCase.id}" />
-</s:url>
-<s:url var="verifiedReqsManagerUrl"
-	value="/test-cases/${ testCase.id }/verified-requirement-versions/manager" />
-<c:url var="verifiedRequirementsUrl"
-	value="/test-cases/${ testCase.id }/verified-requirement-versions" />
-<c:url var="nonVerifiedRequirementsUrl"
-	value="/test-cases/${ testCase.id }/non-verified-requirement-versions" />
 
+<c:url var="workspaceUrl" 					value="/test-case-workspace/#" />
 
-<c:url var="workspaceUrl" value="/test-case-workspace/#" />
-<s:url var="simulateDeletionUrl"
-	value="/test-case-browser/delete-nodes/simulate" />
-<s:url var="confirmDeletionUrl"
-	value="/test-case-browser/delete-nodes/confirm" />
-<s:url var="getImportance" value="/test-cases/{tcId}/importance">
-	<s:param name="tcId" value="${testCase.id}" />
-</s:url>
-<s:url var="getNature" value="/test-cases/{tcId}/nature">
-	<s:param name="tcId" value="${testCase.id}" />
-</s:url>
-<s:url var="getType" value="/test-cases/{tcId}/type">
-	<s:param name="tcId" value="${testCase.id}" />
-</s:url>
-<s:url var="getStatus" value="/test-cases/{tcId}/status">
-	<s:param name="tcId" value="${testCase.id}" />
-</s:url>
-<s:url var="importanceAutoUrl" value="/test-cases/{tcId}/importanceAuto">
-	<s:param name="tcId" value="${testCase.id}" />
-</s:url>
-<c:url var="executionsTabUrl"
-	value='/test-cases/${testCase.id}/executions'>
-	<c:param name="tab" value="" />
-</c:url>
-
-<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
-<c:url var="stepTabUrl" value="/test-cases/${testCase.id}/steps/panel" />
-<c:url var="parametersTabUrl" value="/test-cases/${testCase.id}/parameters/panel" />
+<c:url var="testCaseUrl" 					value="/test-cases/${testCase.id}"/>
+<c:url var="verifiedRequirementsUrl" 		value="/test-cases/${testCase.id }/verified-requirement-versions"/>
+<c:url var="verifiedRequirementsTableUrl"	value="/test-cases/${testCase.id}/verified-requirement-versions?includeCallSteps=true" />
+<c:url var="btEntityUrl" 					value="/bugtracker/test-case/${testCase.id}"/>
+<c:url var="getImportance" 					value="/test-cases/${testCase.id}/importance"/>
+<c:url var="executionsTabUrl"				value="/test-cases/${testCase.id}/executions?tab="/>
+<c:url var="customFieldsValuesURL" 			value="/custom-fields/values" />
+<c:url var="stepTabUrl"						value="/test-cases/${testCase.id}/steps/panel" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- 
@@ -139,98 +91,13 @@
 
 <%---------------------------- Test Case Header ------------------------------%>
 
-<div id="test-case-name-div" 
-	 class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+<tc:test-case-header testCase="${testCase}" />
 
-	<div style="float: left; height: 100%;">
-		<h2>
-			<span>
-				<f:message key="test-case.header.title" />&nbsp;:&nbsp;
-			</span>
-			
-			<c:set var="completeTestCaseName" value="${ testCase.fullName }" />
-			<a id="test-case-name" href="${ testCaseUrl }/info">
-				<c:out value="${ completeTestCaseName }" escapeXml="true" /> 
-			</a>
-			
-			<%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
-			<span id="test-case-raw-reference" style="display: none">
-				<c:out value="${ testCase.reference }" escapeXml="true" /> 
-			</span> 
-			
-			<span id="test-case-raw-name" style="display: none">
-				<c:out value="${ testCase.name }" escapeXml="true" /> 
-			</span>
-		</h2>
-	</div>
-
-	<div style="clear: both;"></div>
-</div>
-
-<%---------------------------- Rename test case popup ------------------------------%>
-<c:if test="${ smallEditable }">
-	<pop:popup id="rename-test-case-dialog"
-		titleKey="dialog.rename-test-case.title" isContextual="true"
-		openedBy="rename-test-case-button">
-		
-		<jsp:attribute name="buttons">
-	
-			<f:message var="label" key="dialog.rename-test-case.title" />
-			
-			'${ label }': function() {
-				var newName = $("#rename-test-case-input").val();
-				$.ajax({
-					url : "${testCaseUrl}",
-					type : "POST",
-					dataType : "json",
-					data : { 'newName' : newName}
-				}).success(renameTestCaseSuccess);			
-			},
-			
-			<pop:cancel-button />
-			
-		</jsp:attribute>
-		
-		<jsp:attribute name="body">
-				<label>
-					<f:message key="dialog.rename.label" />
-				</label>
-				<input type="text" id="rename-test-case-input" 
-					   maxlength="255"	size="50" />
-				<br />
-				<comp:error-message forField="name" />
-		</jsp:attribute>
-	</pop:popup>
-</c:if>
 
 <%---------------------------- Test Case Informations ------------------------------%>
 
-<div id="test-case-toolbar" class="toolbar-class ui-corner-all">
-	
-	<div class="toolbar-information-panel">
-		<comp:general-information-panel auditableEntity="${ testCase }"	entityUrl="${ testCaseUrl }" />
-	</div>
-
-	<div class="toolbar-button-panel">
-	<c:if test="${ smallEditable }">
-		<input type="button" value="<f:message key='test-case.button.rename.label' />"
-				id="rename-test-case-button" class="button" />
-	</c:if>
-	<c:if test="${ deletable }">
-		<input type="button" value="<f:message key='test-case.button.remove.label' />"
-				id="delete-test-case-button" class="button" />
-	</c:if>
-		<input type="button" value="<f:message key='label.print'/>" id="print-test-case-button" class="button"/>
-	</div>
-	<div style="clear: both;"></div>
-	<c:if test="${ moreThanReadOnly }">
-		<comp:opened-object otherViewers="${ otherViewers }"
-							objectUrl="${ testCaseUrl }" 
-							isContextual="${ ! param.isInfoPage }" />
-	</c:if>
-
-</div>
-
+<tc:test-case-toolbar testCase="${testCase}" isInfoPage="${param.isInfoPage}" otherViewers="${otherViewers}"   
+					  moreThanReadOnly="${moreThanReadOnly}"  smallEditable="${smallEditable}" deletable="${deletable}" />
 
 <%-- --------------------------------------- Test Case body --------------------------------------- --%>
 
@@ -264,118 +131,24 @@
 	
 	<div id="tabs-1">
 		
-		<c:if test="${ smallEditable }">
-		<comp:rich-jeditable   targetUrl="${ testCaseUrl }" 
-							   componentId="test-case-description" />
-		
-		<comp:simple-jeditable targetUrl="${ testCaseUrl }"	
-							   componentId="test-case-reference"
-							   submitCallback="updateReferenceInTitle" 
-							   maxLength="50" />
-
-		<comp:select-jeditable componentId="test-case-importance"
-							   jsonData="${ testCaseImportanceComboJson }"
-							   targetUrl="${ testCaseUrl }" />
-
-		<comp:select-jeditable componentId="test-case-nature"
-							   jsonData="${ testCaseNatureComboJson }" 
-							   targetUrl="${ testCaseUrl }" />
-
-		<comp:select-jeditable componentId="test-case-type"
-							   jsonData="${ testCaseTypeComboJson }" 
-							   targetUrl="${ testCaseUrl }" />
-
-		<comp:select-jeditable componentId="test-case-status"
-								jsonData="${ testCaseStatusComboJson }" 
-								targetUrl="${ testCaseUrl }" />
-		</c:if>
-
-
-		<comp:toggle-panel id="test-case-description-panel"
-						   titleKey="label.Description" 
-						   isContextual="true" 
-						   open="true">
-						   
-			<jsp:attribute name="body">
-			<div id="test-case-description-table"  class="display-table">
-				
-				<div class="display-table-row">
-					<label class="display-table-cell" for="test-case-id">ID</label>
-					<div class="display-table-cell" id="test-case-id">${ testCase.id }</div>
-				</div>
-				
-				<div class="display-table-row">
-					<label for="test-case-description" class="display-table-cell"><f:message key="label.Description" /></label>
-					<div class="display-table-cell" id="test-case-description">${ testCase.description }</div>
-				</div>
-				
-				<div class="display-table-row">
-					<label class="display-table-cell" for="test-case-reference"><f:message key="test-case.reference.label" /></label>
-					<div class="display-table-cell" id="test-case-reference">${ testCase.reference }</div>
-				</div>
-				
-				<div class="display-table-row">
-					<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
-					<div class="display-table-cell">
-						<span id="test-case-importance">${testCaseImportanceLabel}</span>
-						<c:if test="${ smallEditable }">
-						<comp:select-jeditable-auto
-								associatedSelectJeditableId="test-case-importance"
-								url="${ importanceAutoUrl }"
-								isAuto="${ testCase.importanceAuto }"
-								paramName="importanceAuto" />
-						</c:if>
-					</div>
-				</div>
-				
-				<div class="display-table-row">
-					<label for="test-case-nature" class="display-table-cell"><f:message key="test-case.nature.combo.label" /></label>
-					<div class="display-table-cell">
-						<span id="test-case-nature">${ testCaseNatureLabel }</span>
-					</div>
-				</div>
-				
-				<div class="display-table-row">
-					<label for="test-case-type" class="display-table-cell">
-						<f:message key="test-case.type.combo.label" />
-					</label>
-					<div class="display-table-cell">
-						<span id="test-case-type">${ testCaseTypeLabel }</span>
-					</div>
-				</div>
-				
-				<div class="display-table-row">
-					<label for="test-case-status" class="display-table-cell"><f:message key="test-case.status.combo.label" /></label>
-					<div class="display-table-cell">
-						<span id="test-case-status">${ testCaseStatusLabel }</span>
-					</div>
-				</div>
-				
-				
-				<%-- Test Automation structure --%>
-				<c:if test="${testCase.project.testAutomationEnabled}">
-				<ta:testcase-script-elt-structure testCase="${testCase}"
-												  canModify="${writable}" 
-												  testCaseUrl="${testCaseUrl}" />	
-				</c:if>			
-				<%--/Test Automation structure --%>
-				
-			</div>
-			</jsp:attribute>
-		</comp:toggle-panel>
+		<tc:test-case-description 	testCase="${testCase}" 
+									testCaseNatureComboJson="${testCaseNatureComboJson}"
+									testCaseImportanceLabel="${testCaseImportanceLabel}"
+									testCaseImportanceComboJson="${testCaseImportanceComboJson}" 
+									testCaseTypeComboJson="${testCaseTypeComboJson}"
+									testCaseTypeStatusJson="${testCaseTypeStatusJson}"
+									writable="${writable}"
+									smallEditable="${smallEditable}"/>
 		
 
 		<%----------------------------------- Prerequisites -----------------------------------------------%>
 
 		<c:if test="${ writable }">
-		<comp:rich-jeditable targetUrl="${ testCaseUrl }"
-					   		 componentId="test-case-prerequisite" />
+		<comp:rich-jeditable targetUrl="${ testCaseUrl }" componentId="test-case-prerequisite" />
 		</c:if>
 
-		<comp:toggle-panel id="test-case-prerequisite-panel"
-						   titleKey="generics.prerequisite.title" 
-						   isContextual="true"
-							open="${ not empty testCase.prerequisite }">
+		<comp:toggle-panel id="test-case-prerequisite-panel" titleKey="generics.prerequisite.title" 
+						   isContextual="true" open="${ not empty testCase.prerequisite }">
 			<jsp:attribute name="body">
 				<div id="test-case-prerequisite-table" class="display-table">
 					<div class="display-table-row">
@@ -387,7 +160,7 @@
 
 
 		<%--------------------------- Verified Requirements section ------------------------------------%>
-		<aggr:test-case-verified-requirement-bloc linkable="${ linkable }" verifiedRequirementsTableUrl="${ verifiedRequirementsTableUrl }" verifiedRequirementsUrl="${verifiedRequirementsUrl }" containerId="contextual-content"/>
+		<tc:test-case-verified-requirement-bloc linkable="${ linkable }" verifiedRequirementsTableUrl="${ verifiedRequirementsTableUrl }" verifiedRequirementsUrl="${verifiedRequirementsUrl }" containerId="contextual-content"/>
 
 
 		<%--------------------------- calling test case section ------------------------------------%>
@@ -407,27 +180,12 @@
 
 </div>
 
-<%--------------------------- Deletion confirmation popup -------------------------------------%>
-
-<c:if test="${ deletable }">
-
-	<comp:delete-contextual-node-dialog
-		simulationUrl="${simulateDeletionUrl}"
-		confirmationUrl="${confirmDeletionUrl}" itemId="${testCase.id}"
-		successCallback="deleteTestCaseSuccess"
-		openedBy="delete-test-case-button"
-		titleKey="dialog.delete-test-case.title" />
-
-</c:if>
-
 <%-- ----------------------------------------- Remaining of the javascript initialization ----------------------------- --%>
 	
 
 <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script type="text/javascript">
 
-
-	
 	function refreshTCImportance(){
 		$.ajax({
 			type : 'GET',
@@ -443,9 +201,7 @@
 		});
 	}
 	
-	
-
-	
+		
 	function deleteTestCaseSuccess() {
 		<c:choose>
 			<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
@@ -543,10 +299,15 @@
 	
 </script>
 
+<%-- ===================================== popups =============================== --%>
+
+<tc:test-case-popups testCase="${testCase}" smallEditable="${smallEditable}" deletable="${deletable}" />
+
+<%-- ===================================== /popups =============================== --%>
 		
 <%-- Test Automation code --%>
 <c:if test="${testCase.project.testAutomationEnabled}">
-	<ta:testcase-script-elt-code testCase="${testCase}"
+	<tc:testcase-script-elt-code testCase="${testCase}"
 								 canModify="${writable}" 
 								 testCaseUrl="${testCaseUrl}" />
 </c:if>

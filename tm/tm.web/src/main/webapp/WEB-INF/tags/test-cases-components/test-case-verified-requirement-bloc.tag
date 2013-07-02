@@ -25,6 +25,9 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
+<%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components"%>
+
+
 <%@ attribute name="verifiedRequirementsUrl" required="true"
 	description="URL to manipulate the verified requirements" %>
 <%@ attribute name="containerId" required="true" description="if of dom container that will hold the table events" %>
@@ -62,7 +65,7 @@
 			</c:if>
 		</span>
 		<div class="toggle-panel-main" id="verified-requirements-panel">
-			<aggr:verified-requirements-table includeIndirectlyVerified="${ true }" linkable="${ linkable }" verifiedRequirementsTableUrl="${ verifiedRequirementsTableUrl }" verifiedRequirementsUrl="${verifiedRequirementsUrl }" containerId="contextual-content" />
+			<tc:verified-requirements-table includeIndirectlyVerified="${ true }" linkable="${ linkable }" verifiedRequirementsTableUrl="${ verifiedRequirementsTableUrl }" verifiedRequirementsUrl="${verifiedRequirementsUrl }" containerId="contextual-content" />
 		</div>
 	</div>
 </div>

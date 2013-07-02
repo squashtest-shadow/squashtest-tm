@@ -83,8 +83,6 @@
 <f:message var="deleteAutoTitle" key='title.confirmDeleteAutomatedTestLink'/>
 <div id="test-automation-removal-confirm-dialog" class="not-displayed popup-dialog" title="${ deleteAutoTitle }">
 <strong><f:message key='message.confirmDeleteAutomatedTestLink'/></strong>
-<input:ok />
-<input:confirm />
 </div>
 <script>
 

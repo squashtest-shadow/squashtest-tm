@@ -23,16 +23,20 @@
 <%@ tag body-content="empty" description="inserts the html table of verified requirements" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+
 <%@ attribute name="testStep" required="true"  type="java.lang.Object" description="the concerned test step" %>
 <%@ attribute name="containerId" required="true" description="if of dom container that will hold the table events" %>
+
 <c:url var="tableLanguageUrl" value="/datatables/messages" />
 <c:url var="requirementVersionsUrl" value="/requirement-versions" />
 <c:url var="verifiedRequirementsUrl" value="/test-cases/${ testStep.testCase.id }/verified-requirement-versions" />
 <c:url var="stepVerifiedRequirementsUrl" value="/test-steps/${ testStep.id }/verified-requirement-versions" />
 <c:url var="root" value="/" />
+
 <%-- This tag is used for requirement/testStep manager --%>
 <%-- Warning ! if you migrate the page in tymeleaf go see : templates/verified-requirements-bloc.frag.html --%>
-	<script type="text/javascript" th:inline="javascript">
+	<script type="text/javascript">
 
 	require([ "common" ], function(common) {
 		require([ "jquery",  "domReady","verified-requirements/TestStepVerifiedRequirementsTable" ], function($, domReady, TestStepVerifiedRequirementsTable) {
@@ -62,6 +66,7 @@
 				},
 			};
 		</script>
+		
 		<div class="toolbar">
 <input  id="remove-verified-requirements-from-step-button"
 				type="button" value="<f:message key='label.removeRequirementsAssociation.test-steps'/>"

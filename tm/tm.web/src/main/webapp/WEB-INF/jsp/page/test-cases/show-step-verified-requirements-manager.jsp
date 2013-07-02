@@ -28,7 +28,7 @@
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
+<%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <c:url var="treeBaseUrl" value="/requirement-browser/"/>
 <c:url var="testCaseUrl" value="/requirements/${ testStep.testCase.id }" />
@@ -141,7 +141,7 @@
 	
 	<jsp:attribute name="tablePane">
 	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testCaseUrl }" isContextual="false"/>
-		<aggr:steps-verified-requirements-table  testStep="${ testStep }" containerId="contextual-content" />
+		<tc:steps-verified-requirements-table  testStep="${ testStep }" containerId="contextual-content" />
 		<div id="add-summary-dialog" class="not-displayed" title="<f:message key='test-case.verified-requirement-version.add-summary-dialog.title' />">
 			<ul><li>summary message here</li></ul>
 		</div>
