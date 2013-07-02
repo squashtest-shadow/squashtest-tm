@@ -20,9 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.generic
 
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest
 
 import org.springframework.web.servlet.ModelAndView
+import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.library.Folder
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.service.library.FolderModificationService
@@ -41,7 +44,7 @@ class FolderModificationControllerTest extends Specification {
 		given:
 		HttpServletRequest req = Mock()
 		req.getPathInfo() >> "/dummy-something/1"
-		Folder f = Mock()
+		TestCaseFolder f = Mock()
 		service.findFolder(15) >> f
 
 		when:
@@ -56,6 +59,8 @@ class FolderModificationControllerTest extends Specification {
 
 class DummyFolderModificationController extends FolderModificationController<TestCaseFolder> {
 	FolderModificationService service
+	ServiceAwareAttachmentTableModelHelper attachmentsHelper 
+	
 
 	@Override
 	protected FolderModificationService<TestCaseFolder> getFolderModificationService() {
@@ -65,6 +70,11 @@ class DummyFolderModificationController extends FolderModificationController<Tes
 	@Override
 	protected String getWorkspaceName() {
 		return "workspace";
+	}
+	
+	@Override
+	protected Set<Attachment> findAttachments(TestCaseFolder folder){
+		return []
 	}
 
 }

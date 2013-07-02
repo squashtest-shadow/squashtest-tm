@@ -20,17 +20,26 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase
 
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest
 
 import org.apache.poi.hssf.record.formula.functions.T
 import org.springframework.web.servlet.ModelAndView
+import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.service.library.FolderModificationService;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
 import spock.lang.Specification
 
 class TestCaseFolderModificationControllerTest extends Specification {
-	TestCaseFolderModificationController controller = new TestCaseFolderModificationController()
+	TestCaseFolderModificationController controller = new TestCaseFolderModificationController(){
+		@Override
+		protected Set<Attachment> findAttachments(TestCaseFolder folder){
+			return []
+		}
+	}
 	FolderModificationService service = Mock()
 
 	def setup() {

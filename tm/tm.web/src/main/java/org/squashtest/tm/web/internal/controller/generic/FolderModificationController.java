@@ -22,6 +22,8 @@ package org.squashtest.tm.web.internal.controller.generic;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.service.library.FolderModificationService;
 
@@ -48,13 +51,19 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 		mav.addObject("folder", folder);
 		mav.addObject("updateUrl", getUpdateUrl(request.getPathInfo()));
 		mav.addObject("workspaceName", getWorkspaceName());
-		mav.addObject("attachments", attachmentsHelper.findAttachments(folder));
+		mav.addObject("attachments", findAttachments(folder));
 		return mav;
 	}
 
 	protected abstract FolderModificationService<FOLDER> getFolderModificationService();
 	protected abstract String getWorkspaceName();
 
+	
+	//might look like a bit of overhead but our class is now testable.
+	protected Set<Attachment> findAttachments(FOLDER folder){
+		return attachmentsHelper.findAttachments(folder);
+	}
+	
 	@RequestMapping(method = RequestMethod.DELETE)
 	public @ResponseBody
 	String removeFolder(@PathVariable long folderId) {
