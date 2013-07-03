@@ -25,20 +25,27 @@ import static org.squashtest.tm.domain.requirement.RequirementStatus.OBSOLETE;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.tm.domain.library.NodeContainer;
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
+import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 
@@ -54,7 +61,7 @@ import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "RLN_ID")
-public class Requirement extends RequirementLibraryNode<RequirementVersion> {
+public class Requirement extends RequirementLibraryNode<RequirementVersion> implements NodeContainer<Requirement> {
 	/**
 	 * The resource of this requirement is the latest version of the requirement.
 	 */
@@ -65,6 +72,12 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> {
 	@OneToMany(mappedBy = "requirement", cascade = { CascadeType.ALL })
 	@OrderBy("versionNumber DESC")
 	private List<RequirementVersion> versions = new ArrayList<RequirementVersion>();
+	
+	
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
+	private final Set<Requirement> children = new HashSet<Requirement>();
+
 
 	protected Requirement() {
 		super();
@@ -346,4 +359,62 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> {
 		}
 	}
 
+	// ****************************** implementation of NodeContainer ************************************
+
+
+	@Override
+	public void addContent(@NotNull Requirement child) throws DuplicateNameException,
+			NullArgumentException {
+		checkContentNameAvailable(child);
+		children.add(child);
+		child.notifyAssociatedWithProject(this.getProject());
+	}
+	
+	private void checkContentNameAvailable(Requirement child) throws DuplicateNameException {
+		if (!isContentNameAvailable(child.getName())) {
+			throw new DuplicateNameException(child.getName(), child.getName());
+		}
+	}
+
+	@Override
+	public boolean isContentNameAvailable(String name) {
+		for (Requirement child : children){
+			if (child.getName().equals(name)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public Set<Requirement> getContent() {
+		return children;
+	}
+
+	@Override
+	public boolean hasContent() {
+		return (children.size()>0);
+	}
+
+	@Override
+	public void removeContent(Requirement exChild)
+			throws NullArgumentException {
+		children.remove(exChild);
+	}
+
+	@Override
+	public List<String> getContentNames() {
+		List<String> contentNames = new ArrayList<String>(children.size());
+		for(Requirement child : children){
+			contentNames.add(child.getName());
+		}
+		return contentNames;
+	}
+
+	@Override
+	public void accept(NodeContainerVisitor visitor) {
+		visitor.visit(this);
+	}
+	
+	
 }

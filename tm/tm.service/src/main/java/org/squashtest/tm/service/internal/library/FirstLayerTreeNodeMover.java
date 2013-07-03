@@ -286,6 +286,10 @@ public class FirstLayerTreeNodeMover  implements NodeVisitor, PasteOperation {
 			
 		}
 
+		@Override
+		public void visit(Requirement requirement) {
+			//naaay
+		}
 
 		private void checkHierarchy(Long tocheckId, Long hierarchySourceId,
 				LibraryNodeDao<? extends LibraryNode> libraryNodeDao) {

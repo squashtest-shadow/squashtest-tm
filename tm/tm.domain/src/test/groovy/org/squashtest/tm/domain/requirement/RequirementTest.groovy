@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 
@@ -375,5 +376,66 @@ class RequirementTest extends Specification {
 		then:
 		thrown(NoVerifiableRequirementVersionException)
 	}
+	
+	def "should accept another Requirement as children"(){
+		given :
+			Requirement root = newRequirement("root")	
+			Requirement son = newRequirement("son")
+			
+		when :
+			root.addContent son
+			
+		then :
+			root.content as Set ==  [son] as Set 
+	}
+	
+	def "should say the name of requirements it contains"(){
+		given :
+			Requirement root = newRequirement("root")
+			
+		when :	
+			["bob", "mike", "robert"].each { root.addContent newRequirement(it) }
+		
+		then :
+			root.contentNames as Set == ["bob", "mike", "robert"] as Set 
+	}
+	
+	def "should say that the given name is available "(){
+		when :
+			Requirement root = newRequirement("root")
+			["bob", "mike", "robert"].each { root.addContent newRequirement(it) }
+			
+		then :
+			root.isContentNameAvailable("larry")
+	}
+	
+	def "should say that the given name is not available "(){
+		when :
+			Requirement root = newRequirement("root")
+			["bob", "mike", "robert"].each { root.addContent newRequirement(it) }
+			
+		then :
+			! root.isContentNameAvailable("bob")
+	}
+	
+	
+	
+	def "should not accept to append a requirement if another requirement having the same name is present"(){
+		given :
+			Requirement root = newRequirement("root")
+			["bob", "mike", "robert"].each { root.addContent newRequirement(it) }
+			
+		when :
+			root.addContent newRequirement("bob")
+			
+		then :
+			thrown(DuplicateNameException)
+	}
+	
+	
+	def newRequirement(String name){
+		return new Requirement(new RequirementVersion(name:name))	
+	}
+	
 
 }
