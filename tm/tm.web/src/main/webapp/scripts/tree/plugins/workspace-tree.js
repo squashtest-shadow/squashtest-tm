@@ -380,53 +380,6 @@ define(['jquery', 'jstree'], function($){
 		return deferred.promise();
 	}
 
-	/*
-	 * ******************************* leaf URL management code *************************************
-	 */
-	/**
-	 * Unselects the nodes of the given tree which are descendants of the given liNode.
-	 * 
-	 * @param liNode
-	 * @param tree
-	 */
-	function unselectDescendants(liNode, tree) {
-		var previouslySelected = tree.get_selected();
-		if (previouslySelected.length > 0) {
-			var descendants = $(liNode).find('li');
-			if (descendants.length > 0) {
-				$(descendants).each(function(index, element) {
-					tree.deselect_node(element);
-				});
-			}
-		}
-	}
-
-	/**
-	 * unused Unselects the nodes of the given tree which are not descendants of the same project as the given liNode.
-	 * 
-	 * @param liNode
-	 * @param tree
-	 * @param previouslySelected
-	 */
-	function unselectOtherProjectsSelections(liNode, tree, ppreviouslySelected) {
-		var previouslySelected = tree.get_selected();
-		if (previouslySelected.length > 0) {
-			var libraryOfSelectedNode;
-			if ($(liNode).is('[rel|="drive"]')) {
-				libraryOfSelectedNode = $(liNode)[0];
-			} else {
-				libraryOfSelectedNode = $(liNode).parents('[rel|="drive"]')[0];
-			}
-			var libraryOfSelectedNodeDescendants = $(libraryOfSelectedNode).find('li');
-			libraryOfSelectedNodeDescendants.push(libraryOfSelectedNode);
-
-			var nodesToUnselect = previouslySelected.not(libraryOfSelectedNodeDescendants);
-			$(nodesToUnselect).each(function(index, element) {
-				tree.deselect_node(element);
-			});
-		}
-
-	}
 
 	/* *******************************************************************************
 							// Library part	
@@ -449,45 +402,14 @@ define(['jquery', 'jstree'], function($){
 
 				var container = this.get_container();
 
-				this.eventHandler = new TreeEventHandler({
-					tree : this
-				});
-
-
-				 /*with the import option an action can be done in
-				 the tree even with no selected node.
-				 when the import mecanism will be dependent on the
-				 selected node this two lines won't be necessary
-				 anymore*/
-				if ($(".jstree").data("importable")) {
-					updateTreebuttons("import-excel import-links-excel");
-				}
-
 				var self = this;
 
 				container.bind("select_node.jstree", function(event, data) {
-
-					unselectDescendants(data.rslt.obj, self);
-					operations = data.inst.allowedOperations();
-					updateTreebuttons(operations);
-
-					var resourceUrl = $(data.rslt.obj).treeNode().getResourceUrl();
-
-					var selected = data.inst.get_selected();
-
-					if (selected.length == 1) {
-						squashtm.contextualContent.loadWith(resourceUrl).done(function() {
-							squashtm.contextualContent.addListener(self.eventHandler);
-						});
-					} else {
-						squashtm.contextualContent.unload();
-					}
+					// should unselect the descendant
+					this.get_selected().deselectChildren();
 
 					return true;
-				}).bind("deselect_node.jstree", function(event, data) {
-					operations = data.inst.allowedOperations();
-					updateTreebuttons(operations);
-					return true;
+					
 				})
 				/*
 				 * the following should have been as a handler of before.jstree on call move_node. however many considerations
@@ -553,55 +475,7 @@ define(['jquery', 'jstree'], function($){
 					var selected = this.get_selected();
 					selected.all('refresh');
 				},
-				
-				
-				allowedOperations : function() {
-					var selectedNodes = this.get_selected();
-					var operations = "";
-					if (this.get_container().data("importable")) {
-						operations += "import-excel import-links-excel";
-					}
-					if (selectedNodes.length === 0) {
-						return operations;
-					}
-					operations += "export ";
-					if (this.selectionIsCopyable(selectedNodes) == "OK") {
-						operations += "copy ";
-					}
-					if (this.selectionIsEditable(selectedNodes) != "OK") {
-						return operations;
-
-					} else {
-						if (this.selectionIsDeletable(selectedNodes) == "OK") {
-							operations += "delete ";
-						}
-
-						if (this.selectionIsOneEditableNode(selectedNodes) == "OK") {
-							if (this.selectionIsCreateFolderAllowed(selectedNodes) == "OK") {
-								operations += "create-folder ";
-							}
-
-							if (this.selectionIsCreateFileAllowed(selectedNodes) == "OK") {
-								operations += "create-file ";
-							}
-
-							if (this.selectionIsCreateResourceAllowed(selectedNodes) == "OK") {
-								operations += "create-resource ";
-							}
-
-							if (this.selectionIsRenamable(selectedNodes) == "OK") {
-								operations += "rename ";
-							}
-
-							if (this.selectionIsPasteAllowed(selectedNodes) == "OK") {
-								operations += "paste ";
-
-							}
-						}
-					}
-					return operations;
-				}
-									
+	
 			}
 
 		});

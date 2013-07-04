@@ -529,8 +529,6 @@ define(['jquery'], function($)){
 
 		this.getMoveUrl = getMoveUrl;
 		
+		return this;		
 	}
-
-
-
 });

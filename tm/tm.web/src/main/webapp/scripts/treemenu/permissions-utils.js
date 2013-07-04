@@ -19,9 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+//disfunctional and unused for now
 define(['jquery'], function($){
 	
-	
+	return {
 	selectionIsEditable : function(selectedNodes) {
 
 		// that variable will be set to true if at least
@@ -189,7 +191,56 @@ define(['jquery'], function($){
 		return squashtm.treemenu.treeNodeCopier.mayPaste();
 	},
 	
+	
+	
+	allowedOperations : function() {
+		var selectedNodes = this.get_selected();
+		var operations = "";
+		if (this.get_container().data("importable")) {
+			operations += "import-excel import-links-excel";
+		}
+		if (selectedNodes.length === 0) {
+			return operations;
+		}
+		operations += "export ";
+		if (this.selectionIsCopyable(selectedNodes) == "OK") {
+			operations += "copy ";
+		}
+		if (this.selectionIsEditable(selectedNodes) != "OK") {
+			return operations;
 
+		} else {
+			if (this.selectionIsDeletable(selectedNodes) == "OK") {
+				operations += "delete ";
+			}
+
+			if (this.selectionIsOneEditableNode(selectedNodes) == "OK") {
+				if (this.selectionIsCreateFolderAllowed(selectedNodes) == "OK") {
+					operations += "create-folder ";
+				}
+
+				if (this.selectionIsCreateFileAllowed(selectedNodes) == "OK") {
+					operations += "create-file ";
+				}
+
+				if (this.selectionIsCreateResourceAllowed(selectedNodes) == "OK") {
+					operations += "create-resource ";
+				}
+
+				if (this.selectionIsRenamable(selectedNodes) == "OK") {
+					operations += "rename ";
+				}
+
+				if (this.selectionIsPasteAllowed(selectedNodes) == "OK") {
+					operations += "paste ";
+
+				}
+			}
+		}
+		return operations;
+	}
+						
+	}
 	
 });
 

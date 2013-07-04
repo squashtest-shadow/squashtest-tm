@@ -24,8 +24,7 @@
  * 
  * 
  * conf : {
- *  controller : the controller object that manages the tree, the buttons and popups,
- * 	model : model object for that tree
+ *  model : model object for that tree
  * }
  * 
  */
@@ -53,7 +52,7 @@ define(function(){
 			},
 			"crrm": {
 				"move" : {
-					"check_move" : this.treeCheckDnd						
+					"check_move" : function(){this.treeCheckDnd()};						
 				} 
 			}, 
 			"dnd": {
@@ -76,16 +75,16 @@ define(function(){
 			
 			"hotkeys" : {
 				"del" : function(){
-							settings.controller.trigger('suppr.squashtree');
+							this.trigger('suppr.squashtree');
 						},
 				"f2" : function(){
-							settings.controller.trigger('rename.squashtree');
+							this.trigger('rename.squashtree');
 						},
 				"ctrl+c" : function(){
-							settings.controller.trigger('copy.squashtree');
+							this.trigger('copy.squashtree');
 						},
 				"ctrl+v" : function(){
-							settings.controller.trigger('paste.squashtree');						
+							this.trigger('paste.squashtree');						
 						},
 						
 				
@@ -115,8 +114,7 @@ define(function(){
 			},
 			
 			"squash" : {
-				rootUrl : baseURL,
-				controller : settings.controller
+				rootUrl : baseURL
 			}
 			
 		}

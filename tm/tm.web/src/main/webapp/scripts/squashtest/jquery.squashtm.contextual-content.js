@@ -28,7 +28,7 @@
 			readyState : 4,
 			abort : function() {
 			}
-		}; // we initialize it with a mock.
+		}; // we initialize it to null
 		this.onCleanContent = null;
 
 		/* **************** super private ************* */
