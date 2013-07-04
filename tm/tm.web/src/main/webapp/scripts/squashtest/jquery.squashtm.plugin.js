@@ -39,6 +39,9 @@ var squashtm = squashtm || {};
 		file : function(a) {
 			return $(a).is("[rel='file']");
 		},
+		requirement : function(a){
+			return $(a).is("[rel='file'][restype='requirements']");
+		},
 		campaign : function(a) {
 			return $(a).is("[rel='file'][restype='campaigns']");
 		},

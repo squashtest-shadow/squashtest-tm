@@ -236,6 +236,38 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		return requirement;
 	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.requirement.Requirement' , 'CREATE') "
+			+ OR_HAS_ROLE_ADMIN)	
+	public Requirement addRequirementToRequirement(long requirementId, @NotNull NewRequirementVersionDto newRequirement) {
+		
+		Requirement parent = requirementDao.findById(requirementId);		
+		Requirement child = createRequirement(newRequirement);
+		
+		parent.addContent(child);		
+		requirementDao.persist(child);
+		
+		createCustomFieldValues(child.getCurrentVersion());
+		initCustomFieldValues(child.getCurrentVersion(), newRequirement.getCustomFields());
+		
+		return child;
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.requirement.Requirement' , 'CREATE') "
+			+ OR_HAS_ROLE_ADMIN)	
+	public Requirement addRequirementToRequirement(long requirementId,
+			@NotNull Requirement newRequirement) {
+		
+		Requirement parent = requirementDao.findById(requirementId);
+
+		parent.addContent(newRequirement);
+		requirementDao.persist(newRequirement);
+		createCustomFieldValues(newRequirement.getCurrentVersion());
+
+		return newRequirement;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -250,6 +282,13 @@ public class RequirementLibraryNavigationServiceImpl extends
 		return (List<ExportRequirementData>) setFullFolderPath(requirementDao
 				.findRequirementToExportFromNodes(folderIds));
 	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.requirement.Requirement' , 'READ') " + OR_HAS_ROLE_ADMIN)	
+	public List<Requirement> findChildrenRequirements(long requirementId){
+		return requirementDao.findChildrenRequirements(requirementId);
+	}
+	
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'LINK') " + OR_HAS_ROLE_ADMIN)

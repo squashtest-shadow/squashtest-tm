@@ -39,7 +39,7 @@ class CampaignLibraryNavigationControllerTest extends spock.lang.Specification {
 	Provider campaignLibraryTreeNodeBuilder = Mock()
 
 	def setup() {
-		controller.setCampaignLibraryNavigationService(service);
+		controller.campaignLibraryNavigationService = service;
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.iterationNodeBuilder = iterationNodeBuilder
 		controller.campaignLibraryTreeNodeBuilder = campaignLibraryTreeNodeBuilder

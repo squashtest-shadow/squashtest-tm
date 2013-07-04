@@ -61,6 +61,9 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 	public void visit(Requirement requirement) {
 		addLeafAttributes("requirements");
 
+		State state = (requirement.hasContent() ? State.closed : State.leaf);
+		getBuiltNode().setState(state);
+		
 		if (requirement.getReference() != null && requirement.getReference().length() > 0) {
 			getBuiltNode().setTitle(requirement.getReference() + " - " + requirement.getName());
 			getBuiltNode().addAttr("reference", requirement.getReference());

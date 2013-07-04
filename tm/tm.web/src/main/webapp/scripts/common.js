@@ -18,9 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-requirejs
-		.config({
-
+requirejs.config({
 			packages : [
 				"custom-field-editor",
 				"custom-field-binding",
@@ -35,7 +33,12 @@ requirejs
 				"bugtracker",
 				"file-upload",
 				"iteration-management",
-				"issue-tables"
+				"issue-tables",
+				{
+					name : 'tree',
+					main : 'main',
+					location : 'http://localhost/scripts/scripts/tree'
+				}
 			],
 			/*
 			 * rules for paths naming: * third party lib: unversionned lib name *

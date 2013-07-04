@@ -153,6 +153,12 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 			criteria.add(restriction);
 		}
 	}
+	
+	@Override
+	public List<Requirement> findChildrenRequirements(long requirementId) {
+		SetQueryParametersCallback setId = new SetIdParameter("requirementId", requirementId);
+		return executeListNamedQuery("findChildrenRequirements", setId);
+	}
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override

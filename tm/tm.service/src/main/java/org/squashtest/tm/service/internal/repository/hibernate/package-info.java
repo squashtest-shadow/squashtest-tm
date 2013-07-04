@@ -73,6 +73,8 @@
 		@NamedQuery(name = "requirement.findAllRootContent", query = "select r.id from RequirementLibraryNode r where r.project.requirementLibrary.id in (:libraryIds)"),
 		@NamedQuery(name = "requirement.findVersions", query = "select rv from RequirementVersion rv where rv.requirement.id = :requirementId"),
 		@NamedQuery(name = "requirement.findVersionsForAll", query = "select rv from RequirementVersion rv join rv.requirement r where r.id in (:requirementIds)"),
+		@NamedQuery(name = "requirement.findChildrenRequirements", query = "select childreqs from Requirement r join r.children childreqs where r.id = :requirementId"),
+		
 
 		//CampaignFolder
 		@NamedQuery(name = "campaignFolder.findAllContentById", query = "select f.content from CampaignFolder f where f.id = :folderId"),

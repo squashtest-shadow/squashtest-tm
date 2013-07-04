@@ -39,13 +39,8 @@ define(
 							// apparently, jstree events dont bubble correctly,
 							// backbone cant capture events
 							// $().on changes this to emitter DOM -> proxy
-							tree
-									.on(
-											"select_node.jstree deselect_node.jstree deselect_all.jstree",
-											$
-													.proxy(
-															this._onTreeSelectionChanged,
-															this));
+							tree.on("select_node.jstree deselect_node.jstree deselect_all.jstree",
+									$.proxy(this._onTreeSelectionChanged,this));
 
 							// initialize menu state
 							this.menu.refreshSelection(tree.jstree(

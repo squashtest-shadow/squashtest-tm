@@ -22,7 +22,7 @@ package org.squashtest.tm.web.internal.controller.requirement;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,10 +31,7 @@ import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -47,6 +44,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto.NewRequirementVersionDaoValidator;
@@ -61,6 +60,7 @@ import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationContro
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
+import org.squashtest.tm.web.internal.model.builder.TestSuiteNodeBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
 /**
@@ -74,15 +74,11 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 @RequestMapping(value = "/requirement-browser")
 public class RequirementLibraryNavigationController extends
 		LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementLibraryNavigationController.class);
 
-	@Inject
-	private Provider<DriveNodeBuilder> driveNodeBuilder;
-	@Inject
-	private Provider<RequirementLibraryTreeNodeBuilder> requirementLibraryTreeNodeBuilder;
 
-	
-	private RequirementLibraryNavigationService requirementLibraryNavigationService;
+	@Inject	private Provider<DriveNodeBuilder> driveNodeBuilder;
+	@Inject	private Provider<RequirementLibraryTreeNodeBuilder> requirementLibraryTreeNodeBuilder;
+	@Inject	private RequirementLibraryNavigationService requirementLibraryNavigationService;
 	
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/requirement-export.jasper";
 
@@ -94,12 +90,6 @@ public class RequirementLibraryNavigationController extends
 		binder.setValidator(validator);
 	}
 	
-	
-	@ServiceReference
-	public void setRequirementLibraryNavigationService(
-			RequirementLibraryNavigationService requirementLibraryNavigationService) {
-		this.requirementLibraryNavigationService = requirementLibraryNavigationService;
-	}
 
 	@RequestMapping(value = "/drives/{libraryId}/content/new-requirement", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
@@ -107,14 +97,9 @@ public class RequirementLibraryNavigationController extends
 	JsTreeNode addNewRequirementToLibraryRootContent(@PathVariable long libraryId,
 			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion){
 		
-
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId,
 				firstVersion);
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("RequirementCreationController : creation of a new requirement, name : "
-					+ firstVersion.getName() + ", description : " + firstVersion.getDescription());
-		}
 
 		return createTreeNodeFromLibraryNode(req);
 
@@ -125,13 +110,29 @@ public class RequirementLibraryNavigationController extends
 	JsTreeNode addNewRequirementToFolderContent(@PathVariable long folderId,
 			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion ){
 
-
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, firstVersion);
-
 	
 		return createTreeNodeFromLibraryNode(req);
 
 	}
+	
+	@RequestMapping(value = "/requirements/{requirementId}/content/new-requirement", method = RequestMethod.POST)
+	public @ResponseBody
+	JsTreeNode addNewRequirementToRequirementContent(@PathVariable("requirementId") long requirementId,
+			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion ){
+
+		Requirement req = requirementLibraryNavigationService.addRequirementToRequirement(requirementId, firstVersion);
+	
+		return createTreeNodeFromLibraryNode(req);
+
+	}
+	
+	@RequestMapping(value = "/requirements/{requirementId}/content", method = RequestMethod.GET)
+	public @ResponseBody
+	List<JsTreeNode> getChildrenRequirementsTreeModel(@PathVariable("requirementId") long requirementId) {
+		List<Requirement> requirements = requirementLibraryNavigationService.findChildrenRequirements(requirementId);
+		return createChildrenRequirementsModel(requirements);
+	}	
 
 	@Override
 	protected LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> getLibraryNavigationService() {
@@ -143,26 +144,6 @@ public class RequirementLibraryNavigationController extends
 		return requirementLibraryTreeNodeBuilder.get().setNode(resource).build();
 	}
 
-	@Deprecated
-	@RequestMapping(method = RequestMethod.GET, params = "show-requirement")
-	public final ModelAndView showLibraryWithOpenRequirement(@PathVariable long libraryId,
-			@RequestParam("show-test-case") long requirementId) {
-		LOGGER.debug("showLibraryWithOpenRequirement");
-
-		RequirementLibrary library = requirementLibraryNavigationService.findLibrary(libraryId);
-		Requirement requirement = requirementLibraryNavigationService.findRequirement(requirementId);
-
-		ModelAndView mav = new ModelAndView("page/requirement-libraries/show-requirement-in-library");
-		mav.addObject("library", library);
-		JsTreeNode rootModel = driveNodeBuilder.get().setModel(library).build();
-		JsTreeNode requirementModel = requirementLibraryTreeNodeBuilder.get().setNode(requirement).build();
-		rootModel.setChildren(Arrays.asList(requirementModel));
-
-		mav.addObject("rootModel", rootModel);
-		mav.addObject("selectedNode", requirementModel);
-
-		return mav;
-	}
 
 	@Override
 	protected String getShowLibraryViewName() {
@@ -207,7 +188,14 @@ public class RequirementLibraryNavigationController extends
 
 	/* ********************************** private stuffs ******************************* */
 
-	
+	private List<JsTreeNode> createChildrenRequirementsModel(List<? extends RequirementLibraryNode> requirements) {
+		
+		RequirementLibraryTreeNodeBuilder nodeBuilder = requirementLibraryTreeNodeBuilder.get();
+		JsTreeNodeListBuilder<RequirementLibraryNode> listBuilder = new JsTreeNodeListBuilder<RequirementLibraryNode>(nodeBuilder);
+
+		return listBuilder.setModel((List<RequirementLibraryNode>)requirements).build();
+
+	}
 
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = { "linkables" })
 	public @ResponseBody

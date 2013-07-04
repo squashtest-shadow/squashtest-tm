@@ -29,61 +29,105 @@
  */
 
 (function($) {
-
-	/*
-	 * we first define some closures.
-	 */
-	var buildGetContent = function(treeNode) {
-		var root = treeNode.getBaseUrl();
-		switch (treeNode.getResType()) {
-		case "requirements":
-		case "test-cases":
-			return function() {
-				return null;
-			};
-		default:
-			return function() {
-				var wkspce = treeNode.getWorkspace();
-				var dmtpe = treeNode.getDomType();
-				var id = treeNode.getResId();
-				return this.getBrowserUrl() + '/' + dmtpe + "s/" + id
-						+ "/content";
-			};
+	
+	// *********************** functions ************************************
+	
+	// 'library' and 'folder' are still named 'library' and 'folder'. Others 
+	// will be renamed according to their subtypes.
+	function _getSemiSpecializedTypeName(node){
+		var type = node.getDomType();
+		var typeRepresentation = "";
+		
+		if ((domType==='folder') || (domType === 'library')){
+			return type+'s';
 		}
-	};
+		else{
+			return this.getResType();
+		}		
+	}
 
-	var buildRefreshLabel = function(treeNode) {
+	function getResourceUrl(){
+		return this.getBaseUrl() + this.getResType() + "/" + this.getResId();		
+	}
+	
+	function getBaseUrl(){
+		return this.tree.data.squash.rootUrl + "/";
+	}
+	
+	function getBrowserUrl(){
+		return this.getBaseUrl() + this.getWorkspace() + "-browser";
+	}
+	
+	function getContentUrl(){
 
-		switch (treeNode.getResType()) {
-		case "requirements":
-		case "test-cases":
-			return function() {
-				var name = this.getName();
-				var reference = this.getReference() || "";
-				if (reference.length > 0) {
-					reference += " - ";
-				}
-				this.getTree().set_text(this, reference + name);
-			};
-
-		case "iterations":
-			return function() {
-				var name = this.getName();
-				var index = this.getIndex() || "";
-				if (index.length > 0) {
-					index += " - ";
-				}
-				this.getTree().set_text(this, index + name);
-			};
-
-		default:
-			return function() {
-				var name = this.getName();
-				this.getTree().set_text(this, name);
-			};
+		var wkspce = this.getWorkspace();
+		var id = this.getResId();
+		var representation = _getSemiSpecializedTypeName(this);
+			
+		return this.getBrowserUrl() + '/' + representation + "/" + id + "/content";
+		
+	}
+	
+	function getCopyUrl(){
+		switch (this.getDomType()) {
+		case "folder":
+		case "file":
+			return this.getBrowserUrl() + "/copy";
+		case "resource":
+			return this.getBrowserUrl() + "/copy-iterations";
+		case "view":
+			return this.getBrowserUrl() + "/copy-test-suites";
 		}
+	}
+	
+	
+	function getMoveUrl(){
+		switch (this.getDomType()) {
+		case "folder":
+		case "file":
+			return this.getBrowserUrl() + "/move";
+		}
+		return undefined;		
+	}
+	
+	function refreshLabel(){
 
-	};
+		var label = null;
+		
+		switch(this.getResType()){
+		
+		case 'requirements' :
+		case 'test-cases' : 
+			var name = this.getName();
+			var reference = this.getReference() || "";
+			
+			if (reference.length > 0) {
+				reference += " - ";
+			}
+			
+			label = reference + name;
+			break;
+		
+		case 'iterations' : 
+			var name = this.getName();
+			var index = this.getIndex() || "";
+			if (index.length > 0) {
+				index += " - ";
+			}
+			label = index + name;
+			break;
+		
+		default : 
+			label = this.getName();
+			break;
+		}
+		
+		this.getTree().set_text(this, label);
+	}
+
+
+
+	// *********************** plugin definition ************************************
 
 	$.fn.treeNode = function() {
 
@@ -164,7 +208,7 @@
 		 * 
 		 * @param wizard
 		 *            an object with an id property which will be used to
-		 *            perfprm the check
+		 *            perform the check
 		 */
 		this.isWorkspaceWizardEnabled = function(wizard) {
 			// enabled wizards list is flattened into comma-separated string
@@ -459,46 +503,22 @@
 			});
 		};
 
-		// *************** urls
+		// *************** urls *******************************
+		
+		this.getResourceUrl = getResourceUrl;
 
-		this.getResourceUrl = function() {
-			return this.getBaseUrl() + this.getResType() + "/"
-					+ this.getResId();
-		};
+		this.getBaseUrl = getBaseUrl;
 
-		this.getBaseUrl = function() {
-			return this.tree.data.squash.rootUrl + "/";
-		};
+		this.getBrowserUrl = getBrowserUrl;
 
-		this.getBrowserUrl = function() {
-			return this.getBaseUrl() + this.getWorkspace() + "-browser";
-		};
+		this.getContentUrl = getContentUrl;
+		
+		this.refreshLabel = refreshLabel;
 
-		this.getContentUrl = buildGetContent(this);
-		this.refreshLabel = buildRefreshLabel(this);
+		this.getCopyUrl = getCopyUrl;
 
-		this.getCopyUrl = function() {
-			switch (this.getDomType()) {
-			case "folder":
-			case "file":
-				return this.getBrowserUrl() + "/copy";
-			case "resource":
-				return this.getBrowserUrl() + "/copy-iterations";
-			case "view":
-				return this.getBrowserUrl() + "/copy-test-suites";
-			}
-		};
-
-		this.getMoveUrl = function() {
-			switch (this.getDomType()) {
-			case "folder":
-			case "file":
-				return this.getBrowserUrl() + "/move";
-			}
-			return undefined;
-		};
-
-		return this;
-	};
+		this.getMoveUrl = getMoveUrl;
+		
+	}
 
 })(jQuery);

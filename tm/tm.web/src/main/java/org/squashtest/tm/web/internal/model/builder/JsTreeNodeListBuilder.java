@@ -34,12 +34,19 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
  * @param <ITEM>
  */
 public class JsTreeNodeListBuilder<ITEM> {
-	private final JsTreeNodeBuilder<? super ITEM, ?> nodeBuilder;
+	private JsTreeNodeBuilder<? super ITEM, ?> nodeBuilder;
+	private LibraryTreeNodeBuilder<? super ITEM> libraryNodeBuilder;
+	
 	private Collection<ITEM> model;
 
 	public JsTreeNodeListBuilder(JsTreeNodeBuilder<? super ITEM, ?> nodeBuilder) {
 		super();
 		this.nodeBuilder = nodeBuilder;
+	}
+	
+	public JsTreeNodeListBuilder(LibraryTreeNodeBuilder<? super ITEM> builder){
+		super();
+		this.libraryNodeBuilder = builder;
 	}
 
 	public final JsTreeNodeListBuilder<ITEM> setModel(Collection<ITEM> model) {
@@ -48,12 +55,31 @@ public class JsTreeNodeListBuilder<ITEM> {
 	}
 
 	public final List<JsTreeNode> build() {
+		if (nodeBuilder != null){
+			return _buildWithNodeBuilder();
+		}
+		else{
+			return _buildWithLibraryNodeBuilder();
+		}
+	}
+	
+	private final List<JsTreeNode> _buildWithNodeBuilder(){
 		List<JsTreeNode> nodes = new ArrayList<JsTreeNode>();
 
 		for (ITEM item : model) {
 			nodes.add(nodeBuilder.setModel(item).build());
 		}
 
-		return nodes;
+		return nodes;		
+	}
+	
+	private final List<JsTreeNode> _buildWithLibraryNodeBuilder(){
+		List<JsTreeNode> nodes = new ArrayList<JsTreeNode>();
+
+		for (ITEM item : model) {
+			nodes.add(libraryNodeBuilder.setNode(item).build());
+		}
+
+		return nodes;		
 	}
 }

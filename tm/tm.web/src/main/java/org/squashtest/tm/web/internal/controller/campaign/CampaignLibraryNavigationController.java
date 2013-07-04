@@ -76,33 +76,14 @@ public class CampaignLibraryNavigationController extends
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationController.class);
 	private static final String NODE_IDS = "nodeIds[]";
 
-	@Inject
-	private Provider<DriveNodeBuilder> driveNodeBuilder;
-	@Inject
-	private Provider<IterationNodeBuilder> iterationNodeBuilder;
-	@Inject
-	private Provider<CampaignLibraryTreeNodeBuilder> campaignLibraryTreeNodeBuilder;
-	@Inject
-	private Provider<TestSuiteNodeBuilder> suiteNodeBuilder;
+	@Inject	private Provider<DriveNodeBuilder> driveNodeBuilder;
+	@Inject	private Provider<IterationNodeBuilder> iterationNodeBuilder;
+	@Inject	private Provider<CampaignLibraryTreeNodeBuilder> campaignLibraryTreeNodeBuilder;
+	@Inject	private Provider<TestSuiteNodeBuilder> suiteNodeBuilder;
+	@Inject	private CampaignLibraryNavigationService campaignLibraryNavigationService;
+	@Inject	private CampaignFinder campaignFinder;
+	@Inject private IterationModificationService iterationModificationService;
 
-	private CampaignLibraryNavigationService campaignLibraryNavigationService;
-
-	@Inject
-	private CampaignFinder campaignFinder;
-
-
-
-	@ServiceReference
-	public void setCampaignLibraryNavigationService(CampaignLibraryNavigationService campaignLibraryNavigationService) {
-		this.campaignLibraryNavigationService = campaignLibraryNavigationService;
-	}
-
-	private IterationModificationService iterationModificationService;
-
-	@ServiceReference
-	public void setIterationModificationService(IterationModificationService iterationModificationService) {
-		this.iterationModificationService = iterationModificationService;
-	}
 
 	@InitBinder("add-campaign")
 	public void addCampaignBinder(WebDataBinder binder) {
@@ -161,7 +142,7 @@ public class CampaignLibraryNavigationController extends
 		return "page/campaign-libraries/show-campaign-library";
 	}
 
-	@RequestMapping(value = "/files/{campaignId}/content/new-iteration", method = RequestMethod.POST)
+	@RequestMapping(value = "/campaigns/{campaignId}/content/new-iteration", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewIterationToCampaign(@PathVariable long campaignId,
 			@Valid @ModelAttribute("add-iteration") IterationFormModel iterationForm) {
@@ -184,14 +165,14 @@ public class CampaignLibraryNavigationController extends
 		return suiteNodeBuilder.get().setModel(testSuite).build();
 	}
 
-	@RequestMapping(value = "/files/{campaignId}/content", method = RequestMethod.GET)
+	@RequestMapping(value = "/campaigns/{campaignId}/content", method = RequestMethod.GET)
 	public @ResponseBody
 	List<JsTreeNode> getCampaignIterationsTreeModel(@PathVariable long campaignId) {
 		List<Iteration> iterations = campaignLibraryNavigationService.findIterationsByCampaignId(campaignId);
 		return createCampaignIterationsModel(iterations);
 	}
 
-	@RequestMapping(value = "/resources/{resourceId}/content", method = RequestMethod.GET)
+	@RequestMapping(value = "/iterations/{resourceId}/content", method = RequestMethod.GET)
 	public @ResponseBody
 	List<JsTreeNode> getIterationTestSuitesTreeModel(@PathVariable("resourceId") long iterationId) {
 

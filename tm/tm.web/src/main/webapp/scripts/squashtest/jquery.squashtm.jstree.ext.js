@@ -196,7 +196,8 @@ squashtm.tree = squashtm.tree || {};
 		var targetNode;
 
 		if ((origNode.is(':library')) || (origNode.is(':folder')) ||
-				((origNode.is(':campaign')) && (contentDiscriminator == "new-iteration"))) {
+				((origNode.is(':campaign')) && (contentDiscriminator == "new-iteration")) ||
+				((origNode.is(':requirement')) && (contentDiscriminator == "new-requirement")) ) {
 			targetNode = origNode;
 		} else {
 			targetNode = origNode.getParent();
