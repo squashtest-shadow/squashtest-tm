@@ -32,13 +32,6 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 
-<c:set var="browserUrlRoot" value="${ pageContext.servletContext.contextPath }/${ workspaceType }-browser" />
-
-<s:url var="moveUrl" value="/${ workspaceType }-browser/move" />
-<s:url var="copyUrl" value="/${ workspaceType }-browser/copy" />
-<s:url var="deleteUrl" value="/${ workspaceType }s/" />
-
-
 <c:set var="newLeafLabelKey" value="tree.button.new-${ workspaceType }.label"/>
 <tree:jstree-tree_element_menu workspace="${workspaceType}" newLeafButtonMessage="${ newLeafLabelKey }" newResourceButtonMessage="tree.button.new-iteration.label"/>
 

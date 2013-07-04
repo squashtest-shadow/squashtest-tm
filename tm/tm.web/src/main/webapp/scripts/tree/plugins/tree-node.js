@@ -28,8 +28,9 @@
  *
  */
 
-(function($) {
-	
+
+define(['jquery'], function($)){
+
 	// *********************** functions ************************************
 	
 	// 'library' and 'folder' are still named 'library' and 'folder'. Others 
@@ -370,13 +371,38 @@
 			}
 			return true;
 		};
+		
 
+		//TODO : this test relates to the configuration of the "types" plugin of their instance of jstree.
 		this.acceptsAsContent = function(nodes) {
-			return ((this.is(':library') && nodes.areNodes())
-					|| (this.is(':folder') && nodes.areNodes())
-					|| (this.is(':file') && nodes.areResources()) || (this
-					.is(':resource') && nodes.areViews()));
+			
+			if (! this.canContainNodes()){
+				return false;
+			}
+			
+			var typePluginConf = this.tree._get_settings().types.types;
+			var thisRel = node.getDomType();
+			
+			//might throw npe if the conf is invalid, and so is good candidate for fail-fast warning
+			var validChildrenTypes = typePluginConf[thisRel].valid_children;	
+			
+			if (! validChildrenTypes instanceof Array ){
+				validChildrenTypes = [validChildrenTypes];
+			}
+			
+			return nodes.areEither(validChildrenTypes);
+			
 		};
+		
+		
+		this.canContainNodes = function(){
+			//might throw npe if the conf is invalid, and so is good candidate for fail-fast warning
+			var typePluginConf = this.tree._get_settings().types.types;
+			var thisRel = node.getDomType();
+			var thisConf = typePluginConf[thisRel];
+			
+			return (thisConf !== undefined && thisConf !== 'none');
+		}
 
 		// ************* methods for multiple matched elements ************
 
@@ -448,6 +474,13 @@
 
 			return (shrinkingSet.length == this.length);
 		};
+		
+
+		this.areEither = function(typesArray){
+			var collected = this.all('getDomType');
+			return $(collected).not(typesArray).length == 0 && $(typesArray).not(collected).length == 0
+		};
+		
 
 		// returns true if all the nodes share the same values (whatever they
 		// are) for the
@@ -479,29 +512,6 @@
 			return ($.unique(parents).length == 1);
 		};
 
-		this.areNodes = function() {
-			var types = this.all('getDomType');
-
-			for ( var i = 0; i < types.length; i++) {
-				if (!(types[i] == "file" || types[i] == "folder")){
-					return false;
-				}
-			}
-
-			return true;
-		};
-
-		this.areResources = function() {
-			return this.allMatch({
-				rel : 'resource'
-			});
-		};
-
-		this.areViews = function() {
-			return this.allMatch({
-				rel : 'view'
-			});
-		};
 
 		// *************** urls *******************************
 		
@@ -521,4 +531,6 @@
 		
 	}
 
-})(jQuery);
+
+
+});
