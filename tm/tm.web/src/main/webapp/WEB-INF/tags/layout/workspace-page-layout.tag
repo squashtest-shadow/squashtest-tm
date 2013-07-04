@@ -51,8 +51,6 @@
 	</jsp:attribute>
 
 	<jsp:attribute name="tree">
-		<c:set var="browserUrlRoot" value="${ pageContext.servletContext.contextPath }/${ resourceName }-browser" />
-		<f:message var="libraryName" key="tree.node.${ resourceName }-library.title" />
 		<tree:workspace-tree  workspaceType="${ resourceName }" rootModel="${ rootModel }"  id="tree" />
 	</jsp:attribute>
 
@@ -62,6 +60,7 @@
 
 	<jsp:attribute name="footer">
 		
+		<%-- 
 		<treepopup:add-nameable-node-dialog resourceName="folder" treeNodeButton="squashtm.treemenu.create.buttons['create-folder']"/>
 		<treepopup:add-nameable-node-dialog resourceName="${ resourceName }"  treeNodeButton="squashtm.treemenu.create.buttons['create-file']"/>
 	
@@ -79,6 +78,8 @@
 				treeNodeButton="squashtm.treemenu.importer.buttons['import-links-excel']" />
 			</sec:authorize>
 		</c:if>
+		
+		 --%>
 
 		<jsp:invoke fragment="footer" />		
 	</jsp:attribute>

@@ -21,7 +21,7 @@
 
 
 
-define(['jquery', './permission-utils'], function($, permissions){
+define(['jquery'], function($){
 
 	/*
 	 * conf : {
@@ -57,8 +57,8 @@ define(['jquery', './permission-utils'], function($, permissions){
 	/**
 	 * definition of the treemenu buttons.
 	 * 
-	 * @param contentSelector :
-	 *          the selector of the content.
+	 * @param html :
+	 *          the html of the menu.
 	 * @param buttons :
 	 *          a map association { button-selector : updateRule }.
 	 *          
@@ -74,7 +74,7 @@ define(['jquery', './permission-utils'], function($, permissions){
 	 * in the trunk of jQuery UI. Note 2 : I had no choice but modifying jquery.fg.menu.js directly, specifically the
 	 * methods showMenu() and kill(), due to the careless managment of event unbinding.
 	 */
-	$.fn.treeMenu = function(settings {
+	$.fn.treeMenu = function(settings) {
 		
 		var options = settings;
 		var this.tree = $(options.treeselector).jstree('get_instance');

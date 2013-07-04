@@ -20,41 +20,32 @@
  */
 
 
-define(function(){
-	
-	function generate(){
+//the 'tree-node' plugin will be automatically applied when required
+define(['jquery', './squash-plugin', './workspace-tree', './tree-picker' , './tree-node'], function($, applySquashPlugin, applyWorkspacePlugin, applyTreePickerPlugin){
 
-		return {
-			"types" : {
-				"max_depth" : -2, // unlimited without check
-				"max_children" : -2, // unlimited w/o check
-				"valid_children" : [ "drive" ],
-				"start_drag" : false,
-				"move_node" : true,
-				"delete_node" : false,
-				"remove" : false,
-				"types" : {
-					"test-case" : {
-						"valid_children" : 'none',
-						"icon" : {
-							"image" : baseURL+'/images/Icon_Tree_TestCase.png'
-						}
-					},
-					"folder" : {
-						"valid_children" : [ "test-case", "folder" ],
-						"icon" : {
-							"image" : baseURL+'/images/Icon_Tree_Folder.png'
-						}
-					},
-					"drive" : {
-						"valid_children" : [ "test-case", "folder" ],
-						"icon" : {
-							"image" : baseURL+'/images/root.png'
-						}
-					}
-				}
+	return {
+		
+		configure : function(type){
+			switch(type){
+			
+			case 'workspace-tree' : 
+				applySquashPlugin();
+				applyWorkspacePlugin();
+				break;
+				
+			case 'tree-picker' : 
+				applySquashPlugin();
+				applyTreePickerPlugin();
+				break;
+				
+			case 'call-test-case' : 
+				throw "not supported yet";
+				
+			default :
+				throw "'"+type+"' is not a valid tree profile";
 			}
 		}
-	
+		
 	}
+	
 });

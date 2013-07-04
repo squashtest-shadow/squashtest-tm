@@ -42,6 +42,7 @@
 	</div>
 	</div>
 </div>
+<%--
 <div class="button-group">
 	<a id="copy-node-tree-button" href="JavaScript:void(0);"><f:message key='tree.button.copy-node.label' /></a>
 	<a id="paste-node-tree-button" href="JavaScript:void(0);"><f:message key="tree.button.paste-node.label" /></a>
@@ -88,65 +89,84 @@
 <div class="button-group">
 	<a id="delete-node-tree-button" href="JavaScript:void(0);"><f:message key="tree.button.delete.label" />...</a>
 </div>
+ --%>
 </div>
 
 <script type="text/javascript">
 $(function () {
     squashtm.treemenu = {};
+    
+    require(['jquery', 'treemenu'], function($){
+        var initButton = function (bSelector, cssIcon, disabledParam) {
+            var opts = {
+                disabled: disabledParam,
+                text: false,
+            };
 
-    var initButton = function (bSelector, cssIcon, disabledParam) {
-        var opts = {
-            disabled: disabledParam,
-            text: false,
+            if (cssIcon) {
+                opts.icons = {
+                    primary: cssIcon
+                }
+            }
+
+            $(bSelector).squashButton(opts);
         };
 
-        if (cssIcon) {
-            opts.icons = {
-                primary: cssIcon
-            }
+        initButton("#tree-create-button", "ui-icon ui-icon-plusthick", false);
+        
+        <%--
+        
+        initButton("#tree-action-button", "ui-icon-arrowreturnthick-1-e", false);
+        initButton("#copy-node-tree-button", "ui-icon-copy", true);
+        initButton("#paste-node-tree-button", "ui-icon-clipboard", true);
+        initButton("#rename-node-tree-button", "ui-icon-pencil", true);
+        initButton("#delete-node-tree-button", "ui-icon-trash", true);
+
+    	--%>
+
+        var createOption = {
+        	"create-folder": ".new-folder-tree-button",
+        	"create-file": ".new-leaf-tree-button" 
+        	<c:if test = "${ not empty newResourceButtonMessage }" >,
+            "create-resource": ".new-resource-tree-button" 
+            </c:if>
+    	};
+    	
+        var createOption = {
+        	html : $("#tree-create-button").html(),
+        	treeselector : "#tree",
+        	buttons : {
+        		'.new-folder-tree-button' : function(nodes){ console.log('updating status for new-folder');},
+        		'.new-leaf-tree-button' : function(nodes) { console.log('updating status new-leaf');}
+        	}
         }
+        
+    	squashtm.treemenu.create = $('#tree-create-button').treeMenu(createOption);
+    		
+        
+        <%--
+    	var treeButtons = {
+    			"copy" : $('#copy-node-tree-button'),
+    			"paste" : $('#paste-node-tree-button'),
+    			"rename" : $('#rename-node-tree-button'),
+    			"delete" : $('#delete-node-tree-button')
+    		};
+    		
+    	squashtm.treeButtons = treeButtons;
 
-        $(bSelector).squashButton(opts);
-    };
-
-    initButton("#tree-create-button", "ui-icon ui-icon-plusthick", false);
-    initButton("#tree-action-button", "ui-icon-arrowreturnthick-1-e", false);
-    initButton("#copy-node-tree-button", "ui-icon-copy", true);
-    initButton("#paste-node-tree-button", "ui-icon-clipboard", true);
-    initButton("#rename-node-tree-button", "ui-icon-pencil", true);
-    initButton("#delete-node-tree-button", "ui-icon-trash", true);
-
-    var createOption = {
-    	"create-folder": ".new-folder-tree-button",
-    	"create-file": ".new-leaf-tree-button" 
-    	<c:if test = "${ not empty newResourceButtonMessage }" >,
-        "create-resource": ".new-resource-tree-button" 
-        </c:if>
-	};
-	
-	squashtm.treemenu.create = $('#tree-create-button').treeMenu("#tree-create-menu", createOption);
-		
-	var treeButtons = {
-			"copy" : $('#copy-node-tree-button'),
-			"paste" : $('#paste-node-tree-button'),
-			"rename" : $('#rename-node-tree-button'),
-			"delete" : $('#delete-node-tree-button')
-		};
-		
-	squashtm.treeButtons = treeButtons;
-
-	<c:if test="${workspace == 'test-case' || workspace == 'requirement'}">
-	initButton("#tree-import-button", "ui-icon-transferthick-e-w");		
-	
-	var importOption = {
-		"import-excel" : ".import-excel-tree-button",
-		"import-links-excel" : ".import-links-excel-tree-button",
-		"export" : ".export-tree-button"
-	};
-	
-	squashtm.treemenu.importer = $('#tree-import-button').treeMenu('#tree-import-menu', importOption);
-	</c:if>
-
+    	<c:if test="${workspace == 'test-case' || workspace == 'requirement'}">
+    	initButton("#tree-import-button", "ui-icon-transferthick-e-w");		
+    	
+    	var importOption = {
+    		"import-excel" : ".import-excel-tree-button",
+    		"import-links-excel" : ".import-links-excel-tree-button",
+    		"export" : ".export-tree-button"
+    	};
+    	
+    	squashtm.treemenu.importer = $('#tree-import-button').treeMenu('#tree-import-menu', importOption);
+    	</c:if>
+    	--%>  	
+    });
 
 });
 </script>

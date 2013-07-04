@@ -19,42 +19,42 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-define(function(){
+define(['jquery'], function($){
 	
-	function generate(){
+	return function(){
+		
+		/*
+		 * specialization for tree-pickers. will maintain the order in which nodes were selected and redefine get_selected to
+		 * return the nodes in that order.
+		 */
+		$.jstree.plugin("treepicker", {
+			__init : function() {
+				this.data.treepicker.counter = 0;
+				this.data.treepicker.ordering = $();
+				var container = this.get_container();
 
-		return {
-			"types" : {
-				"max_depth" : -2, // unlimited without check
-				"max_children" : -2, // unlimited w/o check
-				"valid_children" : [ "drive" ],
-				"start_drag" : false,
-				"move_node" : true,
-				"delete_node" : false,
-				"remove" : false,
-				"types" : {
-					"test-case" : {
-						"valid_children" : 'none',
-						"icon" : {
-							"image" : baseURL+'/images/Icon_Tree_TestCase.png'
-						}
-					},
-					"folder" : {
-						"valid_children" : [ "test-case", "folder" ],
-						"icon" : {
-							"image" : baseURL+'/images/Icon_Tree_Folder.png'
-						}
-					},
-					"drive" : {
-						"valid_children" : [ "test-case", "folder" ],
-						"icon" : {
-							"image" : baseURL+'/images/root.png'
-						}
-					}
+				container.bind("select_node.jstree", $.proxy(function(e, data) {
+					var id = data.rslt.obj.attr('resid');
+					var counter = this.data.treepicker.counter++;
+					data.rslt.obj.attr('order', counter);
+				}, this));
+			},
+			_fn : {
+				get_selected : function() {
+					var selected = this.__call_old();
+					var sorted = selected.sort(function(a, b) {
+						var order_a = $(a).attr('order');
+						var order_b = $(b).attr('order');
+						return order_a - order_b;
+					});
+
+					return sorted;
 				}
 			}
-		}
-	
+
+		});		
+		
+		
 	}
+	
 });

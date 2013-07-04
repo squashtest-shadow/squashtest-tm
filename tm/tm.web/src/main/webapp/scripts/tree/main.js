@@ -21,12 +21,33 @@
 
 
 
-define([ "./workspace-tree/conf-factory" ], function(wkspaceTree) {
+/*
+ * settings : {
+ * 	  workspace : one of ['test-case', 'requirement', 'campaign']
+ *    treeselector : the tree selector,
+ *    model : the data model for that tree.
+ * }
+ */
+
+define([ "./workspace-tree/conf-factory", "./plugins/plugins-factory"], function(wkspConf, pluginsFactory) {
 
 	squashtm = squashtm || {};
 	squashtm.tree = squashtm.tree || {};
 	
 	
+	function initWorkspaceTree(settings){
+		pluginsFactory.configure('workspace-tree');
+		var conf = wkspConf.generate(settings.workspace);
+		var instance = $(settings.treeselector).jstree(conf);
+		squashtm.tree = instance;
+	}
+	
+	
+	return {
+		initWorkspaceTree : initWorkspaceTree,
+		initLinkableTree : undefined,
+		initCallTestCaseTree : undefined
+	}
 	
 	
 });

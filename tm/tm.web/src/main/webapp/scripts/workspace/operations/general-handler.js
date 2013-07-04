@@ -38,7 +38,8 @@ define(['jquery', './TreeEventHandler', './TreeNodeCopier'], function($, TreeEve
 		var handler = $.extend({}, settings);
 		
 		//init 
-		handler.evtHandlers = new TreeEventHandler(settings);
+		
+		handler.treeEvtHandlers = new TreeEventHandler(settings);
 		handler.copier = new TreeNodeCopier(settings);
 		handler.contextualContent = squashtm.contextualContent;
 		
@@ -61,16 +62,29 @@ define(['jquery', './TreeEventHandler', './TreeNodeCopier'], function($, TreeEve
 			handler.copier.pasteNodesFromCookie()
 		});
 		
-		handler.tree.on('', function(){
+		handler.tree.on('select_node.jstree', function(){
 			var selected = handler.tree.get_selected();
 			if (selected == 1){
 				handler.contextualContent.loadWith(selected.getResourceUrl())
+				.done(function(){
+					handler.contextualContent.addListener(handler.treeEvtHandlers);
+				});
 			}
 			else{
 				handler.contextualContent.unload();				
 			}
 		});
 		
+		
+		// **************** do better asap *****************
+		
+		handler.tree.on('suppr.squashtree', function(){
+			$("#delete-node-dialog").dialog('open');
+		});
+		
+		handler.tree.on('rename.squashtree', function(){
+			$("#rename-node-dialog").dialog('open');
+		});
 		
 	};
 	

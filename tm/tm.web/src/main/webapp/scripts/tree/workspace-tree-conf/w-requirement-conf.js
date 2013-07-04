@@ -20,30 +20,10 @@
  */
 
 
-/*
- * configuration {
- *  
- *  messages :{
- *  	cannotMove : the given node(s) cannot be moved,
- *  	warningMove : moving the given node(s) might result in loss of data,
- *  	warningCopy : the clones of the given node(s) might not inherit all the data of the originals 
- *  }
- * 
- * }
- */
 define(function(){
-	
-	var baseURL = squashtm.app.contextRoot;
-	
-	function generate(settings){
+	function generate(){
 
-		
-		var rules = {
-			messages : settings.messages					
-		}
-				
-		
-		
+	
 		return {
 			"types" : {
 				"max_depth" : -2, // unlimited without check
@@ -73,10 +53,6 @@ define(function(){
 						}
 					}
 				}
-			},
-			
-			"workspace_tree" : {
-				rules : rules
 			}
 		}
 	

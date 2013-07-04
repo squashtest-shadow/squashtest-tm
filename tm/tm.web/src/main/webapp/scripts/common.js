@@ -38,6 +38,11 @@ requirejs.config({
 					name : 'tree',
 					main : 'main',
 					location : 'http://localhost/scripts/scripts/tree'
+				},
+				{
+					name : 'treemenu',
+					main : 'main',
+					location : 'http://localhost/scripts/scripts/treemenu'
 				}
 			],
 			/*
