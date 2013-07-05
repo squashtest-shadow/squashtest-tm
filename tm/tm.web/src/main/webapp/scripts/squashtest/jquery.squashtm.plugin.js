@@ -36,27 +36,32 @@ var squashtm = squashtm || {};
 		folder : function(a) {
 			return $(a).is("[rel='folder']");
 		},
-		file : function(a) {
-			return $(a).is("[rel='file']");
+		'test-case' : function(a){
+			return $(a).is("[rel='test-case']");
 		},
 		requirement : function(a){
-			return $(a).is("[rel='file'][restype='requirements']");
+			return $(a).is("[rel='requirement']");
 		},
 		campaign : function(a) {
-			return $(a).is("[rel='file'][restype='campaigns']");
-		},
-		node : function(a) {
-			return $(a).is("[rel='folder']") || $(a).is("[rel='file']");
-		},
-		resource : function(a) {
-			return $(a).is("[rel='resource']");
+			return $(a).is("[rel='campaign']");
 		},
 		iteration : function(a) {
-			return $(a).is("[rel='resource']");
+			return $(a).is("[rel='iteration']");
+		},
+		'test-suite' : function(a){
+			return $(a).is("[rel='test-suite']");
+		},
+		// ***************** legacy *****************
+		node : function(a) {
+			return $(a).is(":folder, :test-case, :requirement, :campaign");
+		},
+		resource : function(a) {
+			return $(a).is("[rel='iteration']");
 		},
 		view : function(a) {
-			return $(a).is("[rel='view']");
+			return $(a).is("[rel='test-suite']");
 		},
+		// ****************** /legacy *****************
 		editable : function(a) {
 			return $(a).attr('smallEdit') === 'true';
 		},

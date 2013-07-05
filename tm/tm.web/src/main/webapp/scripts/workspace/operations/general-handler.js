@@ -31,7 +31,7 @@
  * }
  * 
  */
-define(['jquery', './TreeEventHandler', './TreeNodeCopier'], function($, TreeEventHandler, TreeNodeCopier){
+define(['jquery', './TreeEventHandler', '.tree-node-copier'], function($, TreeEventHandler, TreeNodeCopier){
 
 	function createHandler(settings){
 				

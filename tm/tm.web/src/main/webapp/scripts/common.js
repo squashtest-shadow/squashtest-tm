@@ -38,6 +38,11 @@ requirejs.config({
 					name : 'tree',
 					main : 'main',
 					location : 'http://localhost/scripts/scripts/tree'
+				},
+				{
+					name : 'tc-workspace',
+					main : 'main',
+					location : 'http://localhost/scripts/scripts/tc-workspace'
 				}
 			],
 			/*
@@ -72,7 +77,7 @@ requirejs.config({
 				"jquery.generateId" : "jquery/jquery.generateId",
 				"jquery.hotkeys" : "jquery/jquery.hotkeys-0.8",
 				"jquery.timepicker" : "jquery/jquery-ui-timepicker-addon",
-				"jquery.squash" : "squashtest/jquery.squashtm.plugin",
+				"jquery.squash" : "http://localhost/scripts/scripts/squashtest/jquery.squashtm.plugin",
 				"jquery.squash.fragmenttabs" : "squash/squashtm.fragmenttabs",
 				"jquery.squash.togglepanel" : "squashtest/jquery.squash.togglepanels",
 				"jquery.squash.messagedialog" : "squashtest/jquery.squash.messagedialog",
@@ -93,10 +98,11 @@ requirejs.config({
 				"squash.resizer" : "squash/squashtm.tree-page-resizer",
 				"squash.table-collapser" : "squashtest/jquery.squash.table-collapser",
 				"squash.session-pinger" : "squashtest/jquery.squash.session-pinger",
-				"jquery.tagit" : "jquery/tag-it.min",
-		
+				"jquery.tagit" : "jquery/tag-it.min",		
 				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit",
-				"jquery.squash.add-attachment-popup" : "squashtest/add-attachment-popup"
+				"jquery.squash.add-attachment-popup" : "squashtest/add-attachment-popup",
+				"jquery.squash.buttonmenu" : "http://localhost/scripts/scripts/squashtest/jquery.squash.buttonmenu.js",
+				"tree-node-copier" : "http://localhost/scripts/scripts/workspace/tree-node-copier.js"
 			},
 			shim : {
 				"ckeditor" : {

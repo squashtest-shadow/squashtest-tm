@@ -19,34 +19,16 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-//the 'tree-node' plugin will be automatically applied when required
-define(['jquery', './jstree-dnd-override','./squash-plugin', './workspace-tree-plugin', './tree-picker-plugin' , './tree-node', 'jstree'], function($, applyDndOverride, applySquashPlugin, applyWorkspacePlugin, applyTreePickerPlugin){
-
+define(['jquery'], function($){
+	
 	return {
-		
-		configure : function(type){
-			switch(type){
-			
-			case 'workspace-tree' : 
-				applyDndOverride();
-				applySquashPlugin();
-				applyWorkspacePlugin();
-				break;
-				
-			case 'tree-picker' : 
-				applySquashPlugin();
-				applyTreePickerPlugin();
-				break;
-				
-			case 'call-test-case' : 
-				throw "not supported yet";
-				
-			default :
-				throw "'"+type+"' is not a valid tree profile";
+		btnconf : function(css){
+			return {
+				text : false,
+				icons : {
+					primary : css
+				}
 			}
 		}
-		
 	}
-	
 });

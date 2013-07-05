@@ -20,13 +20,24 @@
  */
 
 
+
+/*
+ * create a singleton instance if needed, 
+ * then returns it to the client. 
+ * 
+ * 
+ */
+
 define(['jquery', 'squash.translator'], function($, translator){
-	
-	
-	return function(settings) {
-		// properties
-		this.tree = settings.tree;
-		this.url = settings.url;
+
+	function TreeNodeCopier() {
+		
+		
+		this.tree = $("#tree");	//default that should work 99% of the time.
+		
+		this.setTree = function(tree){
+			this.tree = tree;
+		}
 	
 		
 		this.message = function(messageName){	
@@ -264,10 +275,14 @@ define(['jquery', 'squash.translator'], function($, translator){
 
 	}
 	
+
+	squashtm = squashtm || {}
+	squashtm.workspace = squashtm.workspace || {};
 	
+	if (squashtm.workspace.treenodecopier === undefined){
+		squashtm.workspace.treenodecopier = new TreeNodeCopier();
+	}
 	
-	
-	
-	
-	
+	return squashtm.workspace.treenodecopier;
+		
 });

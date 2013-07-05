@@ -74,17 +74,7 @@ define(['jquery', 'jqueryui'], function($){
 		}
 		
 	});
-	
-	return function(){
-		$("#tree-create-button").buttonmenu({
-			button : {
-				text: false,
-				icons : {
-	                primary: "ui-icon ui-icon-plusthick"
-	            }
-			}
-		});
-	}
+
 	
 });
 

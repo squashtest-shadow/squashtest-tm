@@ -20,7 +20,7 @@
  */
 
 
-define(['jquery', 'jstree'], function($){
+define(['jquery', 'tree-node-copier', 'jstree'], function($, nodecopier){
 	
 	
 	/* *******************************************************************************
@@ -342,7 +342,7 @@ define(['jquery', 'jstree'], function($){
 		var nodes = $(moveObject.args[0].o).treeNode();
 		var target = $(moveObject.args[0].np).treeNode();
 
-		return squashtm.treemenu.treeNodeCopier.preparePasteData(nodes, target);
+		return nodecopier.preparePasteData(nodes, target);
 
 	}
 
@@ -407,7 +407,6 @@ define(['jquery', 'jstree'], function($){
 				container.bind("select_node.jstree", function(event, data) {
 					// should unselect the descendant
 					self.get_selected().deselectChildren();
-
 					return true;
 					
 				})
