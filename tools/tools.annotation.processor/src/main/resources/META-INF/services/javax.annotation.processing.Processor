@@ -1,0 +1,2 @@
+org.squashtest.tm.tools.annotation.processor.DynamicManagerProcessor
+org.squashtest.tm.tools.annotation.processor.DynamicDaoProcessor

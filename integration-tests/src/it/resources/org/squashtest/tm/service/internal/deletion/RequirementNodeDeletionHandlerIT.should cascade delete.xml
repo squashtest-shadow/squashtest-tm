@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2012 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!-- 
+	depends on NodeDeletionDao.general.dbsetup.xml
+
+ -->
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.6.0.dtd">
+<dataset>
+
+	<!--  ============================ attachment lists (unattached to anything) ===================== -->
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1"   /> <!--  FOR REQ_FOLDER 1-->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="111" /> <!--  FOR REQVERSION 111 OF REQ 11-->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="112" /> <!--  FOR REQVERSION 112 OF REQ 11 -->
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="121" /> <!--  FOR REQVERSION 121 OF REQ 12 -->
+	
+	
+	<!--  ============================ attachment_content ============================================ -->
+
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="111"  STREAM_CONTENT="abcde" /> <!--  FOR REQVERSION 111 OF REQ 11-->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="112"  STREAM_CONTENT="abcde" /> <!--  FOR REQVERSION 112 OF REQ 11 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="121"  STREAM_CONTENT="abcde" /> <!--  FOR REQVERSION 121 OF REQ 12 -->
+	
+	
+	<!--  ============================ attachments =================================================== -->
+	
+	<ATTACHMENT ATTACHMENT_ID="111"  NAME="reqv 111 attach"  TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="111"  ATTACHMENT_LIST_ID="111"  />
+	<ATTACHMENT ATTACHMENT_ID="121"  NAME="reqv 121 attach"  TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="121"  ATTACHMENT_LIST_ID="121"  />	
+	<ATTACHMENT ATTACHMENT_ID="112"  NAME="reqv 112 attach"  TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="112"  ATTACHMENT_LIST_ID="112"  />	
+
+	
+	<!--  =========================== custom fields ==================================================== -->
+	
+	<CUSTOM_FIELD CODE="ss" LABEL="ss" FIELD_TYPE="CF" NAME="field 1" INPUT_TYPE="PLAIN_TEXT" CF_ID="1"/>
+	<CUSTOM_FIELD CODE="qq" LABEL="qq" FIELD_TYPE="CF" NAME="field 2" INPUT_TYPE="PLAIN_TEXT" CF_ID="2"/>	
+	
+	<!-- =============================== one project ================================================ -->
+		
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="987"/><TEST_CASE_LIBRARY ATTACHMENT_LIST_ID="987" TCL_ID="1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="989"/><REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="989" RL_ID="1"/>
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="988"/><CAMPAIGN_LIBRARY ATTACHMENT_LIST_ID="988" CL_ID="1"/>
+	
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="432"/>
+	<PROJECT PROJECT_ID="1" NAME="base project" ACTIVE="TRUE" CREATED_BY="IT" CREATED_ON="2011-08-08" 
+			 CL_ID="1" RL_ID="1" TCL_ID="1" ATTACHMENT_LIST_ID="432"/>
+			 
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="REQUIREMENT_VERSION" CFB_ID="1" POSITION="1" CF_ID="1" BOUND_PROJECT_ID="1"/>
+	<CUSTOM_FIELD_BINDING BOUND_ENTITY="REQUIREMENT_VERSION" CFB_ID="2" POSITION="2" CF_ID="2" BOUND_PROJECT_ID="1"/>
+	
+	
+	<!-- ============================ nodes ================================================= -->	
+	
+	
+	<REQUIREMENT_LIBRARY_NODE RLN_ID="1"  CREATED_BY="IT" CREATED_ON="2011-08-08" PROJECT_ID="1"/>
+	<REQUIREMENT_LIBRARY_NODE RLN_ID="11" CREATED_BY="IT" CREATED_ON="2011-08-08" PROJECT_ID="1"/> 
+	<REQUIREMENT_LIBRARY_NODE RLN_ID="12" CREATED_BY="IT" CREATED_ON="2011-08-08" PROJECT_ID="1"/>  
+	
+
+	<!-- ============================ req folder ================================================= -->
+	
+ 	<RESOURCE RES_ID="1" NAME="req folder 1" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="1"/>
+ 	<SIMPLE_RESOURCE RES_ID="1"/>
+	<REQUIREMENT_FOLDER RLN_ID="1" RES_ID="1"/>
+	
+	<!-- ============================ req======================================================== -->
+	
+	<REQUIREMENT RLN_ID="11" />
+	
+	<REQUIREMENT RLN_ID="12" />
+	
+	<!-- ============================ req Versions======================================================== -->
+	
+	<RESOURCE RES_ID="111" NAME="req V 111" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="111"/>
+	<REQUIREMENT_VERSION RES_ID="111" REQUIREMENT_ID="11" VERSION_NUMBER="1" CRITICALITY="MINOR" REQUIREMENT_STATUS="OBSOLETE"/>
+	
+	<RESOURCE RES_ID="112" NAME="req V 112" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="112"/>
+	<REQUIREMENT_VERSION RES_ID="112" REQUIREMENT_ID="11" VERSION_NUMBER="2" CRITICALITY="MINOR" REQUIREMENT_STATUS="OBSOLETE"/>
+	
+	<RESOURCE RES_ID="121" NAME="req V 121" CREATED_ON="2012-01-02" CREATED_BY="DBU" ATTACHMENT_LIST_ID="121"/>
+	<REQUIREMENT_VERSION RES_ID="121" REQUIREMENT_ID="12" CRITICALITY="MINOR" REQUIREMENT_STATUS="OBSOLETE"/>
+	
+	
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="111" CFV_ID="1111" BOUND_ENTITY_TYPE="REQUIREMENT_VERSION" CFB_ID="1" />
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="111" CFV_ID="1112" BOUND_ENTITY_TYPE="REQUIREMENT_VERSION" CFB_ID="2" />
+	
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="112" CFV_ID="1121" BOUND_ENTITY_TYPE="REQUIREMENT_VERSION" CFB_ID="1" />
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="112" CFV_ID="1122" BOUND_ENTITY_TYPE="REQUIREMENT_VERSION" CFB_ID="2" />
+	
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="121" CFV_ID="1211" BOUND_ENTITY_TYPE="REQUIREMENT_VERSION" CFB_ID="1" />
+	<CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="121" CFV_ID="1212" BOUND_ENTITY_TYPE="REQUIREMENT_VERSION" CFB_ID="2" />	
+	
+	<!-- ============================ 	req_relationship ================================================ -->
+	
+	<RLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="11" /> <!--  TCFOLDER 1 CONTAINS R11 -->
+	<RLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="12" /> <!--  TCFOLDER 1 CONTAINS R12 -->
+	
+	<!-- ============================ 	req_audit_events ================================================ -->
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="111" REQ_VERSION_ID="111" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+	<REQUIREMENT_CREATION EVENT_ID="111" />
+	
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="112" REQ_VERSION_ID="112" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+	<REQUIREMENT_CREATION EVENT_ID="112" />
+	
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="121" REQ_VERSION_ID="121" EVENT_DATE="2012-01-02" AUTHOR="DBU"/>
+	<REQUIREMENT_CREATION EVENT_ID="121" />
+	
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="122" REQ_VERSION_ID="121" EVENT_DATE="2012-01-03" AUTHOR="DBU"/>
+	<REQUIREMENT_PROPERTY_CHANGE EVENT_ID="122" PROPERTY_NAME=""/>
+	
+	<REQUIREMENT_AUDIT_EVENT EVENT_ID="123" REQ_VERSION_ID="121" EVENT_DATE="2012-01-04" AUTHOR="DBU"/>
+	<REQUIREMENT_LARGE_PROPERTY_CHANGE EVENT_ID="123" PROPERTY_NAME=""/>
+	
+	
+</dataset>

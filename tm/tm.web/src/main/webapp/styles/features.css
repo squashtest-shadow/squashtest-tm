@@ -1,0 +1,247 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2013 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ /*
+  * Put there any class definition that aren't related to a specific component of the UI. It's what's the name says : features that
+  * will be applied regardless of the business meaning of the component.  
+  */ 
+
+.linkWise:HOVER {
+	
+    text-decoration: underline;
+    cursor: pointer;
+}
+.popup-notification {
+	color: #555555;
+	font-size: 0.8em;
+	font-style: italic;
+	margin-top:20px;
+	text-align:right;
+}
+
+select option,select {
+	max-width: 400px;
+}
+
+.error-message {
+	color: #99352B;
+}
+
+.export-requirement-link {
+	bottom: 1px;
+	float: left;
+	position: absolute;
+	text-decoration: none;
+}
+
+.filter-enabled {
+	color: #B9121B;
+}
+
+.std-height {
+	height: 14px;
+}
+
+.gray-text {
+	color: #888888;
+}
+
+.not-displayed {
+	display: none;
+}
+
+.not-visible, .unstyled, .unstyled-table {
+	visibility: hidden;
+}
+
+.centered {
+	text-align: center;
+}
+
+.left-aligned {
+	text-align: left;
+}
+
+.right-aligned {
+	text-align: right;
+}
+
+.v-centered {
+	vertical-align: middle;
+}
+
+.y-scrollable{
+	overflow-y : auto;	
+}
+
+.medium-height{
+	max-height : 300px; 	
+}
+
+.icon {
+	float: left;
+	margin-right: 0.3em;
+}
+
+.snap-left {
+	float: left;
+}
+
+.snap-right {
+	float: right;
+}
+
+.unsnap {
+	clear: both;
+}
+
+tr td.drag-handle {
+	cursor: pointer;
+}
+
+tr.nodrop td.drag-handle {
+	cursor: n-resize;
+}
+
+
+.smallfonts {
+	font-size: 0.8em;
+}
+
+.space {
+	margin-top: 1.6em;
+}
+
+
+
+.waiting-loading{
+	background-color: #EBEAE5;
+	background-image: url('../images/ajax-loader.gif');
+	background-position: center center;
+	background-repeat: no-repeat;
+	opacity: 0.2;	
+	filter: alpha(opacity=20);
+}
+
+.minimal-height{
+	min-height : 50px;	
+}
+
+.full-width{
+	width : 100%;	
+}
+
+.searched-project {
+	color: white;
+	border: 1px solid #2E2E2E;
+	background: #2E2E2E;
+}
+
+
+.cursor-arrow{
+	cursor : default;	
+}
+
+.cursor-pointer{
+	cursor : pointer;
+}
+
+span.little-text {
+	font-size: 8px;
+}
+
+td.narrow{
+	width : 2em;	
+}
+
+td.double-narrow{
+	width : 4em;	
+}
+
+.blue-borders{
+	border : 1px solid #80B2FF;	
+}
+
+.std-padding{
+	padding : 0.1em 1em;
+}
+
+.std-margin-top {
+	margin-top : 1em;	
+}
+
+
+
+.small-arrow{
+	width : 14px;
+	height : 7px;
+	background-repeat : no-repeat;
+	background-position : center center;
+}
+
+.small-right-arrow{
+	background-image:url(../images/arrow_right.gif);
+}
+
+.small-down-arrow{
+	background-image:url(../images/arrow_down.gif);
+}
+
+.execute-arrow{
+	background : url(../images/execute.png) no-repeat center center;
+}
+
+/* ---------------------------------------------------------*/
+/* ---------------->>> Hypenation <<<------------------*/
+/* ---------------------------------------------------------*/
+p {
+    -ms-word-break: break-all;
+    word-break: break-all;
+    word-break: break-word;
+	-moz-hyphens: auto;
+	-webkit-hyphens: auto;
+	hyphens: auto;
+	hyphenate: auto;
+}
+
+
+/* ---------------------------------------------------------*/
+/* ---------------->>> custom widgets <<<------------------*/
+/* ---------------------------------------------------------*/
+
+
+
+
+ul.squash-tagit li.ui-widget-content{
+	background-image: none;
+	color: #000000;
+	border-color: #707070;
+	background-color: #D8D8D8; 	
+}
+		
+ul.squash-tagit li.invalid{
+	background-color : red;
+	color : white;
+}
+
+
+div.ui-effects-explode{
+	z-index : 50000;
+}
