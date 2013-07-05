@@ -23,10 +23,11 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="json"  uri="http://org.squashtest.tm/taglib/json" %>
 <%@ taglib prefix="treepopup" tagdir="/WEB-INF/tags/treepopups" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <layout:workspace-page-layout resourceName="campaign">
 	<jsp:attribute name="head">
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.purple.css" />
+		<comp:sq-css name="squash.purple.css" />
 		<script type="text/javascript">
 			var squashtm = squashtm || {};
 			squashtm.app = squashtm.app || {};

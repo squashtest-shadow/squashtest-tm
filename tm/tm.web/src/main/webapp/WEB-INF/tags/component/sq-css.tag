@@ -20,24 +20,6 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
-<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<layout:workspace-page-layout resourceName="requirement">
-  <jsp:attribute name="head">
-	<comp:sq-css name="squash.blue.css" />
-	<script type="text/javascript">
-		var squashtm = squashtm || {};
-		squashtm.app = squashtm.app || {};
-		squashtm.app.requirementWorkspace = {
-			wizards: ${ json:marshall(wizards) }<%-- that was a JSP expression --%>
-		}
-		
-		require( ["common"], function(){
-			require(["requirement-workspace"], function() {
-			});
-		});
-	</script>		
-	</jsp:attribute>
-</layout:workspace-page-layout>
+<%@ tag body-content="empty" %>
+<%@ attribute name="name" required="true" rtexprvalue="true" type="java.lang.String" description="unqualified name of the stylesheet" %>
+<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles-${ initParam.squashTMVersion }/${ name }" /> 

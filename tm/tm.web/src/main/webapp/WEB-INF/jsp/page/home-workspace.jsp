@@ -31,8 +31,8 @@
 
 <layout:info-page-layout titleKey="workspace.home.title" highlightedWorkspace="home">
 	<jsp:attribute  name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.blue.css" />	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/structure.override.css" />	
+		<comp:sq-css name="squash.blue.css" />	
+		<comp:sq-css name="squash.core.override.css" />	
 		
 	</jsp:attribute>
 	

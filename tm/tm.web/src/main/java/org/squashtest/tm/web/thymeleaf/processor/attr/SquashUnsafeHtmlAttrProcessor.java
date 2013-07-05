@@ -66,9 +66,8 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractChildrenModifie
 		final String attributeValue = element.getAttributeValue(attributeName);
 		LOGGER.trace("Will process attribute value {} of element {}", attributeValue, element);
 
-          final Object fragment = 
-            StandardExpressionProcessor.processExpression(arguments, attributeValue);
-          		
+		final Object fragment = StandardExpressionProcessor.processExpression(arguments, attributeValue);
+
 		try {
 			final Configuration configuration = arguments.getConfiguration();
 			final ITemplateModeHandler templateModeHandler = configuration.getTemplateModeHandler("LEGACYHTML5");

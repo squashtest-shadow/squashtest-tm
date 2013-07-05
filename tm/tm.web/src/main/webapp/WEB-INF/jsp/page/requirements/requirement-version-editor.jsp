@@ -22,31 +22,37 @@
 --%>
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="sq" %>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="gr" tagdir="/WEB-INF/tags/aggregates" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="sq"%>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="gr" tagdir="/WEB-INF/tags/aggregates"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 
-<layout:info-page-layout titleKey="squashtm.library.requirement.title" highlightedWorkspace="requirement" isSubPaged="true">
-	<jsp:attribute  name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.blue.css" />
+<layout:info-page-layout titleKey="squashtm.library.requirement.title" highlightedWorkspace="requirement"
+  isSubPaged="true">
+  <jsp:attribute name="head">	
+		<comp:sq-css name="squash.blue.css" />
 	</jsp:attribute>
-	
-	<jsp:attribute name="titlePane">
-		<h2><f:message key="squashtm.library.requirement.title" /></h2>	
+
+  <jsp:attribute name="titlePane">
+		<h2>
+      <f:message key="squashtm.library.requirement.title" />
+    </h2>	
 	</jsp:attribute>
-	
-		<jsp:attribute name="subPageTitle">
-		<h2><f:message key="subpage.requirement.info.title" /></h2>
+
+  <jsp:attribute name="subPageTitle">
+		<h2>
+      <f:message key="subpage.requirement.info.title" />
+    </h2>
 	</jsp:attribute>
-	
-	<jsp:attribute name="subPageButtons">
+
+  <jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
+		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();" />	
 	</jsp:attribute>
-	
-	<jsp:attribute name="informationContent">	
-		<gr:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ jsonCriticalities }" 
-									   jsonCategories="${ jsonCategories }" verifyingTestCaseModel="${verifyingTestCaseModel}" />
-	</jsp:attribute>	
+
+  <jsp:attribute name="informationContent">	
+		<gr:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ jsonCriticalities }"
+      jsonCategories="${ jsonCategories }" verifyingTestCaseModel="${verifyingTestCaseModel}" />
+	</jsp:attribute>
 </layout:info-page-layout>

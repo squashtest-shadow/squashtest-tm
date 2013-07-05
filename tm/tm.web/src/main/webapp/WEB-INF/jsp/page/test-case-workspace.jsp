@@ -22,10 +22,11 @@
 --%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="json"  uri="http://org.squashtest.tm/taglib/json" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <layout:workspace-page-layout resourceName="test-case">
 	<jsp:attribute name="head">
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.green.css" />
+		<comp:sq-css name="squash.green.css" />
 		<script type="text/javascript">
 			var squashtm = squashtm || {};
 			squashtm.app = squashtm.app || {};

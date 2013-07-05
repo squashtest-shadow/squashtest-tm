@@ -19,50 +19,23 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.web.thymeleaf.dialect;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import org.squashtest.tm.web.thymeleaf.processor.attr.SquashCssAttrProcessor;
-import org.squashtest.tm.web.thymeleaf.processor.attr.SquashUnsafeHtmlAttrProcessor;
-import org.thymeleaf.dialect.AbstractDialect;
-import org.thymeleaf.processor.IProcessor;
+package org.squashtest.tm.web.internal.context;
 
 /**
- * Squash dialect for Thmymeleaf
+ * This class enumerates the keys of the init parameters of the servlet context (i.e. <code><context-param></code>
+ * elements defined in <code>web.xml</code>.
  * 
  * @author Gregory Fouquet
  * 
  */
-public class SquashDialect extends AbstractDialect {
+public final class ServletContextParameters {
 
 	/**
-	 * @see org.thymeleaf.dialect.IDialect#getPrefix()
+	 * 
 	 */
-	@Override
-	public String getPrefix() {
-		return "sq";
+	private ServletContextParameters() {
+		super();
 	}
 
-	/**
-	 * @see org.thymeleaf.dialect.IDialect#isLenient()
-	 */
-	@Override
-	public boolean isLenient() {
-		return false;
-	}
-
-	/**
-	 * @see org.thymeleaf.dialect.IDialect#getProcessors()
-	 */
-	@Override
-	public Set<IProcessor> getProcessors() {
-		Set<IProcessor> processors = new HashSet<IProcessor>(2);
-		processors.add(new SquashUnsafeHtmlAttrProcessor());
-		processors.add(new SquashCssAttrProcessor());
-
-		return processors;
-	}
-
+	public static final String SQUASH_TM_VERSION = "squashTMVersion";
 }

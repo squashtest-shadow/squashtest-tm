@@ -91,7 +91,7 @@
 				<s:param name="stepIndex" value="${executionStep.executionStepOrder}" />
 			</s:url>
 
-			<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.purple.css" />
+			<comp:sq-css name="squash.purple.css" />
 		</head>
 
 		<s:url var="btEntityUrl" value="/bugtracker/execution-step/{id}">

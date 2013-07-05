@@ -22,14 +22,12 @@ package org.squashtest.tm.web.internal.exceptionresolver;
 
 public class ActionValidationErrorModel {
 
-	public final String exception; 	// NOSONAR Field is immutable
-	public final String message;	// NOSONAR Field is immutable
-	
-	public ActionValidationErrorModel(String exception, String message){
-		this.exception=exception;
-		this.message=message;
+	public final String exception; // NOSONAR Field is immutable
+	public final String message; // NOSONAR Field is immutable
+
+	public ActionValidationErrorModel(String exception, String message) {
+		this.exception = exception;
+		this.message = message;
 	}
-	
-	
-	
+
 }

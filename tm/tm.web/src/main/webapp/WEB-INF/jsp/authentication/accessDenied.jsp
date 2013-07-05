@@ -34,10 +34,9 @@
 
 <layout:common-import-outer-frame-layout titleKey="workspace.home.title" highlightedWorkspace="requirement">
 	<jsp:attribute name="head" >	
-		
 		<%-- css override is needed in case of a sub page. --%>
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.blue.css" />	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/structure.subpageoverride.css" />
+		<comp:sq-css name="squash.blue.css" />	
+		<comp:sq-css name="structure.subpageoverride.css" />
 			
 	</jsp:attribute>
 	

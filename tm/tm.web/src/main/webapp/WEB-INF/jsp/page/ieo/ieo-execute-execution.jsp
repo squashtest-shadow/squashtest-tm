@@ -31,6 +31,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" /> 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
@@ -63,7 +64,7 @@
 	<s:param name="ieo" value="true"/>
 </s:url>
 
-	<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.purple.css" />	
+	<comp:sq-css name="squash.purple.css" />	
 </head>
 
 <s:url var="btEntityUrl" value="/bugtracker/execution-step/{id}?useDelegatePopup=true" >

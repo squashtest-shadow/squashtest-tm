@@ -38,10 +38,10 @@
 <c:set var="displayedVersions" value="10" />
 <layout:common-import-outer-frame-layout highlightedWorkspace="requirement" titleKey="squashtm.library.requirement.title">
 	<jsp:attribute  name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.blue.css" />
+		<comp:sq-css name="squash.blue.css" />
 		<%-- css override is needed in case of a sub page. --%>
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/structure.override.css" />
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/structure.subpageoverride.css" />
+		<comp:sq-css name="squash.core.override.css" />
+		<comp:sq-css name="squash.subpage.override.css" />
 		<script type="text/javascript">
 
 			$(function() {

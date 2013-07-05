@@ -25,10 +25,11 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="sq" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 
 <layout:info-page-layout titleKey="squashtm.library.requirement.title" highlightedWorkspace="requirement" isSubPaged="true">
 	<jsp:attribute  name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.blue.css" />
+		<comp:sq-css name="squash.blue.css" />
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">

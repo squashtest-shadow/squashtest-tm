@@ -20,5 +20,6 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.core.css" />
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<comp:sq-css name="squash.core.css" />
 <link type="image/x-icon" rel="shortcut icon" href="${ pageContext.servletContext.contextPath }/images/favicon.ico"/>

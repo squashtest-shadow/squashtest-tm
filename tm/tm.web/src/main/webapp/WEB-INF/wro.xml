@@ -94,9 +94,23 @@
     <css>/styles/master.green-blue.css</css>
   </group>
   
+  <!-- Groups of non concatenable css -->
+  <group name="squash.tree">
+    <css>/styles/squashtree.css</css>
+  </group>
+  <group name="squash.core.override">
+    <css>/styles/structure.override.css</css>
+  </group>
+  <group name="squash.subpage.override">
+    <css>/styles/structure.subpageoverride.css</css>
+  </group>
+  <group name="squash.print">
+    <css>/styles/print.css</css>
+  </group>
+  
   <!-- This group is used to lint stylesheets -->
   <group name="csslint">
-    <css minimize="false">/styles/*.css</css>
+    <css minimize="false">/styles/**/*.css</css>
   </group>
 
 </groups>

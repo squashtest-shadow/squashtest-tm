@@ -45,7 +45,7 @@
 							treeBaseUrl="${treeBaseUrl}"
 							isRequirementPaneSearchOn="true" linkable="test-case" isSubPaged="true">
 	<jsp:attribute name="head">
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.purple.css" />
+		<comp:sq-css name="squash.purple.css" />
 
 		<aggr:decorate-campaign-test-plan-manager-table campaignUrl="${ campaignUrl }" 
 			batchRemoveButtonId="remove-items-button" editable="${editable}"/>

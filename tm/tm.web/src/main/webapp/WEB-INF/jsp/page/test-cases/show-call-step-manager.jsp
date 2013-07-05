@@ -54,7 +54,7 @@
 <layout:tree-page-layout titleKey="squashtm" highlightedWorkspace="${resourceName}" isSubPaged="true">
 
 	<jsp:attribute name="head">
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.green.css" />
+		<comp:sq-css name="squash.green.css" />
 
 		<comp:rich-jeditable-header />	
 		

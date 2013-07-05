@@ -20,14 +20,15 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="sq"%>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="sq" %>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout" %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <layout:info-page-layout titleKey="workspace.test-case.title" highlightedWorkspace="test-case" isSubPaged="true">
 
 	<jsp:attribute name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.purple.css" />
+		<comp:sq-css name="squash.purple.css" />
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">

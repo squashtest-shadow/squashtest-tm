@@ -98,7 +98,7 @@
 				"theme" : "squashtest",
 				"dots" : true,
 				"icons" : true,
-				"url" : "${ pageContext.servletContext.contextPath }/styles/squashtree.css"					
+				"url" : "${ pageContext.servletContext.contextPath }/styles/${ initParam.squashTMVersion }/squash.tree.css"					
 			},
 			"squash" : {
 				rootUrl : "${ pageContext.servletContext.contextPath }"

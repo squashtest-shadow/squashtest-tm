@@ -24,9 +24,10 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="sq" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <layout:info-page-layout titleKey="workspace.campaign.title" highlightedWorkspace="campaign">
 	<jsp:attribute  name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.purple.css" />
+		<comp:sq-css name="squash.purple.css" />
 	</jsp:attribute>
 	<jsp:attribute name="titlePane">
 		<h2><f:message key="workspace.campaign.title" /></h2>	

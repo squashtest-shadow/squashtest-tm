@@ -40,8 +40,8 @@
 
 <layout:info-page-layout titleKey="label.administration">
 	<jsp:attribute name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.grey.css" />	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/structure.override.css" />
+		<comp:sq-css name="squash.grey.css" />	
+		<comp:sq-css name="squash.core.override.css" />
 	</jsp:attribute>
 
 	<jsp:attribute name="titlePane">

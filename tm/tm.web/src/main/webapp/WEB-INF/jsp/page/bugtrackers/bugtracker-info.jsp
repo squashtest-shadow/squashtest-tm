@@ -38,7 +38,7 @@
 <s:url var="bugtrackersUrl" value="/administration/bugtrackers" />
 <layout:info-page-layout titleKey="workspace.bugtracker.info.title" isSubPaged="true">
 	<jsp:attribute name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.grey.css" />	
+		<comp:sq-css name="squash.grey.css" />	
 	</jsp:attribute>
 
 	<jsp:attribute name="titlePane"><h2 class="admin"><f:message key="label.administration" /></h2></jsp:attribute>

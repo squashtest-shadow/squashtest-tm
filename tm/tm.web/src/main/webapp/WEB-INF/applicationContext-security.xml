@@ -34,6 +34,7 @@
     <!--  images and stuff dont need authentication -->
   <http pattern="/images/**" security="none" />
   <http pattern="/styles/**" security="none" />
+  <http pattern="/styles-*/**" security="none" />
   <http pattern="/scripts/**" security="none" />
 
   <http auto-config="true" use-expressions="true" entry-point-ref="authenticationProcessingFilterEntryPoint">

@@ -41,7 +41,7 @@
 						   treeBaseUrl="${treeBaseUrl}" linkable="requirement" isSubPaged="true">
 						   
 	<jsp:attribute name="head">
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.green.css" />
+		<comp:sq-css name="squash.green.css" />
 		
 		<c:url var="addVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirements" />
 		<script type="text/javascript">

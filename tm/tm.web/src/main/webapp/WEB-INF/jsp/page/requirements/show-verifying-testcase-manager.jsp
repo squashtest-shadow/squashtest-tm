@@ -39,7 +39,7 @@
 							treeBaseUrl="${treeBaseUrl}" linkable="test-case" isSubPaged="true">
 							
 	<jsp:attribute name="head">
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.blue.css" />
+		<comp:sq-css name="squash.blue.css" />
 	</jsp:attribute>
 	
 	<jsp:attribute name="tree">

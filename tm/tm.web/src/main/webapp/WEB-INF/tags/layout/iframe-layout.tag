@@ -45,7 +45,7 @@
 <layout:common-head />
 <layout:_common-script-import highlightedWorkspace="${ resourceName }"/>
 <tree:jstree-header />
-<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.blue.css" ></link>	
+<comp:sq-css name="squash.blue.css" />	
 <jsp:invoke fragment="head" />
 </head>
 <body>

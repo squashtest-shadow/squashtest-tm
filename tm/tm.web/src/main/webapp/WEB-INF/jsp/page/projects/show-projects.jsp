@@ -35,7 +35,7 @@
 <s:url var="administrationUrl" value="/administration" />
 <layout:info-page-layout titleKey="squashtm.project.title" isSubPaged="true">
 	<jsp:attribute  name="head">	
-		<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.grey.css" />
+		<comp:sq-css name="squash.grey.css" />
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
