@@ -27,6 +27,20 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 	
+	
+
+
+<div id="tree_element_menu" class="tree-top-toolbar">
+	<div class="button-group">
+		<a id="tree-create-button" href="#tree-create-menu" class="buttonmenu"><f:message key="label.create"/>...</a>
+		<ul id="tree-create-menu" class="not-displayed">
+			<li id="new-folder-tree-button" class="ui-state-disabled"><a href="#"><f:message key="tree.button.new-folder.label" />...</a></li>
+			<li id="new-leaf-tree-button"   class="ui-state-disabled"><a href="#"><f:message key="${newLeafButtonMessage}" />...</a></li>
+		</ul>
+	</div>
+</div>
+
+<%--
 <div id="tree_element_menu" class="tree-top-toolbar">
 <div class="button-group">
 	<a id="tree-create-button" href="#tree-create-menu" class="button"><f:message key="label.create"/>...</a>
@@ -42,7 +56,6 @@
 	</div>
 	</div>
 </div>
-<%--
 <div class="button-group">
 	<a id="copy-node-tree-button" href="JavaScript:void(0);"><f:message key='tree.button.copy-node.label' /></a>
 	<a id="paste-node-tree-button" href="JavaScript:void(0);"><f:message key="tree.button.paste-node.label" /></a>
@@ -89,15 +102,21 @@
 <div class="button-group">
 	<a id="delete-node-tree-button" href="JavaScript:void(0);"><f:message key="tree.button.delete.label" />...</a>
 </div>
- --%>
 </div>
 
+ --%>
+ 
+ 
 <script type="text/javascript">
 $(function () {
     squashtm.treemenu = {};
     
-    require(['jquery', 'treemenu'], function($){
-        var initButton = function (bSelector, cssIcon, disabledParam) {
+    require(['jquery', 'http://localhost/scripts/scripts/squashtest/jquery.squash.buttonmenu.js'], function($, menumain){
+       
+    	menumain();
+        
+        <%--
+    	var initButton = function (bSelector, cssIcon, disabledParam) {
             var opts = {
                 disabled: disabledParam,
                 text: false,
@@ -114,15 +133,13 @@ $(function () {
 
         initButton("#tree-create-button", "ui-icon ui-icon-plusthick", false);
         
-        <%--
+
         
         initButton("#tree-action-button", "ui-icon-arrowreturnthick-1-e", false);
         initButton("#copy-node-tree-button", "ui-icon-copy", true);
         initButton("#paste-node-tree-button", "ui-icon-clipboard", true);
         initButton("#rename-node-tree-button", "ui-icon-pencil", true);
         initButton("#delete-node-tree-button", "ui-icon-trash", true);
-
-    	--%>
 
         var createOption = {
         	"create-folder": ".new-folder-tree-button",
@@ -143,8 +160,7 @@ $(function () {
         
     	squashtm.treemenu.create = $('#tree-create-button').treeMenu(createOption);
     		
-        
-        <%--
+
     	var treeButtons = {
     			"copy" : $('#copy-node-tree-button'),
     			"paste" : $('#paste-node-tree-button'),
