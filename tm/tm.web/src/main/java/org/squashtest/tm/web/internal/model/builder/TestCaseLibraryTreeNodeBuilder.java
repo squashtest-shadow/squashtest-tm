@@ -49,7 +49,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 
 	@Override
 	public void visit(TestCase visited) {
-		addLeafAttributes("test-cases");
+		addLeafAttributes("test-case","test-cases");
 
 		if (visited.getReference() != null && visited.getReference().length() > 0) {
 			getBuiltNode().setTitle(visited.getReference() + " - " + visited.getName());

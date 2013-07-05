@@ -29,7 +29,7 @@
  */
 
 
-define(['jquery'], function($)){
+define(['jquery'], function($){
 
 	// *********************** functions ************************************
 	
@@ -39,11 +39,11 @@ define(['jquery'], function($)){
 		var type = node.getDomType();
 		var typeRepresentation = "";
 		
-		if ((domType==='folder') || (domType === 'library')){
+		if ((type==='folder') || (type === 'drive')){
 			return type+'s';
 		}
 		else{
-			return this.getResType();
+			return node.getResType();
 		}		
 	}
 
@@ -297,7 +297,10 @@ define(['jquery'], function($)){
 		// ***************** tree actions
 
 		this.deselectChildren = function() {
-			this.tree.deselect_all(this);
+			var children = this.getChildren();
+			if (children.length>0){
+				this.tree.deselect_all(children);
+			}
 		};
 
 		this.refresh = function() {
@@ -398,10 +401,10 @@ define(['jquery'], function($)){
 		this.canContainNodes = function(){
 			//might throw npe if the conf is invalid, and so is good candidate for fail-fast warning
 			var typePluginConf = this.tree._get_settings().types.types;
-			var thisRel = node.getDomType();
+			var thisRel = this.getDomType();
 			var thisConf = typePluginConf[thisRel];
 			
-			return (thisConf !== undefined && thisConf !== 'none');
+			return (thisConf !== undefined && thisConf.valid_children !== 'none');
 		}
 
 		// ************* methods for multiple matched elements ************

@@ -21,35 +21,38 @@
 
 
 define(function(){
+	var baseURL = squashtm.app.contextRoot;
 	
-	function generate(){
-
-		return {
-			"types" : {
-				"max_depth" : -2, // unlimited without check
-				"max_children" : -2, // unlimited w/o check
-				"valid_children" : [ "drive" ],
-				"start_drag" : false,
-				"move_node" : true,
-				"delete_node" : false,
-				"remove" : false,
+	return {
+		generate : function(){
+		
+			return {
 				"types" : {
-					"test-case" : {
-						"valid_children" : 'none',
-						"icon" : {
-							"image" : baseURL+'/images/Icon_Tree_TestCase.png'
-						}
-					},
-					"folder" : {
-						"valid_children" : [ "test-case", "folder" ],
-						"icon" : {
-							"image" : baseURL+'/images/Icon_Tree_Folder.png'
-						}
-					},
-					"drive" : {
-						"valid_children" : [ "test-case", "folder" ],
-						"icon" : {
-							"image" : baseURL+'/images/root.png'
+					"max_depth" : -2, // unlimited without check
+					"max_children" : -2, // unlimited w/o check
+					"valid_children" : [ "drive" ],
+					"start_drag" : false,
+					"move_node" : true,
+					"delete_node" : false,
+					"remove" : false,
+					"types" : {
+						"test-case" : {
+							"valid_children" : 'none',
+							"icon" : {
+								"image" : baseURL+'/images/Icon_Tree_TestCase.png'
+							}
+						},
+						"folder" : {
+							"valid_children" : [ "test-case", "folder" ],
+							"icon" : {
+								"image" : baseURL+'/images/Icon_Tree_Folder.png'
+							}
+						},
+						"drive" : {
+							"valid_children" : [ "test-case", "folder" ],
+							"icon" : {
+								"image" : baseURL+'/images/root.png'
+							}
 						}
 					}
 				}

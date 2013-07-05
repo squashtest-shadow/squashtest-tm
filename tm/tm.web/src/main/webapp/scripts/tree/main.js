@@ -29,7 +29,7 @@
  * }
  */
 
-define([ "./workspace-tree/conf-factory", "./plugins/plugins-factory"], function(wkspConf, pluginsFactory) {
+define([ "./workspace-tree-conf/conf-factory", "./plugins/plugin-factory"], function(wkspConf, pluginsFactory) {
 
 	squashtm = squashtm || {};
 	squashtm.tree = squashtm.tree || {};
@@ -37,7 +37,7 @@ define([ "./workspace-tree/conf-factory", "./plugins/plugins-factory"], function
 	
 	function initWorkspaceTree(settings){
 		pluginsFactory.configure('workspace-tree');
-		var conf = wkspConf.generate(settings.workspace);
+		var conf = wkspConf.generate(settings);
 		var instance = $(settings.treeselector).jstree(conf);
 		squashtm.tree = instance;
 	}

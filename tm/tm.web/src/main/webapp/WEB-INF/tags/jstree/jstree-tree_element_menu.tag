@@ -133,7 +133,7 @@ $(function () {
     	};
     	
         var createOption = {
-        	html : $("#tree-create-button").html(),
+        	html : $("#tree-create-menu").html(),
         	treeselector : "#tree",
         	buttons : {
         		'.new-folder-tree-button' : function(nodes){ console.log('updating status for new-folder');},

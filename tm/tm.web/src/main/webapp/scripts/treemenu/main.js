@@ -32,11 +32,11 @@ define(['jquery'], function($){
 		
 		button.updateRule = updateRule;
 		
-		button.enable : function(){
+		button.enable = function(){
 			this.removeClass('menu-disabled');
 		};
 		
-		button.disable : function(){
+		button.disable = function(){
 			this.addClass('menu-disabled');
 		};
 		
@@ -77,7 +77,7 @@ define(['jquery'], function($){
 	$.fn.treeMenu = function(settings) {
 		
 		var options = settings;
-		var this.tree = $(options.treeselector).jstree('get_instance');
+		this.tree = $(options.treeselector).jstree('get_instance');
 
 		this.fgmenu({
 			content : options.html,
@@ -98,12 +98,12 @@ define(['jquery'], function($){
 		//init the buttons 
 		this.buttons = [];	
 
-		for ( var selector in options.buttons) {
+		for ( var btnselector in options.buttons) {
 			// menu.create did create a clone of the content which class is
 			// fg-menu-container. We'll be looking at the item we want to bind
 			// in the cloned content.
-			var selector = ".fg-menu-container " + options.buttons[getter];
-			var handler = options.buttons[selector];
+			var selector = ".fg-menu-container " + btnselector;
+			var handler = options.buttons[btnselector];
 			
 			var button = $(selector);
 			var enhanced = decorate(button, handler);
@@ -114,7 +114,7 @@ define(['jquery'], function($){
 		//event binding
 		
 		this.updateButtons = function(evt){
-			var nodes = tree.get_selected();
+			var nodes = this.tree.jstree('get_selected');
 			var i=0, len = this.buttons.length;
 			for (i=0;i<len;i++){
 				this.buttons[i].update;

@@ -406,7 +406,7 @@ define(['jquery', 'jstree'], function($){
 
 				container.bind("select_node.jstree", function(event, data) {
 					// should unselect the descendant
-					this.get_selected().deselectChildren();
+					self.get_selected().deselectChildren();
 
 					return true;
 					

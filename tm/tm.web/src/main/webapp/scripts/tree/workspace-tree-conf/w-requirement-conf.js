@@ -21,35 +21,38 @@
 
 
 define(function(){
-	function generate(){
+	var baseURL = squashtm.app.contextRoot;
 
-	
-		return {
-			"types" : {
-				"max_depth" : -2, // unlimited without check
-				"max_children" : -2, // unlimited w/o check
-				"valid_children" : [ "drive" ],
-				"start_drag" : false,
-				"move_node" : true,
-				"delete_node" : false,
-				"remove" : false,
+	return {
+		generate : function(){
+
+			return {
 				"types" : {
-					"requirement" : {
-						"valid_children" : ['requirement'],
-						"icon" : {
-							"image" : baseURL+'/images/Icon_Tree_TestCase.png'
-						}
-					},
-					"folder" : {
-						"valid_children" : [ "requirement", "folder" ],
-						"icon" : {
-							"image" : baseURL+'/images/Icon_Tree_Folder.png'
-						}
-					},
-					"drive" : {
-						"valid_children" : [ "requirement", "folder" ],
-						"icon" : {
-							"image" : baseURL+'/images/root.png'
+					"max_depth" : -2, // unlimited without check
+					"max_children" : -2, // unlimited w/o check
+					"valid_children" : [ "drive" ],
+					"start_drag" : false,
+					"move_node" : true,
+					"delete_node" : false,
+					"remove" : false,
+					"types" : {
+						"requirement" : {
+							"valid_children" : ['requirement'],
+							"icon" : {
+								"image" : baseURL+'/images/Icon_Tree_TestCase.png'
+							}
+						},
+						"folder" : {
+							"valid_children" : [ "requirement", "folder" ],
+							"icon" : {
+								"image" : baseURL+'/images/Icon_Tree_Folder.png'
+							}
+						},
+						"drive" : {
+							"valid_children" : [ "requirement", "folder" ],
+							"icon" : {
+								"image" : baseURL+'/images/root.png'
+							}
 						}
 					}
 				}

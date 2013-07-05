@@ -59,7 +59,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 
 	@Override
 	public void visit(Requirement requirement) {
-		addLeafAttributes("requirements");
+		addLeafAttributes("requirement","requirements");
 
 		State state = (requirement.hasContent() ? State.closed : State.leaf);
 		getBuiltNode().setState(state);

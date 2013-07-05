@@ -21,7 +21,7 @@
 
 
 //the 'tree-node' plugin will be automatically applied when required
-define(['jquery', './squash-plugin', './workspace-tree', './tree-picker' , './tree-node'], function($, applySquashPlugin, applyWorkspacePlugin, applyTreePickerPlugin){
+define(['jquery', './jstree-dnd-override','./squash-plugin', './workspace-tree-plugin', './tree-picker' , './tree-node', 'jstree'], function($, applyDndOverride, applySquashPlugin, applyWorkspacePlugin, applyTreePickerPlugin){
 
 	return {
 		
@@ -29,6 +29,7 @@ define(['jquery', './squash-plugin', './workspace-tree', './tree-picker' , './tr
 			switch(type){
 			
 			case 'workspace-tree' : 
+				applyDndOverride();
 				applySquashPlugin();
 				applyWorkspacePlugin();
 				break;

@@ -87,9 +87,9 @@ requirejs.config({
 				"jquery.squash.fg.menu" : "squashtest/jquery.squashtm.fg.menu",
 				"jquery.squash.squashbutton" : "squashtest/jquery.squash.squashbutton",
 				"jquery.squash.jeditable" : "squashtest/jquery.squashtm.jeditable.ext",
-				"jquery.squash.jstree-node" : "squashtest/jquery.squashtm.jstree-node",
-				"jquery.squash.jstree" : "squashtest/jquery.squashtm.jstree.ext",
-				"jquery.squash.linkabletree" : "squash/jquery.squashtm.linkabletree",
+				//"jquery.squash.jstree-node" : "tree/plugins/tree-node",						//should not be needed as standalone now, use the 'tree' package instead.
+				//"jquery.squash.jstree" : "tree/plugins/jquery.squashtm.jstree.ext",			//should not be needed as standalone anymore, use the 'tree' package instead
+				//"jquery.squash.linkabletree" : "squash/jquery.squashtm.linkabletree",
 				"jquery.squash.projectpicker" : "squash/jquery.squashtm.projectpicker",
 				"jquery.cookie" : "jquery/jquery.cookie",
 				"squash.bugtrackerMenu" : "squashtest/classes/BugTrackerMenu",
@@ -187,7 +187,7 @@ requirejs.config({
 					deps : [ "jquery", "jeditable", "jeditable.ckeditor" ],
 					exports : "jquerySquashtmJeditable"
 				},
-				"squashtest/classes/TreeEventHandler" : {
+				/*"squashtest/classes/TreeEventHandler" : {
 					deps : [ "squashtest/classes/Event", "jquery.squash.jstree" ],
 					exports : "TreeEventHandler"
 				},
@@ -208,7 +208,7 @@ requirejs.config({
 				"jquery.squash.linkabletree" : {
 					deps : [ "jquery", "jquery.squash.jstree" ],
 					exports : "jquerySquashtmLinkableTree"
-				},
+				},*/
 				"jquery.squash.projectpicker" : {
 					deps : [ "jquery", "jqueryui" ],
 					exports : "jquerySquashtmProjectPicker"

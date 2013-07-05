@@ -40,7 +40,7 @@
  * 
  */
 
-define(['jquery', 'jstree'], function($){
+define(['jquery'], function($){
 	
 	return function(){
 		

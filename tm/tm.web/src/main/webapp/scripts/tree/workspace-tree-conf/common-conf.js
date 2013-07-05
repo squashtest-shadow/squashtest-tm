@@ -32,92 +32,96 @@ define(function(){
 	
 	var baseURL = squashtm.app.contextRoot;
 	
+	return {
+		generate : function(settings){
 	
-	return function(settings){
 	
-		return { 
-			"plugins" : ["json_data", "ui", "types", "sort", "crrm", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ], 			
-			
-			"json_data" : { 
-				"data" : settings.model, 
-				"ajax" : {
-					"url": function (node) {
-						return node.treeNode().getContentUrl();
+			return { 
+				"plugins" : ["json_data", "ui", "types", "sort", "crrm", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ], 			
+				
+				"json_data" : { 
+					"data" : settings.model, 
+					"ajax" : {
+						"url": function (node) {
+							return node.treeNode().getContentUrl();
+						} 
+					}
+				},
+				
+				"core" : { 
+					"animation" : 0
+				},
+				
+				"crrm": {
+					"move" : {
+						"check_move" : function(){this.treeCheckDnd()}					
 					} 
+				}, 
+				
+				"dnd": {
+					
+		        	"drag_check" : function (data) {	            		
+		            	return {
+		            		after : true,
+		                	before : true,
+		                	inside : true
+		            	};	                	
+		    		},
+		    		"drag_target" : false,
+				},
+				
+				"ui": {
+					"disable_selecting_children" : true,
+					"select_multiple_modifier" : "ctrl",
+					"select_prev_on_delete" : false
+				},
+				
+				"hotkeys" : {
+					"del" : function(){
+								this.trigger('suppr.squashtree');
+							},
+					"f2" : function(){
+								this.trigger('rename.squashtree');
+							},
+					"ctrl+c" : function(){
+								this.trigger('copy.squashtree');
+							},
+					"ctrl+v" : function(){
+								this.trigger('paste.squashtree');						
+							},
+							
+					
+					"up" : false, 
+					"ctrl+up" : false, 
+					"shift+up" : false, 
+					"down" : false, 
+					"ctrl+down" : false, 
+					"shift+down" : false, 
+					"left" : false, 
+					"ctrl+left" : false, 
+					"shift+left" : false, 
+					"right" : false, 
+					"ctrl+right" : false,
+					"shift+right" : false, 
+					"space" : false, 
+					"ctrl+space" : false, 
+					"shift+space" : false							
+							
+				},
+				
+				"themes" : {
+					"theme" : "squashtest",
+					"dots" : true,
+					"icons" : true,
+					"url" : baseURL+"/styles/squashtree.css"					
+				},
+				
+				"squash" : {
+					rootUrl : baseURL
 				}
-			},
-			
-			"core" : { 
-				"animation" : 0
-			},
-			"crrm": {
-				"move" : {
-					"check_move" : function(){this.treeCheckDnd()};						
-				} 
-			}, 
-			"dnd": {
 				
-	        	"drag_check" : function (data) {	            		
-	            	return {
-	            		after : true,
-	                	before : true,
-	                	inside : true
-	            	};	                	
-	    		},
-	    		"drag_target" : false,
-			},
-			
-			"ui": {
-				"disable_selecting_children" : true,
-				"select_multiple_modifier" : "ctrl",
-				"select_prev_on_delete" : false
-			},
-			
-			"hotkeys" : {
-				"del" : function(){
-							this.trigger('suppr.squashtree');
-						},
-				"f2" : function(){
-							this.trigger('rename.squashtree');
-						},
-				"ctrl+c" : function(){
-							this.trigger('copy.squashtree');
-						},
-				"ctrl+v" : function(){
-							this.trigger('paste.squashtree');						
-						},
-						
-				
-				"up" : false, 
-				"ctrl+up" : false, 
-				"shift+up" : false, 
-				"down" : false, 
-				"ctrl+down" : false, 
-				"shift+down" : false, 
-				"left" : false, 
-				"ctrl+left" : false, 
-				"shift+left" : false, 
-				"right" : false, 
-				"ctrl+right" : false,
-				"shift+right" : false, 
-				"space" : false, 
-				"ctrl+space" : false, 
-				"shift+space" : false							
-						
-			},
-			
-			"themes" : {
-				"theme" : "squashtest",
-				"dots" : true,
-				"icons" : true,
-				"url" : baseURL+"/styles/squashtree.css"					
-			},
-			
-			"squash" : {
-				rootUrl : baseURL
 			}
-			
 		}
-	};
-	
+	}
+
 });

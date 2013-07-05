@@ -51,7 +51,7 @@ define(['jquery', 'jstree', './tree-node'], function($){
 	 */
 	function handleNodeClick(tree, event) {
 		var target = $(event.target).treeNode();
-		var node = target.parent();
+		var node = target.parent().treeNode();
 
 		if (node.canContainNodes()) {
 			if (event.ctrlKey) {

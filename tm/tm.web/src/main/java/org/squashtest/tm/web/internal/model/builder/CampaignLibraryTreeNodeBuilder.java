@@ -59,7 +59,7 @@ CampaignLibraryNodeVisitor {
 
 	@Override
 	public void visit(Campaign campaign) {
-		treeNode.addAttr("rel", "file");
+		treeNode.addAttr("rel", "campaign");
 		treeNode.addAttr("resType", "campaigns");
 		State state = (campaign.hasIterations() ? State.closed : State.leaf);
 		getBuiltNode().setState(state);

@@ -20,48 +20,52 @@
  */
 
 define(function(){
+
+	var baseURL = squashtm.app.contextRoot;
 	
-	function generate(){
-				
-		return {
-			"types" : {
-				"max_depth" : -2, // unlimited without check
-				"max_children" : -2, // unlimited w/o check
-				"valid_children" : [ "drive" ],
-				"start_drag" : false,
-				"move_node" : true,
-				"delete_node" : false,
-				"remove" : false,
-				"types" : {					
-					"test-suite" : {
-						"valid_children" : "none",						
-						"icon" : {
-							"image" :  baseURL+'/images/Icon_Tree_TestSuite.png'
-						}
-					},
-					
-					"iteration" : {
-						"valid_children" : ["test-suite"],						
-						"icon" : {
-							"image" : baseURL+'/images/Icon_Tree_Iteration.png'
-						}
-					},					
-					"campaign" : {
-						"valid_children" : ['iteration'],
-						"icon" : {
-							"image" : baseURL+'/images/Icon_Tree_Campaign.png'
-						}
-					},
-					"folder" : {
-						"valid_children" : [ "campaign", "folder" ],
-						"icon" : {
-							"image" : baseURL+'/images/Icon_Tree_Folder.png'
-						}
-					},
-					"drive" : {
-						"valid_children" : [ "campaign", "folder" ],
-						"icon" : {
-							"image" : baseURL+'/images/root.png'
+	return {
+		generate : function(){
+		
+				return {
+				"types" : {
+					"max_depth" : -2, // unlimited without check
+					"max_children" : -2, // unlimited w/o check
+					"valid_children" : [ "drive" ],
+					"start_drag" : false,
+					"move_node" : true,
+					"delete_node" : false,
+					"remove" : false,
+					"types" : {					
+						"test-suite" : {
+							"valid_children" : "none",						
+							"icon" : {
+								"image" :  baseURL+'/images/Icon_Tree_TestSuite.png'
+							}
+						},
+						
+						"iteration" : {
+							"valid_children" : ["test-suite"],						
+							"icon" : {
+								"image" : baseURL+'/images/Icon_Tree_Iteration.png'
+							}
+						},					
+						"campaign" : {
+							"valid_children" : ['iteration'],
+							"icon" : {
+								"image" : baseURL+'/images/Icon_Tree_Campaign.png'
+							}
+						},
+						"folder" : {
+							"valid_children" : [ "campaign", "folder" ],
+							"icon" : {
+								"image" : baseURL+'/images/Icon_Tree_Folder.png'
+							}
+						},
+						"drive" : {
+							"valid_children" : [ "campaign", "folder" ],
+							"icon" : {
+								"image" : baseURL+'/images/root.png'
+							}
 						}
 					}
 				}
