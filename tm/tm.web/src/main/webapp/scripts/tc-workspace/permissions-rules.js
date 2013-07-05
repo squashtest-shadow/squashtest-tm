@@ -19,55 +19,75 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery', 'tree-node-copier'], function($, nodecopier){
+define(['jquery', 'tree-node-copier', 'tree'], function($, nodecopier, tree){
 
-
-	
-	return {
-		buttonrules : {
+	return new function(){		
+		
+		this.canCreateFolder = function(nodes){
+			return nodes.filter(':creatable').filter(':folder, :library').length === 1;
+		};
+		
+		this.canCreateTestCase = function(nodes){
+			return nodes.filter(':creatable').length === 1;
+		};
+		
+		this.canCopy = function(nodes){
+			return nodes.not(':library').length > 0;
+		};
+		
+		this.canPaste = function(nodes){
+			return (nodecopier.mayPaste() === "OK");
+		};
+		
+		this.whyCantPaste = function(nodes){
+			return nodecopier.mayPaste();
+		};
+		
+		this.canRename = function(nodes){
+			return nodes.filter(':editable').not(':library').length === 1;
+		};
+		
+		this.canImport = function(nodes){
+			return tree.get().data('importable');	//tree.data would lead to a different object.
+		};
+		
+		this.canExport = function(nodes){
+			return true;
+		};
+		
+		this.canDelete = function(nodes){
+			return (nodes.filter(':deletable').not(':library').length == nodes.length) && (nodes.length>0);
+		};
+		
+		this.whyCantDelete = function(nodes){
+			if (nodes.length===0){
+				return "noNodeSelected";
+			}
+			
+			if (nodes.not(':deletable').length>0){
+				return "noDelete";
+			}
+			
+			if (nodes.is(':library')){
+				return "nodeleteLibrary";
+			}
+			
+			return "good question indeed";
+		};
+		
+		this.buttonrules = {
 			'new-folder-tree-button' : this.canCreateFolder,
-			'new-test-case-button' : this.canCreateTestCase,
+			'new-test-case-tree-button' : this.canCreateTestCase,
 			'copy-node-tree-button' : this.canCopy,
 			'paste-node-tree-button' : this.canPaste,
 			'rename-node-tree-button' : this.canRename,
 			'import-excel-tree-button' : this.canImport,
 			'import-links-excel-tree-button' : this.canImport,
-			'export-tree-button' : this.canExport
-		},
-		
-		canCreateFolder : function(nodes){
-			return nodes.filter([':creatable']).filter(':folder, :library').length === 1;
-		},
-		
-		canCreateTestCase : function(nodes){
-			return nodes.filter([':creatable']).filter(':folder, :test-case').length === 1;
-		},
-		
-		canCopy : function(nodes){
-			return nodes.not(':library').length > 0;
-		},
-		
-		canPaste : function(nodes){
-			return (nodecopier.mayPaste() === "OK");
-		},
-		
-		whyCantPaste : function(nodes){
-			return nodecopier.mayPaste();
-		},
-		
-		canRename : function(nodes){
-			return nodes.filter(':editable').not(':library').length === 1;
-		},
-		
-		canImport : function(nodes){
-			return nodes.tree.data('importable');
-		},
-		
-		canExport : function(nodes){
-			return true;
+			'export-tree-button' : this.canExport,
+			'delete-node-tree-button' : this.canDelete
 		}
-		
-	}
+
+	}();
 	
 	
 });

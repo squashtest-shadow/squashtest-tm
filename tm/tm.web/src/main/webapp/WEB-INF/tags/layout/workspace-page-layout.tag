@@ -39,11 +39,13 @@
 
 
 <layout:tree-page-layout titleKey="squashtm" highlightedWorkspace="${ resourceName }" linkable="${linkable}">
+	
 	<jsp:attribute name="head">
-		<comp:rich-jeditable-header />
 		
+		<comp:rich-jeditable-header />		
 		
 		<jsp:invoke fragment="head" />
+		
 	</jsp:attribute>
 
 	<jsp:attribute name="titlePane">

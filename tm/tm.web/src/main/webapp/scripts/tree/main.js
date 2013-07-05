@@ -46,7 +46,8 @@ define([ "./workspace-tree-conf/conf-factory", "./plugins/plugin-factory"], func
 	return {
 		initWorkspaceTree : initWorkspaceTree,
 		initLinkableTree : undefined,
-		initCallTestCaseTree : undefined
+		initCallTestCaseTree : undefined,
+		get : function(){return squashtm.tree}
 	}
 	
 	

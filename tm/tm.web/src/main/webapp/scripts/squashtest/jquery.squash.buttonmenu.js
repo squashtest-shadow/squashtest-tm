@@ -51,9 +51,9 @@ define(['jquery', 'jqueryui'], function($){
 			var settings = this.options;
 			var button = this.element;
 			var menu = button.next();
-			console.log(menu.width());
 			
 			this._menuCssTweak(menu);
+			this._bindLi(menu);
 			
 			button.button(settings.button);
 			menu.menu(settings.menu);
@@ -61,6 +61,14 @@ define(['jquery', 'jqueryui'], function($){
 			button.on('click', function(){
 				menu.toggle();
 			});
+			
+			menu.on('blur', function(){
+				menu.hide();
+			});
+			
+			//prevent the juggling effect when hovering the items
+			var width = menu.width();
+			menu.width(width+10);
 			
 		},
 		
@@ -71,6 +79,15 @@ define(['jquery', 'jqueryui'], function($){
 			menu.css('overflow', 'hidden');
 			menu.css('white-space', 'nowrap');
 			menu.css('z-index', this.options.menu.zindex);
+		},
+		
+		_bindLi : function(menu){
+			menu.find('li').on('click', function(evt){
+				if ($(this).hasClass('ui-state-disabled')){
+					evt.stopImmediatePropagation();
+					return false;
+				}
+			});
 		}
 		
 	});

@@ -21,14 +21,12 @@
 
 
 
-define(['tree', './tc-button-menu'], function(tree, treebuttons) {
+define(['tree', './tc-treemenu'], function(tree, treemenu) {
 
 	
-	function init(){
-		
-		
-		
-		
+	function init(settings){
+		tree.initWorkspaceTree(settings.tree);
+		treemenu.init();	
 	}
 	
 	

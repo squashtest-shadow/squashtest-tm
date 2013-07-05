@@ -20,7 +20,6 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ attribute name="id" required="true" description="id of the tree component" %>
 <%@ attribute name="rootModel" required="true" type="java.lang.Object" description="JSON serializable model of root of tree" %>
 <%@ attribute name="workspaceType" required="true" %>
 
@@ -32,14 +31,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 
-<c:set var="newLeafLabelKey" value="tree.button.new-${ workspaceType }.label"/>
-<tree:jstree-tree_element_menu workspace="${workspaceType}" newLeafButtonMessage="${ newLeafLabelKey }" newResourceButtonMessage="tree.button.new-iteration.label"/>
-
-
-<c:set var="importable" value="${ false }"/>
-
-<tree:_html-tree treeId="${ id }" >
-</tree:_html-tree>
+<tree:_html-tree treeId="tree" />
 
 <script type="text/javascript">
 	$(function () {
@@ -49,7 +41,7 @@
 			var conf = {
 				model : ${ json:serialize(rootModel) },
 				workspace : "${workspaceType}",
-				treeselector : "#${ id }"
+				treeselector : "#tree"
 			};
 			
 			treemaker.initWorkspaceTree(conf);

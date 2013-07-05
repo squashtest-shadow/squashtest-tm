@@ -101,8 +101,8 @@ requirejs.config({
 				"jquery.tagit" : "jquery/tag-it.min",		
 				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit",
 				"jquery.squash.add-attachment-popup" : "squashtest/add-attachment-popup",
-				"jquery.squash.buttonmenu" : "http://localhost/scripts/scripts/squashtest/jquery.squash.buttonmenu.js",
-				"tree-node-copier" : "http://localhost/scripts/scripts/workspace/tree-node-copier.js"
+				"jquery.squash.buttonmenu" : "http://localhost/scripts/scripts/squashtest/jquery.squash.buttonmenu",
+				"tree-node-copier" : "http://localhost/scripts/scripts/workspace/tree-node-copier"
 			},
 			shim : {
 				"ckeditor" : {

@@ -20,7 +20,7 @@
  */
 
 
-define(['jquery', './utils', './permissions-rules'
+define(['jquery', './utils', './permissions-rules',
         'jquery.squash.buttonmenu', 
         'jquery.squash.squashbutton',], function($, utils, permissions){
 	
@@ -49,36 +49,75 @@ define(['jquery', './utils', './permissions-rules'
 			button : importconf
 		});		
 		
-		$("#delete-node-tree-button").squashButton(renameconf);
+		$("#delete-node-tree-button").squashButton(deleteconf);
 				
+	}
+	
+	function decorateEnablingMethods(buttons){
+		var i=0, len = buttons.length;
+		
+		function btnenable(){
+			this.squashButton('enable');
+		}
+		
+		function btndisable(){
+			this.squashButton('disable');
+		}
+		
+		function itemenable(){
+			this.removeClass('ui-state-disabled');
+		}
+		
+		function itemdisable(){
+			this.addClass('ui-state-disabled');
+		}
+		
+		for (i=0;i<len;i++){
+			var jqbtn = buttons[i];
+			if (jqbtn.attr('role')==='button'){
+				jqbtn.enable = btnenable;
+				jqbtn.disable = btndisable;
+			}
+			else{
+				jqbtn.enable = itemenable;
+				jqbtn.disable = itemdisable;
+			}
+		}
 	}
 	
 	
 	function bindTreeEvents(){
 		
 		var btnselector =   "#new-folder-tree-button, #new-test-case-tree-button, #copy-node-tree-button, #paste-node-tree-button, "+
-							"#rename-node-tree-button, #import-excel-tree-button, #import-links-excel-tree-button, #export-tree-button";
+							"#rename-node-tree-button, #import-excel-tree-button, #import-links-excel-tree-button, #export-tree-button, "+
+							"#delete-node-tree-button";
 		
 		var buttons = [];
+		
 		$(btnselector).each(function(){
-			buttons.push($(this));
+			var $this = $(this);
+			buttons.push($this);
 		})
+		
+		decorateEnablingMethods(buttons);
 
 		var tree = $("#tree");	
 		
-		function loopupdate(){
+		function loopupdate(event, data){
 			
-			var nodes = tree.jstree('get_selected');
+			var rules = permissions.buttonrules;
+			var arbuttons = buttons;
+			var nodes = data.rslt.obj;
 			var i=0,len = buttons.length;
 			
 			for (i=0;i<len;i++){
-				var btn = buttons[i];
+				var btn = arbuttons[i];
 				var id = btn.attr('id');
-				var rule = permissions.buttonrules[id];
+				var rule = rules[id];
 				if (rule(nodes)){
-					btn.removeClass('ui-state-disabled');
+					btn.enable();
 				}else{
-					btn.addClass('ui-state-disabled');
+					btn.disable();
 				}				
 			}
 			
@@ -86,13 +125,26 @@ define(['jquery', './utils', './permissions-rules'
 		
 		tree.on('select_node.jstree', loopupdate);
 		tree.on('deselect_node.jstree', loopupdate);
+		
+		//init the button states immediately
+		loopupdate("", {
+			rslt : {
+				obj : tree.jstree('get_selected')
+			}
+		});
+		
+		//test
+		$(btnselector).on('click', function(){
+			console.log(this.id+' was clicked');
+		})
+		
 
 	}
 	
 	
-	function init(){
+	function init(){		
 		createWidgets();
-		bindEvents();			
+		bindTreeEvents();			
 	}
 	
 	
