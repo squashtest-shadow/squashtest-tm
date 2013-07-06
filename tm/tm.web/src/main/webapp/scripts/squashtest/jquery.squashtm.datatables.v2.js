@@ -665,6 +665,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 	/*
 	 * again 'this' is the table instance.
+	 * 
+	 * TODO : user squash.configmanager next time
 	 */
 	function _configureRichEditables() {
 
@@ -1003,6 +1005,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		return result;
 	}
 
+	//TODO ; use squash.attributeparser instead 
 	function _loopConfiguration(defs, handlers, conf) {
 
 		var hKey, dcount = 0, dlength = defs.length;

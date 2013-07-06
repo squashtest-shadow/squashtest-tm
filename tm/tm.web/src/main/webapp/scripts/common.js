@@ -102,6 +102,9 @@ requirejs.config({
 				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit",
 				"jquery.squash.add-attachment-popup" : "squashtest/add-attachment-popup",
 				"jquery.squash.buttonmenu" : "http://localhost/scripts/scripts/squashtest/jquery.squash.buttonmenu",
+				"jquery.squash.formdialog" : "http://localhost/scripts/scripts/squashtest/jquery.squash.formdialog",
+				"squash.attributeparser" : 'http://localhost/scripts/scripts/squash/squash.attributeparser',
+				"squash.configmanager" : 'http://localhost/scripts/scripts/squash/squash.configmanager',
 				"tree-node-copier" : "http://localhost/scripts/scripts/workspace/tree-node-copier"
 			},
 			shim : {
