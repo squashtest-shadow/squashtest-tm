@@ -77,7 +77,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 	<jsp:attribute name="content">
 		<script type="text/javascript">
 			$(function(){
-				require(['workspace.contextualContent'], function(){
+				require(['workspace.contextual-content'], function(){
 					//noop
 				});
 			});		
@@ -112,7 +112,9 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 	<jsp:attribute name="content">
 		<script type="text/javascript">
 			$(function(){
-				squashtm.contextualContent = $('#information-content').contextualContent();
+				require(['workspace.contextual-content'], function(){
+					//noop
+				});
 			});		
 		</script>
 		<div id="information-content" class="unstyled">

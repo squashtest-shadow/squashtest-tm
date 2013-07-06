@@ -183,7 +183,7 @@
 			</div>	
 			<script type="text/javascript">
 				$(function(){
-					require(['workspace.contextualContent'], function(){
+					require(['workspace.contextual-content'], function(){
 						//noop
 					});
 				});		

@@ -554,7 +554,7 @@
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextualContent"], 
+			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextual-content"], 
 					function($, contentHandlers, Frag, bugtracker, contextualContent){
 
 				var nameHandler = contentHandlers.getSimpleNameHandler();

@@ -74,7 +74,6 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/KeyEventListener.js"></script>
 
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.contextual-content.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.fg.menu.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squash.squashbutton.js"></script>
 

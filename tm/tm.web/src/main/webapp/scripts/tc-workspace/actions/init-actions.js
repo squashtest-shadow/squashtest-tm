@@ -80,8 +80,10 @@ define(['jquery', 'tree', 'workspace.tree-node-copier', 'workspace.tree-event-ha
 	function init(){
 		
 		var tree = tree.get();
-		var contextualContent = 
 		
+		$("#new-folder-tree-button").click(function(){
+			$("#add-folder-dialog").formDialog('open');
+		});
 		
 	}
 	

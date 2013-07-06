@@ -451,7 +451,7 @@ that page won't be editable if
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers", "workspace.contextualContent"], function($, contentHandlers, contextualContent){
+			require(["jquery", "contextual-content-handlers", "workspace.contextual-content"], function($, contentHandlers, contextualContent){
 				var nameHandler = contentHandlers.getNameAndReferenceHandler();
 				
 				nameHandler.identity = identity;

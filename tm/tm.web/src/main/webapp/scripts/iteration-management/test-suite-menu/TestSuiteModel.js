@@ -26,7 +26,7 @@ As such a model object is both master (of its listeners) and slave (of the conte
 
  ********************* */
 
-define([ "jquery", "workspace.contextualContent" , "jqueryui", ], function($, contextualContent) {
+define([ "jquery", "workspace.contextual-content" , "jqueryui", ], function($, contextualContent) {
 
 	function TestSuiteModel(settings) {
 

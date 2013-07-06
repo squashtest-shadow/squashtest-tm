@@ -103,7 +103,7 @@
 	
 		
 		//init the renaming listener
-		require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextualContent", "jqueryui"], 
+		require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextual-content", "jqueryui"], 
 				function($, contentHandlers, Frag, bugtracker, contextualContent){
 			
 			var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
