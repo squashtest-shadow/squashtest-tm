@@ -25,7 +25,7 @@
  * in this same package directory.
  */
 
-define(['jquery', 'tree'], function($, tree){
+define(['jquery'], function($){
 	
 	
 	squashtm = squashtm || {}
@@ -43,7 +43,7 @@ define(['jquery', 'tree'], function($, tree){
 	
 	function TreeEventHandler() {
 		
-		this.tree = tree.get();	//default that should work 99% of the time.
+		this.tree = $("#tree");		//default that should work 99% of the time.
 		
 		this.setTree = function(tree){
 			this.tree = tree;

@@ -34,14 +34,15 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			resizable : false,
 			modal : true,
 			width : 600,
-			position : [ 'center', 100 ]
+			position : [ 'center', 100 ],
 		},
 		
+
 		_richeditors : [],
 
-		_triggerCustom : function(a,b,c,d,e) {
-			console.log("toto");
-			console.log(event);
+		_triggerCustom : function(event) {
+			var evtname = $(event.target).data('evt');
+			this._trigger(evtname);
 			return this;
 		},
 
@@ -73,7 +74,7 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 
 			// declares custom events
 			self._on({
-				"click .ui-dialog-buttonpane button" : self._triggerCustom,
+				"click .ui-dialog-buttonpane :input" : self._triggerCustom,
 				"click .ui-dialog-titlebar-close" : self.cancel,
 				"keydown" : cancelOnEsc
 			});
@@ -84,6 +85,14 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 				self.element.remove();
 			});
 			
+			this._on('formdialogopen', this._cleanup);
+			
+		},
+		
+		_cleanup : function(){
+			this.element.find(':input,textarea,.error-message').each(function(){
+				$(this).val('');
+			})
 		},
 
 		_createButtons : function(buttons) {
@@ -92,7 +101,7 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			
 			var buttonpane = $(this.element).find('.popup-dialog-buttonpane');
 			buttonpane.addClass('ui-dialog-buttonpane ui-widget-content ui-helper-clearfix').wrapInner('<div class="ui-dialog-buttonset"></div>');
-			buttonpane.find('input:button').appendTo('.ui-dialog-buttonset', buttonpane);
+			buttonpane.find('input:button').button().appendTo('.ui-dialog-buttonset', buttonpane);
 			
 		},
 
@@ -115,22 +124,28 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 		_destroy : function() {
 			this._off($(".ui-dialog-buttonpane button"), "click");
 			this._off($(".ui-dialog-titlebar-close"), "click");
+			this._off(this.element, 'keypress');
 			this._destroyCked();
 			this._super();
 		},
 		
 		_readDomConf : function(){
+			var $dialog = this;
 			var $elt = $(this.element);		
 			var handlers = $.squash.formDialog.domconf;
 			
 			$elt.find('[data-def]').each(function(){
 				
-				var $this = $(this);
-				var raw = $this.data('def');
+				var $elt = $(this);
+				var raw = $elt.data('def');
 				var conf = attrparser.parse(raw);
 				
+				var handler;
 				for (var key in conf){
-					handlers[key](conf[key]);
+					handler = handlers[key];
+					if (handler!==undefined){
+						handler.call($dialog, $elt, conf[key]);
+					}
 				}
 				
 			});
@@ -139,17 +154,20 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 	});
 	
 	$.squash.formDialog.domconf = {
-		'isrich' : function($elt){
+		'isrich' : function($elt, value){
 			this._richeditors.push($elt);
 			var conf = confman.getStdChkeditor();
 			$elt.ckeditor(function(){}, conf);
 		},
-		'mainbtn' : function($elt){
-			this.keypress(function(evt){
+		'mainbtn' : function($elt, value){
+			this.element.keypress(function(evt){
 				if (evt.which=='13'){
 					$elt.click();
 				}
 			});
+		},
+		'evt' : function($elt, value){
+			$elt.data('evt', value);
 		}
 	}
 });

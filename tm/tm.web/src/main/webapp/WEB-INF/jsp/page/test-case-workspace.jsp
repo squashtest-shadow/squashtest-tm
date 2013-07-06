@@ -61,6 +61,9 @@
 	</jsp:attribute>	
 	
 	<jsp:attribute name="footer">
+		
+		<wkp:tc-tree-popups/>
+		
 		<script type="text/javascript">
 		
 			var conf = {

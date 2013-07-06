@@ -105,9 +105,11 @@ define(['jquery', './utils', './permissions-rules',
 		
 		function loopupdate(event, data){
 			
+			console.log(event);
+			
 			var rules = permissions.buttonrules;
 			var arbuttons = buttons;
-			var nodes = data.rslt.obj;
+			var nodes = (!!data.rslt) ? data.rslt.obj : $();	//the case 'undefined' is for deselect_all.jstree 
 			var i=0,len = buttons.length;
 			
 			for (i=0;i<len;i++){
@@ -121,10 +123,11 @@ define(['jquery', './utils', './permissions-rules',
 				}				
 			}
 			
+			return true;
+			
 		}
 		
-		tree.on('select_node.jstree', loopupdate);
-		tree.on('deselect_node.jstree', loopupdate);
+		tree.on('select_node.jstree deselect_node.jstree deselect_all.jstree', loopupdate);
 		
 		//init the button states immediately
 		loopupdate("", {
@@ -132,11 +135,6 @@ define(['jquery', './utils', './permissions-rules',
 				obj : tree.jstree('get_selected')
 			}
 		});
-		
-		//test
-		$(btnselector).on('click', function(){
-			console.log(this.id+' was clicked');
-		})
 		
 
 	}

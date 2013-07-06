@@ -82,10 +82,13 @@ define(['jquery', 'jqueryui'], function($){
 		},
 		
 		_bindLi : function(menu){
-			menu.find('li').on('click', function(evt){
+			menu.on('click', 'li', function(evt){
 				if ($(this).hasClass('ui-state-disabled')){
 					evt.stopImmediatePropagation();
 					return false;
+				}else{
+					menu.hide();
+					return true;
 				}
 			});
 		}

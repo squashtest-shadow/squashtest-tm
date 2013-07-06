@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery', 'tree', 'workspace.tree-node-copier', 'workspace.tree-event-handler'], function($, tree, contextualContent, copier, treehandler){
+define(['tree', 'workspace.contextual-content',  'workspace.tree-node-copier', 'workspace.tree-event-handler'], function(zetree, contextualContent, copier, treehandler){
 	/*
 	function init(){
 		
@@ -77,18 +77,18 @@ define(['jquery', 'tree', 'workspace.tree-node-copier', 'workspace.tree-event-ha
 	};
 	*/
 	
-	function init(){
-		
-		var tree = tree.get();
-		
-		$("#new-folder-tree-button").click(function(){
-			$("#add-folder-dialog").formDialog('open');
-		});
-		
-	}
+	
 	
 	return {
-		init : init;
+		init : function(){
+			
+			var tree = zetree.get();
+			
+			$("#new-folder-tree-button").click(function(){
+				$("#add-folder-dialog").formDialog('open');
+			});
+			
+		}
 	}	
 	
 });

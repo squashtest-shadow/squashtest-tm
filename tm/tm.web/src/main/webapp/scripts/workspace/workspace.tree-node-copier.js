@@ -28,7 +28,7 @@
  * 
  */
 
-define(['jquery', 'squash.translator', 'tree'], function($, translator, tree){
+define(['jquery', 'squash.translator'], function($, translator){
 
 
 	squashtm = squashtm || {}
@@ -47,7 +47,7 @@ define(['jquery', 'squash.translator', 'tree'], function($, translator, tree){
 	function TreeNodeCopier() {
 		
 		
-		this.tree = tree.get();	//default that should work 99% of the time.
+		this.tree = $("#tree");	//default that should work 99% of the time.
 		
 		this.setTree = function(tree){
 			this.tree = tree;

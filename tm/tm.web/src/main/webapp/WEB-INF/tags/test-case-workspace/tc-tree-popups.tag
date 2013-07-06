@@ -48,7 +48,7 @@
 		</tr>
 	</table>	
 	<div class="popup-dialog-buttonpane">
-		<input 	type="button" value="${addAnotherLabel}"    data-def="evt=add-another, mainbtn"/>
+		<input 	type="button" value="${addAnotherLabel}"   	data-def="evt=add-another, mainbtn"/>
 		<input 	type="button" value="${addLabel}" 			data-def="evt=add-close"/>
 		<input  type="button" value="${cancelLabel}" 		data-def="evt=cancel"/>
 	</div>

@@ -272,7 +272,7 @@ define(['jquery'], function($){
 		};
 
 		this.getChildren = function() {
-			var children = this.tree._get_children(this);
+			var children =  this.tree._get_children(this); 
 			return (children.length) ? children.treeNode() : $();
 		};
 
@@ -296,15 +296,12 @@ define(['jquery'], function($){
 
 		// ***************** tree actions
 
-		this.deselectChildren = function() {
-			var children = this.getChildren();
-			if (children.length>0){
-				this.tree.deselect_all(children);
-			}
+		this.deselectChildren = function(){
+			var children = this.find('a.jstree-clicked').parent('li').not(this);
+			this.tree.deselect_node(children);
 		};
 
 		this.refresh = function() {
-
 			this.tree.refresh(this);
 		};
 

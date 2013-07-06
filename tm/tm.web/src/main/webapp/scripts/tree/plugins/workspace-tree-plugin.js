@@ -20,7 +20,7 @@
  */
 
 
-define(['jquery', 'tree-node-copier', 'jstree'], function($, nodecopier){
+define(['jquery', 'workspace.tree-node-copier', 'jstree'], function($, nodecopier){
 	
 	
 	/* *******************************************************************************
@@ -405,8 +405,7 @@ define(['jquery', 'tree-node-copier', 'jstree'], function($, nodecopier){
 				var self = this;
 
 				container.bind("select_node.jstree", function(event, data) {
-					// should unselect the descendant
-					self.get_selected().deselectChildren();
+					data.rslt.obj.treeNode().deselectChildren();
 					return true;
 					
 				})

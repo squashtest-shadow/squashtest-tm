@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery', 'tree-node-copier', 'tree'], function($, nodecopier, tree){
+define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, nodecopier, tree){
 
 	return new function(){		
 		

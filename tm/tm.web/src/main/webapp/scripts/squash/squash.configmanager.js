@@ -27,7 +27,7 @@ define(["jquery", "squash.translator"], function($,translator){
 		var lang = translator.get('rich-edit.language.value');
 		
 		return {
-			styleUrl : squashtm.app.contextRoot+'/styles/ckeditor/ckeditor-config.js',
+			customConfig : squashtm.app.contextRoot+'/styles/ckeditor/ckeditor-config.js',
 			lang : lang
 		}
 	}
