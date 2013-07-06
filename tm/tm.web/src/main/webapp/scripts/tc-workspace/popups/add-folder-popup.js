@@ -26,8 +26,8 @@ define(['jquery', 'tree', 'jquery.squash.formdialog'], function($, zetree){
 	function postNode(dialog, tree){
 		
 		var params = {
-			name : dialog.find('add-folder-name').val(),
-			description : dialog.find('add-folder-name').val()
+			name : dialog.find('#add-folder-name').val(),
+			description : dialog.find('#add-folder-name').val()
 		}
 		
 		return tree.jstree('postNewNode', 'new-folder', params, false);
@@ -38,9 +38,6 @@ define(['jquery', 'tree', 'jquery.squash.formdialog'], function($, zetree){
 		
 		var dialog = $("#add-folder-dialog").formDialog();
 		var tree = zetree.get();
-		
-		
-		dialog.on()
 		
 		
 		dialog.on('formdialogadd-close', function(){

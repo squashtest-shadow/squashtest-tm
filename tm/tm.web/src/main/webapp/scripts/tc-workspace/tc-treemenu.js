@@ -105,8 +105,6 @@ define(['jquery', './utils', './permissions-rules',
 		
 		function loopupdate(event, data){
 			
-			console.log(event);
-			
 			var rules = permissions.buttonrules;
 			var arbuttons = buttons;
 			var nodes = (!!data.rslt) ? data.rslt.obj : $();	//the case 'undefined' is for deselect_all.jstree 
