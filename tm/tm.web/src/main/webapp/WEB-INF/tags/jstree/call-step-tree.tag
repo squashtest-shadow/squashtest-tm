@@ -47,7 +47,7 @@
 		$("#tree")
 		.bind("select_node.jstree", function(event, data){			
 			var resourceUrl = $(data.rslt.obj).treeNode().getResourceUrl();
-			squashtm.contextualContent.loadWith(resourceUrl);	
+			squashtm.workspace.contextualContent.loadWith(resourceUrl);	
 			
 			return true;
 		})

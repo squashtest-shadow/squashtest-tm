@@ -18,7 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "app/lnf/Forms", "jquery.squash.confirmdialog" ], function($, Backbone, Forms) {
+define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.contextualContent', 
+         'squash.configmanager', 
+         "jquery.squash.confirmdialog" ], function($, Backbone, Forms, contextualContent, confman) {
 	var NewParameterDialog = Backbone.View.extend({
 		el : "#add-parameter-dialog",
 
@@ -97,11 +99,7 @@ define([ "jquery", "backbone", "app/lnf/Forms", "jquery.squash.confirmdialog" ],
 
 			function decorateArea() {
 				var $area = $(this);
-				$area.ckeditor(function() {
-				}, {
-					customConfig : squashtm.app.contextRoot + "/styles/ckeditor/ckeditor-config.js",
-					language : squashtm.app.ckeditorLanguage
-				});
+				$area.ckeditor(function() {}, confman.getStdChkeditor());
 			}
 
 			this.$textAreas.each(decorateArea);
@@ -128,7 +126,7 @@ define([ "jquery", "backbone", "app/lnf/Forms", "jquery.squash.confirmdialog" ],
 				}
 			};
 
-			squashtm.contextualContent.addListener(terminator);
+			contextualContent.addListener(terminator);
 		}
 	});
 	return NewParameterDialog;

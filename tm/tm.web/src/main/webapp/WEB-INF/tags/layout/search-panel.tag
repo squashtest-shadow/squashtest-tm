@@ -227,7 +227,7 @@
 				
 				var url = getEntityURL($(this));
 				
-				squashtm.contextualContent.loadWith(url);
+				squashtm.workspace.contextualContent.loadWith(url);
 				
 				<%--
 				$.get(url, function(data) {

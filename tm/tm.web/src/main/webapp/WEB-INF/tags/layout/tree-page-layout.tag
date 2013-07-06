@@ -188,7 +188,9 @@
 		
 		<script type="text/javascript">
 			$(function(){
-				squashtm.contextualContent = $('#contextual-content').contextualContent();
+				require(['workspace.contextualContent'], function(){
+					//noop
+				});
 			});		
 		</script>
 			
@@ -261,7 +263,9 @@
 		
 		<script type="text/javascript">
 			$(function(){
-				squashtm.contextualContent = $('#contextual-content').contextualContent();
+				require(['workspace.contextualContent'], function(){
+					//noop
+				});
 			});		
 		</script>
 		

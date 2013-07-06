@@ -89,7 +89,7 @@
 
 					var urlPattern = "<c:url value='/requirement-versions/selectedVersionId/editor-fragment' />";
 					
-					squashtm.contextualContent.loadWith(urlPattern.replace("selectedVersionId", id));
+					squashtm.workspace.contextualContent.loadWith(urlPattern.replace("selectedVersionId", id));
 				}
 				
 				$(".select-handle", table).live('click', function() {
@@ -183,7 +183,9 @@
 			</div>	
 			<script type="text/javascript">
 				$(function(){
-					squashtm.contextualContent = $('#contextual-content').contextualContent();
+					require(['workspace.contextualContent'], function(){
+						//noop
+					});
 				});		
 			</script>
 		</div>

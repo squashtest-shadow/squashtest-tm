@@ -19,14 +19,13 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-define(['tree', './tc-treemenu'], function(tree, treemenu) {
+define(['tree', './tc-treemenu', './popups/init-all', 'actions/init-actions'], function(tree, treemenu, popups, actions) {
 
 	
 	function init(settings){
 		tree.initWorkspaceTree(settings.tree);
 		treemenu.init();	
+		popups.init();
 	}
 	
 	

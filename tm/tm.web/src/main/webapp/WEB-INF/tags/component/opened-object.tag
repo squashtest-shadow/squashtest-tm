@@ -40,6 +40,6 @@ function quitTestCase (){
 }
 window.onbeforeunload = quitTestCase;
 <c:if test="${ isContextual }">
-squashtm.contextualContent.onCleanContent = quitTestCase;
+squashtm.workspace.contextualContent.onCleanContent = quitTestCase;
 </c:if>
 </script>

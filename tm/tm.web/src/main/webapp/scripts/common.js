@@ -83,7 +83,8 @@ requirejs.config({
 				"jquery.squash.messagedialog" : "squashtest/jquery.squash.messagedialog",
 				"jquery.squash.confirmdialog" : "squashtest/jquery.squash.confirmdialog",
 				"jquery.squash.oneshotdialog" : "squashtest/jquery.squashtm.oneshotdialog",
-				"jquery.squash.contextual-content" : "squashtest/jquery.squashtm.contextual-content",
+				"jquery.squash.contextual-content" : "http://localhost/scripts/scripts/workspace/workspace.contextual-content",	//legacy
+				"workspace.contextual-content" : "http://localhost/scripts/scripts/workspace/workspace.contextual-content",	
 				"jquery.squash.fg.menu" : "squashtest/jquery.squashtm.fg.menu",
 				"jquery.squash.squashbutton" : "squashtest/jquery.squash.squashbutton",
 				"jquery.squash.jeditable" : "squashtest/jquery.squashtm.jeditable.ext",
@@ -105,7 +106,8 @@ requirejs.config({
 				"jquery.squash.formdialog" : "http://localhost/scripts/scripts/squashtest/jquery.squash.formdialog",
 				"squash.attributeparser" : 'http://localhost/scripts/scripts/squash/squash.attributeparser',
 				"squash.configmanager" : 'http://localhost/scripts/scripts/squash/squash.configmanager',
-				"tree-node-copier" : "http://localhost/scripts/scripts/workspace/tree-node-copier"
+				"workspace.tree-node-copier" : "http://localhost/scripts/scripts/workspace/workspace.tree-node-copier",
+				"workspace.tree-event-handler" : "http://localhost/scripts/scripts/workspace/workspace.tree-event-handler"
 			},
 			shim : {
 				"ckeditor" : {
@@ -182,10 +184,6 @@ requirejs.config({
 				"jquery.squash.fg.menu" : {
 					deps : [ "jquery", "jqueryui" ],
 					exports : "jquerySquashtmFgMenu"
-				},
-				"jquery.squash.contextual-content" : {
-					deps : [ "jquery", "jqueryui" ],
-					exports : "jquerySquashContextualContent"
 				},
 				"jquery.squash.jeditable" : {
 					deps : [ "jquery", "jeditable", "jeditable.ckeditor" ],
