@@ -80,6 +80,8 @@
 					<c:out value="${deleteMessageSuffix}" />
 				</p>
 				
+				<p id="delete-node-dialog-details" class="not-displayed"></p>
+				
 				<p><c:out value="${deleteMessageNoUndo}"/></p>				
 				
 				<p class='bold-warning-message'><c:out value="${deleteMessageConfirm}"/></p>

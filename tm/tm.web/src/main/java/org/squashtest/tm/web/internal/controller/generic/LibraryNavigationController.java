@@ -172,8 +172,8 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	}
 	
-	@RequestMapping(value="/delete-nodes/simulate", method = RequestMethod.POST, params = {NODE_IDS})
-	public @ResponseBody Message simulateNodeDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale){
+	@RequestMapping(value="/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
+	public @ResponseBody Message simulateNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds, Locale locale){
 		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds);
 		
 		StringBuilder builder = new StringBuilder();
@@ -187,6 +187,13 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		
 	}
 	
+
+	@RequestMapping(value="/content/{nodeIds}", method=RequestMethod.DELETE)
+	public @ResponseBody List<Long> confirmNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds){
+		
+		return getLibraryNavigationService().deleteNodes(nodeIds);	
+	}
+	
 	public static class Message {
 		private String message ;
 		public Message (String message){
@@ -197,11 +204,6 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		}
 	}
 
-	@RequestMapping(value="/delete-nodes/confirm", method=RequestMethod.DELETE, params= {NODE_IDS})
-	public @ResponseBody List<Long> confirmNodeDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds){
-		
-		return getLibraryNavigationService().deleteNodes(nodeIds);	
-	}
 	
 	
 	@RequestMapping(value = "/copy", method = RequestMethod.POST)

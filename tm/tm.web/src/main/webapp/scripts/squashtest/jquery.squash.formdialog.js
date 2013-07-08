@@ -30,10 +30,12 @@
  * 
  * <div id="mydialog" class="popup-dialog">
  * 
- * 		<div id="maincontent">
- * 			<p>this is my main content. Always displayed.</p>
+ * 		<div>
+ * 			<p>this is my main content. Because it isn't a xor-content div (read below), it will always be displayed.</p>
+ * 
  * 			<textarea data-def="isrich">will be turned into rich editable</textarea>
- * 			<textarea>will stay a regular textarea</textarea>
+ * 
+ * 			<textarea>will remain a regular textarea</textarea>
  * 		</div>
  * 
  * 		<div data-def="xor-content=content-1">
@@ -46,8 +48,8 @@
  * 		<div class="popup-dialog-buttonpane">
  * 			<input type="button" value="ok" 					data-def="evt=confirm, mainbtn"/>
  * 			<input type="button" value="cancel" 				data-def="evt=cancel" />
- * 			<input type="button" value="button for content1" 	data-def="xor-content=content-1" />
- * 			<input type="button" value="button for content2" 	data-def="xor-content=content-2" />
+ * 			<input type="button" value="specific to content1" 	data-def="xor-content=content-1" />
+ * 			<input type="button" value="specific to content2" 	data-def="xor-content=content-2" />
  * 		</div>
  * 
  * </div>
@@ -64,8 +66,9 @@
  * 
  * 3/ all the inputs defined in this dialog will be cleaned up automatically whenever the dialog is opened again.
  * 
- * 4/ a popup can define several alternative content that are displayed one at a time. Those elements are declared using
- * the class popup-dialog-xor-content. See the API for details (showContent) and configuration for details.
+ * 4/ a popup can define several alternative content that are displayed one at a time. Displaying one will automatically hide the other alternatives. 
+ * 	  Those elements are declared using data-def="xor-content=<content-id>", or directly using class="popup-dialog-xor-content-<content-id>". 
+ *    See the API for details (showContent) and configuration for details.
  * 
  * ============= API ====================
  * 
@@ -140,11 +143,12 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 					event.preventDefault();
 				}
 			}
-
-			this._readDomConf();
-			
 			// creates the widget
 			self._super();
+			
+			//read and apply dom conf
+			this._readDomConf();
+			
 
 			// declares custom events
 			self._on({
@@ -189,18 +193,19 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 		_createButtons : function() {
 
 			//ripped from jquery-ui 1.8.13. It might change some day, be careful.
-			var buttonpane = $(this.element).find('.popup-dialog-buttonpane');
+			var buttonpane = this.uiDialog.find('.popup-dialog-buttonpane');
 			buttonpane.addClass('ui-dialog-buttonpane ui-widget-content ui-helper-clearfix').wrapInner('<div class="ui-dialog-buttonset"></div>');
-			buttonpane.find('input:button').button().appendTo('.ui-dialog-buttonset', buttonpane);
+			var buttons = buttonpane.find('input:button').button();
+			buttonpane.find('.ui-dialog-buttonset').append(buttons);
 			
 			//the following line will move the buttonpane after the body of the popup.
-			buttonpane.insertAfter(this.element);
+			buttonpane.appendTo(this.uiDialog);
 			
 		},
 		
 		//negation of the above. Untested yet.
 		_destroyButtons : function(){
-			var buttonpane = $(this.element).siblings('.popup-dialog-buttonpane');
+			var buttonpane = this.uiDialog.find('.popup-dialog-buttonpane');
 			buttonpane.removeClass('ui-dialog-buttonpane ui-widget-content ui-helper-clearfix');
 			buttonpane.find('input:button').button('destroy').appendTo(buttonPane);
 			buttonpane.find('div.ui-dialog-buttonset').remove();
@@ -236,11 +241,10 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 		},
 		
 		_readDomConf : function(){
-			var $dialog = this;
-			var $elt = $(this.element);		
+			var $widget = this;		
 			var handlers = $.squash.formDialog.domconf;
 			
-			$elt.find('[data-def]').each(function(){
+			$widget.uiDialog.find('[data-def]').each(function(){
 				
 				var $elt = $(this);
 				var raw = $elt.data('def');
@@ -250,7 +254,7 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 				for (var key in conf){
 					handler = handlers[key];
 					if (handler!==undefined){
-						handler.call($dialog, $elt, conf[key]);
+						handler.call($widget, $elt, conf[key]);
 					}
 				}
 				
@@ -266,11 +270,12 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			$elt.ckeditor(function(){}, conf);
 		},
 		'mainbtn' : function($elt, value){
-			this.element.keypress(function(evt){
+			function callback(evt){
 				if (evt.which=='13'){
 					$elt.click();
 				}
-			});
+			};
+			this.uiDialog.keypress(callback);
 		},
 		'evt' : function($elt, value){
 			$elt.data('evt', value);

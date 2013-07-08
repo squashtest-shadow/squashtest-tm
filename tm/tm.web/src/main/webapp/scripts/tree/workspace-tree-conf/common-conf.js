@@ -78,16 +78,16 @@ define(function(){
 				
 				"hotkeys" : {
 					"del" : function(){
-								this.trigger('suppr.squashtree');
+								this.get_container().trigger('suppr.squashtree');
 							},
 					"f2" : function(){
-								this.trigger('rename.squashtree');
+								this.get_container().trigger('rename.squashtree');
 							},
 					"ctrl+c" : function(){
-								this.trigger('copy.squashtree');
+								this.get_container().trigger('copy.squashtree');
 							},
 					"ctrl+v" : function(){
-								this.trigger('paste.squashtree');						
+								this.get_container().trigger('paste.squashtree');						
 							},
 							
 					

@@ -473,6 +473,44 @@ define(['jquery', 'workspace.tree-node-copier', 'jstree'], function($, nodecopie
 					var selected = this.get_selected();
 					selected.all('refresh');
 				},
+				
+
+				
+				/*
+				 * types : array of values of 'rel' attributes (eg ['folder', 'test-case'])
+				 * ids : array of resid 
+				 */
+				delete_nodes : function(){
+					var self = this, nodes = null;
+
+					if ( (arguments.length==2) && (arguments[0] instanceof Array) && (arguments[1] instanceof Array) ){
+						var types = arguments[0];
+						var ids = arguments[1];
+						
+						var typeSelector = "";
+						var idSelector = "";
+						var tlen = types.length, ilen = ids.length;
+						for (var i=0;i<tlen;i++){
+							typeSelector += "[rel='"+types[i]+"'],";
+						}
+						for (var i=0;i< ilen;i++){
+							idSelector += "[resid='"+ids[i]+"'],";
+						};
+						
+						typeSelector = typeSelector.replace(/,$/,'');
+						idSelector = idSelector.replace(/,$/,'');
+						
+						nodes = this.get_container().find(idSelector).filter(typeSelector);
+					}
+					else{
+						nodes = arguments[0];
+					}
+					
+					nodes.each(function(){
+						self.delete_node(this);
+					});
+					
+				},
 	
 			}
 
