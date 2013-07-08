@@ -97,10 +97,17 @@ define(['tree', 'workspace.contextual-content',  'workspace.tree-node-copier', '
 				}
 			});
 			
-			$("#new-folder-tree-button").click(function(){
+			$("#new-folder-tree-button").on('click', function(){
 				$("#add-folder-dialog").formDialog('open');
 			});
 			
+			$("#delete-node-tree-button").on('click', function(){
+				$("#delete-node-dialog").formDialog('open');
+			});
+			
+			tree.on('suppr.squashtree', function(){
+				$("#delete-node-dialog").formDialog('open');
+			})
 		}
 	}	
 	

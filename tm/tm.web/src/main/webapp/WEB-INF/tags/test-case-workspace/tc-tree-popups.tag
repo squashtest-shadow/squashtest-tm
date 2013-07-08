@@ -25,11 +25,20 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
+<c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
 
 <f:message var="addFolderTitle"  	key="dialog.new-folder.title"/>	
 <f:message var="addLabel"		 	key="label.Add"/>
 <f:message var="addAnotherLabel"	key="label.addAnother"/>
 <f:message var="cancelLabel"		key="label.Cancel"/>
+<f:message var="confirmLabel"		key="label.Confirm"/>
+<f:message var="deleteNodeTitle"	key="dialog.delete-tree-node.title"/>
+
+<f:message var="deleteMessagePrefix"	key="dialog.label.delete-node.label.start" />
+<f:message var="deleteMessageVariable"  key="dialog.label.delete-nodes.test-cases.label"/>
+<f:message var="deleteMessageSuffix"	key="dialog.label.delete-node.label.end"/>
+<f:message var="deleteMessageNoUndo"	key="dialog.label.delete-node.label.cantbeundone" />
+<f:message var="deleteMessageConfirm"	key="dialog.label.delete-node.label.confirm" />
 
 
 <div id="treepopups-definition" class="not-displayed">
@@ -51,6 +60,41 @@
 		<input 	type="button" value="${addAnotherLabel}"   	data-def="evt=add-another, mainbtn"/>
 		<input 	type="button" value="${addLabel}" 			data-def="evt=add-close"/>
 		<input  type="button" value="${cancelLabel}" 		data-def="evt=cancel"/>
+	</div>
+</div>
+
+<div id="delete-node-dialog" class="popup-dialog not-displayed" title="${deleteNodeTitle}">
+	
+	<div id="delete-node-dialog-pleasewait" class="please-wait" data-def="xor-content=pleasewait"></div>
+	
+	<div id="delete-node-dialog-simulation" class="not-displayed" data-def="xor-content=confirm">
+	
+		<div class="display-table-row">
+			<div class="display-table-cell" style="vertical-align:middle;">
+				<img src='${servContext}/images/messagebox_confirm.png'/>
+			</div>
+			<div class="display-table-cell">
+				<p>
+					<c:out value="${deleteMessagePrefix}"/>
+					<span class='red-warning-message'><c:out value="${deleteMessageVariable}" /></span> 
+					<c:out value="${deleteMessageSuffix}" />
+				</p>
+				
+				<p><c:out value="${deleteMessageNoUndo}"/></p>				
+				
+				<p class='bold-warning-message'><c:out value="${deleteMessageConfirm}"/></p>
+				
+			</div>
+		</div>
+	</div>
+		
+	<div id="delete-node-dialog-rejected"   class="not-displayed" data-def="xor-content=rejected">
+		<f:message key="dialog.label.delete-node.rejected"/>
+	</div>
+	
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn, xor-content=confirm"/>
+		<input type="button" value="${cancelLabel}"  data-def="evt=cancel"/>
 	</div>
 </div>
 

@@ -68,8 +68,6 @@
 <%-- onLoad code --%>
 <script type="text/javascript">
 
-
-
 $(function(){
 
 	var dialog=$( "#delete-node-dialog" );

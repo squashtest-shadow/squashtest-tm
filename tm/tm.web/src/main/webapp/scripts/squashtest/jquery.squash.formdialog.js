@@ -19,6 +19,76 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+/*
+ * Documentation  : 
+ * 
+ * ======== structure ===========
+ * 
+ * Contrary to regular jQuery dialogs, the button pane is declared explicitely. Here is a sample formdialog, note 
+ * the use of css classes and data-def :
+ * 
+ * <div id="mydialog" class="popup-dialog">
+ * 
+ * 		<div id="maincontent">
+ * 			<p>this is my main content. Always displayed.</p>
+ * 			<textarea data-def="isrich">will be turned into rich editable</textarea>
+ * 			<textarea>will stay a regular textarea</textarea>
+ * 		</div>
+ * 
+ * 		<div data-def="xor-content=content-1">
+ * 			<p>either this is displayed</p></div>
+ * 
+ * 		<div data-def="xor-content=content-2">
+ * 			<p>or that</p>
+ * 		</div>
+ * 	
+ * 		<div class="popup-dialog-buttonpane">
+ * 			<input type="button" value="ok" 					data-def="evt=confirm, mainbtn"/>
+ * 			<input type="button" value="cancel" 				data-def="evt=cancel" />
+ * 			<input type="button" value="button for content1" 	data-def="xor-content=content-1" />
+ * 			<input type="button" value="button for content2" 	data-def="xor-content=content-2" />
+ * 		</div>
+ * 
+ * </div>
+ * 
+ * 
+ * ========== behaviour ================
+ * 
+ * 1/ the buttons aren't created like regular popup : the same dom objects are litteraly reused. This can help you
+ * with the logic of the popup. HOWEVER, they are moved around, which may lead to the loss of callbacks on those buttons
+ * if they were bound before the dialog was initialized.
+ * 
+ * 2/ the popup will be automatically destroyed and removed whenever the container it was initially declared in
+ * is removed. Not more 'is-contextual' bullshit !
+ * 
+ * 3/ all the inputs defined in this dialog will be cleaned up automatically whenever the dialog is opened again.
+ * 
+ * 4/ a popup can define several alternative content that are displayed one at a time. Those elements are declared using
+ * the class popup-dialog-xor-content. See the API for details (showContent) and configuration for details.
+ * 
+ * ============= API ====================
+ * 
+ * 1/ cleanup : force the cleanup of the controls
+ * 
+ * 2/ showContent(id) : will show anything configured 'xor-content=<content id>' and hide the other ones.
+ *  
+ * ========= configuration ==============
+ * 
+ * 1/ basic : all basic options of jQuery dialog are valid here, EXCEPT for the buttons.
+ * 
+ * 2/ DOM conf : reads parts of the conf from the datatable, see the handlers at the end of the document for details.
+ * for now, supports : 
+ * - isrich : for textarea. If set, will be turned into a ckeditor.
+ * - evt=<eventname> : for buttons. If set, clicking on that button will trigger <eventname> on the dialog.
+ * - mainbtn : for buttons. If set, pressing <ENTER> inside the dialog will trigger 'click' on that button.
+ * - xor-content=<content id> : for any elements in the popup. Multiple elements can declare the same <content-id> and they'll
+ * 								be logically bound when showContent(<content-id>) is invoked. Note that a single element can belong
+ * 								to multiple xor-content.
+ * 
+ * 
+ */
+
 define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'], function($, attrparser, confman){
 
 	if (($.squash !== undefined) && ($.squash.formDialog !== undefined)) {
@@ -54,6 +124,10 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			this._trigger("cancel");
 			return this;
 		},
+		
+		showContent : function(contentId){
+			this.uiDialog.find('[class|="popup-dialog-xor-content"]').hide().end().find('.popup-dialog-xor-content-'+contentId).show();
+		},
 
 		_create : function() {
 			var self = this;
@@ -84,6 +158,9 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 				self.element.formDialog('destroy');
 				self.element.remove();
 			});
+			
+			//show the first xor-content if any.
+			this._activateFirstContent();
 
 		},
 	
@@ -97,6 +174,16 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			this.element.find(':input,textarea,.error-message').each(function(){
 				$(this).val('');
 			})
+		},
+		
+		_activateFirstContent : function(){
+			var elt = this.uiDialog.find('[class*="popup-dialog-xor-content"]:first');
+			if (elt.length===0){
+				return ;
+			}
+			var classes = elt.attr('class');
+			var contentId = /popup-dialog-xor-content-(\S*)/.exec(classes);
+			this.showContent(contentId);
 		},
 
 		_createButtons : function() {
@@ -187,6 +274,9 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 		},
 		'evt' : function($elt, value){
 			$elt.data('evt', value);
+		},
+		'xor-content' : function($elt, value){
+			$elt.addClass('popup-dialog-xor-content-'+value);
 		}
 	}
 });
