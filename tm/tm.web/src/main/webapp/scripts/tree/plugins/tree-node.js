@@ -381,7 +381,7 @@ define(['jquery'], function($){
 			}
 			
 			var typePluginConf = this.tree._get_settings().types.types;
-			var thisRel = node.getDomType();
+			var thisRel = this.getDomType();
 			
 			//might throw npe if the conf is invalid, and so is good candidate for fail-fast warning
 			var validChildrenTypes = typePluginConf[thisRel].valid_children;	
@@ -474,11 +474,12 @@ define(['jquery'], function($){
 
 			return (shrinkingSet.length == this.length);
 		};
+
 		
 
 		this.areEither = function(typesArray){
 			var collected = this.all('getDomType');
-			return $(collected).not(typesArray).length == 0 && $(typesArray).not(collected).length == 0
+			return $(collected).not(typesArray).length == 0;
 		};
 		
 

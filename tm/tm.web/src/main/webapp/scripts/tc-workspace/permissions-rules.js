@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, nodecopier, tree){
+define(['jquery',  'tree'], function($, tree){
 
 	return new function(){		
 		
@@ -31,18 +31,49 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, nodecopier,
 			return nodes.filter(':creatable').length === 1;
 		};
 		
+		//must be not empty, and not contain libraries.
 		this.canCopy = function(nodes){
-			return nodes.not(':library').length > 0;
+			return (nodes.length > 0) && (nodes.not(':library').length == nodes.length);
 		};
 		
-		this.canPaste = function(nodes){
-			return (nodecopier.mayPaste() === "OK");
+		this.whyCantCopy = function(nodes){
+			if (nodes.length==0){
+				return "empty-selection";
+			}
+			
+			if (nodes.not(':library').length != nodes.length){
+				return "no-libraries-allowed";
+			}
+			
+			return "yes-you-can";
 		};
 		
 		this.whyCantPaste = function(nodes){
-			return nodecopier.mayPaste();
+			if (nodes.length==0){
+				return "empty-selection";
+			}
+			
+			var target = nodes.tree.get_selected();
+			
+			if (! target.length === 1){
+				return "not-unique";
+			}
+			
+			if (! target.isCreatable()){
+				return "not-creatable";
+			}
+			
+			if (! target.acceptsAsContent(nodes)){
+				return 'invalid-content';
+			}
+			
+			return "yes-you-can";
 		};
-		
+			
+		this.canPaste = $.proxy(function(nodes){
+			return (this.whyCantPaste(nodes) === "yes-you-can");			
+		}, this);
+
 		this.canRename = function(nodes){
 			return nodes.filter(':editable').not(':library').length === 1;
 		};
@@ -61,18 +92,18 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, nodecopier,
 		
 		this.whyCantDelete = function(nodes){
 			if (nodes.length===0){
-				return "noNodeSelected";
+				return "empty-selection";
 			}
 			
 			if (nodes.not(':deletable').length>0){
-				return "noDelete";
+				return "not-deletable";
 			}
 			
 			if (nodes.is(':library')){
-				return "nodeleteLibrary";
+				return "no-libraries-allowed";
 			}
 			
-			return "good question indeed";
+			return "yes-you-can";
 		};
 		
 		this.buttonrules = {

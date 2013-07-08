@@ -19,65 +19,59 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['tree', 'workspace.contextual-content',  'workspace.tree-node-copier', 'workspace.tree-event-handler'], function(zetree, ctxcontent, copier, treehandler){
-	/*
-	function init(){
-		
-		var handler = $.extend({}, settings);
-		
-		//init 
-		
-		handler.treeEvtHandlers = new TreeEventHandler(settings);
-		handler.copier = new TreeNodeCopier(settings);
-		handler.contextualContent = squashtm.contextualContent;
-		
-		
-		
-		//event binding
-		handler.copyButton.on('click', function(){
-			handler.copier.copyNodesToCookie();
-		})
-		
-		handler.pasteButton.on('click', function(){
-			handler.copier.pasteNodesFromCookie();
-		});
-		
-		handler.tree.on('copy.squashtree', function(){
-			handler.copier.copyNodesToCookies();
-		});
-		
-		handler.tree.on('paste.squashtree', function(){
-			handler.copier.pasteNodesFromCookie()
-		});
-		
-		handler.tree.on('select_node.jstree', function(){
-			var selected = handler.tree.get_selected();
-			if (selected == 1){
-				handler.contextualContent.loadWith(selected.getResourceUrl())
-				.done(function(){
-					handler.contextualContent.addListener(handler.treeEvtHandlers);
-				});
-			}
-			else{
-				handler.contextualContent.unload();				
-			}
-		});
-		
-		
-		// **************** do better asap *****************
-		
-		handler.tree.on('suppr.squashtree', function(){
-			$("#delete-node-dialog").dialog('open');
-		});
-		
-		handler.tree.on('rename.squashtree', function(){
-			$("#rename-node-dialog").dialog('open');
-		});
-		
-	};
-	*/
+define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.translator' , 
+        'workspace.tree-node-copier', 'workspace.tree-event-handler'], function(zetree, rules, ctxcontent, translator, copier, treehandler){
 	
 	
+	function showError(messageName){	
+		
+		var messages = translator.get({
+			'no-libraries-allowed' 	: 'tree.button.copy-node.error.nolibrary',
+			'not-unique' 			: 'tree.button.copy-node.error.notOneEditable',
+			'not-creatable' 		: 'tree.button.copy-node.error.notOneEditable',
+			'empty-selection' 		: 'tree.button.copy-node.error.nothing-to-paste',
+			'invalid-content' 		: 'tree.button.copy-node.error.pastenothere',
+			'not-deletable'			: 'dialog.label.delete-node.rejected'
+		});		
+
+		squashtm.notification.showInfo(message[messageName]);
+	}
+	
+
+	function copyIfOk(tree){
+		var nodes = tree.jstree('get_selected');
+		if (rules.canCopy(nodes)){
+			copier.copyNodesToCookie();
+		}
+		else{
+			var why = rules.whyCantCopy(nodes);
+			showError(why);
+		}		
+	}
+	
+	function pasteIfOk(tree){
+		var nodes = copier.bufferedNodes();
+		if (rules.canPaste(nodes)){
+			copier.pasteNodesFromCookie();
+		}
+		else{
+			var why = rules.whyCantPaste(nodes);
+			showError(why);
+		}		
+	}
+	
+	function loadFragment(tree){
+		var selected =  tree.jstree('get_selected');
+		if (selected.length == 1){
+			ctxcontent.loadWith(selected.getResourceUrl())
+			.done(function(){
+				ctxcontent.addListener(treehandler);
+			});
+		}
+		else{
+			ctxcontent.unload();				
+		}
+	}
 	
 	return {
 		init : function(){
@@ -85,17 +79,10 @@ define(['tree', 'workspace.contextual-content',  'workspace.tree-node-copier', '
 			var tree = zetree.get();
 			
 			tree.on('select_node.jstree', function(){
-				var selected =  tree.jstree('get_selected');
-				if (selected.length == 1){
-					ctxcontent.loadWith(selected.getResourceUrl())
-					.done(function(){
-						ctxcontent.addListener(treehandler);
-					});
-				}
-				else{
-					ctxcontent.unload();				
-				}
+				loadFragment(tree);
 			});
+			
+			// ************* creation ***************
 			
 			$("#new-folder-tree-button").on('click', function(){
 				$("#add-folder-dialog").formDialog('open');
@@ -104,6 +91,28 @@ define(['tree', 'workspace.contextual-content',  'workspace.tree-node-copier', '
 			$("#new-test-case-tree-button").on('click', function(){
 				$("#add-test-case-dialog").formDialog('open');
 			});
+			
+			
+			// *************** copy paste ****************
+			
+			$("#copy-node-tree-button").on('click', function(){
+				copyIfOk(tree);
+			});
+			
+			tree.on('copy.squashtree', function(){
+				copyIfOk(tree);
+			});
+			
+			$("#paste-node-tree-button").on('click', function(){
+				pasteIfOk(tree);
+			});			
+			
+			tree.on('paste.squashtree', function(){
+				pasteIfOk(tree);
+			});
+			
+			
+			// ***************** deletion ********************
 			
 			$("#delete-node-tree-button").on('click', function(){
 				$("#delete-node-dialog").formDialog('open');
