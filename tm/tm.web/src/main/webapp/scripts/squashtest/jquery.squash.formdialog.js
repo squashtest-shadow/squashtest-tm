@@ -81,27 +81,45 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 
 			// autoremove when parent container is removed
 			parent.on('remove', function() {
-				self.element.confirmDialog('destroy');
+				self.element.formDialog('destroy');
 				self.element.remove();
 			});
-			
-			this._on('formdialogopen', this._cleanup);
+
+		},
+	
+		open : function(){
+			this.cleanup();
+			this._super();
 			
 		},
-		
-		_cleanup : function(){
+
+		cleanup : function(){
 			this.element.find(':input,textarea,.error-message').each(function(){
 				$(this).val('');
 			})
 		},
 
-		_createButtons : function(buttons) {
+		_createButtons : function() {
 
 			//ripped from jquery-ui 1.8.13. It might change some day, be careful.
-			
 			var buttonpane = $(this.element).find('.popup-dialog-buttonpane');
 			buttonpane.addClass('ui-dialog-buttonpane ui-widget-content ui-helper-clearfix').wrapInner('<div class="ui-dialog-buttonset"></div>');
 			buttonpane.find('input:button').button().appendTo('.ui-dialog-buttonset', buttonpane);
+			
+			//the following line will move the buttonpane after the body of the popup.
+			buttonpane.insertAfter(this.element);
+			
+		},
+		
+		//negation of the above. Untested yet.
+		_destroyButtons : function(){
+			var buttonpane = $(this.element).siblings('.popup-dialog-buttonpane');
+			buttonpane.removeClass('ui-dialog-buttonpane ui-widget-content ui-helper-clearfix');
+			buttonpane.find('input:button').button('destroy').appendTo(buttonPane);
+			buttonpane.find('div.ui-dialog-buttonset').remove();
+			
+			//move the buttonpane back to the body.
+			this.element.append(buttonpane);
 			
 		},
 
@@ -126,6 +144,7 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			this._off($(".ui-dialog-titlebar-close"), "click");
 			this._off(this.element, 'keypress');
 			this._destroyCked();
+			this._destroyButtons();
 			this._super();
 		},
 		
