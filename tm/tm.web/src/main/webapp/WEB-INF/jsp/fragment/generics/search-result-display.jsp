@@ -77,7 +77,7 @@
 <%-- 				<th><f:message key="test-case.importance.combo.label" /></th> --%>
 <%-- 			</c:if> --%>
 <%-- 			<c:if test="${ icon == 'Requirement' }"> --%>
-<%-- 				<th><f:message key="requirement.reference.label" /></th> --%>
+<%-- 				<th><f:message key="label.Reference" /></th> --%>
 <%-- 				<th><f:message key="search.criticality.label" /></th> --%>
 <%-- 				<th><f:message --%>
 <!-- 						key="label.project" /></th> -->

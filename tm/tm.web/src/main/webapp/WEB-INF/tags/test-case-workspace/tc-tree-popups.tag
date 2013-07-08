@@ -28,6 +28,7 @@
 <c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
 
 <f:message var="addFolderTitle"  	key="dialog.new-folder.title"/>	
+<f:message var="addTestCaseTitle"  	key="dialog.new-test-case.title"/>	
 <f:message var="addLabel"		 	key="label.Add"/>
 <f:message var="addAnotherLabel"	key="label.addAnother"/>
 <f:message var="cancelLabel"		key="label.Cancel"/>
@@ -62,6 +63,38 @@
 		<input  type="button" value="${cancelLabel}" 		data-def="evt=cancel"/>
 	</div>
 </div>
+
+
+<div id="add-test-case-dialog" class="popup-dialog not-displayed" title="${addTestCaseTitle}">
+	<table class="add-node-attributes">
+		
+		<tr>
+			<td><label for="add-test-case-name"><f:message key="label.Name" /></label></td>
+
+			<td><input id="add-test-case-name" type="text" size="50" maxlength="255" /><br />
+				<comp:error-message forField="name" />
+			</td>
+		</tr>
+		
+		<tr>
+			<td><label for="add-test-case-reference"><f:message key="label.Reference" /></label></td>
+			<td><input id="add-test-case-reference" type=text size="15" maxlength="20"/><br />
+				<comp:error-message forField="reference" />	<td>
+		</tr>
+					
+		<tr>
+			<td><label for="add-test-case-description"><f:message key="label.Description" /></label></td>
+			<td><textarea id="add-test-case-description" data-def="isrich"></textarea></td>
+		</tr>
+	</table>	
+	<div class="popup-dialog-buttonpane">
+		<input 	type="button" value="${addAnotherLabel}"   	data-def="evt=add-another, mainbtn"/>
+		<input 	type="button" value="${addLabel}" 			data-def="evt=add-close"/>
+		<input  type="button" value="${cancelLabel}" 		data-def="evt=cancel"/>
+	</div>
+</div>
+
+
 
 <div id="delete-node-dialog" class="popup-dialog not-displayed" title="${deleteNodeTitle}">
 	

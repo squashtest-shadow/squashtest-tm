@@ -138,7 +138,7 @@
 				</div>
 				
 				<div>
-					<label for="requirement-reference"><f:message key="requirement.reference.label" /></label>
+					<label for="requirement-reference"><f:message key="label.Reference" /></label>
 					<div id="requirement-reference">${ requirementVersion.reference }</div>
 				</div>
 				<div>

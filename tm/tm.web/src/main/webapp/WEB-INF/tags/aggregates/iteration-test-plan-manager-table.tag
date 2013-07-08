@@ -28,7 +28,7 @@
 			<th>test plan Id</th>
 			<th>&nbsp;</th>
 			<th><f:message key="label.project" /></th>
-			<th><f:message key="requirement.reference.label"/></th>
+			<th><f:message key="label.Reference"/></th>
 			<th><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
 			<th><f:message key="iteration.executions.table.column-header.importance.label" /></th>
 			<th><f:message key="label.Dataset" /></th>

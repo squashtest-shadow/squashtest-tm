@@ -108,7 +108,7 @@ $(function(){
 			</tr>
 			<c:if test='${ resourceName == "requirement" || resourceName == "test-case"  }'>
 				<tr>
-					<td><label for="add-${ resourceName }-reference"><f:message key="requirement.reference.label" /></label></td>
+					<td><label for="add-${ resourceName }-reference"><f:message key="label.Reference" /></label></td>
 					<td><input id="add-${ resourceName }-reference" type=text size="15" maxlength="20"/><br />
 						<comp:error-message forField="reference" />	<td>
 				</tr>

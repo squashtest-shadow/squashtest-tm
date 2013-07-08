@@ -101,6 +101,10 @@ define(['tree', 'workspace.contextual-content',  'workspace.tree-node-copier', '
 				$("#add-folder-dialog").formDialog('open');
 			});
 			
+			$("#new-test-case-tree-button").on('click', function(){
+				$("#add-test-case-dialog").formDialog('open');
+			});
+			
 			$("#delete-node-tree-button").on('click', function(){
 				$("#delete-node-dialog").formDialog('open');
 			});
