@@ -50,12 +50,11 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 	}
 	
 	function pasteIfOk(tree){
-		var nodes = copier.bufferedNodes();
-		if (rules.canPaste(nodes)){
+		if (rules.canPaste()){
 			copier.pasteNodesFromCookie();
 		}
 		else{
-			var why = rules.whyCantPaste(nodes);
+			var why = rules.whyCantPaste();
 			showError(why);
 		}		
 	}

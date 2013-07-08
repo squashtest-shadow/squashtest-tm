@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery',  'tree'], function($, tree){
+define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tree){
 
 	return new function(){		
 		
@@ -48,14 +48,18 @@ define(['jquery',  'tree'], function($, tree){
 			return "yes-you-can";
 		};
 		
-		this.whyCantPaste = function(nodes){
+		this.whyCantPaste = function(){
+			
+			var nodes = copier.bufferedNodes(); 
+			
 			if (nodes.length==0){
 				return "empty-selection";
 			}
 			
+			
 			var target = nodes.tree.get_selected();
 			
-			if (! target.length === 1){
+			if (target.length !== 1){
 				return "not-unique";
 			}
 			

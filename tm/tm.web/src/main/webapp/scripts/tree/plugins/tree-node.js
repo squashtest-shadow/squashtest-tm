@@ -72,11 +72,13 @@ define(['jquery'], function($){
 	function getCopyUrl(){
 		switch (this.getDomType()) {
 		case "folder":
-		case "file":
+		case "test-case" :
+		case "requirement" :
+		case "campaign" :
 			return this.getBrowserUrl() + "/copy";
-		case "resource":
+		case "iteration":
 			return this.getBrowserUrl() + "/copy-iterations";
-		case "view":
+		case "test-suite":
 			return this.getBrowserUrl() + "/copy-test-suites";
 		}
 	}

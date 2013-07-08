@@ -161,7 +161,7 @@ define(['jquery', 'squash.translator'], function($, translator){
 			// here we mimick the move_object used by tree.moveNode, defined in
 			// jquery.squashtm.jstree.ext.js.
 			var pasteData = {
-				inst : this.tree,
+				inst : this.tree.jstree('get_instance'),
 				sendData : {
 					"object-ids" : nodes.all('getResId'),
 					"destination-id" : target.attr('resid'),
@@ -215,15 +215,15 @@ define(['jquery', 'squash.translator'], function($, translator){
 		};
 
 		var doPasteNodesFromCookies = function(tree, target, data) {
-			var nodes = tree.jstree('find_nodes', data.nodes);
+			var nodes = tree.jstree('findNodes', data.nodes);
 
 			target.open();
 
 			var pasteData = this.preparePasteData(nodes, target);
 
 			// now we can proceed
-			squashtm.tree.copyNode(pasteData, pasteData.url).fail(function(json) {
-				tree.refresh();
+			tree.jstree('copyNodes', pasteData, pasteData.url).fail(function(json) {
+				tree.jstree('refresh');
 			});
 		};
 

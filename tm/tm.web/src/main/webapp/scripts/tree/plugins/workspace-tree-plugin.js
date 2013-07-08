@@ -356,7 +356,7 @@ define(['jquery', 'workspace.tree-node-copier', 'jstree'], function($, nodecopie
 	 * @returns : a promise
 	 * 
 	 */
-	function copyNode(data, url) {
+	function copyNodes(data, url) {
 
 		var deferred = $.Deferred();
 
@@ -466,7 +466,9 @@ define(['jquery', 'workspace.tree-node-copier', 'jstree'], function($, nodecopie
 				
 				treeCheckDnd : function(){treeCheckDnd();},
 				
-				postNewNode : postNewNode, // see below
+				postNewNode : postNewNode, 
+				
+				copyNodes : copyNodes,
 
 				refresh_selected : function() {
 					var self = this;
