@@ -25,7 +25,7 @@
  * in this same package directory.
  */
 
-define(['jquery'], function($){
+define(['jquery', 'tree'], function($, tree){
 	
 	
 	squashtm = squashtm || {}
@@ -42,30 +42,42 @@ define(['jquery'], function($){
 	
 	
 	function TreeEventHandler() {
-		
-		this.tree = $("#tree");		//default that should work 99% of the time.
+
+		//Lazily initialised, see below
+		this.tree=null;
 		
 		this.setTree = function(tree){
-			this.tree = tree;
+			this.tree = tree;			
+		}
+		
+		this.getTree = function(){
+			if (!this.tree){
+				this.tree = tree.get().jstree('get_instance');
+			}
+			return this.tree;
 		}
 
 		this.update = function(event) {
+			
+			var otree = this.getTree();
+			
+			
 			// todo : make something smarter
 			// ^^^ yeah that would be nice
 			switch (event.evt_name) {
 			case "paste":
-				updateEventPaste(event, this.tree);
+				updateEventPaste(event, otree);
 				break;
 			case "rename":
-				updateEventRename(event, this.tree);
+				updateEventRename(event, otree);
 				break;
 			case "update-reference":
-				updateEventUpdateReference(event, this.tree);
+				updateEventUpdateReference(event, otree);
 				break;
 			case "contextualcontent.clear": 
 				break; // bail out, default induces bugs
 			default:
-				this.tree.refresh_selected();
+				otree.refresh_selected();
 				break;
 			}
 		};
@@ -82,7 +94,7 @@ define(['jquery'], function($){
 		});
 
 		destination.getChildren().each(function() {
-			tree.delete_node(this);
+			tree.jstree('delete_node',this);
 		});
 
 		destination.load().done(function() {

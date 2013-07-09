@@ -43,7 +43,12 @@ requirejs.config({
 					name : 'tc-workspace',
 					main : 'main',
 					location : 'http://localhost/scripts/scripts/tc-workspace'
-				}
+				},
+				{
+					name : 'req-workspace',
+					main : 'main',
+					location : 'http://localhost/scripts/scripts/req-workspace'
+				}				
 			],
 			/*
 			 * rules for paths naming: * third party lib: unversionned lib name *
@@ -88,9 +93,6 @@ requirejs.config({
 				"jquery.squash.fg.menu" : "squashtest/jquery.squashtm.fg.menu",
 				"jquery.squash.squashbutton" : "squashtest/jquery.squash.squashbutton",
 				"jquery.squash.jeditable" : "squashtest/jquery.squashtm.jeditable.ext",
-				//"jquery.squash.jstree-node" : "tree/plugins/tree-node",						//should not be needed as standalone now, use the 'tree' package instead.
-				//"jquery.squash.jstree" : "tree/plugins/jquery.squashtm.jstree.ext",			//should not be needed as standalone anymore, use the 'tree' package instead
-				//"jquery.squash.linkabletree" : "squash/jquery.squashtm.linkabletree",
 				"jquery.squash.projectpicker" : "squash/jquery.squashtm.projectpicker",
 				"jquery.cookie" : "jquery/jquery.cookie",
 				"squash.bugtrackerMenu" : "squashtest/classes/BugTrackerMenu",
@@ -189,28 +191,6 @@ requirejs.config({
 					deps : [ "jquery", "jeditable", "jeditable.ckeditor" ],
 					exports : "jquerySquashtmJeditable"
 				},
-				/*"squashtest/classes/TreeEventHandler" : {
-					deps : [ "squashtest/classes/Event", "jquery.squash.jstree" ],
-					exports : "TreeEventHandler"
-				},
-
-				"squashtest/classes/TreeNodeCopier" : {
-					deps : [ "jquery", "jquery.squash.jstree" ],
-					exports : "TreeNodeCopier"
-				},
-				"jquery.squash.jstree-node" : {
-					deps : [ "jquery", "jstree", "jquery.squash" ],
-					exports : "jquerySquashtmJstreeNode"
-				},
-				"jquery.squash.jstree" : {
-					deps : [ "jquery", "jstree", "jquery.squash.jstree-node",
-							"jquery.squash", "jquery.squash.squashbutton" ],
-					exports : "squashtm.tree"
-				},
-				"jquery.squash.linkabletree" : {
-					deps : [ "jquery", "jquery.squash.jstree" ],
-					exports : "jquerySquashtmLinkableTree"
-				},*/
 				"jquery.squash.projectpicker" : {
 					deps : [ "jquery", "jqueryui" ],
 					exports : "jquerySquashtmProjectPicker"
