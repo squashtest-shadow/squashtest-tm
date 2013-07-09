@@ -27,13 +27,13 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			return nodes.filter(':creatable').filter(':folder, :library').length === 1;
 		};
 		
-		this.canCreateTestCase = function(nodes){
+		this.canCreateRequirement = function(nodes){
 			return nodes.filter(':creatable').length === 1;
 		};
 		
 		//must be not empty, and not contain libraries.
 		this.canCopy = function(nodes){
-			return (nodes.length > 0) && (nodes.not(':library').length == nodes.length);
+			return (nodes.length > 0) && (! nodes.is(':library'));
 		};
 		
 		this.whyCantCopy = function(nodes){
@@ -41,7 +41,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 				return "empty-selection";
 			}
 			
-			if (nodes.not(':library').length != nodes.length){
+			if (! nodes.is(':library')){
 				return "no-libraries-allowed";
 			}
 			
@@ -112,7 +112,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 		
 		this.buttonrules = {
 			'new-folder-tree-button' : this.canCreateFolder,
-			'new-test-case-tree-button' : this.canCreateTestCase,
+			'new-requirement-tree-button' : this.canCreateRequirement,
 			'copy-node-tree-button' : this.canCopy,
 			'paste-node-tree-button' : this.canPaste,
 			'rename-node-tree-button' : this.canRename,

@@ -57,6 +57,10 @@ public enum RequirementCriticality implements Level {
 	public static StringComparator stringComparator() {
 		return new StringComparator();
 	}
+	
+	public String getCode(){
+		return name();
+	}
 
 	/**
 	 * inner class used to sort RequirementCriticalities over their string representation. In case we have to sort

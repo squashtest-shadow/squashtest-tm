@@ -52,5 +52,9 @@ public enum RequirementCategory implements Level {
 	public String getI18nKey() {
 		return I18N_KEY_ROOT + name();
 	}
+	
+	public String getCode(){
+		return name();
+	}
 
 }

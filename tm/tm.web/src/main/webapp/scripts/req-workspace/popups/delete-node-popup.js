@@ -89,7 +89,7 @@ define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], f
 		})
 		.done(function(deleted){
 			dialog.formDialog('close');
-			 tree.jstree('delete_nodes', ['test-case', 'folder'], deleted);
+			 tree.jstree('delete_nodes', ['requirement', 'folder'], deleted);
 		});
 		
 	}

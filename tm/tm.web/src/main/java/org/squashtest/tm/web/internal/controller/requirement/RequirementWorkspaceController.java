@@ -24,10 +24,12 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -47,6 +49,7 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	@Inject
 	private MessageSource messageSource;
 
+
 	@Override
 	protected WorkspaceService<RequirementLibrary> getWorkspaceService() {
 		return workspaceService;
@@ -55,6 +58,11 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	@Override
 	protected String getWorkspaceViewName() {
 		return "page/requirement-workspace";
+	}
+	
+	@Override
+	protected void populateModel(Model model) {
+		// 
 	}
 
 	@ServiceReference(serviceBeanName="squashtest.tm.service.RequirementsWorkspaceService")
@@ -71,6 +79,7 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	 */
 	@RequestMapping(value = "/combo-options", method = RequestMethod.GET)
 	@ResponseBody
+	@Deprecated
 	Combos getCriticitySelectionList(Locale locale) {
 		String criticities = buildCriticitySelectionList(locale);
 		String categories = buildCategorySelectionList(locale);
@@ -107,6 +116,7 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	 *            the Locale
 	 * @return the html select object
 	 */
+	@Deprecated
 	private String buildCriticitySelectionList(Locale locale) {
 		StringBuilder toReturn = new StringBuilder("<select id=\"add-requirement-criticality\" cssClass=\"combobox\">");
 		for (RequirementCriticality criticality : RequirementCriticality.values()) {
@@ -127,6 +137,7 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	 *            the Locale
 	 * @return the html select object
 	 */
+	@Deprecated
 	private String buildCategorySelectionList(Locale locale) {
 		StringBuilder toReturn = new StringBuilder("<select id=\"add-requirement-category\" cssClass=\"combobox\">");
 		for (RequirementCategory category : RequirementCategory.values()) {

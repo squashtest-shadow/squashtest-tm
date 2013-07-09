@@ -26,6 +26,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -73,6 +74,12 @@ public abstract class WorkspaceController<LIBRARY extends Library<?>> {
 	 * @return
 	 */
 	protected abstract String getWorkspaceViewName();
+	
+	/**
+	 * Called when {@link #getWorkspaceViewName()} is invoked. This allows you to add 
+	 * anything you need to thisworkspace's model. No need to supply the treenodes : they will be provided.
+	 */
+	protected abstract void populateModel(Model model);
 
 	/**
 	 * Returns the workspace type managed by the concrete controller.

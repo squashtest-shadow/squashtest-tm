@@ -25,6 +25,7 @@ import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
@@ -51,6 +52,11 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 	@Override
 	public WorkspaceType getWorkspaceType() {
 		return WorkspaceType.CAMPAIGN_WORKSPACE;
+	}
+	
+	@Override
+	protected void populateModel(Model model) {
+		//noop
 	}
 
 }

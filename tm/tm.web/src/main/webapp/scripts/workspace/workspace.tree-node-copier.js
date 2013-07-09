@@ -41,19 +41,7 @@ define(['jquery', 'squash.translator'], function($, translator){
 		squashtm.workspace.treenodecopier = new TreeNodeCopier();
 		return squashtm.workspace.treenodecopier;
 	}
-	
-	this.message = function(messageName){	
-		
-		if (this._messages === undefined){
-			
-			this._messages = translator.get({
-				warnCopyToDifferentLibrary : 'message.warnCopyToDifferentLibrary'					
-			});		
 
-		}
-		
-		return this._messages[messageName];
-	}
 			
 	
 	
@@ -66,8 +54,23 @@ define(['jquery', 'squash.translator'], function($, translator){
 			this.tree = tree;
 		}
 	
+		
 		// ***************** private methods *********************
 
+		
+		this.message = function(messageName){	
+			
+			if (this._messages === undefined){
+				
+				this._messages = translator.get({
+					warnCopyToDifferentLibrary : 'message.warnCopyToDifferentLibrary'					
+				});		
+
+			}
+			
+			return this._messages[messageName];
+		}
+		
 		var displayError = function() {
 			if (!arguments.length) {
 				squashtm.notification.showInfo(this.message['errMessage']);

@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -68,6 +69,11 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	 */
 	protected WorkspaceType getWorkspaceType() {
 		return null;
+	}
+	
+	@Override
+	protected void populateModel(Model model) {
+		//noop
 	}
 
 }

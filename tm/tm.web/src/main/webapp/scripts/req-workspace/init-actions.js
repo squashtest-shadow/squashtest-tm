@@ -87,8 +87,8 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 				$("#add-folder-dialog").formDialog('open');
 			});
 			
-			$("#new-test-case-tree-button").on('click', function(){
-				$("#add-test-case-dialog").formDialog('open');
+			$("#new-requirement-tree-button").on('click', function(){
+				$("#add-requirement-dialog").formDialog('open');
 			});
 			
 			

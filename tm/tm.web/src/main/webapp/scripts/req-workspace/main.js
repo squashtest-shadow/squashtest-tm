@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['tree', './tc-treemenu', './popups/init-all', './init-actions'], function(tree, treemenu, popups, actions) {
+define(['tree', './req-treemenu', './popups/init-all', './init-actions'], function(tree, treemenu, popups, actions) {
 
 	
 	function init(settings){

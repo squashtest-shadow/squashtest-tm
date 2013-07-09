@@ -33,7 +33,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 		
 		//must be not empty, and not contain libraries.
 		this.canCopy = function(nodes){
-			return (nodes.length > 0) && (nodes.not(':library').length == nodes.length);
+			return (nodes.length > 0) && (! nodes.is(':library'));
 		};
 		
 		this.whyCantCopy = function(nodes){
@@ -41,7 +41,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 				return "empty-selection";
 			}
 			
-			if (nodes.not(':library').length != nodes.length){
+			if (! nodes.is(':library')){
 				return "no-libraries-allowed";
 			}
 			

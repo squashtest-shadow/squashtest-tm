@@ -24,6 +24,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@taglib prefix="s" uri="http://www.springframework.org/tags" %>
 
 <c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
 
@@ -37,7 +38,7 @@
 <f:message var="deleteNodeTitle"		key="dialog.delete-tree-node.title"/>
 
 <f:message var="deleteMessagePrefix"	key="dialog.label.delete-node.label.start" />
-<f:message var="deleteMessageVariable"  key="dialog.label.delete-nodes.test-cases.label"/>
+<f:message var="deleteMessageVariable"  key="dialog.label.delete-nodes.requirements.label"/>
 <f:message var="deleteMessageSuffix"	key="dialog.label.delete-node.label.end"/>
 <f:message var="deleteMessageNoUndo"	key="dialog.label.delete-node.label.cantbeundone" />
 <f:message var="deleteMessageConfirm"	key="dialog.label.delete-node.label.confirm" />
@@ -85,12 +86,26 @@
 		
 		<tr>
 			<td><label for="add-requirement-criticality"><f:message key="requirement.criticality.combo.label" /></label></td>
-			<td><div id="criticalityList"></div></td>
+			<td>
+				<s:eval expression="T(org.squashtest.tm.domain.requirement.RequirementCriticality).values()" var="criticalities"></s:eval>
+				<select id="add-requirement-criticality">
+				<c:forEach var="crit" items="${criticalities}">
+					<option value="${crit.code}"><f:message key="${crit.i18nKey}"/></option>
+				</c:forEach>
+				</select>
+			</td>
 		</tr>
 		
 		<tr>
 			<td><label for="add-requirement-category"><f:message key="requirement.category.combo.label" /></label></td>
-			<td><div id="categoryList"></div></td>
+			<td>
+				<s:eval expression="T(org.squashtest.tm.domain.requirement.RequirementCategory).values()" var="categories"></s:eval>
+				<select id="add-requirement-category">
+				<c:forEach var="cat" items="${categories}">
+				<option value="${cat}"><f:message key="${cat.i18nKey}" /></option>				
+				</c:forEach>
+				</select>
+			</td>
 		</tr>		
 					
 		<tr>

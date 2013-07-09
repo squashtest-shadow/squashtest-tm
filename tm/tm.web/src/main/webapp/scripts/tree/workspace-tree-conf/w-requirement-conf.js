@@ -39,7 +39,7 @@ define(function(){
 						"requirement" : {
 							"valid_children" : ['requirement'],
 							"icon" : {
-								"image" : baseURL+'/images/Icon_Tree_TestCase.png'
+								"image" : baseURL+'/images/Icon_Tree_Requirement.png'
 							}
 						},
 						"folder" : {
