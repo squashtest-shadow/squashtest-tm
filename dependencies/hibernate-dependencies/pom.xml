@@ -19,7 +19,7 @@
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-osgi</artifactId>
+      <artifactId>org.squashtest.org.hibernate.core</artifactId>
       <version>${hibernate.version}</version>
     </dependency>
 		
@@ -27,7 +27,7 @@
 <!-- Waiting for 3.18.0 because of bugs in 3.17 
 https://issues.jboss.org/browse/JASSIST-189 and
  https://issues.jboss.org/browse/JASSIST-162 -->
- 
+
  		<dependency>
 			<groupId>org.jboss.javassist</groupId>
 			<artifactId>com.springsource.javassist</artifactId>

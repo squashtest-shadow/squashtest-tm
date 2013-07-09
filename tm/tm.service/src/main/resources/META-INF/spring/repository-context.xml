@@ -138,9 +138,9 @@
     </property>
     <property name="hibernateProperties" ref="squashtest.tm.hibernate.config" />
 
-    <property name="lobHandler">
+    <!--<property name="lobHandler">
       <bean class="org.springframework.jdbc.support.lob.DefaultLobHandler" />
-    </property>
+    </property>-->
   </bean>
 
   <bean id="squashtest.tm.hibernate.TransactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">

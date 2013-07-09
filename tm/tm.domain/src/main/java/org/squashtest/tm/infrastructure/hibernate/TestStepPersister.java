@@ -139,6 +139,7 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 
 	public TestStepPersister(PersistentClass persistentClass,
 			EntityRegionAccessStrategy cacheAccessStrategy,
+			NaturalIdRegionAccessStrategy naturalIdRegionAccessStrategy,
 			SessionFactoryImplementor factory, Mapping mapping)
 			throws HibernateException {
 

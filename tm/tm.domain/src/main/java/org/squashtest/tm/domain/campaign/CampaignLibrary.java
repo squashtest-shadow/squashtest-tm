@@ -64,7 +64,6 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	
 	@ElementCollection
 	@CollectionTable(name = "CAMPAIGN_LIBRARY_PLUGINS", joinColumns = @JoinColumn(name = "LIBRARY_ID"))
-	@Enumerated(EnumType.STRING)
 	@Column(name = "PLUGIN_ID")
 	private Set<String> enabledPlugins = new HashSet<String>(5);
 	

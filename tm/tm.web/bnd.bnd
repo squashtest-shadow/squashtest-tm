@@ -44,6 +44,7 @@ Import-Package: javax.servlet.jsp.jstl.core;version=${jstl.version},\
 	org.springframework.beans.factory.xml;version="${spring.version.range}",\
 	org.springframework.context.config;version="${spring.version.range}",\
 	org.springframework.context.support;version="${spring.version.range}",\
+	org.springframework.orm.hibernate4.support;version="${spring.version.range}",\
 	org.springframework.osgi.extensions.annotation;version="${springdm.version.range}",\
 	org.springframework.osgi.web.context.support;version="${springdm.version.range}",\
 	org.springframework.web.context;version="${spring.version.range}",\
