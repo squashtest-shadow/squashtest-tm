@@ -52,6 +52,7 @@ import org.hibernate.annotations.WhereJoinTable;
 import org.hibernate.type.CalendarType;
 
 @FilterDef(name="deletedAssociation", defaultCondition="deleted = 'false'")
+
 @Entity
 class Parent {
 	@Id @GeneratedValue
@@ -59,7 +60,7 @@ class Parent {
 	
 	@ManyToMany(cascade=[CascadeType.PERSIST])
 	@JoinTable(name="parent_child", joinColumns=@JoinColumn(name="parent_id"), inverseJoinColumns=@JoinColumn(name="child_id"))
-	@FilterJoinTable(name="deletedAssociation")
+	@FilterJoinTable(name="deletedAssociation", condition="deleted = 'false'")
 	@Persister(impl = SoftDeletableCollectionPersister)
 	@IndexColumn(name="ord", nullable=true)
 	List<Child> children = new ArrayList<Child>()

@@ -42,6 +42,7 @@ import org.hibernate.persister.collection.BasicCollectionPersister;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.type.CollectionType;
+import org.hibernate.internal.util.collections.ArrayHelper;
 import org.hibernate.type.Type;
 
 class SoftDeletableCollectionPersister extends BasicCollectionPersister  {

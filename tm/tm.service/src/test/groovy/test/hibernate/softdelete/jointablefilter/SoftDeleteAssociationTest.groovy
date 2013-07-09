@@ -28,6 +28,8 @@ import java.util.ResourceBundle;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
@@ -35,14 +37,15 @@ import spock.lang.Specification;
 
 class SoftDeleteAssociationTest extends Specification {
 	Configuration config = new Configuration()
+	ServiceRegistry sr
 	SessionFactory sf
 	
 	def setup() {
 		config.configure("softdelete-association/softdelete-hibernate.cfg.xml")
 		config.addAnnotatedClass Parent
 		config.addAnnotatedClass Child
-		
-		sf = config.buildSessionFactory()
+		sr = new ServiceRegistryBuilder().applySettings(config.getProperties()).buildServiceRegistry();
+		sf = config.buildSessionFactory(sr);
 	}
 	
 	def "should soft delete association when child removed from parent"() {
