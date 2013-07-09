@@ -107,7 +107,7 @@ define(['jquery', './utils', './permissions-rules',
 			
 			var rules = permissions.buttonrules;
 			var arbuttons = buttons;
-			var nodes = (!!data.rslt) ? data.rslt.obj : $();	//the case 'undefined' is for deselect_all.jstree 
+			var nodes = tree.jstree('get_selected'); 
 			var i=0,len = buttons.length;
 			
 			for (i=0;i<len;i++){

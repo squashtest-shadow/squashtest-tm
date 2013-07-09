@@ -31,7 +31,9 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			'not-creatable' 		: 'tree.button.copy-node.error.notOneEditable',
 			'empty-selection' 		: 'tree.button.copy-node.error.nothing-to-paste',
 			'invalid-content' 		: 'tree.button.copy-node.error.pastenothere',
-			'not-deletable'			: 'dialog.label.delete-node.rejected'
+			'not-deletable'			: 'dialog.label.delete-node.rejected',
+			'mixed-nodes-iteration-selection' : 'tree.button.copy-node.mixediteration',
+			'mixed-nodes-testsuite-selection' : 'tree.button.copy-node.mixedsuite'
 		});		
 
 		squashtm.notification.showInfo(messages[messageName]);
@@ -87,11 +89,14 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 				$("#add-folder-dialog").formDialog('open');
 			});
 			
-			$("#new-requirement-tree-button").on('click', function(){
-				$("#add-requirement-dialog").formDialog('open');
+			$("#new-campaign-tree-button").on('click', function(){
+				$("#add-campaign-dialog").formDialog('open');
 			});
 			
-			
+			$("#new-iteration-tree-button").on('click', function(){
+				$("#add-iteration-dialog").formDialog('open');
+			});
+						
 			// *************** copy paste ****************
 			
 			$("#copy-node-tree-button").on('click', function(){

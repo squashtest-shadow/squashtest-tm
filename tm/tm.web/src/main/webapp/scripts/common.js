@@ -48,7 +48,12 @@ requirejs.config({
 					name : 'req-workspace',
 					main : 'main',
 					location : 'http://localhost/scripts/scripts/req-workspace'
-				}				
+				},
+				{
+					name : 'camp-workspace',
+					main : 'main',
+					location : 'http://localhost/scripts/scripts/camp-workspace'
+				}					
 			],
 			/*
 			 * rules for paths naming: * third party lib: unversionned lib name *

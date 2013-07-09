@@ -93,6 +93,19 @@ define(['jquery'], function($){
 		return undefined;		
 	}
 	
+	function getDeleteUrl(){
+		var specific = ""
+		switch (this.getDomType()){
+			case "folder" :
+			case "test-case" :
+			case "requirement" :
+			case "campaign"		: specific = "/content"; break;
+			case "iteration"	: specific = "/iterations"; break;
+			case "test-suite"	: specific = '/test-suites'; break;
+		}
+		return this.getBrowserUrl()+specific+"/{nodesIds}";
+	}
+	
 	function refreshLabel(){
 
 		var label = null;

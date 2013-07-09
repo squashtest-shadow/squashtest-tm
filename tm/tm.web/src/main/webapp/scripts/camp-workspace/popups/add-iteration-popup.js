@@ -21,21 +21,19 @@
 
 define(['jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog'], function($, zetree, cufValuesManager){
 	
-	
-
 	function postNode(dialog, tree){
 		
 		var params = {
-			name : dialog.find('#add-test-case-name').val(),
-			reference : dialog.find('#add-test-case-reference').val(),
-			description : dialog.find('#add-test-case-description').val()
+			name : dialog.find('#add-iteration-name').val(),
+			description : dialog.find('#add-iteration-description').val(),
+			copyTestPlan : dialog.find("#copy-test-plan-box").is(':checked')
 		};
 		
 		var cufParams = dialog.data('cuf-values-support').readValues();
 		
 		$.extend(params, cufParams);
 		
-		return tree.jstree('postNewNode', 'new-test-case', params, true);
+		return tree.jstree('postNewNode', 'new-campaign', params, true);
 	}
 	
 	
@@ -45,7 +43,7 @@ define(['jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog'], fu
 		
 		dialog.on('formdialogopen', function(){
 			var projectId = tree.jstree('get_selected').getProjectId();
-			var bindingsUrl = squashtm.app.contextRoot+"/custom-fields-binding?projectId="+projectId+"&bindableEntity=TEST_CASE&optional=false";
+			var bindingsUrl = squashtm.app.contextRoot+"/custom-fields-binding?projectId="+projectId+"&bindableEntity=ITERATION&optional=false";
 					
 			cufHandler.loadPanel(bindingsUrl);		
 		});
@@ -55,7 +53,7 @@ define(['jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog'], fu
 	
 	function init(){
 		
-		var dialog = $("#add-test-case-dialog").formDialog();
+		var dialog = $("#add-iteration-dialog").formDialog();
 		var tree = zetree.get();
 		
 		

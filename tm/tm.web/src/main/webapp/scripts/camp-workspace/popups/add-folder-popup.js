@@ -19,43 +19,24 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog'], function($, zetree, cufValuesManager){
+define(['jquery', 'tree', 'jquery.squash.formdialog'], function($, zetree){
 	
 	
 
 	function postNode(dialog, tree){
 		
 		var params = {
-			name : dialog.find('#add-test-case-name').val(),
-			reference : dialog.find('#add-test-case-reference').val(),
-			description : dialog.find('#add-test-case-description').val()
-		};
+			name : dialog.find('#add-folder-name').val(),
+			description : dialog.find('#add-folder-name').val()
+		}
 		
-		var cufParams = dialog.data('cuf-values-support').readValues();
-		
-		$.extend(params, cufParams);
-		
-		return tree.jstree('postNewNode', 'new-test-case', params, true);
+		return tree.jstree('postNewNode', 'new-folder', params, false);
 	}
 	
-	
-	function addCufHandler(dialog, tree){
-		var table = dialog.find('table.add-node-attributes');
-		var cufHandler = cufValuesManager.newCreationPopupCUFHandler({table : table});
-		
-		dialog.on('formdialogopen', function(){
-			var projectId = tree.jstree('get_selected').getProjectId();
-			var bindingsUrl = squashtm.app.contextRoot+"/custom-fields-binding?projectId="+projectId+"&bindableEntity=TEST_CASE&optional=false";
-					
-			cufHandler.loadPanel(bindingsUrl);		
-		});
-		
-		dialog.data('cuf-values-support', cufHandler);
-	}
 	
 	function init(){
 		
-		var dialog = $("#add-test-case-dialog").formDialog();
+		var dialog = $("#add-folder-dialog").formDialog();
 		var tree = zetree.get();
 		
 		
@@ -74,9 +55,6 @@ define(['jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog'], fu
 		dialog.on('formdialogcancel', function(){
 			dialog.formDialog('close');
 		});
-		
-		
-		addCufHandler(dialog, tree);
 		
 	}
 	

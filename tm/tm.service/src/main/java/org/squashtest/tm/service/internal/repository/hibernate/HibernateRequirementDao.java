@@ -157,7 +157,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	@Override
 	public List<Requirement> findChildrenRequirements(long requirementId) {
 		SetQueryParametersCallback setId = new SetIdParameter("requirementId", requirementId);
-		return executeListNamedQuery("findChildrenRequirements", setId);
+		return executeListNamedQuery("requirement.findChildrenRequirements", setId);
 	}
 
 	@SuppressWarnings({ "rawtypes" })

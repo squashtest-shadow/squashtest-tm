@@ -32,7 +32,6 @@ define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], f
 		
 		if (! rules.canDelete(nodes)){
 			dialog.formDialog('showContent', 'rejected');
-			dialog.formDialog('close');
 			return;
 		}
 		

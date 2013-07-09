@@ -29,8 +29,8 @@ define(['jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog'], fu
 			name : dialog.find('#add-requirement-name').val(),
 			reference : dialog.find('#add-requirement-reference').val(),
 			description : dialog.find('#add-requirement-description').val(),
-			criticality : $("#add-requirement-criticality").val(),
-			category : $("#add-requirement-category").val()			
+			criticality : dialog.find("#add-requirement-criticality").val(),
+			category : dialog.find("#add-requirement-category").val()			
 		};
 		
 		var cufParams = dialog.data('cuf-values-support').readValues();
@@ -41,12 +41,12 @@ define(['jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog'], fu
 	}
 	
 	
-	function addCufHandler(dialog){
+	function addCufHandler(dialog, tree){
 		var table = dialog.find('table.add-node-attributes');
 		var cufHandler = cufValuesManager.newCreationPopupCUFHandler({table : table});
 		
 		dialog.on('formdialogopen', function(){
-			var projectId = $("#tree").jstree('get_selected').getProjectId();
+			var projectId = tree.jstree('get_selected').getProjectId();
 			var bindingsUrl = squashtm.app.contextRoot+"/custom-fields-binding?projectId="+projectId+"&bindableEntity=REQUIREMENT_VERSION&optional=false";
 					
 			cufHandler.loadPanel(bindingsUrl);		
@@ -78,7 +78,7 @@ define(['jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog'], fu
 		});
 		
 		
-		addCufHandler(dialog);
+		addCufHandler(dialog, tree);
 		
 	}
 	

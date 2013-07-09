@@ -80,7 +80,14 @@
  * 
  * 1/ basic : all basic options of jQuery dialog are valid here, EXCEPT for the buttons.
  * 
- * 2/ DOM conf : reads parts of the conf from the datatable, see the handlers at the end of the document for details.
+ * 2/ more conf :{
+ * 		extender : {
+ * 			an object that will be merged to 'this' when the popup is created. Can be used to override some functions too.
+ * 		}
+ *  }
+ * 
+ * 
+ * 3/ DOM conf : reads parts of the conf from the datatable, see the handlers at the end of the document for details.
  * for now, supports : 
  * - isrich : for textarea. If set, will be turned into a ckeditor.
  * - evt=<eventname> : for buttons. If set, clicking on that button will trigger <eventname> on the dialog.
@@ -108,6 +115,7 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			modal : true,
 			width : 600,
 			position : [ 'center', 100 ],
+			extender : {}
 		},
 		
 
@@ -165,6 +173,10 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			
 			//show the first xor-content if any.
 			this._activateFirstContent();
+			
+			//extensions/overrides
+			var extender = this.options.extender;
+			$.extend(this, extender);
 
 		},
 	

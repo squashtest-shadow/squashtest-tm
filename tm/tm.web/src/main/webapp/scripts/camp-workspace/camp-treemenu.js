@@ -88,9 +88,8 @@ define(['jquery', './utils', './permissions-rules',
 	
 	function bindTreeEvents(){
 		
-		var btnselector =   "#new-folder-tree-button, #new-requirement-tree-button, #copy-node-tree-button, #paste-node-tree-button, "+
-							"#rename-node-tree-button, #import-excel-tree-button, #import-links-excel-tree-button, #export-tree-button, "+
-							"#delete-node-tree-button";
+		var btnselector =   "#new-folder-tree-button, #new-campaign-tree-button, #new-iteration-tree-button, #copy-node-tree-button, " +
+							"#paste-node-tree-button, #rename-node-tree-button, #delete-node-tree-button";
 		
 		var buttons = [];
 		

@@ -23,17 +23,31 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 
 	return new function(){		
 		
+		function allOrNone(nodes, type){
+			var filterLen = nodes.filter(':'+type).length;
+			return (filterLen == nodes.length) || (filterLen == 0);
+		}
+		
 		this.canCreateFolder = function(nodes){
 			return nodes.filter(':creatable').filter(':folder, :library').length === 1;
 		};
 		
-		this.canCreateRequirement = function(nodes){
-			return nodes.filter(':creatable').length === 1;
+		this.canCreateCampaign = function(nodes){
+			return nodes.filter(':creatable').filter(':folder, :campaign').length === 1;
 		};
+		
+		this.canCreateIteration = function(nodes){
+			return nodes.filter(':creatable').filter(':campaign').length === 1;
+		};
+		
 		
 		//must be not empty, and not contain libraries.
 		this.canCopy = function(nodes){
-			return (nodes.length > 0) && (! nodes.is(':library'));
+			return  (  nodes.length > 0) && 
+					(! nodes.is(':library')) && 
+					(  allOrNone(nodes, 'iteration')) &&
+					(  allOrNone(nodes, 'test-suite'))
+			//the last ones reads 'either all nodes are iterations, either none of them are' (same for test suites)
 		};
 		
 		this.whyCantCopy = function(nodes){
@@ -43,6 +57,15 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			
 			if (nodes.is(':library')){
 				return "no-libraries-allowed";
+			}
+			
+			if ( ! allOrNone(nodes, 'iteration')){
+				return "mixed-nodes-iteration-selection";
+			}
+			
+			
+			if (! allOrNone(nodes, 'test-suite')){
+				return "mixed-nodes-testsuite-selection";
 			}
 			
 			return "yes-you-can";
@@ -55,7 +78,6 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			if (nodes.length==0){
 				return "empty-selection";
 			}
-			
 			
 			var target = nodes.tree.get_selected();
 			
@@ -82,14 +104,6 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			return nodes.filter(':editable').not(':library').length === 1;
 		};
 		
-		this.canImport = function(nodes){
-			return tree.get().data('importable');	//tree.data would lead to a different object.
-		};
-		
-		this.canExport = function(nodes){
-			return true;
-		};
-		
 		this.canDelete = function(nodes){
 			return (nodes.filter(':deletable').not(':library').length == nodes.length) && (nodes.length>0);
 		};
@@ -112,13 +126,11 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 		
 		this.buttonrules = {
 			'new-folder-tree-button' : this.canCreateFolder,
-			'new-requirement-tree-button' : this.canCreateRequirement,
+			'new-campaign-tree-button' : this.canCreateCampaign,
+			'new-iteration-tree-button' : this.canCreateIteration,
 			'copy-node-tree-button' : this.canCopy,
 			'paste-node-tree-button' : this.canPaste,
 			'rename-node-tree-button' : this.canRename,
-			'import-excel-tree-button' : this.canImport,
-			'import-links-excel-tree-button' : this.canImport,
-			'export-tree-button' : this.canExport,
 			'delete-node-tree-button' : this.canDelete
 		}
 

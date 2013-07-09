@@ -31,7 +31,6 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -241,11 +240,11 @@ public class CampaignLibraryNavigationController extends
 		return listBuilder.setModel(linkableLibraries).build();
 	}
 
-	@RequestMapping(value = "/delete-iterations/simulate", method = RequestMethod.POST, params = { NODE_IDS })
+	@RequestMapping(value="/iterations/{iterationIds}/deletion-simulation", method = RequestMethod.GET)
 	public @ResponseBody
-	Message simulateIterationDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale) {
+	Message simulateIterationDeletion(@PathVariable("iterationIds") List<Long> iterationIds, Locale locale) {
 
-		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateIterationDeletion(nodeIds);
+		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateIterationDeletion(iterationIds);
 
 		StringBuilder builder = new StringBuilder();
 
@@ -269,17 +268,17 @@ public class CampaignLibraryNavigationController extends
 		}
 	}
 
-	@RequestMapping(value = "/delete-iterations/confirm", method = RequestMethod.DELETE, params = { NODE_IDS })
+	@RequestMapping(value="/iterations/{iterationIds}",  method = RequestMethod.DELETE)
 	public @ResponseBody
-	List<Long> confirmIterationsDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds) {
+	List<Long> confirmIterationsDeletion(@PathVariable("iterationIds") List<Long> iterationIds) {
 
-		return campaignLibraryNavigationService.deleteIterations(nodeIds);
+		return campaignLibraryNavigationService.deleteIterations(iterationIds);
 	}
 
-	@RequestMapping(value = "/delete-test-suites/simulate", method = RequestMethod.POST, params = { NODE_IDS })
+	@RequestMapping(value="/test-suites/{suiteIds}/deletion-simulation", method = RequestMethod.GET)
 	public @ResponseBody
-	String simulateSuiteDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale) {
-		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateSuiteDeletion(nodeIds);
+	String simulateSuiteDeletion(@PathVariable("suiteIds") List<Long> suiteIds, Locale locale) {
+		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateSuiteDeletion(suiteIds);
 
 		StringBuilder builder = new StringBuilder();
 
@@ -292,11 +291,11 @@ public class CampaignLibraryNavigationController extends
 
 	}
 
-	@RequestMapping(value = "/delete-test-suites/confirm", method = RequestMethod.DELETE, params = { NODE_IDS })
+	@RequestMapping(value="/test-suites/{suiteIds}",  method = RequestMethod.DELETE)
 	public @ResponseBody
-	List<Long> confirmSuitesDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds) {
+	List<Long> confirmSuitesDeletion(@PathVariable("suiteIds") List<Long> suiteIds) {
 
-		return campaignLibraryNavigationService.deleteSuites(nodeIds);
+		return campaignLibraryNavigationService.deleteSuites(suiteIds);
 	}
 
 	@RequestMapping(value = "/copy-iterations", method = RequestMethod.POST)

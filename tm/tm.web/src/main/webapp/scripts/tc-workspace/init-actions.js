@@ -34,7 +34,7 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			'not-deletable'			: 'dialog.label.delete-node.rejected'
 		});		
 
-		squashtm.notification.showInfo(message[messageName]);
+		squashtm.notification.showInfo(messages[messageName]);
 	}
 	
 

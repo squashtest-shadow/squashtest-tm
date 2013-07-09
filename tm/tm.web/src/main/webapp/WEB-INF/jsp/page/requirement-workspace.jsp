@@ -40,7 +40,7 @@
 		<script type="text/javascript">
 			var squashtm = squashtm || {};
 			squashtm.app = squashtm.app || {};
-			squashtm.app.testCaseWorkspace = {
+			squashtm.app.requirementWorkspace = {
 				wizards: ${ json:marshall(wizards) }<%-- that was a JSP expression --%>
 			}
 		</script>	
