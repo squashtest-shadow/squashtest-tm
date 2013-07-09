@@ -103,7 +103,7 @@ define(['jquery'], function($){
 			case "iteration"	: specific = "/iterations"; break;
 			case "test-suite"	: specific = '/test-suites'; break;
 		}
-		return this.getBrowserUrl()+specific+"/{nodesIds}";
+		return this.getBrowserUrl()+specific+"/{nodeIds}";
 	}
 	
 	function refreshLabel(){
@@ -544,6 +544,8 @@ define(['jquery'], function($){
 		this.getCopyUrl = getCopyUrl;
 
 		this.getMoveUrl = getMoveUrl;
+		
+		this.getDeleteUrl = getDeleteUrl;
 		
 		return this;		
 	}

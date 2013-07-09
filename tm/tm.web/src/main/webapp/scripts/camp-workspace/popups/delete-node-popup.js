@@ -19,12 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery', 'tree', '../permissions-rules', 'workspace/popups/standard-delete-node-popup'], function($, zetree, rules){
+define(['jquery', 'tree', '../permissions-rules', 'http://localhost/scripts/scripts/workspace-popups/standard-delete-node-popup.js'], function($, zetree, rules){
 
 	
 	function _collectId(node){
 		if (node.getAttributeNode){
-			return node.getAttributeNode('resid');
+			return node.getAttributeNode('resid').value;
 		}
 		else{
 			return node.getAttribute('resid');
@@ -56,23 +56,25 @@ define(['jquery', 'tree', '../permissions-rules', 'workspace/popups/standard-del
 			rules : rules,
 			extender : {
 				
-				getSimulXhrByType : function(nodes){
-					return _loopOver(nodes, function(aXhrs, nodes){
-						if (nodes.length>0){
-							var ids = $.map(nodes.get(), _collectId).join(',');
+				getSimulXhr : function(nodes){
+					return _loopOver(nodes, function(aXhrs, n){
+						if (n.length>0){
+							var nodes = n.treeNode();
+							var ids = $.map(nodes.treeNode().get(), _collectId).join(',');
 							var rawUrl = nodes.getDeleteUrl();
-							var url = rawUrl.replace('{nodeIds}', ids) + '/deletion-simulation';
+							var url = rawUrl.replace('\{nodeIds\}', ids) + '/deletion-simulation';
 							aXhrs.push($.getJSON(url));
 						}
 						else{
-							aXhrs.push({ responseText : null});
+							aXhrs.push({ responseText : '{"message" : ""}' });
 						}
 					});
 				}, 
 				
-				getConfirmXhrByType : function(aXhrs, nodes){
-					return _loopOver(nodes, function(aXhrs, nodes){
-						if (nodes.length>0){
+				getConfirmXhr : function(nodes){
+					return _loopOver(nodes, function(aXhrs, n){
+						if (n.length>0){
+							var nodes = n.treeNode();
 							var ids = $.map(nodes.get(), _collectId).join(',');
 							var rawUrl = nodes.getDeleteUrl();
 							var url = rawUrl.replace('{nodeIds}', ids);
@@ -87,13 +89,15 @@ define(['jquery', 'tree', '../permissions-rules', 'workspace/popups/standard-del
 					});				
 				},
 				
-				deletionSuccess : function(){
+				deletionSuccess : function(responses){
 					
-					this.formDialog('close');
+					var tree = this.options.tree;
 					
-					var delCamFolders = JSON.parse(arguments[0].responseText),
-						delIter = JSON.parse(arguments[1].responseText),
-						delts = JSON.parse(arguments[2].responseText);
+					this.close();
+					
+					var delCamFolders = JSON.parse(responses[0].responseText),
+						delIter = JSON.parse(responses[1].responseText),
+						delts = JSON.parse(responses[2].responseText);
 					
 					 tree.jstree('delete_nodes', ['campaign', 'folder'], delCamFolders);
 					 tree.jstree('delete_nodes', ['iteration'], delIter);
@@ -104,16 +108,16 @@ define(['jquery', 'tree', '../permissions-rules', 'workspace/popups/standard-del
 			}
 		});
 		
-		dialog.on('formdialogopen', function(){
-			simulateDeletion(dialog, tree);
+		dialog.on('deletenodedialogopen', function(){
+			dialog.deletenodeDialog('simulateDeletion');
 		});
 		
-		dialog.on('formdialogconfirm', function(){
-			performDeletion(dialog, tree);
+		dialog.on('deletenodedialogconfirm', function(){
+			dialog.deletenodeDialog('performDeletion');
 		});
 		
-		dialog.on('formdialogcancel', function(){
-			dialog.formDialog('close');
+		dialog.on('deletenodedialogcancel', function(){
+			dialog.deletenodeDialog('close');
 		});
 		
 	}

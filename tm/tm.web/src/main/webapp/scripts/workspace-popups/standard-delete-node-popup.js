@@ -25,8 +25,8 @@
  * 
  * a tree, 
  * a permissions-rules, 
- * an implementation of getSimulXhrByType (using option extender from formDialog),
- * an implementation of getConfirmXhrByType (using option extender from formDialog),
+ * an implementation of getSimulXhr (using option extender from formDialog),
+ * an implementation of getConfirmXhr (using option extender from formDialog),
  * an implementation of deletionSuccess (using option extender from formDialog)
  * 
  */
@@ -39,53 +39,31 @@ define(['jquery', 'jquery.squash.formdialog'], function(){
 	}
 	
 	$.widget("squash.deletenodeDialog", $.squash.formDialog, {
-	
+
 		options : {
 			tree : null,
 			rules : null
 		},
 		
-		getSimulXhrByType : function(nodes){
+		getSimulXhr : function(nodes){
 			throw "must be overriden"
 		},
 		
-		simulateDeletion : function(){
-			
-			var tree = this.options.tree;
-			var rules = this.options.rules;
-			
-			//first, check that the operation is allowed.
-			this.formDialog('showContent', "pleasewait");
-			
-			var nodes = tree.jstree('get_selected');
-			this.uiDialog.data('selected-nodes', nodes);
-			
-			if (! rules.canDelete(nodes)){
-				this.deletenodeDialog('showContent', 'rejected');
-				return;
+		fillDetails : function(xhrs){
+			console.log(xhrs);
+			var detailHtml = "";
+			var i=0,len = xhrs[0].length;
+			for (i=0;i<len;i++){
+				var resp = JSON.parse(xhrs[i].responseText);
+				detailHtml += resp.message;			
 			}
-			
-			//else we can proceed.
-			var xhrs = getSimulXhrByType(nodes) 
-			$.when ( xhrs )			
-			.done(function(){			
-				var detailHtml = "";
-				var i=0,len = arguments.length;
-				for (i=0;i<len;i++){
-					x = arguments[i];
-					detailHtml += x.responseText;				
-				}
-				if (detailHtml.length > 0){
-					this.element.find('delete-node-dialog-details').removeClass('not-displayed').html(data);
-					this.formDialog('showContent', 'confirm');
-				}
-				else{
-					dialog.find('delete-node-dialog-details').addClass('not-displayed');
-				}
-			})
-			.fail(function(){
-				this.formDialog('showContent', 'reject');
-			});
+			if (detailHtml.length > 0){
+				this.element.find('delete-node-dialog-details').removeClass('not-displayed').html(data);
+				this.showContent('confirm');
+			}
+			else{
+				this.element.find('delete-node-dialog-details').addClass('not-displayed');
+			}			
 		},
 		
 		_findPrevNode : function(nodes){
@@ -107,7 +85,34 @@ define(['jquery', 'jquery.squash.formdialog'], function(){
 			
 		},
 		
-		getConfirmXhrByType : function(nodes){
+		simulateDeletion : function(){
+			var self = this;
+			var tree = this.options.tree;
+			var rules = this.options.rules;
+			
+			//first, check that the operation is allowed.
+			this.showContent("pleasewait");
+			
+			var nodes = tree.jstree('get_selected');
+			this.uiDialog.data('selected-nodes', nodes);
+			
+			if (! rules.canDelete(nodes)){
+				this.deletenodeDialog('showContent', 'rejected');
+				return;
+			}
+			
+			//else we can proceed.
+			var xhrs = this.getSimulXhr(nodes) 
+			$.when ( xhrs )			
+			.done(function(responses){		
+				self.fillDetails(responses);
+			})
+			.fail(function(){
+				self.showContent('reject');
+			});
+		},
+
+		getConfirmXhr : function(nodes){
 			throw "must be overriden";
 		},
 		
@@ -117,21 +122,21 @@ define(['jquery', 'jquery.squash.formdialog'], function(){
 		
 		performDeletion : function(){
 			var tree = this.options.tree;
-			var nodes = dialog.data('selected-nodes');		
+			var nodes = this.uiDialog.data('selected-nodes');		
 			var newSelection = this._findPrevNode(nodes);
 			
 			nodes.all('deselect');
 			newSelection.select();
 			
-			this.formDialog('showContent', 'pleasewait');
+			this.showContent('pleasewait');
 
-			var xhrs = this.getConfirmXhrByType(nodes);
+			var xhrs = this.getConfirmXhr(nodes);
 			$.when(xhrs)
 			.done($.proxy(this.deletionSuccess, this));
 			
 		}
 		
-	}
+	});
 
 
 });
