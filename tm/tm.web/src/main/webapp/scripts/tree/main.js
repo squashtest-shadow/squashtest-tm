@@ -29,24 +29,30 @@
  * }
  */
 
-define([ "./workspace-tree-conf/conf-factory", "./plugins/plugin-factory"], function(wkspConf, pluginsFactory) {
+define([ "./workspace-tree-conf/conf-factory", './tree-picker-conf/conf-factory', "./plugins/plugin-factory"], function(wkspConf, pickerConf, pluginsFactory) {
 
 	squashtm = squashtm || {};
 	squashtm.tree = squashtm.tree || {};
 	
 	
-	function initWorkspaceTree(settings){
-		pluginsFactory.configure('workspace-tree');
-		var conf = wkspConf.generate(settings);
-		var instance = $(settings.treeselector).jstree(conf);
-		squashtm.tree = instance;
-	}
-	
-	
 	return {
-		initWorkspaceTree : initWorkspaceTree,
-		initLinkableTree : undefined,
+		initWorkspaceTree : function(settings){
+			pluginsFactory.configure('workspace-tree');
+			var conf = wkspConf.generate(settings);
+			var instance = $(settings.treeselector).jstree(conf);
+			squashtm.tree = instance;			
+		},
+		
+		initLinkableTree : function(settings){
+			pluginsFactory.configure('tree-picker');
+			var conf = pickerConf.generate(settings);
+			var instance = $(settings.treeselector).jstree(conf);
+			squashtm.tree = instance;			
+		},
+		
+		
 		initCallTestCaseTree : undefined,
+		
 		get : function(){return squashtm.tree}
 	}
 	

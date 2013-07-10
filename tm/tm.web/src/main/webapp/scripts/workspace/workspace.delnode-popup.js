@@ -179,6 +179,9 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 		},
 		
 		performDeletion : function(){
+
+			this.showContent("pleasewait");
+			
 			var self=this;
 			var tree = this.options.tree;
 			var nodes = this.uiDialog.data('selected-nodes');		
