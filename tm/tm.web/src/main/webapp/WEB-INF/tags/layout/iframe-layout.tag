@@ -44,7 +44,6 @@
 <title><f:message key="${titleKey }" /></title>
 <layout:common-head />
 <layout:_common-script-import highlightedWorkspace="${ resourceName }"/>
-<tree:jstree-header />
 <link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/squash.blue.css" ></link>	
 <jsp:invoke fragment="head" />
 </head>

@@ -19,35 +19,50 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-//the 'tree-node' plugin will be automatically applied when required
-define(['jquery', './jstree-dnd-override','./squash-plugin', './workspace-tree-plugin', './tree-picker-plugin' , './tree-node', 'jstree'], function($, applyDndOverride, applySquashPlugin, applyWorkspacePlugin, applyTreePickerPlugin){
-
+/*
+ * Returns the workspace-independant part of the configuration of a "workspace" tree.
+ * 
+ * 
+ * conf : {
+ *  model : model object for that tree
+ * }
+ * 
+ */
+define(function(){
+	
+	var baseURL = squashtm.app.contextRoot;
+	
 	return {
-		
-		configure : function(type){
-			switch(type){
-			
-			case 'workspace-tree' : 
-				applyDndOverride();
-				applySquashPlugin();
-				applyWorkspacePlugin();
-				break;
+		generate : function(settings){
+	
+			return { 
+				"plugins" : ["json_data", "sort", "themes", "types", "cookies", "ui", "squash"],
+				"json_data" : { 
+					"data" :settings.model, 
+					"ajax" : {
+						"url": function (node) {
+							return node.treeNode().getContentUrl();
+						} 
+					}
+				},
+				"core" : { 
+					"animation" : 0
+				}, 
+				"ui" : {
+					select_multiple_modifier: false
+				},
+				"themes" : {
+					"theme" : "squashtest",
+					"dots" : true,
+					"icons" : true,
+					"url" : squashtm.app.contextRoot+"/styles/squashtree.css"					
+				},
+				"squash" : {
+					rootUrl : squashtm.app.contextRoot
+				}				
 				
-			case 'tree-picker' : 
-				applySquashPlugin();
-				applyTreePickerPlugin();
-				break;
-				
-			case 'simple-tree' : 
-				applySquashPlugin();
-				break;
-				
-			default :
-				throw "'"+type+"' is not a valid tree profile";
 			}
 		}
-		
 	}
-	
+
 });

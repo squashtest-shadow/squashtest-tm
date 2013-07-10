@@ -22,7 +22,7 @@
  * This is a template for a backbone module
  */
 define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui",
-		"jquery.squash.squashbutton", "jquery.squash.jstree" ], function($,
+		"jquery.squash.squashbutton"], function($,
 		Backbone, Handlebars, _) {
 	var View = Backbone.View.extend({
 		el : "#wizard-tree-pane",

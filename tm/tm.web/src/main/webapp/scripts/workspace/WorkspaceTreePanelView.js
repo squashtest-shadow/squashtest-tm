@@ -22,9 +22,8 @@
  * This is a template for a backbone module
  */
 define(
-		[ "jquery", "backbone", "handlebars", "workspace/WorkspaceWizardMenu",
-				"jquery.squash.jstree" ],
-		function($, Backbone, Handlebars, WorkspaceWizardMenu) {
+		[ "jquery", "backbone", "handlebars", "workspace/WorkspaceWizardMenu", "tree" ],
+		function($, Backbone, Handlebars, WorkspaceWizardMenu, zetree) {
 			var View = Backbone.View
 					.extend({
 						el : "#tabbed-pane",
@@ -34,7 +33,7 @@ define(
 								collection : this.model.wizards
 							});
 
-							var tree = this.$("#tree");
+							var tree = this.$('#tree');
 
 							// apparently, jstree events dont bubble correctly,
 							// backbone cant capture events
@@ -43,15 +42,13 @@ define(
 									$.proxy(this._onTreeSelectionChanged,this));
 
 							// initialize menu state
-							this.menu.refreshSelection(tree.jstree(
-									"get_instance").get_selected());
+							this.menu.refreshSelection(tree.jstree("get_selected"));
 						},
 
 						events : {},
 
 						_onTreeSelectionChanged : function(event, data) {
-							this.menu
-									.refreshSelection(data.inst.get_selected());
+							this.menu.refreshSelection(data.inst.get_selected());
 						}
 
 					});

@@ -20,34 +20,40 @@
  */
 
 
-//the 'tree-node' plugin will be automatically applied when required
-define(['jquery', './jstree-dnd-override','./squash-plugin', './workspace-tree-plugin', './tree-picker-plugin' , './tree-node', 'jstree'], function($, applyDndOverride, applySquashPlugin, applyWorkspacePlugin, applyTreePickerPlugin){
-
+define(function(){
+	var baseURL = squashtm.app.contextRoot;
+	
 	return {
+		generate : function(){
 		
-		configure : function(type){
-			switch(type){
-			
-			case 'workspace-tree' : 
-				applyDndOverride();
-				applySquashPlugin();
-				applyWorkspacePlugin();
-				break;
-				
-			case 'tree-picker' : 
-				applySquashPlugin();
-				applyTreePickerPlugin();
-				break;
-				
-			case 'simple-tree' : 
-				applySquashPlugin();
-				break;
-				
-			default :
-				throw "'"+type+"' is not a valid tree profile";
+			return {
+				"types" : {
+					"max_depth" : -2, // unlimited without check
+					"max_children" : -2, // unlimited w/o check
+					"valid_children" : [ "drive" ],
+					"types" : {
+						"test-case" : {
+							"valid_children" : 'none',
+							"icon" : {
+								"image" : baseURL+'/images/Icon_Tree_TestCase.png'
+							}
+						},
+						"folder" : {
+							"valid_children" : [ "test-case", "folder" ],
+							"icon" : {
+								"image" : baseURL+'/images/Icon_Tree_Folder.png'
+							}
+						},
+						"drive" : {
+							"valid_children" : [ "test-case", "folder" ],
+							"icon" : {
+								"image" : baseURL+'/images/root.png'
+							}
+						}
+					}
+				}
 			}
 		}
-		
-	}
 	
+	}
 });

@@ -29,7 +29,9 @@
  * }
  */
 
-define([ "./workspace-tree-conf/conf-factory", './tree-picker-conf/conf-factory', "./plugins/plugin-factory"], function(wkspConf, pickerConf, pluginsFactory) {
+define([ "./simple-tree-conf/conf-factory", "./workspace-tree-conf/conf-factory", 
+         './tree-picker-conf/conf-factory', "./plugins/plugin-factory", "workspace.contextual-content"], 
+         function(simplConf, wkspConf, pickerConf, pluginsFactory, ctxtcontent) {
 
 	squashtm = squashtm || {};
 	squashtm.tree = squashtm.tree || {};
@@ -50,8 +52,26 @@ define([ "./workspace-tree-conf/conf-factory", './tree-picker-conf/conf-factory'
 			squashtm.tree = instance;			
 		},
 		
+		initSimpleTree : function(){
+			pluginsFactory.configure('simple-tree');
+			var conf = simpleConf.generate(settings);
+			var instance = $(settings.treeselector).jstree(conf);
+			squashtm.tree = instance;					
+		},
 		
-		initCallTestCaseTree : undefined,
+		initCallStepTree : function(){
+			pluginsFactory.configure('simple-tree');
+			var conf = simpleConf.generate(settings);
+			var instance = $(settings.treeselector).jstree(conf);
+			
+			instance.on('select_node.jstree', function(event, data){
+				var resourceUrl = $(data.rslt.obj).treeNode().getResourceUrl();
+				ctxtcontent.loadWith(resourceUrl);				
+				return true;				
+			});
+			
+			squashtm.tree = instance;			
+		},
 		
 		get : function(){return squashtm.tree}
 	}
