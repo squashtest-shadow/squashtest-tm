@@ -24,6 +24,7 @@ package org.squashtest.tm.hibernate.mapping.requirement
 import org.hibernate.Hibernate
 import org.hibernate.Session
 import org.hibernate.exception.GenericJDBCException
+import org.hibernate.exception.ConstraintViolationException
 import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
@@ -54,7 +55,7 @@ class RequirementFolderMappingIT extends HibernateMappingSpecification {
 		persistFixture f
 		
 		then:
-		thrown(GenericJDBCException)
+		thrown(ConstraintViolationException)
 	}
 	
 	

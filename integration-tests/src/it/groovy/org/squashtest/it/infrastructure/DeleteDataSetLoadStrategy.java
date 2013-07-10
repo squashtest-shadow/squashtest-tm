@@ -22,15 +22,29 @@ package org.squashtest.it.infrastructure;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import org.dbunit.dataset.IDataSet;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.connection.ConnectionProvider;
+import org.hibernate.engine.SessionFactoryImplementor;
+
 import org.unitils.dbunit.datasetloadstrategy.impl.CleanInsertLoadStrategy;
 import org.unitils.dbunit.util.DbUnitDatabaseConnection;
 
 public class DeleteDataSetLoadStrategy extends CleanInsertLoadStrategy {
-	
+
+	public Connection getConnection(Session session) {  
+		try {
+			SessionFactoryImplementor sfi = (SessionFactoryImplementor) session.getSessionFactory();
+	    	ConnectionProvider cp = sfi.getConnectionProvider();
+	    	return cp.getConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+    }
 	
 	public void delete(Session session, IDataSet dataSet){
 		try{
@@ -43,8 +57,8 @@ public class DeleteDataSetLoadStrategy extends CleanInsertLoadStrategy {
 			Query query = session.createSQLQuery(builder.toString());
 			
 			query.executeUpdate();
-			
-			session.connection().commit();
+	
+			getConnection(session).commit();
 			
 			
 		}catch(Exception e){
