@@ -29,11 +29,12 @@
 
 <f:message var="addFolderTitle"  	key="dialog.new-folder.title"/>	
 <f:message var="addTestCaseTitle"  	key="dialog.new-test-case.title"/>	
+<f:message var="renameNodeTitle"	key="dialog.rename-tree-node.title" />
+<f:message var="deleteNodeTitle"	key="dialog.delete-tree-node.title"/>
 <f:message var="addLabel"		 	key="label.Add"/>
 <f:message var="addAnotherLabel"	key="label.addAnother"/>
 <f:message var="cancelLabel"		key="label.Cancel"/>
 <f:message var="confirmLabel"		key="label.Confirm"/>
-<f:message var="deleteNodeTitle"	key="dialog.delete-tree-node.title"/>
 
 <f:message var="deleteMessagePrefix"	key="dialog.label.delete-node.label.start" />
 <f:message var="deleteMessageVariable"  key="dialog.label.delete-nodes.test-cases.label"/>
@@ -94,6 +95,25 @@
 	</div>
 </div>
 
+
+<div id="rename-node-dialog" class="popup-dialog not-displayed" title="${renameNodeTitle}" >
+
+	<span data-def="xor-content=denied">
+		<f:message key="dialog.label.rename-node.rejected" />		
+	</span>
+	
+	<div data-def="xor-content=confirm">
+		<label for="rename-tree-node-text"><f:message key="dialog.rename.label" /></label>
+		<input id="rename-tree-node-text" type="text" size="50" /> <br />
+		<comp:error-message forField="name" />
+	</div>
+	
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${confirmLabel}" 		data-def="evt=confirm, mainbtn, xor-content=confirm"/>
+		<input  type="button" value="${cancelLabel}" 		data-def="evt=cancel"/>
+	</div>	
+
+</div>
 
 
 <div id="delete-node-dialog" class="popup-dialog not-displayed" title="${deleteNodeTitle}">

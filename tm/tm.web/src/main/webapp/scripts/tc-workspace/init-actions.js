@@ -111,6 +111,16 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			});
 			
 			
+			// ***************** rename **********************
+			
+			$("#rename-node-tree-button").on('click', function(){
+				$("#rename-node-dialog").formDialog('open');
+			});
+			
+			tree.on('rename.squashtree', function(){
+				$("#rename-node-dialog").formDialog('open');
+			});
+			
 			// ***************** deletion ********************
 			
 			$("#delete-node-tree-button").on('click', function(){

@@ -19,14 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['./add-folder-popup', './add-requirement-popup' , './delete-node-popup'], function(folderpopup, reqpopup, deletepopup){
+define(['./add-folder-popup', './add-requirement-popup' , './rename-node-popup', './delete-node-popup'], function(folderpopup, reqpopup, renamepopup, deletepopup){
 	
 	
 	function init(){
 		
 		folderpopup.init();
 		reqpopup.init();
-		
+		renamepopup.init();
 		
 		deletepopup.init();
 		

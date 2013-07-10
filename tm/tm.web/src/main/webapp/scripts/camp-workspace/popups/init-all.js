@@ -19,7 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['./add-folder-popup', './add-campaign-popup', './add-iteration-popup' , './delete-node-popup'], function(folderpopup, camppopup, iterpopup, deletepopup){
+define(['./add-folder-popup', './add-campaign-popup', './add-iteration-popup' , './rename-node-popup','./delete-node-popup'], 
+		function(folderpopup, camppopup, iterpopup, renamepopup, deletepopup){
 	
 	
 	function init(){
@@ -27,7 +28,7 @@ define(['./add-folder-popup', './add-campaign-popup', './add-iteration-popup' , 
 		folderpopup.init();
 		camppopup.init();
 		iterpopup.init();
-		
+		renamepopup.init();
 		
 		deletepopup.init();
 		

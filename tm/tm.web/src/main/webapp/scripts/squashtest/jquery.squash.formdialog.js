@@ -137,7 +137,7 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 		},
 		
 		showContent : function(contentId){
-			this.uiDialog.find('[class|="popup-dialog-xor-content"]').hide().end().find('.popup-dialog-xor-content-'+contentId).show();
+			this.uiDialog.find('[class*="popup-dialog-xor-content"]').hide().end().find('.popup-dialog-xor-content-'+contentId).show();
 		},
 
 		_create : function() {

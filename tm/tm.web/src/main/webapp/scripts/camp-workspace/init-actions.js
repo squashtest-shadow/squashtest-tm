@@ -115,6 +115,17 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 				pasteIfOk(tree);
 			});
 			
+			// ***************** rename **********************
+			
+			$("#rename-node-tree-button").on('click', function(){
+				$("#rename-node-dialog").formDialog('open');
+			});
+			
+			tree.on('rename.squashtree', function(){
+				$("#rename-node-dialog").formDialog('open');
+			});
+			
+			
 			
 			// ***************** deletion ********************
 			

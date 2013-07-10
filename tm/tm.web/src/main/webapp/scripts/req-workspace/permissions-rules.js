@@ -21,7 +21,16 @@
 
 define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tree){
 
-	return new function(){		
+	squashtm = squashtm || {};
+	squashtm.workspace = squashtm.workspace || {};
+	
+	if (squashtm.workspace.permissions_rules === undefined){
+		squashtm.workspace.permissions_rules = new RequirementPermissionsRules();
+	}
+	
+	return squashtm.workspace.permissions_rules;
+	
+	function RequirementPermissionsRules(){		
 		
 		this.canCreateFolder = function(nodes){
 			return nodes.filter(':creatable').filter(':folder, :library').length === 1;
@@ -122,7 +131,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			'delete-node-tree-button' : this.canDelete
 		}
 
-	}();
+	};
 	
 	
 });

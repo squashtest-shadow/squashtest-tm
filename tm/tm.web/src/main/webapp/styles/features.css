@@ -120,6 +120,11 @@ tr.nodrop td.drag-handle {
 	cursor: n-resize;
 }
 
+.please-wait{
+	vertical-align: center;
+	text-align: center;	
+	background : url('../images/ajax-loader.gif');
+}
 
 .smallfonts {
 	font-size: 0.8em;

@@ -21,7 +21,17 @@
 
 define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tree){
 
-	return new function(){		
+	squashtm = squashtm || {};
+	squashtm.workspace = squashtm.workspace || {};
+	
+	if (squashtm.workspace.permissions_rules === undefined){
+		squashtm.workspace.permissions_rules = new CampaignPermissionsRules();
+	}
+	
+	return squashtm.workspace.permissions_rules;
+	
+	
+	function CampaignPermissionsRules(){		
 		
 		function allOrNone(nodes, type){
 			var filterLen = nodes.filter(':'+type).length;
@@ -134,7 +144,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			'delete-node-tree-button' : this.canDelete
 		}
 
-	}();
+	};
 	
 	
 });
