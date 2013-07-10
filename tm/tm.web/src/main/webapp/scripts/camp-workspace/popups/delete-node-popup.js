@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery', 'tree', '../permissions-rules', 'http://localhost/scripts/scripts/workspace-popups/standard-delete-node-popup.js'], function($, zetree, rules){
+define(['jquery', 'tree', '../permissions-rules', 'http://localhost/scripts/scripts/workspace/workspace.delnode-popup.js'], function($, zetree, rules){
 
 	
 	function _collectId(node){
@@ -45,13 +45,12 @@ define(['jquery', 'tree', '../permissions-rules', 'http://localhost/scripts/scri
 		return allXhrs;
 		
 	}
-	
-	
+		
 
 	function init(){
 		
 		var tree = zetree.get();
-		var dialog = $("#delete-node-dialog").deletenodeDialog({
+		var dialog = $("#delete-node-dialog").delnodeDialog({
 			tree : tree,
 			rules : rules,
 			extender : {
@@ -66,7 +65,7 @@ define(['jquery', 'tree', '../permissions-rules', 'http://localhost/scripts/scri
 							aXhrs.push($.getJSON(url));
 						}
 						else{
-							aXhrs.push({ responseText : '{"message" : ""}' });
+							aXhrs.push(null);
 						}
 					});
 				}, 
@@ -84,40 +83,53 @@ define(['jquery', 'tree', '../permissions-rules', 'http://localhost/scripts/scri
 							}));
 						}
 						else{
-							aXhrs.push( { responseText : '[]'});
+							aXhrs.push( null);	
+							//pushing null is important here because the success callback will make
+							//assumptions on the order of the response.
 						}
 					});				
 				},
 				
-				deletionSuccess : function(responses){
+				deletionSuccess : function(responsesArray){
 					
 					var tree = this.options.tree;
 					
-					this.close();
+					var delCampResp = responsesArray[0], 
+						delIterResp = responsesArray[1],
+						delSuitResp = responsesArray[2];
 					
-					var delCamFolders = JSON.parse(responses[0].responseText),
-						delIter = JSON.parse(responses[1].responseText),
-						delts = JSON.parse(responses[2].responseText);
+					if (delCampResp!==null){
+						var camIds = delCampResp[0];
+						tree.jstree('delete_nodes', ['campaign', 'folder'], camIds);
+					}
 					
-					 tree.jstree('delete_nodes', ['campaign', 'folder'], delCamFolders);
-					 tree.jstree('delete_nodes', ['iteration'], delIter);
-					 tree.jstree('delete_nodes', ['test-suite'], delts);
+					if (delIterResp!==null){
+						var iterIds = delIterResp[0];
+						tree.jstree('delete_nodes', ['iteration'], iterIds);
+					}
+					
+					if (delSuitResp!==null){
+						var suiteIds = delSuitResp[0];
+						tree.jstree('delete_nodes', ['test-suite'], suiteIds);						
+					}
+					
+					 this.close();
 					
 				}
 				
 			}
 		});
 		
-		dialog.on('deletenodedialogopen', function(){
-			dialog.deletenodeDialog('simulateDeletion');
+		dialog.on('delnodedialogopen', function(){
+			dialog.delnodeDialog('simulateDeletion');
 		});
 		
-		dialog.on('deletenodedialogconfirm', function(){
-			dialog.deletenodeDialog('performDeletion');
+		dialog.on('delnodedialogconfirm', function(){
+			dialog.delnodeDialog('performDeletion');
 		});
 		
-		dialog.on('deletenodedialogcancel', function(){
-			dialog.deletenodeDialog('close');
+		dialog.on('delnodedialogcancel', function(){
+			dialog.delnodeDialog('close');
 		});
 		
 	}

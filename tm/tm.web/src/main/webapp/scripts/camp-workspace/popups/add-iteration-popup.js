@@ -33,7 +33,7 @@ define(['jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog'], fu
 		
 		$.extend(params, cufParams);
 		
-		return tree.jstree('postNewNode', 'new-campaign', params, true);
+		return tree.jstree('postNewNode', 'new-iteration', params, true);
 	}
 	
 	

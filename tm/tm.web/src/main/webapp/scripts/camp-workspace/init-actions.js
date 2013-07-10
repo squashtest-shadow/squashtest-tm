@@ -119,11 +119,11 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			// ***************** deletion ********************
 			
 			$("#delete-node-tree-button").on('click', function(){
-				$("#delete-node-dialog").deletenodeDialog('open');
+				$("#delete-node-dialog").delnodeDialog('open');
 			});
 			
 			tree.on('suppr.squashtree', function(){
-				$("#delete-node-dialog").deletenodeDialog('open');
+				$("#delete-node-dialog").delnodeDialog('open');
 			})
 		}
 	}	

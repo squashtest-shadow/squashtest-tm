@@ -277,7 +277,7 @@ public class CampaignLibraryNavigationController extends
 
 	@RequestMapping(value="/test-suites/{suiteIds}/deletion-simulation", method = RequestMethod.GET)
 	public @ResponseBody
-	String simulateSuiteDeletion(@PathVariable("suiteIds") List<Long> suiteIds, Locale locale) {
+	Message simulateSuiteDeletion(@PathVariable("suiteIds") List<Long> suiteIds, Locale locale) {
 		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateSuiteDeletion(suiteIds);
 
 		StringBuilder builder = new StringBuilder();
@@ -287,7 +287,7 @@ public class CampaignLibraryNavigationController extends
 			builder.append("<br/>");
 		}
 
-		return builder.toString();
+		return new Message(builder.toString());
 
 	}
 
