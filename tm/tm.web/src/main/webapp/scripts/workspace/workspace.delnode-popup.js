@@ -24,9 +24,7 @@
  * Must be supplied the following options :
  * 
  * a tree, 
- * a permissions-rules, 
- * an implementation of getSimulXhr (using option extender from formDialog),
- * an implementation of getConfirmXhr (using option extender from formDialog)
+ * a permissions-rules
  * 
  * The rest can also be overriden using the 'extender' parameter.
  * 
@@ -48,24 +46,42 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 			rules : null
 		},
 		
-		// ******************* needs override *******************
+		open : function(){
+			this._super();
+			this.simulateDeletion();
+		},
+		
+		// ******************* override them if needed***********
+		
 		getSimulXhr : function(nodes){
-			throw "must be overriden, must return a xhr or an array of xhr"
+			var ids = nodes.treeNode().all('getResId').join(',');
+			var rawUrl = nodes.getDeleteUrl();
+			var url = rawUrl.replace('\{nodeIds\}', ids) + '/deletion-simulation';
+			return $.getJSON(url);
 		},
 
 		getConfirmXhr : function(nodes){
-			throw "must be overriden, must return a xhr or an array of xhr";
+			var ids = nodes.treeNode().all('getResId').join(',');
+			var rawUrl = nodes.getDeleteUrl();
+			var url = rawUrl.replace('\{nodeIds\}', ids);
+			return $.ajax({
+				url : url,
+				type : 'delete'
+			});				
 		},
 		
+		// ********************* callbacks *************************************
 		
-		// ******************** deletion simulation *************
+		//expects an array of array
+		deletionSuccess : function(responsesArray){
+			var nodesIds = responsesArray[0][0];
+			var tree = this.options.tree;
+			 tree.jstree('delete_nodes', ['folder', 'test-case', 'requirement'], nodesIds);
+			 this.close();
+		},
 		
-	
-		/* because $.when(deferred(s)).done(something) is supplied with inconsistent arguments
-		 * given the number of deferred in the .when() clause, we must force the use of an array argument
-		 * so that the fillDetails callback won't have to discriminate.
-		 */ 
-		fillDetails : function(responsesArray){
+		//expects an array of array
+		simulationSuccess : function(responsesArray){
 			
 			var htmlDetail = '';
 			
@@ -85,8 +101,32 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 			this.showContent('confirm');					
 		},
 		
-
+		// ***************************** ajax queries *******************************
 		
+		/* because $.when(deferred(s)).done(something) is supplied with inconsistent arguments
+		 * given the number of deferred in the .when() clause, we must ensure that the result of the operation
+		 * will be an array of array as the callbacks expect it.
+		 */ 	
+		smartAjax : function(xhrs, callback){
+			var self = this;
+			//case of an array of xhr : the result will be an array of array as expected
+			if (_.isArray(xhrs) && xhrs.length>1){
+				return $.when.apply($, xhrs)
+				.done(function(){
+					callback.call(self, arguments);	
+				});
+			}
+			//case of a single xhr : the result will be an array, that we transform in an array of array as expected
+			else{
+				return $.when(xhrs)
+				.done(function(){
+					callback.call(self, [ arguments ]);	
+				});
+			}
+		},
+		
+		// ******************** deletion simulation *************
+
 		simulateDeletion : function(){
 			var self = this;
 			var tree = this.options.tree;
@@ -110,24 +150,14 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 			 * given the number of deferred in the .when() clause, we must force the use of an array argument
 			 * so that the fillDetails callback won't have to discriminate.
 			 */ 	
-			$.when.apply ($, xhrs )	
-			.done(function(){
-				var clbkargs = (_.isArray(xhrs) && xhrs.length>1) ? arguments : [arguments];
-				self.fillDetails.call(self, clbkargs);
-			})
+			this.smartAjax(xhrs, this.simulationSuccess)
 			.fail(function(){
 				self.showContent('reject');
 			});
 		},
 		
 		// ********************** actual deletion*********************
-		
-		deletionSuccess : function(responsesArray){
-			console.log(responsesArray)
-			
-			//TODO
-		},
-		
+
 		_findPrevNode : function(nodes){
 			var tree = this.options.tree;
 			var oknode= tree.find(':library').filter(':first');
@@ -159,16 +189,9 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 			
 			this.showContent('pleasewait');
 			
-			/* because $.when(deferred(s)).done(something) is supplied with inconsistent arguments
-			 * given the number of deferred in the .when() clause, we must force the use of an array argument
-			 * so that the fillDetails callback won't have to discriminate.
-			 */ 	
 			var xhrs = this.getConfirmXhr(nodes);
-			$.when.apply($, xhrs)
-			.done(function(){
-				var clbkargs = (_.isArray(xhrs) && xhrs.length>1) ? arguments : [arguments];
-				self.deletionSuccess.call(self, clbkargs);			
-			});
+			
+			this.smartAjax(xhrs, this.deletionSuccess);
 			
 		}
 		

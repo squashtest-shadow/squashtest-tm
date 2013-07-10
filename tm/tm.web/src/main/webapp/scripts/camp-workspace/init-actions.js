@@ -124,7 +124,7 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			
 			tree.on('suppr.squashtree', function(){
 				$("#delete-node-dialog").delnodeDialog('open');
-			})
+			});
 		}
 	}	
 	

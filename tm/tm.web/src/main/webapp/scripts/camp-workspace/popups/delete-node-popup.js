@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery', 'tree', '../permissions-rules', 'http://localhost/scripts/scripts/workspace/workspace.delnode-popup.js'], function($, zetree, rules){
+define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-popup'], function($, zetree, rules){
 
 	
 	function _collectId(node){
@@ -59,7 +59,7 @@ define(['jquery', 'tree', '../permissions-rules', 'http://localhost/scripts/scri
 					return _loopOver(nodes, function(aXhrs, n){
 						if (n.length>0){
 							var nodes = n.treeNode();
-							var ids = $.map(nodes.treeNode().get(), _collectId).join(',');
+							var ids = $.map(nodes.get(), _collectId).join(',');
 							var rawUrl = nodes.getDeleteUrl();
 							var url = rawUrl.replace('\{nodeIds\}', ids) + '/deletion-simulation';
 							aXhrs.push($.getJSON(url));
@@ -120,10 +120,7 @@ define(['jquery', 'tree', '../permissions-rules', 'http://localhost/scripts/scri
 			}
 		});
 		
-		dialog.on('delnodedialogopen', function(){
-			dialog.delnodeDialog('simulateDeletion');
-		});
-		
+
 		dialog.on('delnodedialogconfirm', function(){
 			dialog.delnodeDialog('performDeletion');
 		});

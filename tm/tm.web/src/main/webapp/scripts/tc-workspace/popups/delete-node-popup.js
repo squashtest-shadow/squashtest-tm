@@ -19,96 +19,23 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], function($, zetree, rules){
-
-	
-	function simulateDeletion(dialog, tree){
-		
-		//first, check that the operation is allowed.
-		dialog.formDialog('showContent', "pleasewait");
-		
-		var nodes = tree.jstree('get_selected');
-		dialog.data('selected-nodes', nodes);
-		
-		if (! rules.canDelete(nodes)){
-			dialog.formDialog('showContent', 'rejected');
-			dialog.formDialog('close');
-			return;
-		}
-		
-		//else we can proceed.
-		var ids = nodes.all('getResId');
-		var url = nodes.getBrowserUrl() + '/content/' + ids.join(',') + '/deletion-simulation';
-		$.getJSON(url)
-		.done(function(data){
-			if (data !== null){
-				dialog.find('delete-node-dialog-details').removeClass('not-displayed').html(data);
-				dialog.formDialog('showContent', 'confirm');
-			}
-			else{
-				dialog.find('delete-node-dialog-details').addClass('not-displayed');
-			}
-		})
-		.fail(function(){
-			dialog.formDialog('showContent', 'reject');
-		});
-	}
-	
-	function findPrevNode(nodes, tree){
-		if (nodes.length==0) return nodes;
-		var ids = nodes.all('getResId');
-		var loopnode = nodes.first().treeNode().getAncestors();
-		
-		var oknode= tree.find(':library').filter(':first');
-		loopnode.each(function(){
-			var $this = $(this), $thisid = $this.attr('resid');
-			if ($this.is(':library') || $.inArray($thisid, ids)== -1){
-				oknode = $this.treeNode();
-				//break;
-			}
-		});
-		
-		return oknode;
-		
-	}
-	
-	function performDeletion(dialog, tree){
-		var nodes = dialog.data('selected-nodes');		
-		var newSelection = findPrevNode(nodes, tree);
-		
-		nodes.all('deselect');
-		newSelection.select();
-		
-		dialog.formDialog('showContent', 'pleasewait');
-
-		var ids = nodes.all('getResId');
-		var url = nodes.getBrowserUrl() + '/content/' + ids.join(',');
-		$.ajax({
-			url : url,
-			type : 'delete'
-		})
-		.done(function(deleted){
-			dialog.formDialog('close');
-			 tree.jstree('delete_nodes', ['test-case', 'folder'], deleted);
-		});
-		
-	}
+define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-popup'], function($, zetree, rules){
 	
 	function init(){
-		
-		var dialog = $("#delete-node-dialog").formDialog();
-		var tree = zetree.get();
 
-		dialog.on('formdialogopen', function(){
-			simulateDeletion(dialog, tree);
+		var tree = zetree.get();
+		var dialog = $("#delete-node-dialog").delnodeDialog({
+			tree : tree,
+			rules : rules
+		});
+
+
+		dialog.on('delnodedialogconfirm', function(){
+			dialog.delnodeDialog('performDeletion');
 		});
 		
-		dialog.on('formdialogconfirm', function(){
-			performDeletion(dialog, tree);
-		});
-		
-		dialog.on('formdialogcancel', function(){
-			dialog.formDialog('close');
+		dialog.on('delnodedialogcancel', function(){
+			dialog.delnodeDialog('close');
 		});
 		
 	}
