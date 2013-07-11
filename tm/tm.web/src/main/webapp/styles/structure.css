@@ -1040,6 +1040,30 @@ div.information-panel p {
 
 
 /* ---------------------------------------------------------*/
+/* ------------------>>> Tree Popups <<<--------------------*/
+/* ---------------------------------------------------------*/
+
+#delete-node-dialog .delete-node-dialog-warning{
+	vertical-align:middle;
+	background-image : url('../images/messagebox_confirm.png'); 
+	background-repeat : no-repeat;
+	background-position : center center;
+	width : 60px;
+}
+
+#delete-node-dialog .delete-node-dialog-details{
+	padding-left : 1.5em;
+	padding-top : 0.2em;
+	padding-bottom : 0.2em;
+	background-color : #EFEFEF;
+}
+
+#delete-node-dialog .delete-node-dialog-details p{
+	font-weight : bold;
+}
+
+
+/* ---------------------------------------------------------*/
 /* ---------------->>> Administration page <<<------------------*/
 /* ---------------------------------------------------------*/
 #admin-pane {

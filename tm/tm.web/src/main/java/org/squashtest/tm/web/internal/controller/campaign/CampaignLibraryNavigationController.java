@@ -242,31 +242,19 @@ public class CampaignLibraryNavigationController extends
 
 	@RequestMapping(value="/iterations/{iterationIds}/deletion-simulation", method = RequestMethod.GET)
 	public @ResponseBody
-	Message simulateIterationDeletion(@PathVariable("iterationIds") List<Long> iterationIds, Locale locale) {
+	Messages simulateIterationDeletion(@PathVariable("iterationIds") List<Long> iterationIds, Locale locale) {
 
 		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateIterationDeletion(iterationIds);
 
-		StringBuilder builder = new StringBuilder();
-
-		for (SuppressionPreviewReport report : reportList) {
-			builder.append(report.toString(getMessageSource(), locale));
-			builder.append("<br/>");
+		Messages messages = new Messages();
+		for (SuppressionPreviewReport report : reportList){
+			messages.addMessage(report.toString(getMessageSource(), locale));
 		}
-
-		return new Message(builder.toString());
+		
+		return messages;
 	}
 
-	public static class Message {
-		private String message;
 
-		public Message(String message) {
-			this.message = message;
-		}
-
-		public String getMessage() {
-			return this.message;
-		}
-	}
 
 	@RequestMapping(value="/iterations/{iterationIds}",  method = RequestMethod.DELETE)
 	public @ResponseBody
@@ -277,17 +265,15 @@ public class CampaignLibraryNavigationController extends
 
 	@RequestMapping(value="/test-suites/{suiteIds}/deletion-simulation", method = RequestMethod.GET)
 	public @ResponseBody
-	Message simulateSuiteDeletion(@PathVariable("suiteIds") List<Long> suiteIds, Locale locale) {
+	Messages simulateSuiteDeletion(@PathVariable("suiteIds") List<Long> suiteIds, Locale locale) {
 		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateSuiteDeletion(suiteIds);
 
-		StringBuilder builder = new StringBuilder();
-
-		for (SuppressionPreviewReport report : reportList) {
-			builder.append(report.toString(getMessageSource(), locale));
-			builder.append("<br/>");
+		Messages messages = new Messages();
+		for (SuppressionPreviewReport report : reportList){
+			messages.addMessage(report.toString(getMessageSource(), locale));
 		}
-
-		return new Message(builder.toString());
+		
+		return messages;
 
 	}
 

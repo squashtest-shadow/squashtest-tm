@@ -146,15 +146,16 @@
 
 </div>
 
+
 <div id="delete-node-dialog" class="popup-dialog not-displayed" title="${deleteNodeTitle}">
 	
-	<div id="delete-node-dialog-pleasewait" class="please-wait" data-def="state=pleasewait"></div>
+	<div class="waiting-loading" data-def="state=pleasewait"></div>
 	
-	<div id="delete-node-dialog-simulation" class="not-displayed" data-def="state=confirm">
+	<div class="not-displayed" data-def="state=confirm">
 	
 		<div class="display-table-row">
-			<div class="display-table-cell" style="vertical-align:middle;">
-				<img src='${servContext}/images/messagebox_confirm.png'/>
+			<div class="display-table-cell delete-node-dialog-warning">
+				<!-- content is empty on purpose, let it display a background image. -->
 			</div>
 			<div class="display-table-cell">
 				<p>
@@ -163,25 +164,31 @@
 					<c:out value="${deleteMessageSuffix}" />
 				</p>
 				
-				<p id="delete-node-dialog-details" class="not-displayed"></p>
+				<div class="not-displayed delete-node-dialog-details">
+					<p><f:message key="dialog.delete-tree-node.details"/></p>
+					<ul>
+					</ul>				
+				</div>
 				
-				<p><c:out value="${deleteMessageNoUndo}"/></p>				
-				
-				<p class='bold-warning-message'><c:out value="${deleteMessageConfirm}"/></p>
+				<p>
+					<span><c:out value="${deleteMessageNoUndo}"/></span>				
+					<span class='bold-warning-message'><c:out value="${deleteMessageConfirm}"/></span>				
+				</p>				
 				
 			</div>
 		</div>
 	</div>
 		
-	<div id="delete-node-dialog-rejected"   class="not-displayed" data-def="state=rejected">
+	<div class="not-displayed" data-def="state=rejected">
 		<f:message key="dialog.label.delete-node.rejected"/>
 	</div>
 	
 	<div class="popup-dialog-buttonpane">
 		<input type="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn=confirm, state=confirm"/>
-		<input type="button" value="${cancelLabel}"  data-def="evt=cancel, mainbtn=rejected"/>
+		<input type="button" value="${cancelLabel}"  data-def="evt=cancel,  mainbtn=rejected"/>
 	</div>
 </div>
+
 
 
 </div>

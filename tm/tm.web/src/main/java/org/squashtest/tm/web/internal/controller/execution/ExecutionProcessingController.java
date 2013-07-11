@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
 @Controller
 @RequestMapping("/execute/{executionId}")
@@ -66,7 +67,7 @@ public class ExecutionProcessingController {
 
 	@Inject
 	private ExecutionProcessingService executionProcService;
-
+	
 
 
 	private void addCurrentStepUrl(long executionId, Model model) {

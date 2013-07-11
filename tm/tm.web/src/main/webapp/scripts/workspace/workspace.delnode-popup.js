@@ -83,19 +83,20 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 			var htmlDetail = '';
 			
 			$.each(responsesArray, function(idx, arg){
-				if (!!arg && !!arg[0]){
-					htmlDetail += arg[0].message;
+				var messages = arg[0].messages;
+				for (var i=0,len = messages.length;i<len;i++){
+					htmlDetail += '<li>'+messages[i]+'</li>';
 				}
 			});
 			
 			if (htmlDetail.length > 0){
-				this.element.find('delete-node-dialog-details').removeClass('not-displayed').html(htmlDetail);
+				this.element.find('.delete-node-dialog-details').removeClass('not-displayed').find('ul').html(htmlDetail);
 			}
 			else{
-				this.element.find('delete-node-dialog-details').addClass('not-displayed');
+				this.element.find('.delete-node-dialog-details').addClass('not-displayed');
 			}		
 			
-			this.showContent('confirm');					
+			this.setState('confirm');					
 		},
 		
 		// ***************************** ajax queries *******************************
@@ -130,13 +131,13 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 			var rules = this.options.rules;
 			
 			//first, check that the operation is allowed.
-			this.showContent("pleasewait");
+			this.setState("pleasewait");
 			
 			var nodes = tree.jstree('get_selected');
 			this.uiDialog.data('selected-nodes', nodes);
 			
 			if (! rules.canDelete(nodes)){
-				this.showContent('rejected');
+				this.setState('rejected');
 				return;
 			}
 			
@@ -145,7 +146,7 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 				
 			this.smartAjax(xhrs, this.simulationSuccess)
 			.fail(function(){
-				self.showContent('reject');
+				self.setState('reject');
 			});
 		},
 		
@@ -173,7 +174,7 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 		
 		performDeletion : function(){
 
-			this.showContent("pleasewait");
+			this.setState("pleasewait");
 			
 			var self=this;
 			var tree = this.options.tree;
@@ -183,7 +184,7 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 			nodes.all('deselect');
 			newSelection.select();
 			
-			this.showContent('pleasewait');
+			this.setState('pleasewait');
 			
 			var xhrs = this.getConfirmXhr(nodes);
 			

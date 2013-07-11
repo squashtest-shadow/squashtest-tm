@@ -173,17 +173,16 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 	
 	@RequestMapping(value="/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
-	public @ResponseBody Message simulateNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds, Locale locale){
+	public @ResponseBody Messages simulateNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds, Locale locale){
+		
 		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds);
 		
-		StringBuilder builder = new StringBuilder();
-		
+		Messages messages = new Messages();
 		for (SuppressionPreviewReport report : reportList){
-			builder.append(report.toString(messageSource, locale));
-			builder.append("<br/><br>");
+			messages.addMessage(report.toString(messageSource, locale));
 		}
 		
-		return new Message(builder.toString());
+		return messages;
 		
 	}
 	
@@ -193,18 +192,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		
 		return getLibraryNavigationService().deleteNodes(nodeIds);	
 	}
-	
-	public static class Message {
-		private String message ;
-		public Message (String message){
-			this.message = message;
-		}
-		public String getMessage(){
-			return this.message;
-		}
-	}
 
-	
 	
 	@RequestMapping(value = "/copy", method = RequestMethod.POST)
 	public @ResponseBody
@@ -309,4 +297,28 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	}
 
+	
+	// ************************ other utils *************************
+	
+	
+	protected static class Messages {
+		
+		private Collection<String> messages = new ArrayList<String>();
+		
+		public Messages(){
+			super();
+		}
+		
+		public void addMessage(String msg){
+			this.messages.add(msg);
+		}
+		
+		public Collection<String> getMessages(){
+			return this.messages;
+		}
+		
+	}
+
+	
+	
 }

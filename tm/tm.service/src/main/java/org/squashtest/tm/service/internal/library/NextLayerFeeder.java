@@ -114,8 +114,7 @@ public class NextLayerFeeder implements NodeVisitor  {
 
 	@Override
 	public void visit(Requirement requirement) {
-		// nope
-		
+		saveNextToCopy(requirement, (Requirement) destination);
 	}
 
 	@Override

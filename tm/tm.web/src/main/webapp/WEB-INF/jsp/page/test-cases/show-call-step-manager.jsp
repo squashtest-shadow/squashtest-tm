@@ -95,7 +95,7 @@
 				var tree = $("#tree-pane .tree");
 				if (selected == 0){
 					tree.jstree('get_selected').each(function(index, node){
-						if ($( node ).attr('rel') == 'file') {
+						if ($( node ).attr('rel') == 'test-case') {
 							tab.push($( node ).attr('resId'));
 						}
 					});

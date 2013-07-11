@@ -31,7 +31,7 @@
 
 define([ "./simple-tree-conf/conf-factory", "./workspace-tree-conf/conf-factory", 
          './tree-picker-conf/conf-factory', "./plugins/plugin-factory", "workspace.contextual-content"], 
-         function(simplConf, wkspConf, pickerConf, pluginsFactory, ctxtcontent) {
+         function(simpleConf, wkspConf, pickerConf, pluginsFactory, ctxtcontent) {
 
 	squashtm = squashtm || {};
 	squashtm.tree = squashtm.tree || {};
@@ -52,14 +52,14 @@ define([ "./simple-tree-conf/conf-factory", "./workspace-tree-conf/conf-factory"
 			squashtm.tree = instance;			
 		},
 		
-		initSimpleTree : function(){
+		initSimpleTree : function(settings){
 			pluginsFactory.configure('simple-tree');
 			var conf = simpleConf.generate(settings);
 			var instance = $(settings.treeselector).jstree(conf);
 			squashtm.tree = instance;					
 		},
 		
-		initCallStepTree : function(){
+		initCallStepTree : function(settings){
 			pluginsFactory.configure('simple-tree');
 			var conf = simpleConf.generate(settings);
 			var instance = $(settings.treeselector).jstree(conf);
