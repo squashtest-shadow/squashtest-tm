@@ -84,10 +84,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Lob
 	private String prerequisite = "";
 
-	@Enumerated(EnumType.STRING)
-	@Basic(optional = false)
-	private TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
-
 	@NotNull
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "STEP_ORDER")
@@ -131,6 +127,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Basic(optional = false)
 	@Column(name = "TC_STATUS")
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Basic(optional = false)
+	@Column(name = "EXECUTION_MODE")
+	private TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
 
 	/**
 	 * Should the importance be automatically computed.
@@ -198,6 +200,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return executionMode;
 	}
 
+	public void setExecutionMode(@NotNull TestCaseExecutionMode executionMode) {
+		this.executionMode = executionMode;
+	}
+
+	
 	public List<TestStep> getSteps() {
 		return steps;
 	}

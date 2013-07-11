@@ -33,4 +33,8 @@ public enum TestCaseExecutionMode implements Internationalizable {
 	public String getI18nKey() {
 		return I18N_KEY_ROOT + name();
 	}
+	
+	public static TestCaseExecutionMode defaultValue() {
+		return MANUAL;
+	}
 }

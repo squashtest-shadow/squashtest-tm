@@ -56,7 +56,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	@Lob
 	private String expectedResult;
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, optional = false)
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 	

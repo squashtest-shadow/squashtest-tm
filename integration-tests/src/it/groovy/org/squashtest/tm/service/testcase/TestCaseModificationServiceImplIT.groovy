@@ -25,6 +25,7 @@ import javax.inject.Inject
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
@@ -375,7 +376,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def ts3 = new ActionTestStep(action:"action3", expectedResult:"ex3")
 		def ts4 = new ActionTestStep(action:"action4", expectedResult:"ex4")
 		def ts5 = new ActionTestStep(action:"action5", expectedResult:"ex5")
-
+		
 
 		navService.addTestCaseToFolder(folderId, tc)
 		service.addActionTestStep tc.id, ts1

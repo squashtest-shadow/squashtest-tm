@@ -22,6 +22,7 @@ package org.squashtest.tm.infrastructure.hibernate;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,11 +30,14 @@ import java.sql.Types;
 
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.springframework.jdbc.support.lob.LobCreator;
+import org.hibernate.usertype.EnhancedUserType;
+import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobHandler;
-import org.springframework.orm.hibernate3.support.AbstractLobType;
 
-public class BlobUserType extends AbstractLobType {
+public class BlobUserType implements EnhancedUserType {
+
+	LobHandler lobHandler = new DefaultLobHandler();
+
 
 	@Override
 	public int[] sqlTypes() {
@@ -46,41 +50,89 @@ public class BlobUserType extends AbstractLobType {
 	}
 
 	@Override
-	protected Object nullSafeGetInternal(ResultSet rs, String[] names,
-			Object owner, LobHandler lobHandler) throws SQLException,
-			IOException, HibernateException {
-		   return lobHandler.getBlobAsBinaryStream(rs, names[0]);
-
-	}
-
-	@Override
-	protected void nullSafeSetInternal(PreparedStatement ps, int index,	Object value, LobCreator lobCreator) throws SQLException,
-			IOException, HibernateException {
-		
-
-		  if (value != null) {
-			  lobCreator.setBlobAsBinaryStream(ps, index, (InputStream) value, -1);
-
-		 }
-		  else {
-			    lobCreator.setBlobAsBytes(ps, index, null);
-		  }
-
-
-	}
-
-	@Override
 	public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner)
 			throws HibernateException, SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return lobHandler.getBlobAsBinaryStream(rs, names[0]);
 	}
 
 	@Override
 	public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session)
 			throws HibernateException, SQLException {
-		// TODO Auto-generated method stub
+
+		  if (value != null) {
+			  lobHandler.getLobCreator().setBlobAsBinaryStream(st, index, (InputStream) value, -1);
+
+		 }
+		  else {
+			  lobHandler.getLobCreator().setBlobAsBytes(st, index, null);
+		  }
 		
+	}
+
+	@Override
+	public boolean equals(Object x, Object y) throws HibernateException {
+		boolean isEqual = false;
+        if (x == y) {
+            isEqual = true;
+        }
+        if (null == x || null == y) {
+            isEqual = false;
+        } else {
+            isEqual = x.equals(y);
+        }
+        return isEqual;
+	}
+
+	@Override
+	public int hashCode(Object x) throws HibernateException {
+		return x.hashCode();
+	}
+
+	@Override
+	public Object deepCopy(Object value) throws HibernateException {
+		return value;
+	}
+
+	@Override
+	public boolean isMutable() {
+		return true;
+	}
+
+	@Override
+	public Serializable disassemble(Object value) throws HibernateException {
+	       return (Serializable) value;
+	}
+
+	@Override
+	public Object assemble(Serializable cached, Object owner) {
+		return cached;
+	}
+
+	@Override
+	public Object replace(Object original, Object target, Object owner)
+			throws HibernateException {
+		return original;
+	}
+
+	@Override
+	public String objectToSQLString(Object value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	@Deprecated
+	public String toXMLString(Object value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	@Deprecated
+	public Object fromXMLString(String xmlValue) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
