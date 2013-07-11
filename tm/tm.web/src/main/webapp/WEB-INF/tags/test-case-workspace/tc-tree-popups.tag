@@ -98,19 +98,19 @@
 
 <div id="rename-node-dialog" class="popup-dialog not-displayed" title="${renameNodeTitle}" >
 
-	<span data-def="xor-content=denied">
+	<span data-def="state=denied">
 		<f:message key="dialog.label.rename-node.rejected" />		
 	</span>
 	
-	<div data-def="xor-content=confirm">
+	<div data-def="state=confirm">
 		<label for="rename-tree-node-text"><f:message key="dialog.rename.label" /></label>
 		<input id="rename-tree-node-text" type="text" size="50" /> <br />
 		<comp:error-message forField="name" />
 	</div>
 	
 	<div class="popup-dialog-buttonpane">
-		<input type="button" value="${confirmLabel}" 		data-def="evt=confirm, mainbtn, xor-content=confirm"/>
-		<input  type="button" value="${cancelLabel}" 		data-def="evt=cancel"/>
+		<input type="button" value="${confirmLabel}" 		data-def="evt=confirm, mainbtn=confirm, state=confirm"/>
+		<input  type="button" value="${cancelLabel}" 		data-def="evt=cancel, mainbtn"/>
 	</div>	
 
 </div>
@@ -118,9 +118,9 @@
 
 <div id="delete-node-dialog" class="popup-dialog not-displayed" title="${deleteNodeTitle}">
 	
-	<div id="delete-node-dialog-pleasewait" class="please-wait" data-def="xor-content=pleasewait"></div>
+	<div id="delete-node-dialog-pleasewait" class="please-wait" data-def="state=pleasewait"></div>
 	
-	<div id="delete-node-dialog-simulation" class="not-displayed" data-def="xor-content=confirm">
+	<div id="delete-node-dialog-simulation" class="not-displayed" data-def="state=confirm">
 	
 		<div class="display-table-row">
 			<div class="display-table-cell" style="vertical-align:middle;">
@@ -143,13 +143,13 @@
 		</div>
 	</div>
 		
-	<div id="delete-node-dialog-rejected"   class="not-displayed" data-def="xor-content=rejected">
+	<div id="delete-node-dialog-rejected"   class="not-displayed" data-def="state=rejected">
 		<f:message key="dialog.label.delete-node.rejected"/>
 	</div>
 	
 	<div class="popup-dialog-buttonpane">
-		<input type="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn, xor-content=confirm"/>
-		<input type="button" value="${cancelLabel}"  data-def="evt=cancel"/>
+		<input type="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn=confirm, state=confirm"/>
+		<input type="button" value="${cancelLabel}"  data-def="evt=cancel,  mainbtn=rejected"/>
 	</div>
 </div>
 

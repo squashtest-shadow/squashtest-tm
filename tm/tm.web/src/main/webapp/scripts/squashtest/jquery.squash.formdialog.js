@@ -31,25 +31,27 @@
  * <div id="mydialog" class="popup-dialog">
  * 
  * 		<div>
- * 			<p>this is my main content. Because it isn't a xor-content div (read below), it will always be displayed.</p>
+ * 			<p>this is my main content. Because it isn't a 'state' div (read below), it will always be displayed. 
+ * 				It is basically equivalent state=default
+ * 			</p>
  * 
  * 			<textarea data-def="isrich">will be turned into rich editable</textarea>
  * 
  * 			<textarea>will remain a regular textarea</textarea>
  * 		</div>
  * 
- * 		<div data-def="xor-content=content-1">
+ * 		<div data-def="state=content-1">
  * 			<p>either this is displayed</p></div>
  * 
- * 		<div data-def="xor-content=content-2">
+ * 		<div data-def="state=content-2">
  * 			<p>or that</p>
  * 		</div>
  * 	
  * 		<div class="popup-dialog-buttonpane">
  * 			<input type="button" value="ok" 					data-def="evt=confirm, mainbtn"/>
  * 			<input type="button" value="cancel" 				data-def="evt=cancel" />
- * 			<input type="button" value="specific to content1" 	data-def="xor-content=content-1" />
- * 			<input type="button" value="specific to content2" 	data-def="xor-content=content-2" />
+ * 			<input type="button" value="specific to content1" 	data-def="state=content-1" />
+ * 			<input type="button" value="specific to content2" 	data-def="state=content-2" />
  * 		</div>
  * 
  * </div>
@@ -66,36 +68,33 @@
  * 
  * 3/ all the inputs defined in this dialog will be cleaned up automatically whenever the dialog is opened again.
  * 
- * 4/ a popup can define several alternative content that are displayed one at a time. Displaying one will automatically hide the other alternatives. 
- * 	  Those elements are declared using data-def="xor-content=<content-id>", or directly using class="popup-dialog-xor-content-<content-id>". 
- *    See the API for details (showContent) and configuration for details.
+ * 4/ a popup can define several alternative content that are displayed one at a time, representing a state. 
+ * 	  Displaying one will automatically hide the other alternatives. 
+ * 	  Those elements are declared using data-def="state=<state-id>", or directly using class="popup-dialog-state-<state-id>". 
+ *    See the API for details (setState()) and configuration for details.
  * 
  * ============= API ====================
  * 
  * 1/ cleanup : force the cleanup of the controls
  * 
- * 2/ showContent(id) : will show anything configured 'xor-content=<content id>' and hide the other ones.
+ * 2/ showState(id) : will show anything configured 'state=<state id>' and hide the other ones.
  *  
  * ========= configuration ==============
  * 
  * 1/ basic : all basic options of jQuery dialog are valid here, EXCEPT for the buttons.
- * 
- * 2/ more conf :{
- * 		extender : {
- * 			an object that will be merged to 'this' when the popup is created. Can be used to override some functions too.
- * 		}
- *  }
- * 
- * 
- * 3/ DOM conf : reads parts of the conf from the datatable, see the handlers at the end of the document for details.
+ *
+ *
+ * 2/ DOM conf : reads parts of the conf from the datatable, see the handlers at the end of the document for details.
  * for now, supports : 
+ * 
  * - isrich : for textarea. If set, will be turned into a ckeditor.
  * - evt=<eventname> : for buttons. If set, clicking on that button will trigger <eventname> on the dialog.
- * - mainbtn : for buttons. If set, pressing <ENTER> inside the dialog will trigger 'click' on that button.
- * - xor-content=<content id> : for any elements in the popup. Multiple elements can declare the same <content-id> and they'll
- * 								be logically bound when showContent(<content-id>) is invoked. Note that a single element can belong
- * 								to multiple xor-content.
- * 
+ * - state=<state id> : for any elements in the popup. Multiple elements can declare the same <state-id> and they'll
+ * 								be logically bound when setState(<state-id>) is invoked. Note that a single element can belong
+ * 								to multiple state.
+ * - mainbtn[=<state-id>] : for buttons. If set, pressing <ENTER> inside the dialog will trigger 'click' on that button if the popup is in that
+ * 							current state. the <state-id> is optional : if left blank, the button will be triggered if the popup is in the default 
+ * 							state.
  * 
  */
 
@@ -115,17 +114,19 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			modal : true,
 			width : 600,
 			position : [ 'center', 100 ],
-			extender : {}
+			_state : "default",
+			_richeditors : [],
+			_mainBtns : {}
 		},
 		
-
-		_richeditors : [],
 
 		_triggerCustom : function(event) {
 			var evtname = $(event.target).data('evt');
 			this._trigger(evtname);
 			return this;
 		},
+		
+
 
 		cancel : function(event) {
 			if (!this.close()) {
@@ -136,21 +137,41 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			return this;
 		},
 		
-		showContent : function(contentId){
-			this.uiDialog.find('[class*="popup-dialog-xor-content"]').hide().end().find('.popup-dialog-xor-content-'+contentId).show();
+		//if the argument is unknown, will default to state "default"
+		setState : function(state){
+			this.uiDialog.find('[class*="popup-dialog-state"]').hide();
+			
+			var tobedisplayed = this.uiDialog.find('.popup-dialog-state-'+state);
+			tobedisplayed.show();
+			
+			this.options._state = (tobedisplayed.length===0) ? "default" : state;
 		},
 
 		_create : function() {
 			var self = this;
 
 			var parent = this.element.eq(0).parent();
-
-			function cancelOnEsc(event) {
-				if (event.keyCode === $.ui.keyCode.ESCAPE) {
-					self.cancel(event);
-					event.preventDefault();
+			
+			function keyshortcuts(event) {
+				switch(event.keyCode){
+					case $.ui.keyCode.ESCAPE : 
+						self.cancel(event);
+						event.preventDefault();
+						break;
+						
+					case $.ui.keyCode.ENTER :
+						var state = self.options._state;
+						var btn = self.options._mainBtns[state];
+						
+						if (btn!==undefined){
+							btn.click();
+						}
+						break;
+						
+					default : return;
 				}
 			}
+			
 			// creates the widget
 			self._super();
 			
@@ -162,21 +183,15 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			self._on({
 				"click .ui-dialog-buttonpane :input" : self._triggerCustom,
 				"click .ui-dialog-titlebar-close" : self.cancel,
-				"keydown" : cancelOnEsc
 			});
 
 			// autoremove when parent container is removed
 			parent.on('remove', function() {
-				self.element.formDialog('destroy');
+				self.destroy('destroy');
 				self.element.remove();
 			});
-			
-			//show the first xor-content if any.
-			this._activateFirstContent();
-			
-			//extensions/overrides
-			var extender = this.options.extender;
-			$.extend(this, extender);
+				
+			this.uiDialog.keydown(keyshortcuts);
 
 		},
 	
@@ -192,15 +207,6 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			})
 		},
 		
-		_activateFirstContent : function(){
-			var elt = this.uiDialog.find('[class*="popup-dialog-xor-content"]:first');
-			if (elt.length===0){
-				return ;
-			}
-			var classes = elt.attr('class');
-			var contentId = /popup-dialog-xor-content-(\S*)/.exec(classes);
-			this.showContent(contentId);
-		},
 
 		_createButtons : function() {
 
@@ -246,7 +252,6 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 		_destroy : function() {
 			this._off($(".ui-dialog-buttonpane button"), "click");
 			this._off($(".ui-dialog-titlebar-close"), "click");
-			this._off(this.element, 'keypress');
 			this._destroyCked();
 			this._destroyButtons();
 			this._super();
@@ -264,36 +269,35 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 				
 				var handler;
 				for (var key in conf){
+					
 					handler = handlers[key];
 					if (handler!==undefined){
 						handler.call($widget, $elt, conf[key]);
 					}
 				}
-				
 			});
 		}
-		
+
 	});
 	
 	$.squash.formDialog.domconf = {
 		'isrich' : function($elt, value){
-			this._richeditors.push($elt);
+			this.options._richeditors.push($elt);
 			var conf = confman.getStdChkeditor();
 			$elt.ckeditor(function(){}, conf);
 		},
+		
 		'mainbtn' : function($elt, value){
-			function callback(evt){
-				if (evt.which=='13'){
-					$elt.click();
-				}
-			};
-			this.uiDialog.keypress(callback);
+			var state = (value == "true") ? "default" : value;
+			this.options._mainBtns[state] = $elt;
 		},
+		
 		'evt' : function($elt, value){
 			$elt.data('evt', value);
 		},
-		'xor-content' : function($elt, value){
-			$elt.addClass('popup-dialog-xor-content-'+value);
+		
+		'state' : function($elt, value){
+			$elt.addClass('popup-dialog-state-'+value);
 		}
 	}
 });

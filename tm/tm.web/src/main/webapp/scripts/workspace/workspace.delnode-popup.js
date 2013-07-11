@@ -26,9 +26,6 @@
  * a tree, 
  * a permissions-rules
  * 
- * The rest can also be overriden using the 'extender' parameter.
- * 
- * 
  */
 define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 
@@ -51,7 +48,7 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 			this.simulateDeletion();
 		},
 		
-		// ******************* override them if needed***********
+		// ******************* creates the XHR requests ***********
 		
 		getSimulXhr : function(nodes){
 			var ids = nodes.treeNode().all('getResId').join(',');
@@ -145,11 +142,7 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 			
 			//else we can proceed.
 			var xhrs = this.getSimulXhr(nodes) 
-			
-			/* because $.when(deferred(s)).done(something) is supplied with inconsistent arguments
-			 * given the number of deferred in the .when() clause, we must force the use of an array argument
-			 * so that the fillDetails callback won't have to discriminate.
-			 */ 	
+				
 			this.smartAjax(xhrs, this.simulationSuccess)
 			.fail(function(){
 				self.showContent('reject');

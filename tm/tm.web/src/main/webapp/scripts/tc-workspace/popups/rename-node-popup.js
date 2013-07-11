@@ -33,10 +33,10 @@ define(['jquery', 'tree', 'workspace.contextual-content', '../permissions-rules'
 			var node = tree.jstree('get_selected');
 			
 			if (! rules.canRename(node)){
-				dialog.formDialog('showContent','denied');
+				dialog.formDialog('setState','denied');
 			}
 			else{
-				dialog.formDialog('showContent','confirm');
+				dialog.formDialog('setState','confirm');
 				var name = node.getName();
 				dialog.find("#rename-tree-node-text").val(name);				
 			}			

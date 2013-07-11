@@ -20,7 +20,7 @@
  */
 
 define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-popup'], function($, zetree, rules){
-
+	
 	
 	function _collectId(node){
 		if (node.getAttributeNode){
@@ -45,88 +45,87 @@ define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-p
 		return allXhrs;
 		
 	}
+	
+	//subclassing the deletion dialog because this is a special case
+	$.widget("squash.delcampDialog", $.squash.delnodeDialog, {
+		getSimulXhr : function(nodes){
+			return _loopOver(nodes, function(aXhrs, n){
+				if (n.length>0){
+					var nodes = n.treeNode();
+					var ids = $.map(nodes.get(), _collectId).join(',');
+					var rawUrl = nodes.getDeleteUrl();
+					var url = rawUrl.replace('\{nodeIds\}', ids) + '/deletion-simulation';
+					aXhrs.push($.getJSON(url));
+				}
+				else{
+					aXhrs.push(null);
+				}
+			});
+		}, 
 		
-
+		getConfirmXhr : function(nodes){
+			return _loopOver(nodes, function(aXhrs, n){
+				if (n.length>0){
+					var nodes = n.treeNode();
+					var ids = $.map(nodes.get(), _collectId).join(',');
+					var rawUrl = nodes.getDeleteUrl();
+					var url = rawUrl.replace('{nodeIds}', ids);
+					aXhrs.push($.ajax({
+						url : url,
+						type : 'delete'
+					}));
+				}
+				else{
+					aXhrs.push( null);	
+					//pushing null is important here because the success callback will make
+					//assumptions on the order of the response.
+				}
+			});				
+		},
+		
+		deletionSuccess : function(responsesArray){
+			
+			var tree = this.options.tree;
+			
+			var delCampResp = responsesArray[0], 
+				delIterResp = responsesArray[1],
+				delSuitResp = responsesArray[2];
+			
+			if (delCampResp!==null){
+				var camIds = delCampResp[0];
+				tree.jstree('delete_nodes', ['campaign', 'folder'], camIds);
+			}
+			
+			if (delIterResp!==null){
+				var iterIds = delIterResp[0];
+				tree.jstree('delete_nodes', ['iteration'], iterIds);
+			}
+			
+			if (delSuitResp!==null){
+				var suiteIds = delSuitResp[0];
+				tree.jstree('delete_nodes', ['test-suite'], suiteIds);						
+			}
+			
+			 this.close();
+			
+		}		
+	});
+	
 	function init(){
 		
 		var tree = zetree.get();
-		var dialog = $("#delete-node-dialog").delnodeDialog({
+		var dialog = $("#delete-node-dialog").delcampDialog({
 			tree : tree,
-			rules : rules,
-			extender : {
-				
-				getSimulXhr : function(nodes){
-					return _loopOver(nodes, function(aXhrs, n){
-						if (n.length>0){
-							var nodes = n.treeNode();
-							var ids = $.map(nodes.get(), _collectId).join(',');
-							var rawUrl = nodes.getDeleteUrl();
-							var url = rawUrl.replace('\{nodeIds\}', ids) + '/deletion-simulation';
-							aXhrs.push($.getJSON(url));
-						}
-						else{
-							aXhrs.push(null);
-						}
-					});
-				}, 
-				
-				getConfirmXhr : function(nodes){
-					return _loopOver(nodes, function(aXhrs, n){
-						if (n.length>0){
-							var nodes = n.treeNode();
-							var ids = $.map(nodes.get(), _collectId).join(',');
-							var rawUrl = nodes.getDeleteUrl();
-							var url = rawUrl.replace('{nodeIds}', ids);
-							aXhrs.push($.ajax({
-								url : url,
-								type : 'delete'
-							}));
-						}
-						else{
-							aXhrs.push( null);	
-							//pushing null is important here because the success callback will make
-							//assumptions on the order of the response.
-						}
-					});				
-				},
-				
-				deletionSuccess : function(responsesArray){
-					
-					var tree = this.options.tree;
-					
-					var delCampResp = responsesArray[0], 
-						delIterResp = responsesArray[1],
-						delSuitResp = responsesArray[2];
-					
-					if (delCampResp!==null){
-						var camIds = delCampResp[0];
-						tree.jstree('delete_nodes', ['campaign', 'folder'], camIds);
-					}
-					
-					if (delIterResp!==null){
-						var iterIds = delIterResp[0];
-						tree.jstree('delete_nodes', ['iteration'], iterIds);
-					}
-					
-					if (delSuitResp!==null){
-						var suiteIds = delSuitResp[0];
-						tree.jstree('delete_nodes', ['test-suite'], suiteIds);						
-					}
-					
-					 this.close();
-					
-				}
-				
-			}
+			rules : rules
 		});
 		
 
-		dialog.on('delnodedialogconfirm', function(){
-			dialog.delnodeDialog('performDeletion');
+		dialog.on('delcampdialogconfirm', function(){
+			dialog.delcampDialog('performDeletion');
 		});
 		
-		dialog.on('delnodedialogcancel', function(){
-			dialog.delnodeDialog('close');
+		dialog.on('delcampdialogcancel', function(){
+			dialog.delcampDialog('close');
 		});
 		
 	}
