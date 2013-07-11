@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.library;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -136,6 +137,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		if (parents != null) {
 			// if we cont flush and then evict, some entities might not be persisted
 			genericDao.flush();
+			
+			Collection<TreeNode> evicted = new HashSet<TreeNode>();
 			// when moving to a next layer, evict the nodes that won't be used anymore - those who will not receive
 			// content anymore.
 			// note: will note evict the nodes to return because they never been in the "sourceLayer" map.
@@ -143,7 +146,12 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 				NodeContainer<TreeNode> container = processedLayerEntry.getKey();
 				Collection<TreeNode> content = processedLayerEntry.getValue();
 				genericDao.clearFromCache(container);
-				genericDao.clearFromCache(content);
+				for(TreeNode node : content){
+					if(!evicted.contains(node)){
+						evicted.add(node);
+						genericDao.clearFromCache(node);
+					}
+				}
 			}
 		}
 	}

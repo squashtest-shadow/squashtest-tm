@@ -33,7 +33,6 @@ import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.usertype.EnhancedUserType;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobHandler;
-
 public class BlobUserType implements EnhancedUserType {
 
 	LobHandler lobHandler = new DefaultLobHandler();
@@ -96,7 +95,7 @@ public class BlobUserType implements EnhancedUserType {
 
 	@Override
 	public boolean isMutable() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -117,21 +116,18 @@ public class BlobUserType implements EnhancedUserType {
 
 	@Override
 	public String objectToSQLString(Object value) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	@Deprecated
 	public String toXMLString(Object value) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	@Deprecated
 	public Object fromXMLString(String xmlValue) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
