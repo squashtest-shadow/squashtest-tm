@@ -18,41 +18,45 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.requirement;
+package org.squashtest.tm.web.internal.helper;
 
-import javax.inject.Inject;
+import java.util.Comparator;
+import java.util.Locale;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.web.internal.helper.InternationalizableComparator;
-import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
-/**
- * Jeditable combo data builder which model is {@link RequirementCriticality}
- * 
- * @author Gregory Fouquet
- * 
- */
-@Component
-@Scope("prototype")
-public class RequirementCriticalityComboDataBuilder extends EnumJeditableComboDataBuilder<RequirementCriticality> {
-	
-	@Inject
+
+public class InternationalizableComparator implements
+		Comparator<Internationalizable> {
+
 	private InternationalizationHelper helper;
+	private Locale locale = LocaleContextHolder.getLocale();
 	
-	public RequirementCriticalityComboDataBuilder() {
+	public InternationalizableComparator(){
 		super();
-		setModel(RequirementCriticality.values());
-		setModelComparator(new InternationalizableComparator(helper));
+	}
+	
+	public InternationalizableComparator(InternationalizationHelper helper){
+		super();
+		this.helper = helper;
+	}
+	
+	
+	
+	public void setHelper(InternationalizationHelper helper) {
+		this.helper = helper;
 	}
 
-	@Inject
-	public void setLabelFormatter(LevelLabelFormatter formatter) {
-		super.setLabelFormatter(formatter);
+	@Override
+	public int compare(Internationalizable o1, Internationalizable o2) {
+		
+		String name1 = helper.internationalize(o1, locale);
+		String name2 = helper.internationalize(o2, locale);
+		
+		return name1.compareTo(name2);
+		
 	}
-
 
 }
