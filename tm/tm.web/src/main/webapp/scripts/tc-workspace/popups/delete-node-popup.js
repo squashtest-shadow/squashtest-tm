@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-popup.js'], function($, zetree, rules){
+define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-popup'], function($, zetree, rules){
 	
 	function init(){
 
