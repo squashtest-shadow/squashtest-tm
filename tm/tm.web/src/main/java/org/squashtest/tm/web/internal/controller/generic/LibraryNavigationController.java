@@ -196,7 +196,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
 	public @ResponseBody
-	List<JsTreeNode> copyNode(@RequestParam("nodeIds") Long[] nodeIds, 
+	List<JsTreeNode> copyNodes(@RequestParam("nodeIds") Long[] nodeIds, 
 							  @PathVariable("destinationId") long destinationId, 
 							  @PathVariable("destinationType") String destType) {
 		
@@ -221,7 +221,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public @ResponseBody
-	void moveNode(@PathVariable("nodeIds") Long[] nodeIds, 
+	void moveNodes(@PathVariable("nodeIds") Long[] nodeIds, 
 				  @PathVariable("destinationId") long destinationId, 
 				  @PathVariable("destinationType") String destType) {
 		try{

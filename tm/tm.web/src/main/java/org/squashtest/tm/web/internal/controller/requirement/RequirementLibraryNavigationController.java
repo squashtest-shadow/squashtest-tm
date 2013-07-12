@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.requirement;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -130,24 +131,18 @@ public class RequirementLibraryNavigationController extends
 	@RequestMapping(value = "/requirement/{destinationId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
 	public @ResponseBody
 	List<JsTreeNode> copyNodeIntoRequirement(@RequestParam("nodeIds") Long[] nodeIds, 
-							  @PathVariable("destinationId") long destinationId,{
+							  @PathVariable("destinationId") long destinationId){
 		
-		List<RequirementLibraryNode> nodeList;
+		List<Requirement> nodeList;
+		List<RequirementLibraryNode> tojsonList;
  		try{
-			if (destType.equals("folders")){
-				nodeList = getLibraryNavigationService().copyNodesToFolder(destinationId, nodeIds);
-			}
-			else if (destType.equals("libraries")){
-				nodeList = getLibraryNavigationService().copyNodesToLibrary(destinationId, nodeIds);
-			}
-			else{
-				throw new IllegalArgumentException("copy nodes : specified destination type doesn't exists : "+destType);
-			}
+			nodeList = requirementLibraryNavigationService.copyNodesToRequirement(destinationId, nodeIds);
+			tojsonList = new ArrayList<RequirementLibraryNode>(nodeList);
  		}catch(AccessDeniedException ade){
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
 		
-		return createJsTreeModel(nodeList);
+		return createJsTreeModel(tojsonList);
 	}
 	
 	

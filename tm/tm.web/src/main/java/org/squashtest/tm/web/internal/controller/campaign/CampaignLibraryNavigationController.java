@@ -284,21 +284,23 @@ public class CampaignLibraryNavigationController extends
 		return campaignLibraryNavigationService.deleteSuites(suiteIds);
 	}
 
-	@RequestMapping(value = "/copy-iterations", method = RequestMethod.POST)
+	@RequestMapping(value = "/campaigns/{campaignId}/iterations/", method = RequestMethod.POST, params = {"nodeIds[], next-iteration-number"})
 	public @ResponseBody
-	List<JsTreeNode> copyIterations(@RequestParam("object-ids[]") Long[] iterationsIds,
-			@RequestParam("destination-id") long campaignId, @RequestParam("destination-type") String destType,
-			@RequestParam("next-iteration-number") int nextIterationNumber) {
-
-		return copyNodes(iterationsIds, campaignId, destType, nextIterationNumber);
+	List<JsTreeNode> copyIterations(@RequestParam("nodeIds") Long[] nodeIds,
+			@PathVariable("campaignId") long campaignId, @RequestParam("next-iteration-number") int nextIterationNumber) {
+		
+		List<Iteration> iterationsList;
+		iterationsList = campaignLibraryNavigationService.copyIterationsToCampaign(campaignId, nodeIds);
+		return createCopiedIterationsModel(iterationsList, nextIterationNumber);
 	}
 
-	@RequestMapping(value = "/copy-test-suites", method = RequestMethod.POST)
+	@RequestMapping(value = "/iterations/{iterationId}/test-suites/", method = RequestMethod.POST, params = {"nodeIds[]"})
 	public @ResponseBody
-	List<JsTreeNode> copyTestSuites(@RequestParam("object-ids[]") Long[] testSuiteIds,
-			@RequestParam("destination-id") long iterationId, @RequestParam("destination-type") String destType) {
+	List<JsTreeNode> copyTestSuites(@RequestParam("nodeIds") Long[] nodeIds,@PathVariable("iterationId") long iterationId) {
 
-		return copyNodes(testSuiteIds, iterationId, destType, 0);
+		List<TestSuite> testSuiteList;
+		testSuiteList = iterationModificationService.copyPasteTestSuitesToIteration(nodeIds, iterationId);
+		return createCopiedTestSuitesModel(testSuiteList);
 
 	}
 
