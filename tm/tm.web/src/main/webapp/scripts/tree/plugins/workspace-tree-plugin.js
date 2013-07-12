@@ -19,8 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * Implements the dnd api 
+ * 
+ */
 
-define(['jquery', 'workspace.tree-node-copier', 'jstree'], function($, nodecopier){
+define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-broker', 'jstree'], function($, nodecopier, rulesbroker){
 	
 	
 	/* *******************************************************************************
@@ -117,6 +121,7 @@ define(['jquery', 'workspace.tree-node-copier', 'jstree'], function($, nodecopie
 	 * **************************** check move section ****************************************
 	 */
 
+		
 	/*
 	 * Will check if a dnd move is legal. Note that this check is preemptive, contrarily to checkMoveIsAuthorized which
 	 * needs to post-check.
@@ -124,49 +129,33 @@ define(['jquery', 'workspace.tree-node-copier', 'jstree'], function($, nodecopie
 	 * NB : this method is called by the configuration of plugin "crrm" in the initialization object.
 	 * 
 	 */
-	function treeCheckDnd(m) {
-
-		var object = m.o;
-		var dest = m.np;
-		var src = m.op;
-
-		try {
-			var jqSrc = $(src).treeNode();
-			var jqDest = $(dest).treeNode();
-			var jqObject = $(object).treeNode();
-
-			// check if the node is draggable first
-			if (jqObject.is(':library')) {
-				return false;
-			}
-
-			// check that the destination type is legal
-			if (!jqDest.acceptsAsContent(jqObject) || !jqDest.isCreatable()) {
-				return false;
-			}
-
-			// do not allow move if src is not deletable
-			if (!jqSrc.isDeletable() && !squashtm.keyEventListener.ctrl) {
-				return false;
-			}
-
-			// allow iteration or test suite copy only
-			if ((jqObject.is(':resource') || (jqObject.is(':view'))) && !squashtm.keyEventListener.ctrl) {
-				return false;
-			}
-
-			m.differentLibraries = moveFromDifferentLibraries(m);
-
+	function check_move() {
+		
+		var settings = this._get_settings(); 
+		
+		if (settings.workspace_tree.rules == undefined){
+			settings.workspace_tree.rules = rulesbroker.get();
+		}
+		
+		try{
+			var move = this._get_move();
+			var	movednodes = $(move.o).treeNode();
+			var	newparent = $(move.np).treeNode();
+			
+			return settings.workspace_tree.rules.canDnD(movednodes, newparent);
+			
 		} catch (invalid_node) {
+			if (console && console.log){
+				console.log(invalid_node.message);
+			}
 			return false;
 		}
-		return true;
 
 	}
 
 	/*
 	 * This method checks if we can move the object is the dest folder returns true if it's ok to move the object. Note
-	 * that contrary to treeCheckDnd(moveObject), that code is called only for "move", not "copy" operations, and thus is
+	 * that contrary to checkDnd(moveObject), that code is called only for "move", not "copy" operations, and thus is
 	 * not part of the aforementioned function.
 	 * 
 	 * A second reasons is that we don't want to forbid the operation a-priori : we cancel it a-posteriori. Thus, the user
@@ -394,7 +383,7 @@ define(['jquery', 'workspace.tree-node-copier', 'jstree'], function($, nodecopie
 
 		$.jstree.plugin('workspace_tree', {
 			defaults : {
-
+				
 			},
 
 			__init : function() {
@@ -420,8 +409,7 @@ define(['jquery', 'workspace.tree-node-copier', 'jstree'], function($, nodecopie
 								if (squashtm.keyEventListener.ctrl) {
 
 									if (data.rslt.differentLibraries) {
-										// warn user if move
-										// is inter-project
+										// warn user if move is inter-project
 										oneShotConfirm('Info', self._get_settings().workspace_tree.warnCopyToDifferentLibrary,
 												squashtm.message.confirm, squashtm.message.cancel).done(function() {
 											doDnDCopyNodes(moveObject, data);
@@ -464,7 +452,7 @@ define(['jquery', 'workspace.tree-node-copier', 'jstree'], function($, nodecopie
 
 			_fn : {
 				
-				treeCheckDnd : function(){treeCheckDnd();},
+				check_move : check_move,
 				
 				postNewNode : postNewNode, 
 				

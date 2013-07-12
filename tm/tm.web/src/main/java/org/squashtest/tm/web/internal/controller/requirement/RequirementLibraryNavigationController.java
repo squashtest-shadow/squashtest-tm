@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -50,6 +51,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
@@ -122,6 +124,40 @@ public class RequirementLibraryNavigationController extends
 	
 		return createTreeNodeFromLibraryNode(req);
 
+	}
+	
+
+	@RequestMapping(value = "/requirement/{destinationId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
+	public @ResponseBody
+	List<JsTreeNode> copyNodeIntoRequirement(@RequestParam("nodeIds") Long[] nodeIds, 
+							  @PathVariable("destinationId") long destinationId,{
+		
+		List<RequirementLibraryNode> nodeList;
+ 		try{
+			if (destType.equals("folders")){
+				nodeList = getLibraryNavigationService().copyNodesToFolder(destinationId, nodeIds);
+			}
+			else if (destType.equals("libraries")){
+				nodeList = getLibraryNavigationService().copyNodesToLibrary(destinationId, nodeIds);
+			}
+			else{
+				throw new IllegalArgumentException("copy nodes : specified destination type doesn't exists : "+destType);
+			}
+ 		}catch(AccessDeniedException ade){
+			throw new RightsUnsuficientsForOperationException(ade);
+		}
+		
+		return createJsTreeModel(nodeList);
+	}
+	
+	
+	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
+	public @ResponseBody
+	void moveNode(@PathVariable("nodeIds") Long[] nodeIds, 
+				  @PathVariable("destinationId") long destinationId, 
+				  @PathVariable("destinationType") String destType) {
+		//TODO
+		
 	}
 	
 	@RequestMapping(value = "/requirements/{requirementId}/content", method = RequestMethod.GET)

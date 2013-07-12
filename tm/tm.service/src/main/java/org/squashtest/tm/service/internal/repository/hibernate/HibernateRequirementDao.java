@@ -338,5 +338,11 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	}
 	
 	
+	@Override
+	public Requirement findByContent(final Requirement child) {
+		SetQueryParametersCallback callback = new SetNodeContentParameter(child);
+
+		return executeEntityNamedQuery("requirement.findByContent", callback);
+	}
 
 }

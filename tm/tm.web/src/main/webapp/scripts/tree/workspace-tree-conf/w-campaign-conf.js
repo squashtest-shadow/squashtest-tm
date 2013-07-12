@@ -31,10 +31,6 @@ define(function(){
 					"max_depth" : -2, // unlimited without check
 					"max_children" : -2, // unlimited w/o check
 					"valid_children" : [ "drive" ],
-					"start_drag" : false,
-					"move_node" : true,
-					"delete_node" : false,
-					"remove" : false,
 					"types" : {					
 						"test-suite" : {
 							"valid_children" : "none",						

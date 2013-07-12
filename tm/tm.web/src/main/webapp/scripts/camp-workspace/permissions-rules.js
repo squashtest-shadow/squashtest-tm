@@ -134,6 +134,9 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			return "yes-you-can";
 		};
 		
+
+		
+		
 		this.buttonrules = {
 			'new-folder-tree-button' : this.canCreateFolder,
 			'new-campaign-tree-button' : this.canCreateCampaign,

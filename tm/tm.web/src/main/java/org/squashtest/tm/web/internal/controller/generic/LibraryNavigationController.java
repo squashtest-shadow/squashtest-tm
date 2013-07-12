@@ -193,20 +193,20 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		return getLibraryNavigationService().deleteNodes(nodeIds);	
 	}
 
-	
-	@RequestMapping(value = "/copy", method = RequestMethod.POST)
+
+	@RequestMapping(value = "/{destinationType}/{destinationId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
 	public @ResponseBody
-	List<JsTreeNode> copyNode(@RequestParam("object-ids[]") Long[] objectIds, 
-							  @RequestParam("destination-id") long destinationId, 
-							  @RequestParam("destination-type") String destType) {
+	List<JsTreeNode> copyNode(@RequestParam("nodeIds") Long[] nodeIds, 
+							  @PathVariable("destinationId") long destinationId, 
+							  @PathVariable("destinationType") String destType) {
 		
 		List<NODE> nodeList;
  		try{
-			if (destType.equals("folder")){
-				nodeList = getLibraryNavigationService().copyNodesToFolder(destinationId, objectIds);
+			if (destType.equals("folders")){
+				nodeList = getLibraryNavigationService().copyNodesToFolder(destinationId, nodeIds);
 			}
-			else if (destType.equals("library")){
-				nodeList = getLibraryNavigationService().copyNodesToLibrary(destinationId, objectIds);
+			else if (destType.equals("libraries")){
+				nodeList = getLibraryNavigationService().copyNodesToLibrary(destinationId, nodeIds);
 			}
 			else{
 				throw new IllegalArgumentException("copy nodes : specified destination type doesn't exists : "+destType);
@@ -219,17 +219,17 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 	
 	
-	@RequestMapping(value = "/move", method = RequestMethod.POST)
+	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public @ResponseBody
-	void moveNode(@RequestParam("object-ids[]") Long[] objectIds, 
-					@RequestParam("destination-id") long destinationId, 
-					@RequestParam("destination-type") String destType) {
+	void moveNode(@PathVariable("nodeIds") Long[] nodeIds, 
+				  @PathVariable("destinationId") long destinationId, 
+				  @PathVariable("destinationType") String destType) {
 		try{
 			if (destType.equals("folder")){
-				getLibraryNavigationService().moveNodesToFolder(destinationId, objectIds);
+				getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds);
 			}
 			else if (destType.equals("library")){
-				getLibraryNavigationService().moveNodesToLibrary(destinationId, objectIds);
+				getLibraryNavigationService().moveNodesToLibrary(destinationId, nodeIds);
 			}
 			else{
 				throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "+destType);
@@ -239,6 +239,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		}
 		
 	}
+	
 	
 	protected void printExport(List<? extends ExportData> dataSource, String filename,String jasperFile, HttpServletResponse response,
 			Locale locale, String format) {

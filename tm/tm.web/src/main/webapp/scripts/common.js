@@ -115,7 +115,8 @@ requirejs.config({
 				"squash.attributeparser" : 'http://localhost/scripts/scripts/squash/squash.attributeparser',
 				"squash.configmanager" : 'http://localhost/scripts/scripts/squash/squash.configmanager',
 				"workspace.tree-node-copier" : "http://localhost/scripts/scripts/workspace/workspace.tree-node-copier",
-				"workspace.tree-event-handler" : "http://localhost/scripts/scripts/workspace/workspace.tree-event-handler"
+				"workspace.tree-event-handler" : "http://localhost/scripts/scripts/workspace/workspace.tree-event-handler",
+				"workspace.permissions-rules-broker" : "http://localhost/scripts/scripts/workspace/workspace.permissions-rules-broker"
 			},
 			shim : {
 				"ckeditor" : {

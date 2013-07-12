@@ -21,12 +21,14 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,6 +45,7 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.importer.ImportRequirementTestCaseLinksSummary;
@@ -97,6 +100,10 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToRequirementLibraryStrategy")
 	private Provider<PasteStrategy<RequirementLibrary, RequirementLibraryNode>> pasteToRequirementLibraryStrategyProvider;
+	@Inject
+	@Qualifier("squastest.tm.service.internal.PasteToRequirementStrategy")
+	private Provider<PasteStrategy<Requirement, Requirement>> pasteToRequirementStrategyProvider;
+	
 
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
@@ -132,6 +139,10 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	protected PasteStrategy<RequirementLibrary, RequirementLibraryNode> getPasteToLibraryStrategy() {
 		return pasteToRequirementLibraryStrategyProvider.get();
+	}
+	
+	protected PasteStrategy<Requirement, Requirement> getPasteToRequirementStrategy(){
+		return pasteToRequirementStrategyProvider.get();
 	}
 
 	@Override
@@ -267,6 +278,30 @@ public class RequirementLibraryNavigationServiceImpl extends
 		createCustomFieldValues(newRequirement.getCurrentVersion());
 
 		return newRequirement;
+	}
+	
+	
+	@Override
+	public List<Requirement> copyNodesToRequirement(long requirementId, Long[] sourceNodesIds) {
+		PasteStrategy<Requirement, Requirement> pasteStrategy = getPasteToRequirementStrategy();
+		makeCopierStrategy(pasteStrategy);
+		return pasteStrategy.pasteNodes(requirementId, Arrays.asList(sourceNodesIds));
+	}
+	
+	@Override
+	public void moveNodesToRequirement(long requirementId, Long[] nodeIds) {
+		if (nodeIds.length == 0) {
+			return;
+		}
+		try {
+			PasteStrategy<Requirement, Requirement> pasteStrategy = getPasteToRequirementStrategy();
+			makeMoverStrategy(pasteStrategy);
+			pasteStrategy.pasteNodes(requirementId, Arrays.asList(nodeIds));
+		} catch (NullArgumentException dne) {
+			throw new NameAlreadyExistsAtDestinationException(dne);
+		} catch (DuplicateNameException dne) {
+			throw new NameAlreadyExistsAtDestinationException(dne);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

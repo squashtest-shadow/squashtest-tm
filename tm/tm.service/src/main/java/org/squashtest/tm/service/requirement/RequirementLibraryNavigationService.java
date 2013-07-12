@@ -48,6 +48,11 @@ public interface RequirementLibraryNavigationService extends
 	Requirement addRequirementToRequirement(long requirementId, @NotNull Requirement newRequirement);
 	Requirement addRequirementToRequirement(long requirementId, @NotNull NewRequirementVersionDto newRequirement);
 	
+
+	List<Requirement> copyNodesToRequirement(long requirementId, Long[] sourceNodesIds);
+	
+	void moveNodesToRequirement(long requirementId, Long[] nodeIds);
+	
 	Requirement findRequirement(long reqId);
 	/**
 	 * Will find all requirements found in the given projects and return their information as a list of {@linkplain ExportRequirementData}

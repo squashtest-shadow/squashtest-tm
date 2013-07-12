@@ -83,5 +83,8 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 */
 	List<Long> findAllRequirementsIdsByLibrary(long libraryId);
 	
-	 	
+	/**
+	 * returns a requirement that contains the given child requirement
+	 */
+	Requirement findByContent(Requirement childRequirement);
 }

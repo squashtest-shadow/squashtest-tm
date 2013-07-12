@@ -19,41 +19,29 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+/*
+ * This object will retrieve the permissions rules associated to this workspace. It will be an instance of 'tc-workspace/permissions-rules', 
+ * 'req-workspace/permissions-rules' or 'camp-workspace/permissions-rules', provided that one has been instanciated already. 
+ * This object doesn't know which one, it just passes it when asked to. Will throw an exception if no instance of permissions-rules could be found.
+ * 
+ */
 define(function(){
-	var baseURL = squashtm.app.contextRoot;
-
 	return {
-		generate : function(){
-
-			return {
-				"types" : {
-					"max_depth" : -2, // unlimited without check
-					"max_children" : -2, // unlimited w/o check
-					"valid_children" : [ "drive" ],
-					"types" : {
-						"requirement" : {
-							"valid_children" : ['requirement'],
-							"icon" : {
-								"image" : baseURL+'/images/Icon_Tree_Requirement.png'
-							}
-						},
-						"folder" : {
-							"valid_children" : [ "requirement", "folder" ],
-							"icon" : {
-								"image" : baseURL+'/images/Icon_Tree_Folder.png'
-							}
-						},
-						"drive" : {
-							"valid_children" : [ "requirement", "folder" ],
-							"icon" : {
-								"image" : baseURL+'/images/root.png'
-							}
-						}
-					}
+		errmsg : "error : no permission-rules could be found. Please ensure that either 'tc-workspace/permissions-rules', "+
+				 "'req-workspace/permissions-rules' or 'camp-workspace/permissions-rules' have been invoked first.",
+				 
+		get : function(){
+			try{
+				var instance = squashtm.workspace.permissions_rules;
+				if (instance===undefined){
+					throw this.errmsg;
 				}
+				return instance;
+			}
+			catch(severly_undefined){
+				throw this.errmsg;
 			}
 		}
-	
-	}
+	}	
 });
+
