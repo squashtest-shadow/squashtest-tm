@@ -26,6 +26,13 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@taglib prefix="s" uri="http://www.springframework.org/tags" %>
 
+<%--
+	Implicit arguments (must be in the context)
+	
+	- categories : a List<RequirementCategory>, sorted according to the specs.
+
+ --%>
+
 <c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
 
 <f:message var="addFolderTitle"  		key="dialog.new-folder.title"/>		
@@ -100,7 +107,6 @@
 		<tr>
 			<td><label for="add-requirement-category"><f:message key="requirement.category.combo.label" /></label></td>
 			<td>
-				<s:eval expression="T(org.squashtest.tm.domain.requirement.RequirementCategory).values()" var="categories"></s:eval>
 				<select id="add-requirement-category">
 				<c:forEach var="cat" items="${categories}">
 				<option value="${cat}"><f:message key="${cat.i18nKey}" /></option>				

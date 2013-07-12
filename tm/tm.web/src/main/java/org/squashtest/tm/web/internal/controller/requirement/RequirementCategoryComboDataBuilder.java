@@ -24,9 +24,10 @@ import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.LevelComparator;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
+import org.squashtest.tm.web.internal.helper.InternationalizableComparator;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
 /**
@@ -38,10 +39,14 @@ import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilde
 @Component
 @Scope("prototype")
 public class RequirementCategoryComboDataBuilder extends EnumJeditableComboDataBuilder<RequirementCategory> {
+	
+	private InternationalizableComparator comparator = new InternationalizableComparator();
+	
+	
 	public RequirementCategoryComboDataBuilder() {
 		super();
 		setModel(RequirementCategory.values());
-		setModelComparator(LevelComparator.getInstance());
+		setModelComparator(comparator);
 	}
 
 	@Inject
@@ -49,5 +54,9 @@ public class RequirementCategoryComboDataBuilder extends EnumJeditableComboDataB
 		super.setLabelFormatter(formatter);
 	}
 
-
+	@Inject
+	public void setInternationalizationHelper(InternationalizationHelper helper) {
+		comparator.setHelper(helper);
+	}
+	
 }

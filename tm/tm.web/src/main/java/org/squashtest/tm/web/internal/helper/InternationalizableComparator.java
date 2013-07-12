@@ -32,14 +32,15 @@ public class InternationalizableComparator implements
 		Comparator<Internationalizable> {
 
 	private InternationalizationHelper helper;
-	private Locale locale = LocaleContextHolder.getLocale();
+	private Locale locale;
 	
 	public InternationalizableComparator(){
 		super();
+		locale = LocaleContextHolder.getLocale();
 	}
 	
 	public InternationalizableComparator(InternationalizationHelper helper){
-		super();
+		this();
 		this.helper = helper;
 	}
 	

@@ -20,34 +20,28 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
-import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
+import org.squashtest.tm.web.internal.helper.InternationalizableComparator;
 
 @Controller
 @RequestMapping("/requirement-workspace")
 public class RequirementWorkspaceController extends WorkspaceController<RequirementLibrary> {
+	
 	private WorkspaceService<RequirementLibrary> workspaceService;
-
-	@Inject
-	private MessageSource messageSource;
 
 
 	@Override
@@ -61,8 +55,16 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	}
 	
 	@Override
-	protected void populateModel(Model model) {
-		// 
+	protected void populateModel(Model model, Locale locale) {
+		
+		List<RequirementLibrary> libraries = workspaceService.findAllImportableLibraries();
+		//List<RequirementCriticality> criticalities = sortCriticalities(locale);	//not needed yet
+		List<RequirementCategory> categories = sortCategories();
+		
+		model.addAttribute("editableLibraries", libraries);
+		model.addAttribute("categories", categories);
+		
+		
 	}
 
 	@ServiceReference(serviceBeanName="squashtest.tm.service.RequirementsWorkspaceService")
@@ -70,17 +72,6 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 		this.workspaceService = requirementsWorkspaceService;
 	}
 	
-	
-	@Override
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView showWorkspace() {
-
-		ModelAndView mav = super.showWorkspace();
-		List<RequirementLibrary> libraries = workspaceService.findAllImportableLibraries();
-		mav.addObject("editableLibraries", libraries);
-
-		return mav;
-	}
 
 	/**
 	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#getWorkspaceType()
@@ -89,4 +80,12 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 		return WorkspaceType.REQUIREMENT_WORKSPACE;
 	}
 
+	
+	private List<RequirementCategory> sortCategories(){
+		InternationalizableComparator comparator = new InternationalizableComparator(getI18nHelper());
+		List<RequirementCategory> categories = Arrays.asList(RequirementCategory.values());
+		Collections.sort(categories, comparator);
+		return categories;
+	}
+	
 }

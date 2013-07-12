@@ -26,7 +26,6 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +38,6 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
-import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
 @Controller
 @RequestMapping("/execute/{executionId}")

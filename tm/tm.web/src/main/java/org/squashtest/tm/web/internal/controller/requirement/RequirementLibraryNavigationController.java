@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.requirement;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,8 +43,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto.NewRequirementVersionDaoValidator;
@@ -60,7 +57,6 @@ import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationContro
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.TestSuiteNodeBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
 /**
@@ -78,7 +74,8 @@ public class RequirementLibraryNavigationController extends
 
 	@Inject	private Provider<DriveNodeBuilder> driveNodeBuilder;
 	@Inject	private Provider<RequirementLibraryTreeNodeBuilder> requirementLibraryTreeNodeBuilder;
-	@Inject	private RequirementLibraryNavigationService requirementLibraryNavigationService;
+	@Inject	private RequirementLibraryNavigationService requirementLibraryNavigationService;	
+	
 	
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/requirement-export.jasper";
 

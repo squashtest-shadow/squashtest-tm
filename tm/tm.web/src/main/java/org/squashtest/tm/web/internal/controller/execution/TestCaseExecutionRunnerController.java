@@ -25,7 +25,6 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;

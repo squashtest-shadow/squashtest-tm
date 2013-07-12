@@ -21,6 +21,8 @@
 package org.squashtest.tm.web.internal.controller.campaign;
 
 
+import java.util.Locale;
+
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -55,7 +57,7 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 	}
 	
 	@Override
-	protected void populateModel(Model model) {
+	protected void populateModel(Model model, Locale locale) {
 		//noop
 	}
 
