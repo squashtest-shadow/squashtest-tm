@@ -24,7 +24,7 @@
  * 
  */
 
-define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-broker', 'jstree'], function($, nodecopier, rulesbroker){
+define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-broker', 'squash.translator', 'jstree'], function($, nodecopier, rulesbroker, translator){
 	
 	
 	/* *******************************************************************************
@@ -117,7 +117,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 	
 
 	/*
-	 * **************************** check move section ****************************************
+	 * **************************** dnd check section ****************************************
 	 */
 
 		
@@ -130,18 +130,15 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 	 */
 	function check_move() {
 		
-		var settings = this._get_settings(); 
-		
-		if (settings.workspace_tree.rules == undefined){
-			settings.workspace_tree.rules = rulesbroker.get();
-		}
-		
+		var rules = this._getRules();
+
 		try{
+			
 			var move = this._get_move();
 			var	movednodes = $(move.o).treeNode();
 			var	newparent = $(move.np).treeNode();
 			
-			return settings.workspace_tree.rules.canDnD(movednodes, newparent);
+			return rules.canDnD(movednodes, newparent);
 			
 		} catch (invalid_node) {
 			if (console && console.log){
@@ -158,10 +155,9 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 	 * not part of the aforementioned function.
 	 * 
 	 * A second reasons is that we don't want to forbid the operation a-priori : we cancel it a-posteriori. Thus, the user
-	 * will know why the operation could not be performed instead of wondering why the hell he cannot move the bloody
-	 * node.
+	 * will know why the operation could not be performed instead of wondering why he cannot move the  nodes.
 	 */
-	function checkMoveIsAuthorized(data) {
+	function check_name_available(data) {
 		var dest = data.rslt.np;
 		var object = data.rslt.o;
 
@@ -184,37 +180,53 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 		return okay;
 	}
 
-	/**
-	 * This method checks if the move will be inter-project or not.
-	 */
-	function moveFromDifferentLibraries(data) {
-		var dest = data.np;
-		var object = data.o;
-		var movedFromLibs = object.collect(function(elt) {
-			return $(elt).treeNode().getLibrary().attr("id");
-		});
-		if (movedFromLibs.lenght > 0) {
-			return true;
+	
+	var warnIfisCrossProjectOperation = function(target, nodes){
+		
+		var defer = $.Deferred();
+		
+		var targetLib = target.getLibrary().getDomId(),
+			destLibs = nodes.getLibrary().map(function(){
+				return $(this).attr('id');
+			}),
+			isCrossProject = false;
+		
+		for ( var i = 0; i < destLibs.length; i++) {
+			if (targetLib != destLibs[i]) {
+				isCrossProject = true;
+				break;
+			}
 		}
-		var destLibrary = $(dest).treeNode().getLibrary().attr("id");
-		if (movedFromLibs[0] != destLibrary) {
-			return true;
-		}
-		return false;
-	}
+		
+		if (isCrossProject) {
+			oneShotConfirm('Info', translator.get('message.warnCopyToDifferentLibrary'),
+					squashtm.message.confirm, squashtm.message.cancel)
+			.done(function() {
+				defer.resolve();
+			})
+			.fail(function() {
+				defer.reject();
+			});
+		} else {
+			defer.resolve();
+		}		
+		
+		return defer.promise();
+	};
+
+	
+	// ******************************* node move operations ****************************
 	
 	/*
 	 * 
 	 * @param data : the move_node object @param url : the url to post to.
 	 */
-	function moveNode(data, url) {
-		var isRoot = function(node) {
-			return node.is(":library") ? 1 : 0;
-		};
+	function moveNodes(data) {
 
-		var tree = data.inst;
-		var nodeData = data.args[0];
-		var newParent = nodeData.np;
+		var tree = data.inst,
+			nodeData = data.rslt,
+			nodes = nodeData.o,
+			target = nodeData.np;
 
 		// first check if we don't need to perform an
 		// operation
@@ -222,93 +234,47 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 			return;
 		}
 
-		// we also reject iterations.
+		// we also reject iterations and testsuite
 		var firstNode = nodeData.o[0];
-		if ($(firstNode).is(":iteration")) {
+		if ($(firstNode).is(":iteration, :test-suite")) {
 			return;
 		}
 
-		var dataSent = {
-			"object-ids" : $(nodeData.o).treeNode().all('getResId'),
-			"destination-id" : nodeData.np.attr('resid'),
-			"destination-type" : isRoot(nodeData.np) ? "library" : "folder"
-		};
 
-		tree.open_node(newParent);
+		var rawurl = $(target).treeNode().getMoveUrl();
+		var nodeIds = $(nodes).treeNode().all('getResId').join(',');
+		var url = rawurl.replace('\{nodeIds\}', nodeIds);
+
+		tree.open_node(target);
 
 		return $.ajax({
-			type : 'POST',
+			type : 'PUT',
 			url : url,
-			data : dataSent,
 			dataType : 'json'
+		})
+		.fail(function(){
+			$.jstree.rollback(data.rlbk);
 		});
 	}
 
-	/**
-	 * DnD move Method is called after every check id done to allow the operation.
-	 */
-	function doDnDMoveNodes(moveObject, data) {
 
-		var url = $(moveObject.o).treeNode().getMoveUrl();
-
-		moveNode(data, url).fail(function(jqXHR) {
-			try {
-				squashtm.notification.handleJsonResponseError(jqXHR).done(function() {
-					$.jstree.rollback(data.rlbk);
-				});
-			} catch (e) {
-				$.jstree.rollback(data.rlbk);
-			}
-		});
-
-	}
-	
-	/**
-	 * DnD copy node method. This method is called after all check is done to allow the operation.
-	 */
-	function doDnDCopyNodes(moveObject, data) {
-		/* we need to destroy the copies first, since we'll use our owns. */
-		destroyJTreeCopies(moveObject, data.inst);
-
-		/* now let's post.  Again, as annoying as  it is, the url depends on the nature of the nodes. */
-		var jqObjects = $(moveObject.o);
-		var url = jqObjects.treeNode().getCopyUrl();
-		var newData = moveObjectToCopyData(data);
-
-		copyNode(newData, url).fail(function() {
-			data.inst.refresh();
-		}).done(function() {
-			/* Begin [Feat 1299] this is to make the following cases work :
-			  case 1 : one is viewing a campaign and copy-paste one of it's iterations with Ctrl + drag and drop
-				=> the statistics of the  still displayed campaign have changed = > we need to refresh them
-			   
-			  case 2 : one is viewing an iteration and copy-paste one of it's test-suite with Ctrl + drag and drop 
-			    => the statistics of the still displayed iteration have changed => we need to refresh them 
-			 */
-			if (typeof (refreshStatistics) == "function") {
-				refreshStatistics();
-			}
-			// End [Feat 1299]
-		});
-	}
-	
 
 	/*
 	 * ***************************** node copy section ****************************************
 	 */
-
-	/*
-	 * jstree inserts dumb copies when we ask for copies. We need to destroy them before inserting the correct ones
-	 * incoming from the server.
-	 * 
-	 * @param object : the move_object returned as part of the data of the event mode_node.jstree.
-	 * 
-	 */
-	function destroyJTreeCopies(object, tree) {
-		object.oc.each(function(index, elt) {
-			tree.delete_node(elt);
-		});
-	}
+	
+    /*
+     * jstree inserts dumb copies when we ask for copies. We need to destroy them before inserting the correct ones
+     * incoming from the server.
+     * 
+     * @param object : the move_object returned as part of the data of the event mode_node.jstree.
+     * 
+     */
+    function destroyJTreeCopies(object, tree) {
+            object.oc.each(function(index, elt) {
+                    tree.delete_node(elt);
+            });
+    }
 
 	/*
 	 * will batch-insert nodes incoming from the server.
@@ -325,17 +291,10 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 		}
 	}
 
-	function moveObjectToCopyData(moveObject) {
-
-		var nodes = $(moveObject.args[0].o).treeNode();
-		var target = $(moveObject.args[0].np).treeNode();
-
-		return nodecopier.preparePasteData(nodes, target);
-
-	}
 
 	/*
 	 * will erase fake copies in the tree, send the copied node data to the server, and insert the returned nodes.
+	 * Note that this method is invoked by the tree-node-copier.
 	 * 
 	 * @param data : nodesIds
 	 * 
@@ -362,13 +321,15 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 			params['next-iteration-number'] = (target.getChildren().length + 1);
 		}
 		
-
 		$.when(tree.open_node(target)).then(function() {
 			
 			$.post(url, params, 'json')
 			.done(function(jsonData) {
 				insertCopiedNodes(jsonData, target, tree);
 				tree.open_node(target, deferred.resolve);
+				if (typeof (refreshStatistics) == "function") {
+					refreshStatistics();
+				}
 			})
 			.error(deferred.reject);
 
@@ -407,54 +368,54 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 					return true;
 					
 				})
+				
 				/*
-				 * the following should have been as a handler of before.jstree on call move_node. however many considerations
-				 * lead to postprocess mode_node like now, rather than preprocess it. At least that event is triggered only once.
+				 * This event is triggered after the movement was performed. Some checks regarding the validity of this operation
+				 * were not performed, we will perform them now. If the drop operation is invalid we will cancel it now and notify the 
+				 * user of the specific reasons.
+				 * 
+				 * Note : the event 'before.jstree' was too buggy to use so we won't use it.
 				 */
 				.bind("move_node.jstree", function(event, data) {
-							var moveObject = data.args[0];
 
-							if (moveObject !== null && moveObject !== undefined && moveObject.cr !== undefined) {
-								if (squashtm.keyEventListener.ctrl) {
+					var moveObject = data.args[0];
+					
+					if (moveObject == null || moveObject == undefined || moveObject.cr == undefined) {
+						return; //abort !
+					}
+					
 
-									if (data.rslt.differentLibraries) {
-										// warn user if move is inter-project
-										oneShotConfirm('Info', self._get_settings().workspace_tree.warnCopyToDifferentLibrary,
-												squashtm.message.confirm, squashtm.message.cancel).done(function() {
-											doDnDCopyNodes(moveObject, data);
-										}).fail(function() {
-											data.inst.refresh();
-										});
-									} else {
-										doDnDCopyNodes(moveObject, data);
-									}
-								} else {
-									// check if we can move
-									// the object
-									if (checkMoveIsAuthorized(data)) {
-
-										// warn user if move
-										// is inter-project
-										if (data.rslt.differentLibraries) {
-											oneShotConfirm('Info', self._get_settings().workspace_tree.warnMoveToDifferentLibrary,
-													squashtm.message.confirm, squashtm.message.cancel).done(function() {
-												doDnDMoveNodes(moveObject, data);
-											}).fail(function() {
-												$.jstree.rollback(data.rlbk);
-											});
-										} else {
-											doDnDMoveNodes(moveObject, data);
-										}
-
-									} else {
-										$.squash.openMessage('', self._get_settings().workspace_tree.cannotMoveMessage).done(function() {
-											$.jstree.rollback(data.rlbk);
-										});
-									}
-								}
-							}
+					var rules = data.inst._getRules();
+					var nodes = $(moveObject.o).treeNode();
+					var target = $(moveObject.np).treeNode();
+					
+					
+					//case dnd-copy
+					if (squashtm.keyEventListener.ctrl) {
+						destroyJTreeCopies(moveObject, data.inst);
+						nodecopier.pasteNodesFromTree();
+						return;
+					} 
+					
+					//case dnd-move
+					if (check_name_available(data)) {
+						
+						warnIfisCrossProjectOperation(target, nodes)
+						.done(function(){
+							moveNodes(data);
+						})
+						.fail(function(){
+							$.jstree.rollback(data.rlbk);
 						});
-				
+
+					} 
+					else {
+						$.squash.openMessage('', translator.get('squashtm.action.exception.cannotmovenode.label')).done(function() {
+							$.jstree.rollback(data.rlbk);
+						});
+					}
+				});
+		
 			
 				
 			},
@@ -473,7 +434,16 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 					selected.all('refresh');
 				},
 				
-
+				_getRules : function(){				
+					//this code handle lazy initialisation for permissions-rules. 
+					var settings = this._get_settings(); 
+					
+					if (settings.workspace_tree.rules == undefined){
+						settings.workspace_tree.rules = rulesbroker.get();
+					}
+					
+					return settings.workspace_tree.rules;
+				},
 				
 				/*
 				 * types : array of values of 'rel' attributes (eg ['folder', 'test-case'])

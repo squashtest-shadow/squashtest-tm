@@ -67,7 +67,6 @@ define(['jquery', 'squash.translator'], function($, translator){
 				});		
 
 			}
-			
 			return this._messages[messageName];
 		}
 
@@ -143,7 +142,7 @@ define(['jquery', 'squash.translator'], function($, translator){
 			var target = tree.jstree('get_selected');
 			
 			// warn user if not same libraries
-			warnIfisCrossProjectOperation(target, data)	
+			warnIfisCrossProjectOperation.call(this, target, data)	
 			.done(function(){
 				doPaste(tree, target, data);
 			});
@@ -153,14 +152,15 @@ define(['jquery', 'squash.translator'], function($, translator){
 		//assumes that the operation is ok according to the rules of this workspace.
 		this.pasteNodesFromTree = function(){
 			
-			var self = this;
-			var tree = this.tree;
+			var self = this,
+				tree = this.tree;
 			
-			var data = readNodesData(tree);
-			var target = $(tree.jstree('_get_move').np).treeNode();
+			var data = readNodesData(tree),
+				move = tree.jstree('get_instance')._get_move();
+				target = $(move.np).treeNode();
 			
 			// warn user if not same libraries
-			warnIfisCrossProjectOperation(target, data)	
+			warnIfisCrossProjectOperation.call(this, target, data)	
 			.done(function(){
 				doPaste(tree, target, data);
 			});
@@ -206,7 +206,8 @@ define(['jquery', 'squash.translator'], function($, translator){
 			target.open();
 
 			// now we can proceed
-			tree.jstree('copyNodes', nodes, target).fail(function(json) {
+			tree.jstree('copyNodes', nodes, target)
+			.fail(function(json) {
 				tree.jstree('refresh');
 			});
 		};

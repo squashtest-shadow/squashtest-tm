@@ -147,18 +147,8 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 				visitLibraryNode((LibraryNode)toMove, testCaseLibraryDao, testCaseFolderDao);
 				break;			
 			case REQUIREMENT : //special
-				NodeType destType = whichVisitor.getTypeOf(destination);
-				switch(destType){
-					case REQUIREMENT_LIBRARY :
-					case REQUIREMENT_FOLDER :
-						visitLibraryNode((LibraryNode)toMove, requirementLibraryDao, requirementFolderDao);
-						break;
-					case REQUIREMENT :
-						visitWhenDestIsRequirement((Requirement)toMove);
-						break;
-					default :
-						throw new IllegalArgumentException("cannot move a requirement in something that doesn't belong to the Requirement domain");
-				}
+				visitWhenNodeIsRequirement((Requirement)toMove);
+				break;	
 			case ITERATION :
 			case TEST_SUITE :
 				break;
@@ -181,9 +171,12 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private  <LN extends LibraryNode>  void visitWhenDestIsRequirement(Requirement node) {
+	private  <LN extends LibraryNode>  void visitWhenNodeIsRequirement(Requirement node) {
 		
-		Requirement parent = requirementDao.findByContent(node);
+		NodeContainer<Requirement> parent = findFolderOrLibraryParent(node, requirementLibraryDao, requirementFolderDao);
+		if (parent == null){
+			parent = requirementDao.findByContent(node);
+		}
 		
 		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(destination, "CREATE"), new SecurityCheckableObject(
 				parent, "DELETE"), new SecurityCheckableObject(node, "READ"));

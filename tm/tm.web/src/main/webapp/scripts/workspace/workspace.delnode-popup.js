@@ -83,12 +83,12 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 			var htmlDetail = '';
 			
 			$.each(responsesArray, function(idx, arg){
-				if (arg :== null || arg !== undefined){
+				if (arg !== null || arg !== undefined){
 					var messages = arg[0].messages;
 					for (var i=0,len = messages.length;i<len;i++){
 						htmlDetail += '<li>'+messages[i]+'</li>';
 					}
-				);
+				};
 			});
 			
 			if (htmlDetail.length > 0){
