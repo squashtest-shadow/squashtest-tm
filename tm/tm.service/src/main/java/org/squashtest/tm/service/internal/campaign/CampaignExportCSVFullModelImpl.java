@@ -176,7 +176,7 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 		headerCells.add(new CellImpl("TC_PROJECT_ID"));
 		headerCells.add(new CellImpl("TC_PROJECT"));
 		headerCells.add(new CellImpl("TC_WEIGHT"));
-		headerCells.add(new CellImpl("TEST SUITE"));
+		headerCells.add(new CellImpl("TEST_SUITE"));
 		headerCells.add(new CellImpl("#_EXECUTIONS"));
 		headerCells.add(new CellImpl("#_REQUIREMENTS"));
 		headerCells.add(new CellImpl("#_ISSUES"));
@@ -340,7 +340,7 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 			dataCells.add(new CellImpl(testCase.getProject().getId().toString()));
 			dataCells.add(new CellImpl(testCase.getProject().getName()));
 			dataCells.add(new CellImpl(testCase.getImportance().toString()));
-			dataCells.add(new CellImpl(itp.getTestSuiteNames().replace("<", "&lt;").replace(">", "&gt;")));
+			dataCells.add(new CellImpl(itp.getTestSuiteNames().replace(", ",",").replace("<", "&lt;").replace(">", "&gt;")));
 			
 			dataCells.add(new CellImpl(Integer.toString(itp.getExecutions().size())));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
