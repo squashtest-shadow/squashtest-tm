@@ -45,17 +45,4 @@ public interface CustomCampaignModificationService {
 	 */
 	TestPlanStatistics findCampaignStatistics(long campaignId);
 	
-	
-	
-
-	
-	/**
-	 * given a campaign Id, returns a model. It's made of rows and cell, and have a row header, check the relevant methods.
-	 * 
-	 * @param campaignId
-	 * @return
-	 */
-	CampaignExportCSVModel exportCampaignToCSV(Long campaignId, String exportType);
-	
-
 }

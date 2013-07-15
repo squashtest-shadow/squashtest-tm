@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
@@ -155,5 +156,11 @@ public interface CampaignLibraryNavigationService extends
 	List<Long> deleteSuites(List<Long> suiteIds);
 	
 	
-
+	/**
+	 * given a campaign Id, returns a model. It's made of rows and cell, and have a row header, check the relevant methods.
+	 * 
+	 * @param campaignId
+	 * @return
+	 */
+	CampaignExportCSVModel exportCampaignToCSV(Long campaignId, String exportType);
 }

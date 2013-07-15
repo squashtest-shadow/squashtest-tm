@@ -34,6 +34,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
@@ -93,6 +94,15 @@ public class CampaignLibraryNavigationServiceImpl extends
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
 
+	@Inject
+	private Provider<SimpleCampaignExportCSVModelImpl> simpleCampaignExportCSVModelProvider;
+
+	@Inject
+	private Provider<CampaignExportCSVModelImpl> standardCampaignExportCSVModelProvider;
+	
+	@Inject
+	private Provider<CampaignExportCSVFullModelImpl> fullCampaignExportCSVModelProvider;
+	
 	@Inject
 	@Qualifier("squashtest.tm.service.CampaignLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<CampaignLibrary, CampaignLibraryNode> libraryStrategy;
@@ -308,5 +318,42 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 
+	@Override
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') or hasRole('ROLE_ADMIN')")	
+	public CampaignExportCSVModel exportCampaignToCSV(Long campaignId, String exportType) {
+		
+		CampaignExportCSVModel model;
+		
+		model = getRightModel(campaignId, exportType);
 
+		return model;
+	}
+	
+	private CampaignExportCSVModel getRightModel(Long campaignId, String exportType){
+		
+		SimpleCampaignExportCSVModelImpl lightModel;
+		CampaignExportCSVModelImpl standardModel;
+		CampaignExportCSVFullModelImpl fullModel;
+		CampaignExportCSVModel model = null;
+		
+		Campaign campaign = campaignDao.findById(campaignId);
+		
+		if("L".equals(exportType)){
+			lightModel = simpleCampaignExportCSVModelProvider.get();
+			lightModel.setCampaign(campaign);
+			lightModel.init();	
+			model = lightModel;
+		} else if ("F".equals(exportType)){
+			fullModel = fullCampaignExportCSVModelProvider.get();
+			fullModel.setCampaign(campaign);
+			fullModel.init();	
+		} else {
+			standardModel = standardCampaignExportCSVModelProvider.get();
+			standardModel.setCampaign(campaign);
+			standardModel.init();	
+			model = standardModel;
+		}
+		
+		return model;
+	}
 }

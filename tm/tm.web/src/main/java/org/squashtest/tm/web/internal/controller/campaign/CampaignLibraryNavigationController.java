@@ -20,13 +20,20 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -42,11 +49,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.campaign.CampaignExportCSVModel.Row;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -61,6 +70,7 @@ import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.TestSuiteNodeBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * Controller which processes requests related to navigation in a {@link CampaignLibrary}.
@@ -336,7 +346,52 @@ public class CampaignLibraryNavigationController extends
 
 	}
 
+	@RequestMapping(value="/export-campaign", method = RequestMethod.GET, params = "export=csv")
+	public @ResponseBody
+	void exportCampaign(@PathVariable("campaignId") long campaignId, @RequestParam(value = "exportType") String exportType, HttpServletResponse response) {
 
+		BufferedWriter writer = null;
+
+		try {
+			Campaign campaign = campaignFinder.findById(campaignId);
+			CampaignExportCSVModel model = campaignLibraryNavigationService.exportCampaignToCSV(campaignId, exportType);
+
+			// prepare the response
+			writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
+
+			response.setContentType("application/octet-stream");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+
+			response.setHeader("Content-Disposition", "attachment; filename=" + "EXPORT_CPG_"+exportType+"_"+campaign.getName().replace(" ", "_")
+					+"_"+sdf.format(new Date()) + ".csv");
+
+			// print
+			Row header = model.getHeader();
+			writer.write(header.toString() + "\n");
+
+			Iterator<Row> iterator = model.dataIterator();
+			while (iterator.hasNext()) {
+				Row datarow = iterator.next();
+				String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", " ")
+						.replaceAll("\\r", " ");
+				writer.write(cleanRowValue + "\n");
+			}
+
+			// closes stream in the finally clause
+		} catch (IOException ex) {
+			LOGGER.error(ex.getMessage());
+			throw new RuntimeException(ex);
+		} finally {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (IOException ex) {
+					LOGGER.warn(ex.getMessage());
+				}
+			}
+		}
+
+	}
 
 	private List<JsTreeNode> copyNodes(Long[] itemIds, long destinationId, String destinationType,
 			int nextNumberInDestination) {

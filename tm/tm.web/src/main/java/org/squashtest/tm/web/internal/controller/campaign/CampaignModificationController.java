@@ -309,53 +309,6 @@ public class CampaignModificationController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = "export=csv")
-	public @ResponseBody
-	void exportCampaign(@PathVariable("campaignId") long campaignId, @RequestParam(value = "exportType") String exportType, HttpServletResponse response) {
-
-		BufferedWriter writer = null;
-
-		try {
-			Campaign campaign = campaignModService.findById(campaignId);
-			CampaignExportCSVModel model = campaignModService.exportCampaignToCSV(campaignId, exportType);
-
-			// prepare the response
-			writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
-
-			response.setContentType("application/octet-stream");
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-
-			response.setHeader("Content-Disposition", "attachment; filename=" + "EXPORT_CPG_"+exportType+"_"+campaign.getName().replace(" ", "_")
-					+"_"+sdf.format(new Date()) + ".csv");
-
-			// print
-			Row header = model.getHeader();
-			writer.write(header.toString() + "\n");
-
-			Iterator<Row> iterator = model.dataIterator();
-			while (iterator.hasNext()) {
-				Row datarow = iterator.next();
-				String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", " ")
-						.replaceAll("\\r", " ");
-				writer.write(cleanRowValue + "\n");
-			}
-
-			// closes stream in the finally clause
-		} catch (IOException ex) {
-			LOGGER.error(ex.getMessage());
-			throw new RuntimeException(ex);
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException ex) {
-					LOGGER.warn(ex.getMessage());
-				}
-			}
-		}
-
-	}
-
 	// ****************************** Test Plan **********************************
 
 	@RequestMapping(value = "/test-plan/table", params = RequestParams.S_ECHO_PARAM)
