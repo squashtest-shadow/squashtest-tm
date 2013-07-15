@@ -311,22 +311,22 @@ public class CampaignModificationController {
 
 	@RequestMapping(method = RequestMethod.GET, params = "export=csv")
 	public @ResponseBody
-	void exportCampaign(@PathVariable("campaignId") long campaignId, HttpServletResponse response) {
+	void exportCampaign(@PathVariable("campaignId") long campaignId, @RequestParam(value = "exportType") String exportType, HttpServletResponse response) {
 
 		BufferedWriter writer = null;
 
 		try {
 			Campaign campaign = campaignModService.findById(campaignId);
-			CampaignExportCSVModel model = campaignModService.exportCampaignToCSV(campaignId);
+			CampaignExportCSVModel model = campaignModService.exportCampaignToCSV(campaignId, exportType);
 
 			// prepare the response
 			writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
 
 			response.setContentType("application/octet-stream");
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
-			response.setHeader("Content-Disposition", "attachment; filename=" + campaign.getName().replace(" ", "_")
-					+ sdf.format(new Date()) + ".csv");
+			response.setHeader("Content-Disposition", "attachment; filename=" + "EXPORT_CPG_"+exportType+"_"+campaign.getName().replace(" ", "_")
+					+"_"+sdf.format(new Date()) + ".csv");
 
 			// print
 			Row header = model.getHeader();

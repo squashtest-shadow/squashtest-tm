@@ -50,8 +50,14 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	
 	
 	@Inject
-	private Provider<CampaignExportCSVModelImpl> campaignExportCSVModelProvider;
+	private Provider<SimpleCampaignExportCSVModelImpl> simpleCampaignExportCSVModelProvider;
 
+	@Inject
+	private Provider<CampaignExportCSVModelImpl> standardCampaignExportCSVModelProvider;
+	
+	//@Inject
+	//private Provider<FullCampaignExportCSVModelImpl> fullCampaignExportCSVModelProvider;
+	
 	@Inject
 	@Named("squashtest.tm.service.internal.CampaignManagementService")
 	private NodeManagementService<Campaign, CampaignLibraryNode, CampaignFolder> campaignManagementService;
@@ -83,19 +89,39 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') or hasRole('ROLE_ADMIN')")	
-	public CampaignExportCSVModel exportCampaignToCSV(Long campaignId) {
+	public CampaignExportCSVModel exportCampaignToCSV(Long campaignId, String exportType) {
 		
-		Campaign campaign = campaignDao.findById(campaignId);
+		CampaignExportCSVModel model;
 		
-		CampaignExportCSVModelImpl model = campaignExportCSVModelProvider.get();
-	
-		model.setCampaign(campaign);
-		model.init();		
-		
+		model = getRightModel(campaignId, exportType);
+
 		return model;
 	}
 	
-	
+	private CampaignExportCSVModel getRightModel(Long campaignId, String exportType){
+		
+		SimpleCampaignExportCSVModelImpl lightModel;
+		CampaignExportCSVModelImpl standardModel;
+		CampaignExportCSVModel model = null;
+		
+		Campaign campaign = campaignDao.findById(campaignId);
+		
+		if("L".equals(exportType)){
+			lightModel = simpleCampaignExportCSVModelProvider.get();
+			lightModel.setCampaign(campaign);
+			lightModel.init();	
+			model = lightModel;
+		} else if ("F".equals(exportType)){
+			
+		} else {
+			standardModel = standardCampaignExportCSVModelProvider.get();
+			standardModel.setCampaign(campaign);
+			standardModel.init();	
+			model = standardModel;
+		}
+		
+		return model;
+	}
 	
 	
 }

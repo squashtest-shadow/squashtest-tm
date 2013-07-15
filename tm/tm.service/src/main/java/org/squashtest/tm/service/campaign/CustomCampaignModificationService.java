@@ -55,7 +55,7 @@ public interface CustomCampaignModificationService {
 	 * @param campaignId
 	 * @return
 	 */
-	CampaignExportCSVModel exportCampaignToCSV(Long campaignId);
+	CampaignExportCSVModel exportCampaignToCSV(Long campaignId, String exportType);
 	
 
 }
