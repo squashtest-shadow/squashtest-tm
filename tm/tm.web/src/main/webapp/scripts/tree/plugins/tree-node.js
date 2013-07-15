@@ -69,29 +69,41 @@ define(['jquery'], function($){
 		
 	}
 	
+	
 	function getCopyUrl(){
+		
+		var representation =   _getSemiSpecializedTypeName(this);
+		var url = this.getBrowserUrl() + '/' + representation + '/' +this.getResId();
+		
 		switch (this.getDomType()) {
-		case "folder":
-		case "test-case" :
-		case "requirement" :
-		case "campaign" :
-			return this.getBrowserUrl() + "/copy";
-		case "iteration":
-			return this.getBrowserUrl() + "/copy-iterations";
-		case "test-suite":
-			return this.getBrowserUrl() + "/copy-test-suites";
+			case "drive" :	
+			case "folder":
+			case "requirement" :	url += '/content/new'; break;
+			case "campaign" :		url += '/iterations/new'; break;
+			case "iteration":		url += '/test-suites/new'; break;
+			default : throw "copy aborted : node type '"+this.getDomType()+"' cannot receive new content.";
 		}
+		
+		return url;
+		
 	}
 	
 	
 	function getMoveUrl(){
+		
+		var representation =   _getSemiSpecializedTypeName(this);
+		var url = this.getBrowserUrl() + '/' + representation + '/' +this.getResId();
+		
 		switch (this.getDomType()) {
-		case "folder":
-		case "file":
-			return this.getBrowserUrl() + "/move";
+			case "drive" :	
+			case "folder":
+			case "requirement" :	url += '/content/{nodeIds}'; break;
+			default : throw "move aborted : node type '"+this.getDomType()+"' cannot receive moved content.";
 		}
-		return undefined;		
+		
+		return url;	
 	}
+	
 	
 	function getDeleteUrl(){
 		var specific = ""

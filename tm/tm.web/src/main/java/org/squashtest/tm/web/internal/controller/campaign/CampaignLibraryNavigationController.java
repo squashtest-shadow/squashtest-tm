@@ -284,9 +284,9 @@ public class CampaignLibraryNavigationController extends
 		return campaignLibraryNavigationService.deleteSuites(suiteIds);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/iterations/", method = RequestMethod.POST, params = {"nodeIds[], next-iteration-number"})
+	@RequestMapping(value = "/campaigns/{campaignId}/iterations/new", method = RequestMethod.POST, params = {"nodeIds[], next-iteration-number"})
 	public @ResponseBody
-	List<JsTreeNode> copyIterations(@RequestParam("nodeIds") Long[] nodeIds,
+	List<JsTreeNode> copyIterations(@RequestParam("nodeIds[]") Long[] nodeIds,
 			@PathVariable("campaignId") long campaignId, @RequestParam("next-iteration-number") int nextIterationNumber) {
 		
 		List<Iteration> iterationsList;
@@ -294,9 +294,9 @@ public class CampaignLibraryNavigationController extends
 		return createCopiedIterationsModel(iterationsList, nextIterationNumber);
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/test-suites/", method = RequestMethod.POST, params = {"nodeIds[]"})
+	@RequestMapping(value = "/iterations/{iterationId}/test-suites/new", method = RequestMethod.POST, params = {"nodeIds[]"})
 	public @ResponseBody
-	List<JsTreeNode> copyTestSuites(@RequestParam("nodeIds") Long[] nodeIds,@PathVariable("iterationId") long iterationId) {
+	List<JsTreeNode> copyTestSuites(@RequestParam("nodeIds[]") Long[] nodeIds,@PathVariable("iterationId") long iterationId) {
 
 		List<TestSuite> testSuiteList;
 		testSuiteList = iterationModificationService.copyPasteTestSuitesToIteration(nodeIds, iterationId);
@@ -304,21 +304,5 @@ public class CampaignLibraryNavigationController extends
 
 	}
 
-
-
-	private List<JsTreeNode> copyNodes(Long[] itemIds, long destinationId, String destinationType,
-			int nextNumberInDestination) {
-		if (destinationType.equals("campaign")) {
-			List<Iteration> iterationsList;
-			iterationsList = campaignLibraryNavigationService.copyIterationsToCampaign(destinationId, itemIds);
-			return createCopiedIterationsModel(iterationsList, nextNumberInDestination);
-		} else if (destinationType.equals("iteration")) {
-			List<TestSuite> testSuiteList;
-			testSuiteList = iterationModificationService.copyPasteTestSuitesToIteration(itemIds, destinationId);
-			return createCopiedTestSuitesModel(testSuiteList);
-		} else {
-			throw new IllegalArgumentException("copy nodes : cannot paste item to : " + destinationType);
-		}
-	}
 
 }

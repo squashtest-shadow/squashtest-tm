@@ -70,14 +70,7 @@ define(['jquery', 'squash.translator'], function($, translator){
 			
 			return this._messages[messageName];
 		}
-		
-		var displayError = function() {
-			if (!arguments.length) {
-				squashtm.notification.showInfo(this.message['errMessage']);
-			} else {
-				squashtm.notification.showInfo(arguments[0]);
-			}
-		};
+
 
 		var reset = function() {
 			$.cookie('squash-copy-nodes', null);
@@ -89,16 +82,27 @@ define(['jquery', 'squash.translator'], function($, translator){
 		};
 
 
-		var store = function(nodesData, librariesIds) {
-
-			var data = {
-				libraries : librariesIds,
-				nodes : nodesData
-			};
+		var store = function(data) {
 
 			var jsonData = JSON.stringify(data);
 
 			$.cookie('squash-copy-nodes', jsonData);
+		};
+		
+		var readNodesData = function(tree){
+			var nodes = tree.jstree('get_selected');
+
+			var nodesData = nodes.toData();
+			var libIds = [];
+			nodes.getLibrary().each(function() {
+				libIds.push($(this).attr("id"));
+			});			
+			
+			return {
+				libraries : libIds,
+				nodes : nodesData
+			};
+			
 		};
 
 
@@ -121,115 +125,92 @@ define(['jquery', 'squash.translator'], function($, translator){
 
 			reset();
 
-			var nodes = this.tree.jstree('get_selected');
-
-			var nodesData = nodes.toData();
-			var libIds = [];
-			nodes.getLibrary().each(function() {
-				libIds.push($(this).attr("id"));
-			});
+			var data = readNodesData(this.tree);
 			
-			store(nodesData, libIds);
+			store(data);
 		};
 
 
 
-		this.preparePasteData = function(nodes, target) {
-
-			var destinationType;
-			var url;
-
-			// todo : makes something better if we can refractor the whole service
-			// in depth one day.
-			switch (target.getDomType()) {
-			case "drive":
-				destinationType = "library";
-				break;
-
-			case "folder":
-				destinationType = "folder";
-				break;
-
-			case "file":
-				destinationType = "campaign";
-				break;
-
-			case "resource":
-				destinationType = "iteration";
-				break;
-			default:
-				destinationType = "azeporiapzeorj"; // should not happen if this.mayPaste() did its job.
-			}
-
-			// here we mimick the move_object used by tree.moveNode, defined in
-			// jquery.squashtm.jstree.ext.js.
-			var pasteData = {
-				inst : this.tree.jstree('get_instance'),
-				sendData : {
-					"object-ids" : nodes.all('getResId'),
-					"destination-id" : target.attr('resid'),
-					"destination-type" : destinationType
-				},
-				newParent : target,
-				url : nodes.getCopyUrl()
-			};
-
-			// another special delivery for iterations (also should be refractored)
-			if (target.is(':campaign')) {
-				pasteData.sendData["next-iteration-number"] = target.getChildren().length;
-			}
-
-			return pasteData;
-
-		};
-
-		
 		//assumes that the operation is ok according to the rules of this workspace.
 		this.pasteNodesFromCookie = function() {
+			
 			var self = this;
 			var tree = this.tree;
 
 
 			var data = retrieve();
 			var target = tree.jstree('get_selected');
+			
 			// warn user if not same libraries
-			var targetLib = target.getLibrary().getDomId();
-			var destLibs = data.libraries;
-			var sameLib = true;
+			warnIfisCrossProjectOperation(target, data)	
+			.done(function(){
+				doPaste(tree, target, data);
+			});
+			
+		};
+		
+		//assumes that the operation is ok according to the rules of this workspace.
+		this.pasteNodesFromTree = function(){
+			
+			var self = this;
+			var tree = this.tree;
+			
+			var data = readNodesData(tree);
+			var target = $(tree.jstree('_get_move').np).treeNode();
+			
+			// warn user if not same libraries
+			warnIfisCrossProjectOperation(target, data)	
+			.done(function(){
+				doPaste(tree, target, data);
+			});
+			
+		};
+		
+		var warnIfisCrossProjectOperation = function(target, data){
+			
+			var defer = $.Deferred();
+			
+			var targetLib = target.getLibrary().getDomId(),
+				destLibs = data.libraries,
+				isCrossProject = false;
+			
 			for ( var i = 0; i < destLibs.length; i++) {
 				if (targetLib != destLibs[i]) {
-					sameLib = false;
+					isCrossProject = true;
 					break;
 				}
 			}
-			if (!sameLib) {
+			
+			if (isCrossProject) {
 				oneShotConfirm('Info', this.message('warnCopyToDifferentLibrary'),
 						squashtm.message.confirm, squashtm.message.cancel)
-						.done(function() {
-							doPasteNodesFromCookies.call(self, tree, target, data);
-						})
-						.fail(function() {
-					data.inst.refresh();
+				.done(function() {
+					defer.resolve();
+				})
+				.fail(function() {
+					defer.reject();
 				});
 			} else {
-				doPasteNodesFromCookies.call(self, tree, target, data);
-			}
-
+				defer.resolve();
+			}		
+			
+			return defer.promise();
 		};
 
-		var doPasteNodesFromCookies = function(tree, target, data) {
+		
+		var doPaste = function(tree, target, data) {
+			
 			var nodes = tree.jstree('findNodes', data.nodes);
 
 			target.open();
 
-			var pasteData = this.preparePasteData(nodes, target);
-
 			// now we can proceed
-			tree.jstree('copyNodes', pasteData, pasteData.url).fail(function(json) {
+			tree.jstree('copyNodes', nodes, target).fail(function(json) {
 				tree.jstree('refresh');
 			});
 		};
-
+		
 	}
 	
 

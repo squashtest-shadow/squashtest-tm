@@ -196,7 +196,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
 	public @ResponseBody
-	List<JsTreeNode> copyNodes(@RequestParam("nodeIds") Long[] nodeIds, 
+	List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds, 
 							  @PathVariable("destinationId") long destinationId, 
 							  @PathVariable("destinationType") String destType) {
 		
@@ -205,7 +205,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			if (destType.equals("folders")){
 				nodeList = getLibraryNavigationService().copyNodesToFolder(destinationId, nodeIds);
 			}
-			else if (destType.equals("libraries")){
+			else if (destType.equals("drives")){
 				nodeList = getLibraryNavigationService().copyNodesToLibrary(destinationId, nodeIds);
 			}
 			else{
@@ -225,10 +225,10 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 				  @PathVariable("destinationId") long destinationId, 
 				  @PathVariable("destinationType") String destType) {
 		try{
-			if (destType.equals("folder")){
+			if (destType.equals("folders")){
 				getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds);
 			}
-			else if (destType.equals("library")){
+			else if (destType.equals("drives")){
 				getLibraryNavigationService().moveNodesToLibrary(destinationId, nodeIds);
 			}
 			else{

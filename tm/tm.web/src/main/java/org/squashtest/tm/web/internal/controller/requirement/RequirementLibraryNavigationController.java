@@ -128,15 +128,15 @@ public class RequirementLibraryNavigationController extends
 	}
 	
 
-	@RequestMapping(value = "/requirement/{destinationId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
+	@RequestMapping(value = "/requirements/{requirementId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
 	public @ResponseBody
-	List<JsTreeNode> copyNodeIntoRequirement(@RequestParam("nodeIds") Long[] nodeIds, 
-							  @PathVariable("destinationId") long destinationId){
+	List<JsTreeNode> copyNodeIntoRequirement(@RequestParam("nodeIds[]") Long[] nodeIds, 
+							  @PathVariable("requirementId") long requirementId){
 		
 		List<Requirement> nodeList;
 		List<RequirementLibraryNode> tojsonList;
  		try{
-			nodeList = requirementLibraryNavigationService.copyNodesToRequirement(destinationId, nodeIds);
+			nodeList = requirementLibraryNavigationService.copyNodesToRequirement(requirementId, nodeIds);
 			tojsonList = new ArrayList<RequirementLibraryNode>(nodeList);
  		}catch(AccessDeniedException ade){
 			throw new RightsUnsuficientsForOperationException(ade);
@@ -146,13 +146,16 @@ public class RequirementLibraryNavigationController extends
 	}
 	
 	
-	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/requirements/{requirementId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public @ResponseBody
 	void moveNode(@PathVariable("nodeIds") Long[] nodeIds, 
-				  @PathVariable("destinationId") long destinationId, 
-				  @PathVariable("destinationType") String destType) {
-		//TODO
-		
+				  @PathVariable("requirementId") long requirementId) {
+		try{
+			requirementLibraryNavigationService.moveNodesToRequirement(requirementId, nodeIds);
+		}
+		catch(AccessDeniedException ade){
+			throw new RightsUnsuficientsForOperationException(ade);
+		}
 	}
 	
 	@RequestMapping(value = "/requirements/{requirementId}/content", method = RequestMethod.GET)

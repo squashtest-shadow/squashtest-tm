@@ -101,7 +101,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Qualifier("squashtest.tm.service.internal.PasteToRequirementLibraryStrategy")
 	private Provider<PasteStrategy<RequirementLibrary, RequirementLibraryNode>> pasteToRequirementLibraryStrategyProvider;
 	@Inject
-	@Qualifier("squastest.tm.service.internal.PasteToRequirementStrategy")
+	@Qualifier("squashtest.tm.service.internal.PasteToRequirementStrategy")
 	private Provider<PasteStrategy<Requirement, Requirement>> pasteToRequirementStrategyProvider;
 	
 

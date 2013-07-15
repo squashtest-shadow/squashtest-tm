@@ -107,8 +107,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 
 		var isOpen = targetNode.isOpen();
 		if (!isOpen) {
-			return targetNode.open() // first call will make the node load if
-			// necessary.
+			return targetNode.open() // first call will make the node load if necessary.
 			.then(createNode);
 		} else {
 			return createNode();
@@ -338,32 +337,42 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 	/*
 	 * will erase fake copies in the tree, send the copied node data to the server, and insert the returned nodes.
 	 * 
-	 * @param data : the data associated to the event move_node.jstree
+	 * @param data : nodesIds
 	 * 
 	 * @param url : the url where to send the data.
 	 * 
 	 * @returns : a promise
 	 * 
 	 */
-	function copyNodes(data, url) {
+	function copyNodes(nodes, target) {
 
 		var deferred = $.Deferred();
 
-		var tree = data.inst;
-		var newParent = data.newParent;
-		var dataSent = data.sendData;
+		var tree = this;
+		
+		var url = target.getCopyUrl();
+		var nodeIds = nodes.all('getResId');
+		
+		var params = {
+			'nodeIds[]' : nodeIds 
+		};
+		
+		//special delivery for pasting iterations to campaigns
+		if (target.is(':campaign')){
+			params['next-iteration-number'] = (target.getChildren().length + 1);
+		}
+		
 
-		$.when(tree.open_node(newParent)).then(function() {
+		$.when(tree.open_node(target)).then(function() {
+			
+			$.post(url, params, 'json')
+			.done(function(jsonData) {
+				insertCopiedNodes(jsonData, target, tree);
+				tree.open_node(target, deferred.resolve);
+			})
+			.error(deferred.reject);
 
-			$.ajax({
-				type : 'POST',
-				url : url,
-				data : dataSent,
-				dataType : 'json'
-			}).success(function(jsonData) {
-				insertCopiedNodes(jsonData, newParent, tree);
-				tree.open_node(newParent, deferred.resolve);
-			}).error(deferred.reject);
+			
 		});
 
 		return deferred.promise();
