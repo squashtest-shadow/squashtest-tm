@@ -346,7 +346,7 @@ public class CampaignLibraryNavigationController extends
 
 	}
 
-	@RequestMapping(value="/export-campaign", method = RequestMethod.GET, params = "export=csv")
+	@RequestMapping(value="/export-campaign/{campaignId}", method = RequestMethod.GET, params = "export=csv")
 	public @ResponseBody
 	void exportCampaign(@PathVariable("campaignId") long campaignId, @RequestParam(value = "exportType") String exportType, HttpServletResponse response) {
 
