@@ -364,7 +364,7 @@ public class CampaignLibraryNavigationController extends
 
 			response.setHeader("Content-Disposition", "attachment; filename=" + "EXPORT_CPG_"+exportType+"_"+campaign.getName().replace(" ", "_")
 					+"_"+sdf.format(new Date()) + ".csv");
-
+	
 			// print
 			Row header = model.getHeader();
 			writer.write(header.toString() + "\n");
