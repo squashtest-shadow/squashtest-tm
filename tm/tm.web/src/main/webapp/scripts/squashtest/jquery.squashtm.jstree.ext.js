@@ -689,6 +689,12 @@ squashtm.tree = squashtm.tree || {};
 				}
 			},
 
+			selectionIsOneAndOnlyOneCampaign : function(selectedNodes) {
+				if(selectedNodes.length == 1 && selectedNodes.is(":campaign")){
+					return "OK";
+				}
+			},
+			
 			selectionIsCreateFolderAllowed : function(selectedNodes) {
 				// need only one node selected
 				var isOneCreate = this.selectionIsOneCreatableNode(selectedNodes);
@@ -820,12 +826,15 @@ squashtm.tree = squashtm.tree || {};
 				var selectedNodes = this.get_selected();
 				var operations = "";
 				if (this.get_container().data("importable")) {
-					operations += "import-excel import-links-excel";
+					operations += "import-excel import-links-excel ";
 				}
 				if (selectedNodes.length === 0) {
 					return operations;
 				}
 				operations += "export ";
+				if(this.selectionIsOneAndOnlyOneCampaign(selectedNodes) == "OK") {
+					operations += "export-campaign-L export-campaign-S export-campaign-F ";
+				}
 				if (this.selectionIsCopyable(selectedNodes) == "OK") {
 					operations += "copy ";
 				}

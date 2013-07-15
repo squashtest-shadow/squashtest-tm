@@ -48,7 +48,7 @@
 </div>
 <div class="button-group">
 	<a id="rename-node-tree-button" href="JavaScript:void(0);"><f:message key="tree.button.rename-node.label" />...</a>	
-	<c:if test="${workspace == 'test-case' || workspace == 'requirement' }">
+	<c:if test="${workspace == 'test-case' || workspace == 'requirement'}">
 		<a id="tree-import-button" href="#tree-import-menu" class="button"><f:message key="squashtm.treemenu.import.label"/>...</a>
 		<div class="not-displayed" >
 		<div id="tree-import-menu" >
@@ -60,6 +60,18 @@
 		</div>
 		</div>	
 	</c:if>	
+	<c:if test="${workspace == 'campaign'}">
+		<a id="tree-campaign-export-button" href="#tree-campaign-export-menu" class="button"><f:message key="squashtm.treemenu.import.label"/>...</a>
+		<div class="not-displayed" >
+		<div id="tree-campaign-export-menu" >
+		<ul>
+			<li><a class="export-L-tree-button menu-disabled" href="JavaScript:void(0);"><f:message key="label.Export.Campaign.Light" />...</a></li>
+			<li><a class="export-S-tree-button menu-disabled" href="JavaScript:void(0);"><f:message key="label.Export.Campaign.Standard" />...</a></li>
+			<li><a class="export-F-tree-button menu-disabled" href="JavaScript:void(0);"><f:message key='label.Export.Campaign.Full'/>...</a></li>
+		</ul>
+		</div>
+		</div>
+	</c:if>
 </div>
 
 <c:if test="${ not empty wizards }">
@@ -145,6 +157,18 @@ $(function () {
 	};
 	
 	squashtm.treemenu.importer = $('#tree-import-button').treeMenu('#tree-import-menu', importOption);
+	</c:if>
+	
+	<c:if test="${workspace == 'campaign'}">
+	initButton("#tree-campaign-export-button", "ui-icon-transferthick-e-w");		
+	
+	var campaignExportOption = {
+		"export-campaign-L" : ".export-L-tree-button",
+		"export-campaign-S" : ".export-S-tree-button",
+		"export-campaign-F" : ".export-F-tree-button"
+	};
+	
+	squashtm.treemenu.importer = $('#tree-campaign-export-button').treeMenu('#tree-campaign-export-menu', campaignExportOption);
 	</c:if>
 
 
