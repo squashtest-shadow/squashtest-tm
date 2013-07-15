@@ -220,6 +220,10 @@
 		bean-name="squashtest.tm.service.SearchService" interface="org.squashtest.tm.service.library.SearchService"
 		availability="mandatory" />
 
+	<osgi:reference id="squashtest.tm.service.AdvancedSearchService"
+		bean-name="squashtest.tm.service.AdvancedSearchService" interface="org.squashtest.tm.service.library.AdvancedSearchService"
+		availability="mandatory" />
+		
 	<osgi:reference id="squashtest.core.security.PermissionEvaluationService"
 		bean-name="squashtest.core.security.PermissionEvaluationService"
 		interface="org.squashtest.tm.service.security.PermissionEvaluationService"

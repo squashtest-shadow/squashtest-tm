@@ -85,6 +85,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>org.squashtest.org.hibernate.search</artifactId>
+    </dependency>
+    
+    <dependency>
       <groupId>javax.validation</groupId>
       <artifactId>com.springsource.javax.validation</artifactId>
     </dependency>

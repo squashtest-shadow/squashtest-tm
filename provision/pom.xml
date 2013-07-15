@@ -36,6 +36,8 @@
     <db.nocreate>false</db.nocreate>
     <db.nopopulate>false</db.nopopulate>
 
+	<hibernate.search.index>./indexes</hibernate.search.index>
+	
     <log.dir>./logs</log.dir>
     <log.level.global>INFO</log.level.global>
     <log.level.squash>DEBUG</log.level.squash>

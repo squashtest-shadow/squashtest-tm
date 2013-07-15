@@ -63,12 +63,17 @@ import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 
 /**
  * @author Gregory Fouquet
  * 
  */
 @Entity
+@Indexed
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
@@ -79,9 +84,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private final int version = 1;
 
 	@NotNull
+	@Field
 	private String reference = "";
 
 	@Lob
+	@Field
 	private String prerequisite = "";
 
 	@NotNull
@@ -107,7 +114,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Basic(optional = false)
+	@Basic(optional=false)
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	private TestCaseImportance importance = LOW;
 
 	@NotNull

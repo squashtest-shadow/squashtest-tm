@@ -59,7 +59,12 @@
       <artifactId>org.squashtest.org.hibernate.core</artifactId>
       <version>${hibernate.version}</version>
     </dependency>
-    
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>org.squashtest.org.hibernate.search</artifactId>
+      <version>${hibernate.search.version}</version>
+    </dependency>
+            
     <!-- ====== SPRING FRAMEWORK ====== -->
     <dependency>
       <groupId>javax.inject</groupId>

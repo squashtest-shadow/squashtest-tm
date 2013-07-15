@@ -49,7 +49,7 @@ class ProjectTemplateManagerIT extends DbunitServiceSpecification {
 		def res = manager.findAllReferences()
 
 		then:
-		res.collect { it.class } == [ NamedReference, NamedReference ] 
-		res*.name == [ "FOUR", "TWO" ] 
+		res.collect { it.class } == [ NamedReference, NamedReference ]
+		res*.name == [ "FOUR", "TWO" ]
 	}
 }

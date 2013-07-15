@@ -59,6 +59,7 @@ import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
@@ -105,6 +106,9 @@ public class RequirementVersionManagerController {
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
 
+	@Inject
+	private AdvancedSearchService advancedSearchService;
+	
 	public RequirementVersionManagerController() {
 		super();
 	}
@@ -131,6 +135,7 @@ public class RequirementVersionManagerController {
 	public String changeCategory(@PathVariable long requirementVersionId,
 			@RequestParam(VALUE) RequirementCategory category, Locale locale) {
 		requirementVersionManager.changeCategory(requirementVersionId, category);
+		advancedSearchService.findTestCases(); 
 		return internationalizableFormatterProvider.get().useLocale(locale).formatLabel(category);
 
 	}
