@@ -347,6 +347,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 			fullModel = fullCampaignExportCSVModelProvider.get();
 			fullModel.setCampaign(campaign);
 			fullModel.init();	
+			model = fullModel;
 		} else {
 			standardModel = standardCampaignExportCSVModelProvider.get();
 			standardModel.setCampaign(campaign);
