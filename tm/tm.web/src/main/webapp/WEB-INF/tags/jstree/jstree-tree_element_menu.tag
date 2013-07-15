@@ -169,8 +169,30 @@ $(function () {
 	};
 	
 	squashtm.treemenu.importer = $('#tree-campaign-export-button').treeMenu('#tree-campaign-export-menu', campaignExportOption);
-	</c:if>
+	
+	
+	$(".export-L-tree-button").bind("click", function(){
+	
+		var nodeId = $("#tree").jstree("get_selected").attr("resid");
+		
+		document.location.href= squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=L";
+	});
+	
+	$(".export-S-tree-button").bind("click", function(){
+		
+		var nodeId = $("#tree").jstree("get_selected").attr("resid");
+		
+		document.location.href= squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=S";
+	});
+	
+	$(".export-F-tree-button").bind("click", function(){
+		
+		var nodeId = $("#tree").jstree("get_selected").attr("resid");
+		
+		document.location.href=  squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=F";
+	});
 
+	</c:if>
 
 });
 </script>
