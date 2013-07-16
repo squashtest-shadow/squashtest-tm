@@ -134,7 +134,34 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			return "yes-you-can";
 		};
 		
-
+		
+		this.canDnD = function(movednodes, newparent){
+			
+			var oldparent = movednodes.getParent();
+			
+			// check if the node is draggable first
+			if (movednodes.is(':library')){
+				return false;
+			}
+			
+			//check that moving the node will not remove it from its original container
+			if (! squashtm.keyEventListener.ctrl && ! movednodes.isDeletable()){
+				return false;
+			}
+			
+			// check that the destination type is legal
+			if (! newparent.isCreatable() || ! newparent.acceptsAsContent(movednodes)) {
+				return false;
+			}
+			
+            // allow iteration or test suite copy only if one of them is selected
+            if ((movednodes.is(':iteration') || (movednodes.is(':test-suite'))) && !squashtm.keyEventListener.ctrl) {
+                    return false;
+            }
+			
+			return true;
+						
+		};
 		
 		
 		this.buttonrules = {

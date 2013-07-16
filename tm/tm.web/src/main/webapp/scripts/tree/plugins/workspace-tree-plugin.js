@@ -131,10 +131,15 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 	function check_move() {
 		
 		var rules = this._getRules();
-
+		
 		try{
-			
+			//this simple test will cut short useless tests.	
 			var move = this._get_move();
+			
+			if (! move.np.is('li')){
+				return false;
+			}
+			
 			var	movednodes = $(move.o).treeNode();
 			var	newparent = $(move.np).treeNode();
 			

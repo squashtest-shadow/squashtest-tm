@@ -121,6 +121,28 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 		};
 		
 		
+		this.canDnD = function(movednodes, newparent){
+			
+			var oldparent = movednodes.getParent();
+			
+			// check if the node is draggable first
+			if (movednodes.is(':library')){
+				return false;
+			}
+			
+			//check that moving the node will not remove it from its original container
+			if (! squashtm.keyEventListener.ctrl && ! movednodes.isDeletable()){
+				return false;
+			}
+			
+			// check that the destination type is legal
+			if (! newparent.isCreatable() || ! newparent.acceptsAsContent(movednodes)) {
+				return false;
+			}
+			
+			return true;
+						
+		};
 	
 		this.buttonrules = {
 			'new-folder-tree-button' : this.canCreateFolder,

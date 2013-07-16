@@ -150,7 +150,7 @@ define(['jquery'], function($){
 			break;
 		}
 		
-		this.getTree().set_text(this, label);
+		this.tree.set_text(this, label);
 	}
 
 
@@ -174,9 +174,6 @@ define(['jquery'], function($){
 		// ************* methods for 1-sized jquery object **************
 
 		// ************ basic getters
-		this.getTree = function() {
-			return this.tree;
-		};
 
 		this.getDomId = function() {
 			return this.reference.attr('id');
@@ -303,19 +300,7 @@ define(['jquery'], function($){
 			return (children.length) ? children.treeNode() : $();
 		};
 
-		this.getPrevious = function() {
-			if (this.is(':library')) {
-				return this;
-			}
 
-			var prev = this.reference.prev();
-
-			if (prev.length > 0) {
-				return prev.treeNode();
-			} else {
-				return this.getParent();
-			}
-		};
 
 		this.getAncestors = function() {
 			return this.parents('li', this.tree).add(this).treeNode();
@@ -373,22 +358,6 @@ define(['jquery'], function($){
 		};
 
 		// *********** tests
-
-		this.isBrother = function(otherNode) {
-			var myParent = this.getParent();
-			var itsParent = otherNode.getParent();
-			return (myParent.getDomId() === itsParent.getDomId());
-		};
-
-		this.sameLib = function(otherNode) {
-			var myLib = this.getLibrary();
-			var itsLib = otherNode.getLibrary();
-			return (myLib.getDomId() == itsLib.getDomId());
-		};
-
-		this.isSame = function(otherNode) {
-			return (this.getDomId() == otherNode.getDomId());
-		};
 
 		this.match = function(matchObject) {
 			for ( var ppt in matchObject) {
@@ -503,43 +472,11 @@ define(['jquery'], function($){
 		};
 
 		
-
 		this.areEither = function(typesArray){
 			var collected = this.all('getDomType');
 			return $(collected).not(typesArray).length == 0;
 		};
-		
 
-		// returns true if all the nodes share the same values (whatever they
-		// are) for the
-		// requested attributes, false if not.
-		//
-		// that method differs from allMatch as we don't want to compare each
-		// nodes
-		// to a specified value, but against each others.
-		//
-		// pptArray : an array with the names of the dom properties we want to
-		// restrict our
-		// comparison to.
-		this.haveSame = function(pptArray) {
-			var res = this.toData(pptArray);
-			return this.allMatch(res[0]);
-		};
-
-		this.areSameLibs = function() {
-			var libs = this.collect(function(elt) {
-				return $(elt).treeNode().getLibrary().getDomId();
-			});
-			return ($.unique(libs).length == 1);
-		};
-
-		this.areAllBrothers = function() {
-			var parents = this.collect(function(elt) {
-				return $(elt).treeNode().getParent().getDomId();
-			});
-			return ($.unique(parents).length == 1);
-		};
-		
 
 		// *************** urls *******************************
 		
