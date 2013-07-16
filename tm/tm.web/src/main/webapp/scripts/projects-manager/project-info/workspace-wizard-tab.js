@@ -38,12 +38,7 @@ define(
 						render : function() {
 
 							var tbody = this.$el.find('table tbody'), model = this.options.model, i = 0, available = this.options.available, // TODO
-																																				// :
-																																				// load
-																																				// through
-																																				// ajax
-																																				// on
-																																				// render
+							// load through ajax on render
 							availableLength = available.length, collection = this.collection;
 
 							tbody.empty();
@@ -54,16 +49,13 @@ define(
 								var item = available[j];
 								var newRow = $('<tr class="cursor-arrow"/>');
 
-								newRow.append($('<td class="not-displayed">'
-										+ item.id + '</td>'));
+								newRow.append($('<td class="not-displayed">' + item.id + '</td>'));
 								newRow
 										.append($('<td class="centered narrow"><input type="checkbox" class="plugin-enabled"/></td>'));
-								newRow.append($('<td>' + item.displayableName
-										+ '</td>'));
+								newRow.append($('<td>' + item.displayableName + '</td>'));
 
 								if (collection.get(item.id) !== undefined) {
-									newRow.find('input.plugin-enabled').prop(
-											'checked', true);
+									newRow.find('input.plugin-enabled').prop('checked', true);
 								}
 								rows = rows.add(newRow);
 
@@ -74,8 +66,7 @@ define(
 						},
 
 						tickCheckbox : function(event) {
-							var $checkbox = $(event.currentTarget).find(
-									'input.plugin-enabled');
+							var $checkbox = $(event.currentTarget).find('input.plugin-enabled');
 							if (!$(event.target).is('input.plugin-enabled')) {
 								var state = $checkbox.prop('checked');
 								$checkbox.prop('checked', !state);
@@ -116,16 +107,14 @@ define(
 								global : false
 							// we will handle potential exceptions locally
 							};
-							$.ajax(ajaxConf).fail(
-									function(xhr) {
-										squashtm.notification
-												.showInfo(xhr.responseText);
-										self.remove(model, {
-											silent : true
-										});
-										self.panelView.render();
-										return false;
-									});
+							$.ajax(ajaxConf).fail(function(xhr) {
+								squashtm.notification.showInfo(xhr.responseText);
+								self.remove(model, {
+									silent : true
+								});
+								self.panelView.render();
+								return false;
+							});
 						});
 						this.on('remove', function(model) {
 							$.ajax({
@@ -158,7 +147,6 @@ define(
 				enabledCollection.panelView = panelView;
 
 			}
-			
 
 			return initWizardTabView;
 		});

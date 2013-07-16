@@ -20,7 +20,7 @@
  */
 
 jQuery(function($){
-	$.datepicker.regional['de'] = {
+	$.datepicker.regional.de = {
 		closeText: 'schlie\u00dfen',
 		prevText: '<zur\u00fcck',
 		nextText: 'Vor>',
@@ -42,5 +42,5 @@ jQuery(function($){
 		isRTL: false,
 		showMonthAfterYear: false,
 		yearSuffix: ''};
-	$.datepicker.setDefaults($.datepicker.regional['de']);
+	$.datepicker.setDefaults($.datepicker.regional.de);
 });

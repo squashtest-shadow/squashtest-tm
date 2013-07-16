@@ -46,6 +46,6 @@ define(function() {
 	
 	return {
 		parse : _parseSequence
-	}
+	};
 	
 });

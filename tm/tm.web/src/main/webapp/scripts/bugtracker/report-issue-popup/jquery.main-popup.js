@@ -54,14 +54,14 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		//everything it needs is in the fieldValues
 		this.preprocessIssue = function(issue){
 			
-			delete issue["priority"];
-			delete issue["comment"];
-			delete issue["version"];
-			delete issue["status"];
-			delete issue["description"];
-			delete issue["category"];
-			delete issue["summary"];
-			delete issue["assignee"];
+			delete issue.priority;
+			delete issue.comment;
+			delete issue.version;
+			delete issue.status;
+			delete issue.description;
+			delete issue.category;
+			delete issue.summary;
+			delete issue.assignee;
 			
 			return issue;
 		};
@@ -322,7 +322,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		
 		
 		var createViewForModel = $.proxy(function(){
-			if (this.fieldsView==null){
+			if (this.fieldsView===null){
 				var view;
 				var postHelper;
 				

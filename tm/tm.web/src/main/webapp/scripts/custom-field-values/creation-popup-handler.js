@@ -62,8 +62,8 @@ define(
 				this.table = settings.table;
 
 				if (this.table === undefined || !this.table.is('table')) {
-					throw "illegal argument : the settings must provide an attribute 'table' referencing "
-							+ "a jquery table";
+					throw "illegal argument : the settings must provide an attribute 'table' referencing " + 
+						  "a jquery table";
 				}
 
 				this.url = settings.url;

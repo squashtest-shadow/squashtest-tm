@@ -305,7 +305,7 @@ function dpa_postDate() {
 
 	var strMillisec;
 
-	if (myDate == null) {
+	if (myDate === null) {
 		strMillisec = "";
 	} else {
 		strMillisec = myDate.getTime().toString();
@@ -403,7 +403,7 @@ function dpa_refreshAutoDate(newDateToPut) {
 	if (checkbx.is(':checked')) {
 		var newDate;
 
-		if (newDateToPut != null) {
+		if (newDateToPut !== null) {
 			newDate = parseInt(newDateToPut,10);
 		} else {
 			newDate = -1;

@@ -24,8 +24,8 @@
  * The file upload popup works like a repeater. It will append or remove lists of Items.
  * 
  * An Item is the following : 
- *  - a file browser,
- *  - a button that will remove it when clicked.
+ *	- a file browser,
+ *	- a button that will remove it when clicked.
  * 
  * The popup will always propose an empty Item for new inputs. When an item is not empty anymore, a new 
  * empty Item will be appended to the popup.
@@ -102,8 +102,7 @@
 	}
 
 	/*
-	 * the container is an object too. It job is to manage the various Items it
-	 * contains.
+	 * the container is an object too. It job is to manage the various Items it contains.
 	 * 
 	 * 
 	 */
@@ -135,8 +134,7 @@
 		// check if the item argument is actually different from the last one
 		var lastItem = this.findLastItem();
 
-		if ((isFileBrowserEmpty(lastItem))
-				&& (!attachementAreSame(jqAttachItem, lastItem))) {
+		if ((isFileBrowserEmpty(lastItem)) && (!attachementAreSame(jqAttachItem, lastItem))) {
 			jqAttachItem.remove();
 		}
 	}

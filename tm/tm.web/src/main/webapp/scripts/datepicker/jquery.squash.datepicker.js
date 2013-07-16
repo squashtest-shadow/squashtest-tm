@@ -222,7 +222,7 @@ function dp_postDate() {
 
 	var strMillisec;
 
-	if (myDate == null) {
+	if (myDate === null) {
 		strMillisec = "";
 	} else {
 		strMillisec = myDate.getTime().toString();

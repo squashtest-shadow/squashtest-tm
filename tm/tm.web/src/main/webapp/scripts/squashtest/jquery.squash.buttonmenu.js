@@ -28,7 +28,7 @@
  *  		//every valid menu options,
  *  		zindex : a user-defined z-index value, 
  *  				 to make sure your menu will be displayed above any other elements.
- *  				default is 3000. 
+ *	 				default is 3000. 
  *  	}
  *  }
  * 
@@ -36,43 +36,42 @@
  * 
  */
 
-define(['jquery', 'jqueryui'], function($){
-	
-	
+define([ 'jquery', 'jqueryui' ], function($) {
+
 	$.widget('squash.buttonmenu', {
 		options : {
 			button : {},
 			menu : {
-				zindex : 3000				
+				zindex : 3000
 			}
 		},
-		
-		_create : function(){
+
+		_create : function() {
 			var settings = this.options;
 			var button = this.element;
 			var menu = button.next();
-			
+
 			this._menuCssTweak(menu);
 			this._bindLi(menu);
-			
+
 			button.button(settings.button);
 			menu.menu(settings.menu);
-			
-			button.on('click', function(){
+
+			button.on('click', function() {
 				menu.toggle();
 			});
-			
-			menu.on('blur', function(){
+
+			menu.on('blur', function() {
 				menu.hide();
 			});
-			
-			//prevent the juggling effect when hovering the items
+
+			// prevent the juggling effect when hovering the items
 			var width = menu.width();
-			menu.width(width+10);
-			
+			menu.width(width + 10);
+
 		},
-		
-		_menuCssTweak : function(menu){
+
+		_menuCssTweak : function(menu) {
 			menu.hide();
 			menu.removeClass('not-displayed');
 			menu.css('position', 'absolute');
@@ -80,22 +79,19 @@ define(['jquery', 'jqueryui'], function($){
 			menu.css('white-space', 'nowrap');
 			menu.css('z-index', this.options.menu.zindex);
 		},
-		
-		_bindLi : function(menu){
-			menu.on('click', 'li', function(evt){
-				if ($(this).hasClass('ui-state-disabled')){
+
+		_bindLi : function(menu) {
+			menu.on('click', 'li', function(evt) {
+				if ($(this).hasClass('ui-state-disabled')) {
 					evt.stopImmediatePropagation();
 					return false;
-				}else{
+				} else {
 					menu.hide();
 					return true;
 				}
 			});
 		}
-		
+
 	});
 
-	
 });
-
-

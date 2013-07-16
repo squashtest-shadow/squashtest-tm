@@ -19,7 +19,6 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 /*
  * Documentation  : 
  * 
@@ -98,16 +97,15 @@
  * 
  */
 
-define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'], function($, attrparser, confman){
+define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' ], function($, attrparser, confman) {
 
 	if (($.squash !== undefined) && ($.squash.formDialog !== undefined)) {
 		// plugin already loaded
 		return;
 	}
-	
-	
+
 	$.widget("squash.formDialog", $.ui.dialog, {
-		
+
 		options : {
 			autoOpen : false,
 			resizable : false,
@@ -118,15 +116,12 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			_richeditors : [],
 			_mainBtns : {}
 		},
-		
 
 		_triggerCustom : function(event) {
 			var evtname = $(event.target).data('evt');
 			this._trigger(evtname);
 			return this;
 		},
-		
-
 
 		cancel : function(event) {
 			if (!this.close()) {
@@ -136,48 +131,48 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			this._trigger("cancel");
 			return this;
 		},
-		
-		//if the argument is unknown, will default to state "default"
-		setState : function(state){
+
+		// if the argument is unknown, will default to state "default"
+		setState : function(state) {
 			this.uiDialog.find('[class*="popup-dialog-state"]').hide();
-			
-			var tobedisplayed = this.uiDialog.find('.popup-dialog-state-'+state);
+
+			var tobedisplayed = this.uiDialog.find('.popup-dialog-state-' + state);
 			tobedisplayed.show();
-			
-			this.options._state = (tobedisplayed.length===0) ? "default" : state;
+
+			this.options._state = (tobedisplayed.length === 0) ? "default" : state;
 		},
 
 		_create : function() {
 			var self = this;
 
 			var parent = this.element.eq(0).parent();
-			
+
 			function keyshortcuts(event) {
-				switch(event.keyCode){
-					case $.ui.keyCode.ESCAPE : 
-						self.cancel(event);
-						event.preventDefault();
-						break;
-						
-					case $.ui.keyCode.ENTER :
-						var state = self.options._state;
-						var btn = self.options._mainBtns[state];
-						
-						if (btn!==undefined){
-							btn.click();
-						}
-						break;
-						
-					default : return;
+				switch (event.keyCode) {
+				case $.ui.keyCode.ESCAPE:
+					self.cancel(event);
+					event.preventDefault();
+					break;
+
+				case $.ui.keyCode.ENTER:
+					var state = self.options._state;
+					var btn = self.options._mainBtns[state];
+
+					if (btn !== undefined) {
+						btn.click();
+					}
+					break;
+
+				default:
+					return;
 				}
 			}
-			
+
 			// creates the widget
 			self._super();
-			
-			//read and apply dom conf
+
+			// read and apply dom conf
 			this._readDomConf();
-			
 
 			// declares custom events
 			self._on({
@@ -190,62 +185,62 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 				self.destroy('destroy');
 				self.element.remove();
 			});
-				
+
 			this.uiDialog.keydown(keyshortcuts);
 
 		},
-	
-		open : function(){
+
+		open : function() {
 			this.cleanup();
 			this._super();
-			
+
 		},
 
-		cleanup : function(){
-			this.element.find(':input,textarea,.error-message').each(function(){
+		cleanup : function() {
+			this.element.find(':input,textarea,.error-message').each(function() {
 				$(this).val('');
 			})
 		},
-		
 
 		_createButtons : function() {
 
-			//ripped from jquery-ui 1.8.13. It might change some day, be careful.
+			// ripped from jquery-ui 1.8.13. It might change some day, be careful.
 			var buttonpane = this.uiDialog.find('.popup-dialog-buttonpane');
-			buttonpane.addClass('ui-dialog-buttonpane ui-widget-content ui-helper-clearfix').wrapInner('<div class="ui-dialog-buttonset"></div>');
+			buttonpane.addClass('ui-dialog-buttonpane ui-widget-content ui-helper-clearfix').wrapInner(
+					'<div class="ui-dialog-buttonset"></div>');
 			var buttons = buttonpane.find('input:button').button();
 			buttonpane.find('.ui-dialog-buttonset').append(buttons);
-			
-			//the following line will move the buttonpane after the body of the popup.
+
+			// the following line will move the buttonpane after the body of the popup.
 			buttonpane.appendTo(this.uiDialog);
-			
+
 		},
-		
-		//negation of the above. Untested yet.
-		_destroyButtons : function(){
+
+		// negation of the above. Untested yet.
+		_destroyButtons : function() {
 			var buttonpane = this.uiDialog.find('.popup-dialog-buttonpane');
 			buttonpane.removeClass('ui-dialog-buttonpane ui-widget-content ui-helper-clearfix');
 			buttonpane.find('input:button').button('destroy').appendTo(buttonPane);
 			buttonpane.find('div.ui-dialog-buttonset').remove();
-			
-			//move the buttonpane back to the body.
+
+			// move the buttonpane back to the body.
 			this.element.append(buttonpane);
-			
+
 		},
 
 		_setOption : function(key, value) {
 			// In jQuery UI 1.8, you have to manually invoke the _setOption method from the base widget
 			$.Widget.prototype._setOption.apply(this, arguments);
 		},
-		
-		_destroyCked : function(){
-			var i = 0, len= this._richeditors.length;
-			for (i=0;i<len;i++){
+
+		_destroyCked : function() {
+			var i = 0, len = this._richeditors.length;
+			for (i = 0; i < len; i++) {
 				var domelt = this._richeditors[i].get(0);
 				var ckInstance = CKEDITOR.instances[domelt.id];
 				if (ckInstance) {
 					ckInstance.destroy(true);
-				}				
+				}
 			}
 		},
 
@@ -256,22 +251,22 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 			this._destroyButtons();
 			this._super();
 		},
-		
-		_readDomConf : function(){
-			var $widget = this;		
+
+		_readDomConf : function() {
+			var $widget = this;
 			var handlers = $.squash.formDialog.domconf;
-			
-			$widget.uiDialog.find('[data-def]').each(function(){
-				
+
+			$widget.uiDialog.find('[data-def]').each(function() {
+
 				var $elt = $(this);
 				var raw = $elt.data('def');
 				var conf = attrparser.parse(raw);
-				
+
 				var handler;
-				for (var key in conf){
-					
+				for ( var key in conf) {
+
 					handler = handlers[key];
-					if (handler!==undefined){
+					if (handler !== undefined) {
 						handler.call($widget, $elt, conf[key]);
 					}
 				}
@@ -279,25 +274,26 @@ define(['jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui'],
 		}
 
 	});
-	
+
 	$.squash.formDialog.domconf = {
-		'isrich' : function($elt, value){
+		'isrich' : function($elt, value) {
 			this.options._richeditors.push($elt);
 			var conf = confman.getStdChkeditor();
-			$elt.ckeditor(function(){}, conf);
+			$elt.ckeditor(function() {
+			}, conf);
 		},
-		
-		'mainbtn' : function($elt, value){
+
+		'mainbtn' : function($elt, value) {
 			var state = (value == "true") ? "default" : value;
 			this.options._mainBtns[state] = $elt;
 		},
-		
-		'evt' : function($elt, value){
+
+		'evt' : function($elt, value) {
 			$elt.data('evt', value);
 		},
-		
-		'state' : function($elt, value){
-			$elt.addClass('popup-dialog-state-'+value);
+
+		'state' : function($elt, value) {
+			$elt.addClass('popup-dialog-state-' + value);
 		}
 	}
 });

@@ -19,24 +19,19 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+define([ "jquery", "squash.translator" ], function($, translator) {
 
-define(["jquery", "squash.translator"], function($,translator){
-	
-	
-	function stdCkeditor(){
+	function stdCkeditor() {
 		var lang = translator.get('rich-edit.language.value');
-		
+
 		return {
-			customConfig : squashtm.app.contextRoot+'/styles/ckeditor/ckeditor-config.js',
+			customConfig : squashtm.app.contextRoot + '/styles/ckeditor/ckeditor-config.js',
 			lang : lang
-		}
+		};
 	}
-	
-	
-	
+
 	return {
-		getStdChkeditor : stdCkeditor  
-	}
-	
+		getStdChkeditor : stdCkeditor
+	};
 
 });

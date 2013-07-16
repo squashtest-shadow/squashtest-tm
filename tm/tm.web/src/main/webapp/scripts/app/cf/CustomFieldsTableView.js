@@ -119,8 +119,7 @@ define(
 
 								bindLinks : {
 									list : [ {
-										url : cfTable.customFieldUrl
-												+ "/{entity-id}",
+										url : cfTable.customFieldUrl + "/{entity-id}",
 										target : 2,
 										isOpenInTab : false
 									} ]

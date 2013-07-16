@@ -154,8 +154,7 @@ define(
 								for ( var key in validationErrors) {
 									Forms
 											.input(
-													this.$("input[name='" + key
-															+ "']")).setState(
+													this.$("input[name='"+ key+ "']")).setState(
 													"error",
 													validationErrors[key]);
 								}
@@ -274,11 +273,11 @@ define(
 						},
 
 						changeDefaultOption : function(event) {
-							var checkbox = event.currentTarget, option = checkbox.value, defaultValue = checkbox.checked ? option
-									: "", uncheckSelector = ".is-default>input:checkbox"
-									+ (checkbox.checked ? "[value!='" + option
-											+ "']" : ""), optionsInput = Forms
-									.input(this.$("input[name='options']"));
+							var checkbox = event.currentTarget, 
+								option = checkbox.value, 
+								defaultValue = checkbox.checked ? option : "", 
+								uncheckSelector = ".is-default>input:checkbox"+ (checkbox.checked ? "[value!='" + option	+ "']" : ""), 
+								optionsInput = Forms.input(this.$("input[name='options']"));
 
 							optionsInput.clearState();
 

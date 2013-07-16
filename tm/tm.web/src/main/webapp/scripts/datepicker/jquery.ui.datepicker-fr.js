@@ -21,7 +21,7 @@
 /* French initialisation for the jQuery UI date picker plugin. */
 /* Written by Keith Wood (kbwood{at}iinet.com.au) and Stéphane Nahmani (sholby@sholby.net). */
 jQuery(function($) {
-	$.datepicker.regional['fr'] = {
+	$.datepicker.regional.fr = {
 		closeText : 'Fermer',
 		prevText : '<Pr\u00e9c',
 		nextText : 'Suiv>',
@@ -42,5 +42,5 @@ jQuery(function($) {
 		showMonthAfterYear : false,
 		yearSuffix : ''
 	};
-	$.datepicker.setDefaults($.datepicker.regional['fr']);
+	$.datepicker.setDefaults($.datepicker.regional.fr);
 });

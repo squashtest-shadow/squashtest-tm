@@ -38,8 +38,7 @@ define(
 			}
 
 			function getSelectedProjectIds(containerId) {
-				var selectedBoxes = $("#" + containerId
-						+ " .project-checkbox:checked");
+				var selectedBoxes = $("#" + containerId	+ " .project-checkbox:checked");
 				var zeids = [];
 				var i;
 

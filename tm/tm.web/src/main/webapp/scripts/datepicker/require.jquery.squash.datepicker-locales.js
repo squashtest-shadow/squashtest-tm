@@ -31,7 +31,7 @@ define(["jquery","jqueryui"], function($){
 	/* French initialisation for the jQuery UI date picker plugin. */
 	/* Written by Keith Wood (kbwood{at}iinet.com.au) and Stephane Nahmani (sholby@sholby.net). */	
 		
-	$.datepicker.regional['fr'] = {
+	$.datepicker.regional.fr = {
 		closeText: 'Fermer',
 		prevText: '<Pr\u00e9c',
 		nextText: 'Suiv>',
@@ -55,7 +55,7 @@ define(["jquery","jqueryui"], function($){
 		yearSuffix: ''
 	};
 	
-	$.datepicker.regional['de'] = {
+	$.datepicker.regional.de = {
 		closeText: 'schlie\u00dfen',
 		prevText: '<zur\u00fcck',
 		nextText: 'Vor>',

@@ -124,8 +124,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 
 							givesAccessTo = (this.id).replace("-binder", "");
 
-							if (givesAccessTo !== undefined
-									&& givesAccessTo !== "none") {
+							if (givesAccessTo !== undefined && givesAccessTo !== "none") {
 								// find the right element and deactivate it
 								$("#" + givesAccessTo + "-open").attr(
 										"disabled", "disabled");
@@ -237,8 +236,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 								type : 'RADIO_BUTTONS_GROUP'
 							});
 
-							if (givesAccessTo !== undefined
-									&& givesAccessTo !== "none") {
+							if (givesAccessTo !== undefined	&& givesAccessTo !== "none") {
 								// find the right element and deactivate it
 								$("#" + givesAccessTo + "-open").attr(
 										"disabled", "disabled");
@@ -266,9 +264,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 
 			function buildViewUrl(index, format) {
 				// see [Issue 1205] for why "document.location.protocol"
-				return document.location.protocol + '//'
-						+ document.location.host + config.reportUrl + "/views/"
-						+ index + "/formats/" + format;
+				return document.location.protocol + '//' + document.location.host + config.reportUrl + "/views/" + index + "/formats/" + format;
 
 			}
 
