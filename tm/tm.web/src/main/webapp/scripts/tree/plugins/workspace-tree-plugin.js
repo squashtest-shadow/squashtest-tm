@@ -133,22 +133,20 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 		var rules = this._getRules();
 		
 		try{
-			//this simple test will cut short useless tests.	
+			
 			var move = this._get_move();
 			
+			//this simple test will cut short useless tests.	
 			if (! move.np.is('li')){
 				return false;
 			}
 			
-			var	movednodes = $(move.o).treeNode();
-			var	newparent = $(move.np).treeNode();
+			var	movednodes = $(move.o).treeNode(),
+				newparent = $(move.np).treeNode();
 			
 			return rules.canDnD(movednodes, newparent);
 			
 		} catch (invalid_node) {
-			if (console && console.log){
-				console.log(invalid_node.message);
-			}
 			return false;
 		}
 
@@ -186,18 +184,19 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 	}
 
 	
-	var warnIfisCrossProjectOperation = function(target, nodes){
+	var warnIfisCrossProjectOperation = function(moveObject){
 		
 		var defer = $.Deferred();
 		
-		var targetLib = target.getLibrary().getDomId(),
-			destLibs = nodes.getLibrary().map(function(){
+		var targetLib = $(moveObject.np).treeNode().getLibrary().getDomId(),
+			srcLibs = $(moveObject.op).treeNode().getLibrary().map(function(){
 				return $(this).attr('id');
 			}),
 			isCrossProject = false;
 		
-		for ( var i = 0; i < destLibs.length; i++) {
-			if (targetLib != destLibs[i]) {
+
+		for ( var i = 0; i < srcLibs.length; i++) {
+			if (targetLib != srcLibs[i]) {
 				isCrossProject = true;
 				break;
 			}
@@ -388,11 +387,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 					if (moveObject == null || moveObject == undefined || moveObject.cr == undefined) {
 						return; //abort !
 					}
-					
-
 					var rules = data.inst._getRules();
-					var nodes = $(moveObject.o).treeNode();
-					var target = $(moveObject.np).treeNode();
 					
 					
 					//case dnd-copy
@@ -405,7 +400,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 					//case dnd-move
 					if (check_name_available(data)) {
 						
-						warnIfisCrossProjectOperation(target, nodes)
+						warnIfisCrossProjectOperation(moveObject)
 						.done(function(){
 							moveNodes(data);
 						})
