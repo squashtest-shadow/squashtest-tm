@@ -23,8 +23,7 @@ require([ "common" ], function(common) {
 			"app/ws/squashtm.workspace", "domReady" ], function($,
 			TeamModificationView, WS, domReady) {
 		var goBack = function() {
-			document.location.href = squashtm.app.contextRoot
-					+ "/administration/users/list";
+			document.location.href = squashtm.app.contextRoot + "/administration/users/list";
 		};
 
 		domReady(function() {

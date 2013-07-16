@@ -20,32 +20,29 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
-
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
-import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
+import org.squashtest.tm.web.internal.helper.InternationalizableComparator;
 
 @Controller
 @RequestMapping("/requirement-workspace")
 public class RequirementWorkspaceController extends WorkspaceController<RequirementLibrary> {
+	
 	private WorkspaceService<RequirementLibrary> workspaceService;
 
-	@Inject
-	private MessageSource messageSource;
 
 	@Override
 	protected WorkspaceService<RequirementLibrary> getWorkspaceService() {
@@ -56,100 +53,25 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	protected String getWorkspaceViewName() {
 		return "page/requirement-workspace";
 	}
+	
+	@Override
+	protected void populateModel(Model model, Locale locale) {
+		
+		List<RequirementLibrary> libraries = workspaceService.findAllImportableLibraries();
+		//List<RequirementCriticality> criticalities = sortCriticalities(locale);	//not needed yet
+		List<RequirementCategory> categories = sortCategories();
+		
+		model.addAttribute("editableLibraries", libraries);
+		model.addAttribute("categories", categories);
+		
+		
+	}
 
 	@ServiceReference(serviceBeanName="squashtest.tm.service.RequirementsWorkspaceService")
 	public final void setWorkspaceService(WorkspaceService<RequirementLibrary> requirementsWorkspaceService) {
 		this.workspaceService = requirementsWorkspaceService;
 	}
-
-	/***
-	 * This method returns the criticality options tag to the jsp
-	 *
-	 * @param locale
-	 *            the locale
-	 * @return the html code for the criticality(String)
-	 */
-	@RequestMapping(value = "/combo-options", method = RequestMethod.GET)
-	@ResponseBody
-	Combos getCriticitySelectionList(Locale locale) {
-		String criticities = buildCriticitySelectionList(locale);
-		String categories = buildCategorySelectionList(locale);
-		return new Combos(criticities, categories);
-	}
 	
-	private static class Combos {
-		private String categories ;
-		private String criticities;
-		protected Combos(String criticities , String categories ){
-			this.categories = categories;
-			this.criticities = criticities;
-			
-		}
-		public String getCategories() {
-			return categories;
-		}
-		public void setCategories(String categories) {
-			this.categories = categories;
-		}
-		public String getCriticities() {
-			return criticities;
-		}
-		public void setCriticities(String criticities) {
-			this.criticities = criticities;
-		}
-		
-	}
-
-	/***
-	 * Method which returns the criticality select options in the chosen language
-	 *
-	 * @param locale
-	 *            the Locale
-	 * @return the html select object
-	 */
-	private String buildCriticitySelectionList(Locale locale) {
-		StringBuilder toReturn = new StringBuilder("<select id=\"add-requirement-criticality\" cssClass=\"combobox\">");
-		for (RequirementCriticality criticality : RequirementCriticality.values()) {
-			toReturn.append("<option value = \"");
-			toReturn.append(criticality.toString());
-			toReturn.append("\">" +  messageSource.getMessage(criticality.getI18nKey(), null, locale) + "</option>");
-		}
-		toReturn.append("</select>");
-		return toReturn.toString();
-	}
-
-
-
-	/***
-	 * Method which returns the category select options in the chosen language
-	 *
-	 * @param locale
-	 *            the Locale
-	 * @return the html select object
-	 */
-	private String buildCategorySelectionList(Locale locale) {
-		StringBuilder toReturn = new StringBuilder("<select id=\"add-requirement-category\" cssClass=\"combobox\">");
-		for (RequirementCategory category : RequirementCategory.values()) {
-			toReturn.append("<option value = \"");
-			toReturn.append(category.toString());
-			toReturn.append("\">" + messageSource.getMessage(category.getI18nKey(), null, locale) + "</option>");
-		}
-		toReturn.append("</select>");
-		return toReturn.toString();
-	}
-
-	
-	
-	@Override
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView showWorkspace() {
-
-		ModelAndView mav = super.showWorkspace();
-		List<RequirementLibrary> libraries = workspaceService.findAllImportableLibraries();
-		mav.addObject("editableLibraries", libraries);
-
-		return mav;
-	}
 
 	/**
 	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#getWorkspaceType()
@@ -158,4 +80,12 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 		return WorkspaceType.REQUIREMENT_WORKSPACE;
 	}
 
+	
+	private List<RequirementCategory> sortCategories(){
+		InternationalizableComparator comparator = new InternationalizableComparator(getI18nHelper());
+		List<RequirementCategory> categories = Arrays.asList(RequirementCategory.values());
+		Collections.sort(categories, comparator);
+		return categories;
+	}
+	
 }

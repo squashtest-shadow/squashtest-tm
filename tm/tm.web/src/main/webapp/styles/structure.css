@@ -92,15 +92,6 @@ div#tree-pane {
 	padding: 0 0;
 }
 
-div#tree-pane.requirement-tree-pane {
-	bottom: 1.3em;
-	float: left;
-	position: absolute;
-	top: 0.2cm;
-	left: 2px;
-	right: 2px;
-	padding: 0 0;
-}
 
 div#tabbed-pane {
 	bottom: 0px;
@@ -1045,6 +1036,31 @@ div.information-panel p {
 
 #user-infos-table td:first-child {
 	width: 100px;
+}
+
+
+/* ---------------------------------------------------------*/
+/* ------------------>>> Tree Popups <<<--------------------*/
+/* ---------------------------------------------------------*/
+
+#delete-node-dialog .delete-node-dialog-warning{
+	vertical-align:middle;
+	background-image : url('../images/messagebox_confirm.png'); 
+	background-repeat : no-repeat;
+	background-position : center center;
+	width : 60px;
+}
+
+#delete-node-dialog .delete-node-dialog-details{
+	padding-left : 1.5em;
+	padding-top : 0.2em;
+	padding-bottom : 0.2em;
+	padding-right : 0.2em;
+	background-color : #EFEFEF;
+}
+
+#delete-node-dialog .delete-node-dialog-details p{
+	font-weight : bold;
 }
 
 

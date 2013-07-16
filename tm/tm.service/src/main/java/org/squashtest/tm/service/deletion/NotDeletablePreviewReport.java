@@ -47,12 +47,12 @@ public class NotDeletablePreviewReport implements SuppressionPreviewReport {
 			builder.append(source.getMessage(NODES_NAMES_MESSAGE_KEY, null, locale));
 			builder.append(" : ");
 			builder.append(setToString(nodeNames));
-			builder.append("\n\n");
+			builder.append("<br/>");
 			
 			builder.append(source.getMessage(WHY_MESSAGE_KEY, null, locale));
 			builder.append(" : ");
 			builder.append(setToString(why));
-			builder.append("\n");
+			builder.append("<br/>");
 			
 		}
 		return builder.toString();

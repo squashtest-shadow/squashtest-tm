@@ -20,24 +20,69 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
-<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<layout:workspace-page-layout resourceName="requirement">
+
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
+<%@ taglib prefix="wkp" tagdir="/WEB-INF/tags/requirement-workspace" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+
+<layout:tree-page-layout titleKey="squashtm" highlightedWorkspace="requirement">
+	
   <jsp:attribute name="head">
 	<comp:sq-css name="squash.blue.css" />
-	<script type="text/javascript">
-		var squashtm = squashtm || {};
-		squashtm.app = squashtm.app || {};
-		squashtm.app.requirementWorkspace = {
-			wizards: ${ json:marshall(wizards) }<%-- that was a JSP expression --%>
-		}
+		<comp:rich-jeditable-header />
+				
 		
-		require( ["common"], function(){
-			require(["requirement-workspace"], function() {
-			});
-		});
-	</script>		
+		<script type="text/javascript">
+			var squashtm = squashtm || {};
+			squashtm.app = squashtm.app || {};
+			squashtm.app.requirementWorkspace = {
+				wizards: ${ json:marshall(wizards) }<%-- that was a JSP expression --%>
+			}
+		</script>	
+				
 	</jsp:attribute>
-</layout:workspace-page-layout>
+	
+	<jsp:attribute name="titlePane">
+		<h2><f:message key="workspace.requirement.title" /></h2>	
+	</jsp:attribute>	
+	
+	<jsp:attribute name="tree">
+		<wkp:req-tree-menu/>
+		<tree:_html-tree treeId="tree" />
+	</jsp:attribute>
+	
+	<jsp:attribute name="contextualContent">
+		<%-- empty --%>
+	</jsp:attribute>	
+	
+	<jsp:attribute name="footer">
+		
+		<wkp:req-tree-popups/>
+		
+		<script type="text/javascript">
+		
+			var conf = {
+				tree : {
+					model : ${ json:serialize(rootModel) },
+					workspace : "requirement",
+					treeselector : "#tree"
+				}
+			}
+		
+		
+			$(function(){
+				require( ["common"], function(){
+					require(['req-workspace', "requirement-workspace"], function(initWkp) {
+						initWkp.init(conf);						
+					});
+				});						
+			});
+		</script>
+	
+	</jsp:attribute>
+	
+</layout:tree-page-layout>

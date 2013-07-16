@@ -22,19 +22,21 @@ package org.squashtest.tm.web.internal.controller.generic;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.web.internal.controller.campaign.MenuItem;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
@@ -42,22 +44,24 @@ import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
 public abstract class WorkspaceController<LIBRARY extends Library<?>> {
 
-	@Inject
-	private Provider<DriveNodeBuilder> nodeBuilderProvider;
-	@Inject
-	private WorkspaceWizardManager workspaceWizardManager;
+	@Inject private Provider<DriveNodeBuilder> nodeBuilderProvider;
+	@Inject private WorkspaceWizardManager workspaceWizardManager;
+	@Inject protected InternationalizationHelper i18nHelper;
+	
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView showWorkspace() {
+	public String showWorkspace(Model model, Locale locale) {
 
 		List<LIBRARY> libraries = getWorkspaceService().findAllLibraries();
 
-		ModelAndView mav = new ModelAndView(getWorkspaceViewName());
-
 		DriveNodeBuilder nodeBuilder = nodeBuilderProvider.get();
 		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<LIBRARY>(nodeBuilder).setModel(libraries).build();
-		mav.addObject("rootModel", rootNodes);
-		return mav;
+		
+		model.addAttribute("rootModel", rootNodes);
+		
+		populateModel(model, locale);		
+		
+		return getWorkspaceViewName();
 	}
 
 	/**
@@ -73,6 +77,12 @@ public abstract class WorkspaceController<LIBRARY extends Library<?>> {
 	 * @return
 	 */
 	protected abstract String getWorkspaceViewName();
+	
+	/**
+	 * Called when {@link #getWorkspaceViewName()} is invoked. This allows you to add 
+	 * anything you need to thisworkspace's model. No need to supply the treenodes : they will be provided.
+	 */
+	protected abstract void populateModel(Model model, Locale locale);
 
 	/**
 	 * Returns the workspace type managed by the concrete controller.
@@ -118,4 +128,9 @@ public abstract class WorkspaceController<LIBRARY extends Library<?>> {
 		return item;
 	}
 
+	protected InternationalizationHelper getI18nHelper() {
+		return i18nHelper;
+	}
+
+	
 }

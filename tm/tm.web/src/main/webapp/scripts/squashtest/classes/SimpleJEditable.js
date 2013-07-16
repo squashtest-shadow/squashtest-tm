@@ -23,11 +23,11 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
 	var SimpleJEditable = function(settings) {
 		var language = settings.language;
 		var targetUrl = settings.targetUrl;
-		var component ;
-		if(settings.componentId){
-		var componentId = settings.componentId;		
-		component = $('#' + componentId);
-		}else{
+		var component;
+		if (settings.componentId) {
+			var componentId = settings.componentId;
+			component = $('#' + componentId);
+		} else {
 			component = settings.component;
 		}
 		var txt = component.text();
@@ -45,14 +45,12 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
 			// jeditable
 			// when clicking in the rich editor (since it considers the click as
 			// out of the editing zone)
-			indicator : '<img src="' + squashtm.app.contextRoot
-					+ '/scripts/jquery/indicator.gif" alt="processing..." />'
+			indicator : '<img src="' + squashtm.app.contextRoot +
+					'/scripts/jquery/indicator.gif" alt="processing..." />'
 		};
 
-		var effectiveSettings = $.extend(true, {}, settings.jeditableSettings,
-				defaultSettings);
-		this.instance = $(component).editable(targetUrl, effectiveSettings)
-				.addClass("editable");
+		var effectiveSettings = $.extend(true, {}, settings.jeditableSettings, defaultSettings);
+		this.instance = $(component).editable(targetUrl, effectiveSettings).addClass("editable");
 
 	};
 	return SimpleJEditable;

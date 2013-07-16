@@ -524,10 +524,10 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 					var currentProject = urls.projectId;
 
 					if (parseInt(cookieProject, 10) !== currentProject) {
-						oneShotConfirm(language.infoTitle, language.warnCopy, language.confirmlabel, language.cancellabel).then(
-								function() {
-									performPaste(cookieIds); // see definition below
-								});
+						oneShotConfirm(language.infoTitle, language.warnCopy, language.confirmlabel,
+								language.cancellabel).then(function() {
+							performPaste(cookieIds); // see definition below
+						});
 					} else {
 						performPaste(cookieIds); // see definition below
 					}
@@ -544,12 +544,12 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 				var position = table.getSelectedIds();
 
 				var data = {};
-				data['copiedStepId'] = stepIds;
+				data.copiedStepId = stepIds;
 
 				var pasteUrl = urls.pasteStep;
 
 				if (position.length > 0) {
-					data['indexToCopy'] = position[0];
+					data.indexToCopy = position[0];
 					pasteUrl = pasteUrl + "/paste";
 				} else {
 					pasteUrl = pasteUrl + "/paste-last-index";
@@ -584,8 +584,8 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 					if (!ids.length) {
 						$.squash.openMessage(language.errorTitle, language.noStepSelected);
 					} else {
-						var promise = oneShotConfirm(language.deleteTitle, language.deleteMultipleConfirm, language.oklabel,
-								language.cancellabel);
+						var promise = oneShotConfirm(language.deleteTitle, language.deleteMultipleConfirm,
+								language.oklabel, language.cancellabel);
 
 						promise.done(function() {
 							$.ajax({

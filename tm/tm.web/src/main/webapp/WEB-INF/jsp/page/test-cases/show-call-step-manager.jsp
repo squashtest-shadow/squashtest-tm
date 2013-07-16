@@ -31,8 +31,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <%--
-	Note : pruned version of workspace-page-layout with 'resourceName' forced to 'test-case'
-
 	parameters :
 	
 		- testCase : the test case at the calling-side of the call step the user will design in this interface.
@@ -89,10 +87,7 @@
 	
 				
 			}		
-	
 			
-
-	
 			function getSelectedId(){
 				
 				var tab =  new Array();
@@ -100,7 +95,7 @@
 				var tree = $("#tree-pane .tree");
 				if (selected == 0){
 					tree.jstree('get_selected').each(function(index, node){
-						if ($( node ).attr('rel') == 'file') {
+						if ($( node ).attr('rel') == 'test-case') {
 							tab.push($( node ).attr('resId'));
 						}
 					});

@@ -20,29 +20,69 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
-<%@ taglib prefix="json"  uri="http://org.squashtest.tm/taglib/json" %>
-<%@ taglib prefix="treepopup" tagdir="/WEB-INF/tags/treepopups" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<layout:workspace-page-layout resourceName="campaign">
+
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
+<%@ taglib prefix="wkp" tagdir="/WEB-INF/tags/campaign-workspace" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+
+<layout:tree-page-layout titleKey="squashtm" highlightedWorkspace="campaign">
+	
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.purple.css" />
+		<comp:rich-jeditable-header />
+				
+		
 		<script type="text/javascript">
 			var squashtm = squashtm || {};
 			squashtm.app = squashtm.app || {};
 			squashtm.app.campaignWorkspace = {
 				wizards: ${ json:marshall(wizards) }<%-- that was a JSP expression --%>
 			}
-			
-			require( ["common"], function(){
-				require(["campaign-workspace"], function() {
-				});
-			});
-		</script>		
+		</script>	
+				
 	</jsp:attribute>
 	
-	<jsp:attribute name="footer">
-		<treepopup:add-nameable-node-dialog resourceName="iteration" treeNodeButton="squashtm.treemenu.create.buttons['create-resource']" />
+	<jsp:attribute name="titlePane">
+		<h2><f:message key="workspace.campaign.title" /></h2>	
+	</jsp:attribute>	
+	
+	<jsp:attribute name="tree">
+		<wkp:camp-tree-menu/>
+		<tree:_html-tree treeId="tree" />
 	</jsp:attribute>
-</layout:workspace-page-layout>
+	
+	<jsp:attribute name="contextualContent">
+		<%-- empty --%>
+	</jsp:attribute>	
+	
+	<jsp:attribute name="footer">
+		
+		<wkp:camp-tree-popups/>
+		
+		<script type="text/javascript">
+		
+			var conf = {
+				tree : {
+					model : ${ json:serialize(rootModel) },
+					workspace : "campaign",
+					treeselector : "#tree"
+				}
+			}
+		
+		
+			$(function(){
+				require( ["common"], function(){
+					require(['camp-workspace', "campaign-workspace"], function(initWkp) {
+						initWkp.init(conf);						
+					});
+				});						
+			});
+		</script>
+	
+	</jsp:attribute>
+	
+</layout:tree-page-layout>

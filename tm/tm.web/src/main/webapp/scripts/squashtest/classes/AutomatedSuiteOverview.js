@@ -69,8 +69,7 @@ function AutomatedSuiteOverviewDialog(settings) {
 		var progress = suiteView.percentage;
 		var executionTerminated = progress / 100 * executions.length;
 		$("#execution-auto-progress-bar").progressbar("value", progress);
-		$("#execution-auto-progress-amount").text(
-				executionTerminated + "/" + executions.length);
+		$("#execution-auto-progress-amount").text(executionTerminated + "/" + executions.length);
 	}
 
 	function fillContent(suiteView) {
@@ -78,7 +77,7 @@ function AutomatedSuiteOverviewDialog(settings) {
 		var executions = suiteView.executions;
 
 		var template = executionRowTemplate.clone();
-			for (var i = 0; i < executions.length; i++) {
+		for ( var i = 0; i < executions.length; i++) {
 			var execution = executions[i];
 			var executionHtml = template.clone();
 
@@ -87,8 +86,7 @@ function AutomatedSuiteOverviewDialog(settings) {
 			executionHtml.find(".executionName").html(execution.name);
 			// STATUS
 			var executionStatus = executionHtml.find(".executionStatus");
-			var statusHtml = squashtm.statusFactory.getHtmlFor(
-					execution.localizedStatus, execution.status);
+			var statusHtml = squashtm.statusFactory.getHtmlFor(execution.localizedStatus, execution.status);
 			executionStatus.html(statusHtml);
 
 			executionAutoInfos.append(executionHtml);
@@ -101,31 +99,25 @@ function AutomatedSuiteOverviewDialog(settings) {
 			type : 'GET',
 			url : automatedSuiteBaseUrl + "/" + suiteId + "/executions",
 			dataType : "json"
-		})
-				.done(
-						function(suiteView) {
-							// find executions in json
-							var executions = suiteView.executions;
-							for (i = 0; i < executions.length; i++) {
-								// FIND EXEC
-								var execution = executions[i];
-								var executionHtml = $("#execution-info-"
-										+ execution.id);
+		}).done(function(suiteView) {
+			// find executions in json
+			var executions = suiteView.executions;
+			for (i = 0; i < executions.length; i++) {
+				// FIND EXEC
+				var execution = executions[i];
+				var executionHtml = $("#execution-info-" + execution.id);
 
-								// CHANGE STATUS
-								var executionStatus = executionHtml
-										.find(".executionStatus");
-								var statusHtml = squashtm.statusFactory
-										.getHtmlFor(execution.localizedStatus,
-												execution.status);
-								executionStatus.html(statusHtml);
+				// CHANGE STATUS
+				var executionStatus = executionHtml.find(".executionStatus");
+				var statusHtml = squashtm.statusFactory.getHtmlFor(execution.localizedStatus, execution.status);
+				executionStatus.html(statusHtml);
 
-							}
-							updateProgress(suiteView);
-							if (suiteView.percentage == 100) {
-								clearInterval(autoUpdate);
-							}
-						});
+			}
+			updateProgress(suiteView);
+			if (suiteView.percentage == 100) {
+				clearInterval(autoUpdate);
+			}
+		});
 	}
 
 }

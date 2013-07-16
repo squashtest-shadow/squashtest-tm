@@ -80,8 +80,7 @@ define([ "jquery" ], function($) {
 				link.text(params.enabledTxt);
 				link.addClass("filter-enabled");
 
-				if ((params.enabledCallbacks !== undefined)
-						&& (params.enabledCallbacks.length > 0)) {
+				if ((params.enabledCallbacks !== undefined) && (params.enabledCallbacks.length > 0)) {
 					for ( var i = 0; i < params.enabledCallbacks.length; i++) {
 						var callback = params.enabledCallbacks[i];
 						callback();

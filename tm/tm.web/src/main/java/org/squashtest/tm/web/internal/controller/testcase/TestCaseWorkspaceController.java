@@ -21,12 +21,12 @@
 package org.squashtest.tm.web.internal.controller.testcase;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.service.library.WorkspaceService;
@@ -52,22 +52,17 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 		return "page/test-case-workspace";
 	}
 
-	@Override
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView showWorkspace() {
-
-		ModelAndView mav = super.showWorkspace();
-		List<TestCaseLibrary> libraries = workspaceService.findAllImportableLibraries();
-		mav.addObject("editableLibraries", libraries);
-
-		return mav;
-	}
-
 	/**
 	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#getWorkspaceType()
 	 */
 	protected WorkspaceType getWorkspaceType() {
 		return null;
+	}
+	
+	@Override
+	protected void populateModel(Model model, Locale locale) {
+		List<TestCaseLibrary> libraries = workspaceService.findAllImportableLibraries();
+		model.addAttribute("editableLibraries", libraries);
 	}
 
 }

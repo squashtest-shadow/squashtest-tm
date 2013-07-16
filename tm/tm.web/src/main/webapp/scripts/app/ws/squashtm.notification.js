@@ -32,12 +32,12 @@ define(
 				 */
 				var json = $.parseJSON(request.responseText);
 
-				if (json != null) {
-					if (json.actionValidationError != null) {
+				if (json !== null) {
+					if (json.actionValidationError !== null) {
 						return $.squash.openMessage(_config.errorTitle,
 								json.actionValidationError.message);
 					} else {
-						if (json.fieldValidationErrors != null) {
+						if (json.fieldValidationErrors !== null) {
 							/* IE8 requires low tech code */
 							var validationErrorList = json.fieldValidationErrors;
 							if (validationErrorList.length > 0) {
@@ -73,14 +73,11 @@ define(
 			function showBootstrapErrorMessage(fieldValidationError) {
 				var inputName = fieldValidationError.fieldName;
 				if (!!fieldValidationError.objectName) {
-					inputName = fieldValidationError.objectName + "-"
-							+ inputName;
+					inputName = fieldValidationError.objectName + "-" + inputName;
 				}
 
-						$input = $("input[name='" + inputName
-								+ "'], input[id='" + inputName
-								+ "'],  textarea[name='" + inputName + "']");
-						input = Forms.input($input);
+				$input = $("input[name='" + inputName + "'], input[id='" + inputName + "'],  textarea[name='" + inputName + "']");
+				input = Forms.input($input);
 
 				input.setState("error", fieldValidationError.errorMessage);
 
@@ -150,11 +147,11 @@ define(
 			function getErrorMessage(request, index) {
 				var json = $.parseJSON(request.responseText);
 
-				if (json != null) {
-					if (json.actionValidationError != null) {
+				if (json !== null) {
+					if (json.actionValidationError !== null) {
 						return json.actionValidationError.message;
 					} else {
-						if (json.fieldValidationErrors != null) {
+						if (json.fieldValidationErrors !== null) {
 							/* IE8 requires low tech code */
 							var validationErrorList = json.fieldValidationErrors;
 							if (validationErrorList.length > 0) {

@@ -209,7 +209,7 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 			
 			nondeletablemessage.contains("31");
 			nondeletablemessage.contains("32");
-			nondeletablemessage.contains("\n\nreason : because it's a test\n");
+			nondeletablemessage.contains("<br/>reason : because it's a test<br/>");
 	}
 	
 

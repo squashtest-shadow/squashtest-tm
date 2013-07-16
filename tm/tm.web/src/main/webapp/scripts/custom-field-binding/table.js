@@ -55,49 +55,35 @@ define(
 				 * the server talk and make the data compatible.
 				 */
 
-				var fnServerData = function(sSource, aoData, fnCallback,
-						oSettings) {
-					oSettings.jqXHR = $
-							.ajax({
-								'dataType' : 'json',
-								'type' : 'GET',
-								'url' : sSource,
-								'data' : aoData,
-								'success' : function(allData, textStatus, jqXHR) {
-									var availableLocations = settings.renderingLocations;
-									var count = 0, dataLength = allData.aaData.length;
+				var fnServerData = function(sSource, aoData, fnCallback, oSettings) {
+					oSettings.jqXHR = $.ajax({
+						'dataType' : 'json',
+						'type' : 'GET',
+						'url' : sSource,
+						'data' : aoData,
+						'success' : function(allData, textStatus, jqXHR) {
+							var availableLocations = settings.renderingLocations;
+							var count = 0, dataLength = allData.aaData.length;
 
-									for (count = 0; count < dataLength; count++) {
-										var data = allData.aaData[count];
+							var namecollect = function(elt){ return elt.enuName; };
+							for (count = 0; count < dataLength; count++) {
+								var data = allData.aaData[count];
 
-										var actualLocations = $.map(
-												data.renderingLocations,
-												function(elt) {
-													return elt.enumName;
-												}); // from the server
+								var actualLocations = $.map(data.renderingLocations, namecollect); 
 
-										var result = {}, i = 0, max = renderingLocations.length;
+								var result = {}, i = 0, max = renderingLocations.length;
 
-										for (i = 0; i < max; i++) {
-											var possibleLocation = renderingLocations[i];
-											result[possibleLocation] = ($
-													.inArray(possibleLocation,
-															actualLocations) !== -1) ? "true"
-													: "false";
-										}
-
-										data.renderingLocations = result;
-									}
-
-									fnCallback(allData, textStatus, jqXHR); // now
-																			// we
-																			// can
-																			// invoke
-																			// the
-																			// original
-																			// callback
+								for (i = 0; i < max; i++) {
+									var possibleLocation = renderingLocations[i];
+									result[possibleLocation] = ($.inArray(possibleLocation,	actualLocations) !== -1) ? "true" : "false";
 								}
-							});
+
+								data.renderingLocations = result;
+							}
+							// now we can invoke the original callback
+							fnCallback(allData, textStatus, jqXHR); 
+						}
+					});
 				};
 
 				var fnDrawCallback = function(oSettings) {
@@ -111,39 +97,31 @@ define(
 						var locationName = checkbx.data('location-name'), checked = checkbx
 								.prop('checked');
 
-						var id = table.fnGetData(row)['id'];
+						var rowdata = table.fnGetData(row);
+						var id = rowdata.id;
 
 						$.ajax({
-							url : settings.editUrl + "/" + id
-									+ "/renderingLocations/" + locationName,
+							url : settings.editUrl + "/" + id	+ "/renderingLocations/" + locationName,
 							type : (checked) ? 'PUT' : 'DELETE'
 						});
 					};
 
-					cells
-							.each(function() {
+					cells.each(function() {
 
-								var cell = $(this);
-								var row = cell.parent('tr').get(0);
-								var colPosition = table.fnGetPosition(this)[2];
-								var locationName = settings.renderingLocations[colPosition - 3]; // see
-																									// the
-																									// definition
-																									// of
-																									// aoColumnDefs
-																									// regarding
-																									// the
-																									// offset
-																									// (-3)
+						var cell = $(this);
+						var row = cell.parent('tr').get(0);
+						var colPosition = table.fnGetPosition(this)[2];
+						// see the definition of aoColumnDefs regarding the offset (-3)
+						var locationName = settings.renderingLocations[colPosition - 3]; 
 
-								var checkbx = $('<input type="checkbox" />');
-								checkbx.data('location-name', locationName);
-										checkbx.prop('checked', (table
-												.fnGetData(this) == "true"));
-								checkbx.click(clickHandler);
+						var checkbx = $('<input type="checkbox" />');
+						checkbx.data('location-name', locationName);
+								checkbx.prop('checked', (table
+										.fnGetData(this) == "true"));
+						checkbx.click(clickHandler);
 
-								cell.empty().append(checkbx);
-							});
+						cell.empty().append(checkbx);
+					});
 
 				};
 
@@ -178,8 +156,7 @@ define(
 						'bSortable' : false,
 						'bVisible' : true,
 						'aTargets' : [ 3 + i ],
-						'mDataProp' : 'renderingLocations.'
-								+ renderingLocations[i],
+						'mDataProp' : 'renderingLocations.'	+ renderingLocations[i],
 						'sWidth' : '15em',
 						'sClass' : 'centered custom-field-location'
 					};
@@ -239,9 +216,7 @@ define(
 						dropHandler : function(moveObject) {
 							$.ajax(
 									{
-										url : settings.moveUrl + "/"
-												+ moveObject.itemIds.join(',')
-												+ "/position",
+										url : settings.moveUrl + "/"+ moveObject.itemIds.join(',')+ "/position",
 										type : 'POST',
 										data : {
 											'newPosition' : moveObject.newIndex

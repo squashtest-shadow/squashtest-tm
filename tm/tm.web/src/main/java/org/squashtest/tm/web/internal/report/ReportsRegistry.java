@@ -29,11 +29,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.map.MultiValueMap;
@@ -45,7 +43,6 @@ import org.squashtest.tm.api.report.BasicReport;
 import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.api.report.ReportPlugin;
 import org.squashtest.tm.api.report.StandardReportCategory;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 /**
  * This class registers / unregisters {@link BasicReport} and their {@link StandardReportCategory} when

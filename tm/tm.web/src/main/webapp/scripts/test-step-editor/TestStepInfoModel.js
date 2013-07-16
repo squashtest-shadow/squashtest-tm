@@ -35,7 +35,7 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone,
 		validateAll : function() {
 			var attrs = this.attributes, errors = null;
 
-			if (attrs.action != null && isBlank(attrs.action)) {
+			if (attrs.action !== null && isBlank(attrs.action)) {
 				errors = errors || {};
 				errors.action = "message.notBlank";
 			}

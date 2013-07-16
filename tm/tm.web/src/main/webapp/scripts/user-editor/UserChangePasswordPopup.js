@@ -18,144 +18,128 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(
-		[ "jquery", "backbone", "underscore", "app/util/StringUtil",
-				"jquery.squash", "jqueryui", "jquery.squash.togglepanel",
-				"jquery.squash.datatables", "jquery.squash.oneshotdialog",
-				"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ],
-		function($, Backbone, _, StringUtil) {
-			var UMod = squashtm.app.UMod;
-			var UserChangePasswordPopup = Backbone.View
-					.extend({
-						el : "#password-change-popup",
-						initialize : function() {
-							var self = this;
-							var params = {
-								selector : "#password-change-popup",
-								title : UMod.message.changePasswordPopupTitle,
-								openedBy : "#reset-password-button",
-								isContextual : true,
-								closeOnSuccess : false,
-								buttons : [ {
-									'text' : UMod.message.confirmLabel,
-									'click' : function() {
-										self.submitPassword.call(self);
-									}
-								} ],
-								width : 420
-							};
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squash", "jqueryui",
+		"jquery.squash.togglepanel", "jquery.squash.datatables", "jquery.squash.oneshotdialog",
+		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil) {
+	var UMod = squashtm.app.UMod;
+	var UserChangePasswordPopup = Backbone.View.extend({
+		el : "#password-change-popup",
+		initialize : function() {
+			var self = this;
+			var params = {
+				selector : "#password-change-popup",
+				title : UMod.message.changePasswordPopupTitle,
+				openedBy : "#reset-password-button",
+				isContextual : true,
+				closeOnSuccess : false,
+				buttons : [ {
+					'text' : UMod.message.confirmLabel,
+					'click' : function() {
+						self.submitPassword.call(self);
+					}
+				} ],
+				width : 420
+			};
 
-							squashtm.popup.create(params);
-							$("#password-change-popup").bind("dialogclose",
-									self.cleanUp);
+			squashtm.popup.create(params);
+			$("#password-change-popup").bind("dialogclose", self.cleanUp);
 
-						},
-						events : {},
+		},
+		events : {},
 
-						submitPassword : function() {
-							self = this;
-							if (!self.validatePassword.call(self)){
-								return;
-							}
-							
-							var oldPassword = $("#oldPassword").val();
-							var newPassword = $("#newPassword").val();
+		submitPassword : function() {
+			self = this;
+			if (!self.validatePassword.call(self)) {
+				return;
+			}
 
-							$.ajax({
-								url : UMod.user.url.admin,
-								type : "POST",
-								dataType : "json",
-								data : {
-									"oldPassword" : oldPassword,
-									"newPassword" : newPassword
-								},
-								success : function() {
-									self.userPasswordSuccess.call(self);
-								}
-							});
+			var oldPassword = $("#oldPassword").val();
+			var newPassword = $("#newPassword").val();
 
-						},
+			$.ajax({
+				url : UMod.user.url.admin,
+				type : "POST",
+				dataType : "json",
+				data : {
+					"oldPassword" : oldPassword,
+					"newPassword" : newPassword
+				},
+				success : function() {
+					self.userPasswordSuccess.call(self);
+				}
+			});
 
-						// <%-- we validate the passwords only. Note that
-						// validation also occurs server side. --%>
-						validatePassword : function() {
-							var self = this;
-							// first, clear error messages
-							$("#user-account-password-panel span.error-message")
-									.html('');
+		},
 
-							// has the user attempted to change his password ?
+		// <%-- we validate the passwords only. Note that
+		// validation also occurs server side. --%>
+		validatePassword : function() {
+			var self = this;
+			// first, clear error messages
+			$("#user-account-password-panel span.error-message").html('');
 
-							var oldPassOkay = true;
-							var newPassOkay = true;
-							var confirmPassOkay = true;
-							var samePassesOkay = true;
+			// has the user attempted to change his password ?
 
-							if (!self.isFilled("#oldPassword")) {
-								$("span.error-message.oldPassword-error").html(
-										UMod.message.oldPassError);
-								oldPassOkay = false;
-							}
+			var oldPassOkay = true;
+			var newPassOkay = true;
+			var confirmPassOkay = true;
+			var samePassesOkay = true;
 
-							if (!self.isFilled("#newPassword")) {
-								$("span.error-message.newPassword-error").html(
-										UMod.message.newPassError);
-								newPassOkay = false;
-							}
+			if (!self.isFilled("#oldPassword")) {
+				$("span.error-message.oldPassword-error").html(UMod.message.oldPassError);
+				oldPassOkay = false;
+			}
 
-							if (!self.isFilled("#user-account-confirmpass")) {
-								$(
-										"span.error-message.user-account-confirmpass-error")
-										.html(UMod.message.confirmPassError);
-								confirmPassOkay = false;
-							}
+			if (!self.isFilled("#newPassword")) {
+				$("span.error-message.newPassword-error").html(UMod.message.newPassError);
+				newPassOkay = false;
+			}
 
-							if ((newPassOkay)
-									&& (confirmPassOkay)) {
-								var pass = $("#newPassword").val();
-								var confirm = $("#user-account-confirmpass")
-										.val();
+			if (!self.isFilled("#user-account-confirmpass")) {
+				$("span.error-message.user-account-confirmpass-error").html(UMod.message.confirmPassError);
+				confirmPassOkay = false;
+			}
 
-								if (pass != confirm) {
-									$("span.error-message.newPassword-error")
-											.html(UMod.message.samePassError);
-									samePassesOkay = false;
-								}
-							}
+			if ((newPassOkay) && (confirmPassOkay)) {
+				var pass = $("#newPassword").val();
+				var confirm = $("#user-account-confirmpass").val();
 
-							return ((oldPassOkay) && (newPassOkay)
-									&& (confirmPassOkay) && (samePassesOkay));
+				if (pass != confirm) {
+					$("span.error-message.newPassword-error").html(UMod.message.samePassError);
+					samePassesOkay = false;
+				}
+			}
 
-						},
+			return ((oldPassOkay) && (newPassOkay) && (confirmPassOkay) && (samePassesOkay));
 
-						isFilled : function(selector) {
-							var value = $(selector).val();
-							if (!value.length) {
-								return false;
-							} else {
-								return true;
-							}
+		},
 
-						},
+		isFilled : function(selector) {
+			var value = $(selector).val();
+			if (!value.length) {
+				return false;
+			} else {
+				return true;
+			}
 
-						hasPasswdChanged : function() {
-							return ((this.isFilled("#oldPassword"))
-									|| (this.isFilled("#newPassword")) || (this
-									.isFilled("#user-account-confirmpass")));
-						},
+		},
 
-						userPasswordSuccess : function() {
-							$(this.el).dialog('close');
-							squashtm.notification
-									.showInfo(UMod.message.passSuccess);
-						},
+		hasPasswdChanged : function() {
+			return ((this.isFilled("#oldPassword")) || (this.isFilled("#newPassword")) || (this
+					.isFilled("#user-account-confirmpass")));
+		},
 
-						cleanUp : function() {
-							$("#oldPassword").val('');
-							$("#newPassword").val('');
-							$("#user-account-confirmpass").val('');
+		userPasswordSuccess : function() {
+			$(this.el).dialog('close');
+			squashtm.notification.showInfo(UMod.message.passSuccess);
+		},
 
-						}
-					});
-			return UserChangePasswordPopup;
-		});
+		cleanUp : function() {
+			$("#oldPassword").val('');
+			$("#newPassword").val('');
+			$("#user-account-confirmpass").val('');
+
+		}
+	});
+	return UserChangePasswordPopup;
+});

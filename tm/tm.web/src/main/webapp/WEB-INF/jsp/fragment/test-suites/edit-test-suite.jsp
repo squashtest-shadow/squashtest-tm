@@ -153,14 +153,14 @@
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
+			require(["jquery", "contextual-content-handlers", "workspace.contextual-content"], function($, contentHandlers, contextualContent){
 	
 				var nameHandler = contentHandlers.getSimpleNameHandler();
 				
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#test-suite-name";
 				
-				squashtm.contextualContent.addListener(nameHandler);
+				contextualContent.addListener(nameHandler);
 
 				
 			});
@@ -170,7 +170,7 @@
 	
 	function renameTestSuiteSuccess(data){
 		var evt = new EventRename(identity, data.newName);
-		squashtm.contextualContent.fire(null, evt);		
+		squashtm.workspace.contextualContent.fire(null, evt);		
 		refreshTestSuiteInfos();
 	}
 	
@@ -203,7 +203,7 @@
 				var duplicate = new SquashEventObject( idOfDuplicate, "test-suites");
 				var source = new SquashEventObject(${testSuite.id}, "test-suites");
 				var evt = new EventDuplicate(destination, duplicate, source);
-				squashtm.contextualContent.fire(null, evt);
+				squashtm.workspace.contextualContent.fire(null, evt);
 			</c:otherwise>
 		</c:choose>
 		

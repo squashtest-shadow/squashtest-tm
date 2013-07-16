@@ -47,8 +47,7 @@ define(
 				} else if (typeof idOrURLOrPostfunction === undefined) {
 					postFunction = function(value) {
 						var id = $(this).data('value-id');
-						var url = squashtm.app.contextRoot
-								+ "/custom-fields/values/" + id;
+						var url = squashtm.app.contextRoot	+ "/custom-fields/values/" + id;
 						return $.ajax({
 							url : url,
 							data : {
@@ -60,9 +59,7 @@ define(
 				} else {
 					// assumed to be an integer
 					postFunction = function(value) {
-						var url = squashtm.app.contextRoot
-								+ "/custom-fields/values/"
-								+ idOrURLOrPostfunction;
+						var url = squashtm.app.contextRoot	+ "/custom-fields/values/"	+ idOrURLOrPostfunction;
 						return $.ajax({
 							url : url,
 							data : {

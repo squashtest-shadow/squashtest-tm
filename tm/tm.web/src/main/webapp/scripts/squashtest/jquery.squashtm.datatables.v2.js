@@ -37,101 +37,82 @@
  * 
  * keys used for data lookup -------------------------
  * 
- * That table uses mPropData for its columns. More explicitly, it uses json data
- * as a map. Specifically, the defaults keys used here are : - 'entity-id' : the
- * entity id - 'entity-index' : the position of the entity when the list is
+ * That table uses mPropData for its columns. More explicitly, it uses json data as a map. Specifically, the defaults
+ * keys used here are : - 'entity-id' : the entity id - 'entity-index' : the position of the entity when the list is
  * sorted
  * 
- * Those keys may be redefined through configuration, using a field object
- * 'dataKeys' : { ... dataKeys : { entityId : default is 'entity-id' ,
- * entityIndex : default is 'entity-index' } }
+ * Those keys may be redefined through configuration, using a field object 'dataKeys' : { ... dataKeys : { entityId :
+ * default is 'entity-id' , entityIndex : default is 'entity-index' } }
  * 
- * In some cases more keys might be required for the modules described below,
- * refer to the documentation if need be.
+ * In some cases more keys might be required for the modules described below, refer to the documentation if need be.
  * 
  * 
  * Place-holders : --------------
  * 
- * When configuring a module sometimes you will see that a given string supports
- * place-holders. It means that anything between curly braces '{something}' are
- * place-holders that will be replaced by the corresponding value from
+ * When configuring a module sometimes you will see that a given string supports place-holders. It means that anything
+ * between curly braces '{something}' are place-holders that will be replaced by the corresponding value from
  * aoData["something"]. That's where the data keys above are useful.
  * 
  * 
  * filtering : -----------------
  * 
- * activation : just give css class 'datatable-filterable' to the relevant th
- * elements. Whenever a datatable is redrawn, a hook will check if any filtering
- * had been applied and enable/disable the class 'datatable-filtered' when
+ * activation : just give css class 'datatable-filterable' to the relevant th elements. Whenever a datatable is redrawn,
+ * a hook will check if any filtering had been applied and enable/disable the class 'datatable-filtered' when
  * appropriate.
  * 
  * 
  * static functions : ----------
  * 
- * $.fn.squashTable.configuration{ fromDOM(table) : table is either a selector
- * or a jquery object pointing to the datatable. returns [ datatableSettings,
- * squashSettings ] on the basis of what could be found on various 'data-*'
- * attributes of the nodes. Best is to read the code and see what's available in
- * there. }
+ * $.fn.squashTable.configuration{ fromDOM(table) : table is either a selector or a jquery object pointing to the
+ * datatable. returns [ datatableSettings, squashSettings ] on the basis of what could be found on various 'data-*'
+ * attributes of the nodes. Best is to read the code and see what's available in there. }
  * 
  * 
- * $.fn.squashTable.decorator{ rewriteSentData(datatableSettings) : will
- * decorate the datatableSettigns.fnServerData with a preprocessor that will
- * turn the mDataProp_x to something that makes sense to Spring databinder - eg,
- * will write mDataProp[x] instead. If the settings specified any
- * fnServerParams, the decorator will append its code in last position (and will
- * not overwrite it). }
+ * $.fn.squashTable.decorator{ rewriteSentData(datatableSettings) : will decorate the datatableSettigns.fnServerData
+ * with a preprocessor that will turn the mDataProp_x to something that makes sense to Spring databinder - eg, will
+ * write mDataProp[x] instead. If the settings specified any fnServerParams, the decorator will append its code in last
+ * position (and will not overwrite it). }
  * 
  * =========== Regular Datatable settings=======================================
  * 
- * the inherited part of the datatable is configured using the first parameter :
- * 'datatableSettings'. Any regular datatable configuration is supported.
+ * the inherited part of the datatable is configured using the first parameter : 'datatableSettings'. Any regular
+ * datatable configuration is supported.
  * 
- * It uses defaults values yet the following parameters are still REQUIRED : -
- * "oLanguage" (internationalization), - "sAjaxSource" (ajax loading), -
- * "aoColumnDefs" (the columns)
+ * It uses defaults values yet the following parameters are still REQUIRED : - "oLanguage" (internationalization), -
+ * "sAjaxSource" (ajax loading), - "aoColumnDefs" (the columns)
  * 
  * 
  * ============= object datasource and DOM data ================================
  * 
- * Structured object datasource is great except when you need to read those data
- * from the DOM. Normally the initial data should be provided by other means (eg
- * ajax call or supplied to the configuration), because DOM-based simply doesn't
- * fit. For instance, if you configure your column to use "mDataProp :
- * 'cake.cherry'", datatable.js will crash because it cannot find it in the DOM
- * (because it assumes that all you want is a scalar, not an object).
+ * Structured object datasource is great except when you need to read those data from the DOM. Normally the initial data
+ * should be provided by other means (eg ajax call or supplied to the configuration), because DOM-based simply doesn't
+ * fit. For instance, if you configure your column to use "mDataProp : 'cake.cherry'", datatable.js will crash because
+ * it cannot find it in the DOM (because it assumes that all you want is a scalar, not an object).
  * 
- * If you still decide to use an object datasource yet initialize it by reading
- * the DOM, this datatable will help you to work around this by creating the
- * missing parts of the data object on the fly. Note that it still can produce
- * buggy datatables if later on the datatable uses data that couldn't be found
- * that way.
+ * If you still decide to use an object datasource yet initialize it by reading the DOM, this datatable will help you to
+ * work around this by creating the missing parts of the data object on the fly. Note that it still can produce buggy
+ * datatables if later on the datatable uses data that couldn't be found that way.
  * 
- * To enable this feature, please add to your configuration 'fixObjectDOMInit :
- * true'
+ * To enable this feature, please add to your configuration 'fixObjectDOMInit : true'
  * 
  * ============= Squash additional settings=====================================
  * 
  * 
- * The squash specifics are configured using the second parameter :
- * 'squashSettings', for additional configuration. The next items describe the
- * additional configuration available, that are passed as member of the
- * 'squashSettings' object. end of this file)
+ * The squash specifics are configured using the second parameter : 'squashSettings', for additional configuration. The
+ * next items describe the additional configuration available, that are passed as member of the 'squashSettings' object.
+ * end of this file)
  * 
  * ============= Squash table functions override================================
  * 
- * Member name : 'functions' What : any function defined as public member of the
- * table can be redefined as a member of .functions (read the source to pimpoint
- * them at the end of this file) param : an object { itemIds : array of row ids,
+ * Member name : 'functions' What : any function defined as public member of the table can be redefined as a member of
+ * .functions (read the source to pimpoint them at the end of this file) param : an object { itemIds : array of row ids,
  * newIndex : the drop position } default : nothing
  * 
- * examples : dropHandler : what : a function that must handle the row drop.
- * param : an object { itemIds : array of row ids, newIndex : the drop position }
- * default : nothing
+ * examples : dropHandler : what : a function that must handle the row drop. param : an object { itemIds : array of row
+ * ids, newIndex : the drop position } default : nothing
  * 
- * getODataId : what : a function fetching the id from the data param : what
- * $().dataTable().fnGetData() would normally accept default : return
- * fnGetData()["entity-id"] ============= Drag and drop :
+ * getODataId : what : a function fetching the id from the data param : what $().dataTable().fnGetData() would normally
+ * accept default : return fnGetData()["entity-id"] ============= Drag and drop :
  * =============================================
  * 
  * 
@@ -145,150 +126,117 @@
  * 
  * ============== Object data model read from the DOM =========================
  * 
- * Member name : 'fixObjectDOMInit' : true|false, refer to the documentation
- * above ('object datasource and DOM data'), default is false
+ * Member name : 'fixObjectDOMInit' : true|false, refer to the documentation above ('object datasource and DOM data'),
+ * default is false
  * 
  * 
  * ============== Generic multipurpose popup configuration ====================
  * 
  * Member name : 'confirmPopup'
  * 
- * If set, will configure any confirmation dialog used in that table. it's an
- * object whose members are : oklabel : label for okay buttons cancellabel :
- * label for cancel buttons
+ * If set, will configure any confirmation dialog used in that table. it's an object whose members are : oklabel : label
+ * for okay buttons cancellabel : label for cancel buttons
  * 
  * ============== Attachments ==================================================
  * 
  * Member name : 'attachments'
  * 
- * If the table finds tds having a given cssClass (see cssMatcher) if will turn
- * them into link to the attachment manager. 'attachments' is an object. It must
- * define at least url. It may also override the others of course.
+ * If the table finds tds having a given cssClass (see cssMatcher) if will turn them into link to the attachment
+ * manager. 'attachments' is an object. It must define at least url. It may also override the others of course.
  * 
- * url : url where the attachment manager is. Accepts placeholders. Note : that
- * one accepts no defaults ! cssMatcher : the css class of cells that must be
- * treated. defaults to 'has-attachment-cells' aoDataNbAttach : the name of the
- * column in aoData where to look for how many attachment the row has. defaults
- * to "nb-attachments" aoDataListId : the name of the column in aoData where to
- * look for the attachment list id, defaults to "attach-list-id"
+ * url : url where the attachment manager is. Accepts placeholders. Note : that one accepts no defaults ! cssMatcher :
+ * the css class of cells that must be treated. defaults to 'has-attachment-cells' aoDataNbAttach : the name of the
+ * column in aoData where to look for how many attachment the row has. defaults to "nb-attachments" aoDataListId : the
+ * name of the column in aoData where to look for the attachment list id, defaults to "attach-list-id"
  * 
  * ============== Rich editables configuration ================================= *
  * 
  * Member name : 'richEditables'
  * 
- * If set, will attempt to turn some cells to rich editables. If undefined,
- * nothing will happen. the property 'richEditables' is an compound object and
- * must define at least 1 member for 'target'. conf : a regular object
- * configuring the plugin $.ui.richEditable (see
- * jquery.squashtm.jeditable.ext.js). targets : a map of key-values. A key
- * represents a css class and the value represents an url supporting
- * placeholders. Any td having the given css class will be turned to a rich
- * jeditable configured with 'conf' and posting to the supplied url.
+ * If set, will attempt to turn some cells to rich editables. If undefined, nothing will happen. the property
+ * 'richEditables' is an compound object and must define at least 1 member for 'target'. conf : a regular object
+ * configuring the plugin $.ui.richEditable (see jquery.squashtm.jeditable.ext.js). targets : a map of key-values. A key
+ * represents a css class and the value represents an url supporting placeholders. Any td having the given css class
+ * will be turned to a rich jeditable configured with 'conf' and posting to the supplied url.
  * 
  * ============== Execution status icons ======================================
  * 
  * 
  * Member name : 'executionStatus'
  * 
- * If set, will attempt to decorate some cells with execution statuses. If
- * undefined, nothing will happen. The matched cells are identified by css class
- * 'has-status'.
+ * If set, will attempt to decorate some cells with execution statuses. If undefined, nothing will happen. The matched
+ * cells are identified by css class 'has-status'.
  * 
- * 'executionStatus' is an object defining the localized status text : blocked :
- * internationalized version of status 'blocked' failure : internationalized
- * version of status 'failure' success : internationalized version of status
- * 'success' running : internationalized version of status 'running' ready :
- * internationalized version of status 'ready'
+ * 'executionStatus' is an object defining the localized status text : blocked : internationalized version of status
+ * 'blocked' failure : internationalized version of status 'failure' success : internationalized version of status
+ * 'success' running : internationalized version of status 'running' ready : internationalized version of status 'ready'
  * 
- * ============== Delete row button ======================================== 
- * internationalized version of
- * status 'blocked' failure : internationalized version of status 'failure'
- * success : internationalized version of status 'success' running :
- * internationalized version of status 'running' ready : internationalized
- * version of status 'ready'
+ *  internationalized version of status 'blocked' failure : internationalized version of status 'failure' success : internationalized version of status
+ * 'success' running : internationalized version of status 'running' ready : internationalized version of status 'ready'
  * 
+ * ============== Delete row button ========================================
  * Member name : 'deleteButtons'
  * 
- * If set then will look for cells having the css class 'delete-button'.
- * Configuration as follow : Configuration as follow : url : the url where to
- * post the 'delete' instruction. Supports placeholders. popupmessage : the
- * message that will be displayed tooltip : the tooltip displayed by the button
- * success : a callback on the ajax call when successful fail : a callback on
- * the ajax call when failed. dataType : the dataType parameter for the post.
- * (default = "text")
+ * If set then will look for cells having the css class 'delete-button'. Configuration as follow : Configuration as
+ * follow : url : the url where to post the 'delete' instruction. Supports placeholders. popupmessage : the message that
+ * will be displayed tooltip : the tooltip displayed by the button success : a callback on the ajax call when successful
+ * fail : a callback on the ajax call when failed. dataType : the dataType parameter for the post. (default = "text")
  * 
- * NEW : delegate : jquery selector of another popup, that will be used instead
- * of the generated one.
+ * NEW : delegate : jquery selector of another popup, that will be used instead of the generated one.
  * 
  * ============== Add hyperlink to a cell =====================================
  * 
  * Member name : 'bindLinks'
  * 
- * If set then will look for cells according to the parameters given and make
- * their text a link to the wanted url. for cells according to the parameters
- * given and make their text a link to the wanted url. Configuration as follow:
- * list : a list of object to represent each td of a row to make as url Object
- * params as follow : -url : the url to wrap the text with (place holder will be
- * set to row object id) -target : the td rank in the row (starts with 1)
- * -targetClass : alternate to the above, uses css class to find its target
- * -isOpenInTab : boolean to set the target of the url to "_blank" or not.
+ * If set then will look for cells according to the parameters given and make their text a link to the wanted url. for
+ * cells according to the parameters given and make their text a link to the wanted url. Configuration as follow: list :
+ * a list of object to represent each td of a row to make as url Object params as follow : -url : the url to wrap the
+ * text with (place holder will be set to row object id) -target : the td rank in the row (starts with 1) -targetClass :
+ * alternate to the above, uses css class to find its target -isOpenInTab : boolean to set the target of the url to
+ * "_blank" or not.
  * 
  * ============== Add Buttons to a cell =======================================
  * 
- * -buttons : if the property 'buttons' is set, then buttons will be added for
- * each case described in the buttons table. example : 
- *  
- * buttons = [ 
+ * -buttons : if the property 'buttons' is set, then buttons will be added for each case described in the buttons table.
+ * example :
  * 
- * { tooltip : "tooltip",
+ * buttons = [
+ *  { tooltip : "tooltip",
  * 
- * cssClass : "classa", 
+ * cssClass : "classa",
  * 
- * condition : function(row, data){return data["isThat"];}; 
+ * condition : function(row, data){return data["isThat"];};
  * 
- * disabled : true or function(row, data){return data["isThat"];}; 
- *
- * tdSelector : "td.run-step-button", 
+ * disabled : true or function(row, data){return data["isThat"];};
  * 
- * image : "/squash/images/execute.png", 
- *          or function(row, data){return "/squash/images/execute.png";},
- *          
- * onClick : function(table, cell){doThatWithTableAndCell(table, cell);} 
- * }, 
+ * tdSelector : "td.run-step-button",
  * 
- * { tooltip : "tooltip", 
- * cssClass : "classa", 
- * tdSelector : "td.run-step-button", 
- * onClick : function(table, cell){
- * doThatWithTableAndCell(table, cell);} 
- * }];
+ * image : "/squash/images/execute.png", or function(row, data){return "/squash/images/execute.png";},
+ * 
+ * onClick : function(table, cell){doThatWithTableAndCell(table, cell);} },
+ *  { tooltip : "tooltip", cssClass : "classa", tdSelector : "td.run-step-button", onClick : function(table, cell){
+ * doThatWithTableAndCell(table, cell);} }];
  * 
  * 
  * the buttons items properties are :
  * 
- * .tooltip : the button's tooltip 
+ * .tooltip : the button's tooltip
  * 
  * .cssClass : some css class added to the input button
  * 
- * .condition : a function returning a boolean that says if the button is
- *               added to the row. if this property is not set the button will 
- *               be added everywhere 
- *               
- * .disabled : a boolean or a function that return the boolean saying if the 
- *             button needs to be disabled or not.
+ * .condition : a function returning a boolean that says if the button is added to the row. if this property is not set
+ * the button will be added everywhere
  * 
- * .tdSelector : the css selector to use to retrieve the cells where
- *               to put the button 
- *               
- * .image : if the button is to be an input of type"image" set
- *          this property to the wanted image's src can be also a function 
- *          that returns the src image. 
- *          
- * .uiIcon : if the button is to be a jqueryUi icon, set this
- *           property to the wanted icon name 
- *           
- * .onClick : a function that will be called with the parameters table 
- *            and clicked td
+ * .disabled : a boolean or a function that return the boolean saying if the button needs to be disabled or not.
+ * 
+ * .tdSelector : the css selector to use to retrieve the cells where to put the button
+ * 
+ * .image : if the button is to be an input of type"image" set this property to the wanted image's src can be also a
+ * function that returns the src image.
+ * 
+ * .uiIcon : if the button is to be a jqueryUi icon, set this property to the wanted icon name
+ * 
+ * .onClick : a function that will be called with the parameters table and clicked td
  * 
  * 
  */
@@ -297,36 +245,32 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 (function($) {
 
-	/***************************************************************************
+	/*******************************************************************************************************************
 	 * 
-	 * The following functions assume that the instance of the datatable is
-	 * 'this'.
+	 * The following functions assume that the instance of the datatable is 'this'.
 	 * 
 	 * Note the '_' prefixing each of them.
 	 * 
-	 * Typically when the squash datatable initialize it will also declare
-	 * public methods that will access them. Those methods then have the same
-	 * name, without the '_' prefix.
+	 * Typically when the squash datatable initialize it will also declare public methods that will access them. Those
+	 * methods then have the same name, without the '_' prefix.
 	 * 
-	 * In some of the functions here such methods belonging to 'this' are
-	 * invoked. It's not a typo : it's the expected behaviour.
+	 * In some of the functions here such methods belonging to 'this' are invoked. It's not a typo : it's the expected
+	 * behaviour.
 	 * 
 	 * 
-	 **************************************************************************/
+	 ******************************************************************************************************************/
 
 	/*
-	 * what : a function that must handle the row drop. param : an obect {
-	 * itemIds : array of row ids, newIndex : the drop position } default :
-	 * nothing
+	 * what : a function that must handle the row drop. param : an obect { itemIds : array of row ids, newIndex : the
+	 * drop position } default : nothing
 	 */
 	function _dropHandler(dropData) {
 
 	}
 
 	/*
-	 * what : a function fetching the id from the data param : what
-	 * $().dataTable().fnGetData() would normally accept default : return
-	 * aoData[0]; : the datatable expects the id to be first.
+	 * what : a function fetching the id from the data param : what $().dataTable().fnGetData() would normally accept
+	 * default : return aoData[0]; : the datatable expects the id to be first.
 	 */
 	function _getODataId(arg) {
 		var key = this.squashSettings.dataKeys.entityId;
@@ -341,10 +285,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	/**
 	 * Enables DnD on the given table.
 	 * 
-	 * Note : we calculate the 'offset' because the first displayed element is
-	 * not necessarily the first item of the table. For instance, if we are
-	 * displaying page 3 and drop our rows at the top of the table view, the
-	 * drop index is not 0 but (3*pagesize);
+	 * Note : we calculate the 'offset' because the first displayed element is not necessarily the first item of the
+	 * table. For instance, if we are displaying page 3 and drop our rows at the top of the table view, the drop index
+	 * is not 0 but (3*pagesize);
 	 * 
 	 * @this : the datatable instance
 	 * @param dropCallback
@@ -352,7 +295,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	 * @returns
 	 */
 	function _enableTableDragAndDrop() {
-		if (!this.squashSettings.enableDnD){
+		if (!this.squashSettings.enableDnD) {
 			return;
 		}
 		var self = this;
@@ -449,8 +392,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	}
 
 	/*
-	 * that method programatically remove the highlight due to native range
-	 * selection.
+	 * that method programatically remove the highlight due to native range selection.
 	 */
 	function clearRangeSelection() {
 		if (window.getSelection) {
@@ -483,8 +425,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		$(row).removeClass('ui-state-highlight');
 	}
 	/**
-	 * Computes the 0-based range of row that should be selected. Note :
-	 * row.rowIndex is a 1-based index.
+	 * Computes the 0-based range of row that should be selected. Note : row.rowIndex is a 1-based index.
 	 * 
 	 * @param row
 	 * @param table
@@ -551,7 +492,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		}
 
 		rows.removeClass('ui-state-row-selected');
-		
+
 	}
 
 	/**
@@ -559,7 +500,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	 */
 	function _getSelectedIds() {
 		var table = this;
-		return table.getSelectedRows().map(function(){ return table.getODataId(this); }).get();
+		return table.getSelectedRows().map(function() {
+			return table.getODataId(this);
+		}).get();
 	}
 
 	/**
@@ -581,14 +524,13 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 	function _getSelectedRows() {
 		var table = this;
-		//note : we filter on the rows that are actually backed by a model
-		return table.find('tbody tr.ui-state-row-selected').filter(function(){
+		// note : we filter on the rows that are actually backed by a model
+		return table.find('tbody tr.ui-state-row-selected').filter(function() {
 			var found = true;
-			try{
-				found = (!! table.fnGetData(this) );
-			}
-			catch(ex){
-				found=false;
+			try {
+				found = (!!table.fnGetData(this));
+			} catch (ex) {
+				found = false;
 			}
 			return found;
 		});
@@ -665,19 +607,21 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 	/*
 	 * again 'this' is the table instance.
+	 * 
+	 * TODO : user squash.configmanager next time
 	 */
 	function _configureRichEditables() {
 
 		var editableConf = this.squashSettings.richEditables;
 		var self = this;
 
-		if (!editableConf){
+		if (!editableConf) {
 			return;
 		}
 		var baseconf = editableConf.conf;
 		var targets = editableConf.targets;
 
-		if (!targets){
+		if (!targets) {
 			return;
 		}
 		for ( var css in targets) {
@@ -699,7 +643,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 		var statusConf = this.squashSettings.executionStatus;
 
-		if (!statusConf){
+		if (!statusConf) {
 			return;
 		}
 		var factory = new squashtm.StatusFactory(statusConf);
@@ -716,7 +660,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	function _bindButtons() {
 		var buttons = this.squashSettings.buttons;
 		var self = this;
-		if (!buttons){
+		if (!buttons) {
 			return;
 		}
 		$(buttons).each(function(i, button) {
@@ -729,7 +673,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	function _configureButtons() {
 		var self = this;
 		var buttons = this.squashSettings.buttons;
-		if (!buttons){
+		if (!buttons) {
 			return;
 		}
 		$(buttons)
@@ -745,37 +689,42 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 										'" />';
 							}
 							var cells = $(button.tdSelector, self);
-							$(cells).each(
-									function(i, cell) {
-										var row = $(cell).parent("tr")[0];
-										var data = self.fnGetData(row);
-										var disabled = '';
-										if(button.disabled && ((typeof button.disabled == "function" && button.disabled(row, data)) || button.disabled === true)){
-											disabled = 'disabled="disabled"';
-										}
-										if (button.condition && button.condition(row, data) || !button.condition) {
-											if (button.image && typeof button.image == "function") {
-												template = '<input class="tableButton" title="' + button.tooltip +
-														'" type="image" src="' + button.image(row, data) + '" '+disabled+' >';
-											}
-											$(cell).html(template);
-											if (button.uiIcon) {
-												$(cell).find('.tableButton').button({
-													text : false,
-													icons : {
-														primary : button.uiIcon
+							$(cells)
+									.each(
+											function(i, cell) {
+												var row = $(cell).parent("tr")[0];
+												var data = self.fnGetData(row);
+												var disabled = '';
+												if (button.disabled &&
+														((typeof button.disabled == "function" && button.disabled(row,
+																data)) || button.disabled === true)) {
+													disabled = 'disabled="disabled"';
+												}
+												if (button.condition && button.condition(row, data) ||
+														!button.condition) {
+													if (button.image && typeof button.image == "function") {
+														template = '<input class="tableButton" title="' +
+																button.tooltip + '" type="image" src="' +
+																button.image(row, data) + '" ' + disabled + ' >';
 													}
-												});
-											}
-										}
-									});
+													$(cell).html(template);
+													if (button.uiIcon) {
+														$(cell).find('.tableButton').button({
+															text : false,
+															icons : {
+																primary : button.uiIcon
+															}
+														});
+													}
+												}
+											});
 						});
 
 	}
 
 	function _configureDeleteButtons() {
 		var deleteConf = this.squashSettings.deleteButtons;
-		if (!deleteConf){
+		if (!deleteConf) {
 			return;
 		}
 		var template = '<a href="javascript:void(0)">' + deleteConf.tooltip + '</a>';
@@ -795,7 +744,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		var conf = this.squashSettings.deleteButtons;
 		var popconf = this.squashSettings.confirmPopup;
 
-		if (!conf){
+		if (!conf) {
 			return;
 		}
 		var self = this;
@@ -811,7 +760,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 					$(conf.delegate).dialog('open');
 				} catch (thisIsNoDialog) {
 					$(conf.delegate).confirmDialog('open'); // a shot in the
-															// dark
+					// dark
 				}
 			} else {
 				oneShotConfirm(conf.tooltip || "", conf.popupmessage || "", popconf.oklabel, popconf.cancellabel).done(
@@ -825,10 +774,10 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 								dataType : self.squashSettings.deleteButtons.dataType || "text"
 							});
 
-							if (conf.success){
+							if (conf.success) {
 								request.done(conf.success);
 							}
-							if (conf.fail){
+							if (conf.fail) {
 								request.fail(conf.fail);
 							}
 						}).fail(function() {
@@ -839,9 +788,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	}
 
 	/**
-	 * Wrap cell text with link tags according to the given settings :
-	 * squashSettings.bindLinks More info on top of the page on "Squash
-	 * additional settings" doc.
+	 * Wrap cell text with link tags according to the given settings : squashSettings.bindLinks More info on top of the
+	 * page on "Squash additional settings" doc.
 	 * 
 	 */
 	function _configureLinks() {
@@ -884,10 +832,9 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	}
 
 	/**
-	 * Unlike the above, that function will not be a member of the squash
-	 * datatable. This is a factory function that returns a method handling the
-	 * corner case of initializing an object based datasource from the DOM
-	 * (refer to the documentation above).
+	 * Unlike the above, that function will not be a member of the squash datatable. This is a factory function that
+	 * returns a method handling the corner case of initializing an object based datasource from the DOM (refer to the
+	 * documentation above).
 	 * 
 	 * See also the function just below ( _fix_mDataProp )
 	 * 
@@ -940,9 +887,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	}
 
 	/**
-	 * this function will process the column defs, looking for mDataProp
-	 * settings using a dotted object notation, to fix them when reading the DOM
-	 * (read documentation above).
+	 * this function will process the column defs, looking for mDataProp settings using a dotted object notation, to fix
+	 * them when reading the DOM (read documentation above).
 	 * 
 	 */
 	function _fix_mDataProp(datatableSettings) {
@@ -979,8 +925,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	// *****************************
 
 	// ******** configurator
-	
-	//TODO use StringUtils.parseSequence (copied there because used in DatasetsTable) mpagnon
+
+	// TODO use StringUtils.parseSequence (copied there because used in DatasetsTable) mpagnon
 	function _parseAssignation(atom) {
 		var members = atom.split(/\s*=\s*/);
 		return {
@@ -1003,6 +949,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		return result;
 	}
 
+	// TODO ; use squash.attributeparser instead
 	function _loopConfiguration(defs, handlers, conf) {
 
 		var hKey, dcount = 0, dlength = defs.length;
@@ -1090,15 +1037,14 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		}
 	}
 
-	/***************************************************************************
+	/*******************************************************************************************************************
 	 * 
 	 * now we can declare our plugin
 	 * 
-	 **************************************************************************/
+	 ******************************************************************************************************************/
 
 	var datatableDefaults = $.extend(true, {}, squashtm.datatable.defaults);
 
-	
 	var squashDefaults = {
 		dataKeys : {
 			entityId : 'entity-id',
@@ -1114,20 +1060,18 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			cancellabel : "cancel"
 		}
 	};
-	
-	//let's figure out if i18n messages are available
-	try{
+
+	// let's figure out if i18n messages are available
+	try {
 		squashDefaults.confirmPopup.oklabel = squashtm.message.confirm;
 		squashDefaults.confirmPopup.cancellabel = squashtm.message.cancel;
-	}
-	catch(wasUndefined){
-		//well, no big deal
+	} catch (wasUndefined) {
+		// well, no big deal
 	}
 
 	/*
-	 * temporary hack here : due to multiple inclusions of that file, the
-	 * variable $.fn.squashTable.instances might be redefined. Thus previously
-	 * existing instances of a datatable would be lost (and we don't want that).
+	 * temporary hack here : due to multiple inclusions of that file, the variable $.fn.squashTable.instances might be
+	 * redefined. Thus previously existing instances of a datatable would be lost (and we don't want that).
 	 * 
 	 * So we're saving it in case it already exists, and rebind it below.
 	 */
@@ -1139,8 +1083,8 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	$.fn.squashTable = function(datatableSettings, squashSettings) {
 
 		/*
-		 * are we in retrieve mode or init mode ? the answer is simple : no
-		 * param means retrieve mode. Note that the key is the dome element.
+		 * are we in retrieve mode or init mode ? the answer is simple : no param means retrieve mode. Note that the key
+		 * is the dome element.
 		 */
 
 		if (arguments.length === 0) {
@@ -1152,7 +1096,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		 */
 
 		var self = this;
-		
+
 		// first we parse the dom, looking for informations in the dom
 		var domConf = $.fn.squashTable.configurator.fromDOM(this);
 
@@ -1207,27 +1151,26 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		}
 
 		/*
-		 * ************* prepare a custom rowcallback and drawcallback if needed *
-		 * ********
+		 * ************* prepare a custom rowcallback and drawcallback if needed * ********
 		 */
 
 		// pre draw callback
-		var userPreDrawCallback = datatableEffective["fnPreDrawCallback"];
+		var userPreDrawCallback = datatableEffective.fnPreDrawCallback;
 
 		var customPreDrawCallback = function(oSettings) {
-			if (userPreDrawCallback){
+			if (userPreDrawCallback) {
 				userPreDrawCallback.call(this, oSettings);
 			}
 			_saveTableSelection.call(this);
 		};
 
-		datatableEffective["fnPreDrawCallback"] = customPreDrawCallback;
+		datatableEffective.fnPreDrawCallback = customPreDrawCallback;
 
 		// draw callback
-		var userDrawCallback = datatableEffective["fnDrawCallback"];
+		var userDrawCallback = datatableEffective.fnDrawCallback;
 
 		var customDrawCallback = function(oSettings) {
-			if (userDrawCallback){
+			if (userDrawCallback) {
 				userDrawCallback.call(this, oSettings);
 			}
 			this.attachButtonsCallback();
@@ -1242,20 +1185,20 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 		};
 
-		datatableEffective["fnDrawCallback"] = customDrawCallback;
+		datatableEffective.fnDrawCallback = customDrawCallback;
 
 		// init complete callback
-		var userInitCompleteCallback = datatableEffective["fnInitCompleteCallback"];
+		var userInitCompleteCallback = datatableEffective.fnInitCompleteCallback;
 
 		var customInitCompleteCallback = function(oSettings) {
-			if (userInitCompleteCallback){
+			if (userInitCompleteCallback) {
 				userInitCompleteCallback.call(this, oSettings);
 			}
 			// sets the table visible if it was hidden
 			self.removeClass("unstyled-table");
 		};
 
-		datatableEffective["fnInitComplete"] = customInitCompleteCallback;
+		datatableEffective.fnInitComplete = customInitCompleteCallback;
 
 		/* ********************* rewrite the data ***************** */
 
@@ -1280,11 +1223,11 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		if (squashEffective.deleteButtons) {
 			_bindDeleteButtons.call(this);
 		}
-		
+
 		if (squashEffective.buttons) {
 			_bindButtons.call(this);
 		}
-		
+
 		this.addClass("is-contextual");
 
 		return this;
@@ -1333,11 +1276,12 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 					conf.table.iDisplayLength = assignation.value;
 				},
 				'pre-sort' : function(conf, assignation) {
-					//value must be an expression as follow : <columnindex>[-<asc|desc>]. If unspecified or invalid, the default sorting order will be 'asc'.
+					// value must be an expression as follow : <columnindex>[-<asc|desc>]. If unspecified or invalid,
+					// the default sorting order will be 'asc'.
 					var sorting = /(\d+)(-(asc|desc))?/.exec(assignation.value);
 					var colIndex = sorting[1];
-					var order = (sorting[3]!==undefined) ? sorting[3] : 'asc';
-					conf.table.aaSorting = [[colIndex, order]];
+					var order = (sorting[3] !== undefined) ? sorting[3] : 'asc';
+					conf.table.aaSorting = [ [ colIndex, order ] ];
 				}
 			},
 			columns : {
@@ -1353,7 +1297,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 				'double-narrow' : function(conf, assignation) {
 					conf.current.sWidth = '4em';
 				},
-				'sWidth' : function(conf, assignation){
+				'sWidth' : function(conf, assignation) {
 					conf.current.sWidth = assignation.value;
 				},
 				'filter' : function(conf, assignation) {
@@ -1405,7 +1349,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		rewriteSentData : function(datatableSettings) {
 			var oldfnServerParams = datatableSettings.fnServerParams;
 			datatableSettings.fnServerParams = function(aoData) {
-				if (oldfnServerParams !== undefined){
+				if (oldfnServerParams !== undefined) {
 					oldfnServerParams.call(this, aoData);
 				}
 				_fnRewriteData(aoData);

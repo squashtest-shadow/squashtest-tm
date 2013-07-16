@@ -36,24 +36,32 @@ var squashtm = squashtm || {};
 		folder : function(a) {
 			return $(a).is("[rel='folder']");
 		},
-		file : function(a) {
-			return $(a).is("[rel='file']");
+		'test-case' : function(a) {
+			return $(a).is("[rel='test-case']");
+		},
+		requirement : function(a) {
+			return $(a).is("[rel='requirement']");
 		},
 		campaign : function(a) {
-			return $(a).is("[rel='file'][restype='campaigns']");
-		},
-		node : function(a) {
-			return $(a).is("[rel='folder']") || $(a).is("[rel='file']");
-		},
-		resource : function(a) {
-			return $(a).is("[rel='resource']");
+			return $(a).is("[rel='campaign']");
 		},
 		iteration : function(a) {
-			return $(a).is("[rel='resource']");
+			return $(a).is("[rel='iteration']");
+		},
+		'test-suite' : function(a) {
+			return $(a).is("[rel='test-suite']");
+		},
+		// ***************** legacy *****************
+		node : function(a) {
+			return $(a).is(":folder, :test-case, :requirement, :campaign");
+		},
+		resource : function(a) {
+			return $(a).is("[rel='iteration']");
 		},
 		view : function(a) {
-			return $(a).is("[rel='view']");
+			return $(a).is("[rel='test-suite']");
 		},
+		// ****************** /legacy *****************
 		editable : function(a) {
 			return $(a).attr('smallEdit') === 'true';
 		},
@@ -109,47 +117,39 @@ var squashtm = squashtm || {};
 	};
 
 	/* defines functions in the jQuery namespace */
-	$
-			.extend({
-				/**
-				 * Opens a "popup" window containing the result of a POST. Plain
-				 * window.open() can only GET
-				 * 
-				 * @param url
-				 *            the url to POST
-				 * @param data
-				 *            the post data as a javascript object
-				 * @param windowDef
-				 *            definition of the window to open : { name: "name
-				 *            of window", features: "features string as per
-				 *            window.open" }
-				 * @return reference to the new window
-				 */
-				open : function(url, data, windowDef) {
-					var postData = '';
+	$.extend({
+		/**
+		 * Opens a "popup" window containing the result of a POST. Plain window.open() can only GET
+		 * 
+		 * @param url
+		 *            the url to POST
+		 * @param data
+		 *            the post data as a javascript object
+		 * @param windowDef
+		 *            definition of the window to open : { name: "name of window", features: "features string as per
+		 *            window.open" }
+		 * @return reference to the new window
+		 */
+		open : function(url, data, windowDef) {
+			var postData = '';
 
-					for (var attr in data) {
-						postData += '<input type=\"hidden\" name=\"' + attr
-								+ '\" value=\"' + data[attr] + '\" />';
-					}
+			for ( var attr in data) {
+				postData += '<input type=\"hidden\" name=\"' + attr + '\" value=\"' + data[attr] + '\" />';
+			}
 
-					var form = '<form id=\"postForm\" style=\"display:none;\" action=\"'
-							+ url
-							+ '\" method=\"post\">'
-							+ '<input type=\"submit\" name=\"postFormSubmit\" value=\"\" />'
-							+ postData + '</form>';
+			var form = '<form id=\"postForm\" style=\"display:none;\" action=\"' + url + '\" method=\"post\">' +
+					'<input type=\"submit\" name=\"postFormSubmit\" value=\"\" />' + postData + '</form>';
 
-					var win = window.open("about:blank", windowDef.name,
-							windowDef.features);
-					win.document.write(form);
-					win.document.forms['postForm'].submit();
+			var win = window.open("about:blank", windowDef.name, windowDef.features);
+			win.document.write(form);
+			win.document.forms.postForm.submit();
 
-					return win;
-				}
-			});
+			return win;
+		}
+	});
 	/**
-	 * Creates a preconfigured popup dialog from the selector. settings
-	 * definition : see squashtm.popup(settings) function
+	 * Creates a preconfigured popup dialog from the selector. settings definition : see squashtm.popup(settings)
+	 * function
 	 */
 	$.fn.createPopup = function(settings) {
 		var target = this;
@@ -182,7 +182,7 @@ var squashtm = squashtm || {};
 			buttons.filter(':last').addClass('ui-state-active');
 			buttons.filter(':first').removeClass('ui-state-active');
 			// user code
-			if (!!userOpen){
+			if (!!userOpen) {
 				userOpen.call(this);
 			}
 		};
@@ -191,43 +191,35 @@ var squashtm = squashtm || {};
 			// cleanup
 			squashtm.popup.cleanup.call(target);
 			// usercode
-			if (!!userClose){
+			if (!!userClose) {
 				userClose.call(this);
 			}
 		};
 
 		defaults.create = function() {
 			if (defaults.usesRichEdit) {
-				target
-						.find('textarea')
-						.each(
-								function() {
-									var jqT = $(this);
-									if (settings.isContextual) {
-										jqT.addClass('is-contextual');
-									}
-									jqT
-											.ckeditor(
-													function() {
-													},
-													{
-														// in this context
-														// 'this' is the
-														// defaults
-														// object
-														// the following
-														// properties will
-														// appear
-														// once we merged with
-														// the user-provided
-														// settings
-														customConfig : settings.ckeditor.styleUrl
-																|| "/styles/ckeditor/ckeditor-config.js",
-														language : settings.ckeditor.lang
-																|| "en"
-													});
-								});
-				if (!!userCreate){
+				target.find('textarea').each(function() {
+					var jqT = $(this);
+					if (settings.isContextual) {
+						jqT.addClass('is-contextual');
+					}
+					jqT.ckeditor(function() {
+					}, {
+						// in this context
+						// 'this' is the
+						// defaults
+						// object
+						// the following
+						// properties will
+						// appear
+						// once we merged with
+						// the user-provided
+						// settings
+						customConfig : settings.ckeditor.styleUrl || "/styles/ckeditor/ckeditor-config.js",
+						language : settings.ckeditor.lang || "en"
+					});
+				});
+				if (!!userCreate) {
 					userCreate.call(this);
 				}
 			}
@@ -238,7 +230,7 @@ var squashtm = squashtm || {};
 
 		if (defaults.closeOnSuccess === undefined || defaults.closeOnSuccess) {
 			target.ajaxSuccess(function() {
-				if (target.dialog('isOpen') === true){
+				if (target.dialog('isOpen') === true) {
 					target.dialog('close');
 				}
 			});
@@ -284,16 +276,13 @@ var squashtm = squashtm || {};
 	/**
 	 * squashtm.popup(settings) : creates a popup dialog from the given settings
 	 * 
-	 * popup settings : - all normal $.ui.dialog valid options - selector :
-	 * jquery selector of the dom element we are targetting (mandatory) -
-	 * openedBy : selector for a clickable element that will open the popup
-	 * (optional) - title : the title of the popup (mandatory) - isContextual :
-	 * boolean telling if the said popup should be added the special class
-	 * 'is-contextual', that will mark him as a removable popup when the context
-	 * changes, - closeOnSuccess : boolean telling if the popup should be closed
-	 * if an ajax request succeeds (optional) - ckeditor : { - lang : the
-	 * desired language for the ckeditor (optional) - styleUrl : the url for the
-	 * ckeditor style. } - buttons : the button definition (mandatory)
+	 * popup settings : - all normal $.ui.dialog valid options - selector : jquery selector of the dom element we are
+	 * targetting (mandatory) - openedBy : selector for a clickable element that will open the popup (optional) - title :
+	 * the title of the popup (mandatory) - isContextual : boolean telling if the said popup should be added the special
+	 * class 'is-contextual', that will mark him as a removable popup when the context changes, - closeOnSuccess :
+	 * boolean telling if the popup should be closed if an ajax request succeeds (optional) - ckeditor : { - lang : the
+	 * desired language for the ckeditor (optional) - styleUrl : the url for the ckeditor style. } - buttons : the
+	 * button definition (mandatory)
 	 * 
 	 * 
 	 */
@@ -316,8 +305,8 @@ var squashtm = squashtm || {};
 	};
 
 	/*
-	 * inhibits navigation to previous page when pressing backspace, as
-	 * requested in issue https://ci.squashtest.org/mantis/view.php?id=2069
+	 * inhibits navigation to previous page when pressing backspace, as requested in issue
+	 * https://ci.squashtest.org/mantis/view.php?id=2069
 	 * 
 	 * Solution credited to erikkallen, at
 	 * http://stackoverflow.com/questions/1495219/how-can-i-prevent-the-backspace-key-from-navigating-back
@@ -334,10 +323,9 @@ var squashtm = squashtm || {};
 						var doPrevent = false;
 						if (event.keyCode === 8) {
 							var d = event.srcElement || event.target;
-							if ((d.tagName.toUpperCase() === 'INPUT' && (d.type
-									.toUpperCase() === 'TEXT' || d.type
-									.toUpperCase() === 'PASSWORD'))
-									|| d.tagName.toUpperCase() === 'TEXTAREA') {
+							if ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type
+									.toUpperCase() === 'PASSWORD')) ||
+									d.tagName.toUpperCase() === 'TEXTAREA') {
 								doPrevent = d.readOnly || d.disabled;
 							} else {
 								doPrevent = true;

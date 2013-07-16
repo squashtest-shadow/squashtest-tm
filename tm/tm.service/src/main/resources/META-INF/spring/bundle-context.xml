@@ -175,6 +175,12 @@
     <property name="containerDao" ref="hibernateRequirementLibraryDao" />
     <property name="nodeDao" ref="squashtest.tm.repository.RequirementLibraryNodeDao" />
   </bean>
+  
+  <bean id="squashtest.tm.service.internal.PasteToRequirementStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
+    parent="parent.PasteStrategy" scope="prototype">
+    <property name="containerDao" ref="hibernateRequirementDao" />
+    <property name="nodeDao" ref="hibernateRequirementDao" />
+  </bean>
 
   <bean id="squashtest.tm.service.internal.PasteToCampaignFolderStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
     parent="parent.PasteStrategy" scope="prototype">

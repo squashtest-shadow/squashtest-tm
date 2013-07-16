@@ -37,6 +37,8 @@ public interface RequirementDao extends EntityDao<Requirement> {
 
 	@SuppressWarnings("rawtypes")
 	List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria criteria);
+	
+	List<Requirement> findChildrenRequirements(long requirementId);
 
 	List<ExportRequirementData> findRequirementToExportFromNodes(List<Long> folderIds);
 
@@ -81,5 +83,8 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 */
 	List<Long> findAllRequirementsIdsByLibrary(long libraryId);
 	
-	 	
+	/**
+	 * returns a requirement that contains the given child requirement
+	 */
+	Requirement findByContent(Requirement childRequirement);
 }

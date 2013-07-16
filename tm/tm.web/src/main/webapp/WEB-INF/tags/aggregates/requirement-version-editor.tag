@@ -138,7 +138,7 @@
 				</div>
 				
 				<div>
-					<label for="requirement-reference"><f:message key="requirement.reference.label" /></label>
+					<label for="requirement-reference"><f:message key="label.Reference" /></label>
 					<div id="requirement-reference">${ requirementVersion.reference }</div>
 				</div>
 				<div>
@@ -395,7 +395,7 @@
 
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
+			require(["jquery", "contextual-content-handlers", "workspace.contextual-content"], function($, contentHandlers, contextualContent){
 				var nameHandler = contentHandlers.getNameAndReferenceHandler();
 				
 				nameHandler.identity = identity;
@@ -403,7 +403,7 @@
 				nameHandler.nameHidden = "#requirement-raw-name";
 				nameHandler.referenceHidden = "#requirement-raw-reference";
 				
-				squashtm.contextualContent.addListener(nameHandler);
+				contextualContent.addListener(nameHandler);
 				$("#print-requirement-version-button").click(function(){
 					window.open("${requirementUrl}?format=printable", "_blank");
 				});
@@ -415,13 +415,13 @@
 	<c:if test="${ smallEditable }">
 	function renameRequirementSuccess(data){
 		var evt = new EventRename(identity, $('#rename-requirement-input').val());
-		squashtm.contextualContent.fire(null, evt);
+		squashtm.workspace.contextualContent.fire(null, evt);
 		
 	};	
 	
 	function updateReferenceInTitle(newRef){
 		var evt = new EventUpdateReference(identity, newRef);
-		squashtm.contextualContent.fire(null, evt);		
+		squashtm.workspace.contextualContent.fire(null, evt);		
 	};
 	</c:if>
 	

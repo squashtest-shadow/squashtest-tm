@@ -24,6 +24,7 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
@@ -63,4 +64,6 @@ public interface NodeContainerVisitor {
 	void visit(Campaign campaign);
 
 	void visit(Iteration iteration);
+	
+	void visit(Requirement requirement);
 }

@@ -85,6 +85,7 @@ public class RequirementModificationController {
 	
 	@Inject
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
+	
 	@Inject
 	private Provider<LevelLabelFormatter> levelFormatterProvider;
 	@Inject

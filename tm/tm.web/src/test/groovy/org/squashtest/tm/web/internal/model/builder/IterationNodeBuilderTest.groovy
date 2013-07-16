@@ -44,7 +44,7 @@ class IterationNodeBuilderTest extends Specification {
 		def res = builder.setModel(iter).setIterationIndex(4).build();
 
 		then:
-		res.attr['rel'] == "resource"
+		res.attr['rel'] == "iteration"
 		res.attr['resId'] == "10"
 		res.state == State.leaf.name()
 		res.attr['resType'] == "iterations"

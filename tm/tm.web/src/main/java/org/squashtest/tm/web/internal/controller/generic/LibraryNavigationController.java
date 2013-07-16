@@ -172,51 +172,41 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	}
 	
-	@RequestMapping(value="/delete-nodes/simulate", method = RequestMethod.POST, params = {NODE_IDS})
-	public @ResponseBody Message simulateNodeDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds, Locale locale){
+	@RequestMapping(value="/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
+	public @ResponseBody Messages simulateNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds, Locale locale){
+		
 		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds);
 		
-		StringBuilder builder = new StringBuilder();
-		
+		Messages messages = new Messages();
 		for (SuppressionPreviewReport report : reportList){
-			builder.append(report.toString(messageSource, locale));
-			builder.append("<br/><br>");
+			messages.addMessage(report.toString(messageSource, locale));
 		}
 		
-		return new Message(builder.toString());
+		return messages;
 		
 	}
 	
-	public static class Message {
-		private String message ;
-		public Message (String message){
-			this.message = message;
-		}
-		public String getMessage(){
-			return this.message;
-		}
-	}
 
-	@RequestMapping(value="/delete-nodes/confirm", method=RequestMethod.DELETE, params= {NODE_IDS})
-	public @ResponseBody List<Long> confirmNodeDeletion(@RequestParam(NODE_IDS) List<Long> nodeIds){
+	@RequestMapping(value="/content/{nodeIds}", method=RequestMethod.DELETE)
+	public @ResponseBody List<Long> confirmNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds){
 		
 		return getLibraryNavigationService().deleteNodes(nodeIds);	
 	}
-	
-	
-	@RequestMapping(value = "/copy", method = RequestMethod.POST)
+
+
+	@RequestMapping(value = "/{destinationType}/{destinationId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
 	public @ResponseBody
-	List<JsTreeNode> copyNode(@RequestParam("object-ids[]") Long[] objectIds, 
-							  @RequestParam("destination-id") long destinationId, 
-							  @RequestParam("destination-type") String destType) {
+	List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds, 
+							  @PathVariable("destinationId") long destinationId, 
+							  @PathVariable("destinationType") String destType) {
 		
 		List<NODE> nodeList;
  		try{
-			if (destType.equals("folder")){
-				nodeList = getLibraryNavigationService().copyNodesToFolder(destinationId, objectIds);
+			if (destType.equals("folders")){
+				nodeList = getLibraryNavigationService().copyNodesToFolder(destinationId, nodeIds);
 			}
-			else if (destType.equals("library")){
-				nodeList = getLibraryNavigationService().copyNodesToLibrary(destinationId, objectIds);
+			else if (destType.equals("drives")){
+				nodeList = getLibraryNavigationService().copyNodesToLibrary(destinationId, nodeIds);
 			}
 			else{
 				throw new IllegalArgumentException("copy nodes : specified destination type doesn't exists : "+destType);
@@ -229,17 +219,17 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 	
 	
-	@RequestMapping(value = "/move", method = RequestMethod.POST)
+	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public @ResponseBody
-	void moveNode(@RequestParam("object-ids[]") Long[] objectIds, 
-					@RequestParam("destination-id") long destinationId, 
-					@RequestParam("destination-type") String destType) {
+	void moveNodes(@PathVariable("nodeIds") Long[] nodeIds, 
+				  @PathVariable("destinationId") long destinationId, 
+				  @PathVariable("destinationType") String destType) {
 		try{
-			if (destType.equals("folder")){
-				getLibraryNavigationService().moveNodesToFolder(destinationId, objectIds);
+			if (destType.equals("folders")){
+				getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds);
 			}
-			else if (destType.equals("library")){
-				getLibraryNavigationService().moveNodesToLibrary(destinationId, objectIds);
+			else if (destType.equals("drives")){
+				getLibraryNavigationService().moveNodesToLibrary(destinationId, nodeIds);
 			}
 			else{
 				throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "+destType);
@@ -249,6 +239,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		}
 		
 	}
+	
 	
 	protected void printExport(List<? extends ExportData> dataSource, String filename,String jasperFile, HttpServletResponse response,
 			Locale locale, String format) {
@@ -307,4 +298,28 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	}
 
+	
+	// ************************ other utils *************************
+	
+	
+	protected static class Messages {
+		
+		private Collection<String> messages = new ArrayList<String>();
+		
+		public Messages(){
+			super();
+		}
+		
+		public void addMessage(String msg){
+			this.messages.add(msg);
+		}
+		
+		public Collection<String> getMessages(){
+			return this.messages;
+		}
+		
+	}
+
+	
+	
 }

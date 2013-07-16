@@ -28,11 +28,11 @@ var squashtm = squashtm || {};
  * 
  * @author Gregory Fouquet
  */
-define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui",
+define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 		"jeditable", "jeditable.datepicker", "jquery.squash",
-		"jquery.squash.linkabletree", "jquery.squash.projectpicker",
+		"jquery.squash.projectpicker",
 		"datepicker/require.jquery.squash.datepicker-locales" ],
-		function($, RWS) {
+		function($, RWS, treebuilder) {
 			var config = {
 				contextPath : "",
 				dateFormat : "dd/mm/yy",
@@ -124,8 +124,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui",
 
 							givesAccessTo = (this.id).replace("-binder", "");
 
-							if (givesAccessTo !== undefined
-									&& givesAccessTo !== "none") {
+							if (givesAccessTo !== undefined && givesAccessTo !== "none") {
 								// find the right element and deactivate it
 								$("#" + givesAccessTo + "-open").attr(
 										"disabled", "disabled");
@@ -237,8 +236,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui",
 								type : 'RADIO_BUTTONS_GROUP'
 							});
 
-							if (givesAccessTo !== undefined
-									&& givesAccessTo !== "none") {
+							if (givesAccessTo !== undefined	&& givesAccessTo !== "none") {
 								// find the right element and deactivate it
 								$("#" + givesAccessTo + "-open").attr(
 										"disabled", "disabled");
@@ -266,9 +264,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui",
 
 			function buildViewUrl(index, format) {
 				// see [Issue 1205] for why "document.location.protocol"
-				return document.location.protocol + '//'
-						+ document.location.host + config.reportUrl + "/views/"
-						+ index + "/formats/" + format;
+				return document.location.protocol + '//' + document.location.host + config.reportUrl + "/views/" + index + "/formats/" + format;
 
 			}
 
@@ -377,17 +373,17 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "jqueryui",
 
 			function initTreePickerCallback() {
 				var tree = $(this);
+				var treeid = this.id;
 				var workspaceType = getWorkspaceType(tree);
 
-				$.get(
-						config.contextPath + "/" + workspaceType
-								+ "-browser/drives", "linkables", "json").done(
-						function(data) {
-							var settings = $.extend({}, config);
-							settings.workspaceType = workspaceType;
-							settings.jsonData = data;
-							tree.linkableTree(settings);
-						});
+				$.get(config.contextPath + "/" + workspaceType + "-browser/drives", "linkables", "json")
+				.done(function(data) {
+					var settings = $.extend({}, config);
+					settings.workspace = workspaceType;
+					settings.model = data;
+					settings.treeselector = "#"+treeid;
+					treebuilder.initLinkableTree(settings);
+				});
 
 				setTreeState(tree, []);
 			}

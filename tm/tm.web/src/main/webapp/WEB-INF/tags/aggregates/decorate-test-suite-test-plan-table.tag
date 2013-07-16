@@ -105,7 +105,7 @@
 			<th data-def="map=entity-index, sClass=drag-handle ui-state-default, select, center, narrow">#</th>
 			<th data-def="map=project-name"><f:message key="label.project" /></th>
 			<th data-def="map=exec-mode, narrow, sClass=exec-mode">&nbsp;</th><%-- exec mode icon --%>		
-			<th data-def="map=reference"><f:message key="requirement.reference.label"/></th>	
+			<th data-def="map=reference"><f:message key="label.Reference"/></th>	
 			<th data-def="map=tc-name, link=javascript:void(0), sClass=test-case-name-hlink"><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
 			<th data-def="map=importance"><f:message key="iteration.executions.table.column-header.importance.label" /></th>
       <th data-def="map=dataset"><f:message key="label.Dataset" /></th>

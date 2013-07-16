@@ -68,7 +68,7 @@ class RequirementLibraryTreeNodeBuilderTest extends Specification {
 		res.title == node.reference + " - " + node.name
 		res.attr['resId'] == "${node.id}"
 		res.attr['resType'] == "requirements"
-		res.attr['rel'] == "file"
+		res.attr['rel'] == "requirement"
 		res.state == State.leaf.name()
 	}
 	

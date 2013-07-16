@@ -72,7 +72,6 @@
 		<title><f:message key="${ titleKey }"/></title>
 		<layout:common-head />		
 		<layout:_common-script-import highlightedWorkspace="${ highlightedWorkspace }"/>
-		<tree:jstree-header />
 		<jsp:invoke fragment="head" />
 	</head>
 	<body>

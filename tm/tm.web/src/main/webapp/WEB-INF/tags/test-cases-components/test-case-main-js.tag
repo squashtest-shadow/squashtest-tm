@@ -78,13 +78,13 @@
 	function renameTestCaseSuccess(data){
 		var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
 		var evt = new EventRename(identity, data.newName);
-		squashtm.contextualContent.fire(null, evt);		
+		squashtm.workspace.contextualContent.fire(null, evt);		
 	};	
 	
 	function updateReferenceInTitle(newRef){
 		var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
 		var evt = new EventUpdateReference(identity, newRef);
-		squashtm.contextualContent.fire(null, evt);		
+		squashtm.workspace.contextualContent.fire(null, evt);		
 	};
 
 	
@@ -103,7 +103,8 @@
 	
 		
 		//init the renaming listener
-		require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "jqueryui"], function($, contentHandlers, Frag, bugtracker){
+		require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextual-content", "jqueryui"], 
+				function($, contentHandlers, Frag, bugtracker, contextualContent){
 			
 			var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
 			
@@ -114,7 +115,7 @@
 			nameHandler.nameHidden = "#test-case-raw-name";
 			nameHandler.referenceHidden = "#test-case-raw-reference";
 			
-			squashtm.contextualContent.addListener(nameHandler);
+			contextualContent.addListener(nameHandler);
 			
 			//****** tabs configuration *******
 			

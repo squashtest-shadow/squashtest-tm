@@ -21,73 +21,68 @@
 (function() {
 	squashtm = squashtm || {};
 
-	squashtm.StatusFactory = squashtm.StatusFactory
-			|| function(conf) {
+	squashtm.StatusFactory = squashtm.StatusFactory || function(conf) {
 
-				this.getHtmlFor = function(textStatus, status) {
-					var css;
-					if (status != null) {
-						css = "executions-status-" + status + "-icon";
-					} else {
-						css = lookupCss(textStatus);
-					}
-					return makeHtml(css, textStatus);
-				};
+		this.getHtmlFor = function(textStatus, status) {
+			var css;
+			if (status !== null) {
+				css = "executions-status-" + status + "-icon";
+			} else {
+				css = lookupCss(textStatus);
+			}
+			return makeHtml(css, textStatus);
+		};
 
-				function lookupCss(textStatus) {
-					var css;
+		function lookupCss(textStatus) {
+			var css;
 
-					switch (textStatus) {
-					case conf.blocked:
-						css = "executions-status-BLOQUED-icon";
-						break;
+			switch (textStatus) {
+			case conf.blocked:
+				css = "executions-status-BLOQUED-icon";
+				break;
 
-					case conf.failure:
-						css = "executions-status-FAILURE-icon";
-						break;
+			case conf.failure:
+				css = "executions-status-FAILURE-icon";
+				break;
 
-					case conf.success:
-						css = "executions-status-SUCCESS-icon";
-						break;
+			case conf.success:
+				css = "executions-status-SUCCESS-icon";
+				break;
 
-					case conf.running:
-						css = "executions-status-RUNNING-icon";
-						break;
+			case conf.running:
+				css = "executions-status-RUNNING-icon";
+				break;
 
-					case conf.ready:
-						css = "executions-status-READY-icon";
-						break;
+			case conf.ready:
+				css = "executions-status-READY-icon";
+				break;
 
-					case conf.error:
-						css = "executions-status-ERROR-icon";
-						break;
+			case conf.error:
+				css = "executions-status-ERROR-icon";
+				break;
 
-					case conf.warning:
-						css = "executions-status-WARNING-icon";
-						break;
+			case conf.warning:
+				css = "executions-status-WARNING-icon";
+				break;
 
-					case conf.untestable:
-						css = "executions-status-UNTESTABLE-icon";
-						break;
+			case conf.untestable:
+				css = "executions-status-UNTESTABLE-icon";
+				break;
 
-					default:
-						css = "";
-						break;
+			default:
+				css = "";
+				break;
 
-					}
-					
+			}
 
-					return css;
-				}
-				
+			return css;
+		}
 
-				function makeHtml(cssClass, text) {
-					return '<span class="common-status-label ' + cssClass
-							+ '">' + text + '</span>';
-				}
-			
+		function makeHtml(cssClass, text) {
+			return '<span class="common-status-label ' + cssClass + '">' + text + '</span>';
+		}
 
-			};
+	};
 
 	squashtm.statusFactory = new squashtm.StatusFactory();
 })();

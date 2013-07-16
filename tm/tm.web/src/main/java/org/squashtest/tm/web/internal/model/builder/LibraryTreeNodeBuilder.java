@@ -65,8 +65,15 @@ public abstract class LibraryTreeNodeBuilder<T extends LibraryNode> {
 	 * @param resType
 	 *            the nodeType attribute of the node
 	 */
+	@Deprecated
 	protected final void addLeafAttributes(String resType) {
 		builtNode.addAttr("rel", "file");
+		builtNode.addAttr("resType", resType);
+		builtNode.setState(State.leaf);
+	}
+	
+	protected final void addLeafAttributes(String rel, String resType) {
+		builtNode.addAttr("rel", rel);
 		builtNode.addAttr("resType", resType);
 		builtNode.setState(State.leaf);
 	}

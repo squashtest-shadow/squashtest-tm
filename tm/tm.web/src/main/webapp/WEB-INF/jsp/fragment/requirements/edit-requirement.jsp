@@ -244,7 +244,7 @@ that page won't be editable if
 				</div>
 				
 				<div class="display-table-row">
-					<label class="display-table-cell"  for="requirement-reference"><f:message key="requirement.reference.label" /></label>
+					<label class="display-table-cell"  for="requirement-reference"><f:message key="label.Reference" /></label>
 					<div class="display-table-cell"  id="requirement-reference">${ requirement.reference }</div>
 				</div>
 				<div class="display-table-row">
@@ -451,7 +451,7 @@ that page won't be editable if
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
+			require(["jquery", "contextual-content-handlers", "workspace.contextual-content"], function($, contentHandlers, contextualContent){
 				var nameHandler = contentHandlers.getNameAndReferenceHandler();
 				
 				nameHandler.identity = identity;
@@ -459,7 +459,7 @@ that page won't be editable if
 				nameHandler.nameHidden = "#requirement-raw-name";
 				nameHandler.referenceHidden = "#requirement-raw-reference";
 				
-				squashtm.contextualContent.addListener(nameHandler);
+				contextualContent.addListener(nameHandler);
 
 				$("#print-requirement-version-button").click(function(){
 					window.open("${currentVersionUrl}?format=printable", "_blank");
@@ -474,12 +474,12 @@ that page won't be editable if
 	<c:if test="${smallEditable}">
 	function renameRequirementSuccess(data){
 		var evt = new EventRename(identity, data.newName);
-		squashtm.contextualContent.fire(null, evt);
+		squashtm.workspace.contextualContent.fire(null, evt);
 	}
 	
 	function updateReferenceInTitle(reference){
 		var evt = new EventUpdateReference(identity, reference);
-		squashtm.contextualContent.fire(null, evt);	
+		squashtm.workspace.contextualContent.fire(null, evt);	
 	}
 	</c:if>
 

@@ -204,8 +204,7 @@ define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], 
 									}
 
 									do {
-										currentNumber = currentNumber
-												+ array[index];
+										currentNumber = currentNumber + array[index];
 										index++;
 									} while (this.isDigit(array[index]));
 									index--;

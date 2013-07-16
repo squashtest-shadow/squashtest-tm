@@ -29,7 +29,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -40,6 +39,7 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
 /**
  * Helper class for Controllers which need to show classic and optimized execution runners.
@@ -67,7 +67,8 @@ public class ExecutionRunnerControllerHelper {
 	@Inject
 	private TestSuiteExecutionProcessingService testSuiteExecutionProcessingService;
 
-
+	@Inject
+	private ServiceAwareAttachmentTableModelHelper attachmentHelper;	
 
 	@Inject
 	private MessageSource messageSource;
@@ -119,6 +120,7 @@ public class ExecutionRunnerControllerHelper {
 		model.addAttribute("totalSteps", total);
 		model.addAttribute("executionStatus", statusSet);
 		model.addAttribute("hasNextStep", stepOrder != (total - 1));
+		model.addAttribute("attachments", attachmentHelper.findAttachments(executionStep));
 
 		addCurrentStepUrl(execution.getId(), model);
 	}

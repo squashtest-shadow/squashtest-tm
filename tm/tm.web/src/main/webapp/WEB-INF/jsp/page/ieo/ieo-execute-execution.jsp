@@ -216,7 +216,8 @@
 		
 				
 		<%------------------------------ Attachments bloc ---------------------------------------------%> 
-		<at:attachment-bloc entity="${executionStep}" workspaceName="campaign" editable="${ editable }" />
+		
+		<at:attachment-bloc attachListId="${executionStep.attachmentList.id}" workspaceName="campaign" editable="${ editable }" attachmentSet="${attachments}" />
 		
 		<%------------------------------ /attachement ------------------------------%>
 		

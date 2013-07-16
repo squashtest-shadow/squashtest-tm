@@ -401,7 +401,7 @@
 					<div style="clear: both; visibility: hidden"></div>
 				</div>
 
-				<at:attachment-bloc entity="${executionStep}" workspaceName="campaign" editable="${ editable }" />
+				<at:attachment-bloc attachListId="${executionStep.attachmentList.id}" workspaceName="campaign" editable="${ editable }" attachmentSet="${attachments}" />
 
 				<%------------------------------ bugs section -------------------------------%>
 				<%-- this section is loaded asynchronously. The bugtracker might be out of reach indeed. --%>

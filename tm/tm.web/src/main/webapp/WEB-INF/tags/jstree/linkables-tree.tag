@@ -21,42 +21,28 @@
 
 --%>
 <%@ attribute name="id" required="true" description="id of the tree component" %>
-<%@ attribute name="rootModel" required="false" type="java.lang.Object" description="JSON serializable model of root of tree. 
-	If not set, the tree won't be initialized until initLinkableTree(json) is explicitely called with a valid json argument" %>
+<%@ attribute name="rootModel" required="true" type="java.lang.Object" description="JSON serializable model of root of tree." %>
+
 <%@ attribute name="workspaceType" required="false" description="if set, will override the default icons"%>
 
 
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
-<%@ taglib prefix="su" uri="http://org.squashtest.tm/taglib/string-utils" %>
 
 
-<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-
-
-<tree:_html-tree treeId="${ id }">
-</tree:_html-tree> 
+<tree:_html-tree treeId="${ id }" />
 <script type="text/javascript">
+
+	var conf = {
+		model : ${ json:serialize(rootModel) },
+		workspace : "${workspaceType}",
+		treeselector : "#${id}"
+	}
 	
-	<c:if test="${not empty rootModel}">
 	$(function(){
-		var jsondata = ${ json:serialize(rootModel) };
-		if (jsondata!=null){
-			initLinkableTree(jsondata);
-		}
+		require( ["tree"], function(initTree){
+			initTree.initLinkableTree(conf);				
+		});				
 	});
-	</c:if>
 	
-	function initLinkableTree(jsonData) {
-		$("#${ id }").linkableTree({ 
-			contextPath: "${ pageContext.servletContext.contextPath }",
-			jsonData: jsonData, 
-			workspaceType: "${ workspaceType }"
-		});
-	};
 </script>

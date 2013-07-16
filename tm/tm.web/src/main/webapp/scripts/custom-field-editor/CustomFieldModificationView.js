@@ -27,8 +27,7 @@ define(
 				"jquery.squash.messagedialog", "jquery.squash.confirmdialog",
 				"jeditable.datepicker",
 				"datepicker/require.jquery.squash.datepicker-locales" ],
-		function($, NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable,
-				SelectJEditable, StringUtil) {
+		function($, NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable,SelectJEditable, StringUtil) {
 			var cfMod = squashtm.app.cfMod;
 			/*
 			 * Defines the controller for the custom fields table.
@@ -103,14 +102,14 @@ define(
 
 							} else {
 								var defaultValue = self.findDefaultValue();
-								if (StringUtil.isBlank(defaultValue)
-										|| defaultValue === cfMod.richEditPlaceHolder
-										|| defaultValue === cfMod.noDateLabel) {
-									$.squash.openMessage(cfMod.popupErrorTitle,
-											cfMod.mandatoryNeedsDefaultMessage,
-											350);
-									event.target.checked = true;
-									return;
+								if (StringUtil.isBlank(defaultValue) || 
+									defaultValue === cfMod.richEditPlaceHolder || 
+									defaultValue === cfMod.noDateLabel) {
+										$.squash.openMessage(cfMod.popupErrorTitle,
+												cfMod.mandatoryNeedsDefaultMessage,
+												350);
+										event.target.checked = true;
+										return;
 								}
 								var message = cfMod.confirmMandatoryMessage;
 								message = self.replacePlaceHolderByValue(0,
@@ -172,9 +171,7 @@ define(
 										cfMod.defaultOptionMandatoryMessage);
 								return;
 							}
-							var uncheckSelector = ".is-default>input:checkbox"
-									+ (checkbox.checked ? "[value!='" + option
-											+ "']" : "");
+							var uncheckSelector = ".is-default>input:checkbox" + (checkbox.checked ? "[value!='" + option + "']" : "");
 
 							this.sendDefaultValue(defaultValue).done(
 									function() {
@@ -232,17 +229,14 @@ define(
 									"#rename-cuf-option-previous").text();
 							var newValue = self.renameCufOptionPopup.find(
 									"#rename-cuf-option-label").val();
-							$.ajax(
-									{
-										type : 'POST',
-										data : {
-											'value' : newValue
-										},
-										dataType : "json",
-										url : cfMod.optionsTable.ajaxSource
-												+ "/" + previousValue
-												+ "/label"
-									}).done(function(data) {
+							$.ajax({
+								type : 'POST',
+								data : {
+									'value' : newValue
+								},
+								dataType : "json",
+								url : cfMod.optionsTable.ajaxSource	+ "/" + previousValue + "/label"
+							}).done(function(data) {
 								self.optionsTable.refresh();
 							});
 
@@ -261,8 +255,7 @@ define(
 											'value' : newValue
 										},
 										dataType : "json",
-										url : cfMod.optionsTable.ajaxSource
-												+ "/" + label + "/code"
+										url : cfMod.optionsTable.ajaxSource	+ "/" + label + "/code"
 									}).done(function(data) {
 								self.optionsTable.refresh();
 							});
@@ -400,8 +393,7 @@ define(
 						},
 
 						changeDefaultValueText : function(value) {
-							if (this.isFieldMandatory()
-									&& StringUtil.isBlank(value)) {
+							if (this.isFieldMandatory()	&& StringUtil.isBlank(value)) {
 								$.squash.openMessage(cfMod.popupErrorTitle,
 										cfMod.defaultValueMandatoryMessage);
 								return false;
@@ -548,8 +540,7 @@ define(
 								},
 
 								deleteButtons : {
-									url : cfMod.optionsTable.ajaxSource
-											+ "/{opt-label}",
+									url : cfMod.optionsTable.ajaxSource	+ "/{opt-label}",
 									popupmessage : cfMod.optionsTable.deleteConfirmMessage,
 									tooltip : cfMod.optionsTable.deleteTooltip,
 									success : function(data) {
@@ -560,14 +551,10 @@ define(
 
 								functions : {
 									dropHandler : function(dropData) {
-										$
-												.post(
-														cfMod.optionsTable.ajaxSource
-																+ '/positions',
-														dropData, function() {
-															self.optionsTable
-																	.refresh();
-														});
+										var url = cfMod.optionsTable.ajaxSource + '/positions'
+										$.post(url,	dropData, function() {
+											self.optionsTable.refresh();
+										});
 									},
 									getODataId : function(arg) {
 										return this.fnGetData(arg)['opt-label'];

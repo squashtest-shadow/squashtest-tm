@@ -18,9 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-requirejs
-		.config({
-
+requirejs.config({
 			packages : [
 				"custom-field-editor",
 				"custom-field-binding",
@@ -35,7 +33,27 @@ requirejs
 				"bugtracker",
 				"file-upload",
 				"iteration-management",
-				"issue-tables"
+				"issue-tables",
+				{
+					name : 'tree',
+					main : 'main',
+					location : 'http://localhost/scripts/scripts/tree'
+				},
+				{
+					name : 'tc-workspace',
+					main : 'main',
+					location : 'http://localhost/scripts/scripts/tc-workspace'
+				},
+				{
+					name : 'req-workspace',
+					main : 'main',
+					location : 'http://localhost/scripts/scripts/req-workspace'
+				},
+				{
+					name : 'camp-workspace',
+					main : 'main',
+					location : 'http://localhost/scripts/scripts/camp-workspace'
+				}					
 			],
 			/*
 			 * rules for paths naming: * third party lib: unversionned lib name *
@@ -51,6 +69,7 @@ requirejs
 				 */
 				"jquery" : "lib/jquery/jquery-1.8.3.min",
 				"jqueryui" : "lib/jquery/jquery-ui-1.9.0.custom.min",
+				"jquery.dialog-patch" : "jquery/jquery.dialog-patch",
 				"datatables" : "datatables/jquery.dataTables.min",
 				"squash.datatables" : "squashtest/jquery.squashtm.datatables",
 				"jquery.squash.datatables" : "squashtest/jquery.squashtm.datatables.v2",
@@ -69,19 +88,17 @@ requirejs
 				"jquery.generateId" : "jquery/jquery.generateId",
 				"jquery.hotkeys" : "jquery/jquery.hotkeys-0.8",
 				"jquery.timepicker" : "jquery/jquery-ui-timepicker-addon",
-				"jquery.squash" : "squashtest/jquery.squashtm.plugin",
+				"jquery.squash" : "http://localhost/scripts/scripts/squashtest/jquery.squashtm.plugin",
 				"jquery.squash.fragmenttabs" : "squash/squashtm.fragmenttabs",
 				"jquery.squash.togglepanel" : "squashtest/jquery.squash.togglepanels",
 				"jquery.squash.messagedialog" : "squashtest/jquery.squash.messagedialog",
 				"jquery.squash.confirmdialog" : "squashtest/jquery.squash.confirmdialog",
 				"jquery.squash.oneshotdialog" : "squashtest/jquery.squashtm.oneshotdialog",
-				"jquery.squash.contextual-content" : "squashtest/jquery.squashtm.contextual-content",
+				"jquery.squash.contextual-content" : "http://localhost/scripts/scripts/workspace/workspace.contextual-content",	//legacy
+				"workspace.contextual-content" : "http://localhost/scripts/scripts/workspace/workspace.contextual-content",	
 				"jquery.squash.fg.menu" : "squashtest/jquery.squashtm.fg.menu",
 				"jquery.squash.squashbutton" : "squashtest/jquery.squash.squashbutton",
 				"jquery.squash.jeditable" : "squashtest/jquery.squashtm.jeditable.ext",
-				"jquery.squash.jstree-node" : "squashtest/jquery.squashtm.jstree-node",
-				"jquery.squash.jstree" : "squashtest/jquery.squashtm.jstree.ext",
-				"jquery.squash.linkabletree" : "squash/jquery.squashtm.linkabletree",
 				"jquery.squash.projectpicker" : "squash/jquery.squashtm.projectpicker",
 				"jquery.cookie" : "jquery/jquery.cookie",
 				"squash.bugtrackerMenu" : "squashtest/classes/BugTrackerMenu",
@@ -90,17 +107,23 @@ requirejs
 				"squash.resizer" : "squash/squashtm.tree-page-resizer",
 				"squash.table-collapser" : "squashtest/jquery.squash.table-collapser",
 				"squash.session-pinger" : "squashtest/jquery.squash.session-pinger",
-				"jquery.tagit" : "jquery/tag-it.min",
-		
+				"jquery.tagit" : "jquery/tag-it.min",		
 				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit",
-				"jquery.squash.add-attachment-popup" : "squashtest/add-attachment-popup"
+				"jquery.squash.add-attachment-popup" : "squashtest/add-attachment-popup",
+				"jquery.squash.buttonmenu" : "http://localhost/scripts/scripts/squashtest/jquery.squash.buttonmenu",
+				"jquery.squash.formdialog" : "http://localhost/scripts/scripts/squashtest/jquery.squash.formdialog",
+				"squash.attributeparser" : 'http://localhost/scripts/scripts/squash/squash.attributeparser',
+				"squash.configmanager" : 'http://localhost/scripts/scripts/squash/squash.configmanager',
+				"workspace.tree-node-copier" : "http://localhost/scripts/scripts/workspace/workspace.tree-node-copier",
+				"workspace.tree-event-handler" : "http://localhost/scripts/scripts/workspace/workspace.tree-event-handler",
+				"workspace.permissions-rules-broker" : "http://localhost/scripts/scripts/workspace/workspace.permissions-rules-broker"
 			},
 			shim : {
 				"ckeditor" : {
 					exports : "CKEDITOR"
 				},
 				"jquery.ckeditor" : {
-					deps : [ "jquery", "ckeditor" ],
+					deps : [ "jquery", "ckeditor", "jquery.dialog-patch" ],
 					exports : "jqueryCkeditor"
 				},
 				"jeditable" : {
@@ -171,35 +194,9 @@ requirejs
 					deps : [ "jquery", "jqueryui" ],
 					exports : "jquerySquashtmFgMenu"
 				},
-				"jquery.squash.contextual-content" : {
-					deps : [ "jquery", "jqueryui" ],
-					exports : "jquerySquashContextualContent"
-				},
 				"jquery.squash.jeditable" : {
 					deps : [ "jquery", "jeditable", "jeditable.ckeditor" ],
 					exports : "jquerySquashtmJeditable"
-				},
-				"squashtest/classes/TreeEventHandler" : {
-					deps : [ "squashtest/classes/Event", "jquery.squash.jstree" ],
-					exports : "TreeEventHandler"
-				},
-
-				"squashtest/classes/TreeNodeCopier" : {
-					deps : [ "jquery", "jquery.squash.jstree" ],
-					exports : "TreeNodeCopier"
-				},
-				"jquery.squash.jstree-node" : {
-					deps : [ "jquery", "jstree", "jquery.squash" ],
-					exports : "jquerySquashtmJstreeNode"
-				},
-				"jquery.squash.jstree" : {
-					deps : [ "jquery", "jstree", "jquery.squash.jstree-node",
-							"jquery.squash", "jquery.squash.squashbutton" ],
-					exports : "squashtm.tree"
-				},
-				"jquery.squash.linkabletree" : {
-					deps : [ "jquery", "jquery.squash.jstree" ],
-					exports : "jquerySquashtmLinkableTree"
 				},
 				"jquery.squash.projectpicker" : {
 					deps : [ "jquery", "jqueryui" ],

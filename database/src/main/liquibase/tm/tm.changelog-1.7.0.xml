@@ -35,6 +35,22 @@
 		</update>
 	</changeSet>
 
+	<changeSet id="tm-1.7.0.feat-1107-01" author="bsiri">
+		<comment>Modifying RLN_RELATIONSHIP and RLN_RELATIONSHIP_CLOSURE : requirements can now accept more requirements 
+		(but no folders). Cautious : there is no way to express that a a requirement can only accept requirements as children.</comment>
+		
+		<dropForeignKeyConstraint baseTableName="RLN_RELATIONSHIP" constraintName="fk_rln_relationship_ancestor"/>
+		<dropForeignKeyConstraint baseTableName="RLN_RELATIONSHIP" constraintName="fk_rln_relationship_descendant"/>
+		
+		<addForeignKeyConstraint constraintName="fk_rln_relationship_ancestor"
+								 baseTableName="RLN_RELATIONSHIP" baseColumnNames="ANCESTOR_ID" 
+								 referencedTableName="REQUIREMENT_LIBRARY_NODE" referencedColumnNames="RLN_ID" />
+								 
+		<addForeignKeyConstraint constraintName="fk_rln_relationship_descendant"
+								 baseTableName="RLN_RELATIONSHIP" baseColumnNames="DESCENDANT_ID" 
+								 referencedTableName="REQUIREMENT_LIBRARY_NODE" referencedColumnNames="RLN_ID" />
+	
+	</changeSet>
 
 </databaseChangeLog>
  

@@ -27,27 +27,17 @@ import javax.inject.Inject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignFolder;
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.library.NodeContainer;
-import org.squashtest.tm.domain.library.NodeContainerVisitor;
-import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.library.TreeNode;
+import org.squashtest.tm.domain.library.WhichNodeVisitor;
+import org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementFolder;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.library.CannotMoveInHimselfException;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
@@ -56,6 +46,7 @@ import org.squashtest.tm.service.internal.repository.CampaignLibraryDao;
 import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.LibraryDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 import org.squashtest.tm.service.internal.repository.RequirementLibraryDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
@@ -73,7 +64,7 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
  */
 @Component
 @Scope("prototype")
-public class FirstLayerTreeNodeMover  implements NodeVisitor, PasteOperation {
+public class FirstLayerTreeNodeMover implements PasteOperation {
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
 	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
@@ -90,6 +81,8 @@ public class FirstLayerTreeNodeMover  implements NodeVisitor, PasteOperation {
 	@Inject
 	private CampaignDao campaignDao;
 	@Inject
+	private RequirementDao requirementDao;
+	@Inject
 	private CampaignFolderDao campaignFolderDao;
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
@@ -104,6 +97,9 @@ public class FirstLayerTreeNodeMover  implements NodeVisitor, PasteOperation {
 	private TreeNode movedNode;
 	private NodeContainer<? extends TreeNode> destination;
 	private boolean projectChanged = false;
+	
+	private WhichNodeVisitor whichVisitor = new WhichNodeVisitor();
+
 
 	public TreeNode performOperation(TreeNode toMove, NodeContainer<TreeNode> destination) {
 		//initialize attributes
@@ -115,8 +111,10 @@ public class FirstLayerTreeNodeMover  implements NodeVisitor, PasteOperation {
 		Project sourceProject = toMove.getProject();
 		GenericProject destinationProject = destination.getProject();
 		this.projectChanged = changedProject(sourceProject, destinationProject);
+		
 		//process
-		toMove.accept(this);
+		processNodes(toMove);		
+		
 		if(projectChanged){
 			movedNode.accept(treeNodeUpdater);
 		}
@@ -127,56 +125,35 @@ public class FirstLayerTreeNodeMover  implements NodeVisitor, PasteOperation {
 	public boolean isOkToGoDeeper() {
 		return this.projectChanged;
 	}
+	
+	protected void processNodes(TreeNode toMove){
+		NodeType visitedType = whichVisitor.getTypeOf(toMove);
 
-	@Override
-	public void visit(CampaignFolder campaignFolder) {
-		visitLibraryNode(campaignFolder, campaignLibraryDao, campaignFolderDao);
-		
-	}
 
-	@Override
-	public void visit(RequirementFolder requirementFolder) {
-		visitLibraryNode(requirementFolder, requirementLibraryDao, requirementFolderDao);
-	}
-
-	@Override
-	public void visit(TestCaseFolder testCaseFolder) {
-		visitLibraryNode(testCaseFolder, testCaseLibraryDao, testCaseFolderDao);
-		
-	}
-
-	@Override
-	public void visit(Campaign campaign) {
-		visitLibraryNode(campaign, campaignLibraryDao, campaignFolderDao);
-		
-	}
-
-	@Override
-	/**
-	 * Iterations cannot be moved.
-	 */
-	public void visit(Iteration iteration) {
-		// NOOPE
-	}
-
-	@Override
-	/**
-	 * TestSuite cannot be moved.
-	 * 
-	 */
-	public void visit(TestSuite testSuite) {
-		// NOOP€
-	}
-
-	@Override
-	public void visit(Requirement requirement) {
-		visitLibraryNode(requirement, requirementLibraryDao, requirementFolderDao);
-		
-	}
-
-	@Override
-	public void visit(TestCase testCase) {
-		visitLibraryNode(testCase, testCaseLibraryDao, testCaseFolderDao);
+		switch(visitedType){
+			case CAMPAIGN_FOLDER : 
+				visitLibraryNode((LibraryNode)toMove, campaignLibraryDao, campaignFolderDao); 
+				break;
+			case REQUIREMENT_FOLDER : 
+				visitLibraryNode((LibraryNode)toMove, requirementLibraryDao, requirementFolderDao); 
+				break;
+			case TEST_CASE_FOLDER : 
+				visitLibraryNode((LibraryNode)toMove, testCaseLibraryDao, testCaseFolderDao);	
+				break;
+			case CAMPAIGN : 
+				visitLibraryNode((LibraryNode)toMove, campaignLibraryDao, campaignFolderDao); 
+				break;
+			case TEST_CASE :
+				visitLibraryNode((LibraryNode)toMove, testCaseLibraryDao, testCaseFolderDao);
+				break;			
+			case REQUIREMENT : //special
+				visitWhenNodeIsRequirement((Requirement)toMove);
+				break;	
+			case ITERATION :
+			case TEST_SUITE :
+				break;
+			default : throw new IllegalArgumentException("Libraries cannot be copied nor moved !");
+		}
 		
 	}
 
@@ -192,6 +169,21 @@ public class FirstLayerTreeNodeMover  implements NodeVisitor, PasteOperation {
 		node.notifyAssociatedWithProject((Project)destination.getProject());
 		moveNode(node, (NodeContainer<LN>) destination, parent);
 	}
+	
+	@SuppressWarnings("unchecked")
+	private  <LN extends LibraryNode>  void visitWhenNodeIsRequirement(Requirement node) {
+		
+		NodeContainer<Requirement> parent = findFolderOrLibraryParent(node, requirementLibraryDao, requirementFolderDao);
+		if (parent == null){
+			parent = requirementDao.findByContent(node);
+		}
+		
+		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(destination, "CREATE"), new SecurityCheckableObject(
+				parent, "DELETE"), new SecurityCheckableObject(node, "READ"));
+		
+		node.notifyAssociatedWithProject((Project)destination.getProject());
+		moveNode((LN)node, (NodeContainer<LN>) destination,(NodeContainer<LN>) parent);
+	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private <LN extends LibraryNode> NodeContainer<LN> findFolderOrLibraryParent(LN node, LibraryDao libraryDao,
@@ -199,6 +191,8 @@ public class FirstLayerTreeNodeMover  implements NodeVisitor, PasteOperation {
 		Library<? extends LibraryNode> parentLib = libraryDao.findByRootContent(node);
 		return ((parentLib != null) ? parentLib : folderDao.findByContent(node));
 	}
+	
+
 
 	private <TN extends TreeNode> void moveNode(TN toMove, NodeContainer<TN> destination, NodeContainer<TN> toMoveParent) {
 		toMoveParent.removeContent(toMove);
@@ -222,96 +216,49 @@ public class FirstLayerTreeNodeMover  implements NodeVisitor, PasteOperation {
 	}
 	
 	/**
-	 * Will check it treeNode to move is not his destination and if it is not contained in the hierarchy of it's destination.
+	 * Will check if the treeNode to move is not his destination and if it is not contained in the hierarchy of it's destination.
 	 * @param toMove
 	 * @return 
 	 */
 	private void checkNotMovedInHimself(TreeNode toMove) {
-		destination.accept(new CheckMovedInHimselfVisitor(toMove));
-	}
-	
-	private class CheckMovedInHimselfVisitor implements NodeContainerVisitor{
 		
-	private TreeNode toMove;
-
-		public CheckMovedInHimselfVisitor(TreeNode toMove) {
-			this.toMove = toMove;
-		}
-
-		@Override
-		public void visit(CampaignLibrary campaignLibrary) {
-			//NOOPE
-		}
-
-		@Override
-		public void visit(RequirementLibrary requirementLibrary) {
-			//NOOPE
-			
-		}
-
-		@Override
-		public void visit(TestCaseLibrary testCaseLibrary) {
-			//NOOPE
-			
-		}
-
-		@Override
-		public void visit(CampaignFolder campaignFolder) {
-			Long toMoveId = ((CampaignLibraryNode)toMove).getId();
-			checkHierarchy(toMoveId, campaignFolder.getId(), campaignLibraryNodeDao);
-		}
-
-
-		@Override
-		public void visit(RequirementFolder requirementFolder) {
-			Long toMoveId = ((RequirementLibraryNode)toMove).getId();			
-			checkHierarchy(toMoveId, requirementFolder.getId(), requirementLibraryNodeDao);
-		}
-
-		@Override
-		public void visit(TestCaseFolder testCaseFolder) {
-			Long toMoveId = ((TestCaseLibraryNode)toMove).getId();			
-			checkHierarchy(toMoveId, testCaseFolder.getId(), testCaseLibraryNodeDao);
-		}
-
-		@Override
-		public void visit(Campaign campaign) {
-			//NOOPE
-			
-		}
-
-		@Override
-		public void visit(Iteration iteration) {
-			//NOOPE
-			
-		}
-
-
-		private void checkHierarchy(Long tocheckId, Long hierarchySourceId,
-				LibraryNodeDao<? extends LibraryNode> libraryNodeDao) {
-			
-			if(tocheckId.equals(hierarchySourceId)){
-				throw new CannotMoveInHimselfException();
-			} else if(hierarchyContains(libraryNodeDao, hierarchySourceId, tocheckId)){
-				throw new CannotMoveInHimselfException();
-			}
-			
-			
+		Long toMoveId = ((LibraryNode)toMove).getId();
+		Long destinationId = destination.getId();
+		
+		if (toMove.equals(destination)){
+			throw new CannotMoveInHimselfException();
 		}
 		
-		private boolean hierarchyContains(LibraryNodeDao<? extends LibraryNode>  libraryNodeDao, Long hierarchySourceId,
-				Long tocheck) {
-			List<Long> hierarchyIds = libraryNodeDao.getParentsIds(hierarchySourceId);
-			for(Long id : hierarchyIds){
-				if(id.equals(tocheck)){
-					return true;
-				}
+		LibraryNodeDao lnDao = null;
+		NodeType destType = whichVisitor.getTypeOf(destination);
+		
+		
+		switch(destType){
+			case CAMPAIGN_FOLDER : 
+				lnDao = campaignLibraryNodeDao; 
+				break;
+			case REQUIREMENT_FOLDER :
+				lnDao = requirementLibraryNodeDao;
+				break;
+			case TEST_CASE_FOLDER :
+				lnDao = testCaseLibraryNodeDao;
+				break;
+			case REQUIREMENT :
+				lnDao = requirementLibraryNodeDao;
+				break;
+				
+			default : return; //the other cases cannot pose problems
+		}
+		
+		//let's check to problematic cases
+		
+		List<Long> hierarchyIds = lnDao.getParentsIds(destinationId);
+		for(Long id : hierarchyIds){
+			if(id.equals(toMoveId)){
+				throw new CannotMoveInHimselfException();
 			}
-			return false;
 		}
 		
 	}
-
 	
-
 }

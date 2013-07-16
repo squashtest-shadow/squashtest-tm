@@ -153,6 +153,12 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 			criteria.add(restriction);
 		}
 	}
+	
+	@Override
+	public List<Requirement> findChildrenRequirements(long requirementId) {
+		SetQueryParametersCallback setId = new SetIdParameter("requirementId", requirementId);
+		return executeListNamedQuery("requirement.findChildrenRequirements", setId);
+	}
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
@@ -332,5 +338,11 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	}
 	
 	
+	@Override
+	public Requirement findByContent(final Requirement child) {
+		SetQueryParametersCallback callback = new SetNodeContentParameter(child);
+
+		return executeEntityNamedQuery("requirement.findByContent", callback);
+	}
 
 }

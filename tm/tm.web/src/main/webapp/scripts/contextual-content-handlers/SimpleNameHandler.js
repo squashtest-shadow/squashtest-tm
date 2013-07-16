@@ -31,8 +31,7 @@ define([ 'jquery' ], function($) {
 		};
 
 		this.isMe = function(target) {
-			return (this.identity.obj_id == target.obj_id)
-					&& (this.identity.obj_restype == target.obj_restype);
+			return (this.identity.obj_id == target.obj_id)	&& (this.identity.obj_restype == target.obj_restype);
 		};
 
 		this.update = function(evt) {

@@ -50,13 +50,13 @@
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers"], function($, contentHandlers){
+			require(["jquery", "contextual-content-handlers", "workspace.contextual-content"], function($, contentHandlers, contextualContent){
 				var nameHandler = contentHandlers.getSimpleNameHandler();
 				
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#folder-name";
 				
-				squashtm.contextualContent.addListener(nameHandler);				
+				contextualContent.addListener(nameHandler);				
 				
 			});
 		});

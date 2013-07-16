@@ -49,8 +49,6 @@
 <layout:tree-page-layout titleKey="squashtm"  highlightedWorkspace="campaign" isRequirementPaneSearchOn="true" linkable="test-case" isSubPaged="true">
 	<jsp:attribute name="head">
 	<comp:sq-css name="squash.purple.css" />
-	<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squash/jquery.squashtm.linkabletree.js"></script>
-
 
 	<script type="text/javascript">
 		selection = [];

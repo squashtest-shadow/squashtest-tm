@@ -124,7 +124,7 @@ define([ "jquery", "./cuf-values-utils", "./jquery-cuf-values" ], function($, ut
 			// .custom-field-value, and if the data model is not empty
 			// for that one.
 			var cufCells = table.find('td.custom-field-value').filter(function() {
-				return (table.fnGetData(this) != null);
+				return (table.fnGetData(this) !== null);
 			});
 
 			// now wrap the content with a span

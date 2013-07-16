@@ -20,24 +20,69 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
-<%@ taglib prefix="json"  uri="http://org.squashtest.tm/taglib/json" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<layout:workspace-page-layout resourceName="test-case">
+
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
+<%@ taglib prefix="wkp" tagdir="/WEB-INF/tags/test-case-workspace" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+
+<layout:tree-page-layout titleKey="squashtm" highlightedWorkspace="test-case">
+	
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.green.css" />
+		<comp:rich-jeditable-header />
+				
+		
 		<script type="text/javascript">
 			var squashtm = squashtm || {};
 			squashtm.app = squashtm.app || {};
 			squashtm.app.testCaseWorkspace = {
 				wizards: ${ json:marshall(wizards) }<%-- that was a JSP expression --%>
 			}
-			
-			require( ["common"], function(){
-				require(["test-case-workspace"], function() {
-				});
-			});
-		</script>		
+		</script>	
+				
 	</jsp:attribute>
-</layout:workspace-page-layout>
+	
+	<jsp:attribute name="titlePane">
+		<h2><f:message key="workspace.test-case.title" /></h2>	
+	</jsp:attribute>	
+	
+	<jsp:attribute name="tree">
+		<wkp:tc-tree-menu/>
+		<tree:_html-tree treeId="tree" />
+	</jsp:attribute>
+	
+	<jsp:attribute name="contextualContent">
+		<%-- empty --%>
+	</jsp:attribute>	
+	
+	<jsp:attribute name="footer">
+		
+		<wkp:tc-tree-popups/>
+		
+		<script type="text/javascript">
+		
+			var conf = {
+				tree : {
+					model : ${ json:serialize(rootModel) },
+					workspace : "test-case",
+					treeselector : "#tree"
+				}
+			}
+		
+		
+			$(function(){
+				require( ["common"], function(){
+					require(['tc-workspace', "test-case-workspace"], function(initWkp) {
+						initWkp.init(conf);						
+					});
+				});						
+			});
+		</script>
+	
+	</jsp:attribute>
+	
+</layout:tree-page-layout>

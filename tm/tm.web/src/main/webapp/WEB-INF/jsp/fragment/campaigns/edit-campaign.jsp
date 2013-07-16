@@ -463,20 +463,21 @@
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "jqueryui"], function($, contentHandlers, Frag, bugtracker){
+			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", 'workspace.contextual-content', "jqueryui"], 
+					function($, contentHandlers, Frag, bugtracker, contextualContent){
 				
 				$('#delete-campaign-button').button();
 				$('#rename-campaign-button').button();
 				$('#export-campaign-button').button();
-				
 				
 				var nameHandler = contentHandlers.getSimpleNameHandler();
 				
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#campaign-name";
 				
-				squashtm.contextualContent.addListener(nameHandler);				
+				contextualContent.addListener(nameHandler);				
 		
+
 				
 				// ******** export ************
 				
@@ -505,8 +506,9 @@
 	
 	function renameCampaignSuccess(data){
 		var evt = new EventRename(identity, data.newName);
-		squashtm.contextualContent.fire(null, evt);		
-	};	
+		squashtm.workspace.contextualContent.fire(null, evt);		
+	};					
+	
 
 
 

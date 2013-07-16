@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.testcase;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -135,26 +134,6 @@ public class TestCaseLibraryNavigationController extends
 	}
 	
 
-	@Deprecated
-	@RequestMapping(method = RequestMethod.GET, params = "show-test-case")
-	public final ModelAndView showLibraryWithOpenTestCase(@PathVariable long libraryId,
-			@RequestParam("show-test-case") long testCaseId) {
-		LOGGER.debug("showLibraryWithOpenTestCase");
-
-		TestCaseLibrary library = testCaseLibraryNavigationService.findLibrary(libraryId);
-		TestCase testCase = testCaseLibraryNavigationService.findTestCase(testCaseId);
-
-		ModelAndView mav = new ModelAndView("page/test-case-libraries/show-test-case-in-library");
-		mav.addObject("library", library);
-		JsTreeNode rootModel = driveNodeBuilder.get().setModel(library).build();
-		JsTreeNode testCaseModel = testCaseLibraryTreeNodeBuilder.get().setNode(testCase).build();
-		rootModel.setChildren(Arrays.asList(testCaseModel));
-
-		mav.addObject("rootModel", rootModel);
-		mav.addObject("selectedNode", testCaseModel);
-
-		return mav;
-	}
 
 	@Override
 	protected String getShowLibraryViewName() {

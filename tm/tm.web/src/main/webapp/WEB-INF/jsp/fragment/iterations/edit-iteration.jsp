@@ -554,14 +554,15 @@
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker"], function($, contentHandlers, Frag, bugtracker){
+			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextual-content"], 
+					function($, contentHandlers, Frag, bugtracker, contextualContent){
 
 				var nameHandler = contentHandlers.getSimpleNameHandler();
 				
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#iteration-name";
 				
-				squashtm.contextualContent.addListener(nameHandler);
+				contextualContent.addListener(nameHandler);
 				
 				<c:if test="${linkable}">
 				$('#test-case-button').click(function() {
@@ -606,7 +607,7 @@
 	/* renaming success handler */
 	function renameIterationSuccess(data) {
 		var evt = new EventRename(identity, data.newName);
-		squashtm.contextualContent.fire(null, evt);		
+		squashtm.workspace.contextualContent.fire(null, evt);		
 		refreshIterationInfos();
 	}
 

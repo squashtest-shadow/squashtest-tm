@@ -21,8 +21,7 @@
 /**
  * This is a template for a backbone module
  */
-define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui",
-		"jquery.squash.squashbutton", "jquery.squash.jstree" ], function($,
+define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui", "jquery.squash.squashbutton" ], function($,
 		Backbone, Handlebars, _) {
 	var View = Backbone.View.extend({
 		el : "#wizard-tree-pane",
@@ -44,8 +43,7 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui",
 
 			// in a perfect world, we would write $("container").on("click",
 			// "a", ...) but menu breaks event bubbling
-			$("#ws-wizard-tree-menu a").on("click",
-					$.proxy(this._onMenuClicked, this));
+			$("#ws-wizard-tree-menu a").on("click", $.proxy(this._onMenuClicked, this));
 		},
 
 		render : function() {
@@ -71,8 +69,7 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui",
 		},
 
 		/**
-		 * Notifies the menu of new nodes selection and refreshes the menu
-		 * access.
+		 * Notifies the menu of new nodes selection and refreshes the menu access.
 		 */
 		refreshSelection : function(selectedNodes) {
 			this.selectedNodes = selectedNodes;
@@ -83,23 +80,20 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui",
 		 * Refreshes the access to the menu items
 		 */
 		refreshAccess : function(selectedNodes) {
-			var refreshItemAccess = this
-					._refreshItemAccessHandler(selectedNodes);
+			var refreshItemAccess = this._refreshItemAccessHandler(selectedNodes);
 			_.each(this.collection, refreshItemAccess);
 		},
 
 		/**
-		 * Returns a handler for refreshing a menu item in the given node
-		 * context.
+		 * Returns a handler for refreshing a menu item in the given node context.
 		 */
 		_refreshItemAccessHandler : function(selectedNodes) {
 			var self = this;
 			return function(wizard) {
 				var accessRule = wizard.accessRule;
-				var enabled = self._checkSelectionMode(selectedNodes,
-						accessRule)
-						&& self._checkPermission(selectedNodes, accessRule)
-						&& self._checkWizardActivation(selectedNodes, wizard);
+				var enabled = self._checkSelectionMode(selectedNodes, accessRule) &&
+						self._checkPermission(selectedNodes, accessRule) &&
+						self._checkWizardActivation(selectedNodes, wizard);
 
 				if (enabled) {
 					self.menu.buttons[wizard.name].enable();
@@ -112,8 +106,7 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui",
 		},
 
 		/**
-		 * Checks that the node context matches the selection mode defined in
-		 * access rule.
+		 * Checks that the node context matches the selection mode defined in access rule.
 		 */
 		_checkSelectionMode : function(selectedNodes, accessRule) {
 			var res;
@@ -129,8 +122,7 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui",
 		},
 
 		/**
-		 * Checks that the current node context matches the required permissions
-		 * for wizard execution.
+		 * Checks that the current node context matches the required permissions for wizard execution.
 		 */
 		_checkPermission : function(selectedNodes, accessRule) {
 			var self = this;
@@ -141,32 +133,26 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui",
 			};
 
 			return _.reduce(selectedNodes, function(reduced, node) {
-				return reduced
-						&& _.reduce(accessRule.rules, reducePermission(node),
-								false);
+				return reduced && _.reduce(accessRule.rules, reducePermission(node), false);
 			}, true);
 		},
 
 		_nodeMatchesRule : function(node, rule) {
 			var $node = $(node).treeNode();
-			return $node.isAuthorized(rule.permission)
-					&& $node.is(":" + rule.nodeType.toLowerCase());
+			return $node.isAuthorized(rule.permission) && $node.is(":" + rule.nodeType.toLowerCase());
 		},
 
 		/**
-		 * Checks that the given wizard is activated for the project of selected
-		 * nodes
+		 * Checks that the given wizard is activated for the project of selected nodes
 		 */
 		_checkWizardActivation : function(selectedNodes, wizard) {
 			return _.reduce(selectedNodes, function(reduced, node) {
-				return reduced
-						&& $(node).treeNode().isWorkspaceWizardEnabled(wizard);
+				return reduced && $(node).treeNode().isWorkspaceWizardEnabled(wizard);
 			}, true);
 		},
 
 		/**
-		 * Event handler triggered when menu item is clicked. Posts the selected
-		 * nodes to the wizard's url
+		 * Event handler triggered when menu item is clicked. Posts the selected nodes to the wizard's url
 		 */
 		_onMenuClicked : function(event, data) {
 			var wizard = _.find(this.collection, function(wizard) {

@@ -61,7 +61,7 @@ public class TestSuiteNodeBuilder extends JsTreeNodeBuilder<TestSuite, TestSuite
 
 	@Override
 	protected void doBuild(JsTreeNode node, TestSuite model) {
-		node.addAttr("rel", "view");
+		node.addAttr("rel", "test-suite");
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", "test-suites");
 		node.setState(State.leaf);

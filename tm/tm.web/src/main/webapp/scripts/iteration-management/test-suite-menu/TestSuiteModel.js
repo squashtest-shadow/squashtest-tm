@@ -20,13 +20,13 @@
  */
 /* ********************
 This object somewhat implements a distributed MVC. Locally, within the contextual content, it represents the model. However, when modifications happen it must warn it's listeners, but also
-the object squashtm.contextualContent. It will relay the information to other models (ie, the tree).
+the object squashtm.workspace.contextualContent. It will relay the information to other models (ie, the tree).
 
 As such a model object is both master (of its listeners) and slave (of the contextual content).
 
  ********************* */
 
-define([ "jquery", "jqueryui" ], function($) {
+define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, contextualContent) {
 
 	function TestSuiteModel(settings) {
 
@@ -34,6 +34,7 @@ define([ "jquery", "jqueryui" ], function($) {
 		this.baseUpdateUrl = settings.baseUpdateUrl;
 		this.getUrl = settings.getUrl;
 		this.removeUrl = settings.removeUrl;
+		this.contextualContent = contextualContent;
 
 		if (settings.initData !== undefined) {
 			this.data = settings.initData;
@@ -91,8 +92,8 @@ define([ "jquery", "jqueryui" ], function($) {
 		}, self);
 
 		var notifyContextualContent = $.proxy(function(evt) {
-			if (squashtm.contextualContent !== undefined) {
-				squashtm.contextualContent.fire(this, evt);
+			if (this.contextualContent !== "none") {
+				this.contextualContent.fire(this, evt);
 			}
 		}, self);
 
@@ -209,8 +210,8 @@ define([ "jquery", "jqueryui" ], function($) {
 
 		// register to the contextual content manager if exists
 
-		if (squashtm.contextualContent !== undefined) {
-			squashtm.contextualContent.addListener(this);
+		if (this.contextualContent !== undefined) {
+			this.contextualContent.addListener(this);
 		}
 
 	}
