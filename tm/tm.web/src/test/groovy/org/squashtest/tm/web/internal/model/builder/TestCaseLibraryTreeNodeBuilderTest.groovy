@@ -47,7 +47,7 @@ class TestCaseLibraryTreeNodeBuilderTest extends Specification {
 		then:
 		res.title == node.name
 		res.attr['resId'] == "${node.id}"
-		res.attr['rel'] == "file"
+		res.attr['rel'] == "test-case"
 		res.attr['resType'] == "test-cases"
 		res.state == State.leaf.name()
 	}

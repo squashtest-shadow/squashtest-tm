@@ -100,7 +100,7 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 		1 * requirementLibraryNavigationService.addRequirementToRequirementLibrary(100, firstVersion) >> req
 		res.title == "new req"
 		res.attr['resId'] == "100"
-		res.attr['rel'] == "file"
+		res.attr['rel'] == "requirement"
 	}
 
 	def "should return content nodes of folder"() {

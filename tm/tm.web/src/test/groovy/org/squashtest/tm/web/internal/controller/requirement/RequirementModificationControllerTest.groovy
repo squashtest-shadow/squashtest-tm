@@ -100,6 +100,9 @@ class RequirementModificationControllerTest extends Specification {
 		RequirementCategoryComboDataBuilder builder = new RequirementCategoryComboDataBuilder()
 		builder.labelFormatter = internationalformatter
 
+		i18nHelper.internationalize(_, _) >> "--"
+		builder.setInternationalizationHelper(i18nHelper)
+		
 		Provider provider = Mock()
 		provider.get() >> builder
 

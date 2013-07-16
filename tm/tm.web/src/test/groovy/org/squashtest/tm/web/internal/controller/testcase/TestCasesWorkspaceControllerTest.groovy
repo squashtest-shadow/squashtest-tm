@@ -23,12 +23,14 @@ package org.squashtest.tm.web.internal.controller.testcase;
 import javax.inject.Provider
 
 import org.apache.poi.hssf.record.formula.functions.T
+import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.library.WorkspaceService
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController
+import org.squashtest.tm.web.internal.controller.testcase.TestCaseFolderModificationControllerTest;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 
 import spock.lang.Specification
@@ -55,12 +57,13 @@ class TestCasesWorkspaceControllerTest extends Specification {
 		Project project = Mock()
 		library.project >> project
 		service.findAllLibraries() >> [library]
-
+		def model = Mock(Model)
+		
 		when:
-		ModelAndView view = controller.showWorkspace()
+		String view = controller.showWorkspace(model, Locale.getDefault())
 
 		then:
-		view.viewName == "page/test-case-workspace"
-		view.model["rootModel"] != null
+		view == "page/test-case-workspace"
+		1 * model.addAttribute ("rootModel", _)
 	}
 }

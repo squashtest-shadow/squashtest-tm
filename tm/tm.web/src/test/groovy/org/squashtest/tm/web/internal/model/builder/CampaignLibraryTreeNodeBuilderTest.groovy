@@ -65,7 +65,7 @@ class CampaignLibraryTreeNodeBuilderTest extends Specification {
 		res.title == node.name
 		res.attr['resId'] == "${node.id}"
 		res.attr['resType'] == "campaigns"
-		res.attr['rel'] == "file"
+		res.attr['rel'] == "campaign"
 		res.state == State.leaf.name()
 	}
 	

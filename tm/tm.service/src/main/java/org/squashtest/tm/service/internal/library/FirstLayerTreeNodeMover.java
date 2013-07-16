@@ -216,7 +216,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 	}
 	
 	/**
-	 * Will check it treeNode to move is not his destination and if it is not contained in the hierarchy of it's destination.
+	 * Will check if the treeNode to move is not his destination and if it is not contained in the hierarchy of it's destination.
 	 * @param toMove
 	 * @return 
 	 */
@@ -225,7 +225,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 		Long toMoveId = ((LibraryNode)toMove).getId();
 		Long destinationId = destination.getId();
 		
-		if (toMoveId.equals(destinationId)){
+		if (toMove.equals(destination)){
 			throw new CannotMoveInHimselfException();
 		}
 		
