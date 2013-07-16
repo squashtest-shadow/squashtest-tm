@@ -521,7 +521,7 @@ function getIdsOfSelectedAssociationTableRows(dataTable, getRowIdCallback) {
 
 function restoreTableSelection(dataTable, getRowIdCallback) {
 	var selectedIds = dataTable.attr('selectedIds');
-	if (selectedIds != null) {
+	if (selectedIds !== null) {
 		selectTableRowsOfIds(dataTable, selectedIds, getRowIdCallback);
 	}
 	dataTable.removeAttr('selectedIds');

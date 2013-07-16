@@ -23,14 +23,14 @@
  *  object. The configuration trivial :
  *  
  *  conf : {
- *  	button : { button configuration },
- *  	menu : {  
- *  		//every valid menu options,
- *  		zindex : a user-defined z-index value, 
- *  				 to make sure your menu will be displayed above any other elements.
- *	 				default is 3000. 
- *  	}
- *  }
+ *		button : { button configuration },
+ *		menu : {  
+ *			//every valid menu options,
+ *			zindex : a user-defined z-index value, 
+ *					to make sure your menu will be displayed above any other elements.
+ *					default is 3000. 
+ *		}
+ *	}
  * 
  *	@author bsiri
  * 

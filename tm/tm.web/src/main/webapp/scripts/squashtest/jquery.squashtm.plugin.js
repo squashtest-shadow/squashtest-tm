@@ -142,7 +142,7 @@ var squashtm = squashtm || {};
 
 			var win = window.open("about:blank", windowDef.name, windowDef.features);
 			win.document.write(form);
-			win.document.forms['postForm'].submit();
+			win.document.forms.postForm.submit();
 
 			return win;
 		}

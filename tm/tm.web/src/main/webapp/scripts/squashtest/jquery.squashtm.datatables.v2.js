@@ -1155,7 +1155,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		 */
 
 		// pre draw callback
-		var userPreDrawCallback = datatableEffective["fnPreDrawCallback"];
+		var userPreDrawCallback = datatableEffective.fnPreDrawCallback;
 
 		var customPreDrawCallback = function(oSettings) {
 			if (userPreDrawCallback) {
@@ -1164,10 +1164,10 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			_saveTableSelection.call(this);
 		};
 
-		datatableEffective["fnPreDrawCallback"] = customPreDrawCallback;
+		datatableEffective.fnPreDrawCallback = customPreDrawCallback;
 
 		// draw callback
-		var userDrawCallback = datatableEffective["fnDrawCallback"];
+		var userDrawCallback = datatableEffective.fnDrawCallback;
 
 		var customDrawCallback = function(oSettings) {
 			if (userDrawCallback) {
@@ -1185,10 +1185,10 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 		};
 
-		datatableEffective["fnDrawCallback"] = customDrawCallback;
+		datatableEffective.fnDrawCallback = customDrawCallback;
 
 		// init complete callback
-		var userInitCompleteCallback = datatableEffective["fnInitCompleteCallback"];
+		var userInitCompleteCallback = datatableEffective.fnInitCompleteCallback;
 
 		var customInitCompleteCallback = function(oSettings) {
 			if (userInitCompleteCallback) {
@@ -1198,7 +1198,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			self.removeClass("unstyled-table");
 		};
 
-		datatableEffective["fnInitComplete"] = customInitCompleteCallback;
+		datatableEffective.fnInitComplete = customInitCompleteCallback;
 
 		/* ********************* rewrite the data ***************** */
 

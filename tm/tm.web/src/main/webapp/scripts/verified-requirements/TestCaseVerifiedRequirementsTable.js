@@ -67,7 +67,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./VerifiedR
 
 					this.toDeleteIds = rvIds;
 					var obsoleteStatuses = $(rows).not(function(index, row) {
-						return self.table.fnGetData(row)["status"] != "OBSOLETE";
+						var data = self.table.fnGetData(row);
+						return data.status != "OBSOLETE";
 					});
 					if (obsoleteStatuses.length > 0) {
 						this.confirmRemoveObsoleteRequirementDialog.confirmDialog("open");
@@ -83,7 +84,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./VerifiedR
 
 		_requirementsTableRowCallback : function(row, data, displayIndex) {
 			var verified = data.directlyVerified == "false" ? false : data.directlyVerified;
-			if (VRTS.linkable && verified && data["status"] != "OBSOLETE") {
+			if (VRTS.linkable && verified && data.status != "OBSOLETE") {
 				this.addSelectEditableToVersionNumber(row, data);
 			}
 			this.discriminateDirectVerifications(row, data, displayIndex);

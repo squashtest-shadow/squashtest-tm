@@ -65,10 +65,10 @@ define(
 							var availableLocations = settings.renderingLocations;
 							var count = 0, dataLength = allData.aaData.length;
 
+							var namecollect = function(elt){ return elt.enuName; };
 							for (count = 0; count < dataLength; count++) {
 								var data = allData.aaData[count];
 
-								var namecollect = function(elt){ return elt.enuName; }
 								var actualLocations = $.map(data.renderingLocations, namecollect); 
 
 								var result = {}, i = 0, max = renderingLocations.length;
@@ -156,8 +156,7 @@ define(
 						'bSortable' : false,
 						'bVisible' : true,
 						'aTargets' : [ 3 + i ],
-						'mDataProp' : 'renderingLocations.'
-								+ renderingLocations[i],
+						'mDataProp' : 'renderingLocations.'	+ renderingLocations[i],
 						'sWidth' : '15em',
 						'sClass' : 'centered custom-field-location'
 					};

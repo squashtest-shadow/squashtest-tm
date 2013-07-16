@@ -29,71 +29,73 @@
  * 
  * <div id="mydialog" class="popup-dialog">
  * 
- * 		<div>
- * 			<p>this is my main content. Because it isn't a 'state' div (read below), it will always be displayed. 
- * 				It is basically equivalent state=default
- * 			</p>
+ *		<div>
+ *			<p>this is my main content. Because it isn't a 'state' div (read below), it will always be displayed. 
+ *				It is basically equivalent state=default
+ *			</p>
  * 
- * 			<textarea data-def="isrich">will be turned into rich editable</textarea>
+ *			<textarea data-def="isrich">will be turned into rich editable</textarea>
  * 
- * 			<textarea>will remain a regular textarea</textarea>
- * 		</div>
+ *			<textarea>will remain a regular textarea</textarea>
+ *		</div>
  * 
- * 		<div data-def="state=content-1">
- * 			<p>either this is displayed</p></div>
+ *		<div data-def="state=content-1">
+ *			<p>either this is displayed</p>
+ *		</div>
  * 
- * 		<div data-def="state=content-2">
- * 			<p>or that</p>
- * 		</div>
+ *		<div data-def="state=content-2">
+ *			<p>or that</p>
+ *		</div>
  * 	
- * 		<div class="popup-dialog-buttonpane">
- * 			<input type="button" value="ok" 					data-def="evt=confirm, mainbtn"/>
- * 			<input type="button" value="cancel" 				data-def="evt=cancel" />
- * 			<input type="button" value="specific to content1" 	data-def="state=content-1" />
- * 			<input type="button" value="specific to content2" 	data-def="state=content-2" />
- * 		</div>
+ *		<div class="popup-dialog-buttonpane">
+ *			<input type="button" value="ok" 					data-def="evt=confirm, mainbtn"/>
+ *			<input type="button" value="cancel" 				data-def="evt=cancel" />
+ *			<input type="button" value="specific to content1" 	data-def="state=content-1" />
+ *			<input type="button" value="specific to content2" 	data-def="state=content-2" />
+ *		</div>
  * 
- * </div>
+ *	</div>
  * 
  * 
- * ========== behaviour ================
+ *	========== behaviour ================
  * 
- * 1/ the buttons aren't created like regular popup : the same dom objects are litteraly reused. This can help you
- * with the logic of the popup. HOWEVER, they are moved around, which may lead to the loss of callbacks on those buttons
- * if they were bound before the dialog was initialized.
+ *	1/ the buttons aren't created like regular popup : the same dom objects are litteraly reused. This can help you
+ *	with the logic of the popup. HOWEVER, they are moved around, which may lead to the loss of callbacks on those buttons
+ *	if they were bound before the dialog was initialized.
  * 
- * 2/ the popup will be automatically destroyed and removed whenever the container it was initially declared in
- * is removed. Not more 'is-contextual' bullshit !
+ *	2/ the popup will be automatically destroyed and removed whenever the container it was initially declared in
+ *	is removed. Not more 'is-contextual' bullshit !
  * 
- * 3/ all the inputs defined in this dialog will be cleaned up automatically whenever the dialog is opened again.
+ *	3/ all the inputs defined in this dialog will be cleaned up automatically whenever the dialog is opened again.
  * 
- * 4/ a popup can define several alternative content that are displayed one at a time, representing a state. 
- * 	  Displaying one will automatically hide the other alternatives. 
- * 	  Those elements are declared using data-def="state=<state-id>", or directly using class="popup-dialog-state-<state-id>". 
- *    See the API for details (setState()) and configuration for details.
+ *	4/ a popup can define several alternative content that are displayed one at a time, representing a state. 
+ *	Displaying one will automatically hide the other alternatives. 
+ *	Those elements are declared using data-def="state=<state-id>", or directly using class="popup-dialog-state-<state-id>". 
+ *	See the API for details (setState()) and configuration for details.
  * 
- * ============= API ====================
+ *	============= API ====================
  * 
- * 1/ cleanup : force the cleanup of the controls
+ *	1/ cleanup : force the cleanup of the controls
  * 
- * 2/ showState(id) : will show anything configured 'state=<state id>' and hide the other ones.
+ *	2/ showState(id) : will show anything configured 'state=<state id>' and hide the other ones.
  *  
- * ========= configuration ==============
+ *	========= configuration ==============
  * 
- * 1/ basic : all basic options of jQuery dialog are valid here, EXCEPT for the buttons.
+ *	1/ basic : all basic options of jQuery dialog are valid here, EXCEPT for the buttons.
  *
  *
- * 2/ DOM conf : reads parts of the conf from the datatable, see the handlers at the end of the document for details.
- * for now, supports : 
+ *	2/ DOM conf : reads parts of the conf from the datatable, see the handlers at the end of the document for details.
+ *	for now, supports : 
  * 
- * - isrich : for textarea. If set, will be turned into a ckeditor.
- * - evt=<eventname> : for buttons. If set, clicking on that button will trigger <eventname> on the dialog.
- * - state=<state id> : for any elements in the popup. Multiple elements can declare the same <state-id> and they'll
- * 								be logically bound when setState(<state-id>) is invoked. Note that a single element can belong
- * 								to multiple state.
- * - mainbtn[=<state-id>] : for buttons. If set, pressing <ENTER> inside the dialog will trigger 'click' on that button if the popup is in that
- * 							current state. the <state-id> is optional : if left blank, the button will be triggered if the popup is in the default 
- * 							state.
+ *	- isrich : for textarea. If set, will be turned into a ckeditor.
+ *	- evt=<eventname> : for buttons. If set, clicking on that button will trigger <eventname> on the dialog.
+ *	- state=<state id> : for any elements in the popup. Multiple elements can declare the same <state-id> and they'll
+ * 						be logically bound when setState(<state-id>) is invoked. Note that a single element can belong
+ *						to multiple state.
+ *
+ *	- mainbtn[=<state-id>] : for buttons. If set, pressing <ENTER> inside the dialog will trigger 'click' on that button if the popup is in that
+ *						current state. the <state-id> is optional : if left blank, the button will be triggered if the popup is in the default 
+ *						state.
  * 
  */
 

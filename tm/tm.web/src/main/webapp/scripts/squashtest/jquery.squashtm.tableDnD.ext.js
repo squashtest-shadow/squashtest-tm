@@ -210,8 +210,7 @@ jQuery.tableDnD = {
 			};
 		}
 		return {
-			x : ev.clientX + document.body.scrollLeft
-					- document.body.clientLeft,
+			x : ev.clientX + document.body.scrollLeft - document.body.clientLeft,
 			y : ev.clientY + document.body.scrollTop - document.body.clientTop
 		};
 	},
@@ -269,7 +268,7 @@ jQuery.tableDnD = {
 	},
 
 	mousemove : function(ev) {
-		if (jQuery.tableDnD.dragObject == null) {
+		if (jQuery.tableDnD.dragObject === null) {
 			return;
 		}
 
@@ -282,8 +281,7 @@ jQuery.tableDnD = {
 		if (document.all) {
 			// Windows version
 			// yOffset=document.body.scrollTop;
-			if (typeof document.compatMode != 'undefined'
-					&& document.compatMode != 'BackCompat') {
+			if (typeof document.compatMode != 'undefined' && document.compatMode != 'BackCompat') {
 				yOffset = document.documentElement.scrollTop;
 			} else if (typeof document.body != 'undefined') {
 				yOffset = document.body.scrollTop;

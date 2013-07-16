@@ -23,8 +23,7 @@ require([ "common" ], function(common) {
 			"app/ws/squashtm.workspace", "domReady" ], function($,
 			CustomFieldModificationView, WS, domReady) {
 		var goBack = function() {
-			document.location.href = squashtm.app.contextRoot
-					+ "/administration/custom-fields";
+			document.location.href = squashtm.app.contextRoot + "/administration/custom-fields";
 		};
 
 		domReady(function() {

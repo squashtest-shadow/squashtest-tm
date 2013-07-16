@@ -88,7 +88,6 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 						htmlDetail += '<li>' + messages[i] + '</li>';
 					}
 				}
-				;
 			});
 
 			if (htmlDetail.length > 0) {
@@ -143,7 +142,7 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 			}
 
 			// else we can proceed.
-			var xhrs = this.getSimulXhr(nodes)
+			var xhrs = this.getSimulXhr(nodes);
 
 			this.smartAjax(xhrs, this.simulationSuccess).fail(function() {
 				self.setState('reject');

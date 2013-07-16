@@ -255,8 +255,7 @@ define(
 											'value' : newValue
 										},
 										dataType : "json",
-										url : cfMod.optionsTable.ajaxSource
-												+ "/" + label + "/code"
+										url : cfMod.optionsTable.ajaxSource	+ "/" + label + "/code"
 									}).done(function(data) {
 								self.optionsTable.refresh();
 							});

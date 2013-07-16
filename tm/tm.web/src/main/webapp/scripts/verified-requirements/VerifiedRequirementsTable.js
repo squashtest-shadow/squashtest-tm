@@ -116,7 +116,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 			if (hasRequirement) {
 				this.toDeleteIds = rvIds;
 				var obsoleteStatuses = $(rows).not(function(index, row) {
-					return self.table.fnGetData(row)["status"] != "OBSOLETE";
+					var data = self.table.fnGetData(row);
+					return data.status != "OBSOLETE";
 				});
 				if (obsoleteStatuses.length > 0) {
 					this.confirmRemoveObsoleteRequirementDialog.confirmDialog("open");

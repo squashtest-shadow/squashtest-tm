@@ -41,5 +41,5 @@ define(function() {
 				throw this.errmsg;
 			}
 		}
-	}
+	};
 });

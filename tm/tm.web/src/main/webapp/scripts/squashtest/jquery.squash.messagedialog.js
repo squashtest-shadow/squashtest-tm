@@ -154,7 +154,7 @@
 			deferred.resolve();
 		};
 
-		if (size != null) {
+		if (size !== null) {
 			self.messageDialog({
 				width : size
 			}).bind('messagedialogclose', close).messageDialog('open');

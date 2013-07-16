@@ -58,7 +58,7 @@ define([ 'jquery', 'squash.translator' ], function($, translator) {
 
 			}
 			return this._messages[messageName];
-		}
+		};
 
 		var reset = function() {
 			$.cookie('squash-copy-nodes', null);
@@ -97,12 +97,12 @@ define([ 'jquery', 'squash.translator' ], function($, translator) {
 		// public version of 'retrieve'
 		this.bufferedNodes = function() {
 			var data = retrieve();
-			if (data == null) {
+			if (data === null) {
 				return $();
 			} else {
 				return this.tree.jstree('findNodes', data.nodes);
 			}
-		}
+		};
 
 		// assumes that all checks are green according to the rules of this workspace.
 		this.copyNodesToCookie = function() {

@@ -32,7 +32,7 @@ define(
 				 */
 				var json = $.parseJSON(request.responseText);
 
-				if (json != null) {
+				if (json !== null) {
 					if (json.actionValidationError !== null) {
 						return $.squash.openMessage(_config.errorTitle,
 								json.actionValidationError.message);
@@ -151,7 +151,7 @@ define(
 					if (json.actionValidationError !== null) {
 						return json.actionValidationError.message;
 					} else {
-						if (json.fieldValidationErrors != null) {
+						if (json.fieldValidationErrors !== null) {
 							/* IE8 requires low tech code */
 							var validationErrorList = json.fieldValidationErrors;
 							if (validationErrorList.length > 0) {
