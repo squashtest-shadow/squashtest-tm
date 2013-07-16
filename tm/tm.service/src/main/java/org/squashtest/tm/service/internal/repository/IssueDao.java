@@ -106,4 +106,6 @@ public interface IssueDao extends EntityDao<Issue> {
 	 */
 	List<Issue> findAllForTestSuite(Long id);
 
+	Integer countIssuesfromExecutionSteps(List<Long> executionStepsIds);
+
 }

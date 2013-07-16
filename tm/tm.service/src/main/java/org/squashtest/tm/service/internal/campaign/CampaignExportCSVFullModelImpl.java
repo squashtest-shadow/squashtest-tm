@@ -320,16 +320,21 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 		
 		private void populateTestStepFixedRowData(List<CellImpl> dataCells){
 			
-			dataCells.add(new CellImpl(execStep.getId().toString()));
+			dataCells.add(new CellImpl(Long.toString(execStep.getId())));
 			dataCells.add(new CellImpl(""+(stepIndex+1)));
 			dataCells.add(new CellImpl(formatStepRequirements()));
 			dataCells.add(new CellImpl(execStep.getExecutionStatus().toString()));
 			dataCells.add(new CellImpl(formatDate(execStep.getLastExecutedOn())));
 			dataCells.add(new CellImpl(formatUser(execStep.getLastExecutedBy())));
-			dataCells.add(new CellImpl(Integer.toString(execStep.getIssueList().size())));
+			dataCells.add(new CellImpl(Integer.toString(getNbIssues(execStep))));
 			
 		}
 		
+
+		private int getNbIssues(ExecutionStep execStep) {
+
+			return bugTrackerService.findNumberOfIssueForExecutionStep(execStep.getId());
+		}
 
 		private void populateTestCaseFixedRowData(List<CellImpl> dataCells) {
 
@@ -344,7 +349,7 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 			
 			dataCells.add(new CellImpl(Integer.toString(itp.getExecutions().size())));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
-			dataCells.add(new CellImpl(Integer.toString(getNbIssues(testCase))));
+			dataCells.add(new CellImpl(Integer.toString(getNbIssues(itp))));
 			
 			dataCells.add(new CellImpl(itp.getExecutionStatus().toString()));
 			dataCells.add(new CellImpl(formatUser(itp.getUser())));
@@ -400,9 +405,9 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 			return "--";
 		}
 
-		private int getNbIssues(TestCase testCase) {
+		private int getNbIssues(IterationTestPlanItem itp) {
 
-			return bugTrackerService.findNumberOfIssueForTestCase(testCase.getId());
+			return bugTrackerService.findNumberOfIssueForItemTestPlanLastExecution(itp.getId());
 
 		}
 

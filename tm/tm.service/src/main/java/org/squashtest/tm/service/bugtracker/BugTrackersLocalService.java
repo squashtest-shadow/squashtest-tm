@@ -321,4 +321,7 @@ public interface BugTrackersLocalService {
 
 	int findNumberOfIssueForTestCase(Long id);
 
+	int findNumberOfIssueForItemTestPlanLastExecution(Long itemTestPlanId);
+	
+	int findNumberOfIssueForExecutionStep(Long testStepId);
 }

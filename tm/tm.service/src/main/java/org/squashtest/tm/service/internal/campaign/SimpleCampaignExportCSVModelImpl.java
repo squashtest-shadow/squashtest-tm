@@ -297,7 +297,7 @@ public class SimpleCampaignExportCSVModelImpl implements CampaignExportCSVModel 
 			dataCells.add(new CellImpl(itp.getTestSuiteNames().replace(", ",",").replace("<", "&lt;").replace(">", "&gt;")));
 			dataCells.add(new CellImpl(Integer.toString(itp.getExecutions().size())));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
-			dataCells.add(new CellImpl(Integer.toString(getNbIssues(testCase))));
+			dataCells.add(new CellImpl(Integer.toString(getNbIssues(itp))));
 			dataCells.add(new CellImpl(itp.getExecutionStatus().toString()));
 			dataCells.add(new CellImpl(formatUser(itp.getUser())));
 			dataCells.add(new CellImpl(formatDate(itp.getLastExecutedOn())));
@@ -347,9 +347,9 @@ public class SimpleCampaignExportCSVModelImpl implements CampaignExportCSVModel 
 			return "--";
 		}
 
-		private int getNbIssues(TestCase testCase) {
+		private int getNbIssues(IterationTestPlanItem itp) {
 
-			return bugTrackerService.findNumberOfIssueForTestCase(testCase.getId());
+			return bugTrackerService.findNumberOfIssueForItemTestPlanLastExecution(itp.getId());
 
 		}
 
