@@ -18,161 +18,161 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(
-		[ "jquery", "backbone", "app/lnf/Forms","./NewDatasetModel", "jquery.squash.confirmdialog" ],
-		function($, Backbone, Forms, NewDatasetModel) {
-			var NewDatasetDialog = Backbone.View
-					.extend({
-						el : "#add-dataset-dialog",
-						paramInputIdPrefix : "add-dataset-paramValue",
-						paramRowClass : "parameterRow",
-						inputClass : "paramValue",
-						initialize : function() {
-							this.settings = this.options.settings;
-							var self = this;
-							
-							this.getAndAddParamterInputs = $.proxy(this._getAndAddParamterInputs, this);
-							this.addParamterInputs = $.proxy(this._addParamterInputs, this);
-							this.removeParameterInputs = $.proxy(this._removeParameterInputs, this);
-						
-							//add parameter value inputs
-							this.getAndAddParamterInputs();
-							
-							//initialize popup
-							this.$el.find("input:text").val("");
-							$("span.error-message", $(self.el)).text("");
+define([ "jquery", "backbone", "app/lnf/Forms", "./NewDatasetModel", "jquery.squash.confirmdialog" ], function($,
+		Backbone, Forms, NewDatasetModel) {
+	var NewDatasetDialog = Backbone.View.extend({
+		el : "#add-dataset-dialog",
+		paramInputIdPrefix : "add-dataset-paramValue",
+		paramRowClass : "parameterRow",
+		inputClass : "paramValue",
+		initialize : function() {
+			this.settings = this.options.settings;
+			var self = this;
 
-							this.$el.confirmDialog({
-								autoOpen : true
-							});
-							
-						},
-						
-						events : {
-							"blur input:text.strprop" : "changeStrProp",
-							"blur input:text.paramValue" : "changeParamProp",
-							"confirmdialogcancel" : "cancel",
-							"confirmdialogvalidate" : "validate",
-							"confirmdialogconfirm" : "confirm"
-						},
-						
-						changeStrProp : function(event) {
-							var textbox = event.target;
-							this.model.set(textbox.name, textbox.value);
-						},
-						
-						changeParamProp : function(event){
-						var self = this;
-							var textbox = event.target;
-							var nameLength = textbox.name.lenght;
-							var id = parseInt(textbox.name.substring(self.inputClass.length, nameLength), 10);
-							this.model.paramValueChanged(id , textbox.value);
-						},
-						
-						cancel : function(event) {
-							this.cleanup();
-							this.trigger("newDataset.cancel");
-						},
+			this.getAndAddParamterInputs = $.proxy(this._getAndAddParamterInputs, this);
+			this.addParamterInputs = $.proxy(this._addParamterInputs, this);
+			this.removeParameterInputs = $.proxy(this._removeParameterInputs, this);
 
-						confirm : function(event) {
-							this.cleanup();
-							this.trigger("newDataset.confirm");
-						},
+			// add parameter value inputs
+			this.getAndAddParamterInputs();
 
-						
-						validate : function(event) {
-							var res = true, validationErrors = this.model
-									.validateAll();
+			// initialize popup
+			this.$el.find("input:text").val("");
+			$("span.error-message", $(self.el)).text("");
 
-							Forms.form(this.$el).clearState();
+			this.$el.confirmDialog({
+				autoOpen : true
+			});
 
-							if (validationErrors !== null) {
-								for ( var key in validationErrors) {
-									Forms
-											.input(
-													this.$("input[name='" + key
-															+ "']")).setState(
-													"error",
-													validationErrors[key]);
-								}
+		},
 
-								return false;
-							}
+		events : {
+			"blur input:text.strprop" : "changeStrProp",
+			"blur input:text.paramValue" : "changeParamProp",
+			"confirmdialogcancel" : "cancel",
+			"confirmdialogvalidate" : "validate",
+			"confirmdialogconfirm" : "confirm"
+		},
 
-							this.model.save(null, {
-								async : false,
-								error : function() {
-									res = false;
-									event.preventDefault();
-								}
-							});
-						},
-						
-						_getAndAddParamterInputs : function(){
-							var self = this;							 
-							 $.ajax({
-								url: self.settings.basic.testCaseUrl +"/parameters",
-								type: "get"
-							 }).done(self.addParamterInputs);
-							 
-						 
-						},
-						
-						_addParamterInputs : function(json){
-							var self = this;
-							var content = this.$("table.form-horizontal > tbody");
-							//CREATE MODEL
-							var paramValues = [];
-							for(var i=0; i< json.length; i++){
-								paramValues.push([ json[i].id, ""]);
-							}
-							this.model = new NewDatasetModel({name:"", paramValues : paramValues},{url:self.settings.basic.testCaseDatasetsUrl+"/new"});
-							
-							//CREATE INPUTS
-							var newTemplate = function(param){
-								var row = $("<tr/>", {'class':'control-group '+self.paramRowClass});
-								//label
-								var labelCell = $("<td/>");
-								var label = $("<label/>", {'class':'control-label', 'for':self.paramInputIdPrefix+param.id});
-								label.text(param.name);
-								labelCell.append(label);
-								row.append(labelCell);
-								//input
-								var inputCell = $("<td/>",{'class':'controls'});
-								var input =  $("<input/>", {
-											'type' : 'text',
-											'class' : self.inputClass,
-											'id': self.paramInputIdPrefix + param.id,
-											'name' : self.inputClass + param.id,
-											'maxlength':255
-										});
-								input.attr("size", 50);										
-								inputCell.append(input);
-								row.append(inputCell);
-								content.append(row);
-							};								
-							for(var j=0; j< json.length; j++){
-							 var row = newTemplate(json[j]);
-							}
-							
-						},
-						
-						_removeParameterInputs : function(){
-							var selector = "tr."+this.paramRowClass;
-							this.$(selector).remove();
-						},
-						cleanup : function() {
-							this.$el.addClass("not-displayed");
-							this.model = {name :""};
-							Forms.form(this.$el).clearState();
-							this.removeParameterInputs();
-							this.$el.confirmDialog("destroy");
-						}
+		changeStrProp : function(event) {
+			var textbox = event.target;
+			this.model.set(textbox.name, textbox.value);
+		},
 
-						
+		changeParamProp : function(event) {
+			var self = this;
+			var textbox = event.target;
+			var nameLength = textbox.name.lenght;
+			var id = parseInt(textbox.name.substring(self.inputClass.length, nameLength), 10);
+			this.model.paramValueChanged(id, textbox.value);
+		},
 
-								
+		cancel : function(event) {
+			this.cleanup();
+			this.trigger("newDataset.cancel");
+		},
 
-					});
-			return NewDatasetDialog;
-		});
+		confirm : function(event) {
+			this.cleanup();
+			this.trigger("newDataset.confirm");
+		},
+
+		validate : function(event) {
+			var res = true, validationErrors = this.model.validateAll();
+
+			Forms.form(this.$el).clearState();
+
+			if (validationErrors !== null) {
+				for ( var key in validationErrors) {
+					Forms.input(this.$("input[name='" + key + "']")).setState("error", validationErrors[key]);
+				}
+
+				return false;
+			}
+
+			this.model.save(null, {
+				async : false,
+				error : function() {
+					res = false;
+					event.preventDefault();
+				}
+			});
+		},
+
+		_getAndAddParamterInputs : function() {
+			var self = this;
+			$.ajax({
+				url : self.settings.basic.testCaseUrl + "/parameters",
+				type : "get"
+			}).done(self.addParamterInputs);
+
+		},
+
+		_addParamterInputs : function(json) {
+			var self = this;
+			var content = this.$("table.form-horizontal > tbody");
+			// CREATE MODEL
+			var paramValues = [];
+			for ( var i = 0; i < json.length; i++) {
+				paramValues.push([ json[i].id, "" ]);
+			}
+			this.model = new NewDatasetModel({
+				name : "",
+				paramValues : paramValues
+			}, {
+				url : self.settings.basic.testCaseDatasetsUrl + "/new"
+			});
+
+			// CREATE INPUTS
+			var newTemplate = function(param) {
+				var row = $("<tr/>", {
+					'class' : 'control-group ' + self.paramRowClass
+				});
+				// label
+				var labelCell = $("<td/>");
+				var label = $("<label/>", {
+					'class' : 'control-label',
+					'for' : self.paramInputIdPrefix + param.id
+				});
+				label.text(param.name);
+				labelCell.append(label);
+				row.append(labelCell);
+				// input
+				var inputCell = $("<td/>", {
+					'class' : 'controls'
+				});
+				var input = $("<input/>", {
+					'type' : 'text',
+					'class' : self.inputClass,
+					'id' : self.paramInputIdPrefix + param.id,
+					'name' : self.inputClass + param.id,
+					'maxlength' : 255
+				});
+				input.attr("size", 50);
+				inputCell.append(input);
+				row.append(inputCell);
+				content.append(row);
+			};
+			for ( var j = 0; j < json.length; j++) {
+				var row = newTemplate(json[j]);
+			}
+
+		},
+
+		_removeParameterInputs : function() {
+			var selector = "tr." + this.paramRowClass;
+			this.$(selector).remove();
+		},
+		cleanup : function() {
+			this.$el.addClass("not-displayed");
+			this.model = {
+				name : ""
+			};
+			Forms.form(this.$el).clearState();
+			this.removeParameterInputs();
+			this.$el.confirmDialog("destroy");
+		}
+
+	});
+	return NewDatasetDialog;
+});

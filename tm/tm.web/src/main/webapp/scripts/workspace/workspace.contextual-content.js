@@ -25,16 +25,15 @@
  * 
  */
 
-define(['jquery', 'jqueryui'], function($){
-	
-	squashtm = squashtm || {}
+define([ 'jquery', 'jqueryui' ], function($) {
+
+	squashtm = squashtm || {};
 	squashtm.workspace = squashtm.workspace || {};
-	
-	if (squashtm.workspace.contextualContent !== undefined){
+
+	if (squashtm.workspace.contextualContent !== undefined) {
 		return squashtm.workspace.contextualContent;
-	}
-	else{
-		
+	} else {
+
 		$.fn.contextualContent = function() {
 
 			this.listeners = [];
@@ -55,7 +54,9 @@ define(['jquery', 'jqueryui'], function($){
 			/* ******************* private **************** */
 
 			var cleanContent = $.proxy(function() {
-				this.fire(null, {evt_name: "contextualcontent.clear"});
+				this.fire(null, {
+					evt_name : "contextualcontent.clear"
+				});
 				_cleanPopups();
 				this.empty();
 				this.listeners = [];
@@ -86,7 +87,7 @@ define(['jquery', 'jqueryui'], function($){
 				this.listeners.push(listener);
 			};
 
-			this.loadWith = function(url) {			
+			this.loadWith = function(url) {
 				var defer = $.Deferred();
 				var self = this;
 
@@ -119,14 +120,11 @@ define(['jquery', 'jqueryui'], function($){
 			return this;
 
 		};
-		
-		squashtm.workspace.contextualContent = $("#contextual-content, #information-content").contextualContent(); 
 
-		
-		return squashtm.workspace.contextualContent; 
-		
+		squashtm.workspace.contextualContent = $("#contextual-content, #information-content").contextualContent();
+
+		return squashtm.workspace.contextualContent;
+
 	}
-	
+
 });
-
-

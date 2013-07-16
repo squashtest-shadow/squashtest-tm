@@ -25,43 +25,38 @@
  * in this same package directory.
  */
 
-define(['jquery', 'tree'], function($, tree){
-	
-	
-	squashtm = squashtm || {}
+define([ 'jquery', 'tree' ], function($, tree) {
+
+	squashtm = squashtm || {};
 	squashtm.workspace = squashtm.workspace || {};
-	
-	if (squashtm.workspace.treeeventhandler !== undefined){
+
+	if (squashtm.workspace.treeeventhandler !== undefined) {
 		return squashtm.workspace.treeeventhandler;
-	}
-	else{
+	} else {
 		squashtm.workspace.treeeventhandler = new TreeEventHandler();
 		return squashtm.workspace.treeeventhandler;
 	}
-	
-	
-	
+
 	function TreeEventHandler() {
 
-		//Lazily initialised, see below
-		this.tree=null;
-		
-		this.setTree = function(tree){
-			this.tree = tree;			
-		}
-		
-		this.getTree = function(){
-			if (!this.tree){
+		// Lazily initialised, see below
+		this.tree = null;
+
+		this.setTree = function(tree) {
+			this.tree = tree;
+		};
+
+		this.getTree = function() {
+			if (!this.tree) {
 				this.tree = tree.get().jstree('get_instance');
 			}
 			return this.tree;
-		}
+		};
 
 		this.update = function(event) {
-			
+
 			var otree = this.getTree();
-			
-			
+
 			// todo : make something smarter
 			// ^^^ yeah that would be nice
 			switch (event.evt_name) {
@@ -74,7 +69,7 @@ define(['jquery', 'tree'], function($, tree){
 			case "update-reference":
 				updateEventUpdateReference(event, otree);
 				break;
-			case "contextualcontent.clear": 
+			case "contextualcontent.clear":
 				break; // bail out, default induces bugs
 			default:
 				otree.refresh_selected();
@@ -94,7 +89,7 @@ define(['jquery', 'tree'], function($, tree){
 		});
 
 		destination.getChildren().each(function() {
-			tree.jstree('delete_node',this);
+			tree.jstree('delete_node', this);
 		});
 
 		destination.load().done(function() {
@@ -119,7 +114,7 @@ define(['jquery', 'tree'], function($, tree){
 			resid : event.evt_target.obj_id
 		});
 
-		if (target.length === 0){
+		if (target.length === 0) {
 			return;
 		}
 
@@ -133,11 +128,10 @@ define(['jquery', 'tree'], function($, tree){
 			resid : event.evt_target.obj_id
 		});
 
-		if (target.length === 0){
+		if (target.length === 0) {
 			return;
 		}
 
 		target.setReference(event.evt_newref);
-	}	
+	}
 });
-

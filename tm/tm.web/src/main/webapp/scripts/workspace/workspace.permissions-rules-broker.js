@@ -25,23 +25,21 @@
  * This object doesn't know which one, it just passes it when asked to. Will throw an exception if no instance of permissions-rules could be found.
  * 
  */
-define(function(){
+define(function() {
 	return {
-		errmsg : "error : no permission-rules could be found. Please ensure that either 'tc-workspace/permissions-rules', "+
+		errmsg : "error : no permission-rules could be found. Please ensure that either 'tc-workspace/permissions-rules', "	+ 
 				 "'req-workspace/permissions-rules' or 'camp-workspace/permissions-rules' have been invoked first.",
-				 
-		get : function(){
-			try{
+
+		get : function() {
+			try {
 				var instance = squashtm.workspace.permissions_rules;
-				if (instance===undefined){
+				if (instance === undefined) {
 					throw this.errmsg;
 				}
 				return instance;
-			}
-			catch(severly_undefined){
+			} catch (severly_undefined) {
 				throw this.errmsg;
 			}
 		}
-	}	
+	}
 });
-

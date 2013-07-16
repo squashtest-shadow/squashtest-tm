@@ -27,14 +27,13 @@
  * a permissions-rules
  * 
  */
-define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
+define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 
-	
 	if (($.squash !== undefined) && ($.squash.delnodeDialog !== undefined)) {
 		// plugin already loaded
 		return;
 	}
-	
+
 	$.widget("squash.delnodeDialog", $.squash.formDialog, {
 
 		// ********** these options are MANDATORY **************
@@ -42,159 +41,157 @@ define(['jquery', 'underscore', 'jquery.squash.formdialog'], function($, _){
 			tree : null,
 			rules : null
 		},
-		
-		open : function(){
+
+		open : function() {
 			this._super();
 			this.simulateDeletion();
 		},
-		
+
 		// ******************* creates the XHR requests ***********
-		
-		getSimulXhr : function(nodes){
+
+		getSimulXhr : function(nodes) {
 			var ids = nodes.treeNode().all('getResId').join(',');
 			var rawUrl = nodes.getDeleteUrl();
-			var url = rawUrl.replace('\{nodeIds\}', ids) + '/deletion-simulation';
+			var url = rawUrl.replace('\\{nodeIds\\}', ids) + '/deletion-simulation';
 			return $.getJSON(url);
 		},
 
-		getConfirmXhr : function(nodes){
+		getConfirmXhr : function(nodes) {
 			var ids = nodes.treeNode().all('getResId').join(',');
 			var rawUrl = nodes.getDeleteUrl();
-			var url = rawUrl.replace('\{nodeIds\}', ids);
+			var url = rawUrl.replace('\\{nodeIds\\}', ids);
 			return $.ajax({
 				url : url,
 				type : 'delete'
-			});				
+			});
 		},
-		
+
 		// ********************* callbacks *************************************
-		
-		//expects an array of array
-		deletionSuccess : function(responsesArray){
+
+		// expects an array of array
+		deletionSuccess : function(responsesArray) {
 			var nodesIds = responsesArray[0][0];
 			var tree = this.options.tree;
-			 tree.jstree('delete_nodes', ['folder', 'test-case', 'requirement'], nodesIds);
-			 this.close();
+			tree.jstree('delete_nodes', [ 'folder', 'test-case', 'requirement' ], nodesIds);
+			this.close();
 		},
-		
-		//expects an array of array
-		simulationSuccess : function(responsesArray){
-			
+
+		// expects an array of array
+		simulationSuccess : function(responsesArray) {
+
 			var htmlDetail = '';
-			
-			$.each(responsesArray, function(idx, arg){
-				if (arg !== null || arg !== undefined){
+
+			$.each(responsesArray, function(idx, arg) {
+				if (arg !== null || arg !== undefined) {
 					var messages = arg[0].messages;
-					for (var i=0,len = messages.length;i<len;i++){
-						htmlDetail += '<li>'+messages[i]+'</li>';
+					for ( var i = 0, len = messages.length; i < len; i++) {
+						htmlDetail += '<li>' + messages[i] + '</li>';
 					}
-				};
+				}
+				;
 			});
-			
-			if (htmlDetail.length > 0){
-				this.element.find('.delete-node-dialog-details').removeClass('not-displayed').find('ul').html(htmlDetail);
-			}
-			else{
+
+			if (htmlDetail.length > 0) {
+				this.element.find('.delete-node-dialog-details').removeClass('not-displayed').find('ul').html(
+						htmlDetail);
+			} else {
 				this.element.find('.delete-node-dialog-details').addClass('not-displayed');
-			}		
-			
-			this.setState('confirm');					
+			}
+
+			this.setState('confirm');
 		},
-		
+
 		// ***************************** ajax queries *******************************
-		
-		/* because $.when(deferred(s)).done(something) is supplied with inconsistent arguments
-		 * given the number of deferred in the .when() clause, we must ensure that the result of the operation
-		 * will be an array of array as the callbacks expect it.
-		 */ 	
-		smartAjax : function(xhrs, callback){
+
+		/*
+		 * because $.when(deferred(s)).done(something) is supplied with inconsistent arguments given the number of
+		 * deferred in the .when() clause, we must ensure that the result of the operation will be an array of array as
+		 * the callbacks expect it.
+		 */
+		smartAjax : function(xhrs, callback) {
 			var self = this;
-			//case of an array of xhr : the result will be an array of array as expected
-			if (_.isArray(xhrs) && xhrs.length>1){
-				return $.when.apply($, xhrs)
-				.done(function(){
-					callback.call(self, arguments);	
+			// case of an array of xhr : the result will be an array of array as expected
+			if (_.isArray(xhrs) && xhrs.length > 1) {
+				return $.when.apply($, xhrs).done(function() {
+					callback.call(self, arguments);
 				});
 			}
-			//case of a single xhr : the result will be an array, that we transform in an array of array as expected
-			else{
-				return $.when(xhrs)
-				.done(function(){
-					callback.call(self, [ arguments ]);	
+			// case of a single xhr : the result will be an array, that we transform in an array of array as expected
+			else {
+				return $.when(xhrs).done(function() {
+					callback.call(self, [ arguments ]);
 				});
 			}
 		},
-		
+
 		// ******************** deletion simulation *************
 
-		simulateDeletion : function(){
+		simulateDeletion : function() {
 			var self = this;
 			var tree = this.options.tree;
 			var rules = this.options.rules;
-			
-			//first, check that the operation is allowed.
+
+			// first, check that the operation is allowed.
 			this.setState("pleasewait");
-			
+
 			var nodes = tree.jstree('get_selected');
 			this.uiDialog.data('selected-nodes', nodes);
-			
-			if (! rules.canDelete(nodes)){
+
+			if (!rules.canDelete(nodes)) {
 				this.setState('rejected');
 				return;
 			}
-			
-			//else we can proceed.
-			var xhrs = this.getSimulXhr(nodes) 
-				
-			this.smartAjax(xhrs, this.simulationSuccess)
-			.fail(function(){
+
+			// else we can proceed.
+			var xhrs = this.getSimulXhr(nodes)
+
+			this.smartAjax(xhrs, this.simulationSuccess).fail(function() {
 				self.setState('reject');
 			});
 		},
-		
+
 		// ********************** actual deletion*********************
 
-		_findPrevNode : function(nodes){
+		_findPrevNode : function(nodes) {
 			var tree = this.options.tree;
-			var oknode= tree.find(':library').filter(':first');
-			
-			if (nodes.length==0) return oknode;
+			var oknode = tree.find(':library').filter(':first');
+
+			if (nodes.length == 0) return oknode;
 			var ids = nodes.all('getResId');
 			var loopnode = nodes.first().treeNode().getAncestors();
-			
-			loopnode.each(function(){
+
+			loopnode.each(function() {
 				var $this = $(this), $thisid = $this.attr('resid');
-				if ($this.is(':library') || $.inArray($thisid, ids)== -1){
+				if ($this.is(':library') || $.inArray($thisid, ids) == -1) {
 					oknode = $this.treeNode();
-					return false;	//means 'beak' in .each
+					return false; // means 'beak' in .each
 				}
 			});
-			
+
 			return oknode;
-			
+
 		},
-		
-		performDeletion : function(){
+
+		performDeletion : function() {
 
 			this.setState("pleasewait");
-			
-			var self=this;
+
+			var self = this;
 			var tree = this.options.tree;
-			var nodes = this.uiDialog.data('selected-nodes');		
+			var nodes = this.uiDialog.data('selected-nodes');
 			var newSelection = this._findPrevNode(nodes);
-			
+
 			nodes.all('deselect');
 			newSelection.select();
-			
-			this.setState('pleasewait');
-			
-			var xhrs = this.getConfirmXhr(nodes);
-			
-			this.smartAjax(xhrs, this.deletionSuccess);
-			
-		}
-		
-	});
 
+			this.setState('pleasewait');
+
+			var xhrs = this.getConfirmXhr(nodes);
+
+			this.smartAjax(xhrs, this.deletionSuccess);
+
+		}
+
+	});
 
 });

@@ -27,9 +27,8 @@
 var squashtm = squashtm || {};
 
 /*
- * squashtm datatable pagination plugin. Based on the ExtJS style plugin by Zach
- * Curtis (http://zachariahtimothy.wordpress.com/) and simplified according to
- * our needs.
+ * squashtm datatable pagination plugin. Based on the ExtJS style plugin by Zach Curtis
+ * (http://zachariahtimothy.wordpress.com/) and simplified according to our needs.
  * 
  * @author bsiri.
  * 
@@ -39,11 +38,9 @@ var squashtm = squashtm || {};
 
 	$.fn.dataTableExt.oPagination.squash = {
 		/*
-		 * Function: oPagination.squash.fnInit Purpose: Initalise dom elements
-		 * required for pagination with a list of the pages Returns: - Inputs:
-		 * object:oSettings - dataTables settings object node:nPaging - the DIV
-		 * which contains this pagination control function:fnCallbackDraw - draw
-		 * function which must be called on update
+		 * Function: oPagination.squash.fnInit Purpose: Initalise dom elements required for pagination with a list of
+		 * the pages Returns: - Inputs: object:oSettings - dataTables settings object node:nPaging - the DIV which
+		 * contains this pagination control function:fnCallbackDraw - draw function which must be called on update
 		 */
 		"fnInit" : function(oSettings, nPaging, fnCallbackDraw) {
 
@@ -72,8 +69,7 @@ var squashtm = squashtm || {};
 				text : '1'
 			});
 
-			$(nPaging).append(nFirst).append(nPrevious).append(nPageTxt)
-					.append(nNext).append(nLast);
+			$(nPaging).append(nFirst).append(nPrevious).append(nPageTxt).append(nNext).append(nLast);
 
 			// utf8 code for character "◀" = U25C0 and for "▶" = U25B6
 			nFirst.text("◀◀");
@@ -86,53 +82,44 @@ var squashtm = squashtm || {};
 				text : true
 			});
 
-			nFirst.click(
-					function() {
-						oSettings.oApi._fnPageChange(oSettings, "first");
-						fnCallbackDraw(oSettings);
-						nPageTxt.text(parseInt(oSettings._iDisplayEnd
-								/ oSettings._iDisplayLength, 10) + 1);
-					}).bind('selectstart', function() {
+			nFirst.click(function() {
+				oSettings.oApi._fnPageChange(oSettings, "first");
+				fnCallbackDraw(oSettings);
+				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10) + 1);
+			}).bind('selectstart', function() {
 				return false;
 			});
 
-			nPrevious.click(
-					function() {
-						oSettings.oApi._fnPageChange(oSettings, "previous");
-						fnCallbackDraw(oSettings);
-						nPageTxt.text(parseInt(oSettings._iDisplayEnd
-								/ oSettings._iDisplayLength, 10) + 1);
-					}).bind('selectstart', function() {
+			nPrevious.click(function() {
+				oSettings.oApi._fnPageChange(oSettings, "previous");
+				fnCallbackDraw(oSettings);
+				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10) + 1);
+			}).bind('selectstart', function() {
 				return false;
 			});
 
-			nNext.click(
-					function() {
-						oSettings.oApi._fnPageChange(oSettings, "next");
-						fnCallbackDraw(oSettings);
-						nPageTxt.text(parseInt(oSettings._iDisplayEnd
-								/ oSettings._iDisplayLength, 10) + 1);
-					}).bind('selectstart', function() {
+			nNext.click(function() {
+				oSettings.oApi._fnPageChange(oSettings, "next");
+				fnCallbackDraw(oSettings);
+				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10) + 1);
+			}).bind('selectstart', function() {
 				return false;
 			});
 
-			nLast.click(
-					function() {
-						oSettings.oApi._fnPageChange(oSettings, "last");
-						fnCallbackDraw(oSettings);
-						nPageTxt.text(parseInt(oSettings._iDisplayEnd
-								/ oSettings._iDisplayLength, 10) + 1);
-					}).bind('selectstart', function() {
+			nLast.click(function() {
+				oSettings.oApi._fnPageChange(oSettings, "last");
+				fnCallbackDraw(oSettings);
+				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10) + 1);
+			}).bind('selectstart', function() {
 				return false;
 			});
 
 		},
 
 		/*
-		 * Function: oPagination.extStyle.fnUpdate Purpose: Update the list of
-		 * page buttons shows Returns: - Inputs: object:oSettings - dataTables
-		 * settings object function:fnCallbackDraw - draw function which must be
-		 * called on update
+		 * Function: oPagination.extStyle.fnUpdate Purpose: Update the list of page buttons shows Returns: - Inputs:
+		 * object:oSettings - dataTables settings object function:fnCallbackDraw - draw function which must be called on
+		 * update
 		 */
 		"fnUpdate" : function(oSettings, fnCallbackDraw) {
 			if (!oSettings.aanFeatures.p) {
@@ -194,8 +181,8 @@ var squashtm = squashtm || {};
  */
 
 function addDeleteButtonToRow(row, entityId, buttonTemplateId) {
-	$(row).find('td:last').append($('#' + buttonTemplateId).clone()).find('a')
-			.attr('id', buttonTemplateId + ':' + entityId);
+	$(row).find('td:last').append($('#' + buttonTemplateId).clone()).find('a').attr('id',
+			buttonTemplateId + ':' + entityId);
 }
 
 /**
@@ -268,8 +255,8 @@ function handleShiftUp(event) {
 /**
  * private to the DnD code.
  * 
- * we need to fetch the rank of the first tr of the table as an offset to which
- * we'll add the position of lines we are moving around.
+ * we need to fetch the rank of the first tr of the table as an offset to which we'll add the position of lines we are
+ * moving around.
  * 
  * @param domTable
  *            the dom table
@@ -287,17 +274,16 @@ function getOffsetFromDomTable(domTable, fnGetRowIndex) {
 
 	var position = fnGetRowIndex(firstData);
 
-	return parseInt(position,10) - 1;
+	return parseInt(position, 10) - 1;
 
 }
 
 /**
  * Enables DnD on the given table.
  * 
- * Note : we calculate the 'offset' because the first displayed element is not
- * necessarily the first item of the table. For instance, if we are displaying
- * page 3 and drop our rows at the top of the table view, the drop index is not
- * 0 but (3*pagesize);
+ * Note : we calculate the 'offset' because the first displayed element is not necessarily the first item of the table.
+ * For instance, if we are displaying page 3 and drop our rows at the top of the table view, the drop index is not 0 but
+ * (3*pagesize);
  * 
  * @param tableId
  *            html id of the table
@@ -389,8 +375,7 @@ function addClickHandlerToSelectHandle(nRow, table) {
 }
 
 /*
- * that method programatically remove the highlight due to native range
- * selection.
+ * that method programatically remove the highlight due to native range selection.
  */
 function clearRangeSelection() {
 	if (window.getSelection) {
@@ -402,17 +387,14 @@ function clearRangeSelection() {
 
 /* private */
 function toggleRowAndDropSelectedRange(row) {
-	$(row).toggleClass('ui-state-row-selected').removeClass(
-			'ui-state-highlight');
-	$(row).parent().find('.ui-state-row-selected').not(row).removeClass(
-			'ui-state-row-selected');
+	$(row).toggleClass('ui-state-row-selected').removeClass('ui-state-highlight');
+	$(row).parent().find('.ui-state-row-selected').not(row).removeClass('ui-state-row-selected');
 
 }
 
 /* private */
 function toggleRowAndKeepSelectedRange(row) {
-	$(row).toggleClass('ui-state-row-selected').removeClass(
-			'ui-state-highlight');
+	$(row).toggleClass('ui-state-row-selected').removeClass('ui-state-highlight');
 }
 
 /* private */
@@ -428,8 +410,7 @@ function growSelectedRangeToRow(row, table) {
 	$(row).removeClass('ui-state-highlight');
 }
 /**
- * Computes the 0-based range of row that should be selected. Note :
- * row.rowIndex is a 1-based index.
+ * Computes the 0-based range of row that should be selected. Note : row.rowIndex is a 1-based index.
  * 
  * @param row
  * @param table
@@ -573,8 +554,7 @@ function addHLinkToCellText(td, url, isOpenInTab) {
 	}).wrap(link);
 }
 /**
- * Adds a "manage attachment" link to the row cell(s) of class
- * has-attachment-cell
+ * Adds a "manage attachment" link to the row cell(s) of class has-attachment-cell
  * 
  * @param row
  *            row where to add an attachment button
@@ -585,11 +565,10 @@ function addHLinkToCellText(td, url, isOpenInTab) {
  */
 function addAttachmentButtonToRow(row, entityId, buttonTemplateId) {
 	var cell = $('td.has-attachment-cell', row);
-	var attCount = parseInt(cell.text(),10);
+	var attCount = parseInt(cell.text(), 10);
 
 	if (attCount > 0) {
-		cell.html($('#' + buttonTemplateId).clone()).find('a').attr('id',
-				buttonTemplateId + ':' + entityId);
+		cell.html($('#' + buttonTemplateId).clone()).find('a').attr('id', buttonTemplateId + ':' + entityId);
 	}
 }
 /**
@@ -610,9 +589,8 @@ function decorateEmptyAttachmentButtons(buttons) {
 }
 
 /**
- * Adds a "manage attachment" link to the row cell(s) of class
- * has-attachment-cell. DoV for Depending on the Value : the button is different
- * whether the attachment list is empty or not
+ * Adds a "manage attachment" link to the row cell(s) of class has-attachment-cell. DoV for Depending on the Value : the
+ * button is different whether the attachment list is empty or not
  * 
  * @param row
  *            row where to add an attachment button
@@ -621,11 +599,9 @@ function decorateEmptyAttachmentButtons(buttons) {
  * @param buttonTemplateId
  *            html id of the <a> used as a template
  * @param buttonTemplateEmptyId
- *            html id of the <a> used as a template if the attachment list is
- *            empty
+ *            html id of the <a> used as a template if the attachment list is empty
  */
-function addAttachmentButtonToRowDoV(row, attCount, buttonTemplateId,
-		buttonTemplateEmptyId) {
+function addAttachmentButtonToRowDoV(row, attCount, buttonTemplateId, buttonTemplateEmptyId) {
 	var cell = $('td.has-attachment-cell', row);
 	var entityId = cell.text();
 
@@ -633,11 +609,9 @@ function addAttachmentButtonToRowDoV(row, attCount, buttonTemplateId,
 	if (attCount === "") {
 		cell.html('');
 	} else if (attCount > 0) {
-		cell.html($('#' + buttonTemplateId).clone()).find('a').attr('id',
-				buttonTemplateId + ':' + entityId);
+		cell.html($('#' + buttonTemplateId).clone()).find('a').attr('id', buttonTemplateId + ':' + entityId);
 	} else {
-		cell.html($('#' + buttonTemplateEmptyId).clone()).find('a').attr('id',
-				buttonTemplateEmptyId + ':' + entityId);
+		cell.html($('#' + buttonTemplateEmptyId).clone()).find('a').attr('id', buttonTemplateEmptyId + ':' + entityId);
 	}
 }
 

@@ -163,7 +163,7 @@ require([ "common" ], function(common) {
 
 		function populateAndOpenSummary(json) {
 
-			if (json != null) {
+			if (json !== null) {
 				if (!allTransferSuccessful(json)) {
 					populateSummary(json);
 					$("#attachment-upload-summary").dialog("open");
@@ -339,7 +339,7 @@ require([ "common" ], function(common) {
 				uploadDisplayPercentage(0);
 				uploadDisplayMessage(AAPS.pleaseWaitMessage);
 
-				uploadIntervalId = setInterval("pollUploadStatus()", 1000);
+				uploadIntervalId = setInterval(pollUploadStatus, 1000);
 
 			});
 

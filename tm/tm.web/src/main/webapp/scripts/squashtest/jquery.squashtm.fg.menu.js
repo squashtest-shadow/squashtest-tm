@@ -53,14 +53,14 @@ $.fn.fgmenu = function(options) {
 		if (!m.menuOpen) {
 			m.showLoading();
 		}
-		
+
 	}).click(function() {
 		if (!m.menuOpen) {
 			m.showMenu();
 		} else {
 			m.kill();
 		}
-		
+
 		return false;
 	});
 };
@@ -82,8 +82,8 @@ MenuEvent.prototype.execute = function(args) {
 function Menu(pcaller, poptions) {
 	var menu = this;
 	var caller = $(pcaller);
-	var container = $('<div class="fg-menu-container ui-widget ui-widget-content ui-corner-all">'
-			+ poptions.content + '</div>');
+	var container = $('<div class="fg-menu-container ui-widget ui-widget-content ui-corner-all">' + poptions.content +
+			'</div>');
 
 	this.menuOpen = false;
 	this.menuExists = false;
@@ -97,9 +97,9 @@ function Menu(pcaller, poptions) {
 	var options = jQuery.extend({
 		content : null,
 		width : 180, // width of menu container, must be set or passed in to
-						// calculate widths of child menus
+		// calculate widths of child menus
 		maxHeight : 180, // max height of menu (if a drilldown: height does
-							// not include breadcrumb)
+		// not include breadcrumb)
 		positionOpts : {
 			posX : 'left',
 			posY : 'bottom',
@@ -113,27 +113,27 @@ function Menu(pcaller, poptions) {
 		},
 		showSpeed : 200, // show/hide speed in milliseconds
 		callerOnState : 'ui-state-active', // class to change the appearance of
-											// the link/button when the menu is
-											// showing
+		// the link/button when the menu is
+		// showing
 		loadingState : 'ui-state-loading', // class added to the link/button
-											// while the menu is created
+		// while the menu is created
 		linkHover : 'ui-state-hover', // class for menu option hover state
 		linkHoverSecondary : 'li-hover', // alternate class, may be used for
-											// multi-level menus
+		// multi-level menus
 		// ----- multi-level menu defaults -----
 		crossSpeed : 200, // cross-fade speed for multi-level menus
 		crumbDefaultText : 'Choose an option:',
 		backLink : true, // in the ipod-style menu: instead of breadcrumbs,
-							// show only a 'back' link
+		// show only a 'back' link
 		backLinkText : 'Back',
 		flyOut : false, // multi-level menus are ipod-style by default; this
-						// parameter overrides to make a flyout instead
+		// parameter overrides to make a flyout instead
 		flyOutOnState : 'ui-state-default',
 		nextMenuLink : 'ui-icon-triangle-1-e', // class to style the link
-												// (specifically, a span within
-												// the link) used in the
-												// multi-level menu to show the
-												// next level
+		// (specifically, a span within
+		// the link) used in the
+		// multi-level menu to show the
+		// next level
 		topLinkText : 'All',
 		nextCrumbLink : 'ui-icon-carat-1-e'
 	}, poptions);
@@ -143,31 +143,29 @@ function Menu(pcaller, poptions) {
 			if (allUIMenus[i].menuOpen) {
 				allUIMenus[i].kill();
 			}
-			
+
 		});
 	};
 
 	this.kill = function() {
-		caller.removeClass(options.loadingState).removeClass('fg-menu-open')
-				.removeClass(options.callerOnState);
-		container.find('li').removeClass(options.linkHoverSecondary).find('a')
-				.removeClass(options.linkHover);
+		caller.removeClass(options.loadingState).removeClass('fg-menu-open').removeClass(options.callerOnState);
+		container.find('li').removeClass(options.linkHoverSecondary).find('a').removeClass(options.linkHover);
 		if (options.flyOutOnState) {
 			container.find('li a').removeClass(options.flyOutOnState);
 		}
-		
+
 		if (options.callerOnState) {
 			caller.removeClass(options.callerOnState);
 		}
-		
+
 		if (container.is('.fg-menu-ipod')) {
 			menu.resetDrilldownMenu();
 		}
-		
+
 		if (container.is('.fg-menu-flyout')) {
 			menu.resetFlyoutMenu();
 		}
-		
+
 		container.parent().hide();
 		menu.menuOpen = false;
 		$(document).unbind('click', killAllMenus);
@@ -190,8 +188,7 @@ function Menu(pcaller, poptions) {
 			e = event.keyCode;
 		}
 
-		var menuType = ($(event.target).parents('div').is('.fg-menu-flyout')) ? 'flyout'
-				: 'ipod';
+		var menuType = ($(event.target).parents('div').is('.fg-menu-flyout')) ? 'flyout' : 'ipod';
 
 		switch (e) {
 		case 37: // left arrow
@@ -200,29 +197,26 @@ function Menu(pcaller, poptions) {
 				if ($('.' + options.flyOutOnState).size() > 0) {
 					$('.' + options.flyOutOnState).trigger('mouseover');
 				}
-				
+
 			}
-			
 
 			if (menuType == 'ipod') {
 				$(event.target).trigger('mouseout');
 				if ($('.fg-menu-footer').find('a').size() > 0) {
 					$('.fg-menu-footer').find('a').trigger('click');
 				}
-				
+
 				if ($('.fg-menu-header').find('a').size() > 0) {
-					$('.fg-menu-current-crumb').prev().find('a').trigger(
-							'click');
+					$('.fg-menu-current-crumb').prev().find('a').trigger('click');
 				}
-				
+
 				if ($('.fg-menu-current').prev().is('.fg-menu-indicator')) {
 					$('.fg-menu-current').prev().trigger('mouseover');
 				}
-				
+
 			}
-			
+
 			return false;
-			
 
 		case 38: // up arrow
 			if ($(event.target).is('.' + options.linkHover)) {
@@ -231,12 +225,11 @@ function Menu(pcaller, poptions) {
 					$(event.target).trigger('mouseout');
 					prevLink.trigger('mouseover');
 				}
-				
+
 			} else {
 				container.find('a:eq(0)').trigger('mouseover');
 			}
 			return false;
-			
 
 		case 39: // right arrow
 			if ($(event.target).is('.fg-menu-indicator')) {
@@ -245,15 +238,13 @@ function Menu(pcaller, poptions) {
 				} else if (menuType == 'ipod') {
 					$(event.target).trigger('click');
 					setTimeout(function() {
-						$(event.target).next().find('a:eq(0)').trigger(
-								'mouseover');
+						$(event.target).next().find('a:eq(0)').trigger('mouseover');
 					}, options.crossSpeed);
 				}
-				
+
 			}
-			
+
 			return false;
-			
 
 		case 40: // down arrow
 			if ($(event.target).is('.' + options.linkHover)) {
@@ -262,12 +253,11 @@ function Menu(pcaller, poptions) {
 					$(event.target).trigger('mouseout');
 					nextLink.trigger('mouseover');
 				}
-				
+
 			} else {
 				container.find('a:eq(0)').trigger('mouseover');
 			}
 			return false;
-			
 
 		case 27: // escape
 			killAllMenus();
@@ -276,16 +266,14 @@ function Menu(pcaller, poptions) {
 		case 13: // enter
 			if ($(event.target).is('.fg-menu-indicator') && menuType == 'ipod') {
 				$(event.target).trigger('click');
-				setTimeout(
-						function() {
-							$(event.target).next().find('a:eq(0)').trigger(
-									'mouseover');
-						}, options.crossSpeed);
+				setTimeout(function() {
+					$(event.target).next().find('a:eq(0)').trigger('mouseover');
+				}, options.crossSpeed);
 			}
-			
+
 			break;
 		}
-		
+
 	};
 
 	this.showMenu = function() {
@@ -294,7 +282,7 @@ function Menu(pcaller, poptions) {
 		if (!menu.menuExists) {
 			menu.create();
 		}
-		
+
 		caller.addClass('fg-menu-open').addClass(options.callerOnState);
 		container.parent().show().click(function() {
 			menu.kill();
@@ -324,17 +312,14 @@ function Menu(pcaller, poptions) {
 		// normal code now
 		container.css({
 			width : options.width
-		}).appendTo('body').find('ul:first').not('.fg-menu-breadcrumb')
-				.addClass('fg-menu');
+		}).appendTo('body').find('ul:first').not('.fg-menu-breadcrumb').addClass('fg-menu');
 		container.find('ul, li a').addClass('ui-corner-all');
 
 		// aria roles & attributes
-		container.find('ul').attr('role', 'menu').eq(0).attr(
-				'aria-activedescendant', 'active-menuitem').attr(
+		container.find('ul').attr('role', 'menu').eq(0).attr('aria-activedescendant', 'active-menuitem').attr(
 				'aria-labelledby', caller.attr('id'));
 		container.find('li').attr('role', 'menuitem');
-		container.find('li:has(ul)').attr('aria-haspopup', 'true').find('ul')
-				.attr('aria-expanded', 'false');
+		container.find('li:has(ul)').attr('aria-haspopup', 'true').find('ul').attr('aria-expanded', 'false');
 		container.find('a').attr('tabindex', '-1');
 
 		// when there are multiple levels of hierarchy, create flyout or
@@ -351,38 +336,29 @@ function Menu(pcaller, poptions) {
 				return false;
 			});
 		}
-		
 
 		if (options.linkHover) {
 			var allLinks = container.find('.fg-menu li a');
 			allLinks.hover(function() {
 				var menuitem = $(this);
-				$('.' + options.linkHover).removeClass(options.linkHover)
-						.blur().parent().removeAttr('id');
-				$(this).addClass(options.linkHover).focus().parent().attr('id',
-						'active-menuitem');
+				$('.' + options.linkHover).removeClass(options.linkHover).blur().parent().removeAttr('id');
+				$(this).addClass(options.linkHover).focus().parent().attr('id', 'active-menuitem');
 			}, function() {
-				$(this).removeClass(options.linkHover).blur().parent()
-						.removeAttr('id');
+				$(this).removeClass(options.linkHover).blur().parent().removeAttr('id');
 			});
 		}
-		
 
 		if (options.linkHoverSecondary) {
-			container.find('.fg-menu li').hover(
-					function() {
-						$(this).siblings('li').removeClass(
-								options.linkHoverSecondary);
-						if (options.flyOutOnState) {
-							$(this).siblings('li').find('a').removeClass(
-									options.flyOutOnState);
-						}
-						$(this).addClass(options.linkHoverSecondary);
-					}, function() {
-						$(this).removeClass(options.linkHoverSecondary);
-					});
+			container.find('.fg-menu li').hover(function() {
+				$(this).siblings('li').removeClass(options.linkHoverSecondary);
+				if (options.flyOutOnState) {
+					$(this).siblings('li').find('a').removeClass(options.flyOutOnState);
+				}
+				$(this).addClass(options.linkHoverSecondary);
+			}, function() {
+				$(this).removeClass(options.linkHoverSecondary);
+			});
 		}
-		
 
 		menu.setPosition(container, caller, options);
 		menu.menuExists = true;
@@ -416,9 +392,8 @@ Menu.prototype.flyout = function(container, options) {
 				}).hide();
 
 				$(this).find('a:eq(0)').addClass('fg-menu-indicator').html(
-						'<span>' + $(this).find('a:eq(0)').text()
-								+ '</span><span class="ui-icon '
-								+ options.nextMenuLink + '"></span>').hover(
+						'<span>' + $(this).find('a:eq(0)').text() + '</span><span class="ui-icon ' +
+								options.nextMenuLink + '"></span>').hover(
 						function() {
 							clearTimeout(hideTimer);
 							var subList = $(this).next();
@@ -428,48 +403,40 @@ Menu.prototype.flyout = function(container, options) {
 									bottom : 0
 								});
 							}
-							
-							if (!fitHorizontal(subList,
-									$(this).offset().left + 100)) {
+
+							if (!fitHorizontal(subList, $(this).offset().left + 100)) {
 								subList.css({
 									left : 'auto',
 									right : linkWidth,
 									'z-index' : 999
 								});
 							}
-							
+
 							showTimer = setTimeout(function() {
-								subList.addClass('ui-widget-content').show(
-										options.showSpeed).attr(
-										'aria-expanded', 'true');
+								subList.addClass('ui-widget-content').show(options.showSpeed).attr('aria-expanded',
+										'true');
 							}, 300);
 						},
 						function() {
 							clearTimeout(showTimer);
 							var subList = $(this).next();
 							hideTimer = setTimeout(function() {
-								subList.removeClass('ui-widget-content').hide(
-										options.showSpeed).attr(
-										'aria-expanded', 'false');
+								subList.removeClass('ui-widget-content').hide(options.showSpeed).attr('aria-expanded',
+										'false');
 							}, 400);
 						});
 
-				$(this).find('ul a').hover(
-						function() {
-							clearTimeout(hideTimer);
-							if ($(this).parents('ul').prev().is(
-									'a.fg-menu-indicator')) {
-								$(this).parents('ul').prev().addClass(
-										options.flyOutOnState);
-							}
-						},
-						function() {
-							hideTimer = setTimeout(function() {
-								allSubLists.hide(options.showSpeed);
-								container.find(options.flyOutOnState)
-										.removeClass(options.flyOutOnState);
-							}, 500);
-						});
+				$(this).find('ul a').hover(function() {
+					clearTimeout(hideTimer);
+					if ($(this).parents('ul').prev().is('a.fg-menu-indicator')) {
+						$(this).parents('ul').prev().addClass(options.flyOutOnState);
+					}
+				}, function() {
+					hideTimer = setTimeout(function() {
+						allSubLists.hide(options.showSpeed);
+						container.find(options.flyOutOnState).removeClass(options.flyOutOnState);
+					}, 500);
+				});
 			});
 
 	container.find('a').click(function() {
@@ -482,19 +449,13 @@ Menu.prototype.drilldown = function(container, options) {
 	var menu = this;
 	var topList = container.find('.fg-menu');
 	var breadcrumb = $('<ul class="fg-menu-breadcrumb ui-widget-header ui-corner-all ui-helper-clearfix"></ul>');
-	var crumbDefaultHeader = $('<li class="fg-menu-breadcrumb-text">'
-			+ options.crumbDefaultText + '</li>');
-	var firstCrumbText = (options.backLink) ? options.backLinkText
-			: options.topLinkText;
-	var firstCrumbClass = (options.backLink) ? 'fg-menu-prev-list'
-			: 'fg-menu-all-lists';
-	var firstCrumbLinkClass = (options.backLink) ? 'ui-state-default ui-corner-all'
-			: '';
-	var firstCrumbIcon = (options.backLink) ? '<span class="ui-icon ui-icon-triangle-1-w"></span>'
-			: '';
-	var firstCrumb = $('<li class="' + firstCrumbClass
-			+ '"><a href="#" class="' + firstCrumbLinkClass + '">'
-			+ firstCrumbIcon + firstCrumbText + '</a></li>');
+	var crumbDefaultHeader = $('<li class="fg-menu-breadcrumb-text">' + options.crumbDefaultText + '</li>');
+	var firstCrumbText = (options.backLink) ? options.backLinkText : options.topLinkText;
+	var firstCrumbClass = (options.backLink) ? 'fg-menu-prev-list' : 'fg-menu-all-lists';
+	var firstCrumbLinkClass = (options.backLink) ? 'ui-state-default ui-corner-all' : '';
+	var firstCrumbIcon = (options.backLink) ? '<span class="ui-icon ui-icon-triangle-1-w"></span>' : '';
+	var firstCrumb = $('<li class="' + firstCrumbClass + '"><a href="#" class="' + firstCrumbLinkClass + '">' +
+			firstCrumbIcon + firstCrumbText + '</a></li>');
 
 	container.addClass('fg-menu-ipod');
 
@@ -503,22 +464,21 @@ Menu.prototype.drilldown = function(container, options) {
 	} else {
 		breadcrumb.addClass('fg-menu-header').prependTo(container);
 	}
-	
+
 	breadcrumb.append(crumbDefaultHeader);
 
 	var checkMenuHeight = function(el) {
 		if (el.height() > options.maxHeight) {
 			el.addClass('fg-menu-scroll');
 		}
-		
+
 		el.css({
 			height : options.maxHeight
 		});
 	};
 
 	var resetChildMenu = function(el) {
-		el.removeClass('fg-menu-scroll').removeClass('fg-menu-current').height(
-				'auto');
+		el.removeClass('fg-menu-scroll').removeClass('fg-menu-current').height('auto');
 	};
 
 	this.resetDrilldownMenu = function() {
@@ -538,15 +498,12 @@ Menu.prototype.drilldown = function(container, options) {
 		checkMenuHeight(topList);
 	};
 
-	topList
-			.addClass(
-					'fg-menu-content fg-menu-current ui-widget-content ui-helper-clearfix')
-			.css({
-				width : container.width()
-			}).find('ul').css({
-				width : container.width(),
-				left : container.width()
-			}).addClass('ui-widget-content').hide();
+	topList.addClass('fg-menu-content fg-menu-current ui-widget-content ui-helper-clearfix').css({
+		width : container.width()
+	}).find('ul').css({
+		width : container.width(),
+		left : container.width()
+	}).addClass('ui-widget-content').hide();
 	checkMenuHeight(topList);
 
 	topList
@@ -559,30 +516,19 @@ Menu.prototype.drilldown = function(container, options) {
 									.addClass('fg-menu-indicator')
 									.each(
 											function() {
-												$(this)
-														.html(
-																'<span>'
-																		+ $(
-																				this)
-																				.text()
-																		+ '</span><span class="ui-icon '
-																		+ options.nextMenuLink
-																		+ '"></span>');
+												$(this).html(
+														'<span>' + $(this).text() + '</span><span class="ui-icon ' +
+																options.nextMenuLink + '"></span>');
 											})
 									.click(
 											function() { // ----- show the
-															// next menu
+												// next menu
 												var nextList = $(this).next();
-												var parentUl = $(this).parents(
-														'ul:eq(0)');
-												var parentLeft = (parentUl
-														.is('.fg-menu-content')) ? 0
-														: parseFloat(topList
-																.css('left'));
+												var parentUl = $(this).parents('ul:eq(0)');
+												var parentLeft = (parentUl.is('.fg-menu-content')) ? 0
+														: parseFloat(topList.css('left'));
 												var nextLeftVal = Math
-														.round(parentLeft
-																- parseFloat(container
-																		.width()));
+														.round(parentLeft - parseFloat(container.width()));
 												var footer = $('.fg-menu-footer');
 
 												// show next menu
@@ -591,34 +537,22 @@ Menu.prototype.drilldown = function(container, options) {
 												topList.animate({
 													left : nextLeftVal
 												}, options.crossSpeed);
-												nextList.show().addClass(
-														'fg-menu-current')
-														.attr('aria-expanded',
-																'true');
+												nextList.show().addClass('fg-menu-current').attr('aria-expanded',
+														'true');
 
-												var setPrevMenu = function(
-														backlink) {
+												var setPrevMenu = function(backlink) {
 													var b = backlink;
 													var c = $('.fg-menu-current');
-													var prevList = c
-															.parents('ul:eq(0)');
-													c.hide().attr(
-															'aria-expanded',
-															'false');
+													var prevList = c.parents('ul:eq(0)');
+													c.hide().attr('aria-expanded', 'false');
 													resetChildMenu(c);
 													checkMenuHeight(prevList);
-													prevList
-															.addClass(
-																	'fg-menu-current')
-															.attr(
-																	'aria-expanded',
-																	'true');
-													if (prevList
-															.hasClass('fg-menu-content')) {
+													prevList.addClass('fg-menu-current').attr('aria-expanded', 'true');
+													if (prevList.hasClass('fg-menu-content')) {
 														b.remove();
 														footer.hide();
 													}
-													
+
 												};
 
 												// initialize "back" link
@@ -627,129 +561,80 @@ Menu.prototype.drilldown = function(container, options) {
 														footer.show();
 														$(
 																'<a href="#"><span class="ui-icon ui-icon-triangle-1-w"></span> <span>Back</span></a>')
-																.appendTo(
-																		footer)
-																.click(
+																.appendTo(footer).click(
 																		function() { // -----
-																						// show
-																						// the
-																						// previous
-																						// menu
+																			// show
+																			// the
+																			// previous
+																			// menu
 																			var b = $(this);
 																			var prevLeftVal = parseFloat(topList
-																					.css('left'))
-																					+ container
-																							.width();
-																			topList
-																					.animate(
-																							{
-																								left : prevLeftVal
-																							},
-																							options.crossSpeed,
-																							function() {
-																								setPrevMenu(b);
-																							});
+																					.css('left')) +
+																					container.width();
+																			topList.animate({
+																				left : prevLeftVal
+																			}, options.crossSpeed, function() {
+																				setPrevMenu(b);
+																			});
 																			return false;
 																		});
 													}
 												}
 												// or initialize top breadcrumb
 												else {
-													if (breadcrumb.find('li')
-															.size() == 1) {
-														breadcrumb
-																.empty()
-																.append(
-																		firstCrumb);
-														firstCrumb
-																.find('a')
-																.click(
-																		function() {
-																			menu
-																					.resetDrilldownMenu();
-																			return false;
-																		});
+													if (breadcrumb.find('li').size() == 1) {
+														breadcrumb.empty().append(firstCrumb);
+														firstCrumb.find('a').click(function() {
+															menu.resetDrilldownMenu();
+															return false;
+														});
 													}
-													$('.fg-menu-current-crumb')
-															.removeClass(
-																	'fg-menu-current-crumb');
-													var crumbText = $(this)
-															.find('span:eq(0)')
-															.text();
-													var newCrumb = $('<li class="fg-menu-current-crumb"><a href="javascript://" class="fg-menu-crumb">'
-															+ crumbText
-															+ '</a></li>');
-													newCrumb
-															.appendTo(
-																	breadcrumb)
-															.find('a')
-															.click(
-																	function() {
-																		if ($(
-																				this)
-																				.parent()
-																				.is(
-																						'.fg-menu-current-crumb')) {
-																			menu
-																					.chooseItem(this);
-																		} else {
-																			var newLeftVal = -($(
-																					'.fg-menu-current')
-																					.parents(
-																							'ul')
-																					.size() - 1) * 180;
-																			topList
-																					.animate(
-																							{
-																								left : newLeftVal
-																							},
-																							options.crossSpeed,
-																							function() {
-																								setPrevMenu();
-																							});
-
-																			// make
-																			// this
-																			// the
-																			// current
-																			// crumb,
-																			// delete
-																			// all
-																			// breadcrumbs
-																			// after
-																			// this
-																			// one,
-																			// and
-																			// navigate
-																			// to
-																			// the
-																			// relevant
-																			// menu
-																			$(
-																					this)
-																					.parent()
-																					.addClass(
-																							'fg-menu-current-crumb')
-																					.find(
-																							'span')
-																					.remove();
-																			$(
-																					this)
-																					.parent()
-																					.nextAll()
-																					.remove();
-																		}
-																		
-																		return false;
+													$('.fg-menu-current-crumb').removeClass('fg-menu-current-crumb');
+													var crumbText = $(this).find('span:eq(0)').text();
+													var newCrumb = $('<li class="fg-menu-current-crumb"><a href="javascript://" class="fg-menu-crumb">' +
+															crumbText + '</a></li>');
+													newCrumb.appendTo(breadcrumb).find('a').click(
+															function() {
+																if ($(this).parent().is('.fg-menu-current-crumb')) {
+																	menu.chooseItem(this);
+																} else {
+																	var newLeftVal = -($('.fg-menu-current').parents(
+																			'ul').size() - 1) * 180;
+																	topList.animate({
+																		left : newLeftVal
+																	}, options.crossSpeed, function() {
+																		setPrevMenu();
 																	});
-													newCrumb
-															.prev()
-															.append(
-																	' <span class="ui-icon '
-																			+ options.nextCrumbLink
-																			+ '"></span>');
+
+																	// make
+																	// this
+																	// the
+																	// current
+																	// crumb,
+																	// delete
+																	// all
+																	// breadcrumbs
+																	// after
+																	// this
+																	// one,
+																	// and
+																	// navigate
+																	// to
+																	// the
+																	// relevant
+																	// menu
+																	$(this).parent().addClass('fg-menu-current-crumb')
+																			.find('span').remove();
+																	$(this).parent().nextAll().remove();
+																}
+
+																return false;
+															});
+													newCrumb.prev().append(
+															' <span class="ui-icon ' + options.nextCrumbLink +
+																	'"></span>');
 												}
-												
+
 												return false;
 											});
 						}
@@ -761,21 +646,18 @@ Menu.prototype.drilldown = function(container, options) {
 								return false;
 							});
 						}
-						
+
 					});
 };
 
 /*
- * Menu.prototype.setPosition parameters (defaults noted with *): referrer = the
- * link (or other element) used to show the overlaid object settings = can
- * override the defaults: - posX/Y: where the top left corner of the object
- * should be positioned in relation to its referrer. X: left*, center, right Y:
- * top, center, bottom* - offsetX/Y: the number of pixels to be offset from the
- * x or y position. Can be a positive or negative number. - directionH/V: where
- * the entire menu should appear in relation to its referrer. Horizontal: left*,
- * right Vertical: up, down* - detectH/V: detect the viewport horizontally /
- * vertically - linkToFront: copy the menu link and place it on top of the menu
- * (visual effect to make it look like it overlaps the object)
+ * Menu.prototype.setPosition parameters (defaults noted with *): referrer = the link (or other element) used to show
+ * the overlaid object settings = can override the defaults: - posX/Y: where the top left corner of the object should be
+ * positioned in relation to its referrer. X: left*, center, right Y: top, center, bottom* - offsetX/Y: the number of
+ * pixels to be offset from the x or y position. Can be a positive or negative number. - directionH/V: where the entire
+ * menu should appear in relation to its referrer. Horizontal: left*, right Vertical: up, down* - detectH/V: detect the
+ * viewport horizontally / vertically - linkToFront: copy the menu link and place it on top of the menu (visual effect
+ * to make it look like it overlaps the object)
  */
 
 Menu.prototype.setPosition = function(widget, caller, poptions) {
@@ -812,7 +694,6 @@ Menu.prototype.setPosition = function(widget, caller, poptions) {
 		xVal = dims.refW;
 		break;
 	}
-	
 
 	// get Y pos
 	switch (options.positionOpts.posY) {
@@ -826,7 +707,6 @@ Menu.prototype.setPosition = function(widget, caller, poptions) {
 		yVal = dims.refH;
 		break;
 	}
-	
 
 	// add the offsets (zero by default)
 	xVal += options.positionOpts.offsetX;
@@ -856,7 +736,6 @@ Menu.prototype.setPosition = function(widget, caller, poptions) {
 			});
 		}
 	}
-	
 
 	// and horizontally
 	if (options.positionOpts.directionH == 'left') {
@@ -882,7 +761,6 @@ Menu.prototype.setPosition = function(widget, caller, poptions) {
 			});
 		}
 	}
-	
 
 	// if specified, clone the referring element and position it so that it
 	// appears on top of the menu
@@ -897,7 +775,7 @@ Menu.prototype.setPosition = function(widget, caller, poptions) {
 			height : referrer.height()
 		}).insertAfter(el);
 	}
-	
+
 };
 
 /* Utilities to sort and find viewport dimensions */
@@ -907,58 +785,47 @@ function sortBigToSmall(a, b) {
 }
 
 jQuery.fn.getTotalWidth = function() {
-	return $(this).width() + parseInt($(this).css('paddingRight'),10)
-			+ parseInt($(this).css('paddingLeft'),10)
-			+ parseInt($(this).css('borderRightWidth'),10)
-			+ parseInt($(this).css('borderLeftWidth'),10);
+	return $(this).width() + parseInt($(this).css('paddingRight'), 10) + parseInt($(this).css('paddingLeft'), 10) +
+			parseInt($(this).css('borderRightWidth'), 10) + parseInt($(this).css('borderLeftWidth'), 10);
 };
 
 jQuery.fn.getTotalHeight = function() {
-	return $(this).height() + parseInt($(this).css('paddingTop'),10)
-			+ parseInt($(this).css('paddingBottom'),10)
-			+ parseInt($(this).css('borderTopWidth'),10)
-			+ parseInt($(this).css('borderBottomWidth'),10);
+	return $(this).height() + parseInt($(this).css('paddingTop'), 10) + parseInt($(this).css('paddingBottom'), 10) +
+			parseInt($(this).css('borderTopWidth'), 10) + parseInt($(this).css('borderBottomWidth'), 10);
 };
 
 function getScrollTop() {
-	return self.pageYOffset || document.documentElement.scrollTop
-			|| document.body.scrollTop;
+	return self.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
 }
 
 function getScrollLeft() {
-	return self.pageXOffset || document.documentElement.scrollLeft
-			|| document.body.scrollLeft;
+	return self.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
 }
 
 function getWindowHeight() {
 	var de = document.documentElement;
-	return self.innerHeight || (de && de.clientHeight)
-			|| document.body.clientHeight;
+	return self.innerHeight || (de && de.clientHeight) || document.body.clientHeight;
 }
 
 function getWindowWidth() {
 	var de = document.documentElement;
-	return self.innerWidth || (de && de.clientWidth)
-			|| document.body.clientWidth;
+	return self.innerWidth || (de && de.clientWidth) || document.body.clientWidth;
 }
 
 /*
- * Utilities to test whether an element will fit in the viewport Parameters: el =
- * element to position, required leftOffset / topOffset = optional parameter if
- * the offset cannot be calculated (i.e., if the object is in the DOM but is set
- * to display: 'none')
+ * Utilities to test whether an element will fit in the viewport Parameters: el = element to position, required
+ * leftOffset / topOffset = optional parameter if the offset cannot be calculated (i.e., if the object is in the DOM but
+ * is set to display: 'none')
  */
 
 function fitHorizontal(el, leftOffset) {
-	var leftVal = parseInt(leftOffset,10) || $(el).offset().left;
-	return (leftVal + $(el).width() <= getWindowWidth() + getScrollLeft() && leftVal
-			- getScrollLeft() >= 0);
+	var leftVal = parseInt(leftOffset, 10) || $(el).offset().left;
+	return (leftVal + $(el).width() <= getWindowWidth() + getScrollLeft() && leftVal - getScrollLeft() >= 0);
 }
 
 function fitVertical(el, topOffset) {
-	var topVal = parseInt(topOffset,10) || $(el).offset().top;
-	return (topVal + $(el).height() <= getWindowHeight() + getScrollTop() && topVal
-			- getScrollTop() >= 0);
+	var topVal = parseInt(topOffset, 10) || $(el).offset().top;
+	return (topVal + $(el).height() <= getWindowHeight() + getScrollTop() && topVal - getScrollTop() >= 0);
 }
 
 /*-------------------------------------------------------------------- 
@@ -998,34 +865,26 @@ Number.prototype.pxToEm = String.prototype.pxToEm = function(settings) {
 	var scopeVal;
 	var getWindowWidth = function() {
 		var de = document.documentElement;
-		return self.innerWidth || (de && de.clientWidth)
-				|| document.body.clientWidth;
+		return self.innerWidth || (de && de.clientWidth) || document.body.clientWidth;
 	};
 
 	/*
-	 * When a percentage-based font-size is set on the body, IE returns that
-	 * percent of the window width as the font-size. For example, if the body
-	 * font-size is 62.5% and the window width is 1000px, IE will return 625px
-	 * as the font-size. When this happens, we calculate the correct body
-	 * font-size (%) and multiply it by 16 (the standard browser font size) to
-	 * get an accurate em value.
+	 * When a percentage-based font-size is set on the body, IE returns that percent of the window width as the
+	 * font-size. For example, if the body font-size is 62.5% and the window width is 1000px, IE will return 625px as
+	 * the font-size. When this happens, we calculate the correct body font-size (%) and multiply it by 16 (the standard
+	 * browser font size) to get an accurate em value.
 	 */
 
-	if (settings.scope == 'body'
-			&& $.browser.msie
-			&& (parseFloat($('body').css('font-size')) / getWindowWidth())
-					.toFixed(1) > 0.0) {
+	if (settings.scope == 'body' && $.browser.msie &&
+			(parseFloat($('body').css('font-size')) / getWindowWidth()).toFixed(1) > 0.0) {
 		var calcFontSize = function() {
-			return (parseFloat($('body').css('font-size')) / getWindowWidth())
-					.toFixed(3) * 16;
+			return (parseFloat($('body').css('font-size')) / getWindowWidth()).toFixed(3) * 16;
 		};
 		scopeVal = calcFontSize();
 	} else {
 		scopeVal = parseFloat(jQuery(settings.scope).css("font-size"));
 	}
-	
 
-	var result = (!!settings.reverse) ? (pxVal * scopeVal).toFixed(2)
-			+ 'px' : (pxVal / scopeVal).toFixed(2) + 'em';
+	var result = (!!settings.reverse) ? (pxVal * scopeVal).toFixed(2) + 'px' : (pxVal / scopeVal).toFixed(2) + 'em';
 	return result;
 };
