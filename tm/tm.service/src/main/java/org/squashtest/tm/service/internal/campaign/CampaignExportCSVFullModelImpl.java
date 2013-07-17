@@ -320,14 +320,23 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 		
 		private void populateTestStepFixedRowData(List<CellImpl> dataCells){
 			
-			dataCells.add(new CellImpl(Long.toString(execStep.getId())));
-			dataCells.add(new CellImpl(""+(stepIndex+1)));
-			dataCells.add(new CellImpl(formatStepRequirements()));
-			dataCells.add(new CellImpl(execStep.getExecutionStatus().toString()));
-			dataCells.add(new CellImpl(formatDate(execStep.getLastExecutedOn())));
-			dataCells.add(new CellImpl(formatUser(execStep.getLastExecutedBy())));
-			dataCells.add(new CellImpl(Integer.toString(getNbIssues(execStep))));
-			
+			if(execStep == null){
+				dataCells.add(new CellImpl(""));
+				dataCells.add(new CellImpl(""));
+				dataCells.add(new CellImpl(""));
+				dataCells.add(new CellImpl(""));
+				dataCells.add(new CellImpl(""));
+				dataCells.add(new CellImpl(""));
+				dataCells.add(new CellImpl(""));
+			} else {
+				dataCells.add(new CellImpl(Long.toString(execStep.getId())));
+				dataCells.add(new CellImpl(""+(stepIndex+1)));
+				dataCells.add(new CellImpl(formatStepRequirements()));
+				dataCells.add(new CellImpl(execStep.getExecutionStatus().toString()));
+				dataCells.add(new CellImpl(formatDate(execStep.getLastExecutedOn())));
+				dataCells.add(new CellImpl(formatUser(execStep.getLastExecutedBy())));
+				dataCells.add(new CellImpl(Integer.toString(getNbIssues(execStep))));
+			}
 		}
 		
 
@@ -457,7 +466,8 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 			
 			boolean foundNextStep = false;
 			boolean _nextTCSucc;
-			
+			boolean doneOnce = false;
+
 			do{
 				// test if we must move to the next test case
 				if (execStep == null){
@@ -472,18 +482,29 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 				}
 				
 				// find a suitable execution step
-				List<ExecutionStep> steps = itp.getLatestExecution().getSteps();
-				int stepsSize = steps.size();
-				stepIndex++;
-				
-				if (stepIndex < stepsSize){
-					execStep = steps.get(stepIndex);
-					foundNextStep = true;
-				}
-				else{
+				List<ExecutionStep> steps = new ArrayList<ExecutionStep>();
+				if(itp.getLatestExecution() != null){
+					steps = itp.getLatestExecution().getSteps();
+					
+					int stepsSize = steps.size();
+					stepIndex++;
+					
+					if (stepIndex < stepsSize){
+						execStep = steps.get(stepIndex);
+						foundNextStep = true;
+					}
+					else{
+						execStep = null;
+					}
+					
+				} else {
+					if(doneOnce == false){
+						foundNextStep = true;
+						doneOnce = true;
+					}
 					execStep = null;
 				}
-				
+	
 			}while(! foundNextStep);
 			
 		}
