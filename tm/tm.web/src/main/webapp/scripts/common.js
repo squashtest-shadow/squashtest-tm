@@ -34,26 +34,10 @@ requirejs.config({
 				"file-upload",
 				"iteration-management",
 				"issue-tables",
-				{
-					name : 'tree',
-					main : 'main',
-					location : 'http://localhost/scripts/scripts/tree'
-				},
-				{
-					name : 'tc-workspace',
-					main : 'main',
-					location : 'http://localhost/scripts/scripts/tc-workspace'
-				},
-				{
-					name : 'req-workspace',
-					main : 'main',
-					location : 'http://localhost/scripts/scripts/req-workspace'
-				},
-				{
-					name : 'camp-workspace',
-					main : 'main',
-					location : 'http://localhost/scripts/scripts/camp-workspace'
-				}					
+				'tree',
+				'tc-workspace',
+				'req-workspace',
+				'camp-workspace'			
 			],
 			/*
 			 * rules for paths naming: * third party lib: unversionned lib name *
@@ -88,14 +72,13 @@ requirejs.config({
 				"jquery.generateId" : "jquery/jquery.generateId",
 				"jquery.hotkeys" : "jquery/jquery.hotkeys-0.8",
 				"jquery.timepicker" : "jquery/jquery-ui-timepicker-addon",
-				"jquery.squash" : "http://localhost/scripts/scripts/squashtest/jquery.squashtm.plugin",
+				"jquery.squash" : "squashtest/jquery.squashtm.plugin",
 				"jquery.squash.fragmenttabs" : "squash/squashtm.fragmenttabs",
 				"jquery.squash.togglepanel" : "squashtest/jquery.squash.togglepanels",
 				"jquery.squash.messagedialog" : "squashtest/jquery.squash.messagedialog",
 				"jquery.squash.confirmdialog" : "squashtest/jquery.squash.confirmdialog",
 				"jquery.squash.oneshotdialog" : "squashtest/jquery.squashtm.oneshotdialog",
-				"jquery.squash.contextual-content" : "http://localhost/scripts/scripts/workspace/workspace.contextual-content",	//legacy
-				"workspace.contextual-content" : "http://localhost/scripts/scripts/workspace/workspace.contextual-content",	
+				"workspace.contextual-content" : "workspace/workspace.contextual-content",	
 				"jquery.squash.fg.menu" : "squashtest/jquery.squashtm.fg.menu",
 				"jquery.squash.squashbutton" : "squashtest/jquery.squash.squashbutton",
 				"jquery.squash.jeditable" : "squashtest/jquery.squashtm.jeditable.ext",
@@ -110,13 +93,13 @@ requirejs.config({
 				"jquery.tagit" : "jquery/tag-it.min",		
 				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit",
 				"jquery.squash.add-attachment-popup" : "squashtest/add-attachment-popup",
-				"jquery.squash.buttonmenu" : "http://localhost/scripts/scripts/squashtest/jquery.squash.buttonmenu",
-				"jquery.squash.formdialog" : "http://localhost/scripts/scripts/squashtest/jquery.squash.formdialog",
-				"squash.attributeparser" : 'http://localhost/scripts/scripts/squash/squash.attributeparser',
-				"squash.configmanager" : 'http://localhost/scripts/scripts/squash/squash.configmanager',
-				"workspace.tree-node-copier" : "http://localhost/scripts/scripts/workspace/workspace.tree-node-copier",
-				"workspace.tree-event-handler" : "http://localhost/scripts/scripts/workspace/workspace.tree-event-handler",
-				"workspace.permissions-rules-broker" : "http://localhost/scripts/scripts/workspace/workspace.permissions-rules-broker"
+				"jquery.squash.buttonmenu" : "squashtest/jquery.squash.buttonmenu",
+				"jquery.squash.formdialog" : "squashtest/jquery.squash.formdialog",
+				"squash.attributeparser" : 'squash/squash.attributeparser',
+				"squash.configmanager" : 'squash/squash.configmanager',
+				"workspace.tree-node-copier" : "workspace/workspace.tree-node-copier",
+				"workspace.tree-event-handler" : "workspace/workspace.tree-event-handler",
+				"workspace.permissions-rules-broker" : "workspace/workspace.permissions-rules-broker"
 			},
 			shim : {
 				"ckeditor" : {

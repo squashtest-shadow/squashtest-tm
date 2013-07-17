@@ -37,7 +37,7 @@ define(function(){
 	
 	
 			return { 
-				"plugins" : ["json_data", "ui", "types", "sort", /*"crrm"*/, "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ], 			
+				"plugins" : ["json_data", "ui", "types", "sort",  "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ], 			
 				
 				"json_data" : { 
 					"data" : settings.model, 
@@ -51,29 +51,6 @@ define(function(){
 				"core" : { 
 					"animation" : 0
 				},
-				/*
-				"crrm": {
-					"move" : {
-						"check_move" : function(){this.checkDnd.apply(this, arguments);}	
-					} 
-				}, 
-				*/
-				/*
-				"dnd": {
-					
-		        	"drag_check" : function (data) {	            		
-		            	return {
-		            		after : true,
-		                	before : true,
-		                	inside : true
-		            	};	                	
-		    		},
-		    		
-		    		"drag_target" : false,
-		    		
-		    		"drop_check" : function(){this.checkDnd.apply(this, arguments);}
-				},
-				*/
 				
 				"ui": {
 					"disable_selecting_children" : true,
@@ -118,7 +95,7 @@ define(function(){
 					"theme" : "squashtest",
 					"dots" : true,
 					"icons" : true,
-					"url" : baseURL+"/styles/squashtree.css"					
+					"url" : baseURL+"/styles/squashtree.css"				
 				},
 				
 				"squash" : {
