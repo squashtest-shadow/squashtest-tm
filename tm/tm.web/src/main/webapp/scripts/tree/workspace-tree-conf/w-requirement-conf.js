@@ -33,22 +33,13 @@ define(function(){
 					"valid_children" : [ "drive" ],
 					"types" : {
 						"requirement" : {
-							"valid_children" : ['requirement'],
-							"icon" : {
-								"image" : baseURL+'/images/Icon_Tree_Requirement.png'
-							}
+							"valid_children" : ['requirement']
 						},
 						"folder" : {
-							"valid_children" : [ "requirement", "folder" ],
-							"icon" : {
-								"image" : baseURL+'/images/Icon_Tree_Folder.png'
-							}
+							"valid_children" : [ "requirement", "folder" ]
 						},
 						"drive" : {
-							"valid_children" : [ "requirement", "folder" ],
-							"icon" : {
-								"image" : baseURL+'/images/root.png'
-							}
+							"valid_children" : [ "requirement", "folder" ]
 						}
 					}
 				}

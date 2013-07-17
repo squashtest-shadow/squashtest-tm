@@ -266,6 +266,11 @@ define(['jquery'], function($){
 
 		// ************ some setters **************
 
+		this.setAttr = function(attrName, value){
+			this.reference.attr(attrName, value);
+			this.refreshLabel();
+		};
+		
 		this.setName = function(name) {
 			this.reference.attr('name', name);
 			this.refreshLabel();

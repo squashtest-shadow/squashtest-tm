@@ -63,3 +63,13 @@ function EventUpdateReference(target, newReference) {
 }
 
 EventUpdateReference.prototype = new SquashEvent();
+
+//'update category', inheriting base event
+function EventUpdateCategory(target, newCategory) {
+	this.base = SquashEvent;
+	this.base('update-category');
+	this.evt_target = target;
+	this.evt_newcat = newCategory;
+}
+
+EventUpdateCategory.prototype = new SquashEvent();

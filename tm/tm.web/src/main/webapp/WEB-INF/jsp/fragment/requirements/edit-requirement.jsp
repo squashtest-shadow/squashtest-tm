@@ -74,6 +74,41 @@ that page won't be editable if
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <c:set var="status_editable" value="${ moreThanReadOnly and requirement.status.allowsStatusUpdate }"/>
+
+
+
+
+
+<c:if test="${smallEditable}">
+<script type="text/javascript">
+	function renameRequirementSuccess(data){
+		var evt = new EventRename(identity, data.newName);
+		squashtm.workspace.contextualContent.fire(null, evt);
+	}
+	
+	function updateReferenceInTitle(reference){
+		var evt = new EventUpdateReference(identity, reference);
+		squashtm.workspace.contextualContent.fire(null, evt);	
+	}
+	
+	
+	//for technical reasons we handle directly the ajax operation when choosing a category.
+	function postUpdateCategory(value, settings){
+		$.post("${requirementUrl}", {id:"requirement-category", value : value})
+		.done(function(response){
+			var evt = new EventUpdateCategory(identity, value.toLowerCase());
+			squashtm.workspace.contextualContent.fire(null, evt);
+		});
+		
+		//in the mean time, must return immediately
+		var data = JSON.parse(settings.data);
+		return data[value];
+	}
+
+</script>
+</c:if>
+
+
 <%-- ----------------------------------- Init ----------------------------------------------%>
 <%-- 
 	Code managing the status of a requirement. It is a handler for the 'onsubmit' of a jeditable (see documentation for details).
@@ -267,7 +302,7 @@ that page won't be editable if
 						<c:choose>
 							<c:when test="${smallEditable }">
 								<div id="requirement-category"><s:message code="${ requirement.category.i18nKey }" htmlEscape="true" /></div>
-								<comp:select-jeditable componentId="requirement-category" jsonData="${categoryList}" targetUrl="${requirementUrl}" />
+								<comp:select-jeditable componentId="requirement-category" jsonData="${categoryList}" targetFunction="postUpdateCategory"/>
 							</c:when>
 							<c:otherwise>
 								<s:message code="${ requirement.category.i18nKey }" htmlEscape="true" />
@@ -445,6 +480,8 @@ that page won't be editable if
 <%-- -----------------------------------SCRIPT ----------------------------------------------%>
 <comp:decorate-buttons />
 
+
+
 <script type="text/javascript">
 
 	var identity = { obj_id : ${requirement.id}, obj_restype : "requirements"  };
@@ -470,35 +507,21 @@ that page won't be editable if
 	});
 	
 	
-
-	<c:if test="${smallEditable}">
-	function renameRequirementSuccess(data){
-		var evt = new EventRename(identity, data.newName);
-		squashtm.workspace.contextualContent.fire(null, evt);
-	}
-	
-	function updateReferenceInTitle(reference){
-		var evt = new EventUpdateReference(identity, reference);
-		squashtm.workspace.contextualContent.fire(null, evt);	
-	}
-	</c:if>
-
-
 		
 	<c:if test="${deletable}">
-		/* deletion success handler */
-		function deleteRequirementSuccess(){		
-			<c:choose>
-			<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-			<c:when test="${param.isInfoPage}" >		
-			document.location.href="${workspaceUrl}" ;
-			</c:when>
-			<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
-			<c:otherwise>
-			location.reload(true);
-			</c:otherwise>
-			</c:choose>				
-		}
+	/* deletion success handler */
+	function deleteRequirementSuccess(){		
+		<c:choose>
+		<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
+		<c:when test="${param.isInfoPage}" >		
+		document.location.href="${workspaceUrl}" ;
+		</c:when>
+		<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
+		<c:otherwise>
+		location.reload(true);
+		</c:otherwise>
+		</c:choose>				
+	}
 	</c:if>
 		
 </script>

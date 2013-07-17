@@ -69,6 +69,9 @@ define([ 'jquery', 'tree' ], function($, tree) {
 			case "update-reference":
 				updateEventUpdateReference(event, otree);
 				break;
+			case "update-category":
+				updateEventUpdateCategory(event, otree);
+				break;
 			case "contextualcontent.clear":
 				break; // bail out, default induces bugs
 			default:
@@ -134,4 +137,17 @@ define([ 'jquery', 'tree' ], function($, tree) {
 
 		target.setReference(event.evt_newref);
 	}
+	
+	function updateEventUpdateCategory(event, tree) {
+		var target = tree.findNodes({
+			restype : event.evt_target.obj_restype,
+			resid : event.evt_target.obj_id
+		});
+
+		if (target.length === 0) {
+			return;
+		}
+
+		target.setAttr('category', event.evt_newcat);
+	}	
 });

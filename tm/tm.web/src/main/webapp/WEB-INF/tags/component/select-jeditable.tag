@@ -23,7 +23,9 @@
 <%-- call rich-editable-init first --%>
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 
-<%@ attribute name="targetUrl" required="true" %>
+<%@ attribute name="targetUrl" required="false" description="URL where to post the informations. Either this, or 'targetFunction' must be defined." %>
+<%@ attribute name="targetFunction" required="false" description="a function that will post the informations. Either this, or 'targetUrl' must be defined." %>
+
 <%@ attribute name="componentId" required="true" %>
 <%@ attribute name="submitCallback" required="false" %>
 <%@ attribute name="jsonData" required="false" description="string representing the json formated data displayed in the select. Either jsonData or 
@@ -36,11 +38,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<c:set var="target" value="'${targetUrl}'"/>
+<c:if test="${not empty targetFunction }">
+<c:set var="target" value="${targetFunction}"/>
+</c:if>
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <script type="text/javascript">
 
 	$(function() {
-		$( '#${ componentId }' ).editable( '${ targetUrl }', {
+		$( '#${ componentId }' ).editable( ${target}, {
 			type: 'select',	
 			placeholder: '<f:message key="rich-edit.placeholder" />',
 			submit: '<f:message key="rich-edit.button.ok.label" />',

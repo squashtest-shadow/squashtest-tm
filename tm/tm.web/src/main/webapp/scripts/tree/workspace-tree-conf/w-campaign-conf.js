@@ -33,35 +33,20 @@ define(function(){
 					"valid_children" : [ "drive" ],
 					"types" : {					
 						"test-suite" : {
-							"valid_children" : "none",						
-							"icon" : {
-								"image" :  baseURL+'/images/Icon_Tree_TestSuite.png'
-							}
+							"valid_children" : "none"
 						},
 						
 						"iteration" : {
-							"valid_children" : ["test-suite"],						
-							"icon" : {
-								"image" : baseURL+'/images/Icon_Tree_Iteration.png'
-							}
+							"valid_children" : ["test-suite"]
 						},					
 						"campaign" : {
-							"valid_children" : ['iteration'],
-							"icon" : {
-								"image" : baseURL+'/images/Icon_Tree_Campaign.png'
-							}
+							"valid_children" : ['iteration']
 						},
 						"folder" : {
-							"valid_children" : [ "campaign", "folder" ],
-							"icon" : {
-								"image" : baseURL+'/images/Icon_Tree_Folder.png'
-							}
+							"valid_children" : [ "campaign", "folder" ]
 						},
 						"drive" : {
-							"valid_children" : [ "campaign", "folder" ],
-							"icon" : {
-								"image" : baseURL+'/images/root.png'
-							}
+							"valid_children" : [ "campaign", "folder" ]
 						}
 					}
 				}

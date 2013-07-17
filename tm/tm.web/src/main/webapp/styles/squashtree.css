@@ -34,8 +34,23 @@ li[rel="drive"][editable="false"][smallEdit="true"] > a > .jstree-icon {	backgro
 li[rel="drive"][editable="true"][creatable="false"][deletable="false"]> a > .jstree-icon {	background-image: url("../images/pencil.png");	vertical-align : middle;}
 li[rel="drive"][editable="true"][creatable="true"][deletable="true"] > a > .jstree-icon {	background-image: url("../images/star_2.png");	vertical-align : top;}
 
-li[rel="file"][editable="false"] a, li[rel="folder"][editable="false"] a, li[rel="resource"][editable="false"] a {	color: gray;}
+
+li[editable="false"] a {	color: gray;}
 li[editable="false"] a.jstree-clicked, li[rel="folder"][editable="false"] a.jstree-hovered {	color: #FFFFFF;}
+
+
+/*
+ * basic icons. The requirements aren't treated here because they're handled differently, see the bottom of this
+ * file for more details.
+ */
+li[rel="drive"] > a > .jstree-icon{ background-image: url("../images/root.png"); background-position:0 0;} /* default when nothing overrides it*/
+li[rel="folder"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_Folder.png");background-position:0 0;}
+li[rel="test-case"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_TestCase.png");background-position:0 0;}
+li[rel="campaign"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_Campaign.png");background-position:0 0;}
+li[rel="iteration"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_Iteration.png");background-position:0 0;}
+li[rel="test-suite"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_TestSuite.png");background-position:0 0;}
+
+
 
 div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{	 border: none;}
 
@@ -53,8 +68,7 @@ div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{	 border
 .jstree-squashtest .jstree-closed > ins { background-position:-54px 0; }
 .jstree-squashtest .jstree-leaf > ins { background-position:-36px 0; }
 
-.jstree-squashtest a .jstree-icon { background-position:-56px -19px; }
-.jstree-squashtest .jstree-open > a .jstree-icon { background-position:-56px -36px; }
+
 .jstree-squashtest a.jstree-loading .jstree-icon { background:url("../images/throbber.gif") center center no-repeat !important; }
 
 .jstree-squashtest.jstree-focused { background:white; }
@@ -83,53 +97,20 @@ div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{	 border
 #vakata-contextmenu.jstree-squashtest-context li.vakata-separator { background:white; border-top:1px solid #e0e0e0; margin:0; }
 #vakata-contextmenu.jstree-squashtest-context li ul { margin-left:-4px; }
 
-/* TODO: IE6 support - the `>` selectors */
 
-/* ********************** unuseds ************** */
+/******************************** requirement *********************************/
+
+li[rel="requirement"] > a > .jstree-icon {background-image: url("../images/tree-requirement-icons.png");}
+li[rel="requirement"][category="business"] > a > .jstree-icon { background-position: 0 0; width: 16px; height: 16px; } 
+li[rel="requirement"][category="ergonomic"] > a > .jstree-icon { background-position: 0 -66px; width: 16px; height: 16px; } 
+li[rel="requirement"][category="functional"] > a > .jstree-icon { background-position: 0 -132px; width: 16px; height: 16px; } 
+li[rel="requirement"][category="non_functional"] > a > .jstree-icon { background-position: 0 -198px; width: 16px; height: 16px; } 
+li[rel="requirement"][category="performance"] > a > .jstree-icon { background-position: 0 -264px; width: 16px; height: 16px; } 
+li[rel="requirement"][category="security"] > a > .jstree-icon { background-position: 0 -330px; width: 16px; height: 16px; } 
+li[rel="requirement"][category="technical"] > a > .jstree-icon { background-position: 0 -396px; width: 16px; height: 16px; } 
+li[rel="requirement"][category="test_requirement"] > a > .jstree-icon { background-position: 0 -462px; width: 16px; height: 16px; } 
+li[rel="requirement"][category="undefined"] > a > .jstree-icon { background-position: 0 -528px; width: 16px; height: 16px; } 
+li[rel="requirement"][category="use_case"] > a > .jstree-icon { background-position: 0 -594px; width: 16px; height: 16px; } 
+li[rel="requirement"][category="user_story"] > a > .jstree-icon { background-position: 0 -660px; width: 16px; height: 16px; } 
 
 
-/*
-div#tree.jstree-0 li[rel="drive"][editable="false"] > a > .jstree-icon, div#linkable-requirements-tree.jstree-0 li[rel="drive"][editable="false"] > a > .jstree-icon,
-div#linkable-test-cases-tree.jstree-0 li[rel="drive"][editable="false"] > a > .jstree-icon {
-	background-image: url("../images/eye.png");
-}
-
-div#tree.jstree-0 li[rel="drive"][editable="true"] > a > .jstree-icon, div#linkable-requirements-tree.jstree-0 li[rel="drive"][editable="true"] > a > .jstree-icon,
-div#linkable-test-cases-tree.jstree-0 li[rel="drive"][editable="true"] > a > .jstree-icon {
-	background-image: url("../images/pencil.png");
-}
-
-#vakata-contextmenu.jstree-squashtest-context a:hover, 
-#vakata-contextmenu.jstree-squashtest-context .vakata-hover > a { padding:0 5px; background:#e8eff7; border:1px solid #aecff7; color:black; -moz-border-radius:2px; -webkit-border-radius:2px; border-radius:2px; }
-
-.jstree-squashtest .jstree-search { font-style:italic; }
-
-.jstree-squashtest .jstree-no-icons .jstree-checkbox { display:inline-block; }
-.jstree-squashtest .jstree-no-checkboxes .jstree-checkbox { display:none !important; }
-.jstree-squashtest .jstree-checked > a > .jstree-checkbox { background-position:-38px -19px; }
-.jstree-squashtest .jstree-unchecked > a > .jstree-checkbox { background-position:-2px -19px; }
-.jstree-squashtest .jstree-undetermined > a > .jstree-checkbox { background-position:-20px -19px; }
-.jstree-squashtest .jstree-checked > a > .jstree-checkbox:hover { background-position:-38px -37px; }
-.jstree-squashtest .jstree-unchecked > a > .jstree-checkbox:hover { background-position:-2px -37px; }
-.jstree-squashtest .jstree-undetermined > a > .jstree-checkbox:hover { background-position:-20px -37px; }
-
-li[rel] a {
-	margin-top: 2px;
-}
-
-li[rel="drive"] > a {
-	width:88%;
-	background: #2E2E2E;
-	-moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px;
-	color:white;
-	border: 1px solid #2e2e2e;
-}
-
-li[rel="drive"] > a.filter-enabled {
-	width:88%;
-	background: #2E2E2E;
-	-moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px;
-	color : #B9121B;
-	border: 1px solid #2e2e2e;
-}
-*/
