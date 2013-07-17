@@ -405,9 +405,11 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 		// returns the correct value if found, or "--" if not found
 		private String getValue(Collection<CustomFieldValue> values, CustomField model) {
 
-			for (CustomFieldValue value : values) {
-				if (value.getBinding().getCustomField().getCode().equals(model.getCode())) {
-					return value.getValue();
+			if(values != null){
+				for (CustomFieldValue value : values) {
+					if (value.getBinding().getCustomField().getCode().equals(model.getCode())) {
+						return value.getValue();
+					}
 				}
 			}
 
