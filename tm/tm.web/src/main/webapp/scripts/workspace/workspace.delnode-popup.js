@@ -52,14 +52,14 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 		getSimulXhr : function(nodes) {
 			var ids = nodes.treeNode().all('getResId').join(',');
 			var rawUrl = nodes.getDeleteUrl();
-			var url = rawUrl.replace('\\{nodeIds\\}', ids) + '/deletion-simulation';
+			var url = rawUrl.replace('\{nodeIds\}', ids) + '/deletion-simulation';
 			return $.getJSON(url);
 		},
 
 		getConfirmXhr : function(nodes) {
 			var ids = nodes.treeNode().all('getResId').join(',');
 			var rawUrl = nodes.getDeleteUrl();
-			var url = rawUrl.replace('\\{nodeIds\\}', ids);
+			var url = rawUrl.replace('\{nodeIds\}', ids);
 			return $.ajax({
 				url : url,
 				type : 'delete'
