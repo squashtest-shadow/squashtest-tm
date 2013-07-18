@@ -98,7 +98,7 @@ class AuditLogInterceptorTest extends Specification {
 		res.createdOn != null
 
 		cleanup:
-		sf.close()
+			sf.close()
 	}
 
 	def "should set modification info on auditable object update"() {
