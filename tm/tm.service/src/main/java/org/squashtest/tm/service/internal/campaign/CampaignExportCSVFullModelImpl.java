@@ -40,7 +40,10 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
@@ -233,11 +236,13 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 		private Iteration iteration = null;  
 		private IterationTestPlanItem itp = null;
 		private ExecutionStep execStep = null;		
+		private ActionTestStep actionTestStep = null;
 		
 		private int iterIndex = -1;
 		private int itpIndex = 	-1;
 		private int stepIndex = -1;
-
+		private int actionTestStepIndex = -1;
+		
 		private boolean _globalHasNext = true;
 		
 		private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -320,15 +325,17 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 		
 		private void populateTestStepFixedRowData(List<CellImpl> dataCells){
 			
-			if(execStep == null){
-				dataCells.add(new CellImpl(""));
-				dataCells.add(new CellImpl(""));
-				dataCells.add(new CellImpl(""));
-				dataCells.add(new CellImpl(""));
-				dataCells.add(new CellImpl(""));
-				dataCells.add(new CellImpl(""));
-				dataCells.add(new CellImpl(""));
-			} else {
+			if(execStep == null && actionTestStep != null){
+				dataCells.add(new CellImpl("n/a"));
+				dataCells.add(new CellImpl(""+(actionTestStepIndex+1)));
+				dataCells.add(new CellImpl(formatStepRequirements()));
+				dataCells.add(new CellImpl("n/a"));
+				dataCells.add(new CellImpl("n/a"));
+				dataCells.add(new CellImpl("n/a"));
+				dataCells.add(new CellImpl("n/a"));
+			} 
+			
+			if(execStep != null){
 				dataCells.add(new CellImpl(Long.toString(execStep.getId())));
 				dataCells.add(new CellImpl(""+(stepIndex+1)));
 				dataCells.add(new CellImpl(formatStepRequirements()));
@@ -439,7 +446,7 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 		
 		private String formatStepRequirements(){
 			try{
-				if (execStep.getReferencedTestStep() != null){
+				if (execStep != null && execStep.getReferencedTestStep() != null){
 					/* should fix the mapping of execution steps -> action step : an execution 
 					 * step cannot reference a call step by design. For now we'll just downcast 
 					 * the TestStep instance.
@@ -448,7 +455,13 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 					return Integer.toString(aStep.getRequirementVersionCoverages().size());
 				}
 				else{
-					return "?";
+					if(actionTestStep != null){
+						
+						return Integer.toString(actionTestStep.getRequirementVersionCoverages().size());
+						
+					} else {
+						return "?";
+					}
 				}
 			}			
 			catch(NullPointerException npe){
@@ -468,11 +481,11 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 			
 			boolean foundNextStep = false;
 			boolean _nextTCSucc;
-			boolean doneOnce = false;
+			boolean foundNextTestStep = false;
 
 			do{
 				// test if we must move to the next test case
-				if (execStep == null){
+				if (execStep == null && actionTestStep == null){
 					_nextTCSucc = _moveToNextTestCase();
 					if (! _nextTCSucc) {
 						//that was the last test case and we cannot iterate further more : we break the loop forcibly
@@ -480,6 +493,7 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 						return;	
 					}else{
 						_resetStepIndex();
+						_resetActionTestStepIndex();
 					}
 				}
 				
@@ -493,17 +507,31 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 					
 					if (stepIndex < stepsSize){
 						execStep = steps.get(stepIndex);
+						actionTestStep = null;
 						foundNextStep = true;
 					}
 					else{
 						execStep = null;
+						actionTestStep = null;
 					}
 					
 				} else {
-					if(doneOnce == false){
-						foundNextStep = true;
-						doneOnce = true;
-					}
+						TestCase testCase = itp.getReferencedTestCase();
+						List<ActionTestStep> actiontestSteps = getActionTestStepList(testCase);
+						
+						int actionTestStepSize = actiontestSteps.size();
+						actionTestStepIndex++;
+			
+						if (actionTestStepIndex < actionTestStepSize){
+							actionTestStep = actiontestSteps.get(actionTestStepIndex);
+							execStep = null;
+							foundNextStep = true;
+						}
+						else{
+							execStep = null;
+							actionTestStep = null;
+						}
+					
 					execStep = null;
 				}
 	
@@ -511,6 +539,57 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 			
 		}
 
+	
+		private List<ActionTestStep> getActionTestStepList(TestCase testCase){
+			
+			List<ActionTestStep> result = new ArrayList<ActionTestStep>();
+			List<TestStep> steps = testCase.getSteps();
+			
+			result.addAll(getActionTestStepListRec(steps));
+			
+			return result;
+		}
+		
+		private List<ActionTestStep> getActionTestStepListRec(List<TestStep> steps){
+			
+			List<ActionTestStep> result = new ArrayList<ActionTestStep>();
+			TestStepExaminer examiner = new TestStepExaminer();
+			
+			for(TestStep step : steps){
+				step.accept(examiner);
+				if(examiner.isActionStep()){
+					result.add((ActionTestStep)step);
+				} else {
+					CallTestStep callStep = (CallTestStep) step;
+					TestCase testCase = callStep.getCalledTestCase();
+					result.addAll(getActionTestStepList(testCase));
+				}
+			}
+			
+			return result;
+		}
+
+		private final class TestStepExaminer implements TestStepVisitor {
+
+			private boolean isActionStep;
+		
+
+			public boolean isActionStep() {
+				return isActionStep;
+			}
+
+			@Override
+			public void visit(ActionTestStep visited) {
+				this.isActionStep = true;
+			}
+
+			@Override
+			public void visit(CallTestStep visited) {
+				this.isActionStep = false;
+			}
+		}
+		
+		
 		private boolean _moveToNextTestCase(){
 			
 			boolean foundNextTC = false;
@@ -573,6 +652,10 @@ public class CampaignExportCSVFullModelImpl implements CampaignExportCSVModel {
 			stepIndex = -1;
 		}
 
+		private void _resetActionTestStepIndex(){
+			actionTestStepIndex = -1;
+		}
+		
 		private void _resetTCIndex(){
 			itpIndex = -1;
 		}
