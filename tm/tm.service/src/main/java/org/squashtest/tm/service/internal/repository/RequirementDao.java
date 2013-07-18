@@ -87,4 +87,14 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 * returns a requirement that contains the given child requirement
 	 */
 	Requirement findByContent(Requirement childRequirement);
+	
+	
+	/**
+	 * Given a list of requirementIds, returns the corresponding list of [parent, requirement].
+	 * the 'parent' is of type NodeContainer&lt;Requirement&gt;.
+	 * 
+	 * @return what I just said.
+	 * 
+	 */
+	List<Object[]> findAllParentsOf(List<Long> requirementIds);
 }

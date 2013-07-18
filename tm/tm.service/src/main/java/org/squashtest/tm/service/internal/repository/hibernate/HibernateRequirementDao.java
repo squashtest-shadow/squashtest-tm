@@ -77,15 +77,15 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 			+ " where rRoot.LIBRARY_ID = :libraryId" + " )";
 
 	private static final class SetRequirementsIdsParameterCallback implements SetQueryParametersCallback {
-		private List<Long> requirementsIds;
+		private List<Long> requirementIds;
 
-		private SetRequirementsIdsParameterCallback(List<Long> requirementsIds) {
-			this.requirementsIds = requirementsIds;
+		private SetRequirementsIdsParameterCallback(List<Long> requirementIds) {
+			this.requirementIds = requirementIds;
 		}
 
 		@Override
 		public void setQueryParameters(Query query) {
-			query.setParameterList("requirementsIds", requirementsIds);
+			query.setParameterList("requirementIds", requirementIds);
 		}
 	}
 
@@ -343,6 +343,22 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		SetQueryParametersCallback callback = new SetNodeContentParameter(child);
 
 		return executeEntityNamedQuery("requirement.findByContent", callback);
+	}
+	
+	
+	@Override
+	public List<Object[]> findAllParentsOf(List<Long> requirementIds) {
+		List<Object[]> allpairs = new ArrayList<Object[]>(requirementIds.size());
+		
+		List<Object[]> libraryReqs = executeListNamedQuery("requirement.findAllLibraryParents", new SetRequirementsIdsParameterCallback(requirementIds));
+		List<Object[]> folderReqs = executeListNamedQuery("requirement.findAllFolderParent", new SetRequirementsIdsParameterCallback(requirementIds));
+		List<Object[]> reqReqs = executeListNamedQuery("requirement.findAllRequirementParents", new SetRequirementsIdsParameterCallback(requirementIds));
+		
+		allpairs.addAll(libraryReqs);
+		allpairs.addAll(folderReqs);
+		allpairs.addAll(reqReqs);
+		
+		return allpairs;
 	}
 
 }

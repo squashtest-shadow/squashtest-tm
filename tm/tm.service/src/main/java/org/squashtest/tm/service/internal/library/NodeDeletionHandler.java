@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 
 
@@ -73,8 +74,8 @@ public interface NodeDeletionHandler<NODE extends LibraryNode, FOLDER extends Fo
 	 * 
 	 * 
 	 * @param targetIds the list of node ids selected by the user.
-	 * @return the list of the ids of the nodes actually deleted.
+	 * @return an OperationReport saying what happened.
 	 */
-	List<Long> deleteNodes(List<Long> targetIds);
+	OperationReport deleteNodes(List<Long> targetIds);
 	
 }

@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.deletion.LinkedToIterationPreviewReport;
 import org.squashtest.tm.service.deletion.NotDeletablePreviewReport;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.deletion.LockedFileInferenceGraph.Node;
@@ -124,7 +125,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 	 * Note : We only need to take care of the attachments and steps, the rest will cascade thanks to the ON CASCADE
 	 * clauses in the other tables.
 	 */
-	protected void batchDeleteNodes(List<Long> ids) {
+	protected OperationReport batchDeleteNodes(List<Long> ids) {
 		if (!ids.isEmpty()) {
 			List<Long> stepIds = deletionDao.findTestSteps(ids);
 
@@ -157,6 +158,10 @@ public class TestCaseNodeDeletionHandlerImpl extends
 			deletionDao.removeAttachmentsLists(testCaseAttachmentIds);
 
 		}
+		
+		OperationReport report = new OperationReport();
+		report.addRemovedNodes(ids, "mixed-testcases-and-folder");
+		return report;
 	}
 
 	/* ************************ TestCaseNodeDeletionHandler impl ***************************** */

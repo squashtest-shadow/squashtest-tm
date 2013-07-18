@@ -29,6 +29,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.repository.FolderDao;
@@ -77,7 +78,7 @@ public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLD
 	 * {@link NodeDeletionHandler#deleteNodes(List)}
 	 */
 	@Override
-	public List<Long> deleteNodes(List<Long> targetIds){
+	public OperationReport deleteNodes(List<Long> targetIds){
 
 		//phase 1 : find all the nodes and build the tree
 		List<Long[]> hierarchy = findPairedNodeHierarchy(targetIds);
@@ -98,9 +99,8 @@ public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLD
 		//and batch - delete them
 		List<Long> deletableNodeIds =  tree.collectDeletableIds();
 
-		batchDeleteNodes(deletableNodeIds);
+		return batchDeleteNodes(deletableNodeIds);
 
-		return deletableNodeIds;
 	}
 
 
@@ -206,7 +206,7 @@ public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLD
 	 * @param ids the doomed node ids.
 	 * @return 
 	 */
-	protected abstract void batchDeleteNodes(List<Long> ids);
+	protected abstract OperationReport batchDeleteNodes(List<Long> ids);
 
 
 }

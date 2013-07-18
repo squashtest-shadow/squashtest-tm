@@ -64,6 +64,7 @@ public final class NativeQueries {
 	public static final String requirement_sql_remove = "delete from REQUIREMENT where rln_id in (:nodeIds)";
 	public static final String requirementLibraryNode_sql_remove = "delete from REQUIREMENT_LIBRARY_NODE where rln_id in (:nodeIds)";
 	public static final String REQUIREMENT_FOLDER_SQL_REMOVE = "delete from REQUIREMENT_FOLDER where rln_id in (:nodeIds)";
+	public static final String requirementLibraryNode_sql_filterFolderIds = "select folder.rln_id from REQUIREMENT_FOLDER folder where folder.rln_id in (:requirementIds)";
 
 	public static final String REQUIREMENT_SQL_REMOVE_FROM_FOLDER = "delete from RLN_RELATIONSHIP where ancestor_id in (:ancIds) or descendant_id in (:descIds)";
 	public static final String REQUIREMENT_SQL_REMOVE_FROM_LIBRARY = "delete from REQUIREMENT_LIBRARY_CONTENT where content_id in (:requirementIds)";

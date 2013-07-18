@@ -84,6 +84,34 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		query.setParameterList("descIds", entityIds, LongType.INSTANCE);
 		query.executeUpdate();
 	}
+	
+	
+	@Override
+	public List<Long>[] separateFolderFromRequirementIds(List<Long> originalIds) {
+
+		List<Long> folderIds = new ArrayList<Long>();
+		List<Long> requirementIds = new ArrayList<Long>();
+		
+		List<BigInteger> _folderIds = executeSelectSQLQuery(
+						NativeQueries.requirementLibraryNode_sql_filterFolderIds, REQUIREMENT_IDS, originalIds);
+		
+		for (Long oId : originalIds){
+			if (_folderIds.contains(BigInteger.valueOf(oId))){
+				folderIds.add(oId);
+			}
+			else{
+				requirementIds.add(oId);
+			}
+		}
+		
+		List<Long>[] result = new List[2];
+		result[0] = folderIds;
+		result[1] = requirementIds;
+		
+		return result;
+	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	@Override

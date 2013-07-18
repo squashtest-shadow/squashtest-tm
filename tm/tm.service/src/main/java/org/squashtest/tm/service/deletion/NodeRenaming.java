@@ -18,31 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.deletion;
 
-import java.util.List;
-
-public interface RequirementDeletionDao extends DeletionDao {
-	
-	/**
-	 * Given a list of RequirementLibraryNode ids, will tell which ones are folder ids and which ones are requirements.
-	 * 
-	 * @param originalIds the requirement library node ids we want to sort out.
-	 * @return an array of list of ids : result[0] are the folder ids and result[1] are the requirement ids.
-	 */
-	List<Long>[] separateFolderFromRequirementIds(List<Long> originalIds);
-	
-	List<Long> findRequirementAttachmentListIds(List<Long> requirementIds);
-	
-	void removeFromVerifiedRequirementLists(List<Long> requirementIds);
-	
-	void deleteRequirementAuditEvents(List<Long> requirementIds);
-	
-	List<Long> findVersionIds(List<Long> requirementIds);
-	
-	/**
-	 * @param versionsIds
-	 */
-	void removeTestStepsCoverageByRequirementVersionIds(List<Long> versionsIds);
-
+public final class NodeRenaming{
+	Node renamedNode;
+	String newName;
+	public NodeRenaming(Node renamedNode, String newName){
+		this.renamedNode = renamedNode;
+		this.newName = newName;
+	}
 }

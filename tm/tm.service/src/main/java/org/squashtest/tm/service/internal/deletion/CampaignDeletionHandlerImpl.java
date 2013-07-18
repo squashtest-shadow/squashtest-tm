@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.deletion.NotDeletableCampaignsPreviewReport;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
@@ -217,7 +218,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	/*
 	 * by Nodes we mean the CampaignLibraryNodes.
 	 */
-	protected void batchDeleteNodes(List<Long> ids) {
+	protected OperationReport batchDeleteNodes(List<Long> ids) {
 		
 		List<Campaign> campaigns = campaignDao.findAllByIds(ids);
 		
@@ -243,10 +244,14 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		for (AttachmentList list : attachLists) {
 			deletionDao.removeAttachmentList(list);
 		}
+		
+		OperationReport report = new OperationReport();
+		report.addRemovedNodes(ids, "mixed-capaigns-and-folders");
+		return report;
 	}
 
 	@Override
-	public List<Long> deleteIterations(List<Long> targetIds) {
+	public OperationReport deleteIterations(List<Long> targetIds) {
 
 		List<Iteration> iterations = iterationDao.findAllByIds(targetIds);
 		List<Iteration> iterationsToBeDeleted = new ArrayList<Iteration>(iterations.size());
@@ -275,16 +280,21 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			
 		doDeleteIterations(iterationsToBeDeleted);		
 	
-		return deletedTargetIds;
+		OperationReport report = new OperationReport();
+		report.addRemovedNodes(deletedTargetIds, "iteration");
+		
+		return report;
 	}
 	
 	@Override
-	public List<Long> deleteSuites(List<Long> testSuites) {
+	public OperationReport deleteSuites(List<Long> testSuites) {
 		List<TestSuite> suites = suiteDao.findAllByIds(testSuites);
 
 		doDeleteSuites(suites);
 
-		return testSuites;
+		OperationReport report = new OperationReport();
+		report.addRemovedNodes(testSuites, "test-suite");
+		return report;
 
 	}
 

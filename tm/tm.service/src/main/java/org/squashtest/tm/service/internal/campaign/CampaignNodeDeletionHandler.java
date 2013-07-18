@@ -25,6 +25,7 @@ import java.util.List;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 
@@ -78,9 +79,9 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	 * 
 	 * 
 	 * @param targetIds
-	 * @return the list of the ids of the iterations actually deleted.
+	 * @return 
 	 */
-	List<Long> deleteIterations(List<Long> targetIds);
+	OperationReport deleteIterations(List<Long> targetIds);
 
 	/**
 	 * that method should investigate the consequences of the deletion of the given executions, and return a report
@@ -108,6 +109,7 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	 * @param executions
 	 */
 	void deleteExecutions(List<Execution> executions);
+	
 
 	List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds);
 
@@ -117,6 +119,6 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	 * @param testSuites
 	 * @return
 	 */
-	List<Long> deleteSuites(List<Long> suiteIds);
+	OperationReport deleteSuites(List<Long> suiteIds);
 
 }
