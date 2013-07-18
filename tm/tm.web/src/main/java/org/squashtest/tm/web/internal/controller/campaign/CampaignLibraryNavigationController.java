@@ -49,6 +49,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.campaign.CampaignFormModel.CampaignFormModelValidator;
@@ -258,7 +259,7 @@ public class CampaignLibraryNavigationController extends
 
 	@RequestMapping(value="/iterations/{iterationIds}",  method = RequestMethod.DELETE)
 	public @ResponseBody
-	List<Long> confirmIterationsDeletion(@PathVariable("iterationIds") List<Long> iterationIds) {
+	OperationReport confirmIterationsDeletion(@PathVariable("iterationIds") List<Long> iterationIds) {
 
 		return campaignLibraryNavigationService.deleteIterations(iterationIds);
 	}
@@ -279,7 +280,7 @@ public class CampaignLibraryNavigationController extends
 
 	@RequestMapping(value="/test-suites/{suiteIds}",  method = RequestMethod.DELETE)
 	public @ResponseBody
-	List<Long> confirmSuitesDeletion(@PathVariable("suiteIds") List<Long> suiteIds) {
+	OperationReport confirmSuitesDeletion(@PathVariable("suiteIds") List<Long> suiteIds) {
 
 		return campaignLibraryNavigationService.deleteSuites(suiteIds);
 	}

@@ -77,7 +77,7 @@
 		@NamedQuery(name = "requirement.findByContent", query = "from Requirement where :content in elements(children)"),
 		@NamedQuery(name = "requirement.findAllRequirementParents", query = "select par, req from Requirement 		 par join par.children req where req.id in (:requirementIds)"),
 		@NamedQuery(name = "requirement.findAllFolderParents", 		query = "select par, req from RequirementFolder  par join par.content  req where req.id in (:requirementIds)"),
-		@NamedQuery(name = "requirement.findAllLibraryParents", 	query = "select par, req from RequirementLibrary par join par.content  req where req.id in (:requirementIds)"),
+		@NamedQuery(name = "requirement.findAllLibraryParents", 	query = "select par, req from RequirementLibrary par join par.rootContent  req where req.id in (:requirementIds)"),
 				
 
 		//CampaignFolder

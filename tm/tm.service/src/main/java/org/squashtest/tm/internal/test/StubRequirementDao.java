@@ -155,7 +155,7 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	}
 	
 	@Override
-	public List<Object[]> findParentsOf(List<Long> requirementIds) {
+	public List<Object[]> findAllParentsOf(List<Long> requirementIds) {
 		// TODO Auto-generated method stub
 		return null;
 	}

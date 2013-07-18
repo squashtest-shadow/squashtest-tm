@@ -160,13 +160,19 @@ public class RequirementDeletionHandlerImpl extends
 	}
 	
 	
+
+	
+	// ****************************** atrocious boilerplate here ************************
+	
 	/*
 	 * Removing a list of RequirementLibraryNodes means : - find all the attachment lists, - remove them, - remove
 	 * the nodes themselves
 	 */
 	@Override
 	protected OperationReport batchDeleteNodes(List<Long> ids) {
-		if (!ids.isEmpty()) {
+		
+		// commented out for debugging purposes
+		/*if (!ids.isEmpty()) {
 
 			TestCaseImportanceManagerForRequirementDeletion testCaseImportanceManager = provider.get();
 			testCaseImportanceManager.prepareRequirementDeletion(ids);
@@ -188,15 +194,13 @@ public class RequirementDeletionHandlerImpl extends
 
 			testCaseImportanceManager.changeImportanceAfterRequirementDeletion();
 
-		}
+		}*/
 		
 		OperationReport report = new OperationReport();
 		report.addRemovedNodes(ids, "mixed-requirement-and-folders");
 		return report;
 	}
 	
-	
-	// ****************************** atrocious boilerplate here ************************
 	
 	
 	private void _renameContentIfNeededThenAttach(NodeContainer<Requirement> parent, Requirement toBeDeleted, OperationReport report){
@@ -222,13 +226,13 @@ public class RequirementDeletionHandlerImpl extends
 			
 			// log the renaming operation if happened.
 			if (needsRenaming){
-				child.setName(name);
+				//child.setName(name);
 				report.addNodeRenaming("requirement", child.getId(), name);
 			}
 			
 			// now move the node and log the movement operation. 
 			// TODO : perhaps use the navigation service facilities instead? Although the following code is fine enough I think.
-			parent.addContent(child);
+			//parent.addContent(child);
 			movedNodesLog.add(new Node(child.getId(), "requirement"));
 		}
 		

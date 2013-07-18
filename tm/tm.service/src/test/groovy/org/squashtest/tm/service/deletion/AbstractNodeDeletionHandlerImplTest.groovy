@@ -75,7 +75,10 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 			return tcDao.findAllTestCasesIdsCalledByTestCases (nodeIds);
 		}
 		
-		protected  void batchDeleteNodes(List<Long> ids){
+		protected  OperationReport batchDeleteNodes(List<Long> ids){
+			OperationReport report = new  OperationReport()
+			report.addRemovedNodes(ids, "who-cares");
+			return report
 		}
 		
 		
@@ -242,7 +245,7 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 			def deleted = handler.deleteNodes([1l, 2l])
 		
 		then :
-			deleted == expected
+			deleted.removedNodes.collect{it.id} == expected
 			
 		
 		

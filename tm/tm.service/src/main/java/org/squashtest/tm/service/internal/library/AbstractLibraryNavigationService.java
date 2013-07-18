@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.FolderDao;
@@ -343,7 +344,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	}
 
 	@Override
-	public List<Long> deleteNodes(List<Long> targetIds) {
+	public OperationReport deleteNodes(List<Long> targetIds) {
 
 		// check. Note : we wont recursively check for the whole hierarchy as it's supposed to have the same
 		// identity holder

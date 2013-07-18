@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 
@@ -142,7 +143,7 @@ public interface CampaignLibraryNavigationService extends
 	 * @param targetIds
 	 * @return
 	 */
-	List<Long> deleteIterations(List<Long> targetIds);
+	OperationReport deleteIterations(List<Long> targetIds);
 
 	List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds);
 
@@ -152,7 +153,7 @@ public interface CampaignLibraryNavigationService extends
 	 * @param testSuites
 	 * @return
 	 */
-	List<Long> deleteSuites(List<Long> suiteIds);
+	OperationReport deleteSuites(List<Long> suiteIds);
 	
 	
 

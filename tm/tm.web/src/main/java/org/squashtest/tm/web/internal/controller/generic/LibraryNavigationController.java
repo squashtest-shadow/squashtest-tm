@@ -54,6 +54,7 @@ import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
@@ -188,7 +189,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	
 
 	@RequestMapping(value="/content/{nodeIds}", method=RequestMethod.DELETE)
-	public @ResponseBody List<Long> confirmNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds){
+	public @ResponseBody OperationReport confirmNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds){
 		
 		return getLibraryNavigationService().deleteNodes(nodeIds);	
 	}

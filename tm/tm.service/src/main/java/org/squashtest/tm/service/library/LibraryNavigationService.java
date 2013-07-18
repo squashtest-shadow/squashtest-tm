@@ -25,6 +25,7 @@ import java.util.List;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 
 /**
@@ -104,7 +105,7 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	 * @param targetIds
 	 * @return
 	 */
-	List<Long> deleteNodes(List<Long> targetIds);
+	OperationReport deleteNodes(List<Long> targetIds);
 
 	/**
 	 * That method should find the parentFolder of the library Node if it has one

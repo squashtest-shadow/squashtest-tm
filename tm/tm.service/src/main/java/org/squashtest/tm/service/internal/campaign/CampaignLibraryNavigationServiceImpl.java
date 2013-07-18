@@ -43,6 +43,7 @@ import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
@@ -293,7 +294,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	public List<Long> deleteIterations(List<Long> targetIds) {
+	public OperationReport deleteIterations(List<Long> targetIds) {
 		return deletionHandler.deleteIterations(targetIds);
 	}
 
@@ -303,7 +304,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	public List<Long> deleteSuites(List<Long> targetIds) {
+	public OperationReport deleteSuites(List<Long> targetIds) {
 		return deletionHandler.deleteSuites(targetIds);
 	}
 

@@ -61,6 +61,7 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
@@ -426,10 +427,10 @@ public class IterationModificationController {
 
 	@RequestMapping(value = "/test-suites/delete", method = RequestMethod.POST, params = { RequestParams.IDS })
 	public @ResponseBody
-	List<Long> removeTestSuites(@RequestParam(RequestParams.IDS) List<Long> ids) {
-		List<Long> deletedIds = iterationModService.removeTestSuites(ids);
-		LOGGER.debug("removal of " + deletedIds.size() + " Test Suites");
-		return deletedIds;
+	OperationReport removeTestSuites(@RequestParam(RequestParams.IDS) List<Long> ids) {
+		OperationReport report = iterationModService.removeTestSuites(ids);
+		LOGGER.debug("removal of " + report.getRemovedNodes().size() + " Test Suites");
+		return report;
 	}
 
 	/* ************** execute auto *********************************** */

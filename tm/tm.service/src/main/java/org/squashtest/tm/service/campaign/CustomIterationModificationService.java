@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 
 /**
@@ -73,7 +74,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * @param targetIds
 	 * @return
 	 */
-	List<Long> deleteNodes(List<Long> targetIds);
+	OperationReport deleteNodes(List<Long> targetIds);
 
 	void addTestSuite(long iterationId, TestSuite suite);
 
@@ -85,9 +86,9 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * </p>
 	 * 
 	 * @param suitesIds
-	 * @return the deleted suitesIds
+	 * @return 
 	 */
-	List<Long> removeTestSuites(List<Long> suitesIds);
+	OperationReport removeTestSuites(List<Long> suitesIds);
 
 	/**
 	 * <p>

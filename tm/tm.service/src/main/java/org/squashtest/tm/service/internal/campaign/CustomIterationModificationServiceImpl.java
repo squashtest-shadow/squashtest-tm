@@ -57,6 +57,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
@@ -289,7 +290,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
-	public List<Long> deleteNodes(List<Long> targetIds) {
+	public OperationReport deleteNodes(List<Long> targetIds) {
 		return deletionHandler.deleteIterations(targetIds);
 	}
 
@@ -337,7 +338,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	@Override
-	public List<Long> removeTestSuites(List<Long> suitesIds) {
+	public OperationReport removeTestSuites(List<Long> suitesIds) {
 		List<TestSuite> testSuites = suiteDao.findAllByIds(suitesIds);
 		// check
 		checkPermissionsForAll(testSuites, "DELETE");
