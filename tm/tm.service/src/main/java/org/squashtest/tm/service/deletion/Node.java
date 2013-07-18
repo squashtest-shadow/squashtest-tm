@@ -21,10 +21,26 @@
 package org.squashtest.tm.service.deletion;
 
 public final class Node{
-	Long id;
-	String nodetype;
+	public Long id;
+	public String nodetype;
 	public Node(Long id, String nodetype){
 		this.id = id;
 		this.nodetype = nodetype;
 	}
+	public Node() {
+		super();
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getNodetype() {
+		return nodetype;
+	}
+	public void setNodetype(String nodetype) {
+		this.nodetype = nodetype;
+	}
+	
 }

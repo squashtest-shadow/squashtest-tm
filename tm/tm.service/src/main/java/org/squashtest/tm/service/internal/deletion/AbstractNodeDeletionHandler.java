@@ -79,28 +79,33 @@ public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLD
 	 */
 	@Override
 	public OperationReport deleteNodes(List<Long> targetIds){
+		
+		if (! targetIds.isEmpty()){
 
-		//phase 1 : find all the nodes and build the tree
-		List<Long[]> hierarchy = findPairedNodeHierarchy(targetIds);
-
-		LockedFolderInferenceTree tree = new LockedFolderInferenceTree();
-		tree.build(hierarchy);
-
-		//phase 2 : find the nodes that aren't deletable and mark them as such in the tree
-		List<Long> candidateNodeIds = tree.collectKeys();
-		List<Long> lockedNodeIds = detectLockedNodes(candidateNodeIds);
-
-		//phase 3 : resolve which folders are locked with respect to the locked content.
-		tree.markLockedNodes(lockedNodeIds);
-		tree.resolveLockedFolders();
-
-
-		//phase 4 : now the dependencies between the nodes are resolved we may collect the ids of deletable nodes
-		//and batch - delete them
-		List<Long> deletableNodeIds =  tree.collectDeletableIds();
-
-		return batchDeleteNodes(deletableNodeIds);
-
+			//phase 1 : find all the nodes and build the tree
+			List<Long[]> hierarchy = findPairedNodeHierarchy(targetIds);
+	
+			LockedFolderInferenceTree tree = new LockedFolderInferenceTree();
+			tree.build(hierarchy);
+	
+			//phase 2 : find the nodes that aren't deletable and mark them as such in the tree
+			List<Long> candidateNodeIds = tree.collectKeys();
+			List<Long> lockedNodeIds = detectLockedNodes(candidateNodeIds);
+	
+			//phase 3 : resolve which folders are locked with respect to the locked content.
+			tree.markLockedNodes(lockedNodeIds);
+			tree.resolveLockedFolders();
+	
+	
+			//phase 4 : now the dependencies between the nodes are resolved we may collect the ids of deletable nodes
+			//and batch - delete them
+			List<Long> deletableNodeIds =  tree.collectDeletableIds();
+			
+			return batchDeleteNodes(deletableNodeIds);
+		}
+		else{
+			return new OperationReport();	//empty operations
+		}
 	}
 
 

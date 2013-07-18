@@ -348,17 +348,22 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	
 	@Override
 	public List<Object[]> findAllParentsOf(List<Long> requirementIds) {
-		List<Object[]> allpairs = new ArrayList<Object[]>(requirementIds.size());
-		
-		List<Object[]> libraryReqs = executeListNamedQuery("requirement.findAllLibraryParents", new SetRequirementsIdsParameterCallback(requirementIds));
-		List<Object[]> folderReqs = executeListNamedQuery("requirement.findAllFolderParent", new SetRequirementsIdsParameterCallback(requirementIds));
-		List<Object[]> reqReqs = executeListNamedQuery("requirement.findAllRequirementParents", new SetRequirementsIdsParameterCallback(requirementIds));
-		
-		allpairs.addAll(libraryReqs);
-		allpairs.addAll(folderReqs);
-		allpairs.addAll(reqReqs);
-		
-		return allpairs;
+		if (! requirementIds.isEmpty()){
+			List<Object[]> allpairs = new ArrayList<Object[]>(requirementIds.size());
+			
+			List<Object[]> libraryReqs = executeListNamedQuery("requirement.findAllLibraryParents", new SetRequirementsIdsParameterCallback(requirementIds));
+			List<Object[]> folderReqs = executeListNamedQuery("requirement.findAllFolderParents", new SetRequirementsIdsParameterCallback(requirementIds));
+			List<Object[]> reqReqs = executeListNamedQuery("requirement.findAllRequirementParents", new SetRequirementsIdsParameterCallback(requirementIds));
+			
+			allpairs.addAll(libraryReqs);
+			allpairs.addAll(folderReqs);
+			allpairs.addAll(reqReqs);
+			
+			return allpairs;
+		}
+		else{
+			return Collections.emptyList();
+		}
 	}
 
 }

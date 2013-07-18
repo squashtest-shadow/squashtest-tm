@@ -134,29 +134,39 @@ public class RequirementDeletionHandlerImpl extends
 	
 	
 	private OperationReport _deleteFolderContent(List<Long> folderIds){
-		OperationReport report = super.deleteNodes(folderIds);	// in that case, business as usual
-		deletionDao.flush();
-		return report;
+		if (! folderIds.isEmpty()){
+			OperationReport report = super.deleteNodes(folderIds);	// in that case, business as usual
+			deletionDao.flush();
+			return report;
+		}
+		else{
+			return new OperationReport();	//empty
+		}
 	}
 	
 	
 	//todo : send back an object that describes which requirements where rebound to which entities, and how they were renamed if so.
 	private OperationReport _rewireChildrenRequirements(List<Long> requirements){
 		
-		OperationReport rewireReport = new OperationReport();
-		
-		List<Object[]> pairedParentChildren = requirementDao.findAllParentsOf(requirements);
-		
-		for (Object[] pair : pairedParentChildren){
+		if (! requirements.isEmpty()){
+			OperationReport rewireReport = new OperationReport();
 			
-			NodeContainer<Requirement> parent = (NodeContainer<Requirement>)pair[0];
-			Requirement requirement = (Requirement) pair[1];
-
-			_renameContentIfNeededThenAttach(parent, requirement, rewireReport);
+			List<Object[]> pairedParentChildren = requirementDao.findAllParentsOf(requirements);
 			
+			for (Object[] pair : pairedParentChildren){
+				
+				NodeContainer<Requirement> parent = (NodeContainer<Requirement>)pair[0];
+				Requirement requirement = (Requirement) pair[1];
+	
+				_renameContentIfNeededThenAttach(parent, requirement, rewireReport);
+				
+			}
+			
+			return rewireReport;
 		}
-		
-		return rewireReport;
+		else{
+			return new OperationReport();
+		}
 	}
 	
 	
@@ -221,7 +231,8 @@ public class RequirementDeletionHandlerImpl extends
 			
 			while(! parent.isContentNameAvailable(name)){
 				needsRenaming = true;
-				name = child.getName()+"-"+(""+Math.random()).substring(0, 4);	//collisions are unlikely.
+				Double random = Math.random()*1000.0;
+				name = child.getName()+"-"+random.toString().substring(0, 4);	//
 			}
 			
 			// log the renaming operation if happened.
@@ -237,16 +248,18 @@ public class RequirementDeletionHandlerImpl extends
 		}
 		
 		//complete the node movement report
-		NodeType type = new WhichNodeVisitor().getTypeOf(parent);
-		String strtype;
-		switch(type){
-			case REQUIREMENT_LIBRARY : strtype = "drive"; break;
-			case REQUIREMENT_FOLDER : strtype = "folder"; break;
-			default : strtype = "requirement"; break;
+		if (! movedNodesLog.isEmpty()){
+			NodeType type = new WhichNodeVisitor().getTypeOf(parent);
+			String strtype;
+			switch(type){
+				case REQUIREMENT_LIBRARY : strtype = "drive"; break;
+				case REQUIREMENT_FOLDER : strtype = "folder"; break;
+				default : strtype = "requirement"; break;
+			}
+			
+			NodeMovement nodeMovement = new NodeMovement(new Node(parent.getId(), strtype), movedNodesLog);
+			report.addNodeMovement(nodeMovement);
 		}
-		
-		NodeMovement nodeMovement = new NodeMovement(new Node(parent.getId(), strtype), movedNodesLog);
-		report.addNodeMovement(nodeMovement);
 	}
 
 }
