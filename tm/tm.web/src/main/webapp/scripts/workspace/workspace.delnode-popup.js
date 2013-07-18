@@ -70,7 +70,8 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 
 		// expects an array of array
 		deletionSuccess : function(responsesArray) {
-			var nodesIds = responsesArray[0][0];
+			var operations = responsesArray[0][0];
+			var nodesIds = $.map(operations.removedNodes, function(elt){ return elt.id});
 			var tree = this.options.tree;
 			tree.jstree('delete_nodes', [ 'folder', 'test-case', 'requirement' ], nodesIds);
 			this.close();
@@ -82,7 +83,7 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 			var htmlDetail = '';
 
 			$.each(responsesArray, function(idx, arg) {
-				if (arg !== null || arg !== undefined) {
+				if (arg !== null && arg !== undefined) {
 					var messages = arg[0].messages;
 					for ( var i = 0, len = messages.length; i < len; i++) {
 						htmlDetail += '<li>' + messages[i] + '</li>';

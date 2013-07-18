@@ -36,7 +36,12 @@ requirejs.config({
 				"issue-tables",
 				'tree',
 				'tc-workspace',
-				'req-workspace',
+				//'req-workspace',
+				{
+					name : 'req-workspace',
+					main : 'main',
+					location : 'http://localhost/scripts/scripts/req-workspace'
+				},
 				'camp-workspace'			
 			],
 			/*
