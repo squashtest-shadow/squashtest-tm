@@ -107,15 +107,13 @@ public class RequirementDeletionHandlerImpl extends
 	 * @see org.squashtest.tm.service.internal.deletion.AbstractNodeDeletionHandler#deleteNodes(java.util.List)
 	 * 
 	 * 
-	 * ALSO, POSSIBLY REFACTOR THE MAIN API SO THAT  
-	 * 
 	 */
 	@Override
 	public OperationReport deleteNodes(List<Long> targetIds){
 		
 		OperationReport globalReport = new OperationReport();
 		
-			// first step : split the target ids into (folderIds, requirementIds).
+			// first step : split the target ids into [folderIds, requirementIds].
 		List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(targetIds);
 		
 		//the folderIds are treated as usual.
@@ -174,6 +172,7 @@ public class RequirementDeletionHandlerImpl extends
 	
 	// ****************************** atrocious boilerplate here ************************
 	
+	
 	/*
 	 * Removing a list of RequirementLibraryNodes means : - find all the attachment lists, - remove them, - remove
 	 * the nodes themselves
@@ -181,9 +180,14 @@ public class RequirementDeletionHandlerImpl extends
 	@Override
 	protected OperationReport batchDeleteNodes(List<Long> ids) {
 		
-		// commented out for debugging purposes
-		/*if (!ids.isEmpty()) {
+		OperationReport report = new OperationReport();
+		
+		if (!ids.isEmpty()) {
+			
+			List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(ids);
 
+			/*// commented out for debugging purposes
+			
 			TestCaseImportanceManagerForRequirementDeletion testCaseImportanceManager = provider.get();
 			testCaseImportanceManager.prepareRequirementDeletion(ids);
 
@@ -203,11 +207,12 @@ public class RequirementDeletionHandlerImpl extends
 			deletionDao.removeAttachmentsLists(requirementAttachmentIds);
 
 			testCaseImportanceManager.changeImportanceAfterRequirementDeletion();
-
-		}*/
+		 	*/
+			
+			report.addRemovedNodes(separatedIds[0], "folder");
+			report.addRemovedNodes(separatedIds[1], "requirement");
+		}
 		
-		OperationReport report = new OperationReport();
-		report.addRemovedNodes(ids, "mixed-requirement-and-folders");
 		return report;
 	}
 	
@@ -232,7 +237,7 @@ public class RequirementDeletionHandlerImpl extends
 			while(! parent.isContentNameAvailable(name)){
 				needsRenaming = true;
 				Double random = Math.random()*1000.0;
-				name = child.getName()+"-"+random.toString().substring(0, 4);	//
+				name = child.getName()+"-"+random.toString().substring(0, 4);	
 			}
 			
 			// log the renaming operation if happened.
@@ -243,6 +248,7 @@ public class RequirementDeletionHandlerImpl extends
 			
 			// now move the node and log the movement operation. 
 			// TODO : perhaps use the navigation service facilities instead? Although the following code is fine enough I think.
+			//toBeDeleted.removeContent(child);
 			//parent.addContent(child);
 			movedNodesLog.add(new Node(child.getId(), "requirement"));
 		}

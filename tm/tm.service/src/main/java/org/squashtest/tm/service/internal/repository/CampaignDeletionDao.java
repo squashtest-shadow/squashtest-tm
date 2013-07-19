@@ -20,9 +20,16 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.List;
+
 
 public interface CampaignDeletionDao extends DeletionDao {
-	//TODO : currently that interface exists for the sake of semantics. But one day you might want to
-	//put specify that the dao should provide fast deletion routines.
-
+	
+	/**
+	 * Given a list of CampaignLibraryNode ids, will tell which ones are folder ids and which ones are campaigns.
+	 * 
+	 * @param originalIds the requirement library node ids we want to sort out.
+	 * @return an array of list of ids : result[0] are the folder ids and result[1] are the campaign ids.
+	 */
+	List<Long>[] separateFolderFromCampaignIds(List<Long> originalIds);
 }

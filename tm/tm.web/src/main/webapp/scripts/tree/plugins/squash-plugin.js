@@ -180,6 +180,14 @@ define(['jquery', 'jstree', './tree-node'], function($){
 						return $();
 					}
 				},
+				
+				/*
+				 * arrays of { id, rel}
+				 */
+				findAllNodes(arrayNodeDesc){
+
+							//TODO
+				},
 	
 				get_selected : function() {
 					var selected = this.__call_old();

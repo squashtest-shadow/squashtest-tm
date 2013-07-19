@@ -49,19 +49,19 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 			List<Long> requirementVersionIds = findAllVersionsIdsFromRequirements(entityIds);
 
 			// Removal of the reference of the requirement_versions in the wanted requirements
-			executeDeleteSQLQuery(NativeQueries.requirement_set_null_requirement_version, REQUIREMENT_IDS, entityIds);
+			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SET_NULL_REQUIREMENT_VERSION, REQUIREMENT_IDS, entityIds);
 
 			// We now can remove the requirement versions
-			executeDeleteSQLQuery(NativeQueries.requirement_version_sql_remove, REQUIREMENT_VERSION_IDS,
+			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_VERSION_SQL_REMOVE, REQUIREMENT_VERSION_IDS,
 					requirementVersionIds);
 
 			// as well as the resource
-			executeDeleteSQLQuery(NativeQueries.resource_sql_remove, REQUIREMENT_VERSION_IDS, requirementVersionIds);
+			executeDeleteSQLQuery(NativeQueries.RESOURCE_SQL_REMOVE, REQUIREMENT_VERSION_IDS, requirementVersionIds);
 
 			// and finally the wanted requirements
-			executeDeleteSQLQuery(NativeQueries.requirement_sql_remove, NODE_IDS, entityIds);
+			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVE, NODE_IDS, entityIds);
 
-			executeDeleteSQLQuery(NativeQueries.requirementLibraryNode_sql_remove, NODE_IDS, entityIds);
+			executeDeleteSQLQuery(NativeQueries.REQUIREMENTLIBRARYNODE_SQL_REMOVE, NODE_IDS, entityIds);
 		}
 	}
 
@@ -93,7 +93,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		List<Long> requirementIds = new ArrayList<Long>();
 		
 		List<BigInteger> _folderIds = executeSelectSQLQuery(
-						NativeQueries.requirementLibraryNode_sql_filterFolderIds, REQUIREMENT_IDS, originalIds);
+						NativeQueries.REQUIREMENTLIBRARYNODE_SQL_FILTERFOLDERIDS, REQUIREMENT_IDS, originalIds);
 		
 		for (Long oId : originalIds){
 			if (_folderIds.contains(BigInteger.valueOf(oId))){
@@ -127,7 +127,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	@Override
 	public void removeFromVerifiedRequirementLists(List<Long> requirementIds) {
 		if (!requirementIds.isEmpty()) {
-			executeDeleteSQLQuery(NativeQueries.requirement_sql_removeFromVerifiedRequirementLists, REQUIREMENT_IDS,
+			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVEFROMVERIFIEDREQUIREMENTLISTS, REQUIREMENT_IDS,
 					requirementIds);
 		}
 

@@ -46,36 +46,39 @@ public final class NativeQueries {
 
 	/* ***************************** deletion queries ************************************** */
 
-	public static final String testCase_sql_remove = "delete from TEST_CASE where tcln_id in (:nodeIds)";
-	public static final String testCaseLibraryNode_sql_remove = "delete from TEST_CASE_LIBRARY_NODE where tcln_id in (:nodeIds)";
-	public static final String testCaseFolder_sql_remove = "delete from TEST_CASE_FOLDER where tcln_id in (:nodeIds)";
+	public static final String TESTCASE_SQL_REMOVE = "delete from TEST_CASE where tcln_id in (:nodeIds)";
+	public static final String TESTCASELIBRARYNODE_SQL_REMOVE = "delete from TEST_CASE_LIBRARY_NODE where tcln_id in (:nodeIds)";
+	public static final String TESTCASEFOLDER_SQL_REMOVE = "delete from TEST_CASE_FOLDER where tcln_id in (:nodeIds)";
+	public static final String TESTCASELIBRARYNODE_SQL_FILTERFOLDERIDS = "select folder.tcln_id from TEST_CASE_FOLDER folder where folder.tcln_id in (:testcaseIds)";
+	
+	public static final String TESTCASE_SQL_REMOVEFROMFOLDER = "delete from TCLN_RELATIONSHIP where ancestor_id in (:ancIds) or descendant_id in (:descIds)";
+	public static final String TESTCASE_SQL_REMOVEFROMLIBRARY = "delete from TEST_CASE_LIBRARY_CONTENT where content_id in (:testCaseIds)";
 
-	public static final String testCase_sql_removeFromFolder = "delete from TCLN_RELATIONSHIP where ancestor_id in (:ancIds) or descendant_id in (:descIds)";
-	public static final String testCase_sql_removeFromLibrary = "delete from TEST_CASE_LIBRARY_CONTENT where content_id in (:testCaseIds)";
-
-	public static final String testStep_sql_removeActionSteps = "delete from ACTION_TEST_STEP where test_step_id in (:testStepIds)";
-	public static final String testStep_sql_removeCallSteps = "delete from CALL_TEST_STEP where test_step_id in (:testStepIds)";
-	public static final String testStep_sql_removeTestSteps = "delete from TEST_STEP where test_step_id in (:testStepIds)";
+	public static final String TESTSTEP_SQL_REMOVEACTIONSTEPS = "delete from ACTION_TEST_STEP where test_step_id in (:testStepIds)";
+	public static final String TESTSTEP_SQL_REMOVECALLSTEPS = "delete from CALL_TEST_STEP where test_step_id in (:testStepIds)";
+	public static final String TESTSTEP_SQL_REMOVETESTSTEPS = "delete from TEST_STEP where test_step_id in (:testStepIds)";
 
 	public static final String REQUIREMENT_VERSION_FIND_ID_FROM_REQUIREMENT = "select req_v.res_id from REQUIREMENT_VERSION req_v where req_v.requirement_id in (:requirementIds)";
-	public static final String requirement_set_null_requirement_version = "update REQUIREMENT req set req.current_version_id = null where req.rln_id in (:requirementIds);";
-	public static final String requirement_version_sql_remove = "delete from REQUIREMENT_VERSION where res_id in (:requirementVersionIds)";
-	public static final String resource_sql_remove = "delete from RESOURCE where res_id in (:requirementVersionIds)";
-	public static final String requirement_sql_remove = "delete from REQUIREMENT where rln_id in (:nodeIds)";
-	public static final String requirementLibraryNode_sql_remove = "delete from REQUIREMENT_LIBRARY_NODE where rln_id in (:nodeIds)";
+	public static final String REQUIREMENT_SET_NULL_REQUIREMENT_VERSION = "update REQUIREMENT req set req.current_version_id = null where req.rln_id in (:requirementIds);";
+	public static final String REQUIREMENT_VERSION_SQL_REMOVE = "delete from REQUIREMENT_VERSION where res_id in (:requirementVersionIds)";
+	public static final String RESOURCE_SQL_REMOVE = "delete from RESOURCE where res_id in (:requirementVersionIds)";
+	public static final String REQUIREMENT_SQL_REMOVE = "delete from REQUIREMENT where rln_id in (:nodeIds)";
+	public static final String REQUIREMENTLIBRARYNODE_SQL_REMOVE = "delete from REQUIREMENT_LIBRARY_NODE where rln_id in (:nodeIds)";
 	public static final String REQUIREMENT_FOLDER_SQL_REMOVE = "delete from REQUIREMENT_FOLDER where rln_id in (:nodeIds)";
-	public static final String requirementLibraryNode_sql_filterFolderIds = "select folder.rln_id from REQUIREMENT_FOLDER folder where folder.rln_id in (:requirementIds)";
+	public static final String REQUIREMENTLIBRARYNODE_SQL_FILTERFOLDERIDS = "select folder.rln_id from REQUIREMENT_FOLDER folder where folder.rln_id in (:requirementIds)";
 
 	public static final String REQUIREMENT_SQL_REMOVE_FROM_FOLDER = "delete from RLN_RELATIONSHIP where ancestor_id in (:ancIds) or descendant_id in (:descIds)";
 	public static final String REQUIREMENT_SQL_REMOVE_FROM_LIBRARY = "delete from REQUIREMENT_LIBRARY_CONTENT where content_id in (:requirementIds)";
 
-	public static final String campaign_sql_remove = "delete from CAMPAIGN where cln_id in (:nodeIds)";
-	public static final String campaignLibraryNode_sql_remove = "delete from CAMPAIGN_LIBRARY_NODE where cln_id in (:nodeIds)";
-	public static final String campaignFolder_sql_remove = "delete from CAMPAIGN_FOLDER where cln_id in (:nodeIds)";
+	public static final String CAMPAIGN_SQL_REMOVE = "delete from CAMPAIGN where cln_id in (:nodeIds)";
+	public static final String CAMPAIGNLIBRARYNODE_SQL_REMOVE = "delete from CAMPAIGN_LIBRARY_NODE where cln_id in (:nodeIds)";
+	public static final String CAMPAIGNLIBRARYNODE_SQL_FILTERFOLDERIDS = "select folder.cln_id from CAMPAIGN_FOLDER folder where folder.cln_id in (:campaignIds)";
+	public static final String CAMPAIGNFOLDER_SQL_REMOVE = "delete from CAMPAIGN_FOLDER where cln_id in (:nodeIds)";
 
-	public static final String campaign_sql_removeFromFolder = "delete from CLN_RELATIONSHIP where ancestor_id in (:ancIds) or descendant_id in (:descIds)";
-	public static final String campaign_sql_removeFromLibrary = "delete from CAMPAIGN_LIBRARY_CONTENT where content_id in (:campaignIds)";
+	public static final String CAMPAIGN_SQL_REMOVEFROMFOLDER = "delete from CLN_RELATIONSHIP where ancestor_id in (:ancIds) or descendant_id in (:descIds)";
+	public static final String CAMPAIGN_SQL_REMOVEFROMLIBRARY = "delete from CAMPAIGN_LIBRARY_CONTENT where content_id in (:campaignIds)";
 
+	
 	/*
 	 * ********************************************** consequences of test case deletion on campaign item test plans
 	 * *******************************************
@@ -84,7 +87,7 @@ public final class NativeQueries {
 	/*
 	 * that query will count for each campaign item test plan, how many of them will be deleted before them
 	 */
-	public static final String testCase_sql_getCallingCampaignItemTestPlanOrderOffset = " select ctpi1.ctpi_id , count(ctpi1.ctpi_id) "
+	public static final String TESTCASE_SQL_GETCALLINGCAMPAIGNITEMTESTPLANORDEROFFSET = " select ctpi1.ctpi_id , count(ctpi1.ctpi_id) "
 			+ " from CAMPAIGN_TEST_PLAN_ITEM as ctpi1, "
 			+ " CAMPAIGN_TEST_PLAN_ITEM as ctpi2 "
 			+ " where ctpi1.campaign_id = ctpi2.campaign_id "
@@ -93,31 +96,31 @@ public final class NativeQueries {
 			+ " and ctpi1.test_case_id not in (:removedItemIds2) "
 			+ " group by ctpi1.ctpi_id";
 
-	public static final String testCase_sql_updateCallingCampaignItemTestPlan = "update CAMPAIGN_TEST_PLAN_ITEM as ctpi1 "
+	public static final String TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLAN = "update CAMPAIGN_TEST_PLAN_ITEM as ctpi1 "
 			+ " set ctpi1.test_plan_order = ctpi1.test_plan_order - :offset" + " where ctpi1.ctpi_id in (:reorderedItemIds)";
 
-	public static final String testCase_sql_removeCallingCampaignItemTestPlan = "delete from CAMPAIGN_TEST_PLAN_ITEM where test_case_id in (:testCaseIds)";
+	public static final String TESTCASE_SQL_REMOVECALLINGCAMPAIGNITEMTESTPLAN = "delete from CAMPAIGN_TEST_PLAN_ITEM where test_case_id in (:testCaseIds)";
 
 	/*
 	 * ********************************************* consequences of test case deletion on item test plans and test suites
 	 * ******************************************************
 	 */
 
-	public static final String testCase_sql_selectCallingIterationItemTestPlanHavingExecutions = " select * from ITERATION_TEST_PLAN_ITEM itp "
+	public static final String TESTCASE_SQL_SELECTCALLINGITERATIONITEMTESTPLANHAVINGEXECUTIONS = " select * from ITERATION_TEST_PLAN_ITEM itp "
 			+ " inner join ITEM_TEST_PLAN_EXECUTION itpe on itp.item_test_plan_id = itpe.item_test_plan_id "
 			+ " where itp.tcln_id in (:testCaseIds) ";
 
-	public static final String testCase_sql_selectCallingIterationItemTestPlanHavingNoExecutions = " select * from ITERATION_TEST_PLAN_ITEM itp "
+	public static final String TESTCASE_SQL_SELECTCALLINGITERATIONITEMTESTPLANHAVINGNOEXECUTIONS = " select * from ITERATION_TEST_PLAN_ITEM itp "
 			+ " where itp.tcln_id in (:testCaseIds) "
 			+ " and itp.item_test_plan_id not in (select distinct itpe.item_test_plan_id from ITEM_TEST_PLAN_EXECUTION itpe)";
 
-	public static final String testCase_sql_setNullCallingIterationItemTestPlanHavingExecutions = " update ITERATION_TEST_PLAN_ITEM itp set itp.tcln_id = NULL "
+	public static final String TESTCASE_SQL_SETNULLCALLINGITERATIONITEMTESTPLANHAVINGEXECUTIONS = " update ITERATION_TEST_PLAN_ITEM itp set itp.tcln_id = NULL "
 			+ " where itp.item_test_plan_id in (:itpHavingExecIds) ";
 
 	
 	
 	// ********** reordering test plan for iterations
-	public static final String testCase_sql_getCallingIterationItemTestPlanOrderOffset = " select itp1.item_test_plan_id, count(itp1.item_test_plan_id) "
+	public static final String TESTCASE_SQL_GETCALLINGITERATIONITEMTESTPLANORDEROFFSET = " select itp1.item_test_plan_id, count(itp1.item_test_plan_id) "
 			+ " from ITEM_TEST_PLAN_LIST as itp1, "
 			+ " ITEM_TEST_PLAN_LIST as itp2 "
 			+ " where itp1.iteration_id = itp2.iteration_id "
@@ -125,13 +128,13 @@ public final class NativeQueries {
 			+ " and itp2.item_test_plan_id in (:removedItemIds1) "
 			+ " and itp1.item_test_plan_id not in (:removedItemIds2) " + " group by itp1.item_test_plan_id";
 
-	public static final String testCase_sql_updateCallingIterationItemTestPlanOrder = " update ITEM_TEST_PLAN_LIST as itp1 "
+	public static final String TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDER = " update ITEM_TEST_PLAN_LIST as itp1 "
 			+ " set itp1.item_test_plan_order = itp1.item_test_plan_order - :offset "
 			+ " where itp1.item_test_plan_id in (:reorderedItemIds)";
 
 	
 	// ************ reordering test plan for test suites 
-	public static final String testCase_sql_getCallingTestSuiteItemTestPlanOrderOffset = " select itp1.tpi_id, count(itp1.tpi_id) "
+	public static final String TESTCASE_SQL_GETCALLINGTESTSUITEITEMTESTPLANORDEROFFSET = " select itp1.tpi_id, count(itp1.tpi_id) "
 			+ " from TEST_SUITE_TEST_PLAN_ITEM as itp1, "
 			+ " TEST_SUITE_TEST_PLAN_ITEM as itp2 "
 			+ " where itp1.suite_id = itp2.suite_id "
@@ -139,29 +142,29 @@ public final class NativeQueries {
 			+ " and itp2.tpi_id in (:removedItemIds1) "
 			+ " and itp1.tpi_id not in (:removedItemIds2) " + " group by itp1.tpi_id";
 
-	public static final String testCase_sql_updateCallingTestSuiteItemTestPlanOrder = " update TEST_SUITE_TEST_PLAN_ITEM as itp1 "
+	public static final String TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDER = " update TEST_SUITE_TEST_PLAN_ITEM as itp1 "
 			+ " set itp1.test_plan_order = itp1.test_plan_order - :offset "
 			+ " where itp1.tpi_id in (:reorderedItemIds)";
 	
-	public static final String testCase_sql_removeCallingTestSuiteItemTestPlan = "delete from TEST_SUITE_TEST_PLAN_ITEM where tpi_id in (:itpHavingNoExecIds)";
-	public static final String testCase_sql_removeCallingIterationItemTestPlanFromList = "delete from ITEM_TEST_PLAN_LIST  where item_test_plan_id in (:itpHavingNoExecIds)";
-	public static final String testCase_sql_removeCallingIterationItemTestPlan = "delete from ITERATION_TEST_PLAN_ITEM  where item_test_plan_id in (:itpHavingNoExecIds) ";
+	public static final String TESTCASE_SQL_REMOVECALLINGTESTSUITEITEMTESTPLAN = "delete from TEST_SUITE_TEST_PLAN_ITEM where tpi_id in (:itpHavingNoExecIds)";
+	public static final String TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLANFROMLIST = "delete from ITEM_TEST_PLAN_LIST  where item_test_plan_id in (:itpHavingNoExecIds)";
+	public static final String TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLAN = "delete from ITERATION_TEST_PLAN_ITEM  where item_test_plan_id in (:itpHavingNoExecIds) ";
 
 	
 	/* ************************************ /consequences of test case deletion on item test plans  ******************************************************* */
 
 	
-	public static final String testCase_sql_setNullCallingExecutions = "update EXECUTION exec set exec.tcln_id = null where exec.tcln_id in (:testCaseIds)";
+	public static final String TESTCASE_SQL_SETNULLCALLINGEXECUTIONS = "update EXECUTION exec set exec.tcln_id = null where exec.tcln_id in (:testCaseIds)";
 
-	public static final String testCase_sql_setNullCallingExecutionSteps = "update EXECUTION_STEP step set step.test_step_id = null where step.test_step_id in (:testStepIds)";
+	public static final String TESTCASE_SQL_SETNULLCALLINGEXECUTIONSTEPS = "update EXECUTION_STEP step set step.test_step_id = null where step.test_step_id in (:testStepIds)";
 
-	public static final String testCase_sql_removeVerifyingTestCaseList = "delete from REQUIREMENT_VERSION_COVERAGE where verifying_test_case_id in (:testCaseIds)";
+	public static final String TESTCASE_SQL_REMOVEVERIFYINGTESTCASELIST = "delete from REQUIREMENT_VERSION_COVERAGE where verifying_test_case_id in (:testCaseIds)";
 
-	public static final String testCase_sql_removeVerifyingTestStepList = "delete from VERIFYING_STEPS where TEST_STEP_ID in (:testStepIds)";
+	public static final String TESTCASE_SQL_REMOVEVERIFYINGTESTSTEPLIST = "delete from VERIFYING_STEPS where TEST_STEP_ID in (:testStepIds)";
 
-	public static final String testCase_sql_removeTestStepFromList = "delete from TEST_CASE_STEPS where step_id in (:testStepIds)";
+	public static final String TESTCASE_SQL_REMOVETESTSTEPFROMLIST = "delete from TEST_CASE_STEPS where step_id in (:testStepIds)";
 
-	public static final String requirement_sql_removeFromVerifiedRequirementLists = " delete from REQUIREMENT_VERSION_COVERAGE "
+	public static final String REQUIREMENT_SQL_REMOVEFROMVERIFIEDREQUIREMENTLISTS = " delete from REQUIREMENT_VERSION_COVERAGE "
 			+ " where verified_req_version_id in ( "
 			+ " select req_v.res_id from REQUIREMENT_VERSION req_v where req_v.requirement_id in (:requirementIds) "
 			+ ")";

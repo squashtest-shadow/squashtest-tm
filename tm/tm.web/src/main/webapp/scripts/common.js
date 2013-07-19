@@ -34,7 +34,12 @@ requirejs.config({
 				"file-upload",
 				"iteration-management",
 				"issue-tables",
-				'tree',
+				//'tree',
+				{
+					name : 'tree',
+					main : 'main',
+					location : "http://localhost/scripts/scripts/tree"
+				},
 				'tc-workspace',
 				//'req-workspace',
 				{

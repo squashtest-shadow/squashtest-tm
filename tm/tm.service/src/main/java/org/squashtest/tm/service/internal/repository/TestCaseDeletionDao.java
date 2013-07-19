@@ -40,4 +40,13 @@ public interface TestCaseDeletionDao extends DeletionDao {
 	 * @param testStepIds
 	 */
 	void removeFromVerifyingTestStepsList(List<Long> testStepIds);
+	
+	
+	/**
+	 * Given a list of TestCaseLibraryNode ids, will tell which ones are folder ids and which ones are campaigns.
+	 * 
+	 * @param originalIds the requirement library node ids we want to sort out.
+	 * @return an array of list of ids : result[0] are the folder ids and result[1] are the test case ids.
+	 */
+	List<Long>[] separateFolderFromTestCaseIds(List<Long> originalIds);
 }

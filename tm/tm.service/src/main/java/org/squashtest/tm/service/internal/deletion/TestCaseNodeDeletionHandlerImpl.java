@@ -126,7 +126,14 @@ public class TestCaseNodeDeletionHandlerImpl extends
 	 * clauses in the other tables.
 	 */
 	protected OperationReport batchDeleteNodes(List<Long> ids) {
+		
+		OperationReport report = new OperationReport();
+		
 		if (!ids.isEmpty()) {
+			
+			List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(ids);
+			
+			
 			List<Long> stepIds = deletionDao.findTestSteps(ids);
 
 			List<Long> testCaseAttachmentIds = deletionDao.findTestCaseAttachmentListIds(ids);
@@ -156,11 +163,12 @@ public class TestCaseNodeDeletionHandlerImpl extends
 			// we can make one only one query against the database.
 			testCaseAttachmentIds.addAll(testStepAttachmentIds);
 			deletionDao.removeAttachmentsLists(testCaseAttachmentIds);
+			
+			report.addRemovedNodes(separatedIds[0], "folder");
+			report.addRemovedNodes(separatedIds[1], "test-case");
 
 		}
 		
-		OperationReport report = new OperationReport();
-		report.addRemovedNodes(ids, "mixed-testcases-and-folder");
 		return report;
 	}
 

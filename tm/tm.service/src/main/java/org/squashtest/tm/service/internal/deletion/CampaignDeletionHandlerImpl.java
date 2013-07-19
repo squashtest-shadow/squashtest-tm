@@ -220,6 +220,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	 */
 	protected OperationReport batchDeleteNodes(List<Long> ids) {
 		
+		//prepare the operation report:
+		List<Long>[] separatedIds = deletionDao.separateFolderFromCampaignIds(ids);
+		
 		List<Campaign> campaigns = campaignDao.findAllByIds(ids);
 		
 		// saving the attachment list for later.
@@ -228,6 +231,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			attachLists.add(campaign.getAttachmentList());
 		}
 
+		//empty of those campaigns
 		deleteCampaignContent(campaigns);
 
 		/*
@@ -245,8 +249,12 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			deletionDao.removeAttachmentList(list);
 		}
 		
+		
+		//and finally prepare the operation report.
 		OperationReport report = new OperationReport();
-		report.addRemovedNodes(ids, "mixed-capaigns-and-folders");
+		report.addRemovedNodes(separatedIds[0], "folder");
+		report.addRemovedNodes(separatedIds[1], "campaign");
+		
 		return report;
 	}
 

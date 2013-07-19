@@ -21,22 +21,42 @@
 
 define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-popup'], function($, zetree, rules){
 
+	
+	//subclassing the deletion dialog because this is a special case
+	$.widget("squash.delreqDialog", $.squash.delnodeDialog, {
+		
+		deletionSuccess : function(responsesArray){
+			
+			var tree = this.options.tree;
+			
+			var operations = responsesArray[0][0],			
+				removedNodes = operations.removedNodes,
+				nodeRenaming = operations.nodeRenaming,
+				nodeMovemeent = operations.nodeMovement;
+			
+			//first, move renaming
+			
+			nodeRenaming = 
+			
+		}		
+	});
+	
 	function init(){
 
 		var tree = zetree.get();
-		var dialog = $("#delete-node-dialog").delnodeDialog({
+		var dialog = $("#delete-node-dialog").delreqDialog({
 			tree : tree,
 			rules : rules
 		});
 
 
 
-		dialog.on('delnodedialogconfirm', function(){
-			dialog.delnodeDialog('performDeletion');
+		dialog.on('delreqdialogconfirm', function(){
+			dialog.delreqDialog('performDeletion');
 		});
 		
-		dialog.on('delnodedialogcancel', function(){
-			dialog.delnodeDialog('close');
+		dialog.on('delreqdialogcancel', function(){
+			dialog.delreqDialog('close');
 		});
 		
 	}

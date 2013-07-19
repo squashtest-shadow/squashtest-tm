@@ -112,8 +112,7 @@ public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLD
 	/**
 	 * <p>Accepts a list of ids and returns themselves and their children as a list of pairs, each pair being an array of long (node ids) such as [ parent.id, child.id ].
 	 * see {@link FolderDao#findPairedContentForList(List)} for details. The nodes input nodes will be paired with null (no parents), and the leaves will be be paired with null (for children). 
-	 * Obviously, only folders have children. 
-	 * </p> 
+	 *  </p> 
 	 *
 	 * @param rootNodesIds the ids defining the upper level of the hierarchy.
 	 * @return the rootNodeIds and the ids of their children, paired together as described above.
