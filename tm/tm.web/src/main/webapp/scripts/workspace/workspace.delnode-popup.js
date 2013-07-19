@@ -70,11 +70,17 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 
 		// expects an array of array
 		deletionSuccess : function(responsesArray) {
-			var operations = responsesArray[0][0];
-			var nodesIds = $.map(operations.removedNodes, function(elt){ return elt.id});
+			
 			var tree = this.options.tree;
-			tree.jstree('delete_nodes', [ 'folder', 'test-case', 'requirement' ], nodesIds);
-			this.close();
+			
+			var i=0, len = responsesArray.length;
+			for (i=0;i<len;i++){
+				if (responsesArray[i]=== null || responsesArray[i] === undefined) continue;
+				var commands = responsesArray[i][0];
+				tree.jstree('apply_commands', commands);
+			}
+			
+			 this.close();
 		},
 
 		// expects an array of array
@@ -158,9 +164,9 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 
 			if (nodes.length == 0) return oknode;
 			var ids = nodes.all('getResId');
-			var loopnode = nodes.first().treeNode().getAncestors();
+			var ancestry = nodes.first().treeNode().getAncestors().get().reverse();
 
-			loopnode.each(function() {
+			$(ancestry).each(function() {
 				var $this = $(this), $thisid = $this.attr('resid');
 				if ($this.is(':library') || $.inArray($thisid, ids) == -1) {
 					oknode = $this.treeNode();

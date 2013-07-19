@@ -111,7 +111,7 @@
 $(function () {
     squashtm.treemenu = {};
     
-    require(['jquery', 'http://localhost/scripts/scripts/squashtest/jquery.squash.buttonmenu.js'], function($, menumain){
+    require(['jquery', 'squashtest/jquery.squash.buttonmenu.js'], function($, menumain){
        
     	menumain();
         

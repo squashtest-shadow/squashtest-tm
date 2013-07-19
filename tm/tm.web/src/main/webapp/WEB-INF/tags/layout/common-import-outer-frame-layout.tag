@@ -105,7 +105,7 @@
 	<jsp:invoke fragment="foot" />
     <script type="text/javascript">
     	$(function() {
-      		$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
+    		$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
     	});
     </script>
 </html>

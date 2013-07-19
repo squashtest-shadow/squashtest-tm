@@ -237,7 +237,7 @@ public class RequirementDeletionHandlerImpl extends
 			while(! parent.isContentNameAvailable(name)){
 				needsRenaming = true;
 				Double random = Math.random()*1000.0;
-				name = child.getName()+"-"+random.toString().substring(0, 4);	
+				name = child.getName()+"-"+random.toString().substring(0, 3);	
 			}
 			
 			// log the renaming operation if happened.

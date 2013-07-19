@@ -34,30 +34,10 @@ requirejs.config({
 				"file-upload",
 				"iteration-management",
 				"issue-tables",
-				//'tree',
-				{
-					name : 'tree',
-					main : 'main',
-					location : "http://localhost/scripts/scripts/tree"
-				},
-				//'tc-workspace',
-				{
-					name : 'tc-workspace',
-					main : 'main',
-					locaiton : "http://localhost/scripts/scripts/tc-workspace"
-				},
-				//'req-workspace',
-				{
-					name : 'req-workspace',
-					main : 'main',
-					location : 'http://localhost/scripts/scripts/req-workspace'
-				},
-				//'camp-workspace'
-				{
-					name : 'camp-workspace',
-					main : 'main',
-					location : 'http://localhost/scripts/scripts/camp-workspace'
-				}
+				'tree',
+				'tc-workspace',
+				'req-workspace',
+				'camp-workspace'
 			],
 			/*
 			 * rules for paths naming: * third party lib: unversionned lib name *

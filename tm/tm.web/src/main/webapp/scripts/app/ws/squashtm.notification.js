@@ -20,8 +20,7 @@
  */
 var squashtm = squashtm || {};
 
-define(
-		[ "jquery", "app/lnf/Forms", "jquery.squash.messagedialog" ],
+define([ "jquery", "app/lnf/Forms", "jquery.squash.messagedialog" ],
 		function($, Forms) {
 			var _config = {};
 
@@ -86,11 +85,8 @@ define(
 
 			function handleGenericResponseError(request) {
 				var showError = function() {
-					var popup = window
-							.open(
-									'about:blank',
-									'error_details',
-									'resizable=yes, scrollbars=yes, status=no, menubar=no, toolbar=no, dialog=yes, location=no');
+					var popup = window.open('about:blank', 'error_details',
+											'resizable=yes, scrollbars=yes, status=no, menubar=no, toolbar=no, dialog=yes, location=no');
 					popup.document.write(request.responseText);
 				};
 
@@ -105,21 +101,18 @@ define(
 				$.squash.openMessage(_config.infoTitle, message);
 			}
 
-			function init(config) {
-				_config.errorTitle = config.errorTitle;
-				_config.infoTitle = config.infoTitle;
+			function initSpinner(spinner){
 
 				var spinner = $("#ajax-processing-indicator");
 				spinner.addClass("not-processing").removeClass("processing");
-
-				$(".unstyled-notification-pane").addClass("notification-pane")
-						.removeClass("unstyled-notification-pane");
-
+				
+				var $doc = $(document);
+				
 				/*
 				 * Does not work with narrowed down selectors. see
 				 * http://bugs.jquery.com/ticket/6161
 				 */
-				$(document).ajaxError(function(event, request, settings, ex) {
+				$doc.on('ajaxError', function(event, request, settings, ex) {
 					// Check if we get an Unauthorized access response, then
 					// redirect to login page
 					if (401 == request.status) {
@@ -131,17 +124,28 @@ define(
 							handleGenericResponseError(request);
 						}
 					}
-				}).ajaxStart(
-						function() {
-							spinner.addClass("processing").removeClass(
-									"not-processing");
+				});
+				
+				$.ajaxPrefilter(function( options, _, jqXHR ) {
+					spinner.addClass("processing").removeClass("not-processing");
+				    
+					jqXHR.always( function(){
+						spinner.removeClass("processing").addClass("not-processing");
+					});
+				});
 
-						}).ajaxStop(
-						function() {
-							spinner.removeClass("processing").addClass(
-									"not-processing");
+			}
+			
+			
+			function init(config) {
+				_config.errorTitle = config.errorTitle;
+				_config.infoTitle = config.infoTitle;
 
-						});
+				$(".unstyled-notification-pane").addClass("notification-pane")
+						.removeClass("unstyled-notification-pane");
+
+				initSpinner();
+
 			}
 
 			function getErrorMessage(request, index) {

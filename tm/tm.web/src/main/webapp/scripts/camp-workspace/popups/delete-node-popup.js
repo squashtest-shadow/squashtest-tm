@@ -81,34 +81,7 @@ define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-p
 					//assumptions on the order of the response.
 				}
 			});				
-		},
-		
-		deletionSuccess : function(responsesArray){
-			
-			var tree = this.options.tree;
-			
-			var delCampResp = responsesArray[0], 
-				delIterResp = responsesArray[1],
-				delSuitResp = responsesArray[2];
-			
-			if (delCampResp!==null){
-				var camIds = $.map(delCampResp[0].removedNodes, function(elt){ return elt.id});
-				tree.jstree('delete_nodes', ['campaign', 'folder'], camIds);
-			}
-			
-			if (delIterResp!==null){
-				var iterIds = $.map(delIterResp[0].removedNodes, function(elt){ return elt.id});
-				tree.jstree('delete_nodes', ['iteration'], iterIds);
-			}
-			
-			if (delSuitResp!==null){
-				var suiteIds = $.map(delSuitResp[0].removedNodes, function(elt){ return elt.id});
-				tree.jstree('delete_nodes', ['test-suite'], suiteIds);						
-			}
-			
-			 this.close();
-			
-		}		
+		}	
 	});
 	
 	function init(){

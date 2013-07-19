@@ -25,7 +25,7 @@ define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-p
 	function init(){
 
 		var tree = zetree.get();
-		var dialog = $("#delete-node-dialog").delreqDialog({
+		var dialog = $("#delete-node-dialog").delnodeDialog({
 			tree : tree,
 			rules : rules
 		});

@@ -364,6 +364,8 @@ define(['jquery'], function($){
 		 * 
 		 */
 		this.moveTo = function(target){
+			
+			if (this.length===0) return;
 
 			// remove me from my former parent 
 			this.removeMe();
