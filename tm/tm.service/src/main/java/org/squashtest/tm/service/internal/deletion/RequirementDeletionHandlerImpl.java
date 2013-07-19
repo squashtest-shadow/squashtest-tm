@@ -186,8 +186,6 @@ public class RequirementDeletionHandlerImpl extends
 			
 			List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(ids);
 
-			/*// commented out for debugging purposes
-			
 			TestCaseImportanceManagerForRequirementDeletion testCaseImportanceManager = provider.get();
 			testCaseImportanceManager.prepareRequirementDeletion(ids);
 
@@ -207,8 +205,8 @@ public class RequirementDeletionHandlerImpl extends
 			deletionDao.removeAttachmentsLists(requirementAttachmentIds);
 
 			testCaseImportanceManager.changeImportanceAfterRequirementDeletion();
-		 	*/
 			
+			//fill the report
 			report.addRemoved(separatedIds[0], "folder");
 			report.addRemoved(separatedIds[1], "requirement");
 		}
@@ -220,13 +218,13 @@ public class RequirementDeletionHandlerImpl extends
 	
 	private void _renameContentIfNeededThenAttach(NodeContainer<Requirement> parent, Requirement toBeDeleted, OperationReport report){
 		
-		// initiate the NodeMovement object
+		// init
 		List<Node> movedNodesLog = new ArrayList<Node>(toBeDeleted.getContent().size());
 		
-		// init the rest
 		boolean needsRenaming = false;
-		Collection<Requirement> children = toBeDeleted.getContent();
+		Collection<Requirement> children = new ArrayList<Requirement>(toBeDeleted.getContent());
 
+		
 		// renaming loop. Loop over each children, and for each of them ensure that they wont namecrash within their new parent. 
 		// Log all these operations in the report object.
 		for (Requirement child : children){
@@ -242,14 +240,14 @@ public class RequirementDeletionHandlerImpl extends
 			
 			// log the renaming operation if happened.
 			if (needsRenaming){
-				//child.setName(name);
+				child.setName(name);
 				report.addRenamed("requirement", child.getId(), name);
 			}
 			
 			// now move the node and log the movement operation. 
 			// TODO : perhaps use the navigation service facilities instead? Although the following code is fine enough I think.
-			//toBeDeleted.removeContent(child);
-			//parent.addContent(child);
+			toBeDeleted.removeContent(child);
+			parent.addContent(child);
 			movedNodesLog.add(new Node(child.getId(), "requirement"));
 		}
 		

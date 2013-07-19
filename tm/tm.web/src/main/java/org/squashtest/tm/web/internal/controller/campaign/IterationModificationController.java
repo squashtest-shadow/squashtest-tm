@@ -429,7 +429,7 @@ public class IterationModificationController {
 	public @ResponseBody
 	OperationReport removeTestSuites(@RequestParam(RequestParams.IDS) List<Long> ids) {
 		OperationReport report = iterationModService.removeTestSuites(ids);
-		LOGGER.debug("removal of " + report.getRemovedNodes().size() + " Test Suites");
+		LOGGER.debug("removal of " + report.getRemoved().size() + " Test Suites");
 		return report;
 	}
 

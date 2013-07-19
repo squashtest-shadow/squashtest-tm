@@ -109,6 +109,7 @@ public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLD
 	}
 
 
+
 	/**
 	 * <p>Accepts a list of ids and returns themselves and their children as a list of pairs, each pair being an array of long (node ids) such as [ parent.id, child.id ].
 	 * see {@link FolderDao#findPairedContentForList(List)} for details. The nodes input nodes will be paired with null (no parents), and the leaves will be be paired with null (for children). 
@@ -116,6 +117,9 @@ public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLD
 	 *
 	 * @param rootNodesIds the ids defining the upper level of the hierarchy.
 	 * @return the rootNodeIds and the ids of their children, paired together as described above.
+	 */
+	/*
+	 * TODO : refactor and make profit of the tables [TC,R,C]LN_RELATIONSHIP_CLOSURE] 
 	 */
 	@SuppressWarnings("unchecked")
 	protected List<Long[]> findPairedNodeHierarchy(List<Long> rootNodeIds){
@@ -150,11 +154,15 @@ public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLD
 		return nodeHierarchy;
 	}
 
+
 	/**
-	 * <p>Accepts a list of node ids and returns themselves and their children as a list.</p>
+	 * <p>Accepts a list of node ids and returns themselves and their children as a flat list.</p>
 	 * 
 	 * @param rootNodeIds rootNodesIds the ids defining the upper level of the hierarchy.
 	 * @return the rootNodeIds and the ids of their children.
+	 */
+	/*
+	 * TODO : refactor and make profit of the tables [TC,R,C]LN_RELATIONSHIP_CLOSURE] 
 	 */
 	protected List<Long> findNodeHierarchy(List<Long> rootNodeIds){
 		if (rootNodeIds.isEmpty()) {
