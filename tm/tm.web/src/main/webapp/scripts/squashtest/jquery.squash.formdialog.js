@@ -46,12 +46,12 @@
  *		<div data-def="state=content-2">
  *			<p>or that</p>
  *		</div>
- * 	
+ *
  *		<div class="popup-dialog-buttonpane">
- *			<input type="button" value="ok" 					data-def="evt=confirm, mainbtn"/>
- *			<input type="button" value="cancel" 				data-def="evt=cancel" />
- *			<input type="button" value="specific to content1" 	data-def="state=content-1" />
- *			<input type="button" value="specific to content2" 	data-def="state=content-2" />
+ *			<input type="button" value="ok"						data-def="evt=confirm, mainbtn"/>
+ *			<input type="button" value="cancel"					data-def="evt=cancel" />
+ *			<input type="button" value="specific to content1"	data-def="state=content-1" />
+ *			<input type="button" value="specific to content2"	data-def="state=content-2" />
  *		</div>
  * 
  *	</div>
@@ -90,7 +90,7 @@
  *	- isrich : for textarea. If set, will be turned into a ckeditor.
  *	- evt=<eventname> : for buttons. If set, clicking on that button will trigger <eventname> on the dialog.
  *	- state=<state id> : for any elements in the popup. Multiple elements can declare the same <state-id> and they'll
- * 						be logically bound when setState(<state-id>) is invoked. Note that a single element can belong
+ *						be logically bound when setState(<state-id>) is invoked. Note that a single element can belong
  *						to multiple state.
  *
  *	- mainbtn[=<state-id>] : for buttons. If set, pressing <ENTER> inside the dialog will trigger 'click' on that button if the popup is in that
@@ -179,7 +179,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 			// declares custom events
 			self._on({
 				"click .ui-dialog-buttonpane :input" : self._triggerCustom,
-				"click .ui-dialog-titlebar-close" : self.cancel,
+				"click .ui-dialog-titlebar-close" : self.cancel
 			});
 
 			// autoremove when parent container is removed
@@ -201,7 +201,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 		cleanup : function() {
 			this.element.find(':input,textarea,.error-message').each(function() {
 				$(this).val('');
-			})
+			});
 		},
 
 		_createButtons : function() {
@@ -297,5 +297,5 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 		'state' : function($elt, value) {
 			$elt.addClass('popup-dialog-state-' + value);
 		}
-	}
+	};
 });

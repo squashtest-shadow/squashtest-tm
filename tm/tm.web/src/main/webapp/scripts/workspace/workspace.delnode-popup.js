@@ -52,14 +52,14 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 		getSimulXhr : function(nodes) {
 			var ids = nodes.treeNode().all('getResId').join(',');
 			var rawUrl = nodes.getDeleteUrl();
-			var url = rawUrl.replace('\{nodeIds\}', ids) + '/deletion-simulation';
+			var url = rawUrl.replace('{nodeIds}', ids) + '/deletion-simulation';
 			return $.getJSON(url);
 		},
 
 		getConfirmXhr : function(nodes) {
 			var ids = nodes.treeNode().all('getResId').join(',');
 			var rawUrl = nodes.getDeleteUrl();
-			var url = rawUrl.replace('\{nodeIds\}', ids);
+			var url = rawUrl.replace('{nodeIds}', ids);
 			return $.ajax({
 				url : url,
 				type : 'delete'
@@ -75,7 +75,9 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 			
 			var i=0, len = responsesArray.length;
 			for (i=0;i<len;i++){
-				if (responsesArray[i]=== null || responsesArray[i] === undefined) continue;
+				if (responsesArray[i]=== null || responsesArray[i] === undefined){
+					continue;
+				}
 				var commands = responsesArray[i][0];
 				tree.jstree('apply_commands', commands);
 			}
@@ -162,7 +164,9 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 			var tree = this.options.tree;
 			var oknode = tree.find(':library').filter(':first');
 
-			if (nodes.length == 0) return oknode;
+			if (nodes.length === 0){
+				return oknode;
+			}
 			var ids = nodes.all('getResId');
 			var ancestry = nodes.first().treeNode().getAncestors().get().reverse();
 

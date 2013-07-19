@@ -101,7 +101,7 @@ define([ "jquery", "app/lnf/Forms", "jquery.squash.messagedialog" ],
 				$.squash.openMessage(_config.infoTitle, message);
 			}
 
-			function initSpinner(spinner){
+			function initSpinner(){
 
 				var spinner = $("#ajax-processing-indicator");
 				spinner.addClass("not-processing").removeClass("processing");

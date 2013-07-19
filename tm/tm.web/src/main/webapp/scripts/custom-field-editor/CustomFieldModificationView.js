@@ -551,7 +551,7 @@ define(
 
 								functions : {
 									dropHandler : function(dropData) {
-										var url = cfMod.optionsTable.ajaxSource + '/positions'
+										var url = cfMod.optionsTable.ajaxSource + '/positions';
 										$.post(url,	dropData, function() {
 											self.optionsTable.refresh();
 										});
