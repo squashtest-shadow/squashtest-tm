@@ -106,9 +106,6 @@ public class RequirementVersionManagerController {
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
 
-	@Inject
-	private AdvancedSearchService advancedSearchService;
-	
 	public RequirementVersionManagerController() {
 		super();
 	}
@@ -135,7 +132,6 @@ public class RequirementVersionManagerController {
 	public String changeCategory(@PathVariable long requirementVersionId,
 			@RequestParam(VALUE) RequirementCategory category, Locale locale) {
 		requirementVersionManager.changeCategory(requirementVersionId, category);
-		advancedSearchService.findTestCases(); 
 		return internationalizableFormatterProvider.get().useLocale(locale).formatLabel(category);
 
 	}

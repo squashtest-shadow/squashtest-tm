@@ -228,6 +228,8 @@
 
   <osgi:service ref="squashtest.tm.service.AdvancedSearchService" interface="org.squashtest.tm.service.library.AdvancedSearchService" />
 
+  <osgi:service ref="squashtest.tm.service.AdvancedSearchService" interface="org.squashtest.tm.service.library.AdvancedSearchService" />
+
   <osgi:service ref="squashtest.tm.service.UserAccountService" interface="org.squashtest.tm.service.user.UserAccountService" />
 
   <osgi:service ref="squashtest.tm.service.AdministrationService" interface="org.squashtest.tm.service.user.AdministrationService" />
