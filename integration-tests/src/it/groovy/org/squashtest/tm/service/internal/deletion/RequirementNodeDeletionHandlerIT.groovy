@@ -61,7 +61,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		def result = deletionHandler.deleteNodes([11L])
 
 		then :
-		result == [11L]
+		result.removed.collect{it.resid} == [11L]
 		
 		allDeleted("Requirement", [11L])
 		allDeleted("RequirementVersion", [111L, 112L])
@@ -79,7 +79,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		def result = deletionHandler.deleteNodes([1L])
 
 		then :
-		result.containsAll([1L])
+		result.removed.collect{it.resid}.containsAll([1L])
 
 		allDeleted("Requirement", [11L, 12L])
 		allDeleted("RequirementVersion", [111L, 112L, 121L])
@@ -96,7 +96,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		def result = deletionHandler.deleteNodes([1L])
 
 		then :
-		result.containsAll([1L])
+		result.removed.collect{it.resid}.containsAll([1L])
 
 		allDeleted("Attachment", [111L, 112L, 121L])
 		allDeleted("AttachmentContent", [111L, 112L, 121L])
@@ -110,7 +110,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		def result = deletionHandler.deleteNodes([1L])
 
 		then :
-		result.containsAll([1L])
+		result.removed.collect{it.resid}.containsAll([1L])
 
 		allDeleted("RequirementAuditEvent", [111L, 112L, 121L, 122L, 123L])
 		allDeleted("RequirementCreation", [111L, 112L, 121L])
@@ -125,7 +125,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		def result = deletionHandler.deleteNodes([11L])
 		
 		then :
-		result == [11L]
+		result.removed.collect{it.resid} == [11L]
 		allDeleted("Requirement", [11L])
 		TestCase testCase = testCaseDao.findById(31L)
 		testCase.getImportance()== TestCaseImportance.LOW
