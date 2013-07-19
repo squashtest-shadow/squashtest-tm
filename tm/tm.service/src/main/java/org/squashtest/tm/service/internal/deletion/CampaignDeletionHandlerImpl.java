@@ -252,8 +252,8 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		
 		//and finally prepare the operation report.
 		OperationReport report = new OperationReport();
-		report.addRemovedNodes(separatedIds[0], "folder");
-		report.addRemovedNodes(separatedIds[1], "campaign");
+		report.addRemoved(separatedIds[0], "folder");
+		report.addRemoved(separatedIds[1], "campaign");
 		
 		return report;
 	}
@@ -289,7 +289,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		doDeleteIterations(iterationsToBeDeleted);		
 	
 		OperationReport report = new OperationReport();
-		report.addRemovedNodes(deletedTargetIds, "iteration");
+		report.addRemoved(deletedTargetIds, "iteration");
 		
 		return report;
 	}
@@ -301,7 +301,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		doDeleteSuites(suites);
 
 		OperationReport report = new OperationReport();
-		report.addRemovedNodes(testSuites, "test-suite");
+		report.addRemoved(testSuites, "test-suite");
 		return report;
 
 	}

@@ -164,8 +164,8 @@ public class TestCaseNodeDeletionHandlerImpl extends
 			testCaseAttachmentIds.addAll(testStepAttachmentIds);
 			deletionDao.removeAttachmentsLists(testCaseAttachmentIds);
 			
-			report.addRemovedNodes(separatedIds[0], "folder");
-			report.addRemovedNodes(separatedIds[1], "test-case");
+			report.addRemoved(separatedIds[0], "folder");
+			report.addRemoved(separatedIds[1], "test-case");
 
 		}
 		

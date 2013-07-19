@@ -21,26 +21,26 @@
 package org.squashtest.tm.service.deletion;
 
 public final class Node{
-	public Long id;
-	public String nodetype;
+	public Long resid;
+	public String rel;
 	public Node(Long id, String nodetype){
-		this.id = id;
-		this.nodetype = nodetype;
+		this.resid = id;
+		this.rel = nodetype;
 	}
 	public Node() {
 		super();
 	}
-	public Long getId() {
-		return id;
+	public Long getResid() {
+		return resid;
 	}
 	public void setId(Long id) {
-		this.id = id;
+		this.resid = id;
 	}
-	public String getNodetype() {
-		return nodetype;
+	public String getRel() {
+		return rel;
 	}
-	public void setNodetype(String nodetype) {
-		this.nodetype = nodetype;
+	public void setRel(String nodetype) {
+		this.rel = nodetype;
 	}
 	
 }

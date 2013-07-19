@@ -209,8 +209,8 @@ public class RequirementDeletionHandlerImpl extends
 			testCaseImportanceManager.changeImportanceAfterRequirementDeletion();
 		 	*/
 			
-			report.addRemovedNodes(separatedIds[0], "folder");
-			report.addRemovedNodes(separatedIds[1], "requirement");
+			report.addRemoved(separatedIds[0], "folder");
+			report.addRemoved(separatedIds[1], "requirement");
 		}
 		
 		return report;
@@ -243,7 +243,7 @@ public class RequirementDeletionHandlerImpl extends
 			// log the renaming operation if happened.
 			if (needsRenaming){
 				//child.setName(name);
-				report.addNodeRenaming("requirement", child.getId(), name);
+				report.addRenamed("requirement", child.getId(), name);
 			}
 			
 			// now move the node and log the movement operation. 
@@ -264,7 +264,7 @@ public class RequirementDeletionHandlerImpl extends
 			}
 			
 			NodeMovement nodeMovement = new NodeMovement(new Node(parent.getId(), strtype), movedNodesLog);
-			report.addNodeMovement(nodeMovement);
+			report.addMoved(nodeMovement);
 		}
 	}
 

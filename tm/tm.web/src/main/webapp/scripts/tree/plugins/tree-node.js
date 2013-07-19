@@ -335,6 +335,10 @@ define(['jquery'], function($){
 			this.tree.open_node(this, defer.resolve);
 			return defer.promise();
 		};
+		
+		this.isLoaded = function(){
+			return this.tree._is_loaded(this);
+		}
 
 		this.load = function() {
 			var defer = $.Deferred();
@@ -353,6 +357,34 @@ define(['jquery'], function($){
 			var newNode = res.treeNode();
 			return [ newNode, defer.promise() ];
 		};
+		
+		
+		/* Will move around the nodes without triggering events.
+		 * Moved nodes will be removed from their container
+		 * 
+		 */
+		this.moveTo = function(target){
+
+			// remove me from my former parent 
+			this.removeMe();
+			
+			// if the target was empty, now it isn't anymore.
+			if (target.hasClass('jstree-leaf')){
+				target.removeClass('jstree-leaf').addClass('jstree-closed');
+			}
+			
+			// if the target was loaded, we must actually move the nodes in there because they won't be fetched 
+			// from the server again. We create the <ul/> in the process if need be.
+			if (target.isLoaded){
+				var ul = (target.find('> ul'));
+				if (ul.length===0){
+					ul = $("<ul/>");
+					target.append(ul);
+				}
+				this.appendTo(ul);
+			}
+			
+		};
 
 		this.select = function() {
 			this.tree.select_node(this);
@@ -361,6 +393,13 @@ define(['jquery'], function($){
 		this.deselect = function() {
 			this.tree.deselect_node(this);
 		};
+		
+		this.removeMe = function(){
+			var tr = this.tree;
+			this.each(function(elt){
+				tr.delete_node(this);
+			});
+		}
 
 		// *********** tests
 

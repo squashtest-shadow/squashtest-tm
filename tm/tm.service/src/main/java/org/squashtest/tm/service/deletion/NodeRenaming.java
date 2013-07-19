@@ -21,27 +21,27 @@
 package org.squashtest.tm.service.deletion;
 
 public final class NodeRenaming{
-	private Node renamedNode;
-	private String newName;
+	private Node node;
+	private String name;
 	public NodeRenaming(){
 		super();
 	}
 	public NodeRenaming(Node renamedNode, String newName){
 		super();
-		this.renamedNode = renamedNode;
-		this.newName = newName;
+		this.node = renamedNode;
+		this.name = newName;
 	}
-	public Node getRenamedNode() {
-		return renamedNode;
+	public Node getNode() {
+		return node;
 	}
-	public void setRenamedNode(Node renamedNode) {
-		this.renamedNode = renamedNode;
+	public void setNode(Node renamedNode) {
+		this.node = renamedNode;
 	}
-	public String getNewName() {
-		return newName;
+	public String getName() {
+		return name;
 	}
-	public void setNewName(String newName) {
-		this.newName = newName;
+	public void setName(String newName) {
+		this.name = newName;
 	}
 	
 	

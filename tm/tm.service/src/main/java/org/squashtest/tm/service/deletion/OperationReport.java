@@ -25,65 +25,65 @@ import java.util.Collection;
 
 public class OperationReport {
 
-	public Collection<Node> removedNodes = new ArrayList<Node>();
-	public Collection<NodeRenaming> nodeRenaming = new ArrayList<NodeRenaming>();
-	public Collection<NodeMovement> nodeMovement = new ArrayList<NodeMovement>();
+	public Collection<Node> removed = new ArrayList<Node>();
+	public Collection<NodeRenaming> renamed = new ArrayList<NodeRenaming>();
+	public Collection<NodeMovement> moved = new ArrayList<NodeMovement>();
 	
 	
-	public Collection<Node> getRemovedNodes() {
-		return removedNodes;
+	public Collection<Node> getRemoved() {
+		return removed;
 	}
 
-	public Collection<NodeRenaming> getNodeRenaming() {
-		return nodeRenaming;
+	public Collection<NodeRenaming> getRenamed() {
+		return renamed;
 	}
 
-	public Collection<NodeMovement> getNodeMovement() {
-		return nodeMovement;
+	public Collection<NodeMovement> getMoved() {
+		return moved;
 	}
 
 	public void mergeWith(OperationReport other){
-		this.removedNodes.addAll(other.getRemovedNodes());
-		this.nodeRenaming.addAll(other.getNodeRenaming());
-		this.nodeMovement.addAll(other.getNodeMovement());
+		this.removed.addAll(other.getRemoved());
+		this.renamed.addAll(other.getRenamed());
+		this.moved.addAll(other.getMoved());
 	}
 	
-	public void addRemovedNode(Node removed){
-		removedNodes.add(removed);
+	public void addRemoved(Node removednode){
+		removed.add(removednode);
 	}	
 	
-	public void addRemovedNode(String nodetype, Long nodeId){
-		addRemovedNode(new Node(nodeId, nodetype));
+	public void addRemoved(String nodetype, Long nodeId){
+		addRemoved(new Node(nodeId, nodetype));
 	}
 	
-	public void addRemovedNodes(Collection<Node> toRemove){
-		removedNodes.addAll(toRemove);
+	public void addRemoved(Collection<Node> toRemove){
+		removed.addAll(toRemove);
 	}
 	
-	public void addRemovedNodes(Collection<Long> ids, String nodeType){
+	public void addRemoved(Collection<Long> ids, String nodeType){
 		for (Long id : ids){
-			addRemovedNode(new Node(id, nodeType));
+			addRemoved(new Node(id, nodeType));
 		}
 	}
 	
-	public void addNodeRenaming(NodeRenaming renaming){
-		nodeRenaming.add(renaming);
+	public void addRenamed(NodeRenaming renaming){
+		renamed.add(renaming);
 	}
 	
-	public void addNodeRenaming(String nodetype, Long nodeid, String newName){
-		addNodeRenaming(new NodeRenaming(new Node(nodeid, nodetype), newName));
+	public void addRenamed(String nodetype, Long nodeid, String newName){
+		addRenamed(new NodeRenaming(new Node(nodeid, nodetype), newName));
 	}
 	
-	public void addNodeRenamings(Collection<NodeRenaming> renamings){
-		nodeRenaming.addAll(renamings);
+	public void addRenamed(Collection<NodeRenaming> renamings){
+		renamed.addAll(renamings);
 	}
 	
-	public void addNodeMovement(NodeMovement movement){
-		nodeMovement.add(movement);
+	public void addMoved(NodeMovement movement){
+		moved.add(movement);
 	}
 	
-	public void addNodeMovements(Collection<NodeMovement> movements){
-		nodeMovement.addAll(movements);
+	public void addMoved(Collection<NodeMovement> movements){
+		moved.addAll(movements);
 	}
 
 }

@@ -153,6 +153,9 @@ define(['jquery', 'jstree', './tree-node'], function($){
 	
 				 /*accepts an object, or an array of object. the attributes of the object(s) will be tested against the dom attributes of the nodes
 				 and returns those that match all the attributes of at least one of the objects.*/
+				/*
+				 * example : [ {resid : 10, restype : 'test-cases'}, {resid : 15, rel : 'folder'}]
+				 */
 				findNodes : function(descriptor) {
 					var matchers;
 	
@@ -162,32 +165,28 @@ define(['jquery', 'jstree', './tree-node'], function($){
 						matchers = [ descriptor ];
 					}
 	
-					var nodes = $();
-	
+					
+					var megaselector = "";
 					for ( var index = 0; index < matchers.length; index++) {
-						var subList;
-						var selector = "";
-						for ( var ppt in matchers[index]) {
-							selector += "[" + ppt + "='" + matchers[index][ppt] + "']";
+						
+						megaselector += "li";
+						var propertiesset = matchers[index];
+						for ( var ppt in propertiesset) {
+							megaselector += "[" + ppt + "='" + propertiesset[ppt] + "']";
 						}
-						subList = this.get_container().find('li' + selector);
-						nodes = nodes.add(subList);
+						megaselector += ", "
 					}
-	
+					megaselector = megaselector.replace(/, $/,'');
+					
+					
 					try {
-						return nodes.treeNode();
+						var nodes = this.get_container().find(megaselector).treeNode();
+						return nodes;
 					} catch (invalide_node) {
 						return $();
 					}
 				},
 				
-				/*
-				 * arrays of { id, rel}
-				 */
-				findAllNodes(arrayNodeDesc){
-
-							//TODO
-				},
 	
 				get_selected : function() {
 					var selected = this.__call_old();

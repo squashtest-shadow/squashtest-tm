@@ -23,26 +23,26 @@ package org.squashtest.tm.service.deletion;
 import java.util.List;
 
 public final class NodeMovement{
-	public Node newParent;
-	public List<Node> movedNodes;
+	public Node dest;
+	public List<Node> moved;
 	public NodeMovement(Node newParent, List<Node> movedNodes){
-		this.newParent = newParent;
-		this.movedNodes = movedNodes;
+		this.dest = newParent;
+		this.moved = movedNodes;
 	}
 	public NodeMovement() {
 		super();
 	}
-	public Node getNewParent() {
-		return newParent;
+	public Node getDest() {
+		return dest;
 	}
-	public void setNewParent(Node newParent) {
-		this.newParent = newParent;
+	public void setDest(Node newParent) {
+		this.dest = newParent;
 	}
-	public List<Node> getMovedNodes() {
-		return movedNodes;
+	public List<Node> getMoved() {
+		return moved;
 	}
-	public void setMovedNodes(List<Node> movedNodes) {
-		this.movedNodes = movedNodes;
+	public void setMoved(List<Node> movedNodes) {
+		this.moved = movedNodes;
 	}
 	
 }

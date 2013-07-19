@@ -446,41 +446,66 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 				},
 				
 				/*
-				 * types : array of values of 'rel' attributes (eg ['folder', 'test-case'])
-				 * ids : array of resid 
+				 * A example command object is of the form : 
+				 * 
+				 * {
+				 * 	  removed : [ Node, ...],
+				 * 	  renamed : [ NodeRenaming, ... ],
+				 * 	  moved :   [ NodeMovement, ... ] 
+				 * }
+				 * 
+				 * With the following definitions :
+				 * 
+				 * Node : {
+				 * 		//any properties that might help identify your node, eg { resid : 13, rel : 'test-case' }
+				 * }
+				 * 
+				 * NodeRenaming : {
+				 * 		node : Node,
+				 * 		name : String
+				 * }
+				 * 
+				 * NodeMovement : {
+				 * 		dest : Node,
+				 * 		moved : [ Node, ... ]
+				 * }
 				 */
-				delete_nodes : function(){
-					var self = this, nodes = null;
-
-					if ( (arguments.length==2) && (arguments[0] instanceof Array) && (arguments[1] instanceof Array) ){
-						var types = arguments[0];
-						var ids = arguments[1];
-						
-						var typeSelector = "";
-						var idSelector = "";
-						var tlen = types.length, ilen = ids.length;
-						for (var i=0;i<tlen;i++){
-							typeSelector += "[rel='"+types[i]+"'],";
+				apply_commands : function(commandObject){
+				
+					if (commandObject === null || commandObject === undefined) return;
+										
+					//first, node renamings.
+					var renamed = commandObject.renamed;
+					if (renamed !== null && renamed !== undefined &&  renamed instanceof Array){
+						var i=0, len = renamed.length;
+						for (var i=0; i<len; i++){
+							var node = this.findNodes(renamed[i].node);
+							node.setName(renamed[i].name);
 						}
-						for (var i=0;i< ilen;i++){
-							idSelector += "[resid='"+ids[i]+"'],";
-						};
-						
-						typeSelector = typeSelector.replace(/,$/,'');
-						idSelector = idSelector.replace(/,$/,'');
-						
-						nodes = this.get_container().find(idSelector).filter(typeSelector);
-					}
-					else{
-						nodes = arguments[0];
 					}
 					
-					nodes.each(function(){
-						self.delete_node(this);
-					});
+					//second, node movements. Note that if the destination node was loaded we will move the nodes there, while if it 
+					//hasn't loaded yet we simply need to remove the children.
+					var moved = commandObject.moved;
+					if (moved !== null && moved !== undefined &&  moved instanceof Array){
+						var i=0, len = moved.length;
+						for (var i=0;i<len;i++){
+							var movement = moved[i];
+							
+							var target = this.findNodes(movement.dest);
+							var children = this.findNodes(movement.moved);
+							
+							children.moveTo(target);
+							
+						}
+					}
 					
-				},
-	
+					// third, the nodes that were deleted.
+					var removed = commandObject.removed;
+					if (removed !== null && removed !== undefined &&  removed instanceof Array){
+						this.findNodes(removed).removeMe();
+					}
+				}
 			}
 
 		});

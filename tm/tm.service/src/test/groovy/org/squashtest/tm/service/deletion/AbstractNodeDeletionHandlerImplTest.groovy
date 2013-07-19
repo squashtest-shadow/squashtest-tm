@@ -77,7 +77,7 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 		
 		protected  OperationReport batchDeleteNodes(List<Long> ids){
 			OperationReport report = new  OperationReport()
-			report.addRemovedNodes(ids, "who-cares");
+			report.addRemoved(ids, "who-cares");
 			return report
 		}
 		
@@ -245,7 +245,7 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 			def deleted = handler.deleteNodes([1l, 2l])
 		
 		then :
-			deleted.removedNodes.collect{it.id} == expected
+			deleted.removed.collect{it.resid} == expected
 			
 		
 		
