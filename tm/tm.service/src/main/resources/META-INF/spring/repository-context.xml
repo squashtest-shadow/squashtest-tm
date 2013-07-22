@@ -46,40 +46,6 @@
         <value>org.squashtest.tm.infrastructure.hibernate</value>
       </list>
     </property>
-	<property name="eventListeners">
-		<map>
-			<entry key="post-update">
-				<set>
-					<bean class="org.hibernate.search.event.impl.FullTextIndexEventListener"/>
-				</set>
-			</entry>
-			<entry key="post-insert">
-				<set>
-					<bean class="org.hibernate.search.event.impl.FullTextIndexEventListener"/>
-				</set>
-			</entry>
-			<entry key="post-delete">
-				<set>
-					<bean class="org.hibernate.search.event.impl.FullTextIndexEventListener"/>
-				</set>
-			</entry>
-			<entry key="post-collection-recreate">
-				<set>
-					<bean class="org.hibernate.search.event.impl.FullTextIndexEventListener"/>
-				</set>
-			</entry>
-			<entry key="post-collection-remove">
-				<set>
-					<bean class="org.hibernate.search.event.impl.FullTextIndexEventListener"/>
-				</set>
-			</entry>
-			<entry key="post-collection-update">
-				<set>
-					<bean class="org.hibernate.search.event.impl.FullTextIndexEventListener"/>
-				</set>
-			</entry>
-		</map>
-	</property>
     <property name="annotatedClasses">
       <list>
         <value>org.squashtest.tm.domain.testcase.TestCaseLibrary</value>
