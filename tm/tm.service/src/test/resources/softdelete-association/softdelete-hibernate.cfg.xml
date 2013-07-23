@@ -37,27 +37,7 @@
 		<property name="hbm2ddl.import_files">softdelete-association/import.sql</property>
 		<property name="validator.apply_to_ddl">false</property>
 		<property name="javax.persistence.validation.mode">none</property>
-			    <!-- 
-		<event type="post-update">
-			<listener class="org.hibernate.search.event.FullTextIndexEventListener"/>
-		</event>
-		<event type="post-insert">
-			<listener class="org.hibernate.search.event.FullTextIndexEventListener"/>
-		</event>
-		<event type="post-delete">
-			<listener class="org.hibernate.search.event.FullTextIndexEventListener"/>
-		</event>
-		<event type="post-update">
-			<listener class="org.hibernate.search.event.FullTextIndexEventListener"/>
-		</event>
-		<event type="post-collection-recreate">
-			<listener class="org.hibernate.search.event.FullTextIndexEventListener"/>
-		</event>
-		<event type="post-collection-remove">
-			<listener class="org.hibernate.search.event.FullTextIndexEventListener"/>
-		</event>
-		<event type="post-collection-update">
-			<listener class="org.hibernate.search.event.FullTextIndexEventListener"/>
-		</event>-->
+		<property name="hibernate.search.default.directory_provider">filesystem</property> 
+		<property name="hibernate.search.default.indexBase">/luceneindexes</property>
 	</session-factory>
 </hibernate-configuration>
