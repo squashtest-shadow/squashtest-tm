@@ -41,14 +41,21 @@ define([ "jquery", "backbone", "squash.translator", "underscore", "app/util/Stri
 		},
 
 		showResults : function(){
-			 
+			
 			var results = $.ajax({
 				  url: "/squash/advanced-search/results?testcase"
 				}).done(function(data) {
 					$("#contextual-content").html(data);
+					require([ "common" ], function(common) {
+						require([ "jquery",  "domReady","./search/SearchResultPage" ], function($, domReady, TestCaseSearchInputPanel) {
+							domReady(function() {
+							
+								new SearchResultPage();
+								
+								});
+							});
+						});
 				});
-			
-			new SearchResultPage();
 		},
 		
 		makeGeneralInfoTogglePanel : function() {

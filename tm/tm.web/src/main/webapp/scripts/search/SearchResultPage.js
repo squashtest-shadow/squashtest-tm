@@ -29,7 +29,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","jquery.squas
 		el : "#test-case-search-results",
 
 		initialize : function() {
-	
+			this.expanded = false;
 		},
 
 		events : {
@@ -38,12 +38,16 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","jquery.squas
 
 		toggleTree : function(){
 			
-			if(expanded){
+			if(this.expanded){
 				$("#tree-panel-left").show();
 				$("#contextual-content").removeAttr("style");
+				this.expanded = false;
+				$("#toggle-expand-search-result-frame-button").val("<<");
 			} else {
 				$("#tree-panel-left").hide();
 				$("#contextual-content").css("left",0);
+				this.expanded = true;
+				$("#toggle-expand-search-result-frame-button").val(">>");
 			}
 		}
 		
