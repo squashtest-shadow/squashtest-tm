@@ -80,6 +80,7 @@
 
 <c:url var="path" value="${ pageContext.servletContext.contextPath }"/>
 
+<c:url var="testCaseSearchURL" value="/advanced-search?testcase"/>
 
 <c:set var="tabbedPaneScript" >
 	<script type="text/javascript">
@@ -105,12 +106,27 @@
 					}
 					
 					resizer.init(conf);
-				});					
+				});
+				
+				require([ "jquery",  "domReady","search/TestCaseSearchInputPanel" ], function($, domReady, TestCaseSearchInputPanel) {
+					domReady(function() {
+					
+						new TestCaseSearchInputPanel();
+						
+					});
+				});
 			});
 			
 			$( "#tabbed-pane" ).bind( "tabsselect", function(event, ui) {
 				  //change the number of the selected pane 
 				 selectedTab =  ui.index;
+				 if(selectedTab === 1){
+					 var searchtab = $.ajax({
+						  url: "/squash/advanced-search?testcase"
+						}).done(function(data) {
+							$("#search-pane").html(data);
+						});
+				 }
 			});			
 		});
 	</script>	
@@ -165,23 +181,7 @@
 					</div>
 					
 					<div id="search-pane">
-						<c:choose>
-						<c:when test="${not empty linkable}">
-						<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
-						</c:when>
-						<c:otherwise>
-						<layout:search-panel workspace="${ highlightedWorkspace }"/>
-						</c:otherwise>
-						</c:choose>
 					</div>
-					
-					<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-					<div id="requirement-search-pane">
-						<layout:search-panel-by-requirement />
-					</div>
-					</c:if>
-					
-
 				</div>
 			</div>
 		</div>
@@ -241,22 +241,7 @@
 					</div>
 					
 					<div id="search-pane">
-						<c:choose>
-						<c:when test="${not empty linkable}">
-						<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
-						</c:when>
-						<c:otherwise>
-						<layout:search-panel workspace="${ highlightedWorkspace }"/>
-						</c:otherwise>
-						</c:choose>
-					</div>
-					
-					<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-					<div id="requirement-search-pane">
-						<layout:search-panel-by-requirement />
-					</div>
-					</c:if>
-								
+					</div>	
 				</div>
 			</div>
 		</div>

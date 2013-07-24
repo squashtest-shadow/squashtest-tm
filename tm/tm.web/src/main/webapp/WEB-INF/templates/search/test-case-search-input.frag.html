@@ -1,0 +1,214 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2013 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+<head th:remove="all">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" />
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" />
+</head>
+<body th:remove="tag">
+	<div id="navigation" th:remove="all">
+		NAVBAR
+	</div>
+
+	<div id="workspace" th:remove="tag">
+		<div id="workspace-title" th:remove="all">
+			<div class="snap-left">
+			</div>
+			<div class="snap-right">
+ 				<div class="main-menubar">
+ 					MENUBAR
+				</div>
+			</div>
+		</div>
+		
+		<div id="category-pane" th:remove="all">
+ 		</div>
+    
+		<div id="contextual-content" class="no-resizable-contextual-content" th:remove="tag">
+<!-- TAB FRAGMENT-->
+<!--- libellé
+- ID
+- référence 
+- description -->
+			<div id="test-case-search-input-panel" th:fragment="test-case-search-input">
+			 <script type="text/javascript" th:inline="javascript">
+			    /* <![CDATA[ */
+			      squashtm.message = {};
+			      squashtm.message.cache = {};
+			      /* ]]> */
+			    </script>
+			 	<script>
+						require([ "common" ], function(common) {
+						require([ "jquery",  "domReady","./search/TestCaseSearchInputPanel" ], function($, domReady, TestCaseSearchInputPanel) {
+							domReady(function() {
+							
+								new TestCaseSearchInputPanel();
+								
+								});
+							});
+						});
+				</script>
+				<div class="toggle-panel">
+					<span class="not-displayed toogle-panel-buttons"></span>
+					<div id="general-information-panel" class="description-panel toggle-panel-main">
+						<div class="display-table" id="cuf-infos-table">
+                  			<div class="display-table-row">
+                  				<label for="test-case-label" class="display-table-cell" th:text="#{label.Label}"></label>
+                    			<input id="test-case-label" type="text"/>
+                    		</div>
+                  			<div class="display-table-row">
+                  				<label for="test-case-id" class="display-table-cell">ID</label>
+                    			<input id="test-case-id" type="text"/>
+                    		</div>
+                    		<div class="display-table-row">
+                  				<label for="test-case-reference" class="display-table-cell" th:text="#{label.reference}"></label>
+                    			<input id="test-case-reference" type="text"/>
+                    		</div>
+                    		<div class="display-table-row">
+                  				<label for="test-case-description" class="display-table-cell" th:text="#{label.Description}"></label>
+                    			<input id="test-case-description" type="text"/>
+                    		</div>
+						</div>
+					</div>
+				</div>
+<!-- Lorsque certains critères sont cochés, le bandeau affiche : 'Importance: sélection'
+Les importances sont présentées sous la forme d'une liste :
+- Très haute
+- Haute
+- Moyenne
+- Faible
+Une sélection multiple est possible par le raccourci Ctrl + Clic -->
+				<div class="toggle-panel">
+					<span class="not-displayed toogle-panel-buttons"></span>
+					<div id="importance-panel" class="description-panel toggle-panel-main">
+						<div class="display-table" id="cuf-infos-table">
+                  			<div class="display-table-row">
+                  				<label for="test-case-importance" class="display-table-cell" th:text="#{test-case.importance.label}"></label>
+                    			<input id="test-case-importance" type="text"/>
+                    		</div>	
+                    	</div>				
+					</div>
+				</div>
+<!--  Le bloc escamotable prérequis propose un champ de saisie de texte libre à l'image du champ libellé. -->
+
+				<div class="toggle-panel">
+					<span class="not-displayed toogle-panel-buttons"></span>
+					<div id="prerequisite-panel" class="description-panel toggle-panel-main">
+						<div class="display-table" id="cuf-infos-table">
+                  			<div class="display-table-row">
+                  				<label for="test-case-prerequisite" class="display-table-cell" th:text="#{test-case.prerequisite.label}"></label>
+                    			<input id="test-case-prerequisite" type="text"/>
+                    		</div>	
+                    	</div>		
+					</div>
+				</div>
+<!-- Lorsque certains critères sont cochés, le bandeau affiche : 'Associations: sélection'
+Les type d'associations sont présentées sous la forme d'une liste :
+- toutes
+- à une exigence
+- à une itération
+- à une exécution
+=> Pour les critères 'à une exigence' et 'à une itération', une combobox propose les choix suivants :
+   - tous
+   - associé(s)
+   - non-associé(s)   -->
+				<div class="toggle-panel">
+					<span class="not-displayed toogle-panel-buttons"></span>
+					<div id="association-panel" class="description-panel toggle-panel-main">
+						<div class="display-table" id="cuf-infos-table">
+                  			<div class="display-table-row">
+                  				<label for="test-case-association" class="display-table-cell" th:text="#{label.Search}"></label>
+                    			<input id="test-case-association" type="text"/>
+                    		</div>	
+                    	</div>		
+						<div class="display-table" id="cuf-infos-table">
+                  			<div class="display-table-row">
+                  				<label for="test-case-req-association" class="display-table-cell" th:text="#{label.Search}"></label>
+                    			<input id="test-case-req-association" type="text"/>
+                    		</div>	
+                    	</div>		
+						<div class="display-table" id="cuf-infos-table">
+                  			<div class="display-table-row">
+                  				<label for="test-case-it-association" class="display-table-cell" th:text="#{label.Search}"></label>
+                    			<input id="test-case-it-association" type="text"/>
+                    		</div>	
+                    	</div>		
+					</div>
+				</div>
+<!-- Lorsque certains critères sont cochés, le bandeau affiche : 'Projets: sélection'
+Les projets sont présentés sous la forme d'une liste :
+- tous les projets
+- projets sélectionnés -->
+				<div class="toggle-panel">
+					<span class="not-displayed toogle-panel-buttons"></span>
+					<div id="project-panel" class="description-panel toggle-panel-main">
+						<div class="display-table" id="cuf-infos-table">
+                  			<div class="display-table-row">
+                  				<label for="test-case-label" class="display-table-cell" th:text="#{label.Search}"></label>
+                    			<input id="test-case-label" type="text"/>
+                    		</div>	
+                    	</div>		
+						<div class="display-table" id="cuf-infos-table">
+                  			<div class="display-table-row">
+                  				<label for="test-case-label" class="display-table-cell" th:text="#{label.Search}"></label>
+                    			<input id="test-case-label" type="text"/>
+                    		</div>	
+                    	</div>		
+					</div>	
+				</div>
+<!-- Le bloc création/modification propose un menu déroulant offrant deux options :
+1. Créé par :
+2. Modifié par :
+=> En fonction de la sélection, une liste déroulante propose à la sélection les logins des utilisateurs habilités sur le projet répondant à chacun des critères.  -->
+				<div class="toggle-panel">
+					<span class="not-displayed toogle-panel-buttons"></span>
+					<div id="creation-panel" class="description-panel toggle-panel-main">
+						<div class="display-table" id="cuf-infos-table">
+                  			<div class="display-table-row">
+                  				<label for="test-case-label" class="display-table-cell" th:text="#{label.Search}"></label>
+                    			<input id="test-case-label" type="text"/>
+                    		</div>	
+                    	</div>		
+						<div class="display-table" id="cuf-infos-table">
+                  			<div class="display-table-row">
+                  				<label for="test-case-label" class="display-table-cell" th:text="#{label.Search}"></label>
+                    			<input id="test-case-label" type="text"/>
+                    		</div>	
+                    	</div>		
+					</div>
+				</div>
+				
+				<div class="toolbar-button-panel">
+					<input id="test-case-search-button" type="button" th:value="#{label.Search}" class="button ui-button ui-widget ui-state-default ui-corner-all"/> 
+				</div>	
+	
+			</div>
+<!-- /TAB FRAGMENT -->
+  		</div>
+	</div>
+</body>
+</html>
+

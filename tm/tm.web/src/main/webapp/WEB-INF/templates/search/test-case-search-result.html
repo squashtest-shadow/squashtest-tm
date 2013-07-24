@@ -1,0 +1,71 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2013 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+<head th:remove="all">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" />
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}"/>
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" />
+</head>
+<body th:remove="tag">
+	<div id="navigation" th:remove="all">
+		NAVBAR
+	</div>
+
+	<div id="workspace" th:remove="tag">
+		<div id="workspace-title" th:remove="all">
+			<div class="snap-left">
+			</div>
+			<div class="snap-right">
+ 				<div class="main-menubar">
+ 					MENUBAR
+				</div>
+			</div>
+		</div>
+		
+		<div id="category-pane" th:remove="all">
+ 		</div>
+    
+		<div id="contextual-content" class="no-resizable-contextual-content" th:remove="tag">
+<!-- TAB FRAGMENT-->
+		<div id="test-case-search-results">
+			<div id="report-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">			
+				<div id="category-frame-button">
+					<input type="button" class="button ui-button ui-widget ui-state-default ui-corner-all" id="toggle-expand-search-result-frame-button" value="&lt;&lt;" role="button" aria-disabled="false"></input>
+				</div>
+			
+				<div class="snap-left" style="height: 100%;">
+					<h2>
+						<span>Rapport</span>
+					</h2>
+				</div>
+				<div class="unsnap"></div>
+			</div>	
+		</div>
+<!-- /TAB FRAGMENT -->
+  		</div>
+	</div>
+</body>
+</html>
+

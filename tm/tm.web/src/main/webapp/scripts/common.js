@@ -43,7 +43,8 @@ requirejs.config({
 				},
 				'req-workspace',
 				'camp-workspace',
-				'dashboard'
+				'dashboard',
+				'search'
 			],
 			/*
 			 * rules for paths naming: * third party lib: unversionned lib name *
