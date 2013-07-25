@@ -44,8 +44,10 @@ import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.customfield.CustomCustomFieldManagerService;
 import org.squashtest.tm.service.library.AdvancedSearchService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -68,14 +70,17 @@ public class AdvancedSearchController {
 	private AdvancedSearchService advancedSearchService;
 
 	@Inject
+	private PermissionEvaluationService permissionService;
+	
+	@Inject
 	private InternationalizationHelper messageSource;
 	
 	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(12)
 	.mapAttribute(Project.class, "name", String.class, "project-name")
 	.mapAttribute(TestCase.class, "id", Long.class, "test-case-id")	
 	.mapAttribute(TestCase.class, "reference", String.class, "test-case-ref")	
-	.mapAttribute(TestCase.class, "label", String.class, "test-case-label")			
-	.mapAttribute(TestCase.class, "importance", String.class, "test-case-weight")	
+	.mapAttribute(TestCase.class, "label", String.class, "test-case-label")
+	.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, "test-case-weight")	
 	//.mapAttribute(TestCase.class, "weight", Long.class, "test-case-requirement-nb")
 	//.mapAttribute(TestCase.class, "weight", Long.class, "test-case-teststep-nb")
 	//.mapAttribute(TestCase.class, "weight", Long.class, "test-case-iteration-nb")
@@ -102,31 +107,43 @@ public class AdvancedSearchController {
 
 		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCases(paging);
 
-		return new TestCaseSearchResultDataTableModelHelper(locale, messageSource).buildDataModel(holder, params.getsEcho());
+		return new TestCaseSearchResultDataTableModelHelper(locale, messageSource, permissionService).buildDataModel(holder, params.getsEcho());
 	}
 	
 	private static final class TestCaseSearchResultDataTableModelHelper extends DataTableModelBuilder<TestCase> {
 		private InternationalizationHelper messageSource;
 		private Locale locale;
-
-		private TestCaseSearchResultDataTableModelHelper(Locale locale, InternationalizationHelper messageSource) {
+		private PermissionEvaluationService permissionService;
+		
+		private TestCaseSearchResultDataTableModelHelper(Locale locale, InternationalizationHelper messageSource, PermissionEvaluationService permissionService) {
 			this.locale = locale;
 			this.messageSource = messageSource;
+			this.permissionService = permissionService;
 		}
 
+		private String formatImportance(TestCaseImportance importance, Locale locale) {
+			return messageSource.internationalize(importance, locale);
+		}
+		
+		private boolean isTestCaseEditable(TestCase item){
+			return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item);
+		}
+		
 		@Override
 		public Map<String, Object> buildItemData(TestCase item) {
 			final AuditableMixin auditable = (AuditableMixin) item;
 			Map<String, Object> res = new HashMap<String, Object>();
 			res.put("project-name", item.getProject().getName());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put("test-case-id", item.getId());
 			res.put("test-case-ref", item.getReference());
 			res.put("test-case-label", item.getName());
-			res.put("test-case-weight", item.getImportance());
-			res.put("test-case-requirement-nb", "");
-			res.put("test-case-teststep-nb", "");
-			res.put("test-case-iteration-nb", "");
-			res.put("test-case-attachment-nb", "");
+			res.put("editable", isTestCaseEditable(item));
+			res.put("test-case-weight", formatImportance(item.getImportance(), locale));
+			res.put("test-case-requirement-nb", item.getVerifiedRequirementVersions().size());
+			res.put("test-case-teststep-nb", item.getSteps().size());
+			res.put("test-case-iteration-nb","");
+			res.put("test-case-attachment-nb", item.getAllAttachments().size());
 			res.put("test-case-created-by", auditable.getCreatedBy());
 			res.put("test-case-modified-by", auditable.getLastModifiedBy());
 			res.put("empty-openinterface2-holder", " ");

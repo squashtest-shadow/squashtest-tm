@@ -32,63 +32,76 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 				"bDeferRender" : true,
 				"bFilter" : false,
 				"fnRowCallback" : this.teamTableRowCallback,
+				"fnDrawCallback" : this.tableDrawCallback,
 				"aaSorting" : [ [ 2, "asc" ] ],
 				"aoColumnDefs" : [ {
 					"bSortable" : false,
 					"aTargets" : [ 0 ],
-					"mDataProp" : "project-name",
-				}, {
-					"aTargets" : [ 1 ],
-					"mDataProp" : "test-case-id",
-					"bSortable" : false,
+					"mDataProp" : "entity-index",
 					"sClass" : "select-handle centered"
 				}, {
+					"aTargets" : [ 1 ],
+					"mDataProp" : "project-name",
+					"bSortable" : false,
+				}, {		
 					"aTargets" : [ 2 ],
-					"mDataProp" : "test-case-ref",
-					"bSortable" : true
+					"mDataProp" : "test-case-id",
+					"bSortable" : false,
 				}, {
 					"aTargets" : [ 3 ],
-					"mDataProp" : "test-case-label",
-					"bSortable" : false
+					"mDataProp" : "test-case-ref",
+					"bSortable" : true,
+					"sClass" : "editable_ref"
 				}, {
 					"aTargets" : [ 4 ],
-					"mDataProp" : "test-case-weight",
-					"bSortable" : true
+					"mDataProp" : "test-case-label",
+					"bSortable" : false,
+					"sClass" : "editable_label"
 				}, {
 					"aTargets" : [ 5 ],
+					"mDataProp" : "test-case-weight",
+					"bSortable" : true,
+					"sClass" : "editable_imp"
+				}, {
+					"aTargets" : [ 6 ],
 					"mDataProp" : "test-case-requirement-nb",
 					"bSortable" : true
 				}, {
-					"aTargets" : [ 6 ],
+					"aTargets" : [ 7 ],
 					"mDataProp" : "test-case-teststep-nb",
 					"bSortable" : true
 				}, {
-					"aTargets" : [ 7 ],
+					"aTargets" : [ 8 ],
 					"mDataProp" : "test-case-iteration-nb",
 					"bSortable" : true
 				}, {
-					"aTargets" : [ 8 ],
+					"aTargets" : [ 9 ],
 					"mDataProp" : "test-case-attachment-nb",
 					"bSortable" : true
 				}, {
-					"aTargets" : [ 9 ],
+					"aTargets" : [ 10 ],
 					"mDataProp" : "test-case-created-by",
 					"bSortable" : true
 				}, {
-					"aTargets" : [ 10 ],
+					"aTargets" : [ 11 ],
 					"mDataProp" : "test-case-modified-by",
 					"bSortable" : true
 				}, {
-					"aTargets" : [ 11 ],
+					"aTargets" : [ 12 ],
 					"mDataProp" : "empty-openinterface2-holder",
 					"sClass" : "centered delete-button",
 					"sWidth" : "2em",
 					"bSortable" : false
 				}, {
-					"aTargets" : [ 12 ],
+					"aTargets" : [ 13 ],
 					"mDataProp" : "empty-opentree-holder",
 					"sClass" : "centered delete-button",
 					"sWidth" : "2em",
+					"bSortable" : false
+				}, {
+					"aTargets" : [ 14 ],
+					"mDataProp" : "editable",
+					"bVisible" : false,
 					"bSortable" : false
 				} ],
 				"sDom" : 'ft<"dataTables_footer"lirp>'
@@ -117,10 +130,21 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 			this.$el.squashTable(tableConf, squashConf);
 		},
 
+		
+		
 		teamTableRowCallback : function(row, data, displayIndex) {
+			if(data["editable"]){
+				var content = $(".editable_ref", row).html();
+				$(".editable_ref", row).html("<input id='reference-input'></input>")
+				$("#reference-input",row).val(content);
+			}
 			return row;
 		},
 
+		tableDrawCallback : function() {
+
+		},
+		
 		refresh : function() {
 			this.$el.squashTable().fnDraw(false);
 		}
