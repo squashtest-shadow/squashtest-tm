@@ -74,7 +74,7 @@
 				<div class="toggle-panel">
 					<span class="not-displayed toogle-panel-buttons"></span>
 					<div id="general-information-panel" class="description-panel toggle-panel-main">
-						<div class="display-table" id="cuf-infos-table">
+						<div class="display-table" id="general-information-panel-table">
                   			<div class="display-table-row">
                   				<label for="test-case-label" class="display-table-cell" th:text="#{label.Label}"></label>
                     			<input id="test-case-label" type="text"/>
@@ -94,6 +94,15 @@
 						</div>
 					</div>
 				</div>
+				
+				<div class="toggle-panel">
+					<span class="not-displayed toogle-panel-buttons"></span>
+					<div id="cuf-panel" class="description-panel toggle-panel-main">
+						<div class="display-table" id="cuf-panel-table">
+
+                    	</div>				
+					</div>
+				</div>
 <!-- Lorsque certains critères sont cochés, le bandeau affiche : 'Importance: sélection'
 Les importances sont présentées sous la forme d'une liste :
 - Très haute
@@ -104,7 +113,7 @@ Une sélection multiple est possible par le raccourci Ctrl + Clic -->
 				<div class="toggle-panel">
 					<span class="not-displayed toogle-panel-buttons"></span>
 					<div id="importance-panel" class="description-panel toggle-panel-main">
-						<div class="display-table" id="cuf-infos-table">
+						<div class="display-table" id="importance-panel-table">
                   			<div class="display-table-row">
                   				<label for="test-case-importance" class="display-table-cell" th:text="#{test-case.importance.label}"></label>
                     			<input id="test-case-importance" type="text"/>
@@ -117,7 +126,7 @@ Une sélection multiple est possible par le raccourci Ctrl + Clic -->
 				<div class="toggle-panel">
 					<span class="not-displayed toogle-panel-buttons"></span>
 					<div id="prerequisite-panel" class="description-panel toggle-panel-main">
-						<div class="display-table" id="cuf-infos-table">
+						<div class="display-table" id="prerequisite-panel-table">
                   			<div class="display-table-row">
                   				<label for="test-case-prerequisite" class="display-table-cell" th:text="#{test-case.prerequisite.label}"></label>
                     			<input id="test-case-prerequisite" type="text"/>
@@ -138,7 +147,7 @@ Les type d'associations sont présentées sous la forme d'une liste :
 				<div class="toggle-panel">
 					<span class="not-displayed toogle-panel-buttons"></span>
 					<div id="association-panel" class="description-panel toggle-panel-main">
-						<div class="display-table" id="cuf-infos-table">
+						<div class="display-table" id="association-panel-table">
                   			<div class="display-table-row">
                   				<label for="test-case-association" class="display-table-cell" th:text="#{label.Search}"></label>
                     			<input id="test-case-association" type="text"/>
@@ -165,7 +174,7 @@ Les projets sont présentés sous la forme d'une liste :
 				<div class="toggle-panel">
 					<span class="not-displayed toogle-panel-buttons"></span>
 					<div id="project-panel" class="description-panel toggle-panel-main">
-						<div class="display-table" id="cuf-infos-table">
+						<div class="display-table" id="project-panel-table">
                   			<div class="display-table-row">
                   				<label for="test-case-label" class="display-table-cell" th:text="#{label.Search}"></label>
                     			<input id="test-case-label" type="text"/>
@@ -186,7 +195,7 @@ Les projets sont présentés sous la forme d'une liste :
 				<div class="toggle-panel">
 					<span class="not-displayed toogle-panel-buttons"></span>
 					<div id="creation-panel" class="description-panel toggle-panel-main">
-						<div class="display-table" id="cuf-infos-table">
+						<div class="display-table" id="creation-panel-table">
                   			<div class="display-table-row">
                   				<label for="test-case-label" class="display-table-cell" th:text="#{label.Search}"></label>
                     			<input id="test-case-label" type="text"/>

@@ -18,10 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil","jquery.squash", "jqueryui",
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
+        "./TestCaseSearchResultTable","jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "jquery.squash.datatables",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil) {
+		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil, TestCaseSearchResultTable) {
 	
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
@@ -30,6 +31,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","jquery.squas
 
 		initialize : function() {
 			this.expanded = false;
+			new TestCaseSearchResultTable();
 		},
 
 		events : {
@@ -54,3 +56,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","jquery.squas
 	});
 	return TestCaseSearchInputPanel;
 });
+
+
+
+
+
+

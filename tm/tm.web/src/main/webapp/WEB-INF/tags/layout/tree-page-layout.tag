@@ -121,11 +121,15 @@
 				  //change the number of the selected pane 
 				 selectedTab =  ui.index;
 				 if(selectedTab === 1){
-					 var searchtab = $.ajax({
-						  url: "/squash/advanced-search?testcase"
+					<c:if test="${highlightedWorkspace == 'requirement'}">
+					</c:if>
+					<c:if test="${highlightedWorkspace == 'test-case'}">
+						var searchtab = $.ajax({
+						  	url: "/squash/advanced-search?testcase"
 						}).done(function(data) {
 							$("#search-pane").html(data);
 						});
+					</c:if>
 				 }
 			});			
 		});

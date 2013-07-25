@@ -29,6 +29,7 @@ define([ "jquery", "backbone", "squash.translator", "underscore", "app/util/Stri
 
 		initialize : function() {
 			this.makeGeneralInfoTogglePanel();
+			this.makeCUFTogglePanel();
 			this.makeImportanceTogglePanel();
 			this.makePrerequisiteTogglePanel();
 			this.makeAssociationTogglePanel();
@@ -56,6 +57,16 @@ define([ "jquery", "backbone", "squash.translator", "underscore", "app/util/Stri
 							});
 						});
 				});
+		},
+		
+		makeCUFTogglePanel : function() {
+			var title = translator.get("search.testcase.cuf.panel.title");
+			
+			var infoSettings = {
+				initiallyOpen : false,
+				title : title
+			};
+			this.$("#cuf-panel").togglePanel(infoSettings);
 		},
 		
 		makeGeneralInfoTogglePanel : function() {
