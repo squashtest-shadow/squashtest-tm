@@ -120,6 +120,7 @@
 			$( "#tabbed-pane" ).bind( "tabsselect", function(event, ui) {
 				  //change the number of the selected pane 
 				 selectedTab =  ui.index;
+				 $("#contextual-content").html("");
 				 if(selectedTab === 1){
 					<c:if test="${highlightedWorkspace == 'requirement'}">
 					</c:if>
@@ -130,7 +131,7 @@
 							$("#search-pane").html(data);
 						});
 					</c:if>
-				 }
+				 } 
 			});			
 		});
 	</script>	

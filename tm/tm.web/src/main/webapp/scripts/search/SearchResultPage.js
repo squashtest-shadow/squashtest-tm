@@ -31,13 +31,25 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 
 		initialize : function() {
 			this.expanded = false;
+			this.toggleTree();
+			this.configureModifyResultsDialog();
 			new TestCaseSearchResultTable();
 		},
 
 		events : {
-			"click #toggle-expand-search-result-frame-button" : "toggleTree"
+			"click #toggle-expand-search-result-frame-button" : "toggleTree",
+			"click #export-search-result-button" : "exportResults",
+			"click #modify-search-result-button" : "editResults"
 		},
 
+		exportResults : function(){
+			var f = 10;
+		},
+		
+		editResults : function(){
+			this.addModifyResultDialog.confirmDialog("open");
+		},
+		
 		toggleTree : function(){
 			
 			if(this.expanded){
@@ -51,6 +63,44 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				this.expanded = true;
 				$("#toggle-expand-search-result-frame-button").val(">>");
 			}
+		},
+		
+		configureModifyResultsDialog : function() {
+			var addModifyResultDialog = $("#modify-search-result-dialog").confirmDialog();
+
+			var cell = $("#importance-combo");
+			cell.html("<select></select>");
+			
+			$.ajax({
+				url : squashtm.app.contextRoot + "/test-cases/importance-combo-data",
+				dataType : 'json'
+			}).success(function(json) {
+				 $.each(json, function(key, value){ 
+					var option = new Option(value, key);
+					$("select", cell).append(option);
+				 });
+			});
+			
+			addModifyResultDialog.on("confirmdialogvalidate",
+					function() {
+
+					});
+
+			addModifyResultDialog.on("confirmdialogconfirm",
+					function() {
+
+					});
+
+			addModifyResultDialog.on('confirmdialogopen',
+					function() {
+						
+					});
+
+			addModifyResultDialog.activate = function(arg) {
+
+			};
+
+			this.addModifyResultDialog = addModifyResultDialog;
 		}
 		
 	});

@@ -66,7 +66,18 @@
 					</div>
 					<div class="unsnap"></div>
 				</div>
-
+				<div id="search-toolbar" class="toolbar-class ui-corner-all">
+					<div class="toolbar-button-panel">
+						<input type="button" th:value="#{label.Modify}"
+							id="modify-search-result-button"
+							class="button ui-button ui-widget ui-state-default ui-corner-all"
+							role="button" aria-disabled="false" /> <input type="button"
+							th:value="#{label.Export}" id="export-search-result-button"
+							class="button ui-button ui-widget ui-state-default ui-corner-all"
+							role="button" aria-disabled="false" />
+					</div>
+					<div style="clear: both;"></div>
+				</div>
 				<div id="search-results" class="toggle-panel">
 					<div id="search-results-panel" class="toggle-panel-main">
 						<table id="test-case-search-result-table"
@@ -74,25 +85,55 @@
 							<thead>
 								<tr>
 									<th th:attr="data-def='select, map=user-index'">#</th>
-									<th th:attr="data-def='map=project-name'" th:text="#{label.project}">project name</th>
+									<th th:attr="data-def='map=project-name'"
+										th:text="#{label.project}">project name</th>
 									<th th:attr="data-def='map=test-case-id'">ID</th>
- 									<th th:attr="data-def='map=test-case-ref'" th:text="#{label.reference}">test-case reference</th>
- 									<th th:attr="data-def='map=test-case-label'" th:text="#{label.Label}">test-case label</th>
- 									<th th:attr="data-def='map=test-case-weight'" th:text="#{test-case.importance.label}">test-case weight</th>
- 									<th th:attr="data-def='map=test-case-requirement-nb'" th:text="#{label.numberOfAssociatedRequirements}">nb of covered requirements</th>
- 									<th th:attr="data-def='map=test-case-teststep-nb'" th:text="#{label.numberOfTestSteps}">nb of test steps</th>
-									<th th:attr="data-def='map=test-case-iteration-nb'" th:text="#{label.numberOfAssociatedIterations}">nb of iterations</th>
-									<th th:attr="data-def='map=test-case-attachment-nb'" th:text="#{label.numberOfAttachments}">nb of attachments</th>
-									<th th:attr="data-def='map=test-case-created-by'" th:text="#{label.createdBy}">created by</th>
-									<th th:attr="data-def='map=test-case-modified-by'" th:text="#{label.modifiedBy}">last modified by</th>
+									<th th:attr="data-def='map=test-case-ref'"
+										th:text="#{label.reference}">test-case reference</th>
+									<th th:attr="data-def='map=test-case-label'"
+										th:text="#{label.Label}">test-case label</th>
+									<th th:attr="data-def='map=test-case-weight'"
+										th:text="#{test-case.importance.label}">test-case weight</th>
+									<th th:attr="data-def='map=test-case-requirement-nb'"
+										th:text="#{label.numberOfAssociatedRequirements}">nb of
+										covered requirements</th>
+									<th th:attr="data-def='map=test-case-teststep-nb'"
+										th:text="#{label.numberOfTestSteps}">nb of test steps</th>
+									<th th:attr="data-def='map=test-case-iteration-nb'"
+										th:text="#{label.numberOfAssociatedIterations}">nb of
+										iterations</th>
+									<th th:attr="data-def='map=test-case-attachment-nb'"
+										th:text="#{label.numberOfAttachments}">nb of attachments</th>
+									<th th:attr="data-def='map=test-case-created-by'"
+										th:text="#{label.createdBy}">created by</th>
+									<th th:attr="data-def='map=test-case-modified-by'"
+										th:text="#{label.modifiedBy}">last modified by</th>
 									<th th:attr="data-def='map=empty-openinterface2-holder'"></th>
-									<th th:attr="data-def='map=empty-opentree-holder'"></th> 
+									<th th:attr="data-def='map=empty-opentree-holder'"></th>
 								</tr>
 							</thead>
 							<tbody>
 							</tbody>
 						</table>
 					</div>
+				</div>
+			</div>
+
+			<div id="modify-search-result-dialog"
+				class="not-displayed popup-dialog" th:title="#{label.Modifier}">
+				<div class="main">
+					<table id="modify-search-result-dialog-table">
+						<tr>
+							<td></td>
+							<td><label th:text="#{label.project}"></label></td>
+							<td id="importance-combo"></td>
+						</tr>
+					</table>
+				</div>
+				<div class="popup-dialog-buttonpane">
+					<input class="confirm" type="button" value="confirm"
+						th:value="#{label.Confirm}" /> <input class="cancel"
+						type="button" value="cancel" th:value="#{label.Cancel}" />
 				</div>
 			</div>
 			<!-- /TAB FRAGMENT -->

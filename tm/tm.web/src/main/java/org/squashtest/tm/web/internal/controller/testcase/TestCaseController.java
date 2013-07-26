@@ -61,6 +61,9 @@ public class TestCaseController {
 	@Inject
 	private TestCaseFinder finder;
 
+
+	@Inject
+	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
 	/**
 	 * Fetches and returns a list of json test cases from their ids
 	 * 
@@ -112,4 +115,11 @@ public class TestCaseController {
 		consolidatedIds.addAll(folderIds);
 		return buildJsonTestCasesFromAncestorIds(consolidatedIds, locale);
 	}
+	
+	@RequestMapping(value = "/importance-combo-data", method = RequestMethod.GET)
+	@ResponseBody
+	public String buildImportanceComboData(Locale locale) {
+		return importanceComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	}
+
 }

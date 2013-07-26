@@ -18,12 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", "jqueryui" ], function($, Backbone,
+define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery.squash.datatables", "jqueryui" ], function($, Backbone, translator,
 		SQDT) {
 
 	var TestCaseSearchResultTable = Backbone.View.extend({
 		el : "#test-case-search-result-table",
 		initialize : function() {
+			this.addSelectEditableToImportance = $.proxy(this._addSelectEditableToImportance, this);
+			this.addSimpleEditableToReference = $.proxy(this._addSimpleEditableToReference, this);
+			this.addSimpleEditableToLabel = $.proxy(this._addSimpleEditableToLabel, this);
+			this.tableDrawCallback = $.proxy(this._tableDrawCallback, this);
+			this.getIdsOfSelectedTestCases = $.proxy(this._getIdsOfSelectedTestCases, this);
+			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 			var self = this, tableConf = {
 				"oLanguage" : {
 					"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
@@ -31,7 +37,7 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 				"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
 				"bDeferRender" : true,
 				"bFilter" : false,
-				"fnRowCallback" : this.teamTableRowCallback,
+				"fnRowCallback" : this.tableRowCallback,
 				"fnDrawCallback" : this.tableDrawCallback,
 				"aaSorting" : [ [ 2, "asc" ] ],
 				"aoColumnDefs" : [ {
@@ -130,18 +136,75 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 			this.$el.squashTable(tableConf, squashConf);
 		},
 
+		_getIdsOfSelectedTestCases : function(){
+			//$.each($(".ui-state-row-selected", "#test-case-search-result-table"), function(){alert($($("td")[2]).text());});
+		},
 		
 		
-		teamTableRowCallback : function(row, data, displayIndex) {
+		_addSelectEditableToImportance : function(row, data) {
+			var self = this;
+			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
+			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/importance-combo-data";
+			var ok = translator.get("rich-edit.button.ok.label");
+			var cancel = translator.get("label.Cancel");
+			$('.editable_imp', row).editable(
+					function(value, settings) {
+						var innerPOSTData;
+						$.post(urlPOST, {
+							value : value,
+							id : "test-case-importance"	
+						}, function(data) {
+							innerPOSTData = data;
+							self.refresh();
+						});
+						return (innerPOSTData);
+					}, {
+						type : 'select',
+						submit : ok,
+						cancel : cancel,
+						onblur : function() {
+						},
+						loadurl : urlGET,
+						onsubmit : function() {
+						}
+					});
+		},
+		
+		_addSimpleEditableToReference : function(row, data) {
+			var ok = translator.get("rich-edit.button.ok.label");
+			var cancel = translator.get("label.Cancel");
+			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
+			$(".editable_ref", row).editable(url,{
+				"submit" : ok,
+				"cancel" : cancel,
+				"submitdata" : function(value, settings) {
+					return {"id": "test-case-reference"};
+				}
+			});
+		},
+		
+		_addSimpleEditableToLabel : function(row, data) {
+			var ok = translator.get("rich-edit.button.ok.label");
+			var cancel = translator.get("label.Cancel");
+			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
+			$(".editable_label", row).editable(url,{
+				"submit" : ok,
+				"cancel" : cancel,	
+				"submitdata" : function(value, settings) {
+					return {"id": "test-case-newname"};
+				}
+			});
+		},
+	
+		_tableRowCallback : function(row, data, displayIndex) {
 			if(data["editable"]){
-				var content = $(".editable_ref", row).html();
-				$(".editable_ref", row).html("<input id='reference-input'></input>")
-				$("#reference-input",row).val(content);
+				this.addSimpleEditableToReference(row,data);
+				this.addSimpleEditableToLabel(row,data);
+				this.addSelectEditableToImportance(row,data);
 			}
-			return row;
 		},
 
-		tableDrawCallback : function() {
+		_tableDrawCallback : function() {
 
 		},
 		

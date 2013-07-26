@@ -244,7 +244,9 @@ public class TestCaseModificationController {
 		mav.addObject("hasCUF", hasCUF);
 	}
 
-	private String buildImportanceComboData(Locale locale) {
+	@RequestMapping(value = "/importance-combo-data", method = RequestMethod.GET)
+	@ResponseBody
+	public String buildImportanceComboData(TestCase testCase, Locale locale) {
 		return importanceComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
@@ -305,6 +307,16 @@ public class TestCaseModificationController {
 		return formatNature(nature, locale);
 	}
 
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-newname", VALUE})
+	@ResponseBody
+	public Object changeName(@PathVariable long testCaseId, @RequestParam(VALUE) String newName) {
+
+		testCaseModificationService.rename(testCaseId, newName);
+		LOGGER.info("TestCaseModificationController : renaming {} as {}", testCaseId, newName);
+
+		return newName;
+	}
+	
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-type", VALUE })
 	public String changeType(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseType type, Locale locale) {

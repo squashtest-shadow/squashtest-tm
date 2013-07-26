@@ -51,7 +51,7 @@ define([ "jquery", "backbone", "squash.translator", "underscore", "app/util/Stri
 						require([ "jquery",  "domReady","./search/SearchResultPage" ], function($, domReady, TestCaseSearchInputPanel) {
 							domReady(function() {
 							
-								new SearchResultPage();
+									new SearchResultPage();
 								
 								});
 							});
