@@ -218,13 +218,18 @@ public class RequirementDeletionHandlerImpl extends
 	
 	private void _renameContentIfNeededThenAttach(NodeContainer<Requirement> parent, Requirement toBeDeleted, OperationReport report){
 		
+		//abort if no operation is necessary.
+		if (toBeDeleted.getContent().isEmpty()){
+			return;
+		}
+		
 		// init
+		Collection<Requirement> children = new ArrayList<Requirement>(toBeDeleted.getContent());
 		List<Node> movedNodesLog = new ArrayList<Node>(toBeDeleted.getContent().size());
 		
 		boolean needsRenaming = false;
-		Collection<Requirement> children = new ArrayList<Requirement>(toBeDeleted.getContent());
-
 		
+
 		// renaming loop. Loop over each children, and for each of them ensure that they wont namecrash within their new parent. 
 		// Log all these operations in the report object.
 		for (Requirement child : children){
@@ -244,26 +249,36 @@ public class RequirementDeletionHandlerImpl extends
 				report.addRenamed("requirement", child.getId(), name);
 			}
 			
-			// now move the node and log the movement operation. 
-			// TODO : perhaps use the navigation service facilities instead? Although the following code is fine enough I think.
-			toBeDeleted.removeContent(child);
-			parent.addContent(child);
+			// log the movement operation. 
 			movedNodesLog.add(new Node(child.getId(), "requirement"));
+			
+
+		}
+
+		//detach the children from their old parent.
+		toBeDeleted.getContent().clear();
+		
+		//flushing here ensures that the DB calls will be carried on in the proper order.
+		deletionDao.flush();
+		
+		// attach the children to their new parent.
+		// TODO : perhaps use the navigation service facilities instead? For now I believe it's fine enough.
+		for (Requirement child : children){
+			parent.addContent(child);
 		}
 		
-		//complete the node movement report
-		if (! movedNodesLog.isEmpty()){
-			NodeType type = new WhichNodeVisitor().getTypeOf(parent);
-			String strtype;
-			switch(type){
-				case REQUIREMENT_LIBRARY : strtype = "drive"; break;
-				case REQUIREMENT_FOLDER : strtype = "folder"; break;
-				default : strtype = "requirement"; break;
-			}
-			
-			NodeMovement nodeMovement = new NodeMovement(new Node(parent.getId(), strtype), movedNodesLog);
-			report.addMoved(nodeMovement);
+		//fill the report
+		NodeType type = new WhichNodeVisitor().getTypeOf(parent);
+		String strtype;
+		switch(type){
+			case REQUIREMENT_LIBRARY :	strtype = "drive"; break;
+			case REQUIREMENT_FOLDER : strtype = "folder"; break;
+			default : strtype = "requirement"; break;
 		}
+		
+		NodeMovement nodeMovement = new NodeMovement(new Node(parent.getId(), strtype), movedNodesLog);
+		report.addMoved(nodeMovement);
+		
 	}
 
 }

@@ -173,13 +173,16 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		result.removed.collect{it.resid}.containsAll([3L])
 		
 		result.moved.collect{ [it.dest.resid, it.dest.rel] } == [[1L, "drive"]]
-		result.moved.collect{ it.moved.collect {it.resid }} == [[32L, 31L]]
+		result.moved.collect{ it.moved.collect {it.resid }  as Set } == [[32L, 31L]  as Set] 
 		
 		result.renamed == []
 
+		allDeleted("Requirement", [3L])
 		allNotDeleted("Requirement", [31L, 32L, 311L]);
 		
-		lib.rootContent.size() == 3	//the two children + folder 1 
+		Requirement r31 = findEntity(Requirement.class, 31L)
+		Requirement r32 = findEntity(Requirement.class, 32L)
+		lib.rootContent.containsAll([r31, r32])
 
 	}
 	
