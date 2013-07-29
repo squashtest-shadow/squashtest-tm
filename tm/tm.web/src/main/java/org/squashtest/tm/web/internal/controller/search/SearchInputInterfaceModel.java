@@ -20,7 +20,22 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SearchInputInterfaceModel {
 
+	private List<SearchInputPanelModel> panels = new ArrayList<SearchInputPanelModel>();
 	
+	SearchInputInterfaceModel(){
+		
+	}
+	
+	public void addPanel(SearchInputPanelModel panel){
+		this.panels.add(panel);
+	}
+	
+	public List<SearchInputPanelModel> getPanels(){
+		return this.panels;
+	}
 }

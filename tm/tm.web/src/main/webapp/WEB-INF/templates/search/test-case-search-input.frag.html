@@ -54,6 +54,7 @@
 - référence 
 - description -->
 			<div id="test-case-search-input-panel" th:fragment="test-case-search-input">
+			<div id="test-case-search-input-form-panel">
 			 <script type="text/javascript" th:inline="javascript">
 			    /* <![CDATA[ */
 			      squashtm.message = {};
@@ -71,6 +72,16 @@
 							});
 						});
 				</script>
+				<script id="toggle-panel-template" type="text/x-handlebars-template">
+				<div class="toggle-panel">
+					<span class="not-displayed toogle-panel-buttons"></span>
+					<div id="{{toggle-panel-id}}" class="description-panel toggle-panel-main">
+						<div class="display-table" id="{{toggle-panel-table-id}}">
+						</div>
+					</div>
+				</div>
+				</script>
+				
 				<div class="toggle-panel">
 					<span class="not-displayed toogle-panel-buttons"></span>
 					<div id="general-information-panel" class="description-panel toggle-panel-main">
@@ -94,6 +105,7 @@
 						</div>
 					</div>
 				</div>
+
 
 <!-- Lorsque certains critères sont cochés, le bandeau affiche : 'Importance: sélection'
 Les importances sont présentées sous la forme d'une liste :
@@ -215,7 +227,7 @@ Les projets sont présentés sous la forme d'une liste :
 				<div class="toolbar-button-panel">
 					<input id="test-case-search-button" type="button" th:value="#{label.Search}" class="button ui-button ui-widget ui-state-default ui-corner-all"/> 
 				</div>	
-	
+			</div>
 			</div>
 <!-- /TAB FRAGMENT -->
   		</div>

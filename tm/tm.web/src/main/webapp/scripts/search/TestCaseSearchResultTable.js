@@ -28,7 +28,7 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			this.addSimpleEditableToReference = $.proxy(this._addSimpleEditableToReference, this);
 			this.addSimpleEditableToLabel = $.proxy(this._addSimpleEditableToLabel, this);
 			this.tableDrawCallback = $.proxy(this._tableDrawCallback, this);
-			this.getIdsOfSelectedTestCases = $.proxy(this._getIdsOfSelectedTestCases, this);
+			this.getTableRowId = $.proxy(this._getTableRowId, this);
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 			var self = this, tableConf = {
 				"oLanguage" : {
@@ -136,11 +136,10 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			this.$el.squashTable(tableConf, squashConf);
 		},
 
-		_getIdsOfSelectedTestCases : function(){
-			//$.each($(".ui-state-row-selected", "#test-case-search-result-table"), function(){alert($($("td")[2]).text());});
+		_getTableRowId : function(rowData) {
+			return rowData[2];	
 		},
-		
-		
+
 		_addSelectEditableToImportance : function(row, data) {
 			var self = this;
 			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];

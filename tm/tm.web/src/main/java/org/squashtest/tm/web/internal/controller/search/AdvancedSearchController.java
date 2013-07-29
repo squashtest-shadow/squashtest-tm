@@ -58,6 +58,7 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.customfield.CustomCustomFieldManagerService;
 import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.controller.RequestHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -119,6 +120,65 @@ public class AdvancedSearchController {
 		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCases(paging);
 
 		return new TestCaseSearchResultDataTableModelHelper(locale, messageSource, permissionService).buildDataModel(holder, params.getsEcho());
+	}
+	
+
+	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON)
+	@ResponseBody
+	public SearchInputInterfaceModel getSearchInputInterfaceModel(){
+		
+		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
+
+		//General infos
+		SearchInputPanelModel panel = new SearchInputPanelModel();
+		panel.setTitle("search.testcase.generalinfos.panel.title");
+		panel.setOpen(true);
+		panel.setId("general-information");
+		model.addPanel(panel);
+		
+		//Importance
+		panel = new SearchInputPanelModel();
+		panel.setTitle("search.testcase.importance.panel.title");
+		panel.setOpen(false);
+		panel.setId("importance");
+		model.addPanel(panel);
+		
+		//Prerequisite
+		panel = new SearchInputPanelModel();
+		panel.setTitle("search.testcase.prerequisite.panel.title");
+		panel.setOpen(true);
+		panel.setId("prerequisite");
+		model.addPanel(panel);
+		
+		//Associations
+		panel = new SearchInputPanelModel();
+		panel.setTitle("search.testcase.association.panel.title");
+		panel.setOpen(false);
+		panel.setId("association");
+		model.addPanel(panel);
+	
+		//Projects
+		panel = new SearchInputPanelModel();
+		panel.setTitle("search.testcase.title.panel.title");
+		panel.setOpen(false);
+		panel.setId("project");
+		model.addPanel(panel);
+		
+		//Creation/Modification
+		panel = new SearchInputPanelModel();
+		panel.setTitle("search.testcase.creation.panel.title");
+		panel.setOpen(true);
+		panel.setId("creation");
+		model.addPanel(panel);
+		
+		//CUF
+		panel = new SearchInputPanelModel();
+		panel.setTitle("search.testcase.cuf.panel.title");
+		panel.setOpen(false);
+		panel.setId("cuf");
+		model.addPanel(panel);
+		
+		return model;
 	}
 	
 	private static final class TestCaseSearchResultDataTableModelHelper extends DataTableModelBuilder<TestCase> {

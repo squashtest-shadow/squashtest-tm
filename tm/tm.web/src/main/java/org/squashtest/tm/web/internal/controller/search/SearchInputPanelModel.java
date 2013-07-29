@@ -20,26 +20,33 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchInputPanelModel {
 
-	private List<SearchInputFieldModel> fields;
-	private String name;
+	private List<SearchInputFieldModel> fields = new ArrayList<SearchInputFieldModel>();
+	private String title;
+	private boolean open;
+	private String id;
 	
 	public SearchInputPanelModel(){
 		
 	}
 	
-	public SearchInputPanelModel(String name){
-		this.name = name;
+	public SearchInputPanelModel(String title){
+		this.title = title;
 	}
 	
-	public SearchInputPanelModel(String name, List<SearchInputFieldModel> fields){
-		this(name);
+	public SearchInputPanelModel(String title, List<SearchInputFieldModel> fields){
+		this(title);
 		this.fields = fields;
 	}
 
+	public void addField(SearchInputFieldModel field){
+		this.fields.add(field);
+	}
+	
 	public List<SearchInputFieldModel> getFields() {
 		return fields;
 	}
@@ -48,11 +55,27 @@ public class SearchInputPanelModel {
 		this.fields = fields;
 	}
 
-	public String getName() {
-		return name;
+	public String getId() {
+		return id;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public boolean isOpen() {
+		return open;
+	}
+
+	public void setOpen(boolean open) {
+		this.open = open;
 	}
 }

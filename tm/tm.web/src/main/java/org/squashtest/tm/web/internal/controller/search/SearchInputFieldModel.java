@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchInputFieldModel {
@@ -28,7 +29,7 @@ public class SearchInputFieldModel {
 	
 	private String inputType;
 
-	private List<SearchInputPossibleValueModel> possibleValues;
+	private List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>();
 	
 	public SearchInputFieldModel(){
 		
