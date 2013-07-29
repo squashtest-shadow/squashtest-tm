@@ -275,6 +275,8 @@
             <exclude>**/scripts/datatables/**/*.*</exclude>
             <exclude>**/scripts/jquery/**/*.*</exclude>
             <exclude>**/scripts/jqgrid/**/*.*</exclude>
+            <exclude>**/scripts/jqplot/**/*.*</exclude>
+            <exclude>**/scripts/iesupport/**/*.*</exclude>
             <exclude>**/scripts/thirdparties/**/*.*</exclude>
             <exclude>**/scripts/lib/**/*.*</exclude>
             <exclude>**/scripts/require*.js</exclude>
