@@ -317,6 +317,14 @@
 		
 		//Administration
 		@NamedQuery(name = "administration.findAdministrationStatistics", query="select (select count(p.id) from Project p), count(*),(select count(req.id) from Requirement req),(select count(tc.id) from TestCase tc),(select count(camp.id) from Campaign camp), (select count(it.id) from Iteration it),(select count(exec.id) from Execution exec) from User u where u.active = true"),
+		
+		
+		//Test Case Statistics
+		@NamedQuery(name = "TestCaseStatistics.boundRequirements", query = "select count(distinct rvc) from RequirementVersionCoverage rvc where rvc.verifyingTestCase.id in (:testCaseIds)"),
+		@NamedQuery(name = "TestCaseStatistics.importanceStatistics", query = "select tc.importance, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.importance"),
+		@NamedQuery(name = "TestCaseStatistics.statusesStatistics",	query = "select tc.status, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.status"),
+
+		
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
 		@NamedQuery(name = "testCase.findAllAttachmentLists", query = "select testCase.attachmentList.id from TestCase testCase where testCase.id in (:testCaseIds)"),
