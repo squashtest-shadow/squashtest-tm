@@ -26,7 +26,10 @@ import org.hibernate.type.LongType;
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseBoundRequirementsStatistics;
+import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseImportanceStatistics;
 import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseSizeStatistics;
+import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseStatusesStatistics;
 import org.squashtest.tm.service.testcase.TestCaseStatisticsService
 import org.unitils.dbunit.annotation.DataSet
 
@@ -60,5 +63,56 @@ class TestCaseStatisticsServiceImplIT extends DbunitServiceSpecification {
 			stats.above20Steps == 5
 		
 	}
+
+	@DataSet("TCStatisticsService.boundReqs.xml")
+	def "should count how many test case verify requirements and how many don't"(){
+		
+		given :
+			def tcIds = 243L..247L
+			
+		when :
+			TestCaseBoundRequirementsStatistics stats = service.gatherBoundRequirementStatistics(tcIds)
+		
+		then :
+			stats.havingRequirements == 3
+			stats.zeroRequirements == 2
+		
+	}
 	
+	@DataSet("TCStatisticsService.importanceAndStatus.xml")
+	def "should count how many test case for each importance"(){
+		
+		given :
+			def tcIds = 238L..248L
+		
+		when :
+			TestCaseImportanceStatistics stats = service.gatherTestCaseImportanceStatistics(tcIds)
+		
+		then :
+			stats.veryHigh == 4
+			stats.high == 2
+			stats.medium == 3
+			stats.low == 2
+		
+		
+	}
+
+	
+	@DataSet("TCStatisticsService.importanceAndStatus.xml")
+	def "should count how many test case for each status"(){
+		
+		given :
+			def tcIds = 238L..248L
+		
+		when :
+			TestCaseStatusesStatistics stats = service.gatherTestCaseStatusesStatistics(tcIds)
+		
+		then :
+			stats.approved == 4
+			stats.obsolete == 2
+			stats.toBeUpdated == 2
+			stats.underReview == 1
+			stats.workInProgress == 2	
+		
+	}
 }

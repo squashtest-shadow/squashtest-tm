@@ -109,7 +109,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 		TestCaseImportance _importance;
 		Integer _cardinality;
 		for (Object[] tuple : tuples) {
-			_importance = TestCaseImportance.valueOf((String) tuple[0]);
+			_importance = (TestCaseImportance)tuple[0];
 			_cardinality = ((Long) tuple[1]).intValue();
 			switch (_importance) {
 			case VERY_HIGH:
@@ -153,7 +153,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 		TestCaseStatus _status;
 		Integer _cardinality;
 		for (Object[] tuple : tuples) {
-			_status = TestCaseStatus.valueOf((String) tuple[0]);
+			_status = (TestCaseStatus)tuple[0];
 			_cardinality = ((Long) tuple[1]).intValue();
 			switch (_status) {
 			case WORK_IN_PROGRESS:
