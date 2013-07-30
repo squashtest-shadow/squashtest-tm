@@ -20,9 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 @DynamicDao(entity = TestCase.class)
@@ -41,4 +43,6 @@ public interface TestCaseDao extends CustomTestCaseDao {
 	List<Long> findAllDistinctTestCasesIdsCalledByTestCase(long testCaseId);
 
 	List<Long> findAllDistinctTestCasesIdsCallingTestCase(long testCaseId);
+	
+	List<Long> findAllTestCaseIdsByLibraries(@QueryParam("libraryIds") Collection<Long> libraryIds);
 }

@@ -21,6 +21,9 @@
 package org.squashtest.tm.service.internal.testcase;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +58,8 @@ import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle;
+import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
 
 @Service("squashtest.tm.service.TestCaseLibraryNavigationService")
 @Transactional
@@ -88,6 +93,9 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToTestCaseLibraryStrategy")
 	private Provider<PasteStrategy<TestCaseLibrary, TestCaseLibraryNode>> pasteToTestCaseLibraryStrategyProvider;
+	
+	@Inject
+	private TestCaseStatisticsService statisticsService;
 
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
@@ -255,6 +263,38 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	public List<ExportTestCaseData> findTestCasesToExportFromNodes(List<Long> nodesIds) {
 		List<ExportTestCaseData> testCases = testCaseDao.findTestCaseToExportFromNodes(nodesIds);
 		return (List<ExportTestCaseData>) setFullFolderPath(testCases);
+	}
+	
+	
+	@Override
+	public TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds){
+		
+		// filter out unreadable entities		
+		Collection<Long> effectiveLibIds = _collectSecReadableIds(libraryIds, "org.squashtest.tm.domain.testcase.TestCaseLibrary");
+		Collection<Long> effectiveNodeIds = _collectSecReadableIds(nodeIds, "org.squashtest.tm.domain.testcase.TestCaseLibraryNode");
+		
+
+		// get all the test cases
+		Collection<Long> tcIds = new ArrayList<Long>();
+		if (! effectiveLibIds.isEmpty()){
+			tcIds.addAll(testCaseDao.findAllTestCaseIdsByLibraries(effectiveLibIds));	
+		}
+		if (! effectiveNodeIds.isEmpty()){
+			tcIds.addAll(testCaseDao.findAllTestCaseIdsByNodeIds(effectiveNodeIds));
+		}
+		
+		
+		return statisticsService.gatherTestCaseStatisticsBundle(tcIds);
+	}
+	
+	private Collection<Long> _collectSecReadableIds(Collection<Long> original, String entityType){
+		Collection<Long> effective = new ArrayList<Long>();
+		for (Long id : original){
+			if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", id, entityType)){
+				effective.add(id);
+			}	
+		}
+		return effective;
 	}
 
 }

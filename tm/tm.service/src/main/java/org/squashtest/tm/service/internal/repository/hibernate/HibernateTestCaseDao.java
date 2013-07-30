@@ -71,7 +71,13 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	 */
 	private static final String TEST_CASE_ID_PARAM_NAME = "testCaseId";
 	private static final String PROJECT = "project";
+	
 	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from TCLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
+	
+	private static final String FIND_ALL_DESCENDANT_TESTCASE_QUERY = "select tc.tcln_id from TCLN_RELATIONSHIP_CLOSURE tclnrc "+
+																	 "inner join TEST_CASE tc on tclnrc.DESCENDANT_ID = tc.tcln_id "+
+																	 "where tclnrc.ANCESTOR_ID in (:nodeIds)";
+	
 	private static final String FIND_ALL_FOR_LIBRARY_QUERY = "select distinct testCase.TCLN_ID"
 			+ " from TEST_CASE testCase " + " join TEST_CASE_LIBRARY_NODE tcln on tcln.TCLN_ID = testCase.TCLN_ID"
 			+ " join PROJECT project on project.PROJECT_ID = tcln.PROJECT_ID" + " where project.TCL_ID = :libraryId";
@@ -620,6 +626,19 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		} else {
 			return Collections.emptyList();
 		}
+	}
+	
+	@Override
+	public List<Long> findAllTestCaseIdsByNodeIds(Collection<Long> nodeIds) {
+		if (nodeIds.isEmpty()){
+			return Collections.emptyList();
+		}
+		
+		Query query = currentSession().createSQLQuery(FIND_ALL_DESCENDANT_TESTCASE_QUERY);
+		query.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
+		query.setResultTransformer(new SqLIdResultTransformer());
+		
+		return query.list();
 	}
 
 	/* ----------------------------------------------------/EXPORT METHODS----------------------------------------- */

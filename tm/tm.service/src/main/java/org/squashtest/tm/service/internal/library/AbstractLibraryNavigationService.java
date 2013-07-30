@@ -107,7 +107,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	protected static final String COPY_TOKEN = "-Copie";
 
 	@Inject
-	private PermissionEvaluationService permissionService;
+	protected PermissionEvaluationService permissionService;
 
 	protected abstract FolderDao<FOLDER, NODE> getFolderDao();
 

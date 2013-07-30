@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.testcase;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -130,4 +131,16 @@ public interface TestCaseLibraryNavigationService extends
 	 * @return a list of {@linkplain ExportTestCaseData}
 	 */
 	List<ExportTestCaseData> findTestCasesToExportFromNodes(@NotNull List<Long> nodesIds);
+	
+	
+	/**
+	 * Passing the ids of some selected TestCaseLibrary and TestCaseLibraryNodes (in separate collections),
+	 * will return the statistics covering all the TestCases encompassed by this selection.  
+	 * 
+	 * 
+	 * @param libraryIds
+	 * @param nodeIds
+	 * @return TestcaseStatisticsBundle
+	 */
+	TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
 }

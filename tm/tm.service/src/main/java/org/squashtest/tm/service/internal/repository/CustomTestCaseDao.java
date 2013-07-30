@@ -64,6 +64,10 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 * @return
 	 */
 	List<TestCaseLibraryNode> findAllByNameContaining(String tokenInName, boolean groupByProject);
+	
+	
+	List<Long> findAllTestCaseIdsByNodeIds(Collection<Long> nodeIds);
+	
 
 	/***
 	 * This method returns the test step's associated TestCase
