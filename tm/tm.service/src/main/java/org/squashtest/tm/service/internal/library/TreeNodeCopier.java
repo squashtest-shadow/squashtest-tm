@@ -283,7 +283,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		}
 	}
 
-	private final class TestStepCufCopier implements TestStepVisitor {
+	private static final class TestStepCufCopier implements TestStepVisitor {
 		private PrivateCustomFieldValueService customFieldValueManagerService;
 		private TestStep sourceStep;
 

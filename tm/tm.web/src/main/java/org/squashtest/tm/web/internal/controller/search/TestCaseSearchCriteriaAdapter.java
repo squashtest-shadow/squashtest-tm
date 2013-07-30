@@ -151,15 +151,15 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 		
 	}
 	
-	public void setName(String name){
+	public final void setName(String name){
 		this.nameFilter=name;
 	}
 	
-	public void isGroupByProject(boolean groupByProject){
+	public final void isGroupByProject(boolean groupByProject){
 		this.groupByProject=groupByProject;
 	}
 	
-	public void setImportanceFilter(String[] importances){ //NOSONAR no, this array is definitely not stored directly.
+	public final void setImportanceFilter(String[] importances){ //NOSONAR no, this array is definitely not stored directly.
 		if (importances == null){
 			this.importances=new String[0];
 		}else{
@@ -168,7 +168,7 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 		
 	}
 	
-	public void setNatureFilter(String[] natures){ //NOSONAR no, this array is definitely not stored directly.
+	public final void setNatureFilter(String[] natures){ //NOSONAR no, this array is definitely not stored directly.
 		if (natures == null){
 			this.natures=new String[0];
 		}else{
@@ -177,7 +177,7 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 		
 	}
 	
-	public void setTypeFilter(String[] types){ //NOSONAR no, this array is definitely not stored directly.
+	public final void setTypeFilter(String[] types){ //NOSONAR no, this array is definitely not stored directly.
 		if (types == null){
 			this.types=new String[0];
 		}else{
@@ -186,7 +186,7 @@ public class TestCaseSearchCriteriaAdapter implements TestCaseSearchCriteria {
 		
 	}
 
-	public void setStatusFilter(String[] statuses){ //NOSONAR no, this array is definitely not stored directly.
+	public final void setStatusFilter(String[] statuses){ //NOSONAR no, this array is definitely not stored directly.
 		if (statuses == null){
 			this.statuses=new String[0];
 		}else{

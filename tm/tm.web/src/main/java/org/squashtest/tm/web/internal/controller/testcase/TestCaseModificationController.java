@@ -231,32 +231,32 @@ public class TestCaseModificationController {
 		}
 		mav.addObject(TEST_CASE, testCase);
 		mav.addObject("executionModes", executionModes);
-		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(testCase, locale));
+		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(locale));
 		mav.addObject("testCaseImportanceLabel", formatImportance(testCase.getImportance(), locale));
-		mav.addObject("testCaseNatureComboJson", buildNatureComboData(testCase, locale));
+		mav.addObject("testCaseNatureComboJson", buildNatureComboData(locale));
 		mav.addObject("testCaseNatureLabel", formatNature(testCase.getNature(), locale));
-		mav.addObject("testCaseTypeComboJson", buildTypeComboData(testCase, locale));
+		mav.addObject("testCaseTypeComboJson", buildTypeComboData(locale));
 		mav.addObject("testCaseTypeLabel", formatType(testCase.getType(), locale));
-		mav.addObject("testCaseStatusComboJson", buildStatusComboData(testCase, locale));
+		mav.addObject("testCaseStatusComboJson", buildStatusComboData(locale));
 		mav.addObject("testCaseStatusLabel", formatStatus(testCase.getStatus(), locale));
 		mav.addObject("attachmentsModel", attachmentHelper.findPagedAttachments(testCase));
 		mav.addObject("callingTestCasesModel", _getCallingTestCaseTableModel(testCase.getId(), new DefaultPagingAndSorting("TestCase.name"), ""));
 		mav.addObject("hasCUF", hasCUF);
 	}
 
-	private String buildImportanceComboData(TestCase testCase, Locale locale) {
+	private String buildImportanceComboData(Locale locale) {
 		return importanceComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
-	private String buildNatureComboData(TestCase testCase, Locale locale) {
+	private String buildNatureComboData(Locale locale) {
 		return natureComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
-	private String buildTypeComboData(TestCase testCase, Locale locale) {
+	private String buildTypeComboData(Locale locale) {
 		return typeComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
-	private String buildStatusComboData(TestCase testCase, Locale locale) {
+	private String buildStatusComboData(Locale locale) {
 		return statusComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 

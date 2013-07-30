@@ -39,22 +39,22 @@ import org.squashtest.tm.domain.testcase.TestStep;
  *
  */
 /* package-private */class PseudoTestCase {
-	public Date createdOnDate = null;
-	public String createdBy = null;
-	public String createdOn = null;
+	private Date createdOnDate = null;
+	private String createdBy = null;
+	private String createdOn = null;
 
-	public String importance = "";
-	public String nature = "";
-	public String type = "";
-	public String status = "";
+	private String importance = "";
+	private String nature = "";
+	private String type = "";
+	private String status = "";
 	
 	// the first element of the list is the description itself
 	// others are complementary elements
-	public final List<String[]> descriptionElements = new ArrayList<String[]>();
+	private final List<String[]> descriptionElements = new ArrayList<String[]>();
 
-	public final List<String> prerequisites = new ArrayList<String>();
+	private final List<String> prerequisites = new ArrayList<String>();
 
-	public final List<String[]> stepElements = new LinkedList<String[]>();
+	private final List<String[]> stepElements = new LinkedList<String[]>();
 
 	/* ***************************** formatters *********************************** */
 
@@ -136,4 +136,78 @@ import org.squashtest.tm.domain.testcase.TestStep;
 		return steps;
 
 	}
+
+	
+	// ******** accessors ***********************
+
+	public Date getCreatedOnDate() {
+		return createdOnDate;
+	}
+
+	public void setCreatedOnDate(Date createdOnDate) {
+		this.createdOnDate = createdOnDate;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public String getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(String createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public String getImportance() {
+		return importance;
+	}
+
+	public void setImportance(String importance) {
+		this.importance = importance;
+	}
+
+	public String getNature() {
+		return nature;
+	}
+
+	public void setNature(String nature) {
+		this.nature = nature;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public List<String[]> getDescriptionElements() {
+		return descriptionElements;
+	}
+
+	public List<String> getPrerequisites() {
+		return prerequisites;
+	}
+
+	public List<String[]> getStepElements() {
+		return stepElements;
+	}
+	
+	
+	
 }

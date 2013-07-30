@@ -138,7 +138,7 @@ class LockedFolderInferenceTree extends LibraryTree<LockedFolderInferenceTree.No
 	
 	
 	
-	class Node extends TreeNode<Node>{
+	static class Node extends TreeNode<Node>{
 		
 		private Boolean deletable = null;
 		

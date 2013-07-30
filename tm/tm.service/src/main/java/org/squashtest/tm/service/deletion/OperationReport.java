@@ -25,9 +25,9 @@ import java.util.Collection;
 
 public class OperationReport {
 
-	public Collection<Node> removed = new ArrayList<Node>();
-	public Collection<NodeRenaming> renamed = new ArrayList<NodeRenaming>();
-	public Collection<NodeMovement> moved = new ArrayList<NodeMovement>();
+	private Collection<Node> removed = new ArrayList<Node>();
+	private Collection<NodeRenaming> renamed = new ArrayList<NodeRenaming>();
+	private Collection<NodeMovement> moved = new ArrayList<NodeMovement>();
 	
 	
 	public Collection<Node> getRemoved() {

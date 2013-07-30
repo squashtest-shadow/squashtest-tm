@@ -497,7 +497,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	}
 
-	private final class ActionStepRetreiver implements TestStepVisitor {
+	private static final class ActionStepRetreiver implements TestStepVisitor {
 
 		private List<ActionTestStep> result;
 

@@ -120,7 +120,7 @@ public class HtmlSanitizationFilter implements Filter {
 
 	}
 
-	private class HtmlSafeParameterMapWrapper implements Map<String, String[]> {
+	private static class HtmlSafeParameterMapWrapper implements Map<String, String[]> {
 
 		private final Map<String, String[]> wrappedMap;
 

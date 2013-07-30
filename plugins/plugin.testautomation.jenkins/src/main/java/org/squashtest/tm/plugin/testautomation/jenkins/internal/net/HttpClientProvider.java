@@ -121,35 +121,45 @@ public class HttpClientProvider {
 			return result;
 		}
 
-		@Override	//NOSONAR code generation, assumed to be safe
-		public boolean equals(Object obj) { //NOSONAR code generation, assumed to be safe
-			if (this == obj)
+		@Override	
+		public boolean equals(Object obj) { 
+			if (this == obj){
 				return true;
-			if (obj == null)
+			}
+			if (obj == null){
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()){
 				return false;
+			}
 			ServerKey other = (ServerKey) obj;
 			if (serverKind == null) {
 				if (other.serverKind != null)
 					return false;
-			} else if (!serverKind.equals(other.serverKind))
+			} else if (!serverKind.equals(other.serverKind)){
 				return false;
+			}
 			if (serverLogin == null) {
-				if (other.serverLogin != null)
+				if (other.serverLogin != null){
 					return false;
-			} else if (!serverLogin.equals(other.serverLogin))
+				}
+			} else if (!serverLogin.equals(other.serverLogin)){
 				return false;
+			}
 			if (serverPass == null) {
-				if (other.serverPass != null)
+				if (other.serverPass != null){
 					return false;
-			} else if (!serverPass.equals(other.serverPass))
+				}
+			} else if (!serverPass.equals(other.serverPass)){
 				return false;
+			}
 			if (serverURL == null) {
-				if (other.serverURL != null)
+				if (other.serverURL != null){
 					return false;
-			} else if (!serverURL.equals(other.serverURL))
+				}
+			} else if (!serverURL.equals(other.serverURL)){
 				return false;
+			}
 			return true;
 		}
 		

@@ -301,7 +301,7 @@ public class RequirementVersionManagerController {
 	 * @author FOG
 	 * 
 	 */
-	public class MyRequirementVersionsDecOrder implements Comparator<RequirementVersion> {
+	public static class MyRequirementVersionsDecOrder implements Comparator<RequirementVersion> {
 
 		@Override
 		public int compare(RequirementVersion rV1, RequirementVersion rV2) {

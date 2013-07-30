@@ -393,7 +393,7 @@ public class GenericProjectController {
 
 	// ********************** private classes ***************************
 
-	private final class TestAutomationTableModel extends DataTableModelBuilder<TestAutomationProject> {
+	private final static class TestAutomationTableModel extends DataTableModelBuilder<TestAutomationProject> {
 
 		@Override
 		protected Map<String, ?> buildItemData(TestAutomationProject item) {

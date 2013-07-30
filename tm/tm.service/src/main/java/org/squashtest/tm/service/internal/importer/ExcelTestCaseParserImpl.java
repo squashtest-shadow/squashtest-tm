@@ -120,7 +120,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 			String value = valueCell(row).getStringCellValue();
 
 			String[] desc = pairedString(tag, value);
-			pseudoTestCase.descriptionElements.add(desc);
+			pseudoTestCase.getDescriptionElements().add(desc);
 		}
 	};
 
@@ -132,7 +132,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 				String value = valueCell(row).getStringCellValue();
 
 				String[] desc = pairedString(tag, value);
-				pseudoTestCase.descriptionElements.add(0, desc);
+				pseudoTestCase.getDescriptionElements().add(0, desc);
 			}
 		});
 
@@ -140,7 +140,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		fieldPopulators.add(new FieldPopulator(IMPORTANCE_TAG) {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String value = valueCell(row).getStringCellValue();
-				pseudoTestCase.importance = value;
+				pseudoTestCase.setImportance(value);
 			}
 		});
 		
@@ -148,7 +148,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		fieldPopulators.add(new FieldPopulator(NATURE_TAG) {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String value = valueCell(row).getStringCellValue();
-				pseudoTestCase.nature = value;
+				pseudoTestCase.setNature(value);
 			}
 		});
 		
@@ -156,7 +156,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		fieldPopulators.add(new FieldPopulator(TYPE_TAG) {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String value = valueCell(row).getStringCellValue();
-				pseudoTestCase.type = value;
+				pseudoTestCase.setType(value);
 			}
 		});
 	
@@ -164,7 +164,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		fieldPopulators.add(new FieldPopulator(STATUS_TAG) {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String value = valueCell(row).getStringCellValue();
-				pseudoTestCase.status = value;
+				pseudoTestCase.setStatus(value);
 			}
 		});
 		
@@ -172,7 +172,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		fieldPopulators.add(new FieldPopulator(CREATED_BY_TAG) {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String value = valueCell(row).getStringCellValue();
-				pseudoTestCase.createdBy = value;
+				pseudoTestCase.setCreatedBy(value);
 			}
 		});
 		// created on populator
@@ -180,10 +180,10 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				try {
 					String value = valueCell(row).getStringCellValue();
-					pseudoTestCase.createdOn = value;
+					pseudoTestCase.setCreatedOn(value);
 				} catch (IllegalStateException e) {
 					Date value = valueCell(row).getDateCellValue();
-					pseudoTestCase.createdOnDate = value;
+					pseudoTestCase.setCreatedOnDate(value);
 				}
 			}
 		});
@@ -191,7 +191,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		fieldPopulators.add(new FieldPopulator(PREREQUISITE_TAG) {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String value = valueCell(row).getStringCellValue();
-				pseudoTestCase.prerequisites.add(value);
+				pseudoTestCase.getPrerequisites().add(value);
 			}
 		});
 		// action step populator
@@ -204,7 +204,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 					expectation = cell2.getStringCellValue();
 				}
 				String[] stepInfo = pairedString(action, expectation);
-				pseudoTestCase.stepElements.add(stepInfo);
+				pseudoTestCase.getStepElements().add(stepInfo);
 			}
 		});
 	}
@@ -307,13 +307,13 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 	private TestCase setTestCaseCreatedOnByInfos(PseudoTestCase pseudoTestCase, ImportSummaryImpl summary,
 			TestCase testCase) {
-		if ((pseudoTestCase.createdOnDate != null) && (pseudoTestCase.createdBy != null)) {
-			testCase = new TestCase(pseudoTestCase.createdOnDate, pseudoTestCase.createdBy);
+		if ((pseudoTestCase.getCreatedOnDate() != null) && (pseudoTestCase.getCreatedBy() != null)) {
+			testCase = new TestCase(pseudoTestCase.getCreatedOnDate(), pseudoTestCase.getCreatedBy());
 
-		} else if ((pseudoTestCase.createdOn != null) && (pseudoTestCase.createdBy != null)) {
+		} else if ((pseudoTestCase.getCreatedOn() != null) && (pseudoTestCase.getCreatedBy() != null)) {
 			try {
-				Date createdDate = new SimpleDateFormat("dd/MM/yyyy").parse(pseudoTestCase.createdOn);
-				testCase = new TestCase(createdDate, pseudoTestCase.createdBy);
+				Date createdDate = new SimpleDateFormat("dd/MM/yyyy").parse(pseudoTestCase.getCreatedOn());
+				testCase = new TestCase(createdDate, pseudoTestCase.getCreatedBy());
 
 			} catch (ParseException ex) {
 				LOGGER.warn(ex.getMessage());

@@ -214,7 +214,7 @@ public class LockedFileInferenceGraph extends
 		return false;
 	}
 
-	class Node extends GraphNode<Node> {
+	static class Node extends GraphNode<Node> {
 
 		private Boolean deletable = true;
 		private Integer parentDeletableCount = 0;

@@ -21,8 +21,8 @@
 package org.squashtest.tm.service.deletion;
 
 public final class Node{
-	public Long resid;
-	public String rel;
+	private Long resid;
+	private String rel;
 	public Node(Long id, String nodetype){
 		this.resid = id;
 		this.rel = nodetype;

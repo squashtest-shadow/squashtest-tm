@@ -266,19 +266,19 @@ public class CustomFieldValueConfigurationBean {
 			this.setSelected(value.getValue());
 		}
 
-		public void addOption(String option) {
+		public final void addOption(String option) {
 			data.put(option, option);
 		}
 
-		public void setSelected(String option) {
+		public final void setSelected(String option) {
 			data.put(SELECTED, option);
 		}
 
-		public void addOption(CustomFieldOption option) {
+		public final void addOption(CustomFieldOption option) {
 			data.put(option.getLabel(), option.getLabel());
 		}
 
-		public void setSelected(CustomFieldOption option) {
+		public final  void setSelected(CustomFieldOption option) {
 			data.put(SELECTED, option.getLabel());
 		}
 

@@ -106,23 +106,23 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 		// format the result
 		TestCaseImportanceStatistics stats = new TestCaseImportanceStatistics();
 
-		TestCaseImportance _importance;
-		Integer _cardinality;
+		TestCaseImportance importance;
+		Integer cardinality;
 		for (Object[] tuple : tuples) {
-			_importance = (TestCaseImportance)tuple[0];
-			_cardinality = ((Long) tuple[1]).intValue();
-			switch (_importance) {
+			importance = (TestCaseImportance)tuple[0];
+			cardinality = ((Long) tuple[1]).intValue();
+			switch (importance) {
 			case VERY_HIGH:
-				stats.setVeryHigh(_cardinality);
+				stats.setVeryHigh(cardinality);
 				break;
 			case HIGH:
-				stats.setHigh(_cardinality);
+				stats.setHigh(cardinality);
 				break;
 			case MEDIUM:
-				stats.setMedium(_cardinality);
+				stats.setMedium(cardinality);
 				break;
 			case LOW:
-				stats.setLow(_cardinality);
+				stats.setLow(cardinality);
 				break;
 			default:
 				LOGGER.warn("TestCaseStatisticsService cannot handle the following TestCaseImportance value : '"
@@ -150,26 +150,26 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 		// format the result
 		TestCaseStatusesStatistics stats = new TestCaseStatusesStatistics();
 
-		TestCaseStatus _status;
-		Integer _cardinality;
+		TestCaseStatus status;
+		Integer cardinality;
 		for (Object[] tuple : tuples) {
-			_status = (TestCaseStatus)tuple[0];
-			_cardinality = ((Long) tuple[1]).intValue();
-			switch (_status) {
+			status = (TestCaseStatus)tuple[0];
+			cardinality = ((Long) tuple[1]).intValue();
+			switch (status) {
 			case WORK_IN_PROGRESS:
-				stats.setWorkInProgress(_cardinality);
+				stats.setWorkInProgress(cardinality);
 				break;
 			case APPROVED:
-				stats.setApproved(_cardinality);
+				stats.setApproved(cardinality);
 				break;
 			case OBSOLETE:
-				stats.setObsolete(_cardinality);
+				stats.setObsolete(cardinality);
 				break;
 			case TO_BE_UPDATED:
-				stats.setToBeUpdated(_cardinality);
+				stats.setToBeUpdated(cardinality);
 				break;
 			case UNDER_REVIEW:
-				stats.setUnderReview(_cardinality);
+				stats.setUnderReview(cardinality);
 				break;
 
 			}
@@ -194,18 +194,18 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 
 		TestCaseSizeStatistics stats = new TestCaseSizeStatistics();
 
-		Integer _sizeClass;
-		Integer _count;
+		Integer sizeClass;
+		Integer count;
 		for(Object[] tuple : tuples){
 			
-			_sizeClass= (Integer)tuple[0];
-			_count = ((BigInteger)tuple[1]).intValue();
+			sizeClass= (Integer)tuple[0];
+			count = ((BigInteger)tuple[1]).intValue();
 			
-			switch(_sizeClass){
-				case 0 : stats.setZeroSteps(_count); break;
-				case 1 : stats.setBetween0And10Steps(_count); break;
-				case 2 : stats.setBetween11And20Steps(_count); break;
-				case 3 : stats.setAbove20Steps(_count); break;
+			switch(sizeClass){
+				case 0 : stats.setZeroSteps(count); break;
+				case 1 : stats.setBetween0And10Steps(count); break;
+				case 2 : stats.setBetween11And20Steps(count); break;
+				case 3 : stats.setAbove20Steps(count); break;
 				default : throw new RuntimeException("TestCaseStatisticsServiceImpl#gatherTestCaseSizeStatistics : "+
 													 "there should not be a sizeclass <0 or >3. It's a bug.");
 				
