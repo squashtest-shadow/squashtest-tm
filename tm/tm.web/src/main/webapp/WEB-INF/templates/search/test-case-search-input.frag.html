@@ -54,24 +54,25 @@
 - référence 
 - description -->
 			<div id="test-case-search-input-panel" th:fragment="test-case-search-input">
-			<div id="test-case-search-input-form-panel">
-			 <script type="text/javascript" th:inline="javascript">
-			    /* <![CDATA[ */
-			      squashtm.message = {};
-			      squashtm.message.cache = {};
-			      /* ]]> */
-			    </script>
-			 	<script>
-						require([ "common" ], function(common) {
-						require([ "jquery",  "domReady","./search/TestCaseSearchInputPanel" ], function($, domReady, TestCaseSearchInputPanel) {
-							domReady(function() {
-							
-								new TestCaseSearchInputPanel();
+				<div id="test-case-search-input-form-panel">
+				 <script type="text/javascript" th:inline="javascript">
+				    /* <![CDATA[ */
+				      squashtm.message = {};
+				      squashtm.message.cache = {};
+				      /* ]]> */
+				    </script>
+				 	<script>
+							require([ "common" ], function(common) {
+							require([ "jquery",  "domReady","./search/TestCaseSearchInputPanel" ], function($, domReady, TestCaseSearchInputPanel) {
+								domReady(function() {
 								
+									new TestCaseSearchInputPanel();
+									
+									});
 								});
 							});
-						});
-				</script>
+					</script>
+				
 				<script id="toggle-panel-template" type="text/x-handlebars-template">
 				<div class="toggle-panel">
 					<span class="not-displayed toogle-panel-buttons"></span>
@@ -81,153 +82,32 @@
 					</div>
 				</div>
 				</script>
+					
+				<script id="textfield-template" type="text/x-handlebars-template">
+				<div class="display-table-row">
+                  	<label for="{{text-field-id}}" class="display-table-cell">{{text-field-title}}</label>
+                    <input id="{{text-field-id}}" class="search-input" type="text"/>
+                </div>
+				</script>
 				
-				<div class="toggle-panel">
-					<span class="not-displayed toogle-panel-buttons"></span>
-					<div id="general-information-panel" class="description-panel toggle-panel-main">
-						<div class="display-table" id="general-information-panel-table">
-                  			<div class="display-table-row">
-                  				<label for="test-case-label" class="display-table-cell" th:text="#{label.Label}"></label>
-                    			<input id="test-case-label" type="text"/>
-                    		</div>
-                  			<div class="display-table-row">
-                  				<label for="test-case-id" class="display-table-cell">ID</label>
-                    			<input id="test-case-id" type="text"/>
-                    		</div>
-                    		<div class="display-table-row">
-                  				<label for="test-case-reference" class="display-table-cell" th:text="#{label.reference}"></label>
-                    			<input id="test-case-reference" type="text"/>
-                    		</div>
-                    		<div class="display-table-row">
-                  				<label for="test-case-description" class="display-table-cell" th:text="#{label.Description}"></label>
-                    			<input id="test-case-description" type="text"/>
-                    		</div>
-						</div>
-					</div>
-				</div>
-
-
-<!-- Lorsque certains critères sont cochés, le bandeau affiche : 'Importance: sélection'
-Les importances sont présentées sous la forme d'une liste :
-- Très haute
-- Haute
-- Moyenne
-- Faible
-Une sélection multiple est possible par le raccourci Ctrl + Clic -->
-				<div class="toggle-panel">
-					<span class="not-displayed toogle-panel-buttons"></span>
-					<div id="importance-panel" class="description-panel toggle-panel-main">
-						<div class="display-table" id="importance-panel-table">
-                  			<div class="display-table-row">
-                  				<label for="test-case-importance" class="display-table-cell" th:text="#{test-case.importance.label}"></label>
-                    			<input id="test-case-importance" type="text"/>
-                    		</div>	
-                    	</div>				
-					</div>
-				</div>
-<!--  Le bloc escamotable prérequis propose un champ de saisie de texte libre à l'image du champ libellé. -->
-
-				<div class="toggle-panel">
-					<span class="not-displayed toogle-panel-buttons"></span>
-					<div id="prerequisite-panel" class="description-panel toggle-panel-main">
-						<div class="display-table" id="prerequisite-panel-table">
-                  			<div class="display-table-row">
-                  				<label for="test-case-prerequisite" class="display-table-cell" th:text="#{test-case.prerequisite.label}"></label>
-                    			<input id="test-case-prerequisite" type="text"/>
-                    		</div>	
-                    	</div>		
-					</div>
-				</div>
-<!-- Lorsque certains critères sont cochés, le bandeau affiche : 'Associations: sélection'
-Les type d'associations sont présentées sous la forme d'une liste :
-- toutes
-- à une exigence
-- à une itération
-- à une exécution
-=> Pour les critères 'à une exigence' et 'à une itération', une combobox propose les choix suivants :
-   - tous
-   - associé(s)
-   - non-associé(s)   -->
-				<div class="toggle-panel">
-					<span class="not-displayed toogle-panel-buttons"></span>
-					<div id="association-panel" class="description-panel toggle-panel-main">
-						<div class="display-table" id="association-panel-table">
-                  			<div class="display-table-row">
-                  				<label for="test-case-association" class="display-table-cell" th:text="#{label.Search}"></label>
-                    			<input id="test-case-association" type="text"/>
-                    		</div>	
-                    	</div>		
-						<div class="display-table" id="cuf-infos-table">
-                  			<div class="display-table-row">
-                  				<label for="test-case-req-association" class="display-table-cell" th:text="#{label.Search}"></label>
-                    			<input id="test-case-req-association" type="text"/>
-                    		</div>	
-                    	</div>		
-						<div class="display-table" id="cuf-infos-table">
-                  			<div class="display-table-row">
-                  				<label for="test-case-it-association" class="display-table-cell" th:text="#{label.Search}"></label>
-                    			<input id="test-case-it-association" type="text"/>
-                    		</div>	
-                    	</div>		
-					</div>
-				</div>
-<!-- Lorsque certains critères sont cochés, le bandeau affiche : 'Projets: sélection'
-Les projets sont présentés sous la forme d'une liste :
-- tous les projets
-- projets sélectionnés -->
-				<div class="toggle-panel">
-					<span class="not-displayed toogle-panel-buttons"></span>
-					<div id="project-panel" class="description-panel toggle-panel-main">
-						<div class="display-table" id="project-panel-table">
-                  			<div class="display-table-row">
-                  				<label for="test-case-label" class="display-table-cell" th:text="#{label.Search}"></label>
-                    			<input id="test-case-label" type="text"/>
-                    		</div>	
-                    	</div>		
-						<div class="display-table" id="cuf-infos-table">
-                  			<div class="display-table-row">
-                  				<label for="test-case-label" class="display-table-cell" th:text="#{label.Search}"></label>
-                    			<input id="test-case-label" type="text"/>
-                    		</div>	
-                    	</div>		
-					</div>	
-				</div>
-<!-- Le bloc création/modification propose un menu déroulant offrant deux options :
-1. Créé par :
-2. Modifié par :
-=> En fonction de la sélection, une liste déroulante propose à la sélection les logins des utilisateurs habilités sur le projet répondant à chacun des critères.  -->
-				<div class="toggle-panel">
-					<span class="not-displayed toogle-panel-buttons"></span>
-					<div id="creation-panel" class="description-panel toggle-panel-main">
-						<div class="display-table" id="creation-panel-table">
-                  			<div class="display-table-row">
-                  				<label for="test-case-label" class="display-table-cell" th:text="#{label.Search}"></label>
-                    			<input id="test-case-label" type="text"/>
-                    		</div>	
-                    	</div>		
-						<div class="display-table" id="cuf-infos-table">
-                  			<div class="display-table-row">
-                  				<label for="test-case-label" class="display-table-cell" th:text="#{label.Search}"></label>
-                    			<input id="test-case-label" type="text"/>
-                    		</div>	
-                    	</div>		
-					</div>
-				</div>
+				<script id="textarea-template" type="text/x-handlebars-template">
+				<div class="display-table-row">
+                  	<label for="{{text-area-id}}" class="display-table-cell">{{text-area-title}}</label>
+                    <textarea id="{{text-area-id}}" class="search-input"></textarea>
+                </div>
+				</script>
 				
-								
-				<div class="toggle-panel">
-					<span class="not-displayed toogle-panel-buttons"></span>
-					<div id="cuf-panel" class="description-panel toggle-panel-main">
-						<div class="display-table" id="cuf-panel-table">
-
-                    	</div>				
-					</div>
-				</div>
+				<script id="multiselect-template" type="text/x-handlebars-template">
+				<div class="display-table-row">
+                  	<label for="{{multiselect-id}}" class="display-table-cell">{{multiselect-title}}</label>
+                    <select multiple="multiple" id="{{multiselect-id}}" class="search-input"></select>
+                </div>
+				</script>	
 				
+				</div>
 				<div class="toolbar-button-panel">
 					<input id="test-case-search-button" type="button" th:value="#{label.Search}" class="button ui-button ui-widget ui-state-default ui-corner-all"/> 
 				</div>	
-			</div>
 			</div>
 <!-- /TAB FRAGMENT -->
   		</div>

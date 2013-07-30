@@ -25,23 +25,27 @@ import java.util.List;
 
 public class SearchInputFieldModel {
 
-	private String name;
+	private String title;
+	
+	private boolean internationalized = true;
 	
 	private String inputType;
+	
+	private String id;
 
 	private List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>();
 	
 	public SearchInputFieldModel(){
-		
 	}
 	
-	public SearchInputFieldModel(String name, String inputType){
-		this.name = name;
+	public SearchInputFieldModel(String id, String title, String inputType){
+		this.id = id;
+		this.title = title;
 		this.inputType = inputType;
 	}
 
-	public SearchInputFieldModel(String name, String inputType, List<SearchInputPossibleValueModel> possibleValues){
-		this(name,inputType);
+	public SearchInputFieldModel(String id, String title, String inputType, List<SearchInputPossibleValueModel> possibleValues){
+		this(id, title, inputType);
 		this.possibleValues = possibleValues;
 	}
 	
@@ -61,19 +65,35 @@ public class SearchInputFieldModel {
 		this.inputType = inputType;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public List<SearchInputPossibleValueModel> getPossibleValues() {
 		return possibleValues;
 	}
 
 	public void setPossibleValues(List<SearchInputPossibleValueModel> possibleValues) {
 		this.possibleValues = possibleValues;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public boolean isInternationalized() {
+		return internationalized;
+	}
+
+	public void setInternationalized(boolean internationalized) {
+		this.internationalized = internationalized;
 	}
 }

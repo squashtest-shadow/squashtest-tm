@@ -31,14 +31,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 
 		initialize : function() {
 			this.getInputInterfaceModel();
-			this.makeGeneralInfoTogglePanel();
-			this.makeCUFTogglePanel();
-			this.makeImportanceTogglePanel();
-			this.makePrerequisiteTogglePanel();
-			this.makeAssociationTogglePanel();
-			this.makeProjectTogglePanel();
-			this.makeCreationTogglePanel();
-
+			this.model = {fields : []};
 		},
 
 		events : {
@@ -55,19 +48,101 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 				$.each(json, function(key, value) {
 					$.each(value, function(key, val){
 						var source = $("#toggle-panel-template").html();
-						var template = Handlebars.compile(source);
-						var context = {"toggle-panel-id": val.id+"-panel-id", 
-								       "toggle-panel-table-id": val.id+"-panel-table-id"};
-						var html = template(context);
-						$("#test-case-search-input-form-panel").append(html);
-						self.makeTogglePanel(val.id+"-panel-id",val.name,true);
+						if(source){
+							var template = Handlebars.compile(source);
+							var context = {"toggle-panel-id": val.id+"-panel-id", 
+									       "toggle-panel-table-id": val.id+"-panel-table-id"};
+							var tableid = val.id+"-panel-table-id";
+							var html = template(context);
+							$("#test-case-search-input-form-panel").append(html);
+							var i;
+							for(i=0; i<val.fields.length; i++){
+								if(val.fields[i].inputType == "textfield"){
+									self.makeTextField(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].internationalized);
+								} else if (val.fields[i].inputType == "textarea"){
+									self.makeTextArea(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].internationalized);
+								} else if (val.fields[i].inputType == "multiselect"){
+									self.makeMultiselect(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].internationalized, val.fields[i].possibleValues);
+								}
+							}
+							self.makeTogglePanel(val.id+"-panel-id",val.title,val.open);
+						}
 					});
 				});
 			});
 		},
+				
+		makeTextField : function(tableId, textFieldId, textFieldTitle, internationalized) {
+			
+			var title;
+			if(internationalized){
+				title = translator.get(textFieldTitle);
+			} else {
+				title = textFieldTitle;
+			}
+			 
+			var source = $("#textfield-template").html();
+			var template = Handlebars.compile(source);
+			var context = {"text-field-id": textFieldId, 
+				           "text-field-title": title};
+			var html = template(context);
+			$("#"+tableId).append(html);
+		},
+		
+		makeTextArea : function(tableId, textFieldId, textFieldTitle, internationalized) {
 
+			var title;
+			if(internationalized){
+				title = translator.get(textFieldTitle);
+			} else {
+				title = textFieldTitle;
+			}
+			
+			var source = $("#textarea-template").html();
+			var template = Handlebars.compile(source);
+			var context = {"text-area-id": textFieldId, 
+				           "text-area-title": title};
+			var html = template(context);
+			$("#"+tableId).append(html);
+		},
+		
+		makeMultiselect : function(tableId, textFieldId, textFieldTitle, internationalized, options) {
+	
+			var title;
+			if(internationalized){
+				title = translator.get(textFieldTitle);
+			} else {
+				title = textFieldTitle;
+			}
+			
+			var source = $("#multiselect-template").html();
+			var template = Handlebars.compile(source);
+			var context = {"multiselect-id": textFieldId, 
+				           "multiselect-title": title};
+			var html = template(context);
+			$("#"+tableId).append(html);
+			
+			var i;
+			for(i=0; i<options.length; i++){
+				var option = "<option value='"+options[i].code+"'>"+options[i].value+"</option>";
+				$("#"+textFieldId).append(option);
+			}
+		},
+			
+		extractSearchModel : function(){
+			var fields = $(".search-input");
+			var model = {};
+			var i;
+			for(i=0; i<fields.length; i++){
+				var val = {"id" : fields[i].id,
+				           "val" : $(fields[i]).val()};
+				this.model.fields.push(val);
+			}
+		},
+		
 		showResults : function() {
-
+			var self = this;
+			this.extractSearchModel();
 			var results = $.ajax(
 					{
 						url : squashtm.app.contextRoot
@@ -81,7 +156,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 									domReady, TestCaseSearchInputPanel) {
 								domReady(function() {
 
-									new SearchResultPage();
+									new SearchResultPage(self.model);
 
 								});
 							});
@@ -97,77 +172,6 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 				title : title
 			};
 			this.$("#"+id).togglePanel(infoSettings);
-		},
-		
-		makeCUFTogglePanel : function() {
-			var title = translator.get("search.testcase.cuf.panel.title");
-
-			var infoSettings = {
-				initiallyOpen : false,
-				title : title
-			};
-			this.$("#cuf-panel").togglePanel(infoSettings);
-		},
-
-		makeGeneralInfoTogglePanel : function() {
-			var title = translator
-					.get("search.testcase.generalinfos.panel.title");
-
-			var infoSettings = {
-				initiallyOpen : true,
-				title : title
-			};
-			this.$("#general-information-panel").togglePanel(infoSettings);
-		},
-
-		makeImportanceTogglePanel : function() {
-			var title = translator
-					.get("search.testcase.importance.panel.title");
-			var infoSettings = {
-				initiallyOpen : false,
-				title : title
-			};
-			this.$("#importance-panel").togglePanel(infoSettings);
-		},
-
-		makePrerequisiteTogglePanel : function() {
-			var title = translator
-					.get("search.testcase.prerequisite.panel.title");
-			var infoSettings = {
-				initiallyOpen : true,
-				title : title
-			};
-			this.$("#prerequisite-panel").togglePanel(infoSettings);
-		},
-
-		makeAssociationTogglePanel : function() {
-			var title = translator
-					.get("search.testcase.association.panel.title");
-			var infoSettings = {
-				initiallyOpen : false,
-				title : title
-			};
-			this.$("#association-panel").togglePanel(infoSettings);
-		},
-
-		makeProjectTogglePanel : function() {
-			var title = translator.get("search.testcase.project.panel.title");
-			var infoSettings = {
-				initiallyOpen : false,
-				title : title
-
-			};
-			this.$("#project-panel").togglePanel(infoSettings);
-		},
-
-		makeCreationTogglePanel : function() {
-			var title = translator.get("search.testcase.creation.panel.title");
-			var infoSettings = {
-				initiallyOpen : true,
-				title : title
-
-			};
-			this.$("#creation-panel").togglePanel(infoSettings);
 		}
 
 	});

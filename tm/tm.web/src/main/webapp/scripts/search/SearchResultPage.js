@@ -29,13 +29,13 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		expanded : false,
 		el : "#test-case-search-results",
 
-		initialize : function() {
+		initialize : function(model) {
 			self = this;
 			this.expanded = false;
 			this.toggleTree();
 			this.configureModifyResultsDialog();
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
-			new TestCaseSearchResultTable();
+			new TestCaseSearchResultTable(model);
 		},
 
 		events : {

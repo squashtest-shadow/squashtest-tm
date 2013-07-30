@@ -137,6 +137,18 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	}
 
 	@Override
+	public List<GenericProject> findProjectWithPermissionByParty(long partyId) {
+		List<GenericProject> newResult = new ArrayList<GenericProject>();
+		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAMES);
+		for (Object[] objects : result) {
+			GenericProject project = genericProjectFinder.findById((Long) objects[0]);
+			newResult.add(project);
+		}
+		return newResult;
+	}
+
+	
+	@Override
 	public List<ProjectPermission> findProjectPermissionByUserLogin(String userLogin) {
 		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
 		List<Object[]> result = aclService.retrieveClassAclGroupFromUserLogin(userLogin, PROJECT_CLASS_NAMES);

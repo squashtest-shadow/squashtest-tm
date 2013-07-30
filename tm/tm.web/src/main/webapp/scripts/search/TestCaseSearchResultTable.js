@@ -23,7 +23,8 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 
 	var TestCaseSearchResultTable = Backbone.View.extend({
 		el : "#test-case-search-result-table",
-		initialize : function() {
+		initialize : function(model) {
+			this.model = model;
 			this.addSelectEditableToImportance = $.proxy(this._addSelectEditableToImportance, this);
 			this.addSimpleEditableToReference = $.proxy(this._addSimpleEditableToReference, this);
 			this.addSimpleEditableToLabel = $.proxy(this._addSimpleEditableToLabel, this);

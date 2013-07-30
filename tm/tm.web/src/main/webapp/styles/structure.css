@@ -565,6 +565,16 @@ div#tree { /*top:0.8cm;*/
 	right: 0px;
 }
 
+div#test-case-search-input-panel { /*top:0.8cm;*/
+	top: 1.1cm;
+	bottom: 0px;
+	left: 0px;
+	overflow: auto;
+	/* position de tous les tree faire attention */
+	position: absolute;
+	right: 0px;
+}
+
 div.selection-tree {
 	bottom: 0;
 	overflow: auto;

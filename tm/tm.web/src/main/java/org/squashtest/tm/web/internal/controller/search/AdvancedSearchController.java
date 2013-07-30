@@ -33,8 +33,10 @@ import java.util.Map;
 
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,10 +59,14 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.customfield.CustomCustomFieldManagerService;
 import org.squashtest.tm.service.library.AdvancedSearchService;
+import org.squashtest.tm.service.project.ProjectFilterModificationService;
+import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -87,6 +93,17 @@ public class AdvancedSearchController {
 	@Inject
 	private InternationalizationHelper messageSource;
 	
+	@Inject
+	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
+	
+
+	private ProjectFilterModificationService projectFilterService;
+	
+	@ServiceReference
+	public void setProjectFilterModificationService(ProjectFilterModificationService service){
+		this.projectFilterService = service;
+	}
+
 	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(12)
 	.mapAttribute(Project.class, "name", String.class, "project-name")
 	.mapAttribute(TestCase.class, "id", Long.class, "test-case-id")	
@@ -125,7 +142,7 @@ public class AdvancedSearchController {
 
 	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON)
 	@ResponseBody
-	public SearchInputInterfaceModel getSearchInputInterfaceModel(){
+	public SearchInputInterfaceModel getSearchInputInterfaceModel(Locale locale){
 		
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
@@ -135,6 +152,15 @@ public class AdvancedSearchController {
 		panel.setOpen(true);
 		panel.setId("general-information");
 		model.addPanel(panel);
+
+		SearchInputFieldModel labelField = new SearchInputFieldModel("test-case-label","label.Label","textfield");
+		panel.addField(labelField);
+		SearchInputFieldModel idField = new SearchInputFieldModel("test-case-id","label.id","textfield");
+		panel.addField(idField);
+		SearchInputFieldModel referenceField = new SearchInputFieldModel("test-case-reference","label.reference","textfield");
+		panel.addField(referenceField);
+		SearchInputFieldModel descriptionField = new SearchInputFieldModel("test-case-description","label.Description","textarea");
+		panel.addField(descriptionField);
 		
 		//Importance
 		panel = new SearchInputPanelModel();
@@ -142,6 +168,15 @@ public class AdvancedSearchController {
 		panel.setOpen(false);
 		panel.setId("importance");
 		model.addPanel(panel);
+			
+		SearchInputFieldModel importanceField = new SearchInputFieldModel("test-case-importance","test-case.importance.label","multiselect");
+		panel.addField(importanceField);
+		
+		Map<String,String> map = importanceComboBuilderProvider.get().useLocale(locale).buildMap();
+		for(String key : map.keySet()){
+			SearchInputPossibleValueModel importanceOption = new SearchInputPossibleValueModel(map.get(key),key);
+			importanceField.addPossibleValue(importanceOption);
+		}
 		
 		//Prerequisite
 		panel = new SearchInputPanelModel();
@@ -149,6 +184,9 @@ public class AdvancedSearchController {
 		panel.setOpen(true);
 		panel.setId("prerequisite");
 		model.addPanel(panel);
+
+		SearchInputFieldModel prerequisiteField = new SearchInputFieldModel("test-case-prerequisite","test-case.prerequisite.label","textarea");
+		panel.addField(prerequisiteField);
 		
 		//Associations
 		panel = new SearchInputPanelModel();
@@ -156,23 +194,43 @@ public class AdvancedSearchController {
 		panel.setOpen(false);
 		panel.setId("association");
 		model.addPanel(panel);
-	
+
 		//Projects
 		panel = new SearchInputPanelModel();
-		panel.setTitle("search.testcase.title.panel.title");
+		panel.setTitle("search.testcase.project.panel.title");
 		panel.setOpen(false);
 		panel.setId("project");
 		model.addPanel(panel);
+
+		SearchInputFieldModel projectField = new SearchInputFieldModel("test-case-project","test-case.importance.label","multiselect");
+		panel.addField(projectField);
 		
+		List<Project> projects = this.projectFilterService.getAllProjects();
+		for(Project project : projects){
+			SearchInputPossibleValueModel projectOption = new SearchInputPossibleValueModel(project.getName(),project.getId().toString());
+			projectField.addPossibleValue(projectOption);
+		}
+
 		//Creation/Modification
 		panel = new SearchInputPanelModel();
 		panel.setTitle("search.testcase.creation.panel.title");
 		panel.setOpen(true);
 		panel.setId("creation");
 		model.addPanel(panel);
+
+		SearchInputFieldModel creationOrModificationField = new SearchInputFieldModel("test-case-creation","test-case.importance.label","multiselect");
+		panel.addField(creationOrModificationField);
+		
+		SearchInputPossibleValueModel createdByOption = new SearchInputPossibleValueModel("Créé par","CREATED");
+		SearchInputPossibleValueModel modifiedByOption = new SearchInputPossibleValueModel("Modifié par","MODIFIED");
+		creationOrModificationField.addPossibleValue(createdByOption);
+		creationOrModificationField.addPossibleValue(modifiedByOption);
+			
+		SearchInputFieldModel byField = new SearchInputFieldModel("test-case-by","test-case.importance.label","multiselect");
+		panel.addField(byField);
 		
 		//CUF
-		panel = new SearchInputPanelModel();
+		panel = getCustomFielModel();
 		panel.setTitle("search.testcase.cuf.panel.title");
 		panel.setOpen(false);
 		panel.setId("cuf");
@@ -223,8 +281,7 @@ public class AdvancedSearchController {
 		}
 	}
 	
-	@RequestMapping(value = "/customFields", method = RequestMethod.GET)
-	public SearchInputPanelModel GetCustomFielModel(){
+	public SearchInputPanelModel getCustomFielModel(){
 		List<CustomField> customFields = advancedSearchService.findAllQueryableCustomFieldsByBoundEntityType(BindableEntity.TEST_CASE);
 		return convertToSearchInputPanelModel(customFields);
 	}
@@ -235,11 +292,21 @@ public class AdvancedSearchController {
 			if(org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST.equals(customField.getInputType())){
 				SingleSelectField selectField = customFieldManager.findSingleSelectFieldById(customField.getId());
 				model.getFields().add(convertToSearchInputFieldModel(selectField));
-			} 
+			} else if(org.squashtest.tm.domain.customfield.InputType.PLAIN_TEXT.equals(customField.getInputType())){
+				model.getFields().add(convertToSearchInputFieldModel(customField));
+			}
 		}
 		return model;
 	}
 	
+	private SearchInputFieldModel convertToSearchInputFieldModel(CustomField customField){
+		SearchInputFieldModel model = new SearchInputFieldModel();
+		model.setInputType("textfield");
+		model.setTitle(customField.getLabel());
+		model.setInternationalized(false);
+		model.setId(customField.getCode());
+		return model;
+	}
 	private SearchInputFieldModel convertToSearchInputFieldModel(SingleSelectField selectField){
 		List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>();
 		for(CustomFieldOption option : selectField.getOptions()){
@@ -247,23 +314,9 @@ public class AdvancedSearchController {
 		}
 		SearchInputFieldModel model = new SearchInputFieldModel();
 		model.setInputType("multiselect");
-		model.setName(selectField.getLabel());
+		model.setTitle(selectField.getLabel());
+		model.setInternationalized(false);
 		model.setPossibleValues(possibleValues);
 		return model;
-	}
-		
-	private String convertCustomFieldInputType(org.squashtest.tm.domain.customfield.InputType inputType){
-		
-		String result = "textfield";
-		
-		if(org.squashtest.tm.domain.customfield.InputType.CHECKBOX.equals(inputType)){
-			result = "multiselect";
-		} else if (org.squashtest.tm.domain.customfield.InputType.DATE_PICKER.equals(inputType)){
-			result = "datefields";
-		} else if (org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST.equals(inputType)){
-			result = "multiselect";
-		} 
-		
-		return result;
 	}
 }

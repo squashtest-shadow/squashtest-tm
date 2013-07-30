@@ -63,4 +63,6 @@ public interface ProjectsPermissionFinder {
 	public boolean isInPermissionGroup(long partyId, Long projectId, String permissionGroup);
 	
 	public boolean isInPermissionGroup(String userLogin, Long projectId, String permissionGroup);
+
+	List<GenericProject> findProjectWithPermissionByParty(long partyId);
 }
