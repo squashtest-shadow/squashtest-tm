@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.testcase;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -269,13 +268,21 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	@Override
 	public TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds){
 		
+		Collection<Long> tcIds = findTestCaseIdsFromSelection(libraryIds, nodeIds);
+		
+		return statisticsService.gatherTestCaseStatisticsBundle(tcIds);
+	}
+	
+	
+	public Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds){
+		
 		// filter out unreadable entities		
 		Collection<Long> effectiveLibIds = _collectSecReadableIds(libraryIds, "org.squashtest.tm.domain.testcase.TestCaseLibrary");
-		Collection<Long> effectiveNodeIds = _collectSecReadableIds(nodeIds, "org.squashtest.tm.domain.testcase.TestCaseLibraryNode");
-		
+		Collection<Long> effectiveNodeIds = _collectSecReadableIds(nodeIds, "org.squashtest.tm.domain.testcase.TestCaseLibraryNode");			
 
 		// get all the test cases
 		Collection<Long> tcIds = new ArrayList<Long>();
+		
 		if (! effectiveLibIds.isEmpty()){
 			tcIds.addAll(testCaseDao.findAllTestCaseIdsByLibraries(effectiveLibIds));	
 		}
@@ -283,8 +290,8 @@ public class TestCaseLibraryNavigationServiceImpl extends
 			tcIds.addAll(testCaseDao.findAllTestCaseIdsByNodeIds(effectiveNodeIds));
 		}
 		
+		return tcIds;
 		
-		return statisticsService.gatherTestCaseStatisticsBundle(tcIds);
 	}
 	
 	private Collection<Long> _collectSecReadableIds(Collection<Long> original, String entityType){
