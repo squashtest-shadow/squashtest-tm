@@ -93,7 +93,7 @@
 				<script id="textarea-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
                   	<label for="{{text-area-id}}" class="display-table-cell">{{text-area-title}}</label>
-                    <textarea id="{{text-area-id}}" class="search-input"></textarea>
+                    <textarea id="{{text-area-id}}" cols="15" class="search-input"></textarea>
                 </div>
 				</script>
 				
@@ -103,6 +103,15 @@
                     <select multiple="multiple" id="{{multiselect-id}}" class="search-input"></select>
                 </div>
 				</script>	
+				
+				<script id="date-template" type="text/x-handlebars-template">
+				<div class="display-table-row">
+                  	<label for="{{starting-date-id}}" class="display-table-cell">{{starting-date-title}}</label>
+                    <input id="{{starting-date-id}}" class="search-input" type="text"/>
+                  	<label for="{{ending-date-id}}" class="display-table-cell">{{ending-date-title}}</label>
+                    <input id="{{ending-date-id}}" class="search-input" type="text"/>
+				</div>
+				</script>
 				
 				</div>
 				<div class="toolbar-button-panel">

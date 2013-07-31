@@ -70,7 +70,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		
 		_getIdsOfSelectedTableRowList : function(dataTable) {
 			var rows = dataTable.fnGetNodes();
-			var ids = new Array();
+			var ids = [];
 			
 			$( rows ).each(function(index, row) {
 				if ($( row ).attr('class').search('selected') != -1) {

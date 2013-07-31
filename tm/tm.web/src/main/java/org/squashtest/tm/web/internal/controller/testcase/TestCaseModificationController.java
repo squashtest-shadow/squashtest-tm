@@ -246,7 +246,7 @@ public class TestCaseModificationController {
 
 	@RequestMapping(value = "/importance-combo-data", method = RequestMethod.GET)
 	@ResponseBody
-	public String buildImportanceComboData(TestCase testCase, Locale locale) {
+	public String buildImportanceComboData(Locale locale) {
 		return importanceComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 

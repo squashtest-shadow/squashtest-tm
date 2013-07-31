@@ -104,7 +104,7 @@ public class AdvancedSearchController {
 		this.projectFilterService = service;
 	}
 
-	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(12)
+	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(11)
 	.mapAttribute(Project.class, "name", String.class, "project-name")
 	.mapAttribute(TestCase.class, "id", Long.class, "test-case-id")	
 	.mapAttribute(TestCase.class, "reference", String.class, "test-case-ref")	
@@ -139,19 +139,11 @@ public class AdvancedSearchController {
 		return new TestCaseSearchResultDataTableModelHelper(locale, messageSource, permissionService).buildDataModel(holder, params.getsEcho());
 	}
 	
-
-	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON)
-	@ResponseBody
-	public SearchInputInterfaceModel getSearchInputInterfaceModel(Locale locale){
-		
-		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
-
-		//General infos
+	private SearchInputPanelModel createGeneralInfoPanel(){
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle("search.testcase.generalinfos.panel.title");
 		panel.setOpen(true);
 		panel.setId("general-information");
-		model.addPanel(panel);
 
 		SearchInputFieldModel labelField = new SearchInputFieldModel("test-case-label","label.Label","textfield");
 		panel.addField(labelField);
@@ -162,12 +154,15 @@ public class AdvancedSearchController {
 		SearchInputFieldModel descriptionField = new SearchInputFieldModel("test-case-description","label.Description","textarea");
 		panel.addField(descriptionField);
 		
-		//Importance
-		panel = new SearchInputPanelModel();
+		return panel;
+	}
+	
+	private SearchInputPanelModel createImportancePanel(Locale locale){
+		
+		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle("search.testcase.importance.panel.title");
 		panel.setOpen(false);
 		panel.setId("importance");
-		model.addPanel(panel);
 			
 		SearchInputFieldModel importanceField = new SearchInputFieldModel("test-case-importance","test-case.importance.label","multiselect");
 		panel.addField(importanceField);
@@ -177,31 +172,71 @@ public class AdvancedSearchController {
 			SearchInputPossibleValueModel importanceOption = new SearchInputPossibleValueModel(map.get(key),key);
 			importanceField.addPossibleValue(importanceOption);
 		}
+		return panel;
+	}
+	
+	private SearchInputPanelModel createPrerequisitePanel(){
 		
-		//Prerequisite
-		panel = new SearchInputPanelModel();
+		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle("search.testcase.prerequisite.panel.title");
 		panel.setOpen(true);
 		panel.setId("prerequisite");
-		model.addPanel(panel);
 
 		SearchInputFieldModel prerequisiteField = new SearchInputFieldModel("test-case-prerequisite","test-case.prerequisite.label","textarea");
 		panel.addField(prerequisiteField);
+		return panel;
+	}
+	
+	private SearchInputPanelModel createAssociationPanel(){
 		
-		//Associations
+		SearchInputPanelModel panel = new SearchInputPanelModel();
+		
 		panel = new SearchInputPanelModel();
 		panel.setTitle("search.testcase.association.panel.title");
 		panel.setOpen(false);
 		panel.setId("association");
-		model.addPanel(panel);
+		
+		SearchInputFieldModel associationField = new SearchInputFieldModel("test-case-association","test-case.importance.label","multiselect");
+		panel.addField(associationField);
+		
+		SearchInputPossibleValueModel allOption = new SearchInputPossibleValueModel("Tous","ALL");
+		SearchInputPossibleValueModel requirementOption = new SearchInputPossibleValueModel("A une exigence","REQUIREMENT");
+		SearchInputPossibleValueModel iterationOption = new SearchInputPossibleValueModel("A une itération","ITERATION");
+		SearchInputPossibleValueModel executionOption = new SearchInputPossibleValueModel("A une exécution","EXECUTION");
+		
+		associationField.addPossibleValue(allOption);
+		associationField.addPossibleValue(requirementOption);
+		associationField.addPossibleValue(iterationOption);
+		associationField.addPossibleValue(executionOption);
+		
+		SearchInputPossibleValueModel associatedOption = new SearchInputPossibleValueModel("Associé","ASSOCIATED");
+		SearchInputPossibleValueModel notAssociatedOption = new SearchInputPossibleValueModel("Non associé","NOT_ASSOCIATED");
+		
+		
+		SearchInputFieldModel requirementField = new SearchInputFieldModel("test-case-association-requirement","test-case.importance.label","multiselect");
+		panel.addField(requirementField);
+		
+		requirementField.addPossibleValue(allOption);
+		requirementField.addPossibleValue(associatedOption);
+		requirementField.addPossibleValue(notAssociatedOption);
+		
+		SearchInputFieldModel iterationField = new SearchInputFieldModel("test-case-association-iteration","test-case.importance.label","multiselect");
+		panel.addField(iterationField);
 
-		//Projects
-		panel = new SearchInputPanelModel();
+		iterationField.addPossibleValue(allOption);
+		iterationField.addPossibleValue(associatedOption);
+		iterationField.addPossibleValue(notAssociatedOption);
+		
+		return panel;
+	}
+	
+	private SearchInputPanelModel createProjectPanel(){
+	
+		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle("search.testcase.project.panel.title");
 		panel.setOpen(false);
 		panel.setId("project");
-		model.addPanel(panel);
-
+	
 		SearchInputFieldModel projectField = new SearchInputFieldModel("test-case-project","test-case.importance.label","multiselect");
 		panel.addField(projectField);
 		
@@ -210,14 +245,17 @@ public class AdvancedSearchController {
 			SearchInputPossibleValueModel projectOption = new SearchInputPossibleValueModel(project.getName(),project.getId().toString());
 			projectField.addPossibleValue(projectOption);
 		}
-
-		//Creation/Modification
-		panel = new SearchInputPanelModel();
+		
+		return panel;
+	}
+	
+	private SearchInputPanelModel createCreationPanel(){
+		
+		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle("search.testcase.creation.panel.title");
 		panel.setOpen(true);
 		panel.setId("creation");
-		model.addPanel(panel);
-
+	
 		SearchInputFieldModel creationOrModificationField = new SearchInputFieldModel("test-case-creation","test-case.importance.label","multiselect");
 		panel.addField(creationOrModificationField);
 		
@@ -228,13 +266,44 @@ public class AdvancedSearchController {
 			
 		SearchInputFieldModel byField = new SearchInputFieldModel("test-case-by","test-case.importance.label","multiselect");
 		panel.addField(byField);
+		return panel;
+	}
+	
+	private SearchInputPanelModel createCUFPanel(){
 		
-		//CUF
-		panel = getCustomFielModel();
+		SearchInputPanelModel panel = getCustomFielModel();
 		panel.setTitle("search.testcase.cuf.panel.title");
 		panel.setOpen(false);
 		panel.setId("cuf");
-		model.addPanel(panel);
+		return panel;
+	}
+	
+	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON)
+	@ResponseBody
+	public SearchInputInterfaceModel getSearchInputInterfaceModel(Locale locale){
+		
+		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
+
+		//General infos
+		model.addPanel(createGeneralInfoPanel());
+		
+		//Importance
+		model.addPanel(createImportancePanel(locale));
+		
+		//Prerequisite
+		model.addPanel(createPrerequisitePanel());
+		
+		//Associations
+		model.addPanel(createAssociationPanel());
+
+		//Projects
+		model.addPanel(createProjectPanel());
+
+		//Creation/Modification
+		model.addPanel(createCreationPanel());
+		
+		//CUF
+		model.addPanel(createCUFPanel());
 		
 		return model;
 	}
@@ -294,8 +363,28 @@ public class AdvancedSearchController {
 				model.getFields().add(convertToSearchInputFieldModel(selectField));
 			} else if(org.squashtest.tm.domain.customfield.InputType.PLAIN_TEXT.equals(customField.getInputType())){
 				model.getFields().add(convertToSearchInputFieldModel(customField));
+			} else if(org.squashtest.tm.domain.customfield.InputType.CHECKBOX.equals(customField.getInputType())){
+				model.getFields().add(createCheckBoxField(customField));
 			}
 		}
+		return model;
+	}
+	
+	private SearchInputFieldModel createCheckBoxField(CustomField customField){
+		SearchInputFieldModel model = new SearchInputFieldModel();
+
+		List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>();
+		
+		possibleValues.add(new SearchInputPossibleValueModel("tout", "ALL"));
+		possibleValues.add(new SearchInputPossibleValueModel("vrai", "TRUE"));
+		possibleValues.add(new SearchInputPossibleValueModel("faux", "FALSE"));
+		
+		model.setPossibleValues(possibleValues);
+		model.setInputType("multiselect");
+		model.setTitle(customField.getLabel());
+		model.setInternationalized(false);
+		model.setId(customField.getCode());
+		
 		return model;
 	}
 	
@@ -317,6 +406,7 @@ public class AdvancedSearchController {
 		model.setTitle(selectField.getLabel());
 		model.setInternationalized(false);
 		model.setPossibleValues(possibleValues);
+		model.setId(selectField.getCode());
 		return model;
 	}
 }

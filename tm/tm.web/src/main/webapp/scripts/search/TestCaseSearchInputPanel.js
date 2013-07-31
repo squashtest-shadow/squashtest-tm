@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
-		"app/util/StringUtil", "./SearchResultPage", , "jquery.squash",
+		"app/util/StringUtil", "./SearchResultPage", "jquery.squash",
 		"jqueryui", "jquery.squash.togglepanel", "jquery.squash.datatables",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, _,

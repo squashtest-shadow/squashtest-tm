@@ -49,11 +49,11 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 				}, {
 					"aTargets" : [ 1 ],
 					"mDataProp" : "project-name",
-					"bSortable" : false,
+					"bSortable" : false
 				}, {		
 					"aTargets" : [ 2 ],
 					"mDataProp" : "test-case-id",
-					"bSortable" : false,
+					"bSortable" : false
 				}, {
 					"aTargets" : [ 3 ],
 					"mDataProp" : "test-case-ref",

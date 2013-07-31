@@ -36,6 +36,7 @@
     <js>/scripts/project/**.js</js>
     <js>/scripts/projects-manager/**.js</js>
     <js>/scripts/squash/**.js</js>
+    <js>/scripts/search/**.js</js>
     <js>/scripts/squashtest/**.js</js>
     <js>/scripts/team-editor/**.js</js>
     <js>/scripts/teams-manager/**.js</js>

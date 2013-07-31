@@ -22,7 +22,6 @@ package org.squashtest.tm.domain.event;
 
 import org.springframework.security.core.Authentication
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.event.AbstractRequirementEventPublisher;
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementStatus
