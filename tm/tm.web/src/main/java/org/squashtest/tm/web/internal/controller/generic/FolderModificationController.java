@@ -44,7 +44,7 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public final ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
+	public  ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
 		FOLDER folder = getFolderModificationService().findFolder(folderId);
 
 		ModelAndView mav = new ModelAndView("fragment/generics/edit-folder");

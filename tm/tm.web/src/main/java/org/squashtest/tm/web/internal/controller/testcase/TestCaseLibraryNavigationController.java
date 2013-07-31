@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.testcase;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -33,8 +34,8 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -54,6 +55,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.TestCaseFormModelValidator;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
@@ -74,21 +76,24 @@ public class TestCaseLibraryNavigationController extends
 	@Inject
 	private Provider<DriveNodeBuilder> driveNodeBuilder;
 
+	@Inject
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
 	
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/test-case-export.jasper";
 
 	
-	@ServiceReference
-	public void setTestCaseLibraryNavigationService(TestCaseLibraryNavigationService testCaseLibraryNavigationService) {
-		this.testCaseLibraryNavigationService = testCaseLibraryNavigationService;
-	}
 
 	@Override
 	protected LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> getLibraryNavigationService() {
 		return testCaseLibraryNavigationService;
 	}
 
+	
+
+	@Override
+	protected String getShowLibraryViewName() {
+		return "page/test-case-libraries/show-test-case-library";
+	}
 
 	@Override
 	protected JsTreeNode createTreeNodeFromLibraryNode(TestCaseLibraryNode node) {
@@ -119,9 +124,9 @@ public class TestCaseLibraryNavigationController extends
 		return createTreeNodeFromLibraryNode(testCase);
 	}
 
+	
 	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST)
-	public @ResponseBody
-	JsTreeNode addNewTestCaseToFolder(@PathVariable long folderId,
+	public @ResponseBody JsTreeNode addNewTestCaseToFolder(@PathVariable long folderId,
 			@Valid @ModelAttribute("add-test-case") TestCaseFormModel testCaseModel){
 		
 		TestCase testCase = testCaseModel.getTestCase();
@@ -135,10 +140,6 @@ public class TestCaseLibraryNavigationController extends
 	
 
 
-	@Override
-	protected String getShowLibraryViewName() {
-		return "page/test-case-libraries/show-test-case-library";
-	}
 
 	@RequestMapping(value = "/import/upload", method = RequestMethod.POST, params = "upload-ticket")
 	public ModelAndView importArchive(@RequestParam("archive") MultipartFile archive,
@@ -215,13 +216,33 @@ public class TestCaseLibraryNavigationController extends
 	void exportLibrary(@RequestParam("tab[]") List<Long> libraryIds, @RequestParam("name") String filename, @RequestParam("format") String format,
 			HttpServletResponse response, Locale locale) {
 
-		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService
-				.findTestCasesToExportFromLibrary(libraryIds);
+		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExportFromLibrary(libraryIds);
+		
 		escapePrerequisiteAndSteps(dataSource);
 		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, format);
 
 	}
 
+	
+	// ****************************** statistics section *******************************
+	
+	@RequestMapping (value = "/statistics", method = RequestMethod.GET, produces="application/json", params = {"libraries", "nodes"})
+	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(@RequestParam("libraries") Collection<Long> libraryIds, 
+																	  @RequestParam("nodes") Collection<Long> nodeIds){
+		
+		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
+	}
+	
+	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces="text/html", params = {"libraries", "nodes"})
+	public String getDashboard(Model model, @RequestParam("libraries") Collection<Long> libraryIds, 
+											@RequestParam("nodes") Collection<Long> nodeIds){
+		
+		TestCaseStatisticsBundle stats = testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
+		
+		model.addAttribute("initialStatistics", stats);
+		
+		return "null";
+	}
 	
 
 }

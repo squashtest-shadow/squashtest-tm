@@ -132,27 +132,5 @@ public interface TestCaseLibraryNavigationService extends
 	 */
 	List<ExportTestCaseData> findTestCasesToExportFromNodes(@NotNull List<Long> nodesIds);
 	
-	
-	/**
-	 * Passing the ids of some selected TestCaseLibrary and TestCaseLibraryNodes (in separate collections),
-	 * will return the statistics covering all the TestCases encompassed by this selection. The test case ids 
-	 * that cannot be accessed for security reason will be filtered out.
-	 * 
-	 * 
-	 * @param libraryIds
-	 * @param nodeIds
-	 * @return TestcaseStatisticsBundle
-	 */
-	TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
-	
-	/**
-	 * Passing the ids of some selected TestCaseLibrary and TestCaseLibraryNodes (in separate collections), 
-	 * will return the ids of the TestCases encompassed by this selection. The test case ids that cannot be accessed
-	 * for security reason will be filtered out.
-	 * 
-	 * @param libraryIds
-	 * @param nodeIds
-	 * @return
-	 */
-	Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
+
 }

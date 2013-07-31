@@ -22,7 +22,7 @@
 	$.widget("ui.togglePanel",{
 		options : {
 			initiallyOpen : true,
-			title : "",
+			title : undefined,
 			cssClasses : ""
 		},
 

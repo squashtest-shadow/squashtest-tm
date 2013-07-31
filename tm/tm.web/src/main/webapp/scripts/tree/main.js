@@ -34,7 +34,7 @@ define([ "./simple-tree-conf/conf-factory", "./workspace-tree-conf/conf-factory"
          function(simpleConf, wkspConf, pickerConf, pluginsFactory, ctxtcontent) {
 
 	squashtm = squashtm || {};
-	squashtm.tree = squashtm.tree || {};
+	squashtm.tree = squashtm.tree || undefined;
 	
 	
 	return {

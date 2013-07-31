@@ -75,6 +75,10 @@ define([ 'jquery', 'jqueryui' ], function($) {
 			/* ******************* public **************** */
 
 			this.fire = function(origin, event) {
+				
+				this.trigger('contextualcontent.clear');
+				
+				//for old school event API
 				for ( var i in this.listeners) {
 					var listener = this.listeners[i];
 					if (listener !== origin) {

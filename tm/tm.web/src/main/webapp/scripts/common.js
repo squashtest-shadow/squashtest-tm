@@ -37,7 +37,13 @@ requirejs.config({
 				'tree',
 				'tc-workspace',
 				'req-workspace',
-				'camp-workspace'
+				'camp-workspace',
+				//'dashboard'
+				{
+					main : "main",
+					name : "name",
+					location 'http://localhost/scripts/scripts/dashboard'
+				}
 			],
 			/*
 			 * rules for paths naming: * third party lib: unversionned lib name *
@@ -99,7 +105,8 @@ requirejs.config({
 				"squash.configmanager" : 'squash/squash.configmanager',
 				"workspace.tree-node-copier" : "workspace/workspace.tree-node-copier",
 				"workspace.tree-event-handler" : "workspace/workspace.tree-event-handler",
-				"workspace.permissions-rules-broker" : "workspace/workspace.permissions-rules-broker"
+				"workspace.permissions-rules-broker" : "workspace/workspace.permissions-rules-broker",
+				'jqplot' : 'jqplot/jquery.jqplot.min'
 			},
 			shim : {
 				"ckeditor" : {
@@ -211,6 +218,10 @@ requirejs.config({
 				"jquery.squash.add-attachment-popup" : {
 					deps : ["jquery", "jquery.generateId"],
 					exports : "squash.add-attachment-popup"
+				},
+				'jqplot' : {
+					deps : ['jquery'],
+					exports : 'jqplot'
 				}
 			}
 		});

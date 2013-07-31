@@ -20,17 +20,31 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.service.library.FolderModificationService;
+import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
+import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.generic.FolderModificationController;
 
 @Controller
 @RequestMapping("/test-case-folders/{folderId}")
 public class TestCaseFolderModificationController extends FolderModificationController<TestCaseFolder> {
+	
 	private FolderModificationService<TestCaseFolder> folderModificationService;
+	
+	@Inject private TestCaseLibraryFinderService libraryFinderService;
 
 	@Override
 	protected FolderModificationService<TestCaseFolder> getFolderModificationService() {
@@ -45,6 +59,21 @@ public class TestCaseFolderModificationController extends FolderModificationCont
 	@Override
 	protected String getWorkspaceName() {
 		return "test-case";
+	}
+	
+	
+	@Override
+	@RequestMapping(method = RequestMethod.GET)
+	public final ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
+		
+		ModelAndView mav = super.showFolder(folderId, request);
+		
+		TestCaseStatisticsBundle stats = libraryFinderService.getStatisticsForSelection(new ArrayList<Long>(0), Arrays.asList(new Long[]{folderId}));
+		
+		mav.addObject("statistics", stats);
+		mav.setViewName("fragment/test-cases/edit-test-case-folder");
+		
+		return mav;
 	}
 
 }
