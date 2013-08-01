@@ -30,4 +30,5 @@ public interface IterationTestPlanDao extends EntityDao<IterationTestPlanItem>{
 	 */
 	IterationTestPlanItem findTestPlanItem(long itemTestPlanId);
 
+	
 }

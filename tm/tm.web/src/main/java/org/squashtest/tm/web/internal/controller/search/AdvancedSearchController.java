@@ -20,13 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,22 +29,16 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
-import org.squashtest.tm.domain.campaign.CampaignExportCSVModel.Row;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
@@ -57,25 +46,22 @@ import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomCustomFieldManagerService;
 import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
-import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Controller
 @RequestMapping("/advanced-search")
@@ -89,6 +75,9 @@ public class AdvancedSearchController {
 
 	@Inject
 	private PermissionEvaluationService permissionService;
+	
+	@Inject
+	private IterationModificationService iterationService;
 	
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -110,10 +99,10 @@ public class AdvancedSearchController {
 	.mapAttribute(TestCase.class, "reference", String.class, "test-case-ref")	
 	.mapAttribute(TestCase.class, "label", String.class, "test-case-label")
 	.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, "test-case-weight")	
-	//.mapAttribute(TestCase.class, "weight", Long.class, "test-case-requirement-nb")
-	//.mapAttribute(TestCase.class, "weight", Long.class, "test-case-teststep-nb")
+	//.mapAttribute(TestCase.class, "verifiedRequirementVersions.size", Long.class, "test-case-requirement-nb")
+	//.mapAttribute(TestCase.class, "steps.size", Long.class, "test-case-teststep-nb")
 	//.mapAttribute(TestCase.class, "weight", Long.class, "test-case-iteration-nb")
-	//.mapAttribute(TestCase.class, "weight", Long.class, "test-case-attachment-nb")
+	//.mapAttribute(TestCase.class, "allAttachments.size", Long.class, "test-case-attachment-nb")	
 	.mapAttribute(TestCase.class, "audit.createdBy", String.class, "test-case-created-by")
 	.mapAttribute(TestCase.class, "audit.lastModifiedBy", String.class, "test-case-modified-by");
 
@@ -136,7 +125,7 @@ public class AdvancedSearchController {
 
 		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCases(paging);
 
-		return new TestCaseSearchResultDataTableModelHelper(locale, messageSource, permissionService).buildDataModel(holder, params.getsEcho());
+		return new TestCaseSearchResultDataTableModelHelper(locale, messageSource, permissionService, iterationService).buildDataModel(holder, params.getsEcho());
 	}
 	
 	private SearchInputPanelModel createGeneralInfoPanel(){
@@ -312,11 +301,13 @@ public class AdvancedSearchController {
 		private InternationalizationHelper messageSource;
 		private Locale locale;
 		private PermissionEvaluationService permissionService;
+		private IterationModificationService iterationService;
 		
-		private TestCaseSearchResultDataTableModelHelper(Locale locale, InternationalizationHelper messageSource, PermissionEvaluationService permissionService) {
+		private TestCaseSearchResultDataTableModelHelper(Locale locale, InternationalizationHelper messageSource, PermissionEvaluationService permissionService, IterationModificationService iterationService) {
 			this.locale = locale;
 			this.messageSource = messageSource;
 			this.permissionService = permissionService;
+			this.iterationService = iterationService;
 		}
 
 		private String formatImportance(TestCaseImportance importance, Locale locale) {
@@ -340,7 +331,7 @@ public class AdvancedSearchController {
 			res.put("test-case-weight", formatImportance(item.getImportance(), locale));
 			res.put("test-case-requirement-nb", item.getVerifiedRequirementVersions().size());
 			res.put("test-case-teststep-nb", item.getSteps().size());
-			res.put("test-case-iteration-nb","");
+			res.put("test-case-iteration-nb", iterationService.findIterationContainingTestCase(item.getId()).size());
 			res.put("test-case-attachment-nb", item.getAllAttachments().size());
 			res.put("test-case-created-by", auditable.getCreatedBy());
 			res.put("test-case-modified-by", auditable.getLastModifiedBy());
@@ -350,6 +341,7 @@ public class AdvancedSearchController {
 		}
 	}
 	
+
 	public SearchInputPanelModel getCustomFielModel(){
 		List<CustomField> customFields = advancedSearchService.findAllQueryableCustomFieldsByBoundEntityType(BindableEntity.TEST_CASE);
 		return convertToSearchInputPanelModel(customFields);

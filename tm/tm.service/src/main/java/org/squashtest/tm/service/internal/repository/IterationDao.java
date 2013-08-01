@@ -50,6 +50,8 @@ public interface IterationDao extends EntityDao<Iteration> {
 
 	Iteration findAndInit(long iterationId);
 
+	List<Iteration> findAllIterationContainingTestCase(long testCaseId);
+	
 	/**
 	 * Returns the paged test plan of the given iteration
 	 * 

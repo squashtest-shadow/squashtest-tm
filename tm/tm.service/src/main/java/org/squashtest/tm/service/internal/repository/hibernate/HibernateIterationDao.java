@@ -51,6 +51,12 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 				campaignId));
 	}
 
+	@Override
+	public List<Iteration> findAllIterationContainingTestCase(long testCaseId) {
+		return executeListNamedQuery("iterationDao.findAllIterationContainingTestCase", new SetIdParameter("testCaseId",
+				testCaseId));
+	}
+	
 	/*
 	 * as long as the ordering of a collection is managed by @OrderColumn, but you can't explicitely reference the
 	 * ordering column in the join table, initialize the collection itself is the only solution
@@ -224,4 +230,6 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	public long countRunningOrDoneExecutions(long iterationId) {
 		return (Long) executeEntityNamedQuery("iteration.countRunningOrDoneExecutions", idParameter(iterationId));
 	}
+
+
 }

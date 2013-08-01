@@ -88,6 +88,7 @@
 		@NamedQuery(name = "campaignFolder.findParentOf", query = "select f from CampaignFolder f join f.content c where c.id = :contentId "),
 		//Iteration
 		@NamedQuery(name = "iterationDao.findAllInitializedByCampaignId", query = "select c.iterations from Campaign c join c.iterations fetch all properties where c.id = :campaignId"),
+		@NamedQuery(name = "iterationDao.findAllIterationContainingTestCase", query="select it from Iteration it join it.testPlans tps where tps.referencedTestCase = :testCaseId"),
 		@NamedQuery(name = "iteration.countTestPlans", query = "select count(tps) from Iteration iter join iter.testPlans tps where iter.id = :iterationId"),
 		@NamedQuery(name = "iteration.countStatuses", query = "select tp.executionStatus, count(tp) from Iteration it join it.testPlans tp where it.id = :iterationId group by tp.executionStatus"),
 		@NamedQuery(name = "iteration.findIterationByName", query = "from Iteration i where i.name like :iterationName order by i.name asc"),

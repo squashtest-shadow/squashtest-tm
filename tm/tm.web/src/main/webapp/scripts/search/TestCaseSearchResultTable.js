@@ -28,7 +28,12 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			this.addSelectEditableToImportance = $.proxy(this._addSelectEditableToImportance, this);
 			this.addSimpleEditableToReference = $.proxy(this._addSimpleEditableToReference, this);
 			this.addSimpleEditableToLabel = $.proxy(this._addSimpleEditableToLabel, this);
+			this.addInterfaceLevel2Link = $.proxy(this._addInterfaceLevel2Link, this);
+			this.addTreeLink = $.proxy(this._addTreeLink, this);
 			this.tableDrawCallback = $.proxy(this._tableDrawCallback, this);
+			this.openBreadCrumb =  $.proxy(this._openBreadCrumb, this);
+			this.openFoldersUntillEnd = $.proxy(this._openFoldersUntillEnd, this);
+			this.findTreeBreadcrumbToNode =  $.proxy(this._findTreeBreadcrumbToNode, this);
 			this.getTableRowId = $.proxy(this._getTableRowId, this);
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 			var self = this, tableConf = {
@@ -49,11 +54,11 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 				}, {
 					"aTargets" : [ 1 ],
 					"mDataProp" : "project-name",
-					"bSortable" : false
+					"bSortable" : true
 				}, {		
 					"aTargets" : [ 2 ],
 					"mDataProp" : "test-case-id",
-					"bSortable" : false
+					"bSortable" : true
 				}, {
 					"aTargets" : [ 3 ],
 					"mDataProp" : "test-case-ref",
@@ -62,7 +67,7 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 				}, {
 					"aTargets" : [ 4 ],
 					"mDataProp" : "test-case-label",
-					"bSortable" : false,
+					"bSortable" : true,
 					"sClass" : "editable_label"
 				}, {
 					"aTargets" : [ 5 ],
@@ -96,13 +101,13 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 				}, {
 					"aTargets" : [ 12 ],
 					"mDataProp" : "empty-openinterface2-holder",
-					"sClass" : "centered delete-button",
+					"sClass" : "centered search-open-interface2",
 					"sWidth" : "2em",
 					"bSortable" : false
 				}, {
 					"aTargets" : [ 13 ],
 					"mDataProp" : "empty-opentree-holder",
-					"sClass" : "centered delete-button",
+					"sClass" : "centered search-open-tree",
 					"sWidth" : "2em",
 					"bSortable" : false
 				}, {
@@ -113,25 +118,7 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 				} ],
 				"sDom" : 'ft<"dataTables_footer"lirp>'
 			}, squashConf = {
-				enableHover : true/*,
-				bindLinks : {
-					list : [ {
-						target : 2,
-						url : squashtm.app.contextRoot + "/administration/teams/{entity-id}",
-						isOpenInTab : false
-					} ]
-				},
-				deleteButtons : {
-					url : squashtm.app.contextRoot + "/administration/teams/{entity-id}",
-					popupmessage : squashtm.app.teamsManager.table.deleteButtons.popupmessage,
-					tooltip : squashtm.app.teamsManager.table.deleteButtons.tooltip,
-					success : function() {
-						self.refresh();
-					},
-					fail : function() {
-					}
-				}*/
-
+				enableHover : true
 			};
 
 			this.$el.squashTable(tableConf, squashConf);
@@ -202,10 +189,75 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 				this.addSimpleEditableToLabel(row,data);
 				this.addSelectEditableToImportance(row,data);
 			}
+			
+			this.addInterfaceLevel2Link(row,data);
+			this.addTreeLink(row,data);
 		},
 
 		_tableDrawCallback : function() {
 
+		},
+
+		_addInterfaceLevel2Link : function(row, data) {
+			var id = data["test-case-id"];
+		    $(".search-open-interface2",row).click(function(){
+		        window.location = squashtm.app.contextRoot + "/test-cases/" + id + "/info";
+		    });
+		},
+		
+
+		_addTreeLink : function(row, data){
+			var self = this;
+			var id = data["test-case-id"];
+			$(".search-open-tree", row)
+					.click(
+							function() {
+								$("#tree-panel-left").show();
+								$("#contextual-content").removeAttr("style"); 
+								$("#tabbed-pane").tabs('select', 0);
+								var jqTree=$("#tree");
+								var treeNodeName = "TestCase-" + id;
+								self.findTreeBreadcrumbToNode(treeNodeName, squashtm.app.contextRoot + "/search/test-cases/breadcrumb" ).done(function(data){self.openBreadCrumb(data, jqTree);});
+							});
+		},
+			
+		_openBreadCrumb : function(treeNodesIds, jqTree){
+			var self = this;
+			var breadCrumbLength = treeNodesIds.length;
+			var libraryName = treeNodesIds[breadCrumbLength - 1];
+			jqTree.jstree("deselect_all");
+			var librayNode = jqTree.find("li[id=\'"+libraryName+"\']");
+			  var start = breadCrumbLength -2;
+			  jqTree.jstree("open_node",librayNode, function(){self.openFoldersUntillEnd(treeNodesIds,  jqTree, start);});
+		},
+		
+		_openFoldersUntillEnd : function(treeNodesIds,  jqTree, i){
+			var self = this; 
+			var treeNodeName;
+			var treeNode;
+			if ( i >= 1 ) {  
+				  treeNodeName = treeNodesIds[i];
+				  treeNode = jqTree.find("li[id=\'"+treeNodeName+"\']");
+				  i--;
+				  jqTree.jstree("open_node",treeNode, function(){self.openFoldersUntillEnd(treeNodesIds,  jqTree, i);});
+			}else{
+				  treeNodeName = treeNodesIds[i];
+				  treeNode = jqTree.find("li[id=\'"+treeNodeName+"\']");
+				  jqTree.jstree("deselect_all");
+				  jqTree.jstree("select_node",treeNode);
+			  }
+		},
+			
+		_findTreeBreadcrumbToNode : function(treeNodeName, url){
+			var dataB = {
+					'nodeName' : treeNodeName
+				};
+			return $.ajax({
+				'url' : url,
+				type : 'POST',
+				data : dataB,
+				dataType : 'json'
+			});
 		},
 		
 		refresh : function() {

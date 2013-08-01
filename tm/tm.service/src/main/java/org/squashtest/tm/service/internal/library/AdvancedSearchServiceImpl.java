@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,8 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
+import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.library.AdvancedSearchService;
@@ -58,6 +61,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Inject
 	private TestCaseDao testCaseDao;
 
+	@Inject 
+	private IterationModificationService iterationService;
+	
+	@Inject
+	private Provider<TestCaseSearchExportCSVModelImpl> testCaseSearchExportCSVModelProvider;
+	
 	@Override
 	public List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity) {
 
@@ -78,5 +87,16 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		List<TestCase> testCases = testCaseDao.findAll();
 		Long countAll = new Long(testCases.size());
 		return new PagingBackedPagedCollectionHolder<List<TestCase>>(sorting, countAll, testCases);
+	}
+
+	@Override
+	public TestCaseSearchExportCSVModel exportTestCaseSearchToCSV() {
+
+		TestCaseSearchExportCSVModelImpl model = testCaseSearchExportCSVModelProvider.get();
+		
+		List<TestCase> testCases = testCaseDao.findAll();
+		model.setTestCases(testCases);
+		model.setIterationService(iterationService);	
+		return model;
 	}
 }

@@ -18,24 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.library;
+package org.squashtest.tm.domain.testcase;
 
+import java.util.Iterator;
 import java.util.List;
 
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
+public interface TestCaseSearchExportCSVModel {
 
-
-
-public interface AdvancedSearchService {
-
-	List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity);
-	
-	PagedCollectionHolder<List<TestCase>> searchForTestCases(PagingAndSorting sorting);
-	
-	TestCaseSearchExportCSVModel exportTestCaseSearchToCSV();
+		char getSeparator();
+		
+		void setSeparator(char separator);
+		
+		Row getHeader();
+		
+		Iterator<Row> dataIterator();  
+		
+		
+		// ********** interfaces *************
+		
+		
+		public static interface Row{
+			/**
+			 * return a separator-separated list of cell values 
+			 */
+			String toString();
+			
+			public List<Cell> getCells();
+		}
+		
+		
+		
+		public static interface Cell{
+			String getValue();
+		}
 }

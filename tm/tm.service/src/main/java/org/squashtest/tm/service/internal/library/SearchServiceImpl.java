@@ -228,7 +228,7 @@ public class SearchServiceImpl implements SearchService {
 	private List<String> findBreadCrumbOfTestCaseNode(TestCaseLibraryNode node,
 			TestCaseLibraryNavigationService libraryNavigationService, String rejex) {
 		List<String> result = new ArrayList<String>();
-		result.add(node.getClass().getSimpleName() + rejex + node.getId());
+		result.add(node.getClass().getSimpleName().split("_")[0] + rejex + node.getId());
 		TestCaseFolder parent = libraryNavigationService.findParentIfExists(node);
 		fillBreadCrumbListUntillLibraryForTestCase(node, libraryNavigationService, rejex, result, parent);
 

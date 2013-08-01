@@ -42,6 +42,8 @@ public interface IterationFinder {
 
 	List<TestCase> findPlannedTestCases(long iterationId);
 	
+	List<Iteration> findIterationContainingTestCase(long testCaseId);
+	
 	TestPlanStatistics getIterationStatistics(long iterationId);
 	
 	/**

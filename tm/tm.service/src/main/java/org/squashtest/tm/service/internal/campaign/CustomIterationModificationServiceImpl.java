@@ -481,4 +481,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		List<IterationTestPlanItem> items = testPlanDao.findAllByIds(testPlanIds);
 		return createAndStartAutomatedSuite(items);
 	}
+
+	@Override
+	public List<Iteration> findIterationContainingTestCase(long testCaseId) {
+		return iterationDao.findAllIterationContainingTestCase(testCaseId);
+	}
 }

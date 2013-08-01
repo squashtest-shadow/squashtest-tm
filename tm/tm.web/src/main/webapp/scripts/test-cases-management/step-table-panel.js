@@ -451,16 +451,16 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 				lang : language.ckeLang
 			},
 			buttons : [ {
-				'text' : language.addStep,
-				'click' : function() {
-					var data = readAddStepParams();
-					postStep(data).success(addTestStepSuccess);
-				}
-			}, {
 				'text' : language.addAnotherStep,
 				'click' : function() {
 					var data = readAddStepParams();
 					postStep(data).success(addTestStepSuccessAnother);
+				}
+			}, {
+				'text' : language.addStep,
+				'click' : function() {
+					var data = readAddStepParams();
+					postStep(data).success(addTestStepSuccess);
 				}
 			}, {
 				'text' : language.cancellabel,

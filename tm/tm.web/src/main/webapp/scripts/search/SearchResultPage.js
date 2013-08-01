@@ -35,6 +35,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			this.toggleTree();
 			this.configureModifyResultsDialog();
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
+			this.updateDisplayedImportance =  $.proxy(this._updateDisplayedImportance, this);
 			new TestCaseSearchResultTable(model);
 		},
 
@@ -45,7 +46,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		},
 
 		exportResults : function(){
-			var f = 10;
+			document.location.href= squashtm.app.contextRoot +"/advanced-search?export=csv";
 		},
 		
 		editResults : function(){
@@ -74,8 +75,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			
 			$( rows ).each(function(index, row) {
 				if ($( row ).attr('class').search('selected') != -1) {
-					var value = $("#importance-combo").find('option:selected').text();
-					$(".editable_imp", row).text(value);
 					var data = dataTable.fnGetData(row);
 					ids.push(data["test-case-id"]);
 				}
@@ -84,9 +83,23 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			return ids;
 		},
 		
+		_updateDisplayedImportance : function(dataTable) {
+			var rows = dataTable.fnGetNodes();
+			var ids = [];
+			
+			$( rows ).each(function(index, row) {
+				if ($( row ).attr('class').search('selected') != -1) {
+					var value = $("#importance-combo").find('option:selected').text().split("-")[1];
+					$(".editable_imp", row).text(value);
+				}
+			});
+			
+			return ids;
+		},
+		
 		configureModifyResultsDialog : function() {
 			var addModifyResultDialog = $("#modify-search-result-dialog").confirmDialog();
-
+			
 			var cell = $("#importance-combo");
 			cell.html("<select></select>");
 			
@@ -96,19 +109,21 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			}).success(function(json) {
 				 $.each(json, function(key, value){ 
 					var option = new Option(value, key);
+					$(option).html(value);
 					$("select", cell).append(option);
 				 });
 			});
-			
+	
 			addModifyResultDialog.on("confirmdialogvalidate",
 					function() {
-
+						
 					});
 
 			addModifyResultDialog.on("confirmdialogconfirm",
 					function() {
 						var table = $('#test-case-search-result-table').dataTable();
 						var ids = self.getIdsOfSelectedTableRowList(table);
+						self.updateDisplayedImportance(table);
 						var value = $("#importance-combo").find('option:selected').val();
 						var i;
 						for(i=0; i<ids.length; i++){
@@ -122,7 +137,14 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			
 			addModifyResultDialog.on('confirmdialogopen',
 					function() {
-						
+						var table = $('#test-case-search-result-table').dataTable();
+						var ids = self.getIdsOfSelectedTableRowList(table);
+						if(ids.length === 0) {
+							var noLineSelectedDialog = $("#no-selected-lines").messageDialog();
+							noLineSelectedDialog.messageDialog('open');
+							$(this).confirmDialog('close');
+						} else {
+						}
 					});
 
 			addModifyResultDialog.activate = function(arg) {
