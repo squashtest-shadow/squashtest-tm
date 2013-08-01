@@ -23,18 +23,27 @@
 /*
  * settings : {
  * 	  master : a css selector that identifies the whole section that need initialization,
- * 	  workspace : one of 'test-case', 'campaign', 'requirement'
- * 	  rendering : one of 'toggle-panel', 'plain'. This is a hint that tells how to render the dashboard container,
+ * 	  workspace : one of 'test-case', 'campaign', 'requirement' (can be read from dom)
+ * 	  rendering : one of 'toggle-panel', 'plain'. This is a hint that tells how to render the dashboard container (can be read from dom),
  * 	  model : a javascript object, workspace-dependent, containing the data that will be plotted (optional, may be undefined) 	  
  * }
  * 
  */
 
-define([], function(tcDashboard){
+define(['squash.attributeparser', './test-case-statistics/dashboard-builder'], function(attrparser, tcBuilder){
 
 	return {
 		init : function(settings){
-
+			
+			var datadef = $(settings.master).data('def');
+			var domconf = attrparser.parse(datadef);
+			var conf = $.extend(true, {}, domconf, settings);
+			
+			switch(conf.workspace){
+			case 'test-case' : tcBuilder.init(settings); break;
+			default : throw "dashboard : no other dashboard that test case dashboard is currently supported";
+			}
+			
 		}
 	};
 	

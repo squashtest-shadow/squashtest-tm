@@ -21,7 +21,8 @@
 define(function() {
 
 	function _parseAssignation(atom) {
-		var members = atom.split(/\s*=\s*/);
+		var members = atom.split(/\s*=(.+)?/,2);	//it is written that way so that only the first '=' will match 
+													// as a separator, allowing '=' to be a valid part of the value as well.
 		return {
 			name : members[0],
 			value : (members.length > 1) ? members[1] : 'true'

@@ -18,22 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-define(["jquery", "backbone"], function($, Backbone){
-
-	return Backbone.View.extend({
-		
-		initialize : function(){
-			this.render();
-			this.listenTo(this.model, 'change', this.render);
-		},
-		
-		render : function(){
-			var reqstats = this.model.get('boundRequirementsStatistics');
-			var nbtc = reqstats.zeroRequirements + reqstats.havingRequirements;
-			
-			this.$el.find('.dashboard-total').text(nbtc);
+define(function(require) {
+	if (navigator.appName == 'Microsoft Internet Explorer') {
+		var ua = navigator.userAgent;
+		var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+		if (re.exec(ua) != null) {
+			var rv = parseFloat(RegExp.$1);
+			if (rv < 9.0) {
+				return true;
+			}
 		}
-		
-	});
+	}
+	return false;
 });

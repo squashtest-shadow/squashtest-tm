@@ -23,8 +23,11 @@
 <%@ tag language="java" pageEncoding="ISO-8859-1" body-content="empty" description="structure of a dashboard for test cases. No javascript."%>
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ attribute name="url" required="true" description="url where to get the data" %>
+<%@ attribute name="listenTree" type="java.lang.Boolean"  required="true" description="whether to listen to the tree selection or not" %>
 
-<div id="dashboard-master">
+
+<div id="dashboard-master" data-def="rendering=toggle-panel, workspace=test-case, url=${url}, listenTree=${listenTree}">
 
 	<f:message var="dashboardTitle" key="title.Dashboard"/>
 	<f:message var="refreshLabel" key="label.Refresh" />

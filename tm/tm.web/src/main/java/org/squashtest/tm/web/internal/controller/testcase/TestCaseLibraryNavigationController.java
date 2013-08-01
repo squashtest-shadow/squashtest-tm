@@ -227,8 +227,8 @@ public class TestCaseLibraryNavigationController extends
 	// ****************************** statistics section *******************************
 	
 	@RequestMapping (value = "/statistics", method = RequestMethod.GET, produces="application/json", params = {"libraries", "nodes"})
-	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(@RequestParam("libraries") Collection<Long> libraryIds, 
-																	  @RequestParam("nodes") Collection<Long> nodeIds){
+	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(@RequestParam(value="libraries", defaultValue="") Collection<Long> libraryIds, 
+																	  @RequestParam(value="nodes", defaultValue="") Collection<Long> nodeIds){
 		
 		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 	}

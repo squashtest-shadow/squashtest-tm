@@ -38,6 +38,11 @@
 	<s:param name="folderId" value="${folder.id}" />
 </s:url>
 
+<s:url var="statsUrl" value="/test-case-browser/statistics">
+	<s:param name="libraries" value="" />
+	<s:param name="nodes" value="${folder.id}"/>
+</s:url>
+
 
 <c:if test="${empty editable}">
 	<c:set var="editable" value="${ false }" /> 
@@ -48,11 +53,13 @@
 
 <script type="text/javascript">
 
-	var identity = { obj_id : ${folder.id}, obj_restype : '${su:camelCaseToHyphened(folder.class.simpleName)}s'  };
+	var identity = { obj_id : ${folder.id}, obj_restype : 'test-cases'  };
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers", "workspace.contextual-content"], function($, contentHandlers, contextualContent){
+			require(["jquery", "contextual-content-handlers", "workspace.contextual-content", "dashboard"], 
+					function($, contentHandlers, contextualContent, dashboard){
+				
 				var nameHandler = contentHandlers.getSimpleNameHandler();
 				
 				nameHandler.identity = identity;
@@ -60,7 +67,11 @@
 				
 				contextualContent.addListener(nameHandler);				
 				
-				
+				//init the dashboard
+				dashboard.init({
+					master : '#dashboard-master',
+					model : ${json:serialize(statistics)}
+				});
 				
 			});
 		});
@@ -85,7 +96,7 @@
 	
 	<%-- statistics panel --%>
 	
-	<dashboard:test-case-dashboard-panel />
+	<dashboard:test-case-dashboard-panel listenTree="${false}" url="${statsUrl}"/>
 	
 	<%-- description panel --%>
 	

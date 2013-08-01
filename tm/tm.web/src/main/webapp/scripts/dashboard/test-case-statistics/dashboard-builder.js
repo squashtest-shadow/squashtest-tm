@@ -21,27 +21,43 @@
 
 /*
  * settings : {
- *	master : a css selector that identifies the whole section that need initialization,
- *	rendering : one of 'toggle-panel', 'plain'. This is a hint that tells how to render the dashboard master,
+ *	master : a css selector that identifies the master dom element initialization,
  *	model : a javascript object, workspace-dependent, containing the data that will be plotted (optional, may be undefined),  
+ *	
+ *  url : the url where to use fetch the data
+ *	rendering : one of 'toggle-panel', 'plain'. This is a hint that tells how to render the dashboard master,
+ *	listenTree : boolean. If true, the model will listen to the tree. It false, it won't. Default is false.
  * }
  * 
+ * Note : 'master' and 'model' must be provided as javascript object. The other data such as 'url', 'rendering', 'listenTree' etc 
+ * can be read from the DOM, using a 'data-def' clause on the master dom element.  
+ * 
  */
-define(["jquery", "../basic-objects/model", "../basic-objects/refresh-button", 
-        "jquery.squash.togglepanel"], function($, StatModel, RefreshButton){
+define(["jquery", 'squash.attributeparser', 
+        "../basic-objects/model", "../basic-objects/refresh-button", "./summary", 
+        "jquery.squash.togglepanel"], function($, attrparser, StatModel, RefreshButton, Summary){
 	
 	return {
 		
-		init : function(settings){
+		init : function(jsconf){
+
+			var master = $(jsconf.master);
 			
-			var modelOptions = {
-				
-			};
+			//read the conf elements from the dom
+			var domconf = attrparser.parse(master.data('def'));
+			var conf = $.extend(true, {}, jsconf, domconf);
 			
-			var master = $(settings.master);
+			
+			//configure the model
+			var bbModel = new StatModel(conf.model, {
+				url : conf.url,
+				includeTreeSelection : conf.listenTree,
+				syncmode : (conf.listenTree===true) ? "tree-listener" : "passive",
+			});
+			
 			
 			//init the master view
-			switch (settings.rendering){
+			switch (conf.rendering){
 			case "toggle-panel" : 
 				master.find('.toggle-panel-main').togglePanel();
 				break;
@@ -49,6 +65,18 @@ define(["jquery", "../basic-objects/model", "../basic-objects/refresh-button",
 			default : throw "dashboard : no other rendering than 'toggle-panel' is supported at the moment";
 			}
 			
+			
+			//init the sub views
+			new RefreshButton({
+				el : master.find('.dashboard-refresh-button').get(0),
+				model : bbModel
+			});
+			
+			
+			new Summary({
+				el : master.find('.dashboard-summary'),
+				model : bbModel 
+			});
 			
 		}
 		

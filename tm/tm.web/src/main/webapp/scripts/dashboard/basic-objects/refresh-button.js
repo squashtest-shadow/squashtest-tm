@@ -32,7 +32,7 @@ define(["jquery", "backbone", "jquery.squash.squashbutton", "jqueryui"], functio
 		},
 		
 		syncmodel : function(){
-			this.model.sync();
+			this.model.fetch();
 		}
 		
 	});	

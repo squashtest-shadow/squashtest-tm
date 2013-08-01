@@ -40,7 +40,7 @@ define(["jquery", "backbone", "tree", "workspace.contextual-content"], function(
 		
 		initialize : function(attributes, options){
 			
-			Bacbkone.Model.prototype.initialize.call(this, attributes, options);
+			Backbone.Model.prototype.initialize.call(this, attributes, options);
 			
 			var self = this;
 			
@@ -79,7 +79,9 @@ define(["jquery", "backbone", "tree", "workspace.contextual-content"], function(
 			//init if no data where passed at construction time
 			if (attributes === undefined){
 				this.fetch();	//will implicitly call "sync"
-			}
+			};
+			
+			this.options = options;
 			
 		},
 		

@@ -41,8 +41,8 @@ requirejs.config({
 				//'dashboard'
 				{
 					main : "main",
-					name : "name",
-					location 'http://localhost/scripts/scripts/dashboard'
+					name : "dashboard",
+					location : 'http://localhost/scripts/scripts/dashboard'
 				}
 			],
 			/*
@@ -106,7 +106,8 @@ requirejs.config({
 				"workspace.tree-node-copier" : "workspace/workspace.tree-node-copier",
 				"workspace.tree-event-handler" : "workspace/workspace.tree-event-handler",
 				"workspace.permissions-rules-broker" : "workspace/workspace.permissions-rules-broker",
-				'jqplot' : 'jqplot/jquery.jqplot.min'
+				'jqplot' : 'jqplot/jquery.jqplot.min',
+				'excanvas' : 'iesupport/excanvas.min'
 			},
 			shim : {
 				"ckeditor" : {
@@ -220,8 +221,15 @@ requirejs.config({
 					exports : "squash.add-attachment-popup"
 				},
 				'jqplot' : {
-					deps : ['jquery'],
-					exports : 'jqplot'
+					deps : ['jquery', 'iesupport/am-I-ie8', 'require'],
+					exports : 'jqplot',
+					//will test if we need IE canvas support
+					init : function($, isIE8, require){
+					 if (isIE8){
+						 require('iesupport/excanvas.min');
+					 }
+					 return "jqplot";
+					}
 				}
 			}
 		});
