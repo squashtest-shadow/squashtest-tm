@@ -75,6 +75,7 @@ requirejs.config({
 				"jeditable.selectJEditable" : "squashtest/classes/SelectJEditable",
 				"jstree" : "jquery/jquery.jstree",
 				"jform" : "jquery/jquery.form",
+				"jquery.throttle-debounce" : "jquery/jquery.ba-throttle-debounce.min",
 				"jquery.generateId" : "jquery/jquery.generateId",
 				"jquery.hotkeys" : "jquery/jquery.hotkeys-0.8",
 				"jquery.timepicker" : "jquery/jquery-ui-timepicker-addon",
@@ -107,6 +108,7 @@ requirejs.config({
 				"workspace.tree-event-handler" : "workspace/workspace.tree-event-handler",
 				"workspace.permissions-rules-broker" : "workspace/workspace.permissions-rules-broker",
 				'jqplot' : 'jqplot/jquery.jqplot.min',
+				'jqplot-pie' : 'jqplot/plugins/jqplot.pieRenderer.min',
 				'excanvas' : 'iesupport/excanvas.min'
 			},
 			shim : {
@@ -144,6 +146,7 @@ requirejs.config({
 					exports : "jqueryui"
 				},
 				"jform" : [ "jquery" ],
+				"jquery.throttle-debounce" : ['jquery'],
 				"jqueryui" : [ "jquery" ],
 				"datatables" : [ "jqueryui" ],
 				"squash.datatables" : {
@@ -226,10 +229,14 @@ requirejs.config({
 					//will test if we need IE canvas support
 					init : function($, isIE8, require){
 					 if (isIE8){
-						 require('iesupport/excanvas.min');
+						 require('excanvas');
 					 }
 					 return "jqplot";
 					}
+				},
+				'jqplot-pie' : {
+					deps : ['jquery', 'jqplot'],
+					explort : 'jqplot-pie'
 				}
 			}
 		});

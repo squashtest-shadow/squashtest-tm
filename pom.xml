@@ -284,6 +284,7 @@
             <exclude>**/styles/datatables/**/*.*</exclude>
             <exclude>**/styles/jquery/**/*.*</exclude>
             <exclude>**/styles/jqgrid/**/*.*</exclude>
+            <exclude>**/styles/jqplot/**/*.*</exclude>
             <exclude>**/styles/**/thymol.js</exclude>
             <exclude>**/styles/**/bootstrap*.css</exclude>
 	    <!-- generated stylesheets -->

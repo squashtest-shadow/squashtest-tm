@@ -756,6 +756,7 @@ predefined for future evolutions :
 /*****************************************
  * /step denormalized fields
  ****************************************/
+
 #denormalized-fields .toggle-panel h3 {
     display : none;
 }
@@ -769,6 +770,48 @@ predefined for future evolutions :
     background: none;
     border: medium none;
     min-height: 0;
+}
+
+/*****************************************
+ * plots and statistics 
+ ****************************************/
+
+
+/* override of the default */
+.dashboard-item .jqplot-target {
+	color : black;
+}
+
+/* fix for a bug with pie charts, found on https://bitbucket.org/cleonello/jqplot/issue/489/diameter-of-pie-too-small-not-rendering */
+.dashboard-item table.jqplot-table-legend, .dashboard-item table.jqplot-cursor-legend{
+	width : 33%;
+}
+
+.dashboard-item .jqplot-table-legend-swatch{
+	width : 15px;
+}
+
+.dashboard-item {
+	width : 49%;
+	float : left;	
+	min-height : 200px;
+	height : 49%;
+}
+
+.dashboard-item-title{
+	text-align : center;
+}
+
+.dashboard-item-view {
+	height : 100%;
+	width : 100%;
+}
+
+
+.dashboard-legend-sample-color {
+	height : 15px;
+	width : 15px;
+	display : inline-block;
 }
 
 /*****************************************

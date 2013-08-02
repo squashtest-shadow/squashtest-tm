@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,12 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/* MASTER STYLESHEET */
-@import url("structure.css");
-@import url("features.css");
-@import url("typography.css");
-@import url("components.css");
-@import url("bootstrap-lite.css");
-@import url("jquery.tagit.css");
-@import url("datatables.css");
-@import url("jqplot/jquery.jqplot.min.css");
+define(["../basic-objects/pie-view"], function(PieView){
+
+	return PieView.extend({
+		
+		getSerie : function(){
+			var stats = this.model.get('sizeStatistics');
+			return [ stats.zeroSteps, stats.between0And10Steps, stats.between11And20Steps , stats.above20Steps];
+		}
+	});
+	
+});

@@ -34,8 +34,11 @@
  * 
  */
 define(["jquery", 'squash.attributeparser', 
-        "../basic-objects/model", "../basic-objects/refresh-button", "./summary", 
-        "jquery.squash.togglepanel"], function($, attrparser, StatModel, RefreshButton, Summary){
+        "../basic-objects/model", "../basic-objects/refresh-button", 
+        "./summary", "./bound-requirements-pie", "./status-pie", "./importance-pie", "./size-pie",
+        "jquery.squash.togglepanel"], 
+        function($, attrparser, StatModel, RefreshButton, Summary, 
+        		BoundReqPie, StatusPie, ImportancePie, SizePie){
 	
 	return {
 		
@@ -74,10 +77,29 @@ define(["jquery", 'squash.attributeparser',
 			
 			
 			new Summary({
-				el : master.find('.dashboard-summary'),
+				el : master.find('.dashboard-summary').get(0),
 				model : bbModel 
 			});
 			
+			new BoundReqPie({
+				el : master.find('#dashboard-item-bound-reqs').get(0),
+				model : bbModel
+			});
+			
+			new StatusPie({
+				el : master.find('#dashboard-item-test-case-status').get(0),
+				model : bbModel
+			});
+			
+			new ImportancePie({
+				el : master.find('#dashboard-item-test-case-importance').get(0),
+				model : bbModel
+			});
+			
+			new SizePie({
+				el : master.find('#dashboard-item-test-case-size').get(0),
+				model : bbModel
+			});
 		}
 		
 		
