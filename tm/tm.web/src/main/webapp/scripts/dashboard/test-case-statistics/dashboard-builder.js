@@ -54,8 +54,8 @@ define(["jquery", 'squash.attributeparser',
 			//configure the model
 			var bbModel = new StatModel(conf.model, {
 				url : conf.url,
-				includeTreeSelection : conf.listenTree,
-				syncmode : (conf.listenTree===true) ? "tree-listener" : "passive",
+				includeTreeSelection : (conf.listenTree==="true"),
+				syncmode : (conf.listenTree==="true") ? "tree-listener" : "passive",
 			});
 			
 			

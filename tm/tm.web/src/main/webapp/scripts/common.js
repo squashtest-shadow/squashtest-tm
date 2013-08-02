@@ -36,14 +36,19 @@ requirejs.config({
 				"issue-tables",
 				'tree',
 				'tc-workspace',
+				/*{
+					main : "main",
+					name : "tc-workspace",
+					location : 'http://localhost/scripts/scripts/tc-workspace'					
+				},*/
 				'req-workspace',
 				'camp-workspace',
-				//'dashboard'
-				{
+				'dashboard'
+				/*{
 					main : "main",
 					name : "dashboard",
 					location : 'http://localhost/scripts/scripts/dashboard'
-				}
+				}*/
 			],
 			/*
 			 * rules for paths naming: * third party lib: unversionned lib name *

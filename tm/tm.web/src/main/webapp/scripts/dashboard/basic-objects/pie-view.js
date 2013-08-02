@@ -63,26 +63,8 @@ define(["jquery", "backbone", "jqplot-pie", "jquery.throttle-debounce"], functio
 		renderFirst : function(){
 			
 			var serie = this.getSerie();
-			var labels = this._createLabels(serie);
 			
-			var conf = {
-				seriesDefaults : {
-					renderer : jQuery.jqplot.PieRenderer,
-					rendererOptions : {
-						showDataLabels : true,
-						dataLabels : labels,
-						startAngle : -45
-					}
-				},
-				legend : {
-					location : 'e',
-					show : true,
-					labels : this.textlegend,
-					fontSize : '1em'
-				},
-				seriesColors : this.colorscheme
-			}
-
+			var conf = this.getConf();
 			
 			var data = [serie];
 			
@@ -92,25 +74,18 @@ define(["jquery", "backbone", "jqplot-pie", "jquery.throttle-debounce"], functio
 		
 		render : function(){
 			var serie = this.getSerie();
-			var labels = this._createLabels(serie);
 			
-			var newdata = [];
-			for (var i=0,len=serie.length;i<len;i++){
-				newdata.push([i+1, serie[i]]);
-			}
+			var conf = this.getConf();
 			
-			this.pie.series[0].data = newdata;
+			conf.data = [serie];
 			
-			this.pie.replot({
-				seriesDefaults : {
-					rendererOptions : {
-						dataLabels : labels
-					}
-				}
-			});
+			this.pie.replot(conf);
+
+			
 		},
 		
-		_createLabels : function(serie){
+		_createLabels : function(){
+			var serie = this.getSerie();
 			var total=0, 
 				labels = [];
 			
@@ -131,6 +106,26 @@ define(["jquery", "backbone", "jqplot-pie", "jquery.throttle-debounce"], functio
 				
 		getSerie : function(){
 			throw "dashboard : attempted to instanciate an abstract pie view !";
+		},
+		
+		getConf : function(){
+			return {
+				seriesDefaults : {
+					renderer : jQuery.jqplot.PieRenderer,
+					rendererOptions : {
+						showDataLabels : true,
+						dataLabels : this._createLabels(),
+						startAngle : -45
+					}
+				},
+				legend : {
+					location : 'e',
+					show : true,
+					labels : this.textlegend,
+					fontSize : '1em'
+				},
+				seriesColors : this.colorscheme
+			}
 		}
 		
 	});

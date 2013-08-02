@@ -34,7 +34,7 @@
  * 	"passive" : the model will be synchronized only when requested to.  
  * 	"tree-listener" : Will listen to the tree and trigger synchronization everytime the node selection changes. Incidentally, will force 'includeTreeSelection' to true.
  */
-define(["jquery", "backbone", "tree", "workspace.contextual-content"], function($, Backbone, zetree, ctx){
+define(["jquery", "backbone", "tree", "workspace.contextual-content", "jquery.throttle-debounce"], function($, Backbone, zetree, ctx){
 
 	return Backbone.Model.extend({
 		
@@ -67,13 +67,19 @@ define(["jquery", "backbone", "tree", "workspace.contextual-content"], function(
 			
 			if (options.syncmode === "tree-listener"){
 				// evt binding ...
-				this.listenTo(this.tree, 'select_node.jstree', this.sync);
-				this.listenTo(this.tree, 'deselect_node.jstree', this.sync);
+				var debouncedxproxiedfetch = $.debounce(1000, $.proxy(function(){
+					this.fetch();
+				}, this));
+				this.tree.on('select_node.jstree deselect_node.jstree' , debouncedxproxiedfetch);
 				
 				// ... and unbinding
-				this.listenTo(ctx, "contextualcontent.clear", $.proxy(function(){
-					this.stopListening();
-				}, self));
+				var ctxclearclbk = $.proxy(function(){
+					//unbinds from the tree
+					this.tree.off('select_node.jstree deselect_node.jstree', debouncedxproxiedfetch);
+					//unbinds from the contextual content
+					ctx.off("contextualcontent.clear", ctxclearclbk);
+				}, self);
+				ctx.on("contextualcontent.clear", ctxclearclbk);
 			};
 			
 			//init if no data where passed at construction time
@@ -90,23 +96,26 @@ define(["jquery", "backbone", "tree", "workspace.contextual-content"], function(
 				return;	//this is a read-only operation
 			};
 			
-			var params = undefined;
-			
 			if (this.options.includeTreeSelection === true){
 				var selectedNodes = this.tree.jstree('get_selected');
 				
-				var libIds = selectedNodes.filter(':library').treeNode().all('getResId');
-				var nodeIds = selectedNodes.not(':library').treeNode().all('getResId');
+				var libIds = selectedNodes.filter(':library').map(function(i,e){
+					return $(e).attr('resid');
+				}).get();
+			
+				var nodeIds = selectedNodes.not(':library').map(function(i,e){
+					return $(e).attr('resid');
+				}).get();
 				
-				params = {
+				var params = {
 					libraries : libIds.join(','),
 					nodes : nodeIds.join(',')
 				};
+				
+				options.data = params;
 			}
 			
-			var moreOptions = $.extend({}, options, params);
-			
-			return Backbone.Model.prototype.sync.call(this, method, model, moreOptions);
+			return Backbone.Model.prototype.sync.call(this, method, model, options);
 		}
 		
 	});

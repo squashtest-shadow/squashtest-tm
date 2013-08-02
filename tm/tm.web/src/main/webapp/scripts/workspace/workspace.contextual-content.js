@@ -91,7 +91,7 @@ define([ 'jquery', 'jqueryui' ], function($) {
 				this.listeners.push(listener);
 			};
 
-			this.loadWith = function(url) {
+			this.loadWith = function(url, params) {
 				var defer = $.Deferred();
 				var self = this;
 
@@ -100,15 +100,13 @@ define([ 'jquery', 'jqueryui' ], function($) {
 					return defer.promise();
 				} else {
 					abortIfRunning();
-					this.currentXhr = $.ajax({
-						url : url,
-						type : 'GET',
-						dataType : 'html'
-					}).success(function(data) {
-						cleanContent();
-						self.currentUrl = url;
-						self.html(data);
-					});
+					
+					this.currentUrl = url;
+					this.currentXhr = $.get(url, params, 'html')
+									   .success(function(html){
+											cleanContent();	
+											self.html(html);
+									   });
 
 					return this.currentXhr;
 				}

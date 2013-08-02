@@ -61,14 +61,43 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 	
 	function loadFragment(tree){
 		var selected =  tree.jstree('get_selected');
-		if (selected.length == 1){
-			ctxcontent.loadWith(selected.getResourceUrl())
-			.done(function(){
-				ctxcontent.addListener(treehandler);
-			});
-		}
-		else{
-			ctxcontent.unload();				
+		
+		switch (selected.length){
+		
+			//nothing selected : nothing is displayed
+			case 0 :
+				ctxcontent.unload();
+				break;
+			//exactly one element is selected : display it
+			case 1 : 
+				ctxcontent.loadWith(selected.getResourceUrl())
+				.done(function(){
+					ctxcontent.addListener(treehandler);
+				});
+				break;
+				
+			//mode than 1 element is selected : display the dashboard
+			default :
+				
+				var libIds = selected.filter(':library').map(function(i,e){
+					return $(e).attr('resid');
+				}).get();
+			
+				var nodeIds = selected.not(':library').map(function(i,e){
+					return $(e).attr('resid');
+				}).get();
+				
+				params = {
+					libraries : libIds.join(','),
+					nodes : nodeIds.join(',')
+				};
+				
+				ctxcontent.loadWith(squashtm.app.contextRoot+"/test-case-browser/dashboard", params)
+				.done(function(){
+					ctxcontent.addListener(treehandler);
+				});		
+				
+				break;
 		}
 	}
 	
@@ -77,7 +106,7 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			
 			var tree = zetree.get();
 			
-			tree.on('select_node.jstree', function(){
+			tree.on('select_node.jstree deselect_node.jstree', function(){
 				loadFragment(tree);
 			});
 			

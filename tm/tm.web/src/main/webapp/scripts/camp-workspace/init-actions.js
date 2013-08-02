@@ -79,7 +79,7 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			
 			var tree = zetree.get();
 			
-			tree.on('select_node.jstree', function(){
+			tree.on('select_node.jstree deselect_node.jstree', function(){
 				loadFragment(tree);
 			});
 			

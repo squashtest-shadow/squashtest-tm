@@ -239,9 +239,9 @@ public class TestCaseLibraryNavigationController extends
 		
 		TestCaseStatisticsBundle stats = testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 		
-		model.addAttribute("initialStatistics", stats);
+		model.addAttribute("statistics", stats);
 		
-		return "null";
+		return "fragment/test-cases/test-case-dashboard";
 	}
 	
 
