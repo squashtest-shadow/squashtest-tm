@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -32,6 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
 @Controller
@@ -39,7 +42,7 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 public class TestCaseLibraryModificationController {
 	
 	@Inject
-	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
+	private TestCaseLibraryNavigationService service;
 
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
@@ -47,13 +50,15 @@ public class TestCaseLibraryModificationController {
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showTestCaseLibrary(@PathVariable long libraryId) {
 		
-		TestCaseLibrary lib = testCaseLibraryNavigationService.findLibrary(libraryId);
+		TestCaseLibrary lib = service.findLibrary(libraryId);
 		
-		ModelAndView mav = new ModelAndView("fragment/library/show-libraries-details");
+		ModelAndView mav = new ModelAndView("fragment/test-cases/edit-test-case-library");
 		Set<Attachment> attachments = attachmentsHelper.findAttachments(lib);
+		TestCaseStatisticsBundle statistics = service.getStatisticsForSelection(Arrays.asList(new Long[]{libraryId}), new ArrayList<Long>());
 		
 		mav.addObject("library", lib);
 		mav.addObject("attachments", attachments);
+		mav.addObject("statistics", statistics);
 		
 		return mav;
 	}

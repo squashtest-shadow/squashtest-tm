@@ -30,7 +30,6 @@ import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.library.WorkspaceService
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseFolderModificationControllerTest;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 
 import spock.lang.Specification
