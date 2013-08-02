@@ -322,7 +322,6 @@
 		
 		
 		//Test Case Statistics
-		@NamedQuery(name = "TestCaseStatistics.boundRequirements", query = "select count(tc) from TestCase tc where size(tc.requirementVersionCoverages) > 0 and tc.id in (:testCaseIds)"),
 		@NamedQuery(name = "TestCaseStatistics.importanceStatistics", query = "select tc.importance, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.importance"),
 		@NamedQuery(name = "TestCaseStatistics.statusesStatistics",	query = "select tc.status, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.status"),
 

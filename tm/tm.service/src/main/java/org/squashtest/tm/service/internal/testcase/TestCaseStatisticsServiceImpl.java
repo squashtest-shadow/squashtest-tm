@@ -51,7 +51,9 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 
 	/*
 	 * This query cannot be expressed in hql because the CASE construct doesn't
-	 * support multiple WHEN
+	 * support multiple WHEN. 
+	 * 
+	 * See definition of sct.sizeclass in the CASE WHEN construct.
 	 */
 	private static final String SQL_SIZE_STATISTICS = "select sct.sizeclass, count(sct.sizeclass) as count "
 			+ "from "
@@ -65,6 +67,21 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 			+ "left outer join TEST_CASE_STEPS tcs on tc.tcln_id = tcs.test_case_id "
 			+ "where tc.tcln_id in (:testCaseIds) "
 			+ "group by tc.tcln_id ) as sct " + "group by sct.sizeclass";
+	
+	/*
+	 * Same problem here. See definition of coverage.sizeclass in the CASE WHEN.
+	 */
+	private static final String SQL_BOUND_REQS_STATISTICS = "select coverage.sizeclass, count(coverage.sizeclass) as count "
+			+ "from "
+			+ "(select case "
+			+ "	when count(cov.requirement_version_coverage_id) = 0 then 0 "
+			+ "	when count(cov.requirement_version_coverage_id) = 1 then 1 "
+			+ "	else 2 "
+			+ " end as sizeclass "
+			+ "from TEST_CASE tc "
+			+ "left outer join REQUIREMENT_VERSION_COVERAGE cov on tc.tcln_id = cov.verifying_test_case_id "
+			+ "where tc.tcln_id in (:testCaseIds) "
+			+ "group by tc.tcln_id ) as coverage " + "group by coverage.sizeclass";
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -77,15 +94,31 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 			return new TestCaseBoundRequirementsStatistics();
 		}
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery(
-				"TestCaseStatistics.boundRequirements");
+		Query query = sessionFactory.getCurrentSession().createSQLQuery(SQL_BOUND_REQS_STATISTICS);
 		query.setParameterList("testCaseIds", testCaseIds, LongType.INSTANCE);
 
-		Integer nbBound = ((Long) query.uniqueResult()).intValue();
+		List<Object[]> tuples = query.list();
 
-		int nbNotBound = testCaseIds.size() - nbBound;
+		TestCaseBoundRequirementsStatistics stats = new TestCaseBoundRequirementsStatistics();
 
-		return new TestCaseBoundRequirementsStatistics(nbNotBound, nbBound);
+		Integer sizeClass;
+		Integer count;
+		for(Object[] tuple : tuples){
+			
+			sizeClass= (Integer)tuple[0];
+			count = ((BigInteger)tuple[1]).intValue();
+			
+			switch(sizeClass){
+				case 0 : stats.setZeroRequirements(count); break;
+				case 1 : stats.setOneRequirement(count); break;
+				case 2 : stats.setManyRequirements(count); break;
+				default : throw new RuntimeException("TestCaseStatisticsServiceImpl#gatherBoundRequirementStatistics : "+
+													 "there should not be a sizeclass <0 or >2. It's a bug.");
+				
+			}
+		}
+		
+		return stats;
 
 	}
 

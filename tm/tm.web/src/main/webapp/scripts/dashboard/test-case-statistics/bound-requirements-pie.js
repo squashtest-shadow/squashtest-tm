@@ -24,7 +24,7 @@ define(["../basic-objects/pie-view"], function(PieView){
 		
 		getSerie : function(){
 			var stats = this.model.get('boundRequirementsStatistics');
-			return [ stats.havingRequirements, stats.zeroRequirements ];
+			return [ stats.zeroRequirements, stats.oneRequirement, stats.manyRequirements  ];
 		}
 	});
 	

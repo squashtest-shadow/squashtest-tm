@@ -22,10 +22,9 @@
 
 /*
  * this.options : {
- *   syncmode : one of "passive" or "tree-listener". Default is "passive". See below for details.
- *   includeTreeSelection : boolean, default false. If true, when requested to sync the model with the server it will include selected node in the query string. 
- * 	 url : the url where to fetch the data. Note that it may contain predefined query string arguments.
+ *   url : the url where to fetch the data. Note that it may contain predefined query string arguments.
  * 	 model : a javascript object being the model. if undefined, the model will attempt to fetch it remotely when initialization is done.
+ * 	 includeTreeSelection : if defined and true, will include the node selected in the tree in the query string when fetching the model.
  * }
  * 
  * ----
@@ -34,7 +33,7 @@
  * 	"passive" : the model will be synchronized only when requested to.  
  * 	"tree-listener" : Will listen to the tree and trigger synchronization everytime the node selection changes. Incidentally, will force 'includeTreeSelection' to true.
  */
-define(["jquery", "backbone", "tree", "workspace.contextual-content", "jquery.throttle-debounce"], function($, Backbone, zetree, ctx){
+define(["jquery", "backbone", "tree", "jquery.throttle-debounce"], function($, Backbone, zetree){
 
 	return Backbone.Model.extend({
 		
@@ -49,43 +48,6 @@ define(["jquery", "backbone", "tree", "workspace.contextual-content", "jquery.th
 			}
 			
 			this.tree = zetree.get();
-			
-			options.includeTreeSelection = options.includeTreeSelection || false;
-			options.syncmode = options.syncmode || "passive";
-	
-			//force includeTreeSelection if syncmode is tree-listener
-			if (options.syncmode === "tree-listener"){
-				options.includeTreeSelection = true;
-			};
-			
-			//abort all interactions with the tree if there are none available
-			if (this.tree === undefined){
-				options.syncmode = "passive";
-				options.includeTreeSelection = false
-			};
-			
-			
-			if (options.syncmode === "tree-listener"){
-				// evt binding ...
-				var debouncedxproxiedfetch = $.debounce(1000, $.proxy(function(){
-					this.fetch();
-				}, this));
-				this.tree.on('select_node.jstree deselect_node.jstree' , debouncedxproxiedfetch);
-				
-				// ... and unbinding
-				var ctxclearclbk = $.proxy(function(){
-					//unbinds from the tree
-					this.tree.off('select_node.jstree deselect_node.jstree', debouncedxproxiedfetch);
-					//unbinds from the contextual content
-					ctx.off("contextualcontent.clear", ctxclearclbk);
-				}, self);
-				ctx.on("contextualcontent.clear", ctxclearclbk);
-			};
-			
-			//init if no data where passed at construction time
-			if (attributes === undefined){
-				this.fetch();	//will implicitly call "sync"
-			};
 			
 			this.options = options;
 			

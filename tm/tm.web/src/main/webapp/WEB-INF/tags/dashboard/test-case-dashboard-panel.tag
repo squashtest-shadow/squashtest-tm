@@ -46,12 +46,16 @@
 
 				<div class="dashboard-item-legend not-displayed">
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#31859D"></div>
-						<span><f:message key="dashboard.test-cases.bound-reqs.legend.have-reqs" /></span>
-					</div>
-					<div>
 						<div class="dashboard-legend-sample-color" style="background-color:#FFC000"></div>
 						<span><f:message key="dashboard.test-cases.bound-reqs.legend.no-reqs" /></span>
+					</div>
+					<div>
+						<div class="dashboard-legend-sample-color" style="background-color:#FFFFFF"></div>
+						<span>exactly one</span>
+					</div>
+					<div>
+						<div class="dashboard-legend-sample-color" style="background-color:#31859D"></div>
+						<span><f:message key="dashboard.test-cases.bound-reqs.legend.have-reqs" /></span>
 					</div>
 				</div>
 			</div>

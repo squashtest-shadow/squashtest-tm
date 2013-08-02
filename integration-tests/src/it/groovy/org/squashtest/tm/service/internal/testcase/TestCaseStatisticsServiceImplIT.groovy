@@ -74,7 +74,8 @@ class TestCaseStatisticsServiceImplIT extends DbunitServiceSpecification {
 			TestCaseBoundRequirementsStatistics stats = service.gatherBoundRequirementStatistics(tcIds)
 		
 		then :
-			stats.havingRequirements == 3
+			stats.manyRequirements == 2
+			stats.oneRequirement == 1
 			stats.zeroRequirements == 2
 		
 	}

@@ -89,35 +89,48 @@ public class TestCaseStatisticsBundle {
 	public static final class TestCaseBoundRequirementsStatistics{
 		
 		private int zeroRequirements = 0;
-		private int havingRequirements = 0;
-		
+		private int oneRequirement = 0;
+		private int manyRequirements = 0;
 		
 		public int getZeroRequirements() {
 			return zeroRequirements;
 		}
 		
-		public int getHavingRequirements() {
-			return havingRequirements;
-		}
 		
 		public void setZeroRequirements(int zeroRequirements) {
 			this.zeroRequirements = zeroRequirements;
 		}
 
-		public void setHavingRequirements(int havingRequirements) {
-			this.havingRequirements = havingRequirements;
+		public int getOneRequirement() {
+			return oneRequirement;
 		}
 
-		public TestCaseBoundRequirementsStatistics(int zeroRequirements,
-				int havingRequirements) {
-			super();
-			this.zeroRequirements = zeroRequirements;
-			this.havingRequirements = havingRequirements;
+		public void setOneRequirement(int oneRequirement) {
+			this.oneRequirement = oneRequirement;
 		}
-		
+
+		public int getManyRequirements() {
+			return manyRequirements;
+		}
+
+		public void setManyRequirements(int manyRequirements) {
+			this.manyRequirements = manyRequirements;
+		}
+
 		public TestCaseBoundRequirementsStatistics(){
 			super();
 		}
+
+
+		public TestCaseBoundRequirementsStatistics(int zeroRequirements,
+				int oneRequirement, int manyRequirements) {
+			super();
+			this.zeroRequirements = zeroRequirements;
+			this.oneRequirement = oneRequirement;
+			this.manyRequirements = manyRequirements;
+		}
+		
+		
 		
 	}
 	
