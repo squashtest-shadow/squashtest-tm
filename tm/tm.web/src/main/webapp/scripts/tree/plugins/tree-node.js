@@ -106,7 +106,7 @@ define(['jquery'], function($){
 	
 	
 	function getDeleteUrl(){
-		var specific = ""
+		var specific = "";
 		switch (this.getDomType()){
 			case "folder" :
 			case "test-case" :
@@ -121,12 +121,14 @@ define(['jquery'], function($){
 	function refreshLabel(){
 
 		var label = null;
+		var name;
+		
 		
 		switch(this.getResType()){
 		
 		case 'requirements' :
 		case 'test-cases' : 
-			var name = this.getName();
+			name = this.getName();
 			var reference = this.getReference() || "";
 			
 			if (reference.length > 0) {
@@ -137,7 +139,7 @@ define(['jquery'], function($){
 			break;
 		
 		case 'iterations' : 
-			var name = this.getName();
+			name = this.getName();
 			var index = this.getIndex() || "";
 			if (index.length > 0) {
 				index += " - ";
@@ -338,7 +340,7 @@ define(['jquery'], function($){
 		
 		this.isLoaded = function(){
 			return this.tree._is_loaded(this);
-		}
+		};
 
 		this.load = function() {
 			var defer = $.Deferred();
@@ -401,7 +403,7 @@ define(['jquery'], function($){
 			this.each(function(elt){
 				tr.delete_node(this);
 			});
-		}
+		};
 
 		// *********** tests
 
@@ -444,7 +446,7 @@ define(['jquery'], function($){
 			var thisConf = typePluginConf[thisRel];
 			
 			return (thisConf !== undefined && thisConf.valid_children !== 'none');
-		}
+		};
 
 		// ************* methods for multiple matched elements ************
 
@@ -550,5 +552,5 @@ define(['jquery'], function($){
 		this.getDeleteUrl = getDeleteUrl;
 		
 		return this;		
-	}
+	};
 });

@@ -73,8 +73,8 @@ define([ "./simple-tree-conf/conf-factory", "./workspace-tree-conf/conf-factory"
 			squashtm.tree = instance;			
 		},
 		
-		get : function(){return squashtm.tree}
-	}
+		get : function() { return squashtm.tree; }
+	};
 	
 	
 });

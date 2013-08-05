@@ -37,7 +37,7 @@ define(function(){
 	
 	
 			return { 
-				"plugins" : ["json_data", "ui", "types", "sort",  "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ], 			
+				"plugins" : ["json_data", "ui", "types", "sort",  "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ],
 				
 				"json_data" : { 
 					"data" : settings.model, 
@@ -69,7 +69,7 @@ define(function(){
 								this.get_container().trigger('copy.squashtree');
 							},
 					"ctrl+v" : function(){
-								this.get_container().trigger('paste.squashtree');						
+								this.get_container().trigger('paste.squashtree');
 							},
 							
 					
@@ -95,15 +95,15 @@ define(function(){
 					"theme" : "squashtest",
 					"dots" : true,
 					"icons" : true,
-					"url" : baseURL+"/styles/squashtree.css"				
+					"url" : baseURL+"/styles/squashtree.css"
 				},
 				
 				"squash" : {
 					rootUrl : baseURL
 				}
 				
-			}
+			};
 		}
-	}
+	};
 
 });

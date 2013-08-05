@@ -174,7 +174,7 @@ define(['jquery', 'jstree', './tree-node'], function($){
 						for ( var ppt in propertiesset) {
 							megaselector += "[" + ppt + "='" + propertiesset[ppt] + "']";
 						}
-						megaselector += ", "
+						megaselector += ", ";
 					}
 					megaselector = megaselector.replace(/, $/,'');
 					
@@ -222,7 +222,7 @@ define(['jquery', 'jstree', './tree-node'], function($){
 			}
 		});
 	
-	}
+	};
 	
 	
 });
