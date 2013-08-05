@@ -168,6 +168,15 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 				$("#export-test-case-dialog").exportDialog('open');
 			});
 			
+			// *****************  search  ********************
+			
+			$("#search-tree-button").on('click', function(){
+				$.ajax({url: "/squash/advanced-search?testcase"
+				}).done(function(data) {
+					$("#contextual-content").html(data);
+				});
+			});
+			
 			// ***************** deletion ********************
 			
 			$("#delete-node-tree-button").on('click', function(){

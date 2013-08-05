@@ -95,8 +95,7 @@
 		selectedTab = 0;
 
 		$(function(){
-			$( "#tabbed-pane" ).tabs();
-			
+		
 			require( ["common"], function(){
 				require(["squash/squashtm.tree-page-resizer"], function(resizer){
 					
@@ -107,32 +106,7 @@
 					
 					resizer.init(conf);
 				});
-				
-				require([ "jquery",  "domReady","search/TestCaseSearchInputPanel" ], function($, domReady, TestCaseSearchInputPanel) {
-					domReady(function() {
-					
-						new TestCaseSearchInputPanel();
-						
-					});
-				});
-			});
-			
-			$( "#tabbed-pane" ).bind( "tabsselect", function(event, ui) {
-				  //change the number of the selected pane 
-				 selectedTab =  ui.index;
-				 $("#contextual-content").html("");
-				 if(selectedTab === 1){
-					<c:if test="${highlightedWorkspace == 'requirement'}">
-					</c:if>
-					<c:if test="${highlightedWorkspace == 'test-case'}">
-						var searchtab = $.ajax({
-						  	url: "/squash/advanced-search?testcase"
-						}).done(function(data) {
-							$("#search-pane").html(data);
-						});
-					</c:if>
-				 } 
-			});			
+			});		
 		});
 	</script>	
 </c:set>
@@ -171,21 +145,10 @@
 	<jsp:attribute name="content">
 	<%-- now the actual specifics for the tree-page-layout itself --%>
 		<div id="tree-panel-left">
-			<div class="position-layout-fix">
+			<div class="position-layout-fix">	
 				<div id="tabbed-pane">
-					<ul>
-						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
-						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>
-						<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-							<li class="tab"> <a href="#requirement-search-pane"><f:message key="tabbed_panel.requirement.pane.label"/></a></li>
-						</c:if>						
-					</ul>
-					
 					<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
 						<jsp:invoke fragment="tree" />
-					</div>
-					
-					<div id="search-pane">
 					</div>
 				</div>
 			</div>
@@ -233,20 +196,9 @@
 		<div id="tree-panel-left">
 			<div class="position-layout-fix">
 				<div id="tabbed-pane">
-					<ul>
-						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
-						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>
-						<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-							<li class="tab"> <a href="#requirement-search-pane"><f:message key="tabbed_panel.requirement.pane.label"/></a></li>
-						</c:if>
-					</ul>
-
 					<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
 						<jsp:invoke fragment="tree" />
 					</div>
-					
-					<div id="search-pane">
-					</div>	
 				</div>
 			</div>
 		</div>
