@@ -22,8 +22,12 @@
 
 /*
  * this.options : {
- *   url : the url where to fetch the data. Note that it may contain predefined query string arguments.
- * 	 model : a javascript object being the model. if undefined, the model will attempt to fetch it remotely when initialization is done.
+ *   url : 		the url where to fetch the data. Note that it may contain predefined query string arguments. 
+ *   			NB : this is a native Backbone ctor parameter.
+ * 	 model : 	a javascript object being the model. If left undefined, will attempt to read from the cache (if configured to do so). 
+ * 				NB : this is a native Backbone ctor parameter.
+ * 	 cacheKey : string. If defined, will store data fetched from 'url' in a cache using this key. Also, if no 'model' is found, will 
+ * 				attempt to initialize its data from the cache.
  * 	 includeTreeSelection : if defined and true, will include the node selected in the tree in the query string when fetching the model.
  * }
  * 
@@ -45,7 +49,7 @@ define(["jquery", "backbone", "tree", "jquery.throttle-debounce"], function($, B
 			
 			if (options.url === undefined){
 				throw "dashboard : cannot initialize the model because no url was provided";
-			}
+			};
 			
 			this.tree = zetree.get();
 			
@@ -54,30 +58,46 @@ define(["jquery", "backbone", "tree", "jquery.throttle-debounce"], function($, B
 		},
 		
 		sync : function(method, model, options){
+			
 			if (method !== "read"){
 				return;	//this is a read-only operation
 			};
 			
-			if (this.options.includeTreeSelection === true){
-				var selectedNodes = this.tree.jstree('get_selected');
-				
-				var libIds = selectedNodes.filter(':library').map(function(i,e){
-					return $(e).attr('resid');
-				}).get();
-			
-				var nodeIds = selectedNodes.not(':library').map(function(i,e){
-					return $(e).attr('resid');
-				}).get();
-				
-				var params = {
-					libraries : libIds.join(','),
-					nodes : nodeIds.join(',')
+			// override the success handler and automatically add the 
+			// timestamp of this model on completion.
+			var oldsuccess = options.success;
+			options.success = function(data, status, xhr){
+				model.set('timestamp', new Date());
+				if (oldsuccess!==undefined){
+					oldsuccess.call(this, data, status, xhr);
 				};
-				
-				options.data = params;
 			}
 			
+			// includes tree parameters if requested so
+			if (this.options.includeTreeSelection === true){
+				options.data = this._treeParams();
+			};
+			
 			return Backbone.Model.prototype.sync.call(this, method, model, options);
+		},
+		
+		
+		_treeParams : function(){
+			
+			var selectedNodes = this.tree.jstree('get_selected');
+			
+			var libIds = selectedNodes.filter(':library').map(function(i,e){
+				return $(e).attr('resid');
+			}).get();
+		
+			var nodeIds = selectedNodes.not(':library').map(function(i,e){
+				return $(e).attr('resid');
+			}).get();
+			
+			return {
+				libraries : libIds.join(','),
+				nodes : nodeIds.join(',')
+			};			
 		}
 		
 	});

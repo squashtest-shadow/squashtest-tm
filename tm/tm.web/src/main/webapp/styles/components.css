@@ -842,6 +842,11 @@ predefined for future evolutions :
 	vertical-align : top;
 }
 
+.dashboard-summary{
+	font-size: 1.2em;
+	color: #666666;
+}
+
 /*****************************************
  * various icons
  ****************************************/

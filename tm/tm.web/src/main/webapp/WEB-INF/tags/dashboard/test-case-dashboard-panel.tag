@@ -157,8 +157,9 @@
 					</div>
 				</div>
 			</div>
-	
-			<span class="dashboard-summary"><f:message key="dashboard.test-cases.summary"/><span class="dashboard-total"></span></span>
+			
+			<div style="clear:both;"> </div>			
+			<span class="dashboard-summary"><f:message key="dashboard.test-cases.summary"/></span>
 			
 		</div>
 	</div>

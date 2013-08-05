@@ -24,15 +24,21 @@ define(["jquery", "backbone"], function($, Backbone){
 	return Backbone.View.extend({
 		
 		initialize : function(){
+			
+			this.template = this.$el.html();
+			
 			this.render();
 			this.listenTo(this.model, 'change', this.render);
 		},
 		
+		// dirty but effective way to know how many test cases we have here.
 		render : function(){
 			var stats = this.model.get('boundRequirementsStatistics');
 			var nbtc = stats.zeroRequirements + stats.oneRequirement + stats.manyRequirements
 			
-			this.$el.find('.dashboard-total').text(nbtc);
+			var todisplay = this.template.replace('{placeholder}', '<span style="font-weight:bold;">'+nbtc+'</span>');
+			
+			this.$el.html(todisplay);
 		}
 		
 	});
