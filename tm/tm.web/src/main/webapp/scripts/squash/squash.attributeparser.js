@@ -21,8 +21,14 @@
 define(function() {
 
 	function _parseAssignation(atom) {
-		var members = atom.split(/\s*=(.+)?/,2);	//it is written that way so that only the first '=' will match 
-													// as a separator, allowing '=' to be a valid part of the value as well.
+		
+		/*it is written that way so that only the first '=' will match 
+		 as a separator, allowing '=' to be a valid part of the value as well.
+		 It could have been written as 'atom.split(/\s*=(.+)?/,2);' but IE8 definitely 
+		 didn't want it. */
+		var posequals = atom.indexOf('=');	//index of the first '='
+		var members = [ atom.substr(0, posequals), atom.substr(posequals+1)];
+		
 		return {
 			name : members[0],
 			value : (members.length > 1) ? members[1] : 'true'

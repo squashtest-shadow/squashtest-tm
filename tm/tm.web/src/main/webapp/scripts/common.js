@@ -36,19 +36,14 @@ requirejs.config({
 				"issue-tables",
 				'tree',
 				'tc-workspace',
-				/*{
-					main : "main",
-					name : "tc-workspace",
-					location : 'http://localhost/scripts/scripts/tc-workspace'					
-				},*/
 				'req-workspace',
 				'camp-workspace',
-				'dashboard'
-				/*{
+				//'dashboard'
+				{
 					main : "main",
 					name : "dashboard",
 					location : 'http://localhost/scripts/scripts/dashboard'
-				}*/
+				}
 			],
 			/*
 			 * rules for paths naming: * third party lib: unversionned lib name *
@@ -112,9 +107,9 @@ requirejs.config({
 				"workspace.tree-node-copier" : "workspace/workspace.tree-node-copier",
 				"workspace.tree-event-handler" : "workspace/workspace.tree-event-handler",
 				"workspace.permissions-rules-broker" : "workspace/workspace.permissions-rules-broker",
-				'jqplot' : 'jqplot/jquery.jqplot.min',
-				'jqplot-pie' : 'jqplot/plugins/jqplot.pieRenderer.min',
-				'excanvas' : 'iesupport/excanvas.min'
+				'jqplot' : 'lib/jqplot/jquery.jqplot.min',
+				'jqplot-pie' : 'lib/jqplot/plugins/jqplot.pieRenderer.min',
+				'excanvas' : 'lib/excanvas.min'
 			},
 			shim : {
 				"ckeditor" : {
@@ -229,15 +224,8 @@ requirejs.config({
 					exports : "squash.add-attachment-popup"
 				},
 				'jqplot' : {
-					deps : ['jquery', 'iesupport/am-I-ie8', 'require'],
-					exports : 'jqplot',
-					//will test if we need IE canvas support
-					init : function($, isIE8, require){
-					 if (isIE8){
-						 require('excanvas');
-					 }
-					 return "jqplot";
-					}
+					deps : ['jquery'],
+					exports : 'jqplot'
 				},
 				'jqplot-pie' : {
 					deps : ['jquery', 'jqplot'],

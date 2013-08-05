@@ -30,20 +30,29 @@
  * 
  */
 
-define(['squash.attributeparser', './test-case-statistics/dashboard-builder'], function(attrparser, tcBuilder){
-
+define(['require', 'iesupport/am-I-ie8'],function(require, isIE8){
+	
+	var dependencies = ['squash.attributeparser', './test-case-statistics/dashboard-builder'];
+	
+	if (isIE8){
+		dependencies.push('excanvas');
+	};
+	
 	return {
+		
 		init : function(settings){
 			
-			var datadef = $(settings.master).data('def');
-			var domconf = attrparser.parse(datadef);
-			var conf = $.extend(true, {}, domconf, settings);
-			
-			switch(conf.workspace){
-			case 'test-case' : tcBuilder.init(settings); break;
-			default : throw "dashboard : no other dashboard that test case dashboard is currently supported";
-			}
-			
+			require(dependencies, function(attrparser, tcBuilder){
+				var datadef = $(settings.master).data('def');
+				var domconf = attrparser.parse(datadef);
+				var conf = $.extend(true, {}, domconf, settings);
+				
+				switch(conf.workspace){
+				case 'test-case' : tcBuilder.init(settings); break;
+				default : throw "dashboard : no other dashboard that test case dashboard is currently supported";
+				}
+								
+			});
 		}
 	};
 	

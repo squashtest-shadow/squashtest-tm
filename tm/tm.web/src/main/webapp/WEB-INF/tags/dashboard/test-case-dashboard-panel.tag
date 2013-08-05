@@ -38,6 +38,7 @@
 		<div class="toggle-panel-main dashboard-figures" title="${dashboardTitle}">
 			
 			<div id="dashboard-item-bound-reqs" class="dashboard-item dashboard-pie">
+			
 				<h4 class="dashboard-item-title"><f:message key="dashboard.test-cases.bound-reqs.title"/></h4>
 				
 				<div id="dashboard-bound-reqs-view" class="dashboard-item-view">
@@ -46,16 +47,16 @@
 
 				<div class="dashboard-item-legend not-displayed">
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#FFC000"></div>
+						<div class="dashboard-legend-sample-color" style="background-color:#9CCBE0"></div>
 						<span><f:message key="dashboard.test-cases.bound-reqs.legend.no-reqs" /></span>
 					</div>
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#FFFFFF"></div>
-						<span>exactly one</span>
+						<div class="dashboard-legend-sample-color" style="background-color:#69B1D1"></div>
+						<span><f:message key="dashboard.test-cases.bound-reqs.legend.one-req" /></span>
 					</div>
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#31859D"></div>
-						<span><f:message key="dashboard.test-cases.bound-reqs.legend.have-reqs" /></span>
+						<div class="dashboard-legend-sample-color" style="background-color:#3383A7"></div>
+						<span><f:message key="dashboard.test-cases.bound-reqs.legend.many-reqs" /></span>
 					</div>
 				</div>
 			</div>
@@ -70,23 +71,23 @@
 				
 				<div class="dashboard-item-legend not-displayed">
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#CC0001"></div>
+						<div class="dashboard-legend-sample-color" style="background-color:#C9E8AA"></div>
 						<span><f:message key="test-case.status.WORK_IN_PROGRESS" /></span>
 					</div>
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#F7DF01"></div>
+						<div class="dashboard-legend-sample-color" style="background-color:#A3D86E"></div>
 						<span><f:message key="test-case.status.UNDER_REVIEW" /></span>
 					</div>
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#009900"></div>
+						<div class="dashboard-legend-sample-color" style="background-color:#56AD25"></div>
 						<span><f:message key="test-case.status.APPROVED" /></span>
 					</div>
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#FF6600"></div>
+						<div class="dashboard-legend-sample-color" style="background-color:#FFFF00"></div>
 						<span><f:message key="test-case.status.TO_BE_UPDATED" /></span>
 					</div>
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#847D84"></div>
+						<div class="dashboard-legend-sample-color" style="background-color:#D9D9D9"></div>
 						<span><f:message key="test-case.status.OBSOLETE" /></span>
 					</div>
 				</div>
@@ -101,20 +102,20 @@
 				
 				<div class="dashboard-item-legend not-displayed">
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#C97020"></div>
-						<span><f:message key="test-case.importance.VERY_HIGH" /></span>
+						<div class="dashboard-legend-sample-color" style="background-color:#FCEDB6"></div>
+						<span><f:message key="test-case.importance.LOW" /></span>
 					</div>
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#F58225"></div>
-						<span><f:message key="test-case.importance.HIGH" /></span>
-					</div>
-					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#F2975E"></div>
+						<div class="dashboard-legend-sample-color" style="background-color:#FBD329"></div>
 						<span><f:message key="test-case.importance.MEDIUM" /></span>
 					</div>
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#FCC0A4"></div>
-						<span><f:message key="test-case.importance.LOW" /></span>
+						<div class="dashboard-legend-sample-color" style="background-color:#FDA627"></div>
+						<span><f:message key="test-case.importance.HIGH" /></span>
+					</div>
+					<div>
+						<div class="dashboard-legend-sample-color" style="background-color:#FD7927"></div>
+						<span><f:message key="test-case.importance.VERY_HIGH" /></span>
 					</div>
 				</div>
 			</div>
@@ -128,26 +129,26 @@
 				
 				<div class="dashboard-item-legend not-displayed">
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#623151"></div>
+						<div class="dashboard-legend-sample-color" style="background-color:#DFC3EF"></div>
 						<span><f:message key="dashboard.test-cases.size.legend.zerosteps" /></span>
 					</div>
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#604a7b"></div>
+						<div class="dashboard-legend-sample-color" style="background-color:#C998E4"></div>
 						<span><f:message key="dashboard.test-cases.size.legend.b0and10" /></span>
 					</div>
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#917AAE"></div>
+						<div class="dashboard-legend-sample-color" style="background-color:#AF67D7"></div>
 						<span><f:message key="dashboard.test-cases.size.legend.b10and20" /></span>
 					</div>
 					<div>
-						<div class="dashboard-legend-sample-color" style="background-color:#CBC1DA"></div>
+						<div class="dashboard-legend-sample-color" style="background-color:#993CCC"></div>
 						<span><f:message key="dashboard.test-cases.size.legend.above20" /></span>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 	
-	<span class="dashboard-summary"><f:message key="dashboard.test-cases.summary"/><span class="dashboard-total"></span></span>
+		<span class="dashboard-summary"><f:message key="dashboard.test-cases.summary"/><span class="dashboard-total"></span></span>
+	</div>
 	
 </div>
