@@ -21,46 +21,93 @@
 
 
 /*
- * Abstract pie view. Must implement : 
+ * Abstract pie view. 
  * 
- * getSerie() : a function that must return an array of integers read from the model, that represent the values used to draw the pie.  
+ * ----------- API -------------
  * 
- * ---------
+ * Must implement : 
  * 
- * structure : 
+ * getSerie() : a function that must return an array of integers read from the model, that represent the values used to draw the pie.
+ * 				You must ensure that the order of the data is consistent with the one of the legend (see structure below)
  * 
- * TODO : put a sample structure here.
+ * ---------- settings ---------
+ * 
+ * DOM settings : must be set on the top-level element (see Template below)
+ * 
+ * data-def="
+ * 		model-attribute = (optional) If set, will consider only this attribute of the model and not the whole model.
+ * " 
+ * 
+ * --------- Template --------- 
+ * 
+ *	<div id="optional id of this top level element. Nevertheless, this element will be this.el of the backbone view" 
+ *		class="dashboard-item dashboard-pie" 
+ *		data-def="model-attribute=(optional) restrict processing to this attribute of the model (see Settings above)">
+ *		
+ *		<div id="MANDATORY id of this div" class="dashboard-item-view">
+ *			
+ *			<!-- this is populated by jqplot-->
+ * 
+ *		</div>
+ *
+ *		<div class="dashboard-item-meta">		
+ *
+ *			<h2 class="dashboard-item-title">The title</h2>
+ *
+ *			<div class="dashboard-item-legend">
+ *				<div>
+ *					<div class="dashboard-legend-sample-color" style="background-color:some color"></div>
+ *					<span>legend 1</span>
+ *				</div>
+ *				<div>
+ *					<div class="dashboard-legend-sample-color" style="background-color:another color"></div>
+ *					<span>legend 2</span>
+ *				</div>
+ *			</div>
+ *		</div>
+ *
+ *	</div>
  * 
  */
-define(["jquery", "backbone", "jqplot-pie", "jquery.throttle-debounce"], function($, Backbone){
+define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.throttle-debounce"], function($, Backbone, attrparser){
 	
 	return Backbone.View.extend({
 		
 		initialize : function(){
 			
 			var self = this;
+
+			//configure
+			this._readDOM();
 			
-			//read more conf
+			//create		
+			this._renderFirst();
+			
+			//events
+			this._bindEvents();
+			
+		},
+		
+		_readDOM : function(){
+			
+			//reads the data-def from the master element
+			var strconf = this.$el.data('def');
+			var moarconf = attrparser.parse(strconf);
+			if (moarconf['model-attribute']!==undefined){
+				this.modelAttribute = moarconf['model-attribute'];
+			};
+			
+			//read datas from the div.dashboard-item-legend
 			var legendspans = this.$el.find('.dashboard-item-legend span');
 			var legendcolors = this.$el.find('.dashboard-legend-sample-color');
 			
 			this.textlegend = legendspans.map(function(i,e){return $(e).text();}).get();
 			this.colorscheme = legendcolors.map(function(i,e){return $(e).css('background-color');}).get();
-		
 			
-			//create		
-			this.renderFirst();
-			
-			$(window).on('resize', $.debounce(250, function(){
-				self.render();
-			}));
-			
-			//events
-			this.listenTo(this.model, 'change', this.render);
 			
 		},
 		
-		renderFirst : function(){
+		_renderFirst : function(){
 			
 			var serie = this.getSerie();
 			
@@ -70,6 +117,19 @@ define(["jquery", "backbone", "jqplot-pie", "jquery.throttle-debounce"], functio
 			
 			var viewId = this.$el.find('.dashboard-item-view').attr('id');
 			this.pie = $.jqplot(viewId, data, conf);
+		},
+		
+		_bindEvents : function(){
+			
+			var self = this;
+			$(window).on('resize', $.debounce(250, function(){
+				self.render();
+			}));
+			
+			var modelchangeevt = "change";
+			if (this.modelAttribute!==undefined) modelchangeevt+=":"+this.modelAttribute;
+			
+			this.listenTo(this.model, modelchangeevt , this.render);
 		},
 		
 		render : function(){
@@ -115,14 +175,16 @@ define(["jquery", "backbone", "jqplot-pie", "jquery.throttle-debounce"], functio
 					rendererOptions : {
 						showDataLabels : true,
 						dataLabels : this._createLabels(),
-						startAngle : -45
+						startAngle : -45,
+						shadowOffset : 0,
+						sliceMargin : 1.5
 					}
 				},
-				legend : {
-					location : 'e',
-					show : true,
-					labels : this.textlegend,
-					fontSize : '1em'
+				grid : {
+					background : '#FFFFFF',
+					drawBorder : false,
+					//borderColor : '#FFFFFF',
+					shadow : false
 				},
 				seriesColors : this.colorscheme
 			}

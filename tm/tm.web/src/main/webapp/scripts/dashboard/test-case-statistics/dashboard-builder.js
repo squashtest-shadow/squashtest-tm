@@ -70,6 +70,7 @@ define(["jquery", 'squash.attributeparser',
 			
 			
 			//init the sub views
+			
 			new RefreshButton({
 				el : master.find('.dashboard-refresh-button').get(0),
 				model : bbModel

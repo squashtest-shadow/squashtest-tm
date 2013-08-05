@@ -29,8 +29,8 @@ define(["jquery", "backbone"], function($, Backbone){
 		},
 		
 		render : function(){
-			var reqstats = this.model.get('boundRequirementsStatistics');
-			var nbtc = reqstats.zeroRequirements + reqstats.havingRequirements;
+			var stats = this.model.get('boundRequirementsStatistics');
+			var nbtc = stats.zeroRequirements + stats.oneRequirement + stats.manyRequirements
 			
 			this.$el.find('.dashboard-total').text(nbtc);
 		}

@@ -777,6 +777,12 @@ predefined for future evolutions :
  ****************************************/
 
 
+/*
+ * The rules right below are overrides of the standard jqplot.css.
+ * Note : they are used only when jqplot generates the legend by itself, but as of today this is not the case.
+ * 			In short, they are unused. 
+ */
+
 /* override of the default */
 .dashboard-item .jqplot-target {
 	color : black;
@@ -791,27 +797,49 @@ predefined for future evolutions :
 	width : 15px;
 }
 
-
 .dashboard-item {
-	width : 49%;
+	width : 48%;
 	height : 300px;	
 	float : left;
+	border : 1px solid lightgray;
+	margin : 0.5%;
 }
 
 .dashboard-item-title{
-	text-align : center;
+	text-align : right;
+	margin-right : 1em;
+	margin-top : 0.2em;
+	font-weight : bold;
+	color : #CCCCCC;
+	
 }
 
 .dashboard-item-view {
 	height : 100%;
-	width : 100%;
+	width : 63%;
+	float : left;
 }
 
+.dashboard-item-meta{
+	height : 100%;
+	width : 34%;
+	float : right;
+	position : relative;
+}
+.dashboard-item-legend{
+	position : absolute;
+	bottom : 30px;
+	left : 10px;
+}
 
 .dashboard-legend-sample-color {
 	height : 15px;
 	width : 15px;
 	display : inline-block;
+}
+
+.dashboard-item-legend span{
+	vertical-align : top;
 }
 
 /*****************************************
