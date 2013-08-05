@@ -791,11 +791,11 @@ predefined for future evolutions :
 	width : 15px;
 }
 
+
 .dashboard-item {
 	width : 49%;
-	float : left;	
-	min-height : 200px;
-	height : 49%;
+	height : 300px;	
+	float : left;
 }
 
 .dashboard-item-title{

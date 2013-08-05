@@ -26,6 +26,7 @@
 <%@ attribute name="url" required="true" description="url where to get the data" %>
 <%@ attribute name="listenTree" type="java.lang.Boolean"  required="true" description="whether to listen to the tree selection or not" %>
 
+<link rel="stylesheet" type="text/css" href="http://localhost/styles/dashboard.css" /> 
 
 <div id="dashboard-master" data-def="rendering=toggle-panel, workspace=test-case, url=${url}, listenTree=${listenTree}">
 
