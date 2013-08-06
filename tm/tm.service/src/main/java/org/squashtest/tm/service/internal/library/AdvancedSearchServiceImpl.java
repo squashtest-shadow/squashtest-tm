@@ -27,8 +27,13 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.transaction.Transaction;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.search.FullTextSession;
+import org.hibernate.search.Search;
+import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -82,8 +87,42 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	@Override
+	public List<TestCase> searchForTestCases() {
+		
+		Session session = sessionFactory.openSession();
+ 		
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		
+		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity( TestCase.class ).get();
+		 		
+		org.apache.lucene.search.Query query = qb.keyword().onFields("prerequisite").matching("Batman").createQuery();
+		 
+		 org.hibernate.Query hibQuery = ftSession.createFullTextQuery(query, TestCase.class);
+		 
+		List result = hibQuery.list();
+
+		session.close();
+		
+		return result;
+	}
+	
+	@Override
 	public PagedCollectionHolder<List<TestCase>> searchForTestCases(PagingAndSorting sorting) {
 
+		Session session = sessionFactory.openSession();
+		 		
+		FullTextSession ftSession = Search.getFullTextSession(session);
+
+		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity( TestCase.class ).get();
+		 		
+		org.apache.lucene.search.Query query = qb.keyword().onFields("prerequisite").matching("Batman").createQuery();
+		 
+		 org.hibernate.Query hibQuery = ftSession.createFullTextQuery(query, TestCase.class);
+		 
+		List result = hibQuery.list();
+		
+		session.close();
+		 			
 		List<TestCase> testCases = testCaseDao.findAll();
 		Long countAll = new Long(testCases.size());
 		return new PagingBackedPagedCollectionHolder<List<TestCase>>(sorting, countAll, testCases);

@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.library
 
 import javax.inject.Inject;
 
+import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.DbunitServiceSpecification;
@@ -37,6 +38,9 @@ import spock.unitils.UnitilsSupport;
 @Transactional
 class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 
+	@Inject
+	SessionFactory sessionFactory;
+	
 	@Inject 
 	AdvancedSearchService service;
 	
@@ -49,10 +53,12 @@ class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 	
 	@DataSet("AdvancedSearchServiceIT.xml")
 	def"should find test cases"(){
+		
+		
 		when:
 			testCaseService.changePrerequisite(10L, "Batman");
-			def res = service.findTestCases() ;
+			def res = service.searchForTestCases() ;
 		then:
-			res==[];
+			res==[10L];
 	}
 }

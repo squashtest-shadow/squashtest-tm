@@ -59,6 +59,13 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 		}		
 	}
 	
+	function loadSearchFragment(url){
+		ctxcontent.loadWith(url)
+		.done(function(){
+
+		});
+	}
+	
 	function loadFragment(tree){
 		var selected =  tree.jstree('get_selected');
 		
@@ -171,10 +178,7 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			// *****************  search  ********************
 			
 			$("#search-tree-button").on('click', function(){
-				$.ajax({url: "/squash/advanced-search?testcase"
-				}).done(function(data) {
-					$("#contextual-content").html(data);
-				});
+				loadSearchFragment("/squash/advanced-search?testcase");
 			});
 			
 			// ***************** deletion ********************

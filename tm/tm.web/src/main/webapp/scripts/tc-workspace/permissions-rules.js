@@ -99,6 +99,10 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 		this.canExport = function(nodes){
 			return true;
 		};
+
+		this.canSearch = function(nodes){
+			return true;
+		};
 		
 		this.canDelete = function(nodes){
 			return (nodes.filter(':deletable').not(':library').length == nodes.length) && (nodes.length>0);
@@ -153,7 +157,8 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			'import-excel-tree-button' : this.canImport,
 			'import-links-excel-tree-button' : this.canImport,
 			'export-tree-button' : this.canExport,
-			'delete-node-tree-button' : this.canDelete
+			'delete-node-tree-button' : this.canDelete,
+			'search-tree-button' : this.canSearch
 		}
 
 	};

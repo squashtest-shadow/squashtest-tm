@@ -113,9 +113,6 @@ public class RequirementModificationController {
 	@Inject
 	private RequirementAuditTrailService auditTrailService;
 	
-	@Inject
-	private AdvancedSearchService advancedSearchService;
-	
 	private final DatatableMapper<Integer> versionMapper = new IndexBasedMapper(7)
 														.mapAttribute(RequirementVersion.class, "versionNumber", int.class, 1)
 														.mapAttribute(RequirementVersion.class, "reference", String.class, 2)
@@ -214,7 +211,6 @@ public class RequirementModificationController {
 	public String changeCategory(@RequestParam(VALUE) String value, @PathVariable long requirementId, Locale locale) {
 		RequirementCategory category = RequirementCategory.valueOf(value);
 		requirementModService.changeCategory(requirementId, category);
-		advancedSearchService.findTestCases(); 
 		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId, category.name());
 		return formatCategory(category, locale, internationalizableFormatterProvider);
 	}

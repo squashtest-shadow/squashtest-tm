@@ -38,4 +38,6 @@ public interface AdvancedSearchService {
 	PagedCollectionHolder<List<TestCase>> searchForTestCases(PagingAndSorting sorting);
 	
 	TestCaseSearchExportCSVModel exportTestCaseSearchToCSV();
+
+	List<TestCase> searchForTestCases();
 }
