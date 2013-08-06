@@ -847,6 +847,15 @@ predefined for future evolutions :
 	color: #666666;
 }
 
+.dashboard-notready{
+	text-align : center;
+}
+
+.dashboard-notready-title{
+	color: #CCCCCC;
+	font-size: 1.5em;
+}
+
 /*****************************************
  * various icons
  ****************************************/

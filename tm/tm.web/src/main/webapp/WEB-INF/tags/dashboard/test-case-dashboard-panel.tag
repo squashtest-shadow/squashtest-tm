@@ -173,7 +173,7 @@
 			
 			<div class="dashboard-notready" style="text-align : center">
 			
-				<h1>DASHBOARD IS NOT READY</h1>
+				<h3 class="dashboard-notready-title"><f:message key="dashboard.notready.title"/></h3>
 				
 			</div>
 			

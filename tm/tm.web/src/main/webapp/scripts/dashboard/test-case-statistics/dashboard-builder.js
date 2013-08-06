@@ -86,41 +86,58 @@ define(["jquery", 'squash.attributeparser',
 			
 			
 			//init the sub views
+			var views = [
 			
-			new RefreshButton({
-				el : master.find('.dashboard-refresh-button').get(0),
-				model : bbModel
-			});
+				new RefreshButton({
+					el : master.find('.dashboard-refresh-button').get(0),
+					model : bbModel
+				}),
+				
+				new Summary({
+					el : master.find('.dashboard-summary').get(0),
+					model : bbModel 
+				}),
+				
+				new Timestamp({
+					el : master.find('.dashboard-timestamp').get(0),
+					model : bbModel
+				}),
+				
+				new BoundReqPie({
+					el : master.find('#dashboard-item-bound-reqs').get(0),
+					model : bbModel
+				}),
+				
+				new StatusPie({
+					el : master.find('#dashboard-item-test-case-status').get(0),
+					model : bbModel
+				}),
+				
+				new ImportancePie({
+					el : master.find('#dashboard-item-test-case-importance').get(0),
+					model : bbModel
+				}),
+				
+				new SizePie({
+					el : master.find('#dashboard-item-test-case-size').get(0),
+					model : bbModel
+				}),
 			
-			new Summary({
-				el : master.find('.dashboard-summary').get(0),
-				model : bbModel 
-			});
+			];
 			
-			new Timestamp({
-				el : master.find('.dashboard-timestamp').get(0),
-				model : bbModel
-			});
+			// this hook will ensure the destruction of the 
+			// views.
+			var self = this;
+			var removeOnClear = function(){
+				for (var i=0;i<views.length;i++){
+					views[i].undelegateEvents();
+					views[i].remove();
+				}
+				//unbind this hook itself.
+				ctxt.off('contextualcontent.clear', removeOnClear);
+			};
 			
-			new BoundReqPie({
-				el : master.find('#dashboard-item-bound-reqs').get(0),
-				model : bbModel
-			});
-			
-			new StatusPie({
-				el : master.find('#dashboard-item-test-case-status').get(0),
-				model : bbModel
-			});
-			
-			new ImportancePie({
-				el : master.find('#dashboard-item-test-case-importance').get(0),
-				model : bbModel
-			});
-			
-			new SizePie({
-				el : master.find('#dashboard-item-test-case-size').get(0),
-				model : bbModel
-			});
+			ctxt.on('contextualcontent.clear', removeOnClear);
 			
 		}		
 	}

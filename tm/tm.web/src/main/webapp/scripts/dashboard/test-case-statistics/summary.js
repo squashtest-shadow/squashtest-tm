@@ -25,7 +25,10 @@ define(["jquery", "backbone"], function($, Backbone){
 		
 		initialize : function(){
 			
-			this.template = this.$el.html();
+			var template = this.$el.text().split('|');
+
+			this.hasItemsMsg = template[0];	
+			this.zeroItemsMsg = template[1];		
 			
 			this.render();
 			this.listenTo(this.model, 'change:boundRequirementsStatistics', this.render);
@@ -41,7 +44,13 @@ define(["jquery", "backbone"], function($, Backbone){
 			var stats = this.model.get('boundRequirementsStatistics');
 			var nbtc = stats.zeroRequirements + stats.oneRequirement + stats.manyRequirements
 			
-			var todisplay = this.template.replace('{placeholder}', '<span style="font-weight:bold;color:black;">'+nbtc+'</span>');
+			var todisplay;
+			if (nbtc===0){
+				todisplay = this.zeroItemsMsg;
+			}
+			else{
+				todisplay = this.hasItemsMsg.replace('{placeholder}', '<span style="font-weight:bold;color:black;">'+nbtc+'</span>');
+			}
 			
 			this.$el.html(todisplay);
 		}

@@ -193,6 +193,13 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 				},
 				seriesColors : this.colorscheme
 			}
+		},
+		
+		remove : function(){
+			if (!! this.pie){
+				this.pie.destroy();
+			}
+			Backbone.View.prototype.remove.call(this);
 		}
 		
 	});
