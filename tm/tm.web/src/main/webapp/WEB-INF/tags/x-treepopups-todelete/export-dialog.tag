@@ -37,7 +37,7 @@
 <%@ attribute name="resourceName" required="true" description="the resourceName : 'test-case', 'requirement' or 'campaign' '" %>
 
 <script type="text/javascript"
-	src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.dateformat.js"></script>
+	src="${ pageContext.servletContext.contextPath }/scripts/lib/dateformat.js"></script>
 
 
 <c:url var="exportFolderUrl" value="/${resourceName}-browser/export-folder" />

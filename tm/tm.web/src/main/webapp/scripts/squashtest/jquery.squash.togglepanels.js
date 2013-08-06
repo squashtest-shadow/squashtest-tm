@@ -82,12 +82,22 @@
 			panelHead.insertBefore(this.element);
 
 			// the buttons now
-			var inputs = $('.toggle-panel-buttons input', wrapper);
-			inputs.squashButton();
-			inputs.click(function(event) {
-				event.stopPropagation();
-			});
-			panelHead.find('.snap-right').append(inputs);
+			/* 
+			 * 05/08/14 : I've changed this part so that we can stuff more things in the button panel, provided they have 
+			 * a display style 'inline' (like spans).
+			 * 
+			 * -- bsiri
+			 */
+			var snappedright = $('.toggle-panel-buttons', wrapper).children();
+
+			panelHead.find('.snap-right').append(snappedright);		
+			
+			snappedright.filter('input')
+						.squashButton()
+						.click(function(event) {
+							event.stopPropagation();
+						});
+						
 
 			// click event
 			panelHead.click($.proxy(function(event) {

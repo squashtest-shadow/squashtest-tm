@@ -63,8 +63,13 @@ define(["jquery", "backbone", "tree", "jquery.throttle-debounce"], function($, B
 				return;	//this is a read-only operation
 			};
 			
-			// override the success handler and automatically add the 
-			// timestamp of this model on completion.
+			/* override the success handler and automatically add the 
+			 * timestamp of this model on completion.
+			 * 
+			 * There were more elegant ways to do so but this one ensures
+			 * that the timestamp will be set before any other callback is 
+			 * triggered.
+			 */ 
 			var oldsuccess = options.success;
 			options.success = function(data, status, xhr){
 				model.set('timestamp', new Date());

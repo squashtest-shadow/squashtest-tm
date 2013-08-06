@@ -31,10 +31,16 @@
 
 	<f:message var="dashboardTitle" key="title.Dashboard"/>
 	<f:message var="refreshLabel" key="label.Refresh" />
+	
 	<div class="toggle-panel">
+		
 		<span class="not-displayed toggle-panel-buttons">
+			
+			<span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span> 
 			<input type="button" class="dashboard-refresh-button button" role="button" value="${refreshLabel}"/>
+			
 		</span>
+		
 		<div class="toggle-panel-main dashboard-figures" title="${dashboardTitle}">
 			
 			<div id="dashboard-item-bound-reqs" class="dashboard-item dashboard-pie" data-def="model-attribute=boundRequirementsStatistics">

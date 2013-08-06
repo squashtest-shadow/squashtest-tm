@@ -36,9 +36,10 @@
 define(["jquery", 'squash.attributeparser', 
         "../basic-objects/model", "../basic-objects/refresh-button", 
         "./summary", "./bound-requirements-pie", "./status-pie", "./importance-pie", "./size-pie",
+        "../basic-objects/timestamp-label",
         "jquery.squash.togglepanel"], 
         function($, attrparser, StatModel, RefreshButton, Summary, 
-        		BoundReqPie, StatusPie, ImportancePie, SizePie){
+        		BoundReqPie, StatusPie, ImportancePie, SizePie, Timestamp){
 	
 	return {
 		
@@ -76,10 +77,14 @@ define(["jquery", 'squash.attributeparser',
 				model : bbModel
 			});
 			
-			
 			new Summary({
 				el : master.find('.dashboard-summary').get(0),
 				model : bbModel 
+			});
+			
+			new Timestamp({
+				el : master.find('.dashboard-timestamp').get(0),
+				model : bbModel
 			});
 			
 			new BoundReqPie({
@@ -101,6 +106,7 @@ define(["jquery", 'squash.attributeparser',
 				el : master.find('#dashboard-item-test-case-size').get(0),
 				model : bbModel
 			});
+			
 		}
 		
 		
