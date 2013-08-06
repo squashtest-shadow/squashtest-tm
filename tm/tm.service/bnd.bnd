@@ -19,8 +19,10 @@ Import-Package: com.mysql.jdbc;resolution:=optional,\
 	org.apache.commons.dbcp,\
 	org.hibernate.cfg,\
 	org.hibernate.dialect,\
+	org.hibernate.integrator.spi,\
 	org.hibernate.proxy,\
 	org.hibernate.validator,\
+	org.hibernate.search.hcore.impl, \
 	org.springframework.aop,\
 	org.springframework.aop.aspectj.autoproxy,\
 	org.springframework.aop.framework,\
