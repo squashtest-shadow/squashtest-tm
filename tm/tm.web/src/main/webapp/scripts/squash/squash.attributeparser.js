@@ -18,20 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(function() {
-
+define(['jquery'], function($) {
+	
+	/*it is written that way so that only the first '=' will match 
+	 as a separator, allowing '=' to be a valid part of the value as well.
+	 It could have been written as 'atom.split(/\s*=(.+)?/,2);' but IE8 definitely 
+	 didn't want it. */
 	function _parseAssignation(atom) {
 		
-		/*it is written that way so that only the first '=' will match 
-		 as a separator, allowing '=' to be a valid part of the value as well.
-		 It could have been written as 'atom.split(/\s*=(.+)?/,2);' but IE8 definitely 
-		 didn't want it. */
+		var name, value;
+		
 		var posequals = atom.indexOf('=');	//index of the first '='
-		var members = [ atom.substr(0, posequals), atom.substr(posequals+1)];
+		
+		//'unary' assignation : set 'true' as value
+		if (posequals === -1){
+			name = $.trim(atom),
+			value = true;
+		}
+		//'binary' assignation
+		else{
+			var members = [ atom.substr(0, posequals), atom.substr(posequals+1)];
+			name = $.trim(members[0]),
+			value = $.trim(members[1]);
+		}
 		
 		return {
-			name : members[0],
-			value : (members.length > 1) ? members[1] : 'true'
+			name : name,
+			value : value
 		};
 	}
 

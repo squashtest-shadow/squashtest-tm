@@ -26,9 +26,12 @@
  *   			NB : this is a native Backbone ctor parameter.
  * 	 model : 	a javascript object being the model. If left undefined, will attempt to read from the cache (if configured to do so). 
  * 				NB : this is a native Backbone ctor parameter.
- * 	 cacheKey : string. If defined, will store data fetched from 'url' in a cache using this key. Also, if no 'model' is found, will 
- * 				attempt to initialize its data from the cache.
+ * 	 cacheKey : string. If defined, will use a cache. Contrary to what you might think, this will not shortcircuit ajax calls : we still want to 
+ * 				update our data from the server on user request. This cache will be used when the model is initialized only : when no 'model' 
+ * 				is supplied with the init options, it will attempt to lookup the cache instead. Besides this, whenever the model is updated after 
+ * 				successful remote call the cache will be updated accordingly.
  * 	 includeTreeSelection : if defined and true, will include the node selected in the tree in the query string when fetching the model.
+ * 	 syncmode : "passive" or "tree-listener". Default is "passive". See below for details.
  * }
  * 
  * ----
@@ -37,24 +40,85 @@
  * 	"passive" : the model will be synchronized only when requested to.  
  * 	"tree-listener" : Will listen to the tree and trigger synchronization everytime the node selection changes. Incidentally, will force 'includeTreeSelection' to true.
  */
-define(["jquery", "backbone", "tree", "jquery.throttle-debounce"], function($, Backbone, zetree){
+define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.contextual-content", "jquery.throttle-debounce"], 
+		function($, Backbone, _, cache, zetree, ctxt){
 
 	return Backbone.Model.extend({
 		
-		initialize : function(attributes, options){
-			
-			Backbone.Model.prototype.initialize.call(this, attributes, options);
-			
-			var self = this;
+		initialize : function(_attributes, options){
 			
 			if (options.url === undefined){
 				throw "dashboard : cannot initialize the model because no url was provided";
 			};
-			
-			this.tree = zetree.get();
-			
+
 			this.options = options;
+			this.tree = zetree.get();
+			this.ctxt = ctxt;
+		
+			this._configure(_attributes);
+
+			this._bindEvents();
+
+		},
+		
+		_configure : function(_attributes){
+
 			
+			/*
+			 * 1/ configure attributes from supplied model, or from cache.
+			 */
+			var attributes = _attributes;
+			
+			// fetch the model from the cache if no model is supplied.
+			if (attributes === undefined && this.options.cacheKey !==undefined){
+				attributes = cache.get(this.options.cacheKey);
+			};
+			
+			//if attributes is eventually defined but has no timestamp, add one.
+			if (!! attributes && attributes.timestamp===undefined){
+				attributes.timestamp = new Date();
+			};
+			
+			this.set(attributes);		
+			
+			/*
+			 * 2/ resolve the dependencies among parameters.  
+			 */
+			
+			// force 'includeTreeSelection' if 'syncmode' is 'tree-listener'
+			if (this.options.syncmode==="tree-listener"){
+				this.options.includeTreeSelection = true;
+			};
+			
+		},
+		
+		
+		
+		_bindEvents : function(){
+			if (this.options.syncmode === "tree-listener"){
+				
+				var self = this;
+				
+				/* 
+				 * Synchronize when tree selection changes
+				 * we debounce the function so that it will fire only when the user is done with selecting nodes in the tree.
+				 */
+				var syncOnSelect = $.debounce(500, function(){
+					self.fetch();
+				});
+				
+				/* 
+				 * Unbind events when the model is destroyed.
+				 */ 
+				var unbindOnClear = function(){
+					self.tree.off('select_node.jstree deselect_node.jstree', syncOnSelect);
+					self.ctxt.off('contextualcontent.clear', unbindOnClear);
+				};
+				
+				this.tree.on('select_node.jstree deselect_node.jstree', syncOnSelect);
+				this.ctxt.on('contextualcontent.clear', unbindOnClear);
+				
+			}
 		},
 		
 		sync : function(method, model, options){
@@ -63,18 +127,27 @@ define(["jquery", "backbone", "tree", "jquery.throttle-debounce"], function($, B
 				return;	//this is a read-only operation
 			};
 			
-			/* override the success handler and automatically add the 
-			 * timestamp of this model on completion.
+			/* 
+			 * override the success handler and automatically add the 
+			 * timestamp of this model on completion and store to cache if needed.
 			 * 
 			 * There were more elegant ways to do so but this one ensures
 			 * that the timestamp will be set before any other callback is 
 			 * triggered.
 			 */ 
+			var cacheKey = this.options.cacheKey; 
+			
 			var oldsuccess = options.success;
 			options.success = function(data, status, xhr){
+				
 				model.set('timestamp', new Date());
+				
 				if (oldsuccess!==undefined){
 					oldsuccess.call(this, data, status, xhr);
+				};
+				
+				if (!! cacheKey){
+					cache.store(cacheKey, model.toJSON());
 				};
 			}
 			
@@ -84,6 +157,11 @@ define(["jquery", "backbone", "tree", "jquery.throttle-debounce"], function($, B
 			};
 			
 			return Backbone.Model.prototype.sync.call(this, method, model, options);
+		},
+		
+		//tells whether the model is ready of needs to be loaded.
+		isAvailable : function(){
+			return ! _.isEmpty ( this.toJSON() );
 		},
 		
 		

@@ -57,7 +57,7 @@
 <div class="fragment-body">
 
 	<%-- statistics panel --%>	
-	<dashboard:test-case-dashboard-panel listenTree="${false}" url="${statsUrl}"/>
+	<dashboard:test-case-dashboard-panel url="${statsUrl}"/>
 	
 	<%-- description panel --%>
 	<comp:toggle-panel id="library-description-panel" titleKey="label.Description" isContextual="true" open="true">
@@ -77,7 +77,7 @@
 		require(["dashboard"], function(dashboard){
 			dashboard.init({
 				master : '#dashboard-master',
-				model : ${json:serialize(statistics)}
+				cacheKey : 'tclib${library.id}'
 			});			
 		});	
 	});

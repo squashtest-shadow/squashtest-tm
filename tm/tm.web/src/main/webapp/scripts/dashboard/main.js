@@ -25,7 +25,9 @@
  * 	  master : a css selector that identifies the whole section that need initialization,
  * 	  workspace : one of 'test-case', 'campaign', 'requirement' (can be read from dom)
  * 	  rendering : one of 'toggle-panel', 'plain'. This is a hint that tells how to render the dashboard container (can be read from dom),
- * 	  model : a javascript object, workspace-dependent, containing the data that will be plotted (optional, may be undefined) 	  
+ * 	  model : a javascript object, workspace-dependent, containing the data that will be plotted (optional, may be undefined)
+ * 	  cacheKey : if defined, will use the model cache using the specified key.
+ * 	  listeTree : if true, the model will listen to tree selection. 	  
  * }
  * 
  */

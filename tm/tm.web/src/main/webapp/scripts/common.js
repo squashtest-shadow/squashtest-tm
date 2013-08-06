@@ -81,7 +81,7 @@ requirejs.config({
 				"jquery.timepicker" : "jquery/jquery-ui-timepicker-addon",
 				"jquery.squash" : "squashtest/jquery.squashtm.plugin",
 				"jquery.squash.fragmenttabs" : "squash/squashtm.fragmenttabs",
-				"jquery.squash.togglepanel" : "http://localhost/scripts/scripts/squashtest/jquery.squash.togglepanels",
+				"jquery.squash.togglepanel" : "squashtest/jquery.squash.togglepanels",
 				"jquery.squash.messagedialog" : "squashtest/jquery.squash.messagedialog",
 				"jquery.squash.confirmdialog" : "squashtest/jquery.squash.confirmdialog",
 				"jquery.squash.oneshotdialog" : "squashtest/jquery.squashtm.oneshotdialog",

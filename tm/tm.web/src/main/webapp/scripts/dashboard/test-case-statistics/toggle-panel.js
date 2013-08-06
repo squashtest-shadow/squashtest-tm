@@ -19,31 +19,33 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "backbone"], function($, Backbone){
+define(["jquery", "backbone", "jquery.squash.togglepanel"], function($, Backbone){
 
 	return Backbone.View.extend({
 		
 		initialize : function(){
 			
-			this.template = this.$el.html();
+			this.$el.togglePanel();
 			
-			this.render();
-			this.listenTo(this.model, 'change:boundRequirementsStatistics', this.render);
+			if (this.model.isAvailable()){
+				this.show();
+			}
+			else{
+				this.hide();
+				this.listenToOnce(this.model, 'change', this.show);
+			}
+		
 		},
 		
-		// dirty but effective way to know how many test cases we have here.
-		render : function(){
-			
-			if (! this.model.isAvailable()){
-				return;
-			};
-			
-			var stats = this.model.get('boundRequirementsStatistics');
-			var nbtc = stats.zeroRequirements + stats.oneRequirement + stats.manyRequirements
-			
-			var todisplay = this.template.replace('{placeholder}', '<span style="font-weight:bold;color:black;">'+nbtc+'</span>');
-			
-			this.$el.html(todisplay);
+	
+		show : function(){
+			this.$el.find('.dashboard-figures').removeClass('not-displayed');
+			this.$el.find('.dashboard-notready').addClass('not-displayed');
+		},
+		
+		hide : function(){
+			this.$el.find('.dashboard-figures').addClass('not-displayed');
+			this.$el.find('.dashboard-notready').removeClass('not-displayed');			
 		}
 		
 	});

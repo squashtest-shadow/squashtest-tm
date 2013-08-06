@@ -70,7 +70,7 @@
 				//init the dashboard
 				dashboard.init({
 					master : '#dashboard-master',
-					model : ${json:serialize(statistics)}
+					cacheKey : 'tcfold${folder.id}'
 				});
 				
 			});
@@ -96,7 +96,7 @@
 	
 	<%-- statistics panel --%>
 	
-	<dashboard:test-case-dashboard-panel listenTree="${false}" url="${statsUrl}"/>
+	<dashboard:test-case-dashboard-panel url="${statsUrl}"/>
 	
 	<%-- description panel --%>
 	

@@ -54,11 +54,9 @@ public class TestCaseLibraryModificationController {
 		
 		ModelAndView mav = new ModelAndView("fragment/test-cases/edit-test-case-library");
 		Set<Attachment> attachments = attachmentsHelper.findAttachments(lib);
-		TestCaseStatisticsBundle statistics = service.getStatisticsForSelection(Arrays.asList(new Long[]{libraryId}), new ArrayList<Long>());
 		
 		mav.addObject("library", lib);
 		mav.addObject("attachments", attachments);
-		mav.addObject("statistics", statistics);
 		
 		return mav;
 	}
@@ -69,11 +67,9 @@ public class TestCaseLibraryModificationController {
 		
 		ModelAndView mav = new ModelAndView("page/test-case-libraries/show-test-case-library");
 		Set<Attachment> attachments = attachmentsHelper.findAttachments(lib);
-		TestCaseStatisticsBundle statistics = service.getStatisticsForSelection(Arrays.asList(new Long[]{libraryId}), new ArrayList<Long>());
 		
 		mav.addObject("library", lib);
 		mav.addObject("attachments", attachments);
-		mav.addObject("statistics", statistics);
 		
 		return mav;
 	}

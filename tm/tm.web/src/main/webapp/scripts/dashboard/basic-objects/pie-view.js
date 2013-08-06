@@ -21,7 +21,8 @@
 
 
 /*
- * Abstract pie view. 
+ * Abstract pie view. Must be supplied with a backbone model, but that model may be empty. If the model is empty the pie 
+ * will not attempt dangerous operations like building the canvas until it is available.
  * 
  * ----------- API -------------
  * 
@@ -75,12 +76,10 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 		
 		initialize : function(){
 			
-			var self = this;
-
 			//configure
 			this._readDOM();
 			
-			//create		
+			//create. This may abort if the model is not available yet.
 			this._renderFirst();
 			
 			//events
@@ -109,10 +108,12 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 		
 		_renderFirst : function(){
 			
-			var serie = this.getSerie();
+			if (! this.model.isAvailable()){
+				return;
+			}
 			
-			var conf = this.getConf();
-			
+			var serie = this.getSerie();			
+			var conf = this.getConf();			
 			var data = [serie];
 			
 			var viewId = this.$el.find('.dashboard-item-view').attr('id');
@@ -133,13 +134,17 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 		},
 		
 		render : function(){
-			var serie = this.getSerie();
-			
-			var conf = this.getConf();
-			
-			conf.data = [serie];
-			
-			this.pie.replot(conf);
+
+			if (this.pie === undefined){
+				this._renderFirst();
+			}
+			else{			
+				var serie = this.getSerie();				
+				var conf = this.getConf();				
+				conf.data = [serie];
+				
+				this.pie.replot(conf);
+			}
 
 			
 		},

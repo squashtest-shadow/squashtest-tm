@@ -27,6 +27,7 @@
  *  url : the url where to use fetch the data
  *	rendering : one of 'toggle-panel', 'plain'. This is a hint that tells how to render the dashboard master,
  *	listenTree : boolean. If true, the model will listen to the tree. It false, it won't. Default is false.
+ *	cacheKey : string. If defined, will use the cache with that key.
  * }
  * 
  * Note : 'master' and 'model' must be provided as javascript object. The other data such as 'url', 'rendering', 'listenTree' etc 
@@ -34,12 +35,20 @@
  * 
  */
 define(["jquery", 'squash.attributeparser', 
-        "../basic-objects/model", "../basic-objects/refresh-button", 
-        "./summary", "./bound-requirements-pie", "./status-pie", "./importance-pie", "./size-pie",
+        'workspace.contextual-content',
+        "../basic-objects/model", 
+        "../basic-objects/model-cache",
+        "../basic-objects/refresh-button", 
         "../basic-objects/timestamp-label",
-        "jquery.squash.togglepanel"], 
-        function($, attrparser, StatModel, RefreshButton, Summary, 
-        		BoundReqPie, StatusPie, ImportancePie, SizePie, Timestamp){
+        "./summary", 
+        "./bound-requirements-pie", 
+        "./status-pie", 
+        "./importance-pie", 
+        "./size-pie",
+        "./toggle-panel"], 
+        function($, attrparser, ctxt, StatModel, cache, RefreshButton, Timestamp, Summary, 
+        		BoundReqPie, StatusPie, ImportancePie, SizePie, TogglePanel){
+	
 	
 	return {
 		
@@ -51,22 +60,28 @@ define(["jquery", 'squash.attributeparser',
 			var domconf = attrparser.parse(master.data('def'));
 			var conf = $.extend(true, {}, jsconf, domconf);
 			
+			//coerce string|boolean to boolean 
+			var isTreeListener = (conf.listenTree === "true") || (conf.listenTree === true);
 			
-			//configure the model
+			//create the model
 			var bbModel = new StatModel(conf.model, {
 				url : conf.url,
-				includeTreeSelection : (conf.listenTree==="true"),
-				syncmode : (conf.listenTree==="true") ? "tree-listener" : "passive",
+				includeTreeSelection : isTreeListener,
+				syncmode : (isTreeListener) ? "tree-listener" : "passive",
+				cacheKey : conf.cacheKey
 			});
 			
 			
 			//init the master view
 			switch (conf.rendering){
-			case "toggle-panel" : 
-				master.find('.toggle-panel-main').togglePanel();
-				break;
-				
-			default : throw "dashboard : no other rendering than 'toggle-panel' is supported at the moment";
+				case "toggle-panel" : 
+					new TogglePanel({
+						el : master.find('.toggle-panel-main').get(0),
+						model : bbModel
+					});
+					break;
+					
+				default : throw "dashboard : no other rendering than 'toggle-panel' is supported at the moment";
 			}
 			
 			
@@ -107,9 +122,7 @@ define(["jquery", 'squash.attributeparser',
 				model : bbModel
 			});
 			
-		}
-		
-		
+		}		
 	}
 
 });

@@ -68,9 +68,6 @@ public class TestCaseFolderModificationController extends FolderModificationCont
 		
 		ModelAndView mav = super.showFolder(folderId, request);
 		
-		TestCaseStatisticsBundle stats = libraryFinderService.getStatisticsForSelection(new ArrayList<Long>(0), Arrays.asList(new Long[]{folderId}));
-		
-		mav.addObject("statistics", stats);
 		mav.setViewName("fragment/test-cases/edit-test-case-folder");
 		
 		return mav;

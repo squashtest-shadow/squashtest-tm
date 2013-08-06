@@ -19,32 +19,19 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "backbone"], function($, Backbone){
+define(function(){
+	
+	squashtm.dashboard = squashtm.dashboard || {};
+	squashtm.dashboard.cache = squashtm.dashboard.cache || {};
 
-	return Backbone.View.extend({
-		
-		initialize : function(){
-			
-			this.template = this.$el.html();
-			
-			this.render();
-			this.listenTo(this.model, 'change:boundRequirementsStatistics', this.render);
+	return {
+		get : function(key){
+			return squashtm.dashboard.cache[key];
 		},
 		
-		// dirty but effective way to know how many test cases we have here.
-		render : function(){
-			
-			if (! this.model.isAvailable()){
-				return;
-			};
-			
-			var stats = this.model.get('boundRequirementsStatistics');
-			var nbtc = stats.zeroRequirements + stats.oneRequirement + stats.manyRequirements
-			
-			var todisplay = this.template.replace('{placeholder}', '<span style="font-weight:bold;color:black;">'+nbtc+'</span>');
-			
-			this.$el.html(todisplay);
+		store : function(key, data){
+			squashtm.dashboard.cache[key] = data; 
 		}
-		
-	});
+	}
+	
 });

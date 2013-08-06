@@ -51,8 +51,8 @@ define(["jquery", "backbone", "lib/dateformat"], function($, Backbone){
 				var strdate = timestamp.format(this.dateformat);
 				var strtime = timestamp.format(this.timeformat);
 				
-				var txt = this.template.replace(/{.*?}/, '<span style="color:red">'+strdate+'</span>')
-										.replace(/{.*?}/, '<span style="color:red">'+strtime+'</span>');
+				var txt = this.template.replace(/{.*?}/, '<span style="font-weight:bold">'+strdate+'</span>')
+										.replace(/{.*?}/, '<span style="font-weight:bold">'+strtime+'</span>');
 				
 				this.$el.html(txt);
 				this.$el.show();

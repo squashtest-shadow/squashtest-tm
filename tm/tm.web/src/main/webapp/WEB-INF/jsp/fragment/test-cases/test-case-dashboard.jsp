@@ -42,7 +42,7 @@
 
 <div class="fragment-body">
 
-	<dashboard:test-case-dashboard-panel listenTree="${true}" url="${statsUrl}"/>
+	<dashboard:test-case-dashboard-panel url="${statsUrl}"/>
 	
 </div>
 
@@ -52,7 +52,8 @@
 		require(["dashboard"], function(dashboard){
 			dashboard.init({
 				master : '#dashboard-master',
-				model : ${json:serialize(statistics)}
+				model : ${json:serialize(statistics)},
+				listenTree : true
 			});			
 		});	
 	});
