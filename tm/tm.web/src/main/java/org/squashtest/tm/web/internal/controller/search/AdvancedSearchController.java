@@ -109,12 +109,12 @@ public class AdvancedSearchController {
 
 	@RequestMapping( method = RequestMethod.GET, params = "testcase")
 	public String getTestCaseSearchTab(Model model) {
-		return "search/test-case-search-input.frag.html";
+		return "test-case-search-input.html";
 	}
 	
 	@RequestMapping(value = "/results", method = RequestMethod.GET, params = "testcase")
 	public String getTestCaseSearchResultPage(Model model) {
-		return "search/test-case-search-result.html";
+		return "test-case-search-result.html";
 	} 
 	
 	@RequestMapping(value = "/table", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)

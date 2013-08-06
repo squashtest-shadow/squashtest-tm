@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
-		"app/util/StringUtil", "./SearchResultPage", "jquery.squash",
+		"app/util/StringUtil", "test-case-search-result", "jquery.squash",
 		"jqueryui", "jquery.squash.togglepanel", "jquery.squash.datatables",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, _,
@@ -141,27 +141,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 		},
 		
 		showResults : function() {
-			var self = this;
-			this.extractSearchModel();
-			var results = $.ajax(
-					{
-						url : squashtm.app.contextRoot
-								+ "/advanced-search/results?testcase"
-					}).done(
-					function(data) {
-						$("#contextual-content").html(data);
-						require([ "common" ], function(common) {
-							require([ "jquery", "domReady",
-									"./search/SearchResultPage" ], function($,
-									domReady, TestCaseSearchInputPanel) {
-								domReady(function() {
-
-									new SearchResultPage(self.model);
-
-								});
-							});
-						});
-					});
+			document.location.href = squashtm.app.contextRoot + "/advanced-search/results?testcase";		
 		},
 
 		makeTogglePanel : function(id, key, open) {

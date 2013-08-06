@@ -18,3 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+require([ "common" ], function(common) {
+	require([ "jquery", "search/test-case-search-input", "app/ws/squashtm.workspace", "domReady" ], function($,
+			TestCaseSearchView, WS, domReady) {
+		var goBack = function() {
+			history.back();
+		};
+
+		domReady(function() {
+			WS.init("");
+			var view = new TestCaseSearchView();
+			$("#back").button().on("click", goBack);
+			view.on("team.delete", goBack);
+		});
+
+	});
+});

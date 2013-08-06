@@ -29,18 +29,15 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		expanded : false,
 		el : "#test-case-search-results",
 
-		initialize : function(model) {
+		initialize : function() {
 			self = this;
-			this.expanded = false;
-			this.toggleTree();
 			this.configureModifyResultsDialog();
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
 			this.updateDisplayedImportance =  $.proxy(this._updateDisplayedImportance, this);
-			new TestCaseSearchResultTable(model);
+			new TestCaseSearchResultTable();
 		},
 
 		events : {
-			"click #toggle-expand-search-result-frame-button" : "toggleTree",
 			"click #export-search-result-button" : "exportResults",
 			"click #modify-search-result-button" : "editResults"
 		},
@@ -52,23 +49,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		editResults : function(){
 			this.addModifyResultDialog.confirmDialog("open");
 		},
-		
-		toggleTree : function(){
-			
-			if(this.expanded){
-				$("#tree-panel-left").show();
-				$("#contextual-content").removeAttr("style");
-				this.expanded = false;
-				$("#toggle-expand-search-result-frame-button").val("<<");
-			} else {
-				$("#tree-panel-left").hide();
-				$("#contextual-content").css("left",0);
-				this.expanded = true;
-				$("#toggle-expand-search-result-frame-button").val(">>");
-			}
-		},
-
-		
+				
 		_getIdsOfSelectedTableRowList : function(dataTable) {
 			var rows = dataTable.fnGetNodes();
 			var ids = [];

@@ -18,13 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery.squash.datatables", "jqueryui" ], function($, Backbone, translator,
+define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery.squash.datatables", "jqueryui", "jquery.squash.jeditable" ], function($, Backbone, translator,
 		SQDT) {
 
 	var TestCaseSearchResultTable = Backbone.View.extend({
 		el : "#test-case-search-result-table",
-		initialize : function(model) {
-			this.model = model;
+		initialize : function() {
 			this.addSelectEditableToImportance = $.proxy(this._addSelectEditableToImportance, this);
 			this.addSimpleEditableToReference = $.proxy(this._addSimpleEditableToReference, this);
 			this.addSimpleEditableToLabel = $.proxy(this._addSimpleEditableToLabel, this);

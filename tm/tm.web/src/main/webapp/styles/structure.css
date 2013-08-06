@@ -199,6 +199,11 @@ div#tabbed-pane>ul {
 	padding: 0;
 }
 
+
+.search-input {
+	width: 200px;
+}
+
 .search-div {
 	border: 1px solid;
 	bottom: 0.1cm;
@@ -305,7 +310,7 @@ div#contextual-content {
 	position: absolute;
 	right: 0;
 	top: 0.6cm;
-	left : 310px;
+	left : 360px;
 	z-index: 0;
 }
 
@@ -556,16 +561,6 @@ div.position-layout-fix{
 }
 
 div#tree { /*top:0.8cm;*/
-	top: 1.1cm;
-	bottom: 0px;
-	left: 0px;
-	overflow: auto;
-	/* position de tous les tree faire attention */
-	position: absolute;
-	right: 0px;
-}
-
-div#test-case-search-input-panel { /*top:0.8cm;*/
 	top: 1.1cm;
 	bottom: 0px;
 	left: 0px;

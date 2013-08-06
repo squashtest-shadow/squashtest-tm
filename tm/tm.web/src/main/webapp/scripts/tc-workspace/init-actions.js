@@ -178,7 +178,7 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			// *****************  search  ********************
 			
 			$("#search-tree-button").on('click', function(){
-				loadSearchFragment("/squash/advanced-search?testcase");
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?testcase";
 			});
 			
 			// ***************** deletion ********************
