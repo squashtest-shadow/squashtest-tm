@@ -73,6 +73,25 @@
 define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.throttle-debounce"], function($, Backbone, attrparser){
 	
 	return Backbone.View.extend({
+
+		// Represents an empty serie. It contains only one value that cannot be 0. That way jqplot won't complain.
+		EMPTY_SERIE : [1],
+		
+		EMPTY_COLOR_SCHEME : ["#EEEEEE"],
+	
+		EMPTY_LABELS : ["0% (0)"],
+		
+		
+		// ************************* abstract methods *********************
+		
+		
+		getSerie : function(){
+			throw "dashboard : attempted to instanciate an abstract pie view !";
+		},
+		
+		
+		// ************************* initialization ***********************
+		
 		
 		initialize : function(){
 			
@@ -86,6 +105,15 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 			this._bindEvents();
 			
 		},
+		
+
+		remove : function(){
+			if (!! this.pie){
+				this.pie.destroy();
+			}
+			Backbone.View.prototype.remove.call(this);
+		},
+		
 		
 		_readDOM : function(){
 			
@@ -105,20 +133,7 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 			
 			
 		},
-		
-		_renderFirst : function(){
-			
-			if (! this.model.isAvailable()){
-				return;
-			}
-			
-			var serie = this.getSerie();			
-			var conf = this.getConf();			
-			var data = [serie];
-			
-			var viewId = this.$el.find('.dashboard-item-view').attr('id');
-			this.pie = $.jqplot(viewId, data, conf);
-		},
+
 		
 		_bindEvents : function(){
 			
@@ -131,6 +146,23 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 			if (this.modelAttribute!==undefined) modelchangeevt+=":"+this.modelAttribute;
 			
 			this.listenTo(this.model, modelchangeevt , this.render);
+		},	
+
+
+		// ************************* rendering  ***********************
+		
+		_renderFirst : function(){
+			
+			if (! this.model.isAvailable()){
+				return;
+			};
+			
+			var serie = this.getSerieOrEmpty();			
+			var conf = this.getConf();			
+			var data = [serie];
+			
+			var viewId = this.$el.find('.dashboard-item-view').attr('id');
+			this.pie = $.jqplot(viewId, data, conf);
 		},
 		
 		render : function(){
@@ -139,18 +171,59 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 				this._renderFirst();
 			}
 			else{			
-				var serie = this.getSerie();				
+				var serie = this.getSerieOrEmpty();				
 				var conf = this.getConf();				
 				conf.data = [serie];
 				
 				this.pie.replot(conf);
 			}
 
-			
 		},
 		
-		_createLabels : function(){
-			var serie = this.getSerie();
+		// ************************** configuration *************************
+
+
+		getConf : function(aserie){
+			
+			var serie = aserie;
+			if (serie===undefined){
+				serie = this.getSerieOrEmpty();
+			};
+			
+			var labels, colors;
+			
+			if (serie === this.EMPTY_SERIE){
+				labels = this.EMPTY_LABELS,
+				colors = this.EMPTY_COLOR_SCHEME;
+			}
+			else{
+				labels = this._createLabels(serie),
+				colors = this.colorscheme;
+			}
+			
+			return {
+				seriesDefaults : {
+					renderer : jQuery.jqplot.PieRenderer,
+					rendererOptions : {
+						showDataLabels : true,
+						dataLabels : labels,
+						startAngle : -45,
+						shadowOffset : 0,
+						sliceMargin : 1.5
+					}
+				},
+				grid : {
+					background : '#FFFFFF',
+					drawBorder : false,
+					shadow : false
+				},
+				seriesColors : colors
+			}
+		},
+		
+		
+		_createLabels : function(serie){
+			
 			var total=0, 
 				labels = [];
 			
@@ -168,40 +241,26 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 			
 			return labels;
 		},
-				
-		getSerie : function(){
-			throw "dashboard : attempted to instanciate an abstract pie view !";
-		},
+						
 		
-		getConf : function(){
-			return {
-				seriesDefaults : {
-					renderer : jQuery.jqplot.PieRenderer,
-					rendererOptions : {
-						showDataLabels : true,
-						dataLabels : this._createLabels(),
-						startAngle : -45,
-						shadowOffset : 0,
-						sliceMargin : 1.5
-					}
-				},
-				grid : {
-					background : '#FFFFFF',
-					drawBorder : false,
-					//borderColor : '#FFFFFF',
-					shadow : false
-				},
-				seriesColors : this.colorscheme
+		getSerieOrEmpty : function(){
+			//check that the sum is above 0
+			var serie = this.getSerie();
+			var sum = 0,				
+				i = 0,
+				len = serie.length;
+			for (i=0;i<len;i++){
+				sum+=serie[i];
 			}
-		},
-		
-		remove : function(){
-			if (!! this.pie){
-				this.pie.destroy();
+			
+			if (sum>0){
+				return serie;
 			}
-			Backbone.View.prototype.remove.call(this);
+			else{
+				return this.EMPTY_SERIE;
+			}
 		}
-		
+
 	});
 	
 });

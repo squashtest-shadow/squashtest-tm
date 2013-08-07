@@ -38,12 +38,7 @@ requirejs.config({
 				'tc-workspace',
 				'req-workspace',
 				'camp-workspace',
-				//'dashboard'
-				{
-					main : "main",
-					name : "dashboard",
-					location : 'http://localhost/scripts/scripts/dashboard'
-				}
+				'dashboard'
 			],
 			/*
 			 * rules for paths naming: * third party lib: unversionned lib name *
