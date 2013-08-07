@@ -39,9 +39,14 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 
 		events : {
 			"click #export-search-result-button" : "exportResults",
-			"click #modify-search-result-button" : "editResults"
+			"click #modify-search-result-button" : "editResults",
+			"click #new-search-button" : "newSearch"
 		},
 
+		newSearch : function(){
+			document.location.href= squashtm.app.contextRoot +"/advanced-search?testcase";
+		},
+		
 		exportResults : function(){
 			document.location.href= squashtm.app.contextRoot +"/advanced-search?export=csv";
 		},

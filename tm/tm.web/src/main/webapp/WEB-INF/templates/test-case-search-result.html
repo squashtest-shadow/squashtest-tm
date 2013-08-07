@@ -126,10 +126,15 @@
    
    <div id="search-toolbar" class="toolbar-class ui-corner-all">
 					<div class="toolbar-button-panel">
+						<input type="button" th:value="#{label.NewSearch}"
+							id="new-search-button"
+							class="button ui-button ui-widget ui-state-default ui-corner-all"
+							role="button" aria-disabled="false" /> 						
 						<input type="button" th:value="#{label.Modify}"
 							id="modify-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" /> <input type="button"
+							role="button" aria-disabled="false" /> 
+						<input type="button"
 							th:value="#{label.Export}" id="export-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />

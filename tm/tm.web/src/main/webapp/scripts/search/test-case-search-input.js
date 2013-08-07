@@ -19,11 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
-		"app/util/StringUtil", "test-case-search-result", "jquery.squash",
+		"app/util/StringUtil", "./SearchTextfieldWidget", "jquery.squash",
 		"jqueryui", "jquery.squash.togglepanel", "jquery.squash.datatables",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, _,
-		StringUtil, SearchResultPage) {
+		StringUtil, SearchTextfieldWidget) {
 
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
@@ -42,7 +42,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			var self = this;
 			var result = $.ajax({
 				url : squashtm.app.contextRoot + "/advanced-search/input",
-				data : "",
+				data : "nodata",
 				dataType : "json"
 			}).success(function(json) {
 				$.each(json, function(key, value) {
