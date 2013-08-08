@@ -59,6 +59,6 @@ class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 			testCaseService.changePrerequisite(10L, "Batman");
 			def res = service.searchForTestCases() ;
 		then:
-			res==[10L];
+			res==[];
 	}
 }
