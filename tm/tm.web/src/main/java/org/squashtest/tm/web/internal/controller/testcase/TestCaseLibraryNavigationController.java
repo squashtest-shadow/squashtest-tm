@@ -170,14 +170,28 @@ public class TestCaseLibraryNavigationController extends
 		return listBuilder.setModel(linkableLibraries).build();
 	}
 	
-	@RequestMapping(value = "/export-folder", method = RequestMethod.GET)
+	@RequestMapping(value = "/nodes/{nodeIds}/{exportformat}", method = RequestMethod.GET, params="name")
 	public @ResponseBody
-	void exportTestCases(@RequestParam("tab[]") List<Long> ids, @RequestParam("name") String filename, @RequestParam("format") String format,
+	void exportTestCases(@PathVariable("nodeIds") List<Long> ids, @RequestParam("name") String filename, @PathVariable("exportformat") String exportformat,
 			HttpServletResponse response, Locale locale) {
-		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService
-				.findTestCasesToExportFromNodes(ids);
+		
+		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExportFromNodes(ids);
 		escapePrerequisiteAndSteps(dataSource);
-		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, format);
+		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat);
+
+	}
+	
+
+
+	@RequestMapping(value = "/drives/{libIds}/{exportformat}", method = RequestMethod.GET, params="name")
+	public @ResponseBody
+	void exportLibrary(@PathVariable("libIds") List<Long> libIds, @RequestParam("name") String filename, @PathVariable("exportformat") String exportformat,
+			HttpServletResponse response, Locale locale) {
+
+		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExportFromLibrary(libIds);
+		
+		escapePrerequisiteAndSteps(dataSource);
+		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat);
 
 	}
 
@@ -209,18 +223,6 @@ public class TestCaseLibraryNavigationController extends
 			}
 			
 		}
-	}
-
-	@RequestMapping(value = "/export-library", method = RequestMethod.GET)
-	public @ResponseBody
-	void exportLibrary(@RequestParam("tab[]") List<Long> libraryIds, @RequestParam("name") String filename, @RequestParam("format") String format,
-			HttpServletResponse response, Locale locale) {
-
-		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExportFromLibrary(libraryIds);
-		
-		escapePrerequisiteAndSteps(dataSource);
-		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, format);
-
 	}
 
 	

@@ -50,23 +50,43 @@ define(['jquery', 'tree', 'workspace/workspace.import-popup'], function($, zetre
 				if (json.rejected>0) { extensionDialog.show(); } else { extensionDialog.hide(); }
 				
 			}
-		}	
+		},
+		
+		bindEvents : function(){
+			this._super();
+			var self = this;
+			
+			this.onOwnBtn('ok', function(){
+				var tree = zetree.get();
+				var projectId = dialog.find('select[name="projectId"]').val();
+				var lib = tree.jstree('findNodes', {rel : 'drive', resid : projectId});
+				if (lib.size()>0){
+					tree.jstree('refresh', lib);
+				}
+			});
+			
+			this.element.on('change', 'select[name="projectId"]', function(){
+				var projectname = $(':selected', this).text(); 
+				self.element.find('.confirm-project').text(projectname);
+			});
+			
+			this.element.on('change', 'input[type="file"]', function(){
+				var filename = /([^\\]+)$/.exec(this.value)[1]; 
+				self.element.find('.confirm-file').text(filename);
+			});
+		}
 	
 	});
 	
 	function init(){
+		
 		var dialog = $("#import-excel-dialog").tcimportDialog({
 			formats : ['zip']
 		});
 		
-		dialog.on('tcimportdialogok', function(){
-			var tree = zetree.get();
-			var projectId = dialog.find('select[name="projectId"]').val();
-			var lib = tree.jstree('findNodes', {rel : 'drive', resid : projectId});
-			if (lib.size()>0){
-				tree.jstree('refresh', lib);
-			}
-		});
+		// ******** additional processing ***********
+		
+
 	}
 	
 	return {

@@ -21,12 +21,23 @@
 
 /*
  * settings : {
- *	formats : [array of supported file extensions, that will be checked on validation ] 
+ *		formats : [array of supported file extensions, that will be checked on validation ] 
  * 
  * }
  * 
- * API : the following must be implemented : {
- *	createSummary : function(xhr) : populate the summary panel using the xhr response.	
+ * -------------- API----------
+ * 
+ * the following MUST be implemented : 
+ * 
+ * {
+ *		createSummary : function(json) : populate the summary panel using the xhr response.	
+ * }
+ * 
+ * The following methods have a default implementation but could be considered for overriding : 
+ * 
+ * {
+ * 		bindEvents : function() : event binding
+ * 		getForm : function() : returns the form that must be uploaded.
  * }
  * 
  */
@@ -57,10 +68,10 @@ define(['jquery', 'jquery.squash.formdialog', 'jform'], function($){
 	
 		_create : function(){
 			this._super();
-			this._bindEvents();
+			this.bindEvents();
 		},
 		
-		_bindEvents : function(){
+		bindEvents : function(){
 			var self = this;
 			
 			// ** buttons **
@@ -99,18 +110,7 @@ define(['jquery', 'jquery.squash.formdialog', 'jform'], function($){
 			this.onOwnBtn('cancel', function(){
 				self.close();
 			});
-			
-			// ** other inputs **
-			this.element.on('change', 'select[name="projectId"]', function(){
-				var projectname = $(':selected', this).text(); 
-				self.element.find('.confirm-project').text(projectname);
-			});
-			
-			this.element.on('change', 'input[type="file"]', function(){
-				var filename = /([^\\]+)$/.exec(this.value)[1]; 
-				self.element.find('.confirm-file').text(filename);
-			});
-			
+						
 		},
 		
 		open : function(){
@@ -123,9 +123,13 @@ define(['jquery', 'jquery.squash.formdialog', 'jform'], function($){
 			this.setState('parametrization');
 		},
 		
+		getForm : function(){
+			return this.element.find('form');
+		},
+		
 		validate : function(){
 			
-			var fileUploads = this.element.find("input[type='file']");
+			var fileUploads = this.getForm().find("input[type='file']");
 
 			var self = this;
 			var validated = false;
@@ -152,7 +156,9 @@ define(['jquery', 'jquery.squash.formdialog', 'jform'], function($){
 		
 		doSubmit : function(){
 			var self = this;
-			var form = this.element.find('form');
+			
+			var form = this.getForm();
+			
 			var url = form.attr('action');
 			form.ajaxSubmit({
 				url : url + '?upload-ticket=' + self.options._ticket,

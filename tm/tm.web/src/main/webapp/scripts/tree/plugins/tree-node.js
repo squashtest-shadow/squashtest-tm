@@ -497,7 +497,7 @@ define(['jquery'], function($){
 				return res;
 			});
 		};
-
+		
 		// given a matchObject describing the name/value dom attributes they all
 		// must share,
 		// returns true if they all have the same or false if they differ.
@@ -522,6 +522,13 @@ define(['jquery'], function($){
 			var collected = this.all('getDomType');
 			return $(collected).not(typesArray).length == 0;
 		};
+		
+        this.areSameLibs = function() {
+            var libs = this.collect(function(elt) {
+                    return $(elt).treeNode().getLibrary().getDomId();
+            });
+            return ($.unique(libs).length == 1);
+        };
 
 
 		// *************** urls *******************************

@@ -162,6 +162,12 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 				$("#import-links-excel-dialog").linksimportDialog('open');
 			});
 			
+			// ******************* export ********************
+			
+			$("#export-tree-button").on('click', function(){
+				$("#export-test-case-dialog").exportDialog('open');
+			});
+			
 			// ***************** deletion ********************
 			
 			$("#delete-node-tree-button").on('click', function(){

@@ -37,18 +37,23 @@
 <f:message var="deleteNodeTitle"	key="dialog.delete-tree-node.title"/>
 <f:message var="importExcelTitle"	key="dialog.import-excel.title" />
 <f:message var="importLinksTitle"	key="dialog.import-links-excel.title" />
+<f:message var="exportLabel"		key="label.Export" />
 <f:message var="addLabel"		 	key="label.Add"/>
 <f:message var="addAnotherLabel"	key="label.addAnother"/>
 <f:message var="cancelLabel"		key="label.Cancel"/>
 <f:message var="confirmLabel"		key="label.Confirm"/>
 <f:message var="importLabel"		key="label.Import"/>
 <f:message var="okLabel"			key="label.Ok"/>
+<f:message var="exportLabel"		key="label.Export" />
+<f:message var="dateexportFormat"	key="export.dateformat"/>
+<f:message var="exportnamePrefix" 	key="label.lower.dash.exportTestCase" />
 
 <f:message var="deleteMessagePrefix"	key="dialog.label.delete-node.label.start" />
 <f:message var="deleteMessageVariable"  key="dialog.label.delete-nodes.test-cases.label"/>
 <f:message var="deleteMessageSuffix"	key="dialog.label.delete-node.label.end"/>
 <f:message var="deleteMessageNoUndo"	key="dialog.label.delete-node.label.cantbeundone" />
 <f:message var="deleteMessageConfirm"	key="dialog.label.delete-node.label.confirm" />
+
 
 
 <div id="treepopups-definition" class="not-displayed">
@@ -393,5 +398,42 @@
 
 <%-- ================ /IMPORT LINK POPUP ====================== --%>
 </sec:authorize>
+
+<div id="export-test-case-dialog" class="popup-dialog not-displayed" title="${exportLabel}" data-def="nameprefix=${exportnamePrefix}, dateformat=${dateexportFormat}">
+
+	<div data-def="state=main">
+					
+		<div class="display-table" style="width:100%">
+		<div style="display:table-column-group">
+		    <div style="display:table-column" ></div>
+		    <div style="display:table-column; width:70%" ></div>
+		  </div>
+			<div class="display-table-row">
+			<label><f:message key="dialog.rename.label" /></label>
+			<div class="display-table-cell" ><input type="text" id="export-name-input" style="width:100%"/></div>
+			</div>
+			<div class="display-table-row">		
+			<label><f:message key="label.ExportFormat" />
+			</label><div class="display-table-cell"><select id="export-option" >
+				<option value="csv">csv</option>
+				<option value="xls">xls</option>
+			</select></div>
+			</div>
+		</div>	
+	</div>
+	
+	<div data-def="state=crossproerror">
+		<span><f:message key="message.exportTestCaseCrossProjectError"/></span>	
+	</div>
+	
+	<div data-def="state=nonodeserror">
+		<span><f:message key="message.exportTestCaseNoNodeSelected"/></span>
+	</div>
+
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${exportLabel}"		data-def="evt=confirm, mainbtn=main"/>
+		<input type="button" value="${cancelLabel}"		data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror" />
+	</div>
+</div>
 
 </div>

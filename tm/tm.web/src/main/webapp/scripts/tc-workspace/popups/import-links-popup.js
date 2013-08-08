@@ -121,6 +121,8 @@ define(['jquery', 'workspace.contextual-content', 'workspace/workspace.import-po
 		dialog.on('linksimportdialogok', function(){
 			ctxt.fire(undefined, {evt_name : 'tc-req-links-updated'});
 		});
+		
+		
 	}
 	
 	return {
