@@ -21,7 +21,7 @@
 
 define(["jquery", "jqueryui"], function($){
 
-	var searchwidget = $.widget("search.searchTextFieldWidget", {
+	var searchwidget = $.widget("search.searchMultiSelectWidget", {
 		
 		options : {
 
@@ -38,14 +38,25 @@ define(["jquery", "jqueryui"], function($){
 					'value' : text};
 		}, 
 		
-		createDom : function(id){
-			var input = $('<input />', {
-				'type' : 'text',
-				'data-widgetname' : 'TextField',
+		createDom : function(id, options){
+			
+			var input = $('<select />', {
+				'data-widgetname' : 'MultiSelect',
 				'data-fieldid' : id,
+				'multiple' : 'multiple',
 				'class' : "search-input"
 			});
 			
+			var opt;
+			for (var i=0, len = options.length; i<len;i++){
+				opt = $('<option>', {
+					'text' : options[i].value,
+					'value' : options[i].code
+				});
+				opt.html(options[i].value);
+				input.append(opt);
+			}
+						
 			return input;
 		}
 	 });

@@ -21,7 +21,7 @@
 
 define(["jquery", "jqueryui"], function($){
 
-	var searchwidget = $.widget("search.searchTextFieldWidget", {
+	var searchwidget = $.widget("search.searchTextAreaWidget", {
 		
 		options : {
 
@@ -39,14 +39,13 @@ define(["jquery", "jqueryui"], function($){
 		}, 
 		
 		createDom : function(id){
-			var input = $('<input />', {
-				'type' : 'text',
-				'data-widgetname' : 'TextField',
+		
+			return $('<textarea/>', {
+				'data-widgetname' : 'TextArea',
 				'data-fieldid' : id,
+				'rows' : 5,
 				'class' : "search-input"
 			});
-			
-			return input;
 		}
 	 });
 	return searchwidget;

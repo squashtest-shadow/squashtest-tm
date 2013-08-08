@@ -110,7 +110,7 @@
 			<div id="sub-page-header" class="sub-page-header shadow ui-corner-all">
 			
 				<div id="sub-page-title" class="sub-page-title">
-					  <h2 th:text="#{tabbed_panel.search.pane.label}">Champs personnalisés de test</h2> 
+					  <h2 th:text="#{tabbed_panel.search.pane.label}">Recherche de cas de test</h2> 
 				</div>
 				
 				<div id="sub-page-buttons" class="sub-page-buttons">
@@ -141,30 +141,28 @@
 				<script id="textfield-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
                   	<label for="{{text-field-id}}" class="display-table-cell">{{text-field-title}}</label>
-                    <input id="{{text-field-id}}" class="search-input" type="text"/>
+                    <div id="{{text-field-id}}" class="search-input"/>
                 </div>
 				</script>
 				
 				<script id="textarea-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
                   	<label for="{{text-area-id}}" class="display-table-cell">{{text-area-title}}</label>
-                    <textarea id="{{text-area-id}}" cols="15" class="search-input"></textarea>
+                    <div id="{{text-area-id}}" class="search-input"/>
                 </div>
 				</script>
 				
 				<script id="multiselect-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
                   	<label for="{{multiselect-id}}" class="display-table-cell">{{multiselect-title}}</label>
-                    <select multiple="multiple" id="{{multiselect-id}}" class="search-input"></select>
+                    <div id="{{multiselect-id}}" class="search-input"/>
                 </div>
 				</script>	
 				
 				<script id="date-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
-                  	<label for="{{starting-date-id}}" class="display-table-cell">{{starting-date-title}}</label>
-                    <input id="{{starting-date-id}}" class="search-input" type="text"/>
-                  	<label for="{{ending-date-id}}" class="display-table-cell">{{ending-date-title}}</label>
-                    <input id="{{ending-date-id}}" class="search-input" type="text"/>
+                  	<label for="{{date-id}}" class="display-table-cell">{{date-title}}</label>
+                    <div id="{{date-id}}" class="search-input"/>
 				</div>
 				</script>
 				

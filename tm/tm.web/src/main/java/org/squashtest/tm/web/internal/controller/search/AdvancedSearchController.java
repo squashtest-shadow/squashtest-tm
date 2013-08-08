@@ -35,6 +35,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -112,8 +113,9 @@ public class AdvancedSearchController {
 		return "test-case-search-input.html";
 	}
 	
-	@RequestMapping(value = "/results", method = RequestMethod.GET, params = "testcase")
-	public String getTestCaseSearchResultPage(Model model) {
+	@RequestMapping(value = "/results", method = RequestMethod.POST, params = "testcase")
+	public String getTestCaseSearchResultPage(Model model, @RequestParam String searchModel) {
+		model.addAttribute("searchModel", searchModel);
 		return "test-case-search-result.html";
 	} 
 	

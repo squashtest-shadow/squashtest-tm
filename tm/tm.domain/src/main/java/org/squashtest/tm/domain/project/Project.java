@@ -23,7 +23,11 @@ package org.squashtest.tm.domain.project;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+
 @Entity
+@Indexed
 @DiscriminatorValue("P")
 public class Project extends GenericProject {
 	public Project() {

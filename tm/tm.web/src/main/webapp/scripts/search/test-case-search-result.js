@@ -34,7 +34,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			this.configureModifyResultsDialog();
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
 			this.updateDisplayedImportance =  $.proxy(this._updateDisplayedImportance, this);
-			new TestCaseSearchResultTable();
+			var model = JSON.parse($("#searchModel").text());
+			new TestCaseSearchResultTable(model);
 		},
 
 		events : {

@@ -110,7 +110,7 @@
 			<div id="sub-page-header" class="sub-page-header shadow ui-corner-all">
 			
 				<div id="sub-page-title" class="sub-page-title">
-					  <h2 th:text="#{tabbed_panel.search.pane.label}">Champs personnalisés de test</h2> 
+					  <h2 th:text="#{tabbed_panel.search.pane.label}">Recherche des cas de test</h2> 
 				</div>
 				
 				<div id="sub-page-buttons" class="sub-page-buttons">
@@ -141,6 +141,9 @@
 					</div>
 					<div style="clear: both;"></div>
 				</div>
+				
+				<div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
+				
 				<div id="search-results" class="toggle-panel">
 					<div id="search-results-panel" class="toggle-panel-main">
 						<table id="test-case-search-result-table"

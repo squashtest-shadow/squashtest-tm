@@ -29,6 +29,11 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.SelfClassAware;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.audit.Auditable;
@@ -50,6 +55,8 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 public abstract class TestCaseLibraryNode extends GenericLibraryNode implements SelfClassAware {
 	@Id
 	@GeneratedValue
+	@DocumentId
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	@Column(name = "TCLN_ID")
 	private Long id;
 

@@ -39,6 +39,11 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -63,20 +68,24 @@ import org.squashtest.tm.exception.testcase.StepDoesNotBelongToTestCaseException
 		@NamedQuery(name = "RequirementVersionCoverage.byRequirementVersionsAndTestStep", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingSteps step where step.id = :stepId and rv.id in :rvIds"),
 })
 @Entity
+//@Indexed
 public class RequirementVersionCoverage implements Identified {
 	@Id
 	@GeneratedValue
 	@Column(name = "REQUIREMENT_VERSION_COVERAGE_ID")
+	@DocumentId
 	private Long id;
 
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID", referencedColumnName = "TCLN_ID")
+	//@Field(analyze=Analyze.NO, store=Store.YES)
 	private TestCase verifyingTestCase;
 
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "VERIFIED_REQ_VERSION_ID", referencedColumnName = "RES_ID")
+	//@Field(analyze=Analyze.NO, store=Store.YES)
 	private RequirementVersion verifiedRequirementVersion;
 
 	@NotNull

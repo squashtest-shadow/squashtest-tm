@@ -64,6 +64,7 @@ import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.ContainedIn;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
@@ -100,6 +101,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE })
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
+	@ContainedIn
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>(0);
 
 	@NotNull

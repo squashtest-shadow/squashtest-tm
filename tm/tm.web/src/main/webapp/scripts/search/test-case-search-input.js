@@ -19,11 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
-		"app/util/StringUtil", "./SearchTextfieldWidget", "jquery.squash",
+		"app/util/StringUtil", "./SearchTextfieldWidget", "./SearchTextareaWidget", 
+		"./SearchMultiselectWidget", "./SearchDateWidget", "jquery.squash",
 		"jqueryui", "jquery.squash.togglepanel", "jquery.squash.datatables",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, _,
-		StringUtil, SearchTextfieldWidget) {
+		StringUtil, SearchTextfieldWidget, SearchTextareaWidget, SearchMultiselectWidget, SearchDateWidget) {
 
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
@@ -87,6 +88,8 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 				           "text-field-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
+			$("#"+textFieldId).searchTextFieldWidget();
+			$("#"+textFieldId).append($("#"+textFieldId).searchTextFieldWidget('createDom', "F"+textFieldId));
 		},
 		
 		makeTextArea : function(tableId, textFieldId, textFieldTitle, internationalized) {
@@ -104,6 +107,8 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 				           "text-area-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
+			$("#"+textFieldId).searchTextAreaWidget();
+			$("#"+textFieldId).append($("#"+textFieldId).searchTextAreaWidget('createDom', "F"+textFieldId));
 		},
 		
 		makeMultiselect : function(tableId, textFieldId, textFieldTitle, internationalized, options) {
@@ -121,27 +126,43 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 				           "multiselect-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
-			
-			var i;
-			for(i=0; i<options.length; i++){
-				var option = "<option value='"+options[i].code+"'>"+options[i].value+"</option>";
-				$("#"+textFieldId).append(option);
-			}
+			$("#"+textFieldId).searchMultiSelectWidget();
+			$("#"+textFieldId).append($("#"+textFieldId).searchMultiSelectWidget('createDom', "F"+textFieldId, options));
 		},
 			
 		extractSearchModel : function(){
-			var fields = $(".search-input");
-			var model = {};
+			var fields = $("div.search-input");
+			this.model = {fields : []};
 			var i;
 			for(i=0; i<fields.length; i++){
-				var val = {"id" : fields[i].id,
-				           "val" : $(fields[i]).val()};
-				this.model.fields.push(val);
+				var type = $($(fields[i]).children()[0]).attr("data-widgetname");
+				var value = $("#"+$(fields[i]).attr("id")).data("search"+type+"Widget").fieldvalue();
+				this.model.fields.push(value);
 			}
 		},
 		
+		post : function (URL, PARAMS) {
+			var temp=document.createElement("form");
+			temp.action=URL;
+			temp.method="POST";
+			temp.style.display="none";
+			for(var x in PARAMS) {
+				var opt=document.createElement("textarea");
+				opt.name=x;
+				opt.value=PARAMS[x];
+				temp.appendChild(opt);
+			}
+			document.body.appendChild(temp);
+			temp.submit();
+			return temp;
+		},
+		
 		showResults : function() {
-			document.location.href = squashtm.app.contextRoot + "/advanced-search/results?testcase";		
+			this.extractSearchModel();
+			
+			this.post(squashtm.app.contextRoot + "/advanced-search/results?testcase", {
+				searchModel : JSON.stringify(this.model)
+			});	
 		},
 
 		makeTogglePanel : function(id, key, open) {

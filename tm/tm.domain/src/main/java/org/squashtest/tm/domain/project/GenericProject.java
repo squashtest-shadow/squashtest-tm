@@ -43,6 +43,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
@@ -73,6 +74,7 @@ import org.squashtest.tm.exception.NoBugTrackerBindingException;
 public abstract class GenericProject implements Identified, AttachmentHolder {
 	@Id
 	@GeneratedValue
+	@DocumentId
 	@Column(name = "PROJECT_ID")
 	private Long id;
 

@@ -94,9 +94,13 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		FullTextSession ftSession = Search.getFullTextSession(session);
 		
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity( TestCase.class ).get();
-		 		
-		org.apache.lucene.search.Query query = qb.keyword().onFields("prerequisite").matching("Batman").createQuery();
-		 
+		
+		org.apache.lucene.search.Query query = qb
+				.bool()
+				.must(qb.phrase().onField("prerequisite").sentence("Batman").createQuery())
+				.must(qb.keyword().onField("id").matching("238").createQuery())
+				.createQuery();
+			
 		 org.hibernate.Query hibQuery = ftSession.createFullTextQuery(query, TestCase.class);
 		 
 		List result = hibQuery.list();
