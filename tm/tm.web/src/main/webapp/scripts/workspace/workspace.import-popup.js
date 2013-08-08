@@ -21,12 +21,12 @@
 
 /*
  * settings : {
- * 	formats : [array of supported file extensions, that will be checked on validation ] 
+ *	formats : [array of supported file extensions, that will be checked on validation ] 
  * 
  * }
  * 
  * API : the following must be implemented : {
- * 	  createSummary : function(xhr) : populate the summary panel using the xhr response.
+ *	createSummary : function(xhr) : populate the summary panel using the xhr response.
  * }
  * 
  */
@@ -35,7 +35,7 @@ define(['jquery', 'tree', 'jquery.squash.formdialog', 'jform'], function($, zetr
 	if (($.squash !== undefined) && ($.squash.importDialog !== undefined)){
 		//plugin already loaded
 		return ;
-	};
+	}
 	
 	$.widget('squash.importDialog', $.squash.formDialog, {
 		
@@ -216,7 +216,7 @@ define(['jquery', 'tree', 'jquery.squash.formdialog', 'jform'], function($, zetr
 		errMaxSize : function(maxSize){
 			var span = this.element.find('.error-size');
 			var text = span.text();
-			if (! (text.indexOf('{MAX-SIZE}') == -1 )){
+			if (text.indexOf('{MAX-SIZE}') !== -1 ){
 				text.replace('{MAX-SIZE}', maxSize);
 				span.text( text );
 			}

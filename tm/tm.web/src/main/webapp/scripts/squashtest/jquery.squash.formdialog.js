@@ -80,7 +80,7 @@
  *	2/ setState(id) : will show anything configured 'state=<state id>' and hide the other ones.
  *
  *  3/ onOwnBtn(evtname, handler) : for inheritance purposes. This allows subclasses of this dialog
- *  								to listen to their own button event defined using evt=<eventname> (see DOM configuration). 
+ *					to listen to their own button event defined using evt=<eventname> (see DOM configuration). 
  *  
  *	========= configuration ==============
  * 
@@ -312,7 +312,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 		},
 
 		'mainbtn' : function($elt, value) {
-			var state = (value == true) ? "default" : value;
+			var state = (value === true) ? "default" : value;
 			this.options._mainBtns[state] = $elt;
 		},
 
