@@ -30,14 +30,14 @@
  * the following MUST be implemented : 
  * 
  * {
- *		createSummary : function(json) : populate the summary panel using the xhr response.	
+ *		createSummary : function(json) : populate the summary panel using the json response object	
  * }
  * 
  * The following methods have a default implementation but could be considered for overriding : 
  * 
  * {
- * 		bindEvents : function() : event binding
- * 		getForm : function() : returns the form that must be uploaded.
+ *		bindEvents : function() : event binding
+ *		getForm : function() : returns the form that must be uploaded.
  * }
  * 
  */
