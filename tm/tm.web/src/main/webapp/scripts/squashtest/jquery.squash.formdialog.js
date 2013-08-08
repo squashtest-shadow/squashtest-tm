@@ -77,7 +77,10 @@
  * 
  *	1/ cleanup : force the cleanup of the controls
  * 
- *	2/ showState(id) : will show anything configured 'state=<state id>' and hide the other ones.
+ *	2/ setState(id) : will show anything configured 'state=<state id>' and hide the other ones.
+ *
+ *  3/ onOwnBtn(evtname, handler) : for inheritance purposes. This allows subclasses of this dialog
+ *  								to listen to their own button event defined using evt=<eventname> (see DOM configuration). 
  *  
  *	========= configuration ==============
  * 
@@ -89,9 +92,9 @@
  * 
  *	- isrich : for textarea. If set, will be turned into a ckeditor.
  *	- evt=<eventname> : for buttons. If set, clicking on that button will trigger <eventname> on the dialog.
- *	- state=<state id> : for any elements in the popup. Multiple elements can declare the same <state-id> and they'll
+ *	- state=<state id>[ <stat id> ...] : for any elements in the popup. Multiple elements can declare the same <state-id> and they'll
  *						be logically bound when setState(<state-id>) is invoked. Note that a single element can belong
- *						to multiple state.
+ *						to multiple state either by a space-separated list of states,  either declaring this 'state' clause multiple times.
  *
  *	- mainbtn[=<state-id>] : for buttons. If set, pressing <ENTER> inside the dialog will trigger 'click' on that button if the popup is in that
  *						current state. the <state-id> is optional : if left blank, the button will be triggered if the popup is in the default 
@@ -114,6 +117,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 			modal : true,
 			width : 600,
 			position : [ 'center', 100 ],
+			_internalEvents : {},
 			_state : "default",
 			_richeditors : [],
 			_mainBtns : {}
@@ -122,7 +126,25 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 		_triggerCustom : function(event) {
 			var evtname = $(event.target).data('evt');
 			this._trigger(evtname);
+			this._triggerInternal(evtname);
 			return this;
+		},
+		
+		_triggerInternal : function(evtname){
+			var listeners = this.options._internalEvents[evtname];
+			if (listeners!==undefined){
+				for (var i=0,len = listeners.length; i<len;i++){
+					listeners[i]();
+				}
+			}
+		},
+		
+		onOwnBtn : function(evtname, handler){
+			var listeners = this.options._internalEvents[evtname];
+			if (listeners === undefined){
+				listeners = this.options._internalEvents[evtname] = [];
+			}
+			listeners.push(handler);
 		},
 
 		cancel : function(event) {
@@ -142,6 +164,10 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 			tobedisplayed.show();
 
 			this.options._state = (tobedisplayed.length === 0) ? "default" : state;
+		},
+		
+		getState : function(){
+			return this.options._state;
 		},
 
 		_create : function() {
@@ -286,7 +312,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 		},
 
 		'mainbtn' : function($elt, value) {
-			var state = (value == "true") ? "default" : value;
+			var state = (value == true) ? "default" : value;
 			this.options._mainBtns[state] = $elt;
 		},
 
@@ -295,7 +321,10 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 		},
 
 		'state' : function($elt, value) {
-			$elt.addClass('popup-dialog-state-' + value);
+			var values = $.trim(value).split(' ');
+			for (var i=0,len = values.length; i<len;i++){
+				$elt.addClass('popup-dialog-state-' + values[i]);
+			}
 		}
 	};
 });

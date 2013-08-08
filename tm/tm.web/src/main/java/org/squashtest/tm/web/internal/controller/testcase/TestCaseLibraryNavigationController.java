@@ -141,7 +141,7 @@ public class TestCaseLibraryNavigationController extends
 
 
 
-	@RequestMapping(value = "/import/upload", method = RequestMethod.POST, params = "upload-ticket")
+	@RequestMapping(value = "/import/upload", method = RequestMethod.POST, params = "upload-ticket", produces="text/html")
 	public ModelAndView importArchive(@RequestParam("archive") MultipartFile archive,
 			@RequestParam("projectId") Long projectId, @RequestParam("zipEncoding") String zipEncoding)
 			throws IOException {
