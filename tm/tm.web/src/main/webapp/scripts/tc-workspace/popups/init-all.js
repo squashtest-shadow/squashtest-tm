@@ -21,8 +21,8 @@
 
 define(['./add-folder-popup', './add-test-case-popup' , 
         './rename-node-popup', './delete-node-popup', 
-        './import-excel-popup'], 
-		function(folderpopup, tcpopup, renamepopup, deletepopup, importpopup){
+        './import-excel-popup', './import-links-popup'], 
+		function(folderpopup, tcpopup, renamepopup, deletepopup, importpopup, linkspopup){
 	
 	
 	function init(){
@@ -32,6 +32,7 @@ define(['./add-folder-popup', './add-test-case-popup' ,
 		renamepopup.init();
 		
 		importpopup.init();
+		linkspopup.init();
 		deletepopup.init();
 		
 	}

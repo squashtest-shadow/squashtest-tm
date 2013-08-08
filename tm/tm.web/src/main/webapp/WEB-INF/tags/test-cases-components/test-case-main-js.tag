@@ -97,11 +97,7 @@
 			
 		});
 		
-		$("#contextual-content").on("verifiedrequirementversions.refresh", refreshTCImportance);
-		
-		
-	
-		
+					
 		//init the renaming listener
 		require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextual-content", "jqueryui"], 
 				function($, contentHandlers, Frag, bugtracker, contextualContent){
@@ -125,11 +121,26 @@
 			Frag.init(fragConf);
 			
 			<c:if test="${testCase.project.bugtrackerConnected }">
+			// ********* bugtracker ************
 			bugtracker.btPanel.load({
 				url : "${btEntityUrl}",
 				label : "${tabIssueLabel}"
 			});
 			</c:if>
+			
+			// ***** other events from the contextual content ********
+			contextualContent.addListener({
+				update : function(evt){
+					if (evt.evt_name === "tc-req-links-updated"){
+						$("#verified-requirements-table").squashTable().refresh();
+						try{
+							$("#test-steps-table").squashTable().refresh();
+						}catch(notloadedyet){
+							//no problems
+						}
+					}
+				}
+			});
 			
 		});
 		
@@ -153,7 +164,10 @@
 		$("#print-test-case-button").click(function(){
 			window.open("${testCaseUrl}?format=printable", "_blank");
 		});
+		
+		
 	});
 
 	
 </script>
+

@@ -319,13 +319,13 @@ define(['jquery'], function($){
 		};
 
 		this.refresh = function() {
-			this.tree.refresh(this);
+			if (this.canContainNodes()){
+				this.tree.refresh(this);
+			}
 		};
 
 		this.isOpen = function() {
-			// isOpen returns true when open, but something not specified when
-			// it's not
-			// hence the return thing below
+			// note : the original #isOpen() from the tree core module returns true when open, but when it's closed it returns anything but a boolean
 			var isOpen = this.tree.is_open(this);
 			return (!isOpen) ? false : true;
 		};

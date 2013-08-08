@@ -156,6 +156,12 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 				$("#import-excel-dialog").tcimportDialog('open');
 			});
 			
+			// **************** import links *****************
+			
+			$("#import-links-excel-tree-button").on('click', function(){
+				$("#import-links-excel-dialog").linksimportDialog('open');
+			});
+			
 			// ***************** deletion ********************
 			
 			$("#delete-node-tree-button").on('click', function(){

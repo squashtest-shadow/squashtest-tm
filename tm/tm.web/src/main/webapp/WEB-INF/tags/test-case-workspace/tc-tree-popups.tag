@@ -36,6 +36,7 @@
 <f:message var="renameNodeTitle"	key="dialog.rename-tree-node.title" />
 <f:message var="deleteNodeTitle"	key="dialog.delete-tree-node.title"/>
 <f:message var="importExcelTitle"	key="dialog.import-excel.title" />
+<f:message var="importLinksTitle"	key="dialog.import-links-excel.title" />
 <f:message var="addLabel"		 	key="label.Add"/>
 <f:message var="addAnotherLabel"	key="label.addAnother"/>
 <f:message var="cancelLabel"		key="label.Cancel"/>
@@ -272,6 +273,125 @@
 
 <%-- ================ /IMPORT EXCEL POPUP ====================== --%>
 
+
+<%-- ================ IMPORT LINK POPUP ====================== --%>
+
+<div id="import-links-excel-dialog" class="popup-dialog not-displayed" title="${importLinksTitle}">
+
+	<div data-def="state=parametrization">
+		<div style="margin-top:1em;margin-bottom:1em;">
+			<form action="${servContext}/requirement-version-coverage/upload" method="POST" enctype="multipart/form-data" class="display-table">
+				<div class="display-table-row">
+					<div class="display-table-cell"><label><f:message key="dialog.import-links-excel.filetype.message"/></label></div>
+					<div class="display-table-cell">
+						<input type="file" name="file" size="20" accept="application/vnd.ms-excel" />
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	<div data-def="state=confirm">
+		<div class="confirm-div">
+			<label class="confirm-label"><f:message key="dialog.import.file.confirm"/></label>
+			<span class="confirm-span confirm-file"></span>
+		</div>
+		<span style="display:block"><f:message key="dialog.import.confirm.message"/></span>
+	</div>
+	
+	<div data-def="state=progression" style="vertical-align:middle;">
+			<img src="${ pageContext.servletContext.contextPath }/images/ajax-loader.gif" />
+		<span style="font-size:1.5em;"><f:message key="squashtm.processing"/></span>			
+	</div>
+	
+		
+	<div class="import-summary" data-def="state=summary">
+		<br/>
+		<div>
+			<span class="span-bold" ><f:message key="dialog.import-links-excel.success"/></span>
+			<span class="success-import span-bold span-green"></span>
+		</div>
+		<div>
+			<span class="span-bold" ><f:message key="dialog.import-links-excel.failed"/></span>
+			<span class="failures-import span-bold"></span>
+		</div>			
+			
+			
+		<div class="import-links-excel-dialog-note">
+			<br/>
+			<div class="import-links-excel-dialog-normal-errors not-displayed">
+				<span><f:message key="dialog.import.summary.notes.label"/><br>
+				<f:message key="dialog.import-links.summary.notes.lines"/>
+				</span>
+				<ul  contenteditable="true" style="height:100px ; overflow : auto" >
+					<li class="import-links-excel-dialog-req-not-found">
+						<span><f:message key="dialog.import.summary.notes.req-not-found.label"/></span>
+						<span class="req-not-found-import"></span>
+					</li>
+					<li class="import-links-excel-dialog-tc-not-found">
+						<span><f:message key="dialog.import.summary.notes.tc-not-found.label"/></span>
+						<span class="tc-not-found-import"></span>
+					</li>
+					<li class="import-links-excel-dialog-version-not-found">
+						<span><f:message key="dialog.import.summary.notes.version-not-found.label"/></span>
+						<span class="version-not-found-import"></span>
+					</li>
+					<li class="import-links-excel-dialog-link-already-exist">
+						<span><f:message key="dialog.import.summary.notes.link-already-exist.label"/></span>
+						<span class="link-already-exist-import"></span>
+					</li>
+					<li class="import-links-excel-dialog-obsolete">
+						<span><f:message key="dialog.import.summary.notes.obsolete.label"/></span>
+						<span class="obsolete-import"></span>
+					</li>
+					<li class="import-links-excel-dialog-req-access-denied">
+						<span><f:message key="dialog.import.summary.notes.req-access-denied.label"/></span>
+						<span class="req-access-denied-import"></span>
+					</li>
+					<li class="import-links-excel-dialog-tc-access-denied">
+						<span><f:message key="dialog.import.summary.notes.tc-access-denied.label"/></span>
+						<span class="link-already-exist-import"></span>
+					</li>
+				</ul>
+			</div>
+			
+			<div class="import-links-excel-dialog-critical-errors not-displayed">
+				<span><f:message key="dialog.import.summary.errors.label"/><br></span>
+				<ul  contenteditable="true" style="height:100px ; overflow : auto" >
+					<li class="import-links-excel-dialog-missing-headers">
+						<span><f:message key="dialog.import.summary.notes.missing-headers.label"/></span>
+						<span class="file-missing-headers"></span>
+					</li>					
+				</ul>
+			</div>
+					
+		</div>
+	</div>	
+	
+			
+	<div data-def="state=error-size">
+		<span class="error-size"><f:message key="dialog.import.error.sizeexceeded"/></span>
+	</div>
+	
+	<div data-def="state=error-format">		
+		<span><f:message key="dialog.import.wrongfile"/>xls, xlsx</span>	
+	</div>
+	
+	<div id="import-links-dump" class="not-displayed dump"></div>	
+
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${importLabel}"  data-def="evt=import, state=parametrization, mainbtn=parametrization"/>
+		<input type="button" value="${confirmLabel}" data-def="evt=confirm, state=confirm, mainbtn=confirm"/>
+		<input type="button" value="${okLabel}"		 data-def="evt=ok, state=summary, mainbtn=summary"/>
+		<input type="button" value="${okLabel}"		 data-def="evt=okerrsize, state=error-size, mainbtn=error-size"/>
+		<input type="button" value="${okLabel}"		 data-def="evt=okerrformat, state=error-format, mainbtn=error-format"/>
+		<input type="button" value="${cancelLabel}"  data-def="evt=cancel, state=parametrization confirm"/>
+		<input type="button" value="${cancelLabel}"  data-def="evt=cancel-progression, state=progression"/>
+	</div>
+	
+</div>
+
+<%-- ================ /IMPORT LINK POPUP ====================== --%>
 </sec:authorize>
 
 </div>

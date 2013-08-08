@@ -75,8 +75,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 
 		configureTable : function() {
 			var self = this;
-			$(this.el).squashTable(self.dataTableSettings(self), self.squashSettings(self));
-			this.table = $(this.el).squashTable();
+			this.table = this.$el.squashTable(self.dataTableSettings(self), self.squashSettings(self));
 		},
 
 		_requirementsTableDrawCallback : function() {

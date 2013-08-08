@@ -26,11 +26,11 @@
  * }
  * 
  * API : the following must be implemented : {
- *	createSummary : function(xhr) : populate the summary panel using the xhr response.
+ *	createSummary : function(xhr) : populate the summary panel using the xhr response.	
  * }
  * 
  */
-define(['jquery', 'tree', 'jquery.squash.formdialog', 'jform'], function($, zetree){
+define(['jquery', 'jquery.squash.formdialog', 'jform'], function($){
 	
 	if (($.squash !== undefined) && ($.squash.importDialog !== undefined)){
 		//plugin already loaded
@@ -80,12 +80,6 @@ define(['jquery', 'tree', 'jquery.squash.formdialog', 'jform'], function($, zetr
 			});
 			
 			this.onOwnBtn('ok', function(){
-				var tree = zetree.get();
-				var projectId = self.element.find('select[name="projectId"]').val();
-				var lib = tree.jstree('findNodes', {rel : 'drive', resid : projectId});
-				if (lib.size()>0){
-					tree.jstree('refresh', lib);
-				}
 				self.close();
 			});
 			

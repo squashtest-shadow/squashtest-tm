@@ -55,9 +55,9 @@ public class RequirementVersionCoverageController {
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 	
 	@RequestMapping(value="/upload", method = RequestMethod.POST,  params = "upload-ticket")
-	public ModelAndView importArchive(@RequestParam("archive") MultipartFile archive) throws IOException{
+	public ModelAndView importArchive(@RequestParam("file") MultipartFile file) throws IOException{
 		LOGGER.debug("Start upload links requirement/test-cases");
-		InputStream stream = archive.getInputStream();
+		InputStream stream = file.getInputStream();
 		ImportRequirementTestCaseLinksSummary summary =  requirementLibraryNavigationService.importLinksExcel(stream);
 		ModelAndView mav =  new ModelAndView("fragment/import/import-links-summary");
 		mav.addObject("summary", summary);

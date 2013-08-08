@@ -58,6 +58,15 @@ define(['jquery', 'tree', 'workspace/workspace.import-popup'], function($, zetre
 		var dialog = $("#import-excel-dialog").tcimportDialog({
 			formats : ['zip']
 		});
+		
+		dialog.on('tcimportdialogok', function(){
+			var tree = zetree.get();
+			var projectId = dialog.find('select[name="projectId"]').val();
+			var lib = tree.jstree('findNodes', {rel : 'drive', resid : projectId});
+			if (lib.size()>0){
+				tree.jstree('refresh', lib);
+			}
+		});
 	}
 	
 	return {
