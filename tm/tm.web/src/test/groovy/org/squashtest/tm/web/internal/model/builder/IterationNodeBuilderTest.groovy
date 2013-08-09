@@ -20,8 +20,11 @@
  */
 package org.squashtest.tm.web.internal.model.builder
 
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
@@ -50,4 +53,29 @@ class IterationNodeBuilderTest extends Specification {
 		res.attr['resType'] == "iterations"
 		res.title == "5 - it"
 	}
+	
+	def "should expand itreration"() {
+		given:
+		Iteration iter = new Iteration(name: "it")
+		def id = 10L
+		use(ReflectionCategory) {
+			Iteration.set(field: "id", of:iter, to: id)
+		}
+		
+		and:
+		TestSuite ts = new TestSuite()
+		iter.testSuites << ts
+
+		and:
+		MultiMap expand = new MultiValueMap()
+		expand.put("Iteration", 10L)
+
+		when:
+		def res = builder.expand(expand).setModel(iter).build();
+
+		then:
+		res.state == State.open.name()
+		res.children.size() == 1
+	}
+
 }

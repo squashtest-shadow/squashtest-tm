@@ -44,12 +44,10 @@ class CampaignLibraryNavigationControllerTest extends spock.lang.Specification {
 		controller.iterationNodeBuilder = iterationNodeBuilder
 		controller.campaignLibraryTreeNodeBuilder = campaignLibraryTreeNodeBuilder
 
-		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService))
+		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
 		iterationNodeBuilder.get() >> new IterationNodeBuilder(Mock(PermissionEvaluationService))
 		campaignLibraryTreeNodeBuilder.get() >> new CampaignLibraryTreeNodeBuilder(Mock(PermissionEvaluationService))
 	}
-
-	
 
 	def "should return iteration nodes of campaign"() {
 		given:

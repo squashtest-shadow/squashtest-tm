@@ -24,25 +24,36 @@ package org.squashtest.tm.web.internal.controller.campaign;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.api.workspace.WorkspaceType;
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
+import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 
 @Controller
 @RequestMapping("/campaign-workspace")
-public class CampaignWorkspaceController extends WorkspaceController<CampaignLibrary> {
+public class CampaignWorkspaceController extends WorkspaceController<CampaignLibraryNode> {
 	@Inject
-	@Qualifier("squashtest.tm.service.CampaignsWorkspaceService")
-	private WorkspaceService<CampaignLibrary> workspaceService;
+	@Named("squashtest.tm.service.CampaignsWorkspaceService")
+	private WorkspaceService<Library<CampaignLibraryNode>> workspaceService;
+	
+	@Inject
+	@Named("campaign.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilderProvider; 
 
+	/**
+	 * 
+	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#getWorkspaceService()
+	 */
 	@Override
-	protected WorkspaceService<CampaignLibrary> getWorkspaceService() {
+	protected WorkspaceService<Library<CampaignLibraryNode>> getWorkspaceService() {
 		return workspaceService;
 	}
 
@@ -59,6 +70,14 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 	@Override
 	protected void populateModel(Model model, Locale locale) {
 		//noop
+	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#driveNodeBuilderProvider()
+	 */
+	@Override
+	protected Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilderProvider() {
+		return driveNodeBuilderProvider;
 	}
 
 }

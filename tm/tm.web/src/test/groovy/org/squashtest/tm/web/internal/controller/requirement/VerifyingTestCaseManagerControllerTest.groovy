@@ -56,7 +56,7 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 	def driveNodeBuilderProvider() {
 		def provider = Mock(Provider)
 		PermissionEvaluationService permissionEvaluationService = Mock()
-		provider.get() >> new DriveNodeBuilder(permissionEvaluationService)
+		provider.get() >> new DriveNodeBuilder(permissionEvaluationService, null)
 		return provider
 	}
 

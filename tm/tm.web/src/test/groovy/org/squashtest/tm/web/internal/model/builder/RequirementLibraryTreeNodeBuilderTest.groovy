@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
@@ -97,6 +99,29 @@ class RequirementLibraryTreeNodeBuilderTest extends Specification {
 		
 	}
 	
-	
+	def "should expand a requirement node"(){
+		given :
+			Requirement node = new Requirement(resource: new RequirementVersion(), name:"folder")
+			Requirement child = new Requirement(resource: new RequirementVersion(), name:"folder child")
+			node.addContent(child);
+			
+			use(ReflectionCategory) {
+				RequirementLibraryNode.set field: "id", of: node, to: 10L
+				RequirementLibraryNode.set field: "id", of: child, to: 100L
+			}
+			
+		and:
+		MultiMap expanded = new MultiValueMap()
+		expanded.put("Requirement", 10L)
+		
+		when :
+			def res = builder.expand(expanded).setNode(node).build()
+		
+		then :
+			res.state == State.open.name()
+			res.children.size() == 1
+		
+	}
+
 	
 }

@@ -22,18 +22,31 @@ package org.squashtest.tm.web.internal.model.builder;
 
 import static org.junit.Assert.*
 
+import javax.inject.Provider;
+
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 
 import spock.lang.Specification
+import spock.lang.Unroll;
 
 class DriveNodeBuilderTest extends Specification {
 	PermissionEvaluationService permissionEvaluationService = Mock()
-	DriveNodeBuilder builder = new DriveNodeBuilder(permissionEvaluationService)
+	Provider nodeBuilderPovider = Mock()
+	DriveNodeBuilder builder = new DriveNodeBuilder(permissionEvaluationService, nodeBuilderPovider)
 
+	def setup() {
+		nodeBuilderPovider.get() >> new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService)
+	}
+	
 	def "should build root node of test case library"() {
 		given:
 		def library = theTestCaseLibrary(10L).ofProject("foo")
@@ -93,5 +106,46 @@ class DriveNodeBuilderTest extends Specification {
 
 		then:
 		res.attr["wizards"].collect { it } ==  ["foo", "bar"]
+	}
+	
+	def "should build an expanded node"() {
+		given:
+		Library library = theTestCaseLibrary(10L).ofProject("foo")
+		TestCase tc = Mock()
+		def visitor
+		tc.accept({ visitor = it }) >> { visitor.visit(tc) }
+		library.addContent tc
+		
+		and:
+		MultiMap expanded = new MultiValueMap()
+		expanded.put("TestCaseLibrary", 10L);
+		
+		when:
+		JsTreeNode res = builder.expand(expanded).setModel(library).build();
+
+		then: 
+		res.state == State.open.name()
+		res.children.size() == 1
+
+	}
+	
+	@Unroll
+	def "should candidate [#expandedType, #expandedId] be expanded : #expected"() {
+		given:
+		Library library = theTestCaseLibrary(10L).ofProject("foo")
+		
+		and:
+		MultiMap expanded = new MultiValueMap()
+		expanded.put(expandedType, expandedId);
+		
+		expect:
+		builder.expand(expanded).setModel(library).shouldExpandModel() == expected
+		
+		where: 
+		expandedType      | expandedId | expected
+		"TestCaseLibrary" | 10L        | true
+		"TestCaseLibrary" | 20L        | false
+		"Whatever"        | 10L        | false
+		
 	}
 }

@@ -20,17 +20,19 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 
+import org.apache.commons.collections.MultiMap;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,14 +48,17 @@ import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -80,8 +85,10 @@ public class IterationTestPlanManagerController {
 
 	@Inject
 	private InternationalizationHelper messageSource;
+
 	@Inject
-	private Provider<DriveNodeBuilder> driveNodeBuilder;
+	@Named("testCase.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilder; 
 
 	private IterationFinder iterationFinder;
 
@@ -107,12 +114,12 @@ public class IterationTestPlanManagerController {
 			.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, 10);
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan-manager", method = RequestMethod.GET)
-	public ModelAndView showManager(@PathVariable long iterationId) {
+	public ModelAndView showManager(@PathVariable long iterationId, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		Iteration iteration = iterationFinder.findById(iterationId);
 		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();
 
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 
 		ModelAndView mav = new ModelAndView("page/iterations/show-iteration-test-plan-manager");
 		mav.addObject("iteration", iteration);
@@ -165,15 +172,13 @@ public class IterationTestPlanManagerController {
 		return response.toString();
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {
-		DriveNodeBuilder builder = driveNodeBuilder.get();
-		List<JsTreeNode> linkableLibrariesModel = new ArrayList<JsTreeNode>();
+	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes) {
+		MultiMap expansionCandidates =  JsTreeHelper.mapIdsByType(openedNodes);
+		
+		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<TestCaseLibrary>(
+				driveNodeBuilder.get());
 
-		for (TestCaseLibrary library : linkableLibraries) {
-			JsTreeNode libraryNode = builder.setModel(library).build();
-			linkableLibrariesModel.add(libraryNode);
-		}
-		return linkableLibrariesModel;
+		return listBuilder.expand(expansionCandidates).setModel(linkableLibraries).build();
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-case/{testPlanId}/assign-user", method = RequestMethod.POST)

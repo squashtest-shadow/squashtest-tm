@@ -32,11 +32,14 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 
+import org.apache.commons.collections.MultiMap;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,6 +49,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -57,9 +61,11 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.helper.VerifiedRequirementActionSummaryBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -77,16 +83,16 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
  */
 @Controller
 public class VerifiedRequirementsManagerController {
-	/**
-	 * 
-	 */
-
 	private static final String REQUIREMENTS_IDS = "requirementsIds[]";
 
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
+	
+	@SuppressWarnings("rawtypes")
 	@Inject
-	private Provider<DriveNodeBuilder> driveNodeBuilder;
+	@Named("requirement.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<RequirementLibraryNode>> driveNodeBuilder;
+	
 	@Inject
 	private TestCaseModificationService testCaseModificationService;
 	@Inject
@@ -97,9 +103,9 @@ public class VerifiedRequirementsManagerController {
 	private RequirementLibraryFinderService requirementLibraryFinder;
 	private static final String NAME = "name";
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/manager", method = RequestMethod.GET)
-	public String showTestCaseManager(@PathVariable long testCaseId, Model model) {
+	public String showTestCaseManager(@PathVariable long testCaseId, Model model, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel();
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
 		
 		model.addAttribute("testCase", testCase);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
@@ -108,9 +114,9 @@ public class VerifiedRequirementsManagerController {
 	}
 
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/manager", method = RequestMethod.GET)
-	public String showTestStepManager(@PathVariable long testStepId, Model model) {
+	public String showTestStepManager(@PathVariable long testStepId, Model model, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 		TestStep testStep = testStepService.findById(testStepId);
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel();
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
 		
 		model.addAttribute("testStep", testStep);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
@@ -118,16 +124,18 @@ public class VerifiedRequirementsManagerController {
 		return "page/test-cases/show-step-verified-requirements-manager";
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel() {
+	@SuppressWarnings("rawtypes")
+	private List<JsTreeNode> createLinkableLibrariesModel(String[] openedNodes) {
 		List<RequirementLibrary> linkableLibraries = requirementLibraryFinder.findLinkableRequirementLibraries();
-		DriveNodeBuilder builder = driveNodeBuilder.get();
-		List<JsTreeNode> linkableLibrariesModel = new ArrayList<JsTreeNode>();
+		
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
+		DriveNodeBuilder<RequirementLibraryNode> nodeBuilder = driveNodeBuilder.get();
 
-		for (RequirementLibrary library : linkableLibraries) {
-			JsTreeNode libraryNode = builder.setModel(library).build();
-			linkableLibrariesModel.add(libraryNode);
-		}
-		return linkableLibrariesModel;
+		return new JsTreeNodeListBuilder<RequirementLibrary>(nodeBuilder)
+				.expand(expansionCandidates)
+				.setModel(linkableLibraries)
+				.build();
+		
 	}
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS)
@@ -265,7 +273,7 @@ public class VerifiedRequirementsManagerController {
 		Locale locale = LocaleContextHolder.getLocale();
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
 				.findAllDirectlyVerifiedRequirementsByTestStepId(testStepId, paging);
-		;
+		
 		TestCase testCase = testCaseModificationService.findTestCaseFromStep(testStepId);
 		return new TestStepVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper, testStepId, testCase)
 				.buildDataModel(holder, params.getsEcho());
@@ -291,8 +299,8 @@ public class VerifiedRequirementsManagerController {
 			res.put("reference", item.getReference());
 			res.put("versionNumber", item.getVersionNumber());
 			res.put("criticality",
-					internationalizationHelper.getMessage(item.getCriticality().getI18nKey(), null, locale));
-			res.put("category", internationalizationHelper.getMessage(item.getCategory().getI18nKey(), null, locale));
+					internationalizationHelper.internationalize(item.getCriticality(), locale));
+			res.put("category", internationalizationHelper.internationalize(item.getCategory(), locale));
 			res.put("status", item.getStatus().toString());
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;

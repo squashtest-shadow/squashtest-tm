@@ -20,13 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import static org.squashtest.tm.api.security.acls.Permission.CREATE;
-import static org.squashtest.tm.api.security.acls.Permission.DELETE;
-import static org.squashtest.tm.api.security.acls.Permission.SMALL_EDIT;
-import static org.squashtest.tm.api.security.acls.Permission.WRITE;
-
 import org.apache.commons.lang.NullArgumentException;
-import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
@@ -38,15 +32,12 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
  * @author Gregory Fouquet
  * 
  */
-public abstract class LibraryTreeNodeBuilder<T extends LibraryNode> {
-	private static final Permission[] NODE_PERMISSIONS = { WRITE, CREATE, DELETE, SMALL_EDIT };
-	private final PermissionEvaluationService permissionEvaluationService;
-	private T node;
+public abstract class LibraryTreeNodeBuilder<LN extends LibraryNode> extends GenericJsTreeNodeBuilder<LN, LibraryTreeNodeBuilder<LN>> {
+	private LN node;
 	private JsTreeNode builtNode;
 
 	public LibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
-		super();
-		this.permissionEvaluationService = permissionEvaluationService;
+		super(permissionEvaluationService);
 	}
 
 	/**
@@ -57,7 +48,7 @@ public abstract class LibraryTreeNodeBuilder<T extends LibraryNode> {
 	 * @param treeNode
 	 * @see #build()
 	 */
-	protected abstract void addCustomAttributes(T libraryNode, JsTreeNode treeNode);
+	protected abstract void addCustomAttributes(LN libraryNode, JsTreeNode treeNode);
 
 	/**
 	 * Adds to the node being build attributes for a leaf node
@@ -65,13 +56,6 @@ public abstract class LibraryTreeNodeBuilder<T extends LibraryNode> {
 	 * @param resType
 	 *            the nodeType attribute of the node
 	 */
-	@Deprecated
-	protected final void addLeafAttributes(String resType) {
-		builtNode.addAttr("rel", "file");
-		builtNode.addAttr("resType", resType);
-		builtNode.setState(State.leaf);
-	}
-	
 	protected final void addLeafAttributes(String rel, String resType) {
 		builtNode.addAttr("rel", rel);
 		builtNode.addAttr("resType", resType);
@@ -94,19 +78,13 @@ public abstract class LibraryTreeNodeBuilder<T extends LibraryNode> {
 	 * 
 	 * @return
 	 */
-	public final JsTreeNode build() {
-		builtNode = new JsTreeNode();
+	public final void doBuild(JsTreeNode builtNode, LN model) {
+		this.builtNode = builtNode;
+		this.node = model;
 
-		for (Permission permission : NODE_PERMISSIONS) {
-			boolean hasPermission = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN",
-					permission.name(), node);
-			builtNode.addAttr(permission.getQuality(), String.valueOf(hasPermission));
-		}
 		addCommonAttributes();
 		addCustomAttributes(node, builtNode);
-
-		return builtNode;
-
+		
 	}
 
 	private void addCommonAttributes() {
@@ -114,6 +92,7 @@ public abstract class LibraryTreeNodeBuilder<T extends LibraryNode> {
 		builtNode.setTitle(name);
 		builtNode.addAttr("name", name);
 		builtNode.addAttr("resId", String.valueOf(node.getId()));
+		// FIXME may break when node is a proxy
 		builtNode.addAttr("id", node.getClass().getSimpleName() + '-' + node.getId());
 	}
 
@@ -123,17 +102,13 @@ public abstract class LibraryTreeNodeBuilder<T extends LibraryNode> {
 	 * @param node
 	 * @return
 	 */
-	public final LibraryTreeNodeBuilder<T> setNode(T node) {
+	public final LibraryTreeNodeBuilder<LN> setNode(LN node) {
 		if (node == null) {
 			throw new NullArgumentException("node");
 		}
-		this.node = node;
+		this.setModel(node);
 
 		return this;
-	}
-
-	protected JsTreeNode getBuiltNode() {
-		return builtNode;
 	}
 
 }

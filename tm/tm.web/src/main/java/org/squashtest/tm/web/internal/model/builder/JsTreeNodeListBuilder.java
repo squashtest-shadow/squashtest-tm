@@ -24,10 +24,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
 /**
- * Decorates an instance of {@link JsTreeNodeBuilder} to build a list of {@link JsTreeNode} from a list of items.
+ * Decorates an instance of {@link GenericJsTreeNodeBuilder} to build a list of {@link JsTreeNode} from a list of items.
  * 
  * @author Gregory Fouquet
  * 
@@ -35,18 +37,13 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
  */
 public class JsTreeNodeListBuilder<ITEM> {
 	private JsTreeNodeBuilder<? super ITEM, ?> nodeBuilder;
-	private LibraryTreeNodeBuilder<? super ITEM> libraryNodeBuilder;
-	
+	private MultiMap expansionCandidates;
+
 	private Collection<ITEM> model;
 
 	public JsTreeNodeListBuilder(JsTreeNodeBuilder<? super ITEM, ?> nodeBuilder) {
 		super();
 		this.nodeBuilder = nodeBuilder;
-	}
-	
-	public JsTreeNodeListBuilder(LibraryTreeNodeBuilder<? super ITEM> builder){
-		super();
-		this.libraryNodeBuilder = builder;
 	}
 
 	public final JsTreeNodeListBuilder<ITEM> setModel(Collection<ITEM> model) {
@@ -55,31 +52,26 @@ public class JsTreeNodeListBuilder<ITEM> {
 	}
 
 	public final List<JsTreeNode> build() {
-		if (nodeBuilder != null){
-			return _buildWithNodeBuilder();
+		List<JsTreeNode> nodes = new ArrayList<JsTreeNode>(model.size());
+		
+		if (expansionCandidates == null) {
+			expansionCandidates = new MultiValueMap();
 		}
-		else{
-			return _buildWithLibraryNodeBuilder();
-		}
-	}
-	
-	private final List<JsTreeNode> _buildWithNodeBuilder(){
-		List<JsTreeNode> nodes = new ArrayList<JsTreeNode>();
 
 		for (ITEM item : model) {
-			nodes.add(nodeBuilder.setModel(item).build());
+			nodes.add(nodeBuilder.expand(expansionCandidates).setModel(item).build());
 		}
 
-		return nodes;		
+		return nodes;
 	}
-	
-	private final List<JsTreeNode> _buildWithLibraryNodeBuilder(){
-		List<JsTreeNode> nodes = new ArrayList<JsTreeNode>();
 
-		for (ITEM item : model) {
-			nodes.add(libraryNodeBuilder.setNode(item).build());
-		}
-
-		return nodes;		
+	/**
+	 * @param expansionCandidates
+	 *            the ids of items to expand mapped by their type.
+	 * @return
+	 */
+	public JsTreeNodeListBuilder<ITEM> expand(MultiMap expansionCandidates) {
+		this.expansionCandidates = expansionCandidates;
+		return this;
 	}
 }

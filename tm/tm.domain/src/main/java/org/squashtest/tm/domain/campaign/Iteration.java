@@ -707,6 +707,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	}
 
 	/**
+	 * The content of an iteration means its test suites.
 	 * 
 	 * @see org.squashtest.tm.domain.library.NodeContainer#getContent()
 	 */
@@ -715,6 +716,10 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		return getTestSuites();
 	}
 
+	/**
+	 * @return true if there are test suites
+	 * @see org.squashtest.tm.domain.library.NodeContainer#hasContent()
+	 */
 	@Override
 	public boolean hasContent() {
 		return !getContent().isEmpty();

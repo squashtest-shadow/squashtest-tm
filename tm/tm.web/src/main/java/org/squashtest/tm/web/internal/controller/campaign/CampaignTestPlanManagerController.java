@@ -25,11 +25,14 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 
+import org.apache.commons.collections.MultiMap;
 import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,8 +41,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
+import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
@@ -56,7 +61,8 @@ public class CampaignTestPlanManagerController {
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 
 	@Inject
-	private Provider<DriveNodeBuilder> driveNodeBuilder;
+	@Named("testCase.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilder; 
 
 	private CampaignTestPlanManagerService testPlanManager;
 	
@@ -70,12 +76,12 @@ public class CampaignTestPlanManagerController {
 	}
 
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/manager", method = RequestMethod.GET)
-	public ModelAndView showManager(@PathVariable long campaignId) {
+	public ModelAndView showManager(@PathVariable long campaignId, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		Campaign campaign = testPlanManager.findCampaign(campaignId);
 		List<TestCaseLibrary> linkableLibraries = testPlanManager.findLinkableTestCaseLibraries();
 
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 
 		ModelAndView mav = new ModelAndView("page/campaigns/show-campaign-test-plan-manager");
 		mav.addObject("campaign", campaign);
@@ -105,11 +111,13 @@ public class CampaignTestPlanManagerController {
 		testPlanManager.removeTestPlanItem(campaignId, itemId);
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {
+	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes) {
+		MultiMap expansionCandidates =  JsTreeHelper.mapIdsByType(openedNodes);
+		
 		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<TestCaseLibrary>(
 				driveNodeBuilder.get());
 
-		return listBuilder.setModel(linkableLibraries).build();
+		return listBuilder.expand(expansionCandidates).setModel(linkableLibraries).build();
 	}
 
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{itemId}/assign-user", method = RequestMethod.POST, params = "userId")

@@ -20,10 +20,14 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import java.util.Collection;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
@@ -35,8 +39,50 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 @SuppressWarnings("rawtypes")
 @Component
 @Scope("prototype")
-public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<RequirementLibraryNode> implements
-		RequirementLibraryNodeVisitor {
+public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<RequirementLibraryNode> {
+	/**
+	 * This visitor is used to populate custom attributes of the {@link JsTreeNode} currently built
+	 * 
+	 */
+	private class CustomAttributesPopulator implements RequirementLibraryNodeVisitor {
+		private final JsTreeNode builtNode;
+
+		private CustomAttributesPopulator(JsTreeNode builtNode) {
+			super();
+			this.builtNode = builtNode;
+		}
+
+		/**
+		 * 
+		 * @see org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor#visit(org.squashtest.tm.domain.requirement.RequirementFolder)
+		 */
+		public void visit(RequirementFolder folder) {
+			addFolderAttributes("requirement-folders");
+			State state = (folder.hasContent() ? State.closed : State.leaf);
+			builtNode.setState(state);
+
+		}
+
+		/**
+		 * 
+		 * @see org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor#visit(org.squashtest.tm.domain.requirement.Requirement)
+		 */
+		public void visit(Requirement requirement) {
+			addLeafAttributes("requirement", "requirements");
+
+			State state = (requirement.hasContent() ? State.closed : State.leaf);
+			builtNode.setState(state);
+			builtNode.addAttr("category", requirement.getCategory().toString().toLowerCase());
+
+			if (requirement.getReference() != null && requirement.getReference().length() > 0) {
+				builtNode.setTitle(requirement.getReference() + " - " + requirement.getName());
+				builtNode.addAttr("reference", requirement.getReference());
+			} else {
+				builtNode.setTitle(requirement.getName());
+			}
+		}
+
+	}
 
 	@Inject
 	public RequirementLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
@@ -45,31 +91,31 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 
 	@Override
 	protected void addCustomAttributes(RequirementLibraryNode libraryNode, JsTreeNode treeNode) {
-		libraryNode.accept(this);
+		libraryNode.accept(new CustomAttributesPopulator(treeNode));
 
 	}
 
+	/**
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
+	 *      org.squashtest.tm.domain.Identified)
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public void visit(RequirementFolder folder) {
-		addFolderAttributes("requirement-folders");
-		State state = (folder.hasContent() ? State.closed : State.leaf);
-		getBuiltNode().setState(state);
+	protected void doAddChildren(JsTreeNode builtNode, RequirementLibraryNode model) {
+		NodeContainer<RequirementLibraryNode<?>> container = (NodeContainer<RequirementLibraryNode<?>>) model;
 
-	}
+		if (container.hasContent()) {
+			builtNode.setState(State.open);
+			
+			RequirementLibraryTreeNodeBuilder childrenBuilder = new RequirementLibraryTreeNodeBuilder(permissionEvaluationService);
+			Collection<RequirementLibraryNode<?>> content = (Collection<RequirementLibraryNode<?>>) container.getContent();
+			
+			List<JsTreeNode> children = new JsTreeNodeListBuilder<RequirementLibraryNode<?>>(childrenBuilder)
+					.expand(getExpansionCandidates())
+					.setModel(content)
+					.build();
 
-	@Override
-	public void visit(Requirement requirement) {
-		addLeafAttributes("requirement","requirements");
-
-		State state = (requirement.hasContent() ? State.closed : State.leaf);
-		getBuiltNode().setState(state);
-		getBuiltNode().addAttr("category", requirement.getCategory().toString().toLowerCase());
-		
-		if (requirement.getReference() != null && requirement.getReference().length() > 0) {
-			getBuiltNode().setTitle(requirement.getReference() + " - " + requirement.getName());
-			getBuiltNode().addAttr("reference", requirement.getReference());
-		} else {
-			getBuiltNode().setTitle(requirement.getName());
+			builtNode.setChildren(children);
 		}
 	}
 

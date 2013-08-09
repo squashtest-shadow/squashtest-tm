@@ -20,17 +20,20 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.library.Copiable
 import org.squashtest.tm.domain.library.Library
 import org.squashtest.tm.domain.library.LibraryNode
 import org.squashtest.tm.domain.library.NodeVisitor
 import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 
 import spock.lang.Specification
-
 
 class LibraryTreeNodeBuilderTest extends Specification{
 	PermissionEvaluationService permissionEvaluationService = Mock()
@@ -69,6 +72,7 @@ class LibraryTreeNodeBuilderTest extends Specification{
 		then:
 		res.attr["smallEdit"] == "false"
 	}
+	
 	def "node should not be editable"() {
 		given:
 		DummyNode node = new DummyNode(name: "tc", id: 10)
@@ -82,6 +86,24 @@ class LibraryTreeNodeBuilderTest extends Specification{
 		then:
 		res.attr["smallEdit"] == "true"
 	}
+
+	def "node should be expanded"() {
+		given:
+		DummyNode node = new DummyNode(name: "tc", id: 10)
+		node.children << new DummyNode(name: "c1", id: 100)
+		node.children << new DummyNode(name: "c2", id: 200)
+		
+		and:
+		MultiMap expand = new MultiValueMap()
+		expand.put("TestCase", 10L)
+		
+		when:
+		def res = builder.expand(expand).setNode(node).build()
+
+		then:
+		res.getChildren().size() == 2
+	}
+
 }
 
 class DummyLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<DummyNode> {
@@ -94,17 +116,32 @@ class DummyLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<DummyNode> {
 	void addCustomAttributes(DummyNode libraryNode, JsTreeNode treeNode) {
 		addCustomAttributesCalled = true
 	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode, org.squashtest.tm.domain.Identified)
+	 */
+	@Override
+	protected void doAddChildren(JsTreeNode node, DummyNode model) {
+		
+		model.children.each {
+			node.children << it.id 
+		}
+		
+	}
 }
 
-class DummyNode implements LibraryNode {
+class DummyNode implements  LibraryNode {
 	Long id
 	String name
 	String description
+	List children = []
 	void deleteMe(){}
 	Project getProject() {}
 	Library<LibraryNode> getLibrary() {}
 	void notifyAssociatedWithProject(Project project){}	
 	Copiable createCopy() {return null}
-	void accept(NodeVisitor visitor) {}
+	void accept(NodeVisitor visitor) {
+		visitor.visit(new TestCase())
+	}
 	AttachmentList getAttachmentList() {}
 }

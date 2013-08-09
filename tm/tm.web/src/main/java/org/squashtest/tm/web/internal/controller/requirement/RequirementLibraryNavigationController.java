@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -74,32 +75,32 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 public class RequirementLibraryNavigationController extends
 		LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
 
+	@Inject
+	@Named("requirement.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<RequirementLibraryNode>> driveNodeBuilder;
 
-	@Inject	private Provider<DriveNodeBuilder> driveNodeBuilder;
-	@Inject	private Provider<RequirementLibraryTreeNodeBuilder> requirementLibraryTreeNodeBuilder;
-	@Inject	private RequirementLibraryNavigationService requirementLibraryNavigationService;	
-	
-	
+	@Inject
+	private Provider<RequirementLibraryTreeNodeBuilder> requirementLibraryTreeNodeBuilder;
+	@Inject
+	private RequirementLibraryNavigationService requirementLibraryNavigationService;
+
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/requirement-export.jasper";
 
-
 	@InitBinder("add-requirement")
-	public void addRequirementBinder(WebDataBinder binder){
+	public void addRequirementBinder(WebDataBinder binder) {
 		NewRequirementVersionDaoValidator validator = new NewRequirementVersionDaoValidator();
 		validator.setMessageSource(getMessageSource());
 		binder.setValidator(validator);
 	}
-	
 
 	@RequestMapping(value = "/drives/{libraryId}/content/new-requirement", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion){
-		
+			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion) {
+
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId,
 				firstVersion);
-
 
 		return createTreeNodeFromLibraryNode(req);
 
@@ -108,62 +109,58 @@ public class RequirementLibraryNavigationController extends
 	@RequestMapping(value = "/folders/{folderId}/content/new-requirement", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToFolderContent(@PathVariable long folderId,
-			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion ){
+			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion) {
 
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, firstVersion);
-	
+
 		return createTreeNodeFromLibraryNode(req);
 
 	}
-	
+
 	@RequestMapping(value = "/requirements/{requirementId}/content/new-requirement", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToRequirementContent(@PathVariable("requirementId") long requirementId,
-			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion ){
+			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion) {
 
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirement(requirementId, firstVersion);
-	
+
 		return createTreeNodeFromLibraryNode(req);
 
 	}
-	
 
-	@RequestMapping(value = "/requirements/{requirementId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
+	@RequestMapping(value = "/requirements/{requirementId}/content/new", method = RequestMethod.POST, params = { "nodeIds[]" })
 	public @ResponseBody
-	List<JsTreeNode> copyNodeIntoRequirement(@RequestParam("nodeIds[]") Long[] nodeIds, 
-							  @PathVariable("requirementId") long requirementId){
-		
+	List<JsTreeNode> copyNodeIntoRequirement(@RequestParam("nodeIds[]") Long[] nodeIds,
+			@PathVariable("requirementId") long requirementId) {
+
 		List<Requirement> nodeList;
 		List<RequirementLibraryNode> tojsonList;
- 		try{
+		try {
 			nodeList = requirementLibraryNavigationService.copyNodesToRequirement(requirementId, nodeIds);
 			tojsonList = new ArrayList<RequirementLibraryNode>(nodeList);
- 		}catch(AccessDeniedException ade){
+		} catch (AccessDeniedException ade) {
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
-		
+
 		return createJsTreeModel(tojsonList);
 	}
-	
-	
+
 	@RequestMapping(value = "/requirements/{requirementId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public @ResponseBody
-	void moveNode(@PathVariable("nodeIds") Long[] nodeIds, 
-				  @PathVariable("requirementId") long requirementId) {
-		try{
+	void moveNode(@PathVariable("nodeIds") Long[] nodeIds, @PathVariable("requirementId") long requirementId) {
+		try {
 			requirementLibraryNavigationService.moveNodesToRequirement(requirementId, nodeIds);
-		}
-		catch(AccessDeniedException ade){
+		} catch (AccessDeniedException ade) {
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
 	}
-	
+
 	@RequestMapping(value = "/requirements/{requirementId}/content", method = RequestMethod.GET)
 	public @ResponseBody
 	List<JsTreeNode> getChildrenRequirementsTreeModel(@PathVariable("requirementId") long requirementId) {
 		List<Requirement> requirements = requirementLibraryNavigationService.findChildrenRequirements(requirementId);
 		return createChildrenRequirementsModel(requirements);
-	}	
+	}
 
 	@Override
 	protected LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> getLibraryNavigationService() {
@@ -174,7 +171,6 @@ public class RequirementLibraryNavigationController extends
 	protected JsTreeNode createTreeNodeFromLibraryNode(RequirementLibraryNode resource) {
 		return requirementLibraryTreeNodeBuilder.get().setNode(resource).build();
 	}
-
 
 	@Override
 	protected String getShowLibraryViewName() {
@@ -199,7 +195,7 @@ public class RequirementLibraryNavigationController extends
 
 		List<ExportRequirementData> dataSource = requirementLibraryNavigationService
 				.findRequirementsToExportFromLibrary(libraryIds);
-		
+
 		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, format);
 
 	}
@@ -219,13 +215,14 @@ public class RequirementLibraryNavigationController extends
 
 	/* ********************************** private stuffs ******************************* */
 
+	@SuppressWarnings("unchecked")
 	private List<JsTreeNode> createChildrenRequirementsModel(List<? extends RequirementLibraryNode> requirements) {
-		
+
 		RequirementLibraryTreeNodeBuilder nodeBuilder = requirementLibraryTreeNodeBuilder.get();
-		JsTreeNodeListBuilder<RequirementLibraryNode> listBuilder = new JsTreeNodeListBuilder<RequirementLibraryNode>(nodeBuilder);
+		JsTreeNodeListBuilder<RequirementLibraryNode> listBuilder = new JsTreeNodeListBuilder<RequirementLibraryNode>(
+				nodeBuilder);
 
-		return listBuilder.setModel((List<RequirementLibraryNode>)requirements).build();
-
+		return listBuilder.setModel((List<RequirementLibraryNode>) requirements).build();
 	}
 
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = { "linkables" })

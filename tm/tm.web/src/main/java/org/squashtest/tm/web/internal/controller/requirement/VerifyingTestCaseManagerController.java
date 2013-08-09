@@ -25,10 +25,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 
+import org.apache.commons.collections.MultiMap;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,10 +44,12 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.helper.VerifiedRequirementActionSummaryBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
@@ -66,7 +71,8 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 public class VerifyingTestCaseManagerController {
 
 	@Inject
-	private Provider<DriveNodeBuilder> driveNodeBuilder;
+	@Named("testCase.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilder;
 
 	@Inject
 	private InternationalizationHelper i18nHelper;
@@ -91,11 +97,11 @@ public class VerifyingTestCaseManagerController {
 
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/manager", method = RequestMethod.GET)
-	public String showManager(@PathVariable long requirementVersionId, Model model) {
+	public String showManager(@PathVariable long requirementVersionId, Model model, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 		
 		RequirementVersion requirementVersion = requirementVersionFinder.findById(requirementVersionId);
 		List<TestCaseLibrary> linkableLibraries = verifyingTestCaseManager.findLinkableTestCaseLibraries();
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 		DataTableModel verifyingTCModel = buildVerifyingTestCaseModel(requirementVersionId, new DefaultPagingAndSorting("Project.name"), "");
 
 		
@@ -107,9 +113,16 @@ public class VerifyingTestCaseManagerController {
 		return "page/requirements/show-verifying-testcase-manager";
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {
-		DriveNodeBuilder builder = driveNodeBuilder.get();
-		return new JsTreeNodeListBuilder<TestCaseLibrary>(builder).setModel(linkableLibraries).build();
+	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes) {
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
+		
+		DriveNodeBuilder<TestCaseLibraryNode> nodeBuilder = driveNodeBuilder.get();
+
+		return new JsTreeNodeListBuilder<TestCaseLibrary>(nodeBuilder)
+				.expand(expansionCandidates)
+				.setModel(linkableLibraries)
+				.build();
+
 	}
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/{testCaseIds}", method = RequestMethod.POST)

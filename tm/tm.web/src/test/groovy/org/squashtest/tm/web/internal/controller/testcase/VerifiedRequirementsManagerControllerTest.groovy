@@ -59,7 +59,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		controller.testCaseModificationService = testCaseFinder
 		controller.requirementLibraryFinder = requirementLibraryFinder
 		controller.testStepService = testStepService;
-		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService))
+		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
 	}
 
 	def "should show test case manager page"() {
@@ -101,7 +101,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		def model = new ExtendedModelMap()
 
 		when:
-		def res = controller.showTestCaseManager(20L, model)
+		def res = controller.showTestCaseManager(20L, model, [] as String[])
 
 		then:
 		model['testCase'] == testCase
@@ -125,7 +125,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		def model = new ExtendedModelMap()
 
 		when:
-		def res = controller.showTestStepManager(20L, model)
+		def res = controller.showTestStepManager(20L, model, [] as String[])
 
 		then:
 		model['testStep'] == testStep

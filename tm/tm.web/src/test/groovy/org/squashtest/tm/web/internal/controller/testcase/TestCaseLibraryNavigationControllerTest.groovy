@@ -47,7 +47,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.testCaseLibraryTreeNodeBuilder = testCaseLibraryTreeNodeBuilder
 
-		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService))
+		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
 		testCaseLibraryTreeNodeBuilder.get() >> new TestCaseLibraryTreeNodeBuilder(Mock(PermissionEvaluationService))
 	}
 

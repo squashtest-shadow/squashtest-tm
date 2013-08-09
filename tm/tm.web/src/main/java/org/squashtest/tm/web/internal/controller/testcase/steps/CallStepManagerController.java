@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
@@ -45,7 +47,8 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 public class CallStepManagerController {
 
 	@Inject
-	private Provider<DriveNodeBuilder> driveNodeBuilder;
+	@Named("testCase.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilder;
 
 	private CallStepManagerService callStepManagerService;
 	private TestCaseLibraryFinderService testCaseLibraryFinder;
@@ -77,7 +80,7 @@ public class CallStepManagerController {
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {
-		DriveNodeBuilder builder = driveNodeBuilder.get();
+		DriveNodeBuilder<TestCaseLibraryNode> builder = driveNodeBuilder.get();
 		List<JsTreeNode> linkableLibrariesModel = new ArrayList<JsTreeNode>();
 
 		for (TestCaseLibrary library : linkableLibraries) {

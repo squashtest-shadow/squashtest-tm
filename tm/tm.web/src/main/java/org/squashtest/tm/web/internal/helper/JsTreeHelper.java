@@ -19,47 +19,55 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.web.internal.model.builder;
+package org.squashtest.tm.web.internal.helper;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections.MultiMap;
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.apache.commons.collections.map.MultiValueMap;
 
 /**
- * Interface for a builder of {@link JsTreeNode} objects, which provides a fluent API<br />
- * 
- * "node" usually refers to the {@link JsTreeNode} being produced<br />
- * 
- * "model" refers to the object used to produce a {@link JsTreeNode}
+ * Helper class to manipulate jsTree related data.
  * 
  * @author Gregory Fouquet
  * 
- * @param <MODEL>
- * @param <BUILDER>
  */
-public interface JsTreeNodeBuilder<MODEL extends Identified, BUILDER extends JsTreeNodeBuilder<MODEL, BUILDER>> {
-	/**
-	 * Sets the model which should be used to produce a {@link JsTreeNode}. Should not be null.
-	 * 
-	 * @param model
-	 * @return
-	 */
-	BUILDER setModel(MODEL model);
+public final class JsTreeHelper {
 
 	/**
-	 * Creates a {@link JsTreeNode} using the current builder configuration.
 	 * 
-	 * @return
 	 */
-	JsTreeNode build();
+	private JsTreeHelper() {
+		super();
+	}
 
 	/**
-	 * Configures which models should produce expanded (ie having a populated "children" attribute) nodes.
+	 * Coerces an array of dom nodes ids (["#TestCase-10", "#TestCaseLibrary-20"]) into a map. The result maps entities
+	 * ids by their short class name ([TestCase: [10], TestCaseLibrary: [20]]).
 	 * 
-	 * @param expansionCandidates
-	 *            the ids of items to expand mapped by their type.
+	 * @param domNodesIds
 	 * @return
 	 */
-	BUILDER expand(MultiMap expansionCandidates);
+	public static MultiMap mapIdsByType(String[] domNodesIds) {
+		MultiMap res = new MultiValueMap();
+
+		Pattern pattern = Pattern.compile("#(\\w+)-(\\d+)");
+
+		for (String domNodeId : domNodesIds) {
+			Matcher matcher = pattern.matcher(domNodeId);
+
+			while (matcher.find()) {
+				if (matcher.groupCount() == 2) { // extra cautious not to get a null group below
+					String type = matcher.group(1);
+					Long id = Long.valueOf(matcher.group(2)); // the regexp pattern
+					res.put(type, id);
+
+				}
+			}
+		}
+
+		return res;
+	}
 
 }

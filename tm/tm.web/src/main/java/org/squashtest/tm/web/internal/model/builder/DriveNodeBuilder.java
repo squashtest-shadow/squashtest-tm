@@ -20,11 +20,12 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import javax.inject.Inject;
+import java.util.List;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import javax.inject.Provider;
+
 import org.squashtest.tm.domain.library.Library;
+import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
@@ -32,21 +33,27 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 
 /**
  * Builds a {@link JsTreeNode} representing a "drive" from a {@link Library}
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-@Component
-@Scope("prototype")
-public class DriveNodeBuilder extends JsTreeNodeBuilder<Library<?>, DriveNodeBuilder> {
+public class DriveNodeBuilder<LN extends LibraryNode> extends
+		GenericJsTreeNodeBuilder<Library<LN>, DriveNodeBuilder<LN>> {
+	private final Provider<LibraryTreeNodeBuilder<LN>> childrenBuilderProvider;
 
-	@Inject
-	protected DriveNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
+	protected DriveNodeBuilder(PermissionEvaluationService permissionEvaluationService,
+			Provider<LibraryTreeNodeBuilder<LN>> childrenBuilderProvider) {
 		super(permissionEvaluationService);
+		this.childrenBuilderProvider = childrenBuilderProvider;
 	}
 
+	/**
+	 * 
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doBuild(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
+	 *      org.squashtest.tm.domain.Identified)
+	 */
 	@Override
-	protected void doBuild(JsTreeNode node, Library<?> model) {
+	protected void doBuild(JsTreeNode node, Library<LN> model) {
 		node.addAttr("rel", "drive");
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", buildResourceType(model.getClassSimpleName()));
@@ -60,8 +67,27 @@ public class DriveNodeBuilder extends JsTreeNodeBuilder<Library<?>, DriveNodeBui
 	}
 
 	private String buildResourceType(String classSimpleName) {
-		String singleResourceType =  HyphenedStringHelper.camelCaseToHyphened(classSimpleName);
+		String singleResourceType = HyphenedStringHelper.camelCaseToHyphened(classSimpleName);
 		return singleResourceType.replaceAll("y$", "ies");
+	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
+	 *      java.lang.Object)
+	 */
+	@Override
+	protected void doAddChildren(JsTreeNode node, Library<LN> model) {
+		if (model.hasContent()) {
+			node.setState(State.open);
+
+			List<JsTreeNode> children = new JsTreeNodeListBuilder<LN>(childrenBuilderProvider.get())
+				.expand(getExpansionCandidates())
+				.setModel(model.getContent())
+				.build();
+
+			node.setChildren(children);
+		}
+
 	}
 
 }

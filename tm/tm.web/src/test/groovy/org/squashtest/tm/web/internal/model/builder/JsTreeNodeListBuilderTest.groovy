@@ -41,7 +41,7 @@ class JsTreeNodeListBuilderTest extends Specification {
 	}
 }
 
-class DummyBuilder extends JsTreeNodeBuilder<String, DummyBuilder> {
+class DummyBuilder extends GenericJsTreeNodeBuilder<String, DummyBuilder> {
 	def DummyBuilder(pes) {
 		super(pes)
 	}
@@ -49,5 +49,14 @@ class DummyBuilder extends JsTreeNodeBuilder<String, DummyBuilder> {
 	@Override
 	protected void doBuild(JsTreeNode node, String model) {
 		node.title = model
+	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.model.builder.JsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode, java.lang.Object)
+	 */
+	@Override
+	protected void doAddChildren(JsTreeNode node, String model) {
+		// TODO Auto-generated method stub
+		
 	}
 }

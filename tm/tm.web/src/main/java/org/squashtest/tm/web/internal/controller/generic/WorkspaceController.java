@@ -27,41 +27,69 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.apache.commons.collections.MultiMap;
+import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.library.Library;
+import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.web.internal.controller.campaign.MenuItem;
+import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
-public abstract class WorkspaceController<LIBRARY extends Library<?>> {
+public abstract class WorkspaceController<LN extends LibraryNode> {
+	private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceController.class);
+	@Inject
+	private WorkspaceWizardManager workspaceWizardManager;
+	@Inject
+	protected InternationalizationHelper i18nHelper;
 
-	@Inject private Provider<DriveNodeBuilder> nodeBuilderProvider;
-	@Inject private WorkspaceWizardManager workspaceWizardManager;
-	@Inject protected InternationalizationHelper i18nHelper;
-	
+	@Inject
+	SessionFactory sessionFactory;
 
+	/**
+	 * Shows a workspace.
+	 * 
+	 * @param model
+	 * @param locale
+	 * @return
+	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String showWorkspace(Model model, Locale locale) {
+	public String showWorkspace(Model model, Locale locale,
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
 
-		List<LIBRARY> libraries = getWorkspaceService().findAllLibraries();
+		MultiMap expansionCandidates = mapIdsByType(openedNodes);
 
-		DriveNodeBuilder nodeBuilder = nodeBuilderProvider.get();
-		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<LIBRARY>(nodeBuilder).setModel(libraries).build();
-		
+		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
+		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
+				.setModel(libraries).build();
+
 		model.addAttribute("rootModel", rootNodes);
-		
-		populateModel(model, locale);		
-		
+
+		populateModel(model, locale);
+
 		return getWorkspaceViewName();
+	}
+
+	/**
+	 * @param openedNodes
+	 * @return
+	 */
+	protected MultiMap mapIdsByType(String[] openedNodes) {
+		return JsTreeHelper.mapIdsByType(openedNodes);
 	}
 
 	/**
@@ -69,7 +97,7 @@ public abstract class WorkspaceController<LIBRARY extends Library<?>> {
 	 * 
 	 * @return
 	 */
-	protected abstract WorkspaceService<LIBRARY> getWorkspaceService();
+	protected abstract WorkspaceService<Library<LN>> getWorkspaceService();
 
 	/**
 	 * Returns the logical name of the page which shows the workspace.
@@ -77,10 +105,10 @@ public abstract class WorkspaceController<LIBRARY extends Library<?>> {
 	 * @return
 	 */
 	protected abstract String getWorkspaceViewName();
-	
+
 	/**
-	 * Called when {@link #getWorkspaceViewName()} is invoked. This allows you to add 
-	 * anything you need to thisworkspace's model. No need to supply the treenodes : they will be provided.
+	 * Called when {@link #getWorkspaceViewName()} is invoked. This allows you to add anything you need to
+	 * thisworkspace's model. No need to supply the treenodes : they will be provided.
 	 */
 	protected abstract void populateModel(Model model, Locale locale);
 
@@ -94,7 +122,7 @@ public abstract class WorkspaceController<LIBRARY extends Library<?>> {
 	@ModelAttribute("wizards")
 	public MenuItem[] getWorkspaceWizards() {
 		Collection<WorkspaceWizard> wizards = workspaceWizardManager.findAllByWorkspace(getWorkspaceType());
-	
+
 		return menuItems(wizards);
 	}
 
@@ -105,12 +133,12 @@ public abstract class WorkspaceController<LIBRARY extends Library<?>> {
 	private MenuItem[] menuItems(Collection<WorkspaceWizard> wizards) {
 		MenuItem[] res = new MenuItem[wizards.size()];
 		int i = 0;
-	
+
 		for (WorkspaceWizard wizard : wizards) {
 			res[i] = createMenuItem(wizard);
 			i++;
 		}
-	
+
 		return res;
 	}
 
@@ -125,6 +153,7 @@ public abstract class WorkspaceController<LIBRARY extends Library<?>> {
 		item.setTooltip(wizard.getWizardMenu().getTooltip());
 		item.setUrl(wizard.getWizardMenu().getUrl());
 		item.setAccessRule(wizard.getWizardMenu().getAccessRule());
+
 		return item;
 	}
 
@@ -132,5 +161,10 @@ public abstract class WorkspaceController<LIBRARY extends Library<?>> {
 		return i18nHelper;
 	}
 
-	
+	/**
+	 * Returns the appropriate drive node builder. Should never return null.
+	 * 
+	 * @return
+	 */
+	protected abstract Provider<DriveNodeBuilder<LN>> driveNodeBuilderProvider();
 }

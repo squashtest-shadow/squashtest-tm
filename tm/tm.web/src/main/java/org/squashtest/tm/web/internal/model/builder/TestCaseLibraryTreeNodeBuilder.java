@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
@@ -34,41 +36,118 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 
 /**
  * Builds a {@link JsTreeNode} from a TestCaseLibraryNode. Can be reused in the same thread.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 @Component
 @Scope("prototype")
-public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestCaseLibraryNode> implements TestCaseLibraryNodeVisitor {
+public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestCaseLibraryNode> {
+	/**
+	 * This visitor is used to populate custom attributes of the {@link JsTreeNode} currently built
+	 * 
+	 */
+	private class CustomAttributesPopulator implements TestCaseLibraryNodeVisitor {
+		private final JsTreeNode builtNode;
+
+		private CustomAttributesPopulator(JsTreeNode builtNode) {
+			super();
+			this.builtNode = builtNode;
+		}
+
+		/**
+		 * @see org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor#visit(org.squashtest.tm.domain.testcase.TestCase)
+		 */
+		@Override
+		public void visit(TestCase visited) {
+			addLeafAttributes("test-case", "test-cases");
+
+			if (visited.getReference() != null && visited.getReference().length() > 0) {
+				builtNode.setTitle(visited.getReference() + " - " + visited.getName());
+				builtNode.addAttr("reference", visited.getReference());
+
+			} else {
+				builtNode.setTitle(visited.getName());
+			}
+		}
+
+		/**
+		 * @see org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor#visit(org.squashtest.tm.domain.testcase.TestCaseFolder)
+		 */
+		@Override
+		public void visit(TestCaseFolder visited) {
+			addFolderAttributes("test-case-folders");
+			State state = (visited.hasContent() ? State.closed : State.leaf);
+			builtNode.setState(state);
+		}
+
+	}
+
+	/**
+	 * This visitor is used to populate the children of the currently built {@link JsTreeNode}
+	 * 
+	 * @author Gregory Fouquet
+	 * 
+	 */
+	private class ChildrenPopulator implements TestCaseLibraryNodeVisitor {
+		private final JsTreeNode builtNode;
+
+		private ChildrenPopulator(JsTreeNode builtNode) {
+			super();
+			this.builtNode = builtNode;
+		}
+
+		/**
+		 * @see org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor#visit(org.squashtest.tm.domain.testcase.TestCase)
+		 */
+		@Override
+		public void visit(TestCase visited) {
+			// noop
+		}
+
+		/**
+		 * @see org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor#visit(org.squashtest.tm.domain.testcase.TestCaseFolder)
+		 */
+		@Override
+		public void visit(TestCaseFolder visited) {
+			if (visited.hasContent()) {
+				builtNode.setState(State.open);
+
+				TestCaseLibraryTreeNodeBuilder childrenBuilder = new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService);
+				
+				List<JsTreeNode> children = new JsTreeNodeListBuilder<TestCaseLibraryNode>(childrenBuilder)
+						.expand(getExpansionCandidates())
+						.setModel(visited.getContent())
+						.build();
+
+				builtNode.setChildren(children);
+			}
+		}
+
+	}
 
 	@Inject
 	public TestCaseLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
 		super(permissionEvaluationService);
 	}
 
-	@Override
-	public void visit(TestCase visited) {
-		addLeafAttributes("test-case","test-cases");
-
-		if (visited.getReference() != null && visited.getReference().length() > 0) {
-			getBuiltNode().setTitle(visited.getReference() + " - " + visited.getName());
-			getBuiltNode().addAttr("reference", visited.getReference());
-		} else {
-			getBuiltNode().setTitle(visited.getName());
-		}
-	}
-
-	@Override
-	public void visit(TestCaseFolder visited) {
-		addFolderAttributes("test-case-folders");
-		State state = (visited.hasContent() ? State.closed : State.leaf);
-		getBuiltNode().setState(state);
-	}
-
+	/**
+	 * 
+	 * @see org.squashtest.tm.web.internal.model.builder.LibraryTreeNodeBuilder#addCustomAttributes(org.squashtest.tm.domain.library.LibraryNode,
+	 *      org.squashtest.tm.web.internal.model.jstree.JsTreeNode)
+	 */
 	@Override
 	protected void addCustomAttributes(TestCaseLibraryNode libraryNode, JsTreeNode treeNode) {
-		libraryNode.accept(this);
+		libraryNode.accept(new CustomAttributesPopulator(treeNode));
+	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
+	 *      org.squashtest.tm.domain.Identified)
+	 */
+	@Override
+	protected void doAddChildren(JsTreeNode node, TestCaseLibraryNode model) {
+		model.accept(new ChildrenPopulator(node));
 	}
 
 }

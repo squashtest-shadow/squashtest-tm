@@ -29,8 +29,10 @@ import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.library.WorkspaceService
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
 import spock.lang.Specification
 
@@ -39,27 +41,29 @@ import spock.lang.Specification
 class TestCasesWorkspaceControllerTest extends Specification {
 	TestCaseWorkspaceController controller = new TestCaseWorkspaceController()
 	WorkspaceService service = Mock()
-	DriveNodeBuilder driveNodeBuilder = Mock()
+	DriveNodeBuilder driveNodeBuilder = new DriveNodeBuilder(Mock(PermissionEvaluationService), Mock(Provider))
+	
 	Provider provider = Mock()
 
 	def setup() {
 		controller.workspaceService = service
 		provider.get() >> driveNodeBuilder
 		use(ReflectionCategory) {
-			WorkspaceController.set field: 'nodeBuilderProvider', of: controller, to: provider
+			TestCaseWorkspaceController.set field: 'driveNodeBuilderProvider', of: controller, to: provider
 		}
 	}
 
 	def "show should return workspace view with tree root model"() {
 		given:
 		TestCaseLibrary library = Mock()
+		library.getClassSimpleName() >> "TestCaseLibrary"
 		Project project = Mock()
 		library.project >> project
 		service.findAllLibraries() >> [library]
 		def model = Mock(Model)
 		
 		when:
-		String view = controller.showWorkspace(model, Locale.getDefault())
+		String view = controller.showWorkspace(model, Locale.getDefault(), [] as String[])
 
 		then:
 		view == "page/test-case-workspace"

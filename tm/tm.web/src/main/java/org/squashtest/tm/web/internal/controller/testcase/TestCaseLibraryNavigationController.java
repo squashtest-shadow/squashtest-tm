@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -74,7 +75,8 @@ public class TestCaseLibraryNavigationController extends
 	private Provider<TestCaseLibraryTreeNodeBuilder> testCaseLibraryTreeNodeBuilder;
 
 	@Inject
-	private Provider<DriveNodeBuilder> driveNodeBuilder;
+	@Named("testCase.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilder;
 
 	@Inject
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;

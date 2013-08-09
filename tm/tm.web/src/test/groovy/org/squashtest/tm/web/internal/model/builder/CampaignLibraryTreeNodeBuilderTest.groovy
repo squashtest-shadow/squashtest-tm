@@ -21,10 +21,13 @@
 package org.squashtest.tm.web.internal.model.builder
 
 
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
@@ -94,4 +97,50 @@ class CampaignLibraryTreeNodeBuilderTest extends Specification {
 		
 	}
 	
+	def "should expand a folder"(){
+		given :
+			CampaignFolder node = new CampaignFolder(name:"folder")
+			Campaign child = new Campaign(name:"folder child")
+			node.addContent(child);
+			
+			use(ReflectionCategory) {
+				CampaignLibraryNode.set field: "id", of: node, to: 10L
+				CampaignLibraryNode.set field: "id", of: child, to: 100L
+			}
+			
+		and:
+		MultiMap expanded = new MultiValueMap()
+		expanded.put("CampaignFolder", 10L)
+		
+		when :
+			def res = builder.expand(expanded).setNode(node).build()
+		
+		then :
+			res.state == State.open.name()
+			res.children.size() == 1
+		
+	}
+
+	def "should expand a campaign"(){
+		given :
+			Campaign node = new Campaign(name:"folder")
+			Iteration child = new Iteration(name:"folder child")
+			node.addContent(child);
+			
+			use(ReflectionCategory) {
+				CampaignLibraryNode.set field: "id", of: node, to: 10L
+			}
+			
+		and:
+		MultiMap expanded = new MultiValueMap()
+		expanded.put("Campaign", 10L)
+		
+		when :
+			def res = builder.expand(expanded).setNode(node).build()
+		
+		then :
+			res.state == State.open.name()
+			res.children.size() == 1
+		
+	}
 }

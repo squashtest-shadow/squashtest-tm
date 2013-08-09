@@ -23,27 +23,33 @@ package org.squashtest.tm.web.internal.controller.testcase;
 import java.util.List;
 import java.util.Locale;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.api.workspace.WorkspaceType;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.library.Library;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
+import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 
 @Controller
 @RequestMapping("/test-case-workspace")
-public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLibrary> {
-	private WorkspaceService<TestCaseLibrary> workspaceService;
+public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLibraryNode> {
+	@Inject
+	@Named("squashtest.tm.service.TestCasesWorkspaceService")
+	private WorkspaceService<Library<TestCaseLibraryNode>> workspaceService;
 
-	@ServiceReference(serviceBeanName = "squashtest.tm.service.TestCasesWorkspaceService")
-	public final void setWorkspaceService(WorkspaceService<TestCaseLibrary> testCaseWorkspaceService) {
-		this.workspaceService = testCaseWorkspaceService;
-	}
+	@Inject
+	@Named("testCase.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilderProvider; 
 
 	@Override
-	protected WorkspaceService<TestCaseLibrary> getWorkspaceService() {
+	protected WorkspaceService<Library<TestCaseLibraryNode>> getWorkspaceService() {
 		return workspaceService;
 	}
 
@@ -61,8 +67,16 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	
 	@Override
 	protected void populateModel(Model model, Locale locale) {
-		List<TestCaseLibrary> libraries = workspaceService.findAllImportableLibraries();
+		List<Library<TestCaseLibraryNode>> libraries = workspaceService.findAllImportableLibraries();
 		model.addAttribute("editableLibraries", libraries);
+	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#driveNodeBuilderProvider()
+	 */
+	@Override
+	protected Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilderProvider() {
+		return driveNodeBuilderProvider;
 	}
 
 }

@@ -22,30 +22,38 @@ package org.squashtest.tm.web.internal.controller.requirement;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.web.internal.helper.InternationalizableComparator;
+import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 
 @Controller
 @RequestMapping("/requirement-workspace")
-public class RequirementWorkspaceController extends WorkspaceController<RequirementLibrary> {
-	
-	private WorkspaceService<RequirementLibrary> workspaceService;
+public class RequirementWorkspaceController extends WorkspaceController<RequirementLibraryNode<?>> {
+	@Inject
+	@Named("squashtest.tm.service.RequirementsWorkspaceService")
+	private WorkspaceService<Library<RequirementLibraryNode<?>>> workspaceService;
 
+	@Inject
+	@Named("requirement.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<RequirementLibraryNode<?>>> driveNodeBuilderProvider; 
 
 	@Override
-	protected WorkspaceService<RequirementLibrary> getWorkspaceService() {
+	protected WorkspaceService<Library<RequirementLibraryNode<?>>> getWorkspaceService() {
 		return workspaceService;
 	}
 
@@ -57,8 +65,7 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	@Override
 	protected void populateModel(Model model, Locale locale) {
 		
-		List<RequirementLibrary> libraries = workspaceService.findAllImportableLibraries();
-		//List<RequirementCriticality> criticalities = sortCriticalities(locale);	//not needed yet
+		List<Library<RequirementLibraryNode<?>>> libraries = workspaceService.findAllImportableLibraries();
 		List<RequirementCategory> categories = sortCategories();
 		
 		model.addAttribute("editableLibraries", libraries);
@@ -67,25 +74,26 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 		
 	}
 
-	@ServiceReference(serviceBeanName="squashtest.tm.service.RequirementsWorkspaceService")
-	public final void setWorkspaceService(WorkspaceService<RequirementLibrary> requirementsWorkspaceService) {
-		this.workspaceService = requirementsWorkspaceService;
-	}
-	
-
 	/**
 	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#getWorkspaceType()
 	 */
 	protected WorkspaceType getWorkspaceType() {
 		return WorkspaceType.REQUIREMENT_WORKSPACE;
 	}
-
 	
 	private List<RequirementCategory> sortCategories(){
 		InternationalizableComparator comparator = new InternationalizableComparator(getI18nHelper());
 		List<RequirementCategory> categories = Arrays.asList(RequirementCategory.values());
 		Collections.sort(categories, comparator);
 		return categories;
+	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#driveNodeBuilderProvider()
+	 */
+	@Override
+	protected Provider<DriveNodeBuilder<RequirementLibraryNode<?>>> driveNodeBuilderProvider() {
+		return driveNodeBuilderProvider;
 	}
 	
 }

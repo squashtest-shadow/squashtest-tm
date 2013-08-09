@@ -20,11 +20,14 @@
  */
 package org.squashtest.tm.web.internal.model.builder
 
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.controller.testcase.TestCaseFolderModificationController;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
 import spock.lang.Specification
@@ -96,4 +99,27 @@ class TestCaseLibraryTreeNodeBuilderTest extends Specification {
 		
 	}
 	
+	def "should expand a folder "(){
+		given :
+			TestCaseFolder node = new TestCaseFolder(name:"folder")
+			TestCaseFolder child = new TestCaseFolder(name:"folder child")
+			node.addContent(child);
+			
+			use(ReflectionCategory) {
+				TestCaseLibraryNode.set field: "id", of: node, to: 10L
+				TestCaseLibraryNode.set field: "id", of: child, to: 100L
+			}
+			
+		and: 
+		MultiMap expanded = new MultiValueMap()
+		expanded.put("TestCaseFolder", 10L)
+		
+		when :
+			def res = builder.expand(expanded).setNode(node).build()
+		
+		then :
+			res.state == State.open.name()
+			res.children.size() == 1
+		
+	}
 }

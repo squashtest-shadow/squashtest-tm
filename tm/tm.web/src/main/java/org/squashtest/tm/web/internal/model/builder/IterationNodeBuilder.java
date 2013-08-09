@@ -20,18 +20,21 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 
 @Component
 @Scope("prototype")
-public class IterationNodeBuilder extends JsTreeNodeBuilder<Iteration, IterationNodeBuilder> {
+public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, IterationNodeBuilder> {
 	private int iterationIndex;
 
 	@Inject
@@ -39,6 +42,11 @@ public class IterationNodeBuilder extends JsTreeNodeBuilder<Iteration, Iteration
 		super(permissionEvaluationService);
 	}
 
+	/**
+	 * 
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doBuild(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
+	 *      org.squashtest.tm.domain.Identified)
+	 */
 	@Override
 	protected void doBuild(JsTreeNode node, Iteration model) {
 		node.addAttr("rel", "iteration");
@@ -58,6 +66,26 @@ public class IterationNodeBuilder extends JsTreeNodeBuilder<Iteration, Iteration
 	public final IterationNodeBuilder setIterationIndex(int index) {
 		this.iterationIndex = index;
 		return this;
+	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode, java.lang.Object)
+	 */
+	@Override
+	protected void doAddChildren(JsTreeNode node, Iteration model) {
+		if (model.hasContent()) {
+			node.setState(State.open);
+
+			TestSuiteNodeBuilder childrenBuilder = new TestSuiteNodeBuilder(permissionEvaluationService); 
+			
+			List<JsTreeNode> children = new JsTreeNodeListBuilder<TestSuite>(childrenBuilder)
+				.expand(getExpansionCandidates())
+				.setModel(model.getContent())
+				.build();
+
+			node.setChildren(children);
+		}
+
 	}
 
 }

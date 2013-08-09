@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
+import org.apache.commons.collections.MultiMap;
+import org.springframework.stereotype.Controller;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.api.security.acls.AccessRule;
 import org.squashtest.tm.api.widget.MenuItem;
@@ -104,4 +106,5 @@ class WorkspaceControllerTest extends Specification {
 		where: 
 		controller << [new CampaignWorkspaceController(), new TestCaseWorkspaceController(), new RequirementWorkspaceController()]
 	} 
+	
 }

@@ -117,7 +117,7 @@ public class InternationalizationHelper implements MessageSource {
 	/**
 	 * 
 	 * @see org.springframework.context.MessageSource#getMessage(java.lang.String, java.lang.Object[], java.util.Locale)
-	 * @deprecated if args array is empry or null, condider {@link #internationalize(String, Locale)}
+	 * @deprecated if args array is empty or null, condider {@link #internationalize(String, Locale)}
 	 */
 	public String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException {
 		return messageSource.getMessage(code, args, locale);

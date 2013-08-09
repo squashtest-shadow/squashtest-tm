@@ -160,6 +160,35 @@
       <bean class="org.squashtest.tm.web.internal.interceptor.openedentity.ExecutionViewInterceptor" />
     </mvc:interceptor>
   </mvc:interceptors>
+  
+  <!--  DRIVE NODE BUILDERS -->
+  <bean id="testCaseLibraryTreeNodeBuilder.provider" class="org.springframework.beans.factory.config.ProviderCreatingFactoryBean">
+    <property name="targetBeanName" value="testCaseLibraryTreeNodeBuilder" />
+  </bean>
+
+  <bean id="testCase.driveNodeBuilder" class="org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder" scope="prototype">
+    <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
+    <constructor-arg ref="testCaseLibraryTreeNodeBuilder.provider" />
+  </bean>
+  
+  <bean id="requirementLibraryTreeNodeBuilder.provider" class="org.springframework.beans.factory.config.ProviderCreatingFactoryBean">
+    <property name="targetBeanName" value="requirementLibraryTreeNodeBuilder" />
+  </bean>
+
+  <bean id="requirement.driveNodeBuilder" class="org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder" scope="prototype">
+    <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
+    <constructor-arg ref="requirementLibraryTreeNodeBuilder.provider" />
+  </bean>
+  
+  <bean id="campaignLibraryTreeNodeBuilder.provider" class="org.springframework.beans.factory.config.ProviderCreatingFactoryBean">
+    <property name="targetBeanName" value="campaignLibraryTreeNodeBuilder" />
+  </bean>
+
+  <bean id="campaign.driveNodeBuilder" class="org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder" scope="prototype">
+    <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
+    <constructor-arg ref="campaignLibraryTreeNodeBuilder.provider" />
+  </bean>  
+  <!--  DRIVE NODE BUILDERS -->
 
   <beans profile="eclipse">
     <context:component-scan base-package="target/classes/org.squashtest.tm" >

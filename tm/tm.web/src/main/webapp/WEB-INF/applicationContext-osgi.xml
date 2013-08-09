@@ -366,6 +366,14 @@
 		bean-name="squashtest.tm.service.CampaignsWorkspaceService" interface="org.squashtest.tm.service.library.WorkspaceService"
 		availability="mandatory" />
     
+  <osgi:reference id="squashtest.tm.service.TestCasesWorkspaceService"
+    bean-name="squashtest.tm.service.TestCasesWorkspaceService" interface="org.squashtest.tm.service.library.WorkspaceService"
+    availability="mandatory" />
+
+  <osgi:reference id="squashtest.tm.service.RequirementsWorkspaceService"
+    bean-name="squashtest.tm.service.RequirementsWorkspaceService" interface="org.squashtest.tm.service.library.WorkspaceService"
+    availability="mandatory" />
+
     <osgi:reference id="squashtest.tm.service.TestSuiteExecutionProcessingService" bean-name="squashtest.tm.service.TestSuiteExecutionProcessingService" interface="org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService" />
     
     <osgi:reference id="squashtest.tm.service.ExecutionProcessingService" bean-name="squashtest.tm.service.ExecutionProcessingService" interface="org.squashtest.tm.service.execution.ExecutionProcessingService" />

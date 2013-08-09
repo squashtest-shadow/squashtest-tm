@@ -51,7 +51,7 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 
 @Component
 @Scope("prototype")
-public class TestSuiteNodeBuilder extends JsTreeNodeBuilder<TestSuite, TestSuiteNodeBuilder> {
+public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, TestSuiteNodeBuilder> {
 
 	
 	@Inject
@@ -68,6 +68,15 @@ public class TestSuiteNodeBuilder extends JsTreeNodeBuilder<TestSuite, TestSuite
 		node.setTitle(model.getName());
 		node.addAttr("name", model.getName());
 		node.addAttr("id", model.getClass().getSimpleName() + '-' + model.getId());
+	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode, java.lang.Object)
+	 */
+	@Override
+	protected void doAddChildren(JsTreeNode node, TestSuite model) {
+		// NOOP
+		// Test suite ain't got no children
 	}
 
 }

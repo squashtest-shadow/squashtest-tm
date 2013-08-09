@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
@@ -28,41 +30,124 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNodeVisitor;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 
 @Component
 @Scope("prototype")
-public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<CampaignLibraryNode> implements
-CampaignLibraryNodeVisitor {
+public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<CampaignLibraryNode> {
+	/**
+	 * This visitor is used to populate custom attributes of the {@link JsTreeNode} currently built
+	 * 
+	 */
+	private class CustomAttributesPopulator implements CampaignLibraryNodeVisitor {
+		private final JsTreeNode builtNode;
+
+		private CustomAttributesPopulator(JsTreeNode builtNode) {
+			super();
+			this.builtNode = builtNode;
+		}
+
+		/**
+		 * 
+		 * @see org.squashtest.tm.domain.campaign.CampaignLibraryNodeVisitor#visit(org.squashtest.tm.domain.campaign.CampaignFolder)
+		 */
+		@Override
+		public void visit(CampaignFolder folder) {
+			addFolderAttributes("campaign-folders");
+			State state = (folder.hasContent() ? State.closed : State.leaf);
+			builtNode.setState(state);
+		}
+
+		/**
+		 * 
+		 * @see org.squashtest.tm.domain.campaign.CampaignLibraryNodeVisitor#visit(org.squashtest.tm.domain.campaign.Campaign)
+		 */
+		@Override
+		public void visit(Campaign campaign) {
+			builtNode.addAttr("rel", "campaign");
+			builtNode.addAttr("resType", "campaigns");
+			State state = (campaign.hasIterations() ? State.closed : State.leaf);
+			builtNode.setState(state);
+		}
+	}
+
+	/**
+	 * This visitor is used to populate the children of the currently built {@link JsTreeNode}
+	 * 
+	 * @author Gregory Fouquet
+	 * 
+	 */
+	private class ChildrenPopulator implements CampaignLibraryNodeVisitor {
+		private final JsTreeNode builtNode;
+
+		private ChildrenPopulator(JsTreeNode builtNode) {
+			super();
+			this.builtNode = builtNode;
+		}
+
+		/**
+		 * @see org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor#visit(org.squashtest.tm.domain.testcase.TestCase)
+		 */
+		@Override
+		public void visit(Campaign visited) {
+			if (visited.hasContent()) {
+				builtNode.setState(State.open);
+
+				IterationNodeBuilder childrenBuilder = new IterationNodeBuilder(permissionEvaluationService);
+
+				List<JsTreeNode> children = new JsTreeNodeListBuilder<Iteration>(childrenBuilder)
+						.expand(getExpansionCandidates())
+						.setModel(visited.getContent())
+						.build();
+
+				builtNode.setChildren(children);
+			}
+		}
+
+		/**
+		 * @see org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor#visit(org.squashtest.tm.domain.testcase.TestCaseFolder)
+		 */
+		@Override
+		public void visit(CampaignFolder visited) {
+			if (visited.hasContent()) {
+				builtNode.setState(State.open);
+
+				CampaignLibraryTreeNodeBuilder childrenBuilder = new CampaignLibraryTreeNodeBuilder(
+						permissionEvaluationService);
+
+				List<JsTreeNode> children = new JsTreeNodeListBuilder<CampaignLibraryNode>(childrenBuilder)
+						.expand(getExpansionCandidates())
+						.setModel(visited.getContent())
+						.build();
+
+				builtNode.setChildren(children);
+			}
+		}
+
+	}
+
 	@Inject
 	public CampaignLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
 		super(permissionEvaluationService);
 	}
 
-	private JsTreeNode treeNode;
-
 	@Override
 	protected void addCustomAttributes(CampaignLibraryNode libraryNode, JsTreeNode treeNode) {
-		this.treeNode = treeNode;
-		libraryNode.accept(this);
+		libraryNode.accept(new CustomAttributesPopulator(treeNode));
 
 	}
 
+	/**
+	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
+	 *      org.squashtest.tm.domain.Identified)
+	 */
 	@Override
-	public void visit(CampaignFolder folder) {
-		addFolderAttributes("campaign-folders");
-		State state = (folder.hasContent() ? State.closed : State.leaf);
-		getBuiltNode().setState(state);
-	}
+	protected void doAddChildren(JsTreeNode node, CampaignLibraryNode model) {
+		model.accept(new ChildrenPopulator(node));
 
-	@Override
-	public void visit(Campaign campaign) {
-		treeNode.addAttr("rel", "campaign");
-		treeNode.addAttr("resType", "campaigns");
-		State state = (campaign.hasIterations() ? State.closed : State.leaf);
-		getBuiltNode().setState(state);
 	}
 
 }

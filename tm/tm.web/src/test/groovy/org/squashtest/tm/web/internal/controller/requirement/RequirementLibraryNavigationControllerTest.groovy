@@ -47,7 +47,7 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.requirementLibraryTreeNodeBuilder = requirementLibraryTreeNodeBuilder
 
-		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService))
+		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
 		requirementLibraryTreeNodeBuilder.get() >> new RequirementLibraryTreeNodeBuilder(Mock(PermissionEvaluationService))
 	}
 

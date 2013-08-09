@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.validation.Valid;
 
@@ -76,14 +77,22 @@ public class CampaignLibraryNavigationController extends
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationController.class);
 	private static final String NODE_IDS = "nodeIds[]";
 
-	@Inject	private Provider<DriveNodeBuilder> driveNodeBuilder;
-	@Inject	private Provider<IterationNodeBuilder> iterationNodeBuilder;
-	@Inject	private Provider<CampaignLibraryTreeNodeBuilder> campaignLibraryTreeNodeBuilder;
-	@Inject	private Provider<TestSuiteNodeBuilder> suiteNodeBuilder;
-	@Inject	private CampaignLibraryNavigationService campaignLibraryNavigationService;
-	@Inject	private CampaignFinder campaignFinder;
-	@Inject private IterationModificationService iterationModificationService;
-
+	@Inject
+	@Named("campaign.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilder;
+	
+	@Inject
+	private Provider<IterationNodeBuilder> iterationNodeBuilder;
+	@Inject
+	private Provider<CampaignLibraryTreeNodeBuilder> campaignLibraryTreeNodeBuilder;
+	@Inject
+	private Provider<TestSuiteNodeBuilder> suiteNodeBuilder;
+	@Inject
+	private CampaignLibraryNavigationService campaignLibraryNavigationService;
+	@Inject
+	private CampaignFinder campaignFinder;
+	@Inject
+	private IterationModificationService iterationModificationService;
 
 	@InitBinder("add-campaign")
 	public void addCampaignBinder(WebDataBinder binder) {
@@ -241,69 +250,68 @@ public class CampaignLibraryNavigationController extends
 		return listBuilder.setModel(linkableLibraries).build();
 	}
 
-	@RequestMapping(value="/iterations/{iterationIds}/deletion-simulation", method = RequestMethod.GET)
+	@RequestMapping(value = "/iterations/{iterationIds}/deletion-simulation", method = RequestMethod.GET)
 	public @ResponseBody
 	Messages simulateIterationDeletion(@PathVariable("iterationIds") List<Long> iterationIds, Locale locale) {
 
-		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateIterationDeletion(iterationIds);
+		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService
+				.simulateIterationDeletion(iterationIds);
 
 		Messages messages = new Messages();
-		for (SuppressionPreviewReport report : reportList){
+		for (SuppressionPreviewReport report : reportList) {
 			messages.addMessage(report.toString(getMessageSource(), locale));
 		}
-		
+
 		return messages;
 	}
 
-
-
-	@RequestMapping(value="/iterations/{iterationIds}",  method = RequestMethod.DELETE)
+	@RequestMapping(value = "/iterations/{iterationIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
 	OperationReport confirmIterationsDeletion(@PathVariable("iterationIds") List<Long> iterationIds) {
 
 		return campaignLibraryNavigationService.deleteIterations(iterationIds);
 	}
 
-	@RequestMapping(value="/test-suites/{suiteIds}/deletion-simulation", method = RequestMethod.GET)
+	@RequestMapping(value = "/test-suites/{suiteIds}/deletion-simulation", method = RequestMethod.GET)
 	public @ResponseBody
 	Messages simulateSuiteDeletion(@PathVariable("suiteIds") List<Long> suiteIds, Locale locale) {
 		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateSuiteDeletion(suiteIds);
 
 		Messages messages = new Messages();
-		for (SuppressionPreviewReport report : reportList){
+		for (SuppressionPreviewReport report : reportList) {
 			messages.addMessage(report.toString(getMessageSource(), locale));
 		}
-		
+
 		return messages;
 
 	}
 
-	@RequestMapping(value="/test-suites/{suiteIds}",  method = RequestMethod.DELETE)
+	@RequestMapping(value = "/test-suites/{suiteIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
 	OperationReport confirmSuitesDeletion(@PathVariable("suiteIds") List<Long> suiteIds) {
 
 		return campaignLibraryNavigationService.deleteSuites(suiteIds);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/iterations/new", method = RequestMethod.POST, params = {"nodeIds[], next-iteration-number"})
+	@RequestMapping(value = "/campaigns/{campaignId}/iterations/new", method = RequestMethod.POST, params = { "nodeIds[], next-iteration-number" })
 	public @ResponseBody
 	List<JsTreeNode> copyIterations(@RequestParam("nodeIds[]") Long[] nodeIds,
 			@PathVariable("campaignId") long campaignId, @RequestParam("next-iteration-number") int nextIterationNumber) {
-		
+
 		List<Iteration> iterationsList;
 		iterationsList = campaignLibraryNavigationService.copyIterationsToCampaign(campaignId, nodeIds);
 		return createCopiedIterationsModel(iterationsList, nextIterationNumber);
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/test-suites/new", method = RequestMethod.POST, params = {"nodeIds[]"})
+	@RequestMapping(value = "/iterations/{iterationId}/test-suites/new", method = RequestMethod.POST, params = { "nodeIds[]" })
 	public @ResponseBody
-	List<JsTreeNode> copyTestSuites(@RequestParam("nodeIds[]") Long[] nodeIds,@PathVariable("iterationId") long iterationId) {
+	List<JsTreeNode> copyTestSuites(@RequestParam("nodeIds[]") Long[] nodeIds,
+			@PathVariable("iterationId") long iterationId) {
 
 		List<TestSuite> testSuiteList;
 		testSuiteList = iterationModificationService.copyPasteTestSuitesToIteration(nodeIds, iterationId);
 		return createCopiedTestSuitesModel(testSuiteList);
 
 	}
-
 
 }
