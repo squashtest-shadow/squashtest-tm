@@ -36,6 +36,7 @@ import spock.unitils.UnitilsSupport;
 
 @UnitilsSupport
 @Transactional
+@DataSet("AdvancedSearchServiceIT.xml")
 class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 
 	@Inject
@@ -50,15 +51,18 @@ class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 	@Inject
 	TestCaseFinder testCaseFinder;
 	
+	def setup(){
+		testCaseService.changePrerequisite(10L, "Batman");
+		service.indexTestCases();
+	}
 	
-	@DataSet("AdvancedSearchServiceIT.xml")
+
 	def"should find test cases"(){
 		
 		
 		when:
-			testCaseService.changePrerequisite(10L, "Batman");
 			def res = service.searchForTestCases() ;
 		then:
-			res==[];
+			res==[10];
 	}
 }

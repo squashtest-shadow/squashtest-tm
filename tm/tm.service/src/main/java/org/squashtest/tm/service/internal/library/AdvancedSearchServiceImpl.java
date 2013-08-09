@@ -27,12 +27,18 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.transaction.Transaction;
 
+import org.hibernate.CacheMode;
+import org.hibernate.FlushMode;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
+import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
+import org.hibernate.search.jmx.IndexingProgressMonitor;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,7 +77,33 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	
 	@Inject
 	private Provider<TestCaseSearchExportCSVModelImpl> testCaseSearchExportCSVModelProvider;
+
 	
+	@Override
+	public void indexTestCases(){
+		
+		Session session = sessionFactory.getCurrentSession();
+ 		
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		
+		MassIndexerProgressMonitor monitor = new IndexingProgressMonitor();
+		
+		try {
+
+			ftSession 
+			 .createIndexer(TestCase.class)
+			 .purgeAllOnStart(true)
+			 .batchSizeToLoadObjects(25)
+			 .cacheMode(CacheMode.NORMAL)
+			 .progressMonitor(monitor)
+			 .startAndWait();
+
+		} catch (InterruptedException e) {
+
+		}
+
+	}
+		
 	@Override
 	public List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity) {
 
@@ -89,31 +121,29 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Override
 	public List<TestCase> searchForTestCases() {
 		
-		Session session = sessionFactory.openSession();
+		Session session = sessionFactory.getCurrentSession();
  		
 		FullTextSession ftSession = Search.getFullTextSession(session);
-		
+
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity( TestCase.class ).get();
 		
 		org.apache.lucene.search.Query query = qb
 				.bool()
-				.must(qb.phrase().onField("prerequisite").sentence("Batman").createQuery())
-				.must(qb.keyword().onField("id").matching("238").createQuery())
+				.must(qb.keyword().onField("prerequisite").matching("Batman").createQuery())
+				//.must(qb.keyword().onField("id").matching("238").createQuery())
 				.createQuery();
 			
 		 org.hibernate.Query hibQuery = ftSession.createFullTextQuery(query, TestCase.class);
 		 
 		List result = hibQuery.list();
 
-		session.close();
-		
 		return result;
 	}
 	
 	@Override
 	public PagedCollectionHolder<List<TestCase>> searchForTestCases(PagingAndSorting sorting) {
 
-		Session session = sessionFactory.openSession();
+		Session session = sessionFactory.getCurrentSession();
 		 		
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
@@ -124,13 +154,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		 org.hibernate.Query hibQuery = ftSession.createFullTextQuery(query, TestCase.class);
 		 
 		List result = hibQuery.list();
-		
-		session.close();
-		 			
+			 			
 		List<TestCase> testCases = testCaseDao.findAll();
 		long countAll = testCases.size();
 		return new PagingBackedPagedCollectionHolder<List<TestCase>>(sorting, countAll, testCases);
 	}
+
 
 	@Override
 	public TestCaseSearchExportCSVModel exportTestCaseSearchToCSV() {

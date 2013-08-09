@@ -33,11 +33,19 @@ import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
 
 public interface AdvancedSearchService {
 
+	//Indexing
+	void indexTestCases();
+	
+	//Querying
 	List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity);
 	
 	PagedCollectionHolder<List<TestCase>> searchForTestCases(PagingAndSorting sorting);
 	
+	List<TestCase> searchForTestCases();
+	
+	//Exporting
 	TestCaseSearchExportCSVModel exportTestCaseSearchToCSV();
 
-	List<TestCase> searchForTestCases();
+
+
 }

@@ -188,31 +188,31 @@ public class AdvancedSearchController {
 		panel.setOpen(false);
 		panel.setId("association");
 		
-		SearchInputFieldModel associationField = new SearchInputFieldModel("test-case-association","test-case.importance.label","multiselect");
+		SearchInputFieldModel associationField = new SearchInputFieldModel("test-case-association","search.testcase.association.field.title","multiselect");
 		panel.addField(associationField);
 		
-		SearchInputPossibleValueModel allOption = new SearchInputPossibleValueModel("Tous","ALL");
-		SearchInputPossibleValueModel requirementOption = new SearchInputPossibleValueModel("A une exigence","REQUIREMENT");
-		SearchInputPossibleValueModel iterationOption = new SearchInputPossibleValueModel("A une itération","ITERATION");
-		SearchInputPossibleValueModel executionOption = new SearchInputPossibleValueModel("A une exécution","EXECUTION");
+		SearchInputPossibleValueModel allOption = new SearchInputPossibleValueModel("search.testcase.option.all","ALL");
+		SearchInputPossibleValueModel requirementOption = new SearchInputPossibleValueModel("search.testcase.option.requirement","REQUIREMENT");
+		SearchInputPossibleValueModel iterationOption = new SearchInputPossibleValueModel("search.testcase.option.iteration","ITERATION");
+		SearchInputPossibleValueModel executionOption = new SearchInputPossibleValueModel("search.testcase.option.execution","EXECUTION");
 		
 		associationField.addPossibleValue(allOption);
 		associationField.addPossibleValue(requirementOption);
 		associationField.addPossibleValue(iterationOption);
 		associationField.addPossibleValue(executionOption);
 		
-		SearchInputPossibleValueModel associatedOption = new SearchInputPossibleValueModel("Associé","ASSOCIATED");
-		SearchInputPossibleValueModel notAssociatedOption = new SearchInputPossibleValueModel("Non associé","NOT_ASSOCIATED");
+		SearchInputPossibleValueModel associatedOption = new SearchInputPossibleValueModel("search.testcase.option.associated","ASSOCIATED");
+		SearchInputPossibleValueModel notAssociatedOption = new SearchInputPossibleValueModel("search.testcase.option.not_associated","NOT_ASSOCIATED");
 		
 		
-		SearchInputFieldModel requirementField = new SearchInputFieldModel("test-case-association-requirement","test-case.importance.label","multiselect");
+		SearchInputFieldModel requirementField = new SearchInputFieldModel("test-case-association-requirement","search.testcase.association.requirement.field.title","multiselect");
 		panel.addField(requirementField);
 		
 		requirementField.addPossibleValue(allOption);
 		requirementField.addPossibleValue(associatedOption);
 		requirementField.addPossibleValue(notAssociatedOption);
 		
-		SearchInputFieldModel iterationField = new SearchInputFieldModel("test-case-association-iteration","test-case.importance.label","multiselect");
+		SearchInputFieldModel iterationField = new SearchInputFieldModel("test-case-association-iteration","search.testcase.association.iteration.field.title","multiselect");
 		panel.addField(iterationField);
 
 		iterationField.addPossibleValue(allOption);
@@ -229,7 +229,7 @@ public class AdvancedSearchController {
 		panel.setOpen(false);
 		panel.setId("project");
 	
-		SearchInputFieldModel projectField = new SearchInputFieldModel("test-case-project","test-case.importance.label","multiselect");
+		SearchInputFieldModel projectField = new SearchInputFieldModel("test-case-project","search.testcase.project.field.title","multiselect");
 		panel.addField(projectField);
 		
 		List<Project> projects = this.projectFilterService.getAllProjects();
@@ -248,15 +248,15 @@ public class AdvancedSearchController {
 		panel.setOpen(true);
 		panel.setId("creation");
 	
-		SearchInputFieldModel creationOrModificationField = new SearchInputFieldModel("test-case-creation","test-case.importance.label","multiselect");
+		SearchInputFieldModel creationOrModificationField = new SearchInputFieldModel("test-case-creation","search.testcase.creation.role.field.title","multiselect");
 		panel.addField(creationOrModificationField);
 		
-		SearchInputPossibleValueModel createdByOption = new SearchInputPossibleValueModel("Créé par","CREATED");
-		SearchInputPossibleValueModel modifiedByOption = new SearchInputPossibleValueModel("Modifié par","MODIFIED");
+		SearchInputPossibleValueModel createdByOption = new SearchInputPossibleValueModel("label.createdBy","CREATED");
+		SearchInputPossibleValueModel modifiedByOption = new SearchInputPossibleValueModel("label.modifiedBy","MODIFIED");
 		creationOrModificationField.addPossibleValue(createdByOption);
 		creationOrModificationField.addPossibleValue(modifiedByOption);
 			
-		SearchInputFieldModel byField = new SearchInputFieldModel("test-case-by","test-case.importance.label","multiselect");
+		SearchInputFieldModel byField = new SearchInputFieldModel("test-case-by","search.testcase.creation.user.field.title","multiselect");
 		panel.addField(byField);
 		return panel;
 	}
