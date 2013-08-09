@@ -38,6 +38,6 @@
 		<property name="validator.apply_to_ddl">false</property>
 		<property name="javax.persistence.validation.mode">none</property>
 	   	<property name="hibernate.search.default.directory_provider">filesystem</property> 
-		<property name="hibernate.search.default.indexBase">/luceneindexes</property>
+		<property name="hibernate.search.default.indexBase">${project.build.outputDirectory}/luceneindexes</property>
 	</session-factory>
 </hibernate-configuration>
