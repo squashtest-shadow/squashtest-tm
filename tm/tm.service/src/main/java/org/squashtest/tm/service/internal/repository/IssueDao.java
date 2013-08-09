@@ -105,5 +105,12 @@ public interface IssueDao extends EntityDao<Issue> {
 	 * @return the list of the suite's {@link Issue}s
 	 */
 	List<Issue> findAllForTestSuite(Long id);
+	
+	/**
+	 * Self explanatory
+	 * @param executionStepsIds
+	 * @return
+	 */
+	Integer countIssuesfromExecutionSteps(List<Long> executionStepsIds);
 
 }

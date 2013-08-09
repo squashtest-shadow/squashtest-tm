@@ -158,10 +158,7 @@
 				value='<f:message key="label.Rename" />'
 				id="rename-campaign-button" />
 		</c:if>
-		
-		<%-- the click handler bound to this button is so trivial it should actually have been a hyperlink, but I couldn't bother
-		fixing the lnf issues so I left it as a button --%>
-		<input type="button" value="<f:message key="label.Export" />" id="export-campaign-button"/>
+
 		
 		<c:if test="${ deletable }">
 			<input type="button"
@@ -468,7 +465,6 @@
 				
 				$('#delete-campaign-button').button();
 				$('#rename-campaign-button').button();
-				$('#export-campaign-button').button();
 				
 				var nameHandler = contentHandlers.getSimpleNameHandler();
 				
@@ -477,14 +473,6 @@
 				
 				contextualContent.addListener(nameHandler);				
 		
-
-				
-				// ******** export ************
-				
-				$("#export-campaign-button").click(function(){
-					document.location.href="${campaignUrl}?export=csv";
-				});
-				
 				
 				//****** tabs configuration ***********
 				

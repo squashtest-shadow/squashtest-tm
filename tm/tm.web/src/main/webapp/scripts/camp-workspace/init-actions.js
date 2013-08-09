@@ -126,6 +126,23 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			});
 			
 			
+			// ****************** exports *********************
+			
+			$("#export-L-tree-button").bind("click", function(){				
+				var nodeId = tree.jstree("get_selected").attr("resid");				
+				document.location.href= squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=L";
+			});
+			
+			$("#export-S-tree-button").bind("click", function(){				
+				var nodeId = tree.jstree("get_selected").attr("resid");				
+				document.location.href= squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=S";
+			});
+			
+			$("#export-F-tree-button").bind("click", function(){				
+				var nodeId = tree.jstree("get_selected").attr("resid");				
+				document.location.href=  squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=F";
+			});		
+			
 			
 			// ***************** deletion ********************
 			

@@ -50,6 +50,10 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			return nodes.filter(':creatable').filter(':campaign').length === 1;
 		};
 		
+		this.canExport = function(nodes){
+			return (nodes.length === 1 && nodes.is(':campaign'));
+		},
+		
 		
 		//must be not empty, and not contain libraries.
 		this.canCopy = function(nodes){
@@ -171,7 +175,10 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			'copy-node-tree-button' : this.canCopy,
 			'paste-node-tree-button' : this.canPaste,
 			'rename-node-tree-button' : this.canRename,
-			'delete-node-tree-button' : this.canDelete
+			'delete-node-tree-button' : this.canDelete,
+			'export-L-tree-button' : this.canExport,
+			'export-S-tree-button' : this.canExport,
+			'export-F-tree-button' : this.canExport
 		}
 
 	};

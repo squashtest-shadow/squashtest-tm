@@ -18,33 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.campaign;
+package org.squashtest.tm.service.internal.campaign;
 
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
-import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestPlanStatistics;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
-@Transactional
-public interface CustomCampaignModificationService {
+public interface WritableCampaignCSVModel extends CampaignExportCSVModel {
 
-	void rename(long campaignId, String newName);
-
-
-	FilteredCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
-			CollectionSorting filter);
+	void setCampaign(Campaign campaign);
+	void init();
 	
-	/**
-	 * 
-	 * @param campaignId the id of the concerned campaign
-	 * @return the computed {@link TestPlanStatistics} out of each test-plan-item of each campaign's iteration
-	 */
-	TestPlanStatistics findCampaignStatistics(long campaignId);
-	
-	
-
 }

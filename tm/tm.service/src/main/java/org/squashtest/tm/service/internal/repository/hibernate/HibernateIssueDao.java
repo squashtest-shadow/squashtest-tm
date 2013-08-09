@@ -72,6 +72,21 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			// restriction for executionStep's bugtracker
 			"where execStep.id in :executionStepsIds " + "and btb.bugtracker.id = issueExecStepBT.id) ";
 
+	
+	private static final String WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_STEP =
+	// ------------------------------------Where issues is from the given Executions
+	"where Issue.id in (select issueExecStep.id "
+			+ "from ExecutionStep execStep "
+			// way to issue id for execStep
+			+ "join execStep.issueList issueListExecStep " + "join issueListExecStep.issues issueExecStep "
+			+ "join issueExecStep.bugtracker issueExecStepBT "
+			// way to bug-tracker for execStep
+			+ "join execStep.execution exec " + "join exec.testPlan tp " + "join tp.iteration iter "
+			+ "join iter.campaign camp " + "join camp.project project " + "join project.bugtrackerBinding btb " +
+			// restriction for executionStep's bugtracker
+			"where execStep.id in :executionStepsIds " + "and btb.bugtracker.id = issueExecStepBT.id) ";
+	
+	
 	/**
 	 * 
 	 * @see org.squashtest.tm.service.internal.repository.IssueDao#countIssuesfromIssueList(java.util.List)
@@ -224,6 +239,21 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 					+ WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_AND_EXEC_STEP;
 			Query query = currentSession().createQuery(queryString);
 			query.setParameterList("executionsIds", executionsIds);
+			query.setParameterList("executionStepsIds", executionStepsIds);
+			Long result = (Long) query.uniqueResult();
+			return result.intValue();
+
+		} else {
+			return 0;
+		}
+	}
+	
+	@Override
+	public Integer countIssuesfromExecutionSteps(List<Long> executionStepsIds) {
+		if (!executionStepsIds.isEmpty()) {
+			String queryString = "select count(Issue)  " + "from Issue Issue "
+					+ WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_STEP;
+			Query query = currentSession().createQuery(queryString);
 			query.setParameterList("executionStepsIds", executionStepsIds);
 			Long result = (Long) query.uniqueResult();
 			return result.intValue();

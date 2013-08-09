@@ -33,6 +33,7 @@ import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -45,7 +46,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 
 @Component
 @Scope("prototype")
-public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
+public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 
 	@Inject
 	private CustomFieldHelperService cufHelperService;
@@ -67,7 +68,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 
 	private int nbColumns;
 
-	public CampaignExportCSVModelImpl() {
+	public SimpleCampaignExportCSVModelImpl() {
 		super();
 	}
 
@@ -157,41 +158,43 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		headerCells.add(new CellImpl("CPG_ACTUAL_START_ON"));
 		headerCells.add(new CellImpl("CPG_ACTUAL_END_ON"));
 
-		// campaign custom fields
-		for (CustomField cufModel : campCUFModel) {
-			headerCells.add(new CellImpl("CPG_CUF_" + cufModel.getCode()));
-		}
-
 		// iteration fixed fields
-		headerCells.add(new CellImpl("ITERATION"));
+		headerCells.add(new CellImpl("IT_ID"));
+		headerCells.add(new CellImpl("IT_NUM"));
+		headerCells.add(new CellImpl("IT_NAME"));
 		headerCells.add(new CellImpl("IT_SCHEDULED_START_ON"));
 		headerCells.add(new CellImpl("IT_SCHEDULED_END_ON"));
 		headerCells.add(new CellImpl("IT_ACTUAL_START_ON"));
 		headerCells.add(new CellImpl("IT_ACTUAL_END_ON"));
 
-		// iteration custom fields
-		for (CustomField cufModel : iterCUFModel) {
-			headerCells.add(new CellImpl("IT_CUF_" + cufModel.getCode()));
-		}
-
 		// test case fixed fields
-		headerCells.add(new CellImpl("TEST_CASE"));
-		headerCells.add(new CellImpl("PROJECT"));
-		headerCells.add(new CellImpl("WEIGHT"));
-		headerCells.add(new CellImpl("TEST SUITE"));
+		headerCells.add(new CellImpl("TC_ID"));
+		headerCells.add(new CellImpl("TC_NAME"));
+		headerCells.add(new CellImpl("TC_PROJECT_ID"));
+		headerCells.add(new CellImpl("TC_PROJECT"));
+		headerCells.add(new CellImpl("TC_WEIGHT"));
+		headerCells.add(new CellImpl("TEST_SUITE"));
 		headerCells.add(new CellImpl("#_EXECUTIONS"));
 		headerCells.add(new CellImpl("#_REQUIREMENTS"));
 		headerCells.add(new CellImpl("#_ISSUES"));
 		headerCells.add(new CellImpl("EXEC_STATUS"));
-		headerCells.add(new CellImpl("USER"));
-		headerCells.add(new CellImpl("EXECUTION_DATE"));
-		headerCells.add(new CellImpl("DESCRIPTION"));
-		headerCells.add(new CellImpl("REF"));
-		headerCells.add(new CellImpl("NATURE"));
-		headerCells.add(new CellImpl("TYPE"));
+		headerCells.add(new CellImpl("EXEC_USER"));
+		headerCells.add(new CellImpl("EXEC_DATE"));
+		headerCells.add(new CellImpl("TC_REF"));
+		headerCells.add(new CellImpl("TC_NATURE"));
+		headerCells.add(new CellImpl("TC_TYPE"));
 		headerCells.add(new CellImpl("TC_STATUS"));
-		headerCells.add(new CellImpl("PREREQUISITE"));
 
+		// campaign custom fields
+		for (CustomField cufModel : campCUFModel) {
+			headerCells.add(new CellImpl("CPG_CUF_" + cufModel.getCode()));
+		}
+
+		// iteration custom fields
+		for (CustomField cufModel : iterCUFModel) {
+			headerCells.add(new CellImpl("IT_CUF_" + cufModel.getCode()));
+		}
+		
 		// test case custom fields
 		for (CustomField cufModel : tcCUFModel) {
 			headerCells.add(new CellImpl("TC_CUF_" + cufModel.getCode()));
@@ -215,7 +218,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		private Iteration iteration = new Iteration(); // initialized to dummy value for for bootstrap purposes
 		private IterationTestPlanItem itp; // null means "no more"
 
-		private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
 		public DataIterator() {
 
@@ -246,6 +249,9 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			// the test case
 			populateTestCaseRowData(dataCells);
 
+			// custom fields
+			populateCustomFields(dataCells);
+			
 			// move to the next occurence
 			moveNext();
 
@@ -254,54 +260,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		}
 
 		@SuppressWarnings("unchecked")
-		private void populateTestCaseRowData(List<CellImpl> dataCells) {
-
-			TestCase testCase = itp.getReferencedTestCase();
-
-			dataCells.add(new CellImpl(testCase.getName()));
-			dataCells.add(new CellImpl(testCase.getProject().getName()));
-			dataCells.add(new CellImpl(testCase.getImportance().toString()));
-			dataCells.add(new CellImpl(itp.getTestSuiteNames().replace("<", "&lt;").replace(">", "&gt;")));
-			dataCells.add(new CellImpl(Integer.toString(itp.getExecutions().size())));
-			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
-			dataCells.add(new CellImpl(Integer.toString(getNbIssues(itp))));
-			dataCells.add(new CellImpl(itp.getExecutionStatus().toString()));
-			dataCells.add(new CellImpl(formatUser(itp.getUser())));
-			dataCells.add(new CellImpl(formatDate(itp.getLastExecutedOn())));
-			dataCells.add(new CellImpl(formatLongText(testCase.getDescription())));
-			dataCells.add(new CellImpl(testCase.getReference()));
-			dataCells.add(new CellImpl(testCase.getNature().toString()));
-			dataCells.add(new CellImpl(testCase.getType().toString()));
-			dataCells.add(new CellImpl(testCase.getStatus().toString()));
-			dataCells.add(new CellImpl(formatLongText(testCase.getPrerequisite())));
-
-			Collection<CustomFieldValue> tcValues = (Collection<CustomFieldValue>) tcCUFValues.get(testCase.getId());
-			for (CustomField model : tcCUFModel) {
-				String strValue = getValue(tcValues, model);
-				dataCells.add(new CellImpl(strValue));
-			}
-		}
-
-		@SuppressWarnings("unchecked")
-		private void populateIterationRowData(List<CellImpl> dataCells) {
-			dataCells.add(new CellImpl("#" + (iterIndex + 1) + " " + iteration.getName()));
-			dataCells.add(new CellImpl(formatDate(iteration.getScheduledStartDate())));
-			dataCells.add(new CellImpl(formatDate(iteration.getScheduledEndDate())));
-			dataCells.add(new CellImpl(formatDate(iteration.getActualStartDate())));
-			dataCells.add(new CellImpl(formatDate(iteration.getActualEndDate())));
-
-			Collection<CustomFieldValue> iValues = (Collection<CustomFieldValue>) iterCUFValues.get(iteration.getId());
-			for (CustomField model : iterCUFModel) {
-				String strValue = getValue(iValues, model);
-				dataCells.add(new CellImpl(strValue));
-			}
-		}
-
-		private void populateCampaignRowData(List<CellImpl> dataCells) {
-			dataCells.add(new CellImpl(formatDate(campaign.getScheduledStartDate())));
-			dataCells.add(new CellImpl(formatDate(campaign.getScheduledEndDate())));
-			dataCells.add(new CellImpl(formatDate(campaign.getActualStartDate())));
-			dataCells.add(new CellImpl(formatDate(campaign.getActualEndDate())));
+		private void populateCustomFields(List<CellImpl> dataCells) {
 
 			List<CustomFieldValue> cValues = campCUFValues;
 			// ensure that the CUF values are processed in the correct order
@@ -309,6 +268,64 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 				String strValue = getValue(cValues, model);
 				dataCells.add(new CellImpl(strValue));
 			}
+			
+			Collection<CustomFieldValue> iValues = (Collection<CustomFieldValue>) iterCUFValues.get(iteration.getId());
+			for (CustomField model : iterCUFModel) {
+				String strValue = getValue(iValues, model);
+				dataCells.add(new CellImpl(strValue));
+			}
+			
+			TestCase testCase = itp.getReferencedTestCase();
+			
+			Collection<CustomFieldValue> tcValues = (Collection<CustomFieldValue>) tcCUFValues.get(testCase.getId());
+			for (CustomField model : tcCUFModel) {
+				String strValue = getValue(tcValues, model);
+				dataCells.add(new CellImpl(strValue));
+			}
+		}
+		
+		@SuppressWarnings("unchecked")
+		private void populateTestCaseRowData(List<CellImpl> dataCells) {
+
+			TestCase testCase = itp.getReferencedTestCase();
+			
+			dataCells.add(new CellImpl(testCase.getId().toString()));
+			dataCells.add(new CellImpl(itp.getLabel()));
+			dataCells.add(new CellImpl(testCase.getProject().getId().toString()));
+			dataCells.add(new CellImpl(testCase.getProject().getName()));
+			dataCells.add(new CellImpl(testCase.getImportance().toString()));
+			dataCells.add(new CellImpl(itp.getTestSuiteNames().replace(", ",",").replace("<", "&lt;").replace(">", "&gt;")));
+			dataCells.add(new CellImpl(Integer.toString(itp.getExecutions().size())));
+			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
+			dataCells.add(new CellImpl(Integer.toString(getNbIssues(itp))));
+			dataCells.add(new CellImpl(itp.getExecutionStatus().toString()));
+			dataCells.add(new CellImpl(formatUser(itp.getUser())));
+			dataCells.add(new CellImpl(formatDate(itp.getLastExecutedOn())));
+			dataCells.add(new CellImpl(testCase.getReference()));
+			dataCells.add(new CellImpl(testCase.getNature().toString()));
+			dataCells.add(new CellImpl(testCase.getType().toString()));
+			dataCells.add(new CellImpl(testCase.getStatus().toString()));
+		}
+
+		@SuppressWarnings("unchecked")
+		private void populateIterationRowData(List<CellImpl> dataCells) {
+			
+			dataCells.add(new CellImpl(iteration.getId().toString()));
+			dataCells.add(new CellImpl(Integer.toString(iterIndex + 1)));
+			dataCells.add(new CellImpl(iteration.getName()));
+			dataCells.add(new CellImpl(formatDate(iteration.getScheduledStartDate())));
+			dataCells.add(new CellImpl(formatDate(iteration.getScheduledEndDate())));
+			dataCells.add(new CellImpl(formatDate(iteration.getActualStartDate())));
+			dataCells.add(new CellImpl(formatDate(iteration.getActualEndDate())));
+
+
+		}
+
+		private void populateCampaignRowData(List<CellImpl> dataCells) {
+			dataCells.add(new CellImpl(formatDate(campaign.getScheduledStartDate())));
+			dataCells.add(new CellImpl(formatDate(campaign.getScheduledEndDate())));
+			dataCells.add(new CellImpl(formatDate(campaign.getActualStartDate())));
+			dataCells.add(new CellImpl(formatDate(campaign.getActualEndDate())));
 		}
 
 		@Override
@@ -332,22 +349,18 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			return "--";
 		}
 
-		private int getNbIssues(IterationTestPlanItem aitp) {
+		private int getNbIssues(IterationTestPlanItem itp) {
 
-			return bugTrackerService.findNumberOfIssueForItemTestPlanLastExecution(aitp.getId());
+			return bugTrackerService.findNumberOfIssueForItemTestPlanLastExecution(itp.getId());
 
 		}
 
 		private String formatDate(Date date) {
 
-			return (date == null) ? "--" : dateFormat.format(date);
+			return (date == null) ? "" : dateFormat.format(date);
 
 		}
 
-		private String formatLongText(String text) {
-			// TODO something mor euseful ?
-			return (text == null) ? "--" : text;
-		}
 
 		private String formatUser(User user) {
 			return (user == null) ? "--" : user.getLogin();

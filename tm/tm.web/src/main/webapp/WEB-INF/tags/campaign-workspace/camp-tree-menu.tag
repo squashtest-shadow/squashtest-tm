@@ -41,7 +41,14 @@
 	</div>	
 	
 	<div class="button-group">
-		<a  id="rename-node-tree-button" href="JavaScript:void(0);"  ><f:message key="tree.button.rename-node.label" />...</a>				
+		<a  id="rename-node-tree-button" href="JavaScript:void(0);"  ><f:message key="tree.button.rename-node.label" />...</a>		
+	
+		<a  id="tree-import-button" href="JavaScript:void(0);" class="buttonmenu"><f:message key="squashtm.treemenu.import.label"/>...</a>
+		<ul id="tree-import-menu" class="not-displayed">
+			<li id="export-L-tree-button" class="ui-state-disabled"><a href="JavaScript:void(0);"><f:message key="label.Export.Campaign.Light" />...</a></li>
+			<li id="export-S-tree-button" class="ui-state-disabled"><a href="JavaScript:void(0);"><f:message key="label.Export.Campaign.Standard" />...</a></li>
+			<li id="export-F-tree-button" class="ui-state-disabled"><a href="JavaScript:void(0);"><f:message key='label.Export.Campaign.Full'/>...</a></li>
+		</ul>	
 	</div>
 	
 	<c:if test="${ not empty wizards }">

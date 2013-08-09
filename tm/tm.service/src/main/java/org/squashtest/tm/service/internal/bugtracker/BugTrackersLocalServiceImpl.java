@@ -58,6 +58,7 @@ import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
@@ -70,6 +71,7 @@ import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.service.internal.repository.IssueDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
@@ -91,6 +93,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Inject
 	private IterationDao iterationDao;
+	
+	@Inject
+	private IterationTestPlanDao iterationTestPlanDao;
 
 	@Inject
 	private CampaignDao campaignDao;
@@ -649,6 +654,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	public Set<String> getProviderKinds() {
 		return remoteBugTrackersService.getProviderKinds();
 	}
+	
+
 
 	@Override
 	public int findNumberOfIssueForTestCase(Long tcId) {
@@ -668,4 +675,40 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return issueDao.countIssuesfromExecutionAndExecutionSteps(executionIds, executionStepIds);
 	}
 
+	@Override
+	public int findNumberOfIssueForItemTestPlanLastExecution(Long itemTestPlanId) {
+		
+		IterationTestPlanItem itp = iterationTestPlanDao.findTestPlanItem(itemTestPlanId);
+		Execution execution = itp.getLatestExecution();
+		if(execution == null){
+			return 0;
+		} else {
+			List<Execution> executions = new ArrayList<Execution>();
+			executions.add(execution);
+			return findNumberOfIssueForExecutions(executions);
+		}
+	}
+	
+	@Override
+	public int findNumberOfIssueForExecutionStep(Long testStepId){
+		List<Long> executionStepIds  = new ArrayList<Long>();
+		executionStepIds.add(testStepId); 
+		return issueDao.countIssuesfromExecutionSteps(executionStepIds);
+	}
+	
+	private int findNumberOfIssueForExecutions(List<Execution> executions){
+		
+		List<ExecutionStep> executionSteps = collectExecutionStepsFromExecution(executions);
+		
+		Map<Long, IssueDetector> issueDetectorByListId = createIssueDetectorByIssueListId(executions);
+		Map<Long, IssueDetector> executionStepByListId = createIssueDetectorByIssueListId(executionSteps);
+		issueDetectorByListId.putAll(executionStepByListId);
+
+		// Extract ids out of Executions and ExecutionSteps
+		List<Long> executionIds = IdentifiedUtil.extractIds(executions);
+		List<Long> executionStepIds = IdentifiedUtil.extractIds(executionSteps);
+
+		return issueDao.countIssuesfromExecutionAndExecutionSteps(executionIds, executionStepIds);
+	}
+	
 }

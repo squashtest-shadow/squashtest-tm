@@ -37,6 +37,8 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
@@ -45,7 +47,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 
 @Component
 @Scope("prototype")
-public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
+public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel {
 
 	@Inject
 	private CustomFieldHelperService cufHelperService;
@@ -67,7 +69,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 
 	private int nbColumns;
 
-	public CampaignExportCSVModelImpl() {
+	public CampaignExportCSVFullModelImpl() {
 		super();
 	}
 
@@ -108,7 +110,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		tcCUFModel = tcHelper.getCustomFieldConfiguration();
 		List<CustomFieldValue> tcValues = tcHelper.getCustomFieldValues();
 
-		nbColumns = 25 + campCUFModel.size() + iterCUFModel.size() + tcCUFModel.size();
+		nbColumns = 33 + campCUFModel.size() + iterCUFModel.size() + tcCUFModel.size();
 
 		// index the custom field values with a map for faster reference later
 		createCustomFieldValuesIndex(iterValues, tcValues);
@@ -151,52 +153,69 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 
 		List<CellImpl> headerCells = new ArrayList<CellImpl>(nbColumns);
 
-		// campaign fixed fields
+		// campaign fixed fields (4)
 		headerCells.add(new CellImpl("CPG_SCHEDULED_START_ON"));
 		headerCells.add(new CellImpl("CPG_SCHEDULED_END_ON"));
 		headerCells.add(new CellImpl("CPG_ACTUAL_START_ON"));
 		headerCells.add(new CellImpl("CPG_ACTUAL_END_ON"));
 
-		// campaign custom fields
-		for (CustomField cufModel : campCUFModel) {
-			headerCells.add(new CellImpl("CPG_CUF_" + cufModel.getCode()));
-		}
-
-		// iteration fixed fields
-		headerCells.add(new CellImpl("ITERATION"));
+		// iteration fixed fields (7)
+		headerCells.add(new CellImpl("IT_ID"));
+		headerCells.add(new CellImpl("IT_NUM"));
+		headerCells.add(new CellImpl("IT_NAME"));
 		headerCells.add(new CellImpl("IT_SCHEDULED_START_ON"));
 		headerCells.add(new CellImpl("IT_SCHEDULED_END_ON"));
 		headerCells.add(new CellImpl("IT_ACTUAL_START_ON"));
 		headerCells.add(new CellImpl("IT_ACTUAL_END_ON"));
 
+
+		// test case fixed fields (16)
+		headerCells.add(new CellImpl("TC_ID"));
+		headerCells.add(new CellImpl("TC_NAME"));
+		headerCells.add(new CellImpl("TC_PROJECT_ID"));
+		headerCells.add(new CellImpl("TC_PROJECT"));
+		headerCells.add(new CellImpl("TC_WEIGHT"));
+		headerCells.add(new CellImpl("TEST_SUITE"));
+		headerCells.add(new CellImpl("#_EXECUTIONS"));
+		headerCells.add(new CellImpl("#_REQUIREMENTS"));
+		headerCells.add(new CellImpl("#_ISSUES"));
+		headerCells.add(new CellImpl("EXEC_STATUS"));
+		headerCells.add(new CellImpl("EXEC_USER"));
+		headerCells.add(new CellImpl("EXEC_DATE"));
+		headerCells.add(new CellImpl("TC_REF"));
+		headerCells.add(new CellImpl("TC_NATURE"));
+		headerCells.add(new CellImpl("TC_TYPE"));
+		headerCells.add(new CellImpl("TC_STATUS"));
+		
+		//test step fixed fields (7)
+		headerCells.add(new CellImpl("STEP_ID"));
+		headerCells.add(new CellImpl("STEP_NUM"));
+		headerCells.add(new CellImpl("STEP_#_REQ"));
+		headerCells.add(new CellImpl("EXEC_STEP_STATUS"));
+		headerCells.add(new CellImpl("EXEC_STEP_DATE"));
+		headerCells.add(new CellImpl("EXEC_STEP_USER"));
+		headerCells.add(new CellImpl("EXEC_STEP_#_ISSUES"));
+		
+		
+		// campaign custom fields
+		for (CustomField cufModel : campCUFModel) {
+			headerCells.add(new CellImpl("CPG_CUF_" + cufModel.getCode()));
+		}
+
+	
+		
 		// iteration custom fields
 		for (CustomField cufModel : iterCUFModel) {
 			headerCells.add(new CellImpl("IT_CUF_" + cufModel.getCode()));
 		}
 
-		// test case fixed fields
-		headerCells.add(new CellImpl("TEST_CASE"));
-		headerCells.add(new CellImpl("PROJECT"));
-		headerCells.add(new CellImpl("WEIGHT"));
-		headerCells.add(new CellImpl("TEST SUITE"));
-		headerCells.add(new CellImpl("#_EXECUTIONS"));
-		headerCells.add(new CellImpl("#_REQUIREMENTS"));
-		headerCells.add(new CellImpl("#_ISSUES"));
-		headerCells.add(new CellImpl("EXEC_STATUS"));
-		headerCells.add(new CellImpl("USER"));
-		headerCells.add(new CellImpl("EXECUTION_DATE"));
-		headerCells.add(new CellImpl("DESCRIPTION"));
-		headerCells.add(new CellImpl("REF"));
-		headerCells.add(new CellImpl("NATURE"));
-		headerCells.add(new CellImpl("TYPE"));
-		headerCells.add(new CellImpl("TC_STATUS"));
-		headerCells.add(new CellImpl("PREREQUISITE"));
-
+		
 		// test case custom fields
 		for (CustomField cufModel : tcCUFModel) {
 			headerCells.add(new CellImpl("TC_CUF_" + cufModel.getCode()));
 		}
 
+		
 		return new RowImpl(headerCells);
 
 	}
@@ -208,29 +227,30 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 	// ********************************** nested classes ********************************************
 
 	private class DataIterator implements Iterator<Row> {
-
+		
+		//initial state : null is a meaningful value here.
+		private Iteration iteration = null;  
+		private IterationTestPlanItem itp = null;
+		private ExecutionStep execStep = null;		
+		
 		private int iterIndex = -1;
-		private int itpIndex = -1;
+		private int itpIndex = 	-1;
+		private int stepIndex = -1;
 
-		private Iteration iteration = new Iteration(); // initialized to dummy value for for bootstrap purposes
-		private IterationTestPlanItem itp; // null means "no more"
-
-		private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		private boolean _globalHasNext = true;
+		
+		private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
 		public DataIterator() {
 
 			super();
-			moveNext();
+			moveToNextStep();
 
 		}
 
-		@Override
-		public boolean hasNext() {
-
-			return itp != null;
-
-		}
-
+		// ************************************** model population ******************************
+		
+		
 		// See getHeader() for reference
 		@Override
 		public Row next() {
@@ -238,57 +258,45 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			List<CellImpl> dataCells = new ArrayList<CellImpl>(nbColumns);
 
 			// the campaign
-			populateCampaignRowData(dataCells);
+			populateCampaignFixedRowData(dataCells);
 
 			// the iteration
-			populateIterationRowData(dataCells);
+			populateIterationFixedRowData(dataCells);
 
 			// the test case
-			populateTestCaseRowData(dataCells);
+			populateTestCaseFixedRowData(dataCells);
 
+			//the step
+			populateTestStepFixedRowData(dataCells);
+			
+			//the campaign custom fields
+			populateCampaignCUFRowData(dataCells);			
+			
+			//the iteration custom fields
+			populateIterationCUFRowData(dataCells);			
+			
+			//the test case custom fields
+			populateTestCaseCUFRowData(dataCells);
+			
 			// move to the next occurence
-			moveNext();
+			moveToNextStep();
 
 			return new RowImpl(dataCells);
 
 		}
-
-		@SuppressWarnings("unchecked")
-		private void populateTestCaseRowData(List<CellImpl> dataCells) {
-
+		
+		private void populateTestCaseCUFRowData(List<CellImpl> dataCells){
 			TestCase testCase = itp.getReferencedTestCase();
-
-			dataCells.add(new CellImpl(testCase.getName()));
-			dataCells.add(new CellImpl(testCase.getProject().getName()));
-			dataCells.add(new CellImpl(testCase.getImportance().toString()));
-			dataCells.add(new CellImpl(itp.getTestSuiteNames().replace("<", "&lt;").replace(">", "&gt;")));
-			dataCells.add(new CellImpl(Integer.toString(itp.getExecutions().size())));
-			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
-			dataCells.add(new CellImpl(Integer.toString(getNbIssues(itp))));
-			dataCells.add(new CellImpl(itp.getExecutionStatus().toString()));
-			dataCells.add(new CellImpl(formatUser(itp.getUser())));
-			dataCells.add(new CellImpl(formatDate(itp.getLastExecutedOn())));
-			dataCells.add(new CellImpl(formatLongText(testCase.getDescription())));
-			dataCells.add(new CellImpl(testCase.getReference()));
-			dataCells.add(new CellImpl(testCase.getNature().toString()));
-			dataCells.add(new CellImpl(testCase.getType().toString()));
-			dataCells.add(new CellImpl(testCase.getStatus().toString()));
-			dataCells.add(new CellImpl(formatLongText(testCase.getPrerequisite())));
-
+			
 			Collection<CustomFieldValue> tcValues = (Collection<CustomFieldValue>) tcCUFValues.get(testCase.getId());
 			for (CustomField model : tcCUFModel) {
 				String strValue = getValue(tcValues, model);
 				dataCells.add(new CellImpl(strValue));
 			}
 		}
-
-		@SuppressWarnings("unchecked")
-		private void populateIterationRowData(List<CellImpl> dataCells) {
-			dataCells.add(new CellImpl("#" + (iterIndex + 1) + " " + iteration.getName()));
-			dataCells.add(new CellImpl(formatDate(iteration.getScheduledStartDate())));
-			dataCells.add(new CellImpl(formatDate(iteration.getScheduledEndDate())));
-			dataCells.add(new CellImpl(formatDate(iteration.getActualStartDate())));
-			dataCells.add(new CellImpl(formatDate(iteration.getActualEndDate())));
+		
+		
+		private void populateIterationCUFRowData(List<CellImpl> dataCells){
 
 			Collection<CustomFieldValue> iValues = (Collection<CustomFieldValue>) iterCUFValues.get(iteration.getId());
 			for (CustomField model : iterCUFModel) {
@@ -296,19 +304,94 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 				dataCells.add(new CellImpl(strValue));
 			}
 		}
-
-		private void populateCampaignRowData(List<CellImpl> dataCells) {
-			dataCells.add(new CellImpl(formatDate(campaign.getScheduledStartDate())));
-			dataCells.add(new CellImpl(formatDate(campaign.getScheduledEndDate())));
-			dataCells.add(new CellImpl(formatDate(campaign.getActualStartDate())));
-			dataCells.add(new CellImpl(formatDate(campaign.getActualEndDate())));
-
+		
+		
+		
+		private void populateCampaignCUFRowData(List<CellImpl> dataCells){
 			List<CustomFieldValue> cValues = campCUFValues;
 			// ensure that the CUF values are processed in the correct order
 			for (CustomField model : campCUFModel) {
 				String strValue = getValue(cValues, model);
 				dataCells.add(new CellImpl(strValue));
 			}
+		}
+		
+		
+		private void populateTestStepFixedRowData(List<CellImpl> dataCells){
+			
+			if(execStep == null){
+				dataCells.add(new CellImpl(""));
+				dataCells.add(new CellImpl(""));
+				dataCells.add(new CellImpl(""));
+				dataCells.add(new CellImpl(""));
+				dataCells.add(new CellImpl(""));
+				dataCells.add(new CellImpl(""));
+				dataCells.add(new CellImpl(""));
+			} else {
+				dataCells.add(new CellImpl(Long.toString(execStep.getId())));
+				dataCells.add(new CellImpl(""+(stepIndex+1)));
+				dataCells.add(new CellImpl(formatStepRequirements()));
+				dataCells.add(new CellImpl(execStep.getExecutionStatus().toString()));
+				dataCells.add(new CellImpl(formatDate(execStep.getLastExecutedOn())));
+				dataCells.add(new CellImpl(formatUser(execStep.getLastExecutedBy())));
+				dataCells.add(new CellImpl(Integer.toString(getNbIssues(execStep))));
+			}
+		}
+		
+
+		private int getNbIssues(ExecutionStep execStep) {
+
+			return bugTrackerService.findNumberOfIssueForExecutionStep(execStep.getId());
+		}
+
+		private void populateTestCaseFixedRowData(List<CellImpl> dataCells) {
+
+			TestCase testCase = itp.getReferencedTestCase();
+
+			dataCells.add(new CellImpl(testCase.getId().toString()));
+			dataCells.add(new CellImpl(testCase.getName()));
+			dataCells.add(new CellImpl(testCase.getProject().getId().toString()));
+			dataCells.add(new CellImpl(testCase.getProject().getName()));
+			dataCells.add(new CellImpl(testCase.getImportance().toString()));
+			dataCells.add(new CellImpl(itp.getTestSuiteNames().replace(", ",",").replace("<", "&lt;").replace(">", "&gt;")));
+			
+			dataCells.add(new CellImpl(Integer.toString(itp.getExecutions().size())));
+			dataCells.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
+			dataCells.add(new CellImpl(Integer.toString(getNbIssues(itp))));
+			
+			dataCells.add(new CellImpl(itp.getExecutionStatus().toString()));
+			dataCells.add(new CellImpl(formatUser(itp.getUser())));
+			dataCells.add(new CellImpl(formatDate(itp.getLastExecutedOn())));
+
+			dataCells.add(new CellImpl(testCase.getReference()));
+			dataCells.add(new CellImpl(testCase.getNature().toString()));
+			dataCells.add(new CellImpl(testCase.getType().toString()));
+			dataCells.add(new CellImpl(testCase.getStatus().toString()));
+
+
+
+		}
+
+		
+		private void populateIterationFixedRowData(List<CellImpl> dataCells) {
+			
+			dataCells.add(new CellImpl(iteration.getId().toString()));
+			dataCells.add(new CellImpl("" + (iterIndex + 1)));
+			dataCells.add(new CellImpl(iteration.getName()));
+			dataCells.add(new CellImpl(formatDate(iteration.getScheduledStartDate())));
+			dataCells.add(new CellImpl(formatDate(iteration.getScheduledEndDate())));
+			dataCells.add(new CellImpl(formatDate(iteration.getActualStartDate())));
+			dataCells.add(new CellImpl(formatDate(iteration.getActualEndDate())));
+
+		}
+
+		private void populateCampaignFixedRowData(List<CellImpl> dataCells) {
+			
+			dataCells.add(new CellImpl(formatDate(campaign.getScheduledStartDate())));
+			dataCells.add(new CellImpl(formatDate(campaign.getScheduledEndDate())));
+			dataCells.add(new CellImpl(formatDate(campaign.getActualStartDate())));
+			dataCells.add(new CellImpl(formatDate(campaign.getActualEndDate())));
+			
 		}
 
 		@Override
@@ -332,96 +415,171 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			return "--";
 		}
 
-		private int getNbIssues(IterationTestPlanItem aitp) {
+		private int getNbIssues(IterationTestPlanItem itp) {
 
-			return bugTrackerService.findNumberOfIssueForItemTestPlanLastExecution(aitp.getId());
+			return bugTrackerService.findNumberOfIssueForItemTestPlanLastExecution(itp.getId());
 
 		}
 
 		private String formatDate(Date date) {
 
-			return (date == null) ? "--" : dateFormat.format(date);
+			return (date == null) ? "" : dateFormat.format(date);
 
-		}
-
-		private String formatLongText(String text) {
-			// TODO something mor euseful ?
-			return (text == null) ? "--" : text;
 		}
 
 		private String formatUser(User user) {
 			return (user == null) ? "--" : user.getLogin();
 
 		}
+		
+		private String formatUser(String username){
+			return (username == null ) ? "--" : username;
+		}
+		
+		private String formatStepRequirements(){
+			try{
+				if (execStep.getReferencedTestStep() != null){
+					/* should fix the mapping of execution steps -> action step : an execution 
+					 * step cannot reference a call step by design. For now we'll just downcast 
+					 * the TestStep instance.
+					 */
+					ActionTestStep aStep = (ActionTestStep)execStep.getReferencedTestStep(); 
+					return Integer.toString(aStep.getRequirementVersionCoverages().size());
+				}
+				else{
+					return "?";
+				}
+			}			
+			catch(NullPointerException npe){
+				return "?";
+			}
+		}
 
-		// ****************** iterator mechanics here ****************
+		// ****************** hairy iterator mechanics here ****************
 
-		private void moveNext() {
+		@Override
+		public boolean hasNext() {
+			return _globalHasNext;
+		}
+		
+		
+		private void moveToNextStep(){
+			
+			boolean foundNextStep = false;
+			boolean _nextTCSucc;
+			boolean doneOnce = false;
 
-			boolean moveITPSuccess = moveToNextTestCase();
-
-			if (!moveITPSuccess) {
-
-				boolean moveIterSuccess = moveToNextIteration();
-
-				if (moveIterSuccess) {
-					moveNext();
+			do{
+				// test if we must move to the next test case
+				if (execStep == null){
+					_nextTCSucc = _moveToNextTestCase();
+					if (! _nextTCSucc) {
+						//that was the last test case and we cannot iterate further more : we break the loop forcibly
+						_globalHasNext = false;
+						return;	
+					}else{
+						_resetStepIndex();
+					}
+				}
+				
+				// find a suitable execution step
+				List<ExecutionStep> steps = new ArrayList<ExecutionStep>();
+				if(itp.getLatestExecution() != null){
+					steps = itp.getLatestExecution().getSteps();
+					
+					int stepsSize = steps.size();
+					stepIndex++;
+					
+					if (stepIndex < stepsSize){
+						execStep = steps.get(stepIndex);
+						foundNextStep = true;
+					}
+					else{
+						execStep = null;
+					}
+					
 				} else {
-					itp = null; // terminal state
+					if(doneOnce == false){
+						foundNextStep = true;
+						doneOnce = true;
+					}
+					execStep = null;
 				}
-
-			}
-
+	
+			}while(! foundNextStep);
+			
 		}
 
-		// returns true if could move the pointer to the next iteration
-		// returns false if there are no more iterations to visit
-		private boolean moveToNextIteration() {
-
-			iterIndex++;
-			if (campaign.getIterations().size() > iterIndex) {
-
-				iteration = campaign.getIterations().get(iterIndex);
-				itpIndex = -1;
-
-				return true;
-			} else {
-				return false;
-			}
-
-		}
-
-		// returns true if the current iteration had a next test case
-		// returns false if the current iteration had no more.
-		// if successful, the inner pointer to the next test case will be set accordingly
-		private boolean moveToNextTestCase() {
-
-			IterationTestPlanItem nextITP = null;
-
-			List<IterationTestPlanItem> items = iteration.getTestPlans();
-			int nbItems = items.size();
-
-			do {
-
+		private boolean _moveToNextTestCase(){
+			
+			boolean foundNextTC = false;
+			boolean _nextIterSucc;
+			
+			do{
+				// test if we must move to the next iteration
+				if (itp == null){
+					_nextIterSucc = _moveToNextIteration();
+					if (! _nextIterSucc) {
+						return false;	
+					}else{
+						_resetTCIndex();
+					}
+				}
+				
+				// find a suitable execution step
+				List<IterationTestPlanItem> items = iteration.getTestPlans();
+				int itemSize = items.size();
 				itpIndex++;
-
-				if (nbItems <= itpIndex) {
-					break;
+				
+				//see if we reached the end of the collection
+				if (itpIndex >= itemSize){
+					itp = null;	
+					foundNextTC = false;
 				}
-
-				IterationTestPlanItem item = items.get(itpIndex);
-				if (!item.isTestCaseDeleted()) {
-					nextITP = item;
+				//check that the test case wasn't deleted
+				else if (items.get(itpIndex).isTestCaseDeleted()){
+					foundNextTC = false;
 				}
+				else{
+					itp = items.get(itpIndex);
+					foundNextTC = true;
+				}
+				
+			}while(! foundNextTC);
+			
+			return foundNextTC;
+		}
+		
+		private boolean _moveToNextIteration(){
+			
+			boolean foundIter=false;
+			iterIndex++;
+			
+			List<Iteration> iterations = campaign.getIterations();
+			int iterSize = iterations.size();
+			
+			if (iterIndex < iterSize){
+				iteration = iterations.get(iterIndex);
+				foundIter = true;
+			}
+			
+			return foundIter;
+				
+		}
 
-			} while (nextITP == null && nbItems > itpIndex);
+		
+		private void _resetStepIndex(){
+			stepIndex = -1;
+		}
 
-			itp = nextITP;
-
-			return (itp != null);
+		private void _resetTCIndex(){
+			itpIndex = -1;
 		}
 
 	}
+	
+	
+	// ******************** implementation for the rows and cells **********************
 
 	public static class CellImpl implements Cell {
 		private String value;
