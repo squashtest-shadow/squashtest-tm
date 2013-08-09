@@ -76,7 +76,7 @@
 			</div>
 		</div>
 
-		<div id="add-attachment-popup-frag"
+		<div th:if="${attachable}" id="add-attachment-popup-frag"
 			th:include="add-attachment-popup.frag :: add-attachment-popup">ATTACHMENT-POPUP</div>
 
 		<!-- <comp:add-attachment-popup paramName="attachment" url="${uploadAttachmentUrl}"   -->
