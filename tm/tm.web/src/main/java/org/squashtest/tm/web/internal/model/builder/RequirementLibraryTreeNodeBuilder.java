@@ -47,7 +47,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 	private class CustomAttributesPopulator implements RequirementLibraryNodeVisitor {
 		private final JsTreeNode builtNode;
 
-		private CustomAttributesPopulator(JsTreeNode builtNode) {
+		public CustomAttributesPopulator(JsTreeNode builtNode) {
 			super();
 			this.builtNode = builtNode;
 		}

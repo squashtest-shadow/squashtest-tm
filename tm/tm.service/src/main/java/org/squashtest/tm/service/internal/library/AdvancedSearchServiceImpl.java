@@ -128,7 +128,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		session.close();
 		 			
 		List<TestCase> testCases = testCaseDao.findAll();
-		Long countAll = new Long(testCases.size());
+		long countAll = testCases.size();
 		return new PagingBackedPagedCollectionHolder<List<TestCase>>(sorting, countAll, testCases);
 	}
 

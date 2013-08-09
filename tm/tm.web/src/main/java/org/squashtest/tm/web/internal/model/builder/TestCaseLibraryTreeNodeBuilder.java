@@ -50,7 +50,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	private class CustomAttributesPopulator implements TestCaseLibraryNodeVisitor {
 		private final JsTreeNode builtNode;
 
-		private CustomAttributesPopulator(JsTreeNode builtNode) {
+		public CustomAttributesPopulator(JsTreeNode builtNode) {
 			super();
 			this.builtNode = builtNode;
 		}
@@ -92,7 +92,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	private class ChildrenPopulator implements TestCaseLibraryNodeVisitor {
 		private final JsTreeNode builtNode;
 
-		private ChildrenPopulator(JsTreeNode builtNode) {
+		public ChildrenPopulator(JsTreeNode builtNode) {
 			super();
 			this.builtNode = builtNode;
 		}

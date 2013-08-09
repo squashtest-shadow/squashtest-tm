@@ -56,9 +56,6 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	@Inject
 	protected InternationalizationHelper i18nHelper;
 
-	@Inject
-	SessionFactory sessionFactory;
-
 	/**
 	 * Shows a workspace.
 	 * 

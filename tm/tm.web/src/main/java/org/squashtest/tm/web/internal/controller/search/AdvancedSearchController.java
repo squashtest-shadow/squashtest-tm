@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 
 import javax.inject.Inject;
@@ -159,8 +160,9 @@ public class AdvancedSearchController {
 		panel.addField(importanceField);
 		
 		Map<String,String> map = importanceComboBuilderProvider.get().useLocale(locale).buildMap();
-		for(String key : map.keySet()){
-			SearchInputPossibleValueModel importanceOption = new SearchInputPossibleValueModel(map.get(key),key);
+		
+		for(Entry<String, String> entry : map.entrySet()){
+			SearchInputPossibleValueModel importanceOption = new SearchInputPossibleValueModel(entry.getValue(),entry.getKey());
 			importanceField.addPossibleValue(importanceOption);
 		}
 		return panel;
@@ -182,7 +184,6 @@ public class AdvancedSearchController {
 		
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		
-		panel = new SearchInputPanelModel();
 		panel.setTitle("search.testcase.association.panel.title");
 		panel.setOpen(false);
 		panel.setId("association");

@@ -45,7 +45,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 	private class CustomAttributesPopulator implements CampaignLibraryNodeVisitor {
 		private final JsTreeNode builtNode;
 
-		private CustomAttributesPopulator(JsTreeNode builtNode) {
+		public CustomAttributesPopulator(JsTreeNode builtNode) {
 			super();
 			this.builtNode = builtNode;
 		}
@@ -83,7 +83,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 	private class ChildrenPopulator implements CampaignLibraryNodeVisitor {
 		private final JsTreeNode builtNode;
 
-		private ChildrenPopulator(JsTreeNode builtNode) {
+		public ChildrenPopulator(JsTreeNode builtNode) {
 			super();
 			this.builtNode = builtNode;
 		}

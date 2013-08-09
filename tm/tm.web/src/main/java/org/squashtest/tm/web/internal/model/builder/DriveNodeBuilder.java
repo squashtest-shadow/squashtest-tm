@@ -41,7 +41,7 @@ public class DriveNodeBuilder<LN extends LibraryNode> extends
 		GenericJsTreeNodeBuilder<Library<LN>, DriveNodeBuilder<LN>> {
 	private final Provider<LibraryTreeNodeBuilder<LN>> childrenBuilderProvider;
 
-	protected DriveNodeBuilder(PermissionEvaluationService permissionEvaluationService,
+	public DriveNodeBuilder(PermissionEvaluationService permissionEvaluationService,
 			Provider<LibraryTreeNodeBuilder<LN>> childrenBuilderProvider) {
 		super(permissionEvaluationService);
 		this.childrenBuilderProvider = childrenBuilderProvider;
