@@ -46,7 +46,6 @@ require([ "common" ], function(common) {
 			$("#manage-attachment-bloc-button").click(function() {
 				document.location.href = ABS.attachmentManagerUrl;
 			});
-			reloadAttachments();
 
 			$(squashtm.app.addAttachmentPopupSettings).on("exitUpload", reloadAttachments);
 		});

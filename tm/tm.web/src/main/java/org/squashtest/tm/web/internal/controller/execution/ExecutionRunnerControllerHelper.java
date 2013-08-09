@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
+import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
@@ -249,6 +250,7 @@ public class ExecutionRunnerControllerHelper {
 		model.addAttribute("execution", execution);
 		model.addAttribute("config", runnerState);
 		model.addAttribute("totalSteps", totalSteps);
+		model.addAttribute("attachments", attachmentHelper.findAttachments(execution));
 
 	}
 

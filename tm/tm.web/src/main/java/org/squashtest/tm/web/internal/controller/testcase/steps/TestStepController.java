@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.testcase.steps;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -36,11 +37,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.requirement.RequirementVerifierView;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueConfigurationBean;
 
@@ -59,6 +63,11 @@ public class TestStepController {
 	private PermissionEvaluationService permissionEvaluationService;
 	
 
+	@Inject
+	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
+	
+	
+
 	/**
 	 * Shows the step modification page.
 	 * 
@@ -74,6 +83,8 @@ public class TestStepController {
 		LOGGER.debug("Find and show TestStep #{}", testStepId);
 		TestStep testStep = testStepService.findById(testStepId);
 		TestStepView testStepView = new TestStepViewBuilder().buildTestStepView(testStep);
+		
+		
 		model.addAttribute("testStepView", testStepView);
 		model.addAttribute("workspace", "test-case");
 		
@@ -95,6 +106,9 @@ public class TestStepController {
 		if (testStepView.getActionStep() != null) {
 			//attachments
 			model.addAttribute("attachableEntity", testStepView.getActionStep());
+			Set<Attachment> attachments = attachmentHelper.findAttachments(testStepView.getActionStep());
+			model.addAttribute("attachmentSet", attachments);
+			
 			//cufs
 			values = cufValueFinder.findAllCustomFieldValues(testStepView.getActionStep().getBoundEntityId(),
 					testStepView.getActionStep().getBoundEntityType());hasCUF = cufValueFinder.hasCustomFields(testStepView.getActionStep());
