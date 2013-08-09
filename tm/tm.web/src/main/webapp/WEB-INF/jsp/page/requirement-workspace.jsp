@@ -61,7 +61,7 @@
 	
 	<jsp:attribute name="footer">
 		
-		<wkp:req-tree-popups/>
+		<wkp:req-tree-popups importableLibraries="${editableLibraries}"/>
 		
 		<script type="text/javascript">
 		

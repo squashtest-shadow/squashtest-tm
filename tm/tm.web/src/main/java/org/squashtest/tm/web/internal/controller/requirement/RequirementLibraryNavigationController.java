@@ -53,6 +53,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.library.LibraryNavigationService;
@@ -177,26 +178,26 @@ public class RequirementLibraryNavigationController extends
 		return "page/requirement-libraries/show-requirement-library";
 	}
 
-	@RequestMapping(value = "/export-folder", method = RequestMethod.GET)
+	@RequestMapping(value = "/nodes/{nodeIds}/{exportformat}", method = RequestMethod.GET, params="name")
 	public @ResponseBody
-	void exportRequirements(@RequestParam("tab[]") List<Long> ids, @RequestParam("name") String filename,
-			HttpServletResponse response, Locale locale, @RequestParam("format") String format) {
-		List<ExportRequirementData> dataSource = requirementLibraryNavigationService
-				.findRequirementsToExportFromNodes(ids);
-
-		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, format);
+	void exportTestCases(@PathVariable("nodeIds") List<Long> ids, @RequestParam("name") String filename, @PathVariable("exportformat") String exportformat,
+			HttpServletResponse response, Locale locale) {
+		
+		List<ExportRequirementData> dataSource = requirementLibraryNavigationService.findRequirementsToExportFromNodes(ids);
+		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat);
 
 	}
+	
 
-	@RequestMapping(value = "/export-library", method = RequestMethod.GET)
+
+	@RequestMapping(value = "/drives/{libIds}/{exportformat}", method = RequestMethod.GET, params="name")
 	public @ResponseBody
-	void exportLibrary(@RequestParam("tab[]") List<Long> libraryIds, @RequestParam("name") String filename,
-			HttpServletResponse response, Locale locale, @RequestParam("format") String format) {
+	void exportLibrary(@PathVariable("libIds") List<Long> libIds, @RequestParam("name") String filename, @PathVariable("exportformat") String exportformat,
+			HttpServletResponse response, Locale locale) {
 
-		List<ExportRequirementData> dataSource = requirementLibraryNavigationService
-				.findRequirementsToExportFromLibrary(libraryIds);
+		List<ExportRequirementData> dataSource = requirementLibraryNavigationService.findRequirementsToExportFromLibrary(libIds);
 
-		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, format);
+		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat);
 
 	}
 

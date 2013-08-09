@@ -19,7 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['./add-folder-popup', './add-requirement-popup' , './rename-node-popup', './delete-node-popup'], function(folderpopup, reqpopup, renamepopup, deletepopup){
+define(['./add-folder-popup', './add-requirement-popup' , 
+        './rename-node-popup', './delete-node-popup', 
+        './import-excel-popup', './import-links-popup',
+        './export-popup'], 
+		function(folderpopup, reqpopup, renamepopup, deletepopup, importpopup, linkspopup, exportpopup){
 	
 	
 	function init(){
@@ -27,6 +31,10 @@ define(['./add-folder-popup', './add-requirement-popup' , './rename-node-popup',
 		folderpopup.init();
 		reqpopup.init();
 		renamepopup.init();
+		
+		importpopup.init();
+		linkspopup.init();
+		exportpopup.init();
 		
 		deletepopup.init();
 		

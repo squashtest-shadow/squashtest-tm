@@ -502,6 +502,15 @@ that page won't be editable if
 					window.open("${currentVersionUrl}?format=printable", "_blank");
 				});
 				
+				// ***** other events from the contextual content ********
+				contextualContent.addListener({
+					update : function(evt){
+						if (evt.evt_name === "tc-req-links-updated"){
+							$("#verifying-test-cases-table").squashTable().refresh();
+						}
+					}
+				});
+				
 			});
 		});
 	});

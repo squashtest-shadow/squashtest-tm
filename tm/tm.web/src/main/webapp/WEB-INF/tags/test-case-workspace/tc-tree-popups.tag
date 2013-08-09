@@ -399,6 +399,10 @@
 <%-- ================ /IMPORT LINK POPUP ====================== --%>
 </sec:authorize>
 
+
+
+<%-- ================= /EXPORT TC POPUP ======================= --%>
+
 <div id="export-test-case-dialog" class="popup-dialog not-displayed" title="${exportLabel}" data-def="nameprefix=${exportnamePrefix}, dateformat=${dateexportFormat}">
 
 	<div data-def="state=main">
@@ -436,4 +440,6 @@
 	</div>
 </div>
 
+
+<%-- ================= /EXPORT TC POPUP ======================= --%>
 </div>

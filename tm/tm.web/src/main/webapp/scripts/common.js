@@ -35,12 +35,7 @@ requirejs.config({
 				"iteration-management",
 				"issue-tables",
 				'tree',
-				//'tc-workspace',
-				{
-					main : 'main',
-					name : 'tc-workspace',
-					location : 'http://localhost/scripts/scripts/tc-workspace'
-				},
+				'tc-workspace',
 				'req-workspace',
 				'camp-workspace',
 				'dashboard',

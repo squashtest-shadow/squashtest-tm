@@ -21,7 +21,7 @@
 
 define(['jquery', 'tree', 'workspace/workspace.import-popup'], function($, zetree){
 	
-	$.widget("squash.tcimportDialog", $.squash.importDialog, {
+	$.widget("squash.reqimportDialog", $.squash.importDialog, {
 		
 		createSummary : function(json){
 			var panel = this.element.find('.import-summary');
@@ -42,12 +42,6 @@ define(['jquery', 'tree', 'workspace/workspace.import-popup'], function($, zetre
 				
 				var renamedDialog = $(".import-excel-dialog-renamed", panel);
 				if (json.renamed>0) { renamedDialog.show(); } else { renamedDialog.hide(); }
-
-				var modifiedDialog = $(".import-excel-dialog-modified", panel);
-				if (json.modified>0) { modifiedDialog.show(); } else { modifiedDialog.hide(); }
-				
-				var extensionDialog = $(".import-excel-dialog-extension", panel);
-				if (json.rejected>0) { extensionDialog.show(); } else { extensionDialog.hide(); }
 				
 			}
 		},
@@ -80,11 +74,10 @@ define(['jquery', 'tree', 'workspace/workspace.import-popup'], function($, zetre
 	
 	function init(){
 		
-		var dialog = $("#import-excel-dialog").tcimportDialog({
-			formats : ['zip']
+		var dialog = $("#import-excel-dialog").reqimportDialog({
+			formats : ['xls', 'xlsx']
 		});
 		
-		// ******** additional processing ***********
 		
 
 	}

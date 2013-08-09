@@ -62,7 +62,7 @@
 			<th data-def="map=tc-index, select">#</th>
 			<th data-def="map=project-name, sortable"><f:message key="label.project" /></th>
 			<th data-def="map=tc-reference, sortable"><f:message key="test-case.reference.label" /></th>
-			<th data-def="map=tc-name, sortable, link=${testCaseUrl}/{tc-id}/infos"><f:message key="test-case.name.label" /></th>
+			<th data-def="map=tc-name, sortable, link=${testCaseUrl}/{tc-id}/info"><f:message key="test-case.name.label" /></th>
 			<th data-def="map=tc-type, sortable"><f:message key="verifying-test-cases.table.column-header.type.label"/></th>
 			<th data-def="map=empty-delete-holder ${tblRemoveBtnClause}">&nbsp;</th>				
 		</tr>

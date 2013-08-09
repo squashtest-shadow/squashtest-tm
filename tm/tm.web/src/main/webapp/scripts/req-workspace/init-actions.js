@@ -120,6 +120,23 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 				$("#rename-node-dialog").formDialog('open');
 			});
 			
+			// ****************** import req ******************
+			
+			$("#import-excel-tree-button").on('click', function(){
+				$("#import-excel-dialog").reqimportDialog('open');
+			});
+			
+			// **************** import links *****************
+			
+			$("#import-links-excel-tree-button").on('click', function(){
+				$("#import-links-excel-dialog").linksimportDialog('open');
+			});
+			
+			// ******************* export ********************
+			
+			$("#export-tree-button").on('click', function(){
+				$("#export-requirement-dialog").exportDialog('open');
+			});
 			
 			// ***************** deletion ********************
 			
