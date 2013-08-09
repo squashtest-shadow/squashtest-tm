@@ -151,7 +151,13 @@
 		
 	<jsp:attribute name="content">
 	<%-- now the actual specifics for the tree-page-layout itself --%>
-		<div id="tree-panel-left">
+	<%-- 
+		about the z-index : 1 on the tree-panel-left : this ensure that the stacking context of the tree pane will always be 
+		above the stacking context of the contextual content.
+		
+		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/  
+	--%>
+		<div id="tree-panel-left" style="z-index:1;">
 			<div class="position-layout-fix">
 				<div id="tabbed-pane">
 					<ul>
@@ -225,7 +231,13 @@
 
 	<jsp:attribute name="content">
 	<%-- now the actual specifics for the tree-page-layout itself --%>
-		<div id="tree-panel-left">
+	<%-- 
+		about the z-index : 1 on the tree-panel-left : this ensure that the stacking context of the tree pane will always be 
+		above the stacking context of the contextual content.
+		
+		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/  
+	--%>	
+		<div id="tree-panel-left" style="z-index:1">
 			<div class="position-layout-fix">
 				<div id="tabbed-pane">
 					<ul>
