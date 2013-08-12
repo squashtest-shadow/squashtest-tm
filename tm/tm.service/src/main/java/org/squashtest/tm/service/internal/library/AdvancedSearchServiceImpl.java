@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.library;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +29,9 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.apache.lucene.document.DateTools;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.hibernate.CacheMode;
 import org.hibernate.FlushMode;
 import org.hibernate.ScrollMode;
@@ -118,6 +122,88 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return new ArrayList<CustomField>(result);
 	}
 
+	private org.apache.lucene.search.Query buildLuceneRangeQuery(QueryBuilder qb, String fieldName, Integer minValue, Integer maxValue){
+
+		org.apache.lucene.search.Query query = null;
+		
+		if(minValue == null){
+		
+			query = qb
+					.bool()
+					.must(qb.range().onField(fieldName).below(maxValue).createQuery())
+					.createQuery();
+			
+		} else if(maxValue == null){
+			
+			query = qb
+					.bool()
+					.must(qb.range().onField(fieldName).above(minValue).createQuery())
+					.createQuery();
+		
+		} else {
+			
+			query = qb
+					.bool()
+					.must(qb.range().onField(fieldName).above(minValue).createQuery())
+					.must(qb.range().onField(fieldName).below(maxValue).createQuery())
+					.createQuery();
+		}
+		
+		return query;
+	}
+
+	private org.apache.lucene.search.Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName, List<String> values){
+
+		StringBuilder builder = new StringBuilder();
+		for(String value : values){
+			builder.append(value+" ");
+		}
+
+		org.apache.lucene.search.Query query = qb
+				.bool()
+				.must(qb.keyword().onField(fieldName).matching(builder.toString()).createQuery())
+				.createQuery();
+
+		return query;
+	}
+
+	private org.apache.lucene.search.Query buildLuceneSingleValueQuery(QueryBuilder qb, String fieldName, String value){
+		
+		org.apache.lucene.search.Query query = qb
+				.bool()
+				.must(qb.keyword().onField(fieldName).matching(value).createQuery())
+				.createQuery();
+
+		return query;
+	}
+	
+	private org.apache.lucene.search.Query buildLuceneTextQuery(QueryBuilder qb, String fieldName, String value){
+		
+		org.apache.lucene.search.Query query = qb
+				.bool()
+				.must(qb.phrase().onField(fieldName).sentence(value).createQuery())
+				.createQuery();
+
+		return query;
+	}
+	
+	private org.apache.lucene.search.Query buildLuceneTimeIntervalQuery(QueryBuilder qb, String fieldName, Date startdate, Date enddate){
+	
+		org.apache.lucene.search.Query query = qb
+					.bool()
+					.must(qb
+			    		.range()
+			    		.onField(fieldName)
+			    		.ignoreFieldBridge()
+			    		.from(DateTools.dateToString(startdate, DateTools.Resolution.DAY))
+			    		.to(DateTools.dateToString(enddate, DateTools.Resolution.DAY))
+			    		.createQuery())
+			    	.createQuery();
+	
+		return query;
+	}
+
+
 	@Override
 	public List<TestCase> searchForTestCases() {
 		
@@ -127,13 +213,67 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity( TestCase.class ).get();
 		
-		org.apache.lucene.search.Query query = qb
-				.bool()
-				.must(qb.keyword().onField("prerequisite").matching("Batman").createQuery())
-				//.must(qb.keyword().onField("id").matching("238").createQuery())
-				.createQuery();
+		BooleanQuery query = new BooleanQuery();
+		
+		//ID
+
+		//Reference
+				
+		//Label
+				
+		//Description
+				
+		//Prerequisite
 			
-		 org.hibernate.Query hibQuery = ftSession.createFullTextQuery(query, TestCase.class);
+		//Importance
+		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"importance",null),BooleanClause.Occur.MUST));
+		
+		//Nature
+		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"nature",null),BooleanClause.Occur.MUST));
+		
+		//Type
+		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"type",null),BooleanClause.Occur.MUST));
+		
+		//Status
+		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"status",null),BooleanClause.Occur.MUST));
+		
+		//Projects
+		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"project.id",null),BooleanClause.Occur.MUST));
+		
+		
+		//Test steps
+				
+		//Parameters
+		query.add(new BooleanClause(buildLuceneRangeQuery(qb,"parameters",0,10),BooleanClause.Occur.MUST));
+		
+		//Datasets
+		query.add(new BooleanClause(buildLuceneRangeQuery(qb,"datasets",0,10),BooleanClause.Occur.MUST));
+		
+		//Call Test steps
+				
+		//Attachments
+		query.add(new BooleanClause(buildLuceneRangeQuery(qb,"attachmentList",0,10),BooleanClause.Occur.MUST));
+		
+		//Requirements
+				
+		//Iterations
+				
+		//Executions
+				
+		//Bugs
+				
+		//CreatedBy
+				
+		//CreatedOn
+				
+		//ModifiedBy
+			
+		//ModifiedOn
+				
+		//CUFs
+				
+			
+		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(query, TestCase.class);
 		 
 		List result = hibQuery.list();
 
