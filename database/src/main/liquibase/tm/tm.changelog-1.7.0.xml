@@ -38,19 +38,98 @@
 	<changeSet id="tm-1.7.0.feat-1107-01" author="bsiri">
 		<comment>Modifying RLN_RELATIONSHIP and RLN_RELATIONSHIP_CLOSURE : requirements can now accept more requirements 
 		(but no folders). Cautious : there is no way to express that a a requirement can only accept requirements as children.</comment>
-		
-		<dropForeignKeyConstraint baseTableName="RLN_RELATIONSHIP" constraintName="fk_rln_relationship_ancestor"/>
-		<dropForeignKeyConstraint baseTableName="RLN_RELATIONSHIP" constraintName="fk_rln_relationship_descendant"/>
-		
+
+		<dropForeignKeyConstraint baseTableName="RLN_RELATIONSHIP"
+			constraintName="fk_rln_relationship_ancestor" />
+		<dropForeignKeyConstraint baseTableName="RLN_RELATIONSHIP"
+			constraintName="fk_rln_relationship_descendant" />
+
 		<addForeignKeyConstraint constraintName="fk_rln_relationship_ancestor"
-								 baseTableName="RLN_RELATIONSHIP" baseColumnNames="ANCESTOR_ID" 
-								 referencedTableName="REQUIREMENT_LIBRARY_NODE" referencedColumnNames="RLN_ID" />
-								 
+			baseTableName="RLN_RELATIONSHIP" baseColumnNames="ANCESTOR_ID"
+			referencedTableName="REQUIREMENT_LIBRARY_NODE" referencedColumnNames="RLN_ID" />
+
 		<addForeignKeyConstraint constraintName="fk_rln_relationship_descendant"
-								 baseTableName="RLN_RELATIONSHIP" baseColumnNames="DESCENDANT_ID" 
-								 referencedTableName="REQUIREMENT_LIBRARY_NODE" referencedColumnNames="RLN_ID" />
-	
+			baseTableName="RLN_RELATIONSHIP" baseColumnNames="DESCENDANT_ID"
+			referencedTableName="REQUIREMENT_LIBRARY_NODE" referencedColumnNames="RLN_ID" />
+
 	</changeSet>
 
+	<changeSet id="tm-1.7.0.feat-1090-01" author="flaurens">
+		<preConditions onError="CONTINUE" onFail="CONTINUE">
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_CONFIG
+				where STR_KEY = 'lastindexing.requirement.date'
+			</sqlCheck>
+		</preConditions>
+		<comment>adding entries for indexing dates in table core_config</comment>
+		<insert tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="lastindexing.requirement.date" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="tm-1.7.0.feat-1090-02" author="flaurens">
+		<preConditions onError="CONTINUE" onFail="CONTINUE">
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_CONFIG
+				where STR_KEY = 'lastindexing.testcase.date'
+			</sqlCheck>
+		</preConditions>
+		<comment>adding entries for indexing dates in table core_config</comment>
+		<insert tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="lastindexing.testcase.date" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="tm-1.7.0.feat-1090-03" author="flaurens">
+		<preConditions onError="CONTINUE" onFail="CONTINUE">
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_CONFIG
+				where STR_KEY = 'lastindexing.campaign.date'
+			</sqlCheck>
+		</preConditions>
+		<comment>adding entries for indexing dates in table core_config</comment>
+		<insert tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="lastindexing.campaign.date" />
+		</insert>
+	</changeSet>
+	
+	<changeSet id="tm-1.7.0.feat-1090-04" author="flaurens">
+		<preConditions onError="CONTINUE" onFail="CONTINUE">
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_CONFIG
+				where STR_KEY = 'lastindexing.requirement.version'
+			</sqlCheck>
+		</preConditions>
+		<comment>adding entries for indexing versions in table core_config</comment>
+		<insert tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="lastindexing.requirement.version" />
+		</insert>
+	</changeSet>
+	
+	<changeSet id="tm-1.7.0.feat-1090-05" author="flaurens">
+		<preConditions onError="CONTINUE" onFail="CONTINUE">
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_CONFIG
+				where STR_KEY = 'lastindexing.requirement.testcase'
+			</sqlCheck>
+		</preConditions>
+		<comment>adding entries for indexing versions in table core_config</comment>
+		<insert tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="lastindexing.testcase.version" />
+		</insert>
+	</changeSet>
+	
+	<changeSet id="tm-1.7.0.feat-1090-06" author="flaurens">
+		<preConditions onError="CONTINUE" onFail="CONTINUE">
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_CONFIG
+				where STR_KEY = 'lastindexing.campaign.version'
+			</sqlCheck>
+		</preConditions>
+		<comment>adding entries for indexing versions in table core_config</comment>
+		<insert tableName="CORE_CONFIG">
+			<column name="STR_KEY" value="lastindexing.campaign.version" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>
  

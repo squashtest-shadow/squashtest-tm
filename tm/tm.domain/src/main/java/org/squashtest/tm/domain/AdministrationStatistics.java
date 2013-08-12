@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain;
 
+import java.util.Date;
+
 /**
  * Bean that stores the number of some entities in the database. <br>
  * Contains the following properties :
@@ -44,6 +46,9 @@ public class AdministrationStatistics {
 	private long campaignsNumber;
 	private long iterationsNumber;
 	private long executionsNumber;
+	private Date requirementIndexingDate;
+	private Date testcaseIndexingDate;
+	private Date campaignIndexingDate;
 
 	/**
 	 * Will read the <code>Object[]</code> param and fill it's properties with the following "index/property" mapping :
@@ -68,7 +73,6 @@ public class AdministrationStatistics {
 		this.campaignsNumber = (Long) result[4];
 		this.iterationsNumber = (Long) result[5];
 		this.executionsNumber = (Long) result[6];
-
 	}
 
 	public long getProjectsNumber() {
@@ -127,4 +131,27 @@ public class AdministrationStatistics {
 		this.executionsNumber = executionsNumber;
 	}
 
+	public Date getRequirementIndexingDate() {
+		return requirementIndexingDate;
+	}
+
+	public void setRequirementIndexingDate(Date requirementIndexingDate) {
+		this.requirementIndexingDate = requirementIndexingDate;
+	}
+
+	public Date getTestcaseIndexingDate() {
+		return testcaseIndexingDate;
+	}
+
+	public void setTestcaseIndexingDate(Date testcaseIndexingDate) {
+		this.testcaseIndexingDate = testcaseIndexingDate;
+	}
+
+	public Date getCampaignIndexingDate() {
+		return campaignIndexingDate;
+	}
+
+	public void setCampaignIndexingDate(Date campaignIndexingDate) {
+		this.campaignIndexingDate = campaignIndexingDate;
+	}
 }

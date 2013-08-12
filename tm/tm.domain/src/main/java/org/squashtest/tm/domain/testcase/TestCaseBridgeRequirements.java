@@ -31,6 +31,7 @@ import org.hibernate.search.bridge.LuceneOptions;
 
 public class TestCaseBridgeRequirements implements FieldBridge{
 
+	
 	@Inject 
 	private SessionFactory sessionFactory;
 	
@@ -57,7 +58,7 @@ public class TestCaseBridgeRequirements implements FieldBridge{
         Integer size = (Integer) query.uniqueResult();
         session.close();
         return size.toString();
-        */
+		 */
 		
 		return new Integer(10).toString();
 	}

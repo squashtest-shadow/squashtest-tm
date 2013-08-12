@@ -37,6 +37,9 @@
 <c:url var="loginUrl" value="/configuration/login-message" />
 <c:url var="welcomeUrl" value="/configuration/welcome-message" />
 <c:url var="customFieldsUrl" value="administration/custom-fields" />
+<c:url var="indexUrl" value="administration/indexes" />
+
+<f:message var="dateFormat" key="squashtm.dateformat"/>
 
 <layout:info-page-layout titleKey="label.administration">
 	<jsp:attribute name="head">	
@@ -74,6 +77,10 @@
 					<a href="${ welcomeUrl }" class="unstyledLink "><img id="welcome-message-admin"
 						src="${ pageContext.servletContext.contextPath }/images/Button_MsgHome.png" /><span><f:message
 								key="label.consultModifyWelcomeMessage" /></span></a>
+					<a href="" class="unstyledLink"></a>
+					<a href="${ indexUrl }" class="unstyledLink"><img id="index-admin"
+						src="${ pageContext.servletContext.contextPath }/images/Button_Index.png" /><span><f:message
+								key="label.indexManagement" /></span></a>
 				</sec:authorize>
 			</div>
 			
@@ -93,6 +100,46 @@
 						<div><label><f:message key="label.iterations"/></label><span>${adminStats.iterationsNumber }</span></div>
 						<div><label><f:message key="label.executions"/></label><span>${adminStats.executionsNumber }</span></div>
 					</div>
+				</div>
+				<div class="admin-stats-table"><label><f:message key="label.lastIndexing"/></label>
+					<div>
+					<div><label><f:message key="label.requirements"/></label>
+						<c:choose>
+							<c:when test="${not empty adminStats.requirementIndexingDate}">
+								<span id="last-modified-on">
+									<f:formatDate value="${adminStats.requirementIndexingDate}" pattern="${dateFormat}" /> 
+								</span>
+							</c:when>
+							<c:otherwise>
+								<span>(<f:message key="label.lower.Never" />)</span>
+							</c:otherwise>
+						</c:choose>	
+					</div>
+					<div><label><f:message key="label.testCases"/></label>
+						<c:choose>
+							<c:when test="${not empty adminStats.testcaseIndexingDate}">
+								<span id="last-modified-on">
+									<f:formatDate value="${adminStats.testcaseIndexingDate}" pattern="${dateFormat}" /> 
+								</span>
+							</c:when>
+							<c:otherwise>
+								<span>(<f:message key="label.lower.Never" />)</span>
+							</c:otherwise>
+						</c:choose>	
+					</div>
+					<div><label><f:message key="label.campaigns"/></label>
+						<c:choose>
+							<c:when test="${not empty adminStats.campaignIndexingDate}">
+								<span id="last-modified-on">
+									<f:formatDate value="${adminStats.campaignIndexingDate}" pattern="${dateFormat}" /> 
+								</span>
+							</c:when>
+							<c:otherwise>
+								<span>(<f:message key="label.lower.Never" />)</span>
+							</c:otherwise>
+						</c:choose>	
+					</div>
+				</div>
 				</div>
 			</div>
 		</div>

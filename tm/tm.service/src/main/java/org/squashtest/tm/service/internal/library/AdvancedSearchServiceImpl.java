@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -51,10 +53,12 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
 import org.squashtest.tm.service.campaign.IterationModificationService;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.library.AdvancedSearchService;
@@ -82,6 +86,46 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Inject
 	private Provider<TestCaseSearchExportCSVModelImpl> testCaseSearchExportCSVModelProvider;
 
+	@Inject
+	private ConfigurationService configurationService;
+
+	private final static String REQUIREMENT_INDEXING_DATE_KEY = "lastindexing.requirement.date";
+	private final static String TESTCASE_INDEXING_DATE_KEY = "lastindexing.testcase.date";
+	private final static String CAMPAIGN_INDEXING_DATE_KEY = "lastindexing.campaign.date";
+	
+	private final static String REQUIREMENT_INDEXING_VERSION_KEY = "lastindexing.requirement.version";
+	private final static String TESTCASE_INDEXING_VERSION_KEY = "lastindexing.testcase.version";
+	private final static String CAMPAIGN_INDEXING_VERSION_KEY = "lastindexing.campaign.version";
+	
+	private final static String SQUASH_VERSION_KEY = "squashtest.tm.database.version";
+	
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
+	
+	@Override
+	public IndexModel findIndexModel(){
+		IndexModel model = new IndexModel();
+		model.setRequirementIndexDate(findIndexDate(REQUIREMENT_INDEXING_DATE_KEY));
+		model.setTestCaseIndexDate(findIndexDate(TESTCASE_INDEXING_DATE_KEY));
+		model.setCampaignIndexDate(findIndexDate(CAMPAIGN_INDEXING_DATE_KEY));
+		model.setRequirementIndexVersion(configurationService.findConfiguration(REQUIREMENT_INDEXING_VERSION_KEY));
+		model.setTestcaseIndexVersion(configurationService.findConfiguration(TESTCASE_INDEXING_VERSION_KEY));
+		model.setCampaignIndexVersion(configurationService.findConfiguration(CAMPAIGN_INDEXING_VERSION_KEY));		
+		model.setCurrentSquashVersion(configurationService.findConfiguration(SQUASH_VERSION_KEY));	
+		return model;
+	}
+	
+	private Date findIndexDate(String key){
+		String value = configurationService.findConfiguration(key);
+		Date date = null;
+		if(value != null){
+			try {
+				date = dateFormat.parse(value);
+			} catch (ParseException e) {
+	
+			}
+		}
+		return date;
+	}
 	
 	@Override
 	public void indexTestCases(){
@@ -106,6 +150,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		}
 
+		Date indexingDate = new Date();
+		this.configurationService.updateConfiguration(TESTCASE_INDEXING_DATE_KEY, dateFormat.format(indexingDate));
+		String currentVersion = this.configurationService.findConfiguration(SQUASH_VERSION_KEY);
+		this.configurationService.updateConfiguration(TESTCASE_INDEXING_VERSION_KEY, currentVersion);
 	}
 		
 	@Override
@@ -226,19 +274,19 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		//Prerequisite
 			
 		//Importance
-		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"importance",null),BooleanClause.Occur.MUST));
+		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"importance",new ArrayList<String>()),BooleanClause.Occur.MUST));
 		
 		//Nature
-		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"nature",null),BooleanClause.Occur.MUST));
+		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"nature",new ArrayList<String>()),BooleanClause.Occur.MUST));
 		
 		//Type
-		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"type",null),BooleanClause.Occur.MUST));
+		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"type",new ArrayList<String>()),BooleanClause.Occur.MUST));
 		
 		//Status
-		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"status",null),BooleanClause.Occur.MUST));
+		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"status",new ArrayList<String>()),BooleanClause.Occur.MUST));
 		
 		//Projects
-		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"project.id",null),BooleanClause.Occur.MUST));
+		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"project.id",new ArrayList<String>()),BooleanClause.Occur.MUST));
 		
 		
 		//Test steps
@@ -310,5 +358,23 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		model.setTestCases(testCases);
 		model.setIterationService(iterationService);	
 		return model;
+	}
+
+	@Override
+	public Boolean isIndexedOnPreviousVersion() {
+		String currentVersion = configurationService.findConfiguration(SQUASH_VERSION_KEY);
+		String testcaseIndexVersion = configurationService.findConfiguration(TESTCASE_INDEXING_VERSION_KEY);
+		
+		boolean result = currentVersion.equals(testcaseIndexVersion); 
+				
+		//TODO uncomment when requirements and campains are added to advanced search
+		/*String requirementIndexVersion = configurationService.findConfiguration(REQUIREMENT_INDEXING_VERSION_KEY);
+		String campaignIndexVersion = configurationService.findConfiguration(CAMPAIGN_INDEXING_VERSION_KEY);
+		
+		boolean result = currentVersion.equals(requirementIndexVersion)
+							&& currentVersion.equals(testcaseIndexVersion) 
+							&& currentVersion.equals(campaignIndexVersion);*/
+		
+		return !result;
 	}
 }

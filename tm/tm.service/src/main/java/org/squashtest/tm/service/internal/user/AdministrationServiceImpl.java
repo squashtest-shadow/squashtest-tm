@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.service.internal.user;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -89,7 +92,11 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	private final static String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE";
 	private final static String LOGIN_MESSAGE_KEY = "LOGIN_MESSAGE";
-
+	private final static String REQUIREMENT_INDEXING_DATE_KEY = "lastindexing.requirement.date";
+	private final static String TESTCASE_INDEXING_DATE_KEY = "lastindexing.testcase.date";
+	private final static String CAMPAIGN_INDEXING_DATE_KEY = "lastindexing.campaign.date";
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
+	
 	public void setAdministratorAuthenticationService(AdministratorAuthenticationService adminService) {
 		this.adminAuthentService = adminService;
 	}
@@ -225,6 +232,45 @@ public class AdministrationServiceImpl implements AdministrationService {
 		return configurationService.findConfiguration(LOGIN_MESSAGE_KEY);
 	}
 
+	private Date findRequirementIndexingDate(){
+		String date = configurationService.findConfiguration(REQUIREMENT_INDEXING_DATE_KEY);
+		Date result = null;
+		if(date != null){
+			try{
+				result = dateFormat.parse(date);
+			} catch(ParseException e){
+				
+			}
+		}
+		return result;
+	}
+	
+	private Date findTestCaseIndexingDate() {
+		String date = configurationService.findConfiguration(TESTCASE_INDEXING_DATE_KEY);
+		Date result = null;
+		if(date != null){
+			try{
+				result = dateFormat.parse(date);
+			} catch(ParseException e){
+				
+			}
+		}
+		return result;
+	}
+
+	private Date findCampaignIndexingDate(){
+		String date = configurationService.findConfiguration(CAMPAIGN_INDEXING_DATE_KEY);
+		Date result = null;
+		if(date != null){
+			try{
+				result = dateFormat.parse(date);
+			} catch(ParseException e){
+				
+			}
+		}
+		return result;
+	}
+	
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void resetUserPassword(long userId, String newPassword) {
@@ -237,7 +283,11 @@ public class AdministrationServiceImpl implements AdministrationService {
 	 */
 	@Override
 	public AdministrationStatistics findAdministrationStatistics() {
-		return adminDao.findAdministrationStatistics();
+		AdministrationStatistics statistics = adminDao.findAdministrationStatistics();
+		statistics.setRequirementIndexingDate(findRequirementIndexingDate());
+		statistics.setTestcaseIndexingDate(findTestCaseIndexingDate());
+		statistics.setCampaignIndexingDate(findCampaignIndexingDate());
+		return statistics;
 	}
 
 	/**

@@ -348,7 +348,6 @@ div#user-info-pane {
 }
 
 div#admin-link-pane {
-	top: 1cm;
 	position: relative;
 }
 
@@ -1240,3 +1239,56 @@ div.admin-message-page-content{
 
 
 /* ---------------- /attachments file images  --------------*/
+
+/* ----------------  index administration view  ------------*/
+
+.index-block-title{
+	font-variant:small-caps;
+	text-decoration:underline;	
+    font-size: medium;
+    padding-bottom:25px;
+}
+
+.index-info-line{    
+	padding-bottom:25px;
+}
+
+.index-message-title{
+	text-decoration:underline;	
+}
+
+.index-important{
+	font-weight: bold;
+}
+
+.index-warning{
+  	color: #CC0000;
+    font-weight: bold;
+    font-size: medium;
+}
+
+.index-inline-left-block{
+	display: inline-block; 
+	width: 80%;
+	padding-bottom:25px;
+}
+
+.index-inline-right-block{
+	display: inline-block; 
+	width: 19%;
+	padding-bottom:25px;
+}
+
+.index-inline-center-block{
+	display: inline-block; 
+	width: 25%;
+	text-align: center;
+	border-style:solid;
+	border-color:grey;
+	border-width:1px;
+	padding-bottom:25px;
+	margin-left:25px;
+	margin-right:25px;
+}
+
+/* ----------------  /index administration view  -----------*/

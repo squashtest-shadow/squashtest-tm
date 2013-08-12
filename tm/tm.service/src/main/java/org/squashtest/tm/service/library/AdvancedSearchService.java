@@ -26,6 +26,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
 
@@ -35,6 +36,10 @@ public interface AdvancedSearchService {
 
 	//Indexing
 	void indexTestCases();
+
+	IndexModel findIndexModel();
+	
+	Boolean isIndexedOnPreviousVersion();
 	
 	//Querying
 	List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity);
@@ -45,7 +50,6 @@ public interface AdvancedSearchService {
 	
 	//Exporting
 	TestCaseSearchExportCSVModel exportTestCaseSearchToCSV();
-
 
 
 }
