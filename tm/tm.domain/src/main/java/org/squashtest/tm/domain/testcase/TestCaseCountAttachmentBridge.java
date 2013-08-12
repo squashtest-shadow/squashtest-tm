@@ -18,41 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.audit;
+package org.squashtest.tm.domain.testcase;
 
-import java.util.Date;
+import java.util.List;
 
-import org.hibernate.search.annotations.DateBridge;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Resolution;
+import org.hibernate.search.bridge.StringBridge;
+import org.squashtest.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.attachment.AttachmentList;
 
-/**
- * Defines interface for @Auditable entities. Any @Auditable entity will be modified to implement this interface.
- * 
- * @author Gregory Fouquet
- * 
- */
-public interface AuditableMixin {
-	
-	@DateBridge(resolution=Resolution.DAY)
-	Date getCreatedOn();
-	
-	@Field
-	String getCreatedBy();
+public class TestCaseCountAttachmentBridge implements StringBridge {
 
-	@DateBridge(resolution=Resolution.DAY)
-	Date getLastModifiedOn();
+	@Override
+	public String objectToString(Object value) {
+		AttachmentList attachments = (AttachmentList) value;
+		return Integer.toString(attachments.size());
+	}
 
-	@Field
-	String getLastModifiedBy();
-	
-	
-	void setCreatedBy(String createdBy);
-
-	void setCreatedOn(Date createdOn);
-
-	void setLastModifiedBy(String lastModifiedBy);
-
-	void setLastModifiedOn(Date lastModifiedOn);
-		
 }

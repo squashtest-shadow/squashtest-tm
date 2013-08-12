@@ -64,10 +64,12 @@ import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.ContainedIn;
+import org.hibernate.search.annotations.ClassBridge;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.Index;
 
 /**
  * @author Gregory Fouquet
@@ -75,6 +77,10 @@ import org.hibernate.search.annotations.Store;
  */
 @Entity
 @Indexed
+@ClassBridge(
+		name="nb_requirements",
+		store=Store.YES,
+		impl=TestCaseBridgeRequirements.class)
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
@@ -107,11 +113,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
+	@Field
+	@FieldBridge(impl = TestCaseCountParametersBridge.class)
 	private Set<Parameter> parameters = new HashSet<Parameter>(0);
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
+	@Field
+	@FieldBridge(impl = TestCaseCountDatasetsBridge.class)
 	private Set<Dataset> datasets = new HashSet<Dataset>(0);
 
 	@NotNull

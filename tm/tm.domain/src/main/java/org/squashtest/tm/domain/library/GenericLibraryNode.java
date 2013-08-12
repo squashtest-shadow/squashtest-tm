@@ -30,11 +30,13 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
 
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.TestCaseCountAttachmentBridge;
 
 /**
  * Generic superclass for library nodes.
@@ -60,6 +62,8 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", updatable = false)
+	@Field
+	@FieldBridge(impl = TestCaseCountAttachmentBridge.class)
 	private final AttachmentList attachmentList = new AttachmentList();
 
 	public GenericLibraryNode() {
