@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,38 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.domain.testcase;
 
-define(["jquery", "jqueryui"], function($){
+import java.util.HashMap;
+import java.util.Map;
 
-	var searchwidget = $.widget("search.searchDateWidget", {
-		
-		options : {
+public class TestCaseSearchModel {
 
-		},
-		
-		_create : function(){
-			this._super();
-		},
-		
-		fieldvalue : function(){
-			var text = $(this.element.children()[0]).val();
-			var id = $(this.element).attr("id");
-			return {"type" : "TIME_INTERVAL",
-					                 "startDate" : "",
-					                 "endDate" : ""};
-		}, 
-		
-		createDom : function(id){
-			
-			var input = $('<input />', {
-				'type' : 'text',
-				'data-widgetname' : 'Date',
-				'data-fieldid' : id,
-				'class' : "search-input"
-			});
-			
-			return input;
-		}
-	 });
-	return searchwidget;
-});
+	Map<String, TestCaseSearchFieldModel> fields = new HashMap<String, TestCaseSearchFieldModel>();
+	
+	public TestCaseSearchModel(){
+
+	}
+	
+	public void addField(String fieldName, TestCaseSearchFieldModel value){
+		fields.put(fieldName, value);
+	}
+	
+	public Map<String, TestCaseSearchFieldModel> getFields(){
+		return this.fields;
+	}
+}

@@ -35,12 +35,9 @@ import org.apache.lucene.document.DateTools;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.hibernate.CacheMode;
-import org.hibernate.FlushMode;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.search.FullTextQuery;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
@@ -57,6 +54,13 @@ import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
+import org.squashtest.tm.domain.testcase.TestCaseSearchFieldModel;
+import org.squashtest.tm.domain.testcase.TestCaseSearchListFieldModel;
+import org.squashtest.tm.domain.testcase.TestCaseSearchModel;
+import org.squashtest.tm.domain.testcase.TestCaseSearchRangeFieldModel;
+import org.squashtest.tm.domain.testcase.TestCaseSearchSingleFieldModel;
+import org.squashtest.tm.domain.testcase.TestCaseSearchTextFieldModel;
+import org.squashtest.tm.domain.testcase.TestCaseSearchTimeIntervalFieldModel;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
@@ -203,13 +207,15 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	private org.apache.lucene.search.Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName, List<String> values){
 
 		StringBuilder builder = new StringBuilder();
+		builder.append("( ");
 		for(String value : values){
 			builder.append(value+" ");
 		}
-
+		builder.append(")");
+		
 		org.apache.lucene.search.Query query = qb
 				.bool()
-				.must(qb.keyword().onField(fieldName).matching(builder.toString()).createQuery())
+				.must(qb.keyword().onField(fieldName).ignoreFieldBridge().matching(builder.toString()).createQuery())
 				.createQuery();
 
 		return query;
@@ -253,18 +259,84 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 
 	@Override
-	public List<TestCase> searchForTestCases() {
+	public List<TestCase> searchForTestCases(TestCaseSearchModel model) {
 		
 		Session session = sessionFactory.getCurrentSession();
  		
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity( TestCase.class ).get();
+		org.apache.lucene.search.Query query = null;
 		
-		BooleanQuery query = new BooleanQuery();
+		Set<String> fieldKeys = model.getFields().keySet();
 		
-		//ID
+		for(String fieldKey : fieldKeys){
+			
+			TestCaseSearchFieldModel fieldModel = model.getFields().get(fieldKey);
+			String type = fieldModel.getType();
+			
+			if(TestCaseSearchFieldModel.SINGLE.equals(type)){
+				TestCaseSearchSingleFieldModel singleModel = (TestCaseSearchSingleFieldModel) fieldModel;
+				if(singleModel.getValue() != null && !"".equals(singleModel.getValue().trim())){
+					if(query == null){
+						query = qb.bool().must(buildLuceneSingleValueQuery(qb,fieldKey,singleModel.getValue())).createQuery();
+					} else {
+						query = qb.bool().must(buildLuceneSingleValueQuery(qb,fieldKey,singleModel.getValue())).must(query).createQuery();
+					}
+				}
+				
+			} else if (TestCaseSearchFieldModel.LIST.equals(type)){
+				TestCaseSearchListFieldModel listModel = (TestCaseSearchListFieldModel) fieldModel;
+				if(listModel.getValues() != null){
+					if(query == null){
+						query = qb.bool().must(buildLuceneValueInListQuery(qb,fieldKey,listModel.getValues())).createQuery();
+					} else {
+						query = qb.bool().must(buildLuceneValueInListQuery(qb,fieldKey,listModel.getValues())).must(query).createQuery();
+					}
+				}
+				
+			} else if (TestCaseSearchFieldModel.TEXT.equals(type)){
+				TestCaseSearchTextFieldModel textModel = (TestCaseSearchTextFieldModel) fieldModel;
+				if(textModel.getValue() != null && !"".equals(textModel.getValue().trim())){
+					
+					if(query == null){
+						query = qb.bool().must(buildLuceneTextQuery(qb,fieldKey,textModel.getValue())).createQuery();
+					} else {
+						query = qb.bool().must(buildLuceneTextQuery(qb,fieldKey,textModel.getValue())).must(query).createQuery();
+					}
 
+				}
+				
+			} else if (TestCaseSearchFieldModel.RANGE.equals(type)){
+				
+				TestCaseSearchRangeFieldModel rangeModel = (TestCaseSearchRangeFieldModel) fieldModel;
+				
+				if(query == null){
+					query = qb.bool().must(buildLuceneRangeQuery(qb,fieldKey,rangeModel.getMinValue(),rangeModel.getMaxValue())).createQuery();
+				} else {
+					query = qb.bool().must(buildLuceneRangeQuery(qb,fieldKey,rangeModel.getMinValue(),rangeModel.getMaxValue())).must(query).createQuery();
+				}
+				
+			} else if (TestCaseSearchFieldModel.TIME_INTERVAL.equals(type)){
+				
+				TestCaseSearchTimeIntervalFieldModel intervalModel = (TestCaseSearchTimeIntervalFieldModel) fieldModel;
+				
+				if(query == null){
+					query = qb.bool().must(buildLuceneTimeIntervalQuery(qb,fieldKey,intervalModel.getStartDate(),intervalModel.getEndDate())).createQuery();
+				} else {
+					query = qb.bool().must(buildLuceneTimeIntervalQuery(qb,fieldKey,intervalModel.getStartDate(),intervalModel.getEndDate())).must(query).createQuery();
+				}
+			}
+		}
+		
+		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(query, TestCase.class);
+		 
+		List result = hibQuery.list();
+		
+		return result;
+
+		//ID
+		
 		//Reference
 				
 		//Label
@@ -274,33 +346,33 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		//Prerequisite
 			
 		//Importance
-		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"importance",new ArrayList<String>()),BooleanClause.Occur.MUST));
+		//
 		
 		//Nature
-		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"nature",new ArrayList<String>()),BooleanClause.Occur.MUST));
+		//query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"nature",new ArrayList<String>()),BooleanClause.Occur.MUST));
 		
 		//Type
-		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"type",new ArrayList<String>()),BooleanClause.Occur.MUST));
+		//query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"type",new ArrayList<String>()),BooleanClause.Occur.MUST));
 		
 		//Status
-		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"status",new ArrayList<String>()),BooleanClause.Occur.MUST));
+		//query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"status",new ArrayList<String>()),BooleanClause.Occur.MUST));
 		
 		//Projects
-		query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"project.id",new ArrayList<String>()),BooleanClause.Occur.MUST));
+		//query.add(new BooleanClause(buildLuceneValueInListQuery(qb,"project.id",new ArrayList<String>()),BooleanClause.Occur.MUST));
 		
 		
 		//Test steps
 				
 		//Parameters
-		query.add(new BooleanClause(buildLuceneRangeQuery(qb,"parameters",0,10),BooleanClause.Occur.MUST));
+		//query.add(new BooleanClause(buildLuceneRangeQuery(qb,"parameters",0,10),BooleanClause.Occur.MUST));
 		
 		//Datasets
-		query.add(new BooleanClause(buildLuceneRangeQuery(qb,"datasets",0,10),BooleanClause.Occur.MUST));
+		//query.add(new BooleanClause(buildLuceneRangeQuery(qb,"datasets",0,10),BooleanClause.Occur.MUST));
 		
 		//Call Test steps
 				
 		//Attachments
-		query.add(new BooleanClause(buildLuceneRangeQuery(qb,"attachmentList",0,10),BooleanClause.Occur.MUST));
+		//query.add(new BooleanClause(buildLuceneRangeQuery(qb,"attachmentList",0,10),BooleanClause.Occur.MUST));
 		
 		//Requirements
 				
@@ -319,33 +391,93 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		//ModifiedOn
 				
 		//CUFs
-				
-			
-		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(query, TestCase.class);
-		 
-		List result = hibQuery.list();
 
-		return result;
 	}
 	
 	@Override
-	public PagedCollectionHolder<List<TestCase>> searchForTestCases(PagingAndSorting sorting) {
+	public PagedCollectionHolder<List<TestCase>> searchForTestCases(TestCaseSearchModel model, PagingAndSorting sorting) {
 
 		Session session = sessionFactory.getCurrentSession();
-		 		
+ 		
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity( TestCase.class ).get();
-		 		
-		org.apache.lucene.search.Query query = qb.keyword().onFields("prerequisite").matching("Batman").createQuery();
+		
+		org.apache.lucene.search.Query query = null;
+
+		Set<String> fieldKeys = model.getFields().keySet();
+		
+		for(String fieldKey : fieldKeys){
+			
+			TestCaseSearchFieldModel fieldModel = model.getFields().get(fieldKey);
+			String type = fieldModel.getType();
+			
+			if(TestCaseSearchFieldModel.SINGLE.equals(type)){
+				TestCaseSearchSingleFieldModel singleModel = (TestCaseSearchSingleFieldModel) fieldModel;
+				if(singleModel.getValue() != null && !"".equals(singleModel.getValue().trim())){
+					if(query == null){
+						query = qb.bool().must(buildLuceneSingleValueQuery(qb,fieldKey,singleModel.getValue())).createQuery();
+					} else {
+						query = qb.bool().must(buildLuceneSingleValueQuery(qb,fieldKey,singleModel.getValue())).must(query).createQuery();
+					}
+				}
+				
+			} else if (TestCaseSearchFieldModel.LIST.equals(type)){
+				TestCaseSearchListFieldModel listModel = (TestCaseSearchListFieldModel) fieldModel;
+				if(listModel.getValues() != null){
+					if(query == null){
+						query = qb.bool().must(buildLuceneValueInListQuery(qb,fieldKey,listModel.getValues())).createQuery();
+					} else {
+						query = qb.bool().must(buildLuceneValueInListQuery(qb,fieldKey,listModel.getValues())).must(query).createQuery();
+					}
+				}
+				
+			} else if (TestCaseSearchFieldModel.TEXT.equals(type)){
+				TestCaseSearchTextFieldModel textModel = (TestCaseSearchTextFieldModel) fieldModel;
+				if(textModel.getValue() != null && !"".equals(textModel.getValue().trim())){
+					
+					if(query == null){
+						query = qb.bool().must(buildLuceneTextQuery(qb,fieldKey,textModel.getValue())).createQuery();
+					} else {
+						query = qb.bool().must(buildLuceneTextQuery(qb,fieldKey,textModel.getValue())).must(query).createQuery();
+					}
+
+				}
+				
+			} else if (TestCaseSearchFieldModel.RANGE.equals(type)){
+				
+				TestCaseSearchRangeFieldModel rangeModel = (TestCaseSearchRangeFieldModel) fieldModel;
+				
+				if(query == null){
+					query = qb.bool().must(buildLuceneRangeQuery(qb,fieldKey,rangeModel.getMinValue(),rangeModel.getMaxValue())).createQuery();
+				} else {
+					query = qb.bool().must(buildLuceneRangeQuery(qb,fieldKey,rangeModel.getMinValue(),rangeModel.getMaxValue())).must(query).createQuery();
+				}
+				
+			} else if (TestCaseSearchFieldModel.TIME_INTERVAL.equals(type)){
+				
+				TestCaseSearchTimeIntervalFieldModel intervalModel = (TestCaseSearchTimeIntervalFieldModel) fieldModel;
+				
+				if(query == null){
+					query = qb.bool().must(buildLuceneTimeIntervalQuery(qb,fieldKey,intervalModel.getStartDate(),intervalModel.getEndDate())).createQuery();
+				} else {
+					query = qb.bool().must(buildLuceneTimeIntervalQuery(qb,fieldKey,intervalModel.getStartDate(),intervalModel.getEndDate())).must(query).createQuery();
+				}
+			}
+		}
+		
+		query = qb.keyword().onField("importance").ignoreFieldBridge().matching("HIGH").createQuery();
+
+		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(query, TestCase.class);
 		 
-		 org.hibernate.Query hibQuery = ftSession.createFullTextQuery(query, TestCase.class);
-		 
-		List result = hibQuery.list();
-			 			
-		List<TestCase> testCases = testCaseDao.findAll();
-		long countAll = testCases.size();
-		return new PagingBackedPagedCollectionHolder<List<TestCase>>(sorting, countAll, testCases);
+		List result = hibQuery
+						.setFirstResult(sorting.getFirstItemIndex())
+						.setMaxResults(sorting.getPageSize()) 
+						.list();
+		
+		int countAll = hibQuery.list().size();
+		
+		return new PagingBackedPagedCollectionHolder<List<TestCase>>(sorting, countAll, result);
 	}
 
 

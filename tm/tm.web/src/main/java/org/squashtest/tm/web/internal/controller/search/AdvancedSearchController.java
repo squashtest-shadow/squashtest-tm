@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,9 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,6 +52,7 @@ import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseSearchModel;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomCustomFieldManagerService;
 import org.squashtest.tm.service.library.AdvancedSearchService;
@@ -120,13 +125,15 @@ public class AdvancedSearchController {
 		return "test-case-search-result.html";
 	} 
 	
-	@RequestMapping(value = "/table", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
+	@RequestMapping(value = "/table", method = RequestMethod.POST, params =  { "model", RequestParams.S_ECHO_PARAM})
 	@ResponseBody
-	public DataTableModel getTableModel(final DataTableDrawParameters params, final Locale locale) {
+	public DataTableModel getTableModel(final DataTableDrawParameters params, final Locale locale, @RequestParam(value = "model") String model) throws JsonParseException, JsonMappingException, IOException {
+
+		TestCaseSearchModel searchModel = new ObjectMapper().readValue(model, TestCaseSearchModel.class);
 
 		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, testCaseSearchResultMapper);
 
-		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCases(paging);
+		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCases(searchModel, paging);
 
 		return new TestCaseSearchResultDataTableModelHelper(locale, messageSource, permissionService, iterationService).buildDataModel(holder, params.getsEcho());
 	}
@@ -156,7 +163,7 @@ public class AdvancedSearchController {
 		panel.setOpen(false);
 		panel.setId("importance");
 			
-		SearchInputFieldModel importanceField = new SearchInputFieldModel("test-case-importance","test-case.importance.label","multiselect");
+		SearchInputFieldModel importanceField = new SearchInputFieldModel("importance","test-case.importance.label","multiselect");
 		panel.addField(importanceField);
 		
 		Map<String,String> map = importanceComboBuilderProvider.get().useLocale(locale).buildMap();
@@ -175,7 +182,7 @@ public class AdvancedSearchController {
 		panel.setOpen(true);
 		panel.setId("prerequisite");
 
-		SearchInputFieldModel prerequisiteField = new SearchInputFieldModel("test-case-prerequisite","test-case.prerequisite.label","textarea");
+		SearchInputFieldModel prerequisiteField = new SearchInputFieldModel("prerequisite","test-case.prerequisite.label","textarea");
 		panel.addField(prerequisiteField);
 		return panel;
 	}

@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
+import org.squashtest.tm.domain.testcase.TestCaseSearchModel;
 
 
 
@@ -44,9 +45,9 @@ public interface AdvancedSearchService {
 	//Querying
 	List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity);
 	
-	PagedCollectionHolder<List<TestCase>> searchForTestCases(PagingAndSorting sorting);
+	PagedCollectionHolder<List<TestCase>> searchForTestCases(TestCaseSearchModel model, PagingAndSorting sorting);
 	
-	List<TestCase> searchForTestCases();
+	List<TestCase> searchForTestCases(TestCaseSearchModel model);
 	
 	//Exporting
 	TestCaseSearchExportCSVModel exportTestCaseSearchToCSV();

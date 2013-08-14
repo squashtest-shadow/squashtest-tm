@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,38 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.domain.testcase;
 
-define(["jquery", "jqueryui"], function($){
+import java.util.ArrayList;
+import java.util.List;
 
-	var searchwidget = $.widget("search.searchDateWidget", {
-		
-		options : {
+public class TestCaseSearchListFieldModel implements TestCaseSearchFieldModel{
 
-		},
+	private String type = TestCaseSearchFieldModel.LIST;
+	
+	private List<String> values = new ArrayList<String>();
+	
+	public TestCaseSearchListFieldModel(){
 		
-		_create : function(){
-			this._super();
-		},
-		
-		fieldvalue : function(){
-			var text = $(this.element.children()[0]).val();
-			var id = $(this.element).attr("id");
-			return {"type" : "TIME_INTERVAL",
-					                 "startDate" : "",
-					                 "endDate" : ""};
-		}, 
-		
-		createDom : function(id){
-			
-			var input = $('<input />', {
-				'type' : 'text',
-				'data-widgetname' : 'Date',
-				'data-fieldid' : id,
-				'class' : "search-input"
-			});
-			
-			return input;
-		}
-	 });
-	return searchwidget;
-});
+	}
+	
+	@Override
+	public String getType(){
+		return this.type;
+	}
+
+	public List<String> getValues() {
+		return values;
+	}
+
+	public void setValues(List<String> values) {
+		this.values = values;
+	}
+	
+}

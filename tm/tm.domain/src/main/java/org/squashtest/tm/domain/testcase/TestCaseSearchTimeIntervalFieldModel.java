@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,38 +18,40 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.domain.testcase;
 
-define(["jquery", "jqueryui"], function($){
+import java.util.Date;
 
-	var searchwidget = $.widget("search.searchDateWidget", {
-		
-		options : {
+public class TestCaseSearchTimeIntervalFieldModel implements TestCaseSearchFieldModel{
 
-		},
-		
-		_create : function(){
-			this._super();
-		},
-		
-		fieldvalue : function(){
-			var text = $(this.element.children()[0]).val();
-			var id = $(this.element).attr("id");
-			return {"type" : "TIME_INTERVAL",
-					                 "startDate" : "",
-					                 "endDate" : ""};
-		}, 
-		
-		createDom : function(id){
-			
-			var input = $('<input />', {
-				'type' : 'text',
-				'data-widgetname' : 'Date',
-				'data-fieldid' : id,
-				'class' : "search-input"
-			});
-			
-			return input;
-		}
-	 });
-	return searchwidget;
-});
+	private String type = TestCaseSearchFieldModel.TIME_INTERVAL;
+
+	private Date startDate;
+	
+	private Date endDate;
+
+	@Override
+	public String getType() {
+		return this.type;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+}

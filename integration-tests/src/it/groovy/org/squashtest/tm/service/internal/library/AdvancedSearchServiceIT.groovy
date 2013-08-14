@@ -25,6 +25,9 @@ import javax.inject.Inject;
 import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseSearchListFieldModel
+import org.squashtest.tm.domain.testcase.TestCaseSearchModel
+import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.service.DbunitServiceSpecification;
 import org.squashtest.tm.service.library.AdvancedSearchService
 import org.squashtest.tm.service.project.ProjectTemplateManagerService;
@@ -53,6 +56,7 @@ class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 	
 	def setup(){
 		testCaseService.changePrerequisite(10L, "Batman");
+		testCaseService.changeImportance(10L, TestCaseImportance.LOW);
 		service.indexTestCases();
 	}
 	
@@ -61,8 +65,12 @@ class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 		
 		
 		when:
-			def res = service.searchForTestCases() ;
+			def model = new TestCaseSearchModel();
+			def field = new TestCaseSearchListFieldModel();
+			field.values = ["LOW"];
+			model.addField("importance", field);
+			def res = service.searchForTestCases(model) ;
 		then:
-			res==[10];
+			res==[];
 	}
 }

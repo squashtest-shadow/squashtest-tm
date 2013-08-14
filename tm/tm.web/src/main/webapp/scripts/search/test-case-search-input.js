@@ -132,13 +132,17 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			
 		extractSearchModel : function(){
 			var fields = $("div.search-input");
-			this.model = {fields : []};
+			
+			var jsonVariable = {};
 			var i;
 			for(i=0; i<fields.length; i++){
 				var type = $($(fields[i]).children()[0]).attr("data-widgetname");
+				var key = $(fields[i]).attr("id");
 				var value = $("#"+$(fields[i]).attr("id")).data("search"+type+"Widget").fieldvalue();
-				this.model.fields.push(value);
+				var jsonKey  = key;
+				jsonVariable[jsonKey] = value;
 			}
+			this.model = {fields : jsonVariable};
 		},
 		
 		post : function (URL, PARAMS) {

@@ -34,8 +34,8 @@ define(["jquery", "jqueryui"], function($){
 		fieldvalue : function(){
 			var text = $(this.element.children()[0]).val();
 			var id = $(this.element).attr("id");
-			return {'id' : id, 
-					'value' : text};
+			return {"type" : "LIST",
+					"values" : text};
 		}, 
 		
 		createDom : function(id, options){

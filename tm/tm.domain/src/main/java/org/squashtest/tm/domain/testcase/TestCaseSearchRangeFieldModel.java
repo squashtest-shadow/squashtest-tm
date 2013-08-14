@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,38 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.domain.testcase;
 
-define(["jquery", "jqueryui"], function($){
+public class TestCaseSearchRangeFieldModel implements TestCaseSearchFieldModel{
 
-	var searchwidget = $.widget("search.searchDateWidget", {
-		
-		options : {
+	private String type = TestCaseSearchFieldModel.RANGE;
+	
+	private Integer minValue;
+	
+	private Integer maxValue;
 
-		},
-		
-		_create : function(){
-			this._super();
-		},
-		
-		fieldvalue : function(){
-			var text = $(this.element.children()[0]).val();
-			var id = $(this.element).attr("id");
-			return {"type" : "TIME_INTERVAL",
-					                 "startDate" : "",
-					                 "endDate" : ""};
-		}, 
-		
-		createDom : function(id){
-			
-			var input = $('<input />', {
-				'type' : 'text',
-				'data-widgetname' : 'Date',
-				'data-fieldid' : id,
-				'class' : "search-input"
-			});
-			
-			return input;
-		}
-	 });
-	return searchwidget;
-});
+	@Override
+	public String getType() {
+		return this.type;
+	}
+
+	public Integer getMinValue() {
+		return minValue;
+	}
+
+	public void setMinValue(Integer minValue) {
+		this.minValue = minValue;
+	}
+
+	public Integer getMaxValue() {
+		return maxValue;
+	}
+
+	public void setMaxValue(Integer maxValue) {
+		this.maxValue = maxValue;
+	}
+}

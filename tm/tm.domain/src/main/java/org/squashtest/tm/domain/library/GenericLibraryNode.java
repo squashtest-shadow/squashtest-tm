@@ -62,8 +62,8 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", updatable = false)
-	@Field
-	@FieldBridge(impl = TestCaseCountAttachmentBridge.class)
+	//@Field
+	//@FieldBridge(impl = TestCaseCountAttachmentBridge.class)
 	private final AttachmentList attachmentList = new AttachmentList();
 
 	public GenericLibraryNode() {

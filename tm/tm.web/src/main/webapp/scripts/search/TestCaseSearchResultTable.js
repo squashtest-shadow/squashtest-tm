@@ -40,7 +40,14 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 				"oLanguage" : {
 					"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
 				},
+			    "bServerSide": true,  
+			    "bProcessing": true,  
 				"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
+				 "fnServerParams": function ( aoData )   
+				    {  
+				        aoData.push( { "name": "model", "value": JSON.stringify(model) } );  
+				    }, 
+				"sServerMethod": "POST",
 				"bDeferRender" : true,
 				"bFilter" : false,
 				"fnRowCallback" : this.tableRowCallback,
