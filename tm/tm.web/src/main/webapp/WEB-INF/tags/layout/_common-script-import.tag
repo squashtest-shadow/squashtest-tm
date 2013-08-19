@@ -83,7 +83,6 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/AutomatedSuiteOverview.js"></script>
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/FeedbackMultipartPopup.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.cookie.js"></script>
 
 
