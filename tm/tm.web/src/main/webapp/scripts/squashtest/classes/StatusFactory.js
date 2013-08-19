@@ -25,7 +25,7 @@
 
 		this.getHtmlFor = function(textStatus, status) {
 			var css;
-			if (status !== null) {
+			if (!! status) {
 				css = "executions-status-" + status + "-icon";
 			} else {
 				css = lookupCss(textStatus);
