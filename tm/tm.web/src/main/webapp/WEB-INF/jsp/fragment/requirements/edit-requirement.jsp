@@ -40,8 +40,7 @@
 </s:url>
 <s:url var="verifyingTCManagerUrl" value="/requirement-versions/${ requirement.currentVersion.id }/verifying-test-cases/manager" /> 
 <c:url var="workspaceUrl" value="/requirement-workspace/#" />
-<s:url var="simulateDeletionUrl" value="/requirement-browser/delete-nodes/simulate" />
-<s:url var="confirmDeletionUrl" value="/requirement-browser/delete-nodes/confirm" />
+
 <s:url var="getStatusComboContent" value="/requirements/${requirement.id}/next-status" />
 
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
@@ -446,7 +445,7 @@ that page won't be editable if
 	</c:if>	
 <%--------------------------- Deletion confirmation popup -------------------------------------%>
 	<c:if test="${deletable}">
-	<comp:delete-contextual-node-dialog simulationUrl="${simulateDeletionUrl}" confirmationUrl="${confirmDeletionUrl}" 
+	<comp:delete-contextual-node-dialog 
 			itemId="${requirement.id}" successCallback="deleteRequirementSuccess" openedBy="delete-requirement-button" titleKey="dialog.delete-requirement.title"/>
 	</c:if>
 <%------------------------------- confirm new status if set to obsolete popup---------------------%>

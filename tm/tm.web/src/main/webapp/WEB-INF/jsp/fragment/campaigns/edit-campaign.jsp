@@ -60,10 +60,7 @@
 	value="/campaigns/${ campaign.id }/test-plan/manager" />
 
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
-<s:url var="simulateDeletionUrl"
-	value="/campaign-browser/delete-nodes/simulate" />
-<s:url var="confirmDeletionUrl"
-	value="/campaign-browser/delete-nodes/confirm" />
+
 <s:url var="btEntityUrl" value="/bugtracker/campaign/{id}">
 	<s:param name="id" value="${campaign.id}" />
 </s:url>
@@ -386,8 +383,7 @@
 
 
 	<comp:delete-contextual-node-dialog
-		simulationUrl="${simulateDeletionUrl}"
-		confirmationUrl="${confirmDeletionUrl}" itemId="${campaign.id}"
+		itemId="${campaign.id}"
 		successCallback="deleteCampaignSuccess"
 		openedBy="delete-campaign-button"
 		titleKey="dialog.delete-campaign.title" />

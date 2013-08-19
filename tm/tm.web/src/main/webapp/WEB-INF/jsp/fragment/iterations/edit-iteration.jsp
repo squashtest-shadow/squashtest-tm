@@ -92,11 +92,7 @@
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
 
-<s:url var="simulateDeletionUrl"
-	value="/campaign-browser/delete-iterations/simulate" />
 
-<s:url var="confirmDeletionUrl"
-	value="/campaign-browser/delete-iterations/confirm" />
 
 <s:url var="testSuitesUrl" value="/iterations/{iterId}/test-suites">
 	<s:param name="iterId" value="${iteration.id}" />
@@ -471,8 +467,7 @@
 	<c:if test="${ deletable }">
 	
 		<comp:delete-contextual-node-dialog
-		simulationUrl="${simulateDeletionUrl}"
-		confirmationUrl="${confirmDeletionUrl}" itemId="${iteration.id}"
+		itemId="${iteration.id}"		
 		successCallback="deleteIterationSuccess"
 		openedBy="delete-iteration-button"
 		titleKey="dialog.delete-iteration.title" />

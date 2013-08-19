@@ -34,8 +34,6 @@
 
 
 <c:url var="testCaseUrl" 					value="/test-cases/${testCase.id}"/>
-<c:url var="simulateDeletionUrl"			value="/test-case-browser/delete-nodes/simulate" />
-<c:url var="confirmDeletionUrl"				value="/test-case-browser/delete-nodes/confirm" />
 
 <%---------------------------- Rename test case popup ------------------------------%>
 
@@ -79,8 +77,7 @@
 <c:if test="${ deletable }">
 
 	<comp:delete-contextual-node-dialog
-		simulationUrl="${simulateDeletionUrl}"
-		confirmationUrl="${confirmDeletionUrl}" itemId="${testCase.id}"
+		itemId="${testCase.id}"
 		successCallback="deleteTestCaseSuccess"
 		openedBy="delete-test-case-button"
 		titleKey="dialog.delete-test-case.title" />

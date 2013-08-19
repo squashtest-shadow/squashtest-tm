@@ -30,8 +30,6 @@
 <%@ attribute name="openedBy" description="id of the widget that will open the popup"%>
 <%@ attribute name="titleKey" description="resource key for the title of the popup." %>
 <%@ attribute name="successCallback" description="javascript callback in case of success."%>
-<%@ attribute name="simulationUrl" required="true" description="the url where to post a simulation of the deletion before actually performing it."%>
-<%@ attribute name="confirmationUrl" required="true" description="the url where to post to confirm the deletion."%>
 <%@ attribute name="itemId" required="true" description="the id of the item to be deleted"%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -39,19 +37,29 @@
 <c:choose>
 	<c:when test="${'delete-requirement-button' == openedBy}">
 		<f:message var="deleteMessage" key="dialog.label.delete-nodes.requirement.label" />
+		<c:url var="simulationUrl" value="/requirement-browser/content/${itemId}/deletion-simulation" />
+		<c:url var="confirmUrl" value="/requirement-browser/content/${itemId}" />
 	</c:when>
 	<c:when test="${'delete-test-case-button' == openedBy}">
 		<f:message var="deleteMessage" key="dialog.label.delete-nodes.test-case.label" />
+		<c:url var="simulationUrl" value="/test-case-browser/content/${itemId}/deletion-simulation" />
+		<c:url var="confirmUrl" value="/test-case-browser/content/${itemId}" />
 	</c:when>
 	<c:when test="${'delete-campaign-button' == openedBy}">
 		<f:message var="deleteMessage" key="dialog.label.delete-nodes.campaign.label" />
+		<c:url var="simulationUrl" value="/campaign-browser/content/${itemId}/deletion-simulation" />
+		<c:url var="confirmUrl" value="/campaign-browser/content/${itemId}" />
 	</c:when>
 	<c:when test="${'delete-iteration-button' == openedBy}">
 		<f:message var="deleteMessage" key="dialog.label.delete-nodes.iteration.label" />
+		<c:url var="simulationUrl" value="/campaign-browser/iterations/${itemId}/deletion-simulation" />
+		<c:url var="confirmUrl" value="/campaign-browser/iterations/${itemId}" />
 	</c:when>
-	<c:otherwise>
+	<c:when test="${'delete-test-suite-button' == openedBy}">
 		<f:message var="deleteMessage" key="dialog.label.delete-nodes.label" />
-	</c:otherwise>
+		<c:url var="simulationUrl" value="/campaign-browser/test-suites/${itemId}/deletion-simulation" />
+		<c:url var="confirmUrl" value="/campaign-browser/test-suits/${itemId}" />
+	</c:when>
 </c:choose>
 
 <f:message var='deleteMessageStart' key='dialog.label.delete-node.label.start'/>
@@ -84,17 +92,24 @@ function sendContextualDeletionSimulationRequest(jqDialog){
 
 	$.ajax({
 		url :url,
-		data :{"nodeIds[]": [${itemId}] },
-		type : 'post',
+		type : 'get',
 		dataType : 'json'
 	})			
 	.success(function(data){
 		
-		jqDialog.html("<table><tr><td><img src='${servContext}/images/messagebox_confirm.png'/></td><td><table><tr><td><span>${deleteMessageStart} <span class='red-warning-message'>${deleteMessage}</span> </span></td></tr><tr><td>${deleteMessageCantBeUndone}</td></tr><tr><td class='bold-warning-message'>${deleteMessageConfirm}</td></tr></table></td></tr></table>");
+		var messages = "";
+		if(data.messages.length>0){			
+			messages = "<ul>";
+			for (var i=0;i<data.messages.length;i++){
+				messages += "<li>"+data.messages[0]+"</li>";
+			}
+			messages += "</ul>";
+		}	
 		
-		if(data !== null){
-			jqDialog.html("<div>"+data.message+"</div>"+ jqDialog.html()); 
-		}		
+		var dialogHtml = messages + "<table><tr><td><img src='${servContext}/images/messagebox_confirm.png'/></td><td><table><tr><td><span>${deleteMessageStart} <span class='red-warning-message'>${deleteMessage}</span> </span></td></tr><tr><td>${deleteMessageCantBeUndone}</td></tr><tr><td class='bold-warning-message'>${deleteMessageConfirm}</td></tr></table></td></tr></table>";
+		
+		jqDialog.html(dialogHtml);
+		
 	})
 	.fail(function(){
 		jqDialog.dialog("close"); <%-- the standard failure handler should kick in, no need for further treatment here. --%>
@@ -110,11 +125,10 @@ function sendContextualDeletionSimulationRequest(jqDialog){
 function confirmDeletion(){
 	
 	var jqDialog = $( "#delete-contextual-node-dialog_${openedBy}" );
-	var url = "${confirmationUrl}";
+	var url = "${confirmUrl}";
 
 	$.ajax({
-		url : url+"?nodeIds[]="+${itemId},
-		dataType : "json",
+		url : url,
 		type : 'DELETE'
 	})
 	.success(function(list){			
