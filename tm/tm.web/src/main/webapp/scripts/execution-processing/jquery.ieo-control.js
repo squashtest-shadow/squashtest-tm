@@ -81,6 +81,20 @@ define([ "jquery", "module", "jquery.cookie", "jqueryui" ], function($, module) 
 				}
 			});
 
+			this.getUntestableButton().button({
+				'text' : false,
+				'icons' : {
+					'primary' : 'execute-untestable'
+				}
+			});
+
+			this.getBlockedButton().button({
+				'text' : false,
+				'icons' : {
+					'primary' : 'execute-blocked'
+				}
+			});
+
 			this.getFailedButton().button({
 				'text' : false,
 				'icons' : {
@@ -119,6 +133,14 @@ define([ "jquery", "module", "jquery.cookie", "jqueryui" ], function($, module) 
 			var cbox = this.getStatusCombo();
 			cbox.val(status);
 			this._updateComboIcon();
+		},
+		
+		setUntestable : function(){
+			this.setStatus('UNTESTABLE');
+		},
+		
+		setBlocked : function(){
+			this.setStatus('BLOCKED');
 		},
 
 		setSuccess : function() {
@@ -159,6 +181,14 @@ define([ "jquery", "module", "jquery.cookie", "jqueryui" ], function($, module) 
 
 		getStopButton : function() {
 			return this.element.find('.stop-execution');
+		},
+		
+		getUntestableButton : function(){
+			return this.element.find('.step-untestable');
+		},
+		
+		getBlockedButton : function(){
+			return this.element.find('.step-blocked');
 		},
 
 		getFailedButton : function() {
@@ -272,6 +302,9 @@ define([ "jquery", "module", "jquery.cookie", "jqueryui" ], function($, module) 
 
 			btnState = (this._isPrologue()) ? "disable" : "enable";
 			this.getPreviousStepButton().button(btnState);
+			
+			this.getUntestableButton().button(btnState);
+			this.getBlockedButton().button(btnState);
 			this.getSuccessButton().button(btnState);
 			this.getFailedButton().button(btnState);
 

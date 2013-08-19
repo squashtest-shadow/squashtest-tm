@@ -134,12 +134,21 @@ table.datepicker-table td.datepicker-table-col {
 /*******************************
 	information panel / description panel
 ********************************/
+
+.execute-untestable {
+	background-image: url("../images/Icon_White.png") !important;
+}
+
+.execute-blocked {
+	background-image: url("../images/Icon_Yellow.png") !important;
+}
+
 .execute-success {
-	background-image: url("../images/Button_Exec_Passed.png") !important;
+	background-image: url("../images/Icon_Green.png") !important;
 }
 
 .execute-failure {
-	background-image: url("../images/Button_Exec_Failed.png") !important;
+	background-image: url("../images/Icon_Red.png") !important;
 }
 
 .execute-stop {

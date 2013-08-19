@@ -215,6 +215,8 @@ define([ "jquery", "jquery.squash.messagedialog" ], function($) {
 			var nextButton = control.ieoControl("getNextStepButton");
 			var prevButton = control.ieoControl("getPreviousStepButton");
 			var stopButton = control.ieoControl("getStopButton");
+			var untsButton = control.ieoControl("getUntestableButton");
+			var blckButton = control.ieoControl("getBlockedButton");
 			var succButton = control.ieoControl("getSuccessButton");
 			var failButton = control.ieoControl("getFailedButton");
 			var mvTCButton = control.ieoControl("getNextTestCaseButton");
@@ -255,6 +257,22 @@ define([ "jquery", "jquery.squash.messagedialog" ], function($) {
 				$.post(getStatusUrl(), {
 					executionStatus : "FAILURE"
 				}).success(function() {
+					self.navigateNext();
+				});
+			});
+			
+			untsButton.click(function(){
+				$.post(getStatusUrl(),{
+					executionStatus : "UNTESTABLE"
+				}).success(function(){
+					self.navigateNext();
+				});
+			});
+			
+			blckButton.click(function(){
+				$.post(getStatusUrl(),{
+					executionStatus : "BLOCKED"
+				}).success(function(){
 					self.navigateNext();
 				});
 			});

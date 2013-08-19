@@ -78,6 +78,8 @@
 				<td class="right-aligned">
 					<label class="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
 					<comp:execution-status-combo name="executionStatus" id="step-status-combo" />
+					<button class="step-untestable"><f:message key="execute.header.button.untestable.title" /></button>
+					<button class="step-blocked"><f:message key="execute.header.button.blocked.title" /></button>
 					<button class="step-failed"><f:message key="execute.header.button.failure.title" /></button>
 					<button class="step-succeeded"><f:message key="execute.header.button.passed.title" /></button>
 				</td>

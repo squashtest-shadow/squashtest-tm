@@ -122,13 +122,14 @@
 				function testComplete() {	
 
 					if (!isOer) {
-						$.squash.openMessage("<f:message key='popup.title.info' />",  "${ completedMessage }","300").done(function() {
+						oneShotConfirm("<f:message key='popup.title.info' />",  "${ completedMessage }", "Ok", squashtm.message.cancel, 300).done(function() {
 							window.close();
 						});
 					} else if (hasNextTestCase) {
 						$('#execute-next-test-case').click();
-					} else { // oer without next
-						$.squash.openMessage("<f:message key='popup.title.info' />","${ endTestSuiteMessage }","300").done(function() {
+					} else { 
+						// oer without next
+						oneShotConfirm("<f:message key='popup.title.info' />",  "${ endTestSuiteMessage }", "Ok", squashtm.message.cancel, 300).done(function() {
 							window.close();
 						});
 					}					
@@ -191,6 +192,31 @@
 					});		
 				}
 				
+				function initUntestableButton(){
+					$("#execute-untestable-button").button({
+						'text': false,
+						'icons' :{
+							'primary' : 'execute-untestable'
+						}
+					}).click(function(){
+						$.post('${ executeStatus }', {
+							executionStatus : "UNTESTABLE"
+						},  setStatusUntestable );
+					});		
+				}
+				
+				function initBlockedButton(){
+					$("#execute-blocked-button").button({
+						'text': false,
+						'icons' :{
+							'primary' : 'execute-blocked'
+						}
+					}).click(function(){
+						$.post('${ executeStatus }', {
+							executionStatus : "BLOCKED"
+						},  setStatusBlocked );
+					});		
+				}
 				
 				function initSuccessButton(){
 					$("#execute-success-button").button({
@@ -206,6 +232,7 @@
 					
 				}
 				
+				
 				function setStatusSuccess(){
 					$("#execution-status-combo").val("SUCCESS");			
 					statusComboChange();
@@ -214,6 +241,18 @@
 				
 				function setStatusFailure(){
 					$("#execution-status-combo").val("FAILURE");
+					statusComboChange();
+					navigateNext();
+				}
+				
+				function setStatusUntestable(){
+					$("#execution-status-combo").val("UNTESTABLE");			
+					statusComboChange();
+					navigateNext();
+				}
+				
+				function setStatusBlocked(){
+					$("#execution-status-combo").val("BLOCKED");
 					statusComboChange();
 					navigateNext();
 				}
@@ -267,6 +306,8 @@
 					initPreviousButton();
 					initStopButton();
 					<c:if test="${editable}">
+					initUntestableButton();
+					initBlockedButton();
 					initFailButton();
 					initSuccessButton();
 	
@@ -325,6 +366,12 @@
 							</label> 
 							<c:choose>
 							<c:when test="${editable }"><comp:execution-status-combo name="executionStatus" id="execution-status-combo" />
+							<button id="execute-untestable-button">
+								<f:message key="execute.header.button.untestable.title" />
+							</button>
+							<button id="execute-blocked-button">
+								<f:message key="execute.header.button.blocked.title" />
+							</button>							
 							<button id="execute-fail-button">
 								<f:message key="execute.header.button.failure.title" />
 							</button>
@@ -413,6 +460,8 @@
 				<div id="bugtracker-section-div"></div>
 
 				<%------------------------------ /bugs section -------------------------------%>
+	
+				
 			</div>
 			<comp:decorate-buttons />
 		</body>
