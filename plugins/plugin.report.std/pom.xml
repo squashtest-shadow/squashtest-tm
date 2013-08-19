@@ -113,16 +113,7 @@
 		<testSourceDirectory>src/test/groovy</testSourceDirectory>
 
 		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<_include>bnd.bnd</_include>
-					</instructions>
-				</configuration>
-			</plugin>
+
 			<!-- ====== SPOCK TESTS ====== -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -143,6 +134,17 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<_include>bnd.bnd</_include>
+					</instructions>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

@@ -29,9 +29,9 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
  */
 public class ReqCoverageByTestRequirementSingleDto {
 	/***
-	 * The name of the folder which contains the requirement. Default value is " - "
+	 * The name of the parent which contains the requirement. Default value is " - "
 	 */
-	private String folder = " - ";
+	private String parent = " - ";
 	/***
 	 * The requirement reference and name
 	 */
@@ -56,12 +56,12 @@ public class ReqCoverageByTestRequirementSingleDto {
 
 	// ACCESSORS
 
-	public String getFolder() {
-		return folder;
+	public String getParent() {
+		return parent;
 	}
 
-	public void setFolder(String folder) {
-		this.folder = folder;
+	public void setParent(String parent) {
+		this.parent = parent;
 	}
 
 	public String getReference() {

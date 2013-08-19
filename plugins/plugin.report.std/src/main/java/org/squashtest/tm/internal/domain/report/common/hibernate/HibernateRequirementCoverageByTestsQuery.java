@@ -20,10 +20,12 @@
  */
 package org.squashtest.tm.internal.domain.report.common.hibernate;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.hibernate.Query;
@@ -34,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.internal.domain.report.common.dto.ReqCoverageByTestProjectDto;
 import org.squashtest.tm.internal.domain.report.common.dto.ReqCoverageByTestRequirementSingleDto;
@@ -70,6 +71,31 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	private static final int REPORT_LAST_VERSION = 2;
 
 	private static final String PROJECT_IDS = "projectIds[]";
+	
+	
+	private static final String FIND_REQUIREMENT_PARENT_NAMES = 
+			"select rlnc.descendant_id, res.name "+
+			"from RLN_RELATIONSHIP rlnc  "+
+			"inner join REQUIREMENT_FOLDER rf on rlnc.ancestor_id = rf.rln_id  "+
+			"inner join RESOURCE res on rf.res_id = res.res_id "+
+			"where rlnc.descendant_id in (:reqIds) "+
+
+			"UNION "+
+
+			"select rlnc.descendant_id, res.name "+
+			"from RLN_RELATIONSHIP rlnc  "+
+			"inner join REQUIREMENT r on rlnc.ancestor_id = r.rln_id  "+
+			"inner join RESOURCE res on r.current_version_id = res.res_id "+
+			"where rlnc.descendant_id in (:reqIds) "+
+
+			"UNION "+
+
+			"select req.rln_id, '-' "+
+			"from REQUIREMENT req  "+
+			"left join RLN_RELATIONSHIP rlnc on req.rln_id = rlnc.descendant_id "+
+			"where rlnc.descendant_id is null "+
+			"and req.rln_id in (:reqIds) ";
+	
 
 	public HibernateRequirementCoverageByTestsQuery() {
 		Map<String, ReportCriterion> criterions = getCriterions();
@@ -102,88 +128,92 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<?> doInSession(Session session) {
+		
+		// find the ids of all the requirements encompassed in the scope of this report instance.
+		List<Long> ids = findRequirementIds(session);
 
-		// Get projectIds
-		List<Long> ids = new ArrayList<Long>();
-		// Check if there's projects id
-		boolean isProjectIds = checkIfThereIsProjectsIds(ids);
+		// find the corresponding requirements
+		List<Requirement> requirements = findRequirements(session, ids);
+		
+		// find the name of their parents. The result is a pair of (requirementid, parentname)
+		List<Object[]> parentsNameOfRequirements = findParentsNames(session, ids);
 
-		// Forced to get data with two requests so :
-		// get requirement and requirementLibraryNode
-		Query queryReqAndRLN = createReqAndRLNQuery(isProjectIds, session, ids);
-
-		// create folders query
-		Query queryFolders = createFoldersQuery(isProjectIds, session, ids);
-
-		// Get the folders
-		List<RequirementFolder> folderList = queryFolders.list();
-
-		// Initiate result list
-		List<Object[]> results = new ArrayList<Object[]>();
-		fillResultListWithRequirementAndFolders(queryReqAndRLN, folderList, results);
-
-		return results;
+		// pair the requirements with their parent's name
+		List<Object[]> requirementsAndParents = pairRequirementAndParents(requirements, parentsNameOfRequirements);
+		
+		// return
+		return requirementsAndParents;
 	}
+
 	
-	private Query createFoldersQuery(boolean isProjectIds, Session session, List<Long> ids){
-		String hqlQueryFolders = "from RequirementFolder";
-		// Add projects id parameter if defined
-		if (isProjectIds) {
-			hqlQueryFolders += " where project in (:projectIds)";
-		}
-		Query queryFolders = session.createQuery(hqlQueryFolders);
-		// Set the parameter if defined
-		if (isProjectIds) {
-			queryFolders.setParameterList("projectIds", ids, LongType.INSTANCE);
-		}
-		return queryFolders;
-	}
-	
-	private Query createReqAndRLNQuery(boolean isProjectIds, Session session, List<Long> ids) {
-		String hqlQueryReqAndRLN = "select r, rld from Requirement r, RequirementLibraryNode rld where r.id = rld.id";
-		if (isProjectIds) {
-			hqlQueryReqAndRLN += " and r.project in (:projectIds)";
-		}
-		Query queryReqAndRLN = session.createQuery(hqlQueryReqAndRLN);
-		if (isProjectIds) {
-			queryReqAndRLN.setParameterList("projectIds", ids, LongType.INSTANCE);
-		}
-		return queryReqAndRLN;
-	}
-
-	@SuppressWarnings("unchecked")
-	private void fillResultListWithRequirementAndFolders(Query queryFirstStep, List<RequirementFolder> folderList,
-			List<Object[]> results) {
-		// Browse the requirement and requirementLibraryNode to get the folder which contains the requirement and fill
-		// the result list
-		for (Object[] requirements : (List<Object[]>) queryFirstStep.list()) {
-			Object[] resultArray = new Object[2];
-			// First the requirement
-			resultArray[0] = requirements[0];
-			resultArray[1] = null;
-			// check the folder
-			for (RequirementFolder folder : folderList) {
-				if (folder.getContent().contains(requirements[1])) {
-					// Add the folder if it exists
-					resultArray[1] = folder;
-				}
-			}
-			// add to the result list
-			results.add(resultArray);
-		}
-	}
-
-	private boolean checkIfThereIsProjectsIds(List<Long> ids) {
-		boolean isProjectIds = false;
+	private List<Long> findRequirementIds(Session session){
+		List<Long> projectIds = new ArrayList<Long>();
+		boolean runOnAllProjects = true;
 		if (this.getCriterions().get(PROJECT_IDS).getParameters() != null) {
-			isProjectIds = true;
+			runOnAllProjects = true;
 			// Put ids in a list
 			for (Object id : this.getCriterions().get(PROJECT_IDS).getParameters()) {
-				ids.add(Long.parseLong((String) id));
+				projectIds.add(Long.parseLong((String) id));
 			}
 		}
-		return isProjectIds;
+		
+		String hql = "select req.id from Requirement req";
+		if (! runOnAllProjects){
+			hql +=" where req.project.id in (:projectIds)";
+		}
+		
+		Query query = session.createQuery(hql);
+		
+		if (! runOnAllProjects){
+			query.setParameterList("projectIds", projectIds, LongType.INSTANCE);
+		}
+		
+		return query.list();
 	}
+	
+	private List<Requirement> findRequirements(Session session, List<Long> ids) {
+		
+		return session.createQuery("from Requirement where id in (:ids)")
+					  .setParameterList("ids", ids, LongType.INSTANCE)
+					  .list();
+		
+	}
+
+	
+	private List<Object[]> findParentsNames(Session session, List<Long> ids){
+		
+		return session.createSQLQuery(FIND_REQUIREMENT_PARENT_NAMES)
+					  .setParameterList("reqIds", ids, LongType.INSTANCE)
+					  .list();
+	}
+
+	
+	private List<Object[]> pairRequirementAndParents(List<Requirement> requirements, List<Object[]>parentsNameOfRequirements){
+		
+		List<Object[]> requirementsAndParents = new LinkedList<Object[]>();
+		
+		for (Requirement req : requirements){
+			
+			ListIterator<Object[]> iterNames = parentsNameOfRequirements.listIterator();
+			
+			while (iterNames.hasNext()){
+				Object[] tuple = iterNames.next();
+				Long id = ((BigInteger)tuple[0]).longValue();
+				if (id.equals(req.getId())){
+					requirementsAndParents.add(new Object[]{req, (String)tuple[1]});
+					iterNames.remove();
+					break;
+				}
+			}
+			
+		}
+		
+		return requirementsAndParents;
+		
+	}
+
+	
+	// ************************ post processing part **********************************
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -225,14 +255,14 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 			// Current project
 			ReqCoverageByTestProjectDto currentProject;
 			// easier to identify the two objects this way
-			Requirement requirement = ((Requirement) objects[0]);
-			RequirementFolder folder = ((RequirementFolder) objects[1]);
+			Requirement requirement = (Requirement) objects[0];
+			String parentName = (String) objects[1];
 			// Get current project Id from requirement
 			Long projectId = requirement.getProject().getId();
 
 			// Create the requirementSingleDtos depending on the mode
 			List<ReqCoverageByTestRequirementSingleDto> requirementSingleDtos = createRequirementSingleDtos(
-					requirement, folder);
+					requirement, parentName);
 
 			currentProject = findProjectDto(projectList, requirement, projectId);
 			// add the requirementDtos
@@ -305,41 +335,41 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	 * @return a ReqCoverageByTestRequirementSingleDto
 	 */
 	private List<ReqCoverageByTestRequirementSingleDto> createRequirementSingleDtos(Requirement requirement,
-			RequirementFolder folder) {
+			String parentName) {
 		Object mode = this.criterions.get("mode").getParameters()[0];
 		int reqMode = Integer.parseInt((String) mode);
 		List<ReqCoverageByTestRequirementSingleDto> reqCovByTestReqSingleDtos = new ArrayList<ReqCoverageByTestRequirementSingleDto>();
 		switch (reqMode) {
 		case REPORT_EACH_VERSION:
 			LOGGER.debug("creation of reqCovByTestReqSingleDtos for Report mode 1 : all versions of requirement taken into account");
-			createSingleDtoReportEachVersion(requirement, folder, reqCovByTestReqSingleDtos);
+			createSingleDtoReportEachVersion(requirement, parentName, reqCovByTestReqSingleDtos);
 			break;
 		case REPORT_LAST_VERSION:
 			LOGGER.debug("creation of reqCovByTestReqSingleDtos for Report mode 2 : only last version of requirement taken into account");
-			createSingleDtoReportLastVersion(requirement, folder, reqCovByTestReqSingleDtos);
+			createSingleDtoReportLastVersion(requirement, parentName, reqCovByTestReqSingleDtos);
 			break;
 		default:
 			LOGGER.warn("mode selection problem : default value");
 			LOGGER.debug("creation of reqCovByTestReqSingleDtos for Report default mode : all versions of requirement taken into account");
-			createSingleDtoReportEachVersion(requirement, folder, reqCovByTestReqSingleDtos);
+			createSingleDtoReportEachVersion(requirement, parentName, reqCovByTestReqSingleDtos);
 			break;
 		}
 
 		return reqCovByTestReqSingleDtos;
 	}
 
-	private void createSingleDtoReportEachVersion(Requirement requirement, RequirementFolder folder,
+	private void createSingleDtoReportEachVersion(Requirement requirement, String parentName,
 			List<ReqCoverageByTestRequirementSingleDto> reqCovByTestReqSingleDtos) {
 		List<RequirementVersion> requirementVersions = requirement.getRequirementVersions();
 		for (RequirementVersion version : requirementVersions) {
-			ReqCoverageByTestRequirementSingleDto requirementSingleDto = createRequirementSingleDto(version, folder,
+			ReqCoverageByTestRequirementSingleDto requirementSingleDto = createRequirementSingleDto(version, parentName,
 					requirement);
 			reqCovByTestReqSingleDtos.add(requirementSingleDto);
 		}
 	}
 
 	private ReqCoverageByTestRequirementSingleDto createRequirementSingleDto(RequirementVersion version,
-			RequirementFolder folder, Requirement requirement) {
+			String parentName, Requirement requirement) {
 		ReqCoverageByTestRequirementSingleDto requirementSingleDto = new ReqCoverageByTestRequirementSingleDto();
 		requirementSingleDto.setLabel(requirement.getName());
 		requirementSingleDto.setReference(requirement.getReference());
@@ -348,17 +378,17 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		requirementSingleDto.setVersionNumber(version.getVersionNumber());
 		int verifyingTestCases = version.getVerifyingTestCases().size();
 		requirementSingleDto.setAssociatedTestCaseNumber(verifyingTestCases);
-		if (folder != null) {
-			requirementSingleDto.setFolder(folder.getName());
+		if (parentName != null) {
+			requirementSingleDto.setParent(parentName);
 		}
 
 		return requirementSingleDto;
 	}
 
-	private void createSingleDtoReportLastVersion(Requirement requirement, RequirementFolder folder,
+	private void createSingleDtoReportLastVersion(Requirement requirement, String parentName,
 			List<ReqCoverageByTestRequirementSingleDto> reqCovByTestReqSingleDtos) {
 		RequirementVersion lastVersion = requirement.getCurrentVersion();
-		ReqCoverageByTestRequirementSingleDto requirementSingleDto = createRequirementSingleDto(lastVersion, folder,
+		ReqCoverageByTestRequirementSingleDto requirementSingleDto = createRequirementSingleDto(lastVersion, parentName,
 				requirement);
 		reqCovByTestReqSingleDtos.add(requirementSingleDto);
 	}
