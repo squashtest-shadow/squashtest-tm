@@ -57,8 +57,8 @@ requirejs.config({
 				"jqueryui" : "lib/jquery/jquery-ui-1.9.0.custom.min",
 				"jquery.dialog-patch" : "jquery/jquery.dialog-patch",
 				"datatables" : "datatables/jquery.dataTables.min",
-				"squash.datatables" : "squashtest/jquery.squashtm.datatables",
-				"jquery.squash.datatables" : "squashtest/jquery.squashtm.datatables.v2",
+				"squash.datatables" : "squashtable/jquery.squashtm.datatables",
+				"jquery.squash.datatables" : "squashtable/jquery.squashtm.datatables.v2",
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 				"underscore" : "lib/underscore/underscore-1.4.4-min",
 				"backbone" : "lib/backbone/backbone-1.0.0-min",
@@ -91,7 +91,7 @@ requirejs.config({
 				"squash.cssloader" : "squash/squash.cssloader",
 				"squash.translator" : "squash/squash.translator",
 				"squash.resizer" : "squash/squashtm.tree-page-resizer",
-				"squash.table-collapser" : "squashtest/jquery.squash.table-collapser",
+				"squash.table-collapser" : "squashtable/jquery.squash.table-collapser",
 				"squash.session-pinger" : "squashtest/jquery.squash.session-pinger",
 				"jquery.tagit" : "jquery/tag-it.min",		
 				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit",
@@ -146,8 +146,7 @@ requirejs.config({
 				"jqueryui" : [ "jquery" ],
 				"datatables" : [ "jqueryui" ],
 				"squash.datatables" : {
-					deps : [ "datatables",
-							"squashtest/jquery.squashtm.tableDnD.ext" ],
+					deps : [ "datatables", "squashtable/jquery.squashtm.tableDnD.ext" ],
 					exports : "squashtm.datatables"
 				},
 				"jquery.squash.datatables" : {
