@@ -18,8 +18,56 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(function() {
 
+/*
+ * configuration an object as follow :
+ * 
+ * {
+ *		permissions : {
+ *			editable : boolean, is the table content editable ?
+ *			executable : boolean, can the content be executed ?	
+ * 		},
+ * 		basic : {
+ * 			iterationId : the id of the current iteration
+ * 		}
+ * }
+ * 
+ */
+
+define(['jquery', 'squash.translator', 'jquery.squash.datatables'],function($, translator) {
+
+
+	function enhanceConfiguration(origconf){
+		
+		var conf = $.extend({}, origconf);
+		
+		var baseURL = squashtm.app.contextRoot;
+		
+		conf.messages = translator.get({
+			
+		});
+		
+		conf.urls = {
+			 itemsUrl = baseURL + '/iterations/'+conf.basic.iterationId+'/{itemIds}'
+		};
+		
+		return conf;
+	}
 	
+	
+	function createTableConfiguration(initconf){
+		
+	}
+	
+	
+	function init(origconf){		
+		var conf = enhanceConfiguration(origconf);
+		
+	}
+	
+	
+	return {
+		init : init
+	};
 	
 });

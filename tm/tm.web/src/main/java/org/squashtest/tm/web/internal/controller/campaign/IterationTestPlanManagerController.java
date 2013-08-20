@@ -154,21 +154,12 @@ public class IterationTestPlanManagerController {
 		return jsonTestCaseBuilder.get().locale(locale).entities(testCases).toJson();
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/non-belonging-test-cases", method = RequestMethod.POST, params = TESTPLANS_IDS_REQUEST_PARAM)
-	public @ResponseBody
-	String removeTestCasesFromCampaign(@RequestParam(TESTPLANS_IDS_REQUEST_PARAM) List<Long> testPlansIds,
-			@PathVariable long iterationId) {
-		// check if at least one test plan was already executed and therefore
-		// not removed
-		Boolean response = iterationTestPlanManagerService.removeTestPlansFromIteration(testPlansIds, iterationId);
-		return response.toString();
-	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
-	String removeTestCaseFromIteration(@PathVariable("testPlanId") long testPlanId, @PathVariable long iterationId) {
+	String removeTestCaseFromIteration(@PathVariable("testPlanIds") List<Long> testPlanIds, @PathVariable long iterationId) {
 		// check if a test plan was already executed and therefore not removed
-		Boolean response = iterationTestPlanManagerService.removeTestPlanFromIteration(testPlanId);
+		Boolean response = iterationTestPlanManagerService.removeTestPlansFromIteration(testPlanIds, iterationId);
 		return response.toString();
 	}
 

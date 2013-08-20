@@ -58,12 +58,10 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 
 <s:url var="showExecutionUrl" value="/executions" />
+<s:url var="dtMessagesUrl" value="/datatables/messages" />
 
-<f:message var="cannotCreateExecutionException"
-	key="squashtm.action.exception.cannotcreateexecution.label" />
-<f:message var="unauthorizedDeletion"
-	key="dialog.remove-testcase-association.unauthorized-deletion.message" />
-
+<f:message var="cannotCreateExecutionException" key="squashtm.action.exception.cannotcreateexecution.label" />
+<f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message" />
 <f:message var="statusUntestable" key="execution.execution-status.UNTESTABLE" />
 <f:message var="statusBlocked" key="execution.execution-status.BLOCKED" />
 <f:message var="statusFailure" key="execution.execution-status.FAILURE" />
@@ -73,6 +71,32 @@
 <f:message var="statusError" key="execution.execution-status.ERROR" />
 <f:message var="statusWarning" key="execution.execution-status.WARNING" />
 
+
+
+<table id="test-plans-table" data-def="language=${dtMessagesUrl}, ajaxsource=${tableModelUrl}, hover"  >
+	<thead>
+		<tr>
+			<th data-def="map=entity-index, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
+			<th data-def="map=project-name, sortable"><f:message key="label.project" /></th>
+			<th data-def="map=exec-mode, sortable, narrow, sClass=exec-mode">&nbsp;</th><%-- exec mode icon --%>
+			<th data-def="map=reference, sortable"><f:message key="label.Reference"/></th>
+			<th data-def="map=tc-name, sortable, sClass=toggle-row"><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
+			<th data-def="map=importance, sortable"><f:message key="iteration.executions.table.column-header.importance.label" /></th>
+			<th data-def="map=dataset, sWidth=10%"><f:message key="label.Dataset" /></th>
+			<th data-def="map=suite, sWidth=10%"><f:message key="iteration.executions.table.column-header.suite.label" /></th>
+			<th data-def="map=status, sortable, sWidth=10%, sClass=has-status status-combo"><f:message key="iteration.executions.table.column-header.status.label" /></th>
+			<th data-def="map=last-exec-by, sortable, sWidth=10%, sClass=assignable-combo"><f:message key="iteration.executions.table.column-header.user.label" /></th>
+			<th data-def="map=last-exec-on, sortable, sWidth=10%"><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>
+			<th data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>	
+			<th data-def="map=empty-delete-holder, delete-button=#iter-test-plan-delete-row-dialog">&nbsp;</th>				
+		</tr>
+	</thead>
+	<tbody><%-- Will be populated through ajax --%></tbody>
+</table>
+
+<div id="iter-test-plan-delete-row-dialog" class="not-displayed popup-dialog" title="<f:message key="test-case.verified_requirement_item.remove.button.label" />">
+	<span style="font-weight:bold;"><f:message key="dialog.remove-testcase-association.message" /></span>
+</div>
 
 <%--
 	TODO : that could use some refactoring too.
@@ -268,11 +292,13 @@
 	}			
 
 	function testPlanTableRowCallback(row, data, displayIndex) {
+		/*
 		addHLinkToTestPlanName(row, data);
 		addIconToTestPlanName(row, data);
 		<c:if test="${executable}">
 		addExecuteIconToTestPlan(row, data);
 		</c:if>
+		*/
 		addStyleToDeletedTestCaseRows(row, data);
 		addIterationTestPlanItemExecModeIcon(row, data);
 		selectCurrentStatus(row,data);
@@ -620,35 +646,12 @@
 		/* ************************** datatable settings ********************* */
 		
 		var tableSettings = {
-				"oLanguage": {
-					"sUrl": "<c:url value='/datatables/messages' />"
-				},
-				"sAjaxSource" : "${tableModelUrl}", 
 				"fnRowCallback" : testPlanTableRowCallback,
-				"fnDrawCallback" : testPlanDrawCallback,
-				"aoColumnDefs": [
-					{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
-					{'bSortable': false, 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
-					{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'project-name'},
-					{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'exec-mode', 'sWidth': '2em', 'sClass' : "exec-mode"},
-					{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'reference'},
-					{'bSortable': false, 'aTargets': [5], 'mDataProp' : 'tc-name'},
-					{'bSortable': false, 'aTargets': [6], 'mDataProp' : 'importance'},
-					{'bSortable': false, 'sWidth': '10%', 'aTargets': [7], 'mDataProp' : 'dataset'},
-					{'bSortable': false, 'sWidth': '10%', 'aTargets': [8], 'mDataProp' : 'suite'},
-					{'bSortable': false, 'sWidth': '10%', 'sClass': 'has-status status-combo', 'aTargets': [9], 'mDataProp' : 'status'},
-					{'bSortable': false, 'sWidth': '10%', 'sClass': 'assignable-combo', 'aTargets': [10], 'mDataProp' : 'last-exec-by'},
-					{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [11], 'mDataProp' : 'assigned-to'},
-					{'bSortable': false, 'sWidth': '10%', 'aTargets': [12], 'mDataProp' : 'last-exec-on'},
-					{'bSortable': false, 'bVisible': false, 'aTargets': [13], 'mDataProp' : 'is-tc-deleted'},
-					{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered execute-button', 'aTargets': [14], 'mDataProp' : 'empty-execute-holder'}, 
-					{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [15], 'mDataProp' : 'empty-delete-holder'} 
-					]
+				"fnDrawCallback" : testPlanDrawCallback
 			};		
 		
 			var squashSettings = {
 					
-				enableHover : true,
 				executionStatus : {
 					untestable : "${statusUntestable}",
 					blocked : "${statusBlocked}",
@@ -658,10 +661,6 @@
 					ready : "${statusReady}",
 					error : "${statusError}",
 					warning : "${statusWarning}",
-				},
-				confirmPopup : {
-					oklabel : '<f:message key="label.Yes" />',
-					cancellabel : '<f:message key="label.Cancel" />'
 				}
 				
 			};
@@ -677,6 +676,21 @@
 					refreshTestPlans();
 					checkForbiddenDeletion(data);
 					refreshStatistics();
+				}
+			};
+			
+			squashSettings.toggleRows = {
+				'td.toggle-row' :	function(table, jqold, jqnew){
+					
+					var data = table.fnGetData(jqold.get(0)),
+						url = "${testPlanExecutionsUrl}" + data['entity-id'];
+						
+					jqnew.load(url, function(){				
+						<c:if test="${ executable }">
+						//apply the post processing on the content
+						expandedRowCallback(jqnew);
+						</c:if>
+					});
 				}
 			};
 				

@@ -190,19 +190,14 @@ td.double-narrow{
 
 
 
-.small-arrow{
-	width : 14px;
-	height : 7px;
-	background-repeat : no-repeat;
-	background-position : center center;
-}
-
 .small-right-arrow{
-	background-image:url(../images/arrow_right.gif);
+	background :url(../images/arrow_right.gif) no-repeat left center;
+	padding-left : 10px;
 }
 
 .small-down-arrow{
-	background-image:url(../images/arrow_down.gif);
+	background:url(../images/arrow_down.gif) no-repeat left center;
+	padding-left : 10px;
 }
 
 .execute-arrow{

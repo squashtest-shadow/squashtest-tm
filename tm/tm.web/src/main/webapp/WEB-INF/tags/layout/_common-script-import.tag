@@ -89,8 +89,8 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 <!-- --------------------DataTables library imports. SHOULD BE IMPORTED BEFORE DATATABLE USAGE--------------------------------------------- -->
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/datatables/jquery.dataTables.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/jquery.squashtm.datatables.js"></script>
-
+<!-- <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/jquery.squashtm.datatables.js"></script> -->
+<script type="text/javascript" src="http://localhost/scripts/scripts/squashtable/jquery.squashtm.datatables.js"></script>
 <%-- transitional javascript --%>
 
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/jquery.squashtm.datatables.v2.js"></script>

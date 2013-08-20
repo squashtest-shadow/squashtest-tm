@@ -58,7 +58,7 @@ requirejs.config({
 				"jquery.dialog-patch" : "jquery/jquery.dialog-patch",
 				"datatables" : "datatables/jquery.dataTables.min",
 				"squash.datatables" : "squashtable/jquery.squashtm.datatables",
-				"jquery.squash.datatables" : "squashtable/jquery.squashtm.datatables.v2",
+				"jquery.squash.datatables" : "http://localhost/scripts/scripts/squashtable/jquery.squashtm.datatables.v2",
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 				"underscore" : "lib/underscore/underscore-1.4.4-min",
 				"backbone" : "lib/backbone/backbone-1.0.0-min",

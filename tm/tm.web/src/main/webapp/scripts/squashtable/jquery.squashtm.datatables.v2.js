@@ -195,6 +195,27 @@
  * alternate to the above, uses css class to find its target -isOpenInTab : boolean to set the target of the url to
  * "_blank" or not.
  * 
+ * ============== Toggable rows ===============================================
+ * 
+ * Member name : 'toggleRows'
+ * 
+ * Coonfiguration as follow : 
+ * 
+ * {
+ * 	toggleRows : {
+ * 		'<css-selector-1>' : url where to load the content of an expanded row when the elements selected by 'css-selector-1' 
+ * 							are clicked.
+ * 
+ *		'<css-selector-2>' : function(table, jqExpandedRow, jqNewRow){
+ * 			this function will load the content of an expanded row when the elements selected 
+ * 			by 'css-selector-2' are clicked.
+ *			},
+ *		...(more of them)
+ * 		}
+ * 	}
+ * 
+ * }
+ * 
  * ============== Add Buttons to a cell =======================================
  * 
  * -buttons : if the property 'buttons' is set, then buttons will be added for each case described in the buttons table.
@@ -537,18 +558,21 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	}
 
 	function _addHLinkToCellText(td, url, isOpenInTab) {
-
-		var link = $('<a></a>');
+		var $td = $(td),
+			link = $('<a></a>');
+		
 		link.attr('href', url);
 		if (isOpenInTab) {
 			link.attr('target', '_blank');
 		}
 
-		$(td).contents().filter(function() {
+		$td.contents().filter(function() {
 			// IE doesn't define the constant Node so we'll use constant value
 			// instead of Node.TEXT_NODE
 			return this.nodeType == 3;
 		}).wrap(link);
+		
+		return $td.find('a');
 	}
 
 	function _dereferenceNestedProperties(data, key) {
@@ -1036,6 +1060,63 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			}
 		}
 	}
+	
+	
+	function _configureToggableRows(){
+		
+		var toggleSettings = this.squashSettings.toggleRows || {};
+		var ppt;
+		var table = this;	
+		
+		for (selector in toggleSettings){
+			
+			// adds a draw callback. It will be then executed every time the table is reloaded 
+			this.drawcallbacks.push(function(){		
+				this.find(selector).each(function(idx,cell){
+					var link = table.addHLinkToCellText(cell, 'javascript:void(0)');
+					link.addClass('small-right-arrow');					
+				});
+			});
+			
+			// click handler (executed one time only).
+			var loader = toggleSettings[selector];
+			this.on('click', selector+'> a', function(){
+
+				var jqlink = $(this),
+					ltr = jqlink.parents('tr').get(0);
+				
+				if (! jqlink.hasClass('opened')){
+					
+					var rowClass = ($(ltr).hasClass("odd")) ? "odd" : "even",
+						$ltr = $(ltr),
+						$newTr = $(table.fnOpen(ltr, "   ", ""));
+					
+					$newTr.addClass(rowClass);
+					
+					jqlink.removeClass('small-right-arrow').addClass('small-down-arrow');
+					
+					if (typeof loader === "string"){
+						// content loader assumed to be an url
+						$newTr.load(loader);	
+					}
+					else{
+						// content loader assumed to be a function. The (table, table,...) arguments is not a typo. 
+						loader.call(table, table, $ltr, $newTr);
+					}
+					
+				}
+				else{
+					table.fnClose(ltr);
+					jqlink.removeClass('small-down-arrow').addClass('small-right-arrow');
+				}
+				
+				
+			});
+			
+		}
+		
+		
+	}
 
 	/*******************************************************************************************************************
 	 * 
@@ -1103,8 +1184,17 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		var datatableEffective = $.extend(true, {}, datatableDefaults, domConf.table, datatableSettings);
 		var squashEffective = $.extend(true, {}, squashDefaults, domConf.squash, squashSettings);
 
+		
+		/* ************** internal properties ******************** */
+
+		this.drawcallbacks = [];
+		this.rowcalbacks = [];
+		
+		
+		
 		/* ************** squash init first *********************** */
 
+		
 		// save the settings in that instance
 		this.squashSettings = squashEffective;
 		this.dropHandler = _dropHandler;
@@ -1144,10 +1234,14 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			$.extend(this, squashEffective.functions);
 		}
 
-		// ************** preprocess the column definitions if need be
+		// ************** other preprocessings ****************
 
 		if (squashEffective.fixObjectDOMInit) {
 			_fix_mDataProp(datatableEffective);
+		}
+		
+		if (squashEffective.toggleRows){
+			_configureToggableRows.call(this);
 		}
 
 		/*
@@ -1166,28 +1260,40 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 		datatableEffective.fnPreDrawCallback = customPreDrawCallback;
 
-		// draw callback
+		//****************** draw callback *****************
+		
+		var aDrawCallbacks = this.drawcallbacks;
+		
+		aDrawCallbacks.push(_attachButtonsCallback);
+		aDrawCallbacks.push(_configureRichEditables);
+		aDrawCallbacks.push(_configureExecutionStatus);
+		aDrawCallbacks.push(_configureButtons);
+		aDrawCallbacks.push(_configureDeleteButtons);
+		aDrawCallbacks.push(_configureLinks);
+		aDrawCallbacks.push(_enableTableDragAndDrop);
+		aDrawCallbacks.push(_restoreTableSelection);
+		aDrawCallbacks.push(_applyFilteredStyle);
+		
+		
 		var userDrawCallback = datatableEffective.fnDrawCallback;
 
 		var customDrawCallback = function(oSettings) {
+			
 			if (userDrawCallback) {
 				userDrawCallback.call(this, oSettings);
 			}
-			this.attachButtonsCallback();
-			this.configureRichEditables();
-			this.configureExecutionStatus();
-			_configureButtons.call(this);
-			this.configureDeleteButtons();
-			this.configureLinks();
-			this.enableTableDragAndDrop();
-			this.restoreTableSelection();
-			this.applyFilteredStyle();
+			
+			var i=0, len = this.drawcallbacks.length;
+			for (i=0; i<len; i++){
+				this.drawcallbacks[i].call(this);
+			}
 
 		};
 
 		datatableEffective.fnDrawCallback = customDrawCallback;
 
-		// init complete callback
+		// ***************** init complete callback ***************
+		
 		var userInitCompleteCallback = datatableEffective.fnInitCompleteCallback;
 
 		var customInitCompleteCallback = function(oSettings) {

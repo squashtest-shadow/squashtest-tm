@@ -394,7 +394,6 @@
 				testCaseMultipleRemovalPopupId="delete-multiple-test-plan-dialog"
 				baseIterationURL="${iterationUrl}"
 				testCaseSingleRemovalPopupId="delete-single-test-plan-dialog" />
-			<aggr:iteration-test-plan-table />
 		</div>
 
 		<%--------------------------- Deletion confirmation pup for Test plan section ------------------------------------%>
