@@ -20,11 +20,13 @@
  */
 define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 		"app/util/StringUtil", "./SearchTextfieldWidget", "./SearchTextareaWidget", 
-		"./SearchMultiselectWidget", "./SearchDateWidget", "jquery.squash",
+		"./SearchMultiselectWidget", "./SearchDateWidget", "./SearchRangeWidget", 
+		"./SearchExistsWidget", "./SearchCheckboxWidget", "jquery.squash",
 		"jqueryui", "jquery.squash.togglepanel", "jquery.squash.datatables",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, _,
-		StringUtil, SearchTextfieldWidget, SearchTextareaWidget, SearchMultiselectWidget, SearchDateWidget) {
+		StringUtil, SearchTextfieldWidget, SearchTextareaWidget, SearchMultiselectWidget, 
+		SearchDateWidget, SearchRangeWidget, SearchExistsWidget, SearchCheckboxWidget) {
 
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
@@ -59,12 +61,20 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 							var i;
 							for(i=0; i<val.fields.length; i++){
 								if(val.fields[i].inputType == "textfield"){
-									self.makeTextField(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].internationalized);
+									self.makeTextField(tableid, val.fields[i].id, val.fields[i].title);
 								} else if (val.fields[i].inputType == "textarea"){
-									self.makeTextArea(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].internationalized);
+									self.makeTextArea(tableid, val.fields[i].id, val.fields[i].title);
 								} else if (val.fields[i].inputType == "multiselect"){
-									self.makeMultiselect(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].internationalized, val.fields[i].possibleValues);
-								}
+									self.makeMultiselect(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].possibleValues);
+								} else if (val.fields[i].inputType == "range"){
+									self.makeRangeField(tableid, val.fields[i].id, val.fields[i].title);
+								} else if (val.fields[i].inputType == "exists"){
+									self.makeExistsField(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].possibleValues);
+								} else if (val.fields[i].inputType == "date"){
+									self.makeDateField(tableid, val.fields[i].id, val.fields[i].title);
+								} else if (val.fields[i].inputType == "checkbox"){
+									self.makeCheckboxField(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].possibleValues);
+								} 
 							}
 							self.makeTogglePanel(val.id+"-panel-id",val.title,val.open);
 						}
@@ -73,63 +83,107 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			});
 		},
 				
-		makeTextField : function(tableId, textFieldId, textFieldTitle, internationalized) {
+		makeRangeField : function(tableId, textFieldId, textFieldTitle) {
 			
-			var title;
-			if(internationalized){
-				title = translator.get(textFieldTitle);
-			} else {
-				title = textFieldTitle;
-			}
-			 
+			var title = textFieldTitle;
+			
+			var source = $("#range-template").html();
+			var template = Handlebars.compile(source);
+			var context = {"text-range-id": textFieldId, 
+				           "text-range-title": title};
+			var html = template(context);
+			$("#"+tableId).append(html);
+			var escapedId = textFieldId.replace(".", "\\.");
+			$("#"+escapedId).searchRangeWidget();
+			
+		},
+		
+		makeExistsField : function(tableId, textFieldId, textFieldTitle, options) {
+			
+			var title = textFieldTitle;
+			var source = $("#exists-template").html();
+			var template = Handlebars.compile(source);
+			var context = {"text-exists-id": textFieldId, 
+				           "text-exists-title": title};
+			var html = template(context);
+			$("#"+tableId).append(html);
+			var escapedId = textFieldId.replace(".", "\\.");
+			$("#"+escapedId).searchExistsWidget();
+			$("#"+escapedId).searchExistsWidget('createDom', "F"+textFieldId, options);
+		},
+			
+		makeDateField : function(tableId, textFieldId, textFieldTitle) {
+			
+			var title = textFieldTitle;
+			var source = $("#date-template").html();
+			var template = Handlebars.compile(source);
+			var context = {"text-date-id": textFieldId, 
+				           "text-date-title": title};
+			var html = template(context);
+			$("#"+tableId).append(html);
+			var escapedId = textFieldId.replace(".", "\\.");
+			$("#"+escapedId).searchDateWidget();
+			$("#"+escapedId).searchDateWidget('createDom', "F"+textFieldId);
+		},
+			
+		makeCheckboxField : function(tableId, textFieldId, textFieldTitle, options) {
+
+			var title = textFieldTitle;
+			var source = $("#checkbox-template").html();
+			var template = Handlebars.compile(source);
+			var context = {"text-checkbox-id": textFieldId, 
+				           "text-checkbox-title": title};
+			var html = template(context);
+			$("#"+tableId).append(html);
+			var escapedId = textFieldId.replace(".", "\\.");
+			$("#"+escapedId).searchCheckboxWidget();
+			$("#"+escapedId).searchCheckboxWidget('createDom', "F"+textFieldId, options);
+			
+		},
+			
+		makeTextField : function(tableId, textFieldId, textFieldTitle) {
+			
+			var title = textFieldTitle;
 			var source = $("#textfield-template").html();
 			var template = Handlebars.compile(source);
 			var context = {"text-field-id": textFieldId, 
 				           "text-field-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
-			$("#"+textFieldId).searchTextFieldWidget();
-			$("#"+textFieldId).append($("#"+textFieldId).searchTextFieldWidget('createDom', "F"+textFieldId));
+			var escapedId = textFieldId.replace(".", "\\.");
+			$("#"+escapedId).searchTextFieldWidget();
+			$("#"+escapedId).append($("#"+escapedId).searchTextFieldWidget('createDom', "F"+textFieldId));
 		},
 		
-		makeTextArea : function(tableId, textFieldId, textFieldTitle, internationalized) {
+		makeTextArea : function(tableId, textFieldId, textFieldTitle) {
 
-			var title;
-			if(internationalized){
-				title = translator.get(textFieldTitle);
-			} else {
-				title = textFieldTitle;
-			}
-			
+			var title = textFieldTitle;
 			var source = $("#textarea-template").html();
 			var template = Handlebars.compile(source);
 			var context = {"text-area-id": textFieldId, 
 				           "text-area-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
-			$("#"+textFieldId).searchTextAreaWidget();
-			$("#"+textFieldId).append($("#"+textFieldId).searchTextAreaWidget('createDom', "F"+textFieldId));
+			var escapedId = textFieldId.replace(".", "\\.");
+			$("#"+escapedId).searchTextAreaWidget();
+			$("#"+escapedId).append($("#"+escapedId).searchTextAreaWidget('createDom', "F"+textFieldId));
 		},
 		
-		makeMultiselect : function(tableId, textFieldId, textFieldTitle, internationalized, options) {
+		makeMultiselect : function(tableId, textFieldId, textFieldTitle, options) {
 	
-			var title;
-			if(internationalized){
-				title = translator.get(textFieldTitle);
-			} else {
-				title = textFieldTitle;
-			}
-			
+			var title = textFieldTitle;
 			var source = $("#multiselect-template").html();
 			var template = Handlebars.compile(source);
 			var context = {"multiselect-id": textFieldId, 
 				           "multiselect-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
-			$("#"+textFieldId).searchMultiSelectWidget();
-			$("#"+textFieldId).append($("#"+textFieldId).searchMultiSelectWidget('createDom', "F"+textFieldId, options));
+			var escapedId = textFieldId.replace(".", "\\.");
+			$("#"+escapedId).searchMultiSelectWidget();
+			$("#"+escapedId).append($("#"+escapedId).searchMultiSelectWidget('createDom', "F"+textFieldId, options));
 		},
 			
+		
 		extractSearchModel : function(){
 			var fields = $("div.search-input");
 			
@@ -173,7 +227,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 		},
 
 		makeTogglePanel : function(id, key, open) {
-			var title = translator.get(key);
+			var title = key;
 			
 			var infoSettings = {
 				initiallyOpen : open,

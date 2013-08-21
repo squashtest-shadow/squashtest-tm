@@ -21,7 +21,7 @@
 
 define(["jquery", "jqueryui"], function($){
 
-	var searchwidget = $.widget("search.searchMultiSelectWidget", {
+	var searchwidget = $.widget("search.searchExistsWidget", {
 		
 		options : {
 
@@ -32,33 +32,39 @@ define(["jquery", "jqueryui"], function($){
 		},
 		
 		fieldvalue : function(){
-			var text = $(this.element.children()[0]).val();
-			var id = $(this.element).attr("id");
-			return {"type" : "LIST",
-					"values" : text};
+			var checked = $($(this.element.children()[0]).children()[0]).prop('checked');
+			var value = $($(this.element.children()[0]).children()[1]).val();
+			if(checked){
+				if(value == 1){
+					return {"type" : "RANGE",
+						    "minValue" : 1,
+							"maxValue" : null};
+				} else {
+					return {"type" : "RANGE",
+					    "minValue" : null,
+						"maxValue" : 0};
+				}
+			} else {
+				return {"type" : "RANGE",
+				    "minValue" : null,
+					"maxValue" : null};
+			}
+
 		}, 
 		
 		createDom : function(id, options){
 			
-			var input = $('<select />', {
-				'data-widgetname' : 'MultiSelect',
-				'data-fieldid' : id,
-				'multiple' : 'multiple',
-				'class' : "search-input"
-			});
+			var input = $("select", this.element);
 			
 			var opt;
 			for (var i=0, len = options.length; i<len;i++){
 				opt = $('<option>', {
 					'text' : options[i].value,
-					'value' : options[i].code,
-					'selected': 'selected'
+					'value' : options[i].code
 				});
 				opt.html(options[i].value);
 				input.append(opt);
 			}
-						
-			return input;
 		}
 	 });
 	return searchwidget;

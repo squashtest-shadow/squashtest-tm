@@ -65,11 +65,11 @@ import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.ClassBridge;
+import org.hibernate.search.annotations.ClassBridges;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
-import org.hibernate.search.annotations.Index;
 
 /**
  * @author Gregory Fouquet
@@ -77,10 +77,37 @@ import org.hibernate.search.annotations.Index;
  */
 @Entity
 @Indexed
-@ClassBridge(
-		name="nb_requirements",
-		store=Store.YES,
-		impl=TestCaseBridgeRequirements.class)
+@ClassBridges({
+		/*@ClassBridge(
+			name="attachments",
+			store=Store.YES,
+			impl=TestCaseBridgeAttachments.class
+		),*/
+		@ClassBridge(
+			name="createdBy",
+			store=Store.YES,
+			analyze=Analyze.NO,
+			impl=TestCaseBridgeCreatedBy.class	
+		),
+		@ClassBridge(
+			name="modifiedBy",
+			store=Store.YES,
+			analyze=Analyze.NO,
+			impl=TestCaseBridgeModifiedBy.class	
+		),
+		@ClassBridge(
+			name="createdOn",
+			store=Store.YES,
+			analyze=Analyze.NO,
+			impl=TestCaseBridgeCreatedOn.class
+		),
+		@ClassBridge(
+			name="modifiedOn",
+			store=Store.YES,
+			analyze=Analyze.NO,
+			impl=TestCaseBridgeModifiedOn.class
+		)
+})
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
@@ -102,12 +129,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "STEP_ORDER")
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
+	@FieldBridge(impl = TestCaseCountParametersBridge.class)
+	@Field
 	private final List<TestStep> steps = new ArrayList<TestStep>();
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE })
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
-	//@ContainedIn
+	@FieldBridge(impl = TestCaseCountParametersBridge.class)
+	@Field(name="requirements")
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>(0);
 
 	@NotNull
@@ -127,28 +157,28 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional=false)
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze=Analyze.YES, store=Store.YES)
 	private TestCaseImportance importance = LOW;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_NATURE")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze=Analyze.YES, store=Store.YES)
 	private TestCaseNature nature = TestCaseNature.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_TYPE")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze=Analyze.YES, store=Store.YES)
 	private TestCaseType type = TestCaseType.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_STATUS")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze=Analyze.YES, store=Store.YES)
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
 	@NotNull

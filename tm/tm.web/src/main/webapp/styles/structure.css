@@ -204,6 +204,10 @@ div#tabbed-pane>ul {
 	width: 200px;
 }
 
+.search-line {
+	display:inline;		
+}
+
 .search-div {
 	border: 1px solid;
 	bottom: 0.1cm;

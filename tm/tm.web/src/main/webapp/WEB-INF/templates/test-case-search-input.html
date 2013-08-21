@@ -161,11 +161,46 @@
 				
 				<script id="date-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
-                  	<label for="{{date-id}}" class="display-table-cell">{{date-title}}</label>
-                    <div id="{{date-id}}" class="search-input"/>
+                  	<label for="{{text-date-id}}" class="display-table-cell">{{text-date-title}}</label>
+                    <div id="{{text-date-id}}" class="search-input" style="display:inline">
+						<div class="search-line" data-widgetname="Date">
+						<input type="checkbox"></input>
+						<span th:text="#{search.testcase.betweenDate.label}"></span>
+						<input type="text"></input>
+						<span th:text="#{search.testcase.andDate.label}"></span>
+						<input type="text"></input>
+						</div>
+					</div>
 				</div>
 				</script>
 				
+				<script id="range-template" type="text/x-handlebars-template">
+				<div class="display-table-row">
+					<div id="{{text-range-id}}" class="search-input" style="display:inline">
+						<div class="search-line" data-widgetname="Range">
+						<input type="checkbox"></input>
+						<span th:text="#{search.testcase.between.label}"></span>
+						<input type="text"></input>
+						<span th:text="#{search.testcase.and.label}"></span>
+						<input type="text"></input>
+						<span>{{text-range-title}}</span>
+						</div>
+					</div>
+				</div>
+				</script>
+
+				<script id="exists-template" type="text/x-handlebars-template">
+				<div class="display-table-row">
+					<div id="{{text-exists-id}}" class="search-input" style="display:inline">
+						<div class="search-line" data-widgetname="Exists">
+						<input type="checkbox"></input>
+						<select></select>				
+						<span>{{text-exists-title}}</span>
+						</div>
+					</div>
+				</div>
+				</script>
+								
 				</div>
 				<div class="toolbar-button-panel">
 					<input id="test-case-search-button" type="button" th:value="#{label.Search}" class="button ui-button ui-widget ui-state-default ui-corner-all"/> 

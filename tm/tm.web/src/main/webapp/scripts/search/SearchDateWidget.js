@@ -19,7 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "jqueryui"], function($){
+define(["jquery", "squash.translator", "datepicker/require.jquery.squash.datepicker-locales", "jqueryui", "jeditable.datepicker"], 
+		function($, translator, regionale){
 
 	var searchwidget = $.widget("search.searchDateWidget", {
 		
@@ -30,25 +31,44 @@ define(["jquery", "jqueryui"], function($){
 		_create : function(){
 			this._super();
 		},
-		
+
 		fieldvalue : function(){
-			var text = $(this.element.children()[0]).val();
+			var checked = $($(this.element.children()[0]).children()[0]).prop('checked');
+			var startDate = $($(this.element.children()[0]).children()[2]).datepicker('getDate');
+			var endDate = $($(this.element.children()[0]).children()[4]).datepicker('getDate');
 			var id = $(this.element).attr("id");
-			return {"type" : "TIME_INTERVAL",
-					                 "startDate" : "",
-					                 "endDate" : ""};
+			if(checked){
+				
+				var toFormat = "yy-mm-dd";
+				var formattedStartDate = $.datepicker.formatDate(toFormat, startDate);
+				var formattedEndDate = $.datepicker.formatDate(toFormat, endDate);
+				
+				return {"type" : "TIME_INTERVAL",
+						"startDate" : formattedStartDate,
+						"endDate" : formattedEndDate};
+				} else {
+					return {"type" : "TIME_INTERVAL",
+						"startDate" : null,
+						"endDate" : null};
+				}
 		}, 
 		
 		createDom : function(id){
 			
-			var input = $('<input />', {
-				'type' : 'text',
-				'data-widgetname' : 'Date',
-				'data-fieldid' : id,
-				'class' : "search-input"
-			});
-			
-			return input;
+			var localemeta = {
+					format : 'squashtm.dateformatShort.js',
+					locale : 'squashtm.locale'
+				};
+				
+			var message = translator.get(localemeta);
+			this.options.message = message;
+				
+			var language = regionale[message.locale] || regionale;
+				
+			var pickerconf = $.extend(true, {}, language, {dateFormat : message.format});
+				
+			$($(this.element.children()[0]).children()[2]).datepicker(pickerconf);
+			$($(this.element.children()[0]).children()[4]).datepicker(pickerconf);	
 		}
 	 });
 	return searchwidget;

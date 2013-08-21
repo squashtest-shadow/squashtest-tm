@@ -26,9 +26,7 @@ import java.util.List;
 public class SearchInputFieldModel {
 
 	private String title;
-	
-	private boolean internationalized = true;
-	
+
 	private String inputType;
 	
 	private String id;
@@ -87,13 +85,5 @@ public class SearchInputFieldModel {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public boolean isInternationalized() {
-		return internationalized;
-	}
-
-	public void setInternationalized(boolean internationalized) {
-		this.internationalized = internationalized;
 	}
 }

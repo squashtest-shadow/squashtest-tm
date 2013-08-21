@@ -111,7 +111,6 @@ public abstract class TestCaseLibraryNode extends GenericLibraryNode implements 
 		return getProject().getTestCaseLibrary();
 	}
 
-
 	public Set<Attachment> getAllAttachments() {
 		return getAttachmentList().getAllAttachments();
 	}

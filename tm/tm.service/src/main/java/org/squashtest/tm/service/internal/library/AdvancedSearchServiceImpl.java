@@ -179,22 +179,22 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		
 			query = qb
 					.bool()
-					.must(qb.range().onField(fieldName).below(maxValue).createQuery())
+					.must(qb.range().onField(fieldName).ignoreFieldBridge().below(maxValue).createQuery())
 					.createQuery();
 			
 		} else if(maxValue == null){
 			
 			query = qb
 					.bool()
-					.must(qb.range().onField(fieldName).above(minValue).createQuery())
+					.must(qb.range().onField(fieldName).ignoreFieldBridge().above(minValue).createQuery())
 					.createQuery();
 		
 		} else {
 			
 			query = qb
 					.bool()
-					.must(qb.range().onField(fieldName).above(minValue).createQuery())
-					.must(qb.range().onField(fieldName).below(maxValue).createQuery())
+					.must(qb.range().onField(fieldName).ignoreFieldBridge().above(minValue).createQuery())
+					.must(qb.range().onField(fieldName).ignoreFieldBridge().below(maxValue).createQuery())
 					.createQuery();
 		}
 		
@@ -204,11 +204,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	private org.apache.lucene.search.Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName, List<String> values){
 
 		StringBuilder builder = new StringBuilder();
-		builder.append("( ");
 		for(String value : values){
 			builder.append(value+" ");
 		}
-		builder.append(")");
 		
 		org.apache.lucene.search.Query query = qb
 				.bool()
@@ -286,12 +284,20 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	
 	private org.apache.lucene.search.Query  buildQueryForRangeCriterium(String fieldKey, TestCaseSearchFieldModel fieldModel, QueryBuilder qb){
 		TestCaseSearchRangeFieldModel rangeModel = (TestCaseSearchRangeFieldModel) fieldModel;
-		return buildLuceneRangeQuery(qb,fieldKey,rangeModel.getMinValue(),rangeModel.getMaxValue());
+		if(rangeModel.getMinValue() != null || rangeModel.getMaxValue() != null){
+			return buildLuceneRangeQuery(qb,fieldKey,rangeModel.getMinValue(),rangeModel.getMaxValue());
+		}
+		
+		return null;
 	}
 	
 	private org.apache.lucene.search.Query  buildQueryForTimeIntervalCriterium(String fieldKey, TestCaseSearchFieldModel fieldModel, QueryBuilder qb){
 		TestCaseSearchTimeIntervalFieldModel intervalModel = (TestCaseSearchTimeIntervalFieldModel) fieldModel;
-		return buildLuceneTimeIntervalQuery(qb,fieldKey,intervalModel.getStartDate(),intervalModel.getEndDate());
+		if(intervalModel.getStartDate() != null || intervalModel.getEndDate() != null){
+			return buildLuceneTimeIntervalQuery(qb,fieldKey,intervalModel.getStartDate(),intervalModel.getEndDate());
+		}
+		
+		return null;
 	}
 	
 	private org.apache.lucene.search.Query buildLuceneQuery(QueryBuilder qb, TestCaseSearchModel model){

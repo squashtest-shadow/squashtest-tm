@@ -44,7 +44,8 @@ define(["jquery", "jqueryui"], function($){
 			return $('<textarea/>', {
 				'data-widgetname' : 'TextArea',
 				'data-fieldid' : id,
-				'rows' : 5,
+				'rows' : 2,
+				'style' : "resize:none",
 				'class' : "search-input"
 			});
 		}

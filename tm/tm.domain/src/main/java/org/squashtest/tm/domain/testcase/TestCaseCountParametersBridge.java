@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ public class TestCaseCountParametersBridge implements StringBridge {
 
 	@Override
 	public String objectToString(Object value) {
-		Set<Parameter> parameters = (Set<Parameter>) value;
+		Collection<Object> parameters = (Collection<Object>) value;
 		return Integer.toString(parameters.size());
 	}
 }

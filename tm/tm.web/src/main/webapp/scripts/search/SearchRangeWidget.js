@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,37 +18,38 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.audit;
 
-import java.util.Date;
+define(["jquery", "jqueryui"], function($){
 
-import org.hibernate.search.annotations.DateBridge;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Resolution;
-
-/**
- * Defines interface for @Auditable entities. Any @Auditable entity will be modified to implement this interface.
- * 
- * @author Gregory Fouquet
- * 
- */
-public interface AuditableMixin {
-	
-	Date getCreatedOn();
-	
-	String getCreatedBy();
-
-	Date getLastModifiedOn();
-
-	String getLastModifiedBy();
-	
-	
-	void setCreatedBy(String createdBy);
-
-	void setCreatedOn(Date createdOn);
-
-	void setLastModifiedBy(String lastModifiedBy);
-
-	void setLastModifiedOn(Date lastModifiedOn);
+	var searchwidget = $.widget("search.searchRangeWidget", {
 		
-}
+		options : {
+
+		},
+		
+		_create : function(){
+			this._super();
+		},
+		
+		fieldvalue : function(){
+			var checked = $($(this.element.children()[0]).children()[0]).prop('checked');
+			var min = $($(this.element.children()[0]).children()[2]).val();
+			var max = $($(this.element.children()[0]).children()[4]).val();
+			var id = $(this.element).attr("id");
+			if(checked){
+				return {"type" : "RANGE",
+				    "minValue" : min,
+					"maxValue" : max};
+			} else {
+				return {"type" : "RANGE",
+				    "minValue" : null,
+					"maxValue" : null};
+			}
+		}, 
+		
+		createDom : function(id){
+			
+		}
+	 });
+	return searchwidget;
+});

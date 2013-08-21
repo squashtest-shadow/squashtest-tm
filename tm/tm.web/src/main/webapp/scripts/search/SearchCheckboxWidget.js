@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,37 +18,46 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.audit;
 
-import java.util.Date;
+define(["jquery", "jqueryui"], function($){
 
-import org.hibernate.search.annotations.DateBridge;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Resolution;
-
-/**
- * Defines interface for @Auditable entities. Any @Auditable entity will be modified to implement this interface.
- * 
- * @author Gregory Fouquet
- * 
- */
-public interface AuditableMixin {
-	
-	Date getCreatedOn();
-	
-	String getCreatedBy();
-
-	Date getLastModifiedOn();
-
-	String getLastModifiedBy();
-	
-	
-	void setCreatedBy(String createdBy);
-
-	void setCreatedOn(Date createdOn);
-
-	void setLastModifiedBy(String lastModifiedBy);
-
-	void setLastModifiedOn(Date lastModifiedOn);
+	var searchwidget = $.widget("search.searchCheckboxWidget", {
 		
-}
+		options : {
+
+		},
+		
+		_create : function(){
+			this._super();
+		},
+		
+		fieldvalue : function(){
+			var checked = $($(this.element.children()[0]).children()[0]).prop('checked');
+			var value = $($(this.element.children()[0]).children()[1]).val();
+			if(checked){
+				var id = $(this.element).attr("id");
+				return {"type" : "LIST",
+						"values" : text};
+			} else {
+				return {"type" : "LIST",
+					"values" : null};
+			}
+		}, 
+		
+		createDom : function(id, options){
+			
+			var input = $("select", this.element);
+			
+			var opt;
+			for (var i=0, len = options.length; i<len;i++){
+				opt = $('<option>', {
+					'text' : options[i].value,
+					'value' : options[i].code
+				});
+				opt.html(options[i].value);
+				input.append(opt);
+			}
+		}
+	 });
+	return searchwidget;
+});
