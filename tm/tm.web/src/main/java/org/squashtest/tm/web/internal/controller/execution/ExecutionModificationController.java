@@ -372,7 +372,7 @@ public class ExecutionModificationController {
 
 	@RequestMapping(method = RequestMethod.DELETE)
 	public @ResponseBody
-	Object removeExecution(@PathVariable long executionId) {
+	Object removeExecution(@PathVariable("executionId") long executionId) {
 		Execution execution = executionModService.findById(executionId);
 		IterationTestPlanItem testPlan = execution.getTestPlan();
 		Iteration iteration = testPlan.getIteration();

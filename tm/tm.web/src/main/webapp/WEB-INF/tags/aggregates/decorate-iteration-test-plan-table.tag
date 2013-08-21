@@ -49,7 +49,7 @@
 <%@ attribute name="testCaseMultipleRemovalPopupId" required="true"
 	description="html id of the multiple test-case removal popup"%>
 <%@ attribute name="baseIterationURL" description="the base iteration url" %>
-<%@ attribute name="assignableUsers" description="a map of users paired by id -> login. The id must be a string."%>
+<%@ attribute name="assignableUsers" type="java.lang.Object" description="a map of users paired by id -> login. The id must be a string."%>
 <%@ attribute name="iteration" type="java.lang.Object" description="the instance of iteration" %>
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
@@ -65,15 +65,8 @@
 
 <f:message var="cannotCreateExecutionException" key="squashtm.action.exception.cannotcreateexecution.label" />
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message" />
-<f:message var="statusUntestable" key="execution.execution-status.UNTESTABLE" />
-<f:message var="statusBlocked" key="execution.execution-status.BLOCKED" />
-<f:message var="statusFailure" key="execution.execution-status.FAILURE" />
-<f:message var="statusSuccess" key="execution.execution-status.SUCCESS" />
-<f:message var="statusRunning" key="execution.execution-status.RUNNING" />
-<f:message var="statusReady" key="execution.execution-status.READY" />
-<f:message var="statusError" key="execution.execution-status.ERROR" />
-<f:message var="statusWarning" key="execution.execution-status.WARNING" />
-
+<f:message var="confirmLabel" key="label.Confirm"/>
+<f:message var="cancelLabel"  key="label.Cancel"/>
 
 <c:if test="${editable}">
 	<c:set var="deleteBtnClause" value=", delete-button=#iter-test-plan-delete-row-dialog"/>
@@ -90,7 +83,7 @@
 			<th data-def="map=dataset, sWidth=10%"><f:message key="label.Dataset" /></th>
 			<th data-def="map=suite, sWidth=10%"><f:message key="iteration.executions.table.column-header.suite.label" /></th>
 			<th data-def="map=status, sortable, sWidth=10%, sClass=has-status status-combo"><f:message key="iteration.executions.table.column-header.status.label" /></th>
-			<th data-def="map=assigned-to, sortable, sWidth=10%, sClass=assignee-combo"><f:message key="iteration.executions.table.column-header.user.label" /></th>
+			<th data-def="map=assignee-login, sortable, sWidth=10%, sClass=assignee-combo"><f:message key="iteration.executions.table.column-header.user.label" /></th>
 			<th data-def="map=last-exec-on, sortable, sWidth=10%"><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>
 			<th data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>	
 			<th data-def="map=empty-delete-holder, ${deleteBtnClause}">&nbsp;</th>				
@@ -103,6 +96,18 @@
 
 <div id="iter-test-plan-delete-row-dialog" class="not-displayed popup-dialog" title="<f:message key="test-case.verified_requirement_item.remove.button.label" />">
 	<span style="font-weight:bold;"><f:message key="dialog.remove-testcase-association.message" /></span>
+	<div class="popup-dialog-buttonpane"> 
+		<input type="button" value="${confirmLabel}"/> 
+		<input type="button" value="${cancelLabel}"/> 
+	</div>
+</div>
+
+<div id="iter-test-plan-delete-execution-dialog" class="not-displayed popup-dialog" title="<f:message key="dialog.delete-execution.title" />">
+	<span style="font-weight:bold;"><f:message key="dialog.delete-execution.message" /></span>
+	<div class="popup-dialog-buttonpane"> 
+		<input type="button" value="${confirmLabel}"/> 
+		<input type="button" value="${cancelLabel}"/> 
+	</div>
 </div>
 
 <%--
@@ -626,30 +631,28 @@
 		<%-- multiple test-plan removal --%>
 		<%--=========================--%>
 		//multiple deletion
-		$("#${ testCaseMultipleRemovalPopupId }").bind(
-				'dialogclose',
-				function() {
-					var answer = $("#${ testCaseMultipleRemovalPopupId }")
-							.data("answer");
-					if (answer != "yes") {
-						return;
-					}
+		$("#${ testCaseMultipleRemovalPopupId }").bind('dialogclose',function() {
+			var answer = $("#${ testCaseMultipleRemovalPopupId }")
+					.data("answer");
+			if (answer != "yes") {
+				return;
+			}
 
-					var table = $('#test-plans-table').squashTable();
-					var ids = getIdsOfSelectedTableRows(table,
-							getTestPlansTableRowId);
+			var table = $('#test-plans-table').squashTable();
+			var ids = getIdsOfSelectedTableRows(table,
+					getTestPlansTableRowId);
 
-					if (ids.length > 0) {
-						$.post( nonBelongingTestPlansUrl , {
-							testPlanIds : ids
-						}, function(data) {
-							refreshTestPlans();
-							checkForbiddenDeletion(data);
-							refreshStatistics();
-						});
-					}
-
+			if (ids.length > 0) {
+				$.post( nonBelongingTestPlansUrl , {
+					testPlanIds : ids
+				}, function(data) {
+					refreshTestPlans();
+					checkForbiddenDeletion(data);
+					refreshStatistics();
 				});
+			}
+
+		});
 
 		/* ************************** datatable settings ********************* */
 		
@@ -661,7 +664,7 @@
 				},
 				basic : {
 					iterationId : ${iteration.id},
-					assignableUsers : ${ json:marshall(assignableUsers) }
+					assignableUsers : ${ json:serialize(assignableUsers) }
 				}
 			};
 			

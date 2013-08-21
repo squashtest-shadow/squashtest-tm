@@ -29,17 +29,15 @@
  * 		},
  * 		basic : {
  * 			iterationId : the id of the current iteration
- *			assignableUsers : the json string for a map of { "id1 : "login1", "id2" : "login2" etc }
+ *			assignableUsers : [ { 'id' : id, 'login' : login } ]
  * 		}
  * }
  * 
  */
 
-define(['jquery', 'squash.translator', 'jquery.squash.datatables', 'jeditable'],function($, translator) {
+define(['jquery', 'squash.translator', 'workspace.contextual-content', 'jquery.squash.datatables', 'jquery.squash.confirmdialog', 'jeditable'],function($, translator, ctxt) {
 
 
-	
-	// ****************** INIT FUNCTIONS **************
 	
 	function enhanceConfiguration(origconf){
 		
@@ -63,17 +61,36 @@ define(['jquery', 'squash.translator', 'jquery.squash.datatables', 'jeditable'],
 		
 		conf.urls = {
 			 testplanUrl : baseURL + '/iterations/'+conf.basic.iterationId+'/test-plan/',
-			 executionsUrl : baseURL + '/executions'
+			 executionsUrl : baseURL + '/executions/'
 		};
 		
 		return conf;
 	}
 	
 	
+	
+	// ****************** TABLE CONFIGURATION **************
+	
 	function createTableConfiguration(initconf){
 		
-		var statuses = initconf.messages.executionStatus;
-		var assignableUsers = JSON.parse(initconf.basic.assignableUsers);
+		// data for the comboboxes
+		
+		var statuses = initconf.messages.executionStatus,
+			jsonStatuses = JSON.stringify(statuses),
+			assignableUsers = initconf.basic.assignableUsers,
+			jsonAssignableUsers = JSON.stringify(assignableUsers),
+			statusFactory = new squashtm.StatusFactory(statuses);	
+		
+		
+		var submitStatusClbk = function(value) {
+			var $span = $(this);
+			$span.attr('class', 'common-status-label executions-status-'+value+'-icon');
+			$span.text( statuses[value] );
+		} 
+		
+		var submitAssigneeClbk = function(value) {
+			$(this).text( assignableUsers[value] );
+		} 
 		
 		// basic configuration. Much of it is in the DOM of the table.
 		
@@ -100,22 +117,20 @@ define(['jquery', 'squash.translator', 'jquery.squash.datatables', 'jeditable'],
 				// execution status (read)
 				var status = data['status'],
 					i18nstatus = statuses[status],
-					html = squashtm.StatusFactory.getHtmlFor(i18nstatus, status);
+					$statustd = $row.find('.status-combo'),
+					html = statusFactory.getHtmlFor(i18nstatus, status);
 					
 				$statustd.html(html);	// remember : this will insert a <span> in the process
 				
 				// execution status (edit)
 				if (initconf.permissions.editable){
-					
-					var comboconf = $.extend({}, statuses, { 'selected' : status } ),
-						url = initconf.urls.testplanUrl + data['entity-id'],
-						$statustd = $row.find('.status-combo');					
-					
-					$statustd.children().first().editable(url, {
+					var url = initconf.urls.testplanUrl + data['entity-id']; 
+					$statustd.children().first().editable( url, {
 						type : 'select',
-						data : JSON.stringify(comboconf),
+						data : jsonStatuses,
 						name : 'status',
-						onblur : 'submit';
+						onblur : 'cancel',
+						callback : submitStatusClbk
 					});
 					
 				};
@@ -123,38 +138,61 @@ define(['jquery', 'squash.translator', 'jquery.squash.datatables', 'jeditable'],
 				// assignee (read) 
 				var $assigneetd = $row.find('.assignee-combo');
 				$assigneetd.wrapInner('<span/>');
-				
+								
 				// assignee (edit)
 				if (initconf.permissions.editable){
-					var assigneeId = data['assigned-to'] || "0",
-						comboconf = $.exted({}, assignableUsers, { 'selected' : assigneeId }),
-						url = initconf.urls.testplanUrl + data['entity-id'] ;
+					var url = initconf.urls.testplanUrl + data['entity-id'] ;
 						
 					$assigneetd.children().first().editable(url,{
 						type : 'select',
-						data : JSON.stringify(comboconf),
+						data : jsonAssignableUsers,
 						name : 'assignee', 
-						onblur : 'submit'
+						onblur : 'cancel',
+						callback : submitAssigneeClbk
 					});
-				}
-				
+				};			
 				
 				// done
 				return row;
-			}
+			},
+				
+			fnDrawCallback : function(){
+				// make all <select> elements autosubmit on selection change.
+				this.on('change', 'select', function(){
+					$(this).submit();
+				});
+			}	
 		};
 		
-		var squashSettings : {
+		var squashSettings = {
 			toggleRows : {				
 				'td.toggle-row' : function(table, jqold, jqnew){
 					
 					var data = table.fnGetData(jqold.get(0)),
-						url = initconf.urls.executionsUrl +'/' + data['entity-id'];
+						url = initconf.urls.testplanUrl + data['entity-id'] + '/executions';
 						
-					jqnew.load(url, function(){				
-						decorateRow(jqnew);
+					jqnew.load(url, function(){	
+
+						// styling 
+						jqnew.find('.new-exec', 'new-auto-exec').button();
+						
+						// the delete buttons
+						if (initconf.permissions.editable){
+							jqnew.find('.delete-execution-table-button').button({
+								text : false,
+								icons : {
+									primary : "ui-icon-minus"
+								}
+							})
+							.on('click', function(){
+								var dialog = $("#iter-test-plan-delete-execution-dialog");
+								dialog.data('origin', this);
+								dialog.confirmDialog('open');
+							});
+						};
+						
+						//the new execution buttons
 						if (initconf.permissions.executable){
-							bindRowButtons(jqnew);
 						}
 					});
 				}
@@ -163,10 +201,10 @@ define(['jquery', 'squash.translator', 'jquery.squash.datatables', 'jeditable'],
 		
 		//more conf if editable
 		
-		if (conf.permissions.editable){
+		if (initconf.permissions.editable){
 			
 			squashSettings.enableDnD = true;
-			
+			squashSettings.functions = {};
 			squashSettings.functions.dropHandler = function(dropData){			
 				var ids = dropData.itemIds.join(',');
 				var url	= initconf.urls.testplanUrl + '/' + ids + '/position/' + dropData.newIndex;			
@@ -185,12 +223,42 @@ define(['jquery', 'squash.translator', 'jquery.squash.datatables', 'jeditable'],
 	}
 	
 	
+	
+	// ****************** DELETE EXECUTION CONFIGURATION **************
+	
+	function initDeleteExecutionPopup(conf){
+		var deleteExecutionDialog = $("#iter-test-plan-delete-execution-dialog");
+		
+		deleteExecutionDialog.confirmDialog();
+		
+		deleteExecutionDialog.on('confirmdialogconfirm', function(){
+			var execId = $(this).data('origin')
+								.id
+								.substr('delete-execution-table-button-'.length);
+			
+			$.ajax({
+				url : conf.urls.executionsUrl + execId,
+				type : 'DELETE',
+				dataType : 'json'
+			}).done(function(data){
+				ctxt.trigger('context.iteration-updated', data);
+			});	
+			
+		});
+	}
+	
 	function init(origconf){		
 		
 		var conf = enhanceConfiguration(origconf);
+		
+		//table init
 		var tableconf = createTableConfiguration(conf);
 		
 		$("#test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
+		
+		// delete execution popup init
+		initDeleteExecutionPopup(origconf);
+		
 	}
 	
 	

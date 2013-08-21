@@ -164,20 +164,7 @@ public class IterationTestPlanManagerController {
 		return listBuilder.expand(expansionCandidates).setModel(linkableLibraries).build();
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/test-case/{testPlanId}", method = RequestMethod.POST, params = {"assignee"})
-	public @ResponseBody
-	void assignUserToCampaignTestPlanItem(@PathVariable("testPlanId") long testPlanId, @PathVariable("iterationId") long iterationId,
-			@RequestParam("assignee") long assignee) {
-		iterationTestPlanManagerService.assignUserToTestPlanItem(testPlanId, assignee);
-	}
-	
 
-	@RequestMapping(value = "/iterations/{iterationId}/batch-assign-user", method = RequestMethod.POST)
-	public @ResponseBody
-	void assignUserToCampaignTestPlanItems(@RequestParam(TESTPLANS_IDS_REQUEST_PARAM) List<Long> testPlanIds,
-			@PathVariable long iterationId, @RequestParam long userId) {
-		iterationTestPlanManagerService.assignUserToTestPlanItems(testPlanIds, userId);
-	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/assignable-users", method = RequestMethod.GET)
 	public @ResponseBody
@@ -198,14 +185,24 @@ public class IterationTestPlanManagerController {
 		return jsonUsers;
 
 	}
+	
+	
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = {"assignee"})
+	public @ResponseBody
+	Long assignUserToCampaignTestPlanItem(@PathVariable("testPlanIds") List<Long> testPlanIds, @PathVariable("iterationId") long iterationId,
+			@RequestParam("assignee") long assignee) {
+		iterationTestPlanManagerService.assignUserToTestPlanItems(testPlanIds, assignee);
+		return assignee;
+	}
 
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"status"})
 	public @ResponseBody
-	void assignUserToCampaignTestPlanItem(@PathVariable("testPlanId") long testPlanId, 
+	String setTestPlanItemStatus(@PathVariable("testPlanId") long testPlanId, 
 										  @PathVariable("iterationId") long iterationId,
 										  @RequestParam("status") String status) {
 		iterationTestPlanManagerService.assignExecutionStatusToTestPlanItem(testPlanId, status);
+		return status;
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/table", params = RequestParams.S_ECHO_PARAM)

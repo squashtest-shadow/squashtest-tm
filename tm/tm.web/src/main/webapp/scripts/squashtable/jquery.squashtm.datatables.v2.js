@@ -1085,7 +1085,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 				var jqlink = $(this),
 					ltr = jqlink.parents('tr').get(0);
 				
-				if (! jqlink.hasClass('opened')){
+				if (! jqlink.hasClass('small-down-arrow')){
 					
 					var rowClass = ($(ltr).hasClass("odd")) ? "odd" : "even",
 						$ltr = $(ltr),

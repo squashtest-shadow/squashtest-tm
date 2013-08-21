@@ -38,34 +38,42 @@
 
 			switch (textStatus) {
 			case conf.blocked:
+			case conf.BLOCKED:
 				css = "executions-status-BLOQUED-icon";
 				break;
 
 			case conf.failure:
+			case conf.FAILURE:
 				css = "executions-status-FAILURE-icon";
 				break;
 
 			case conf.success:
+			case conf.SUCCESS:
 				css = "executions-status-SUCCESS-icon";
 				break;
 
 			case conf.running:
+			case conf.RUNNING:
 				css = "executions-status-RUNNING-icon";
 				break;
 
 			case conf.ready:
+			case conf.READY:
 				css = "executions-status-READY-icon";
 				break;
 
 			case conf.error:
+			case conf.ERROR:
 				css = "executions-status-ERROR-icon";
 				break;
 
 			case conf.warning:
+			case conf.WARNING:
 				css = "executions-status-WARNING-icon";
 				break;
 
 			case conf.untestable:
+			case conf.UNTESTABLE:
 				css = "executions-status-UNTESTABLE-icon";
 				break;
 

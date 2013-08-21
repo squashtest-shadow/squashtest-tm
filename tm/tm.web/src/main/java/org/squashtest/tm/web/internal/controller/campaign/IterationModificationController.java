@@ -394,17 +394,17 @@ public class IterationModificationController {
 
 	}
 
-	@RequestMapping(value = "/test-case-executions/{iterationTestPlanItemId}", method = RequestMethod.GET)
-	public ModelAndView getExecutionsForTestPlan(@PathVariable long iterationId,
-			@PathVariable long iterationTestPlanItemId) {
+	@RequestMapping(value = "/test-plan/{itemId}/executions", method = RequestMethod.GET)
+	public ModelAndView getExecutionsForTestPlan(@PathVariable("iterationId") long iterationId,
+			@PathVariable("itemId") long itemId) {
 
 		// TODO
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId,
-				iterationTestPlanItemId);
+				itemId);
 		// get the iteraction to check access rights
 		Iteration iter = iterationModService.findById(iterationId);
 		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", iter);
-		IterationTestPlanItem testPlanItem = testPlanFinder.findTestPlanItem(iterationTestPlanItemId);
+		IterationTestPlanItem testPlanItem = testPlanFinder.findTestPlanItem(itemId);
 		ModelAndView mav = new ModelAndView("fragment/iterations/iteration-test-plan-row");
 
 		mav.addObject("editableIteration", editable);
