@@ -138,9 +138,12 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			for(i=0; i<fields.length; i++){
 				var type = $($(fields[i]).children()[0]).attr("data-widgetname");
 				var key = $(fields[i]).attr("id");
-				var value = $("#"+$(fields[i]).attr("id")).data("search"+type+"Widget").fieldvalue();
-				var jsonKey  = key;
-				jsonVariable[jsonKey] = value;
+				var field = $("#"+$(fields[i]).attr("id")).data("search"+type+"Widget");
+				if(field){
+					var value = field.fieldvalue();
+					var jsonKey  = key;
+					jsonVariable[jsonKey] = value;
+				}
 			}
 			this.model = {fields : jsonVariable};
 		},
