@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>squashtest-csp-tm</artifactId>
@@ -12,9 +13,9 @@
   <description>Squash TM services module - Provides Test management related internal services</description>
   <packaging>bundle</packaging>
 
-	<properties>
-		<dynamicdao.outputdir>${basedir}/META-INF/spring/</dynamicdao.outputdir>	
-	</properties>
+  <properties>
+    <dynamicdao.outputdir>${basedir}/META-INF/spring/</dynamicdao.outputdir>
+  </properties>
 
 
   <dependencies>
@@ -37,8 +38,8 @@
       <artifactId>hibernate-dependencies</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
-    </dependency>	
-     <dependency>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>org.squashtest.csp.tools.unittest</artifactId>
       <version>${project.version}</version>
@@ -218,13 +219,16 @@
       <scope>compile</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>org.squashtest.org.hibernate.search</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>org.squashtest.org.apache.lucene.core</artifactId>
+    </dependency>
 
-	<dependency>
-  		<groupId>org.hibernate</groupId>
-  		<artifactId>org.squashtest.org.hibernate.search</artifactId>
-	</dependency>
-
-  </dependencies>  
+  </dependencies>
   <build>
     <resources>
       <resource>
@@ -324,13 +328,13 @@
 
   <profiles>
     <profile>
-			<id>linkMeta</id>
-			<properties>
-				<dynamicdao.outputdir>${project.build.outputDirectory}/META-INF/spring/</dynamicdao.outputdir>	
-			</properties>
-		</profile>
-	
-		<profile>
+      <id>linkMeta</id>
+      <properties>
+        <dynamicdao.outputdir>${project.build.outputDirectory}/META-INF/spring/</dynamicdao.outputdir>
+      </properties>
+    </profile>
+
+    <profile>
       <id>eclipse</id>
       <activation>
         <file>
