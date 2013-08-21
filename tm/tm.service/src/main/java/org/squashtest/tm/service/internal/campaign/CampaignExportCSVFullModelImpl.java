@@ -198,7 +198,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		headerCells.add(new CellImpl("EXEC_STEP_DATE"));
 		headerCells.add(new CellImpl("EXEC_STEP_USER"));
 		headerCells.add(new CellImpl("EXEC_STEP_#_ISSUES"));
-		
+		headerCells.add(new CellImpl("EXEC_STEP_COMMENT"));		
 		
 		// campaign custom fields
 		for (CustomField cufModel : campCUFModel) {
@@ -332,6 +332,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				dataCells.add(new CellImpl("n/a"));
 				dataCells.add(new CellImpl("n/a"));
 				dataCells.add(new CellImpl("n/a"));
+				dataCells.add(new CellImpl("n/a"));
 			} 
 			
 			if(execStep != null){
@@ -342,10 +343,14 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				dataCells.add(new CellImpl(formatDate(execStep.getLastExecutedOn())));
 				dataCells.add(new CellImpl(formatUser(execStep.getLastExecutedBy())));
 				dataCells.add(new CellImpl(Integer.toString(getNbIssues(execStep))));
+				dataCells.add(new CellImpl(formatLongText(execStep.getComment())));
 			}
 		}
 		
-
+		private String formatLongText(String text) {
+			return (text == null) ? "" : text.trim();
+		}
+		
 		private int getNbIssues(ExecutionStep execStep) {
 
 			return bugTrackerService.findNumberOfIssueForExecutionStep(execStep.getId());
