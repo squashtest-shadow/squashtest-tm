@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -36,6 +37,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -58,8 +60,10 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -72,6 +76,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.tm.web.internal.model.jquery.TestSuiteModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
@@ -91,6 +96,9 @@ public class IterationModificationController {
 
 	@Inject
 	private IterationModificationService iterationModService;
+	
+	@Inject
+	private IterationTestPlanManagerService iterationTestPlanManagerService;
 
 	@Inject
 	private PermissionEvaluationService permissionService;
@@ -100,8 +108,11 @@ public class IterationModificationController {
 
 	@Inject
 	private IterationTestPlanFinder testPlanFinder;	
+	
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
+
+	
 	@Inject
 	private InternationalizationHelper messageSource;
 
@@ -137,14 +148,36 @@ public class IterationModificationController {
 		TestPlanStatistics statistics = iterationModService.getIterationStatistics(iterationId);
 		boolean hasCUF = cufValueService.hasCustomFields(iteration);
 		DataTableModel attachmentsModel = attachmentHelper.findPagedAttachments(iteration);
-		
+		Map<String, String> assignableUsers = getAssignableUsers(iterationId);
+
 		model.addAttribute(ITERATION_KEY, iteration);
 		model.addAttribute("statistics", statistics);
 		model.addAttribute("hasCUF", hasCUF);		
 		model.addAttribute("attachmentsModel", attachmentsModel);		
+		model.addAttribute("assignableUsers", assignableUsers);
 		
 	}
 
+	
+	private Map<String, String> getAssignableUsers(@PathVariable long iterationId){
+
+		Locale locale = LocaleContextHolder.getLocale();
+		
+		List<User> usersList = iterationTestPlanManagerService.findAssignableUserForTestPlan(iterationId);
+
+		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
+
+		Map<String, String> jsonUsers = new HashMap<String, String>(usersList.size());
+		
+		jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
+		for (User user : usersList){
+			jsonUsers.put(user.getId().toString(), user.getLogin());
+		}
+		
+		return jsonUsers;
+	}
+
+	
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long iterationId) {
 
@@ -327,10 +360,10 @@ public class IterationModificationController {
 	 * @param newIndex
 	 *            the new position of the first of them
 	 */
-	@RequestMapping(value = "/test-case/move", method = RequestMethod.POST, params = { "newIndex", "itemIds[]" })
+	@RequestMapping(value = "/test-plan/{itemIds}/position/{newIndex}", method = RequestMethod.POST)
 	@ResponseBody
-	public void moveTestPlanItems(@PathVariable(ITERATION_ID_KEY) long iterationId, @RequestParam int newIndex,
-			@RequestParam("itemIds[]") List<Long> itemIds) {
+	public void moveTestPlanItems(@PathVariable(ITERATION_ID_KEY) long iterationId, 
+								@PathVariable("newIndex") int newIndex, @PathVariable("itemIds") List<Long> itemIds) {
 		iterationModService.changeTestPlanPosition(iterationId, newIndex, itemIds);
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("iteration " + iterationId + ": moving " + itemIds.size() + " test plan items  to " + newIndex);

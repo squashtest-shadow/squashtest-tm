@@ -49,6 +49,8 @@
 <%@ attribute name="testCaseMultipleRemovalPopupId" required="true"
 	description="html id of the multiple test-case removal popup"%>
 <%@ attribute name="baseIterationURL" description="the base iteration url" %>
+<%@ attribute name="assignableUsers" description="a map of users paired by id -> login. The id must be a string."%>
+<%@ attribute name="iteration" type="java.lang.Object" description="the instance of iteration" %>
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
@@ -56,6 +58,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <s:url var="showExecutionUrl" value="/executions" />
 <s:url var="dtMessagesUrl" value="/datatables/messages" />
@@ -72,7 +75,9 @@
 <f:message var="statusWarning" key="execution.execution-status.WARNING" />
 
 
-
+<c:if test="${editable}">
+	<c:set var="deleteBtnClause" value=", delete-button=#iter-test-plan-delete-row-dialog"/>
+</c:if>
 <table id="test-plans-table" data-def="language=${dtMessagesUrl}, ajaxsource=${tableModelUrl}, hover"  >
 	<thead>
 		<tr>
@@ -85,14 +90,16 @@
 			<th data-def="map=dataset, sWidth=10%"><f:message key="label.Dataset" /></th>
 			<th data-def="map=suite, sWidth=10%"><f:message key="iteration.executions.table.column-header.suite.label" /></th>
 			<th data-def="map=status, sortable, sWidth=10%, sClass=has-status status-combo"><f:message key="iteration.executions.table.column-header.status.label" /></th>
-			<th data-def="map=last-exec-by, sortable, sWidth=10%, sClass=assignable-combo"><f:message key="iteration.executions.table.column-header.user.label" /></th>
+			<th data-def="map=assigned-to, sortable, sWidth=10%, sClass=assignee-combo"><f:message key="iteration.executions.table.column-header.user.label" /></th>
 			<th data-def="map=last-exec-on, sortable, sWidth=10%"><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>
 			<th data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>	
-			<th data-def="map=empty-delete-holder, delete-button=#iter-test-plan-delete-row-dialog">&nbsp;</th>				
+			<th data-def="map=empty-delete-holder, ${deleteBtnClause}">&nbsp;</th>				
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
 </table>
+
+
 
 <div id="iter-test-plan-delete-row-dialog" class="not-displayed popup-dialog" title="<f:message key="test-case.verified_requirement_item.remove.button.label" />">
 	<span style="font-weight:bold;"><f:message key="dialog.remove-testcase-association.message" /></span>
@@ -103,7 +110,7 @@
  --%>
 
 <script type="text/javascript">
-	
+	/*
 	var testPlansUrl = "${testPlansUrl}";
 	var nonBelongingTestPlansUrl = "${nonBelongingTestPlansUrl}";
 	var runnerUrl = ""; //URL used to run an execution. will be created dynamically
@@ -292,13 +299,14 @@
 	}			
 
 	function testPlanTableRowCallback(row, data, displayIndex) {
-		/*
+		
 		addHLinkToTestPlanName(row, data);
 		addIconToTestPlanName(row, data);
+		
 		<c:if test="${executable}">
 		addExecuteIconToTestPlan(row, data);
 		</c:if>
-		*/
+		
 		addStyleToDeletedTestCaseRows(row, data);
 		addIterationTestPlanItemExecModeIcon(row, data);
 		selectCurrentStatus(row,data);
@@ -504,7 +512,7 @@
 
 		if (!$(testPlanHyperlink).hasClass("opened")) {
 			
-			/* the row is closed - open it */
+			// the row is closed - open it 
 			var nTr = table.fnOpen(ltr, "      ", "");
 			var url1 = "${testPlanExecutionsUrl}" + data['entity-id'];
 			var jqnTr = $(nTr);
@@ -524,7 +532,7 @@
 			});
 
 		} else {
-			/* This row is already open - close it */
+			// This row is already open - close it 
 			table.fnClose(ltr);
 			image.attr("src",
 							"${pageContext.servletContext.contextPath}/images/arrow_right.gif");
@@ -538,7 +546,7 @@
 			return false; //return false to prevent navigation in page (# appears at the end of the URL)
 		});		
 	}
-	
+	*/
 	
 	/* ***************************** expanded line post processing *************** */
 
@@ -645,65 +653,22 @@
 
 		/* ************************** datatable settings ********************* */
 		
-		var tableSettings = {
-				"fnRowCallback" : testPlanTableRowCallback,
-				"fnDrawCallback" : testPlanDrawCallback
-			};		
-		
-			var squashSettings = {
-					
-				executionStatus : {
-					untestable : "${statusUntestable}",
-					blocked : "${statusBlocked}",
-					failure : "${statusFailure}",
-					success : "${statusSuccess}",
-					running : "${statusRunning}",
-					ready : "${statusReady}",
-					error : "${statusError}",
-					warning : "${statusWarning}",
-				}
-				
-			};
-			
-			<c:if test="${editable}">
-			squashSettings.enableDnD = true;
-
-			squashSettings.deleteButtons = {
-				url : "${testPlansUrl}/{entity-id}",
-				popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
-				tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
-				success : function(data) {
-					refreshTestPlans();
-					checkForbiddenDeletion(data);
-					refreshStatistics();
+		require(['iteration-management'], function(iterInit){
+			var conf = {
+				permissions : {
+					editable : ${editable},
+					executable : ${executable}
+				},
+				basic : {
+					iterationId : ${iteration.id},
+					assignableUsers : ${ json:marshall(assignableUsers) }
 				}
 			};
 			
-			squashSettings.toggleRows = {
-				'td.toggle-row' :	function(table, jqold, jqnew){
+			iterInit.initTestPlanTable(conf);
+		});
 					
-					var data = table.fnGetData(jqold.get(0)),
-						url = "${testPlanExecutionsUrl}" + data['entity-id'];
-						
-					jqnew.load(url, function(){				
-						<c:if test="${ executable }">
-						//apply the post processing on the content
-						expandedRowCallback(jqnew);
-						</c:if>
-					});
-				}
-			};
-				
-			squashSettings.functions = {
-				dropHandler : function(dropData){
-					$.post('${ updateTestPlanUrl }/move',dropData, function(){
-						$("#test-plans-table").squashTable().refresh();
-					});
-				}
-			};
-			</c:if>
-					
-			$("#test-plans-table").squashTable(tableSettings, squashSettings);
+			
 	});
 </script>
 

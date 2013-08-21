@@ -88,7 +88,7 @@
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
 
-<s:url var="updateTestCaseUrl" value="/iterations/{iterId}/test-case/">
+<s:url var="updateTestCaseUrl" value="/iterations/{iterId}/test-plan/">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
 
@@ -393,7 +393,9 @@
 				executable="${ executable }"
 				testCaseMultipleRemovalPopupId="delete-multiple-test-plan-dialog"
 				baseIterationURL="${iterationUrl}"
-				testCaseSingleRemovalPopupId="delete-single-test-plan-dialog" />
+				testCaseSingleRemovalPopupId="delete-single-test-plan-dialog" 
+				assignableUsers="${assignableUsers}"
+				iteration="${iteration}"/>
 		</div>
 
 		<%--------------------------- Deletion confirmation pup for Test plan section ------------------------------------%>

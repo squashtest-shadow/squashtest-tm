@@ -63,7 +63,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
-import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableStatus;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
 import org.squashtest.tm.web.internal.model.json.JsonTestCaseBuilder;
@@ -81,6 +80,7 @@ public class IterationTestPlanManagerController {
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 	private static final String TESTPLANS_IDS_REQUEST_PARAM = "testPlanIds[]";
 
+	@Inject
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
 
 	@Inject
@@ -90,17 +90,9 @@ public class IterationTestPlanManagerController {
 	@Named("testCase.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilder; 
 
+	@Inject
 	private IterationFinder iterationFinder;
 
-	@ServiceReference
-	public void setIterationFinder(IterationFinder iterationFinder) {
-		this.iterationFinder = iterationFinder;
-	}
-
-	@ServiceReference
-	public void setCampaignTestPlanManagerService(IterationTestPlanManagerService iterationTestPlanManagerService) {
-		this.iterationTestPlanManagerService = iterationTestPlanManagerService;
-	}
 
 	private final DatatableMapper testPlanMapper = new IndexBasedMapper(11)
 			.mapAttribute(Project.class, "name", String.class, 2)
@@ -172,12 +164,13 @@ public class IterationTestPlanManagerController {
 		return listBuilder.expand(expansionCandidates).setModel(linkableLibraries).build();
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/test-case/{testPlanId}/assign-user", method = RequestMethod.POST)
+	@RequestMapping(value = "/iterations/{iterationId}/test-case/{testPlanId}", method = RequestMethod.POST, params = {"assignee"})
 	public @ResponseBody
-	void assignUserToCampaignTestPlanItem(@PathVariable long testPlanId, @PathVariable long iterationId,
-			@RequestParam long userId) {
-		iterationTestPlanManagerService.assignUserToTestPlanItem(testPlanId, userId);
+	void assignUserToCampaignTestPlanItem(@PathVariable("testPlanId") long testPlanId, @PathVariable("iterationId") long iterationId,
+			@RequestParam("assignee") long assignee) {
+		iterationTestPlanManagerService.assignUserToTestPlanItem(testPlanId, assignee);
 	}
+	
 
 	@RequestMapping(value = "/iterations/{iterationId}/batch-assign-user", method = RequestMethod.POST)
 	public @ResponseBody
@@ -206,31 +199,16 @@ public class IterationTestPlanManagerController {
 
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/assignable-statuses", method = RequestMethod.GET)
+
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"status"})
 	public @ResponseBody
-	List<TestPlanAssignableStatus> getAssignStatusForIterationTestPlanItem(@PathVariable long iterationId,
-			final Locale locale) {
-
-		List<ExecutionStatus> statusList = iterationTestPlanManagerService.getExecutionStatusList();
-
-		List<TestPlanAssignableStatus> jsonStatuses = new LinkedList<TestPlanAssignableStatus>();
-
-		for (ExecutionStatus status : statusList) {
-			jsonStatuses
-					.add(new TestPlanAssignableStatus(status.name(), messageSource.internationalize(status, locale)));
-		}
-
-		return jsonStatuses;
+	void assignUserToCampaignTestPlanItem(@PathVariable("testPlanId") long testPlanId, 
+										  @PathVariable("iterationId") long iterationId,
+										  @RequestParam("status") String status) {
+		iterationTestPlanManagerService.assignExecutionStatusToTestPlanItem(testPlanId, status);
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/test-case/{testPlanId}/assign-status", method = RequestMethod.POST)
-	public @ResponseBody
-	void assignUserToCampaignTestPlanItem(@PathVariable long testPlanId, @PathVariable long iterationId,
-			@RequestParam String statusName) {
-		iterationTestPlanManagerService.assignExecutionStatusToTestPlanItem(testPlanId, statusName);
-	}
-
-	@RequestMapping(value = "/iterations/{iterationId}/test-cases/table", params = RequestParams.S_ECHO_PARAM)
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/table", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getIterationTableModel(@PathVariable Long iterationId, final DataTableDrawParameters params,
 			final Locale locale) {

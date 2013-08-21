@@ -53,7 +53,15 @@ class IterationViewTestPlanTableModelHelper extends DataTableModelBuilder<Iterat
 		final String automationMode = item.isAutomated() ? "A" : "M";
 
 		String testSuiteNameList = "";
-		Long assignedId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
+		
+		User assignee = item.getUser();
+		Long assigneeId = User.NO_USER_ID;
+		String assigneeLogin = formatString(item.getLastExecutedBy(), locale);
+		
+		if  (assignee  != null) {
+			assigneeId = assignee.getId();
+			assigneeLogin = assignee.getLogin();
+		}
 
 		if (item.isTestCaseDeleted()) {
 			projectName = formatNoData(locale);
@@ -86,9 +94,9 @@ class IterationViewTestPlanTableModelHelper extends DataTableModelBuilder<Iterat
 		res.put("tc-name", testCaseName);
 		res.put("importance", importance);
 		res.put("suite", testSuiteNameList);
-		res.put("status", messageSource.internationalize(item.getExecutionStatus(), locale));
-		res.put("last-exec-by", formatString(item.getLastExecutedBy(), locale));
-		res.put("assigned-to", assignedId);
+		res.put("status",item.getExecutionStatus());
+		res.put("assignee-id", assigneeId);
+		res.put("assignee-login", assigneeLogin);
 		res.put("last-exec-on", messageSource.localizeDate(item.getLastExecutedOn(), locale));
 		res.put("is-tc-deleted", item.isTestCaseDeleted());
 		res.put(DataTableModelConstants.DEFAULT_EMPTY_EXECUTE_HOLDER_KEY, " ");
