@@ -61,6 +61,9 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
+import org.squashtest.tm.web.internal.controller.testcase.TestCaseNatureJeditableComboDataBuilder;
+import org.squashtest.tm.web.internal.controller.testcase.TestCaseStatusJeditableComboDataBuilder;
+import org.squashtest.tm.web.internal.controller.testcase.TestCaseTypeJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
@@ -91,8 +94,16 @@ public class AdvancedSearchController {
 	
 	@Inject
 	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
-	
 
+	@Inject
+	private Provider<TestCaseNatureJeditableComboDataBuilder> natureComboBuilderProvider;
+
+	@Inject
+	private Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider;
+	
+	@Inject
+	private Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider;
+	
 	private ProjectFilterModificationService projectFilterService;
 	
 	@ServiceReference
@@ -144,19 +155,21 @@ public class AdvancedSearchController {
 		panel.setOpen(true);
 		panel.setId("general-information");
 
-		SearchInputFieldModel labelField = new SearchInputFieldModel("test-case-label","label.Label","textfield");
-		panel.addField(labelField);
-		SearchInputFieldModel idField = new SearchInputFieldModel("test-case-id","label.id","textfield");
+		SearchInputFieldModel idField = new SearchInputFieldModel("id","label.id","textfield");
 		panel.addField(idField);
-		SearchInputFieldModel referenceField = new SearchInputFieldModel("test-case-reference","label.reference","textfield");
+		SearchInputFieldModel referenceField = new SearchInputFieldModel("reference","label.reference","textfield");
 		panel.addField(referenceField);
-		SearchInputFieldModel descriptionField = new SearchInputFieldModel("test-case-description","label.Description","textarea");
+		SearchInputFieldModel labelField = new SearchInputFieldModel("name","label.Label","textfield");
+		panel.addField(labelField);
+		SearchInputFieldModel descriptionField = new SearchInputFieldModel("description","label.Description","textarea");
 		panel.addField(descriptionField);
+		SearchInputFieldModel prerequisiteField = new SearchInputFieldModel("prerequisite","test-case.prerequisite.label","textarea");
+		panel.addField(prerequisiteField);
 		
 		return panel;
 	}
 	
-	private SearchInputPanelModel createImportancePanel(Locale locale){
+	private SearchInputPanelModel createAttributePanel(Locale locale){
 		
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle("search.testcase.importance.panel.title");
@@ -172,18 +185,36 @@ public class AdvancedSearchController {
 			SearchInputPossibleValueModel importanceOption = new SearchInputPossibleValueModel(entry.getValue(),entry.getKey());
 			importanceField.addPossibleValue(importanceOption);
 		}
-		return panel;
-	}
-	
-	private SearchInputPanelModel createPrerequisitePanel(){
 		
-		SearchInputPanelModel panel = new SearchInputPanelModel();
-		panel.setTitle("search.testcase.prerequisite.panel.title");
-		panel.setOpen(true);
-		panel.setId("prerequisite");
-
-		SearchInputFieldModel prerequisiteField = new SearchInputFieldModel("prerequisite","test-case.prerequisite.label","textarea");
-		panel.addField(prerequisiteField);
+		SearchInputFieldModel natureField = new SearchInputFieldModel("nature","test-case.importance.label","multiselect");
+		panel.addField(natureField);
+		
+		map = natureComboBuilderProvider.get().useLocale(locale).buildMap();
+		
+		for(Entry<String, String> entry : map.entrySet()){
+			SearchInputPossibleValueModel importanceOption = new SearchInputPossibleValueModel(entry.getValue(),entry.getKey());
+			importanceField.addPossibleValue(importanceOption);
+		}
+		
+		SearchInputFieldModel typeField = new SearchInputFieldModel("type","test-case.importance.label","multiselect");
+		panel.addField(typeField);
+		
+		map = typeComboBuilderProvider.get().useLocale(locale).buildMap();
+		
+		for(Entry<String, String> entry : map.entrySet()){
+			SearchInputPossibleValueModel importanceOption = new SearchInputPossibleValueModel(entry.getValue(),entry.getKey());
+			importanceField.addPossibleValue(importanceOption);
+		}
+		
+		SearchInputFieldModel statusField = new SearchInputFieldModel("status","test-case.importance.label","multiselect");
+		panel.addField(statusField);	
+		
+		map = statusComboBuilderProvider.get().useLocale(locale).buildMap();
+		
+		for(Entry<String, String> entry : map.entrySet()){
+			SearchInputPossibleValueModel importanceOption = new SearchInputPossibleValueModel(entry.getValue(),entry.getKey());
+			importanceField.addPossibleValue(importanceOption);
+		}
 		return panel;
 	}
 	
@@ -229,14 +260,14 @@ public class AdvancedSearchController {
 		return panel;
 	}
 	
-	private SearchInputPanelModel createProjectPanel(){
+	private SearchInputPanelModel createPerimeterPanel(){
 	
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle("search.testcase.project.panel.title");
 		panel.setOpen(false);
 		panel.setId("project");
 	
-		SearchInputFieldModel projectField = new SearchInputFieldModel("test-case-project","search.testcase.project.field.title","multiselect");
+		SearchInputFieldModel projectField = new SearchInputFieldModel("project.id","search.testcase.project.field.title","multiselect");
 		panel.addField(projectField);
 		
 		List<Project> projects = this.projectFilterService.getAllProjects();
@@ -247,8 +278,19 @@ public class AdvancedSearchController {
 		
 		return panel;
 	}
+
+	private SearchInputPanelModel createContentPanel(){
+		
+		SearchInputPanelModel panel = new SearchInputPanelModel();
+		panel.setTitle("search.testcase.creation.panel.title");
+		panel.setOpen(true);
+		panel.setId("creation");
+		
+		
+		return panel;
+	}
 	
-	private SearchInputPanelModel createCreationPanel(){
+	private SearchInputPanelModel createHistoryPanel(){
 		
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle("search.testcase.creation.panel.title");
@@ -283,23 +325,23 @@ public class AdvancedSearchController {
 		
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
-		//General infos
+		//Information
 		model.addPanel(createGeneralInfoPanel());
 		
-		//Importance
-		model.addPanel(createImportancePanel(locale));
+		//Attributes
+		model.addPanel(createAttributePanel(locale));
 		
-		//Prerequisite
-		model.addPanel(createPrerequisitePanel());
-		
+		//Perimeter
+		model.addPanel(createPerimeterPanel());
+
+		//Content
+		model.addPanel(createContentPanel());
+
 		//Associations
 		model.addPanel(createAssociationPanel());
 
-		//Projects
-		model.addPanel(createProjectPanel());
-
-		//Creation/Modification
-		model.addPanel(createCreationPanel());
+		//Historique
+		model.addPanel(createHistoryPanel());
 		
 		//CUF
 		model.addPanel(createCUFPanel());

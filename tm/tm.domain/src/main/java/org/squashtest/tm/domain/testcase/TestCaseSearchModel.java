@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class TestCaseSearchModel {
 
-	Map<String, TestCaseSearchFieldModel> fields = new HashMap<String, TestCaseSearchFieldModel>();
+	private Map<String, TestCaseSearchFieldModel> fields = new HashMap<String, TestCaseSearchFieldModel>();
 	
 	public TestCaseSearchModel(){
 

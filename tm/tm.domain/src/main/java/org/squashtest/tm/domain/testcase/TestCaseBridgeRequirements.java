@@ -60,7 +60,7 @@ public class TestCaseBridgeRequirements implements FieldBridge{
         return size.toString();
 		 */
 		
-		return new Integer(10).toString();
+		return Integer.valueOf(10).toString();
 	}
 
 }
