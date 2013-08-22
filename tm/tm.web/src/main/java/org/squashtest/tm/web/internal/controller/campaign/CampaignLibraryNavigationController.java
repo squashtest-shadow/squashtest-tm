@@ -303,7 +303,7 @@ public class CampaignLibraryNavigationController extends
 		return campaignLibraryNavigationService.deleteSuites(suiteIds);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/iterations/new", method = RequestMethod.POST, params = { "nodeIds[], next-iteration-number" })
+	@RequestMapping(value = "/campaigns/{campaignId}/iterations/new", method = RequestMethod.POST, params = { "nodeIds[]", "next-iteration-number" })
 	public @ResponseBody
 	List<JsTreeNode> copyIterations(@RequestParam("nodeIds[]") Long[] nodeIds,
 			@PathVariable("campaignId") long campaignId, @RequestParam("next-iteration-number") int nextIterationNumber) {

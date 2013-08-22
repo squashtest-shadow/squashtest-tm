@@ -174,7 +174,8 @@ define(['jquery', 'squash.translator', 'workspace.contextual-content', 'jquery.s
 					jqnew.load(url, function(){	
 
 						// styling 
-						jqnew.find('.new-exec', 'new-auto-exec').button();
+						var newexecBtn = jqnew.find('.new-exec').squashButton(),
+							newautoexecBtn = jqnew.find('.new-auto-exec').squashButton();
 						
 						// the delete buttons
 						if (initconf.permissions.editable){
@@ -193,6 +194,19 @@ define(['jquery', 'squash.translator', 'workspace.contextual-content', 'jquery.s
 						
 						//the new execution buttons
 						if (initconf.permissions.executable){
+							
+							newexecBtn.click(function(){
+								var url = $(this).data('new-exec');
+								$.post(url, {mode : 'manual'}, 'json')
+								.done(function(id){
+									document.location.href=initconf.urls.executionsUrl + id;
+								});
+								return false;
+							});
+							
+							/*newautoexecBtn.click(function(){
+								var url = $(this.
+							});*/
 						}
 					});
 				}
@@ -241,7 +255,7 @@ define(['jquery', 'squash.translator', 'workspace.contextual-content', 'jquery.s
 				type : 'DELETE',
 				dataType : 'json'
 			}).done(function(data){
-				ctxt.trigger('context.iteration-updated', data);
+				ctxt.trigger('context.iteration-updated', { newDates : data });
 			});	
 			
 		});
@@ -257,7 +271,7 @@ define(['jquery', 'squash.translator', 'workspace.contextual-content', 'jquery.s
 		$("#test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
 		
 		// delete execution popup init
-		initDeleteExecutionPopup(origconf);
+		initDeleteExecutionPopup(conf);
 		
 	}
 	

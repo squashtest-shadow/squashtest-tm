@@ -33,6 +33,7 @@
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+<%@ taglib prefix="it" tagdir="/WEB-INF/tags/iterations-components"%>
 
 <f:message var="squashlocale" key="squashtm.locale" />
 
@@ -379,7 +380,7 @@
 		<div class="table-tab-wrap">
 
 
-			<aggr:decorate-iteration-test-plan-table
+			<it:iteration-test-plan-table
 				tableModelUrl="${iterationTestPlanUrl}"
 				testPlanDetailsBaseUrl="${testCaseDetailsBaseUrl}"
 				testPlansUrl="${testCasesUrl}"
