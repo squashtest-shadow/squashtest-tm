@@ -9,7 +9,7 @@
 
   <artifactId>core.wizard.api</artifactId>
   <name>${project.groupId}.${project.artifactId}</name>
-  <description>Squash TM API required to provide reports as plugins</description>
+  <description>Squash TM API required to provide wizards as plugins</description>
   <packaging>bundle</packaging>
 
   <properties>
