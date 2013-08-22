@@ -202,6 +202,13 @@ td.double-narrow{
 
 .execute-arrow{
 	background : url(../images/execute.png) no-repeat center center;
+	width : 20px;
+	height : 20px;
+}
+
+.disabled-transparent{
+	opacity : 0.35;
+	filter:alpha(opacity=35);	
 }
 
 /* ---------------------------------------------------------*/

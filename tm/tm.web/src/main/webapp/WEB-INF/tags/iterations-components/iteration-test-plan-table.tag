@@ -71,7 +71,7 @@
 <c:if test="${editable}">
 	<c:set var="deleteBtnClause" value=", delete-button=#iter-test-plan-delete-row-dialog"/>
 </c:if>
-<table id="test-plans-table" data-def="language=${dtMessagesUrl}, ajaxsource=${tableModelUrl}, hover"  >
+<table id="iteration-test-plans-table" class="test-plan-table" data-def="language=${dtMessagesUrl}, ajaxsource=${tableModelUrl}, hover"  >
 	<thead>
 		<tr>
 			<th data-def="map=entity-index, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
@@ -108,6 +108,14 @@
 		<input type="button" value="${confirmLabel}"/> 
 		<input type="button" value="${cancelLabel}"/> 
 	</div>
+</div>
+
+<div id="shortcut-exec-menu-template" class="not-displayed">
+		<div class="buttonmenu execute-arrow cursor-pointer"></div> 
+		<ul style="display:none">
+			<li><a data-tpid="{placeholder-tpid}" class="run-menu-item run-popup" href="javascript:void(0)"><f:message key="test-suite.execution.classic.label"/></a></li>
+			<li><a data-tpid="{placeholder-tpid}" class="run-menu-item run-oer" href="javascript:void(0)"><f:message key="test-suite.execution.optimized.label"/></a></li>
+		</ul>
 </div>
 
 <%--
@@ -554,7 +562,7 @@
 	*/
 	
 	/* ***************************** expanded line post processing *************** */
-
+/*
 <c:if test="${ executable }">
 	
 	function expandedRowCallback(jqnTr) {
@@ -620,7 +628,7 @@
 		actualEnd.refreshAutoDate(data.newEndDate);
 
 	}
-	
+	*/
 </c:if>
 
 	$(function() {
@@ -638,7 +646,7 @@
 				return;
 			}
 
-			var table = $('#test-plans-table').squashTable();
+			var table = $('#iteration-test-plans-table').squashTable();
 			var ids = getIdsOfSelectedTableRows(table,
 					getTestPlansTableRowId);
 

@@ -1169,7 +1169,22 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		 */
 
 		if (arguments.length === 0) {
-			return $.fn.squashTable.instances[this.selector];
+			//first, let's try to see if this selector is actually the key of this table in the hash 
+			var rettable = $.fn.squashTable.instances[this.selector];
+			if (rettable !== undefined){
+				return rettable;
+			}
+			//if not found, try looking over all the maps if one satisfies this selector
+			else{
+				for (var _t in $.fn.squashTable.instances){
+					var _tt = $.fn.squashTable.instances[_t];
+					if (_tt.is(this.selector)){
+						return _tt;
+					}
+				}
+				//else well, too bad.
+				return undefined;
+			}
 		}
 
 		/*

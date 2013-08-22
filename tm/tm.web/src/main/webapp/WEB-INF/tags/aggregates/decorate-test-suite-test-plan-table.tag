@@ -99,7 +99,7 @@
 
 
 
-<table id="test-suite-test-plans-table" data-def="ajaxsource=${tableModelUrl}, language=${tableLanguageUrl}, hover, pagesize=10" >
+<table id="test-suite-test-plans-table" class="test-plan-table" data-def="ajaxsource=${tableModelUrl}, language=${tableLanguageUrl}, hover, pagesize=10" >
 	<thead>
 		<tr>
 			<th data-def="map=entity-index, sClass=drag-handle ui-state-default, select, center, narrow">#</th>

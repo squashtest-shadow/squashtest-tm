@@ -20,45 +20,52 @@
  */
 define(['jquery' ], function($) {
 
+	
+	function _dryRunStart(url){
+		return $.ajax({
+			url : url,
+			method : 'get',
+			dataType : 'json',
+			data : {
+				'dry-run' : ''
+			}
+		});
+	};
+	
+	function _runInPopup(url){
+		var data = {
+			'optimized' : 'false'
+		};
+		var winDef = {
+			name : "classicExecutionRunner",
+			features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
+		};
+		$.open(url, data, winDef);		
+	};
+	
+	function _runInOER(url){
+		
+		$('body form#start-optimized-form').remove();
+		$('body').append('<form id="start-optimized-form" action="'+url+'?optimized=true&suitemode=false" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="true" name="optimized" id="start-optimized-button" /><input type="button" value="false" name="suitemode"  /></form>');
+		
+		$('#start-optimized-button').trigger('click');
+	};
+	
 	return {
 		
-		url : "",
-		
-		dryRunStart : function(){
-			var self = this;
-			return $.ajax({
-				url : self.url,
-				method : 'get',
-				dataType : 'json',
-				data : {
-					'dry-run' : ''
-				}
+		runInPopup : function(url){
+			_dryRunStart(url)
+			.done(function(){
+				_runInPopup(url);
 			});
 		},
 		
-		runInPopup : function(){
-			var url = this.url;
-			var data = {
-				'optimized' : 'false'
-			};
-			var winDef = {
-				name : "classicExecutionRunner",
-				features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
-			};
-			$.open(url, data, winDef);		
-		},
-		
-		runInOER : function(){
-			
-			var url = this.url;
-			$('body form#start-optimized-form').remove();
-			$('body').append('<form id="start-optimized-form" action="'+runnerUrl+'?optimized=true&suitemode=false" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="true" name="optimized" id="start-optimized-button" /><input type="button" value="false" name="suitemode"  /></form>');
-			
-			$('#start-optimized-button').trigger('click');
-		};
-			
-		
-		
+		runInOER : function(url){
+			_dryRunStart(url)
+			.done(function(){
+				_runInOER(url);
+			});
+		}
 	}
 	
 });

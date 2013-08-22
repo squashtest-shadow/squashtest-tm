@@ -23,6 +23,7 @@
  *  object. The configuration trivial :
  *  
  *  conf : {
+ *  	preskinned : if true, will not alter the look of the button.
  *		button : { button configuration },
  *		menu : {  
  *			//every valid menu options,
@@ -40,6 +41,7 @@ define([ 'jquery', 'jqueryui' ], function($) {
 
 	$.widget('squash.buttonmenu', {
 		options : {
+			preskinned : false,
 			button : {},
 			menu : {
 				zindex : 3000
@@ -54,7 +56,9 @@ define([ 'jquery', 'jqueryui' ], function($) {
 			this._menuCssTweak(menu);
 			this._bindLi(menu);
 
-			button.button(settings.button);
+			if (! settings.preskinned){
+				button.button(settings.button);
+			}
 			menu.menu(settings.menu);
 
 			button.on('click', function() {
@@ -68,7 +72,8 @@ define([ 'jquery', 'jqueryui' ], function($) {
 			// prevent the juggling effect when hovering the items
 			var width = menu.width();
 			menu.width(width + 10);
-
+			
+			return this;
 		},
 
 		_menuCssTweak : function(menu) {

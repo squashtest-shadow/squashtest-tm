@@ -35,10 +35,10 @@
  * 
  */
 
-define(['jquery', 'squash.translator', 'workspace.contextual-content', 'jquery.squash.datatables', 'jquery.squash.confirmdialog', 'jeditable'],function($, translator, ctxt) {
+define(['jquery', 'squash.translator', './exec-runner', 'workspace.contextual-content', 
+        'jquery.squash.datatables', 'jquery.squash.confirmdialog', 'jeditable', 'jquery.squash.buttonmenu'],
+        function($, translator, execrunner, ctxt) {
 
-
-	
 	function enhanceConfiguration(origconf){
 		
 		var conf = $.extend({}, origconf);
@@ -46,7 +46,6 @@ define(['jquery', 'squash.translator', 'workspace.contextual-content', 'jquery.s
 		var baseURL = squashtm.app.contextRoot;
 		
 		conf.messages = translator.get({
-			automatedExecutionTooltip : "label.automatedExecution",
 			executionStatus : {
 				UNTESTABLE : "execution.execution-status.UNTESTABLE",
 				BLOCKED : "execution.execution-status.BLOCKED",
@@ -55,8 +54,11 @@ define(['jquery', 'squash.translator', 'workspace.contextual-content', 'jquery.s
 				RUNNING : "execution.execution-status.RUNNING",
 				READY  : "execution.execution-status.READY",
 			},
+			automatedExecutionTooltip : "label.automatedExecution",
 			labelOk : "label.Ok",
-			labelCancel : "label.Cancel"
+			labelCancel : "label.Cancel",
+			titleInfo : "popup.title.Info",
+			messageNoAutoexecFound : "dialog.execution.auto.overview.error.none"
 		});
 		
 		conf.urls = {
@@ -71,86 +73,186 @@ define(['jquery', 'squash.translator', 'workspace.contextual-content', 'jquery.s
 	
 	// ****************** TABLE CONFIGURATION **************
 	
+	
+	function _rowCallbackReadFeatures($row, data, _conf){
+		
+		// style for deleted test case rows
+		if ( data['is-tc-deleted'] === "true" ){
+			$row.addClass('test-case-deleted');
+		}
+		
+		// execution mode icon
+		var $exectd = $row.find('.exec-mode').text('');
+		if ( data['exec-mode'] === "M"){
+			$exectd.addClass('exec-mode-manual').attr('title', '');
+		}
+		else{
+			$exectd.addClass('exec-mode-automated').attr('title', _conf.autoexecutionTooltip);
+		}
+		
+		// execution status (read)
+		var status = data['status'],
+			i18nstatus = _conf.statuses[status],
+			$statustd = $row.find('.status-combo'),
+			html = _conf.statusFactory.getHtmlFor(i18nstatus, status);
+			
+		$statustd.html(html);	// remember : this will insert a <span> in the process
+		
+		
+		// assignee (read) 
+		var $assigneetd = $row.find('.assignee-combo');
+		$assigneetd.wrapInner('<span/>');
+	}
+	
+
+	function _rowCallbackWriteFeatures($row, data, _conf){
+		
+		// execution status (edit)
+		var statusurl = _conf.testplanUrl + data['entity-id']; 
+		$row.find('.status-combo').children().first().editable( statusurl, {
+			type : 'select',
+			data : _conf.jsonStatuses,
+			name : 'status',
+			onblur : 'cancel',
+			callback : _conf.submitStatusClbk
+		});
+		
+		// assignee (edit)
+		var assigneeurl = _conf.testplanUrl + data['entity-id'];		
+		$row.find('.assignee-combo').children().first().editable(assigneeurl,{
+			type : 'select',
+			data : _conf.jsonAssignableUsers,
+			name : 'assignee', 
+			onblur : 'cancel',
+			callback : _conf.submitAssigneeClbk
+		});
+					
+	}
+	
+	function _rowCallbackExecFeatures($row, data, _conf){
+
+		//add the execute shortcut menu
+		var isTcDel = data['is-tc-deleted'],
+			isManual = (data['exec-mode'] === "M"); 
+		
+		var tpId = data['entity-id']
+			$td = $row.find('.execute-button'),
+			strmenu = $("#shortcut-exec-menu-template").html().replace(/{placeholder-tpid}/g, tpId),
+		
+		$td.empty();
+		$td.append(strmenu);
+		
+		// if the test case is deleted : just disable the whole thing
+		if (isTcDel){
+			$td.find('.execute-arrow').addClass('disabled-transparent');
+		} 
+		
+		//if the test case is manual : configure a button menu, althgouh we don't want it 
+		//to be skinned as a regular jquery button
+		else if (isManual){			
+			$td.find('.buttonmenu').buttonmenu({preskinned : true});			
+			$td.on('click', '.run-menu-item', _conf.manualHandler);
+		} 
+		
+		//if the test case is automated : just configure the button
+		else {
+			$td.find('.execute-arrow').click(_conf.automatedHandler);
+		}
+		
+	
+	}	
+	
 	function createTableConfiguration(initconf){
 		
-		// data for the comboboxes
+		// conf objects for the row callbacks
+		var _readFeaturesConf = {
+			statuses : initconf.messages.executionStatus,
+			autoexecutionTooltip : initconf.messages.automatedExecutionTooltip,
+			statusFactory : new squashtm.StatusFactory(initconf.messages.executionStatus)	
+		};
 		
-		var statuses = initconf.messages.executionStatus,
-			jsonStatuses = JSON.stringify(statuses),
-			assignableUsers = initconf.basic.assignableUsers,
-			jsonAssignableUsers = JSON.stringify(assignableUsers),
-			statusFactory = new squashtm.StatusFactory(statuses);	
+		var _writeFeaturesConf = {
 		
+			testplanUrl : initconf.urls.testplanUrl,
+			
+			jsonStatuses : JSON.stringify(initconf.messages.executionStatus),			
+			submitStatusClbk : function(value, settings) {
+				var $span = $(this),
+					statuses = JSON.parse(settings.data);
+				$span.attr('class', 'common-status-label executions-status-'+value+'-icon');
+				$span.text( statuses[value] );
+			}, 
+			
+			jsonAssignableUsers : JSON.stringify(initconf.basic.assignableUsers),
+			submitAssigneeClbk : function(value, settings) {
+				var assignableUsers = JSON.parse(settings.data);
+				$(this).text( assignableUsers[value] );
+			}
+		};
 		
-		var submitStatusClbk = function(value) {
-			var $span = $(this);
-			$span.attr('class', 'common-status-label executions-status-'+value+'-icon');
-			$span.text( statuses[value] );
-		} 
+		var _execFeaturesConf = {
+			
+			manualHandler : function(){
+				
+				var $this = $(this),
+					tpid = $this.data('tpid'),
+					ui = ($this.is('.run-popup')) ? "popup" : "oer",
+					newurl = initconf.urls.testplanUrl + tpid + '/executions/new';
+					
+				$.post(newurl, {mode : 'manual'}, 'json')
+				.done(function(execId){
+					var execurl = initconf.urls.executionsUrl + execId;
+					if (ui === "popup"){
+						execrunner.runInPopup(execurl);
+					}
+					else{
+						execrunner.runInOER(execurl);
+					}
+					
+				});				
+			},
+			
+			automatedHandler : function(){
+				var row = $(this).parents('tr').get(0),
+					table = $("#iteration-test-plans-table").squashTable(),
+					data = table.fnGetData(row),
+					tpid = data['entity-id'],
+					newurl = initconf.urls.testplanUrl + tpid + '/executions/new';
+				
+				$.post(newurl, {mode : 'auto'}, 'json')
+				.done(function(suiteview){
+					if (suiteview.executions.length == 0){
+						$.squash.openMessage(initcon.messages.titleInfo, 
+											initconf.messages.messageNoAutoexecFound);
+					}
+					else{
+						squashtm.automatedSuiteOverviewDialog.open(suiteview);
+					}
+				});
+				
+			}
+		};
+
 		
-		var submitAssigneeClbk = function(value) {
-			$(this).text( assignableUsers[value] );
-		} 
-		
-		// basic configuration. Much of it is in the DOM of the table.
-		
+		// basic table configuration. Much of it is in the DOM of the table.		
 		var tableSettings = {
 		
 			fnRowCallback : function(row, data, displayIndex){
 				
 				var $row = $(row);
 				
-				// style for deleted test case rows
-				if ( data['is-tc-deleted'] === "true" ){
-					$row.addClass('test-case-deleted');
-				}
+				//add read-only mode features (always applied)
+				_rowCallbackReadFeatures($row, data, _readFeaturesConf);
 				
-				// execution mode icon
-				var $exectd = $row.find('.exec-mode').text('');
-				if ( data['exec-mode'] === "M"){
-					$exectd.addClass('exec-mode-manual').attr('title', '');
-				}
-				else{
-					$exectd.addClass('exec-mode-automated').attr('title', initconf.messages.automatedExecutionTooltip);
-				}
-				
-				// execution status (read)
-				var status = data['status'],
-					i18nstatus = statuses[status],
-					$statustd = $row.find('.status-combo'),
-					html = statusFactory.getHtmlFor(i18nstatus, status);
-					
-				$statustd.html(html);	// remember : this will insert a <span> in the process
-				
-				// execution status (edit)
+				//add edit-mode features
 				if (initconf.permissions.editable){
-					var url = initconf.urls.testplanUrl + data['entity-id']; 
-					$statustd.children().first().editable( url, {
-						type : 'select',
-						data : jsonStatuses,
-						name : 'status',
-						onblur : 'cancel',
-						callback : submitStatusClbk
-					});
-					
-				};
-
-				// assignee (read) 
-				var $assigneetd = $row.find('.assignee-combo');
-				$assigneetd.wrapInner('<span/>');
-								
-				// assignee (edit)
-				if (initconf.permissions.editable){
-					var url = initconf.urls.testplanUrl + data['entity-id'] ;
-						
-					$assigneetd.children().first().editable(url,{
-						type : 'select',
-						data : jsonAssignableUsers,
-						name : 'assignee', 
-						onblur : 'cancel',
-						callback : submitAssigneeClbk
-					});
-				};			
+					_rowCallbackWriteFeatures($row, data, _writeFeaturesConf);
+				}
+				
+				//add execute-mode features
+				if (initconf.permissions.executable){
+					_rowCallbackExecFeatures($row, data, _execFeaturesConf);
+				}
 				
 				// done
 				return row;
@@ -204,9 +306,20 @@ define(['jquery', 'squash.translator', 'workspace.contextual-content', 'jquery.s
 								return false;
 							});
 							
-							/*newautoexecBtn.click(function(){
-								var url = $(this.
-							});*/
+							newautoexecBtn.click(function(){
+								var url = $(this).data('new-exec');
+								$.post(url, {mode : 'auto'}, 'json')
+								.done(function(suiteview){
+									if (suiteview.executions.length == 0){
+										$.squash.openMessage(initcon.messages.titleInfo, 
+															initconf.messages.messageNoAutoexecFound);
+									}
+									else{
+										squashtm.automatedSuiteOverviewDialog.open(suiteview);
+									}
+								});
+								return false;
+							});
 						}
 					});
 				}
@@ -223,7 +336,7 @@ define(['jquery', 'squash.translator', 'workspace.contextual-content', 'jquery.s
 				var ids = dropData.itemIds.join(',');
 				var url	= initconf.urls.testplanUrl + '/' + ids + '/position/' + dropData.newIndex;			
 				$.post(url, function(){
-					$("#test-plans-table").squashTable().refresh();
+					$("#iteration-test-plans-table").squashTable().refresh();
 				});
 			}
 			
@@ -241,6 +354,7 @@ define(['jquery', 'squash.translator', 'workspace.contextual-content', 'jquery.s
 	// ****************** DELETE EXECUTION CONFIGURATION **************
 	
 	function initDeleteExecutionPopup(conf){
+		
 		var deleteExecutionDialog = $("#iter-test-plan-delete-execution-dialog");
 		
 		deleteExecutionDialog.confirmDialog();
@@ -256,10 +370,10 @@ define(['jquery', 'squash.translator', 'workspace.contextual-content', 'jquery.s
 				dataType : 'json'
 			}).done(function(data){
 				ctxt.trigger('context.iteration-updated', { newDates : data });
-			});	
-			
+			});				
 		});
 	}
+	
 	
 	function init(origconf){		
 		
@@ -268,7 +382,7 @@ define(['jquery', 'squash.translator', 'workspace.contextual-content', 'jquery.s
 		//table init
 		var tableconf = createTableConfiguration(conf);
 		
-		$("#test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
+		$("#iteration-test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
 		
 		// delete execution popup init
 		initDeleteExecutionPopup(conf);
