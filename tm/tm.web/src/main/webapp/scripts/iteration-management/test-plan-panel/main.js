@@ -27,12 +27,12 @@
  *			linkable : boolean, can items be added or removed ?
  *			editable : boolean, is the table content editable ?
  *			executable : boolean, can the content be executed ?	
- * 		},
- * 		basic : {
- * 			iterationId : the id of the current iteration
+ *		},
+ *		basic : {
+ *			iterationId : the id of the current iteration
  *			assignableUsers : [ { 'id' : id, 'login' : login } ]
- * 		}
- * }
+ *		}
+ *	}
  * 
  */
 
@@ -51,7 +51,7 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 				FAILURE : "execution.execution-status.FAILURE",
 				SUCCESS : "execution.execution-status.SUCCESS",
 				RUNNING : "execution.execution-status.RUNNING",
-				READY  : "execution.execution-status.READY",
+				READY  : "execution.execution-status.READY"
 			},
 			automatedExecutionTooltip : "label.automatedExecution",
 			labelOk : "label.Ok",
@@ -98,7 +98,6 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 			_bindButtons(conf);
 			
 		}
-	}
-	
+	};	
 	
 });

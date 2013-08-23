@@ -30,7 +30,7 @@ define(['jquery' ], function($) {
 				'dry-run' : ''
 			}
 		});
-	};
+	}
 	
 	function _runInPopup(url){
 		var data = {
@@ -41,7 +41,7 @@ define(['jquery' ], function($) {
 			features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
 		};
 		$.open(url, data, winDef);		
-	};
+	}
 	
 	function _runInOER(url){
 		
@@ -49,7 +49,7 @@ define(['jquery' ], function($) {
 		$('body').append('<form id="start-optimized-form" action="'+url+'?optimized=true&suitemode=false" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="true" name="optimized" id="start-optimized-button" /><input type="button" value="false" name="suitemode"  /></form>');
 		
 		$('#start-optimized-button').trigger('click');
-	};
+	}
 	
 	return {
 		
@@ -66,6 +66,6 @@ define(['jquery' ], function($) {
 				_runInOER(url);
 			});
 		}
-	}
+	};
 	
 });

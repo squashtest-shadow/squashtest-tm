@@ -23,7 +23,7 @@
  *  object. The configuration trivial :
  *  
  *  conf : {
- *  	preskinned : if true, will not alter the look of the button.
+ *		preskinned : if true, will not alter the look of the button.
  *		button : { button configuration },
  *		menu : {  
  *			//every valid menu options,

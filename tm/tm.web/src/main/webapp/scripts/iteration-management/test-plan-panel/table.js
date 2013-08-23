@@ -26,31 +26,31 @@
  *		permissions : {
  *			editable : boolean, is the table content editable ?
  *			executable : boolean, can the content be executed ?	
- * 		},
- * 		basic : {
- * 			iterationId : the id of the current iteration
+ *		},
+ *		basic : {
+ *			iterationId : the id of the current iteration
  *			assignableUsers : [ { 'id' : id, 'login' : login } ]
- * 		},
- * 		messages : {
- * 			executionStatus : {
- * 				UNTESTABLE : i18n label,
- * 				BLOCKED : i18n label,
+ *		},
+ *		messages : {
+ *			executionStatus : {
+ *				UNTESTABLE : i18n label,
+ *				BLOCKED : i18n label,
  *				FAILURE : i18n label,
  *				SUCCESS : i18n label,
  *				RUNNING : i18n label,
  *				READY : i18n label,
- * 			},
+ *			},
  *			automatedExecutionTooltip : i18n label,
  *			labelOk : i18n label,
  *			labelCancel : i18n label,
  *			titleInfo : i18n label,
  *			messageNoAutoexecFound : i18n label
- * 		},
+ *		},
  *		urls : {
- *			 testplanUrl : base urls for test plan items,
- *			 executionsUrl : base urls for executions
+ *			testplanUrl : base urls for test plan items,
+ *			executionsUrl : base urls for executions
  *		}
- * }
+ *	}
  * 
  */
 
@@ -125,9 +125,9 @@ define(['jquery', 'squash.translator', './exec-runner',
 		var isTcDel = data['is-tc-deleted'],
 			isManual = (data['exec-mode'] === "M"); 
 		
-		var tpId = data['entity-id']
+		var tpId = data['entity-id'],
 			$td = $row.find('.execute-button'),
-			strmenu = $("#shortcut-exec-menu-template").html().replace(/{placeholder-tpid}/g, tpId),
+			strmenu = $("#shortcut-exec-menu-template").html().replace(/#placeholder-tpid#/g, tpId);
 		
 		$td.empty();
 		$td.append(strmenu);
@@ -211,7 +211,7 @@ define(['jquery', 'squash.translator', './exec-runner',
 				
 				$.post(newurl, {mode : 'auto'}, 'json')
 				.done(function(suiteview){
-					if (suiteview.executions.length == 0){
+					if (suiteview.executions.length === 0){
 						$.squash.openMessage(initcon.messages.titleInfo, 
 											initconf.messages.messageNoAutoexecFound);
 					}
@@ -282,7 +282,7 @@ define(['jquery', 'squash.translator', './exec-runner',
 								dialog.data('origin', this);
 								dialog.confirmDialog('open');
 							});
-						};
+						}
 						
 						//the new execution buttons
 						if (initconf.permissions.executable){
@@ -300,7 +300,7 @@ define(['jquery', 'squash.translator', './exec-runner',
 								var url = $(this).data('new-exec');
 								$.post(url, {mode : 'auto'}, 'json')
 								.done(function(suiteview){
-									if (suiteview.executions.length == 0){
+									if (suiteview.executions.length === 0){
 										$.squash.openMessage(initcon.messages.titleInfo, 
 															initconf.messages.messageNoAutoexecFound);
 									}
@@ -328,14 +328,14 @@ define(['jquery', 'squash.translator', './exec-runner',
 				$.post(url, function(){
 					$("#iteration-test-plans-table").squashTable().refresh();
 				});
-			}
+			};
 			
-		};
+		}
 	
 		return {
 			tconf : tableSettings,
 			sconf : squashSettings
-		}
+		};
 	
 	}
 	
