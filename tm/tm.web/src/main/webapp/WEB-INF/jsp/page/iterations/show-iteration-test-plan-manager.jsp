@@ -32,16 +32,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <c:url var="backUrl" value="/campaign-workspace/" />
-<c:url var="iterationUrl" value="/iterations/${ iteration.id }" />
-<c:url var="treeBaseUrl" value="/test-case-browser/" />
-<c:url var="testPlansTableUrl" value="${ baseURL }/test-cases/table" />
-<c:url var="testPlanUrl" value="${ baseURL }/test-cases" />
-<c:url var="removeTestPlanUrl" value="${ baseURL }/test-plan" />
-<c:url var="nonBelongingTestPlansUrl" value="${ baseURL }/non-belonging-test-cases" />
-
-<c:url var="testPlanDetailsBaseUrl" value="/test-cases" />
-
-<c:url var="updateTestPlanUrl" value="${ baseURL }/test-case/" />
+<c:url var="testPlanUrl" value="/iterations/${iteration.id}/test-plan/" />
 
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
 <%-- TODO : why is that no tree-picker-layout like the rest of association interface  ? --%>
@@ -63,7 +54,10 @@
 				var tree = $( '#linkable-test-cases-tree' );
 				var ids = getTestCasesIds();
 				if (ids.length > 0) {
-					$.post('${ testPlanUrl }', { testCasesIds: ids}, refreshTestPlans);
+					$.post('${ testPlanUrl }', { testCasesIds: ids})
+					.done(function(){
+						$("#test-plans-table").squashTable().refresh();
+					})
 				}
 				tree.jstree('deselect_all'); //todo : each panel should define that method too.
 				firstIndex = null;
@@ -177,11 +171,8 @@
 			<div class="fragment-body">
 			
 			<c:if test="${ useIterationTable }">
-			<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" isContextual="false"/>
-				<aggr:decorate-iteration-test-plan-manager-table tableModelUrl="${testPlansTableUrl}" testPlanDetailsBaseUrl="${testPlanDetailsBaseUrl}" 
-					testPlansUrl="${removeTestPlanUrl}" batchRemoveButtonId="remove-items-button" 
-					updateTestPlanUrl="${updateTestPlanUrl}" nonBelongingTestPlansUrl="${nonBelongingTestPlansUrl}" />
-				<aggr:iteration-test-plan-manager-table/>
+				<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" isContextual="false"/>
+				<aggr:iteration-test-plan-manager-table iteration="${iteration}"/>
 			</c:if>
 			<c:if test="${ not useIterationTable }">
 			<c:url var="testSuiteUrl" value="/test-suites/${ testSuite.id }" />

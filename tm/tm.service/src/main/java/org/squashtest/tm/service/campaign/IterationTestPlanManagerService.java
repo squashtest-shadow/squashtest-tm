@@ -52,6 +52,9 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @param iteration
 	 */
 	List<IterationTestPlanItem> addTestPlanItemsToIteration(List<Long> testCaseIds, Iteration iteration);
+	
+
+	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
 
 	/**
 	 * Removes a list of test cases from a campaign excepted the test plans which were executed

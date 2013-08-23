@@ -55,7 +55,6 @@ public interface CustomIterationModificationService extends IterationFinder {
 
 	Execution addAutomatedExecution(long testPlanItemId);
 
-	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
 
 	/**
 	 * that method should investigate the consequences of the deletion request, and return a report about what will

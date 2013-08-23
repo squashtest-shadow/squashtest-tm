@@ -352,27 +352,6 @@ public class IterationModificationController {
 
 	/* *************************************** test plan ********************************* */
 
-	/***
-	 * Method called when you drag a test case and change its position in the selected iteration
-	 * 
-	 * @param testPlanId
-	 *            : the iteration owning the moving test plan items
-	 * 
-	 * @param itemIds
-	 *            the ids of the items we are trying to move
-	 * 
-	 * @param newIndex
-	 *            the new position of the first of them
-	 */
-	@RequestMapping(value = "/test-plan/{itemIds}/position/{newIndex}", method = RequestMethod.POST)
-	@ResponseBody
-	public void moveTestPlanItems(@PathVariable(ITERATION_ID_KEY) long iterationId, 
-								@PathVariable("newIndex") int newIndex, @PathVariable("itemIds") List<Long> itemIds) {
-		iterationModService.changeTestPlanPosition(iterationId, newIndex, itemIds);
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("iteration " + iterationId + ": moving " + itemIds.size() + " test plan items  to " + newIndex);
-		}
-	}
 
 	// returns the ID of the newly created execution
 	@RequestMapping(value = "/test-plan/{testPlanItemId}/executions/new", method = RequestMethod.POST, params = { "mode=manual" })

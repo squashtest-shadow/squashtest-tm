@@ -90,6 +90,36 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		collected[ 2] == tc3
 	}
 
+	
+	
+	def "should move a test case"(){
+		given:
+		TestCase tc1 = Mock()
+		TestCase tc2 = Mock()
+		TestCase tc3 = Mock()
+		IterationTestPlanItem itp1 = Mock()
+		IterationTestPlanItem itp2 = Mock()
+		IterationTestPlanItem itp3 = Mock()
+		itp1.isTestCaseDeleted() >> false
+		itp2.isTestCaseDeleted() >> false
+		itp3.isTestCaseDeleted() >> false
+		itp1.getReferencedTestCase() >> tc1
+		itp2.getReferencedTestCase() >> tc2
+		itp3.getReferencedTestCase() >> tc3
+		Iteration iteration = new Iteration()
+		iteration.addTestPlan(itp1)
+		iteration.addTestPlan(itp2)
+		iteration.addTestPlan(itp3)
+		iterDao.findById(_) >> iteration
+		itemDao.findAllByIds(_)>> [itp3]
+		
+		when:
+		service.changeTestPlanPosition(5, 0, [600])
+
+		then:
+		iteration.getPlannedTestCase() == [tc3, tc1, tc2]
+	}
+	
 	@Unroll
 	def "should create test plan fragment using datasets #datasets" () {
 		given:

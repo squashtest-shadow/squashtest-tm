@@ -47,6 +47,7 @@ class IterationViewTestPlanTableModelHelper extends DataTableModelBuilder<Iterat
 
 		String projectName;
 		String testCaseName;
+		Long tcId;
 		String importance;
 		String reference;
 		String datasetName;
@@ -66,11 +67,13 @@ class IterationViewTestPlanTableModelHelper extends DataTableModelBuilder<Iterat
 		if (item.isTestCaseDeleted()) {
 			projectName = formatNoData(locale);
 			testCaseName = formatDeleted(locale);
+			tcId = null;
 			importance = formatNoData(locale);
 			reference = formatNoData(locale);
 		} else {
 			projectName = item.getReferencedTestCase().getProject().getName();
 			testCaseName = item.getReferencedTestCase().getName();
+			tcId = item.getReferencedTestCase().getId();
 			reference = item.getReferencedTestCase().getReference();
 			importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
 		}
@@ -91,6 +94,7 @@ class IterationViewTestPlanTableModelHelper extends DataTableModelBuilder<Iterat
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 		res.put("project-name", projectName);
 		res.put("reference", reference);
+		res.put("tc-id", tcId);
 		res.put("tc-name", testCaseName);
 		res.put("importance", importance);
 		res.put("suite", testSuiteNameList);

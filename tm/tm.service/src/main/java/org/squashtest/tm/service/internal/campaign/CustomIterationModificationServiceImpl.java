@@ -244,18 +244,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	
 
-	/**
-	 * @see CustomIterationModificationService#changeTestPlanPosition(long, int, List)
-	 */
-	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
-			+ OR_HAS_ROLE_ADMIN)
-	public void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds) {
-		Iteration iteration = iterationDao.findById(iterationId);
-		List<IterationTestPlanItem> items = testPlanDao.findAllByIds(itemIds);
-
-		iteration.moveTestPlans(newPosition, items);
-	}
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
