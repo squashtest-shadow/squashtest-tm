@@ -29,7 +29,9 @@
  *			//every valid menu options,
  *			zindex : a user-defined z-index value, 
  *					to make sure your menu will be displayed above any other elements.
- *					default is 3000. 
+ *					default is 3000,
+ *			anchor : one of ["left", "right"]. Default is "left" : this means that the menu is anchored to the button via its top-left corner. 
+ *						When set to "right", it would be the top-right. 
  *		}
  *	}
  * 
@@ -45,10 +47,13 @@ define([ 'jquery', 'jqueryui' ], function($) {
 			button : {},
 			menu : {
 				zindex : 3000
-			}
+			},
+			anchor : "left",
+			_firstInvokation : true
 		},
 
 		_create : function() {
+			
 			var settings = this.options;
 			var button = this.element;
 			var menu = button.next();
@@ -63,17 +68,37 @@ define([ 'jquery', 'jqueryui' ], function($) {
 
 			button.on('click', function() {
 				menu.toggle();
+				if (! settings._firstInvokation){
+					this._fixRender(menu);
+				}
 			});
 
 			menu.on('blur', function() {
 				menu.hide();
 			});
 
-			// prevent the juggling effect when hovering the items
-			var width = menu.width();
-			menu.width(width + 10);
+			
+
 			
 			return this;
+		},
+		
+		/* 
+		 * The goal here is to prevents the juggling effect when hovering the items.
+		 * 
+		 * The following cannot be invoked before the menu has appeared at least once. It is so
+		 * because we need the browser to compute its final width before we can execute some adjustments based on it
+		 * (in some cases the width might had been 0).
+		 * 
+		 */
+		_fixRender : function(menu){
+			var settings = this.options;
+			
+			var width = menu.width();
+			menu.width(width + 10);	
+
+			
+			settings._firstInvokation = false;			
 		},
 
 		_menuCssTweak : function(menu) {
@@ -83,6 +108,9 @@ define([ 'jquery', 'jqueryui' ], function($) {
 			menu.css('overflow', 'hidden');
 			menu.css('white-space', 'nowrap');
 			menu.css('z-index', this.options.menu.zindex);
+			if (this.options.anchor === "right"){
+				menu.css('right', 0);
+			}
 		},
 
 		_bindLi : function(menu) {

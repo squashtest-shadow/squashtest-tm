@@ -780,11 +780,15 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			jqRow.addClass('ui-state-row-selected');
 
 			if (conf.delegate !== undefined) {
-				try {
-					$(conf.delegate).dialog('open');
-				} catch (thisIsNoDialog) {
-					$(conf.delegate).confirmDialog('open'); // a shot in the
-					// dark
+				// the following trick will open a dialog instance regardless of the actual 
+				// implementation used (the original jquery dialog or one of ours).
+				var _data = $(conf.delegate).data();
+				for (var _ppt in _data){
+					var _widg = _data[_ppt];
+					if (_widg.uiDialog !== undefined && _widg.open !== undefined){
+						_widg.open();
+						break;
+					}
 				}
 			} else {
 				oneShotConfirm(conf.tooltip || "", conf.popupmessage || "", popconf.oklabel, popconf.cancellabel).done(

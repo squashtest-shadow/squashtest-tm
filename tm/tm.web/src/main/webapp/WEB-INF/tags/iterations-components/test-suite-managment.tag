@@ -117,7 +117,7 @@ $(function(){
 				update : function(evt){
 					//"add" is none of our business.
 					if ((evt===undefined) || (evt.evt_name=="remove") || (evt.evt_name=="rename") || (evt.evt_name =="bind")){
-						refreshTestPlansWithoutSelection();	
+						$('#iteration-test-plans-table').squashTable().refresh();	
 					}
 				}
 			};

@@ -24,8 +24,11 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -164,10 +167,11 @@ public class IterationModificationController {
 		Locale locale = LocaleContextHolder.getLocale();
 		
 		List<User> usersList = iterationTestPlanManagerService.findAssignableUserForTestPlan(iterationId);
+		Collections.sort(usersList, new UserLoginComparator());
 
 		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
 
-		Map<String, String> jsonUsers = new HashMap<String, String>(usersList.size());
+		Map<String, String> jsonUsers = new LinkedHashMap<String, String>(usersList.size());
 		
 		jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
 		for (User user : usersList){
@@ -490,5 +494,15 @@ public class IterationModificationController {
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
 
+	
+	// ******************** other stuffs ***********************
+	
+	private static final class UserLoginComparator implements Comparator<User>{
+		@Override
+		public int compare(User u1, User u2) {
+			return u1.getLogin().compareTo(u2.getLogin());
+		}
+		
+	}
 
 }

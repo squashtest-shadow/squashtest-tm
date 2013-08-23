@@ -312,8 +312,15 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 		},
 
 		'mainbtn' : function($elt, value) {
-			var state = (value === true) ? "default" : value;
-			this.options._mainBtns[state] = $elt;
+			if (value === true){
+				this.options._mainBtns["default"] = $elt;
+			}
+			else{
+				var values = $.trim(value).split(' ');
+				for (var i=0, len = values.length; i<len;i++){
+					this.options._mainBtns[values] = $elt;
+				}
+			}
 		},
 
 		'evt' : function($elt, value) {

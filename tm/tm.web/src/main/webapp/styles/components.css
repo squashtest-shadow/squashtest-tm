@@ -164,7 +164,7 @@ table.datepicker-table td.datepicker-table-col {
 	line-height: 1.2;
 }
 
-.executions-status-BLOQUED-icon {
+.executions-status-BLOQUED-icon,  .executions-status-BLOCKED-icon{
 	background: url("../images/Icon_Yellow.png") no-repeat;
 }
 

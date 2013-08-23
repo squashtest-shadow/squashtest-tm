@@ -60,45 +60,19 @@
 	value="/iterations/{iterId}/test-plan-manager">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-<s:url var="testCasesUrl" value="/iterations/{iterId}/test-plan">
-	<s:param name="iterId" value="${iteration.id}" />
-</s:url>
-<s:url var="nonBelongingTestCasesUrl"
-	value="/iterations/{iterId}/non-belonging-test-cases">
-	<s:param name="iterId" value="${iteration.id}" />
-</s:url>
-<s:url var="assignableUsersUrl"
-	value="/iterations/{iterId}/assignable-users">
-	<s:param name="iterId" value="${iteration.id}" />
-</s:url>
-<s:url var="assignableStatusUrl"
-	value="/iterations/{iterId}/assignable-statuses">
-	<s:param name="iterId" value="${iteration.id}" />
-</s:url>
-<s:url var="assignTestCasesUrl"
-	value="/iterations/{iterId}/batch-assign-user">
-	<s:param name="iterId" value="${iteration.id}" />
-</s:url>
+
 <c:url var="testCaseDetailsBaseUrl"
 	value="/test-case-libraries/1/test-cases" /><%-- FIXME this url looks wrong but not used where it's passed --%>
 
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
 
-<s:url var="testCaseExecutionsUrl"
-	value="/iterations/{iterId}/test-case-executions/">
-	<s:param name="iterId" value="${iteration.id}" />
-</s:url>
-
 <s:url var="updateTestCaseUrl" value="/iterations/{iterId}/test-plan/">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
 
-
-
 <s:url var="testSuitesUrl" value="/iterations/{iterId}/test-suites">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-
 
 <s:url var="btEntityUrl" value="/bugtracker/iteration/{id}">
 	<s:param name="id" value="${iteration.id}" />
@@ -213,7 +187,7 @@
 	</div>
 	<div class="toolbar-button-panel">
 		<c:if test="${ executable && iteration.project.testAutomationEnabled }">
-			<comp:execute-auto-button url="${ iterationUrl }" testPlanTableId="test-plans-table"/>
+			<comp:execute-auto-button url="${ iterationUrl }" testPlanTableId="iteration-test-plans-table"/>
 		
 		</c:if>
 		<c:if test="${ writable }">
@@ -244,7 +218,7 @@
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
 		</a>
 		</li>
-		<li><a href="#tabs-2"><f:message key="tabs.label.test-plan" />
+		<li><a href="#iteration-test-plans-panel"><f:message key="tabs.label.test-plan" />
 		</a>
 		</li>
 		<li><a href="#tabs-3"><f:message key="label.Attachments" />
@@ -352,113 +326,34 @@
 		<%-- ------------------ statistiques --------------------------- --%>
 		<comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ iterationStatisticsUrl }"/>
 	</div>
-	<div id="tabs-2" class="table-tab">
+	
+	<%-- ------------------ test plan ------------------------------ --%>
+	
+	<it:iteration-test-plan-panel iteration="${iteration}" assignableUsers="${assignableUsers}" 
+								  linkable="${linkable}"   editable="${writable}"  executable="${executable}"/>
+	
+	<%-- ------------------ /test plan ----------------------------- --%>
+		
+	<%-- ----------------------------------- Test Suite Management -------------------------------------------------- --%>
+	<c:if test="${ writable }">
+		<!-- here the deletable attribute concern the iteration because it has the same impact so far on the appearance the deletion button for a test suite. -->
+		<!-- it is unlikely but for more specific right management we will have to check the right of the user on the selected test suites in the popup -->
+		<it:test-suite-managment suiteList="${iteration.testSuites}"
+			popupOpener="manage-test-suites-button" creatable="${ creatable }"
+			deletable="${ deletable }" popupId="manage-test-suites-popup"
+			menuId="manage-test-suites-menu" testSuitesUrl="${testSuitesUrl}"
+			datatableId="iteration-test-plans-table"
+			emptySelectionMessageId="test-plan-empty-sel-msg" />
 
-		<%-- ------------------ test plan ------------------------------ --%>
-
-
-		<div class="toolbar">
-			<c:if test="${ linkable }">
-				<f:message var="associateLabel"
-					key="label.Add" />
-				<f:message var="removeLabel"
-					key="label.Remove" />
-				<f:message var="assignLabel"
-					key="label.Assign" />
-				<f:message var="manageTS" key='menu.test-suites.button.main' />
-				<input id="test-case-button" type="button" value="${associateLabel}"
-					class="button" />
-				<input id="remove-test-case-button" type="button"
-					value="${removeLabel}" class="button" />
-				<input id="assign-test-case-button" type="button"
-					value="${assignLabel}" class="button" />
-				<input id="manage-test-suites-menu" type="button"
-					value="${manageTS}" class="button" />
-			</c:if>
-		</div>
-
-		<div class="table-tab-wrap">
-
-
-			<it:iteration-test-plan-table
-				tableModelUrl="${iterationTestPlanUrl}"
-				testPlanDetailsBaseUrl="${testCaseDetailsBaseUrl}"
-				testPlansUrl="${testCasesUrl}"
-				batchRemoveButtonId="remove-test-case-button"
-				updateTestPlanUrl="${updateTestCaseUrl}"
-				assignableUsersUrl="${assignableUsersUrl}"
-				assignableStatusUrl="${assignableStatusUrl}"
-				nonBelongingTestPlansUrl="${nonBelongingTestCasesUrl}"
-				testPlanExecutionsUrl="${testCaseExecutionsUrl}"
-				editable="${ linkable }"
-				executable="${ executable }"
-				testCaseMultipleRemovalPopupId="delete-multiple-test-plan-dialog"
-				baseIterationURL="${iterationUrl}"
-				testCaseSingleRemovalPopupId="delete-single-test-plan-dialog" 
-				assignableUsers="${assignableUsers}"
-				iteration="${iteration}"/>
-		</div>
-
-		<%--------------------------- Deletion confirmation pup for Test plan section ------------------------------------%>
-		<c:if test="${ linkable }">
-			<pop:popup id="delete-multiple-test-plan-dialog"
-				openedBy="remove-test-case-button" isContextual="true" 
-				titleKey="dialog.remove-testcase-associations.title">
-				<jsp:attribute name="buttons">
-		<f:message var="label" key="label.Yes" />
-				'${ label }' : function(){
-					$("#delete-multiple-test-plan-dialog").data("answer","yes");
-					$("#delete-multiple-test-plan-dialog").dialog("close");
-				},
-				
-		<pop:cancel-button />
-	</jsp:attribute>
-				<jsp:attribute name="body">
-	<f:message var="emptyMessage"
-						key="message.EmptyTableSelection" />			
-	<script type="text/javascript">
-		$("#delete-multiple-test-plan-dialog").bind(
-				"dialogopen",
-				function(event, ui) {
-					var table = $('#test-plans-table').squashTable();
-					var ids = table.getSelectedIds();
-
-					if (ids.length == 0) {
-						$.squash.openMessage(
-								"<f:message key='popup.title.error' />",
-								"${emptyMessage}");
-						$(this).dialog('close');
-					}
-
-				});
-	</script>
-		<f:message key="dialog.remove-testcase-associations.message" />
-	</jsp:attribute>
-			</pop:popup>
-
-		</c:if>
-		<%-- ------------------------- /Deletion confirmation popup for Test plan section --------------------------------- --%>
-
-		<%-- ----------------------------------- Test Suite Management -------------------------------------------------- --%>
-		<c:if test="${ writable }">
-			<!-- here the deletable attribute concern the iteration because it has the same impact so far on the appearance the deletion button for a test suite. -->
-			<!-- it is unlikely but for more specific right management we will have to check the right of the user on the selected test suites in the popup -->
-			<comp:test-suite-managment suiteList="${iteration.testSuites}"
-				popupOpener="manage-test-suites-button" creatable="${ creatable }"
-				deletable="${ deletable }" popupId="manage-test-suites-popup"
-				menuId="manage-test-suites-menu" testSuitesUrl="${testSuitesUrl}"
-				datatableId="test-plans-table"
-				emptySelectionMessageId="test-plan-empty-sel-msg" />
-
-			<div id="test-plan-empty-sel-msg" class="not-visible"
-				title="<f:message key='iteration.test-plan.action.title' />">
-				<div>
-					<f:message key="iteration.test-plan.action.empty-selection.message" />
-				</div>
+		<div id="test-plan-empty-sel-msg" class="not-visible"
+			title="<f:message key='iteration.test-plan.action.title' />">
+			<div>
+				<f:message key="iteration.test-plan.action.empty-selection.message" />
 			</div>
-		</c:if>
-		<%-- ----------------------------------- /Test Suite Management -------------------------------------------------- --%>
-	</div>
+		</div>
+	</c:if>
+	<%-- ----------------------------------- /Test Suite Management -------------------------------------------------- --%>
+
 
 	<%------------------------------ Attachments bloc ------------------------------------------- --%>
 	
@@ -476,63 +371,6 @@
 	
 	</c:if>
 
-	<%--------------------------- Assign User popup -------------------------------------%>
-	<c:if test="${writable}">
-		<pop:popup id="batch-assign-test-case"
-			titleKey="label.AssignUser" isContextual="true"
-			openedBy="assign-test-case-button" closeOnSuccess="false">
-
-			<jsp:attribute name="buttons">
-		
-			<f:message var="label" key="label.Assign" />
-			'${ label }': function() {
-				var url = "${assignTestCasesUrl}";
-				var table = $( '#test-plans-table' ).squashTable();
-				var ids = table.getSelectedIds();
-		
-				var user = $(".batch-select", this).val();
-			
-				$.post(url, { testPlanIds: ids, userId: user}, function(){
-					refreshTestPlansWithoutSelection();
-					$("#batch-assign-test-case").dialog('close');
-				});
-				
-			},			
-			<pop:cancel-button />
-		</jsp:attribute>
-			<jsp:attribute name="body">
-			<script type="text/javascript">
-				$("#batch-assign-test-case").bind("dialogopen",function(event, ui) {
-					
-					var table = $('#test-plans-table').squashTable();
-					var ids = table.getSelectedIds();
-
-					if (ids.length > 0) {
-						var pop = this;
-						$.get("${assignableUsersUrl}","json")
-						.success(function(jsonList) {
-							var select = $(".batch-select", pop);
-							select.empty();
-							for ( var i = 0; i < jsonList.length; i++) {
-								select.append('<option value="'+jsonList[i].id+'">'
-												+ jsonList[i].login
-												+ '</option>');
-							}
-						});
-					} else {
-						$.squash.openMessage("<f:message key='popup.title.error' />", "${emptyMessage}");
-						$(this).dialog('close');
-					}
-
-				});
-			</script>
-			<span><f:message key="message.AssignTestCaseToUser" />
-				</span>
-			<select class="batch-select">
-			</select>
-		</jsp:attribute>
-		</pop:popup>
-	</c:if>
 </div>
 <%------------------------------------------automated suite overview --------------------------------------------%>
 <c:if test="${ executable && iteration.project.testAutomationEnabled }">		
@@ -554,19 +392,15 @@
 			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextual-content"], 
 					function($, contentHandlers, Frag, bugtracker, contextualContent){
 
+				
+				// *********** name handler ***************
+				
 				var nameHandler = contentHandlers.getSimpleNameHandler();
 				
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#iteration-name";
 				
 				contextualContent.addListener(nameHandler);
-				
-				<c:if test="${linkable}">
-				$('#test-case-button').click(function() {
-					document.location.href = "${testPlanManagerUrl}";
-				});
-				</c:if>			
-
 				
 				//****** tabs configuration *******
 				
@@ -591,7 +425,7 @@
 				
 			 	squashtm.execution = squashtm.execution || {};
 			 	squashtm.execution.refresh = $.proxy(function(){
-			 		$("#test-plans-table").squashTable().refresh();
+			 		$("#iteration-test-plans-table").squashTable().refresh();
 			 		$('#general-informations-panel').load('${iterationInfoUrl}');
 			 	}, window);
 				

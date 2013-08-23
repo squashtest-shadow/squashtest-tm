@@ -30,45 +30,35 @@
  * 		basic : {
  * 			iterationId : the id of the current iteration
  *			assignableUsers : [ { 'id' : id, 'login' : login } ]
- * 		}
+ * 		},
+ * 		messages : {
+ * 			executionStatus : {
+ * 				UNTESTABLE : i18n label,
+ * 				BLOCKED : i18n label,
+ *				FAILURE : i18n label,
+ *				SUCCESS : i18n label,
+ *				RUNNING : i18n label,
+ *				READY : i18n label,
+ * 			},
+ *			automatedExecutionTooltip : i18n label,
+ *			labelOk : i18n label,
+ *			labelCancel : i18n label,
+ *			titleInfo : i18n label,
+ *			messageNoAutoexecFound : i18n label
+ * 		},
+ *		urls : {
+ *			 testplanUrl : base urls for test plan items,
+ *			 executionsUrl : base urls for executions
+ *		}
  * }
  * 
  */
 
-define(['jquery', 'squash.translator', './exec-runner', 'workspace.contextual-content', 
-        'jquery.squash.datatables', 'jquery.squash.confirmdialog', 'jeditable', 'jquery.squash.buttonmenu'],
-        function($, translator, execrunner, ctxt) {
+define(['jquery', 'squash.translator', './exec-runner', 
+        'jquery.squash.datatables', 'jeditable', 'jquery.squash.buttonmenu'],
+        function($, translator, execrunner) {
 
-	function enhanceConfiguration(origconf){
 		
-		var conf = $.extend({}, origconf);
-		
-		var baseURL = squashtm.app.contextRoot;
-		
-		conf.messages = translator.get({
-			executionStatus : {
-				UNTESTABLE : "execution.execution-status.UNTESTABLE",
-				BLOCKED : "execution.execution-status.BLOCKED",
-				FAILURE : "execution.execution-status.FAILURE",
-				SUCCESS : "execution.execution-status.SUCCESS",
-				RUNNING : "execution.execution-status.RUNNING",
-				READY  : "execution.execution-status.READY",
-			},
-			automatedExecutionTooltip : "label.automatedExecution",
-			labelOk : "label.Ok",
-			labelCancel : "label.Cancel",
-			titleInfo : "popup.title.Info",
-			messageNoAutoexecFound : "dialog.execution.auto.overview.error.none"
-		});
-		
-		conf.urls = {
-			 testplanUrl : baseURL + '/iterations/'+conf.basic.iterationId+'/test-plan/',
-			 executionsUrl : baseURL + '/executions/'
-		};
-		
-		return conf;
-	}
-	
 	
 	
 	// ****************** TABLE CONFIGURATION **************
@@ -150,7 +140,7 @@ define(['jquery', 'squash.translator', './exec-runner', 'workspace.contextual-co
 		//if the test case is manual : configure a button menu, althgouh we don't want it 
 		//to be skinned as a regular jquery button
 		else if (isManual){			
-			$td.find('.buttonmenu').buttonmenu({preskinned : true});			
+			$td.find('.buttonmenu').buttonmenu({preskinned : true, anchor : "right"});			
 			$td.on('click', '.run-menu-item', _conf.manualHandler);
 		} 
 		
@@ -201,7 +191,7 @@ define(['jquery', 'squash.translator', './exec-runner', 'workspace.contextual-co
 					
 				$.post(newurl, {mode : 'manual'}, 'json')
 				.done(function(execId){
-					var execurl = initconf.urls.executionsUrl + execId;
+					var execurl = initconf.urls.executionsUrl + execId +'/runner';
 					if (ui === "popup"){
 						execrunner.runInPopup(execurl);
 					}
@@ -349,49 +339,14 @@ define(['jquery', 'squash.translator', './exec-runner', 'workspace.contextual-co
 	
 	}
 	
-	
-	
-	// ****************** DELETE EXECUTION CONFIGURATION **************
-	
-	function initDeleteExecutionPopup(conf){
-		
-		var deleteExecutionDialog = $("#iter-test-plan-delete-execution-dialog");
-		
-		deleteExecutionDialog.confirmDialog();
-		
-		deleteExecutionDialog.on('confirmdialogconfirm', function(){
-			var execId = $(this).data('origin')
-								.id
-								.substr('delete-execution-table-button-'.length);
-			
-			$.ajax({
-				url : conf.urls.executionsUrl + execId,
-				type : 'DELETE',
-				dataType : 'json'
-			}).done(function(data){
-				ctxt.trigger('context.iteration-updated', { newDates : data });
-			});				
-		});
-	}
-	
-	
-	function init(origconf){		
-		
-		var conf = enhanceConfiguration(origconf);
-		
-		//table init
-		var tableconf = createTableConfiguration(conf);
-		
-		$("#iteration-test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
-		
-		// delete execution popup init
-		initDeleteExecutionPopup(conf);
-		
-	}
-	
+
+	// **************** MAIN ****************
 	
 	return {
-		init : init
+		init : function(enhconf){			
+			var tableconf = createTableConfiguration(enhconf);			
+			$("#iteration-test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
+		}
 	};
 	
 });
