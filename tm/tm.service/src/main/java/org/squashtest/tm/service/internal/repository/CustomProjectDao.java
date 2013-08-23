@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.List;
+
 
 /**
  * @author Gregory Fouquet
@@ -27,4 +29,8 @@ package org.squashtest.tm.service.internal.repository;
  */
 public interface CustomProjectDao {
 	long countNonFoldersInProject(long projectId);
+
+	List<String> findUsersWhoCreatedTestCases(List<Long> projectIds);
+
+	List<String> findUsersWhoModifiedTestCases(List<Long> projectIds);
 }

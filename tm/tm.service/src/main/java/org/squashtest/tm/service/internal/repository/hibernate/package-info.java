@@ -206,7 +206,9 @@
 		@NamedQuery(name = "project.countNonFolderInTestCase", query = "select count(tc) from  TestCase tc where tc.project.id = :projectId "),
 		@NamedQuery(name = "project.countNonFolderInRequirement", query = "select count(req) from Requirement req where req.project.id = :projectId "),
 		@NamedQuery(name = "Project.findProjectFiltersContainingProject", query = "select pf from ProjectFilter pf join pf.projects p where p.id = :projectId "),
-
+		@NamedQuery(name = "Project.findAllUsersWhoCreatedTestCases", query = "select distinct tc.audit.createdBy from TestCase tc join tc.project p where p.id in :projectIds"),
+		@NamedQuery(name = "Project.findAllUsersWhoModifiedTestCases", query = "select distinct tc.audit.lastModifiedBy from TestCase tc join tc.project p where p.id in :projectIds"),		
+		
 		//Attachement et al
 		@NamedQuery(name = "attachment.findContentId", query = "select aContent.id from Attachment attachment join attachment.content aContent where attachment.id = :attachId"),
 		@NamedQuery(name = "attachment.removeContent", query = "delete from AttachmentContent where id = :contentId"),

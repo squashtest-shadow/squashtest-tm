@@ -18,14 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.domain.search;
 
-public class TestCaseSearchSingleFieldModel implements TestCaseSearchFieldModel{
+public class AdvancedSearchTextFieldModel implements AdvancedSearchFieldModel{
 
-	private String type = TestCaseSearchFieldModel.SINGLE;
-	
+	private String type = AdvancedSearchFieldModel.TEXT;
+
 	private String value;
-
+	
 	public String getValue() {
 		return value;
 	}

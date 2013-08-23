@@ -49,9 +49,9 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseSearchModel;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomCustomFieldManagerService;
 import org.squashtest.tm.service.library.AdvancedSearchService;
@@ -139,7 +139,7 @@ public class AdvancedSearchController {
 	@ResponseBody
 	public DataTableModel getTableModel(final DataTableDrawParameters params, final Locale locale, @RequestParam(value = "model") String model) throws JsonParseException, JsonMappingException, IOException {
 
-		TestCaseSearchModel searchModel = new ObjectMapper().readValue(model, TestCaseSearchModel.class);
+		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
 		PagingAndSorting paging = new DataTableSorting(params, testCaseSearchResultMapper);
 
@@ -312,12 +312,22 @@ public class AdvancedSearchController {
 		SearchInputFieldModel createdByField = new SearchInputFieldModel("createdBy",messageSource.internationalize("search.testcase.history.createdBy.label",locale),"multiselect");
 		panel.addField(createdByField);
 
+		List<String> users = advancedSearchService.findAllUsersWhoCreatedTestCases();
+		for(String user : users){
+			createdByField.addPossibleValue(new SearchInputPossibleValueModel(user, user));
+		}
+		
 		SearchInputFieldModel createdOnField = new SearchInputFieldModel("createdOn",messageSource.internationalize("search.testcase.history.createdOn.label",locale),"date");
 		panel.addField(createdOnField);
 		
 		SearchInputFieldModel modifiedByField = new SearchInputFieldModel("modifiedBy",messageSource.internationalize("search.testcase.history.modifiedBy.label",locale),"multiselect");
 		panel.addField(modifiedByField);
 
+		users = advancedSearchService.findAllUsersWhoModifiedTestCases();
+		for(String user : users){
+			modifiedByField.addPossibleValue(new SearchInputPossibleValueModel(user, user));
+		}
+		
 		SearchInputFieldModel modifiedOnField = new SearchInputFieldModel("modifiedOn",messageSource.internationalize("search.testcase.history.modifiedOn.label",locale),"date");
 		panel.addField(modifiedOnField);
 		
@@ -326,7 +336,7 @@ public class AdvancedSearchController {
 	
 	private SearchInputPanelModel createCUFPanel(Locale locale){
 		
-		SearchInputPanelModel panel = getCustomFielModel();
+		SearchInputPanelModel panel = getCustomFielModel(locale);
 		panel.setTitle(messageSource.internationalize("search.testcase.cuf.panel.title",locale));
 		panel.setOpen(false);
 		panel.setId("cuf");
@@ -408,12 +418,12 @@ public class AdvancedSearchController {
 	}
 	
 
-	public SearchInputPanelModel getCustomFielModel(){
+	public SearchInputPanelModel getCustomFielModel(Locale locale){
 		List<CustomField> customFields = advancedSearchService.findAllQueryableCustomFieldsByBoundEntityType(BindableEntity.TEST_CASE);
-		return convertToSearchInputPanelModel(customFields);
+		return convertToSearchInputPanelModel(customFields, locale);
 	}
 	
-	private SearchInputPanelModel convertToSearchInputPanelModel(List<CustomField> customFields){
+	private SearchInputPanelModel convertToSearchInputPanelModel(List<CustomField> customFields, Locale locale){
 		SearchInputPanelModel model = new SearchInputPanelModel();
 		for(CustomField customField : customFields){
 			if(org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST.equals(customField.getInputType())){
@@ -422,20 +432,20 @@ public class AdvancedSearchController {
 			} else if(org.squashtest.tm.domain.customfield.InputType.PLAIN_TEXT.equals(customField.getInputType())){
 				model.getFields().add(convertToSearchInputFieldModel(customField));
 			} else if(org.squashtest.tm.domain.customfield.InputType.CHECKBOX.equals(customField.getInputType())){
-				model.getFields().add(createCheckBoxField(customField));
+				model.getFields().add(createCheckBoxField(customField, locale));
 			}
 		}
 		return model;
 	}
 	
-	private SearchInputFieldModel createCheckBoxField(CustomField customField){
+	private SearchInputFieldModel createCheckBoxField(CustomField customField, Locale locale){
 		SearchInputFieldModel model = new SearchInputFieldModel();
 
 		List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>();
 		
-		possibleValues.add(new SearchInputPossibleValueModel("search.testcase.choose.label", "ALL"));
-		possibleValues.add(new SearchInputPossibleValueModel("squashtm.yesno.true", "TRUE"));
-		possibleValues.add(new SearchInputPossibleValueModel("squashtm.yesno.false", "FALSE"));
+		possibleValues.add(new SearchInputPossibleValueModel(messageSource.internationalize("search.testcase.choose.label",locale), "ALL"));
+		possibleValues.add(new SearchInputPossibleValueModel(messageSource.internationalize("squashtm.yesno.true",locale), "TRUE"));
+		possibleValues.add(new SearchInputPossibleValueModel(messageSource.internationalize("squashtm.yesno.false",locale), "FALSE"));
 		
 		model.setPossibleValues(possibleValues);
 		model.setInputType("multiselect");

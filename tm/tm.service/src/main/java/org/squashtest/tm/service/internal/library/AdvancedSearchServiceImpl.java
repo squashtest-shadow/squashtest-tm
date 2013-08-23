@@ -49,18 +49,19 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
-import org.squashtest.tm.domain.testcase.TestCaseSearchFieldModel;
-import org.squashtest.tm.domain.testcase.TestCaseSearchListFieldModel;
-import org.squashtest.tm.domain.testcase.TestCaseSearchModel;
-import org.squashtest.tm.domain.testcase.TestCaseSearchRangeFieldModel;
-import org.squashtest.tm.domain.testcase.TestCaseSearchSingleFieldModel;
-import org.squashtest.tm.domain.testcase.TestCaseSearchTextFieldModel;
-import org.squashtest.tm.domain.testcase.TestCaseSearchTimeIntervalFieldModel;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.project.ProjectManagerService;
@@ -78,6 +79,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Inject
 	private ProjectManagerService projectFinder;
 
+	@Inject
+	private ProjectDao projectDao;
+	
 	@Inject
 	private TestCaseDao testCaseDao;
 
@@ -170,7 +174,28 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		return new ArrayList<CustomField>(result);
 	}
-
+	
+	@Override
+	public List<String> findAllUsersWhoCreatedTestCases(){
+		List<Project> readableProjects = projectFinder.findAllReadable();
+		List<Long> projectIds = new ArrayList<Long>(readableProjects.size());
+		for(Project project : readableProjects){
+			projectIds.add(project.getId());
+		}
+		return projectDao.findUsersWhoCreatedTestCases(projectIds);
+	}
+	
+	
+	@Override
+	public List<String> findAllUsersWhoModifiedTestCases(){
+		List<Project> readableProjects = projectFinder.findAllReadable();
+		List<Long> projectIds = new ArrayList<Long>(readableProjects.size());
+		for(Project project : readableProjects){
+			projectIds.add(project.getId());
+		}
+		return projectDao.findUsersWhoModifiedTestCases(projectIds);
+	}
+	
 	private org.apache.lucene.search.Query buildLuceneRangeQuery(QueryBuilder qb, String fieldName, Integer minValue, Integer maxValue){
 
 		org.apache.lucene.search.Query query = null;
@@ -203,17 +228,24 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private org.apache.lucene.search.Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName, List<String> values){
 
-		StringBuilder builder = new StringBuilder();
-		for(String value : values){
-			builder.append(value+" ");
-		}
+		org.apache.lucene.search.Query mainQuery = null;
 		
-		org.apache.lucene.search.Query query = qb
-				.bool()
-				.must(qb.keyword().onField(fieldName).ignoreFieldBridge().matching(builder.toString()).createQuery())
-				.createQuery();
+		//StringBuilder builder = new StringBuilder();
+		for(String value : values){
+			//builder.append(value+" ");
+			org.apache.lucene.search.Query query = qb
+					.bool()
+					.should(qb.keyword().onField(fieldName).ignoreFieldBridge().matching(value).createQuery())
+					.createQuery();
+			
+			if(query != null && mainQuery == null){
+				mainQuery = query;
+			} else if(query != null) {
+				mainQuery = qb.bool().should(mainQuery).should(query).createQuery();
+			}
+		}
 
-		return query;
+		return qb.bool().must(mainQuery).createQuery();
 	}
 
 	private org.apache.lucene.search.Query buildLuceneSingleValueQuery(QueryBuilder qb, String fieldName, String value){
@@ -252,9 +284,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	private org.apache.lucene.search.Query  buildQueryForSingleCriterium(String fieldKey, TestCaseSearchFieldModel fieldModel, QueryBuilder qb){
+	private org.apache.lucene.search.Query  buildQueryForSingleCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb){
 		
-		TestCaseSearchSingleFieldModel singleModel = (TestCaseSearchSingleFieldModel) fieldModel;
+		AdvancedSearchSingleFieldModel singleModel = (AdvancedSearchSingleFieldModel) fieldModel;
 		if(singleModel.getValue() != null && !"".equals(singleModel.getValue().trim())){
 			return buildLuceneSingleValueQuery(qb,fieldKey,singleModel.getValue());
 		}
@@ -262,9 +294,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 	
-	private org.apache.lucene.search.Query  buildQueryForListCriterium(String fieldKey, TestCaseSearchFieldModel fieldModel, QueryBuilder qb){
+	private org.apache.lucene.search.Query  buildQueryForListCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb){
 		
-		TestCaseSearchListFieldModel listModel = (TestCaseSearchListFieldModel) fieldModel;
+		AdvancedSearchListFieldModel listModel = (AdvancedSearchListFieldModel) fieldModel;
 		if(listModel.getValues() != null){
 			return buildLuceneValueInListQuery(qb,fieldKey,listModel.getValues());
 		}
@@ -272,8 +304,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 	
-	private org.apache.lucene.search.Query  buildQueryForTextCriterium(String fieldKey, TestCaseSearchFieldModel fieldModel, QueryBuilder qb){
-		TestCaseSearchTextFieldModel textModel = (TestCaseSearchTextFieldModel) fieldModel;
+	private org.apache.lucene.search.Query  buildQueryForTextCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb){
+		AdvancedSearchTextFieldModel textModel = (AdvancedSearchTextFieldModel) fieldModel;
 		if(textModel.getValue() != null && !"".equals(textModel.getValue().trim())){
 			return buildLuceneTextQuery(qb,fieldKey,textModel.getValue());
 		}
@@ -282,8 +314,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 	
 	
-	private org.apache.lucene.search.Query  buildQueryForRangeCriterium(String fieldKey, TestCaseSearchFieldModel fieldModel, QueryBuilder qb){
-		TestCaseSearchRangeFieldModel rangeModel = (TestCaseSearchRangeFieldModel) fieldModel;
+	private org.apache.lucene.search.Query  buildQueryForRangeCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb){
+		AdvancedSearchRangeFieldModel rangeModel = (AdvancedSearchRangeFieldModel) fieldModel;
 		if(rangeModel.getMinValue() != null || rangeModel.getMaxValue() != null){
 			return buildLuceneRangeQuery(qb,fieldKey,rangeModel.getMinValue(),rangeModel.getMaxValue());
 		}
@@ -291,8 +323,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 	
-	private org.apache.lucene.search.Query  buildQueryForTimeIntervalCriterium(String fieldKey, TestCaseSearchFieldModel fieldModel, QueryBuilder qb){
-		TestCaseSearchTimeIntervalFieldModel intervalModel = (TestCaseSearchTimeIntervalFieldModel) fieldModel;
+	private org.apache.lucene.search.Query  buildQueryForTimeIntervalCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb){
+		AdvancedSearchTimeIntervalFieldModel intervalModel = (AdvancedSearchTimeIntervalFieldModel) fieldModel;
 		if(intervalModel.getStartDate() != null || intervalModel.getEndDate() != null){
 			return buildLuceneTimeIntervalQuery(qb,fieldKey,intervalModel.getStartDate(),intervalModel.getEndDate());
 		}
@@ -300,7 +332,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 	
-	private org.apache.lucene.search.Query buildLuceneQuery(QueryBuilder qb, TestCaseSearchModel model){
+	private org.apache.lucene.search.Query buildLuceneQuery(QueryBuilder qb, AdvancedSearchModel model){
 		
 		org.apache.lucene.search.Query mainQuery = null;
 		org.apache.lucene.search.Query query = null;
@@ -309,22 +341,22 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		
 		for(String fieldKey : fieldKeys){
 			
-			TestCaseSearchFieldModel fieldModel = model.getFields().get(fieldKey);
+			AdvancedSearchFieldModel fieldModel = model.getFields().get(fieldKey);
 			String type = fieldModel.getType();
 			
-			if(TestCaseSearchFieldModel.SINGLE.equals(type)){
+			if(AdvancedSearchFieldModel.SINGLE.equals(type)){
 				query = buildQueryForSingleCriterium(fieldKey, fieldModel, qb);
 				
-			} else if (TestCaseSearchFieldModel.LIST.equals(type)){
+			} else if (AdvancedSearchFieldModel.LIST.equals(type)){
 				query =  buildQueryForListCriterium(fieldKey, fieldModel, qb);
 				
-			} else if (TestCaseSearchFieldModel.TEXT.equals(type)){
+			} else if (AdvancedSearchFieldModel.TEXT.equals(type)){
 				query =  buildQueryForTextCriterium(fieldKey, fieldModel, qb);
 				
-			} else if (TestCaseSearchFieldModel.RANGE.equals(type)){
+			} else if (AdvancedSearchFieldModel.RANGE.equals(type)){
 				query =  buildQueryForRangeCriterium(fieldKey, fieldModel, qb);
 				
-			} else if (TestCaseSearchFieldModel.TIME_INTERVAL.equals(type)){
+			} else if (AdvancedSearchFieldModel.TIME_INTERVAL.equals(type)){
 				query =  buildQueryForTimeIntervalCriterium(fieldKey, fieldModel, qb);
 			}
 			
@@ -339,7 +371,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 	
 	@Override
-	public List<TestCase> searchForTestCases(TestCaseSearchModel model) {
+	public List<TestCase> searchForTestCases(AdvancedSearchModel model) {
 		
 		Session session = sessionFactory.getCurrentSession();
  		
@@ -358,7 +390,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 	
 	@Override
-	public PagedCollectionHolder<List<TestCase>> searchForTestCases(TestCaseSearchModel model, PagingAndSorting sorting) {
+	public PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model, PagingAndSorting sorting) {
 
 		Session session = sessionFactory.getCurrentSession();
  		

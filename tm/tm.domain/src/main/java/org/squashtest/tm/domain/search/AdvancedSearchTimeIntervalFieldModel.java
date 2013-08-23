@@ -18,34 +18,40 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.domain.search;
 
-public class TestCaseSearchRangeFieldModel implements TestCaseSearchFieldModel{
+import java.util.Date;
 
-	private String type = TestCaseSearchFieldModel.RANGE;
+public class AdvancedSearchTimeIntervalFieldModel implements AdvancedSearchFieldModel{
+
+	private String type = AdvancedSearchFieldModel.TIME_INTERVAL;
+
+	private Date startDate;
 	
-	private Integer minValue;
-	
-	private Integer maxValue;
+	private Date endDate;
 
 	@Override
 	public String getType() {
 		return this.type;
 	}
 
-	public Integer getMinValue() {
-		return minValue;
+	public Date getStartDate() {
+		return startDate;
 	}
 
-	public void setMinValue(Integer minValue) {
-		this.minValue = minValue;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 
-	public Integer getMaxValue() {
-		return maxValue;
+	public Date getEndDate() {
+		return endDate;
 	}
 
-	public void setMaxValue(Integer maxValue) {
-		this.maxValue = maxValue;
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

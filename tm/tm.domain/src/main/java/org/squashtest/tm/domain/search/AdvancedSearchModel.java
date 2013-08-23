@@ -18,40 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.domain.search;
 
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-public class TestCaseSearchTimeIntervalFieldModel implements TestCaseSearchFieldModel{
+public class AdvancedSearchModel {
 
-	private String type = TestCaseSearchFieldModel.TIME_INTERVAL;
-
-	private Date startDate;
+	private Map<String, AdvancedSearchFieldModel> fields = new HashMap<String, AdvancedSearchFieldModel>();
 	
-	private Date endDate;
+	public AdvancedSearchModel(){
 
-	@Override
-	public String getType() {
-		return this.type;
 	}
-
-	public Date getStartDate() {
-		return startDate;
+	
+	public void addField(String fieldName, AdvancedSearchFieldModel value){
+		fields.put(fieldName, value);
 	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-	public void setType(String type) {
-		this.type = type;
+	
+	public Map<String, AdvancedSearchFieldModel> getFields(){
+		return this.fields;
 	}
 }

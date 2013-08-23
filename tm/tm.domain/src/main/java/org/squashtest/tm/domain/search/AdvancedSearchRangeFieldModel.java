@@ -18,24 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.domain.search;
 
-import java.util.HashMap;
-import java.util.Map;
+public class AdvancedSearchRangeFieldModel implements AdvancedSearchFieldModel{
 
-public class TestCaseSearchModel {
-
-	private Map<String, TestCaseSearchFieldModel> fields = new HashMap<String, TestCaseSearchFieldModel>();
+	private String type = AdvancedSearchFieldModel.RANGE;
 	
-	public TestCaseSearchModel(){
+	private Integer minValue;
+	
+	private Integer maxValue;
 
+	@Override
+	public String getType() {
+		return this.type;
 	}
-	
-	public void addField(String fieldName, TestCaseSearchFieldModel value){
-		fields.put(fieldName, value);
+
+	public Integer getMinValue() {
+		return minValue;
 	}
-	
-	public Map<String, TestCaseSearchFieldModel> getFields(){
-		return this.fields;
+
+	public void setMinValue(Integer minValue) {
+		this.minValue = minValue;
+	}
+
+	public Integer getMaxValue() {
+		return maxValue;
+	}
+
+	public void setMaxValue(Integer maxValue) {
+		this.maxValue = maxValue;
 	}
 }

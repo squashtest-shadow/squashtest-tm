@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.domain.search;
 
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonSubTypes.Type;
@@ -29,12 +29,12 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
 	    include = JsonTypeInfo.As.PROPERTY,  
 	    property = "type")  
 	@JsonSubTypes({  
-	    @Type(value = TestCaseSearchListFieldModel.class, name = "LIST"),  
-	    @Type(value = TestCaseSearchSingleFieldModel.class, name = "SINGLE"),
-	    @Type(value = TestCaseSearchTextFieldModel.class, name = "TEXT"),
-	    @Type(value = TestCaseSearchRangeFieldModel.class, name = "RANGE"),
-	    @Type(value = TestCaseSearchTimeIntervalFieldModel.class, name = "TIME_INTERVAL")})  
-public interface TestCaseSearchFieldModel {
+	    @Type(value = AdvancedSearchListFieldModel.class, name = "LIST"),  
+	    @Type(value = AdvancedSearchSingleFieldModel.class, name = "SINGLE"),
+	    @Type(value = AdvancedSearchTextFieldModel.class, name = "TEXT"),
+	    @Type(value = AdvancedSearchRangeFieldModel.class, name = "RANGE"),
+	    @Type(value = AdvancedSearchTimeIntervalFieldModel.class, name = "TIME_INTERVAL")})  
+public interface AdvancedSearchFieldModel {
 
 	static final String SINGLE = "SINGLE";
 	static final String LIST = "LIST";

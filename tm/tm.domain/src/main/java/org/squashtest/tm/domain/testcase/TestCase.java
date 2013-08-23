@@ -157,28 +157,28 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional=false)
-	@Field(analyze=Analyze.YES, store=Store.YES)
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	private TestCaseImportance importance = LOW;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_NATURE")
-	@Field(analyze=Analyze.YES, store=Store.YES)
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	private TestCaseNature nature = TestCaseNature.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_TYPE")
-	@Field(analyze=Analyze.YES, store=Store.YES)
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	private TestCaseType type = TestCaseType.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_STATUS")
-	@Field(analyze=Analyze.YES, store=Store.YES)
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
 	@NotNull

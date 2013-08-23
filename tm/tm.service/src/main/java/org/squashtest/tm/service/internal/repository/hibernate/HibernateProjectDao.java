@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.repository.CustomProjectDao;
@@ -38,5 +40,21 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 
 	private SetQueryParametersCallback idParameter(final long id) {
 		return new SetIdParameter("projectId", id);
+	}
+	
+	private SetQueryParametersCallback idParameters(final List<Long> ids) {
+		return new SetProjectIdsParameterCallback(ids);
+	}
+	
+	@Override
+	public List<String> findUsersWhoCreatedTestCases(List<Long> projectIds){
+		 List<String> users = executeListNamedQuery("Project.findAllUsersWhoCreatedTestCases", idParameters(projectIds));
+		 return users;
+	}
+	
+	@Override
+	public List<String> findUsersWhoModifiedTestCases(List<Long> projectIds){
+		 List<String> users = executeListNamedQuery("Project.findAllUsersWhoModifiedTestCases", idParameters(projectIds));
+		 return users;
 	}
 }

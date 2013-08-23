@@ -27,9 +27,9 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.library.IndexModel;
+import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
-import org.squashtest.tm.domain.testcase.TestCaseSearchModel;
 
 
 
@@ -45,12 +45,16 @@ public interface AdvancedSearchService {
 	//Querying
 	List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity);
 	
-	PagedCollectionHolder<List<TestCase>> searchForTestCases(TestCaseSearchModel model, PagingAndSorting sorting);
+	PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model, PagingAndSorting sorting);
 	
-	List<TestCase> searchForTestCases(TestCaseSearchModel model);
+	List<TestCase> searchForTestCases(AdvancedSearchModel model);
 	
 	//Exporting
 	TestCaseSearchExportCSVModel exportTestCaseSearchToCSV();
+
+	List<String> findAllUsersWhoModifiedTestCases();
+
+	List<String> findAllUsersWhoCreatedTestCases();
 
 
 }

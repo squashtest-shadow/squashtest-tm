@@ -18,30 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.domain.search;
 
-public class TestCaseSearchTextFieldModel implements TestCaseSearchFieldModel{
+import java.util.ArrayList;
+import java.util.List;
 
-	private String type = TestCaseSearchFieldModel.TEXT;
+public class AdvancedSearchListFieldModel implements AdvancedSearchFieldModel{
 
-	private String value;
+	private String type = AdvancedSearchFieldModel.LIST;
 	
-	public String getValue() {
-		return value;
+	private List<String> values = new ArrayList<String>();
+	
+	public AdvancedSearchListFieldModel(){
+		
 	}
-
+	
 	@Override
-	public String getType() {
-		return type;
+	public String getType(){
+		return this.type;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public List<String> getValues() {
+		return values;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setValues(List<String> values) {
+		this.values = values;
 	}
-	
 	
 }
