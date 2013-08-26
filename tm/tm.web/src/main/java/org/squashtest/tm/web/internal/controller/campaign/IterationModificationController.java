@@ -29,7 +29,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -79,10 +78,10 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
-import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.tm.web.internal.model.jquery.TestSuiteModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import org.squashtest.tm.web.internal.util.DateUtils;
 
 @Controller
@@ -119,16 +118,15 @@ public class IterationModificationController {
 	@Inject
 	private InternationalizationHelper messageSource;
 
-	private final DatatableMapper<Integer> testPlanMapper = new IndexBasedMapper(13)
-														.mapAttribute(Project.class, NAME, String.class, 3)
-														.mapAttribute(TestCase.class, "reference", String.class, 4)
-														.mapAttribute(TestCase.class, NAME, String.class, 5)
-														.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, 6)
-														.mapAttribute(Dataset.class, "name", String.class, 7)
-														.mapAttribute(IterationTestPlanItem.class, "executionStatus", ExecutionStatus.class, 8)
-														.mapAttribute(TestSuite.class, NAME, String.class, 9)
-														.mapAttribute(IterationTestPlanItem.class, "lastExecutedBy", String.class, 10)
-														.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, 12);
+	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
+														.mapAttribute(Project.class,  "name", String.class, "project-name")
+														.mapAttribute(TestCase.class, "reference", String.class, "reference")
+														.mapAttribute(TestCase.class, "name", String.class, "tc-name")
+														.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, "importance")
+														.mapAttribute(Dataset.class,  "name", String.class, "dataset")
+														.mapAttribute(IterationTestPlanItem.class, "executionStatus", ExecutionStatus.class, "status")
+														.mapAttribute(User.class, "login", String.class, "assignee-login")
+														.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, "last-exec-on");
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showIteration(Model model, @PathVariable long iterationId) {
@@ -409,7 +407,7 @@ public class IterationModificationController {
 		PagedCollectionHolder<List<IterationTestPlanItem>> holder = iterationModService.findAssignedTestPlan(
 				iterationId, paging);
 
-		return new IterationViewTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder,
+		return new IterationTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder,
 				params.getsEcho());
 
 	}

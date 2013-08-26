@@ -30,12 +30,12 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
-class IterationViewTestPlanTableModelHelper extends DataTableModelBuilder<IterationTestPlanItem> {
+class IterationTestPlanTableModelHelper extends DataTableModelBuilder<IterationTestPlanItem> {
 
 	private InternationalizationHelper messageSource;
 	private Locale locale;
 
-	IterationViewTestPlanTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
+	IterationTestPlanTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
 		this.messageSource = messageSource;
 		this.locale = locale;
 	}

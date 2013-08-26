@@ -61,7 +61,6 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 public class IterationTestPlanManagerController {
 
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
-	private static final String TESTPLANS_IDS_REQUEST_PARAM = "testPlanIds[]";
 
 	@Inject
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
