@@ -38,9 +38,17 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 		mappings = new HashMap<KEY, Mapping>(initialCapacity);
 	}
 
+	
+	
 	@Override
 	public DatatableMapper<KEY> map(KEY key, Mapping mapping) {
 		mappings.put(key,  mapping);
+		return this;
+	}
+	
+	@Override
+	public DatatableMapper<KEY> map(KEY key, String expression) {
+		mappings.put(key, new SimpleMapping(expression));
 		return this;
 	}
 	
@@ -50,9 +58,15 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 		mappings.put(key, register);
 		return this;
 	}
+
+	@Override
+	public String getMapping(KEY key) {
+		Mapping mapping = mappings.get(key);
+		if (mapping != null) {
+			return mapping.getMapping();
+		} else {
+			throw new NoSuchElementException("column '"+key+"' is not mapped");
+		}
+	}
 	
-
-	
-
-
 }

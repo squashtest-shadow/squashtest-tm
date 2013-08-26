@@ -69,7 +69,7 @@ public class UserController {
 
 	private static final String USER_ID_URL = "/{userId}";
 
-	private DatatableMapper<String> teamsMapper = new NameBasedMapper(1).mapAttribute("team-name", "name");
+	private DatatableMapper<String> teamsMapper = new NameBasedMapper(1).map("team-name", "name");
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 

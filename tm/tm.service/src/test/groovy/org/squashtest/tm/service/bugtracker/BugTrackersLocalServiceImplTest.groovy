@@ -23,7 +23,6 @@ package org.squashtest.tm.service.bugtracker
 import org.squashtest.csp.core.bugtracker.domain.BTIssue
 import org.squashtest.csp.core.bugtracker.domain.BTProject
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
-import org.squashtest.csp.core.bugtracker.domain.Priority
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus
 import org.squashtest.tm.domain.bugtracker.Issue

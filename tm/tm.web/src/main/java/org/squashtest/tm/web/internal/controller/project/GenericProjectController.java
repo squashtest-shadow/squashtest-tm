@@ -52,6 +52,7 @@ import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
@@ -65,7 +66,6 @@ import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.user.LoginDoNotExistException;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.PartyPermissionDatatableModelHelper;
@@ -110,20 +110,20 @@ public class GenericProjectController {
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
 	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9)
-			.mapAttribute("name", "name")
-			.mapAttribute("label", "label")
-			.mapAttribute("active", "active")
-			.mapAttribute("created-on", "audit.createdOn")
-			.mapAttribute("created-by", "audit.createdBy")
-			.mapAttribute("last-mod-on", "audit.lastModifiedOn")
-			.mapAttribute("last-mod-by", "audit.lastModifiedBy");
+			.map("name", "name")
+			.map("label", "label")
+			.map("active", "active")
+			.map("created-on", "audit.createdOn")
+			.map("created-by", "audit.createdBy")
+			.map("last-mod-on", "audit.lastModifiedOn")
+			.map("last-mod-by", "audit.lastModifiedBy");
 
 	private DatatableMapper<String> partyPermissionMapper = new NameBasedMapper(5)
-			.mapAttribute("party-index", "index")
-			.mapAttribute("party-id", "id")
-			.mapAttribute("party-name", "name")
-			.mapAttribute("party-type", "type")
-			.mapAttribute("permission-group.qualifiedName", "qualifiedName");
+			.map("party-index", "index")
+			.map("party-id", "id")
+			.map("party-name", "name")
+			.map("party-type", "type")
+			.map("permission-group.qualifiedName", "qualifiedName");
 
 	@RequestMapping(value = "", params = RequestParams.S_ECHO_PARAM, method = RequestMethod.GET)
 	public @ResponseBody
@@ -328,10 +328,9 @@ public class GenericProjectController {
 	public DataTableModel getProjectsTableModel(@PathVariable long projectId, final DataTableDrawParameters params) {
 		List<TestAutomationProject> taProjects = projectManager.findBoundTestAutomationProjects(projectId);
 
-		FilteredCollectionHolder<List<TestAutomationProject>> holder = new FilteredCollectionHolder<List<TestAutomationProject>>(
-				taProjects.size(), taProjects);
+		PagedCollectionHolder<List<TestAutomationProject>> holder = new SinglePageCollectionHolder<List<TestAutomationProject>>(taProjects);
 
-		return new TestAutomationTableModel().buildDataModel(holder, 0, params.getsEcho());
+		return new TestAutomationTableModel().buildDataModel(holder, params.getsEcho());
 
 	}
 

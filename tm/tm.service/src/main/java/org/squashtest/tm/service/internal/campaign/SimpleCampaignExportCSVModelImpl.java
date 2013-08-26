@@ -33,7 +33,6 @@ import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.CustomField;

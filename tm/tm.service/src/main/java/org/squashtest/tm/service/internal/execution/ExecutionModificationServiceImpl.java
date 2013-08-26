@@ -34,7 +34,6 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
@@ -83,10 +82,10 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
-	public FilteredCollectionHolder<List<ExecutionStep>> findExecutionSteps(long executionId, Paging filter) {
+	public PagedCollectionHolder<List<ExecutionStep>> findExecutionSteps(long executionId, Paging filter) {
 		List<ExecutionStep> list = executionDao.findStepsFiltered(executionId, filter);
 		long count = executionDao.countExecutionSteps(executionId);
-		return new FilteredCollectionHolder<List<ExecutionStep>>(count, list);
+		return new PagingBackedPagedCollectionHolder<List<ExecutionStep>>(filter, count, list);
 	}
 
 	@Override

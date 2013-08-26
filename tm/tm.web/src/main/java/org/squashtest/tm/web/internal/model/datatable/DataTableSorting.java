@@ -39,7 +39,7 @@ public class DataTableSorting extends DataTablePaging implements PagingAndSortin
 	
 	@Override
 	public String getSortedAttribute() {
-		return mapper.pathAt(params.getsSortedAttribute_0());
+		return mapper.getMapping(params.getsSortedAttribute_0());
 	}
 
 

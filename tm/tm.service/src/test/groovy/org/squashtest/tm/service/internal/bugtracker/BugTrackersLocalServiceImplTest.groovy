@@ -25,11 +25,10 @@ import org.apache.commons.collections.MultiMap
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService
 import org.squashtest.tm.bugtracker.definition.RemoteIssue
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator
 import org.squashtest.tm.domain.execution.Execution
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder
 import org.squashtest.tm.service.internal.repository.IssueDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 

@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
 /**
  * Superclass to create builders of {@link DataTableModel} AND NOTHING ELSE !
@@ -37,25 +36,6 @@ import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 public abstract class DataTableModelBuilder<X> {
 	private long currentIndex = 0;
 
-	/**
-	 * @deprecated use {@link #buildDataModel(PagedCollectionHolder, String)} instead
-	 * @param holder
-	 * @param startIndex
-	 * @param sEcho
-	 * @return
-	 */
-	@Deprecated
-	public DataTableModel buildDataModel(FilteredCollectionHolder<List<X>> holder, int startIndex, String sEcho) {
-
-		currentIndex = startIndex;
-
-		Collection<X> collectionX = holder.getFilteredCollection();
-		DataTableModel model = createModelFromItems(sEcho, collectionX);
-		model.displayRowsFromTotalOf(holder.getUnfilteredResultCount());
-
-		return model;
-
-	}
 
 	public final DataTableModel buildDataModel(PagedCollectionHolder<List<X>> holder, String sEcho) {
 

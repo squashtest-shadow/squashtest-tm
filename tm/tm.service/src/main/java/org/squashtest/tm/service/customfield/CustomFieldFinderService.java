@@ -29,7 +29,6 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 
 /**
  * Facade service for custom fields read only access methods
@@ -50,7 +49,7 @@ public interface CustomFieldFinderService {
 	 * Will find all custom fields available and return them ordered according to the given parameters.
 	 * 
 	 * @param filter
-	 *            the {@link CollectionSorting} that holds order and paging params.
+	 *            the {@link PagingAndSorting} that holds order and paging params.
 	 * @return the filtered collection of all custom field available in squash
 	 */
 	public PagedCollectionHolder<List<CustomField>> findSortedCustomFields(PagingAndSorting filter);

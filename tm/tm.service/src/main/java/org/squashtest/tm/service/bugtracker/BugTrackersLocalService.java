@@ -90,8 +90,8 @@ public interface BugTrackersLocalService {
 	 *            of which we need to get the issues,
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
-	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
-	 *         and filtered according to the CollectionSorting.
+	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
+	 *         and filtered according to the PagingAndSorting.
 	 */
 	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnerShipsForExecutionStep(Long stepId,
 			PagingAndSorting sorter);
@@ -107,8 +107,8 @@ public interface BugTrackersLocalService {
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
 	 * 
-	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
-	 *         and filtered according to the CollectionSorting.
+	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
+	 *         and filtered according to the PagingAndSorting.
 	 */
 	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsforExecution(Long execId,
 			PagingAndSorting sorter);
@@ -124,8 +124,8 @@ public interface BugTrackersLocalService {
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
 	 * 
-	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
-	 *         and filtered according to the CollectionSorting.
+	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
+	 *         and filtered according to the PagingAndSorting.
 	 */
 	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForIteration(Long iterId,
 			PagingAndSorting sorter);
@@ -141,8 +141,8 @@ public interface BugTrackersLocalService {
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
 	 * 
-	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
-	 *         and filtered according to the CollectionSorting.
+	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
+	 *         and filtered according to the PagingAndSorting.
 	 */
 	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaigns(Long campId,
 			PagingAndSorting sorter);
@@ -158,8 +158,8 @@ public interface BugTrackersLocalService {
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
 	 * 
-	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
-	 *         and filtered according to the CollectionSorting.
+	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
+	 *         and filtered according to the PagingAndSorting.
 	 */
 	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(Long testSuiteId,
 			PagingAndSorting sorter);
@@ -175,8 +175,8 @@ public interface BugTrackersLocalService {
 	 * @param sorter
 	 *            that tells us how we should sort and filter the data
 	 * 
-	 * @return a FilteredCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
-	 *         and filtered according to the CollectionSorting.
+	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
+	 *         and filtered according to the PagingAndSorting.
 	 */
 	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForTestCase(Long tcId,
 			PagingAndSorting sorter);

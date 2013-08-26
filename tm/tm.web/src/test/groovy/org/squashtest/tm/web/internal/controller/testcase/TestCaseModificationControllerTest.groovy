@@ -20,33 +20,23 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import java.util.List
-
 import javax.inject.Provider
 import javax.servlet.http.HttpServletRequest
 
 import org.springframework.web.servlet.ModelAndView
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
-import org.squashtest.tm.domain.attachment.AttachmentList
-import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestStep
-import org.squashtest.tm.service.customfield.CustomFieldHelper;
-import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
-import org.squashtest.tm.service.customfield.CustomFieldHelperService;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder
-import org.squashtest.tm.service.testcase.TestCaseModificationService;
-import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.service.customfield.CustomFieldHelperService
+import org.squashtest.tm.service.testcase.TestCaseModificationService
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
-import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder
+import org.squashtest.tm.web.internal.model.datatable.DataTableModel
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper
 
 import spock.lang.Specification
@@ -182,7 +172,7 @@ class TestCaseModificationControllerTest extends Specification {
 
 
 
-	def "should adapt table draw parameters to collection filter"() {
+	def "should adapt table draw parameters to pagingandsorting"() {
 		given:
 		DataTableDrawParameters	params = Mock()
 		params.getiDisplayLength() >> 10
@@ -191,10 +181,10 @@ class TestCaseModificationControllerTest extends Specification {
 		params.getsSortDir_0() >> "asc"
 
 		DatatableMapper dtMapper = Mock()
-		dtMapper.pathAt(2) >> "name"
+		dtMapper.getMapping(2) >> "name"
 
 		when:
-		def filter = controller.createPaging(params,dtMapper)
+		PagingAndSorting filter = controller.createPaging(params,dtMapper)
 
 		then:
 		filter.firstItemIndex == 5

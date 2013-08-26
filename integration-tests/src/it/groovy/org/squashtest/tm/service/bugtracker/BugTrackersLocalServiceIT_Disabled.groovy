@@ -21,8 +21,6 @@
 package org.squashtest.tm.service.bugtracker
 
 
-import java.util.List
-
 import javax.inject.Inject
 
 import org.spockframework.util.NotThreadSafe
@@ -36,14 +34,15 @@ import org.squashtest.csp.core.bugtracker.domain.Priority
 import org.squashtest.csp.core.bugtracker.domain.User
 import org.squashtest.csp.core.bugtracker.domain.Version
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus
 import org.squashtest.tm.domain.bugtracker.Issue
 import org.squashtest.tm.domain.bugtracker.IssueOwnership
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
-import org.squashtest.tm.service.bugtracker.BugTrackersLocalService
-import org.squashtest.tm.service.foundation.collection.CollectionSorting
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
@@ -127,39 +126,16 @@ class BugTrackersLocalServiceIT_Disabled { // extends DbunitServiceSpecification
 		given :
 			ExecutionStep estep = findEntity(ExecutionStep.class, 1l)
 			
-			CollectionSorting sorter = new CollectionSorting(){
-				
-
-			   public int getFirstItemIndex(){
-				   return 0
-			   }
-			
-
-			    public int getPageSize(){
-				   return 10
-			   }
-			   
-			   String getSortedAttribute(){
-				   return "Issue.id"
-			   }
-		   
-
-			   String getSortingOrder(){
-				   return "desc"
-			   }
-			   
-			   boolean shouldDisplayAll() {
-			   	return false;
-			   };
-			}
+			DefaultPagingAndSorting sorter = new DefaultPagingAndSorting("Issue.id", 10);
+			sorter.setSortOrder(SortOrder.DESCENDING)
 		
 		when :
-			FilteredCollectionHolder<List<IssueOwnership<Issue>>> ownedIssues = 
+			PagedCollectionHolder<List<IssueOwnership<Issue>>> ownedIssues = 
 					btService.findSortedIssueOwnerShipsForExecutionStep(estep.id, sorter)
 		
 		then :
-			ownedIssues.unfilteredResultCount == 3
-			List<IssueOwnership<Issue>> list = ownedIssues.filteredCollection
+			ownedIssues.totalNumberOfItems == 3
+			List<IssueOwnership<Issue>> list = ownedIssues.pagedItems
 			
 			list.collect { it -> it.issue.id} == [6l, 4l, 2l]
 		
@@ -175,40 +151,19 @@ class BugTrackersLocalServiceIT_Disabled { // extends DbunitServiceSpecification
 			ExecutionStep step1 = findEntity(ExecutionStep.class, 1l)
 			ExecutionStep step2 = findEntity(ExecutionStep.class, 2l)
 			
-			CollectionSorting sorter = new CollectionSorting(){
-				
-
-			   public int getFirstItemIndex(){
-				   return 0
-			   }
-			
-			   public int getPageSize(){
-				   return 10
-			   }
-	
-			   String getSortedAttribute(){
-				   return "Issue.id"
-			   }
-		   
-
-			   String getSortingOrder(){
-				   return "desc"
-			   }
-			   
-			   boolean shouldDisplayAll() {
-				   return false;
-			   };
-			}
+						
+			DefaultPagingAndSorting sorter = new DefaultPagingAndSorting("Issue.id", 10);
+			sorter.setSortOrder(SortOrder.DESCENDING)
 		
 		when :
-			FilteredCollectionHolder<List<IssueOwnership<Issue>>> ownedIssues =
+			PagedCollectionHolder<List<IssueOwnership<Issue>>> ownedIssues =
 					btService.findSortedIssueOwnershipsforExecution(exec.id, sorter)
 					
 			
 		
 		then :
-			ownedIssues.unfilteredResultCount == 8
-			List<IssueOwnership<Issue>> list = ownedIssues.filteredCollection
+			ownedIssues.totalNumberOfItems == 8
+			List<IssueOwnership<Issue>> list = ownedIssues.pagedItems
 			
 			list.collect { it -> it.issue.id} == [8l, 7l, 6l, 5l, 4l, 3l,  2l, 1l]
 			

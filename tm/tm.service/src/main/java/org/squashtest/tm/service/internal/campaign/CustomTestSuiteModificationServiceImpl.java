@@ -34,14 +34,11 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
-import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;

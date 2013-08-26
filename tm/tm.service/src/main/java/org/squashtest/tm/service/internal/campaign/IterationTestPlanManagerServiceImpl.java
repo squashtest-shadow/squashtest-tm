@@ -36,6 +36,9 @@ import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -49,8 +52,6 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
@@ -278,10 +279,10 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
 			+ OR_HAS_ROLE_ADMIN)
-	public FilteredCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, CollectionSorting filter) {
+	public PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, PagingAndSorting filter) {
 		List<IterationTestPlanItem> testPlan = iterationDao.findTestPlan(iterationId, filter);
 		long count = iterationDao.countTestPlans(iterationId);
-		return new FilteredCollectionHolder<List<IterationTestPlanItem>>(count, testPlan);
+		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>>(filter, count, testPlan);
 	}
 
 	@Override

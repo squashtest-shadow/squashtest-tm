@@ -23,8 +23,8 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.List;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.exception.BugTrackerNameAlreadyExistsException;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 
 public interface BugTrackerDao extends EntityDao<BugTracker> {
 	
@@ -40,7 +40,7 @@ public interface BugTrackerDao extends EntityDao<BugTracker> {
 	 * @param filter
 	 * @return a page of bugtrackers according to the filter
 	 */
-	List<BugTracker> findSortedBugTrackers(CollectionSorting filter);
+	List<BugTracker> findSortedBugTrackers(PagingAndSorting filter);
 	
 	/**
 	 * checks if there is a Bugtracker of the same name in the database.<br>

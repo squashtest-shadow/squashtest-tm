@@ -28,7 +28,6 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
 @Transactional(readOnly = true)
 public interface ExecutionFinder {
@@ -53,7 +52,7 @@ public interface ExecutionFinder {
 	 * @param testCaseId
 	 * @param pas
 	 *            Paging and sorting data, should not be <code>null</code>
-	 * @return a {@link FilteredCollectionHolder} holding the results. Should never return <code>null</code>
+	 * @return a {@link PagedCollectionHolder} holding the results. Should never return <code>null</code>
 	 */
 	PagedCollectionHolder<List<Execution>> findAllByTestCaseId(long testCaseId, PagingAndSorting pas);
 

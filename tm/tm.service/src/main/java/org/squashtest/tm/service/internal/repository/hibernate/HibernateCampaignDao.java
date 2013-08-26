@@ -31,13 +31,13 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 
 @Repository
@@ -54,7 +54,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	}
 
 	@Override
-	public List<CampaignTestPlanItem> findAllTestPlanByIdFiltered(final long campaignId, final CollectionSorting filter) {
+	public List<CampaignTestPlanItem> findAllTestPlanByIdFiltered(final long campaignId, final PagingAndSorting filter) {
 
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
 

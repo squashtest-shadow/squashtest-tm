@@ -56,7 +56,6 @@ import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -93,16 +92,16 @@ public class UserAdministrationController extends PartyControllerSupport {
 	private AuthenticationProviderContext authenticationProviderContext;
 
 	private DatatableMapper<String> userMapper = new NameBasedMapper(10)
-			.mapAttribute("user-id", "id")
-			.mapAttribute("user-login", "login")
-			.mapAttribute("user-group", "group")
-			.mapAttribute("user-firstname", "firstName")
-			.mapAttribute("user-lastname", "lastName")
-			.mapAttribute("user-email", "email")
-			.mapAttribute("user-created-on", "audit.createdOn")
-			.mapAttribute("user-created-by", "audit.createdBy")
-			.mapAttribute("user-modified-on", "audit.lastModifiedOn")
-			.mapAttribute("user-modified-by", "audit.lastModifiedBy");
+			.map("user-id", "id")
+			.map("user-login", "login")
+			.map("user-group", "group")
+			.map("user-firstname", "firstName")
+			.map("user-lastname", "lastName")
+			.map("user-email", "email")
+			.map("user-created-on", "audit.createdOn")
+			.map("user-created-by", "audit.createdBy")
+			.map("user-modified-on", "audit.lastModifiedOn")
+			.map("user-modified-by", "audit.lastModifiedBy");
 
 	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2).mapAttribute("project-name",
 			"project.name", ProjectPermission.class).mapAttribute("permission-name",
@@ -148,9 +147,9 @@ public class UserAdministrationController extends PartyControllerSupport {
 	}
 
 	private DataTableModel getTableModel(PagingAndSorting sorting, Filtering filtering, String sEcho, Locale locale) {
-		FilteredCollectionHolder<List<User>> holder = adminService.findAllActiveUsersFiltered(sorting, filtering);
+		PagedCollectionHolder<List<User>> holder = adminService.findAllActiveUsersFiltered(sorting, filtering);
 
-		return new UserDataTableModelBuilder(locale).buildDataModel(holder, sorting.getFirstItemIndex() + 1, sEcho);
+		return new UserDataTableModelBuilder(locale).buildDataModel(holder,  sEcho);
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "password")

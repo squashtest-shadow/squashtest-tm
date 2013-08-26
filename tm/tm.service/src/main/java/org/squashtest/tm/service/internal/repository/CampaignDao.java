@@ -22,18 +22,18 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 
 public interface CampaignDao extends EntityDao<Campaign> {
 
 	Campaign findByIdWithInitializedIterations(long campaignId);
 
-	List<CampaignTestPlanItem> findAllTestPlanByIdFiltered(long campaignId, CollectionSorting filter);
+	List<CampaignTestPlanItem> findAllTestPlanByIdFiltered(long campaignId, PagingAndSorting filter);
 	
 	long countTestPlanById(long campaignId);
 

@@ -25,7 +25,6 @@ import java.util.List;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 /**
  * 
  * Facade for Custom-Field access methods which cannot be dynamically generated. 
@@ -34,10 +33,10 @@ import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 public interface CustomCustomFieldDao {
 	
 	/**
-	 * Will find all existing custom fields ordered according to the given {@link CollectionSorting} params.
+	 * Will find all existing custom fields ordered according to the given {@link PagingAndSorting} params.
 	 * 
-	 * @param filter the {@link CollectionSorting} param that holds order and paging requirements.
-	 * @return the list of all existing {@link CustomField} ordered according to the {@link CollectionSorting} param
+	 * @param filter the {@link PagingAndSorting} param that holds order and paging requirements.
+	 * @return the list of all existing {@link CustomField} ordered according to the {@link PagingAndSorting} param
 	 */
 	List<CustomField> findSortedCustomFields(PagingAndSorting filter);
 	

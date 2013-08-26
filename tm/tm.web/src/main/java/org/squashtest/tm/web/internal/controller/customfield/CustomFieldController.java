@@ -44,13 +44,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.core.foundation.collection.DefaultPaging;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.exception.DomainException;
 import org.squashtest.tm.service.customfield.CustomFieldManagerService;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -335,9 +336,8 @@ public class CustomFieldController {
 			final DataTableDrawParameters params) {
 		SingleSelectField customField = customFieldManager.findSingleSelectFieldById(customFieldId);
 		List<CustomFieldOption> customFieldOptions = customField.getOptions();
-		FilteredCollectionHolder<List<CustomFieldOption>> holder = new FilteredCollectionHolder<List<CustomFieldOption>>(
-				customFieldOptions.size(), customFieldOptions);
-		return new CustomFieldOptionsDataTableModelHelper(customField).buildDataModel(holder, 1, params.getsEcho());
+		PagedCollectionHolder<List<CustomFieldOption>> holder = new SinglePageCollectionHolder<List<CustomFieldOption>>(customFieldOptions);
+		return new CustomFieldOptionsDataTableModelHelper(customField).buildDataModel(holder,params.getsEcho());
 	}
 
 	/**

@@ -43,7 +43,7 @@ public interface DatatableMapper<KEY> {
 	 * @param attribute : the name of an attribute of a class 
 	 * @return this
 	 */
-	public DatatableMapper<KEY> mapAttribute(KEY key, String attribute);
+	public DatatableMapper<KEY> map(KEY key, String attribute);
 	
 	
 	/**

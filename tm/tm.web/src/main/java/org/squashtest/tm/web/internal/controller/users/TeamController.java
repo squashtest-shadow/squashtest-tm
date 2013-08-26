@@ -99,7 +99,7 @@ public class TeamController extends PartyControllerSupport {
 			.mapAttribute("last-mod-on", "audit.lastModifiedOn", Team.class)
 			.mapAttribute("last-mod-by", "audit.lastModifiedBy", Team.class);
 
-	private DatatableMapper<String> membersMapper = new NameBasedMapper(1).mapAttribute("user-name", "firstName");
+	private DatatableMapper<String> membersMapper = new NameBasedMapper(1).map("user-name", "firstName");
 
 	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2).mapAttribute("project-name",
 			"project.name", ProjectPermission.class).mapAttribute("permission-name",

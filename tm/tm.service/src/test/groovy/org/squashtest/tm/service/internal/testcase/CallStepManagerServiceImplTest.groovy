@@ -22,16 +22,12 @@ package org.squashtest.tm.service.internal.testcase
 
 import org.squashtest.tm.domain.testcase.CallTestStep
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.exception.CyclicStepCallException;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
+import org.squashtest.tm.exception.CyclicStepCallException
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
 import org.squashtest.tm.service.internal.repository.TestStepDao
-import org.squashtest.tm.service.internal.testcase.CallStepManagerServiceImpl;
-import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
-import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl;
-import org.squashtest.tm.service.project.ProjectFilterModificationService;
-import org.squashtest.tm.service.testcase.DatasetModificationService;
+import org.squashtest.tm.service.project.ProjectFilterModificationService
+import org.squashtest.tm.service.testcase.DatasetModificationService
 
 import spock.lang.Specification
 

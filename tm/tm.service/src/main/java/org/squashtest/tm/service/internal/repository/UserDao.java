@@ -26,7 +26,6 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 
 public interface UserDao extends EntityDao<User> {
 
@@ -34,7 +33,7 @@ public interface UserDao extends EntityDao<User> {
 
 	List<User> findAllActiveUsersOrderedByLogin();
 	
-	List<User> findAllUsersFiltered(CollectionSorting filter);
+	List<User> findAllUsersFiltered(PagingAndSorting filter);
 
 	List<User> findAllActiveUsers(PagingAndSorting sorter, Filtering filter);
 	

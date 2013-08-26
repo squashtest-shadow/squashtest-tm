@@ -28,14 +28,15 @@ import javax.inject.Named;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.service.campaign.CustomCampaignModificationService;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 
@@ -62,11 +63,11 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	}
 
 	@Override
-	public FilteredCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
-			CollectionSorting filter) {
+	public PagedCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
+			PagingAndSorting filter) {
 		List<CampaignTestPlanItem> tcs = campaignDao.findAllTestPlanByIdFiltered(campaignId, filter);
 		long count = campaignDao.countTestPlanById(campaignId);
-		return new FilteredCollectionHolder<List<CampaignTestPlanItem>>(count, tcs);
+		return new PagingBackedPagedCollectionHolder<List<CampaignTestPlanItem>>(filter, count, tcs);
 	}
 
 	@Override

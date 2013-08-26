@@ -23,19 +23,19 @@ package org.squashtest.tm.service.campaign;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
 //@Transactional(readOnly = true)
 @Transactional
 public interface IterationTestPlanFinder {
 	
 	
-	FilteredCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, CollectionSorting filter);
+	PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, PagingAndSorting filter);
 	
 	IterationTestPlanItem findTestPlanItem(long itemTestPlanId);
 	

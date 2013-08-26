@@ -45,14 +45,14 @@ public interface CustomTestCaseFinder {
 
 	/**
 	 * That method returns the list of test cases having at least one CallTestStep directly calling the test case
-	 * identified by testCaseId. The list is wrapped in a FilteredCollectionHolder, that contains meta informations
+	 * identified by testCaseId. The list is wrapped in a PagedCollectionHolder, that contains meta informations
 	 * regarding the filtering, as usual.
 	 * 
 	 * @param testCaseId
 	 *            the Id of the called test case.
 	 * @param sorting
 	 *            the sorting parameters.
-	 * @return a non null but possibly empty FilteredCollectionHolder wrapping the list of first-level calling test
+	 * @return a non null but possibly empty PagedCollectionHolder wrapping the list of first-level calling test
 	 *         cases.
 	 */
 	PagedCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, PagingAndSorting sorting);

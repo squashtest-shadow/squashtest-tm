@@ -25,8 +25,8 @@ import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 
 @Transactional(readOnly = true)
@@ -49,7 +49,7 @@ public interface BugTrackerFinderService {
 	 * @param filter
 	 * @return sorted list of bugtrackers
 	 */
-	FilteredCollectionHolder<List<BugTracker>> findSortedBugtrackers(CollectionSorting filter);
+	PagedCollectionHolder<List<BugTracker>> findSortedBugtrackers(PagingAndSorting filter);
 	
 	/**
 	 * 

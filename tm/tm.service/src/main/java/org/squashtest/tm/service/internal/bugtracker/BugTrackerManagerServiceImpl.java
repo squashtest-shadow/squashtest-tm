@@ -29,10 +29,11 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 
 @Service("squashtest.tm.service.BugTrackerManagerService")
@@ -60,10 +61,10 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 	
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public FilteredCollectionHolder<List<BugTracker>> findSortedBugtrackers(CollectionSorting filter) {
+	public PagedCollectionHolder<List<BugTracker>> findSortedBugtrackers(PagingAndSorting filter) {
 		List<BugTracker> bugTrackers = bugTrackerDao.findSortedBugTrackers(filter);
 		long count = bugTrackerDao.countBugTrackers();
-		return new FilteredCollectionHolder<List<BugTracker>>(count, bugTrackers);
+		return new PagingBackedPagedCollectionHolder<List<BugTracker>>(filter, count, bugTrackers);
 	}
 
 	@Override

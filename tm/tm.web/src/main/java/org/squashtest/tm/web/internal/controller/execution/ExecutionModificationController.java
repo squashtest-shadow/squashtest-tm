@@ -47,6 +47,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -58,7 +59,6 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelper;
@@ -166,11 +166,11 @@ public class ExecutionModificationController {
 
 		Paging filter = createPaging(params);
 
-		FilteredCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
+		PagedCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
 				filter);
 
 		return new ManualExecutionStepDataTableModelHelper(locale, messageSource, denormalizedFieldValueFinder)
-				.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+				.buildDataModel(holder,  params.getsEcho());
 
 	}
 
@@ -291,11 +291,11 @@ public class ExecutionModificationController {
 
 		Paging filter = createPaging(params);
 
-		FilteredCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
+		PagedCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
 				filter);
 
 		return new AutomatedExecutionStepDataTableModelHelper(locale, messageSource, denormalizedFieldValueFinder)
-				.buildDataModel(holder, filter.getFirstItemIndex() + 1, params.getsEcho());
+				.buildDataModel(holder,  params.getsEcho());
 
 	}
 

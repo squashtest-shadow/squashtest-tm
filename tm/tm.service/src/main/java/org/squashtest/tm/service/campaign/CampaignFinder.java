@@ -25,10 +25,10 @@ import java.util.List;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
 @Transactional(readOnly = true)
 public interface CampaignFinder {
@@ -37,7 +37,7 @@ public interface CampaignFinder {
 
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') "
 			+ "or hasRole('ROLE_ADMIN')")
-	FilteredCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
-			CollectionSorting filter);
+	PagedCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
+			PagingAndSorting filter);
 
 }

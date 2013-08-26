@@ -26,13 +26,13 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.exception.BugTrackerNameAlreadyExistsException;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
+import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 
 @Repository
@@ -43,21 +43,16 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<BugTracker> findSortedBugTrackers(CollectionSorting filter) {
+	public List<BugTracker> findSortedBugTrackers(PagingAndSorting filter) {
 		Session session = currentSession();
 
 		String sortedAttribute = filter.getSortedAttribute();
-		String order = filter.getSortingOrder();
 
 		Criteria crit = session.createCriteria(BugTracker.class, "BugTracker");
 
 		/* add ordering */
 		if (sortedAttribute != null) {
-			if (order.equals("asc")) {
-				crit.addOrder(Order.asc(sortedAttribute).ignoreCase());
-			} else {
-				crit.addOrder(Order.desc(sortedAttribute).ignoreCase());
-			}
+			SortingUtils.addOrder(crit, filter);
 		}
 
 		/* result range */

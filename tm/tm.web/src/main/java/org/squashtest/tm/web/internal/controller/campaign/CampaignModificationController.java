@@ -41,6 +41,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
@@ -52,16 +54,14 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
@@ -309,30 +309,27 @@ public class CampaignModificationController {
 	public @ResponseBody
 	DataTableModel getTestCasesTableModel(@PathVariable("campaignId") long campaignId,
 			final DataTableDrawParameters params, final Locale locale) {
-		CollectionSorting filter = createCollectionSorting(params, testPlanMapper);
+		PagingAndSorting filter = createCollectionSorting(params, testPlanMapper);
 
-		FilteredCollectionHolder<List<CampaignTestPlanItem>> holder = campaignModService.findTestPlanByCampaignId(
-				campaignId, filter);
+		PagedCollectionHolder<List<CampaignTestPlanItem>> holder = campaignModService.findTestPlanByCampaignId(campaignId, filter);
 
-		return new TestCaseTableModelHelper(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1,
-				params.getsEcho());
+		return new TestCaseTableModelHelper(locale).buildDataModel(holder, 	params.getsEcho());
 	}
 
 	@RequestMapping(value = "/test-plan/manager/table", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getLinkableTestCasesTableModel(@PathVariable("campaignId") long campaignId,
 			final DataTableDrawParameters params, final Locale locale) {
-		CollectionSorting filter = createCollectionSorting(params, testPlanMapper);
+		PagingAndSorting filter = createCollectionSorting(params, testPlanMapper);
 
-		FilteredCollectionHolder<List<CampaignTestPlanItem>> holder = campaignModService.findTestPlanByCampaignId(
+		PagedCollectionHolder<List<CampaignTestPlanItem>> holder = campaignModService.findTestPlanByCampaignId(
 				campaignId, filter);
 
-		return new TestPlanManagerTableHelper(locale).buildDataModel(holder, filter.getFirstItemIndex() + 1,
-				params.getsEcho());
+		return new TestPlanManagerTableHelper(locale).buildDataModel(holder, params.getsEcho());
 	}
 
-	private CollectionSorting createCollectionSorting(final DataTableDrawParameters params, DatatableMapper mapper) {
-		return new DataTableCollectionSorting(params, mapper);
+	private PagingAndSorting createCollectionSorting(final DataTableDrawParameters params, DatatableMapper mapper) {
+		return new DataTableSorting(params, mapper);
 	}
 
 	/* ************************************** formatting code ****************************** */

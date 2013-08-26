@@ -45,7 +45,6 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.service.configuration.ConfigurationService;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.service.internal.repository.AdministrationDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TeamDao;
@@ -156,10 +155,10 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public FilteredCollectionHolder<List<User>> findAllActiveUsersFiltered(PagingAndSorting sorter, Filtering filter) {
+	public PagedCollectionHolder<List<User>> findAllActiveUsersFiltered(PagingAndSorting sorter, Filtering filter) {
 		List<User> list = userDao.findAllActiveUsers(sorter, filter);
 		long count = userDao.findAll().size();
-		return new FilteredCollectionHolder<List<User>>(count, list);
+		return new PagingBackedPagedCollectionHolder<List<User>>(sorter, count, list);
 	}
 
 	@Override

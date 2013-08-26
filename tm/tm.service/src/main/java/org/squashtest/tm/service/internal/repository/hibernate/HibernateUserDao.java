@@ -38,7 +38,6 @@ import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.UserDao;
@@ -115,21 +114,16 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<User> findAllUsersFiltered(CollectionSorting filter) {
+	public List<User> findAllUsersFiltered(PagingAndSorting filter) {
 		Session session = currentSession();
 		
 		String sortedAttribute = filter.getSortedAttribute();
-		String order = filter.getSortingOrder();
 		
 		Criteria crit = session.createCriteria(User.class, "User");
 		
 		/* add ordering */
 		if (sortedAttribute != null) {
-			if (order.equals("asc")) {
-				crit.addOrder(Order.asc(sortedAttribute).ignoreCase());
-			} else {
-				crit.addOrder(Order.desc(sortedAttribute).ignoreCase());
-			}
+			SortingUtils.addOrder(crit, filter);
 		}
 		
 		/* result range */

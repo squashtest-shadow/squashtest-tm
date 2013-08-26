@@ -30,7 +30,6 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.users.Party;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
 /**
  * @author Gregory Fouquet
@@ -42,7 +41,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 	 * 
 	 * @param pagingAndSorting the {@link PagingAndSorting} that holds order and paging params
 	 * @param filter the filter to apply on the result
-	 * @return a {@link FilteredCollectionHolder} containing all projects the user has management access to, ordered according to the given params.
+	 * @return a {@link PagedCollectionHolder} containing all projects the user has management access to, ordered according to the given params.
 	 */
 	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting, Filtering filtering);
 

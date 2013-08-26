@@ -37,14 +37,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableCollectionSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
@@ -60,7 +60,7 @@ public class BugTrackerAdministrationController {
 
 
 /* remember that the indexes here are supposed to match the visible columns in the bugtracker view */
-	private DatatableMapper bugtrackerMapper=new IndexBasedMapper(6)
+	private DatatableMapper<Integer> bugtrackerMapper=new IndexBasedMapper(6)
 										.mapAttribute(2, "name", BugTracker.class)
 										.mapAttribute(3, "kind", BugTracker.class)
 										.mapAttribute(4, "url", BugTracker.class)
@@ -98,19 +98,19 @@ public class BugTrackerAdministrationController {
 	public @ResponseBody
 	DataTableModel getBugtrackerTableModel(final DataTableDrawParameters params, final Locale locale) {
 
-		CollectionSorting filter = createPaging(params, bugtrackerMapper);
+		PagingAndSorting filter = createPaging(params, bugtrackerMapper);
 
-		FilteredCollectionHolder<List<BugTracker>> holder = bugTrackerManagerService.findSortedBugtrackers(filter);
+		PagedCollectionHolder<List<BugTracker>> holder = bugTrackerManagerService.findSortedBugtrackers(filter);
 
 
-		return new BugtrackerDataTableModelHelper(messageSource).buildDataModel(holder, filter.getFirstItemIndex()+1, params.getsEcho(), locale);
+		return new BugtrackerDataTableModelHelper(messageSource).buildDataModel(holder,  params.getsEcho(), locale);
 
 	}
 
 	/* ****************************** data formatters ********************************************** */
 
-	private CollectionSorting createPaging(final DataTableDrawParameters params, final DatatableMapper mapper) {
-		return new DataTableCollectionSorting(params, mapper);
+	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper<?> mapper) {
+		return new DataTableSorting(params, mapper);
 	}
 
 

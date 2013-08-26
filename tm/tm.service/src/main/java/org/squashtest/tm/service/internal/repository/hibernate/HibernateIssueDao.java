@@ -37,7 +37,6 @@ import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueList;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
-import org.squashtest.tm.service.foundation.collection.CollectionSorting;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IssueDao;
@@ -126,7 +125,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	}
 
 	/**
-	 * @see {@linkplain IssueDao#findSortedIssuesFromIssuesLists(List, CollectionSorting, Long)
+	 * @see {@linkplain IssueDao#findSortedIssuesFromIssuesLists(List, PagingAndSorting, Long)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -203,7 +202,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	}
 
 	/**
-	 * @see {@linkplain IssueDao#findSortedIssuesFromExecutionAndExecutionSteps(List, List, CollectionSorting)
+	 * @see {@linkplain IssueDao#findSortedIssuesFromExecutionAndExecutionSteps(List, List, PagingAndSorting)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
