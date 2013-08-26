@@ -31,24 +31,34 @@ define(["jquery", "jqueryui"], function($){
 			this._super();
 		},
 		
-		fieldvalue : function(){
+		fieldvalue : function(value){
+			
+			if(!value){
 			var checked = $($(this.element.children()[0]).children()[0]).prop('checked');
-			var value = $($(this.element.children()[0]).children()[1]).val();
+			var selected = $($(this.element.children()[0]).children()[1]).val();
 			if(checked){
-				if(value == 1){
+				if(selected == 1){
 					return {"type" : "RANGE",
-						    "minValue" : 1,
-							"maxValue" : null};
+						    "minValue" : null,
+							"maxValue" : 0};
 				} else {
 					return {"type" : "RANGE",
-					    "minValue" : null,
-						"maxValue" : 0};
+					    "minValue" : 1,
+						"maxValue" : null};
 				}
 			} else {
-				return {"type" : "RANGE",
-				    "minValue" : null,
-					"maxValue" : null};
+				return null;
 			}
+		} else {
+			if(value.minValue == 1){
+				$($(this.element.children()[0]).children()[0]).attr('checked', 'checked');
+				$("option[value=0]", $($(this.element.children()[0]).children()[1])).attr("selected", "selected");
+			} 
+			if(value.maxValue === 0){
+				$($(this.element.children()[0]).children()[0]).attr('checked', 'checked');
+				$("option[value=1]", $($(this.element.children()[0]).children()[1])).attr("selected", "selected");			
+			}
+		}
 
 		}, 
 		

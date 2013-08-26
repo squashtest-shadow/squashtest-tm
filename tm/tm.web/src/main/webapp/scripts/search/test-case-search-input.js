@@ -57,23 +57,27 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 									       "toggle-panel-table-id": val.id+"-panel-table-id"};
 							var tableid = val.id+"-panel-table-id";
 							var html = template(context);
-							$("#test-case-search-input-form-panel").append(html);
+							$("#test-case-search-input-form-panel-"+val.location).append(html);
 							var i;
+							var searchModel = {}; 
+							if($("#searchModel").text()){
+								searchModel = JSON.parse($("#searchModel").text()).fields;
+							}
 							for(i=0; i<val.fields.length; i++){
 								if(val.fields[i].inputType == "textfield"){
-									self.makeTextField(tableid, val.fields[i].id, val.fields[i].title);
+									self.makeTextField(tableid, val.fields[i].id, val.fields[i].title, searchModel[val.fields[i].id]);
 								} else if (val.fields[i].inputType == "textarea"){
-									self.makeTextArea(tableid, val.fields[i].id, val.fields[i].title);
+									self.makeTextArea(tableid, val.fields[i].id, val.fields[i].title, searchModel[val.fields[i].id]);
 								} else if (val.fields[i].inputType == "multiselect"){
-									self.makeMultiselect(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].possibleValues);
+									self.makeMultiselect(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].possibleValues, searchModel[val.fields[i].id]);
 								} else if (val.fields[i].inputType == "range"){
-									self.makeRangeField(tableid, val.fields[i].id, val.fields[i].title);
+									self.makeRangeField(tableid, val.fields[i].id, val.fields[i].title, searchModel[val.fields[i].id]);
 								} else if (val.fields[i].inputType == "exists"){
-									self.makeExistsField(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].possibleValues);
+									self.makeExistsField(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].possibleValues,searchModel[val.fields[i].id]);
 								} else if (val.fields[i].inputType == "date"){
-									self.makeDateField(tableid, val.fields[i].id, val.fields[i].title);
+									self.makeDateField(tableid, val.fields[i].id, val.fields[i].title, searchModel[val.fields[i].id]);
 								} else if (val.fields[i].inputType == "checkbox"){
-									self.makeCheckboxField(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].possibleValues);
+									self.makeCheckboxField(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].possibleValues, searchModel[val.fields[i].id]);
 								} 
 							}
 							self.makeTogglePanel(val.id+"-panel-id",val.title,val.open);
@@ -83,7 +87,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			});
 		},
 				
-		makeRangeField : function(tableId, textFieldId, textFieldTitle) {
+		makeRangeField : function(tableId, textFieldId, textFieldTitle, enteredValue) {
 			
 			var title = textFieldTitle;
 			
@@ -95,10 +99,11 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			$("#"+tableId).append(html);
 			var escapedId = textFieldId.replace(".", "\\.");
 			$("#"+escapedId).searchRangeWidget();
+			$("#"+escapedId).searchRangeWidget('fieldvalue', enteredValue);
 			
 		},
 		
-		makeExistsField : function(tableId, textFieldId, textFieldTitle, options) {
+		makeExistsField : function(tableId, textFieldId, textFieldTitle, options, enteredValue) {
 			
 			var title = textFieldTitle;
 			var source = $("#exists-template").html();
@@ -110,9 +115,10 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			var escapedId = textFieldId.replace(".", "\\.");
 			$("#"+escapedId).searchExistsWidget();
 			$("#"+escapedId).searchExistsWidget('createDom', "F"+textFieldId, options);
+			$("#"+escapedId).searchExistsWidget('fieldvalue', enteredValue);
 		},
 			
-		makeDateField : function(tableId, textFieldId, textFieldTitle) {
+		makeDateField : function(tableId, textFieldId, textFieldTitle, enteredValue) {
 			
 			var title = textFieldTitle;
 			var source = $("#date-template").html();
@@ -124,9 +130,10 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			var escapedId = textFieldId.replace(".", "\\.");
 			$("#"+escapedId).searchDateWidget();
 			$("#"+escapedId).searchDateWidget('createDom', "F"+textFieldId);
+			$("#"+escapedId).searchDateWidget('fieldvalue', enteredValue);
 		},
 			
-		makeCheckboxField : function(tableId, textFieldId, textFieldTitle, options) {
+		makeCheckboxField : function(tableId, textFieldId, textFieldTitle, options, enteredValue) {
 
 			var title = textFieldTitle;
 			var source = $("#checkbox-template").html();
@@ -138,10 +145,11 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			var escapedId = textFieldId.replace(".", "\\.");
 			$("#"+escapedId).searchCheckboxWidget();
 			$("#"+escapedId).searchCheckboxWidget('createDom', "F"+textFieldId, options);
+			$("#"+escapedId).searchCheckboxWidget('fieldvalue', enteredValue);
 			
 		},
 			
-		makeTextField : function(tableId, textFieldId, textFieldTitle) {
+		makeTextField : function(tableId, textFieldId, textFieldTitle, enteredValue) {
 			
 			var title = textFieldTitle;
 			var source = $("#textfield-template").html();
@@ -153,9 +161,10 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			var escapedId = textFieldId.replace(".", "\\.");
 			$("#"+escapedId).searchTextFieldWidget();
 			$("#"+escapedId).append($("#"+escapedId).searchTextFieldWidget('createDom', "F"+textFieldId));
+			$("#"+escapedId).searchTextFieldWidget('fieldvalue', enteredValue);
 		},
 		
-		makeTextArea : function(tableId, textFieldId, textFieldTitle) {
+		makeTextArea : function(tableId, textFieldId, textFieldTitle, enteredValue) {
 
 			var title = textFieldTitle;
 			var source = $("#textarea-template").html();
@@ -167,9 +176,10 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			var escapedId = textFieldId.replace(".", "\\.");
 			$("#"+escapedId).searchTextAreaWidget();
 			$("#"+escapedId).append($("#"+escapedId).searchTextAreaWidget('createDom', "F"+textFieldId));
+			$("#"+escapedId).searchTextAreaWidget('fieldvalue', enteredValue);
 		},
 		
-		makeMultiselect : function(tableId, textFieldId, textFieldTitle, options) {
+		makeMultiselect : function(tableId, textFieldId, textFieldTitle, options, enteredValue) {
 	
 			var title = textFieldTitle;
 			var source = $("#multiselect-template").html();
@@ -181,6 +191,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			var escapedId = textFieldId.replace(".", "\\.");
 			$("#"+escapedId).searchMultiSelectWidget();
 			$("#"+escapedId).append($("#"+escapedId).searchMultiSelectWidget('createDom', "F"+textFieldId, options));
+			$("#"+escapedId).searchMultiSelectWidget('fieldvalue', enteredValue);
 		},
 			
 		
@@ -193,7 +204,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 				var type = $($(fields[i]).children()[0]).attr("data-widgetname");
 				var key = $(fields[i]).attr("id");
 				var field = $("#"+$(fields[i]).attr("id")).data("search"+type+"Widget");
-				if(field){
+				if(field && !!field.fieldvalue()){
 					var value = field.fieldvalue();
 					var jsonKey  = key;
 					jsonVariable[jsonKey] = value;
@@ -231,7 +242,8 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			
 			var infoSettings = {
 				initiallyOpen : open,
-				title : title
+				title : title, 
+				cssClasses : ""
 			};
 			this.$("#"+id).togglePanel(infoSettings);
 		}

@@ -31,16 +31,25 @@ define(["jquery", "jqueryui"], function($){
 			this._super();
 		},
 		
-		fieldvalue : function(){
+		fieldvalue : function(value){
+			
+			if(!value){
+			
 			var checked = $($(this.element.children()[0]).children()[0]).prop('checked');
-			var value = $($(this.element.children()[0]).children()[1]).val();
+			var selectedValue = $($(this.element.children()[0]).children()[1]).val();
 			if(checked){
 				var id = $(this.element).attr("id");
 				return {"type" : "LIST",
-						"values" : text};
+						"values" : selectedValue};
 			} else {
-				return {"type" : "LIST",
-					"values" : null};
+				return null;
+			}
+			} else {
+				$($(this.element.children()[0]).children()[0]).attr('checked', 'checked');
+				$("option", $($(this.element.children()[0]).children()[1]).removeAttr("selected"));
+				for (var i=0, len = value.values.length; i<len;i++){
+					$("option[value='"+value.values[i]+"']", $($(this.element.children()[0]).children()[1]).attr("selected", "selected"));
+				}
 			}
 		}, 
 		

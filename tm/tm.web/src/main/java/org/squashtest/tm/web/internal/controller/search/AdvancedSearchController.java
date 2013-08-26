@@ -128,6 +128,12 @@ public class AdvancedSearchController {
 	public String getTestCaseSearchTab(Model model) {
 		return "test-case-search-input.html";
 	}
+
+	@RequestMapping( method = RequestMethod.POST, params = "testcase")
+	public String getTestCaseSearchTab(Model model,  @RequestParam String searchModel) {
+		model.addAttribute("searchModel", searchModel);
+		return "test-case-search-input.html";
+	}
 	
 	@RequestMapping(value = "/results", method = RequestMethod.POST, params = "testcase")
 	public String getTestCaseSearchResultPage(Model model, @RequestParam String searchModel) {
@@ -153,7 +159,8 @@ public class AdvancedSearchController {
 		panel.setTitle(messageSource.internationalize("search.testcase.generalinfos.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("general-information");
-
+		panel.setLocation("column1");
+		
 		SearchInputFieldModel idField = new SearchInputFieldModel("id",messageSource.internationalize("label.id",locale),"textfield");
 		panel.addField(idField);
 		SearchInputFieldModel referenceField = new SearchInputFieldModel("reference",messageSource.internationalize("label.reference",locale),"textfield");
@@ -172,9 +179,10 @@ public class AdvancedSearchController {
 		
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(messageSource.internationalize("search.testcase.attributes.panel.title",locale));
-		panel.setOpen(false);
+		panel.setOpen(true);
 		panel.setId("attributes");
-			
+		panel.setLocation("column1");
+		
 		SearchInputFieldModel importanceField = new SearchInputFieldModel("importance",messageSource.internationalize("test-case.importance.label",locale),"multiselect");
 		panel.addField(importanceField);
 		
@@ -222,8 +230,9 @@ public class AdvancedSearchController {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		
 		panel.setTitle(messageSource.internationalize("search.testcase.association.panel.title",locale));
-		panel.setOpen(false);
+		panel.setOpen(true);
 		panel.setId("association");
+		panel.setLocation("column2");
 		
 		SearchInputFieldModel requirementsField = new SearchInputFieldModel("requirements",messageSource.internationalize("search.testcase.association.requirement.label", locale),"range");
 		panel.addField(requirementsField);
@@ -250,8 +259,9 @@ public class AdvancedSearchController {
 	
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(messageSource.internationalize("search.testcase.perimeter.panel.title",locale));
-		panel.setOpen(false);
+		panel.setOpen(true);
 		panel.setId("perimeter");
+		panel.setLocation("column2");
 	
 		SearchInputFieldModel projectField = new SearchInputFieldModel("project.id",messageSource.internationalize("search.testcase.perimeter.field.title",locale),"multiselect");
 		panel.addField(projectField);
@@ -271,6 +281,7 @@ public class AdvancedSearchController {
 		panel.setTitle(messageSource.internationalize("search.testcase.content.panel.title",locale));
 		panel.setOpen(true);
 		panel.setId("content");
+		panel.setLocation("column2");
 		
 		SearchInputFieldModel teststepField = new SearchInputFieldModel("steps",messageSource.internationalize("search.testcase.content.teststep.label",locale),"range");
 		panel.addField(teststepField);
@@ -308,6 +319,7 @@ public class AdvancedSearchController {
 		panel.setTitle(messageSource.internationalize("search.testcase.history.panel.title",locale));
 		panel.setOpen(true);
 		panel.setId("history");
+		panel.setLocation("column3");
 	
 		SearchInputFieldModel createdByField = new SearchInputFieldModel("createdBy",messageSource.internationalize("search.testcase.history.createdBy.label",locale),"multiselect");
 		panel.addField(createdByField);
@@ -338,8 +350,9 @@ public class AdvancedSearchController {
 		
 		SearchInputPanelModel panel = getCustomFielModel(locale);
 		panel.setTitle(messageSource.internationalize("search.testcase.cuf.panel.title",locale));
-		panel.setOpen(false);
+		panel.setOpen(true);
 		panel.setId("cuf");
+		panel.setLocation("column3");
 		return panel;
 	}
 	

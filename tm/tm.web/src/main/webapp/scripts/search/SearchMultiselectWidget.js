@@ -31,11 +31,19 @@ define(["jquery", "jqueryui"], function($){
 			this._super();
 		},
 		
-		fieldvalue : function(){
+		fieldvalue : function(value){
+			
+			if(!value){
 			var text = $(this.element.children()[0]).val();
 			var id = $(this.element).attr("id");
 			return {"type" : "LIST",
 					"values" : text};
+			} else {
+				$("option", $(this.element.children()[0])).removeAttr("selected");
+				for (var i=0, len = value.values.length; i<len;i++){
+					$("option[value='"+value.values[i]+"']", $(this.element.children()[0])).attr("selected", "selected");
+				}
+			}
 		}, 
 		
 		createDom : function(id, options){

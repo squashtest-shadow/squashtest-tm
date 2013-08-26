@@ -31,11 +31,16 @@ define(["jquery", "jqueryui"], function($){
 			this._super();
 		},
 		
-		fieldvalue : function(){
+		fieldvalue : function(value){
+			
+			if(!value){
 			var text = $(this.element.children()[0]).val();
 			var id = $(this.element).attr("id");
 			return {"type" : "SINGLE",
 					"value" : text};
+			} else {
+				$(this.element.children()[0]).val(value.value);
+			}
 
 		}, 
 		

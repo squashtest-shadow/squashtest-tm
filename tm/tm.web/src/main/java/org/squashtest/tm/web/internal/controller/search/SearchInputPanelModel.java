@@ -29,6 +29,7 @@ public class SearchInputPanelModel {
 	private String title;
 	private boolean open;
 	private String id;
+	private String location;
 	
 	public SearchInputPanelModel(){
 		
@@ -77,5 +78,13 @@ public class SearchInputPanelModel {
 
 	public void setOpen(boolean open) {
 		this.open = open;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 }

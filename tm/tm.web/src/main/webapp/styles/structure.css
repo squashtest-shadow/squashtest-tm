@@ -204,6 +204,24 @@ div#tabbed-pane>ul {
 	width: 200px;
 }
 
+.small-search-input {
+	width: 50px;
+}
+
+.date-search-input {
+	width: 90px;
+}
+
+.search-input-column {
+	display:inline-block;
+	width:30%;
+	vertical-align:top;
+}
+
+.search-toggle-panel {
+	width:350px;
+}
+
 .search-line {
 	display:inline;		
 }

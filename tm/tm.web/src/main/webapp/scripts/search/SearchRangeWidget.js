@@ -31,19 +31,24 @@ define(["jquery", "jqueryui"], function($){
 			this._super();
 		},
 		
-		fieldvalue : function(){
-			var checked = $($(this.element.children()[0]).children()[0]).prop('checked');
-			var min = $($(this.element.children()[0]).children()[2]).val();
-			var max = $($(this.element.children()[0]).children()[4]).val();
-			var id = $(this.element).attr("id");
-			if(checked){
-				return {"type" : "RANGE",
-				    "minValue" : min,
-					"maxValue" : max};
+		fieldvalue : function(value){
+			
+			if(!value){
+				var checked = $($(this.element.children()[0]).children()[0]).prop('checked');
+				var min = $($(this.element.children()[0]).children()[2]).val();
+				var max = $($(this.element.children()[0]).children()[4]).val();
+				var id = $(this.element).attr("id");
+				if(checked){
+					return {"type" : "RANGE",
+					    "minValue" : min,
+						"maxValue" : max};
+				} else {
+					return null;
+				}
 			} else {
-				return {"type" : "RANGE",
-				    "minValue" : null,
-					"maxValue" : null};
+				$($(this.element.children()[0]).children()[0]).attr('checked', 'checked');
+				$($(this.element.children()[0]).children()[2]).val(value.minValue);
+				$($(this.element.children()[0]).children()[4]).val(value.maxValue);
 			}
 		}, 
 		

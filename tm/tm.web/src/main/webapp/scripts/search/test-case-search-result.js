@@ -35,15 +35,39 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
 			this.updateDisplayedImportance =  $.proxy(this._updateDisplayedImportance, this);
 			var model = JSON.parse($("#searchModel").text());
+			this.model = model;
 			new TestCaseSearchResultTable(model);
 		},
 
 		events : {
 			"click #export-search-result-button" : "exportResults",
 			"click #modify-search-result-button" : "editResults",
-			"click #new-search-button" : "newSearch"
+			"click #new-search-button" : "newSearch",
+			"click #modify-search-button" : "modifySearch"	
 		},
 
+		modifySearch : function(){
+			this.post(squashtm.app.contextRoot + "/advanced-search?testcase", {
+				searchModel : JSON.stringify(this.model)
+			});	
+		},
+		
+		post : function (URL, PARAMS) {
+			var temp=document.createElement("form");
+			temp.action=URL;
+			temp.method="POST";
+			temp.style.display="none";
+			for(var x in PARAMS) {
+				var opt=document.createElement("textarea");
+				opt.name=x;
+				opt.value=PARAMS[x];
+				temp.appendChild(opt);
+			}
+			document.body.appendChild(temp);
+			temp.submit();
+			return temp;
+		},
+		
 		newSearch : function(){
 			document.location.href= squashtm.app.contextRoot +"/advanced-search?testcase";
 		},

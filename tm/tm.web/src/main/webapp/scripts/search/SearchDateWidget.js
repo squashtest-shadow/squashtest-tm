@@ -32,7 +32,9 @@ define(["jquery", "squash.translator", "datepicker/require.jquery.squash.datepic
 			this._super();
 		},
 
-		fieldvalue : function(){
+		fieldvalue : function(value){
+			
+			if(!value){
 			var checked = $($(this.element.children()[0]).children()[0]).prop('checked');
 			var startDate = $($(this.element.children()[0]).children()[2]).datepicker('getDate');
 			var endDate = $($(this.element.children()[0]).children()[4]).datepicker('getDate');
@@ -47,10 +49,13 @@ define(["jquery", "squash.translator", "datepicker/require.jquery.squash.datepic
 						"startDate" : formattedStartDate,
 						"endDate" : formattedEndDate};
 				} else {
-					return {"type" : "TIME_INTERVAL",
-						"startDate" : null,
-						"endDate" : null};
+					return null;
 				}
+			} else {
+				$($(this.element.children()[0]).children()[0]).attr('checked', 'checked');
+				$($(this.element.children()[0]).children()[2]).datepicker('setDate', new Date(value.startDate));
+				$($(this.element.children()[0]).children()[4]).datepicker('setDate', new Date(value.endDate));
+			}
 		}, 
 		
 		createDom : function(id){

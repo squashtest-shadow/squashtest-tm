@@ -127,9 +127,22 @@
      <div id="test-case-search-input-panel">
 				<div id="test-case-search-input-form-panel">
 		
+				<div id="test-case-search-input-form-panel-column1" align="center" class="search-input-column">
+					
+				</div>
 				
+				<div id="test-case-search-input-form-panel-column2" align="center" class="search-input-column">
+				
+				</div>
+				
+				<div id="test-case-search-input-form-panel-column3" align="center" class="search-input-column">
+					<div class="" align="right">
+						<input id="test-case-search-button" type="button" th:value="#{label.Search}" class="button ui-button ui-widget ui-state-default ui-corner-all"/> 
+					</div>	
+				</div>	
+							
 				<script id="toggle-panel-template" type="text/x-handlebars-template">
-				<div class="toggle-panel">
+				<div class="toggle-panel search-toggle-panel">
 					<span class="not-displayed toogle-panel-buttons"></span>
 					<div id="{{toggle-panel-id}}" class="description-panel toggle-panel-main">
 						<div class="display-table" id="{{toggle-panel-table-id}}">
@@ -166,9 +179,9 @@
 						<div class="search-line" data-widgetname="Date">
 						<input type="checkbox"></input>
 						<span th:text="#{search.testcase.betweenDate.label}"></span>
-						<input type="text"></input>
+						<input class="date-search-input" type="text"></input>
 						<span th:text="#{search.testcase.andDate.label}"></span>
-						<input type="text"></input>
+						<input class="date-search-input" type="text"></input>
 						</div>
 					</div>
 				</div>
@@ -180,9 +193,9 @@
 						<div class="search-line" data-widgetname="Range">
 						<input type="checkbox"></input>
 						<span th:text="#{search.testcase.between.label}"></span>
-						<input type="text"></input>
+						<input class="small-search-input" type="text"></input>
 						<span th:text="#{search.testcase.and.label}"></span>
-						<input type="text"></input>
+						<input class="small-search-input" type="text"></input>
 						<span>{{text-range-title}}</span>
 						</div>
 					</div>
@@ -202,11 +215,9 @@
 				</script>
 								
 				</div>
-				<div class="toolbar-button-panel">
-					<input id="test-case-search-button" type="button" th:value="#{label.Search}" class="button ui-button ui-widget ui-state-default ui-corner-all"/> 
-				</div>	
 
-   
+				<div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
+
       </div>
     </div>
     </div>	
