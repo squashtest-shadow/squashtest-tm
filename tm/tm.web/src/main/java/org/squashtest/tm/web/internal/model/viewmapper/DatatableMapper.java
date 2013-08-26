@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.web.internal.model.viewmapper;
 
-import java.util.NoSuchElementException;
-
-
-
 
 /**
  * @param <KEY>
@@ -31,36 +27,51 @@ import java.util.NoSuchElementException;
 public interface DatatableMapper<KEY> {
 
 	/**
-	 * Returns the name of the attribute indexed by KEY in the mapper.
+	 * Registers a new mapping. 'key' is the name of the column in the datatable.
 	 * 
 	 * @param key
+	 * @param mapping
 	 * @return
-	 * @throws NoSuchElementException if no result was found for the given key
 	 */
-	String attrAt(KEY key) throws NoSuchElementException;	
-	
+	public DatatableMapper<KEY> map(KEY key, Mapping mapping);
 	
 	/**
-	 * Returns the path of that attribute. Contrary to {@link #attrAt(Object)}, you will also know of which class it belongs :
-	 * the returned data is &lt;simpleclassname&gt;.&lt;attributename&gt;. Example : the name of a TestCase will be returned 
-	 * as "TestCase.name".
+	 * Will map an attribute named 'attribute' of the model to the datatable column 'key'. Note that this
+	 * implementation is equivalent to  map(key, new SimpleMapping(attribute)).
 	 * 
-	 * @param key
-	 * @return
-	 * @throws NoSuchElementException if no result was found for the given key
-	 */
-	String pathAt(KEY key) throws NoSuchElementException;
-	
-	
-	/**
-	 * will register an attribute named 'attributeName' of a class 'ownerType', of which the type is 'attributeType' and that will be refered to as 'key'.
-	 * 
-	 * @param ownerType
-	 * @param attributeName
-	 * @param attributeType
-	 * @param key
+	 * @param key : the key used to register. Usually corresponds to a column of the datatable.
+	 * @param attribute : the name of an attribute of a class 
 	 * @return this
 	 */
-	public DatatableMapper<KEY> mapAttribute(Class<?> ownerType, String attributeName, Class<?> attributeType, KEY key);
+	public DatatableMapper<KEY> mapAttribute(KEY key, String attribute);
+	
+	
+	/**
+	 * Will map an attribute named 'attribute' of a class 'ownerType' to the datatable column 'key'. Note that this
+	 * implementation is equivalent to  map(key, new AttributeMapping(ownerType, attribute)).
+	 * 
+	 * @param key : the key used to register. Usually corresponds to a column of the datatable.
+	 * @param attribute : the name of an attribute of a class 
+	 * @param ownerType : the class that own the attribute  stated above
+	 * @return this
+	 */
+	public DatatableMapper<KEY> mapAttribute(KEY key, String attribute, Class<?> ownerType);
 
+
+	/**
+	 * 
+	 * @returns the String that represents the model mapping associated to that key. Note that what is returned depends on the 
+	 * implementation of DatatableMapper.Mapping actually used. 
+	 * 
+	 */
+	public String getMapping(KEY key);
+	
+	
+	
+	public static interface Mapping{
+		
+		public String getMapping();
+		
+	}
+	
 }

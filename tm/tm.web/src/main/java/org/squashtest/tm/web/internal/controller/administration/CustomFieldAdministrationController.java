@@ -44,10 +44,10 @@ import org.squashtest.tm.service.customfield.CustomFieldManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -106,9 +106,9 @@ public class CustomFieldAdministrationController {
 	 * column index is of all table's columns (displayed or not)
 	 */
 	private final DatatableMapper customFieldTableMapper = new NameBasedMapper(3)
-			.mapAttribute(CustomField.class, NAME, String.class, NAME)
-			.mapAttribute(CustomField.class, LABEL, String.class, LABEL)
-			.mapAttribute(CustomField.class, INPUT_TYPE, String.class, "input-type");
+			.mapAttribute(NAME, NAME, CustomField.class)
+			.mapAttribute(LABEL, LABEL, CustomField.class)
+			.mapAttribute("input-type", INPUT_TYPE, CustomField.class);
 
 	/**
 	 * Return the DataTableModel to display the table of all custom fields.
@@ -122,7 +122,7 @@ public class CustomFieldAdministrationController {
 	@RequestMapping(method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getCustomFieldsTableModel(final DataTableDrawParameters params, final Locale locale) {
-		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, customFieldTableMapper);
+		PagingAndSorting filter = new DataTableSorting(params, customFieldTableMapper);
 
 		PagedCollectionHolder<List<CustomField>> holder = customFieldManagerService.findSortedCustomFields(filter);
 

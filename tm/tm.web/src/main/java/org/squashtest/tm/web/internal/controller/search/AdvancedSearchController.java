@@ -28,7 +28,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -66,10 +65,10 @@ import org.squashtest.tm.web.internal.controller.testcase.TestCaseStatusJeditabl
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseTypeJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -112,17 +111,17 @@ public class AdvancedSearchController {
 	}
 
 	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(11)
-	.mapAttribute(Project.class, "name", String.class, "project-name")
-	.mapAttribute(TestCase.class, "id", Long.class, "test-case-id")	
-	.mapAttribute(TestCase.class, "reference", String.class, "test-case-ref")	
-	.mapAttribute(TestCase.class, "label", String.class, "test-case-label")
-	.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, "test-case-weight")	
+	.mapAttribute("project-name", "name", Project.class)
+	.mapAttribute("test-case-id", "id", TestCase.class)	
+	.mapAttribute("test-case-ref", "reference", TestCase.class)	
+	.mapAttribute("test-case-label", "label", TestCase.class)
+	.mapAttribute("test-case-weight", "importance", TestCase.class)	
 	//.mapAttribute(TestCase.class, "verifiedRequirementVersions.size", Long.class, "test-case-requirement-nb")
 	//.mapAttribute(TestCase.class, "steps.size", Long.class, "test-case-teststep-nb")
 	//.mapAttribute(TestCase.class, "weight", Long.class, "test-case-iteration-nb")
 	//.mapAttribute(TestCase.class, "allAttachments.size", Long.class, "test-case-attachment-nb")	
-	.mapAttribute(TestCase.class, "audit.createdBy", String.class, "test-case-created-by")
-	.mapAttribute(TestCase.class, "audit.lastModifiedBy", String.class, "test-case-modified-by");
+	.mapAttribute("test-case-created-by", "audit.createdBy", TestCase.class)
+	.mapAttribute("test-case-modified-by", "audit.lastModifiedBy", TestCase.class);
 
 
 	@RequestMapping( method = RequestMethod.GET, params = "testcase")
@@ -142,7 +141,7 @@ public class AdvancedSearchController {
 
 		TestCaseSearchModel searchModel = new ObjectMapper().readValue(model, TestCaseSearchModel.class);
 
-		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, testCaseSearchResultMapper);
+		PagingAndSorting paging = new DataTableSorting(params, testCaseSearchResultMapper);
 
 		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCases(searchModel, paging);
 

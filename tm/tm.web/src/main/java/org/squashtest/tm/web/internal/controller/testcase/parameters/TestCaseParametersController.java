@@ -54,9 +54,9 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -82,8 +82,8 @@ public class TestCaseParametersController {
 	
 
 	private DatatableMapper<String> parametersTableMapper = new NameBasedMapper(3)
-																.mapAttribute(Parameter.class,"name", String.class, DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY)
-																.mapAttribute(TestCase.class, "name", String.class,	"test-case-name");
+																.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY,"name", Parameter.class)
+																.mapAttribute("test-case-name", "name", TestCase.class);
 	
 	/**
 	 * 
@@ -150,7 +150,7 @@ public class TestCaseParametersController {
 			final Locale locale) {
 
 		List<Parameter> parameters = parameterModificationService.findAllforTestCase(testCaseId);
-		Sorting sorting = new DataTableMapperPagingAndSortingAdapter(params, parametersTableMapper);
+		Sorting sorting = new DataTableSorting(params, parametersTableMapper);
 		sortParams(sorting, parameters);
 		PagedCollectionHolder<List<Parameter>> holder = new SinglePageCollectionHolder<List<Parameter>>(parameters);
 

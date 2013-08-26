@@ -56,12 +56,10 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
@@ -75,12 +73,11 @@ import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionVie
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.jquery.TestSuiteModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import org.squashtest.tm.web.internal.util.DateUtils;
 
@@ -119,14 +116,14 @@ public class IterationModificationController {
 	private InternationalizationHelper messageSource;
 
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
-														.mapAttribute(Project.class,  "name", String.class, "project-name")
-														.mapAttribute(TestCase.class, "reference", String.class, "reference")
-														.mapAttribute(TestCase.class, "name", String.class, "tc-name")
-														.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, "importance")
-														.mapAttribute(Dataset.class,  "name", String.class, "dataset")
-														.mapAttribute(IterationTestPlanItem.class, "executionStatus", ExecutionStatus.class, "status")
-														.mapAttribute(User.class, "login", String.class, "assignee-login")
-														.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, "last-exec-on");
+														.mapAttribute("project-name",	"name", 			Project.class)
+														.mapAttribute("reference", 		"reference", 		TestCase.class)
+														.mapAttribute("tc-name", 		"name", 			TestCase.class)
+														.mapAttribute("importance",		"importance", 		TestCase.class)
+														.mapAttribute("dataset",		"name", 			Dataset.class)
+														.mapAttribute("status",			"executionStatus", 	IterationTestPlanItem.class)
+														.mapAttribute("assignee-login", "login", 			User.class)
+														.mapAttribute("last-exec-on",	"lastExecutedOn",	IterationTestPlanItem.class);
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showIteration(Model model, @PathVariable long iterationId) {
@@ -403,7 +400,7 @@ public class IterationModificationController {
 	DataTableModel getTestPlanModel(@PathVariable long iterationId, final DataTableDrawParameters params,
 			final Locale locale) {
 
-		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, testPlanMapper);
+		PagingAndSorting paging = new DataTableSorting(params, testPlanMapper);
 		PagedCollectionHolder<List<IterationTestPlanItem>> holder = iterationModService.findAssignedTestPlan(
 				iterationId, paging);
 

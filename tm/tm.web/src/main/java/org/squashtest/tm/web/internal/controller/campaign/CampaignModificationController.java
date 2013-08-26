@@ -97,11 +97,11 @@ public class CampaignModificationController {
 	 * because their configuration and content are different !
 	 */
 	private final DatatableMapper<Integer> testPlanMapper = new IndexBasedMapper(8)
-			.mapAttribute(Project.class, "name", String.class, 2)
-			.mapAttribute(Project.class, "name", String.class, 3)
-			.mapAttribute(TestCase.class, "name", String.class, 4)
-			.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, 6)
-			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 7);
+			.mapAttribute(2, "name", Project.class)
+			.mapAttribute(3, "name", Project.class)
+			.mapAttribute(4, "name", TestCase.class)
+			.mapAttribute(6, "importance", TestCase.class)
+			.mapAttribute(7, "executionMode", TestCase.class);
 
 
 

@@ -24,7 +24,6 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -74,11 +73,10 @@ import org.squashtest.tm.web.internal.helper.ProjectHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.testautomation.TestAutomationProjectRegistrationForm;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
@@ -111,28 +109,27 @@ public class GenericProjectController {
 	private static final String PROJECT_ID_URL = "/{projectId}";
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
-	private DatatableMapper allProjectsMapper = new NameBasedMapper(9)
-			.mapAttribute(GenericProject.class, "name", String.class, "name")
-			.mapAttribute(GenericProject.class, "label", String.class, "label")
-			.mapAttribute(GenericProject.class, "active", boolean.class, "active")
-			.mapAttribute(GenericProject.class, "audit.createdOn", Date.class, "created-on")
-			.mapAttribute(GenericProject.class, "audit.createdBy", String.class, "created-by")
-			.mapAttribute(GenericProject.class, "audit.lastModifiedOn", Date.class, "last-mod-on")
-			.mapAttribute(GenericProject.class, "audit.lastModifiedBy", String.class, "last-mod-by");
+	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9)
+			.mapAttribute("name", "name")
+			.mapAttribute("label", "label")
+			.mapAttribute("active", "active")
+			.mapAttribute("created-on", "audit.createdOn")
+			.mapAttribute("created-by", "audit.createdBy")
+			.mapAttribute("last-mod-on", "audit.lastModifiedOn")
+			.mapAttribute("last-mod-by", "audit.lastModifiedBy");
 
-	private DatatableMapper partyPermissionMapper = new NameBasedMapper(5)
-			.mapAttribute(Party.class, "index", Integer.class, "party-index")
-			.mapAttribute(Party.class, "id", Long.class, "party-id")
-			.mapAttribute(Party.class, "name", String.class, "party-name")
-			.mapAttribute(Party.class, "type", String.class, "party-type")
-			.mapAttribute(PermissionGroup.class, "qualifiedName", String.class, "permission-group.qualifiedName");
+	private DatatableMapper<String> partyPermissionMapper = new NameBasedMapper(5)
+			.mapAttribute("party-index", "index")
+			.mapAttribute("party-id", "id")
+			.mapAttribute("party-name", "name")
+			.mapAttribute("party-type", "type")
+			.mapAttribute("permission-group.qualifiedName", "qualifiedName");
 
 	@RequestMapping(value = "", params = RequestParams.S_ECHO_PARAM, method = RequestMethod.GET)
 	public @ResponseBody
 	DataTableModel getProjectsTableModel(final DataTableDrawParameters params, final Locale locale) {
 
-		PagingAndSorting sorter = new DataTableMapperPagingAndSortingAdapter(params, allProjectsMapper,
-				SortedAttributeSource.SINGLE_ENTITY);
+		PagingAndSorting sorter = new DataTableSorting(params, allProjectsMapper);
 
 		Filtering filter = new DataTableFiltering(params);
 
@@ -301,8 +298,7 @@ public class GenericProjectController {
 	public DataTableModel getPartyPermissionTable(DataTableDrawParameters params,
 			@PathVariable(PROJECT_ID) long projectId, final Locale locale) {
 
-		PagingAndSorting sorting = new DataTableMapperPagingAndSortingAdapter(params, partyPermissionMapper,
-				SortedAttributeSource.SINGLE_ENTITY);
+		PagingAndSorting sorting = new DataTableSorting(params, partyPermissionMapper);
 		Filtering filtering = new DataTableFiltering(params);
 
 		PagedCollectionHolder<List<PartyProjectPermissionsBean>> partyPermissions = projectManager

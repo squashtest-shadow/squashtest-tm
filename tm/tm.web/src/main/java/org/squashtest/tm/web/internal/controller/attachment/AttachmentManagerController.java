@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.attachment;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,8 +41,8 @@ import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -71,10 +70,10 @@ public class AttachmentManagerController {
 
 	@SuppressWarnings("rawtypes")
 	private final DatatableMapper attachmentMapper = new NameBasedMapper()
-			.mapAttribute(Attachment.class, "id", Long.class, "item-id")
-			.mapAttribute(Attachment.class, NAME, String.class, "hyphenated-name")
-			.mapAttribute(Attachment.class, "size", Long.class, "size")
-			.mapAttribute(Attachment.class, "addedOn", Date.class, "added-on");
+			.mapAttribute("item-id", "id", Attachment.class)
+			.mapAttribute("hyphenated-name", NAME, Attachment.class)
+			.mapAttribute("size", "size", Attachment.class)
+			.mapAttribute("added-on", "addedOn", Attachment.class);
 
 	
 	/* ********************** data display *********************************** */
@@ -129,7 +128,7 @@ public class AttachmentManagerController {
 
 	
 	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper mapper) {
-		return new DataTableMapperPagingAndSortingAdapter(params, mapper);
+		return new DataTableSorting(params, mapper);
 	}
 
 

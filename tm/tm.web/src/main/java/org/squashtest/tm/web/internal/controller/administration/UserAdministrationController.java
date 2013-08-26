@@ -64,8 +64,6 @@ import org.squashtest.tm.web.internal.controller.users.PartyControllerSupport;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
@@ -94,21 +92,21 @@ public class UserAdministrationController extends PartyControllerSupport {
 	@Inject
 	private AuthenticationProviderContext authenticationProviderContext;
 
-	private DatatableMapper userMapper = new NameBasedMapper(10)
-			.mapAttribute(User.class, "id", String.class, "user-id")
-			.mapAttribute(User.class, "login", String.class, "user-login")
-			.mapAttribute(User.class, "group", UsersGroup.class, "user-group")
-			.mapAttribute(User.class, "firstName", String.class, "user-firstname")
-			.mapAttribute(User.class, "lastName", String.class, "user-lastname")
-			.mapAttribute(User.class, "email", String.class, "user-email")
-			.mapAttribute(User.class, "audit.createdOn", Date.class, "user-created-on")
-			.mapAttribute(User.class, "audit.createdBy", String.class, "user-created-by")
-			.mapAttribute(User.class, "audit.lastModifiedOn", Date.class, "user-modified-on")
-			.mapAttribute(User.class, "audit.lastModifiedBy", String.class, "user-modified-by");
+	private DatatableMapper<String> userMapper = new NameBasedMapper(10)
+			.mapAttribute("user-id", "id")
+			.mapAttribute("user-login", "login")
+			.mapAttribute("user-group", "group")
+			.mapAttribute("user-firstname", "firstName")
+			.mapAttribute("user-lastname", "lastName")
+			.mapAttribute("user-email", "email")
+			.mapAttribute("user-created-on", "audit.createdOn")
+			.mapAttribute("user-created-by", "audit.createdBy")
+			.mapAttribute("user-modified-on", "audit.lastModifiedOn")
+			.mapAttribute("user-modified-by", "audit.lastModifiedBy");
 
-	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2).mapAttribute(ProjectPermission.class,
-			"project.name", String.class, "project-name").mapAttribute(ProjectPermission.class,
-			"permissionGroup.qualifiedName", String.class, "permission-name");
+	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2).mapAttribute("project-name",
+			"project.name", ProjectPermission.class).mapAttribute("permission-name",
+			"permissionGroup.qualifiedName", ProjectPermission.class);
 
 	@ServiceReference
 	public void setAdministrationService(AdministrationService adminService) {
@@ -296,8 +294,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 	@RequestMapping(value = USER_URL + "/permissions", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable("userId") long userId) {
-		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, permissionMapper,
-				SortedAttributeSource.SINGLE_ENTITY);
+		PagingAndSorting paging = new DataTableSorting(params, permissionMapper);
 		Filtering filtering = new DataTableFiltering(params);
 		return createPermissionTableModel(userId, paging, filtering, params.getsEcho());
 	}

@@ -20,39 +20,24 @@
  */
 package org.squashtest.tm.web.internal.model.viewmapper;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper.Mapping;
 
-public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
+class AttributeMapping implements Mapping{
 
-	private Map<KEY, Mapping> mappings;
+	private String attribute;
 
-	public DefaultDatatableMapper() {
+	private Class<?> ownerType;
+
+	
+	public AttributeMapping(String attribute, Class<?> ownerType) {
 		super();
-		mappings = new HashMap<KEY, Mapping>();
+		this.attribute = attribute;
+		this.ownerType = ownerType;
 	}
 
-	public DefaultDatatableMapper(int initialCapacity) {
-		super();
-		mappings = new HashMap<KEY, Mapping>(initialCapacity);
-	}
 
-	@Override
-	public DatatableMapper<KEY> map(KEY key, Mapping mapping) {
-		mappings.put(key,  mapping);
-		return this;
+	public String getMapping() {
+		return ownerType.getSimpleName() + "." + attribute;
 	}
 	
-	@Override
-	public DatatableMapper<KEY> mapAttribute(KEY key, String attribute, Class<?> ownerType) {
-		AttributeMapping register = new AttributeMapping(attribute, ownerType);
-		mappings.put(key, register);
-		return this;
-	}
-	
-
-	
-
-
 }

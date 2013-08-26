@@ -48,7 +48,7 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractChildrenModifie
 	private static final Logger LOGGER = LoggerFactory.getLogger(SquashUnsafeHtmlAttrProcessor.class);
 
 	/**
-	 * @param attributeName
+	 * @param attribute
 	 */
 	public SquashUnsafeHtmlAttrProcessor() {
 		super("unsafe-html");

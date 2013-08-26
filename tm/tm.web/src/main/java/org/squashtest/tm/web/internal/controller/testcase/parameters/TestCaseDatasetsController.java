@@ -60,10 +60,10 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseParametersController.ParameterNameComparator;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -87,9 +87,9 @@ public class TestCaseDatasetsController {
 	@Inject
 	private MessageSource messageSource;
 
-	private DatatableMapper<String> datasetsTableMapper = new NameBasedMapper(3).mapAttribute(Dataset.class, "id",
-			String.class, DataTableModelConstants.DEFAULT_ENTITY_ID_KEY).mapAttribute(Dataset.class, "name",
-			String.class, DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY);
+	private DatatableMapper<String> datasetsTableMapper = new NameBasedMapper(3).mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id",
+			Dataset.class).mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name",
+			Dataset.class);
 
 	/**
 	 * Return the datas to fill the datasets table in the test case view
@@ -203,7 +203,7 @@ public class TestCaseDatasetsController {
 
 	private List<Dataset> getSortedDatasets(long testCaseId, final DataTableDrawParameters params) {
 		final TestCase testCase = testCaseFinder.findById(testCaseId);
-		Sorting sorting = new DataTableMapperPagingAndSortingAdapter(params, datasetsTableMapper);
+		Sorting sorting = new DataTableSorting(params, datasetsTableMapper);
 		Set<Dataset> datasets = testCase.getDatasets();
 		List<Dataset> datasetsList = new ArrayList<Dataset>(datasets);
 		if (sorting.getSortedAttribute() != null && sorting.getSortedAttribute().equals("Parameter.name")) {

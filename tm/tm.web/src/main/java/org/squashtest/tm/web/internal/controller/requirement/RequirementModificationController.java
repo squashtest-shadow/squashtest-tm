@@ -54,7 +54,6 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
-import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.requirement.RequirementModificationService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
@@ -65,9 +64,9 @@ import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
@@ -114,12 +113,12 @@ public class RequirementModificationController {
 	private RequirementAuditTrailService auditTrailService;
 	
 	private final DatatableMapper<Integer> versionMapper = new IndexBasedMapper(7)
-														.mapAttribute(RequirementVersion.class, "versionNumber", int.class, 1)
-														.mapAttribute(RequirementVersion.class, "reference", String.class, 2)
-														.mapAttribute(RequirementVersion.class, "name", String.class, 3)
-														.mapAttribute(RequirementVersion.class, "status", RequirementStatus.class, 4)
-														.mapAttribute(RequirementVersion.class, "criticality", RequirementCriticality.class, 5)
-														.mapAttribute(RequirementVersion.class, "category", RequirementCategory.class, 6);
+														.mapAttribute(1, "versionNumber", RequirementVersion.class)
+														.mapAttribute(2, "reference", RequirementVersion.class)
+														.mapAttribute(3, "name", RequirementVersion.class)
+														.mapAttribute(4, "status", RequirementVersion.class)
+														.mapAttribute(5, "criticality", RequirementVersion.class)
+														.mapAttribute(6, "category", RequirementVersion.class);
 
 
 
@@ -324,7 +323,7 @@ public class RequirementModificationController {
 	@ResponseBody
 	public DataTableModel getRequirementVersionsTableModel(@PathVariable long requirementId,
 			DataTableDrawParameters params, final Locale locale) {
-		PagingAndSorting pas = new DataTableMapperPagingAndSortingAdapter(params, versionMapper);
+		PagingAndSorting pas = new DataTableSorting(params, versionMapper);
 
 		PagedCollectionHolder<List<RequirementVersion>> holder = versionFinder.findAllByRequirement(requirementId, pas);
 

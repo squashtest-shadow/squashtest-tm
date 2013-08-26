@@ -61,10 +61,10 @@ public class BugTrackerAdministrationController {
 
 /* remember that the indexes here are supposed to match the visible columns in the bugtracker view */
 	private DatatableMapper bugtrackerMapper=new IndexBasedMapper(6)
-										.mapAttribute(BugTracker.class, "name", String.class, 2)
-										.mapAttribute(BugTracker.class, "kind", String.class, 3)
-										.mapAttribute(BugTracker.class, "url", String.class, 4)
-										.mapAttribute(BugTracker.class, "iframeFriendly", String.class, 5);
+										.mapAttribute(2, "name", BugTracker.class)
+										.mapAttribute(3, "kind", BugTracker.class)
+										.mapAttribute(4, "url", BugTracker.class)
+										.mapAttribute(5, "iframeFriendly", BugTracker.class);
 
 	@ServiceReference
 	public void setBugtrackerManagerService(BugTrackerManagerService bugTrackerManagerService) {

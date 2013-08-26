@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.internal.controller.users;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -63,11 +62,10 @@ import org.squashtest.tm.web.internal.controller.administration.UserModel;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -91,22 +89,21 @@ public class TeamController extends PartyControllerSupport {
 	private static final String TEAM_ID_URL = "/{teamId}";
 
 	private DatatableMapper<String> teamsMapper = new NameBasedMapper(9)
-			.mapAttribute(Team.class, "name", String.class, "name")
-			.mapAttribute(Team.class, "description", String.class, "description")
-			.mapAttribute(Team.class, "size", Long.class, "nb-associated-users")
+			.mapAttribute("name", "name", Team.class)
+			.mapAttribute("description", "description", Team.class)
+			.mapAttribute("nb-associated-users", "size", Team.class)
 			// WARNING : the 'size' attribute doesn't actually exist. It's a trick, see
 			// HibernateTeamDao#findSortedTeams. see #1968
-			.mapAttribute(Team.class, "audit.createdOn", Date.class, "created-on")
-			.mapAttribute(Team.class, "audit.createdBy", String.class, "created-by")
-			.mapAttribute(Team.class, "audit.lastModifiedOn", Date.class, "last-mod-on")
-			.mapAttribute(Team.class, "audit.lastModifiedBy", String.class, "last-mod-by");
+			.mapAttribute("created-on", "audit.createdOn", Team.class)
+			.mapAttribute("created-by", "audit.createdBy", Team.class)
+			.mapAttribute("last-mod-on", "audit.lastModifiedOn", Team.class)
+			.mapAttribute("last-mod-by", "audit.lastModifiedBy", Team.class);
 
-	private DatatableMapper<String> membersMapper = new NameBasedMapper(1).mapAttribute(User.class, "firstName",
-			String.class, "user-name");
+	private DatatableMapper<String> membersMapper = new NameBasedMapper(1).mapAttribute("user-name", "firstName");
 
-	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2).mapAttribute(ProjectPermission.class,
-			"project.name", String.class, "project-name").mapAttribute(ProjectPermission.class,
-			"permissionGroup.qualifiedName", String.class, "permission-name");
+	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2).mapAttribute("project-name",
+			"project.name", ProjectPermission.class).mapAttribute("permission-name",
+			"permissionGroup.qualifiedName", ProjectPermission.class);
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TeamController.class);
 
@@ -135,7 +132,7 @@ public class TeamController extends PartyControllerSupport {
 	@ResponseBody
 	public DataTableModel getTableModel(final DataTableDrawParameters params, final Locale locale) {
 
-		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, teamsMapper);
+		PagingAndSorting paging = new DataTableSorting(params, teamsMapper);
 		Filtering filtering = new DataTableFiltering(params);
 
 		PagedCollectionHolder<List<Team>> holder = service.findAllFiltered(paging, filtering);
@@ -208,8 +205,7 @@ public class TeamController extends PartyControllerSupport {
 	@RequestMapping(value = TEAM_ID_URL + "/members", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getMembersTableModel(DataTableDrawParameters params, @PathVariable("teamId") long teamId) {
-		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, membersMapper,
-				SortedAttributeSource.SINGLE_ENTITY);
+		PagingAndSorting paging = new DataTableSorting(params, membersMapper);
 		Filtering filtering = new DataTableFiltering(params);
 		return createMembersTableModel(teamId, paging, filtering, params.getsEcho());
 	}
@@ -252,7 +248,7 @@ public class TeamController extends PartyControllerSupport {
 	@RequestMapping(value = TEAM_ID_URL + "/permissions", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable("teamId") long teamId) {
-		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, permissionMapper);
+		PagingAndSorting paging = new DataTableSorting(params, permissionMapper);
 		Filtering filtering = new DataTableFiltering(params);
 		return createPermissionTableModel(teamId, paging, filtering, params.getsEcho());
 	}

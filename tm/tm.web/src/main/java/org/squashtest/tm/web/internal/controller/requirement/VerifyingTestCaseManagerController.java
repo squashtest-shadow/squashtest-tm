@@ -42,7 +42,6 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
@@ -55,8 +54,8 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -90,10 +89,10 @@ public class VerifyingTestCaseManagerController {
 	 * So we use a named-base with column indexes as names.
 	 */
 	private final DatatableMapper<String> verifyingTcMapper = new NameBasedMapper(6)
-			.mapAttribute(Project.class, "name", String.class, "project-name")
-			.mapAttribute(TestCase.class, "reference", String.class, "tc-reference")
-			.mapAttribute(TestCase.class, "name", String.class, "tc-name")
-			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, "tc-type");
+			.mapAttribute("project-name", "name", Project.class)
+			.mapAttribute("tc-reference", "reference", TestCase.class)
+			.mapAttribute("tc-name", "name", TestCase.class)
+			.mapAttribute("tc-type", "executionMode", TestCase.class);
 
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/manager", method = RequestMethod.GET)
@@ -152,7 +151,7 @@ public class VerifyingTestCaseManagerController {
 	DataTableModel getVerifiedTestCasesTableModel(@PathVariable long requirementVersionId,
 			DataTableDrawParameters params) {
 		
-		PagingAndSorting filter = new DataTableMapperPagingAndSortingAdapter(params, verifyingTcMapper);
+		PagingAndSorting filter = new DataTableSorting(params, verifyingTcMapper);
 
 		return buildVerifyingTestCaseModel(requirementVersionId, filter, params.getsEcho());
 

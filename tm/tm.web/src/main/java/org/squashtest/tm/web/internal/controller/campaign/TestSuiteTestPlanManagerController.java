@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.internal.controller.campaign;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -48,10 +47,8 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
@@ -66,9 +63,9 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
@@ -93,14 +90,14 @@ public class TestSuiteTestPlanManagerController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 
 	private final DatatableMapper testPlanMapper = new IndexBasedMapper(11)
-			.mapAttribute(Project.class, "name", String.class, 2)
-			.mapAttribute(TestCase.class, "reference", String.class, 3)
-			.mapAttribute(TestCase.class, "name", String.class, 4)
-			.mapAttribute(TestCase.class, "importance", TestCaseImportance.class, 5)
-			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, 6)
-			.mapAttribute(IterationTestPlanItem.class, "executionStatus", ExecutionStatus.class, 7)
-			.mapAttribute(IterationTestPlanItem.class, "lastExecutedBy", String.class, 8)
-			.mapAttribute(IterationTestPlanItem.class, "lastExecutedOn", Date.class, 9);
+			.mapAttribute(2, "name", Project.class)
+			.mapAttribute(3, "reference", TestCase.class)
+			.mapAttribute(4, "name", TestCase.class)
+			.mapAttribute(5, "importance", TestCase.class)
+			.mapAttribute(6, "executionMode", TestCase.class)
+			.mapAttribute(7, "executionStatus", IterationTestPlanItem.class)
+			.mapAttribute(8, "lastExecutedBy", IterationTestPlanItem.class)
+			.mapAttribute(9, "lastExecutedOn", IterationTestPlanItem.class);
 
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -244,7 +241,7 @@ public class TestSuiteTestPlanManagerController {
 	public @ResponseBody
 	DataTableModel getTestPlanModel(@PathVariable Long id, final DataTableDrawParameters params, final Locale locale) {
 
-		Paging paging = new DataTableMapperPagingAndSortingAdapter(params, testPlanMapper);
+		Paging paging = new DataTableSorting(params, testPlanMapper);
 
 		PagedCollectionHolder<List<IterationTestPlanItem>> holder = testSuiteTestPlanManagerService.findTestPlan(id,
 				paging);

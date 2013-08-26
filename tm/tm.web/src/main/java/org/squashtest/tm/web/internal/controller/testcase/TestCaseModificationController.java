@@ -96,8 +96,8 @@ import org.squashtest.tm.web.internal.model.combo.OptionTag;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -120,10 +120,10 @@ public class TestCaseModificationController {
 	private static final String TEST_CASE_ = "test case ";
 
 	private final DatatableMapper<String> referencingTestCaseMapper = new NameBasedMapper(6)
-			.mapAttribute(Project.class, NAME, String.class, "project-name")
-			.mapAttribute(TestCase.class, "reference", String.class, "tc-reference")
-			.mapAttribute(TestCase.class, NAME, String.class, "tc-name")
-			.mapAttribute(TestCase.class, "executionMode", TestCaseExecutionMode.class, "tc-mode");
+			.mapAttribute("project-name", NAME, Project.class)
+			.mapAttribute("tc-reference", "reference", TestCase.class)
+			.mapAttribute("tc-name", NAME, TestCase.class)
+			.mapAttribute("tc-mode", "executionMode", TestCase.class);
 
 	
 	@Inject
@@ -452,7 +452,7 @@ public class TestCaseModificationController {
 	}
 
 	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper<?> dtMapper) {
-		return new DataTableMapperPagingAndSortingAdapter(params, dtMapper);
+		return new DataTableSorting(params, dtMapper);
 	}
 
 	/* ********************************** localization stuffs ****************************** */

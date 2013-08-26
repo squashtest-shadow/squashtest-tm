@@ -67,10 +67,10 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -215,7 +215,7 @@ public class VerifiedRequirementsManagerController {
 	public DataTableModel getTestCaseWithCallStepsVerifiedRequirementsTableModel(@PathVariable long testCaseId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		PagingAndSorting pas = new DataTableMapperPagingAndSortingAdapter(params, verifiedRequirementVersionsMapper);
+		PagingAndSorting pas = new DataTableSorting(params, verifiedRequirementVersionsMapper);
 
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
 				.findAllVerifiedRequirementsByTestCaseId(testCaseId, pas);
@@ -246,7 +246,7 @@ public class VerifiedRequirementsManagerController {
 	public DataTableModel getTestCaseVerifiedRequirementsTableModel(@PathVariable long testCaseId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		PagingAndSorting pagingAndSorting = new DataTableMapperPagingAndSortingAdapter(params,
+		PagingAndSorting pagingAndSorting = new DataTableSorting(params,
 				verifiedRequirementVersionsMapper);
 
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
@@ -269,7 +269,7 @@ public class VerifiedRequirementsManagerController {
 	@ResponseBody
 	public DataTableModel getTestStepVerifiedRequirementTableModel(DataTableDrawParameters params,
 			@PathVariable long testStepId) {
-		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, verifiedRequirementVersionsMapper);
+		PagingAndSorting paging = new DataTableSorting(params, verifiedRequirementVersionsMapper);
 		Locale locale = LocaleContextHolder.getLocale();
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
 				.findAllDirectlyVerifiedRequirementsByTestStepId(testStepId, paging);
@@ -362,12 +362,12 @@ public class VerifiedRequirementsManagerController {
 	}
 
 	private DatatableMapper<String> verifiedRequirementVersionsMapper = new NameBasedMapper(7)
-			.mapAttribute(RequirementVersion.class, "id", String.class, DataTableModelConstants.DEFAULT_ENTITY_ID_KEY)
-			.mapAttribute(RequirementVersion.class, NAME, String.class, DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY)
-			.mapAttribute(Project.class, NAME, String.class, "project")
-			.mapAttribute(RequirementVersion.class, "reference", String.class, "reference")
-			.mapAttribute(RequirementVersion.class, "versionNumber", String.class, "versionNumber")
-			.mapAttribute(RequirementVersion.class, "criticality", String.class, "criticality")
-			.mapAttribute(RequirementVersion.class, "category", String.class, "category");
+			.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", RequirementVersion.class)
+			.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, NAME, RequirementVersion.class)
+			.mapAttribute("project", NAME, Project.class)
+			.mapAttribute("reference", "reference", RequirementVersion.class)
+			.mapAttribute("versionNumber", "versionNumber", RequirementVersion.class)
+			.mapAttribute("criticality", "criticality", RequirementVersion.class)
+			.mapAttribute("category", "category", RequirementVersion.class);
 
 }

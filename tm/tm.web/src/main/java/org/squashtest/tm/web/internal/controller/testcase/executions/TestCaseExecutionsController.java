@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.executions;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,15 +41,13 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
 
@@ -64,14 +61,14 @@ public class TestCaseExecutionsController {
 
 	
 	private final DatatableMapper<Integer> execsTableMapper = new IndexBasedMapper(11)
-			.mapAttribute(Project.class, NAME, String.class, 1).mapAttribute(Campaign.class, NAME, String.class, 2)
-			.mapAttribute(Iteration.class, NAME, String.class, 3)
-			.mapAttribute(Execution.class, NAME, String.class, 4)
-			.mapAttribute(Execution.class, "executionMode", TestCaseExecutionMode.class, 5)
-			.mapAttribute(TestSuite.class, NAME, String.class, 6)
-			.mapAttribute(Execution.class, "executionStatus", ExecutionStatus.class, 8)
-			.mapAttribute(Execution.class, "lastExecutedBy", String.class, 9)
-			.mapAttribute(Execution.class, "lastExecutedOn", Date.class, 10);
+			.mapAttribute(1, NAME, Project.class).mapAttribute(2, NAME, Campaign.class)
+			.mapAttribute(3, NAME, Iteration.class)
+			.mapAttribute(4, NAME, Execution.class)
+			.mapAttribute(5, "executionMode", Execution.class)
+			.mapAttribute(6, NAME, TestSuite.class)
+			.mapAttribute(8, "executionStatus", Execution.class)
+			.mapAttribute(9, "lastExecutedBy", Execution.class)
+			.mapAttribute(10, "lastExecutedOn", Execution.class);
 
 	private ExecutionFinder executionFinder;
 	@Inject
@@ -123,7 +120,7 @@ public class TestCaseExecutionsController {
 	}
 
 	private PagingAndSorting createPagingAndSorting(DataTableDrawParameters params) {
-		return new DataTableMapperPagingAndSortingAdapter(params, execsTableMapper);
+		return new DataTableSorting(params, execsTableMapper);
 	}
 
 }

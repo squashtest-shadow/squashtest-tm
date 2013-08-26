@@ -47,10 +47,9 @@ import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter;
-import org.squashtest.tm.web.internal.model.datatable.DataTableMapperPagingAndSortingAdapter.SortedAttributeSource;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -70,8 +69,7 @@ public class UserController {
 
 	private static final String USER_ID_URL = "/{userId}";
 
-	private DatatableMapper<String> teamsMapper = new NameBasedMapper(1).mapAttribute(Team.class, "name", String.class,
-			"team-name");
+	private DatatableMapper<String> teamsMapper = new NameBasedMapper(1).mapAttribute("team-name", "name");
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
@@ -89,8 +87,7 @@ public class UserController {
 	@ResponseBody
 	public DataTableModel getTeamsTableModel(DataTableDrawParameters params, @PathVariable("userId") long userId) {
 		LOGGER.info("Find associated teams table model for user #{}", userId);
-		PagingAndSorting paging = new DataTableMapperPagingAndSortingAdapter(params, teamsMapper,
-				SortedAttributeSource.SINGLE_ENTITY);
+		PagingAndSorting paging = new DataTableSorting(params, teamsMapper);
 		Filtering filtering = new DataTableFiltering(params);
 		return getTeamsTableModel(userId, paging, filtering, params.getsEcho());
 	}
